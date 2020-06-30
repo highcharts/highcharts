@@ -230,6 +230,27 @@ function makeInstrumentCopies(instruments) {
     });
 }
 /**
+ * Utility function to apply a master volume to a list of instrument
+ * options.
+ * @private
+ * @param {Array<Highcharts.PointInstrumentObject>} instruments
+ * The instrument options. Only options with Instrument object instances
+ * will be affected.
+ * @param {number} masterVolume
+ * The master volume multiplier to apply to the instruments.
+ * @return {Array<Highcharts.PointInstrumentObject>}
+ * Array of instrument options.
+ */
+function applyMasterVolumeToInstruments(instruments, masterVolume) {
+    instruments.forEach(function (instrOpts) {
+        var instr = instrOpts.instrument;
+        if (typeof instr !== 'string') {
+            instr.setMasterVolume(masterVolume);
+        }
+    });
+    return instruments;
+}
+/**
  * Create a TimelinePath from a series. Takes the same options as seriesSonify.
  * To intuitively allow multiple series to play simultaneously we make copies of
  * the instruments for each series.
@@ -250,10 +271,10 @@ function buildTimelinePathFromSeries(series, options) {
         return utilities.virtualAxisTranslate(getPointTimeValue(point, options.pointPlayTime), timeExtremes, { min: 0, max: options.duration });
     }, 
     // Compute any data extremes that aren't defined yet
-    dataExtremes = getExtremesForInstrumentProps(series.chart, options.instruments, options.dataExtremes), 
+    dataExtremes = getExtremesForInstrumentProps(series.chart, options.instruments, options.dataExtremes), masterVolume = pick(options.masterVolume, 1), 
     // Make copies of the instruments used for this series, to allow
     // multiple series with the same instrument to play together
-    instruments = makeInstrumentCopies(options.instruments), 
+    instrumentCopies = makeInstrumentCopies(options.instruments), instruments = applyMasterVolumeToInstruments(instrumentCopies, masterVolume), 
     // Go through the points, convert to events, optionally add Earcons
     timelineEvents = series.points.reduce(function (events, point) {
         var earcons = getPointEarcons(point, options.earcons || []), time = pointToTime(point);
@@ -265,14 +286,18 @@ function buildTimelinePathFromSeries(series, options) {
             id: point.id,
             playOptions: {
                 instruments: instruments,
-                dataExtremes: dataExtremes
+                dataExtremes: dataExtremes,
+                masterVolume: masterVolume
             }
         }), 
         // Earcons
         earcons.map(function (earcon) {
             return new H.sonification.TimelineEvent({
                 eventObject: earcon,
-                time: time
+                time: time,
+                playOptions: {
+                    volume: masterVolume
+                }
             });
         }));
     }, []);
@@ -390,7 +415,8 @@ function buildChartSonifySeriesOptions(series, dataExtremes, chartSonifyOptions)
         instruments: chartSonifyOptions.instruments || configOptions.instruments,
         onStart: chartSonifyOptions.onSeriesStart || configOptions.onStart,
         onEnd: chartSonifyOptions.onSeriesEnd || configOptions.onEnd,
-        earcons: chartSonifyOptions.earcons || configOptions.earcons
+        earcons: chartSonifyOptions.earcons || configOptions.earcons,
+        masterVolume: pick(chartSonifyOptions.masterVolume, configOptions.masterVolume)
     }, 
     // Merge in the specific series options by ID if any are passed in
     isArray(additionalSeriesOptions) ? (find(additionalSeriesOptions, function (optEntry) {
@@ -685,7 +711,8 @@ function chartOptionsToSonifySeriesOptions(series) {
         onStart: chartEvents.onSeriesStart,
         onPointEnd: chartEvents.onPointEnd,
         onPointStart: chartEvents.onPointStart,
-        pointPlayTime: (_b = (_a = chartOpts.defaultInstrumentOptions) === null || _a === void 0 ? void 0 : _a.mapping) === null || _b === void 0 ? void 0 : _b.pointPlayTime
+        pointPlayTime: (_b = (_a = chartOpts.defaultInstrumentOptions) === null || _a === void 0 ? void 0 : _a.mapping) === null || _b === void 0 ? void 0 : _b.pointPlayTime,
+        masterVolume: chartOpts.masterVolume
     }, {
         onEnd: seriesEvents.onSeriesEnd,
         onPointEnd: seriesEvents.onPointEnd,
@@ -706,8 +733,7 @@ function getSeriesSonifyOptions(series, options) {
     var chartOpts = series.chart.options.sonification;
     var seriesOpts = series.options.sonification;
     return merge({
-        duration: (seriesOpts === null || seriesOpts === void 0 ? void 0 : seriesOpts.duration) || (chartOpts === null || chartOpts === void 0 ? void 0 : chartOpts.duration),
-        masterVolume: chartOpts === null || chartOpts === void 0 ? void 0 : chartOpts.masterVolume
+        duration: (seriesOpts === null || seriesOpts === void 0 ? void 0 : seriesOpts.duration) || (chartOpts === null || chartOpts === void 0 ? void 0 : chartOpts.duration)
     }, chartOptionsToSonifySeriesOptions(series), options);
 }
 /**

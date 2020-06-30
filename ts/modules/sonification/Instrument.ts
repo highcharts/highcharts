@@ -31,6 +31,7 @@ declare global {
             public _play?: Instrument['play'];
             public gainNode?: GainNode;
             public id: string;
+            public masterVolume: number;
             public options: InstrumentOptionsObject;
             public oscillator?: OscillatorNode;
             public oscillatorStarted?: boolean;
@@ -59,6 +60,7 @@ declare global {
                 frequencyLimits?: Dictionary<number>
             ): void;
             public setGain(gainValue: number, rampTime?: number): void;
+            public setMasterVolume(volumeMultiplier: number): void;
             public setPan(panValue: number): void;
             public stop(
                 immediately: boolean,
@@ -69,6 +71,7 @@ declare global {
         interface InstrumentOptionsObject {
             allowedFrequencies?: Array<number>;
             id?: string;
+            masterVolume?: number;
             oscillator?: OscillatorOptionsObject;
             playCallbackInterval?: number;
             type?: string;
@@ -104,6 +107,11 @@ declare global {
  * The unique ID of the instrument. Generated if not supplied.
  * @name Highcharts.InstrumentOptionsObject#id
  * @type {string|undefined}
+ *//**
+ * The master volume multiplier to apply to the instrument, regardless of other
+ * volume changes. Defaults to 1.
+ * @name Highcharts.InstrumentPlayOptionsObject#masterVolume
+ * @type {number|undefined}
  *//**
  * When using functions to determine frequency or other parameters during
  * playback, this options specifies how often to call the callback functions.
@@ -191,6 +199,7 @@ declare global {
 var defaultOptions: Highcharts.InstrumentOptionsObject = {
     type: 'oscillator',
     playCallbackInterval: 20,
+    masterVolume: 1,
     oscillator: {
         waveformShape: 'sine'
     }
@@ -231,6 +240,7 @@ Instrument.prototype.init = function (
     }
     this.options = merge(defaultOptions, options);
     this.id = this.options.id = options && options.id || uniqueKey();
+    this.masterVolume = this.options.masterVolume || 0;
 
     // Init the audio nodes
     var ctx = H.audioContext;
@@ -349,7 +359,8 @@ Instrument.prototype.setPan = function (
 
 /**
  * Set gain level. A maximum of 1.2 is allowed before we emit a warning. The
- * actual volume is not set above this level regardless of input.
+ * actual volume is not set above this level regardless of input. This function
+ * also handles the Instrument's master volume.
  * @private
  * @param {number} gainValue
  * The gain level to set for the instrument.
@@ -362,25 +373,27 @@ Instrument.prototype.setGain = function (
     gainValue: number,
     rampTime?: number
 ): void {
-    if (this.gainNode) {
-        if (gainValue > 1.2) {
+    const gainNode = this.gainNode;
+    let newVal = gainValue * this.masterVolume;
+    if (gainNode) {
+        if (newVal > 1.2) {
             console.warn( // eslint-disable-line
                 'Highcharts sonification warning: ' +
                 'Volume of instrument set too high.'
             );
-            gainValue = 1.2;
+            newVal = 1.2;
         }
         if (rampTime) {
-            this.gainNode.gain.setValueAtTime(
-                this.gainNode.gain.value, H.audioContext.currentTime
+            gainNode.gain.setValueAtTime(
+                gainNode.gain.value, H.audioContext.currentTime
             );
-            this.gainNode.gain.linearRampToValueAtTime(
-                gainValue,
+            gainNode.gain.linearRampToValueAtTime(
+                newVal,
                 H.audioContext.currentTime + rampTime / 1000
             );
         } else {
-            this.gainNode.gain.setValueAtTime(
-                gainValue, H.audioContext.currentTime
+            gainNode.gain.setValueAtTime(
+                newVal, H.audioContext.currentTime
             );
         }
     }
@@ -398,6 +411,20 @@ Instrument.prototype.cancelGainRamp = function (
     if (this.gainNode) {
         this.gainNode.gain.cancelScheduledValues(0);
     }
+};
+
+
+/**
+ * Set the master volume multiplier of the instrument after creation.
+ * @param {number} volumeMultiplier
+ * The gain level to set for the instrument.
+ * @return {void}
+ */
+Instrument.prototype.setMasterVolume = function (
+    this: Highcharts.Instrument,
+    volumeMultiplier: number
+): void {
+    this.masterVolume = volumeMultiplier || 0;
 };
 
 

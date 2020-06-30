@@ -59,6 +59,7 @@ declare global {
             dataExtremes?: Dictionary<RangeObject>;
             instruments: Array<PointInstrumentObject>;
             onEnd?: Function;
+            masterVolume?: number;
         }
     }
 }
@@ -274,6 +275,7 @@ function pointSonify(
 ): void {
     var point = this,
         chart = point.series.chart,
+        masterVolume = pick(options.masterVolume, chart.options.sonification?.masterVolume),
         dataExtremes = options.dataExtremes || {},
         // Get the value to pass to instrument.play from the mapping value
         // passed in.
@@ -377,6 +379,10 @@ function pointSonify(
 
         // Play the note on the instrument
         if (instrument && instrument.play) {
+            if (typeof masterVolume !== 'undefined') {
+                instrument.setMasterVolume(masterVolume);
+            }
+
             (point.sonification.instrumentsPlaying as any)[instrument.id] =
                 instrument;
             instrument.play({
