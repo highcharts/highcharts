@@ -1062,9 +1062,7 @@ var Legend = /** @class */ (function () {
      */
     Legend.prototype.sortItems = function () {
         // sort by legendIndex
-        stableSort(this.allItems, function (
-        // TODO: fix TS
-        a, b) {
+        stableSort(this.allItems, function (a, b) {
             return ((a.options && a.options.legendIndex) || 0) -
                 ((b.options && b.options.legendIndex) || 0);
         });
@@ -1095,9 +1093,7 @@ var Legend = /** @class */ (function () {
      * @return {void}
      */
     Legend.prototype.layoutItems = function () {
-        this.allItems.forEach(function (
-        // TODO: fix TS
-        item) {
+        this.allItems.forEach(function (item) {
             this.layoutItem(item);
         }, this);
     };
@@ -1119,12 +1115,12 @@ var Legend = /** @class */ (function () {
         this.legendHeight += this.padding;
     };
     /**
- * Create a border and background for the legend.
- *
- * @private
- * @function Highcharts.renderBox
- * @return {void}
- */
+     * Create a border and background for the legend.
+     *
+     * @private
+     * @function Highcharts.renderBox
+     * @return {void}
+     */
     Legend.prototype.renderBox = function () {
         var box = this.box, options = this.options;
         // Draw the border and/or background

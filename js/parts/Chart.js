@@ -1756,14 +1756,14 @@ var Chart = /** @class */ (function () {
         chart.hasRendered = true;
     };
     /**
-    * This method provides the logic for rendering the legend.
-    * In its basic form it's simple new Legend() call. It is
-    * redefined in Advanced Legend Module.
-    *
-    * @private
-    * @function Highcharts.Chart#renderLegend
-    * @return {void}
-    */
+     * This method provides the logic for rendering the legend.
+     * In its basic form it's simple new Legend() call. It is
+     * redefined in Advanced Legend Module.
+     *
+     * @private
+     * @function Highcharts.Chart#renderLegend
+     * @return {void}
+     */
     Chart.prototype.renderLegend = function () {
         /**
          * The overview of the chart's series.

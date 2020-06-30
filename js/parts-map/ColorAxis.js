@@ -101,14 +101,14 @@ var ColorAxis = /** @class */ (function (_super) {
         return merge(ColorAxis.defaultOptions, {
             side: horiz ? 2 : 1,
             reversed: !horiz
-        }, //Highcharts.ColorAxisOptions,
+        }, // Highcharts.ColorAxisOptions,
         userOptions, {
             opposite: !horiz,
             showEmpty: false,
             title: null,
             visible: legend && (legend.enabled !== false) &&
                 (userOptions ? userOptions.visible !== false : true)
-        } //Highcharts.ColorAxisOptions
+        } // Highcharts.ColorAxisOptions
         );
     };
     /* *
@@ -542,7 +542,8 @@ var ColorAxis = /** @class */ (function (_super) {
         }
         // Keep the options structure updated for export. Unlike xAxis and
         // yAxis, the colorAxis is not an array. (#3207)
-        // TODO: there can be multipe color axes if advanced legend module is used.
+        // TODO: there can be multipe color axes if advanced legend module
+        // is used.
         chart.options[axis.coll] =
             merge(axis.userOptions, updatedOptions);
         _super.prototype.update.call(this, updatedOptions, redraw);
