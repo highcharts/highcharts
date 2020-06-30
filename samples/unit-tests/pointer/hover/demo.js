@@ -161,6 +161,50 @@ QUnit.test('Testing hovering over panes.', function (assert) {
 
 });
 
+QUnit.test('Tooltip should be shown for value equal to max', function (assert) {
+    const chart = Highcharts.chart('container', {
+        chart: {
+            polar: true,
+            type: 'line'
+        },
+
+        yAxis: {
+            gridLineInterpolation: 'polygon',
+            lineWidth: 0,
+            min: 0,
+            max: 100
+        },
+
+        tooltip: {
+            //shared: true
+        },
+
+        series: [{
+            data: [99, 100, 101, 36, 47, 16],
+            pointPlacement: 'on'
+        }]
+    });
+
+    const controller = new TestController(chart);
+
+    const series = chart.series[0];
+    let point = series.points[1];
+    controller.mouseMove(point.plotX, point.plotY);
+    assert.strictEqual(
+        chart.tooltip.isHidden,
+        true,
+        'Tooltip at max + 1 should be hidden'
+    );
+
+    point = series.points[2];
+    controller.mouseMove(point.plotX, point.plotY);
+    assert.strictEqual(
+        chart.tooltip.isHidden,
+        false,
+        'Tooltip at max should be drawn'
+    );
+});
+
 QUnit.test('Hover state when axis is updated (#12569).', function (assert) {
     var chart = Highcharts.chart('container', {
         series: [{
