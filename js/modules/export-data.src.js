@@ -274,7 +274,8 @@ addEvent(Chart, 'render', function () {
     if (this.options &&
         this.options.exporting &&
         this.options.exporting.showTable &&
-        !this.options.chart.forExport) {
+        !this.options.chart.forExport &&
+        !this.dataTableDiv) {
         this.viewData();
     }
 });

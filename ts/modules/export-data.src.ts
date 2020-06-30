@@ -399,7 +399,8 @@ addEvent(Chart, 'render', function (): void {
         this.options &&
         this.options.exporting &&
         this.options.exporting.showTable &&
-        !(this.options.chart as any).forExport
+        !(this.options.chart as any).forExport &&
+        !this.dataTableDiv
     ) {
         this.viewData();
     }
@@ -1178,7 +1179,6 @@ Chart.prototype.viewData = function (): void {
     if (!this.dataTableDiv) {
         this.dataTableDiv = doc.createElement('div');
         this.dataTableDiv.className = 'highcharts-data-table';
-
         // Insert after the chart container
         (this.renderTo.parentNode as any).insertBefore(
             this.dataTableDiv,
@@ -1206,13 +1206,11 @@ Chart.prototype.viewData = function (): void {
         exportDivElements[menuItems.indexOf('viewData')]
             .innerHTML = isTableVisible ? lang.hideData : lang.viewData;
     }
-
 };
 
 
 // Add "Download CSV" to the exporting menu.
 var exportingOptions = getOptions().exporting;
-
 if (exportingOptions) {
 
     extend(exportingOptions.menuItemDefinitions, {

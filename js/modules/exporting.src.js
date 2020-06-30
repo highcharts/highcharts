@@ -1481,7 +1481,8 @@ extend(Chart.prototype, /** @lends Highcharts.Chart.prototype */ {
                                 }
                             },
                             innerHTML: (item.text ||
-                                chart.options.lang[item.textKey])
+                                (chart.dataTableDiv && item.textKey === 'viewData') ?
+                                chart.options.lang.hideData : chart.options.lang[item.textKey])
                         }, null, innerMenu);
                         if (!chart.styledMode) {
                             element.onmouseover = function () {
