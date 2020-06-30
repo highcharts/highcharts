@@ -189,6 +189,16 @@ var H: typeof Highcharts = {
     win: glob,
     marginNames: ['plotTop', 'marginRight', 'marginBottom', 'plotLeft'],
     noop: function (): void {},
+
+    /**
+     * Theme options that should get applied to the chart. In module mode it
+     * might not be possible to change this property because of read-only
+     * restrictions, instead use {@link Highcharts.setOptions}.
+     *
+     * @name Highcharts.theme
+     * @type {Highcharts.Options}
+     */
+
     /**
      * An array containing the current chart objects in the page. A chart's
      * position in the array is preserved throughout the page's lifetime. When
