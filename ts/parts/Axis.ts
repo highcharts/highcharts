@@ -5545,6 +5545,7 @@ class Axis implements AxisComposition, AxisLike {
     /**
      * Now we have computed the normalized tickInterval, get the tick positions.
      *
+     * @private
      * @function Highcharts.Axis#setTickPositions
      *
      * @fires Highcharts.Axis#event:afterSetTickPositions

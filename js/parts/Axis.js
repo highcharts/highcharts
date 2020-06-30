@@ -1477,6 +1477,7 @@ var Axis = /** @class */ (function () {
     /**
      * Now we have computed the normalized tickInterval, get the tick positions.
      *
+     * @private
      * @function Highcharts.Axis#setTickPositions
      *
      * @fires Highcharts.Axis#event:afterSetTickPositions
