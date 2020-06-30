@@ -633,6 +633,10 @@ var Axis = /** @class */ (function () {
                     if (axis.isXAxis) {
                         xData = series.xData;
                         if (xData.length) {
+                            var isPositive = function (number) { return number > 0; };
+                            xData = axis.logarithmic ?
+                                xData.filter(isNumber).filter(isPositive) :
+                                xData;
                             xExtremes = series.getXExtremes(xData);
                             // If xData contains values which is not numbers,
                             // then filter them out. To prevent performance hit,
@@ -644,10 +648,7 @@ var Axis = /** @class */ (function () {
                             if (!isNumber(seriesDataMin) &&
                                 // #5010:
                                 !(seriesDataMin instanceof Date)) {
-                                var isPositive = function (number) { return number > 0; };
-                                xData = axis.positiveValuesOnly ?
-                                    xData.filter(isNumber) :
-                                    xData.filter(isNumber).filter(isPositive);
+                                xData = xData.filter(isNumber);
                                 xExtremes = series.getXExtremes(xData);
                                 // Do it again with valid data
                                 seriesDataMin = xExtremes.min;

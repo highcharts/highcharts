@@ -5193,7 +5193,7 @@ H.Series = seriesType<Highcharts.LineSeries>(
                 const isPositiveAxes = yAxis.positiveValuesOnly ||
                     xAxis.positiveValuesOnly,
                     isValidValue = (yValue !== null && (yValue as any) <= 0) ||
-                    (xValue !== null && xValue <= 0);
+                    (xValue && xValue <= 0);
 
                 if (isPositiveAxes && isValidValue) {
                     point.isNull = true;

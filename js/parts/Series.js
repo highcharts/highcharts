@@ -3939,7 +3939,7 @@ null,
             // Discard disallowed x and y values for log axes #3434, #13533
             var isPositiveAxes = yAxis.positiveValuesOnly ||
                 xAxis.positiveValuesOnly, isValidValue = (yValue !== null && yValue <= 0) ||
-                (xValue !== null && xValue <= 0);
+                (xValue && xValue <= 0);
             if (isPositiveAxes && isValidValue) {
                 point.isNull = true;
             }

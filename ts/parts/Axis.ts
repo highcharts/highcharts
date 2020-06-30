@@ -4359,6 +4359,12 @@ class Axis implements AxisComposition, AxisLike {
                     if (axis.isXAxis) {
                         xData = series.xData as any;
                         if (xData.length) {
+                            const isPositive = (number: number): boolean => number > 0;
+
+                            xData = axis.logarithmic ?
+                                xData.filter(isNumber).filter(isPositive) :
+                                xData;
+
                             xExtremes = series.getXExtremes(xData);
                             // If xData contains values which is not numbers,
                             // then filter them out. To prevent performance hit,
@@ -4373,11 +4379,8 @@ class Axis implements AxisComposition, AxisLike {
                                 // #5010:
                                 !((seriesDataMin as any) instanceof Date)
                             ) {
-                                const isPositive = (number: number): boolean => number > 0;
 
-                                xData = axis.positiveValuesOnly ?
-                                    xData.filter(isNumber) :
-                                    xData.filter(isNumber).filter(isPositive);
+                                xData = xData.filter(isNumber);
 
                                 xExtremes = series.getXExtremes(xData);
                                 // Do it again with valid data
