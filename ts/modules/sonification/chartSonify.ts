@@ -1127,24 +1127,16 @@ function chartOptionsToSonifySeriesOptions(
     const chartEvents = chartOpts.events || {} as Highcharts.ChartSonificationEventsOptions;
     const seriesEvents = seriesOpts.events || {} as Highcharts.SeriesSonificationEventsOptions;
 
-    return merge(
-        { // Chart options
-            onEnd: chartEvents.onSeriesEnd,
-            onStart: chartEvents.onSeriesStart,
-            onPointEnd: chartEvents.onPointEnd,
-            onPointStart: chartEvents.onPointStart,
-            pointPlayTime: chartOpts.defaultInstrumentOptions?.mapping?.pointPlayTime,
-            masterVolume: chartOpts.masterVolume
-        },
-        { // Series options
-            onEnd: seriesEvents.onSeriesEnd,
-            onPointEnd: seriesEvents.onPointEnd,
-            onPointStart: seriesEvents.onPointStart,
-            onStart: seriesEvents.onSeriesStart,
-            instruments: getSeriesInstrumentOptions(series), // Deals with chart-level defaults
-            earcons: seriesOpts.earcons || chartOpts.earcons
-        }
-    );
+    return { // Chart options
+        onEnd: seriesEvents.onSeriesEnd || chartEvents.onSeriesEnd,
+        onStart: seriesEvents.onSeriesStart || chartEvents.onSeriesStart,
+        onPointEnd: seriesEvents.onPointEnd || chartEvents.onPointEnd,
+        onPointStart: seriesEvents.onPointStart || chartEvents.onPointStart,
+        pointPlayTime: chartOpts.defaultInstrumentOptions?.mapping?.pointPlayTime,
+        masterVolume: chartOpts.masterVolume,
+        instruments: getSeriesInstrumentOptions(series), // Deals with chart-level defaults
+        earcons: seriesOpts.earcons || chartOpts.earcons
+    };
 }
 
 
