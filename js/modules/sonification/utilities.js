@@ -151,12 +151,15 @@ var utilities = {
      * The possible extremes for this value.
      * @param {object} limits
      * Limits for the virtual axis.
+     * @param {boolean} [invert]
+     * Invert the virtual axis.
      * @return {number}
      * The value mapped to the virtual axis.
      */
-    virtualAxisTranslate: function (value, dataExtremes, limits) {
-        var lenValueAxis = dataExtremes.max - dataExtremes.min, lenVirtualAxis = limits.max - limits.min, virtualAxisValue = limits.min +
-            lenVirtualAxis * (value - dataExtremes.min) / lenValueAxis;
+    virtualAxisTranslate: function (value, dataExtremes, limits, invert) {
+        var lenValueAxis = dataExtremes.max - dataExtremes.min, lenVirtualAxis = Math.abs(limits.max - limits.min), valueDelta = invert ?
+            dataExtremes.max - value :
+            value - dataExtremes.min, virtualValueDelta = lenVirtualAxis * valueDelta / lenValueAxis, virtualAxisValue = limits.min + virtualValueDelta;
         return lenValueAxis > 0 ?
             clamp(virtualAxisValue, limits.min, limits.max) :
             limits.min;
