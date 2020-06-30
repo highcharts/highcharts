@@ -644,7 +644,10 @@ var Axis = /** @class */ (function () {
                             if (!isNumber(seriesDataMin) &&
                                 // #5010:
                                 !(seriesDataMin instanceof Date)) {
-                                xData = xData.filter(isNumber);
+                                var isPositive = function (number) { return number > 0; };
+                                xData = axis.positiveValuesOnly ?
+                                    xData.filter(isNumber) :
+                                    xData.filter(isNumber).filter(isPositive);
                                 xExtremes = series.getXExtremes(xData);
                                 // Do it again with valid data
                                 seriesDataMin = xExtremes.min;

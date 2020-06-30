@@ -5189,11 +5189,13 @@ H.Series = seriesType<Highcharts.LineSeries>(
                     pointStack,
                     stackValues;
 
-                // Discard disallowed y values for log axes (#3434)
-                if (yAxis.positiveValuesOnly &&
-                    yValue !== null &&
-                    (yValue as any) <= 0
-                ) {
+                // Discard disallowed x and y values for log axes #3434, #13533
+                const isPositiveAxes = yAxis.positiveValuesOnly ||
+                    xAxis.positiveValuesOnly,
+                    isValidValue = (yValue !== null && (yValue as any) <= 0) ||
+                    (xValue !== null && xValue <= 0);
+
+                if (isPositiveAxes && isValidValue) {
                     point.isNull = true;
                 }
 

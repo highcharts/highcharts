@@ -4373,7 +4373,12 @@ class Axis implements AxisComposition, AxisLike {
                                 // #5010:
                                 !((seriesDataMin as any) instanceof Date)
                             ) {
-                                xData = xData.filter(isNumber);
+                                const isPositive = (number: number): boolean => number > 0;
+
+                                xData = axis.positiveValuesOnly ?
+                                    xData.filter(isNumber) :
+                                    xData.filter(isNumber).filter(isPositive);
+
                                 xExtremes = series.getXExtremes(xData);
                                 // Do it again with valid data
                                 seriesDataMin = xExtremes.min;
