@@ -28,7 +28,7 @@ import Color from './Color.js';
 var color = Color.parse;
 import LegendSymbolMixin from '../mixins/legend-symbol.js';
 import U from './Utilities.js';
-var animObject = U.animObject, clamp = U.clamp, defined = U.defined, extend = U.extend, isNumber = U.isNumber, merge = U.merge, pick = U.pick, seriesType = U.seriesType;
+var animObject = U.animObject, clamp = U.clamp, defined = U.defined, extend = U.extend, isNumber = U.isNumber, merge = U.merge, pick = U.pick, seriesType = U.seriesType, objectEach = U.objectEach;
 import './Series.js';
 import './Options.js';
 var noop = H.noop, Series = H.Series, svg = H.svg;
@@ -568,7 +568,7 @@ seriesType('column', 'line',
             // enabled, but `centerInCategory` is true, there is one stack
             // handling the grouping of points in each category. This is
             // done in the `setGroupedPoints` function.
-            Highcharts.objectEach(this.yAxis.stacking && this.yAxis.stacking.stacks, function (stack) {
+            objectEach(this.yAxis.stacking && this.yAxis.stacking.stacks, function (stack) {
                 if (typeof point.x === 'number') {
                     var stackItem = stack[point.x.toString()];
                     if (stackItem) {

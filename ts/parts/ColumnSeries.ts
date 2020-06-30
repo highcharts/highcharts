@@ -132,7 +132,8 @@ const {
     isNumber,
     merge,
     pick,
-    seriesType
+    seriesType,
+    objectEach
 } = U;
 
 import './Series.js';
@@ -788,7 +789,7 @@ seriesType<Highcharts.ColumnSeries>(
                 // enabled, but `centerInCategory` is true, there is one stack
                 // handling the grouping of points in each category. This is
                 // done in the `setGroupedPoints` function.
-                Highcharts.objectEach(
+                objectEach(
                     this.yAxis.stacking && this.yAxis.stacking.stacks,
                     (stack: Highcharts.Dictionary<Highcharts.StackItem>): void => {
                         if (typeof point.x === 'number') {
