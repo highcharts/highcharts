@@ -521,7 +521,7 @@ function isInsidePane(
 ): boolean {
     return Math.sqrt(
         Math.pow(x - center[0], 2) + Math.pow(y - center[1], 2)
-    ) < center[2] / 2;
+    ) <= center[2] / 2;
 }
 
 H.Chart.prototype.getHoverPane = function (
