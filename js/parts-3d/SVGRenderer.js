@@ -666,7 +666,7 @@ SVGRenderer.prototype.arc3d = function (attribs) {
                         return from[key] + (pick(to[key], from[key]) -
                             from[key]) * fx.pos;
                     }
-                    if (fx.prop === randomProp) {
+                    if ((fx.prop === randomProp) && fx.elem) {
                         fx.elem.setPaths(merge(from, {
                             x: interpolate('x'),
                             y: interpolate('y'),
