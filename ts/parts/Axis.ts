@@ -4379,9 +4379,7 @@ class Axis implements AxisComposition, AxisLike {
                                 // #5010:
                                 !((seriesDataMin as any) instanceof Date)
                             ) {
-
                                 xData = xData.filter(isNumber);
-
                                 xExtremes = series.getXExtremes(xData);
                                 // Do it again with valid data
                                 seriesDataMin = xExtremes.min;
