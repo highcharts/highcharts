@@ -1475,7 +1475,7 @@ var Axis = /** @class */ (function () {
         this.setTickPositions();
     };
     /**
-     * Now we have computed the normalized tickInterval, get the tick positions
+     * Now we have computed the normalized tickInterval, get the tick positions.
      *
      * @function Highcharts.Axis#setTickPositions
      *
@@ -3936,17 +3936,17 @@ var Axis = /** @class */ (function () {
              * @apioption xAxis.labels.useHTML
              */
             /**
-             * The x position offset of the label relative to the tick position
-             * on the axis.
+             * The x position offset of all labels relative to the tick
+             * positions on the axis.
              *
              * @sample {highcharts} highcharts/xaxis/labels-x/
              *         Y axis labels placed on grid lines
              */
             x: 0,
             /**
-             * The y position offset of the label relative to the tick position
-             * on the axis. The default makes it adapt to the font size on
-             * bottom axis.
+             * The y position offset of all labels relative to the tick
+             * positions on the axis. The default makes it adapt to the font
+             * size of the bottom axis.
              *
              * @sample {highcharts} highcharts/xaxis/labels-x/
              *         Y axis labels placed on grid lines
@@ -5219,7 +5219,7 @@ var Axis = /** @class */ (function () {
          * @sample {highcharts} highcharts/demo/gauge-solid/
          *         True by default
          *
-         * @type      {Array<Highcharts.GradientColorStopObject>}
+         * @type      {Array<Array<number,Highcharts.ColorType>>}
          * @since     4.0
          * @product   highcharts
          * @apioption yAxis.stops
@@ -5234,35 +5234,6 @@ var Axis = /** @class */ (function () {
          * @default   0
          * @product   highcharts highstock gantt
          * @apioption yAxis.tickWidth
-         */
-        /**
-         * Angular gauges and solid gauges only.
-         * The label's pixel distance from the perimeter of the plot area.
-         *
-         * Since v7.1.2: If it's a percentage string, it is interpreted the
-         * same as [series.radius](#plotOptions.gauge.radius), so label can be
-         * aligned under the gauge's shape.
-         *
-         * @sample {highcharts} highcharts/yaxis/labels-distance/
-         *                      Labels centered under the arc
-         *
-         * @type      {number|string}
-         * @default   -25
-         * @product   highcharts
-         * @apioption yAxis.labels.distance
-         */
-        /**
-         * The y position offset of the label relative to the tick position
-         * on the axis.
-         *
-         * @sample {highcharts} highcharts/xaxis/labels-x/
-         *         Y axis labels placed on grid lines
-         *
-         * @type      {number}
-         * @default   {highcharts} 3
-         * @default   {highstock} -2
-         * @default   {highmaps} 3
-         * @apioption yAxis.labels.y
          */
         /**
          * Whether to force the axis to end on a tick. Use this option with
@@ -5353,6 +5324,36 @@ var Axis = /** @class */ (function () {
          */
         labels: {
             /**
+             * Angular gauges and solid gauges only.
+             * The label's pixel distance from the perimeter of the plot area.
+             *
+             * Since v7.1.2: If it's a percentage string, it is interpreted the
+             * same as [series.radius](#plotOptions.gauge.radius), so label can be
+             * aligned under the gauge's shape.
+             *
+             * @sample {highcharts} highcharts/yaxis/labels-distance/
+             *         Labels centered under the arc
+             *
+             * @type      {number|string}
+             * @default   -25
+             * @product   highcharts
+             * @apioption yAxis.labels.distance
+             */
+            /**
+             * The y position offset of all labels relative to the tick
+             * positions on the axis. For polar and radial axis consider the use
+             * of the [distance](#yAxis.labels.distance) option.
+             *
+             * @sample {highcharts} highcharts/xaxis/labels-x/
+             *         Y axis labels placed on grid lines
+             *
+             * @type      {number}
+             * @default   {highcharts} 3
+             * @default   {highstock} -2
+             * @default   {highmaps} 3
+             * @apioption yAxis.labels.y
+             */
+            /**
              * What part of the string the given position is anchored to. Can
              * be one of `"left"`, `"center"` or `"right"`. The exact position
              * also depends on the `labels.x` setting.
@@ -5374,8 +5375,9 @@ var Axis = /** @class */ (function () {
              * @apioption  yAxis.labels.align
              */
             /**
-             * The x position offset of the label relative to the tick position
-             * on the axis. Defaults to -15 for left axis, 15 for right axis.
+             * The x position offset of all labels relative to the tick
+             * positions on the axis. Defaults to -15 for left axis, 15 for
+             * right axis.
              *
              * @sample {highcharts} highcharts/xaxis/labels-x/
              *         Y axis labels placed on grid lines
