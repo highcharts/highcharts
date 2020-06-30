@@ -706,21 +706,16 @@ function chartOptionsToSonifySeriesOptions(series) {
     var chartOpts = series.chart.options.sonification || {};
     var chartEvents = chartOpts.events || {};
     var seriesEvents = seriesOpts.events || {};
-    return merge({
-        onEnd: chartEvents.onSeriesEnd,
-        onStart: chartEvents.onSeriesStart,
-        onPointEnd: chartEvents.onPointEnd,
-        onPointStart: chartEvents.onPointStart,
+    return {
+        onEnd: seriesEvents.onSeriesEnd || chartEvents.onSeriesEnd,
+        onStart: seriesEvents.onSeriesStart || chartEvents.onSeriesStart,
+        onPointEnd: seriesEvents.onPointEnd || chartEvents.onPointEnd,
+        onPointStart: seriesEvents.onPointStart || chartEvents.onPointStart,
         pointPlayTime: (_b = (_a = chartOpts.defaultInstrumentOptions) === null || _a === void 0 ? void 0 : _a.mapping) === null || _b === void 0 ? void 0 : _b.pointPlayTime,
-        masterVolume: chartOpts.masterVolume
-    }, {
-        onEnd: seriesEvents.onSeriesEnd,
-        onPointEnd: seriesEvents.onPointEnd,
-        onPointStart: seriesEvents.onPointStart,
-        onStart: seriesEvents.onSeriesStart,
+        masterVolume: chartOpts.masterVolume,
         instruments: getSeriesInstrumentOptions(series),
         earcons: seriesOpts.earcons || chartOpts.earcons
-    });
+    };
 }
 /**
  * @private
