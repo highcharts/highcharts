@@ -265,3 +265,35 @@ QUnit.test('Y axis minimum got stuck (#3353)', function (assert) {
         "Y minimum value should not be changed when updating yAxis type"
     );
 });
+
+QUnit.test('Negative values on log axes', function (assert) {
+    const chart = Highcharts.chart('container', {
+        xAxis: {
+            type: 'logarithmic'
+        },
+        yAxis: {
+            type: 'logarithmic'
+        },
+        series: [{
+            data: [[-1, 2], [0, -2], [10, 10]]
+        }]
+    });
+
+    assert.strictEqual(
+        chart.xAxis[0].dataMin,
+        10,
+        "should not be present in the xAxis.dataMin."
+    );
+
+    assert.strictEqual(
+        chart.yAxis[0].dataMin,
+        10,
+        "should not be present in the yAxis.dataMin."
+    );
+
+    assert.ok(
+        true,
+        "should not throw error."
+    );
+
+});
