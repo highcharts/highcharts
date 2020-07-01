@@ -10,7 +10,6 @@ import Annotation from '../annotations.src.js';
 import ControlPoint from '../ControlPoint.js';
 import CrookedLine from './CrookedLine.js';
 import MockPoint from '../MockPoint.js';
-import H from '../../parts/Globals.js';
 import U from '../../parts/Utilities.js';
 const {
     merge

@@ -8,7 +8,6 @@
 
 import type SVGPath from '../../parts/SVGPath';
 import Annotation from '../annotations.src.js';
-import H from '../../parts/Globals.js';
 import MockPoint from '../MockPoint.js';
 import Tunnel from './Tunnel.js';
 import U from '../../parts/Utilities.js';
