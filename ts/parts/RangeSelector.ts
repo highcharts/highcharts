@@ -889,8 +889,12 @@ class RangeSelector {
             newMax = dataMax as any;
         }
 
-        newMin += rangeOptions._offsetMin as any;
-        newMax += rangeOptions._offsetMax as any;
+        if (defined(newMin)) {
+            newMin += rangeOptions._offsetMin as any;
+        }
+        if (defined(newMax)) {
+            newMax += rangeOptions._offsetMax as any;
+        }
 
         rangeSelector.setSelected(i);
 

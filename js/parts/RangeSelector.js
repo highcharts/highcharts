@@ -628,8 +628,12 @@ var RangeSelector = /** @class */ (function () {
             newMin = dataMin;
             newMax = dataMax;
         }
-        newMin += rangeOptions._offsetMin;
-        newMax += rangeOptions._offsetMax;
+        if (defined(newMin)) {
+            newMin += rangeOptions._offsetMin;
+        }
+        if (defined(newMax)) {
+            newMax += rangeOptions._offsetMax;
+        }
         rangeSelector.setSelected(i);
         // Update the chart
         if (!baseAxis) {
