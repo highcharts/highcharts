@@ -14,8 +14,6 @@
  * - Go over the code base and look for assignments of innerHTML, setAttribute
  *   etc to look for unfiltered inputs from config. Attributes set directly from
  *   API may be vulnerable to javascript: directive.
- * - Test legacy browsers. IE8 doesn't have DOMParser, IE9 doesn't do DOMParser
- *   with HTML.
  * */
 'use strict';
 import H from './Globals.js';
@@ -251,7 +249,20 @@ var TextBuilder = /** @class */ (function () {
      */
     TextBuilder.prototype.parseMarkup = function (markup) {
         var tree = [];
-        var doc = new DOMParser().parseFromString(markup, 'text/html');
+        var doc;
+        var body;
+        if (
+        // IE9 is only able to parse XML
+        /MSIE 9.0/.test(navigator.userAgent) ||
+            // IE8-
+            typeof DOMParser === 'undefined') {
+            body = H.createElement('div');
+            body.innerHTML = markup;
+            doc = { body: body };
+        }
+        else {
+            doc = new DOMParser().parseFromString(markup, 'text/html');
+        }
         var validateDirective = function (attrib) {
             if (['background', 'dynsrc', 'href', 'lowsrc', 'src']
                 .indexOf(attrib.name) !== -1) {
@@ -295,6 +306,9 @@ var TextBuilder = /** @class */ (function () {
             }
         };
         [].forEach.call(doc.body.childNodes, function (childNode) { return validateChildNodes(childNode, tree); });
+        if (body) {
+            H.discardElement(body);
+        }
         return tree;
     };
     /*

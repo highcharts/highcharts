@@ -14,8 +14,6 @@
  * - Go over the code base and look for assignments of innerHTML, setAttribute
  *   etc to look for unfiltered inputs from config. Attributes set directly from
  *   API may be vulnerable to javascript: directive.
- * - Test legacy browsers. IE8 doesn't have DOMParser, IE9 doesn't do DOMParser
- *   with HTML.
  * */
 
 'use strict';
@@ -391,7 +389,20 @@ class TextBuilder {
         }
 
         const tree: Highcharts.NodeTreeObject[] = [];
-        const doc = new DOMParser().parseFromString(markup, 'text/html');
+        let doc;
+        let body;
+        if (
+            // IE9 is only able to parse XML
+            /MSIE 9.0/.test(navigator.userAgent) ||
+            // IE8-
+            typeof DOMParser === 'undefined'
+        ) {
+            body = H.createElement('div');
+            body.innerHTML = markup;
+            doc = { body };
+        } else {
+            doc = new DOMParser().parseFromString(markup, 'text/html');
+        }
 
         const validateDirective = (attrib: Attribute): boolean => {
             if (
@@ -458,6 +469,9 @@ class TextBuilder {
             (childNode): void => validateChildNodes(childNode, tree)
         );
 
+        if (body) {
+            H.discardElement(body);
+        }
         return tree;
     }
 
