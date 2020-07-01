@@ -10,13 +10,10 @@
  * Pen test: https://jsfiddle.net/highcharts/abr5czg7/
  *
  * @todo
- * - Discuss whether this should be a separate class, or just part of the
- *   SVGElement. Maybe rename to TextBuilder, since HTML also uses it.
  * - Set up XSS tests
  * - Go over the code base and look for assignments of innerHTML, setAttribute
  *   etc to look for unfiltered inputs from config. Attributes set directly from
  *   API may be vulnerable to javascript: directive.
- * - Events to allow implementers to override the filter?
  * - Test legacy browsers. IE8 doesn't have DOMParser, IE9 doesn't do DOMParser
  *   with HTML.
  * */
@@ -77,7 +74,7 @@ var TextBuilder = /** @class */ (function () {
             textNode.appendChild(doc.createTextNode(this.unescapeEntities(textStr)));
             // Complex strings, add more logic
         }
-        else {
+        else if (textStr !== '') {
             if (tempParent) {
                 // attach it to the DOM to read offset width
                 tempParent.appendChild(textNode);
@@ -267,11 +264,12 @@ var TextBuilder = /** @class */ (function () {
             var tagName = node.nodeName.toLowerCase();
             // Add allowed tags
             if (TextBuilder.allowedTags.indexOf(tagName) !== -1) {
-                var textContent_1 = (_a = node.textContent) === null || _a === void 0 ? void 0 : _a.toString();
                 var astNode_1 = {
-                    tagName: tagName,
-                    textContent: textContent_1
+                    tagName: tagName
                 };
+                if (tagName === '#text') {
+                    astNode_1.textContent = (_a = node.textContent) === null || _a === void 0 ? void 0 : _a.toString();
+                }
                 var attributes = node.attributes;
                 // Add allowed attributes
                 if (attributes) {
@@ -286,11 +284,8 @@ var TextBuilder = /** @class */ (function () {
                 // Handle children
                 if (node.childNodes.length) {
                     var children_1 = [];
-                    node.childNodes.forEach(function (childNode) {
-                        if (childNode.nodeName !== '#text' ||
-                            childNode.textContent !== textContent_1) {
-                            validateChildNodes(childNode, children_1);
-                        }
+                    [].forEach.call(node.childNodes, function (childNode) {
+                        validateChildNodes(childNode, children_1);
                     });
                     if (children_1.length) {
                         astNode_1.children = children_1;
@@ -299,7 +294,7 @@ var TextBuilder = /** @class */ (function () {
                 addTo.push(astNode_1);
             }
         };
-        doc.body.childNodes.forEach(function (childNode) { return validateChildNodes(childNode, tree); });
+        [].forEach.call(doc.body.childNodes, function (childNode) { return validateChildNodes(childNode, tree); });
         return tree;
     };
     /*
@@ -423,6 +418,7 @@ var TextBuilder = /** @class */ (function () {
         'span',
         'strong',
         'table',
+        'tbody',
         'td',
         'tr',
         '#text'

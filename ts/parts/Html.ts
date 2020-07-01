@@ -440,11 +440,13 @@ extend(SVGRenderer.prototype, /** @lends SVGRenderer.prototype */ {
                 delete this.bBox;
                 delete this.oldTextWidth;
 
-                const builder = new TextBuilder(this);
-                const tree = builder.parseMarkup(pick(value, ''));
-
                 element.innerHTML = '';
-                renderer.addTree(tree, this);
+
+                if (pick(value, '') !== '') {
+                    const builder = new TextBuilder(this);
+                    const tree = builder.parseMarkup(value);
+                    renderer.addTree(tree, this);
+                }
 
                 this.textStr = value;
                 wrapper.doTransform = true;

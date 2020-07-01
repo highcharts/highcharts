@@ -275,10 +275,12 @@ extend(SVGRenderer.prototype, /** @lends SVGRenderer.prototype */ {
             if (value !== this.textStr) {
                 delete this.bBox;
                 delete this.oldTextWidth;
-                var builder = new TextBuilder(this);
-                var tree = builder.parseMarkup(pick(value, ''));
                 element.innerHTML = '';
-                renderer.addTree(tree, this);
+                if (pick(value, '') !== '') {
+                    var builder = new TextBuilder(this);
+                    var tree = builder.parseMarkup(value);
+                    renderer.addTree(tree, this);
+                }
                 this.textStr = value;
                 wrapper.doTransform = true;
             }

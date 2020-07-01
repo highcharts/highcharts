@@ -10,13 +10,10 @@
  * Pen test: https://jsfiddle.net/highcharts/abr5czg7/
  *
  * @todo
- * - Discuss whether this should be a separate class, or just part of the
- *   SVGElement. Maybe rename to TextBuilder, since HTML also uses it.
  * - Set up XSS tests
  * - Go over the code base and look for assignments of innerHTML, setAttribute
  *   etc to look for unfiltered inputs from config. Attributes set directly from
  *   API may be vulnerable to javascript: directive.
- * - Events to allow implementers to override the filter?
  * - Test legacy browsers. IE8 doesn't have DOMParser, IE9 doesn't do DOMParser
  *   with HTML.
  * */
@@ -57,6 +54,7 @@ class TextBuilder {
         'span',
         'strong',
         'table',
+        'tbody',
         'td',
         'tr',
         '#text'
@@ -140,7 +138,7 @@ class TextBuilder {
             );
 
         // Complex strings, add more logic
-        } else {
+        } else if (textStr !== '') {
 
             if (tempParent) {
                 // attach it to the DOM to read offset width
@@ -413,11 +411,12 @@ class TextBuilder {
 
             // Add allowed tags
             if (TextBuilder.allowedTags.indexOf(tagName) !== -1) {
-                const textContent = node.textContent?.toString();
                 const astNode: Highcharts.NodeTreeObject = {
-                    tagName,
-                    textContent
+                    tagName
                 };
+                if (tagName === '#text') {
+                    astNode.textContent = node.textContent?.toString();
+                }
                 const attributes = (node as any).attributes;
 
                 // Add allowed attributes
@@ -436,17 +435,13 @@ class TextBuilder {
                 // Handle children
                 if (node.childNodes.length) {
                     const children: Highcharts.NodeTreeObject[] = [];
-                    node.childNodes.forEach(
-                        (childNode): void => {
-                            if (
-                                childNode.nodeName !== '#text' ||
-                                childNode.textContent !== textContent
-                            ) {
-                                validateChildNodes(
-                                    childNode,
-                                    children
-                                );
-                            }
+                    [].forEach.call(
+                        node.childNodes,
+                        (childNode: ChildNode): void => {
+                            validateChildNodes(
+                                childNode,
+                                children
+                            );
                         }
                     );
                     if (children.length) {
@@ -458,7 +453,8 @@ class TextBuilder {
             }
         };
 
-        doc.body.childNodes.forEach(
+        [].forEach.call(
+            doc.body.childNodes,
             (childNode): void => validateChildNodes(childNode, tree)
         );
 
