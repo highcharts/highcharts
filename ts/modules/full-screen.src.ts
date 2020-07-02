@@ -10,6 +10,9 @@
 
 import Chart from '../parts/Chart.js';
 import H from '../parts/Globals.js';
+const {
+    doc
+} = H;
 import U from '../parts/Utilities.js';
 const {
     addEvent
@@ -262,12 +265,16 @@ class Fullscreen {
             exportDivElements &&
             exportDivElements.length
         ) {
-            exportDivElements[menuItems.indexOf('viewFullscreen')]
-                .innerHTML = !this.isOpen ?
-                    (
-                        exportingOptions.menuItemDefinitions.viewFullscreen.text ||
-                        lang.viewFullscreen
-                    ) : lang.exitFullscreen;
+            exportDivElements[menuItems.indexOf('viewFullscreen')].innerHTML = '';
+            exportDivElements[menuItems.indexOf('viewFullscreen')].appendChild(
+                doc.createTextNode(
+                    !this.isOpen ?
+                        (
+                            exportingOptions.menuItemDefinitions.viewFullscreen.text ||
+                            lang.viewFullscreen
+                        ) : lang.exitFullscreen
+                )
+            );
         }
     }
     /**

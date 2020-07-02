@@ -12,8 +12,15 @@
  * @todo
  * - Go over the code base and look for assignments of innerHTML, setAttribute
  *   etc to look for unfiltered inputs from config. Attributes set directly from
- *   API may be vulnerable to javascript: directive.
+ *   API may be vulnerable to javascript: directive and on* attributes.
+ *   - https://jsfiddle.net/highcharts/Lukjm510/
+ *   - Test/validate all options in highcharts.d.ts that have SVGAttributes as
+ *     input type (roughly 10 cases). Most can be whitelisted to fill, stroke,
+ *     stroke-width, maybe style and class and a few more.
  * - More tags in whitelist?
+ * - In HTML structures like .getTable(), consider building a syntax tree
+ *   instead, and apply it using SVGRenderer.addTree(). Same for the a11y
+ *   module. In order to avoid setting innerHTML wherever possible.
  * */
 
 'use strict';

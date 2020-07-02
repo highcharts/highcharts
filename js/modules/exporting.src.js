@@ -1480,10 +1480,10 @@ extend(Chart.prototype, /** @lends Highcharts.Chart.prototype */ {
                                     item.onclick
                                         .apply(chart, arguments);
                                 }
-                            },
-                            innerHTML: (item.text ||
-                                chart.options.lang[item.textKey])
+                            }
                         }, null, innerMenu);
+                        element.appendChild(doc.createTextNode(item.text ||
+                            chart.options.lang[item.textKey]));
                         if (!chart.styledMode) {
                             element.onmouseover = function () {
                                 css(this, navOptions.menuItemHoverStyle);

@@ -1991,14 +1991,15 @@ extend(Chart.prototype, /** @lends Highcharts.Chart.prototype */ {
                                     (item as any).onclick
                                         .apply(chart, arguments);
                                 }
-                            },
-                            innerHTML: (
-                                (item as any).text ||
-                                (chart.options.lang as any)[
-                                    (item as any).textKey as any
-                                ]
-                            )
+                            }
                         }, null as any, innerMenu);
+
+                        element.appendChild(doc.createTextNode(
+                            (item as any).text ||
+                            (chart.options.lang as any)[
+                                (item as any).textKey as any
+                            ]
+                        ));
 
                         if (!chart.styledMode) {
                             element.onmouseover = function (
