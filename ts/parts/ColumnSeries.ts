@@ -306,9 +306,11 @@ seriesType<Highcharts.ColumnSeries>(
         pointPadding: 0.1,
 
         /**
-         * A pixel value specifying a fixed width for each column or bar. When
-         * `null`, the width is calculated from the `pointPadding` and
-         * `groupPadding`.
+         * A pixel value specifying a fixed width for each column or bar point.
+         * When `null`, the width is calculated from the `pointPadding` and
+         * `groupPadding`. The width effects the dimension that is not based on
+         * the point value. For column series it is the hoizontal length and for
+         * bar series it is the vertical length.
          *
          * @see [maxPointWidth](#plotOptions.column.maxPointWidth)
          *
@@ -1404,7 +1406,8 @@ seriesType<Highcharts.ColumnSeries>(
 
 /**
  * A pixel value specifying a fixed width for the column or bar. Overrides
- * pointWidth on the series.
+ * pointWidth on the series. The width effects the dimension that is not based
+ * on the point value.
  *
  * @see [series.pointWidth](#plotOptions.column.pointWidth)
  *
