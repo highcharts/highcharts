@@ -6,7 +6,9 @@
 
 'use strict';
 
-import H from '../../parts/Globals.js';
+import type SVGElement from '../../parts/SVGElement';
+import Chart from '../../parts/Chart.js';
+import SVGRenderer from '../../parts/SVGRenderer.js';
 import U from '../../parts/Utilities.js';
 const {
     addEvent,
@@ -38,9 +40,6 @@ declare global {
         }
     }
 }
-
-import '../../parts/Chart.js';
-import '../../parts/SVGRenderer.js';
 
 /**
  * Options for configuring markers for annotations.
@@ -76,7 +75,7 @@ import '../../parts/SVGRenderer.js';
  * @since        6.0.0
  * @optionparent defs
  */
-var defaultMarkers: Highcharts.Dictionary<Highcharts.SVGDefinitionObject> = {
+var defaultMarkers: Record<string, Highcharts.SVGDefinitionObject> = {
     /**
      * @type {Highcharts.SVGDefinitionObject}
      */
@@ -117,7 +116,7 @@ var defaultMarkers: Highcharts.Dictionary<Highcharts.SVGDefinitionObject> = {
     }
 };
 
-H.SVGRenderer.prototype.addMarker = function (
+SVGRenderer.prototype.addMarker = function (
     id: string,
     markerOptions: Highcharts.SVGAttributes
 ): Highcharts.SVGElement {
@@ -149,11 +148,14 @@ H.SVGRenderer.prototype.addMarker = function (
 
 /* eslint-disable no-invalid-this, valid-jsdoc */
 
-var createMarkerSetter = function (markerType: string): Highcharts.AnnotationMarkerMixin['markerStartSetter'] {
-    return function (this: Highcharts.SVGElement, value: string): void {
+/**
+ * @private
+ */
+function createMarkerSetter(markerType: string): Highcharts.AnnotationMarkerMixin['markerStartSetter'] {
+    return function (this: SVGElement, value: string): void {
         this.attr(markerType, 'url(#' + value + ')');
     };
-};
+}
 
 /**
  * @private
@@ -169,10 +171,7 @@ var markerMixin: Highcharts.AnnotationMarkerMixin = {
      * @private
      * @param {Highcharts.AnnotationControllablePath} item
      */
-    setItemMarkers: function (
-        this: Highcharts.AnnotationControllablePath,
-        item: Highcharts.AnnotationControllablePath
-    ): void {
+    setItemMarkers: function (item: Highcharts.AnnotationControllablePath): void {
         var itemOptions = item.options,
             chart = item.chart,
             defs = chart.options.defs,
@@ -209,7 +208,7 @@ var markerMixin: Highcharts.AnnotationMarkerMixin = {
                                 merge(predefinedMarker, { color: color })
                             );
 
-                        item.attr(markerType, marker.attr('id') as any);
+                        item.attr(markerType, marker.attr('id'));
                     }
                 }
             };
@@ -218,7 +217,7 @@ var markerMixin: Highcharts.AnnotationMarkerMixin = {
     }
 };
 
-addEvent(H.Chart as any, 'afterGetContainer', function (this: Highcharts.AnnotationChart): void {
+addEvent(Chart, 'afterGetContainer', function (): void {
     this.options.defs = merge(defaultMarkers, this.options.defs || {});
 
     objectEach(this.options.defs, function (def): void {
