@@ -139,15 +139,31 @@ function generateHTML() {
                 </div>
                 <div class="changelog-container">`);
         }
-
+        function makeDownloadLinks(version, name) {
+            var filePrefixMap = {
+                'highcharts-stock': 'Highstock',
+                'highcharts-maps': 'Highmaps'
+            };
+            if (semver.satisfies(version, '>=8.1.0') || (name === 'highcharts' || name === 'highcharts-gantt')) {
+                return name
+                    .split('-')
+                    .map(word => word.charAt(0).toUpperCase() + word.slice(1))
+                    .join('-');
+            }
+            return filePrefixMap[name];
+        }
         function featureHTMLStructure() {
             if (changelog.features) {
                 const version = changelog.header.version.split('-').join('.');
                 const id = changelog.header.name + '-v' + version;
+                const name = changelog.header.name;
+                const downloadLink = 'https://code.highcharts.com/zips/' + makeDownloadLinks(version, name) + '-' + version + '.zip';
+
                 return (
                     `<p class="release-header">
                         <a id="${id}"></a>
                         <a href="#${id}">${changelog.header.productName} v${version} ${changelog.header.date}</a>
+                        <span class="download-link" title="Download the zip archive for ${changelog.header.productName} v${version}"><a href="${downloadLink}"><i class="fas fa-download"></i></a></span>    
                     </p>
                     ${marked.parser(changelog.features)}`
                 );
