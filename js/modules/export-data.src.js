@@ -150,7 +150,7 @@ setOptions({
                 * @since   next
                 * @requires modules/annotations
                 */
-                join: false,
+                join: false
             },
             /**
              * Formatter callback for the column headers. Parameters are:
