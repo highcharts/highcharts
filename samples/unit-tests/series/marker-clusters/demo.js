@@ -379,9 +379,17 @@ QUnit.test('General marker-clusters', function (assert) {
                     point = chart.series[0].points[0];
                     graphicBBox = point.graphic.getBBox();
 
-                    assert.deepEqual(
-                        [point.plotX.toFixed(2), point.plotY.toFixed(2)],
-                        [graphicBBox.x.toFixed(2), graphicBBox.y.toFixed(2)],
+                    result = true;
+
+                    if (
+                        Math.abs(point.plotX - graphicBBox.x) > 1 &&
+                        Math.abs(point.plotY - graphicBBox.y) > 1
+                    ) {
+                        result = false;
+                    }
+
+                    assert.ok(
+                        result,
                         'Points with image marker symbol should be displayed ' +
                             'correctly after the zoom (#13302).'
                     );
