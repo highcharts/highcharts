@@ -10,10 +10,10 @@
  * Pen test: https://jsfiddle.net/highcharts/abr5czg7/
  *
  * @todo
- * - Set up XSS tests
  * - Go over the code base and look for assignments of innerHTML, setAttribute
  *   etc to look for unfiltered inputs from config. Attributes set directly from
  *   API may be vulnerable to javascript: directive.
+ * - More tags in whitelist?
  * */
 
 'use strict';

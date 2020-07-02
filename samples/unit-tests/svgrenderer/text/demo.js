@@ -801,37 +801,3 @@ QUnit.test('RTL characters with outline (#10162)', function (assert) {
         renderer.destroy();
     }
 });
-
-QUnit.test('XSS and script injection', assert => {
-    const ren = new Highcharts.Renderer(
-        document.getElementById('container'),
-        600,
-        400
-    );
-
-    ren.text(
-        'This is a link to <a href="https://www.highcharts.com">highcharts.com</a>',
-        30,
-        30
-    )
-        .add();
-
-    assert.strictEqual(
-        document.getElementById('container').innerHTML.indexOf('onclick'),
-        -1,
-        'There should be no translation of anchors to onclick like historically'
-    );
-
-    ren.text(
-        'This is a link to <a href="javascript:alert(\'XSS\')">an alert</a>',
-        30,
-        60
-    )
-        .add();
-
-    assert.strictEqual(
-        document.getElementById('container').innerHTML.indexOf('javascript'),
-        -1,
-        'JavaScript execution should not be allowed from config'
-    );
-});
