@@ -150,7 +150,7 @@ Earcon.prototype.init = function (
  */
 Earcon.prototype.sonify = function (
     this: Highcharts.Earcon,
-    options: Highcharts.EarconOptionsObject
+    options: Partial<Highcharts.EarconOptionsObject>
 ): void {
     var playOptions = merge(this.options, options);
 
@@ -174,11 +174,6 @@ Earcon.prototype.sonify = function (
 
         if (instrument && instrument.play) {
             if (opts.playOptions) {
-                // Handle master pan/volume
-                if (typeof opts.playOptions.volume !== 'function') {
-                    instrumentOpts.volume = pick(masterVolume, 1) *
-                        pick(opts.playOptions.volume, 1);
-                }
                 instrumentOpts.pan = pick(masterPan, instrumentOpts.pan);
 
                 // Handle onEnd
@@ -201,6 +196,7 @@ Earcon.prototype.sonify = function (
                 // Play the instrument. Use a copy so we can play multiple at
                 // the same time.
                 instrumentCopy = instrument.copy();
+                instrumentCopy.setMasterVolume(masterVolume);
                 copyId = instrumentCopy.id;
                 earcon.instrumentsPlaying[copyId] = instrumentCopy;
                 instrumentCopy.play(instrumentOpts);

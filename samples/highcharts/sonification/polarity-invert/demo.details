@@ -2,6 +2,6 @@
  name: Highcharts Demo
  authors:
    - Øystein Moseng
- skipTest: true
+ requiresManualTesting: true
  js_wrap: b
 ...

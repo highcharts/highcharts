@@ -61,7 +61,7 @@ declare global {
             (e: Event): (boolean|undefined);
         }
         interface RangeSelectorParseCallbackFunction {
-            (value: string): number;
+            (value: string, useUTC: boolean): number;
         }
         interface RangeSelectorButtonPositionOptions {
             align?: AlignValue;
@@ -85,7 +85,7 @@ declare global {
             type?: RangeSelectorButtonTypeValue;
         }
         interface RangeSelectorInputElement extends HTMLDOMElement {
-            previousValue?: number;
+            previousValue?: number|RangeSelectorParseCallbackFunction|undefined;
             value?: string;
         }
         interface RangeSelectorInputPositionOptions {
@@ -526,6 +526,8 @@ extend(defaultOptions, {
         /**
          * A custom callback function to parse values entered in the input boxes
          * and return a valid JavaScript time as milliseconds since 1970.
+         * The first argument passed is a value to parse,
+         * second is a boolean indicating use of the UTC time.
          *
          * @sample {highstock} stock/rangeselector/input-format/
          *         Milliseconds in the range selector
@@ -1248,6 +1250,21 @@ class RangeSelector {
     }
 
     /**
+     * @private
+     * @function Highcharts.RangeSelector#defaultInputDateParser
+     */
+    public defaultInputDateParser(inputDate: string, useUTC: boolean): number {
+        var date = new Date();
+        if (H.isSafari) {
+            return Date.parse(inputDate.split(' ').join('T'));
+        }
+        if (useUTC) {
+            return Date.parse(inputDate + 'Z');
+        }
+        return Date.parse(inputDate) - date.getTimezoneOffset() * 60 * 1000;
+    }
+
+    /**
      * Draw either the 'from' or the 'to' HTML input box of the range selector
      *
      * @private
@@ -1268,21 +1285,23 @@ class RangeSelector {
             input: Highcharts.RangeSelectorInputElement,
             label,
             dateBox,
-            inputGroup = this.inputGroup;
+            inputGroup = this.inputGroup,
+            defaultInputDateParser = this.defaultInputDateParser;
 
         /**
          * @private
          */
         function updateExtremes(): void {
-            var inputValue = input.value,
-                value: (number|undefined) =
-                    (options.inputDateParser || Date.parse)(inputValue as any),
+            var inputValue = input.value as any,
+                value: (number|Highcharts.RangeSelectorParseCallbackFunction|undefined),
                 chartAxis = chart.xAxis[0],
                 dataAxis = chart.scroller && chart.scroller.xAxis ?
                     chart.scroller.xAxis :
                     chartAxis,
                 dataMin = dataAxis.dataMin,
                 dataMax = dataAxis.dataMax;
+
+            value = (options.inputDateParser || defaultInputDateParser)(inputValue, chart.time.useUTC);
 
             if (value !== input.previousValue) {
                 input.previousValue = value;

@@ -7,7 +7,6 @@
 'use strict';
 
 import Annotation from '../annotations.src.js';
-import H from '../../parts/Globals.js';
 import InfinityLine from './InfinityLine.js';
 import MockPoint from '../MockPoint.js';
 import U from '../../parts/Utilities.js';

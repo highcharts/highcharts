@@ -59,6 +59,7 @@ declare global {
             dataExtremes?: Dictionary<RangeObject>;
             instruments: Array<PointInstrumentObject>;
             onEnd?: Function;
+            masterVolume?: number;
         }
     }
 }
@@ -73,20 +74,24 @@ declare global {
  * Define the volume of the instrument. This can be a string with a data
  * property name, e.g. `'y'`, in which case this data property is used to define
  * the volume relative to the `y`-values of the other points. A higher `y` value
- * would then result in a higher volume. This option can also be a fixed number
- * or a function. If it is a function, this function is called in regular
- * intervals while the note is playing. It receives three arguments: The point,
- * the dataExtremes, and the current relative time - where 0 is the beginning of
- * the note and 1 is the end. The function should return the volume of the note
- * as a number between 0 and 1.
+ * would then result in a higher volume. Alternatively, `'-y'` can be used,
+ * which inverts the polarity, so that a higher `y` value results in a lower
+ * volume. This option can also be a fixed number or a function. If it is a
+ * function, this function is called in regular intervals while the note is
+ * playing. It receives three arguments: The point, the dataExtremes, and the
+ * current relative time - where 0 is the beginning of the note and 1 is the
+ * end. The function should return the volume of the note as a number between
+ * 0 and 1.
  * @name Highcharts.PointInstrumentMappingObject#volume
  * @type {string|number|Function}
  *//**
  * Define the duration of the notes for this instrument. This can be a string
  * with a data property name, e.g. `'y'`, in which case this data property is
  * used to define the duration relative to the `y`-values of the other points. A
- * higher `y` value would then result in a longer duration. This option can also
- * be a fixed number or a function. If it is a function, this function is called
+ * higher `y` value would then result in a longer duration. Alternatively,
+ * `'-y'` can be used, in which case the polarity is inverted, and a higher
+ * `y` value would result in a shorter duration. This option can also be a
+ * fixed number or a function. If it is a function, this function is called
  * once before the note starts playing, and should return the duration in
  * milliseconds. It receives two arguments: The point, and the dataExtremes.
  * @name Highcharts.PointInstrumentMappingObject#duration
@@ -96,24 +101,28 @@ declare global {
  * property name, e.g. `'x'`, in which case this data property is used to define
  * the panning relative to the `x`-values of the other points. A higher `x`
  * value would then result in a higher panning value (panned further to the
- * right). This option can also be a fixed number or a function. If it is a
- * function, this function is called in regular intervals while the note is
- * playing. It receives three arguments: The point, the dataExtremes, and the
- * current relative time - where 0 is the beginning of the note and 1 is the
- * end. The function should return the panning of the note as a number between
- * -1 and 1.
+ * right). Alternatively, `'-x'` can be used, in which case the polarity is
+ * inverted, and a higher `x` value would result in a lower panning value
+ * (panned further to the left). This option can also be a fixed number or a
+ * function. If it is a function, this function is called in regular intervals
+ * while the note is playing. It receives three arguments: The point, the
+ * dataExtremes, and the current relative time - where 0 is the beginning of
+ * the note and 1 is the end. The function should return the panning of the
+ * note as a number between -1 and 1.
  * @name Highcharts.PointInstrumentMappingObject#pan
  * @type {string|number|Function|undefined}
  *//**
  * Define the frequency of the instrument. This can be a string with a data
  * property name, e.g. `'y'`, in which case this data property is used to define
  * the frequency relative to the `y`-values of the other points. A higher `y`
- * value would then result in a higher frequency. This option can also be a
- * fixed number or a function. If it is a function, this function is called in
- * regular intervals while the note is playing. It receives three arguments:
- * The point, the dataExtremes, and the current relative time - where 0 is the
- * beginning of the note and 1 is the end. The function should return the
- * frequency of the note as a number (in Hz).
+ * value would then result in a higher frequency. Alternatively, `'-y'` can be
+ * used, in which case the polarity is inverted, and a higher `y` value would
+ * result in a lower frequency. This option can also be a fixed number or a
+ * function. If it is a function, this function is called in regular intervals
+ * while the note is playing. It receives three arguments: The point, the
+ * dataExtremes, and the current relative time - where 0 is the beginning of
+ * the note and 1 is the end. The function should return the frequency of the
+ * note as a number (in Hz).
  * @name Highcharts.PointInstrumentMappingObject#frequency
  * @type {string|number|Function}
  */
@@ -274,6 +283,7 @@ function pointSonify(
 ): void {
     var point = this,
         chart = point.series.chart,
+        masterVolume = pick(options.masterVolume, chart.options.sonification?.masterVolume),
         dataExtremes = options.dataExtremes || {},
         // Get the value to pass to instrument.play from the mapping value
         // passed in.
@@ -291,18 +301,24 @@ function pointSonify(
                     } :
                     value(point, dataExtremes);
             }
-            // String, this is a data prop.
+            // String, this is a data prop. Potentially with negative polarity.
             if (typeof value === 'string') {
+                const hasInvertedPolarity = value.charAt(0) === '-';
+                const dataProp = hasInvertedPolarity ? value.slice(1) : value;
+                const pointValue = pick((point as any)[dataProp], (point.options as any)[dataProp]);
+
                 // Find data extremes if we don't have them
-                dataExtremes[value] = dataExtremes[value] ||
+                dataExtremes[dataProp] = dataExtremes[dataProp] ||
                     utilities.calculateDataExtremes(
-                        point.series.chart, value
+                        point.series.chart, dataProp
                     );
+
                 // Find the value
                 return utilities.virtualAxisTranslate(
-                    pick((point as any)[value], (point.options as any)[value]),
-                    dataExtremes[value],
-                    allowedExtremes
+                    pointValue,
+                    dataExtremes[dataProp],
+                    allowedExtremes,
+                    hasInvertedPolarity
                 );
             }
             // Fixed number or something else weird, just use that
@@ -377,6 +393,10 @@ function pointSonify(
 
         // Play the note on the instrument
         if (instrument && instrument.play) {
+            if (typeof masterVolume !== 'undefined') {
+                instrument.setMasterVolume(masterVolume);
+            }
+
             (point.sonification.instrumentsPlaying as any)[instrument.id] =
                 instrument;
             instrument.play({

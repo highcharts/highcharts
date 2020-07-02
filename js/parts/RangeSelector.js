@@ -350,6 +350,8 @@ extend(defaultOptions, {
         /**
          * A custom callback function to parse values entered in the input boxes
          * and return a valid JavaScript time as milliseconds since 1970.
+         * The first argument passed is a value to parse,
+         * second is a boolean indicating use of the UTC time.
          *
          * @sample {highstock} stock/rangeselector/input-format/
          *         Milliseconds in the range selector
@@ -873,6 +875,20 @@ var RangeSelector = /** @class */ (function () {
         this.setInputValue(name);
     };
     /**
+     * @private
+     * @function Highcharts.RangeSelector#defaultInputDateParser
+     */
+    RangeSelector.prototype.defaultInputDateParser = function (inputDate, useUTC) {
+        var date = new Date();
+        if (H.isSafari) {
+            return Date.parse(inputDate.split(' ').join('T'));
+        }
+        if (useUTC) {
+            return Date.parse(inputDate + 'Z');
+        }
+        return Date.parse(inputDate) - date.getTimezoneOffset() * 60 * 1000;
+    };
+    /**
      * Draw either the 'from' or the 'to' HTML input box of the range selector
      *
      * @private
@@ -881,14 +897,15 @@ var RangeSelector = /** @class */ (function () {
      * @return {void}
      */
     RangeSelector.prototype.drawInput = function (name) {
-        var rangeSelector = this, chart = rangeSelector.chart, chartStyle = chart.renderer.style || {}, renderer = chart.renderer, options = chart.options.rangeSelector, lang = defaultOptions.lang, div = rangeSelector.div, isMin = name === 'min', input, label, dateBox, inputGroup = this.inputGroup;
+        var rangeSelector = this, chart = rangeSelector.chart, chartStyle = chart.renderer.style || {}, renderer = chart.renderer, options = chart.options.rangeSelector, lang = defaultOptions.lang, div = rangeSelector.div, isMin = name === 'min', input, label, dateBox, inputGroup = this.inputGroup, defaultInputDateParser = this.defaultInputDateParser;
         /**
          * @private
          */
         function updateExtremes() {
-            var inputValue = input.value, value = (options.inputDateParser || Date.parse)(inputValue), chartAxis = chart.xAxis[0], dataAxis = chart.scroller && chart.scroller.xAxis ?
+            var inputValue = input.value, value, chartAxis = chart.xAxis[0], dataAxis = chart.scroller && chart.scroller.xAxis ?
                 chart.scroller.xAxis :
                 chartAxis, dataMin = dataAxis.dataMin, dataMax = dataAxis.dataMax;
+            value = (options.inputDateParser || defaultInputDateParser)(inputValue, chart.time.useUTC);
             if (value !== input.previousValue) {
                 input.previousValue = value;
                 // If the value isn't parsed directly to a value by the
