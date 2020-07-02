@@ -1739,8 +1739,8 @@ chartProto.callbacks.push(function (
                 }
             },
             startRowLength = event.dataRows[0].length,
-            annotationSeparator = chart.options.exporting?.csv?.annotationSeparator,
-            joinAnnotations = chart.options.exporting?.csv?.joinAnnotations;
+            annotationSeparator = chart.options.exporting?.csv?.annotations?.itemDelimiter,
+            joinAnnotations = chart.options.exporting?.csv?.annotations?.join;
 
         annotations.forEach((annotation): void => {
 

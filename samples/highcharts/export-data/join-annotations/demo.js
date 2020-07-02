@@ -28,7 +28,10 @@ Highcharts.chart('container', {
 
     exporting: {
         csv: {
-            joinAnnotations: true
+            annotations: {
+                itemDelimiter: ' / ',
+                join: true
+            }
         },
         showTable: true
     }

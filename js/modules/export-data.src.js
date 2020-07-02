@@ -122,13 +122,36 @@ setOptions({
          */
         csv: {
             /**
-            * The way to mark the separator for annotations
-            * combined in one export-data table cell.
-            *
-            * @since   next
-            * @requires modules/annotations
-            */
-            annotationSeparator: '; ',
+             *
+             * Options for annotations in the export-data table.
+             *
+             * @since    next
+             * @requires modules/export-data
+             * @requires modules/annotations
+             *
+             *
+             */
+            annotations: {
+                /**
+                * The way to mark the separator for annotations
+                * combined in one export-data table cell.
+                *
+                * @since   next
+                * @requires modules/annotations
+                */
+                itemDelimiter: '; ',
+                /**
+                * When several labels are assigned to a specific point,
+                * they will be displayed in one field in the table.
+                *
+                * @sample highcharts/export-data/join-annotations/
+                *         Concatenate point annotations with itemDelimiter set.
+                *
+                * @since   next
+                * @requires modules/annotations
+                */
+                join: false,
+            },
             /**
              * Formatter callback for the column headers. Parameters are:
              * - `item` - The series or axis object)
@@ -158,17 +181,6 @@ setOptions({
              * @type {Function|null}
              */
             columnHeaderFormatter: null,
-            /**
-            * When several labels are assigned to a specific point,
-            * they will be displayed in one field in the table.
-            *
-            * @sample highcharts/export-data/join-annotations/
-            *         Concatenate point annotations.
-            *
-            * @since   next
-            * @requires modules/annotations
-            */
-            joinAnnotations: false,
             /**
              * Which date format to use for exported dates on a datetime X axis.
              * See `Highcharts.dateFormat`.

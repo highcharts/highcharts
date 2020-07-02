@@ -360,8 +360,10 @@ QUnit.test('Annotation labels in export-data table.', function (assert) {
 
         exporting: {
             csv: {
-                joinAnnotations: true,
-                annotationSeparator: ' / '
+                annotations: {
+                    join: true,
+                    itemDelimiter: ' / '
+                }
             }
         }
     });
@@ -376,6 +378,6 @@ QUnit.test('Annotation labels in export-data table.', function (assert) {
         '<tbody><tr><th scope="row" class="number">0</th><td class="number">29</td><td class="number">2</td><td class="empty"></td></tr><tr><th scope="row" class="number">1</th><td class="number">71</td><td class="number">11</td><td class="text">This is my annotation I for point I / This is my annotation II for point I</td></tr><tr>' +
         '<th scope="row" class="number">2</th><td class="number">106</td><td class="number">60</td><td class="empty"></td></tr><tr><th scope="row" class="number">3</th><td class="number">129</td><td class="number">44</td><td class="text">This is my annotation I for point II</td></tr><tr><th scope="row" class="number">4</th>' +
         '<td class="number">144</td><td class="number">44</td><td class="empty"></td></tr></tbody></table>',
-        'Table should look like this with set joinAnnotations and annotationSeparator (12789).'
+        'Table should look like this with set join and itemDelimiter (12789).'
     );
 });
