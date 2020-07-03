@@ -316,6 +316,7 @@ declare global {
 
 import '../parts/Series.js';
 import '../parts/ColumnSeries.js';
+import { cssNumber } from 'jquery';
 
 var noop = H.noop,
     seriesTypes = H.seriesTypes,
@@ -815,7 +816,6 @@ Chart.prototype.applyDrilldown = function (): void {
         this.resetZoomButton.hide();
         delete this.resetZoomButton;
     }
-
     this.pointer.reset();
     this.redraw();
     this.showDrillUpButton();
@@ -1109,7 +1109,13 @@ ColumnSeries.prototype.animateDrillupTo = function (init?: boolean): void {
         // Do dummy animation on first point to get to complete
         syncTimeout(function (): void {
             if (newSeries.points) { // May be destroyed in the meantime, #3389
-                newSeries.points.forEach(function (
+                // Unable to drillup with nodes, #13711
+                var seriesWithNodes: Array<any> = [];
+                newSeries.data.forEach(function (el): void {
+                    seriesWithNodes.push(el);
+                });
+                seriesWithNodes = seriesWithNodes.concat(newSeries.nodes);
+                seriesWithNodes.forEach(function (
                     point: Point,
                     i: number
                 ): void {
@@ -1117,10 +1123,9 @@ ColumnSeries.prototype.animateDrillupTo = function (init?: boolean): void {
                     var verb =
                         i === (level && level.pointIndex) ? 'show' : 'fadeIn',
                         inherit = verb === 'show' ? true : void 0,
-                        dataLabel = point.dataLabel;
+                        dataLabel = point?.dataLabel;
 
-
-                    if (point.graphic) { // #3407
+                    if (point?.graphic) { // #3407
                         point.graphic[verb](inherit);
                     }
 

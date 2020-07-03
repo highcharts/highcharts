@@ -770,10 +770,18 @@ ColumnSeries.prototype.animateDrillupTo = function (init) {
         // Do dummy animation on first point to get to complete
         syncTimeout(function () {
             if (newSeries.points) { // May be destroyed in the meantime, #3389
-                newSeries.points.forEach(function (point, i) {
+                var seriesWithNodes = [];
+                newSeries.data.forEach(function (el) {
+                    seriesWithNodes.push(el);
+                });
+                seriesWithNodes = seriesWithNodes.concat(newSeries.nodes);
+                seriesWithNodes.forEach(function (point, i) {
                     // Fade in other points
-                    var verb = i === (level && level.pointIndex) ? 'show' : 'fadeIn', inherit = verb === 'show' ? true : void 0, dataLabel = point.dataLabel;
-                    if (point.graphic) { // #3407
+                    var verb = i === (level && level.pointIndex) ? 'show' : 'fadeIn', inherit = verb === 'show' ? true : void 0, dataLabel = point === null || point === void 0 ? void 0 : point.dataLabel;
+                    // console.log(newSeries)
+                    // // console.log(point)
+                    // // console.log(dataLabel)
+                    if (point === null || point === void 0 ? void 0 : point.graphic) { // #3407
                         point.graphic[verb](inherit);
                     }
                     if (dataLabel && !dataLabel.hidden) { // #6127
