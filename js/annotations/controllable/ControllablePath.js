@@ -8,7 +8,7 @@ import ControllableMixin from './controllableMixin.js';
 import H from './../../parts/Globals.js';
 import MarkerMixin from './markerMixin.js';
 import U from './../../parts/Utilities.js';
-var extend = U.extend, merge = U.merge;
+var extend = U.extend;
 // See TRACKER_FILL in highcharts.src.js
 var TRACKER_FILL = 'rgba(192,192,192,' + (H.svg ? 0.0001 : 0.002) + ')';
 /* eslint-disable no-invalid-this, valid-jsdoc */
