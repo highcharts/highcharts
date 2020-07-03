@@ -14,8 +14,7 @@ import H from './../../parts/Globals.js';
 import MarkerMixin from './markerMixin.js';
 import U from './../../parts/Utilities.js';
 const {
-    extend,
-    merge
+    extend
 } = U;
 
 /**
@@ -24,44 +23,6 @@ const {
  */
 declare global {
     namespace Highcharts {
-        class AnnotationControllablePath implements AnnotationControllable {
-            public static attrsMap: Dictionary<string>;
-            public constructor(annotation: Annotation, options: AnnotationsShapeOptions, index: number);
-            public addControlPoints: AnnotationControllableMixin['addControlPoints'];
-            public anchor: AnnotationControllableMixin['anchor'];
-            public annotation: AnnotationControllable['annotation'];
-            public attr: AnnotationControllableMixin['attr'];
-            public attrsFromOptions: AnnotationControllableMixin['attrsFromOptions'];
-            public chart: AnnotationControllable['chart'];
-            public collection: 'shapes';
-            public controlPoints: AnnotationControllable['controlPoints'];
-            public destroy: AnnotationControllableMixin['destroy'];
-            public getPointsOptions: AnnotationControllableMixin['getPointsOptions'];
-            public graphic: SVGAnnotationElement;
-            public index: AnnotationControllable['index'];
-            public init: AnnotationControllableMixin['init'];
-            public linkPoints: AnnotationControllableMixin['linkPoints'];
-            public markerEnd?: SVGElement;
-            public markerStart?: SVGElement;
-            public options: AnnotationsShapeOptions;
-            public point: AnnotationControllableMixin['point'];
-            public points: AnnotationControllable['points'];
-            public rotate: AnnotationControllableMixin['rotate'];
-            public scale: AnnotationControllableMixin['scale'];
-            public setControlPointsVisibility: AnnotationControllableMixin['setControlPointsVisibility'];
-            public setMarkers: AnnotationMarkerMixin['setItemMarkers'];
-            public transform: AnnotationControllableMixin['transform'];
-            public transformPoint: AnnotationControllableMixin['transformPoint'];
-            public translate: AnnotationControllableMixin['translate'];
-            public translatePoint: AnnotationControllableMixin['translatePoint'];
-            public translateShape: AnnotationControllableMixin['translateShape'];
-            public type: 'path';
-            public update: AnnotationControllableMixin['update'];
-            public redraw(animation?: boolean): void;
-            public render(parent: SVGElement): void;
-            public shouldBeDrawn(): boolean;
-            public toD(): (SVGPath|null);
-        }
         interface SVGAnnotationElement extends SVGElement {
             markerEndSetter?: AnnotationMarkerMixin['markerEndSetter'];
             markerStartSetter?: AnnotationMarkerMixin['markerStartSetter'];

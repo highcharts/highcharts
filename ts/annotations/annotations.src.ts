@@ -79,8 +79,8 @@ declare global {
         type AnnotationDraggableValue = (''|'x'|'y'|'xy');
         type AnnotationLabelType = ControllableLabel;
         type AnnotationShapeType = (
-            ControllableCircle|ControllableImage|AnnotationControllablePath|
-            AnnotationControllableRect
+            ControllableCircle|ControllableImage|ControllablePath|
+            ControllableRect
         );
         interface AnnotationMockPointOptionsObject {
             x: number;
