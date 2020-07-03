@@ -62,9 +62,6 @@ declare global {
             defs: Dictionary<SVGDefinitionObject>;
             navigation: NavigationOptions;
         }
-        interface AnnotationControllableLabel {
-            itemType: 'label';
-        }
         interface AnnotationControlPointEventsOptionsObject {
             drag?: AnnotationControlPointDragEventFunction;
         }
@@ -80,9 +77,9 @@ declare global {
             width: number;
         }
         type AnnotationDraggableValue = (''|'x'|'y'|'xy');
-        type AnnotationLabelType = AnnotationControllableLabel;
+        type AnnotationLabelType = ControllableLabel;
         type AnnotationShapeType = (
-            AnnotationControllableCircle|AnnotationControllableImage|AnnotationControllablePath|
+            ControllableCircle|ControllableImage|AnnotationControllablePath|
             AnnotationControllableRect
         );
         interface AnnotationMockPointOptionsObject {

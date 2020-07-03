@@ -11,49 +11,6 @@ import type SVGElement from '../../parts/SVGElement';
 import ControllableLabel from './ControllableLabel.js';
 import ControllableMixin from './controllableMixin.js';
 
-/**
- * Internal types.
- * @private
- */
-declare global {
-    namespace Highcharts {
-        class AnnotationControllableImage implements AnnotationControllable {
-            public static attrsMap: Dictionary<string>;
-            public constructor(annotation: Annotation, options: AnnotationsShapeOptions, index: number);
-            public addControlPoints: AnnotationControllableMixin['addControlPoints'];
-            public anchor: AnnotationControllableMixin['anchor'];
-            public annotation: AnnotationControllable['annotation'];
-            public attr: AnnotationControllable['attr'];
-            public attrsFromOptions: AnnotationControllableMixin['attrsFromOptions'];
-            public chart: AnnotationControllable['chart'];
-            public collection: 'shapes';
-            public controlPoints: AnnotationControllable['controlPoints'];
-            public destroy: AnnotationControllableMixin['destroy'];
-            public getPointsOptions: AnnotationControllableMixin['getPointsOptions'];
-            public graphic: AnnotationControllable['graphic'];
-            public index: AnnotationControllable['index'];
-            public init: AnnotationControllableMixin['init'];
-            public linkPoints: AnnotationControllableMixin['linkPoints'];
-            public options: AnnotationsShapeOptions;
-            public point: AnnotationControllableMixin['point'];
-            public points: AnnotationControllable['points'];
-            public rotate: AnnotationControllableMixin['rotate'];
-            public scale: AnnotationControllableMixin['scale'];
-            public setControlPointsVisibility: AnnotationControllableMixin['setControlPointsVisibility'];
-            public shouldBeDrawn: AnnotationControllableMixin['shouldBeDrawn'];
-            public transform: AnnotationControllableMixin['transform'];
-            public transformPoint: AnnotationControllableMixin['transformPoint'];
-            public translate: AnnotationControllableMixin['translateShape'];
-            public translatePoint: AnnotationControllableMixin['translatePoint'];
-            public translateShape: AnnotationControllableMixin['translateShape'];
-            public type: 'image';
-            public update: AnnotationControllableMixin['update'];
-            public redraw(animation?: boolean): void;
-            public render(parent: SVGElement): void;
-        }
-    }
-}
-
 /* eslint-disable no-invalid-this, valid-jsdoc */
 
 /**

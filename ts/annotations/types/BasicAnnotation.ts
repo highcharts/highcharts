@@ -6,6 +6,7 @@
 
 'use strict';
 
+import type ControllableCircle from '../controllable/ControllableCircle';
 import Annotation from '../annotations.src.js';
 import MockPoint from '../MockPoint.js';
 import U from '../../parts/Utilities.js';
@@ -167,7 +168,7 @@ class BasicAnnotation extends Annotation {
                 drag: function (
                     this: Annotation,
                     e: Highcharts.AnnotationEventObject,
-                    target: Highcharts.AnnotationControllableCircle
+                    target: ControllableCircle
                 ): void {
                     var annotation = target.annotation,
                         position = this.mouseMoveToTranslation(e);
