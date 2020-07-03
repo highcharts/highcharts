@@ -361,7 +361,7 @@ Chart.prototype.getDataRows = function (multiLevelHeaders) {
     // or point.name is defined #13293
     getPointArray = function (series, xAxis) {
         var namedPoints = series.data.filter(function (d) {
-            return (d.y === 0 || d.y === null || d.y) && d.name;
+            return (typeof d.y !== 'undefined') && d.name;
         });
         if (namedPoints.length &&
             xAxis &&
