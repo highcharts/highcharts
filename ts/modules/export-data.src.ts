@@ -536,7 +536,9 @@ Chart.prototype.getDataRows = function (
             series: Highcharts.Series,
             xAxis: Highcharts.Axis
         ): string[] {
-            const namedPoints = series.data.filter((d): string | 0 | null | undefined => d.y && d.name);
+            const namedPoints = series.data.filter((d): string | 0 | null | undefined =>
+                (d.y === 0 || d.y === null || d.y) && d.name
+            );
 
             if (
                 namedPoints.length &&
