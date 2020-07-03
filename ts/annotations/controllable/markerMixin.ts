@@ -6,6 +6,7 @@
 
 'use strict';
 
+import type ControllablePath from './ControllablePath';
 import type SVGElement from '../../parts/SVGElement';
 import Chart from '../../parts/Chart.js';
 import SVGRenderer from '../../parts/SVGRenderer.js';
@@ -24,13 +25,13 @@ const {
  */
 declare global {
     namespace Highcharts {
+        interface AnnotationChart {
+            afterGetContainer(): void;
+        }
         interface AnnotationMarkerMixin {
             markerEndSetter(this: SVGElement, value: string): void;
             markerStartSetter(this: SVGElement, value: string): void;
-            setItemMarkers(this: AnnotationControllablePath, item: AnnotationControllablePath): void;
-        }
-        interface AnnotationChart {
-            afterGetContainer(): void;
+            setItemMarkers(this: ControllablePath, item: ControllablePath): void;
         }
         interface Options {
             defs?: Dictionary<SVGDefinitionObject>;
@@ -171,7 +172,7 @@ var markerMixin: Highcharts.AnnotationMarkerMixin = {
      * @private
      * @param {Highcharts.AnnotationControllablePath} item
      */
-    setItemMarkers: function (item: Highcharts.AnnotationControllablePath): void {
+    setItemMarkers: function (item: ControllablePath): void {
         var itemOptions = item.options,
             chart = item.chart,
             defs = chart.options.defs,

@@ -5,11 +5,11 @@
  * */
 'use strict';
 import ControllableMixin from './controllableMixin.js';
-import H from '../../parts/Globals.js';
 import MockPoint from '../MockPoint.js';
+import SVGRenderer from '../../parts/SVGRenderer.js';
 import Tooltip from '../../parts/Tooltip.js';
 import U from '../../parts/Utilities.js';
-var extend = U.extend, format = U.format, isNumber = U.isNumber, merge = U.merge, pick = U.pick;
+var extend = U.extend, format = U.format, isNumber = U.isNumber, pick = U.pick;
 import '../../parts/SVGRenderer.js';
 /* eslint-disable no-invalid-this, valid-jsdoc */
 /**
@@ -339,12 +339,13 @@ var ControllableLabel = /** @class */ (function () {
     ControllableLabel.shapesWithoutBackground = ['connector'];
     return ControllableLabel;
 }());
+export default ControllableLabel;
 /* ********************************************************************** */
 /**
  * General symbol definition for labels with connector
  * @private
  */
-H.SVGRenderer.prototype.symbols.connector = function (x, y, w, h, options) {
+SVGRenderer.prototype.symbols.connector = function (x, y, w, h, options) {
     var anchorX = options && options.anchorX, anchorY = options && options.anchorY, path, yOffset, lateral = w / 2;
     if (isNumber(anchorX) && isNumber(anchorY)) {
         path = [['M', anchorX, anchorY]];
@@ -375,4 +376,3 @@ H.SVGRenderer.prototype.symbols.connector = function (x, y, w, h, options) {
     }
     return path || [];
 };
-export default ControllableLabel;

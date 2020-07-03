@@ -10,15 +10,14 @@ import type Annotation from '../annotations.src';
 import type SVGElement from '../../parts/SVGElement';
 import type SVGPath from '../../parts/SVGPath';
 import ControllableMixin from './controllableMixin.js';
-import H from '../../parts/Globals.js';
 import MockPoint from '../MockPoint.js';
+import SVGRenderer from '../../parts/SVGRenderer.js';
 import Tooltip from '../../parts/Tooltip.js';
 import U from '../../parts/Utilities.js';
 const {
     extend,
     format,
     isNumber,
-    merge,
     pick
 } = U;
 
@@ -511,13 +510,15 @@ interface ControllableLabel extends ControllableMixin.Type {
     options: Highcharts.AnnotationsLabelOptions;
 }
 
+export default ControllableLabel;
+
 /* ********************************************************************** */
 
 /**
  * General symbol definition for labels with connector
  * @private
  */
-H.SVGRenderer.prototype.symbols.connector = function (
+SVGRenderer.prototype.symbols.connector = function (
     x: number,
     y: number,
     w: number,
@@ -563,5 +564,3 @@ H.SVGRenderer.prototype.symbols.connector = function (
 
     return path || [];
 };
-
-export default ControllableLabel;
