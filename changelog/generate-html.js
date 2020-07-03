@@ -163,7 +163,7 @@ function generateHTML() {
                     `<p class="release-header">
                         <a id="${id}"></a>
                         <a href="#${id}">${changelog.header.productName} v${version} ${changelog.header.date}</a>
-                        <span class="download-link" title="Download the zip archive for ${changelog.header.productName} v${version}"><a href="${downloadLink}"><i class="fas fa-download"></i></a></span>    
+                        <span class="download-link" ><a href="${downloadLink}" title="Download the zip archive for ${changelog.header.productName} v${version}"><i class="fas fa-download"></i></a></span>    
                     </p>
                     ${marked.parser(changelog.features)}`
                 );
@@ -175,10 +175,10 @@ function generateHTML() {
                 return (
                     `<div id="${changelog.header.offset}heading-${changelog.header.version}-upgrade-notes" class="card-header">
                     <h4 class="card-title">
-                    <a href="#${changelog.header.offset}${changelog.header.version}-upgrade-notes" data-toggle="collapse" data-parent="#accordion"> Upgrade notes</a>
+                    <button class="btn btn-link collapsed" type="button" data-toggle="collapse" data-target="#${changelog.header.offset}${changelog.header.version}-upgrade-notes"><div> Upgrade notes </div></a>
                     </h4>
                     </div>
-                    <div id="${changelog.header.offset}${changelog.header.version}-upgrade-notes" class="collapse">
+                    <div id="${changelog.header.offset}${changelog.header.version}-upgrade-notes" class="collapse" aria-labelledby="${changelog.header.offset}heading-${changelog.header.version}-bug-fixes" data-parent=".accordion">
                     <div class="card-body">
                     ${marked.parser(changelog.upgradeNotes)}
                     </div>
@@ -194,10 +194,10 @@ function generateHTML() {
                         id="${changelog.header.offset}heading-${changelog.header.version}-bug-fixes"
                         class="card-header">
                     <h4 class="card-title">
-                    <a href="#${changelog.header.offset}${changelog.header.version}-bug-fixes" data-toggle="collapse" data-parent="#accordion"> Bug fixes </a>
+                    <button class="btn btn-link collapsed" type="button" data-toggle="collapse" data-target="#${changelog.header.offset}${changelog.header.version}-bug-fixes"><div> Bug fixes </div></a>
                     </h4>
                     </div>
-                    <div id="${changelog.header.offset}${changelog.header.version}-bug-fixes" class="collapse">
+                    <div id="${changelog.header.offset}${changelog.header.version}-bug-fixes" class="collapse" aria-labelledby="${changelog.header.offset}heading-${changelog.header.version}-bug-fixes" data-parent=".accordion">
                     <div class="card-body">
                     ${marked.parser(changelog.bugFixes)}
                     </div>
@@ -210,7 +210,7 @@ function generateHTML() {
             if (changelog.upgradeNotes.length > 0 ||
                 changelog.bugFixes.length > 0) {
                 return (
-                    `<div id="accordion" class="card-group">
+                    `<div class="accordion card-group">
                     <div class="card">
                     ${upgradeNotesHTMLStructure()}
                     ${bugFixesHTMLStructure()}
