@@ -5093,17 +5093,21 @@ H.Series = seriesType<Highcharts.LineSeries>(
             const dataExtremes = this.getExtremes();
 
             /**
-             * Contains the minimum value of the series' data point.
+             * Contains the minimum value of the series' data point. Some series
+             * types like `networkgraph` do not support this property as they
+             * lack a `y`-value.
              * @name Highcharts.Series#dataMin
-             * @type {number}
+             * @type {number|undefined}
              * @readonly
              */
             this.dataMin = dataExtremes.dataMin;
 
-            /* *
-             * Contains the maximum value of the series' data point.
+            /**
+             * Contains the maximum value of the series' data point. Some series
+             * types like `networkgraph` do not support this property as they
+             * lack a `y`-value.
              * @name Highcharts.Series#dataMax
-             * @type {number}
+             * @type {number|undefined}
              * @readonly
              */
             this.dataMax = dataExtremes.dataMax;
