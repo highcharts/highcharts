@@ -1612,7 +1612,8 @@ seriesType<Highcharts.PieSeries>(
  * it is inherited from [chart.type](#chart.type).
  *
  * @extends   series,plotOptions.pie
- * @excluding dataParser, dataURL, stack, xAxis, yAxis, dataSorting, step
+ * @excluding cropThreshold, dataParser, dataURL, stack, xAxis, yAxis,
+ *            dataSorting, step
  * @product   highcharts
  * @apioption series.pie
  */
