@@ -1010,7 +1010,10 @@ var SVGRenderer = /** @class */ (function () {
      * The button element.
      */
     SVGRenderer.prototype.button = function (text, x, y, callback, normalState, hoverState, pressedState, disabledState, shape, useHTML) {
-        var label = this.label(text, x, y, shape, void 0, void 0, useHTML, void 0, 'button'), curState = 0, styledMode = this.styledMode, userNormalStyle = normalState && normalState.style || {};
+        var label = this.label(text, x, y, shape, void 0, void 0, useHTML, void 0, 'button'), curState = 0, styledMode = this.styledMode, 
+        // Make a copy of normalState (#13798)
+        // (reference to options.rangeSelector.buttonTheme)
+        normalState = normalState ? H.merge(normalState, {}) : normalState, userNormalStyle = normalState && normalState.style || {};
         // Remove stylable attributes
         if (normalState && normalState.style) {
             delete normalState.style;
