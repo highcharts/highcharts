@@ -13,13 +13,13 @@
 import type { AxisType } from './axis/types';
 import type Chart from './Chart';
 import type SVGPath from './SVGPath';
-import H from './Globals.js';
+import H from '../Core/Globals.js';
 import LegendSymbolMixin from '../mixins/legend-symbol.js';
 import O from './Options.js';
 const { defaultOptions } = O;
 import Point from './Point.js';
 import SVGElement from './SVGElement.js';
-import U from './Utilities.js';
+import U from '../Core/Utilities.js';
 const {
     addEvent,
     animObject,

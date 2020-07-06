@@ -11,7 +11,7 @@
 'use strict';
 
 import type Chart from './Chart';
-import H from './Globals.js';
+import H from '../Core/Globals.js';
 const {
     charts,
     doc,
@@ -19,7 +19,7 @@ const {
     win
 } = H;
 import Pointer from './Pointer.js';
-import U from './Utilities.js';
+import U from '../Core/Utilities.js';
 const {
     addEvent,
     css,

@@ -10,7 +10,7 @@ import type Annotation from '../annotations.src';
 import ControlPoint from './../ControlPoint.js';
 import MockPoint from './../MockPoint.js';
 import Tooltip from '../../parts/Tooltip.js';
-import U from './../../parts/Utilities.js';
+import U from './../../Core/Utilities.js';
 const {
     isObject,
     isString,

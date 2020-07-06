@@ -10,7 +10,7 @@
  *
  * */
 'use strict';
-import '../../parts/Globals.js';
+import '../../Core/Globals.js';
 /**
  * @requires  modules/boost
  * @apioption boost

@@ -9,10 +9,10 @@
 import type Annotation from '../annotations.src';
 import type SVGPath from '../../parts/SVGPath';
 import controllableMixin from './controllableMixin.js';
-import H from './../../parts/Globals.js';
+import H from './../../Core/Globals.js';
 import MockPoint from './../MockPoint.js';
 import Tooltip from '../../parts/Tooltip.js';
-import U from './../../parts/Utilities.js';
+import U from './../../Core/Utilities.js';
 const {
     extend,
     format,

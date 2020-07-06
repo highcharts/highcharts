@@ -10,10 +10,10 @@
 'use strict';
 import Axis from './Axis.js';
 import Chart from './Chart.js';
-import H from './Globals.js';
+import H from '../Core/Globals.js';
 import Point from './Point.js';
 import SVGRenderer from './SVGRenderer.js';
-import U from './Utilities.js';
+import U from '../Core/Utilities.js';
 var addEvent = U.addEvent, arrayMax = U.arrayMax, arrayMin = U.arrayMin, clamp = U.clamp, defined = U.defined, extend = U.extend, find = U.find, format = U.format, getOptions = U.getOptions, isNumber = U.isNumber, isString = U.isString, merge = U.merge, pick = U.pick, splat = U.splat;
 import './Pointer.js';
 import './Series.js';

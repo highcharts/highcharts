@@ -13,9 +13,9 @@
 import type Chart from '../parts/Chart';
 import type SVGPath from '../parts/SVGPath';
 import Axis from './Axis.js';
-import H from './Globals.js';
+import H from '../Core/Globals.js';
 import ScrollbarAxis from './ScrollbarAxis.js';
-import U from './Utilities.js';
+import U from '../Core/Utilities.js';
 const {
     addEvent,
     correctFloat,

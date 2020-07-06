@@ -16,7 +16,7 @@ import type SVGPath from '../parts/SVGPath';
 import Chart from '../parts/Chart.js';
 import Color from '../parts/Color.js';
 const color = Color.parse;
-import H from '../parts/Globals.js';
+import H from '../Core/Globals.js';
 const {
     deg2rad,
     doc,
@@ -27,7 +27,7 @@ const {
 import Pointer from '../parts/Pointer.js';
 import SVGElement from '../parts/SVGElement.js';
 import SVGRenderer from '../parts/SVGRenderer.js';
-import U from '../parts/Utilities.js';
+import U from '../Core/Utilities.js';
 const {
     addEvent,
     createElement,

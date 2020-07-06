@@ -10,7 +10,7 @@
  *
  * */
 'use strict';
-import H from '../parts/Globals.js';
+import H from '../Core/Globals.js';
 /**
  * A node in a sankey diagram.
  *
@@ -91,7 +91,7 @@ import H from '../parts/Globals.js';
 */
 import Color from '../parts/Color.js';
 import Point from '../parts/Point.js';
-import U from '../parts/Utilities.js';
+import U from '../Core/Utilities.js';
 var defined = U.defined, find = U.find, isObject = U.isObject, merge = U.merge, pick = U.pick, relativeLength = U.relativeLength, seriesType = U.seriesType, stableSort = U.stableSort;
 import '../parts/Options.js';
 import '../mixins/nodes.js';

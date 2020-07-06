@@ -8,7 +8,7 @@
  *
  * */
 'use strict';
-import U from './Utilities.js';
+import U from '../Core/Utilities.js';
 var seriesType = U.seriesType;
 import './ColumnSeries.js';
 /**

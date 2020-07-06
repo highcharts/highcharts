@@ -9,7 +9,7 @@
  * */
 'use strict';
 import Pointer from '../parts/Pointer.js';
-import U from '../parts/Utilities.js';
+import U from '../Core/Utilities.js';
 var extend = U.extend, pick = U.pick, wrap = U.wrap;
 /* eslint-disable no-invalid-this */
 // Extend the Pointer

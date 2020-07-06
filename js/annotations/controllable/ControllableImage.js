@@ -6,7 +6,7 @@
 'use strict';
 import ControllableLabel from './ControllableLabel.js';
 import controllableMixin from './controllableMixin.js';
-import U from './../../parts/Utilities.js';
+import U from './../../Core/Utilities.js';
 var merge = U.merge;
 /* eslint-disable no-invalid-this, valid-jsdoc */
 /**

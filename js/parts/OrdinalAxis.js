@@ -9,8 +9,8 @@
  * */
 'use strict';
 import Axis from './Axis.js';
-import H from './Globals.js';
-import U from './Utilities.js';
+import H from '../Core/Globals.js';
+import U from '../Core/Utilities.js';
 var addEvent = U.addEvent, css = U.css, defined = U.defined, pick = U.pick, timeUnits = U.timeUnits;
 import './Chart.js';
 // Has a dependency on Navigator due to the use of Axis.toFixedRange

@@ -12,10 +12,10 @@
  *
  * */
 'use strict';
-import H from '../parts/Globals.js';
+import H from '../Core/Globals.js';
 import Color from '../parts/Color.js';
 var color = Color.parse;
-import U from '../parts/Utilities.js';
+import U from '../Core/Utilities.js';
 var merge = U.merge, pick = U.pick, seriesType = U.seriesType;
 import '../parts/ColumnSeries.js';
 import '../parts/SVGRenderer.js';

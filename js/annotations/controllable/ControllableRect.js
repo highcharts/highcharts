@@ -5,7 +5,7 @@
  * */
 import controllableMixin from './controllableMixin.js';
 import ControllablePath from './ControllablePath.js';
-import U from '../../parts/Utilities.js';
+import U from '../../Core/Utilities.js';
 var merge = U.merge;
 /* eslint-disable no-invalid-this, valid-jsdoc */
 /**

@@ -12,7 +12,7 @@
 
 import type Point from '../../parts/Point';
 import Chart from '../../parts/Chart.js';
-import H from '../../parts/Globals.js';
+import H from '../../Core/Globals.js';
 
 /**
  * Internal types
@@ -68,7 +68,7 @@ declare global {
     }
 }
 
-import U from '../../parts/Utilities.js';
+import U from '../../Core/Utilities.js';
 const {
     addEvent
 } = U;

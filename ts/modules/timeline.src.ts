@@ -15,11 +15,11 @@
 'use strict';
 
 import type SVGPath from '../parts/SVGPath';
-import H from '../parts/Globals.js';
+import H from '../Core/Globals.js';
 import LegendSymbolMixin from '../mixins/legend-symbol.js';
 import Point from '../parts/Point.js';
 import SVGElement from '../parts/SVGElement.js';
-import U from '../parts/Utilities.js';
+import U from '../Core/Utilities.js';
 const {
     addEvent,
     arrayMax,

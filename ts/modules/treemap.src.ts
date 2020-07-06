@@ -13,7 +13,7 @@
 'use strict';
 
 import type Chart from '../parts/Chart';
-import H from '../parts/Globals.js';
+import H from '../Core/Globals.js';
 
 /**
  * Internal types
@@ -296,7 +296,7 @@ const {
 } = Color;
 import LegendSymbolMixin from '../mixins/legend-symbol.js';
 import Point from '../parts/Point.js';
-import U from '../parts/Utilities.js';
+import U from '../Core/Utilities.js';
 const {
     addEvent,
     correctFloat,

@@ -10,9 +10,9 @@
  *
  * */
 'use strict';
-import H from '../../../parts/Globals.js';
+import H from '../../../Core/Globals.js';
 import Legend from '../../../parts/Legend.js';
-import U from '../../../parts/Utilities.js';
+import U from '../../../Core/Utilities.js';
 var addEvent = U.addEvent, extend = U.extend, find = U.find, fireEvent = U.fireEvent;
 import AccessibilityComponent from '../AccessibilityComponent.js';
 import KeyboardNavigationHandler from '../KeyboardNavigationHandler.js';

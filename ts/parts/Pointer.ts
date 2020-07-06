@@ -16,13 +16,13 @@ import type Point from './Point';
 import type SVGElement from './SVGElement';
 import Color from './Color.js';
 const color = Color.parse;
-import H from './Globals.js';
+import H from '../Core/Globals.js';
 const {
     charts,
     noop
 } = H;
 import Tooltip from './Tooltip.js';
-import U from './Utilities.js';
+import U from '../Core/Utilities.js';
 const {
     addEvent,
     attr,

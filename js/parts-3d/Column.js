@@ -8,9 +8,9 @@
  *
  * */
 'use strict';
-import H from '../parts/Globals.js';
+import H from '../Core/Globals.js';
 import StackItem from '../parts/Stacking.js';
-import U from '../parts/Utilities.js';
+import U from '../Core/Utilities.js';
 var addEvent = U.addEvent, pick = U.pick, wrap = U.wrap;
 import '../parts/Series.js';
 var perspective = H.perspective, Series = H.Series, seriesTypes = H.seriesTypes, svg = H.svg;

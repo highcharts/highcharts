@@ -13,10 +13,10 @@
 import type SVGPath from '../parts/SVGPath';
 import Axis from './Axis.js';
 import Chart from './Chart.js';
-import H from './Globals.js';
+import H from '../Core/Globals.js';
 import Point from './Point.js';
 import SVGRenderer from './SVGRenderer.js';
-import U from './Utilities.js';
+import U from '../Core/Utilities.js';
 const {
     addEvent,
     arrayMax,

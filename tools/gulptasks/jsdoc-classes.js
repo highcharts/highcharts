@@ -13,7 +13,7 @@ const Path = require('path');
 
 const SOURCE_GLOBS = [
     'readme.md',
-    'js/parts/Utilities.js',
+    'js/Core/Utilities.js',
     'js/parts/Axis.js',
     'js/parts/Chart.js',
     'js/parts/Color.js',
@@ -21,7 +21,7 @@ const SOURCE_GLOBS = [
     'js/parts/DataGrouping.js',
     'js/parts/DataLabels.js',
     'js/parts/Dynamics.js',
-    'js/parts/Globals.js',
+    'js/Core/Globals.js',
     'js/parts/Interaction.js',
     'js/parts/Legend.js',
     'js/parts/Options.js',

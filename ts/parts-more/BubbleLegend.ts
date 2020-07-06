@@ -18,9 +18,9 @@ import Color from '../parts/Color.js';
 const {
     parse: color
 } = Color;
-import H from '../parts/Globals.js';
+import H from '../Core/Globals.js';
 import Legend from '../parts/Legend.js';
-import U from '../parts/Utilities.js';
+import U from '../Core/Utilities.js';
 const {
     addEvent,
     arrayMax,

@@ -58,7 +58,7 @@ declare global {
     }
 }
 
-import U from '../parts/Utilities.js';
+import U from '../Core/Utilities.js';
 const {
     error,
     isArray,

@@ -6,8 +6,8 @@
  *
  * */
 'use strict';
-import H from '../parts/Globals.js';
-import U from '../parts/Utilities.js';
+import H from '../Core/Globals.js';
+import U from '../Core/Utilities.js';
 var isArray = U.isArray, merge = U.merge, seriesType = U.seriesType;
 var SMA = H.seriesTypes.sma;
 /**

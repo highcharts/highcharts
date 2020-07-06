@@ -15,7 +15,7 @@
 import type SVGPath from '../parts/SVGPath';
 import Chart from '../parts/Chart.js';
 import chartNavigationMixin from '../mixins/navigation.js';
-import H from '../parts/Globals.js';
+import H from '../Core/Globals.js';
 const {
     doc,
     isTouchDevice,
@@ -26,7 +26,7 @@ const {
     defaultOptions
 } = O;
 import SVGRenderer from '../parts/SVGRenderer.js';
-import U from '../parts/Utilities.js';
+import U from '../Core/Utilities.js';
 const {
     addEvent,
     css,

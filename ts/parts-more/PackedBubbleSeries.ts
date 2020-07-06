@@ -13,9 +13,9 @@
 import Chart from '../parts/Chart.js';
 import Color from '../parts/Color.js';
 const color = Color.parse;
-import H from '../parts/Globals.js';
+import H from '../Core/Globals.js';
 import Point from '../parts/Point.js';
-import U from '../parts/Utilities.js';
+import U from '../Core/Utilities.js';
 const {
     addEvent,
     clamp,

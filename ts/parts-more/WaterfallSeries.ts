@@ -14,10 +14,10 @@ import type SVGElement from '../parts/SVGElement';
 import type SVGPath from '../parts/SVGPath';
 import Axis from '../parts/Axis.js';
 import Chart from '../parts/Chart.js';
-import H from '../parts/Globals.js';
+import H from '../Core/Globals.js';
 import Point from '../parts/Point.js';
 import StackItem from '../parts/Stacking.js';
-import U from '../parts/Utilities.js';
+import U from '../Core/Utilities.js';
 const {
     addEvent,
     arrayMax,

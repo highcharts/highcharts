@@ -12,10 +12,10 @@
 
 import type SVGPath from '../parts/SVGPath';
 import Color from './Color.js';
-import H from './Globals.js';
+import H from '../Core/Globals.js';
 import SVGElement from './SVGElement.js';
 import SVGLabel from './SVGLabel.js';
-import U from './Utilities.js';
+import U from '../Core/Utilities.js';
 const {
     addEvent,
     attr,

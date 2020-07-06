@@ -10,10 +10,10 @@
  *
  * */
 'use strict';
-import H from '../parts/Globals.js';
+import H from '../Core/Globals.js';
 import O from '../parts/Options.js';
 var defaultOptions = O.defaultOptions;
-import U from '../parts/Utilities.js';
+import U from '../Core/Utilities.js';
 var defined = U.defined, extend = U.extend, fireEvent = U.fireEvent, isNumber = U.isNumber, merge = U.merge, objectEach = U.objectEach, pick = U.pick, seriesType = U.seriesType;
 import '../parts/Series.js';
 var piePoint = H.seriesTypes.pie.prototype.pointClass.prototype;

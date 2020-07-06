@@ -9,10 +9,10 @@
  * */
 'use strict';
 import Chart from '../parts/Chart.js';
-import H from '../parts/Globals.js';
+import H from '../Core/Globals.js';
 var win = H.win;
 import '../parts/Options.js';
-import U from '../parts/Utilities.js';
+import U from '../Core/Utilities.js';
 var error = U.error, extend = U.extend, format = U.format, merge = U.merge, wrap = U.wrap;
 /**
  * Represents the loose structure of a geographic JSON file.

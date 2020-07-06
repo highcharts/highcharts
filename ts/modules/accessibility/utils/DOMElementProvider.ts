@@ -13,10 +13,10 @@
 
 'use strict';
 
-import H from '../../../parts/Globals.js';
+import H from '../../../Core/Globals.js';
 var doc = H.win.document;
 
-import U from '../../../parts/Utilities.js';
+import U from '../../../Core/Utilities.js';
 var extend = U.extend;
 
 import HTMLUtilities from './htmlUtilities.js';

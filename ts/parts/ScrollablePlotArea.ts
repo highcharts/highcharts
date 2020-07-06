@@ -22,8 +22,8 @@ WIP on vertical scrollable plot area (#9378). To do:
 
 import type SVGPath from '../parts/SVGPath';
 import Chart from './Chart.js';
-import H from './Globals.js';
-import U from './Utilities.js';
+import H from '../Core/Globals.js';
+import U from '../Core/Utilities.js';
 const {
     addEvent,
     createElement,

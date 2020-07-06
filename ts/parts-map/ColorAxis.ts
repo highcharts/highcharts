@@ -18,14 +18,14 @@ import Color from '../parts/Color.js';
 const {
     parse: color
 } = Color;
-import H from '../parts/Globals.js';
+import H from '../Core/Globals.js';
 const {
     noop
 } = H;
 import Legend from '../parts/Legend.js';
 import LegendSymbolMixin from '../mixins/legend-symbol.js';
 import Point from '../parts/Point.js';
-import U from '../parts/Utilities.js';
+import U from '../Core/Utilities.js';
 const {
     addEvent,
     erase,

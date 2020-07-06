@@ -21,7 +21,7 @@ var __extends = (this && this.__extends) || (function () {
     };
 })();
 import Axis from '../parts/Axis.js';
-import U from '../parts/Utilities.js';
+import U from '../Core/Utilities.js';
 var addEvent = U.addEvent, merge = U.merge, pick = U.pick, splat = U.splat;
 /* eslint-disable valid-jsdoc */
 /**

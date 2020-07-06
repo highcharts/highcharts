@@ -10,7 +10,7 @@
  *
  * */
 'use strict';
-import H from '../../parts/Globals.js';
+import H from '../../Core/Globals.js';
 var isMS = H.isMS, win = H.win, doc = win.document;
 var whcm = {
     /**

@@ -8,7 +8,7 @@
 
 import Annotation from '../annotations.src.js';
 import CrookedLine from './CrookedLine.js';
-import U from '../../parts/Utilities.js';
+import U from '../../Core/Utilities.js';
 const {
     merge
 } = U;

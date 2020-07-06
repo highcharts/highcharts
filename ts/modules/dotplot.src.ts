@@ -22,7 +22,7 @@
 
 import type SVGPath from '../parts/SVGPath';
 import SVGRenderer from '../parts/SVGRenderer.js';
-import U from '../parts/Utilities.js';
+import U from '../Core/Utilities.js';
 const {
     extend,
     objectEach,

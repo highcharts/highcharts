@@ -19,7 +19,7 @@ import HTMLUtilities from './htmlUtilities.js';
 const {
     stripHTMLTagsFromString: stripHTMLTags
 } = HTMLUtilities;
-import U from '../../../parts/Utilities.js';
+import U from '../../../Core/Utilities.js';
 const {
     defined,
     find,

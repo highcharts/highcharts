@@ -8,7 +8,7 @@
 
 import Annotation from '../annotations.src.js';
 import MockPoint from '../MockPoint.js';
-import U from '../../parts/Utilities.js';
+import U from '../../Core/Utilities.js';
 const {
     merge
 } = U;

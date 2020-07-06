@@ -10,7 +10,7 @@
 
 'use strict';
 
-import Highcharts from './Globals.js';
+import Highcharts from '../Core/Globals.js';
 
 /**
  * Internal types
@@ -158,7 +158,7 @@ declare global {
  * Timezone offset in minutes.
  */
 
-import U from './Utilities.js';
+import U from '../Core/Utilities.js';
 const {
     defined,
     error,

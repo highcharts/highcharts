@@ -10,12 +10,12 @@
  *
  * */
 'use strict';
-import H from '../../parts/Globals.js';
+import H from '../../Core/Globals.js';
 import GLShader from './wgl-shader.js';
 import GLVertexBuffer from './wgl-vbuffer.js';
 import Color from '../../parts/Color.js';
 var color = Color.parse;
-import U from '../../parts/Utilities.js';
+import U from '../../Core/Utilities.js';
 var isNumber = U.isNumber, isObject = U.isObject, merge = U.merge, objectEach = U.objectEach, pick = U.pick;
 var win = H.win, doc = win.document;
 /* eslint-disable valid-jsdoc */

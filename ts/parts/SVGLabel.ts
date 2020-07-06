@@ -12,7 +12,7 @@
 
 import type SVGRenderer from './SVGRenderer';
 import SVGElement from './SVGElement.js';
-import U from './Utilities.js';
+import U from '../Core/Utilities.js';
 const {
     defined,
     extend,

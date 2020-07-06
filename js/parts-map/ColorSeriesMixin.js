@@ -8,7 +8,7 @@
  *
  * */
 'use strict';
-import H from '../parts/Globals.js';
+import H from '../Core/Globals.js';
 /**
  * Mixin for maps and heatmaps
  *

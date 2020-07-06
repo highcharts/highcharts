@@ -12,7 +12,7 @@
 
 import type StackingAxis from './StackingAxis';
 import type SVGPath from '../parts/SVGPath';
-import H from './Globals.js';
+import H from '../Core/Globals.js';
 
 /**
  * Internal types
@@ -57,7 +57,7 @@ const {
     parse: color
 } = Color;
 import LegendSymbolMixin from '../mixins/legend-symbol.js';
-import U from './Utilities.js';
+import U from '../Core/Utilities.js';
 const {
     objectEach,
     pick,

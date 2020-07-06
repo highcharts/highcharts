@@ -9,7 +9,7 @@
 import type Annotation from '../annotations.src';
 import ControllableLabel from './ControllableLabel.js';
 import controllableMixin from './controllableMixin.js';
-import U from './../../parts/Utilities.js';
+import U from './../../Core/Utilities.js';
 const {
     merge
 } = U;

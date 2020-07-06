@@ -10,10 +10,10 @@
  *
  * */
 'use strict';
-import H from '../parts/Globals.js';
+import H from '../Core/Globals.js';
 import Tick from '../parts/Tick.js';
 import Tick3D from './Tick3D.js';
-import U from '../parts/Utilities.js';
+import U from '../Core/Utilities.js';
 var addEvent = U.addEvent, merge = U.merge, pick = U.pick, wrap = U.wrap;
 var deg2rad = H.deg2rad, perspective = H.perspective, perspective3D = H.perspective3D, shapeArea = H.shapeArea;
 /* eslint-disable valid-jsdoc */

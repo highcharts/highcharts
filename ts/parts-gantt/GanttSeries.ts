@@ -14,11 +14,11 @@
 
 import type Point from '../parts/Point';
 import type SVGPath from '../parts/SVGPath';
-import H from '../parts/Globals.js';
+import H from '../Core/Globals.js';
 import O from '../parts/Options.js';
 const { dateFormat } = O;
 import './TreeGridAxis.js';
-import U from '../parts/Utilities.js';
+import U from '../Core/Utilities.js';
 const {
     isNumber,
     merge,

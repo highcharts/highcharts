@@ -8,9 +8,9 @@
  *
  * */
 'use strict';
-import H from '../parts/Globals.js';
+import H from '../Core/Globals.js';
 import Point from '../parts/Point.js';
-import U from '../parts/Utilities.js';
+import U from '../Core/Utilities.js';
 var merge = U.merge, seriesType = U.seriesType;
 import '../parts/Options.js';
 import '../parts-more/BubbleSeries.js';

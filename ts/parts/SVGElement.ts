@@ -12,7 +12,7 @@
 
 import type SVGPath from '../parts/SVGPath';
 import Color from './Color.js';
-import H from './Globals.js';
+import H from '../Core/Globals.js';
 const {
     deg2rad,
     doc,
@@ -23,7 +23,7 @@ const {
     SVG_NS,
     win
 } = H;
-import U from './Utilities.js';
+import U from '../Core/Utilities.js';
 const {
     animate,
     animObject,

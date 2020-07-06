@@ -9,9 +9,9 @@
  * */
 'use strict';
 import Color from './Color.js';
-import H from './Globals.js';
+import H from '../Core/Globals.js';
 var deg2rad = H.deg2rad, doc = H.doc, hasTouch = H.hasTouch, isFirefox = H.isFirefox, noop = H.noop, svg = H.svg, SVG_NS = H.SVG_NS, win = H.win;
-import U from './Utilities.js';
+import U from '../Core/Utilities.js';
 var animate = U.animate, animObject = U.animObject, attr = U.attr, createElement = U.createElement, css = U.css, defined = U.defined, erase = U.erase, extend = U.extend, fireEvent = U.fireEvent, isArray = U.isArray, isFunction = U.isFunction, isNumber = U.isNumber, isString = U.isString, merge = U.merge, objectEach = U.objectEach, pick = U.pick, pInt = U.pInt, stop = U.stop, uniqueKey = U.uniqueKey;
 /**
  * The horizontal alignment of an element.

@@ -10,8 +10,8 @@
  *
  * */
 'use strict';
-import H from '../parts/Globals.js';
-import U from '../parts/Utilities.js';
+import H from '../Core/Globals.js';
+import U from '../Core/Utilities.js';
 var css = U.css, pick = U.pick, seriesType = U.seriesType, wrap = U.wrap;
 /**
  * Layout value for the child nodes in an organization chart. If `hanging`, this

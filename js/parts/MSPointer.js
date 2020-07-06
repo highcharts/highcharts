@@ -21,10 +21,10 @@ var __extends = (this && this.__extends) || (function () {
         d.prototype = b === null ? Object.create(b) : (__.prototype = b.prototype, new __());
     };
 })();
-import H from './Globals.js';
+import H from '../Core/Globals.js';
 var charts = H.charts, doc = H.doc, noop = H.noop, win = H.win;
 import Pointer from './Pointer.js';
-import U from './Utilities.js';
+import U from '../Core/Utilities.js';
 var addEvent = U.addEvent, css = U.css, objectEach = U.objectEach, removeEvent = U.removeEvent;
 /* globals MSPointerEvent, PointerEvent */
 // The touches object keeps track of the points being touched at all times

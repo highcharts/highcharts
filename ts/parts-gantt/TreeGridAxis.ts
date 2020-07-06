@@ -18,7 +18,7 @@ import Tick from '../parts/Tick.js';
 import Tree from './Tree.js';
 import TreeGridTick from './TreeGridTick.js';
 import TreeSeriesMixin from '../mixins/tree-series.js';
-import U from '../parts/Utilities.js';
+import U from '../Core/Utilities.js';
 const {
     addEvent,
     find,

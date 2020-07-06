@@ -13,9 +13,9 @@
 'use strict';
 
 import Axis from '../parts/Axis.js';
-import H from '../parts/Globals.js';
+import H from '../Core/Globals.js';
 import SVGRenderer from '../parts/SVGRenderer.js';
-import U from '../parts/Utilities.js';
+import U from '../Core/Utilities.js';
 const { setOptions } = U;
 import VMLAxis3D from './VMLAxis3D.js';
 

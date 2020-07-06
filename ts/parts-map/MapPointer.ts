@@ -11,7 +11,7 @@
 'use strict';
 
 import Pointer from '../parts/Pointer.js';
-import U from '../parts/Utilities.js';
+import U from '../Core/Utilities.js';
 const {
     extend,
     pick,

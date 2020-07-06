@@ -9,9 +9,9 @@
  * */
 'use strict';
 import Axis from './Axis.js';
-import H from './Globals.js';
+import H from '../Core/Globals.js';
 import ScrollbarAxis from './ScrollbarAxis.js';
-import U from './Utilities.js';
+import U from '../Core/Utilities.js';
 var addEvent = U.addEvent, correctFloat = U.correctFloat, defined = U.defined, destroyObjectProperties = U.destroyObjectProperties, fireEvent = U.fireEvent, merge = U.merge, pick = U.pick, removeEvent = U.removeEvent;
 import O from './Options.js';
 var defaultOptions = O.defaultOptions;

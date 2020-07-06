@@ -6,7 +6,7 @@
 
 import type Point from '../parts/Point';
 import Color from '../parts/Color.js';
-import U from '../parts/Utilities.js';
+import U from '../Core/Utilities.js';
 const {
     extend,
     isArray,

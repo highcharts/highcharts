@@ -10,10 +10,10 @@
  *
  * */
 'use strict';
-import H from '../parts/Globals.js';
+import H from '../Core/Globals.js';
 import O from '../parts/Options.js';
 var dateFormat = O.dateFormat;
-import U from '../parts/Utilities.js';
+import U from '../Core/Utilities.js';
 var addEvent = U.addEvent, merge = U.merge, wrap = U.wrap;
 import PlotLineOrBand from '../parts/PlotLineOrBand.js';
 var Axis = H.Axis;

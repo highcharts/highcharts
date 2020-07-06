@@ -8,7 +8,7 @@
  *
  * */
 'use strict';
-import H from './Globals.js';
+import H from '../Core/Globals.js';
 /**
  * A valid color to be parsed and handled by Highcharts. Highcharts internally
  * supports hex colors like `#ffffff`, rgb colors like `rgb(255,255,255)` and
@@ -112,7 +112,7 @@ import H from './Globals.js';
 * @name Highcharts.RadialGradientColorObject#r
 * @type {number}
 */
-import U from './Utilities.js';
+import U from '../Core/Utilities.js';
 var isNumber = U.isNumber, merge = U.merge, pInt = U.pInt;
 /* eslint-disable no-invalid-this, valid-jsdoc */
 /**

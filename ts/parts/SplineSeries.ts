@@ -47,7 +47,7 @@ declare global {
     }
 }
 
-import U from './Utilities.js';
+import U from '../Core/Utilities.js';
 const {
     pick,
     seriesType

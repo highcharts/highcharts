@@ -8,11 +8,11 @@
  *
  * */
 'use strict';
-import H from './Globals.js';
+import H from '../Core/Globals.js';
 import Color from './Color.js';
 var color = Color.parse;
 import LegendSymbolMixin from '../mixins/legend-symbol.js';
-import U from './Utilities.js';
+import U from '../Core/Utilities.js';
 var objectEach = U.objectEach, pick = U.pick, seriesType = U.seriesType;
 import './Series.js';
 import './Options.js';

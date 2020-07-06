@@ -13,10 +13,10 @@
 import Axis from '../parts/Axis.js';
 import Axis3D from './Axis3D.js';
 import Chart from '../parts/Chart.js';
-import H from '../parts/Globals.js';
+import H from '../Core/Globals.js';
 import O from '../parts/Options.js';
 var genericDefaultOptions = O.defaultOptions;
-import U from '../parts/Utilities.js';
+import U from '../Core/Utilities.js';
 var addEvent = U.addEvent, Fx = U.Fx, isArray = U.isArray, merge = U.merge, pick = U.pick, wrap = U.wrap;
 import ZAxis from './ZAxis.js';
 var perspective = H.perspective;

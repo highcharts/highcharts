@@ -23,10 +23,10 @@ import ControllableImage from './controllable/ControllableImage.js';
 import ControllableLabel from './controllable/ControllableLabel.js';
 import ControlPoint from './ControlPoint.js';
 import EventEmitterMixin from './eventEmitterMixin.js';
-import H from '../parts/Globals.js';
+import H from '../Core/Globals.js';
 import MockPoint from './MockPoint.js';
 import Pointer from '../parts/Pointer.js';
-import U from '../parts/Utilities.js';
+import U from '../Core/Utilities.js';
 const {
     addEvent,
     defined,
