@@ -73,7 +73,7 @@ seriesType('networkgraph', 'line',
  *               Networkgraph
  * @since        7.0.0
  * @excluding    boostThreshold, animation, animationLimit, connectEnds,
- *               colorAxis, colorKey, connectNulls, dragDrop,
+ *               colorAxis, colorKey, connectNulls, cropThreshold, dragDrop,
  *               getExtremesFromAll, label, linecap, negativeColor,
  *               pointInterval, pointIntervalUnit, pointPlacement,
  *               pointStart, softThreshold, stack, stacking, step,
@@ -950,8 +950,8 @@ seriesType('networkgraph', 'line',
  *
  * @extends   series,plotOptions.networkgraph
  * @excluding boostThreshold, animation, animationLimit, connectEnds,
- *            connectNulls, dragDrop, getExtremesFromAll, label, linecap,
- *            negativeColor, pointInterval, pointIntervalUnit,
+ *            connectNulls, cropThreshold, dragDrop, getExtremesFromAll, label,
+ *            linecap, negativeColor, pointInterval, pointIntervalUnit,
  *            pointPlacement, pointStart, softThreshold, stack, stacking,
  *            step, threshold, xAxis, yAxis, zoneAxis, dataSorting
  * @product   highcharts

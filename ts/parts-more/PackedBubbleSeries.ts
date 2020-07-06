@@ -538,9 +538,9 @@ seriesType<Highcharts.PackedBubbleSeries>(
      *         Split packed bubble chart
 
      * @extends      plotOptions.bubble
-     * @excluding    connectEnds, connectNulls, dragDrop, jitter, keys,
-     *               pointPlacement, sizeByAbsoluteValue, step, xAxis, yAxis,
-     *               zMax, zMin, dataSorting
+     * @excluding    connectEnds, connectNulls, cropThreshold, dragDrop, jitter,
+     *               keys, pointPlacement, sizeByAbsoluteValue, step, xAxis,
+     *               yAxis, zMax, zMin, dataSorting
      * @product      highcharts
      * @since        7.0.0
      * @requires     highcharts-more
@@ -1998,7 +1998,7 @@ addEvent(Chart as any, 'beforeRedraw', function (
  *
  * @type      {Object}
  * @extends   series,plotOptions.packedbubble
- * @excluding dataParser, dataSorting, dataURL, dragDrop, stack
+ * @excluding cropThreshold, dataParser, dataSorting, dataURL, dragDrop, stack
  * @product   highcharts
  * @requires  highcharts-more
  * @apioption series.packedbubble
