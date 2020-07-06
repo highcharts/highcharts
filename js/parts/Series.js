@@ -5257,7 +5257,9 @@ null,
             point.plotX >= 0 &&
             point.plotX <= this.xAxis.len;
         return isInside;
-    }
+    },
+    // Rendering of series' and point's as legend items is very similar.
+    renderAsLegendItem: H.Point.prototype.renderAsLegendItem
 }); // end Series prototype
 /**
  * A line series displays information as a series of data points connected by

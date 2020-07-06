@@ -561,7 +561,7 @@ extend(Chart.prototype, /** @lends Highcharts.Chart.prototype */ {
                     }
                 });
                 // Add items for removal
-                if (oneToOne) {
+                if (oneToOne && H.isArray(chart[coll])) {
                     chart[coll].forEach(function (item) {
                         if (!item.touched && !item.options.isInternal) {
                             itemsForRemoval.push(item);
