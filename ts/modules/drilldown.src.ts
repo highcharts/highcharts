@@ -316,7 +316,6 @@ declare global {
 
 import '../parts/Series.js';
 import '../parts/ColumnSeries.js';
-import { cssNumber } from 'jquery';
 
 var noop = H.noop,
     seriesTypes = H.seriesTypes,
@@ -612,6 +611,8 @@ defaultOptions.drilldown = {
  *
  * @sample {highcharts} highcharts/drilldown/basic/
  *         Basic drilldown
+ * @sample {highcharts} highcharts/demo/organization-drilldown
+ *         Organization chart drilldown
  *
  * @type      {string}
  * @since     3.0.8
@@ -1114,7 +1115,9 @@ ColumnSeries.prototype.animateDrillupTo = function (init?: boolean): void {
                 newSeries.data.forEach(function (el): void {
                     seriesWithNodes.push(el);
                 });
-                seriesWithNodes = seriesWithNodes.concat(newSeries.nodes);
+                if (newSeries.nodes) {
+                    seriesWithNodes = seriesWithNodes.concat(newSeries.nodes);
+                }
                 seriesWithNodes.forEach(function (
                     point: Point,
                     i: number
