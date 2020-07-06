@@ -130,6 +130,7 @@ var Pointer = /** @class */ (function () {
         this.hasDragged = false;
         this.options = options;
         this.unbindContainerMouseLeave = function () { };
+        this.unbindContainerMouseEnter = function () { };
         this.init(chart, options);
     }
     /* *
@@ -850,6 +851,19 @@ var Pointer = /** @class */ (function () {
         }
     };
     /**
+     * When mouse enters the container, delete pointer's chartPosition.
+     *
+     * @private
+     * @function Highcharts.Pointer#onContainerMouseEnter
+     *
+     * @param {global.MouseEvent} e
+     *
+     * @return {void}
+     */
+    Pointer.prototype.onContainerMouseEnter = function (e) {
+        delete this.chartPosition;
+    };
+    /**
      * The mousemove, touchmove and touchstart event handler
      *
      * @private
@@ -1396,6 +1410,7 @@ var Pointer = /** @class */ (function () {
         container.onmousedown = this.onContainerMouseDown.bind(this);
         container.onmousemove = this.onContainerMouseMove.bind(this);
         container.onclick = this.onContainerClick.bind(this);
+        this.unbindContainerMouseEnter = addEvent(container, 'mouseenter', this.onContainerMouseEnter.bind(this));
         this.unbindContainerMouseLeave = addEvent(container, 'mouseleave', this.onContainerMouseLeave.bind(this));
         if (!H.unbindDocumentMouseUp) {
             H.unbindDocumentMouseUp = addEvent(ownerDoc, 'mouseup', this.onDocumentMouseUp.bind(this));
