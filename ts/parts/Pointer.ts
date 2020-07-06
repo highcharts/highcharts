@@ -226,6 +226,7 @@ class Pointer {
         this.hasDragged = false;
         this.options = options;
         this.unbindContainerMouseLeave = function (): void {};
+        this.unbindContainerMouseEnter = function (): void {};
         this.init(chart, options);
     }
 
@@ -272,6 +273,8 @@ class Pointer {
     public tooltipTimeout?: number;
 
     public unbindContainerMouseLeave: Function;
+
+    public unbindContainerMouseEnter: Function;
 
     public unDocMouseMove?: Function;
 
@@ -1234,6 +1237,20 @@ class Pointer {
     }
 
     /**
+     * When mouse enters the container, delete pointer's chartPosition.
+     *
+     * @private
+     * @function Highcharts.Pointer#onContainerMouseEnter
+     *
+     * @param {global.MouseEvent} e
+     *
+     * @return {void}
+     */
+    public onContainerMouseEnter(e: MouseEvent): void {
+        delete this.chartPosition;
+    }
+
+    /**
      * The mousemove, touchmove and touchstart event handler
      *
      * @private
@@ -2012,6 +2029,11 @@ class Pointer {
         container.onmousedown = this.onContainerMouseDown.bind(this);
         container.onmousemove = this.onContainerMouseMove.bind(this);
         container.onclick = this.onContainerClick.bind(this);
+        this.unbindContainerMouseEnter = addEvent(
+            container,
+            'mouseenter',
+            this.onContainerMouseEnter.bind(this)
+        );
         this.unbindContainerMouseLeave = addEvent(
             container,
             'mouseleave',
