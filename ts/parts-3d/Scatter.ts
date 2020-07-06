@@ -41,6 +41,8 @@ declare global {
     }
 }
 
+import Math3D from '../parts-3d/Math.js';
+const { pointCameraDistance } = Math3D;
 import Point from '../parts/Point.js';
 import U from '../parts/Utilities.js';
 const {
@@ -90,7 +92,7 @@ seriesType(
 
             if (this.chart.is3d() && point) {
                 attribs.zIndex =
-                    H.pointCameraDistance(point as any, this.chart);
+                    pointCameraDistance(point as any, this.chart);
             }
 
             return attribs;

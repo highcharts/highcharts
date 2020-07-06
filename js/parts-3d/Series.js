@@ -11,9 +11,10 @@
  * */
 'use strict';
 import H from '../parts/Globals.js';
+import Math3D from '../parts-3d/Math.js';
+var perspective = Math3D.perspective;
 import U from '../parts/Utilities.js';
 var addEvent = U.addEvent, pick = U.pick;
-var perspective = H.perspective;
 /* eslint-disable no-invalid-this */
 // Wrap the translate method to post-translate points into 3D perspective
 addEvent(H.Series, 'afterTranslate', function () {

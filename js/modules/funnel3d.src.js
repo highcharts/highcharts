@@ -13,6 +13,8 @@
  * */
 'use strict';
 import H from '../parts/Globals.js';
+import Math3D from '../parts-3d/Math.js';
+var perspective = Math3D.perspective;
 import Color from '../parts/Color.js';
 var color = Color.parse;
 import U from '../parts/Utilities.js';
@@ -246,7 +248,7 @@ seriesType('funnel3d', 'column',
                 point.plotY = (y1 + (y5 || y3)) / 2;
             }
             // Placement of tooltips and data labels in 3D
-            tooltipPos = H.perspective([{
+            tooltipPos = perspective([{
                     x: centerX,
                     y: point.plotY,
                     z: reversed ?

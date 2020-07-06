@@ -84,7 +84,7 @@ function rotate3D(x, y, z, angles) {
  *
  * @requires highcharts-3d
  */
-H.perspective3D = function (coordinate, origin, distance) {
+var perspective3D = H.perspective3D = function (coordinate, origin, distance) {
     var projection = ((distance > 0) && (distance < Number.POSITIVE_INFINITY)) ?
         distance / (coordinate.z + origin.z + distance) :
         1;
@@ -116,7 +116,7 @@ H.perspective3D = function (coordinate, origin, distance) {
  *
  * @requires highcharts-3d
  */
-H.perspective = function (points, chart, insidePlotArea, useInvertedPersp) {
+var perspective = H.perspective = function (points, chart, insidePlotArea, useInvertedPersp) {
     var options3d = chart.options.chart.options3d, 
     /* The useInvertedPersp argument is used for
      * inverted charts with already inverted elements,
@@ -141,7 +141,7 @@ H.perspective = function (points, chart, insidePlotArea, useInvertedPersp) {
     return points.map(function (point) {
         var rotated = rotate3D((inverted ? point.y : point.x) - origin.x, (inverted ? point.x : point.y) - origin.y, (point.z || 0) - origin.z, angles), 
         // Apply perspective
-        coordinate = H.perspective3D(rotated, origin, origin.vd);
+        coordinate = perspective3D(rotated, origin, origin.vd);
         // Apply translation
         coordinate.x = coordinate.x * scale + origin.x;
         coordinate.y = coordinate.y * scale + origin.y;
@@ -171,7 +171,7 @@ H.perspective = function (points, chart, insidePlotArea, useInvertedPersp) {
  *
  * @requires highcharts-3d
  */
-H.pointCameraDistance = function (coordinates, chart) {
+var pointCameraDistance = H.pointCameraDistance = function (coordinates, chart) {
     var options3d = chart.options.chart.options3d, cameraPosition = {
         x: chart.plotWidth / 2,
         y: chart.plotHeight / 2,
@@ -199,7 +199,7 @@ H.pointCameraDistance = function (coordinates, chart) {
  *
  * @requires highcharts-3d
  */
-H.shapeArea = function (vertexes) {
+var shapeArea = H.shapeArea = function (vertexes) {
     var area = 0, i, j;
     for (i = 0; i < vertexes.length; i++) {
         j = (i + 1) % vertexes.length;
@@ -227,6 +227,14 @@ H.shapeArea = function (vertexes) {
  *
  * @requires highcharts-3d
  */
-H.shapeArea3d = function (vertexes, chart, insidePlotArea) {
-    return H.shapeArea(H.perspective(vertexes, chart, insidePlotArea));
+var shapeArea3D = H.shapeArea3d = function (vertexes, chart, insidePlotArea) {
+    return shapeArea(perspective(vertexes, chart, insidePlotArea));
 };
+var mathModule = {
+    perspective: perspective,
+    perspective3D: perspective3D,
+    pointCameraDistance: pointCameraDistance,
+    shapeArea: shapeArea,
+    shapeArea3D: shapeArea3D
+};
+export default mathModule;
