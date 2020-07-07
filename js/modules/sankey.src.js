@@ -93,7 +93,7 @@ import Color from '../Core/Color.js';
 import Point from '../parts/Point.js';
 import U from '../Core/Utilities.js';
 var defined = U.defined, find = U.find, isObject = U.isObject, merge = U.merge, pick = U.pick, relativeLength = U.relativeLength, seriesType = U.seriesType, stableSort = U.stableSort;
-import '../parts/Options.js';
+import '../Core/Options.js';
 import '../mixins/nodes.js';
 import mixinTreeSeries from '../mixins/tree-series.js';
 var getLevelOptions = mixinTreeSeries.getLevelOptions;

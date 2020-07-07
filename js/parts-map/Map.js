@@ -10,12 +10,12 @@
 'use strict';
 import Chart from '../parts/Chart.js';
 import H from '../Core/Globals.js';
-import O from '../parts/Options.js';
+import O from '../Core/Options.js';
 var defaultOptions = O.defaultOptions;
 import SVGRenderer from '../parts/SVGRenderer.js';
 import U from '../Core/Utilities.js';
 var extend = U.extend, getOptions = U.getOptions, merge = U.merge, pick = U.pick;
-import '../parts/Options.js';
+import '../Core/Options.js';
 import '../parts/Chart.js';
 var Renderer = H.Renderer, VMLRenderer = H.VMLRenderer;
 // Add language

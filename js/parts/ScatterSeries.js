@@ -11,7 +11,7 @@
 import H from '../Core/Globals.js';
 import U from '../Core/Utilities.js';
 var addEvent = U.addEvent, seriesType = U.seriesType;
-import './Options.js';
+import '../Core/Options.js';
 import './Series.js';
 var Series = H.Series;
 /**

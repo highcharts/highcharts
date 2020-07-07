@@ -12,7 +12,7 @@ import H from '../Core/Globals.js';
 import Point from '../parts/Point.js';
 import U from '../Core/Utilities.js';
 var merge = U.merge, seriesType = U.seriesType;
-import '../parts/Options.js';
+import '../Core/Options.js';
 import '../parts-more/BubbleSeries.js';
 var seriesTypes = H.seriesTypes;
 // The mapbubble series type

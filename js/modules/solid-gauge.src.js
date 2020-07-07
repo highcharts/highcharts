@@ -25,7 +25,7 @@ var clamp = U.clamp, extend = U.extend, isNumber = U.isNumber, merge = U.merge, 
 * @name Highcharts.SymbolOptionsObject#rounded
 * @type {boolean|undefined}
 */
-import '../parts/Options.js';
+import '../Core/Options.js';
 import '../parts-more/GaugeSeries.js';
 var Renderer = H.Renderer;
 /**

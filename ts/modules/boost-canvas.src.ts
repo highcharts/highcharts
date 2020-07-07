@@ -89,7 +89,7 @@ const {
 } = U;
 
 import '../parts/Series.js';
-import '../parts/Options.js';
+import '../Core/Options.js';
 
 var win = H.win,
     doc = win.document,

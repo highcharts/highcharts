@@ -14,7 +14,7 @@ import type ColorAxis from '../parts-map/ColorAxis';
 import Axis from '../parts/Axis.js';
 import Chart from '../parts/Chart.js';
 import H from './Globals.js';
-import O from '../parts/Options.js';
+import O from './Options.js';
 const { time } = O;
 import Point from '../parts/Point.js';
 import Time from './Time.js';

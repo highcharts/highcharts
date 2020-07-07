@@ -16,7 +16,7 @@ import Chart from '../parts/Chart.js';
 import H from '../Core/Globals.js';
 import Math3D from '../parts-3d/Math.js';
 var perspective = Math3D.perspective, shapeArea3D = Math3D.shapeArea3D;
-import O from '../parts/Options.js';
+import O from '../Core/Options.js';
 var genericDefaultOptions = O.defaultOptions;
 import U from '../Core/Utilities.js';
 var addEvent = U.addEvent, Fx = U.Fx, isArray = U.isArray, merge = U.merge, pick = U.pick, wrap = U.wrap;

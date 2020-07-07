@@ -14,7 +14,7 @@
 import Chart from '../parts/Chart.js';
 import H from '../Core/Globals.js';
 var win = H.win, doc = H.doc;
-import '../parts/Options.js';
+import '../Core/Options.js';
 import SVGRenderer from '../parts/SVGRenderer.js';
 import U from '../Core/Utilities.js';
 var addEvent = U.addEvent, error = U.error, extend = U.extend, getOptions = U.getOptions, merge = U.merge;

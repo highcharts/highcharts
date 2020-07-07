@@ -21,7 +21,7 @@ const {
     isTouchDevice,
     win
 } = H;
-import O from '../parts/Options.js';
+import O from '../Core/Options.js';
 const {
     defaultOptions
 } = O;

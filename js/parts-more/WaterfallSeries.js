@@ -15,7 +15,7 @@ import Point from '../parts/Point.js';
 import StackItem from '../parts/Stacking.js';
 import U from '../Core/Utilities.js';
 var addEvent = U.addEvent, arrayMax = U.arrayMax, arrayMin = U.arrayMin, correctFloat = U.correctFloat, isNumber = U.isNumber, objectEach = U.objectEach, pick = U.pick, seriesType = U.seriesType;
-import '../parts/Options.js';
+import '../Core/Options.js';
 import '../parts/Series.js';
 var Series = H.Series, seriesTypes = H.seriesTypes;
 /**

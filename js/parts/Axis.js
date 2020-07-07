@@ -218,7 +218,7 @@ var addEvent = U.addEvent, animObject = U.animObject, arrayMax = U.arrayMax, arr
  *
  * @return {string}
  */
-import O from '../parts/Options.js';
+import O from '../Core/Options.js';
 var defaultOptions = O.defaultOptions;
 var deg2rad = H.deg2rad;
 /**

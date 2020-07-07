@@ -140,7 +140,7 @@ const {
 
 import './ColumnSeries.js';
 import '../mixins/centered-series.js';
-import './Options.js';
+import '../Core/Options.js';
 import './Series.js';
 
 var CenteredSeriesMixin = H.CenteredSeriesMixin,

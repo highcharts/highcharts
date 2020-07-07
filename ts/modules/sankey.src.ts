@@ -267,7 +267,7 @@ const {
     stableSort
 } = U;
 
-import '../parts/Options.js';
+import '../Core/Options.js';
 import '../mixins/nodes.js';
 import mixinTreeSeries from '../mixins/tree-series.js';
 const {

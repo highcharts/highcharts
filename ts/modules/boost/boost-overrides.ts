@@ -63,7 +63,7 @@ declare global {
 }
 
 import '../../parts/Series.js';
-import '../../parts/Options.js';
+import '../../Core/Options.js';
 
 import '../../Core/Interaction.js';
 

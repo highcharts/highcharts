@@ -14,7 +14,7 @@ import Chart from '../parts/Chart.js';
 import chartNavigationMixin from '../mixins/navigation.js';
 import H from '../Core/Globals.js';
 var doc = H.doc, isTouchDevice = H.isTouchDevice, win = H.win;
-import O from '../parts/Options.js';
+import O from '../Core/Options.js';
 var defaultOptions = O.defaultOptions;
 import SVGRenderer from '../parts/SVGRenderer.js';
 import U from '../Core/Utilities.js';

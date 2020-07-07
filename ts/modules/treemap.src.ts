@@ -315,7 +315,7 @@ const {
     stableSort
 } = U;
 
-import '../parts/Options.js';
+import '../Core/Options.js';
 import '../parts/Series.js';
 
 /* eslint-disable no-invalid-this */

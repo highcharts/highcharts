@@ -10,7 +10,7 @@
 'use strict';
 import H from '../Core/Globals.js';
 import LegendSymbolMixin from '../mixins/legend-symbol.js';
-import O from '../parts/Options.js';
+import O from '../Core/Options.js';
 var defaultOptions = O.defaultOptions;
 import Point from './Point.js';
 import SVGElement from './SVGElement.js';

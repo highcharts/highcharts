@@ -50,7 +50,7 @@ var addEvent = U.addEvent, css = U.css, defined = U.defined, pick = U.pick, seri
 * @since 7.0.0
 */
 ''; // detach doclets above
-import '../../parts/Options.js';
+import '../../Core/Options.js';
 import '../../mixins/nodes.js';
 import './layouts.js';
 import './draggable-nodes.js';

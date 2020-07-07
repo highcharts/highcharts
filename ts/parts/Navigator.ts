@@ -19,7 +19,7 @@ const {
 } = Color;
 import H from '../Core/Globals.js';
 import NavigatorAxis from './NavigatorAxis.js';
-import O from './Options.js';
+import O from '../Core/Options.js';
 const { defaultOptions } = O;
 import Scrollbar from './Scrollbar.js';
 import U from '../Core/Utilities.js';

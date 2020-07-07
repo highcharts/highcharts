@@ -68,7 +68,7 @@ declare global {
     }
 }
 
-import O from '../../parts/Options.js';
+import O from '../../Core/Options.js';
 const { defaultOptions } = O;
 import Point from '../../parts/Point.js';
 import U from '../../Core/Utilities.js';

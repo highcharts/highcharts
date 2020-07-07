@@ -97,7 +97,7 @@ const {
     seriesType
 } = U;
 
-import '../parts/Options.js';
+import '../Core/Options.js';
 import '../parts/Point.js';
 import '../parts/Series.js';
 import '../Core/Interaction.js';

@@ -74,7 +74,7 @@ const {
     seriesType
 } = U;
 
-import '../parts/Options.js';
+import '../Core/Options.js';
 import '../mixins/nodes.js';
 
 var base = H.seriesTypes.sankey.prototype;

@@ -14,7 +14,7 @@
 import type Point from '../parts/Point';
 import Axis from '../parts/Axis.js';
 import H from '../Core/Globals.js';
-import O from '../parts/Options.js';
+import O from '../Core/Options.js';
 const {
     dateFormat
 } = O;

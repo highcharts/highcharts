@@ -14,7 +14,7 @@ import type SVGPath from '../parts/SVGPath';
 import Chart from '../parts/Chart.js';
 import H from './Globals.js';
 import Legend from './Legend.js';
-import O from '../parts/Options.js';
+import O from './Options.js';
 const {
     defaultOptions
 } = O;

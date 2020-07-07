@@ -11,7 +11,7 @@
 'use strict';
 import Axis from '../parts/Axis.js';
 import H from '../Core/Globals.js';
-import O from '../parts/Options.js';
+import O from '../Core/Options.js';
 var dateFormat = O.dateFormat;
 import Tick from '../parts/Tick.js';
 import U from '../Core/Utilities.js';

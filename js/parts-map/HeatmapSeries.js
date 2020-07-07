@@ -26,7 +26,7 @@ var clamp = U.clamp, extend = U.extend, fireEvent = U.fireEvent, isNumber = U.is
 * @type {number|null|undefined}
 */
 ''; // detach doclets above
-import '../parts/Options.js';
+import '../Core/Options.js';
 import '../parts/Series.js';
 import './ColorMapSeriesMixin.js';
 var colorMapPointMixin = H.colorMapPointMixin, colorMapSeriesMixin = H.colorMapSeriesMixin, noop = H.noop, Series = H.Series, seriesTypes = H.seriesTypes, symbols = SVGRenderer.prototype.symbols;

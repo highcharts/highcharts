@@ -86,7 +86,7 @@ declare global {
  * @type {boolean|undefined}
  */
 
-import '../parts/Options.js';
+import '../Core/Options.js';
 import '../parts-more/GaugeSeries.js';
 
 const Renderer = H.Renderer;

@@ -53,7 +53,7 @@ const {
     seriesType
 } = U;
 
-import './Options.js';
+import '../Core/Options.js';
 import './Series.js';
 
 /**

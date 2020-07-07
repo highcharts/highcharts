@@ -52,7 +52,7 @@ import U from '../Core/Utilities.js';
 const {
     seriesType
 } = U;
-import '../parts/Options.js';
+import '../Core/Options.js';
 import './BoxPlotSeries.js';
 
 var noop = H.noop,

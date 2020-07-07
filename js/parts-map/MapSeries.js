@@ -14,7 +14,7 @@ import Point from '../parts/Point.js';
 import SVGRenderer from '../parts/SVGRenderer.js';
 import U from '../Core/Utilities.js';
 var extend = U.extend, fireEvent = U.fireEvent, getNestedProperty = U.getNestedProperty, isArray = U.isArray, isNumber = U.isNumber, merge = U.merge, objectEach = U.objectEach, pick = U.pick, seriesType = U.seriesType, splat = U.splat;
-import '../parts/Options.js';
+import '../Core/Options.js';
 import '../parts/ScatterSeries.js';
 import '../parts/Series.js';
 import './ColorMapSeriesMixin.js';

@@ -13,7 +13,7 @@ import H from '../Core/Globals.js';
 var charts = H.charts, doc = H.doc, seriesTypes = H.seriesTypes, win = H.win;
 import Legend from '../Core/Legend.js';
 import MSPointer from './MSPointer.js';
-import O from './Options.js';
+import O from '../Core/Options.js';
 var defaultOptions = O.defaultOptions;
 import Pointer from './Pointer.js';
 import Time from '../Core/Time.js';

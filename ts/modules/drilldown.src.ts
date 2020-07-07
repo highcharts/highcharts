@@ -15,7 +15,7 @@
 import Chart from '../parts/Chart.js';
 import Color from '../Core/Color.js';
 import H from '../Core/Globals.js';
-import O from '../parts/Options.js';
+import O from '../Core/Options.js';
 const {
     defaultOptions
 } = O;

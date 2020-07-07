@@ -16,7 +16,7 @@ import H from '../Core/Globals.js';
  */
 import U from '../Core/Utilities.js';
 var arrayMax = U.arrayMax, arrayMin = U.arrayMin, clamp = U.clamp, fireEvent = U.fireEvent, pick = U.pick, seriesType = U.seriesType;
-import '../parts/Options.js';
+import '../Core/Options.js';
 var pieProto = H.seriesTypes.pie.prototype;
 /**
  * The variablepie series type.
