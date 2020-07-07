@@ -260,8 +260,8 @@ declare global {
  *         continue async.
  */
 
-import '../mixins/ajax.js';
-const ajax = H.ajax;
+import ajaxModule from '../mixins/ajax.js';
+const { ajax } = ajaxModule;
 
 // Utilities
 var win = H.win,

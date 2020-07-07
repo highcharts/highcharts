@@ -54,7 +54,7 @@ var merge = U.merge, objectEach = U.objectEach;
  * @return {false|undefined}
  *         Returns false, if error occured.
  */
-H.ajax = function (attr) {
+var ajax = H.ajax = function (attr) {
     var options = merge(true, {
         url: false,
         type: 'get',
@@ -131,8 +131,8 @@ H.ajax = function (attr) {
  *        function instead.
  * @return {void}
  */
-H.getJSON = function (url, success) {
-    H.ajax({
+var getJSON = H.getJSON = function (url, success) {
+    ajax({
         url: url,
         success: success,
         dataType: 'json',
@@ -143,3 +143,8 @@ H.getJSON = function (url, success) {
         }
     });
 };
+var ajaxModule = {
+    ajax: ajax,
+    getJSON: getJSON
+};
+export default ajaxModule;

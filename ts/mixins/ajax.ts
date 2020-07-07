@@ -92,7 +92,7 @@ declare global {
  * @return {false|undefined}
  *         Returns false, if error occured.
  */
-H.ajax = function (
+const ajax = H.ajax = function (
     attr: Partial<Highcharts.AjaxSettingsObject>
 ): (false|undefined) {
     var options = merge(true, {
@@ -183,11 +183,11 @@ H.ajax = function (
  *        function instead.
  * @return {void}
  */
-H.getJSON = function (
+const getJSON = H.getJSON = function (
     url: string,
     success: Highcharts.AjaxSuccessCallbackFunction
 ): void {
-    H.ajax({
+    ajax({
         url: url,
         success: success,
         dataType: 'json',
@@ -198,3 +198,10 @@ H.getJSON = function (
         }
     });
 };
+
+const ajaxModule = {
+    ajax,
+    getJSON
+};
+
+export default ajaxModule;
