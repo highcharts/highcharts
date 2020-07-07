@@ -290,7 +290,7 @@ declare global {
 
 import mixinTreeSeries from '../mixins/tree-series.js';
 import drawPoint from '../mixins/draw-point.js';
-import Color from '../parts/Color.js';
+import Color from '../Core/Color.js';
 const {
     parse: color
 } = Color;

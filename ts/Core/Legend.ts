@@ -10,10 +10,10 @@
 
 'use strict';
 
-import type Chart from './Chart';
+import type Chart from '../parts/Chart';
 import type ColorAxisGlobal from '../parts-map/ColorAxis';
-import type Point from './Point';
-import H from '../Core/Globals.js';
+import type Point from '../parts/Point';
+import H from './Globals.js';
 
 /**
  * Internal types

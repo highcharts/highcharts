@@ -13,7 +13,7 @@
 import type SVGPath from '../parts/SVGPath';
 import Axis from './Axis.js';
 import Chart from '../parts/Chart.js';
-import Color from './Color.js';
+import Color from '../Core/Color.js';
 const {
     parse: color
 } = Color;

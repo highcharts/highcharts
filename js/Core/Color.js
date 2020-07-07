@@ -8,7 +8,7 @@
  *
  * */
 'use strict';
-import H from '../Core/Globals.js';
+import H from './Globals.js';
 /**
  * A valid color to be parsed and handled by Highcharts. Highcharts internally
  * supports hex colors like `#ffffff`, rgb colors like `rgb(255,255,255)` and

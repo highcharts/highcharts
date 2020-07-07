@@ -9,7 +9,7 @@
  * */
 'use strict';
 import H from '../Core/Globals.js';
-import Color from './Color.js';
+import Color from '../Core/Color.js';
 var color = Color.parse;
 import LegendSymbolMixin from '../mixins/legend-symbol.js';
 import U from '../Core/Utilities.js';

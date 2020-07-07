@@ -8,7 +8,7 @@
  *
  * */
 'use strict';
-import Color from './Color.js';
+import Color from '../Core/Color.js';
 import H from '../Core/Globals.js';
 import Tick from './Tick.js';
 import U from '../Core/Utilities.js';
@@ -218,7 +218,7 @@ var addEvent = U.addEvent, animObject = U.animObject, arrayMax = U.arrayMax, arr
  *
  * @return {string}
  */
-import O from './Options.js';
+import O from '../parts/Options.js';
 var defaultOptions = O.defaultOptions;
 var deg2rad = H.deg2rad;
 /**

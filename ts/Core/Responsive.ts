@@ -10,7 +10,7 @@
 
 'use strict';
 
-import Chart from './Chart.js';
+import Chart from '../parts/Chart.js';
 import U from '../Core/Utilities.js';
 const {
     find,

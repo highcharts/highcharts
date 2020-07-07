@@ -21,13 +21,13 @@ const {
     seriesTypes,
     win
 } = H;
-import Legend from './Legend.js';
+import Legend from '../Core/Legend.js';
 import MSPointer from './MSPointer.js';
 import O from './Options.js';
 const { defaultOptions } = O;
 import Pointer from './Pointer.js';
 import SVGRenderer from './SVGRenderer.js';
-import Time from './Time.js';
+import Time from '../Core/Time.js';
 import U from '../Core/Utilities.js';
 const {
     addEvent,

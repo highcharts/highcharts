@@ -110,7 +110,7 @@ declare global {
 
 import GLShader from './wgl-shader.js';
 import GLVertexBuffer from './wgl-vbuffer.js';
-import Color from '../../parts/Color.js';
+import Color from '../../Core/Color.js';
 const color = Color.parse;
 import U from '../../Core/Utilities.js';
 const {

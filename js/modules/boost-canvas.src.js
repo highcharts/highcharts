@@ -15,7 +15,7 @@
 'use strict';
 import Chart from '../parts/Chart.js';
 import H from '../Core/Globals.js';
-import Color from '../parts/Color.js';
+import Color from '../Core/Color.js';
 var color = Color.parse;
 import U from '../Core/Utilities.js';
 var addEvent = U.addEvent, extend = U.extend, fireEvent = U.fireEvent, isNumber = U.isNumber, merge = U.merge, pick = U.pick, wrap = U.wrap;

@@ -100,7 +100,7 @@ declare global {
  * @typedef {"area"|"width"} Highcharts.BubbleSizeByValue
  */
 
-import Color from '../parts/Color.js';
+import Color from '../Core/Color.js';
 const {
     parse: color
 } = Color;

@@ -19,7 +19,7 @@
 
 import type Chart from '../parts/Chart';
 import type SVGPath from '../parts/SVGPath';
-import Color from '../parts/Color.js';
+import Color from '../Core/Color.js';
 const color = Color.parse;
 import H from '../Core/Globals.js';
 import U from '../Core/Utilities.js';

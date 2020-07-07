@@ -546,8 +546,8 @@ declare global {
  * @type {number}
  */
 
-import Time from './Time.js';
-import Color from './Color.js';
+import Time from '../Core/Time.js';
+import Color from '../Core/Color.js';
 const color = Color.parse;
 import U from '../Core/Utilities.js';
 const {

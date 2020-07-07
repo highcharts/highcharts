@@ -11,7 +11,7 @@
 'use strict';
 
 import type SVGPath from '../parts/SVGPath';
-import Color from './Color.js';
+import Color from '../Core/Color.js';
 import H from '../Core/Globals.js';
 import SVGElement from './SVGElement.js';
 import SVGLabel from './SVGLabel.js';

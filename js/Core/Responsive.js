@@ -8,7 +8,7 @@
  *
  * */
 'use strict';
-import Chart from './Chart.js';
+import Chart from '../parts/Chart.js';
 import U from '../Core/Utilities.js';
 var find = U.find, isArray = U.isArray, isObject = U.isObject, merge = U.merge, objectEach = U.objectEach, pick = U.pick, splat = U.splat, uniqueKey = U.uniqueKey;
 /**

@@ -8,7 +8,7 @@
  *
  * */
 'use strict';
-import Highcharts from '../Core/Globals.js';
+import Highcharts from './Globals.js';
 /**
  * Normalized interval.
  *
