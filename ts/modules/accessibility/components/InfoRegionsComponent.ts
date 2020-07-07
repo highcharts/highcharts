@@ -86,7 +86,7 @@ declare global {
             public initRegionsDefinitions(): void;
             public initSonifyButton(sonifyButtonId: string): void;
             public onChartUpdate(): void;
-            public onDataTableCreated(e: { html: string }): void;
+            public onDataTableCreated(e: { tree: NodeTreeObject }): void;
             public setLinkedDescriptionAttrs(): void;
             public setScreenReaderSectionAttribs(
                 sectionDiv: HTMLDOMElement,
@@ -273,8 +273,8 @@ extend(InfoRegionsComponent.prototype, /** @lends Highcharts.InfoRegionsComponen
 
         this.initRegionsDefinitions();
 
-        this.addEvent(chart, 'afterGetTable', function (
-            e: { html: string }
+        this.addEvent(chart, 'afterGetTree', function (
+            e: { tree: Highcharts.NodeTreeObject }
         ): void {
             component.onDataTableCreated(e);
         });
@@ -675,7 +675,7 @@ extend(InfoRegionsComponent.prototype, /** @lends Highcharts.InfoRegionsComponen
      */
     onDataTableCreated: function (
         this: Highcharts.InfoRegionsComponent,
-        e: { html: string }
+        e: { tree: Highcharts.NodeTreeObject }
     ): void {
         var chart = this.chart;
 
@@ -684,8 +684,8 @@ extend(InfoRegionsComponent.prototype, /** @lends Highcharts.InfoRegionsComponen
                 this.viewDataTableButton.setAttribute('aria-expanded', 'true');
             }
 
-            e.html = e.html.replace('<table ',
-                '<table tabindex="-1" summary="' + getTableSummary(chart) + '"');
+            e.tree.tabindex = -1;
+            e.tree.summary = getTableSummary(chart);
         }
     },
 

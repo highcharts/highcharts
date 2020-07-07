@@ -583,7 +583,48 @@ Chart.prototype.getCSV = function (useLocalDecimalPoint) {
  * @fires Highcharts.Chart#event:afterGetTable
  */
 Chart.prototype.getTable = function (useLocalDecimalPoint) {
-    var html = '<table id="highcharts-data-table-' + this.index + '">', options = this.options, decimalPoint = useLocalDecimalPoint ? (1.1).toLocaleString()[1] : '.', useMultiLevelHeaders = pick(options.exporting.useMultiLevelHeaders, true), rows = this.getDataRows(useMultiLevelHeaders), rowLength = 0, topHeaders = useMultiLevelHeaders ? rows.shift() : null, subHeaders = rows.shift(), 
+    var serialize = function (node) {
+        if (!node.tagName || node.tagName === '#text') {
+            // Text node
+            return node.textContent || '';
+        }
+        var html = "<" + node.tagName;
+        Object.keys(node).forEach(function (key) {
+            if (key !== 'children' &&
+                key !== 'tagName' &&
+                key !== 'textContent') {
+                html += " " + key + "=\"" + node[key] + "\"";
+            }
+        });
+        html += '>';
+        html += node.textContent || '';
+        (node.children || []).forEach(function (child) {
+            html += serialize(child);
+        });
+        html += "</" + node.tagName + ">";
+        return html;
+    };
+    var tree = this.getTableTree(useLocalDecimalPoint);
+    return serialize(tree);
+};
+/**
+ * Get the AST of a HTML table representing the chart data.
+ *
+ * @private
+ *
+ * @function Highcharts.Chart#getTableTree
+ *
+ * @param {boolean} [useLocalDecimalPoint]
+ *        Whether to use the local decimal point as detected from the browser.
+ *        This makes it easier to export data to Excel in the same locale as the
+ *        user is.
+ *
+ * @return {Highcharts.NodeTreeObject}
+ *         The abstract syntax tree
+ */
+Chart.prototype.getTableTree = function (useLocalDecimalPoint) {
+    var treeChildren = [];
+    var options = this.options, decimalPoint = useLocalDecimalPoint ? (1.1).toLocaleString()[1] : '.', useMultiLevelHeaders = pick(options.exporting.useMultiLevelHeaders, true), rows = this.getDataRows(useMultiLevelHeaders), rowLength = 0, topHeaders = useMultiLevelHeaders ? rows.shift() : null, subHeaders = rows.shift(), 
     // Compare two rows for equality
     isRowEqual = function (row1, row2) {
         var i = row1.length;
@@ -600,7 +641,7 @@ Chart.prototype.getTable = function (useLocalDecimalPoint) {
         return true;
     }, 
     // Get table cell HTML from value
-    getCellHTMLFromValue = function (tag, classes, attrs, value) {
+    getCellHTMLFromValue = function (tagName, classes, attrs, value) {
         var val = pick(value, ''), className = 'text' + (classes ? ' ' + classes : '');
         // Convert to string if number
         if (typeof val === 'number') {
@@ -613,13 +654,16 @@ Chart.prototype.getTable = function (useLocalDecimalPoint) {
         else if (!value) {
             className = 'empty';
         }
-        return '<' + tag + (attrs ? ' ' + attrs : '') +
-            ' class="' + className + '">' +
-            val + '</' + tag + '>';
+        return extend({
+            tagName: tagName,
+            'class': className,
+            textContent: val
+        }, attrs);
     }, 
     // Get table header markup from row data
     getTableHeaderHTML = function (topheaders, subheaders, rowLength) {
-        var html = '<thead>', i = 0, len = rowLength || subheaders && subheaders.length, next, cur, curColspan = 0, rowspan;
+        var theadChildren = [];
+        var i = 0, len = rowLength || subheaders && subheaders.length, next, cur, curColspan = 0, rowspan;
         // Clean up multiple table headers. Chart.getDataRows() returns two
         // levels of headers when using multilevel, not merged. We need to
         // merge identical headers, remove redundant headers, and keep it
@@ -628,7 +672,7 @@ Chart.prototype.getTable = function (useLocalDecimalPoint) {
             topheaders &&
             subheaders &&
             !isRowEqual(topheaders, subheaders)) {
-            html += '<tr>';
+            var trChildren = [];
             for (; i < len; ++i) {
                 cur = topheaders[i];
                 next = topheaders[i + 1];
@@ -638,8 +682,10 @@ Chart.prototype.getTable = function (useLocalDecimalPoint) {
                 else if (curColspan) {
                     // Ended colspan
                     // Add cur to HTML with colspan.
-                    html += getCellHTMLFromValue('th', 'highcharts-table-topheading', 'scope="col" ' +
-                        'colspan="' + (curColspan + 1) + '"', cur);
+                    trChildren.push(getCellHTMLFromValue('th', 'highcharts-table-topheading', {
+                        scope: 'col',
+                        colspan: curColspan + 1
+                    }, cur));
                     curColspan = 0;
                 }
                 else {
@@ -658,32 +704,46 @@ Chart.prototype.getTable = function (useLocalDecimalPoint) {
                     else {
                         rowspan = 1;
                     }
-                    html += getCellHTMLFromValue('th', 'highcharts-table-topheading', 'scope="col"' +
-                        (rowspan > 1 ?
-                            ' valign="top" rowspan="' + rowspan + '"' :
-                            ''), cur);
+                    var cell = getCellHTMLFromValue('th', 'highcharts-table-topheading', { scope: 'col' }, cur);
+                    if (rowspan > 1) {
+                        cell.valign = 'top';
+                        cell.rowspan = rowspan;
+                    }
+                    trChildren.push(cell);
                 }
             }
-            html += '</tr>';
+            theadChildren.push({
+                tagName: 'tr',
+                children: trChildren
+            });
         }
         // Add the subheaders (the only headers if not using multilevels)
         if (subheaders) {
-            html += '<tr>';
+            var trChildren = [];
             for (i = 0, len = subheaders.length; i < len; ++i) {
                 if (typeof subheaders[i] !== 'undefined') {
-                    html += getCellHTMLFromValue('th', null, 'scope="col"', subheaders[i]);
+                    trChildren.push(getCellHTMLFromValue('th', null, { scope: 'col' }, subheaders[i]));
                 }
             }
-            html += '</tr>';
+            theadChildren.push({
+                tagName: 'tr',
+                children: trChildren
+            });
         }
-        html += '</thead>';
-        return html;
+        return {
+            tagName: 'thead',
+            children: theadChildren
+        };
     };
     // Add table caption
     if (options.exporting.tableCaption !== false) {
-        html += '<caption class="highcharts-table-caption">' + pick(options.exporting.tableCaption, (options.title.text ?
-            htmlencode(options.title.text) :
-            'Chart')) + '</caption>';
+        treeChildren.push({
+            tagName: 'caption',
+            'class': 'highcharts-table-caption',
+            textContent: pick(options.exporting.tableCaption, (options.title.text ?
+                htmlencode(options.title.text) :
+                'Chart'))
+        });
     }
     // Find longest row
     for (var i = 0, len = rows.length; i < len; ++i) {
@@ -692,23 +752,35 @@ Chart.prototype.getTable = function (useLocalDecimalPoint) {
         }
     }
     // Add header
-    html += getTableHeaderHTML(topHeaders, subHeaders, Math.max(rowLength, subHeaders.length));
+    treeChildren.push(getTableHeaderHTML(topHeaders, subHeaders, Math.max(rowLength, subHeaders.length)));
     // Transform the rows to HTML
-    html += '<tbody>';
+    var trs = [];
     rows.forEach(function (row) {
-        html += '<tr>';
+        var trChildren = [];
         for (var j = 0; j < rowLength; j++) {
             // Make first column a header too. Especially important for
             // category axes, but also might make sense for datetime? Should
             // await user feedback on this.
-            html += getCellHTMLFromValue(j ? 'td' : 'th', null, j ? '' : 'scope="row"', row[j]);
+            trChildren.push(getCellHTMLFromValue(j ? 'td' : 'th', null, j ? {} : { scope: 'row' }, row[j]));
         }
-        html += '</tr>';
+        trs.push({
+            tagName: 'tr',
+            children: trChildren
+        });
     });
-    html += '</tbody></table>';
-    var e = { html: html };
-    fireEvent(this, 'afterGetTable', e);
-    return e.html;
+    treeChildren.push({
+        tagName: 'tbody',
+        children: trs
+    });
+    var e = {
+        tree: {
+            tagName: 'table',
+            id: "highcharts-data-table-" + this.index,
+            children: treeChildren
+        }
+    };
+    fireEvent(this, 'aftergetTableTree', e);
+    return e.tree;
 };
 /**
  * Get a blob object from content, if blob is supported
@@ -804,7 +876,7 @@ Chart.prototype.viewData = function () {
         // Insert after the chart container
         this.renderTo.parentNode.insertBefore(this.dataTableDiv, this.renderTo.nextSibling);
     }
-    this.dataTableDiv.innerHTML = this.getTable();
+    this.renderer.addTree(this.getTableTree(), this.dataTableDiv);
     fireEvent(this, 'afterViewData', this.dataTableDiv);
 };
 // Add "Download CSV" to the exporting menu.

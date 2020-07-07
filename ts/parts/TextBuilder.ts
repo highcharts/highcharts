@@ -18,9 +18,13 @@
  *     input type (roughly 10 cases). Most can be whitelisted to fill, stroke,
  *     stroke-width, maybe style and class and a few more.
  * - More tags in whitelist?
- * - In HTML structures like .getTable(), consider building a syntax tree
- *   instead, and apply it using SVGRenderer.addTree(). Same for the a11y
- *   module. In order to avoid setting innerHTML wherever possible.
+ * - Avoid setting innerHTML wherever possible. In the A11y module, use
+ *   SVGRenderer.addTree like demonstrated in export-data.
+ * - Consider standardized AST format, like https://github.com/syntax-tree/hast,
+ *   or simpler, just create a subnode for attributes (attrs, properties?)
+ *   instead of registering them on the main object.
+ *   - Then the legacy .definition function must translate to this format.
+ *   - Rename functions to addAST, getTableAST etc
  * */
 
 'use strict';

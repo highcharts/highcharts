@@ -65,6 +65,7 @@ declare global {
             ): Array<Array<(number|string)>>;
             /** @requires modules/export-data */
             getTable(useLocalDecimalPoint?: boolean): string;
+            getTableTree(useLocalDecimalPoint?: boolean): NodeTreeObject;
             /** @requires modules/export-data */
             setUpKeyToAxis(): void;
             /** @requires modules/export-data */
@@ -860,8 +861,58 @@ Chart.prototype.getCSV = function (
 Chart.prototype.getTable = function (
     useLocalDecimalPoint?: boolean
 ): string {
-    var html = '<table id="highcharts-data-table-' + this.index + '">',
-        options = this.options,
+    const serialize = (node: Highcharts.NodeTreeObject): string => {
+        if (!node.tagName || node.tagName === '#text') {
+            // Text node
+            return node.textContent || '';
+        }
+
+        let html = `<${node.tagName}`;
+        Object.keys(node).forEach((key): void => {
+            if (
+                key !== 'children' &&
+                key !== 'tagName' &&
+                key !== 'textContent'
+            ) {
+                html += ` ${key}="${node[key]}"`;
+            }
+        });
+        html += '>';
+
+        html += node.textContent || '';
+
+        (node.children || []).forEach((child): void => {
+            html += serialize(child);
+        });
+
+        html += `</${node.tagName}>`;
+        return html;
+    };
+
+    const tree = this.getTableTree(useLocalDecimalPoint);
+    return serialize(tree);
+};
+
+/**
+ * Get the AST of a HTML table representing the chart data.
+ *
+ * @private
+ *
+ * @function Highcharts.Chart#getTableTree
+ *
+ * @param {boolean} [useLocalDecimalPoint]
+ *        Whether to use the local decimal point as detected from the browser.
+ *        This makes it easier to export data to Excel in the same locale as the
+ *        user is.
+ *
+ * @return {Highcharts.NodeTreeObject}
+ *         The abstract syntax tree
+ */
+Chart.prototype.getTableTree = function (
+    useLocalDecimalPoint?: boolean
+): Highcharts.NodeTreeObject {
+    const treeChildren = [];
+    var options = this.options,
         decimalPoint = useLocalDecimalPoint ? (1.1).toLocaleString()[1] : '.',
         useMultiLevelHeaders = pick(
             (options.exporting as any).useMultiLevelHeaders, true
@@ -890,11 +941,11 @@ Chart.prototype.getTable = function (
         },
         // Get table cell HTML from value
         getCellHTMLFromValue = function (
-            tag: string,
+            tagName: string,
             classes: (string|null),
-            attrs: string,
+            attrs: Highcharts.Dictionary<string|number>,
             value: (number|string)
-        ): string {
+        ): Highcharts.NodeTreeObject {
             var val = pick(value, ''),
                 className = 'text' + (classes ? ' ' + classes : '');
 
@@ -908,18 +959,23 @@ Chart.prototype.getTable = function (
             } else if (!value) {
                 className = 'empty';
             }
-            return '<' + tag + (attrs ? ' ' + attrs : '') +
-                    ' class="' + className + '">' +
-                    val + '</' + tag + '>';
+
+            return extend({
+                tagName,
+                'class': className,
+                textContent: val
+            }, attrs);
+
         },
         // Get table header markup from row data
         getTableHeaderHTML = function (
             topheaders: (Array<(number|string)>|null|undefined),
             subheaders: Array<(number|string)>,
             rowLength?: number
-        ): string {
-            var html = '<thead>',
-                i = 0,
+        ): Highcharts.NodeTreeObject {
+            const theadChildren: Highcharts.NodeTreeObject[] = [];
+
+            var i = 0,
                 len = rowLength || subheaders && subheaders.length,
                 next,
                 cur,
@@ -936,7 +992,7 @@ Chart.prototype.getTable = function (
                 subheaders &&
                 !isRowEqual(topheaders, subheaders)
             ) {
-                html += '<tr>';
+                const trChildren = [];
                 for (; i < len; ++i) {
                     cur = topheaders[i];
                     next = topheaders[i + 1];
@@ -945,13 +1001,15 @@ Chart.prototype.getTable = function (
                     } else if (curColspan) {
                         // Ended colspan
                         // Add cur to HTML with colspan.
-                        html += getCellHTMLFromValue(
+                        trChildren.push(getCellHTMLFromValue(
                             'th',
                             'highcharts-table-topheading',
-                            'scope="col" ' +
-                            'colspan="' + (curColspan + 1) + '"',
+                            {
+                                scope: 'col',
+                                colspan: curColspan + 1
+                            },
                             cur
-                        );
+                        ));
                         curColspan = 0;
                     } else {
                         // Cur is standalone. If it is same as sublevel,
@@ -967,46 +1025,67 @@ Chart.prototype.getTable = function (
                         } else {
                             rowspan = 1;
                         }
-                        html += getCellHTMLFromValue(
+
+                        const cell = getCellHTMLFromValue(
                             'th',
                             'highcharts-table-topheading',
-                            'scope="col"' +
-                            (rowspan > 1 ?
-                                ' valign="top" rowspan="' + rowspan + '"' :
-                                ''),
+                            { scope: 'col' },
                             cur
                         );
+                        if (rowspan > 1) {
+                            cell.valign = 'top';
+                            cell.rowspan = rowspan;
+                        }
+
+                        trChildren.push(cell);
                     }
                 }
-                html += '</tr>';
+
+                theadChildren.push({
+                    tagName: 'tr',
+                    children: trChildren
+                });
             }
 
             // Add the subheaders (the only headers if not using multilevels)
             if (subheaders) {
-                html += '<tr>';
+                const trChildren = [];
+
                 for (i = 0, len = subheaders.length; i < len; ++i) {
                     if (typeof subheaders[i] !== 'undefined') {
-                        html += getCellHTMLFromValue(
-                            'th', null, 'scope="col"', subheaders[i]
+                        trChildren.push(
+                            getCellHTMLFromValue(
+                                'th', null, { scope: 'col' }, subheaders[i]
+                            )
                         );
                     }
                 }
-                html += '</tr>';
+
+                theadChildren.push({
+                    tagName: 'tr',
+                    children: trChildren
+                });
             }
-            html += '</thead>';
-            return html;
+            return {
+                tagName: 'thead',
+                children: theadChildren
+            };
         };
 
     // Add table caption
     if ((options.exporting as any).tableCaption !== false) {
-        html += '<caption class="highcharts-table-caption">' + pick(
-            (options.exporting as any).tableCaption,
-            (
-                (options.title as any).text ?
-                    htmlencode((options.title as any).text) :
-                    'Chart'
+        treeChildren.push({
+            tagName: 'caption',
+            'class': 'highcharts-table-caption',
+            textContent: pick(
+                (options.exporting as any).tableCaption,
+                (
+                    (options.title as any).text ?
+                        htmlencode((options.title as any).text) :
+                        'Chart'
+                )
             )
-        ) + '</caption>';
+        });
     }
 
     // Find longest row
@@ -1017,36 +1096,48 @@ Chart.prototype.getTable = function (
     }
 
     // Add header
-    html += getTableHeaderHTML(
+    treeChildren.push(getTableHeaderHTML(
         topHeaders,
         subHeaders as any,
         Math.max(rowLength, (subHeaders as any).length)
-    );
+    ));
 
     // Transform the rows to HTML
-    html += '<tbody>';
+    const trs: Highcharts.NodeTreeObject[] = [];
     rows.forEach(function (row: Array<(number|string)>): void {
-        html += '<tr>';
+        const trChildren = [];
         for (var j = 0; j < rowLength; j++) {
             // Make first column a header too. Especially important for
             // category axes, but also might make sense for datetime? Should
             // await user feedback on this.
-            html += getCellHTMLFromValue(
+            trChildren.push(getCellHTMLFromValue(
                 j ? 'td' : 'th',
                 null,
-                j ? '' : 'scope="row"',
+                j ? {} : { scope: 'row' },
                 row[j]
-            );
+            ));
         }
-        html += '</tr>';
+        trs.push({
+            tagName: 'tr',
+            children: trChildren
+        });
     });
-    html += '</tbody></table>';
+    treeChildren.push({
+        tagName: 'tbody',
+        children: trs
+    });
 
-    var e = { html: html };
+    const e = {
+        tree: {
+            tagName: 'table',
+            id: `highcharts-data-table-${this.index}`,
+            children: treeChildren
+        } as Highcharts.NodeTreeObject
 
-    fireEvent(this, 'afterGetTable', e);
+    };
+    fireEvent(this, 'aftergetTableTree', e);
 
-    return e.html;
+    return e.tree;
 };
 
 
@@ -1173,7 +1264,7 @@ Chart.prototype.viewData = function (): void {
         );
     }
 
-    this.dataTableDiv.innerHTML = this.getTable();
+    this.renderer.addTree(this.getTableTree(), this.dataTableDiv);
     fireEvent(this, 'afterViewData', this.dataTableDiv);
 };
 

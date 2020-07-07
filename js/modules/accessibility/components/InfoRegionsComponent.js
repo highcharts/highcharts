@@ -123,7 +123,7 @@ extend(InfoRegionsComponent.prototype, /** @lends Highcharts.InfoRegionsComponen
         var chart = this.chart;
         var component = this;
         this.initRegionsDefinitions();
-        this.addEvent(chart, 'afterGetTable', function (e) {
+        this.addEvent(chart, 'afterGetTree', function (e) {
             component.onDataTableCreated(e);
         });
         this.addEvent(chart, 'afterViewData', function (tableDiv) {
@@ -365,7 +365,8 @@ extend(InfoRegionsComponent.prototype, /** @lends Highcharts.InfoRegionsComponen
             if (this.viewDataTableButton) {
                 this.viewDataTableButton.setAttribute('aria-expanded', 'true');
             }
-            e.html = e.html.replace('<table ', '<table tabindex="-1" summary="' + getTableSummary(chart) + '"');
+            e.tree.tabindex = -1;
+            e.tree.summary = getTableSummary(chart);
         }
     },
     /**

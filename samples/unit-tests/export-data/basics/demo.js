@@ -619,8 +619,7 @@ QUnit.test('Missing data in first series (#78)', function (assert) {
             // accessibility module added.
             .replace(/<table[^>]+>/g, '<table>')
             .replace('<caption>Chart title</caption>', ''),
-        '<table><caption class="highcharts-table-caption">Chart title</caption><thead><tr><th scope="col" class="text">Category</th><th scope="col" class="text">Drop 2</th><th scope="col" class="text">Full</th></tr></thead><tbody><tr><th scope="row" class="number">0</th><td class="number">1</td><td class="number">1</td></tr><tr><th scope="row" class="number">1</th><td class="number">1</td><td class="number">1</td></tr><tr><th scope="row" class="number">2</th>' +
-        '<td class="empty"></td><td class="number">2</td></tr><tr><th scope="row" class="number">3</th><td class="number">3</td><td class="number">3</td></tr><tr><th scope="row" class="number">4</th><td class="number">4</td><td class="number">4</td></tr></tbody></table>',
+        '<table><caption class=\"highcharts-table-caption\">Chart title</caption><thead><tr><th class=\"text\" scope=\"col\">Category</th><th class=\"text\" scope=\"col\">Drop 2</th><th class=\"text\" scope=\"col\">Full</th></tr></thead><tbody><tr><th class=\"number\" scope=\"row\">0</th><td class=\"number\">1</td><td class=\"number\">1</td></tr><tr><th class=\"number\" scope=\"row\">1</th><td class=\"number\">1</td><td class=\"number\">1</td></tr><tr><th class=\"number\" scope=\"row\">2</th><td class=\"empty\"></td><td class=\"number\">2</td></tr><tr><th class=\"number\" scope=\"row\">3</th><td class=\"number\">3</td><td class=\"number\">3</td></tr><tr><th class=\"number\" scope=\"row\">4</th><td class=\"number\">4</td><td class=\"number\">4</td></tr></tbody></table>',
         'Empty data in table'
     );
 
