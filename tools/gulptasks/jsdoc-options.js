@@ -14,6 +14,16 @@ const path = require('path');
 const SOURCE_DIRECTORY = 'js';
 
 const SOURCE_GLOBS = [
+    'Accessibility/**/*',
+    'Boost/**/*',
+    'Core/**/*',
+    'Data/**/*',
+    'Data-Grid/**/*',
+    'Extensions/**/*',
+    'Gantt/**/*',
+    'Maps/**/*',
+    'Stock/**/*',
+    'Series/**/*',
     'annotations/**/*',
     'indicators/**/*',
     'modules/**/*',
