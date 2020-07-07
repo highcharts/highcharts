@@ -65,7 +65,7 @@ declare global {
 import '../../parts/Series.js';
 import '../../parts/Options.js';
 
-import '../../parts/Interaction.js';
+import '../../Core/Interaction.js';
 
 import butils from './boost-utils.js';
 import boostable from './boostables.js';

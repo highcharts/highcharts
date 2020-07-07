@@ -14,7 +14,7 @@ var clamp = U.clamp, isNumber = U.isNumber, merge = U.merge, pick = U.pick, pInt
 import '../parts/Options.js';
 import '../parts/Point.js';
 import '../parts/Series.js';
-import '../parts/Interaction.js';
+import '../Core/Interaction.js';
 var noop = H.noop, Series = H.Series, TrackerMixin = H.TrackerMixin;
 /**
  * Gauges are circular plots displaying one or more values with a dial pointing
