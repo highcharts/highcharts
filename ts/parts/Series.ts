@@ -5203,21 +5203,11 @@ H.Series = seriesType<Highcharts.LineSeries>(
                     pointStack,
                     stackValues;
 
-                // Discard disallowed x and y values for log axes #3434, #13533
-                const isPositiveAxes = yAxis.positiveValuesOnly ||
-                    xAxis.positiveValuesOnly,
-                    isValidValue = (yValue !== null && (yValue as any) <= 0) ||
-                    (xValue && xValue <= 0);
-
-                if (isPositiveAxes && isValidValue) {
-                    point.isNull = true;
-                }
-
                 if (
                     yAxis.positiveValuesOnly && !yAxis.validatePositiveValue(yValue) ||
                     xAxis.positiveValuesOnly && !xAxis.validatePositiveValue(xValue)
                 ) {
-                    point.isNull;
+                    point.isNull = true;
                 }
 
                 // Get the plotX translation

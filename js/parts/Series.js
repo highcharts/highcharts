@@ -3949,16 +3949,9 @@ null,
                     (stackThreshold ? 0 : threshold) ?
                 '-' :
                 '') + series.stackKey], pointStack, stackValues;
-            // Discard disallowed x and y values for log axes #3434, #13533
-            var isPositiveAxes = yAxis.positiveValuesOnly ||
-                xAxis.positiveValuesOnly, isValidValue = (yValue !== null && yValue <= 0) ||
-                (xValue && xValue <= 0);
-            if (isPositiveAxes && isValidValue) {
-                point.isNull = true;
-            }
             if (yAxis.positiveValuesOnly && !yAxis.validatePositiveValue(yValue) ||
                 xAxis.positiveValuesOnly && !xAxis.validatePositiveValue(xValue)) {
-                point.isNull;
+                point.isNull = true;
             }
             // Get the plotX translation
             point.plotX = plotX = correctFloat(// #5236
