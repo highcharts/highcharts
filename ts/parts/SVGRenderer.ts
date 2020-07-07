@@ -1622,7 +1622,7 @@ class SVGRenderer {
             styledMode = this.styledMode,
             // Make a copy of normalState (#13798)
             // (reference to options.rangeSelector.buttonTheme)
-            normalState = normalState ? H.merge(normalState, {}) : normalState,
+            normalState = normalState ? merge(normalState) : normalState,
             userNormalStyle = normalState && normalState.style || {};
 
         // Remove stylable attributes

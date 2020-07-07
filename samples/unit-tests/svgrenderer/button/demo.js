@@ -46,4 +46,27 @@ QUnit.test('General button() tests', function (assert) {
         '[Object object]',
         'Button should not set wrong styles (#9424).'
     );
+
+    button.destroy();
+
+    // #13798 - button text style not applied to all buttons.
+    var normalState = {
+            style: {
+                color: 'blue',
+                fontWeight: 'bold'
+            }
+        },
+        buttons = [],
+        btn;
+
+    ['One', 'Two'].forEach((s, i) => {
+        btn = ren.button(s, 20, i * 30 + 30, undefined, normalState).add();
+        buttons.push(btn);
+    });
+
+    assert.strictEqual(
+        buttons[1].text.styles.color,
+        'blue',
+        'Button function should not mutate its options (#13798).'
+    );
 });
