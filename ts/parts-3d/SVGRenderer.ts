@@ -16,6 +16,11 @@ import type SVGPath from '../parts/SVGPath';
 import Color from '../parts/Color.js';
 const color = Color.parse;
 import H from '../Core/Globals.js';
+import Math3D from '../parts-3d/Math.js';
+const {
+    perspective,
+    shapeArea
+} = Math3D;
 import SVGElement from '../parts/SVGElement.js';
 import SVGRenderer from '../parts/SVGRenderer.js';
 import U from '../Core/Utilities.js';
@@ -123,7 +128,6 @@ var cos = Math.cos,
 
 var charts = H.charts,
     deg2rad = H.deg2rad,
-    perspective = H.perspective,
     // internal:
     dFactor: number,
     element3dMethods: Highcharts.Element3dMethodsObject,
@@ -269,7 +273,7 @@ SVGRenderer.prototype.face3d = function (
                     this.insidePlotArea
                 ),
                 path = renderer.toLinePath(vertexes2d, true),
-                area = H.shapeArea(vertexes2d),
+                area = shapeArea(vertexes2d),
                 visibility = (this.enabled && area > 0) ? 'visible' : 'hidden';
 
             hash.d = path;
@@ -307,7 +311,7 @@ SVGRenderer.prototype.face3d = function (
                     this.insidePlotArea
                 ),
                 path = renderer.toLinePath(vertexes2d, true),
-                area = H.shapeArea(vertexes2d),
+                area = shapeArea(vertexes2d),
                 visibility = (this.enabled && area > 0) ? 'visible' : 'hidden';
 
             params.d = path;
@@ -804,15 +808,15 @@ SVGRenderer.prototype.cuboidPath = function (
                 verticesIndex1.map(mapSidePath),
             dummyFace2: Array<Highcharts.Position3dObject> =
                 verticesIndex2.map(mapSidePath);
-        if (H.shapeArea(face1) < 0) {
+        if (shapeArea(face1) < 0) {
             ret = [face1, 0];
-        } else if (H.shapeArea(face2) < 0) {
+        } else if (shapeArea(face2) < 0) {
             ret = [face2, 1];
         } else if (side) {
             forcedSides.push(side);
-            if (H.shapeArea(dummyFace1) < 0) {
+            if (shapeArea(dummyFace1) < 0) {
                 ret = [face1, 0];
-            } else if (H.shapeArea(dummyFace2) < 0) {
+            } else if (shapeArea(dummyFace2) < 0) {
                 ret = [face2, 1];
             } else {
                 ret = [face1, 0]; // force side calculation.

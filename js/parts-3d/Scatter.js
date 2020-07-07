@@ -11,6 +11,8 @@
  * */
 'use strict';
 import H from '../Core/Globals.js';
+import Math3D from '../parts-3d/Math.js';
+var pointCameraDistance = Math3D.pointCameraDistance;
 import Point from '../parts/Point.js';
 import U from '../Core/Utilities.js';
 var seriesType = U.seriesType;
@@ -49,7 +51,7 @@ seriesType('scatter3d', 'scatter',
             .apply(this, arguments);
         if (this.chart.is3d() && point) {
             attribs.zIndex =
-                H.pointCameraDistance(point, this.chart);
+                pointCameraDistance(point, this.chart);
         }
         return attribs;
     },

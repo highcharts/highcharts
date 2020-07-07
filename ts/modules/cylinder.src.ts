@@ -81,6 +81,8 @@ declare global {
 
 import Color from '../parts/Color.js';
 const color = Color.parse;
+import Math3D from '../parts-3d/Math.js';
+const { perspective } = Math3D;
 import U from '../Core/Utilities.js';
 const {
     merge,
@@ -93,7 +95,6 @@ import '../parts/SVGRenderer.js';
 
 var charts = H.charts,
     deg2rad = H.deg2rad,
-    perspective = H.perspective,
 
     // Work on H.Renderer instead of SVGRenderer for VML support.
     RendererProto = H.Renderer.prototype,

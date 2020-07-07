@@ -15,6 +15,8 @@
 import type Point from '../parts/Point';
 import type ZAxis from '../parts-3d/ZAxis';
 import H from '../Core/Globals.js';
+import Math3D from '../parts-3d/Math.js';
+const { perspective } = Math3D;
 
 /**
  * Internal types
@@ -38,8 +40,6 @@ const {
     addEvent,
     pick
 } = U;
-
-var perspective = H.perspective;
 
 /* eslint-disable no-invalid-this */
 

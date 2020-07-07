@@ -17,6 +17,8 @@
 import type Chart from '../parts/Chart';
 import type SVGPath from '../parts/SVGPath';
 import H from '../Core/Globals.js';
+import Math3D from '../parts-3d/Math.js';
+const { perspective } = Math3D;
 
 /**
  * Internal types
@@ -391,7 +393,7 @@ seriesType<Highcharts.Funnel3dSeries>('funnel3d', 'column',
                 }
 
                 // Placement of tooltips and data labels in 3D
-                tooltipPos = H.perspective([{
+                tooltipPos = perspective([{
                     x: centerX,
                     y: point.plotY,
                     z: reversed ?
