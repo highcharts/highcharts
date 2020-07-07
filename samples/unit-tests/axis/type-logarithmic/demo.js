@@ -266,29 +266,58 @@ QUnit.test('Y axis minimum got stuck (#3353)', function (assert) {
     );
 });
 
-QUnit.test('Negative values on log axes', function (assert) {
+QUnit.test('Negative values', function (assert) {
     const chart = Highcharts.chart('container', {
-        xAxis: {
+        xAxis: [{
             type: 'logarithmic'
-        },
-        yAxis: {
+        }, {}],
+        yAxis: [{
             type: 'logarithmic'
-        },
+        }, {}],
         series: [{
-            data: [[-1, 2], [0, -2], [10, 10]]
+            xAxis: 0,
+            yAxis: 0,
+            data: [[-3, -5], [-1, 2], [0, -2], [10, 10]]
+        },
+        {
+            xAxis: 0,
+            yAxis: 1,
+            data: [[-3, -5], [-1, 2], [0, -2], [10, 10]]
+        },
+        {
+            xAxis: 1,
+            yAxis: 0,
+            data: [[-3, -5], [-1, 2], [0, -2], [10, 10]]
+        },
+        {
+            xAxis: 1,
+            yAxis: 1,
+            data: [[-3, -5], [-1, 2], [0, -2], [10, 10]]
         }]
     });
 
     assert.strictEqual(
         chart.xAxis[0].dataMin,
         10,
-        "should not be present in the xAxis.dataMin."
+        "should not be present on the log axis under the xAxis.dataMin."
     );
 
     assert.strictEqual(
         chart.yAxis[0].dataMin,
-        10,
-        "should not be present in the yAxis.dataMin."
+        2,
+        "should not be present on the log axis yAxis.dataMin."
+    );
+
+    assert.strictEqual(
+        chart.xAxis[1].dataMin,
+        -3,
+        "should be present on the linear axis under the xAxis.dataMin."
+    );
+
+    assert.strictEqual(
+        chart.yAxis[1].dataMin,
+        -5,
+        "should be present on the linear axis under the xAxis.dataMax"
     );
 
     assert.ok(
