@@ -11,14 +11,14 @@
 'use strict';
 
 import type SVGPath from '../parts/SVGPath';
-import Axis from './Axis.js';
+import Axis from './Axis/Axis.js';
 import Chart from '../parts/Chart.js';
 import Color from '../Core/Color.js';
 const {
     parse: color
 } = Color;
 import H from '../Core/Globals.js';
-import NavigatorAxis from './NavigatorAxis.js';
+import NavigatorAxis from './Axis/NavigatorAxis.js';
 import O from '../Core/Options.js';
 const { defaultOptions } = O;
 import Scrollbar from './Scrollbar.js';
@@ -195,7 +195,7 @@ declare global {
     }
 }
 
-import './Series.js';
+import '../parts/Series.js';
 
 var hasTouch = H.hasTouch,
     isTouchDevice = H.isTouchDevice,

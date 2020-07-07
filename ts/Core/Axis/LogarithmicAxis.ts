@@ -11,7 +11,7 @@
 'use strict';
 
 import Axis from './Axis.js';
-import U from '../Core/Utilities.js';
+import U from '../Utilities.js';
 const {
     addEvent,
     getMagnitude,
@@ -40,7 +40,7 @@ declare global {
 /**
  * @private
  */
-declare module '../parts/axis/types' {
+declare module './Types' {
     interface AxisComposition {
         logarithmic?: LogarithmicAxis['logarithmic'];
     }

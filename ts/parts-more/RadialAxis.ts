@@ -14,8 +14,8 @@ import type Chart from '../parts/Chart';
 import type Pane from './Pane';
 import type Point from '../parts/Point';
 import type SVGPath from '../parts/SVGPath';
-import Axis from '../parts/Axis.js';
-import Tick from '../parts/Tick.js';
+import Axis from '../Core/Axis/Axis.js';
+import Tick from '../Core/Axis/Tick.js';
 import HiddenAxis from './HiddenAxis.js';
 import U from '../Core/Utilities.js';
 const {
@@ -67,7 +67,7 @@ declare global {
 /**
  * @private
  */
-declare module '../parts/axis/types' {
+declare module '../Core/Axis/Types' {
     interface AxisTypeRegistry {
         RadialAxis: RadialAxis;
     }

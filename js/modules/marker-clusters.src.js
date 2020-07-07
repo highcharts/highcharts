@@ -33,7 +33,7 @@ var addEvent = U.addEvent, animObject = U.animObject, defined = U.defined, error
  */
 ''; // detach doclets from following code
 /* eslint-disable no-invalid-this */
-import '../parts/Axis.js';
+import '../Core/Axis/Axis.js';
 import '../parts/Series.js';
 var Series = H.Series, Scatter = H.seriesTypes.scatter, baseGeneratePoints = Series.prototype.generatePoints, stateIdCounter = 0, 
 // Points that ids are included in the oldPointsStateId array

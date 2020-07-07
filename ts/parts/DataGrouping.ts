@@ -10,8 +10,8 @@
 
 'use strict';
 
-import type { AxisType } from './axis/types';
-import DateTimeAxis from './DateTimeAxis.js';
+import type { AxisType } from '../Core/Axis/Types';
+import DateTimeAxis from '../Core/Axis/DateTimeAxis.js';
 import H from '../Core/Globals.js';
 
 /**
@@ -164,7 +164,7 @@ const {
     pick
 } = U;
 
-import './Axis.js';
+import '../Core/Axis/Axis.js';
 import './Series.js';
 
 var Axis = H.Axis,

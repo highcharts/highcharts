@@ -8,9 +8,9 @@
  *
  * */
 
-import type StackItem from './Stacking.js';
+import type StackItem from '../../parts/Stacking.js';
 import Axis from './Axis.js';
-import U from '../Core/Utilities.js';
+import U from '../Utilities.js';
 const {
     addEvent,
     destroyObjectProperties,
@@ -22,7 +22,7 @@ const {
 /**
  * @private
  */
-declare module '../parts/axis/types' {
+declare module './Types' {
     interface AxisComposition {
         stacking?: StackingAxis['stacking'];
     }

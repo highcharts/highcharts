@@ -10,10 +10,10 @@
 
 'use strict';
 
-import type { AxisType } from './axis/types';
+import type { AxisType } from '../Core/Axis/Types';
 import type Point from './Point';
 import type SVGElement from './SVGElement';
-import Axis from './Axis.js';
+import Axis from '../Core/Axis/Axis.js';
 import H from '../Core/Globals.js';
 const {
     charts,

@@ -11,7 +11,7 @@
 'use strict';
 
 import type ColorAxis from '../parts-map/ColorAxis';
-import Axis from '../parts/Axis.js';
+import Axis from '../Core/Axis/Axis.js';
 import Chart from '../parts/Chart.js';
 import H from './Globals.js';
 import O from './Options.js';

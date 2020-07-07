@@ -61,7 +61,7 @@
 
 'use strict';
 
-import Axis from '../../../parts/Axis.js';
+import Axis from '../../../Core/Axis/Axis.js';
 import Chart from '../../../parts/Chart.js';
 import U from '../../../Core/Utilities.js';
 const {

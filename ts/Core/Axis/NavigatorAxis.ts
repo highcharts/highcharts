@@ -11,11 +11,11 @@
 'use strict';
 
 import Axis from './Axis.js';
-import H from '../Core/Globals.js';
+import H from '../Globals.js';
 const {
     isTouchDevice
 } = H;
-import U from '../Core/Utilities.js';
+import U from '../Utilities.js';
 const {
     addEvent,
     correctFloat,
@@ -27,7 +27,7 @@ const {
 /**
  * @private
  */
-declare module '../parts/axis/types' {
+declare module './Types' {
     interface AxisComposition {
         navigatorAxis?: NavigatorAxis['navigatorAxis'];
     }

@@ -12,7 +12,7 @@
 
 'use strict';
 
-import type Axis from '../parts/Axis';
+import type Axis from '../Core/Axis/Axis';
 import type Point from '../parts/Point';
 import type SVGPath from '../parts/SVGPath';
 import H from '../Core/Globals.js';
@@ -22,7 +22,7 @@ const {
     perspective3D,
     shapeArea
 } = Math3D;
-import Tick from '../parts/Tick.js';
+import Tick from '../Core/Axis/Tick.js';
 import Tick3D from './Tick3D.js';
 import U from '../Core/Utilities.js';
 const {
@@ -61,7 +61,7 @@ declare global {
 /**
  * @private
  */
-declare module '../parts/axis/types' {
+declare module '../Core/Axis/Types' {
     interface AxisComposition {
         axis3D?: Axis3D['axis3D'];
     }

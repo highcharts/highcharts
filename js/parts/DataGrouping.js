@@ -8,7 +8,7 @@
  *
  * */
 'use strict';
-import DateTimeAxis from './DateTimeAxis.js';
+import DateTimeAxis from '../Core/Axis/DateTimeAxis.js';
 import H from '../Core/Globals.js';
 /**
  * @typedef {"average"|"averages"|"open"|"high"|"low"|"close"|"sum"} Highcharts.DataGroupingApproximationValue
@@ -32,7 +32,7 @@ import Point from './Point.js';
 import Tooltip from './Tooltip.js';
 import U from '../Core/Utilities.js';
 var addEvent = U.addEvent, arrayMax = U.arrayMax, arrayMin = U.arrayMin, correctFloat = U.correctFloat, defined = U.defined, error = U.error, extend = U.extend, format = U.format, isNumber = U.isNumber, merge = U.merge, pick = U.pick;
-import './Axis.js';
+import '../Core/Axis/Axis.js';
 import './Series.js';
 var Axis = H.Axis, Series = H.Series;
 /* ************************************************************************** *

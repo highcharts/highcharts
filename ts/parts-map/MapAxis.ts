@@ -11,7 +11,7 @@
 'use strict';
 
 import type Chart from '../parts/Chart';
-import Axis from '../parts/Axis.js';
+import Axis from '../Core/Axis/Axis.js';
 import U from '../Core/Utilities.js';
 const {
     addEvent,
@@ -21,7 +21,7 @@ const {
 /**
  * @private
  */
-declare module '../parts/axis/types' {
+declare module '../Core/Axis/Types' {
     interface AxisComposition {
         mapAxis?: MapAxis['mapAxis'];
     }

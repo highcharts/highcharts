@@ -8,7 +8,7 @@
  *
  * */
 'use strict';
-import Axis from './Axis.js';
+import Axis from '../Core/Axis/Axis.js';
 import H from '../Core/Globals.js';
 var charts = H.charts, doc = H.doc, seriesTypes = H.seriesTypes, win = H.win;
 import Legend from '../Core/Legend.js';

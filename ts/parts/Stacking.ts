@@ -10,10 +10,10 @@
 
 'use strict';
 
-import Axis from './Axis.js';
+import Axis from '../Core/Axis/Axis.js';
 import Chart from './Chart.js';
 import H from '../Core/Globals.js';
-import StackingAxis from './StackingAxis.js';
+import StackingAxis from '../Core/Axis/StackingAxis.js';
 import U from '../Core/Utilities.js';
 const {
     correctFloat,

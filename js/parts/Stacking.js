@@ -8,10 +8,10 @@
  *
  * */
 'use strict';
-import Axis from './Axis.js';
+import Axis from '../Core/Axis/Axis.js';
 import Chart from './Chart.js';
 import H from '../Core/Globals.js';
-import StackingAxis from './StackingAxis.js';
+import StackingAxis from '../Core/Axis/StackingAxis.js';
 import U from '../Core/Utilities.js';
 var correctFloat = U.correctFloat, defined = U.defined, destroyObjectProperties = U.destroyObjectProperties, format = U.format, isNumber = U.isNumber, pick = U.pick;
 /**

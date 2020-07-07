@@ -50,7 +50,7 @@ var addEvent = U.addEvent, clamp = U.clamp, defined = U.defined, extend = U.exte
 * @type {string}
 * @since 7.0.0
 */
-import '../parts/Axis.js';
+import '../Core/Axis/Axis.js';
 import '../parts/Series.js';
 import '../modules/networkgraph/layouts.js';
 import '../modules/networkgraph/draggable-nodes.js';

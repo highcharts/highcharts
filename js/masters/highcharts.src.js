@@ -10,10 +10,10 @@
 import Highcharts from '../Core/Globals.js';
 import '../parts/SVGRenderer.js';
 import '../parts/Html.js';
-import '../parts/Axis.js';
-import '../parts/DateTimeAxis.js';
-import '../parts/LogarithmicAxis.js';
-import '../parts/PlotLineOrBand.js';
+import '../Core/Axis/Axis.js';
+import '../Core/Axis/DateTimeAxis.js';
+import '../Core/Axis/LogarithmicAxis.js';
+import '../Core/Axis/PlotLineOrBand.js';
 import '../parts/Tooltip.js';
 import '../parts/Pointer.js';
 import '../parts/MSPointer.js';

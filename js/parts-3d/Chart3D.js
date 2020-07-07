@@ -10,7 +10,7 @@
  *
  * */
 'use strict';
-import Axis from '../parts/Axis.js';
+import Axis from '../Core/Axis/Axis.js';
 import Axis3D from './Axis3D.js';
 import Chart from '../parts/Chart.js';
 import H from '../Core/Globals.js';

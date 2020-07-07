@@ -10,7 +10,7 @@
 
 'use strict';
 
-import type { AxisType } from './axis/types';
+import type { AxisType } from '../Core/Axis/Types';
 import type Chart from './Chart';
 import type SVGPath from './SVGPath';
 import H from '../Core/Globals.js';

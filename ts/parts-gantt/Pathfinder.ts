@@ -11,7 +11,7 @@
 
 'use strict';
 
-import type Axis from '../parts/Axis';
+import type Axis from '../Core/Axis/Axis';
 import type SVGPath from '../parts/SVGPath';
 import Chart from '../parts/Chart.js';
 import H from '../Core/Globals.js';

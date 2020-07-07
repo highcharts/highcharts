@@ -10,7 +10,7 @@
  *
  * */
 
-import type Axis from '../parts/Axis';
+import type Axis from '../Core/Axis/Axis';
 import U from '../Core/Utilities.js';
 const {
     addEvent
@@ -19,7 +19,7 @@ const {
 /**
  * @private
  */
-declare module '../parts/axis/types' {
+declare module '../Core/Axis/Types' {
     interface AxisComposition {
         vml?: VMLAxis3D['vml'];
     }

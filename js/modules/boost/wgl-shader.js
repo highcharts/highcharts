@@ -14,7 +14,7 @@ import U from '../../Core/Utilities.js';
 var clamp = U.clamp, error = U.error, pick = U.pick;
 /* eslint-disable valid-jsdoc */
 /**
- * A static shader mimicing axis translation functions found in parts/Axis
+ * A static shader mimicing axis translation functions found in Core/Axis
  *
  * @private
  * @function GLShader

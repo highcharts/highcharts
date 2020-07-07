@@ -10,7 +10,7 @@
  *
  * */
 'use strict';
-import Axis from '../parts/Axis.js';
+import Axis from '../Core/Axis/Axis.js';
 import H from '../Core/Globals.js';
 import SVGRenderer from '../parts/SVGRenderer.js';
 import U from '../Core/Utilities.js';

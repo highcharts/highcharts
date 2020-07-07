@@ -12,7 +12,7 @@
 
 'use strict';
 
-import type Axis from '../../../parts/Axis';
+import type Axis from '../../../Core/Axis/Axis';
 import type Chart from '../../../parts/Chart';
 import type Point from '../../../parts/Point';
 import HTMLUtilities from './htmlUtilities.js';

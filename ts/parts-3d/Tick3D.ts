@@ -13,7 +13,7 @@
 'use strict';
 
 import type SVGPath from '../parts/SVGPath';
-import type Tick from '../parts/Tick.js';
+import type Tick from '../Core/Axis/Tick.js';
 import U from '../Core/Utilities.js';
 const {
     addEvent,

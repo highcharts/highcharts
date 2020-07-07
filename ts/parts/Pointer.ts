@@ -10,7 +10,7 @@
 
 'use strict';
 
-import type Axis from './Axis';
+import type Axis from '../Core/Axis/Axis';
 import type Chart from './Chart';
 import type Point from './Point';
 import type SVGElement from './SVGElement';

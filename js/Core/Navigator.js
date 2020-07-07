@@ -8,18 +8,18 @@
  *
  * */
 'use strict';
-import Axis from './Axis.js';
+import Axis from './Axis/Axis.js';
 import Chart from '../parts/Chart.js';
 import Color from '../Core/Color.js';
 var color = Color.parse;
 import H from '../Core/Globals.js';
-import NavigatorAxis from './NavigatorAxis.js';
+import NavigatorAxis from './Axis/NavigatorAxis.js';
 import O from '../Core/Options.js';
 var defaultOptions = O.defaultOptions;
 import Scrollbar from './Scrollbar.js';
 import U from '../Core/Utilities.js';
 var addEvent = U.addEvent, clamp = U.clamp, correctFloat = U.correctFloat, defined = U.defined, destroyObjectProperties = U.destroyObjectProperties, erase = U.erase, extend = U.extend, find = U.find, isArray = U.isArray, isNumber = U.isNumber, merge = U.merge, pick = U.pick, removeEvent = U.removeEvent, splat = U.splat;
-import './Series.js';
+import '../parts/Series.js';
 var hasTouch = H.hasTouch, isTouchDevice = H.isTouchDevice, Series = H.Series, seriesTypes = H.seriesTypes, defaultSeriesType, 
 // Finding the min or max of a set of variables where we don't know if they
 // are defined, is a pattern that is repeated several places in Highcharts.

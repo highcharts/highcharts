@@ -11,7 +11,7 @@
 
 'use strict';
 
-import type Tick from '../parts/Tick';
+import type Tick from '../Core/Axis/Tick';
 import type TreeGridAxis from './TreeGridAxis';
 import U from '../Core/Utilities.js';
 const {
