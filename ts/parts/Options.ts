@@ -12,7 +12,7 @@
 
 import type Chart from './Chart';
 import type Point from './Point';
-import H from './Globals.js';
+import H from '../Core/Globals.js';
 
 /**
  * Internal types
@@ -549,7 +549,7 @@ declare global {
 import Time from './Time.js';
 import Color from './Color.js';
 const color = Color.parse;
-import U from './Utilities.js';
+import U from '../Core/Utilities.js';
 const {
     merge
 } = U;

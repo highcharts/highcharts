@@ -9,11 +9,11 @@
  * */
 'use strict';
 import Chart from '../parts/Chart.js';
-import H from '../parts/Globals.js';
+import H from '../Core/Globals.js';
 import O from '../parts/Options.js';
 var defaultOptions = O.defaultOptions;
 import SVGRenderer from '../parts/SVGRenderer.js';
-import U from '../parts/Utilities.js';
+import U from '../Core/Utilities.js';
 var extend = U.extend, getOptions = U.getOptions, merge = U.merge, pick = U.pick;
 import '../parts/Options.js';
 import '../parts/Chart.js';

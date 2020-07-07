@@ -10,7 +10,7 @@
 
 'use strict';
 
-import H from './Globals.js';
+import H from '../Core/Globals.js';
 
 /**
  * Internal types
@@ -123,7 +123,7 @@ const {
     parse: color
 } = Color;
 import LegendSymbolMixin from '../mixins/legend-symbol.js';
-import U from './Utilities.js';
+import U from '../Core/Utilities.js';
 const {
     animObject,
     clamp,

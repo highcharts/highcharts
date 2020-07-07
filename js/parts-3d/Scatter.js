@@ -10,11 +10,11 @@
  *
  * */
 'use strict';
-import H from '../parts/Globals.js';
+import H from '../Core/Globals.js';
 import Math3D from '../parts-3d/Math.js';
 var pointCameraDistance = Math3D.pointCameraDistance;
 import Point from '../parts/Point.js';
-import U from '../parts/Utilities.js';
+import U from '../Core/Utilities.js';
 var seriesType = U.seriesType;
 var seriesTypes = H.seriesTypes;
 /**

@@ -10,7 +10,7 @@
  * */
 'use strict';
 import Chart from '../parts/Chart.js';
-import H from '../parts/Globals.js';
+import H from '../Core/Globals.js';
 /**
  * The default pathfinder algorithm to use for a chart. It is possible to define
  * your own algorithms by adding them to the
@@ -37,7 +37,7 @@ import H from '../parts/Globals.js';
 import O from '../parts/Options.js';
 var defaultOptions = O.defaultOptions;
 import Point from '../parts/Point.js';
-import U from '../parts/Utilities.js';
+import U from '../Core/Utilities.js';
 var addEvent = U.addEvent, defined = U.defined, error = U.error, extend = U.extend, merge = U.merge, objectEach = U.objectEach, pick = U.pick, splat = U.splat;
 import pathfinderAlgorithms from './PathfinderAlgorithms.js';
 import './ArrowSymbols.js';

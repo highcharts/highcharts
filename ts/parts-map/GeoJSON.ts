@@ -12,12 +12,12 @@
 
 import type SVGPath from '../parts/SVGPath';
 import Chart from '../parts/Chart.js';
-import H from '../parts/Globals.js';
+import H from '../Core/Globals.js';
 const {
     win
 } = H;
 import '../parts/Options.js';
-import U from '../parts/Utilities.js';
+import U from '../Core/Utilities.js';
 const {
     error,
     extend,

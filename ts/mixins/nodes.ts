@@ -4,7 +4,7 @@
  *
  * */
 
-import H from '../parts/Globals.js';
+import H from '../Core/Globals.js';
 
 /**
  * Internal types
@@ -81,7 +81,7 @@ declare global {
 }
 
 import Point from '../parts/Point.js';
-import U from '../parts/Utilities.js';
+import U from '../Core/Utilities.js';
 const {
     defined,
     extend,

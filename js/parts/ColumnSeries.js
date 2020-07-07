@@ -8,7 +8,7 @@
  *
  * */
 'use strict';
-import H from './Globals.js';
+import H from '../Core/Globals.js';
 /**
  * Adjusted width and x offset of the columns for grouping.
  *
@@ -27,7 +27,7 @@ import H from './Globals.js';
 import Color from './Color.js';
 var color = Color.parse;
 import LegendSymbolMixin from '../mixins/legend-symbol.js';
-import U from './Utilities.js';
+import U from '../Core/Utilities.js';
 var animObject = U.animObject, clamp = U.clamp, defined = U.defined, extend = U.extend, isNumber = U.isNumber, merge = U.merge, pick = U.pick, seriesType = U.seriesType, objectEach = U.objectEach;
 import './Series.js';
 import './Options.js';

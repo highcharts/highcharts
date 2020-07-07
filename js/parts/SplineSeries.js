@@ -8,7 +8,7 @@
  *
  * */
 'use strict';
-import U from './Utilities.js';
+import U from '../Core/Utilities.js';
 var pick = U.pick, seriesType = U.seriesType;
 import './Options.js';
 import './Series.js';

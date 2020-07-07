@@ -13,7 +13,7 @@
 
 import type Point from '../parts/Point';
 import type SVGPath from '../parts/SVGPath';
-import U from '../parts/Utilities.js';
+import U from '../Core/Utilities.js';
 const {
     extend,
     pick

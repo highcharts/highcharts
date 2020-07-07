@@ -12,12 +12,12 @@ import Axis from './Axis.js';
 import Chart from '../parts/Chart.js';
 import Color from './Color.js';
 var color = Color.parse;
-import H from './Globals.js';
+import H from '../Core/Globals.js';
 import NavigatorAxis from './NavigatorAxis.js';
 import O from './Options.js';
 var defaultOptions = O.defaultOptions;
 import Scrollbar from './Scrollbar.js';
-import U from './Utilities.js';
+import U from '../Core/Utilities.js';
 var addEvent = U.addEvent, clamp = U.clamp, correctFloat = U.correctFloat, defined = U.defined, destroyObjectProperties = U.destroyObjectProperties, erase = U.erase, extend = U.extend, find = U.find, isArray = U.isArray, isNumber = U.isNumber, merge = U.merge, pick = U.pick, removeEvent = U.removeEvent, splat = U.splat;
 import './Series.js';
 var hasTouch = H.hasTouch, isTouchDevice = H.isTouchDevice, Series = H.Series, seriesTypes = H.seriesTypes, defaultSeriesType, 

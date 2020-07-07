@@ -5,7 +5,7 @@
  * */
 import ControllableMixin from './controllableMixin.js';
 import ControllablePath from './ControllablePath.js';
-import U from '../../parts/Utilities.js';
+import U from '../../Core/Utilities.js';
 var merge = U.merge;
 /**
  * @typedef {Annotation.ControllablePath.AttrsMap}

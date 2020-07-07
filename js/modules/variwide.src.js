@@ -10,8 +10,8 @@
  *
  * */
 'use strict';
-import H from '../parts/Globals.js';
-import U from '../parts/Utilities.js';
+import H from '../Core/Globals.js';
+import U from '../Core/Utilities.js';
 var addEvent = U.addEvent, isNumber = U.isNumber, pick = U.pick, seriesType = U.seriesType, wrap = U.wrap;
 import '../parts/AreaSeries.js';
 var seriesTypes = H.seriesTypes;

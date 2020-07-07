@@ -12,7 +12,7 @@
 
 'use strict';
 
-import H from '../parts/Globals.js';
+import H from '../Core/Globals.js';
 import O from '../parts/Options.js';
 const { dateFormat } = O;
 
@@ -56,7 +56,7 @@ declare global {
 }
 
 import Time from '../parts/Time.js';
-import U from '../parts/Utilities.js';
+import U from '../Core/Utilities.js';
 const {
     addEvent,
     merge,

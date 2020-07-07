@@ -12,8 +12,8 @@
 'use strict';
 import Axis from '../parts/Axis.js';
 import Chart from '../parts/Chart.js';
-import H from '../parts/Globals.js';
-import U from '../parts/Utilities.js';
+import H from '../Core/Globals.js';
+import U from '../Core/Utilities.js';
 var addEvent = U.addEvent, arrayMax = U.arrayMax, arrayMin = U.arrayMin, defined = U.defined, erase = U.erase, extend = U.extend, format = U.format, merge = U.merge, pick = U.pick, setOptions = U.setOptions, splat = U.splat, wrap = U.wrap;
 import '../parts/Series.js';
 // Extensions for parallel coordinates plot.

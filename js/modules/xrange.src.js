@@ -11,11 +11,11 @@
  * */
 'use strict';
 import Axis from '../parts/Axis.js';
-import H from '../parts/Globals.js';
+import H from '../Core/Globals.js';
 import Color from '../parts/Color.js';
 var color = Color.parse;
 import Point from '../parts/Point.js';
-import U from '../parts/Utilities.js';
+import U from '../Core/Utilities.js';
 var addEvent = U.addEvent, clamp = U.clamp, correctFloat = U.correctFloat, defined = U.defined, find = U.find, isNumber = U.isNumber, isObject = U.isObject, merge = U.merge, pick = U.pick, seriesType = U.seriesType;
 /* *
  * @interface Highcharts.PointOptionsObject in parts/Point.ts

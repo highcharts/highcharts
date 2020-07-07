@@ -8,7 +8,7 @@
  *
  * */
 'use strict';
-import H from '../parts/Globals.js';
+import H from '../Core/Globals.js';
 /**
  * @private
  * @interface Highcharts.RadianAngles
@@ -19,7 +19,7 @@ import H from '../parts/Globals.js';
 * @name Highcharts.RadianAngles#start
 * @type {number}
 */
-import U from '../parts/Utilities.js';
+import U from '../Core/Utilities.js';
 var isNumber = U.isNumber, pick = U.pick, relativeLength = U.relativeLength;
 var deg2rad = H.deg2rad;
 /* eslint-disable valid-jsdoc */

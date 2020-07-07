@@ -8,7 +8,7 @@ import ControllableMixin from './controllableMixin.js';
 import MockPoint from '../MockPoint.js';
 import SVGRenderer from '../../parts/SVGRenderer.js';
 import Tooltip from '../../parts/Tooltip.js';
-import U from '../../parts/Utilities.js';
+import U from '../../Core/Utilities.js';
 var extend = U.extend, format = U.format, isNumber = U.isNumber, pick = U.pick;
 import '../../parts/SVGRenderer.js';
 /* eslint-disable no-invalid-this, valid-jsdoc */

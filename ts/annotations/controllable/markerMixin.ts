@@ -10,7 +10,7 @@ import type ControllablePath from './ControllablePath';
 import type SVGElement from '../../parts/SVGElement';
 import Chart from '../../parts/Chart.js';
 import SVGRenderer from '../../parts/SVGRenderer.js';
-import U from '../../parts/Utilities.js';
+import U from '../../Core/Utilities.js';
 const {
     addEvent,
     defined,

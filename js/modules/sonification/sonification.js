@@ -10,11 +10,11 @@
  *
  * */
 'use strict';
-import H from '../../parts/Globals.js';
+import H from '../../Core/Globals.js';
 import O from '../../parts/Options.js';
 var defaultOptions = O.defaultOptions;
 import Point from '../../parts/Point.js';
-import U from '../../parts/Utilities.js';
+import U from '../../Core/Utilities.js';
 var addEvent = U.addEvent, extend = U.extend, merge = U.merge;
 import Instrument from './Instrument.js';
 import instruments from './instrumentDefinitions.js';

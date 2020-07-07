@@ -19,7 +19,7 @@ var __extends = (this && this.__extends) || (function () {
 })();
 import Annotation from '../../annotations/annotations.src.js';
 import ControlPoint from '../ControlPoint.js';
-import U from '../../parts/Utilities.js';
+import U from '../../Core/Utilities.js';
 var extend = U.extend, isNumber = U.isNumber, merge = U.merge;
 /* eslint-disable no-invalid-this, valid-jsdoc */
 var Measure = /** @class */ (function (_super) {

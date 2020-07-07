@@ -10,9 +10,9 @@ import type Annotation from '../annotations.src';
 import type SVGElement from '../../parts/SVGElement';
 import type SVGPath from '../../parts/SVGPath';
 import ControllableMixin from './controllableMixin.js';
-import H from './../../parts/Globals.js';
+import H from '../../Core/Globals.js';
 import MarkerMixin from './markerMixin.js';
-import U from './../../parts/Utilities.js';
+import U from '../../Core/Utilities.js';
 const {
     extend
 } = U;

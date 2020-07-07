@@ -11,7 +11,7 @@
  * */
 
 import type Axis from '../parts/Axis';
-import U from '../parts/Utilities.js';
+import U from '../Core/Utilities.js';
 const {
     addEvent
 } = U;

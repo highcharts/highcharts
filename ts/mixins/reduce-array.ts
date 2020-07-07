@@ -9,7 +9,7 @@
  * */
 
 'use strict';
-import H from '../parts/Globals.js';
+import H from '../Core/Globals.js';
 
 /**
  * Internal types
@@ -29,7 +29,7 @@ declare global {
     }
 }
 
-import '../parts/Utilities.js';
+import '../Core/Utilities.js';
 
 var reduceArrayMixin: Highcharts.ReduceArrayMixin = {
     /**

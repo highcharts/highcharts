@@ -11,7 +11,7 @@
  * @param {Highcharts.AnnotationControllable} target
  * @return {Highcharts.PositionObject}
  */
-import U from './../parts/Utilities.js';
+import U from './../Core/Utilities.js';
 var extend = U.extend, merge = U.merge, pick = U.pick;
 import eventEmitterMixin from './eventEmitterMixin.js';
 /* eslint-disable no-invalid-this, valid-jsdoc */

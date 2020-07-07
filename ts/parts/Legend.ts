@@ -13,7 +13,7 @@
 import type Chart from './Chart';
 import type ColorAxisGlobal from '../parts-map/ColorAxis';
 import type Point from './Point';
-import H from './Globals.js';
+import H from '../Core/Globals.js';
 
 /**
  * Internal types
@@ -185,7 +185,7 @@ declare global {
  * @type {"legendItemClick"}
  */
 
-import U from './Utilities.js';
+import U from '../Core/Utilities.js';
 const {
     addEvent,
     animObject,

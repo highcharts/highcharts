@@ -6,7 +6,7 @@
 'use strict';
 import Chart from '../../parts/Chart.js';
 import SVGRenderer from '../../parts/SVGRenderer.js';
-import U from '../../parts/Utilities.js';
+import U from '../../Core/Utilities.js';
 var addEvent = U.addEvent, defined = U.defined, merge = U.merge, objectEach = U.objectEach, uniqueKey = U.uniqueKey;
 /**
  * Options for configuring markers for annotations.

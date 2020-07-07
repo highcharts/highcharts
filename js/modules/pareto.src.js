@@ -8,7 +8,7 @@
  *
  * */
 'use strict';
-import U from '../parts/Utilities.js';
+import U from '../Core/Utilities.js';
 var correctFloat = U.correctFloat, merge = U.merge, seriesType = U.seriesType;
 import '../parts/Options.js';
 import derivedSeriesMixin from '../mixins/derived-series.js';

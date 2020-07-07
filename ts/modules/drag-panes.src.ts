@@ -14,13 +14,13 @@
 
 'use strict';
 
-import H from '../parts/Globals.js';
+import H from '../Core/Globals.js';
 const {
     hasTouch
 } = H;
 import Axis from '../parts/Axis.js';
 import Pointer from '../parts/Pointer.js';
-import U from '../parts/Utilities.js';
+import U from '../Core/Utilities.js';
 const {
     addEvent,
     clamp,

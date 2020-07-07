@@ -14,8 +14,8 @@ import type { AxisBreakBorderObject, AxisBreakObject } from '../parts/axis/types
 import type Point from '../parts/Point';
 import type SVGPath from '../parts/SVGPath';
 import Axis from '../parts/Axis.js';
-import H from '../parts/Globals.js';
-import U from '../parts/Utilities.js';
+import H from '../Core/Globals.js';
+import U from '../Core/Utilities.js';
 const {
     addEvent,
     find,

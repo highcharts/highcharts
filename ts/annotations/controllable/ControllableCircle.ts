@@ -9,7 +9,7 @@
 import type Annotation from '../annotations.src';
 import ControllableMixin from './controllableMixin.js';
 import ControllablePath from './ControllablePath.js';
-import U from '../../parts/Utilities.js';
+import U from '../../Core/Utilities.js';
 const {
     merge
 } = U;

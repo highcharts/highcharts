@@ -16,9 +16,9 @@ import type PlotLineOrBand from './PlotLineOrBand';
 import type Point from './Point';
 import type SVGPath from './SVGPath';
 import Color from './Color.js';
-import H from './Globals.js';
+import H from '../Core/Globals.js';
 import Tick from './Tick.js';
-import U from './Utilities.js';
+import U from '../Core/Utilities.js';
 const {
     addEvent,
     animObject,

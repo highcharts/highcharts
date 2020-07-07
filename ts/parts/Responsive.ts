@@ -11,7 +11,7 @@
 'use strict';
 
 import Chart from './Chart.js';
-import U from './Utilities.js';
+import U from '../Core/Utilities.js';
 const {
     find,
     isArray,

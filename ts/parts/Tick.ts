@@ -11,7 +11,7 @@
 'use strict';
 
 import type SVGPath from '../parts/SVGPath';
-import H from './Globals.js';
+import H from '../Core/Globals.js';
 
 /**
  * Internal types
@@ -136,7 +136,7 @@ declare global {
  */
 
 
-import U from './Utilities.js';
+import U from '../Core/Utilities.js';
 const {
     clamp,
     correctFloat,

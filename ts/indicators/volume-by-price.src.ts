@@ -15,7 +15,7 @@
 import type { AxisType } from '../parts/axis/types';
 import type Chart from '../parts/Chart';
 import type SVGPath from '../parts/SVGPath';
-import H from '../parts/Globals.js';
+import H from '../Core/Globals.js';
 
 
 /**
@@ -125,7 +125,7 @@ declare global {
 }
 
 import Point from '../parts/Point.js';
-import U from '../parts/Utilities.js';
+import U from '../Core/Utilities.js';
 const {
     addEvent,
     animObject,

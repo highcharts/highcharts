@@ -11,7 +11,7 @@
  *
  * */
 'use strict';
-import U from '../parts/Utilities.js';
+import U from '../Core/Utilities.js';
 var seriesType = U.seriesType;
 import '../parts/ColumnSeries.js';
 import '../parts/SVGRenderer.js';

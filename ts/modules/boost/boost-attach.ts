@@ -14,11 +14,11 @@
 
 import type Chart from '../../parts/Chart';
 import GLRenderer from './wgl-renderer.js';
-import H from '../../parts/Globals.js';
+import H from '../../Core/Globals.js';
 const {
     doc
 } = H;
-import U from '../../parts/Utilities.js';
+import U from '../../Core/Utilities.js';
 const {
     error
 } = U;

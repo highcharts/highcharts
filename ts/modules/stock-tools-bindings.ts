@@ -16,9 +16,9 @@ import type Annotation from '../annotations/annotations.src';
 import type { AxisType } from '../parts/axis/types';
 import type Chart from '../parts/Chart';
 import type Point from '../parts/Point';
-import H from '../parts/Globals.js';
+import H from '../Core/Globals.js';
 import NavigationBindings from '../annotations/navigationBindings.js';
-import U from '../parts/Utilities.js';
+import U from '../Core/Utilities.js';
 const {
     correctFloat,
     defined,

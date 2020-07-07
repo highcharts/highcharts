@@ -8,11 +8,11 @@
  *
  * */
 'use strict';
-import H from './Globals.js';
+import H from '../Core/Globals.js';
 import LegendSymbolMixin from '../mixins/legend-symbol.js';
 import O from '../parts/Options.js';
 var defaultOptions = O.defaultOptions;
-import U from './Utilities.js';
+import U from '../Core/Utilities.js';
 var seriesType = U.seriesType;
 import './AreaSeries.js';
 import './SplineSeries.js';

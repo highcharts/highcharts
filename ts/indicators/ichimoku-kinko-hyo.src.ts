@@ -10,7 +10,7 @@
 
 import type Point from '../parts/Point';
 import type SVGPath from '../parts/SVGPath';
-import H from '../parts/Globals.js';
+import H from '../Core/Globals.js';
 
 /* eslint-disable @typescript-eslint/interface-name-prefix */
 
@@ -111,7 +111,7 @@ declare global {
 
 import Color from '../parts/Color.js';
 const color = Color.parse;
-import U from '../parts/Utilities.js';
+import U from '../Core/Utilities.js';
 const {
     defined,
     isArray,
