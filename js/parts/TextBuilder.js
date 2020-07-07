@@ -45,7 +45,7 @@ var TextBuilder = /** @class */ (function () {
         this.noWrap = Boolean(textStyles && textStyles.whiteSpace === 'nowrap');
         this.fontSize = textStyles && textStyles.fontSize;
     }
-    TextBuilder.prototype.buildText = function () {
+    TextBuilder.prototype.buildSVG = function () {
         var wrapper = this.svgElement;
         var textNode = wrapper.element, renderer = wrapper.renderer, forExport = renderer.forExport, textStr = pick(wrapper.textStr, '').toString(), hasMarkup = textStr.indexOf('<') !== -1, lines, childNodes = textNode.childNodes, parentX = attr(textNode, 'x'), textCache, isSubsequentLine, i = childNodes.length, tempParent = this.width && !wrapper.added && renderer.box;
         var regexMatchBreaks = /<br.*?>/g;
@@ -90,7 +90,7 @@ var TextBuilder = /** @class */ (function () {
             // Step 2. Do as many as we can of the modifications to the tree
             // structure before it is added to the DOM
             this.modifyTree(tree);
-            renderer.addTree(tree, wrapper);
+            renderer.addTree(tree, wrapper.element);
             // Step 3. Some modifications can't be done until the structure is
             // in the DOM, because we need to read computed metrics.
             this.modifyDOM();

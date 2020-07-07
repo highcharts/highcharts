@@ -454,14 +454,13 @@ var SVGRenderer = /** @class */ (function () {
      * The inserted node.
      */
     SVGRenderer.prototype.addTree = function (tree, parent) {
-        var ren = this;
-        var NS = parent.element.namespaceURI || SVG_NS;
+        var NS = parent.namespaceURI || SVG_NS;
         /**
          * @private
          * @param {Highcharts.NodeTreeObject} subtree - SVG definition
          * @param {Element} [parentNode] - parent node
          */
-        function recurse(subtree, parentNode) {
+        function recurse(subtree, subParent) {
             var ret;
             splat(subtree).forEach(function (item) {
                 var textNode = item.textContent ?
@@ -492,14 +491,14 @@ var SVGRenderer = /** @class */ (function () {
                 }
                 // Add to the tree
                 if (node) {
-                    parentNode.appendChild(node);
+                    subParent.appendChild(node);
                 }
                 ret = node;
             });
             // Return last node added (on top level it's the only one)
             return ret;
         }
-        return recurse(tree, parent.element);
+        return recurse(tree, parent);
     };
     /**
      * General method for adding a definition to the SVG `defs` tag. Can be used
@@ -518,7 +517,7 @@ var SVGRenderer = /** @class */ (function () {
      * The inserted node.
      */
     SVGRenderer.prototype.definition = function (def) {
-        return this.addTree(def, this.defs);
+        return this.addTree(def, this.defs.element);
     };
     /**
      * Get the global style setting for the renderer.
@@ -640,8 +639,7 @@ var SVGRenderer = /** @class */ (function () {
      * The parent SVGElement.
      */
     SVGRenderer.prototype.buildText = function (wrapper) {
-        var builder = new TextBuilder(wrapper);
-        builder.buildText();
+        new TextBuilder(wrapper).buildSVG();
     };
     /**
      * Returns white for dark colors and black for bright colors.

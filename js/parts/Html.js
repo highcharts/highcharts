@@ -279,7 +279,7 @@ extend(SVGRenderer.prototype, /** @lends SVGRenderer.prototype */ {
                 if (pick(value, '') !== '') {
                     var builder = new TextBuilder(this);
                     var tree = builder.parseMarkup(value);
-                    renderer.addTree(tree, this);
+                    renderer.addTree(tree, this.element);
                 }
                 this.textStr = value;
                 wrapper.doTransform = true;

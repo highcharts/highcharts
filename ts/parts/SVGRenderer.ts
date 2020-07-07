@@ -145,7 +145,7 @@ declare global {
             public width: number;
             public addTree(
                 def: NodeTreeObject|Array<NodeTreeObject>,
-                parent: SVGElement
+                parent: Element
             ): SVGElement;
             public arc(attribs: SVGAttributes): SVGElement;
             public arc(
@@ -793,10 +793,9 @@ class SVGRenderer {
             Highcharts.NodeTreeObject|
             Array<Highcharts.NodeTreeObject>
         ),
-        parent: SVGElement
+        parent: Element
     ): SVGElement {
-        const ren = this;
-        const NS = parent.element.namespaceURI || SVG_NS;
+        const NS = parent.namespaceURI || SVG_NS;
 
         /**
          * @private
@@ -808,7 +807,7 @@ class SVGRenderer {
                 Highcharts.NodeTreeObject|
                 Array<Highcharts.NodeTreeObject>
             ),
-            parentNode: Element
+            subParent: Element
         ): SVGElement {
             var ret: any;
 
@@ -850,7 +849,7 @@ class SVGRenderer {
 
                 // Add to the tree
                 if (node) {
-                    parentNode.appendChild(node);
+                    subParent.appendChild(node);
                 }
 
                 ret = node;
@@ -859,7 +858,7 @@ class SVGRenderer {
             // Return last node added (on top level it's the only one)
             return ret;
         }
-        return recurse(tree, parent.element);
+        return recurse(tree, parent);
     }
 
     /**
@@ -879,7 +878,7 @@ class SVGRenderer {
      * The inserted node.
      */
     public definition(def: Highcharts.NodeTreeObject): SVGElement {
-        return this.addTree(def, this.defs);
+        return this.addTree(def, this.defs.element);
     }
 
     /**
@@ -1021,10 +1020,7 @@ class SVGRenderer {
      * The parent SVGElement.
      */
     public buildText(wrapper: SVGElement): void {
-
-        const builder = new TextBuilder(wrapper);
-
-        builder.buildText();
+        new TextBuilder(wrapper).buildSVG();
     }
 
     /**

@@ -89,7 +89,7 @@ class TextBuilder {
     public textOutline: any;
     public width?: number;
 
-    public buildText(): void {
+    public buildSVG(): void {
         const wrapper = this.svgElement;
         var textNode = wrapper.element,
             renderer = wrapper.renderer,
@@ -158,7 +158,7 @@ class TextBuilder {
             // structure before it is added to the DOM
             this.modifyTree(tree);
 
-            renderer.addTree(tree, wrapper);
+            renderer.addTree(tree, wrapper.element);
 
             // Step 3. Some modifications can't be done until the structure is
             // in the DOM, because we need to read computed metrics.
