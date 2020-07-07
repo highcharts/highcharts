@@ -635,7 +635,7 @@ var Axis = /** @class */ (function () {
                         if (xData.length) {
                             var isPositive = function (number) { return number > 0; };
                             xData = axis.logarithmic ?
-                                xData.filter(isNumber).filter(isPositive) :
+                                xData.filter(axis.validatePositiveValue) :
                                 xData;
                             xExtremes = series.getXExtremes(xData);
                             // If xData contains values which is not numbers,
@@ -3029,6 +3029,20 @@ var Axis = /** @class */ (function () {
     Axis.prototype.hasVerticalPanning = function () {
         var _a, _b;
         return /y/.test(((_b = (_a = this.chart.options.chart) === null || _a === void 0 ? void 0 : _a.panning) === null || _b === void 0 ? void 0 : _b.type) || '');
+    };
+    /**
+    * Check whether the given value is a positive valid axis value.
+    *
+    * @private
+    * @function Highcharts.Axis#validatePositiveValue
+    *
+    * @param {unknown} value
+    * The axis value
+    * @return {boolean}
+    *
+    */
+    Axis.prototype.validatePositiveValue = function (value) {
+        return isNumber(value) && value > 0;
     };
     /* *
      *

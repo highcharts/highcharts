@@ -5199,6 +5199,13 @@ H.Series = seriesType<Highcharts.LineSeries>(
                     point.isNull = true;
                 }
 
+                if (
+                    yAxis.positiveValuesOnly && !yAxis.validatePositiveValue(yValue) ||
+                    xAxis.positiveValuesOnly && !xAxis.validatePositiveValue(xValue)
+                ) {
+                    point.isNull;
+                }
+
                 // Get the plotX translation
                 point.plotX = plotX = correctFloat( // #5236
                     limitedRange((xAxis.translate as any)( // #3923
