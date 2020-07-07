@@ -12,9 +12,9 @@
 
 import type Chart from '../parts/Chart';
 import type SVGPath from '../parts/SVGPath';
-import Axis from './Axis.js';
+import Axis from '../Core/Axis/Axis.js';
 import H from '../Core/Globals.js';
-import ScrollbarAxis from './ScrollbarAxis.js';
+import ScrollbarAxis from './Axis/ScrollbarAxis.js';
 import U from '../Core/Utilities.js';
 const {
     addEvent,

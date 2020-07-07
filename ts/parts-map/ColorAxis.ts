@@ -10,9 +10,9 @@
 
 'use strict';
 
-import type { AxisLike } from '../parts/axis/types';
+import type { AxisLike } from '../Core/Axis/Types';
 import type SVGPath from '../parts/SVGPath';
-import Axis from '../parts/Axis.js';
+import Axis from '../Core/Axis/Axis.js';
 import Chart from '../parts/Chart.js';
 import Color from '../Core/Color.js';
 const {

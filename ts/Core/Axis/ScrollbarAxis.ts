@@ -9,9 +9,9 @@
  * */
 
 import type Axis from './Axis';
-import type Scrollbar from './Scrollbar';
-import H from '../Core/Globals.js';
-import U from '../Core/Utilities.js';
+import type Scrollbar from '../Scrollbar';
+import H from '../Globals.js';
+import U from '../Utilities.js';
 const {
     addEvent,
     defined,
@@ -21,7 +21,7 @@ const {
 /**
  * @private
  */
-declare module '../parts/axis/types' {
+declare module './Types' {
     interface AxisComposition {
         scrollbar?: ScrollbarAxis['scrollbar'];
     }

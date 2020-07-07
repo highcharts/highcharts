@@ -9,8 +9,8 @@
  *
  * */
 'use strict';
-import Axis from '../parts/Axis.js';
-import Tick from '../parts/Tick.js';
+import Axis from '../Core/Axis/Axis.js';
+import Tick from '../Core/Axis/Tick.js';
 import Tree from './Tree.js';
 import TreeGridTick from './TreeGridTick.js';
 import TreeSeriesMixin from '../mixins/tree-series.js';

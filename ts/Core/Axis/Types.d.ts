@@ -8,9 +8,9 @@
  *
  * */
 
-import type Axis from '../Axis';
-import type Chart from '../Chart';
-import type Tick from '../Tick';
+import type Axis from './Axis';
+import type Chart from '../../parts/Chart';
+import type Tick from './Tick';
 
 /**
  * All possible axis types.

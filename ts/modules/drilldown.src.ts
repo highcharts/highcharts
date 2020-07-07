@@ -21,7 +21,7 @@ const {
 } = O;
 import Point from '../parts/Point.js';
 import SVGRenderer from '../parts/SVGRenderer.js';
-import Tick from '../parts/Tick.js';
+import Tick from '../Core/Axis/Tick.js';
 import U from '../Core/Utilities.js';
 const {
     addEvent,

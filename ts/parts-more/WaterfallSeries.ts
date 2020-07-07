@@ -12,7 +12,7 @@
 
 import type SVGElement from '../parts/SVGElement';
 import type SVGPath from '../parts/SVGPath';
-import Axis from '../parts/Axis.js';
+import Axis from '../Core/Axis/Axis.js';
 import Chart from '../parts/Chart.js';
 import H from '../Core/Globals.js';
 import Point from '../parts/Point.js';
@@ -117,7 +117,7 @@ function ownProp(obj: unknown, key: string): boolean {
 /**
  * @private
  */
-declare module '../parts/axis/types' {
+declare module '../Core/Axis/Types' {
     interface AxisComposition {
         waterfall?: WaterfallAxis['waterfall'];
     }

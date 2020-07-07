@@ -117,7 +117,7 @@ const {
     seriesType
 } = U;
 
-import '../parts/Axis.js';
+import '../Core/Axis/Axis.js';
 import '../parts/Series.js';
 import '../parts/ScatterSeries.js';
 import './BubbleLegend.js';

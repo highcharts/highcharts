@@ -8,7 +8,7 @@
  *
  * */
 'use strict';
-import Axis from './Axis.js';
+import Axis from '../Core/Axis/Axis.js';
 import Chart from './Chart.js';
 import H from '../Core/Globals.js';
 import Point from './Point.js';
@@ -19,10 +19,10 @@ import './Pointer.js';
 import './Series.js';
 // Has a dependency on Navigator due to the use of
 // defaultOptions.navigator
-import './Navigator.js';
+import '../Core/Navigator.js';
 // Has a dependency on Scrollbar due to the use of
 // defaultOptions.scrollbar
-import './Scrollbar.js';
+import '../Core/Scrollbar.js';
 // Has a dependency on RangeSelector due to the use of
 // defaultOptions.rangeSelector
 import './RangeSelector.js';

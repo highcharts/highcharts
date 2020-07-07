@@ -13,7 +13,7 @@
 'use strict';
 
 import type Annotation from '../annotations/annotations.src';
-import type { AxisType } from '../parts/axis/types';
+import type { AxisType } from '../Core/Axis/Types';
 import type Chart from '../parts/Chart';
 import type Point from '../parts/Point';
 import H from '../Core/Globals.js';

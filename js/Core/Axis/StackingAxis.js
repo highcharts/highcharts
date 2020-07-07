@@ -7,7 +7,7 @@
  *  !!!!!!! SOURCE GETS TRANSPILED BY TYPESCRIPT. EDIT TS FILE ONLY. !!!!!!!
  *
  * */
-import U from '../Core/Utilities.js';
+import U from '../Utilities.js';
 var addEvent = U.addEvent, destroyObjectProperties = U.destroyObjectProperties, fireEvent = U.fireEvent, objectEach = U.objectEach, pick = U.pick;
 /* eslint-disable valid-jsdoc */
 /**

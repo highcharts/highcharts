@@ -10,10 +10,10 @@
 
 'use strict';
 
-import type { AxisBreakBorderObject, AxisBreakObject } from '../parts/axis/types';
+import type { AxisBreakBorderObject, AxisBreakObject } from '../Core/Axis/Types';
 import type Point from '../parts/Point';
 import type SVGPath from '../parts/SVGPath';
-import Axis from '../parts/Axis.js';
+import Axis from '../Core/Axis/Axis.js';
 import H from '../Core/Globals.js';
 import U from '../Core/Utilities.js';
 const {
@@ -48,7 +48,7 @@ declare global {
 /**
  * @private
  */
-declare module '../parts/axis/types' {
+declare module '../Core/Axis/Types' {
     interface AxisComposition {
         brokenAxis?: BrokenAxis['brokenAxis'];
     }

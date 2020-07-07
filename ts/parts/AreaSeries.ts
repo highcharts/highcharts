@@ -10,7 +10,7 @@
 
 'use strict';
 
-import type StackingAxis from './StackingAxis';
+import type StackingAxis from '../Core/Axis/StackingAxis';
 import type SVGPath from '../parts/SVGPath';
 import H from '../Core/Globals.js';
 

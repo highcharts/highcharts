@@ -12,7 +12,7 @@
 
 'use strict';
 
-import type StackingAxis from '../parts/StackingAxis';
+import type StackingAxis from '../Core/Axis/StackingAxis';
 import H from '../Core/Globals.js';
 
 /**

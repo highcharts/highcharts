@@ -10,15 +10,15 @@
 
 'use strict';
 
-import type { AxisComposition, AxisLike } from './axis/types';
-import type Chart from './Chart';
+import type { AxisComposition, AxisLike } from './Types';
+import type Chart from '../../parts/Chart';
 import type PlotLineOrBand from './PlotLineOrBand';
-import type Point from './Point';
-import type SVGPath from './SVGPath';
-import Color from '../Core/Color.js';
-import H from '../Core/Globals.js';
+import type Point from '../../parts/Point';
+import type SVGPath from '../../parts/SVGPath';
+import Color from '../Color.js';
+import H from '../Globals.js';
 import Tick from './Tick.js';
-import U from '../Core/Utilities.js';
+import U from '../Utilities.js';
 const {
     addEvent,
     animObject,
@@ -716,7 +716,7 @@ declare global {
  * @return {string}
  */
 
-import O from '../Core/Options.js';
+import O from '../Options.js';
 const { defaultOptions } = O;
 
 var deg2rad = H.deg2rad;

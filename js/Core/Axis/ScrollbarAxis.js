@@ -7,8 +7,8 @@
  *  !!!!!!! SOURCE GETS TRANSPILED BY TYPESCRIPT. EDIT TS FILE ONLY. !!!!!!!
  *
  * */
-import H from '../Core/Globals.js';
-import U from '../Core/Utilities.js';
+import H from '../Globals.js';
+import U from '../Utilities.js';
 var addEvent = U.addEvent, defined = U.defined, pick = U.pick;
 /* eslint-disable no-invalid-this, valid-jsdoc */
 /**

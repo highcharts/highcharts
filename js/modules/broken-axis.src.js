@@ -8,7 +8,7 @@
  *
  * */
 'use strict';
-import Axis from '../parts/Axis.js';
+import Axis from '../Core/Axis/Axis.js';
 import H from '../Core/Globals.js';
 import U from '../Core/Utilities.js';
 var addEvent = U.addEvent, find = U.find, fireEvent = U.fireEvent, isArray = U.isArray, isNumber = U.isNumber, pick = U.pick;

@@ -261,7 +261,7 @@ declare global {
 
 /* eslint-disable no-invalid-this */
 
-import '../parts/Axis.js';
+import '../Core/Axis/Axis.js';
 import '../parts/Series.js';
 
 var Series = H.Series,
