@@ -42,7 +42,7 @@ declare global {
 }
 
 import LegendSymbolMixin from '../mixins/legend-symbol.js';
-import O from '../parts/Options.js';
+import O from './Options.js';
 const { defaultOptions } = O;
 import U from '../Core/Utilities.js';
 const {

@@ -8,7 +8,7 @@
  *
  * */
 'use strict';
-import H from '../Core/Globals.js';
+import H from './Globals.js';
 /**
  * Gets fired when the legend item belonging to a point is clicked. The default
  * action is to toggle the visibility of the point. This can be prevented by

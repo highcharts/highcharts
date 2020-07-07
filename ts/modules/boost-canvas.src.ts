@@ -75,7 +75,7 @@ declare global {
     }
 }
 
-import Color from '../parts/Color.js';
+import Color from '../Core/Color.js';
 const color = Color.parse;
 import U from '../Core/Utilities.js';
 const {

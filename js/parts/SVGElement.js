@@ -8,7 +8,7 @@
  *
  * */
 'use strict';
-import Color from './Color.js';
+import Color from '../Core/Color.js';
 import H from '../Core/Globals.js';
 var deg2rad = H.deg2rad, doc = H.doc, hasTouch = H.hasTouch, isFirefox = H.isFirefox, noop = H.noop, svg = H.svg, SVG_NS = H.SVG_NS, win = H.win;
 import U from '../Core/Utilities.js';

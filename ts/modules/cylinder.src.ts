@@ -79,7 +79,7 @@ declare global {
     }
 }
 
-import Color from '../parts/Color.js';
+import Color from '../Core/Color.js';
 const color = Color.parse;
 import Math3D from '../parts-3d/Math.js';
 const { perspective } = Math3D;

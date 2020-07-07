@@ -10,7 +10,7 @@
 
 'use strict';
 
-import H from '../Core/Globals.js';
+import H from './Globals.js';
 
 /**
  * Internal types

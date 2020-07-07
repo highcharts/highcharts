@@ -175,8 +175,8 @@ import H from '../Core/Globals.js';
 * @name Highcharts.ChartSelectionAxisContextObject#min
 * @type {number}
 */
-import Time from './Time.js';
-import Color from './Color.js';
+import Time from '../Core/Time.js';
+import Color from '../Core/Color.js';
 var color = Color.parse;
 import U from '../Core/Utilities.js';
 var merge = U.merge;

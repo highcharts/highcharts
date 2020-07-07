@@ -10,7 +10,7 @@
 'use strict';
 import Axis from './Axis.js';
 import Chart from '../parts/Chart.js';
-import Color from './Color.js';
+import Color from '../Core/Color.js';
 var color = Color.parse;
 import H from '../Core/Globals.js';
 import NavigatorAxis from './NavigatorAxis.js';

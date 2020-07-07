@@ -15,7 +15,7 @@ import type Chart from './Chart';
 import type PlotLineOrBand from './PlotLineOrBand';
 import type Point from './Point';
 import type SVGPath from './SVGPath';
-import Color from './Color.js';
+import Color from '../Core/Color.js';
 import H from '../Core/Globals.js';
 import Tick from './Tick.js';
 import U from '../Core/Utilities.js';
@@ -716,7 +716,7 @@ declare global {
  * @return {string}
  */
 
-import O from './Options.js';
+import O from '../parts/Options.js';
 const { defaultOptions } = O;
 
 var deg2rad = H.deg2rad;

@@ -145,7 +145,7 @@ declare global {
 
 ''; // detach doclets above
 
-import O from '../parts/Options.js';
+import O from './Options.js';
 const { defaultOptions } = O;
 import Point from './Point.js';
 import Tooltip from './Tooltip.js';

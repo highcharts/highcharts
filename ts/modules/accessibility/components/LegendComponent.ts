@@ -15,7 +15,7 @@
 import type Chart from '../../../parts/Chart';
 import type Point from '../../../parts/Point';
 import H from '../../../Core/Globals.js';
-import Legend from '../../../parts/Legend.js';
+import Legend from '../../../Core/Legend.js';
 import U from '../../../Core/Utilities.js';
 const {
     addEvent,

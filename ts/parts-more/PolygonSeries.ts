@@ -51,7 +51,7 @@ const {
 } = U;
 import '../parts/Options.js';
 import '../parts/Series.js';
-import '../parts/Legend.js';
+import '../Core/Legend.js';
 import '../parts/ScatterSeries.js';
 
 var noop = H.noop,

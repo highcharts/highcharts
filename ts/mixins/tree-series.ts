@@ -5,7 +5,7 @@
  * */
 
 import type Point from '../parts/Point';
-import Color from '../parts/Color.js';
+import Color from '../Core/Color.js';
 import U from '../Core/Utilities.js';
 const {
     extend,

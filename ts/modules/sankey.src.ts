@@ -253,7 +253,7 @@ declare global {
  * @type {Highcharts.SankeyNodeObject}
  */
 
-import Color from '../parts/Color.js';
+import Color from '../Core/Color.js';
 import Point from '../parts/Point.js';
 import U from '../Core/Utilities.js';
 const {

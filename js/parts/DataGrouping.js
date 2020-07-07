@@ -26,7 +26,7 @@ import H from '../Core/Globals.js';
 * @type {number}
 */
 ''; // detach doclets above
-import O from '../parts/Options.js';
+import O from './Options.js';
 var defaultOptions = O.defaultOptions;
 import Point from './Point.js';
 import Tooltip from './Tooltip.js';

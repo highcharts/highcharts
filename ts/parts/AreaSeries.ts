@@ -52,7 +52,7 @@ declare global {
     }
 }
 
-import Color from './Color.js';
+import Color from '../Core/Color.js';
 const {
     parse: color
 } = Color;
