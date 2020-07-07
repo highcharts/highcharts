@@ -8,7 +8,7 @@
  *
  * */
 'use strict';
-import H from './Globals.js';
+import H from '../Core/Globals.js';
 /**
  * @typedef {"plotBox"|"spacingBox"} Highcharts.ButtonRelativeToValue
  */
@@ -178,7 +178,7 @@ import H from './Globals.js';
 import Time from './Time.js';
 import Color from './Color.js';
 var color = Color.parse;
-import U from './Utilities.js';
+import U from '../Core/Utilities.js';
 var merge = U.merge;
 var isTouchDevice = H.isTouchDevice, svg = H.svg;
 /* ************************************************************************** *

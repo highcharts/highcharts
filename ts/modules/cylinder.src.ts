@@ -16,7 +16,7 @@
 
 import type Chart from '../parts/Chart';
 import type SVGPath from '../parts/SVGPath';
-import H from '../parts/Globals.js';
+import H from '../Core/Globals.js';
 
 /**
  * Internal types
@@ -83,7 +83,7 @@ import Color from '../parts/Color.js';
 const color = Color.parse;
 import Math3D from '../parts-3d/Math.js';
 const { perspective } = Math3D;
-import U from '../parts/Utilities.js';
+import U from '../Core/Utilities.js';
 const {
     merge,
     pick,

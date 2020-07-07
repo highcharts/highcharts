@@ -25,12 +25,12 @@ import Axis from '../parts/Axis.js';
 import Chart from '../parts/Chart.js';
 import Color from '../parts/Color.js';
 var color = Color.parse;
-import H from '../parts/Globals.js';
+import H from '../Core/Globals.js';
 var noop = H.noop;
 import Legend from '../parts/Legend.js';
 import LegendSymbolMixin from '../mixins/legend-symbol.js';
 import Point from '../parts/Point.js';
-import U from '../parts/Utilities.js';
+import U from '../Core/Utilities.js';
 var addEvent = U.addEvent, erase = U.erase, extend = U.extend, Fx = U.Fx, isNumber = U.isNumber, merge = U.merge, pick = U.pick, splat = U.splat;
 /**
  * Color axis types

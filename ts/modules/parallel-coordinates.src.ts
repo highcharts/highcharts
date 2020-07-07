@@ -17,8 +17,8 @@ import type Point from '../parts/Point';
 import type RadialAxis from '../parts-more/RadialAxis';
 import Axis from '../parts/Axis.js';
 import Chart from '../parts/Chart.js';
-import H from '../parts/Globals.js';
-import U from '../parts/Utilities.js';
+import H from '../Core/Globals.js';
+import U from '../Core/Utilities.js';
 const {
     addEvent,
     arrayMax,

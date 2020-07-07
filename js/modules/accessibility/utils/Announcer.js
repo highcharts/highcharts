@@ -10,7 +10,7 @@
  *
  * */
 'use strict';
-import H from '../../../parts/Globals.js';
+import H from '../../../Core/Globals.js';
 import DOMElementProvider from './DOMElementProvider.js';
 import HTMLUtilities from './htmlUtilities.js';
 var visuallyHideElement = HTMLUtilities.visuallyHideElement;

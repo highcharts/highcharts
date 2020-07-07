@@ -13,8 +13,8 @@
 'use strict';
 
 import type SVGPath from '../parts/SVGPath';
-import H from '../parts/Globals.js';
-import U from '../parts/Utilities.js';
+import H from '../Core/Globals.js';
+import U from '../Core/Utilities.js';
 const {
     animObject,
     arrayMax,

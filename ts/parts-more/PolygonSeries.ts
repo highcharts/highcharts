@@ -11,7 +11,7 @@
 'use strict';
 
 import type SVGPath from '../parts/SVGPath';
-import H from '../parts/Globals.js';
+import H from '../Core/Globals.js';
 
 /**
  * Internal types
@@ -45,7 +45,7 @@ declare global {
 }
 
 import LegendSymbolMixin from '../mixins/legend-symbol.js';
-import U from '../parts/Utilities.js';
+import U from '../Core/Utilities.js';
 const {
     seriesType
 } = U;

@@ -10,7 +10,7 @@
  *
  * */
 'use strict';
-import H from '../../parts/Globals.js';
+import H from '../../Core/Globals.js';
 /**
  * An Earcon configuration, specifying an Earcon and when to play it.
  *
@@ -95,7 +95,7 @@ import H from '../../parts/Globals.js';
 */
 ''; // detach doclets above
 import Point from '../../parts/Point.js';
-import U from '../../parts/Utilities.js';
+import U from '../../Core/Utilities.js';
 var find = U.find, isArray = U.isArray, merge = U.merge, pick = U.pick, splat = U.splat;
 import utilities from './utilities.js';
 /**

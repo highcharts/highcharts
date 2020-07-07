@@ -14,7 +14,7 @@
 
 import Chart from '../parts/Chart.js';
 import Color from '../parts/Color.js';
-import H from '../parts/Globals.js';
+import H from '../Core/Globals.js';
 import O from '../parts/Options.js';
 const {
     defaultOptions
@@ -22,7 +22,7 @@ const {
 import Point from '../parts/Point.js';
 import SVGRenderer from '../parts/SVGRenderer.js';
 import Tick from '../parts/Tick.js';
-import U from '../parts/Utilities.js';
+import U from '../Core/Utilities.js';
 const {
     addEvent,
     removeEvent,

@@ -9,7 +9,7 @@
  * */
 'use strict';
 import Axis from '../parts/Axis.js';
-import U from '../parts/Utilities.js';
+import U from '../Core/Utilities.js';
 var addEvent = U.addEvent, pick = U.pick;
 /**
  * Map support for axes.

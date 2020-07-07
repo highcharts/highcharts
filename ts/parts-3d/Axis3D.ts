@@ -15,7 +15,7 @@
 import type Axis from '../parts/Axis';
 import type Point from '../parts/Point';
 import type SVGPath from '../parts/SVGPath';
-import H from '../parts/Globals.js';
+import H from '../Core/Globals.js';
 import Math3D from '../parts-3d/Math.js';
 const {
     perspective,
@@ -24,7 +24,7 @@ const {
 } = Math3D;
 import Tick from '../parts/Tick.js';
 import Tick3D from './Tick3D.js';
-import U from '../parts/Utilities.js';
+import U from '../Core/Utilities.js';
 const {
     addEvent,
     merge,

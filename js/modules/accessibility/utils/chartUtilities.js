@@ -12,7 +12,7 @@
 'use strict';
 import HTMLUtilities from './htmlUtilities.js';
 var stripHTMLTags = HTMLUtilities.stripHTMLTagsFromString;
-import U from '../../../parts/Utilities.js';
+import U from '../../../Core/Utilities.js';
 var defined = U.defined, find = U.find, fireEvent = U.fireEvent;
 /* eslint-disable valid-jsdoc */
 /**

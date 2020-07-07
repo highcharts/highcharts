@@ -16,7 +16,7 @@
 import type Point from '../parts/Point';
 import type SVGElement from '../parts/SVGElement';
 import Chart from '../parts/Chart.js';
-import U from '../parts/Utilities.js';
+import U from '../Core/Utilities.js';
 const {
     addEvent,
     fireEvent,

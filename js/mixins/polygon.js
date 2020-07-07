@@ -3,7 +3,7 @@
  *  !!!!!!! SOURCE GETS TRANSPILED BY TYPESCRIPT. EDIT TS FILE ONLY. !!!!!!!
  *
  * */
-import H from '../parts/Globals.js';
+import H from '../Core/Globals.js';
 /**
  * @private
  * @interface Highcharts.PolygonPointObject
@@ -22,7 +22,7 @@ import H from '../parts/Globals.js';
 * @name Highcharts.PolygonObject#axes
 * @type {Array<PolygonPointObject>}
 */
-import U from '../parts/Utilities.js';
+import U from '../Core/Utilities.js';
 var find = U.find, isArray = U.isArray, isNumber = U.isNumber;
 var deg2rad = H.deg2rad;
 /* eslint-disable no-invalid-this, valid-jsdoc */

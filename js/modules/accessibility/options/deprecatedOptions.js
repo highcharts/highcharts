@@ -58,7 +58,7 @@
  */
 /* eslint-enable max-len */
 'use strict';
-import U from '../../../parts/Utilities.js';
+import U from '../../../Core/Utilities.js';
 var error = U.error, pick = U.pick;
 /* eslint-disable valid-jsdoc */
 /**

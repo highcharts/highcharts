@@ -11,7 +11,7 @@
 import type { AxisLike } from '../parts/axis/types';
 import type Chart from '../parts/Chart.js';
 import Axis from '../parts/Axis.js';
-import U from '../parts/Utilities.js';
+import U from '../Core/Utilities.js';
 const {
     addEvent,
     merge,

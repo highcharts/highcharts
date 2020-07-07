@@ -10,7 +10,7 @@
  *
  * */
 'use strict';
-import U from '../../parts/Utilities.js';
+import U from '../../Core/Utilities.js';
 var find = U.find;
 /**
  * Options for the keyboard navigation handler.

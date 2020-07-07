@@ -15,7 +15,7 @@
 import type SVGPath from '../parts/SVGPath';
 import Color from '../parts/Color.js';
 const color = Color.parse;
-import H from '../parts/Globals.js';
+import H from '../Core/Globals.js';
 import Math3D from '../parts-3d/Math.js';
 const {
     perspective,
@@ -23,7 +23,7 @@ const {
 } = Math3D;
 import SVGElement from '../parts/SVGElement.js';
 import SVGRenderer from '../parts/SVGRenderer.js';
-import U from '../parts/Utilities.js';
+import U from '../Core/Utilities.js';
 const {
     animObject,
     defined,

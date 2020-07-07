@@ -11,9 +11,9 @@
  * */
 'use strict';
 import Chart from '../../parts/Chart.js';
-import H from '../../parts/Globals.js';
+import H from '../../Core/Globals.js';
 import Point from '../../parts/Point.js';
-import U from '../../parts/Utilities.js';
+import U from '../../Core/Utilities.js';
 var addEvent = U.addEvent, error = U.error, getOptions = U.getOptions, isArray = U.isArray, isNumber = U.isNumber, pick = U.pick, wrap = U.wrap;
 import '../../parts/Series.js';
 import '../../parts/Options.js';

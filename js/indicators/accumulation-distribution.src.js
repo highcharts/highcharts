@@ -5,7 +5,7 @@
  *  !!!!!!! SOURCE GETS TRANSPILED BY TYPESCRIPT. EDIT TS FILE ONLY. !!!!!!!
  * */
 'use strict';
-import U from '../parts/Utilities.js';
+import U from '../Core/Utilities.js';
 var error = U.error, seriesType = U.seriesType;
 /* eslint-disable valid-jsdoc */
 // Utils:

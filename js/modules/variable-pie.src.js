@@ -10,11 +10,11 @@
  *
  * */
 'use strict';
-import H from '../parts/Globals.js';
+import H from '../Core/Globals.js';
 /**
  * @typedef {"area"|"radius"} Highcharts.VariablePieSizeByValue
  */
-import U from '../parts/Utilities.js';
+import U from '../Core/Utilities.js';
 var arrayMax = U.arrayMax, arrayMin = U.arrayMin, clamp = U.clamp, fireEvent = U.fireEvent, pick = U.pick, seriesType = U.seriesType;
 import '../parts/Options.js';
 var pieProto = H.seriesTypes.pie.prototype;

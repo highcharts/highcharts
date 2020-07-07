@@ -13,7 +13,7 @@
 'use strict';
 
 import type Point from '../../parts/Point.js';
-import H from '../../parts/Globals.js';
+import H from '../../Core/Globals.js';
 
 /**
  * Internal types.

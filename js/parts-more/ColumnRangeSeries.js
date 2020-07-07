@@ -8,10 +8,10 @@
  *
  * */
 'use strict';
-import H from '../parts/Globals.js';
+import H from '../Core/Globals.js';
 import O from '../parts/Options.js';
 var defaultOptions = O.defaultOptions;
-import U from '../parts/Utilities.js';
+import U from '../Core/Utilities.js';
 var clamp = U.clamp, merge = U.merge, pick = U.pick, seriesType = U.seriesType;
 var noop = H.noop, seriesTypes = H.seriesTypes;
 var colProto = seriesTypes.column.prototype;

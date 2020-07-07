@@ -14,7 +14,7 @@ import type { AxisType } from './axis/types';
 import type Point from './Point';
 import type SVGElement from './SVGElement';
 import Axis from './Axis.js';
-import H from './Globals.js';
+import H from '../Core/Globals.js';
 const {
     charts,
     doc,
@@ -28,7 +28,7 @@ const { defaultOptions } = O;
 import Pointer from './Pointer.js';
 import SVGRenderer from './SVGRenderer.js';
 import Time from './Time.js';
-import U from './Utilities.js';
+import U from '../Core/Utilities.js';
 const {
     addEvent,
     animate,

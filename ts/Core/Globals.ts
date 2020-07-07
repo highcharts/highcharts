@@ -10,7 +10,7 @@
 
 'use strict';
 
-import type Chart from './Chart';
+import type Chart from '../parts/Chart';
 
 /**
  * Internal types

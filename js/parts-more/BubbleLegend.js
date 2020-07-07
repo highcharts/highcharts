@@ -13,9 +13,9 @@
 import Chart from '../parts/Chart.js';
 import Color from '../parts/Color.js';
 var color = Color.parse;
-import H from '../parts/Globals.js';
+import H from '../Core/Globals.js';
 import Legend from '../parts/Legend.js';
-import U from '../parts/Utilities.js';
+import U from '../Core/Utilities.js';
 var addEvent = U.addEvent, arrayMax = U.arrayMax, arrayMin = U.arrayMin, isNumber = U.isNumber, merge = U.merge, objectEach = U.objectEach, pick = U.pick, setOptions = U.setOptions, stableSort = U.stableSort, wrap = U.wrap;
 /**
  * @interface Highcharts.BubbleLegendFormatterContextObject

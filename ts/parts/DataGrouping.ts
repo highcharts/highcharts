@@ -12,7 +12,7 @@
 
 import type { AxisType } from './axis/types';
 import DateTimeAxis from './DateTimeAxis.js';
-import H from './Globals.js';
+import H from '../Core/Globals.js';
 
 /**
  * Internal types
@@ -149,7 +149,7 @@ import O from '../parts/Options.js';
 const { defaultOptions } = O;
 import Point from './Point.js';
 import Tooltip from './Tooltip.js';
-import U from './Utilities.js';
+import U from '../Core/Utilities.js';
 const {
     addEvent,
     arrayMax,

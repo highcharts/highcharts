@@ -12,12 +12,12 @@
 
 import type Point from './Point';
 import type SVGElement from './SVGElement';
-import H from './Globals.js';
+import H from '../Core/Globals.js';
 const {
     noop,
     seriesTypes
 } = H;
-import U from './Utilities.js';
+import U from '../Core/Utilities.js';
 const {
     animObject,
     arrayMax,

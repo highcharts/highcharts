@@ -9,7 +9,7 @@
  * */
 'use strict';
 import Chart from './Chart.js';
-import U from './Utilities.js';
+import U from '../Core/Utilities.js';
 var find = U.find, isArray = U.isArray, isObject = U.isObject, merge = U.merge, objectEach = U.objectEach, pick = U.pick, splat = U.splat, uniqueKey = U.uniqueKey;
 /**
  * A callback function to gain complete control on when the responsive rule

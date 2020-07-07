@@ -15,7 +15,7 @@
 import Axis from '../parts/Axis.js';
 import Axis3D from './Axis3D.js';
 import Chart from '../parts/Chart.js';
-import H from '../parts/Globals.js';
+import H from '../Core/Globals.js';
 import Math3D from '../parts-3d/Math.js';
 const {
     perspective,
@@ -25,7 +25,7 @@ import O from '../parts/Options.js';
 const {
     defaultOptions: genericDefaultOptions
 } = O;
-import U from '../parts/Utilities.js';
+import U from '../Core/Utilities.js';
 const {
     addEvent,
     Fx,

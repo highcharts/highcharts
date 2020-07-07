@@ -13,11 +13,11 @@
 import type Chart from './Chart';
 import type Point from './Point';
 import type SVGElement from './SVGElement';
-import H from './Globals.js';
+import H from '../Core/Globals.js';
 const {
     doc
 } = H;
-import U from './Utilities.js';
+import U from '../Core/Utilities.js';
 const {
     clamp,
     css,

@@ -14,7 +14,7 @@
 import type Axis from '../parts/Axis';
 import type SVGPath from '../parts/SVGPath';
 import Chart from '../parts/Chart.js';
-import H from '../parts/Globals.js';
+import H from '../Core/Globals.js';
 
 /**
  * Internal types
@@ -194,7 +194,7 @@ declare global {
 import O from '../parts/Options.js';
 const { defaultOptions } = O;
 import Point from '../parts/Point.js';
-import U from '../parts/Utilities.js';
+import U from '../Core/Utilities.js';
 const {
     addEvent,
     defined,

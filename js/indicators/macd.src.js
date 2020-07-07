@@ -6,8 +6,8 @@
  *
  * */
 'use strict';
-import H from '../parts/Globals.js';
-import U from '../parts/Utilities.js';
+import H from '../Core/Globals.js';
+import U from '../Core/Utilities.js';
 var correctFloat = U.correctFloat, defined = U.defined, merge = U.merge, seriesType = U.seriesType;
 var noop = H.noop, SMA = H.seriesTypes.sma, EMA = H.seriesTypes.ema;
 /**

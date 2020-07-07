@@ -8,8 +8,8 @@
  *
  * */
 'use strict';
-import H from './Globals.js';
-import U from './Utilities.js';
+import H from '../Core/Globals.js';
+import U from '../Core/Utilities.js';
 var animObject = U.animObject, defined = U.defined, erase = U.erase, extend = U.extend, fireEvent = U.fireEvent, format = U.format, getNestedProperty = U.getNestedProperty, isArray = U.isArray, isNumber = U.isNumber, isObject = U.isObject, syncTimeout = U.syncTimeout, pick = U.pick, removeEvent = U.removeEvent, uniqueKey = U.uniqueKey;
 /**
  * Function callback when a series point is clicked. Return false to cancel the

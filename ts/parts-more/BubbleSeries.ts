@@ -11,7 +11,7 @@
 'use strict';
 
 import type SVGPath from '../parts/SVGPath';
-import H from '../parts/Globals.js';
+import H from '../Core/Globals.js';
 
 /**
  * Internal types
@@ -105,7 +105,7 @@ const {
     parse: color
 } = Color;
 import Point from '../parts/Point.js';
-import U from '../parts/Utilities.js';
+import U from '../Core/Utilities.js';
 const {
     arrayMax,
     arrayMin,

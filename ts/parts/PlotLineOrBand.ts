@@ -12,7 +12,7 @@
 
 import type SVGPath from '../parts/SVGPath';
 import Axis from './Axis.js';
-import H from './Globals.js';
+import H from '../Core/Globals.js';
 
 /**
  * Internal types
@@ -156,7 +156,7 @@ declare global {
  * @typedef {Highcharts.XAxisPlotLinesLabelOptions|Highcharts.YAxisPlotLinesLabelOptions|Highcharts.ZAxisPlotLinesLabelOptions} Highcharts.AxisPlotLinesLabelOptions
  */
 
-import U from './Utilities.js';
+import U from '../Core/Utilities.js';
 const {
     arrayMax,
     arrayMin,

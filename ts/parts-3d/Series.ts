@@ -14,7 +14,7 @@
 
 import type Point from '../parts/Point';
 import type ZAxis from '../parts-3d/ZAxis';
-import H from '../parts/Globals.js';
+import H from '../Core/Globals.js';
 import Math3D from '../parts-3d/Math.js';
 const { perspective } = Math3D;
 
@@ -35,7 +35,7 @@ declare global {
     }
 }
 
-import U from '../parts/Utilities.js';
+import U from '../Core/Utilities.js';
 const {
     addEvent,
     pick

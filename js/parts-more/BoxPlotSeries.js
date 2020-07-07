@@ -8,8 +8,8 @@
  *
  * */
 'use strict';
-import H from '../parts/Globals.js';
-import U from '../parts/Utilities.js';
+import H from '../Core/Globals.js';
+import U from '../Core/Utilities.js';
 var pick = U.pick, seriesType = U.seriesType;
 import '../parts/Options.js';
 var noop = H.noop, seriesTypes = H.seriesTypes;

@@ -10,7 +10,7 @@
  *
  * */
 'use strict';
-import U from '../../../../parts/Utilities.js';
+import U from '../../../../Core/Utilities.js';
 var find = U.find, format = U.format, isNumber = U.isNumber, numberFormat = U.numberFormat, pick = U.pick, defined = U.defined;
 import AnnotationsA11y from '../AnnotationsA11y.js';
 var getPointAnnotationTexts = AnnotationsA11y.getPointAnnotationTexts;

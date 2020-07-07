@@ -10,7 +10,7 @@ import type SVGPath from '../../parts/SVGPath';
 import Annotation from '../annotations.src.js';
 import MockPoint from '../MockPoint.js';
 import Tunnel from './Tunnel.js';
-import U from '../../parts/Utilities.js';
+import U from '../../Core/Utilities.js';
 const {
     merge
 } = U;

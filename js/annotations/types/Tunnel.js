@@ -21,7 +21,7 @@ import Annotation from '../annotations.src.js';
 import ControlPoint from '../ControlPoint.js';
 import CrookedLine from './CrookedLine.js';
 import MockPoint from '../MockPoint.js';
-import U from '../../parts/Utilities.js';
+import U from '../../Core/Utilities.js';
 var merge = U.merge;
 /* eslint-disable no-invalid-this, valid-jsdoc */
 /**

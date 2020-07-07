@@ -8,9 +8,9 @@
  *
  * */
 'use strict';
-import H from './Globals.js';
+import H from '../Core/Globals.js';
 import Point from './Point.js';
-import U from './Utilities.js';
+import U from '../Core/Utilities.js';
 var seriesType = U.seriesType;
 var seriesTypes = H.seriesTypes;
 /**

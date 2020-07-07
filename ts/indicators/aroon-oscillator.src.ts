@@ -8,7 +8,7 @@
 
 'use strict';
 
-import H from '../parts/Globals.js';
+import H from '../Core/Globals.js';
 
 
 /**
@@ -57,7 +57,7 @@ declare global {
 
 import multipleLinesMixin from '../mixins/multipe-lines.js';
 import requiredIndicatorMixin from '../mixins/indicator-required.js';
-import U from '../parts/Utilities.js';
+import U from '../Core/Utilities.js';
 const {
     merge,
     seriesType

@@ -10,7 +10,7 @@
  *
  * */
 'use strict';
-import Highcharts from '../parts/Globals.js';
+import Highcharts from '../Core/Globals.js';
 var win = Highcharts.win, nav = win.navigator, doc = win.document, domurl = win.URL || win.webkitURL || win, isEdgeBrowser = /Edge\/\d+/.test(nav.userAgent);
 /**
  * Convert base64 dataURL to Blob if supported, otherwise returns undefined.

@@ -4,8 +4,8 @@
  *
  * */
 'use strict';
-import H from '../parts/Globals.js';
-import U from '../parts/Utilities.js';
+import H from '../Core/Globals.js';
+import U from '../Core/Utilities.js';
 var addEvent = U.addEvent, defined = U.defined;
 import '../parts/Series.js';
 var Series = H.Series, noop = H.noop;
