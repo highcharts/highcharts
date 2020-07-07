@@ -175,10 +175,10 @@ import H from '../Core/Globals.js';
 * @name Highcharts.ChartSelectionAxisContextObject#min
 * @type {number}
 */
-import Time from '../Core/Time.js';
-import Color from '../Core/Color.js';
+import Time from './Time.js';
+import Color from './Color.js';
 var color = Color.parse;
-import U from '../Core/Utilities.js';
+import U from './Utilities.js';
 var merge = U.merge;
 var isTouchDevice = H.isTouchDevice, svg = H.svg;
 /* ************************************************************************** *

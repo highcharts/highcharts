@@ -11,7 +11,7 @@
 import H from '../Core/Globals.js';
 import U from '../Core/Utilities.js';
 var clamp = U.clamp, isNumber = U.isNumber, merge = U.merge, pick = U.pick, pInt = U.pInt, seriesType = U.seriesType;
-import '../parts/Options.js';
+import '../Core/Options.js';
 import '../parts/Point.js';
 import '../parts/Series.js';
 import '../Core/Interaction.js';

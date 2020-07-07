@@ -65,7 +65,7 @@ const {
 } = U;
 
 import './Series.js';
-import './Options.js';
+import '../Core/Options.js';
 
 var Series = H.Series;
 

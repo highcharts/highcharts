@@ -95,7 +95,7 @@ declare global {
 }
 
 
-import '../parts/Options.js';
+import '../Core/Options.js';
 import '../parts/Series.js';
 
 var Series = H.Series,

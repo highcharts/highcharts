@@ -15,7 +15,7 @@
 import type Point from '../parts/Point';
 import type SVGPath from '../parts/SVGPath';
 import H from '../Core/Globals.js';
-import O from '../parts/Options.js';
+import O from '../Core/Options.js';
 const { dateFormat } = O;
 import './TreeGridAxis.js';
 import U from '../Core/Utilities.js';

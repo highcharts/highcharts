@@ -24,7 +24,7 @@ const SOURCE_GLOBS = [
     'js/Core/Globals.js',
     'js/Core/Interaction.js',
     'js/Core/Legend.js',
-    'js/parts/Options.js',
+    'js/Core/Options.js',
     'js/parts/PieSeries.js',
     'js/parts/Point.js',
     'js/parts/Pointer.js',

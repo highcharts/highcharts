@@ -13,7 +13,7 @@
 'use strict';
 
 import H from '../Core/Globals.js';
-import O from '../parts/Options.js';
+import O from '../Core/Options.js';
 const { dateFormat } = O;
 
 /**

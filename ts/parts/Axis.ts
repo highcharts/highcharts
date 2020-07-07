@@ -716,7 +716,7 @@ declare global {
  * @return {string}
  */
 
-import O from '../parts/Options.js';
+import O from '../Core/Options.js';
 const { defaultOptions } = O;
 
 var deg2rad = H.deg2rad;

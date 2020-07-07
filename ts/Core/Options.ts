@@ -10,8 +10,8 @@
 
 'use strict';
 
-import type Chart from './Chart';
-import type Point from './Point';
+import type Chart from '../parts/Chart';
+import type Point from '../parts/Point';
 import H from '../Core/Globals.js';
 
 /**
@@ -546,10 +546,10 @@ declare global {
  * @type {number}
  */
 
-import Time from '../Core/Time.js';
-import Color from '../Core/Color.js';
+import Time from './Time.js';
+import Color from './Color.js';
 const color = Color.parse;
-import U from '../Core/Utilities.js';
+import U from './Utilities.js';
 const {
     merge
 } = U;

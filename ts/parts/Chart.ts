@@ -23,7 +23,7 @@ const {
 } = H;
 import Legend from '../Core/Legend.js';
 import MSPointer from './MSPointer.js';
-import O from './Options.js';
+import O from '../Core/Options.js';
 const { defaultOptions } = O;
 import Pointer from './Pointer.js';
 import SVGRenderer from './SVGRenderer.js';

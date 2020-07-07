@@ -137,7 +137,7 @@ const {
 } = U;
 
 import './Series.js';
-import './Options.js';
+import '../Core/Options.js';
 
 var noop = H.noop,
     Series = H.Series,

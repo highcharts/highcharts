@@ -61,7 +61,7 @@ const {
     merge,
     seriesType
 } = U;
-import '../parts/Options.js';
+import '../Core/Options.js';
 import derivedSeriesMixin from '../mixins/derived-series.js';
 
 /**

@@ -13,7 +13,7 @@ import H from '../Core/Globals.js';
 import ScrollbarAxis from './ScrollbarAxis.js';
 import U from '../Core/Utilities.js';
 var addEvent = U.addEvent, correctFloat = U.correctFloat, defined = U.defined, destroyObjectProperties = U.destroyObjectProperties, fireEvent = U.fireEvent, merge = U.merge, pick = U.pick, removeEvent = U.removeEvent;
-import O from '../parts/Options.js';
+import O from '../Core/Options.js';
 var defaultOptions = O.defaultOptions;
 var hasTouch = H.hasTouch, isTouchDevice = H.isTouchDevice;
 /**

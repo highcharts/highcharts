@@ -13,7 +13,7 @@
 import Axis from './Axis.js';
 import Chart from './Chart.js';
 import H from '../Core/Globals.js';
-import O from '../parts/Options.js';
+import O from '../Core/Options.js';
 const { defaultOptions } = O;
 import SVGElement from './SVGElement.js';
 import U from '../Core/Utilities.js';

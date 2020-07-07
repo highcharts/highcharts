@@ -152,7 +152,7 @@ declare global {
     }
 }
 
-import '../parts/Options.js';
+import '../Core/Options.js';
 import '../parts/ScatterSeries.js';
 import '../parts/Series.js';
 import './ColorMapSeriesMixin.js';

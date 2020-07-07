@@ -71,7 +71,7 @@ declare global {
     }
 }
 
-import O from '../parts/Options.js';
+import O from '../Core/Options.js';
 const { defaultOptions } = O;
 import U from '../Core/Utilities.js';
 const {

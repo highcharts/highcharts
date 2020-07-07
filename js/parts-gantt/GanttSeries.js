@@ -11,7 +11,7 @@
  * */
 'use strict';
 import H from '../Core/Globals.js';
-import O from '../parts/Options.js';
+import O from '../Core/Options.js';
 var dateFormat = O.dateFormat;
 import './TreeGridAxis.js';
 import U from '../Core/Utilities.js';

@@ -98,7 +98,7 @@ const {
     seriesType
 } = U;
 
-import '../parts/Options.js';
+import '../Core/Options.js';
 
 var noop = H.noop,
     seriesTypes = H.seriesTypes;

@@ -130,7 +130,7 @@ declare global {
 
 ''; // detach doclets above
 
-import '../parts/Options.js';
+import '../Core/Options.js';
 import '../parts/Series.js';
 import './ColorMapSeriesMixin.js';
 
