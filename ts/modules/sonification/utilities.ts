@@ -15,7 +15,7 @@
 import type Chart from '../../parts/Chart';
 import type Point from '../../parts/Point';
 import musicalFrequencies from './musicalFrequencies.js';
-import U from '../../parts/Utilities.js';
+import U from '../../Core/Utilities.js';
 const { clamp } = U;
 
 /**
@@ -46,7 +46,8 @@ declare global {
             virtualAxisTranslate(
                 value: number,
                 dataExtremes: RangeObject,
-                limits: RangeObject
+                limits: RangeObject,
+                invert?: boolean
             ): number;
         }
     }
@@ -239,18 +240,24 @@ var utilities: Highcharts.SonificationUtilitiesObject = {
      * The possible extremes for this value.
      * @param {object} limits
      * Limits for the virtual axis.
+     * @param {boolean} [invert]
+     * Invert the virtual axis.
      * @return {number}
      * The value mapped to the virtual axis.
      */
     virtualAxisTranslate: function (
         value: number,
         dataExtremes: Highcharts.RangeObject,
-        limits: Highcharts.RangeObject
+        limits: Highcharts.RangeObject,
+        invert?: boolean
     ): number {
-        var lenValueAxis = dataExtremes.max - dataExtremes.min,
-            lenVirtualAxis = limits.max - limits.min,
-            virtualAxisValue = limits.min +
-                lenVirtualAxis * (value - dataExtremes.min) / lenValueAxis;
+        const lenValueAxis = dataExtremes.max - dataExtremes.min,
+            lenVirtualAxis = Math.abs(limits.max - limits.min),
+            valueDelta = invert ?
+                dataExtremes.max - value :
+                value - dataExtremes.min,
+            virtualValueDelta = lenVirtualAxis * valueDelta / lenValueAxis,
+            virtualAxisValue = limits.min + virtualValueDelta;
 
         return lenValueAxis > 0 ?
             clamp(virtualAxisValue, limits.min, limits.max) :

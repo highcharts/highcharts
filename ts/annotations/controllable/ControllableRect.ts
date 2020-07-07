@@ -5,59 +5,20 @@
  * */
 
 import type Annotation from '../annotations.src';
-import controllableMixin from './controllableMixin.js';
+import type SVGElement from '../../parts/SVGElement';
+import ControllableMixin from './controllableMixin.js';
 import ControllablePath from './ControllablePath.js';
-import U from '../../parts/Utilities.js';
+import U from '../../Core/Utilities.js';
 const {
     merge
 } = U;
 
 /**
- * Internal types.
- * @private
+ * @typedef {Annotation.ControllablePath.AttrsMap}
+ *          Annotation.ControllableRect.AttrsMap
+ * @property {string} width=width
+ * @property {string} height=height
  */
-declare global {
-    namespace Highcharts {
-        class AnnotationControllableRect implements AnnotationControllable {
-            public static attrsMap: Dictionary<string>;
-            public constructor(annotation: Annotation, options: AnnotationsShapeOptions, index: number);
-            public addControlPoints: AnnotationControllableMixin['addControlPoints'];
-            public anchor: AnnotationControllableMixin['anchor'];
-            public annotation: AnnotationControllable['annotation'];
-            public attr: AnnotationControllableMixin['attr'];
-            public attrsFromOptions: AnnotationControllableMixin['attrsFromOptions'];
-            public chart: AnnotationControllable['chart'];
-            public collection: 'shapes';
-            public controlPoints: AnnotationControllable['controlPoints'];
-            public destroy: AnnotationControllableMixin['destroy'];
-            public getPointsOptions: AnnotationControllableMixin['getPointsOptions'];
-            public graphic: SVGAnnotationElement;
-            public index: AnnotationControllable['index'];
-            public init: AnnotationControllableMixin['init'];
-            public linkPoints: AnnotationControllableMixin['linkPoints'];
-            public markerEnd?: SVGElement;
-            public markerStart?: SVGElement;
-            public options: AnnotationsShapeOptions;
-            public point: AnnotationControllableMixin['point'];
-            public points: AnnotationControllable['points'];
-            public rotate: AnnotationControllableMixin['rotate'];
-            public scale: AnnotationControllableMixin['scale'];
-            public shouldBeDrawn: AnnotationControllableMixin['shouldBeDrawn'];
-            public setControlPointsVisibility: AnnotationControllableMixin['setControlPointsVisibility'];
-            public setMarkers: AnnotationMarkerMixin['setItemMarkers'];
-            public tracker: SVGAnnotationElement;
-            public transform: AnnotationControllableMixin['transform'];
-            public transformPoint: AnnotationControllableMixin['transformPoint'];
-            public translate: AnnotationControllableMixin['translateShape'];
-            public translatePoint: AnnotationControllableMixin['translatePoint'];
-            public translateShape: AnnotationControllableMixin['translateShape'];
-            public type: 'rect';
-            public update: AnnotationControllableMixin['update'];
-            public redraw(animation?: boolean): void;
-            public render(parent: SVGElement): void;
-        }
-    }
-}
 
 /* eslint-disable no-invalid-this, valid-jsdoc */
 
@@ -79,77 +40,114 @@ declare global {
  * @param {number} index
  * Index of the rectangle
  */
-const ControllableRect: typeof Highcharts.AnnotationControllableRect = function (
-    this: Highcharts.AnnotationControllableRect,
-    annotation: Annotation,
-    options: Highcharts.AnnotationsShapeOptions,
-    index: number
-): void {
-    this.init(annotation, options, index);
-    this.collection = 'shapes';
-} as any;
+class ControllableRect implements ControllableMixin.Type {
 
-/**
- * @typedef {Annotation.ControllablePath.AttrsMap}
- *          Annotation.ControllableRect.AttrsMap
- * @property {string} width=width
- * @property {string} height=height
- */
+    /* *
+     *
+     *  Static Properties
+     *
+     * */
 
-/**
- * A map object which allows to map options attributes to element attributes
- *
- * @type {Annotation.ControllableRect.AttrsMap}
- */
-ControllableRect.attrsMap = merge(ControllablePath.attrsMap, {
-    width: 'width',
-    height: 'height'
-});
+    /**
+     * A map object which allows to map options attributes to element attributes
+     *
+     * @type {Annotation.ControllableRect.AttrsMap}
+     */
+    public static attrsMap = merge(ControllablePath.attrsMap, {
+        width: 'width',
+        height: 'height'
+    });
 
-merge<Highcharts.AnnotationControllableRect, Partial<Highcharts.AnnotationControllableRect>>(
-    true,
-    ControllableRect.prototype,
-    controllableMixin, /** @lends Annotation.ControllableRect# */ {
-        /**
-         * @type 'rect'
-         */
-        type: 'rect',
+    /* *
+     *
+     *  Constructors
+     *
+     * */
 
-        translate: controllableMixin.translateShape,
-
-        render: function (this: Highcharts.AnnotationControllableRect, parent: Highcharts.SVGElement): void {
-            var attrs = this.attrsFromOptions(this.options);
-
-            this.graphic = this.annotation.chart.renderer
-                .rect(0, -9e9, 0, 0)
-                .attr(attrs)
-                .add(parent);
-
-            controllableMixin.render.call(this);
-        },
-
-        redraw: function (this: Highcharts.AnnotationControllableRect, animation?: boolean): void {
-            var position = this.anchor(this.points[0]).absolutePosition;
-
-            if (position) {
-                this.graphic[animation ? 'animate' : 'attr']({
-                    x: position.x,
-                    y: position.y,
-                    width: this.options.width,
-                    height: this.options.height
-                });
-            } else {
-                this.attr({
-                    x: 0,
-                    y: -9e9
-                });
-            }
-
-            this.graphic.placed = Boolean(position);
-
-            controllableMixin.redraw.call(this, animation);
-        }
+    public constructor(
+        annotation: Annotation,
+        options: Highcharts.AnnotationsShapeOptions,
+        index: number
+    ) {
+        this.init(annotation, options, index);
+        this.collection = 'shapes';
     }
-);
+
+    /* *
+     *
+     *  Properties
+     *
+     * */
+
+    public addControlPoints = ControllableMixin.addControlPoints;
+    public anchor = ControllableMixin.anchor;
+    public attr = ControllableMixin.attr;
+    public attrsFromOptions = ControllableMixin.attrsFromOptions;
+    public destroy = ControllableMixin.destroy;
+    public getPointsOptions = ControllableMixin.getPointsOptions;
+    public init = ControllableMixin.init;
+    public linkPoints = ControllableMixin.linkPoints;
+    public point = ControllableMixin.point;
+    public rotate = ControllableMixin.rotate;
+    public scale = ControllableMixin.scale;
+    public setControlPointsVisibility = ControllableMixin.setControlPointsVisibility;
+    public shouldBeDrawn = ControllableMixin.shouldBeDrawn;
+    public transform = ControllableMixin.transform;
+    public transformPoint = ControllableMixin.transformPoint;
+    public translatePoint = ControllableMixin.translatePoint;
+    public translateShape = ControllableMixin.translateShape;
+    public update = ControllableMixin.update;
+
+    /**
+     * @type 'rect'
+     */
+    public type = 'rect';
+
+    public translate = ControllableMixin.translateShape;
+
+    /* *
+     *
+     *  Functions
+     *
+     * */
+
+    public render(parent: SVGElement): void {
+        var attrs = this.attrsFromOptions(this.options);
+
+        this.graphic = this.annotation.chart.renderer
+            .rect(0, -9e9, 0, 0)
+            .attr(attrs)
+            .add(parent);
+
+        ControllableMixin.render.call(this);
+    }
+
+    public redraw(animation?: boolean): void {
+        var position = this.anchor(this.points[0]).absolutePosition;
+
+        if (position) {
+            this.graphic[animation ? 'animate' : 'attr']({
+                x: position.x,
+                y: position.y,
+                width: this.options.width,
+                height: this.options.height
+            });
+        } else {
+            this.attr({
+                x: 0,
+                y: -9e9
+            });
+        }
+
+        this.graphic.placed = Boolean(position);
+
+        ControllableMixin.redraw.call(this, animation);
+    }
+}
+
+interface ControllableRect extends ControllableMixin.Type {
+    // adds mixin property types, created during init
+    options: Highcharts.AnnotationsShapeOptions;
+}
 
 export default ControllableRect;

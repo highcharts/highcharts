@@ -12,7 +12,7 @@
 
 import type Chart from '../parts/Chart';
 import Axis from '../parts/Axis.js';
-import U from '../parts/Utilities.js';
+import U from '../Core/Utilities.js';
 const {
     addEvent,
     pick

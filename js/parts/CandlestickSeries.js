@@ -8,10 +8,10 @@
  *
  * */
 'use strict';
-import H from './Globals.js';
+import H from '../Core/Globals.js';
 import O from '../parts/Options.js';
 var defaultOptions = O.defaultOptions;
-import U from './Utilities.js';
+import U from '../Core/Utilities.js';
 var merge = U.merge, seriesType = U.seriesType;
 var seriesTypes = H.seriesTypes;
 /**

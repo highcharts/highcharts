@@ -12,11 +12,11 @@
 
 'use strict';
 
-import H from '../../parts/Globals.js';
+import H from '../../Core/Globals.js';
 var win = H.win,
     doc = win.document;
 
-import U from '../../parts/Utilities.js';
+import U from '../../Core/Utilities.js';
 const {
     extend,
     fireEvent,
@@ -51,6 +51,7 @@ declare global {
             public destroy(): void;
             public destroyBase(): void;
             public cloneMouseEvent(e: MouseEvent): MouseEvent;
+            public cloneTouchEvent(e: TouchEvent): TouchEvent;
             public createOrUpdateProxyContainer(): void;
             public createProxyButton(
                 svgElement: SVGElement,
@@ -79,9 +80,10 @@ declare global {
                 el: (SVGElement|HTMLElement|HTMLDOMElement|SVGDOMElement),
                 eventObject: Event
             ): void;
-            public setProxyButtonStyle(
-                button: HTMLDOMElement,
-                bBox: (BBoxObject|Dictionary<number>)
+            public setProxyButtonStyle(button: HTMLDOMElement): void;
+            public updateProxyButtonPosition(
+                proxy: HTMLDOMElement,
+                posElement: Highcharts.SVGElement
             ): void;
         }
         interface AccessibilityChart {
@@ -335,8 +337,7 @@ AccessibilityComponent.prototype = {
             proxy = this.createElement('button'),
             attrs = merge({
                 'aria-label': svgEl.getAttribute('aria-label')
-            }, attributes),
-            bBox = this.getElementPosition(posElement || svgElement);
+            }, attributes);
 
         Object.keys(attrs).forEach(function (prop: string): void {
             if (attrs[prop] !== null) {
@@ -350,7 +351,8 @@ AccessibilityComponent.prototype = {
             this.addEvent(proxy, 'click', preClickEvent);
         }
 
-        this.setProxyButtonStyle(proxy, bBox);
+        this.setProxyButtonStyle(proxy);
+        this.updateProxyButtonPosition(proxy, posElement || svgElement);
         this.proxyMouseEventsForButton(svgEl, proxy);
 
         // Add to chart div and unhide from screen readers
@@ -396,13 +398,9 @@ AccessibilityComponent.prototype = {
 
     /**
      * @private
-     * @param {Highcharts.HTMLElement} button
-     * @param {Highcharts.BBoxObject} bBox
+     * @param {Highcharts.HTMLElement} button The proxy element.
      */
-    setProxyButtonStyle: function (
-        button: Highcharts.HTMLDOMElement,
-        bBox: Highcharts.BBoxObject
-    ): void {
+    setProxyButtonStyle: function (button: Highcharts.HTMLDOMElement): void {
         merge(true, button.style, {
             'border-width': 0,
             'background-color': 'transparent',
@@ -416,7 +414,22 @@ AccessibilityComponent.prototype = {
             padding: 0,
             margin: 0,
             display: 'block',
-            position: 'absolute',
+            position: 'absolute'
+        });
+    },
+
+
+    /**
+     * @private
+     * @param {Highcharts.HTMLElement} proxy The proxy to update position of.
+     * @param {Highcharts.SVGElement} posElement The element to overlay and take position from.
+     */
+    updateProxyButtonPosition: function (
+        proxy: Highcharts.HTMLDOMElement,
+        posElement: Highcharts.SVGElement
+    ): void {
+        const bBox = this.getElementPosition(posElement);
+        merge(true, proxy.style, {
             width: (bBox.width || 1) + 'px',
             height: (bBox.height || 1) + 'px',
             left: (bBox.x || 0) + 'px',
@@ -445,8 +458,12 @@ AccessibilityComponent.prototype = {
             'click', 'touchstart', 'touchend', 'touchcancel', 'touchmove',
             'mouseover', 'mouseenter', 'mouseleave', 'mouseout'
         ].forEach(function (evtType: string): void {
-            component.addEvent(button, evtType, function (e: MouseEvent): void {
-                const clonedEvent = component.cloneMouseEvent(e);
+            const isTouchEvent = evtType.indexOf('touch') === 0;
+
+            component.addEvent(button, evtType, function (e: MouseEvent | TouchEvent): void {
+                const clonedEvent = isTouchEvent ?
+                    component.cloneTouchEvent(e as TouchEvent) :
+                    component.cloneMouseEvent(e as MouseEvent);
 
                 if (source) {
                     component.fireEventOnWrappedOrUnwrappedElement(source, clonedEvent);
@@ -496,6 +513,54 @@ AccessibilityComponent.prototype = {
         }
 
         return getFakeMouseEvent(e.type);
+    },
+
+
+    /**
+     * Utility function to clone a touch event for re-dispatching.
+     * @private
+     * @param {global.TouchEvent} e The event to clone.
+     * @return {global.TouchEvent} The cloned event
+     */
+    cloneTouchEvent: function (e: TouchEvent): TouchEvent {
+        const touchListToTouchArray = (l: TouchList): Touch[] => {
+            const touchArray = [];
+            for (let i = 0; i < l.length; ++i) {
+                const item = l.item(i);
+                if (item) {
+                    touchArray.push(item);
+                }
+            }
+            return touchArray;
+        };
+
+        if (typeof win.TouchEvent === 'function') {
+            const newEvent = new win.TouchEvent(e.type, {
+                touches: touchListToTouchArray(e.touches),
+                targetTouches: touchListToTouchArray(e.targetTouches),
+                changedTouches: touchListToTouchArray(e.changedTouches),
+                ctrlKey: e.ctrlKey,
+                shiftKey: e.shiftKey,
+                altKey: e.altKey,
+                metaKey: e.metaKey,
+                bubbles: e.bubbles,
+                cancelable: e.cancelable,
+                composed: e.composed,
+                detail: e.detail,
+                view: e.view
+            });
+            if (e.defaultPrevented) {
+                newEvent.preventDefault();
+            }
+            return newEvent;
+        }
+
+        // Fallback to mouse event
+        const fakeEvt = this.cloneMouseEvent(e as unknown as MouseEvent);
+        fakeEvt.touches = e.touches;
+        fakeEvt.changedTouches = e.changedTouches;
+        fakeEvt.targetTouches = e.targetTouches;
+        return fakeEvt;
     },
 
 

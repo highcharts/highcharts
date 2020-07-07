@@ -9,9 +9,9 @@
  * */
 'use strict';
 import Color from './Color.js';
-import H from './Globals.js';
+import H from '../Core/Globals.js';
 import Tick from './Tick.js';
-import U from './Utilities.js';
+import U from '../Core/Utilities.js';
 var addEvent = U.addEvent, animObject = U.animObject, arrayMax = U.arrayMax, arrayMin = U.arrayMin, clamp = U.clamp, correctFloat = U.correctFloat, defined = U.defined, destroyObjectProperties = U.destroyObjectProperties, error = U.error, extend = U.extend, fireEvent = U.fireEvent, format = U.format, getMagnitude = U.getMagnitude, isArray = U.isArray, isFunction = U.isFunction, isNumber = U.isNumber, isString = U.isString, merge = U.merge, normalizeTickInterval = U.normalizeTickInterval, objectEach = U.objectEach, pick = U.pick, relativeLength = U.relativeLength, removeEvent = U.removeEvent, splat = U.splat, syncTimeout = U.syncTimeout;
 /**
  * Options for the path on the Axis to be calculated.
@@ -66,25 +66,35 @@ var addEvent = U.addEvent, animObject = U.animObject, arrayMax = U.arrayMax, arr
  * @param {Highcharts.Axis} this
  */
 /**
- * @interface Highcharts.AxisLabelsFormatterContextObject
+ * @callback Highcharts.AxisLabelsFormatterCallbackFunction
+ *
+ * @param {Highcharts.AxisLabelsFormatterContextObject<number>} this
+ *
+ * @param {Highcharts.AxisLabelsFormatterContextObject<string>} that
+ *
+ * @return {string}
+ */
+/**
+ * @interface Highcharts.AxisLabelsFormatterContextObject<T>
  */ /**
-* @name Highcharts.AxisLabelsFormatterContextObject#axis
+* @name Highcharts.AxisLabelsFormatterContextObject<T>#axis
 * @type {Highcharts.Axis}
 */ /**
-* @name Highcharts.AxisLabelsFormatterContextObject#chart
+* @name Highcharts.AxisLabelsFormatterContextObject<T>#chart
 * @type {Highcharts.Chart}
 */ /**
-* @name Highcharts.AxisLabelsFormatterContextObject#isFirst
+* @name Highcharts.AxisLabelsFormatterContextObject<T>#isFirst
 * @type {boolean}
 */ /**
-* @name Highcharts.AxisLabelsFormatterContextObject#isLast
+* @name Highcharts.AxisLabelsFormatterContextObject<T>#isLast
 * @type {boolean}
 */ /**
-* @name Highcharts.AxisLabelsFormatterContextObject#pos
+* @name Highcharts.AxisLabelsFormatterContextObject<T>#pos
 * @type {number}
 */ /**
-* @name Highcharts.AxisLabelsFormatterContextObject#value
-* @type {number}
+* This can be either a numeric value or a category string.
+* @name Highcharts.AxisLabelsFormatterContextObject<T>#value
+* @type {T}
 */
 /**
  * Options for axes.
@@ -543,14 +553,14 @@ var Axis = /** @class */ (function () {
      *
      * @function Highcharts.Axis#defaultLabelFormatter
      *
-     * @param {Highcharts.AxisLabelsFormatterContextObject} this
+     * @param {Highcharts.AxisLabelsFormatterContextObject<number>|Highcharts.AxisLabelsFormatterContextObject<string>} this
      * Formatter context of axis label.
      *
      * @return {string}
      * The formatted label content.
      */
     Axis.prototype.defaultLabelFormatter = function () {
-        var axis = this.axis, value = this.value, time = axis.chart.time, categories = axis.categories, dateTimeLabelFormat = this.dateTimeLabelFormat, lang = defaultOptions.lang, numericSymbols = lang.numericSymbols, numSymMagnitude = lang.numericSymbolMagnitude || 1000, i = numericSymbols && numericSymbols.length, multi, ret, formatOption = axis.options.labels.format, 
+        var axis = this.axis, value = isNumber(this.value) ? this.value : NaN, time = axis.chart.time, categories = axis.categories, dateTimeLabelFormat = this.dateTimeLabelFormat, lang = defaultOptions.lang, numericSymbols = lang.numericSymbols, numSymMagnitude = lang.numericSymbolMagnitude || 1000, i = numericSymbols && numericSymbols.length, multi, ret, formatOption = axis.options.labels.format, 
         // make sure the same symbol is added for all labels on a linear
         // axis
         numericSymbolDetector = axis.logarithmic ?
@@ -562,7 +572,7 @@ var Axis = /** @class */ (function () {
             ret = format(formatOption, this, chart);
         }
         else if (categories) {
-            ret = value;
+            ret = "" + this.value;
         }
         else if (dateTimeLabelFormat) { // datetime axis
             ret = time.dateFormat(dateTimeLabelFormat, value);
@@ -584,8 +594,7 @@ var Axis = /** @class */ (function () {
                     (value * 10) % multi === 0 &&
                     numericSymbols[i] !== null &&
                     value !== 0) { // #5480
-                    ret = numberFormatter(value / multi, -1) +
-                        numericSymbols[i];
+                    ret = numberFormatter(value / multi, -1) + numericSymbols[i];
                 }
             }
         }
@@ -1296,7 +1305,7 @@ var Axis = /** @class */ (function () {
         }
         else {
             // Adjust to hard threshold
-            if (!softThreshold && defined(threshold)) {
+            if (softThreshold && defined(threshold)) {
                 if (axis.dataMin >= threshold) {
                     thresholdMin = threshold;
                     minPadding = 0;
@@ -1444,7 +1453,12 @@ var Axis = /** @class */ (function () {
         }
         // Before normalizing the tick interval, handle minimum tick interval.
         // This applies only if tickInterval is not defined.
-        minTickInterval = pick(options.minTickInterval, (axis.dateTime && axis.closestPointRange));
+        minTickInterval = pick(options.minTickInterval, 
+        // In datetime axes, don't go below the data interval, except when
+        // there are scatter-like series involved (#13369).
+        axis.dateTime &&
+            !axis.series.some(function (s) { return s.noSharedTooltip; }) ?
+            axis.closestPointRange : 0);
         if (!tickIntervalOption && axis.tickInterval < minTickInterval) {
             axis.tickInterval = minTickInterval;
         }
@@ -1465,8 +1479,9 @@ var Axis = /** @class */ (function () {
         this.setTickPositions();
     };
     /**
-     * Now we have computed the normalized tickInterval, get the tick positions
+     * Now we have computed the normalized tickInterval, get the tick positions.
      *
+     * @private
      * @function Highcharts.Axis#setTickPositions
      *
      * @fires Highcharts.Axis#event:afterSetTickPositions
@@ -3113,7 +3128,7 @@ var Axis = /** @class */ (function () {
          * @sample {highstock} stock/xaxis/alternategridcolor/
          *         Alternate grid color on the Y axis
          *
-         * @type      {Highcharts.ColorString|Highcharts.GradientColorObject|Highcharts.PatternObject}
+         * @type      {Highcharts.ColorType}
          * @apioption xAxis.alternateGridColor
          */
         /**
@@ -3258,7 +3273,7 @@ var Axis = /** @class */ (function () {
          * @sample {highcharts|highstock|highmaps} highcharts/xaxis/crosshair-customized/
          *         Customized crosshairs
          *
-         * @type      {Highcharts.ColorString|Highcharts.GradientColorObject|Highcharts.PatternObject}
+         * @type      {Highcharts.ColorType}
          * @default   #cccccc
          * @since     4.1
          * @apioption xAxis.crosshair.color
@@ -3308,7 +3323,7 @@ var Axis = /** @class */ (function () {
          * The background color for the label. Defaults to the related series
          * color, or `#666666` if that is not available.
          *
-         * @type      {Highcharts.ColorString|Highcharts.GradientColorObject|Highcharts.PatternObject}
+         * @type      {Highcharts.ColorType}
          * @since     2.1
          * @product   highstock
          * @apioption xAxis.crosshair.label.backgroundColor
@@ -3316,7 +3331,7 @@ var Axis = /** @class */ (function () {
         /**
          * The border color for the crosshair label
          *
-         * @type      {Highcharts.ColorString|Highcharts.GradientColorObject|Highcharts.PatternObject}
+         * @type      {Highcharts.ColorType}
          * @since     2.1
          * @product   highstock
          * @apioption xAxis.crosshair.label.borderColor
@@ -3813,7 +3828,7 @@ var Axis = /** @class */ (function () {
              * @sample {highstock} stock/xaxis/labels-formatter/
              *         Added units on Y axis
              *
-             * @type      {Highcharts.FormatterCallbackFunction<Highcharts.AxisLabelsFormatterContextObject>}
+             * @type      {Highcharts.AxisLabelsFormatterCallbackFunction}
              * @apioption xAxis.labels.formatter
              */
             /**
@@ -3940,17 +3955,17 @@ var Axis = /** @class */ (function () {
              * @apioption xAxis.labels.useHTML
              */
             /**
-             * The x position offset of the label relative to the tick position
-             * on the axis.
+             * The x position offset of all labels relative to the tick
+             * positions on the axis.
              *
              * @sample {highcharts} highcharts/xaxis/labels-x/
              *         Y axis labels placed on grid lines
              */
             x: 0,
             /**
-             * The y position offset of the label relative to the tick position
-             * on the axis. The default makes it adapt to the font size on
-             * bottom axis.
+             * The y position offset of all labels relative to the tick
+             * positions on the axis. The default makes it adapt to the font
+             * size of the bottom axis.
              *
              * @sample {highcharts} highcharts/xaxis/labels-x/
              *         Y axis labels placed on grid lines
@@ -4943,7 +4958,7 @@ var Axis = /** @class */ (function () {
          * @sample {highstock} stock/xaxis/minorgridlinecolor/
          *         Bright grey lines from Y axis
          *
-         * @type    {Highcharts.ColorString|Highcharts.GradientColorObject|Highcharts.PatternObject}
+         * @type    {Highcharts.ColorType}
          * @default #f2f2f2
          */
         minorGridLineColor: '${palette.neutralColor5}',
@@ -4969,7 +4984,7 @@ var Axis = /** @class */ (function () {
          * @sample {highstock} stock/xaxis/minorticks/
          *         Black tick marks on Y axis
          *
-         * @type    {Highcharts.ColorString|Highcharts.GradientColorObject|Highcharts.PatternObject}
+         * @type    {Highcharts.ColorType}
          * @default #999999
          */
         minorTickColor: '${palette.neutralColor40}',
@@ -4990,7 +5005,7 @@ var Axis = /** @class */ (function () {
          * @sample {highstock} stock/xaxis/linecolor/
          *         A red line on X axis
          *
-         * @type    {Highcharts.ColorString|Highcharts.GradientColorObject|Highcharts.PatternObject}
+         * @type    {Highcharts.ColorType}
          * @default #ccd6eb
          */
         lineColor: '${palette.highlightColor20}',
@@ -5027,7 +5042,7 @@ var Axis = /** @class */ (function () {
          * @sample {highstock} stock/xaxis/gridlinecolor/
          *         Green lines
          *
-         * @type    {Highcharts.ColorString|Highcharts.GradientColorObject|Highcharts.PatternObject}
+         * @type    {Highcharts.ColorType}
          * @default #e6e6e6
          */
         gridLineColor: '${palette.neutralColor10}',
@@ -5085,7 +5100,7 @@ var Axis = /** @class */ (function () {
          * @sample {highstock} stock/xaxis/ticks/
          *         Formatted ticks on X axis
          *
-         * @type    {Highcharts.ColorString|Highcharts.GradientColorObject|Highcharts.PatternObject}
+         * @type    {Highcharts.ColorType}
          * @default #ccd6eb
          */
         tickColor: '${palette.highlightColor20}'
@@ -5155,7 +5170,7 @@ var Axis = /** @class */ (function () {
          * @sample {highcharts} highcharts/yaxis/mincolor-maxcolor/
          *         Min and max colors
          *
-         * @type      {Highcharts.ColorString|Highcharts.GradientColorObject|Highcharts.PatternObject}
+         * @type      {Highcharts.ColorType}
          * @default   #003399
          * @since     4.0
          * @product   highcharts
@@ -5168,7 +5183,7 @@ var Axis = /** @class */ (function () {
          * @sample {highcharts} highcharts/yaxis/mincolor-maxcolor/
          *         Min and max color
          *
-         * @type      {Highcharts.ColorString|Highcharts.GradientColorObject|Highcharts.PatternObject}
+         * @type      {Highcharts.ColorType}
          * @default   #e6ebf5
          * @since     4.0
          * @product   highcharts
@@ -5223,7 +5238,7 @@ var Axis = /** @class */ (function () {
          * @sample {highcharts} highcharts/demo/gauge-solid/
          *         True by default
          *
-         * @type      {Array<Highcharts.GradientColorStopObject>}
+         * @type      {Array<Array<number,Highcharts.ColorType>>}
          * @since     4.0
          * @product   highcharts
          * @apioption yAxis.stops
@@ -5238,35 +5253,6 @@ var Axis = /** @class */ (function () {
          * @default   0
          * @product   highcharts highstock gantt
          * @apioption yAxis.tickWidth
-         */
-        /**
-         * Angular gauges and solid gauges only.
-         * The label's pixel distance from the perimeter of the plot area.
-         *
-         * Since v7.1.2: If it's a percentage string, it is interpreted the
-         * same as [series.radius](#plotOptions.gauge.radius), so label can be
-         * aligned under the gauge's shape.
-         *
-         * @sample {highcharts} highcharts/yaxis/labels-distance/
-         *                      Labels centered under the arc
-         *
-         * @type      {number|string}
-         * @default   -25
-         * @product   highcharts
-         * @apioption yAxis.labels.distance
-         */
-        /**
-         * The y position offset of the label relative to the tick position
-         * on the axis.
-         *
-         * @sample {highcharts} highcharts/xaxis/labels-x/
-         *         Y axis labels placed on grid lines
-         *
-         * @type      {number}
-         * @default   {highcharts} 3
-         * @default   {highstock} -2
-         * @default   {highmaps} 3
-         * @apioption yAxis.labels.y
          */
         /**
          * Whether to force the axis to end on a tick. Use this option with
@@ -5357,6 +5343,36 @@ var Axis = /** @class */ (function () {
          */
         labels: {
             /**
+             * Angular gauges and solid gauges only.
+             * The label's pixel distance from the perimeter of the plot area.
+             *
+             * Since v7.1.2: If it's a percentage string, it is interpreted the
+             * same as [series.radius](#plotOptions.gauge.radius), so label can be
+             * aligned under the gauge's shape.
+             *
+             * @sample {highcharts} highcharts/yaxis/labels-distance/
+             *         Labels centered under the arc
+             *
+             * @type      {number|string}
+             * @default   -25
+             * @product   highcharts
+             * @apioption yAxis.labels.distance
+             */
+            /**
+             * The y position offset of all labels relative to the tick
+             * positions on the axis. For polar and radial axis consider the use
+             * of the [distance](#yAxis.labels.distance) option.
+             *
+             * @sample {highcharts} highcharts/xaxis/labels-x/
+             *         Y axis labels placed on grid lines
+             *
+             * @type      {number}
+             * @default   {highcharts} 3
+             * @default   {highstock} -2
+             * @default   {highmaps} 3
+             * @apioption yAxis.labels.y
+             */
+            /**
              * What part of the string the given position is anchored to. Can
              * be one of `"left"`, `"center"` or `"right"`. The exact position
              * also depends on the `labels.x` setting.
@@ -5378,8 +5394,9 @@ var Axis = /** @class */ (function () {
              * @apioption  yAxis.labels.align
              */
             /**
-             * The x position offset of the label relative to the tick position
-             * on the axis. Defaults to -15 for left axis, 15 for right axis.
+             * The x position offset of all labels relative to the tick
+             * positions on the axis. Defaults to -15 for left axis, 15 for
+             * right axis.
              *
              * @sample {highcharts} highcharts/xaxis/labels-x/
              *         Y axis labels placed on grid lines
@@ -5391,7 +5408,7 @@ var Axis = /** @class */ (function () {
          * In Highmaps, the axis line is hidden by default, because the axis is
          * not visible by default.
          *
-         * @type      {Highcharts.ColorString|Highcharts.GradientColorObject|Highcharts.PatternObject}
+         * @type      {Highcharts.ColorType}
          * @apioption yAxis.lineColor
          */
         /**
@@ -5728,7 +5745,7 @@ var Axis = /** @class */ (function () {
              *
              * @sample {highcharts} highcharts/yaxis/stacklabels-box/
              *          Stack labels box options
-             * @type      {Highcharts.ColorString|Highcharts.GradientColorObject|Highcharts.PatternObject}
+             * @type      {Highcharts.ColorType}
              * @since 8.1.0
              * @apioption yAxis.stackLabels.backgroundColor
              */
@@ -5737,7 +5754,7 @@ var Axis = /** @class */ (function () {
              *
              * @sample {highcharts} highcharts/yaxis/stacklabels-box/
              *          Stack labels box options
-             * @type      {Highcharts.ColorString|Highcharts.GradientColorObject|Highcharts.PatternObject}
+             * @type      {Highcharts.ColorType}
              * @since 8.1.0
              * @apioption yAxis.stackLabels.borderColor
              */

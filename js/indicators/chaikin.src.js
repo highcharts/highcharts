@@ -6,9 +6,9 @@
  *
  * */
 'use strict';
-import H from '../parts/Globals.js';
+import H from '../Core/Globals.js';
 import './accumulation-distribution.src.js';
-import U from '../parts/Utilities.js';
+import U from '../Core/Utilities.js';
 var correctFloat = U.correctFloat, error = U.error, seriesType = U.seriesType;
 import requiredIndicatorMixin from '../mixins/indicator-required.js';
 var EMA = H.seriesTypes.ema, AD = H.seriesTypes.ad, requiredIndicator = requiredIndicatorMixin;

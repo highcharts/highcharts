@@ -10,7 +10,7 @@
  *
  * */
 'use strict';
-import U from '../parts/Utilities.js';
+import U from '../Core/Utilities.js';
 var addEvent = U.addEvent, extend = U.extend, wrap = U.wrap;
 /* eslint-disable valid-jsdoc */
 /**

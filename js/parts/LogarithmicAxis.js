@@ -9,7 +9,7 @@
  * */
 'use strict';
 import Axis from './Axis.js';
-import U from './Utilities.js';
+import U from '../Core/Utilities.js';
 var addEvent = U.addEvent, getMagnitude = U.getMagnitude, normalizeTickInterval = U.normalizeTickInterval, pick = U.pick;
 /* eslint-disable valid-jsdoc */
 /**

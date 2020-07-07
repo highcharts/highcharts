@@ -12,13 +12,15 @@
 'use strict';
 import Color from '../parts/Color.js';
 var color = Color.parse;
-import H from '../parts/Globals.js';
+import H from '../Core/Globals.js';
+import Math3D from '../parts-3d/Math.js';
+var perspective = Math3D.perspective, shapeArea = Math3D.shapeArea;
 import SVGElement from '../parts/SVGElement.js';
 import SVGRenderer from '../parts/SVGRenderer.js';
-import U from '../parts/Utilities.js';
+import U from '../Core/Utilities.js';
 var animObject = U.animObject, defined = U.defined, extend = U.extend, merge = U.merge, objectEach = U.objectEach, pick = U.pick;
 var cos = Math.cos, PI = Math.PI, sin = Math.sin;
-var charts = H.charts, deg2rad = H.deg2rad, perspective = H.perspective, 
+var charts = H.charts, deg2rad = H.deg2rad, 
 // internal:
 dFactor, element3dMethods, cuboidMethods;
 /*
@@ -100,7 +102,7 @@ SVGRenderer.prototype.face3d = function (args) {
             delete hash.enabled;
             delete hash.vertexes;
             delete hash.insidePlotArea;
-            var chart = charts[renderer.chartIndex], vertexes2d = perspective(this.vertexes, chart, this.insidePlotArea), path = renderer.toLinePath(vertexes2d, true), area = H.shapeArea(vertexes2d), visibility = (this.enabled && area > 0) ? 'visible' : 'hidden';
+            var chart = charts[renderer.chartIndex], vertexes2d = perspective(this.vertexes, chart, this.insidePlotArea), path = renderer.toLinePath(vertexes2d, true), area = shapeArea(vertexes2d), visibility = (this.enabled && area > 0) ? 'visible' : 'hidden';
             hash.d = path;
             hash.visibility = visibility;
         }
@@ -117,7 +119,7 @@ SVGRenderer.prototype.face3d = function (args) {
             delete params.enabled;
             delete params.vertexes;
             delete params.insidePlotArea;
-            var chart = charts[renderer.chartIndex], vertexes2d = perspective(this.vertexes, chart, this.insidePlotArea), path = renderer.toLinePath(vertexes2d, true), area = H.shapeArea(vertexes2d), visibility = (this.enabled && area > 0) ? 'visible' : 'hidden';
+            var chart = charts[renderer.chartIndex], vertexes2d = perspective(this.vertexes, chart, this.insidePlotArea), path = renderer.toLinePath(vertexes2d, true), area = shapeArea(vertexes2d), visibility = (this.enabled && area > 0) ? 'visible' : 'hidden';
             params.d = path;
             this.attr('visibility', visibility);
         }
@@ -449,18 +451,18 @@ SVGRenderer.prototype.cuboidPath = function (shapeArgs) {
         // but if cuboid height is 0 additional height is added so it is
         // possible to use this vertices array for visible face calculation
         dummyFace1 = verticesIndex1.map(mapSidePath), dummyFace2 = verticesIndex2.map(mapSidePath);
-        if (H.shapeArea(face1) < 0) {
+        if (shapeArea(face1) < 0) {
             ret = [face1, 0];
         }
-        else if (H.shapeArea(face2) < 0) {
+        else if (shapeArea(face2) < 0) {
             ret = [face2, 1];
         }
         else if (side) {
             forcedSides.push(side);
-            if (H.shapeArea(dummyFace1) < 0) {
+            if (shapeArea(dummyFace1) < 0) {
                 ret = [face1, 0];
             }
-            else if (H.shapeArea(dummyFace2) < 0) {
+            else if (shapeArea(dummyFace2) < 0) {
                 ret = [face2, 1];
             }
             else {

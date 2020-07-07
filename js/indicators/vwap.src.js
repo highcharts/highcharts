@@ -10,7 +10,7 @@
  *
  * */
 'use strict';
-import U from '../parts/Utilities.js';
+import U from '../Core/Utilities.js';
 var error = U.error, isArray = U.isArray, seriesType = U.seriesType;
 /**
  * The Volume Weighted Average Price (VWAP) series type.

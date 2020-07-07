@@ -12,7 +12,7 @@
 
 import type SVGRenderer from './SVGRenderer';
 import SVGElement from './SVGElement.js';
-import U from './Utilities.js';
+import U from '../Core/Utilities.js';
 const {
     defined,
     extend,
@@ -83,7 +83,7 @@ class SVGLabel extends SVGElement {
         let hasBGImage;
         if (typeof shape === 'string') {
             hasBGImage = /^url\((.*?)\)$/.test(shape);
-            if (this.renderer.symbol(shape) || hasBGImage) {
+            if (this.renderer.symbols[shape] || hasBGImage) {
                 this.symbolKey = shape;
             }
         }

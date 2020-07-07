@@ -8,11 +8,11 @@
  *
  * */
 'use strict';
-import H from './Globals.js';
+import H from '../Core/Globals.js';
 import Color from './Color.js';
 var color = Color.parse;
 import LegendSymbolMixin from '../mixins/legend-symbol.js';
-import U from './Utilities.js';
+import U from '../Core/Utilities.js';
 var objectEach = U.objectEach, pick = U.pick, seriesType = U.seriesType;
 import './Series.js';
 import './Options.js';
@@ -120,20 +120,6 @@ seriesType('area', 'line',
      * @product   highcharts highstock
      * @apioption plotOptions.area.trackByArea
      */
-    /**
-     * When this is true, the series will not cause the Y axis to cross
-     * the zero plane (or [threshold](#plotOptions.series.threshold) option)
-     * unless the data actually crosses the plane.
-     *
-     * For example, if `softThreshold` is `false`, a series of 0, 1, 2,
-     * 3 will make the Y axis show negative values according to the
-     * `minPadding` option. If `softThreshold` is `true`, the Y axis starts
-     * at 0.
-     *
-     * @since   4.1.9
-     * @product highcharts highstock
-     */
-    softThreshold: false,
     /**
      * The Y axis value to serve as the base for the area, for
      * distinguishing between values above and below a threshold. The area

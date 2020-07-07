@@ -5,7 +5,7 @@
  * */
 
 import type Annotation from '../annotations/annotations.src';
-import H from '../parts/Globals.js';
+import H from '../Core/Globals.js';
 
 /**
  * Internal types.
@@ -52,11 +52,10 @@ declare global {
     }
 }
 
-import U from '../parts/Utilities.js';
+import U from '../Core/Utilities.js';
 const {
     addEvent,
     fireEvent,
-    inArray,
     objectEach,
     pick,
     removeEvent
@@ -86,7 +85,7 @@ const eventEmitterMixin: Highcharts.AnnotationEventEmitterMixin = {
             ): void {
                 addEvent(
                     element,
-                    Highcharts.isTouchDevice ? 'touchstart' : 'mousedown',
+                    H.isTouchDevice ? 'touchstart' : 'mousedown',
                     (e: Highcharts.AnnotationEventObject): void => {
                         emitter.onMouseDown(e);
                     }
@@ -116,7 +115,7 @@ const eventEmitterMixin: Highcharts.AnnotationEventEmitterMixin = {
                 }
             };
 
-            if (inArray(type, emitter.nonDOMEvents || []) === -1) {
+            if ((emitter.nonDOMEvents || []).indexOf(type) === -1) {
                 emitter.graphic.on(type, eventHandler);
             } else {
                 addEvent(emitter, type, eventHandler);
@@ -125,7 +124,7 @@ const eventEmitterMixin: Highcharts.AnnotationEventEmitterMixin = {
 
         if (emitter.options.draggable) {
 
-            addEvent(emitter, Highcharts.isTouchDevice ? 'touchmove' : 'drag', emitter.onDrag);
+            addEvent(emitter, H.isTouchDevice ? 'touchmove' : 'drag', emitter.onDrag);
 
 
             if (!emitter.graphic.renderer.styledMode) {
@@ -193,7 +192,7 @@ const eventEmitterMixin: Highcharts.AnnotationEventEmitterMixin = {
         emitter.chart.hasDraggedAnnotation = true;
         emitter.removeDrag = addEvent(
             H.doc,
-            Highcharts.isTouchDevice ? 'touchmove' : 'mousemove',
+            H.isTouchDevice ? 'touchmove' : 'mousemove',
             function (e: Highcharts.AnnotationEventObject): void {
                 emitter.hasDragged = true;
 
@@ -209,7 +208,7 @@ const eventEmitterMixin: Highcharts.AnnotationEventEmitterMixin = {
         );
         emitter.removeMouseUp = addEvent(
             H.doc,
-            Highcharts.isTouchDevice ? 'touchend' : 'mouseup',
+            H.isTouchDevice ? 'touchend' : 'mouseup',
             function (e: Highcharts.AnnotationEventObject): void {
                 emitter.cancelClick = emitter.hasDragged;
                 emitter.hasDragged = false;

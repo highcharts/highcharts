@@ -253,14 +253,13 @@ QUnit.test('X-Range', function (assert) {
 
     point = chart.series[0].points[0];
     point.showDragHandles();
-
-    var leftHandleBBox = chart.dragHandles.left.getBBox(),
-        rightHandleBBox = chart.dragHandles.right.getBBox(),
-        leftHandleX = chart.dragHandles.left.translateX,
-        leftHandleY = chart.dragHandles.left.translateY +
+    var leftHandleBBox = chart.dragHandles.draggableX1.getBBox(),
+        rightHandleBBox = chart.dragHandles.draggableX2.getBBox(),
+        leftHandleX = chart.dragHandles.draggableX1.translateX,
+        leftHandleY = chart.dragHandles.draggableX1.translateY +
             leftHandleBBox.y + leftHandleBBox.height / 2,
-        rightHandleX = chart.dragHandles.right.translateX,
-        rightHandleY = chart.dragHandles.right.translateY +
+        rightHandleX = chart.dragHandles.draggableX2.translateX,
+        rightHandleY = chart.dragHandles.draggableX2.translateY +
             rightHandleBBox.y + rightHandleBBox.height / 2,
         plotX = point.plotX,
         plotY = point.plotY + point.series.columnMetrics.offset +

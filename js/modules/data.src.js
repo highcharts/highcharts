@@ -11,9 +11,9 @@
  * */
 'use strict';
 import Chart from '../parts/Chart.js';
-import H from '../parts/Globals.js';
+import H from '../Core/Globals.js';
 import Point from '../parts/Point.js';
-import U from '../parts/Utilities.js';
+import U from '../Core/Utilities.js';
 var addEvent = U.addEvent, defined = U.defined, extend = U.extend, fireEvent = U.fireEvent, isNumber = U.isNumber, merge = U.merge, objectEach = U.objectEach, pick = U.pick, splat = U.splat;
 /**
  * Callback function to modify the CSV before parsing it by the data module.
@@ -88,6 +88,7 @@ var addEvent = U.addEvent, defined = U.defined, extend = U.extend, fireEvent = U
  *         continue async.
  */
 import '../mixins/ajax.js';
+var ajax = H.ajax;
 // Utilities
 var win = H.win, doc = win.document;
 /**
@@ -1232,7 +1233,7 @@ var Data = /** @class */ (function () {
                             setTimeout(performFetch, updateIntervalMs);
                     }
                 }
-                Highcharts.ajax({
+                ajax({
                     url: url,
                     dataType: tp || 'json',
                     success: function (res) {
@@ -1305,7 +1306,7 @@ var Data = /** @class */ (function () {
                 worksheet,
                 'public/values?alt=json'
             ].join('/');
-            Highcharts.ajax({
+            ajax({
                 url: url,
                 dataType: 'json',
                 success: function (json) {

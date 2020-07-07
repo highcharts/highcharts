@@ -16,9 +16,9 @@ import type PlotLineOrBand from './PlotLineOrBand';
 import type Point from './Point';
 import type SVGPath from './SVGPath';
 import Color from './Color.js';
-import H from './Globals.js';
+import H from '../Core/Globals.js';
 import Tick from './Tick.js';
-import U from './Utilities.js';
+import U from '../Core/Utilities.js';
 const {
     addEvent,
     animObject,
@@ -71,14 +71,20 @@ declare global {
         interface AxisEventCallbackFunction {
             (this: Axis): void;
         }
-        interface AxisLabelsFormatterContextObject {
+        interface AxisLabelsFormatterCallbackFunction {
+            (
+                this: AxisLabelsFormatterContextObject<number>,
+                that?: AxisLabelsFormatterContextObject<string>
+            ): string;
+        }
+        interface AxisLabelsFormatterContextObject<T = number> {
             axis: Axis;
             chart: Chart;
             dateTimeLabelFormat: string;
             isFirst: boolean;
             isLast: boolean;
             pos: number;
-            value: number;
+            value: T;
         }
         interface AxisPlotLinePathOptionsObject {
             acrossPanes?: boolean;
@@ -139,8 +145,8 @@ declare global {
         }
         interface XAxisCrosshairLabelOptions {
             align?: AlignValue;
-            backgroundColor?: (ColorString|GradientColorObject|PatternObject);
-            borderColor?: (ColorString|GradientColorObject|PatternObject);
+            backgroundColor?: ColorType;
+            borderColor?: ColorType;
             borderRadius?: number;
             borderWidth?: number;
             enabled?: boolean;
@@ -152,7 +158,7 @@ declare global {
         }
         interface XAxisCrosshairOptions {
             className?: string;
-            color?: (ColorString|GradientColorObject|PatternObject);
+            color?: ColorType;
             dashStyle?: DashStyleValue;
             label?: XAxisCrosshairLabelOptions;
             snap?: boolean;
@@ -179,9 +185,7 @@ declare global {
             distance?: number;
             enabled?: boolean;
             format?: string;
-            formatter?: (
-                FormatterCallbackFunction<AxisLabelsFormatterContextObject>
-            );
+            formatter?: AxisLabelsFormatterCallbackFunction;
             indentation?: number;
             maxStaggerLines?: number;
             overflow?: OptionsOverflowValue;
@@ -201,9 +205,7 @@ declare global {
             alignTicks?: boolean;
             allowDecimals?: boolean;
             allowNegativeLog?: boolean;
-            alternateGridColor?: (
-                ColorString|GradientColorObject|PatternObject
-            );
+            alternateGridColor?: ColorType;
             breaks?: Array<XAxisBreaksOptions>;
             categories?: Array<string>;
             ceiling?: number;
@@ -212,7 +214,7 @@ declare global {
             endOnTick?: boolean;
             events?: XAxisEventsOptions;
             floor?: number;
-            gridLineColor?: (ColorString|GradientColorObject|PatternObject);
+            gridLineColor?: ColorType;
             gridLineDashStyle?: DashStyleValue;
             gridLineWidth?: number;
             gridZIndex?: number;
@@ -221,7 +223,7 @@ declare global {
             isX?: boolean;
             labels?: XAxisLabelsOptions;
             left?: (number|string);
-            lineColor?: (ColorString|GradientColorObject|PatternObject);
+            lineColor?: ColorType;
             lineWidth?: number;
             linkedTo?: number;
             margin?: number;
@@ -230,12 +232,10 @@ declare global {
             maxRange?: number;
             maxZoom?: number;
             min?: (null|number);
-            minorGridLineColor?: (
-                ColorString|GradientColorObject|PatternObject
-            );
+            minorGridLineColor?: ColorType;
             minorGridLineDashStyle?: DashStyleValue;
             minorGridLineWidth?: number;
-            minorTickColor?: (ColorString|GradientColorObject|PatternObject);
+            minorTickColor?: ColorType;
             minorTickInterval?: ('auto'|null|number);
             minorTickLength?: number;
             minorTickPosition?: AxisMinorTickPositionValue;
@@ -262,7 +262,7 @@ declare global {
             startOfWeek?: number;
             startOnTick?: boolean;
             tickAmount?: number;
-            tickColor?: (ColorString|GradientColorObject|PatternObject);
+            tickColor?: ColorType;
             tickInterval?: number;
             tickLength?: number;
             tickmarkPlacement?: AxisTickmarkPlacementValue;
@@ -295,8 +295,8 @@ declare global {
             y?: number;
         }
         interface YAxisOptions extends XAxisOptions {
-            maxColor?: (ColorString|GradientColorObject|PatternObject);
-            minColor?: (ColorString|GradientColorObject|PatternObject);
+            maxColor?: ColorType;
+            minColor?: ColorType;
             staticScale?: number;
             stops?: Array<GradientColorStopObject>;
             tooltipValueFormat?: string;
@@ -348,9 +348,7 @@ declare global {
             public keepProps?: Array<string>;
             public labelAlign?: AlignValue;
             public labelEdge: Array<null>;
-            public labelFormatter: (
-                FormatterCallbackFunction<AxisLabelsFormatterContextObject>
-            );
+            public labelFormatter: AxisLabelsFormatterCallbackFunction;
             public labelGroup?: SVGElement;
             public labelOffset?: number;
             public labelRotation?: number;
@@ -553,25 +551,36 @@ declare global {
  */
 
 /**
- * @interface Highcharts.AxisLabelsFormatterContextObject
+ * @callback Highcharts.AxisLabelsFormatterCallbackFunction
+ *
+ * @param {Highcharts.AxisLabelsFormatterContextObject<number>} this
+ *
+ * @param {Highcharts.AxisLabelsFormatterContextObject<string>} that
+ *
+ * @return {string}
+ */
+
+/**
+ * @interface Highcharts.AxisLabelsFormatterContextObject<T>
  *//**
- * @name Highcharts.AxisLabelsFormatterContextObject#axis
+ * @name Highcharts.AxisLabelsFormatterContextObject<T>#axis
  * @type {Highcharts.Axis}
  *//**
- * @name Highcharts.AxisLabelsFormatterContextObject#chart
+ * @name Highcharts.AxisLabelsFormatterContextObject<T>#chart
  * @type {Highcharts.Chart}
  *//**
- * @name Highcharts.AxisLabelsFormatterContextObject#isFirst
+ * @name Highcharts.AxisLabelsFormatterContextObject<T>#isFirst
  * @type {boolean}
  *//**
- * @name Highcharts.AxisLabelsFormatterContextObject#isLast
+ * @name Highcharts.AxisLabelsFormatterContextObject<T>#isLast
  * @type {boolean}
  *//**
- * @name Highcharts.AxisLabelsFormatterContextObject#pos
+ * @name Highcharts.AxisLabelsFormatterContextObject<T>#pos
  * @type {number}
  *//**
- * @name Highcharts.AxisLabelsFormatterContextObject#value
- * @type {number}
+ * This can be either a numeric value or a category string.
+ * @name Highcharts.AxisLabelsFormatterContextObject<T>#value
+ * @type {T}
  */
 
 /**
@@ -820,7 +829,7 @@ class Axis implements AxisComposition, AxisLike {
          * @sample {highstock} stock/xaxis/alternategridcolor/
          *         Alternate grid color on the Y axis
          *
-         * @type      {Highcharts.ColorString|Highcharts.GradientColorObject|Highcharts.PatternObject}
+         * @type      {Highcharts.ColorType}
          * @apioption xAxis.alternateGridColor
          */
 
@@ -976,7 +985,7 @@ class Axis implements AxisComposition, AxisLike {
          * @sample {highcharts|highstock|highmaps} highcharts/xaxis/crosshair-customized/
          *         Customized crosshairs
          *
-         * @type      {Highcharts.ColorString|Highcharts.GradientColorObject|Highcharts.PatternObject}
+         * @type      {Highcharts.ColorType}
          * @default   #cccccc
          * @since     4.1
          * @apioption xAxis.crosshair.color
@@ -1030,7 +1039,7 @@ class Axis implements AxisComposition, AxisLike {
          * The background color for the label. Defaults to the related series
          * color, or `#666666` if that is not available.
          *
-         * @type      {Highcharts.ColorString|Highcharts.GradientColorObject|Highcharts.PatternObject}
+         * @type      {Highcharts.ColorType}
          * @since     2.1
          * @product   highstock
          * @apioption xAxis.crosshair.label.backgroundColor
@@ -1039,7 +1048,7 @@ class Axis implements AxisComposition, AxisLike {
         /**
          * The border color for the crosshair label
          *
-         * @type      {Highcharts.ColorString|Highcharts.GradientColorObject|Highcharts.PatternObject}
+         * @type      {Highcharts.ColorType}
          * @since     2.1
          * @product   highstock
          * @apioption xAxis.crosshair.label.borderColor
@@ -1568,7 +1577,7 @@ class Axis implements AxisComposition, AxisLike {
              * @sample {highstock} stock/xaxis/labels-formatter/
              *         Added units on Y axis
              *
-             * @type      {Highcharts.FormatterCallbackFunction<Highcharts.AxisLabelsFormatterContextObject>}
+             * @type      {Highcharts.AxisLabelsFormatterCallbackFunction}
              * @apioption xAxis.labels.formatter
              */
 
@@ -1705,8 +1714,8 @@ class Axis implements AxisComposition, AxisLike {
              */
 
             /**
-             * The x position offset of the label relative to the tick position
-             * on the axis.
+             * The x position offset of all labels relative to the tick
+             * positions on the axis.
              *
              * @sample {highcharts} highcharts/xaxis/labels-x/
              *         Y axis labels placed on grid lines
@@ -1714,9 +1723,9 @@ class Axis implements AxisComposition, AxisLike {
             x: 0,
 
             /**
-             * The y position offset of the label relative to the tick position
-             * on the axis. The default makes it adapt to the font size on
-             * bottom axis.
+             * The y position offset of all labels relative to the tick
+             * positions on the axis. The default makes it adapt to the font
+             * size of the bottom axis.
              *
              * @sample {highcharts} highcharts/xaxis/labels-x/
              *         Y axis labels placed on grid lines
@@ -2773,7 +2782,7 @@ class Axis implements AxisComposition, AxisLike {
          * @sample {highstock} stock/xaxis/minorgridlinecolor/
          *         Bright grey lines from Y axis
          *
-         * @type    {Highcharts.ColorString|Highcharts.GradientColorObject|Highcharts.PatternObject}
+         * @type    {Highcharts.ColorType}
          * @default #f2f2f2
          */
         minorGridLineColor: '${palette.neutralColor5}',
@@ -2801,7 +2810,7 @@ class Axis implements AxisComposition, AxisLike {
          * @sample {highstock} stock/xaxis/minorticks/
          *         Black tick marks on Y axis
          *
-         * @type    {Highcharts.ColorString|Highcharts.GradientColorObject|Highcharts.PatternObject}
+         * @type    {Highcharts.ColorType}
          * @default #999999
          */
         minorTickColor: '${palette.neutralColor40}',
@@ -2823,7 +2832,7 @@ class Axis implements AxisComposition, AxisLike {
          * @sample {highstock} stock/xaxis/linecolor/
          *         A red line on X axis
          *
-         * @type    {Highcharts.ColorString|Highcharts.GradientColorObject|Highcharts.PatternObject}
+         * @type    {Highcharts.ColorType}
          * @default #ccd6eb
          */
         lineColor: '${palette.highlightColor20}',
@@ -2862,7 +2871,7 @@ class Axis implements AxisComposition, AxisLike {
          * @sample {highstock} stock/xaxis/gridlinecolor/
          *         Green lines
          *
-         * @type    {Highcharts.ColorString|Highcharts.GradientColorObject|Highcharts.PatternObject}
+         * @type    {Highcharts.ColorType}
          * @default #e6e6e6
          */
         gridLineColor: '${palette.neutralColor10}',
@@ -2925,7 +2934,7 @@ class Axis implements AxisComposition, AxisLike {
          * @sample {highstock} stock/xaxis/ticks/
          *         Formatted ticks on X axis
          *
-         * @type    {Highcharts.ColorString|Highcharts.GradientColorObject|Highcharts.PatternObject}
+         * @type    {Highcharts.ColorType}
          * @default #ccd6eb
          */
         tickColor: '${palette.highlightColor20}'
@@ -3000,7 +3009,7 @@ class Axis implements AxisComposition, AxisLike {
          * @sample {highcharts} highcharts/yaxis/mincolor-maxcolor/
          *         Min and max colors
          *
-         * @type      {Highcharts.ColorString|Highcharts.GradientColorObject|Highcharts.PatternObject}
+         * @type      {Highcharts.ColorType}
          * @default   #003399
          * @since     4.0
          * @product   highcharts
@@ -3014,7 +3023,7 @@ class Axis implements AxisComposition, AxisLike {
          * @sample {highcharts} highcharts/yaxis/mincolor-maxcolor/
          *         Min and max color
          *
-         * @type      {Highcharts.ColorString|Highcharts.GradientColorObject|Highcharts.PatternObject}
+         * @type      {Highcharts.ColorType}
          * @default   #e6ebf5
          * @since     4.0
          * @product   highcharts
@@ -3072,7 +3081,7 @@ class Axis implements AxisComposition, AxisLike {
          * @sample {highcharts} highcharts/demo/gauge-solid/
          *         True by default
          *
-         * @type      {Array<Highcharts.GradientColorStopObject>}
+         * @type      {Array<Array<number,Highcharts.ColorType>>}
          * @since     4.0
          * @product   highcharts
          * @apioption yAxis.stops
@@ -3088,37 +3097,6 @@ class Axis implements AxisComposition, AxisLike {
          * @default   0
          * @product   highcharts highstock gantt
          * @apioption yAxis.tickWidth
-         */
-
-        /**
-         * Angular gauges and solid gauges only.
-         * The label's pixel distance from the perimeter of the plot area.
-         *
-         * Since v7.1.2: If it's a percentage string, it is interpreted the
-         * same as [series.radius](#plotOptions.gauge.radius), so label can be
-         * aligned under the gauge's shape.
-         *
-         * @sample {highcharts} highcharts/yaxis/labels-distance/
-         *                      Labels centered under the arc
-         *
-         * @type      {number|string}
-         * @default   -25
-         * @product   highcharts
-         * @apioption yAxis.labels.distance
-         */
-
-        /**
-         * The y position offset of the label relative to the tick position
-         * on the axis.
-         *
-         * @sample {highcharts} highcharts/xaxis/labels-x/
-         *         Y axis labels placed on grid lines
-         *
-         * @type      {number}
-         * @default   {highcharts} 3
-         * @default   {highstock} -2
-         * @default   {highmaps} 3
-         * @apioption yAxis.labels.y
          */
 
         /**
@@ -3216,6 +3194,38 @@ class Axis implements AxisComposition, AxisLike {
          */
         labels: {
             /**
+             * Angular gauges and solid gauges only.
+             * The label's pixel distance from the perimeter of the plot area.
+             *
+             * Since v7.1.2: If it's a percentage string, it is interpreted the
+             * same as [series.radius](#plotOptions.gauge.radius), so label can be
+             * aligned under the gauge's shape.
+             *
+             * @sample {highcharts} highcharts/yaxis/labels-distance/
+             *         Labels centered under the arc
+             *
+             * @type      {number|string}
+             * @default   -25
+             * @product   highcharts
+             * @apioption yAxis.labels.distance
+             */
+
+            /**
+             * The y position offset of all labels relative to the tick
+             * positions on the axis. For polar and radial axis consider the use
+             * of the [distance](#yAxis.labels.distance) option.
+             *
+             * @sample {highcharts} highcharts/xaxis/labels-x/
+             *         Y axis labels placed on grid lines
+             *
+             * @type      {number}
+             * @default   {highcharts} 3
+             * @default   {highstock} -2
+             * @default   {highmaps} 3
+             * @apioption yAxis.labels.y
+             */
+
+            /**
              * What part of the string the given position is anchored to. Can
              * be one of `"left"`, `"center"` or `"right"`. The exact position
              * also depends on the `labels.x` setting.
@@ -3238,8 +3248,9 @@ class Axis implements AxisComposition, AxisLike {
              */
 
             /**
-             * The x position offset of the label relative to the tick position
-             * on the axis. Defaults to -15 for left axis, 15 for right axis.
+             * The x position offset of all labels relative to the tick
+             * positions on the axis. Defaults to -15 for left axis, 15 for
+             * right axis.
              *
              * @sample {highcharts} highcharts/xaxis/labels-x/
              *         Y axis labels placed on grid lines
@@ -3252,7 +3263,7 @@ class Axis implements AxisComposition, AxisLike {
          * In Highmaps, the axis line is hidden by default, because the axis is
          * not visible by default.
          *
-         * @type      {Highcharts.ColorString|Highcharts.GradientColorObject|Highcharts.PatternObject}
+         * @type      {Highcharts.ColorType}
          * @apioption yAxis.lineColor
          */
 
@@ -3616,7 +3627,7 @@ class Axis implements AxisComposition, AxisLike {
              *
              * @sample {highcharts} highcharts/yaxis/stacklabels-box/
              *          Stack labels box options
-             * @type      {Highcharts.ColorString|Highcharts.GradientColorObject|Highcharts.PatternObject}
+             * @type      {Highcharts.ColorType}
              * @since 8.1.0
              * @apioption yAxis.stackLabels.backgroundColor
              */
@@ -3626,7 +3637,7 @@ class Axis implements AxisComposition, AxisLike {
              *
              * @sample {highcharts} highcharts/yaxis/stacklabels-box/
              *          Stack labels box options
-             * @type      {Highcharts.ColorString|Highcharts.GradientColorObject|Highcharts.PatternObject}
+             * @type      {Highcharts.ColorType}
              * @since 8.1.0
              * @apioption yAxis.stackLabels.borderColor
              */
@@ -3870,9 +3881,7 @@ class Axis implements AxisComposition, AxisLike {
     public keepProps?: Array<string>;
     public labelAlign?: Highcharts.AlignValue;
     public labelEdge: Array<null> = void 0 as any; // @todo
-    public labelFormatter: (
-        Highcharts.FormatterCallbackFunction<Highcharts.AxisLabelsFormatterContextObject>
-    ) = void 0 as any;
+    public labelFormatter: Highcharts.AxisLabelsFormatterCallbackFunction = void 0 as any;
     public labelGroup?: Highcharts.SVGElement;
     public labelOffset?: number;
     public labelRotation?: number;
@@ -4237,15 +4246,15 @@ class Axis implements AxisComposition, AxisLike {
      *
      * @function Highcharts.Axis#defaultLabelFormatter
      *
-     * @param {Highcharts.AxisLabelsFormatterContextObject} this
+     * @param {Highcharts.AxisLabelsFormatterContextObject<number>|Highcharts.AxisLabelsFormatterContextObject<string>} this
      * Formatter context of axis label.
      *
      * @return {string}
      * The formatted label content.
      */
-    public defaultLabelFormatter(this: Highcharts.AxisLabelsFormatterContextObject): string {
+    public defaultLabelFormatter(this: Highcharts.AxisLabelsFormatterContextObject<number>): string {
         var axis = this.axis,
-            value = this.value,
+            value = isNumber(this.value) ? this.value : NaN,
             time = axis.chart.time,
             categories = axis.categories,
             dateTimeLabelFormat = this.dateTimeLabelFormat,
@@ -4269,7 +4278,7 @@ class Axis implements AxisComposition, AxisLike {
             ret = format(formatOption, this, chart);
 
         } else if (categories) {
-            ret = value as any;
+            ret = `${this.value}`;
 
         } else if (dateTimeLabelFormat) { // datetime axis
             ret = time.dateFormat(dateTimeLabelFormat, value);
@@ -4292,8 +4301,7 @@ class Axis implements AxisComposition, AxisLike {
                     numericSymbols[i] !== null &&
                     value !== 0
                 ) { // #5480
-                    ret = numberFormatter(value / multi, -1) +
-                        numericSymbols[i];
+                    ret = numberFormatter(value / multi, -1) + numericSymbols[i];
                 }
             }
         }
@@ -5314,7 +5322,7 @@ class Axis implements AxisComposition, AxisLike {
         } else {
 
             // Adjust to hard threshold
-            if (!softThreshold && defined(threshold)) {
+            if (softThreshold && defined(threshold)) {
                 if ((axis.dataMin as any) >= (threshold as any)) {
                     thresholdMin = threshold;
                     minPadding = 0;
@@ -5504,7 +5512,11 @@ class Axis implements AxisComposition, AxisLike {
         // This applies only if tickInterval is not defined.
         minTickInterval = pick(
             options.minTickInterval,
-            (axis.dateTime && axis.closestPointRange) as number
+            // In datetime axes, don't go below the data interval, except when
+            // there are scatter-like series involved (#13369).
+            axis.dateTime &&
+            !axis.series.some((s): boolean|undefined => s.noSharedTooltip) ?
+                axis.closestPointRange : 0
         );
         if (!tickIntervalOption && axis.tickInterval < minTickInterval) {
             axis.tickInterval = minTickInterval;
@@ -5538,8 +5550,9 @@ class Axis implements AxisComposition, AxisLike {
     }
 
     /**
-     * Now we have computed the normalized tickInterval, get the tick positions
+     * Now we have computed the normalized tickInterval, get the tick positions.
      *
+     * @private
      * @function Highcharts.Axis#setTickPositions
      *
      * @fires Highcharts.Axis#event:afterSetTickPositions

@@ -10,9 +10,9 @@
  *
  * */
 'use strict';
-import H from '../../parts/Globals.js';
+import H from '../../Core/Globals.js';
 var win = H.win, doc = win.document;
-import U from '../../parts/Utilities.js';
+import U from '../../Core/Utilities.js';
 var extend = U.extend, fireEvent = U.fireEvent, merge = U.merge;
 import HTMLUtilities from './utils/htmlUtilities.js';
 var removeElement = HTMLUtilities.removeElement, getFakeMouseEvent = HTMLUtilities.getFakeMouseEvent;
@@ -200,7 +200,7 @@ AccessibilityComponent.prototype = {
     createProxyButton: function (svgElement, parentGroup, attributes, posElement, preClickEvent) {
         var svgEl = svgElement.element, proxy = this.createElement('button'), attrs = merge({
             'aria-label': svgEl.getAttribute('aria-label')
-        }, attributes), bBox = this.getElementPosition(posElement || svgElement);
+        }, attributes);
         Object.keys(attrs).forEach(function (prop) {
             if (attrs[prop] !== null) {
                 proxy.setAttribute(prop, attrs[prop]);
@@ -210,7 +210,8 @@ AccessibilityComponent.prototype = {
         if (preClickEvent) {
             this.addEvent(proxy, 'click', preClickEvent);
         }
-        this.setProxyButtonStyle(proxy, bBox);
+        this.setProxyButtonStyle(proxy);
+        this.updateProxyButtonPosition(proxy, posElement || svgElement);
         this.proxyMouseEventsForButton(svgEl, proxy);
         // Add to chart div and unhide from screen readers
         parentGroup.appendChild(proxy);
@@ -242,10 +243,9 @@ AccessibilityComponent.prototype = {
     },
     /**
      * @private
-     * @param {Highcharts.HTMLElement} button
-     * @param {Highcharts.BBoxObject} bBox
+     * @param {Highcharts.HTMLElement} button The proxy element.
      */
-    setProxyButtonStyle: function (button, bBox) {
+    setProxyButtonStyle: function (button) {
         merge(true, button.style, {
             'border-width': 0,
             'background-color': 'transparent',
@@ -259,7 +259,17 @@ AccessibilityComponent.prototype = {
             padding: 0,
             margin: 0,
             display: 'block',
-            position: 'absolute',
+            position: 'absolute'
+        });
+    },
+    /**
+     * @private
+     * @param {Highcharts.HTMLElement} proxy The proxy to update position of.
+     * @param {Highcharts.SVGElement} posElement The element to overlay and take position from.
+     */
+    updateProxyButtonPosition: function (proxy, posElement) {
+        var bBox = this.getElementPosition(posElement);
+        merge(true, proxy.style, {
             width: (bBox.width || 1) + 'px',
             height: (bBox.height || 1) + 'px',
             left: (bBox.x || 0) + 'px',
@@ -278,8 +288,11 @@ AccessibilityComponent.prototype = {
             'click', 'touchstart', 'touchend', 'touchcancel', 'touchmove',
             'mouseover', 'mouseenter', 'mouseleave', 'mouseout'
         ].forEach(function (evtType) {
+            var isTouchEvent = evtType.indexOf('touch') === 0;
             component.addEvent(button, evtType, function (e) {
-                var clonedEvent = component.cloneMouseEvent(e);
+                var clonedEvent = isTouchEvent ?
+                    component.cloneTouchEvent(e) :
+                    component.cloneMouseEvent(e);
                 if (source) {
                     component.fireEventOnWrappedOrUnwrappedElement(source, clonedEvent);
                 }
@@ -308,6 +321,50 @@ AccessibilityComponent.prototype = {
             }
         }
         return getFakeMouseEvent(e.type);
+    },
+    /**
+     * Utility function to clone a touch event for re-dispatching.
+     * @private
+     * @param {global.TouchEvent} e The event to clone.
+     * @return {global.TouchEvent} The cloned event
+     */
+    cloneTouchEvent: function (e) {
+        var touchListToTouchArray = function (l) {
+            var touchArray = [];
+            for (var i = 0; i < l.length; ++i) {
+                var item = l.item(i);
+                if (item) {
+                    touchArray.push(item);
+                }
+            }
+            return touchArray;
+        };
+        if (typeof win.TouchEvent === 'function') {
+            var newEvent = new win.TouchEvent(e.type, {
+                touches: touchListToTouchArray(e.touches),
+                targetTouches: touchListToTouchArray(e.targetTouches),
+                changedTouches: touchListToTouchArray(e.changedTouches),
+                ctrlKey: e.ctrlKey,
+                shiftKey: e.shiftKey,
+                altKey: e.altKey,
+                metaKey: e.metaKey,
+                bubbles: e.bubbles,
+                cancelable: e.cancelable,
+                composed: e.composed,
+                detail: e.detail,
+                view: e.view
+            });
+            if (e.defaultPrevented) {
+                newEvent.preventDefault();
+            }
+            return newEvent;
+        }
+        // Fallback to mouse event
+        var fakeEvt = this.cloneMouseEvent(e);
+        fakeEvt.touches = e.touches;
+        fakeEvt.changedTouches = e.changedTouches;
+        fakeEvt.targetTouches = e.targetTouches;
+        return fakeEvt;
     },
     /**
      * Remove traces of the component.

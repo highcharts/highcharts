@@ -10,7 +10,7 @@
 
 'use strict';
 
-import H from './Globals.js';
+import H from '../Core/Globals.js';
 
 /**
  * Internal types
@@ -44,7 +44,7 @@ declare global {
 import LegendSymbolMixin from '../mixins/legend-symbol.js';
 import O from '../parts/Options.js';
 const { defaultOptions } = O;
-import U from './Utilities.js';
+import U from '../Core/Utilities.js';
 const {
     seriesType
 } = U;

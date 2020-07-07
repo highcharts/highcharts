@@ -17,7 +17,7 @@ import type SVGPath from '../parts/SVGPath';
 import Axis from '../parts/Axis.js';
 import Tick from '../parts/Tick.js';
 import HiddenAxis from './HiddenAxis.js';
-import U from '../parts/Utilities.js';
+import U from '../Core/Utilities.js';
 const {
     addEvent,
     correctFloat,

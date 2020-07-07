@@ -15,12 +15,17 @@
 import Axis from '../parts/Axis.js';
 import Axis3D from './Axis3D.js';
 import Chart from '../parts/Chart.js';
-import H from '../parts/Globals.js';
+import H from '../Core/Globals.js';
+import Math3D from '../parts-3d/Math.js';
+const {
+    perspective,
+    shapeArea3D
+} = Math3D;
 import O from '../parts/Options.js';
 const {
     defaultOptions: genericDefaultOptions
 } = O;
-import U from '../parts/Utilities.js';
+import U from '../Core/Utilities.js';
 const {
     addEvent,
     Fx,
@@ -60,8 +65,6 @@ declare global {
         }
     }
 }
-
-var perspective = H.perspective;
 
 /* eslint-disable no-invalid-this, valid-jsdoc */
 
@@ -169,7 +172,7 @@ namespace Chart3D {
                 faceOrientation = function (
                     vertexes: Array<Highcharts.Position3dObject>
                 ): number {
-                    var area = H.shapeArea3d(vertexes, chart);
+                    var area = shapeArea3D(vertexes, chart);
 
                     // Give it 0.5 squared-pixel as a margin for rounding errors
                     if (area > 0.5) {

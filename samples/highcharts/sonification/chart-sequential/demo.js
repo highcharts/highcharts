@@ -18,7 +18,6 @@ document.getElementById('sonify').onclick = function () {
     chart.sonify({
         duration: 3000,
         order: 'sequential',
-        pointPlayTime: 'x',
         afterSeriesWait: 1000,
         instruments: [{
             instrument: 'triangleMajor',

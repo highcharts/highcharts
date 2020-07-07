@@ -8,10 +8,10 @@
  *
  * */
 'use strict';
-import H from '../parts/Globals.js';
+import H from '../Core/Globals.js';
 import LegendSymbolMixin from '../mixins/legend-symbol.js';
 import SVGRenderer from '../parts/SVGRenderer.js';
-import U from '../parts/Utilities.js';
+import U from '../Core/Utilities.js';
 var clamp = U.clamp, extend = U.extend, fireEvent = U.fireEvent, isNumber = U.isNumber, merge = U.merge, pick = U.pick, seriesType = U.seriesType;
 /* *
  * @interface Highcharts.PointOptionsObject in parts/Point.ts
@@ -51,11 +51,11 @@ seriesType('heatmap', 'scatter',
  *         Heavy heatmap
  *
  * @extends      plotOptions.scatter
- * @excluding    animationLimit, connectEnds, connectNulls, dashStyle,
- *               findNearestPointBy, getExtremesFromAll, jitter, linecap,
- *               lineWidth, pointInterval, pointIntervalUnit, pointRange,
- *               pointStart, shadow, softThreshold, stacking, step,
- *               threshold, cluster
+ * @excluding    animationLimit, connectEnds, connectNulls, cropThreshold,
+ *               dashStyle, findNearestPointBy, getExtremesFromAll, jitter,
+ *               linecap, lineWidth, pointInterval, pointIntervalUnit,
+ *               pointRange, pointStart, shadow, softThreshold, stacking,
+ *               step, threshold, cluster
  * @product      highcharts highmaps
  * @optionparent plotOptions.heatmap
  */
@@ -636,7 +636,7 @@ seriesType('heatmap', 'scatter',
  * Requires `modules/heatmap`.
  *
  * @extends   series,plotOptions.heatmap
- * @excluding dataParser, dataURL, pointRange, stack,
+ * @excluding cropThreshold, dataParser, dataURL, pointRange, stack,
  * @product   highcharts highmaps
  * @apioption series.heatmap
  */

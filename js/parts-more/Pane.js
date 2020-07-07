@@ -9,9 +9,9 @@
  * */
 'use strict';
 import Chart from '../parts/Chart.js';
-import H from '../parts/Globals.js';
+import H from '../Core/Globals.js';
 import Pointer from '../parts/Pointer.js';
-import U from '../parts/Utilities.js';
+import U from '../Core/Utilities.js';
 var addEvent = U.addEvent, extend = U.extend, merge = U.merge, pick = U.pick, splat = U.splat;
 /**
  * @typedef {"arc"|"circle"|"solid"} Highcharts.PaneBackgroundShapeValue
@@ -354,7 +354,7 @@ var Pane = /** @class */ (function () {
  * @return {boolean}
  */
 function isInsidePane(x, y, center) {
-    return Math.sqrt(Math.pow(x - center[0], 2) + Math.pow(y - center[1], 2)) < center[2] / 2;
+    return Math.sqrt(Math.pow(x - center[0], 2) + Math.pow(y - center[1], 2)) <= center[2] / 2;
 }
 H.Chart.prototype.getHoverPane = function (eventArgs) {
     var chart = this;

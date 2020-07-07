@@ -90,6 +90,7 @@ $indicator-negative-line: #F21313;
     -webkit-tap-highlight-color: rgba(0,0,0,0);
     font-family: $font-family;
     font-size: 12px;
+    user-select: none;
 }
 .highcharts-root {
     display: block;
@@ -229,6 +230,13 @@ div.highcharts-tooltip {
     stroke-linecap: round;
     stroke-linejoin: round;
 }
+
+.highcharts-empty-series {
+    stroke-width: 1px;
+    fill: none;
+    stroke: $neutral-color-20;
+}
+
 .highcharts-state-hover .highcharts-graph {
     stroke-width: 3;
 }

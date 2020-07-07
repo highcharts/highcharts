@@ -12,8 +12,8 @@
 
 import Annotation from './annotations.src.js';
 import chartNavigationMixin from '../mixins/navigation.js';
-import H from '../parts/Globals.js';
-import U from '../parts/Utilities.js';
+import H from '../Core/Globals.js';
+import U from '../Core/Utilities.js';
 const {
     addEvent,
     attr,
@@ -267,7 +267,7 @@ class NavigationBindings {
         rect: ['shapes'],
         // Crooked lines, elliots, arrows etc:
         crookedLine: [],
-        basicAnnotation: []
+        basicAnnotation: ['shapes', 'labelOptions']
     };
 
     // Define non editable fields per annotation, for example Rectangle inherits
@@ -413,7 +413,7 @@ class NavigationBindings {
             })
         );
         navigation.eventsToUnbind.push(
-            addEvent(chart.container, Highcharts.isTouchDevice ? 'touchmove' : 'mousemove', function (
+            addEvent(chart.container, H.isTouchDevice ? 'touchmove' : 'mousemove', function (
                 e: Highcharts.PointerEventObject
             ): void {
                 navigation.bindingsContainerMouseMove(this, e);
@@ -755,6 +755,7 @@ class NavigationBindings {
 
             if (
                 parentEditables &&
+                option &&
                 nonEditables.indexOf(key) === -1 &&
                 (
                     (
@@ -1027,7 +1028,7 @@ function selectableAnnotation(annotationType: typeof Annotation): void {
             prevAnnotation = navigation.activeAnnotation;
 
         if (originalClick) {
-            (originalClick as any).click.call(annotation, event);
+            originalClick.call(annotation, event);
         }
 
         if (prevAnnotation !== annotation) {

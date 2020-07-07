@@ -15,8 +15,8 @@
 
 'use strict';
 
-import Highcharts from '../parts/Globals.js';
-import U from '../parts/Utilities.js';
+import Highcharts from '../Core/Globals.js';
+import U from '../Core/Utilities.js';
 const { setOptions } = U;
 
 Highcharts.theme = {

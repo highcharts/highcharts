@@ -16,7 +16,7 @@
 import type Point from '../parts/Point';
 import type SVGElement from '../parts/SVGElement';
 import Chart from '../parts/Chart.js';
-import U from '../parts/Utilities.js';
+import U from '../Core/Utilities.js';
 const {
     addEvent,
     fireEvent,
@@ -276,7 +276,6 @@ Chart.prototype.hideOverlappingLabels = function (
                             label.css({ pointerEvents: newOpacity ? 'auto' : 'none' });
                         }
                         label.visibility = newOpacity ? 'inherit' : 'hidden';
-                        label.placed = !!newOpacity;
                     };
 
                     isLabelAffected = true;

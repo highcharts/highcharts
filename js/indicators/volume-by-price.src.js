@@ -10,9 +10,9 @@
  *
  * */
 'use strict';
-import H from '../parts/Globals.js';
+import H from '../Core/Globals.js';
 import Point from '../parts/Point.js';
-import U from '../parts/Utilities.js';
+import U from '../Core/Utilities.js';
 var addEvent = U.addEvent, animObject = U.animObject, arrayMax = U.arrayMax, arrayMin = U.arrayMin, correctFloat = U.correctFloat, error = U.error, extend = U.extend, isArray = U.isArray, seriesType = U.seriesType;
 /* eslint-disable require-jsdoc */
 // Utils

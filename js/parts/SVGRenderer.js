@@ -9,10 +9,10 @@
  * */
 'use strict';
 import Color from './Color.js';
-import H from './Globals.js';
+import H from '../Core/Globals.js';
 import SVGElement from './SVGElement.js';
 import SVGLabel from './SVGLabel.js';
-import U from './Utilities.js';
+import U from '../Core/Utilities.js';
 var addEvent = U.addEvent, attr = U.attr, createElement = U.createElement, css = U.css, defined = U.defined, destroyObjectProperties = U.destroyObjectProperties, erase = U.erase, extend = U.extend, isArray = U.isArray, isNumber = U.isNumber, isObject = U.isObject, isString = U.isString, merge = U.merge, objectEach = U.objectEach, pick = U.pick, pInt = U.pInt, removeEvent = U.removeEvent, splat = U.splat, stop = U.stop, uniqueKey = U.uniqueKey;
 /**
  * A clipping rectangle that can be applied to one or more {@link SVGElement}
@@ -147,7 +147,7 @@ var addEvent = U.addEvent, attr = U.attr, createElement = U.createElement, css =
  * Array of path commands, that will go into the `d` attribute of an SVG
  * element.
  *
- * @typedef {Array<Array<Highcharts.SVGPathCommand,number?,number?,number?,number?,number?,number?,number?>>} Highcharts.SVGPathArray
+ * @typedef {Array<(Array<Highcharts.SVGPathCommand>|Array<Highcharts.SVGPathCommand,number>|Array<Highcharts.SVGPathCommand,number,number>|Array<Highcharts.SVGPathCommand,number,number,number,number>|Array<Highcharts.SVGPathCommand,number,number,number,number,number,number>|Array<Highcharts.SVGPathCommand,number,number,number,number,number,number,number>)>} Highcharts.SVGPathArray
  */
 /**
  * Possible path commands in an SVG path array. Valid values are `A`, `C`, `H`,
@@ -284,9 +284,6 @@ var SVGRenderer = /** @class */ (function () {
      *  Constructors
      *
      * */
-    /**
-     * @private
-     */
     function SVGRenderer(container, width, height, style, forExport, allowHTML, styledMode) {
         /* *
          *
@@ -294,11 +291,29 @@ var SVGRenderer = /** @class */ (function () {
          *
          * */
         this.alignedObjects = void 0;
+        /**
+         * The root `svg` node of the renderer.
+         *
+         * @name Highcharts.SVGRenderer#box
+         * @type {Highcharts.SVGDOMElement}
+         */
         this.box = void 0;
+        /**
+         * The wrapper for the root `svg` node of the renderer.
+         *
+         * @name Highcharts.SVGRenderer#boxWrapper
+         * @type {Highcharts.SVGElement}
+         */
         this.boxWrapper = void 0;
         this.cache = void 0;
         this.cacheKeys = void 0;
         this.chartIndex = void 0;
+        /**
+         * A pointer to the `defs` node of the root SVG.
+         *
+         * @name Highcharts.SVGRenderer#defs
+         * @type {Highcharts.SVGElement}
+         */
         this.defs = void 0;
         this.globalAnimation = void 0;
         this.gradients = void 0;
@@ -306,6 +321,13 @@ var SVGRenderer = /** @class */ (function () {
         this.imgCount = void 0;
         this.isSVG = void 0;
         this.style = void 0;
+        /**
+         * Page url used for internal references.
+         *
+         * @private
+         * @name Highcharts.SVGRenderer#url
+         * @type {string}
+         */
         this.url = void 0;
         this.width = void 0;
         this.init(container, width, height, style, forExport, allowHTML, styledMode);
@@ -366,28 +388,9 @@ var SVGRenderer = /** @class */ (function () {
         }
         // object properties
         renderer.isSVG = true;
-        /**
-         * The root `svg` node of the renderer.
-         *
-         * @name Highcharts.SVGRenderer#box
-         * @type {Highcharts.SVGDOMElement}
-         */
         this.box = element;
-        /**
-         * The wrapper for the root `svg` node of the renderer.
-         *
-         * @name Highcharts.SVGRenderer#boxWrapper
-         * @type {Highcharts.SVGElement}
-         */
         this.boxWrapper = boxWrapper;
         renderer.alignedObjects = [];
-        /**
-         * Page url used for internal references.
-         *
-         * @private
-         * @name Highcharts.SVGRenderer#url
-         * @type {string}
-         */
         // #24, #672, #1070
         this.url = ((isFirefox || isWebKit) &&
             doc.getElementsByTagName('base').length) ?
@@ -402,12 +405,6 @@ var SVGRenderer = /** @class */ (function () {
         // Add description
         desc = this.createElement('desc').add();
         desc.element.appendChild(doc.createTextNode('Created with @product.name@ @product.version@'));
-        /**
-         * A pointer to the `defs` node of the root SVG.
-         *
-         * @name Highcharts.SVGRenderer#defs
-         * @type {Highcharts.SVGElement}
-         */
         renderer.defs = this.createElement('defs').add();
         renderer.allowHTML = allowHTML;
         renderer.forExport = forExport;

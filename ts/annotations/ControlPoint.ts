@@ -57,7 +57,7 @@ declare global {
  * @return {Highcharts.PositionObject}
  */
 
-import U from './../parts/Utilities.js';
+import U from './../Core/Utilities.js';
 const {
     extend,
     merge,

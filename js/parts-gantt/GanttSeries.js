@@ -10,11 +10,11 @@
  *
  * */
 'use strict';
-import H from '../parts/Globals.js';
+import H from '../Core/Globals.js';
 import O from '../parts/Options.js';
 var dateFormat = O.dateFormat;
 import './TreeGridAxis.js';
-import U from '../parts/Utilities.js';
+import U from '../Core/Utilities.js';
 var isNumber = U.isNumber, merge = U.merge, pick = U.pick, seriesType = U.seriesType, splat = U.splat;
 import './CurrentDateIndicator.js';
 import '../modules/static-scale.src.js';
@@ -232,7 +232,7 @@ seriesType('gantt', 'xrange'
  * @declare   Highcharts.GanttPointOptionsObject
  * @type      {Array<*>}
  * @extends   series.xrange.data
- * @excluding className, color, colorIndex, connect, dataLabels, events, id,
+ * @excluding className, color, colorIndex, connect, dataLabels, events,
  *            partialFill, selected, x, x2
  * @product   gantt
  * @apioption series.gantt.data

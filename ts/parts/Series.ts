@@ -13,13 +13,13 @@
 import type { AxisType } from './axis/types';
 import type Chart from './Chart';
 import type SVGPath from './SVGPath';
-import H from './Globals.js';
+import H from '../Core/Globals.js';
 import LegendSymbolMixin from '../mixins/legend-symbol.js';
 import O from './Options.js';
 const { defaultOptions } = O;
 import Point from './Point.js';
 import SVGElement from './SVGElement.js';
-import U from './Utilities.js';
+import U from '../Core/Utilities.js';
 const {
     addEvent,
     animObject,
@@ -368,6 +368,7 @@ declare global {
             boostThreshold?: number;
             borderColor?: ColorType;
             borderWidth?: number;
+            centerInCategory?: boolean;
             className?: string;
             clip?: boolean;
             color?: ColorType;
@@ -1625,11 +1626,15 @@ H.Series = seriesType<Highcharts.LineSeries>(
         /**
          * Whether to stack the values of each series on top of each other.
          * Possible values are `undefined` to disable, `"normal"` to stack by
-         * value or `"percent"`. When stacking is enabled, data must be sorted
-         * in ascending X order. A special stacking option is with the
-         * streamgraph series type, where the stacking option is set to
-         * `"stream"`. The second one is `"overlap"`, which only applies to
-         * waterfall series.
+         * value or `"percent"`.
+         *
+         * When stacking is enabled, data must be sorted
+         * in ascending X order.
+         *
+         * Some stacking options are related to specific series types. In the
+         * streamgraph series type, the stacking option is set to `"stream"`.
+         * The second one is `"overlap"`, which only applies to waterfall
+         * series.
          *
          * @see [yAxis.reversedStacks](#yAxis.reversedStacks)
          *
@@ -3801,6 +3806,11 @@ H.Series = seriesType<Highcharts.LineSeries>(
                 );
 
             // use copy to prevent undetected changes (#9762)
+            /**
+             * Contains series options by the user without defaults.
+             * @name Highcharts.Series#userOptions
+             * @type {Highcharts.SeriesOptionsType}
+             */
             this.userOptions = e.userOptions;
 
             options = merge(
@@ -5083,17 +5093,21 @@ H.Series = seriesType<Highcharts.LineSeries>(
             const dataExtremes = this.getExtremes();
 
             /**
-             * Contains the minimum value of the series' data point.
+             * Contains the minimum value of the series' data point. Some series
+             * types like `networkgraph` do not support this property as they
+             * lack a `y`-value.
              * @name Highcharts.Series#dataMin
-             * @type {number}
+             * @type {number|undefined}
              * @readonly
              */
             this.dataMin = dataExtremes.dataMin;
 
-            /* *
-             * Contains the maximum value of the series' data point.
+            /**
+             * Contains the maximum value of the series' data point. Some series
+             * types like `networkgraph` do not support this property as they
+             * lack a `y`-value.
              * @name Highcharts.Series#dataMax
-             * @type {number}
+             * @type {number|undefined}
              * @readonly
              */
             this.dataMax = dataExtremes.dataMax;

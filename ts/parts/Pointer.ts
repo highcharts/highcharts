@@ -16,13 +16,13 @@ import type Point from './Point';
 import type SVGElement from './SVGElement';
 import Color from './Color.js';
 const color = Color.parse;
-import H from './Globals.js';
+import H from '../Core/Globals.js';
 const {
     charts,
     noop
 } = H;
 import Tooltip from './Tooltip.js';
-import U from './Utilities.js';
+import U from '../Core/Utilities.js';
 const {
     addEvent,
     attr,
@@ -226,6 +226,7 @@ class Pointer {
         this.hasDragged = false;
         this.options = options;
         this.unbindContainerMouseLeave = function (): void {};
+        this.unbindContainerMouseEnter = function (): void {};
         this.init(chart, options);
     }
 
@@ -272,6 +273,8 @@ class Pointer {
     public tooltipTimeout?: number;
 
     public unbindContainerMouseLeave: Function;
+
+    public unbindContainerMouseEnter: Function;
 
     public unDocMouseMove?: Function;
 
@@ -1100,7 +1103,10 @@ class Pointer {
             touches ?
                 touches.length ?
                     touches.item(0) as Touch :
-                    touches.changedTouches[0] :
+                    (pick( // #13534
+                        touches.changedTouches,
+                        (e as TouchEvent).changedTouches)
+                    )[0] :
                 e as unknown as PointerEvent
         );
 
@@ -1175,6 +1181,8 @@ class Pointer {
      * @param {global.MouseEvent} e
      */
     public onContainerMouseDown(e: MouseEvent): void {
+        const isPrimaryButton = ((e.buttons || e.button) & 1) === 1;
+
         // Normalize before the 'if' for the legacy IE (#7850)
         e = this.normalize(e);
 
@@ -1189,9 +1197,18 @@ class Pointer {
         // #11635, limiting to primary button (incl. IE 8 support)
         if (
             typeof e.button === 'undefined' ||
-            ((e.buttons || e.button) & 1) === 1
+            isPrimaryButton
         ) {
             this.zoomOption(e);
+
+            // #295, #13737 solve conflict between container drag and chart zoom
+            if (
+                isPrimaryButton &&
+                e.preventDefault
+            ) {
+                e.preventDefault();
+            }
+
             this.dragStart(e as Highcharts.PointerEventObject);
         }
     }
@@ -1228,6 +1245,20 @@ class Pointer {
         ) {
             this.reset();
         }
+    }
+
+    /**
+     * When mouse enters the container, delete pointer's chartPosition.
+     *
+     * @private
+     * @function Highcharts.Pointer#onContainerMouseEnter
+     *
+     * @param {global.MouseEvent} e
+     *
+     * @return {void}
+     */
+    public onContainerMouseEnter(e: MouseEvent): void {
+        delete this.chartPosition;
     }
 
     /**
@@ -2009,6 +2040,11 @@ class Pointer {
         container.onmousedown = this.onContainerMouseDown.bind(this);
         container.onmousemove = this.onContainerMouseMove.bind(this);
         container.onclick = this.onContainerClick.bind(this);
+        this.unbindContainerMouseEnter = addEvent(
+            container,
+            'mouseenter',
+            this.onContainerMouseEnter.bind(this)
+        );
         this.unbindContainerMouseLeave = addEvent(
             container,
             'mouseleave',

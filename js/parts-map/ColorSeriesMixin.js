@@ -8,7 +8,7 @@
  *
  * */
 'use strict';
-import H from '../parts/Globals.js';
+import H from '../Core/Globals.js';
 /**
  * Mixin for maps and heatmaps
  *
@@ -33,6 +33,7 @@ H.colorPointMixin = {
                 point[key][method]();
             }
         });
+        this.series.buildKDTree(); // rebuild kdtree #13195
     }
     /* eslint-enable valid-jsdoc */
 };

@@ -14,7 +14,7 @@ import type { AxisType } from './axis/types';
 import type Point from './Point';
 import type SVGElement from './SVGElement';
 import Axis from './Axis.js';
-import H from './Globals.js';
+import H from '../Core/Globals.js';
 const {
     charts,
     doc,
@@ -28,7 +28,7 @@ const { defaultOptions } = O;
 import Pointer from './Pointer.js';
 import SVGRenderer from './SVGRenderer.js';
 import Time from './Time.js';
-import U from './Utilities.js';
+import U from '../Core/Utilities.js';
 const {
     addEvent,
     animate,
@@ -820,7 +820,7 @@ class Chart {
                 // Don't do setScale again if we're only resizing. Regression
                 // #13507. But we need it after chart.update (responsive), as
                 // axis is initialized again (#12137).
-                if (!chart.isResizing || !axis.tickPositions) {
+                if (!chart.isResizing || !isNumber(axis.min)) {
                     axis.updateNames();
                     axis.setScale();
                 }
@@ -1506,7 +1506,8 @@ class Chart {
                 textAlign: 'left',
                 lineHeight: 'normal', // #427
                 zIndex: 0, // #1072
-                '-webkit-tap-highlight-color': 'rgba(0,0,0,0)'
+                '-webkit-tap-highlight-color': 'rgba(0,0,0,0)',
+                userSelect: 'none' // #13503
             }, optionsChart.style as any);
         }
 

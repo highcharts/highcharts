@@ -10,9 +10,9 @@
  *
  * */
 'use strict';
-import U from '../../../parts/Utilities.js';
+import U from '../../../Core/Utilities.js';
 var merge = U.merge;
-import H from '../../../parts/Globals.js';
+import H from '../../../Core/Globals.js';
 var win = H.win, doc = win.document;
 /* eslint-disable valid-jsdoc */
 /**

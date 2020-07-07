@@ -11,7 +11,7 @@
 
 'use strict';
 
-import H from './parts/Globals.js';
+import H from './Core/Globals.js';
 
 H.errorMessages = {
     "10": {
@@ -103,6 +103,10 @@ H.errorMessages = {
         "title": "Non-unique point or node id",
         "text": "<h1>Non-unique point or node id</h1><p>This error occurs when using the same <code>id</code> for two or more points or nodes.</p>"
     },
+    "32": {
+        "title": "Deprecated function or property",
+        "text": "<h1>Deprecated function or property</h1><p>This error occurs when using a deprecated function or property. Consult the <a href=\"https://api.highcharts.com/\">API documentation</a> for alternatives, if no replacement is mentioned by the error itself.</p>"
+    },
     "meta": {
         "files": [
             "errors/10/readme.md",
@@ -127,7 +131,8 @@ H.errorMessages = {
             "errors/28/readme.md",
             "errors/29/readme.md",
             "errors/30/readme.md",
-            "errors/31/readme.md"
+            "errors/31/readme.md",
+            "errors/32/readme.md"
         ]
     }
 };

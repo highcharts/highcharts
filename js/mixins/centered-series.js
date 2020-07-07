@@ -8,7 +8,7 @@
  *
  * */
 'use strict';
-import H from '../parts/Globals.js';
+import H from '../Core/Globals.js';
 /**
  * @private
  * @interface Highcharts.RadianAngles
@@ -19,7 +19,7 @@ import H from '../parts/Globals.js';
 * @name Highcharts.RadianAngles#start
 * @type {number}
 */
-import U from '../parts/Utilities.js';
+import U from '../Core/Utilities.js';
 var isNumber = U.isNumber, pick = U.pick, relativeLength = U.relativeLength;
 var deg2rad = H.deg2rad;
 /* eslint-disable valid-jsdoc */
@@ -52,8 +52,9 @@ H.CenteredSeriesMixin = {
             pick(size && size < 0 ? void 0 : options.size, '100%'),
             pick(innerSize && innerSize < 0 ? void 0 : options.innerSize || 0, '0%')
         ];
-        // No need for inner size in angular (gauges) series
-        if (chart.angular) {
+        // No need for inner size in angular (gauges) series but still required
+        // for pie series
+        if (chart.angular && !(this instanceof H.Series)) {
             positions[3] = 0;
         }
         for (i = 0; i < 4; ++i) {

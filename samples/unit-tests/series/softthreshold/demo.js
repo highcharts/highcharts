@@ -196,5 +196,20 @@ QUnit.test('Soft threshold = false', function (assert) {
         'Line - tight positive data'
     );
 
+    chart.update({
+        yAxis: {
+            minPadding: 1.5
+        },
+        series: [{
+            threshold: 0,
+            softThreshold: false,
+            data: [0, 1, 2, 3]
+        }]
+    });
+    assert.strictEqual(
+        chart.yAxis[0].min < 0,
+        true,
+        'Threshold and minPadding set - minPadding should be applied'
+    );
 
 });

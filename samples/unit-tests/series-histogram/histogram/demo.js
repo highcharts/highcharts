@@ -187,13 +187,13 @@ QUnit.test('Histogram', function (assert) {
 
     baseSeries.remove();
     assert.ok(
-        Highcharts.inArray(histogram, chart.series) !== -1,
+        chart.series.indexOf(histogram) !== -1,
         'Histogram is not removed after the base series is removed'
     );
 
     histogram.remove();
     assert.ok(
-        Highcharts.inArray(histogram, chart.series) === -1,
+        chart.series.indexOf(histogram) === -1,
         'Histogram is removed after histogram.remove()'
     );
 

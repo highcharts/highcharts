@@ -1,0 +1,8 @@
+---
+ name: Highcharts Demo
+ authors:
+   - Torstein Hønsi
+   - Gøran Slettemark
+ requiresManualTesting: true
+ js_wrap: b
+...

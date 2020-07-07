@@ -10,8 +10,6 @@
 
 'use strict';
 
-import H from './Globals.js';
-
 /**
  * Internal types
  * @private
@@ -39,7 +37,7 @@ declare global {
     }
 }
 
-import U from './Utilities.js';
+import U from '../Core/Utilities.js';
 const {
     seriesType
 } = U;

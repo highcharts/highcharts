@@ -12,8 +12,8 @@
 'use strict';
 /* global document */
 // Load the fonts
-import Highcharts from '../parts/Globals.js';
-import U from '../parts/Utilities.js';
+import Highcharts from '../Core/Globals.js';
+import U from '../Core/Utilities.js';
 var setOptions = U.setOptions;
 Highcharts.createElement('link', {
     href: 'https://fonts.googleapis.com/css?family=Unica+One',

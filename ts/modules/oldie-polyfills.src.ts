@@ -54,6 +54,11 @@ interface ArraySomeCallbackFunction<T, TScope = any> {
 }
 
 /* eslint-disable no-extend-native */
+if (!String.prototype.trim) {
+    String.prototype.trim = function (): string {
+        return this.replace(/^[\s\uFEFF\xA0]+|[\s\uFEFF\xA0]+$/g, '');
+    };
+}
 
 if (!Array.prototype.forEach) {
     Array.prototype.forEach = function<T, TScope = any> (

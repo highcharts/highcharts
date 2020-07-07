@@ -11,7 +11,7 @@
 'use strict';
 
 import type Point from '../parts/Point';
-import H from '../parts/Globals.js';
+import H from '../Core/Globals.js';
 
 declare global {
     namespace Highcharts {
@@ -73,6 +73,7 @@ H.colorPointMixin = {
                 (point as any)[key][method]();
             }
         });
+        this.series.buildKDTree(); // rebuild kdtree #13195
     }
 
     /* eslint-enable valid-jsdoc */

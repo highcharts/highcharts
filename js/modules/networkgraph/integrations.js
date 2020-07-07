@@ -10,7 +10,7 @@
  *
  * */
 'use strict';
-import H from '../../parts/Globals.js';
+import H from '../../Core/Globals.js';
 /* eslint-disable no-invalid-this, valid-jsdoc */
 H.networkgraphIntegrations = {
     verlet: {

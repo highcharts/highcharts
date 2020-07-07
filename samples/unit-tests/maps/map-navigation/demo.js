@@ -7,11 +7,7 @@ QUnit.test('Zoom in - zoomout with padding, panning in both directions.', functi
         },
 
         mapNavigation: {
-            enabled: true,
-            buttonOptions: {
-                alignTo: 'spacingBox',
-                verticalAlign: 'bottom'
-            }
+            enabled: false
         },
 
         colorAxis: {
@@ -46,8 +42,19 @@ QUnit.test('Zoom in - zoomout with padding, panning in both directions.', functi
 
     var xExtremes = chart.xAxis[0].getExtremes(),
         yExtremes,
+        plotLeft = chart.plotLeft,
+        plotTop = chart.plotTop,
         controller = new TestController(chart);
 
+    controller.pan(
+        [plotLeft + 50, plotTop + 50],
+        [plotLeft + 100, plotTop + 100]
+    );
+
+    assert.ok(
+        !chart.resetZoomButton,
+        'Reset zoom button should not appear while panning and chart is not zoomed.'
+    );
 
     chart.mapZoom(0.5);
 
@@ -70,8 +77,8 @@ QUnit.test('Zoom in - zoomout with padding, panning in both directions.', functi
     yExtremes = chart.yAxis[0].getExtremes();
 
     controller.pan(
-        [chart.plotLeft + 50, chart.plotTop + 50],
-        [chart.plotLeft + 100, chart.plotTop + 100]
+        [plotLeft + 50, plotTop + 50],
+        [plotLeft + 100, plotTop + 100]
     );
 
     assert.notEqual(

@@ -9,10 +9,10 @@
  * */
 'use strict';
 import Color from './Color.js';
-import H from './Globals.js';
+import H from '../Core/Globals.js';
 var deg2rad = H.deg2rad, doc = H.doc, hasTouch = H.hasTouch, isFirefox = H.isFirefox, noop = H.noop, svg = H.svg, SVG_NS = H.SVG_NS, win = H.win;
-import U from './Utilities.js';
-var animate = U.animate, animObject = U.animObject, attr = U.attr, createElement = U.createElement, css = U.css, defined = U.defined, erase = U.erase, extend = U.extend, fireEvent = U.fireEvent, inArray = U.inArray, isArray = U.isArray, isFunction = U.isFunction, isNumber = U.isNumber, isString = U.isString, merge = U.merge, objectEach = U.objectEach, pick = U.pick, pInt = U.pInt, stop = U.stop, uniqueKey = U.uniqueKey;
+import U from '../Core/Utilities.js';
+var animate = U.animate, animObject = U.animObject, attr = U.attr, createElement = U.createElement, css = U.css, defined = U.defined, erase = U.erase, extend = U.extend, fireEvent = U.fireEvent, isArray = U.isArray, isFunction = U.isFunction, isNumber = U.isNumber, isString = U.isString, merge = U.merge, objectEach = U.objectEach, pick = U.pick, pInt = U.pInt, stop = U.stop, uniqueKey = U.uniqueKey;
 /**
  * The horizontal alignment of an element.
  *
@@ -668,7 +668,7 @@ var SVGElement = /** @class */ (function () {
                 }
                 // Special handling of symbol attributes
                 if (this.symbolName &&
-                    inArray(key, symbolCustomAttribs) !== -1) {
+                    symbolCustomAttribs.indexOf(key) !== -1) {
                     if (!hasSetSymbolSize) {
                         this.symbolAttr(hash);
                         hasSetSymbolSize = true;
@@ -1505,9 +1505,12 @@ var SVGElement = /** @class */ (function () {
      * @return {Highcharts.SVGElement} Returns the SVG element for chainability.
      */
     SVGElement.prototype.removeClass = function (className) {
-        return this.attr('class', ('' + this.attr('class')).replace(isString(className) ?
-            new RegExp(" ?" + className + " ?") : // #12064
-            className, ''));
+        return this.attr('class', ('' + this.attr('class'))
+            .replace(isString(className) ?
+            new RegExp("(^| )" + className + "( |$)") : // #12064, #13590
+            className, ' ')
+            .replace(/ +/g, ' ')
+            .trim());
     };
     /**
      * @private

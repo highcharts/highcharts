@@ -62,3 +62,54 @@ QUnit.test('Data classes and redundant text labels', function (assert) {
         'The number of child nodes should not change after adding a pie (#8478)'
     );
 });
+
+QUnit.test('Data classes - interactions', function (assert) {
+    var chart = Highcharts.chart('container', {
+            colorAxis: {
+                dataClasses: [{
+                    from: 0,
+                    to: 1,
+                    color: '#FF0000'
+                }, {
+                    from: 1,
+                    to: 2,
+                    color: '#0000FF'
+                }]
+            },
+            series: [{
+                type: 'scatter',
+                data: [{
+                    y: 0,
+                    x: 0
+                }, {
+                    y: 1,
+                    x: 1
+                }]
+            }]
+        }),
+        test = TestController(chart),
+        point = chart.series[0].points[0],
+        pointPos = { x: chart.plotLeft + point.plotX, y: chart.plotTop + point.plotY },
+        legend = chart.legend,
+        legendItemBBox = legend.allItems[0].legendGroup.getBBox(true),
+        legendItemX = legend.group.translateX + legendItemBBox.x + legendItemBBox.width / 2,
+        legendItemY = legend.group.translateY + legendItemBBox.y + legendItemBBox.height / 2;
+
+    test.click(legendItemX, legendItemY);
+    test.mouseMove(pointPos.x, pointPos.y);
+
+    assert.strictEqual(
+        chart.hoverPoint,
+        chart.series[0].points[1],
+        'The hidden point should not be hovered.'
+    );
+
+    test.click(legendItemX, legendItemY);
+    test.mouseMove(pointPos.x, pointPos.y);
+
+    assert.strictEqual(
+        chart.hoverPoint,
+        point,
+        'The shown point should be hovered.'
+    );
+});

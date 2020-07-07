@@ -8,8 +8,8 @@
  *
  * */
 'use strict';
-import H from './Globals.js';
-import U from './Utilities.js';
+import H from '../Core/Globals.js';
+import U from '../Core/Utilities.js';
 var addEvent = U.addEvent, seriesType = U.seriesType;
 import './Options.js';
 import './Series.js';
@@ -32,7 +32,7 @@ seriesType('scatter', 'line',
  *         Scatter plot
  *
  * @extends      plotOptions.line
- * @excluding    pointPlacement, shadow, useOhlcData
+ * @excluding    cropThreshold, pointPlacement, shadow, useOhlcData
  * @product      highcharts highstock
  * @optionparent plotOptions.scatter
  */
@@ -186,7 +186,7 @@ addEvent(Series, 'afterTranslate', function () {
  * not specified, it is inherited from [chart.type](#chart.type).
  *
  * @extends   series,plotOptions.scatter
- * @excluding dataParser, dataURL, useOhlcData
+ * @excluding cropThreshold, dataParser, dataURL, useOhlcData
  * @product   highcharts highstock
  * @apioption series.scatter
  */

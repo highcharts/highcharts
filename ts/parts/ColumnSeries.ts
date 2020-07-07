@@ -10,7 +10,7 @@
 
 'use strict';
 
-import H from './Globals.js';
+import H from '../Core/Globals.js';
 
 /**
  * Internal types
@@ -21,6 +21,8 @@ declare global {
         interface ColumnMetricsObject {
             offset: number;
             width: number;
+            paddedWidth: number;
+            columnCount: number;
         }
         interface ColumnPointOptions extends LinePointOptions {
             dashStyle?: DashStyleValue;
@@ -81,6 +83,12 @@ declare global {
             public points: Array<ColumnPoint>;
             public pointXOffset: number;
             public translatedThreshold?: number;
+            public adjustForMissingColumns(
+                x: number,
+                pointWidth: number,
+                point: ColumnPoint,
+                metrics: ColumnMetricsObject
+            ): number;
             public crispCol(
                 x: number,
                 y: number,
@@ -115,7 +123,7 @@ const {
     parse: color
 } = Color;
 import LegendSymbolMixin from '../mixins/legend-symbol.js';
-import U from './Utilities.js';
+import U from '../Core/Utilities.js';
 const {
     animObject,
     clamp,
@@ -124,7 +132,8 @@ const {
     isNumber,
     merge,
     pick,
-    seriesType
+    seriesType,
+    objectEach
 } = U;
 
 import './Series.js';
@@ -212,6 +221,19 @@ seriesType<Highcharts.ColumnSeries>(
          */
 
         /**
+         * When `true`, the columns will center in the category, ignoring null
+         * or missing points. When `false`, space will be reserved for null or
+         * missing points.
+         *
+         * @sample {highcharts} highcharts/series-column/centerincategory/
+         *         Center in category
+         *
+         * @since   8.0.1
+         * @product highcharts highstock gantt
+         */
+        centerInCategory: false,
+
+        /**
          * Padding between each value groups, in x axis units.
          *
          * @sample {highcharts} highcharts/plotoptions/column-grouppadding-default/
@@ -284,9 +306,11 @@ seriesType<Highcharts.ColumnSeries>(
         pointPadding: 0.1,
 
         /**
-         * A pixel value specifying a fixed width for each column or bar. When
-         * `null`, the width is calculated from the `pointPadding` and
-         * `groupPadding`.
+         * A pixel value specifying a fixed width for each column or bar point.
+         * When `null`, the width is calculated from the `pointPadding` and
+         * `groupPadding`. The width effects the dimension that is not based on
+         * the point value. For column series it is the hoizontal length and for
+         * bar series it is the vertical length.
          *
          * @see [maxPointWidth](#plotOptions.column.maxPointWidth)
          *
@@ -452,25 +476,15 @@ seriesType<Highcharts.ColumnSeries>(
         dataLabels: {
             align: void 0,
             verticalAlign: void 0,
+
+            /**
+             * The y position offset of the label relative to the point in
+             * pixels.
+             *
+             * @type {number}
+             */
             y: void 0
         },
-
-        /**
-         * When this is true, the series will not cause the Y axis to cross
-         * the zero plane (or [threshold](#plotOptions.series.threshold) option)
-         * unless the data actually crosses the plane.
-         *
-         * For example, if `softThreshold` is `false`, a series of 0, 1, 2,
-         * 3 will make the Y axis show negative values according to the
-         * `minPadding` option. If `softThreshold` is `true`, the Y axis starts
-         * at 0.
-         *
-         * @since   4.1.9
-         * @product highcharts highstock
-         *
-         * @private
-         */
-        softThreshold: false,
 
         // false doesn't work well: https://jsfiddle.net/highcharts/hz8fopan/14/
         /**
@@ -622,7 +636,7 @@ seriesType<Highcharts.ColumnSeries>(
                         yAxis.len === otherYAxis.len &&
                         yAxis.pos === otherYAxis.pos
                     ) { // #642, #2086
-                        if (otherOptions.stacking) {
+                        if (otherOptions.stacking && otherOptions.stacking !== 'group') {
                             stackKey = otherSeries.stackKey;
                             if (
                                 typeof stackGroups[stackKey as any] ===
@@ -675,7 +689,9 @@ seriesType<Highcharts.ColumnSeries>(
             // Save it for reading in linked series (Error bars particularly)
             series.columnMetrics = {
                 width: pointWidth,
-                offset: pointXOffset
+                offset: pointXOffset,
+                paddedWidth: pointOffsetWidth,
+                columnCount
             };
             return series.columnMetrics;
 
@@ -741,6 +757,84 @@ seriesType<Highcharts.ColumnSeries>(
         },
 
         /**
+         * Adjust for missing columns, according to the `centerInCategory`
+         * option. Missing columns are either single points or stacks where the
+         * point or points are either missing or null.
+         *
+         * @private
+         * @function Highcharts.seriesTypes.column#adjustForMissingColumns
+         * @param {number} x
+         *        The x coordinate of the column, left side
+         * @param {number} pointWidth
+         *        The pointWidth, already computed upstream
+         * @param {Highcharts.ColumnPoint} point
+         *        The point instance
+         * @param {Highcharts.ColumnMetricsObject} metrics
+         *        The series-wide column metrics
+         * @return {number}
+         *        The adjusted x position, or the original if not adjusted
+         */
+        adjustForMissingColumns: function (
+            this: Highcharts.ColumnSeries,
+            x: number,
+            pointWidth: number,
+            point: Highcharts.ColumnPoint,
+            metrics: Highcharts.ColumnMetricsObject
+        ): number {
+            const stacking = this.options.stacking;
+            if (!point.isNull && metrics.columnCount > 1) {
+                let indexInCategory = 0;
+                let totalInCategory = 0;
+
+                // Loop over all the stacks on the Y axis. When stacking is
+                // enabled, these are real point stacks. When stacking is not
+                // enabled, but `centerInCategory` is true, there is one stack
+                // handling the grouping of points in each category. This is
+                // done in the `setGroupedPoints` function.
+                objectEach(
+                    this.yAxis.stacking && this.yAxis.stacking.stacks,
+                    (stack: Highcharts.Dictionary<Highcharts.StackItem>): void => {
+                        if (typeof point.x === 'number') {
+                            const stackItem = stack[point.x.toString()];
+
+                            if (stackItem) {
+                                const pointValues = stackItem.points[this.index as any],
+                                    total = stackItem.total;
+
+                                // If true `stacking` is enabled, count the
+                                // total number of non-null stacks in the
+                                // category, and note which index this point is
+                                // within those stacks.
+                                if (stacking) {
+                                    if (pointValues) {
+                                        indexInCategory = totalInCategory;
+                                    }
+                                    if (stackItem.hasValidPoints) {
+                                        totalInCategory++;
+                                    }
+
+                                // If `stacking` is not enabled, look for the
+                                // index and total of the `group` stack.
+                                } else if (H.isArray(pointValues)) {
+                                    indexInCategory = pointValues[1];
+                                    totalInCategory = total || 0;
+                                }
+                            }
+                        }
+                    }
+                );
+
+                // Compute the adjusted x position
+                const boxWidth = (totalInCategory - 1) * metrics.paddedWidth +
+                    pointWidth;
+                x = (point.plotX || 0) + boxWidth / 2 - pointWidth -
+                    indexInCategory * metrics.paddedWidth;
+
+            }
+            return x;
+        },
+
+        /**
          * Translate each point to the plot area coordinate system and find
          * shape positions
          *
@@ -793,7 +887,7 @@ seriesType<Highcharts.ColumnSeries>(
                 var yBottom = pick(point.yBottom, translatedThreshold as any),
                     safeDistance = 999 + Math.abs(yBottom),
                     pointWidth = seriesPointWidth,
-                    plotX = point.plotX,
+                    plotX = point.plotX || 0,
                     // Don't draw too far outside plot area (#1303, #2241,
                     // #4264)
                     plotY = clamp(
@@ -801,7 +895,7 @@ seriesType<Highcharts.ColumnSeries>(
                         -safeDistance,
                         yAxis.len + safeDistance
                     ),
-                    barX = (point.plotX as any) + seriesXOffset,
+                    barX = plotX + seriesXOffset,
                     barW = seriesBarW,
                     barY = Math.min(plotY, yBottom),
                     up,
@@ -848,6 +942,11 @@ seriesType<Highcharts.ColumnSeries>(
                     pointWidth = barW =
                         Math.ceil(point.options.pointWidth as any);
                     barX -= Math.round((pointWidth - seriesPointWidth) / 2);
+                }
+
+                // Adjust for null or missing points
+                if (options.centerInCategory) {
+                    barX = series.adjustForMissingColumns(barX, pointWidth, point, metrics);
                 }
 
                 // Cache for access in polar
@@ -1307,7 +1406,8 @@ seriesType<Highcharts.ColumnSeries>(
 
 /**
  * A pixel value specifying a fixed width for the column or bar. Overrides
- * pointWidth on the series.
+ * pointWidth on the series. The width effects the dimension that is not based
+ * on the point value.
  *
  * @see [series.pointWidth](#plotOptions.column.pointWidth)
  *

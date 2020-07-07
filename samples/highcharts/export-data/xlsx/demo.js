@@ -10,8 +10,8 @@
             div.style.display = 'none';
             document.body.appendChild(div);
             rows = this.getDataRows(true);
-            xlsxRows = H.map(rows.slice(1), function (row) {
-                return H.map(row, function (column) {
+            xlsxRows = rows.slice(1).map(function (row) {
+                return row.map(function (column) {
                     return {
                         type: typeof column === 'number' ? 'number' : 'string',
                         value: column

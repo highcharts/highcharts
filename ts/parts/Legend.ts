@@ -13,7 +13,7 @@
 import type Chart from './Chart';
 import type ColorAxisGlobal from '../parts-map/ColorAxis';
 import type Point from './Point';
-import H from './Globals.js';
+import H from '../Core/Globals.js';
 
 /**
  * Internal types
@@ -185,7 +185,7 @@ declare global {
  * @type {"legendItemClick"}
  */
 
-import U from './Utilities.js';
+import U from '../Core/Utilities.js';
 const {
     addEvent,
     animObject,
@@ -561,12 +561,22 @@ class Legend {
             legendGroup = item.legendGroup;
 
         if (legendGroup && legendGroup.element) {
-            legendGroup[defined(legendGroup.translateY) ? 'animate' : 'attr']({
+            const attribs = {
                 translateX: ltr ?
                     itemX :
                     legend.legendWidth - itemX - 2 * (symbolPadding as any) - 4,
                 translateY: itemY
-            });
+            };
+            const complete = (): void => {
+                fireEvent(this, 'afterPositionItem', { item });
+            };
+
+            if (defined(legendGroup.translateY)) {
+                legendGroup.animate(attribs, { complete });
+            } else {
+                legendGroup.attr(attribs);
+                complete();
+            }
         }
 
         if (checkbox) {

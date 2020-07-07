@@ -12,12 +12,12 @@
 'use strict';
 import Chart from '../parts/Chart.js';
 import chartNavigationMixin from '../mixins/navigation.js';
-import H from '../parts/Globals.js';
+import H from '../Core/Globals.js';
 var doc = H.doc, isTouchDevice = H.isTouchDevice, win = H.win;
 import O from '../parts/Options.js';
 var defaultOptions = O.defaultOptions;
 import SVGRenderer from '../parts/SVGRenderer.js';
-import U from '../parts/Utilities.js';
+import U from '../Core/Utilities.js';
 var addEvent = U.addEvent, css = U.css, createElement = U.createElement, discardElement = U.discardElement, extend = U.extend, find = U.find, fireEvent = U.fireEvent, isObject = U.isObject, merge = U.merge, objectEach = U.objectEach, pick = U.pick, removeEvent = U.removeEvent, uniqueKey = U.uniqueKey;
 /**
  * Gets fired after a chart is printed through the context menu item or the
@@ -990,7 +990,8 @@ extend(Chart.prototype, /** @lends Highcharts.Chart.prototype */ {
                     'width="' + options.chart.width + '" ' +
                     'height="' + options.chart.height + '">' +
                     '<body xmlns="http://www.w3.org/1999/xhtml">' +
-                    html +
+                    // Some tags needs to be closed in xhtml (#13726)
+                    html.replace(/(<(?:img|br).*?(?=\>))>/g, '$1 />') +
                     '</body>' +
                     '</foreignObject>';
                 svg = svg.replace('</svg>', html + '</svg>');

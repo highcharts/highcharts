@@ -11,7 +11,7 @@
 import Axis from '../parts/Axis.js';
 import Tick from '../parts/Tick.js';
 import HiddenAxis from './HiddenAxis.js';
-import U from '../parts/Utilities.js';
+import U from '../Core/Utilities.js';
 var addEvent = U.addEvent, correctFloat = U.correctFloat, defined = U.defined, extend = U.extend, fireEvent = U.fireEvent, isNumber = U.isNumber, merge = U.merge, pick = U.pick, pInt = U.pInt, relativeLength = U.relativeLength, wrap = U.wrap;
 /**
  * @private

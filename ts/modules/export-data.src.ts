@@ -16,18 +16,24 @@
 
 'use strict';
 
-import type Chart from '../parts/Chart';
 import type Point from '../parts/Point';
-import H from '../parts/Globals.js';
+import Axis from '../parts/Axis.js';
+import Chart from '../parts/Chart.js';
+import H from '../Core/Globals.js';
 const {
     doc,
+    seriesTypes,
     win
 } = H;
-import U from '../parts/Utilities.js';
+import U from '../Core/Utilities.js';
 const {
+    addEvent,
     defined,
     extend,
+    find,
+    fireEvent,
     getOptions,
+    isNumber,
     pick,
     setOptions
 } = U;
@@ -138,10 +144,7 @@ declare global {
 import '../mixins/ajax.js';
 import '../mixins/download-url.js';
 
-var seriesTypes = Highcharts.seriesTypes,
-    downloadURL = Highcharts.downloadURL,
-    fireEvent = Highcharts.fireEvent;
-
+const downloadURL = H.downloadURL;
 
 // Can we add this to utils? Also used in screen-reader.js
 /**
@@ -383,7 +386,7 @@ setOptions({
 /* eslint-disable no-invalid-this */
 
 // Add an event listener to handle the showTable option
-Highcharts.addEvent(Highcharts.Chart, 'render', function (): void {
+addEvent(Chart, 'render', function (): void {
     if (
         this.options &&
         this.options.exporting &&
@@ -405,7 +408,7 @@ Highcharts.addEvent(Highcharts.Chart, 'render', function (): void {
  * @private
  * @function Highcharts.Chart#setUpKeyToAxis
  */
-Highcharts.Chart.prototype.setUpKeyToAxis = function (): void {
+Chart.prototype.setUpKeyToAxis = function (): void {
     if (seriesTypes.arearange) {
         seriesTypes.arearange.prototype.keyToAxis = {
             low: 'y',
@@ -436,7 +439,7 @@ Highcharts.Chart.prototype.setUpKeyToAxis = function (): void {
  *
  * @fires Highcharts.Chart#event:exportData
  */
-Highcharts.Chart.prototype.getDataRows = function (
+Chart.prototype.getDataRows = function (
     multiLevelHeaders?: boolean
 ): Array<Array<(number|string)>> {
     var hasParallelCoords = this.hasParallelCoordinates,
@@ -478,7 +481,7 @@ Highcharts.Chart.prototype.getDataRows = function (
                 return categoryHeader;
             }
 
-            if (item instanceof Highcharts.Axis) {
+            if (item instanceof Axis) {
                 return (item.options.title && item.options.title.text) ||
                     (item.dateTime ? categoryDatetimeHeader : categoryHeader);
             }
@@ -510,7 +513,7 @@ Highcharts.Chart.prototype.getDataRows = function (
                     ) + 'Axis',
                     // Points in parallel coordinates refers to all yAxis
                     // not only `series.yAxis`
-                    axis = Highcharts.isNumber(pIdx) ?
+                    axis = isNumber(pIdx) ?
                         (series as any).chart[axisName][pIdx] :
                         (series as any)[axisName];
 
@@ -527,6 +530,33 @@ Highcharts.Chart.prototype.getDataRows = function (
                 dateTimeValueAxisMap: dateTimeValueAxisMap
             };
         },
+        // Create point array depends if xAxis is category
+        // or point.name is defined #13293
+        getPointArray = function (
+            series: Highcharts.Series,
+            xAxis: Highcharts.Axis
+        ): string[] {
+            const namedPoints = series.data.filter((d): string | false =>
+                (typeof d.y !== 'undefined') && d.name
+            );
+
+            if (
+                namedPoints.length &&
+                xAxis &&
+                !xAxis.categories &&
+                !series.keyToAxis
+            ) {
+                if (series.pointArrayMap) {
+                    const pointArrayMapCheck = series.pointArrayMap.filter((p): boolean => p === 'x');
+                    if (pointArrayMapCheck.length) {
+                        series.pointArrayMap.unshift('x');
+                        return series.pointArrayMap;
+                    }
+                }
+                return ['x', 'y'];
+            }
+            return series.pointArrayMap || ['y'];
+        },
         xAxisIndices: Array<Array<number>> = [];
 
     // Loop the series and index values
@@ -537,7 +567,7 @@ Highcharts.Chart.prototype.getDataRows = function (
     this.series.forEach(function (series: Highcharts.Series): void {
         var keys = series.options.keys,
             xAxis = series.xAxis,
-            pointArrayMap = keys || series.pointArrayMap || ['y'],
+            pointArrayMap = keys || getPointArray(series, xAxis),
             valueCount = pointArrayMap.length,
             xTaken: (false|Highcharts.Dictionary<unknown>) =
                 !series.requireSorting && {},
@@ -559,7 +589,7 @@ Highcharts.Chart.prototype.getDataRows = function (
             // series that belongs to that X axis. Includes -1 for non-axis
             // series types like pies.
             if (
-                !Highcharts.find(
+                !find(
                     xAxisIndices,
                     function (index: Array<number>): boolean {
                         return index[0] === xAxisIndex;
@@ -633,7 +663,7 @@ Highcharts.Chart.prototype.getDataRows = function (
                 if (
                     !xAxis ||
                     series.exportKey === 'name' ||
-                    (!hasParallelCoords && xAxis && xAxis.hasNames)
+                    (!hasParallelCoords && xAxis && xAxis.hasNames) && name
                 ) {
                     key = name as any;
                 }
@@ -762,7 +792,7 @@ Highcharts.Chart.prototype.getDataRows = function (
  * @return {string}
  *         CSV representation of the data
  */
-Highcharts.Chart.prototype.getCSV = function (
+Chart.prototype.getCSV = function (
     useLocalDecimalPoint?: boolean
 ): string {
     var csv = '',
@@ -830,7 +860,7 @@ Highcharts.Chart.prototype.getCSV = function (
  *
  * @fires Highcharts.Chart#event:afterGetTable
  */
-Highcharts.Chart.prototype.getTable = function (
+Chart.prototype.getTable = function (
     useLocalDecimalPoint?: boolean
 ): string {
     var html = '<table id="highcharts-data-table-' + this.index + '">',
@@ -1077,7 +1107,7 @@ function getBlobFromContent(
  *
  * @requires modules/exporting
  */
-Highcharts.Chart.prototype.downloadCSV = function (): void {
+Chart.prototype.downloadCSV = function (): void {
     var csv = this.getCSV(true);
 
     downloadURL(
@@ -1097,7 +1127,7 @@ Highcharts.Chart.prototype.downloadCSV = function (): void {
  *
  * @requires modules/exporting
  */
-Highcharts.Chart.prototype.downloadXLS = function (): void {
+Chart.prototype.downloadXLS = function (): void {
     var uri = 'data:application/vnd.ms-excel;base64,',
         template = '<html xmlns:o="urn:schemas-microsoft-com:office:office" ' +
             'xmlns:x="urn:schemas-microsoft-com:office:excel" ' +
@@ -1134,7 +1164,7 @@ Highcharts.Chart.prototype.downloadXLS = function (): void {
  *
  * @fires Highcharts.Chart#event:afterViewData
  */
-Highcharts.Chart.prototype.viewData = function (): void {
+Chart.prototype.viewData = function (): void {
     if (!this.dataTableDiv) {
         this.dataTableDiv = doc.createElement('div');
         this.dataTableDiv.className = 'highcharts-data-table';

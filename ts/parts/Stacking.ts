@@ -12,9 +12,9 @@
 
 import Axis from './Axis.js';
 import Chart from './Chart.js';
-import H from './Globals.js';
+import H from '../Core/Globals.js';
 import StackingAxis from './StackingAxis.js';
-import U from './Utilities.js';
+import U from '../Core/Utilities.js';
 const {
     correctFloat,
     defined,
@@ -30,7 +30,7 @@ const {
  */
 declare global {
     namespace Highcharts {
-        type OptionsStackingValue = ('normal'|'overlap'|'percent'|'stream');
+        type OptionsStackingValue = ('normal'|'overlap'|'percent'|'stream'|'group');
         interface ChartLike {
             getStacks(): void;
         }
@@ -57,7 +57,10 @@ declare global {
                 stack: StackItem,
                 i: number
             ): void;
-            setStackedPoints(): void;
+            setGroupedPoints(): void;
+            setStackedPoints(
+                stackingParam?: string
+            ): void;
         }
         interface StackItemIndicatorObject {
             index: number;
@@ -116,6 +119,7 @@ declare global {
             public axis: StackingAxis;
             public base?: string;
             public cumulative?: (null|number);
+            public hasValidPoints: boolean;
             public isNegative: boolean;
             public label?: SVGElement;
             public leftCliff: number;
@@ -238,6 +242,7 @@ class StackItem {
         // This will keep each points' extremes stored by series.index and point
         // index
         this.points = {};
+        this.hasValidPoints = false;
 
         // Save the stack option on the series configuration object,
         // and whether to treat it as percent
@@ -264,6 +269,7 @@ class StackItem {
     public axis: StackingAxis;
     public base?: string;
     public cumulative?: (null|number);
+    public hasValidPoints: boolean;
     public isNegative: boolean;
     public label?: Highcharts.SVGElement;
     public leftCliff: number;
@@ -570,7 +576,30 @@ Chart.prototype.getStacks = function (this: Chart): void {
 StackingAxis.compose(Axis);
 
 
-// Stacking methods defnied for Series prototype
+// Stacking methods defined for Series prototype
+
+/**
+ * Set grouped points in a stack-like object. When `centerInCategory` is true,
+ * and `stacking` is not enabled, we need a pseudo (horizontal) stack in order
+ * to handle grouping of points within the same category.
+ *
+ * @private
+ * @function Highcharts.Series#setStackedPoints
+ * @return {void}
+ */
+Series.prototype.setGroupedPoints = function (this: Highcharts.Series): void {
+    if (
+        this.options.centerInCategory &&
+        (this.is('column') || this.is('columnrange')) &&
+        // With stacking enabled, we already have stacks that we can compute
+        // from
+        !this.options.stacking &&
+        // With only one series, we don't need to consider centerInCategory
+        this.chart.series.length > 1
+    ) {
+        Series.prototype.setStackedPoints.call(this, 'group');
+    }
+};
 
 /**
  * Adds series' points value to corresponding stack
@@ -578,8 +607,14 @@ StackingAxis.compose(Axis);
  * @private
  * @function Highcharts.Series#setStackedPoints
  */
-Series.prototype.setStackedPoints = function (this: Highcharts.Series): void {
-    if (!this.options.stacking ||
+Series.prototype.setStackedPoints = function (
+    this: Highcharts.Series,
+    stackingParam?: string
+): void {
+
+    const stacking = stackingParam || this.options.stacking;
+
+    if (!stacking ||
         (this.visible !== true &&
         (this.chart.options.chart as any).ignoreHiddenSeries !== false)
     ) {
@@ -595,8 +630,7 @@ Series.prototype.setStackedPoints = function (this: Highcharts.Series): void {
         threshold = seriesOptions.threshold,
         stackThreshold = pick(seriesOptions.startFromThreshold && threshold, 0),
         stackOption = seriesOptions.stack,
-        stacking = seriesOptions.stacking,
-        stackKey = series.stackKey,
+        stackKey = stackingParam ? `${series.type},${stacking}` : series.stackKey,
         negKey = '-' + stackKey,
         negStacks = series.negStacks,
         yAxis = series.yAxis as StackingAxis,
@@ -669,7 +703,6 @@ Series.prototype.setStackedPoints = function (this: Highcharts.Series): void {
             }
             stack.touched = yAxis.stacking.stacksTouched;
 
-
             // In area charts, if there are multiple points on the same X value,
             // let the area fill the full span of those points
             if (stackIndicator.index > 0 && series.singleStacks === false) {
@@ -701,25 +734,39 @@ Series.prototype.setStackedPoints = function (this: Highcharts.Series): void {
                 stack.total =
                     correctFloat((stack.total as any) + (Math.abs(y) || 0));
             }
+
+        } else if (stacking === 'group') {
+            // In this stack, the total is the number of valid points
+            if (y !== null) {
+                stack.total = (stack.total || 0) + 1;
+            }
+
         } else {
             stack.total = correctFloat(stack.total + (y || 0));
         }
 
-        stack.cumulative =
-            pick(stack.cumulative, stackThreshold as any) + (y || 0);
+        if (stacking === 'group') {
+            // This point's index within the stack, pushed to stack.points[1]
+            stack.cumulative = (stack.total || 1) - 1;
+        } else {
+            stack.cumulative =
+                pick(stack.cumulative, stackThreshold as any) + (y || 0);
+        }
 
         if (y !== null) {
             (stack.points[pointKey as any] as any).push(stack.cumulative);
             stackedYData[i] = stack.cumulative;
+            stack.hasValidPoints = true;
         }
-
     }
 
     if (stacking === 'percent') {
         yAxis.stacking.usePercentage = true;
     }
 
-    this.stackedYData = stackedYData as any; // To be used in getExtremes
+    if (stacking !== 'group') {
+        this.stackedYData = stackedYData as any; // To be used in getExtremes
+    }
 
     // Reset old stacks
     yAxis.stacking.oldStacks = {};

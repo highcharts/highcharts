@@ -8,8 +8,8 @@
  *
  * */
 'use strict';
-import H from '../parts/Globals.js';
-import U from '../parts/Utilities.js';
+import H from '../Core/Globals.js';
+import U from '../Core/Utilities.js';
 var pick = U.pick, seriesType = U.seriesType;
 import '../parts/Options.js';
 var noop = H.noop, seriesTypes = H.seriesTypes;
@@ -93,8 +93,8 @@ seriesType('boxplot', 'column', {
      */
     lineWidth: 1,
     /**
-     * The color of the median line. If `undefined`, the general series color
-     * applies.
+     * The color of the median line. If `undefined`, the general series
+     * color applies.
      *
      * In styled mode, the median stroke width can be set with the
      * `.highcharts-boxplot-median` class.
@@ -273,7 +273,9 @@ seriesType('boxplot', 'column', {
      * @product highcharts
      */
     whiskerWidth: 2
-}, /** @lends Highcharts.seriesTypes.boxplot */ {
+}, 
+/** @lends Highcharts.seriesTypes.boxplot */
+{
     // array point configs are mapped to this
     pointArrayMap: ['low', 'q1', 'median', 'q3', 'high'],
     // return a plain array for speedy calculation

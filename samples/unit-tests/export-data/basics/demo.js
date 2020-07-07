@@ -1004,3 +1004,124 @@ QUnit.test('Descending categories', function (assert) {
         'First point should be in Category 2 (#12767)'
     );
 });
+
+QUnit.test('Point name (#13293)', function (assert) {
+    var chart = Highcharts.chart('container', {
+            series: [{
+                data: [{
+                    x: 1,
+                    y: 9,
+                    name: "Point2"
+                }, {
+                    x: 2,
+                    y: 6,
+                    name: "Point1"
+                }]
+            }, {
+                data: [{
+                    x: 20,
+                    y: 9
+                }, {
+                    x: 30,
+                    y: 6
+                }]
+            }],
+            exporting: {
+                showTable: true
+            }
+        }),
+        csv = '"Category","Series 1 (x)","Series 1 (y)","Series 2"\n' +
+        '"Point2",1,9\n' +
+        '"Point1",2,6\n' +
+        '20,,,9\n' +
+        '30,,,6';
+
+    assert.strictEqual(
+        chart.getCSV(),
+        csv,
+        'The first series should render point name, y and x value (#13293)'
+    );
+});
+
+QUnit.test('Point name with category (#13293)', function (assert) {
+    var chart = Highcharts.chart('container', {
+            xAxis: {
+                type: 'category'
+            },
+            series: [{
+                data: [{
+                    x: 1,
+                    y: 9,
+                    name: "Point2"
+                }, {
+                    x: 2,
+                    y: 6,
+                    name: "Point1"
+                }]
+            }, {
+                data: [{
+                    x: 20,
+                    y: 9
+                }, {
+                    x: 30,
+                    y: 6
+                }]
+            }],
+            exporting: {
+                showTable: true
+            }
+        }),
+        csv = '"Category","Series 1","Series 2"\n' +
+        '"Point2",9\n' +
+        '"Point1",6\n' +
+        '20,,9\n' +
+        '30,,6';
+
+    assert.strictEqual(
+        chart.getCSV(),
+        csv,
+        'The first series should render just a point name and y value (#13293)'
+    );
+});
+
+QUnit.test('Point without y data, but with value (#13785)', function (assert) {
+    var chart = Highcharts.chart('container', {
+
+            series: [{
+                type: 'sunburst',
+                data: [{
+                    id: '1',
+                    name: 'test'
+                },
+                {
+                    parent: '1',
+                    name: 'test1',
+                    value: 5
+                },
+                {
+                    parent: '1',
+                    name: 'test2',
+                    value: 10
+                },
+                {
+                    parent: '1',
+                    name: 'test3',
+                    value: 15
+                }]
+            }],
+            exporting: {
+                showTable: true
+            }
+        }),
+        csv = '"Category","Series 1"\n' +
+        '"test",\n' +
+        '"test1",5\n' +
+        '"test2",10\n' +
+        '"test3",15';
+
+    assert.strictEqual(
+        chart.getCSV(),
+        csv,
+        'The table should render category name and value (#13785)'
+    );
+});

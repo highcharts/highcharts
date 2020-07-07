@@ -10,9 +10,9 @@
  *
  * */
 'use strict';
-import H from '../../parts/Globals.js';
+import H from '../../Core/Globals.js';
 import Point from '../../parts/Point.js';
-import U from '../../parts/Utilities.js';
+import U from '../../Core/Utilities.js';
 var addEvent = U.addEvent, css = U.css, defined = U.defined, pick = U.pick, seriesType = U.seriesType;
 /**
  * Formatter callback function.
@@ -73,7 +73,7 @@ seriesType('networkgraph', 'line',
  *               Networkgraph
  * @since        7.0.0
  * @excluding    boostThreshold, animation, animationLimit, connectEnds,
- *               colorAxis, colorKey, connectNulls, dragDrop,
+ *               colorAxis, colorKey, connectNulls, cropThreshold, dragDrop,
  *               getExtremesFromAll, label, linecap, negativeColor,
  *               pointInterval, pointIntervalUnit, pointPlacement,
  *               pointStart, softThreshold, stack, stacking, step,
@@ -950,8 +950,8 @@ seriesType('networkgraph', 'line',
  *
  * @extends   series,plotOptions.networkgraph
  * @excluding boostThreshold, animation, animationLimit, connectEnds,
- *            connectNulls, dragDrop, getExtremesFromAll, label, linecap,
- *            negativeColor, pointInterval, pointIntervalUnit,
+ *            connectNulls, cropThreshold, dragDrop, getExtremesFromAll, label,
+ *            linecap, negativeColor, pointInterval, pointIntervalUnit,
  *            pointPlacement, pointStart, softThreshold, stack, stacking,
  *            step, threshold, xAxis, yAxis, zoneAxis, dataSorting
  * @product   highcharts

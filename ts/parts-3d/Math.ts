@@ -11,7 +11,7 @@
 'use strict';
 
 import type Chart from '../parts/Chart';
-import H from '../parts/Globals.js';
+import H from '../Core/Globals.js';
 
 /**
  * Internal types
@@ -55,7 +55,7 @@ declare global {
     }
 }
 
-import U from '../parts/Utilities.js';
+import U from '../Core/Utilities.js';
 const {
     pick
 } = U;
@@ -141,7 +141,7 @@ function rotate3D(
  *
  * @requires highcharts-3d
  */
-H.perspective3D = function (
+const perspective3D = H.perspective3D = function (
     coordinate: Highcharts.Position3dObject,
     origin: Highcharts.Position3dObject,
     distance: number
@@ -179,7 +179,7 @@ H.perspective3D = function (
  *
  * @requires highcharts-3d
  */
-H.perspective = function (
+const perspective = H.perspective = function (
     points: Array<Highcharts.Position3dObject>,
     chart: Chart,
     insidePlotArea?: boolean,
@@ -224,7 +224,7 @@ H.perspective = function (
             ),
             // Apply perspective
             coordinate: Highcharts.Position3dObject =
-                H.perspective3D(rotated, origin, origin.vd) as any;
+                perspective3D(rotated, origin, origin.vd) as any;
 
         // Apply translation
         coordinate.x = coordinate.x * scale + origin.x;
@@ -257,7 +257,7 @@ H.perspective = function (
  *
  * @requires highcharts-3d
  */
-H.pointCameraDistance = function (
+const pointCameraDistance = H.pointCameraDistance = function (
     coordinates: Highcharts.Dictionary<number>,
     chart: Chart
 ): number {
@@ -293,7 +293,7 @@ H.pointCameraDistance = function (
  *
  * @requires highcharts-3d
  */
-H.shapeArea = function (vertexes: Array<Highcharts.PositionObject>): number {
+const shapeArea = H.shapeArea = function (vertexes: Array<Highcharts.PositionObject>): number {
     var area = 0,
         i,
         j;
@@ -325,10 +325,20 @@ H.shapeArea = function (vertexes: Array<Highcharts.PositionObject>): number {
  *
  * @requires highcharts-3d
  */
-H.shapeArea3d = function (
+const shapeArea3D = H.shapeArea3d = function (
     vertexes: Array<Highcharts.Position3dObject>,
     chart: Chart,
     insidePlotArea?: boolean
 ): number {
-    return H.shapeArea(H.perspective(vertexes, chart, insidePlotArea));
+    return shapeArea(perspective(vertexes, chart, insidePlotArea));
 };
+
+const mathModule = {
+    perspective,
+    perspective3D,
+    pointCameraDistance,
+    shapeArea,
+    shapeArea3D
+};
+
+export default mathModule;

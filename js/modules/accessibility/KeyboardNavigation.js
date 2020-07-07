@@ -10,9 +10,9 @@
  *
  * */
 'use strict';
-import H from '../../parts/Globals.js';
+import H from '../../Core/Globals.js';
 var doc = H.doc, win = H.win;
-import U from '../../parts/Utilities.js';
+import U from '../../Core/Utilities.js';
 var addEvent = U.addEvent, fireEvent = U.fireEvent;
 import HTMLUtilities from './utils/htmlUtilities.js';
 var getElement = HTMLUtilities.getElement;
@@ -76,8 +76,10 @@ KeyboardNavigation.prototype = {
         this.components = components;
         this.modules = [];
         this.currentModuleIx = 0;
+        // Run an update to get all modules
+        this.update();
         ep.addEvent(chart.renderTo, 'keydown', function (e) { return _this.onKeydown(e); });
-        ep.addEvent(chart.container, 'focus', function (e) { return _this.onFocus(e); });
+        ep.addEvent(this.tabindexContainer, 'focus', function (e) { return _this.onFocus(e); });
         ep.addEvent(doc, 'mouseup', function () { return _this.onMouseUp(); });
         ep.addEvent(chart.renderTo, 'mousedown', function () {
             _this.isClickingChart = true;
@@ -88,8 +90,6 @@ KeyboardNavigation.prototype = {
         ep.addEvent(chart.renderTo, 'mouseout', function () {
             _this.pointerIsOverChart = false;
         });
-        // Run an update to get all modules
-        this.update();
         // Init first module
         if (this.modules.length) {
             this.modules[0].init(1);
@@ -234,7 +234,7 @@ KeyboardNavigation.prototype = {
             this.exitAnchor.focus();
         }
         else {
-            this.chart.container.focus();
+            this.tabindexContainer.focus();
         }
         return false;
     },
@@ -261,20 +261,31 @@ KeyboardNavigation.prototype = {
      * @private
      */
     updateContainerTabindex: function () {
-        var a11yOptions = this.chart.options.accessibility, keyboardOptions = a11yOptions && a11yOptions.keyboardNavigation, shouldHaveTabindex = !(keyboardOptions && keyboardOptions.enabled === false), container = this.chart.container, curTabindex = container.getAttribute('tabIndex');
-        if (shouldHaveTabindex && !curTabindex) {
-            container.setAttribute('tabindex', '0');
-        }
-        else if (!shouldHaveTabindex && curTabindex === '0') {
+        var a11yOptions = this.chart.options.accessibility, keyboardOptions = a11yOptions && a11yOptions.keyboardNavigation, shouldHaveTabindex = !(keyboardOptions && keyboardOptions.enabled === false), chart = this.chart, container = chart.container;
+        var tabindexContainer;
+        if (chart.renderTo.hasAttribute('tabindex')) {
             container.removeAttribute('tabindex');
+            tabindexContainer = chart.renderTo;
+        }
+        else {
+            tabindexContainer = container;
+        }
+        this.tabindexContainer = tabindexContainer;
+        var curTabindex = tabindexContainer.getAttribute('tabindex');
+        if (shouldHaveTabindex && !curTabindex) {
+            tabindexContainer.setAttribute('tabindex', '0');
+        }
+        else if (!shouldHaveTabindex) {
+            chart.container.removeAttribute('tabindex');
         }
     },
     /**
      * @private
      */
     makeElementAnExitAnchor: function (el) {
+        var chartTabindex = this.tabindexContainer.getAttribute('tabindex') || 0;
         el.setAttribute('class', 'highcharts-exit-anchor');
-        el.setAttribute('tabindex', '0');
+        el.setAttribute('tabindex', chartTabindex);
         el.setAttribute('aria-hidden', false);
         // Handle focus
         this.addExitAnchorEventsToEl(el);
@@ -342,9 +353,7 @@ KeyboardNavigation.prototype = {
     destroy: function () {
         this.removeExitAnchor();
         this.eventProvider.removeAddedEvents();
-        if (this.chart.container.getAttribute('tabindex') === '0') {
-            this.chart.container.removeAttribute('tabindex');
-        }
+        this.chart.container.removeAttribute('tabindex');
     }
 };
 export default KeyboardNavigation;

@@ -10,7 +10,7 @@
 
 import type StackItem from './Stacking.js';
 import Axis from './Axis.js';
-import U from './Utilities.js';
+import U from '../Core/Utilities.js';
 const {
     addEvent,
     destroyObjectProperties,
@@ -89,6 +89,7 @@ class StackingAxisAdditions {
             while (i--) {
                 actualSeries = axisSeries[reversedStacks ? i : len - i - 1];
                 actualSeries.setStackedPoints();
+                actualSeries.setGroupedPoints();
             }
 
             // Loop up again to compute percent and stream stack

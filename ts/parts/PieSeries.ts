@@ -11,7 +11,8 @@
 'use strict';
 
 import type SVGPath from '../parts/SVGPath';
-import H from './Globals.js';
+import H from '../Core/Globals.js';
+import SVGRenderer from './SVGRenderer.js';
 
 /**
  * Internal types
@@ -123,7 +124,7 @@ declare global {
 
 import LegendSymbolMixin from '../mixins/legend-symbol.js';
 import Point from './Point.js';
-import U from './Utilities.js';
+import U from '../Core/Utilities.js';
 const {
     addEvent,
     clamp,
@@ -1052,6 +1053,8 @@ seriesType<Highcharts.PieSeries>(
         drawEmpty: function (this: Highcharts.PieSeries): void {
             var centerX,
                 centerY,
+                start = this.startAngleRad,
+                end = this.endAngleRad,
                 options = this.options;
 
             // Draw auxiliary graph if there're no visible points.
@@ -1059,22 +1062,34 @@ seriesType<Highcharts.PieSeries>(
                 centerX = this.center[0];
                 centerY = this.center[1];
 
-                if (!this.graph) { // Auxiliary graph doesn't exist yet.
-                    this.graph = this.chart.renderer.circle(centerX,
-                        centerY, 0)
-                        .addClass('highcharts-graph')
+                if (!this.graph) {
+                    this.graph = this.chart.renderer
+                        .arc(centerX, centerY, this.center[1] / 2, 0, start, end)
+                        .addClass('highcharts-empty-series')
                         .add(this.group);
                 }
 
-                this.graph.animate({
-                    'stroke-width': options.borderWidth,
-                    cx: centerX,
-                    cy: centerY,
-                    r: this.center[2] / 2,
-                    fill: (options.fillColor as any) || 'none',
-                    stroke: (options.color as any) ||
+                this.graph.attr({
+                    d: SVGRenderer.prototype.symbols.arc(
+                        centerX,
+                        centerY,
+                        this.center[2] / 2,
+                        0, {
+                            start: start,
+                            end: end,
+                            innerR: this.center[3] / 2
+                        }
+                    )
+                });
+
+                if (!this.chart.styledMode) {
+                    this.graph.attr({
+                        'stroke-width': options.borderWidth,
+                        fill: options.fillColor || 'none',
+                        stroke: (options.color as any) ||
                         '${palette.neutralColor20}'
-                }, this.options.animation);
+                    });
+                }
 
             } else if (this.graph) { // Destroy the graph object.
                 this.graph = this.graph.destroy();
@@ -1597,7 +1612,8 @@ seriesType<Highcharts.PieSeries>(
  * it is inherited from [chart.type](#chart.type).
  *
  * @extends   series,plotOptions.pie
- * @excluding dataParser, dataURL, stack, xAxis, yAxis, dataSorting, step
+ * @excluding cropThreshold, dataParser, dataURL, stack, xAxis, yAxis,
+ *            dataSorting, step
  * @product   highcharts
  * @apioption series.pie
  */

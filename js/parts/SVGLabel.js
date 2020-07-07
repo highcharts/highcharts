@@ -22,7 +22,7 @@ var __extends = (this && this.__extends) || (function () {
     };
 })();
 import SVGElement from './SVGElement.js';
-import U from './Utilities.js';
+import U from '../Core/Utilities.js';
 var defined = U.defined, extend = U.extend, isNumber = U.isNumber, merge = U.merge, removeEvent = U.removeEvent;
 /**
  * SVG label to render text.
@@ -62,7 +62,7 @@ var SVGLabel = /** @class */ (function (_super) {
         var hasBGImage;
         if (typeof shape === 'string') {
             hasBGImage = /^url\((.*?)\)$/.test(shape);
-            if (_this.renderer.symbol(shape) || hasBGImage) {
+            if (_this.renderer.symbols[shape] || hasBGImage) {
                 _this.symbolKey = shape;
             }
         }

@@ -19,10 +19,11 @@ import HTMLUtilities from './htmlUtilities.js';
 const {
     stripHTMLTagsFromString: stripHTMLTags
 } = HTMLUtilities;
-import U from '../../../parts/Utilities.js';
+import U from '../../../Core/Utilities.js';
 const {
     defined,
-    find
+    find,
+    fireEvent
 } = U;
 
 
@@ -273,7 +274,7 @@ function scrollToPoint(point: Point): void {
             pos + range / 2
         );
 
-        Highcharts.fireEvent(scrollbar, 'changed', {
+        fireEvent(scrollbar, 'changed', {
             from: scrollbar.from,
             to: scrollbar.to,
             trigger: 'scrollbar',

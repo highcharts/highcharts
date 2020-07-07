@@ -359,6 +359,74 @@ QUnit.test('General marker-clusters', function (assert) {
         resultVisibility,
         'Parent point should be hidden before animation.'
     );
+
+    // (#13302)
+    var done = assert.async(),
+        url = location.host.substr(0, 12) === 'localhost:98' ?
+            'url(base/test/testimage.png)' : // karma
+            'url(testimage.png)'; // utils
+
+    chart = Highcharts.chart('container', {
+        chart: {
+            events: {
+                load: function () {
+                    var chart = this,
+                        point,
+                        graphicBBox;
+
+                    chart.xAxis[0].setExtremes(49, 52);
+
+                    point = chart.series[0].points[0];
+                    graphicBBox = point.graphic.getBBox();
+
+                    result = true;
+
+                    if (
+                        Math.abs(point.plotX - graphicBBox.x) > 1 &&
+                        Math.abs(point.plotY - graphicBBox.y) > 1
+                    ) {
+                        result = false;
+                    }
+
+                    assert.ok(
+                        result,
+                        'Points with image marker symbol should be displayed ' +
+                            'correctly after the zoom (#13302).'
+                    );
+
+                    done();
+                }
+            }
+        },
+        plotOptions: {
+            series: {
+                cluster: {
+                    enabled: true
+                }
+            }
+        },
+        series: [{
+            type: 'scatter',
+            marker: {
+                symbol: url.replace(')', '?' + Date.now() + ')')
+            },
+            animation: {
+                duration: 0
+            },
+            cluster: {
+                animation: {
+                    duration: 0
+                }
+            },
+            data: [
+                [0, 0],
+                [50, 50],
+                [55, 53],
+                [52, 51],
+                [100, 100]
+            ]
+        }]
+    });
 });
 
 QUnit.test('Grid algorithm tests.', function (assert) {

@@ -16,7 +16,7 @@
 
 import type Chart from '../parts/Chart';
 import type SVGPath from '../parts/SVGPath';
-import H from '../parts/Globals.js';
+import H from '../Core/Globals.js';
 
 /**
  * Internal types
@@ -81,7 +81,9 @@ declare global {
 
 import Color from '../parts/Color.js';
 const color = Color.parse;
-import U from '../parts/Utilities.js';
+import Math3D from '../parts-3d/Math.js';
+const { perspective } = Math3D;
+import U from '../Core/Utilities.js';
 const {
     merge,
     pick,
@@ -93,7 +95,6 @@ import '../parts/SVGRenderer.js';
 
 var charts = H.charts,
     deg2rad = H.deg2rad,
-    perspective = H.perspective,
 
     // Work on H.Renderer instead of SVGRenderer for VML support.
     RendererProto = H.Renderer.prototype,

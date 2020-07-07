@@ -11,7 +11,7 @@
  * */
 'use strict';
 import '../parts/AreaSeries.js';
-import U from '../parts/Utilities.js';
+import U from '../Core/Utilities.js';
 var seriesType = U.seriesType;
 /**
  * @private

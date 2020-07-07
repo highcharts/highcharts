@@ -6,7 +6,7 @@
  *
  * */
 'use strict';
-import U from '../parts/Utilities.js';
+import U from '../Core/Utilities.js';
 var correctFloat = U.correctFloat, isArray = U.isArray, seriesType = U.seriesType;
 /**
  * The EMA series type.

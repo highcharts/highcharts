@@ -8,9 +8,8 @@
 
 import Annotation from '../annotations.src.js';
 import ControlPoint from '../ControlPoint.js';
-import H from '../../parts/Globals.js';
 import MockPoint from '../MockPoint.js';
-import U from '../../parts/Utilities.js';
+import U from '../../Core/Utilities.js';
 const {
     merge
 } = U;
@@ -21,121 +20,119 @@ const {
  */
 declare global {
     namespace Highcharts {
-        class AnnotationCrookedLine extends Annotation {
-            public options: AnnotationCrookedLineOptionsObject;
-            addControlPoints: () => void;
-            getPointsOptions: () => Array<AnnotationMockPointOptionsObject>;
-            public addBackground(): void;
-            public addLine(): void;
-            public addShapes(): void;
-            public getControlPointsOptions(): Array<AnnotationMockPointOptionsObject>;
-            public heightPointOptions(pointOptions: AnnotationMockPointOptionsObject): AnnotationMockPointOptionsObject;
-            public setClipAxes(): void;
-            public translateHeight(dh: number): void;
-            public translateSide(dx: number, dy: number, end?: boolean): void;
-        }
         interface AnnotationCrookedLineOptionsObject extends AnnotationsOptions {
             typeOptions: AnnotationCrookedLineTypeOptionsObject;
         }
         interface AnnotationCrookedLineTypeOptionsObject extends AnnotationsTypeOptions {
-            points: Array<AnnotationsTypePointsOptions>;
+            points?: Array<AnnotationsTypePointsOptions>;
         }
         interface AnnotationMockPointOptionsObject {
             controlPoint?: AnnotationControlPointOptionsObject;
-        }
-        interface AnnotationTypesRegistry {
-            crookedLine: typeof AnnotationCrookedLine;
         }
     }
 }
 
 /* eslint-disable no-invalid-this, valid-jsdoc */
 
-const CrookedLine: typeof Highcharts.AnnotationCrookedLine = function (this: Highcharts.AnnotationCrookedLine): void {
-    Annotation.apply(this, arguments as any);
-} as any;
+class CrookedLine extends Annotation {
 
-H.extendAnnotation(
-    CrookedLine,
-    null,
-    {
-        /**
-         * Overrides default setter to get axes from typeOptions.
-         * @private
-         */
-        setClipAxes: function (this: Highcharts.AnnotationCrookedLine): void {
-            this.clipXAxis = this.chart.xAxis[this.options.typeOptions.xAxis as any];
-            this.clipYAxis = this.chart.yAxis[this.options.typeOptions.yAxis as any];
-        },
-        getPointsOptions: function (
-            this: Highcharts.AnnotationCrookedLine
-        ): Array<Highcharts.AnnotationMockPointOptionsObject> {
-            var typeOptions = this.options.typeOptions;
+    /* *
+     *
+     * Constructors
+     *
+     * */
+    public constructor(chart: Highcharts.AnnotationChart, options: Highcharts.AnnotationCrookedLineOptionsObject) {
+        super(chart, options);
+    }
 
-            return typeOptions.points.map(function (
-                pointOptions: Highcharts.AnnotationsTypePointsOptions
-            ): Highcharts.AnnotationMockPointOptionsObject {
-                pointOptions.xAxis = typeOptions.xAxis;
-                pointOptions.yAxis = typeOptions.yAxis;
+    /* *
+     *
+     * Functions
+     *
+     * */
 
-                return pointOptions as any;
-            });
-        },
+    /**
+     * Overrides default setter to get axes from typeOptions.
+     * @private
+     */
+    public setClipAxes(): void {
+        this.clipXAxis = this.chart.xAxis[this.options.typeOptions.xAxis as any];
+        this.clipYAxis = this.chart.yAxis[this.options.typeOptions.yAxis as any];
+    }
 
-        getControlPointsOptions: function (
-            this: Highcharts.AnnotationCrookedLine
-        ): Array<Highcharts.AnnotationMockPointOptionsObject> {
-            return this.getPointsOptions();
-        },
+    public getPointsOptions(): Array<Highcharts.AnnotationMockPointOptionsObject> {
+        var typeOptions = this.options.typeOptions;
 
-        addControlPoints: function (this: Highcharts.AnnotationCrookedLine): void {
-            this.getControlPointsOptions().forEach(
-                function (
-                    this: Highcharts.AnnotationCrookedLine,
-                    pointOptions: Highcharts.AnnotationMockPointOptionsObject,
-                    i: number
-                ): void {
-                    var controlPoint = new ControlPoint(
-                        this.chart,
-                        this,
-                        merge(
-                            this.options.controlPointOptions,
-                            pointOptions.controlPoint
-                        ),
-                        i
-                    );
+        return (typeOptions.points || []).map(function (
+            pointOptions: Highcharts.AnnotationsTypePointsOptions
+        ): Highcharts.AnnotationMockPointOptionsObject {
+            pointOptions.xAxis = typeOptions.xAxis;
+            pointOptions.yAxis = typeOptions.yAxis;
 
-                    this.controlPoints.push(controlPoint);
+            return pointOptions as any;
+        });
+    }
 
-                    pointOptions.controlPoint = controlPoint.options;
-                },
-                this
-            );
-        },
+    public getControlPointsOptions(): Array<Highcharts.AnnotationMockPointOptionsObject> {
+        return this.getPointsOptions();
+    }
 
-        addShapes: function (this: Highcharts.AnnotationCrookedLine): void {
-            var typeOptions = this.options.typeOptions,
-                shape = this.initShape(
-                    merge(typeOptions.line, {
-                        type: 'path',
-                        points: this.points.map(function (
-                            _point: Highcharts.AnnotationPointType,
-                            i: number
-                        ): any {
-                            return function (
-                                target: Highcharts.AnnotationControllable
-                            ): Highcharts.AnnotationPointType {
-                                return target.annotation.points[i];
-                            } as any;
-                        })
-                    }),
-                    false as any
+    public addControlPoints(): void {
+        this.getControlPointsOptions().forEach(
+            function (
+                pointOptions: Highcharts.AnnotationMockPointOptionsObject,
+                i: number
+            ): void {
+                var controlPoint = new ControlPoint(
+                    this.chart,
+                    this,
+                    merge(
+                        this.options.controlPointOptions,
+                        pointOptions.controlPoint
+                    ),
+                    i
                 );
 
-            typeOptions.line = shape.options;
-        }
-    },
+                this.controlPoints.push(controlPoint);
 
+                pointOptions.controlPoint = controlPoint.options;
+            },
+            this
+        );
+    }
+
+    public addShapes(): void {
+        var typeOptions = this.options.typeOptions,
+            shape = this.initShape(
+                merge(typeOptions.line, {
+                    type: 'path',
+                    points: this.points.map(function (
+                        _point: Highcharts.AnnotationPointType,
+                        i: number
+                    ): any {
+                        return function (
+                            target: Highcharts.AnnotationControllable
+                        ): Highcharts.AnnotationPointType {
+                            return target.annotation.points[i];
+                        } as any;
+                    })
+                }),
+                false as any
+            );
+
+        typeOptions.line = shape.options;
+    }
+}
+
+/**
+ * @private
+ */
+interface CrookedLine {
+    defaultOptions: Annotation['defaultOptions'];
+}
+
+CrookedLine.prototype.defaultOptions = merge(
+    Annotation.prototype.defaultOptions,
     /**
      * A crooked line annotation.
      *
@@ -146,7 +143,6 @@ H.extendAnnotation(
      * @optionparent annotations.crookedLine
      */
     {
-
         /**
          * @extends   annotations.labelOptions
          * @apioption annotations.crookedLine.labelOptions
@@ -228,7 +224,7 @@ H.extendAnnotation(
 
             events: {
                 drag: function (
-                    this: Highcharts.AnnotationCrookedLine,
+                    this: Annotation,
                     e: Highcharts.AnnotationEventObject,
                     target: Highcharts.AnnotationControllable
                 ): void {

@@ -11,7 +11,7 @@
  * */
 
 'use strict';
-import '../../parts/Globals.js';
+import '../../Core/Globals.js';
 
 /**
  * Internal types

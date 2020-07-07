@@ -14,6 +14,11 @@
 /* global document */
 'use strict';
 /* eslint-disable no-extend-native */
+if (!String.prototype.trim) {
+    String.prototype.trim = function () {
+        return this.replace(/^[\s\uFEFF\xA0]+|[\s\uFEFF\xA0]+$/g, '');
+    };
+}
 if (!Array.prototype.forEach) {
     Array.prototype.forEach = function (fn, thisArg) {
         var i = 0, len = this.length;

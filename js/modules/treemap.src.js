@@ -10,14 +10,14 @@
  *
  * */
 'use strict';
-import H from '../parts/Globals.js';
+import H from '../Core/Globals.js';
 import mixinTreeSeries from '../mixins/tree-series.js';
 import drawPoint from '../mixins/draw-point.js';
 import Color from '../parts/Color.js';
 var color = Color.parse;
 import LegendSymbolMixin from '../mixins/legend-symbol.js';
 import Point from '../parts/Point.js';
-import U from '../parts/Utilities.js';
+import U from '../Core/Utilities.js';
 var addEvent = U.addEvent, correctFloat = U.correctFloat, defined = U.defined, error = U.error, extend = U.extend, fireEvent = U.fireEvent, isArray = U.isArray, isNumber = U.isNumber, isObject = U.isObject, isString = U.isString, merge = U.merge, objectEach = U.objectEach, pick = U.pick, seriesType = U.seriesType, stableSort = U.stableSort;
 import '../parts/Options.js';
 import '../parts/Series.js';
@@ -1199,7 +1199,8 @@ seriesType('treemap', 'scatter'
     onClickDrillToNode: function (event) {
         var series = this, point = event.point, drillId = point && point.drillId;
         // If a drill id is returned, add click event and cursor.
-        if (isString(drillId)) {
+        if (isString(drillId) &&
+            (series.isDrillAllowed ? series.isDrillAllowed(drillId) : true)) {
             point.setState(''); // Remove hover
             series.setRootNode(drillId, true, { trigger: 'click' });
         }
@@ -1261,8 +1262,7 @@ seriesType('treemap', 'scatter'
     },
     // TODO remove this function at a suitable version.
     drillToNode: function (id, redraw) {
-        error('WARNING: treemap.drillToNode has been renamed to treemap.' +
-            'setRootNode, and will be removed in the next major version.');
+        error(32, false, void 0, { 'treemap.drillToNode': 'use treemap.setRootNode' });
         this.setRootNode(id, redraw);
     },
     /**
@@ -1324,9 +1324,25 @@ seriesType('treemap', 'scatter'
         // Fire setRootNode event.
         fireEvent(series, 'setRootNode', eventArgs, defaultFn);
     },
+    /**
+     * Check if the drill up/down is allowed.
+     *
+     * @private
+     */
+    isDrillAllowed: function (targetNode) {
+        var tree = this.tree, firstChild = tree.children[0];
+        // The sunburst series looks exactly the same on the level ''
+        // and level 1 if there’s only one element on level 1. Disable
+        // drilling up/down when it doesn't perform any visual
+        // difference (#13388).
+        return !(tree.children.length === 1 && ((this.rootNode === '' && targetNode === firstChild.id) ||
+            (this.rootNode === firstChild.id && targetNode === '')));
+    },
     renderTraverseUpButton: function (rootId) {
         var series = this, nodeMap = series.nodeMap, node = nodeMap[rootId], name = node.name, buttonOptions = series.options.traverseUpButton, backText = pick(buttonOptions.text, name, '< Back'), attr, states;
-        if (rootId === '') {
+        if (rootId === '' ||
+            (series.isDrillAllowed ?
+                !(isString(node.parent) && series.isDrillAllowed(node.parent)) : false)) {
             if (series.drillUpButton) {
                 series.drillUpButton =
                     series.drillUpButton.destroy();

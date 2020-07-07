@@ -8,7 +8,7 @@
  *
  * */
 'use strict';
-import H from './Globals.js';
+import H from '../Core/Globals.js';
 /**
  * @typedef {"plotBox"|"spacingBox"} Highcharts.ButtonRelativeToValue
  */
@@ -178,7 +178,7 @@ import H from './Globals.js';
 import Time from './Time.js';
 import Color from './Color.js';
 var color = Color.parse;
-import U from './Utilities.js';
+import U from '../Core/Utilities.js';
 var merge = U.merge;
 var isTouchDevice = H.isTouchDevice, svg = H.svg;
 /* ************************************************************************** *
@@ -632,7 +632,7 @@ H.defaultOptions = {
          * @sample    maps/chart/topojson
          *            Loading topoJSON converted to geoJSON
          *
-         * @type      {string|Array<*>}
+         * @type      {string|Array<*>|Highcharts.GeoJSON}
          * @since     5.0.0
          * @product   highmaps
          * @apioption chart.map

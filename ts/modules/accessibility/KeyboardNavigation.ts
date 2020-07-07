@@ -13,12 +13,12 @@
 'use strict';
 
 import type Chart from '../../parts/Chart';
-import H from '../../parts/Globals.js';
+import H from '../../Core/Globals.js';
 const {
     doc,
     win
 } = H;
-import U from '../../parts/Utilities.js';
+import U from '../../Core/Utilities.js';
 const {
     addEvent,
     fireEvent
@@ -50,6 +50,7 @@ declare global {
             public keyboardReset?: boolean;
             public modules: Array<KeyboardNavigationHandler>;
             public pointerIsOverChart?: boolean;
+            public tabindexContainer: HTMLDOMElement;
             public addExitAnchorEventsToEl(
                 element: (HTMLDOMElement|SVGDOMElement)
             ): void;
@@ -155,10 +156,13 @@ KeyboardNavigation.prototype = {
         this.modules = [];
         this.currentModuleIx = 0;
 
+        // Run an update to get all modules
+        this.update();
+
         ep.addEvent(chart.renderTo, 'keydown',
             (e: KeyboardEvent): void => this.onKeydown(e));
 
-        ep.addEvent(chart.container, 'focus',
+        ep.addEvent(this.tabindexContainer, 'focus',
             (e: FocusEvent): void => this.onFocus(e));
 
         ep.addEvent(doc, 'mouseup', (): void => this.onMouseUp());
@@ -174,9 +178,6 @@ KeyboardNavigation.prototype = {
         ep.addEvent(chart.renderTo, 'mouseout', (): void => {
             this.pointerIsOverChart = false;
         });
-
-        // Run an update to get all modules
-        this.update();
 
         // Init first module
         if (this.modules.length) {
@@ -365,7 +366,7 @@ KeyboardNavigation.prototype = {
             this.exiting = true;
             this.exitAnchor.focus();
         } else {
-            this.chart.container.focus();
+            this.tabindexContainer.focus();
         }
 
         return false;
@@ -402,13 +403,24 @@ KeyboardNavigation.prototype = {
         const a11yOptions = this.chart.options.accessibility,
             keyboardOptions = a11yOptions && a11yOptions.keyboardNavigation,
             shouldHaveTabindex = !(keyboardOptions && keyboardOptions.enabled === false),
-            container = this.chart.container,
-            curTabindex = container.getAttribute('tabIndex');
+            chart = this.chart,
+            container = chart.container;
 
-        if (shouldHaveTabindex && !curTabindex) {
-            container.setAttribute('tabindex', '0');
-        } else if (!shouldHaveTabindex && curTabindex === '0') {
+        let tabindexContainer;
+        if (chart.renderTo.hasAttribute('tabindex')) {
             container.removeAttribute('tabindex');
+            tabindexContainer = chart.renderTo;
+        } else {
+            tabindexContainer = container;
+        }
+
+        this.tabindexContainer = tabindexContainer;
+
+        const curTabindex = tabindexContainer.getAttribute('tabindex');
+        if (shouldHaveTabindex && !curTabindex) {
+            tabindexContainer.setAttribute('tabindex', '0');
+        } else if (!shouldHaveTabindex) {
+            chart.container.removeAttribute('tabindex');
         }
     },
 
@@ -420,8 +432,9 @@ KeyboardNavigation.prototype = {
         this: Highcharts.KeyboardNavigation,
         el: (Highcharts.HTMLDOMElement|Highcharts.SVGDOMElement)
     ): void {
+        const chartTabindex = this.tabindexContainer.getAttribute('tabindex') || 0;
         el.setAttribute('class', 'highcharts-exit-anchor');
-        el.setAttribute('tabindex', '0');
+        el.setAttribute('tabindex', chartTabindex);
         el.setAttribute('aria-hidden', false);
 
         // Handle focus
@@ -523,9 +536,7 @@ KeyboardNavigation.prototype = {
     destroy: function (this: Highcharts.KeyboardNavigation): void {
         this.removeExitAnchor();
         this.eventProvider.removeAddedEvents();
-        if (this.chart.container.getAttribute('tabindex') === '0') {
-            this.chart.container.removeAttribute('tabindex');
-        }
+        this.chart.container.removeAttribute('tabindex');
     }
 };
 

@@ -13,13 +13,14 @@
 import Axis from '../parts/Axis.js';
 import Axis3D from './Axis3D.js';
 import Chart from '../parts/Chart.js';
-import H from '../parts/Globals.js';
+import H from '../Core/Globals.js';
+import Math3D from '../parts-3d/Math.js';
+var perspective = Math3D.perspective, shapeArea3D = Math3D.shapeArea3D;
 import O from '../parts/Options.js';
 var genericDefaultOptions = O.defaultOptions;
-import U from '../parts/Utilities.js';
+import U from '../Core/Utilities.js';
 var addEvent = U.addEvent, Fx = U.Fx, isArray = U.isArray, merge = U.merge, pick = U.pick, wrap = U.wrap;
 import ZAxis from './ZAxis.js';
-var perspective = H.perspective;
 var Chart3D;
 (function (Chart3D) {
     /* *
@@ -52,7 +53,7 @@ var Chart3D;
          * */
         Composition.prototype.get3dFrame = function () {
             var chart = this.chart, options3d = chart.options.chart.options3d, frameOptions = options3d.frame, xm = chart.plotLeft, xp = chart.plotLeft + chart.plotWidth, ym = chart.plotTop, yp = chart.plotTop + chart.plotHeight, zm = 0, zp = options3d.depth, faceOrientation = function (vertexes) {
-                var area = H.shapeArea3d(vertexes, chart);
+                var area = shapeArea3D(vertexes, chart);
                 // Give it 0.5 squared-pixel as a margin for rounding errors
                 if (area > 0.5) {
                     return 1;

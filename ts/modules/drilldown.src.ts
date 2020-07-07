@@ -14,7 +14,7 @@
 
 import Chart from '../parts/Chart.js';
 import Color from '../parts/Color.js';
-import H from '../parts/Globals.js';
+import H from '../Core/Globals.js';
 import O from '../parts/Options.js';
 const {
     defaultOptions
@@ -22,7 +22,7 @@ const {
 import Point from '../parts/Point.js';
 import SVGRenderer from '../parts/SVGRenderer.js';
 import Tick from '../parts/Tick.js';
-import U from '../parts/Utilities.js';
+import U from '../Core/Utilities.js';
 const {
     addEvent,
     removeEvent,
@@ -1279,8 +1279,11 @@ if (PieSeries) {
                 animationOptions =
                     (this.chart.options.drilldown as any).animation;
 
+            if (this.is('item')) {
+                animationOptions.duration = 0;
+            }
             // Unable to drill down in the horizontal item series #13372
-            if (this.is('item') && this.center) {
+            if (this.center) {
                 var animateFrom = level.shapeArgs,
                     start = (animateFrom as any).start,
                     angle = (animateFrom as any).end - start,
@@ -1314,8 +1317,6 @@ if (PieSeries) {
                     // Reset to prototype
                     delete this.animate;
                 }
-            } else {
-                animationOptions.duration = 0;
             }
         }
     });

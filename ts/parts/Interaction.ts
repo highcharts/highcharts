@@ -12,14 +12,14 @@
 
 import type SVGPath from '../parts/SVGPath';
 import Chart from './Chart.js';
-import H from './Globals.js';
+import H from '../Core/Globals.js';
 import Legend from './Legend.js';
 import O from './Options.js';
 const {
     defaultOptions
 } = O;
 import Point from './Point.js';
-import U from './Utilities.js';
+import U from '../Core/Utilities.js';
 const {
     addEvent,
     createElement,
@@ -76,7 +76,7 @@ declare global {
             importEvents(): void;
             onMouseOut(): void;
             onMouseOver(e?: PointerEventObject): void;
-            select(selected?: boolean, accumulate?: boolean): void;
+            select(selected?: boolean | null, accumulate?: boolean): void;
             setState(
                 state?: string,
                 move?: boolean
@@ -797,7 +797,6 @@ extend(Chart.prototype, /** @lends Chart.prototype */ {
             ): void {
 
                 var axis = chart[isX ? 'xAxis' : 'yAxis'][0],
-                    axisOpt = axis.options,
                     horiz = axis.horiz,
                     mousePos = e[horiz ? 'chartX' : 'chartY'],
                     mouseDown = horiz ? 'mouseDownX' : 'mouseDownY',
@@ -904,13 +903,10 @@ extend(Chart.prototype, /** @lends Chart.prototype */ {
                     // Set new extremes if they are actually new
                     if (
                         axis.series.length &&
-                            newMin !== extremes.min &&
-                            newMax !== extremes.max &&
-                            isX ? true : (
-                                panningState &&
-                                newMin >= paddedMin &&
-                                newMax <= paddedMax
-                            )
+                        newMin !== extremes.min &&
+                        newMax !== extremes.max &&
+                        newMin >= paddedMin &&
+                        newMax <= paddedMax
                     ) {
                         axis.setExtremes(
                             newMin,
@@ -923,6 +919,10 @@ extend(Chart.prototype, /** @lends Chart.prototype */ {
                         if (
                             !chart.resetZoomButton &&
                             !hasMapNavigation &&
+                            // Show reset zoom button only when both newMin and
+                            // newMax values are between padded axis range.
+                            newMin !== paddedMin &&
+                            newMax !== paddedMax &&
                             type.match('y')
                         ) {
                             chart.showResetZoom();

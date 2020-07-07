@@ -11,7 +11,7 @@
  * */
 
 'use strict';
-import H from '../parts/Globals.js';
+import H from '../Core/Globals.js';
 
 /**
  * Internal types
@@ -63,7 +63,7 @@ declare global {
  * @typedef {"area"|"radius"} Highcharts.VariablePieSizeByValue
  */
 
-import U from '../parts/Utilities.js';
+import U from '../Core/Utilities.js';
 const {
     arrayMax,
     arrayMin,

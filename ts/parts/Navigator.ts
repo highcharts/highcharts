@@ -17,12 +17,12 @@ import Color from './Color.js';
 const {
     parse: color
 } = Color;
-import H from './Globals.js';
+import H from '../Core/Globals.js';
 import NavigatorAxis from './NavigatorAxis.js';
 import O from './Options.js';
 const { defaultOptions } = O;
 import Scrollbar from './Scrollbar.js';
-import U from './Utilities.js';
+import U from '../Core/Utilities.js';
 const {
     addEvent,
     clamp,

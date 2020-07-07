@@ -11,8 +11,8 @@
  * */
 'use strict';
 import Chart from '../../parts/Chart.js';
-import H from '../../parts/Globals.js';
-import U from '../../parts/Utilities.js';
+import H from '../../Core/Globals.js';
+import U from '../../Core/Utilities.js';
 var addEvent = U.addEvent, clamp = U.clamp, defined = U.defined, extend = U.extend, isFunction = U.isFunction, pick = U.pick, setAnimation = U.setAnimation;
 import './integrations.js';
 import './QuadTree.js';
@@ -151,6 +151,30 @@ H.layouts['reingold-fruchterman'].prototype, {
         this.setMaxIterations();
         this.setTemperature();
         this.setDiffTemperature();
+    },
+    restartSimulation: function () {
+        if (!this.simulation) {
+            // When dragging nodes, we don't need to calculate
+            // initial positions and rendering nodes:
+            this.setInitialRendering(false);
+            // Start new simulation:
+            if (!this.enableSimulation) {
+                // Run only one iteration to speed things up:
+                this.setMaxIterations(1);
+            }
+            else {
+                this.start();
+            }
+            if (this.chart) {
+                this.chart.redraw();
+            }
+            // Restore defaults:
+            this.setInitialRendering(true);
+        }
+        else {
+            // Extend current simulation:
+            this.resetSimulation();
+        }
     },
     setMaxIterations: function (maxIterations) {
         this.maxIterations = pick(maxIterations, this.options.maxIterations);

@@ -12,9 +12,9 @@
 
 import type RadialAxis from './RadialAxis';
 import Chart from '../parts/Chart.js';
-import H from '../parts/Globals.js';
+import H from '../Core/Globals.js';
 import Pointer from '../parts/Pointer.js';
-import U from '../parts/Utilities.js';
+import U from '../Core/Utilities.js';
 const {
     addEvent,
     extend,
@@ -521,7 +521,7 @@ function isInsidePane(
 ): boolean {
     return Math.sqrt(
         Math.pow(x - center[0], 2) + Math.pow(y - center[1], 2)
-    ) < center[2] / 2;
+    ) <= center[2] / 2;
 }
 
 H.Chart.prototype.getHoverPane = function (

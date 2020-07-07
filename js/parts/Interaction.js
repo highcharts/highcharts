@@ -9,12 +9,12 @@
  * */
 'use strict';
 import Chart from './Chart.js';
-import H from './Globals.js';
+import H from '../Core/Globals.js';
 import Legend from './Legend.js';
 import O from './Options.js';
 var defaultOptions = O.defaultOptions;
 import Point from './Point.js';
-import U from './Utilities.js';
+import U from '../Core/Utilities.js';
 var addEvent = U.addEvent, createElement = U.createElement, css = U.css, defined = U.defined, extend = U.extend, fireEvent = U.fireEvent, isArray = U.isArray, isFunction = U.isFunction, isNumber = U.isNumber, isObject = U.isObject, merge = U.merge, objectEach = U.objectEach, pick = U.pick;
 /**
  * @interface Highcharts.PointEventsOptionsObject
@@ -490,7 +490,7 @@ extend(Chart.prototype, /** @lends Chart.prototype */ {
                 xy = [0];
             }
             xy.forEach(function (isX) {
-                var axis = chart[isX ? 'xAxis' : 'yAxis'][0], axisOpt = axis.options, horiz = axis.horiz, mousePos = e[horiz ? 'chartX' : 'chartY'], mouseDown = horiz ? 'mouseDownX' : 'mouseDownY', startPos = chart[mouseDown], halfPointRange = (axis.pointRange || 0) / 2, pointRangeDirection = (axis.reversed && !chart.inverted) ||
+                var axis = chart[isX ? 'xAxis' : 'yAxis'][0], horiz = axis.horiz, mousePos = e[horiz ? 'chartX' : 'chartY'], mouseDown = horiz ? 'mouseDownX' : 'mouseDownY', startPos = chart[mouseDown], halfPointRange = (axis.pointRange || 0) / 2, pointRangeDirection = (axis.reversed && !chart.inverted) ||
                     (!axis.reversed && chart.inverted) ?
                     -1 :
                     1, extremes = axis.getExtremes(), panMin = axis.toValue(startPos - mousePos, true) +
@@ -544,12 +544,15 @@ extend(Chart.prototype, /** @lends Chart.prototype */ {
                     if (axis.series.length &&
                         newMin !== extremes.min &&
                         newMax !== extremes.max &&
-                        isX ? true : (panningState &&
                         newMin >= paddedMin &&
-                        newMax <= paddedMax)) {
+                        newMax <= paddedMax) {
                         axis.setExtremes(newMin, newMax, false, false, { trigger: 'pan' });
                         if (!chart.resetZoomButton &&
                             !hasMapNavigation &&
+                            // Show reset zoom button only when both newMin and
+                            // newMax values are between padded axis range.
+                            newMin !== paddedMin &&
+                            newMax !== paddedMax &&
                             type.match('y')) {
                             chart.showResetZoom();
                             axis.displayBtn = false;

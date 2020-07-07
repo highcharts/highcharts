@@ -13,12 +13,12 @@
 import type ColorAxis from '../parts-map/ColorAxis';
 import Axis from './Axis.js';
 import Chart from './Chart.js';
-import H from './Globals.js';
+import H from '../Core/Globals.js';
 import O from './Options.js';
 const { time } = O;
 import Point from './Point.js';
 import Time from './Time.js';
-import U from './Utilities.js';
+import U from '../Core/Utilities.js';
 const {
     addEvent,
     animate,

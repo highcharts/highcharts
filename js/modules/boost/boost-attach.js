@@ -11,9 +11,9 @@
  * */
 'use strict';
 import GLRenderer from './wgl-renderer.js';
-import H from '../../parts/Globals.js';
+import H from '../../Core/Globals.js';
 var doc = H.doc;
-import U from '../../parts/Utilities.js';
+import U from '../../Core/Utilities.js';
 var error = U.error;
 import '../../parts/Series.js';
 var mainCanvas = doc.createElement('canvas');

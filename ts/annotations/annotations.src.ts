@@ -23,10 +23,10 @@ import ControllableImage from './controllable/ControllableImage.js';
 import ControllableLabel from './controllable/ControllableLabel.js';
 import ControlPoint from './ControlPoint.js';
 import EventEmitterMixin from './eventEmitterMixin.js';
-import H from '../parts/Globals.js';
+import H from '../Core/Globals.js';
 import MockPoint from './MockPoint.js';
 import Pointer from '../parts/Pointer.js';
-import U from '../parts/Utilities.js';
+import U from '../Core/Utilities.js';
 const {
     addEvent,
     defined,
@@ -62,9 +62,6 @@ declare global {
             defs: Dictionary<SVGDefinitionObject>;
             navigation: NavigationOptions;
         }
-        interface AnnotationControllableLabel {
-            itemType: 'label';
-        }
         interface AnnotationControlPointEventsOptionsObject {
             drag?: AnnotationControlPointDragEventFunction;
         }
@@ -80,10 +77,10 @@ declare global {
             width: number;
         }
         type AnnotationDraggableValue = (''|'x'|'y'|'xy');
-        type AnnotationLabelType = AnnotationControllableLabel;
+        type AnnotationLabelType = ControllableLabel;
         type AnnotationShapeType = (
-            AnnotationControllableCircle|AnnotationControllableImage|AnnotationControllablePath|
-            AnnotationControllableRect
+            ControllableCircle|ControllableImage|ControllablePath|
+            ControllableRect
         );
         interface AnnotationMockPointOptionsObject {
             x: number;
@@ -286,9 +283,6 @@ class Annotation implements EventEmitterMixin.Type, ControllableMixin.Type {
      *
      * */
 
-    /**
-     * @private
-     */
     public constructor(
         chart: Highcharts.AnnotationChart,
         userOptions: Highcharts.AnnotationsOptions

@@ -12,10 +12,10 @@
 
 'use strict';
 
-import H from '../../parts/Globals.js';
+import H from '../../Core/Globals.js';
 import SVGElement from '../../parts/SVGElement.js';
 import SVGLabel from '../../parts/SVGLabel.js';
-import U from '../../parts/Utilities.js';
+import U from '../../Core/Utilities.js';
 const {
     addEvent,
     extend,

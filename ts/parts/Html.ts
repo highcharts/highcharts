@@ -10,10 +10,10 @@
 
 'use strict';
 
-import H from './Globals.js';
+import H from '../Core/Globals.js';
 import SVGElement from './SVGElement.js';
 import SVGRenderer from './SVGRenderer.js';
-import U from './Utilities.js';
+import U from '../Core/Utilities.js';
 const {
     attr,
     createElement,

@@ -12,7 +12,7 @@
 
 'use strict';
 
-import Highcharts from '../parts/Globals.js';
+import Highcharts from '../Core/Globals.js';
 
 /**
  * Internal types

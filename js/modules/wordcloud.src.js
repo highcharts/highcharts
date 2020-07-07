@@ -10,8 +10,8 @@
  *  !!!!!!! SOURCE GETS TRANSPILED BY TYPESCRIPT. EDIT TS FILE ONLY. !!!!!!!
  * */
 'use strict';
-import H from '../parts/Globals.js';
-import U from '../parts/Utilities.js';
+import H from '../Core/Globals.js';
+import U from '../Core/Utilities.js';
 var extend = U.extend, find = U.find, isArray = U.isArray, isNumber = U.isNumber, isObject = U.isObject, merge = U.merge, seriesType = U.seriesType;
 import drawPoint from '../mixins/draw-point.js';
 import polygon from '../mixins/polygon.js';

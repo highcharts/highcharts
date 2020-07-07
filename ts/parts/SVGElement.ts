@@ -12,7 +12,7 @@
 
 import type SVGPath from '../parts/SVGPath';
 import Color from './Color.js';
-import H from './Globals.js';
+import H from '../Core/Globals.js';
 const {
     deg2rad,
     doc,
@@ -23,7 +23,7 @@ const {
     SVG_NS,
     win
 } = H;
-import U from './Utilities.js';
+import U from '../Core/Utilities.js';
 const {
     animate,
     animObject,
@@ -34,7 +34,6 @@ const {
     erase,
     extend,
     fireEvent,
-    inArray,
     isArray,
     isFunction,
     isNumber,
@@ -1097,7 +1096,7 @@ class SVGElement {
                 // Special handling of symbol attributes
                 if (
                     this.symbolName &&
-                    inArray(key, symbolCustomAttribs) !== -1
+                    symbolCustomAttribs.indexOf(key) !== -1
                 ) {
                     if (!hasSetSymbolSize) {
                         this.symbolAttr(hash as any);
@@ -2178,12 +2177,15 @@ class SVGElement {
     public removeClass(className: (string|RegExp)): SVGElement {
         return this.attr(
             'class',
-            ('' + this.attr('class')).replace(
-                isString(className) ?
-                    new RegExp(` ?${className} ?`) : // #12064
-                    className,
-                ''
-            )
+            ('' + this.attr('class'))
+                .replace(
+                    isString(className) ?
+                        new RegExp(`(^| )${className}( |$)`) : // #12064, #13590
+                        className,
+                    ' '
+                )
+                .replace(/ +/g, ' ')
+                .trim()
         );
     }
 

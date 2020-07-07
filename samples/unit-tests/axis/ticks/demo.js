@@ -724,3 +724,62 @@ QUnit.test('Ticks and setSize', assert => {
     }
 
 });
+
+QUnit.test('The tick interval after updating series visibility should stay the same (#13369)', function (assert) {
+    var chart = Highcharts.chart('container', {
+        xAxis: {
+            type: 'datetime'
+        },
+        series: [{
+            type: 'scatter',
+            data: [{
+                x: Date.UTC(2020, 1, 1),
+                y: 8
+            }, {
+                x: Date.UTC(2020, 1, 2),
+                y: 5
+            }, {
+                x: Date.UTC(2020, 1, 3),
+                y: 4
+            }]
+        }, {
+            type: 'line',
+            visible: false,
+            data: [{
+                x: Date.UTC(2020, 1, 1),
+                y: 7.0
+            }, {
+                x: Date.UTC(2020, 1, 3),
+                y: 7.0
+            }]
+        }]
+    });
+
+    var initialTickInterval = chart.xAxis[0].tickPositions;
+
+    chart.series[1].setVisible(true);
+
+    assert.deepEqual(
+        initialTickInterval,
+        chart.xAxis[0].tickPositions,
+        "Using the scatter and line series the tick interval should stay the same."
+    );
+
+    chart.addSeries({
+        type: 'column',
+        visible: true,
+        data: [{
+            x: Date.UTC(2020, 1, 1),
+            y: 7.0
+        }, {
+            x: Date.UTC(2020, 1, 3),
+            y: 7.0
+        }]
+    });
+
+    assert.deepEqual(
+        chart.xAxis[0].tickPositions,
+        [1580515200000, 1580688000000],
+        "After adding columns series the tick interval should change to make a place for columns."
+    );
+});

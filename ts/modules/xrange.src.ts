@@ -13,13 +13,13 @@
 'use strict';
 
 import Axis from '../parts/Axis.js';
-import H from '../parts/Globals.js';
+import H from '../Core/Globals.js';
 import Color from '../parts/Color.js';
 const {
     parse: color
 } = Color;
 import Point from '../parts/Point.js';
-import U from '../parts/Utilities.js';
+import U from '../Core/Utilities.js';
 const {
     addEvent,
     clamp,

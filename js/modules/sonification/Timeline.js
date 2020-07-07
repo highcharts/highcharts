@@ -10,8 +10,8 @@
  *
  * */
 'use strict';
-import H from '../../parts/Globals.js';
-import U from '../../parts/Utilities.js';
+import H from '../../Core/Globals.js';
+import U from '../../Core/Utilities.js';
 var merge = U.merge, splat = U.splat, uniqueKey = U.uniqueKey;
 /**
  * A set of options for the TimelineEvent class.

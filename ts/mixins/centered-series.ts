@@ -10,7 +10,7 @@
 
 'use strict';
 
-import H from '../parts/Globals.js';
+import H from '../Core/Globals.js';
 
 /**
  * Internal types
@@ -53,7 +53,7 @@ declare global {
  * @type {number}
  */
 
-import U from '../parts/Utilities.js';
+import U from '../Core/Utilities.js';
 const {
     isNumber,
     pick,
@@ -111,8 +111,9 @@ H.CenteredSeriesMixin = {
             pick(innerSize && innerSize < 0 ? void 0 : options.innerSize || 0, '0%')
         ];
 
-        // No need for inner size in angular (gauges) series
-        if (chart.angular) {
+        // No need for inner size in angular (gauges) series but still required
+        // for pie series
+        if (chart.angular && !(this instanceof H.Series)) {
             positions[3] = 0;
         }
 

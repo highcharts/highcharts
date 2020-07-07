@@ -12,9 +12,11 @@
 
 import type Axis from '../parts/Axis';
 import type Chart from '../parts/Chart';
-import H from '../parts/Globals.js';
+import H from '../Core/Globals.js';
+import Math3D from '../parts-3d/Math.js';
+const { perspective } = Math3D;
 import StackItem from '../parts/Stacking.js';
-import U from '../parts/Utilities.js';
+import U from '../Core/Utilities.js';
 const {
     addEvent,
     pick,
@@ -62,8 +64,7 @@ declare global {
 
 import '../parts/Series.js';
 
-var perspective = H.perspective,
-    Series = H.Series,
+var Series = H.Series,
     seriesTypes = H.seriesTypes,
     svg = H.svg;
 

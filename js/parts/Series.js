@@ -8,13 +8,13 @@
  *
  * */
 'use strict';
-import H from './Globals.js';
+import H from '../Core/Globals.js';
 import LegendSymbolMixin from '../mixins/legend-symbol.js';
 import O from './Options.js';
 var defaultOptions = O.defaultOptions;
 import Point from './Point.js';
 import SVGElement from './SVGElement.js';
-import U from './Utilities.js';
+import U from '../Core/Utilities.js';
 var addEvent = U.addEvent, animObject = U.animObject, arrayMax = U.arrayMax, arrayMin = U.arrayMin, clamp = U.clamp, correctFloat = U.correctFloat, defined = U.defined, erase = U.erase, error = U.error, extend = U.extend, find = U.find, fireEvent = U.fireEvent, getNestedProperty = U.getNestedProperty, isArray = U.isArray, isFunction = U.isFunction, isNumber = U.isNumber, isString = U.isString, merge = U.merge, objectEach = U.objectEach, pick = U.pick, removeEvent = U.removeEvent, seriesType = U.seriesType, splat = U.splat, syncTimeout = U.syncTimeout;
 /**
  * This is a placeholder type of the possible series options for
@@ -1055,11 +1055,15 @@ null,
     /**
      * Whether to stack the values of each series on top of each other.
      * Possible values are `undefined` to disable, `"normal"` to stack by
-     * value or `"percent"`. When stacking is enabled, data must be sorted
-     * in ascending X order. A special stacking option is with the
-     * streamgraph series type, where the stacking option is set to
-     * `"stream"`. The second one is `"overlap"`, which only applies to
-     * waterfall series.
+     * value or `"percent"`.
+     *
+     * When stacking is enabled, data must be sorted
+     * in ascending X order.
+     *
+     * Some stacking options are related to specific series types. In the
+     * streamgraph series type, the stacking option is set to `"stream"`.
+     * The second one is `"overlap"`, which only applies to waterfall
+     * series.
      *
      * @see [yAxis.reversedStacks](#yAxis.reversedStacks)
      *
@@ -2973,6 +2977,11 @@ null,
         // These may be modified by the event
         var typeOptions = e.plotOptions[this.type], userPlotOptions = (userOptions.plotOptions || {});
         // use copy to prevent undetected changes (#9762)
+        /**
+         * Contains series options by the user without defaults.
+         * @name Highcharts.Series#userOptions
+         * @type {Highcharts.SeriesOptionsType}
+         */
         this.userOptions = e.userOptions;
         options = merge(typeOptions, plotOptions.series, 
         // #3881, chart instance plotOptions[type] should trump
@@ -3870,16 +3879,20 @@ null,
     applyExtremes: function () {
         var dataExtremes = this.getExtremes();
         /**
-         * Contains the minimum value of the series' data point.
+         * Contains the minimum value of the series' data point. Some series
+         * types like `networkgraph` do not support this property as they
+         * lack a `y`-value.
          * @name Highcharts.Series#dataMin
-         * @type {number}
+         * @type {number|undefined}
          * @readonly
          */
         this.dataMin = dataExtremes.dataMin;
-        /* *
-         * Contains the maximum value of the series' data point.
+        /**
+         * Contains the maximum value of the series' data point. Some series
+         * types like `networkgraph` do not support this property as they
+         * lack a `y`-value.
          * @name Highcharts.Series#dataMax
-         * @type {number}
+         * @type {number|undefined}
          * @readonly
          */
         this.dataMax = dataExtremes.dataMax;

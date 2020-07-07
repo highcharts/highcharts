@@ -10,7 +10,7 @@
 
 'use strict';
 
-import H from './Globals.js';
+import H from '../Core/Globals.js';
 
 /**
  * Internal types
@@ -50,7 +50,7 @@ declare global {
     }
 }
 
-import U from './Utilities.js';
+import U from '../Core/Utilities.js';
 const {
     addEvent,
     seriesType
@@ -82,7 +82,7 @@ seriesType<Highcharts.ScatterSeries>(
      *         Scatter plot
      *
      * @extends      plotOptions.line
-     * @excluding    pointPlacement, shadow, useOhlcData
+     * @excluding    cropThreshold, pointPlacement, shadow, useOhlcData
      * @product      highcharts highstock
      * @optionparent plotOptions.scatter
      */
@@ -281,7 +281,7 @@ addEvent(Series as any, 'afterTranslate', function (
  * not specified, it is inherited from [chart.type](#chart.type).
  *
  * @extends   series,plotOptions.scatter
- * @excluding dataParser, dataURL, useOhlcData
+ * @excluding cropThreshold, dataParser, dataURL, useOhlcData
  * @product   highcharts highstock
  * @apioption series.scatter
  */

@@ -12,13 +12,13 @@
 'use strict';
 import Chart from '../parts/Chart.js';
 import Color from '../parts/Color.js';
-import H from '../parts/Globals.js';
+import H from '../Core/Globals.js';
 import O from '../parts/Options.js';
 var defaultOptions = O.defaultOptions;
 import Point from '../parts/Point.js';
 import SVGRenderer from '../parts/SVGRenderer.js';
 import Tick from '../parts/Tick.js';
-import U from '../parts/Utilities.js';
+import U from '../Core/Utilities.js';
 var addEvent = U.addEvent, removeEvent = U.removeEvent, animObject = U.animObject, extend = U.extend, fireEvent = U.fireEvent, format = U.format, merge = U.merge, objectEach = U.objectEach, pick = U.pick, syncTimeout = U.syncTimeout;
 /**
  * Gets fired when a drilldown point is clicked, before the new series is added.
@@ -874,8 +874,11 @@ if (PieSeries) {
         animateDrillupFrom: ColumnSeries.prototype.animateDrillupFrom,
         animateDrilldown: function (init) {
             var level = this.chart.drilldownLevels[this.chart.drilldownLevels.length - 1], animationOptions = this.chart.options.drilldown.animation;
+            if (this.is('item')) {
+                animationOptions.duration = 0;
+            }
             // Unable to drill down in the horizontal item series #13372
-            if (this.is('item') && this.center) {
+            if (this.center) {
                 var animateFrom = level.shapeArgs, start = animateFrom.start, angle = animateFrom.end - start, startAngle = angle / this.points.length, styledMode = this.chart.styledMode;
                 if (!init) {
                     this.points.forEach(function (point, i) {
@@ -895,9 +898,6 @@ if (PieSeries) {
                     // Reset to prototype
                     delete this.animate;
                 }
-            }
-            else {
-                animationOptions.duration = 0;
             }
         }
     });

@@ -35,8 +35,8 @@ QUnit.test('Curve bell', function (assert) {
     );
 
     baseSeries.remove();
-    assert.ok(Highcharts.inArray(bellcurve, chart.series) !== -1, 'Curve bell is not removed after the base series is removed');
+    assert.ok(chart.series.indexOf(bellcurve) !== -1, 'Curve bell is not removed after the base series is removed');
 
     bellcurve.remove();
-    assert.ok(Highcharts.inArray(bellcurve, chart.series) === -1, 'Curve bell is removed after bellcurve.remove()');
+    assert.ok(chart.series.indexOf(bellcurve) === -1, 'Curve bell is removed after bellcurve.remove()');
 });

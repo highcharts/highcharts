@@ -333,3 +333,18 @@ QUnit.test('Set extremes on inputs blur (#4710)', function (assert) {
         'Extremes are updated.'
     );
 });
+
+QUnit.test('Range selector value on change should change properly (#13205)', function (assert) {
+    const now = new Date(),
+        year = now.getFullYear(),
+        month = now.getMonth() < 11 ? `0${now.getMonth()}` : now.getMonth(),
+        day = now.getDate() < 11 ? `0${now.getDate()}` : now.getDate(),
+        date = `${year}-${month}-${day}T00:00:00.000`,
+        defaultInputDateParser = Highcharts.RangeSelector.prototype.defaultInputDateParser;
+
+    assert.strictEqual(
+        0,
+        defaultInputDateParser(date, false) - defaultInputDateParser(date, true),
+        'Independently from use UTC being enabled or disabled, the function should return the same values.'
+    );
+});
