@@ -139,12 +139,11 @@ const {
 } = U;
 
 import './ColumnSeries.js';
-import '../mixins/centered-series.js';
+import centeredSeriesMixin from '../mixins/centered-series.js';
 import '../Core/Options.js';
 import './Series.js';
 
-var CenteredSeriesMixin = H.CenteredSeriesMixin,
-    getStartAndEndRadians = CenteredSeriesMixin.getStartAndEndRadians,
+var getStartAndEndRadians = centeredSeriesMixin.getStartAndEndRadians,
     noop = H.noop,
     Series = H.Series,
     seriesTypes = H.seriesTypes;
@@ -1262,7 +1261,7 @@ seriesType<Highcharts.PieSeries>(
          * @private
          * @borrows Highcharts.CenteredSeriesMixin.getCenter as Highcharts.seriesTypes.pie#getCenter
          */
-        getCenter: CenteredSeriesMixin.getCenter,
+        getCenter: centeredSeriesMixin.getCenter,
 
         /**
          * Pies don't have point marker symbols.
