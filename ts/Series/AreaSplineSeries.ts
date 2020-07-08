@@ -48,8 +48,8 @@ import U from '../Core/Utilities.js';
 const {
     seriesType
 } = U;
-import './Area.js';
-import './Spline.js';
+import './AreaSeries.js';
+import './SplineSeries.js';
 
 var areaProto = H.seriesTypes.area.prototype as Highcharts.AreaSeries;
 

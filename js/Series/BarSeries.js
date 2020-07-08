@@ -10,7 +10,7 @@
 'use strict';
 import U from '../Core/Utilities.js';
 var seriesType = U.seriesType;
-import './Column.js';
+import './ColumnSeries.js';
 /**
  * Bar series type.
  *

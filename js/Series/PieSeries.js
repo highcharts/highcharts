@@ -14,7 +14,7 @@ import LegendSymbolMixin from '../mixins/legend-symbol.js';
 import Point from '../Core/Series/Point.js';
 import U from '../Core/Utilities.js';
 var addEvent = U.addEvent, clamp = U.clamp, defined = U.defined, fireEvent = U.fireEvent, isNumber = U.isNumber, merge = U.merge, pick = U.pick, relativeLength = U.relativeLength, seriesType = U.seriesType, setAnimation = U.setAnimation;
-import './Column.js';
+import './ColumnSeries.js';
 import '../mixins/centered-series.js';
 import '../Core/Options.js';
 import '../Core/Series/Series.js';

@@ -138,7 +138,7 @@ const {
     setAnimation
 } = U;
 
-import './Column.js';
+import './ColumnSeries.js';
 import '../mixins/centered-series.js';
 import '../Core/Options.js';
 import '../Core/Series/Series.js';

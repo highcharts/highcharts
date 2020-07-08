@@ -14,8 +14,8 @@ import O from '../Core/Options.js';
 var defaultOptions = O.defaultOptions;
 import U from '../Core/Utilities.js';
 var seriesType = U.seriesType;
-import './Area.js';
-import './Spline.js';
+import './AreaSeries.js';
+import './SplineSeries.js';
 var areaProto = H.seriesTypes.area.prototype;
 /**
  * AreaSpline series type.

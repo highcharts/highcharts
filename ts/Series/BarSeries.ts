@@ -41,7 +41,7 @@ import U from '../Core/Utilities.js';
 const {
     seriesType
 } = U;
-import './Column.js';
+import './ColumnSeries.js';
 
 /**
  * Bar series type.
