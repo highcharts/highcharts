@@ -27,7 +27,7 @@ var getAreaOfCircle = geometryCirclesModule.getAreaOfCircle, getAreaOfIntersecti
 import nelderMeadModule from '../mixins/nelder-mead.js';
 // TODO: replace with individual imports
 var nelderMead = nelderMeadModule.nelderMead;
-import '../parts/Series.js';
+import '../Core/Series/Series.js';
 var getCenterOfPoints = geometry.getCenterOfPoints, getDistanceBetweenPoints = geometry.getDistanceBetweenPoints, seriesTypes = H.seriesTypes;
 var objectValues = function objectValues(obj) {
     return Object.keys(obj).map(function (x) {

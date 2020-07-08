@@ -11,8 +11,8 @@
  */
 'use strict';
 import '../../parts-map/MapAxis.js';
-import '../../parts-map/ColorAxis.js';
-import '../../parts-map/ColorMapSeriesMixin.js';
+import '../../Core/Axis/ColorAxis.js';
+import '../../mixins/color-map-series.js';
 import '../../parts-map/MapNavigation.js';
 import '../../parts-map/MapPointer.js';
 import '../../parts-map/MapSeries.js';

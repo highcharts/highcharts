@@ -12,7 +12,7 @@
 
 'use strict';
 
-import type Chart from '../../parts/Chart';
+import type Chart from '../../Core/Chart/Chart';
 import GLRenderer from './wgl-renderer.js';
 import H from '../../Core/Globals.js';
 const {
@@ -50,7 +50,7 @@ declare global {
     }
 }
 
-import '../../parts/Series.js';
+import '../../Core/Series/Series.js';
 
 var mainCanvas = doc.createElement('canvas');
 

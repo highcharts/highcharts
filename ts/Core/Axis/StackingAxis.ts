@@ -8,7 +8,7 @@
  *
  * */
 
-import type StackItem from '../../parts/Stacking.js';
+import type StackItem from '../../Extensions/Stacking.js';
 import Axis from './Axis.js';
 import U from '../Utilities.js';
 const {

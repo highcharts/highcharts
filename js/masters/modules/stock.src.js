@@ -12,11 +12,11 @@
 'use strict';
 import '../../Core/Axis/OrdinalAxis.js';
 import './broken-axis.src.js';
-import '../../parts/DataGrouping.js';
-import '../../parts/OHLCSeries.js';
-import '../../parts/CandlestickSeries.js';
-import '../../parts/FlagsSeries.js';
+import '../../Extensions/DataGrouping.js';
+import '../../Series/OHLCSeries.js';
+import '../../Series/CandlestickSeries.js';
+import '../../Series/FlagsSeries.js';
 import '../../Core/Scrollbar.js';
 import '../../Core/Navigator.js';
-import '../../parts/RangeSelector.js';
-import '../../parts/StockChart.js';
+import '../../Extensions/RangeSelector.js';
+import '../../Core/Chart/StockChart.js';

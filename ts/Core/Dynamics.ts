@@ -10,13 +10,13 @@
 
 'use strict';
 
-import type ColorAxis from '../parts-map/ColorAxis';
-import Axis from '../Core/Axis/Axis.js';
-import Chart from '../parts/Chart.js';
+import type ColorAxis from './Axis/ColorAxis';
+import Axis from './Axis/Axis.js';
+import Chart from './Chart/Chart.js';
 import H from './Globals.js';
 import O from './Options.js';
 const { time } = O;
-import Point from '../parts/Point.js';
+import Point from '../Core/Series/Point.js';
 import Time from './Time.js';
 import U from './Utilities.js';
 const {
@@ -147,7 +147,7 @@ declare global {
     }
 }
 
-import '../parts/Series.js';
+import '../Core/Series/Series.js';
 
 var Series = H.Series,
     seriesTypes = H.seriesTypes;

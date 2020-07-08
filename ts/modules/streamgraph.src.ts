@@ -11,7 +11,6 @@
  * */
 
 'use strict';
-import H from '../Core/Globals.js';
 
 /**
  * Internal types
@@ -47,7 +46,7 @@ declare global {
     }
 }
 
-import '../parts/AreaSeries.js';
+import '../Series/AreaSeries.js';
 import U from '../Core/Utilities.js';
 const {
     seriesType

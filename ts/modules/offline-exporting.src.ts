@@ -14,14 +14,14 @@
 
 /* global MSBlobBuilder */
 
-import Chart from '../parts/Chart.js';
+import Chart from '../Core/Chart/Chart.js';
 import H from '../Core/Globals.js';
 const {
     win,
     doc
 } = H;
 import '../Core/Options.js';
-import SVGRenderer from '../parts/SVGRenderer.js';
+import SVGRenderer from '../Core/Renderer/SVG/SVGRenderer.js';
 import U from '../Core/Utilities.js';
 const {
     addEvent,

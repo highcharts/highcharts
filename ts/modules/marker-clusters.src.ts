@@ -14,13 +14,13 @@
 
 'use strict';
 
-import type SVGPath from '../parts/SVGPath';
-import Chart from '../parts/Chart.js';
+import type SVGPath from '../Core/Renderer/SVG/SVGPath';
+import Chart from '../Core/Chart/Chart.js';
 import H from '../Core/Globals.js';
 import O from '../Core/Options.js';
 const { defaultOptions } = O;
-import Point from '../parts/Point.js';
-import SVGRenderer from '../parts/SVGRenderer.js';
+import Point from '../Core/Series/Point.js';
+import SVGRenderer from '../Core/Renderer/SVG/SVGRenderer.js';
 import U from '../Core/Utilities.js';
 const {
     addEvent,
@@ -262,7 +262,7 @@ declare global {
 /* eslint-disable no-invalid-this */
 
 import '../Core/Axis/Axis.js';
-import '../parts/Series.js';
+import '../Core/Series/Series.js';
 
 var Series = H.Series,
     Scatter = H.seriesTypes.scatter,

@@ -51,8 +51,8 @@ declare global {
 
 import '../Core/Utilities.js';
 import '../Core/Options.js';
-import '../parts/Point.js';
-import '../parts/ScatterSeries.js';
+import '../Core/Series/Point.js';
+import '../Series/ScatterSeries.js';
 
 const {
     merge,

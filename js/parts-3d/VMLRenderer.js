@@ -12,7 +12,7 @@
 'use strict';
 import Axis from '../Core/Axis/Axis.js';
 import H from '../Core/Globals.js';
-import SVGRenderer from '../parts/SVGRenderer.js';
+import SVGRenderer from '../Core/Renderer/SVG/SVGRenderer.js';
 import U from '../Core/Utilities.js';
 var setOptions = U.setOptions;
 import VMLAxis3D from './VMLAxis3D.js';

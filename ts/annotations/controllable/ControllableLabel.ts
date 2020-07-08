@@ -7,12 +7,12 @@
 'use strict';
 
 import type Annotation from '../annotations.src';
-import type SVGElement from '../../parts/SVGElement';
-import type SVGPath from '../../parts/SVGPath';
+import type SVGElement from '../../Core/Renderer/SVG/SVGElement';
+import type SVGPath from '../../Core/Renderer/SVG/SVGPath';
 import ControllableMixin from './controllableMixin.js';
 import MockPoint from '../MockPoint.js';
-import SVGRenderer from '../../parts/SVGRenderer.js';
-import Tooltip from '../../parts/Tooltip.js';
+import SVGRenderer from '../../Core/Renderer/SVG/SVGRenderer.js';
+import Tooltip from '../../Core/Tooltip.js';
 import U from '../../Core/Utilities.js';
 const {
     extend,
@@ -40,7 +40,7 @@ declare global
     }
 }
 
-import '../../parts/SVGRenderer.js';
+import '../../Core/Renderer/SVG/SVGRenderer.js';
 
 /* eslint-disable no-invalid-this, valid-jsdoc */
 

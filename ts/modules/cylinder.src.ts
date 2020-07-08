@@ -14,8 +14,8 @@
 
 'use strict';
 
-import type Chart from '../parts/Chart';
-import type SVGPath from '../parts/SVGPath';
+import type Chart from '../Core/Chart/Chart';
+import type SVGPath from '../Core/Renderer/SVG/SVGPath';
 import H from '../Core/Globals.js';
 
 /**
@@ -90,8 +90,8 @@ const {
     seriesType
 } = U;
 
-import '../parts/ColumnSeries.js';
-import '../parts/SVGRenderer.js';
+import '../Series/ColumnSeries.js';
+import '../Core/Renderer/SVG/SVGRenderer.js';
 
 var charts = H.charts,
     deg2rad = H.deg2rad,

@@ -10,7 +10,7 @@
 
 'use strict';
 
-import Pointer from '../parts/Pointer.js';
+import Pointer from '../Core/Pointer.js';
 import U from '../Core/Utilities.js';
 const {
     extend,

@@ -10,8 +10,8 @@
  *
  * */
 
-import type Point from '../../parts/Point';
-import Chart from '../../parts/Chart.js';
+import type Point from '../../Core/Series/Point';
+import Chart from '../../Core/Chart/Chart.js';
 import H from '../../Core/Globals.js';
 
 /**

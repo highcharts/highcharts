@@ -6,7 +6,7 @@
 
 'use strict';
 
-import type SVGPath from '../../parts/SVGPath';
+import type SVGPath from '../../Core/Renderer/SVG/SVGPath';
 import Annotation from '../annotations.src.js';
 import MockPoint from '../MockPoint.js';
 import Tunnel from './Tunnel.js';

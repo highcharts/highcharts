@@ -14,8 +14,8 @@
 
 import type Annotation from '../annotations/annotations.src';
 import type { AxisType } from '../Core/Axis/Types';
-import type Chart from '../parts/Chart';
-import type Point from '../parts/Point';
+import type Chart from '../Core/Chart/Chart';
+import type Point from '../Core/Series/Point';
 import H from '../Core/Globals.js';
 import NavigationBindings from '../annotations/navigationBindings.js';
 import U from '../Core/Utilities.js';

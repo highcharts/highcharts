@@ -12,8 +12,8 @@
 
 'use strict';
 
-import type Chart from '../../../../parts/Chart';
-import type Point from '../../../../parts/Point';
+import type Chart from '../../../../Core/Chart/Chart';
+import type Point from '../../../../Core/Series/Point';
 import H from '../../../../Core/Globals.js';
 import U from '../../../../Core/Utilities.js';
 var extend = U.extend,

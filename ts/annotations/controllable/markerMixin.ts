@@ -7,9 +7,9 @@
 'use strict';
 
 import type ControllablePath from './ControllablePath';
-import type SVGElement from '../../parts/SVGElement';
-import Chart from '../../parts/Chart.js';
-import SVGRenderer from '../../parts/SVGRenderer.js';
+import type SVGElement from '../../Core/Renderer/SVG/SVGElement';
+import Chart from '../../Core/Chart/Chart.js';
+import SVGRenderer from '../../Core/Renderer/SVG/SVGRenderer.js';
 import U from '../../Core/Utilities.js';
 const {
     addEvent,

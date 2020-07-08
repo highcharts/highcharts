@@ -9,11 +9,11 @@
  * */
 'use strict';
 import H from '../Core/Globals.js';
-import Point from '../parts/Point.js';
+import Point from '../Core/Series/Point.js';
 import U from '../Core/Utilities.js';
 var defined = U.defined, extend = U.extend, isArray = U.isArray, isNumber = U.isNumber, pick = U.pick, seriesType = U.seriesType;
 import '../Core/Options.js';
-import '../parts/Series.js';
+import '../Core/Series/Series.js';
 var noop = H.noop, Series = H.Series, seriesTypes = H.seriesTypes, seriesProto = Series.prototype, pointProto = Point.prototype;
 /**
  * The area range series is a carteseian series with higher and lower values for

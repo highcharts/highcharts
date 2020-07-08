@@ -12,8 +12,8 @@
  * */
 'use strict';
 import H from '../Core/Globals.js';
-import Point from '../parts/Point.js';
-import SVGRenderer from '../parts/SVGRenderer.js';
+import Point from '../Core/Series/Point.js';
+import SVGRenderer from '../Core/Renderer/SVG/SVGRenderer.js';
 import U from '../Core/Utilities.js';
 var addEvent = U.addEvent, animObject = U.animObject, erase = U.erase, getOptions = U.getOptions, merge = U.merge, pick = U.pick, removeEvent = U.removeEvent, wrap = U.wrap;
 /**

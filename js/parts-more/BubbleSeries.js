@@ -14,12 +14,12 @@ import H from '../Core/Globals.js';
  */
 import Color from '../Core/Color.js';
 var color = Color.parse;
-import Point from '../parts/Point.js';
+import Point from '../Core/Series/Point.js';
 import U from '../Core/Utilities.js';
 var arrayMax = U.arrayMax, arrayMin = U.arrayMin, clamp = U.clamp, extend = U.extend, isNumber = U.isNumber, pick = U.pick, pInt = U.pInt, seriesType = U.seriesType;
 import '../Core/Axis/Axis.js';
-import '../parts/Series.js';
-import '../parts/ScatterSeries.js';
+import '../Core/Series/Series.js';
+import '../Series/ScatterSeries.js';
 import './BubbleLegend.js';
 var Axis = H.Axis, noop = H.noop, Series = H.Series, seriesTypes = H.seriesTypes;
 /**

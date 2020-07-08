@@ -16,9 +16,9 @@
 
 'use strict';
 
-import type Point from '../parts/Point';
+import type Point from '../Core/Series/Point';
 import Axis from '../Core/Axis/Axis.js';
-import Chart from '../parts/Chart.js';
+import Chart from '../Core/Chart/Chart.js';
 import H from '../Core/Globals.js';
 const {
     doc,

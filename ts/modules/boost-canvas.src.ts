@@ -15,7 +15,7 @@
 
 'use strict';
 
-import Chart from '../parts/Chart.js';
+import Chart from '../Core/Chart/Chart.js';
 import H from '../Core/Globals.js';
 
 /**
@@ -88,7 +88,7 @@ const {
     wrap
 } = U;
 
-import '../parts/Series.js';
+import '../Core/Series/Series.js';
 import '../Core/Options.js';
 
 var win = H.win,

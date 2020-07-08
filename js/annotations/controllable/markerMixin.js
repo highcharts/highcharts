@@ -4,8 +4,8 @@
  *
  * */
 'use strict';
-import Chart from '../../parts/Chart.js';
-import SVGRenderer from '../../parts/SVGRenderer.js';
+import Chart from '../../Core/Chart/Chart.js';
+import SVGRenderer from '../../Core/Renderer/SVG/SVGRenderer.js';
 import U from '../../Core/Utilities.js';
 var addEvent = U.addEvent, defined = U.defined, merge = U.merge, objectEach = U.objectEach, uniqueKey = U.uniqueKey;
 /**

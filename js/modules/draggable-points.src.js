@@ -11,7 +11,7 @@
  * */
 'use strict';
 import H from '../Core/Globals.js';
-import Point from '../parts/Point.js';
+import Point from '../Core/Series/Point.js';
 import U from '../Core/Utilities.js';
 var addEvent = U.addEvent, clamp = U.clamp, merge = U.merge, objectEach = U.objectEach, pick = U.pick;
 /**

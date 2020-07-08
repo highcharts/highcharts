@@ -11,7 +11,7 @@
  * */
 
 'use strict';
-import Chart from '../../parts/Chart.js';
+import Chart from '../../Core/Chart/Chart.js';
 import H from '../../Core/Globals.js';
 import U from '../../Core/Utilities.js';
 const {
@@ -39,7 +39,7 @@ declare global {
     }
 }
 
-import '../../parts/Series.js';
+import '../../Core/Series/Series.js';
 
 import butils from './boost-utils.js';
 import createAndAttachRenderer from './boost-attach.js';

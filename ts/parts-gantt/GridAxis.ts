@@ -11,7 +11,7 @@
 
 'use strict';
 
-import type Point from '../parts/Point';
+import type Point from '../Core/Series/Point';
 import Axis from '../Core/Axis/Axis.js';
 import H from '../Core/Globals.js';
 import O from '../Core/Options.js';

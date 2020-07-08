@@ -10,11 +10,11 @@
 
 'use strict';
 
-import type SVGPath from '../parts/SVGPath';
+import type SVGPath from '../Core/Renderer/SVG/SVGPath';
 import H from '../Core/Globals.js';
 import LegendSymbolMixin from '../mixins/legend-symbol.js';
-import Point from '../parts/Point.js';
-import SVGRenderer from '../parts/SVGRenderer.js';
+import Point from '../Core/Series/Point.js';
+import SVGRenderer from '../Core/Renderer/SVG/SVGRenderer.js';
 import U from '../Core/Utilities.js';
 const {
     extend,
@@ -153,9 +153,9 @@ declare global {
 }
 
 import '../Core/Options.js';
-import '../parts/ScatterSeries.js';
-import '../parts/Series.js';
-import './ColorMapSeriesMixin.js';
+import '../Series/ScatterSeries.js';
+import '../Core/Series/Series.js';
+import '../mixins/color-map-series.js';
 
 var colorMapPointMixin = H.colorMapPointMixin,
     colorMapSeriesMixin = H.colorMapSeriesMixin,

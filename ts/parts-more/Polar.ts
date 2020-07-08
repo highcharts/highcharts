@@ -10,14 +10,14 @@
 
 'use strict';
 
-import type Point from '../parts/Point';
-import type RadialAxis from './RadialAxis';
-import type SVGPath from '../parts/SVGPath';
-import Chart from '../parts/Chart.js';
+import type Point from '../Core/Series/Point';
+import type RadialAxis from '../Core/Axis/RadialAxis';
+import type SVGPath from '../Core/Renderer/SVG/SVGPath';
+import Chart from '../Core/Chart/Chart.js';
 import H from '../Core/Globals.js';
-import Pane from '../parts-more/Pane.js';
-import Pointer from '../parts/Pointer.js';
-import SVGRenderer from '../parts/SVGRenderer.js';
+import Pane from './Pane.js';
+import Pointer from '../Core/Pointer.js';
+import SVGRenderer from '../Core/Renderer/SVG/SVGRenderer.js';
 import U from '../Core/Utilities.js';
 const {
     addEvent,
@@ -124,7 +124,7 @@ declare global {
     }
 }
 
-import '../parts/Series.js';
+import '../Core/Series/Series.js';
 
 // Extensions for polar charts. Additionally, much of the geometry required for
 // polar charts is gathered in RadialAxes.js.

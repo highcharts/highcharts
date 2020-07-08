@@ -81,7 +81,7 @@ const {
     wrap
 } = U;
 
-import '../parts/AreaSeries.js';
+import '../Series/AreaSeries.js';
 
 var seriesTypes = H.seriesTypes;
 

@@ -143,7 +143,7 @@ const {
 
 import drawPoint from '../mixins/draw-point.js';
 import polygon from '../mixins/polygon.js';
-import '../parts/Series.js';
+import '../Core/Series/Series.js';
 
 var noop = H.noop,
     getBoundingBoxFromPolygon = polygon.getBoundingBoxFromPolygon,

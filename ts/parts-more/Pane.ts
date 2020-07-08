@@ -10,10 +10,10 @@
 
 'use strict';
 
-import type RadialAxis from './RadialAxis';
-import Chart from '../parts/Chart.js';
+import type RadialAxis from '../Core/Axis/RadialAxis';
+import Chart from '../Core/Chart/Chart.js';
 import H from '../Core/Globals.js';
-import Pointer from '../parts/Pointer.js';
+import Pointer from '../Core/Pointer.js';
 import U from '../Core/Utilities.js';
 const {
     addEvent,

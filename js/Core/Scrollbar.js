@@ -8,12 +8,12 @@
  *
  * */
 'use strict';
-import Axis from '../Core/Axis/Axis.js';
-import H from '../Core/Globals.js';
+import Axis from './Axis/Axis.js';
+import H from './Globals.js';
 import ScrollbarAxis from './Axis/ScrollbarAxis.js';
-import U from '../Core/Utilities.js';
+import U from './Utilities.js';
 var addEvent = U.addEvent, correctFloat = U.correctFloat, defined = U.defined, destroyObjectProperties = U.destroyObjectProperties, fireEvent = U.fireEvent, merge = U.merge, pick = U.pick, removeEvent = U.removeEvent;
-import O from '../Core/Options.js';
+import O from './Options.js';
 var defaultOptions = O.defaultOptions;
 var hasTouch = H.hasTouch, isTouchDevice = H.isTouchDevice;
 /**

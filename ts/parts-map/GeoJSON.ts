@@ -10,8 +10,8 @@
 
 'use strict';
 
-import type SVGPath from '../parts/SVGPath';
-import Chart from '../parts/Chart.js';
+import type SVGPath from '../Core/Renderer/SVG/SVGPath';
+import Chart from '../Core/Chart/Chart.js';
 import H from '../Core/Globals.js';
 const {
     win

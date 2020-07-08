@@ -53,7 +53,7 @@ const {
     getOptions
 } = U;
 
-import '../parts/Series.js';
+import '../Core/Series/Series.js';
 
 var chartPrototype = H.Chart.prototype,
     defaultOptions = getOptions();

@@ -11,8 +11,8 @@
 import H from '../Core/Globals.js';
 import '../Core/Utilities.js';
 import '../Core/Options.js';
-import '../parts/Point.js';
-import '../parts/ScatterSeries.js';
+import '../Core/Series/Point.js';
+import '../Series/ScatterSeries.js';
 var merge = H.merge, Point = H.Point, Series = H.Series, seriesType = H.seriesType;
 /**
  * @private

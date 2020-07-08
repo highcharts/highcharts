@@ -12,8 +12,8 @@
 
 'use strict';
 
-import type SVGPath from '../parts/SVGPath';
-import Chart from '../parts/Chart.js';
+import type SVGPath from '../Core/Renderer/SVG/SVGPath';
+import Chart from '../Core/Chart/Chart.js';
 import Color from '../Core/Color.js';
 const color = Color.parse;
 import H from '../Core/Globals.js';
@@ -24,9 +24,9 @@ const {
     svg,
     win
 } = H;
-import Pointer from '../parts/Pointer.js';
-import SVGElement from '../parts/SVGElement.js';
-import SVGRenderer from '../parts/SVGRenderer.js';
+import Pointer from '../Core/Pointer.js';
+import SVGElement from '../Core/Renderer/SVG/SVGElement.js';
+import SVGRenderer from '../Core/Renderer/SVG/SVGRenderer.js';
 import U from '../Core/Utilities.js';
 const {
     addEvent,

@@ -94,7 +94,7 @@ import H from '../../Core/Globals.js';
 * @type {Function|undefined}
 */
 ''; // detach doclets above
-import Point from '../../parts/Point.js';
+import Point from '../../Core/Series/Point.js';
 import U from '../../Core/Utilities.js';
 var find = U.find, isArray = U.isArray, merge = U.merge, pick = U.pick, splat = U.splat;
 import utilities from './utilities.js';

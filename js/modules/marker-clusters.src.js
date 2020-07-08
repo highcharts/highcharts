@@ -12,12 +12,12 @@
  *
  * */
 'use strict';
-import Chart from '../parts/Chart.js';
+import Chart from '../Core/Chart/Chart.js';
 import H from '../Core/Globals.js';
 import O from '../Core/Options.js';
 var defaultOptions = O.defaultOptions;
-import Point from '../parts/Point.js';
-import SVGRenderer from '../parts/SVGRenderer.js';
+import Point from '../Core/Series/Point.js';
+import SVGRenderer from '../Core/Renderer/SVG/SVGRenderer.js';
 import U from '../Core/Utilities.js';
 var addEvent = U.addEvent, animObject = U.animObject, defined = U.defined, error = U.error, isArray = U.isArray, isFunction = U.isFunction, isObject = U.isObject, isNumber = U.isNumber, merge = U.merge, objectEach = U.objectEach, relativeLength = U.relativeLength, syncTimeout = U.syncTimeout;
 /**
@@ -34,7 +34,7 @@ var addEvent = U.addEvent, animObject = U.animObject, defined = U.defined, error
 ''; // detach doclets from following code
 /* eslint-disable no-invalid-this */
 import '../Core/Axis/Axis.js';
-import '../parts/Series.js';
+import '../Core/Series/Series.js';
 var Series = H.Series, Scatter = H.seriesTypes.scatter, baseGeneratePoints = Series.prototype.generatePoints, stateIdCounter = 0, 
 // Points that ids are included in the oldPointsStateId array
 // are hidden before animation. Other ones are destroyed.

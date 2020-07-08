@@ -19,7 +19,7 @@ const {
     hasTouch
 } = H;
 import Axis from '../Core/Axis/Axis.js';
-import Pointer from '../parts/Pointer.js';
+import Pointer from '../Core/Pointer.js';
 import U from '../Core/Utilities.js';
 const {
     addEvent,

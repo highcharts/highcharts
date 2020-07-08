@@ -15,7 +15,7 @@ import H from '../../Core/Globals.js';
 var doc = H.doc;
 import U from '../../Core/Utilities.js';
 var error = U.error;
-import '../../parts/Series.js';
+import '../../Core/Series/Series.js';
 var mainCanvas = doc.createElement('canvas');
 /**
  * Create a canvas + context and attach it to the target

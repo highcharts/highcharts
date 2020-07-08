@@ -55,7 +55,6 @@ declare global {
     }
 }
 
-import Time from '../Core/Time.js';
 import U from '../Core/Utilities.js';
 const {
     addEvent,

@@ -10,9 +10,9 @@
 
 'use strict';
 
-import type Chart from '../parts/Chart';
-import type Point from '../parts/Point';
-import H from '../Core/Globals.js';
+import type Chart from './Chart/Chart';
+import type Point from '../Core/Series/Point';
+import H from './Globals.js';
 
 /**
  * Internal types

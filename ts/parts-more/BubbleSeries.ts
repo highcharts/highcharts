@@ -10,7 +10,7 @@
 
 'use strict';
 
-import type SVGPath from '../parts/SVGPath';
+import type SVGPath from '../Core/Renderer/SVG/SVGPath';
 import H from '../Core/Globals.js';
 
 /**
@@ -104,7 +104,7 @@ import Color from '../Core/Color.js';
 const {
     parse: color
 } = Color;
-import Point from '../parts/Point.js';
+import Point from '../Core/Series/Point.js';
 import U from '../Core/Utilities.js';
 const {
     arrayMax,
@@ -118,8 +118,8 @@ const {
 } = U;
 
 import '../Core/Axis/Axis.js';
-import '../parts/Series.js';
-import '../parts/ScatterSeries.js';
+import '../Core/Series/Series.js';
+import '../Series/ScatterSeries.js';
 import './BubbleLegend.js';
 
 var Axis = H.Axis,

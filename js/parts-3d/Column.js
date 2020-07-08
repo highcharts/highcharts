@@ -11,10 +11,10 @@
 import H from '../Core/Globals.js';
 import Math3D from '../parts-3d/Math.js';
 var perspective = Math3D.perspective;
-import StackItem from '../parts/Stacking.js';
+import StackItem from '../Extensions/Stacking.js';
 import U from '../Core/Utilities.js';
 var addEvent = U.addEvent, pick = U.pick, wrap = U.wrap;
-import '../parts/Series.js';
+import '../Core/Series/Series.js';
 var Series = H.Series, seriesTypes = H.seriesTypes, svg = H.svg;
 /**
  * Depth of the columns in a 3D column chart.

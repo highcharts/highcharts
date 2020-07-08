@@ -71,7 +71,7 @@ import Highcharts from './Globals.js';
  * @return {number}
  * Timezone offset in minutes.
  */
-import U from '../Core/Utilities.js';
+import U from './Utilities.js';
 var defined = U.defined, error = U.error, extend = U.extend, isObject = U.isObject, merge = U.merge, objectEach = U.objectEach, pad = U.pad, pick = U.pick, splat = U.splat, timeUnits = U.timeUnits;
 var H = Highcharts, win = H.win;
 /* eslint-disable no-invalid-this, valid-jsdoc */

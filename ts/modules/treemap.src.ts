@@ -12,7 +12,7 @@
 
 'use strict';
 
-import type Chart from '../parts/Chart';
+import type Chart from '../Core/Chart/Chart';
 import H from '../Core/Globals.js';
 
 /**
@@ -295,7 +295,7 @@ const {
     parse: color
 } = Color;
 import LegendSymbolMixin from '../mixins/legend-symbol.js';
-import Point from '../parts/Point.js';
+import Point from '../Core/Series/Point.js';
 import U from '../Core/Utilities.js';
 const {
     addEvent,
@@ -316,7 +316,7 @@ const {
 } = U;
 
 import '../Core/Options.js';
-import '../parts/Series.js';
+import '../Core/Series/Series.js';
 
 /* eslint-disable no-invalid-this */
 const AXIS_MAX = 100;

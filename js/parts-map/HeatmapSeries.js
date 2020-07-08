@@ -10,7 +10,7 @@
 'use strict';
 import H from '../Core/Globals.js';
 import LegendSymbolMixin from '../mixins/legend-symbol.js';
-import SVGRenderer from '../parts/SVGRenderer.js';
+import SVGRenderer from '../Core/Renderer/SVG/SVGRenderer.js';
 import U from '../Core/Utilities.js';
 var clamp = U.clamp, extend = U.extend, fireEvent = U.fireEvent, isNumber = U.isNumber, merge = U.merge, pick = U.pick, seriesType = U.seriesType;
 /* *
@@ -27,8 +27,8 @@ var clamp = U.clamp, extend = U.extend, fireEvent = U.fireEvent, isNumber = U.is
 */
 ''; // detach doclets above
 import '../Core/Options.js';
-import '../parts/Series.js';
-import './ColorMapSeriesMixin.js';
+import '../Core/Series/Series.js';
+import '../mixins/color-map-series.js';
 var colorMapPointMixin = H.colorMapPointMixin, colorMapSeriesMixin = H.colorMapSeriesMixin, noop = H.noop, Series = H.Series, seriesTypes = H.seriesTypes, symbols = SVGRenderer.prototype.symbols;
 /**
  * @private

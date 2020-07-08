@@ -10,8 +10,8 @@
 
 'use strict';
 
-import type Chart from '../parts/Chart';
-import type SVGPath from '../parts/SVGPath';
+import type Chart from './Chart/Chart';
+import type SVGPath from './Renderer/SVG/SVGPath';
 import H from './Globals.js';
 type NonArray<T> = T extends Array<unknown> ? never : T;
 type NonFunction<T> = T extends Function ? never : T;
