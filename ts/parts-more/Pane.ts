@@ -93,9 +93,7 @@ declare global {
  * @typedef {"arc"|"circle"|"solid"} Highcharts.PaneBackgroundShapeValue
  */
 
-import '../mixins/centered-series.js';
-
-var CenteredSeriesMixin = H.CenteredSeriesMixin;
+import centeredSeriesMixin from '../mixins/centered-series.js';
 
 /* eslint-disable no-invalid-this, valid-jsdoc */
 
@@ -458,7 +456,7 @@ class Pane {
             axis ||
             this.axis ||
             ({} as Highcharts.Dictionary<Array<number>>)
-        ).center = CenteredSeriesMixin.getCenter.call(this as any);
+        ).center = centeredSeriesMixin.getCenter.call(this as any);
     }
 
     /**

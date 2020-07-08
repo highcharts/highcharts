@@ -15,10 +15,10 @@ import Point from './Point.js';
 import U from '../Core/Utilities.js';
 var addEvent = U.addEvent, clamp = U.clamp, defined = U.defined, fireEvent = U.fireEvent, isNumber = U.isNumber, merge = U.merge, pick = U.pick, relativeLength = U.relativeLength, seriesType = U.seriesType, setAnimation = U.setAnimation;
 import './ColumnSeries.js';
-import '../mixins/centered-series.js';
+import centeredSeriesMixin from '../mixins/centered-series.js';
 import '../Core/Options.js';
 import './Series.js';
-var CenteredSeriesMixin = H.CenteredSeriesMixin, getStartAndEndRadians = CenteredSeriesMixin.getStartAndEndRadians, noop = H.noop, Series = H.Series, seriesTypes = H.seriesTypes;
+var getStartAndEndRadians = centeredSeriesMixin.getStartAndEndRadians, noop = H.noop, Series = H.Series, seriesTypes = H.seriesTypes;
 /**
  * Pie series type.
  *
@@ -930,7 +930,7 @@ seriesType('pie', 'line',
      * @private
      * @borrows Highcharts.CenteredSeriesMixin.getCenter as Highcharts.seriesTypes.pie#getCenter
      */
-    getCenter: CenteredSeriesMixin.getCenter,
+    getCenter: centeredSeriesMixin.getCenter,
     /**
      * Pies don't have point marker symbols.
      *

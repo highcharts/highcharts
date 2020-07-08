@@ -16,8 +16,7 @@ var addEvent = U.addEvent, extend = U.extend, merge = U.merge, pick = U.pick, sp
 /**
  * @typedef {"arc"|"circle"|"solid"} Highcharts.PaneBackgroundShapeValue
  */
-import '../mixins/centered-series.js';
-var CenteredSeriesMixin = H.CenteredSeriesMixin;
+import centeredSeriesMixin from '../mixins/centered-series.js';
 /* eslint-disable no-invalid-this, valid-jsdoc */
 Chart.prototype.collectionsWithUpdate.push('pane');
 /**
@@ -303,7 +302,7 @@ var Pane = /** @class */ (function () {
     Pane.prototype.updateCenter = function (axis) {
         this.center = (axis ||
             this.axis ||
-            {}).center = CenteredSeriesMixin.getCenter.call(this);
+            {}).center = centeredSeriesMixin.getCenter.call(this);
     };
     /**
      * Destroy the pane item
