@@ -1532,7 +1532,7 @@ extend(Series.prototype, /** @lends Series.prototype */ {
                 'maxX'
             );
             if (options.visible !== false) {
-                preserve.push('area', 'graph');
+                preserve.push('area'); // (#13816)
             }
             series.parallelArrays.forEach(function (key: string): void {
                 preserve.push(key + 'Data');
