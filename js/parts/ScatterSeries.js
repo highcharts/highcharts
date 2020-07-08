@@ -48,6 +48,11 @@ seriesType('scatter', 'line',
      * @product highcharts highstock
      */
     lineWidth: 0,
+    states: {
+        hover: {
+            lineWidthPlus: 0
+        }
+    },
     findNearestPointBy: 'xy',
     /**
      * Apply a jitter effect for the rendered markers. When plotting
@@ -131,7 +136,10 @@ seriesType('scatter', 'line',
      * @function Highcharts.seriesTypes.scatter#drawGraph
      */
     drawGraph: function () {
-        if (this.options.lineWidth) {
+        if (this.options.lineWidth ||
+            (this.options.lineWidth === 0 &&
+                this.graph &&
+                this.graph.strokeWidth())) {
             Series.prototype.drawGraph.call(this);
         }
     },

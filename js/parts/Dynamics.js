@@ -1075,7 +1075,7 @@ extend(Series.prototype, /** @lends Series.prototype */ {
             // properties (#10617)
             'mapMap', 'mapData', 'minY', 'maxY', 'minX', 'maxX');
             if (options.visible !== false) {
-                preserve.push('area'); // (#13816)
+                preserve.push('area', 'graph');
             }
             series.parallelArrays.forEach(function (key) {
                 preserve.push(key + 'Data');

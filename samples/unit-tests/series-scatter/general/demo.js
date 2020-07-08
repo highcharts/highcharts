@@ -14,14 +14,16 @@ QUnit.test('Scatter series general tests.', function (assert) {
         series = chart.series[0];
 
     series.update({ lineWidth: 0 });
-    assert.notOk(
-        series.graph,
+    assert.strictEqual(
+        series.graph.strokeWidth(),
+        0,
         'Scatter line should not be visible after lineWidth = 0 update (#13816).'
     );
 
     series.points[0].onMouseOver();
-    assert.notOk(
-        series.graph,
+    assert.strictEqual(
+        series.graph.strokeWidth(),
+        0,
         'Scatter line should not be visible when mouse over a point (#13816).'
     );
 });

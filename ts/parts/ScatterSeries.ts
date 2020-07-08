@@ -99,6 +99,11 @@ seriesType<Highcharts.ScatterSeries>(
          * @product highcharts highstock
          */
         lineWidth: 0,
+        states: {
+            hover: {
+                lineWidthPlus: 0
+            }
+        },
 
         findNearestPointBy: 'xy',
 
@@ -193,7 +198,14 @@ seriesType<Highcharts.ScatterSeries>(
          * @function Highcharts.seriesTypes.scatter#drawGraph
          */
         drawGraph: function (this: Highcharts.ScatterSeries): void {
-            if (this.options.lineWidth) {
+            if (
+                this.options.lineWidth ||
+                (
+                    this.options.lineWidth === 0 &&
+                    this.graph &&
+                    this.graph.strokeWidth()
+                )
+            ) {
                 Series.prototype.drawGraph.call(this);
             }
         },
