@@ -130,11 +130,9 @@ var multipleLinesMixin = {
         secondaryLinesNames.forEach(function (plotLine, index) {
             // create additional lines point place holders
             secondaryLines[index] = [];
-            while (pointsLength--) {
-                point = mainLinePoints[pointsLength];
+            for (var i = 0; i < pointsLength; ++i) {
+                point = mainLinePoints[i];
                 secondaryLines[index].push({
-                    x: point.x,
-                    plotX: point.plotX,
                     plotY: point[plotLine],
                     isNull: !defined(point[plotLine])
                 });
@@ -144,7 +142,18 @@ var multipleLinesMixin = {
         // Modify options and generate additional lines:
         linesApiNames.forEach(function (lineName, i) {
             if (secondaryLines[i]) {
-                indicator.points = secondaryLines[i];
+                for (var j = 0; j < pointsLength; ++j) {
+                    point = mainLinePoints[j];
+                    point.origProps = {
+                        graphic: point.graphic,
+                        isNull: point.isNull,
+                        plotY: point.plotY,
+                        zone: point.zone
+                    };
+                    merge(true, point, secondaryLines[i][j]);
+                    point.graphic = void 0;
+                    point.zone = (indicator.zones.length && point.getZone());
+                }
                 if (mainLineOptions[lineName]) {
                     indicator.options = merge(mainLineOptions[lineName].styles, gappedExtend);
                 }
@@ -156,6 +165,13 @@ var multipleLinesMixin = {
                 }
                 indicator.graph = indicator['graph' + lineName];
                 SMA.prototype.drawGraph.call(indicator);
+                for (var j = 0; j < pointsLength; ++j) {
+                    point = mainLinePoints[j];
+                    if (point.origProps) {
+                        merge(true, point, point.origProps);
+                    }
+                    point.origProps = void 0;
+                }
                 // Now save lines:
                 indicator['graph' + lineName] = indicator.graph;
             }

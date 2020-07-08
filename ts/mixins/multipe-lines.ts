@@ -201,7 +201,7 @@ var multipleLinesMixin: Highcharts.MultipleLinesMixin = {
         var indicator = this,
             pointValKey = indicator.pointValKey,
             linesApiNames = indicator.linesApiNames,
-            mainLinePoints = indicator.points,
+            mainLinePoints: Array<typeof point> = indicator.points,
             pointsLength = mainLinePoints.length,
             mainLineOptions = indicator.options,
             mainLinePath = indicator.graph,
@@ -215,7 +215,7 @@ var multipleLinesMixin: Highcharts.MultipleLinesMixin = {
             secondaryLinesNames = indicator.getTranslatedLinesNames(
                 pointValKey
             ),
-            point;
+            point: (Point & { origProps?: Record<string, any> });
 
 
         // Generate points for additional lines:
@@ -227,11 +227,9 @@ var multipleLinesMixin: Highcharts.MultipleLinesMixin = {
             // create additional lines point place holders
             secondaryLines[index] = [];
 
-            while (pointsLength--) {
-                point = mainLinePoints[pointsLength];
+            for (let i = 0; i < pointsLength; ++i) {
+                point = mainLinePoints[i];
                 secondaryLines[index].push({
-                    x: point.x,
-                    plotX: point.plotX,
                     plotY: (point as any)[plotLine],
                     isNull: !defined((point as any)[plotLine])
                 } as any);
@@ -243,7 +241,18 @@ var multipleLinesMixin: Highcharts.MultipleLinesMixin = {
         // Modify options and generate additional lines:
         linesApiNames.forEach(function (lineName: string, i: number): void {
             if (secondaryLines[i]) {
-                indicator.points = secondaryLines[i];
+                for (let j = 0; j < pointsLength; ++j) {
+                    point = mainLinePoints[j];
+                    point.origProps = {
+                        graphic: point.graphic,
+                        isNull: point.isNull,
+                        plotY: point.plotY,
+                        zone: point.zone
+                    };
+                    merge(true, point, secondaryLines[i][j]);
+                    point.graphic = void 0;
+                    point.zone = (indicator.zones.length && point.getZone()) as any;
+                }
                 if ((mainLineOptions as any)[lineName]) {
                     indicator.options = merge(
                         (mainLineOptions as any)[lineName].styles,
@@ -260,6 +269,14 @@ var multipleLinesMixin: Highcharts.MultipleLinesMixin = {
 
                 indicator.graph = (indicator as any)['graph' + lineName];
                 SMA.prototype.drawGraph.call(indicator);
+
+                for (let j = 0; j < pointsLength; ++j) {
+                    point = mainLinePoints[j];
+                    if (point.origProps) {
+                        merge(true, point, point.origProps);
+                    }
+                    point.origProps = void 0;
+                }
 
                 // Now save lines:
                 (indicator as any)['graph' + lineName] = indicator.graph;
