@@ -10,8 +10,8 @@
 
 'use strict';
 
-import type { AxisType } from './axis/types';
-import DateTimeAxis from './DateTimeAxis.js';
+import type { AxisType } from '../Core/Axis/Types';
+import DateTimeAxis from '../Core/Axis/DateTimeAxis.js';
 import H from '../Core/Globals.js';
 
 /**
@@ -145,7 +145,7 @@ declare global {
 
 ''; // detach doclets above
 
-import O from '../parts/Options.js';
+import O from '../Core/Options.js';
 const { defaultOptions } = O;
 import Point from './Point.js';
 import Tooltip from './Tooltip.js';
@@ -164,7 +164,7 @@ const {
     pick
 } = U;
 
-import './Axis.js';
+import '../Core/Axis/Axis.js';
 import './Series.js';
 
 var Axis = H.Axis,

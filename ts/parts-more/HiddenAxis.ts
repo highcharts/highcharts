@@ -8,14 +8,14 @@
  *
  * */
 
-import type Axis from '../parts/Axis';
+import type Axis from '../Core/Axis/Axis';
 import type Chart from '../parts/Chart';
 import type RadialAxis from './RadialAxis';
 
 /**
  * @private
  */
-declare module '../parts/axis/types' {
+declare module '../Core/Axis/Types' {
     interface AxisTypeRegistry {
         HiddenAxis: HiddenAxis;
     }

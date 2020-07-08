@@ -12,10 +12,10 @@
 
 'use strict';
 
-import type { AxisType } from '../parts/axis/types';
+import type { AxisType } from '../Core/Axis/Types';
 import type Point from '../parts/Point';
 import type RadialAxis from '../parts-more/RadialAxis';
-import Axis from '../parts/Axis.js';
+import Axis from '../Core/Axis/Axis.js';
 import Chart from '../parts/Chart.js';
 import H from '../Core/Globals.js';
 import U from '../Core/Utilities.js';
@@ -67,7 +67,7 @@ declare global {
 /**
  * @private
  */
-declare module '../parts/axis/types' {
+declare module '../Core/Axis/Types' {
     interface AxisComposition {
         parallelCoordinates?: ParallelAxis['parallelCoordinates'];
     }

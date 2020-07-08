@@ -10,12 +10,12 @@
 
 'use strict';
 
-import type { AxisType } from './axis/types';
+import type { AxisType } from '../Core/Axis/Types';
 import type Chart from './Chart';
 import type SVGPath from './SVGPath';
 import H from '../Core/Globals.js';
 import LegendSymbolMixin from '../mixins/legend-symbol.js';
-import O from './Options.js';
+import O from '../Core/Options.js';
 const { defaultOptions } = O;
 import Point from './Point.js';
 import SVGElement from './SVGElement.js';

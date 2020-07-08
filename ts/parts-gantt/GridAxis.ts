@@ -12,13 +12,13 @@
 'use strict';
 
 import type Point from '../parts/Point';
-import Axis from '../parts/Axis.js';
+import Axis from '../Core/Axis/Axis.js';
 import H from '../Core/Globals.js';
-import O from '../parts/Options.js';
+import O from '../Core/Options.js';
 const {
     dateFormat
 } = O;
-import Tick from '../parts/Tick.js';
+import Tick from '../Core/Axis/Tick.js';
 import U from '../Core/Utilities.js';
 const {
     addEvent,
@@ -61,7 +61,7 @@ declare global {
 /**
  * @private
  */
-declare module '../parts/axis/types' {
+declare module '../Core/Axis/Types' {
     interface AxisComposition {
         grid?: GridAxis['grid'];
     }

@@ -118,7 +118,7 @@ declare global {
 
 ''; // detach doclets above
 
-import Color from './Color.js';
+import Color from '../Core/Color.js';
 const {
     parse: color
 } = Color;
@@ -137,7 +137,7 @@ const {
 } = U;
 
 import './Series.js';
-import './Options.js';
+import '../Core/Options.js';
 
 var noop = H.noop,
     Series = H.Series,

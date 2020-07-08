@@ -100,7 +100,7 @@ declare global {
  * @typedef {"area"|"width"} Highcharts.BubbleSizeByValue
  */
 
-import Color from '../parts/Color.js';
+import Color from '../Core/Color.js';
 const {
     parse: color
 } = Color;
@@ -117,7 +117,7 @@ const {
     seriesType
 } = U;
 
-import '../parts/Axis.js';
+import '../Core/Axis/Axis.js';
 import '../parts/Series.js';
 import '../parts/ScatterSeries.js';
 import './BubbleLegend.js';

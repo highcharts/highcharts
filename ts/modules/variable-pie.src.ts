@@ -73,7 +73,7 @@ const {
     seriesType
 } = U;
 
-import '../parts/Options.js';
+import '../Core/Options.js';
 
 var pieProto = H.seriesTypes.pie.prototype;
 

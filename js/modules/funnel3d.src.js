@@ -15,7 +15,7 @@
 import H from '../Core/Globals.js';
 import Math3D from '../parts-3d/Math.js';
 var perspective = Math3D.perspective;
-import Color from '../parts/Color.js';
+import Color from '../Core/Color.js';
 var color = Color.parse;
 import U from '../Core/Utilities.js';
 var error = U.error, extend = U.extend, merge = U.merge, pick = U.pick, relativeLength = U.relativeLength, seriesType = U.seriesType;

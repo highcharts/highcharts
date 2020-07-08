@@ -17,7 +17,7 @@
 import type SVGPath from '../parts/SVGPath';
 import Chart from '../parts/Chart.js';
 import H from '../Core/Globals.js';
-import O from '../parts/Options.js';
+import O from '../Core/Options.js';
 const { defaultOptions } = O;
 import Point from '../parts/Point.js';
 import SVGRenderer from '../parts/SVGRenderer.js';
@@ -261,7 +261,7 @@ declare global {
 
 /* eslint-disable no-invalid-this */
 
-import '../parts/Axis.js';
+import '../Core/Axis/Axis.js';
 import '../parts/Series.js';
 
 var Series = H.Series,

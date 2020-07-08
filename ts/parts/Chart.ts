@@ -10,10 +10,10 @@
 
 'use strict';
 
-import type { AxisType } from './axis/types';
+import type { AxisType } from '../Core/Axis/Types';
 import type Point from './Point';
 import type SVGElement from './SVGElement';
-import Axis from './Axis.js';
+import Axis from '../Core/Axis/Axis.js';
 import H from '../Core/Globals.js';
 const {
     charts,
@@ -21,13 +21,13 @@ const {
     seriesTypes,
     win
 } = H;
-import Legend from './Legend.js';
+import Legend from '../Core/Legend.js';
 import MSPointer from './MSPointer.js';
-import O from './Options.js';
+import O from '../Core/Options.js';
 const { defaultOptions } = O;
 import Pointer from './Pointer.js';
 import SVGRenderer from './SVGRenderer.js';
-import Time from './Time.js';
+import Time from '../Core/Time.js';
 import U from '../Core/Utilities.js';
 const {
     addEvent,

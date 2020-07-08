@@ -13,7 +13,7 @@
 import H from '../Core/Globals.js';
 import Math3D from '../parts-3d/Math.js';
 var perspective = Math3D.perspective, perspective3D = Math3D.perspective3D, shapeArea = Math3D.shapeArea;
-import Tick from '../parts/Tick.js';
+import Tick from '../Core/Axis/Tick.js';
 import Tick3D from './Tick3D.js';
 import U from '../Core/Utilities.js';
 var addEvent = U.addEvent, merge = U.merge, pick = U.pick, wrap = U.wrap;

@@ -12,9 +12,9 @@
 
 'use strict';
 
-import Axis from '../parts/Axis.js';
+import Axis from '../Core/Axis/Axis.js';
 import H from '../Core/Globals.js';
-import Color from '../parts/Color.js';
+import Color from '../Core/Color.js';
 const {
     parse: color
 } = Color;

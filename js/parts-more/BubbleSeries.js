@@ -12,12 +12,12 @@ import H from '../Core/Globals.js';
 /**
  * @typedef {"area"|"width"} Highcharts.BubbleSizeByValue
  */
-import Color from '../parts/Color.js';
+import Color from '../Core/Color.js';
 var color = Color.parse;
 import Point from '../parts/Point.js';
 import U from '../Core/Utilities.js';
 var arrayMax = U.arrayMax, arrayMin = U.arrayMin, clamp = U.clamp, extend = U.extend, isNumber = U.isNumber, pick = U.pick, pInt = U.pInt, seriesType = U.seriesType;
-import '../parts/Axis.js';
+import '../Core/Axis/Axis.js';
 import '../parts/Series.js';
 import '../parts/ScatterSeries.js';
 import './BubbleLegend.js';

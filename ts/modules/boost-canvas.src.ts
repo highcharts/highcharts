@@ -75,7 +75,7 @@ declare global {
     }
 }
 
-import Color from '../parts/Color.js';
+import Color from '../Core/Color.js';
 const color = Color.parse;
 import U from '../Core/Utilities.js';
 const {
@@ -89,7 +89,7 @@ const {
 } = U;
 
 import '../parts/Series.js';
-import '../parts/Options.js';
+import '../Core/Options.js';
 
 var win = H.win,
     doc = win.document,

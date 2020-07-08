@@ -16,7 +16,7 @@ import U from '../Core/Utilities.js';
 var addEvent = U.addEvent, clamp = U.clamp, defined = U.defined, fireEvent = U.fireEvent, isNumber = U.isNumber, merge = U.merge, pick = U.pick, relativeLength = U.relativeLength, seriesType = U.seriesType, setAnimation = U.setAnimation;
 import './ColumnSeries.js';
 import '../mixins/centered-series.js';
-import './Options.js';
+import '../Core/Options.js';
 import './Series.js';
 var CenteredSeriesMixin = H.CenteredSeriesMixin, getStartAndEndRadians = CenteredSeriesMixin.getStartAndEndRadians, noop = H.noop, Series = H.Series, seriesTypes = H.seriesTypes;
 /**

@@ -10,11 +10,11 @@
 
 'use strict';
 
-import type Axis from './Axis';
+import type Axis from '../Core/Axis/Axis';
 import type Chart from './Chart';
 import type Point from './Point';
 import type SVGElement from './SVGElement';
-import Color from './Color.js';
+import Color from '../Core/Color.js';
 const color = Color.parse;
 import H from '../Core/Globals.js';
 const {

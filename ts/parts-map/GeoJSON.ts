@@ -16,7 +16,7 @@ import H from '../Core/Globals.js';
 const {
     win
 } = H;
-import '../parts/Options.js';
+import '../Core/Options.js';
 import U from '../Core/Utilities.js';
 const {
     error,

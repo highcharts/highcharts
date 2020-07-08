@@ -21,13 +21,13 @@ var __extends = (this && this.__extends) || (function () {
         d.prototype = b === null ? Object.create(b) : (__.prototype = b.prototype, new __());
     };
 })();
-import Axis from '../parts/Axis.js';
+import Axis from '../Core/Axis/Axis.js';
 import Chart from '../parts/Chart.js';
-import Color from '../parts/Color.js';
+import Color from '../Core/Color.js';
 var color = Color.parse;
 import H from '../Core/Globals.js';
 var noop = H.noop;
-import Legend from '../parts/Legend.js';
+import Legend from '../Core/Legend.js';
 import LegendSymbolMixin from '../mixins/legend-symbol.js';
 import Point from '../parts/Point.js';
 import U from '../Core/Utilities.js';

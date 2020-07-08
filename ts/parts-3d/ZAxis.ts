@@ -8,9 +8,9 @@
  *
  * */
 
-import type { AxisLike } from '../parts/axis/types';
+import type { AxisLike } from '../Core/Axis/Types';
 import type Chart from '../parts/Chart.js';
-import Axis from '../parts/Axis.js';
+import Axis from '../Core/Axis/Axis.js';
 import U from '../Core/Utilities.js';
 const {
     addEvent,
@@ -38,7 +38,7 @@ declare global {
 /**
  * @private
  */
-declare module '../parts/axis/types' {
+declare module '../Core/Axis/Types' {
     interface AxisTypeRegistry {
         ZAxis: ZAxis;
     }

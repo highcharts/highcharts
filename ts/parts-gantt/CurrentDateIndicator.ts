@@ -13,7 +13,7 @@
 'use strict';
 
 import H from '../Core/Globals.js';
-import O from '../parts/Options.js';
+import O from '../Core/Options.js';
 const { dateFormat } = O;
 
 /**
@@ -55,7 +55,7 @@ declare global {
     }
 }
 
-import Time from '../parts/Time.js';
+import Time from '../Core/Time.js';
 import U from '../Core/Utilities.js';
 const {
     addEvent,
@@ -63,7 +63,7 @@ const {
     wrap
 } = U;
 
-import PlotLineOrBand from '../parts/PlotLineOrBand.js';
+import PlotLineOrBand from '../Core/Axis/PlotLineOrBand.js';
 
 var Axis = H.Axis;
 

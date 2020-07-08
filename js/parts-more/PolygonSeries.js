@@ -12,9 +12,9 @@ import H from '../Core/Globals.js';
 import LegendSymbolMixin from '../mixins/legend-symbol.js';
 import U from '../Core/Utilities.js';
 var seriesType = U.seriesType;
-import '../parts/Options.js';
+import '../Core/Options.js';
 import '../parts/Series.js';
-import '../parts/Legend.js';
+import '../Core/Legend.js';
 import '../parts/ScatterSeries.js';
 var noop = H.noop, Series = H.Series, seriesTypes = H.seriesTypes;
 /**

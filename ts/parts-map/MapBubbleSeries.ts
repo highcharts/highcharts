@@ -59,7 +59,7 @@ const {
     seriesType
 } = U;
 
-import '../parts/Options.js';
+import '../Core/Options.js';
 import '../parts-more/BubbleSeries.js';
 
 var seriesTypes = H.seriesTypes;

@@ -10,7 +10,7 @@
 
 'use strict';
 
-import type StackingAxis from './StackingAxis';
+import type StackingAxis from '../Core/Axis/StackingAxis';
 import type SVGPath from '../parts/SVGPath';
 import H from '../Core/Globals.js';
 
@@ -52,7 +52,7 @@ declare global {
     }
 }
 
-import Color from './Color.js';
+import Color from '../Core/Color.js';
 const {
     parse: color
 } = Color;
@@ -65,7 +65,7 @@ const {
 } = U;
 
 import './Series.js';
-import './Options.js';
+import '../Core/Options.js';
 
 var Series = H.Series;
 

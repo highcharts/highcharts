@@ -14,7 +14,7 @@
 'use strict';
 import H from '../Core/Globals.js';
 var hasTouch = H.hasTouch;
-import Axis from '../parts/Axis.js';
+import Axis from '../Core/Axis/Axis.js';
 import Pointer from '../parts/Pointer.js';
 import U from '../Core/Utilities.js';
 var addEvent = U.addEvent, clamp = U.clamp, isNumber = U.isNumber, merge = U.merge, objectEach = U.objectEach, relativeLength = U.relativeLength, wrap = U.wrap;

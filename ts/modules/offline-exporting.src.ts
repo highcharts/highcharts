@@ -20,7 +20,7 @@ const {
     win,
     doc
 } = H;
-import '../parts/Options.js';
+import '../Core/Options.js';
 import SVGRenderer from '../parts/SVGRenderer.js';
 import U from '../Core/Utilities.js';
 const {

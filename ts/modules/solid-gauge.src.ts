@@ -15,7 +15,7 @@
 import type ColorAxis from '../parts-map/ColorAxis';
 import type RadialAxis from '../parts-more/RadialAxis';
 import type SVGPath from '../parts/SVGPath';
-import Color from '../parts/Color.js';
+import Color from '../Core/Color.js';
 const color = Color.parse;
 import H from '../Core/Globals.js';
 import LegendSymbolMixin from '../mixins/legend-symbol.js';
@@ -86,7 +86,7 @@ declare global {
  * @type {boolean|undefined}
  */
 
-import '../parts/Options.js';
+import '../Core/Options.js';
 import '../parts-more/GaugeSeries.js';
 
 const Renderer = H.Renderer;

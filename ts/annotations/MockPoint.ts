@@ -114,7 +114,7 @@ var defined = U.defined,
     extend = U.extend,
     fireEvent = U.fireEvent;
 
-import '../parts/Axis.js';
+import '../Core/Axis/Axis.js';
 import '../parts/Series.js';
 
 /* eslint-disable no-invalid-this, valid-jsdoc */

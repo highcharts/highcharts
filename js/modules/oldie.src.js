@@ -11,7 +11,7 @@
  * */
 'use strict';
 import Chart from '../parts/Chart.js';
-import Color from '../parts/Color.js';
+import Color from '../Core/Color.js';
 var color = Color.parse;
 import H from '../Core/Globals.js';
 var deg2rad = H.deg2rad, doc = H.doc, noop = H.noop, svg = H.svg, win = H.win;

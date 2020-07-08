@@ -8,7 +8,7 @@
  *
  * */
 'use strict';
-import Color from './Color.js';
+import Color from '../Core/Color.js';
 var color = Color.parse;
 import H from '../Core/Globals.js';
 var charts = H.charts, noop = H.noop;

@@ -11,7 +11,7 @@
 
 'use strict';
 
-import type Axis from '../parts/Axis';
+import type Axis from '../Core/Axis/Axis';
 import type SVGPath from '../parts/SVGPath';
 import Chart from '../parts/Chart.js';
 import H from '../Core/Globals.js';
@@ -191,7 +191,7 @@ declare global {
 
 ''; // detach doclets above
 
-import O from '../parts/Options.js';
+import O from '../Core/Options.js';
 const { defaultOptions } = O;
 import Point from '../parts/Point.js';
 import U from '../Core/Utilities.js';

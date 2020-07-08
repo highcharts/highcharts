@@ -11,7 +11,7 @@
 import Chart from '../parts/Chart.js';
 import H from '../Core/Globals.js';
 var win = H.win;
-import '../parts/Options.js';
+import '../Core/Options.js';
 import U from '../Core/Utilities.js';
 var error = U.error, extend = U.extend, format = U.format, merge = U.merge, wrap = U.wrap;
 /**

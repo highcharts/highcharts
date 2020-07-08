@@ -10,7 +10,7 @@
 'use strict';
 import U from '../Core/Utilities.js';
 var correctFloat = U.correctFloat, merge = U.merge, seriesType = U.seriesType;
-import '../parts/Options.js';
+import '../Core/Options.js';
 import derivedSeriesMixin from '../mixins/derived-series.js';
 /**
  * The pareto series type.

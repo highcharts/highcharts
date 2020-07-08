@@ -16,7 +16,7 @@ import H from '../Core/Globals.js';
 var noop = H.noop, seriesType = H.seriesType, seriesTypes = H.seriesTypes;
 import U from '../Core/Utilities.js';
 var addEvent = U.addEvent, fireEvent = U.fireEvent, isArray = U.isArray, pick = U.pick;
-import '../parts/Options.js';
+import '../Core/Options.js';
 import '../parts/Series.js';
 /**
  * @private

@@ -11,13 +11,13 @@
  * */
 'use strict';
 import Chart from '../parts/Chart.js';
-import Color from '../parts/Color.js';
+import Color from '../Core/Color.js';
 import H from '../Core/Globals.js';
-import O from '../parts/Options.js';
+import O from '../Core/Options.js';
 var defaultOptions = O.defaultOptions;
 import Point from '../parts/Point.js';
 import SVGRenderer from '../parts/SVGRenderer.js';
-import Tick from '../parts/Tick.js';
+import Tick from '../Core/Axis/Tick.js';
 import U from '../Core/Utilities.js';
 var addEvent = U.addEvent, removeEvent = U.removeEvent, animObject = U.animObject, extend = U.extend, fireEvent = U.fireEvent, format = U.format, merge = U.merge, objectEach = U.objectEach, pick = U.pick, syncTimeout = U.syncTimeout;
 /**

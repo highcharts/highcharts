@@ -24,13 +24,13 @@ import H from '../Core/Globals.js';
 * @type {number}
 */
 ''; // detach doclets above
-import Color from './Color.js';
+import Color from '../Core/Color.js';
 var color = Color.parse;
 import LegendSymbolMixin from '../mixins/legend-symbol.js';
 import U from '../Core/Utilities.js';
 var animObject = U.animObject, clamp = U.clamp, defined = U.defined, extend = U.extend, isNumber = U.isNumber, merge = U.merge, pick = U.pick, seriesType = U.seriesType, objectEach = U.objectEach;
 import './Series.js';
-import './Options.js';
+import '../Core/Options.js';
 var noop = H.noop, Series = H.Series, svg = H.svg;
 /**
  * The column series type.

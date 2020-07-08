@@ -13,7 +13,7 @@
 import type SVGPath from '../parts/SVGPath';
 import Chart from '../parts/Chart.js';
 import H from '../Core/Globals.js';
-import O from '../parts/Options.js';
+import O from '../Core/Options.js';
 const { defaultOptions } = O;
 import SVGRenderer from '../parts/SVGRenderer.js';
 import U from '../Core/Utilities.js';
@@ -38,7 +38,7 @@ declare global {
     }
 }
 
-import '../parts/Options.js';
+import '../Core/Options.js';
 import '../parts/Chart.js';
 
 var Renderer = H.Renderer,

@@ -14,7 +14,7 @@
 'use strict';
 import Chart from '../parts/Chart.js';
 import H from '../Core/Globals.js';
-import O from '../parts/Options.js';
+import O from '../Core/Options.js';
 var defaultOptions = O.defaultOptions;
 import Point from '../parts/Point.js';
 import SVGRenderer from '../parts/SVGRenderer.js';
@@ -33,7 +33,7 @@ var addEvent = U.addEvent, animObject = U.animObject, defined = U.defined, error
  */
 ''; // detach doclets from following code
 /* eslint-disable no-invalid-this */
-import '../parts/Axis.js';
+import '../Core/Axis/Axis.js';
 import '../parts/Series.js';
 var Series = H.Series, Scatter = H.seriesTypes.scatter, baseGeneratePoints = Series.prototype.generatePoints, stateIdCounter = 0, 
 // Points that ids are included in the oldPointsStateId array

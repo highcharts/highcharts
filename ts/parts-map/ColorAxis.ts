@@ -10,11 +10,11 @@
 
 'use strict';
 
-import type { AxisLike } from '../parts/axis/types';
+import type { AxisLike } from '../Core/Axis/Types';
 import type SVGPath from '../parts/SVGPath';
-import Axis from '../parts/Axis.js';
+import Axis from '../Core/Axis/Axis.js';
 import Chart from '../parts/Chart.js';
-import Color from '../parts/Color.js';
+import Color from '../Core/Color.js';
 const {
     parse: color
 } = Color;
@@ -22,7 +22,7 @@ import H from '../Core/Globals.js';
 const {
     noop
 } = H;
-import Legend from '../parts/Legend.js';
+import Legend from '../Core/Legend.js';
 import LegendSymbolMixin from '../mixins/legend-symbol.js';
 import Point from '../parts/Point.js';
 import U from '../Core/Utilities.js';

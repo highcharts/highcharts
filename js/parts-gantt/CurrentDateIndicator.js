@@ -11,11 +11,11 @@
  * */
 'use strict';
 import H from '../Core/Globals.js';
-import O from '../parts/Options.js';
+import O from '../Core/Options.js';
 var dateFormat = O.dateFormat;
 import U from '../Core/Utilities.js';
 var addEvent = U.addEvent, merge = U.merge, wrap = U.wrap;
-import PlotLineOrBand from '../parts/PlotLineOrBand.js';
+import PlotLineOrBand from '../Core/Axis/PlotLineOrBand.js';
 var Axis = H.Axis;
 var defaultConfig = {
     /**

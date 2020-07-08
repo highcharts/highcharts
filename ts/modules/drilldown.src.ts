@@ -13,15 +13,15 @@
 'use strict';
 
 import Chart from '../parts/Chart.js';
-import Color from '../parts/Color.js';
+import Color from '../Core/Color.js';
 import H from '../Core/Globals.js';
-import O from '../parts/Options.js';
+import O from '../Core/Options.js';
 const {
     defaultOptions
 } = O;
 import Point from '../parts/Point.js';
 import SVGRenderer from '../parts/SVGRenderer.js';
-import Tick from '../parts/Tick.js';
+import Tick from '../Core/Axis/Tick.js';
 import U from '../Core/Utilities.js';
 const {
     addEvent,

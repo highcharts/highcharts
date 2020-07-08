@@ -10,7 +10,7 @@
 'use strict';
 import H from '../Core/Globals.js';
 import '../Core/Utilities.js';
-import '../parts/Options.js';
+import '../Core/Options.js';
 import '../parts/Point.js';
 import '../parts/ScatterSeries.js';
 var merge = H.merge, Point = H.Point, Series = H.Series, seriesType = H.seriesType;

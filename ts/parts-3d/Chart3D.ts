@@ -12,7 +12,7 @@
 
 'use strict';
 
-import Axis from '../parts/Axis.js';
+import Axis from '../Core/Axis/Axis.js';
 import Axis3D from './Axis3D.js';
 import Chart from '../parts/Chart.js';
 import H from '../Core/Globals.js';
@@ -21,7 +21,7 @@ const {
     perspective,
     shapeArea3D
 } = Math3D;
-import O from '../parts/Options.js';
+import O from '../Core/Options.js';
 const {
     defaultOptions: genericDefaultOptions
 } = O;

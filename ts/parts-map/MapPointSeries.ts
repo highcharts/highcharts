@@ -50,7 +50,7 @@ declare global {
 }
 
 import '../Core/Utilities.js';
-import '../parts/Options.js';
+import '../Core/Options.js';
 import '../parts/Point.js';
 import '../parts/ScatterSeries.js';
 
