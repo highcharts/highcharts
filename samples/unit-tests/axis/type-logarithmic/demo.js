@@ -174,7 +174,7 @@ QUnit.test('Linear-log axis with natural min at 0 (#6502)', function (assert) {
 });
 
 // Highcharts 4.0.1, Issue #3053
-// Logarythmic xAxis for line series
+// Logarithmic xAxis for line series
 QUnit.test('Cropping log axis (#3053)', function (assert) {
 
     var data = [];
@@ -266,7 +266,7 @@ QUnit.test('Y axis minimum got stuck (#3353)', function (assert) {
     );
 });
 
-QUnit.test('Negative values', function (assert) {
+QUnit.test('Negative values on the log axes.', function (assert) {
     const chart = Highcharts.chart('container', {
         xAxis: [{
             type: 'logarithmic'
@@ -277,52 +277,76 @@ QUnit.test('Negative values', function (assert) {
         series: [{
             xAxis: 0,
             yAxis: 0,
-            data: [[-3, -5], [-1, 2], [0, -2], [10, 10]]
+            data: [[-3, -5], [-1, 2], [0, -2], [1, -5], [10, 10]]
         },
         {
             xAxis: 0,
             yAxis: 1,
-            data: [[-3, -5], [-1, 2], [0, -2], [10, 10]]
+            data: [[-3, -5], [-1, 2], [0, -2], [1, -5], [10, 10]]
         },
         {
             xAxis: 1,
             yAxis: 0,
-            data: [[-3, -5], [-1, 2], [0, -2], [10, 10]]
+            data: [[-3, -5], [-1, 2], [0, -2], [1, -5], [10, 10]]
         },
         {
             xAxis: 1,
             yAxis: 1,
-            data: [[-3, -5], [-1, 2], [0, -2], [10, 10]]
+            data: [[-3, -5], [-1, 2], [0, -2], [1, -5], [10, 10]]
         }]
     });
 
     assert.strictEqual(
         chart.xAxis[0].dataMin,
-        10,
-        "should not be present on the log axis under the xAxis.dataMin."
+        1,
+        "Negative xValues should not be present on the log axis under the xAxis.dataMin."
     );
 
     assert.strictEqual(
         chart.yAxis[0].dataMin,
         2,
-        "should not be present on the log axis yAxis.dataMin."
+        "Negative yValues should not be present on the log axis under the xAxis.dataMin."
     );
 
     assert.strictEqual(
         chart.xAxis[1].dataMin,
         -3,
-        "should be present on the linear axis under the xAxis.dataMin."
+        "Negative xValues should be present on the log axis under the xAxis.dataMin."
     );
 
     assert.strictEqual(
         chart.yAxis[1].dataMin,
         -5,
-        "should be present on the linear axis under the xAxis.dataMax"
+        "Negative yValues should be present on the log axis under the yAxis.dataMin."
+    );
+
+    assert.deepEqual(
+        chart.series[0].points.map(point => point.isNull),
+        [true, true, true, true, false],
+        "Points with negative value should be discarded when both axes are logarithmic.  "
+    );
+
+    assert.deepEqual(
+        chart.series[1].points.map(point => point.isNull),
+        [true, true, true, false, false],
+        "Points with negative xValues should be discarded when xAxis is logarithmic."
+    );
+
+    assert.deepEqual(
+        chart.series[2].points.map(point => point.isNull),
+        [true, false, true, true, false],
+        "Points with negative yValues should be discarded when yAxis is logarithmic."
+    );
+
+    assert.strictEqual(
+        chart.series[3].points.filter(point => point.isNull).length,
+        0,
+        "Points with negative value should not be discarded when both axes are linear."
     );
 
     assert.ok(
         true,
-        "should not throw error."
+        "Should not throw error."
     );
 
 });
