@@ -8,7 +8,7 @@ const glob = require('glob');
 const { uploadFiles, isDirectoryOrSystemFile, toS3Path } = require('./lib/uploadS3');
 
 
-const SOURCE_DIR = 'samples/data';
+const SOURCE_DIR = ['samples/data', 'samples/graphics', 'samples/static'];
 const S3_DEST_PATH = 'demos';
 const BUCKET = 'assets.highcharts.com';
 
@@ -23,12 +23,20 @@ async function distUploadSamplesData() {
     const bucket = argv.bucket || BUCKET;
     let sourceDir = argv.sourceDir || SOURCE_DIR;
 
-    if (!sourceDir.endsWith('/')) {
-        sourceDir = sourceDir + '/';
+    if (!Array.isArray(sourceDir)) {
+        sourceDir = [sourceDir];
     }
 
-    const sourceFiles = glob.sync(`${sourceDir}/**/*`).filter(file => !isDirectoryOrSystemFile(file));
-    const rootFiles = sourceFiles.map(file => toS3Path(file, sourceDir + '/', S3_DEST_PATH));
+    let rootFiles = [];
+
+    rootFiles = sourceDir.flatMap(dir => {
+        if (!dir.endsWith('/')) {
+            dir = dir + '/';
+        }
+
+        const sourceFiles = glob.sync(`${dir}/**/*`).filter(file => !isDirectoryOrSystemFile(file));
+        return sourceFiles.map(file => toS3Path(file, dir + '/', S3_DEST_PATH));
+    });
 
     return uploadFiles({
         files: [...rootFiles],
@@ -38,10 +46,10 @@ async function distUploadSamplesData() {
     });
 }
 
-distUploadSamplesData.description = 'Uploads samples data to S3';
+distUploadSamplesData.description = 'Uploads sample resources to S3';
 distUploadSamplesData.flags = {
     '--profile': 'AWS profile to load from AWS credentials file. If no profile is provided the default profile or ' +
         'standard AWS environment variables for credentials will be used. (optional)'
 };
 
-gulp.task('dist-upload-samples-data', distUploadSamplesData);
+gulp.task('dist-upload-samples-resources', distUploadSamplesData);
