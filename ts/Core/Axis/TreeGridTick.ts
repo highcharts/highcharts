@@ -11,9 +11,9 @@
 
 'use strict';
 
-import type Tick from '../Core/Axis/Tick';
+import type Tick from './Tick';
 import type TreeGridAxis from './TreeGridAxis';
-import U from '../Core/Utilities.js';
+import U from '../Utilities.js';
 const {
     addEvent,
     defined,

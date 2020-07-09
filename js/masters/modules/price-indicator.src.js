@@ -12,4 +12,4 @@
  * License: www.highcharts.com/license
  */
 'use strict';
-import '../../Stock/Indicators/PriceIndicator.js';
+import '../../Extensions/PriceIndication.js';

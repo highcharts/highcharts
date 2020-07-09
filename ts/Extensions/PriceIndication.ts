@@ -9,7 +9,7 @@
  */
 
 'use strict';
-import H from '../../Core/Globals.js';
+import H from '../Core/Globals.js';
 
 declare global {
     namespace Highcharts {
@@ -35,7 +35,7 @@ declare global {
     }
 }
 
-import U from '../../Core/Utilities.js';
+import U from '../Core/Utilities.js';
 const {
     addEvent,
     isArray,

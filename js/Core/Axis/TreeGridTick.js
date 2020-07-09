@@ -9,7 +9,7 @@
  *
  * */
 'use strict';
-import U from '../Core/Utilities.js';
+import U from '../Utilities.js';
 var addEvent = U.addEvent, defined = U.defined, isObject = U.isObject, isNumber = U.isNumber, pick = U.pick, wrap = U.wrap;
 /**
  * @private

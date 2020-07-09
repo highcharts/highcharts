@@ -10,11 +10,11 @@
  *
  * */
 'use strict';
-import Chart from '../Core/Chart/Chart.js';
-import H from '../Core/Globals.js';
-import U from '../Core/Utilities.js';
+import Chart from './Chart.js';
+import H from '../Globals.js';
+import U from '../Utilities.js';
 var getOptions = U.getOptions, isArray = U.isArray, merge = U.merge, splat = U.splat;
-import './GanttSeries.js';
+import '../../Series/GanttSeries.js';
 /**
  * Factory function for Gantt charts.
  *
