@@ -11,14 +11,14 @@
 
 'use strict';
 
-import type AxisTypes from '../Core/Axis/Types';
-import type Chart from '../Core/Chart/Chart';
-import Axis from '../Core/Axis/Axis.js';
-import Tick from '../Core/Axis/Tick.js';
-import Tree from './Tree.js';
+import type AxisTypes from './Types';
+import type Chart from '../Chart/Chart';
+import Axis from './Axis.js';
+import Tick from './Tick.js';
+import Tree from '../../Gantt/Tree.js';
 import TreeGridTick from './TreeGridTick.js';
-import TreeSeriesMixin from '../mixins/tree-series.js';
-import U from '../Core/Utilities.js';
+import TreeSeriesMixin from '../../mixins/tree-series.js';
+import U from '../Utilities.js';
 const {
     addEvent,
     find,
@@ -32,7 +32,7 @@ const {
 } = U;
 
 import './GridAxis.js';
-import '../Core/Axis/BrokenAxis.js';
+import './BrokenAxis.js';
 
 /**
  * Internal types
@@ -52,7 +52,7 @@ declare global {
 /**
  * @private
  */
-declare module '../Core/Axis/Types' {
+declare module './Types' {
     interface AxisComposition {
         treeGrid?: TreeGridAxis['treeGrid'];
     }

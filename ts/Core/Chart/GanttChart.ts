@@ -12,8 +12,8 @@
 
 'use strict';
 
-import Chart from '../Core/Chart/Chart.js';
-import H from '../Core/Globals.js';
+import Chart from './Chart.js';
+import H from '../Globals.js';
 
 /**
  * Internal types
@@ -32,7 +32,7 @@ declare global {
     }
 }
 
-import U from '../Core/Utilities.js';
+import U from '../Utilities.js';
 const {
     getOptions,
     isArray,
@@ -40,7 +40,7 @@ const {
     splat
 } = U;
 
-import './GanttSeries.js';
+import '../../Series/GanttSeries.js';
 
 /**
  * Factory function for Gantt charts.

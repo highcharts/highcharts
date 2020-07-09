@@ -17,7 +17,7 @@ import type SVGPath from '../Core/Renderer/SVG/SVGPath';
 import H from '../Core/Globals.js';
 import O from '../Core/Options.js';
 const { dateFormat } = O;
-import './TreeGridAxis.js';
+import '../Core/Axis/TreeGridAxis.js';
 import U from '../Core/Utilities.js';
 const {
     isNumber,
@@ -91,10 +91,10 @@ declare global {
     }
 }
 
-import './CurrentDateIndicator.js';
-import '../modules/static-scale.src.js';
-import './Pathfinder.js';
-import '../modules/xrange.src.js';
+import '../Extensions/CurrentDateIndication.js';
+import '../Extensions/StaticScale.js';
+import '../Gantt/Pathfinder.js';
+import './XRangeSeries.js';
 
 var seriesTypes = H.seriesTypes,
     Series = H.Series,

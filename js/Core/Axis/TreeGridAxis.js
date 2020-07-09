@@ -9,15 +9,15 @@
  *
  * */
 'use strict';
-import Axis from '../Core/Axis/Axis.js';
-import Tick from '../Core/Axis/Tick.js';
-import Tree from './Tree.js';
+import Axis from './Axis.js';
+import Tick from './Tick.js';
+import Tree from '../../Gantt/Tree.js';
 import TreeGridTick from './TreeGridTick.js';
-import TreeSeriesMixin from '../mixins/tree-series.js';
-import U from '../Core/Utilities.js';
+import TreeSeriesMixin from '../../mixins/tree-series.js';
+import U from '../Utilities.js';
 var addEvent = U.addEvent, find = U.find, fireEvent = U.fireEvent, isNumber = U.isNumber, isObject = U.isObject, isString = U.isString, merge = U.merge, pick = U.pick, wrap = U.wrap;
 import './GridAxis.js';
-import '../Core/Axis/BrokenAxis.js';
+import './BrokenAxis.js';
 /**
  * @private
  */

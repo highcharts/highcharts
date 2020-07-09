@@ -13,13 +13,13 @@
 import H from '../Core/Globals.js';
 import O from '../Core/Options.js';
 var dateFormat = O.dateFormat;
-import './TreeGridAxis.js';
+import '../Core/Axis/TreeGridAxis.js';
 import U from '../Core/Utilities.js';
 var isNumber = U.isNumber, merge = U.merge, pick = U.pick, seriesType = U.seriesType, splat = U.splat;
-import './CurrentDateIndicator.js';
-import '../modules/static-scale.src.js';
-import './Pathfinder.js';
-import '../modules/xrange.src.js';
+import '../Extensions/CurrentDateIndication.js';
+import '../Extensions/StaticScale.js';
+import '../Gantt/Pathfinder.js';
+import './XRangeSeries.js';
 var seriesTypes = H.seriesTypes, Series = H.Series, parent = seriesTypes.xrange;
 /**
  * @private
