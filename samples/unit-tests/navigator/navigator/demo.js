@@ -994,3 +994,24 @@ QUnit.test('Navigator overlaps chart (#13392).', function (assert) {
         'Navigator should not overlap the chart (#13392).'
     );
 });
+
+QUnit.test('Navigator with adding series on chart load.', function (assert) {
+    Highcharts.stockChart('container', {
+        chart: {
+            events: {
+                load: function (event) {
+                    this.navigator.onMouseUp(event);
+                    const xStr = this.navigator.shades[1].element.getAttribute('x');
+                    assert.notEqual(
+                        /^[\-0-9\.]+$/.test(xStr) || xStr === null,
+                        false,
+                        "Navigator rects have correctly defined x attribute."
+                    );
+                }
+            }
+        },
+        series: [{
+            data: []
+        }]
+    });
+});

@@ -1131,7 +1131,7 @@ var Navigator = /** @class */ (function () {
      */
     Navigator.prototype.onMouseUp = function (e) {
         var navigator = this, chart = navigator.chart, xAxis = navigator.xAxis, scrollbar = navigator.scrollbar, DOMEvent = e.DOMEvent || e, inverted = chart.inverted, verb = navigator.rendered && !navigator.hasDragged ?
-            'animate' : 'attr', zoomedMax = Math.round(navigator.zoomedMax), zoomedMin = Math.round(navigator.zoomedMin), unionExtremes, fixedMin, fixedMax, ext;
+            'animate' : 'attr', zoomedMax, zoomedMin, unionExtremes, fixedMin, fixedMax, ext;
         if (
         // MouseUp is called for both, navigator and scrollbar (that order),
         // which causes calling afterSetExtremes twice. Prevent first call
@@ -1178,7 +1178,11 @@ var Navigator = /** @class */ (function () {
                         navigator.hasDragged = navigator.dragOffset = null;
         }
         // Update position of navigator shades, outline and handles (#12573)
-        if (navigator.navigatorEnabled) {
+        if (navigator.navigatorEnabled &&
+            navigator.zoomedMin &&
+            navigator.zoomedMax) {
+            zoomedMin = Math.round(navigator.zoomedMin);
+            zoomedMax = Math.round(navigator.zoomedMax);
             if (navigator.shades) {
                 navigator.drawMasks(zoomedMin, zoomedMax, inverted, verb);
             }
