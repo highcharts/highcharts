@@ -40,7 +40,7 @@ import Point from '../Core/Series/Point.js';
 import U from '../Core/Utilities.js';
 var addEvent = U.addEvent, defined = U.defined, error = U.error, extend = U.extend, merge = U.merge, objectEach = U.objectEach, pick = U.pick, splat = U.splat;
 import pathfinderAlgorithms from './PathfinderAlgorithms.js';
-import './ArrowSymbols.js';
+import '../Extensions/ArrowSymbols.js';
 var deg2rad = H.deg2rad, max = Math.max, min = Math.min;
 /*
  @todo:
