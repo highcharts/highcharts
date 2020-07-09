@@ -181,7 +181,7 @@ declare global {
  *        Event that occured.
  */
 
-import '../Core/Series/Series.js';
+import './Series/Series.js';
 
 var hasTouch = H.hasTouch,
     Series = H.Series,
