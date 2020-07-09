@@ -13,7 +13,7 @@
  * */
 'use strict';
 import H from '../Core/Globals.js';
-import Math3D from '../parts-3d/Math.js';
+import Math3D from '../Extensions/Math3D.js';
 var perspective = Math3D.perspective;
 import Color from '../Core/Color.js';
 var color = Color.parse;

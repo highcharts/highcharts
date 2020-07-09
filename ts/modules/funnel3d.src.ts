@@ -17,7 +17,7 @@
 import type Chart from '../Core/Chart/Chart';
 import type SVGPath from '../Core/Renderer/SVG/SVGPath';
 import H from '../Core/Globals.js';
-import Math3D from '../parts-3d/Math.js';
+import Math3D from '../Extensions/Math3D.js';
 const { perspective } = Math3D;
 
 /**

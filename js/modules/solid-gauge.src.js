@@ -26,7 +26,7 @@ var clamp = U.clamp, extend = U.extend, isNumber = U.isNumber, merge = U.merge, 
 * @type {boolean|undefined}
 */
 import '../Core/Options.js';
-import '../parts-more/GaugeSeries.js';
+import '../Series/GaugeSeries.js';
 var Renderer = H.Renderer;
 /**
  * Symbol definition of an arc with round edges.

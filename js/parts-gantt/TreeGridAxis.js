@@ -17,7 +17,7 @@ import TreeSeriesMixin from '../mixins/tree-series.js';
 import U from '../Core/Utilities.js';
 var addEvent = U.addEvent, find = U.find, fireEvent = U.fireEvent, isNumber = U.isNumber, isObject = U.isObject, isString = U.isString, merge = U.merge, pick = U.pick, wrap = U.wrap;
 import './GridAxis.js';
-import '../modules/broken-axis.src.js';
+import '../Core/Axis/BrokenAxis.js';
 /**
  * @private
  */

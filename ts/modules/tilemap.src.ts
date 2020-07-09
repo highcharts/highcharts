@@ -103,7 +103,7 @@ const {
     seriesType
 } = U;
 
-import '../parts-map/HeatmapSeries.js';
+import '../Series/HeatmapSeries.js';
 
 /**
  * Utility func to get padding definition from tile size division

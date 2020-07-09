@@ -18,7 +18,7 @@ import H from '../Core/Globals.js';
 ''; // detach doclets above
 import U from '../Core/Utilities.js';
 var addEvent = U.addEvent, clamp = U.clamp, extend = U.extend, pick = U.pick, seriesType = U.seriesType;
-import '../parts-map/HeatmapSeries.js';
+import '../Series/HeatmapSeries.js';
 /**
  * Utility func to get padding definition from tile size division
  * @private
