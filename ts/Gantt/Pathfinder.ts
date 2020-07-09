@@ -207,7 +207,7 @@ const {
 } = U;
 
 import pathfinderAlgorithms from './PathfinderAlgorithms.js';
-import './ArrowSymbols.js';
+import '../Extensions/ArrowSymbols.js';
 
 var deg2rad = H.deg2rad,
     max = Math.max,
