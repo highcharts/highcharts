@@ -39,13 +39,13 @@ const SOURCE_GLOBS = [
     'js/parts-gantt/GanttChart.js',
     'js/parts-gantt/TreeGridAxis.js',
     'js/parts-gantt/TreeGridTick.js',
-    'js/parts-map/ColorAxis.js',
-    'js/parts-map/GeoJSON.js',
-    'js/parts-map/Map.js',
-    'js/parts-map/MapNavigation.js',
-    'js/parts-map/MapSeries.js',
-    'js/parts-more/AreaRangeSeries.js',
-    'js/parts-more/PackedBubbleSeries.js',
+    'js/Core/Axis/ColorAxis.js',
+    'js/Extensions/GeoJSON.js',
+    'js/Maps/Map.js',
+    'js/Maps/MapNavigation.js',
+    'js/Series/MapSeries.js',
+    'js/Series/AreaRangeSeries.js',
+    'js/Series/PackedBubbleSeries.js',
     'js/mixins/ajax.js',
     'js/modules/accessibility/*.js',
     'js/modules/data.src.js',
@@ -64,10 +64,10 @@ const SOURCE_GLOBS = [
     'js/modules/sonification/*.js',
     'js/modules/sunburst.src.js',
     'js/modules/timeline.src.js',
-    'js/annotations/annotations.src.js',
-    'js/annotations/controllable/controllableMixin.js',
-    'js/annotations/ControlPoint.js',
-    'js/annotations/navigationBindings.js'
+    'js/Extensions/Annotations/Annotations.js',
+    'js/Extensions/Annotations/Mixins/controllableMixin.js',
+    'js/Extensions/Annotations/ControlPoint.js',
+    'js/Extensions/Annotations/NavigationBindings.js'
 ];
 
 const TARGET_DIRECTORY = Path.join('build', 'api', 'class-reference');

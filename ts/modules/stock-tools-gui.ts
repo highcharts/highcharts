@@ -14,7 +14,7 @@
 
 import Chart from '../Core/Chart/Chart.js';
 import H from '../Core/Globals.js';
-import NavigationBindings from '../annotations/navigationBindings.js';
+import NavigationBindings from '../Extensions/Annotations/NavigationBindings.js';
 import U from '../Core/Utilities.js';
 const {
     addEvent,
