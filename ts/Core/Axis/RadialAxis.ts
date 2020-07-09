@@ -11,7 +11,7 @@
 'use strict';
 
 import type Chart from '../Chart/Chart';
-import type Pane from '../../parts-more/Pane';
+import type Pane from '../../Extensions/Pane';
 import type Point from '../Series/Point';
 import type SVGPath from '../Renderer/SVG/SVGPath';
 import Axis from './Axis.js';

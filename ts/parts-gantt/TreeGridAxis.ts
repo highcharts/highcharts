@@ -32,7 +32,7 @@ const {
 } = U;
 
 import './GridAxis.js';
-import '../modules/broken-axis.src.js';
+import '../Core/Axis/BrokenAxis.js';
 
 /**
  * Internal types

@@ -81,7 +81,7 @@ declare global {
 
 import Color from '../Core/Color.js';
 const color = Color.parse;
-import Math3D from '../parts-3d/Math.js';
+import Math3D from '../Extensions/Math3D.js';
 const { perspective } = Math3D;
 import U from '../Core/Utilities.js';
 const {
