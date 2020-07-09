@@ -12,7 +12,6 @@
  * */
 
 'use strict';
-import H from '../Core/Globals.js';
 
 /**
  * Internal types
@@ -45,8 +44,8 @@ import U from '../Core/Utilities.js';
 const {
     seriesType
 } = U;
-import '../parts/ColumnSeries.js';
-import '../parts/SVGRenderer.js';
+import '../Series/ColumnSeries.js';
+import '../Core/Renderer/SVG/SVGRenderer.js';
 
 /**
  * The pyramid3d series type.

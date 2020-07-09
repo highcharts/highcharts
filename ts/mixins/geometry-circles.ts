@@ -4,7 +4,7 @@
  *
  * */
 
-import type SVGPath from '../parts/SVGPath';
+import type SVGPath from '../Core/Renderer/SVG/SVGPath';
 import geometry from './geometry.js';
 const {
     getAngleBetweenPoints,

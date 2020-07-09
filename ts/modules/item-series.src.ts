@@ -85,7 +85,7 @@ const {
     seriesType
 } = U;
 
-import '../parts/Series.js';
+import '../Core/Series/Series.js';
 
 var piePoint = H.seriesTypes.pie.prototype.pointClass.prototype;
 

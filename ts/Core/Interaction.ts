@@ -10,15 +10,15 @@
 
 'use strict';
 
-import type SVGPath from '../parts/SVGPath';
-import Chart from '../parts/Chart.js';
+import type SVGPath from './Renderer/SVG/SVGPath';
+import Chart from './Chart/Chart.js';
 import H from './Globals.js';
 import Legend from './Legend.js';
 import O from './Options.js';
 const {
     defaultOptions
 } = O;
-import Point from '../parts/Point.js';
+import Point from '../Core/Series/Point.js';
 import U from './Utilities.js';
 const {
     addEvent,
@@ -181,7 +181,7 @@ declare global {
  *        Event that occured.
  */
 
-import '../parts/Series.js';
+import '../Core/Series/Series.js';
 
 var hasTouch = H.hasTouch,
     Series = H.Series,

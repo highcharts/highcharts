@@ -56,7 +56,7 @@ const {
     defined
 } = U;
 
-import '../parts/Series.js';
+import '../Core/Series/Series.js';
 
 var Series = H.Series,
     noop = H.noop;

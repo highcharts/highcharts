@@ -44,7 +44,7 @@ import H from '../Core/Globals.js';
 import U from '../Core/Utilities.js';
 var defined = U.defined, extend = U.extend, fireEvent = U.fireEvent;
 import '../Core/Axis/Axis.js';
-import '../parts/Series.js';
+import '../Core/Series/Series.js';
 /* eslint-disable no-invalid-this, valid-jsdoc */
 /**
  * A trimmed point object which imitates {@link Highchart.Point} class. It is

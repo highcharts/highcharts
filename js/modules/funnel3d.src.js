@@ -19,8 +19,8 @@ import Color from '../Core/Color.js';
 var color = Color.parse;
 import U from '../Core/Utilities.js';
 var error = U.error, extend = U.extend, merge = U.merge, pick = U.pick, relativeLength = U.relativeLength, seriesType = U.seriesType;
-import '../parts/ColumnSeries.js';
-import '../parts/SVGRenderer.js';
+import '../Series/ColumnSeries.js';
+import '../Core/Renderer/SVG/SVGRenderer.js';
 var charts = H.charts, seriesTypes = H.seriesTypes, 
 // Use H.Renderer instead of SVGRenderer for VML support.
 RendererProto = H.Renderer.prototype, 

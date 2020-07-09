@@ -13,10 +13,10 @@
 'use strict';
 
 import type { AxisType } from '../Core/Axis/Types';
-import type Point from '../parts/Point';
-import type RadialAxis from '../parts-more/RadialAxis';
+import type Point from '../Core/Series/Point';
+import type RadialAxis from '../Core/Axis/RadialAxis';
 import Axis from '../Core/Axis/Axis.js';
-import Chart from '../parts/Chart.js';
+import Chart from '../Core/Chart/Chart.js';
 import H from '../Core/Globals.js';
 import U from '../Core/Utilities.js';
 const {
@@ -76,7 +76,7 @@ declare module '../Core/Axis/Types' {
     }
 }
 
-import '../parts/Series.js';
+import '../Core/Series/Series.js';
 
 // Extensions for parallel coordinates plot.
 var ChartProto = Chart.prototype;

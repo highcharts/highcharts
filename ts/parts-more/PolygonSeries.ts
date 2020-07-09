@@ -10,7 +10,7 @@
 
 'use strict';
 
-import type SVGPath from '../parts/SVGPath';
+import type SVGPath from '../Core/Renderer/SVG/SVGPath';
 import H from '../Core/Globals.js';
 
 /**
@@ -50,9 +50,9 @@ const {
     seriesType
 } = U;
 import '../Core/Options.js';
-import '../parts/Series.js';
+import '../Core/Series/Series.js';
 import '../Core/Legend.js';
-import '../parts/ScatterSeries.js';
+import '../Series/ScatterSeries.js';
 
 var noop = H.noop,
     Series = H.Series,

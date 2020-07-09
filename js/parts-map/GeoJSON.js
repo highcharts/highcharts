@@ -8,7 +8,7 @@
  *
  * */
 'use strict';
-import Chart from '../parts/Chart.js';
+import Chart from '../Core/Chart/Chart.js';
 import H from '../Core/Globals.js';
 var win = H.win;
 import '../Core/Options.js';

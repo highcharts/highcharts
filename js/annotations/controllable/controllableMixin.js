@@ -6,7 +6,7 @@
 'use strict';
 import ControlPoint from '../ControlPoint.js';
 import MockPoint from '../MockPoint.js';
-import Tooltip from '../../parts/Tooltip.js';
+import Tooltip from '../../Core/Tooltip.js';
 import U from '../../Core/Utilities.js';
 var isObject = U.isObject, isString = U.isString, merge = U.merge, splat = U.splat;
 /**

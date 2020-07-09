@@ -14,9 +14,9 @@
 
 'use strict';
 
-import type Point from '../parts/Point';
-import type SVGPath from '../parts/SVGPath';
-import Chart from '../parts/Chart.js';
+import type Point from '../Core/Series/Point';
+import type SVGPath from '../Core/Renderer/SVG/SVGPath';
+import Chart from '../Core/Chart/Chart.js';
 import H from '../Core/Globals.js';
 const {
     noop,
@@ -109,7 +109,7 @@ declare global {
 }
 
 import '../Core/Options.js';
-import '../parts/Series.js';
+import '../Core/Series/Series.js';
 
 /**
  * @private

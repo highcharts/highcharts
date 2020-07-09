@@ -12,7 +12,7 @@
 
 'use strict';
 
-import Chart from '../parts/Chart.js';
+import Chart from '../Core/Chart/Chart.js';
 import H from '../Core/Globals.js';
 import NavigationBindings from '../annotations/navigationBindings.js';
 import U from '../Core/Utilities.js';
@@ -152,8 +152,7 @@ declare global {
     }
 }
 
-var win = H.win,
-    DIV = 'div',
+var DIV = 'div',
     SPAN = 'span',
     UL = 'ul',
     LI = 'li',

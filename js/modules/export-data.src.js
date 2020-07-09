@@ -14,7 +14,7 @@
 //   module importing the same data.
 'use strict';
 import Axis from '../Core/Axis/Axis.js';
-import Chart from '../parts/Chart.js';
+import Chart from '../Core/Chart/Chart.js';
 import H from '../Core/Globals.js';
 var doc = H.doc, seriesTypes = H.seriesTypes, win = H.win;
 import U from '../Core/Utilities.js';

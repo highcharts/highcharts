@@ -62,7 +62,7 @@
 'use strict';
 
 import Axis from '../../../Core/Axis/Axis.js';
-import Chart from '../../../parts/Chart.js';
+import Chart from '../../../Core/Chart/Chart.js';
 import U from '../../../Core/Utilities.js';
 const {
     error,

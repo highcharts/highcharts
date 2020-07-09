@@ -21,7 +21,7 @@ import ChartUtilities from '../../utils/chartUtilities.js';
 var hideSeriesFromAT = ChartUtilities.hideSeriesFromAT;
 import SeriesDescriber from './SeriesDescriber.js';
 var describeSeries = SeriesDescriber.describeSeries;
-import Tooltip from '../../../../parts/Tooltip.js';
+import Tooltip from '../../../../Core/Tooltip.js';
 // Expose functionality to users
 H.SeriesAccessibilityDescriber = SeriesDescriber;
 // Handle forcing markers

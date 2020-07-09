@@ -19,8 +19,8 @@ import Math3D from '../parts-3d/Math.js';
 var perspective = Math3D.perspective;
 import U from '../Core/Utilities.js';
 var merge = U.merge, pick = U.pick, seriesType = U.seriesType;
-import '../parts/ColumnSeries.js';
-import '../parts/SVGRenderer.js';
+import '../Series/ColumnSeries.js';
+import '../Core/Renderer/SVG/SVGRenderer.js';
 var charts = H.charts, deg2rad = H.deg2rad, 
 // Work on H.Renderer instead of SVGRenderer for VML support.
 RendererProto = H.Renderer.prototype, cuboidPath = RendererProto.cuboidPath, cylinderMethods;

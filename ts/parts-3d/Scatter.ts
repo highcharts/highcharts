@@ -43,7 +43,7 @@ declare global {
 
 import Math3D from '../parts-3d/Math.js';
 const { pointCameraDistance } = Math3D;
-import Point from '../parts/Point.js';
+import Point from '../Core/Series/Point.js';
 import U from '../Core/Utilities.js';
 const {
     seriesType

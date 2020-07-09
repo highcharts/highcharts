@@ -11,8 +11,8 @@
 'use strict';
 
 import type { AxisBreakBorderObject, AxisBreakObject } from '../Core/Axis/Types';
-import type Point from '../parts/Point';
-import type SVGPath from '../parts/SVGPath';
+import type Point from '../Core/Series/Point';
+import type SVGPath from '../Core/Renderer/SVG/SVGPath';
 import Axis from '../Core/Axis/Axis.js';
 import H from '../Core/Globals.js';
 import U from '../Core/Utilities.js';
@@ -57,8 +57,8 @@ declare module '../Core/Axis/Types' {
     }
 }
 
-import '../parts/Series.js';
-import StackItem from '../parts/Stacking.js';
+import '../Core/Series/Series.js';
+import StackItem from '../Extensions/Stacking.js';
 
 var Series = H.Series;
 

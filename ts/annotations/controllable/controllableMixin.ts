@@ -7,10 +7,10 @@
 'use strict';
 
 import type Annotation from '../annotations.src';
-import type SVGElement from '../../parts/SVGElement';
+import type SVGElement from '../../Core/Renderer/SVG/SVGElement';
 import ControlPoint from '../ControlPoint.js';
 import MockPoint from '../MockPoint.js';
-import Tooltip from '../../parts/Tooltip.js';
+import Tooltip from '../../Core/Tooltip.js';
 import U from '../../Core/Utilities.js';
 const {
     isObject,

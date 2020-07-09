@@ -12,7 +12,7 @@
 'use strict';
 
 import type AxisTypes from '../Core/Axis/Types';
-import type Chart from '../parts/Chart';
+import type Chart from '../Core/Chart/Chart';
 import Axis from '../Core/Axis/Axis.js';
 import Tick from '../Core/Axis/Tick.js';
 import Tree from './Tree.js';

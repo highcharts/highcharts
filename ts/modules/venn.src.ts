@@ -17,8 +17,8 @@
 
 'use strict';
 
-import type Chart from '../parts/Chart';
-import type SVGPath from '../parts/SVGPath';
+import type Chart from '../Core/Chart/Chart';
+import type SVGPath from '../Core/Renderer/SVG/SVGPath';
 import Color from '../Core/Color.js';
 const color = Color.parse;
 import H from '../Core/Globals.js';
@@ -163,7 +163,7 @@ import nelderMeadModule from '../mixins/nelder-mead.js';
 // TODO: replace with individual imports
 var nelderMead = nelderMeadModule.nelderMead;
 
-import '../parts/Series.js';
+import '../Core/Series/Series.js';
 
 var getCenterOfPoints = geometry.getCenterOfPoints,
     getDistanceBetweenPoints = geometry.getDistanceBetweenPoints,

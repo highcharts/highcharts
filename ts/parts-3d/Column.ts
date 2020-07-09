@@ -11,11 +11,11 @@
 'use strict';
 
 import type Axis from '../Core/Axis/Axis';
-import type Chart from '../parts/Chart';
+import type Chart from '../Core/Chart/Chart';
 import H from '../Core/Globals.js';
 import Math3D from '../parts-3d/Math.js';
 const { perspective } = Math3D;
-import StackItem from '../parts/Stacking.js';
+import StackItem from '../Extensions/Stacking.js';
 import U from '../Core/Utilities.js';
 const {
     addEvent,
@@ -62,7 +62,7 @@ declare global {
     }
 }
 
-import '../parts/Series.js';
+import '../Core/Series/Series.js';
 
 var Series = H.Series,
     seriesTypes = H.seriesTypes,

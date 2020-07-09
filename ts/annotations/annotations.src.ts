@@ -11,9 +11,9 @@
 'use strict';
 
 import type { AxisType } from '../Core/Axis/Types';
-import type Point from '../parts/Point';
-import type SVGPath from '../parts/SVGPath';
-import Chart from '../parts/Chart.js';
+import type Point from '../Core/Series/Point';
+import type SVGPath from '../Core/Renderer/SVG/SVGPath';
+import Chart from '../Core/Chart/Chart.js';
 const chartProto: Highcharts.AnnotationChart = Chart.prototype as any;
 import ControllableMixin from './controllable/controllableMixin.js';
 import ControllableRect from './controllable/ControllableRect.js';
@@ -25,7 +25,7 @@ import ControlPoint from './ControlPoint.js';
 import EventEmitterMixin from './eventEmitterMixin.js';
 import H from '../Core/Globals.js';
 import MockPoint from './MockPoint.js';
-import Pointer from '../parts/Pointer.js';
+import Pointer from '../Core/Pointer.js';
 import U from '../Core/Utilities.js';
 const {
     addEvent,

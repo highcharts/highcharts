@@ -8,16 +8,16 @@
  *
  * */
 'use strict';
-import Axis from '../Core/Axis/Axis.js';
-import Chart from '../parts/Chart.js';
+import Axis from './Axis/Axis.js';
+import Chart from './Chart/Chart.js';
 import H from './Globals.js';
 import O from './Options.js';
 var time = O.time;
-import Point from '../parts/Point.js';
+import Point from '../Core/Series/Point.js';
 import Time from './Time.js';
 import U from './Utilities.js';
 var addEvent = U.addEvent, animate = U.animate, createElement = U.createElement, css = U.css, defined = U.defined, erase = U.erase, error = U.error, extend = U.extend, fireEvent = U.fireEvent, isArray = U.isArray, isNumber = U.isNumber, isObject = U.isObject, isString = U.isString, merge = U.merge, objectEach = U.objectEach, pick = U.pick, relativeLength = U.relativeLength, setAnimation = U.setAnimation, splat = U.splat;
-import '../parts/Series.js';
+import '../Core/Series/Series.js';
 var Series = H.Series, seriesTypes = H.seriesTypes;
 /* eslint-disable valid-jsdoc */
 /**

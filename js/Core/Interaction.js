@@ -8,12 +8,12 @@
  *
  * */
 'use strict';
-import Chart from '../parts/Chart.js';
+import Chart from './Chart/Chart.js';
 import H from './Globals.js';
 import Legend from './Legend.js';
 import O from './Options.js';
 var defaultOptions = O.defaultOptions;
-import Point from '../parts/Point.js';
+import Point from '../Core/Series/Point.js';
 import U from './Utilities.js';
 var addEvent = U.addEvent, createElement = U.createElement, css = U.css, defined = U.defined, extend = U.extend, fireEvent = U.fireEvent, isArray = U.isArray, isFunction = U.isFunction, isNumber = U.isNumber, isObject = U.isObject, merge = U.merge, objectEach = U.objectEach, pick = U.pick;
 /**
@@ -64,7 +64,7 @@ var addEvent = U.addEvent, createElement = U.createElement, css = U.css, defined
  * @param {Highcharts.PointInteractionEventObject} event
  *        Event that occured.
  */
-import '../parts/Series.js';
+import '../Core/Series/Series.js';
 var hasTouch = H.hasTouch, Series = H.Series, seriesTypes = H.seriesTypes, svg = H.svg, TrackerMixin;
 /* eslint-disable valid-jsdoc */
 /**

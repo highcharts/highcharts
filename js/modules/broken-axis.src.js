@@ -12,8 +12,8 @@ import Axis from '../Core/Axis/Axis.js';
 import H from '../Core/Globals.js';
 import U from '../Core/Utilities.js';
 var addEvent = U.addEvent, find = U.find, fireEvent = U.fireEvent, isArray = U.isArray, isNumber = U.isNumber, pick = U.pick;
-import '../parts/Series.js';
-import StackItem from '../parts/Stacking.js';
+import '../Core/Series/Series.js';
+import StackItem from '../Extensions/Stacking.js';
 var Series = H.Series;
 /* eslint-disable valid-jsdoc */
 /**

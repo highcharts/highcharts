@@ -13,8 +13,8 @@
 'use strict';
 
 import type Axis from '../Core/Axis/Axis';
-import type Point from '../parts/Point';
-import type SVGPath from '../parts/SVGPath';
+import type Point from '../Core/Series/Point';
+import type SVGPath from '../Core/Renderer/SVG/SVGPath';
 import H from '../Core/Globals.js';
 import Math3D from '../parts-3d/Math.js';
 const {

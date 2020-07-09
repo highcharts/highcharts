@@ -14,7 +14,7 @@
 
 import Axis from '../Core/Axis/Axis.js';
 import Axis3D from './Axis3D.js';
-import Chart from '../parts/Chart.js';
+import Chart from '../Core/Chart/Chart.js';
 import H from '../Core/Globals.js';
 import Math3D from '../parts-3d/Math.js';
 const {

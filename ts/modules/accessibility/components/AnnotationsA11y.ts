@@ -13,7 +13,7 @@
 'use strict';
 
 import type Annotation from '../../../annotations/annotations.src';
-import type Point from '../../../parts/Point';
+import type Point from '../../../Core/Series/Point';
 
 import HTMLUtilities from '../utils/htmlUtilities.js';
 const {

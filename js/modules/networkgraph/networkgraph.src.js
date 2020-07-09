@@ -11,7 +11,7 @@
  * */
 'use strict';
 import H from '../../Core/Globals.js';
-import Point from '../../parts/Point.js';
+import Point from '../../Core/Series/Point.js';
 import U from '../../Core/Utilities.js';
 var addEvent = U.addEvent, css = U.css, defined = U.defined, pick = U.pick, seriesType = U.seriesType;
 /**

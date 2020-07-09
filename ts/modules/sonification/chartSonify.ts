@@ -12,7 +12,7 @@
 
 'use strict';
 
-import type Chart from '../../parts/Chart';
+import type Chart from '../../Core/Chart/Chart';
 import H from '../../Core/Globals.js';
 
 /**
@@ -217,7 +217,7 @@ declare global {
 
 ''; // detach doclets above
 
-import Point from '../../parts/Point.js';
+import Point from '../../Core/Series/Point.js';
 import U from '../../Core/Utilities.js';
 const {
     find,

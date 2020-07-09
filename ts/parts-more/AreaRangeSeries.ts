@@ -10,8 +10,8 @@
 
 'use strict';
 
-import type RadialAxis from './RadialAxis';
-import type SVGPath from '../parts/SVGPath';
+import type RadialAxis from '../Core/Axis/RadialAxis';
+import type SVGPath from '../Core/Renderer/SVG/SVGPath';
 import H from '../Core/Globals.js';
 
 /**
@@ -87,7 +87,7 @@ declare global {
     }
 }
 
-import Point from '../parts/Point.js';
+import Point from '../Core/Series/Point.js';
 import U from '../Core/Utilities.js';
 const {
     defined,
@@ -99,7 +99,7 @@ const {
 } = U;
 
 import '../Core/Options.js';
-import '../parts/Series.js';
+import '../Core/Series/Series.js';
 
 var noop = H.noop,
     Series = H.Series,

@@ -11,10 +11,10 @@
 'use strict';
 
 import type { AxisComposition, AxisLike } from './Types';
-import type Chart from '../../parts/Chart';
+import type Chart from '../Chart/Chart';
 import type PlotLineOrBand from './PlotLineOrBand';
-import type Point from '../../parts/Point';
-import type SVGPath from '../../parts/SVGPath';
+import type Point from '../../Core/Series/Point';
+import type SVGPath from '../Renderer/SVG/SVGPath';
 import Color from '../Color.js';
 import H from '../Globals.js';
 import Tick from './Tick.js';

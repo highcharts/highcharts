@@ -10,7 +10,7 @@
  *
  * */
 'use strict';
-import Chart from '../parts/Chart.js';
+import Chart from '../Core/Chart/Chart.js';
 import Color from '../Core/Color.js';
 var color = Color.parse;
 import H from '../Core/Globals.js';

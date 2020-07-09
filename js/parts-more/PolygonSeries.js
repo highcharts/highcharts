@@ -13,9 +13,9 @@ import LegendSymbolMixin from '../mixins/legend-symbol.js';
 import U from '../Core/Utilities.js';
 var seriesType = U.seriesType;
 import '../Core/Options.js';
-import '../parts/Series.js';
+import '../Core/Series/Series.js';
 import '../Core/Legend.js';
-import '../parts/ScatterSeries.js';
+import '../Series/ScatterSeries.js';
 var noop = H.noop, Series = H.Series, seriesTypes = H.seriesTypes;
 /**
  * A polygon series can be used to draw any freeform shape in the cartesian

@@ -7,8 +7,8 @@
 'use strict';
 
 import type Annotation from '../annotations.src';
-import type SVGElement from '../../parts/SVGElement';
-import type SVGPath from '../../parts/SVGPath';
+import type SVGElement from '../../Core/Renderer/SVG/SVGElement';
+import type SVGPath from '../../Core/Renderer/SVG/SVGPath';
 import ControllableMixin from './controllableMixin.js';
 import H from '../../Core/Globals.js';
 import MarkerMixin from './markerMixin.js';

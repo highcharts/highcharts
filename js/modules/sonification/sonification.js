@@ -13,7 +13,7 @@
 import H from '../../Core/Globals.js';
 import O from '../../Core/Options.js';
 var defaultOptions = O.defaultOptions;
-import Point from '../../parts/Point.js';
+import Point from '../../Core/Series/Point.js';
 import U from '../../Core/Utilities.js';
 var addEvent = U.addEvent, extend = U.extend, merge = U.merge;
 import Instrument from './Instrument.js';

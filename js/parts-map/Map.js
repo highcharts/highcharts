@@ -8,15 +8,15 @@
  *
  * */
 'use strict';
-import Chart from '../parts/Chart.js';
+import Chart from '../Core/Chart/Chart.js';
 import H from '../Core/Globals.js';
 import O from '../Core/Options.js';
 var defaultOptions = O.defaultOptions;
-import SVGRenderer from '../parts/SVGRenderer.js';
+import SVGRenderer from '../Core/Renderer/SVG/SVGRenderer.js';
 import U from '../Core/Utilities.js';
 var extend = U.extend, getOptions = U.getOptions, merge = U.merge, pick = U.pick;
 import '../Core/Options.js';
-import '../parts/Chart.js';
+import '../Core/Chart/Chart.js';
 var Renderer = H.Renderer, VMLRenderer = H.VMLRenderer;
 // Add language
 extend(defaultOptions.lang, {

@@ -13,5 +13,5 @@
 import '../../parts-gantt/GanttSeries.js';
 import '../../parts-gantt/GanttChart.js';
 import '../../Core/Scrollbar.js';
-import '../../parts/RangeSelector.js';
+import '../../Extensions/RangeSelector.js';
 import '../../Core/Navigator.js';

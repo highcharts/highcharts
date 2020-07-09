@@ -12,9 +12,9 @@
 
 'use strict';
 
-import type ColorAxis from '../parts-map/ColorAxis';
-import type RadialAxis from '../parts-more/RadialAxis';
-import type SVGPath from '../parts/SVGPath';
+import type ColorAxis from '../Core/Axis/ColorAxis';
+import type RadialAxis from '../Core/Axis/RadialAxis';
+import type SVGPath from '../Core/Renderer/SVG/SVGPath';
 import Color from '../Core/Color.js';
 const color = Color.parse;
 import H from '../Core/Globals.js';

@@ -10,11 +10,11 @@
 
 'use strict';
 
-import Chart from '../parts/Chart.js';
+import Chart from '../Core/Chart/Chart.js';
 import Color from '../Core/Color.js';
 const color = Color.parse;
 import H from '../Core/Globals.js';
-import Point from '../parts/Point.js';
+import Point from '../Core/Series/Point.js';
 import U from '../Core/Utilities.js';
 const {
     addEvent,
@@ -268,7 +268,7 @@ declare global {
  */
 
 import '../Core/Axis/Axis.js';
-import '../parts/Series.js';
+import '../Core/Series/Series.js';
 import '../modules/networkgraph/layouts.js';
 import '../modules/networkgraph/draggable-nodes.js';
 

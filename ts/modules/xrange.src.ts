@@ -18,7 +18,7 @@ import Color from '../Core/Color.js';
 const {
     parse: color
 } = Color;
-import Point from '../parts/Point.js';
+import Point from '../Core/Series/Point.js';
 import U from '../Core/Utilities.js';
 const {
     addEvent,

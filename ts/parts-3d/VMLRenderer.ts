@@ -14,7 +14,7 @@
 
 import Axis from '../Core/Axis/Axis.js';
 import H from '../Core/Globals.js';
-import SVGRenderer from '../parts/SVGRenderer.js';
+import SVGRenderer from '../Core/Renderer/SVG/SVGRenderer.js';
 import U from '../Core/Utilities.js';
 const { setOptions } = U;
 import VMLAxis3D from './VMLAxis3D.js';

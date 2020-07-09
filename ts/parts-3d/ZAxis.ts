@@ -9,7 +9,7 @@
  * */
 
 import type { AxisLike } from '../Core/Axis/Types';
-import type Chart from '../parts/Chart.js';
+import type Chart from '../Core/Chart/Chart.js';
 import Axis from '../Core/Axis/Axis.js';
 import U from '../Core/Utilities.js';
 const {

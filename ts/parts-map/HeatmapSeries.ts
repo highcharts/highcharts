@@ -10,11 +10,11 @@
 
 'use strict';
 
-import type Point from '../parts/Point';
-import type SVGPath from '../parts/SVGPath';
+import type Point from '../Core/Series/Point';
+import type SVGPath from '../Core/Renderer/SVG/SVGPath';
 import H from '../Core/Globals.js';
 import LegendSymbolMixin from '../mixins/legend-symbol.js';
-import SVGRenderer from '../parts/SVGRenderer.js';
+import SVGRenderer from '../Core/Renderer/SVG/SVGRenderer.js';
 import U from '../Core/Utilities.js';
 const {
     clamp,
@@ -131,8 +131,8 @@ declare global {
 ''; // detach doclets above
 
 import '../Core/Options.js';
-import '../parts/Series.js';
-import './ColorMapSeriesMixin.js';
+import '../Core/Series/Series.js';
+import '../mixins/color-map-series.js';
 
 var colorMapPointMixin = H.colorMapPointMixin,
     colorMapSeriesMixin = H.colorMapSeriesMixin,

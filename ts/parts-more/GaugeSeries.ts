@@ -10,8 +10,8 @@
 
 'use strict';
 
-import type RadialAxis from './RadialAxis';
-import type SVGPath from '../parts/SVGPath';
+import type RadialAxis from '../Core/Axis/RadialAxis';
+import type SVGPath from '../Core/Renderer/SVG/SVGPath';
 import H from '../Core/Globals.js';
 
 /**
@@ -98,8 +98,8 @@ const {
 } = U;
 
 import '../Core/Options.js';
-import '../parts/Point.js';
-import '../parts/Series.js';
+import '../Core/Series/Point.js';
+import '../Core/Series/Series.js';
 import '../Core/Interaction.js';
 
 var noop = H.noop,

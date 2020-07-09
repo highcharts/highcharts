@@ -10,9 +10,9 @@
 
 'use strict';
 
-import type Chart from '../parts/Chart';
-import type ColorAxisGlobal from '../parts-map/ColorAxis';
-import type Point from '../parts/Point';
+import type Chart from './Chart/Chart';
+import type ColorAxisGlobal from './Axis/ColorAxis';
+import type Point from '../Core/Series/Point';
 import H from './Globals.js';
 
 /**
@@ -185,7 +185,7 @@ declare global {
  * @type {"legendItemClick"}
  */
 
-import U from '../Core/Utilities.js';
+import U from './Utilities.js';
 const {
     addEvent,
     animObject,

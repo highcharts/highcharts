@@ -10,8 +10,8 @@
 
 'use strict';
 
-import Chart from '../parts/Chart.js';
-import U from '../Core/Utilities.js';
+import Chart from './Chart/Chart.js';
+import U from './Utilities.js';
 const {
     find,
     isArray,

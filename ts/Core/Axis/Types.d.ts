@@ -9,7 +9,7 @@
  * */
 
 import type Axis from './Axis';
-import type Chart from '../../parts/Chart';
+import type Chart from '../Chart/Chart';
 import type Tick from './Tick';
 
 /**

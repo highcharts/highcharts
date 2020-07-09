@@ -14,8 +14,8 @@
 'use strict';
 
 import H from '../Core/Globals.js';
-import Point from '../parts/Point.js';
-import SVGRenderer from '../parts/SVGRenderer.js';
+import Point from '../Core/Series/Point.js';
+import SVGRenderer from '../Core/Renderer/SVG/SVGRenderer.js';
 import U from '../Core/Utilities.js';
 const {
     addEvent,

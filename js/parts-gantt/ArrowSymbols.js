@@ -9,7 +9,7 @@
  *
  * */
 'use strict';
-import SVGRenderer from '../parts/SVGRenderer.js';
+import SVGRenderer from '../Core/Renderer/SVG/SVGRenderer.js';
 /**
  * Creates an arrow symbol. Like a triangle, except not filled.
  * ```

@@ -254,7 +254,7 @@ declare global {
  */
 
 import Color from '../Core/Color.js';
-import Point from '../parts/Point.js';
+import Point from '../Core/Series/Point.js';
 import U from '../Core/Utilities.js';
 const {
     defined,

@@ -9,7 +9,7 @@
  */
 'use strict';
 import '../parts-more/Pane.js';
-import '../parts-more/RadialAxis.js';
+import '../Core/Axis/RadialAxis.js';
 import '../parts-more/AreaRangeSeries.js';
 import '../parts-more/AreaSplineRangeSeries.js';
 import '../parts-more/ColumnRangeSeries.js';

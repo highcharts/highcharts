@@ -10,7 +10,7 @@
  *
  * */
 'use strict';
-import '../parts/AreaSeries.js';
+import '../Series/AreaSeries.js';
 import U from '../Core/Utilities.js';
 var seriesType = U.seriesType;
 /**

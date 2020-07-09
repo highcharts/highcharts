@@ -15,7 +15,7 @@
 import H from '../Core/Globals.js';
 var hasTouch = H.hasTouch;
 import Axis from '../Core/Axis/Axis.js';
-import Pointer from '../parts/Pointer.js';
+import Pointer from '../Core/Pointer.js';
 import U from '../Core/Utilities.js';
 var addEvent = U.addEvent, clamp = U.clamp, isNumber = U.isNumber, merge = U.merge, objectEach = U.objectEach, relativeLength = U.relativeLength, wrap = U.wrap;
 /* eslint-disable no-invalid-this, valid-jsdoc */

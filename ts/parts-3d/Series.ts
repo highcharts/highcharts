@@ -12,7 +12,7 @@
 
 'use strict';
 
-import type Point from '../parts/Point';
+import type Point from '../Core/Series/Point';
 import type ZAxis from '../parts-3d/ZAxis';
 import H from '../Core/Globals.js';
 import Math3D from '../parts-3d/Math.js';

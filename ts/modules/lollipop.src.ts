@@ -10,7 +10,7 @@
 
 'use strict';
 
-import type Point from '../parts/Point';
+import type Point from '../Core/Series/Point';
 import H from '../Core/Globals.js';
 import U from '../Core/Utilities.js';
 const {

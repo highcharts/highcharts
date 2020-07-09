@@ -10,7 +10,7 @@
 
 'use strict';
 
-import type Chart from '../parts/Chart';
+import type Chart from '../Core/Chart/Chart';
 import Axis from '../Core/Axis/Axis.js';
 import U from '../Core/Utilities.js';
 const {

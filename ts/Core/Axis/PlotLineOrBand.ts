@@ -10,7 +10,7 @@
 
 'use strict';
 
-import type SVGPath from '../../parts/SVGPath';
+import type SVGPath from '../Renderer/SVG/SVGPath';
 import Axis from './Axis.js';
 import H from '../Globals.js';
 

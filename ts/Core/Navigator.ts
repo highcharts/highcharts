@@ -10,19 +10,19 @@
 
 'use strict';
 
-import type SVGPath from '../parts/SVGPath';
+import type SVGPath from './Renderer/SVG/SVGPath';
 import Axis from './Axis/Axis.js';
-import Chart from '../parts/Chart.js';
-import Color from '../Core/Color.js';
+import Chart from './Chart/Chart.js';
+import Color from './Color.js';
 const {
     parse: color
 } = Color;
-import H from '../Core/Globals.js';
+import H from './Globals.js';
 import NavigatorAxis from './Axis/NavigatorAxis.js';
-import O from '../Core/Options.js';
+import O from './Options.js';
 const { defaultOptions } = O;
 import Scrollbar from './Scrollbar.js';
-import U from '../Core/Utilities.js';
+import U from './Utilities.js';
 const {
     addEvent,
     clamp,
@@ -195,7 +195,7 @@ declare global {
     }
 }
 
-import '../parts/Series.js';
+import '../Core/Series/Series.js';
 
 var hasTouch = H.hasTouch,
     isTouchDevice = H.isTouchDevice,

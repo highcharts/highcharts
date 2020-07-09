@@ -10,13 +10,13 @@
 
 'use strict';
 
-import type SVGElement from '../parts/SVGElement';
-import type SVGPath from '../parts/SVGPath';
+import type SVGElement from '../Core/Renderer/SVG/SVGElement';
+import type SVGPath from '../Core/Renderer/SVG/SVGPath';
 import Axis from '../Core/Axis/Axis.js';
-import Chart from '../parts/Chart.js';
+import Chart from '../Core/Chart/Chart.js';
 import H from '../Core/Globals.js';
-import Point from '../parts/Point.js';
-import StackItem from '../parts/Stacking.js';
+import Point from '../Core/Series/Point.js';
+import StackItem from '../Extensions/Stacking.js';
 import U from '../Core/Utilities.js';
 const {
     addEvent,
@@ -96,7 +96,7 @@ declare global {
 
 
 import '../Core/Options.js';
-import '../parts/Series.js';
+import '../Core/Series/Series.js';
 
 var Series = H.Series,
     seriesTypes = H.seriesTypes;

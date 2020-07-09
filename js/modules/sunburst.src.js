@@ -18,7 +18,7 @@ var correctFloat = U.correctFloat, error = U.error, extend = U.extend, isNumber 
 import centeredSeriesMixin from '../mixins/centered-series.js';
 import drawPoint from '../mixins/draw-point.js';
 import mixinTreeSeries from '../mixins/tree-series.js';
-import '../parts/Series.js';
+import '../Core/Series/Series.js';
 import './treemap.src.js';
 var Series = H.Series, getCenter = centeredSeriesMixin.getCenter, getColor = mixinTreeSeries.getColor, getLevelOptions = mixinTreeSeries.getLevelOptions, getStartAndEndRadians = centeredSeriesMixin.getStartAndEndRadians, isBoolean = function (x) {
     return typeof x === 'boolean';

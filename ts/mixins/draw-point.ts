@@ -4,7 +4,7 @@
  *
  * */
 
-import type Point from '../parts/Point';
+import type Point from '../Core/Series/Point';
 
 /**
  * Internal types
