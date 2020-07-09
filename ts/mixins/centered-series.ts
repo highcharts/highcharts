@@ -68,7 +68,7 @@ var deg2rad = H.deg2rad;
  * @private
  * @mixin Highcharts.CenteredSeriesMixin
  */
-H.CenteredSeriesMixin = {
+const centeredSeriesMixin = H.CenteredSeriesMixin = {
 
     /**
      * Get the center of the pie based on the size and center options relative
@@ -177,3 +177,5 @@ H.CenteredSeriesMixin = {
         };
     }
 };
+
+export default centeredSeriesMixin;

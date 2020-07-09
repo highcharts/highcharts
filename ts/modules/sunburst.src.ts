@@ -183,18 +183,17 @@ const {
     splat
 } = U;
 
-import '../mixins/centered-series.js';
+import centeredSeriesMixin from '../mixins/centered-series.js';
 import drawPoint from '../mixins/draw-point.js';
 import mixinTreeSeries from '../mixins/tree-series.js';
 import '../Core/Series/Series.js';
 import './treemap.src.js';
 
-var CenteredSeriesMixin = H.CenteredSeriesMixin,
-    Series = H.Series,
-    getCenter = CenteredSeriesMixin.getCenter,
+var Series = H.Series,
+    getCenter = centeredSeriesMixin.getCenter,
     getColor = mixinTreeSeries.getColor,
     getLevelOptions = mixinTreeSeries.getLevelOptions,
-    getStartAndEndRadians = CenteredSeriesMixin.getStartAndEndRadians,
+    getStartAndEndRadians = centeredSeriesMixin.getStartAndEndRadians,
     isBoolean = function (x: unknown): x is boolean {
         return typeof x === 'boolean';
     },

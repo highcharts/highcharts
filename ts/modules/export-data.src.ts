@@ -142,9 +142,9 @@ declare global {
 
 
 import '../mixins/ajax.js';
-import '../mixins/download-url.js';
+import downloadURLmodule from '../mixins/download-url.js';
+const { downloadURL } = downloadURLmodule;
 
-const downloadURL = H.downloadURL;
 
 // Can we add this to utils? Also used in screen-reader.js
 /**

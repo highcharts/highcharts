@@ -96,7 +96,8 @@ declare global {
     }
 }
 
-import '../mixins/download-url.js';
+import downloadURLmodule from '../mixins/download-url.js';
+const { downloadURL } = downloadURLmodule;
 
 var domurl = win.URL || win.webkitURL || win,
     nav = win.navigator,
@@ -433,7 +434,7 @@ H.downloadSVGLocal = function (
         });
         svgData = svgToPdf(dummySVGContainer.firstChild as any, 0);
         try {
-            H.downloadURL(svgData, filename);
+            downloadURL(svgData, filename);
             if (successCallback) {
                 successCallback();
             }
@@ -456,7 +457,7 @@ H.downloadSVGLocal = function (
             } else {
                 svgurl = H.svgToDataUrl(svg);
             }
-            H.downloadURL(svgurl, filename);
+            downloadURL(svgurl, filename);
             if (successCallback) {
                 successCallback();
             }
@@ -497,7 +498,7 @@ H.downloadSVGLocal = function (
             function (imageURL: string): void {
                 // Success
                 try {
-                    H.downloadURL(imageURL, filename);
+                    downloadURL(imageURL, filename);
                     if (successCallback) {
                         successCallback();
                     }
@@ -519,7 +520,7 @@ H.downloadSVGLocal = function (
                     downloadWithCanVG = function (): void {
                         ctx.drawSvg(svg, 0, 0, imageWidth, imageHeight);
                         try {
-                            H.downloadURL(
+                            downloadURL(
                                 nav.msSaveOrOpenBlob as any ?
                                     canvas.msToBlob() :
                                     canvas.toDataURL(imageType),

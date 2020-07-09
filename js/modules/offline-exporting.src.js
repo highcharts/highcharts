@@ -18,7 +18,8 @@ import '../Core/Options.js';
 import SVGRenderer from '../Core/Renderer/SVG/SVGRenderer.js';
 import U from '../Core/Utilities.js';
 var addEvent = U.addEvent, error = U.error, extend = U.extend, getOptions = U.getOptions, merge = U.merge;
-import '../mixins/download-url.js';
+import downloadURLmodule from '../mixins/download-url.js';
+var downloadURL = downloadURLmodule.downloadURL;
 var domurl = win.URL || win.webkitURL || win, nav = win.navigator, isMSBrowser = /Edge\/|Trident\/|MSIE /.test(nav.userAgent), 
 // Milliseconds to defer image load event handlers to offset IE bug
 loadEventDeferDelay = isMSBrowser ? 150 : 0;
@@ -253,7 +254,7 @@ H.downloadSVGLocal = function (svg, options, failCallback, successCallback) {
         });
         svgData = svgToPdf(dummySVGContainer.firstChild, 0);
         try {
-            H.downloadURL(svgData, filename);
+            downloadURL(svgData, filename);
             if (successCallback) {
                 successCallback();
             }
@@ -276,7 +277,7 @@ H.downloadSVGLocal = function (svg, options, failCallback, successCallback) {
             else {
                 svgurl = H.svgToDataUrl(svg);
             }
-            H.downloadURL(svgurl, filename);
+            downloadURL(svgurl, filename);
             if (successCallback) {
                 successCallback();
             }
@@ -316,7 +317,7 @@ H.downloadSVGLocal = function (svg, options, failCallback, successCallback) {
         H.imageToDataUrl(svgurl, imageType, {}, scale, function (imageURL) {
             // Success
             try {
-                H.downloadURL(imageURL, filename);
+                downloadURL(imageURL, filename);
                 if (successCallback) {
                     successCallback();
                 }
@@ -330,7 +331,7 @@ H.downloadSVGLocal = function (svg, options, failCallback, successCallback) {
             var canvas = doc.createElement('canvas'), ctx = canvas.getContext('2d'), imageWidth = svg.match(/^<svg[^>]*width\s*=\s*\"?(\d+)\"?[^>]*>/)[1] * scale, imageHeight = svg.match(/^<svg[^>]*height\s*=\s*\"?(\d+)\"?[^>]*>/)[1] * scale, downloadWithCanVG = function () {
                 ctx.drawSvg(svg, 0, 0, imageWidth, imageHeight);
                 try {
-                    H.downloadURL(nav.msSaveOrOpenBlob ?
+                    downloadURL(nav.msSaveOrOpenBlob ?
                         canvas.msToBlob() :
                         canvas.toDataURL(imageType), filename);
                     if (successCallback) {

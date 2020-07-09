@@ -43,8 +43,8 @@ var addEvent = U.addEvent, defined = U.defined, extend = U.extend, find = U.find
 * @type {Array<Array<string>>}
 */
 import '../mixins/ajax.js';
-import '../mixins/download-url.js';
-var downloadURL = H.downloadURL;
+import downloadURLmodule from '../mixins/download-url.js';
+var downloadURL = downloadURLmodule.downloadURL;
 // Can we add this to utils? Also used in screen-reader.js
 /**
  * HTML encode some characters vulnerable for XSS.
