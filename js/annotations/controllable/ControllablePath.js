@@ -4,11 +4,11 @@
  *
  * */
 'use strict';
-import controllableMixin from './controllableMixin.js';
-import H from './../../parts/Globals.js';
-import markerMixin from './markerMixin.js';
-import U from './../../parts/Utilities.js';
-var extend = U.extend, merge = U.merge;
+import ControllableMixin from './controllableMixin.js';
+import H from '../../Core/Globals.js';
+import MarkerMixin from './markerMixin.js';
+import U from '../../Core/Utilities.js';
+var extend = U.extend;
 // See TRACKER_FILL in highcharts.src.js
 var TRACKER_FILL = 'rgba(192,192,192,' + (H.svg ? 0.0001 : 0.002) + ')';
 /* eslint-disable no-invalid-this, valid-jsdoc */
@@ -29,37 +29,57 @@ var TRACKER_FILL = 'rgba(192,192,192,' + (H.svg ? 0.0001 : 0.002) + ')';
  *
  * @param {number} index
  * Index of the path.
- **/
-var ControllablePath = function (annotation, options, index) {
-    this.init(annotation, options, index);
-    this.collection = 'shapes';
-};
-/**
- * A map object which allows to map options attributes to element attributes
- *
- * @name Highcharts.AnnotationControllablePath.attrsMap
- * @type {Highcharts.Dictionary<string>}
  */
-ControllablePath.attrsMap = {
-    dashStyle: 'dashstyle',
-    strokeWidth: 'stroke-width',
-    stroke: 'stroke',
-    fill: 'fill',
-    zIndex: 'zIndex'
-};
-merge(true, ControllablePath.prototype, controllableMixin, /** @lends Highcharts.AnnotationControllablePath# */ {
-    /**
-     * @type 'path'
-     */
-    type: 'path',
-    setMarkers: markerMixin.setItemMarkers,
+var ControllablePath = /** @class */ (function () {
+    /* *
+     *
+     *  Constructors
+     *
+     * */
+    function ControllablePath(annotation, options, index) {
+        /* *
+         *
+         *  Properties
+         *
+         * */
+        this.addControlPoints = ControllableMixin.addControlPoints;
+        this.anchor = ControllableMixin.anchor;
+        this.attr = ControllableMixin.attr;
+        this.attrsFromOptions = ControllableMixin.attrsFromOptions;
+        this.destroy = ControllableMixin.destroy;
+        this.getPointsOptions = ControllableMixin.getPointsOptions;
+        this.init = ControllableMixin.init;
+        this.linkPoints = ControllableMixin.linkPoints;
+        this.point = ControllableMixin.point;
+        this.rotate = ControllableMixin.rotate;
+        this.scale = ControllableMixin.scale;
+        this.setControlPointsVisibility = ControllableMixin.setControlPointsVisibility;
+        this.setMarkers = MarkerMixin.setItemMarkers;
+        this.transform = ControllableMixin.transform;
+        this.transformPoint = ControllableMixin.transformPoint;
+        this.translate = ControllableMixin.translate;
+        this.translatePoint = ControllableMixin.translatePoint;
+        this.translateShape = ControllableMixin.translateShape;
+        this.update = ControllableMixin.update;
+        /**
+         * @type 'path'
+         */
+        this.type = 'path';
+        this.init(annotation, options, index);
+        this.collection = 'shapes';
+    }
+    /* *
+     *
+     *  Functions
+     *
+     * */
     /**
      * Map the controllable path to 'd' path attribute.
      *
      * @return {Highcharts.SVGPathArray|null}
      * A path's d attribute.
      */
-    toD: function () {
+    ControllablePath.prototype.toD = function () {
         var dOption = this.options.d;
         if (dOption) {
             return typeof dOption === 'function' ?
@@ -88,11 +108,11 @@ merge(true, ControllablePath.prototype, controllableMixin, /** @lends Highcharts
         return showPath ?
             this.chart.renderer.crispLine(d, this.graphic.strokeWidth()) :
             null;
-    },
-    shouldBeDrawn: function () {
-        return (controllableMixin.shouldBeDrawn.call(this) || Boolean(this.options.d));
-    },
-    render: function (parent) {
+    };
+    ControllablePath.prototype.shouldBeDrawn = function () {
+        return (ControllableMixin.shouldBeDrawn.call(this) || Boolean(this.options.d));
+    };
+    ControllablePath.prototype.render = function (parent) {
         var options = this.options, attrs = this.attrsFromOptions(options);
         this.graphic = this.annotation.chart.renderer
             .path([['M', 0, 0]])
@@ -117,14 +137,14 @@ merge(true, ControllablePath.prototype, controllableMixin, /** @lends Highcharts
                     options.snap * 2
             });
         }
-        controllableMixin.render.call(this);
+        ControllableMixin.render.call(this);
         extend(this.graphic, {
-            markerStartSetter: markerMixin.markerStartSetter,
-            markerEndSetter: markerMixin.markerEndSetter
+            markerStartSetter: MarkerMixin.markerStartSetter,
+            markerEndSetter: MarkerMixin.markerEndSetter
         });
         this.setMarkers(this);
-    },
-    redraw: function (animation) {
+    };
+    ControllablePath.prototype.redraw = function (animation) {
         var d = this.toD(), action = animation ? 'animate' : 'attr';
         if (d) {
             this.graphic[action]({ d: d });
@@ -135,7 +155,26 @@ merge(true, ControllablePath.prototype, controllableMixin, /** @lends Highcharts
             this.tracker.attr({ d: 'M 0 ' + -9e9 });
         }
         this.graphic.placed = this.tracker.placed = Boolean(d);
-        controllableMixin.redraw.call(this, animation);
-    }
-});
+        ControllableMixin.redraw.call(this, animation);
+    };
+    /* *
+     *
+     *  Static Properties
+     *
+     * */
+    /**
+     * A map object which allows to map options attributes to element attributes
+     *
+     * @name Highcharts.AnnotationControllablePath.attrsMap
+     * @type {Highcharts.Dictionary<string>}
+     */
+    ControllablePath.attrsMap = {
+        dashStyle: 'dashstyle',
+        strokeWidth: 'stroke-width',
+        stroke: 'stroke',
+        fill: 'fill',
+        zIndex: 'zIndex'
+    };
+    return ControllablePath;
+}());
 export default ControllablePath;

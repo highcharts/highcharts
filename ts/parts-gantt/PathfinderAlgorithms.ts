@@ -11,9 +11,9 @@
 
 'use strict';
 
-import type Point from '../parts/Point';
-import type SVGPath from '../parts/SVGPath';
-import U from '../parts/Utilities.js';
+import type Point from '../Core/Series/Point';
+import type SVGPath from '../Core/Renderer/SVG/SVGPath';
+import U from '../Core/Utilities.js';
 const {
     extend,
     pick

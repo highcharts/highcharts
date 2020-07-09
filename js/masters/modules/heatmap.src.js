@@ -8,6 +8,6 @@
  * License: www.highcharts.com/license
  */
 'use strict';
-import '../../parts-map/ColorAxis.js';
-import '../../parts-map/ColorMapSeriesMixin.js';
-import '../../parts-map/HeatmapSeries.js';
+import '../../Core/Axis/ColorAxis.js';
+import '../../mixins/color-map-series.js';
+import '../../Series/HeatmapSeries.js';

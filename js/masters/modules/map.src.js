@@ -10,15 +10,15 @@
  * License: www.highcharts.com/license
  */
 'use strict';
-import '../../parts-map/MapAxis.js';
-import '../../parts-map/ColorAxis.js';
-import '../../parts-map/ColorMapSeriesMixin.js';
-import '../../parts-map/MapNavigation.js';
-import '../../parts-map/MapPointer.js';
-import '../../parts-map/MapSeries.js';
-import '../../parts-map/MapLineSeries.js';
-import '../../parts-map/MapPointSeries.js';
-import '../../parts-map/MapBubbleSeries.js';
-import '../../parts-map/HeatmapSeries.js';
-import '../../parts-map/GeoJSON.js';
-import '../../parts-map/Map.js';
+import '../../Core/Axis/MapAxis.js';
+import '../../Core/Axis/ColorAxis.js';
+import '../../mixins/color-map-series.js';
+import '../../Maps/MapNavigation.js';
+import '../../Maps/MapPointer.js';
+import '../../Series/MapSeries.js';
+import '../../Series/MapLineSeries.js';
+import '../../Series/MapPointSeries.js';
+import '../../Series/MapBubbleSeries.js';
+import '../../Series/HeatmapSeries.js';
+import '../../Maps/GeoJSON.js';
+import '../../Maps/Map.js';

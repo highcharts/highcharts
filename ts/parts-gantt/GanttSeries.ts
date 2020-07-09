@@ -12,13 +12,13 @@
 
 'use strict';
 
-import type Point from '../parts/Point';
-import type SVGPath from '../parts/SVGPath';
-import H from '../parts/Globals.js';
-import O from '../parts/Options.js';
+import type Point from '../Core/Series/Point';
+import type SVGPath from '../Core/Renderer/SVG/SVGPath';
+import H from '../Core/Globals.js';
+import O from '../Core/Options.js';
 const { dateFormat } = O;
 import './TreeGridAxis.js';
-import U from '../parts/Utilities.js';
+import U from '../Core/Utilities.js';
 const {
     isNumber,
     merge,

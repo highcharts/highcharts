@@ -12,13 +12,13 @@
  *
  * */
 'use strict';
-import Chart from '../parts/Chart.js';
-import H from '../parts/Globals.js';
-import O from '../parts/Options.js';
+import Chart from '../Core/Chart/Chart.js';
+import H from '../Core/Globals.js';
+import O from '../Core/Options.js';
 var defaultOptions = O.defaultOptions;
-import Point from '../parts/Point.js';
-import SVGRenderer from '../parts/SVGRenderer.js';
-import U from '../parts/Utilities.js';
+import Point from '../Core/Series/Point.js';
+import SVGRenderer from '../Core/Renderer/SVG/SVGRenderer.js';
+import U from '../Core/Utilities.js';
 var addEvent = U.addEvent, animObject = U.animObject, defined = U.defined, error = U.error, isArray = U.isArray, isFunction = U.isFunction, isObject = U.isObject, isNumber = U.isNumber, merge = U.merge, objectEach = U.objectEach, relativeLength = U.relativeLength, syncTimeout = U.syncTimeout;
 /**
  * Function callback when a cluster is clicked.
@@ -33,8 +33,8 @@ var addEvent = U.addEvent, animObject = U.animObject, defined = U.defined, error
  */
 ''; // detach doclets from following code
 /* eslint-disable no-invalid-this */
-import '../parts/Axis.js';
-import '../parts/Series.js';
+import '../Core/Axis/Axis.js';
+import '../Core/Series/Series.js';
 var Series = H.Series, Scatter = H.seriesTypes.scatter, baseGeneratePoints = Series.prototype.generatePoints, stateIdCounter = 0, 
 // Points that ids are included in the oldPointsStateId array
 // are hidden before animation. Other ones are destroyed.
@@ -577,8 +577,8 @@ Scatter.prototype.animateClusterPoint = function (clusterObj) {
                     y: oldPointObj.point.plotY - offset
                 });
                 newPointObj.point.graphic.animate({
-                    x: newX - newPointObj.point.graphic.radius,
-                    y: newY - newPointObj.point.graphic.radius
+                    x: newX - (newPointObj.point.graphic.radius || 0),
+                    y: newY - (newPointObj.point.graphic.radius || 0)
                 }, animation, function () {
                     isCbHandled = true;
                     // Destroy old point.
@@ -624,8 +624,8 @@ Scatter.prototype.animateClusterPoint = function (clusterObj) {
                         isOldPointGrahic = true;
                         oldPointObj.point.graphic.show();
                         oldPointObj.point.graphic.animate({
-                            x: newX - oldPointObj.point.graphic.radius,
-                            y: newY - oldPointObj.point.graphic.radius,
+                            x: newX - (oldPointObj.point.graphic.radius || 0),
+                            y: newY - (oldPointObj.point.graphic.radius || 0),
                             opacity: 0.4
                         }, animation, function () {
                             isCbHandled = true;

@@ -10,10 +10,10 @@
  *
  * */
 'use strict';
-import H from '../parts/Globals.js';
-import U from '../parts/Utilities.js';
+import H from '../Core/Globals.js';
+import U from '../Core/Utilities.js';
 var animObject = U.animObject, seriesType = U.seriesType;
-import '../parts/Options.js';
+import '../Core/Options.js';
 import '../mixins/nodes.js';
 var base = H.seriesTypes.sankey.prototype;
 /**

@@ -10,17 +10,17 @@
  *
  * */
 'use strict';
-import H from '../parts/Globals.js';
+import H from '../Core/Globals.js';
 import mixinTreeSeries from '../mixins/tree-series.js';
 import drawPoint from '../mixins/draw-point.js';
-import Color from '../parts/Color.js';
+import Color from '../Core/Color.js';
 var color = Color.parse;
 import LegendSymbolMixin from '../mixins/legend-symbol.js';
-import Point from '../parts/Point.js';
-import U from '../parts/Utilities.js';
+import Point from '../Core/Series/Point.js';
+import U from '../Core/Utilities.js';
 var addEvent = U.addEvent, correctFloat = U.correctFloat, defined = U.defined, error = U.error, extend = U.extend, fireEvent = U.fireEvent, isArray = U.isArray, isNumber = U.isNumber, isObject = U.isObject, isString = U.isString, merge = U.merge, objectEach = U.objectEach, pick = U.pick, seriesType = U.seriesType, stableSort = U.stableSort;
-import '../parts/Options.js';
-import '../parts/Series.js';
+import '../Core/Options.js';
+import '../Core/Series/Series.js';
 /* eslint-disable no-invalid-this */
 var AXIS_MAX = 100;
 var seriesTypes = H.seriesTypes, noop = H.noop, getColor = mixinTreeSeries.getColor, getLevelOptions = mixinTreeSeries.getLevelOptions, 
@@ -1262,7 +1262,7 @@ seriesType('treemap', 'scatter'
     },
     // TODO remove this function at a suitable version.
     drillToNode: function (id, redraw) {
-        error(32, false, void 0, { 'treemap.drillToNode': 'treemap.setRootNode' });
+        error(32, false, void 0, { 'treemap.drillToNode': 'use treemap.setRootNode' });
         this.setRootNode(id, redraw);
     },
     /**

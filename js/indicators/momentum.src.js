@@ -6,7 +6,7 @@
  *
  * */
 'use strict';
-import U from '../parts/Utilities.js';
+import U from '../Core/Utilities.js';
 var isArray = U.isArray, seriesType = U.seriesType;
 /* eslint-disable require-jsdoc */
 function populateAverage(points, xVal, yVal, i, period) {

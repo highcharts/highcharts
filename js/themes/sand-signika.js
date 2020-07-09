@@ -11,8 +11,8 @@
  * */
 'use strict';
 /* global document */
-import Highcharts from '../parts/Globals.js';
-import U from '../parts/Utilities.js';
+import Highcharts from '../Core/Globals.js';
+import U from '../Core/Utilities.js';
 var setOptions = U.setOptions;
 // Load the fonts
 Highcharts.createElement('link', {

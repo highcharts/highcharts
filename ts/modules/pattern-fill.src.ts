@@ -13,10 +13,10 @@
 
 'use strict';
 
-import H from '../parts/Globals.js';
-import Point from '../parts/Point.js';
-import SVGRenderer from '../parts/SVGRenderer.js';
-import U from '../parts/Utilities.js';
+import H from '../Core/Globals.js';
+import Point from '../Core/Series/Point.js';
+import SVGRenderer from '../Core/Renderer/SVG/SVGRenderer.js';
+import U from '../Core/Utilities.js';
 const {
     addEvent,
     animObject,
@@ -402,6 +402,9 @@ SVGRenderer.prototype.addPattern = function (
         ++this.idCounter;
     }
 
+    if (this.forExport) {
+        id += '-export';
+    }
     // Do nothing if ID already exists
     this.defIds = this.defIds || [];
     if (this.defIds.indexOf(id) > -1) {
@@ -658,7 +661,7 @@ addEvent(SVGRenderer, 'complexColor', function (
             { duration: 100 }
         ));
 
-        value = `url(${this.url}#${pattern.id})`;
+        value = `url(${this.url}#${pattern.id + (this.forExport ? '-export' : '')})`;
 
     } else {
         // Not a full pattern definition, just add color
@@ -729,7 +732,6 @@ addEvent(H.Chart, 'redraw', function (): void {
                 pattern.indexOf('highcharts-pattern-') === 0
             );
         });
-
     if (patterns.length) {
         // Look through the DOM for usage of the patterns. This can be points,
         // series, tooltips etc.

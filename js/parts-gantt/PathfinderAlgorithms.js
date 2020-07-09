@@ -9,7 +9,7 @@
  *
  * */
 'use strict';
-import U from '../parts/Utilities.js';
+import U from '../Core/Utilities.js';
 var extend = U.extend, pick = U.pick;
 var min = Math.min, max = Math.max, abs = Math.abs;
 /**

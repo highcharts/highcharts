@@ -12,14 +12,14 @@
 
 'use strict';
 
-import type ColorAxis from '../parts-map/ColorAxis';
-import type RadialAxis from '../parts-more/RadialAxis';
-import type SVGPath from '../parts/SVGPath';
-import Color from '../parts/Color.js';
+import type ColorAxis from '../Core/Axis/ColorAxis';
+import type RadialAxis from '../Core/Axis/RadialAxis';
+import type SVGPath from '../Core/Renderer/SVG/SVGPath';
+import Color from '../Core/Color.js';
 const color = Color.parse;
-import H from '../parts/Globals.js';
+import H from '../Core/Globals.js';
 import LegendSymbolMixin from '../mixins/legend-symbol.js';
-import U from '../parts/Utilities.js';
+import U from '../Core/Utilities.js';
 const {
     clamp,
     extend,
@@ -86,8 +86,8 @@ declare global {
  * @type {boolean|undefined}
  */
 
-import '../parts/Options.js';
-import '../parts-more/GaugeSeries.js';
+import '../Core/Options.js';
+import '../Series/GaugeSeries.js';
 
 const Renderer = H.Renderer;
 

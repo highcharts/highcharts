@@ -12,7 +12,7 @@
 
 'use strict';
 
-import Highcharts from '../parts/Globals.js';
+import Highcharts from '../Core/Globals.js';
 
 /**
  * Internal types
@@ -40,7 +40,7 @@ var win = Highcharts.win,
  * @return {string|undefined}
  *         Blob
  */
-Highcharts.dataURLtoBlob = function (dataURL: string): (string|undefined) {
+const dataURLtoBlob = Highcharts.dataURLtoBlob = function (dataURL: string): (string|undefined) {
     var parts = dataURL.match(/data:([^;]*)(;base64)?,([0-9A-Za-z+/]+)/);
 
     if (
@@ -79,7 +79,7 @@ Highcharts.dataURLtoBlob = function (dataURL: string): (string|undefined) {
  *        The name of the resulting file (w/extension)
  * @return {void}
  */
-Highcharts.downloadURL = function (
+const downloadURL = Highcharts.downloadURL = function (
     dataURL: (string|URL),
     filename: string
 ): void {
@@ -99,7 +99,7 @@ Highcharts.downloadURL = function (
     // Some browsers have limitations for data URL lengths. Try to convert to
     // Blob or fall back. Edge always needs that blob.
     if (isEdgeBrowser || (dataURL as any).length > 2000000) {
-        dataURL = Highcharts.dataURLtoBlob(dataURL as any) as any;
+        dataURL = dataURLtoBlob(dataURL as any) as any;
         if (!dataURL) {
             throw new Error('Failed to convert to blob');
         }
@@ -125,3 +125,11 @@ Highcharts.downloadURL = function (
         }
     }
 };
+
+
+const downladURLmodule = {
+    dataURLtoBlob,
+    downloadURL
+};
+
+export default downladURLmodule;

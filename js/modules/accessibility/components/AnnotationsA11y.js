@@ -10,8 +10,6 @@
  *
  * */
 'use strict';
-import U from '../../../parts/Utilities.js';
-var inArray = U.inArray;
 import HTMLUtilities from '../utils/htmlUtilities.js';
 var escapeStringForHTML = HTMLUtilities.escapeStringForHTML, stripHTMLTagsFromString = HTMLUtilities.stripHTMLTagsFromString;
 /**
@@ -121,7 +119,7 @@ function getAnnotationsInfoHTML(chart) {
 function getPointAnnotationTexts(point) {
     var labels = getChartAnnotationLabels(point.series.chart);
     var pointLabels = labels
-        .filter(function (label) { return inArray(point, label.points) > -1; });
+        .filter(function (label) { return label.points.indexOf(point) > -1; });
     if (!pointLabels.length) {
         return [];
     }

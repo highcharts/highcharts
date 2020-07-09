@@ -13,9 +13,9 @@
 
 'use strict';
 
-import type Point from '../parts/Point';
-import type SVGPath from '../parts/SVGPath';
-import H from '../parts/Globals.js';
+import type Point from '../Core/Series/Point';
+import type SVGPath from '../Core/Renderer/SVG/SVGPath';
+import H from '../Core/Globals.js';
 
 /**
  * Internal types
@@ -94,7 +94,7 @@ declare global {
 
 ''; // detach doclets above
 
-import U from '../parts/Utilities.js';
+import U from '../Core/Utilities.js';
 const {
     addEvent,
     clamp,
@@ -103,7 +103,7 @@ const {
     seriesType
 } = U;
 
-import '../parts-map/HeatmapSeries.js';
+import '../Series/HeatmapSeries.js';
 
 /**
  * Utility func to get padding definition from tile size division

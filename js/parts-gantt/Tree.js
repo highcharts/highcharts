@@ -11,7 +11,7 @@
  * */
 /* eslint no-console: 0 */
 'use strict';
-import U from '../parts/Utilities.js';
+import U from '../Core/Utilities.js';
 var extend = U.extend, isNumber = U.isNumber, pick = U.pick;
 /**
  * Creates an object map from parent id to childrens index.

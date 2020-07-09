@@ -6,11 +6,11 @@
  *
  * */
 'use strict';
-import H from '../parts/Globals.js';
+import H from '../Core/Globals.js';
 /* eslint-enable @typescript-eslint/interface-name-prefix */
-import Color from '../parts/Color.js';
+import Color from '../Core/Color.js';
 var color = Color.parse;
-import U from '../parts/Utilities.js';
+import U from '../Core/Utilities.js';
 var defined = U.defined, isArray = U.isArray, merge = U.merge, objectEach = U.objectEach, seriesType = U.seriesType;
 var UNDEFINED, SMA = H.seriesTypes.sma;
 /* eslint-disable require-jsdoc */

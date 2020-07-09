@@ -16,15 +16,16 @@
 
 'use strict';
 
-import type Point from '../parts/Point';
-import Chart from '../parts/Chart.js';
-import H from '../parts/Globals.js';
+import type Point from '../Core/Series/Point';
+import Axis from '../Core/Axis/Axis.js';
+import Chart from '../Core/Chart/Chart.js';
+import H from '../Core/Globals.js';
 const {
     doc,
     seriesTypes,
     win
 } = H;
-import U from '../parts/Utilities.js';
+import U from '../Core/Utilities.js';
 const {
     addEvent,
     defined,
@@ -141,9 +142,9 @@ declare global {
 
 
 import '../mixins/ajax.js';
-import '../mixins/download-url.js';
+import downloadURLmodule from '../mixins/download-url.js';
+const { downloadURL } = downloadURLmodule;
 
-const downloadURL = H.downloadURL;
 
 // Can we add this to utils? Also used in screen-reader.js
 /**
@@ -480,7 +481,7 @@ Chart.prototype.getDataRows = function (
                 return categoryHeader;
             }
 
-            if (item instanceof Highcharts.Axis) {
+            if (item instanceof Axis) {
                 return (item.options.title && item.options.title.text) ||
                     (item.dateTime ? categoryDatetimeHeader : categoryHeader);
             }
@@ -535,7 +536,10 @@ Chart.prototype.getDataRows = function (
             series: Highcharts.Series,
             xAxis: Highcharts.Axis
         ): string[] {
-            const namedPoints = series.data.filter((d): string | undefined => d.name);
+            const namedPoints = series.data.filter((d): string | false =>
+                (typeof d.y !== 'undefined') && d.name
+            );
+
             if (
                 namedPoints.length &&
                 xAxis &&

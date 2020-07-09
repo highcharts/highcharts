@@ -28,14 +28,14 @@ assembler. This is the recommended approach. The following example installs a
 version of the assembler tagged as `v1.0.10`:
 
 ```shell
-npm install --save-dev highcharts/highcharts-assembler#v1.0.10 
+npm install --save-dev highcharts/highcharts-assembler#v1.0.10
 ```
 
 If versioning is not a concern, then it is possible to install the latest commit
 from master branch by omitting the `#<commit-ish>`:
 
 ```shell
-npm install --save-dev highcharts/highcharts-assembler 
+npm install --save-dev highcharts/highcharts-assembler
 ```
 
 [Read more about `npm install` on npmjs.com](https://docs.npmjs.com/cli/install).
@@ -43,7 +43,7 @@ npm install --save-dev highcharts/highcharts-assembler
 After installing the package by using NPM it can be loaded as a regular package
 in NodeJS.
 ```js
-const build = require('highcharts-assembler'); 
+const build = require('highcharts-assembler');
 ```
 
 ### Download ZIP archive from GitHub
@@ -69,8 +69,6 @@ const build = require('./highcharts-assembler/index.js');
 Download the Highcharts parts files
 -----------------------------------
 
-### Download from GitHub
-
 Go to the [highcharts/highcharts](https://github.com/highcharts/highcharts)
 repository and click on “Clone or download” and select “Download ZIP”. Once the
 zip file is downloaded unpack it to a desired location. In this case we are only
@@ -89,7 +87,7 @@ will need a setup that looks something like this:
 ```js
 'use strict';
 import Highcharts from '../parts/Globals.js';
-import '../parts/SvgRenderer.js';
+import '../parts/SVGRenderer.js';
 import '../parts/Chart.js';
 import '../parts/Series.js';
 import '../parts/Interaction.js';
@@ -119,7 +117,7 @@ build({
     base: './highcharts/js/masters/',
     files: ['custom.src.js'],
     output: './dist/'
-}); 
+});
 ```
 
 Open a CLI in your project folder and run `node custom-builder.js` to execute
@@ -128,31 +126,13 @@ script `./dist/custom.src.js`.
 
 
 
-Create custom Highcharts Styled files
+Create CSS for Styled Mode
 -------------------------------------
 
-To create a custom Styled version you will have to make a few modifications to
-the build procedure. This example assumes that you have read and followed the
-procedures already mentioned above in this article.
-
-The Highcharts assembler has an option named `type`, let us set this to `css`.
-The configuration in `./custom-builder.js` should now look like this:
-
-```js
-build({
-    base: './highcharts/js/masters/',
-    files: ['custom.src.js'],
-    output: './dist/',
-    type : 'css'
-}); 
-```
-
-Run `node custom-builder.js` again and notice that the new file
-`./dist/js/custom.src.js` has been created.
-
-Highcharts Styled version uses CSS to style the chart, and we must therefore
-also load its css styling. In this example we will use node-sass to generate the
-css file from the highcharts.scss file.
+Highcharts [styled mode](https://api.highcharts.com/highcharts/chart.styledMode)
+uses CSS to style the chart, and we must therefore also load CSS styling. In
+this example we will use node-sass to generate the CSS file from the
+`highcharts.scss` file.
 
 First create a new directory `./dist/css`.
 
@@ -190,4 +170,3 @@ Options
 |product|‘Highcharts’|Which product we’re building.|
 |umd|true|Wether to use UMD pattern or a module pattern|
 |version|‘x.x.x’|Version number of Highcharts|
-|type|‘classic’|Type of Highcharts version. Classic or css.|

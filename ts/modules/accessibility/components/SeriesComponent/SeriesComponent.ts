@@ -12,8 +12,8 @@
 
 'use strict';
 
-import H from '../../../../parts/Globals.js';
-import U from '../../../../parts/Utilities.js';
+import H from '../../../../Core/Globals.js';
+import U from '../../../../Core/Utilities.js';
 var extend = U.extend;
 
 import AccessibilityComponent from '../../AccessibilityComponent.js';
@@ -27,7 +27,7 @@ var hideSeriesFromAT = ChartUtilities.hideSeriesFromAT;
 import SeriesDescriber from './SeriesDescriber.js';
 var describeSeries = SeriesDescriber.describeSeries;
 
-import Tooltip from '../../../../parts/Tooltip.js';
+import Tooltip from '../../../../Core/Tooltip.js';
 
 /**
  * Internal types.

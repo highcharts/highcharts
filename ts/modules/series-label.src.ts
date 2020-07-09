@@ -10,12 +10,12 @@
 
 'use strict';
 
-import type Point from '../parts/Point';
-import type SVGPath from '../parts/SVGPath';
-import Chart from '../parts/Chart.js';
-import H from '../parts/Globals.js';
-import SVGRenderer from '../parts/SVGRenderer.js';
-import U from '../parts/Utilities.js';
+import type Point from '../Core/Series/Point';
+import type SVGPath from '../Core/Renderer/SVG/SVGPath';
+import Chart from '../Core/Chart/Chart.js';
+import H from '../Core/Globals.js';
+import SVGRenderer from '../Core/Renderer/SVG/SVGRenderer.js';
+import U from '../Core/Utilities.js';
 const {
     addEvent,
     animObject,
@@ -122,7 +122,7 @@ declare global {
 
 ''; // detach doclets above
 
-import '../parts/Series.js';
+import '../Core/Series/Series.js';
 
 const labelDistance = 3,
     Series = H.Series;

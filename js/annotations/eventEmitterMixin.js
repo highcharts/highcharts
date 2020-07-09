@@ -3,9 +3,9 @@
  *  !!!!!!! SOURCE GETS TRANSPILED BY TYPESCRIPT. EDIT TS FILE ONLY. !!!!!!!
  *
  * */
-import H from '../parts/Globals.js';
-import U from '../parts/Utilities.js';
-var addEvent = U.addEvent, fireEvent = U.fireEvent, inArray = U.inArray, objectEach = U.objectEach, pick = U.pick, removeEvent = U.removeEvent;
+import H from '../Core/Globals.js';
+import U from '../Core/Utilities.js';
+var addEvent = U.addEvent, fireEvent = U.fireEvent, objectEach = U.objectEach, pick = U.pick, removeEvent = U.removeEvent;
 /* eslint-disable valid-jsdoc */
 /**
  * It provides methods for:
@@ -24,7 +24,7 @@ var eventEmitterMixin = {
      */
     addEvents: function () {
         var emitter = this, addMouseDownEvent = function (element) {
-            addEvent(element, Highcharts.isTouchDevice ? 'touchstart' : 'mousedown', function (e) {
+            addEvent(element, H.isTouchDevice ? 'touchstart' : 'mousedown', function (e) {
                 emitter.onMouseDown(e);
             });
         };
@@ -41,7 +41,7 @@ var eventEmitterMixin = {
                     event.call(emitter, emitter.chart.pointer.normalize(e), emitter.target);
                 }
             };
-            if (inArray(type, emitter.nonDOMEvents || []) === -1) {
+            if ((emitter.nonDOMEvents || []).indexOf(type) === -1) {
                 emitter.graphic.on(type, eventHandler);
             }
             else {
@@ -49,7 +49,7 @@ var eventEmitterMixin = {
             }
         });
         if (emitter.options.draggable) {
-            addEvent(emitter, Highcharts.isTouchDevice ? 'touchmove' : 'drag', emitter.onDrag);
+            addEvent(emitter, H.isTouchDevice ? 'touchmove' : 'drag', emitter.onDrag);
             if (!emitter.graphic.renderer.styledMode) {
                 var cssPointer_1 = {
                     cursor: {
@@ -98,7 +98,7 @@ var eventEmitterMixin = {
         prevChartY = e.chartY;
         emitter.cancelClick = false;
         emitter.chart.hasDraggedAnnotation = true;
-        emitter.removeDrag = addEvent(H.doc, Highcharts.isTouchDevice ? 'touchmove' : 'mousemove', function (e) {
+        emitter.removeDrag = addEvent(H.doc, H.isTouchDevice ? 'touchmove' : 'mousemove', function (e) {
             emitter.hasDragged = true;
             e = pointer.normalize(e);
             e.prevChartX = prevChartX;
@@ -107,7 +107,7 @@ var eventEmitterMixin = {
             prevChartX = e.chartX;
             prevChartY = e.chartY;
         });
-        emitter.removeMouseUp = addEvent(H.doc, Highcharts.isTouchDevice ? 'touchend' : 'mouseup', function (e) {
+        emitter.removeMouseUp = addEvent(H.doc, H.isTouchDevice ? 'touchend' : 'mouseup', function (e) {
             emitter.cancelClick = emitter.hasDragged;
             emitter.hasDragged = false;
             emitter.chart.hasDraggedAnnotation = false;

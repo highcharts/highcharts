@@ -13,11 +13,7 @@
 'use strict';
 
 import type Annotation from '../../../annotations/annotations.src';
-import type Point from '../../../parts/Point';
-import U from '../../../parts/Utilities.js';
-const {
-    inArray
-} = U;
+import type Point from '../../../Core/Series/Point';
 
 import HTMLUtilities from '../utils/htmlUtilities.js';
 const {
@@ -155,7 +151,7 @@ function getAnnotationsInfoHTML(chart: Highcharts.AnnotationChart): string {
 function getPointAnnotationTexts(point: Highcharts.AnnotationPoint): Array<string> {
     const labels = getChartAnnotationLabels(point.series.chart);
     const pointLabels = labels
-        .filter((label): boolean => inArray(point, label.points) > -1);
+        .filter((label): boolean => label.points.indexOf(point) > -1);
 
     if (!pointLabels.length) {
         return [];

@@ -10,7 +10,7 @@
  *
  * */
 'use strict';
-import U from '../parts/Utilities.js';
+import U from '../Core/Utilities.js';
 var seriesType = U.seriesType;
 /* eslint-disable require-jsdoc */
 // Utils:

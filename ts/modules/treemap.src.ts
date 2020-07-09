@@ -12,8 +12,8 @@
 
 'use strict';
 
-import type Chart from '../parts/Chart';
-import H from '../parts/Globals.js';
+import type Chart from '../Core/Chart/Chart';
+import H from '../Core/Globals.js';
 
 /**
  * Internal types
@@ -290,13 +290,13 @@ declare global {
 
 import mixinTreeSeries from '../mixins/tree-series.js';
 import drawPoint from '../mixins/draw-point.js';
-import Color from '../parts/Color.js';
+import Color from '../Core/Color.js';
 const {
     parse: color
 } = Color;
 import LegendSymbolMixin from '../mixins/legend-symbol.js';
-import Point from '../parts/Point.js';
-import U from '../parts/Utilities.js';
+import Point from '../Core/Series/Point.js';
+import U from '../Core/Utilities.js';
 const {
     addEvent,
     correctFloat,
@@ -315,8 +315,8 @@ const {
     stableSort
 } = U;
 
-import '../parts/Options.js';
-import '../parts/Series.js';
+import '../Core/Options.js';
+import '../Core/Series/Series.js';
 
 /* eslint-disable no-invalid-this */
 const AXIS_MAX = 100;
@@ -2000,7 +2000,7 @@ seriesType<Highcharts.TreemapSeries>(
             id: string,
             redraw?: boolean
         ): void {
-            error(32, false, void 0, { 'treemap.drillToNode': 'treemap.setRootNode' });
+            error(32, false, void 0, { 'treemap.drillToNode': 'use treemap.setRootNode' });
             this.setRootNode(id, redraw);
         },
         /**

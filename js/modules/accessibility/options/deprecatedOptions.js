@@ -58,7 +58,7 @@
  */
 /* eslint-enable max-len */
 'use strict';
-import U from '../../../parts/Utilities.js';
+import U from '../../../Core/Utilities.js';
 var error = U.error, pick = U.pick;
 /* eslint-disable valid-jsdoc */
 /**
@@ -112,7 +112,7 @@ function copyDeprecatedChartOptions(chart) {
         var _a;
         if (chartOptions[prop]) {
             a11yOptions[prop] = chartOptions[prop];
-            error(32, false, chart, (_a = {}, _a["chart." + prop] = "accessibility." + prop, _a));
+            error(32, false, chart, (_a = {}, _a["chart." + prop] = "use accessibility." + prop, _a));
         }
     });
 }
@@ -125,7 +125,7 @@ function copyDeprecatedAxisOptions(chart) {
         if (opts && opts.description) {
             opts.accessibility = opts.accessibility || {};
             opts.accessibility.description = opts.description;
-            error(32, false, chart, { 'axis.description': 'axis.accessibility.description' });
+            error(32, false, chart, { 'axis.description': 'use axis.accessibility.description' });
         }
     });
 }

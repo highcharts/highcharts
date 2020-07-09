@@ -10,11 +10,11 @@
  *
  * */
 'use strict';
-import H from '../parts/Globals.js';
-import O from '../parts/Options.js';
+import H from '../Core/Globals.js';
+import O from '../Core/Options.js';
 var dateFormat = O.dateFormat;
 import './TreeGridAxis.js';
-import U from '../parts/Utilities.js';
+import U from '../Core/Utilities.js';
 var isNumber = U.isNumber, merge = U.merge, pick = U.pick, seriesType = U.seriesType, splat = U.splat;
 import './CurrentDateIndicator.js';
 import '../modules/static-scale.src.js';

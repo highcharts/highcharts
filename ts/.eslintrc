@@ -10,6 +10,7 @@
         "project": "./tsconfig.json"
     },
     "plugins": [
+        "highcharts",
         "@typescript-eslint"
     ],
     "rules": {
@@ -87,6 +88,9 @@
         "@typescript-eslint/prefer-regexp-exec": 0, // @todo
         "@typescript-eslint/prefer-string-starts-ends-with": 0, // @todo
         "@typescript-eslint/unbound-method": 0, // @todo
+        "highcharts/no-highcharts-object": 2,
+        "highcharts/no-private-constructor-doclet": 0,
+        "highcharts/doclet-apioption-last": 2,
         "node/no-missing-import": 0, // @todo
         "node/no-unsupported-features/es-syntax": 0, // @todo
     }

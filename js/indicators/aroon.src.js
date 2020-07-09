@@ -6,7 +6,7 @@
  *
  * */
 'use strict';
-import U from '../parts/Utilities.js';
+import U from '../Core/Utilities.js';
 var merge = U.merge, pick = U.pick, seriesType = U.seriesType;
 import multipleLinesMixin from '../mixins/multipe-lines.js';
 /* eslint-disable valid-jsdoc */

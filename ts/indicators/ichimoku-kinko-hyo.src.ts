@@ -8,9 +8,9 @@
 
 'use strict';
 
-import type Point from '../parts/Point';
-import type SVGPath from '../parts/SVGPath';
-import H from '../parts/Globals.js';
+import type Point from '../Core/Series/Point';
+import type SVGPath from '../Core/Renderer/SVG/SVGPath';
+import H from '../Core/Globals.js';
 
 /* eslint-disable @typescript-eslint/interface-name-prefix */
 
@@ -109,9 +109,9 @@ declare global {
 
 /* eslint-enable @typescript-eslint/interface-name-prefix */
 
-import Color from '../parts/Color.js';
+import Color from '../Core/Color.js';
 const color = Color.parse;
-import U from '../parts/Utilities.js';
+import U from '../Core/Utilities.js';
 const {
     defined,
     isArray,

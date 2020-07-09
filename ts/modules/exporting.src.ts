@@ -12,21 +12,21 @@
 
 'use strict';
 
-import type SVGPath from '../parts/SVGPath';
-import Chart from '../parts/Chart.js';
+import type SVGPath from '../Core/Renderer/SVG/SVGPath';
+import Chart from '../Core/Chart/Chart.js';
 import chartNavigationMixin from '../mixins/navigation.js';
-import H from '../parts/Globals.js';
+import H from '../Core/Globals.js';
 const {
     doc,
     isTouchDevice,
     win
 } = H;
-import O from '../parts/Options.js';
+import O from '../Core/Options.js';
 const {
     defaultOptions
 } = O;
-import SVGRenderer from '../parts/SVGRenderer.js';
-import U from '../parts/Utilities.js';
+import SVGRenderer from '../Core/Renderer/SVG/SVGRenderer.js';
+import U from '../Core/Utilities.js';
 const {
     addEvent,
     css,
@@ -1323,7 +1323,8 @@ extend(Chart.prototype, /** @lends Highcharts.Chart.prototype */ {
                             'width="' + (options.chart as any).width + '" ' +
                             'height="' + (options.chart as any).height + '">' +
                     '<body xmlns="http://www.w3.org/1999/xhtml">' +
-                    html +
+                    // Some tags needs to be closed in xhtml (#13726)
+                    html.replace(/(<(?:img|br).*?(?=\>))>/g, '$1 />') +
                     '</body>' +
                     '</foreignObject>';
                 svg = svg.replace('</svg>', html + '</svg>');

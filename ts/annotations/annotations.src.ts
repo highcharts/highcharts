@@ -10,10 +10,10 @@
 
 'use strict';
 
-import type { AxisType } from '../parts/axis/types';
-import type Point from '../parts/Point';
-import type SVGPath from '../parts/SVGPath';
-import Chart from '../parts/Chart.js';
+import type { AxisType } from '../Core/Axis/Types';
+import type Point from '../Core/Series/Point';
+import type SVGPath from '../Core/Renderer/SVG/SVGPath';
+import Chart from '../Core/Chart/Chart.js';
 const chartProto: Highcharts.AnnotationChart = Chart.prototype as any;
 import ControllableMixin from './controllable/controllableMixin.js';
 import ControllableRect from './controllable/ControllableRect.js';
@@ -23,13 +23,12 @@ import ControllableImage from './controllable/ControllableImage.js';
 import ControllableLabel from './controllable/ControllableLabel.js';
 import ControlPoint from './ControlPoint.js';
 import EventEmitterMixin from './eventEmitterMixin.js';
-import H from '../parts/Globals.js';
+import H from '../Core/Globals.js';
 import MockPoint from './MockPoint.js';
-import Pointer from '../parts/Pointer.js';
-import U from '../parts/Utilities.js';
+import Pointer from '../Core/Pointer.js';
+import U from '../Core/Utilities.js';
 const {
     addEvent,
-    animObject,
     defined,
     destroyObjectProperties,
     erase,
@@ -64,9 +63,6 @@ declare global {
             defs: Dictionary<SVGDefinitionObject>;
             navigation: NavigationOptions;
         }
-        interface AnnotationControllableLabel {
-            itemType: 'label';
-        }
         interface AnnotationControlPointEventsOptionsObject {
             drag?: AnnotationControlPointDragEventFunction;
         }
@@ -82,10 +78,10 @@ declare global {
             width: number;
         }
         type AnnotationDraggableValue = (''|'x'|'y'|'xy');
-        type AnnotationLabelType = AnnotationControllableLabel;
+        type AnnotationLabelType = ControllableLabel;
         type AnnotationShapeType = (
-            AnnotationControllableCircle|AnnotationControllableImage|AnnotationControllablePath|
-            AnnotationControllableRect
+            ControllableCircle|ControllableImage|ControllablePath|
+            ControllableRect
         );
         interface AnnotationMockPointOptionsObject {
             x: number;
@@ -289,9 +285,6 @@ class Annotation implements EventEmitterMixin.Type, ControllableMixin.Type {
      *
      * */
 
-    /**
-     * @private
-     */
     public constructor(
         chart: Highcharts.AnnotationChart,
         userOptions: Highcharts.AnnotationsOptions

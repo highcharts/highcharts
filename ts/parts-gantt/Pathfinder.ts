@@ -11,10 +11,10 @@
 
 'use strict';
 
-import type Axis from '../parts/Axis';
-import type SVGPath from '../parts/SVGPath';
-import Chart from '../parts/Chart.js';
-import H from '../parts/Globals.js';
+import type Axis from '../Core/Axis/Axis';
+import type SVGPath from '../Core/Renderer/SVG/SVGPath';
+import Chart from '../Core/Chart/Chart.js';
+import H from '../Core/Globals.js';
 
 /**
  * Internal types
@@ -191,10 +191,10 @@ declare global {
 
 ''; // detach doclets above
 
-import O from '../parts/Options.js';
+import O from '../Core/Options.js';
 const { defaultOptions } = O;
-import Point from '../parts/Point.js';
-import U from '../parts/Utilities.js';
+import Point from '../Core/Series/Point.js';
+import U from '../Core/Utilities.js';
 const {
     addEvent,
     defined,

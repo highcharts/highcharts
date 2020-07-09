@@ -4,11 +4,10 @@
  *
  * */
 'use strict';
-import H from '../../parts/Globals.js';
-import U from '../../parts/Utilities.js';
+import Chart from '../../Core/Chart/Chart.js';
+import SVGRenderer from '../../Core/Renderer/SVG/SVGRenderer.js';
+import U from '../../Core/Utilities.js';
 var addEvent = U.addEvent, defined = U.defined, merge = U.merge, objectEach = U.objectEach, uniqueKey = U.uniqueKey;
-import '../../parts/Chart.js';
-import '../../parts/SVGRenderer.js';
 /**
  * Options for configuring markers for annotations.
  *
@@ -83,7 +82,7 @@ var defaultMarkers = {
             }]
     }
 };
-H.SVGRenderer.prototype.addMarker = function (id, markerOptions) {
+SVGRenderer.prototype.addMarker = function (id, markerOptions) {
     var options = { id: id };
     var attrs = {
         stroke: markerOptions.color || 'none',
@@ -103,11 +102,14 @@ H.SVGRenderer.prototype.addMarker = function (id, markerOptions) {
     return marker;
 };
 /* eslint-disable no-invalid-this, valid-jsdoc */
-var createMarkerSetter = function (markerType) {
+/**
+ * @private
+ */
+function createMarkerSetter(markerType) {
     return function (value) {
         this.attr(markerType, 'url(#' + value + ')');
     };
-};
+}
 /**
  * @private
  * @mixin
@@ -146,7 +148,7 @@ var markerMixin = {
         ['markerStart', 'markerEnd'].forEach(setMarker);
     }
 };
-addEvent(H.Chart, 'afterGetContainer', function () {
+addEvent(Chart, 'afterGetContainer', function () {
     this.options.defs = merge(defaultMarkers, this.options.defs || {});
     objectEach(this.options.defs, function (def) {
         if (def.tagName === 'marker' && def.render !== false) {

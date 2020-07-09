@@ -10,7 +10,7 @@
  *
  * */
 'use strict';
-import U from '../../../../parts/Utilities.js';
+import U from '../../../../Core/Utilities.js';
 var find = U.find, format = U.format, isNumber = U.isNumber, numberFormat = U.numberFormat, pick = U.pick, defined = U.defined;
 import AnnotationsA11y from '../AnnotationsA11y.js';
 var getPointAnnotationTexts = AnnotationsA11y.getPointAnnotationTexts;
@@ -18,7 +18,7 @@ import HTMLUtilities from '../../utils/htmlUtilities.js';
 var escapeStringForHTML = HTMLUtilities.escapeStringForHTML, reverseChildNodes = HTMLUtilities.reverseChildNodes, stripHTMLTags = HTMLUtilities.stripHTMLTagsFromString;
 import ChartUtilities from '../../utils/chartUtilities.js';
 var getAxisDescription = ChartUtilities.getAxisDescription, getSeriesFirstPointElement = ChartUtilities.getSeriesFirstPointElement, getSeriesA11yElement = ChartUtilities.getSeriesA11yElement, unhideChartElementFromAT = ChartUtilities.unhideChartElementFromAT;
-import Tooltip from '../../../../parts/Tooltip.js';
+import Tooltip from '../../../../Core/Tooltip.js';
 /* eslint-disable valid-jsdoc */
 /**
  * @private

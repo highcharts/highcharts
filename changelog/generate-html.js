@@ -53,19 +53,20 @@ function generateHTML() {
 
         var htmlContent = '';
 
-        function addLinkToIssues(textToken) {
-            if (typeof textToken !== 'undefined') {
-                var issues = textToken.match(/#[0-9]+/g);
-                if (issues !== null) {
-                    issues.forEach(issue => {
-                        var issued = issue.substring(1),
-                            issueLink = 'https://github.com/highcharts/highcharts/issues/' + issued,
-                            formatIssue = '[' + issue + '](' + issueLink + ')';
-                        textToken = replaceString(textToken, issue, formatIssue);
-                    });
+        function addLinkToIssues(items) {
+            (items || []).forEach(item => {
+                if (typeof item.text === 'string') {
+                    var issues = item.text.match(/#[0-9]+/g);
+                    if (issues !== null) {
+                        issues.forEach(issue => {
+                            var issued = issue.substring(1),
+                                issueLink = 'https://github.com/highcharts/highcharts/issues/' + issued,
+                                formatIssue = '[' + issue + '](' + issueLink + ')';
+                            item.text = replaceString(item.text, issue, formatIssue);
+                        });
+                    }
                 }
-            }
-            return textToken;
+            });
         }
 
 
@@ -99,15 +100,15 @@ function generateHTML() {
                 }
                 switch (write) {
                     case 'New features':
-                        token.text = addLinkToIssues(token.text);
+                        addLinkToIssues(token.items);
                         changelog.features.push(token);
                         break;
                     case 'Upgrade notes':
-                        token.text = addLinkToIssues(token.text);
+                        addLinkToIssues(token.items);
                         changelog.upgradeNotes.push(token);
                         break;
                     case 'Bug fixes':
-                        token.text = addLinkToIssues(token.text);
+                        addLinkToIssues(token.items);
                         changelog.bugFixes.push(token);
                         break;
                     default:
@@ -138,15 +139,31 @@ function generateHTML() {
                 </div>
                 <div class="changelog-container">`);
         }
-
+        function makeDownloadLinks(version, name) {
+            var filePrefixMap = {
+                'highcharts-stock': 'Highstock',
+                'highcharts-maps': 'Highmaps'
+            };
+            if (semver.satisfies(version, '>=8.1.0') || (name === 'highcharts' || name === 'highcharts-gantt')) {
+                return name
+                    .split('-')
+                    .map(word => word.charAt(0).toUpperCase() + word.slice(1))
+                    .join('-');
+            }
+            return filePrefixMap[name];
+        }
         function featureHTMLStructure() {
             if (changelog.features) {
                 const version = changelog.header.version.split('-').join('.');
                 const id = changelog.header.name + '-v' + version;
+                const name = changelog.header.name;
+                const downloadLink = 'https://code.highcharts.com/zips/' + makeDownloadLinks(version, name) + '-' + version + '.zip';
+
                 return (
                     `<p class="release-header">
                         <a id="${id}"></a>
                         <a href="#${id}">${changelog.header.productName} v${version} ${changelog.header.date}</a>
+                        <span class="download-link" ><a href="${downloadLink}" title="Download the zip archive for ${changelog.header.productName} v${version}"><i class="fas fa-download"></i></a></span>    
                     </p>
                     ${marked.parser(changelog.features)}`
                 );
@@ -158,14 +175,13 @@ function generateHTML() {
                 return (
                     `<div id="${changelog.header.offset}heading-${changelog.header.version}-upgrade-notes" class="card-header">
                     <h4 class="card-title">
-                    <a href="#${changelog.header.offset}${changelog.header.version}-upgrade-notes" data-toggle="collapse" data-parent="#accordion"> Upgrade notes</a>
+                    <button class="btn btn-link collapsed" type="button" data-toggle="collapse" data-target="#${changelog.header.offset}${changelog.header.version}-upgrade-notes"><span> Upgrade notes </span></button>
                     </h4>
                     </div>
-                    <div id="${changelog.header.offset}${changelog.header.version}-upgrade-notes" class="collapse">
+                    <div id="${changelog.header.offset}${changelog.header.version}-upgrade-notes" class="collapse" aria-labelledby="${changelog.header.offset}heading-${changelog.header.version}-bug-fixes" data-parent=".accordion">
                     <div class="card-body">
                     ${marked.parser(changelog.upgradeNotes)}
                     </div>
-
                     </div>`);
             }
             return '';
@@ -177,10 +193,10 @@ function generateHTML() {
                         id="${changelog.header.offset}heading-${changelog.header.version}-bug-fixes"
                         class="card-header">
                     <h4 class="card-title">
-                    <a href="#${changelog.header.offset}${changelog.header.version}-bug-fixes" data-toggle="collapse" data-parent="#accordion"> Bug fixes </a>
+                    <button class="btn btn-link collapsed" type="button" data-toggle="collapse" data-target="#${changelog.header.offset}${changelog.header.version}-bug-fixes"><span> Bug fixes </span></button>
                     </h4>
                     </div>
-                    <div id="${changelog.header.offset}${changelog.header.version}-bug-fixes" class="collapse">
+                    <div id="${changelog.header.offset}${changelog.header.version}-bug-fixes" class="collapse" aria-labelledby="${changelog.header.offset}heading-${changelog.header.version}-bug-fixes" data-parent=".accordion">
                     <div class="card-body">
                     ${marked.parser(changelog.bugFixes)}
                     </div>
@@ -193,7 +209,7 @@ function generateHTML() {
             if (changelog.upgradeNotes.length > 0 ||
                 changelog.bugFixes.length > 0) {
                 return (
-                    `<div id="accordion" class="card-group">
+                    `<div class="accordion card-group">
                     <div class="card">
                     ${upgradeNotesHTMLStructure()}
                     ${bugFixesHTMLStructure()}

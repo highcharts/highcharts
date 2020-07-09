@@ -10,4 +10,4 @@
  * License: www.highcharts.com/license
  */
 'use strict';
-import '../../modules/networkgraph/networkgraph.src.js';
+import '../../Series/Networkgraph/Networkgraph.js';

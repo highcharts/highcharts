@@ -8,7 +8,7 @@
  *
  * */
 'use strict';
-import Chart from '../parts/Chart.js';
+import Chart from '../Core/Chart/Chart.js';
 var chartProto = Chart.prototype;
 import ControllableMixin from './controllable/controllableMixin.js';
 import ControllableRect from './controllable/ControllableRect.js';
@@ -18,11 +18,11 @@ import ControllableImage from './controllable/ControllableImage.js';
 import ControllableLabel from './controllable/ControllableLabel.js';
 import ControlPoint from './ControlPoint.js';
 import EventEmitterMixin from './eventEmitterMixin.js';
-import H from '../parts/Globals.js';
+import H from '../Core/Globals.js';
 import MockPoint from './MockPoint.js';
-import Pointer from '../parts/Pointer.js';
-import U from '../parts/Utilities.js';
-var addEvent = U.addEvent, animObject = U.animObject, defined = U.defined, destroyObjectProperties = U.destroyObjectProperties, erase = U.erase, extend = U.extend, find = U.find, fireEvent = U.fireEvent, getDeferredAnimation = U.getDeferredAnimation, merge = U.merge, pick = U.pick, splat = U.splat, wrap = U.wrap;
+import Pointer from '../Core/Pointer.js';
+import U from '../Core/Utilities.js';
+var addEvent = U.addEvent, defined = U.defined, destroyObjectProperties = U.destroyObjectProperties, erase = U.erase, extend = U.extend, find = U.find, fireEvent = U.fireEvent, getDeferredAnimation = U.getDeferredAnimation, merge = U.merge, pick = U.pick, splat = U.splat, wrap = U.wrap;
 /* *********************************************************************
  *
  * ANNOTATION
@@ -77,9 +77,6 @@ var Annotation = /** @class */ (function () {
      *  Constructors
      *
      * */
-    /**
-     * @private
-     */
     function Annotation(chart, userOptions) {
         /* *
          *

@@ -10,9 +10,9 @@
  *
  * */
 'use strict';
-import H from '../parts/Globals.js';
-import Point from '../parts/Point.js';
-import U from '../parts/Utilities.js';
+import H from '../Core/Globals.js';
+import Point from '../Core/Series/Point.js';
+import U from '../Core/Utilities.js';
 var addEvent = U.addEvent, clamp = U.clamp, merge = U.merge, objectEach = U.objectEach, pick = U.pick;
 /**
  * Current drag and drop position.
@@ -1877,7 +1877,7 @@ Point.prototype.showDragHandles = function () {
             'stroke-width': handleOptions.lineWidth,
             fill: handleOptions.color,
             stroke: handleOptions.lineColor
-        }, pathFormatter = handleOptions.pathFormatter || val.handleFormatter, positioner = val.handlePositioner, pos, handle, handleSide, path, 
+        }, pathFormatter = handleOptions.pathFormatter || val.handleFormatter, positioner = val.handlePositioner, pos, handle, path, 
         // Run validation function on whether or not we allow individual
         // updating of this prop.
         validate = val.validateIndividualDrag ?
@@ -1902,8 +1902,6 @@ Point.prototype.showDragHandles = function () {
             // Find position and path of handle
             pos = positioner(point);
             handleAttrs.d = path = pathFormatter(point);
-            handleSide = typeof val.resizeSide === 'function' ?
-                val.resizeSide(point.options, point) : val.resizeSide;
             if (!path || pos.x < 0 || pos.y < 0) {
                 return;
             }
@@ -1912,9 +1910,9 @@ Point.prototype.showDragHandles = function () {
                 (val.axis === 'x') !== !!chart.inverted ?
                 'ew-resize' : 'ns-resize';
             // Create and add the handle element if it doesn't exist
-            handle = chart.dragHandles[handleSide];
+            handle = chart.dragHandles[val.optionName];
             if (!handle) {
-                handle = chart.dragHandles[handleSide] = renderer
+                handle = chart.dragHandles[val.optionName] = renderer
                     .path()
                     .add(chart.dragHandles.group);
             }

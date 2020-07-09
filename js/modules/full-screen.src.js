@@ -6,9 +6,9 @@
  * License: www.highcharts.com/license
  */
 'use strict';
-import Chart from '../parts/Chart.js';
-import H from '../parts/Globals.js';
-import U from '../parts/Utilities.js';
+import Chart from '../Core/Chart/Chart.js';
+import H from '../Core/Globals.js';
+import U from '../Core/Utilities.js';
 var addEvent = U.addEvent;
 /**
  * The module allows user to enable display chart in full screen mode.

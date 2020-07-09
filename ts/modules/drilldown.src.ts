@@ -12,17 +12,17 @@
 
 'use strict';
 
-import Chart from '../parts/Chart.js';
-import Color from '../parts/Color.js';
-import H from '../parts/Globals.js';
-import O from '../parts/Options.js';
+import Chart from '../Core/Chart/Chart.js';
+import Color from '../Core/Color.js';
+import H from '../Core/Globals.js';
+import O from '../Core/Options.js';
 const {
     defaultOptions
 } = O;
-import Point from '../parts/Point.js';
-import SVGRenderer from '../parts/SVGRenderer.js';
-import Tick from '../parts/Tick.js';
-import U from '../parts/Utilities.js';
+import Point from '../Core/Series/Point.js';
+import SVGRenderer from '../Core/Renderer/SVG/SVGRenderer.js';
+import Tick from '../Core/Axis/Tick.js';
+import U from '../Core/Utilities.js';
 const {
     addEvent,
     removeEvent,
@@ -314,8 +314,8 @@ declare global {
  * @type {"drillup"}
  */
 
-import '../parts/Series.js';
-import '../parts/ColumnSeries.js';
+import '../Core/Series/Series.js';
+import '../Series/ColumnSeries.js';
 
 var noop = H.noop,
     seriesTypes = H.seriesTypes,
@@ -1279,8 +1279,11 @@ if (PieSeries) {
                 animationOptions =
                     (this.chart.options.drilldown as any).animation;
 
+            if (this.is('item')) {
+                animationOptions.duration = 0;
+            }
             // Unable to drill down in the horizontal item series #13372
-            if (this.is('item') && this.center) {
+            if (this.center) {
                 var animateFrom = level.shapeArgs,
                     start = (animateFrom as any).start,
                     angle = (animateFrom as any).end - start,
@@ -1314,8 +1317,6 @@ if (PieSeries) {
                     // Reset to prototype
                     delete this.animate;
                 }
-            } else {
-                animationOptions.duration = 0;
             }
         }
     });

@@ -12,7 +12,7 @@
 
 'use strict';
 
-import type Chart from '../parts/Chart';
+import type Chart from '../Core/Chart/Chart';
 
 /**
  * Internal types
@@ -58,7 +58,7 @@ declare global {
     }
 }
 
-import U from '../parts/Utilities.js';
+import U from '../Core/Utilities.js';
 const {
     error,
     isArray,

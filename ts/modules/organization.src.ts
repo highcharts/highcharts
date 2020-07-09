@@ -12,9 +12,9 @@
 
 'use strict';
 
-import type SVGPath from '../parts/SVGPath';
-import H from '../parts/Globals.js';
-import U from '../parts/Utilities.js';
+import type SVGPath from '../Core/Renderer/SVG/SVGPath';
+import H from '../Core/Globals.js';
+import U from '../Core/Utilities.js';
 const {
     css,
     pick,

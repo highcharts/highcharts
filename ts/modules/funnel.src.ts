@@ -14,16 +14,16 @@
 
 'use strict';
 
-import type Point from '../parts/Point';
-import type SVGPath from '../parts/SVGPath';
-import Chart from '../parts/Chart.js';
-import H from '../parts/Globals.js';
+import type Point from '../Core/Series/Point';
+import type SVGPath from '../Core/Renderer/SVG/SVGPath';
+import Chart from '../Core/Chart/Chart.js';
+import H from '../Core/Globals.js';
 const {
     noop,
     seriesType,
     seriesTypes
 } = H;
-import U from '../parts/Utilities.js';
+import U from '../Core/Utilities.js';
 const {
     addEvent,
     fireEvent,
@@ -108,8 +108,8 @@ declare global {
     }
 }
 
-import '../parts/Options.js';
-import '../parts/Series.js';
+import '../Core/Options.js';
+import '../Core/Series/Series.js';
 
 /**
  * @private

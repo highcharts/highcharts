@@ -9,12 +9,12 @@
  *
  * */
 'use strict';
-import Axis from '../parts/Axis.js';
-import H from '../parts/Globals.js';
-import O from '../parts/Options.js';
+import Axis from '../Core/Axis/Axis.js';
+import H from '../Core/Globals.js';
+import O from '../Core/Options.js';
 var dateFormat = O.dateFormat;
-import Tick from '../parts/Tick.js';
-import U from '../parts/Utilities.js';
+import Tick from '../Core/Axis/Tick.js';
+import U from '../Core/Utilities.js';
 var addEvent = U.addEvent, defined = U.defined, erase = U.erase, find = U.find, isArray = U.isArray, isNumber = U.isNumber, merge = U.merge, pick = U.pick, timeUnits = U.timeUnits, wrap = U.wrap;
 var argsToArray = function (args) {
     return Array.prototype.slice.call(args, 1);

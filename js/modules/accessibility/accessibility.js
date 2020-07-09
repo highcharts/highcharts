@@ -11,12 +11,12 @@
  * */
 'use strict';
 import ChartUtilities from './utils/chartUtilities.js';
-import H from '../../parts/Globals.js';
+import H from '../../Core/Globals.js';
 import KeyboardNavigationHandler from './KeyboardNavigationHandler.js';
-import O from '../../parts/Options.js';
+import O from '../../Core/Options.js';
 var defaultOptions = O.defaultOptions;
-import Point from '../../parts/Point.js';
-import U from '../../parts/Utilities.js';
+import Point from '../../Core/Series/Point.js';
+import U from '../../Core/Utilities.js';
 var addEvent = U.addEvent, extend = U.extend, fireEvent = U.fireEvent, merge = U.merge;
 var doc = H.win.document;
 import AccessibilityComponent from './AccessibilityComponent.js';

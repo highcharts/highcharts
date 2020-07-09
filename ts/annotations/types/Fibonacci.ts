@@ -6,11 +6,11 @@
 
 'use strict';
 
-import type SVGPath from '../../parts/SVGPath';
+import type SVGPath from '../../Core/Renderer/SVG/SVGPath';
 import Annotation from '../annotations.src.js';
-import H from '../../parts/Globals.js';
 import MockPoint from '../MockPoint.js';
-import U from '../../parts/Utilities.js';
+import Tunnel from './Tunnel.js';
+import U from '../../Core/Utilities.js';
 const {
     merge
 } = U;
@@ -21,7 +21,7 @@ const {
  */
 declare global {
     namespace Highcharts {
-        class AnnotationFibonacci extends AnnotationTunnel {
+        class AnnotationFibonacci extends Tunnel {
             public static levels: Array<number>;
             public options: AnnotationFibonacciOptionsObject;
             public endRetracements: Array<AnnotationMockPoint>;
@@ -49,7 +49,6 @@ declare global {
     }
 }
 
-var Tunnel = Annotation.types.tunnel;
 
 /* eslint-disable no-invalid-this, valid-jsdoc */
 
@@ -88,120 +87,152 @@ var createPathDGenerator = function (retracementIndex: number, isBackground?: bo
     };
 };
 
-const Fibonacci: typeof Highcharts.AnnotationFibonacci = function (this: Highcharts.AnnotationFibonacci): void {
-    this.startRetracements = [];
-    this.endRetracements = [];
+class Fibonacci extends Tunnel {
 
-    Tunnel.apply(this, arguments as any);
-} as any;
+    /* *
+     *
+     * Static properties
+     *
+     * */
 
-Fibonacci.levels = [0, 0.236, 0.382, 0.5, 0.618, 0.786, 1];
+    public static levels = [0, 0.236, 0.382, 0.5, 0.618, 0.786, 1];
 
-H.extendAnnotation(Fibonacci, Tunnel,
-    {
-        linkPoints: function (this: Highcharts.AnnotationFibonacci): undefined {
-            Tunnel.prototype.linkPoints.call(this);
+    /* *
+     *
+     * Constructors
+     *
+     * */
 
-            this.linkRetracementsPoints();
+    public constructor(chart: Highcharts.AnnotationChart, options: Highcharts.AnnotationFibonacciOptionsObject) {
+        super(chart, options);
+    }
 
-            return;
-        },
+    /* *
+     *
+     *  Properties
+     *
+     * */
 
-        linkRetracementsPoints: function (this: Highcharts.AnnotationFibonacci): void {
-            var points = this.points,
-                startDiff = (points[0].y as any) - (points[3].y as any),
-                endDiff = (points[1].y as any) - (points[2].y as any),
-                startX: number = points[0].x as any,
-                endX: number = points[1].x as any;
+    public endRetracements?: Array<Highcharts.AnnotationMockPoint>;
+    public startRetracements?: Array<Highcharts.AnnotationMockPoint>;
 
-            Fibonacci.levels.forEach(function (level: number, i: number): void {
-                var startRetracement = (points[0].y as any) - startDiff * level,
-                    endRetracement = (points[1].y as any) - endDiff * level;
+    /* *
+     *
+     * Functions
+     *
+     * */
 
-                this.linkRetracementPoint(
-                    i,
-                    startX,
-                    startRetracement,
-                    this.startRetracements
-                );
+    public linkPoints(): undefined {
+        super.linkPoints();
 
-                this.linkRetracementPoint(
-                    i,
-                    endX,
-                    endRetracement,
-                    this.endRetracements
-                );
-            }, this);
-        },
+        this.linkRetracementsPoints();
 
-        linkRetracementPoint: function (
-            this: Highcharts.AnnotationFibonacci,
-            pointIndex: number,
-            x: number,
-            y: number,
-            retracements: Array<Highcharts.AnnotationMockPoint>
-        ): void {
-            var point = retracements[pointIndex],
-                typeOptions = this.options.typeOptions;
+        return;
+    }
 
-            if (!point) {
-                retracements[pointIndex] = new MockPoint(
-                    this.chart,
-                    this,
-                    {
-                        x: x,
-                        y: y,
-                        xAxis: typeOptions.xAxis,
-                        yAxis: typeOptions.yAxis
-                    }
-                );
-            } else {
-                (point.options as any).x = x;
-                (point.options as any).y = y;
+    public linkRetracementsPoints(): void {
+        var points = this.points,
+            startDiff = (points[0].y as any) - (points[3].y as any),
+            endDiff = (points[1].y as any) - (points[2].y as any),
+            startX: number = points[0].x as any,
+            endX: number = points[1].x as any;
 
-                point.refresh();
-            }
-        },
+        Fibonacci.levels.forEach(function (level: number, i: number): void {
+            var startRetracement = (points[0].y as any) - startDiff * level,
+                endRetracement = (points[1].y as any) - endDiff * level;
 
-        addShapes: function (this: Highcharts.AnnotationFibonacci): void {
-            Fibonacci.levels.forEach(function (this: Highcharts.AnnotationFibonacci, _level: number, i: number): void {
-                this.initShape({
-                    type: 'path',
-                    d: createPathDGenerator(i)
-                }, false as any);
+            this.startRetracements = this.startRetracements || [];
+            this.endRetracements = this.endRetracements || [];
 
-                if (i > 0) {
-                    (this.initShape as any)({
-                        type: 'path',
-                        fill: this.options.typeOptions.backgroundColors[i - 1],
-                        strokeWidth: 0,
-                        d: createPathDGenerator(i, true)
-                    });
+            this.linkRetracementPoint(
+                i,
+                startX,
+                startRetracement,
+                this.startRetracements
+            );
+
+            this.linkRetracementPoint(
+                i,
+                endX,
+                endRetracement,
+                this.endRetracements
+            );
+        }, this);
+    }
+
+    public linkRetracementPoint(
+        pointIndex: number,
+        x: number,
+        y: number,
+        retracements: Array<Highcharts.AnnotationMockPoint>
+    ): void {
+        var point = retracements[pointIndex],
+            typeOptions = this.options.typeOptions;
+
+        if (!point) {
+            retracements[pointIndex] = new MockPoint(
+                this.chart,
+                this,
+                {
+                    x: x,
+                    y: y,
+                    xAxis: typeOptions.xAxis,
+                    yAxis: typeOptions.yAxis
                 }
-            }, this);
-        },
+            );
+        } else {
+            (point.options as any).x = x;
+            (point.options as any).y = y;
 
-        addLabels: function (this: Highcharts.AnnotationFibonacci): void {
-            Fibonacci.levels.forEach(function (this: Highcharts.AnnotationFibonacci, level: number, i: number): void {
-                var options = this.options.typeOptions,
-                    label = (this.initLabel as any)(
-                        merge(options.labels[i], {
-                            point: function (target: any): Highcharts.AnnotationMockPointOptionsObject {
-                                var point = MockPoint.pointToOptions(
-                                    target.annotation.startRetracements[i]
-                                );
-
-                                return point;
-                            },
-                            text: level.toString()
-                        })
-                    );
-
-                options.labels[i] = label.options;
-            }, this);
+            point.refresh();
         }
-    },
+    }
 
+    public addShapes(): void {
+        Fibonacci.levels.forEach(function (this: Highcharts.AnnotationFibonacci, _level: number, i: number): void {
+            this.initShape({
+                type: 'path',
+                d: createPathDGenerator(i)
+            }, false as any);
+
+            if (i > 0) {
+                (this.initShape as any)({
+                    type: 'path',
+                    fill: this.options.typeOptions.backgroundColors[i - 1],
+                    strokeWidth: 0,
+                    d: createPathDGenerator(i, true)
+                });
+            }
+        }, this);
+    }
+
+    public addLabels(): void {
+        Fibonacci.levels.forEach(function (this: Highcharts.AnnotationFibonacci, level: number, i: number): void {
+            var options = this.options.typeOptions,
+                label = (this.initLabel as any)(
+                    merge(options.labels[i], {
+                        point: function (target: any): Highcharts.AnnotationMockPointOptionsObject {
+                            var point = MockPoint.pointToOptions(
+                                target.annotation.startRetracements[i]
+                            );
+
+                            return point;
+                        },
+                        text: level.toString()
+                    })
+                );
+
+            options.labels[i] = label.options;
+        }, this);
+    }
+}
+
+interface Fibonacci {
+    defaultOptions: Tunnel['defaultOptions'];
+}
+
+Fibonacci.prototype.defaultOptions = merge(
+    Tunnel.prototype.defaultOptions,
     /**
      * A fibonacci annotation.
      *
@@ -276,7 +307,8 @@ H.extendAnnotation(Fibonacci, Tunnel,
             verticalAlign: 'middle',
             y: 0
         }
-    });
+    }
+);
 
 Annotation.types.fibonacci = Fibonacci;
 

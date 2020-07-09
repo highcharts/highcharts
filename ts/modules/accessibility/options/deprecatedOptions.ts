@@ -61,9 +61,9 @@
 
 'use strict';
 
-import Axis from '../../../parts/Axis.js';
-import Chart from '../../../parts/Chart.js';
-import U from '../../../parts/Utilities.js';
+import Axis from '../../../Core/Axis/Axis.js';
+import Chart from '../../../Core/Chart/Chart.js';
+import U from '../../../Core/Utilities.js';
 const {
     error,
     pick
@@ -174,7 +174,7 @@ function copyDeprecatedChartOptions(chart: Chart): void {
     ): void {
         if ((chartOptions as any)[prop]) {
             (a11yOptions as any)[prop] = (chartOptions as any)[prop];
-            error(32, false, chart, { [`chart.${prop}`]: `accessibility.${prop}` });
+            error(32, false, chart, { [`chart.${prop}`]: `use accessibility.${prop}` });
         }
     });
 }
@@ -188,7 +188,7 @@ function copyDeprecatedAxisOptions(chart: Chart): void {
         if (opts && opts.description) {
             opts.accessibility = opts.accessibility || {};
             opts.accessibility.description = opts.description;
-            error(32, false, chart, { 'axis.description': 'axis.accessibility.description' });
+            error(32, false, chart, { 'axis.description': 'use axis.accessibility.description' });
         }
     });
 }

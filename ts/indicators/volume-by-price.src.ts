@@ -12,10 +12,10 @@
 
 'use strict';
 
-import type { AxisType } from '../parts/axis/types';
-import type Chart from '../parts/Chart';
-import type SVGPath from '../parts/SVGPath';
-import H from '../parts/Globals.js';
+import type { AxisType } from '../Core/Axis/Types';
+import type Chart from '../Core/Chart/Chart';
+import type SVGPath from '../Core/Renderer/SVG/SVGPath';
+import H from '../Core/Globals.js';
 
 
 /**
@@ -124,8 +124,8 @@ declare global {
     }
 }
 
-import Point from '../parts/Point.js';
-import U from '../parts/Utilities.js';
+import Point from '../Core/Series/Point.js';
+import U from '../Core/Utilities.js';
 const {
     addEvent,
     animObject,

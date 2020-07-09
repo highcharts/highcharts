@@ -12,8 +12,7 @@
 
 'use strict';
 
-import type Point from '../../../../parts/Point';
-import H from '../../../../parts/Globals.js';
+import type Point from '../../../../Core/Series/Point';
 
 /**
  * Internal types.
@@ -28,7 +27,7 @@ declare global {
     }
 }
 
-import U from '../../../../parts/Utilities.js';
+import U from '../../../../Core/Utilities.js';
 const {
     find,
     format,
@@ -56,7 +55,7 @@ const {
     unhideChartElementFromAT
 } = ChartUtilities;
 
-import Tooltip from '../../../../parts/Tooltip.js';
+import Tooltip from '../../../../Core/Tooltip.js';
 
 /**
  * Internal types.

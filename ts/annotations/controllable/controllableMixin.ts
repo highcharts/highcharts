@@ -7,10 +7,11 @@
 'use strict';
 
 import type Annotation from '../annotations.src';
-import ControlPoint from './../ControlPoint.js';
-import MockPoint from './../MockPoint.js';
-import Tooltip from '../../parts/Tooltip.js';
-import U from './../../parts/Utilities.js';
+import type SVGElement from '../../Core/Renderer/SVG/SVGElement';
+import ControlPoint from '../ControlPoint.js';
+import MockPoint from '../MockPoint.js';
+import Tooltip from '../../Core/Tooltip.js';
+import U from '../../Core/Utilities.js';
 const {
     isObject,
     isString,
@@ -154,8 +155,6 @@ declare global {
  * @name Highcharts.AnnotationControllable#points
  * @type {Array<Highcharts.Point>}
  */
-
-import './../../parts/Tooltip.js';
 
 /* eslint-disable no-invalid-this, valid-jsdoc */
 
@@ -405,7 +404,7 @@ var controllableMixin: Highcharts.AnnotationControllableMixin = {
     /**
      * Render a controllable.
      */
-    render: function (this: Highcharts.AnnotationControllable, _parentGroup?: Highcharts.SVGElement): void {
+    render: function (this: Highcharts.AnnotationControllable, _parentGroup?: SVGElement): void {
         this.controlPoints.forEach(function (controlPoint): void {
             controlPoint.render();
         });

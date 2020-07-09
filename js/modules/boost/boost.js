@@ -10,12 +10,12 @@
  *
  * */
 'use strict';
-import H from '../../parts/Globals.js';
+import H from '../../Core/Globals.js';
 import butils from './boost-utils.js';
 import init from './boost-init.js';
 import './boost-overrides.js';
 import './named-colors.js';
-import U from '../../parts/Utilities.js';
+import U from '../../Core/Utilities.js';
 var error = U.error;
 // These need to be fixed when we support named imports
 var hasWebGLSupport = butils.hasWebGLSupport;

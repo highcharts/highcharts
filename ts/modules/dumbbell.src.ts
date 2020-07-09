@@ -10,8 +10,8 @@
 
 'use strict';
 
-import type SVGPath from '../parts/SVGPath';
-import H from '../parts/Globals.js';
+import type SVGPath from '../Core/Renderer/SVG/SVGPath';
+import H from '../Core/Globals.js';
 
 const {
     SVGRenderer
@@ -81,7 +81,7 @@ declare global {
         }
     }
 }
-import U from '../parts/Utilities.js';
+import U from '../Core/Utilities.js';
 const {
     extend,
     pick,

@@ -11,14 +11,14 @@
 
 'use strict';
 
-import type AxisTypes from '../parts/axis/types';
-import type Chart from '../parts/Chart';
-import Axis from '../parts/Axis.js';
-import Tick from '../parts/Tick.js';
+import type AxisTypes from '../Core/Axis/Types';
+import type Chart from '../Core/Chart/Chart';
+import Axis from '../Core/Axis/Axis.js';
+import Tick from '../Core/Axis/Tick.js';
 import Tree from './Tree.js';
 import TreeGridTick from './TreeGridTick.js';
 import TreeSeriesMixin from '../mixins/tree-series.js';
-import U from '../parts/Utilities.js';
+import U from '../Core/Utilities.js';
 const {
     addEvent,
     find,
@@ -32,7 +32,7 @@ const {
 } = U;
 
 import './GridAxis.js';
-import '../modules/broken-axis.src.js';
+import '../Core/Axis/BrokenAxis.js';
 
 /**
  * Internal types
@@ -52,7 +52,7 @@ declare global {
 /**
  * @private
  */
-declare module '../parts/axis/types' {
+declare module '../Core/Axis/Types' {
     interface AxisComposition {
         treeGrid?: TreeGridAxis['treeGrid'];
     }
@@ -638,6 +638,15 @@ namespace TreeGridAxis {
                             }
                         }
                     });
+                }
+            });
+
+            // If staticScale is not defined on the yAxis
+            // and chart height is set, set axis.isDirty
+            // to ensure collapsing works (#12012)
+            addEvent(axis, 'afterBreaks', function (): void {
+                if (axis.coll === 'yAxis' && !axis.staticScale && axis.chart.options.chart?.height) {
+                    axis.isDirty = true;
                 }
             });
 

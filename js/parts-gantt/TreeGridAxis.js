@@ -9,15 +9,15 @@
  *
  * */
 'use strict';
-import Axis from '../parts/Axis.js';
-import Tick from '../parts/Tick.js';
+import Axis from '../Core/Axis/Axis.js';
+import Tick from '../Core/Axis/Tick.js';
 import Tree from './Tree.js';
 import TreeGridTick from './TreeGridTick.js';
 import TreeSeriesMixin from '../mixins/tree-series.js';
-import U from '../parts/Utilities.js';
+import U from '../Core/Utilities.js';
 var addEvent = U.addEvent, find = U.find, fireEvent = U.fireEvent, isNumber = U.isNumber, isObject = U.isObject, isString = U.isString, merge = U.merge, pick = U.pick, wrap = U.wrap;
 import './GridAxis.js';
-import '../modules/broken-axis.src.js';
+import '../Core/Axis/BrokenAxis.js';
 /**
  * @private
  */
@@ -383,6 +383,15 @@ var TreeGridAxis;
                             }
                         }
                     });
+                }
+            });
+            // If staticScale is not defined on the yAxis
+            // and chart height is set, set axis.isDirty
+            // to ensure collapsing works (#12012)
+            addEvent(axis, 'afterBreaks', function () {
+                var _a;
+                if (axis.coll === 'yAxis' && !axis.staticScale && ((_a = axis.chart.options.chart) === null || _a === void 0 ? void 0 : _a.height)) {
+                    axis.isDirty = true;
                 }
             });
             userOptions = merge({

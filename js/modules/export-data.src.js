@@ -13,10 +13,11 @@
 // - Set up systematic tests for all series types, paired with tests of the data
 //   module importing the same data.
 'use strict';
-import Chart from '../parts/Chart.js';
-import H from '../parts/Globals.js';
+import Axis from '../Core/Axis/Axis.js';
+import Chart from '../Core/Chart/Chart.js';
+import H from '../Core/Globals.js';
 var doc = H.doc, seriesTypes = H.seriesTypes, win = H.win;
-import U from '../parts/Utilities.js';
+import U from '../Core/Utilities.js';
 var addEvent = U.addEvent, defined = U.defined, extend = U.extend, find = U.find, fireEvent = U.fireEvent, getOptions = U.getOptions, isNumber = U.isNumber, pick = U.pick, setOptions = U.setOptions;
 /**
  * Function callback to execute while data rows are processed for exporting.
@@ -42,8 +43,8 @@ var addEvent = U.addEvent, defined = U.defined, extend = U.extend, find = U.find
 * @type {Array<Array<string>>}
 */
 import '../mixins/ajax.js';
-import '../mixins/download-url.js';
-var downloadURL = H.downloadURL;
+import downloadURLmodule from '../mixins/download-url.js';
+var downloadURL = downloadURLmodule.downloadURL;
 // Can we add this to utils? Also used in screen-reader.js
 /**
  * HTML encode some characters vulnerable for XSS.
@@ -323,7 +324,7 @@ Chart.prototype.getDataRows = function (multiLevelHeaders) {
         if (!item) {
             return categoryHeader;
         }
-        if (item instanceof Highcharts.Axis) {
+        if (item instanceof Axis) {
             return (item.options.title && item.options.title.text) ||
                 (item.dateTime ? categoryDatetimeHeader : categoryHeader);
         }
@@ -359,7 +360,9 @@ Chart.prototype.getDataRows = function (multiLevelHeaders) {
     // Create point array depends if xAxis is category
     // or point.name is defined #13293
     getPointArray = function (series, xAxis) {
-        var namedPoints = series.data.filter(function (d) { return d.name; });
+        var namedPoints = series.data.filter(function (d) {
+            return (typeof d.y !== 'undefined') && d.name;
+        });
         if (namedPoints.length &&
             xAxis &&
             !xAxis.categories &&

@@ -11,8 +11,8 @@
  * */
 
 'use strict';
-import H from '../../parts/Globals.js';
-import U from '../../parts/Utilities.js';
+import H from '../../Core/Globals.js';
+import U from '../../Core/Utilities.js';
 const {
     merge,
     splat,
@@ -73,7 +73,7 @@ declare global {
             eventObject?: TimelineEventObject;
             id?: string;
             onEnd?: Function;
-            playOptions?: PointSonifyOptionsObject;
+            playOptions?: PointSonifyOptionsObject|Partial<EarconOptionsObject>;
             time?: number;
         }
         interface TimelineOptionsObject {

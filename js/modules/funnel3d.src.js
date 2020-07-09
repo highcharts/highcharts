@@ -12,13 +12,15 @@
  *
  * */
 'use strict';
-import H from '../parts/Globals.js';
-import Color from '../parts/Color.js';
+import H from '../Core/Globals.js';
+import Math3D from '../Extensions/Math3D.js';
+var perspective = Math3D.perspective;
+import Color from '../Core/Color.js';
 var color = Color.parse;
-import U from '../parts/Utilities.js';
+import U from '../Core/Utilities.js';
 var error = U.error, extend = U.extend, merge = U.merge, pick = U.pick, relativeLength = U.relativeLength, seriesType = U.seriesType;
-import '../parts/ColumnSeries.js';
-import '../parts/SVGRenderer.js';
+import '../Series/ColumnSeries.js';
+import '../Core/Renderer/SVG/SVGRenderer.js';
 var charts = H.charts, seriesTypes = H.seriesTypes, 
 // Use H.Renderer instead of SVGRenderer for VML support.
 RendererProto = H.Renderer.prototype, 
@@ -246,7 +248,7 @@ seriesType('funnel3d', 'column',
                 point.plotY = (y1 + (y5 || y3)) / 2;
             }
             // Placement of tooltips and data labels in 3D
-            tooltipPos = H.perspective([{
+            tooltipPos = perspective([{
                     x: centerX,
                     y: point.plotY,
                     z: reversed ?

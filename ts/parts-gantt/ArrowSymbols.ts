@@ -11,8 +11,8 @@
 
 'use strict';
 
-import type SVGPath from '../parts/SVGPath';
-import SVGRenderer from '../parts/SVGRenderer.js';
+import type SVGPath from '../Core/Renderer/SVG/SVGPath';
+import SVGRenderer from '../Core/Renderer/SVG/SVGRenderer.js';
 
 /**
  * Creates an arrow symbol. Like a triangle, except not filled.

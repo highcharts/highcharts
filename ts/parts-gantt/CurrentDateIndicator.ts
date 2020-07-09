@@ -12,8 +12,8 @@
 
 'use strict';
 
-import H from '../parts/Globals.js';
-import O from '../parts/Options.js';
+import H from '../Core/Globals.js';
+import O from '../Core/Options.js';
 const { dateFormat } = O;
 
 /**
@@ -55,15 +55,14 @@ declare global {
     }
 }
 
-import Time from '../parts/Time.js';
-import U from '../parts/Utilities.js';
+import U from '../Core/Utilities.js';
 const {
     addEvent,
     merge,
     wrap
 } = U;
 
-import PlotLineOrBand from '../parts/PlotLineOrBand.js';
+import PlotLineOrBand from '../Core/Axis/PlotLineOrBand.js';
 
 var Axis = H.Axis;
 

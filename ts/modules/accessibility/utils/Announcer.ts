@@ -12,8 +12,8 @@
 
 'use strict';
 
-import type Chart from '../../../parts/Chart';
-import H from '../../../parts/Globals.js';
+import type Chart from '../../../Core/Chart/Chart';
+import H from '../../../Core/Globals.js';
 import DOMElementProvider from './DOMElementProvider.js';
 import HTMLUtilities from './htmlUtilities.js';
 const {

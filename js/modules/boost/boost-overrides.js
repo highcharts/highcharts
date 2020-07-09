@@ -10,14 +10,14 @@
  *
  * */
 'use strict';
-import Chart from '../../parts/Chart.js';
-import H from '../../parts/Globals.js';
-import Point from '../../parts/Point.js';
-import U from '../../parts/Utilities.js';
+import Chart from '../../Core/Chart/Chart.js';
+import H from '../../Core/Globals.js';
+import Point from '../../Core/Series/Point.js';
+import U from '../../Core/Utilities.js';
 var addEvent = U.addEvent, error = U.error, getOptions = U.getOptions, isArray = U.isArray, isNumber = U.isNumber, pick = U.pick, wrap = U.wrap;
-import '../../parts/Series.js';
-import '../../parts/Options.js';
-import '../../parts/Interaction.js';
+import '../../Core/Series/Series.js';
+import '../../Core/Options.js';
+import '../../Core/Interaction.js';
 import butils from './boost-utils.js';
 import boostable from './boostables.js';
 import boostableMap from './boostable-map.js';

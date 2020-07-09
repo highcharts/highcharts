@@ -12,14 +12,16 @@
  *
  * */
 'use strict';
-import H from '../parts/Globals.js';
-import Color from '../parts/Color.js';
+import H from '../Core/Globals.js';
+import Color from '../Core/Color.js';
 var color = Color.parse;
-import U from '../parts/Utilities.js';
+import Math3D from '../Extensions/Math3D.js';
+var perspective = Math3D.perspective;
+import U from '../Core/Utilities.js';
 var merge = U.merge, pick = U.pick, seriesType = U.seriesType;
-import '../parts/ColumnSeries.js';
-import '../parts/SVGRenderer.js';
-var charts = H.charts, deg2rad = H.deg2rad, perspective = H.perspective, 
+import '../Series/ColumnSeries.js';
+import '../Core/Renderer/SVG/SVGRenderer.js';
+var charts = H.charts, deg2rad = H.deg2rad, 
 // Work on H.Renderer instead of SVGRenderer for VML support.
 RendererProto = H.Renderer.prototype, cuboidPath = RendererProto.cuboidPath, cylinderMethods;
 // Check if a path is simplified. The simplified path contains only lineTo

@@ -10,8 +10,8 @@
 'use strict';
 import Annotation from './annotations.src.js';
 import chartNavigationMixin from '../mixins/navigation.js';
-import H from '../parts/Globals.js';
-import U from '../parts/Utilities.js';
+import H from '../Core/Globals.js';
+import U from '../Core/Utilities.js';
 var addEvent = U.addEvent, attr = U.attr, extend = U.extend, format = U.format, fireEvent = U.fireEvent, isArray = U.isArray, isFunction = U.isFunction, isNumber = U.isNumber, isObject = U.isObject, merge = U.merge, objectEach = U.objectEach, pick = U.pick, setOptions = U.setOptions;
 /**
  * A config object for navigation bindings in annotations.
@@ -182,7 +182,7 @@ var NavigationBindings = /** @class */ (function () {
                 navigation.bindingsChartClick(this, e);
             }
         }));
-        navigation.eventsToUnbind.push(addEvent(chart.container, Highcharts.isTouchDevice ? 'touchmove' : 'mousemove', function (e) {
+        navigation.eventsToUnbind.push(addEvent(chart.container, H.isTouchDevice ? 'touchmove' : 'mousemove', function (e) {
             navigation.bindingsContainerMouseMove(this, e);
         }));
     };
@@ -427,6 +427,7 @@ var NavigationBindings = /** @class */ (function () {
         function traverse(option, key, parentEditables, parent) {
             var nextParent;
             if (parentEditables &&
+                option &&
                 nonEditables.indexOf(key) === -1 &&
                 ((parentEditables.indexOf &&
                     parentEditables.indexOf(key)) >= 0 ||
@@ -622,7 +623,7 @@ var NavigationBindings = /** @class */ (function () {
         rect: ['shapes'],
         // Crooked lines, elliots, arrows etc:
         crookedLine: [],
-        basicAnnotation: []
+        basicAnnotation: ['shapes', 'labelOptions']
     };
     // Define non editable fields per annotation, for example Rectangle inherits
     // options from Measure, but crosshairs are not available
@@ -676,7 +677,7 @@ function selectableAnnotation(annotationType) {
     function selectAndshowPopup(event) {
         var annotation = this, navigation = annotation.chart.navigationBindings, prevAnnotation = navigation.activeAnnotation;
         if (originalClick) {
-            originalClick.click.call(annotation, event);
+            originalClick.call(annotation, event);
         }
         if (prevAnnotation !== annotation) {
             // Select current:

@@ -13,11 +13,11 @@
 'use strict';
 
 import type Annotation from './annotations.src';
-import type Chart from '../parts/Chart';
-import H from '../parts/Globals.js';
+import type Chart from '../Core/Chart/Chart';
+import H from '../Core/Globals.js';
 import NavigationBindings from './navigationBindings.js';
-import Pointer from '../parts/Pointer.js';
-import U from '../parts/Utilities.js';
+import Pointer from '../Core/Pointer.js';
+import U from '../Core/Utilities.js';
 const {
     addEvent,
     createElement,

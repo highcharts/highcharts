@@ -4,42 +4,70 @@
  *
  * */
 'use strict';
+var __extends = (this && this.__extends) || (function () {
+    var extendStatics = function (d, b) {
+        extendStatics = Object.setPrototypeOf ||
+            ({ __proto__: [] } instanceof Array && function (d, b) { d.__proto__ = b; }) ||
+            function (d, b) { for (var p in b) if (b.hasOwnProperty(p)) d[p] = b[p]; };
+        return extendStatics(d, b);
+    };
+    return function (d, b) {
+        extendStatics(d, b);
+        function __() { this.constructor = d; }
+        d.prototype = b === null ? Object.create(b) : (__.prototype = b.prototype, new __());
+    };
+})();
 import Annotation from '../annotations.src.js';
-import H from '../../parts/Globals.js';
 import MockPoint from '../MockPoint.js';
-import U from '../../parts/Utilities.js';
+import U from '../../Core/Utilities.js';
 var merge = U.merge;
 /* eslint-disable no-invalid-this, valid-jsdoc */
-var VerticalLine = function () {
-    Annotation.apply(this, arguments);
-};
-VerticalLine.connectorFirstPoint = function (target) {
-    var annotation = target.annotation, point = annotation.points[0], xy = MockPoint.pointToPixels(point, true), y = xy.y, offset = annotation.options.typeOptions.label.offset;
-    if (annotation.chart.inverted) {
-        y = xy.x;
+var VerticalLine = /** @class */ (function (_super) {
+    __extends(VerticalLine, _super);
+    /* *
+     *
+     *  Constructors
+     *
+     * */
+    function VerticalLine(chart, userOptions) {
+        return _super.call(this, chart, userOptions) || this;
     }
-    return {
-        x: point.x,
-        xAxis: point.series.xAxis,
-        y: y + offset
+    /* *
+     *
+     *  Static Functions
+     *
+     * */
+    VerticalLine.connectorFirstPoint = function (target) {
+        var annotation = target.annotation, point = annotation.points[0], xy = MockPoint.pointToPixels(point, true), y = xy.y, offset = annotation.options.typeOptions.label.offset;
+        if (annotation.chart.inverted) {
+            y = xy.x;
+        }
+        return {
+            x: point.x,
+            xAxis: point.series.xAxis,
+            y: y + offset
+        };
     };
-};
-VerticalLine.connectorSecondPoint = function (target) {
-    var annotation = target.annotation, typeOptions = annotation.options.typeOptions, point = annotation.points[0], yOffset = typeOptions.yOffset, xy = MockPoint.pointToPixels(point, true), y = xy[annotation.chart.inverted ? 'x' : 'y'];
-    if (typeOptions.label.offset < 0) {
-        yOffset *= -1;
-    }
-    return {
-        x: point.x,
-        xAxis: point.series.xAxis,
-        y: y + yOffset
+    VerticalLine.connectorSecondPoint = function (target) {
+        var annotation = target.annotation, typeOptions = annotation.options.typeOptions, point = annotation.points[0], yOffset = typeOptions.yOffset, xy = MockPoint.pointToPixels(point, true), y = xy[annotation.chart.inverted ? 'x' : 'y'];
+        if (typeOptions.label.offset < 0) {
+            yOffset *= -1;
+        }
+        return {
+            x: point.x,
+            xAxis: point.series.xAxis,
+            y: y + yOffset
+        };
     };
-};
-H.extendAnnotation(VerticalLine, null, {
-    getPointsOptions: function () {
+    /* *
+     *
+     *  Functions
+     *
+     * */
+    VerticalLine.prototype.getPointsOptions = function () {
         return [this.options.typeOptions.point];
-    },
-    addShapes: function () {
+    };
+    VerticalLine.prototype.addShapes = function () {
         var typeOptions = this.options.typeOptions, connector = this.initShape(merge(typeOptions.connector, {
             type: 'path',
             points: [
@@ -48,8 +76,8 @@ H.extendAnnotation(VerticalLine, null, {
             ]
         }), false);
         typeOptions.connector = connector.options;
-    },
-    addLabels: function () {
+    };
+    VerticalLine.prototype.addLabels = function () {
         var typeOptions = this.options.typeOptions, labelOptions = typeOptions.label, x = 0, y = labelOptions.offset, verticalAlign = labelOptions.offset < 0 ? 'bottom' : 'top', align = 'center';
         if (this.chart.inverted) {
             x = labelOptions.offset;
@@ -64,8 +92,10 @@ H.extendAnnotation(VerticalLine, null, {
             y: y
         }));
         typeOptions.label = label.options;
-    }
-}, 
+    };
+    return VerticalLine;
+}(Annotation));
+VerticalLine.prototype.defaultOptions = merge(Annotation.prototype.defaultOptions, 
 /**
  * A vertical line annotation.
  *

@@ -14,14 +14,14 @@
 
 'use strict';
 
-import type SVGPath from '../parts/SVGPath';
-import Chart from '../parts/Chart.js';
-import H from '../parts/Globals.js';
-import O from '../parts/Options.js';
+import type SVGPath from '../Core/Renderer/SVG/SVGPath';
+import Chart from '../Core/Chart/Chart.js';
+import H from '../Core/Globals.js';
+import O from '../Core/Options.js';
 const { defaultOptions } = O;
-import Point from '../parts/Point.js';
-import SVGRenderer from '../parts/SVGRenderer.js';
-import U from '../parts/Utilities.js';
+import Point from '../Core/Series/Point.js';
+import SVGRenderer from '../Core/Renderer/SVG/SVGRenderer.js';
+import U from '../Core/Utilities.js';
 const {
     addEvent,
     animObject,
@@ -261,8 +261,8 @@ declare global {
 
 /* eslint-disable no-invalid-this */
 
-import '../parts/Axis.js';
-import '../parts/Series.js';
+import '../Core/Axis/Axis.js';
+import '../Core/Series/Series.js';
 
 var Series = H.Series,
     Scatter = H.seriesTypes.scatter,
@@ -936,8 +936,8 @@ Scatter.prototype.animateClusterPoint = function (
                 });
 
                 newPointObj.point.graphic.animate({
-                    x: newX - newPointObj.point.graphic.radius,
-                    y: newY - newPointObj.point.graphic.radius
+                    x: newX - (newPointObj.point.graphic.radius || 0),
+                    y: newY - (newPointObj.point.graphic.radius || 0)
                 }, animation, function (): void {
                     isCbHandled = true;
 
@@ -993,8 +993,8 @@ Scatter.prototype.animateClusterPoint = function (
                         isOldPointGrahic = true;
                         oldPointObj.point.graphic.show();
                         oldPointObj.point.graphic.animate({
-                            x: newX - oldPointObj.point.graphic.radius,
-                            y: newY - oldPointObj.point.graphic.radius,
+                            x: newX - (oldPointObj.point.graphic.radius || 0),
+                            y: newY - (oldPointObj.point.graphic.radius || 0),
                             opacity: 0.4
                         }, animation, function (): void {
                             isCbHandled = true;

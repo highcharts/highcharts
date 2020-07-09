@@ -12,7 +12,7 @@
 
 'use strict';
 
-import H from '../parts/Globals.js';
+import H from '../Core/Globals.js';
 
 /**
  * Internal types
@@ -253,9 +253,9 @@ declare global {
  * @type {Highcharts.SankeyNodeObject}
  */
 
-import Color from '../parts/Color.js';
-import Point from '../parts/Point.js';
-import U from '../parts/Utilities.js';
+import Color from '../Core/Color.js';
+import Point from '../Core/Series/Point.js';
+import U from '../Core/Utilities.js';
 const {
     defined,
     find,
@@ -267,7 +267,7 @@ const {
     stableSort
 } = U;
 
-import '../parts/Options.js';
+import '../Core/Options.js';
 import '../mixins/nodes.js';
 import mixinTreeSeries from '../mixins/tree-series.js';
 const {
