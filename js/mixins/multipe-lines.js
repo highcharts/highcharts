@@ -8,9 +8,10 @@
  *
  * */
 'use strict';
+import Color from '../Core/Color.js';
 import H from '../Core/Globals.js';
 import U from '../Core/Utilities.js';
-var defined = U.defined, error = U.error, merge = U.merge;
+var defined = U.defined, error = U.error, merge = U.merge, pick = U.pick;
 var SMA = H.seriesTypes.sma;
 /**
  * Mixin useful for all indicators that have more than one line.
@@ -142,6 +143,15 @@ var multipleLinesMixin = {
         // Modify options and generate additional lines:
         linesApiNames.forEach(function (lineName, i) {
             if (secondaryLines[i]) {
+                if (mainLineOptions[lineName]) {
+                    indicator.options = merge(mainLineOptions[lineName].styles, gappedExtend);
+                }
+                else {
+                    error('Error: "There is no ' + lineName +
+                        ' in DOCS options declared. Check if linesApiNames' +
+                        ' are consistent with your DOCS line names."' +
+                        ' at mixin/multiple-line.js:34');
+                }
                 for (var j = 0; j < pointsLength; ++j) {
                     point = mainLinePoints[j];
                     point.origProps = {
@@ -154,17 +164,17 @@ var multipleLinesMixin = {
                     point.graphic = void 0;
                     point.zone = (indicator.zones.length && point.getZone());
                 }
-                if (mainLineOptions[lineName]) {
-                    indicator.options = merge(mainLineOptions[lineName].styles, gappedExtend);
-                }
-                else {
-                    error('Error: "There is no ' + lineName +
-                        ' in DOCS options declared. Check if linesApiNames' +
-                        ' are consistent with your DOCS line names."' +
-                        ' at mixin/multiple-line.js:34');
-                }
                 indicator.graph = indicator['graph' + lineName];
                 SMA.prototype.drawGraph.call(indicator);
+                if (!indicator.chart.styledMode && indicator.graph) {
+                    indicator.graph.attr({
+                        stroke: pick(indicator.options.fillColor, Color.parse((point.zone && point.zone.color) ||
+                            indicator.options.color).get())
+                    });
+                }
+                // Now save lines:
+                indicator['graph' + lineName] = indicator.graph;
+                // Now restore original point props
                 for (var j = 0; j < pointsLength; ++j) {
                     point = mainLinePoints[j];
                     if (point.origProps) {
@@ -172,8 +182,6 @@ var multipleLinesMixin = {
                     }
                     point.origProps = void 0;
                 }
-                // Now save lines:
-                indicator['graph' + lineName] = indicator.graph;
             }
             else {
                 error('Error: "' + lineName + ' doesn\'t have equivalent ' +

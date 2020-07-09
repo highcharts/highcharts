@@ -11,7 +11,15 @@
 'use strict';
 
 import type Point from '../parts/Point';
+import Color from '../Core/Color.js';
 import H from '../Core/Globals.js';
+import U from '../Core/Utilities.js';
+const {
+    defined,
+    error,
+    merge,
+    pick
+} = U;
 
 /**
  * Internal types
@@ -32,6 +40,8 @@ declare global {
             toYData: MultipleLinesMixin['toYData'];
         }
         interface MultipleLinesIndicatorOptions {
+            color?: ColorType;
+            fillColor?: ColorType;
             gapSize?: number;
         }
         interface MultipleLinesMixin {
@@ -48,13 +58,6 @@ declare global {
         }
     }
 }
-
-import U from '../Core/Utilities.js';
-const {
-    defined,
-    error,
-    merge
-} = U;
 
 var SMA = H.seriesTypes.sma;
 
@@ -241,18 +244,6 @@ var multipleLinesMixin: Highcharts.MultipleLinesMixin = {
         // Modify options and generate additional lines:
         linesApiNames.forEach(function (lineName: string, i: number): void {
             if (secondaryLines[i]) {
-                for (let j = 0; j < pointsLength; ++j) {
-                    point = mainLinePoints[j];
-                    point.origProps = {
-                        graphic: point.graphic,
-                        isNull: point.isNull,
-                        plotY: point.plotY,
-                        zone: point.zone
-                    };
-                    merge(true, point, secondaryLines[i][j]);
-                    point.graphic = void 0;
-                    point.zone = (indicator.zones.length && point.getZone()) as any;
-                }
                 if ((mainLineOptions as any)[lineName]) {
                     indicator.options = merge(
                         (mainLineOptions as any)[lineName].styles,
@@ -267,9 +258,37 @@ var multipleLinesMixin: Highcharts.MultipleLinesMixin = {
                     );
                 }
 
+                for (let j = 0; j < pointsLength; ++j) {
+                    point = mainLinePoints[j];
+                    point.origProps = {
+                        graphic: point.graphic,
+                        isNull: point.isNull,
+                        plotY: point.plotY,
+                        zone: point.zone
+                    };
+                    merge(true, point, secondaryLines[i][j]);
+                    point.graphic = void 0;
+                    point.zone = (indicator.zones.length && point.getZone()) as any;
+                }
+
                 indicator.graph = (indicator as any)['graph' + lineName];
                 SMA.prototype.drawGraph.call(indicator);
 
+                if (!indicator.chart.styledMode && indicator.graph) {
+                    indicator.graph.attr({
+                        stroke: pick(
+                            indicator.options.fillColor,
+                            Color.parse(
+                                (point.zone && point.zone.color) ||
+                                indicator.options.color
+                            ).get()
+                        )
+                    });
+                }
+                // Now save lines:
+                (indicator as any)['graph' + lineName] = indicator.graph;
+
+                // Now restore original point props
                 for (let j = 0; j < pointsLength; ++j) {
                     point = mainLinePoints[j];
                     if (point.origProps) {
@@ -277,9 +296,6 @@ var multipleLinesMixin: Highcharts.MultipleLinesMixin = {
                     }
                     point.origProps = void 0;
                 }
-
-                // Now save lines:
-                (indicator as any)['graph' + lineName] = indicator.graph;
             } else {
                 error(
                     'Error: "' + lineName + ' doesn\'t have equivalent ' +
