@@ -11,4 +11,4 @@
  * License: www.highcharts.com/license
  */
 'use strict';
-import '../../indicators/momentum.src.js';
+import '../../Stock/Indicators/MomentumIndicator.js';

@@ -11,4 +11,4 @@
  * License: www.highcharts.com/license
  */
 'use strict';
-import '../../indicators/slow-stochastic.src.js';
+import '../../Stock/Indicators/SlowStochasticIndicator.js';
