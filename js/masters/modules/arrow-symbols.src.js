@@ -10,4 +10,4 @@
  * License: www.highcharts.com/license
  */
 'use strict';
-import '../../parts-gantt/ArrowSymbols.js';
+import '../../Extensions/ArrowSymbols.js';
