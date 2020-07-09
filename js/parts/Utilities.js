@@ -1853,7 +1853,7 @@ var getStyle = H.getStyle = function (el, prop, toInt) {
 /**
  * Get the defer as a number value from series animation options.
  *
- * @function Highcharts.getDeferTime
+ * @function Highcharts.getDeferredAnimation
  *
  * @param {Highcharts.Chart} chart
  *        The chart instance.
@@ -1861,13 +1861,27 @@ var getStyle = H.getStyle = function (el, prop, toInt) {
  * @return {number}
  *        The numeric value.
  */
-var getDeferTime = H.getDeferTime = function (chart) {
-    var maxDefer = 0;
-    chart.series.forEach(function (series) {
+var getDeferredAnimation = H.getDeferredAnimation = function (chart, animation, series) {
+    var labelAnimation = animObject(animation);
+    var s = series ? [series] : chart.series;
+    var defer = 0;
+    var duration = 0;
+    s.forEach(function (series) {
         var seriesAnim = animObject(series.options.animation);
-        maxDefer = Math.max(seriesAnim.duration + seriesAnim.defer);
+        defer = animation && defined(animation.defer) ?
+            labelAnimation.defer :
+            Math.max(defer, seriesAnim.duration + seriesAnim.defer);
+        duration = Math.min(labelAnimation.duration, seriesAnim.duration);
     });
-    return maxDefer;
+    // Disable defer for exporting
+    if (chart.renderer.forExport) {
+        defer = 0;
+    }
+    var anim = {
+        defer: Math.max(0, defer - duration),
+        duration: Math.min(defer, duration)
+    };
+    return anim;
 };
 /**
  * Search for an item in an array.
@@ -2627,7 +2641,7 @@ var utilitiesModule = {
     find: find,
     fireEvent: fireEvent,
     format: format,
-    getDeferTime: getDeferTime,
+    getDeferredAnimation: getDeferredAnimation,
     getMagnitude: getMagnitude,
     getNestedProperty: getNestedProperty,
     getOptions: getOptions,

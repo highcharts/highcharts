@@ -848,7 +848,9 @@ class SVGElement {
             }
             // If defer option is defined delay the animation #12901
             syncTimeout((): void => {
-                animate(this, params, animOptions);
+                if (this.element) {
+                    animate(this, params, animOptions);
+                }
             }, deferTime);
         } else {
             this.attr(params, void 0, complete);

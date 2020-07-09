@@ -22,7 +22,7 @@ import H from '../parts/Globals.js';
 import MockPoint from './MockPoint.js';
 import Pointer from '../parts/Pointer.js';
 import U from '../parts/Utilities.js';
-var addEvent = U.addEvent, animObject = U.animObject, defined = U.defined, destroyObjectProperties = U.destroyObjectProperties, erase = U.erase, extend = U.extend, find = U.find, fireEvent = U.fireEvent, getDeferTime = U.getDeferTime, merge = U.merge, pick = U.pick, splat = U.splat, wrap = U.wrap;
+var addEvent = U.addEvent, animObject = U.animObject, defined = U.defined, destroyObjectProperties = U.destroyObjectProperties, erase = U.erase, extend = U.extend, find = U.find, fireEvent = U.fireEvent, getDeferredAnimation = U.getDeferredAnimation, merge = U.merge, pick = U.pick, splat = U.splat, wrap = U.wrap;
 /* *********************************************************************
  *
  * ANNOTATION
@@ -89,8 +89,7 @@ var Annotation = /** @class */ (function () {
         this.annotation = void 0;
         this.coll = 'annotations';
         this.collection = void 0;
-        this.deferTime = void 0;
-        this.durationTime = void 0;
+        this.animationConfig = void 0;
         this.graphic = void 0;
         this.group = void 0;
         this.labelCollector = void 0;
@@ -191,9 +190,7 @@ var Annotation = /** @class */ (function () {
         this.addShapes();
         this.addLabels();
         this.setLabelCollector();
-        this.deferTime = animOptions && typeof animOptions.defer === 'undefined' ?
-            getDeferTime(chart) : animObject(animOptions).defer;
-        this.durationTime = Math.min(this.deferTime, 200);
+        this.animationConfig = getDeferredAnimation(chart, animOptions);
     };
     Annotation.prototype.getLabelsAndShapesOptions = function (baseOptions, newOptions) {
         var mergedOptions = {};
@@ -1169,10 +1166,7 @@ extend(chartProto, /** @lends Highcharts.Chart# */ {
             annotation.redraw();
             annotation.graphic.animate({
                 opacity: 1
-            }, {
-                defer: annotation.deferTime - annotation.durationTime,
-                duration: annotation.durationTime
-            });
+            }, annotation.animationConfig);
         });
     }
 });

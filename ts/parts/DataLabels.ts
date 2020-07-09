@@ -26,6 +26,7 @@ const {
     extend,
     fireEvent,
     format,
+    getDeferredAnimation,
     isArray,
     isNumber,
     merge,
@@ -410,15 +411,9 @@ Series.prototype.drawDataLabels = function (this: Highcharts.Series): void {
         pointOptions,
         hasRendered = series.hasRendered || 0,
         dataLabelsGroup: Highcharts.SVGElement,
-        seriesAnim = animObject(seriesOptions.animation),
-        fadeInDuration = Math.min(seriesAnim.duration, 200),
         dataLabelAnim = (seriesDlOptions as any).animation,
-        defer = !chart.renderer.forExport && pick(
-            (seriesDlOptions as any).defer &&
-            dataLabelAnim && typeof dataLabelAnim.defer === 'undefined' ?
-                true : animObject(dataLabelAnim).defer,
-            fadeInDuration > 0
-        ),
+        animationConfig = typeof (seriesDlOptions as any).defer === 'undefined' || (seriesDlOptions as any).defer ?
+            getDeferredAnimation(chart, dataLabelAnim, series) : { defer: 0, duration: 0 },
         renderer = chart.renderer;
 
     /**
@@ -531,33 +526,23 @@ Series.prototype.drawDataLabels = function (this: Highcharts.Series): void {
         dataLabelsGroup = series.plotGroup(
             'dataLabelsGroup',
             'data-labels',
-            defer && !hasRendered ? 'hidden' : 'inherit', // #5133, #10220
+            !hasRendered ? 'hidden' : 'inherit', // #5133, #10220
             (seriesDlOptions as any).zIndex || 6
         );
 
-        if (defer) {
-            // If defer as true - get the value from the series.animation object
-            if (!isNumber(defer)) {
-                defer = seriesAnim.duration + seriesAnim.defer;
-            }
-
-            dataLabelsGroup.attr({ opacity: +hasRendered }); // #3300
-            if (!hasRendered) {
-                var group = series.dataLabelsGroup;
-                if (group) {
-                    if (series.visible) { // #2597, #3023, #3024
-                        dataLabelsGroup.show(true);
-                    }
-                    (group[
-                        seriesOptions.animation ? 'animate' : 'attr'
-                    ] as any)(
-                        { opacity: 1 },
-                        {
-                            duration: fadeInDuration,
-                            defer: defer - fadeInDuration
-                        }
-                    );
+        dataLabelsGroup.attr({ opacity: +hasRendered }); // #3300
+        if (!hasRendered) {
+            var group = series.dataLabelsGroup;
+            if (group) {
+                if (series.visible) { // #2597, #3023, #3024
+                    dataLabelsGroup.show(true);
                 }
+                (group[
+                    seriesOptions.animation ? 'animate' : 'attr'
+                ] as any)(
+                    { opacity: 1 },
+                    animationConfig
+                );
             }
         }
 

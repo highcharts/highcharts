@@ -479,7 +479,7 @@ QUnit.test('StackLabels Initial animation - defer test #12901', function (assert
                         stacking: 'normal',
                         animation: {
                             defer: 400,
-                            duration: 0
+                            duration: 100
                         }
                     }
                 },
@@ -517,7 +517,7 @@ QUnit.test('StackLabels Initial animation - defer test #12901', function (assert
                     true,
                     'Animation should be started but not finished'
                 );
-            }, 200);
+            }, 250);
 
             setTimeout(function () {
                 labelOpacity = chart.yAxis[0].stacking.stackTotalGroup.opacity;

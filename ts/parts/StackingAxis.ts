@@ -16,7 +16,7 @@ const {
     animObject,
     destroyObjectProperties,
     fireEvent,
-    getDeferTime,
+    getDeferredAnimation,
     objectEach,
     pick
 } = U;
@@ -169,9 +169,7 @@ class StackingAxisAdditions {
         const renderer = chart.renderer;
         const stacks = stacking.stacks;
         const stackLabelsAnim = axis.options.stackLabels.animation;
-        const deferTime = stackLabelsAnim && typeof stackLabelsAnim.defer === 'undefined' ?
-            getDeferTime(chart) : animObject(stackLabelsAnim).defer;
-        const durationTime = Math.min(deferTime, 200);
+        const animationConfig = getDeferredAnimation(chart, stackLabelsAnim);
         const stackTotalGroup = stacking.stackTotalGroup = (
             stacking.stackTotalGroup ||
             renderer
@@ -199,10 +197,7 @@ class StackingAxisAdditions {
         });
         stackTotalGroup.animate({
             opacity: 1
-        }, {
-            duration: durationTime,
-            defer: deferTime - durationTime
-        });
+        }, animationConfig);
     }
 
 }

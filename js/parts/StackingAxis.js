@@ -8,7 +8,7 @@
  *
  * */
 import U from './Utilities.js';
-var addEvent = U.addEvent, animObject = U.animObject, destroyObjectProperties = U.destroyObjectProperties, fireEvent = U.fireEvent, getDeferTime = U.getDeferTime, objectEach = U.objectEach, pick = U.pick;
+var addEvent = U.addEvent, animObject = U.animObject, destroyObjectProperties = U.destroyObjectProperties, fireEvent = U.fireEvent, getDeferredAnimation = U.getDeferredAnimation, objectEach = U.objectEach, pick = U.pick;
 /* eslint-disable valid-jsdoc */
 /**
  * Adds stacking support to axes.
@@ -112,9 +112,7 @@ var StackingAxisAdditions = /** @class */ (function () {
         var renderer = chart.renderer;
         var stacks = stacking.stacks;
         var stackLabelsAnim = axis.options.stackLabels.animation;
-        var deferTime = stackLabelsAnim && typeof stackLabelsAnim.defer === 'undefined' ?
-            getDeferTime(chart) : animObject(stackLabelsAnim).defer;
-        var durationTime = Math.min(deferTime, 200);
+        var animationConfig = getDeferredAnimation(chart, stackLabelsAnim);
         var stackTotalGroup = stacking.stackTotalGroup = (stacking.stackTotalGroup ||
             renderer
                 .g('stack-labels')
@@ -136,10 +134,7 @@ var StackingAxisAdditions = /** @class */ (function () {
         });
         stackTotalGroup.animate({
             opacity: 1
-        }, {
-            duration: durationTime,
-            defer: deferTime - durationTime
-        });
+        }, animationConfig);
     };
     return StackingAxisAdditions;
 }());

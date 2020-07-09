@@ -485,7 +485,9 @@ var SVGElement = /** @class */ (function () {
             }
             // If defer option is defined delay the animation #12901
             syncTimeout(function () {
-                animate(_this, params, animOptions);
+                if (_this.element) {
+                    animate(_this, params, animOptions);
+                }
             }, deferTime);
         }
         else {

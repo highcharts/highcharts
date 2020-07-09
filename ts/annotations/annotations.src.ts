@@ -36,7 +36,7 @@ const {
     extend,
     find,
     fireEvent,
-    getDeferTime,
+    getDeferredAnimation,
     merge,
     pick,
     splat,
@@ -412,8 +412,7 @@ class Annotation implements EventEmitterMixin.Type, ControllableMixin.Type {
     public coll: 'annotations' = 'annotations';
     public collection: ControllableMixin.Type['collection'] = void 0 as any;
     public controlPoints: Array<ControlPoint>;
-    public deferTime: number = void 0 as any;
-    public durationTime: number = void 0 as any;
+    public animationConfig: Partial<Highcharts.AnimationOptionsObject> = void 0 as any;
     public graphic: Highcharts.SVGElement = void 0 as any;
     public group: Highcharts.SVGElement = void 0 as any;
     public isUpdating?: boolean;
@@ -451,9 +450,7 @@ class Annotation implements EventEmitterMixin.Type, ControllableMixin.Type {
         this.addShapes();
         this.addLabels();
         this.setLabelCollector();
-        this.deferTime = animOptions && typeof animOptions.defer === 'undefined' ?
-            getDeferTime(chart) : animObject(animOptions).defer;
-        this.durationTime = Math.min(this.deferTime, 200);
+        this.animationConfig = getDeferredAnimation(chart, animOptions);
     }
 
     public getLabelsAndShapesOptions(
@@ -1698,10 +1695,7 @@ extend(chartProto, /** @lends Highcharts.Chart# */ {
             annotation.redraw();
             annotation.graphic.animate({
                 opacity: 1
-            }, {
-                defer: annotation.deferTime - annotation.durationTime,
-                duration: annotation.durationTime
-            });
+            }, annotation.animationConfig);
         });
     }
 });

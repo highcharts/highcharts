@@ -213,7 +213,11 @@ declare global {
             defaultFunction?: (EventCallbackFunction<T>|Function)
         ): void;
         function format(str: string, ctx: any, chart?: Chart): string;
-        function getDeferTime(chart: Chart): number;
+        function getDeferredAnimation(
+            chart: Chart,
+            animation: Partial<Highcharts.AnimationOptionsObject>,
+            series?: Series
+        ): Partial<Highcharts.AnimationOptionsObject>;
         function getMagnitude(num: number): number;
         function getStyle(
             el: HTMLDOMElement,
@@ -2635,7 +2639,7 @@ const getStyle = H.getStyle = function (
 /**
  * Get the defer as a number value from series animation options.
  *
- * @function Highcharts.getDeferTime
+ * @function Highcharts.getDeferredAnimation
  *
  * @param {Highcharts.Chart} chart
  *        The chart instance.
@@ -2643,15 +2647,39 @@ const getStyle = H.getStyle = function (
  * @return {number}
  *        The numeric value.
  */
-const getDeferTime = H.getDeferTime = function (chart): number {
-    let maxDefer = 0;
+const getDeferredAnimation = H.getDeferredAnimation = function (
+    chart,
+    animation,
+    series?
+): Partial<Highcharts.AnimationOptionsObject> {
 
-    chart.series.forEach((series): void => {
+    const labelAnimation = animObject(animation);
+    const s = series ? [series] : chart.series;
+    let defer = 0;
+    let duration = 0;
+
+    s.forEach((series): void => {
         const seriesAnim = animObject(series.options.animation);
 
-        maxDefer = Math.max(seriesAnim.duration + seriesAnim.defer);
+        defer = animation && defined(animation.defer) ?
+            labelAnimation.defer :
+            Math.max(
+                defer,
+                seriesAnim.duration + seriesAnim.defer
+            );
+        duration = Math.min(labelAnimation.duration, seriesAnim.duration);
     });
-    return maxDefer;
+    // Disable defer for exporting
+    if (chart.renderer.forExport) {
+        defer = 0;
+    }
+
+    const anim = {
+        defer: Math.max(0, defer - duration),
+        duration: Math.min(defer, duration)
+    };
+
+    return anim;
 };
 
 /**
@@ -3559,7 +3587,7 @@ const utilitiesModule = {
     find,
     fireEvent,
     format,
-    getDeferTime,
+    getDeferredAnimation,
     getMagnitude,
     getNestedProperty,
     getOptions,

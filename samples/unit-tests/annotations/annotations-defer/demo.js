@@ -26,7 +26,8 @@ QUnit.test('Annotations defer option test #12901', function (assert) {
             }]
         }, {
             animation: {
-                defer: 0
+                defer: 0,
+                duration: 200
             },
             labels: [{
                 point: 'min',
@@ -34,7 +35,8 @@ QUnit.test('Annotations defer option test #12901', function (assert) {
             }]
         }, {
             animation: {
-                defer: 500
+                defer: 500,
+                duration: 200
             },
             shapes: [{
                 type: 'circle',
@@ -48,8 +50,8 @@ QUnit.test('Annotations defer option test #12901', function (assert) {
     });
 
     assert.strictEqual(
-        chart.annotations[0].deferTime,
-        chart.userOptions.plotOptions.series.animation.duration,
+        chart.annotations[0].animationConfig.defer,
+        chart.userOptions.plotOptions.series.animation.duration - 500, //500 is an animObject default value for duration
         'For this annotations the duration time should be the same as set in plotOptions.'
     );
 
@@ -60,8 +62,8 @@ QUnit.test('Annotations defer option test #12901', function (assert) {
     );
 
     assert.strictEqual(
-        chart.annotations[2].deferTime,
-        chart.annotations[2].options.animation.defer,
+        chart.annotations[2].animationConfig.defer,
+        chart.annotations[2].options.animation.defer - chart.annotations[2].options.animation.duration,
         'Duration time should be same as set in the options.'
     );
 });
