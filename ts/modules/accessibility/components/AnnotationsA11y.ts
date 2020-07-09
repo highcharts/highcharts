@@ -12,7 +12,7 @@
 
 'use strict';
 
-import type Annotation from '../../../Extensions/Annotations/annotations';
+import type Annotation from '../../../Extensions/Annotations/Annotations';
 import type Point from '../../../Core/Series/Point';
 
 import HTMLUtilities from '../utils/htmlUtilities.js';
