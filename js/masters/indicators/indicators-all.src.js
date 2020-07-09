@@ -1,6 +1,6 @@
 /**
  * @license Highstock JS v@product.version@ (@product.date@)
- * @module highcharts/Stock/Indicators/indicators-all
+ * @module highcharts/indicators/indicators-all
  * @requires highcharts
  * @requires highcharts/modules/stock
  *

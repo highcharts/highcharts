@@ -147,7 +147,7 @@ declare global {
     }
 }
 
-import '../Core/Series/Series.js';
+import './Series/Series.js';
 
 var Series = H.Series,
     seriesTypes = H.seriesTypes;
