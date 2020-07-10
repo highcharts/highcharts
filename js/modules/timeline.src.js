@@ -73,7 +73,8 @@ seriesType('timeline', 'line',
  *               getExtremesFromAll, lineWidth, negativeColor,
  *               pointInterval, pointIntervalUnit, pointPlacement,
  *               pointStart, softThreshold, stacking, step, threshold,
- *               turboThreshold, zoneAxis, zones, dataSorting
+ *               turboThreshold, zoneAxis, zones, dataSorting,
+ *               boostBlending
  * @requires     modules/timeline
  * @optionparent plotOptions.timeline
  */
@@ -531,7 +532,7 @@ seriesType('timeline', 'line',
  *            getExtremesFromAll, lineWidth, negativeColor,
  *            pointInterval, pointIntervalUnit, pointPlacement, pointStart,
  *            softThreshold, stacking, stack, step, threshold, turboThreshold,
- *            zoneAxis, zones, dataSorting
+ *            zoneAxis, zones, dataSorting, boostBlending
  * @product   highcharts
  * @requires  modules/timeline
  * @apioption series.timeline

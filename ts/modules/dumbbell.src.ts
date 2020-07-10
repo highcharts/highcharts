@@ -107,7 +107,7 @@ var seriesTypes = H.seriesTypes,
  * @extends      plotOptions.arearange
  * @product      highcharts highstock
  * @excluding    fillColor, fillOpacity, lineWidth, stack, stacking,
- *               stickyTracking, trackByArea
+ *               stickyTracking, trackByArea, boostThreshold, boostBlending
  * @since 8.0.0
  * @optionparent plotOptions.dumbbell
  */
@@ -559,6 +559,7 @@ seriesType<Highcharts.DumbbellSeries>('dumbbell', 'arearange', {
  * not specified, it is inherited from [chart.type](#chart.type).
  *
  * @extends   series,plotOptions.dumbbell
+ * @excluding boostThreshold, boostBlending
  * @product   highcharts highstock
  * @requires  highcharts-more
  * @requires  modules/dumbbell

@@ -725,7 +725,7 @@ seriesType<Highcharts.TilemapSeries>('tilemap', 'heatmap'
      * @extends      plotOptions.heatmap
      * @since        6.0.0
      * @excluding    jitter, joinBy, shadow, allAreas, mapData, marker, data,
-     *               dataSorting
+     *               dataSorting, boostThreshold, boostBlending
      * @product      highcharts highmaps
      * @requires     modules/tilemap.js
      * @optionparent plotOptions.tilemap
@@ -943,7 +943,8 @@ seriesType<Highcharts.TilemapSeries>('tilemap', 'heatmap'
  *
  * @extends   series,plotOptions.tilemap
  * @excluding allAreas, dataParser, dataURL, joinBy, mapData, marker,
- *            pointRange, shadow, stack, dataSorting
+ *            pointRange, shadow, stack, dataSorting, boostThreshold,
+ *            boostBlending
  * @product   highcharts highmaps
  * @requires  modules/tilemap.js
  * @apioption series.tilemap

@@ -644,7 +644,8 @@ addEvent(Chart, 'afterHideAllOverlappingLabels', function (): void {
  * not specified, it is inherited from [chart.type](#chart.type).
  *
  * @extends   series,plotOptions.funnel
- * @excluding dataParser, dataURL, stack, xAxis, yAxis, dataSorting
+ * @excluding dataParser, dataURL, stack, xAxis, yAxis, dataSorting,
+ *            boostBlending, boostThreshold
  * @product   highcharts
  * @requires  modules/funnel
  * @apioption series.funnel
@@ -752,7 +753,8 @@ seriesType<Highcharts.PyramidSeries>(
  * not specified, it is inherited from [chart.type](#chart.type).
  *
  * @extends   series,plotOptions.pyramid
- * @excluding dataParser, dataURL, stack, xAxis, yAxis, dataSorting
+ * @excluding dataParser, dataURL, stack, xAxis, yAxis, dataSorting,
+ *            boostThreshold, boostBlending
  * @product   highcharts
  * @requires  modules/funnel
  * @apioption series.pyramid

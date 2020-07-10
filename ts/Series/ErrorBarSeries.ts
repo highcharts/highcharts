@@ -69,6 +69,7 @@ var noop = H.noop,
  *         Error bars on a scatter series
  *
  * @extends      plotOptions.boxplot
+ * @excluding    boostBlending, boostThreshold
  * @product      highcharts highstock
  * @requires     highcharts-more
  * @optionparent plotOptions.errorbar
@@ -162,7 +163,8 @@ seriesType<Highcharts.ErrorBarSeries>('errorbar', 'boxplot', {
  * is not specified, it is inherited from [chart.type](#chart.type).
  *
  * @extends   series,plotOptions.errorbar
- * @excluding dataParser, dataURL, stack, stacking
+ * @excluding dataParser, dataURL, stack, stacking, boostThreshold,
+ *            boostBlending
  * @product   highcharts
  * @requires  highcharts-more
  * @apioption series.errorbar

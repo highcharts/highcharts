@@ -32,7 +32,7 @@ seriesType('spline', 'line',
  *         Spline chart
  *
  * @extends      plotOptions.series
- * @excluding    step
+ * @excluding    step, boostThreshold, boostBlending
  * @product      highcharts highstock
  * @optionparent plotOptions.spline
  */
@@ -180,7 +180,7 @@ seriesType('spline', 'line',
  * not specified, it is inherited from [chart.type](#chart.type).
  *
  * @extends   series,plotOptions.spline
- * @excluding dataParser, dataURL, step
+ * @excluding dataParser, dataURL, step, boostThreshold, boostBlending
  * @product   highcharts highstock
  * @apioption series.spline
  */

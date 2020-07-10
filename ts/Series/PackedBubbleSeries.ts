@@ -540,7 +540,8 @@ seriesType<Highcharts.PackedBubbleSeries>(
      * @extends      plotOptions.bubble
      * @excluding    connectEnds, connectNulls, cropThreshold, dragDrop, jitter,
      *               keys, pointPlacement, sizeByAbsoluteValue, step, xAxis,
-     *               yAxis, zMax, zMin, dataSorting
+     *               yAxis, zMax, zMin, dataSorting, boostThreshold,
+     *               boostBlending
      * @product      highcharts
      * @since        7.0.0
      * @requires     highcharts-more
@@ -1998,7 +1999,8 @@ addEvent(Chart as any, 'beforeRedraw', function (
  *
  * @type      {Object}
  * @extends   series,plotOptions.packedbubble
- * @excluding cropThreshold, dataParser, dataSorting, dataURL, dragDrop, stack
+ * @excluding cropThreshold, dataParser, dataSorting, dataURL, dragDrop, stack,
+ *            boostThreshold, boostBlending
  * @product   highcharts
  * @requires  highcharts-more
  * @apioption series.packedbubble

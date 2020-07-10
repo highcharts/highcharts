@@ -135,7 +135,7 @@ seriesType<Highcharts.HistogramSeries>(
      *
      * @extends      plotOptions.column
      * @excluding    boostThreshold, dragDrop, pointInterval, pointIntervalUnit,
-     *               stacking
+     *               stacking, boostBlending
      * @product      highcharts
      * @since        6.0.0
      * @requires     modules/histogram
@@ -307,7 +307,7 @@ seriesType<Highcharts.HistogramSeries>(
  * specified, it is inherited from [chart.type](#chart.type).
  *
  * @extends   series,plotOptions.histogram
- * @excluding data, dataParser, dataURL
+ * @excluding data, dataParser, dataURL, boostThreshold, boostBlending
  * @product   highcharts
  * @since     6.0.0
  * @requires  modules/histogram

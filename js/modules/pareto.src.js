@@ -40,7 +40,7 @@ seriesType('pareto', 'line'
  *               negativeColor, pointInterval, pointIntervalUnit,
  *               pointPadding, pointPlacement, pointRange, pointStart,
  *               pointWidth, shadow, step, softThreshold, stacking,
- *               threshold, zoneAxis, zones
+ *               threshold, zoneAxis, zones, boostBlending
  * @requires     modules/pareto
  * @optionparent plotOptions.pareto
  */
@@ -115,7 +115,7 @@ merge(derivedSeriesMixin, {
  * @extends   series,plotOptions.pareto
  * @since     6.0.0
  * @product   highcharts
- * @excluding data, dataParser, dataURL
+ * @excluding data, dataParser, dataURL, boostThreshold, boostBlending
  * @requires  modules/pareto
  * @apioption series.pareto
  */

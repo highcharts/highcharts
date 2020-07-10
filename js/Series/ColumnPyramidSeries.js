@@ -40,7 +40,7 @@ seriesType('columnpyramid', 'column',
  * @product      highcharts highstock
  * @excluding    boostThreshold, borderRadius, crisp, depth, edgeColor,
  *               edgeWidth, groupZPadding, negativeColor, softThreshold,
- *               threshold, zoneAxis, zones
+ *               threshold, zoneAxis, zones, boostBlending
  * @requires     highcharts-more
  * @optionparent plotOptions.columnpyramid
  */
@@ -178,7 +178,8 @@ seriesType('columnpyramid', 'column',
  *
  * @extends   series,plotOptions.columnpyramid
  * @excluding connectEnds, connectNulls, dashStyle, dataParser, dataURL,
- *            gapSize, gapUnit, linecap, lineWidth, marker, step
+ *            gapSize, gapUnit, linecap, lineWidth, marker, step,
+ *            boostThreshold, boostBlending
  * @product   highcharts highstock
  * @requires  highcharts-more
  * @apioption series.columnpyramid

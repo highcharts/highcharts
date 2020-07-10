@@ -81,7 +81,7 @@ seriesType<Highcharts.ColumnPyramidSeries>(
      * @product      highcharts highstock
      * @excluding    boostThreshold, borderRadius, crisp, depth, edgeColor,
      *               edgeWidth, groupZPadding, negativeColor, softThreshold,
-     *               threshold, zoneAxis, zones
+     *               threshold, zoneAxis, zones, boostBlending
      * @requires     highcharts-more
      * @optionparent plotOptions.columnpyramid
      */
@@ -278,7 +278,8 @@ seriesType<Highcharts.ColumnPyramidSeries>(
  *
  * @extends   series,plotOptions.columnpyramid
  * @excluding connectEnds, connectNulls, dashStyle, dataParser, dataURL,
- *            gapSize, gapUnit, linecap, lineWidth, marker, step
+ *            gapSize, gapUnit, linecap, lineWidth, marker, step,
+ *            boostThreshold, boostBlending
  * @product   highcharts highstock
  * @requires  highcharts-more
  * @apioption series.columnpyramid

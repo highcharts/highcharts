@@ -80,7 +80,8 @@ seriesType('lollipop', 'dumbbell', {
  * The `lollipop` series. If the [type](#series.lollipop.type) option is
  * not specified, it is inherited from [chart.type](#chart.type).
  *
- * @extends   series,plotOptions.lollipop
+ * @extends   series,plotOptions.lollipop,
+ * @excluding boostThreshold, boostBlending
  * @product   highcharts highstock
  * @requires  highcharts-more
  * @requires  modules/dumbbell

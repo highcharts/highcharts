@@ -23,7 +23,7 @@ var seriesTypes = H.seriesTypes;
  *
  * @extends   plotOptions.arearange
  * @since     2.3.0
- * @excluding step
+ * @excluding step, boostThreshold, boostBlending
  * @product   highcharts highstock
  * @requires  highcharts-more
  * @apioption plotOptions.areasplinerange
@@ -36,7 +36,7 @@ seriesType('areasplinerange', 'arearange', null, {
  * option is not specified, it is inherited from [chart.type](#chart.type).
  *
  * @extends   series,plotOptions.areasplinerange
- * @excluding dataParser, dataURL, stack, step
+ * @excluding dataParser, dataURL, stack, step, boostThreshold, boostBlending
  * @product   highcharts highstock
  * @requires  highcharts-more
  * @apioption series.areasplinerange

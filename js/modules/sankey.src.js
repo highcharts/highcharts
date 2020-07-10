@@ -140,7 +140,7 @@ seriesType('sankey', 'column',
  *               pointInterval, pointIntervalUnit, pointPadding,
  *               pointPlacement, pointRange, pointStart, pointWidth,
  *               shadow, softThreshold, stacking, threshold, zoneAxis,
- *               zones, minPointLength, dataSorting
+ *               zones, minPointLength, dataSorting, boostBlending
  * @requires     modules/sankey
  * @optionparent plotOptions.sankey
  */

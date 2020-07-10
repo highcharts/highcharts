@@ -98,7 +98,7 @@ seriesType<Highcharts.Pyramid3dSeries>('pyramid3d', 'funnel3d',
  * not specified, it is inherited from [chart.type](#chart.type).
  *
  * @since     7.1.0
- * @extends   series,plotOptions.pyramid3d
+ * @extends   series.pyramid,plotOptions.pyramid3d
  * @excluding allAreas,boostThreshold,colorAxis,compare,compareBase,dataSorting
  * @product   highcharts
  * @sample    {highcharts} highcharts/demo/pyramid3d/ Pyramid3d

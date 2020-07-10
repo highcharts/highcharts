@@ -35,7 +35,7 @@ seriesType('scatter3d', 'scatter',
  *         Draggable 3d scatter
  *
  * @extends      plotOptions.scatter
- * @excluding    dragDrop, cluster
+ * @excluding    dragDrop, cluster, boostThreshold, boostBlending
  * @product      highcharts
  * @requires     highcharts-3d
  * @optionparent plotOptions.scatter3d
@@ -79,6 +79,7 @@ seriesType('scatter3d', 'scatter',
  * scatter3d](#plotOptions.scatter3d).
  *
  * @extends   series,plotOptions.scatter3d
+ * @excluding boostThreshold, boostBlending
  * @product   highcharts
  * @requires  highcharts-3d
  * @apioption series.scatter3d

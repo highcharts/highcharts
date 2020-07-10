@@ -338,6 +338,7 @@ namespace WaterfallAxis {
  *         Stacked waterfall chart
  *
  * @extends      plotOptions.column
+ * @excluding    boostThreshold, boostBlending
  * @product      highcharts
  * @requires     highcharts-more
  * @optionparent plotOptions.waterfall
@@ -1186,7 +1187,7 @@ seriesType<Highcharts.WaterfallSeries>('waterfall', 'column', {
  * is not specified, it is inherited from [chart.type](#chart.type).
  *
  * @extends   series,plotOptions.waterfall
- * @excluding dataParser, dataURL
+ * @excluding dataParser, dataURL, boostThreshold, boostBlending
  * @product   highcharts
  * @requires  highcharts-more
  * @apioption series.waterfall
