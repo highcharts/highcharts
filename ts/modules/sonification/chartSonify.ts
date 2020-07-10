@@ -224,7 +224,8 @@ const {
     isArray,
     merge,
     pick,
-    splat
+    splat,
+    objectEach
 } = U;
 
 import utilities from './utilities.js';
@@ -1095,20 +1096,33 @@ function getSeriesInstrumentOptions(
         series.chart.options.sonification?.defaultInstrumentOptions || {};
     const seriesInstrOpts: Array<Highcharts.Dictionary<any>> =
         series.options.sonification?.instruments || [{}];
+    const removeNullsFromObject = (obj: Highcharts.Dictionary<any>): void => {
+        objectEach(obj, (val: any, key: string): void => {
+            if (val === null) {
+                delete obj[key];
+            }
+        });
+    };
 
     // Convert series options to PointInstrumentObjects and merge with
     // default options
-    return (seriesInstrOpts).map((optionSet): Highcharts.PointInstrumentObject => ({
-        instrument: optionSet.instrument || defaultInstrOpts.instrument,
-        instrumentOptions: merge(defaultInstrOpts, optionSet, {
-            // Instrument options are lifted to root in the API options object,
-            // so merge all in order to avoid missing any. But remove the
-            // following which are not instrumentOptions:
-            mapping: void 0,
-            instrument: void 0
-        }) as Partial<Highcharts.PointInstrumentOptionsObject>,
-        instrumentMapping: merge(defaultInstrOpts.mapping, optionSet.mapping)
-    }));
+    return (seriesInstrOpts).map((optionSet): Highcharts.PointInstrumentObject => {
+        // Allow setting option to null to use default
+        removeNullsFromObject(optionSet.mapping || {});
+        removeNullsFromObject(optionSet);
+
+        return {
+            instrument: optionSet.instrument || defaultInstrOpts.instrument,
+            instrumentOptions: merge(defaultInstrOpts, optionSet, {
+                // Instrument options are lifted to root in the API options
+                // object, so merge all in order to avoid missing any. But
+                // remove the following which are not instrumentOptions:
+                mapping: void 0,
+                instrument: void 0
+            }) as Partial<Highcharts.PointInstrumentOptionsObject>,
+            instrumentMapping: merge(defaultInstrOpts.mapping, optionSet.mapping)
+        };
+    });
 }
 
 
