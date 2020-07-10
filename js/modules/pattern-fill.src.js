@@ -11,10 +11,10 @@
  *
  * */
 'use strict';
-import H from '../parts/Globals.js';
-import Point from '../parts/Point.js';
-import SVGRenderer from '../parts/SVGRenderer.js';
-import U from '../parts/Utilities.js';
+import H from '../Core/Globals.js';
+import Point from '../Core/Series/Point.js';
+import SVGRenderer from '../Core/Renderer/SVG/SVGRenderer.js';
+import U from '../Core/Utilities.js';
 var addEvent = U.addEvent, animObject = U.animObject, erase = U.erase, getOptions = U.getOptions, merge = U.merge, pick = U.pick, removeEvent = U.removeEvent, wrap = U.wrap;
 /**
  * Pattern options
@@ -114,7 +114,7 @@ var addEvent = U.addEvent, animObject = U.animObject, erase = U.erase, getOption
 */ /**
 * Animation options for the image pattern loading.
 * @name Highcharts.PatternObject#animation
-* @type {boolean|Highcharts.AnimationOptionsObject|undefined}
+* @type {boolean|Partial<Highcharts.AnimationOptionsObject>|undefined}
 */ /**
 * Optionally an index referencing which pattern to use. Highcharts adds
 * 10 default patterns to the `Highcharts.patterns` array. Additional
@@ -268,7 +268,7 @@ Point.prototype.calculatePatternDimensions = function (pattern) {
  * @param {Highcharts.PatternObject} options
  * The pattern options.
  *
- * @param {boolean|Highcharts.AnimationOptionsObject} [animation]
+ * @param {boolean|Partial<Highcharts.AnimationOptionsObject>} [animation]
  * The animation options.
  *
  * @return {Highcharts.SVGElement|undefined}

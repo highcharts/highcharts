@@ -10,11 +10,11 @@
  *
  * */
 'use strict';
-import Color from '../parts/Color.js';
+import Color from '../Core/Color.js';
 var color = Color.parse;
-import H from '../parts/Globals.js';
+import H from '../Core/Globals.js';
 import LegendSymbolMixin from '../mixins/legend-symbol.js';
-import U from '../parts/Utilities.js';
+import U from '../Core/Utilities.js';
 var clamp = U.clamp, extend = U.extend, isNumber = U.isNumber, merge = U.merge, pick = U.pick, pInt = U.pInt, seriesType = U.seriesType, wrap = U.wrap;
 /**
  * Additional options, depending on the actual symbol drawn.
@@ -25,8 +25,8 @@ var clamp = U.clamp, extend = U.extend, isNumber = U.isNumber, merge = U.merge, 
 * @name Highcharts.SymbolOptionsObject#rounded
 * @type {boolean|undefined}
 */
-import '../parts/Options.js';
-import '../parts-more/GaugeSeries.js';
+import '../Core/Options.js';
+import '../Series/GaugeSeries.js';
 var Renderer = H.Renderer;
 /**
  * Symbol definition of an arc with round edges.

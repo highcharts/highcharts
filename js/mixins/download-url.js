@@ -10,7 +10,7 @@
  *
  * */
 'use strict';
-import Highcharts from '../parts/Globals.js';
+import Highcharts from '../Core/Globals.js';
 var win = Highcharts.win, nav = win.navigator, doc = win.document, domurl = win.URL || win.webkitURL || win, isEdgeBrowser = /Edge\/\d+/.test(nav.userAgent);
 /**
  * Convert base64 dataURL to Blob if supported, otherwise returns undefined.
@@ -21,7 +21,7 @@ var win = Highcharts.win, nav = win.navigator, doc = win.document, domurl = win.
  * @return {string|undefined}
  *         Blob
  */
-Highcharts.dataURLtoBlob = function (dataURL) {
+var dataURLtoBlob = Highcharts.dataURLtoBlob = function (dataURL) {
     var parts = dataURL.match(/data:([^;]*)(;base64)?,([0-9A-Za-z+/]+)/);
     if (parts &&
         parts.length > 3 &&
@@ -50,7 +50,7 @@ Highcharts.dataURLtoBlob = function (dataURL) {
  *        The name of the resulting file (w/extension)
  * @return {void}
  */
-Highcharts.downloadURL = function (dataURL, filename) {
+var downloadURL = Highcharts.downloadURL = function (dataURL, filename) {
     var a = doc.createElement('a'), windowRef;
     // IE specific blob implementation
     // Don't use for normal dataURLs
@@ -63,7 +63,7 @@ Highcharts.downloadURL = function (dataURL, filename) {
     // Some browsers have limitations for data URL lengths. Try to convert to
     // Blob or fall back. Edge always needs that blob.
     if (isEdgeBrowser || dataURL.length > 2000000) {
-        dataURL = Highcharts.dataURLtoBlob(dataURL);
+        dataURL = dataURLtoBlob(dataURL);
         if (!dataURL) {
             throw new Error('Failed to convert to blob');
         }
@@ -90,3 +90,8 @@ Highcharts.downloadURL = function (dataURL, filename) {
         }
     }
 };
+var downladURLmodule = {
+    dataURLtoBlob: dataURLtoBlob,
+    downloadURL: downloadURL
+};
+export default downladURLmodule;

@@ -12,7 +12,7 @@
 
 'use strict';
 
-import H from '../parts/Globals.js';
+import H from '../Core/Globals.js';
 
 /**
  * Internal types
@@ -71,9 +71,9 @@ declare global {
     }
 }
 
-import O from '../parts/Options.js';
+import O from '../Core/Options.js';
 const { defaultOptions } = O;
-import U from '../parts/Utilities.js';
+import U from '../Core/Utilities.js';
 const {
     defined,
     extend,
@@ -85,7 +85,7 @@ const {
     seriesType
 } = U;
 
-import '../parts/Series.js';
+import '../Core/Series/Series.js';
 
 var piePoint = H.seriesTypes.pie.prototype.pointClass.prototype;
 

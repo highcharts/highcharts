@@ -61,9 +61,9 @@
 
 'use strict';
 
-import Axis from '../../../parts/Axis.js';
-import Chart from '../../../parts/Chart.js';
-import U from '../../../parts/Utilities.js';
+import Axis from '../../../Core/Axis/Axis.js';
+import Chart from '../../../Core/Chart/Chart.js';
+import U from '../../../Core/Utilities.js';
 const {
     error,
     pick

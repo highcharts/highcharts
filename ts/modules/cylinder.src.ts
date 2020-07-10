@@ -14,9 +14,9 @@
 
 'use strict';
 
-import type Chart from '../parts/Chart';
-import type SVGPath from '../parts/SVGPath';
-import H from '../parts/Globals.js';
+import type Chart from '../Core/Chart/Chart';
+import type SVGPath from '../Core/Renderer/SVG/SVGPath';
+import H from '../Core/Globals.js';
 
 /**
  * Internal types
@@ -79,21 +79,22 @@ declare global {
     }
 }
 
-import Color from '../parts/Color.js';
+import Color from '../Core/Color.js';
 const color = Color.parse;
-import U from '../parts/Utilities.js';
+import Math3D from '../Extensions/Math3D.js';
+const { perspective } = Math3D;
+import U from '../Core/Utilities.js';
 const {
     merge,
     pick,
     seriesType
 } = U;
 
-import '../parts/ColumnSeries.js';
-import '../parts/SVGRenderer.js';
+import '../Series/ColumnSeries.js';
+import '../Core/Renderer/SVG/SVGRenderer.js';
 
 var charts = H.charts,
     deg2rad = H.deg2rad,
-    perspective = H.perspective,
 
     // Work on H.Renderer instead of SVGRenderer for VML support.
     RendererProto = H.Renderer.prototype,

@@ -8,12 +8,12 @@
 
 'use strict';
 
-import Chart from '../parts/Chart.js';
-import H from '../parts/Globals.js';
+import Chart from '../Core/Chart/Chart.js';
+import H from '../Core/Globals.js';
 const {
     doc
 } = H;
-import U from '../parts/Utilities.js';
+import U from '../Core/Utilities.js';
 const {
     addEvent
 } = U;

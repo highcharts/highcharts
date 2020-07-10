@@ -11,8 +11,8 @@
  * */
 
 'use strict';
-import H from '../../parts/Globals.js';
-import U from '../../parts/Utilities.js';
+
+import U from '../../Core/Utilities.js';
 const {
     clamp,
     error,
@@ -54,7 +54,7 @@ declare global {
 /* eslint-disable valid-jsdoc */
 
 /**
- * A static shader mimicing axis translation functions found in parts/Axis
+ * A static shader mimicing axis translation functions found in Core/Axis
  *
  * @private
  * @function GLShader

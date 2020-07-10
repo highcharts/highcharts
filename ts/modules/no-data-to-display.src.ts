@@ -14,7 +14,7 @@
 
 'use strict';
 
-import H from '../parts/Globals.js';
+import H from '../Core/Globals.js';
 
 /**
  * Internal types
@@ -46,14 +46,14 @@ declare global {
     }
 }
 
-import U from '../parts/Utilities.js';
+import U from '../Core/Utilities.js';
 const {
     addEvent,
     extend,
     getOptions
 } = U;
 
-import '../parts/Series.js';
+import '../Core/Series/Series.js';
 
 var chartPrototype = H.Chart.prototype,
     defaultOptions = getOptions();

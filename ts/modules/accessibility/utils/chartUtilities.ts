@@ -12,14 +12,14 @@
 
 'use strict';
 
-import type Axis from '../../../parts/Axis';
-import type Chart from '../../../parts/Chart';
-import type Point from '../../../parts/Point';
+import type Axis from '../../../Core/Axis/Axis';
+import type Chart from '../../../Core/Chart/Chart';
+import type Point from '../../../Core/Series/Point';
 import HTMLUtilities from './htmlUtilities.js';
 const {
     stripHTMLTagsFromString: stripHTMLTags
 } = HTMLUtilities;
-import U from '../../../parts/Utilities.js';
+import U from '../../../Core/Utilities.js';
 const {
     defined,
     find,

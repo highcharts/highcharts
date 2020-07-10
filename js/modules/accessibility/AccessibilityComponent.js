@@ -10,9 +10,9 @@
  *
  * */
 'use strict';
-import H from '../../parts/Globals.js';
+import H from '../../Core/Globals.js';
 var win = H.win, doc = win.document;
-import U from '../../parts/Utilities.js';
+import U from '../../Core/Utilities.js';
 var extend = U.extend, fireEvent = U.fireEvent, merge = U.merge;
 import HTMLUtilities from './utils/htmlUtilities.js';
 var removeElement = HTMLUtilities.removeElement, getFakeMouseEvent = HTMLUtilities.getFakeMouseEvent;

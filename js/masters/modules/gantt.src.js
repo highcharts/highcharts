@@ -10,8 +10,8 @@
  * License: www.highcharts.com/license
  */
 'use strict';
-import '../../parts-gantt/GanttSeries.js';
-import '../../parts-gantt/GanttChart.js';
-import '../../parts/Scrollbar.js';
-import '../../parts/RangeSelector.js';
-import '../../parts/Navigator.js';
+import '../../Series/GanttSeries.js';
+import '../../Core/Chart/GanttChart.js';
+import '../../Core/Scrollbar.js';
+import '../../Extensions/RangeSelector.js';
+import '../../Core/Navigator.js';

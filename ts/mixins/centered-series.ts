@@ -10,7 +10,7 @@
 
 'use strict';
 
-import H from '../parts/Globals.js';
+import H from '../Core/Globals.js';
 
 /**
  * Internal types
@@ -53,7 +53,7 @@ declare global {
  * @type {number}
  */
 
-import U from '../parts/Utilities.js';
+import U from '../Core/Utilities.js';
 const {
     isNumber,
     pick,
@@ -68,7 +68,7 @@ var deg2rad = H.deg2rad;
  * @private
  * @mixin Highcharts.CenteredSeriesMixin
  */
-H.CenteredSeriesMixin = {
+const centeredSeriesMixin = H.CenteredSeriesMixin = {
 
     /**
      * Get the center of the pie based on the size and center options relative
@@ -177,3 +177,5 @@ H.CenteredSeriesMixin = {
         };
     }
 };
+
+export default centeredSeriesMixin;

@@ -10,4 +10,4 @@
  * License: www.highcharts.com/license
  */
 'use strict';
-import '../../modules/static-scale.src.js';
+import '../../Extensions/StaticScale.js';

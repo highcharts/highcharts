@@ -10,15 +10,15 @@
  *
  * */
 'use strict';
-import Chart from '../parts/Chart.js';
-import Color from '../parts/Color.js';
-import H from '../parts/Globals.js';
-import O from '../parts/Options.js';
+import Chart from '../Core/Chart/Chart.js';
+import Color from '../Core/Color.js';
+import H from '../Core/Globals.js';
+import O from '../Core/Options.js';
 var defaultOptions = O.defaultOptions;
-import Point from '../parts/Point.js';
-import SVGRenderer from '../parts/SVGRenderer.js';
-import Tick from '../parts/Tick.js';
-import U from '../parts/Utilities.js';
+import Point from '../Core/Series/Point.js';
+import SVGRenderer from '../Core/Renderer/SVG/SVGRenderer.js';
+import Tick from '../Core/Axis/Tick.js';
+import U from '../Core/Utilities.js';
 var addEvent = U.addEvent, removeEvent = U.removeEvent, animObject = U.animObject, extend = U.extend, fireEvent = U.fireEvent, format = U.format, merge = U.merge, objectEach = U.objectEach, pick = U.pick, syncTimeout = U.syncTimeout;
 /**
  * Gets fired when a drilldown point is clicked, before the new series is added.
@@ -133,8 +133,8 @@ var addEvent = U.addEvent, removeEvent = U.removeEvent, animObject = U.animObjec
 * @name Highcharts.DrillupEventObject#type
 * @type {"drillup"}
 */
-import '../parts/Series.js';
-import '../parts/ColumnSeries.js';
+import '../Core/Series/Series.js';
+import '../Series/ColumnSeries.js';
 var noop = H.noop, seriesTypes = H.seriesTypes, PieSeries = seriesTypes.pie, ColumnSeries = seriesTypes.column, ddSeriesId = 1;
 // Add language
 extend(defaultOptions.lang, 
@@ -260,7 +260,7 @@ defaultOptions.drilldown = {
      *   object. See
      *   [the easing demo](https://jsfiddle.net/gh/get/library/pure/highcharts/highcharts/tree/master/samples/highcharts/plotoptions/series-animation-easing/).
      *
-     * @type    {boolean|Highcharts.AnimationOptionsObject}
+     * @type    {boolean|Partial<Highcharts.AnimationOptionsObject>}
      * @since   3.0.8
      * @product highcharts highmaps
      */
@@ -418,7 +418,7 @@ defaultOptions.drilldown = {
  *
  * @function Highcharts.SVGElement#fadeIn
  *
- * @param {boolean|Highcharts.AnimationOptionsObject} [animation]
+ * @param {boolean|Partial<Highcharts.AnimationOptionsObject>} [animation]
  * The animation options for the element fade.
  */
 SVGRenderer.prototype.Element.prototype.fadeIn = function (animation) {

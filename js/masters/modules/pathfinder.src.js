@@ -10,4 +10,4 @@
  * License: www.highcharts.com/license
  */
 'use strict';
-import '../../parts-gantt/Pathfinder.js';
+import '../../Gantt/Pathfinder.js';

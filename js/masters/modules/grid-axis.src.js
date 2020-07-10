@@ -10,4 +10,4 @@
  * License: www.highcharts.com/license
  */
 'use strict';
-import '../../parts-gantt/GridAxis.js';
+import '../../Core/Axis/GridAxis.js';

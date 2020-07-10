@@ -12,12 +12,12 @@
 
 'use strict';
 
-import type Chart from '../parts/Chart';
-import type SVGElement from '../parts/SVGElement';
-import type SVGPath from '../parts/SVGPath';
-import H from '../parts/Globals.js';
-import Point from '../parts/Point.js';
-import U from '../parts/Utilities.js';
+import type Chart from '../Core/Chart/Chart';
+import type SVGElement from '../Core/Renderer/SVG/SVGElement';
+import type SVGPath from '../Core/Renderer/SVG/SVGPath';
+import H from '../Core/Globals.js';
+import Point from '../Core/Series/Point.js';
+import U from '../Core/Utilities.js';
 const {
     addEvent,
     clamp,
@@ -2090,7 +2090,7 @@ function getNewPoints(
  */
 function updatePoints(
     chart: Chart,
-    animate?: (boolean|Highcharts.AnimationOptionsObject)
+    animate?: (boolean|Partial<Highcharts.AnimationOptionsObject>)
 ): void {
     var newPoints: Highcharts.Dictionary<Highcharts.DragDropPointObject> =
             (chart.dragDropData as any).newPoints,

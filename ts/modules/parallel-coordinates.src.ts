@@ -12,13 +12,13 @@
 
 'use strict';
 
-import type { AxisType } from '../parts/axis/types';
-import type Point from '../parts/Point';
-import type RadialAxis from '../parts-more/RadialAxis';
-import Axis from '../parts/Axis.js';
-import Chart from '../parts/Chart.js';
-import H from '../parts/Globals.js';
-import U from '../parts/Utilities.js';
+import type { AxisType } from '../Core/Axis/Types';
+import type Point from '../Core/Series/Point';
+import type RadialAxis from '../Core/Axis/RadialAxis';
+import Axis from '../Core/Axis/Axis.js';
+import Chart from '../Core/Chart/Chart.js';
+import H from '../Core/Globals.js';
+import U from '../Core/Utilities.js';
 const {
     addEvent,
     arrayMax,
@@ -67,7 +67,7 @@ declare global {
 /**
  * @private
  */
-declare module '../parts/axis/types' {
+declare module '../Core/Axis/Types' {
     interface AxisComposition {
         parallelCoordinates?: ParallelAxis['parallelCoordinates'];
     }
@@ -76,7 +76,7 @@ declare module '../parts/axis/types' {
     }
 }
 
-import '../parts/Series.js';
+import '../Core/Series/Series.js';
 
 // Extensions for parallel coordinates plot.
 var ChartProto = Chart.prototype;

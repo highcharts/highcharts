@@ -10,9 +10,9 @@
  *
  * */
 'use strict';
-import H from '../../../parts/Globals.js';
+import H from '../../../Core/Globals.js';
 var doc = H.doc;
-import U from '../../../parts/Utilities.js';
+import U from '../../../Core/Utilities.js';
 var extend = U.extend, format = U.format, pick = U.pick;
 import AccessibilityComponent from '../AccessibilityComponent.js';
 import Announcer from '../utils/Announcer.js';

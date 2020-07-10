@@ -15,8 +15,8 @@
 
 'use strict';
 
-import Chart from '../parts/Chart.js';
-import H from '../parts/Globals.js';
+import Chart from '../Core/Chart/Chart.js';
+import H from '../Core/Globals.js';
 
 /**
  * Internal types
@@ -75,9 +75,9 @@ declare global {
     }
 }
 
-import Color from '../parts/Color.js';
+import Color from '../Core/Color.js';
 const color = Color.parse;
-import U from '../parts/Utilities.js';
+import U from '../Core/Utilities.js';
 const {
     addEvent,
     extend,
@@ -88,8 +88,8 @@ const {
     wrap
 } = U;
 
-import '../parts/Series.js';
-import '../parts/Options.js';
+import '../Core/Series/Series.js';
+import '../Core/Options.js';
 
 var win = H.win,
     doc = win.document,

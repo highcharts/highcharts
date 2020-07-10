@@ -12,10 +12,10 @@
 
 'use strict';
 
-import type Chart from '../../parts/Chart';
-import type Point from '../../parts/Point';
+import type Chart from '../../Core/Chart/Chart';
+import type Point from '../../Core/Series/Point';
 import musicalFrequencies from './musicalFrequencies.js';
-import U from '../../parts/Utilities.js';
+import U from '../../Core/Utilities.js';
 const { clamp } = U;
 
 /**

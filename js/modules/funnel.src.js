@@ -11,13 +11,13 @@
  * */
 /* eslint indent: 0 */
 'use strict';
-import Chart from '../parts/Chart.js';
-import H from '../parts/Globals.js';
+import Chart from '../Core/Chart/Chart.js';
+import H from '../Core/Globals.js';
 var noop = H.noop, seriesType = H.seriesType, seriesTypes = H.seriesTypes;
-import U from '../parts/Utilities.js';
+import U from '../Core/Utilities.js';
 var addEvent = U.addEvent, fireEvent = U.fireEvent, isArray = U.isArray, pick = U.pick;
-import '../parts/Options.js';
-import '../parts/Series.js';
+import '../Core/Options.js';
+import '../Core/Series/Series.js';
 /**
  * @private
  * @class

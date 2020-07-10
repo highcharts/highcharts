@@ -14,9 +14,11 @@
 
 'use strict';
 
-import type Chart from '../parts/Chart';
-import type SVGPath from '../parts/SVGPath';
-import H from '../parts/Globals.js';
+import type Chart from '../Core/Chart/Chart';
+import type SVGPath from '../Core/Renderer/SVG/SVGPath';
+import H from '../Core/Globals.js';
+import Math3D from '../Extensions/Math3D.js';
+const { perspective } = Math3D;
 
 /**
  * Internal types
@@ -94,9 +96,9 @@ declare global {
     }
 }
 
-import Color from '../parts/Color.js';
+import Color from '../Core/Color.js';
 const color = Color.parse;
-import U from '../parts/Utilities.js';
+import U from '../Core/Utilities.js';
 const {
     error,
     extend,
@@ -106,8 +108,8 @@ const {
     seriesType
 } = U;
 
-import '../parts/ColumnSeries.js';
-import '../parts/SVGRenderer.js';
+import '../Series/ColumnSeries.js';
+import '../Core/Renderer/SVG/SVGRenderer.js';
 
 var charts = H.charts,
     seriesTypes = H.seriesTypes,
@@ -391,7 +393,7 @@ seriesType<Highcharts.Funnel3dSeries>('funnel3d', 'column',
                 }
 
                 // Placement of tooltips and data labels in 3D
-                tooltipPos = H.perspective([{
+                tooltipPos = perspective([{
                     x: centerX,
                     y: point.plotY,
                     z: reversed ?

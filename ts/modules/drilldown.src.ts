@@ -12,17 +12,17 @@
 
 'use strict';
 
-import Chart from '../parts/Chart.js';
-import Color from '../parts/Color.js';
-import H from '../parts/Globals.js';
-import O from '../parts/Options.js';
+import Chart from '../Core/Chart/Chart.js';
+import Color from '../Core/Color.js';
+import H from '../Core/Globals.js';
+import O from '../Core/Options.js';
 const {
     defaultOptions
 } = O;
-import Point from '../parts/Point.js';
-import SVGRenderer from '../parts/SVGRenderer.js';
-import Tick from '../parts/Tick.js';
-import U from '../parts/Utilities.js';
+import Point from '../Core/Series/Point.js';
+import SVGRenderer from '../Core/Renderer/SVG/SVGRenderer.js';
+import Tick from '../Core/Axis/Tick.js';
+import U from '../Core/Utilities.js';
 const {
     addEvent,
     removeEvent,
@@ -115,7 +115,7 @@ declare global {
                 CSSObject|DrilldownActiveDataLabelStyleOptions
             );
             allowPointDrilldown?: boolean;
-            animation?: (boolean|AnimationOptionsObject);
+            animation?: (boolean|Partial<AnimationOptionsObject>);
             drillUpButton?: DrilldownDrillUpButtonOptions;
             series?: Array<SeriesOptionsType>;
         }
@@ -187,7 +187,7 @@ declare global {
             drilldown?: string;
         }
         interface SVGElement {
-            fadeIn(animation?: (boolean|AnimationOptionsObject)): void;
+            fadeIn(animation?: (boolean|Partial<AnimationOptionsObject>)): void;
         }
         interface Tick {
             drillable(): void;
@@ -314,8 +314,8 @@ declare global {
  * @type {"drillup"}
  */
 
-import '../parts/Series.js';
-import '../parts/ColumnSeries.js';
+import '../Core/Series/Series.js';
+import '../Series/ColumnSeries.js';
 
 var noop = H.noop,
     seriesTypes = H.seriesTypes,
@@ -455,7 +455,7 @@ defaultOptions.drilldown = {
      *   object. See
      *   [the easing demo](https://jsfiddle.net/gh/get/library/pure/highcharts/highcharts/tree/master/samples/highcharts/plotoptions/series-animation-easing/).
      *
-     * @type    {boolean|Highcharts.AnimationOptionsObject}
+     * @type    {boolean|Partial<Highcharts.AnimationOptionsObject>}
      * @since   3.0.8
      * @product highcharts highmaps
      */
@@ -626,11 +626,11 @@ defaultOptions.drilldown = {
  *
  * @function Highcharts.SVGElement#fadeIn
  *
- * @param {boolean|Highcharts.AnimationOptionsObject} [animation]
+ * @param {boolean|Partial<Highcharts.AnimationOptionsObject>} [animation]
  * The animation options for the element fade.
  */
 SVGRenderer.prototype.Element.prototype.fadeIn = function (
-    animation?: (boolean|Highcharts.AnimationOptionsObject)
+    animation?: (boolean|Partial<Highcharts.AnimationOptionsObject>)
 ): void {
     this
         .attr({

@@ -10,8 +10,8 @@
  *
  * */
 'use strict';
-import H from '../../parts/Globals.js';
-import U from '../../parts/Utilities.js';
+import H from '../../Core/Globals.js';
+import U from '../../Core/Utilities.js';
 var error = U.error, merge = U.merge, pick = U.pick;
 /**
  * Define the parameter mapping for an instrument.

@@ -8,9 +8,9 @@
  *
  * */
 'use strict';
-import H from '../parts/Globals.js';
+import H from '../Core/Globals.js';
 var SVGRenderer = H.SVGRenderer;
-import U from '../parts/Utilities.js';
+import U from '../Core/Utilities.js';
 var extend = U.extend, pick = U.pick, seriesType = U.seriesType;
 var seriesTypes = H.seriesTypes, seriesProto = H.Series.prototype, areaRangeProto = seriesTypes.arearange.prototype, columnRangeProto = seriesTypes.columnrange.prototype, colProto = seriesTypes.column.prototype, areaRangePointProto = areaRangeProto.pointClass.prototype;
 /**

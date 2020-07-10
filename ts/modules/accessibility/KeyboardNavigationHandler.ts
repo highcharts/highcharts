@@ -12,8 +12,8 @@
 
 'use strict';
 
-import type Chart from '../../parts/Chart';
-import U from '../../parts/Utilities.js';
+import type Chart from '../../Core/Chart/Chart';
+import U from '../../Core/Utilities.js';
 const {
     find
 } = U;

@@ -10,15 +10,15 @@
  *
  * */
 'use strict';
-import Chart from '../parts/Chart.js';
-import Color from '../parts/Color.js';
+import Chart from '../Core/Chart/Chart.js';
+import Color from '../Core/Color.js';
 var color = Color.parse;
-import H from '../parts/Globals.js';
+import H from '../Core/Globals.js';
 var deg2rad = H.deg2rad, doc = H.doc, noop = H.noop, svg = H.svg, win = H.win;
-import Pointer from '../parts/Pointer.js';
-import SVGElement from '../parts/SVGElement.js';
-import SVGRenderer from '../parts/SVGRenderer.js';
-import U from '../parts/Utilities.js';
+import Pointer from '../Core/Pointer.js';
+import SVGElement from '../Core/Renderer/SVG/SVGElement.js';
+import SVGRenderer from '../Core/Renderer/SVG/SVGRenderer.js';
+import U from '../Core/Utilities.js';
 var addEvent = U.addEvent, createElement = U.createElement, css = U.css, defined = U.defined, discardElement = U.discardElement, erase = U.erase, extend = U.extend, extendClass = U.extendClass, getOptions = U.getOptions, isArray = U.isArray, isNumber = U.isNumber, isObject = U.isObject, merge = U.merge, offset = U.offset, pick = U.pick, pInt = U.pInt, uniqueKey = U.uniqueKey;
 var VMLRenderer, VMLRendererExtension, VMLElement;
 /**

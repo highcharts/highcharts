@@ -12,10 +12,10 @@
 
 'use strict';
 
-import Chart from '../parts/Chart.js';
-import H from '../parts/Globals.js';
-import Point from '../parts/Point.js';
-import U from '../parts/Utilities.js';
+import Chart from '../Core/Chart/Chart.js';
+import H from '../Core/Globals.js';
+import Point from '../Core/Series/Point.js';
+import U from '../Core/Utilities.js';
 const {
     addEvent,
     defined,

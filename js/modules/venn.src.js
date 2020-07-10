@@ -15,10 +15,10 @@
  *
  * */
 'use strict';
-import Color from '../parts/Color.js';
+import Color from '../Core/Color.js';
 var color = Color.parse;
-import H from '../parts/Globals.js';
-import U from '../parts/Utilities.js';
+import H from '../Core/Globals.js';
+import U from '../Core/Utilities.js';
 var addEvent = U.addEvent, animObject = U.animObject, extend = U.extend, isArray = U.isArray, isNumber = U.isNumber, isObject = U.isObject, isString = U.isString, merge = U.merge, seriesType = U.seriesType;
 import draw from '../mixins/draw-point.js';
 import geometry from '../mixins/geometry.js';
@@ -27,7 +27,7 @@ var getAreaOfCircle = geometryCirclesModule.getAreaOfCircle, getAreaOfIntersecti
 import nelderMeadModule from '../mixins/nelder-mead.js';
 // TODO: replace with individual imports
 var nelderMead = nelderMeadModule.nelderMead;
-import '../parts/Series.js';
+import '../Core/Series/Series.js';
 var getCenterOfPoints = geometry.getCenterOfPoints, getDistanceBetweenPoints = geometry.getDistanceBetweenPoints, seriesTypes = H.seriesTypes;
 var objectValues = function objectValues(obj) {
     return Object.keys(obj).map(function (x) {
