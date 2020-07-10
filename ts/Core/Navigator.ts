@@ -1746,8 +1746,8 @@ class Navigator {
         // Update position of navigator shades, outline and handles (#12573)
         if (
             navigator.navigatorEnabled &&
-            navigator.zoomedMin &&
-            navigator.zoomedMax
+            isNumber(navigator.zoomedMin) &&
+            isNumber(navigator.zoomedMax)
         ) {
             zoomedMin = Math.round(navigator.zoomedMin);
             zoomedMax = Math.round(navigator.zoomedMax);
