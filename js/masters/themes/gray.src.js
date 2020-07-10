@@ -8,4 +8,4 @@
  * License: www.highcharts.com/license
  */
 'use strict';
-import '../../themes/gray.js';
+import '../../Extensions/Themes/Gray.js';

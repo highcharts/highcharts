@@ -9,27 +9,22 @@
  *  !!!!!!! SOURCE GETS TRANSPILED BY TYPESCRIPT. EDIT TS FILE ONLY. !!!!!!!
  *
  * */
-
 'use strict';
-
 /* global document */
-
-import Highcharts from '../Core/Globals.js';
-import U from '../Core/Utilities.js';
-const { setOptions } = U;
-
+import Highcharts from '../../Core/Globals.js';
+import U from '../../Core/Utilities.js';
+var setOptions = U.setOptions;
 // Load the fonts
 Highcharts.createElement('link', {
     href: 'https://fonts.googleapis.com/css?family=Dosis:400,600',
     rel: 'stylesheet',
     type: 'text/css'
-}, null as any, document.getElementsByTagName('head')[0]);
-
+}, null, document.getElementsByTagName('head')[0]);
 Highcharts.theme = {
     colors: ['#7cb5ec', '#f7a35c', '#90ee7e', '#7798BF', '#aaeeee', '#ff0066',
         '#eeaaee', '#55BF3B', '#DF5353', '#7798BF', '#aaeeee'],
     chart: {
-        backgroundColor: null as any,
+        backgroundColor: null,
         style: {
             fontFamily: 'Dosis, sans-serif'
         }
@@ -79,8 +74,6 @@ Highcharts.theme = {
             lineColor: '#404048'
         }
     }
-
 };
-
 // Apply the theme
 setOptions(Highcharts.theme);

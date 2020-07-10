@@ -9,12 +9,10 @@
  *  !!!!!!! SOURCE GETS TRANSPILED BY TYPESCRIPT. EDIT TS FILE ONLY. !!!!!!!
  *
  * */
-
 'use strict';
-import Highcharts from '../Core/Globals.js';
-import U from '../Core/Utilities.js';
-const { setOptions } = U;
-
+import Highcharts from '../../Core/Globals.js';
+import U from '../../Core/Utilities.js';
+var setOptions = U.setOptions;
 Highcharts.theme = {
     colors: ['#DDDF0D', '#55BF3B', '#DF5353', '#7798BF', '#aaeeee',
         '#ff0066', '#eeaaee', '#55BF3B', '#DF5353', '#7798BF', '#aaeeee'],
@@ -61,10 +59,9 @@ Highcharts.theme = {
                 fontWeight: 'bold',
                 fontSize: '12px',
                 fontFamily: 'Trebuchet MS, Verdana, sans-serif'
-
             }
         }
-    } as Highcharts.XAxisOptions,
+    },
     yAxis: {
         gridLineColor: '#333333',
         labels: {
@@ -84,7 +81,7 @@ Highcharts.theme = {
                 fontFamily: 'Trebuchet MS, Verdana, sans-serif'
             }
         }
-    } as Highcharts.YAxisOptions,
+    },
     tooltip: {
         backgroundColor: 'rgba(0, 0, 0, 0.75)',
         style: {
@@ -147,7 +144,6 @@ Highcharts.theme = {
             color: '#CCC'
         }
     },
-
     navigation: {
         buttonOptions: {
             symbolStroke: '#DDDDDD',
@@ -163,7 +159,6 @@ Highcharts.theme = {
             }
         }
     },
-
     // scroll charts
     rangeSelector: {
         buttonTheme: {
@@ -216,7 +211,6 @@ Highcharts.theme = {
             color: 'silver'
         }
     },
-
     navigator: {
         handles: {
             backgroundColor: '#666',
@@ -229,7 +223,6 @@ Highcharts.theme = {
             lineColor: '#A6C7ED'
         }
     },
-
     scrollbar: {
         barBackgroundColor: {
             linearGradient: { x1: 0, y1: 0, x2: 0, y2: 1 },
@@ -259,6 +252,5 @@ Highcharts.theme = {
         trackBorderColor: '#666'
     }
 };
-
 // Apply the theme
 setOptions(Highcharts.theme);

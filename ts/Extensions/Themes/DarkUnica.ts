@@ -1,14 +1,10 @@
 /* *
  *
- *  (c) 2010-2020 Highsoft AS
- *
- *  Author: Øystein Moseng
+ *  (c) 2010-2020 Torstein Honsi
  *
  *  License: www.highcharts.com/license
  *
- *  Accessible high-contrast dark theme for Highcharts. Specifically tailored
- *  towards 3:1 contrast against black/off-black backgrounds. Neighboring
- *  colors are tested for color blindness.
+ *  Dark theme for Highcharts JS
  *
  *  !!!!!!! SOURCE GETS TRANSPILED BY TYPESCRIPT. EDIT TS FILE ONLY. !!!!!!!
  *
@@ -16,48 +12,53 @@
 
 'use strict';
 
-import Highcharts from '../Core/Globals.js';
-import U from '../Core/Utilities.js';
+/* global document */
+
+// Load the fonts
+import Highcharts from '../../Core/Globals.js';
+import U from '../../Core/Utilities.js';
 const { setOptions } = U;
 
-var textBright = '#F0F0F3';
+Highcharts.createElement('link', {
+    href: 'https://fonts.googleapis.com/css?family=Unica+One',
+    rel: 'stylesheet',
+    type: 'text/css'
+}, null as any, document.getElementsByTagName('head')[0]);
 
 Highcharts.theme = {
-    colors: [
-        '#a6f0ff',
-        '#70d49e',
-        '#e898a5',
-        '#007faa',
-        '#f9db72',
-        '#f45b5b',
-        '#1e824c',
-        '#e7934c',
-        '#dadfe1',
-        '#a0618b'
-    ],
-
+    colors: ['#2b908f', '#90ee7e', '#f45b5b', '#7798BF', '#aaeeee', '#ff0066',
+        '#eeaaee', '#55BF3B', '#DF5353', '#7798BF', '#aaeeee'],
     chart: {
-        backgroundColor: '#1f1f20',
+        backgroundColor: {
+            linearGradient: { x1: 0, y1: 0, x2: 1, y2: 1 },
+            stops: [
+                [0, '#2a2a2b'],
+                [1, '#3e3e40']
+            ]
+        },
+        style: {
+            fontFamily: '\'Unica One\', sans-serif'
+        },
         plotBorderColor: '#606063'
     },
-
     title: {
         style: {
-            color: textBright
+            color: '#E0E0E3',
+            textTransform: 'uppercase',
+            fontSize: '20px'
         }
     },
-
     subtitle: {
         style: {
-            color: textBright
+            color: '#E0E0E3',
+            textTransform: 'uppercase'
         }
     },
-
     xAxis: {
         gridLineColor: '#707073',
         labels: {
             style: {
-                color: textBright
+                color: '#E0E0E3'
             }
         },
         lineColor: '#707073',
@@ -65,40 +66,41 @@ Highcharts.theme = {
         tickColor: '#707073',
         title: {
             style: {
-                color: textBright
+                color: '#A0A0A3'
 
             }
         }
     },
-
     yAxis: {
         gridLineColor: '#707073',
         labels: {
             style: {
-                color: textBright
+                color: '#E0E0E3'
             }
         },
         lineColor: '#707073',
         minorGridLineColor: '#505053',
         tickColor: '#707073',
+        tickWidth: 1,
         title: {
             style: {
-                color: textBright
+                color: '#A0A0A3'
             }
         }
     },
-
     tooltip: {
         backgroundColor: 'rgba(0, 0, 0, 0.85)',
         style: {
-            color: textBright
+            color: '#F0F0F0'
         }
     },
-
     plotOptions: {
         series: {
             dataLabels: {
-                color: textBright
+                color: '#F0F0F3',
+                style: {
+                    fontSize: '13px'
+                }
             },
             marker: {
                 lineColor: '#333'
@@ -112,16 +114,12 @@ Highcharts.theme = {
         },
         errorbar: {
             color: 'white'
-        },
-        map: {
-            nullColor: '#353535'
         }
     } as Highcharts.PlotOptions,
-
     legend: {
-        backgroundColor: 'transparent',
+        backgroundColor: 'rgba(0, 0, 0, 0.5)',
         itemStyle: {
-            color: textBright
+            color: '#E0E0E3'
         },
         itemHoverStyle: {
             color: '#FFF'
@@ -131,17 +129,15 @@ Highcharts.theme = {
         },
         title: {
             style: {
-                color: '#D0D0D0'
+                color: '#C0C0C0'
             }
         }
     },
-
     credits: {
         style: {
-            color: textBright
+            color: '#666'
         }
     },
-
     labels: {
         style: {
             color: '#707073'
@@ -150,10 +146,10 @@ Highcharts.theme = {
 
     drilldown: {
         activeAxisLabelStyle: {
-            color: textBright
+            color: '#F0F0F3'
         },
         activeDataLabelStyle: {
-            color: textBright
+            color: '#F0F0F3'
         }
     },
 
@@ -166,26 +162,27 @@ Highcharts.theme = {
         }
     },
 
+    // scroll charts
     rangeSelector: {
         buttonTheme: {
             fill: '#505053',
             stroke: '#000000',
             style: {
-                color: '#eee'
+                color: '#CCC'
             },
             states: {
                 hover: {
                     fill: '#707073',
                     stroke: '#000000',
                     style: {
-                        color: textBright
+                        color: 'white'
                     }
                 },
                 select: {
-                    fill: '#303030',
-                    stroke: '#101010',
+                    fill: '#000003',
+                    stroke: '#000000',
                     style: {
-                        color: textBright
+                        color: 'white'
                     }
                 }
             }
@@ -193,10 +190,10 @@ Highcharts.theme = {
         inputBoxBorderColor: '#505053',
         inputStyle: {
             backgroundColor: '#333',
-            color: textBright
+            color: 'silver'
         },
         labelStyle: {
-            color: textBright
+            color: 'silver'
         }
     },
 
@@ -206,7 +203,7 @@ Highcharts.theme = {
             borderColor: '#AAA'
         },
         outlineColor: '#CCC',
-        maskFill: 'rgba(180,180,255,0.2)',
+        maskFill: 'rgba(255,255,255,0.1)',
         series: {
             color: '#7798BF',
             lineColor: '#A6C7ED'

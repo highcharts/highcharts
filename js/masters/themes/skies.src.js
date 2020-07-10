@@ -8,4 +8,4 @@
  * License: www.highcharts.com/license
  */
 'use strict';
-import '../../themes/skies.js';
+import '../../Extensions/Themes/Skies.js';
