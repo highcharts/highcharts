@@ -171,8 +171,9 @@ H.distribute = function (boxes, len, maxDistance) {
  * @fires Highcharts.Series#event:afterDrawDataLabels
  */
 Series.prototype.drawDataLabels = function () {
-    var series = this, chart = series.chart, seriesOptions = series.options, seriesDlOptions = seriesOptions.dataLabels, points = series.points, pointOptions, hasRendered = series.hasRendered || 0, dataLabelsGroup, dataLabelAnim = seriesDlOptions.animation, animationConfig = typeof seriesDlOptions.defer === 'undefined' || seriesDlOptions.defer ?
-        getDeferredAnimation(chart, dataLabelAnim, series) : { defer: 0, duration: 0 }, renderer = chart.renderer;
+    var series = this, chart = series.chart, seriesOptions = series.options, seriesDlOptions = seriesOptions.dataLabels, points = series.points, pointOptions, hasRendered = series.hasRendered || 0, dataLabelsGroup, dataLabelAnim = seriesDlOptions.animation, animationConfig = seriesDlOptions.defer ?
+        getDeferredAnimation(chart, dataLabelAnim, series) :
+        { defer: 0, duration: 0 }, renderer = chart.renderer;
     /**
      * Handle the dataLabels.filter option.
      * @private

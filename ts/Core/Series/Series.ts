@@ -2513,12 +2513,10 @@ H.Series = seriesType<Highcharts.LineSeries>(
              * @sample highcharts/plotoptions/animation-defer
              *         Set defer time
              *
-             * @type      {boolean}
-             * @default   true
              * @since     4.0.0
              * @product   highcharts highstock gantt
-             * @apioption plotOptions.series.dataLabels.defer
              */
+            defer: true,
 
             /**
              * Enable or disable the data labels.

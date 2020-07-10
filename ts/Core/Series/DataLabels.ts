@@ -410,8 +410,9 @@ Series.prototype.drawDataLabels = function (this: Highcharts.Series): void {
         hasRendered = series.hasRendered || 0,
         dataLabelsGroup: Highcharts.SVGElement,
         dataLabelAnim = (seriesDlOptions as any).animation,
-        animationConfig = typeof (seriesDlOptions as any).defer === 'undefined' || (seriesDlOptions as any).defer ?
-            getDeferredAnimation(chart, dataLabelAnim, series) : { defer: 0, duration: 0 },
+        animationConfig = (seriesDlOptions as any).defer ?
+            getDeferredAnimation(chart, dataLabelAnim, series) :
+            { defer: 0, duration: 0 },
         renderer = chart.renderer;
 
     /**
