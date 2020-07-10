@@ -1101,7 +1101,7 @@ QUnit.test('Toggle data table (#13690)', function (assert) {
         chart.dataTableDiv,
         'Table should be visible.'
     );
-    chart.viewData();
+    chart.hideData();
 
     assert.strictEqual(
         chart.dataTableDiv.style.display,

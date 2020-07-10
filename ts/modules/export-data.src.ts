@@ -69,6 +69,12 @@ declare global {
             setUpKeyToAxis(): void;
             /** @requires modules/export-data */
             viewData(): void;
+            /** @requires modules/export-data */
+            toggleDataTable(): void;
+            /** @requires modules/export-data */
+            hideData(): void;
+            /** @requires modules/export-data */
+            isDataTableVisible: boolean;
         }
         interface ExportingCsvOptions {
             columnHeaderFormatter?: (Function|null);
@@ -384,7 +390,7 @@ setOptions({
         /**
          * The text for the menu item.
          *
-         * @since    6.0.0
+         * @since    next
          * @requires modules/export-data
          */
         hideData: 'Hide data table'
@@ -1171,11 +1177,7 @@ Chart.prototype.downloadXLS = function (): void {
  * @fires Highcharts.Chart#event:afterViewData
  */
 Chart.prototype.viewData = function (): void {
-    var exportDivElements = this.exportDivElements,
-        menuItems = exportingOptions?.buttons?.contextButton.menuItems,
-        lang = this.options.lang,
-        isTableVisible;
-
+    // Create div and generate the data table.
     if (!this.dataTableDiv) {
         this.dataTableDiv = doc.createElement('div');
         this.dataTableDiv.className = 'highcharts-data-table';
@@ -1184,17 +1186,43 @@ Chart.prototype.viewData = function (): void {
             this.dataTableDiv,
             this.renderTo.nextSibling
         );
-    }
-    // Toggle data table
-    if (this.dataTableDiv.style.display === '' || this.dataTableDiv.style.display === 'none') {
         this.dataTableDiv.innerHTML = this.getTable();
-        fireEvent(this, 'afterViewData', this.dataTableDiv);
-        this.dataTableDiv.style.display = 'block';
-        isTableVisible = true;
-    } else {
-        this.dataTableDiv.style.display = 'none';
-        isTableVisible = false;
     }
+    // Show the data table again.
+    if (this.dataTableDiv.style.display === '' || this.dataTableDiv.style.display === 'none') {
+        this.dataTableDiv.style.display = 'block';
+    }
+
+    this.isDataTableVisible = true;
+
+    fireEvent(this, 'afterViewData', this.dataTableDiv);
+};
+
+/**
+ * Export-data module required. Hide the data table when visible.
+ *
+ * @function Highcharts.Chart#hideData
+ */
+Chart.prototype.hideData = function (): void {
+    if (this.dataTableDiv && this.dataTableDiv.style.display === 'block') {
+        this.dataTableDiv.style.display = 'none';
+    }
+
+    this.isDataTableVisible = false;
+};
+
+Chart.prototype.toggleDataTable = function (): void {
+    var exportDivElements = this.exportDivElements,
+        menuItems = exportingOptions?.buttons?.contextButton.menuItems,
+        lang = this.options.lang;
+
+    if (this.isDataTableVisible) {
+        this.hideData();
+    } else {
+        this.viewData();
+    }
+
+    // Change the button text based on table visibility.
     if (
         exportingOptions?.menuItemDefinitions &&
         lang?.viewData &&
@@ -1204,7 +1232,7 @@ Chart.prototype.viewData = function (): void {
         exportDivElements.length
     ) {
         exportDivElements[menuItems.indexOf('viewData')]
-            .innerHTML = isTableVisible ? lang.hideData : lang.viewData;
+            .innerHTML = this.isDataTableVisible ? lang.hideData : lang.viewData;
     }
 };
 
@@ -1229,7 +1257,7 @@ if (exportingOptions) {
         viewData: {
             textKey: 'viewData',
             onclick: function (): void {
-                this.viewData();
+                this.toggleDataTable();
             }
         }
     } as Highcharts.Dictionary<Highcharts.ExportingMenuObject>);
