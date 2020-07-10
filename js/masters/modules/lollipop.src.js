@@ -8,4 +8,4 @@
  * License: www.highcharts.com/license
  */
 'use strict';
-import '../../modules/lollipop.src.js';
+import '../../Series/LollipopSeries.js';

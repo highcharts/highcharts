@@ -11,4 +11,4 @@
  * License: www.highcharts.com/license
  */
 'use strict';
-import '../../modules/oldie-polyfills.src.js';
+import '../../Extensions/OldiePolyfills.js';

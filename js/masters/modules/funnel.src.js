@@ -10,4 +10,4 @@
  * License: www.highcharts.com/license
  */
 'use strict';
-import '../../modules/funnel.src.js';
+import '../../Series/FunnelSeries.js';

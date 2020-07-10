@@ -10,4 +10,4 @@
  * License: www.highcharts.com/license
  */
 'use strict';
-import '../../modules/pareto.src.js';
+import '../../Series/ParetoSeries.js';
