@@ -15,7 +15,7 @@ var addEvent = U.addEvent, css = U.css, defined = U.defined, pick = U.pick, time
 import '../Chart/Chart.js';
 // Has a dependency on Navigator due to the use of Axis.toFixedRange
 import '../Navigator.js';
-import '../../Core/Series/Series.js';
+import '../Series/Series.js';
 var Chart = H.Chart, Series = H.Series;
 /**
  * Extends the axis with ordinal support.

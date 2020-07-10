@@ -184,7 +184,8 @@ const {
 } = U;
 
 import centeredSeriesMixin from '../mixins/centered-series.js';
-import drawPoint from '../mixins/draw-point.js';
+import drawPointModule from '../mixins/draw-point.js';
+const { drawPoint } = drawPointModule;
 import mixinTreeSeries from '../mixins/tree-series.js';
 import '../Core/Series/Series.js';
 import './treemap.src.js';

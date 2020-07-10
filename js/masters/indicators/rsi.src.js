@@ -11,4 +11,4 @@
  * License: www.highcharts.com/license
  */
 'use strict';
-import '../../indicators/rsi.src.js';
+import '../../Stock/Indicators/RSIIndicator.js';

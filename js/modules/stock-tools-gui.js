@@ -12,7 +12,7 @@
 'use strict';
 import Chart from '../Core/Chart/Chart.js';
 import H from '../Core/Globals.js';
-import NavigationBindings from '../annotations/navigationBindings.js';
+import NavigationBindings from '../Extensions/Annotations/NavigationBindings.js';
 import U from '../Core/Utilities.js';
 var addEvent = U.addEvent, createElement = U.createElement, css = U.css, extend = U.extend, fireEvent = U.fireEvent, getStyle = U.getStyle, isArray = U.isArray, merge = U.merge, pick = U.pick, setOptions = U.setOptions;
 var DIV = 'div', SPAN = 'span', UL = 'ul', LI = 'li', PREFIX = 'highcharts-', activeClass = PREFIX + 'active';

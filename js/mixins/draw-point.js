@@ -66,4 +66,9 @@ var drawPoint = function drawPoint(params) {
     // Call draw to render component
     draw.call(point, params);
 };
-export default drawPoint;
+var drawPointModule = {
+    draw: draw,
+    drawPoint: drawPoint,
+    isFn: isFn
+};
+export default drawPointModule;

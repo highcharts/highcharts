@@ -11,4 +11,4 @@
  * License: www.highcharts.com/license
  */
 'use strict';
-import '../../indicators/ema.src.js';
+import '../../Stock/Indicators/EMAIndicator.js';

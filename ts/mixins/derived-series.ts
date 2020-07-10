@@ -75,7 +75,7 @@ var Series = H.Series,
  * @private
  * @mixin derivedSeriesMixin
  */
-var derivedSeriesMixin: Highcharts.DerivedSeriesMixin = {
+const derivedSeriesMixin: Highcharts.DerivedSeriesMixin = {
 
     hasDerivedData: true,
 

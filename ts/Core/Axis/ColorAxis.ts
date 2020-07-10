@@ -450,7 +450,7 @@ class ColorAxis extends Axis implements AxisLike {
              * Animation for the marker as it moves between values. Set to
              * `false` to disable animation. Defaults to `{ duration: 50 }`.
              *
-             * @type    {boolean|Highcharts.AnimationOptionsObject}
+             * @type    {boolean|Partial<Highcharts.AnimationOptionsObject>}
              * @product highcharts highstock highmaps
              */
             animation: {
@@ -1587,7 +1587,7 @@ namespace ColorAxis {
     }
 
     export interface MarkerOptions {
-        animation?: (boolean|Highcharts.AnimationOptionsObject);
+        animation?: (boolean|Partial<Highcharts.AnimationOptionsObject>);
         color?: Highcharts.ColorType;
         width?: number;
     }

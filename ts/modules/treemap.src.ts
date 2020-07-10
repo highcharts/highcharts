@@ -289,7 +289,8 @@ declare global {
 }
 
 import mixinTreeSeries from '../mixins/tree-series.js';
-import drawPoint from '../mixins/draw-point.js';
+import drawPointModule from '../mixins/draw-point.js';
+const { drawPoint } = drawPointModule;
 import Color from '../Core/Color.js';
 const {
     parse: color
@@ -1835,7 +1836,7 @@ seriesType<Highcharts.TreemapSeries>(
 
             points.forEach(function (point: Highcharts.TreemapPoint): void {
                 var levelDynamic = point.node.levelDynamic,
-                    animate: Highcharts.AnimationOptionsObject = {},
+                    animate: Partial<Highcharts.AnimationOptionsObject> = {},
                     attr: Highcharts.SVGAttributes = {},
                     css: Highcharts.CSSObject = {},
                     groupKey = 'level-group-' + levelDynamic,
