@@ -13,4 +13,4 @@
 'use strict';
 
 import '../../error-messages.js';
-import '../../modules/debugger.src.js';
+import '../../Extensions/Debugger.js';

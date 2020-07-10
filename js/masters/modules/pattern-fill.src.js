@@ -11,4 +11,4 @@
  * License: www.highcharts.com/license
  */
 'use strict';
-import '../../modules/pattern-fill.src.js';
+import '../../Extensions/PatternFill.js';
