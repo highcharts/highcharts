@@ -19,8 +19,8 @@ import SeriesDescriber from './SeriesDescriber.js';
 var defaultPointDescriptionFormatter = SeriesDescriber
     .defaultPointDescriptionFormatter, defaultSeriesDescriptionFormatter = SeriesDescriber
     .defaultSeriesDescriptionFormatter;
-import Announcer from '../../utils/Announcer.js';
-import EventProvider from '../../utils/EventProvider.js';
+import Announcer from '../../Utils/Announcer.js';
+import EventProvider from '../../Utils/EventProvider.js';
 /* eslint-disable no-invalid-this, valid-jsdoc */
 /**
  * @private

@@ -28,8 +28,8 @@ var defaultPointDescriptionFormatter = SeriesDescriber
     defaultSeriesDescriptionFormatter = SeriesDescriber
         .defaultSeriesDescriptionFormatter;
 
-import Announcer from '../../utils/Announcer.js';
-import EventProvider from '../../utils/EventProvider.js';
+import Announcer from '../../Utils/Announcer.js';
+import EventProvider from '../../Utils/EventProvider.js';
 
 
 /**
