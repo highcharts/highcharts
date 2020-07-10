@@ -306,7 +306,7 @@ class BrokenAxisAdditions {
                 newMin: number,
                 newMax: number,
                 redraw?: boolean,
-                animation?: (boolean|Highcharts.AnimationOptionsObject),
+                animation?: (boolean|Partial<Highcharts.AnimationOptionsObject>),
                 eventArguments?: any
             ): void {
                 // If trying to set extremes inside a break, extend min to

@@ -20,7 +20,7 @@ declare global {
                 this: NodesSeries,
                 data: Array<NodesPointOptions>,
                 redraw?: boolean,
-                animation?: (boolean|AnimationOptionsObject),
+                animation?: (boolean|Partial<AnimationOptionsObject>),
                 updatePoints?: boolean
             ): void;
             setNodeState(this: NodesPoint, state: string): void;

@@ -40,7 +40,7 @@ declare global {
             aspectWidth?: number;
         }
         interface PatternObject {
-            animation?: AnimationOptionsObject;
+            animation?: Partial<AnimationOptionsObject>;
             pattern: PatternOptionsObject;
             patternIndex?: number;
         }
@@ -178,7 +178,7 @@ declare global {
  *//**
  * Animation options for the image pattern loading.
  * @name Highcharts.PatternObject#animation
- * @type {boolean|Highcharts.AnimationOptionsObject|undefined}
+ * @type {boolean|Partial<Highcharts.AnimationOptionsObject>|undefined}
  *//**
  * Optionally an index referencing which pattern to use. Highcharts adds
  * 10 default patterns to the `Highcharts.patterns` array. Additional
@@ -365,7 +365,7 @@ Point.prototype.calculatePatternDimensions = function (
  * @param {Highcharts.PatternObject} options
  * The pattern options.
  *
- * @param {boolean|Highcharts.AnimationOptionsObject} [animation]
+ * @param {boolean|Partial<Highcharts.AnimationOptionsObject>} [animation]
  * The animation options.
  *
  * @return {Highcharts.SVGElement|undefined}
@@ -375,7 +375,7 @@ Point.prototype.calculatePatternDimensions = function (
  */
 SVGRenderer.prototype.addPattern = function (
     options: Highcharts.PatternOptionsObject,
-    animation?: (boolean|Highcharts.AnimationOptionsObject)
+    animation?: (boolean|Partial<Highcharts.AnimationOptionsObject>)
 ): (Highcharts.SVGElement|undefined) {
     var pattern: (Highcharts.SVGElement|undefined),
         animate = pick(animation, true),

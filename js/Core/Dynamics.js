@@ -68,7 +68,7 @@ extend(Chart.prototype, /** @lends Highcharts.Chart.prototype */ {
      * @param {boolean} [redraw=true]
      *        Whether to redraw the chart after adding.
      *
-     * @param {boolean|Highcharts.AnimationOptionsObject} [animation]
+     * @param {boolean|Partial<Highcharts.AnimationOptionsObject>} [animation]
      *        Whether to apply animation, and optionally animation
      *        configuration.
      *
@@ -119,7 +119,7 @@ extend(Chart.prototype, /** @lends Highcharts.Chart.prototype */ {
      * @param {boolean} [redraw=true]
      *        Whether to redraw the chart after adding.
      *
-     * @param {boolean|Highcharts.AnimationOptionsObject} [animation=true]
+     * @param {boolean|Partial<Highcharts.AnimationOptionsObject>} [animation=true]
      *        Whether and how to apply animation in the redraw.
      *
      * @return {Highcharts.Axis}
@@ -146,7 +146,7 @@ extend(Chart.prototype, /** @lends Highcharts.Chart.prototype */ {
      * @param {boolean} [redraw=true]
      *        Whether to redraw the chart after adding.
      *
-     * @param {boolean|Highcharts.AnimationOptionsObject} [animation=true]
+     * @param {boolean|Partial<Highcharts.AnimationOptionsObject>} [animation=true]
      *        Whether and how to apply animation in the redraw.
      *
      * @return {Highcharts.ColorAxis}
@@ -399,7 +399,7 @@ extend(Chart.prototype, /** @lends Highcharts.Chart.prototype */ {
      *        series have id's, the new series options will be matched by id,
      *        and the remaining ones removed.
      *
-     * @param {boolean|Highcharts.AnimationOptionsObject} [animation=true]
+     * @param {boolean|Partial<Highcharts.AnimationOptionsObject>} [animation=true]
      *        Whether to apply animation, and optionally animation
      *        configuration.
      *
@@ -693,7 +693,7 @@ extend(Point.prototype, /** @lends Highcharts.Point.prototype */ {
      *        more operations on the chart, it is best practice to set
      *        `redraw` to false and call `chart.redraw()` after.
      *
-     * @param {boolean|Highcharts.AnimationOptionsObject} [animation=true]
+     * @param {boolean|Partial<Highcharts.AnimationOptionsObject>} [animation=true]
      *        Whether to apply animation, and optionally animation
      *        configuration.
      *
@@ -782,7 +782,7 @@ extend(Point.prototype, /** @lends Highcharts.Point.prototype */ {
      *        `point.remove()` in a loop, it is best practice to set `redraw`
      *        to false and call `chart.redraw()` after.
      *
-     * @param {boolean|Highcharts.AnimationOptionsObject} [animation=false]
+     * @param {boolean|Partial<Highcharts.AnimationOptionsObject>} [animation=false]
      *        Whether to apply animation, and optionally animation
      *        configuration.
      *
@@ -834,7 +834,7 @@ extend(Series.prototype, /** @lends Series.prototype */ {
      *        If true, a point is shifted off the start of the series as one is
      *        appended to the end.
      *
-     * @param {boolean|Highcharts.AnimationOptionsObject} [animation]
+     * @param {boolean|Partial<Highcharts.AnimationOptionsObject>} [animation]
      *        Whether to apply animation, and optionally animation
      *        configuration.
      *
@@ -923,7 +923,7 @@ extend(Series.prototype, /** @lends Series.prototype */ {
      *        Highcharts.Chart#redraw} is explicitly called after the adding of
      *        points is finished.
      *
-     * @param {boolean|Highcharts.AnimationOptionsObject} [animation]
+     * @param {boolean|Partial<Highcharts.AnimationOptionsObject>} [animation]
      *        Whether and optionally how the series should be animated.
      *
      * @return {void}
@@ -970,7 +970,7 @@ extend(Series.prototype, /** @lends Series.prototype */ {
      *        Whether to redraw the chart or wait for an explicit call to
      *        {@link Highcharts.Chart#redraw}.
      *
-     * @param {boolean|Highcharts.AnimationOptionsObject} [animation]
+     * @param {boolean|Partial<Highcharts.AnimationOptionsObject>} [animation]
      *        Whether to apply animation, and optionally animation
      *        configuration.
      *

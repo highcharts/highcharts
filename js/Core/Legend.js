@@ -1019,7 +1019,7 @@ var Legend = /** @class */ (function () {
      * @param {number} scrollBy
      *        The number of pages to scroll.
      *
-     * @param {boolean|Highcharts.AnimationOptionsObject} [animation]
+     * @param {boolean|Partial<Highcharts.AnimationOptionsObject>} [animation]
      *        Whether and how to apply animation.
      *
      * @return {void}
@@ -1093,7 +1093,7 @@ var Legend = /** @class */ (function () {
             var animOptions = animObject(pick(animation, chart.renderer.globalAnimation, true));
             syncTimeout(function () {
                 fireEvent(_this, 'afterScroll', { currentPage: currentPage });
-            }, animOptions.duration || 0);
+            }, animOptions.duration);
         }
     };
     return Legend;

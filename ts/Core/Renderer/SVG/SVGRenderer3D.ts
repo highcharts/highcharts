@@ -57,7 +57,7 @@ declare global {
             animate(
                 this: SVGElement,
                 args: SVGAttributes,
-                duration?: (boolean|AnimationOptionsObject),
+                duration?: (boolean|Partial<AnimationOptionsObject>),
                 complete?: Function
             ): SVGElement;
             attr(
@@ -384,7 +384,7 @@ SVGRenderer.prototype.polyhedron = function (
     result.animate = function (
         this: Highcharts.SVGElement,
         params: Highcharts.SVGAttributes,
-        duration?: (boolean|Highcharts.AnimationOptionsObject),
+        duration?: (boolean|Partial<Highcharts.AnimationOptionsObject>),
         complete?: Function
     ): Highcharts.SVGElement {
         if (params && params.faces) {
@@ -561,7 +561,7 @@ cuboidMethods = merge(element3dMethods, {
     animate: function (
         this: Highcharts.SVGElement,
         args: Highcharts.SVGAttributes,
-        duration?: (boolean|Highcharts.AnimationOptionsObject),
+        duration?: (boolean|Partial<Highcharts.AnimationOptionsObject>),
         complete?: Function
     ): Highcharts.SVGElement {
         if (defined(args.x) && defined(args.y)) {
@@ -1061,7 +1061,7 @@ SVGRenderer.prototype.arc3d = function (
     wrapper.animate = function (
         this: Highcharts.SVGElement,
         params: Highcharts.SVGAttributes,
-        animation?: (boolean|Highcharts.AnimationOptionsObject),
+        animation?: (boolean|Partial<Highcharts.AnimationOptionsObject>),
         complete?: Function
     ): Highcharts.SVGElement {
         var paramArr,

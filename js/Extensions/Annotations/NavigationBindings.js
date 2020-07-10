@@ -1031,7 +1031,11 @@ setOptions({
          *            measure, pitchfork, tunnel, verticalLine, basicAnnotation
          * @apioption navigation.annotationsOptions
          */
-        annotationsOptions: {}
+        annotationsOptions: {
+            animation: {
+                defer: 0
+            }
+        }
     }
 });
 export default NavigationBindings;

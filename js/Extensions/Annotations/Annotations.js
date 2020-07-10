@@ -22,7 +22,7 @@ import H from '../../Core/Globals.js';
 import MockPoint from './MockPoint.js';
 import Pointer from '../../Core/Pointer.js';
 import U from '../../Core/Utilities.js';
-var addEvent = U.addEvent, defined = U.defined, destroyObjectProperties = U.destroyObjectProperties, erase = U.erase, extend = U.extend, find = U.find, fireEvent = U.fireEvent, merge = U.merge, pick = U.pick, splat = U.splat, wrap = U.wrap;
+var addEvent = U.addEvent, defined = U.defined, destroyObjectProperties = U.destroyObjectProperties, erase = U.erase, extend = U.extend, find = U.find, fireEvent = U.fireEvent, getDeferredAnimation = U.getDeferredAnimation, merge = U.merge, pick = U.pick, splat = U.splat, wrap = U.wrap;
 /* *********************************************************************
  *
  * ANNOTATION
@@ -86,6 +86,7 @@ var Annotation = /** @class */ (function () {
         this.annotation = void 0;
         this.coll = 'annotations';
         this.collection = void 0;
+        this.animationConfig = void 0;
         this.graphic = void 0;
         this.group = void 0;
         this.labelCollector = void 0;
@@ -180,11 +181,13 @@ var Annotation = /** @class */ (function () {
      * @private
      */
     Annotation.prototype.init = function () {
+        var chart = this.chart, animOptions = this.options.animation;
         this.linkPoints();
         this.addControlPoints();
         this.addShapes();
         this.addLabels();
         this.setLabelCollector();
+        this.animationConfig = getDeferredAnimation(chart, animOptions);
     };
     Annotation.prototype.getLabelsAndShapesOptions = function (baseOptions, newOptions) {
         var mergedOptions = {};
@@ -302,6 +305,7 @@ var Annotation = /** @class */ (function () {
         this.graphic = renderer
             .g('annotation')
             .attr({
+            opacity: 0,
             zIndex: this.options.zIndex,
             visibility: this.options.visible ?
                 'visible' :
@@ -571,6 +575,33 @@ merge(Annotation.prototype,
          *         Set annotation visibility
          */
         visible: true,
+        /**
+         * Enable or disable the initial animation when a series is
+         * displayed for the `annotation`. The animation can also be set
+         * as a configuration object. Please note that this option only
+         * applies to the initial animation.
+         * For other animations, see [chart.animation](#chart.animation)
+         * and the animation parameter under the API methods.
+         * The following properties are supported:
+         *
+         * - `defer`: The animation delay time in milliseconds.
+         *
+         * @sample {highcharts} highcharts/annotations/defer/
+         *          Animation defer settings
+         * @type {boolean|Partial<Highcharts.AnimationOptionsObject>}
+         * @since next
+         * @apioption annotations.animation
+         */
+        animation: {},
+        /**
+         * The animation delay time in milliseconds.
+         * Set to `0` renders annotation immediately.
+         * As `undefined` inherits defer time from the [series.animation.defer](#plotOptions.series.animation.defer).
+         *
+         * @type      {number}
+         * @since     next
+         * @apioption annotations.animation.defer
+         */
         /**
          * Allow an annotation to be draggable by a user. Possible
          * values are `'x'`, `'xy'`, `'y'` and `''` (disabled).
@@ -1130,6 +1161,9 @@ extend(chartProto, /** @lends Highcharts.Chart# */ {
         this.plotBoxClip.attr(this.plotBox);
         this.annotations.forEach(function (annotation) {
             annotation.redraw();
+            annotation.graphic.animate({
+                opacity: 1
+            }, annotation.animationConfig);
         });
     }
 });

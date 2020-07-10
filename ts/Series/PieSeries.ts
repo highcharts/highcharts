@@ -40,7 +40,7 @@ declare global {
             public slice(
                 sliced: boolean,
                 redraw?: boolean,
-                animation?: (boolean|AnimationOptionsObject)
+                animation?: (boolean|Partial<AnimationOptionsObject>)
             ): void;
         }
         class PieSeries extends LineSeries {
@@ -1395,7 +1395,7 @@ seriesType<Highcharts.PieSeries>(
          *        When undefined, the slice state is toggled.
          * @param {boolean} redraw
          *        Whether to redraw the chart. True by default.
-         * @param {boolean|Highcharts.AnimationOptionsObject}
+         * @param {boolean|Partial<Highcharts.AnimationOptionsObject>}
          *        Animation options.
          * @return {void}
          */
@@ -1403,7 +1403,7 @@ seriesType<Highcharts.PieSeries>(
             this: Highcharts.PiePoint,
             sliced: boolean,
             redraw?: boolean,
-            animation?: (boolean|Highcharts.AnimationOptionsObject)
+            animation?: (boolean|Partial<Highcharts.AnimationOptionsObject>)
         ): void {
             var point = this,
                 series = point.series,

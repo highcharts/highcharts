@@ -1385,7 +1385,7 @@ var SVGRenderer = /** @class */ (function () {
      * @param {number} height
      * The new pixel height.
      *
-     * @param {boolean|Highcharts.AnimationOptionsObject} [animate=true]
+     * @param {boolean|Partial<Highcharts.AnimationOptionsObject>} [animate=true]
      * Whether and how to animate.
      */
     SVGRenderer.prototype.setSize = function (width, height, animate) {

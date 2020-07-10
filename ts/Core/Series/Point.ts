@@ -110,7 +110,7 @@ declare global {
             (this: Point, event: Event): void;
         }
         interface PointStatesHoverOptionsObject {
-            animation?: (boolean|AnimationOptionsObject);
+            animation?: (boolean|Partial<AnimationOptionsObject>);
             enabled?: boolean;
             fillColor?: ColorType;
             lineColor?: ColorType;
@@ -123,7 +123,7 @@ declare global {
             opacity?: number;
         }
         interface PointStatesNormalOptionsObject {
-            animation?: (boolean|AnimationOptionsObject);
+            animation?: (boolean|Partial<AnimationOptionsObject>);
         }
         interface PointStatesOptionsObject {
             hover?: PointStatesHoverOptionsObject;
@@ -660,7 +660,7 @@ class Point {
 
         } else {
             this.animateBeforeDestroy();
-            syncTimeout(destroyPoint, (animation as any).duration);
+            syncTimeout(destroyPoint, animation.duration);
         }
 
         chart.pointCount--;

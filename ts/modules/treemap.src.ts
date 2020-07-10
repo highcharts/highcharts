@@ -1835,7 +1835,7 @@ seriesType<Highcharts.TreemapSeries>(
 
             points.forEach(function (point: Highcharts.TreemapPoint): void {
                 var levelDynamic = point.node.levelDynamic,
-                    animate: Highcharts.AnimationOptionsObject = {},
+                    animate: Partial<Highcharts.AnimationOptionsObject> = {},
                     attr: Highcharts.SVGAttributes = {},
                     css: Highcharts.CSSObject = {},
                     groupKey = 'level-group-' + levelDynamic,

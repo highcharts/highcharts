@@ -8,7 +8,7 @@
  *
  * */
 import U from '../Utilities.js';
-var addEvent = U.addEvent, destroyObjectProperties = U.destroyObjectProperties, fireEvent = U.fireEvent, objectEach = U.objectEach, pick = U.pick;
+var addEvent = U.addEvent, destroyObjectProperties = U.destroyObjectProperties, fireEvent = U.fireEvent, getDeferredAnimation = U.getDeferredAnimation, objectEach = U.objectEach, pick = U.pick;
 /* eslint-disable valid-jsdoc */
 /**
  * Adds stacking support to axes.
@@ -111,12 +111,15 @@ var StackingAxisAdditions = /** @class */ (function () {
         var chart = axis.chart;
         var renderer = chart.renderer;
         var stacks = stacking.stacks;
+        var stackLabelsAnim = axis.options.stackLabels.animation;
+        var animationConfig = getDeferredAnimation(chart, stackLabelsAnim);
         var stackTotalGroup = stacking.stackTotalGroup = (stacking.stackTotalGroup ||
             renderer
                 .g('stack-labels')
                 .attr({
                 visibility: 'visible',
-                zIndex: 6
+                zIndex: 6,
+                opacity: 0
             })
                 .add());
         // plotLeft/Top will change when y axis gets wider so we need to
@@ -129,6 +132,9 @@ var StackingAxisAdditions = /** @class */ (function () {
                 stack.render(stackTotalGroup);
             });
         });
+        stackTotalGroup.animate({
+            opacity: 1
+        }, animationConfig);
     };
     return StackingAxisAdditions;
 }());
