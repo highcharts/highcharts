@@ -13,7 +13,7 @@
 'use strict';
 
 import type Chart from '../../Core/Chart/Chart';
-import GLRenderer from './wgl-renderer.js';
+import GLRenderer from './WGLRenderer.js';
 import H from '../../Core/Globals.js';
 const {
     doc

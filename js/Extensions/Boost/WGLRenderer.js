@@ -11,8 +11,8 @@
  * */
 'use strict';
 import H from '../../Core/Globals.js';
-import GLShader from './wgl-shader.js';
-import GLVertexBuffer from './wgl-vbuffer.js';
+import GLShader from './WGLShader.js';
+import GLVertexBuffer from './WGLVBuffer.js';
 import Color from '../../Core/Color.js';
 var color = Color.parse;
 import U from '../../Core/Utilities.js';
