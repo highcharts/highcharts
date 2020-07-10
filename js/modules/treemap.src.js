@@ -12,7 +12,8 @@
 'use strict';
 import H from '../Core/Globals.js';
 import mixinTreeSeries from '../mixins/tree-series.js';
-import drawPoint from '../mixins/draw-point.js';
+import drawPointModule from '../mixins/draw-point.js';
+var drawPoint = drawPointModule.drawPoint;
 import Color from '../Core/Color.js';
 var color = Color.parse;
 import LegendSymbolMixin from '../mixins/legend-symbol.js';
