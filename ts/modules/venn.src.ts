@@ -143,7 +143,8 @@ declare global {
     }
 }
 
-import draw from '../mixins/draw-point.js';
+import drawPointModule from '../mixins/draw-point.js';
+const { draw } = drawPointModule;
 import geometry from '../mixins/geometry.js';
 
 import geometryCirclesModule from '../mixins/geometry-circles.js';

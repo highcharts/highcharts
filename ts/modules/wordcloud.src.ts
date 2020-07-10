@@ -141,7 +141,8 @@ const {
     seriesType
 } = U;
 
-import drawPoint from '../mixins/draw-point.js';
+import drawPointModule from '../mixins/draw-point.js';
+const { drawPoint } = drawPointModule;
 import polygon from '../mixins/polygon.js';
 import '../Core/Series/Series.js';
 

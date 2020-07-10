@@ -13,7 +13,8 @@
 import H from '../Core/Globals.js';
 import U from '../Core/Utilities.js';
 var extend = U.extend, find = U.find, isArray = U.isArray, isNumber = U.isNumber, isObject = U.isObject, merge = U.merge, seriesType = U.seriesType;
-import drawPoint from '../mixins/draw-point.js';
+import drawPointModule from '../mixins/draw-point.js';
+var drawPoint = drawPointModule.drawPoint;
 import polygon from '../mixins/polygon.js';
 import '../Core/Series/Series.js';
 var noop = H.noop, getBoundingBoxFromPolygon = polygon.getBoundingBoxFromPolygon, getPolygon = polygon.getPolygon, isPolygonsColliding = polygon.isPolygonsColliding, movePolygon = polygon.movePolygon, Series = H.Series;
