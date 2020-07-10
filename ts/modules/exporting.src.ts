@@ -1993,10 +1993,9 @@ extend(Chart.prototype, /** @lends Highcharts.Chart.prototype */ {
                             },
                             innerHTML: (
                                 (item as any).text ||
-                                (chart.dataTableDiv && item.textKey === 'viewData') ?
-                                    (chart.options.lang as any).hideData : (chart.options.lang as any)[
-                                        (item as any).textKey as any
-                                    ]
+                                (chart.options.lang as any)[
+                                    (item as any).textKey as any
+                                ]
                             )
                         }, null as any, innerMenu);
 
