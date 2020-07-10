@@ -9,29 +9,26 @@
  *  !!!!!!! SOURCE GETS TRANSPILED BY TYPESCRIPT. EDIT TS FILE ONLY. !!!!!!!
  *
  * */
-
 'use strict';
 import H from '../../Core/Globals.js';
-import butils from './boost-utils.js';
-import init from './boost-init.js';
-import './boost-overrides.js';
-import './named-colors.js';
+import butils from './BoostUtils.js';
+import init from './BoostInit.js';
+import './BoostOverrides.js';
+import './NamedColors.js';
 import U from '../../Core/Utilities.js';
-const {
-    error
-} = U;
-
+var error = U.error;
 // These need to be fixed when we support named imports
 var hasWebGLSupport = butils.hasWebGLSupport;
-
 if (!hasWebGLSupport()) {
     if (typeof H.initCanvasBoost !== 'undefined') {
         // Fallback to canvas boost
         H.initCanvasBoost();
-    } else {
+    }
+    else {
         error(26);
     }
-} else {
+}
+else {
     // WebGL support is alright, and we're good to go.
     init();
 }

@@ -10,7 +10,7 @@
  *
  * */
 
-import boostables from './boostables.js';
+import boostables from './Boostables.js';
 
 // These are the series we allow boosting for.
 

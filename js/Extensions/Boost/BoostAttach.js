@@ -10,7 +10,7 @@
  *
  * */
 'use strict';
-import GLRenderer from './wgl-renderer.js';
+import GLRenderer from './WGLRenderer.js';
 import H from '../../Core/Globals.js';
 var doc = H.doc;
 import U from '../../Core/Utilities.js';

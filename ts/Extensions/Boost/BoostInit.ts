@@ -41,8 +41,8 @@ declare global {
 
 import '../../Core/Series/Series.js';
 
-import butils from './boost-utils.js';
-import createAndAttachRenderer from './boost-attach.js';
+import butils from './BoostUtils.js';
+import createAndAttachRenderer from './BoostAttach.js';
 
 var Series = H.Series,
     seriesTypes = H.seriesTypes,

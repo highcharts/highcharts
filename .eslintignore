@@ -1,4 +1,5 @@
 docs/sidebars.js
+js/Accessibility/**/*.js
 js/Core/**/*.js
 js/Extensions/**/*.js
 js/Gantt/**/*.js
