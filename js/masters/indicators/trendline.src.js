@@ -11,4 +11,4 @@
  * License: www.highcharts.com/license
  */
 'use strict';
-import '../../indicators/trendline.src.js';
+import '../../Stock/Indicators/TrendLineIndicator.js';

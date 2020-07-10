@@ -11,4 +11,4 @@
  * License: www.highcharts.com/license
  */
 'use strict';
-import '../../indicators/stochastic.src.js';
+import '../../Stock/Indicators/StochasticIndicator.js';

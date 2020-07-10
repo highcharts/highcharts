@@ -11,4 +11,4 @@
  * License: www.highcharts.com/license
  */
 'use strict';
-import '../../indicators/price-envelopes.src.js';
+import '../../Stock/Indicators/PriceEnvelopesIndicator.js';

@@ -11,7 +11,7 @@
  * */
 'use strict';
 import H from '../Core/Globals.js';
-import NavigationBindings from '../annotations/navigationBindings.js';
+import NavigationBindings from '../Extensions/Annotations/NavigationBindings.js';
 import U from '../Core/Utilities.js';
 var correctFloat = U.correctFloat, defined = U.defined, extend = U.extend, fireEvent = U.fireEvent, isNumber = U.isNumber, merge = U.merge, pick = U.pick, setOptions = U.setOptions, uniqueKey = U.uniqueKey;
 var bindingsUtils = NavigationBindings.prototype.utils, PREFIX = 'highcharts-';

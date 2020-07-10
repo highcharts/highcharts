@@ -19,7 +19,7 @@ var defaultOptions = O.defaultOptions;
 import Scrollbar from './Scrollbar.js';
 import U from './Utilities.js';
 var addEvent = U.addEvent, clamp = U.clamp, correctFloat = U.correctFloat, defined = U.defined, destroyObjectProperties = U.destroyObjectProperties, erase = U.erase, extend = U.extend, find = U.find, isArray = U.isArray, isNumber = U.isNumber, merge = U.merge, pick = U.pick, removeEvent = U.removeEvent, splat = U.splat;
-import '../Core/Series/Series.js';
+import './Series/Series.js';
 var hasTouch = H.hasTouch, isTouchDevice = H.isTouchDevice, Series = H.Series, seriesTypes = H.seriesTypes, defaultSeriesType, 
 // Finding the min or max of a set of variables where we don't know if they
 // are defined, is a pattern that is repeated several places in Highcharts.

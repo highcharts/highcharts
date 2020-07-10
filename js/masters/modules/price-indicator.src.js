@@ -12,4 +12,4 @@
  * License: www.highcharts.com/license
  */
 'use strict';
-import '../../modules/price-indicator.src.js';
+import '../../Extensions/PriceIndication.js';

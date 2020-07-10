@@ -11,4 +11,4 @@
  * License: www.highcharts.com/license
  */
 'use strict';
-import '../../indicators/mfi.src.js';
+import '../../Stock/Indicators/MFIIndicator.js';
