@@ -9,10 +9,13 @@
  *  !!!!!!! SOURCE GETS TRANSPILED BY TYPESCRIPT. EDIT TS FILE ONLY. !!!!!!!
  *
  * */
+
 'use strict';
-import Highcharts from '../Core/Globals.js';
-import U from '../Core/Utilities.js';
-var setOptions = U.setOptions;
+
+import Highcharts from '../../Core/Globals.js';
+import U from '../../Core/Utilities.js';
+const { setOptions } = U;
+
 Highcharts.theme = {
     colors: ['#514F78', '#42A07B', '#9B5E4A', '#72727F', '#1F949A',
         '#82914E', '#86777F', '#42A07B'],
@@ -58,7 +61,7 @@ Highcharts.theme = {
             style: {
                 color: '#666',
                 font: '12px Lucida Grande, Lucida Sans Unicode,' +
-                    ' Verdana, Arial, Helvetica, sans-serif'
+                ' Verdana, Arial, Helvetica, sans-serif'
             }
         }
     },
@@ -77,7 +80,7 @@ Highcharts.theme = {
             style: {
                 color: '#666',
                 font: '12px Lucida Grande, Lucida Sans Unicode,' +
-                    ' Verdana, Arial, Helvetica, sans-serif'
+                ' Verdana, Arial, Helvetica, sans-serif'
             }
         }
     },
@@ -99,5 +102,6 @@ Highcharts.theme = {
         }
     }
 };
+
 // Apply the theme
 setOptions(Highcharts.theme);

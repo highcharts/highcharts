@@ -14,8 +14,8 @@
 
 /* global document */
 
-import Highcharts from '../Core/Globals.js';
-import U from '../Core/Utilities.js';
+import Highcharts from '../../Core/Globals.js';
+import U from '../../Core/Utilities.js';
 const { setOptions } = U;
 
 // Load the fonts

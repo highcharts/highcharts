@@ -13,13 +13,10 @@
  *  !!!!!!! SOURCE GETS TRANSPILED BY TYPESCRIPT. EDIT TS FILE ONLY. !!!!!!!
  *
  * */
-
 'use strict';
-
-import Highcharts from '../Core/Globals.js';
-import U from '../Core/Utilities.js';
-const { setOptions } = U;
-
+import Highcharts from '../../Core/Globals.js';
+import U from '../../Core/Utilities.js';
+var setOptions = U.setOptions;
 Highcharts.theme = {
     colors: [
         '#5f98cf',
@@ -33,7 +30,6 @@ Highcharts.theme = {
         '#4f4a7a',
         '#b381b3'
     ],
-
     navigator: {
         series: {
             color: '#5f98cf',
@@ -41,6 +37,5 @@ Highcharts.theme = {
         }
     }
 };
-
 // Apply the theme
 setOptions(Highcharts.theme);

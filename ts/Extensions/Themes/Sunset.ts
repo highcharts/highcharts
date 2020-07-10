@@ -14,29 +14,29 @@
  * */
 
 'use strict';
-import Highcharts from '../Core/Globals.js';
-import U from '../Core/Utilities.js';
+
+import Highcharts from '../../Core/Globals.js';
+import U from '../../Core/Utilities.js';
 const { setOptions } = U;
 
 Highcharts.theme = {
-    colors: ['#F3E796', '#95C471', '#35729E', '#251735'],
+    colors: ['#FDD089', '#FF7F79', '#A0446E', '#251535'],
 
     colorAxis: {
-        maxColor: '#05426E',
-        minColor: '#F3E796'
+        maxColor: '#60042E',
+        minColor: '#FDD089'
     },
 
     plotOptions: {
         map: {
-            nullColor: '#FCFEFE'
+            nullColor: '#fefefc'
         }
     } as Highcharts.PlotOptions,
 
     navigator: {
-        maskFill: 'rgba(170, 205, 170, 0.5)',
         series: {
-            color: '#95C471',
-            lineColor: '#35729E'
+            color: '#FF7F79',
+            lineColor: '#A0446E'
         }
     }
 };
