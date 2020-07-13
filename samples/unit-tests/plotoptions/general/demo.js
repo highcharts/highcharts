@@ -61,3 +61,40 @@ QUnit.test('Random properties in plot options', assert => {
 
     assert.ok('No error should occur on the above', true);
 });
+
+QUnit.test('Updates', assert => {
+
+    const chart = Highcharts.chart('container', {
+        series: [{
+            data: [1, 2, 3, 4]
+        }]
+    });
+
+    chart.update({
+        plotOptions: {
+            series: {
+                pointInterval: 10
+            }
+        }
+    });
+
+    assert.strictEqual(
+        chart.series[0].data[1].x,
+        10,
+        'It is possible to update the plotOptions.series.pointInterval.'
+    );
+
+    chart.update({
+        plotOptions: {
+            series: {
+                pointStart: 10
+            }
+        }
+    });
+
+    assert.strictEqual(
+        chart.series[0].data[1].x,
+        20,
+        'It is possible to update the plotOptions.series.pointStart.'
+    );
+});
