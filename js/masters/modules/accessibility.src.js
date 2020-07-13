@@ -12,4 +12,4 @@
  */
 'use strict';
 
-import '../../modules/accessibility/accessibility.js';
+import '../../Accessibility/Accessibility.js';

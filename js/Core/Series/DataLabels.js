@@ -11,7 +11,7 @@
 import H from '../Globals.js';
 var noop = H.noop, seriesTypes = H.seriesTypes;
 import U from '../Utilities.js';
-var animObject = U.animObject, arrayMax = U.arrayMax, clamp = U.clamp, defined = U.defined, extend = U.extend, fireEvent = U.fireEvent, format = U.format, isArray = U.isArray, merge = U.merge, objectEach = U.objectEach, pick = U.pick, relativeLength = U.relativeLength, splat = U.splat, stableSort = U.stableSort;
+var arrayMax = U.arrayMax, clamp = U.clamp, defined = U.defined, extend = U.extend, fireEvent = U.fireEvent, format = U.format, getDeferredAnimation = U.getDeferredAnimation, isArray = U.isArray, merge = U.merge, objectEach = U.objectEach, pick = U.pick, relativeLength = U.relativeLength, splat = U.splat, stableSort = U.stableSort;
 /**
  * Callback JavaScript function to format the data label as a string. Note that
  * if a `format` is defined, the format takes precedence and the formatter is
@@ -171,7 +171,9 @@ H.distribute = function (boxes, len, maxDistance) {
  * @fires Highcharts.Series#event:afterDrawDataLabels
  */
 Series.prototype.drawDataLabels = function () {
-    var series = this, chart = series.chart, seriesOptions = series.options, seriesDlOptions = seriesOptions.dataLabels, points = series.points, pointOptions, hasRendered = series.hasRendered || 0, dataLabelsGroup, seriesAnimDuration = animObject(seriesOptions.animation).duration, fadeInDuration = Math.min(seriesAnimDuration, 200), defer = !chart.renderer.forExport && pick(seriesDlOptions.defer, fadeInDuration > 0), renderer = chart.renderer;
+    var series = this, chart = series.chart, seriesOptions = series.options, seriesDlOptions = seriesOptions.dataLabels, points = series.points, pointOptions, hasRendered = series.hasRendered || 0, dataLabelsGroup, dataLabelAnim = seriesDlOptions.animation, animationConfig = seriesDlOptions.defer ?
+        getDeferredAnimation(chart, dataLabelAnim, series) :
+        { defer: 0, duration: 0 }, renderer = chart.renderer;
     /**
      * Handle the dataLabels.filter option.
      * @private
@@ -234,20 +236,16 @@ Series.prototype.drawDataLabels = function () {
         seriesDlOptions.enabled ||
         series._hasPointLabels) {
         // Create a separate group for the data labels to avoid rotation
-        dataLabelsGroup = series.plotGroup('dataLabelsGroup', 'data-labels', defer && !hasRendered ? 'hidden' : 'inherit', // #5133, #10220
+        dataLabelsGroup = series.plotGroup('dataLabelsGroup', 'data-labels', !hasRendered ? 'hidden' : 'inherit', // #5133, #10220
         seriesDlOptions.zIndex || 6);
-        if (defer) {
-            dataLabelsGroup.attr({ opacity: +hasRendered }); // #3300
-            if (!hasRendered) {
-                setTimeout(function () {
-                    var group = series.dataLabelsGroup;
-                    if (group) {
-                        if (series.visible) { // #2597, #3023, #3024
-                            dataLabelsGroup.show(true);
-                        }
-                        group[seriesOptions.animation ? 'animate' : 'attr']({ opacity: 1 }, { duration: fadeInDuration });
-                    }
-                }, seriesAnimDuration - fadeInDuration);
+        dataLabelsGroup.attr({ opacity: +hasRendered }); // #3300
+        if (!hasRendered) {
+            var group = series.dataLabelsGroup;
+            if (group) {
+                if (series.visible) { // #2597, #3023, #3024
+                    dataLabelsGroup.show(true);
+                }
+                group[seriesOptions.animation ? 'animate' : 'attr']({ opacity: 1 }, animationConfig);
             }
         }
         // Make the labels for each point

@@ -11,4 +11,4 @@
  * License: www.highcharts.com/license
  */
 'use strict';
-import '../../indicators/ao.src.js';
+import '../../Stock/Indicators/AOIndicator.js';

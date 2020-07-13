@@ -13,7 +13,7 @@
 import type NavigatorAxis from './NavigatorAxis';
 import Axis from './Axis.js';
 import H from '../Globals.js';
-import Point from '../../Core/Series/Point.js';
+import Point from '../Series/Point.js';
 import U from '../Utilities.js';
 const {
     addEvent,
@@ -66,7 +66,7 @@ declare module './Types' {
 import '../Chart/Chart.js';
 // Has a dependency on Navigator due to the use of Axis.toFixedRange
 import '../Navigator.js';
-import '../../Core/Series/Series.js';
+import '../Series/Series.js';
 
 var Chart = H.Chart,
     Series = H.Series;

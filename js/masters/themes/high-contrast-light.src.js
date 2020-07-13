@@ -8,4 +8,4 @@
  * License: www.highcharts.com/license
  */
 'use strict';
-import '../../themes/high-contrast-light.js';
+import '../../Extensions/Themes/HighContrastLight.js';

@@ -542,6 +542,8 @@ null,
      * #chart.animation) and the animation parameter under the API methods.
      * The following properties are supported:
      *
+     * - `defer`: The animation delay time in milliseconds.
+     *
      * - `duration`: The duration of the animation in milliseconds.
      *
      * - `easing`: Can be a string reference to an easing function set on
@@ -566,7 +568,7 @@ null,
      * @sample {highmaps} maps/plotoptions/mapbubble-animation-false/
      *         Disabled on mapbubble series
      *
-     * @type    {boolean|Highcharts.AnimationOptionsObject}
+     * @type    {boolean|Partial<Highcharts.AnimationOptionsObject>}
      * @default {highcharts} true
      * @default {highstock} true
      * @default {highmaps} false
@@ -577,6 +579,12 @@ null,
         /** @internal */
         duration: 1000
     },
+    /**
+     * @default   0
+     * @type      {number}
+     * @since     next
+     * @apioption plotOptions.series.animation.defer
+     */
     /**
      * An additional class name to apply to the series' graphical elements.
      * This option does not replace default class names of the graphical
@@ -1423,7 +1431,7 @@ null,
                 /**
                  * Animation when returning to normal state after hovering.
                  *
-                 * @type {boolean|Highcharts.AnimationOptionsObject}
+                 * @type {boolean|Partial<Highcharts.AnimationOptionsObject>}
                  */
                 animation: true
             },
@@ -1436,7 +1444,7 @@ null,
                 /**
                  * Animation when hovering over the marker.
                  *
-                 * @type {boolean|Highcharts.AnimationOptionsObject}
+                 * @type {boolean|Partial<Highcharts.AnimationOptionsObject>}
                  */
                 animation: {
                     /** @internal */
@@ -1717,6 +1725,33 @@ null,
      */
     dataLabels: {
         /**
+         * Enable or disable the initial animation when a series is
+         * displayed for the `dataLabels`. The animation can also be set as
+         * a configuration object. Please note that this option only
+         * applies to the initial animation.
+         * For other animations, see [chart.animation](#chart.animation)
+         * and the animation parameter under the API methods.
+         * The following properties are supported:
+         *
+         * - `defer`: The animation delay time in milliseconds.
+         *
+         * @sample {highcharts} highcharts/plotoptions/animation-defer/
+         *          Animation defer settings
+         * @type {boolean|Partial<Highcharts.AnimationOptionsObject>}
+         * @since next
+         * @apioption plotOptions.series.dataLabels.animation
+         */
+        animation: {},
+        /**
+         * The animation delay time in milliseconds.
+         * Set to `0` renders dataLabel immediately.
+         * As `undefined` inherits defer time from the [series.animation.defer](#plotOptions.series.animation.defer).
+         *
+         * @type      {number}
+         * @since     next
+         * @apioption plotOptions.series.dataLabels.animation.defer
+         */
+        /**
          * The alignment of the data label compared to the point. If
          * `right`, the right side of the label should be touching the
          * point. For points with an extent, like columns, the alignments
@@ -1839,14 +1874,17 @@ null,
          */
         /**
          * Whether to defer displaying the data labels until the initial
-         * series animation has finished.
+         * series animation has finished. Setting to `false` renders the
+         * data label immediately. If set to `true` inherits the defer
+         * time set in [plotOptions.series.animation](#plotOptions.series.animation).
          *
-         * @type      {boolean}
-         * @default   true
+         * @sample highcharts/plotoptions/animation-defer
+         *         Set defer time
+         *
          * @since     4.0.0
          * @product   highcharts highstock gantt
-         * @apioption plotOptions.series.dataLabels.defer
          */
+        defer: true,
         /**
          * Enable or disable the data labels.
          *
@@ -2231,7 +2269,7 @@ null,
             /**
              * Animation when returning to normal state after hovering.
              *
-             * @type {boolean|Highcharts.AnimationOptionsObject}
+                 * @type {boolean|Partial<Highcharts.AnimationOptionsObject>}
              */
             animation: true
         },
@@ -2261,7 +2299,7 @@ null,
             /**
              * Animation setting for hovering the graph in line-type series.
              *
-             * @type    {boolean|Highcharts.AnimationOptionsObject}
+             * @type {boolean|Partial<Highcharts.AnimationOptionsObject>}
              * @since   5.0.8
              * @product highcharts highstock
              */
@@ -2410,7 +2448,7 @@ null,
             /**
              * The animation for entering the inactive state.
              *
-             * @type {boolean|Highcharts.AnimationOptionsObject}
+             * @type {boolean|Partial<Highcharts.AnimationOptionsObject>}
              */
             animation: {
                 /** @internal */
@@ -3339,7 +3377,7 @@ null,
      *        doing more operations on the chart, it is a good idea to set
      *        redraw to false and call {@link Chart#redraw} after.
      *
-     * @param {boolean|Highcharts.AnimationOptionsObject} [animation]
+     * @param {boolean|Partial<Highcharts.AnimationOptionsObject>} [animation]
      *        When the updated data is the same length as the existing data,
      *        points will be updated by default, and animation visualizes
      *        how the points are changed. Set false to disable animation, or
@@ -4080,7 +4118,7 @@ null,
      *
      * @private
      * @function Highcharts.Series#getClip
-     * @param  {boolean|Highcharts.AnimationOptionsObject} [animation]
+     * @param  {boolean|Partial<Highcharts.AnimationOptionsObject>} [animation]
      *         Initialize the animation.
      * @param  {boolean} [finalBox]
      *         Final size for the clip - end state for the animation.
@@ -4985,12 +5023,12 @@ null,
      * @fires Highcharts.Series#event:afterRender
      */
     render: function () {
-        var series = this, chart = series.chart, group, options = series.options, 
+        var series = this, chart = series.chart, group, options = series.options, animOptions = animObject(options.animation), 
         // Animation doesn't work in IE8 quirks when the group div is
         // hidden, and looks bad in other oldIE
         animDuration = (!series.finishedAnimating &&
             chart.renderer.isSVG &&
-            animObject(options.animation).duration), visibility = series.visible ? 'inherit' : 'hidden', // #2597
+            animOptions.duration), visibility = series.visible ? 'inherit' : 'hidden', // #2597
         zIndex = options.zIndex, hasRendered = series.hasRendered, chartSeriesGroup = chart.seriesGroup, inverted = chart.inverted;
         fireEvent(this, 'render');
         // the group
@@ -5049,6 +5087,11 @@ null,
         // overwrite the animation.complete option which should be available
         // to the user).
         if (!hasRendered) {
+            // Additional time if defer is defined before afterAnimate
+            // will be triggered
+            if (animDuration && animOptions.defer) {
+                animDuration += animOptions.defer;
+            }
             series.animationTimeout = syncTimeout(function () {
                 series.afterAnimate();
             }, animDuration || 0);

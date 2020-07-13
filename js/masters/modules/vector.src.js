@@ -10,4 +10,4 @@
  * License: www.highcharts.com/license
  */
 'use strict';
-import '../../modules/vector.src.js';
+import '../../Series/VectorSeries.js';

@@ -10,4 +10,4 @@
  * License: www.highcharts.com/license
  */
 'use strict';
-import '../../modules/bullet.src.js';
+import '../../Series/BulletSeries.js';

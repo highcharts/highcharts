@@ -43,6 +43,7 @@ const {
     pick,
     pInt,
     stop,
+    syncTimeout,
     uniqueKey
 } = U;
 
@@ -134,7 +135,7 @@ declare global {
             public alignSetter(value: ('left'|'center'|'right')): void;
             public animate(
                 params: SVGAttributes,
-                options?: (boolean|AnimationOptionsObject),
+                options?: (boolean|Partial<AnimationOptionsObject>),
                 complete?: Function
             ): SVGElement;
             public applyTextOutline(textOutline: string): void;
@@ -813,7 +814,7 @@ class SVGElement {
      * @param {Highcharts.SVGAttributes} params
      *        SVG attributes or CSS to animate.
      *
-     * @param {boolean|Highcharts.AnimationOptionsObject} [options]
+     * @param {boolean|Partial<Highcharts.AnimationOptionsObject>} [options]
      *        Animation options.
      *
      * @param {Function} [complete]
@@ -824,12 +825,13 @@ class SVGElement {
      */
     public animate(
         params: Highcharts.SVGAttributes,
-        options?: (boolean|Highcharts.AnimationOptionsObject),
+        options?: (boolean|Partial<Highcharts.AnimationOptionsObject>),
         complete?: Function
     ): SVGElement {
         var animOptions = animObject(
-            pick(options, this.renderer.globalAnimation, true)
-        );
+                pick(options, this.renderer.globalAnimation, true)
+            ),
+            deferTime = animOptions.defer;
 
         // When the page is hidden save resources in the background by not
         // running animation at all (#9749).
@@ -843,7 +845,12 @@ class SVGElement {
             if (complete) {
                 animOptions.complete = complete;
             }
-            animate(this as any, params, animOptions);
+            // If defer option is defined delay the animation #12901
+            syncTimeout((): void => {
+                if (this.element) {
+                    animate(this, params, animOptions);
+                }
+            }, deferTime);
         } else {
             this.attr(params, void 0, complete);
             // Call the end step synchronously
