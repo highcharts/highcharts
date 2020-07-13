@@ -179,7 +179,7 @@ declare global {
  * @type {number}
  */
 
-import U from '../Core/Utilities.js';
+import U from './Utilities.js';
 const {
     isNumber,
     merge,

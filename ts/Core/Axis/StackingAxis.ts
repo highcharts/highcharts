@@ -8,13 +8,14 @@
  *
  * */
 
-import type StackItem from '../../parts/Stacking.js';
+import type StackItem from '../../Extensions/Stacking.js';
 import Axis from './Axis.js';
 import U from '../Utilities.js';
 const {
     addEvent,
     destroyObjectProperties,
     fireEvent,
+    getDeferredAnimation,
     objectEach,
     pick
 } = U;
@@ -166,13 +167,16 @@ class StackingAxisAdditions {
         const chart = axis.chart;
         const renderer = chart.renderer;
         const stacks = stacking.stacks;
+        const stackLabelsAnim = axis.options.stackLabels.animation;
+        const animationConfig = getDeferredAnimation(chart, stackLabelsAnim);
         const stackTotalGroup = stacking.stackTotalGroup = (
             stacking.stackTotalGroup ||
             renderer
                 .g('stack-labels')
                 .attr({
                     visibility: 'visible',
-                    zIndex: 6
+                    zIndex: 6,
+                    opacity: 0
                 })
                 .add()
         );
@@ -190,6 +194,9 @@ class StackingAxisAdditions {
                 stack.render(stackTotalGroup);
             });
         });
+        stackTotalGroup.animate({
+            opacity: 1
+        }, animationConfig);
     }
 
 }

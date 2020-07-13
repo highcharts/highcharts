@@ -198,3 +198,10 @@ H.getJSON = function (
         }
     });
 };
+
+const ajaxModule = {
+    ajax: H.ajax,
+    getJSON: H.getJSON
+};
+
+export default ajaxModule;

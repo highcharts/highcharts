@@ -175,14 +175,13 @@ function generateHTML() {
                 return (
                     `<div id="${changelog.header.offset}heading-${changelog.header.version}-upgrade-notes" class="card-header">
                     <h4 class="card-title">
-                    <button class="btn btn-link collapsed" type="button" data-toggle="collapse" data-target="#${changelog.header.offset}${changelog.header.version}-upgrade-notes"><div> Upgrade notes </div></a>
+                    <button class="btn btn-link collapsed" type="button" data-toggle="collapse" data-target="#${changelog.header.offset}${changelog.header.version}-upgrade-notes"><span> Upgrade notes </span></button>
                     </h4>
                     </div>
                     <div id="${changelog.header.offset}${changelog.header.version}-upgrade-notes" class="collapse" aria-labelledby="${changelog.header.offset}heading-${changelog.header.version}-bug-fixes" data-parent=".accordion">
                     <div class="card-body">
                     ${marked.parser(changelog.upgradeNotes)}
                     </div>
-
                     </div>`);
             }
             return '';
@@ -194,7 +193,7 @@ function generateHTML() {
                         id="${changelog.header.offset}heading-${changelog.header.version}-bug-fixes"
                         class="card-header">
                     <h4 class="card-title">
-                    <button class="btn btn-link collapsed" type="button" data-toggle="collapse" data-target="#${changelog.header.offset}${changelog.header.version}-bug-fixes"><div> Bug fixes </div></a>
+                    <button class="btn btn-link collapsed" type="button" data-toggle="collapse" data-target="#${changelog.header.offset}${changelog.header.version}-bug-fixes"><span> Bug fixes </span></button>
                     </h4>
                     </div>
                     <div id="${changelog.header.offset}${changelog.header.version}-bug-fixes" class="collapse" aria-labelledby="${changelog.header.offset}heading-${changelog.header.version}-bug-fixes" data-parent=".accordion">

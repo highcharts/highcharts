@@ -56,7 +56,7 @@ const {
     defined
 } = U;
 
-import '../parts/Series.js';
+import '../Core/Series/Series.js';
 
 var Series = H.Series,
     noop = H.noop;
@@ -75,7 +75,7 @@ var Series = H.Series,
  * @private
  * @mixin derivedSeriesMixin
  */
-var derivedSeriesMixin: Highcharts.DerivedSeriesMixin = {
+const derivedSeriesMixin: Highcharts.DerivedSeriesMixin = {
 
     hasDerivedData: true,
 

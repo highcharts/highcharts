@@ -11,4 +11,4 @@
  * License: www.highcharts.com/license
  */
 'use strict';
-import '../../indicators/volume-by-price.src.js';
+import '../../Stock/Indicators/VBPIndicator.js';

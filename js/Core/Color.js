@@ -112,7 +112,7 @@ import H from './Globals.js';
 * @name Highcharts.RadialGradientColorObject#r
 * @type {number}
 */
-import U from '../Core/Utilities.js';
+import U from './Utilities.js';
 var isNumber = U.isNumber, merge = U.merge, pInt = U.pInt;
 /* eslint-disable no-invalid-this, valid-jsdoc */
 /**

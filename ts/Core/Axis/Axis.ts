@@ -11,10 +11,10 @@
 'use strict';
 
 import type { AxisComposition, AxisLike } from './Types';
-import type Chart from '../../parts/Chart';
+import type Chart from '../Chart/Chart';
 import type PlotLineOrBand from './PlotLineOrBand';
-import type Point from '../../parts/Point';
-import type SVGPath from '../../parts/SVGPath';
+import type Point from '../../Core/Series/Point';
+import type SVGPath from '../Renderer/SVG/SVGPath';
 import Color from '../Color.js';
 import H from '../Globals.js';
 import Tick from './Tick.js';
@@ -461,7 +461,7 @@ declare global {
                 newMin?: number,
                 newMax?: number,
                 redraw?: boolean,
-                animation?: (boolean|AnimationOptionsObject),
+                animation?: (boolean|Partial<AnimationOptionsObject>),
                 eventArguments?: any
             ): void;
             public setOptions(userOptions: DeepPartial<AxisOptions>): void;
@@ -3610,6 +3610,34 @@ class Axis implements AxisComposition, AxisLike {
          * @product highcharts
          */
         stackLabels: {
+            /**
+             * Enable or disable the initial animation when a series is
+             * displayed for the `stackLabels`. The animation can also be set as
+             * a configuration object. Please note that this option only
+             * applies to the initial animation.
+             * For other animations, see [chart.animation](#chart.animation)
+             * and the animation parameter under the API methods.
+             * The following properties are supported:
+             *
+             * - `defer`: The animation delay time in milliseconds.
+             *
+             * @sample {highcharts} highcharts/plotoptions/animation-defer/
+             *          Animation defer settings
+             * @type {boolean|Partial<Highcharts.AnimationOptionsObject>}
+             * @since next
+             * @apioption yAxis.stackLabels.animation
+             */
+            animation: {},
+
+            /**
+             * The animation delay time in milliseconds.
+             * Set to `0` renders stackLabel immediately.
+             * As `undefined` inherits defer time from the [series.animation.defer](#plotOptions.series.animation.defer).
+             *
+             * @type      {number}
+             * @since     next
+             * @apioption yAxis.stackLabels.animation.defer
+             */
 
             /**
              * Allow the stack labels to overlap.
@@ -6058,7 +6086,7 @@ class Axis implements AxisComposition, AxisLike {
      *        Whether to redraw the chart or wait for an explicit call to
      *        {@link Highcharts.Chart#redraw}
      *
-     * @param {boolean|Highcharts.AnimationOptionsObject} [animation=true]
+     * @param {boolean|Partial<Highcharts.AnimationOptionsObject>} [animation=true]
      *        Enable or modify animations.
      *
      * @param {*} [eventArguments]
@@ -6070,7 +6098,7 @@ class Axis implements AxisComposition, AxisLike {
         newMin?: number,
         newMax?: number,
         redraw?: boolean,
-        animation?: (boolean|Highcharts.AnimationOptionsObject),
+        animation?: (boolean|Partial<Highcharts.AnimationOptionsObject>),
         eventArguments?: any
     ): void {
         var axis = this,

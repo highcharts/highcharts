@@ -20,7 +20,7 @@ declare global {
                 this: NodesSeries,
                 data: Array<NodesPointOptions>,
                 redraw?: boolean,
-                animation?: (boolean|AnimationOptionsObject),
+                animation?: (boolean|Partial<AnimationOptionsObject>),
                 updatePoints?: boolean
             ): void;
             setNodeState(this: NodesPoint, state: string): void;
@@ -80,7 +80,7 @@ declare global {
     }
 }
 
-import Point from '../parts/Point.js';
+import Point from '../Core/Series/Point.js';
 import U from '../Core/Utilities.js';
 const {
     defined,

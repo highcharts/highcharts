@@ -10,4 +10,4 @@
  * License: www.highcharts.com/license
  */
 'use strict';
-import '../../parts-gantt/CurrentDateIndicator.js';
+import '../../Extensions/CurrentDateIndication.js';

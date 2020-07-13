@@ -12,11 +12,11 @@
 
 'use strict';
 
-import type Chart from '../../parts/Chart';
+import type Chart from '../../Core/Chart/Chart';
 import H from '../../Core/Globals.js';
 import O from '../../Core/Options.js';
 const { defaultOptions } = O;
-import Point from '../../parts/Point.js';
+import Point from '../../Core/Series/Point.js';
 import U from '../../Core/Utilities.js';
 const {
     addEvent,

@@ -10,12 +10,12 @@
 
 'use strict';
 
-import type Chart from '../parts/Chart';
-import type SVGPath from '../parts/SVGPath';
-import Axis from '../Core/Axis/Axis.js';
-import H from '../Core/Globals.js';
+import type Chart from './Chart/Chart';
+import type SVGPath from './Renderer/SVG/SVGPath';
+import Axis from './Axis/Axis.js';
+import H from './Globals.js';
 import ScrollbarAxis from './Axis/ScrollbarAxis.js';
-import U from '../Core/Utilities.js';
+import U from './Utilities.js';
 const {
     addEvent,
     correctFloat,
@@ -148,7 +148,7 @@ interface ScrollbarEventCallbackFunction {
     (e: Highcharts.PointerEventObject): void;
 }
 
-import O from '../Core/Options.js';
+import O from './Options.js';
 const { defaultOptions } = O;
 
 var hasTouch = H.hasTouch,
