@@ -69,10 +69,10 @@ addEvent(Chart, 'render', function collectAndHide() {
  */
 Chart.prototype.hideOverlappingLabels = function (labels) {
     var chart = this, len = labels.length, ren = chart.renderer, label, i, j, label1, label2, box1, box2, isLabelAffected = false, isIntersectRect = function (box1, box2) {
-        return !(box2.x > box1.x + box1.width ||
-            box2.x + box2.width < box1.x ||
-            box2.y > box1.y + box1.height ||
-            box2.y + box2.height < box1.y);
+        return !(box2.x >= box1.x + box1.width ||
+            box2.x + box2.width <= box1.x ||
+            box2.y >= box1.y + box1.height ||
+            box2.y + box2.height <= box1.y);
     }, 
     // Get the box with its position inside the chart, as opposed to getBBox
     // that only reports the position relative to the parent.

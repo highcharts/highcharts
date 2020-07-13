@@ -141,10 +141,10 @@ Chart.prototype.hideOverlappingLabels = function (
             box2: Highcharts.BBoxObject
         ): boolean {
             return !(
-                box2.x > box1.x + box1.width ||
-                box2.x + box2.width < box1.x ||
-                box2.y > box1.y + box1.height ||
-                box2.y + box2.height < box1.y
+                box2.x >= box1.x + box1.width ||
+                box2.x + box2.width <= box1.x ||
+                box2.y >= box1.y + box1.height ||
+                box2.y + box2.height <= box1.y
             );
         },
 
