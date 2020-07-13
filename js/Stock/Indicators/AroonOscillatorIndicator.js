@@ -8,10 +8,10 @@
 'use strict';
 import H from '../../Core/Globals.js';
 import multipleLinesMixin from '../../mixins/multipe-lines.js';
-import requiredIndicatorMixin from '../../mixins/indicator-required.js';
+import requiredIndicator from '../../mixins/indicator-required.js';
 import U from '../../Core/Utilities.js';
 var merge = U.merge, seriesType = U.seriesType;
-var AROON = H.seriesTypes.aroon, requiredIndicator = requiredIndicatorMixin;
+var AROON = H.seriesTypes.aroon;
 /**
  * The Aroon Oscillator series type.
  *

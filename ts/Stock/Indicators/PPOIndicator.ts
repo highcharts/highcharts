@@ -57,10 +57,9 @@ const {
     seriesType
 } = U;
 
-import requiredIndicatorMixin from '../../mixins/indicator-required.js';
+import requiredIndicator from '../../mixins/indicator-required.js';
 
-var EMA = H.seriesTypes.ema,
-    requiredIndicator = requiredIndicatorMixin;
+var EMA = H.seriesTypes.ema;
 
 /**
  * The PPO series type.

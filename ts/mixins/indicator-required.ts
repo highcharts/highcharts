@@ -45,7 +45,7 @@ const {
 
 /* eslint-disable no-invalid-this, valid-jsdoc */
 
-var requiredIndicatorMixin: Highcharts.RequiredIndicatorMixin = {
+const requiredIndicatorMixin: Highcharts.RequiredIndicatorMixin = {
     /**
      * Check whether given indicator is loaded, else throw error.
      * @private

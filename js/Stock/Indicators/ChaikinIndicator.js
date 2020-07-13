@@ -10,8 +10,8 @@ import H from '../../Core/Globals.js';
 import './ADIndicator.js';
 import U from '../../Core/Utilities.js';
 var correctFloat = U.correctFloat, error = U.error, seriesType = U.seriesType;
-import requiredIndicatorMixin from '../../mixins/indicator-required.js';
-var EMA = H.seriesTypes.ema, AD = H.seriesTypes.ad, requiredIndicator = requiredIndicatorMixin;
+import requiredIndicator from '../../mixins/indicator-required.js';
+var EMA = H.seriesTypes.ema, AD = H.seriesTypes.ad;
 /**
  * The Chaikin series type.
  *

@@ -9,8 +9,8 @@
 import H from '../../Core/Globals.js';
 import U from '../../Core/Utilities.js';
 var correctFloat = U.correctFloat, isArray = U.isArray, seriesType = U.seriesType;
-import requiredIndicatorMixin from '../../mixins/indicator-required.js';
-var EMAindicator = H.seriesTypes.ema, requiredIndicator = requiredIndicatorMixin;
+import requiredIndicator from '../../mixins/indicator-required.js';
+var EMAindicator = H.seriesTypes.ema;
 /**
  * The DEMA series Type
  *
