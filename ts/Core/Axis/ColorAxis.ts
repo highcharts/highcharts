@@ -1579,7 +1579,7 @@ namespace ColorAxis {
         chart: Chart;
         name: string;
         options: object;
-        drawLegendSymbol: LegendSymbolMixin['drawRectangle'];
+        drawLegendSymbol: typeof LegendSymbolMixin['drawRectangle'];
         visible: boolean;
         setState: Function;
         isDataClass: true;

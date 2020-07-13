@@ -17,7 +17,7 @@ var merge = U.merge, pick = U.pick;
  * @private
  * @mixin Highcharts.LegendSymbolMixin
  */
-H.LegendSymbolMixin = {
+var LegendSymbolMixin = H.LegendSymbolMixin = {
     /**
      * Get the series' symbol in the legend
      *
@@ -93,4 +93,4 @@ H.LegendSymbolMixin = {
         }
     }
 };
-export default H.LegendSymbolMixin;
+export default LegendSymbolMixin;
