@@ -1219,7 +1219,7 @@ class Axis implements AxisComposition, AxisLike {
          *         More information in x axis labels
          *
          * @declare Highcharts.AxisDateTimeLabelFormatsOptions
-         * @product highcharts highstock gantt
+         * @product highcharts highstock
          */
         dateTimeLabelFormats: {
             /**
