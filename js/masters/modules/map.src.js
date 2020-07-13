@@ -20,5 +20,5 @@ import '../../Series/MapLineSeries.js';
 import '../../Series/MapPointSeries.js';
 import '../../Series/MapBubbleSeries.js';
 import '../../Series/HeatmapSeries.js';
-import '../../Maps/GeoJSON.js';
+import '../../Extensions/GeoJSON.js';
 import '../../Maps/Map.js';
