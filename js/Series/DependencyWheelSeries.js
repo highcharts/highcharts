@@ -14,7 +14,7 @@ import H from '../Core/Globals.js';
 import U from '../Core/Utilities.js';
 var animObject = U.animObject, seriesType = U.seriesType;
 import '../Core/Options.js';
-import '../mixins/nodes.js';
+import NodesMixin from '../mixins/nodes.js';
 var base = H.seriesTypes.sankey.prototype;
 /**
  * @private
@@ -248,7 +248,7 @@ seriesType('dependencywheel', 'sankey',
 }, 
 // Point class
 {
-    setState: H.NodesMixin.setNodeState,
+    setState: NodesMixin.setNodeState,
     /* eslint-disable valid-jsdoc */
     /**
      * Return a text path that the data label uses.
