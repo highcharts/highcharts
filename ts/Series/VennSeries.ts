@@ -160,9 +160,10 @@ const {
     isPointOutsideAllCircles
 } = geometryCirclesModule;
 
-import nelderMeadModule from '../mixins/nelder-mead.js';
-// TODO: replace with individual imports
-var nelderMead = nelderMeadModule.nelderMead;
+import nelderMeadMixin from '../mixins/nelder-mead.js';
+const {
+    nelderMead
+} = nelderMeadMixin;
 
 import '../Core/Series/Series.js';
 
@@ -1389,7 +1390,7 @@ var vennSeries = {
         getDistanceBetweenCirclesByOverlap: getDistanceBetweenCirclesByOverlap,
         layoutGreedyVenn: layoutGreedyVenn,
         loss: loss,
-        nelderMead: nelderMeadModule,
+        nelderMead: nelderMeadMixin,
         processVennData: processVennData,
         sortByTotalOverlap: sortByTotalOverlap
     }
