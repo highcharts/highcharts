@@ -75,7 +75,7 @@ const {
 } = U;
 
 import '../Core/Options.js';
-import '../mixins/nodes.js';
+import NodesMixin from '../mixins/nodes.js';
 
 var base = H.seriesTypes.sankey.prototype;
 
@@ -405,7 +405,7 @@ seriesType<Highcharts.DependencyWheelSeries>(
 
     // Point class
     {
-        setState: H.NodesMixin.setNodeState,
+        setState: NodesMixin.setNodeState,
 
         /* eslint-disable valid-jsdoc */
 

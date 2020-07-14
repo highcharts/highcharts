@@ -51,7 +51,7 @@ var addEvent = U.addEvent, css = U.css, defined = U.defined, pick = U.pick, seri
 */
 ''; // detach doclets above
 import '../../Core/Options.js';
-import '../../mixins/nodes.js';
+import NodesMixin from '../../mixins/nodes.js';
 import './Layouts.js';
 import './DraggableNodes.js';
 var seriesTypes = H.seriesTypes, Series = H.Series, dragNodesMixin = H.dragNodesMixin;
@@ -453,10 +453,10 @@ seriesType('networkgraph', 'line',
      * links.
      * @private
      */
-    createNode: H.NodesMixin.createNode,
+    createNode: NodesMixin.createNode,
     destroy: function () {
         this.layout.removeElementFromCollection(this, this.layout.series);
-        H.NodesMixin.destroy.call(this);
+        NodesMixin.destroy.call(this);
     },
     /* eslint-disable no-invalid-this, valid-jsdoc */
     /**
@@ -480,7 +480,7 @@ seriesType('networkgraph', 'line',
      */
     generatePoints: function () {
         var node, i;
-        H.NodesMixin.generatePoints.apply(this, arguments);
+        NodesMixin.generatePoints.apply(this, arguments);
         // In networkgraph, it's fine to define stanalone nodes, create
         // them:
         if (this.options.nodes) {
@@ -709,7 +709,7 @@ seriesType('networkgraph', 'line',
         }
     }
 }, {
-    setState: H.NodesMixin.setNodeState,
+    setState: NodesMixin.setNodeState,
     /**
      * Basic `point.init()` and additional styles applied when
      * `series.draggable` is enabled.
