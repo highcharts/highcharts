@@ -49,7 +49,7 @@ var eventEmitterMixin = {
             }
         });
         if (emitter.options.draggable) {
-            addEvent(emitter, H.isTouchDevice ? 'touchmove' : 'drag', emitter.onDrag);
+            addEvent(emitter, 'drag', emitter.onDrag);
             if (!emitter.graphic.renderer.styledMode) {
                 var cssPointer_1 = {
                     cursor: {
