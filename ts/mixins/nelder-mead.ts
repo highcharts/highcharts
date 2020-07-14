@@ -32,7 +32,7 @@ interface NelderMeadCentroidObject {
 
 /* eslint-disable valid-jsdoc */
 
-var getCentroid = function (
+const getCentroid = function (
     simplex: Array<Highcharts.NelderMeadPointArray>
 ): Array<number> {
     var arr = simplex.slice(0, -1),
@@ -64,7 +64,7 @@ var getCentroid = function (
  * @return {Highcharts.NelderMeadPointArray}
  *         Returns the opimized position of a point.
  */
-var nelderMead = function nelderMead(
+const nelderMead = function nelderMead(
     fn: Highcharts.NelderMeadTestFunction,
     initial: Highcharts.NelderMeadPointArray
 ): Highcharts.NelderMeadPointArray {
@@ -214,9 +214,9 @@ var nelderMead = function nelderMead(
     return simplex[0];
 };
 
-var content: Highcharts.NelderMeadMixin = {
+const nelderMeadMixin: Highcharts.NelderMeadMixin = {
     getCentroid: getCentroid,
     nelderMead: nelderMead
 };
 
-export default content;
+export default nelderMeadMixin;
