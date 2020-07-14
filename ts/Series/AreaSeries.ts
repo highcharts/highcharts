@@ -480,7 +480,7 @@ seriesType<Highcharts.AreaSeries>(
 
                 isNull = points[i].isNull;
                 plotX = pick(points[i].rectPlotX, points[i].plotX);
-                yBottom = pick(points[i].yBottom, translatedThreshold);
+                yBottom = translatedThreshold;
 
                 if (!isNull || connectNulls) {
 
