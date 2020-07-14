@@ -9,7 +9,7 @@
 import H from '../../Core/Globals.js';
 import U from '../../Core/Utilities.js';
 var correctFloat = U.correctFloat, merge = U.merge, seriesType = U.seriesType;
-import multipleLinesMixin from '../../mixins/multipe-lines.js';
+import multipleLinesMixin from '../../mixins/multiple-lines.js';
 var SMA = H.seriesTypes.sma;
 /* eslint-disable valid-jsdoc */
 /**

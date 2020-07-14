@@ -9,7 +9,7 @@
 import U from '../../Core/Utilities.js';
 var merge = U.merge, seriesType = U.seriesType;
 import reduceArrayMixin from '../../mixins/reduce-array.js';
-import multipleLinesMixin from '../../mixins/multipe-lines.js';
+import multipleLinesMixin from '../../mixins/multiple-lines.js';
 var getArrayExtremes = reduceArrayMixin.getArrayExtremes;
 /**
  * The Price Channel series type.
