@@ -487,8 +487,7 @@ extend(defaultOptions, {
         series: {
 
             /**
-             * The type of the navigator series. Defaults to `areaspline` if
-             * defined, otherwise `line`.
+             * The type of the navigator series.
              *
              * Heads up:
              * In column-type navigator, zooming is limited to at least one
@@ -498,7 +497,8 @@ extend(defaultOptions, {
              *         Column type navigator
              *
              * @type    {string}
-             * @default areaspline
+             * @default {highstock} `areaspline` if defined, otherwise `line`
+             * @default {gantt} gantt
              */
             type: defaultSeriesType,
 
