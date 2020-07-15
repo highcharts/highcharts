@@ -68,7 +68,7 @@ var SMA = H.seriesTypes.sma;
  * @private
  * @mixin multipleLinesMixin
  */
-var multipleLinesMixin: Highcharts.MultipleLinesMixin = {
+const multipleLinesMixin: Highcharts.MultipleLinesMixin = {
 
     /* eslint-disable valid-jsdoc */
 
