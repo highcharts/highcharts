@@ -15,9 +15,10 @@ import U from '../Core/Utilities.js';
 var extend = U.extend, find = U.find, isArray = U.isArray, isNumber = U.isNumber, isObject = U.isObject, merge = U.merge, seriesType = U.seriesType;
 import drawPointModule from '../mixins/draw-point.js';
 var drawPoint = drawPointModule.drawPoint;
-import polygon from '../mixins/polygon.js';
+import polygonMixin from '../mixins/polygon.js';
+var getBoundingBoxFromPolygon = polygonMixin.getBoundingBoxFromPolygon, getPolygon = polygonMixin.getPolygon, isPolygonsColliding = polygonMixin.isPolygonsColliding, movePolygon = polygonMixin.movePolygon, rotate2DToOrigin = polygonMixin.rotate2DToOrigin, rotate2DToPoint = polygonMixin.rotate2DToPoint;
 import '../Core/Series/Series.js';
-var noop = H.noop, getBoundingBoxFromPolygon = polygon.getBoundingBoxFromPolygon, getPolygon = polygon.getPolygon, isPolygonsColliding = polygon.isPolygonsColliding, movePolygon = polygon.movePolygon, Series = H.Series;
+var noop = H.noop, Series = H.Series;
 /**
  * Detects if there is a collision between two rectangles.
  *
@@ -835,8 +836,8 @@ var wordCloudSeries = {
         extendPlayingField: extendPlayingField,
         getRotation: getRotation,
         isPolygonsColliding: isPolygonsColliding,
-        rotate2DToOrigin: polygon.rotate2DToOrigin,
-        rotate2DToPoint: polygon.rotate2DToPoint
+        rotate2DToOrigin: rotate2DToOrigin,
+        rotate2DToPoint: rotate2DToPoint
     },
     getPlotBox: function () {
         var series = this, chart = series.chart, inverted = chart.inverted, 
