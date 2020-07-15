@@ -13,7 +13,8 @@ import Axis from './Axis.js';
 import Tick from './Tick.js';
 import Tree from '../../Gantt/Tree.js';
 import TreeGridTick from './TreeGridTick.js';
-import TreeSeriesMixin from '../../mixins/tree-series.js';
+import mixinTreeSeries from '../../mixins/tree-series.js';
+var getLevelOptions = mixinTreeSeries.getLevelOptions;
 import U from '../Utilities.js';
 var addEvent = U.addEvent, find = U.find, fireEvent = U.fireEvent, isNumber = U.isNumber, isObject = U.isObject, isString = U.isString, merge = U.merge, pick = U.pick, wrap = U.wrap;
 import './GridAxis.js';
@@ -269,7 +270,7 @@ var TreeGridAxis;
                 });
                 // Calculate the label options for each level in the tree.
                 axis.treeGrid.mapOptionsToLevel =
-                    TreeSeriesMixin.getLevelOptions({
+                    getLevelOptions({
                         defaults: labelOptions,
                         from: 1,
                         levels: labelOptions && labelOptions.levels,

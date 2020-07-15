@@ -289,6 +289,11 @@ declare global {
 }
 
 import mixinTreeSeries from '../mixins/tree-series.js';
+const {
+    getColor,
+    getLevelOptions,
+    updateRootId
+} = mixinTreeSeries;
 import drawPointModule from '../mixins/draw-point.js';
 const { drawPoint } = drawPointModule;
 import Color from '../Core/Color.js';
@@ -324,8 +329,6 @@ const AXIS_MAX = 100;
 
 var seriesTypes = H.seriesTypes,
     noop = H.noop,
-    getColor = mixinTreeSeries.getColor,
-    getLevelOptions = mixinTreeSeries.getLevelOptions,
     // @todo Similar to eachObject, this function is likely redundant
     isBoolean = function (x: unknown): x is boolean {
         return typeof x === 'boolean';
@@ -359,7 +362,6 @@ var seriesTypes = H.seriesTypes,
             recursive(next, func, context);
         }
     },
-    updateRootId = mixinTreeSeries.updateRootId,
     treemapAxisDefaultValues = false;
 
 /* eslint-enable no-invalid-this */

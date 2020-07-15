@@ -12,6 +12,7 @@
 'use strict';
 import H from '../Core/Globals.js';
 import mixinTreeSeries from '../mixins/tree-series.js';
+var getColor = mixinTreeSeries.getColor, getLevelOptions = mixinTreeSeries.getLevelOptions, updateRootId = mixinTreeSeries.updateRootId;
 import drawPointModule from '../mixins/draw-point.js';
 var drawPoint = drawPointModule.drawPoint;
 import Color from '../Core/Color.js';
@@ -24,7 +25,7 @@ import '../Core/Options.js';
 import '../Core/Series/Series.js';
 /* eslint-disable no-invalid-this */
 var AXIS_MAX = 100;
-var seriesTypes = H.seriesTypes, noop = H.noop, getColor = mixinTreeSeries.getColor, getLevelOptions = mixinTreeSeries.getLevelOptions, 
+var seriesTypes = H.seriesTypes, noop = H.noop, 
 // @todo Similar to eachObject, this function is likely redundant
 isBoolean = function (x) {
     return typeof x === 'boolean';
@@ -45,7 +46,7 @@ recursive = function (item, func, context) {
     if (next !== false) {
         recursive(next, func, context);
     }
-}, updateRootId = mixinTreeSeries.updateRootId, treemapAxisDefaultValues = false;
+}, treemapAxisDefaultValues = false;
 /* eslint-enable no-invalid-this */
 /**
  * @private

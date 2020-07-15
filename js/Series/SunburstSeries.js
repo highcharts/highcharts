@@ -19,11 +19,12 @@ import centeredSeriesMixin from '../mixins/centered-series.js';
 import drawPointModule from '../mixins/draw-point.js';
 var drawPoint = drawPointModule.drawPoint;
 import mixinTreeSeries from '../mixins/tree-series.js';
+var getColor = mixinTreeSeries.getColor, getLevelOptions = mixinTreeSeries.getLevelOptions, setTreeValues = mixinTreeSeries.setTreeValues, updateRootId = mixinTreeSeries.updateRootId;
 import '../Core/Series/Series.js';
 import './TreemapSeries.js';
-var Series = H.Series, getCenter = centeredSeriesMixin.getCenter, getColor = mixinTreeSeries.getColor, getLevelOptions = mixinTreeSeries.getLevelOptions, getStartAndEndRadians = centeredSeriesMixin.getStartAndEndRadians, isBoolean = function (x) {
+var Series = H.Series, getCenter = centeredSeriesMixin.getCenter, getStartAndEndRadians = centeredSeriesMixin.getStartAndEndRadians, isBoolean = function (x) {
     return typeof x === 'boolean';
-}, noop = H.noop, rad2deg = 180 / Math.PI, seriesTypes = H.seriesTypes, setTreeValues = mixinTreeSeries.setTreeValues, updateRootId = mixinTreeSeries.updateRootId;
+}, noop = H.noop, rad2deg = 180 / Math.PI, seriesTypes = H.seriesTypes;
 // TODO introduce step, which should default to 1.
 var range = function range(from, to) {
     var result = [], i;

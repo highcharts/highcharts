@@ -17,7 +17,8 @@ import Axis from './Axis.js';
 import Tick from './Tick.js';
 import Tree from '../../Gantt/Tree.js';
 import TreeGridTick from './TreeGridTick.js';
-import TreeSeriesMixin from '../../mixins/tree-series.js';
+import mixinTreeSeries from '../../mixins/tree-series.js';
+const { getLevelOptions } = mixinTreeSeries;
 import U from '../Utilities.js';
 const {
     addEvent,
@@ -478,7 +479,7 @@ namespace TreeGridAxis {
 
                     // Calculate the label options for each level in the tree.
                     axis.treeGrid.mapOptionsToLevel =
-                        TreeSeriesMixin.getLevelOptions({
+                        getLevelOptions({
                             defaults: labelOptions,
                             from: 1,
                             levels: labelOptions && labelOptions.levels,
