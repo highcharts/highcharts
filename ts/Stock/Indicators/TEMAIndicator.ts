@@ -81,10 +81,9 @@ const {
 } = U;
 
 
-import requiredIndicatorMixin from '../../mixins/indicator-required.js';
+import requiredIndicator from '../../mixins/indicator-required.js';
 
-var EMAindicator = H.seriesTypes.ema,
-    requiredIndicator = requiredIndicatorMixin;
+var EMAindicator = H.seriesTypes.ema;
 
 /**
  * The TEMA series type.
