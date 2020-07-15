@@ -892,7 +892,10 @@ Timeline.prototype.getCursor = function (
  * True if timeline is at the beginning.
  */
 Timeline.prototype.atStart = function (this: Highcharts.Timeline): boolean {
-    return !this.getCurrentPlayingPaths().some(function (
+    if (this.cursor) {
+        return false;
+    }
+    return !splat(this.paths[0]).some(function (
         path: Highcharts.TimelinePath
     ): number {
         return path.cursor;
