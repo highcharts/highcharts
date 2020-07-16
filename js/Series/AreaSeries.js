@@ -322,7 +322,7 @@ seriesType('area', 'line',
             }
             isNull = points[i].isNull;
             plotX = pick(points[i].rectPlotX, points[i].plotX);
-            yBottom = translatedThreshold;
+            yBottom = stacking ? points[i].yBottom : translatedThreshold;
             if (!isNull || connectNulls) {
                 if (!connectNulls) {
                     addDummyPoints(i, i - 1, 'left');
