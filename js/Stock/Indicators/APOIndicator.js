@@ -9,7 +9,7 @@
 import H from '../../Core/Globals.js';
 import U from '../../Core/Utilities.js';
 var error = U.error, seriesType = U.seriesType;
-import requiredIndicator from '../../mixin/IndicatorRequired.js';
+import requiredIndicator from '../../Mixins/IndicatorRequired.js';
 var EMA = H.seriesTypes.ema;
 /**
  * The APO series type.

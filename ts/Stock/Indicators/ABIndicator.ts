@@ -63,7 +63,7 @@ const {
     seriesType
 } = U;
 
-import multipleLinesMixin from '../../mixin/MultipleLines.js';
+import multipleLinesMixin from '../../Mixins/MultipleLines.js';
 
 var SMA = H.seriesTypes.sma;
 

@@ -18,7 +18,7 @@ import '../Core/Options.js';
 import SVGRenderer from '../Core/Renderer/SVG/SVGRenderer.js';
 import U from '../Core/Utilities.js';
 var addEvent = U.addEvent, error = U.error, extend = U.extend, getOptions = U.getOptions, merge = U.merge;
-import downloadURLmodule from '../mixin/DownloadURL.js';
+import downloadURLmodule from '../Mixins/DownloadURL.js';
 var downloadURL = downloadURLmodule.downloadURL;
 var domurl = win.URL || win.webkitURL || win, nav = win.navigator, isMSBrowser = /Edge\/|Trident\/|MSIE /.test(nav.userAgent), 
 // Milliseconds to defer image load event handlers to offset IE bug

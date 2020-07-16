@@ -104,7 +104,7 @@ const {
     splat
 } = U;
 
-import requiredIndicator from '../../mixin/IndicatorRequired.js';
+import requiredIndicator from '../../Mixins/IndicatorRequired.js';
 
 var Series = H.Series,
     seriesTypes = H.seriesTypes,

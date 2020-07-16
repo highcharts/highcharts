@@ -16,7 +16,7 @@ var addEvent = U.addEvent, extend = U.extend, merge = U.merge, pick = U.pick, sp
 /**
  * @typedef {"arc"|"circle"|"solid"} Highcharts.PaneBackgroundShapeValue
  */
-import centeredSeriesMixin from '../mixin/CenteredSeries.js';
+import centeredSeriesMixin from '../Mixins/CenteredSeries.js';
 /* eslint-disable no-invalid-this, valid-jsdoc */
 Chart.prototype.collectionsWithUpdate.push('pane');
 /**

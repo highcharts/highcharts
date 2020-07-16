@@ -12,7 +12,7 @@
 'use strict';
 import U from '../Core/Utilities.js';
 var correctFloat = U.correctFloat, isNumber = U.isNumber, merge = U.merge, seriesType = U.seriesType;
-import derivedSeriesMixin from '../mixin/DerivedSeries.js';
+import derivedSeriesMixin from '../Mixins/DerivedSeries.js';
 /* ************************************************************************** *
  *  BELL CURVE                                                                *
  * ************************************************************************** */

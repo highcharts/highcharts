@@ -11,13 +11,13 @@
  * */
 'use strict';
 import H from '../Core/Globals.js';
-import mixinTreeSeries from '../mixin/TreeSeries.js';
+import mixinTreeSeries from '../Mixins/TreeSeries.js';
 var getColor = mixinTreeSeries.getColor, getLevelOptions = mixinTreeSeries.getLevelOptions, updateRootId = mixinTreeSeries.updateRootId;
-import drawPointModule from '../mixin/DrawPoint.js';
+import drawPointModule from '../Mixins/DrawPoint.js';
 var drawPoint = drawPointModule.drawPoint;
 import Color from '../Core/Color.js';
 var color = Color.parse;
-import LegendSymbolMixin from '../mixin/LegendSymbol.js';
+import LegendSymbolMixin from '../Mixins/LegendSymbol.js';
 import Point from '../Core/Series/Point.js';
 import U from '../Core/Utilities.js';
 var addEvent = U.addEvent, correctFloat = U.correctFloat, defined = U.defined, error = U.error, extend = U.extend, fireEvent = U.fireEvent, isArray = U.isArray, isNumber = U.isNumber, isObject = U.isObject, isString = U.isString, merge = U.merge, objectEach = U.objectEach, pick = U.pick, seriesType = U.seriesType, stableSort = U.stableSort;

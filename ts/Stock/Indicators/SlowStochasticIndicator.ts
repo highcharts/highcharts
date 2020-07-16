@@ -48,7 +48,7 @@ declare global {
     }
 }
 
-import requiredIndicator from '../../mixin/IndicatorRequired.js';
+import requiredIndicator from '../../Mixins/IndicatorRequired.js';
 
 var seriesTypes = H.seriesTypes;
 

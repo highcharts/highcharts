@@ -9,8 +9,8 @@
 import H from '../../Core/Globals.js';
 import U from '../../Core/Utilities.js';
 var isArray = U.isArray, merge = U.merge, seriesType = U.seriesType;
-import reduceArrayMixin from '../../mixin/ReduceArray.js';
-import multipleLinesMixin from '../../mixin/MultipleLines.js';
+import reduceArrayMixin from '../../Mixins/ReduceArray.js';
+import multipleLinesMixin from '../../Mixins/MultipleLines.js';
 var SMA = H.seriesTypes.sma, getArrayExtremes = reduceArrayMixin.getArrayExtremes;
 /**
  * The Stochastic series type.

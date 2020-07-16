@@ -62,7 +62,7 @@ const {
     seriesType
 } = U;
 import '../Core/Options.js';
-import derivedSeriesMixin from '../mixin/DerivedSeries.js';
+import derivedSeriesMixin from '../Mixins/DerivedSeries.js';
 
 /**
  * The pareto series type.

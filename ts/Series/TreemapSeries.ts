@@ -288,19 +288,19 @@ declare global {
     }
 }
 
-import mixinTreeSeries from '../mixin/TreeSeries.js';
+import mixinTreeSeries from '../Mixins/TreeSeries.js';
 const {
     getColor,
     getLevelOptions,
     updateRootId
 } = mixinTreeSeries;
-import drawPointModule from '../mixin/DrawPoint.js';
+import drawPointModule from '../Mixins/DrawPoint.js';
 const { drawPoint } = drawPointModule;
 import Color from '../Core/Color.js';
 const {
     parse: color
 } = Color;
-import LegendSymbolMixin from '../mixin/LegendSymbol.js';
+import LegendSymbolMixin from '../Mixins/LegendSymbol.js';
 import Point from '../Core/Series/Point.js';
 import U from '../Core/Utilities.js';
 const {

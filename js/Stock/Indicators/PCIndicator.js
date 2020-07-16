@@ -8,8 +8,8 @@
 'use strict';
 import U from '../../Core/Utilities.js';
 var merge = U.merge, seriesType = U.seriesType;
-import reduceArrayMixin from '../../mixin/ReduceArray.js';
-import multipleLinesMixin from '../../mixin/MultipleLines.js';
+import reduceArrayMixin from '../../Mixins/ReduceArray.js';
+import multipleLinesMixin from '../../Mixins/MultipleLines.js';
 var getArrayExtremes = reduceArrayMixin.getArrayExtremes;
 /**
  * The Price Channel series type.

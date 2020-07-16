@@ -8,7 +8,7 @@
 'use strict';
 import U from '../../Core/Utilities.js';
 var merge = U.merge, pick = U.pick, seriesType = U.seriesType;
-import multipleLinesMixin from '../../mixin/MultipleLines.js';
+import multipleLinesMixin from '../../Mixins/MultipleLines.js';
 /* eslint-disable valid-jsdoc */
 // Utils
 // Index of element with extreme value from array (min or max)
