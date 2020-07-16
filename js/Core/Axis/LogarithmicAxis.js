@@ -174,3 +174,11 @@ var LogarithmicAxis = /** @class */ (function () {
 }());
 LogarithmicAxis.compose(Axis); // @todo move to factory functions
 export default LogarithmicAxis;
+/**
+ * Activates rendering of negative logarithmic values.
+ *
+ * @type      {boolean}
+ * @since     8.1.0
+ * @apioption xAxis.allowNegativeLog
+ */
+''; // keeps doclets above in transpiled file
