@@ -46,7 +46,7 @@ const {
     seriesType
 } = U;
 
-import reduceArrayMixin from '../../mixins/reduce-array.js';
+import reduceArrayMixin from '../../mixin/ReduceArray.js';
 
 var getArrayExtremes = reduceArrayMixin.getArrayExtremes;
 

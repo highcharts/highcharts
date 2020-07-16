@@ -13,7 +13,7 @@
 'use strict';
 
 import H from '../Core/Globals.js';
-import NodesMixin from '../mixins/nodes.js';
+import NodesMixin from '../mixin/Nodes.js';
 
 /**
  * Internal types
@@ -269,8 +269,8 @@ const {
 } = U;
 
 import '../Core/Options.js';
-import '../mixins/nodes.js';
-import mixinTreeSeries from '../mixins/tree-series.js';
+import nodesMixin from '../mixin/Nodes.js';
+import mixinTreeSeries from '../mixin/TreeSeries.js';
 const {
     getLevelOptions
 } = mixinTreeSeries;

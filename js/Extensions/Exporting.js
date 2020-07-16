@@ -11,7 +11,7 @@
  * */
 'use strict';
 import Chart from '../Core/Chart/Chart.js';
-import chartNavigationMixin from '../mixins/navigation.js';
+import chartNavigationMixin from '../mixin/Navigation.js';
 import H from '../Core/Globals.js';
 var doc = H.doc, isTouchDevice = H.isTouchDevice, win = H.win;
 import O from '../Core/Options.js';

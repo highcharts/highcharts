@@ -141,8 +141,8 @@ declare global {
  */
 
 
-import '../mixins/ajax.js';
-import downloadURLmodule from '../mixins/download-url.js';
+import '../mixin/Ajax.js';
+import downloadURLmodule from '../mixin/DownloadURL.js';
 const { downloadURL } = downloadURLmodule;
 
 

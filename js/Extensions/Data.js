@@ -87,7 +87,7 @@ var addEvent = U.addEvent, defined = U.defined, extend = U.extend, fireEvent = U
  *         Return `false` to stop completion, or call `this.complete()` to
  *         continue async.
  */
-import ajaxModule from '../mixins/ajax.js';
+import ajaxModule from '../mixin/Ajax.js';
 var ajax = ajaxModule.ajax;
 // Utilities
 var win = H.win, doc = win.document;

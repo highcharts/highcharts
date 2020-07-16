@@ -143,11 +143,11 @@ declare global {
     }
 }
 
-import drawPointModule from '../mixins/draw-point.js';
+import drawPointModule from '../mixin/DrawPoint.js';
 const { draw } = drawPointModule;
-import geometry from '../mixins/geometry.js';
+import geometry from '../mixin/Geometry.js';
 
-import geometryCirclesModule from '../mixins/geometry-circles.js';
+import geometryCirclesModule from '../mixin/GeometryCircles.js';
 const {
     getAreaOfCircle,
     getAreaOfIntersectionBetweenCircles,
@@ -160,7 +160,7 @@ const {
     isPointOutsideAllCircles
 } = geometryCirclesModule;
 
-import nelderMeadMixin from '../mixins/nelder-mead.js';
+import nelderMeadMixin from '../mixin/NelderMead.js';
 const {
     nelderMead
 } = nelderMeadMixin;

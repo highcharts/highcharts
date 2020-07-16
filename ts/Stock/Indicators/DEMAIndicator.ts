@@ -66,7 +66,7 @@ const {
     seriesType
 } = U;
 
-import requiredIndicator from '../../mixins/indicator-required.js';
+import requiredIndicator from '../../mixin/IndicatorRequired.js';
 
 var EMAindicator = H.seriesTypes.ema;
 

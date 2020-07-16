@@ -11,7 +11,7 @@
  * */
 'use strict';
 import H from '../Core/Globals.js';
-import NodesMixin from '../mixins/nodes.js';
+import NodesMixin from '../mixin/Nodes.js';
 /**
  * A node in a sankey diagram.
  *
@@ -95,8 +95,7 @@ import Point from '../Core/Series/Point.js';
 import U from '../Core/Utilities.js';
 var defined = U.defined, find = U.find, isObject = U.isObject, merge = U.merge, pick = U.pick, relativeLength = U.relativeLength, seriesType = U.seriesType, stableSort = U.stableSort;
 import '../Core/Options.js';
-import '../mixins/nodes.js';
-import mixinTreeSeries from '../mixins/tree-series.js';
+import mixinTreeSeries from '../mixin/TreeSeries.js';
 var getLevelOptions = mixinTreeSeries.getLevelOptions;
 // eslint-disable-next-line valid-jsdoc
 /**

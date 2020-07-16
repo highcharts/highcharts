@@ -9,7 +9,7 @@
  * */
 'use strict';
 import Annotation from './Annotations.js';
-import chartNavigationMixin from '../../mixins/navigation.js';
+import chartNavigationMixin from '../../mixin/Navigation.js';
 import H from '../../Core/Globals.js';
 import U from '../../Core/Utilities.js';
 var addEvent = U.addEvent, attr = U.attr, extend = U.extend, format = U.format, fireEvent = U.fireEvent, isArray = U.isArray, isFunction = U.isFunction, isNumber = U.isNumber, isObject = U.isObject, merge = U.merge, objectEach = U.objectEach, pick = U.pick, setOptions = U.setOptions;
