@@ -9,7 +9,7 @@
  * */
 'use strict';
 import H from '../Core/Globals.js';
-import LegendSymbolMixin from '../mixins/legend-symbol.js';
+import LegendSymbolMixin from '../mixin/LegendSymbol.js';
 import Point from '../Core/Series/Point.js';
 import SVGRenderer from '../Core/Renderer/SVG/SVGRenderer.js';
 import U from '../Core/Utilities.js';
@@ -17,7 +17,7 @@ var extend = U.extend, fireEvent = U.fireEvent, getNestedProperty = U.getNestedP
 import '../Core/Options.js';
 import '../Series/ScatterSeries.js';
 import '../Core/Series/Series.js';
-import '../mixins/color-map-series.js';
+import '../mixin/ColorMapSeries.js';
 var colorMapPointMixin = H.colorMapPointMixin, colorMapSeriesMixin = H.colorMapSeriesMixin, noop = H.noop, Series = H.Series, seriesTypes = H.seriesTypes;
 /**
  * @private

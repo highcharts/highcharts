@@ -9,7 +9,7 @@
 import H from '../../Core/Globals.js';
 import U from '../../Core/Utilities.js';
 var addEvent = U.addEvent, error = U.error, extend = U.extend, isArray = U.isArray, pick = U.pick, seriesType = U.seriesType, splat = U.splat;
-import requiredIndicator from '../../mixins/indicator-required.js';
+import requiredIndicator from '../../mixin/IndicatorRequired.js';
 var Series = H.Series, seriesTypes = H.seriesTypes, ohlcProto = H.seriesTypes.ohlc.prototype, generateMessage = requiredIndicator.generateMessage;
 /**
  * The parameter allows setting line series type and use OHLC indicators. Data

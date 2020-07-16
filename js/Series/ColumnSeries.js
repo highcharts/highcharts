@@ -26,7 +26,7 @@ import H from '../Core/Globals.js';
 ''; // detach doclets above
 import Color from '../Core/Color.js';
 var color = Color.parse;
-import LegendSymbolMixin from '../mixins/legend-symbol.js';
+import LegendSymbolMixin from '../mixin/LegendSymbol.js';
 import U from '../Core/Utilities.js';
 var animObject = U.animObject, clamp = U.clamp, defined = U.defined, extend = U.extend, isNumber = U.isNumber, merge = U.merge, pick = U.pick, seriesType = U.seriesType, objectEach = U.objectEach;
 import '../Core/Series/Series.js';

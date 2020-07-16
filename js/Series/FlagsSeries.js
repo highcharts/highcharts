@@ -18,7 +18,7 @@ var addEvent = U.addEvent, defined = U.defined, isNumber = U.isNumber, merge = U
  */
 import '../Core/Series/Series.js';
 import '../Core/Renderer/SVG/SVGRenderer.js';
-import onSeriesMixin from '../mixins/on-series.js';
+import onSeriesMixin from '../mixin/OnSeries.js';
 var noop = H.noop, Renderer = H.Renderer, Series = H.Series, TrackerMixin = H.TrackerMixin, VMLRenderer = H.VMLRenderer, symbols = SVGRenderer.prototype.symbols;
 /**
  * The Flags series.

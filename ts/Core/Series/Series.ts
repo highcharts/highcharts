@@ -14,7 +14,7 @@ import type { AxisType } from '../Axis/Types';
 import type Chart from '../Chart/Chart';
 import type SVGPath from '../Renderer/SVG/SVGPath';
 import H from '../Globals.js';
-import LegendSymbolMixin from '../../mixins/legend-symbol.js';
+import LegendSymbolMixin from '../../mixin/LegendSymbol.js';
 import O from '../Options.js';
 const { defaultOptions } = O;
 import Point from './Point.js';

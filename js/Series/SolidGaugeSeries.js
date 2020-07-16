@@ -13,7 +13,7 @@
 import Color from '../Core/Color.js';
 var color = Color.parse;
 import H from '../Core/Globals.js';
-import LegendSymbolMixin from '../mixins/legend-symbol.js';
+import LegendSymbolMixin from '../mixin/LegendSymbol.js';
 import U from '../Core/Utilities.js';
 var clamp = U.clamp, extend = U.extend, isNumber = U.isNumber, merge = U.merge, pick = U.pick, pInt = U.pInt, seriesType = U.seriesType, wrap = U.wrap;
 /**

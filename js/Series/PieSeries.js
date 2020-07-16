@@ -10,12 +10,12 @@
 'use strict';
 import H from '../Core/Globals.js';
 import SVGRenderer from '../Core/Renderer/SVG/SVGRenderer.js';
-import LegendSymbolMixin from '../mixins/legend-symbol.js';
+import LegendSymbolMixin from '../mixin/LegendSymbol.js';
 import Point from '../Core/Series/Point.js';
 import U from '../Core/Utilities.js';
 var addEvent = U.addEvent, clamp = U.clamp, defined = U.defined, fireEvent = U.fireEvent, isNumber = U.isNumber, merge = U.merge, pick = U.pick, relativeLength = U.relativeLength, seriesType = U.seriesType, setAnimation = U.setAnimation;
 import './ColumnSeries.js';
-import centeredSeriesMixin from '../mixins/centered-series.js';
+import centeredSeriesMixin from '../mixin/CenteredSeries.js';
 import '../Core/Options.js';
 import '../Core/Series/Series.js';
 var getStartAndEndRadians = centeredSeriesMixin.getStartAndEndRadians, noop = H.noop, Series = H.Series, seriesTypes = H.seriesTypes;

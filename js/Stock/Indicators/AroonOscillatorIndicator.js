@@ -7,8 +7,8 @@
  * */
 'use strict';
 import H from '../../Core/Globals.js';
-import multipleLinesMixin from '../../mixins/multiple-lines.js';
-import requiredIndicator from '../../mixins/indicator-required.js';
+import multipleLinesMixin from '../../mixin/MultipleLines.js';
+import requiredIndicator from '../../mixin/IndicatorRequired.js';
 import U from '../../Core/Utilities.js';
 var merge = U.merge, seriesType = U.seriesType;
 var AROON = H.seriesTypes.aroon;

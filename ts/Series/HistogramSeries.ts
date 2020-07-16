@@ -68,7 +68,7 @@ const {
     seriesType
 } = U;
 
-import derivedSeriesMixin from '../mixins/derived-series.js';
+import derivedSeriesMixin from '../mixin/DerivedSeries.js';
 
 /* ************************************************************************** *
  *  HISTOGRAM

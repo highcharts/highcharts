@@ -11,7 +11,7 @@
 'use strict';
 import U from '../Core/Utilities.js';
 var arrayMax = U.arrayMax, arrayMin = U.arrayMin, correctFloat = U.correctFloat, isNumber = U.isNumber, merge = U.merge, objectEach = U.objectEach, seriesType = U.seriesType;
-import derivedSeriesMixin from '../mixins/derived-series.js';
+import derivedSeriesMixin from '../mixin/DerivedSeries.js';
 /* ************************************************************************** *
  *  HISTOGRAM
  * ************************************************************************** */

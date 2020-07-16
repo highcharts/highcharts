@@ -9,7 +9,7 @@
 import H from '../../Core/Globals.js';
 import U from '../../Core/Utilities.js';
 var seriesType = U.seriesType;
-import requiredIndicator from '../../mixins/indicator-required.js';
+import requiredIndicator from '../../mixin/IndicatorRequired.js';
 var seriesTypes = H.seriesTypes;
 /**
  * The Slow Stochastic series type.

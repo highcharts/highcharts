@@ -9,7 +9,7 @@
 import H from '../../Core/Globals.js';
 import U from '../../Core/Utilities.js';
 var correctFloat = U.correctFloat, error = U.error, seriesType = U.seriesType;
-import requiredIndicator from '../../mixins/indicator-required.js';
+import requiredIndicator from '../../mixin/IndicatorRequired.js';
 var EMA = H.seriesTypes.ema;
 /**
  * The PPO series type.

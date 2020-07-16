@@ -14,7 +14,7 @@ import H from '../Core/Globals.js';
 import U from '../Core/Utilities.js';
 var animObject = U.animObject, seriesType = U.seriesType;
 import '../Core/Options.js';
-import NodesMixin from '../mixins/nodes.js';
+import NodesMixin from '../mixin/Nodes.js';
 var base = H.seriesTypes.sankey.prototype;
 /**
  * @private

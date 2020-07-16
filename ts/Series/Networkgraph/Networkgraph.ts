@@ -234,7 +234,7 @@ declare global {
 ''; // detach doclets above
 
 import '../../Core/Options.js';
-import NodesMixin from '../../mixins/nodes.js';
+import NodesMixin from '../../mixin/Nodes.js';
 import './Layouts.js';
 import './DraggableNodes.js';
 
