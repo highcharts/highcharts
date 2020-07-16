@@ -496,3 +496,60 @@ QUnit.test('Ellipsis on single-word labels (#9537)', function (assert) {
         'The label should be within the tick bounds'
     );
 });
+
+// Highcharts 8.1.2, Issue #13762
+QUnit.test('Overlapping of xAxis labels (useHTML: true) in polar chart (#13762)', function (assert) {
+    var chart = Highcharts.chart('container', {
+            chart: {
+                polar: true,
+                width: 600,
+                height: 400
+            },
+            xAxis: {
+                tickmarkPlacement: 'on',
+                labels: {
+                    useHTML: true
+                },
+                categories: [
+                    'CATEGORY1',
+                    'CATEGORY2',
+                    'CATEGORY3',
+                    'CATEGORY4',
+                    'CATEGORY5',
+                    'CATEGORY6',
+                    'CATEGORY7',
+                    'CATEGORY8',
+                    'CATEGORY9',
+                    'CATEGORY10',
+                    'CATEGORY11',
+                    'CATEGORY12'
+                ]
+            },
+            series: [{
+                pointPlacement: 'on',
+                data: (numberOfPoints => {
+                    var data = [];
+                    while (numberOfPoints) {
+                        data.push(100);
+                        numberOfPoints--;
+                    }
+                    return data;
+                })(12)
+            }]
+        }),
+        ticks = chart.xAxis[0].ticks,
+        visible = true;
+
+    for (var prop in ticks) {
+        if (Object.prototype.hasOwnProperty.call(ticks, prop)) {
+            if (!ticks[prop].label.opacity) {
+                visible = false;
+            }
+        }
+    }
+
+    assert.ok(
+        visible,
+        'All xAxis labels are visible'
+    );
+});
