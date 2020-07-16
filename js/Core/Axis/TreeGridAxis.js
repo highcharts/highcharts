@@ -590,7 +590,8 @@ var TreeGridAxis;
         };
         /**
          * Creates a list of positions for the ticks on the axis. Filters out
-         * positions that are outside min and max, or is inside an axis break.
+         * positions that are outside rounded min and max
+         * allowing scrolling correctly, or is inside an axis break.
          *
          * @private
          *
@@ -600,9 +601,9 @@ var TreeGridAxis;
         Additions.prototype.getTickPositions = function () {
             var axis = this.axis;
             return Object.keys(axis.treeGrid.mapOfPosToGridNode || {}).reduce(function (arr, key) {
-                var pos = +key;
-                if (axis.min <= pos &&
-                    axis.max >= pos &&
+                var pos = +key, roundedMin = Math.floor(axis.min / axis.tickInterval) * axis.tickInterval, roundedMax = Math.ceil(axis.max / axis.tickInterval) * axis.tickInterval;
+                if (pos >= roundedMin &&
+                    pos <= roundedMax &&
                     !(axis.brokenAxis && axis.brokenAxis.isInAnyBreak(pos))) {
                     arr.push(pos);
                 }

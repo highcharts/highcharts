@@ -449,4 +449,67 @@
 
         assert.ok(true, "Gantt should be initialized with no errors (#13246).");
     });
+
+    QUnit.test('The ticks should be generated correctly during scrolling, #13072.', assert => {
+        const chart = Highcharts.ganttChart('container', {
+            yAxis: {
+                min: 0,
+                max: 3
+            },
+            series: [{
+                data: [{
+                    start: 1,
+                    end: 2,
+                    name: 'Task 1'
+                }, {
+                    start: 2,
+                    end: 3,
+                    name: 'Task 2'
+                }, {
+                    start: 3,
+                    end: 4,
+                    name: 'Task 3'
+                }, {
+                    start: 4,
+                    end: 5,
+                    name: 'Task 4'
+                }, {
+                    start: 5,
+                    end: 6,
+                    name: 'Task 5'
+                }, {
+                    start: 6,
+                    end: 7,
+                    name: 'Task 6'
+                }]
+            }]
+        });
+
+        assert.deepEqual(
+            chart.yAxis[0].tickPositions,
+            [0, 1, 2, 3],
+            'First four ticks should be displayed.'
+        );
+        chart.yAxis[0].setExtremes(0.4, 3.4);
+
+        assert.deepEqual(
+            chart.yAxis[0].tickPositions,
+            [0, 1, 2, 3, 4],
+            'First five ticks should be displayed.'
+        );
+        chart.yAxis[0].setExtremes(0.8, 3.8);
+
+        assert.deepEqual(
+            chart.yAxis[0].tickPositions,
+            [0, 1, 2, 3, 4],
+            'First five ticks should be displayed.'
+        );
+        chart.yAxis[0].setExtremes(1, 4);
+
+        assert.deepEqual(
+            chart.yAxis[0].tickPositions,
+            [1, 2, 3, 4],
+            'Ticks from 1 to 5 should be displayed.'
+        );
+    });
 }());
