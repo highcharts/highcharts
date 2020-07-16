@@ -5,12 +5,12 @@
  * */
 
 import type SVGPath from '../Core/Renderer/SVG/SVGPath';
-import geometry from './geometry.js';
+import Geometry from './Geometry.js';
 const {
     getAngleBetweenPoints,
     getCenterOfPoints,
     getDistanceBetweenPoints
-} = geometry;
+} = Geometry;
 
 /**
  * Internal types
