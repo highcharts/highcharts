@@ -190,7 +190,7 @@ Chart.prototype.hideOverlappingLabels = function (
                     left: '0',
                     center: '0.5',
                     right: '1'
-                }[label.alignValue as Highcharts.AlignValue];
+                }[label.alignValue as Highcharts.AlignValue || label.textAlign];
 
                 if (alignValue) {
                     xOffset = +alignValue * boxWidth;
@@ -199,7 +199,8 @@ Chart.prototype.hideOverlappingLabels = function (
                 }
 
                 return {
-                    x: pos.x + (parent.translateX || 0) + padding - xOffset,
+                    x: pos.x + (parent.translateX || 0) + padding -
+                        (xOffset || 0),
                     y: pos.y + (parent.translateY || 0) + padding -
                         lineHeightCorrection,
                     width: label.width - 2 * padding,
