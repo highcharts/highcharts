@@ -60,8 +60,8 @@ const {
     merge,
     seriesType
 } = U;
-import reduceArrayMixin from '../../mixin/ReduceArray.js';
-import multipleLinesMixin from '../../mixin/MultipleLines.js';
+import reduceArrayMixin from '../../Mixins/ReduceArray.js';
+import multipleLinesMixin from '../../Mixins/MultipleLines.js';
 
 var getArrayExtremes = reduceArrayMixin.getArrayExtremes;
 

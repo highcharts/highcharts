@@ -81,7 +81,7 @@ const {
 } = U;
 
 
-import requiredIndicator from '../../mixin/IndicatorRequired.js';
+import requiredIndicator from '../../Mixins/IndicatorRequired.js';
 
 var EMAindicator = H.seriesTypes.ema;
 

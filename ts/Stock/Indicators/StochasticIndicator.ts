@@ -69,8 +69,8 @@ const {
     seriesType
 } = U;
 
-import reduceArrayMixin from '../../mixin/ReduceArray.js';
-import multipleLinesMixin from '../../mixin/MultipleLines.js';
+import reduceArrayMixin from '../../Mixins/ReduceArray.js';
+import multipleLinesMixin from '../../Mixins/MultipleLines.js';
 
 var SMA = H.seriesTypes.sma,
     getArrayExtremes = reduceArrayMixin.getArrayExtremes;

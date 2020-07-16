@@ -260,7 +260,7 @@ declare global {
  *         continue async.
  */
 
-import ajaxModule from '../mixin/Ajax.js';
+import ajaxModule from '../Mixins/Ajax.js';
 const { ajax } = ajaxModule;
 
 // Utilities

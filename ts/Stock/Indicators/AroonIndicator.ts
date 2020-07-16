@@ -65,7 +65,7 @@ declare global {
 }
 
 
-import multipleLinesMixin from '../../mixin/MultipleLines.js';
+import multipleLinesMixin from '../../Mixins/MultipleLines.js';
 
 /* eslint-disable valid-jsdoc */
 // Utils

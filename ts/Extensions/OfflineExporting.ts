@@ -96,7 +96,7 @@ declare global {
     }
 }
 
-import downloadURLmodule from '../mixin/DownloadURL.js';
+import downloadURLmodule from '../Mixins/DownloadURL.js';
 const { downloadURL } = downloadURLmodule;
 
 var domurl = win.URL || win.webkitURL || win,

@@ -12,7 +12,7 @@
 
 import type SVGPath from '../Core/Renderer/SVG/SVGPath';
 import H from '../Core/Globals.js';
-import LegendSymbolMixin from '../mixin/LegendSymbol.js';
+import LegendSymbolMixin from '../Mixins/LegendSymbol.js';
 import Point from '../Core/Series/Point.js';
 import SVGRenderer from '../Core/Renderer/SVG/SVGRenderer.js';
 import U from '../Core/Utilities.js';
@@ -155,7 +155,7 @@ declare global {
 import '../Core/Options.js';
 import '../Series/ScatterSeries.js';
 import '../Core/Series/Series.js';
-import '../mixin/ColorMapSeries.js';
+import '../Mixins/ColorMapSeries.js';
 
 var colorMapPointMixin = H.colorMapPointMixin,
     colorMapSeriesMixin = H.colorMapSeriesMixin,

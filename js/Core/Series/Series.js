@@ -9,7 +9,7 @@
  * */
 'use strict';
 import H from '../Globals.js';
-import LegendSymbolMixin from '../../mixin/LegendSymbol.js';
+import LegendSymbolMixin from '../../Mixins/LegendSymbol.js';
 import O from '../Options.js';
 var defaultOptions = O.defaultOptions;
 import Point from './Point.js';

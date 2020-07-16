@@ -141,9 +141,9 @@ const {
     seriesType
 } = U;
 
-import drawPointModule from '../mixin/DrawPoint.js';
+import drawPointModule from '../Mixins/DrawPoint.js';
 const { drawPoint } = drawPointModule;
-import polygonMixin from '../mixin/Polygon.js';
+import polygonMixin from '../Mixins/Polygon.js';
 const {
     getBoundingBoxFromPolygon,
     getPolygon,
