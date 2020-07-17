@@ -4942,7 +4942,8 @@ null,
         };
         // Avoid setting undefined opacity, or in styled mode
         if (typeof this.opacity !== 'undefined' &&
-            !this.chart.styledMode) {
+            !this.chart.styledMode && this.state !== 'inactive' // #13719
+        ) {
             attrs.opacity = this.opacity;
         }
         // Generate it on first call
