@@ -12,6 +12,11 @@
 
 'use strict';
 
+import U from '../Core/Utilities.js';
+const {
+    fireEvent
+} = U;
+
 /** eslint-disable valid-jsdoc */
 
 /**
@@ -76,6 +81,7 @@ class DataTable<T> {
     ): DataTable<T> {
         this.dataSet[index] = dataRow;
         ++this.absoluteLength;
+        fireEvent(this, 'newDataRow', { dataRow, index });
         return this;
     }
 
@@ -83,9 +89,11 @@ class DataTable<T> {
         dataRow: DataTable.Row<T>,
         index: number = this.relativeLength
     ): DataTable<T> {
-        this.dataSet[this.absolutePosition(index)] = dataRow;
+        index = this.absolutePosition(index);
+        this.dataSet[index] = dataRow;
         ++this.absoluteLength;
         ++this.relativeLength;
+        fireEvent(this, 'newDataRow', { dataRow, index });
         return this;
     }
 

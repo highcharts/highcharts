@@ -10,6 +10,8 @@
  *
  * */
 'use strict';
+import U from '../Core/Utilities.js';
+var fireEvent = U.fireEvent;
 /** eslint-disable valid-jsdoc */
 /**
  * @private
@@ -48,13 +50,16 @@ var DataTable = /** @class */ (function () {
         if (index === void 0) { index = this.absoluteLength; }
         this.dataSet[index] = dataRow;
         ++this.absoluteLength;
+        fireEvent(this, 'newDataRow', { dataRow: dataRow, index: index });
         return this;
     };
     DataTable.prototype.setRelative = function (dataRow, index) {
         if (index === void 0) { index = this.relativeLength; }
-        this.dataSet[this.absolutePosition(index)] = dataRow;
+        index = this.absolutePosition(index);
+        this.dataSet[index] = dataRow;
         ++this.absoluteLength;
         ++this.relativeLength;
+        fireEvent(this, 'newDataRow', { dataRow: dataRow, index: index });
         return this;
     };
     return DataTable;
