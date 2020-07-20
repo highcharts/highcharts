@@ -109,10 +109,20 @@ var LogarithmicAxisAdditions = /** @class */ (function () {
         return positions;
     };
     LogarithmicAxisAdditions.prototype.lin2log = function (num) {
-        return Math.pow(10, num);
+        var isNegative = num < 0 && this.axis.options.allowNegativeLog;
+        var result = Math.pow(10, Math.abs(num));
+        if (result < 10) {
+            result = (10 * (result - 1)) / (10 - 1);
+        }
+        return isNegative ? -result : result;
     };
     LogarithmicAxisAdditions.prototype.log2lin = function (num) {
-        return Math.log(num) / Math.LN10;
+        var isNegative = num < 0 && this.axis.options.allowNegativeLog;
+        var adjustedNum = Math.abs(num);
+        if (adjustedNum < 10) {
+            adjustedNum += (10 - adjustedNum) / 10;
+        }
+        return (isNegative ? -1 : 1) * Math.log(adjustedNum) / Math.LN10;
     };
     return LogarithmicAxisAdditions;
 }());
@@ -131,8 +141,12 @@ var LogarithmicAxis = /** @class */ (function () {
         // @todo Remove this in next major
         var axisProto = AxisClass.prototype;
         var logAxisProto = LogarithmicAxisAdditions.prototype;
-        axisProto.log2lin = logAxisProto.log2lin;
-        axisProto.lin2log = logAxisProto.lin2log;
+        axisProto.log2lin = function (num) {
+            return logAxisProto.log2lin.call({ axis: this }, num);
+        };
+        axisProto.lin2log = function (num) {
+            return logAxisProto.lin2log.call({ axis: this }, num);
+        };
         /* eslint-disable no-invalid-this */
         addEvent(AxisClass, 'init', function (e) {
             var axis = this;

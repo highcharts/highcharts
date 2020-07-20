@@ -209,11 +209,27 @@ class LogarithmicAxisAdditions {
     }
 
     public lin2log(num: number): number {
-        return Math.pow(10, num);
+        const isNegative = num < 0 && this.axis.options.allowNegativeLog;
+
+        let result = Math.pow(10, Math.abs(num));
+
+        if (result < 10) {
+            result = (10 * (result - 1)) / (10 - 1);
+        }
+
+        return isNegative ? -result : result;
     }
 
     public log2lin(num: number): number {
-        return Math.log(num) / Math.LN10;
+        const isNegative = num < 0 && this.axis.options.allowNegativeLog;
+
+        let adjustedNum = Math.abs(num);
+
+        if (adjustedNum < 10) {
+            adjustedNum += (10 - adjustedNum) / 10;
+        }
+
+        return (isNegative ? -1 : 1) * Math.log(adjustedNum) / Math.LN10;
     }
 
 }
@@ -234,8 +250,12 @@ class LogarithmicAxis {
         // @todo Remove this in next major
         const axisProto = AxisClass.prototype;
         const logAxisProto = LogarithmicAxisAdditions.prototype;
-        axisProto.log2lin = logAxisProto.log2lin;
-        axisProto.lin2log = logAxisProto.lin2log;
+        axisProto.log2lin = function (num: number): number {
+            return logAxisProto.log2lin.call({ axis: this }, num);
+        };
+        axisProto.lin2log = function (num: number): number {
+            return logAxisProto.lin2log.call({ axis: this }, num);
+        };
 
         /* eslint-disable no-invalid-this */
 

@@ -243,7 +243,7 @@ QUnit.test('Y axis minimum got stuck (#3353)', function (assert) {
         },
         series: [{
             name: 'Year 1800',
-            data: [1, 3, 2]
+            data: [0.1, 1, 10]
         }]
     });
 
