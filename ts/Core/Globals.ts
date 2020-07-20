@@ -72,6 +72,7 @@ declare global {
         const symbolSizes: Dictionary<SizeObject>;
         const win: GlobalWindow;
         const seriesTypes: SeriesTypesDictionary;
+        const supportPassiveEvents: boolean;
         const svg: boolean;
         const version: string;
         let theme: (Options|undefined);
@@ -166,7 +167,23 @@ var glob = ( // @todo UMD variable named `window`, and glob named `win`
     hasBidiBug = (
         isFirefox &&
         parseInt(userAgent.split('Firefox/')[1], 10) < 4 // issue #38
-    );
+    ),
+    noop = function (): void {},
+    // Checks whether the browser supports passive events, (#11353).
+    checkPassiveEvents = function (): boolean {
+        let supportsPassive = false;
+
+        const opts = Object.defineProperty({}, 'passive', {
+            get: function (): void {
+                supportsPassive = true;
+            }
+        });
+
+        glob.addEventListener('testPassive', noop, opts);
+        glob.removeEventListener('testPassive', noop, opts);
+
+        return supportsPassive;
+    };
 
 var H: typeof Highcharts = {
     product: 'Highcharts',
@@ -185,10 +202,11 @@ var H: typeof Highcharts = {
     chartCount: 0,
     seriesTypes: {} as Highcharts.SeriesTypesDictionary,
     symbolSizes: {},
+    supportPassiveEvents: checkPassiveEvents(),
     svg: svg,
     win: glob,
     marginNames: ['plotTop', 'marginRight', 'marginBottom', 'plotLeft'],
-    noop: function (): void {},
+    noop: noop,
 
     /**
      * Theme options that should get applied to the chart. In module mode it

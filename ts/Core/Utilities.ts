@@ -3025,8 +3025,12 @@ const addEvent = H.addEvent = function<T> (
     }
 
     // Handle DOM events
+    // If the browser supports passive events, add it to improve performance
+    // on touch events (#11353).
     if (addEventListener) {
-        addEventListener.call(el, type, fn, false);
+        addEventListener.call(el, type, fn, H.supportPassiveEvents ? {
+            passive: type.indexOf('touch') !== -1, capture: false
+        } : false);
     }
 
     if (!events[type]) {
