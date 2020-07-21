@@ -65,7 +65,7 @@ const SOURCE_GLOBS = [
     'js/Series/SunburstSeries.js',
     'js/Series/TimelineSeries.js',
     'js/Extensions/Annotations/Annotations.js',
-    'js/Extensions/Annotations/Mixins/controllableMixin.js',
+    'js/Extensions/Annotations/Mixins/ControllableMixin.js',
     'js/Extensions/Annotations/ControlPoint.js',
     'js/Extensions/Annotations/NavigationBindings.js'
 ];
