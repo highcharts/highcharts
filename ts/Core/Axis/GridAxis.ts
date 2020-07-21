@@ -199,13 +199,11 @@ Axis.prototype.getMaxLabelDimensions = function (
 
             // Find width and height of tick
             tickHeight = label.getBBox ? label.getBBox().height : 0;
-            if (label.textStr && !isNumber(label.textPxLength)) {
-                label.textPxLength = label.getBBox().width;
+            if (label.textStr) {
+                // Set the tickWidth same as the label
+                // width after ellipsis applied #10281
+                tickWidth = label.getBBox().width;
             }
-            tickWidth = isNumber(label.textPxLength) ?
-                // Math.round ensures crisp lines
-                Math.round(label.textPxLength) :
-                0;
 
             // Update the result if width and/or height are larger
             dimensions.height = Math.max(tickHeight, dimensions.height);
