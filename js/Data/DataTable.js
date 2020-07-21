@@ -12,7 +12,7 @@
 'use strict';
 import DataRow from './DataRow.js';
 import U from '../Core/Utilities.js';
-var fireEvent = U.fireEvent, uniqueKey = U.uniqueKey;
+var addEvent = U.addEvent, fireEvent = U.fireEvent, uniqueKey = U.uniqueKey;
 /** eslint-disable valid-jsdoc */
 /**
  * @private
@@ -87,6 +87,9 @@ var DataTable = /** @class */ (function () {
     };
     DataTable.prototype.getVersion = function () {
         return this.version || (this.version = 0);
+    };
+    DataTable.prototype.on = function (event, callback) {
+        return addEvent(this, event, callback);
     };
     DataTable.prototype.setAbsolute = function (dataRow, index) {
         if (index === void 0) { index = this.absoluteLength; }

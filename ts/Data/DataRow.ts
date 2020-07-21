@@ -54,66 +54,77 @@ class DataRow {
      *
      * */
 
-    public addColumn(key: string, value: DataRow.ColumnTypes): boolean {
+    public add(columnKey: string, columnValue: DataRow.ColumnTypes): boolean {
         const row = this;
-        if (row.getColumnKeys().indexOf(key) !== -1) {
+        if (row.getColumnKeys().indexOf(columnKey) !== -1) {
             return false;
         }
         fireEvent(
             row,
             'newColumn',
-            { key, value },
+            { columnKey, columnValue },
             function (e: DataRow.ColumnEventObject): void {
-                row.columns[e.key] = e.value;
+                row.columns[e.columnKey] = e.columnValue;
             }
         );
         return true;
     }
 
-    public getColumn(key: string): DataRow.ColumnTypes {
-        return this.columns[key];
+    public get(columnKey: string): DataRow.ColumnTypes {
+        return this.columns[columnKey];
     }
 
-    public getColumnAsBoolean(key: string): boolean {
-        return this.converter.toBoolean(this.getColumn(key));
+    public getBoolean(columnKey: string): boolean {
+        return this.converter.toBoolean(this.get(columnKey));
     }
 
-    public getColumnAsDataTable(key: string): DataTable {
-        return this.converter.toDataTable(this.getColumn(key));
+    public getDataTable(columnKey: string): DataTable {
+        return this.converter.toDataTable(this.get(columnKey));
     }
 
-    public getColumnAsDate(key: string): Date {
-        return this.converter.toDate(this.getColumn(key));
+    public getDate(columnKey: string): Date {
+        return this.converter.toDate(this.get(columnKey));
     }
 
-    public getColumnAsNumber(key: string): number {
-        return this.converter.toNumber(this.getColumn(key));
+    public getNumber(columnKey: string): number {
+        return this.converter.toNumber(this.get(columnKey));
     }
 
-    public getColumnAsString(key: string): string {
-        return this.converter.toString(this.getColumn(key));
+    public getString(columnKey: string): string {
+        return this.converter.toString(this.get(columnKey));
     }
 
     public getColumnKeys(unfiltered: boolean = false): Array<string> {
         return Object.keys(this.columns).reverse();
     }
 
-    public on(event: DataRow.ColumnEvents, listener: DataRow.ColumnEventListener): Function {
-        return addEvent(this, event, listener);
+    public on(
+        event: DataRow.ColumnEvents,
+        callback: DataRow.ColumnEventListener
+    ): Function {
+        return addEvent(this, event, callback);
     }
 
-    public removeColumn(key: string): void {
-        delete this.columns[key];
+    public remove(columnKey: string): void {
+        const row = this;
+        fireEvent(
+            row,
+            'deleteColumn',
+            { columnKey, columnValue: row.columns[columnKey] },
+            function (e: DataRow.ColumnEventObject): void {
+                delete row.columns[e.columnKey];
+            }
+        );
     }
 
-    public setColumn(key: string, value: DataRow.ColumnTypes): void {
+    public set(columnKey: string, columnValue: DataRow.ColumnTypes): void {
         const row = this;
         fireEvent(
             row,
             'changeColumn',
-            { key, value },
+            { columnKey, columnValue },
             function (e: DataRow.ColumnEventObject): void {
-                row.columns[e.key] = e.value;
+                row.columns[e.columnKey] = e.columnValue;
             }
         );
     }
@@ -123,13 +134,13 @@ class DataRow {
 namespace DataRow {
     export type Columns = Record<string, ColumnTypes>;
     export type ColumnTypes = (boolean|null|number|string|Date|DataTable|undefined);
-    export type ColumnEvents = ('changeColumn'|'deleteColumn'|'addColumn');
+    export type ColumnEvents = ('changeColumn'|'deleteColumn'|'newColumn');
     export interface ColumnEventListener {
         (this: DataRow, e: ColumnEventObject): void;
     }
     export interface ColumnEventObject {
-        key: string;
-        value: ColumnTypes;
+        columnKey: string;
+        columnValue: ColumnTypes;
     }
 }
 

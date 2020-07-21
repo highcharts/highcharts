@@ -15,6 +15,7 @@
 import DataRow from './DataRow.js';
 import U from '../Core/Utilities.js';
 const {
+    addEvent,
     fireEvent,
     uniqueKey
 } = U;
@@ -124,6 +125,13 @@ class DataTable {
         return this.version || (this.version = 0);
     }
 
+    public on(
+        event: DataTable.RowEvents,
+        callback: DataTable.RowEventListener
+    ): Function {
+        return addEvent(this, event, callback);
+    }
+
     public setAbsolute(
         dataRow: DataRow,
         index: number = this.absoluteLength
@@ -167,6 +175,10 @@ class DataTable {
 }
 
 namespace DataTable {
+    export type RowEvents = ('newDataRow');
+    export interface RowEventListener {
+        (this: DataTable, e: RowEventObject): void;
+    }
     export interface RowEventObject {
         dataRow: DataRow;
         index: number;
