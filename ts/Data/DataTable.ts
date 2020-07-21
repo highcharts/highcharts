@@ -12,9 +12,11 @@
 
 'use strict';
 
+import DataRow from './DataRow.js';
 import U from '../Core/Utilities.js';
 const {
-    fireEvent
+    fireEvent,
+    uniqueKey
 } = U;
 
 /** eslint-disable valid-jsdoc */
@@ -22,7 +24,41 @@ const {
 /**
  * @private
  */
-class DataTable<T> {
+class DataTable {
+
+    /* *
+     *
+     *  Static Functions
+     *
+     * */
+
+    public static parse(json: DataTable.TableJSON): DataTable {
+        try {
+            const rows: Array<DataRow> = [];
+            for (let i = 0, iEnd = json.length; i < iEnd; ++i) {
+                rows[i] = DataTable.parseRow(json[i]);
+            }
+            return new DataTable(rows);
+        } catch (error) {
+            return new DataTable();
+        }
+    }
+
+    private static parseRow(json: DataTable.TableRowJSON): DataRow {
+        const columns: DataRow.Columns = {};
+        const keys = Object.keys(json);
+        let key: (string|undefined);
+        let value;
+        while (typeof (key = keys.pop()) !== 'undefined') {
+            value = json[key];
+            if (value instanceof Array) {
+                columns[key] = DataTable.parse(value);
+            } else {
+                columns[key] = value;
+            }
+        }
+        return new DataRow(columns);
+    }
 
     /* *
      *
@@ -30,10 +66,11 @@ class DataTable<T> {
      *
      * */
 
-    public constructor(dataSet: DataTable.Set<T>) {
-        this.dataSet = dataSet;
-        this.absoluteLength = dataSet.length;
-        this.relativeLength = dataSet.length;
+    public constructor(rows: Array<DataRow> = []) {
+        this.id = uniqueKey();
+        this.rows = rows;
+        this.absoluteLength = rows.length;
+        this.relativeLength = rows.length;
         this.relativeStart = 0;
     }
 
@@ -43,13 +80,17 @@ class DataTable<T> {
      *
      * */
 
-    private dataSet: DataTable.Set<T>;
+    public readonly id: string;
 
     public absoluteLength: number;
 
     public relativeLength: number;
 
     public relativeStart: number;
+
+    private rows: Array<DataRow>;
+
+    private version?: number;
 
     /* *
      *
@@ -67,41 +108,75 @@ class DataTable<T> {
         return this.relativeStart + relativeIndex;
     }
 
-    public getAbsolute(index: number): DataTable.Row<T> {
-        return this.dataSet[index];
+    public clear(): void {
+        this.rows.length = 0;
     }
 
-    public getRelative(index: number): DataTable.Row<T> {
-        return this.dataSet[this.absolutePosition(index)];
+    public getAbsolute(index: number): DataRow {
+        return this.rows[index];
+    }
+
+    public getRelative(index: number): DataRow {
+        return this.rows[this.absolutePosition(index)];
+    }
+
+    public getVersion(): number {
+        return this.version || (this.version = 0);
     }
 
     public setAbsolute(
-        dataRow: DataTable.Row<T>,
+        dataRow: DataRow,
         index: number = this.absoluteLength
-    ): DataTable<T> {
-        this.dataSet[index] = dataRow;
-        ++this.absoluteLength;
-        fireEvent(this, 'newDataRow', { dataRow, index });
-        return this;
+    ): number {
+        const table = this;
+        fireEvent(
+            table,
+            'newDataRow',
+            { dataRow, index },
+            function (e: DataTable.RowEventObject): void {
+                table.rows[e.index] = e.dataRow;
+                table.absoluteLength = table.rows.length;
+            }
+        );
+        return index;
     }
 
     public setRelative(
-        dataRow: DataTable.Row<T>,
+        dataRow: DataRow,
         index: number = this.relativeLength
-    ): DataTable<T> {
-        index = this.absolutePosition(index);
-        this.dataSet[index] = dataRow;
-        ++this.absoluteLength;
-        ++this.relativeLength;
-        fireEvent(this, 'newDataRow', { dataRow, index });
-        return this;
+    ): number {
+        const table = this;
+        index = table.absolutePosition(index);
+        fireEvent(
+            table,
+            'newDataRow',
+            { dataRow, index },
+            function (e: DataTable.RowEventObject): void {
+                table.rows[e.index] = e.dataRow;
+                table.absoluteLength = table.rows.length;
+                ++table.relativeLength;
+            }
+        );
+        return index;
+    }
+
+    public toString(): string {
+        return JSON.stringify(this.rows);
     }
 
 }
 
 namespace DataTable {
-    export type Row<T> = Record<string, T>;
-    export type Set<T> = Array<DataTable.Row<T>>;
+    export interface RowEventObject {
+        dataRow: DataRow;
+        index: number;
+    }
+    export interface TableJSON extends Array<TableRowJSON> {
+        [key: number]: TableRowJSON;
+    }
+    export interface TableRowJSON {
+        [key: string]: (boolean|null|number|string|TableJSON);
+    }
 }
 
 export default DataTable;
