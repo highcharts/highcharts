@@ -62,7 +62,7 @@ class DataConverter {
             return parseFloat(value);
         }
         if (value instanceof DataTable) {
-            return value.absoluteLength;
+            return value.getRowCount();
         }
         if (value instanceof Date) {
             return value.getDate();

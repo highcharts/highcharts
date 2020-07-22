@@ -26,10 +26,16 @@ var DataTable = /** @class */ (function () {
     function DataTable(rows) {
         if (rows === void 0) { rows = []; }
         this.id = uniqueKey();
-        this.rows = rows;
-        this.absoluteLength = rows.length;
-        this.relativeLength = rows.length;
-        this.relativeStart = 0;
+        this.rows = rows.slice();
+        this.rowsIdMap = {};
+        this.watchsIdMap = {};
+        var rowsIdMap = this.rowsIdMap = {};
+        var row;
+        for (var i = 0, iEnd = rows.length; i < iEnd; ++i) {
+            row = rows[i];
+            rowsIdMap[row.id] = row;
+            this.insert(row);
+        }
     }
     /* *
      *
@@ -49,7 +55,7 @@ var DataTable = /** @class */ (function () {
         }
     };
     DataTable.parseRow = function (json) {
-        var columns = {};
+        var columns = { id: uniqueKey() };
         var keys = Object.keys(json);
         var key;
         var value;
@@ -69,50 +75,84 @@ var DataTable = /** @class */ (function () {
      *  Functions
      *
      * */
-    DataTable.prototype.absolutePosition = function (relativeIndex) {
-        if (relativeIndex < 0 &&
-            this.relativeStart < Math.abs(relativeIndex)) {
-            return this.absoluteLength + this.relativeStart + relativeIndex;
-        }
-        return this.relativeStart + relativeIndex;
-    };
     DataTable.prototype.clear = function () {
-        this.rows.length = 0;
+        var rowIds = this.getRowIds();
+        for (var i = 0, iEnd = rowIds.length; i < iEnd; ++i) {
+            this.delete(rowIds[i]);
+        }
     };
-    DataTable.prototype.getAbsolute = function (index) {
+    DataTable.prototype.delete = function (id) {
+        var table = this;
+        var row = table.rowsIdMap[id];
+        var rowId = row.id;
+        var index = table.rows.indexOf(row);
+        fireEvent(table, 'deleteRow', { index: index, row: row }, function () {
+            table.rows[index] = row;
+            delete table.rowsIdMap[rowId];
+            table.unwatch(rowId);
+            fireEvent(table, 'afterDeleteRow', { index: index, row: row });
+        });
+        return row;
+    };
+    DataTable.prototype.getAllRows = function () {
+        return this.rows.slice();
+    };
+    DataTable.prototype.getById = function (id) {
+        return this.rowsIdMap[id];
+    };
+    DataTable.prototype.getByIndex = function (index) {
         return this.rows[index];
     };
-    DataTable.prototype.getRelative = function (index) {
-        return this.rows[this.absolutePosition(index)];
+    /**
+     * @todo Consider implementation via property getter `.length` depending on
+     *       browser support.
+     * @return {number}
+     * Number of rows in this table.
+     */
+    DataTable.prototype.getRowCount = function () {
+        return this.rows.length;
     };
-    DataTable.prototype.getVersion = function () {
-        return this.version || (this.version = 0);
+    DataTable.prototype.getRowIds = function () {
+        return Object.keys(this.rowsIdMap);
+    };
+    DataTable.prototype.getVersionId = function () {
+        return this.versionId || (this.versionId = uniqueKey());
+    };
+    DataTable.prototype.insert = function (row) {
+        var table = this;
+        var index = table.rows.length;
+        if (typeof table.rowsIdMap[row.id] !== 'undefined') {
+            return false;
+        }
+        fireEvent(table, 'insertRow', { index: index, row: row }, function () {
+            table.rows.push(row);
+            table.rowsIdMap[row.id] = row;
+            table.watch(row);
+            fireEvent(table, 'afterInsertRow', { index: index, row: row });
+        });
+        return true;
     };
     DataTable.prototype.on = function (event, callback) {
         return addEvent(this, event, callback);
     };
-    DataTable.prototype.setAbsolute = function (dataRow, index) {
-        if (index === void 0) { index = this.absoluteLength; }
+    DataTable.prototype.watch = function (row) {
         var table = this;
-        fireEvent(table, 'newDataRow', { dataRow: dataRow, index: index }, function (e) {
-            table.rows[e.index] = e.dataRow;
-            table.absoluteLength = table.rows.length;
+        var index = table.rows.indexOf(row);
+        var watchsIdMap = table.watchsIdMap;
+        watchsIdMap[row.id] = row.on('afterUpdateColumn', function () {
+            table.versionId = uniqueKey();
+            fireEvent(table, 'afterUpdateRow', { index: index, row: row });
         });
-        return index;
-    };
-    DataTable.prototype.setRelative = function (dataRow, index) {
-        if (index === void 0) { index = this.relativeLength; }
-        var table = this;
-        index = table.absolutePosition(index);
-        fireEvent(table, 'newDataRow', { dataRow: dataRow, index: index }, function (e) {
-            table.rows[e.index] = e.dataRow;
-            table.absoluteLength = table.rows.length;
-            ++table.relativeLength;
-        });
-        return index;
     };
     DataTable.prototype.toString = function () {
         return JSON.stringify(this.rows);
+    };
+    DataTable.prototype.unwatch = function (rowId) {
+        var watchsIdMap = this.watchsIdMap;
+        if (watchsIdMap[rowId]) {
+            watchsIdMap[rowId]();
+            delete watchsIdMap[rowId];
+        }
     };
     return DataTable;
 }());

@@ -32,7 +32,7 @@ class GoogleDataStore implements DataStore {
     public constructor(dataSet: DataTable) {
         this.rows = dataSet;
         this.metadata = [];
-        this.length = this.rows.absoluteLength;
+        this.length = this.rows.getRowCount();
     }
 
     /* *
@@ -86,4 +86,4 @@ class GoogleDataStore implements DataStore {
     }
 }
 
-export default DataStore;
+export default GoogleDataStore;

@@ -17,7 +17,9 @@ import DataConverter from './DataConverter.js';
 import U from '../Core/Utilities.js';
 const {
     addEvent,
-    fireEvent
+    fireEvent,
+    merge,
+    uniqueKey
 } = U;
 
 /** eslint-disable valid-jsdoc */
@@ -34,8 +36,16 @@ class DataRow {
         columns: DataRow.Columns = {},
         converter: DataConverter = new DataConverter()
     ) {
-        this.columns = columns;
+        this.columns = columns = merge(columns);
         this.converter = converter;
+
+        if (typeof columns.id === 'string') {
+            this.id = columns.id;
+        } else {
+            this.id = uniqueKey();
+        }
+
+        delete columns.id;
     }
 
     /* *
@@ -48,54 +58,85 @@ class DataRow {
 
     private converter: DataConverter;
 
+    public readonly id: string;
+
     /* *
      *
      *  Functions
      *
      * */
 
-    public add(columnKey: string, columnValue: DataRow.ColumnTypes): boolean {
+    public clear(): void {
+        const columnKeys = this.getColumnKeys();
+    }
+
+    public delete(columnKey: string): void {
         const row = this;
-        if (row.getColumnKeys().indexOf(columnKey) !== -1) {
-            return false;
+        const columnValue = row.columns[columnKey];
+        if (columnKey === 'id') {
+            return;
         }
         fireEvent(
             row,
-            'newColumn',
+            'deleteColumn',
             { columnKey, columnValue },
             function (e: DataRow.ColumnEventObject): void {
-                row.columns[e.columnKey] = e.columnValue;
+                delete row.columns[e.columnKey];
+                fireEvent(row, 'afterDeleteColumn', { columnKey, columnValue });
             }
         );
-        return true;
     }
 
     public get(columnKey: string): DataRow.ColumnTypes {
         return this.columns[columnKey];
     }
 
-    public getBoolean(columnKey: string): boolean {
+    public getAllColumns(): DataRow.Columns {
+        return merge(this.columns);
+    }
+
+    public getAsBoolean(columnKey: string): boolean {
         return this.converter.toBoolean(this.get(columnKey));
     }
 
-    public getDataTable(columnKey: string): DataTable {
+    public getAsDataTable(columnKey: string): DataTable {
         return this.converter.toDataTable(this.get(columnKey));
     }
 
-    public getDate(columnKey: string): Date {
+    public getAsDate(columnKey: string): Date {
         return this.converter.toDate(this.get(columnKey));
     }
 
-    public getNumber(columnKey: string): number {
+    public getAsNumber(columnKey: string): number {
         return this.converter.toNumber(this.get(columnKey));
     }
 
-    public getString(columnKey: string): string {
+    public getAsString(columnKey: string): string {
         return this.converter.toString(this.get(columnKey));
     }
 
     public getColumnKeys(unfiltered: boolean = false): Array<string> {
         return Object.keys(this.columns).reverse();
+    }
+
+    public insert(columnKey: string, columnValue: DataRow.ColumnTypes): boolean {
+        const row = this;
+        if (
+            columnKey === 'id' ||
+            row.getColumnKeys().indexOf(columnKey) !== -1
+        ) {
+            return false;
+        }
+        fireEvent(
+            row,
+            'insertColumn',
+            { columnKey, columnValue },
+            function (): void {
+                row.columns[columnKey] = columnValue;
+                fireEvent(row, 'afterInsertColumn', { columnKey, columnValue });
+            }
+        );
+        return true;
     }
 
     public on(
@@ -105,26 +146,18 @@ class DataRow {
         return addEvent(this, event, callback);
     }
 
-    public remove(columnKey: string): void {
+    public update(columnKey: string, columnValue: DataRow.ColumnTypes): void {
         const row = this;
+        if (columnKey === 'id') {
+            return;
+        }
         fireEvent(
             row,
-            'deleteColumn',
-            { columnKey, columnValue: row.columns[columnKey] },
-            function (e: DataRow.ColumnEventObject): void {
-                delete row.columns[e.columnKey];
-            }
-        );
-    }
-
-    public set(columnKey: string, columnValue: DataRow.ColumnTypes): void {
-        const row = this;
-        fireEvent(
-            row,
-            'changeColumn',
+            'updateColumn',
             { columnKey, columnValue },
-            function (e: DataRow.ColumnEventObject): void {
-                row.columns[e.columnKey] = e.columnValue;
+            function (): void {
+                row.columns[columnKey] = columnValue;
+                fireEvent(row, 'afterUpdateColumn', { columnKey, columnValue });
             }
         );
     }
@@ -132,15 +165,17 @@ class DataRow {
 }
 
 namespace DataRow {
+    export type ColumnEvents = (
+        'afterDeleteColumn'|'afterInsertColumn'|'afterUpdateColumn'|'deleteColumn'|'insertColumn'|'updateColumn'
+    );
     export type Columns = Record<string, ColumnTypes>;
     export type ColumnTypes = (boolean|null|number|string|Date|DataTable|undefined);
-    export type ColumnEvents = ('changeColumn'|'deleteColumn'|'newColumn');
     export interface ColumnEventListener {
         (this: DataRow, e: ColumnEventObject): void;
     }
     export interface ColumnEventObject {
-        columnKey: string;
-        columnValue: ColumnTypes;
+        readonly columnKey: string;
+        readonly columnValue: ColumnTypes;
     }
 }
 

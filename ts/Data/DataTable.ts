@@ -46,7 +46,7 @@ class DataTable {
     }
 
     private static parseRow(json: DataTable.TableRowJSON): DataRow {
-        const columns: DataRow.Columns = {};
+        const columns: DataRow.Columns = { id: uniqueKey() };
         const keys = Object.keys(json);
         let key: (string|undefined);
         let value;
@@ -69,10 +69,18 @@ class DataTable {
 
     public constructor(rows: Array<DataRow> = []) {
         this.id = uniqueKey();
-        this.rows = rows;
-        this.absoluteLength = rows.length;
-        this.relativeLength = rows.length;
-        this.relativeStart = 0;
+        this.rows = rows.slice();
+        this.rowsIdMap = {};
+        this.watchsIdMap = {};
+
+        const rowsIdMap: Record<string, DataRow> = this.rowsIdMap = {};
+        let row: DataRow;
+
+        for (let i = 0, iEnd = rows.length; i < iEnd; ++i) {
+            row = rows[i];
+            rowsIdMap[row.id] = row;
+            this.insert(row);
+        }
     }
 
     /* *
@@ -83,15 +91,13 @@ class DataTable {
 
     public readonly id: string;
 
-    public absoluteLength: number;
-
-    public relativeLength: number;
-
-    public relativeStart: number;
-
     private rows: Array<DataRow>;
 
-    private version?: number;
+    private rowsIdMap: Record<string, DataRow>;
+
+    private versionId?: string;
+
+    private watchsIdMap: Record<string, Function>;
 
     /* *
      *
@@ -99,30 +105,80 @@ class DataTable {
      *
      * */
 
-    private absolutePosition(relativeIndex: number): number {
-        if (
-            relativeIndex < 0 &&
-            this.relativeStart < Math.abs(relativeIndex)
-        ) {
-            return this.absoluteLength + this.relativeStart + relativeIndex;
-        }
-        return this.relativeStart + relativeIndex;
-    }
-
     public clear(): void {
-        this.rows.length = 0;
+        const rowIds = this.getRowIds();
+        for (var i = 0, iEnd = rowIds.length; i < iEnd; ++i) {
+            this.delete(rowIds[i]);
+        }
     }
 
-    public getAbsolute(index: number): DataRow {
+    public delete(id: string): DataRow {
+        const table = this;
+        const row = table.rowsIdMap[id];
+        const rowId = row.id;
+        const index = table.rows.indexOf(row);
+        fireEvent(
+            table,
+            'deleteRow',
+            { index, row },
+            function (): void {
+                table.rows[index] = row;
+                delete table.rowsIdMap[rowId];
+                table.unwatch(rowId);
+                fireEvent(table, 'afterDeleteRow', { index, row });
+            }
+        );
+        return row;
+    }
+
+    public getAllRows(): Array<DataRow> {
+        return this.rows.slice();
+    }
+
+    public getById(id: string): (DataRow|undefined) {
+        return this.rowsIdMap[id];
+    }
+
+    public getByIndex(index: number): (DataRow|undefined) {
         return this.rows[index];
     }
 
-    public getRelative(index: number): DataRow {
-        return this.rows[this.absolutePosition(index)];
+    /**
+     * @todo Consider implementation via property getter `.length` depending on
+     *       browser support.
+     * @return {number}
+     * Number of rows in this table.
+     */
+    public getRowCount(): number {
+        return this.rows.length;
     }
 
-    public getVersion(): number {
-        return this.version || (this.version = 0);
+    public getRowIds(): Array<string> {
+        return Object.keys(this.rowsIdMap);
+    }
+
+    public getVersionId(): string {
+        return this.versionId || (this.versionId = uniqueKey());
+    }
+
+    public insert(row: DataRow): boolean {
+        const table = this;
+        const index = table.rows.length;
+        if (typeof table.rowsIdMap[row.id] !== 'undefined') {
+            return false;
+        }
+        fireEvent(
+            table,
+            'insertRow',
+            { index, row },
+            function (): void {
+                table.rows.push(row);
+                table.rowsIdMap[row.id] = row;
+                table.watch(row);
+                fireEvent(table, 'afterInsertRow', { index, row });
+            }
+        );
+        return true;
     }
 
     public on(
@@ -132,56 +188,41 @@ class DataTable {
         return addEvent(this, event, callback);
     }
 
-    public setAbsolute(
-        dataRow: DataRow,
-        index: number = this.absoluteLength
-    ): number {
+    private watch(row: DataRow): void {
         const table = this;
-        fireEvent(
-            table,
-            'newDataRow',
-            { dataRow, index },
-            function (e: DataTable.RowEventObject): void {
-                table.rows[e.index] = e.dataRow;
-                table.absoluteLength = table.rows.length;
+        const index = table.rows.indexOf(row);
+        const watchsIdMap = table.watchsIdMap;
+        watchsIdMap[row.id] = row.on(
+            'afterUpdateColumn',
+            function (): void {
+                table.versionId = uniqueKey();
+                fireEvent(table, 'afterUpdateRow', { index, row });
             }
         );
-        return index;
-    }
-
-    public setRelative(
-        dataRow: DataRow,
-        index: number = this.relativeLength
-    ): number {
-        const table = this;
-        index = table.absolutePosition(index);
-        fireEvent(
-            table,
-            'newDataRow',
-            { dataRow, index },
-            function (e: DataTable.RowEventObject): void {
-                table.rows[e.index] = e.dataRow;
-                table.absoluteLength = table.rows.length;
-                ++table.relativeLength;
-            }
-        );
-        return index;
     }
 
     public toString(): string {
         return JSON.stringify(this.rows);
     }
 
+    private unwatch(rowId: string): void {
+        const watchsIdMap = this.watchsIdMap;
+        if (watchsIdMap[rowId]) {
+            watchsIdMap[rowId]();
+            delete watchsIdMap[rowId];
+        }
+    }
+
 }
 
 namespace DataTable {
-    export type RowEvents = ('newDataRow');
+    export type RowEvents = ('afterDeleteRow'|'afterInsertRow'|'afterUpdateRow'|'deleteRow'|'insertRow');
     export interface RowEventListener {
         (this: DataTable, e: RowEventObject): void;
     }
     export interface RowEventObject {
-        dataRow: DataRow;
-        index: number;
+        readonly index: number;
+        readonly row: DataRow;
     }
     export interface TableJSON extends Array<TableRowJSON> {
         [key: number]: TableRowJSON;

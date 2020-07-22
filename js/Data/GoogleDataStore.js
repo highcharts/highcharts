@@ -23,7 +23,7 @@ var GoogleDataStore = /** @class */ (function () {
     function GoogleDataStore(dataSet) {
         this.rows = dataSet;
         this.metadata = [];
-        this.length = this.rows.absoluteLength;
+        this.length = this.rows.getRowCount();
     }
     /* *
     *
@@ -52,3 +52,4 @@ var GoogleDataStore = /** @class */ (function () {
     };
     return GoogleDataStore;
 }());
+export default GoogleDataStore;
