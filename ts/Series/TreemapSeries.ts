@@ -987,44 +987,45 @@ seriesType<Highcharts.TreemapSeries>(
             options: Highcharts.TreemapSeriesOptions
         ): void {
             var series = this,
-                colorMapSeriesMixin = H.colorMapSeriesMixin;
+                colorMapSeriesMixin = H.colorMapSeriesMixin,
+                setOptionsEvent;
 
             // If color series logic is loaded, add some properties
             if (colorMapSeriesMixin) {
                 this.colorAttribs = colorMapSeriesMixin.colorAttribs;
             }
 
-            // Handle deprecated options.
-            series.eventsToUnbind.push(
-                addEvent(series, 'setOptions', function (
-                    event: {
-                        userOptions: Highcharts.TreemapSeriesOptions;
-                    }
-                ): void {
-                    var options = event.userOptions;
+            setOptionsEvent = addEvent(series, 'setOptions', function (
+                event: {
+                    userOptions: Highcharts.TreemapSeriesOptions;
+                }
+            ): void {
+                var options = event.userOptions;
 
-                    if (
-                        defined(options.allowDrillToNode) &&
-                        !defined(options.allowTraversingTree)
-                    ) {
-                        options.allowTraversingTree = options.allowDrillToNode;
-                        delete options.allowDrillToNode;
-                    }
+                if (
+                    defined(options.allowDrillToNode) &&
+                    !defined(options.allowTraversingTree)
+                ) {
+                    options.allowTraversingTree = options.allowDrillToNode;
+                    delete options.allowDrillToNode;
+                }
 
-                    if (
-                        defined(options.drillUpButton) &&
-                        !defined(options.traverseUpButton)
-                    ) {
-                        options.traverseUpButton = options.drillUpButton;
-                        delete options.drillUpButton;
-                    }
-                })
-            );
+                if (
+                    defined(options.drillUpButton) &&
+                    !defined(options.traverseUpButton)
+                ) {
+                    options.traverseUpButton = options.drillUpButton;
+                    delete options.drillUpButton;
+                }
+            });
 
             Series.prototype.init.call(series, chart, options);
 
             // Treemap's opacity is a different option from other series
             delete series.opacity;
+
+            // Handle deprecated options.
+            series.eventsToUnbind.push(setOptionsEvent);
 
             if (series.options.allowTraversingTree) {
                 series.eventsToUnbind.push(

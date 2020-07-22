@@ -2666,7 +2666,6 @@ null,
     colorCounter: 0,
     cropShoulder: 1,
     directTouch: false,
-    eventsToUnbind: [],
     isCartesian: true,
     // each point's x and y values are stored in this.xData and this.yData
     parallelArrays: ['x', 'y'],
@@ -2680,6 +2679,10 @@ null,
         // programmatically). These are updated through Series.update()
         // (#10861).
         this.eventOptions = this.eventOptions || {};
+        // The 'eventsToUnbind' property moved from prototype into the
+        // Series init to avoid reference to the same array between
+        // the different series and charts. #12959, #13937
+        this.eventsToUnbind = [];
         /**
          * Read only. The chart that the series belongs to.
          *
