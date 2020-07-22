@@ -68,18 +68,19 @@ class DataTable {
      * */
 
     public constructor(rows: Array<DataRow> = []) {
+        const rowsIdMap: Record<string, DataRow> = {};
+
+        let row: DataRow;
+
         this.id = uniqueKey();
         this.rows = rows.slice();
-        this.rowsIdMap = {};
+        this.rowsIdMap = rowsIdMap;
         this.watchsIdMap = {};
-
-        const rowsIdMap: Record<string, DataRow> = this.rowsIdMap = {};
-        let row: DataRow;
 
         for (let i = 0, iEnd = rows.length; i < iEnd; ++i) {
             row = rows[i];
             rowsIdMap[row.id] = row;
-            this.insert(row);
+            this.watchRow(row);
         }
     }
 
@@ -97,7 +98,7 @@ class DataTable {
 
     private versionId?: string;
 
-    private watchsIdMap: Record<string, Function>;
+    private watchsIdMap: Record<string, Array<Function>>;
 
     /* *
      *
@@ -106,40 +107,59 @@ class DataTable {
      * */
 
     public clear(): void {
-        const rowIds = this.getRowIds();
-        for (var i = 0, iEnd = rowIds.length; i < iEnd; ++i) {
-            this.delete(rowIds[i]);
-        }
+        const table = this;
+        const row = table.getRowByIndex(0);
+        const index = 0;
+        fireEvent(
+            row,
+            'clearTable',
+            { index, row },
+            function (): void {
+                const rowIds = table.getRowIds();
+                for (let i = 0, iEnd = rowIds.length; i < iEnd; ++i) {
+                    table.unwatchRow(rowIds[i], true);
+                }
+                table.rows.length = 0;
+                table.rowsIdMap = {};
+                table.watchsIdMap = {};
+                fireEvent(row, 'afterClearTable', { index, row });
+            }
+        );
     }
 
-    public delete(id: string): DataRow {
+    public deleteRow(id: string): (DataRow|undefined) {
         const table = this;
         const row = table.rowsIdMap[id];
-        const rowId = row.id;
         const index = table.rows.indexOf(row);
+
+        let result: (DataRow|undefined);
+
         fireEvent(
             table,
             'deleteRow',
             { index, row },
             function (): void {
+                const rowId = row.id;
                 table.rows[index] = row;
                 delete table.rowsIdMap[rowId];
-                table.unwatch(rowId);
+                table.unwatchRow(rowId);
+                result = row;
                 fireEvent(table, 'afterDeleteRow', { index, row });
             }
         );
-        return row;
+
+        return result;
     }
 
     public getAllRows(): Array<DataRow> {
         return this.rows.slice();
     }
 
-    public getById(id: string): (DataRow|undefined) {
+    public getRowById(id: string): (DataRow|undefined) {
         return this.rowsIdMap[id];
     }
 
-    public getByIndex(index: number): (DataRow|undefined) {
+    public getRowByIndex(index: number): (DataRow|undefined) {
         return this.rows[index];
     }
 
@@ -161,24 +181,31 @@ class DataTable {
         return this.versionId || (this.versionId = uniqueKey());
     }
 
-    public insert(row: DataRow): boolean {
+    public insertRow(row: DataRow): boolean {
         const table = this;
+        const rowId = row.id;
         const index = table.rows.length;
-        if (typeof table.rowsIdMap[row.id] !== 'undefined') {
-            return false;
+
+        let succeeded = false;
+
+        if (typeof table.rowsIdMap[rowId] !== 'undefined') {
+            return succeeded;
         }
+
         fireEvent(
             table,
             'insertRow',
             { index, row },
             function (): void {
                 table.rows.push(row);
-                table.rowsIdMap[row.id] = row;
-                table.watch(row);
+                table.rowsIdMap[rowId] = row;
+                table.watchRow(row);
+                succeeded = true;
                 fireEvent(table, 'afterInsertRow', { index, row });
             }
         );
-        return true;
+
+        return succeeded;
     }
 
     public on(
@@ -188,27 +215,39 @@ class DataTable {
         return addEvent(this, event, callback);
     }
 
-    private watch(row: DataRow): void {
+    private watchRow(row: DataRow): void {
+
+        /** @private */
+        function callback(): void {
+            table.versionId = uniqueKey();
+            fireEvent(table, 'afterUpdateRow', { index, row });
+        }
+
         const table = this;
         const index = table.rows.indexOf(row);
         const watchsIdMap = table.watchsIdMap;
-        watchsIdMap[row.id] = row.on(
-            'afterUpdateColumn',
-            function (): void {
-                table.versionId = uniqueKey();
-                fireEvent(table, 'afterUpdateRow', { index, row });
-            }
-        );
+        const watchs: Array<Function> = [];
+
+        watchs.push(row.on('afterDeleteColumn', callback));
+        watchs.push(row.on('afterInsertColumn', callback));
+        watchs.push(row.on('afterUpdateColumn', callback));
+
+        watchsIdMap[row.id] = watchs;
     }
 
     public toString(): string {
         return JSON.stringify(this.rows);
     }
 
-    private unwatch(rowId: string): void {
+    private unwatchRow(rowId: string, skipDelete?: boolean): void {
         const watchsIdMap = this.watchsIdMap;
-        if (watchsIdMap[rowId]) {
-            watchsIdMap[rowId]();
+        const watchs = watchsIdMap[rowId] || [];
+
+        for (let i = 0, iEnd = watchs.length; i < iEnd; ++i) {
+            watchs[i]();
+        }
+
+        if (!skipDelete) {
             delete watchsIdMap[rowId];
         }
     }
@@ -216,7 +255,12 @@ class DataTable {
 }
 
 namespace DataTable {
-    export type RowEvents = ('afterDeleteRow'|'afterInsertRow'|'afterUpdateRow'|'deleteRow'|'insertRow');
+    export type RowEvents = (
+        'clearTable'|'afterClearTable'|
+        'deleteRow'|'afterDeleteRow'|
+        'insertRow'|'afterInsertRow'|
+        'afterUpdateRow'
+    );
     export interface RowEventListener {
         (this: DataTable, e: RowEventObject): void;
     }

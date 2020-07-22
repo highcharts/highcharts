@@ -25,16 +25,16 @@ var DataTable = /** @class */ (function () {
      * */
     function DataTable(rows) {
         if (rows === void 0) { rows = []; }
+        var rowsIdMap = {};
+        var row;
         this.id = uniqueKey();
         this.rows = rows.slice();
-        this.rowsIdMap = {};
+        this.rowsIdMap = rowsIdMap;
         this.watchsIdMap = {};
-        var rowsIdMap = this.rowsIdMap = {};
-        var row;
         for (var i = 0, iEnd = rows.length; i < iEnd; ++i) {
             row = rows[i];
             rowsIdMap[row.id] = row;
-            this.insert(row);
+            this.watchRow(row);
         }
     }
     /* *
@@ -76,31 +76,42 @@ var DataTable = /** @class */ (function () {
      *
      * */
     DataTable.prototype.clear = function () {
-        var rowIds = this.getRowIds();
-        for (var i = 0, iEnd = rowIds.length; i < iEnd; ++i) {
-            this.delete(rowIds[i]);
-        }
+        var table = this;
+        var row = table.getRowByIndex(0);
+        var index = 0;
+        fireEvent(row, 'clearTable', { index: index, row: row }, function () {
+            var rowIds = table.getRowIds();
+            for (var i = 0, iEnd = rowIds.length; i < iEnd; ++i) {
+                table.unwatchRow(rowIds[i], true);
+            }
+            table.rows.length = 0;
+            table.rowsIdMap = {};
+            table.watchsIdMap = {};
+            fireEvent(row, 'afterClearTable', { index: index, row: row });
+        });
     };
-    DataTable.prototype.delete = function (id) {
+    DataTable.prototype.deleteRow = function (id) {
         var table = this;
         var row = table.rowsIdMap[id];
-        var rowId = row.id;
         var index = table.rows.indexOf(row);
+        var result;
         fireEvent(table, 'deleteRow', { index: index, row: row }, function () {
+            var rowId = row.id;
             table.rows[index] = row;
             delete table.rowsIdMap[rowId];
-            table.unwatch(rowId);
+            table.unwatchRow(rowId);
+            result = row;
             fireEvent(table, 'afterDeleteRow', { index: index, row: row });
         });
-        return row;
+        return result;
     };
     DataTable.prototype.getAllRows = function () {
         return this.rows.slice();
     };
-    DataTable.prototype.getById = function (id) {
+    DataTable.prototype.getRowById = function (id) {
         return this.rowsIdMap[id];
     };
-    DataTable.prototype.getByIndex = function (index) {
+    DataTable.prototype.getRowByIndex = function (index) {
         return this.rows[index];
     };
     /**
@@ -118,39 +129,51 @@ var DataTable = /** @class */ (function () {
     DataTable.prototype.getVersionId = function () {
         return this.versionId || (this.versionId = uniqueKey());
     };
-    DataTable.prototype.insert = function (row) {
+    DataTable.prototype.insertRow = function (row) {
         var table = this;
+        var rowId = row.id;
         var index = table.rows.length;
-        if (typeof table.rowsIdMap[row.id] !== 'undefined') {
-            return false;
+        var succeeded = false;
+        if (typeof table.rowsIdMap[rowId] !== 'undefined') {
+            return succeeded;
         }
         fireEvent(table, 'insertRow', { index: index, row: row }, function () {
             table.rows.push(row);
-            table.rowsIdMap[row.id] = row;
-            table.watch(row);
+            table.rowsIdMap[rowId] = row;
+            table.watchRow(row);
+            succeeded = true;
             fireEvent(table, 'afterInsertRow', { index: index, row: row });
         });
-        return true;
+        return succeeded;
     };
     DataTable.prototype.on = function (event, callback) {
         return addEvent(this, event, callback);
     };
-    DataTable.prototype.watch = function (row) {
+    DataTable.prototype.watchRow = function (row) {
+        /** @private */
+        function callback() {
+            table.versionId = uniqueKey();
+            fireEvent(table, 'afterUpdateRow', { index: index, row: row });
+        }
         var table = this;
         var index = table.rows.indexOf(row);
         var watchsIdMap = table.watchsIdMap;
-        watchsIdMap[row.id] = row.on('afterUpdateColumn', function () {
-            table.versionId = uniqueKey();
-            fireEvent(table, 'afterUpdateRow', { index: index, row: row });
-        });
+        var watchs = [];
+        watchs.push(row.on('afterDeleteColumn', callback));
+        watchs.push(row.on('afterInsertColumn', callback));
+        watchs.push(row.on('afterUpdateColumn', callback));
+        watchsIdMap[row.id] = watchs;
     };
     DataTable.prototype.toString = function () {
         return JSON.stringify(this.rows);
     };
-    DataTable.prototype.unwatch = function (rowId) {
+    DataTable.prototype.unwatchRow = function (rowId, skipDelete) {
         var watchsIdMap = this.watchsIdMap;
-        if (watchsIdMap[rowId]) {
-            watchsIdMap[rowId]();
+        var watchs = watchsIdMap[rowId] || [];
+        for (var i = 0, iEnd = watchs.length; i < iEnd; ++i) {
+            watchs[i]();
+        }
+        if (!skipDelete) {
             delete watchsIdMap[rowId];
         }
     };

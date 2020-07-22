@@ -19,17 +19,16 @@ var DataConverter = /** @class */ (function () {
      *  Functions
      *
      * */
-    DataConverter.prototype.toBoolean = function (value) {
+    DataConverter.prototype.asBoolean = function (value) {
         if (typeof value === 'boolean') {
             return value;
         }
         if (typeof value === 'string') {
             return value !== '' && value !== '0' && value !== 'false';
         }
-        value = this.toNumber(value);
-        return value !== 0 && !isNaN(value);
+        return this.asNumber(value) !== 0;
     };
-    DataConverter.prototype.toDataTable = function (value) {
+    DataConverter.prototype.asDataTable = function (value) {
         if (value instanceof DataTable) {
             return value;
         }
@@ -43,10 +42,13 @@ var DataConverter = /** @class */ (function () {
         }
         return new DataTable();
     };
-    DataConverter.prototype.toDate = function (value) {
-        return new Date(this.toNumber(value));
+    DataConverter.prototype.asDate = function (value) {
+        if (typeof value === 'string') {
+            return new Date(value);
+        }
+        return new Date(this.asNumber(value));
     };
-    DataConverter.prototype.toNumber = function (value) {
+    DataConverter.prototype.asNumber = function (value) {
         if (typeof value === 'number') {
             return value;
         }
@@ -54,7 +56,7 @@ var DataConverter = /** @class */ (function () {
             return value ? 1 : 0;
         }
         if (typeof value === 'string') {
-            return parseFloat(value);
+            return parseFloat("0" + value);
         }
         if (value instanceof DataTable) {
             return value.getRowCount();
@@ -62,9 +64,9 @@ var DataConverter = /** @class */ (function () {
         if (value instanceof Date) {
             return value.getDate();
         }
-        return NaN;
+        return 0;
     };
-    DataConverter.prototype.toString = function (value) {
+    DataConverter.prototype.asString = function (value) {
         return "" + value;
     };
     return DataConverter;

@@ -39,68 +39,87 @@ var DataRow = /** @class */ (function () {
      *
      * */
     DataRow.prototype.clear = function () {
-        var columnKeys = this.getColumnKeys();
+        var row = this;
+        var columnKey = row.getColumnKeys()[0] || '';
+        var columnValue = row.columns[columnKey];
+        var succeeded = false;
+        fireEvent(row, 'clearRow', { columnKey: columnKey, columnValue: columnValue }, function () {
+            row.columns.length = 0;
+            succeeded = true;
+            fireEvent(row, 'afterClearRow', { columnKey: columnKey, columnValue: columnValue });
+        });
+        return succeeded;
     };
-    DataRow.prototype.delete = function (columnKey) {
+    DataRow.prototype.deleteColumn = function (columnKey) {
         var row = this;
         var columnValue = row.columns[columnKey];
+        var succeeded = false;
         if (columnKey === 'id') {
-            return;
+            return succeeded;
         }
         fireEvent(row, 'deleteColumn', { columnKey: columnKey, columnValue: columnValue }, function (e) {
             delete row.columns[e.columnKey];
+            succeeded = true;
             fireEvent(row, 'afterDeleteColumn', { columnKey: columnKey, columnValue: columnValue });
         });
-    };
-    DataRow.prototype.get = function (columnKey) {
-        return this.columns[columnKey];
+        return succeeded;
     };
     DataRow.prototype.getAllColumns = function () {
         return merge(this.columns);
     };
-    DataRow.prototype.getAsBoolean = function (columnKey) {
-        return this.converter.toBoolean(this.get(columnKey));
+    DataRow.prototype.getColumn = function (columnKey) {
+        return this.columns[columnKey];
     };
-    DataRow.prototype.getAsDataTable = function (columnKey) {
-        return this.converter.toDataTable(this.get(columnKey));
+    DataRow.prototype.getColumnAsBoolean = function (columnKey) {
+        return this.converter.asBoolean(this.getColumn(columnKey));
     };
-    DataRow.prototype.getAsDate = function (columnKey) {
-        return this.converter.toDate(this.get(columnKey));
+    DataRow.prototype.getColumnAsDataTable = function (columnKey) {
+        return this.converter.asDataTable(this.getColumn(columnKey));
     };
-    DataRow.prototype.getAsNumber = function (columnKey) {
-        return this.converter.toNumber(this.get(columnKey));
+    DataRow.prototype.getColumnAsDate = function (columnKey) {
+        return this.converter.asDate(this.getColumn(columnKey));
     };
-    DataRow.prototype.getAsString = function (columnKey) {
-        return this.converter.toString(this.get(columnKey));
+    DataRow.prototype.getColumnAsNumber = function (columnKey) {
+        return this.converter.asNumber(this.getColumn(columnKey));
     };
-    DataRow.prototype.getColumnKeys = function (unfiltered) {
-        if (unfiltered === void 0) { unfiltered = false; }
-        return Object.keys(this.columns).reverse();
+    DataRow.prototype.getColumnAsString = function (columnKey) {
+        return this.converter.asString(this.getColumn(columnKey));
     };
-    DataRow.prototype.insert = function (columnKey, columnValue) {
+    DataRow.prototype.getColumnCount = function () {
+        return this.getColumnKeys().length;
+    };
+    DataRow.prototype.getColumnKeys = function () {
+        return Object.keys(this.columns);
+    };
+    DataRow.prototype.insertColumn = function (columnKey, columnValue) {
         var row = this;
+        var succeeded = false;
         if (columnKey === 'id' ||
             row.getColumnKeys().indexOf(columnKey) !== -1) {
-            return false;
+            return succeeded;
         }
         fireEvent(row, 'insertColumn', { columnKey: columnKey, columnValue: columnValue }, function () {
             row.columns[columnKey] = columnValue;
+            succeeded = true;
             fireEvent(row, 'afterInsertColumn', { columnKey: columnKey, columnValue: columnValue });
         });
-        return true;
+        return succeeded;
     };
     DataRow.prototype.on = function (event, callback) {
         return addEvent(this, event, callback);
     };
-    DataRow.prototype.update = function (columnKey, columnValue) {
+    DataRow.prototype.updateColumn = function (columnKey, columnValue) {
         var row = this;
+        var succeeded = false;
         if (columnKey === 'id') {
-            return;
+            return succeeded;
         }
         fireEvent(row, 'updateColumn', { columnKey: columnKey, columnValue: columnValue }, function () {
             row.columns[columnKey] = columnValue;
+            succeeded = true;
             fireEvent(row, 'afterUpdateColumn', { columnKey: columnKey, columnValue: columnValue });
         });
+        return succeeded;
     };
     return DataRow;
 }());
