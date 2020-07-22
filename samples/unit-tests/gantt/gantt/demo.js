@@ -512,4 +512,107 @@
             'Ticks from 1 to 5 should be displayed.'
         );
     });
+
+    QUnit.test('The ticks should be generated correctly during scrolling with the grid axis, #13072.', assert => {
+        const chart = Highcharts.ganttChart('container', {
+            yAxis: {
+                min: 0,
+                max: 2,
+                type: 'category',
+                grid: {
+                    enabled: true,
+                    columns: [{
+                        title: {
+                            text: 'Project'
+                        },
+                        labels: {
+                            format: '{point.name}'
+                        },
+                        scrollbar: {
+                            enabled: false
+                        }
+                    }, {
+                        title: {
+                            text: 'Assignee'
+                        },
+                        labels: {
+                            format: '{point.assignee}'
+                        },
+                        scrollbar: {
+                            enabled: true
+                        }
+                    }]
+                }
+            },
+            series: [{
+                name: 'Project 1',
+                data: [{
+                    start: 1,
+                    end: 2,
+                    name: 'Task A',
+                    assignee: 'Person 1',
+                    y: 0
+                }, {
+                    start: 3,
+                    end: 4,
+                    name: 'Task B',
+                    assignee: 'Person 2',
+                    y: 1
+                }, {
+                    start: 5,
+                    end: 6,
+                    name: 'Task C',
+                    assignee: 'Person 3',
+                    y: 2
+                }, {
+                    start: 6,
+                    end: 9,
+                    name: 'Task D',
+                    assignee: 'Person 4',
+                    y: 3
+                }, {
+                    start: 4,
+                    end: 10,
+                    name: 'Task E',
+                    assignee: 'Person 5',
+                    y: 4
+                }]
+            }]
+        });
+
+        assert.strictEqual(
+            chart.yAxis[0].grid.columns[0].ticks[0].label.textStr,
+            'Task A',
+            'First tick on the left columns should be Task A.'
+        );
+        chart.yAxis[0].setExtremes(0.4, 2.4);
+
+        assert.strictEqual(
+            chart.yAxis[0].grid.columns[0].ticks[0].label.textStr,
+            'Task A',
+            'First tick on the left columns should be Task A.'
+        );
+        assert.notOk(
+            chart.yAxis[0].grid.columns[0].ticks[3],
+            'Tick with index 3 should not exist.'
+        );
+        chart.yAxis[0].setExtremes(0.8, 2.8);
+
+        assert.notOk(
+            chart.yAxis[0].grid.columns[0].ticks[0],
+            'Tick with index 0 should not exist.'
+        );
+        assert.strictEqual(
+            chart.yAxis[0].grid.columns[0].ticks[3].label.textStr,
+            'Task D',
+            'Last visible tick on the left columns should be Task D.'
+        );
+        chart.yAxis[0].setExtremes(1, 3);
+
+        assert.strictEqual(
+            chart.yAxis[0].grid.columns[0].ticks[3].label.textStr,
+            'Task D',
+            'Last visible tick on the left columns should be Task D.'
+        );
+    });
 }());

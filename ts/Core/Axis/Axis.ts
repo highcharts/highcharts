@@ -7250,10 +7250,13 @@ class Axis implements AxisComposition, AxisLike {
         const isLinked = axis.isLinked;
         const ticks = axis.ticks;
         const slideInTicks = axis.chart.hasRendered && isNumber(axis.oldMin);
+        const tickInterval = axis.tickInterval;
 
         // Linked axes need an extra check to find out if
         if (!isLinked ||
-            (pos >= (axis.min as any) && pos <= (axis.max as any))
+            (pos >= (axis.min as any) && pos <= (axis.max as any)) ||
+            axis.grid &&
+            (pos >= (axis.min as any) - 0.5 * tickInterval && pos <= (axis.max as any) + 0.5 * tickInterval)
         ) {
 
             if (!ticks[pos]) {

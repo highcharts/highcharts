@@ -2667,9 +2667,12 @@ var Axis = /** @class */ (function () {
         var isLinked = axis.isLinked;
         var ticks = axis.ticks;
         var slideInTicks = axis.chart.hasRendered && isNumber(axis.oldMin);
+        var tickInterval = axis.tickInterval;
         // Linked axes need an extra check to find out if
         if (!isLinked ||
-            (pos >= axis.min && pos <= axis.max)) {
+            (pos >= axis.min && pos <= axis.max) ||
+            axis.grid &&
+                (pos >= axis.min - 0.5 * tickInterval && pos <= axis.max + 0.5 * tickInterval)) {
             if (!ticks[pos]) {
                 ticks[pos] = new Tick(axis, pos);
             }
