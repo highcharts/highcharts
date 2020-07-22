@@ -580,13 +580,12 @@ seriesType('treemap', 'scatter'
         return !!this.processedXData.length; // != 0
     },
     init: function (chart, options) {
-        var series = this, colorMapSeriesMixin = H.colorMapSeriesMixin;
+        var series = this, colorMapSeriesMixin = H.colorMapSeriesMixin, setOptionsEvent;
         // If color series logic is loaded, add some properties
         if (colorMapSeriesMixin) {
             this.colorAttribs = colorMapSeriesMixin.colorAttribs;
         }
-        // Handle deprecated options.
-        series.eventsToUnbind.push(addEvent(series, 'setOptions', function (event) {
+        setOptionsEvent = addEvent(series, 'setOptions', function (event) {
             var options = event.userOptions;
             if (defined(options.allowDrillToNode) &&
                 !defined(options.allowTraversingTree)) {
@@ -598,10 +597,12 @@ seriesType('treemap', 'scatter'
                 options.traverseUpButton = options.drillUpButton;
                 delete options.drillUpButton;
             }
-        }));
+        });
         Series.prototype.init.call(series, chart, options);
         // Treemap's opacity is a different option from other series
         delete series.opacity;
+        // Handle deprecated options.
+        series.eventsToUnbind.push(setOptionsEvent);
         if (series.options.allowTraversingTree) {
             series.eventsToUnbind.push(addEvent(series, 'click', series.onClickDrillToNode));
         }
