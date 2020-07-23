@@ -92,6 +92,7 @@ declare global {
                 oneToOne?: boolean,
                 animation?: (boolean|AnimationOptionsObject)
             ): void;
+            isInPlotOptions(property: string): boolean;
         }
         interface ChartAfterUpdateEventObject {
             animation: (boolean|AnimationOptionsObject);
@@ -139,6 +140,7 @@ declare global {
             ): void;
             setName(name: string): void;
             update(options: SeriesOptionsType, redraw?: boolean): void;
+            isInPlotOptions(property: string): boolean;
         }
         interface XAxisOptions {
             index?: number;
@@ -968,6 +970,35 @@ extend(Chart.prototype, /** @lends Highcharts.Chart.prototype */ {
     ): void {
         this.applyDescription('caption', options);
         this.layOutTitles(redraw);
+    },
+
+    /**
+     * Check if the property exist in the plotOptions.
+     *
+     * @private
+     * @function Highcharts.Chart#isInPlotOptions
+     *
+     * @param {string} property
+     *
+     * @return {boolean}
+     */
+    isInPlotOptions: function (this: Chart, property: string): boolean {
+        const chart = this,
+            plotOptions = chart.options.plotOptions;
+        if (plotOptions) {
+            for (const seriesType in plotOptions) {
+                if (Object.prototype.hasOwnProperty.call(plotOptions, seriesType)) {
+                    const isInPlotOptions = Object.prototype.hasOwnProperty.call(
+                        plotOptions[seriesType],
+                        property
+                    );
+                    if (isInPlotOptions) {
+                        return true;
+                    }
+                }
+            }
+        }
+        return false;
     }
 
 });
@@ -1485,6 +1516,8 @@ extend(Series.prototype, /** @lends Series.prototype */ {
                 (newType && newType !== this.type) ||
                 // New options affecting how the data points are built
                 typeof options.pointStart !== 'undefined' ||
+                chart.isInPlotOptions('pointInterval') ||
+                chart.isInPlotOptions('pointStart') ||
                 options.pointInterval ||
                 options.pointIntervalUnit ||
                 options.keys
@@ -1556,6 +1589,7 @@ extend(Series.prototype, /** @lends Series.prototype */ {
                 series.index : oldOptions.index,
             pointStart: pick(
                 // when updating from blank (#7933)
+                (chart.options as any).plotOptions.series.pointStart,
                 oldOptions.pointStart,
                 // when updating after addPoint
                 (series.xData as any)[0]

@@ -649,6 +649,30 @@ extend(Chart.prototype, /** @lends Highcharts.Chart.prototype */ {
     setCaption: function (options, redraw) {
         this.applyDescription('caption', options);
         this.layOutTitles(redraw);
+    },
+    /**
+     * Check if the property exist in the plotOptions.
+     *
+     * @private
+     * @function Highcharts.Chart#isInPlotOptions
+     *
+     * @param {string} property
+     *
+     * @return {boolean}
+     */
+    isInPlotOptions: function (property) {
+        var chart = this, plotOptions = chart.options.plotOptions;
+        if (plotOptions) {
+            for (var seriesType in plotOptions) {
+                if (Object.prototype.hasOwnProperty.call(plotOptions, seriesType)) {
+                    var isInPlotOptions = Object.prototype.hasOwnProperty.call(plotOptions[seriesType], property);
+                    if (isInPlotOptions) {
+                        return true;
+                    }
+                }
+            }
+        }
+        return false;
     }
 });
 /**
@@ -1052,6 +1076,8 @@ extend(Series.prototype, /** @lends Series.prototype */ {
             (newType && newType !== this.type) ||
             // New options affecting how the data points are built
             typeof options.pointStart !== 'undefined' ||
+            chart.isInPlotOptions('pointInterval') ||
+            chart.isInPlotOptions('pointStart') ||
             options.pointInterval ||
             options.pointIntervalUnit ||
             options.keys), initialSeriesProto = seriesTypes[initialType].prototype, n, groups = [
@@ -1097,7 +1123,7 @@ extend(Series.prototype, /** @lends Series.prototype */ {
                 series.index : oldOptions.index,
             pointStart: pick(
             // when updating from blank (#7933)
-            oldOptions.pointStart, 
+            chart.options.plotOptions.series.pointStart, oldOptions.pointStart, 
             // when updating after addPoint
             series.xData[0])
         }, (!keepPoints && { data: series.options.data }), options);
