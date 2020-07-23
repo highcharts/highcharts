@@ -1,0 +1,27 @@
+{
+    "compilerOptions": {
+        "downlevelIteration": true,
+        "sourceMap": true,
+        "noEmitOnError": true,
+        "noImplicitAny": true,
+        "noImplicitThis": true,
+        "strict": false,
+        "baseUrl": "../../",
+        "module": "none",
+        "moduleResolution": "node",
+        "target": "es5",
+        "lib": [
+            "dom",
+            "es5"
+        ],
+        "types": [
+            // disable node types
+        ]
+    },
+    "files": [
+        "tsglobal.d.ts",
+    ],
+    "include": [
+        "*/*/*.ts"
+    ]
+}

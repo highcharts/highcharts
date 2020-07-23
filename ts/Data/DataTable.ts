@@ -46,7 +46,7 @@ class DataTable {
     }
 
     private static parseRow(json: DataTable.TableRowJSON): DataRow {
-        const columns: DataRow.Columns = { id: uniqueKey() };
+        const columns: DataRow.Columns = {};
         const keys = Object.keys(json);
         let key: (string|undefined);
         let value;
@@ -72,8 +72,10 @@ class DataTable {
 
         let row: DataRow;
 
+        rows = rows.slice();
+
         this.id = uniqueKey();
-        this.rows = rows.slice();
+        this.rows = rows;
         this.rowsIdMap = rowsIdMap;
         this.watchsIdMap = {};
 
@@ -108,10 +110,10 @@ class DataTable {
 
     public clear(): void {
         const table = this;
-        const row = table.getRowByIndex(0);
+        const row = table.getRow(0);
         const index = 0;
         fireEvent(
-            row,
+            table,
             'clearTable',
             { index, row },
             function (): void {
@@ -122,7 +124,7 @@ class DataTable {
                 table.rows.length = 0;
                 table.rowsIdMap = {};
                 table.watchsIdMap = {};
-                fireEvent(row, 'afterClearTable', { index, row });
+                fireEvent(table, 'afterClearTable', { index, row });
             }
         );
     }
@@ -155,12 +157,11 @@ class DataTable {
         return this.rows.slice();
     }
 
-    public getRowById(id: string): (DataRow|undefined) {
-        return this.rowsIdMap[id];
-    }
-
-    public getRowByIndex(index: number): (DataRow|undefined) {
-        return this.rows[index];
+    public getRow(indexOrID: (number|string)): (DataRow|undefined) {
+        if (typeof indexOrID === 'string') {
+            return this.rowsIdMap[indexOrID];
+        }
+        return this.rows[indexOrID];
     }
 
     /**
@@ -228,6 +229,7 @@ class DataTable {
         const watchsIdMap = table.watchsIdMap;
         const watchs: Array<Function> = [];
 
+        watchs.push(row.on('afterClearRow', callback));
         watchs.push(row.on('afterDeleteColumn', callback));
         watchs.push(row.on('afterInsertColumn', callback));
         watchs.push(row.on('afterUpdateColumn', callback));

@@ -39,7 +39,7 @@
   "husky": {
     "hooks": {
       "commit-msg": "node tools/validate-commit-msg.js ${HUSKY_GIT_PARAMS}",
-      "pre-commit": "npx lint-staged && npx gulp lint-ts && npx gulp scripts && npx gulp test"
+      "pre-commit": "npx lint-staged && npx gulp lint-ts && npx gulp scripts && npx gulp test && npx gulp test-ts"
     }
   },
   "devDependencies": {

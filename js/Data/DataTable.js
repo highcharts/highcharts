@@ -27,8 +27,9 @@ var DataTable = /** @class */ (function () {
         if (rows === void 0) { rows = []; }
         var rowsIdMap = {};
         var row;
+        rows = rows.slice();
         this.id = uniqueKey();
-        this.rows = rows.slice();
+        this.rows = rows;
         this.rowsIdMap = rowsIdMap;
         this.watchsIdMap = {};
         for (var i = 0, iEnd = rows.length; i < iEnd; ++i) {
@@ -55,7 +56,7 @@ var DataTable = /** @class */ (function () {
         }
     };
     DataTable.parseRow = function (json) {
-        var columns = { id: uniqueKey() };
+        var columns = {};
         var keys = Object.keys(json);
         var key;
         var value;
@@ -77,9 +78,9 @@ var DataTable = /** @class */ (function () {
      * */
     DataTable.prototype.clear = function () {
         var table = this;
-        var row = table.getRowByIndex(0);
+        var row = table.getRow(0);
         var index = 0;
-        fireEvent(row, 'clearTable', { index: index, row: row }, function () {
+        fireEvent(table, 'clearTable', { index: index, row: row }, function () {
             var rowIds = table.getRowIds();
             for (var i = 0, iEnd = rowIds.length; i < iEnd; ++i) {
                 table.unwatchRow(rowIds[i], true);
@@ -87,7 +88,7 @@ var DataTable = /** @class */ (function () {
             table.rows.length = 0;
             table.rowsIdMap = {};
             table.watchsIdMap = {};
-            fireEvent(row, 'afterClearTable', { index: index, row: row });
+            fireEvent(table, 'afterClearTable', { index: index, row: row });
         });
     };
     DataTable.prototype.deleteRow = function (id) {
@@ -108,11 +109,11 @@ var DataTable = /** @class */ (function () {
     DataTable.prototype.getAllRows = function () {
         return this.rows.slice();
     };
-    DataTable.prototype.getRowById = function (id) {
-        return this.rowsIdMap[id];
-    };
-    DataTable.prototype.getRowByIndex = function (index) {
-        return this.rows[index];
+    DataTable.prototype.getRow = function (indexOrID) {
+        if (typeof indexOrID === 'string') {
+            return this.rowsIdMap[indexOrID];
+        }
+        return this.rows[indexOrID];
     };
     /**
      * @todo Consider implementation via property getter `.length` depending on
@@ -159,6 +160,7 @@ var DataTable = /** @class */ (function () {
         var index = table.rows.indexOf(row);
         var watchsIdMap = table.watchsIdMap;
         var watchs = [];
+        watchs.push(row.on('afterClearRow', callback));
         watchs.push(row.on('afterDeleteColumn', callback));
         watchs.push(row.on('afterInsertColumn', callback));
         watchs.push(row.on('afterUpdateColumn', callback));
