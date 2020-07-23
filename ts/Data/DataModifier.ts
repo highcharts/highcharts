@@ -12,13 +12,15 @@
 
 'use strict';
 
+import DataTable from './DataTable.js';
+
 /** eslint-disable valid-jsdoc */
 
 /**
  * @private
  */
 
-class DataModifier<T> {
+abstract class DataModifier {
 
     /* *
      *
@@ -36,7 +38,7 @@ class DataModifier<T> {
      *
      * */
 
-    public name: string;
+    public readonly name: string;
 
     /* *
      *
@@ -44,12 +46,12 @@ class DataModifier<T> {
      *
      * */
 
-    // public execute(dataRows) {}
+    public abstract execute(dataTable: DataTable): DataTable;
     // public attr() {}
 }
 
 namespace DataModifier {
-    export type Modifier<T> = Record<string, T>;
+    export type Modifier<T> = Record<string, T>; // @todo what is this about?
 }
 
 export default DataModifier;

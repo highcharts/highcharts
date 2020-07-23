@@ -18,10 +18,10 @@
  * @private
  */
 
-import DataModifier from './DataModifier';
-import H from '../Core/Globals';
+import DataModifier from './DataModifier.js';
+import DataTable from './DataTable.js';
 
-class DataModifierChain<T> {
+class DataModifierChain extends DataModifier {
 
     /* *
      *
@@ -29,14 +29,16 @@ class DataModifierChain<T> {
      *
      * */
 
-    public constructor(dataModifiers: Array<DataModifier<T>>) {
+    public constructor(name: string, ...modifiers: DataModifierChain.Modifiers) {
+        super(name);
+
         var self = this;
 
         this.dataModifiersMap = {};
-        this.dataModifiers = dataModifiers || [];
+        this.dataModifiers = modifiers || [];
 
         if (self.dataModifiers.length) {
-            self.dataModifiers.forEach(function (modifier: DataModifier<T>, i: number): void {
+            self.dataModifiers.forEach(function (modifier: DataModifier, i: number): void {
                 self.dataModifiersMap[modifier.name] = i;
             });
         }
@@ -50,7 +52,7 @@ class DataModifierChain<T> {
 
     private dataModifiersMap: Record<string, number>;
 
-    private dataModifiers: DataModifierChain.DataModifiers<T>;
+    private dataModifiers: DataModifierChain.Modifiers;
 
     /* *
      *
@@ -58,12 +60,12 @@ class DataModifierChain<T> {
      *
      * */
 
-    public add(dataModifier: DataModifier<T>): void {
+    public add(dataModifier: DataModifier): void {
         this.dataModifiers.push(dataModifier);
         this.dataModifiersMap[dataModifier.name] = this.dataModifiers.length - 1;
     }
 
-    public remove(dataModifier: DataModifier<T>): void {
+    public remove(dataModifier: DataModifier): void {
         var index = this.dataModifiersMap[dataModifier.name];
 
         delete this.dataModifiersMap[dataModifier.name];
@@ -82,13 +84,15 @@ class DataModifierChain<T> {
     //     return H.addEvent(this, eventName, callback);
     // }
 
-    // public execute(dataStore) {}
+    public execute(dataTable: DataTable): DataTable {
+        return new DataTable(dataTable.getAllRows());
+    }
     // public benchmark() {}
     // public cancel() {}
 }
 
 namespace DataModifierChain {
-    export type DataModifiers<T> = Array<DataModifier<T>>;
+    export type Modifiers = Array<DataModifier>;
 }
 
 export default DataModifierChain;
