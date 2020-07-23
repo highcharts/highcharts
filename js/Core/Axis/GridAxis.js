@@ -449,7 +449,11 @@ var GridAxis = /** @class */ (function () {
                 var columnOptions = merge(userOptions, gridOptions.columns[gridOptions.columns.length - columnIndex - 1], {
                     linkedTo: 0,
                     // Force to behave like category axis
-                    type: 'category'
+                    type: 'category',
+                    // Disable by default the scrollbar on the grid axis
+                    scrollbar: {
+                        enabled: false
+                    }
                 });
                 delete columnOptions.grid.columns; // Prevent recursion
                 var column = new Axis(axis.chart, columnOptions);

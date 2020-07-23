@@ -683,7 +683,6 @@ class GridAxis {
         if (gridOptions.columns) {
             var columns = axis.grid.columns = [] as Array<GridAxis>,
                 columnIndex = axis.grid.columnIndex = 0;
-
             // Handle columns, each column is a grid axis
             while (++columnIndex < gridOptions.columns.length) {
                 var columnOptions = merge(
@@ -694,7 +693,11 @@ class GridAxis {
                     {
                         linkedTo: 0,
                         // Force to behave like category axis
-                        type: 'category'
+                        type: 'category',
+                        // Disable by default the scrollbar on the grid axis
+                        scrollbar: {
+                            enabled: false
+                        }
                     }
                 );
 
