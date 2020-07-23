@@ -11,4 +11,4 @@
  * License: www.highcharts.com/license
  */
 'use strict';
-import '../../indicators/pivot-points.src.js';
+import '../../Stock/Indicators/PivotPointsIndicator.js';

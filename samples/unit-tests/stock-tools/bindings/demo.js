@@ -324,7 +324,6 @@ QUnit.test('Bindings general tests', function (assert) {
             'Correct height for main yAxis (' + (i + 1) + ' pane(s) - indicator.remove).'
         );
     }
-
     // Test annotation events:
     points = chart.series[0].points;
     chart.navigationBindings.popup.closePopup();
@@ -332,6 +331,36 @@ QUnit.test('Bindings general tests', function (assert) {
         points[2].plotX + plotLeft + 15,
         points[2].plotY + plotTop + 25
     );
+    // Styles in Karma are not loaded!
+    chart.navigationBindings.popup.container.style.position = 'absolute';
+
+    var button = document.querySelectorAll('.highcharts-popup .highcharts-annotation-edit-button')[0],
+        buttonOffset = Highcharts.offset(button);
+
+    controller.click(
+        buttonOffset.left + 5,
+        buttonOffset.top + 5
+    );
+
+    var popupEditor = document.querySelectorAll('.highcharts-popup-lhs-col');
+
+    assert.strictEqual(
+        popupEditor[0].children.length > 0,
+        true,
+        'The popup should includes the edit elements #13532'
+    );
+
+    // Point out the other point to close the editor popup
+    controller.click(
+        points[9].plotX + plotLeft,
+        points[9].plotY + plotTop
+    );
+
+    controller.click(
+        points[2].plotX + plotLeft + 15,
+        points[2].plotY + plotTop + 25
+    );
+
     assert.strictEqual(
         chart.navigationBindings.popup.container.classList
             .contains('highcharts-annotation-toolbar'),
@@ -348,10 +377,10 @@ QUnit.test('Bindings general tests', function (assert) {
     // Styles in Karma are not loaded!
     chart.navigationBindings.popup.container.style.position = 'absolute';
 
-    var button = document.querySelectorAll(
-            '.highcharts-popup .highcharts-annotation-remove-button'
-        )[0],
-        buttonOffset = Highcharts.offset(button);
+    button = document.querySelectorAll(
+        '.highcharts-popup .highcharts-annotation-remove-button'
+    )[0];
+    buttonOffset = Highcharts.offset(button);
 
     controller.click(
         buttonOffset.left + 5,

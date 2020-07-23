@@ -11,4 +11,4 @@
  * License: www.highcharts.com/license
  */
 'use strict';
-import '../../indicators/natr.src.js';
+import '../../Stock/Indicators/NATRIndicator.js';

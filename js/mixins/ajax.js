@@ -8,8 +8,8 @@
  *
  * */
 'use strict';
-import H from '../parts/Globals.js';
-import U from '../parts/Utilities.js';
+import H from '../Core/Globals.js';
+import U from '../Core/Utilities.js';
 var merge = U.merge, objectEach = U.objectEach;
 /**
  * @interface Highcharts.AjaxSettingsObject
@@ -143,3 +143,8 @@ H.getJSON = function (url, success) {
         }
     });
 };
+var ajaxModule = {
+    ajax: H.ajax,
+    getJSON: H.getJSON
+};
+export default ajaxModule;

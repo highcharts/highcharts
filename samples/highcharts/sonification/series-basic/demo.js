@@ -1,37 +1,34 @@
 Highcharts.chart('container', {
     title: {
-        text: 'Click series to sonify'
+        text: 'Click on series to sonify'
     },
     legend: {
         enabled: false
     },
     plotOptions: {
         series: {
+            sonification: {
+                instruments: [{
+                    instrument: 'triangleMajor',
+                    minFrequency: 523, // C5
+                    maxFrequency: 1047, // C6
+                    mapping: {
+                        pan: 'x'
+                    }
+                }],
+                events: {
+                    onPointStart: function (e, point) {
+                        point.onMouseOver();
+                    }
+                }
+            },
             marker: {
                 radius: 8
             },
             cursor: 'pointer',
             events: {
                 click: function () {
-                    // Sonify the series when clicked
-                    this.sonify({
-                        duration: 2200,
-                        pointPlayTime: 'x',
-                        instruments: [{
-                            instrument: 'triangleMajor',
-                            instrumentMapping: {
-                                volume: 0.8,
-                                duration: 250,
-                                pan: 'x',
-                                frequency: 'y'
-                            },
-                            // Start at C5 note, end at C6
-                            instrumentOptions: {
-                                minFrequency: 520,
-                                maxFrequency: 1050
-                            }
-                        }]
-                    });
+                    this.sonify();
                 }
             }
         }

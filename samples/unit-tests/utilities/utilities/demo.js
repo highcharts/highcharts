@@ -878,4 +878,11 @@
         );
 
     });
+
+    QUnit.test('keys', assert => {
+        assert.deepEqual(
+            Highcharts.keys({ foo: 'bar' }),
+            Object.keys({ foo: 'bar' })
+        );
+    });
 }());

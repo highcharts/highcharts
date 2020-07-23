@@ -381,6 +381,65 @@
         );
     });
 
+    QUnit.test('Collapsing subtasks', assert => {
+        const today = new Date();
+        const day = 24 * 60 * 60 * 1000;
+
+        const chart = Highcharts.ganttChart('container', {
+            chart: {
+                height: 300
+            },
+            title: {
+                text: 'Highcharts Gantt With Subtasks'
+            },
+            xAxis: {
+                min: today.getTime() - (2 * day),
+                max: today.getTime() + (32 * day)
+            },
+            series: [{
+                name: 'Project 1',
+                data: [{
+                    name: 'Planning',
+                    id: 'planning',
+                    start: today.getTime(),
+                    end: today.getTime() + (20 * day)
+                }, {
+                    name: 'Requirements',
+                    id: 'requirements',
+                    parent: 'planning',
+                    start: today.getTime(),
+                    end: today.getTime() + (5 * day)
+                }, {
+                    name: 'Design',
+                    id: 'design',
+                    dependency: 'requirements',
+                    parent: 'planning',
+                    start: today.getTime() + (3 * day),
+                    end: today.getTime() + (20 * day)
+                }, {
+                    name: 'Layout',
+                    id: 'layout',
+                    parent: 'design',
+                    start: today.getTime() + (3 * day),
+                    end: today.getTime() + (10 * day)
+                }, {
+                    name: 'Develop',
+                    id: 'develop',
+                    start: today.getTime() + (5 * day),
+                    end: today.getTime() + (30 * day)
+                }]
+            }]
+        });
+        click(chart.yAxis[0].ticks['2'].label.element);
+        click(chart.yAxis[0].ticks['0'].label.element);
+
+        assert.strictEqual(
+            document.querySelectorAll('.highcharts-yaxis .highcharts-tick').length,
+            chart.yAxis[0].tickPositions.length + 1,
+            'Should have the correct amount of ticks remaining after collapsing subtask before parent (#12012)'
+        );
+    });
+
     QUnit.test('No series', function (assert) {
         Highcharts.ganttChart('container', {
             title: {

@@ -461,3 +461,79 @@ QUnit.test('Stack labels styles options #13330', function (assert) {
         'This stack-label box r atribute should be same as set in options #13330'
     );
 });
+
+QUnit.test('StackLabels Initial animation - defer test #12901', function (assert) {
+
+    var clock = null;
+
+    try {
+        clock = TestUtilities.lolexInstall();
+
+        var chart = Highcharts.chart('container', {
+                chart: {
+                    type: 'column'
+                },
+
+                plotOptions: {
+                    series: {
+                        stacking: 'normal',
+                        animation: {
+                            defer: 400,
+                            duration: 100
+                        }
+                    }
+                },
+
+                yAxis: {
+                    stackLabels: {
+                        enabled: true
+                    }
+                },
+
+                series: [{
+                    data: [43934, 52503, 57177, 69658, 97031, 119931, 137133, 154175]
+
+                }, {
+                    data: [43934, 52503, 57177, 69658, 97031, 119931, 137133, 154175].reverse()
+                }]
+            }),
+            done = assert.async(),
+            labelOpacity;
+
+        setTimeout(function () {
+            // Animation started
+            labelOpacity = chart.yAxis[0].stacking.stackTotalGroup.opacity;
+            assert.strictEqual(
+                labelOpacity,
+                0,
+                'Animate should not be started - stackLabels should be invisible'
+            );
+
+            setTimeout(function () {
+                labelOpacity = chart.yAxis[0].stacking.stackTotalGroup.opacity;
+                // Animation started but not finished
+                assert.strictEqual(
+                    labelOpacity > 0 && labelOpacity < 1,
+                    true,
+                    'Animation should be started but not finished'
+                );
+            }, 250);
+
+            setTimeout(function () {
+                labelOpacity = chart.yAxis[0].stacking.stackTotalGroup.opacity;
+                // Animation finished
+                assert.strictEqual(
+                    labelOpacity,
+                    1,
+                    'Animate should be finished - stackLabels should be visible'
+                );
+                // All tests are done
+                done();
+            }, 400);
+        }, 200);
+
+        TestUtilities.lolexRunAndUninstall(clock);
+    } finally {
+        TestUtilities.lolexUninstall(clock);
+    }
+});

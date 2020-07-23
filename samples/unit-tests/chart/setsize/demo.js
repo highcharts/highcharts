@@ -506,3 +506,41 @@ QUnit.test('Plot area update(#3098)', function (assert) {
         "The legend overlaps the plot"
     );
 });
+
+QUnit.test('Succession of setSize and other dynamics', assert => {
+    const done = assert.async();
+    const chart = Highcharts.chart('container', {
+        chart: {
+            width: 600,
+            animation: {
+                duration: 1
+            }
+        },
+        legend: {
+            enabled: false
+        },
+        series: []
+    });
+    setTimeout(function () {
+        assert.strictEqual(
+            chart.chartWidth,
+            600,
+            'Initial chart width'
+        );
+        chart.setSize(500, 300);
+        assert.strictEqual(
+            chart.chartWidth,
+            500,
+            'Size should be set without errors'
+        );
+
+        chart.addSeries({ type: 'column', data: [1, 2, 3, 4] });
+        assert.notEqual(
+            chart.series[0].points[0].graphic.getBBox().height,
+            0,
+            'A series should be added with valid column heights (#13680)'
+        );
+
+        done();
+    }, 2);
+});

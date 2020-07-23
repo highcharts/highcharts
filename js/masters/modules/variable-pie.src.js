@@ -10,4 +10,4 @@
  * License: www.highcharts.com/license
  */
 'use strict';
-import '../../modules/variable-pie.src.js';
+import '../../Series/VariablePieSeries.js';

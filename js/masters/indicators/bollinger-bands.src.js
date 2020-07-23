@@ -11,4 +11,4 @@
  * License: www.highcharts.com/license
  */
 'use strict';
-import '../../indicators/bollinger-bands.src.js';
+import '../../Stock/Indicators/BBIndicator.js';

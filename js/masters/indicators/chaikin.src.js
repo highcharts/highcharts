@@ -11,4 +11,4 @@
  * License: www.highcharts.com/license
  */
 'use strict';
-import '../../indicators/chaikin.src.js';
+import '../../Stock/Indicators/ChaikinIndicator.js';

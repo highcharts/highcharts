@@ -266,3 +266,50 @@ QUnit.test(
         );
     }
 );
+
+QUnit.test('All values should be draggable (#13576)',
+    function (assert) {
+        const chart = Highcharts.chart('container', {
+            chart: {
+                type: 'boxplot'
+            },
+            series: [{
+                dragDrop: {
+                    draggableY: true,
+                    draggableQ1: true,
+                    draggableQ3: true,
+                    draggableLow: true,
+                    draggableHigh: true
+                },
+                data: [
+                    [700, 750, 848, 905, 965],
+                    [650, 700, 939, 1080, 1180]
+                ]
+            }]
+        });
+
+        const point = chart.series[0].points[0];
+        let result;
+
+        point.showDragHandles();
+
+        const highHandleY = chart.dragHandles.draggableHigh.translateY,
+            lowHandleY = chart.dragHandles.draggableLow.translateY,
+            Q1HandleY = chart.dragHandles.draggableQ1.translateY,
+            Q3HandleY = chart.dragHandles.draggableQ3.translateY;
+
+        if (
+            Math.abs(highHandleY - point.highPlot) <= 1 &&
+            Math.abs(lowHandleY - point.lowPlot) <= 1 &&
+            Math.abs(Q1HandleY - point.q1Plot) <= 1 &&
+            Math.abs(Q3HandleY - point.q3Plot) <= 1
+        ) {
+            result = true;
+        }
+
+        assert.ok(
+            result,
+            'Drag handles are rendered in correct positions.'
+        );
+    }
+);

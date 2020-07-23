@@ -10,8 +10,8 @@
  *
  * */
 'use strict';
-import H from '../../parts/Globals.js';
-import U from '../../parts/Utilities.js';
+import H from '../../Core/Globals.js';
+import U from '../../Core/Utilities.js';
 var merge = U.merge, splat = U.splat, uniqueKey = U.uniqueKey;
 /**
  * A set of options for the TimelineEvent class.
@@ -411,7 +411,7 @@ function Timeline(options) {
 Timeline.prototype.init = function (options) {
     this.options = options;
     this.cursor = 0;
-    this.paths = options.paths;
+    this.paths = options.paths || [];
     this.pathsPlaying = {};
     this.signalHandler = new utilities.SignalHandler(['playOnEnd', 'masterOnEnd', 'onPathStart', 'onPathEnd']);
     this.signalHandler.registerSignalCallbacks(merge(options, { masterOnEnd: options.onEnd }));
@@ -450,7 +450,17 @@ Timeline.prototype.rewind = function (onEnd) {
  * @return {void}
  */
 Timeline.prototype.playPaths = function (direction) {
-    var curPaths = splat(this.paths[this.cursor]), nextPaths = this.paths[this.cursor + direction], timeline = this, signalHandler = this.signalHandler, pathsEnded = 0, 
+    var timeline = this;
+    var signalHandler = timeline.signalHandler;
+    if (!timeline.paths.length) {
+        var emptySignal = {
+            cancelled: false
+        };
+        signalHandler.emitSignal('playOnEnd', emptySignal);
+        signalHandler.emitSignal('masterOnEnd', emptySignal);
+        return;
+    }
+    var curPaths = splat(this.paths[this.cursor]), nextPaths = this.paths[this.cursor + direction], pathsEnded = 0, 
     // Play a path
     playPath = function (path) {
         // Emit signal and set playing state
@@ -595,6 +605,9 @@ Timeline.prototype.atStart = function () {
  * The TimelinePaths currently being played.
  */
 Timeline.prototype.getCurrentPlayingPaths = function () {
+    if (!this.paths.length) {
+        return [];
+    }
     return splat(this.paths[this.cursor]);
 };
 // Export the classes

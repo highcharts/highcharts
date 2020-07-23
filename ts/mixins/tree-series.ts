@@ -4,9 +4,9 @@
  *
  * */
 
-import type Point from '../parts/Point';
-import Color from '../parts/Color.js';
-import U from '../parts/Utilities.js';
+import type Point from '../Core/Series/Point';
+import Color from '../Core/Color.js';
+import U from '../Core/Utilities.js';
 const {
     extend,
     isArray,

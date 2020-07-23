@@ -6,7 +6,7 @@
 
 'use strict';
 
-import H from '../parts/Globals.js';
+import H from '../Core/Globals.js';
 
 /**
  * Internal types
@@ -50,13 +50,13 @@ declare global {
     }
 }
 
-import U from '../parts/Utilities.js';
+import U from '../Core/Utilities.js';
 const {
     addEvent,
     defined
 } = U;
 
-import '../parts/Series.js';
+import '../Core/Series/Series.js';
 
 var Series = H.Series,
     noop = H.noop;
@@ -75,7 +75,7 @@ var Series = H.Series,
  * @private
  * @mixin derivedSeriesMixin
  */
-var derivedSeriesMixin: Highcharts.DerivedSeriesMixin = {
+const derivedSeriesMixin: Highcharts.DerivedSeriesMixin = {
 
     hasDerivedData: true,
 

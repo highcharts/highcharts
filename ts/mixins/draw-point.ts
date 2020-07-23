@@ -4,7 +4,7 @@
  *
  * */
 
-import type Point from '../parts/Point';
+import type Point from '../Core/Series/Point';
 
 /**
  * Internal types
@@ -30,7 +30,7 @@ declare global {
     }
 }
 
-var isFn = function (x: unknown): x is Function {
+const isFn = function (x: unknown): x is Function {
     return typeof x === 'function';
 };
 
@@ -49,7 +49,7 @@ var isFn = function (x: unknown): x is Function {
  * @todo add type checking.
  * @todo export this function to enable usage
  */
-var draw = function draw(
+const draw = function draw(
     this: Highcharts.DrawPoint,
     params: Highcharts.DrawPointParams
 ): void {
@@ -100,7 +100,7 @@ var draw = function draw(
  * @private
  * @param {Highcharts.Dictionary<any>} params Parameters
  */
-var drawPoint = function drawPoint(
+const drawPoint = function drawPoint(
     this: Highcharts.DrawPoint,
     params: Highcharts.DrawPointParams
 ): void {
@@ -115,4 +115,10 @@ var drawPoint = function drawPoint(
     draw.call(point, params);
 };
 
-export default drawPoint;
+const drawPointModule = {
+    draw,
+    drawPoint,
+    isFn
+};
+
+export default drawPointModule;

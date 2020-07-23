@@ -8,4 +8,4 @@
  * License: www.highcharts.com/license
  */
 'use strict';
-import '../../themes/grid-light.js';
+import '../../Extensions/Themes/GridLight.js';
