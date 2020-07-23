@@ -65,6 +65,11 @@ QUnit.test('Random properties in plot options', assert => {
 QUnit.test('Updates', assert => {
 
     const chart = Highcharts.chart('container', {
+        plotOptions: {
+            series: {
+                pointStart: 3
+            }
+        },
         series: [{
             data: [1, 2, 3, 4]
         }]
@@ -79,8 +84,20 @@ QUnit.test('Updates', assert => {
     });
 
     assert.strictEqual(
+        chart.isInPlotOptions('pointStart'),
+        true,
+        'isInPlotOptions() method should return true when given property exist.'
+    );
+
+    assert.strictEqual(
+        chart.isInPlotOptions('myNotExistingProperty'),
+        false,
+        'isInPlotOptions() method should return false when given property does not exist.'
+    );
+
+    assert.strictEqual(
         chart.series[0].data[1].x,
-        10,
+        13,
         'It is possible to update the plotOptions.series.pointInterval.'
     );
 
