@@ -11,4 +11,4 @@
  * License: www.highcharts.com/license
  */
 'use strict';
-import '../../modules/full-screen.src.js';
+import '../../Extensions/FullScreen.js';

@@ -179,24 +179,29 @@ seriesType('arearange', 'area', {
      * @private
      */
     getGraphPath: function (points) {
-        var highPoints = [], highAreaPoints = [], i, getGraphPath = seriesTypes.area.prototype.getGraphPath, point, pointShim, linePath, lowerPath, options = this.options, connectEnds = this.chart.polar && options.connectEnds !== false, connectNulls = options.connectNulls, step = options.step, higherPath, higherAreaPath;
+        var highPoints = [], highAreaPoints = [], i, getGraphPath = seriesTypes.area.prototype.getGraphPath, point, pointShim, linePath, lowerPath, options = this.options, polar = this.chart.polar, connectEnds = polar && options.connectEnds !== false, connectNulls = options.connectNulls, step = options.step, higherPath, higherAreaPath;
         points = points || this.points;
-        i = points.length;
         // Create the top line and the top part of the area fill. The area fill
         // compensates for null points by drawing down to the lower graph,
         // moving across the null gap and starting again at the lower graph.
         i = points.length;
         while (i--) {
             point = points[i];
+            // Support for polar
+            var highAreaPoint = polar ? {
+                plotX: point.rectPlotX,
+                plotY: point.yBottom,
+                doCurve: false // #5186, gaps in areasplinerange fill
+            } : {
+                plotX: point.plotX,
+                plotY: point.plotY,
+                doCurve: false // #5186, gaps in areasplinerange fill
+            };
             if (!point.isNull &&
                 !connectEnds &&
                 !connectNulls &&
                 (!points[i + 1] || points[i + 1].isNull)) {
-                highAreaPoints.push({
-                    plotX: point.plotX,
-                    plotY: point.plotY,
-                    doCurve: false // #5186, gaps in areasplinerange fill
-                });
+                highAreaPoints.push(highAreaPoint);
             }
             pointShim = {
                 polarPlotY: point.polarPlotY,
@@ -213,11 +218,7 @@ seriesType('arearange', 'area', {
                 !connectEnds &&
                 !connectNulls &&
                 (!points[i - 1] || points[i - 1].isNull)) {
-                highAreaPoints.push({
-                    plotX: point.plotX,
-                    plotY: point.plotY,
-                    doCurve: false // #5186, gaps in areasplinerange fill
-                });
+                highAreaPoints.push(highAreaPoint);
             }
         }
         // Get the paths

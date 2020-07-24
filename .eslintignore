@@ -1,4 +1,5 @@
 docs/sidebars.js
+js/Accessibility/**/*.js
 js/Core/**/*.js
 js/Extensions/**/*.js
 js/Gantt/**/*.js
@@ -8,7 +9,7 @@ js/Stock/**/*.js
 js/annotations/**/*.js
 js/indicators/**/*.js
 js/modules/**/*.js
-js/mixins/**/*.js
+js/Mixins/**/*.js
 js/parts/**/*.js
 js/parts-3d/**/*.js
 js/parts-gantt/**/*.js

@@ -108,7 +108,7 @@ declare global {
 
 import '../Core/Series/Series.js';
 import '../Core/Renderer/SVG/SVGRenderer.js';
-import onSeriesMixin from '../mixins/on-series.js';
+import onSeriesMixin from '../Mixins/OnSeries.js';
 
 var noop = H.noop,
     Renderer = H.Renderer,

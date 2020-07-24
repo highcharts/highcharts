@@ -58,11 +58,10 @@ const {
     seriesType
 } = U;
 
-import requiredIndicatorMixin from '../../mixins/indicator-required.js';
+import requiredIndicator from '../../Mixins/IndicatorRequired.js';
 
 var EMA = H.seriesTypes.ema,
-    AD = H.seriesTypes.ad,
-    requiredIndicator = requiredIndicatorMixin;
+    AD = H.seriesTypes.ad;
 
 /**
  * The Chaikin series type.

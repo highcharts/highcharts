@@ -28,7 +28,7 @@ var color = Color.parse;
 import H from '../Globals.js';
 var noop = H.noop;
 import Legend from '../Legend.js';
-import LegendSymbolMixin from '../../mixins/legend-symbol.js';
+import LegendSymbolMixin from '../../Mixins/LegendSymbol.js';
 import Point from '../Series/Point.js';
 import U from '../Utilities.js';
 var addEvent = U.addEvent, erase = U.erase, extend = U.extend, Fx = U.Fx, isNumber = U.isNumber, merge = U.merge, pick = U.pick, splat = U.splat;
@@ -38,7 +38,7 @@ var addEvent = U.addEvent, erase = U.erase, extend = U.extend, Fx = U.Fx, isNumb
  * @typedef {"linear"|"logarithmic"} Highcharts.ColorAxisTypeValue
  */
 ''; // detach doclet above
-import '../../mixins/color-series.js';
+import '../../Mixins/ColorSeries.js';
 var Series = H.Series, colorPointMixin = H.colorPointMixin, colorSeriesMixin = H.colorSeriesMixin;
 extend(Series.prototype, colorSeriesMixin);
 extend(Point.prototype, colorPointMixin);

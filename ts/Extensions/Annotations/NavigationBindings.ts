@@ -11,7 +11,7 @@
 'use strict';
 
 import Annotation from './Annotations.js';
-import chartNavigationMixin from '../../mixins/navigation.js';
+import chartNavigationMixin from '../../Mixins/Navigation.js';
 import H from '../../Core/Globals.js';
 import U from '../../Core/Utilities.js';
 const {

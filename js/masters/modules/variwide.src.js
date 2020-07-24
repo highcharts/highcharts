@@ -10,4 +10,4 @@
  * License: www.highcharts.com/license
  */
 'use strict';
-import '../../modules/variwide.src.js';
+import '../../Series/VariwideSeries.js';
