@@ -198,7 +198,7 @@ Available arguments for 'gulp test':
             return;
         }
 
-        const forceRun = !!(argv.browsers || argv.browsercount || argv.force || argv.tests || argv.testsAbsolutePath);
+        const forceRun = !!(argv.browsers || argv.browsercount || argv.force || argv.tests || argv.testsAbsolutePath || argv.wait);
 
         if (forceRun || shouldRun()) {
 
@@ -210,7 +210,7 @@ Available arguments for 'gulp test':
             new KarmaServer(
                 {
                     configFile: KARMA_CONFIG_FILE,
-                    singleRun: true,
+                    singleRun: !argv.wait,
                     client: {
                         cliArgs: argv
                     }

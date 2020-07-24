@@ -47,6 +47,7 @@ abstract class DataModifier {
      * */
 
     public abstract execute(dataTable: DataTable): DataTable;
+
     // public attr() {}
 }
 

@@ -34,10 +34,16 @@ require.config({
     baseUrl: '/base/', // karma specific root link
     packages: [{
         name: 'highcharts',
-        main: 'highcharts.src'
+        main: 'highcharts'
     }],
     paths: {
-        highcharts: 'code'
+        'base/js': 'code/es-modules',
+        'highcharts': 'code'
+    },
+    map: {
+        '*': {
+            'code/highcharts': 'code/highcharts.src'
+        }
     }
 });
 
@@ -66,7 +72,7 @@ if (window.QUnit) {
         }
     }
 
-    QUnit.module('Highcharts', {
+    QUnit.module('[Highcharts Tests]', {
         beforeEach: function (test) {
             if (VERBOSE) {
                 console.log('Start "' + test.test.testName + '"');
