@@ -1479,11 +1479,11 @@ extend(Series.prototype, /** @lends Series.prototype */ {
                 // Indicators, histograms etc recalculate the data. It should be
                 // possible to omit this.
                 this.hasDerivedData ||
-                // Changes to data grouping requires new points in new groupsgu
                 // New type requires new point classes
                 (newType && newType !== this.type) ||
                 // New options affecting how the data points are built
                 typeof options.pointStart !== 'undefined' ||
+                // Changes to data grouping requires new points in new groups
                 series.hasOptionChanged('dataGrouping') ||
                 series.hasOptionChanged('pointStart') ||
                 series.hasOptionChanged('pointInterval') ||
