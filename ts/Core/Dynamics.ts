@@ -92,7 +92,6 @@ declare global {
                 oneToOne?: boolean,
                 animation?: (boolean|AnimationOptionsObject)
             ): void;
-            isInPlotOptions(property: string): boolean;
         }
         interface ChartAfterUpdateEventObject {
             animation: (boolean|AnimationOptionsObject);
@@ -140,7 +139,7 @@ declare global {
             ): void;
             setName(name: string): void;
             update(options: SeriesOptionsType, redraw?: boolean): void;
-            isInPlotOptions(property: string): boolean;
+            hasOptionChanged(this: Highcharts.Series, optionName: string): boolean;
         }
         interface XAxisOptions {
             index?: number;
@@ -970,37 +969,7 @@ extend(Chart.prototype, /** @lends Highcharts.Chart.prototype */ {
     ): void {
         this.applyDescription('caption', options);
         this.layOutTitles(redraw);
-    },
-
-    /**
-     * Check if the property exist in the plotOptions.
-     *
-     * @private
-     * @function Highcharts.Chart#isInPlotOptions
-     *
-     * @param {string} property
-     *
-     * @return {boolean}
-     */
-    isInPlotOptions: function (this: Chart, property: string): boolean {
-        const chart = this,
-            plotOptions = chart.options.plotOptions;
-        if (plotOptions) {
-            for (const seriesType in plotOptions) {
-                if (Object.prototype.hasOwnProperty.call(plotOptions, seriesType)) {
-                    const isInPlotOptions = Object.prototype.hasOwnProperty.call(
-                        plotOptions[seriesType],
-                        property
-                    );
-                    if (isInPlotOptions) {
-                        return true;
-                    }
-                }
-            }
-        }
-        return false;
     }
-
 });
 
 /**
@@ -1510,17 +1479,16 @@ extend(Series.prototype, /** @lends Series.prototype */ {
                 // Indicators, histograms etc recalculate the data. It should be
                 // possible to omit this.
                 this.hasDerivedData ||
-                // Changes to data grouping requires new points in new groups
-                options.dataGrouping ||
+                // Changes to data grouping requires new points in new groupsgu
                 // New type requires new point classes
                 (newType && newType !== this.type) ||
                 // New options affecting how the data points are built
                 typeof options.pointStart !== 'undefined' ||
-                chart.isInPlotOptions('pointInterval') ||
-                chart.isInPlotOptions('pointStart') ||
-                options.pointInterval ||
-                options.pointIntervalUnit ||
-                options.keys
+                series.hasOptionChanged('dataGrouping') ||
+                series.hasOptionChanged('pointStart') ||
+                series.hasOptionChanged('pointInterval') ||
+                series.hasOptionChanged('pointIntervalUnit') ||
+                series.hasOptionChanged('keys')
             ),
             initialSeriesProto = seriesTypes[initialType].prototype,
             n,
@@ -1701,6 +1669,26 @@ extend(Series.prototype, /** @lends Series.prototype */ {
     setName: function (this: Highcharts.Series, name: string): void {
         this.name = this.options.name = this.userOptions.name = name;
         this.chart.isDirtyLegend = true;
+    },
+    /**
+     * Check if the option has changed.
+     *
+     * @private
+     * @function Highcharts.Series#hasOptionChanged
+     *
+     * @param {string} option
+     *
+     * @return {boolean}
+     */
+    hasOptionChanged(this: Highcharts.Series, optionName: string): boolean {
+        const chart = this.chart,
+            plotOptions = chart.options.plotOptions;
+
+        return (this.options as any)[optionName] !== pick(
+            (plotOptions as any)[this.type][optionName],
+            (plotOptions as any).series[optionName],
+            (this.options as any)[optionName]
+        );
     }
 });
 

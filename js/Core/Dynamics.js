@@ -649,30 +649,6 @@ extend(Chart.prototype, /** @lends Highcharts.Chart.prototype */ {
     setCaption: function (options, redraw) {
         this.applyDescription('caption', options);
         this.layOutTitles(redraw);
-    },
-    /**
-     * Check if the property exist in the plotOptions.
-     *
-     * @private
-     * @function Highcharts.Chart#isInPlotOptions
-     *
-     * @param {string} property
-     *
-     * @return {boolean}
-     */
-    isInPlotOptions: function (property) {
-        var chart = this, plotOptions = chart.options.plotOptions;
-        if (plotOptions) {
-            for (var seriesType in plotOptions) {
-                if (Object.prototype.hasOwnProperty.call(plotOptions, seriesType)) {
-                    var isInPlotOptions = Object.prototype.hasOwnProperty.call(plotOptions[seriesType], property);
-                    if (isInPlotOptions) {
-                        return true;
-                    }
-                }
-            }
-        }
-        return false;
     }
 });
 /**
@@ -1070,17 +1046,16 @@ extend(Series.prototype, /** @lends Series.prototype */ {
         // Indicators, histograms etc recalculate the data. It should be
         // possible to omit this.
         this.hasDerivedData ||
-            // Changes to data grouping requires new points in new groups
-            options.dataGrouping ||
+            // Changes to data grouping requires new points in new groupsgu
             // New type requires new point classes
             (newType && newType !== this.type) ||
             // New options affecting how the data points are built
             typeof options.pointStart !== 'undefined' ||
-            chart.isInPlotOptions('pointInterval') ||
-            chart.isInPlotOptions('pointStart') ||
-            options.pointInterval ||
-            options.pointIntervalUnit ||
-            options.keys), initialSeriesProto = seriesTypes[initialType].prototype, n, groups = [
+            series.hasOptionChanged('dataGrouping') ||
+            series.hasOptionChanged('pointStart') ||
+            series.hasOptionChanged('pointInterval') ||
+            series.hasOptionChanged('pointIntervalUnit') ||
+            series.hasOptionChanged('keys')), initialSeriesProto = seriesTypes[initialType].prototype, n, groups = [
             'group',
             'markerGroup',
             'dataLabelsGroup',
@@ -1213,6 +1188,20 @@ extend(Series.prototype, /** @lends Series.prototype */ {
     setName: function (name) {
         this.name = this.options.name = this.userOptions.name = name;
         this.chart.isDirtyLegend = true;
+    },
+    /**
+     * Check if the option has changed.
+     *
+     * @private
+     * @function Highcharts.Series#hasOptionChanged
+     *
+     * @param {string} option
+     *
+     * @return {boolean}
+     */
+    hasOptionChanged: function (optionName) {
+        var chart = this.chart, plotOptions = chart.options.plotOptions;
+        return this.options[optionName] !== pick(plotOptions[this.type][optionName], plotOptions.series[optionName], this.options[optionName]);
     }
 });
 // Extend the Axis.prototype for dynamic methods
