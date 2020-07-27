@@ -84,18 +84,6 @@ QUnit.test('Updates', assert => {
     });
 
     assert.strictEqual(
-        chart.isInPlotOptions('pointStart'),
-        true,
-        'isInPlotOptions() method should return true when given property exist.'
-    );
-
-    assert.strictEqual(
-        chart.isInPlotOptions('myNotExistingProperty'),
-        false,
-        'isInPlotOptions() method should return false when given property does not exist.'
-    );
-
-    assert.strictEqual(
         chart.series[0].data[1].x,
         13,
         'It is possible to update the plotOptions.series.pointInterval.'
@@ -113,5 +101,19 @@ QUnit.test('Updates', assert => {
         chart.series[0].data[1].x,
         20,
         'It is possible to update the plotOptions.series.pointStart.'
+    );
+
+    chart.options.plotOptions.line.pointStart = 11;
+
+    assert.strictEqual(
+        chart.series[0].hasOptionChanged('pointStart'),
+        true,
+        'hasOptionChanged() method should return true when given property has changed.'
+    );
+
+    assert.strictEqual(
+        chart.series[0].hasOptionChanged('myNotExistingProperty'),
+        false,
+        'hasOptionChanged() method should return false when given property has not changed.'
     );
 });
