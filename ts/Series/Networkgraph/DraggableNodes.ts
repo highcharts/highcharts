@@ -70,7 +70,8 @@ declare global {
 
 import U from '../../Core/Utilities.js';
 const {
-    addEvent
+    addEvent,
+    wrap
 } = U;
 
 /* eslint-disable no-invalid-this, valid-jsdoc */
@@ -189,6 +190,23 @@ H.dragNodesMixin = {
         }
     }
 };
+
+// Extend the onMouseUp method to restart simulation after click.
+wrap(
+    H.dragNodesMixin,
+    'onMouseUp',
+    function (
+        this: Highcharts.DragNodesSeries,
+        proceed: Function,
+        point: Highcharts.DragNodesPoint
+    ): Function {
+        if (!this.options.fixedDraggable) {
+            delete point.fixedPosition;
+        }
+        return proceed.apply(this, Array.prototype.slice.call(arguments, 1));
+    }
+);
+
 /*
  * Draggable mode:
  */
