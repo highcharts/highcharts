@@ -1653,6 +1653,80 @@ QUnit.test('Zero-width slot', assert => {
     );
 });
 
+QUnit.test('Only one scrollbar should be visible for the vertical scrolling #13359', assert => {
+    const chart = Highcharts.ganttChart('container', {
+        yAxis: {
+            min: 0,
+            max: 1,
+            type: 'category',
+            scrollbar: {
+                enabled: true
+            },
+            grid: {
+                enabled: true,
+                columns: [{
+                    title: {
+                        text: 'Project'
+                    },
+                    labels: {
+                        format: '{point.name}'
+                    }
+                }, {
+                    title: {
+                        text: 'Assignee'
+                    },
+                    labels: {
+                        format: '{point.assignee}'
+                    }
+                }]
+            }
+        },
+        series: [{
+            name: 'Project 1',
+            data: [{
+                start: 1,
+                end: 2,
+                name: 'Task A',
+                assignee: 'Person 1',
+                y: 0
+            }, {
+                start: 3,
+                end: 4,
+                name: 'Task B',
+                assignee: 'Person 2',
+                y: 1
+            }, {
+                start: 5,
+                end: 6,
+                name: 'Task C',
+                assignee: 'Person 3',
+                y: 2
+            }, {
+                start: 6,
+                end: 9,
+                name: 'Task D',
+                assignee: 'Person 4',
+                y: 3
+            }, {
+                start: 4,
+                end: 10,
+                name: 'Task E',
+                assignee: 'Person 5',
+                y: 4
+            }]
+        }]
+    });
+
+    assert.notOk(
+        chart.yAxis[0].grid.columns[0].scrollbar,
+        'The scrollbar for the column grid axis should not exist.'
+    );
+    assert.ok(
+        chart.yAxis[0].scrollbar,
+        'Only one scrollbar should be visible.'
+    );
+});
+
 QUnit.test('yAxis label adjustment #10281', assert => {
     const chart = Highcharts.ganttChart('container', {
         series: [{

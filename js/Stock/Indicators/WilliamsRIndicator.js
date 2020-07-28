@@ -8,7 +8,7 @@
 'use strict';
 import U from '../../Core/Utilities.js';
 var isArray = U.isArray, seriesType = U.seriesType;
-import reduceArrayMixin from '../../mixins/reduce-array.js';
+import reduceArrayMixin from '../../Mixins/ReduceArray.js';
 var getArrayExtremes = reduceArrayMixin.getArrayExtremes;
 /**
  * The Williams %R series type.

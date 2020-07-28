@@ -183,26 +183,28 @@ const {
     splat
 } = U;
 
-import centeredSeriesMixin from '../mixins/centered-series.js';
-import drawPointModule from '../mixins/draw-point.js';
+import centeredSeriesMixin from '../Mixins/CenteredSeries.js';
+import drawPointModule from '../Mixins/DrawPoint.js';
 const { drawPoint } = drawPointModule;
-import mixinTreeSeries from '../mixins/tree-series.js';
+import mixinTreeSeries from '../Mixins/TreeSeries.js';
+const {
+    getColor,
+    getLevelOptions,
+    setTreeValues,
+    updateRootId
+} = mixinTreeSeries;
 import '../Core/Series/Series.js';
 import './TreemapSeries.js';
 
 var Series = H.Series,
     getCenter = centeredSeriesMixin.getCenter,
-    getColor = mixinTreeSeries.getColor,
-    getLevelOptions = mixinTreeSeries.getLevelOptions,
     getStartAndEndRadians = centeredSeriesMixin.getStartAndEndRadians,
     isBoolean = function (x: unknown): x is boolean {
         return typeof x === 'boolean';
     },
     noop = H.noop,
     rad2deg = 180 / Math.PI,
-    seriesTypes = H.seriesTypes,
-    setTreeValues = mixinTreeSeries.setTreeValues,
-    updateRootId = mixinTreeSeries.updateRootId;
+    seriesTypes = H.seriesTypes;
 
 // TODO introduce step, which should default to 1.
 var range = function range(from: unknown, to: unknown): Array<number> {

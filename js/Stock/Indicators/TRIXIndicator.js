@@ -9,7 +9,7 @@
 import H from '../../Core/Globals.js';
 import U from '../../Core/Utilities.js';
 var correctFloat = U.correctFloat, seriesType = U.seriesType;
-import requiredIndicator from '../../mixins/indicator-required.js';
+import requiredIndicator from '../../Mixins/IndicatorRequired.js';
 var TEMA = H.seriesTypes.tema;
 /**
  * The TRIX series type.

@@ -141,16 +141,20 @@ const {
     seriesType
 } = U;
 
-import drawPointModule from '../mixins/draw-point.js';
+import drawPointModule from '../Mixins/DrawPoint.js';
 const { drawPoint } = drawPointModule;
-import polygon from '../mixins/polygon.js';
+import polygonMixin from '../Mixins/Polygon.js';
+const {
+    getBoundingBoxFromPolygon,
+    getPolygon,
+    isPolygonsColliding,
+    movePolygon,
+    rotate2DToOrigin,
+    rotate2DToPoint
+} = polygonMixin;
 import '../Core/Series/Series.js';
 
 var noop = H.noop,
-    getBoundingBoxFromPolygon = polygon.getBoundingBoxFromPolygon,
-    getPolygon = polygon.getPolygon,
-    isPolygonsColliding = polygon.isPolygonsColliding,
-    movePolygon = polygon.movePolygon,
     Series = H.Series;
 
 /**
@@ -1199,8 +1203,8 @@ var wordCloudSeries: Partial<Highcharts.WordcloudSeries> = {
         extendPlayingField: extendPlayingField,
         getRotation: getRotation,
         isPolygonsColliding: isPolygonsColliding,
-        rotate2DToOrigin: polygon.rotate2DToOrigin,
-        rotate2DToPoint: polygon.rotate2DToPoint
+        rotate2DToOrigin: rotate2DToOrigin,
+        rotate2DToPoint: rotate2DToPoint
     },
     getPlotBox: function (
         this: Highcharts.WordcloudSeries

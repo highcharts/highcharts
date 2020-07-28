@@ -88,3 +88,38 @@ QUnit.test('Inactive state and legend', function (assert) {
         'Disabling visible series should not inactivate other series (#11301)'
     );
 });
+
+QUnit.test('Keep state after the redraw call #13719', function (assert) {
+
+    var chart = Highcharts.chart('container', {
+        chart: {
+            events: {
+                render() {
+                    const chart = this;
+
+                    chart.series.forEach(function (s) {
+                        s.setState('inactive');
+                    });
+                    chart.series[0].setState('hover');
+                }
+            }
+        },
+        series: [{
+            data: [43934, 52503, 57177, 69658, 97031, 119931, 137133, 154175]
+        }, {
+            data: [24916, 24064, 29742, 29851, 32490, 30282, 38121, 40434]
+        }, {
+            data: [11744, 17722, 16005, 19771, 20185, 24377, 32147, 39387]
+        }]
+    });
+
+    chart.reflow();
+
+    var series = chart.series[1];
+
+    assert.strictEqual(
+        series.group.attr('opacity'),
+        0.2,
+        'The opacity should be set as default value for the inactive state #13719'
+    );
+});
