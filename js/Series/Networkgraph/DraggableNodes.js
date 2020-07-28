@@ -12,7 +12,7 @@
 import Chart from '../../Core/Chart/Chart.js';
 import H from '../../Core/Globals.js';
 import U from '../../Core/Utilities.js';
-var addEvent = U.addEvent;
+var addEvent = U.addEvent, wrap = U.wrap;
 /* eslint-disable no-invalid-this, valid-jsdoc */
 H.dragNodesMixin = {
     /**
@@ -99,6 +99,13 @@ H.dragNodesMixin = {
         }
     }
 };
+// Extend the onMouseUp method to restart simulation after click.
+wrap(H.dragNodesMixin, 'onMouseUp', function (proceed, point) {
+    if (!this.options.fixedDraggable) {
+        delete point.fixedPosition;
+    }
+    return proceed.apply(this, Array.prototype.slice.call(arguments, 1));
+});
 /*
  * Draggable mode:
  */
