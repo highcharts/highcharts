@@ -149,11 +149,11 @@ var GoogleDataStore = /** @class */ (function (_super) {
                 // console.log(text);
             }
         });
-        return true;
+        // return true;
     };
     GoogleDataStore.prototype.load = function () {
         return this.googleSpreadsheetKey ?
-            this.fetchSheet() : false;
+            this.fetchSheet() : void 0;
     };
     return GoogleDataStore;
 }(DataStore));

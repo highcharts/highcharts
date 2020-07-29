@@ -153,7 +153,7 @@ class GoogleDataStore extends DataStore {
          * */
     }
 
-    private fetchSheet(): (boolean) {
+    private fetchSheet(): void {
         const parseSheet = this.parseSheet;
         const fetchSheet = this.fetchSheet;
 
@@ -198,17 +198,19 @@ class GoogleDataStore extends DataStore {
             }
         });
 
-        return true;
+        // return true;
     }
 
-    public load(): boolean {
+    public load(): void {
         return this.googleSpreadsheetKey ?
-            this.fetchSheet() : false;
+            this.fetchSheet() : void 0;
     }
     /* *
      * TODO:
      * public save() {}
      * ...
+     *
+     * requires oAuth2 auth
      *
      * */
 }

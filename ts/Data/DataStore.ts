@@ -39,7 +39,7 @@ abstract class DataStore {
 
     public length: number;
 
-    public metadata: Array<MetaColumn>;
+    public metadata: Array<DataStore.MetaColumn>;
 
     /* *
     *
@@ -58,11 +58,11 @@ abstract class DataStore {
         });
     }
 
-    public describe(metadata: Array<MetaColumn>): void {
+    public describe(metadata: Array<DataStore.MetaColumn>): void {
         this.metadata = metadata;
     }
 
-    public whatIs(name: string): (MetaColumn|void) {
+    public whatIs(name: string): (DataStore.MetaColumn|void) {
         const metadata = this.metadata;
         let i;
 
@@ -81,10 +81,11 @@ abstract class DataStore {
     }
 
 }
-
-export interface MetaColumn {
-    name?: string;
-    metadata?: any;
+namespace DataStore {
+    export interface MetaColumn {
+        name?: string;
+        metadata?: any;
+    }
 }
 
 export default DataStore;
