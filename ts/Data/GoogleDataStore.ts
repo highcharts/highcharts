@@ -15,8 +15,8 @@
 import DataTable from './DataTable.js';
 import DataStore from './DataStore.js';
 
-import ajaxModule from '../mixins/ajax.js';
-const { ajax } = ajaxModule;
+import AjaxMixin from '../Mixins/Ajax.js';
+const { ajax } = AjaxMixin;
 
 /** eslint-disable valid-jsdoc */
 

@@ -24,8 +24,8 @@ var __extends = (this && this.__extends) || (function () {
     };
 })();
 import DataStore from './DataStore.js';
-import ajaxModule from '../mixins/ajax.js';
-var ajax = ajaxModule.ajax;
+import AjaxMixin from '../Mixins/Ajax.js';
+var ajax = AjaxMixin.ajax;
 /** eslint-disable valid-jsdoc */
 /**
  * @private
