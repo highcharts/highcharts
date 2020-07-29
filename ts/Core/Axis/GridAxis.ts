@@ -40,6 +40,7 @@ const {
 declare global {
     namespace Highcharts {
         interface Axis {
+            axisBorder?: SVGElement;
             getMaxLabelDimensions(
                 ticks: Dictionary<Tick>,
                 tickPositions: Array<(number|string)>
@@ -410,6 +411,8 @@ class GridAxisAdditions {
 
     axis: GridAxis;
     axisLineExtra?: Highcharts.SVGElement;
+    upperBorder?: Highcharts.SVGElement;
+    lowerBorder?: Highcharts.SVGElement;
     columnIndex?: number;
     columns?: Array<GridAxis>;
     isColumn?: boolean;
@@ -729,7 +732,6 @@ class GridAxis {
                     const linePath = axis.getLinePath(lineWidth);
                     const startPoint = linePath[0];
                     const endPoint = linePath[1];
-
                     // Negate distance if top or left axis
                     // Subtract 1px to draw the line at the end of the tick
                     const tickLength = (axis.tickSize('tick') || [1])[0];
@@ -751,6 +753,62 @@ class GridAxis {
                         }
                     }
 
+                    // If it doesn't exist, add an upper and lower border
+                    // for the vertical grid axis.
+                    if (!axis.horiz && axis.chart.marginRight) {
+                        const upperBorderStartPoint = startPoint,
+                            upperBorderEndPoint = ['L', axis.chart.chartWidth - axis.chart.marginRight, startPoint[2]],
+                            upperBorderPath = [upperBorderStartPoint, upperBorderEndPoint],
+                            lowerBorderEndPoint = ['L', axis.chart.chartWidth - axis.chart.marginRight,
+                                axis.toPixels(axis.max as any + axis.tickmarkOffset)],
+                            lowerBorderStartPoint = ['M', endPoint[1],
+                                axis.toPixels(axis.max as any + axis.tickmarkOffset)],
+                            lowerBorderPath = [lowerBorderStartPoint, lowerBorderEndPoint];
+
+                        if (!axis.grid.upperBorder) {
+                            axis.grid.upperBorder = renderer
+                                .path(upperBorderPath)
+                                .attr({
+                                    zIndex: 7
+                                })
+                                .addClass('highcharts-axis-line')
+                                .add(axis.axisBorder);
+
+                            if (!renderer.styledMode) {
+                                axis.grid.upperBorder.attr({
+                                    stroke: options.lineColor,
+                                    'stroke-width': lineWidth
+                                });
+                            }
+                        } else {
+                            axis.grid.upperBorder.animate({
+                                d: upperBorderPath as any
+                            });
+                        }
+
+                        if (!axis.grid.lowerBorder) {
+                            axis.grid.lowerBorder = renderer
+                                .path(lowerBorderPath)
+                                .attr({
+                                    zIndex: 7
+                                })
+                                .addClass('highcharts-axis-line')
+                                .add(axis.axisBorder);
+                            if (!renderer.styledMode) {
+                                axis.grid.lowerBorder.attr({
+                                    stroke: options.lineColor,
+                                    'stroke-width': lineWidth
+                                });
+                            }
+                        } else {
+                            axis.grid.lowerBorder.animate({
+                                d: lowerBorderPath as any
+                            });
+                        }
+                    }
+
+                    // Render an extra line parallel to the existing axes,
+                    // to close the grid.
                     if (!axis.grid.axisLineExtra) {
                         axis.grid.axisLineExtra = renderer
                             .path(linePath)

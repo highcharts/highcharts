@@ -486,6 +486,53 @@ var GridAxis = /** @class */ (function () {
                             endPoint[1] += distance;
                         }
                     }
+                    // If it doesn't exist, add an upper and lower border
+                    // for the vertical grid axis.
+                    if (!axis.horiz && axis.chart.marginRight) {
+                        var upperBorderStartPoint = startPoint, upperBorderEndPoint = ['L', axis.left - axis.chart.marginRight, startPoint[2]], upperBorderPath = [upperBorderStartPoint, upperBorderEndPoint], lowerBorderEndPoint = ['L', axis.chart.chartWidth - axis.chart.marginRight, axis.toPixels(axis.max + axis.tickmarkOffset)], lowerBorderStartPoint = ['M', endPoint[1], axis.toPixels(axis.max + axis.tickmarkOffset)], lowerBorderPath = [lowerBorderStartPoint, lowerBorderEndPoint];
+                        if (!axis.grid.upperBorder) {
+                            axis.grid.upperBorder = renderer
+                                .path(upperBorderPath)
+                                .attr({
+                                zIndex: 7
+                            })
+                                .addClass('highcharts-axis-line')
+                                .add(axis.axisBorder);
+                            if (!renderer.styledMode) {
+                                axis.grid.upperBorder.attr({
+                                    stroke: options.lineColor,
+                                    'stroke-width': lineWidth
+                                });
+                            }
+                        }
+                        else {
+                            axis.grid.upperBorder.animate({
+                                d: upperBorderPath
+                            });
+                        }
+                        if (!axis.grid.lowerBorder) {
+                            axis.grid.lowerBorder = renderer
+                                .path(lowerBorderPath)
+                                .attr({
+                                zIndex: 7
+                            })
+                                .addClass('highcharts-axis-line')
+                                .add(axis.axisBorder);
+                            if (!renderer.styledMode) {
+                                axis.grid.lowerBorder.attr({
+                                    stroke: options.lineColor,
+                                    'stroke-width': lineWidth
+                                });
+                            }
+                        }
+                        else {
+                            axis.grid.lowerBorder.animate({
+                                d: lowerBorderPath
+                            });
+                        }
+                    }
+                    // Render an extra line parallel to the existing axes,
+                    // to close the grid.
                     if (!axis.grid.axisLineExtra) {
                         axis.grid.axisLineExtra = renderer
                             .path(linePath)
