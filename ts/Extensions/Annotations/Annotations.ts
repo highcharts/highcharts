@@ -1754,6 +1754,7 @@ chartProto.callbacks.push(function (
             // If second row doesn't have xValues
             // then it is a title row thus multiple level header is in use.
             multiLevelHeaders = !event.dataRows[1].xValues,
+            annotationHeader = chart.options.lang?.exportData?.annotationHeader,
             columnHeaderFormatter = function (index: any): any {
                 let s;
                 if (csvColumnHeaderFormatter) {
@@ -1763,7 +1764,7 @@ chartProto.callbacks.push(function (
                     }
                 }
 
-                s = 'Annotations ' + index;
+                s = annotationHeader + ' ' + index;
 
                 if (multiLevelHeaders) {
                     return {
@@ -1771,6 +1772,8 @@ chartProto.callbacks.push(function (
                         topLevelColumnTitle: s
                     };
                 }
+
+                return s;
             },
             startRowLength = event.dataRows[0].length,
             annotationSeparator = chart.options.exporting?.csv?.annotations?.itemDelimiter,

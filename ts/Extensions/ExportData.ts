@@ -98,6 +98,7 @@ declare global {
             pointArrayMap?: Array<string>;
         }
         interface ExportDataOptions {
+            annotationHeader?: string;
             categoryHeader?: string;
             categoryDatetimeHeader?: string;
         }
@@ -400,6 +401,11 @@ setOptions({
          * @requires modules/export-data
          */
         exportData: {
+            /**
+             * The annotation column title.
+             */
+            annotationHeader: 'Annotations',
+
             /**
              * The category column title.
              */

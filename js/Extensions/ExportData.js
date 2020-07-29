@@ -275,6 +275,10 @@ setOptions({
          */
         exportData: {
             /**
+             * The annotation column title.
+             */
+            annotationHeader: 'Annotations',
+            /**
              * The category column title.
              */
             categoryHeader: 'Category',
