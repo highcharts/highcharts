@@ -1652,3 +1652,102 @@ QUnit.test('Zero-width slot', assert => {
         'The first label has a 0px slot and should not render (#13221)'
     );
 });
+
+QUnit.test('Only one scrollbar should be visible for the vertical scrolling #13359', assert => {
+    const chart = Highcharts.ganttChart('container', {
+        yAxis: {
+            min: 0,
+            max: 1,
+            type: 'category',
+            scrollbar: {
+                enabled: true
+            },
+            grid: {
+                enabled: true,
+                columns: [{
+                    title: {
+                        text: 'Project'
+                    },
+                    labels: {
+                        format: '{point.name}'
+                    }
+                }, {
+                    title: {
+                        text: 'Assignee'
+                    },
+                    labels: {
+                        format: '{point.assignee}'
+                    }
+                }]
+            }
+        },
+        series: [{
+            name: 'Project 1',
+            data: [{
+                start: 1,
+                end: 2,
+                name: 'Task A',
+                assignee: 'Person 1',
+                y: 0
+            }, {
+                start: 3,
+                end: 4,
+                name: 'Task B',
+                assignee: 'Person 2',
+                y: 1
+            }, {
+                start: 5,
+                end: 6,
+                name: 'Task C',
+                assignee: 'Person 3',
+                y: 2
+            }, {
+                start: 6,
+                end: 9,
+                name: 'Task D',
+                assignee: 'Person 4',
+                y: 3
+            }, {
+                start: 4,
+                end: 10,
+                name: 'Task E',
+                assignee: 'Person 5',
+                y: 4
+            }]
+        }]
+    });
+
+    assert.notOk(
+        chart.yAxis[0].grid.columns[0].scrollbar,
+        'The scrollbar for the column grid axis should not exist.'
+    );
+    assert.ok(
+        chart.yAxis[0].scrollbar,
+        'Only one scrollbar should be visible.'
+    );
+});
+
+QUnit.test('yAxis label adjustment #10281', assert => {
+    const chart = Highcharts.ganttChart('container', {
+        series: [{
+            data: [{
+                name: 'Start prototype',
+                start: Date.UTC(2014, 10, 18),
+                end: Date.UTC(2014, 10, 25)
+            }, {
+                name: 'Really Long series name that is very long indeed. Really Long series name that is very long indeed.',
+                start: Date.UTC(2014, 10, 23),
+                end: Date.UTC(2014, 10, 26)
+            }]
+        }]
+    });
+
+    const yAxis = chart.yAxis[0],
+        label = yAxis.ticks[1].label;
+
+    assert.strictEqual(
+        yAxis.maxLabelDimensions.width,
+        label.getBBox().width,
+        'The yAxis max label dimensions should be same as the width of the longest label (#10281)'
+    );
+});

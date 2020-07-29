@@ -183,10 +183,10 @@ const {
     splat
 } = U;
 
-import centeredSeriesMixin from '../mixins/centered-series.js';
-import drawPointModule from '../mixins/draw-point.js';
+import centeredSeriesMixin from '../Mixins/CenteredSeries.js';
+import drawPointModule from '../Mixins/DrawPoint.js';
 const { drawPoint } = drawPointModule;
-import mixinTreeSeries from '../mixins/tree-series.js';
+import mixinTreeSeries from '../Mixins/TreeSeries.js';
 const {
     getColor,
     getLevelOptions,

@@ -594,7 +594,10 @@ Timeline.prototype.getCursor = function () {
  * True if timeline is at the beginning.
  */
 Timeline.prototype.atStart = function () {
-    return !this.getCurrentPlayingPaths().some(function (path) {
+    if (this.cursor) {
+        return false;
+    }
+    return !splat(this.paths[0]).some(function (path) {
         return path.cursor;
     });
 };

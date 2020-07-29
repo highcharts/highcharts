@@ -13,9 +13,9 @@
 import H from '../Core/Globals.js';
 import U from '../Core/Utilities.js';
 var extend = U.extend, find = U.find, isArray = U.isArray, isNumber = U.isNumber, isObject = U.isObject, merge = U.merge, seriesType = U.seriesType;
-import drawPointModule from '../mixins/draw-point.js';
+import drawPointModule from '../Mixins/DrawPoint.js';
 var drawPoint = drawPointModule.drawPoint;
-import polygonMixin from '../mixins/polygon.js';
+import polygonMixin from '../Mixins/Polygon.js';
 var getBoundingBoxFromPolygon = polygonMixin.getBoundingBoxFromPolygon, getPolygon = polygonMixin.getPolygon, isPolygonsColliding = polygonMixin.isPolygonsColliding, movePolygon = polygonMixin.movePolygon, rotate2DToOrigin = polygonMixin.rotate2DToOrigin, rotate2DToPoint = polygonMixin.rotate2DToPoint;
 import '../Core/Series/Series.js';
 var noop = H.noop, Series = H.Series;

@@ -13,7 +13,7 @@ import Axis from './Axis.js';
 import Tick from './Tick.js';
 import Tree from '../../Gantt/Tree.js';
 import TreeGridTick from './TreeGridTick.js';
-import mixinTreeSeries from '../../mixins/tree-series.js';
+import mixinTreeSeries from '../../Mixins/TreeSeries.js';
 var getLevelOptions = mixinTreeSeries.getLevelOptions;
 import U from '../Utilities.js';
 var addEvent = U.addEvent, find = U.find, fireEvent = U.fireEvent, isNumber = U.isNumber, isObject = U.isObject, isString = U.isString, merge = U.merge, pick = U.pick, wrap = U.wrap;

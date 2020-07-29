@@ -75,7 +75,7 @@ const {
 } = U;
 
 import '../Core/Options.js';
-import NodesMixin from '../mixins/nodes.js';
+import NodesMixin from '../Mixins/Nodes.js';
 
 var base = H.seriesTypes.sankey.prototype;
 

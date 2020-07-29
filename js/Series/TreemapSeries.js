@@ -11,13 +11,13 @@
  * */
 'use strict';
 import H from '../Core/Globals.js';
-import mixinTreeSeries from '../mixins/tree-series.js';
+import mixinTreeSeries from '../Mixins/TreeSeries.js';
 var getColor = mixinTreeSeries.getColor, getLevelOptions = mixinTreeSeries.getLevelOptions, updateRootId = mixinTreeSeries.updateRootId;
-import drawPointModule from '../mixins/draw-point.js';
+import drawPointModule from '../Mixins/DrawPoint.js';
 var drawPoint = drawPointModule.drawPoint;
 import Color from '../Core/Color.js';
 var color = Color.parse;
-import LegendSymbolMixin from '../mixins/legend-symbol.js';
+import LegendSymbolMixin from '../Mixins/LegendSymbol.js';
 import Point from '../Core/Series/Point.js';
 import U from '../Core/Utilities.js';
 var addEvent = U.addEvent, correctFloat = U.correctFloat, defined = U.defined, error = U.error, extend = U.extend, fireEvent = U.fireEvent, isArray = U.isArray, isNumber = U.isNumber, isObject = U.isObject, isString = U.isString, merge = U.merge, objectEach = U.objectEach, pick = U.pick, seriesType = U.seriesType, stableSort = U.stableSort;
@@ -580,13 +580,12 @@ seriesType('treemap', 'scatter'
         return !!this.processedXData.length; // != 0
     },
     init: function (chart, options) {
-        var series = this, colorMapSeriesMixin = H.colorMapSeriesMixin;
+        var series = this, colorMapSeriesMixin = H.colorMapSeriesMixin, setOptionsEvent;
         // If color series logic is loaded, add some properties
         if (colorMapSeriesMixin) {
             this.colorAttribs = colorMapSeriesMixin.colorAttribs;
         }
-        // Handle deprecated options.
-        series.eventsToUnbind.push(addEvent(series, 'setOptions', function (event) {
+        setOptionsEvent = addEvent(series, 'setOptions', function (event) {
             var options = event.userOptions;
             if (defined(options.allowDrillToNode) &&
                 !defined(options.allowTraversingTree)) {
@@ -598,10 +597,12 @@ seriesType('treemap', 'scatter'
                 options.traverseUpButton = options.drillUpButton;
                 delete options.drillUpButton;
             }
-        }));
+        });
         Series.prototype.init.call(series, chart, options);
         // Treemap's opacity is a different option from other series
         delete series.opacity;
+        // Handle deprecated options.
+        series.eventsToUnbind.push(setOptionsEvent);
         if (series.options.allowTraversingTree) {
             series.eventsToUnbind.push(addEvent(series, 'click', series.onClickDrillToNode));
         }

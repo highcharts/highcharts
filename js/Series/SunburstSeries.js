@@ -15,10 +15,10 @@
 import H from '../Core/Globals.js';
 import U from '../Core/Utilities.js';
 var correctFloat = U.correctFloat, error = U.error, extend = U.extend, isNumber = U.isNumber, isObject = U.isObject, isString = U.isString, merge = U.merge, seriesType = U.seriesType, splat = U.splat;
-import centeredSeriesMixin from '../mixins/centered-series.js';
-import drawPointModule from '../mixins/draw-point.js';
+import centeredSeriesMixin from '../Mixins/CenteredSeries.js';
+import drawPointModule from '../Mixins/DrawPoint.js';
 var drawPoint = drawPointModule.drawPoint;
-import mixinTreeSeries from '../mixins/tree-series.js';
+import mixinTreeSeries from '../Mixins/TreeSeries.js';
 var getColor = mixinTreeSeries.getColor, getLevelOptions = mixinTreeSeries.getLevelOptions, setTreeValues = mixinTreeSeries.setTreeValues, updateRootId = mixinTreeSeries.updateRootId;
 import '../Core/Series/Series.js';
 import './TreemapSeries.js';

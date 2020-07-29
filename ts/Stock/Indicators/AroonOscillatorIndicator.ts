@@ -55,8 +55,8 @@ declare global {
     }
 }
 
-import multipleLinesMixin from '../../mixins/multiple-lines.js';
-import requiredIndicator from '../../mixins/indicator-required.js';
+import multipleLinesMixin from '../../Mixins/MultipleLines.js';
+import requiredIndicator from '../../Mixins/IndicatorRequired.js';
 import U from '../../Core/Utilities.js';
 const {
     merge,

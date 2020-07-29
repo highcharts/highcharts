@@ -17,7 +17,7 @@ import Axis from './Axis.js';
 import Tick from './Tick.js';
 import Tree from '../../Gantt/Tree.js';
 import TreeGridTick from './TreeGridTick.js';
-import mixinTreeSeries from '../../mixins/tree-series.js';
+import mixinTreeSeries from '../../Mixins/TreeSeries.js';
 const { getLevelOptions } = mixinTreeSeries;
 import U from '../Utilities.js';
 const {

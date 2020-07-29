@@ -3,8 +3,8 @@
  *  !!!!!!! SOURCE GETS TRANSPILED BY TYPESCRIPT. EDIT TS FILE ONLY. !!!!!!!
  *
  * */
-import geometry from './geometry.js';
-var getAngleBetweenPoints = geometry.getAngleBetweenPoints, getCenterOfPoints = geometry.getCenterOfPoints, getDistanceBetweenPoints = geometry.getDistanceBetweenPoints;
+import Geometry from './Geometry.js';
+var getAngleBetweenPoints = Geometry.getAngleBetweenPoints, getCenterOfPoints = Geometry.getCenterOfPoints, getDistanceBetweenPoints = Geometry.getDistanceBetweenPoints;
 /**
  * @private
  * @param {number} x

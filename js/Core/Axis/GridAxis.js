@@ -157,13 +157,11 @@ Axis.prototype.getMaxLabelDimensions = function (ticks, tickPositions) {
             label = isObject(tick.label) ? tick.label : {};
             // Find width and height of tick
             tickHeight = label.getBBox ? label.getBBox().height : 0;
-            if (label.textStr && !isNumber(label.textPxLength)) {
-                label.textPxLength = label.getBBox().width;
+            if (label.textStr) {
+                // Set the tickWidth same as the label
+                // width after ellipsis applied #10281
+                tickWidth = label.getBBox().width;
             }
-            tickWidth = isNumber(label.textPxLength) ?
-                // Math.round ensures crisp lines
-                Math.round(label.textPxLength) :
-                0;
             // Update the result if width and/or height are larger
             dimensions.height = Math.max(tickHeight, dimensions.height);
             dimensions.width = Math.max(tickWidth, dimensions.width);
@@ -449,7 +447,11 @@ var GridAxis = /** @class */ (function () {
                 var columnOptions = merge(userOptions, gridOptions.columns[gridOptions.columns.length - columnIndex - 1], {
                     linkedTo: 0,
                     // Force to behave like category axis
-                    type: 'category'
+                    type: 'category',
+                    // Disable by default the scrollbar on the grid axis
+                    scrollbar: {
+                        enabled: false
+                    }
                 });
                 delete columnOptions.grid.columns; // Prevent recursion
                 var column = new Axis(axis.chart, columnOptions);

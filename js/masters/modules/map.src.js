@@ -12,7 +12,7 @@
 'use strict';
 import '../../Core/Axis/MapAxis.js';
 import '../../Core/Axis/ColorAxis.js';
-import '../../mixins/color-map-series.js';
+import '../../Mixins/ColorMapSeries.js';
 import '../../Maps/MapNavigation.js';
 import '../../Maps/MapPointer.js';
 import '../../Series/MapSeries.js';

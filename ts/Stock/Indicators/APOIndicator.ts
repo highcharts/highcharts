@@ -53,7 +53,7 @@ const {
     error,
     seriesType
 } = U;
-import requiredIndicator from '../../mixins/indicator-required.js';
+import requiredIndicator from '../../Mixins/IndicatorRequired.js';
 
 var EMA = H.seriesTypes.ema;
 
