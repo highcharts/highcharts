@@ -236,14 +236,12 @@ Axis.prototype.getMaxLabelDimensions = function (
 
             // Find width and height of tick
             tickHeight = label.getBBox ? label.getBBox().height : 0;
-            if (label.textStr && !isNumber(label.textPxLength)) {
-                label.textPxLength = label.getBBox().width;
-            }
-            tickWidth = isNumber(label.textPxLength) ?
-                // Math.round ensures crisp lines
-                Math.round(label.textPxLength) :
-                0;
 
+            if (label.textStr) {
+                // Set the tickWidth same as the label
+                // width after ellipsis applied #10281
+                tickWidth = label.getBBox().width;
+            }
             // Update the result if width and/or height are larger
             dimensions.height = Math.max(tickHeight, dimensions.height);
             dimensions.width = Math.max(tickWidth, dimensions.width);
@@ -683,7 +681,6 @@ class GridAxis {
         if (gridOptions.columns) {
             var columns = axis.grid.columns = [] as Array<GridAxis>,
                 columnIndex = axis.grid.columnIndex = 0;
-
             // Handle columns, each column is a grid axis
             while (++columnIndex < gridOptions.columns.length) {
                 var columnOptions = merge(
@@ -694,7 +691,11 @@ class GridAxis {
                     {
                         linkedTo: 0,
                         // Force to behave like category axis
-                        type: 'category'
+                        type: 'category',
+                        // Disable by default the scrollbar on the grid axis
+                        scrollbar: {
+                            enabled: false
+                        }
                     }
                 );
 

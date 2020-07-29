@@ -3361,7 +3361,6 @@ H.Series = seriesType<Highcharts.LineSeries>(
         colorCounter: 0,
         cropShoulder: 1,
         directTouch: false,
-        eventsToUnbind: [],
         isCartesian: true,
         // each point's x and y values are stored in this.xData and this.yData
         parallelArrays: ['x', 'y'],
@@ -3385,6 +3384,11 @@ H.Series = seriesType<Highcharts.LineSeries>(
             // programmatically). These are updated through Series.update()
             // (#10861).
             this.eventOptions = this.eventOptions || {};
+
+            // The 'eventsToUnbind' property moved from prototype into the
+            // Series init to avoid reference to the same array between
+            // the different series and charts. #12959, #13937
+            this.eventsToUnbind = [];
 
             /**
              * Read only. The chart that the series belongs to.
@@ -6650,7 +6654,7 @@ H.Series = seriesType<Highcharts.LineSeries>(
             // Avoid setting undefined opacity, or in styled mode
             if (
                 typeof this.opacity !== 'undefined' &&
-                !this.chart.styledMode
+                !this.chart.styledMode && this.state !== 'inactive' // #13719
             ) {
                 attrs.opacity = this.opacity;
             }
