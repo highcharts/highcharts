@@ -411,7 +411,8 @@ namespace TreeGridAxis {
                     numberOfSeries = 0,
                     isDirty: (boolean|undefined),
                     data: Array<PointOptionsObject>,
-                    treeGrid: TreeGridObject;
+                    treeGrid: TreeGridObject,
+                    max = options.max;
                 // Check whether any of series is rendering for the first time,
                 // visibility has changed, or its data is dirty,
                 // and only then update. #10570, #10580
@@ -449,6 +450,17 @@ namespace TreeGridAxis {
                         }
                         return arr;
                     }, []);
+
+                    // If max is higher than set data - add a
+                    // dummy data to render categories #10779
+                    if (max && data.length < max) {
+                        for (let i = data.length; i <= max; i++) {
+                            data.push({
+                                name: i + ''
+                            });
+                        }
+                    }
+
                     // setScale is fired after all the series is initialized,
                     // which is an ideal time to update the axis.categories.
                     treeGrid = getTreeGridFromData(
