@@ -133,7 +133,7 @@ class HTMLTableDataStore extends DataStore {
 
         return this.colsToDataTable(columns, headers);
     }
-    
+
     /**
      * Handle supplied table being either an ID or an actual table
      */
