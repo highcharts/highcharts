@@ -12,7 +12,7 @@
 import Chart from '../../Core/Chart/Chart.js';
 import H from '../../Core/Globals.js';
 import U from '../../Core/Utilities.js';
-var addEvent = U.addEvent, wrap = U.wrap;
+var addEvent = U.addEvent;
 /* eslint-disable no-invalid-this, valid-jsdoc */
 H.dragNodesMixin = {
     /**
@@ -70,12 +70,14 @@ H.dragNodesMixin = {
      * @return {void}
      */
     onMouseUp: function (point, event) {
-        if (point.fixedPosition && point.hasDragged) {
-            if (this.layout.enableSimulation) {
-                this.layout.start();
-            }
-            else {
-                this.chart.redraw();
+        if (point.fixedPosition) {
+            if (point.hasDragged) {
+                if (this.layout.enableSimulation) {
+                    this.layout.start();
+                }
+                else {
+                    this.chart.redraw();
+                }
             }
             point.inDragMode = point.hasDragged = false;
             if (!this.options.fixedDraggable) {
@@ -99,13 +101,6 @@ H.dragNodesMixin = {
         }
     }
 };
-// Extend the onMouseUp method to restart simulation after click.
-wrap(H.dragNodesMixin, 'onMouseUp', function (proceed, point) {
-    if (!this.options.fixedDraggable) {
-        delete point.fixedPosition;
-    }
-    return proceed.apply(this, Array.prototype.slice.call(arguments, 1));
-});
 /*
  * Draggable mode:
  */
