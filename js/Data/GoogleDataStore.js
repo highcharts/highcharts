@@ -24,8 +24,10 @@ var __extends = (this && this.__extends) || (function () {
     };
 })();
 import DataStore from './DataStore.js';
+import U from '../Core/Utilities.js';
 import AjaxMixin from '../Mixins/Ajax.js';
 var ajax = AjaxMixin.ajax;
+var fireEvent = U.fireEvent, uniqueKey = U.uniqueKey;
 /** eslint-disable valid-jsdoc */
 /**
  * @private
@@ -42,6 +44,7 @@ var GoogleDataStore = /** @class */ (function (_super) {
         _this.endColumn = options.endColumn || Number.MAX_VALUE;
         _this.enablePolling = options.enablePolling || false;
         _this.dataRefreshRate = options.dataRefreshRate || 2;
+        _this.columns = [];
         return _this;
     }
     /* *
@@ -49,11 +52,8 @@ var GoogleDataStore = /** @class */ (function (_super) {
     *  Functions
     *
     * */
-    GoogleDataStore.prototype.parseSheet = function (json) {
-        var startColumn = this.startColumn, endColumn = this.endColumn, startRow = this.startRow, endRow = this.endRow, columns = [], cells = json.feed.entry, cell, cellCount = (cells || []).length, colCount = 0, rowCount = 0, val, gr, gc, cellInner, i;
-        if (!cells || cells.length === 0) {
-            return false;
-        }
+    GoogleDataStore.prototype.getSheetColumns = function (json) {
+        var store = this, startColumn = store.startColumn, endColumn = store.endColumn, startRow = store.startRow, endRow = store.endRow, columns = [], cells = json.feed.entry, cell, cellCount = (cells || []).length, colCount = 0, rowCount = 0, val, gr, gc, cellInner, i;
         // First, find the total number of columns and rows that
         // are actually filled with data
         for (i = 0; i < cellCount; i++) {
@@ -109,35 +109,48 @@ var GoogleDataStore = /** @class */ (function (_super) {
                 }
             }
         });
-        /* *
-         * TODO:
-         * add data to dataTable
-         * ...
-         *
-         * */
+        return columns;
+    };
+    GoogleDataStore.prototype.parseSheet = function (json) {
+        var store = this, cells = json.feed.entry, columns = [];
+        if (!cells || cells.length === 0) {
+            return false;
+        }
+        fireEvent(store, 'parse', { json: json }, function () {
+            columns = store.getSheetColumns(json);
+            store.columns = columns;
+            fireEvent(store, 'afterParse', { columns: columns });
+        });
     };
     GoogleDataStore.prototype.fetchSheet = function () {
-        var parseSheet = this.parseSheet;
-        var fetchSheet = this.fetchSheet;
-        var enablePolling = this.enablePolling;
-        var dataRefreshRate = this.dataRefreshRate;
+        var store = this;
+        var enablePolling = store.enablePolling;
+        var dataRefreshRate = store.dataRefreshRate;
+        var headers = [];
         var url = [
             'https://spreadsheets.google.com/feeds/cells',
-            this.googleSpreadsheetKey,
-            this.worksheet,
+            store.googleSpreadsheetKey,
+            store.worksheet,
             'public/values?alt=json'
         ].join('/');
         ajax({
             url: url,
             dataType: 'json',
             success: function (json) {
-                parseSheet(json);
-                // Polling
-                if (enablePolling) {
-                    setTimeout(function () {
-                        fetchSheet();
-                    }, dataRefreshRate * 1000);
-                }
+                fireEvent(store, 'load', { json: json, enablePolling: enablePolling, dataRefreshRate: dataRefreshRate }, function () {
+                    store.parseSheet(json);
+                    store.columns.forEach(function (col) {
+                        headers.push('' + col[0]);
+                    });
+                    var table = store.colsToDataTable(store.columns, headers);
+                    // Polling
+                    if (enablePolling) {
+                        setTimeout(function () {
+                            store.fetchSheet();
+                        }, dataRefreshRate * 1000);
+                    }
+                    fireEvent(store, 'afterLoad', { table: table });
+                });
             },
             error: function (xhr, text) {
                 /* *
@@ -147,6 +160,7 @@ var GoogleDataStore = /** @class */ (function (_super) {
                  *
                  * */
                 // console.log(text);
+                fireEvent(store, 'fail', { text: text });
             }
         });
         // return true;

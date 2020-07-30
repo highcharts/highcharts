@@ -25,7 +25,6 @@ var __extends = (this && this.__extends) || (function () {
 })();
 import DataStore from './DataStore.js';
 import DataTable from './DataTable.js';
-import DataRow from './DataRow.js';
 import U from '../Core/Utilities.js';
 import H from '../Core/Globals.js';
 var win = H.win;
@@ -52,22 +51,6 @@ var HTMLTableDataStore = /** @class */ (function (_super) {
         _this.endColumn = options.endColumn || Number.MAX_VALUE;
         return _this;
     }
-    HTMLTableDataStore.prototype.colsToDataTable = function (cols, headers) {
-        if (headers === void 0) { headers = []; }
-        var table = new DataTable();
-        var noOfCols = cols.length;
-        if (noOfCols) {
-            var noOfRows = cols[0].length;
-            for (var i = 0; i < noOfRows; ++i) {
-                var row = new DataRow();
-                for (var j = 0; j < noOfCols; ++j) {
-                    row.insertColumn((headers.length ? headers[j] : uniqueKey()), cols[j][i]);
-                }
-                table.insertRow(row);
-            }
-        }
-        return table;
-    };
     HTMLTableDataStore.prototype.htmlToDataTable = function (table) {
         var columns = [], headers = [], startRow = this.startRow, endRow = this.endRow, startColumn = this.startColumn, endColumn = this.endColumn;
         [].forEach.call(table.getElementsByTagName('tr'), function (tr, rowNo) {

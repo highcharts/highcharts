@@ -179,6 +179,7 @@ class GoogleDataStore extends DataStore {
         const store = this;
         const enablePolling = store.enablePolling;
         const dataRefreshRate = store.dataRefreshRate;
+        const headers: string[] = [];
 
         const url = [
             'https://spreadsheets.google.com/feeds/cells',
@@ -198,7 +199,11 @@ class GoogleDataStore extends DataStore {
                     { json, enablePolling, dataRefreshRate },
                     function (): void {
                         store.parseSheet(json);
-                        const table = store.colsToDataTable();
+                        store.columns.forEach(function (col): void {
+                            headers.push('' + col[0]);
+                        });
+
+                        const table = store.colsToDataTable(store.columns, headers);
 
                         // Polling
                         if (enablePolling) {
@@ -231,31 +236,6 @@ class GoogleDataStore extends DataStore {
         });
 
         // return true;
-    }
-
-    private colsToDataTable(cols?: Array<Array<Highcharts.DataValueType>>): DataTable {
-        const store = this;
-        const columns = cols || store.columns;
-        const table = new DataTable();
-        const colsLen = columns.length;
-
-        let row, i, j;
-
-        if (colsLen) {
-            const rowsLen = columns[0].length;
-
-            for (i = 0; i < rowsLen; i++) {
-                row = new DataRow();
-
-                for (j = 0; j < colsLen; j++) {
-                    row.insertColumn(uniqueKey(), columns[j][i]);
-                }
-
-                table.insertRow(row);
-            }
-        }
-
-        return table;
     }
 
     public load(): void {

@@ -61,22 +61,6 @@ class HTMLTableDataStore extends DataStore {
     public startColumn: number
     public endColumn: number
 
-    private colsToDataTable(cols: string[], headers: string[] = []): DataTable {
-        const table = new DataTable();
-        const noOfCols = cols.length;
-        if (noOfCols) {
-            const noOfRows = cols[0].length;
-            for (let i = 0; i < noOfRows; ++i) {
-                const row = new DataRow();
-                for (let j = 0; j < noOfCols; ++j) {
-                    row.insertColumn((headers.length ? headers[j] : uniqueKey()), cols[j][i]);
-                }
-                table.insertRow(row);
-            }
-        }
-        return table;
-    }
-
     private htmlToDataTable(table: HTMLElement): DataTable {
         const columns: [] = [],
             headers: string[] = [],
