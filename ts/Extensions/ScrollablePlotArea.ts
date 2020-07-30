@@ -254,10 +254,22 @@ Chart.prototype.setUpScrolling = function (): void {
         attribs.overflowY = 'auto';
     }
 
+    // Insert a container with position relative
+    // that scrolling and fixed container renders to (#10555)
+    const relContainer = createElement(
+        'div',
+        void 0,
+        {
+            position: 'relative'
+        },
+        this.renderTo,
+        true
+    );
+
     // Add the necessary divs to provide scrolling
     this.scrollingContainer = createElement('div', {
         'className': 'highcharts-scrolling'
-    }, attribs, this.renderTo);
+    }, attribs, relContainer);
 
     // On scroll, reset the chart position because it applies to the scrolled
     // container
@@ -345,7 +357,6 @@ Chart.prototype.applyFixed = function (): void {
 
     // First render
     if (firstTime) {
-
         this.fixedDiv = createElement(
             'div',
             {
@@ -355,14 +366,14 @@ Chart.prototype.applyFixed = function (): void {
                 position: 'absolute',
                 overflow: 'hidden',
                 pointerEvents: 'none',
-                zIndex: 2
+                zIndex: 2,
+                top: 0
             },
             null as any,
             true
         );
-        this.renderTo.insertBefore(
-            this.fixedDiv,
-            this.renderTo.firstChild
+        this.scrollingContainer?.parentNode.appendChild(
+            this.fixedDiv
         );
         this.renderTo.style.overflow = 'visible';
 
