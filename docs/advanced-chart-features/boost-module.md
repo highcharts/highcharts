@@ -8,7 +8,7 @@ This document will guide you through your first steps with the Highcharts boost 
 Including boost in your project
 -------------------------------
 
-The boost module is a “renderer-in-a-module”. Including [modules/boost.js](https://code.highcharts.com/modules/boost.js) will, by default, activate boost for all series that support it (line series, column, bar, treemap, heatmap, scatter, bubble, area).
+The boost module is a "renderer-in-a-module". Including [modules/boost.js](https://code.highcharts.com/modules/boost.js) will, by default, activate boost for all series that support it (line series, column, bar, treemap, heatmap, scatter, bubble, area).
 
 If needed, boost can be disabled on a chart-by-chart basis by setting `boost.enabled` to `false` in the chart configuration.
 
@@ -17,7 +17,7 @@ If needed, boost can be disabled on a chart-by-chart basis by setting `boost.ena
 Configuration Options
 ---------------------
 
-The main boost configuration is set in the `boost property in the chart options.`
+The main boost configuration is set in the `boost` property in the chart options.
 
 |Option|Description|
 |--- |--- |
@@ -100,15 +100,15 @@ Note that the K-d tree is build async, which means that it will not lock up the 
 Samples
 -------
 
-*   [Area chart](https://jsfiddle.net/gh/get/jquery/1.7.2/highslide-software/highcharts.com/tree/master/samples/highcharts/boost/area/) – 500,000 points
-*   [Stacked area chart](https://jsfiddle.net/gh/get/jquery/1.7.2/highslide-software/highcharts.com/tree/master/samples/highcharts/boost/area-stacked) – 50,000 points
-*   [Area range chart](https://jsfiddle.net/gh/get/jquery/1.7.2/highslide-software/highcharts.com/tree/master/samples/highcharts/boost/arearange) – 500,000 points
-*   [Bubble chart](https://jsfiddle.net/gh/get/library/pure/highcharts/highcharts/tree/master/samples/highcharts/boost/bubble/) - 50,000 points
-*   [Column chart](https://jsfiddle.net/gh/get/jquery/1.7.2/highslide-software/highcharts.com/tree/master/samples/highcharts/boost/column) – 500,000 points
-*   [Heatmap](https://jsfiddle.net/gh/get/library/pure/highcharts/highcharts/tree/master/samples/highcharts/boost/heatmap/)
-*   [Line chart](https://jsfiddle.net/gh/get/jquery/1.7.2/highslide-software/highcharts.com/tree/master/samples/highcharts/boost/line/) – 500,000 points
-*   [Series-heavy line chart](https://jsfiddle.net/gh/get/library/pure/highcharts/highcharts/tree/master/samples/highcharts/boost/line-series-heavy/) - 600 series, 600,000 points
-*   [Series-heavy stock chart](https://jsfiddle.net/gh/get/library/pure/highcharts/highcharts/tree/master/samples/highcharts/boost/line-series-heavy-stock/) \- 600 series, 72,000 points
-*   [Dynamic series-heavy stock chart](https://jsfiddle.net/gh/get/library/pure/highcharts/highcharts/tree/master/samples/highcharts/boost/line-series-heavy-dynamic/) - 600 series, 12,000 initial points; adds 1 point to all series every second
-*   [Scatter chart](https://jsfiddle.net/gh/get/jquery/1.7.2/highslide-software/highcharts.com/tree/master/samples/highcharts/boost/scatter) – 1,000,000 points
-*   [Treemap](https://jsfiddle.net/gh/get/library/pure/highcharts/highcharts/tree/master/samples/highcharts/boost/treemap/)
+*   [Area chart](https://highcharts.com/samples/highcharts/boost/area) – 500,000 points
+*   [Stacked area chart](https://highcharts.com/samples/highcharts/boost/area-stacked) – 50,000 points
+*   [Area range chart](https://highcharts.com/samples/highcharts/boost/arearange) – 500,000 points
+*   [Bubble chart](https://highcharts.com/samples/highcharts/boost/bubble) - 50,000 points
+*   [Column chart](https://highcharts.com/samples/highcharts/boost/column) – 500,000 points
+*   [Heatmap](https://highcharts.com/samples/highcharts/boost/heatmap)
+*   [Line chart](https://highcharts.com/samples/highcharts/boost/line) – 500,000 points
+*   [Series-heavy line chart](https://highcharts.com/samples/highcharts/boost/line-series-heavy) - 600 series, 600,000 points
+*   [Series-heavy stock chart](https://highcharts.com/samples/highcharts/boost/line-series-heavy-stock) \- 600 series, 72,000 points
+*   [Dynamic series-heavy stock chart](https://highcharts.com/samples/highcharts/boost/line-series-heavy-dynamic) - 600 series, 12,000 initial points; adds 1 point to all series every second
+*   [Scatter chart](https://highcharts.com/samples/highcharts/boost/scatter) – 1,000,000 points
+*   [Treemap](https://highcharts.com/samples/highcharts/boost/treemap)
