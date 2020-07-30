@@ -14,9 +14,16 @@
 
 import DataTable from './DataTable.js';
 import DataStore from './DataStore.js';
+import DataRow from './DataRow.js';
+import U from '../Core/Utilities.js';
 
 import AjaxMixin from '../Mixins/Ajax.js';
 const { ajax } = AjaxMixin;
+
+const {
+    fireEvent,
+    uniqueKey
+} = U;
 
 /** eslint-disable valid-jsdoc */
 
@@ -39,7 +46,7 @@ class GoogleDataStore extends DataStore {
         this.endColumn = options.endColumn || Number.MAX_VALUE;
         this.enablePolling = options.enablePolling || false;
         this.dataRefreshRate = options.dataRefreshRate || 2;
-
+        this.columns = [];
     }
 
     /* *
@@ -55,17 +62,19 @@ class GoogleDataStore extends DataStore {
     public endColumn: number;
     public enablePolling: boolean;
     public dataRefreshRate: number;
+    public columns: Array<Array<Highcharts.DataValueType>>;
 
     /* *
     *
     *  Functions
     *
     * */
-    private parseSheet(json: Highcharts.JSONType): (boolean|undefined) {
-        var startColumn = this.startColumn,
-            endColumn = this.endColumn,
-            startRow = this.startRow,
-            endRow = this.endRow,
+    private getSheetColumns(json: Highcharts.JSONType): Array<Array<Highcharts.DataValueType>> {
+        var store = this,
+            startColumn = store.startColumn,
+            endColumn = store.endColumn,
+            startRow = store.startRow,
+            endRow = store.endRow,
             columns: Array<Array<Highcharts.DataValueType>> = [],
             cells = json.feed.entry,
             cell,
@@ -77,10 +86,6 @@ class GoogleDataStore extends DataStore {
             gc,
             cellInner,
             i: number;
-
-        if (!cells || cells.length === 0) {
-            return false;
-        }
 
         // First, find the total number of columns and rows that
         // are actually filled with data
@@ -145,25 +150,40 @@ class GoogleDataStore extends DataStore {
             }
         });
 
-        /* *
-         * TODO:
-         * add data to dataTable
-         * ...
-         *
-         * */
+        return columns;
+    }
+
+    private parseSheet(json: Highcharts.JSONType): (boolean|undefined) {
+        var store = this,
+            cells = json.feed.entry,
+            columns: Array<Array<Highcharts.DataValueType>> = [];
+
+        if (!cells || cells.length === 0) {
+            return false;
+        }
+
+        fireEvent(
+            store,
+            'parse',
+            { json },
+            function (): void {
+                columns = store.getSheetColumns(json);
+                store.columns = columns;
+
+                fireEvent(store, 'afterParse', { columns });
+            }
+        );
     }
 
     private fetchSheet(): void {
-        const parseSheet = this.parseSheet;
-        const fetchSheet = this.fetchSheet;
-
-        const enablePolling = this.enablePolling;
-        const dataRefreshRate = this.dataRefreshRate;
+        const store = this;
+        const enablePolling = store.enablePolling;
+        const dataRefreshRate = store.dataRefreshRate;
 
         const url = [
             'https://spreadsheets.google.com/feeds/cells',
-            this.googleSpreadsheetKey,
-            this.worksheet,
+            store.googleSpreadsheetKey,
+            store.worksheet,
             'public/values?alt=json'
         ].join('/');
 
@@ -172,17 +192,27 @@ class GoogleDataStore extends DataStore {
             dataType: 'json',
             success: function (json: Highcharts.JSONType): void {
 
-                parseSheet(json);
+                fireEvent(
+                    store,
+                    'load',
+                    { json, enablePolling, dataRefreshRate },
+                    function (): void {
+                        store.parseSheet(json);
+                        const table = store.colsToDataTable();
 
-                // Polling
-                if (enablePolling) {
-                    setTimeout(
-                        function (): void {
-                            fetchSheet();
-                        },
-                        dataRefreshRate * 1000
-                    );
-                }
+                        // Polling
+                        if (enablePolling) {
+                            setTimeout(
+                                function (): void {
+                                    store.fetchSheet();
+                                },
+                                dataRefreshRate * 1000
+                            );
+                        }
+
+                        fireEvent(store, 'afterLoad', { table });
+                    }
+                );
             },
             error: function (
                 xhr: XMLHttpRequest,
@@ -195,10 +225,37 @@ class GoogleDataStore extends DataStore {
                  *
                  * */
                 // console.log(text);
+
+                fireEvent(store, 'fail', { text });
             }
         });
 
         // return true;
+    }
+
+    private colsToDataTable(cols?: Array<Array<Highcharts.DataValueType>>): DataTable {
+        const store = this;
+        const columns = cols || store.columns;
+        const table = new DataTable();
+        const colsLen = columns.length;
+
+        let row, i, j;
+
+        if (colsLen) {
+            const rowsLen = columns[0].length;
+
+            for (i = 0; i < rowsLen; i++) {
+                row = new DataRow();
+
+                for (j = 0; j < colsLen; j++) {
+                    row.insertColumn(uniqueKey(), columns[j][i]);
+                }
+
+                table.insertRow(row);
+            }
+        }
+
+        return table;
     }
 
     public load(): void {
