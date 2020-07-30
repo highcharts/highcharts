@@ -63,7 +63,7 @@
     "fs-extra": "^9.0.1",
     "gifencoder": "^2.0.1",
     "glob": "^7.1.6",
-    "google-closure-compiler": "^20200719.0.0",
+    "google-closure-compiler": "20200504.0.0",
     "gulp": "^4.0.2",
     "gulp-jsdoc3": "^3.0.0",
     "gulp-zip": "^5.0.2",
