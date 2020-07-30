@@ -210,13 +210,18 @@ class LogarithmicAxisAdditions {
 
     public lin2log(num: number): number {
         const isNegative = num < 0 && this.axis.options.allowNegativeLog;
-        const result = Math.pow(10, Math.abs(num));
-        return isNegative ? -result : result;
+        if (isNegative) {
+            return -Math.pow(10, Math.abs(num));
+        }
+        return Math.pow(10, num);
     }
 
     public log2lin(num: number): number {
         const isNegative = num < 0 && this.axis.options.allowNegativeLog;
-        return (isNegative ? -1 : 1) * Math.log(Math.abs(num)) / Math.LN10;
+        if (isNegative) {
+            return -Math.log(Math.abs(num)) / Math.LN10;
+        }
+        return Math.log(num) / Math.LN10;
     }
 
 }

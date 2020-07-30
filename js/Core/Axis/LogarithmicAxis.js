@@ -110,12 +110,17 @@ var LogarithmicAxisAdditions = /** @class */ (function () {
     };
     LogarithmicAxisAdditions.prototype.lin2log = function (num) {
         var isNegative = num < 0 && this.axis.options.allowNegativeLog;
-        var result = Math.pow(10, Math.abs(num));
-        return isNegative ? -result : result;
+        if (isNegative) {
+            return -Math.pow(10, Math.abs(num));
+        }
+        return Math.pow(10, num);
     };
     LogarithmicAxisAdditions.prototype.log2lin = function (num) {
         var isNegative = num < 0 && this.axis.options.allowNegativeLog;
-        return (isNegative ? -1 : 1) * Math.log(Math.abs(num)) / Math.LN10;
+        if (isNegative) {
+            return -Math.log(Math.abs(num)) / Math.LN10;
+        }
+        return Math.log(num) / Math.LN10;
     };
     return LogarithmicAxisAdditions;
 }());
