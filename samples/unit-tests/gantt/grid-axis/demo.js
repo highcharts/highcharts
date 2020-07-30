@@ -1727,6 +1727,31 @@ QUnit.test('Only one scrollbar should be visible for the vertical scrolling #133
     );
 });
 
+QUnit.test('yAxis label adjustment #10281', assert => {
+    const chart = Highcharts.ganttChart('container', {
+        series: [{
+            data: [{
+                name: 'Start prototype',
+                start: Date.UTC(2014, 10, 18),
+                end: Date.UTC(2014, 10, 25)
+            }, {
+                name: 'Really Long series name that is very long indeed. Really Long series name that is very long indeed.',
+                start: Date.UTC(2014, 10, 23),
+                end: Date.UTC(2014, 10, 26)
+            }]
+        }]
+    });
+
+    const yAxis = chart.yAxis[0],
+        label = yAxis.ticks[1].label;
+
+    assert.strictEqual(
+        yAxis.maxLabelDimensions.width,
+        label.getBBox().width,
+        'The yAxis max label dimensions should be same as the width of the longest label (#10281)'
+    );
+});
+
 QUnit.test('yAxis max value #10779', assert => {
     const chart = Highcharts.ganttChart('container', {
 
