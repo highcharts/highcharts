@@ -50,7 +50,6 @@ const {
     seriesType
 } = U;
 import '../Core/Options.js';
-import '../Core/Series/Series.js';
 import '../Core/Legend.js';
 import '../Series/ScatterSeries.js';
 

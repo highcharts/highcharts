@@ -88,6 +88,8 @@ const {
     seriesType
 } = U;
 
+import './AreaRangeSeries.js';
+
 var seriesTypes = H.seriesTypes,
     seriesProto = H.Series.prototype,
     areaRangeProto = seriesTypes.arearange.prototype,

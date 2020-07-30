@@ -42,6 +42,8 @@ declare global {
     }
 }
 
+import '../Core/Series/Series.js';
+
 var seriesTypes = H.seriesTypes;
 
 /**

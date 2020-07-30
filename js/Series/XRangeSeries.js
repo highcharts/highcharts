@@ -25,6 +25,7 @@ var addEvent = U.addEvent, clamp = U.clamp, correctFloat = U.correctFloat, defin
 * @type {number|undefined}
 * @requires modules/xrange
 */
+import '../Core/Series/Series.js';
 var columnType = H.seriesTypes.column, seriesTypes = H.seriesTypes, Series = H.Series;
 /**
  * Return color of a point based on its category.

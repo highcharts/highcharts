@@ -268,14 +268,12 @@ declare global {
  */
 
 import '../Core/Axis/Axis.js';
-import '../Core/Series/Series.js';
+import './Bubble/BubbleSeries.js';
 import '../Series/Networkgraph/DraggableNodes.js';
 import '../Series/Networkgraph/Layouts.js';
 
-
 var Series = H.Series,
     Reingold = H.layouts['reingold-fruchterman'],
-    NetworkPoint = H.seriesTypes.bubble.prototype.pointClass,
     dragNodesMixin = H.dragNodesMixin;
 
 Chart.prototype.getSelectedParentNodes = function (): Array<Highcharts.PackedBubblePoint> {

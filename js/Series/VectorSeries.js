@@ -13,6 +13,7 @@
 import H from '../Core/Globals.js';
 import U from '../Core/Utilities.js';
 var animObject = U.animObject, arrayMax = U.arrayMax, pick = U.pick, seriesType = U.seriesType;
+import './ScatterSeries.js';
 /**
  * The vector series class.
  *

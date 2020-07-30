@@ -108,7 +108,7 @@ const {
     seriesType
 } = U;
 
-import '../Series/ColumnSeries.js';
+import './ColumnSeries.js';
 import '../Core/Renderer/SVG/SVGRenderer.js';
 
 var charts = H.charts,

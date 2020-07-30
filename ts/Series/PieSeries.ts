@@ -141,7 +141,6 @@ const {
 import './ColumnSeries.js';
 import centeredSeriesMixin from '../Mixins/CenteredSeries.js';
 import '../Core/Options.js';
-import '../Core/Series/Series.js';
 
 var getStartAndEndRadians = centeredSeriesMixin.getStartAndEndRadians,
     noop = H.noop,

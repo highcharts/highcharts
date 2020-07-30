@@ -15,6 +15,7 @@
 import type Chart from '../../Core/Chart/Chart';
 import type SVGPath from '../../Core/Renderer/SVG/SVGPath';
 import H from '../../Core/Globals.js';
+import NodesMixin from '../../Mixins/Nodes.js';
 import Point from '../../Core/Series/Point.js';
 import U from '../../Core/Utilities.js';
 const {
@@ -234,10 +235,9 @@ declare global {
 ''; // detach doclets above
 
 import '../../Core/Options.js';
-import NodesMixin from '../../Mixins/Nodes.js';
 import './Layouts.js';
 import './DraggableNodes.js';
-
+import '../../Core/Series/Series.js';
 
 var seriesTypes = H.seriesTypes,
     Series = H.Series,

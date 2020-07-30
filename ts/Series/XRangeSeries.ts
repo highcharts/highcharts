@@ -122,6 +122,7 @@ declare global {
  * @requires modules/xrange
  */
 
+import '../Core/Series/Series.js';
 
 var columnType = H.seriesTypes.column,
     seriesTypes = H.seriesTypes,

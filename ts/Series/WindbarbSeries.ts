@@ -89,6 +89,7 @@ const {
 } = U;
 
 import onSeriesMixin from '../Mixins/OnSeries.js';
+import './ColumnSeries.js';
 
 var noop = H.noop;
 

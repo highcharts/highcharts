@@ -51,10 +51,10 @@ var addEvent = U.addEvent, clamp = U.clamp, defined = U.defined, extend = U.exte
 * @since 7.0.0
 */
 import '../Core/Axis/Axis.js';
-import '../Core/Series/Series.js';
+import './Bubble/BubbleSeries.js';
 import '../Series/Networkgraph/DraggableNodes.js';
 import '../Series/Networkgraph/Layouts.js';
-var Series = H.Series, Reingold = H.layouts['reingold-fruchterman'], NetworkPoint = H.seriesTypes.bubble.prototype.pointClass, dragNodesMixin = H.dragNodesMixin;
+var Series = H.Series, Reingold = H.layouts['reingold-fruchterman'], dragNodesMixin = H.dragNodesMixin;
 Chart.prototype.getSelectedParentNodes = function () {
     var chart = this, series = chart.series, selectedParentsNodes = [];
     series.forEach(function (series) {
