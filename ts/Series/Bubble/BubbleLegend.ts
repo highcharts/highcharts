@@ -165,6 +165,8 @@ declare global {
 
 ''; // detach doclets above
 
+import './BubbleSeries.js';
+
 var Series = H.Series,
     noop = H.noop;
 

@@ -28,6 +28,8 @@ const {
     wrap
 } = U;
 
+import '../Core/Series/Series.js';
+
 /**
  * Internal types
  * @private

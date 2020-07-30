@@ -67,6 +67,8 @@ declare global {
     }
 }
 
+import './ScatterSeries.js';
+
 /**
  * The vector series class.
  *

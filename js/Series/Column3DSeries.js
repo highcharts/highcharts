@@ -87,7 +87,7 @@ wrap(seriesTypes.column.prototype, 'translate', function (proceed) {
     }
 });
 // Don't use justifyDataLabel when point is outsidePlot
-wrap(H.Series.prototype, 'justifyDataLabel', function (proceed) {
+wrap(Series.prototype, 'justifyDataLabel', function (proceed) {
     return !(arguments[2].outside3dPlot) ?
         proceed.apply(this, [].slice.call(arguments, 1)) :
         false;

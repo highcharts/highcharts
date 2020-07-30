@@ -90,12 +90,13 @@ declare global {
 
 import KeyboardNavigationHandler from '../../KeyboardNavigationHandler.js';
 import EventProvider from '../../Utils/EventProvider.js';
-
 import ChartUtilities from '../../Utils/ChartUtilities.js';
 var getPointFromXY = ChartUtilities.getPointFromXY,
     getSeriesFromName = ChartUtilities.getSeriesFromName,
     scrollToPoint = ChartUtilities.scrollToPoint;
 
+import '../../../Series/ColumnSeries.js';
+import '../../../Series/PieSeries.js';
 
 /* eslint-disable no-invalid-this, valid-jsdoc */
 

@@ -369,6 +369,8 @@ declare global {
 
 ''; // detaches doclets above
 
+import '../Core/Series/Series.js';
+
 var seriesTypes = H.seriesTypes;
 
 /**

@@ -17,7 +17,6 @@ var addEvent = U.addEvent, clamp = U.clamp, defined = U.defined, fireEvent = U.f
 import './ColumnSeries.js';
 import centeredSeriesMixin from '../Mixins/CenteredSeries.js';
 import '../Core/Options.js';
-import '../Core/Series/Series.js';
 var getStartAndEndRadians = centeredSeriesMixin.getStartAndEndRadians, noop = H.noop, Series = H.Series, seriesTypes = H.seriesTypes;
 /**
  * Pie series type.

@@ -267,13 +267,13 @@ const {
     seriesType,
     stableSort
 } = U;
-
-import '../Core/Options.js';
-import nodesMixin from '../Mixins/Nodes.js';
-import mixinTreeSeries from '../Mixins/TreeSeries.js';
+import TreeSeriesMixin from '../Mixins/TreeSeries.js';
 const {
     getLevelOptions
-} = mixinTreeSeries;
+} = TreeSeriesMixin;
+
+import '../Core/Options.js';
+import './ColumnSeries.js';
 
 // eslint-disable-next-line valid-jsdoc
 /**

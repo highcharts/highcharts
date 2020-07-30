@@ -160,6 +160,10 @@ declare global {
  * @type {Highcharts.Series}
  */
 
+''; // dettach doclets above
+
+import '../Core/Series/Series.js';
+
 var TrackerMixin = H.TrackerMixin,
     Series = H.Series,
     seriesTypes = H.seriesTypes;

@@ -11,6 +11,7 @@
  * */
 'use strict';
 import H from '../../Core/Globals.js';
+import NodesMixin from '../../Mixins/Nodes.js';
 import Point from '../../Core/Series/Point.js';
 import U from '../../Core/Utilities.js';
 var addEvent = U.addEvent, css = U.css, defined = U.defined, pick = U.pick, seriesType = U.seriesType;
@@ -51,9 +52,9 @@ var addEvent = U.addEvent, css = U.css, defined = U.defined, pick = U.pick, seri
 */
 ''; // detach doclets above
 import '../../Core/Options.js';
-import NodesMixin from '../../Mixins/Nodes.js';
 import './Layouts.js';
 import './DraggableNodes.js';
+import '../../Core/Series/Series.js';
 var seriesTypes = H.seriesTypes, Series = H.Series, dragNodesMixin = H.dragNodesMixin;
 /**
  * @private

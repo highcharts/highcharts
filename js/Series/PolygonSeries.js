@@ -13,7 +13,6 @@ import LegendSymbolMixin from '../Mixins/LegendSymbol.js';
 import U from '../Core/Utilities.js';
 var seriesType = U.seriesType;
 import '../Core/Options.js';
-import '../Core/Series/Series.js';
 import '../Core/Legend.js';
 import '../Series/ScatterSeries.js';
 var noop = H.noop, Series = H.Series, seriesTypes = H.seriesTypes;
