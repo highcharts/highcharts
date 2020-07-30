@@ -80,8 +80,8 @@ class DataStore {
     }
 
     public on(
-        event: DataStore.Events,
-        callback: DataStore.EventListener
+        event: (DataStore.LoadEvents|DataStore.ParseEvents),
+        callback: (DataStore.LoadEventListener|DataStore.ParseEventListener)
     ): Function {
         return addEvent(this, event, callback);
     }
@@ -103,16 +103,22 @@ class DataStore {
     }
 }
 namespace DataStore {
-    export type Events = ('load'|'afterLoad'|'parse'|'afterParse'|'fail');
-    export interface EventListener {
-        (this: DataStore, e: EventObject): void;
+    export type LoadEvents = ('load'|'afterLoad'|'fail');
+    export type ParseEvents = ('parse'|'afterParse'|'fail');
+    export interface LoadEventListener {
+        (this: DataStore, e: LoadEventObject): void;
     }
-    export interface EventObject {
-        dataTable?: DataTable;
+    export interface LoadEventObject {
+        readonly table: DataTable;
     }
     export interface MetaColumn {
         name?: string;
         metadata?: any;
+    }
+    export interface ParseEventListener {
+        (this: DataStore, e: ParseEventObject): void;
+    }
+    export interface ParseEventObject {
     }
 }
 
