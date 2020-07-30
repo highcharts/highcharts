@@ -60,10 +60,11 @@ var downloadURL = Highcharts.downloadURL = function (dataURL, filename) {
         nav.msSaveOrOpenBlob(dataURL, filename);
         return;
     }
+    dataURL = "" + dataURL;
     // Some browsers have limitations for data URL lengths. Try to convert to
     // Blob or fall back. Edge always needs that blob.
     if (isEdgeBrowser || dataURL.length > 2000000) {
-        dataURL = dataURLtoBlob(dataURL);
+        dataURL = dataURLtoBlob(dataURL) || '';
         if (!dataURL) {
             throw new Error('Failed to convert to blob');
         }
@@ -90,8 +91,8 @@ var downloadURL = Highcharts.downloadURL = function (dataURL, filename) {
         }
     }
 };
-var downladURLmodule = {
+var exports = {
     dataURLtoBlob: dataURLtoBlob,
     downloadURL: downloadURL
 };
-export default downladURLmodule;
+export default exports;

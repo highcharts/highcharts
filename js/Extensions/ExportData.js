@@ -42,9 +42,8 @@ var addEvent = U.addEvent, defined = U.defined, extend = U.extend, find = U.find
 * @name Highcharts.ExportDataEventObject#dataRows
 * @type {Array<Array<string>>}
 */
-import '../Mixins/Ajax.js';
-import downloadURLmodule from '../Mixins/DownloadURL.js';
-var downloadURL = downloadURLmodule.downloadURL;
+import DownloadURL from '../Extensions/DownloadURL.js';
+var downloadURL = DownloadURL.downloadURL;
 // Can we add this to utils? Also used in screen-reader.js
 /**
  * HTML encode some characters vulnerable for XSS.

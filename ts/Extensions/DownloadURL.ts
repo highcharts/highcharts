@@ -96,10 +96,12 @@ const downloadURL = Highcharts.downloadURL = function (
         return;
     }
 
+    dataURL = `${dataURL}`;
+
     // Some browsers have limitations for data URL lengths. Try to convert to
     // Blob or fall back. Edge always needs that blob.
-    if (isEdgeBrowser || (dataURL as any).length > 2000000) {
-        dataURL = dataURLtoBlob(dataURL as any) as any;
+    if (isEdgeBrowser || dataURL.length > 2000000) {
+        dataURL = dataURLtoBlob(dataURL) || '';
         if (!dataURL) {
             throw new Error('Failed to convert to blob');
         }
@@ -107,7 +109,7 @@ const downloadURL = Highcharts.downloadURL = function (
 
     // Try HTML5 download attr if supported
     if (typeof a.download !== 'undefined') {
-        a.href = dataURL as any;
+        a.href = dataURL;
         a.download = filename; // HTML5 download attribute
         doc.body.appendChild(a);
         a.click();
@@ -115,21 +117,21 @@ const downloadURL = Highcharts.downloadURL = function (
     } else {
         // No download attr, just opening data URI
         try {
-            windowRef = win.open(dataURL as any, 'chart');
+            windowRef = win.open(dataURL, 'chart');
             if (typeof windowRef === 'undefined' || windowRef === null) {
                 throw new Error('Failed to open window');
             }
         } catch (e) {
             // window.open failed, trying location.href
-            win.location.href = dataURL as any;
+            win.location.href = dataURL;
         }
     }
 };
 
 
-const downladURLmodule = {
+const exports = {
     dataURLtoBlob,
     downloadURL
 };
 
-export default downladURLmodule;
+export default exports;
