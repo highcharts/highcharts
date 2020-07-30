@@ -133,10 +133,12 @@ QUnit.test(
             '.highcharts-minor-grid-line'
         );
         assert.ok(
+            minorGridLines.length > 0 &&
             minorGridLines[0].getBBox().x < gridLines[0].getBBox().x,
             'Minor grid lines outside major grid lines'
         );
         assert.ok(
+            minorGridLines.length > 0 &&
             minorGridLines[minorGridLines.length - 1].getBBox().x >
             gridLines[gridLines.length - 1].getBBox().x,
             'Minor grid lines outside major grid lines'
@@ -243,7 +245,7 @@ QUnit.test('Y axis minimum got stuck (#3353)', function (assert) {
         },
         series: [{
             name: 'Year 1800',
-            data: [0.1, 1, 10]
+            data: [1, 3, 2]
         }]
     });
 

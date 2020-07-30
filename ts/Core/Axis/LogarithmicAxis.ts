@@ -210,26 +210,13 @@ class LogarithmicAxisAdditions {
 
     public lin2log(num: number): number {
         const isNegative = num < 0 && this.axis.options.allowNegativeLog;
-
-        let result = Math.pow(10, Math.abs(num));
-
-        if (result < 10) {
-            result = (10 * (result - 1)) / (10 - 1);
-        }
-
+        const result = Math.pow(10, Math.abs(num));
         return isNegative ? -result : result;
     }
 
     public log2lin(num: number): number {
         const isNegative = num < 0 && this.axis.options.allowNegativeLog;
-
-        let adjustedNum = Math.abs(num);
-
-        if (adjustedNum < 10) {
-            adjustedNum += (10 - adjustedNum) / 10;
-        }
-
-        return (isNegative ? -1 : 1) * Math.log(adjustedNum) / Math.LN10;
+        return (isNegative ? -1 : 1) * Math.log(Math.abs(num)) / Math.LN10;
     }
 
 }
@@ -312,7 +299,7 @@ export default LogarithmicAxis;
  * Activates rendering of negative logarithmic values.
  *
  * @type      {boolean}
- * @since     8.1.0
+ * @since     next
  * @apioption xAxis.allowNegativeLog
  */
 

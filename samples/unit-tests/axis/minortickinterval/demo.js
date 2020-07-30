@@ -90,12 +90,12 @@ QUnit.test('Legacy - auto, log', function (assert) {
             type: 'logarithmic'
         },
         series: [{
-            data: [0.1, 1, 10, 100]
+            data: [1, 2, 3, 4]
         }]
     });
     assert.strictEqual(
         Object.keys(chart.yAxis[0].minorTicks).length,
-        12,
+        11,
         'Auto'
     );
 });
@@ -267,12 +267,12 @@ QUnit.test('Typed - auto, log', function (assert) {
             type: 'logarithmic'
         },
         series: [{
-            data: [0.1, 1, 10, 100]
+            data: [1, 2, 3, 4]
         }]
     });
     assert.strictEqual(
         Object.keys(chart.yAxis[0].minorTicks).length,
-        12,
+        11,
         'Auto'
     );
 });

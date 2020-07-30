@@ -111,18 +111,11 @@ var LogarithmicAxisAdditions = /** @class */ (function () {
     LogarithmicAxisAdditions.prototype.lin2log = function (num) {
         var isNegative = num < 0 && this.axis.options.allowNegativeLog;
         var result = Math.pow(10, Math.abs(num));
-        if (result < 10) {
-            result = (10 * (result - 1)) / (10 - 1);
-        }
         return isNegative ? -result : result;
     };
     LogarithmicAxisAdditions.prototype.log2lin = function (num) {
         var isNegative = num < 0 && this.axis.options.allowNegativeLog;
-        var adjustedNum = Math.abs(num);
-        if (adjustedNum < 10) {
-            adjustedNum += (10 - adjustedNum) / 10;
-        }
-        return (isNegative ? -1 : 1) * Math.log(adjustedNum) / Math.LN10;
+        return (isNegative ? -1 : 1) * Math.log(Math.abs(num)) / Math.LN10;
     };
     return LogarithmicAxisAdditions;
 }());
@@ -192,7 +185,7 @@ export default LogarithmicAxis;
  * Activates rendering of negative logarithmic values.
  *
  * @type      {boolean}
- * @since     8.1.0
+ * @since     next
  * @apioption xAxis.allowNegativeLog
  */
 ''; // keeps doclets above in transpiled file
