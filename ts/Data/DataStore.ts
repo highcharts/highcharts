@@ -16,12 +16,13 @@ import DataTable from './DataTable.js';
 import DataRow from './DataRow.js';
 import U from '../Core/Utilities.js';
 const {
+    addEvent,
     uniqueKey
 } = U;
 
 export type TableEvents = ('\\(._.)//');
 
-abstract class DataStore {
+class DataStore {
     /* *
     *
     *  Constructors
@@ -79,10 +80,10 @@ abstract class DataStore {
     }
 
     public on(
-        event: TableEvents,
-        callback: Highcharts.EventCallbackFunction<DataStore>
-    ): void {
-
+        event: DataStore.Events,
+        callback: DataStore.EventListener
+    ): Function {
+        return addEvent(this, event, callback);
     }
 
     colsToDataTable(cols: Array<Array<Highcharts.DataValueType>>, headers: string[] = []): DataTable {
@@ -102,6 +103,13 @@ abstract class DataStore {
     }
 }
 namespace DataStore {
+    export type Events = ('load'|'afterLoad'|'parse'|'afterParse'|'fail');
+    export interface EventListener {
+        (this: DataStore, e: EventObject): void;
+    }
+    export interface EventObject {
+        dataTable?: DataTable;
+    }
     export interface MetaColumn {
         name?: string;
         metadata?: any;

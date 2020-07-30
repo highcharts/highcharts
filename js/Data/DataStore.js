@@ -13,7 +13,7 @@
 import DataTable from './DataTable.js';
 import DataRow from './DataRow.js';
 import U from '../Core/Utilities.js';
-var uniqueKey = U.uniqueKey;
+var addEvent = U.addEvent, uniqueKey = U.uniqueKey;
 var DataStore = /** @class */ (function () {
     /* *
     *
@@ -49,6 +49,7 @@ var DataStore = /** @class */ (function () {
         }
     };
     DataStore.prototype.on = function (event, callback) {
+        return addEvent(this, event, callback);
     };
     DataStore.prototype.colsToDataTable = function (cols, headers) {
         if (headers === void 0) { headers = []; }
