@@ -70,112 +70,11 @@ var CSVDataStore = /** @class */ (function (_super) {
     * @return {Array<Array<Highcharts.DataValueType>>}
     */
     CSVDataStore.prototype.parseCSV = function () {
-        var csv = this.csv, columns, startRow = (typeof this.startRow !== 'undefined' && this.startRow ?
+        var store = this;
+        var csv = this.csv, startRow = (typeof this.startRow !== 'undefined' && this.startRow ?
             this.startRow :
-            0), endRow = this.endRow || Number.MAX_VALUE, startColumn = (typeof this.startColumn !== 'undefined' &&
-            this.startColumn) ? this.startColumn : 0, endColumn = this.endColumn || Number.MAX_VALUE, itemDelimiter, lines, rowIt = 0, dataTypes = [];
-        columns = [];
-        /**
-         * Parse a single row.
-         * @private
-         */
-        function parseRow(columnStr, rowNumber, noAdd, callbacks) {
-            var i = 0, c = '', cl = '', cn = '', token = '', actualColumn = 0, column = 0;
-            /**
-             * @private
-             */
-            function read(j) {
-                c = columnStr[j];
-                cl = columnStr[j - 1];
-                cn = columnStr[j + 1];
-            }
-            /**
-             * @private
-             */
-            function pushType(type) {
-                if (dataTypes.length < column + 1) {
-                    dataTypes.push([type]);
-                }
-                if (dataTypes[column][dataTypes[column].length - 1] !== type) {
-                    dataTypes[column].push(type);
-                }
-            }
-            /**
-             * @private
-             */
-            function push() {
-                if (startColumn > actualColumn || actualColumn > endColumn) {
-                    // Skip this column, but increment the column count (#7272)
-                    ++actualColumn;
-                    token = '';
-                    return;
-                }
-                if (!isNaN(parseFloat(token)) && isFinite(token)) {
-                    token = parseFloat(token);
-                    pushType('number');
-                }
-                else if (!isNaN(Date.parse(token))) {
-                    token = token.replace(/\//g, '-');
-                    pushType('date');
-                }
-                else {
-                    pushType('string');
-                }
-                if (columns.length < column + 1) {
-                    columns.push([]);
-                }
-                if (!noAdd) {
-                    // Don't push - if there's a varrying amount of columns
-                    // for each row, pushing will skew everything down n slots
-                    columns[column][rowNumber] = token;
-                }
-                token = '';
-                ++column;
-                ++actualColumn;
-            }
-            if (!columnStr.trim().length) {
-                return;
-            }
-            if (columnStr.trim()[0] === '#') {
-                return;
-            }
-            for (; i < columnStr.length; i++) {
-                read(i);
-                // Quoted string
-                if (c === '#') {
-                    // The rest of the row is a comment
-                    push();
-                    return;
-                }
-                if (c === '"') {
-                    read(++i);
-                    while (i < columnStr.length) {
-                        if (c === '"' && cl !== '"' && cn !== '"') {
-                            break;
-                        }
-                        if (c !== '"' || (c === '"' && cl !== '"')) {
-                            token += c;
-                        }
-                        read(++i);
-                    }
-                    // Perform "plugin" handling
-                }
-                else if (callbacks && callbacks[c]) {
-                    if (callbacks[c](c, token)) {
-                        push();
-                    }
-                    // Delimiter - push current token
-                }
-                else if (c === itemDelimiter) {
-                    push();
-                    // Actual column data
-                }
-                else {
-                    token += c;
-                }
-            }
-            push();
-        }
+            0), endRow = this.endRow || Number.MAX_VALUE, lines, rowIt = 0;
+        this.columns = [];
         if (csv && this.beforeParse) {
             csv = this.beforeParse(csv);
         }
@@ -190,12 +89,8 @@ var CSVDataStore = /** @class */ (function (_super) {
             if (!endRow || endRow >= lines.length) {
                 endRow = lines.length - 1;
             }
-            if (this.itemDelimiter) {
-                itemDelimiter = this.itemDelimiter;
-            }
-            else {
-                itemDelimiter = null;
-                itemDelimiter = this.guessDelimiter(lines);
+            if (!this.itemDelimiter) {
+                this.itemDelimiter = this.guessDelimiter(lines);
             }
             var offset = 0;
             for (rowIt = startRow; rowIt <= endRow; rowIt++) {
@@ -203,25 +98,91 @@ var CSVDataStore = /** @class */ (function (_super) {
                     offset++;
                 }
                 else {
-                    parseRow(lines[rowIt], rowIt - startRow - offset);
+                    store.parseCSVRow(lines[rowIt], rowIt - startRow - offset);
                 }
             }
         }
         var headers = [];
         if (this.firstRowAsNames) {
-            columns.forEach(function name(col) {
+            this.columns.forEach(function name(col) {
                 headers.push('' + col[0]);
             });
         }
-        return this.dataParser.columnArrayToDataTable(columns, headers);
+        return this.dataParser.columnArrayToDataTable(this.columns, headers);
+    };
+    CSVDataStore.prototype.parseCSVRow = function (columnStr, rowNumber) {
+        var store = this, columns = store.columns || [];
+        var i = 0, c = '', cl = '', cn = '', token = '', actualColumn = 0, column = 0;
+        /**
+         * @private
+         */
+        function read(j) {
+            c = columnStr[j];
+            cl = columnStr[j - 1];
+            cn = columnStr[j + 1];
+        }
+        /**
+         * @private
+         */
+        function push() {
+            if (store.startColumn > actualColumn || actualColumn > store.endColumn) {
+                // Skip this column, but increment the column count (#7272)
+                ++actualColumn;
+                token = '';
+                return;
+            }
+            if (columns.length < column + 1) {
+                columns.push([]);
+            }
+            columns[column][rowNumber] = token;
+            token = '';
+            ++column;
+            ++actualColumn;
+        }
+        if (!columnStr.trim().length) {
+            return;
+        }
+        if (columnStr.trim()[0] === '#') {
+            return;
+        }
+        for (; i < columnStr.length; i++) {
+            read(i);
+            // Quoted string
+            if (c === '#') {
+                // The rest of the row is a comment
+                push();
+                return;
+            }
+            if (c === '"') {
+                read(++i);
+                while (i < columnStr.length) {
+                    if (c === '"' && cl !== '"' && cn !== '"') {
+                        break;
+                    }
+                    if (c !== '"' || (c === '"' && cl !== '"')) {
+                        token += c;
+                    }
+                    read(++i);
+                }
+            }
+            else if (c === this.itemDelimiter) {
+                push();
+                // Actual column data
+            }
+            else {
+                token += c;
+            }
+        }
+        push();
     };
     CSVDataStore.prototype.guessDelimiter = function (lines) {
-        var points = 0, commas = 0, guessed = false;
+        var points = 0, commas = 0, guessed;
         var potDelimiters = {
             ',': 0,
             ';': 0,
             '\t': 0
         };
+        // TODO make this not a [].some
         lines.some(function (columnStr, i) {
             var inStr = false, c, cn, cl, token = '';
             // We should be able to detect dateformats within 13 rows
@@ -260,8 +221,8 @@ var CSVDataStore = /** @class */ (function (_super) {
                     if (!isNaN(Date.parse(token))) {
                         potDelimiters[c]++;
                     }
-                    else if (isNaN(token) ||
-                        !isFinite(token)) {
+                    else if (isNaN(Number(token)) ||
+                        !isFinite(Number(token))) {
                         potDelimiters[c]++;
                     }
                     token = '';
