@@ -13,11 +13,9 @@
 'use strict';
 
 import DataTable from './DataTable.js';
-import DataRow from './DataRow.js';
 import U from '../Core/Utilities.js';
 const {
-    addEvent,
-    uniqueKey
+    addEvent
 } = U;
 
 export type TableEvents = ('\\(._.)//');
@@ -84,22 +82,6 @@ class DataStore {
         callback: (DataStore.LoadEventListener|DataStore.ParseEventListener)
     ): Function {
         return addEvent(this, event, callback);
-    }
-
-    colsToDataTable(cols: Array<Array<Highcharts.DataValueType>>, headers: string[] = []): DataTable {
-        const table = new DataTable();
-        const noOfCols = cols.length;
-        if (noOfCols) {
-            const noOfRows = cols[0].length;
-            for (let i = 0; i < noOfRows; ++i) {
-                const row = new DataRow();
-                for (let j = 0; j < noOfCols; ++j) {
-                    row.insertColumn((headers.length ? headers[j] : uniqueKey()), cols[j][i]);
-                }
-                table.insertRow(row);
-            }
-        }
-        return table;
     }
 }
 namespace DataStore {

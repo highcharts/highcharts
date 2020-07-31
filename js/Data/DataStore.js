@@ -10,10 +10,8 @@
  *
  * */
 'use strict';
-import DataTable from './DataTable.js';
-import DataRow from './DataRow.js';
 import U from '../Core/Utilities.js';
-var addEvent = U.addEvent, uniqueKey = U.uniqueKey;
+var addEvent = U.addEvent;
 var DataStore = /** @class */ (function () {
     /* *
     *
@@ -50,22 +48,6 @@ var DataStore = /** @class */ (function () {
     };
     DataStore.prototype.on = function (event, callback) {
         return addEvent(this, event, callback);
-    };
-    DataStore.prototype.colsToDataTable = function (cols, headers) {
-        if (headers === void 0) { headers = []; }
-        var table = new DataTable();
-        var noOfCols = cols.length;
-        if (noOfCols) {
-            var noOfRows = cols[0].length;
-            for (var i = 0; i < noOfRows; ++i) {
-                var row = new DataRow();
-                for (var j = 0; j < noOfCols; ++j) {
-                    row.insertColumn((headers.length ? headers[j] : uniqueKey()), cols[j][i]);
-                }
-                table.insertRow(row);
-            }
-        }
-        return table;
     };
     return DataStore;
 }());

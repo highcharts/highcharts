@@ -14,7 +14,7 @@
 
 import DataTable from './DataTable.js';
 import DataStore from './DataStore.js';
-import DataRow from './DataRow.js';
+import DataParser from './DataParser.js';
 import U from '../Core/Utilities.js';
 
 import AjaxMixin from '../Mixins/Ajax.js';
@@ -63,6 +63,8 @@ class GoogleDataStore extends DataStore {
     public enablePolling: boolean;
     public dataRefreshRate: number;
     public columns: Array<Array<Highcharts.DataValueType>>;
+
+    private dataParser = new DataParser();
 
     /* *
     *
@@ -203,7 +205,7 @@ class GoogleDataStore extends DataStore {
                             headers.push('' + col[0]);
                         });
 
-                        const table = store.colsToDataTable(store.columns, headers);
+                        const table = store.dataParser.columnArrayToDataTable(store.columns, headers);
 
                         // Polling
                         if (enablePolling) {

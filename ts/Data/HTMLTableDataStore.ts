@@ -14,13 +14,12 @@
 
 import DataStore from './DataStore.js';
 import DataTable from './DataTable.js';
-import DataRow from './DataRow.js';
+import DataParser from './DataParser.js';
 
 import U from '../Core/Utilities.js';
 import H from '../Core/Globals.js';
 
 const { win } = H;
-const { uniqueKey } = U;
 
 /** eslint-disable valid-jsdoc */
 
@@ -48,6 +47,7 @@ class HTMLTableDataStore extends DataStore {
         this.endRow = options.endRow || Number.MAX_VALUE;
         this.startColumn = options.startColumn || 0;
         this.endColumn = options.endColumn || Number.MAX_VALUE;
+        this.dataParser = new DataParser();
     }
 
     /* *
@@ -60,6 +60,8 @@ class HTMLTableDataStore extends DataStore {
     public endRow: number
     public startColumn: number
     public endColumn: number
+
+    private dataParser: DataParser;
 
     private htmlToDataTable(table: HTMLElement): DataTable {
         const columns: [] = [],
@@ -115,7 +117,7 @@ class HTMLTableDataStore extends DataStore {
             }
         });
 
-        return this.colsToDataTable(columns, headers);
+        return this.dataParser.columnArrayToDataTable(columns, headers);
     }
 
     /**

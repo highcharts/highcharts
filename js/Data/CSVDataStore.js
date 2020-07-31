@@ -25,6 +25,7 @@ var __extends = (this && this.__extends) || (function () {
 })();
 import DataStore from './DataStore.js';
 import DataTable from './DataTable.js';
+import DataParser from './DataParser.js';
 import ajaxModule from '../Mixins/Ajax.js';
 var ajax = ajaxModule.ajax;
 /* eslint-disable valid-jsdoc, require-jsdoc */
@@ -58,6 +59,7 @@ var CSVDataStore = /** @class */ (function (_super) {
         _this.endRow = options.endRow || Number.MAX_VALUE;
         _this.startColumn = options.startColumn || 0;
         _this.endColumn = options.endColumn || Number.MAX_VALUE;
+        _this.dataParser = new DataParser();
         return _this;
     }
     /**
@@ -211,7 +213,7 @@ var CSVDataStore = /** @class */ (function (_super) {
                 headers.push('' + col[0]);
             });
         }
-        return this.colsToDataTable(columns, headers);
+        return this.dataParser.columnArrayToDataTable(columns, headers);
     };
     CSVDataStore.prototype.guessDelimiter = function (lines) {
         var points = 0, commas = 0, guessed = false;

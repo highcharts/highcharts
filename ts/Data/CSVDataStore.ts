@@ -14,6 +14,7 @@
 
 import DataStore from './DataStore.js';
 import DataTable from './DataTable.js';
+import DataParser from './DataParser.js';
 import ajaxModule from '../Mixins/Ajax.js';
 
 const { ajax } = ajaxModule;
@@ -57,6 +58,8 @@ class CSVDataStore extends DataStore {
         this.endRow = options.endRow || Number.MAX_VALUE;
         this.startColumn = options.startColumn || 0;
         this.endColumn = options.endColumn || Number.MAX_VALUE;
+
+        this.dataParser = new DataParser();
     }
 
     /* *
@@ -72,13 +75,14 @@ class CSVDataStore extends DataStore {
     public itemDelimiter?: string;
     public lineDelimiter: string;
     public firstRowAsNames: boolean;
-    public startRow: number
-    public endRow: number
-    public startColumn: number
-    public endColumn: number
-    public beforeParse?: Highcharts.DataBeforeParseCallbackFunction
+    public startRow: number;
+    public endRow: number;
+    public startColumn: number;
+    public endColumn: number;
+    public beforeParse?: Highcharts.DataBeforeParseCallbackFunction;
+    public decimalRegex?: RegExp;
 
-    public decimalRegex?: RegExp
+    private dataParser: DataParser;
 
     /**
     * Parse a CSV input string
@@ -280,7 +284,7 @@ class CSVDataStore extends DataStore {
             });
         }
 
-        return this.colsToDataTable(columns, headers);
+        return this.dataParser.columnArrayToDataTable(columns, headers);
     }
 
     private guessDelimiter(lines: Array<string>): string {

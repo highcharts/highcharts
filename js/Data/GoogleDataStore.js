@@ -24,6 +24,7 @@ var __extends = (this && this.__extends) || (function () {
     };
 })();
 import DataStore from './DataStore.js';
+import DataParser from './DataParser.js';
 import U from '../Core/Utilities.js';
 import AjaxMixin from '../Mixins/Ajax.js';
 var ajax = AjaxMixin.ajax;
@@ -36,6 +37,7 @@ var GoogleDataStore = /** @class */ (function (_super) {
     __extends(GoogleDataStore, _super);
     function GoogleDataStore(dataSet, options) {
         var _this = _super.call(this, dataSet) || this;
+        _this.dataParser = new DataParser();
         _this.googleSpreadsheetKey = options.googleSpreadsheetKey;
         _this.worksheet = options.worksheet || 1;
         _this.startRow = options.startRow || 0;
@@ -142,7 +144,7 @@ var GoogleDataStore = /** @class */ (function (_super) {
                     store.columns.forEach(function (col) {
                         headers.push('' + col[0]);
                     });
-                    var table = store.colsToDataTable(store.columns, headers);
+                    var table = store.dataParser.columnArrayToDataTable(store.columns, headers);
                     // Polling
                     if (enablePolling) {
                         setTimeout(function () {

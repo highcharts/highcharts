@@ -25,10 +25,9 @@ var __extends = (this && this.__extends) || (function () {
 })();
 import DataStore from './DataStore.js';
 import DataTable from './DataTable.js';
-import U from '../Core/Utilities.js';
+import DataParser from './DataParser.js';
 import H from '../Core/Globals.js';
 var win = H.win;
-var uniqueKey = U.uniqueKey;
 /** eslint-disable valid-jsdoc */
 /**
  * @private
@@ -49,6 +48,7 @@ var HTMLTableDataStore = /** @class */ (function (_super) {
         _this.endRow = options.endRow || Number.MAX_VALUE;
         _this.startColumn = options.startColumn || 0;
         _this.endColumn = options.endColumn || Number.MAX_VALUE;
+        _this.dataParser = new DataParser();
         return _this;
     }
     HTMLTableDataStore.prototype.htmlToDataTable = function (table) {
@@ -80,7 +80,7 @@ var HTMLTableDataStore = /** @class */ (function (_super) {
                 });
             }
         });
-        return this.colsToDataTable(columns, headers);
+        return this.dataParser.columnArrayToDataTable(columns, headers);
     };
     /**
      * Handle supplied table being either an ID or an actual table
