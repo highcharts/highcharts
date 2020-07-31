@@ -437,7 +437,7 @@ var Tick = /** @class */ (function () {
      * @return {void}
      */
     Tick.prototype.moveLabel = function (str, labelOptions) {
-        var tick = this, label = tick.label, moved = false, axis = tick.axis, labelPos, reversed = axis.reversed, isVertical = !axis.horiz, xPos, yPos;
+        var tick = this, label = tick.label, moved = false, axis = tick.axis, labelPos, reversed = axis.reversed, xPos, yPos;
         if (label && label.textStr === str) {
             tick.movedLabel = label;
             moved = true;
@@ -460,10 +460,10 @@ var Tick = /** @class */ (function () {
         // Create new label if the actual one is moved
         if (!moved && (tick.labelPos || label)) {
             labelPos = tick.labelPos || label.xy;
-            xPos = isVertical ?
-                labelPos.x : (reversed ? 0 : axis.width + axis.left);
-            yPos = isVertical ?
-                (reversed ? (axis.width + axis.left) : 0) : labelPos.y;
+            xPos = axis.horiz ?
+                (reversed ? 0 : axis.width + axis.left) : labelPos.x;
+            yPos = axis.horiz ?
+                labelPos.y : (reversed ? (axis.width + axis.left) : 0);
             tick.movedLabel = tick.createLabel({ x: xPos, y: yPos }, str, labelOptions);
             if (tick.movedLabel) {
                 tick.movedLabel.attr({ opacity: 0 });
@@ -647,13 +647,13 @@ var Tick = /** @class */ (function () {
      * @return {void}
      */
     Tick.prototype.replaceMovedLabel = function () {
-        var tick = this, label = tick.label, axis = tick.axis, reversed = axis.reversed, isVertical = !axis.horiz, x, y;
+        var tick = this, label = tick.label, axis = tick.axis, reversed = axis.reversed, x, y;
         // Animate and destroy
         if (label && !tick.isNew) {
-            x = isVertical ? label.xy.x : (reversed ? axis.left : axis.width + axis.left);
-            y = isVertical ?
-                (reversed ? axis.width + axis.top : axis.top) :
-                label.xy.y;
+            x = axis.horiz ? (reversed ? axis.left : axis.width + axis.left) : label.xy.x;
+            y = axis.horiz ?
+                label.xy.y :
+                (reversed ? axis.width + axis.top : axis.top);
             label.animate({ x: x, y: y, opacity: 0 }, void 0, label.destroy);
             delete tick.label;
         }

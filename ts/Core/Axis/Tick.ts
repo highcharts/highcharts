@@ -818,7 +818,6 @@ class Tick {
             axis = tick.axis,
             labelPos,
             reversed = axis.reversed,
-            isVertical = !axis.horiz,
             xPos,
             yPos;
 
@@ -847,10 +846,10 @@ class Tick {
         // Create new label if the actual one is moved
         if (!moved && (tick.labelPos || label)) {
             labelPos = tick.labelPos || (label as any).xy;
-            xPos = isVertical ?
-                labelPos.x : (reversed ? 0 : axis.width + axis.left);
-            yPos = isVertical ?
-                (reversed ? (axis.width + axis.left) : 0) : labelPos.y;
+            xPos = axis.horiz ?
+                (reversed ? 0 : axis.width + axis.left) : labelPos.x;
+            yPos = axis.horiz ?
+                labelPos.y : (reversed ? (axis.width + axis.left) : 0);
 
             tick.movedLabel = tick.createLabel(
                 { x: xPos, y: yPos },
@@ -1156,18 +1155,17 @@ class Tick {
             label = tick.label,
             axis = tick.axis,
             reversed = axis.reversed,
-            isVertical = !axis.horiz,
             x,
             y;
 
         // Animate and destroy
         if (label && !tick.isNew) {
-            x = isVertical ? label.xy.x : (
+            x = axis.horiz ? (
                 reversed ? axis.left : axis.width + axis.left
-            );
-            y = isVertical ?
-                (reversed ? axis.width + axis.top : axis.top) :
-                label.xy.y;
+            ) : label.xy.x;
+            y = axis.horiz ?
+                label.xy.y :
+                (reversed ? axis.width + axis.top : axis.top);
 
             label.animate(
                 { x: x, y: y, opacity: 0 },
