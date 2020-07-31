@@ -209,17 +209,25 @@ class LogarithmicAxisAdditions {
     }
 
     public lin2log(num: number): number {
-        const isNegative = num < 0 && this.axis.options.allowNegativeLog;
-        if (isNegative) {
-            return -Math.pow(10, Math.abs(num));
+        if (this.axis.options.allowNegativeLog) {
+            const isNegative = num < 0;
+            num = Math.abs(num);
+            if (num < 1) {
+                return 0;
+            }
+            return (isNegative ? -1 : 1) * Math.pow(10, num);
         }
         return Math.pow(10, num);
     }
 
     public log2lin(num: number): number {
-        const isNegative = num < 0 && this.axis.options.allowNegativeLog;
-        if (isNegative) {
-            return -Math.log(Math.abs(num)) / Math.LN10;
+        if (this.axis.options.allowNegativeLog) {
+            const isNegative = num < 0;
+            num = Math.abs(num);
+            if (num < 1) {
+                return 0;
+            }
+            return (isNegative ? -1 : 1) * Math.log(num) / Math.LN10;
         }
         return Math.log(num) / Math.LN10;
     }
@@ -302,6 +310,9 @@ export default LogarithmicAxis;
 
 /**
  * Activates rendering of negative logarithmic values.
+ *
+ * @sample highcharts/yaxis/type-log-negative
+ *         Rendering negative logarithmic
  *
  * @type      {boolean}
  * @since     next
