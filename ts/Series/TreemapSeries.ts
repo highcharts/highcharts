@@ -288,14 +288,19 @@ declare global {
     }
 }
 
-import mixinTreeSeries from '../mixins/tree-series.js';
-import drawPointModule from '../mixins/draw-point.js';
+import mixinTreeSeries from '../Mixins/TreeSeries.js';
+const {
+    getColor,
+    getLevelOptions,
+    updateRootId
+} = mixinTreeSeries;
+import drawPointModule from '../Mixins/DrawPoint.js';
 const { drawPoint } = drawPointModule;
 import Color from '../Core/Color.js';
 const {
     parse: color
 } = Color;
-import LegendSymbolMixin from '../mixins/legend-symbol.js';
+import LegendSymbolMixin from '../Mixins/LegendSymbol.js';
 import Point from '../Core/Series/Point.js';
 import U from '../Core/Utilities.js';
 const {
@@ -324,8 +329,6 @@ const AXIS_MAX = 100;
 
 var seriesTypes = H.seriesTypes,
     noop = H.noop,
-    getColor = mixinTreeSeries.getColor,
-    getLevelOptions = mixinTreeSeries.getLevelOptions,
     // @todo Similar to eachObject, this function is likely redundant
     isBoolean = function (x: unknown): x is boolean {
         return typeof x === 'boolean';
@@ -359,7 +362,6 @@ var seriesTypes = H.seriesTypes,
             recursive(next, func, context);
         }
     },
-    updateRootId = mixinTreeSeries.updateRootId,
     treemapAxisDefaultValues = false;
 
 /* eslint-enable no-invalid-this */
@@ -985,44 +987,45 @@ seriesType<Highcharts.TreemapSeries>(
             options: Highcharts.TreemapSeriesOptions
         ): void {
             var series = this,
-                colorMapSeriesMixin = H.colorMapSeriesMixin;
+                colorMapSeriesMixin = H.colorMapSeriesMixin,
+                setOptionsEvent;
 
             // If color series logic is loaded, add some properties
             if (colorMapSeriesMixin) {
                 this.colorAttribs = colorMapSeriesMixin.colorAttribs;
             }
 
-            // Handle deprecated options.
-            series.eventsToUnbind.push(
-                addEvent(series, 'setOptions', function (
-                    event: {
-                        userOptions: Highcharts.TreemapSeriesOptions;
-                    }
-                ): void {
-                    var options = event.userOptions;
+            setOptionsEvent = addEvent(series, 'setOptions', function (
+                event: {
+                    userOptions: Highcharts.TreemapSeriesOptions;
+                }
+            ): void {
+                var options = event.userOptions;
 
-                    if (
-                        defined(options.allowDrillToNode) &&
-                        !defined(options.allowTraversingTree)
-                    ) {
-                        options.allowTraversingTree = options.allowDrillToNode;
-                        delete options.allowDrillToNode;
-                    }
+                if (
+                    defined(options.allowDrillToNode) &&
+                    !defined(options.allowTraversingTree)
+                ) {
+                    options.allowTraversingTree = options.allowDrillToNode;
+                    delete options.allowDrillToNode;
+                }
 
-                    if (
-                        defined(options.drillUpButton) &&
-                        !defined(options.traverseUpButton)
-                    ) {
-                        options.traverseUpButton = options.drillUpButton;
-                        delete options.drillUpButton;
-                    }
-                })
-            );
+                if (
+                    defined(options.drillUpButton) &&
+                    !defined(options.traverseUpButton)
+                ) {
+                    options.traverseUpButton = options.drillUpButton;
+                    delete options.drillUpButton;
+                }
+            });
 
             Series.prototype.init.call(series, chart, options);
 
             // Treemap's opacity is a different option from other series
             delete series.opacity;
+
+            // Handle deprecated options.
+            series.eventsToUnbind.push(setOptionsEvent);
 
             if (series.options.allowTraversingTree) {
                 series.eventsToUnbind.push(

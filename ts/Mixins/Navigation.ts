@@ -44,7 +44,7 @@ declare global {
     }
 }
 
-var chartNavigation: Highcharts.ChartNavigationMixin = {
+const chartNavigation: Highcharts.ChartNavigationMixin = {
     /**
      * Initializes `chart.navigation` object which delegates `update()` methods
      * to all other common classes (used in exporting and navigationBindings).

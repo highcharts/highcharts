@@ -32,7 +32,7 @@ declare global {
  * @return {Highcharts.PositionObject}
  *         Calculated center
  */
-var getCenterOfPoints = function getCenterOfPoints(
+const getCenterOfPoints = function getCenterOfPoints(
     points: Array<Highcharts.PositionObject>
 ): Highcharts.PositionObject {
     var sum = points.reduce(function (
@@ -61,7 +61,7 @@ var getCenterOfPoints = function getCenterOfPoints(
  * @return {number}
  *         Returns the distance between the points.
  */
-var getDistanceBetweenPoints = function getDistanceBetweenPoints(
+const getDistanceBetweenPoints = function getDistanceBetweenPoints(
     p1: Highcharts.PositionObject,
     p2: Highcharts.PositionObject
 ): number {
@@ -76,14 +76,14 @@ var getDistanceBetweenPoints = function getDistanceBetweenPoints(
  * @param {Highcharts.PositionObject} p2 The second point.
  * @return {number} Returns the angle in radians.
  */
-var getAngleBetweenPoints = function getAngleBetweenPoints(
+const getAngleBetweenPoints = function getAngleBetweenPoints(
     p1: Highcharts.PositionObject,
     p2: Highcharts.PositionObject
 ): number {
     return Math.atan2(p2.x - p1.x, p2.y - p1.y);
 };
 
-var geometry: Highcharts.GeometryMixin = {
+const geometry: Highcharts.GeometryMixin = {
     getAngleBetweenPoints: getAngleBetweenPoints,
     getCenterOfPoints: getCenterOfPoints,
     getDistanceBetweenPoints: getDistanceBetweenPoints

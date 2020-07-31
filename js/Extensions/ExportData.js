@@ -42,8 +42,8 @@ var addEvent = U.addEvent, defined = U.defined, extend = U.extend, find = U.find
 * @name Highcharts.ExportDataEventObject#dataRows
 * @type {Array<Array<string>>}
 */
-import '../mixins/ajax.js';
-import downloadURLmodule from '../mixins/download-url.js';
+import '../Mixins/Ajax.js';
+import downloadURLmodule from '../Mixins/DownloadURL.js';
 var downloadURL = downloadURLmodule.downloadURL;
 // Can we add this to utils? Also used in screen-reader.js
 /**

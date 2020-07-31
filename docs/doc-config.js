@@ -15,6 +15,7 @@ module.exports = {
         { from: 'advanced-chart-features/highcharts-typescript-beta', to: 'advanced-chart-features/highcharts-typescript-declarations' },
         { from: 'maps/create-custom-maps-for-highmaps', to: 'maps/create-custom-maps' },
         { from: 'stock/understanding-highstock', to: 'stock/understanding-highcharts-stock' },
-        { from: 'getting-started/compatibility', to: 'getting-started/system-requirements' }
+        { from: 'getting-started/compatibility', to: 'getting-started/system-requirements' },
+        { from: 'chart-and-series-types/packed-bubble-charts', to: 'chart-and-series-types/packed-bubble' }
     ]
 };

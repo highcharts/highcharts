@@ -88,7 +88,7 @@ const {
     seriesType
 } = U;
 
-import onSeriesMixin from '../mixins/on-series.js';
+import onSeriesMixin from '../Mixins/OnSeries.js';
 
 var noop = H.noop;
 

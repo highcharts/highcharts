@@ -73,7 +73,7 @@ const {
     seriesType
 } = U;
 
-import derivedSeriesMixin from '../mixins/derived-series.js';
+import derivedSeriesMixin from '../Mixins/DerivedSeries.js';
 
 /* ************************************************************************** *
  *  BELL CURVE                                                                *

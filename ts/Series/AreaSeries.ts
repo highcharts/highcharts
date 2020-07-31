@@ -56,7 +56,7 @@ import Color from '../Core/Color.js';
 const {
     parse: color
 } = Color;
-import LegendSymbolMixin from '../mixins/legend-symbol.js';
+import LegendSymbolMixin from '../Mixins/LegendSymbol.js';
 import U from '../Core/Utilities.js';
 const {
     objectEach,

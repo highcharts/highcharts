@@ -125,8 +125,8 @@ var nelderMead = function nelderMead(fn, initial) {
     }
     return simplex[0];
 };
-var content = {
+var nelderMeadMixin = {
     getCentroid: getCentroid,
     nelderMead: nelderMead
 };
-export default content;
+export default nelderMeadMixin;

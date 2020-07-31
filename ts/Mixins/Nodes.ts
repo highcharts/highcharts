@@ -89,7 +89,7 @@ const {
     pick
 } = U;
 
-H.NodesMixin = {
+const NodesMixin = H.NodesMixin = {
 
     /* eslint-disable valid-jsdoc */
 
@@ -318,3 +318,5 @@ H.NodesMixin = {
     /* eslint-enable valid-jsdoc */
 
 };
+
+export default NodesMixin;

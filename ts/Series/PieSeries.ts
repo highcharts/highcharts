@@ -122,7 +122,7 @@ declare global {
     }
 }
 
-import LegendSymbolMixin from '../mixins/legend-symbol.js';
+import LegendSymbolMixin from '../Mixins/LegendSymbol.js';
 import Point from '../Core/Series/Point.js';
 import U from '../Core/Utilities.js';
 const {
@@ -139,7 +139,7 @@ const {
 } = U;
 
 import './ColumnSeries.js';
-import centeredSeriesMixin from '../mixins/centered-series.js';
+import centeredSeriesMixin from '../Mixins/CenteredSeries.js';
 import '../Core/Options.js';
 import '../Core/Series/Series.js';
 

@@ -1,5 +1,5 @@
 Boost module
-===
+============
 
 Boost is a stripped-down renderer-in-a-module for Highcharts. It bypasses some of the standard Highcharts features (such as animation), and focuses on pushing as many points as possible as quickly as possible.
 
@@ -92,6 +92,7 @@ There are five different probes that can be activated:
 *   Series processing (`timeSeriesProcessing`)
 *   K-d tree processing (`timeKDTree`)
 *   Buffer copy (`timeBufferCopy`)
+*   Rendering (`timeRendering`)
 
 All of the above settings are booleans set in the `debug` object on the `boost` property.
 

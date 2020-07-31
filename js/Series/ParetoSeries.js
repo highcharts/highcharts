@@ -11,7 +11,7 @@
 import U from '../Core/Utilities.js';
 var correctFloat = U.correctFloat, merge = U.merge, seriesType = U.seriesType;
 import '../Core/Options.js';
-import derivedSeriesMixin from '../mixins/derived-series.js';
+import derivedSeriesMixin from '../Mixins/DerivedSeries.js';
 /**
  * The pareto series type.
  *
