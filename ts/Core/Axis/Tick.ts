@@ -386,7 +386,7 @@ class Tick {
         }
 
         // Call only after first render
-        if (animateLabels && axis._addedPlotLB && axis.isXAxis) {
+        if (animateLabels && axis._addedPlotLB) {
             tick.moveLabel(str, labelOptions);
         }
         // First call
@@ -815,10 +815,10 @@ class Tick {
         var tick = this,
             label = tick.label,
             moved = false,
-            xAxis = tick.axis,
-            chart = xAxis.chart,
+            axis = tick.axis,
+            chart = axis.chart,
             labelPos,
-            reversed = xAxis.reversed,
+            reversed = axis.reversed,
             inverted = chart.inverted,
             xPos,
             yPos;
@@ -829,7 +829,7 @@ class Tick {
             delete tick.label;
 
         } else { // Find a label with the same string
-            objectEach(xAxis.ticks, function (currentTick: Tick): void {
+            objectEach(axis.ticks, function (currentTick: Tick): void {
                 if (
                     !moved &&
                     !currentTick.isNew &&
@@ -848,10 +848,19 @@ class Tick {
         // Create new label if the actual one is moved
         if (!moved && (tick.labelPos || label)) {
             labelPos = tick.labelPos || (label as any).xy;
+            // Use the inverted logic for the yAxis
+            if (!axis.isXAxis) {
+                if (inverted) {
+                    inverted = false;
+                } else {
+                    inverted = true;
+                }
+            }
+
             xPos = inverted ?
-                labelPos.x : (reversed ? 0 : xAxis.width + xAxis.left);
+                labelPos.x : (reversed ? 0 : axis.width + axis.left);
             yPos = inverted ?
-                (reversed ? (xAxis.width + xAxis.left) : 0) : labelPos.y;
+                (reversed ? (axis.width + axis.left) : 0) : labelPos.y;
 
             tick.movedLabel = tick.createLabel(
                 { x: xPos, y: yPos },
@@ -1164,6 +1173,15 @@ class Tick {
 
         // Animate and destroy
         if (label && !tick.isNew) {
+            // Use the inverted logic for the yAxis
+            if (!axis.isXAxis) {
+                if (inverted) {
+                    inverted = false;
+                } else {
+                    inverted = true;
+                }
+            }
+
             x = inverted ? label.xy.x : (
                 reversed ? axis.left : axis.width + axis.left
             );
