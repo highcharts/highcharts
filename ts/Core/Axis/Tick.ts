@@ -816,10 +816,9 @@ class Tick {
             label = tick.label,
             moved = false,
             axis = tick.axis,
-            chart = axis.chart,
             labelPos,
             reversed = axis.reversed,
-            inverted = chart.inverted,
+            isVertical = !axis.horiz,
             xPos,
             yPos;
 
@@ -848,18 +847,9 @@ class Tick {
         // Create new label if the actual one is moved
         if (!moved && (tick.labelPos || label)) {
             labelPos = tick.labelPos || (label as any).xy;
-            // Use the inverted logic for the yAxis
-            if (!axis.isXAxis) {
-                if (inverted) {
-                    inverted = false;
-                } else {
-                    inverted = true;
-                }
-            }
-
-            xPos = inverted ?
+            xPos = isVertical ?
                 labelPos.x : (reversed ? 0 : axis.width + axis.left);
-            yPos = inverted ?
+            yPos = isVertical ?
                 (reversed ? (axis.width + axis.left) : 0) : labelPos.y;
 
             tick.movedLabel = tick.createLabel(
@@ -1166,26 +1156,16 @@ class Tick {
             label = tick.label,
             axis = tick.axis,
             reversed = axis.reversed,
-            chart = tick.axis.chart,
-            inverted = chart.inverted,
+            isVertical = !axis.horiz,
             x,
             y;
 
         // Animate and destroy
         if (label && !tick.isNew) {
-            // Use the inverted logic for the yAxis
-            if (!axis.isXAxis) {
-                if (inverted) {
-                    inverted = false;
-                } else {
-                    inverted = true;
-                }
-            }
-
-            x = inverted ? label.xy.x : (
+            x = isVertical ? label.xy.x : (
                 reversed ? axis.left : axis.width + axis.left
             );
-            y = inverted ?
+            y = isVertical ?
                 (reversed ? axis.width + axis.top : axis.top) :
                 label.xy.y;
 

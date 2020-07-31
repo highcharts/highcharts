@@ -437,7 +437,7 @@ var Tick = /** @class */ (function () {
      * @return {void}
      */
     Tick.prototype.moveLabel = function (str, labelOptions) {
-        var tick = this, label = tick.label, moved = false, axis = tick.axis, chart = axis.chart, labelPos, reversed = axis.reversed, inverted = chart.inverted, xPos, yPos;
+        var tick = this, label = tick.label, moved = false, axis = tick.axis, labelPos, reversed = axis.reversed, isVertical = !axis.horiz, xPos, yPos;
         if (label && label.textStr === str) {
             tick.movedLabel = label;
             moved = true;
@@ -460,18 +460,9 @@ var Tick = /** @class */ (function () {
         // Create new label if the actual one is moved
         if (!moved && (tick.labelPos || label)) {
             labelPos = tick.labelPos || label.xy;
-            // Use the inverted logic for the yAxis
-            if (!axis.isXAxis) {
-                if (inverted) {
-                    inverted = false;
-                }
-                else {
-                    inverted = true;
-                }
-            }
-            xPos = inverted ?
+            xPos = isVertical ?
                 labelPos.x : (reversed ? 0 : axis.width + axis.left);
-            yPos = inverted ?
+            yPos = isVertical ?
                 (reversed ? (axis.width + axis.left) : 0) : labelPos.y;
             tick.movedLabel = tick.createLabel({ x: xPos, y: yPos }, str, labelOptions);
             if (tick.movedLabel) {
@@ -656,20 +647,11 @@ var Tick = /** @class */ (function () {
      * @return {void}
      */
     Tick.prototype.replaceMovedLabel = function () {
-        var tick = this, label = tick.label, axis = tick.axis, reversed = axis.reversed, chart = tick.axis.chart, inverted = chart.inverted, x, y;
+        var tick = this, label = tick.label, axis = tick.axis, reversed = axis.reversed, isVertical = !axis.horiz, x, y;
         // Animate and destroy
         if (label && !tick.isNew) {
-            // Use the inverted logic for the yAxis
-            if (!axis.isXAxis) {
-                if (inverted) {
-                    inverted = false;
-                }
-                else {
-                    inverted = true;
-                }
-            }
-            x = inverted ? label.xy.x : (reversed ? axis.left : axis.width + axis.left);
-            y = inverted ?
+            x = isVertical ? label.xy.x : (reversed ? axis.left : axis.width + axis.left);
+            y = isVertical ?
                 (reversed ? axis.width + axis.top : axis.top) :
                 label.xy.y;
             label.animate({ x: x, y: y, opacity: 0 }, void 0, label.destroy);
