@@ -138,12 +138,8 @@ const LegendSymbolMixin = H.LegendSymbolMixin = {
 
         this.legendLine = renderer
             .path([
-                'M',
-                0,
-                verticalCenter,
-                'L',
-                symbolWidth,
-                verticalCenter
+                ['M', 0, verticalCenter],
+                ['L', symbolWidth, verticalCenter]
             ])
             .addClass('highcharts-graph')
             .attr(attr)
