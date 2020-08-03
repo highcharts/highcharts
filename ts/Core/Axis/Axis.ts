@@ -204,7 +204,6 @@ declare global {
             accessibility?: XAxisAccessibilityOptions;
             alignTicks?: boolean;
             allowDecimals?: boolean;
-            allowNegativeLog?: boolean;
             alternateGridColor?: ColorType;
             breaks?: Array<XAxisBreaksOptions>;
             categories?: Array<string>;
@@ -4121,7 +4120,11 @@ class Axis implements AxisComposition, AxisLike {
         axis.plotLinesAndBandsGroups = {};
 
         // Shorthand types
-        axis.positiveValuesOnly = !!(axis.logarithmic && !options.allowNegativeLog);
+        axis.positiveValuesOnly = !!(
+            axis.logarithmic &&
+            !options.allowNegativeLog &&
+            !axis.allowNegativeLog // #13914 backwards compatibility
+        );
 
         // Flag, if axis is linked to another axis
         axis.isLinked = defined(options.linkedTo);
