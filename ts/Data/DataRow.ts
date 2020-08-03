@@ -13,6 +13,7 @@
 'use strict';
 
 import type DataTable from './DataTable';
+import type JSONType from './JSONType';
 import DataConverter from './DataConverter.js';
 import U from '../Core/Utilities.js';
 const {
@@ -179,6 +180,42 @@ class DataRow {
         callback: (DataRow.ColumnEventListener|DataRow.RowEventListener)
     ): Function {
         return addEvent(this, event, callback);
+    }
+
+    public toJSON(): JSONType {
+        const columns = this.getAllColumns();
+        const columnKeys = Object.keys(columns);
+        const json: JSONType = { id: this.id };
+
+        let key: string;
+        let value: DataRow.ColumnTypes;
+
+        for (let i = 0, iEnd = columnKeys.length; i < iEnd; ++i) {
+            key = columnKeys[i];
+            value = columns[key];
+
+            /* eslint-disable @typescript-eslint/indent */
+            switch (typeof value) {
+                default:
+                    if (value === null) {
+                        json[key] = value;
+                    } else if (value instanceof Date) {
+                        json[key] = value.getTime();
+                    } else { // DataTable
+                        json[key] = value.toJSON();
+                    }
+                    continue;
+                case 'undefined':
+                    continue;
+                case 'boolean':
+                case 'number':
+                case 'string':
+                    json[key] = value;
+                    continue;
+            }
+        }
+
+        return json;
     }
 
     public updateColumn(

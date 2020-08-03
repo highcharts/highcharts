@@ -106,6 +106,39 @@ var DataRow = /** @class */ (function () {
     DataRow.prototype.on = function (event, callback) {
         return addEvent(this, event, callback);
     };
+    DataRow.prototype.toJSON = function () {
+        var columns = this.getAllColumns();
+        var columnKeys = Object.keys(columns);
+        var json = { id: this.id };
+        var key;
+        var value;
+        for (var i = 0, iEnd = columnKeys.length; i < iEnd; ++i) {
+            key = columnKeys[i];
+            value = columns[key];
+            /* eslint-disable @typescript-eslint/indent */
+            switch (typeof value) {
+                default:
+                    if (value === null) {
+                        json[key] = value;
+                    }
+                    else if (value instanceof Date) {
+                        json[key] = value.getTime();
+                    }
+                    else { // DataTable
+                        json[key] = value.toJSON();
+                    }
+                    continue;
+                case 'undefined':
+                    continue;
+                case 'boolean':
+                case 'number':
+                case 'string':
+                    json[key] = value;
+                    continue;
+            }
+        }
+        return json;
+    };
     DataRow.prototype.updateColumn = function (columnKey, columnValue) {
         var row = this;
         var succeeded = false;

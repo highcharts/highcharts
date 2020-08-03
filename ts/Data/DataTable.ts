@@ -12,6 +12,7 @@
 
 'use strict';
 
+import type JSONType from './JSONType';
 import DataRow from './DataRow.js';
 import U from '../Core/Utilities.js';
 const {
@@ -235,6 +236,17 @@ class DataTable {
         watchs.push(row.on('afterUpdateColumn', callback));
 
         watchsIdMap[row.id] = watchs;
+    }
+
+    public toJSON(): JSONType {
+        const json: JSONType = [];
+        const rows = this.rows;
+
+        for (let i = 0, iEnd = rows.length; i < iEnd; ++i) {
+            json.push(rows[i].toJSON());
+        }
+
+        return json;
     }
 
     public toString(): string {

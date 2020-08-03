@@ -130,9 +130,9 @@ QUnit.test('DataTable and DataRow events', function (assert) {
 
 });
 
-QUnit.test('DataTable parser', function (assert) {
+QUnit.test('DataTable JSON support', function (assert) {
 
-    const table = DataTable.parse([{
+    const json = [{
         id: 'a',
         column1: 'value1',
         column2: 0.0002,
@@ -156,7 +156,9 @@ QUnit.test('DataTable parser', function (assert) {
         column1: 'value1',
         column2: 'value2',
         column3: 'value3'
-    }]);
+    }];
+
+    const table = DataTable.parse(json);
 
     const rowA = table.getRow('a');
     const rowB = table.getRow('b');
@@ -204,6 +206,12 @@ QUnit.test('DataTable parser', function (assert) {
             'bc',
         ],
         'Subtable should contain three rows.'
+    );
+
+    assert.deepEqual(
+        table.toJSON(),
+        json,
+        'Exported JSON of table should be equal to imported JSON.'
     );
 
 });

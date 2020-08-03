@@ -166,6 +166,14 @@ var DataTable = /** @class */ (function () {
         watchs.push(row.on('afterUpdateColumn', callback));
         watchsIdMap[row.id] = watchs;
     };
+    DataTable.prototype.toJSON = function () {
+        var json = [];
+        var rows = this.rows;
+        for (var i = 0, iEnd = rows.length; i < iEnd; ++i) {
+            json.push(rows[i].toJSON());
+        }
+        return json;
+    };
     DataTable.prototype.toString = function () {
         return JSON.stringify(this.rows);
     };
