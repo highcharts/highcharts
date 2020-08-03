@@ -13,6 +13,7 @@
 'use strict';
 
 import type Chart from '../Core/Chart/Chart';
+import type DrawPointMixin from '../Mixins/DrawPoint';
 import H from '../Core/Globals.js';
 
 /**
@@ -43,8 +44,8 @@ declare global {
             public addElement(el: number): void;
             public reset(): void;
         }
-        class TreemapPoint extends ScatterPoint implements DrawPoint {
-            public draw: typeof drawPoint;
+        class TreemapPoint extends ScatterPoint implements DrawPointMixin.DrawPoint {
+            public draw: typeof DrawPointMixin.drawPoint;
             public drillId?: (boolean|string);
             public isValid: () => boolean;
             public name: string;
@@ -56,7 +57,7 @@ declare global {
             public setVisible: PiePoint['setVisible'];
             public sortIndex?: number;
             public value: (number|null);
-            public drawPoint(params: DrawPointParams): void;
+            public drawPoint(params: DrawPointMixin.DrawPointParams): void;
             public getClassName(): string;
             public shouldDraw(): boolean;
         }

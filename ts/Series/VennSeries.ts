@@ -18,6 +18,7 @@
 'use strict';
 
 import type Chart from '../Core/Chart/Chart';
+import type DrawPointMixin from '../Mixins/DrawPoint';
 import type SVGPath from '../Core/Renderer/SVG/SVGPath';
 import Color from '../Core/Color.js';
 const color = Color.parse;
@@ -42,8 +43,8 @@ const {
  */
 declare global {
     namespace Highcharts {
-        class VennPoint extends ScatterPoint implements DrawPoint {
-            public draw: typeof draw;
+        class VennPoint extends ScatterPoint implements DrawPointMixin.DrawPoint {
+            public draw: typeof DrawPointMixin.draw;
             public isValid: () => boolean;
             public options: VennPointOptions;
             public series: VennSeries;

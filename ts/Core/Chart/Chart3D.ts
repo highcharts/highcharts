@@ -876,7 +876,7 @@ namespace Chart3D {
     /**
      * @private
      */
-    export function compose(ChartClass: typeof Chart, FxClass: typeof Fx): void {
+    export function compose(ChartClass: typeof Chart, FxClass: typeof Highcharts.Fx): void {
 
         const chartProto = ChartClass.prototype;
         const fxProto = FxClass.prototype;

@@ -66,9 +66,9 @@ var drawPoint = function drawPoint(params) {
     // Call draw to render component
     draw.call(point, params);
 };
-var drawPointModule = {
+var Mixin = {
     draw: draw,
     drawPoint: drawPoint,
     isFn: isFn
 };
-export default drawPointModule;
+export default Mixin;

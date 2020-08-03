@@ -6,30 +6,6 @@
 
 import type Point from '../Core/Series/Point';
 
-/**
- * Internal types
- * @private
- */
-declare global {
-    namespace Highcharts {
-        interface DrawPoint extends Point {
-            shouldDraw(): boolean;
-        }
-        interface DrawPointParams {
-            animatableAttribs: SVGAttributes;
-            attribs: SVGAttributes;
-            css?: CSSObject;
-            group: SVGElement;
-            onComplete?: Function;
-            isNew?: boolean;
-            renderer: Renderer;
-            shadow?: (boolean|Partial<ShadowOptionsObject>);
-            shapeArgs?: SVGAttributes;
-            shapeType: string;
-        }
-    }
-}
-
 const isFn = function (x: unknown): x is Function {
     return typeof x === 'function';
 };
@@ -50,8 +26,8 @@ const isFn = function (x: unknown): x is Function {
  * @todo export this function to enable usage
  */
 const draw = function draw(
-    this: Highcharts.DrawPoint,
-    params: Highcharts.DrawPointParams
+    this: Mixin.DrawPoint,
+    params: Mixin.DrawPointParams
 ): void {
     var component = this,
         graphic = component.graphic,
@@ -101,8 +77,8 @@ const draw = function draw(
  * @param {Highcharts.Dictionary<any>} params Parameters
  */
 const drawPoint = function drawPoint(
-    this: Highcharts.DrawPoint,
-    params: Highcharts.DrawPointParams
+    this: Mixin.DrawPoint,
+    params: Mixin.DrawPointParams
 ): void {
     var point = this,
         attribs = params.attribs = params.attribs || {};
@@ -115,10 +91,28 @@ const drawPoint = function drawPoint(
     draw.call(point, params);
 };
 
-const drawPointModule = {
+const Mixin = {
     draw,
     drawPoint,
     isFn
 };
 
-export default drawPointModule;
+namespace Mixin {
+    export interface DrawPoint extends Point {
+        shouldDraw(): boolean;
+    }
+    export interface DrawPointParams {
+        animatableAttribs: Highcharts.SVGAttributes;
+        attribs: Highcharts.SVGAttributes;
+        css?: Highcharts.CSSObject;
+        group: Highcharts.SVGElement;
+        onComplete?: Function;
+        isNew?: boolean;
+        renderer: Highcharts.Renderer;
+        shadow?: (boolean|Partial<Highcharts.ShadowOptionsObject>);
+        shapeArgs?: Highcharts.SVGAttributes;
+        shapeType: string;
+    }
+}
+
+export default Mixin;

@@ -11,6 +11,8 @@
  * */
 
 'use strict';
+
+import type DrawPointMixin from '../Mixins/DrawPoint';
 import H from '../Core/Globals.js';
 
 /**
@@ -21,7 +23,7 @@ declare global {
     namespace Highcharts {
         class WordcloudPoint extends ColumnPoint {
             public dimensions: SizeObject;
-            public draw: typeof drawPoint;
+            public draw: typeof DrawPointMixin.drawPoint;
             public lastCollidedWith?: WordcloudPoint;
             public options: WordcloudPointOptions;
             public polygon?: PolygonObject;
