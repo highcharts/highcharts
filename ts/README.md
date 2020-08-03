@@ -22,6 +22,54 @@ Main Rules
 Do's and Don'ts
 ---------------
 
+### Combine ES6 class pattern with types ###
+
+When it comes to types that are only used by one class, the following pattern
+works the best:
+
+```ts
+class MyClass {
+    /* properties and functions using MyClass.MyType */
+    private myProperty?: MyClass.MyType;
+    public myFunction(arg: MyClass.MyType) {
+        /* ... */
+    }
+}
+namespace MyClass {
+    export interface MyType {
+        /* ... */
+    }
+}
+export default MyClass; // allows access to both, class implementation and types
+```
+
+*Please note:* The namespace should only contain types and interfaces. If you
+like to add real members that should not be part of the class, move them in a
+new files.
+
+
+### Make use of type definition files ###
+
+If a type is used by multiple files, it should go into its own `*.d.ts` file.
+That way multiple files can add properties to an interface in an `*.d.ts` file.
+Good examples for this type registration:
+
+* [`./Core/Axis/Types.d.ts`](./Core/Axis/Types.d.ts)
+
+* [`./Core/Renderer/SVG/SVGPath.d.ts`](./Core/Renderer/SVG/SVGPath.d.ts)
+
+
+### Make use of type import ###
+
+If you only need a class type of a file, but not the implementation, make use of
+the type import. This removes these import from the `*.js` output, as is is only
+relevant to TypeScript and holds the file and package sizes small.
+
+```ts
+import type Chart from '../Core/Chart/Chart';
+```
+
+
 ### Avoid "any" casting
 
 Even in strict mode some casts to `any` are allowed. In most situations you
