@@ -16,8 +16,10 @@ import DataStore from './DataStore.js';
 import DataTable from './DataTable.js';
 import DataParser from './DataParser.js';
 import ajaxModule from '../Mixins/Ajax.js';
+import U from '../Core/Utilities.js';
 
 const { ajax } = ajaxModule;
+const { fireEvent } = U;
 /* eslint-disable valid-jsdoc, require-jsdoc */
 
 /**
@@ -47,7 +49,7 @@ class CSVDataStore extends DataStore {
         }
 
         this.enablePolling = options.enablePolling || false;
-        this.dataRefreshRate = options.dataRefreshRate || 1;
+        this.dataRefreshRate = options.dataRefreshRate || 2;
 
         this.decimalPoint = options.decimalPoint || '.';
         this.itemDelimiter = options.itemDelimiter;
@@ -60,7 +62,10 @@ class CSVDataStore extends DataStore {
         this.endColumn = options.endColumn || Number.MAX_VALUE;
 
         this.dataParser = new DataParser();
+
+        this.addEvents();
     }
+
 
     /* *
     *
@@ -71,6 +76,7 @@ class CSVDataStore extends DataStore {
     public csvURL?: string;
     public enablePolling: boolean;
     public dataRefreshRate: number;
+    public liveDataTimeout?: number;
     public decimalPoint: string;
     public itemDelimiter?: string;
     public lineDelimiter: string;
@@ -84,71 +90,93 @@ class CSVDataStore extends DataStore {
 
     private dataParser: DataParser;
     private columns?: Array<Array<Highcharts.DataValueType>>;
+    private headers?: string[];
+    private liveDataURL?: string;
+
+    private addEvents(): void {
+        this.on('load', (e: DataStore.LoadEventObject): void => {
+            // console.log(e)
+        });
+        this.on('afterLoad', (e: DataStore.LoadEventObject): void => {
+            this.rows = e.table;
+        });
+        this.on('parse', (e: DataStore.ParseEventObject): void => {
+            // console.log(e)
+        });
+        this.on('afterParse', (e: DataStore.ParseEventObject): void => {
+            this.columns = e.columns;
+            this.headers = e.headers;
+        });
+        this.on('fail', (e: any): void => {
+            // throw new Error(e.error)
+        });
+    }
 
     /**
     * Parse a CSV input string
     * @todo simplify
     *
     * @function Highcharts.Data#parseCSV
-    * @return {Array<Array<Highcharts.DataValueType>>}
+    * @return {void}
     */
-    public parseCSV(): DataTable {
+    public parseCSV(csv: string): void {
         const store = this;
-        var csv = this.csv,
-            startRow = (
-                typeof this.startRow !== 'undefined' && this.startRow ?
-                    this.startRow :
-                    0
-            ),
-            endRow = this.endRow || Number.MAX_VALUE,
-            lines,
-            rowIt = 0;
+        let lines,
+            rowIt = 0,
+            {
+                startRow,
+                endRow
+            } = store;
 
         this.columns = [];
 
+        // todo parse should have a payload
+        fireEvent(store, 'parse', {}, function (): void {
 
-        if (csv && this.beforeParse) {
-            csv = this.beforeParse(csv);
-        }
-
-        if (csv) {
-            lines = csv
-                .replace(/\r\n/g, '\n') // Unix
-                .replace(/\r/g, '\n') // Mac
-                .split(this.lineDelimiter);
-
-            if (!startRow || startRow < 0) {
-                startRow = 0;
+            if (csv && store.beforeParse) {
+                csv = store.beforeParse(csv);
             }
 
-            if (!endRow || endRow >= lines.length) {
-                endRow = lines.length - 1;
-            }
+            if (csv) {
+                lines = csv
+                    .replace(/\r\n/g, '\n') // Unix
+                    .replace(/\r/g, '\n') // Mac
+                    .split(store.lineDelimiter);
 
-            if (!this.itemDelimiter) {
-                this.itemDelimiter = this.guessDelimiter(lines);
-            }
+                if (!startRow || startRow < 0) {
+                    startRow = 0;
+                }
 
-            var offset = 0;
+                if (!endRow || endRow >= lines.length) {
+                    endRow = lines.length - 1;
+                }
 
-            for (rowIt = startRow; rowIt <= endRow; rowIt++) {
-                if (lines[rowIt][0] === '#') {
-                    offset++;
-                } else {
-                    store.parseCSVRow(lines[rowIt], rowIt - startRow - offset);
+                if (!store.itemDelimiter) {
+                    store.itemDelimiter = store.guessDelimiter(lines);
+                }
+
+                var offset = 0;
+
+                for (rowIt = startRow; rowIt <= endRow; rowIt++) {
+                    if (lines[rowIt][0] === '#') {
+                        offset++;
+                    } else {
+                        store.parseCSVRow(lines[rowIt], rowIt - startRow - offset);
+                    }
                 }
             }
-        }
 
-        const headers: string[] = [];
+            if (store.firstRowAsNames) {
+                store.columns?.forEach(function (col, i): void {
+                    if (!store.headers) {
+                        store.headers = [];
+                    }
+                    store.headers[i] = '' + col[0];
+                });
+            }
 
-        if (this.firstRowAsNames) {
-            this.columns.forEach(function name(col): void {
-                headers.push('' + col[0]);
-            });
-        }
-
-        return this.dataParser.columnArrayToDataTable(this.columns, headers);
+            fireEvent(store, 'afterParse', { columns: store.columns, headers: store.headers });
+        });
     }
 
     private parseCSVRow(
@@ -362,24 +390,64 @@ class CSVDataStore extends DataStore {
         return guessed;
     }
 
-    // TODO
-    private fetchCSV(): void {
+    private getTable(): DataTable {
+        return this.columns ?
+            this.dataParser.columnArrayToDataTable(this.columns, this.headers) :
+            new DataTable();
+    }
+
+    /**
+     * Handle polling of live data
+     */
+    private poll(): void {
+        const updateIntervalMs = (this.dataRefreshRate > 1 ? this.dataRefreshRate : 1) * 1000;
+        if (this.enablePolling && this.csvURL === this.liveDataURL) {
+            // We need to stop doing this if the URL has changed
+            this.liveDataTimeout = setTimeout((): void => {
+                this.fetchCSV();
+            }, updateIntervalMs);
+        }
+    }
+
+    private fetchCSV(initialFetch?: boolean): void {
+        const store = this,
+            maxRetries = 3;
+        let currentRetries: number;
+
+        if (initialFetch) {
+            clearTimeout(store.liveDataTimeout);
+            store.liveDataURL = this.csvURL;
+        }
+
         ajax({
             url: this.csvURL,
             dataType: 'text',
-            data: this.csv,
             success: function (csv: string): void {
+                fireEvent(store, 'load', { csv }, function (): void {
+                    store.parseCSV(csv);
+                    store.poll();
+                    fireEvent(store, 'afterLoad', { table: store.getTable() });
+                });
             },
             error: function (xhr, text): void {
+                if (++currentRetries < maxRetries) {
+                    store.poll();
+                }
+                fireEvent(store, 'fail', { error: { xhr, text } });
             }
         });
     }
-    // TODO: handle csv from URL
+
     public load(): void {
-        if (this.csv) {
-            this.rows = this.parseCSV();
-        } else if (this.csvURL) {
-            this.fetchCSV();
+        const store = this,
+            { csv, csvURL } = store;
+        if (csv) {
+            fireEvent(store, 'load', { csv }, function (): void {
+                store.parseCSV(csv);
+                fireEvent(store, 'afterLoad', { table: store.getTable() });
+            });
+        } else if (csvURL) {
+            store.fetchCSV(true);
         }
     }
 

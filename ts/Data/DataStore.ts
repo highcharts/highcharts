@@ -101,6 +101,8 @@ namespace DataStore {
         (this: DataStore, e: ParseEventObject): void;
     }
     export interface ParseEventObject {
+        readonly columns: Highcharts.DataValueType[][];
+        readonly headers: string[];
     }
 }
 
