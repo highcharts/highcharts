@@ -105,7 +105,7 @@ var langOptions = {
          */
         legend: {
             legendLabel: 'Toggle series visibility',
-            legendItem: 'Toggle visibility of {itemName}'
+            legendItem: 'Hide {itemName}'
         },
         /**
          * Chart and map zoom accessibility language options.
