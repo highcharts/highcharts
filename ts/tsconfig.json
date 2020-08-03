@@ -2,8 +2,10 @@
     "compilerOptions": {
         "allowJs": true,
         "allowSyntheticDefaultImports": true,
+        "composite": false,
         "declaration": false,
         "esModuleInterop": true,
+        "forceConsistentCasingInFileNames": true,
         "keyofStringsOnly": true,
         "noEmitOnError": true,
         "noFallthroughCasesInSwitch": true,

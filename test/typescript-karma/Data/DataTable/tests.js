@@ -4,9 +4,13 @@ import DataTable from '/base/js/Data/DataTable.js';
 QUnit.test('DataTable and DataRow events', function (assert) {
 
     const registeredEvents = [];
+
+    /** @param {DataRow.ColumnEventObject|DataTable.RowEventObject} e */
     function registerEvent(e) {
         registeredEvents.push(e.type);
     }
+
+    /** @param {DataRow} row */
     function registerRow(row) {
         row.on('clearRow', registerEvent);
         row.on('afterClearRow', registerEvent);
@@ -17,6 +21,8 @@ QUnit.test('DataTable and DataRow events', function (assert) {
         row.on('updateColumn', registerEvent);
         row.on('afterUpdateColumn', registerEvent);
     }
+
+    /** @param {DataTable} table */
     function registerTable(table) {
         table.on('clearTable', registerEvent);
         table.on('afterClearTable', registerEvent);
@@ -120,6 +126,84 @@ QUnit.test('DataTable and DataRow events', function (assert) {
             'afterClearTable'
         ],
         'Events DataTable.clear should be in expected order.'
+    );
+
+});
+
+QUnit.test('DataTable parser', function (assert) {
+
+    const table = DataTable.parse([{
+        id: 'a',
+        column1: 'value1',
+        column2: 0.0002,
+        column3: false
+    }, {
+        id: 'b',
+        column1: 'value1',
+        column2: 'value2',
+        column3: [{
+            id: 'ba',
+            column1: 'value1'
+        }, {
+            id: 'bb',
+            column1: 'value1'
+        }, {
+            id: 'bc',
+            column1: 'value1'
+        }]
+    }, {
+        id: 'c',
+        column1: 'value1',
+        column2: 'value2',
+        column3: 'value3'
+    }]);
+
+    const rowA = table.getRow('a');
+    const rowB = table.getRow('b');
+    const rowC = table.getRow('c');
+
+    assert.deepEqual(
+        [
+            table.getRowCount(),
+            rowA && rowA.id,
+            rowB && rowB.id,
+            rowC && rowC.id,
+        ], [
+            3,
+            'a',
+            'b',
+            'c',
+        ],
+        'Table should contain three rows.'
+    );
+
+    assert.deepEqual(
+        rowA && rowA.getAllColumns(),
+        {
+            'column1': 'value1',
+            'column2': 0.0002,
+            'column3': false
+        }
+    );
+
+    const tableB3 = rowB.getColumn('column3');
+    const rowBA = tableB3.getRow('ba');
+    const rowBB = tableB3.getRow('bb');
+    const rowBC = tableB3.getRow('bc');
+
+    assert.deepEqual(
+        [
+            tableB3.getRowCount(),
+            rowBA && rowBA.id,
+            rowBB && rowBB.id,
+            rowBC && rowBC.id,
+        ], [
+            3,
+            'ba',
+            'bb',
+            'bc',
+        ],
+        'Subtable should contain three rows.'
     );
 
 });

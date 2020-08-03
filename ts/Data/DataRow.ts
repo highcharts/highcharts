@@ -68,19 +68,17 @@ class DataRow {
 
     public clear(): boolean {
         const row = this;
-        const columnKey = row.getColumnKeys()[0] || '';
-        const columnValue = row.columns[columnKey];
 
         let succeeded = false;
 
         fireEvent(
             row,
             'clearRow',
-            { columnKey, columnValue },
+            {},
             function (): void {
                 row.columns.length = 0;
                 succeeded = true;
-                fireEvent(row, 'afterClearRow', { columnKey, columnValue });
+                fireEvent(row, 'afterClearRow', {});
             }
         );
 
@@ -177,8 +175,8 @@ class DataRow {
     }
 
     public on(
-        event: DataRow.ColumnEvents,
-        callback: DataRow.ColumnEventListener
+        event: (DataRow.ColumnEvents|DataRow.RowEvents),
+        callback: (DataRow.ColumnEventListener|DataRow.RowEventListener)
     ): Function {
         return addEvent(this, event, callback);
     }
@@ -214,7 +212,6 @@ class DataRow {
 namespace DataRow {
 
     export type ColumnEvents = (
-        'clearRow'|'afterClearRow'|
         'deleteColumn'|'afterDeleteColumn'|
         'insertColumn'|'afterInsertColumn'|
         'updateColumn'|'afterUpdateColumn'
@@ -224,6 +221,10 @@ namespace DataRow {
 
     export type ColumnTypes = (boolean|null|number|string|Date|DataTable|undefined);
 
+    export type RowEvents = (
+        'clearRow'|'afterClearRow'
+    );
+
     export interface ColumnEventListener {
         (this: DataRow, e: ColumnEventObject): void;
     }
@@ -231,6 +232,15 @@ namespace DataRow {
     export interface ColumnEventObject {
         readonly columnKey: string;
         readonly columnValue: ColumnTypes;
+        readonly type: ColumnEvents;
+    }
+
+    export interface RowEventListener {
+        (this: DataRow, e: RowEventObject): void;
+    }
+
+    export interface RowEventObject {
+        readonly type: RowEvents;
     }
 
 }

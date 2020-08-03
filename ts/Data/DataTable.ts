@@ -210,8 +210,8 @@ class DataTable {
     }
 
     public on(
-        event: DataTable.RowEvents,
-        callback: DataTable.RowEventListener
+        event: (DataTable.RowEvents|DataTable.TableEvents),
+        callback: (DataTable.RowEventListener|DataTable.TableEventListener)
     ): Function {
         return addEvent(this, event, callback);
     }
@@ -257,25 +257,43 @@ class DataTable {
 }
 
 namespace DataTable {
+
     export type RowEvents = (
-        'clearTable'|'afterClearTable'|
         'deleteRow'|'afterDeleteRow'|
         'insertRow'|'afterInsertRow'|
         'afterUpdateRow'
     );
+
+    export type TableEvents = (
+        'clearTable'|'afterClearTable'
+    );
+
     export interface RowEventListener {
         (this: DataTable, e: RowEventObject): void;
     }
+
     export interface RowEventObject {
         readonly index: number;
         readonly row: DataRow;
+        readonly type: RowEvents;
     }
+
     export interface TableJSON extends Array<TableRowJSON> {
         [key: number]: TableRowJSON;
     }
+
     export interface TableRowJSON {
         [key: string]: (boolean|null|number|string|TableJSON);
     }
+
+    export interface TableEventListener {
+        (this: DataTable, e: TableEventObject): void;
+    }
+
+    export interface TableEventObject {
+        readonly type: TableEvents;
+    }
+
 }
 
 export default DataTable;

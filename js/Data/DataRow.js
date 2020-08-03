@@ -40,13 +40,11 @@ var DataRow = /** @class */ (function () {
      * */
     DataRow.prototype.clear = function () {
         var row = this;
-        var columnKey = row.getColumnKeys()[0] || '';
-        var columnValue = row.columns[columnKey];
         var succeeded = false;
-        fireEvent(row, 'clearRow', { columnKey: columnKey, columnValue: columnValue }, function () {
+        fireEvent(row, 'clearRow', {}, function () {
             row.columns.length = 0;
             succeeded = true;
-            fireEvent(row, 'afterClearRow', { columnKey: columnKey, columnValue: columnValue });
+            fireEvent(row, 'afterClearRow', {});
         });
         return succeeded;
     };

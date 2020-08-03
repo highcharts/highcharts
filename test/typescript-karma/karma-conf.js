@@ -97,27 +97,26 @@ module.exports = function (config) {
 
     const argv = require('yargs').argv;
 
-    if (argv.ts) {
-        const ChildProcess = require('child_process');
-        // Compile test tools and samples
-        try {
-            console.log('Compiling declarations...');
-            ChildProcess.execSync(
-                'npx gulp jsdoc-dts'
-            );
-            console.log('Compiling test tools...');
-            ChildProcess.execSync(
-                'cd "' + process.cwd() + '" && npx tsc -p test'
-            );
-            console.log('Compiling unit-tests...');
-            ChildProcess.execSync(
-                'cd "' + process.cwd() + '" && npx tsc -p test/typescript-karma'
-            );
-        } catch (catchedError) {
-            console.error(catchedError);
-            return;
-        }
+    /**
+     * @todo ./ts project is not ready for this. We have to remove global
+     * Highcharts namespace first, so we have pure ES6 modules and types.
+     * /
+    const ChildProcess = require('child_process');
+    // Compile tools and tests
+    try {
+        console.log('Compiling test tools...');
+        ChildProcess.execSync(
+            'cd "' + process.cwd() + '" && npx tsc -p test'
+        );
+        console.log('Compiling unit-tests...');
+        ChildProcess.execSync(
+            'cd "' + process.cwd() + '" && npx tsc -b test/typescript-karma'
+        );
+    } catch (catchedError) {
+        console.error(catchedError);
+        return;
     }
+    //*/
 
     // Browsers
     let browsers = argv.browsers ?
