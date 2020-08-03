@@ -155,7 +155,7 @@ seriesType<Highcharts.WindbarbSeries>('windbarb', 'column'
      * @extends      plotOptions.column
      * @excluding    boostThreshold, marker, connectEnds, connectNulls,
      *               cropThreshold, dashStyle, dragDrop, gapSize, gapUnit,
-     *               linecap, shadow, stacking, step
+     *               linecap, shadow, stacking, step, boostBlending
      * @since        6.0.0
      * @product      highcharts highstock
      * @requires     modules/windbarb
@@ -493,7 +493,7 @@ seriesType<Highcharts.WindbarbSeries>('windbarb', 'column'
  * specified, it is inherited from [chart.type](#chart.type).
  *
  * @extends   series,plotOptions.windbarb
- * @excluding dataParser, dataURL
+ * @excluding dataParser, dataURL, boostThreshold, boostBlending
  * @product   highcharts highstock
  * @requires  modules/windbarb
  * @apioption series.windbarb

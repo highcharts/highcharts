@@ -69,7 +69,8 @@ var noop = H.noop,
  *
  * @extends      plotOptions.scatter
  * @since        4.1.0
- * @excluding    jitter, softThreshold, threshold, cluster
+ * @excluding    jitter, softThreshold, threshold, cluster, boostThreshold,
+ *               boostBlending
  * @product      highcharts highstock
  * @requires     highcharts-more
  * @optionparent plotOptions.polygon
@@ -125,7 +126,7 @@ seriesType<Highcharts.PolygonSeries>('polygon', 'scatter', {
  * not specified, it is inherited from [chart.type](#chart.type).
  *
  * @extends   series,plotOptions.polygon
- * @excluding dataParser, dataURL, stack
+ * @excluding dataParser, dataURL, stack, boostThreshold, boostBlending
  * @product   highcharts highstock
  * @requires  highcharts-more
  * @apioption series.polygon

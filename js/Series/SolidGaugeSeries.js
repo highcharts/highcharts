@@ -378,7 +378,7 @@ seriesType('solidgauge', 'gauge', solidGaugeOptions, {
  *            findNearestPointBy, getExtremesFromAll, marker, negativeColor,
  *            pointPlacement, pivot, shadow, softThreshold, stack, stacking,
  *            states, step, threshold, turboThreshold, wrap, zoneAxis, zones,
- *            dataSorting
+ *            dataSorting, boostBlending
  * @product   highcharts
  * @requires  modules/solid-gauge
  * @apioption series.solidgauge

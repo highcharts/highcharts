@@ -49,7 +49,7 @@ seriesType('funnel3d', 'column',
  *
  * @extends      plotOptions.column
  * @excluding    allAreas, boostThreshold, colorAxis, compare, compareBase,
- *               dataSorting
+ *               dataSorting, boostBlending
  * @product      highcharts
  * @since        7.1.0
  * @requires     highcharts-3d
@@ -320,7 +320,7 @@ seriesType('funnel3d', 'column',
  *         Funnel3d demo
  *
  * @since     7.1.0
- * @extends   series,plotOptions.funnel3d
+ * @extends   series.funnel,plotOptions.funnel3d
  * @excluding allAreas,boostThreshold,colorAxis,compare,compareBase
  * @product   highcharts
  * @requires  highcharts-3d

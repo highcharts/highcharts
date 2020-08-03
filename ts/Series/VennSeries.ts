@@ -1094,7 +1094,7 @@ var updateFieldBoundaries = function updateFieldBoundaries(
  *               lineWidth, linkedTo, marker, negativeColor, pointInterval,
  *               pointIntervalUnit, pointPlacement, pointStart, softThreshold,
  *               stacking, steps, threshold, xAxis, yAxis, zoneAxis, zones,
- *               dataSorting
+ *               dataSorting, boostThreshold, boostBlending
  * @product      highcharts
  * @requires     modules/venn
  * @optionparent plotOptions.venn
@@ -1418,7 +1418,8 @@ var vennPoint = {
  *            findNearestPointBy, getExtremesFromAll, label, linecap, lineWidth,
  *            linkedTo, marker, negativeColor, pointInterval, pointIntervalUnit,
  *            pointPlacement, pointStart, softThreshold, stack, stacking, steps,
- *            threshold, xAxis, yAxis, zoneAxis, zones, dataSorting
+ *            threshold, xAxis, yAxis, zoneAxis, zones, dataSorting,
+ *            boostThreshold, boostBlending
  * @product   highcharts
  * @requires  modules/venn
  * @apioption series.venn

@@ -77,7 +77,7 @@ seriesType('xrange', 'column'
  *               edgeWidth, findNearestPointBy, getExtremesFromAll,
  *               negativeColor, pointInterval, pointIntervalUnit,
  *               pointPlacement, pointRange, pointStart, softThreshold,
- *               stacking, threshold, data, dataSorting
+ *               stacking, threshold, data, dataSorting, boostBlending
  * @requires     modules/xrange
  * @optionparent plotOptions.xrange
  */
@@ -575,7 +575,8 @@ addEvent(Axis, 'afterGetSeriesExtremes', function () {
  * @excluding boostThreshold, crisp, cropThreshold, depth, edgeColor, edgeWidth,
  *            findNearestPointBy, getExtremesFromAll, negativeColor,
  *            pointInterval, pointIntervalUnit, pointPlacement, pointRange,
- *            pointStart, softThreshold, stacking, threshold, dataSorting
+ *            pointStart, softThreshold, stacking, threshold, dataSorting,
+ *            boostBlending
  * @product   highcharts highstock gantt
  * @requires  modules/xrange
  * @apioption series.xrange

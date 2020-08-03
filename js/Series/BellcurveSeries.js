@@ -130,7 +130,7 @@ seriesType('bellcurve', 'areaspline'
  * @extends   series,plotOptions.bellcurve
  * @since     6.0.0
  * @product   highcharts
- * @excluding dataParser, dataURL, data
+ * @excluding dataParser, dataURL, data, boostThreshold, boostBlending
  * @requires  modules/bellcurve
  * @apioption series.bellcurve
  */
