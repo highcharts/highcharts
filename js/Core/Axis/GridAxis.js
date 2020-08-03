@@ -489,7 +489,7 @@ var GridAxis = /** @class */ (function () {
                     // If it doesn't exist, add an upper and lower border
                     // for the vertical grid axis.
                     if (!axis.horiz && axis.chart.marginRight) {
-                        var upperBorderStartPoint = startPoint, upperBorderEndPoint = ['L', axis.left - axis.chart.marginRight, startPoint[2]], upperBorderPath = [upperBorderStartPoint, upperBorderEndPoint], lowerBorderEndPoint = ['L', axis.chart.chartWidth - axis.chart.marginRight, axis.toPixels(axis.max + axis.tickmarkOffset)], lowerBorderStartPoint = ['M', endPoint[1], axis.toPixels(axis.max + axis.tickmarkOffset)], lowerBorderPath = [lowerBorderStartPoint, lowerBorderEndPoint];
+                        var upperBorderStartPoint = startPoint, upperBorderEndPoint = ['L', axis.chart.chartWidth - axis.chart.marginRight, startPoint[2]], upperBorderPath = [upperBorderStartPoint, upperBorderEndPoint], lowerBorderEndPoint = ['L', axis.chart.chartWidth - axis.chart.marginRight, axis.toPixels(axis.max + axis.tickmarkOffset)], lowerBorderStartPoint = ['M', endPoint[1], axis.toPixels(axis.max + axis.tickmarkOffset)], lowerBorderPath = [lowerBorderStartPoint, lowerBorderEndPoint];
                         if (!axis.grid.upperBorder) {
                             axis.grid.upperBorder = renderer
                                 .path(upperBorderPath)
@@ -561,6 +561,23 @@ var GridAxis = /** @class */ (function () {
             (grid && grid.columns || []).forEach(function (column) {
                 column.render();
             });
+            // Manipulate the tick mark visibility
+            // based on the axis.max- allows smooth scrolling.
+            if (!axis.horiz && axis.chart.hasRendered && axis.grid && axis.scrollbar) {
+                var max = axis.max, tickmarkOffset = axis.tickmarkOffset, lastTick = axis.tickPositions[axis.tickPositions.length - 1];
+                // Hide/show last tick mark- don't stick out of the grid table.
+                if (lastTick - max <= tickmarkOffset && lastTick - max >= 0) {
+                    axis.ticks[lastTick].mark.attr({ 'stroke-width': 0 });
+                }
+                else {
+                    if (axis.isLinked) {
+                        axis.ticks[lastTick - 1].mark.attr({ 'stroke-width': 1 });
+                    }
+                    else {
+                        axis.ticks[lastTick].mark.attr({ 'stroke-width': 1 });
+                    }
+                }
+            }
         }
     };
     /**

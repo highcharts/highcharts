@@ -519,6 +519,9 @@
                 min: 0,
                 max: 2,
                 type: 'category',
+                scrollbar: {
+                    enabled: true
+                },
                 grid: {
                     enabled: true,
                     columns: [{
@@ -527,9 +530,6 @@
                         },
                         labels: {
                             format: '{point.name}'
-                        },
-                        scrollbar: {
-                            enabled: false
                         }
                     }, {
                         title: {
@@ -537,9 +537,6 @@
                         },
                         labels: {
                             format: '{point.assignee}'
-                        },
-                        scrollbar: {
-                            enabled: true
                         }
                     }]
                 }
@@ -592,20 +589,19 @@
             'Task A',
             'First tick on the left columns should be Task A.'
         );
-        assert.notOk(
-            chart.yAxis[0].grid.columns[0].ticks[3],
-            'Tick with index 3 should not exist.'
-        );
         chart.yAxis[0].setExtremes(0.8, 2.8);
 
-        assert.notOk(
-            chart.yAxis[0].grid.columns[0].ticks[0],
-            'Tick with index 0 should not exist.'
-        );
+        //TODO: First tick mark should be visible in this case
+
         assert.strictEqual(
             chart.yAxis[0].grid.columns[0].ticks[3].label.textStr,
             'Task D',
             'Last visible tick on the left columns should be Task D.'
+        );
+        assert.strictEqual(
+            chart.yAxis[0].grid.columns[0].ticks[3].mark['stroke-width'],
+            0,
+            'Tick marker with index 3 should not be visible.'
         );
         chart.yAxis[0].setExtremes(1, 3);
 
@@ -614,5 +610,18 @@
             'Task D',
             'Last visible tick on the left columns should be Task D.'
         );
+        chart.yAxis[0].setExtremes(1.4, 3.4);
+
+        assert.strictEqual(
+            chart.yAxis[0].grid.columns[0].ticks[3].mark['stroke-width'],
+            1,
+            'Tick marker with index 3 should be visible now.'
+        );
+
     });
 }());
+// assert.strictEqual(
+//     chart.yAxis[0].grid.columns[0].ticks[3].label.textStr,
+//     '',
+//     'Tick with index 3 should not exist.'
+// );

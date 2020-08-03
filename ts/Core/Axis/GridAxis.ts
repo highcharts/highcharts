@@ -841,6 +841,25 @@ class GridAxis {
             ): void {
                 column.render();
             });
+
+            // Manipulate the tick mark visibility
+            // based on the axis.max- allows smooth scrolling.
+            if (!axis.horiz && axis.chart.hasRendered && axis.grid && axis.scrollbar) {
+                const max = axis.max as any,
+                    tickmarkOffset = axis.tickmarkOffset,
+                    lastTick = axis.tickPositions[axis.tickPositions.length - 1];
+
+                // Hide/show last tick mark- don't stick out of the grid table.
+                if (lastTick - max <= tickmarkOffset && lastTick - max >= 0) {
+                    (axis.ticks[lastTick].mark as any).attr({ 'stroke-width': 0 });
+                } else {
+                    if (axis.isLinked) {
+                        (axis.ticks[lastTick - 1].mark as any).attr({ 'stroke-width': 1 });
+                    } else {
+                        (axis.ticks[lastTick].mark as any).attr({ 'stroke-width': 1 });
+                    }
+                }
+            }
         }
     }
 
