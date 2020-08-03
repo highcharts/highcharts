@@ -255,7 +255,9 @@ var TreeGridAxis;
                 if (max && data.length < max) {
                     for (var i = data.length; i <= max; i++) {
                         data.push({
-                            name: i + ''
+                            // Use the zero-width character
+                            // to avoid conflict with uniqueNames
+                            name: i + '\u200B'
                         });
                     }
                 }
