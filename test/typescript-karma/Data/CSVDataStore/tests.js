@@ -46,3 +46,45 @@ test('csvDataStore from string', function (assert) {
     const foundComment = Object.values(datastore.rows.getRow(1).getAllColumns()).some((col) => { ('' + col).includes('#this is a comment') });
     assert.ok(!foundComment, 'Comment is not added to the dataTable');
 })
+
+test('csvDataStore from URL', function (assert) {
+
+    const datastore = new CSVDataStore(undefined, {
+        csvURL: 'https://demo-live-data.highcharts.com/sine-data.csv',
+        enablePolling: true
+    });
+    datastore.load();
+
+    let pollNumber = 0;
+
+    let states = [];
+
+    const startedLoad = assert.async(2);
+    const doneLoading = assert.async(2);
+    datastore.on('afterLoad', (e) => {
+        assert.ok(datastore.rows.getRowCount() > 1, 'Datastore got rows')
+        states[pollNumber] = new CSVDataStore(datastore.rows);
+
+        if (pollNumber > 0) {
+            const currentValue = states[pollNumber].rows.getRow(2).getColumnAsNumber('X');
+            const previousValue = states[pollNumber - 1].rows.getRow(2).getColumnAsNumber('X')
+
+            assert.notStrictEqual(
+                currentValue,
+                previousValue,
+                'Fetched new data'
+            )
+        }
+        pollNumber++;
+        doneLoading();
+    });
+    datastore.on('load', (e) => {
+        assert.ok(true)
+        startedLoad();
+    });
+    datastore.on('fail', (e) => {
+        console.log(e)
+        assert.ok(true)
+        doneLoading();
+    });
+})

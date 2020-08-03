@@ -27,7 +27,9 @@ import DataStore from './DataStore.js';
 import DataTable from './DataTable.js';
 import DataParser from './DataParser.js';
 import ajaxModule from '../Mixins/Ajax.js';
+import U from '../Core/Utilities.js';
 var ajax = ajaxModule.ajax;
+var fireEvent = U.fireEvent;
 /* eslint-disable valid-jsdoc, require-jsdoc */
 /**
  * @private
@@ -50,7 +52,7 @@ var CSVDataStore = /** @class */ (function (_super) {
             _this.csvURL = options.csvURL;
         }
         _this.enablePolling = options.enablePolling || false;
-        _this.dataRefreshRate = options.dataRefreshRate || 1;
+        _this.dataRefreshRate = options.dataRefreshRate || 2;
         _this.decimalPoint = options.decimalPoint || '.';
         _this.itemDelimiter = options.itemDelimiter;
         _this.lineDelimiter = options.lineDelimiter || '\n';
@@ -60,55 +62,79 @@ var CSVDataStore = /** @class */ (function (_super) {
         _this.startColumn = options.startColumn || 0;
         _this.endColumn = options.endColumn || Number.MAX_VALUE;
         _this.dataParser = new DataParser();
+        _this.addEvents();
         return _this;
     }
+    CSVDataStore.prototype.addEvents = function () {
+        var _this = this;
+        this.on('load', function (e) {
+            // console.log(e)
+        });
+        this.on('afterLoad', function (e) {
+            _this.rows = e.table;
+        });
+        this.on('parse', function (e) {
+            // console.log(e)
+        });
+        this.on('afterParse', function (e) {
+            _this.columns = e.columns;
+            _this.headers = e.headers;
+        });
+        this.on('fail', function (e) {
+            // throw new Error(e.error)
+        });
+    };
     /**
     * Parse a CSV input string
     * @todo simplify
     *
     * @function Highcharts.Data#parseCSV
-    * @return {Array<Array<Highcharts.DataValueType>>}
+    * @return {void}
     */
-    CSVDataStore.prototype.parseCSV = function () {
+    CSVDataStore.prototype.parseCSV = function (csv) {
         var store = this;
-        var csv = this.csv, startRow = (typeof this.startRow !== 'undefined' && this.startRow ?
-            this.startRow :
-            0), endRow = this.endRow || Number.MAX_VALUE, lines, rowIt = 0;
+        var lines, rowIt = 0, startRow = store.startRow, endRow = store.endRow;
         this.columns = [];
-        if (csv && this.beforeParse) {
-            csv = this.beforeParse(csv);
-        }
-        if (csv) {
-            lines = csv
-                .replace(/\r\n/g, '\n') // Unix
-                .replace(/\r/g, '\n') // Mac
-                .split(this.lineDelimiter);
-            if (!startRow || startRow < 0) {
-                startRow = 0;
+        // todo parse should have a payload
+        fireEvent(store, 'parse', {}, function () {
+            var _a;
+            if (csv && store.beforeParse) {
+                csv = store.beforeParse(csv);
             }
-            if (!endRow || endRow >= lines.length) {
-                endRow = lines.length - 1;
-            }
-            if (!this.itemDelimiter) {
-                this.itemDelimiter = this.guessDelimiter(lines);
-            }
-            var offset = 0;
-            for (rowIt = startRow; rowIt <= endRow; rowIt++) {
-                if (lines[rowIt][0] === '#') {
-                    offset++;
+            if (csv) {
+                lines = csv
+                    .replace(/\r\n/g, '\n') // Unix
+                    .replace(/\r/g, '\n') // Mac
+                    .split(store.lineDelimiter);
+                if (!startRow || startRow < 0) {
+                    startRow = 0;
                 }
-                else {
-                    store.parseCSVRow(lines[rowIt], rowIt - startRow - offset);
+                if (!endRow || endRow >= lines.length) {
+                    endRow = lines.length - 1;
+                }
+                if (!store.itemDelimiter) {
+                    store.itemDelimiter = store.guessDelimiter(lines);
+                }
+                var offset = 0;
+                for (rowIt = startRow; rowIt <= endRow; rowIt++) {
+                    if (lines[rowIt][0] === '#') {
+                        offset++;
+                    }
+                    else {
+                        store.parseCSVRow(lines[rowIt], rowIt - startRow - offset);
+                    }
                 }
             }
-        }
-        var headers = [];
-        if (this.firstRowAsNames) {
-            this.columns.forEach(function name(col) {
-                headers.push('' + col[0]);
-            });
-        }
-        return this.dataParser.columnArrayToDataTable(this.columns, headers);
+            if (store.firstRowAsNames) {
+                (_a = store.columns) === null || _a === void 0 ? void 0 : _a.forEach(function (col, i) {
+                    if (!store.headers) {
+                        store.headers = [];
+                    }
+                    store.headers[i] = '' + col[0];
+                });
+            }
+            fireEvent(store, 'afterParse', { columns: store.columns, headers: store.headers });
+        });
     };
     CSVDataStore.prototype.parseCSVRow = function (columnStr, rowNumber) {
         var store = this, columns = store.columns || [];
@@ -267,25 +293,59 @@ var CSVDataStore = /** @class */ (function (_super) {
         }
         return guessed;
     };
-    // TODO
-    CSVDataStore.prototype.fetchCSV = function () {
+    CSVDataStore.prototype.getTable = function () {
+        return this.columns ?
+            this.dataParser.columnArrayToDataTable(this.columns, this.headers) :
+            new DataTable();
+    };
+    /**
+     * Handle polling of live data
+     */
+    CSVDataStore.prototype.poll = function () {
+        var _this = this;
+        var updateIntervalMs = (this.dataRefreshRate > 1 ? this.dataRefreshRate : 1) * 1000;
+        if (this.enablePolling && this.csvURL === this.liveDataURL) {
+            // We need to stop doing this if the URL has changed
+            this.liveDataTimeout = setTimeout(function () {
+                _this.fetchCSV();
+            }, updateIntervalMs);
+        }
+    };
+    CSVDataStore.prototype.fetchCSV = function (initialFetch) {
+        var store = this, maxRetries = 3;
+        var currentRetries;
+        if (initialFetch) {
+            clearTimeout(store.liveDataTimeout);
+            store.liveDataURL = this.csvURL;
+        }
         ajax({
             url: this.csvURL,
             dataType: 'text',
-            data: this.csv,
             success: function (csv) {
+                fireEvent(store, 'load', { csv: csv }, function () {
+                    store.parseCSV(csv);
+                    store.poll();
+                    fireEvent(store, 'afterLoad', { table: store.getTable() });
+                });
             },
             error: function (xhr, text) {
+                if (++currentRetries < maxRetries) {
+                    store.poll();
+                }
+                fireEvent(store, 'fail', { error: { xhr: xhr, text: text } });
             }
         });
     };
-    // TODO: handle csv from URL
     CSVDataStore.prototype.load = function () {
-        if (this.csv) {
-            this.rows = this.parseCSV();
+        var store = this, csv = store.csv, csvURL = store.csvURL;
+        if (csv) {
+            fireEvent(store, 'load', { csv: csv }, function () {
+                store.parseCSV(csv);
+                fireEvent(store, 'afterLoad', { table: store.getTable() });
+            });
         }
-        else if (this.csvURL) {
-            this.fetchCSV();
+        else if (csvURL) {
+            store.fetchCSV(true);
         }
     };
     CSVDataStore.prototype.save = function () {

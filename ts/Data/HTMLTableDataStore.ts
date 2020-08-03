@@ -19,6 +19,7 @@ import DataParser from './DataParser.js';
 import U from '../Core/Utilities.js';
 import H from '../Core/Globals.js';
 
+const { fireEvent } = U;
 const { win } = H;
 
 /** eslint-disable valid-jsdoc */
@@ -48,6 +49,8 @@ class HTMLTableDataStore extends DataStore {
         this.startColumn = options.startColumn || 0;
         this.endColumn = options.endColumn || Number.MAX_VALUE;
         this.dataParser = new DataParser();
+
+        this.addEvents();
     }
 
     /* *
@@ -61,77 +64,126 @@ class HTMLTableDataStore extends DataStore {
     public startColumn: number
     public endColumn: number
 
+    private columns?: Highcharts.DataValueType[][];
+    private headers?: string[];
+
     private dataParser: DataParser;
 
-    private htmlToDataTable(table: HTMLElement): DataTable {
+    private addEvents(): void {
+        this.on('load', (e: DataStore.LoadEventObject): void => {
+            // console.log(e)
+        });
+        this.on('afterLoad', (e: DataStore.LoadEventObject): void => {
+            this.rows = e.table;
+        });
+        this.on('parse', (e: DataStore.ParseEventObject): void => {
+            // console.log(e)
+        });
+        this.on('afterParse', (e: DataStore.ParseEventObject): void => {
+            this.columns = e.columns;
+            this.headers = e.headers;
+        });
+        this.on('fail', (e: any): void => {
+            // throw new Error(e.error)
+        });
+    }
+
+    private htmlToDataTable(table: HTMLElement): void {
         const columns: [] = [],
             headers: string[] = [],
-            startRow = this.startRow,
-            endRow = this.endRow,
-            startColumn = this.startColumn,
-            endColumn = this.endColumn;
+            store = this,
+            {
+                startRow,
+                endRow,
+                startColumn,
+                endColumn
+            } = store;
 
-        [].forEach.call(table.getElementsByTagName('tr'), function (
-            tr: HTMLTableRowElement,
-            rowNo: number
-        ): void {
-            if (rowNo >= startRow && rowNo <= endRow) {
-                [].forEach.call(tr.children, function (
-                    item: Element,
-                    colNo: number
+        fireEvent(
+            this,
+            'parse',
+            { table: table.innerHTML },
+            function (): void {
+                [].forEach.call(table.getElementsByTagName('tr'), function (
+                    tr: HTMLTableRowElement,
+                    rowNo: number
                 ): void {
-                    const row = (columns as any)[colNo - startColumn];
-                    let i = 1;
+                    if (rowNo >= startRow && rowNo <= endRow) {
+                        [].forEach.call(tr.children, function (
+                            item: Element,
+                            colNo: number
+                        ): void {
+                            const row = (columns as any)[colNo - startColumn];
+                            let i = 1;
 
-                    if (
-                        (
-                            item.tagName === 'TD' ||
-                            item.tagName === 'TH'
-                        ) &&
-                        colNo >= startColumn &&
-                        colNo <= endColumn
-                    ) {
-                        if (!(columns as any)[colNo - startColumn]) {
-                            (columns as any)[colNo - startColumn] = [];
-                        }
+                            if (
+                                (
+                                    item.tagName === 'TD' ||
+                                    item.tagName === 'TH'
+                                ) &&
+                                colNo >= startColumn &&
+                                colNo <= endColumn
+                            ) {
+                                if (!(columns as any)[colNo - startColumn]) {
+                                    (columns as any)[colNo - startColumn] = [];
+                                }
 
-                        if (item.tagName === 'TH') {
-                            headers.push(item.innerHTML);
-                        }
+                                if (item.tagName === 'TH') {
+                                    headers.push(item.innerHTML);
+                                }
 
-                        (columns as any)[colNo - startColumn][
-                            rowNo - startRow
-                        ] = item.innerHTML;
+                                (columns as any)[colNo - startColumn][
+                                    rowNo - startRow
+                                ] = item.innerHTML;
 
-                        // Loop over all previous indices and make sure
-                        // they are nulls, not undefined.
-                        while (
-                            rowNo - startRow >= i &&
-                            row[rowNo - startRow - i] === void 0
-                        ) {
-                            row[rowNo - startRow - i] = null;
-                            i++;
-                        }
+                                // Loop over all previous indices and make sure
+                                // they are nulls, not undefined.
+                                while (
+                                    rowNo - startRow >= i &&
+                                    row[rowNo - startRow - i] === void 0
+                                ) {
+                                    row[rowNo - startRow - i] = null;
+                                    i++;
+                                }
+                            }
+                        });
                     }
                 });
-            }
-        });
 
-        return this.dataParser.columnArrayToDataTable(columns, headers);
+                fireEvent(store, 'afterParse', { columns, headers });
+            }
+        );
     }
 
     /**
      * Handle supplied table being either an ID or an actual table
      */
     private fetchTable(): void {
-        let tableToFetch;
+        let tableElement: HTMLElement | null;
         if (typeof this.table === 'string') {
-            tableToFetch = win.document.getElementById(this.table);
+            tableElement = win.document.getElementById(this.table);
         } else {
-            tableToFetch = this.table;
+            tableElement = this.table;
         }
 
-        this.rows = tableToFetch ? this.htmlToDataTable(tableToFetch) : new DataTable();
+        fireEvent(
+            this,
+            'load',
+            { tableElement },
+            (): void => {
+                if (tableElement) {
+                    this.htmlToDataTable(tableElement);
+                    const table = this.columns ?
+                        this.dataParser.columnArrayToDataTable(this.columns, this.headers) :
+                        new DataTable();
+                    fireEvent(this, 'afterLoad', { table });
+                } else {
+                    fireEvent(this, 'fail', {
+                        error: 'HTML table not provided, or could not find ID'
+                    });
+                }
+            }
+        );
     }
 
     /**
@@ -139,11 +191,7 @@ class HTMLTableDataStore extends DataStore {
      * TODO: add callback / fire event
      */
     public load(): void {
-        try {
-            this.fetchTable();
-        } catch (error) {
-            throw new Error('Could not fetch table');
-        }
+        this.fetchTable();
     }
 
     /**
