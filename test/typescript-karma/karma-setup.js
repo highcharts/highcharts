@@ -31,19 +31,19 @@ document.body.appendChild(demoHTML);
 // RequireJS
 
 require.config({
-    baseUrl: '/base/', // karma specific root link
+    baseUrl: '/base', // karma specific root link
     packages: [{
         name: 'highcharts',
         main: 'highcharts'
     }],
     paths: {
-        'base/js': 'code/es-modules',
-        'highcharts': 'code'
-    },
-    map: {
-        '*': {
-            'code/highcharts': 'code/highcharts.src'
-        }
+        'highcharts': 'code',
+        'highcharts/highcharts': 'code/highcharts.src',
+        'highcharts/highmaps': 'code/highmaps.src',
+        'highcharts/highstock': 'code/highstock.src',
+        'highcharts/highcharts-3d': 'code/highcharts-3d.src',
+        'highcharts/highcharts-gantt': 'code/highcharts-gantt.src',
+        'highcharts/highcharts-more': 'code/highcharts-more.src'
     }
 });
 
