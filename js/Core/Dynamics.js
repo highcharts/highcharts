@@ -1040,7 +1040,7 @@ extend(Series.prototype, /** @lends Series.prototype */ {
         var series = this, chart = series.chart, 
         // must use user options when changing type because series.options
         // is merged in with type specific plotOptions
-        oldOptions = series.userOptions, seriesOptions, initialType = series.initialType || series.type, newType = (options.type ||
+        oldOptions = series.userOptions, seriesOptions, initialType = series.initialType || series.type, plotOptions = chart.options.plotOptions, newType = (options.type ||
             oldOptions.type ||
             chart.options.chart.type), keepPoints = !(
         // Indicators, histograms etc recalculate the data. It should be
@@ -1050,7 +1050,8 @@ extend(Series.prototype, /** @lends Series.prototype */ {
             (newType && newType !== this.type) ||
             // New options affecting how the data points are built
             typeof options.pointStart !== 'undefined' ||
-            // Changes to data grouping requires new points in new groups
+            typeof options.pointInterval !== 'undefined' ||
+            // Changes to data grouping requires new points in new group
             series.hasOptionChanged('dataGrouping') ||
             series.hasOptionChanged('pointStart') ||
             series.hasOptionChanged('pointInterval') ||
@@ -1098,7 +1099,7 @@ extend(Series.prototype, /** @lends Series.prototype */ {
                 series.index : oldOptions.index,
             pointStart: pick(
             // when updating from blank (#7933)
-            chart.options.plotOptions.series.pointStart, oldOptions.pointStart, 
+            plotOptions && plotOptions.series && plotOptions.series.pointStart, oldOptions.pointStart, 
             // when updating after addPoint
             series.xData[0])
         }, (!keepPoints && { data: series.options.data }), options);
@@ -1200,8 +1201,12 @@ extend(Series.prototype, /** @lends Series.prototype */ {
      * @return {boolean}
      */
     hasOptionChanged: function (optionName) {
-        var chart = this.chart, plotOptions = chart.options.plotOptions;
-        return this.options[optionName] !== pick(plotOptions[this.type][optionName], plotOptions.series[optionName], this.options[optionName]);
+        var chart = this.chart, options = this.options[optionName], plotOptions = chart.options.plotOptions, oldOptions = this.userOptions[optionName];
+        if (oldOptions) {
+            return options !== oldOptions;
+        }
+        return options !==
+            pick(plotOptions && plotOptions[this.type] && plotOptions[this.type][optionName], plotOptions && plotOptions.series && plotOptions.series[optionName], options);
     }
 });
 // Extend the Axis.prototype for dynamic methods

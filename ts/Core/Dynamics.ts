@@ -1470,6 +1470,7 @@ extend(Series.prototype, /** @lends Series.prototype */ {
             oldOptions = series.userOptions,
             seriesOptions: Highcharts.SeriesOptions,
             initialType = series.initialType || series.type,
+            plotOptions = chart.options.plotOptions,
             newType = (
                 options.type ||
                 oldOptions.type ||
@@ -1483,7 +1484,8 @@ extend(Series.prototype, /** @lends Series.prototype */ {
                 (newType && newType !== this.type) ||
                 // New options affecting how the data points are built
                 typeof options.pointStart !== 'undefined' ||
-                // Changes to data grouping requires new points in new groups
+                typeof options.pointInterval !== 'undefined' ||
+                // Changes to data grouping requires new points in new group
                 series.hasOptionChanged('dataGrouping') ||
                 series.hasOptionChanged('pointStart') ||
                 series.hasOptionChanged('pointInterval') ||
@@ -1557,7 +1559,7 @@ extend(Series.prototype, /** @lends Series.prototype */ {
                 series.index : oldOptions.index,
             pointStart: pick(
                 // when updating from blank (#7933)
-                (chart.options as any).plotOptions.series.pointStart,
+                plotOptions && plotOptions.series && plotOptions.series.pointStart,
                 oldOptions.pointStart,
                 // when updating after addPoint
                 (series.xData as any)[0]
@@ -1682,13 +1684,20 @@ extend(Series.prototype, /** @lends Series.prototype */ {
      */
     hasOptionChanged(this: Highcharts.Series, optionName: string): boolean {
         const chart = this.chart,
-            plotOptions = chart.options.plotOptions;
+            options = (this.options as any)[optionName],
+            plotOptions = chart.options.plotOptions,
+            oldOptions = (this.userOptions as any)[optionName];
 
-        return (this.options as any)[optionName] !== pick(
-            (plotOptions as any)[this.type][optionName],
-            (plotOptions as any).series[optionName],
-            (this.options as any)[optionName]
-        );
+        if (oldOptions) {
+            return options !== oldOptions;
+        }
+
+        return options !==
+            pick(
+                plotOptions && plotOptions[this.type] && (plotOptions[this.type] as any)[optionName],
+                plotOptions && plotOptions.series && (plotOptions as any).series[optionName],
+                options
+            );
     }
 });
 
