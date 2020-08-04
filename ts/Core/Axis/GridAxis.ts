@@ -191,26 +191,26 @@ Axis.prototype.getMaxLabelDimensions = function (
 
     tickPositions.forEach(function (pos: (number|string)): void {
         var tick = ticks[pos],
-            tickHeight = 0,
-            tickWidth = 0,
+            labelHeight = 0,
+            labelWidth = 0,
             label: Highcharts.SVGElement;
 
         if (isObject(tick)) {
             label = isObject(tick.label) ? tick.label : ({} as any);
 
             // Find width and height of tick
-            tickHeight = label.getBBox ? label.getBBox().height : 0;
+            labelHeight = label.getBBox ? label.getBBox().height : 0;
             if (label.textStr && !isNumber(label.textPxLength)) {
                 label.textPxLength = label.getBBox().width;
             }
-            tickWidth = isNumber(label.textPxLength) ?
+            labelWidth = isNumber(label.textPxLength) ?
                 // Math.round ensures crisp lines
                 Math.round(label.textPxLength) :
                 0;
 
             // Update the result if width and/or height are larger
-            dimensions.height = Math.max(tickHeight, dimensions.height);
-            dimensions.width = Math.max(tickWidth, dimensions.width);
+            dimensions.height = Math.max(labelHeight, dimensions.height);
+            dimensions.width = Math.max(labelWidth, dimensions.width);
         }
     });
 
@@ -298,7 +298,6 @@ addEvent(
             top: number,
             left: number,
             right: number;
-
         // Only center tick labels in grid axes
         if (gridOptions.enabled === true) {
 
@@ -729,16 +728,23 @@ class GridAxis {
 
                 const lineWidth = options.lineWidth;
                 if (lineWidth) {
-                    const linePath = axis.getLinePath(lineWidth);
-                    const startPoint = linePath[0];
-                    const endPoint = linePath[1];
-                    // Negate distance if top or left axis
-                    // Subtract 1px to draw the line at the end of the tick
-                    const tickLength = (axis.tickSize('tick') || [1])[0];
-                    const distance = (tickLength - 1) * ((
-                        axis.side === GridAxis.Side.top ||
-                        axis.side === GridAxis.Side.left
-                    ) ? -1 : 1);
+                    const linePath = axis.getLinePath(lineWidth),
+                        startPoint = linePath[0],
+                        endPoint = linePath[1],
+                        // Negate distance if top or left axis
+                        // Subtract 1px to draw the line at the end of the tick
+                        tickLength = (axis.tickSize('tick') || [1])[0],
+                        distance = (tickLength - 1) * ((
+                            axis.side === GridAxis.Side.top ||
+                            axis.side === GridAxis.Side.left
+                        ) ? -1 : 1);
+                    let axisLineExtraXposition;
+
+                    if (axis.opposite) {
+                        axisLineExtraXposition = axis.chart.chartWidth - axis.chart.spacing[1];
+                    } else {
+                        axisLineExtraXposition = axis.chart.spacing[3];
+                    }
 
                     // If axis is horizontal, reposition line path vertically
                     if (startPoint[0] === 'M' && endPoint[0] === 'L') {
@@ -746,10 +752,10 @@ class GridAxis {
                             startPoint[2] += distance;
                             endPoint[2] += distance;
                         } else {
-                            // If axis is vertical, reposition line path
-                            // horizontally
-                            startPoint[1] += distance;
-                            endPoint[1] += distance;
+                            // If the axis is vertical, the extra line should
+                            // always start on the outer edge of the chart.
+                            startPoint[1] = axisLineExtraXposition;
+                            endPoint[1] = axisLineExtraXposition;
                         }
                     }
 
@@ -844,16 +850,15 @@ class GridAxis {
 
             // Manipulate the tick mark visibility
             // based on the axis.max- allows smooth scrolling.
-            if (!axis.horiz && axis.chart.hasRendered && axis.grid && axis.scrollbar) {
+            if (!axis.horiz && axis.chart.hasRendered && axis.scrollbar) {
                 const max = axis.max as any,
                     tickmarkOffset = axis.tickmarkOffset,
                     lastTick = axis.tickPositions[axis.tickPositions.length - 1];
-
                 // Hide/show last tick mark- don't stick out of the grid table.
                 if (lastTick - max <= tickmarkOffset && lastTick - max >= 0) {
                     (axis.ticks[lastTick].mark as any).attr({ 'stroke-width': 0 });
                 } else {
-                    if (axis.isLinked) {
+                    if (axis.isLinked || axis.options.type === 'treegrid') {
                         (axis.ticks[lastTick - 1].mark as any).attr({ 'stroke-width': 1 });
                     } else {
                         (axis.ticks[lastTick].mark as any).attr({ 'stroke-width': 1 });
@@ -1160,7 +1165,6 @@ class GridAxis {
                 grid: gridOptions = {}
             }
         } = this;
-
         if (gridOptions.enabled && maxLabelDimensions) {
             const labelPadding =
                 (Math.abs((defaultLeftAxisOptions.labels as any).x) * 2);
