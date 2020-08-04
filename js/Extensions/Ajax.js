@@ -35,9 +35,9 @@ var merge = U.merge, objectEach = U.objectEach;
 * @name Highcharts.AjaxSettingsObject#success
 * @type {Function}
 */ /**
-* The verb to use.
+* The HTTP method to use. For example GET or POST.
 * @name Highcharts.AjaxSettingsObject#type
-* @type {"GET"|"POST"|"UPDATE"|"DELETE"}
+* @type {string}
 */ /**
 * The URL to call.
 * @name Highcharts.AjaxSettingsObject#url
@@ -143,8 +143,8 @@ H.getJSON = function (url, success) {
         }
     });
 };
-var ajaxModule = {
+var exports = {
     ajax: H.ajax,
     getJSON: H.getJSON
 };
-export default ajaxModule;
+export default exports;
