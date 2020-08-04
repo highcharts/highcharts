@@ -10,6 +10,17 @@
 
 import type Chart from '../../Core/Chart/Chart';
 import H from '../../Core/Globals.js';
+import requiredIndicator from '../../Mixins/IndicatorRequired.js';
+import U from '../../Core/Utilities.js';
+const {
+    addEvent,
+    error,
+    extend,
+    isArray,
+    pick,
+    seriesType,
+    splat
+} = U;
 
 /**
  * Internal types
@@ -93,18 +104,7 @@ declare global {
     }
 }
 
-import U from '../../Core/Utilities.js';
-const {
-    addEvent,
-    error,
-    extend,
-    isArray,
-    pick,
-    seriesType,
-    splat
-} = U;
-
-import requiredIndicator from '../../Mixins/IndicatorRequired.js';
+import '../../Core/Series/Series.js';
 
 var Series = H.Series,
     seriesTypes = H.seriesTypes,

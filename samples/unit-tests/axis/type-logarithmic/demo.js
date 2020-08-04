@@ -133,10 +133,12 @@ QUnit.test(
             '.highcharts-minor-grid-line'
         );
         assert.ok(
+            minorGridLines.length > 0 &&
             minorGridLines[0].getBBox().x < gridLines[0].getBBox().x,
             'Minor grid lines outside major grid lines'
         );
         assert.ok(
+            minorGridLines.length > 0 &&
             minorGridLines[minorGridLines.length - 1].getBBox().x >
             gridLines[gridLines.length - 1].getBBox().x,
             'Minor grid lines outside major grid lines'

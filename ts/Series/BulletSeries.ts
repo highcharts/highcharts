@@ -93,7 +93,7 @@ seriesType<Highcharts.BulletSeries>('bullet', 'column'
      * @since        6.0.0
      * @product      highcharts
      * @excluding    allAreas, boostThreshold, colorAxis, compare, compareBase,
-     *               dataSorting
+     *               dataSorting, boostBlending
      * @requires     modules/bullet
      * @optionparent plotOptions.bullet
      */
@@ -366,7 +366,8 @@ seriesType<Highcharts.BulletSeries>('bullet', 'column'
  * @extends   series,plotOptions.bullet
  * @since     6.0.0
  * @product   highcharts
- * @excluding dataParser, dataURL, marker, dataSorting
+ * @excluding dataParser, dataURL, marker, dataSorting, boostThreshold,
+ *            boostBlending
  * @requires  modules/bullet
  * @apioption series.bullet
  */

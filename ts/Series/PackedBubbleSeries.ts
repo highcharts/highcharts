@@ -268,14 +268,12 @@ declare global {
  */
 
 import '../Core/Axis/Axis.js';
-import '../Core/Series/Series.js';
+import './Bubble/BubbleSeries.js';
 import '../Series/Networkgraph/DraggableNodes.js';
 import '../Series/Networkgraph/Layouts.js';
 
-
 var Series = H.Series,
     Reingold = H.layouts['reingold-fruchterman'],
-    NetworkPoint = H.seriesTypes.bubble.prototype.pointClass,
     dragNodesMixin = H.dragNodesMixin;
 
 Chart.prototype.getSelectedParentNodes = function (): Array<Highcharts.PackedBubblePoint> {
@@ -540,7 +538,8 @@ seriesType<Highcharts.PackedBubbleSeries>(
      * @extends      plotOptions.bubble
      * @excluding    connectEnds, connectNulls, cropThreshold, dragDrop, jitter,
      *               keys, pointPlacement, sizeByAbsoluteValue, step, xAxis,
-     *               yAxis, zMax, zMin, dataSorting
+     *               yAxis, zMax, zMin, dataSorting, boostThreshold,
+     *               boostBlending
      * @product      highcharts
      * @since        7.0.0
      * @requires     highcharts-more
@@ -1998,7 +1997,8 @@ addEvent(Chart as any, 'beforeRedraw', function (
  *
  * @type      {Object}
  * @extends   series,plotOptions.packedbubble
- * @excluding cropThreshold, dataParser, dataSorting, dataURL, dragDrop, stack
+ * @excluding cropThreshold, dataParser, dataSorting, dataURL, dragDrop, stack,
+ *            boostThreshold, boostBlending
  * @product   highcharts
  * @requires  highcharts-more
  * @apioption series.packedbubble

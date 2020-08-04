@@ -14,6 +14,7 @@ import H from '../Core/Globals.js';
 import U from '../Core/Utilities.js';
 var animObject = U.animObject, isNumber = U.isNumber, pick = U.pick, seriesType = U.seriesType;
 import onSeriesMixin from '../Mixins/OnSeries.js';
+import './ColumnSeries.js';
 var noop = H.noop;
 // eslint-disable-next-line valid-jsdoc
 /**
@@ -62,7 +63,7 @@ seriesType('windbarb', 'column'
  * @extends      plotOptions.column
  * @excluding    boostThreshold, marker, connectEnds, connectNulls,
  *               cropThreshold, dashStyle, dragDrop, gapSize, gapUnit,
- *               linecap, shadow, stacking, step
+ *               linecap, shadow, stacking, step, boostBlending
  * @since        6.0.0
  * @product      highcharts highstock
  * @requires     modules/windbarb
@@ -323,7 +324,7 @@ seriesType('windbarb', 'column'
  * specified, it is inherited from [chart.type](#chart.type).
  *
  * @extends   series,plotOptions.windbarb
- * @excluding dataParser, dataURL
+ * @excluding dataParser, dataURL, boostThreshold, boostBlending
  * @product   highcharts highstock
  * @requires  modules/windbarb
  * @apioption series.windbarb

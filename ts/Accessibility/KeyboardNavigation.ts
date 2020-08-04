@@ -159,7 +159,7 @@ KeyboardNavigation.prototype = {
         // Run an update to get all modules
         this.update();
 
-        ep.addEvent(chart.renderTo, 'keydown',
+        ep.addEvent(this.tabindexContainer, 'keydown',
             (e: KeyboardEvent): void => this.onKeydown(e));
 
         ep.addEvent(this.tabindexContainer, 'focus',
@@ -493,7 +493,7 @@ KeyboardNavigation.prototype = {
                     );
 
                 if (comingInBackwards) {
-                    chart.renderTo.focus();
+                    keyboardNavigation.tabindexContainer.focus();
                     e.preventDefault();
 
                     // Move to last valid keyboard nav module

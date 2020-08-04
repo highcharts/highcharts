@@ -141,7 +141,6 @@ const {
 import './ColumnSeries.js';
 import centeredSeriesMixin from '../Mixins/CenteredSeries.js';
 import '../Core/Options.js';
-import '../Core/Series/Series.js';
 
 var getStartAndEndRadians = centeredSeriesMixin.getStartAndEndRadians,
     noop = H.noop,
@@ -174,7 +173,8 @@ seriesType<Highcharts.PieSeries>(
      *               findNearestPointBy, getExtremesFromAll, label, lineWidth,
      *               marker, negativeColor, pointInterval, pointIntervalUnit,
      *               pointPlacement, pointStart, softThreshold, stacking, step,
-     *               threshold, turboThreshold, zoneAxis, zones, dataSorting
+     *               threshold, turboThreshold, zoneAxis, zones, dataSorting,
+     *               boostBlending
      * @product      highcharts
      * @optionparent plotOptions.pie
      */
@@ -1612,7 +1612,7 @@ seriesType<Highcharts.PieSeries>(
  *
  * @extends   series,plotOptions.pie
  * @excluding cropThreshold, dataParser, dataURL, stack, xAxis, yAxis,
- *            dataSorting, step
+ *            dataSorting, step, boostThreshold, boostBlending
  * @product   highcharts
  * @apioption series.pie
  */

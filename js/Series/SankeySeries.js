@@ -94,9 +94,10 @@ import Color from '../Core/Color.js';
 import Point from '../Core/Series/Point.js';
 import U from '../Core/Utilities.js';
 var defined = U.defined, find = U.find, isObject = U.isObject, merge = U.merge, pick = U.pick, relativeLength = U.relativeLength, seriesType = U.seriesType, stableSort = U.stableSort;
+import TreeSeriesMixin from '../Mixins/TreeSeries.js';
+var getLevelOptions = TreeSeriesMixin.getLevelOptions;
 import '../Core/Options.js';
-import mixinTreeSeries from '../Mixins/TreeSeries.js';
-var getLevelOptions = mixinTreeSeries.getLevelOptions;
+import './ColumnSeries.js';
 // eslint-disable-next-line valid-jsdoc
 /**
  * @private
@@ -140,7 +141,7 @@ seriesType('sankey', 'column',
  *               pointInterval, pointIntervalUnit, pointPadding,
  *               pointPlacement, pointRange, pointStart, pointWidth,
  *               shadow, softThreshold, stacking, threshold, zoneAxis,
- *               zones, minPointLength, dataSorting
+ *               zones, minPointLength, dataSorting, boostBlending
  * @requires     modules/sankey
  * @optionparent plotOptions.sankey
  */

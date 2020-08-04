@@ -13,6 +13,7 @@
 import H from '../Core/Globals.js';
 import U from '../Core/Utilities.js';
 var animObject = U.animObject, arrayMax = U.arrayMax, pick = U.pick, seriesType = U.seriesType;
+import './ScatterSeries.js';
 /**
  * The vector series class.
  *
@@ -34,7 +35,8 @@ seriesType('vector', 'scatter'
  * @extends      plotOptions.scatter
  * @excluding    boostThreshold, marker, connectEnds, connectNulls,
  *               cropThreshold, dashStyle, dragDrop, gapSize, gapUnit,
- *               dataGrouping, linecap, shadow, stacking, step, jitter
+ *               dataGrouping, linecap, shadow, stacking, step, jitter,
+ *               boostBlending
  * @product      highcharts highstock
  * @requires     modules/vector
  * @optionparent plotOptions.vector
@@ -253,7 +255,7 @@ seriesType('vector', 'scatter'
  * specified, it is inherited from [chart.type](#chart.type).
  *
  * @extends   series,plotOptions.vector
- * @excluding dataParser, dataURL
+ * @excluding dataParser, dataURL, boostThreshold, boostBlending
  * @product   highcharts highstock
  * @requires  modules/vector
  * @apioption series.vector

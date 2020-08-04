@@ -160,7 +160,7 @@ wrap(seriesTypes.column.prototype, 'translate', function (
 });
 
 // Don't use justifyDataLabel when point is outsidePlot
-wrap(H.Series.prototype, 'justifyDataLabel', function (
+wrap(Series.prototype, 'justifyDataLabel', function (
     this: Highcharts.ColumnSeries,
     proceed: Function
 ): void {

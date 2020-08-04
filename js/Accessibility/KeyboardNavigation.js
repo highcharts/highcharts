@@ -78,7 +78,7 @@ KeyboardNavigation.prototype = {
         this.currentModuleIx = 0;
         // Run an update to get all modules
         this.update();
-        ep.addEvent(chart.renderTo, 'keydown', function (e) { return _this.onKeydown(e); });
+        ep.addEvent(this.tabindexContainer, 'keydown', function (e) { return _this.onKeydown(e); });
         ep.addEvent(this.tabindexContainer, 'focus', function (e) { return _this.onFocus(e); });
         ep.addEvent(doc, 'mouseup', function () { return _this.onMouseUp(); });
         ep.addEvent(chart.renderTo, 'mousedown', function () {
@@ -319,7 +319,7 @@ KeyboardNavigation.prototype = {
             var e = ev || win.event, curModule, focusComesFromChart = (e.relatedTarget &&
                 chart.container.contains(e.relatedTarget)), comingInBackwards = !(focusComesFromChart || keyboardNavigation.exiting);
             if (comingInBackwards) {
-                chart.renderTo.focus();
+                keyboardNavigation.tabindexContainer.focus();
                 e.preventDefault();
                 // Move to last valid keyboard nav module
                 // Note the we don't run it, just set the index
