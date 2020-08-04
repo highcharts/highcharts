@@ -1751,3 +1751,34 @@ QUnit.test('yAxis label adjustment #10281', assert => {
         'The yAxis max label dimensions should be same as the width of the longest label (#10281)'
     );
 });
+
+QUnit.test('yAxis max value #10779', assert => {
+    const chart = Highcharts.ganttChart('container', {
+
+        yAxis: {
+            max: 5
+        },
+
+        series: [{
+            data: [{
+                start: 1595548800000,
+                end: 1595808000000,
+                y: 0,
+                name: 'test'
+            }, {
+                start: 1595808000000,
+                end: 1596067200000,
+                y: 1,
+                name: 'test1'
+            }]
+        }]
+    });
+
+    const yAxis = chart.yAxis[0];
+
+    assert.strictEqual(
+        yAxis.tickPositions.length - 1,
+        yAxis.max,
+        'The tick amount should be same as the max value #10779'
+    );
+});
