@@ -12,14 +12,14 @@
 
 'use strict';
 
-/** eslint-disable valid-jsdoc */
-
-/**
- * @private
- */
-
 import DataModifier from './DataModifier.js';
-import DataTable from './DataTable.js';
+import DataTable from '../DataTable.js';
+import U from '../../Core/Utilities.js';
+const {
+    addEvent
+} = U;
+
+/** eslint-disable valid-jsdoc */
 
 class DataModifierChain extends DataModifier {
 
@@ -76,13 +76,6 @@ class DataModifierChain extends DataModifier {
         this.dataModifiersMap = {};
         this.dataModifiers.length = 0;
     }
-
-    // public on(
-    //     eventName: string,
-    //     callback: (Highcharts.EventCallbackFunction<T>|Function)
-    // ): Function {
-    //     return H.addEvent(this, eventName, callback);
-    // }
 
     public execute(dataTable: DataTable): DataTable {
         return new DataTable(dataTable.getAllRows());

@@ -23,12 +23,11 @@ var __extends = (this && this.__extends) || (function () {
         d.prototype = b === null ? Object.create(b) : (__.prototype = b.prototype, new __());
     };
 })();
-/** eslint-disable valid-jsdoc */
-/**
- * @private
- */
 import DataModifier from './DataModifier.js';
-import DataTable from './DataTable.js';
+import DataTable from '../DataTable.js';
+import U from '../../Core/Utilities.js';
+var addEvent = U.addEvent;
+/** eslint-disable valid-jsdoc */
 var DataModifierChain = /** @class */ (function (_super) {
     __extends(DataModifierChain, _super);
     /* *
@@ -70,12 +69,6 @@ var DataModifierChain = /** @class */ (function (_super) {
         this.dataModifiersMap = {};
         this.dataModifiers.length = 0;
     };
-    // public on(
-    //     eventName: string,
-    //     callback: (Highcharts.EventCallbackFunction<T>|Function)
-    // ): Function {
-    //     return H.addEvent(this, eventName, callback);
-    // }
     DataModifierChain.prototype.execute = function (dataTable) {
         return new DataTable(dataTable.getAllRows());
     };
