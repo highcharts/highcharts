@@ -98,7 +98,7 @@ class CSVDataStore extends DataStore {
             // console.log(e)
         });
         this.on('afterLoad', (e: DataStore.LoadEventObject): void => {
-            this.rows = e.table;
+            this.table = e.table;
         });
         this.on('parse', (e: DataStore.ParseEventObject): void => {
             // console.log(e)

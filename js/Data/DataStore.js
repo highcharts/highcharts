@@ -10,18 +10,19 @@
  *
  * */
 'use strict';
+import DataTable from './DataTable.js';
 import U from '../Core/Utilities.js';
-var addEvent = U.addEvent;
+var addEvent = U.addEvent, fireEvent = U.fireEvent;
 var DataStore = /** @class */ (function () {
     /* *
     *
     *  Constructors
     *
     * */
-    function DataStore(dataSet) {
-        this.rows = dataSet;
+    function DataStore(table) {
+        if (table === void 0) { table = new DataTable(); }
+        this.table = table;
         this.metadata = [];
-        this.length = this.rows.getRowCount();
     }
     /* *
     *
@@ -36,6 +37,9 @@ var DataStore = /** @class */ (function () {
     };
     DataStore.prototype.describe = function (metadata) {
         this.metadata = metadata;
+    };
+    DataStore.prototype.load = function () {
+        fireEvent(this, 'afterLoad', { table: this.table });
     };
     DataStore.prototype.whatIs = function (name) {
         var metadata = this.metadata;

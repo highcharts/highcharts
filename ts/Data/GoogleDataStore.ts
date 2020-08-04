@@ -12,17 +12,17 @@
 
 'use strict';
 
+import AjaxMixin from '../Mixins/Ajax.js';
+const {
+    ajax
+} = AjaxMixin;
 import DataTable from './DataTable.js';
 import DataStore from './DataStore.js';
 import DataParser from './DataParser.js';
 import U from '../Core/Utilities.js';
-
-import AjaxMixin from '../Mixins/Ajax.js';
-const { ajax } = AjaxMixin;
-
 const {
     fireEvent,
-    uniqueKey
+    merge
 } = U;
 
 /** eslint-disable valid-jsdoc */
@@ -32,55 +32,72 @@ const {
  */
 
 class GoogleDataStore extends DataStore {
-    public constructor(
-        dataSet: DataTable,
-        options: GoogleSpreadsheetOptions
-    ) {
-        super(dataSet);
 
-        this.googleSpreadsheetKey = options.googleSpreadsheetKey;
-        this.worksheet = options.worksheet || 1;
-        this.startRow = options.startRow || 0;
-        this.endRow = options.endRow || Number.MAX_VALUE;
-        this.startColumn = options.startColumn || 0;
-        this.endColumn = options.endColumn || Number.MAX_VALUE;
-        this.enablePolling = options.enablePolling || false;
-        this.dataRefreshRate = options.dataRefreshRate || 2;
+    /* *
+     *
+     *  Static Properties
+     *
+     * */
+
+    protected static readonly defaultOptions: GoogleDataStore.Options = {
+        googleSpreadsheetKey: '',
+        worksheet: 1,
+        startColumn: 0,
+        endColumn: Number.MAX_VALUE,
+        startRow: 0,
+        endRow: Number.MAX_VALUE,
+        enablePolling: false,
+        dataRefreshRate: 2
+    };
+
+    /* *
+     *
+     *  Constructors
+     *
+     * */
+
+    public constructor(
+        table: DataTable,
+        options: (
+            Partial<GoogleDataStore.Options>&
+            { googleSpreadsheetKey: string }
+        )
+    ) {
+        super(table);
+
+        this.options = merge(GoogleDataStore.defaultOptions, options);
         this.columns = [];
     }
 
     /* *
-    *
-    *  Properties
-    *
-    * */
-    public googleSpreadsheetKey: string;
-    public worksheet: number;
-    public startRow: number;
-    public endRow: number;
-    public startColumn: number;
-    public endColumn: number;
-    public enablePolling: boolean;
-    public dataRefreshRate: number;
-    public columns: Array<Array<Highcharts.DataValueType>>;
+     *
+     *  Properties
+     *
+     * */
 
+    public columns: Array<Array<Highcharts.DataValueType>>;
+    public options: GoogleDataStore.Options;
     private dataParser = new DataParser();
 
     /* *
-    *
-    *  Functions
-    *
-    * */
+     *
+     *  Functions
+     *
+     * */
+
     private getSheetColumns(json: Highcharts.JSONType): Array<Array<Highcharts.DataValueType>> {
-        var store = this,
-            startColumn = store.startColumn,
-            endColumn = store.endColumn,
-            startRow = store.startRow,
-            endRow = store.endRow,
+        const store = this,
+            {
+                startColumn,
+                endColumn,
+                startRow,
+                endRow
+            } = store.options,
             columns: Array<Array<Highcharts.DataValueType>> = [],
             cells = json.feed.entry,
-            cell,
-            cellCount = (cells || []).length,
+            cellCount = (cells || []).length;
+
+        let cell,
             colCount = 0,
             rowCount = 0,
             val,
@@ -178,17 +195,20 @@ class GoogleDataStore extends DataStore {
     }
 
     private fetchSheet(): void {
-        const store = this;
-        const enablePolling = store.enablePolling;
-        const dataRefreshRate = store.dataRefreshRate;
-        const headers: string[] = [];
-
-        const url = [
-            'https://spreadsheets.google.com/feeds/cells',
-            store.googleSpreadsheetKey,
-            store.worksheet,
-            'public/values?alt=json'
-        ].join('/');
+        const store = this,
+            headers: string[] = [],
+            {
+                enablePolling,
+                dataRefreshRate,
+                googleSpreadsheetKey,
+                worksheet
+            } = store.options,
+            url = [
+                'https://spreadsheets.google.com/feeds/cells',
+                googleSpreadsheetKey,
+                worksheet,
+                'public/values?alt=json'
+            ].join('/');
 
         ajax({
             url: url,
@@ -241,7 +261,7 @@ class GoogleDataStore extends DataStore {
     }
 
     public load(): void {
-        return this.googleSpreadsheetKey ?
+        return this.options.googleSpreadsheetKey ?
             this.fetchSheet() : void 0;
     }
     /* *
@@ -254,15 +274,19 @@ class GoogleDataStore extends DataStore {
      * */
 }
 
-export interface GoogleSpreadsheetOptions {
-    googleSpreadsheetKey: string;
-    worksheet?: number;
-    startRow?: number;
-    endRow?: number;
-    startColumn?: number;
-    endColumn?: number;
-    enablePolling?: boolean;
-    dataRefreshRate?: number;
+namespace GoogleDataStore {
+
+    export interface Options {
+        googleSpreadsheetKey: string;
+        worksheet: number;
+        startRow: number;
+        endRow: number;
+        startColumn: number;
+        endColumn: number;
+        enablePolling: boolean;
+        dataRefreshRate: number;
+    }
+
 }
 
 export default GoogleDataStore;

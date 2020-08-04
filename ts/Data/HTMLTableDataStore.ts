@@ -12,15 +12,16 @@
 
 'use strict';
 
+import DataParser from './DataParser.js';
 import DataStore from './DataStore.js';
 import DataTable from './DataTable.js';
-import DataParser from './DataParser.js';
-
-import U from '../Core/Utilities.js';
 import H from '../Core/Globals.js';
-
-const { fireEvent } = U;
 const { win } = H;
+import U from '../Core/Utilities.js';
+const {
+    fireEvent,
+    merge
+} = U;
 
 /** eslint-disable valid-jsdoc */
 
@@ -30,24 +31,34 @@ const { win } = H;
 
 class HTMLTableDataStore extends DataStore {
 
+    /* *
+     *
+     *  Static Properties
+     *
+     * */
+
+    protected static readonly defaultOptions: HTMLTableDataStore.Options = {
+        table: '',
+        startColumn: 0,
+        endColumn: Number.MAX_VALUE,
+        startRow: 0,
+        endRow: Number.MAX_VALUE
+    };
 
     /* *
-    *
-    *  Constructors
-    *
-    * */
+     *
+     *  Constructors
+     *
+     * */
 
     public constructor(
-        dataSet: DataTable = new DataTable(),
-        options: Highcharts.DataOptions = {}
+        table: DataTable = new DataTable(),
+        options: Partial<HTMLTableDataStore.Options> = {}
     ) {
-        super(dataSet);
+        super(table);
 
-        this.table = options.table || '';
-        this.startRow = options.startRow || 0;
-        this.endRow = options.endRow || Number.MAX_VALUE;
-        this.startColumn = options.startColumn || 0;
-        this.endColumn = options.endColumn || Number.MAX_VALUE;
+        this.element = options.table || '';
+        this.options = merge(HTMLTableDataStore.defaultOptions, options);
         this.dataParser = new DataParser();
 
         this.addEvents();
@@ -58,11 +69,10 @@ class HTMLTableDataStore extends DataStore {
     *  Properties
     *
     * */
-    public table: HTMLElement | string;
-    public startRow: number
-    public endRow: number
-    public startColumn: number
-    public endColumn: number
+
+    public element: HTMLElement | string;
+
+    public options: HTMLTableDataStore.Options
 
     private columns?: Highcharts.DataValueType[][];
     private headers?: string[];
@@ -74,7 +84,7 @@ class HTMLTableDataStore extends DataStore {
             // console.log(e)
         });
         this.on('afterLoad', (e: DataStore.LoadEventObject): void => {
-            this.rows = e.table;
+            this.table = e.table;
         });
         this.on('parse', (e: DataStore.ParseEventObject): void => {
             // console.log(e)
@@ -97,7 +107,7 @@ class HTMLTableDataStore extends DataStore {
                 endRow,
                 startColumn,
                 endColumn
-            } = store;
+            } = store.options;
 
         fireEvent(
             this,
@@ -159,27 +169,27 @@ class HTMLTableDataStore extends DataStore {
      * Handle supplied table being either an ID or an actual table
      */
     private fetchTable(): void {
-        let tableElement: HTMLElement | null;
-        if (typeof this.table === 'string') {
-            tableElement = win.document.getElementById(this.table);
+        let element: HTMLElement | null;
+        if (typeof this.element === 'string') {
+            element = win.document.getElementById(this.element);
         } else {
-            tableElement = this.table;
+            element = this.element;
         }
 
         fireEvent(
             this,
             'load',
-            { tableElement },
+            { tableElement: element },
             (): void => {
-                if (tableElement) {
-                    this.htmlToDataTable(tableElement);
+                if (element) {
+                    this.htmlToDataTable(element);
                     const table = this.columns ?
                         this.dataParser.columnArrayToDataTable(this.columns, this.headers) :
                         new DataTable();
                     fireEvent(this, 'afterLoad', { table });
                 } else {
                     fireEvent(this, 'fail', {
-                        error: 'HTML table not provided, or could not find ID'
+                        error: 'HTML table not provided, or element with ID not found'
                     });
                 }
             }
@@ -200,6 +210,17 @@ class HTMLTableDataStore extends DataStore {
      */
     public save(): void {
 
+    }
+}
+
+namespace HTMLTableDataStore {
+
+    export interface Options {
+        table: (string|HTMLElement);
+        startColumn: number;
+        endColumn: number;
+        startRow: number;
+        endRow: number;
     }
 }
 

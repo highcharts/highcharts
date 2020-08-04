@@ -23,39 +23,38 @@ var __extends = (this && this.__extends) || (function () {
         d.prototype = b === null ? Object.create(b) : (__.prototype = b.prototype, new __());
     };
 })();
+import AjaxMixin from '../Mixins/Ajax.js';
+var ajax = AjaxMixin.ajax;
 import DataStore from './DataStore.js';
 import DataParser from './DataParser.js';
 import U from '../Core/Utilities.js';
-import AjaxMixin from '../Mixins/Ajax.js';
-var ajax = AjaxMixin.ajax;
-var fireEvent = U.fireEvent, uniqueKey = U.uniqueKey;
+var fireEvent = U.fireEvent, merge = U.merge;
 /** eslint-disable valid-jsdoc */
 /**
  * @private
  */
 var GoogleDataStore = /** @class */ (function (_super) {
     __extends(GoogleDataStore, _super);
-    function GoogleDataStore(dataSet, options) {
-        var _this = _super.call(this, dataSet) || this;
+    /* *
+     *
+     *  Constructors
+     *
+     * */
+    function GoogleDataStore(table, options) {
+        var _this = _super.call(this, table) || this;
         _this.dataParser = new DataParser();
-        _this.googleSpreadsheetKey = options.googleSpreadsheetKey;
-        _this.worksheet = options.worksheet || 1;
-        _this.startRow = options.startRow || 0;
-        _this.endRow = options.endRow || Number.MAX_VALUE;
-        _this.startColumn = options.startColumn || 0;
-        _this.endColumn = options.endColumn || Number.MAX_VALUE;
-        _this.enablePolling = options.enablePolling || false;
-        _this.dataRefreshRate = options.dataRefreshRate || 2;
+        _this.options = merge(GoogleDataStore.defaultOptions, options);
         _this.columns = [];
         return _this;
     }
     /* *
-    *
-    *  Functions
-    *
-    * */
+     *
+     *  Functions
+     *
+     * */
     GoogleDataStore.prototype.getSheetColumns = function (json) {
-        var store = this, startColumn = store.startColumn, endColumn = store.endColumn, startRow = store.startRow, endRow = store.endRow, columns = [], cells = json.feed.entry, cell, cellCount = (cells || []).length, colCount = 0, rowCount = 0, val, gr, gc, cellInner, i;
+        var store = this, _a = store.options, startColumn = _a.startColumn, endColumn = _a.endColumn, startRow = _a.startRow, endRow = _a.endRow, columns = [], cells = json.feed.entry, cellCount = (cells || []).length;
+        var cell, colCount = 0, rowCount = 0, val, gr, gc, cellInner, i;
         // First, find the total number of columns and rows that
         // are actually filled with data
         for (i = 0; i < cellCount; i++) {
@@ -125,14 +124,10 @@ var GoogleDataStore = /** @class */ (function (_super) {
         });
     };
     GoogleDataStore.prototype.fetchSheet = function () {
-        var store = this;
-        var enablePolling = store.enablePolling;
-        var dataRefreshRate = store.dataRefreshRate;
-        var headers = [];
-        var url = [
+        var store = this, headers = [], _a = store.options, enablePolling = _a.enablePolling, dataRefreshRate = _a.dataRefreshRate, googleSpreadsheetKey = _a.googleSpreadsheetKey, worksheet = _a.worksheet, url = [
             'https://spreadsheets.google.com/feeds/cells',
-            store.googleSpreadsheetKey,
-            store.worksheet,
+            googleSpreadsheetKey,
+            worksheet,
             'public/values?alt=json'
         ].join('/');
         ajax({
@@ -168,8 +163,23 @@ var GoogleDataStore = /** @class */ (function (_super) {
         // return true;
     };
     GoogleDataStore.prototype.load = function () {
-        return this.googleSpreadsheetKey ?
+        return this.options.googleSpreadsheetKey ?
             this.fetchSheet() : void 0;
+    };
+    /* *
+     *
+     *  Static Properties
+     *
+     * */
+    GoogleDataStore.defaultOptions = {
+        googleSpreadsheetKey: '',
+        worksheet: 1,
+        startColumn: 0,
+        endColumn: Number.MAX_VALUE,
+        startRow: 0,
+        endRow: Number.MAX_VALUE,
+        enablePolling: false,
+        dataRefreshRate: 2
     };
     return GoogleDataStore;
 }(DataStore));

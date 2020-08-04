@@ -23,13 +23,13 @@ var __extends = (this && this.__extends) || (function () {
         d.prototype = b === null ? Object.create(b) : (__.prototype = b.prototype, new __());
     };
 })();
+import DataParser from './DataParser.js';
 import DataStore from './DataStore.js';
 import DataTable from './DataTable.js';
-import DataParser from './DataParser.js';
-import U from '../Core/Utilities.js';
 import H from '../Core/Globals.js';
-var fireEvent = U.fireEvent;
 var win = H.win;
+import U from '../Core/Utilities.js';
+var fireEvent = U.fireEvent, merge = U.merge;
 /** eslint-disable valid-jsdoc */
 /**
  * @private
@@ -37,19 +37,16 @@ var win = H.win;
 var HTMLTableDataStore = /** @class */ (function (_super) {
     __extends(HTMLTableDataStore, _super);
     /* *
-    *
-    *  Constructors
-    *
-    * */
-    function HTMLTableDataStore(dataSet, options) {
-        if (dataSet === void 0) { dataSet = new DataTable(); }
+     *
+     *  Constructors
+     *
+     * */
+    function HTMLTableDataStore(table, options) {
+        if (table === void 0) { table = new DataTable(); }
         if (options === void 0) { options = {}; }
-        var _this = _super.call(this, dataSet) || this;
-        _this.table = options.table || '';
-        _this.startRow = options.startRow || 0;
-        _this.endRow = options.endRow || Number.MAX_VALUE;
-        _this.startColumn = options.startColumn || 0;
-        _this.endColumn = options.endColumn || Number.MAX_VALUE;
+        var _this = _super.call(this, table) || this;
+        _this.element = options.table || '';
+        _this.options = merge(HTMLTableDataStore.defaultOptions, options);
         _this.dataParser = new DataParser();
         _this.addEvents();
         return _this;
@@ -60,7 +57,7 @@ var HTMLTableDataStore = /** @class */ (function (_super) {
             // console.log(e)
         });
         this.on('afterLoad', function (e) {
-            _this.rows = e.table;
+            _this.table = e.table;
         });
         this.on('parse', function (e) {
             // console.log(e)
@@ -74,7 +71,7 @@ var HTMLTableDataStore = /** @class */ (function (_super) {
         });
     };
     HTMLTableDataStore.prototype.htmlToDataTable = function (table) {
-        var columns = [], headers = [], store = this, startRow = store.startRow, endRow = store.endRow, startColumn = store.startColumn, endColumn = store.endColumn;
+        var columns = [], headers = [], store = this, _a = store.options, startRow = _a.startRow, endRow = _a.endRow, startColumn = _a.startColumn, endColumn = _a.endColumn;
         fireEvent(this, 'parse', { table: table.innerHTML }, function () {
             [].forEach.call(table.getElementsByTagName('tr'), function (tr, rowNo) {
                 if (rowNo >= startRow && rowNo <= endRow) {
@@ -111,16 +108,16 @@ var HTMLTableDataStore = /** @class */ (function (_super) {
      */
     HTMLTableDataStore.prototype.fetchTable = function () {
         var _this = this;
-        var tableElement;
-        if (typeof this.table === 'string') {
-            tableElement = win.document.getElementById(this.table);
+        var element;
+        if (typeof this.element === 'string') {
+            element = win.document.getElementById(this.element);
         }
         else {
-            tableElement = this.table;
+            element = this.element;
         }
-        fireEvent(this, 'load', { tableElement: tableElement }, function () {
-            if (tableElement) {
-                _this.htmlToDataTable(tableElement);
+        fireEvent(this, 'load', { tableElement: element }, function () {
+            if (element) {
+                _this.htmlToDataTable(element);
                 var table = _this.columns ?
                     _this.dataParser.columnArrayToDataTable(_this.columns, _this.headers) :
                     new DataTable();
@@ -128,7 +125,7 @@ var HTMLTableDataStore = /** @class */ (function (_super) {
             }
             else {
                 fireEvent(_this, 'fail', {
-                    error: 'HTML table not provided, or could not find ID'
+                    error: 'HTML table not provided, or element with ID not found'
                 });
             }
         });
@@ -145,6 +142,18 @@ var HTMLTableDataStore = /** @class */ (function (_super) {
      * @todo implement
      */
     HTMLTableDataStore.prototype.save = function () {
+    };
+    /* *
+     *
+     *  Static Properties
+     *
+     * */
+    HTMLTableDataStore.defaultOptions = {
+        table: '',
+        startColumn: 0,
+        endColumn: Number.MAX_VALUE,
+        startRow: 0,
+        endRow: Number.MAX_VALUE
     };
     return HTMLTableDataStore;
 }(DataStore));

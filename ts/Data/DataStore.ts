@@ -15,10 +15,9 @@
 import DataTable from './DataTable.js';
 import U from '../Core/Utilities.js';
 const {
-    addEvent
+    addEvent,
+    fireEvent
 } = U;
-
-export type TableEvents = ('\\(._.)//');
 
 class DataStore {
     /* *
@@ -27,10 +26,9 @@ class DataStore {
     *
     * */
 
-    public constructor(dataSet: DataTable) {
-        this.rows = dataSet;
+    public constructor(table: DataTable = new DataTable()) {
+        this.table = table;
         this.metadata = [];
-        this.length = this.rows.getRowCount();
     }
 
     /* *
@@ -39,9 +37,7 @@ class DataStore {
     *
     * */
 
-    public rows: DataTable;
-
-    public length: number;
+    public table: DataTable;
 
     public metadata: Array<DataStore.MetaColumn>;
 
@@ -66,6 +62,10 @@ class DataStore {
         this.metadata = metadata;
     }
 
+    public load(): void {
+        fireEvent(this, 'afterLoad', { table: this.table });
+    }
+
     public whatIs(name: string): (DataStore.MetaColumn|void) {
         const metadata = this.metadata;
         let i;
@@ -83,27 +83,37 @@ class DataStore {
     ): Function {
         return addEvent(this, event, callback);
     }
+
 }
+
 namespace DataStore {
+
     export type LoadEvents = ('load'|'afterLoad'|'fail');
+
     export type ParseEvents = ('parse'|'afterParse'|'fail');
+
     export interface LoadEventListener {
         (this: DataStore, e: LoadEventObject): void;
     }
+
     export interface LoadEventObject {
         readonly table: DataTable;
     }
+
     export interface MetaColumn {
         name?: string;
         metadata?: any;
     }
+
     export interface ParseEventListener {
         (this: DataStore, e: ParseEventObject): void;
     }
+
     export interface ParseEventObject {
         readonly columns: Highcharts.DataValueType[][];
         readonly headers: string[];
     }
+
 }
 
 export default DataStore;

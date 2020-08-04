@@ -71,7 +71,7 @@ var CSVDataStore = /** @class */ (function (_super) {
             // console.log(e)
         });
         this.on('afterLoad', function (e) {
-            _this.rows = e.table;
+            _this.table = e.table;
         });
         this.on('parse', function (e) {
             // console.log(e)

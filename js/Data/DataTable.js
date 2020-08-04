@@ -43,7 +43,7 @@ var DataTable = /** @class */ (function () {
      *  Static Functions
      *
      * */
-    DataTable.parse = function (json) {
+    DataTable.fromJSON = function (json) {
         try {
             var rows = [];
             for (var i = 0, iEnd = json.length; i < iEnd; ++i) {
@@ -63,7 +63,7 @@ var DataTable = /** @class */ (function () {
         while (typeof (key = keys.pop()) !== 'undefined') {
             value = json[key];
             if (value instanceof Array) {
-                columns[key] = DataTable.parse(value);
+                columns[key] = DataTable.fromJSON(value);
             }
             else {
                 columns[key] = value;

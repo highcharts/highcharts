@@ -35,15 +35,15 @@ test('csvDataStore from string', function (assert) {
     datastore.load();
 
     assert.strictEqual(
-        datastore.rows.getRowCount(), csv.split('\n').length,
+        datastore.table.getRowCount(), csv.split('\n').length,
         'Datastore has correct amount of rows'
     );
     assert.strictEqual(
-        datastore.rows.getRow(0).getColumnCount(), csv.split('\n')[0].split(',').length,
+        datastore.table.getRow(0).getColumnCount(), csv.split('\n')[0].split(',').length,
         'Datastore has correct amount of columns'
     );
 
-    const foundComment = Object.values(datastore.rows.getRow(1).getAllColumns()).some((col) => { ('' + col).includes('#this is a comment') });
+    const foundComment = Object.values(datastore.table.getRow(1).getAllColumns()).some((col) => { ('' + col).includes('#this is a comment') });
     assert.ok(!foundComment, 'Comment is not added to the dataTable');
 })
 
@@ -62,12 +62,12 @@ test('csvDataStore from URL', function (assert) {
     const startedLoad = assert.async(2);
     const doneLoading = assert.async(2);
     datastore.on('afterLoad', (e) => {
-        assert.ok(datastore.rows.getRowCount() > 1, 'Datastore got rows')
-        states[pollNumber] = new CSVDataStore(datastore.rows);
+        assert.ok(datastore.table.getRowCount() > 1, 'Datastore got rows')
+        states[pollNumber] = new CSVDataStore(datastore.table);
 
         if (pollNumber > 0) {
-            const currentValue = states[pollNumber].rows.getRow(2).getColumnAsNumber('X');
-            const previousValue = states[pollNumber - 1].rows.getRow(2).getColumnAsNumber('X')
+            const currentValue = states[pollNumber].table.getRow(2).getColumnAsNumber('X');
+            const previousValue = states[pollNumber - 1].table.getRow(2).getColumnAsNumber('X')
 
             assert.notStrictEqual(
                 currentValue,

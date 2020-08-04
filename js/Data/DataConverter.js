@@ -34,7 +34,7 @@ var DataConverter = /** @class */ (function () {
         }
         if (typeof value === 'string') {
             try {
-                return DataTable.parse(JSON.parse(value));
+                return DataTable.fromJSON(JSON.parse(value));
             }
             catch (error) {
                 return new DataTable();

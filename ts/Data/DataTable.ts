@@ -34,7 +34,7 @@ class DataTable {
      *
      * */
 
-    public static parse(json: DataTable.TableJSON): DataTable {
+    public static fromJSON(json: DataTable.TableJSON): DataTable {
         try {
             const rows: Array<DataRow> = [];
             for (let i = 0, iEnd = json.length; i < iEnd; ++i) {
@@ -54,7 +54,7 @@ class DataTable {
         while (typeof (key = keys.pop()) !== 'undefined') {
             value = json[key];
             if (value instanceof Array) {
-                columns[key] = DataTable.parse(value);
+                columns[key] = DataTable.fromJSON(value);
             } else {
                 columns[key] = value;
             }

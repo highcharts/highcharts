@@ -34,7 +34,7 @@ QUnit.test('DataTable and DataRow events', function (assert) {
         table.getAllRows().forEach(registerRow);
     }
 
-    const dataTable = DataTable.parse([{
+    const dataTable = DataTable.fromJSON([{
         id: 'a',
         text: 'text'
     }]);
@@ -158,7 +158,7 @@ QUnit.test('DataTable JSON support', function (assert) {
         column3: 'value3'
     }];
 
-    const table = DataTable.parse(json);
+    const table = DataTable.fromJSON(json);
 
     const rowA = table.getRow('a');
     const rowB = table.getRow('b');

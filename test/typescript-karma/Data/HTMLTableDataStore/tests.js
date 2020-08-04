@@ -275,7 +275,7 @@ test('HTMLTableDataStore', function (assert) {
     const datastore = new HTMLTableDataStore(undefined, { table: tableElement });
     datastore.load()
     assert.strictEqual(
-        datastore.rows.getRowCount(),
+        datastore.table.getRowCount(),
         tableElement.querySelectorAll('tr').length,
         'Datastore loaded from HTML element has same amount of rows'
     )
