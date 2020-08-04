@@ -19,6 +19,8 @@ const {
     fireEvent
 } = U;
 
+import type DataValueType from './DataValueType.js';
+
 class DataStore {
     /* *
     *
@@ -110,7 +112,7 @@ namespace DataStore {
     }
 
     export interface ParseEventObject {
-        readonly columns: Highcharts.DataValueType[][];
+        readonly columns: DataValueType[][];
         readonly headers: string[];
     }
 

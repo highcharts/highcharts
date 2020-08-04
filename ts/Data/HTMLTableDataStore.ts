@@ -23,6 +23,8 @@ const {
     merge
 } = U;
 
+import type DataValueType from './DataValueType.js';
+
 /** eslint-disable valid-jsdoc */
 
 /**
@@ -74,7 +76,7 @@ class HTMLTableDataStore extends DataStore {
 
     public options: HTMLTableDataStore.Options
 
-    private columns?: Highcharts.DataValueType[][];
+    private columns?: DataValueType[][];
     private headers?: string[];
 
     private dataParser: DataParser;

@@ -17,6 +17,7 @@ import DataTable from './DataTable.js';
 import DataParser from './DataParser.js';
 import ajaxModule from '../Mixins/Ajax.js';
 import U from '../Core/Utilities.js';
+import type DataValueType from './DataValueType.js';
 
 const { ajax } = ajaxModule;
 const { fireEvent } = U;
@@ -85,11 +86,11 @@ class CSVDataStore extends DataStore {
     public endRow: number;
     public startColumn: number;
     public endColumn: number;
-    public beforeParse?: Highcharts.DataBeforeParseCallbackFunction;
+    public beforeParse?: CSVDataStore.DataBeforeParseCallbackFunction;
     public decimalRegex?: RegExp;
 
     private dataParser: DataParser;
-    private columns?: Array<Array<Highcharts.DataValueType>>;
+    private columns?: Array<Array<DataValueType>>;
     private headers?: string[];
     private liveDataURL?: string;
 
@@ -275,7 +276,7 @@ class CSVDataStore extends DataStore {
         var points = 0,
             commas = 0,
             guessed: string;
-        const potDelimiters: Highcharts.Dictionary<number> = {
+        const potDelimiters: Record<string, number> = {
             ',': 0,
             ';': 0,
             '\t': 0
@@ -453,6 +454,12 @@ class CSVDataStore extends DataStore {
 
     public save(): void {
 
+    }
+}
+
+namespace CSVDataStore {
+    export interface DataBeforeParseCallbackFunction {
+        (csv: string): string;
     }
 }
 

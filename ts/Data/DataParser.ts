@@ -19,13 +19,15 @@ const {
     uniqueKey
 } = U;
 
+import type DataValueType from './DataValueType.js';
+
 class DataParser {
 
     /**
      * Functions
      */
 
-    public columnArrayToDataTable(columns: Array<Array<Highcharts.DataValueType>>, headers: string[] = []): DataTable {
+    public columnArrayToDataTable(columns: Array<Array<DataValueType>>, headers: string[] = []): DataTable {
         const table = new DataTable();
         const columnsLength = columns.length;
         if (columnsLength) {

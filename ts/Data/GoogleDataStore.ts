@@ -25,6 +25,8 @@ const {
     merge
 } = U;
 
+import type DataValueType from './DataValueType.js';
+
 /** eslint-disable valid-jsdoc */
 
 /**
@@ -75,7 +77,7 @@ class GoogleDataStore extends DataStore {
      *
      * */
 
-    public columns: Array<Array<Highcharts.DataValueType>>;
+    public columns: Array<Array<DataValueType>>;
     public options: GoogleDataStore.Options;
     private dataParser = new DataParser();
 
@@ -85,7 +87,7 @@ class GoogleDataStore extends DataStore {
      *
      * */
 
-    private getSheetColumns(json: Highcharts.JSONType): Array<Array<Highcharts.DataValueType>> {
+    private getSheetColumns(json: Highcharts.JSONType): Array<Array<DataValueType>> {
         const store = this,
             {
                 startColumn,
@@ -93,7 +95,7 @@ class GoogleDataStore extends DataStore {
                 startRow,
                 endRow
             } = store.options,
-            columns: Array<Array<Highcharts.DataValueType>> = [],
+            columns: Array<Array<DataValueType>> = [],
             cells = json.feed.entry,
             cellCount = (cells || []).length;
 
@@ -160,7 +162,7 @@ class GoogleDataStore extends DataStore {
 
         // Insert null for empty spreadsheet cells (#5298)
         columns.forEach(function (
-            column: Array<Highcharts.DataValueType>
+            column: Array<DataValueType>
         ): void {
             for (i = 0; i < column.length; i++) {
                 if (typeof column[i] === 'undefined') {
@@ -175,7 +177,7 @@ class GoogleDataStore extends DataStore {
     private parseSheet(json: Highcharts.JSONType): (boolean|undefined) {
         var store = this,
             cells = json.feed.entry,
-            columns: Array<Array<Highcharts.DataValueType>> = [];
+            columns: Array<Array<DataValueType>> = [];
 
         if (!cells || cells.length === 0) {
             return false;
