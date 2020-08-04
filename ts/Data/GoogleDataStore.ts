@@ -12,7 +12,7 @@
 
 'use strict';
 
-import AjaxMixin from '../Mixins/Ajax.js';
+import AjaxMixin from '../Extensions/Ajax.js';
 const {
     ajax
 } = AjaxMixin;
