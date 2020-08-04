@@ -11,6 +11,7 @@
  * */
 'use strict';
 import DataConverter from './DataConverter.js';
+import DataJSON from './DataJSON.js';
 import U from '../Core/Utilities.js';
 var addEvent = U.addEvent, fireEvent = U.fireEvent, merge = U.merge, uniqueKey = U.uniqueKey;
 /** eslint-disable valid-jsdoc */
@@ -33,6 +34,37 @@ var DataRow = /** @class */ (function () {
         }
         delete columns.id;
     }
+    /* *
+     *
+     *  Static Functions
+     *
+     * */
+    DataRow.fromJSON = function (json) {
+        var dataTableClass = DataJSON.getClass('DataTable'), keys = Object.keys(json), columns = {};
+        var key, value;
+        while (typeof (key = keys.pop()) !== 'undefined') {
+            if (key[0] === '_') {
+                continue;
+            }
+            value = json[key];
+            if (typeof value === 'object' &&
+                value !== null) {
+                if (value instanceof Array) {
+                    columns[key] = dataTableClass.fromJSON({
+                        _DATA_CLASS_NAME_: 'DataTable',
+                        rows: value
+                    });
+                }
+                else {
+                    columns[key] = dataTableClass.fromJSON(value);
+                }
+            }
+            else {
+                columns[key] = value;
+            }
+        }
+        return new DataRow(columns);
+    };
     /* *
      *
      *  Functions
@@ -107,11 +139,11 @@ var DataRow = /** @class */ (function () {
         return addEvent(this, event, callback);
     };
     DataRow.prototype.toJSON = function () {
-        var columns = this.getAllColumns();
-        var columnKeys = Object.keys(columns);
-        var json = { id: this.id };
-        var key;
-        var value;
+        var columns = this.getAllColumns(), columnKeys = Object.keys(columns), json = {
+            _DATA_CLASS_NAME_: 'DataRow',
+            id: this.id
+        };
+        var key, value;
         for (var i = 0, iEnd = columnKeys.length; i < iEnd; ++i) {
             key = columnKeys[i];
             value = columns[key];
@@ -152,6 +184,13 @@ var DataRow = /** @class */ (function () {
         });
         return succeeded;
     };
+    /* *
+     *
+     *  Static Properties
+     *
+     * */
+    DataRow._DATA_CLASS_NAME_ = 'DataRow';
     return DataRow;
 }());
+DataJSON.addClass(DataRow);
 export default DataRow;

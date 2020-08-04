@@ -10,6 +10,7 @@
  *
  * */
 'use strict';
+import DataJSON from './DataJSON.js';
 import DataRow from './DataRow.js';
 import U from '../Core/Utilities.js';
 var addEvent = U.addEvent, fireEvent = U.fireEvent, uniqueKey = U.uniqueKey;
@@ -44,32 +45,16 @@ var DataTable = /** @class */ (function () {
      *
      * */
     DataTable.fromJSON = function (json) {
+        var rows = json.rows, dataRows = [];
         try {
-            var rows = [];
-            for (var i = 0, iEnd = json.length; i < iEnd; ++i) {
-                rows[i] = DataTable.parseRow(json[i]);
+            for (var i = 0, iEnd = rows.length; i < iEnd; ++i) {
+                dataRows[i] = DataRow.fromJSON(rows[i]);
             }
-            return new DataTable(rows);
+            return new DataTable(dataRows);
         }
         catch (error) {
             return new DataTable();
         }
-    };
-    DataTable.parseRow = function (json) {
-        var columns = {};
-        var keys = Object.keys(json);
-        var key;
-        var value;
-        while (typeof (key = keys.pop()) !== 'undefined') {
-            value = json[key];
-            if (value instanceof Array) {
-                columns[key] = DataTable.fromJSON(value);
-            }
-            else {
-                columns[key] = value;
-            }
-        }
-        return new DataRow(columns);
     };
     /* *
      *
@@ -167,10 +152,13 @@ var DataTable = /** @class */ (function () {
         watchsIdMap[row.id] = watchs;
     };
     DataTable.prototype.toJSON = function () {
-        var json = [];
+        var json = {
+            _DATA_CLASS_NAME_: 'DataTable',
+            rows: []
+        };
         var rows = this.rows;
         for (var i = 0, iEnd = rows.length; i < iEnd; ++i) {
-            json.push(rows[i].toJSON());
+            json.rows.push(rows[i].toJSON());
         }
         return json;
     };
@@ -187,6 +175,13 @@ var DataTable = /** @class */ (function () {
             delete watchsIdMap[rowId];
         }
     };
+    /* *
+     *
+     *  Static Properties
+     *
+     * */
+    DataTable._DATA_CLASS_NAME_ = 'DataTable';
     return DataTable;
 }());
+DataJSON.addClass(DataTable);
 export default DataTable;

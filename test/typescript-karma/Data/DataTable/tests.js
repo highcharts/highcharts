@@ -34,11 +34,16 @@ QUnit.test('DataTable and DataRow events', function (assert) {
         table.getAllRows().forEach(registerRow);
     }
 
-    const dataTable = DataTable.fromJSON([{
-        id: 'a',
-        text: 'text'
-    }]);
+    const dataTable = DataTable.fromJSON({
+        _DATA_CLASS_NAME_: 'DataTable',
+        rows: [{
+            _DATA_CLASS_NAME_: 'DataRow',
+            id: 'a',
+            text: 'text'
+        }]
+    });
     const dataRow = new DataRow({
+        _DATA_CLASS_NAME_: 'DataRow',
         id: 'b',
         text: 'text'
     });
@@ -132,31 +137,43 @@ QUnit.test('DataTable and DataRow events', function (assert) {
 
 QUnit.test('DataTable JSON support', function (assert) {
 
-    const json = [{
-        id: 'a',
-        column1: 'value1',
-        column2: 0.0002,
-        column3: false
-    }, {
-        id: 'b',
-        column1: 'value1',
-        column2: 'value2',
-        column3: [{
-            id: 'ba',
-            column1: 'value1'
+    const json = {
+        _DATA_CLASS_NAME_: 'DataTable',
+        rows: [{
+            _DATA_CLASS_NAME_: 'DataRow',
+            id: 'a',
+            column1: 'value1',
+            column2: 0.0002,
+            column3: false
         }, {
-            id: 'bb',
-            column1: 'value1'
+            _DATA_CLASS_NAME_: 'DataRow',
+            id: 'b',
+            column1: 'value1',
+            column2: 'value2',
+            column3: {
+                _DATA_CLASS_NAME_: 'DataTable',
+                rows: [{
+                    _DATA_CLASS_NAME_: 'DataRow',
+                    id: 'ba',
+                    column1: 'value1'
+                }, {
+                    _DATA_CLASS_NAME_: 'DataRow',
+                    id: 'bb',
+                    column1: 'value1'
+                }, {
+                    _DATA_CLASS_NAME_: 'DataRow',
+                    id: 'bc',
+                    column1: 'value1'
+                }]
+            }
         }, {
-            id: 'bc',
-            column1: 'value1'
+            _DATA_CLASS_NAME_: 'DataRow',
+            id: 'c',
+            column1: 'value1',
+            column2: 'value2',
+            column3: 'value3'
         }]
-    }, {
-        id: 'c',
-        column1: 'value1',
-        column2: 'value2',
-        column3: 'value3'
-    }];
+    };
 
     const table = DataTable.fromJSON(json);
 
@@ -185,7 +202,8 @@ QUnit.test('DataTable JSON support', function (assert) {
             'column1': 'value1',
             'column2': 0.0002,
             'column3': false
-        }
+        },
+        'First row should contain three columns.'
     );
 
     const tableB3 = rowB.getColumn('column3');
@@ -205,7 +223,7 @@ QUnit.test('DataTable JSON support', function (assert) {
             'bb',
             'bc',
         ],
-        'Subtable should contain three rows.'
+        'Inner table should contain three rows.'
     );
 
     assert.deepEqual(

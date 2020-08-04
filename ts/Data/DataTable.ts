@@ -12,7 +12,7 @@
 
 'use strict';
 
-import type JSONType from './JSONType';
+import DataJSON from './DataJSON.js';
 import DataRow from './DataRow.js';
 import U from '../Core/Utilities.js';
 const {
@@ -26,7 +26,15 @@ const {
 /**
  * @private
  */
-class DataTable {
+class DataTable implements DataJSON.Class {
+
+    /* *
+     *
+     *  Static Properties
+     *
+     * */
+
+    public static _DATA_CLASS_NAME_ = 'DataTable';
 
     /* *
      *
@@ -34,32 +42,18 @@ class DataTable {
      *
      * */
 
-    public static fromJSON(json: DataTable.TableJSON): DataTable {
+    public static fromJSON(json: DataTable.JSON): DataTable {
+        const rows = json.rows,
+            dataRows: Array<DataRow> = [];
+
         try {
-            const rows: Array<DataRow> = [];
-            for (let i = 0, iEnd = json.length; i < iEnd; ++i) {
-                rows[i] = DataTable.parseRow(json[i]);
+            for (let i = 0, iEnd = rows.length; i < iEnd; ++i) {
+                dataRows[i] = DataRow.fromJSON(rows[i]);
             }
-            return new DataTable(rows);
+            return new DataTable(dataRows);
         } catch (error) {
             return new DataTable();
         }
-    }
-
-    private static parseRow(json: DataTable.TableRowJSON): DataRow {
-        const columns: DataRow.Columns = {};
-        const keys = Object.keys(json);
-        let key: (string|undefined);
-        let value;
-        while (typeof (key = keys.pop()) !== 'undefined') {
-            value = json[key];
-            if (value instanceof Array) {
-                columns[key] = DataTable.fromJSON(value);
-            } else {
-                columns[key] = value;
-            }
-        }
-        return new DataRow(columns);
     }
 
     /* *
@@ -238,12 +232,15 @@ class DataTable {
         watchsIdMap[row.id] = watchs;
     }
 
-    public toJSON(): JSONType {
-        const json: JSONType = [];
+    public toJSON(): DataTable.JSON {
+        const json: DataTable.JSON = {
+            _DATA_CLASS_NAME_: 'DataTable',
+            rows: []
+        };
         const rows = this.rows;
 
         for (let i = 0, iEnd = rows.length; i < iEnd; ++i) {
-            json.push(rows[i].toJSON());
+            json.rows.push(rows[i].toJSON());
         }
 
         return json;
@@ -280,6 +277,10 @@ namespace DataTable {
         'clearTable'|'afterClearTable'
     );
 
+    export interface JSON extends DataJSON.ClassJSON {
+        rows: Array<DataRow.JSON>;
+    }
+
     export interface RowEventListener {
         (this: DataTable, e: RowEventObject): void;
     }
@@ -288,14 +289,6 @@ namespace DataTable {
         readonly index: number;
         readonly row: DataRow;
         readonly type: RowEvents;
-    }
-
-    export interface TableJSON extends Array<TableRowJSON> {
-        [key: number]: TableRowJSON;
-    }
-
-    export interface TableRowJSON {
-        [key: string]: (boolean|null|number|string|TableJSON);
     }
 
     export interface TableEventListener {
@@ -307,5 +300,7 @@ namespace DataTable {
     }
 
 }
+
+DataJSON.addClass(DataTable);
 
 export default DataTable;

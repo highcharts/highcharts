@@ -13,8 +13,8 @@
 'use strict';
 
 import type DataTable from './DataTable';
-import type JSONType from './JSONType';
 import DataConverter from './DataConverter.js';
+import DataJSON from './DataJSON.js';
 import U from '../Core/Utilities.js';
 const {
     addEvent,
@@ -25,7 +25,57 @@ const {
 
 /** eslint-disable valid-jsdoc */
 
-class DataRow {
+class DataRow implements DataJSON.Class {
+
+    /* *
+     *
+     *  Static Properties
+     *
+     * */
+
+    public static _DATA_CLASS_NAME_ = 'DataRow';
+
+    /* *
+     *
+     *  Static Functions
+     *
+     * */
+
+    public static fromJSON(json: DataRow.JSON): DataRow {
+        const dataTableClass = DataJSON.getClass('DataTable') as typeof DataTable,
+            keys = Object.keys(json),
+            columns: DataRow.Columns = {};
+
+        let key: (string|undefined),
+            value;
+
+        while (typeof (key = keys.pop()) !== 'undefined') {
+
+            if (key[0] === '_') {
+                continue;
+            }
+
+            value = json[key];
+
+            if (
+                typeof value === 'object' &&
+                value !== null
+            ) {
+                if (value instanceof Array) {
+                    columns[key] = dataTableClass.fromJSON({
+                        _DATA_CLASS_NAME_: 'DataTable',
+                        rows: value
+                    });
+                } else {
+                    columns[key] = dataTableClass.fromJSON(value);
+                }
+            } else {
+                columns[key] = value;
+            }
+        }
+
+        return new DataRow(columns);
+    }
 
     /* *
      *
@@ -182,13 +232,16 @@ class DataRow {
         return addEvent(this, event, callback);
     }
 
-    public toJSON(): JSONType {
-        const columns = this.getAllColumns();
-        const columnKeys = Object.keys(columns);
-        const json: JSONType = { id: this.id };
+    public toJSON(): DataRow.JSON {
+        const columns = this.getAllColumns(),
+            columnKeys = Object.keys(columns),
+            json: DataRow.JSON = {
+                _DATA_CLASS_NAME_: 'DataRow',
+                id: this.id
+            };
 
-        let key: string;
-        let value: DataRow.ColumnTypes;
+        let key: string,
+            value: DataRow.ColumnTypes;
 
         for (let i = 0, iEnd = columnKeys.length; i < iEnd; ++i) {
             key = columnKeys[i];
@@ -272,6 +325,11 @@ namespace DataRow {
         readonly type: ColumnEvents;
     }
 
+    export interface JSON extends DataJSON.ClassJSON {
+        id: string;
+        [key: string]: (DataJSON.Primitives|DataTable.JSON|Array<DataRow.JSON>);
+    }
+
     export interface RowEventListener {
         (this: DataRow, e: RowEventObject): void;
     }
@@ -281,5 +339,7 @@ namespace DataRow {
     }
 
 }
+
+DataJSON.addClass(DataRow);
 
 export default DataRow;
