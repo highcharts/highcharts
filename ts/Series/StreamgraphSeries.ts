@@ -110,7 +110,7 @@ seriesType<Highcharts.StreamgraphSeries>('streamgraph', 'areaspline'
  * specified, it is inherited from [chart.type](#chart.type).
  *
  * @extends   series,plotOptions.streamgraph
- * @excluding dataParser, dataURL, step
+ * @excluding dataParser, dataURL, step, boostThreshold, boostBlending
  * @product   highcharts highstock
  * @requires  modules/streamgraph
  * @apioption series.streamgraph

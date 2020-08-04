@@ -11,7 +11,7 @@
 'use strict';
 import U from '../Core/Utilities.js';
 var arrayMax = U.arrayMax, arrayMin = U.arrayMin, correctFloat = U.correctFloat, isNumber = U.isNumber, merge = U.merge, objectEach = U.objectEach, seriesType = U.seriesType;
-import derivedSeriesMixin from '../mixins/derived-series.js';
+import derivedSeriesMixin from '../Mixins/DerivedSeries.js';
 /* ************************************************************************** *
  *  HISTOGRAM
  * ************************************************************************** */
@@ -63,7 +63,7 @@ seriesType('histogram', 'column',
  *
  * @extends      plotOptions.column
  * @excluding    boostThreshold, dragDrop, pointInterval, pointIntervalUnit,
- *               stacking
+ *               stacking, boostBlending
  * @product      highcharts
  * @since        6.0.0
  * @requires     modules/histogram
@@ -177,7 +177,7 @@ seriesType('histogram', 'column',
  * specified, it is inherited from [chart.type](#chart.type).
  *
  * @extends   series,plotOptions.histogram
- * @excluding data, dataParser, dataURL
+ * @excluding data, dataParser, dataURL, boostThreshold, boostBlending
  * @product   highcharts
  * @since     6.0.0
  * @requires  modules/histogram

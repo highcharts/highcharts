@@ -13,7 +13,7 @@
  * */
 'use strict';
 import H from '../Core/Globals.js';
-import LegendSymbolMixin from '../mixins/legend-symbol.js';
+import LegendSymbolMixin from '../Mixins/LegendSymbol.js';
 import Point from '../Core/Series/Point.js';
 import SVGElement from '../Core/Renderer/SVG/SVGElement.js';
 import U from '../Core/Utilities.js';
@@ -44,6 +44,8 @@ var addEvent = U.addEvent, arrayMax = U.arrayMax, arrayMin = U.arrayMin, defined
 * @name Highcharts.TimelineDataLabelsFormatterContextObject#series
 * @type {Highcharts.Series}
 */
+''; // dettach doclets above
+import '../Core/Series/Series.js';
 var TrackerMixin = H.TrackerMixin, Series = H.Series, seriesTypes = H.seriesTypes;
 /**
  * The timeline series type.
@@ -73,7 +75,8 @@ seriesType('timeline', 'line',
  *               getExtremesFromAll, lineWidth, negativeColor,
  *               pointInterval, pointIntervalUnit, pointPlacement,
  *               pointStart, softThreshold, stacking, step, threshold,
- *               turboThreshold, zoneAxis, zones, dataSorting
+ *               turboThreshold, zoneAxis, zones, dataSorting,
+ *               boostBlending
  * @requires     modules/timeline
  * @optionparent plotOptions.timeline
  */
@@ -531,7 +534,7 @@ seriesType('timeline', 'line',
  *            getExtremesFromAll, lineWidth, negativeColor,
  *            pointInterval, pointIntervalUnit, pointPlacement, pointStart,
  *            softThreshold, stacking, stack, step, threshold, turboThreshold,
- *            zoneAxis, zones, dataSorting
+ *            zoneAxis, zones, dataSorting, boostBlending
  * @product   highcharts
  * @requires  modules/timeline
  * @apioption series.timeline

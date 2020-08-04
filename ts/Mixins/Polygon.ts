@@ -97,7 +97,7 @@ var deg2rad = H.deg2rad;
  * @param {number} [precision]
  * @return {number}
  */
-var correctFloat = function (number: number, precision?: number): number {
+const correctFloat = function (number: number, precision?: number): number {
     var p = isNumber(precision) ? precision : 14,
         magnitude = Math.pow(10, p);
 
@@ -116,7 +116,7 @@ var correctFloat = function (number: number, precision?: number): number {
  * @return {Highcharts.PolygonObject}
  *         Returns the two normals in an array.
  */
-var getNormals = function getNormal(
+const getNormals = function getNormal(
     p1: Highcharts.PolygonPointObject,
     p2: Highcharts.PolygonPointObject
 ): Highcharts.PolygonObject {
@@ -143,7 +143,7 @@ var getNormals = function getNormal(
  * @return {number}
  *         Returns the dot product of a and b.
  */
-var dotProduct = function dotProduct(
+const dotProduct = function dotProduct(
     a: Highcharts.PolygonPointObject,
     b: Highcharts.PolygonPointObject
 ): number {
@@ -166,7 +166,7 @@ var dotProduct = function dotProduct(
  *        The coordinate of pr
  * @return {Highcharts.RangeObject}
  */
-var project = function project(
+const project = function project(
     this: unknown,
     polygon: Highcharts.PolygonObject,
     target: Highcharts.PolygonPointObject
@@ -195,7 +195,7 @@ var project = function project(
  * @return {Highcharts.PolygonPointObject}
  *         The x and y coordinate for the rotated point.
  */
-var rotate2DToOrigin = function (
+const rotate2DToOrigin = function (
     point: Highcharts.PolygonPointObject,
     angle: number
 ): Highcharts.PolygonPointObject {
@@ -225,7 +225,7 @@ var rotate2DToOrigin = function (
  * @return {Highcharts.PolygonPointObject}
  *         The x and y coordinate for the rotated point.
  */
-var rotate2DToPoint = function (
+const rotate2DToPoint = function (
     point: Highcharts.PolygonPointObject,
     origin: Highcharts.PolygonPointObject,
     angle: number
@@ -243,7 +243,7 @@ var rotate2DToPoint = function (
 /**
  * @private
  */
-var isAxesEqual = function (
+const isAxesEqual = function (
     axis1: Highcharts.PolygonPointObject,
     axis2: Highcharts.PolygonPointObject
 ): boolean {
@@ -256,7 +256,7 @@ var isAxesEqual = function (
 /**
  * @private
  */
-var getAxesFromPolygon = function (
+const getAxesFromPolygon = function (
     polygon: Highcharts.PolygonObject
 ): Array<Highcharts.PolygonPointObject> {
     var points,
@@ -294,7 +294,7 @@ var getAxesFromPolygon = function (
 /**
  * @private
  */
-var getAxes = function (
+const getAxes = function (
     polygon1: Highcharts.PolygonObject,
     polygon2: Highcharts.PolygonObject
 ): Highcharts.PolygonObject {
@@ -308,7 +308,7 @@ var getAxes = function (
 /**
  * @private
  */
-var getPolygon = function (
+const getPolygon = function (
     x: number,
     y: number,
     width: number,
@@ -337,7 +337,7 @@ var getPolygon = function (
 /**
  * @private
  */
-var getBoundingBoxFromPolygon = function (
+const getBoundingBoxFromPolygon = function (
     points: Highcharts.PolygonObject
 ): Highcharts.PolygonBoxObject {
     return points.reduce(function (
@@ -363,7 +363,7 @@ var getBoundingBoxFromPolygon = function (
 /**
  * @private
  */
-var isPolygonsOverlappingOnAxis = function (
+const isPolygonsOverlappingOnAxis = function (
     axis: Highcharts.PolygonPointObject,
     polygon1: Highcharts.PolygonObject,
     polygon2: Highcharts.PolygonObject
@@ -393,7 +393,7 @@ var isPolygonsOverlappingOnAxis = function (
  * @return {boolean}
  *         Returns true if they are colliding, otherwise false.
  */
-var isPolygonsColliding = function isPolygonsColliding(
+const isPolygonsColliding = function isPolygonsColliding(
     polygon1: Highcharts.PolygonObject,
     polygon2: Highcharts.PolygonObject
 ): boolean {
@@ -410,7 +410,7 @@ var isPolygonsColliding = function isPolygonsColliding(
 /**
  * @private
  */
-var movePolygon = function (
+const movePolygon = function (
     deltaX: number,
     deltaY: number,
     polygon: Highcharts.PolygonObject

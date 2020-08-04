@@ -76,7 +76,7 @@ declare global {
     }
 }
 
-var isBoolean = function (x: unknown): x is boolean {
+const isBoolean = function (x: unknown): x is boolean {
         return typeof x === 'boolean';
     },
     isFn = function (x: unknown): x is Function {
@@ -90,7 +90,7 @@ var isBoolean = function (x: unknown): x is boolean {
  * @todo Remove logic from Treemap and make it utilize this mixin.
  * @private
  */
-var setTreeValues = function setTreeValues<T extends Highcharts.TreeSeries>(
+const setTreeValues = function setTreeValues<T extends Highcharts.TreeSeries>(
     tree: T['tree'],
     options: Highcharts.TreeValuesOptionsObject<T>
 ): T['tree'] {
@@ -156,7 +156,7 @@ var setTreeValues = function setTreeValues<T extends Highcharts.TreeSeries>(
 /**
  * @private
  */
-var getColor = function getColor(
+const getColor = function getColor(
     node: Highcharts.TreemapNodeObject,
     options: {
         colorIndex?: number;
@@ -258,7 +258,7 @@ var getColor = function getColor(
  * @return {Highcharts.Dictionary<object>|null}
  *         Returns a map from level number to its given options.
  */
-var getLevelOptions = function getLevelOptions<T extends Highcharts.TreeSeries>(
+const getLevelOptions = function getLevelOptions<T extends Highcharts.TreeSeries>(
     params: any
 ): (T['mapOptionsToLevel']|null) {
     var result = null,
@@ -327,7 +327,7 @@ var getLevelOptions = function getLevelOptions<T extends Highcharts.TreeSeries>(
  * @return {string}
  *         Returns the resulting rootId after update.
  */
-var updateRootId = function (series: any): string {
+const updateRootId = function (series: any): string {
     var rootId,
         options;
 
@@ -348,7 +348,7 @@ var updateRootId = function (series: any): string {
     return rootId;
 };
 
-var result: Highcharts.TreeSeriesMixin = {
+const result: Highcharts.TreeSeriesMixin = {
     getColor: getColor,
     getLevelOptions: getLevelOptions,
     setTreeValues: setTreeValues,

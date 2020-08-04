@@ -44,6 +44,42 @@ var applyGridOptions = function applyGridOptions(axis) {
     options.labels.rotation = 0;
 };
 /**
+ * For a datetime axis, the scale will automatically adjust to the
+ * appropriate unit. This member gives the default string
+ * representations used for each unit. For intermediate values,
+ * different units may be used, for example the `day` unit can be used
+ * on midnight and `hour` unit be used for intermediate values on the
+ * same axis.
+ * For Gantt possible to declare as a list to provide different
+ * formats depending on available space.
+ * For an overview of the replacement codes, see
+ * [dateFormat](/class-reference/Highcharts#dateFormat).
+ *
+ * Defaults to:
+ * ```js
+ * {
+        hour: {
+            list: ['%H:%M', '%H']
+        },
+        day: {
+            list: ['%A, %e. %B', '%a, %e. %b', '%E']
+        },
+        week: {
+            list: ['Week %W', 'W%W']
+        },
+        month: {
+            list: ['%B', '%b', '%o']
+        }
+    },
+ * ```
+ *
+ * @sample {gantt} gantt/demo/left-axis-table
+ *         Gantt Chart with custom axis date format.
+ *
+ * @product gantt
+ * @apioption xAxis.dateTimeLabelFormats
+ */
+/**
  * Set grid options for the axis labels. Requires Highcharts Gantt.
  *
  * @since     6.2.0
@@ -128,6 +164,7 @@ Axis.prototype.getMaxLabelDimensions = function (ticks, tickPositions) {
                 // Math.round ensures crisp lines
                 Math.round(label.textPxLength) :
                 0;
+          
             // Update the result if width and/or height are larger
             dimensions.height = Math.max(labelHeight, dimensions.height);
             dimensions.width = Math.max(labelWidth, dimensions.width);
@@ -413,7 +450,11 @@ var GridAxis = /** @class */ (function () {
                 var columnOptions = merge(userOptions, gridOptions.columns[gridOptions.columns.length - columnIndex - 1], {
                     linkedTo: 0,
                     // Force to behave like category axis
-                    type: 'category'
+                    type: 'category',
+                    // Disable by default the scrollbar on the grid axis
+                    scrollbar: {
+                        enabled: false
+                    }
                 });
                 delete columnOptions.grid.columns; // Prevent recursion
                 var column = new Axis(axis.chart, columnOptions);

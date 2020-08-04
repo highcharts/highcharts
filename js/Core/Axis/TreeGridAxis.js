@@ -13,7 +13,8 @@ import Axis from './Axis.js';
 import Tick from './Tick.js';
 import Tree from '../../Gantt/Tree.js';
 import TreeGridTick from './TreeGridTick.js';
-import TreeSeriesMixin from '../../mixins/tree-series.js';
+import mixinTreeSeries from '../../Mixins/TreeSeries.js';
+var getLevelOptions = mixinTreeSeries.getLevelOptions;
 import U from '../Utilities.js';
 var addEvent = U.addEvent, find = U.find, fireEvent = U.fireEvent, isNumber = U.isNumber, isObject = U.isObject, isString = U.isString, merge = U.merge, pick = U.pick, wrap = U.wrap;
 import './GridAxis.js';
@@ -218,7 +219,7 @@ var TreeGridAxis;
         axes.filter(function (axis) {
             return axis.options.type === 'treegrid';
         }).forEach(function (axis) {
-            var options = axis.options || {}, labelOptions = options.labels, uniqueNames = options.uniqueNames, numberOfSeries = 0, isDirty, data, treeGrid;
+            var options = axis.options || {}, labelOptions = options.labels, uniqueNames = options.uniqueNames, numberOfSeries = 0, isDirty, data, treeGrid, max = options.max;
             // Check whether any of series is rendering for the first time,
             // visibility has changed, or its data is dirty,
             // and only then update. #10570, #10580
@@ -249,6 +250,17 @@ var TreeGridAxis;
                     }
                     return arr;
                 }, []);
+                // If max is higher than set data - add a
+                // dummy data to render categories #10779
+                if (max && data.length < max) {
+                    for (var i = data.length; i <= max; i++) {
+                        data.push({
+                            // Use the zero-width character
+                            // to avoid conflict with uniqueNames
+                            name: i + '\u200B'
+                        });
+                    }
+                }
                 // setScale is fired after all the series is initialized,
                 // which is an ideal time to update the axis.categories.
                 treeGrid = getTreeGridFromData(data, uniqueNames || false, (uniqueNames === true) ? numberOfSeries : 1);
@@ -269,7 +281,7 @@ var TreeGridAxis;
                 });
                 // Calculate the label options for each level in the tree.
                 axis.treeGrid.mapOptionsToLevel =
-                    TreeSeriesMixin.getLevelOptions({
+                    getLevelOptions({
                         defaults: labelOptions,
                         from: 1,
                         levels: labelOptions && labelOptions.levels,

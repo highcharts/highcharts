@@ -31,7 +31,7 @@ declare global {
 
 import '../Core/Utilities.js';
 
-var reduceArrayMixin: Highcharts.ReduceArrayMixin = {
+const reduceArrayMixin: Highcharts.ReduceArrayMixin = {
     /**
      * Get min value of array filled by OHLC data.
      * @private

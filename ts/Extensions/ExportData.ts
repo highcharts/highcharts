@@ -70,7 +70,12 @@ declare global {
             /** @requires modules/export-data */
             viewData(): void;
         }
+        interface AnnotationInDataTable {
+            itemDelimiter?: string;
+            join?: boolean;
+        }
         interface ExportingCsvOptions {
+            annotations?: AnnotationInDataTable;
             columnHeaderFormatter?: (Function|null);
             dateFormat?: string;
             decimalPoint?: (string|null);
@@ -93,6 +98,7 @@ declare global {
             pointArrayMap?: Array<string>;
         }
         interface ExportDataOptions {
+            annotationHeader?: string;
             categoryHeader?: string;
             categoryDatetimeHeader?: string;
         }
@@ -141,9 +147,8 @@ declare global {
  */
 
 
-import '../mixins/ajax.js';
-import downloadURLmodule from '../mixins/download-url.js';
-const { downloadURL } = downloadURLmodule;
+import DownloadURL from '../Extensions/DownloadURL.js';
+const { downloadURL } = DownloadURL;
 
 
 // Can we add this to utils? Also used in screen-reader.js
@@ -228,6 +233,39 @@ setOptions({
          * @requires modules/export-data
          */
         csv: {
+
+            /**
+             *
+             * Options for annotations in the export-data table.
+             *
+             * @since    next
+             * @requires modules/export-data
+             * @requires modules/annotations
+             *
+             *
+             */
+            annotations: {
+                /**
+                * The way to mark the separator for annotations
+                * combined in one export-data table cell.
+                *
+                * @since   next
+                * @requires modules/annotations
+                */
+                itemDelimiter: '; ',
+
+                /**
+                * When several labels are assigned to a specific point,
+                * they will be displayed in one field in the table.
+                *
+                * @sample highcharts/export-data/join-annotations/
+                *         Concatenate point annotations with itemDelimiter set.
+                *
+                * @since   next
+                * @requires modules/annotations
+                */
+                join: false
+            },
 
             /**
              * Formatter callback for the column headers. Parameters are:
@@ -362,6 +400,11 @@ setOptions({
          * @requires modules/export-data
          */
         exportData: {
+            /**
+             * The annotation column title.
+             */
+            annotationHeader: 'Annotations',
+
             /**
              * The category column title.
              */

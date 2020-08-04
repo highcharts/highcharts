@@ -33,6 +33,7 @@ var addEvent = U.addEvent, arrayMax = U.arrayMax, arrayMin = U.arrayMin, isNumbe
 * @type {number}
 */
 ''; // detach doclets above
+import './BubbleSeries.js';
 var Series = H.Series, noop = H.noop;
 setOptions({
     legend: {

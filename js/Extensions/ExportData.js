@@ -42,9 +42,8 @@ var addEvent = U.addEvent, defined = U.defined, extend = U.extend, find = U.find
 * @name Highcharts.ExportDataEventObject#dataRows
 * @type {Array<Array<string>>}
 */
-import '../mixins/ajax.js';
-import downloadURLmodule from '../mixins/download-url.js';
-var downloadURL = downloadURLmodule.downloadURL;
+import DownloadURL from '../Extensions/DownloadURL.js';
+var downloadURL = DownloadURL.downloadURL;
 // Can we add this to utils? Also used in screen-reader.js
 /**
  * HTML encode some characters vulnerable for XSS.
@@ -122,6 +121,37 @@ setOptions({
          * @requires modules/export-data
          */
         csv: {
+            /**
+             *
+             * Options for annotations in the export-data table.
+             *
+             * @since    next
+             * @requires modules/export-data
+             * @requires modules/annotations
+             *
+             *
+             */
+            annotations: {
+                /**
+                * The way to mark the separator for annotations
+                * combined in one export-data table cell.
+                *
+                * @since   next
+                * @requires modules/annotations
+                */
+                itemDelimiter: '; ',
+                /**
+                * When several labels are assigned to a specific point,
+                * they will be displayed in one field in the table.
+                *
+                * @sample highcharts/export-data/join-annotations/
+                *         Concatenate point annotations with itemDelimiter set.
+                *
+                * @since   next
+                * @requires modules/annotations
+                */
+                join: false
+            },
             /**
              * Formatter callback for the column headers. Parameters are:
              * - `item` - The series or axis object)
@@ -243,6 +273,10 @@ setOptions({
          * @requires modules/export-data
          */
         exportData: {
+            /**
+             * The annotation column title.
+             */
+            annotationHeader: 'Annotations',
             /**
              * The category column title.
              */

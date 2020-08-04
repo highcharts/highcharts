@@ -141,16 +141,20 @@ const {
     seriesType
 } = U;
 
-import drawPointModule from '../mixins/draw-point.js';
+import drawPointModule from '../Mixins/DrawPoint.js';
 const { drawPoint } = drawPointModule;
-import polygon from '../mixins/polygon.js';
+import polygonMixin from '../Mixins/Polygon.js';
+const {
+    getBoundingBoxFromPolygon,
+    getPolygon,
+    isPolygonsColliding,
+    movePolygon,
+    rotate2DToOrigin,
+    rotate2DToPoint
+} = polygonMixin;
 import '../Core/Series/Series.js';
 
 var noop = H.noop,
-    getBoundingBoxFromPolygon = polygon.getBoundingBoxFromPolygon,
-    getPolygon = polygon.getPolygon,
-    isPolygonsColliding = polygon.isPolygonsColliding,
-    movePolygon = polygon.movePolygon,
     Series = H.Series;
 
 /**
@@ -793,7 +797,7 @@ function updateFieldBoundaries(
  *               pointPlacement, pointRange, pointStart, pointWidth, pointStart,
  *               pointWidth, shadow, showCheckbox, showInNavigator,
  *               softThreshold, stacking, threshold, zoneAxis, zones,
- *               dataSorting
+ *               dataSorting, boostBlending
  * @product      highcharts
  * @since        6.0.0
  * @requires     modules/wordcloud
@@ -1199,8 +1203,8 @@ var wordCloudSeries: Partial<Highcharts.WordcloudSeries> = {
         extendPlayingField: extendPlayingField,
         getRotation: getRotation,
         isPolygonsColliding: isPolygonsColliding,
-        rotate2DToOrigin: polygon.rotate2DToOrigin,
-        rotate2DToPoint: polygon.rotate2DToPoint
+        rotate2DToOrigin: rotate2DToOrigin,
+        rotate2DToPoint: rotate2DToPoint
     },
     getPlotBox: function (
         this: Highcharts.WordcloudSeries
@@ -1244,7 +1248,7 @@ var wordCloudPoint: Partial<Highcharts.WordcloudPoint> = {
  * specified, it is inherited from [chart.type](#chart.type).
  *
  * @extends   series,plotOptions.wordcloud
- * @exclude   dataSorting
+ * @exclude   dataSorting, boostThreshold, boostBlending
  * @product   highcharts
  * @requires  modules/wordcloud
  * @apioption series.wordcloud

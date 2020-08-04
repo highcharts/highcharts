@@ -414,7 +414,7 @@ seriesType('organization', 'sankey',
  * not specified, it is inherited from [chart.type](#chart.type).
  *
  * @extends   series,plotOptions.organization
- * @exclude   dataSorting
+ * @exclude   dataSorting, boostThreshold, boostBlending
  * @product   highcharts
  * @requires  modules/organization
  * @apioption series.organization

@@ -44,13 +44,12 @@ declare global {
     }
 }
 
-import LegendSymbolMixin from '../mixins/legend-symbol.js';
+import LegendSymbolMixin from '../Mixins/LegendSymbol.js';
 import U from '../Core/Utilities.js';
 const {
     seriesType
 } = U;
 import '../Core/Options.js';
-import '../Core/Series/Series.js';
 import '../Core/Legend.js';
 import '../Series/ScatterSeries.js';
 
@@ -70,7 +69,8 @@ var noop = H.noop,
  *
  * @extends      plotOptions.scatter
  * @since        4.1.0
- * @excluding    jitter, softThreshold, threshold, cluster
+ * @excluding    jitter, softThreshold, threshold, cluster, boostThreshold,
+ *               boostBlending
  * @product      highcharts highstock
  * @requires     highcharts-more
  * @optionparent plotOptions.polygon
@@ -126,7 +126,7 @@ seriesType<Highcharts.PolygonSeries>('polygon', 'scatter', {
  * not specified, it is inherited from [chart.type](#chart.type).
  *
  * @extends   series,plotOptions.polygon
- * @excluding dataParser, dataURL, stack
+ * @excluding dataParser, dataURL, stack, boostThreshold, boostBlending
  * @product   highcharts highstock
  * @requires  highcharts-more
  * @apioption series.polygon

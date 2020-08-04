@@ -5,6 +5,14 @@
  * */
 
 import H from '../Core/Globals.js';
+import Point from '../Core/Series/Point.js';
+import U from '../Core/Utilities.js';
+const {
+    defined,
+    extend,
+    find,
+    pick
+} = U;
 
 /**
  * Internal types
@@ -80,16 +88,9 @@ declare global {
     }
 }
 
-import Point from '../Core/Series/Point.js';
-import U from '../Core/Utilities.js';
-const {
-    defined,
-    extend,
-    find,
-    pick
-} = U;
+import '../Core/Series/Series.js';
 
-H.NodesMixin = {
+const NodesMixin = H.NodesMixin = {
 
     /* eslint-disable valid-jsdoc */
 
@@ -318,3 +319,5 @@ H.NodesMixin = {
     /* eslint-enable valid-jsdoc */
 
 };
+
+export default NodesMixin;

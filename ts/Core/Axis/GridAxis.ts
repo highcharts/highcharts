@@ -107,6 +107,43 @@ var applyGridOptions = function applyGridOptions(axis: Highcharts.Axis): void {
 };
 
 /**
+ * For a datetime axis, the scale will automatically adjust to the
+ * appropriate unit. This member gives the default string
+ * representations used for each unit. For intermediate values,
+ * different units may be used, for example the `day` unit can be used
+ * on midnight and `hour` unit be used for intermediate values on the
+ * same axis.
+ * For Gantt possible to declare as a list to provide different
+ * formats depending on available space.
+ * For an overview of the replacement codes, see
+ * [dateFormat](/class-reference/Highcharts#dateFormat).
+ *
+ * Defaults to:
+ * ```js
+ * {
+        hour: {
+            list: ['%H:%M', '%H']
+        },
+        day: {
+            list: ['%A, %e. %B', '%a, %e. %b', '%E']
+        },
+        week: {
+            list: ['Week %W', 'W%W']
+        },
+        month: {
+            list: ['%B', '%b', '%o']
+        }
+    },
+ * ```
+ *
+ * @sample {gantt} gantt/demo/left-axis-table
+ *         Gantt Chart with custom axis date format.
+ *
+ * @product gantt
+ * @apioption xAxis.dateTimeLabelFormats
+ */
+
+/**
  * Set grid options for the axis labels. Requires Highcharts Gantt.
  *
  * @since     6.2.0
@@ -208,6 +245,11 @@ Axis.prototype.getMaxLabelDimensions = function (
                 Math.round(label.textPxLength) :
                 0;
 
+            if (label.textStr) {
+                // Set the tickWidth same as the label
+                // width after ellipsis applied #10281
+                tickWidth = label.getBBox().width;
+            }
             // Update the result if width and/or height are larger
             dimensions.height = Math.max(labelHeight, dimensions.height);
             dimensions.width = Math.max(labelWidth, dimensions.width);
@@ -648,7 +690,6 @@ class GridAxis {
         if (gridOptions.columns) {
             var columns = axis.grid.columns = [] as Array<GridAxis>,
                 columnIndex = axis.grid.columnIndex = 0;
-
             // Handle columns, each column is a grid axis
             while (++columnIndex < gridOptions.columns.length) {
                 var columnOptions = merge(
@@ -659,7 +700,11 @@ class GridAxis {
                     {
                         linkedTo: 0,
                         // Force to behave like category axis
-                        type: 'category'
+                        type: 'category',
+                        // Disable by default the scrollbar on the grid axis
+                        scrollbar: {
+                            enabled: false
+                        }
                     }
                 );
 

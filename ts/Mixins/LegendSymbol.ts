@@ -59,7 +59,7 @@ const {
  * @private
  * @mixin Highcharts.LegendSymbolMixin
  */
-H.LegendSymbolMixin = {
+const LegendSymbolMixin = H.LegendSymbolMixin = {
 
     /**
      * Get the series' symbol in the legend
@@ -138,12 +138,8 @@ H.LegendSymbolMixin = {
 
         this.legendLine = renderer
             .path([
-                'M',
-                0,
-                verticalCenter,
-                'L',
-                symbolWidth,
-                verticalCenter
+                ['M', 0, verticalCenter],
+                ['L', symbolWidth, verticalCenter]
             ])
             .addClass('highcharts-graph')
             .attr(attr)
@@ -182,4 +178,4 @@ H.LegendSymbolMixin = {
     }
 };
 
-export default H.LegendSymbolMixin;
+export default LegendSymbolMixin;

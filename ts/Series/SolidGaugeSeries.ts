@@ -18,7 +18,7 @@ import type SVGPath from '../Core/Renderer/SVG/SVGPath';
 import Color from '../Core/Color.js';
 const color = Color.parse;
 import H from '../Core/Globals.js';
-import LegendSymbolMixin from '../mixins/legend-symbol.js';
+import LegendSymbolMixin from '../Mixins/LegendSymbol.js';
 import U from '../Core/Utilities.js';
 const {
     clamp,
@@ -632,7 +632,7 @@ seriesType<Highcharts.SolidGaugeSeries>(
  *            findNearestPointBy, getExtremesFromAll, marker, negativeColor,
  *            pointPlacement, pivot, shadow, softThreshold, stack, stacking,
  *            states, step, threshold, turboThreshold, wrap, zoneAxis, zones,
- *            dataSorting
+ *            dataSorting, boostBlending
  * @product   highcharts
  * @requires  modules/solid-gauge
  * @apioption series.solidgauge

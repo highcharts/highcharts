@@ -738,6 +738,17 @@ merge(Annotation.prototype,
                 return defined(this.y) ? this.y : 'Annotation label';
             },
             /**
+             * Whether the annotation is visible in the exported data
+             * table.
+             *
+             * @sample highcharts/annotations/include-in-data-export/
+             *         Do not include in the data export
+             *
+             * @since   next
+             * @requires modules/export-data
+             */
+            includeInDataExport: true,
+            /**
              * How to handle the annotation's label that flow outside
              * the plot area. The justify option aligns the label inside
              * the plot area.
@@ -1191,6 +1202,105 @@ chartProto.callbacks.push(function (chart) {
     addEvent(chart, 'destroy', function () {
         chart.plotBoxClip.destroy();
         chart.controlPointsGroup.destroy();
+    });
+    addEvent(chart, 'exportData', function (event) {
+        var _a, _b, _c, _d, _e, _f, _g, _h;
+        var annotations = chart.annotations, csvColumnHeaderFormatter = ((this.options.exporting &&
+            this.options.exporting.csv) ||
+            {}).columnHeaderFormatter, 
+        // If second row doesn't have xValues
+        // then it is a title row thus multiple level header is in use.
+        multiLevelHeaders = !event.dataRows[1].xValues, annotationHeader = (_b = (_a = chart.options.lang) === null || _a === void 0 ? void 0 : _a.exportData) === null || _b === void 0 ? void 0 : _b.annotationHeader, columnHeaderFormatter = function (index) {
+            var s;
+            if (csvColumnHeaderFormatter) {
+                s = csvColumnHeaderFormatter(index);
+                if (s !== false) {
+                    return s;
+                }
+            }
+            s = annotationHeader + ' ' + index;
+            if (multiLevelHeaders) {
+                return {
+                    columnTitle: s,
+                    topLevelColumnTitle: s
+                };
+            }
+            return s;
+        }, startRowLength = event.dataRows[0].length, annotationSeparator = (_e = (_d = (_c = chart.options.exporting) === null || _c === void 0 ? void 0 : _c.csv) === null || _d === void 0 ? void 0 : _d.annotations) === null || _e === void 0 ? void 0 : _e.itemDelimiter, joinAnnotations = (_h = (_g = (_f = chart.options.exporting) === null || _f === void 0 ? void 0 : _f.csv) === null || _g === void 0 ? void 0 : _g.annotations) === null || _h === void 0 ? void 0 : _h.join;
+        annotations.forEach(function (annotation) {
+            if (annotation.options.labelOptions.includeInDataExport) {
+                annotation.labels.forEach(function (label) {
+                    if (label.options.text) {
+                        var annotationText_1 = label.options.text;
+                        label.points.forEach(function (points) {
+                            var annotationX = points.x, xAxisIndex = points.series.xAxis ?
+                                points.series.xAxis.options.index :
+                                -1;
+                            var wasAdded = false;
+                            // Annotation not connected to any xAxis -
+                            // add new row.
+                            if (xAxisIndex === -1) {
+                                var newRow = new Array(event.dataRows[0].length);
+                                newRow.fill('');
+                                newRow.push(annotationText_1);
+                                newRow.xValues = [];
+                                newRow.xValues[xAxisIndex] = annotationX;
+                                event.dataRows.push(newRow);
+                                wasAdded = true;
+                            }
+                            // Annotation placed on a exported data point
+                            // - add new column
+                            if (!wasAdded) {
+                                event.dataRows.forEach(function (row, rowIndex) {
+                                    if (!wasAdded &&
+                                        row.xValues &&
+                                        xAxisIndex !== void 0 &&
+                                        annotationX === row.xValues[xAxisIndex]) {
+                                        if (joinAnnotations &&
+                                            row.length > startRowLength) {
+                                            row[row.length - 1] +=
+                                                annotationSeparator + annotationText_1;
+                                        }
+                                        else {
+                                            row.push(annotationText_1);
+                                        }
+                                        wasAdded = true;
+                                    }
+                                });
+                            }
+                            // Annotation not placed on any exported data point,
+                            // but connected to the xAxis - add new row
+                            if (!wasAdded) {
+                                var newRow = new Array(event.dataRows[0].length);
+                                newRow.fill('');
+                                newRow[0] = annotationX;
+                                newRow.push(annotationText_1);
+                                newRow.xValues = [];
+                                if (xAxisIndex !== void 0) {
+                                    newRow.xValues[xAxisIndex] = annotationX;
+                                }
+                                event.dataRows.push(newRow);
+                            }
+                        });
+                    }
+                });
+            }
+        });
+        var maxRowLen = 0;
+        event.dataRows.forEach(function (row) {
+            maxRowLen = Math.max(maxRowLen, row.length);
+        });
+        var newRows = maxRowLen - event.dataRows[0].length;
+        for (var i = 0; i < newRows; i++) {
+            var header = columnHeaderFormatter(i + 1);
+            if (multiLevelHeaders) {
+                event.dataRows[0].push(header.topLevelColumnTitle);
+                event.dataRows[1].push(header.columnTitle);
+            }
+            else {
+                event.dataRows[0].push(header);
+            }
+        }
     });
 });
 wrap(Pointer.prototype, 'onContainerMouseDown', function (proceed) {

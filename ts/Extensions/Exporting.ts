@@ -14,7 +14,7 @@
 
 import type SVGPath from '../Core/Renderer/SVG/SVGPath';
 import Chart from '../Core/Chart/Chart.js';
-import chartNavigationMixin from '../mixins/navigation.js';
+import chartNavigationMixin from '../Mixins/Navigation.js';
 import H from '../Core/Globals.js';
 const {
     doc,

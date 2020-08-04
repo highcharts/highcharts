@@ -55,16 +55,15 @@ declare global {
     }
 }
 
-import multipleLinesMixin from '../../mixins/multipe-lines.js';
-import requiredIndicatorMixin from '../../mixins/indicator-required.js';
+import multipleLinesMixin from '../../Mixins/MultipleLines.js';
+import requiredIndicator from '../../Mixins/IndicatorRequired.js';
 import U from '../../Core/Utilities.js';
 const {
     merge,
     seriesType
 } = U;
 
-var AROON = H.seriesTypes.aroon,
-    requiredIndicator = requiredIndicatorMixin;
+var AROON = H.seriesTypes.aroon;
 
 /**
  * The Aroon Oscillator series type.

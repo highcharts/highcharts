@@ -143,11 +143,11 @@ declare global {
     }
 }
 
-import drawPointModule from '../mixins/draw-point.js';
+import drawPointModule from '../Mixins/DrawPoint.js';
 const { draw } = drawPointModule;
-import geometry from '../mixins/geometry.js';
+import geometry from '../Mixins/Geometry.js';
 
-import geometryCirclesModule from '../mixins/geometry-circles.js';
+import geometryCirclesModule from '../Mixins/GeometryCircles.js';
 const {
     getAreaOfCircle,
     getAreaOfIntersectionBetweenCircles,
@@ -160,9 +160,10 @@ const {
     isPointOutsideAllCircles
 } = geometryCirclesModule;
 
-import nelderMeadModule from '../mixins/nelder-mead.js';
-// TODO: replace with individual imports
-var nelderMead = nelderMeadModule.nelderMead;
+import nelderMeadMixin from '../Mixins/NelderMead.js';
+const {
+    nelderMead
+} = nelderMeadMixin;
 
 import '../Core/Series/Series.js';
 
@@ -1093,7 +1094,7 @@ var updateFieldBoundaries = function updateFieldBoundaries(
  *               lineWidth, linkedTo, marker, negativeColor, pointInterval,
  *               pointIntervalUnit, pointPlacement, pointStart, softThreshold,
  *               stacking, steps, threshold, xAxis, yAxis, zoneAxis, zones,
- *               dataSorting
+ *               dataSorting, boostThreshold, boostBlending
  * @product      highcharts
  * @requires     modules/venn
  * @optionparent plotOptions.venn
@@ -1389,7 +1390,7 @@ var vennSeries = {
         getDistanceBetweenCirclesByOverlap: getDistanceBetweenCirclesByOverlap,
         layoutGreedyVenn: layoutGreedyVenn,
         loss: loss,
-        nelderMead: nelderMeadModule,
+        nelderMead: nelderMeadMixin,
         processVennData: processVennData,
         sortByTotalOverlap: sortByTotalOverlap
     }
@@ -1417,7 +1418,8 @@ var vennPoint = {
  *            findNearestPointBy, getExtremesFromAll, label, linecap, lineWidth,
  *            linkedTo, marker, negativeColor, pointInterval, pointIntervalUnit,
  *            pointPlacement, pointStart, softThreshold, stack, stacking, steps,
- *            threshold, xAxis, yAxis, zoneAxis, zones, dataSorting
+ *            threshold, xAxis, yAxis, zoneAxis, zones, dataSorting,
+ *            boostThreshold, boostBlending
  * @product   highcharts
  * @requires  modules/venn
  * @apioption series.venn

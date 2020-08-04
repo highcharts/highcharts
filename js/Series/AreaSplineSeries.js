@@ -9,7 +9,7 @@
  * */
 'use strict';
 import H from '../Core/Globals.js';
-import LegendSymbolMixin from '../mixins/legend-symbol.js';
+import LegendSymbolMixin from '../Mixins/LegendSymbol.js';
 import O from '../Core/Options.js';
 var defaultOptions = O.defaultOptions;
 import U from '../Core/Utilities.js';
@@ -37,7 +37,7 @@ seriesType('areaspline', 'spline',
  *         Area spline chart
  *
  * @extends   plotOptions.area
- * @excluding step
+ * @excluding step, boostThreshold, boostBlending
  * @product   highcharts highstock
  * @apioption plotOptions.areaspline
  */
@@ -53,7 +53,7 @@ defaultOptions.plotOptions.area, {
  *
  *
  * @extends   series,plotOptions.areaspline
- * @excluding dataParser, dataURL, step
+ * @excluding dataParser, dataURL, step, boostThreshold, boostBlending
  * @product   highcharts highstock
  * @apioption series.areaspline
  */

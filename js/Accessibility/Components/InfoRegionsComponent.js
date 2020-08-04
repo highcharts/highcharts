@@ -323,7 +323,7 @@ extend(InfoRegionsComponent.prototype, /** @lends Highcharts.InfoRegionsComponen
      */
     getDataTableButtonText: function (buttonId) {
         var chart = this.chart, buttonText = chart.langFormat('accessibility.table.viewAsDataTableButtonText', { chart: chart, chartTitle: getChartTitle(chart) });
-        return '<a id="' + buttonId + '">' + buttonText + '</a>';
+        return '<button id="' + buttonId + '">' + buttonText + '</button>';
     },
     /**
      * @private
@@ -420,10 +420,8 @@ extend(InfoRegionsComponent.prototype, /** @lends Highcharts.InfoRegionsComponen
         var el = this.viewDataTableButton = getElement(tableButtonId), chart = this.chart, tableId = tableButtonId.replace('hc-linkto-', '');
         if (el) {
             setElAttrs(el, {
-                role: 'button',
                 tabindex: '-1',
-                'aria-expanded': !!getElement(tableId),
-                href: '#' + tableId
+                'aria-expanded': !!getElement(tableId)
             });
             el.onclick = chart.options.accessibility
                 .screenReaderSection.onViewDataTableClick ||
