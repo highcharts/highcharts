@@ -12,7 +12,7 @@
 
 'use strict';
 
-import DataParser from './DataParser.js';
+import DataParser from './Parsers/DataParser.js';
 import DataStore from './DataStore.js';
 import DataTable from './DataTable.js';
 import H from '../Core/Globals.js';

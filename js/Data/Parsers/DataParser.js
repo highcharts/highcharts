@@ -10,9 +10,9 @@
  *
  * */
 'use strict';
-import DataTable from './DataTable.js';
-import DataRow from './DataRow.js';
-import U from '../Core/Utilities.js';
+import DataTable from '../DataTable.js';
+import DataRow from '../DataRow.js';
+import U from '../../Core/Utilities.js';
 var uniqueKey = U.uniqueKey;
 var DataParser = /** @class */ (function () {
     function DataParser() {

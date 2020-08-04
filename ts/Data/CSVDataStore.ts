@@ -14,7 +14,7 @@
 
 import DataStore from './DataStore.js';
 import DataTable from './DataTable.js';
-import DataParser from './DataParser.js';
+import DataParser from './Parsers/DataParser.js';
 import ajaxModule from '../Extensions/Ajax.js';
 import U from '../Core/Utilities.js';
 import type DataValueType from './DataValueType.js';

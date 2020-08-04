@@ -18,7 +18,7 @@ const {
 } = AjaxMixin;
 import DataTable from './DataTable.js';
 import DataStore from './DataStore.js';
-import DataParser from './DataParser.js';
+import DataParser from './Parsers/DataParser.js';
 import U from '../Core/Utilities.js';
 const {
     fireEvent,

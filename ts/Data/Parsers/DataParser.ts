@@ -12,14 +12,14 @@
 
 'use strict';
 
-import DataTable from './DataTable.js';
-import DataRow from './DataRow.js';
-import U from '../Core/Utilities.js';
+import DataTable from '../DataTable.js';
+import DataRow from '../DataRow.js';
+import U from '../../Core/Utilities.js';
 const {
     uniqueKey
 } = U;
 
-import type DataValueType from './DataValueType.js';
+import type DataValueType from '../DataValueType.js';
 
 class DataParser {
 

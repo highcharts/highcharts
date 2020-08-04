@@ -26,7 +26,7 @@ var __extends = (this && this.__extends) || (function () {
 import AjaxMixin from '../Extensions/Ajax.js';
 var ajax = AjaxMixin.ajax;
 import DataStore from './DataStore.js';
-import DataParser from './DataParser.js';
+import DataParser from './Parsers/DataParser.js';
 import U from '../Core/Utilities.js';
 var fireEvent = U.fireEvent, merge = U.merge;
 /** eslint-disable valid-jsdoc */

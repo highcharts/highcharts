@@ -25,7 +25,7 @@ var __extends = (this && this.__extends) || (function () {
 })();
 import DataStore from './DataStore.js';
 import DataTable from './DataTable.js';
-import DataParser from './DataParser.js';
+import DataParser from './Parsers/DataParser.js';
 import ajaxModule from '../Extensions/Ajax.js';
 import U from '../Core/Utilities.js';
 var ajax = ajaxModule.ajax;
