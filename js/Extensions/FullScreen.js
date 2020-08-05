@@ -20,6 +20,8 @@ var addEvent = U.addEvent;
 /**
  * Handles displaying chart's container in the fullscreen mode.
  *
+ * Fullscreen is not supported on iPhone due to iOS limits.
+ *
  * @class
  * @name Highcharts.Fullscreen
  * @hideconstructor
