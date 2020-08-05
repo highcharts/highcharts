@@ -44,4 +44,12 @@ class DataParser {
     }
 }
 
+namespace DataParser {
+    export interface DataParser {
+        parse(csv: string): void;
+        getTable(): any;
+
+    }
+}
+
 export default DataParser;
