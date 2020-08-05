@@ -153,7 +153,7 @@ var DataTable = /** @class */ (function () {
     };
     DataTable.prototype.toJSON = function () {
         var json = {
-            _DATA_CLASS_NAME_: 'DataTable',
+            $class: 'DataTable',
             rows: []
         };
         var rows = this.rows;
@@ -180,7 +180,7 @@ var DataTable = /** @class */ (function () {
      *  Static Properties
      *
      * */
-    DataTable._DATA_CLASS_NAME_ = 'DataTable';
+    DataTable.$class = 'DataTable';
     return DataTable;
 }());
 DataJSON.addClass(DataTable);

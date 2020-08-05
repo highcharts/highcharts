@@ -35,15 +35,15 @@ QUnit.test('DataTable and DataRow events', function (assert) {
     }
 
     const dataTable = DataTable.fromJSON({
-        _DATA_CLASS_NAME_: 'DataTable',
+        $class: 'DataTable',
         rows: [{
-            _DATA_CLASS_NAME_: 'DataRow',
+            $class: 'DataRow',
             id: 'a',
             text: 'text'
         }]
     });
     const dataRow = new DataRow({
-        _DATA_CLASS_NAME_: 'DataRow',
+        $class: 'DataRow',
         id: 'b',
         text: 'text'
     });
@@ -138,36 +138,36 @@ QUnit.test('DataTable and DataRow events', function (assert) {
 QUnit.test('DataTable JSON support', function (assert) {
 
     const json = {
-        _DATA_CLASS_NAME_: 'DataTable',
+        $class: 'DataTable',
         rows: [{
-            _DATA_CLASS_NAME_: 'DataRow',
+            $class: 'DataRow',
             id: 'a',
             column1: 'value1',
             column2: 0.0002,
             column3: false
         }, {
-            _DATA_CLASS_NAME_: 'DataRow',
+            $class: 'DataRow',
             id: 'b',
             column1: 'value1',
             column2: 'value2',
             column3: {
-                _DATA_CLASS_NAME_: 'DataTable',
+                $class: 'DataTable',
                 rows: [{
-                    _DATA_CLASS_NAME_: 'DataRow',
+                    $class: 'DataRow',
                     id: 'ba',
                     column1: 'value1'
                 }, {
-                    _DATA_CLASS_NAME_: 'DataRow',
+                    $class: 'DataRow',
                     id: 'bb',
                     column1: 'value1'
                 }, {
-                    _DATA_CLASS_NAME_: 'DataRow',
+                    $class: 'DataRow',
                     id: 'bc',
                     column1: 'value1'
                 }]
             }
         }, {
-            _DATA_CLASS_NAME_: 'DataRow',
+            $class: 'DataRow',
             id: 'c',
             column1: 'value1',
             column2: 'value2',

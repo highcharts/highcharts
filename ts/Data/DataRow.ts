@@ -33,7 +33,7 @@ class DataRow implements DataJSON.Class {
      *
      * */
 
-    public static _DATA_CLASS_NAME_ = 'DataRow';
+    public static $class = 'DataRow';
 
     /* *
      *
@@ -42,8 +42,7 @@ class DataRow implements DataJSON.Class {
      * */
 
     public static fromJSON(json: DataRow.JSON): DataRow {
-        const dataTableClass = DataJSON.getClass('DataTable') as typeof DataTable,
-            keys = Object.keys(json),
+        const keys = Object.keys(json),
             columns: DataRow.Columns = {};
 
         let key: (string|undefined),
@@ -51,7 +50,7 @@ class DataRow implements DataJSON.Class {
 
         while (typeof (key = keys.pop()) !== 'undefined') {
 
-            if (key[0] === '_') {
+            if (key === '$class') {
                 continue;
             }
 
@@ -62,12 +61,12 @@ class DataRow implements DataJSON.Class {
                 value !== null
             ) {
                 if (value instanceof Array) {
-                    columns[key] = dataTableClass.fromJSON({
-                        _DATA_CLASS_NAME_: 'DataTable',
+                    columns[key] = DataJSON.fromJSON({
+                        $class: 'DataTable',
                         rows: value
-                    });
+                    }) as DataTable;
                 } else {
-                    columns[key] = dataTableClass.fromJSON(value);
+                    columns[key] = DataJSON.fromJSON(value) as DataTable;
                 }
             } else {
                 columns[key] = value;
@@ -236,7 +235,7 @@ class DataRow implements DataJSON.Class {
         const columns = this.getAllColumns(),
             columnKeys = Object.keys(columns),
             json: DataRow.JSON = {
-                _DATA_CLASS_NAME_: 'DataRow',
+                $class: 'DataRow',
                 id: this.id
             };
 

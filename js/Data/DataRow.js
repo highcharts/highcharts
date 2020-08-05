@@ -40,23 +40,23 @@ var DataRow = /** @class */ (function () {
      *
      * */
     DataRow.fromJSON = function (json) {
-        var dataTableClass = DataJSON.getClass('DataTable'), keys = Object.keys(json), columns = {};
+        var keys = Object.keys(json), columns = {};
         var key, value;
         while (typeof (key = keys.pop()) !== 'undefined') {
-            if (key[0] === '_') {
+            if (key === '$class') {
                 continue;
             }
             value = json[key];
             if (typeof value === 'object' &&
                 value !== null) {
                 if (value instanceof Array) {
-                    columns[key] = dataTableClass.fromJSON({
-                        _DATA_CLASS_NAME_: 'DataTable',
+                    columns[key] = DataJSON.fromJSON({
+                        $class: 'DataTable',
                         rows: value
                     });
                 }
                 else {
-                    columns[key] = dataTableClass.fromJSON(value);
+                    columns[key] = DataJSON.fromJSON(value);
                 }
             }
             else {
@@ -140,7 +140,7 @@ var DataRow = /** @class */ (function () {
     };
     DataRow.prototype.toJSON = function () {
         var columns = this.getAllColumns(), columnKeys = Object.keys(columns), json = {
-            _DATA_CLASS_NAME_: 'DataRow',
+            $class: 'DataRow',
             id: this.id
         };
         var key, value;
@@ -189,7 +189,7 @@ var DataRow = /** @class */ (function () {
      *  Static Properties
      *
      * */
-    DataRow._DATA_CLASS_NAME_ = 'DataRow';
+    DataRow.$class = 'DataRow';
     return DataRow;
 }());
 DataJSON.addClass(DataRow);

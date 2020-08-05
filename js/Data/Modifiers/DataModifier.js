@@ -48,7 +48,7 @@ var DataModifier = /** @class */ (function () {
     };
     DataModifier.prototype.toJSON = function () {
         return {
-            _DATA_CLASS_NAME_: 'DataModifier',
+            $class: 'DataModifier',
             name: this.name
         };
     };
@@ -57,7 +57,7 @@ var DataModifier = /** @class */ (function () {
      *  Static Properties
      *
      * */
-    DataModifier._DATA_CLASS_NAME_ = 'DataModifier';
+    DataModifier.$class = 'DataModifier';
     return DataModifier;
 }());
 DataJSON.addClass(DataModifier);

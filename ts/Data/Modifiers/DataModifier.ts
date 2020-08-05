@@ -42,7 +42,7 @@ abstract class DataModifier implements DataJSON.Class {
      *
      * */
 
-    public static _DATA_CLASS_NAME_ = 'DataModifier';
+    public static $class = 'DataModifier';
 
     private static registry: Record<string, DataModifier>;
 
@@ -100,7 +100,7 @@ abstract class DataModifier implements DataJSON.Class {
 
     public toJSON(): DataModifier.JSON {
         return {
-            _DATA_CLASS_NAME_: 'DataModifier',
+            $class: 'DataModifier',
             name: this.name
         };
     }

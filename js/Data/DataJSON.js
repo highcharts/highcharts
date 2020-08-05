@@ -26,7 +26,7 @@ var DataJSON = /** @class */ (function () {
      *
      * */
     DataJSON.addClass = function (dataClassType) {
-        var dataClassName = dataClassType._DATA_CLASS_NAME_, registry = DataJSON.registry;
+        var dataClassName = dataClassType.$class, registry = DataJSON.registry;
         if (!dataClassName ||
             registry[dataClassName]) {
             return false;
@@ -35,7 +35,7 @@ var DataJSON = /** @class */ (function () {
         return true;
     };
     DataJSON.fromJSON = function (json) {
-        var dataClassType = DataJSON.registry[json._DATA_CLASS_NAME_];
+        var dataClassType = DataJSON.registry[json.$class];
         if (!dataClassType) {
             return;
         }

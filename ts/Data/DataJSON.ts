@@ -35,7 +35,7 @@ class DataJSON {
 
     public static addClass(dataClassType: DataJSON.ClassType): boolean {
 
-        const dataClassName = dataClassType._DATA_CLASS_NAME_,
+        const dataClassName = dataClassType.$class,
             registry = DataJSON.registry;
 
         if (
@@ -52,7 +52,7 @@ class DataJSON {
 
     public static fromJSON(json: DataJSON.ClassJSON): (DataJSON.Class|undefined) {
 
-        const dataClassType = DataJSON.registry[json._DATA_CLASS_NAME_];
+        const dataClassType = DataJSON.registry[json.$class];
 
         if (!dataClassType) {
             return;
@@ -101,11 +101,11 @@ namespace DataJSON {
     }
 
     export interface ClassJSON extends Object {
-        _DATA_CLASS_NAME_: string;
+        $class: string;
     }
 
     export interface ClassType {
-        _DATA_CLASS_NAME_: string;
+        $class: string;
         constructor: Function;
         prototype: Class;
         fromJSON(json: DataJSON.Object): (Class|undefined);

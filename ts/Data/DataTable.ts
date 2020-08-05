@@ -34,7 +34,7 @@ class DataTable implements DataJSON.Class {
      *
      * */
 
-    public static _DATA_CLASS_NAME_ = 'DataTable';
+    public static $class = 'DataTable';
 
     /* *
      *
@@ -234,7 +234,7 @@ class DataTable implements DataJSON.Class {
 
     public toJSON(): DataTable.JSON {
         const json: DataTable.JSON = {
-            _DATA_CLASS_NAME_: 'DataTable',
+            $class: 'DataTable',
             rows: []
         };
         const rows = this.rows;
