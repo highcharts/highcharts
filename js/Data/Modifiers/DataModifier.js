@@ -9,8 +9,7 @@
  *  !!!!!!! SOURCE GETS TRANSPILED BY TYPESCRIPT. EDIT TS FILE ONLY. !!!!!!!
  *
  * */
-'use strict';
-import DataJSON from '../DataJSON';
+import DataJSON from '../DataJSON.js';
 import U from '../../Core/Utilities.js';
 var addEvent = U.addEvent, merge = U.merge;
 /** eslint-disable valid-jsdoc */
@@ -25,23 +24,50 @@ var DataModifier = /** @class */ (function () {
      *  Constructors
      *
      * */
-    function DataModifier(name) {
-        this.name = name;
-        DataModifier.registerModifier(this);
+    function DataModifier(options) {
+        var defaultOptions = {
+            modifier: DataModifier.getName(this.constructor)
+        };
+        this.options = merge(defaultOptions, options);
     }
     /* *
      *
      *  Static Functions
      *
      * */
-    DataModifier.getModiferPool = function () {
-        return merge(DataModifier.registry);
+    DataModifier.addModifier = function (modifier) {
+        var name = DataModifier.getName(modifier), registry = DataModifier.registry;
+        if (!name ||
+            registry[name]) {
+            return false;
+        }
+        registry[name] = modifier;
+        return true;
     };
     DataModifier.fromJSON = function (json) {
-        return DataJSON.fromJSON(json);
+        return new DataModifier(json.options);
     };
-    DataModifier.registerModifier = function (modifier) {
-        DataModifier.registry[modifier.name] = modifier;
+    DataModifier.getAllModifiers = function () {
+        return merge(DataModifier.registry);
+    };
+    DataModifier.getModifier = function (name, options) {
+        var Class = DataModifier.registry[name];
+        if (Class) {
+            return new Class(options);
+        }
+        return;
+    };
+    DataModifier.getName = function (modifier) {
+        return (modifier.toString().match(DataModifier.nameRegExp) ||
+            ['', ''])[1];
+    };
+    /* *
+     *
+     *  Functions
+     *
+     * */
+    DataModifier.prototype.execute = function (table) {
+        return table;
     };
     DataModifier.prototype.on = function (eventName, callback) {
         return addEvent(this, eventName, callback);
@@ -49,7 +75,7 @@ var DataModifier = /** @class */ (function () {
     DataModifier.prototype.toJSON = function () {
         return {
             $class: 'DataModifier',
-            name: this.name
+            options: merge(this.options)
         };
     };
     /* *
@@ -57,7 +83,8 @@ var DataModifier = /** @class */ (function () {
      *  Static Properties
      *
      * */
-    DataModifier.$class = 'DataModifier';
+    DataModifier.nameRegExp = /^function\s+(\w*?)(?:DataModifier)?\s*\(/;
+    DataModifier.registry = {};
     return DataModifier;
 }());
 DataJSON.addClass(DataModifier);

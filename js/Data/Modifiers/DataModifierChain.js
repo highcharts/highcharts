@@ -24,7 +24,6 @@ var __extends = (this && this.__extends) || (function () {
     };
 })();
 import DataModifier from './DataModifier.js';
-import DataTable from '../DataTable.js';
 import U from '../../Core/Utilities.js';
 var addEvent = U.addEvent;
 /** eslint-disable valid-jsdoc */
@@ -35,20 +34,13 @@ var DataModifierChain = /** @class */ (function (_super) {
      *  Constructors
      *
      * */
-    function DataModifierChain(name) {
+    function DataModifierChain(options) {
         var modifiers = [];
         for (var _i = 1; _i < arguments.length; _i++) {
             modifiers[_i - 1] = arguments[_i];
         }
-        var _this = _super.call(this, name) || this;
-        var self = _this;
-        _this.dataModifiersMap = {};
-        _this.dataModifiers = modifiers || [];
-        if (self.dataModifiers.length) {
-            self.dataModifiers.forEach(function (modifier, i) {
-                self.dataModifiersMap[modifier.name] = i;
-            });
-        }
+        var _this = _super.call(this, options) || this;
+        _this.modifiers = modifiers;
         return _this;
     }
     /* *
@@ -56,22 +48,27 @@ var DataModifierChain = /** @class */ (function (_super) {
      *  Functions
      *
      * */
-    DataModifierChain.prototype.add = function (dataModifier) {
-        this.dataModifiers.push(dataModifier);
-        this.dataModifiersMap[dataModifier.name] = this.dataModifiers.length - 1;
-    };
-    DataModifierChain.prototype.remove = function (dataModifier) {
-        var index = this.dataModifiersMap[dataModifier.name];
-        delete this.dataModifiersMap[dataModifier.name];
-        this.dataModifiers.splice(index, 1);
+    DataModifierChain.prototype.add = function (modifier) {
+        this.modifiers.push(modifier);
     };
     DataModifierChain.prototype.clear = function () {
-        this.dataModifiersMap = {};
-        this.dataModifiers.length = 0;
+        this.modifiers.length = 0;
     };
-    DataModifierChain.prototype.execute = function (dataTable) {
-        return new DataTable(dataTable.getAllRows());
+    DataModifierChain.prototype.execute = function (table) {
+        var modifiers = this.modifiers;
+        for (var i = 0, iEnd = modifiers.length; i < iEnd; ++i) {
+            table = modifiers[i].execute(table);
+        }
+        return table;
+    };
+    DataModifierChain.prototype.remove = function (modifier) {
+        var modifiers = this.modifiers;
+        modifiers.splice(modifiers.indexOf(modifier), 1);
+    };
+    DataModifierChain.prototype.reverse = function () {
+        this.modifiers = this.modifiers.reverse();
     };
     return DataModifierChain;
 }(DataModifier));
+DataModifier.addModifier(DataModifierChain);
 export default DataModifierChain;

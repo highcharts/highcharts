@@ -30,19 +30,11 @@ class DataTable implements DataJSON.Class {
 
     /* *
      *
-     *  Static Properties
-     *
-     * */
-
-    public static $class = 'DataTable';
-
-    /* *
-     *
      *  Static Functions
      *
      * */
 
-    public static fromJSON(json: DataTable.JSON): DataTable {
+    public static fromJSON(json: DataTable.ClassJSON): DataTable {
         const rows = json.rows,
             dataRows: Array<DataRow> = [];
 
@@ -206,7 +198,7 @@ class DataTable implements DataJSON.Class {
 
     public on(
         event: (DataTable.RowEvents|DataTable.TableEvents),
-        callback: (DataTable.RowEventListener|DataTable.TableEventListener)
+        callback: (DataTable.RowEventCallback|DataTable.TableEventCallback)
     ): Function {
         return addEvent(this, event, callback);
     }
@@ -232,8 +224,8 @@ class DataTable implements DataJSON.Class {
         watchsIdMap[row.id] = watchs;
     }
 
-    public toJSON(): DataTable.JSON {
-        const json: DataTable.JSON = {
+    public toJSON(): DataTable.ClassJSON {
+        const json: DataTable.ClassJSON = {
             $class: 'DataTable',
             rows: []
         };
@@ -277,11 +269,11 @@ namespace DataTable {
         'clearTable'|'afterClearTable'
     );
 
-    export interface JSON extends DataJSON.ClassJSON {
-        rows: Array<DataRow.JSON>;
+    export interface ClassJSON extends DataJSON.ClassJSON {
+        rows: Array<DataRow.ClassJSON>;
     }
 
-    export interface RowEventListener {
+    export interface RowEventCallback {
         (this: DataTable, e: RowEventObject): void;
     }
 
@@ -291,7 +283,7 @@ namespace DataTable {
         readonly type: RowEvents;
     }
 
-    export interface TableEventListener {
+    export interface TableEventCallback {
         (this: DataTable, e: TableEventObject): void;
     }
 

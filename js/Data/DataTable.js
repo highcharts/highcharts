@@ -175,12 +175,6 @@ var DataTable = /** @class */ (function () {
             delete watchsIdMap[rowId];
         }
     };
-    /* *
-     *
-     *  Static Properties
-     *
-     * */
-    DataTable.$class = 'DataTable';
     return DataTable;
 }());
 DataJSON.addClass(DataTable);

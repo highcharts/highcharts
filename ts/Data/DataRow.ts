@@ -29,20 +29,12 @@ class DataRow implements DataJSON.Class {
 
     /* *
      *
-     *  Static Properties
-     *
-     * */
-
-    public static $class = 'DataRow';
-
-    /* *
-     *
      *  Static Functions
      *
      * */
 
-    public static fromJSON(json: DataRow.JSON): DataRow {
-        const keys = Object.keys(json),
+    public static fromJSON(json: DataRow.ClassJSON): DataRow {
+        const keys = Object.keys(json).reverse(),
             columns: DataRow.Columns = {};
 
         let key: (string|undefined),
@@ -86,12 +78,17 @@ class DataRow implements DataJSON.Class {
         columns: DataRow.Columns = {},
         converter: DataConverter = new DataConverter()
     ) {
-        this.columns = columns = merge(columns);
+        columns = merge(columns);
+
+        this.autoId = false;
+        this.columnKeys = Object.keys(columns);
+        this.columns = columns;
         this.converter = converter;
 
         if (typeof columns.id === 'string') {
             this.id = columns.id;
         } else {
+            this.autoId = true;
             this.id = uniqueKey();
         }
 
@@ -103,6 +100,10 @@ class DataRow implements DataJSON.Class {
      *  Properties
      *
      * */
+
+    public readonly autoId: boolean;
+
+    private columnKeys: Array<string>;
 
     private columns: DataRow.Columns;
 
@@ -126,6 +127,7 @@ class DataRow implements DataJSON.Class {
             'clearRow',
             {},
             function (): void {
+                row.columnKeys.length = 0;
                 row.columns.length = 0;
                 succeeded = true;
                 fireEvent(row, 'afterClearRow', {});
@@ -150,6 +152,7 @@ class DataRow implements DataJSON.Class {
             'deleteColumn',
             { columnKey, columnValue },
             function (e: DataRow.ColumnEventObject): void {
+                row.columnKeys.splice(row.columnKeys.indexOf(e.columnKey), 1);
                 delete row.columns[e.columnKey];
                 succeeded = true;
                 fireEvent(row, 'afterDeleteColumn', { columnKey, columnValue });
@@ -163,28 +166,33 @@ class DataRow implements DataJSON.Class {
         return merge(this.columns);
     }
 
-    public getColumn(columnKey: string): DataRow.ColumnTypes {
-        return this.columns[columnKey];
+    public getColumn(column: (number|string)): DataRow.ColumnTypes {
+
+        if (typeof column === 'number') {
+            return this.columns[this.columnKeys[column]];
+        }
+
+        return this.columns[column];
     }
 
-    public getColumnAsBoolean(columnKey: string): boolean {
-        return this.converter.asBoolean(this.getColumn(columnKey));
+    public getColumnAsBoolean(column: (number|string)): boolean {
+        return this.converter.asBoolean(this.getColumn(column));
     }
 
-    public getColumnAsDataTable(columnKey: string): DataTable {
-        return this.converter.asDataTable(this.getColumn(columnKey));
+    public getColumnAsDataTable(column: (number|string)): DataTable {
+        return this.converter.asDataTable(this.getColumn(column));
     }
 
-    public getColumnAsDate(columnKey: string): Date {
-        return this.converter.asDate(this.getColumn(columnKey));
+    public getColumnAsDate(column: (number|string)): Date {
+        return this.converter.asDate(this.getColumn(column));
     }
 
-    public getColumnAsNumber(columnKey: string): number {
-        return this.converter.asNumber(this.getColumn(columnKey));
+    public getColumnAsNumber(column: (number|string)): number {
+        return this.converter.asNumber(this.getColumn(column));
     }
 
-    public getColumnAsString(columnKey: string): string {
-        return this.converter.asString(this.getColumn(columnKey));
+    public getColumnAsString(column: (number|string)): string {
+        return this.converter.asString(this.getColumn(column));
     }
 
     public getColumnCount(): number {
@@ -192,7 +200,7 @@ class DataRow implements DataJSON.Class {
     }
 
     public getColumnKeys(): Array<string> {
-        return Object.keys(this.columns);
+        return this.columnKeys.slice();
     }
 
     public insertColumn(
@@ -215,6 +223,7 @@ class DataRow implements DataJSON.Class {
             'insertColumn',
             { columnKey, columnValue },
             function (): void {
+                row.columnKeys.push(columnKey);
                 row.columns[columnKey] = columnValue;
                 succeeded = true;
                 fireEvent(row, 'afterInsertColumn', { columnKey, columnValue });
@@ -226,21 +235,24 @@ class DataRow implements DataJSON.Class {
 
     public on(
         event: (DataRow.ColumnEvents|DataRow.RowEvents),
-        callback: (DataRow.ColumnEventListener|DataRow.RowEventListener)
+        callback: (DataRow.ColumnEventCallback|DataRow.RowEventCallback)
     ): Function {
         return addEvent(this, event, callback);
     }
 
-    public toJSON(): DataRow.JSON {
+    public toJSON(): DataRow.ClassJSON {
         const columns = this.getAllColumns(),
             columnKeys = Object.keys(columns),
-            json: DataRow.JSON = {
-                $class: 'DataRow',
-                id: this.id
+            json: DataRow.ClassJSON = {
+                $class: 'DataRow'
             };
 
         let key: string,
             value: DataRow.ColumnTypes;
+
+        if (!this.autoId) {
+            json.id = this.id;
+        }
 
         for (let i = 0, iEnd = columnKeys.length; i < iEnd; ++i) {
             key = columnKeys[i];
@@ -314,7 +326,11 @@ namespace DataRow {
         'clearRow'|'afterClearRow'
     );
 
-    export interface ColumnEventListener {
+    export interface ClassJSON extends DataJSON.ClassJSON {
+        [key: string]: (DataJSON.Primitives|DataTable.ClassJSON|Array<DataRow.ClassJSON>);
+    }
+
+    export interface ColumnEventCallback {
         (this: DataRow, e: ColumnEventObject): void;
     }
 
@@ -324,12 +340,7 @@ namespace DataRow {
         readonly type: ColumnEvents;
     }
 
-    export interface JSON extends DataJSON.ClassJSON {
-        id: string;
-        [key: string]: (DataJSON.Primitives|DataTable.JSON|Array<DataRow.JSON>);
-    }
-
-    export interface RowEventListener {
+    export interface RowEventCallback {
         (this: DataRow, e: RowEventObject): void;
     }
 

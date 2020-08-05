@@ -25,21 +25,20 @@ var DataJSON = /** @class */ (function () {
      *  Static Functions
      *
      * */
-    DataJSON.addClass = function (dataClassType) {
-        var dataClassName = dataClassType.$class, registry = DataJSON.registry;
-        if (!dataClassName ||
-            registry[dataClassName]) {
+    DataJSON.addClass = function (classType) {
+        var className = DataJSON.getName(classType), registry = DataJSON.registry;
+        if (!className || registry[className]) {
             return false;
         }
-        registry[dataClassName] = dataClassType;
+        registry[className] = classType;
         return true;
     };
     DataJSON.fromJSON = function (json) {
-        var dataClassType = DataJSON.registry[json.$class];
-        if (!dataClassType) {
+        var classType = DataJSON.registry[json.$class];
+        if (!classType) {
             return;
         }
-        return dataClassType.fromJSON(json);
+        return classType.fromJSON(json);
     };
     DataJSON.getAllClassNames = function () {
         return Object.keys(DataJSON.registry);
@@ -47,14 +46,19 @@ var DataJSON = /** @class */ (function () {
     DataJSON.getAllClassTypes = function () {
         return merge(DataJSON.registry);
     };
-    DataJSON.getClass = function (dataClassType) {
-        return DataJSON.registry[dataClassType];
+    DataJSON.getClass = function (className) {
+        return DataJSON.registry[className];
+    };
+    DataJSON.getName = function (classType) {
+        return (classType.toString().match(DataJSON.nameRegExp) ||
+            ['', ''])[1];
     };
     /* *
      *
      *  Static Properties
      *
      * */
+    DataJSON.nameRegExp = /^function\s+(\w*?)\s*\(/;
     DataJSON.registry = {};
     return DataJSON;
 }());

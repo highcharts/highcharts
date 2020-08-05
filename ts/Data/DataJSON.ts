@@ -15,8 +15,6 @@ const {
     merge
 } = U;
 
-type GlobalArray<T> = Array<T>;
-
 class DataJSON {
 
     /* *
@@ -25,7 +23,8 @@ class DataJSON {
      *
      * */
 
-    private static registry: Record<string, DataJSON.ClassType> = {};
+    private static readonly nameRegExp = /^function\s+(\w*?)\s*\(/;
+    private static readonly registry: Record<string, DataJSON.ClassType> = {};
 
     /* *
      *
@@ -33,32 +32,29 @@ class DataJSON {
      *
      * */
 
-    public static addClass(dataClassType: DataJSON.ClassType): boolean {
+    public static addClass(classType: DataJSON.ClassType): boolean {
 
-        const dataClassName = dataClassType.$class,
+        const className = DataJSON.getName(classType),
             registry = DataJSON.registry;
 
-        if (
-            !dataClassName ||
-            registry[dataClassName]
-        ) {
+        if (!className || registry[className]) {
             return false;
         }
 
-        registry[dataClassName] = dataClassType;
+        registry[className] = classType;
 
         return true;
     }
 
     public static fromJSON(json: DataJSON.ClassJSON): (DataJSON.Class|undefined) {
 
-        const dataClassType = DataJSON.registry[json.$class];
+        const classType = DataJSON.registry[json.$class];
 
-        if (!dataClassType) {
+        if (!classType) {
             return;
         }
 
-        return dataClassType.fromJSON(json);
+        return classType.fromJSON(json);
     }
 
     public static getAllClassNames(): Array<string> {
@@ -69,8 +65,15 @@ class DataJSON {
         return merge(DataJSON.registry);
     }
 
-    public static getClass(dataClassType: string): (DataJSON.ClassType|undefined) {
-        return DataJSON.registry[dataClassType];
+    public static getClass(className: string): (DataJSON.ClassType|undefined) {
+        return DataJSON.registry[className];
+    }
+
+    private static getName(classType: DataJSON.ClassType): string {
+        return (
+            classType.toString().match(DataJSON.nameRegExp) ||
+            ['', '']
+        )[1];
     }
 
     /* *
@@ -92,7 +95,7 @@ namespace DataJSON {
     // eslint-disable-next-line @typescript-eslint/ban-types
     export type Types = (Object|Array);
 
-    export interface Array extends GlobalArray<(Primitives|Types)> {
+    export interface Array extends globalThis.Array<(Primitives|Types)> {
         [index: number]: (Primitives|Types);
     }
 
@@ -105,7 +108,6 @@ namespace DataJSON {
     }
 
     export interface ClassType {
-        $class: string;
         constructor: Function;
         prototype: Class;
         fromJSON(json: DataJSON.Object): (Class|undefined);
@@ -114,6 +116,7 @@ namespace DataJSON {
     export interface Object {
         [key: string]: (Primitives|Types);
     }
+
 }
 
 export default DataJSON;

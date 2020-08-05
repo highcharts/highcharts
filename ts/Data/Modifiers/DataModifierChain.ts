@@ -29,19 +29,13 @@ class DataModifierChain extends DataModifier {
      *
      * */
 
-    public constructor(name: string, ...modifiers: DataModifierChain.Modifiers) {
-        super(name);
+    public constructor(
+        options: DeepPartial<DataModifier.Options>,
+        ...modifiers: Array<DataModifier>
+    ) {
+        super(options);
 
-        var self = this;
-
-        this.dataModifiersMap = {};
-        this.dataModifiers = modifiers || [];
-
-        if (self.dataModifiers.length) {
-            self.dataModifiers.forEach(function (modifier: DataModifier, i: number): void {
-                self.dataModifiersMap[modifier.name] = i;
-            });
-        }
+        this.modifiers = modifiers;
     }
 
     /* *
@@ -50,9 +44,7 @@ class DataModifierChain extends DataModifier {
      *
      * */
 
-    private dataModifiersMap: Record<string, number>;
-
-    private dataModifiers: DataModifierChain.Modifiers;
+    private modifiers: Array<DataModifier>;
 
     /* *
      *
@@ -60,32 +52,35 @@ class DataModifierChain extends DataModifier {
      *
      * */
 
-    public add(dataModifier: DataModifier): void {
-        this.dataModifiers.push(dataModifier);
-        this.dataModifiersMap[dataModifier.name] = this.dataModifiers.length - 1;
-    }
-
-    public remove(dataModifier: DataModifier): void {
-        var index = this.dataModifiersMap[dataModifier.name];
-
-        delete this.dataModifiersMap[dataModifier.name];
-        this.dataModifiers.splice(index, 1);
+    public add(modifier: DataModifier): void {
+        this.modifiers.push(modifier);
     }
 
     public clear(): void {
-        this.dataModifiersMap = {};
-        this.dataModifiers.length = 0;
+        this.modifiers.length = 0;
     }
 
-    public execute(dataTable: DataTable): DataTable {
-        return new DataTable(dataTable.getAllRows());
+    public execute(table: DataTable): DataTable {
+        const modifiers = this.modifiers;
+
+        for (let i = 0, iEnd = modifiers.length; i < iEnd; ++i) {
+            table = modifiers[i].execute(table);
+        }
+
+        return table;
     }
-    // public benchmark() {}
-    // public cancel() {}
+
+    public remove(modifier: DataModifier): void {
+        const modifiers = this.modifiers;
+        modifiers.splice(modifiers.indexOf(modifier), 1);
+    }
+
+    public reverse(): void {
+        this.modifiers = this.modifiers.reverse();
+    }
+
 }
 
-namespace DataModifierChain {
-    export type Modifiers = Array<DataModifier>;
-}
+DataModifier.addModifier(DataModifierChain);
 
 export default DataModifierChain;

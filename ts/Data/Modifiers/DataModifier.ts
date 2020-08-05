@@ -10,8 +10,6 @@
  *
  * */
 
-'use strict';
-
 /* *
  *
  *  Imports
@@ -19,7 +17,7 @@
  * */
 
 import type DataTable from '../DataTable';
-import DataJSON from '../DataJSON';
+import DataJSON from '../DataJSON.js';
 import U from '../../Core/Utilities.js';
 const {
     addEvent,
@@ -34,7 +32,7 @@ const {
  *
  * */
 
-abstract class DataModifier implements DataJSON.Class {
+class DataModifier implements DataJSON.Class {
 
     /* *
      *
@@ -42,9 +40,9 @@ abstract class DataModifier implements DataJSON.Class {
      *
      * */
 
-    public static $class = 'DataModifier';
+    private static readonly nameRegExp = /^function\s+(\w*?)(?:DataModifier)?\s*\(/;
 
-    private static registry: Record<string, DataModifier>;
+    private static readonly registry: Record<string, typeof DataModifier> = {};
 
     /* *
      *
@@ -52,16 +50,48 @@ abstract class DataModifier implements DataJSON.Class {
      *
      * */
 
-    public static getModiferPool(): Record<string, DataModifier> {
+    public static addModifier(modifier: typeof DataModifier): boolean {
+        const name = DataModifier.getName(modifier),
+            registry = DataModifier.registry;
+
+        if (
+            !name ||
+            registry[name]
+        ) {
+            return false;
+        }
+
+        registry[name] = modifier;
+
+        return true;
+    }
+
+    public static fromJSON(json: DataModifier.ClassJSON): DataModifier {
+        return new DataModifier(json.options);
+    }
+
+    public static getAllModifiers(): Record<string, typeof DataModifier> {
         return merge(DataModifier.registry);
     }
 
-    public static fromJSON(json: DataModifier.JSON): (DataJSON.Class|undefined) {
-        return DataJSON.fromJSON(json);
+    public static getModifier(
+        name: string,
+        options: DataModifier.Options
+    ): (DataModifier|undefined) {
+        const Class = DataModifier.registry[name];
+
+        if (Class) {
+            return new Class(options);
+        }
+
+        return;
     }
 
-    public static registerModifier(modifier: DataModifier): void {
-        DataModifier.registry[modifier.name] = modifier;
+    private static getName(modifier: (typeof DataModifier|Function)): string {
+        return (
+            modifier.toString().match(DataModifier.nameRegExp) ||
+            ['', '']
+        )[1];
     }
 
     /* *
@@ -70,9 +100,12 @@ abstract class DataModifier implements DataJSON.Class {
      *
      * */
 
-    public constructor(name: string) {
-        this.name = name;
-        DataModifier.registerModifier(this);
+    protected constructor(options?: DeepPartial<DataModifier.Options>) {
+        const defaultOptions: DataModifier.Options = {
+            modifier: DataModifier.getName(this.constructor)
+        };
+
+        this.options = merge(defaultOptions, options);
     }
 
     /* *
@@ -81,7 +114,7 @@ abstract class DataModifier implements DataJSON.Class {
      *
      * */
 
-    public readonly name: string;
+    public readonly options: DataModifier.Options;
 
     /* *
      *
@@ -89,7 +122,9 @@ abstract class DataModifier implements DataJSON.Class {
      *
      * */
 
-    public abstract execute(dataTable: DataTable): DataTable;
+    public execute(table: DataTable): DataTable {
+        return table;
+    }
 
     public on(
         eventName: DataModifier.EventNames,
@@ -98,10 +133,10 @@ abstract class DataModifier implements DataJSON.Class {
         return addEvent(this, eventName, callback);
     }
 
-    public toJSON(): DataModifier.JSON {
+    public toJSON(): DataModifier.ClassJSON {
         return {
             $class: 'DataModifier',
-            name: this.name
+            options: merge(this.options)
         };
     }
 
@@ -117,6 +152,10 @@ namespace DataModifier {
 
     export type EventNames = ('execute'|'afterExecute');
 
+    export interface ClassJSON extends DataJSON.ClassJSON {
+        options: Options;
+    }
+
     export interface EventCallback {
         (this: DataModifier, e: EventObject): void;
     }
@@ -125,8 +164,8 @@ namespace DataModifier {
         readonly type: EventNames;
     }
 
-    export interface JSON extends DataJSON.ClassJSON {
-        name: string;
+    export interface Options extends DataJSON.Object {
+        modifier: string;
     }
 
 }
