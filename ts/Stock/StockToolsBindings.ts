@@ -1994,6 +1994,8 @@ var stockToolsBindings: Highcharts.Dictionary<Highcharts.NavigationBindingsOptio
     /**
      * Displays chart in fullscreen.
      *
+     * Fullscreen is not supported on iPhone due to iOS limits.
+     *
      * @type    {Highcharts.NavigationBindingsOptionsObject}
      * @product highstock
      * @default {"className": "highcharts-full-screen", "init": function() {}}
