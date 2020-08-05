@@ -1684,19 +1684,19 @@ extend(Series.prototype, /** @lends Series.prototype */ {
      */
     hasOptionChanged(this: Highcharts.Series, optionName: string): boolean {
         const chart = this.chart,
-            options = (this.options as any)[optionName],
+            option = (this.options as any)[optionName],
             plotOptions = chart.options.plotOptions,
-            oldOptions = (this.userOptions as any)[optionName];
+            oldOption = (this.userOptions as any)[optionName];
 
-        if (oldOptions) {
-            return options !== oldOptions;
+        if (oldOption) {
+            return option !== oldOption;
         }
 
-        return options !==
+        return option !==
             pick(
                 plotOptions && plotOptions[this.type] && (plotOptions[this.type] as any)[optionName],
                 plotOptions && plotOptions.series && (plotOptions as any).series[optionName],
-                options
+                option
             );
     }
 });

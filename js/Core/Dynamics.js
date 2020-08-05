@@ -1201,12 +1201,12 @@ extend(Series.prototype, /** @lends Series.prototype */ {
      * @return {boolean}
      */
     hasOptionChanged: function (optionName) {
-        var chart = this.chart, options = this.options[optionName], plotOptions = chart.options.plotOptions, oldOptions = this.userOptions[optionName];
-        if (oldOptions) {
-            return options !== oldOptions;
+        var chart = this.chart, option = this.options[optionName], plotOptions = chart.options.plotOptions, oldOption = this.userOptions[optionName];
+        if (oldOption) {
+            return option !== oldOption;
         }
-        return options !==
-            pick(plotOptions && plotOptions[this.type] && plotOptions[this.type][optionName], plotOptions && plotOptions.series && plotOptions.series[optionName], options);
+        return option !==
+            pick(plotOptions && plotOptions[this.type] && plotOptions[this.type][optionName], plotOptions && plotOptions.series && plotOptions.series[optionName], option);
     }
 });
 // Extend the Axis.prototype for dynamic methods
