@@ -549,11 +549,13 @@ BaseSeries.seriesType('ikh', 'sma',
             spanA = SMA.prototype.getGraphPath.call(indicator, 
             // Reverse points, so Senkou Span A will start from the end:
             indicator.nextPoints);
-            spanA[0][0] = 'L';
-            path = SMA.prototype.getGraphPath.call(indicator, points);
-            spanAarr = spanA.slice(0, path.length);
-            for (var i = spanAarr.length - 1; i >= 0; i--) {
-                path.push(spanAarr[i]);
+            if (spanA.length) {
+                spanA[0][0] = 'L';
+                path = SMA.prototype.getGraphPath.call(indicator, points);
+                spanAarr = spanA.slice(0, path.length);
+                for (var i = spanAarr.length - 1; i >= 0; i--) {
+                    path.push(spanAarr[i]);
+                }
             }
         }
         else {
