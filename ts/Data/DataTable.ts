@@ -12,6 +12,7 @@
 
 'use strict';
 
+import type DataEventEmitter from './DataEventEmitter';
 import DataJSON from './DataJSON.js';
 import DataRow from './DataRow.js';
 import U from '../Core/Utilities.js';
@@ -26,7 +27,7 @@ const {
 /**
  * @private
  */
-class DataTable implements DataJSON.Class {
+class DataTable implements DataEventEmitter<DataTable.EventTypes>, DataJSON.Class {
 
     /* *
      *
@@ -96,40 +97,40 @@ class DataTable implements DataJSON.Class {
      * */
 
     public clear(): void {
-        const table = this,
-            row = table.getRow(0),
-            index = 0;
 
-        fireEvent(table, 'clearTable', { index, row });
+        this.emit('clearTable', { });
 
-        const rowIds = table.getRowIds();
+        const rowIds = this.getRowIds();
 
         for (let i = 0, iEnd = rowIds.length; i < iEnd; ++i) {
-            table.unwatchRow(rowIds[i], true);
+            this.unwatchRow(rowIds[i], true);
         }
 
-        table.rows.length = 0;
-        table.rowsIdMap = {};
-        table.watchsIdMap = {};
+        this.rows.length = 0;
+        this.rowsIdMap = {};
+        this.watchsIdMap = {};
 
-        fireEvent(table, 'afterClearTable', { index, row });
+        this.emit('afterClearTable', { });
     }
 
     public deleteRow(id: string): (DataRow|undefined) {
-        const table = this;
-        const row = table.rowsIdMap[id];
-        const index = table.rows.indexOf(row);
+        const row = this.rowsIdMap[id],
+            rowId = row.id,
+            index = this.rows.indexOf(row);
 
-        fireEvent(table, 'deleteRow', { index, row });
+        this.emit('deleteRow', { index, row });
 
-        const rowId = row.id;
-        table.rows[index] = row;
-        delete table.rowsIdMap[rowId];
-        table.unwatchRow(rowId);
+        this.rows[index] = row;
+        delete this.rowsIdMap[rowId];
+        this.unwatchRow(rowId);
 
-        fireEvent(table, 'afterDeleteRow', { index, row });
+        this.emit('afterDeleteRow', { index, row });
 
         return row;
+    }
+
+    public emit(type: DataTable.EventTypes, e: DataTable.EventObjects): void {
+        fireEvent(this, type, e);
     }
 
     public getAllRows(): Array<DataRow> {
@@ -137,9 +138,11 @@ class DataTable implements DataJSON.Class {
     }
 
     public getRow(indexOrID: (number|string)): (DataRow|undefined) {
+
         if (typeof indexOrID === 'string') {
             return this.rowsIdMap[indexOrID];
         }
+
         return this.rows[indexOrID];
     }
 
@@ -162,44 +165,42 @@ class DataTable implements DataJSON.Class {
     }
 
     public insertRow(row: DataRow): boolean {
-        const table = this;
         const rowId = row.id;
-        const index = table.rows.length;
+        const index = this.rows.length;
 
-        if (typeof table.rowsIdMap[rowId] !== 'undefined') {
+        if (typeof this.rowsIdMap[rowId] !== 'undefined') {
             return false;
         }
 
-        fireEvent(table, 'insertRow', { index, row });
+        this.emit('insertRow', { index, row });
 
-        table.rows.push(row);
-        table.rowsIdMap[rowId] = row;
-        table.watchRow(row);
+        this.rows.push(row);
+        this.rowsIdMap[rowId] = row;
+        this.watchRow(row);
 
-        fireEvent(table, 'afterInsertRow', { index, row });
+        this.emit('afterInsertRow', { index, row });
 
         return true;
     }
 
     public on(
-        event: (DataTable.RowEvents|DataTable.TableEvents),
-        callback: (DataTable.RowEventCallback|DataTable.TableEventCallback)
+        event: DataTable.EventTypes,
+        callback: DataTable.EventCallbacks<this>
     ): Function {
         return addEvent(this, event, callback);
     }
 
     private watchRow(row: DataRow): void {
+        const table = this,
+            index = table.rows.indexOf(row),
+            watchsIdMap = table.watchsIdMap,
+            watchs: Array<Function> = [];
 
         /** @private */
         function callback(): void {
             table.versionId = uniqueKey();
             fireEvent(table, 'afterUpdateRow', { index, row });
         }
-
-        const table = this;
-        const index = table.rows.indexOf(row);
-        const watchsIdMap = table.watchsIdMap;
-        const watchs: Array<Function> = [];
 
         watchs.push(row.on('afterClearRow', callback));
         watchs.push(row.on('afterDeleteColumn', callback));
@@ -244,13 +245,19 @@ class DataTable implements DataJSON.Class {
 
 namespace DataTable {
 
-    export type RowEvents = (
+    export type EventCallbacks<TThis> = (RowEventCallback<TThis>|TableEventCallback<TThis>);
+
+    export type EventObjects = (RowEventObject|TableEventObject);
+
+    export type EventTypes = (RowEventTypes|TableEventTypes);
+
+    export type RowEventTypes = (
         'deleteRow'|'afterDeleteRow'|
         'insertRow'|'afterInsertRow'|
         'afterUpdateRow'
     );
 
-    export type TableEvents = (
+    export type TableEventTypes = (
         'clearTable'|'afterClearTable'
     );
 
@@ -258,22 +265,20 @@ namespace DataTable {
         rows: Array<DataRow.ClassJSON>;
     }
 
-    export interface RowEventCallback {
-        (this: DataTable, e: RowEventObject): void;
+    export interface RowEventCallback<TThis> extends DataEventEmitter.EventCallback<TThis, RowEventTypes> {
+        (this: TThis, e: RowEventObject): void;
     }
 
-    export interface RowEventObject {
+    export interface RowEventObject extends DataEventEmitter.EventObject<RowEventTypes> {
         readonly index: number;
         readonly row: DataRow;
-        readonly type: RowEvents;
     }
 
-    export interface TableEventCallback {
-        (this: DataTable, e: TableEventObject): void;
+    export interface TableEventCallback<TThis> extends DataEventEmitter.EventCallback<TThis, TableEventTypes> {
+        (this: TThis, e: TableEventObject): void;
     }
 
-    export interface TableEventObject {
-        readonly type: TableEvents;
+    export interface TableEventObject extends DataEventEmitter.EventObject<TableEventTypes> {
     }
 
 }

@@ -16,11 +16,10 @@ import DataModifier from './DataModifier.js';
 import DataTable from '../DataTable.js';
 import U from '../../Core/Utilities.js';
 const {
-    fireEvent,
     merge
 } = U;
 
-class FilterRangeDataModifier extends DataModifier implements DataJSON.Class {
+class RangeDataModifier extends DataModifier implements DataJSON.Class {
 
     /* *
      *
@@ -28,8 +27,8 @@ class FilterRangeDataModifier extends DataModifier implements DataJSON.Class {
      *
      * */
 
-    public static readonly defaultOptions: FilterRangeDataModifier.Options = {
-        modifier: 'FilterRange',
+    public static readonly defaultOptions: RangeDataModifier.Options = {
+        modifier: 'Range',
         strict: false,
         ranges: [
             {
@@ -46,8 +45,8 @@ class FilterRangeDataModifier extends DataModifier implements DataJSON.Class {
      *
      * */
 
-    public static fromJSON(): FilterRangeDataModifier {
-        return new FilterRangeDataModifier();
+    public static fromJSON(): RangeDataModifier {
+        return new RangeDataModifier();
     }
 
     /* *
@@ -56,10 +55,10 @@ class FilterRangeDataModifier extends DataModifier implements DataJSON.Class {
      *
      * */
 
-    public constructor(options?: DeepPartial<FilterRangeDataModifier.Options>) {
-        super(options);
+    public constructor(options?: DeepPartial<RangeDataModifier.Options>) {
+        super();
 
-        this.options = merge(FilterRangeDataModifier.defaultOptions, options);
+        this.options = merge(RangeDataModifier.defaultOptions, options);
     }
 
     /* *
@@ -68,7 +67,7 @@ class FilterRangeDataModifier extends DataModifier implements DataJSON.Class {
      *
      * */
 
-    public readonly options: FilterRangeDataModifier.Options;
+    public options: RangeDataModifier.Options;
 
     /* *
      *
@@ -86,10 +85,10 @@ class FilterRangeDataModifier extends DataModifier implements DataJSON.Class {
             result = new DataTable();
 
         let column: DataRow.ColumnTypes,
-            range: FilterRangeDataModifier.RangeOptions,
+            range: RangeDataModifier.RangeOptions,
             row: DataRow;
 
-        fireEvent(modifier, 'execute', { table });
+        this.emit('execute', { table });
 
         for (let i = 0, iEnd = ranges.length; i < iEnd; ++i) {
             range = ranges[i];
@@ -131,20 +130,20 @@ class FilterRangeDataModifier extends DataModifier implements DataJSON.Class {
             }
         }
 
-        fireEvent(modifier, 'afterExecute', { table: result });
+        this.emit('afterExecute', { table: result });
 
         return result;
     }
 
-    public toJSON(): FilterRangeDataModifier.ClassJSON {
+    public toJSON(): RangeDataModifier.ClassJSON {
         return {
-            $class: 'FilterRangeDataModifier',
-            options: this.options
+            $class: 'RangeDataModifier',
+            options: merge(this.options)
         };
     }
 }
 
-namespace FilterRangeDataModifier {
+namespace RangeDataModifier {
 
     export interface ClassJSON extends DataModifier.ClassJSON {
         options: Options;
@@ -179,8 +178,7 @@ namespace FilterRangeDataModifier {
 
 }
 
-DataJSON.addClass(FilterRangeDataModifier);
+DataJSON.addClass(RangeDataModifier);
+DataModifier.addModifier(RangeDataModifier);
 
-DataModifier.addModifier(FilterRangeDataModifier);
-
-export default FilterRangeDataModifier;
+export default RangeDataModifier;

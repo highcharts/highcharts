@@ -62,28 +62,27 @@ var DataTable = /** @class */ (function () {
      *
      * */
     DataTable.prototype.clear = function () {
-        var table = this, row = table.getRow(0), index = 0;
-        fireEvent(table, 'clearTable', { index: index, row: row });
-        var rowIds = table.getRowIds();
+        this.emit('clearTable', {});
+        var rowIds = this.getRowIds();
         for (var i = 0, iEnd = rowIds.length; i < iEnd; ++i) {
-            table.unwatchRow(rowIds[i], true);
+            this.unwatchRow(rowIds[i], true);
         }
-        table.rows.length = 0;
-        table.rowsIdMap = {};
-        table.watchsIdMap = {};
-        fireEvent(table, 'afterClearTable', { index: index, row: row });
+        this.rows.length = 0;
+        this.rowsIdMap = {};
+        this.watchsIdMap = {};
+        this.emit('afterClearTable', {});
     };
     DataTable.prototype.deleteRow = function (id) {
-        var table = this;
-        var row = table.rowsIdMap[id];
-        var index = table.rows.indexOf(row);
-        fireEvent(table, 'deleteRow', { index: index, row: row });
-        var rowId = row.id;
-        table.rows[index] = row;
-        delete table.rowsIdMap[rowId];
-        table.unwatchRow(rowId);
-        fireEvent(table, 'afterDeleteRow', { index: index, row: row });
+        var row = this.rowsIdMap[id], rowId = row.id, index = this.rows.indexOf(row);
+        this.emit('deleteRow', { index: index, row: row });
+        this.rows[index] = row;
+        delete this.rowsIdMap[rowId];
+        this.unwatchRow(rowId);
+        this.emit('afterDeleteRow', { index: index, row: row });
         return row;
+    };
+    DataTable.prototype.emit = function (type, e) {
+        fireEvent(this, type, e);
     };
     DataTable.prototype.getAllRows = function () {
         return this.rows.slice();
@@ -110,32 +109,28 @@ var DataTable = /** @class */ (function () {
         return this.versionId || (this.versionId = uniqueKey());
     };
     DataTable.prototype.insertRow = function (row) {
-        var table = this;
         var rowId = row.id;
-        var index = table.rows.length;
-        if (typeof table.rowsIdMap[rowId] !== 'undefined') {
+        var index = this.rows.length;
+        if (typeof this.rowsIdMap[rowId] !== 'undefined') {
             return false;
         }
-        fireEvent(table, 'insertRow', { index: index, row: row });
-        table.rows.push(row);
-        table.rowsIdMap[rowId] = row;
-        table.watchRow(row);
-        fireEvent(table, 'afterInsertRow', { index: index, row: row });
+        this.emit('insertRow', { index: index, row: row });
+        this.rows.push(row);
+        this.rowsIdMap[rowId] = row;
+        this.watchRow(row);
+        this.emit('afterInsertRow', { index: index, row: row });
         return true;
     };
     DataTable.prototype.on = function (event, callback) {
         return addEvent(this, event, callback);
     };
     DataTable.prototype.watchRow = function (row) {
+        var table = this, index = table.rows.indexOf(row), watchsIdMap = table.watchsIdMap, watchs = [];
         /** @private */
         function callback() {
             table.versionId = uniqueKey();
             fireEvent(table, 'afterUpdateRow', { index: index, row: row });
         }
-        var table = this;
-        var index = table.rows.indexOf(row);
-        var watchsIdMap = table.watchsIdMap;
-        var watchs = [];
         watchs.push(row.on('afterClearRow', callback));
         watchs.push(row.on('afterDeleteColumn', callback));
         watchs.push(row.on('afterInsertColumn', callback));

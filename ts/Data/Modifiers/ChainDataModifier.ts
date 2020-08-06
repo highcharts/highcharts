@@ -17,12 +17,22 @@ import DataModifier from './DataModifier.js';
 import DataTable from '../DataTable.js';
 import U from '../../Core/Utilities.js';
 const {
-    fireEvent
+    merge
 } = U;
 
 /** eslint-disable valid-jsdoc */
 
-class DataModifierChain extends DataModifier implements DataJSON.Class {
+class ChainDataModifier extends DataModifier implements DataJSON.Class {
+
+    /* *
+     *
+     *  Static Properties
+     *
+     * */
+
+    public static readonly defaultOptions: ChainDataModifier.Options = {
+        modifier: 'Chain'
+    };
 
     /* *
      *
@@ -30,7 +40,7 @@ class DataModifierChain extends DataModifier implements DataJSON.Class {
      *
      * */
 
-    public static fromJSON(json: DataModifierChain.ClassJSON): DataModifierChain {
+    public static fromJSON(json: ChainDataModifier.ClassJSON): ChainDataModifier {
         const jsonModifiers = json.modifiers,
             modifiers: Array<DataModifier> = [];
 
@@ -38,7 +48,7 @@ class DataModifierChain extends DataModifier implements DataJSON.Class {
             modifiers.push(DataJSON.fromJSON(jsonModifiers[i]) as DataModifier);
         }
 
-        return new DataModifierChain(json.options, ...modifiers);
+        return new ChainDataModifier(json.options, ...modifiers);
     }
 
     /* *
@@ -48,12 +58,13 @@ class DataModifierChain extends DataModifier implements DataJSON.Class {
      * */
 
     public constructor(
-        options: DeepPartial<DataModifierChain.Options>,
+        options: DeepPartial<ChainDataModifier.Options>,
         ...modifiers: Array<DataModifier>
     ) {
-        super(options);
+        super();
 
         this.modifiers = modifiers;
+        this.options = merge(ChainDataModifier.defaultOptions, options);
     }
 
     /* *
@@ -63,6 +74,8 @@ class DataModifierChain extends DataModifier implements DataJSON.Class {
      * */
 
     private modifiers: Array<DataModifier>;
+
+    public readonly options: ChainDataModifier.Options;
 
     /* *
      *
@@ -82,13 +95,13 @@ class DataModifierChain extends DataModifier implements DataJSON.Class {
         const modifier = this,
             modifiers = this.modifiers;
 
-        fireEvent(modifier, 'execute', { table });
+        this.emit('execute', { table });
 
         for (let i = 0, iEnd = modifiers.length; i < iEnd; ++i) {
             table = modifiers[i].execute(table);
         }
 
-        fireEvent(modifier, 'afterExecute', { table });
+        this.emit('afterExecute', { table });
 
         return table;
     }
@@ -102,14 +115,12 @@ class DataModifierChain extends DataModifier implements DataJSON.Class {
         this.modifiers = this.modifiers.reverse();
     }
 
-    public toJSON(): DataModifierChain.ClassJSON {
-        const chain = this,
-            modifiers = chain.modifiers,
-            options = chain.options,
-            json: DataModifierChain.ClassJSON = {
-                $class: 'DataModifierChain',
+    public toJSON(): ChainDataModifier.ClassJSON {
+        const modifiers = this.modifiers,
+            json: ChainDataModifier.ClassJSON = {
+                $class: 'ChainDataModifier',
                 modifiers: [],
-                options
+                options: merge(this.options)
             };
 
         for (let i = 0, iEnd = modifiers.length; i < iEnd; ++i) {
@@ -121,7 +132,7 @@ class DataModifierChain extends DataModifier implements DataJSON.Class {
 
 }
 
-namespace DataModifierChain {
+namespace ChainDataModifier {
 
     export interface ClassJSON extends DataModifier.ClassJSON {
         modifiers: Array<DataModifier.ClassJSON>;
@@ -133,6 +144,6 @@ namespace DataModifierChain {
 
 }
 
-DataJSON.addClass(DataModifierChain);
+DataJSON.addClass(ChainDataModifier);
 
-export default DataModifierChain;
+export default ChainDataModifier;

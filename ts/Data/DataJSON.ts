@@ -90,7 +90,7 @@ class DataJSON {
 
 namespace DataJSON {
 
-    export type Primitives = (boolean|number|string|null);
+    export type Primitives = (boolean|number|string|null|undefined);
 
     // eslint-disable-next-line @typescript-eslint/ban-types
     export type Types = (Object|Array);

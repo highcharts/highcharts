@@ -16,11 +16,13 @@
  *
  * */
 
+import type DataEventEmitter from '../DataEventEmitter';
 import type DataJSON from '../DataJSON';
 import type DataTable from '../DataTable';
 import U from '../../Core/Utilities.js';
 const {
     addEvent,
+    fireEvent,
     merge
 } = U;
 
@@ -32,7 +34,7 @@ const {
  *
  * */
 
-class DataModifier {
+abstract class DataModifier implements DataEventEmitter<DataModifier.EventTypes> {
 
     /* *
      *
@@ -74,7 +76,7 @@ class DataModifier {
         name: string,
         options: DataModifier.Options
     ): (DataModifier|undefined) {
-        const Class = DataModifier.registry[name];
+        const Class = DataModifier.registry[name] as unknown as DataModifier.ClassConstructor;
 
         if (Class) {
             return new Class(options);
@@ -92,25 +94,11 @@ class DataModifier {
 
     /* *
      *
-     *  Constructors
-     *
-     * */
-
-    protected constructor(options?: DeepPartial<DataModifier.Options>) {
-        const defaultOptions: DataModifier.Options = {
-            modifier: DataModifier.getName(this.constructor)
-        };
-
-        this.options = merge(defaultOptions, options);
-    }
-
-    /* *
-     *
      *  Properties
      *
      * */
 
-    public readonly options: DataModifier.Options;
+    public abstract readonly options: DataModifier.Options;
 
     /* *
      *
@@ -118,23 +106,23 @@ class DataModifier {
      *
      * */
 
-    public execute(table: DataTable): DataTable {
-        return table;
+    public abstract execute(table: DataTable): DataTable;
+
+    public emit(
+        type: DataModifier.EventTypes,
+        e: DataModifier.EventObject
+    ): void {
+        fireEvent(this, type, e);
     }
 
     public on(
-        eventName: DataModifier.EventNames,
-        callback: DataModifier.EventCallback
+        type: DataModifier.EventTypes,
+        callback: DataModifier.EventCallback<this>
     ): Function {
-        return addEvent(this, eventName, callback);
+        return addEvent(this, type, callback);
     }
 
-    public toJSON(): DataModifier.ClassJSON {
-        return {
-            $class: 'DataModifier',
-            options: merge(this.options)
-        };
-    }
+    public abstract toJSON(): DataModifier.ClassJSON;
 
 }
 
@@ -146,19 +134,22 @@ class DataModifier {
 
 namespace DataModifier {
 
-    export type EventNames = ('execute'|'afterExecute');
+    export type EventTypes = ('execute'|'afterExecute');
+
+    export interface ClassConstructor {
+        new(options?: DeepPartial<Options>): DataModifier;
+    }
 
     export interface ClassJSON extends DataJSON.ClassJSON {
         options: Options;
     }
 
-    export interface EventCallback {
-        (this: DataModifier, e: EventObject): void;
+    export interface EventCallback<TThis> extends DataEventEmitter.EventCallback<TThis, EventTypes> {
+        (this: TThis, e: EventObject): void;
     }
 
-    export interface EventObject {
+    export interface EventObject extends DataEventEmitter.EventObject<EventTypes> {
         readonly table: DataTable;
-        readonly type: EventNames;
     }
 
     export interface Options extends DataJSON.Object {

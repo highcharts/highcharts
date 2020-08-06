@@ -33,22 +33,23 @@ var __spreadArrays = (this && this.__spreadArrays) || function () {
 import DataJSON from '../DataJSON.js';
 import DataModifier from './DataModifier.js';
 import U from '../../Core/Utilities.js';
-var fireEvent = U.fireEvent, merge = U.merge;
+var merge = U.merge;
 /** eslint-disable valid-jsdoc */
-var DataModifierChain = /** @class */ (function (_super) {
-    __extends(DataModifierChain, _super);
+var ChainDataModifier = /** @class */ (function (_super) {
+    __extends(ChainDataModifier, _super);
     /* *
      *
      *  Constructors
      *
      * */
-    function DataModifierChain(options) {
+    function ChainDataModifier(options) {
         var modifiers = [];
         for (var _i = 1; _i < arguments.length; _i++) {
             modifiers[_i - 1] = arguments[_i];
         }
-        var _this = _super.call(this, options) || this;
+        var _this = _super.call(this) || this;
         _this.modifiers = modifiers;
+        _this.options = merge(ChainDataModifier.defaultOptions, options);
         return _this;
     }
     /* *
@@ -56,43 +57,43 @@ var DataModifierChain = /** @class */ (function (_super) {
      *  Static Functions
      *
      * */
-    DataModifierChain.fromJSON = function (json) {
+    ChainDataModifier.fromJSON = function (json) {
         var jsonModifiers = json.modifiers, modifiers = [];
         for (var i = 0, iEnd = jsonModifiers.length; i < iEnd; ++i) {
             modifiers.push(DataJSON.fromJSON(jsonModifiers[i]));
         }
-        return new (DataModifierChain.bind.apply(DataModifierChain, __spreadArrays([void 0, json.options], modifiers)))();
+        return new (ChainDataModifier.bind.apply(ChainDataModifier, __spreadArrays([void 0, json.options], modifiers)))();
     };
     /* *
      *
      *  Functions
      *
      * */
-    DataModifierChain.prototype.add = function (modifier) {
+    ChainDataModifier.prototype.add = function (modifier) {
         this.modifiers.push(modifier);
     };
-    DataModifierChain.prototype.clear = function () {
+    ChainDataModifier.prototype.clear = function () {
         this.modifiers.length = 0;
     };
-    DataModifierChain.prototype.execute = function (table) {
+    ChainDataModifier.prototype.execute = function (table) {
         var modifier = this, modifiers = this.modifiers;
-        fireEvent(modifier, 'execute', { table: table });
+        this.emit('execute', { table: table });
         for (var i = 0, iEnd = modifiers.length; i < iEnd; ++i) {
             table = modifiers[i].execute(table);
         }
-        fireEvent(modifier, 'afterExecute', { table: table });
+        this.emit('afterExecute', { table: table });
         return table;
     };
-    DataModifierChain.prototype.remove = function (modifier) {
+    ChainDataModifier.prototype.remove = function (modifier) {
         var modifiers = this.modifiers;
         modifiers.splice(modifiers.indexOf(modifier), 1);
     };
-    DataModifierChain.prototype.reverse = function () {
+    ChainDataModifier.prototype.reverse = function () {
         this.modifiers = this.modifiers.reverse();
     };
-    DataModifierChain.prototype.toJSON = function () {
+    ChainDataModifier.prototype.toJSON = function () {
         var modifiers = this.modifiers, json = {
-            $class: 'DataModifierChain',
+            $class: 'ChainDataModifier',
             modifiers: [],
             options: merge(this.options)
         };
@@ -101,7 +102,15 @@ var DataModifierChain = /** @class */ (function (_super) {
         }
         return json;
     };
-    return DataModifierChain;
+    /* *
+     *
+     *  Static Properties
+     *
+     * */
+    ChainDataModifier.defaultOptions = {
+        modifier: 'Chain'
+    };
+    return ChainDataModifier;
 }(DataModifier));
-DataJSON.addClass(DataModifierChain);
-export default DataModifierChain;
+DataJSON.addClass(ChainDataModifier);
+export default ChainDataModifier;

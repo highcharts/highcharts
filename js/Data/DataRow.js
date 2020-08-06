@@ -75,11 +75,10 @@ var DataRow = /** @class */ (function () {
      *
      * */
     DataRow.prototype.clear = function () {
-        var row = this;
-        fireEvent(row, 'clearRow', {});
-        row.columnKeys.length = 0;
-        row.columns.length = 0;
-        fireEvent(row, 'afterClearRow', {});
+        this.emit('clearRow', {});
+        this.columnKeys.length = 0;
+        this.columns.length = 0;
+        this.emit('afterClearRow', {});
         return true;
     };
     DataRow.prototype.deleteColumn = function (columnKey) {
@@ -87,11 +86,14 @@ var DataRow = /** @class */ (function () {
         if (columnKey === 'id') {
             return false;
         }
-        fireEvent(row, 'deleteColumn', { columnKey: columnKey, columnValue: columnValue });
+        this.emit('deleteColumn', { columnKey: columnKey, columnValue: columnValue });
         row.columnKeys.splice(row.columnKeys.indexOf(columnKey), 1);
         delete row.columns[columnKey];
-        fireEvent(row, 'afterDeleteColumn', { columnKey: columnKey, columnValue: columnValue });
+        this.emit('afterDeleteColumn', { columnKey: columnKey, columnValue: columnValue });
         return true;
+    };
+    DataRow.prototype.emit = function (type, e) {
+        fireEvent(this, type, e);
     };
     DataRow.prototype.getAllColumns = function () {
         return merge(this.columns);
@@ -124,15 +126,14 @@ var DataRow = /** @class */ (function () {
         return this.columnKeys.slice();
     };
     DataRow.prototype.insertColumn = function (columnKey, columnValue) {
-        var row = this, columns = row.columns, columnKeys = row.columnKeys;
         if (columnKey === 'id' ||
-            columnKeys.indexOf(columnKey) !== -1) {
+            this.columnKeys.indexOf(columnKey) !== -1) {
             return false;
         }
-        fireEvent(row, 'insertColumn', { columnKey: columnKey, columnValue: columnValue });
-        columnKeys.push(columnKey);
-        columns[columnKey] = columnValue;
-        fireEvent(row, 'afterInsertColumn', { columnKey: columnKey, columnValue: columnValue });
+        this.emit('insertColumn', { columnKey: columnKey, columnValue: columnValue });
+        this.columnKeys.push(columnKey);
+        this.columns[columnKey] = columnValue;
+        this.emit('afterInsertColumn', { columnKey: columnKey, columnValue: columnValue });
         return true;
     };
     DataRow.prototype.on = function (event, callback) {

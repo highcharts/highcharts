@@ -10,7 +10,7 @@
  *
  * */
 import U from '../../Core/Utilities.js';
-var addEvent = U.addEvent, merge = U.merge;
+var addEvent = U.addEvent, fireEvent = U.fireEvent, merge = U.merge;
 /** eslint-disable valid-jsdoc */
 /* *
  *
@@ -18,16 +18,7 @@ var addEvent = U.addEvent, merge = U.merge;
  *
  * */
 var DataModifier = /** @class */ (function () {
-    /* *
-     *
-     *  Constructors
-     *
-     * */
-    function DataModifier(options) {
-        var defaultOptions = {
-            modifier: DataModifier.getName(this.constructor)
-        };
-        this.options = merge(defaultOptions, options);
+    function DataModifier() {
     }
     /* *
      *
@@ -57,22 +48,11 @@ var DataModifier = /** @class */ (function () {
         return (modifier.toString().match(DataModifier.nameRegExp) ||
             ['', ''])[1];
     };
-    /* *
-     *
-     *  Functions
-     *
-     * */
-    DataModifier.prototype.execute = function (table) {
-        return table;
+    DataModifier.prototype.emit = function (type, e) {
+        fireEvent(this, type, e);
     };
-    DataModifier.prototype.on = function (eventName, callback) {
-        return addEvent(this, eventName, callback);
-    };
-    DataModifier.prototype.toJSON = function () {
-        return {
-            $class: 'DataModifier',
-            options: merge(this.options)
-        };
+    DataModifier.prototype.on = function (type, callback) {
+        return addEvent(this, type, callback);
     };
     /* *
      *

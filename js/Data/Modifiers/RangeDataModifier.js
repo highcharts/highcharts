@@ -26,17 +26,17 @@ import DataJSON from '../DataJSON.js';
 import DataModifier from './DataModifier.js';
 import DataTable from '../DataTable.js';
 import U from '../../Core/Utilities.js';
-var fireEvent = U.fireEvent, merge = U.merge;
-var FilterRangeDataModifier = /** @class */ (function (_super) {
-    __extends(FilterRangeDataModifier, _super);
+var merge = U.merge;
+var RangeDataModifier = /** @class */ (function (_super) {
+    __extends(RangeDataModifier, _super);
     /* *
      *
      *  Constructor
      *
      * */
-    function FilterRangeDataModifier(options) {
-        var _this = _super.call(this, options) || this;
-        _this.options = merge(FilterRangeDataModifier.defaultOptions, options);
+    function RangeDataModifier(options) {
+        var _this = _super.call(this) || this;
+        _this.options = merge(RangeDataModifier.defaultOptions, options);
         return _this;
     }
     /* *
@@ -44,18 +44,18 @@ var FilterRangeDataModifier = /** @class */ (function (_super) {
      *  Static Functions
      *
      * */
-    FilterRangeDataModifier.fromJSON = function () {
-        return new FilterRangeDataModifier();
+    RangeDataModifier.fromJSON = function () {
+        return new RangeDataModifier();
     };
     /* *
      *
      *  Functions
      *
      * */
-    FilterRangeDataModifier.prototype.execute = function (table) {
+    RangeDataModifier.prototype.execute = function (table) {
         var modifier = this, _a = modifier.options, ranges = _a.ranges, strict = _a.strict, rows = table.getAllRows(), result = new DataTable();
         var column, range, row;
-        fireEvent(modifier, 'execute', { table: table });
+        this.emit('execute', { table: table });
         for (var i = 0, iEnd = ranges.length; i < iEnd; ++i) {
             range = ranges[i];
             if (strict &&
@@ -85,12 +85,12 @@ var FilterRangeDataModifier = /** @class */ (function (_super) {
                 }
             }
         }
-        fireEvent(modifier, 'afterExecute', { table: result });
+        this.emit('afterExecute', { table: result });
         return result;
     };
-    FilterRangeDataModifier.prototype.toJSON = function () {
+    RangeDataModifier.prototype.toJSON = function () {
         return {
-            $class: 'FilterRangeDataModifier',
+            $class: 'RangeDataModifier',
             options: merge(this.options)
         };
     };
@@ -99,8 +99,8 @@ var FilterRangeDataModifier = /** @class */ (function (_super) {
      *  Static Properties
      *
      * */
-    FilterRangeDataModifier.defaultOptions = {
-        modifier: 'FilterRange',
+    RangeDataModifier.defaultOptions = {
+        modifier: 'Range',
         strict: false,
         ranges: [
             {
@@ -110,8 +110,8 @@ var FilterRangeDataModifier = /** @class */ (function (_super) {
             }
         ]
     };
-    return FilterRangeDataModifier;
+    return RangeDataModifier;
 }(DataModifier));
-DataJSON.addClass(FilterRangeDataModifier);
-DataModifier.addModifier(FilterRangeDataModifier);
-export default FilterRangeDataModifier;
+DataJSON.addClass(RangeDataModifier);
+DataModifier.addModifier(RangeDataModifier);
+export default RangeDataModifier;
