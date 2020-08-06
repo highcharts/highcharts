@@ -76,29 +76,22 @@ var DataRow = /** @class */ (function () {
      * */
     DataRow.prototype.clear = function () {
         var row = this;
-        var succeeded = false;
-        fireEvent(row, 'clearRow', {}, function () {
-            row.columnKeys.length = 0;
-            row.columns.length = 0;
-            succeeded = true;
-            fireEvent(row, 'afterClearRow', {});
-        });
-        return succeeded;
+        fireEvent(row, 'clearRow', {});
+        row.columnKeys.length = 0;
+        row.columns.length = 0;
+        fireEvent(row, 'afterClearRow', {});
+        return true;
     };
     DataRow.prototype.deleteColumn = function (columnKey) {
-        var row = this;
-        var columnValue = row.columns[columnKey];
-        var succeeded = false;
+        var row = this, columnValue = row.columns[columnKey];
         if (columnKey === 'id') {
-            return succeeded;
+            return false;
         }
-        fireEvent(row, 'deleteColumn', { columnKey: columnKey, columnValue: columnValue }, function (e) {
-            row.columnKeys.splice(row.columnKeys.indexOf(e.columnKey), 1);
-            delete row.columns[e.columnKey];
-            succeeded = true;
-            fireEvent(row, 'afterDeleteColumn', { columnKey: columnKey, columnValue: columnValue });
-        });
-        return succeeded;
+        fireEvent(row, 'deleteColumn', { columnKey: columnKey, columnValue: columnValue });
+        row.columnKeys.splice(row.columnKeys.indexOf(columnKey), 1);
+        delete row.columns[columnKey];
+        fireEvent(row, 'afterDeleteColumn', { columnKey: columnKey, columnValue: columnValue });
+        return true;
     };
     DataRow.prototype.getAllColumns = function () {
         return merge(this.columns);
@@ -131,19 +124,16 @@ var DataRow = /** @class */ (function () {
         return this.columnKeys.slice();
     };
     DataRow.prototype.insertColumn = function (columnKey, columnValue) {
-        var row = this;
-        var succeeded = false;
+        var row = this, columns = row.columns, columnKeys = row.columnKeys;
         if (columnKey === 'id' ||
-            row.getColumnKeys().indexOf(columnKey) !== -1) {
-            return succeeded;
+            columnKeys.indexOf(columnKey) !== -1) {
+            return false;
         }
-        fireEvent(row, 'insertColumn', { columnKey: columnKey, columnValue: columnValue }, function () {
-            row.columnKeys.push(columnKey);
-            row.columns[columnKey] = columnValue;
-            succeeded = true;
-            fireEvent(row, 'afterInsertColumn', { columnKey: columnKey, columnValue: columnValue });
-        });
-        return succeeded;
+        fireEvent(row, 'insertColumn', { columnKey: columnKey, columnValue: columnValue });
+        columnKeys.push(columnKey);
+        columns[columnKey] = columnValue;
+        fireEvent(row, 'afterInsertColumn', { columnKey: columnKey, columnValue: columnValue });
+        return true;
     };
     DataRow.prototype.on = function (event, callback) {
         return addEvent(this, event, callback);
@@ -185,16 +175,13 @@ var DataRow = /** @class */ (function () {
     };
     DataRow.prototype.updateColumn = function (columnKey, columnValue) {
         var row = this;
-        var succeeded = false;
         if (columnKey === 'id') {
-            return succeeded;
+            return false;
         }
-        fireEvent(row, 'updateColumn', { columnKey: columnKey, columnValue: columnValue }, function () {
-            row.columns[columnKey] = columnValue;
-            succeeded = true;
-            fireEvent(row, 'afterUpdateColumn', { columnKey: columnKey, columnValue: columnValue });
-        });
-        return succeeded;
+        fireEvent(row, 'updateColumn', { columnKey: columnKey, columnValue: columnValue });
+        row.columns[columnKey] = columnValue;
+        fireEvent(row, 'afterUpdateColumn', { columnKey: columnKey, columnValue: columnValue });
+        return true;
     };
     return DataRow;
 }());

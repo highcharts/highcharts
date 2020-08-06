@@ -120,46 +120,32 @@ class DataRow implements DataJSON.Class {
     public clear(): boolean {
         const row = this;
 
-        let succeeded = false;
+        fireEvent(row, 'clearRow', {});
 
-        fireEvent(
-            row,
-            'clearRow',
-            {},
-            function (): void {
-                row.columnKeys.length = 0;
-                row.columns.length = 0;
-                succeeded = true;
-                fireEvent(row, 'afterClearRow', {});
-            }
-        );
+        row.columnKeys.length = 0;
+        row.columns.length = 0;
 
-        return succeeded;
+        fireEvent(row, 'afterClearRow', {});
+
+        return true;
     }
 
     public deleteColumn(columnKey: string): boolean {
-        const row = this;
-        const columnValue = row.columns[columnKey];
-
-        let succeeded = false;
+        const row = this,
+            columnValue = row.columns[columnKey];
 
         if (columnKey === 'id') {
-            return succeeded;
+            return false;
         }
 
-        fireEvent(
-            row,
-            'deleteColumn',
-            { columnKey, columnValue },
-            function (e: DataRow.ColumnEventObject): void {
-                row.columnKeys.splice(row.columnKeys.indexOf(e.columnKey), 1);
-                delete row.columns[e.columnKey];
-                succeeded = true;
-                fireEvent(row, 'afterDeleteColumn', { columnKey, columnValue });
-            }
-        );
+        fireEvent(row, 'deleteColumn', { columnKey, columnValue });
 
-        return succeeded;
+        row.columnKeys.splice(row.columnKeys.indexOf(columnKey), 1);
+        delete row.columns[columnKey];
+
+        fireEvent(row, 'afterDeleteColumn', { columnKey, columnValue });
+
+        return true;
     }
 
     public getAllColumns(): DataRow.Columns {
@@ -207,30 +193,25 @@ class DataRow implements DataJSON.Class {
         columnKey: string,
         columnValue: DataRow.ColumnTypes
     ): boolean {
-        const row = this;
-
-        let succeeded = false;
+        const row = this,
+            columns = row.columns,
+            columnKeys = row.columnKeys;
 
         if (
             columnKey === 'id' ||
-            row.getColumnKeys().indexOf(columnKey) !== -1
+            columnKeys.indexOf(columnKey) !== -1
         ) {
-            return succeeded;
+            return false;
         }
 
-        fireEvent(
-            row,
-            'insertColumn',
-            { columnKey, columnValue },
-            function (): void {
-                row.columnKeys.push(columnKey);
-                row.columns[columnKey] = columnValue;
-                succeeded = true;
-                fireEvent(row, 'afterInsertColumn', { columnKey, columnValue });
-            }
-        );
+        fireEvent(row, 'insertColumn', { columnKey, columnValue });
 
-        return succeeded;
+        columnKeys.push(columnKey);
+        columns[columnKey] = columnValue;
+
+        fireEvent(row, 'afterInsertColumn', { columnKey, columnValue });
+
+        return true;
     }
 
     public on(
@@ -288,24 +269,17 @@ class DataRow implements DataJSON.Class {
     ): boolean {
         const row = this;
 
-        let succeeded = false;
-
         if (columnKey === 'id') {
-            return succeeded;
+            return false;
         }
 
-        fireEvent(
-            row,
-            'updateColumn',
-            { columnKey, columnValue },
-            function (): void {
-                row.columns[columnKey] = columnValue;
-                succeeded = true;
-                fireEvent(row, 'afterUpdateColumn', { columnKey, columnValue });
-            }
-        );
+        fireEvent(row, 'updateColumn', { columnKey, columnValue });
 
-        return succeeded;
+        row.columns[columnKey] = columnValue;
+
+        fireEvent(row, 'afterUpdateColumn', { columnKey, columnValue });
+
+        return true;
     }
 
 }

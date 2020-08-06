@@ -62,34 +62,28 @@ var DataTable = /** @class */ (function () {
      *
      * */
     DataTable.prototype.clear = function () {
-        var table = this;
-        var row = table.getRow(0);
-        var index = 0;
-        fireEvent(table, 'clearTable', { index: index, row: row }, function () {
-            var rowIds = table.getRowIds();
-            for (var i = 0, iEnd = rowIds.length; i < iEnd; ++i) {
-                table.unwatchRow(rowIds[i], true);
-            }
-            table.rows.length = 0;
-            table.rowsIdMap = {};
-            table.watchsIdMap = {};
-            fireEvent(table, 'afterClearTable', { index: index, row: row });
-        });
+        var table = this, row = table.getRow(0), index = 0;
+        fireEvent(table, 'clearTable', { index: index, row: row });
+        var rowIds = table.getRowIds();
+        for (var i = 0, iEnd = rowIds.length; i < iEnd; ++i) {
+            table.unwatchRow(rowIds[i], true);
+        }
+        table.rows.length = 0;
+        table.rowsIdMap = {};
+        table.watchsIdMap = {};
+        fireEvent(table, 'afterClearTable', { index: index, row: row });
     };
     DataTable.prototype.deleteRow = function (id) {
         var table = this;
         var row = table.rowsIdMap[id];
         var index = table.rows.indexOf(row);
-        var result;
-        fireEvent(table, 'deleteRow', { index: index, row: row }, function () {
-            var rowId = row.id;
-            table.rows[index] = row;
-            delete table.rowsIdMap[rowId];
-            table.unwatchRow(rowId);
-            result = row;
-            fireEvent(table, 'afterDeleteRow', { index: index, row: row });
-        });
-        return result;
+        fireEvent(table, 'deleteRow', { index: index, row: row });
+        var rowId = row.id;
+        table.rows[index] = row;
+        delete table.rowsIdMap[rowId];
+        table.unwatchRow(rowId);
+        fireEvent(table, 'afterDeleteRow', { index: index, row: row });
+        return row;
     };
     DataTable.prototype.getAllRows = function () {
         return this.rows.slice();
@@ -119,18 +113,15 @@ var DataTable = /** @class */ (function () {
         var table = this;
         var rowId = row.id;
         var index = table.rows.length;
-        var succeeded = false;
         if (typeof table.rowsIdMap[rowId] !== 'undefined') {
-            return succeeded;
+            return false;
         }
-        fireEvent(table, 'insertRow', { index: index, row: row }, function () {
-            table.rows.push(row);
-            table.rowsIdMap[rowId] = row;
-            table.watchRow(row);
-            succeeded = true;
-            fireEvent(table, 'afterInsertRow', { index: index, row: row });
-        });
-        return succeeded;
+        fireEvent(table, 'insertRow', { index: index, row: row });
+        table.rows.push(row);
+        table.rowsIdMap[rowId] = row;
+        table.watchRow(row);
+        fireEvent(table, 'afterInsertRow', { index: index, row: row });
+        return true;
     };
     DataTable.prototype.on = function (event, callback) {
         return addEvent(this, event, callback);

@@ -16,6 +16,7 @@ import DataModifier from './DataModifier.js';
 import DataTable from '../DataTable.js';
 import U from '../../Core/Utilities.js';
 const {
+    fireEvent,
     merge
 } = U;
 
@@ -76,16 +77,19 @@ class FilterRangeDataModifier extends DataModifier implements DataJSON.Class {
      * */
 
     public execute(table: DataTable): DataTable {
-        const {
+        const modifier = this,
+            {
                 ranges,
                 strict
-            } = this.options,
+            } = modifier.options,
             rows = table.getAllRows(),
             result = new DataTable();
 
         let column: DataRow.ColumnTypes,
             range: FilterRangeDataModifier.RangeOptions,
             row: DataRow;
+
+        fireEvent(modifier, 'execute', { table });
 
         for (let i = 0, iEnd = ranges.length; i < iEnd; ++i) {
             range = ranges[i];
@@ -126,6 +130,8 @@ class FilterRangeDataModifier extends DataModifier implements DataJSON.Class {
                 }
             }
         }
+
+        fireEvent(modifier, 'afterExecute', { table: result });
 
         return result;
     }

@@ -23,9 +23,17 @@ var __extends = (this && this.__extends) || (function () {
         d.prototype = b === null ? Object.create(b) : (__.prototype = b.prototype, new __());
     };
 })();
+var __spreadArrays = (this && this.__spreadArrays) || function () {
+    for (var s = 0, i = 0, il = arguments.length; i < il; i++) s += arguments[i].length;
+    for (var r = Array(s), k = 0, i = 0; i < il; i++)
+        for (var a = arguments[i], j = 0, jl = a.length; j < jl; j++, k++)
+            r[k] = a[j];
+    return r;
+};
+import DataJSON from '../DataJSON.js';
 import DataModifier from './DataModifier.js';
 import U from '../../Core/Utilities.js';
-var addEvent = U.addEvent;
+var fireEvent = U.fireEvent;
 /** eslint-disable valid-jsdoc */
 var DataModifierChain = /** @class */ (function (_super) {
     __extends(DataModifierChain, _super);
@@ -45,6 +53,18 @@ var DataModifierChain = /** @class */ (function (_super) {
     }
     /* *
      *
+     *  Static Functions
+     *
+     * */
+    DataModifierChain.fromJSON = function (json) {
+        var jsonModifiers = json.modifiers, modifiers = [];
+        for (var i = 0, iEnd = jsonModifiers.length; i < iEnd; ++i) {
+            modifiers.push(DataJSON.fromJSON(jsonModifiers[i]));
+        }
+        return new (DataModifierChain.bind.apply(DataModifierChain, __spreadArrays([void 0, json.options], modifiers)))();
+    };
+    /* *
+     *
      *  Functions
      *
      * */
@@ -55,10 +75,12 @@ var DataModifierChain = /** @class */ (function (_super) {
         this.modifiers.length = 0;
     };
     DataModifierChain.prototype.execute = function (table) {
-        var modifiers = this.modifiers;
+        var modifier = this, modifiers = this.modifiers;
+        fireEvent(modifier, 'execute', { table: table });
         for (var i = 0, iEnd = modifiers.length; i < iEnd; ++i) {
             table = modifiers[i].execute(table);
         }
+        fireEvent(modifier, 'afterExecute', { table: table });
         return table;
     };
     DataModifierChain.prototype.remove = function (modifier) {
@@ -68,7 +90,18 @@ var DataModifierChain = /** @class */ (function (_super) {
     DataModifierChain.prototype.reverse = function () {
         this.modifiers = this.modifiers.reverse();
     };
+    DataModifierChain.prototype.toJSON = function () {
+        var chain = this, modifiers = chain.modifiers, options = chain.options, json = {
+            $class: 'DataModifierChain',
+            modifiers: [],
+            options: options
+        };
+        for (var i = 0, iEnd = modifiers.length; i < iEnd; ++i) {
+            json.modifiers.push(modifiers[i].toJSON());
+        }
+        return json;
+    };
     return DataModifierChain;
 }(DataModifier));
-DataModifier.addModifier(DataModifierChain);
+DataJSON.addClass(DataModifierChain);
 export default DataModifierChain;

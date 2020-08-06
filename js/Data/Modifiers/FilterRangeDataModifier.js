@@ -26,7 +26,7 @@ import DataJSON from '../DataJSON.js';
 import DataModifier from './DataModifier.js';
 import DataTable from '../DataTable.js';
 import U from '../../Core/Utilities.js';
-var merge = U.merge;
+var fireEvent = U.fireEvent, merge = U.merge;
 var FilterRangeDataModifier = /** @class */ (function (_super) {
     __extends(FilterRangeDataModifier, _super);
     /* *
@@ -53,8 +53,9 @@ var FilterRangeDataModifier = /** @class */ (function (_super) {
      *
      * */
     FilterRangeDataModifier.prototype.execute = function (table) {
-        var _a = this.options, ranges = _a.ranges, strict = _a.strict, rows = table.getAllRows(), result = new DataTable();
+        var modifier = this, _a = modifier.options, ranges = _a.ranges, strict = _a.strict, rows = table.getAllRows(), result = new DataTable();
         var column, range, row;
+        fireEvent(modifier, 'execute', { table: table });
         for (var i = 0, iEnd = ranges.length; i < iEnd; ++i) {
             range = ranges[i];
             if (strict &&
@@ -84,6 +85,7 @@ var FilterRangeDataModifier = /** @class */ (function (_super) {
                 }
             }
         }
+        fireEvent(modifier, 'afterExecute', { table: result });
         return result;
     };
     FilterRangeDataModifier.prototype.toJSON = function () {

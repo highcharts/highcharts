@@ -9,7 +9,6 @@
  *  !!!!!!! SOURCE GETS TRANSPILED BY TYPESCRIPT. EDIT TS FILE ONLY. !!!!!!!
  *
  * */
-import DataJSON from '../DataJSON.js';
 import U from '../../Core/Utilities.js';
 var addEvent = U.addEvent, merge = U.merge;
 /** eslint-disable valid-jsdoc */
@@ -43,9 +42,6 @@ var DataModifier = /** @class */ (function () {
         }
         registry[name] = modifier;
         return true;
-    };
-    DataModifier.fromJSON = function (json) {
-        return new DataModifier(json.options);
     };
     DataModifier.getAllModifiers = function () {
         return merge(DataModifier.registry);
@@ -87,5 +83,4 @@ var DataModifier = /** @class */ (function () {
     DataModifier.registry = {};
     return DataModifier;
 }());
-DataJSON.addClass(DataModifier);
 export default DataModifier;
