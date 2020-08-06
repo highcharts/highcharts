@@ -23,6 +23,28 @@ var __extends = (this && this.__extends) || (function () {
         d.prototype = b === null ? Object.create(b) : (__.prototype = b.prototype, new __());
     };
 })();
+var __assign = (this && this.__assign) || function () {
+    __assign = Object.assign || function(t) {
+        for (var s, i = 1, n = arguments.length; i < n; i++) {
+            s = arguments[i];
+            for (var p in s) if (Object.prototype.hasOwnProperty.call(s, p))
+                t[p] = s[p];
+        }
+        return t;
+    };
+    return __assign.apply(this, arguments);
+};
+var __rest = (this && this.__rest) || function (s, e) {
+    var t = {};
+    for (var p in s) if (Object.prototype.hasOwnProperty.call(s, p) && e.indexOf(p) < 0)
+        t[p] = s[p];
+    if (s != null && typeof Object.getOwnPropertySymbols === "function")
+        for (var i = 0, p = Object.getOwnPropertySymbols(s); i < p.length; i++) {
+            if (e.indexOf(p[i]) < 0 && Object.prototype.propertyIsEnumerable.call(s, p[i]))
+                t[p[i]] = s[p[i]];
+        }
+    return t;
+};
 import DataStore from './DataStore.js';
 import DataTable from './DataTable.js';
 import ajaxModule from '../Extensions/Ajax.js';
@@ -45,8 +67,10 @@ var CSVDataStore = /** @class */ (function (_super) {
         if (table === void 0) { table = new DataTable(); }
         if (options === void 0) { options = {}; }
         var _this = _super.call(this, table) || this;
-        _this.options = merge(CSVDataStore.defaultOptions, options);
-        _this.dataParser = new CSVDataParser(table, _this.options);
+        var csv = options.csv, csvURL = options.csvURL, enablePolling = options.enablePolling, dataRefreshRate = options.dataRefreshRate, parserOptions = __rest(options, ["csv", "csvURL", "enablePolling", "dataRefreshRate"]);
+        _this.parserOptions = parserOptions;
+        _this.options = merge(CSVDataStore.defaultOptions, { csv: csv, csvURL: csvURL, enablePolling: enablePolling, dataRefreshRate: dataRefreshRate });
+        _this.dataParser = new CSVDataParser(table);
         _this.addEvents();
         return _this;
     }
@@ -91,7 +115,7 @@ var CSVDataStore = /** @class */ (function (_super) {
             dataType: 'text',
             success: function (csv) {
                 fireEvent(store, 'load', { csv: csv }, function () {
-                    store.dataParser.parse(csv);
+                    store.dataParser.parse(__assign({ csv: csv }, store.parserOptions));
                     store.poll();
                     fireEvent(store, 'afterLoad', { table: store.dataParser.getTable() });
                 });
@@ -108,7 +132,7 @@ var CSVDataStore = /** @class */ (function (_super) {
         var store = this, _a = store.options, csv = _a.csv, csvURL = _a.csvURL;
         if (csv) {
             fireEvent(store, 'load', { csv: csv }, function () {
-                store.dataParser.parse(csv);
+                store.dataParser.parse(__assign({ csv: csv }, store.parserOptions));
                 fireEvent(store, 'afterLoad', { table: store.dataParser.getTable() });
             });
         }

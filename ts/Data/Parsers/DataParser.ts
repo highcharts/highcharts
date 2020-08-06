@@ -32,12 +32,15 @@ class DataParser {
         const columnsLength = columns.length;
         if (columnsLength) {
             const rowsLength = columns[0].length;
-            for (let i = 0; i < rowsLength; ++i) {
+            let i = 0;
+
+            while (i < rowsLength) {
                 const row = new DataRow();
                 for (let j = 0; j < columnsLength; ++j) {
                     row.insertColumn((headers.length ? headers[j] : uniqueKey()), columns[j][i]);
                 }
                 table.insertRow(row);
+                ++i;
             }
         }
         return table;
