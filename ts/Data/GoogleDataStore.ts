@@ -106,7 +106,8 @@ class GoogleDataStore extends DataStore {
             gr,
             gc,
             cellInner,
-            i: number;
+            i: number,
+            j: number;
 
         // First, find the total number of columns and rows that
         // are actually filled with data
@@ -161,15 +162,13 @@ class GoogleDataStore extends DataStore {
         }
 
         // Insert null for empty spreadsheet cells (#5298)
-        columns.forEach(function (
-            column: Array<DataValueType>
-        ): void {
-            for (i = 0; i < column.length; i++) {
-                if (typeof column[i] === 'undefined') {
-                    column[i] = null as any;
+        for (i = 0; i < colCount; i++) {
+            for (j = 0; j < cellCount; i++) {
+                if (typeof columns[i][j] === 'undefined') {
+                    columns[i][j] = null as any;
                 }
             }
-        });
+        }
 
         return columns;
     }
@@ -212,6 +211,9 @@ class GoogleDataStore extends DataStore {
                 'public/values?alt=json'
             ].join('/');
 
+        let i: number,
+            colsCount: number;
+
         ajax({
             url: url,
             dataType: 'json',
@@ -223,9 +225,11 @@ class GoogleDataStore extends DataStore {
                     { json, enablePolling, dataRefreshRate },
                     function (): void {
                         store.parseSheet(json);
-                        store.columns.forEach(function (col): void {
-                            headers.push('' + col[0]);
-                        });
+                        colsCount = store.columns.length;
+
+                        for (i = 0; i < colsCount; i++) {
+                            headers.push('' + store.columns[i][0]);
+                        }
 
                         const table = store.dataParser.columnArrayToDataTable(store.columns, headers);
 

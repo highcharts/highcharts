@@ -26,12 +26,14 @@ var DataParser = /** @class */ (function () {
         var columnsLength = columns.length;
         if (columnsLength) {
             var rowsLength = columns[0].length;
-            for (var i = 0; i < rowsLength; ++i) {
+            var i = 0;
+            while (i < rowsLength) {
                 var row = new DataRow();
                 for (var j = 0; j < columnsLength; ++j) {
                     row.insertColumn((headers.length ? headers[j] : uniqueKey()), columns[j][i]);
                 }
                 table.insertRow(row);
+                ++i;
             }
         }
         return table;

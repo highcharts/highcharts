@@ -75,7 +75,9 @@ class CSVDataParser extends DataParser {
                 csv,
                 startRow,
                 endRow
-            } = parser.options;
+            } = parser.options,
+            i: number,
+            colsCount: number;
 
         this.columns = [];
 
@@ -115,13 +117,15 @@ class CSVDataParser extends DataParser {
                 }
             }
 
-            if (firstRowAsNames) {
-                parser.columns?.forEach(function (col, i): void {
+            if (firstRowAsNames && parser.columns) {
+                colsCount = parser.columns.length;
+
+                for (i = 0; i < colsCount; i++) {
                     if (!parser.headers) {
                         parser.headers = [];
                     }
-                    parser.headers[i] = '' + col[0];
-                });
+                    parser.headers[i] = '' + parser.columns[i][0];
+                }
             }
 
             fireEvent(parser, 'afterParse', { columns: parser.columns, headers: parser.headers });

@@ -54,7 +54,7 @@ var GoogleDataStore = /** @class */ (function (_super) {
      * */
     GoogleDataStore.prototype.getSheetColumns = function (json) {
         var store = this, _a = store.options, startColumn = _a.startColumn, endColumn = _a.endColumn, startRow = _a.startRow, endRow = _a.endRow, columns = [], cells = json.feed.entry, cellCount = (cells || []).length;
-        var cell, colCount = 0, rowCount = 0, val, gr, gc, cellInner, i;
+        var cell, colCount = 0, rowCount = 0, val, gr, gc, cellInner, i, j;
         // First, find the total number of columns and rows that
         // are actually filled with data
         for (i = 0; i < cellCount; i++) {
@@ -103,13 +103,13 @@ var GoogleDataStore = /** @class */ (function (_super) {
             }
         }
         // Insert null for empty spreadsheet cells (#5298)
-        columns.forEach(function (column) {
-            for (i = 0; i < column.length; i++) {
-                if (typeof column[i] === 'undefined') {
-                    column[i] = null;
+        for (i = 0; i < colCount; i++) {
+            for (j = 0; j < cellCount; i++) {
+                if (typeof columns[i][j] === 'undefined') {
+                    columns[i][j] = null;
                 }
             }
-        });
+        }
         return columns;
     };
     GoogleDataStore.prototype.parseSheet = function (json) {
@@ -130,15 +130,17 @@ var GoogleDataStore = /** @class */ (function (_super) {
             worksheet,
             'public/values?alt=json'
         ].join('/');
+        var i, colsCount;
         ajax({
             url: url,
             dataType: 'json',
             success: function (json) {
                 fireEvent(store, 'load', { json: json, enablePolling: enablePolling, dataRefreshRate: dataRefreshRate }, function () {
                     store.parseSheet(json);
-                    store.columns.forEach(function (col) {
-                        headers.push('' + col[0]);
-                    });
+                    colsCount = store.columns.length;
+                    for (i = 0; i < colsCount; i++) {
+                        headers.push('' + store.columns[i][0]);
+                    }
                     var table = store.dataParser.columnArrayToDataTable(store.columns, headers);
                     // Polling
                     if (enablePolling) {

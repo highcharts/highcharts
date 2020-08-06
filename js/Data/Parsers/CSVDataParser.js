@@ -46,11 +46,10 @@ var CSVDataParser = /** @class */ (function (_super) {
     CSVDataParser.prototype.parse = function (options) {
         this.options = merge(options, CSVDataParser.defaultOptions);
         var parser = this, _a = parser.options, beforeParse = _a.beforeParse, lineDelimiter = _a.lineDelimiter, firstRowAsNames = _a.firstRowAsNames, itemDelimiter = _a.itemDelimiter;
-        var lines, rowIt = 0, _b = parser.options, csv = _b.csv, startRow = _b.startRow, endRow = _b.endRow;
+        var lines, rowIt = 0, _b = parser.options, csv = _b.csv, startRow = _b.startRow, endRow = _b.endRow, i, colsCount;
         this.columns = [];
         // todo parse should have a payload
         fireEvent(parser, 'parse', {}, function () {
-            var _a;
             if (csv && beforeParse) {
                 csv = beforeParse(csv);
             }
@@ -78,13 +77,14 @@ var CSVDataParser = /** @class */ (function (_super) {
                     }
                 }
             }
-            if (firstRowAsNames) {
-                (_a = parser.columns) === null || _a === void 0 ? void 0 : _a.forEach(function (col, i) {
+            if (firstRowAsNames && parser.columns) {
+                colsCount = parser.columns.length;
+                for (i = 0; i < colsCount; i++) {
                     if (!parser.headers) {
                         parser.headers = [];
                     }
-                    parser.headers[i] = '' + col[0];
-                });
+                    parser.headers[i] = '' + parser.columns[i][0];
+                }
             }
             fireEvent(parser, 'afterParse', { columns: parser.columns, headers: parser.headers });
         });
