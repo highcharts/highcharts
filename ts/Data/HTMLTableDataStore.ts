@@ -74,7 +74,7 @@ class HTMLTableDataStore extends DataStore {
 
     public element: HTMLElement | string;
 
-    public options: HTMLTableDataStore.Options
+    public options: HTMLTableDataStore.Options;
 
     private columns?: DataValueType[][];
     private headers?: string[];
@@ -111,21 +111,32 @@ class HTMLTableDataStore extends DataStore {
                 endColumn
             } = store.options;
 
+        let rowsCount: number,
+            colsCount: number,
+            rowNo: number,
+            colNo: number,
+            item: Element;
+
         fireEvent(
             this,
             'parse',
             { table: table.innerHTML },
             function (): void {
-                [].forEach.call(table.getElementsByTagName('tr'), function (
-                    tr: HTMLTableRowElement,
-                    rowNo: number
-                ): void {
+                const rows = table.getElementsByTagName('tr');
+                rowsCount = rows.length;
+
+                rowNo = 0;
+
+                while (rowNo < rowsCount) {
                     if (rowNo >= startRow && rowNo <= endRow) {
-                        [].forEach.call(tr.children, function (
-                            item: Element,
-                            colNo: number
-                        ): void {
+
+                        const cols = rows[rowNo].children;
+                        colsCount = cols.length;
+                        colNo = 0;
+
+                        while (colNo < colsCount) {
                             const row = (columns as any)[colNo - startColumn];
+                            item = cols[colNo];
                             let i = 1;
 
                             if (
@@ -158,9 +169,13 @@ class HTMLTableDataStore extends DataStore {
                                     i++;
                                 }
                             }
-                        });
+
+                            colNo++;
+                        }
                     }
-                });
+
+                    rowNo++;
+                }
 
                 fireEvent(store, 'afterParse', { columns, headers });
             }

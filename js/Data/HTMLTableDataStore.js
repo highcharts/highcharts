@@ -72,11 +72,19 @@ var HTMLTableDataStore = /** @class */ (function (_super) {
     };
     HTMLTableDataStore.prototype.htmlToDataTable = function (table) {
         var columns = [], headers = [], store = this, _a = store.options, startRow = _a.startRow, endRow = _a.endRow, startColumn = _a.startColumn, endColumn = _a.endColumn;
+        var rowsCount, colsCount, rowNo, colNo, item;
         fireEvent(this, 'parse', { table: table.innerHTML }, function () {
-            [].forEach.call(table.getElementsByTagName('tr'), function (tr, rowNo) {
+            var rows = table.getElementsByTagName('tr');
+            rowsCount = rows.length;
+            rowNo = 0;
+            while (rowNo < rowsCount) {
                 if (rowNo >= startRow && rowNo <= endRow) {
-                    [].forEach.call(tr.children, function (item, colNo) {
+                    var cols = rows[rowNo].children;
+                    colsCount = cols.length;
+                    colNo = 0;
+                    while (colNo < colsCount) {
                         var row = columns[colNo - startColumn];
+                        item = cols[colNo];
                         var i = 1;
                         if ((item.tagName === 'TD' ||
                             item.tagName === 'TH') &&
@@ -97,9 +105,11 @@ var HTMLTableDataStore = /** @class */ (function (_super) {
                                 i++;
                             }
                         }
-                    });
+                        colNo++;
+                    }
                 }
-            });
+                rowNo++;
+            }
             fireEvent(store, 'afterParse', { columns: columns, headers: headers });
         });
     };
