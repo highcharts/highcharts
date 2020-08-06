@@ -16,8 +16,8 @@
  *
  * */
 
+import type DataJSON from '../DataJSON';
 import type DataTable from '../DataTable';
-import DataJSON from '../DataJSON.js';
 import U from '../../Core/Utilities.js';
 const {
     addEvent,
@@ -32,7 +32,7 @@ const {
  *
  * */
 
-class DataModifier implements DataJSON.Class {
+class DataModifier {
 
     /* *
      *
@@ -64,10 +64,6 @@ class DataModifier implements DataJSON.Class {
         registry[name] = modifier;
 
         return true;
-    }
-
-    public static fromJSON(json: DataModifier.ClassJSON): DataModifier {
-        return new DataModifier(json.options);
     }
 
     public static getAllModifiers(): Record<string, typeof DataModifier> {
@@ -161,6 +157,7 @@ namespace DataModifier {
     }
 
     export interface EventObject {
+        readonly table: DataTable;
         readonly type: EventNames;
     }
 
@@ -169,7 +166,5 @@ namespace DataModifier {
     }
 
 }
-
-DataJSON.addClass(DataModifier);
 
 export default DataModifier;

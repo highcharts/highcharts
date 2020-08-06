@@ -96,24 +96,23 @@ class DataTable implements DataJSON.Class {
      * */
 
     public clear(): void {
-        const table = this;
-        const row = table.getRow(0);
-        const index = 0;
-        fireEvent(
-            table,
-            'clearTable',
-            { index, row },
-            function (): void {
-                const rowIds = table.getRowIds();
-                for (let i = 0, iEnd = rowIds.length; i < iEnd; ++i) {
-                    table.unwatchRow(rowIds[i], true);
-                }
-                table.rows.length = 0;
-                table.rowsIdMap = {};
-                table.watchsIdMap = {};
-                fireEvent(table, 'afterClearTable', { index, row });
-            }
-        );
+        const table = this,
+            row = table.getRow(0),
+            index = 0;
+
+        fireEvent(table, 'clearTable', { index, row });
+
+        const rowIds = table.getRowIds();
+
+        for (let i = 0, iEnd = rowIds.length; i < iEnd; ++i) {
+            table.unwatchRow(rowIds[i], true);
+        }
+
+        table.rows.length = 0;
+        table.rowsIdMap = {};
+        table.watchsIdMap = {};
+
+        fireEvent(table, 'afterClearTable', { index, row });
     }
 
     public deleteRow(id: string): (DataRow|undefined) {
@@ -121,23 +120,16 @@ class DataTable implements DataJSON.Class {
         const row = table.rowsIdMap[id];
         const index = table.rows.indexOf(row);
 
-        let result: (DataRow|undefined);
+        fireEvent(table, 'deleteRow', { index, row });
 
-        fireEvent(
-            table,
-            'deleteRow',
-            { index, row },
-            function (): void {
-                const rowId = row.id;
-                table.rows[index] = row;
-                delete table.rowsIdMap[rowId];
-                table.unwatchRow(rowId);
-                result = row;
-                fireEvent(table, 'afterDeleteRow', { index, row });
-            }
-        );
+        const rowId = row.id;
+        table.rows[index] = row;
+        delete table.rowsIdMap[rowId];
+        table.unwatchRow(rowId);
 
-        return result;
+        fireEvent(table, 'afterDeleteRow', { index, row });
+
+        return row;
     }
 
     public getAllRows(): Array<DataRow> {
@@ -174,26 +166,19 @@ class DataTable implements DataJSON.Class {
         const rowId = row.id;
         const index = table.rows.length;
 
-        let succeeded = false;
-
         if (typeof table.rowsIdMap[rowId] !== 'undefined') {
-            return succeeded;
+            return false;
         }
 
-        fireEvent(
-            table,
-            'insertRow',
-            { index, row },
-            function (): void {
-                table.rows.push(row);
-                table.rowsIdMap[rowId] = row;
-                table.watchRow(row);
-                succeeded = true;
-                fireEvent(table, 'afterInsertRow', { index, row });
-            }
-        );
+        fireEvent(table, 'insertRow', { index, row });
 
-        return succeeded;
+        table.rows.push(row);
+        table.rowsIdMap[rowId] = row;
+        table.watchRow(row);
+
+        fireEvent(table, 'afterInsertRow', { index, row });
+
+        return true;
     }
 
     public on(
