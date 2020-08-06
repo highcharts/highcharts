@@ -25,7 +25,7 @@ const { fireEvent, merge, addEvent } = U;
  * @private
  */
 
-class CSVDataParser extends DataParser implements DataParser {
+class CSVDataParser extends DataParser {
     /*
      * Default options
      */
@@ -40,12 +40,11 @@ class CSVDataParser extends DataParser implements DataParser {
     };
 
     public constructor(
-        table: DataTable = new DataTable(),
-        options: Partial<CSVDataStore.optionsType>
+        table: DataTable = new DataTable()
     ) {
         super();
-        this.options = merge(options, CSVDataParser.defaultOptions);
         this.table = table;
+        this.options = CSVDataParser.defaultOptions;
         addEvent(this, 'afterParse', (e: DataStore.ParseEventObject): void => {
             this.columns = e.columns;
             this.headers = e.headers;
@@ -55,13 +54,14 @@ class CSVDataParser extends DataParser implements DataParser {
     private table: DataTable;
     private columns?: DataValueType[][];
     private headers?: string[];
-    private options: CSVDataParser.Options;
     private guessedItemDelimiter?: string;
     private guessedDecimalPoint?: string;
     private decimalRegex?: RegExp;
+    private options: CSVDataParser.Options;
 
 
-    public parse(csv: string): void {
+    public parse(options: Partial<CSVDataParser.Options>): void {
+        this.options = merge(options, CSVDataParser.defaultOptions);
         const parser = this,
             {
                 beforeParse,
@@ -72,6 +72,7 @@ class CSVDataParser extends DataParser implements DataParser {
         let lines,
             rowIt = 0,
             {
+                csv,
                 startRow,
                 endRow
             } = parser.options;
@@ -352,6 +353,7 @@ class CSVDataParser extends DataParser implements DataParser {
 
 namespace CSVDataParser {
     export interface Options {
+        csv?: string;
         decimalPoint: string;
         itemDelimiter?: string;
         lineDelimiter: string;

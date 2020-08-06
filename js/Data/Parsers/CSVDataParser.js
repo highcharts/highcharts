@@ -32,20 +32,21 @@ var fireEvent = U.fireEvent, merge = U.merge, addEvent = U.addEvent;
  */
 var CSVDataParser = /** @class */ (function (_super) {
     __extends(CSVDataParser, _super);
-    function CSVDataParser(table, options) {
+    function CSVDataParser(table) {
         if (table === void 0) { table = new DataTable(); }
         var _this = _super.call(this) || this;
-        _this.options = merge(options, CSVDataParser.defaultOptions);
         _this.table = table;
+        _this.options = CSVDataParser.defaultOptions;
         addEvent(_this, 'afterParse', function (e) {
             _this.columns = e.columns;
             _this.headers = e.headers;
         });
         return _this;
     }
-    CSVDataParser.prototype.parse = function (csv) {
+    CSVDataParser.prototype.parse = function (options) {
+        this.options = merge(options, CSVDataParser.defaultOptions);
         var parser = this, _a = parser.options, beforeParse = _a.beforeParse, lineDelimiter = _a.lineDelimiter, firstRowAsNames = _a.firstRowAsNames, itemDelimiter = _a.itemDelimiter;
-        var lines, rowIt = 0, _b = parser.options, startRow = _b.startRow, endRow = _b.endRow;
+        var lines, rowIt = 0, _b = parser.options, csv = _b.csv, startRow = _b.startRow, endRow = _b.endRow;
         this.columns = [];
         // todo parse should have a payload
         fireEvent(parser, 'parse', {}, function () {

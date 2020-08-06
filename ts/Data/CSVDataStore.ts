@@ -48,12 +48,15 @@ class CSVDataStore extends DataStore {
 
     public constructor(
         table: DataTable = new DataTable(),
-        options: Partial<CSVDataStore.Options> = {}
+        options: Partial<CSVDataStore.Options & CSVDataParser.Options> = {}
     ) {
         super(table);
 
-        this.options = merge(CSVDataStore.defaultOptions, options);
-        this.dataParser = new CSVDataParser(table, this.options);
+        const { csv, csvURL, enablePolling, dataRefreshRate, ...parserOptions } = options;
+
+        this.parserOptions = parserOptions;
+        this.options = merge(CSVDataStore.defaultOptions, { csv, csvURL, enablePolling, dataRefreshRate });
+        this.dataParser = new CSVDataParser(table);
         this.addEvents();
     }
 
@@ -64,6 +67,7 @@ class CSVDataStore extends DataStore {
     *
     * */
     public options: CSVDataStore.Options;
+    public parserOptions: Partial<CSVDataParser.Options>;
 
     private dataParser: CSVDataParser;
     private liveDataURL?: string;
@@ -115,7 +119,10 @@ class CSVDataStore extends DataStore {
             dataType: 'text',
             success: function (csv: string): void {
                 fireEvent(store, 'load', { csv }, function (): void {
-                    store.dataParser.parse(csv);
+                    store.dataParser.parse({
+                        csv,
+                        ...store.parserOptions
+                    });
                     store.poll();
                     fireEvent(store, 'afterLoad', { table: store.dataParser.getTable() });
                 });
@@ -134,7 +141,10 @@ class CSVDataStore extends DataStore {
             { csv, csvURL } = store.options;
         if (csv) {
             fireEvent(store, 'load', { csv }, function (): void {
-                store.dataParser.parse(csv);
+                store.dataParser.parse({
+                    csv,
+                    ...store.parserOptions
+                });
                 fireEvent(store, 'afterLoad', { table: store.dataParser.getTable() });
             });
         } else if (csvURL) {
@@ -149,8 +159,8 @@ class CSVDataStore extends DataStore {
 
 namespace CSVDataStore {
     export interface Options {
-        csv?: string;
-        csvURL?: string;
+        csv: string;
+        csvURL: string;
         enablePolling: boolean;
         dataRefreshRate: number;
     }
