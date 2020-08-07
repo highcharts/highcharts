@@ -1,6 +1,6 @@
 /* *
  *
- *  Data module
+ *  Data Layer
  *
  *  (c) 2012-2020 Torstein Honsi
  *
@@ -10,11 +10,28 @@
  *
  * */
 
+/* *
+ *
+ *  Imports
+ *
+ * */
+
 import U from '../Core/Utilities.js';
 const {
     merge
 } = U;
 
+/* *
+ *
+ *  Class
+ *
+ * */
+
+/**
+ * Static class to manage JSON-based conversion of registered classes. It
+ * provides static methods to register classes, that can convert their instance
+ * to JSON and can create instances from JSON.
+ */
 class DataJSON {
 
     /* *
@@ -23,8 +40,16 @@ class DataJSON {
      *
      * */
 
+    /**
+     * Regular expression to extract the class name (group 1) from the
+     * stringified class type.
+     */
     private static readonly nameRegExp = /^function\s+(\w*?)\s*\(/;
-    private static readonly registry: Record<string, DataJSON.ClassType> = {};
+
+    /**
+     * Registry as a record object with class names and their class types.
+     */
+    private static readonly registry: DataJSON.ClassRegistry = {};
 
     /* *
      *
@@ -32,6 +57,18 @@ class DataJSON {
      *
      * */
 
+    /**
+     * Adds a class type to the registry. The class has to provide two methods
+     * to convert JSON to a class instance (`public static fromJSON`) and to
+     * convert a class instance to JSON (`public toJSON`).
+     *
+     * @param {DataJSON.ClassType} classType
+     * Class type (aka class constructor) to register.
+     *
+     * @return {boolean}
+     * Returns true, if the registration was successful. False is returned, if
+     * their is already a class type registered with this name.
+     */
     public static addClass(classType: DataJSON.ClassType): boolean {
 
         const className = DataJSON.getName(classType),
@@ -46,6 +83,16 @@ class DataJSON {
         return true;
     }
 
+    /**
+     * Converts JSON to the matching class type and returns an instance.
+     *
+     * @param {DataJSON.ClassJSON} json
+     * Class JSON to convert to a class instance.
+     *
+     * @return {DataJSON.Class|undefined}
+     * Returns a class instance of the JSON, if the matching class type was
+     * found, otherwise `undefined`.
+     */
     public static fromJSON(json: DataJSON.ClassJSON): (DataJSON.Class|undefined) {
 
         const classType = DataJSON.registry[json.$class];
@@ -57,18 +104,49 @@ class DataJSON {
         return classType.fromJSON(json);
     }
 
+    /**
+     * Returns all registered class names.
+     *
+     * @return {Array<string>}
+     * All registered class names.
+     */
     public static getAllClassNames(): Array<string> {
         return Object.keys(DataJSON.registry);
     }
 
-    public static getAllClassTypes(): Record<string, DataJSON.ClassType> {
+    /**
+     * Returns a copy of the class registry as record object with class names
+     * and their class types.
+     *
+     * @return {DataJSON.ClassRegistry}
+     */
+    public static getAllClassTypes(): DataJSON.ClassRegistry {
         return merge(DataJSON.registry);
     }
 
+    /**
+     * Returns a class type (aka class constructor) of the given class name.
+     *
+     * @param {string} className
+     * Registered class name of the class type.
+     *
+     * @return {DataJSON.ClassType|undefined}
+     * Returns a class type, if the class name was found, otherwise `undefined`.
+     */
     public static getClass(className: string): (DataJSON.ClassType|undefined) {
         return DataJSON.registry[className];
     }
 
+    /**
+     * Extracts the class name from a given class type.
+     *
+     * @param {DataJSON.ClassType} classType
+     * Class type to extract the name from.
+     *
+     * @return {string}
+     * Returns the class name, if the extraction was successful, otherwise an
+     * empty string.
+     */
     private static getName(classType: DataJSON.ClassType): string {
         return (
             classType.toString().match(DataJSON.nameRegExp) ||
@@ -82,37 +160,99 @@ class DataJSON {
      *
      * */
 
+    /**
+     * Private constructor to make the class static without instances.
+     */
     private constructor() {
         // prevents instantiation, therefor static only
     }
 
 }
 
+/**
+ * Additionally provided types for JSON-compatible types, and
+ * registry-compatible classes.
+ */
 namespace DataJSON {
 
+    /**
+     * All primitive types, that are supported in JSON.
+     */
     export type Primitives = (boolean|number|string|null|undefined);
 
+    /**
+     * All object types, that are supported in JSON.
+     */
     // eslint-disable-next-line @typescript-eslint/ban-types
-    export type Types = (Object|Array);
+    export type Types = (Array|Object|Primitives);
 
+    /**
+     * Type structor of arrays as it is supported in JSON.
+     */
     export interface Array extends globalThis.Array<(Primitives|Types)> {
         [index: number]: (Primitives|Types);
     }
 
+    /**
+     * Describes the instance of a class type, that is compatible to the class
+     * registry.
+     */
     export interface Class {
+        /**
+         * Converts the class instance to a class JSON.
+         *
+         * @return {DataJSON.ClassJSON}
+         * Class JSON of this class instance.
+         */
         toJSON(): DataJSON.ClassJSON;
     }
 
+    /**
+     * Interface of the class JSON to convert to class instances.
+     */
     export interface ClassJSON extends Object {
+        /**
+         * Regsitered name of the class.
+         */
         $class: string;
     }
 
-    export interface ClassType {
-        constructor: Function;
-        prototype: Class;
-        fromJSON(json: DataJSON.Object): (Class|undefined);
+    /**
+     * Describes the class registry as a record object with class name and their
+     * class types (aka class constructor).
+     */
+    export interface ClassRegistry extends Record<string, DataJSON.ClassType> {
+        // nothing here yet
     }
 
+    /**
+     * Describes structure of a class type, that is compatible to the class
+     * registry.
+     */
+    export interface ClassType {
+        /**
+         * Constructor function.
+         */
+        constructor: Function;
+        /**
+         * Structure of the constructor instance.
+         */
+        prototype: Class;
+        /**
+         * Converts a supported class JSON to a class instance.
+         *
+         * @param {DataJSON.ClassJSON} json
+         * Class JSON to convert to a class instance.
+         *
+         * @return {DataJSON.Class}
+         * Class JSON from the class JSON.
+         */
+        fromJSON(json: DataJSON.ClassJSON): (Class|undefined);
+    }
+
+    /**
+     * Type structure of a record object as it is supported in JSON.
+     */
     export interface Object {
         [key: string]: (Primitives|Types);
     }

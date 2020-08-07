@@ -1,6 +1,6 @@
 /* *
  *
- *  Data module
+ *  Data Layer
  *
  *  (c) 2012-2020 Torstein Honsi
  *
@@ -10,9 +10,14 @@
  *
  * */
 
-'use strict';
+/* *
+ *
+ *  Imports
+ *
+ * */
 
 import type DataEventEmitter from './DataEventEmitter';
+import DataConverter from './DataConverter.js';
 import DataJSON from './DataJSON.js';
 import DataRow from './DataRow.js';
 import U from '../Core/Utilities.js';
@@ -22,10 +27,14 @@ const {
     uniqueKey
 } = U;
 
-/** eslint-disable valid-jsdoc */
+/* *
+ *
+ *  Class
+ *
+ * */
 
 /**
- * @private
+ * Class to manage rows in a table structure.
  */
 class DataTable implements DataEventEmitter<DataTable.EventTypes>, DataJSON.Class {
 
@@ -35,6 +44,15 @@ class DataTable implements DataEventEmitter<DataTable.EventTypes>, DataJSON.Clas
      *
      * */
 
+    /**
+     * Converts a supported class JSON to a DataTable instance.
+     *
+     * @param {DataRow.ClassJSON} json
+     * Class JSON (usually with a $class property) to convert.
+     *
+     * @return {DataTable}
+     * DataTable instance from the class JSON.
+     */
     public static fromJSON(json: DataTable.ClassJSON): DataTable {
         const rows = json.rows,
             dataRows: Array<DataRow> = [];
@@ -51,17 +69,30 @@ class DataTable implements DataEventEmitter<DataTable.EventTypes>, DataJSON.Clas
 
     /* *
      *
-     *  Constructors
+     *  Constructor
      *
      * */
 
-    public constructor(rows: Array<DataRow> = []) {
+    /**
+     * Constructs an instance of the DataRow class.
+     *
+     * @param {Array<DataRow>} [rows]
+     * Array of table rows as DataRow instances.
+     *
+     * @param {DataConverter} [converter]
+     * Converter for value conversions in table rows.
+     */
+    public constructor(
+        rows: Array<DataRow> = [],
+        converter: DataConverter = new DataConverter()
+    ) {
         const rowsIdMap: Record<string, DataRow> = {};
 
         let row: DataRow;
 
         rows = rows.slice();
 
+        this.converter = converter;
         this.id = uniqueKey();
         this.rows = rows;
         this.rowsIdMap = rowsIdMap;
@@ -69,6 +100,7 @@ class DataTable implements DataEventEmitter<DataTable.EventTypes>, DataJSON.Clas
 
         for (let i = 0, iEnd = rows.length; i < iEnd; ++i) {
             row = rows[i];
+            row.converter = converter;
             rowsIdMap[row.id] = row;
             this.watchRow(row);
         }
@@ -80,14 +112,38 @@ class DataTable implements DataEventEmitter<DataTable.EventTypes>, DataJSON.Clas
      *
      * */
 
-    public readonly id: string;
+    /**
+     * Converter for value conversions in table rows.
+     */
+    public readonly converter: DataConverter;
 
+    /**
+     * ID of the table. As an inner table the ID links to the column ID in the
+     * outer table.
+     */
+    public id: string;
+
+    /**
+     * Array of all rows in the table.
+     */
     private rows: Array<DataRow>;
 
+    /**
+     * Registry as record object with row IDs and their DataRow instance.
+     */
     private rowsIdMap: Record<string, DataRow>;
 
-    private versionId?: string;
+    /**
+     * Internal version tag that changes with each modification of the table or
+     * a related row.
+     */
+    private versionTag?: string;
 
+    /**
+     * Registry of record objects with row ID and an array of unregister
+     * functions of DataRow-related callbacks. These callbacks are used to keep
+     * the version tag changing in case of row modifications.
+     */
     private watchsIdMap: Record<string, Array<Function>>;
 
     /* *
@@ -96,11 +152,17 @@ class DataTable implements DataEventEmitter<DataTable.EventTypes>, DataJSON.Clas
      *
      * */
 
+    /**
+     * Removes all rows from this table.
+     *
+     * @emits DataTable#clearTable
+     * @emits DataTable#afterClearTable
+     */
     public clear(): void {
 
         this.emit('clearTable', { });
 
-        const rowIds = this.getRowIds();
+        const rowIds = this.getAllRowIds();
 
         for (let i = 0, iEnd = rowIds.length; i < iEnd; ++i) {
             this.unwatchRow(rowIds[i], true);
@@ -113,9 +175,20 @@ class DataTable implements DataEventEmitter<DataTable.EventTypes>, DataJSON.Clas
         this.emit('afterClearTable', { });
     }
 
-    public deleteRow(id: string): (DataRow|undefined) {
-        const row = this.rowsIdMap[id],
-            rowId = row.id,
+    /**
+     * Deletes a row in this table.
+     *
+     * @param {string} rowId
+     * Name of the row to delete.
+     *
+     * @return {boolean}
+     * Returns true, if the delete was successful, otherwise false.
+     *
+     * @emits DataTable#deleteRow
+     * @emits DataTable#afterDeleteRow
+     */
+    public deleteRow(rowId: string): (DataRow|undefined) {
+        const row = this.rowsIdMap[rowId],
             index = this.rows.indexOf(row);
 
         this.emit('deleteRow', { index, row });
@@ -129,41 +202,92 @@ class DataTable implements DataEventEmitter<DataTable.EventTypes>, DataJSON.Clas
         return row;
     }
 
-    public emit(type: DataTable.EventTypes, e: DataTable.EventObjects): void {
+    /**
+     * Emits an event on this row to all registered callbacks of the given
+     * event.
+     *
+     * @param {DataTable.EventTypes} type
+     * Event type as a string.
+     *
+     * @param {DataTable.EventObjects} [e]
+     * Event object with additional event information.
+     */
+    public emit(type: DataTable.EventTypes, e?: DataTable.EventObjects): void {
         fireEvent(this, type, e);
     }
 
+    /**
+     * Return the array of row IDs of this table.
+     *
+     * @return {Array<string>}
+     * Array of row IDs in this table.
+     */
+    public getAllRowIds(): Array<string> {
+        return Object.keys(this.rowsIdMap);
+    }
+
+    /**
+     * Returns a copy of the internal array with rows.
+     *
+     * @return {Array<DataRow>}
+     * Copy of the internal array with rows.
+     */
     public getAllRows(): Array<DataRow> {
         return this.rows.slice();
     }
 
-    public getRow(indexOrID: (number|string)): (DataRow|undefined) {
+    /**
+     * Returns the row with the fiven index or row ID.
+     *
+     * @param {number|string} row
+     * Row index or row ID.
+     *
+     * @return {DataRow.ColumnTypes}
+     * Column value of the column in this row.
+     */
+    public getRow(row: (number|string)): (DataRow|undefined) {
 
-        if (typeof indexOrID === 'string') {
-            return this.rowsIdMap[indexOrID];
+        if (typeof row === 'string') {
+            return this.rowsIdMap[row];
         }
 
-        return this.rows[indexOrID];
+        return this.rows[row];
     }
 
     /**
-     * @todo Consider implementation via property getter `.length` depending on
-     *       browser support.
+     * Returns the number of rows in this table.
+     *
      * @return {number}
      * Number of rows in this table.
+     *
+     * @todo Consider implementation via property getter `.length` depending on
+     *       browser support.
      */
     public getRowCount(): number {
         return this.rows.length;
     }
 
-    public getRowIds(): Array<string> {
-        return Object.keys(this.rowsIdMap);
+    /**
+     * Returns the version tag that changes with each modification of the table
+     * or a related row.
+     *
+     * @return {string}
+     * Version tag of the current state.
+     */
+    public getVersionTag(): string {
+        return this.versionTag || (this.versionTag = uniqueKey());
     }
 
-    public getVersionId(): string {
-        return this.versionId || (this.versionId = uniqueKey());
-    }
-
+    /**
+     * Adds a row to this table.
+     *
+     * @param {DataRow} row
+     * Row to add to this table.
+     *
+     * @return {boolean}
+     * Returns true, if the row has been added to the table. Returns false, if
+     * a row with the same row ID already exists in the table.
+     */
     public insertRow(row: DataRow): boolean {
         const rowId = row.id;
         const index = this.rows.length;
@@ -183,13 +307,31 @@ class DataTable implements DataEventEmitter<DataTable.EventTypes>, DataJSON.Clas
         return true;
     }
 
+    /**
+     * Registers a callback for a specific event.
+     *
+     * @param {DataRow.EventTypes} type
+     * Event type as a string.
+     *
+     * @param {DataRow.EventCallbacks} callback
+     * Function to register for an event callback.
+     *
+     * @return {Function}
+     * Function to unregister callback from the event.
+     */
     public on(
-        event: DataTable.EventTypes,
+        type: DataTable.EventTypes,
         callback: DataTable.EventCallbacks<this>
     ): Function {
-        return addEvent(this, event, callback);
+        return addEvent(this, type, callback);
     }
 
+    /**
+     * Watchs for events in a row to keep the version tag of the table updated.
+     *
+     * @param {DataRow} row
+     * Row the watch for modifications.
+     */
     private watchRow(row: DataRow): void {
         const table = this,
             index = table.rows.indexOf(row),
@@ -198,7 +340,7 @@ class DataTable implements DataEventEmitter<DataTable.EventTypes>, DataJSON.Clas
 
         /** @private */
         function callback(): void {
-            table.versionId = uniqueKey();
+            table.versionTag = uniqueKey();
             fireEvent(table, 'afterUpdateRow', { index, row });
         }
 
@@ -210,6 +352,12 @@ class DataTable implements DataEventEmitter<DataTable.EventTypes>, DataJSON.Clas
         watchsIdMap[row.id] = watchs;
     }
 
+    /**
+     * Converts the table to a class JSON.
+     *
+     * @return {DataJSON.ClassJSON}
+     * Class JSON of this table.
+     */
     public toJSON(): DataTable.ClassJSON {
         const json: DataTable.ClassJSON = {
             $class: 'DataTable',
@@ -224,10 +372,17 @@ class DataTable implements DataEventEmitter<DataTable.EventTypes>, DataJSON.Clas
         return json;
     }
 
-    public toString(): string {
-        return JSON.stringify(this.rows);
-    }
-
+    /**
+     * Removes the watch callbacks from in a row, so that version tag of the
+     * table get not updated anymore, if the row is modified.
+     *
+     * @param {string} rowId
+     * ID of the row to unwatch.
+     *
+     * @param {boolean} [skipDelete]
+     * True, to skip the deletion of the unregister functions. Usefull when
+     * modifying multiple rows in a batch.
+     */
     private unwatchRow(rowId: string, skipDelete?: boolean): void {
         const watchsIdMap = this.watchsIdMap;
         const watchs = watchsIdMap[rowId] || [];
@@ -243,46 +398,98 @@ class DataTable implements DataEventEmitter<DataTable.EventTypes>, DataJSON.Clas
 
 }
 
+/* *
+ *
+ *  Namespace
+ *
+ * */
+
+/**
+ * Additionally provided types for events and JSON conversion.
+ */
 namespace DataTable {
 
+    /**
+     * All callback structures of DataTable events.
+     */
     export type EventCallbacks<TThis> = (RowEventCallback<TThis>|TableEventCallback<TThis>);
 
+    /**
+     * All information objects of DataTable events.
+     */
     export type EventObjects = (RowEventObject|TableEventObject);
 
+    /**
+     * All types of DataTable events.
+     */
     export type EventTypes = (RowEventTypes|TableEventTypes);
 
+    /**
+     * Event types related to a row in a table.
+     */
     export type RowEventTypes = (
         'deleteRow'|'afterDeleteRow'|
         'insertRow'|'afterInsertRow'|
         'afterUpdateRow'
     );
 
+    /**
+     * Event types related to the table itself.
+     */
     export type TableEventTypes = (
         'clearTable'|'afterClearTable'
     );
 
+    /**
+     * Describes the class JSON of a DataTable.
+     */
     export interface ClassJSON extends DataJSON.ClassJSON {
         rows: Array<DataRow.ClassJSON>;
     }
 
+    /**
+     * Describes the callback for row-related events.
+     */
     export interface RowEventCallback<TThis> extends DataEventEmitter.EventCallback<TThis, RowEventTypes> {
         (this: TThis, e: RowEventObject): void;
     }
 
+    /**
+     * Describes the information object for row-related events.
+     */
     export interface RowEventObject extends DataEventEmitter.EventObject<RowEventTypes> {
         readonly index: number;
         readonly row: DataRow;
     }
 
+    /**
+     * Describes the callback for table-related events.
+     */
     export interface TableEventCallback<TThis> extends DataEventEmitter.EventCallback<TThis, TableEventTypes> {
         (this: TThis, e: TableEventObject): void;
     }
 
+    /**
+     * Describes the information object for table-related events.
+     */
     export interface TableEventObject extends DataEventEmitter.EventObject<TableEventTypes> {
+        // nothing here yet
     }
 
 }
 
+/* *
+ *
+ *  Register
+ *
+ * */
+
 DataJSON.addClass(DataTable);
+
+/* *
+ *
+ *  Export
+ *
+ * */
 
 export default DataTable;

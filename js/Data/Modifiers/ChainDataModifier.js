@@ -1,6 +1,6 @@
 /* *
  *
- *  Data module
+ *  Data Layer
  *
  *  (c) 2012-2020 Torstein Honsi
  *

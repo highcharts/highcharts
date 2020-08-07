@@ -1,6 +1,6 @@
 /* *
  *
- *  Data module
+ *  Data Layer
  *
  *  (c) 2012-2020 Torstein Honsi
  *
@@ -110,7 +110,7 @@ abstract class DataModifier implements DataEventEmitter<DataModifier.EventTypes>
 
     public emit(
         type: DataModifier.EventTypes,
-        e: DataModifier.EventObject
+        e?: DataModifier.EventObject
     ): void {
         fireEvent(this, type, e);
     }

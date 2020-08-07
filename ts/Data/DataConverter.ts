@@ -1,6 +1,6 @@
 /* *
  *
- *  Data module
+ *  Data Layer
  *
  *  (c) 2012-2020 Torstein Honsi
  *
@@ -10,10 +10,24 @@
  *
  * */
 
+/* *
+ *
+ *  Imports
+ *
+ * */
+
+import DataRow from './DataRow.js';
 import DataTable from './DataTable.js';
 
-/** eslint-disable valid-jsdoc */
+/* *
+ *
+ *  Class
+ *
+ * */
 
+/**
+ * Class to convert between common value types.
+ */
 class DataConverter {
 
     /* *
@@ -22,6 +36,15 @@ class DataConverter {
      *
      * */
 
+    /**
+     * Converts a value to a boolean.
+     *
+     * @param {DataConverter.Types} value
+     * Value to convert.
+     *
+     * @return {boolean}
+     * Converted value as a boolean.
+     */
     public asBoolean(value: DataConverter.Types): boolean {
         if (typeof value === 'boolean') {
             return value;
@@ -32,6 +55,15 @@ class DataConverter {
         return this.asNumber(value) !== 0;
     }
 
+    /**
+     * Converts a value to a DataTable.
+     *
+     * @param {DataConverter.Types} value
+     * Value to convert.
+     *
+     * @return {DataTable}
+     * Converted value as a DataTable.
+     */
     public asDataTable(value: DataConverter.Types): DataTable {
         if (value instanceof DataTable) {
             return value;
@@ -43,9 +75,18 @@ class DataConverter {
                 return new DataTable();
             }
         }
-        return new DataTable();
+        return new DataTable([new DataRow({ value })]);
     }
 
+    /**
+     * Converts a value to a Date.
+     *
+     * @param {DataConverter.Types} value
+     * Value to convert.
+     *
+     * @return {globalThis.Date}
+     * Converted value as a Date.
+     */
     public asDate(value: DataConverter.Types): Date {
         if (typeof value === 'string') {
             return new Date(value);
@@ -53,6 +94,15 @@ class DataConverter {
         return new Date(this.asNumber(value));
     }
 
+    /**
+     * Converts a value to a number.
+     *
+     * @param {DataConverter.Types} value
+     * Value to convert.
+     *
+     * @return {number}
+     * Converted value as a number.
+     */
     public asNumber(value: DataConverter.Types): number {
         if (typeof value === 'number') {
             return value;
@@ -72,14 +122,42 @@ class DataConverter {
         return 0;
     }
 
+    /**
+     * Converts a value to a string.
+     *
+     * @param {DataConverter.Types} value
+     * Value to convert.
+     *
+     * @return {string}
+     * Converted value as a string.
+     */
     public asString(value: DataConverter.Types): string {
         return `${value}`;
     }
 
 }
 
+/* *
+ *
+ *  Namespace
+ *
+ * */
+
+/**
+ * Additionally provided types to describe supported value types.
+ */
 namespace DataConverter {
+
+    /**
+     * Contains supported types to convert values from and to.
+     */
     export type Types = (boolean|null|number|string|Date|DataTable|undefined);
 }
+
+/* *
+ *
+ *  Export
+ *
+ * */
 
 export default DataConverter;

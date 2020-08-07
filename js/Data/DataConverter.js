@@ -1,6 +1,6 @@
 /* *
  *
- *  Data module
+ *  Data Layer
  *
  *  (c) 2012-2020 Torstein Honsi
  *
@@ -9,8 +9,21 @@
  *  !!!!!!! SOURCE GETS TRANSPILED BY TYPESCRIPT. EDIT TS FILE ONLY. !!!!!!!
  *
  * */
+/* *
+ *
+ *  Imports
+ *
+ * */
+import DataRow from './DataRow.js';
 import DataTable from './DataTable.js';
-/** eslint-disable valid-jsdoc */
+/* *
+ *
+ *  Class
+ *
+ * */
+/**
+ * Class to convert between common value types.
+ */
 var DataConverter = /** @class */ (function () {
     function DataConverter() {
     }
@@ -19,6 +32,15 @@ var DataConverter = /** @class */ (function () {
      *  Functions
      *
      * */
+    /**
+     * Converts a value to a boolean.
+     *
+     * @param {DataConverter.Types} value
+     * Value to convert.
+     *
+     * @return {boolean}
+     * Converted value as a boolean.
+     */
     DataConverter.prototype.asBoolean = function (value) {
         if (typeof value === 'boolean') {
             return value;
@@ -28,6 +50,15 @@ var DataConverter = /** @class */ (function () {
         }
         return this.asNumber(value) !== 0;
     };
+    /**
+     * Converts a value to a DataTable.
+     *
+     * @param {DataConverter.Types} value
+     * Value to convert.
+     *
+     * @return {DataTable}
+     * Converted value as a DataTable.
+     */
     DataConverter.prototype.asDataTable = function (value) {
         if (value instanceof DataTable) {
             return value;
@@ -40,14 +71,32 @@ var DataConverter = /** @class */ (function () {
                 return new DataTable();
             }
         }
-        return new DataTable();
+        return new DataTable([new DataRow({ value: value })]);
     };
+    /**
+     * Converts a value to a Date.
+     *
+     * @param {DataConverter.Types} value
+     * Value to convert.
+     *
+     * @return {globalThis.Date}
+     * Converted value as a Date.
+     */
     DataConverter.prototype.asDate = function (value) {
         if (typeof value === 'string') {
             return new Date(value);
         }
         return new Date(this.asNumber(value));
     };
+    /**
+     * Converts a value to a number.
+     *
+     * @param {DataConverter.Types} value
+     * Value to convert.
+     *
+     * @return {number}
+     * Converted value as a number.
+     */
     DataConverter.prototype.asNumber = function (value) {
         if (typeof value === 'number') {
             return value;
@@ -66,9 +115,23 @@ var DataConverter = /** @class */ (function () {
         }
         return 0;
     };
+    /**
+     * Converts a value to a string.
+     *
+     * @param {DataConverter.Types} value
+     * Value to convert.
+     *
+     * @return {string}
+     * Converted value as a string.
+     */
     DataConverter.prototype.asString = function (value) {
         return "" + value;
     };
     return DataConverter;
 }());
+/* *
+ *
+ *  Export
+ *
+ * */
 export default DataConverter;

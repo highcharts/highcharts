@@ -1,6 +1,6 @@
 /* *
  *
- *  Data module
+ *  Data Layer
  *
  *  (c) 2012-2020 Torstein Honsi
  *
@@ -9,32 +9,48 @@
  *  !!!!!!! SOURCE GETS TRANSPILED BY TYPESCRIPT. EDIT TS FILE ONLY. !!!!!!!
  *
  * */
-'use strict';
+import DataConverter from './DataConverter.js';
 import DataJSON from './DataJSON.js';
 import DataRow from './DataRow.js';
 import U from '../Core/Utilities.js';
 var addEvent = U.addEvent, fireEvent = U.fireEvent, uniqueKey = U.uniqueKey;
-/** eslint-disable valid-jsdoc */
+/* *
+ *
+ *  Class
+ *
+ * */
 /**
- * @private
+ * Class to manage rows in a table structure.
  */
 var DataTable = /** @class */ (function () {
     /* *
      *
-     *  Constructors
+     *  Constructor
      *
      * */
-    function DataTable(rows) {
+    /**
+     * Constructs an instance of the DataRow class.
+     *
+     * @param {Array<DataRow>} [rows]
+     * Array of table rows as DataRow instances.
+     *
+     * @param {DataConverter} [converter]
+     * Converter for value conversions in table rows.
+     */
+    function DataTable(rows, converter) {
         if (rows === void 0) { rows = []; }
+        if (converter === void 0) { converter = new DataConverter(); }
         var rowsIdMap = {};
         var row;
         rows = rows.slice();
+        this.converter = converter;
         this.id = uniqueKey();
         this.rows = rows;
         this.rowsIdMap = rowsIdMap;
         this.watchsIdMap = {};
         for (var i = 0, iEnd = rows.length; i < iEnd; ++i) {
             row = rows[i];
+            row.converter = converter;
             rowsIdMap[row.id] = row;
             this.watchRow(row);
         }
@@ -44,6 +60,15 @@ var DataTable = /** @class */ (function () {
      *  Static Functions
      *
      * */
+    /**
+     * Converts a supported class JSON to a DataTable instance.
+     *
+     * @param {DataRow.ClassJSON} json
+     * Class JSON (usually with a $class property) to convert.
+     *
+     * @return {DataTable}
+     * DataTable instance from the class JSON.
+     */
     DataTable.fromJSON = function (json) {
         var rows = json.rows, dataRows = [];
         try {
@@ -61,9 +86,15 @@ var DataTable = /** @class */ (function () {
      *  Functions
      *
      * */
+    /**
+     * Removes all rows from this table.
+     *
+     * @emits DataTable#clearTable
+     * @emits DataTable#afterClearTable
+     */
     DataTable.prototype.clear = function () {
         this.emit('clearTable', {});
-        var rowIds = this.getRowIds();
+        var rowIds = this.getAllRowIds();
         for (var i = 0, iEnd = rowIds.length; i < iEnd; ++i) {
             this.unwatchRow(rowIds[i], true);
         }
@@ -72,8 +103,20 @@ var DataTable = /** @class */ (function () {
         this.watchsIdMap = {};
         this.emit('afterClearTable', {});
     };
-    DataTable.prototype.deleteRow = function (id) {
-        var row = this.rowsIdMap[id], rowId = row.id, index = this.rows.indexOf(row);
+    /**
+     * Deletes a row in this table.
+     *
+     * @param {string} rowId
+     * Name of the row to delete.
+     *
+     * @return {boolean}
+     * Returns true, if the delete was successful, otherwise false.
+     *
+     * @emits DataTable#deleteRow
+     * @emits DataTable#afterDeleteRow
+     */
+    DataTable.prototype.deleteRow = function (rowId) {
+        var row = this.rowsIdMap[rowId], index = this.rows.indexOf(row);
         this.emit('deleteRow', { index: index, row: row });
         this.rows[index] = row;
         delete this.rowsIdMap[rowId];
@@ -81,33 +124,84 @@ var DataTable = /** @class */ (function () {
         this.emit('afterDeleteRow', { index: index, row: row });
         return row;
     };
+    /**
+     * Emits an event on this row to all registered callbacks of the given
+     * event.
+     *
+     * @param {DataTable.EventTypes} type
+     * Event type as a string.
+     *
+     * @param {DataTable.EventObjects} [e]
+     * Event object with additional event information.
+     */
     DataTable.prototype.emit = function (type, e) {
         fireEvent(this, type, e);
     };
+    /**
+     * Return the array of row IDs of this table.
+     *
+     * @return {Array<string>}
+     * Array of row IDs in this table.
+     */
+    DataTable.prototype.getAllRowIds = function () {
+        return Object.keys(this.rowsIdMap);
+    };
+    /**
+     * Returns a copy of the internal array with rows.
+     *
+     * @return {Array<DataRow>}
+     * Copy of the internal array with rows.
+     */
     DataTable.prototype.getAllRows = function () {
         return this.rows.slice();
     };
-    DataTable.prototype.getRow = function (indexOrID) {
-        if (typeof indexOrID === 'string') {
-            return this.rowsIdMap[indexOrID];
+    /**
+     * Returns the row with the fiven index or row ID.
+     *
+     * @param {number|string} row
+     * Row index or row ID.
+     *
+     * @return {DataRow.ColumnTypes}
+     * Column value of the column in this row.
+     */
+    DataTable.prototype.getRow = function (row) {
+        if (typeof row === 'string') {
+            return this.rowsIdMap[row];
         }
-        return this.rows[indexOrID];
+        return this.rows[row];
     };
     /**
-     * @todo Consider implementation via property getter `.length` depending on
-     *       browser support.
+     * Returns the number of rows in this table.
+     *
      * @return {number}
      * Number of rows in this table.
+     *
+     * @todo Consider implementation via property getter `.length` depending on
+     *       browser support.
      */
     DataTable.prototype.getRowCount = function () {
         return this.rows.length;
     };
-    DataTable.prototype.getRowIds = function () {
-        return Object.keys(this.rowsIdMap);
+    /**
+     * Returns the version tag that changes with each modification of the table
+     * or a related row.
+     *
+     * @return {string}
+     * Version tag of the current state.
+     */
+    DataTable.prototype.getVersionTag = function () {
+        return this.versionTag || (this.versionTag = uniqueKey());
     };
-    DataTable.prototype.getVersionId = function () {
-        return this.versionId || (this.versionId = uniqueKey());
-    };
+    /**
+     * Adds a row to this table.
+     *
+     * @param {DataRow} row
+     * Row to add to this table.
+     *
+     * @return {boolean}
+     * Returns true, if the row has been added to the table. Returns false, if
+     * a row with the same row ID already exists in the table.
+     */
     DataTable.prototype.insertRow = function (row) {
         var rowId = row.id;
         var index = this.rows.length;
@@ -121,14 +215,32 @@ var DataTable = /** @class */ (function () {
         this.emit('afterInsertRow', { index: index, row: row });
         return true;
     };
-    DataTable.prototype.on = function (event, callback) {
-        return addEvent(this, event, callback);
+    /**
+     * Registers a callback for a specific event.
+     *
+     * @param {DataRow.EventTypes} type
+     * Event type as a string.
+     *
+     * @param {DataRow.EventCallbacks} callback
+     * Function to register for an event callback.
+     *
+     * @return {Function}
+     * Function to unregister callback from the event.
+     */
+    DataTable.prototype.on = function (type, callback) {
+        return addEvent(this, type, callback);
     };
+    /**
+     * Watchs for events in a row to keep the version tag of the table updated.
+     *
+     * @param {DataRow} row
+     * Row the watch for modifications.
+     */
     DataTable.prototype.watchRow = function (row) {
         var table = this, index = table.rows.indexOf(row), watchsIdMap = table.watchsIdMap, watchs = [];
         /** @private */
         function callback() {
-            table.versionId = uniqueKey();
+            table.versionTag = uniqueKey();
             fireEvent(table, 'afterUpdateRow', { index: index, row: row });
         }
         watchs.push(row.on('afterClearRow', callback));
@@ -137,6 +249,12 @@ var DataTable = /** @class */ (function () {
         watchs.push(row.on('afterUpdateColumn', callback));
         watchsIdMap[row.id] = watchs;
     };
+    /**
+     * Converts the table to a class JSON.
+     *
+     * @return {DataJSON.ClassJSON}
+     * Class JSON of this table.
+     */
     DataTable.prototype.toJSON = function () {
         var json = {
             $class: 'DataTable',
@@ -148,9 +266,17 @@ var DataTable = /** @class */ (function () {
         }
         return json;
     };
-    DataTable.prototype.toString = function () {
-        return JSON.stringify(this.rows);
-    };
+    /**
+     * Removes the watch callbacks from in a row, so that version tag of the
+     * table get not updated anymore, if the row is modified.
+     *
+     * @param {string} rowId
+     * ID of the row to unwatch.
+     *
+     * @param {boolean} [skipDelete]
+     * True, to skip the deletion of the unregister functions. Usefull when
+     * modifying multiple rows in a batch.
+     */
     DataTable.prototype.unwatchRow = function (rowId, skipDelete) {
         var watchsIdMap = this.watchsIdMap;
         var watchs = watchsIdMap[rowId] || [];
@@ -163,5 +289,15 @@ var DataTable = /** @class */ (function () {
     };
     return DataTable;
 }());
+/* *
+ *
+ *  Register
+ *
+ * */
 DataJSON.addClass(DataTable);
+/* *
+ *
+ *  Export
+ *
+ * */
 export default DataTable;
