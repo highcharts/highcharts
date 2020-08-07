@@ -77,7 +77,11 @@ var CSVDataStore = /** @class */ (function (_super) {
     CSVDataStore.prototype.addEvents = function () {
         var _this = this;
         this.on('load', function (e) {
-            // console.log(e)
+            _this.dataParser.parse(__assign({ csv: e.csv }, _this.parserOptions));
+            if (_this.liveDataURL) {
+                _this.poll();
+            }
+            fireEvent(_this, 'afterLoad', { table: _this.dataParser.getTable() });
         });
         this.on('afterLoad', function (e) {
             _this.table = e.table;
@@ -114,11 +118,7 @@ var CSVDataStore = /** @class */ (function (_super) {
             url: store.liveDataURL,
             dataType: 'text',
             success: function (csv) {
-                fireEvent(store, 'load', { csv: csv }, function () {
-                    store.dataParser.parse(__assign({ csv: csv }, store.parserOptions));
-                    store.poll();
-                    fireEvent(store, 'afterLoad', { table: store.dataParser.getTable() });
-                });
+                fireEvent(store, 'load', { csv: csv });
             },
             error: function (xhr, text) {
                 if (++currentRetries < maxRetries) {
@@ -131,10 +131,7 @@ var CSVDataStore = /** @class */ (function (_super) {
     CSVDataStore.prototype.load = function () {
         var store = this, _a = store.options, csv = _a.csv, csvURL = _a.csvURL;
         if (csv) {
-            fireEvent(store, 'load', { csv: csv }, function () {
-                store.dataParser.parse(__assign({ csv: csv }, store.parserOptions));
-                fireEvent(store, 'afterLoad', { table: store.dataParser.getTable() });
-            });
+            fireEvent(store, 'load', { csv: csv });
         }
         else if (csvURL) {
             store.fetchCSV(true);

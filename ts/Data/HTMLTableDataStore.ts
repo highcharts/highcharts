@@ -12,7 +12,7 @@
 
 'use strict';
 
-import DataParser from './Parsers/DataParser.js';
+import HTMLTableParser from './Parsers/HTMLTableParser.js';
 import DataStore from './DataStore.js';
 import DataTable from './DataTable.js';
 import H from '../Core/Globals.js';
@@ -40,11 +40,7 @@ class HTMLTableDataStore extends DataStore {
      * */
 
     protected static readonly defaultOptions: HTMLTableDataStore.Options = {
-        table: '',
-        startColumn: 0,
-        endColumn: Number.MAX_VALUE,
-        startRow: 0,
-        endRow: Number.MAX_VALUE
+        tableHTML: ''
     };
 
     /* *
@@ -55,13 +51,14 @@ class HTMLTableDataStore extends DataStore {
 
     public constructor(
         table: DataTable = new DataTable(),
-        options: Partial<HTMLTableDataStore.Options> = {}
+        options: Partial<HTMLTableDataStore.Options & HTMLTableParser.Options> = {}
     ) {
         super(table);
+        const { tableHTML, ...parserOptions } = options;
 
-        this.element = options.table || '';
-        this.options = merge(HTMLTableDataStore.defaultOptions, options);
-        this.dataParser = new DataParser();
+        this.element = tableHTML || '';
+        this.parserOptions = merge(HTMLTableDataStore.defaultOptions, parserOptions);
+        this.dataParser = new HTMLTableParser(table);
 
         this.addEvents();
     }
@@ -73,150 +70,53 @@ class HTMLTableDataStore extends DataStore {
     * */
 
     public element: HTMLElement | string;
-
-    public options: HTMLTableDataStore.Options;
-
-    private columns?: DataValueType[][];
-    private headers?: string[];
-
-    private dataParser: DataParser;
+    public parserOptions: HTMLTableDataStore.Options;
+    private dataParser: HTMLTableParser;
 
     private addEvents(): void {
-        this.on('load', (e: DataStore.LoadEventObject): void => {
-            // console.log(e)
+        const { dataParser } = this;
+        this.on('load', (e: HTMLTableDataStore.LoadEventObject): void => {
+            if (e.tableElement) {
+                fireEvent(this, 'parse', { tableElement: e.tableElement });
+            } else {
+                fireEvent(this, 'fail', {
+                    error: 'HTML table not provided, or element with ID not found'
+                });
+            }
         });
+
         this.on('afterLoad', (e: DataStore.LoadEventObject): void => {
             this.table = e.table;
         });
-        this.on('parse', (e: DataStore.ParseEventObject): void => {
-            // console.log(e)
+
+        this.on('parse', (e: any): void => {
+            this.dataParser.parse({ tableElement: e.tableElement, ...this.parserOptions });
+            fireEvent(this, 'afterParse', { dataParser });
         });
-        this.on('afterParse', (e: DataStore.ParseEventObject): void => {
-            this.columns = e.columns;
-            this.headers = e.headers;
+
+        this.on('afterParse', (e: any): void => {
+            fireEvent(this, 'afterLoad', { table: dataParser.getTable() });
         });
+
         this.on('fail', (e: any): void => {
             // throw new Error(e.error)
         });
-    }
-
-    private htmlToDataTable(table: HTMLElement): void {
-        const columns: [] = [],
-            headers: string[] = [],
-            store = this,
-            {
-                startRow,
-                endRow,
-                startColumn,
-                endColumn
-            } = store.options;
-
-        let rowsCount: number,
-            colsCount: number,
-            rowNo: number,
-            colNo: number,
-            item: Element;
-
-        fireEvent(
-            this,
-            'parse',
-            { table: table.innerHTML },
-            function (): void {
-                const rows = table.getElementsByTagName('tr');
-                rowsCount = rows.length;
-
-                rowNo = 0;
-
-                while (rowNo < rowsCount) {
-                    if (rowNo >= startRow && rowNo <= endRow) {
-
-                        const cols = rows[rowNo].children;
-                        colsCount = cols.length;
-                        colNo = 0;
-
-                        while (colNo < colsCount) {
-                            const row = (columns as any)[colNo - startColumn];
-                            item = cols[colNo];
-                            let i = 1;
-
-                            if (
-                                (
-                                    item.tagName === 'TD' ||
-                                    item.tagName === 'TH'
-                                ) &&
-                                colNo >= startColumn &&
-                                colNo <= endColumn
-                            ) {
-                                if (!(columns as any)[colNo - startColumn]) {
-                                    (columns as any)[colNo - startColumn] = [];
-                                }
-
-                                if (item.tagName === 'TH') {
-                                    headers.push(item.innerHTML);
-                                }
-
-                                (columns as any)[colNo - startColumn][
-                                    rowNo - startRow
-                                ] = item.innerHTML;
-
-                                // Loop over all previous indices and make sure
-                                // they are nulls, not undefined.
-                                while (
-                                    rowNo - startRow >= i &&
-                                    row[rowNo - startRow - i] === void 0
-                                ) {
-                                    row[rowNo - startRow - i] = null;
-                                    i++;
-                                }
-                            }
-
-                            colNo++;
-                        }
-                    }
-
-                    rowNo++;
-                }
-
-                fireEvent(store, 'afterParse', { columns, headers });
-            }
-        );
     }
 
     /**
      * Handle supplied table being either an ID or an actual table
      */
     private fetchTable(): void {
-        let element: HTMLElement | null;
+        let tableElement: HTMLElement | null;
         if (typeof this.element === 'string') {
-            element = win.document.getElementById(this.element);
+            tableElement = win.document.getElementById(this.element);
         } else {
-            element = this.element;
+            tableElement = this.element;
         }
 
-        fireEvent(
-            this,
-            'load',
-            { tableElement: element },
-            (): void => {
-                if (element) {
-                    this.htmlToDataTable(element);
-                    const table = this.columns ?
-                        this.dataParser.columnArrayToDataTable(this.columns, this.headers) :
-                        new DataTable();
-                    fireEvent(this, 'afterLoad', { table });
-                } else {
-                    fireEvent(this, 'fail', {
-                        error: 'HTML table not provided, or element with ID not found'
-                    });
-                }
-            }
-        );
+        fireEvent(this, 'load', { tableElement });
     }
 
-    /**
-     * Load
-     * TODO: add callback / fire event
-     */
     public load(): void {
         this.fetchTable();
     }
@@ -231,13 +131,12 @@ class HTMLTableDataStore extends DataStore {
 }
 
 namespace HTMLTableDataStore {
-
     export interface Options {
-        table: (string|HTMLElement);
-        startColumn: number;
-        endColumn: number;
-        startRow: number;
-        endRow: number;
+        tableHTML: (string | HTMLElement);
+    }
+
+    export interface LoadEventObject extends DataStore.LoadEventObject {
+        tableElement?: HTMLElement;
     }
 }
 

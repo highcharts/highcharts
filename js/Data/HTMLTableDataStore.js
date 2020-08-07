@@ -23,7 +23,29 @@ var __extends = (this && this.__extends) || (function () {
         d.prototype = b === null ? Object.create(b) : (__.prototype = b.prototype, new __());
     };
 })();
-import DataParser from './Parsers/DataParser.js';
+var __assign = (this && this.__assign) || function () {
+    __assign = Object.assign || function(t) {
+        for (var s, i = 1, n = arguments.length; i < n; i++) {
+            s = arguments[i];
+            for (var p in s) if (Object.prototype.hasOwnProperty.call(s, p))
+                t[p] = s[p];
+        }
+        return t;
+    };
+    return __assign.apply(this, arguments);
+};
+var __rest = (this && this.__rest) || function (s, e) {
+    var t = {};
+    for (var p in s) if (Object.prototype.hasOwnProperty.call(s, p) && e.indexOf(p) < 0)
+        t[p] = s[p];
+    if (s != null && typeof Object.getOwnPropertySymbols === "function")
+        for (var i = 0, p = Object.getOwnPropertySymbols(s); i < p.length; i++) {
+            if (e.indexOf(p[i]) < 0 && Object.prototype.propertyIsEnumerable.call(s, p[i]))
+                t[p[i]] = s[p[i]];
+        }
+    return t;
+};
+import HTMLTableParser from './Parsers/HTMLTableParser.js';
 import DataStore from './DataStore.js';
 import DataTable from './DataTable.js';
 import H from '../Core/Globals.js';
@@ -45,93 +67,19 @@ var HTMLTableDataStore = /** @class */ (function (_super) {
         if (table === void 0) { table = new DataTable(); }
         if (options === void 0) { options = {}; }
         var _this = _super.call(this, table) || this;
-        _this.element = options.table || '';
-        _this.options = merge(HTMLTableDataStore.defaultOptions, options);
-        _this.dataParser = new DataParser();
+        var tableHTML = options.tableHTML, parserOptions = __rest(options, ["tableHTML"]);
+        _this.element = tableHTML || '';
+        _this.parserOptions = merge(HTMLTableDataStore.defaultOptions, parserOptions);
+        _this.dataParser = new HTMLTableParser(table);
         _this.addEvents();
         return _this;
     }
     HTMLTableDataStore.prototype.addEvents = function () {
         var _this = this;
+        var dataParser = this.dataParser;
         this.on('load', function (e) {
-            // console.log(e)
-        });
-        this.on('afterLoad', function (e) {
-            _this.table = e.table;
-        });
-        this.on('parse', function (e) {
-            // console.log(e)
-        });
-        this.on('afterParse', function (e) {
-            _this.columns = e.columns;
-            _this.headers = e.headers;
-        });
-        this.on('fail', function (e) {
-            // throw new Error(e.error)
-        });
-    };
-    HTMLTableDataStore.prototype.htmlToDataTable = function (table) {
-        var columns = [], headers = [], store = this, _a = store.options, startRow = _a.startRow, endRow = _a.endRow, startColumn = _a.startColumn, endColumn = _a.endColumn;
-        var rowsCount, colsCount, rowNo, colNo, item;
-        fireEvent(this, 'parse', { table: table.innerHTML }, function () {
-            var rows = table.getElementsByTagName('tr');
-            rowsCount = rows.length;
-            rowNo = 0;
-            while (rowNo < rowsCount) {
-                if (rowNo >= startRow && rowNo <= endRow) {
-                    var cols = rows[rowNo].children;
-                    colsCount = cols.length;
-                    colNo = 0;
-                    while (colNo < colsCount) {
-                        var row = columns[colNo - startColumn];
-                        item = cols[colNo];
-                        var i = 1;
-                        if ((item.tagName === 'TD' ||
-                            item.tagName === 'TH') &&
-                            colNo >= startColumn &&
-                            colNo <= endColumn) {
-                            if (!columns[colNo - startColumn]) {
-                                columns[colNo - startColumn] = [];
-                            }
-                            if (item.tagName === 'TH') {
-                                headers.push(item.innerHTML);
-                            }
-                            columns[colNo - startColumn][rowNo - startRow] = item.innerHTML;
-                            // Loop over all previous indices and make sure
-                            // they are nulls, not undefined.
-                            while (rowNo - startRow >= i &&
-                                row[rowNo - startRow - i] === void 0) {
-                                row[rowNo - startRow - i] = null;
-                                i++;
-                            }
-                        }
-                        colNo++;
-                    }
-                }
-                rowNo++;
-            }
-            fireEvent(store, 'afterParse', { columns: columns, headers: headers });
-        });
-    };
-    /**
-     * Handle supplied table being either an ID or an actual table
-     */
-    HTMLTableDataStore.prototype.fetchTable = function () {
-        var _this = this;
-        var element;
-        if (typeof this.element === 'string') {
-            element = win.document.getElementById(this.element);
-        }
-        else {
-            element = this.element;
-        }
-        fireEvent(this, 'load', { tableElement: element }, function () {
-            if (element) {
-                _this.htmlToDataTable(element);
-                var table = _this.columns ?
-                    _this.dataParser.columnArrayToDataTable(_this.columns, _this.headers) :
-                    new DataTable();
-                fireEvent(_this, 'afterLoad', { table: table });
+            if (e.tableElement) {
+                fireEvent(_this, 'parse', { tableElement: e.tableElement });
             }
             else {
                 fireEvent(_this, 'fail', {
@@ -139,11 +87,33 @@ var HTMLTableDataStore = /** @class */ (function (_super) {
                 });
             }
         });
+        this.on('afterLoad', function (e) {
+            _this.table = e.table;
+        });
+        this.on('parse', function (e) {
+            _this.dataParser.parse(__assign({ tableElement: e.tableElement }, _this.parserOptions));
+            fireEvent(_this, 'afterParse', { dataParser: dataParser });
+        });
+        this.on('afterParse', function (e) {
+            fireEvent(_this, 'afterLoad', { table: dataParser.getTable() });
+        });
+        this.on('fail', function (e) {
+            // throw new Error(e.error)
+        });
     };
     /**
-     * Load
-     * TODO: add callback / fire event
+     * Handle supplied table being either an ID or an actual table
      */
+    HTMLTableDataStore.prototype.fetchTable = function () {
+        var tableElement;
+        if (typeof this.element === 'string') {
+            tableElement = win.document.getElementById(this.element);
+        }
+        else {
+            tableElement = this.element;
+        }
+        fireEvent(this, 'load', { tableElement: tableElement });
+    };
     HTMLTableDataStore.prototype.load = function () {
         this.fetchTable();
     };
@@ -159,11 +129,7 @@ var HTMLTableDataStore = /** @class */ (function (_super) {
      *
      * */
     HTMLTableDataStore.defaultOptions = {
-        table: '',
-        startColumn: 0,
-        endColumn: Number.MAX_VALUE,
-        startRow: 0,
-        endRow: Number.MAX_VALUE
+        tableHTML: ''
     };
     return HTMLTableDataStore;
 }(DataStore));
