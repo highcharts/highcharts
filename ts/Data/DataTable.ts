@@ -21,6 +21,7 @@ import DataConverter from './DataConverter.js';
 import DataJSON from './DataJSON.js';
 import DataRow from './DataRow.js';
 import U from '../Core/Utilities.js';
+import DataValueType from './DataValueType';
 const {
     addEvent,
     fireEvent,
@@ -65,6 +66,25 @@ class DataTable implements DataEventEmitter<DataTable.EventTypes>, DataJSON.Clas
         } catch (error) {
             return new DataTable();
         }
+    }
+
+    public static fromColumns(columns: DataValueType[][] = [], headers: string [] = []): DataTable {
+        const table = new DataTable();
+        const columnsLength = columns.length;
+        if (columnsLength) {
+            const rowsLength = columns[0].length;
+            let i = 0;
+
+            while (i < rowsLength) {
+                const row = new DataRow();
+                for (let j = 0; j < columnsLength; ++j) {
+                    row.insertColumn((headers.length ? headers[j] : uniqueKey()), columns[j][i]);
+                }
+                table.insertRow(row);
+                ++i;
+            }
+        }
+        return table;
     }
 
     /* *

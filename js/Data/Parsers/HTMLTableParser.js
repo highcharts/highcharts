@@ -84,9 +84,7 @@ var HTMLTableParser = /** @class */ (function (_super) {
         this.headers = headers;
     };
     HTMLTableParser.prototype.getTable = function () {
-        return this.columns ?
-            this.columnArrayToDataTable(this.columns, this.headers) :
-            new DataTable();
+        return DataTable.fromColumns(this.columns, this.headers);
     };
     HTMLTableParser.defaultOptions = {
         startColumn: 0,

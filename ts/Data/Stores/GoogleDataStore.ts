@@ -231,7 +231,7 @@ class GoogleDataStore extends DataStore {
                             headers.push('' + store.columns[i][0]);
                         }
 
-                        const table = store.dataParser.columnArrayToDataTable(store.columns, headers);
+                        const table = DataTable.fromColumns(store.columns, headers);
 
                         // Polling
                         if (enablePolling) {

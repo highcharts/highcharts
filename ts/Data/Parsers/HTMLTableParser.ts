@@ -122,9 +122,7 @@ class HTMLTableParser extends DataParser {
     }
 
     public getTable(): DataTable {
-        return this.columns ?
-            this.columnArrayToDataTable(this.columns, this.headers) :
-            new DataTable();
+        return DataTable.fromColumns(this.columns, this.headers);
     }
 
 

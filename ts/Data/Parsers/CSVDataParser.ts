@@ -25,7 +25,7 @@ const { fireEvent, merge, addEvent } = U;
  * @private
  */
 
-class CSVDataParser extends DataParser {
+class CSVDataParser implements DataParser {
     /*
      * Default options
      */
@@ -42,7 +42,6 @@ class CSVDataParser extends DataParser {
     public constructor(
         table: DataTable = new DataTable()
     ) {
-        super();
         this.table = table;
         this.options = CSVDataParser.defaultOptions;
         addEvent(this, 'afterParse', (e: DataStore.ParseEventObject): void => {
@@ -349,9 +348,7 @@ class CSVDataParser extends DataParser {
 
     // Todo: handle exisiting datatable
     public getTable(): DataTable {
-        return this.columns ?
-            this.columnArrayToDataTable(this.columns, this.headers) :
-            new DataTable();
+        return DataTable.fromColumns(this.columns, this.headers);
     }
 }
 

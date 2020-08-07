@@ -81,6 +81,25 @@ var DataTable = /** @class */ (function () {
             return new DataTable();
         }
     };
+    DataTable.fromColumns = function (columns, headers) {
+        if (columns === void 0) { columns = []; }
+        if (headers === void 0) { headers = []; }
+        var table = new DataTable();
+        var columnsLength = columns.length;
+        if (columnsLength) {
+            var rowsLength = columns[0].length;
+            var i = 0;
+            while (i < rowsLength) {
+                var row = new DataRow();
+                for (var j = 0; j < columnsLength; ++j) {
+                    row.insertColumn((headers.length ? headers[j] : uniqueKey()), columns[j][i]);
+                }
+                table.insertRow(row);
+                ++i;
+            }
+        }
+        return table;
+    };
     /* *
      *
      *  Functions

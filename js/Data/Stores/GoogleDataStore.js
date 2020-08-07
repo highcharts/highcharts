@@ -25,6 +25,7 @@ var __extends = (this && this.__extends) || (function () {
 })();
 import AjaxMixin from '../../Extensions/Ajax.js';
 var ajax = AjaxMixin.ajax;
+import DataTable from '../DataTable.js';
 import DataStore from './DataStore.js';
 import DataParser from '../Parsers/DataParser.js';
 import U from '../../Core/Utilities.js';
@@ -141,7 +142,7 @@ var GoogleDataStore = /** @class */ (function (_super) {
                     for (i = 0; i < colsCount; i++) {
                         headers.push('' + store.columns[i][0]);
                     }
-                    var table = store.dataParser.columnArrayToDataTable(store.columns, headers);
+                    var table = DataTable.fromColumns(store.columns, headers);
                     // Polling
                     if (enablePolling) {
                         setTimeout(function () {

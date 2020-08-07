@@ -9,20 +9,6 @@
  *  !!!!!!! SOURCE GETS TRANSPILED BY TYPESCRIPT. EDIT TS FILE ONLY. !!!!!!!
  *
  * */
-var __extends = (this && this.__extends) || (function () {
-    var extendStatics = function (d, b) {
-        extendStatics = Object.setPrototypeOf ||
-            ({ __proto__: [] } instanceof Array && function (d, b) { d.__proto__ = b; }) ||
-            function (d, b) { for (var p in b) if (b.hasOwnProperty(p)) d[p] = b[p]; };
-        return extendStatics(d, b);
-    };
-    return function (d, b) {
-        extendStatics(d, b);
-        function __() { this.constructor = d; }
-        d.prototype = b === null ? Object.create(b) : (__.prototype = b.prototype, new __());
-    };
-})();
-import DataParser from './DataParser.js';
 import DataTable from '../DataTable.js';
 import U from '../../Core/Utilities.js';
 var fireEvent = U.fireEvent, merge = U.merge, addEvent = U.addEvent;
@@ -30,18 +16,16 @@ var fireEvent = U.fireEvent, merge = U.merge, addEvent = U.addEvent;
 /**
  * @private
  */
-var CSVDataParser = /** @class */ (function (_super) {
-    __extends(CSVDataParser, _super);
+var CSVDataParser = /** @class */ (function () {
     function CSVDataParser(table) {
+        var _this = this;
         if (table === void 0) { table = new DataTable(); }
-        var _this = _super.call(this) || this;
-        _this.table = table;
-        _this.options = CSVDataParser.defaultOptions;
-        addEvent(_this, 'afterParse', function (e) {
+        this.table = table;
+        this.options = CSVDataParser.defaultOptions;
+        addEvent(this, 'afterParse', function (e) {
             _this.columns = e.columns;
             _this.headers = e.headers;
         });
-        return _this;
     }
     CSVDataParser.prototype.parse = function (options) {
         this.options = merge(options, CSVDataParser.defaultOptions);
@@ -249,9 +233,7 @@ var CSVDataParser = /** @class */ (function (_super) {
     };
     // Todo: handle exisiting datatable
     CSVDataParser.prototype.getTable = function () {
-        return this.columns ?
-            this.columnArrayToDataTable(this.columns, this.headers) :
-            new DataTable();
+        return DataTable.fromColumns(this.columns, this.headers);
     };
     /*
      * Default options
@@ -266,5 +248,5 @@ var CSVDataParser = /** @class */ (function (_super) {
         firstRowAsNames: true
     };
     return CSVDataParser;
-}(DataParser));
+}());
 export default CSVDataParser;
