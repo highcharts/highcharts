@@ -102,7 +102,7 @@ Chart.prototype.hideOverlappingLabels = function (labels) {
                 left: '0',
                 center: '0.5',
                 right: '1'
-            }[label.alignValue || label.textAlign];
+            }[label.alignValue];
             if (alignValue) {
                 xOffset = +alignValue * boxWidth;
             }

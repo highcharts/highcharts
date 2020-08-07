@@ -190,7 +190,7 @@ Chart.prototype.hideOverlappingLabels = function (
                     left: '0',
                     center: '0.5',
                     right: '1'
-                }[label.alignValue as Highcharts.AlignValue || label.textAlign];
+                }[label.alignValue as Highcharts.AlignValue];
 
                 if (alignValue) {
                     xOffset = +alignValue * boxWidth;
