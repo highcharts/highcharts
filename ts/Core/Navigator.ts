@@ -1744,7 +1744,11 @@ class Navigator {
         }
 
         // Update position of navigator shades, outline and handles (#12573)
-        if (navigator.navigatorEnabled) {
+        if (
+            navigator.navigatorEnabled &&
+            isNumber(zoomedMin) &&
+            isNumber(zoomedMax)
+        ) {
             if (navigator.shades) {
                 navigator.drawMasks(zoomedMin, zoomedMax, inverted, verb);
             }
