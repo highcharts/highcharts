@@ -11,4 +11,4 @@
  * License: www.highcharts.com/license
  */
 'use strict';
-import '../../indicators/supertrend.src.js';
+import '../../Stock/Indicators/SupertrendIndicator.js';

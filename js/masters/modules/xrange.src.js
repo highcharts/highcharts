@@ -10,4 +10,4 @@
  * License: www.highcharts.com/license
  */
 'use strict';
-import '../../modules/xrange.src.js';
+import '../../Series/XRangeSeries.js';

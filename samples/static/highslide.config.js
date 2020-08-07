@@ -1,7 +1,7 @@
 /**
  * Site-specific configuration settings for Highslide JS
  */
-hs.graphicsDir = 'https://www.highcharts.com/samples/graphics/highslide/';
+hs.graphicsDir = 'https://www.highcharts.com/samples/static/graphic/';
 hs.outlineType = 'rounded-white';
 hs.wrapperClassName = 'draggable-header';
 hs.captionEval = 'this.a.title';

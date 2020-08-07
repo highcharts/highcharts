@@ -11,4 +11,4 @@
  * License: www.highcharts.com/license
  */
 'use strict';
-import '../../indicators/atr.src.js';
+import '../../Stock/Indicators/ATRIndicator.js';

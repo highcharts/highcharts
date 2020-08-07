@@ -1083,3 +1083,45 @@ QUnit.test('Point name with category (#13293)', function (assert) {
         'The first series should render just a point name and y value (#13293)'
     );
 });
+
+QUnit.test('Point without y data, but with value (#13785)', function (assert) {
+    var chart = Highcharts.chart('container', {
+
+            series: [{
+                type: 'sunburst',
+                data: [{
+                    id: '1',
+                    name: 'test'
+                },
+                {
+                    parent: '1',
+                    name: 'test1',
+                    value: 5
+                },
+                {
+                    parent: '1',
+                    name: 'test2',
+                    value: 10
+                },
+                {
+                    parent: '1',
+                    name: 'test3',
+                    value: 15
+                }]
+            }],
+            exporting: {
+                showTable: true
+            }
+        }),
+        csv = '"Category","Series 1"\n' +
+        '"test",\n' +
+        '"test1",5\n' +
+        '"test2",10\n' +
+        '"test3",15';
+
+    assert.strictEqual(
+        chart.getCSV(),
+        csv,
+        'The table should render category name and value (#13785)'
+    );
+});

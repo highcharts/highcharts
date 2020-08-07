@@ -8,4 +8,4 @@
  * License: www.highcharts.com/license
  */
 'use strict';
-import '../../themes/dark-green.js';
+import '../../Extensions/Themes/DarkGreen.js';

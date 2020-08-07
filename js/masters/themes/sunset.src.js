@@ -8,4 +8,4 @@
  * License: www.highcharts.com/license
  */
 'use strict';
-import '../../themes/sunset.js';
+import '../../Extensions/Themes/Sunset.js';
