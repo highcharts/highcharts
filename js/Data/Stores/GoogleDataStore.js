@@ -25,6 +25,7 @@ var __extends = (this && this.__extends) || (function () {
 })();
 import AjaxMixin from '../../Extensions/Ajax.js';
 var ajax = AjaxMixin.ajax;
+import DataTable from '../DataTable.js';
 import DataStore from './DataStore.js';
 import DataParser from '../Parsers/DataParser.js';
 import U from '../../Core/Utilities.js';
@@ -47,6 +48,22 @@ var GoogleDataStore = /** @class */ (function (_super) {
         _this.columns = [];
         return _this;
     }
+    /* *
+     *
+     *  Static Functions
+     *
+     * */
+    GoogleDataStore.fromJSON = function (json) {
+        var options = json.options, table = DataTable.fromJSON(json.table), store = new GoogleDataStore(table, options);
+        var metadata;
+        for (var i = 0, iEnd = json.metadata.length; i < iEnd; i++) {
+            metadata = json.metadata[i];
+            if (metadata instanceof Array && typeof metadata[0] === 'string') {
+                store.describeColumn(metadata[0], metadata[1]);
+            }
+        }
+        return store;
+    };
     /* *
      *
      *  Functions
@@ -167,6 +184,23 @@ var GoogleDataStore = /** @class */ (function (_super) {
     GoogleDataStore.prototype.load = function () {
         return this.options.googleSpreadsheetKey ?
             this.fetchSheet() : void 0;
+    };
+    GoogleDataStore.prototype.toJSON = function () {
+        var json = {
+            $class: 'GoogleDataStore',
+            options: merge(this.options),
+            table: this.table.toJSON(),
+            metadata: []
+        };
+        var metadata;
+        for (var i = 0, iEnd = this.metadata.length; i < iEnd; i++) {
+            metadata = this.metadata[i];
+            json.metadata.push([
+                metadata.name,
+                metadata.metadata
+            ]);
+        }
+        return json;
     };
     /* *
      *
