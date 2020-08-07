@@ -99,6 +99,7 @@ namespace TreeGridAxis {
         collapseStart?: number;
         depth: number;
         descendants?: number;
+        id?: number | string | null;
         height?: number;
         name: string;
         nodes: [TreeGridNode];
@@ -284,6 +285,7 @@ namespace TreeGridAxis {
                     mapOfPosToGridNode[pos] = gridNode = {
                         depth: parentGridNode ? parentGridNode.depth + 1 : 0,
                         name: name,
+                        id: data.id,
                         nodes: [node as TreeGridNode],
                         children: [],
                         pos: pos
@@ -851,6 +853,19 @@ namespace TreeGridAxis {
                 obj = getBreakFromNode(node, axis.max);
 
             breaks.push(obj);
+            // Change the collapsed flag #13838
+            node.collapsed = true;
+            axis.series.forEach(function (series): void {
+                const data = series.options.data;
+
+                if (data && data.length) {
+                    data.forEach(function (data): void {
+                        if ((data as PointOptionsObject).id === node.id) {
+                            (data as PointOptionsObject).collapsed = true;
+                        }
+                    });
+                }
+            });
 
             return breaks;
         }
@@ -876,6 +891,20 @@ namespace TreeGridAxis {
             const axis = this.axis,
                 breaks = (axis.options.breaks || []),
                 obj = getBreakFromNode(node, axis.max);
+
+            // Change the collapsed flag #13838
+            node.collapsed = false;
+            axis.series.forEach(function (series): void {
+                const data = series.options.data;
+
+                if (data && data.length) {
+                    data.forEach(function (data): void {
+                        if ((data as PointOptionsObject).id === node.id) {
+                            (data as PointOptionsObject).collapsed = false;
+                        }
+                    });
+                }
+            });
 
             // Remove the break from the axis breaks array.
             return breaks.reduce(function (
