@@ -1,4 +1,4 @@
-import HTMLTableDataStore from '/base/js/Data/HTMLTableDataStore.js'
+import HTMLTableDataStore from '/base/js/Data/Stores/HTMLTableDataStore.js'
 import U from '/base/js/Core/Utilities.js';
 
 const { test, only } = QUnit;
@@ -272,7 +272,7 @@ test('HTMLTableDataStore', function (assert) {
     const tableElement = createElement('div');
     tableElement.innerHTML = tableHTML;
 
-    const datastore = new HTMLTableDataStore(undefined, { table: tableElement });
+    const datastore = new HTMLTableDataStore(undefined, { tableHTML: tableElement });
     datastore.load()
     assert.strictEqual(
         datastore.table.getRowCount(),

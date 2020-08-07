@@ -12,20 +12,20 @@
 
 'use strict';
 
-import AjaxMixin from '../Extensions/Ajax.js';
+import AjaxMixin from '../../Extensions/Ajax.js';
 const {
     ajax
 } = AjaxMixin;
-import DataTable from './DataTable.js';
+import DataTable from '../DataTable.js';
 import DataStore from './DataStore.js';
-import DataParser from './Parsers/DataParser.js';
-import U from '../Core/Utilities.js';
+import DataParser from '../Parsers/DataParser.js';
+import U from '../../Core/Utilities.js';
 const {
     fireEvent,
     merge
 } = U;
 
-import type DataValueType from './DataValueType.js';
+import type DataValueType from '../DataValueType.js';
 
 /** eslint-disable valid-jsdoc */
 

@@ -14,9 +14,9 @@ import type DataValueType from '../DataValueType.js';
 
 import DataParser from './DataParser.js';
 import DataTable from '../DataTable.js';
-import DataStore from '../DataStore.js';
+import DataStore from '../Stores/DataStore.js';
 import U from '../../Core/Utilities.js';
-import CSVDataStore from '../CSVDataStore.js';
+import CSVDataStore from '../Stores/CSVDataStore.js';
 
 const { fireEvent, merge, addEvent } = U;
 /* eslint-disable valid-jsdoc, require-jsdoc */

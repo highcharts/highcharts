@@ -1,4 +1,4 @@
-import CSVDataStore from '/base/js/Data/CSVDataStore.js'
+import CSVDataStore from '/base/js/Data/Stores/CSVDataStore.js'
 import U from '/base/js/Core/Utilities.js';
 
 const { test, only } = QUnit;

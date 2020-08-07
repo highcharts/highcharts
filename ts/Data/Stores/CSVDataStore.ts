@@ -13,11 +13,11 @@
 'use strict';
 
 import DataStore from './DataStore.js';
-import DataTable from './DataTable.js';
-import DataParser from './Parsers/DataParser.js';
-import ajaxModule from '../Extensions/Ajax.js';
-import U from '../Core/Utilities.js';
-import CSVDataParser from './Parsers/CSVDataParser.js';
+import DataTable from '../DataTable.js';
+import DataParser from '../Parsers/DataParser.js';
+import ajaxModule from '../../Extensions/Ajax.js';
+import U from '../../Core/Utilities.js';
+import CSVDataParser from '../Parsers/CSVDataParser.js';
 const { ajax } = ajaxModule;
 const { fireEvent, merge } = U;
 /* eslint-disable valid-jsdoc, require-jsdoc */
@@ -74,8 +74,15 @@ class CSVDataStore extends DataStore {
     private liveDataTimeout?: number;
 
     private addEvents(): void {
-        this.on('load', (e: DataStore.LoadEventObject): void => {
-            // console.log(e)
+        this.on('load', (e: CSVDataStore.LoadEventObject): void => {
+            this.dataParser.parse({
+                csv: e.csv,
+                ...this.parserOptions
+            });
+            if (this.liveDataURL) {
+                this.poll();
+            }
+            fireEvent(this, 'afterLoad', { table: this.dataParser.getTable() });
         });
         this.on('afterLoad', (e: DataStore.LoadEventObject): void => {
             this.table = e.table;
@@ -118,14 +125,7 @@ class CSVDataStore extends DataStore {
             url: store.liveDataURL,
             dataType: 'text',
             success: function (csv: string): void {
-                fireEvent(store, 'load', { csv }, function (): void {
-                    store.dataParser.parse({
-                        csv,
-                        ...store.parserOptions
-                    });
-                    store.poll();
-                    fireEvent(store, 'afterLoad', { table: store.dataParser.getTable() });
-                });
+                fireEvent(store, 'load', { csv });
             },
             error: function (xhr, text): void {
                 if (++currentRetries < maxRetries) {
@@ -140,13 +140,7 @@ class CSVDataStore extends DataStore {
         const store = this,
             { csv, csvURL } = store.options;
         if (csv) {
-            fireEvent(store, 'load', { csv }, function (): void {
-                store.dataParser.parse({
-                    csv,
-                    ...store.parserOptions
-                });
-                fireEvent(store, 'afterLoad', { table: store.dataParser.getTable() });
-            });
+            fireEvent(store, 'load', { csv });
         } else if (csvURL) {
             store.fetchCSV(true);
         }
@@ -169,6 +163,9 @@ namespace CSVDataStore {
 
     export interface DataBeforeParseCallbackFunction {
         (csv: string): string;
+    }
+    export interface LoadEventObject extends DataStore.LoadEventObject {
+        csv?: string;
     }
 }
 
