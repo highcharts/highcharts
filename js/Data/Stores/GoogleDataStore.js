@@ -23,11 +23,11 @@ var __extends = (this && this.__extends) || (function () {
         d.prototype = b === null ? Object.create(b) : (__.prototype = b.prototype, new __());
     };
 })();
-import AjaxMixin from '../Extensions/Ajax.js';
+import AjaxMixin from '../../Extensions/Ajax.js';
 var ajax = AjaxMixin.ajax;
 import DataStore from './DataStore.js';
-import DataParser from './Parsers/DataParser.js';
-import U from '../Core/Utilities.js';
+import DataParser from '../Parsers/DataParser.js';
+import U from '../../Core/Utilities.js';
 var fireEvent = U.fireEvent, merge = U.merge;
 /** eslint-disable valid-jsdoc */
 /**

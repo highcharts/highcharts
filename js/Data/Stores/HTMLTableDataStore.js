@@ -45,12 +45,12 @@ var __rest = (this && this.__rest) || function (s, e) {
         }
     return t;
 };
-import HTMLTableParser from './Parsers/HTMLTableParser.js';
+import HTMLTableParser from '../Parsers/HTMLTableParser.js';
 import DataStore from './DataStore.js';
-import DataTable from './DataTable.js';
-import H from '../Core/Globals.js';
+import DataTable from '../DataTable.js';
+import H from '../../Core/Globals.js';
 var win = H.win;
-import U from '../Core/Utilities.js';
+import U from '../../Core/Utilities.js';
 var fireEvent = U.fireEvent, merge = U.merge;
 /** eslint-disable valid-jsdoc */
 /**

@@ -13,11 +13,11 @@
 'use strict';
 
 import DataStore from './DataStore.js';
-import DataTable from './DataTable.js';
-import DataParser from './Parsers/DataParser.js';
-import ajaxModule from '../Extensions/Ajax.js';
-import U from '../Core/Utilities.js';
-import CSVDataParser from './Parsers/CSVDataParser.js';
+import DataTable from '../DataTable.js';
+import DataParser from '../Parsers/DataParser.js';
+import ajaxModule from '../../Extensions/Ajax.js';
+import U from '../../Core/Utilities.js';
+import CSVDataParser from '../Parsers/CSVDataParser.js';
 const { ajax } = ajaxModule;
 const { fireEvent, merge } = U;
 /* eslint-disable valid-jsdoc, require-jsdoc */

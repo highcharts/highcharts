@@ -12,18 +12,18 @@
 
 'use strict';
 
-import HTMLTableParser from './Parsers/HTMLTableParser.js';
+import HTMLTableParser from '../Parsers/HTMLTableParser.js';
 import DataStore from './DataStore.js';
-import DataTable from './DataTable.js';
-import H from '../Core/Globals.js';
+import DataTable from '../DataTable.js';
+import H from '../../Core/Globals.js';
 const { win } = H;
-import U from '../Core/Utilities.js';
+import U from '../../Core/Utilities.js';
 const {
     fireEvent,
     merge
 } = U;
 
-import type DataValueType from './DataValueType.js';
+import type DataValueType from '../DataValueType.js';
 
 /** eslint-disable valid-jsdoc */
 

@@ -10,8 +10,8 @@
  *
  * */
 'use strict';
-import DataTable from './DataTable.js';
-import U from '../Core/Utilities.js';
+import DataTable from '../DataTable.js';
+import U from '../../Core/Utilities.js';
 var addEvent = U.addEvent, fireEvent = U.fireEvent;
 var DataStore = /** @class */ (function () {
     /* *

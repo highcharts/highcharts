@@ -1,4 +1,4 @@
-import HTMLTableDataStore from '/base/js/Data/HTMLTableDataStore.js'
+import HTMLTableDataStore from '/base/js/Data/Stores/HTMLTableDataStore.js'
 import U from '/base/js/Core/Utilities.js';
 
 const { test, only } = QUnit;

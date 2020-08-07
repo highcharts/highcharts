@@ -46,10 +46,10 @@ var __rest = (this && this.__rest) || function (s, e) {
     return t;
 };
 import DataStore from './DataStore.js';
-import DataTable from './DataTable.js';
-import ajaxModule from '../Extensions/Ajax.js';
-import U from '../Core/Utilities.js';
-import CSVDataParser from './Parsers/CSVDataParser.js';
+import DataTable from '../DataTable.js';
+import ajaxModule from '../../Extensions/Ajax.js';
+import U from '../../Core/Utilities.js';
+import CSVDataParser from '../Parsers/CSVDataParser.js';
 var ajax = ajaxModule.ajax;
 var fireEvent = U.fireEvent, merge = U.merge;
 /* eslint-disable valid-jsdoc, require-jsdoc */
