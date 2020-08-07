@@ -141,6 +141,7 @@ var TreeGridAxis;
                     mapOfPosToGridNode[pos] = gridNode = {
                         depth: parentGridNode ? parentGridNode.depth + 1 : 0,
                         name: name,
+                        id: data.id,
                         nodes: [node],
                         children: [],
                         pos: pos
@@ -586,6 +587,18 @@ var TreeGridAxis;
         Additions.prototype.collapse = function (node) {
             var axis = this.axis, breaks = (axis.options.breaks || []), obj = getBreakFromNode(node, axis.max);
             breaks.push(obj);
+            // Change the collapsed flag #13838
+            node.collapsed = true;
+            axis.series.forEach(function (series) {
+                var data = series.options.data;
+                if (data && data.length) {
+                    data.forEach(function (data) {
+                        if (data.id === node.id) {
+                            data.collapsed = true;
+                        }
+                    });
+                }
+            });
             return breaks;
         };
         /**
@@ -607,6 +620,18 @@ var TreeGridAxis;
          */
         Additions.prototype.expand = function (node) {
             var axis = this.axis, breaks = (axis.options.breaks || []), obj = getBreakFromNode(node, axis.max);
+            // Change the collapsed flag #13838
+            node.collapsed = false;
+            axis.series.forEach(function (series) {
+                var data = series.options.data;
+                if (data && data.length) {
+                    data.forEach(function (data) {
+                        if (data.id === node.id) {
+                            data.collapsed = false;
+                        }
+                    });
+                }
+            });
             // Remove the break from the axis breaks array.
             return breaks.reduce(function (arr, b) {
                 if (b.to !== obj.to || b.from !== obj.from) {
