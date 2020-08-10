@@ -232,28 +232,25 @@ class CSVDataParser implements DataParser {
             commas = 0,
             guessed: string;
         const potDelimiters: Record<string, number> = {
-            ',': 0,
-            ';': 0,
-            '\t': 0
-        };
+                ',': 0,
+                ';': 0,
+                '\t': 0
+            },
+            linesCount = lines.length;
 
-        // TODO make this not a [].some
-        lines.some(function (
-            columnStr: string,
-            i: number
-        ): (boolean | undefined) {
+        for (let i = 0; i < linesCount; i++) {
             var inStr = false,
                 c,
                 cn,
                 cl,
                 token = '';
 
-
             // We should be able to detect dateformats within 13 rows
             if (i > 13) {
-                return true;
+                break;
             }
 
+            const columnStr = lines[i];
             for (var j = 0; j < columnStr.length; j++) {
                 c = columnStr[j];
                 cn = columnStr[j + 1];
@@ -261,7 +258,7 @@ class CSVDataParser implements DataParser {
 
                 if (c === '#') {
                     // Skip the rest of the line - it's a comment
-                    return;
+                    break;
                 }
 
                 if (c === '"') {
@@ -311,7 +308,7 @@ class CSVDataParser implements DataParser {
                     points++;
                 }
             }
-        } as any);
+        }
 
         // Count the potential delimiters.
         // This could be improved by checking if the number of delimiters

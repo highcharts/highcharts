@@ -145,21 +145,21 @@ var CSVDataParser = /** @class */ (function () {
             ',': 0,
             ';': 0,
             '\t': 0
-        };
-        // TODO make this not a [].some
-        lines.some(function (columnStr, i) {
+        }, linesCount = lines.length;
+        for (var i = 0; i < linesCount; i++) {
             var inStr = false, c, cn, cl, token = '';
             // We should be able to detect dateformats within 13 rows
             if (i > 13) {
-                return true;
+                break;
             }
+            var columnStr = lines[i];
             for (var j = 0; j < columnStr.length; j++) {
                 c = columnStr[j];
                 cn = columnStr[j + 1];
                 cl = columnStr[j - 1];
                 if (c === '#') {
                     // Skip the rest of the line - it's a comment
-                    return;
+                    break;
                 }
                 if (c === '"') {
                     if (inStr) {
@@ -201,7 +201,7 @@ var CSVDataParser = /** @class */ (function () {
                     points++;
                 }
             }
-        });
+        }
         // Count the potential delimiters.
         // This could be improved by checking if the number of delimiters
         // equals the number of columns - 1
