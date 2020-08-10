@@ -29,6 +29,32 @@ var DataStore = /** @class */ (function () {
     *  Functions
     *
     * */
+    DataStore.prototype.getMetadataJSON = function () {
+        var json = [];
+        var elem;
+        for (var i = 0, iEnd = this.metadata.length; i < iEnd; i++) {
+            elem = this.metadata[i];
+            json.push([
+                elem.name,
+                elem.metadata
+            ]);
+        }
+        return json;
+    };
+    DataStore.prototype.getMetadataFromJSON = function (metadataJSON) {
+        var metadata = [];
+        var elem;
+        for (var i = 0, iEnd = metadataJSON.length; i < iEnd; i++) {
+            elem = metadataJSON[i];
+            if (elem instanceof Array && typeof elem[0] === 'string') {
+                metadata.push({
+                    name: elem[0],
+                    metadata: elem[1]
+                });
+            }
+        }
+        return metadata;
+    };
     DataStore.prototype.describeColumn = function (name, metadata) {
         this.metadata.push({
             name: name,

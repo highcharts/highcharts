@@ -64,16 +64,7 @@ class GoogleDataStore extends DataStore implements DataJSON.Class {
             table = DataTable.fromJSON(json.table),
             store = new GoogleDataStore(table, options);
 
-        let metadata;
-
-        for (let i = 0, iEnd = json.metadata.length; i < iEnd; i++) {
-            metadata = json.metadata[i];
-
-            if (metadata instanceof Array && typeof metadata[0] === 'string') {
-                store.describeColumn(metadata[0], metadata[1]);
-            }
-        }
-
+        store.describe(store.getMetadataFromJSON(json.metadata));
         return store;
     }
 
@@ -301,19 +292,8 @@ class GoogleDataStore extends DataStore implements DataJSON.Class {
             $class: 'GoogleDataStore',
             options: merge(this.options),
             table: this.table.toJSON(),
-            metadata: []
+            metadata: this.getMetadataJSON()
         };
-
-        let metadata;
-
-        for (let i = 0, iEnd = this.metadata.length; i < iEnd; i++) {
-            metadata = this.metadata[i];
-
-            json.metadata.push([
-                metadata.name,
-                metadata.metadata
-            ]);
-        }
 
         return json;
     }
@@ -344,7 +324,7 @@ namespace GoogleDataStore {
     export interface ClassJSON extends DataJSON.ClassJSON {
         table: DataTable.ClassJSON;
         options: Options;
-        metadata: DataJSON.Array;
+        metadata: DataStore.MetadataJSON;
     }
 
 }

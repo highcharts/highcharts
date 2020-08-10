@@ -20,6 +20,7 @@ const {
 } = U;
 
 import type DataValueType from '../DataValueType.js';
+import DataJSON from '../DataJSON.js';
 
 class DataStore {
     /* *
@@ -48,6 +49,41 @@ class DataStore {
     *  Functions
     *
     * */
+
+    protected getMetadataJSON(): DataStore.MetadataJSON {
+        const json = [];
+        let elem;
+
+        for (let i = 0, iEnd = this.metadata.length; i < iEnd; i++) {
+            elem = this.metadata[i];
+
+            json.push([
+                elem.name,
+                elem.metadata
+            ]);
+        }
+
+        return json;
+    }
+
+    protected getMetadataFromJSON(metadataJSON: DataStore.MetadataJSON):
+    Array<DataStore.MetaColumn> {
+        const metadata = [];
+        let elem;
+
+        for (let i = 0, iEnd = metadataJSON.length; i < iEnd; i++) {
+            elem = metadataJSON[i];
+
+            if (elem instanceof Array && typeof elem[0] === 'string') {
+                metadata.push({
+                    name: elem[0],
+                    metadata: elem[1]
+                });
+            }
+        }
+
+        return metadata;
+    }
 
     public describeColumn(
         name: string,
@@ -115,6 +151,8 @@ namespace DataStore {
         readonly columns: DataValueType[][];
         readonly headers: string[];
     }
+
+    export type MetadataJSON = Array<DataJSON.Array>
 
 }
 

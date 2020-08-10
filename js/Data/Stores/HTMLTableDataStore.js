@@ -83,13 +83,7 @@ var HTMLTableDataStore = /** @class */ (function (_super) {
         var options = {
             tableHTML: json.tableHTMLId
         }, table = DataTable.fromJSON(json.table), store = new HTMLTableDataStore(table, options);
-        var metadata;
-        for (var i = 0, iEnd = json.metadata.length; i < iEnd; i++) {
-            metadata = json.metadata[i];
-            if (metadata instanceof Array && typeof metadata[0] === 'string') {
-                store.describeColumn(metadata[0], metadata[1]);
-            }
-        }
+        store.describe(store.getMetadataFromJSON(json.metadata));
         return store;
     };
     HTMLTableDataStore.prototype.addEvents = function () {
@@ -146,16 +140,8 @@ var HTMLTableDataStore = /** @class */ (function (_super) {
             $class: 'HTMLTableDataStore',
             table: this.table.toJSON(),
             tableHTMLId: typeof this.element === 'string' ? this.element : this.element.id,
-            metadata: []
+            metadata: this.getMetadataJSON()
         };
-        var metadata;
-        for (var i = 0, iEnd = this.metadata.length; i < iEnd; i++) {
-            metadata = this.metadata[i];
-            json.metadata.push([
-                metadata.name,
-                metadata.metadata
-            ]);
-        }
         return json;
     };
     /* *
