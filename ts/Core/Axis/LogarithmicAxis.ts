@@ -30,14 +30,9 @@ declare global {
     namespace Highcharts {
         interface Axis {
             /** @deprecated */
-            allowNegativeLog?: boolean;
-            /** @deprecated */
             lin2log(num: number): number;
             /** @deprecated */
             log2lin(num: number): number;
-        }
-        interface XAxisOptions {
-            allowNegativeLog?: boolean;
         }
     }
 }
@@ -209,26 +204,10 @@ class LogarithmicAxisAdditions {
     }
 
     public lin2log(num: number): number {
-        if (this.axis.options.allowNegativeLog) {
-            const isNegative = num < 0;
-            num = Math.abs(num);
-            if (num < 1) {
-                return 0;
-            }
-            return (isNegative ? -1 : 1) * Math.pow(10, num);
-        }
         return Math.pow(10, num);
     }
 
     public log2lin(num: number): number {
-        if (this.axis.options.allowNegativeLog) {
-            const isNegative = num < 0;
-            num = Math.abs(num);
-            if (num < 1) {
-                return 0;
-            }
-            return (isNegative ? -1 : 1) * Math.log(num) / Math.LN10;
-        }
         return Math.log(num) / Math.LN10;
     }
 
@@ -250,12 +229,8 @@ class LogarithmicAxis {
         // @todo Remove this in next major
         const axisProto = AxisClass.prototype;
         const logAxisProto = LogarithmicAxisAdditions.prototype;
-        axisProto.log2lin = function (num: number): number {
-            return logAxisProto.log2lin.call({ axis: this }, num);
-        };
-        axisProto.lin2log = function (num: number): number {
-            return logAxisProto.lin2log.call({ axis: this }, num);
-        };
+        axisProto.log2lin = logAxisProto.log2lin;
+        axisProto.lin2log = logAxisProto.lin2log;
 
         /* eslint-disable no-invalid-this */
 
@@ -307,16 +282,3 @@ interface LogarithmicAxis extends Axis {
 LogarithmicAxis.compose(Axis); // @todo move to factory functions
 
 export default LogarithmicAxis;
-
-/**
- * Activates rendering of negative logarithmic values.
- *
- * @sample highcharts/yaxis/type-log-negative
- *         Rendering negative logarithmic
- *
- * @type      {boolean}
- * @since     next
- * @apioption xAxis.allowNegativeLog
- */
-
-''; // keeps doclets above in transpiled file
