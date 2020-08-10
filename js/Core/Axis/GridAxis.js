@@ -50,7 +50,8 @@ var applyGridOptions = function applyGridOptions(axis) {
  * different units may be used, for example the `day` unit can be used
  * on midnight and `hour` unit be used for intermediate values on the
  * same axis.
- * For Gantt possible to declare as a list to provide different
+ * For grid axes (like in Gantt charts),
+ * it is possible to declare as a list to provide different
  * formats depending on available space.
  * For an overview of the replacement codes, see
  * [dateFormat](/class-reference/Highcharts#dateFormat).
