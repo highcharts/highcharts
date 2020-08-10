@@ -18,6 +18,7 @@ import DataParser from '../Parsers/DataParser.js';
 import ajaxModule from '../../Extensions/Ajax.js';
 import U from '../../Core/Utilities.js';
 import CSVDataParser from '../Parsers/CSVDataParser.js';
+import DataJSON from './../DataJSON.js';
 const { ajax } = ajaxModule;
 const { fireEvent, merge } = U;
 /* eslint-disable valid-jsdoc, require-jsdoc */
@@ -26,7 +27,7 @@ const { fireEvent, merge } = U;
  * @private
  */
 
-class CSVDataStore extends DataStore {
+class CSVDataStore extends DataStore implements DataJSON.Class {
 
 
     /* *
@@ -40,6 +41,30 @@ class CSVDataStore extends DataStore {
         enablePolling: false,
         dataRefreshRate: 1
     }
+
+    /* *
+     *
+     *  Static Functions
+     *
+     * */
+    public static fromJSON(json: CSVDataStore.ClassJSON): CSVDataStore {
+        const options = json.options,
+            table = DataTable.fromJSON(json.table),
+            store = new CSVDataStore(table, options);
+
+        let metadata;
+
+        for (let i = 0, iEnd = json.metadata.length; i < iEnd; i++) {
+            metadata = json.metadata[i];
+
+            if (metadata instanceof Array && typeof metadata[0] === 'string') {
+                store.describeColumn(metadata[0], metadata[1]);
+            }
+        }
+
+        return store;
+    }
+
     /* *
     *
     *  Constructors
@@ -149,10 +174,32 @@ class CSVDataStore extends DataStore {
     public save(): void {
 
     }
+
+    public toJSON(): CSVDataStore.ClassJSON {
+        const json: CSVDataStore.ClassJSON = {
+            $class: 'CSVDataStore',
+            options: merge(this.options),
+            table: this.table.toJSON(),
+            metadata: []
+        };
+
+        let metadata;
+
+        for (let i = 0, iEnd = this.metadata.length; i < iEnd; i++) {
+            metadata = this.metadata[i];
+
+            json.metadata.push([
+                metadata.name,
+                metadata.metadata
+            ]);
+        }
+
+        return json;
+    }
 }
 
 namespace CSVDataStore {
-    export interface Options {
+    export interface Options extends DataJSON.Object {
         csv: string;
         csvURL: string;
         enablePolling: boolean;
@@ -166,6 +213,12 @@ namespace CSVDataStore {
     }
     export interface LoadEventObject extends DataStore.LoadEventObject {
         csv?: string;
+    }
+
+    export interface ClassJSON extends DataJSON.ClassJSON {
+        table: DataTable.ClassJSON;
+        options: Options;
+        metadata: DataJSON.Array;
     }
 }
 
