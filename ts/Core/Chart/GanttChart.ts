@@ -167,8 +167,9 @@ H.ganttChart = function (
 
     (options.series || []).forEach(function (series): void {
         if (series.data) {
-            series.data.forEach(function (point): void {
-                H.seriesTypes.gantt.prototype.setGanttPointAliases(point as any);
+            series.data.forEach(function (point, i): void {
+                (point as any) = H.seriesTypes.gantt.prototype.setGanttPointAliases(point as any, series.keys);
+                (series as any).data[i] = point;
             });
         }
     });

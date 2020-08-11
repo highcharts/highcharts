@@ -104,8 +104,9 @@ H.ganttChart = function (renderTo, options, callback) {
     options.series = userOptions.series = seriesOptions;
     (options.series || []).forEach(function (series) {
         if (series.data) {
-            series.data.forEach(function (point) {
-                H.seriesTypes.gantt.prototype.setGanttPointAliases(point);
+            series.data.forEach(function (point, i) {
+                point = H.seriesTypes.gantt.prototype.setGanttPointAliases(point, series.keys);
+                series.data[i] = point;
             });
         }
     });

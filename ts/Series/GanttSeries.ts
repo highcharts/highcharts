@@ -54,7 +54,7 @@ declare global {
             public points: Array<GanttPoint>;
             public setData: Series['setData'];
             public drawPoint(point: GanttPoint, verb: string): void;
-            public setGanttPointAliases(options: GanttPointOptions): void;
+            public setGanttPointAliases(options: GanttPointOptions, keys?: Array<string>): void;
             public translatePoint(point: GanttPoint): void;
         }
         interface GanttAnimationOptionsObject extends Partial<AnimationOptionsObject> {
@@ -303,8 +303,9 @@ seriesType<Highcharts.GanttSeries>('gantt', 'xrange'
          */
         setGanttPointAliases: function (
             this: Highcharts.GanttSeriesOptions,
-            options: Highcharts.GanttPointOptions
-        ): void {
+            options: Highcharts.GanttPointOptions,
+            keys: Array<string>
+        ): Highcharts.GanttPointOptions {
             /**
              * Add a value to options if the value exists.
              * @private
@@ -314,6 +315,17 @@ seriesType<Highcharts.GanttSeries>('gantt', 'xrange'
                     (options as any)[prop] = val;
                 }
             }
+
+            if (keys) {
+                const data = options;
+                // Change the options array into the empty object
+                // and assign keys values #13768
+                options = {};
+                keys.forEach((key, i): void => {
+                    (options as any)[key] = (data as any)[i];
+                });
+            }
+
             addIfExists('x', pick(options.start, options.x));
             addIfExists('x2', pick(options.end, options.x2));
             addIfExists(
@@ -322,6 +334,8 @@ seriesType<Highcharts.GanttSeries>('gantt', 'xrange'
             addIfExists('connect', pick(
                 options.dependency, options.connect as any
             ));
+
+            return options;
         }
 
         /* eslint-enable valid-jsdoc */
