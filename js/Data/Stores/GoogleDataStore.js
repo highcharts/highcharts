@@ -55,7 +55,7 @@ var GoogleDataStore = /** @class */ (function (_super) {
      * */
     GoogleDataStore.fromJSON = function (json) {
         var options = json.options, table = DataTable.fromJSON(json.table), store = new GoogleDataStore(table, options);
-        store.describe(store.getMetadataFromJSON(json.metadata));
+        store.describe(DataStore.getMetadataFromJSON(json.metadata));
         return store;
     };
     /* *

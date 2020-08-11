@@ -57,7 +57,7 @@ class HTMLTableDataStore extends DataStore implements DataJSON.Class {
             table = DataTable.fromJSON(json.table),
             store = new HTMLTableDataStore(table, options);
 
-        store.describe(store.getMetadataFromJSON(json.metadata));
+        store.describe(DataStore.getMetadataFromJSON(json.metadata));
         return store;
     }
 

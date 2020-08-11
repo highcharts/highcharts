@@ -83,7 +83,7 @@ var HTMLTableDataStore = /** @class */ (function (_super) {
         var options = {
             tableHTML: json.tableHTMLId
         }, table = DataTable.fromJSON(json.table), store = new HTMLTableDataStore(table, options);
-        store.describe(store.getMetadataFromJSON(json.metadata));
+        store.describe(DataStore.getMetadataFromJSON(json.metadata));
         return store;
     };
     HTMLTableDataStore.prototype.addEvents = function () {
