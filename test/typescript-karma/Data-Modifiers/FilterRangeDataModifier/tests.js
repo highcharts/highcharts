@@ -1,7 +1,7 @@
 import DataTable from '/base/js/Data/DataTable.js';
-import FilterRangeDataModifier from '/base/js/Data/Modifiers/FilterRangeDataModifier.js';
+import RangeDataModifier from '/base/js/Data/Modifiers/RangeDataModifier.js';
 
-QUnit.test('FilterRangeDataModifier.execute', function (assert) {
+QUnit.test('RangeDataModifier.execute', function (assert) {
 
     const tableJSON = {
             $class: 'DataTable',
@@ -28,7 +28,7 @@ QUnit.test('FilterRangeDataModifier.execute', function (assert) {
             }]
         },
         table = DataTable.fromJSON(tableJSON),
-        modifier = new FilterRangeDataModifier({}),
+        modifier = new RangeDataModifier({}),
         modifiedTable = modifier.execute(table);
 
     assert.ok(

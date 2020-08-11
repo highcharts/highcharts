@@ -1,0 +1,29 @@
+<!DOCTYPE html><html>
+    <head>
+        <title>Data layer demo</title>
+    </head>
+    <body>
+        <div id="container"></div>
+        <script type="module">
+            import '../../../../code/es-modules/Core/Renderer/SVG/SVGRenderer.js';
+            import Chart from '../../../../code/es-modules/Core/Chart/Chart.js';
+            import GoogleDataStore from '../../../../code/es-modules/Data/Stores/GoogleDataStore.js';
+
+            const chart = new Chart('container', {});
+            const store = new GoogleDataStore({
+                googleSpreadsheetKey: '14632VxDAT-TAL06ICnoLsV_JyvjEBXdVY-J34br5iXY',
+                startColumn: 1,
+                endColumn: 8,
+                startRow: 2,
+                endRow: 52
+            });
+            store.on('load', e => console.log('load', e));
+            store.on('afterLoad', e => {
+                console.log(e.table.toJSON());
+            });
+            store.on('loadError', e => console.log(e));
+
+            store.load();
+        </script>
+    </body>
+</html>

@@ -37,7 +37,7 @@ const {
 /**
  * Class to manage a row with column values.
  */
-class DataRow implements DataEventEmitter<DataRow.EventTypes>, DataJSON.Class {
+class DataRow implements DataEventEmitter, DataJSON.Class {
 
     /* *
      *
@@ -394,7 +394,7 @@ class DataRow implements DataEventEmitter<DataRow.EventTypes>, DataJSON.Class {
      */
     public on(
         type: DataRow.EventTypes,
-        callback: DataRow.EventCallbacks<this>
+        callback: DataRow.EventCallbacks
     ): Function {
         return addEvent(this, type, callback);
     }
@@ -516,7 +516,7 @@ namespace DataRow {
     /**
      * All callback types of DataRow events.
      */
-    export type EventCallbacks<TThis> = (ColumnEventCallback<TThis>|RowEventCallback<TThis>);
+    export type EventCallbacks = (ColumnEventCallback|RowEventCallback);
 
     /**
      * All information objects of DataRow events.
@@ -545,14 +545,14 @@ namespace DataRow {
     /**
      * Describes the callback for column-related events.
      */
-    export interface ColumnEventCallback<TThis> extends DataEventEmitter.EventCallback<TThis, ColumnEventTypes> {
-        (this: TThis, e: ColumnEventObject): void;
+    export interface ColumnEventCallback extends DataEventEmitter.EventCallback {
+        (this: DataRow, e: ColumnEventObject): void;
     }
 
     /**
      * Describes the information object for column-related events.
      */
-    export interface ColumnEventObject extends DataEventEmitter.EventObject<ColumnEventTypes> {
+    export interface ColumnEventObject extends DataEventEmitter.EventObject {
         readonly columnKey: string;
         readonly columnValue: ColumnTypes;
     }
@@ -560,14 +560,14 @@ namespace DataRow {
     /**
      * Describes the callback for row-related events.
      */
-    export interface RowEventCallback<TThis> extends DataEventEmitter.EventCallback<TThis, RowEventTypes> {
-        (this: TThis, e: RowEventObject): void;
+    export interface RowEventCallback extends DataEventEmitter.EventCallback {
+        (this: DataRow, e: RowEventObject): void;
     }
 
     /**
      * Describes the information object for row-related events.
      */
-    export interface RowEventObject extends DataEventEmitter.EventObject<RowEventTypes> {
+    export interface RowEventObject extends DataEventEmitter.EventObject {
         // nothing here yet
     }
 

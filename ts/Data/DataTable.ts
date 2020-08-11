@@ -37,7 +37,7 @@ const {
 /**
  * Class to manage rows in a table structure.
  */
-class DataTable implements DataEventEmitter<DataTable.EventTypes>, DataJSON.Class {
+class DataTable implements DataEventEmitter, DataJSON.Class {
 
     /* *
      *
@@ -341,7 +341,7 @@ class DataTable implements DataEventEmitter<DataTable.EventTypes>, DataJSON.Clas
      */
     public on(
         type: DataTable.EventTypes,
-        callback: DataTable.EventCallbacks<this>
+        callback: DataTable.EventCallbacks
     ): Function {
         return addEvent(this, type, callback);
     }
@@ -432,7 +432,7 @@ namespace DataTable {
     /**
      * All callback structures of DataTable events.
      */
-    export type EventCallbacks<TThis> = (RowEventCallback<TThis>|TableEventCallback<TThis>);
+    export type EventCallbacks = (RowEventCallback|TableEventCallback);
 
     /**
      * All information objects of DataTable events.
@@ -470,14 +470,14 @@ namespace DataTable {
     /**
      * Describes the callback for row-related events.
      */
-    export interface RowEventCallback<TThis> extends DataEventEmitter.EventCallback<TThis, RowEventTypes> {
-        (this: TThis, e: RowEventObject): void;
+    export interface RowEventCallback extends DataEventEmitter.EventCallback {
+        (this: DataTable, e: RowEventObject): void;
     }
 
     /**
      * Describes the information object for row-related events.
      */
-    export interface RowEventObject extends DataEventEmitter.EventObject<RowEventTypes> {
+    export interface RowEventObject extends DataEventEmitter.EventObject {
         readonly index: number;
         readonly row: DataRow;
     }
@@ -485,14 +485,14 @@ namespace DataTable {
     /**
      * Describes the callback for table-related events.
      */
-    export interface TableEventCallback<TThis> extends DataEventEmitter.EventCallback<TThis, TableEventTypes> {
-        (this: TThis, e: TableEventObject): void;
+    export interface TableEventCallback extends DataEventEmitter.EventCallback {
+        (this: DataTable, e: TableEventObject): void;
     }
 
     /**
      * Describes the information object for table-related events.
      */
-    export interface TableEventObject extends DataEventEmitter.EventObject<TableEventTypes> {
+    export interface TableEventObject extends DataEventEmitter.EventObject {
         // nothing here yet
     }
 

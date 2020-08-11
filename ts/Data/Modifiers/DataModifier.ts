@@ -34,7 +34,7 @@ const {
  *
  * */
 
-abstract class DataModifier implements DataEventEmitter<DataModifier.EventTypes> {
+abstract class DataModifier implements DataEventEmitter {
 
     /* *
      *
@@ -117,7 +117,7 @@ abstract class DataModifier implements DataEventEmitter<DataModifier.EventTypes>
 
     public on(
         type: DataModifier.EventTypes,
-        callback: DataModifier.EventCallback<this>
+        callback: DataModifier.EventCallback
     ): Function {
         return addEvent(this, type, callback);
     }
@@ -144,11 +144,11 @@ namespace DataModifier {
         options: Options;
     }
 
-    export interface EventCallback<TThis> extends DataEventEmitter.EventCallback<TThis, EventTypes> {
-        (this: TThis, e: EventObject): void;
+    export interface EventCallback extends DataEventEmitter.EventCallback {
+        (this: DataModifier, e: EventObject): void;
     }
 
-    export interface EventObject extends DataEventEmitter.EventObject<EventTypes> {
+    export interface EventObject extends DataEventEmitter.EventObject {
         readonly table: DataTable;
     }
 
