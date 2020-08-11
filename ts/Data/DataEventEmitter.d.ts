@@ -19,27 +19,24 @@
 /**
  * Describes methods to attach callbacks to events of a class instance.
  */
-declare interface DataEventEmitter<TEventTypes extends string> {
+declare interface DataEventEmitter {
 
     /**
      * Emits an event on the class instance to all registered callbacks of this
      * event.
      *
-     * @param {DataEventEmitter.EventType} type
+     * @param {string} type
      * Event type as a string.
      *
      * @param {DataEventEmitter.EventObject} [e]
      * Event object with additional event information.
      */
-    emit(
-        type: TEventTypes,
-        e?: DataEventEmitter.EventObject<TEventTypes>
-    ): void;
+    emit(type: string, e?: DataEventEmitter.EventObject): void;
 
     /**
      * Registers a callback for a specific event.
      *
-     * @param {DataEventEmitter.EventType} type
+     * @param {string} type
      * Event type as a string.
      *
      * @param {DataEventEmitter.EventCallback} callack
@@ -48,10 +45,7 @@ declare interface DataEventEmitter<TEventTypes extends string> {
      * @return {Function}
      * Function to unregister callback from the event.
      */
-    on(
-        type: TEventTypes,
-        callback: DataEventEmitter.EventCallback<this, TEventTypes>
-    ): Function;
+    on(type: string, callback: DataEventEmitter.EventCallback): Function;
 
 }
 
@@ -70,26 +64,28 @@ declare namespace DataEventEmitter {
     /**
      * Describes the callbacks expected types. This generic interface can be
      * extended by implementing classes.
-     *
-     * @param this
-     * Event scope pointing to the class instance, where the event happens.
-     *
-     * @param e
-     * Event object with additional event information.
      */
-    export interface EventCallback<TThis, TEventTypes> {
-        (this: TThis, e: DataEventEmitter.EventObject<TEventTypes>): void;
+    export interface EventCallback {
+        /**
+         *
+         * @param this
+         * Event scope pointing to the class instance, where the event happens.
+         *
+         * @param e
+         * Event object with additional event information.
+         */
+        (this: DataEventEmitter, e: DataEventEmitter.EventObject): void;
     }
 
     /**
-     * Event object with additional event information. This generic interface
-     * can be extended by implementing classes.
+     * Event object with additional event information. This interface can be
+     * extended by implementing classes.
      */
-    export interface EventObject<TEventTypes> {
+    export interface EventObject {
         /**
          * Event type as a string.
          */
-        readonly type?: TEventTypes;
+        readonly type?: string;
     }
 }
 
