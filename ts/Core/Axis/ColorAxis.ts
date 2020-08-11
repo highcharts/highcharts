@@ -23,7 +23,7 @@ const {
     noop
 } = H;
 import Legend from '../Legend.js';
-import LegendSymbolMixin from '../../mixins/legend-symbol.js';
+import LegendSymbolMixin from '../../Mixins/LegendSymbol.js';
 import Point from '../Series/Point.js';
 import U from '../Utilities.js';
 const {
@@ -123,7 +123,8 @@ declare global {
 
 ''; // detach doclet above
 
-import '../../mixins/color-series.js';
+import '../../Mixins/ColorSeries.js';
+import '../Series/Series.js';
 
 var Series = H.Series,
     colorPointMixin = H.colorPointMixin,
@@ -1579,7 +1580,7 @@ namespace ColorAxis {
         chart: Chart;
         name: string;
         options: object;
-        drawLegendSymbol: LegendSymbolMixin['drawRectangle'];
+        drawLegendSymbol: typeof LegendSymbolMixin['drawRectangle'];
         visible: boolean;
         setState: Function;
         isDataClass: true;

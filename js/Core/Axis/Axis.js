@@ -433,7 +433,7 @@ var Axis = /** @class */ (function () {
         // Placeholder for plotlines and plotbands groups
         axis.plotLinesAndBandsGroups = {};
         // Shorthand types
-        axis.positiveValuesOnly = !!(axis.logarithmic && !options.allowNegativeLog);
+        axis.positiveValuesOnly = !!axis.logarithmic;
         // Flag, if axis is linked to another axis
         axis.isLinked = defined(options.linkedTo);
         /**
@@ -3472,7 +3472,7 @@ var Axis = /** @class */ (function () {
          *         More information in x axis labels
          *
          * @declare Highcharts.AxisDateTimeLabelFormatsOptions
-         * @product highcharts highstock gantt
+         * @product highcharts highstock
          */
         dateTimeLabelFormats: {
             /**

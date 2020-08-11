@@ -114,6 +114,7 @@ declare global {
             distance?: number;
             format?: string;
             formatter: FormatterCallbackFunction<Point>;
+            includeInDataExport: boolean;
             overflow: DataLabelsOverflowValue;
             padding: number;
             shadow: (boolean|Partial<ShadowOptionsObject>);
@@ -1176,6 +1177,18 @@ merge<Annotation>(
                     },
 
                     /**
+                     * Whether the annotation is visible in the exported data
+                     * table.
+                     *
+                     * @sample highcharts/annotations/include-in-data-export/
+                     *         Do not include in the data export
+                     *
+                     * @since   next
+                     * @requires modules/export-data
+                     */
+                    includeInDataExport: true,
+
+                    /**
                      * How to handle the annotation's label that flow outside
                      * the plot area. The justify option aligns the label inside
                      * the plot area.
@@ -1731,6 +1744,132 @@ chartProto.callbacks.push(function (
     addEvent(chart, 'destroy', function (): void {
         chart.plotBoxClip.destroy();
         chart.controlPointsGroup.destroy();
+    });
+    addEvent(chart, 'exportData', function (this: Highcharts.AnnotationChart, event: any): void {
+        const annotations = chart.annotations,
+            csvColumnHeaderFormatter = ((
+                this.options.exporting &&
+                this.options.exporting.csv) ||
+                {}).columnHeaderFormatter,
+            // If second row doesn't have xValues
+            // then it is a title row thus multiple level header is in use.
+            multiLevelHeaders = !event.dataRows[1].xValues,
+            annotationHeader = chart.options.lang?.exportData?.annotationHeader,
+            columnHeaderFormatter = function (index: any): any {
+                let s;
+                if (csvColumnHeaderFormatter) {
+                    s = csvColumnHeaderFormatter(index);
+                    if (s !== false) {
+                        return s;
+                    }
+                }
+
+                s = annotationHeader + ' ' + index;
+
+                if (multiLevelHeaders) {
+                    return {
+                        columnTitle: s,
+                        topLevelColumnTitle: s
+                    };
+                }
+
+                return s;
+            },
+            startRowLength = event.dataRows[0].length,
+            annotationSeparator = chart.options.exporting?.csv?.annotations?.itemDelimiter,
+            joinAnnotations = chart.options.exporting?.csv?.annotations?.join;
+
+        annotations.forEach((annotation): void => {
+
+            if (annotation.options.labelOptions.includeInDataExport) {
+
+                annotation.labels.forEach((label): void => {
+                    if (label.options.text) {
+                        const annotationText = label.options.text;
+
+                        label.points.forEach((points): void => {
+                            const annotationX = points.x,
+                                xAxisIndex = points.series.xAxis ?
+                                    points.series.xAxis.options.index :
+                                    -1;
+                            let wasAdded = false;
+
+                            // Annotation not connected to any xAxis -
+                            // add new row.
+                            if (xAxisIndex === -1) {
+                                const newRow: any = new Array(event.dataRows[0].length);
+
+                                newRow.fill('');
+                                newRow.push(annotationText);
+                                newRow.xValues = [];
+                                newRow.xValues[xAxisIndex] = annotationX;
+                                event.dataRows.push(newRow);
+                                wasAdded = true;
+                            }
+
+                            // Annotation placed on a exported data point
+                            // - add new column
+                            if (!wasAdded) {
+                                event.dataRows.forEach((row: any, rowIndex: number): void => {
+                                    if (
+                                        !wasAdded &&
+                                        row.xValues &&
+                                        xAxisIndex !== void 0 &&
+                                        annotationX === row.xValues[xAxisIndex]
+                                    ) {
+                                        if (
+                                            joinAnnotations &&
+                                            row.length > startRowLength
+                                        ) {
+                                            row[row.length - 1] +=
+                                            annotationSeparator + annotationText;
+                                        } else {
+                                            row.push(annotationText);
+                                        }
+                                        wasAdded = true;
+                                    }
+                                });
+                            }
+
+                            // Annotation not placed on any exported data point,
+                            // but connected to the xAxis - add new row
+                            if (!wasAdded) {
+                                const newRow: any = new Array(event.dataRows[0].length);
+
+                                newRow.fill('');
+                                newRow[0] = annotationX;
+                                newRow.push(annotationText);
+                                newRow.xValues = [];
+
+                                if (xAxisIndex !== void 0) {
+                                    newRow.xValues[xAxisIndex] = annotationX;
+                                }
+                                event.dataRows.push(newRow);
+                            }
+                        });
+                    }
+                });
+            }
+        });
+
+        let maxRowLen = 0;
+
+        event.dataRows.forEach((row: any): void => {
+            maxRowLen = Math.max(maxRowLen, row.length);
+        });
+
+        const newRows = maxRowLen - event.dataRows[0].length;
+
+        for (let i = 0; i < newRows; i++) {
+            const header = columnHeaderFormatter(i + 1);
+
+            if (multiLevelHeaders) {
+                event.dataRows[0].push(header.topLevelColumnTitle);
+                event.dataRows[1].push(header.columnTitle);
+            } else {
+                event.dataRows[0].push(header);
+            }
+        }
     });
 } as any);
 

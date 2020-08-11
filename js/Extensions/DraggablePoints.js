@@ -171,6 +171,7 @@ var addEvent = U.addEvent, clamp = U.clamp, merge = U.merge, objectEach = U.obje
 * @type {"drop"}
 */
 ''; // detaches doclets above
+import '../Core/Series/Series.js';
 var seriesTypes = H.seriesTypes;
 /**
  * Flip a side property, used with resizeRect. If input side is "left", return

@@ -24,6 +24,7 @@ import chartSonifyFunctions from './chartSonify.js';
 import utilities from './utilities.js';
 import TimelineClasses from './Timeline.js';
 import sonificationOptions from './options.js';
+import '../../Core/Series/Series.js';
 // Expose on the Highcharts object
 /**
  * Global classes and objects related to sonification.

@@ -11,6 +11,7 @@
  * */
 'use strict';
 import H from '../Core/Globals.js';
+import NodesMixin from '../Mixins/Nodes.js';
 /**
  * A node in a sankey diagram.
  *
@@ -93,10 +94,10 @@ import Color from '../Core/Color.js';
 import Point from '../Core/Series/Point.js';
 import U from '../Core/Utilities.js';
 var defined = U.defined, find = U.find, isObject = U.isObject, merge = U.merge, pick = U.pick, relativeLength = U.relativeLength, seriesType = U.seriesType, stableSort = U.stableSort;
+import TreeSeriesMixin from '../Mixins/TreeSeries.js';
+var getLevelOptions = TreeSeriesMixin.getLevelOptions;
 import '../Core/Options.js';
-import '../mixins/nodes.js';
-import mixinTreeSeries from '../mixins/tree-series.js';
-var getLevelOptions = mixinTreeSeries.getLevelOptions;
+import './ColumnSeries.js';
 // eslint-disable-next-line valid-jsdoc
 /**
  * @private
@@ -140,7 +141,7 @@ seriesType('sankey', 'column',
  *               pointInterval, pointIntervalUnit, pointPadding,
  *               pointPlacement, pointRange, pointStart, pointWidth,
  *               shadow, softThreshold, stacking, threshold, zoneAxis,
- *               zones, minPointLength, dataSorting
+ *               zones, minPointLength, dataSorting, boostBlending
  * @requires     modules/sankey
  * @optionparent plotOptions.sankey
  */
@@ -382,10 +383,10 @@ seriesType('sankey', 'column',
     pointArrayMap: ['from', 'to'],
     // Create a single node that holds information on incoming and outgoing
     // links.
-    createNode: H.NodesMixin.createNode,
+    createNode: NodesMixin.createNode,
     searchPoint: H.noop,
-    setData: H.NodesMixin.setData,
-    destroy: H.NodesMixin.destroy,
+    setData: NodesMixin.setData,
+    destroy: NodesMixin.destroy,
     /* eslint-disable valid-jsdoc */
     /**
      * Overridable function to get node padding, overridden in dependency
@@ -545,7 +546,7 @@ seriesType('sankey', 'column',
      * @private
      */
     generatePoints: function () {
-        H.NodesMixin.generatePoints.apply(this, arguments);
+        NodesMixin.generatePoints.apply(this, arguments);
         /**
          * Order the nodes, starting with the root node(s). (#9818)
          * @private
@@ -861,7 +862,7 @@ seriesType('sankey', 'column',
         }
         return this;
     },
-    setState: H.NodesMixin.setNodeState,
+    setState: NodesMixin.setNodeState,
     getClassName: function () {
         return (this.isNode ? 'highcharts-node ' : 'highcharts-link ') +
             Point.prototype.getClassName.call(this);

@@ -12,7 +12,7 @@
 'use strict';
 import U from '../Core/Utilities.js';
 var correctFloat = U.correctFloat, isNumber = U.isNumber, merge = U.merge, seriesType = U.seriesType;
-import derivedSeriesMixin from '../mixins/derived-series.js';
+import derivedSeriesMixin from '../Mixins/DerivedSeries.js';
 /* ************************************************************************** *
  *  BELL CURVE                                                                *
  * ************************************************************************** */
@@ -130,7 +130,7 @@ seriesType('bellcurve', 'areaspline'
  * @extends   series,plotOptions.bellcurve
  * @since     6.0.0
  * @product   highcharts
- * @excluding dataParser, dataURL, data
+ * @excluding dataParser, dataURL, data, boostThreshold, boostBlending
  * @requires  modules/bellcurve
  * @apioption series.bellcurve
  */

@@ -13,7 +13,7 @@
 import Color from '../Core/Color.js';
 var color = Color.parse;
 import H from '../Core/Globals.js';
-import LegendSymbolMixin from '../mixins/legend-symbol.js';
+import LegendSymbolMixin from '../Mixins/LegendSymbol.js';
 import U from '../Core/Utilities.js';
 var clamp = U.clamp, extend = U.extend, isNumber = U.isNumber, merge = U.merge, pick = U.pick, pInt = U.pInt, seriesType = U.seriesType, wrap = U.wrap;
 /**
@@ -378,7 +378,7 @@ seriesType('solidgauge', 'gauge', solidGaugeOptions, {
  *            findNearestPointBy, getExtremesFromAll, marker, negativeColor,
  *            pointPlacement, pivot, shadow, softThreshold, stack, stacking,
  *            states, step, threshold, turboThreshold, wrap, zoneAxis, zones,
- *            dataSorting
+ *            dataSorting, boostBlending
  * @product   highcharts
  * @requires  modules/solid-gauge
  * @apioption series.solidgauge

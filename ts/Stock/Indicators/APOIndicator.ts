@@ -53,10 +53,9 @@ const {
     error,
     seriesType
 } = U;
-import requiredIndicatorMixin from '../../mixins/indicator-required.js';
+import requiredIndicator from '../../Mixins/IndicatorRequired.js';
 
-var EMA = H.seriesTypes.ema,
-    requiredIndicator = requiredIndicatorMixin;
+var EMA = H.seriesTypes.ema;
 
 /**
  * The APO series type.

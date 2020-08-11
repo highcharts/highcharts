@@ -15,6 +15,7 @@
 import type Chart from '../../Core/Chart/Chart';
 import type SVGPath from '../../Core/Renderer/SVG/SVGPath';
 import H from '../../Core/Globals.js';
+import NodesMixin from '../../Mixins/Nodes.js';
 import Point from '../../Core/Series/Point.js';
 import U from '../../Core/Utilities.js';
 const {
@@ -234,10 +235,9 @@ declare global {
 ''; // detach doclets above
 
 import '../../Core/Options.js';
-import '../../mixins/nodes.js';
 import './Layouts.js';
 import './DraggableNodes.js';
-
+import '../../Core/Series/Series.js';
 
 var seriesTypes = H.seriesTypes,
     Series = H.Series,
@@ -268,7 +268,8 @@ seriesType<Highcharts.NetworkgraphSeries>(
      *               getExtremesFromAll, label, linecap, negativeColor,
      *               pointInterval, pointIntervalUnit, pointPlacement,
      *               pointStart, softThreshold, stack, stacking, step,
-     *               threshold, xAxis, yAxis, zoneAxis, dataSorting
+     *               threshold, xAxis, yAxis, zoneAxis, dataSorting,
+     *               boostBlending
      * @requires     modules/networkgraph
      * @optionparent plotOptions.networkgraph
      */
@@ -676,13 +677,13 @@ seriesType<Highcharts.NetworkgraphSeries>(
          * links.
          * @private
          */
-        createNode: H.NodesMixin.createNode,
+        createNode: NodesMixin.createNode,
         destroy: function (this: Highcharts.NetworkgraphSeries): void {
             this.layout.removeElementFromCollection<Highcharts.Series>(
                 this,
                 this.layout.series
             );
-            H.NodesMixin.destroy.call(this);
+            NodesMixin.destroy.call(this);
         },
 
         /* eslint-disable no-invalid-this, valid-jsdoc */
@@ -716,7 +717,7 @@ seriesType<Highcharts.NetworkgraphSeries>(
             var node,
                 i;
 
-            H.NodesMixin.generatePoints.apply(this, arguments as any);
+            NodesMixin.generatePoints.apply(this, arguments as any);
 
             // In networkgraph, it's fine to define stanalone nodes, create
             // them:
@@ -1041,7 +1042,7 @@ seriesType<Highcharts.NetworkgraphSeries>(
             }
         }
     }, {
-        setState: H.NodesMixin.setNodeState,
+        setState: NodesMixin.setNodeState,
         /**
          * Basic `point.init()` and additional styles applied when
          * `series.draggable` is enabled.
@@ -1386,7 +1387,8 @@ seriesType<Highcharts.NetworkgraphSeries>(
  *            connectNulls, cropThreshold, dragDrop, getExtremesFromAll, label,
  *            linecap, negativeColor, pointInterval, pointIntervalUnit,
  *            pointPlacement, pointStart, softThreshold, stack, stacking,
- *            step, threshold, xAxis, yAxis, zoneAxis, dataSorting
+ *            step, threshold, xAxis, yAxis, zoneAxis, dataSorting,
+ *            boostBlending
  * @product   highcharts
  * @requires  modules/networkgraph
  * @apioption series.networkgraph

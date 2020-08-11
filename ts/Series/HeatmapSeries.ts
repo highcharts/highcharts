@@ -13,7 +13,7 @@
 import type Point from '../Core/Series/Point';
 import type SVGPath from '../Core/Renderer/SVG/SVGPath';
 import H from '../Core/Globals.js';
-import LegendSymbolMixin from '../mixins/legend-symbol.js';
+import LegendSymbolMixin from '../Mixins/LegendSymbol.js';
 import SVGRenderer from '../Core/Renderer/SVG/SVGRenderer.js';
 import U from '../Core/Utilities.js';
 const {
@@ -132,7 +132,7 @@ declare global {
 
 import '../Core/Options.js';
 import '../Core/Series/Series.js';
-import '../mixins/color-map-series.js';
+import '../Mixins/ColorMapSeries.js';
 
 var colorMapPointMixin = H.colorMapPointMixin,
     colorMapSeriesMixin = H.colorMapSeriesMixin,

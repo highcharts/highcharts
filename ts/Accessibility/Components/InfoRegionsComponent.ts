@@ -609,7 +609,7 @@ extend(InfoRegionsComponent.prototype, /** @lends Highcharts.InfoRegionsComponen
                 { chart: chart, chartTitle: getChartTitle(chart) }
             );
 
-        return '<a id="' + buttonId + '">' + buttonText + '</a>';
+        return '<button id="' + buttonId + '">' + buttonText + '</button>';
     },
 
 
@@ -769,10 +769,8 @@ extend(InfoRegionsComponent.prototype, /** @lends Highcharts.InfoRegionsComponen
 
         if (el) {
             setElAttrs(el, {
-                role: 'button',
                 tabindex: '-1',
-                'aria-expanded': !!getElement(tableId),
-                href: '#' + tableId
+                'aria-expanded': !!getElement(tableId)
             });
 
             el.onclick = chart.options.accessibility

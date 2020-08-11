@@ -124,7 +124,7 @@ const eventEmitterMixin: Highcharts.AnnotationEventEmitterMixin = {
 
         if (emitter.options.draggable) {
 
-            addEvent(emitter, H.isTouchDevice ? 'touchmove' : 'drag', emitter.onDrag);
+            addEvent(emitter, 'drag', emitter.onDrag);
 
 
             if (!emitter.graphic.renderer.styledMode) {
