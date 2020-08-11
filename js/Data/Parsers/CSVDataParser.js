@@ -28,7 +28,7 @@ var CSVDataParser = /** @class */ (function () {
         });
     }
     CSVDataParser.prototype.parse = function (options) {
-        this.options = merge(options, CSVDataParser.defaultOptions);
+        this.options = merge(CSVDataParser.defaultOptions, options);
         var parser = this, _a = parser.options, beforeParse = _a.beforeParse, lineDelimiter = _a.lineDelimiter, firstRowAsNames = _a.firstRowAsNames, itemDelimiter = _a.itemDelimiter;
         var lines, rowIt = 0, _b = parser.options, csv = _b.csv, startRow = _b.startRow, endRow = _b.endRow, i, colsCount;
         this.columns = [];

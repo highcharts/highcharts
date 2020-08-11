@@ -60,7 +60,7 @@ class CSVDataParser implements DataParser {
 
 
     public parse(options: Partial<CSVDataParser.Options>): void {
-        this.options = merge(options, CSVDataParser.defaultOptions);
+        this.options = merge(CSVDataParser.defaultOptions, options);
         const parser = this,
             {
                 beforeParse,
