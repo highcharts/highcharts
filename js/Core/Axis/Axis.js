@@ -433,9 +433,7 @@ var Axis = /** @class */ (function () {
         // Placeholder for plotlines and plotbands groups
         axis.plotLinesAndBandsGroups = {};
         // Shorthand types
-        axis.positiveValuesOnly = !!(axis.logarithmic &&
-            !options.allowNegativeLog // legacy @todo remove
-        );
+        axis.positiveValuesOnly = !!axis.logarithmic;
         // Flag, if axis is linked to another axis
         axis.isLinked = defined(options.linkedTo);
         /**

@@ -4120,10 +4120,7 @@ class Axis implements AxisComposition, AxisLike {
         axis.plotLinesAndBandsGroups = {};
 
         // Shorthand types
-        axis.positiveValuesOnly = !!(
-            axis.logarithmic &&
-            !(options as any).allowNegativeLog // legacy @todo remove
-        );
+        axis.positiveValuesOnly = !!axis.logarithmic;
 
         // Flag, if axis is linked to another axis
         axis.isLinked = defined(options.linkedTo);
