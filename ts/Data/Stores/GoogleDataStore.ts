@@ -93,8 +93,8 @@ class GoogleDataStore extends DataStore<GoogleDataStore.EventObjects> implements
      * */
 
     public columns: Array<Array<DataValueType>>;
-    public options: GoogleDataStore.Options;
-    public readonly dataParser = new DataParser();
+    public readonly options: GoogleDataStore.Options;
+    public readonly parser = new DataParser();
 
     /* *
      *

@@ -13,6 +13,7 @@
 'use strict';
 
 import type DataEventEmitter from '../DataEventEmitter';
+import type DataParser from '../Parsers/DataParser';
 import DataJSON from '../DataJSON.js';
 import DataTable from '../DataTable.js';
 import U from '../../Core/Utilities.js';
@@ -65,9 +66,11 @@ abstract class DataStore<TEventObject extends DataStore.EventObject> implements 
     *
     * */
 
-    public table: DataTable;
+    public abstract readonly parser: DataParser<DataParser.EventObject>;
 
     public metadata: Array<DataStore.MetaColumn>;
+
+    public table: DataTable;
 
     /* *
      *

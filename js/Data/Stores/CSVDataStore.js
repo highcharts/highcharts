@@ -70,7 +70,7 @@ var CSVDataStore = /** @class */ (function (_super) {
         var csv = options.csv, csvURL = options.csvURL, enablePolling = options.enablePolling, dataRefreshRate = options.dataRefreshRate, parserOptions = __rest(options, ["csv", "csvURL", "enablePolling", "dataRefreshRate"]);
         _this.parserOptions = parserOptions;
         _this.options = merge(CSVDataStore.defaultOptions, { csv: csv, csvURL: csvURL, enablePolling: enablePolling, dataRefreshRate: dataRefreshRate });
-        _this.dataParser = new CSVDataParser(table);
+        _this.parser = new CSVDataParser(table);
         return _this;
     }
     /* *
@@ -109,11 +109,11 @@ var CSVDataStore = /** @class */ (function (_super) {
             url: store.liveDataURL,
             dataType: 'text',
             success: function (csv) {
-                store.dataParser.parse(__assign({ csv: csv }, store.parserOptions));
+                store.parser.parse(__assign({ csv: csv }, store.parserOptions));
                 if (store.liveDataURL) {
                     store.poll();
                 }
-                store.table = store.dataParser.getTable();
+                store.table = store.parser.getTable();
                 store.emit({ type: 'afterLoad', csv: csv, table: store.table });
             },
             error: function (xhr, error) {
@@ -128,8 +128,8 @@ var CSVDataStore = /** @class */ (function (_super) {
         var store = this, _a = store.options, csv = _a.csv, csvURL = _a.csvURL;
         if (csv) {
             store.emit({ type: 'load', csv: csv, table: store.table });
-            store.dataParser.parse(__assign({ csv: csv }, store.parserOptions));
-            store.table = store.dataParser.getTable();
+            store.parser.parse(__assign({ csv: csv }, store.parserOptions));
+            store.table = store.parser.getTable();
             store.emit({ type: 'afterLoad', csv: csv, table: store.table });
         }
         else if (csvURL) {

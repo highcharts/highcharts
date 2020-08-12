@@ -68,7 +68,7 @@ class HTMLTableDataStore extends DataStore<HTMLTableDataStore.EventObjects> impl
     ) {
         super(table);
 
-        this.dataParser = new HTMLTableParser(table);
+        this.parser = new HTMLTableParser(table);
         this.options = merge(HTMLTableDataStore.defaultOptions, HTMLTableParser.defaultOptions, options);
         this.tableElement = null;
     }
@@ -79,8 +79,8 @@ class HTMLTableDataStore extends DataStore<HTMLTableDataStore.EventObjects> impl
     *
     * */
 
-    private dataParser: HTMLTableParser;
     public readonly options: (HTMLTableDataStore.Options&HTMLTableParser.Options);
+    public readonly parser: HTMLTableParser;
     public tableElement: (HTMLElement|null);
 
     /**
@@ -121,12 +121,12 @@ class HTMLTableDataStore extends DataStore<HTMLTableDataStore.EventObjects> impl
             return;
         }
 
-        store.dataParser.parse({
+        store.parser.parse({
             tableElement: store.tableElement,
             ...store.options
         });
 
-        store.table = store.dataParser.getTable();
+        store.table = store.parser.getTable();
 
         store.emit({
             type: 'afterLoad',

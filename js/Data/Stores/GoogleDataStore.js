@@ -43,7 +43,7 @@ var GoogleDataStore = /** @class */ (function (_super) {
      * */
     function GoogleDataStore(table, options) {
         var _this = _super.call(this, table) || this;
-        _this.dataParser = new DataParser();
+        _this.parser = new DataParser();
         _this.options = merge(GoogleDataStore.defaultOptions, options);
         _this.columns = [];
         return _this;

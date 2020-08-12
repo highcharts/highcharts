@@ -71,7 +71,7 @@ class CSVDataStore extends DataStore<CSVDataStore.EventObjects> implements DataJ
 
         this.parserOptions = parserOptions;
         this.options = merge(CSVDataStore.defaultOptions, { csv, csvURL, enablePolling, dataRefreshRate });
-        this.dataParser = new CSVDataParser(table);
+        this.parser = new CSVDataParser(table);
     }
 
 
@@ -80,10 +80,10 @@ class CSVDataStore extends DataStore<CSVDataStore.EventObjects> implements DataJ
     *  Properties
     *
     * */
-    public options: CSVDataStore.Options;
+    public readonly options: CSVDataStore.Options;
+    public readonly parser: CSVDataParser;
     public parserOptions: Partial<CSVDataParser.Options>;
 
-    private dataParser: CSVDataParser;
     private liveDataURL?: string;
     private liveDataTimeout?: number;
 
@@ -118,14 +118,14 @@ class CSVDataStore extends DataStore<CSVDataStore.EventObjects> implements DataJ
             url: store.liveDataURL,
             dataType: 'text',
             success: function (csv: string): void {
-                store.dataParser.parse({
+                store.parser.parse({
                     csv,
                     ...store.parserOptions
                 });
                 if (store.liveDataURL) {
                     store.poll();
                 }
-                store.table = store.dataParser.getTable();
+                store.table = store.parser.getTable();
                 store.emit({ type: 'afterLoad', csv, table: store.table });
             },
             error: function (xhr, error): void {
@@ -143,11 +143,11 @@ class CSVDataStore extends DataStore<CSVDataStore.EventObjects> implements DataJ
 
         if (csv) {
             store.emit({ type: 'load', csv, table: store.table });
-            store.dataParser.parse({
+            store.parser.parse({
                 csv,
                 ...store.parserOptions
             });
-            store.table = store.dataParser.getTable();
+            store.table = store.parser.getTable();
             store.emit({ type: 'afterLoad', csv, table: store.table });
         } else if (csvURL) {
             store.fetchCSV(true);

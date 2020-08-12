@@ -56,7 +56,7 @@ var HTMLTableDataStore = /** @class */ (function (_super) {
         if (table === void 0) { table = new DataTable(); }
         if (options === void 0) { options = {}; }
         var _this = _super.call(this, table) || this;
-        _this.dataParser = new HTMLTableParser(table);
+        _this.parser = new HTMLTableParser(table);
         _this.options = merge(HTMLTableDataStore.defaultOptions, HTMLTableParser.defaultOptions, options);
         _this.tableElement = null;
         return _this;
@@ -103,8 +103,8 @@ var HTMLTableDataStore = /** @class */ (function (_super) {
             });
             return;
         }
-        store.dataParser.parse(__assign({ tableElement: store.tableElement }, store.options));
-        store.table = store.dataParser.getTable();
+        store.parser.parse(__assign({ tableElement: store.tableElement }, store.options));
+        store.table = store.parser.getTable();
         store.emit({
             type: 'afterLoad',
             table: store.table,
