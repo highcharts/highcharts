@@ -112,7 +112,7 @@ var DataTable = /** @class */ (function () {
      * @emits DataTable#afterClearTable
      */
     DataTable.prototype.clear = function () {
-        this.emit('clearTable', {});
+        this.emit({ type: 'clearTable' });
         var rowIds = this.getAllRowIds();
         for (var i = 0, iEnd = rowIds.length; i < iEnd; ++i) {
             this.unwatchRow(rowIds[i], true);
@@ -120,7 +120,7 @@ var DataTable = /** @class */ (function () {
         this.rows.length = 0;
         this.rowsIdMap = {};
         this.watchsIdMap = {};
-        this.emit('afterClearTable', {});
+        this.emit({ type: 'afterClearTable' });
     };
     /**
      * Deletes a row in this table.
@@ -136,25 +136,22 @@ var DataTable = /** @class */ (function () {
      */
     DataTable.prototype.deleteRow = function (rowId) {
         var row = this.rowsIdMap[rowId], index = this.rows.indexOf(row);
-        this.emit('deleteRow', { index: index, row: row });
+        this.emit({ type: 'deleteRow', index: index, row: row });
         this.rows[index] = row;
         delete this.rowsIdMap[rowId];
         this.unwatchRow(rowId);
-        this.emit('afterDeleteRow', { index: index, row: row });
+        this.emit({ type: 'afterDeleteRow', index: index, row: row });
         return row;
     };
     /**
      * Emits an event on this row to all registered callbacks of the given
      * event.
      *
-     * @param {DataTable.EventTypes} type
-     * Event type as a string.
-     *
      * @param {DataTable.EventObjects} [e]
-     * Event object with additional event information.
+     * Event object with event information.
      */
-    DataTable.prototype.emit = function (type, e) {
-        fireEvent(this, type, e);
+    DataTable.prototype.emit = function (e) {
+        fireEvent(this, e.type, e);
     };
     /**
      * Return the array of row IDs of this table.
@@ -227,11 +224,11 @@ var DataTable = /** @class */ (function () {
         if (typeof this.rowsIdMap[rowId] !== 'undefined') {
             return false;
         }
-        this.emit('insertRow', { index: index, row: row });
+        this.emit({ type: 'insertRow', index: index, row: row });
         this.rows.push(row);
         this.rowsIdMap[rowId] = row;
         this.watchRow(row);
-        this.emit('afterInsertRow', { index: index, row: row });
+        this.emit({ type: 'afterInsertRow', index: index, row: row });
         return true;
     };
     /**

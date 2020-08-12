@@ -9,23 +9,41 @@
  *  !!!!!!! SOURCE GETS TRANSPILED BY TYPESCRIPT. EDIT TS FILE ONLY. !!!!!!!
  *
  * */
+var __extends = (this && this.__extends) || (function () {
+    var extendStatics = function (d, b) {
+        extendStatics = Object.setPrototypeOf ||
+            ({ __proto__: [] } instanceof Array && function (d, b) { d.__proto__ = b; }) ||
+            function (d, b) { for (var p in b) if (b.hasOwnProperty(p)) d[p] = b[p]; };
+        return extendStatics(d, b);
+    };
+    return function (d, b) {
+        extendStatics(d, b);
+        function __() { this.constructor = d; }
+        d.prototype = b === null ? Object.create(b) : (__.prototype = b.prototype, new __());
+    };
+})();
+import DataParser from './DataParser.js';
 import DataTable from '../DataTable.js';
 import U from '../../Core/Utilities.js';
-var fireEvent = U.fireEvent, merge = U.merge, addEvent = U.addEvent;
-/* eslint-disable valid-jsdoc, require-jsdoc */
+var merge = U.merge;
+/* eslint-disable no-invalid-this, require-jsdoc, valid-jsdoc */
 /**
  * @private
  */
-var CSVDataParser = /** @class */ (function () {
+var CSVDataParser = /** @class */ (function (_super) {
+    __extends(CSVDataParser, _super);
     function CSVDataParser(table) {
-        var _this = this;
         if (table === void 0) { table = new DataTable(); }
-        this.table = table;
-        this.options = CSVDataParser.defaultOptions;
-        addEvent(this, 'afterParse', function (e) {
-            _this.columns = e.columns;
-            _this.headers = e.headers;
+        var _this = _super.call(this) || this;
+        _this.columns = [];
+        _this.headers = [];
+        _this.table = table;
+        _this.options = CSVDataParser.defaultOptions;
+        _this.on('afterParse', function (e) {
+            this.columns = e.columns;
+            this.headers = e.headers;
         });
+        return _this;
     }
     CSVDataParser.prototype.parse = function (options) {
         this.options = merge(CSVDataParser.defaultOptions, options);
@@ -33,45 +51,44 @@ var CSVDataParser = /** @class */ (function () {
         var lines, rowIt = 0, _b = parser.options, csv = _b.csv, startRow = _b.startRow, endRow = _b.endRow, i, colsCount;
         this.columns = [];
         // todo parse should have a payload
-        fireEvent(parser, 'parse', {}, function () {
-            if (csv && beforeParse) {
-                csv = beforeParse(csv);
+        this.emit({ type: 'parse', columns: parser.columns, headers: parser.headers });
+        if (csv && beforeParse) {
+            csv = beforeParse(csv);
+        }
+        if (csv) {
+            lines = csv
+                .replace(/\r\n/g, '\n') // Unix
+                .replace(/\r/g, '\n') // Mac
+                .split(lineDelimiter);
+            if (!startRow || startRow < 0) {
+                startRow = 0;
             }
-            if (csv) {
-                lines = csv
-                    .replace(/\r\n/g, '\n') // Unix
-                    .replace(/\r/g, '\n') // Mac
-                    .split(lineDelimiter);
-                if (!startRow || startRow < 0) {
-                    startRow = 0;
-                }
-                if (!endRow || endRow >= lines.length) {
-                    endRow = lines.length - 1;
-                }
-                if (!itemDelimiter) {
-                    parser.guessedItemDelimiter = parser.guessDelimiter(lines);
-                }
-                var offset = 0;
-                for (rowIt = startRow; rowIt <= endRow; rowIt++) {
-                    if (lines[rowIt][0] === '#') {
-                        offset++;
-                    }
-                    else {
-                        parser.parseCSVRow(lines[rowIt], rowIt - startRow - offset);
-                    }
-                }
+            if (!endRow || endRow >= lines.length) {
+                endRow = lines.length - 1;
             }
-            if (firstRowAsNames && parser.columns) {
-                colsCount = parser.columns.length;
-                for (i = 0; i < colsCount; i++) {
-                    if (!parser.headers) {
-                        parser.headers = [];
-                    }
-                    parser.headers[i] = '' + parser.columns[i][0];
+            if (!itemDelimiter) {
+                parser.guessedItemDelimiter = parser.guessDelimiter(lines);
+            }
+            var offset = 0;
+            for (rowIt = startRow; rowIt <= endRow; rowIt++) {
+                if (lines[rowIt][0] === '#') {
+                    offset++;
+                }
+                else {
+                    parser.parseCSVRow(lines[rowIt], rowIt - startRow - offset);
                 }
             }
-            fireEvent(parser, 'afterParse', { columns: parser.columns, headers: parser.headers });
-        });
+        }
+        if (firstRowAsNames && parser.columns) {
+            colsCount = parser.columns.length;
+            for (i = 0; i < colsCount; i++) {
+                if (!parser.headers) {
+                    parser.headers = [];
+                }
+                parser.headers[i] = '' + parser.columns[i][0];
+            }
+        }
+        this.emit({ type: 'afterParse', columns: parser.columns, headers: parser.headers });
     };
     CSVDataParser.prototype.parseCSVRow = function (columnStr, rowNumber) {
         var parser = this, columns = parser.columns || [], _a = parser.options, startColumn = _a.startColumn, endColumn = _a.endColumn, itemDelimiter = parser.options.itemDelimiter || parser.guessedItemDelimiter;
@@ -248,5 +265,5 @@ var CSVDataParser = /** @class */ (function () {
         firstRowAsNames: true
     };
     return CSVDataParser;
-}());
+}(DataParser));
 export default CSVDataParser;

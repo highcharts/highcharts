@@ -12,6 +12,8 @@
 
 'use strict';
 
+import type DataEventEmitter from '../DataEventEmitter';
+import DataJSON from '../DataJSON.js';
 import DataTable from '../DataTable.js';
 import U from '../../Core/Utilities.js';
 const {
@@ -19,10 +21,7 @@ const {
     fireEvent
 } = U;
 
-import type DataValueType from '../DataValueType.js';
-import DataJSON from '../DataJSON.js';
-
-class DataStore {
+abstract class DataStore<TEventObject extends DataStore.EventObject> implements DataEventEmitter<TEventObject> {
 
     /* *
      *
@@ -71,10 +70,29 @@ class DataStore {
     public metadata: Array<DataStore.MetaColumn>;
 
     /* *
-    *
-    *  Functions
-    *
-    * */
+     *
+     *  Functions
+     *
+     * */
+
+    public describeColumn(
+        name: string,
+        metadata: any
+    ): void {
+
+        this.metadata.push({
+            name: name,
+            metadata: metadata
+        });
+    }
+
+    public describe(metadata: Array<DataStore.MetaColumn>): void {
+        this.metadata = metadata;
+    }
+
+    public emit(e: TEventObject): void {
+        fireEvent(this, e.type, e);
+    }
 
     protected getMetadataJSON(): DataStore.MetadataJSON {
         const json = [];
@@ -90,21 +108,6 @@ class DataStore {
         }
 
         return json;
-    }
-
-    public describeColumn(
-        name: string,
-        metadata: any
-    ): void {
-
-        this.metadata.push({
-            name: name,
-            metadata: metadata
-        });
-    }
-
-    public describe(metadata: Array<DataStore.MetaColumn>): void {
-        this.metadata = metadata;
     }
 
     public load(): void {
@@ -123,25 +126,19 @@ class DataStore {
     }
 
     public on(
-        event: (DataStore.LoadEvents|DataStore.ParseEvents),
-        callback: (DataStore.LoadEventListener|DataStore.ParseEventListener)
+        type: TEventObject['type'],
+        callback: DataEventEmitter.EventCallback<this, TEventObject>
     ): Function {
-        return addEvent(this, event, callback);
+        return addEvent(this, type, callback);
     }
 
 }
 
 namespace DataStore {
 
-    export type LoadEvents = ('load'|'afterLoad'|'fail');
+    export type MetadataJSON = Array<DataJSON.Array>;
 
-    export type ParseEvents = ('parse'|'afterParse'|'fail');
-
-    export interface LoadEventListener {
-        (this: DataStore, e: LoadEventObject): void;
-    }
-
-    export interface LoadEventObject {
+    export interface EventObject extends DataEventEmitter.EventObject {
         readonly table: DataTable;
     }
 
@@ -149,17 +146,6 @@ namespace DataStore {
         name?: string;
         metadata?: any;
     }
-
-    export interface ParseEventListener {
-        (this: DataStore, e: ParseEventObject): void;
-    }
-
-    export interface ParseEventObject {
-        readonly columns: DataValueType[][];
-        readonly headers: string[];
-    }
-
-    export type MetadataJSON = Array<DataJSON.Array>
 
 }
 

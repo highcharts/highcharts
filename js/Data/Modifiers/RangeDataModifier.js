@@ -55,7 +55,7 @@ var RangeDataModifier = /** @class */ (function (_super) {
     RangeDataModifier.prototype.execute = function (table) {
         var modifier = this, _a = modifier.options, ranges = _a.ranges, strict = _a.strict, rows = table.getAllRows(), result = new DataTable();
         var column, range, row;
-        this.emit('execute', { table: table });
+        this.emit({ type: 'execute', table: table });
         for (var i = 0, iEnd = ranges.length; i < iEnd; ++i) {
             range = ranges[i];
             if (strict &&
@@ -85,7 +85,7 @@ var RangeDataModifier = /** @class */ (function (_super) {
                 }
             }
         }
-        this.emit('afterExecute', { table: result });
+        this.emit({ type: 'afterExecute', table: result });
         return result;
     };
     RangeDataModifier.prototype.toJSON = function () {

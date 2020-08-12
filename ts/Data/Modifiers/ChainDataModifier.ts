@@ -95,13 +95,13 @@ class ChainDataModifier extends DataModifier implements DataJSON.Class {
         const modifier = this,
             modifiers = this.modifiers;
 
-        this.emit('execute', { table });
+        this.emit({ type: 'execute', table });
 
         for (let i = 0, iEnd = modifiers.length; i < iEnd; ++i) {
             table = modifiers[i].execute(table);
         }
 
-        this.emit('afterExecute', { table });
+        this.emit({ type: 'afterExecute', table });
 
         return table;
     }

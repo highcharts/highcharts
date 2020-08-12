@@ -29,7 +29,7 @@ import DataTable from '../DataTable.js';
 import DataStore from './DataStore.js';
 import DataParser from '../Parsers/DataParser.js';
 import U from '../../Core/Utilities.js';
-var fireEvent = U.fireEvent, merge = U.merge;
+var merge = U.merge;
 /** eslint-disable valid-jsdoc */
 /**
  * @private
@@ -128,11 +128,10 @@ var GoogleDataStore = /** @class */ (function (_super) {
         if (!cells || cells.length === 0) {
             return false;
         }
-        fireEvent(store, 'parse', { json: json }, function () {
-            columns = store.getSheetColumns(json);
-            store.columns = columns;
-            fireEvent(store, 'afterParse', { columns: columns });
-        });
+        // parser.emit({ type: 'parse', json });
+        columns = store.getSheetColumns(json);
+        store.columns = columns;
+        // parser.emit({ type: 'afterParse', columns });
     };
     GoogleDataStore.prototype.fetchSheet = function () {
         var store = this, headers = [], _a = store.options, enablePolling = _a.enablePolling, dataRefreshRate = _a.dataRefreshRate, googleSpreadsheetKey = _a.googleSpreadsheetKey, worksheet = _a.worksheet, url = [
@@ -142,27 +141,26 @@ var GoogleDataStore = /** @class */ (function (_super) {
             'public/values?alt=json'
         ].join('/');
         var i, colsCount;
+        store.emit({ type: 'load', table: store.table, url: url });
         ajax({
             url: url,
             dataType: 'json',
             success: function (json) {
-                fireEvent(store, 'load', { json: json, enablePolling: enablePolling, dataRefreshRate: dataRefreshRate }, function () {
-                    store.parseSheet(json);
-                    colsCount = store.columns.length;
-                    for (i = 0; i < colsCount; i++) {
-                        headers.push('' + store.columns[i][0]);
-                    }
-                    var table = DataTable.fromColumns(store.columns, headers);
-                    // Polling
-                    if (enablePolling) {
-                        setTimeout(function () {
-                            store.fetchSheet();
-                        }, dataRefreshRate * 1000);
-                    }
-                    fireEvent(store, 'afterLoad', { table: table });
-                });
+                store.parseSheet(json);
+                colsCount = store.columns.length;
+                for (i = 0; i < colsCount; i++) {
+                    headers.push('' + store.columns[i][0]);
+                }
+                var table = DataTable.fromColumns(store.columns, headers);
+                // Polling
+                if (enablePolling) {
+                    setTimeout(function () {
+                        store.fetchSheet();
+                    }, dataRefreshRate * 1000);
+                }
+                store.emit({ type: 'afterLoad', table: table, url: url });
             },
-            error: function (xhr, text) {
+            error: function (xhr, error) {
                 /* *
                  * TODO:
                  * catch error
@@ -170,7 +168,7 @@ var GoogleDataStore = /** @class */ (function (_super) {
                  *
                  * */
                 // console.log(text);
-                fireEvent(store, 'fail', { text: text });
+                store.emit({ type: 'loadError', error: error, table: store.table, xhr: xhr });
             }
         });
         // return true;

@@ -37,7 +37,7 @@ const {
 /**
  * Class to manage rows in a table structure.
  */
-class DataTable implements DataEventEmitter, DataJSON.Class {
+class DataTable implements DataEventEmitter<DataTable.EventObjects>, DataJSON.Class {
 
     /* *
      *
@@ -180,7 +180,7 @@ class DataTable implements DataEventEmitter, DataJSON.Class {
      */
     public clear(): void {
 
-        this.emit('clearTable', { });
+        this.emit({ type: 'clearTable' });
 
         const rowIds = this.getAllRowIds();
 
@@ -192,7 +192,7 @@ class DataTable implements DataEventEmitter, DataJSON.Class {
         this.rowsIdMap = {};
         this.watchsIdMap = {};
 
-        this.emit('afterClearTable', { });
+        this.emit({ type: 'afterClearTable' });
     }
 
     /**
@@ -211,13 +211,13 @@ class DataTable implements DataEventEmitter, DataJSON.Class {
         const row = this.rowsIdMap[rowId],
             index = this.rows.indexOf(row);
 
-        this.emit('deleteRow', { index, row });
+        this.emit({ type: 'deleteRow', index, row });
 
         this.rows[index] = row;
         delete this.rowsIdMap[rowId];
         this.unwatchRow(rowId);
 
-        this.emit('afterDeleteRow', { index, row });
+        this.emit({ type: 'afterDeleteRow', index, row });
 
         return row;
     }
@@ -226,14 +226,11 @@ class DataTable implements DataEventEmitter, DataJSON.Class {
      * Emits an event on this row to all registered callbacks of the given
      * event.
      *
-     * @param {DataTable.EventTypes} type
-     * Event type as a string.
-     *
      * @param {DataTable.EventObjects} [e]
-     * Event object with additional event information.
+     * Event object with event information.
      */
-    public emit(type: DataTable.EventTypes, e?: DataTable.EventObjects): void {
-        fireEvent(this, type, e);
+    public emit(e: DataTable.EventObjects): void {
+        fireEvent(this, e.type, e);
     }
 
     /**
@@ -316,13 +313,13 @@ class DataTable implements DataEventEmitter, DataJSON.Class {
             return false;
         }
 
-        this.emit('insertRow', { index, row });
+        this.emit({ type: 'insertRow', index, row });
 
         this.rows.push(row);
         this.rowsIdMap[rowId] = row;
         this.watchRow(row);
 
-        this.emit('afterInsertRow', { index, row });
+        this.emit({ type: 'afterInsertRow', index, row });
 
         return true;
     }
@@ -340,8 +337,8 @@ class DataTable implements DataEventEmitter, DataJSON.Class {
      * Function to unregister callback from the event.
      */
     public on(
-        type: DataTable.EventTypes,
-        callback: DataTable.EventCallbacks
+        type: DataTable.EventObjects['type'],
+        callback: DataEventEmitter.EventCallback<this, DataTable.EventObjects>
     ): Function {
         return addEvent(this, type, callback);
     }
@@ -430,19 +427,9 @@ class DataTable implements DataEventEmitter, DataJSON.Class {
 namespace DataTable {
 
     /**
-     * All callback structures of DataTable events.
-     */
-    export type EventCallbacks = (RowEventCallback|TableEventCallback);
-
-    /**
      * All information objects of DataTable events.
      */
     export type EventObjects = (RowEventObject|TableEventObject);
-
-    /**
-     * All types of DataTable events.
-     */
-    export type EventTypes = (RowEventTypes|TableEventTypes);
 
     /**
      * Event types related to a row in a table.
@@ -468,25 +455,11 @@ namespace DataTable {
     }
 
     /**
-     * Describes the callback for row-related events.
-     */
-    export interface RowEventCallback extends DataEventEmitter.EventCallback {
-        (this: DataTable, e: RowEventObject): void;
-    }
-
-    /**
      * Describes the information object for row-related events.
      */
     export interface RowEventObject extends DataEventEmitter.EventObject {
         readonly index: number;
         readonly row: DataRow;
-    }
-
-    /**
-     * Describes the callback for table-related events.
-     */
-    export interface TableEventCallback extends DataEventEmitter.EventCallback {
-        (this: DataTable, e: TableEventObject): void;
     }
 
     /**

@@ -34,24 +34,13 @@ var __assign = (this && this.__assign) || function () {
     };
     return __assign.apply(this, arguments);
 };
-var __rest = (this && this.__rest) || function (s, e) {
-    var t = {};
-    for (var p in s) if (Object.prototype.hasOwnProperty.call(s, p) && e.indexOf(p) < 0)
-        t[p] = s[p];
-    if (s != null && typeof Object.getOwnPropertySymbols === "function")
-        for (var i = 0, p = Object.getOwnPropertySymbols(s); i < p.length; i++) {
-            if (e.indexOf(p[i]) < 0 && Object.prototype.propertyIsEnumerable.call(s, p[i]))
-                t[p[i]] = s[p[i]];
-        }
-    return t;
-};
-import HTMLTableParser from '../Parsers/HTMLTableParser.js';
 import DataStore from './DataStore.js';
 import DataTable from '../DataTable.js';
 import H from '../../Core/Globals.js';
 var win = H.win;
+import HTMLTableParser from '../Parsers/HTMLTableParser.js';
 import U from '../../Core/Utilities.js';
-var fireEvent = U.fireEvent, merge = U.merge;
+var merge = U.merge;
 /** eslint-disable valid-jsdoc */
 /**
  * @private
@@ -67,11 +56,9 @@ var HTMLTableDataStore = /** @class */ (function (_super) {
         if (table === void 0) { table = new DataTable(); }
         if (options === void 0) { options = {}; }
         var _this = _super.call(this, table) || this;
-        var tableHTML = options.tableHTML, parserOptions = __rest(options, ["tableHTML"]);
-        _this.element = tableHTML || '';
-        _this.parserOptions = merge(HTMLTableDataStore.defaultOptions, parserOptions);
         _this.dataParser = new HTMLTableParser(table);
-        _this.addEvents();
+        _this.options = merge(HTMLTableDataStore.defaultOptions, HTMLTableParser.defaultOptions, options);
+        _this.tableElement = null;
         return _this;
     }
     /* *
@@ -81,53 +68,48 @@ var HTMLTableDataStore = /** @class */ (function (_super) {
      * */
     HTMLTableDataStore.fromJSON = function (json) {
         var options = {
-            tableHTML: json.tableHTMLId
+            tableHTML: json.tableElement
         }, table = DataTable.fromJSON(json.table), store = new HTMLTableDataStore(table, options);
         store.describe(DataStore.getMetadataFromJSON(json.metadata));
         return store;
-    };
-    HTMLTableDataStore.prototype.addEvents = function () {
-        var _this = this;
-        var dataParser = this.dataParser;
-        this.on('load', function (e) {
-            if (e.tableElement) {
-                fireEvent(_this, 'parse', { tableElement: e.tableElement });
-            }
-            else {
-                fireEvent(_this, 'fail', {
-                    error: 'HTML table not provided, or element with ID not found'
-                });
-            }
-        });
-        this.on('afterLoad', function (e) {
-            _this.table = e.table;
-        });
-        this.on('parse', function (e) {
-            _this.dataParser.parse(__assign({ tableElement: e.tableElement }, _this.parserOptions));
-            fireEvent(_this, 'afterParse', { dataParser: dataParser });
-        });
-        this.on('afterParse', function (e) {
-            fireEvent(_this, 'afterLoad', { table: dataParser.getTable() });
-        });
-        this.on('fail', function (e) {
-            // throw new Error(e.error)
-        });
     };
     /**
      * Handle supplied table being either an ID or an actual table
      */
     HTMLTableDataStore.prototype.fetchTable = function () {
+        var store = this, tableHTML = store.options.tableHTML;
         var tableElement;
-        if (typeof this.element === 'string') {
-            tableElement = win.document.getElementById(this.element);
+        if (typeof tableHTML === 'string') {
+            tableElement = win.document.getElementById(tableHTML);
         }
         else {
-            tableElement = this.element;
+            tableElement = tableHTML;
         }
-        fireEvent(this, 'load', { tableElement: tableElement });
+        store.tableElement = tableElement;
     };
     HTMLTableDataStore.prototype.load = function () {
-        this.fetchTable();
+        var store = this;
+        store.fetchTable();
+        store.emit({
+            type: 'load',
+            table: store.table,
+            tableElement: store.tableElement
+        });
+        if (!store.tableElement) {
+            store.emit({
+                type: 'loadError',
+                error: 'HTML table not provided, or element with ID not found',
+                table: store.table
+            });
+            return;
+        }
+        store.dataParser.parse(__assign({ tableElement: store.tableElement }, store.options));
+        store.table = store.dataParser.getTable();
+        store.emit({
+            type: 'afterLoad',
+            table: store.table,
+            tableElement: store.tableElement
+        });
     };
     /**
      * Save
@@ -136,11 +118,15 @@ var HTMLTableDataStore = /** @class */ (function (_super) {
     HTMLTableDataStore.prototype.save = function () {
     };
     HTMLTableDataStore.prototype.toJSON = function () {
-        var json = {
+        var store = this, json = {
             $class: 'HTMLTableDataStore',
-            table: this.table.toJSON(),
-            tableHTMLId: typeof this.element === 'string' ? this.element : this.element.id,
-            metadata: this.getMetadataJSON()
+            table: store.table.toJSON(),
+            tableElement: (typeof store.tableElement === 'string' ?
+                store.tableElement :
+                store.tableElement ?
+                    store.tableElement.id :
+                    ''),
+            metadata: store.getMetadataJSON()
         };
         return json;
     };

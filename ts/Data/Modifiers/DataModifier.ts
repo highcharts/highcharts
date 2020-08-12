@@ -34,7 +34,7 @@ const {
  *
  * */
 
-abstract class DataModifier implements DataEventEmitter {
+abstract class DataModifier implements DataEventEmitter<DataModifier.EventObject> {
 
     /* *
      *
@@ -108,16 +108,13 @@ abstract class DataModifier implements DataEventEmitter {
 
     public abstract execute(table: DataTable): DataTable;
 
-    public emit(
-        type: DataModifier.EventTypes,
-        e?: DataModifier.EventObject
-    ): void {
-        fireEvent(this, type, e);
+    public emit(e: DataModifier.EventObject): void {
+        fireEvent(this, e.type, e);
     }
 
     public on(
-        type: DataModifier.EventTypes,
-        callback: DataModifier.EventCallback
+        type: DataModifier.EventObject['type'],
+        callback: DataEventEmitter.EventCallback<this, DataModifier.EventObject>
     ): Function {
         return addEvent(this, type, callback);
     }
@@ -134,8 +131,6 @@ abstract class DataModifier implements DataEventEmitter {
 
 namespace DataModifier {
 
-    export type EventTypes = ('execute'|'afterExecute');
-
     export interface ClassConstructor {
         new(options?: DeepPartial<Options>): DataModifier;
     }
@@ -144,11 +139,8 @@ namespace DataModifier {
         options: Options;
     }
 
-    export interface EventCallback extends DataEventEmitter.EventCallback {
-        (this: DataModifier, e: EventObject): void;
-    }
-
     export interface EventObject extends DataEventEmitter.EventObject {
+        readonly type: ('execute'|'afterExecute');
         readonly table: DataTable;
     }
 

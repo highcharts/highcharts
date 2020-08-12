@@ -88,7 +88,7 @@ class RangeDataModifier extends DataModifier implements DataJSON.Class {
             range: RangeDataModifier.RangeOptions,
             row: DataRow;
 
-        this.emit('execute', { table });
+        this.emit({ type: 'execute', table });
 
         for (let i = 0, iEnd = ranges.length; i < iEnd; ++i) {
             range = ranges[i];
@@ -130,7 +130,7 @@ class RangeDataModifier extends DataModifier implements DataJSON.Class {
             }
         }
 
-        this.emit('afterExecute', { table: result });
+        this.emit({ type: 'afterExecute', table: result });
 
         return result;
     }

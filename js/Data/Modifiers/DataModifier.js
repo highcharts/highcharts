@@ -48,8 +48,8 @@ var DataModifier = /** @class */ (function () {
         return (modifier.toString().match(DataModifier.nameRegExp) ||
             ['', ''])[1];
     };
-    DataModifier.prototype.emit = function (type, e) {
-        fireEvent(this, type, e);
+    DataModifier.prototype.emit = function (e) {
+        fireEvent(this, e.type, e);
     };
     DataModifier.prototype.on = function (type, callback) {
         return addEvent(this, type, callback);

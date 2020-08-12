@@ -77,11 +77,11 @@ var ChainDataModifier = /** @class */ (function (_super) {
     };
     ChainDataModifier.prototype.execute = function (table) {
         var modifier = this, modifiers = this.modifiers;
-        this.emit('execute', { table: table });
+        this.emit({ type: 'execute', table: table });
         for (var i = 0, iEnd = modifiers.length; i < iEnd; ++i) {
             table = modifiers[i].execute(table);
         }
-        this.emit('afterExecute', { table: table });
+        this.emit({ type: 'afterExecute', table: table });
         return table;
     };
     ChainDataModifier.prototype.remove = function (modifier) {

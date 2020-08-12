@@ -107,10 +107,10 @@ var DataRow = /** @class */ (function () {
      * @emits DataRow#afterClearRow
      */
     DataRow.prototype.clear = function () {
-        this.emit('clearRow', {});
+        this.emit({ type: 'clearRow' });
         this.columnNames.length = 0;
         this.columns.length = 0;
-        this.emit('afterClearRow', {});
+        this.emit({ type: 'afterClearRow' });
     };
     /**
      * Deletes a column in this row.
@@ -129,24 +129,21 @@ var DataRow = /** @class */ (function () {
         if (columnName === 'id') {
             return false;
         }
-        this.emit('deleteColumn', { columnKey: columnName, columnValue: columnValue });
+        this.emit({ type: 'deleteColumn', columnKey: columnName, columnValue: columnValue });
         row.columnNames.splice(row.columnNames.indexOf(columnName), 1);
         delete row.columns[columnName];
-        this.emit('afterDeleteColumn', { columnKey: columnName, columnValue: columnValue });
+        this.emit({ type: 'afterDeleteColumn', columnKey: columnName, columnValue: columnValue });
         return true;
     };
     /**
      * Emits an event on this row to all registered callbacks of the given
      * event.
      *
-     * @param {DataRow.EventTypes} type
-     * Event type as a string.
-     *
-     * @param {DataRow.EventObjects} [e]
-     * Event object with additional event information.
+     * @param {DataRow.EventObjects} e
+     * Event object with event information.
      */
-    DataRow.prototype.emit = function (type, e) {
-        fireEvent(this, type, e);
+    DataRow.prototype.emit = function (e) {
+        fireEvent(this, e.type, e);
     };
     /**
      * Returns a copy of the record object of all columnNames with their values.
@@ -273,10 +270,10 @@ var DataRow = /** @class */ (function () {
             this.columnNames.indexOf(columnName) !== -1) {
             return false;
         }
-        this.emit('insertColumn', { columnKey: columnName, columnValue: columnValue });
+        this.emit({ type: 'insertColumn', columnKey: columnName, columnValue: columnValue });
         this.columnNames.push(columnName);
         this.columns[columnName] = columnValue;
-        this.emit('afterInsertColumn', { columnKey: columnName, columnValue: columnValue });
+        this.emit({ type: 'afterInsertColumn', columnKey: columnName, columnValue: columnValue });
         return true;
     };
     /**
@@ -352,9 +349,9 @@ var DataRow = /** @class */ (function () {
         if (columnKey === 'id') {
             return false;
         }
-        fireEvent(row, 'updateColumn', { columnKey: columnKey, columnValue: columnValue });
+        row.emit({ type: 'updateColumn', columnKey: columnKey, columnValue: columnValue });
         row.columns[columnKey] = columnValue;
-        fireEvent(row, 'afterUpdateColumn', { columnKey: columnKey, columnValue: columnValue });
+        row.emit({ type: 'afterUpdateColumn', columnKey: columnKey, columnValue: columnValue });
         return true;
     };
     return DataRow;
