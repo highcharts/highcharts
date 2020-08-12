@@ -9,6 +9,37 @@ fail-proofed development cycle for your Highcharts-based solutions.
 
 
 
+Summary of Changes from v7.2.1 to v8.0.0
+----------------------------------------
+
+With Highcharts v8 the file size of TypeScript declarations has been reduced by
+40 procent. This has been achieved by combining series options to more generic
+shared options. Here are the most important changes:
+
+* `AccessibilityAnnounceNewDataOptions` => `AccessibilityAnnounceNewDataOptionsObject`
+* `DataLabelsFilterOperatorValue` => `OptionsOperatorValue`
+* `ExportingButtonsContextButtonOptions` => `ExportingButtonsOptionsObject`
+* `NavigatorSeriesDataGroupingOptions` => `DataGroupingOptionsObject`
+* `PlotLineAccessibilityOptions` (and other series) => `SeriesAccessibilityOptionsObject`
+* `PlotLineAnimationOptions` (and other series) => `AnimationOptionsObject`
+* `PlotLineConnectorsOptions` (and other series) => `SeriesConnectorsOptionsObject`
+* `PlotLineDataGroupingOptions` (and other series) => `DataGroupingOptionsObject`
+* `PlotLineEventsOptions` (and other series) => `SeriesEventsOptionsObject`
+* `PlotLineLabelOptions` (and other series) => `SeriesLabelOptionsObject`
+* `PlotLineMarkerOptions` (and other series) => `PointMarkerOptionsObject`
+* `PlotLinePointOptions` (and other series) => `PlotSeriesPointOptions`
+* `PlotLineStatesOptions` (and other series) => `SeriesStatesOptionsObject`
+* `PlotLineTooltipOptions` (and other series) => `SeriesTooltipOptionsObject`
+* `PlotLineZonesOptions` (and other series) => `SeriesZonesOptionsObject`
+* `SeriesLineDataOptions` (and other series) => `PointOptionsObject`
+* `XAxisAccessibilityOptions` (and other axis) => `AxisAccessibilityOptionsObject`
+* `XAxisCrosshairOptions` (and other axis) => `AxisCrosshairOptions`
+* `XAxisCurrentDateIndicatorOptions` (and other axis) => `AxisCurrentDateIndicatorOptions`
+* `XAxisDateTimeLabelFormatsOptions` (and other axis) => `AxisDateTimeLabelFormatsOptions`
+* `XAxisMarkerOptions` (and other axis) => `PointMarkerOptionsObject`
+
+
+
 Installation
 ------------
 
