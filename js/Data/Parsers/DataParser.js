@@ -10,9 +10,22 @@
  *
  * */
 'use strict';
+import U from '../../Core/Utilities.js';
+var addEvent = U.addEvent, fireEvent = U.fireEvent;
 var DataParser = /** @class */ (function () {
     function DataParser() {
     }
+    /* *
+     *
+     *  Functions
+     *
+     * */
+    DataParser.prototype.emit = function (e) {
+        fireEvent(this, e.type, e);
+    };
+    DataParser.prototype.on = function (type, callback) {
+        return addEvent(this, type, callback);
+    };
     return DataParser;
 }());
 export default DataParser;

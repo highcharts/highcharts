@@ -14,18 +14,17 @@ import type DataValueType from '../DataValueType.js';
 
 import DataParser from './DataParser.js';
 import DataTable from '../DataTable.js';
-import DataStore from '../Stores/DataStore.js';
 import U from '../../Core/Utilities.js';
-import CSVDataStore from '../Stores/CSVDataStore.js';
 
-const { fireEvent, merge, addEvent } = U;
-/* eslint-disable valid-jsdoc, require-jsdoc */
+const { merge } = U;
+
+/* eslint-disable no-invalid-this, require-jsdoc, valid-jsdoc */
 
 /**
  * @private
  */
 
-class CSVDataParser implements DataParser {
+class CSVDataParser extends DataParser<DataParser.EventObject> {
     /*
      * Default options
      */
@@ -42,17 +41,22 @@ class CSVDataParser implements DataParser {
     public constructor(
         table: DataTable = new DataTable()
     ) {
+        super();
+
         this.table = table;
         this.options = CSVDataParser.defaultOptions;
-        addEvent(this, 'afterParse', (e: DataStore.ParseEventObject): void => {
+        this.on('afterParse', function (
+            this: CSVDataParser,
+            e: DataParser.EventObject
+        ): void {
             this.columns = e.columns;
             this.headers = e.headers;
         });
     }
 
     private table: DataTable;
-    private columns?: DataValueType[][];
-    private headers?: string[];
+    private columns: Array<Array<DataValueType>> = [];
+    private headers: Array<string> = [];
     private guessedItemDelimiter?: string;
     private guessedDecimalPoint?: string;
     private decimalRegex?: RegExp;
@@ -81,54 +85,53 @@ class CSVDataParser implements DataParser {
         this.columns = [];
 
         // todo parse should have a payload
-        fireEvent(parser, 'parse', {}, function (): void {
+        this.emit({ type: 'parse', columns: parser.columns, headers: parser.headers });
 
-            if (csv && beforeParse) {
-                csv = beforeParse(csv);
+        if (csv && beforeParse) {
+            csv = beforeParse(csv);
+        }
+
+        if (csv) {
+            lines = csv
+                .replace(/\r\n/g, '\n') // Unix
+                .replace(/\r/g, '\n') // Mac
+                .split(lineDelimiter);
+
+            if (!startRow || startRow < 0) {
+                startRow = 0;
             }
 
-            if (csv) {
-                lines = csv
-                    .replace(/\r\n/g, '\n') // Unix
-                    .replace(/\r/g, '\n') // Mac
-                    .split(lineDelimiter);
-
-                if (!startRow || startRow < 0) {
-                    startRow = 0;
-                }
-
-                if (!endRow || endRow >= lines.length) {
-                    endRow = lines.length - 1;
-                }
-
-                if (!itemDelimiter) {
-                    parser.guessedItemDelimiter = parser.guessDelimiter(lines);
-                }
-
-                var offset = 0;
-
-                for (rowIt = startRow; rowIt <= endRow; rowIt++) {
-                    if (lines[rowIt][0] === '#') {
-                        offset++;
-                    } else {
-                        parser.parseCSVRow(lines[rowIt], rowIt - startRow - offset);
-                    }
-                }
+            if (!endRow || endRow >= lines.length) {
+                endRow = lines.length - 1;
             }
 
-            if (firstRowAsNames && parser.columns) {
-                colsCount = parser.columns.length;
-
-                for (i = 0; i < colsCount; i++) {
-                    if (!parser.headers) {
-                        parser.headers = [];
-                    }
-                    parser.headers[i] = '' + parser.columns[i][0];
-                }
+            if (!itemDelimiter) {
+                parser.guessedItemDelimiter = parser.guessDelimiter(lines);
             }
 
-            fireEvent(parser, 'afterParse', { columns: parser.columns, headers: parser.headers });
-        });
+            var offset = 0;
+
+            for (rowIt = startRow; rowIt <= endRow; rowIt++) {
+                if (lines[rowIt][0] === '#') {
+                    offset++;
+                } else {
+                    parser.parseCSVRow(lines[rowIt], rowIt - startRow - offset);
+                }
+            }
+        }
+
+        if (firstRowAsNames && parser.columns) {
+            colsCount = parser.columns.length;
+
+            for (i = 0; i < colsCount; i++) {
+                if (!parser.headers) {
+                    parser.headers = [];
+                }
+                parser.headers[i] = '' + parser.columns[i][0];
+            }
+        }
+
+        this.emit({ type: 'afterParse', columns: parser.columns, headers: parser.headers });
     }
 
     private parseCSVRow(

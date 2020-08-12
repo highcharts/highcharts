@@ -30,7 +30,7 @@ const csv = `Grade,Ounce,Gram,Inch,mm,PPO
 "9",       0.0017,   0.047,   0.079,2.01, 603
 "12",      0.0005,   0.014,   0.050,1.30,2025`;
 
-test('csvDataStore from string', function (assert) {
+test('CSVDataStore from string', function (assert) {
     const datastore = new CSVDataStore(undefined, { csv });
     datastore.load();
 
@@ -47,7 +47,7 @@ test('csvDataStore from string', function (assert) {
     assert.ok(!foundComment, 'Comment is not added to the dataTable');
 })
 
-test('csvDataStore from URL', function (assert) {
+test('CSVDataStore from URL', function (assert) {
 
     const datastore = new CSVDataStore(undefined, {
         csvURL: 'https://demo-live-data.highcharts.com/sine-data.csv',
@@ -82,7 +82,7 @@ test('csvDataStore from URL', function (assert) {
         assert.ok(true)
         startedLoad();
     });
-    datastore.on('fail', (e) => {
+    datastore.on('loadError', (e) => {
         console.log(e)
         assert.ok(true)
         doneLoading();

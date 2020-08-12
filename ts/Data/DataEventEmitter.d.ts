@@ -19,7 +19,7 @@
 /**
  * Describes methods to attach callbacks to events of a class instance.
  */
-declare interface DataEventEmitter {
+declare interface DataEventEmitter<TEventObject extends DataEventEmitter.EventObject> {
 
     /**
      * Emits an event on the class instance to all registered callbacks of this
@@ -31,7 +31,7 @@ declare interface DataEventEmitter {
      * @param {DataEventEmitter.EventObject} [e]
      * Event object with additional event information.
      */
-    emit(type: string, e?: DataEventEmitter.EventObject): void;
+    emit(e: TEventObject): void;
 
     /**
      * Registers a callback for a specific event.
@@ -45,7 +45,10 @@ declare interface DataEventEmitter {
      * @return {Function}
      * Function to unregister callback from the event.
      */
-    on(type: string, callback: DataEventEmitter.EventCallback): Function;
+    on(
+        type: TEventObject['type'],
+        callback: DataEventEmitter.EventCallback<this, TEventObject>
+    ): Function;
 
 }
 
@@ -65,7 +68,7 @@ declare namespace DataEventEmitter {
      * Describes the callbacks expected types. This generic interface can be
      * extended by implementing classes.
      */
-    export interface EventCallback {
+    export interface EventCallback<TScope, TEventObject extends EventObject> {
         /**
          *
          * @param this
@@ -74,7 +77,7 @@ declare namespace DataEventEmitter {
          * @param e
          * Event object with additional event information.
          */
-        (this: DataEventEmitter, e: DataEventEmitter.EventObject): void;
+        (this: TScope, e: TEventObject): void;
     }
 
     /**
@@ -85,7 +88,7 @@ declare namespace DataEventEmitter {
         /**
          * Event type as a string.
          */
-        readonly type?: string;
+        readonly type: string;
     }
 }
 

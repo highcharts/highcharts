@@ -25,7 +25,7 @@ var __extends = (this && this.__extends) || (function () {
 import DataParser from './DataParser.js';
 import DataTable from '../DataTable.js';
 import U from '../../Core/Utilities.js';
-var fireEvent = U.fireEvent, merge = U.merge;
+var merge = U.merge;
 var HTMLTableParser = /** @class */ (function (_super) {
     __extends(HTMLTableParser, _super);
     function HTMLTableParser(dataTable) {
@@ -39,7 +39,10 @@ var HTMLTableParser = /** @class */ (function (_super) {
         this.options = merge(options, HTMLTableParser.defaultOptions);
         var columns = [], headers = [], store = this, _a = store.options, startRow = _a.startRow, endRow = _a.endRow, startColumn = _a.startColumn, endColumn = _a.endColumn, tableElement = _a.tableElement;
         if (!(tableElement instanceof HTMLElement)) {
-            fireEvent(this, 'fail', {
+            this.emit({
+                type: 'parseError',
+                columns: columns,
+                headers: headers,
                 error: 'Not a valid HTML Table'
             });
             return;

@@ -70,7 +70,7 @@ class GroupDataModifier extends DataModifier implements DataJSON.Class {
 
     public execute(table: DataTable): DataTable {
 
-        this.emit('execute', { table });
+        this.emit({ type: 'execute', table });
 
         const modifier = this,
             {
@@ -122,7 +122,7 @@ class GroupDataModifier extends DataModifier implements DataJSON.Class {
             }));
         }
 
-        this.emit('afterExecute', { table });
+        this.emit({ type: 'afterExecute', table });
 
         return table;
     }

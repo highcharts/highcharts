@@ -21,7 +21,6 @@ import DataStore from './DataStore.js';
 import DataParser from '../Parsers/DataParser.js';
 import U from '../../Core/Utilities.js';
 const {
-    fireEvent,
     merge
 } = U;
 
@@ -34,7 +33,7 @@ import DataJSON from './../DataJSON.js';
  * @private
  */
 
-class GoogleDataStore extends DataStore implements DataJSON.Class {
+class GoogleDataStore extends DataStore<GoogleDataStore.EventObjects> implements DataJSON.Class {
 
     /* *
      *
@@ -95,7 +94,7 @@ class GoogleDataStore extends DataStore implements DataJSON.Class {
 
     public columns: Array<Array<DataValueType>>;
     public options: GoogleDataStore.Options;
-    private dataParser = new DataParser();
+    public readonly dataParser = new DataParser();
 
     /* *
      *
@@ -198,17 +197,12 @@ class GoogleDataStore extends DataStore implements DataJSON.Class {
             return false;
         }
 
-        fireEvent(
-            store,
-            'parse',
-            { json },
-            function (): void {
-                columns = store.getSheetColumns(json);
-                store.columns = columns;
+        // parser.emit({ type: 'parse', json });
 
-                fireEvent(store, 'afterParse', { columns });
-            }
-        );
+        columns = store.getSheetColumns(json);
+        store.columns = columns;
+
+        // parser.emit({ type: 'afterParse', columns });
     }
 
     private fetchSheet(): void {
@@ -230,42 +224,36 @@ class GoogleDataStore extends DataStore implements DataJSON.Class {
         let i: number,
             colsCount: number;
 
+        store.emit({ type: 'load', table: store.table, url });
+
         ajax({
             url: url,
             dataType: 'json',
             success: function (json: Highcharts.JSONType): void {
+                store.parseSheet(json);
+                colsCount = store.columns.length;
 
-                fireEvent(
-                    store,
-                    'load',
-                    { json, enablePolling, dataRefreshRate },
-                    function (): void {
-                        store.parseSheet(json);
-                        colsCount = store.columns.length;
+                for (i = 0; i < colsCount; i++) {
+                    headers.push('' + store.columns[i][0]);
+                }
 
-                        for (i = 0; i < colsCount; i++) {
-                            headers.push('' + store.columns[i][0]);
-                        }
+                const table = DataTable.fromColumns(store.columns, headers);
 
-                        const table = DataTable.fromColumns(store.columns, headers);
+                // Polling
+                if (enablePolling) {
+                    setTimeout(
+                        function (): void {
+                            store.fetchSheet();
+                        },
+                        dataRefreshRate * 1000
+                    );
+                }
 
-                        // Polling
-                        if (enablePolling) {
-                            setTimeout(
-                                function (): void {
-                                    store.fetchSheet();
-                                },
-                                dataRefreshRate * 1000
-                            );
-                        }
-
-                        fireEvent(store, 'afterLoad', { table });
-                    }
-                );
+                store.emit({ type: 'afterLoad', table, url });
             },
             error: function (
                 xhr: XMLHttpRequest,
-                text: (string|Error)
+                error: (string|Error)
             ): void {
                 /* *
                  * TODO:
@@ -275,7 +263,7 @@ class GoogleDataStore extends DataStore implements DataJSON.Class {
                  * */
                 // console.log(text);
 
-                fireEvent(store, 'fail', { text });
+                store.emit({ type: 'loadError', error, table: store.table, xhr });
             }
         });
 
@@ -309,6 +297,19 @@ class GoogleDataStore extends DataStore implements DataJSON.Class {
 }
 
 namespace GoogleDataStore {
+
+    export type EventObjects = (ErrorEventObject|LoadEventObject);
+
+    export interface ErrorEventObject extends DataStore.EventObject {
+        type: 'loadError';
+        error: (string|Error);
+        xhr: XMLHttpRequest;
+    }
+
+    export interface LoadEventObject extends DataStore.EventObject {
+        type: ('load'|'afterLoad');
+        url: string;
+    }
 
     export interface Options extends DataJSON.Object {
         googleSpreadsheetKey: string;

@@ -44,10 +44,22 @@ var DataStore = /** @class */ (function () {
         return metadata;
     };
     /* *
-    *
-    *  Functions
-    *
-    * */
+     *
+     *  Functions
+     *
+     * */
+    DataStore.prototype.describeColumn = function (name, metadata) {
+        this.metadata.push({
+            name: name,
+            metadata: metadata
+        });
+    };
+    DataStore.prototype.describe = function (metadata) {
+        this.metadata = metadata;
+    };
+    DataStore.prototype.emit = function (e) {
+        fireEvent(this, e.type, e);
+    };
     DataStore.prototype.getMetadataJSON = function () {
         var json = [];
         var elem;
@@ -59,15 +71,6 @@ var DataStore = /** @class */ (function () {
             ]);
         }
         return json;
-    };
-    DataStore.prototype.describeColumn = function (name, metadata) {
-        this.metadata.push({
-            name: name,
-            metadata: metadata
-        });
-    };
-    DataStore.prototype.describe = function (metadata) {
-        this.metadata = metadata;
     };
     DataStore.prototype.load = function () {
         fireEvent(this, 'afterLoad', { table: this.table });
@@ -81,8 +84,8 @@ var DataStore = /** @class */ (function () {
             }
         }
     };
-    DataStore.prototype.on = function (event, callback) {
-        return addEvent(this, event, callback);
+    DataStore.prototype.on = function (type, callback) {
+        return addEvent(this, type, callback);
     };
     return DataStore;
 }());

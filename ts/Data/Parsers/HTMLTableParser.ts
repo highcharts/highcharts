@@ -16,10 +16,10 @@ import DataParser from './DataParser.js';
 import DataTable from '../DataTable.js';
 import U from '../../Core/Utilities.js';
 
-const { fireEvent, merge } = U;
+const { merge } = U;
 
-class HTMLTableParser extends DataParser {
-    protected static readonly defaultOptions: HTMLTableParser.Options = {
+class HTMLTableParser extends DataParser<DataParser.EventObject> {
+    public static readonly defaultOptions: HTMLTableParser.Options = {
         startColumn: 0,
         endColumn: Number.MAX_VALUE,
         startRow: 0,
@@ -53,7 +53,10 @@ class HTMLTableParser extends DataParser {
             } = store.options;
 
         if (!(tableElement instanceof HTMLElement)) {
-            fireEvent(this, 'fail', {
+            this.emit({
+                type: 'parseError',
+                columns,
+                headers,
                 error: 'Not a valid HTML Table'
             });
             return;

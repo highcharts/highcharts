@@ -54,7 +54,7 @@ var GroupDataModifier = /** @class */ (function (_super) {
      *
      * */
     GroupDataModifier.prototype.execute = function (table) {
-        this.emit('execute', { table: table });
+        this.emit({ type: 'execute', table: table });
         var modifier = this, _a = modifier.options, groupColumn = _a.groupColumn, invalidValues = _a.invalidValues, validValues = _a.validValues, groupTables = [], groupValues = [];
         var row, value, valueIndex;
         for (var i = 0, iEnd = table.getRowCount(); i < iEnd; ++i) {
@@ -86,7 +86,7 @@ var GroupDataModifier = /** @class */ (function (_super) {
                 table: groupTables[i]
             }));
         }
-        this.emit('afterExecute', { table: table });
+        this.emit({ type: 'afterExecute', table: table });
         return table;
     };
     GroupDataModifier.prototype.toJSON = function () {

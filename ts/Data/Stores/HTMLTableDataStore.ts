@@ -12,19 +12,14 @@
 
 'use strict';
 
-import HTMLTableParser from '../Parsers/HTMLTableParser.js';
+import DataJSON from '../DataJSON.js';
 import DataStore from './DataStore.js';
 import DataTable from '../DataTable.js';
 import H from '../../Core/Globals.js';
 const { win } = H;
+import HTMLTableParser from '../Parsers/HTMLTableParser.js';
 import U from '../../Core/Utilities.js';
-const {
-    fireEvent,
-    merge
-} = U;
-
-import type DataValueType from '../DataValueType.js';
-import DataJSON from '../DataJSON.js';
+const { merge } = U;
 
 /** eslint-disable valid-jsdoc */
 
@@ -32,7 +27,7 @@ import DataJSON from '../DataJSON.js';
  * @private
  */
 
-class HTMLTableDataStore extends DataStore implements DataJSON.Class {
+class HTMLTableDataStore extends DataStore<HTMLTableDataStore.EventObjects> implements DataJSON.Class {
 
     /* *
      *
@@ -51,8 +46,8 @@ class HTMLTableDataStore extends DataStore implements DataJSON.Class {
      * */
 
     public static fromJSON(json: HTMLTableDataStore.ClassJSON): HTMLTableDataStore {
-        const options = {
-                tableHTML: json.tableHTMLId
+        const options: HTMLTableDataStore.Options = {
+                tableHTML: json.tableElement
             },
             table = DataTable.fromJSON(json.table),
             store = new HTMLTableDataStore(table, options);
@@ -69,16 +64,13 @@ class HTMLTableDataStore extends DataStore implements DataJSON.Class {
 
     public constructor(
         table: DataTable = new DataTable(),
-        options: Partial<HTMLTableDataStore.Options & HTMLTableParser.Options> = {}
+        options: Partial<(HTMLTableDataStore.Options&HTMLTableParser.Options)> = {}
     ) {
         super(table);
-        const { tableHTML, ...parserOptions } = options;
 
-        this.element = tableHTML || '';
-        this.parserOptions = merge(HTMLTableDataStore.defaultOptions, parserOptions);
         this.dataParser = new HTMLTableParser(table);
-
-        this.addEvents();
+        this.options = merge(HTMLTableDataStore.defaultOptions, HTMLTableParser.defaultOptions, options);
+        this.tableElement = null;
     }
 
     /* *
@@ -87,56 +79,60 @@ class HTMLTableDataStore extends DataStore implements DataJSON.Class {
     *
     * */
 
-    public element: HTMLElement | string;
-    public parserOptions: HTMLTableDataStore.Options;
     private dataParser: HTMLTableParser;
-
-    private addEvents(): void {
-        const { dataParser } = this;
-        this.on('load', (e: HTMLTableDataStore.LoadEventObject): void => {
-            if (e.tableElement) {
-                fireEvent(this, 'parse', { tableElement: e.tableElement });
-            } else {
-                fireEvent(this, 'fail', {
-                    error: 'HTML table not provided, or element with ID not found'
-                });
-            }
-        });
-
-        this.on('afterLoad', (e: DataStore.LoadEventObject): void => {
-            this.table = e.table;
-        });
-
-        this.on('parse', (e: any): void => {
-            this.dataParser.parse({ tableElement: e.tableElement, ...this.parserOptions });
-            fireEvent(this, 'afterParse', { dataParser });
-        });
-
-        this.on('afterParse', (e: any): void => {
-            fireEvent(this, 'afterLoad', { table: dataParser.getTable() });
-        });
-
-        this.on('fail', (e: any): void => {
-            // throw new Error(e.error)
-        });
-    }
+    public readonly options: (HTMLTableDataStore.Options&HTMLTableParser.Options);
+    public tableElement: (HTMLElement|null);
 
     /**
      * Handle supplied table being either an ID or an actual table
      */
     private fetchTable(): void {
-        let tableElement: HTMLElement | null;
-        if (typeof this.element === 'string') {
-            tableElement = win.document.getElementById(this.element);
+        const store = this,
+            { tableHTML } = store.options;
+
+        let tableElement: (HTMLElement|null);
+
+        if (typeof tableHTML === 'string') {
+            tableElement = win.document.getElementById(tableHTML);
         } else {
-            tableElement = this.element;
+            tableElement = tableHTML;
         }
 
-        fireEvent(this, 'load', { tableElement });
+        store.tableElement = tableElement;
     }
 
     public load(): void {
-        this.fetchTable();
+        const store = this;
+
+        store.fetchTable();
+
+        store.emit({
+            type: 'load',
+            table: store.table,
+            tableElement: store.tableElement
+        });
+
+        if (!store.tableElement) {
+            store.emit({
+                type: 'loadError',
+                error: 'HTML table not provided, or element with ID not found',
+                table: store.table
+            });
+            return;
+        }
+
+        store.dataParser.parse({
+            tableElement: store.tableElement,
+            ...store.options
+        });
+
+        store.table = store.dataParser.getTable();
+
+        store.emit({
+            type: 'afterLoad',
+            table: store.table,
+            tableElement: store.tableElement
+        });
     }
 
     /**
@@ -148,31 +144,48 @@ class HTMLTableDataStore extends DataStore implements DataJSON.Class {
     }
 
     public toJSON(): HTMLTableDataStore.ClassJSON {
-        const json: HTMLTableDataStore.ClassJSON = {
-            $class: 'HTMLTableDataStore',
-            table: this.table.toJSON(),
-            tableHTMLId: typeof this.element === 'string' ? this.element : this.element.id,
-            metadata: this.getMetadataJSON()
-        };
+        const store = this,
+            json: HTMLTableDataStore.ClassJSON = {
+                $class: 'HTMLTableDataStore',
+                table: store.table.toJSON(),
+                tableElement: (
+                    typeof store.tableElement === 'string' ?
+                        store.tableElement :
+                        store.tableElement ?
+                            store.tableElement.id :
+                            ''
+                ),
+                metadata: store.getMetadataJSON()
+            };
 
         return json;
     }
 }
 
 namespace HTMLTableDataStore {
+
+    export type EventObjects = (ErrorEventObject|LoadEventObject);
+
+    export interface ClassJSON extends DataJSON.ClassJSON {
+        table: DataTable.ClassJSON;
+        tableElement: string;
+        metadata: DataStore.MetadataJSON;
+    }
+
+    export interface ErrorEventObject extends DataStore.EventObject {
+        type: 'loadError';
+        error: (string|Error);
+    }
+
+    export interface LoadEventObject extends DataStore.EventObject {
+        type: ('load'|'afterLoad');
+        tableElement?: (HTMLElement|null);
+    }
+
     export interface Options {
         tableHTML: (string | HTMLElement);
     }
 
-    export interface LoadEventObject extends DataStore.LoadEventObject {
-        tableElement?: HTMLElement;
-    }
-
-    export interface ClassJSON extends DataJSON.ClassJSON {
-        table: DataTable.ClassJSON;
-        tableHTMLId: string;
-        metadata: DataStore.MetadataJSON;
-    }
 }
 
 export default HTMLTableDataStore;

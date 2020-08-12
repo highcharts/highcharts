@@ -37,7 +37,7 @@ const {
 /**
  * Class to manage a row with column values.
  */
-class DataRow implements DataEventEmitter, DataJSON.Class {
+class DataRow implements DataEventEmitter<DataRow.EventObjects>, DataJSON.Class {
 
     /* *
      *
@@ -175,12 +175,12 @@ class DataRow implements DataEventEmitter, DataJSON.Class {
      */
     public clear(): void {
 
-        this.emit('clearRow', {});
+        this.emit({ type: 'clearRow' });
 
         this.columnNames.length = 0;
         this.columns.length = 0;
 
-        this.emit('afterClearRow', {});
+        this.emit({ type: 'afterClearRow' });
     }
 
     /**
@@ -203,12 +203,12 @@ class DataRow implements DataEventEmitter, DataJSON.Class {
             return false;
         }
 
-        this.emit('deleteColumn', { columnKey: columnName, columnValue });
+        this.emit({ type: 'deleteColumn', columnKey: columnName, columnValue });
 
         row.columnNames.splice(row.columnNames.indexOf(columnName), 1);
         delete row.columns[columnName];
 
-        this.emit('afterDeleteColumn', { columnKey: columnName, columnValue });
+        this.emit({ type: 'afterDeleteColumn', columnKey: columnName, columnValue });
 
         return true;
     }
@@ -217,14 +217,11 @@ class DataRow implements DataEventEmitter, DataJSON.Class {
      * Emits an event on this row to all registered callbacks of the given
      * event.
      *
-     * @param {DataRow.EventTypes} type
-     * Event type as a string.
-     *
-     * @param {DataRow.EventObjects} [e]
-     * Event object with additional event information.
+     * @param {DataRow.EventObjects} e
+     * Event object with event information.
      */
-    public emit(type: DataRow.EventTypes, e?: DataRow.EventObjects): void {
-        fireEvent(this, type, e);
+    public emit(e: DataRow.EventObjects): void {
+        fireEvent(this, e.type, e);
     }
 
     /**
@@ -370,12 +367,12 @@ class DataRow implements DataEventEmitter, DataJSON.Class {
             return false;
         }
 
-        this.emit('insertColumn', { columnKey: columnName, columnValue });
+        this.emit({ type: 'insertColumn', columnKey: columnName, columnValue });
 
         this.columnNames.push(columnName);
         this.columns[columnName] = columnValue;
 
-        this.emit('afterInsertColumn', { columnKey: columnName, columnValue });
+        this.emit({ type: 'afterInsertColumn', columnKey: columnName, columnValue });
 
         return true;
     }
@@ -393,8 +390,8 @@ class DataRow implements DataEventEmitter, DataJSON.Class {
      * Function to unregister callback from the event.
      */
     public on(
-        type: DataRow.EventTypes,
-        callback: DataRow.EventCallbacks
+        type: DataRow.EventObjects['type'],
+        callback: DataEventEmitter.EventCallback<this, DataRow.EventObjects>
     ): Function {
         return addEvent(this, type, callback);
     }
@@ -469,11 +466,11 @@ class DataRow implements DataEventEmitter, DataJSON.Class {
             return false;
         }
 
-        fireEvent(row, 'updateColumn', { columnKey, columnValue });
+        row.emit({ type: 'updateColumn', columnKey, columnValue });
 
         row.columns[columnKey] = columnValue;
 
-        fireEvent(row, 'afterUpdateColumn', { columnKey, columnValue });
+        row.emit({ type: 'afterUpdateColumn', columnKey, columnValue });
 
         return true;
     }
@@ -514,19 +511,9 @@ namespace DataRow {
     export type ColumnTypes = (boolean|null|number|string|Date|DataTable|undefined);
 
     /**
-     * All callback types of DataRow events.
-     */
-    export type EventCallbacks = (ColumnEventCallback|RowEventCallback);
-
-    /**
      * All information objects of DataRow events.
      */
     export type EventObjects = (ColumnEventObject|RowEventObject);
-
-    /**
-     * All types of DataRow events.
-     */
-    export type EventTypes = (ColumnEventTypes|RowEventTypes);
 
     /**
      * Event types related to the row itself.
@@ -543,25 +530,11 @@ namespace DataRow {
     }
 
     /**
-     * Describes the callback for column-related events.
-     */
-    export interface ColumnEventCallback extends DataEventEmitter.EventCallback {
-        (this: DataRow, e: ColumnEventObject): void;
-    }
-
-    /**
      * Describes the information object for column-related events.
      */
     export interface ColumnEventObject extends DataEventEmitter.EventObject {
         readonly columnKey: string;
         readonly columnValue: ColumnTypes;
-    }
-
-    /**
-     * Describes the callback for row-related events.
-     */
-    export interface RowEventCallback extends DataEventEmitter.EventCallback {
-        (this: DataRow, e: RowEventObject): void;
     }
 
     /**

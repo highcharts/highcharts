@@ -45,14 +45,14 @@ var __rest = (this && this.__rest) || function (s, e) {
         }
     return t;
 };
+import Ajax from '../../Extensions/Ajax.js';
 import DataStore from './DataStore.js';
 import DataTable from '../DataTable.js';
-import ajaxModule from '../../Extensions/Ajax.js';
 import U from '../../Core/Utilities.js';
+var merge = U.merge;
 import CSVDataParser from '../Parsers/CSVDataParser.js';
-var ajax = ajaxModule.ajax;
-var fireEvent = U.fireEvent, merge = U.merge;
-/* eslint-disable valid-jsdoc, require-jsdoc */
+var ajax = Ajax.ajax;
+/* eslint-disable no-invalid-this, require-jsdoc, valid-jsdoc */
 /**
  * @private
  */
@@ -71,7 +71,6 @@ var CSVDataStore = /** @class */ (function (_super) {
         _this.parserOptions = parserOptions;
         _this.options = merge(CSVDataStore.defaultOptions, { csv: csv, csvURL: csvURL, enablePolling: enablePolling, dataRefreshRate: dataRefreshRate });
         _this.dataParser = new CSVDataParser(table);
-        _this.addEvents();
         return _this;
     }
     /* *
@@ -83,25 +82,6 @@ var CSVDataStore = /** @class */ (function (_super) {
         var options = json.options, table = DataTable.fromJSON(json.table), store = new CSVDataStore(table, options);
         store.describe(DataStore.getMetadataFromJSON(json.metadata));
         return store;
-    };
-    CSVDataStore.prototype.addEvents = function () {
-        var _this = this;
-        this.on('load', function (e) {
-            _this.dataParser.parse(__assign({ csv: e.csv }, _this.parserOptions));
-            if (_this.liveDataURL) {
-                _this.poll();
-            }
-            fireEvent(_this, 'afterLoad', { table: _this.dataParser.getTable() });
-        });
-        this.on('afterLoad', function (e) {
-            _this.table = e.table;
-        });
-        this.on('parse', function (e) {
-            // console.log(e)
-        });
-        this.on('fail', function (e) {
-            // throw new Error(e.error)
-        });
     };
     /**
      * Handle polling of live data
@@ -124,24 +104,33 @@ var CSVDataStore = /** @class */ (function (_super) {
             clearTimeout(store.liveDataTimeout);
             store.liveDataURL = csvURL;
         }
+        store.emit({ type: 'load', table: store.table });
         ajax({
             url: store.liveDataURL,
             dataType: 'text',
             success: function (csv) {
-                fireEvent(store, 'load', { csv: csv });
+                store.dataParser.parse(__assign({ csv: csv }, store.parserOptions));
+                if (store.liveDataURL) {
+                    store.poll();
+                }
+                store.table = store.dataParser.getTable();
+                store.emit({ type: 'afterLoad', csv: csv, table: store.table });
             },
-            error: function (xhr, text) {
+            error: function (xhr, error) {
                 if (++currentRetries < maxRetries) {
                     store.poll();
                 }
-                fireEvent(store, 'fail', { error: { xhr: xhr, text: text } });
+                store.emit({ type: 'loadError', error: error, table: store.table, xhr: xhr });
             }
         });
     };
     CSVDataStore.prototype.load = function () {
         var store = this, _a = store.options, csv = _a.csv, csvURL = _a.csvURL;
         if (csv) {
-            fireEvent(store, 'load', { csv: csv });
+            store.emit({ type: 'load', csv: csv, table: store.table });
+            store.dataParser.parse(__assign({ csv: csv }, store.parserOptions));
+            store.table = store.dataParser.getTable();
+            store.emit({ type: 'afterLoad', csv: csv, table: store.table });
         }
         else if (csvURL) {
             store.fetchCSV(true);

@@ -12,23 +12,22 @@
 
 'use strict';
 
+import Ajax from '../../Extensions/Ajax.js';
 import DataStore from './DataStore.js';
 import DataTable from '../DataTable.js';
-import DataParser from '../Parsers/DataParser.js';
-import ajaxModule from '../../Extensions/Ajax.js';
 import U from '../../Core/Utilities.js';
+const { merge } = U;
 import CSVDataParser from '../Parsers/CSVDataParser.js';
 import DataJSON from './../DataJSON.js';
-const { ajax } = ajaxModule;
-const { fireEvent, merge } = U;
-/* eslint-disable valid-jsdoc, require-jsdoc */
+const { ajax } = Ajax;
+
+/* eslint-disable no-invalid-this, require-jsdoc, valid-jsdoc */
 
 /**
  * @private
  */
 
-class CSVDataStore extends DataStore implements DataJSON.Class {
-
+class CSVDataStore extends DataStore<CSVDataStore.EventObjects> implements DataJSON.Class {
 
     /* *
      *
@@ -73,7 +72,6 @@ class CSVDataStore extends DataStore implements DataJSON.Class {
         this.parserOptions = parserOptions;
         this.options = merge(CSVDataStore.defaultOptions, { csv, csvURL, enablePolling, dataRefreshRate });
         this.dataParser = new CSVDataParser(table);
-        this.addEvents();
     }
 
 
@@ -88,29 +86,6 @@ class CSVDataStore extends DataStore implements DataJSON.Class {
     private dataParser: CSVDataParser;
     private liveDataURL?: string;
     private liveDataTimeout?: number;
-
-    private addEvents(): void {
-        this.on('load', (e: CSVDataStore.LoadEventObject): void => {
-            this.dataParser.parse({
-                csv: e.csv,
-                ...this.parserOptions
-            });
-            if (this.liveDataURL) {
-                this.poll();
-            }
-            fireEvent(this, 'afterLoad', { table: this.dataParser.getTable() });
-        });
-        this.on('afterLoad', (e: DataStore.LoadEventObject): void => {
-            this.table = e.table;
-        });
-        this.on('parse', (e: DataStore.ParseEventObject): void => {
-            // console.log(e)
-        });
-        this.on('fail', (e: any): void => {
-            // throw new Error(e.error)
-        });
-    }
-
 
     /**
      * Handle polling of live data
@@ -137,17 +112,27 @@ class CSVDataStore extends DataStore implements DataJSON.Class {
             store.liveDataURL = csvURL;
         }
 
+        store.emit({ type: 'load', table: store.table });
+
         ajax({
             url: store.liveDataURL,
             dataType: 'text',
             success: function (csv: string): void {
-                fireEvent(store, 'load', { csv });
+                store.dataParser.parse({
+                    csv,
+                    ...store.parserOptions
+                });
+                if (store.liveDataURL) {
+                    store.poll();
+                }
+                store.table = store.dataParser.getTable();
+                store.emit({ type: 'afterLoad', csv, table: store.table });
             },
-            error: function (xhr, text): void {
+            error: function (xhr, error): void {
                 if (++currentRetries < maxRetries) {
                     store.poll();
                 }
-                fireEvent(store, 'fail', { error: { xhr, text } });
+                store.emit({ type: 'loadError', error, table: store.table, xhr });
             }
         });
     }
@@ -155,8 +140,15 @@ class CSVDataStore extends DataStore implements DataJSON.Class {
     public load(): void {
         const store = this,
             { csv, csvURL } = store.options;
+
         if (csv) {
-            fireEvent(store, 'load', { csv });
+            store.emit({ type: 'load', csv, table: store.table });
+            store.dataParser.parse({
+                csv,
+                ...store.parserOptions
+            });
+            store.table = store.dataParser.getTable();
+            store.emit({ type: 'afterLoad', csv, table: store.table });
         } else if (csvURL) {
             store.fetchCSV(true);
         }
@@ -179,6 +171,32 @@ class CSVDataStore extends DataStore implements DataJSON.Class {
 }
 
 namespace CSVDataStore {
+
+    export type EventObjects = (ErrorEventObject|LoadEventObject);
+
+    export type OptionsType = (CSVDataStore.Options | CSVDataParser.Options)
+
+    export interface ClassJSON extends DataJSON.ClassJSON {
+        table: DataTable.ClassJSON;
+        options: Options;
+        metadata: DataStore.MetadataJSON;
+    }
+
+    export interface DataBeforeParseCallbackFunction {
+        (csv: string): string;
+    }
+
+    export interface ErrorEventObject extends DataStore.EventObject {
+        type: ('loadError');
+        error: (string|Error);
+        xhr: XMLHttpRequest;
+    }
+
+    export interface LoadEventObject extends DataStore.EventObject {
+        type: ('load'|'afterLoad');
+        csv?: string;
+    }
+
     export interface Options extends DataJSON.Object {
         csv: string;
         csvURL: string;
@@ -186,20 +204,6 @@ namespace CSVDataStore {
         dataRefreshRate: number;
     }
 
-    export type optionsType = (CSVDataStore.Options | CSVDataParser.Options)
-
-    export interface DataBeforeParseCallbackFunction {
-        (csv: string): string;
-    }
-    export interface LoadEventObject extends DataStore.LoadEventObject {
-        csv?: string;
-    }
-
-    export interface ClassJSON extends DataJSON.ClassJSON {
-        table: DataTable.ClassJSON;
-        options: Options;
-        metadata: DataStore.MetadataJSON;
-    }
 }
 
 export default CSVDataStore;
