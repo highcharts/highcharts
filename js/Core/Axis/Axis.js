@@ -2669,7 +2669,8 @@ var Axis = /** @class */ (function () {
         var slideInTicks = axis.chart.hasRendered && isNumber(axis.oldMin);
         // Linked axes need an extra check to find out if
         if (!isLinked ||
-            (pos >= axis.min && pos <= axis.max)) {
+            (pos >= axis.min && pos <= axis.max) ||
+            axis.grid) {
             if (!ticks[pos]) {
                 ticks[pos] = new Tick(axis, pos);
             }

@@ -12,6 +12,7 @@
 'use strict';
 
 import type Point from '../Series/Point';
+import type SVGPath from '../Renderer/SVG/SVGPath';
 import Axis from './Axis.js';
 import H from '../Globals.js';
 import O from '../Options.js';
@@ -40,9 +41,13 @@ const {
 declare global {
     namespace Highcharts {
         interface Axis {
+            axisBorder?: SVGElement;
             getMaxLabelDimensions(
                 ticks: Dictionary<Tick>,
                 tickPositions: Array<(number|string)>
+            ): SizeObject;
+            addExtraBorder(
+                path: SVGPath,
             ): SizeObject;
         }
         interface AxisLabelsFormatterContextObject {
@@ -227,24 +232,31 @@ Axis.prototype.getMaxLabelDimensions = function (
 
     tickPositions.forEach(function (pos: (number|string)): void {
         var tick = ticks[pos],
-            tickHeight = 0,
-            tickWidth = 0,
+            labelHeight = 0,
+            labelWidth = 0,
             label: Highcharts.SVGElement;
 
         if (isObject(tick)) {
             label = isObject(tick.label) ? tick.label : ({} as any);
 
             // Find width and height of tick
-            tickHeight = label.getBBox ? label.getBBox().height : 0;
+            labelHeight = label.getBBox ? label.getBBox().height : 0;
+            if (label.textStr && !isNumber(label.textPxLength)) {
+                label.textPxLength = label.getBBox().width;
+            }
+            labelWidth = isNumber(label.textPxLength) ?
+                // Math.round ensures crisp lines
+                Math.round(label.textPxLength) :
+                0;
 
             if (label.textStr) {
                 // Set the tickWidth same as the label
                 // width after ellipsis applied #10281
-                tickWidth = label.getBBox().width;
+                labelWidth = label.getBBox().width;
             }
             // Update the result if width and/or height are larger
-            dimensions.height = Math.max(tickHeight, dimensions.height);
-            dimensions.width = Math.max(tickWidth, dimensions.width);
+            dimensions.height = Math.max(labelHeight, dimensions.height);
+            dimensions.width = Math.max(labelWidth, dimensions.width);
         }
     });
 
@@ -332,7 +344,6 @@ addEvent(
             top: number,
             left: number,
             right: number;
-
         // Only center tick labels in grid axes
         if (gridOptions.enabled === true) {
 
@@ -445,6 +456,8 @@ class GridAxisAdditions {
 
     axis: GridAxis;
     axisLineExtra?: Highcharts.SVGElement;
+    upperBorder?: Highcharts.SVGElement;
+    lowerBorder?: Highcharts.SVGElement;
     columnIndex?: number;
     columns?: Array<GridAxis>;
     isColumn?: boolean;
@@ -502,6 +515,33 @@ class GridAxisAdditions {
         );
     }
 
+    /**
+     * Add extra border based on the provided path.
+     *  *
+     * @private
+     *
+     * @param {SVGPath} path
+     * The path of the border.
+     *
+     * @return {Highcharts.SVGElement}
+     */
+    public renderBorder(path: SVGPath): Highcharts.SVGElement {
+        const axis = this.axis,
+            renderer = axis.chart.renderer,
+            options = axis.options,
+            extraBorderLine = renderer.path(path)
+                .addClass('highcharts-axis-line')
+                .add(axis.axisBorder);
+
+        if (!renderer.styledMode) {
+            extraBorderLine.attr({
+                stroke: options.lineColor,
+                'stroke-width': options.lineWidth,
+                zIndex: 7
+            });
+        }
+        return extraBorderLine;
+    }
 }
 
 /**
@@ -728,16 +768,10 @@ class GridAxis {
      * @private
      */
     public static onAfterRender(this: Axis): void {
-        const axis = this;
-        const grid = axis.grid;
-        const options = axis.options;
-        const renderer = axis.chart.renderer;
-        const gridOptions = options.grid || {};
-
-        let yStartIndex,
-            yEndIndex,
-            xStartIndex,
-            xEndIndex;
+        const axis = this,
+            grid = axis.grid,
+            options = axis.options,
+            gridOptions = options.grid || {};
 
         if (gridOptions.enabled === true) {
 
@@ -764,17 +798,23 @@ class GridAxis {
 
                 const lineWidth = options.lineWidth;
                 if (lineWidth) {
-                    const linePath = axis.getLinePath(lineWidth);
-                    const startPoint = linePath[0];
-                    const endPoint = linePath[1];
+                    const linePath = axis.getLinePath(lineWidth),
+                        startPoint = linePath[0],
+                        endPoint = linePath[1],
+                        // Negate distance if top or left axis
+                        // Subtract 1px to draw the line at the end of the tick
+                        tickLength = (axis.tickSize('tick') || [1])[0],
+                        distance = (tickLength - 1) * ((
+                            axis.side === GridAxis.Side.top ||
+                            axis.side === GridAxis.Side.left
+                        ) ? -1 : 1);
+                    let axisLineExtraXposition;
 
-                    // Negate distance if top or left axis
-                    // Subtract 1px to draw the line at the end of the tick
-                    const tickLength = (axis.tickSize('tick') || [1])[0];
-                    const distance = (tickLength - 1) * ((
-                        axis.side === GridAxis.Side.top ||
-                        axis.side === GridAxis.Side.left
-                    ) ? -1 : 1);
+                    if (axis.opposite) {
+                        axisLineExtraXposition = axis.chart.chartWidth - axis.chart.spacing[1];
+                    } else {
+                        axisLineExtraXposition = axis.chart.spacing[3];
+                    }
 
                     // If axis is horizontal, reposition line path vertically
                     if (startPoint[0] === 'M' && endPoint[0] === 'L') {
@@ -782,28 +822,46 @@ class GridAxis {
                             startPoint[2] += distance;
                             endPoint[2] += distance;
                         } else {
-                            // If axis is vertical, reposition line path
-                            // horizontally
-                            startPoint[1] += distance;
-                            endPoint[1] += distance;
+                            // If the axis is vertical, the extra line should
+                            // always start on the outer edge of the chart.
+                            startPoint[1] = axisLineExtraXposition;
+                            endPoint[1] = axisLineExtraXposition;
                         }
                     }
 
-                    if (!axis.grid.axisLineExtra) {
-                        axis.grid.axisLineExtra = renderer
-                            .path(linePath)
-                            .attr({
-                                zIndex: 7
-                            })
-                            .addClass('highcharts-axis-line')
-                            .add(axis.axisGroup);
+                    // If it doesn't exist, add an upper and lower border
+                    // for the vertical grid axis.
+                    if (!axis.horiz && axis.chart.marginRight) {
+                        const upperBorderStartPoint = startPoint,
+                            upperBorderEndPoint = ['L', axis.chart.chartWidth - axis.chart.marginRight, startPoint[2]],
+                            upperBorderPath = [upperBorderStartPoint, upperBorderEndPoint],
+                            lowerBorderEndPoint = ['L', axis.chart.chartWidth - axis.chart.marginRight,
+                                axis.toPixels(axis.max as any + axis.tickmarkOffset)],
+                            lowerBorderStartPoint = ['M', endPoint[1],
+                                axis.toPixels(axis.max as any + axis.tickmarkOffset)],
+                            lowerBorderPath = [lowerBorderStartPoint, lowerBorderEndPoint];
 
-                        if (!renderer.styledMode) {
-                            axis.grid.axisLineExtra.attr({
-                                stroke: options.lineColor,
-                                'stroke-width': lineWidth
+                        if (!axis.grid.upperBorder) {
+                            axis.grid.upperBorder = axis.grid.renderBorder(upperBorderPath as any);
+                        } else {
+                            axis.grid.upperBorder.animate({
+                                d: upperBorderPath as any
                             });
                         }
+
+                        if (!axis.grid.lowerBorder) {
+                            axis.grid.lowerBorder = axis.grid.renderBorder(lowerBorderPath as any);
+                        } else {
+                            axis.grid.lowerBorder.animate({
+                                d: lowerBorderPath as any
+                            });
+                        }
+                    }
+
+                    // Render an extra line parallel to the existing axes,
+                    // to close the grid.
+                    if (!axis.grid.axisLineExtra) {
+                        axis.grid.axisLineExtra = axis.grid.renderBorder(linePath);
                     } else {
                         axis.grid.axisLineExtra.animate({
                             d: linePath
@@ -821,6 +879,35 @@ class GridAxis {
             ): void {
                 column.render();
             });
+            // Manipulate the tick mark visibility
+            // based on the axis.max- allows smooth scrolling.
+            if (!axis.horiz && axis.chart.hasRendered && (axis.scrollbar || axis.linkedParent?.scrollbar)) {
+                const max = axis.max as any,
+                    min = axis.min as any,
+                    tickmarkOffset = axis.tickmarkOffset,
+                    lastTick = axis.tickPositions[axis.tickPositions.length - 1],
+                    firstTick = axis.tickPositions[0];
+
+                // Hide/show firts tick label.
+                if (min - firstTick > tickmarkOffset) {
+                    (axis.ticks[firstTick].label as any).hide();
+                } else {
+                    (axis.ticks[firstTick].label as any).show();
+                }
+
+                // Hide/show last tick mark/label.
+                if (lastTick - max >= tickmarkOffset) {
+                    (axis.ticks[lastTick].label as any).hide();
+                } else {
+                    (axis.ticks[lastTick].label as any).show();
+                }
+
+                if (lastTick - max <= tickmarkOffset && lastTick - max >= 0 && axis.ticks[lastTick].isLast) {
+                    (axis.ticks[lastTick].mark as any).hide();
+                } else {
+                    (axis.ticks[lastTick - 1].mark as any).show();
+                }
+            }
         }
     }
 
@@ -860,6 +947,12 @@ class GridAxis {
                 if (!defined(userLabels.x)) {
                     options.labels.x = 3;
                 }
+            }
+        } else {
+            // Don't trim ticks which not in min/max range but
+            // they are still in the min/max plus tickInterval.
+            if (this.options.type !== 'treegrid' && axis.grid?.columns) {
+                this.minPointOffset = this.tickInterval;
             }
         }
     }
@@ -1121,7 +1214,6 @@ class GridAxis {
                 grid: gridOptions = {}
             }
         } = this;
-
         if (gridOptions.enabled && maxLabelDimensions) {
             const labelPadding =
                 (Math.abs((defaultLeftAxisOptions.labels as any).x) * 2);
