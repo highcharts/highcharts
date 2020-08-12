@@ -1796,10 +1796,20 @@ chartProto.callbacks.push(function (
 
                             // Annotation not connected to any xAxis -
                             // add new row.
-                            if (xAxisIndex === -1) {
-                                const newRow: any = new Array(event.dataRows[0].length);
+                            let isPie, i;
+                            const series = chart.series;
 
-                                newRow.fill('');
+                            for (i = 0; i < series.length; i++) {
+                                isPie = series[i].is('pie') === false;
+                            }
+
+                            if (isPie && xAxisIndex === -1) {
+                                const n = event.dataRows[0].length,
+                                    newRow: any = new Array(n);
+
+                                for (let i = 0; i < n; ++i) {
+                                    newRow[i] = '';
+                                }
                                 newRow.push(annotationText);
                                 newRow.xValues = [];
                                 newRow.xValues[xAxisIndex] = annotationX;
@@ -1834,9 +1844,12 @@ chartProto.callbacks.push(function (
                             // Annotation not placed on any exported data point,
                             // but connected to the xAxis - add new row
                             if (!wasAdded) {
-                                const newRow: any = new Array(event.dataRows[0].length);
+                                const n = event.dataRows[0].length,
+                                    newRow: any = new Array(n);
 
-                                newRow.fill('');
+                                for (let i = 0; i < n; ++i) {
+                                    newRow[i] = '';
+                                }
                                 newRow[0] = annotationX;
                                 newRow.push(annotationText);
                                 newRow.xValues = [];
