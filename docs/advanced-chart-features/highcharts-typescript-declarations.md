@@ -13,8 +13,8 @@ Summary of Changes from v7.2.1 to v8.0.0
 ----------------------------------------
 
 With Highcharts v8 the file size of TypeScript declarations has been reduced by
-40 procent. This has been achieved by combining series options to more generic
-shared options. Here are the most important changes:
+40 percent. This has been achieved by combining series options to more generic
+shared options. Following are the most important changes:
 
 * `AccessibilityAnnounceNewDataOptions` => `AccessibilityAnnounceNewDataOptionsObject`
 * `DataLabelsFilterOperatorValue` => `OptionsOperatorValue`
