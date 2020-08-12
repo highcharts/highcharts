@@ -1239,12 +1239,12 @@ chartProto.callbacks.push(function (chart) {
                             var wasAdded = false;
                             // Annotation not connected to any xAxis -
                             // add new row.
-                            var isPie, i;
+                            var isNotPie, i;
                             var series = chart.series;
                             for (i = 0; i < series.length; i++) {
-                                isPie = series[i].is('pie') === false;
+                                isNotPie = series[i].is('pie') === false;
                             }
-                            if (isPie && xAxisIndex === -1) {
+                            if (isNotPie && xAxisIndex === -1) {
                                 var n = event.dataRows[0].length, newRow = new Array(n);
                                 for (var i_1 = 0; i_1 < n; ++i_1) {
                                     newRow[i_1] = '';
