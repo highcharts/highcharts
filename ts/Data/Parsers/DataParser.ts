@@ -13,6 +13,7 @@
 'use strict';
 
 import type DataEventEmitter from '../DataEventEmitter';
+import type DataJSON from '../DataJSON';
 import type DataTable from '../DataTable';
 import type DataValueType from '../DataValueType';
 import U from '../../Core/Utilities.js';
@@ -21,13 +22,16 @@ const {
     fireEvent
 } = U;
 
-class DataParser<TEventObject extends DataParser.EventObject> implements DataEventEmitter<TEventObject> {
+abstract class DataParser<TEventObject extends DataParser.EventObject>
+implements DataEventEmitter<TEventObject>, DataJSON.Class {
 
     /* *
      *
      *  Functions
      *
      * */
+
+    public abstract getTable(): DataTable;
 
     public emit(e: TEventObject): void {
         fireEvent(this, e.type, e);
@@ -40,6 +44,10 @@ class DataParser<TEventObject extends DataParser.EventObject> implements DataEve
         return addEvent(this, type, callback);
     }
 
+    public abstract parse(options: DataParser.Options): void;
+
+    public abstract toJSON(): DataJSON.ClassJSON;
+
 }
 
 namespace DataParser {
@@ -51,13 +59,8 @@ namespace DataParser {
         readonly headers: string[];
     }
 
-    export interface DataParserOptions {
+    export interface Options extends DataJSON.Object {
         // nothing here yet
-    }
-
-    export interface DataParser {
-        parse(options: DataParserOptions): void;
-        getTable(): DataTable;
     }
 
 }

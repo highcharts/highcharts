@@ -10,22 +10,19 @@
  *
  * */
 
-'use strict';
-
+import type DataValueType from '../DataValueType.js';
 import AjaxMixin from '../../Extensions/Ajax.js';
 const {
     ajax
 } = AjaxMixin;
-import DataTable from '../DataTable.js';
-import DataStore from './DataStore.js';
+import DataJSON from './../DataJSON.js';
 import DataParser from '../Parsers/DataParser.js';
+import DataStore from './DataStore.js';
+import DataTable from '../DataTable.js';
 import U from '../../Core/Utilities.js';
 const {
     merge
 } = U;
-
-import type DataValueType from '../DataValueType.js';
-import DataJSON from './../DataJSON.js';
 
 /** eslint-disable valid-jsdoc */
 
@@ -64,6 +61,7 @@ class GoogleDataStore extends DataStore<GoogleDataStore.EventObjects> implements
             store = new GoogleDataStore(table, options);
 
         store.describe(DataStore.getMetadataFromJSON(json.metadata));
+
         return store;
     }
 
@@ -94,7 +92,7 @@ class GoogleDataStore extends DataStore<GoogleDataStore.EventObjects> implements
 
     public columns: Array<Array<DataValueType>>;
     public readonly options: GoogleDataStore.Options;
-    public readonly parser = new DataParser();
+    public readonly parser: DataParser<DataParser.EventObject> = void 0 as any;
 
     /* *
      *

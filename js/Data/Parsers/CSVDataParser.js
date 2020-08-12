@@ -22,6 +22,7 @@ var __extends = (this && this.__extends) || (function () {
         d.prototype = b === null ? Object.create(b) : (__.prototype = b.prototype, new __());
     };
 })();
+import DataJSON from '../DataJSON.js';
 import DataParser from './DataParser.js';
 import DataTable from '../DataTable.js';
 import U from '../../Core/Utilities.js';
@@ -32,23 +33,34 @@ var merge = U.merge;
  */
 var CSVDataParser = /** @class */ (function (_super) {
     __extends(CSVDataParser, _super);
-    function CSVDataParser(table) {
-        if (table === void 0) { table = new DataTable(); }
+    /* *
+     *
+     *  Constructor
+     *
+     * */
+    function CSVDataParser(options) {
         var _this = _super.call(this) || this;
+        /* *
+         *
+         *  Properties
+         *
+         * */
         _this.columns = [];
         _this.headers = [];
-        _this.table = table;
-        _this.options = CSVDataParser.defaultOptions;
-        _this.on('afterParse', function (e) {
-            this.columns = e.columns;
-            this.headers = e.headers;
-        });
+        _this.options = merge(CSVDataParser.defaultOptions, options);
         return _this;
     }
+    /* *
+     *
+     *  Static Functions
+     *
+     * */
+    CSVDataParser.fromJSON = function (json) {
+        return new CSVDataParser(json.options);
+    };
     CSVDataParser.prototype.parse = function (options) {
-        this.options = merge(CSVDataParser.defaultOptions, options);
-        var parser = this, _a = parser.options, beforeParse = _a.beforeParse, lineDelimiter = _a.lineDelimiter, firstRowAsNames = _a.firstRowAsNames, itemDelimiter = _a.itemDelimiter;
-        var lines, rowIt = 0, _b = parser.options, csv = _b.csv, startRow = _b.startRow, endRow = _b.endRow, i, colsCount;
+        var parser = this, parserOptions = merge(this.options, options), beforeParse = parserOptions.beforeParse, lineDelimiter = parserOptions.lineDelimiter, firstRowAsNames = parserOptions.firstRowAsNames, itemDelimiter = parserOptions.itemDelimiter;
+        var lines, rowIt = 0, csv = parserOptions.csv, startRow = parserOptions.startRow, endRow = parserOptions.endRow, i, colsCount;
         this.columns = [];
         // todo parse should have a payload
         this.emit({ type: 'parse', columns: parser.columns, headers: parser.headers });
@@ -88,7 +100,7 @@ var CSVDataParser = /** @class */ (function (_super) {
                 parser.headers[i] = '' + parser.columns[i][0];
             }
         }
-        this.emit({ type: 'afterParse', columns: parser.columns, headers: parser.headers });
+        parser.emit({ type: 'afterParse', columns: parser.columns, headers: parser.headers });
     };
     CSVDataParser.prototype.parseCSVRow = function (columnStr, rowNumber) {
         var parser = this, columns = parser.columns || [], _a = parser.options, startColumn = _a.startColumn, endColumn = _a.endColumn, itemDelimiter = parser.options.itemDelimiter || parser.guessedItemDelimiter;
@@ -252,7 +264,19 @@ var CSVDataParser = /** @class */ (function (_super) {
     CSVDataParser.prototype.getTable = function () {
         return DataTable.fromColumns(this.columns, this.headers);
     };
-    /*
+    CSVDataParser.prototype.toJSON = function () {
+        var parser = this, options = parser.options, json = {
+            $class: 'CSVDataParser',
+            options: options
+        };
+        return json;
+    };
+    /* *
+     *
+     *  Static Properties
+     *
+     * */
+    /**
      * Default options
      */
     CSVDataParser.defaultOptions = {
@@ -266,4 +290,15 @@ var CSVDataParser = /** @class */ (function (_super) {
     };
     return CSVDataParser;
 }(DataParser));
+/* *
+ *
+ *  Register
+ *
+ * */
+DataJSON.addClass(CSVDataParser);
+/* *
+ *
+ *  Export
+ *
+ * */
 export default CSVDataParser;

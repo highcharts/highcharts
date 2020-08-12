@@ -10,8 +10,6 @@
  *
  * */
 
-'use strict';
-
 import DataJSON from '../DataJSON.js';
 import DataStore from './DataStore.js';
 import DataTable from '../DataTable.js';
@@ -46,13 +44,15 @@ class HTMLTableDataStore extends DataStore<HTMLTableDataStore.EventObjects> impl
      * */
 
     public static fromJSON(json: HTMLTableDataStore.ClassJSON): HTMLTableDataStore {
-        const options: HTMLTableDataStore.Options = {
+        const options: Partial<(HTMLTableDataStore.Options&HTMLTableParser.Options)> = {
                 tableHTML: json.tableElement
             },
+            parser = HTMLTableParser.fromJSON(json.parser),
             table = DataTable.fromJSON(json.table),
-            store = new HTMLTableDataStore(table, options);
+            store = new HTMLTableDataStore(table, options, parser);
 
         store.describe(DataStore.getMetadataFromJSON(json.metadata));
+
         return store;
     }
 
@@ -64,13 +64,14 @@ class HTMLTableDataStore extends DataStore<HTMLTableDataStore.EventObjects> impl
 
     public constructor(
         table: DataTable = new DataTable(),
-        options: Partial<(HTMLTableDataStore.Options&HTMLTableParser.Options)> = {}
+        options: Partial<(HTMLTableDataStore.Options&HTMLTableParser.Options)> = {},
+        parser?: HTMLTableParser
     ) {
         super(table);
 
-        this.parser = new HTMLTableParser(table);
-        this.options = merge(HTMLTableDataStore.defaultOptions, HTMLTableParser.defaultOptions, options);
         this.tableElement = null;
+        this.options = merge(HTMLTableDataStore.defaultOptions, HTMLTableParser.defaultOptions, options);
+        this.parser = parser || new HTMLTableParser(this.tableElement, this.options);
     }
 
     /* *
@@ -121,10 +122,9 @@ class HTMLTableDataStore extends DataStore<HTMLTableDataStore.EventObjects> impl
             return;
         }
 
-        store.parser.parse({
-            tableElement: store.tableElement,
-            ...store.options
-        });
+        store.parser.parse(
+            merge({ tableHTML: store.tableElement }, store.options)
+        );
 
         store.table = store.parser.getTable();
 
@@ -147,6 +147,8 @@ class HTMLTableDataStore extends DataStore<HTMLTableDataStore.EventObjects> impl
         const store = this,
             json: HTMLTableDataStore.ClassJSON = {
                 $class: 'HTMLTableDataStore',
+                metadata: store.getMetadataJSON(),
+                parser: store.parser.toJSON(),
                 table: store.table.toJSON(),
                 tableElement: (
                     typeof store.tableElement === 'string' ?
@@ -154,8 +156,7 @@ class HTMLTableDataStore extends DataStore<HTMLTableDataStore.EventObjects> impl
                         store.tableElement ?
                             store.tableElement.id :
                             ''
-                ),
-                metadata: store.getMetadataJSON()
+                )
             };
 
         return json;
@@ -167,9 +168,10 @@ namespace HTMLTableDataStore {
     export type EventObjects = (ErrorEventObject|LoadEventObject);
 
     export interface ClassJSON extends DataJSON.ClassJSON {
+        metadata: DataStore.MetadataJSON;
+        parser: HTMLTableParser.ClassJSON;
         table: DataTable.ClassJSON;
         tableElement: string;
-        metadata: DataStore.MetadataJSON;
     }
 
     export interface ErrorEventObject extends DataStore.EventObject {

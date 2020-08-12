@@ -13,8 +13,8 @@
 'use strict';
 
 import type DataEventEmitter from '../DataEventEmitter';
+import type DataJSON from '../DataJSON';
 import type DataParser from '../Parsers/DataParser';
-import DataJSON from '../DataJSON.js';
 import DataTable from '../DataTable.js';
 import U from '../../Core/Utilities.js';
 const {
@@ -22,7 +22,8 @@ const {
     fireEvent
 } = U;
 
-abstract class DataStore<TEventObject extends DataStore.EventObject> implements DataEventEmitter<TEventObject> {
+abstract class DataStore<TEventObject extends DataStore.EventObject>
+implements DataEventEmitter<TEventObject>, DataJSON.Class {
 
     /* *
      *
@@ -134,6 +135,8 @@ abstract class DataStore<TEventObject extends DataStore.EventObject> implements 
     ): Function {
         return addEvent(this, type, callback);
     }
+
+    public abstract toJSON(): DataJSON.ClassJSON;
 
 }
 

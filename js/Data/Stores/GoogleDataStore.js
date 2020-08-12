@@ -9,7 +9,6 @@
  *  !!!!!!! SOURCE GETS TRANSPILED BY TYPESCRIPT. EDIT TS FILE ONLY. !!!!!!!
  *
  * */
-'use strict';
 var __extends = (this && this.__extends) || (function () {
     var extendStatics = function (d, b) {
         extendStatics = Object.setPrototypeOf ||
@@ -25,9 +24,8 @@ var __extends = (this && this.__extends) || (function () {
 })();
 import AjaxMixin from '../../Extensions/Ajax.js';
 var ajax = AjaxMixin.ajax;
-import DataTable from '../DataTable.js';
 import DataStore from './DataStore.js';
-import DataParser from '../Parsers/DataParser.js';
+import DataTable from '../DataTable.js';
 import U from '../../Core/Utilities.js';
 var merge = U.merge;
 /** eslint-disable valid-jsdoc */
@@ -43,7 +41,7 @@ var GoogleDataStore = /** @class */ (function (_super) {
      * */
     function GoogleDataStore(table, options) {
         var _this = _super.call(this, table) || this;
-        _this.parser = new DataParser();
+        _this.parser = void 0;
         _this.options = merge(GoogleDataStore.defaultOptions, options);
         _this.columns = [];
         return _this;

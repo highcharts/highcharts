@@ -10,8 +10,6 @@
  *
  * */
 
-'use strict';
-
 import Ajax from '../../Extensions/Ajax.js';
 import DataStore from './DataStore.js';
 import DataTable from '../DataTable.js';
@@ -48,10 +46,12 @@ class CSVDataStore extends DataStore<CSVDataStore.EventObjects> implements DataJ
      * */
     public static fromJSON(json: CSVDataStore.ClassJSON): CSVDataStore {
         const options = json.options,
+            parser = CSVDataParser.fromJSON(json.parser),
             table = DataTable.fromJSON(json.table),
-            store = new CSVDataStore(table, options);
+            store = new CSVDataStore(table, options, parser);
 
         store.describe(DataStore.getMetadataFromJSON(json.metadata));
+
         return store;
     }
 
@@ -63,15 +63,15 @@ class CSVDataStore extends DataStore<CSVDataStore.EventObjects> implements DataJ
 
     public constructor(
         table: DataTable = new DataTable(),
-        options: Partial<CSVDataStore.Options & CSVDataParser.Options> = {}
+        options: Partial<(CSVDataStore.Options&CSVDataParser.Options)> = {},
+        parser?: CSVDataParser
     ) {
         super(table);
 
         const { csv, csvURL, enablePolling, dataRefreshRate, ...parserOptions } = options;
 
-        this.parserOptions = parserOptions;
         this.options = merge(CSVDataStore.defaultOptions, { csv, csvURL, enablePolling, dataRefreshRate });
-        this.parser = new CSVDataParser(table);
+        this.parser = parser || new CSVDataParser(parserOptions);
     }
 
 
@@ -82,7 +82,6 @@ class CSVDataStore extends DataStore<CSVDataStore.EventObjects> implements DataJ
     * */
     public readonly options: CSVDataStore.Options;
     public readonly parser: CSVDataParser;
-    public parserOptions: Partial<CSVDataParser.Options>;
 
     private liveDataURL?: string;
     private liveDataTimeout?: number;
@@ -118,10 +117,7 @@ class CSVDataStore extends DataStore<CSVDataStore.EventObjects> implements DataJ
             url: store.liveDataURL,
             dataType: 'text',
             success: function (csv: string): void {
-                store.parser.parse({
-                    csv,
-                    ...store.parserOptions
-                });
+                store.parser.parse({ csv });
                 if (store.liveDataURL) {
                     store.poll();
                 }
@@ -143,10 +139,7 @@ class CSVDataStore extends DataStore<CSVDataStore.EventObjects> implements DataJ
 
         if (csv) {
             store.emit({ type: 'load', csv, table: store.table });
-            store.parser.parse({
-                csv,
-                ...store.parserOptions
-            });
+            store.parser.parse({ csv });
             store.table = store.parser.getTable();
             store.emit({ type: 'afterLoad', csv, table: store.table });
         } else if (csvURL) {
@@ -161,9 +154,10 @@ class CSVDataStore extends DataStore<CSVDataStore.EventObjects> implements DataJ
     public toJSON(): CSVDataStore.ClassJSON {
         const json: CSVDataStore.ClassJSON = {
             $class: 'CSVDataStore',
+            metadata: this.getMetadataJSON(),
             options: merge(this.options),
-            table: this.table.toJSON(),
-            metadata: this.getMetadataJSON()
+            parser: this.parser.toJSON(),
+            table: this.table.toJSON()
         };
 
         return json;
@@ -177,9 +171,10 @@ namespace CSVDataStore {
     export type OptionsType = (CSVDataStore.Options | CSVDataParser.Options)
 
     export interface ClassJSON extends DataJSON.ClassJSON {
-        table: DataTable.ClassJSON;
-        options: Options;
         metadata: DataStore.MetadataJSON;
+        options: Options;
+        parser: CSVDataParser.ClassJSON;
+        table: DataTable.ClassJSON;
     }
 
     export interface DataBeforeParseCallbackFunction {

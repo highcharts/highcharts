@@ -15,11 +15,6 @@ var addEvent = U.addEvent, fireEvent = U.fireEvent;
 var DataParser = /** @class */ (function () {
     function DataParser() {
     }
-    /* *
-     *
-     *  Functions
-     *
-     * */
     DataParser.prototype.emit = function (e) {
         fireEvent(this, e.type, e);
     };

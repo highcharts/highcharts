@@ -9,7 +9,6 @@
  *  !!!!!!! SOURCE GETS TRANSPILED BY TYPESCRIPT. EDIT TS FILE ONLY. !!!!!!!
  *
  * */
-'use strict';
 var __extends = (this && this.__extends) || (function () {
     var extendStatics = function (d, b) {
         extendStatics = Object.setPrototypeOf ||
@@ -23,17 +22,6 @@ var __extends = (this && this.__extends) || (function () {
         d.prototype = b === null ? Object.create(b) : (__.prototype = b.prototype, new __());
     };
 })();
-var __assign = (this && this.__assign) || function () {
-    __assign = Object.assign || function(t) {
-        for (var s, i = 1, n = arguments.length; i < n; i++) {
-            s = arguments[i];
-            for (var p in s) if (Object.prototype.hasOwnProperty.call(s, p))
-                t[p] = s[p];
-        }
-        return t;
-    };
-    return __assign.apply(this, arguments);
-};
 var __rest = (this && this.__rest) || function (s, e) {
     var t = {};
     for (var p in s) if (Object.prototype.hasOwnProperty.call(s, p) && e.indexOf(p) < 0)
@@ -63,14 +51,13 @@ var CSVDataStore = /** @class */ (function (_super) {
     *  Constructors
     *
     * */
-    function CSVDataStore(table, options) {
+    function CSVDataStore(table, options, parser) {
         if (table === void 0) { table = new DataTable(); }
         if (options === void 0) { options = {}; }
         var _this = _super.call(this, table) || this;
         var csv = options.csv, csvURL = options.csvURL, enablePolling = options.enablePolling, dataRefreshRate = options.dataRefreshRate, parserOptions = __rest(options, ["csv", "csvURL", "enablePolling", "dataRefreshRate"]);
-        _this.parserOptions = parserOptions;
         _this.options = merge(CSVDataStore.defaultOptions, { csv: csv, csvURL: csvURL, enablePolling: enablePolling, dataRefreshRate: dataRefreshRate });
-        _this.parser = new CSVDataParser(table);
+        _this.parser = parser || new CSVDataParser(parserOptions);
         return _this;
     }
     /* *
@@ -79,7 +66,7 @@ var CSVDataStore = /** @class */ (function (_super) {
      *
      * */
     CSVDataStore.fromJSON = function (json) {
-        var options = json.options, table = DataTable.fromJSON(json.table), store = new CSVDataStore(table, options);
+        var options = json.options, parser = CSVDataParser.fromJSON(json.parser), table = DataTable.fromJSON(json.table), store = new CSVDataStore(table, options, parser);
         store.describe(DataStore.getMetadataFromJSON(json.metadata));
         return store;
     };
@@ -109,7 +96,7 @@ var CSVDataStore = /** @class */ (function (_super) {
             url: store.liveDataURL,
             dataType: 'text',
             success: function (csv) {
-                store.parser.parse(__assign({ csv: csv }, store.parserOptions));
+                store.parser.parse({ csv: csv });
                 if (store.liveDataURL) {
                     store.poll();
                 }
@@ -128,7 +115,7 @@ var CSVDataStore = /** @class */ (function (_super) {
         var store = this, _a = store.options, csv = _a.csv, csvURL = _a.csvURL;
         if (csv) {
             store.emit({ type: 'load', csv: csv, table: store.table });
-            store.parser.parse(__assign({ csv: csv }, store.parserOptions));
+            store.parser.parse({ csv: csv });
             store.table = store.parser.getTable();
             store.emit({ type: 'afterLoad', csv: csv, table: store.table });
         }
@@ -141,9 +128,10 @@ var CSVDataStore = /** @class */ (function (_super) {
     CSVDataStore.prototype.toJSON = function () {
         var json = {
             $class: 'CSVDataStore',
+            metadata: this.getMetadataJSON(),
             options: merge(this.options),
-            table: this.table.toJSON(),
-            metadata: this.getMetadataJSON()
+            parser: this.parser.toJSON(),
+            table: this.table.toJSON()
         };
         return json;
     };

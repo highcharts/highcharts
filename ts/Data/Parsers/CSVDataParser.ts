@@ -11,7 +11,7 @@
  * */
 
 import type DataValueType from '../DataValueType.js';
-
+import DataJSON from '../DataJSON.js';
 import DataParser from './DataParser.js';
 import DataTable from '../DataTable.js';
 import U from '../../Core/Utilities.js';
@@ -25,7 +25,14 @@ const { merge } = U;
  */
 
 class CSVDataParser extends DataParser<DataParser.EventObject> {
-    /*
+
+    /* *
+     *
+     *  Static Properties
+     *
+     * */
+
+    /**
      * Default options
      */
     protected static readonly defaultOptions: CSVDataParser.Options = {
@@ -38,23 +45,34 @@ class CSVDataParser extends DataParser<DataParser.EventObject> {
         firstRowAsNames: true
     };
 
-    public constructor(
-        table: DataTable = new DataTable()
-    ) {
-        super();
+    /* *
+     *
+     *  Static Functions
+     *
+     * */
 
-        this.table = table;
-        this.options = CSVDataParser.defaultOptions;
-        this.on('afterParse', function (
-            this: CSVDataParser,
-            e: DataParser.EventObject
-        ): void {
-            this.columns = e.columns;
-            this.headers = e.headers;
-        });
+    public static fromJSON(json: CSVDataParser.ClassJSON): CSVDataParser {
+        return new CSVDataParser(json.options);
     }
 
-    private table: DataTable;
+    /* *
+     *
+     *  Constructor
+     *
+     * */
+
+    public constructor(options?: Partial<CSVDataParser.Options>) {
+        super();
+
+        this.options = merge(CSVDataParser.defaultOptions, options);
+    }
+
+    /* *
+     *
+     *  Properties
+     *
+     * */
+
     private columns: Array<Array<DataValueType>> = [];
     private headers: Array<string> = [];
     private guessedItemDelimiter?: string;
@@ -63,22 +81,25 @@ class CSVDataParser extends DataParser<DataParser.EventObject> {
     private options: CSVDataParser.Options;
 
 
-    public parse(options: Partial<CSVDataParser.Options>): void {
-        this.options = merge(CSVDataParser.defaultOptions, options);
+    public parse(
+        options: Partial<(CSVDataParser.ParseOptions&CSVDataParser.Options)>
+    ): void {
         const parser = this,
+            parserOptions = merge(this.options, options),
             {
                 beforeParse,
                 lineDelimiter,
                 firstRowAsNames,
                 itemDelimiter
-            } = parser.options;
+            } = parserOptions;
+
         let lines,
             rowIt = 0,
             {
                 csv,
                 startRow,
                 endRow
-            } = parser.options,
+            } = parserOptions,
             i: number,
             colsCount: number;
 
@@ -131,7 +152,7 @@ class CSVDataParser extends DataParser<DataParser.EventObject> {
             }
         }
 
-        this.emit({ type: 'afterParse', columns: parser.columns, headers: parser.headers });
+        parser.emit({ type: 'afterParse', columns: parser.columns, headers: parser.headers });
     }
 
     private parseCSVRow(
@@ -350,10 +371,32 @@ class CSVDataParser extends DataParser<DataParser.EventObject> {
     public getTable(): DataTable {
         return DataTable.fromColumns(this.columns, this.headers);
     }
+
+    public toJSON(): CSVDataParser.ClassJSON {
+        const parser = this,
+            {
+                options
+            } = parser,
+            json: CSVDataParser.ClassJSON = {
+                $class: 'CSVDataParser',
+                options
+            };
+
+        return json;
+    }
 }
 
 namespace CSVDataParser {
-    export interface Options {
+
+    export interface ClassJSON extends DataJSON.ClassJSON {
+        options: Options;
+    }
+
+    export interface DataBeforeParseCallbackFunction {
+        (csv: string): string;
+    }
+
+    export interface Options extends DataParser.Options {
         csv?: string;
         decimalPoint: string;
         itemDelimiter?: string;
@@ -363,12 +406,27 @@ namespace CSVDataParser {
         endRow: number;
         startColumn: number;
         endColumn: number;
+    }
+
+    export interface ParseOptions {
         beforeParse?: DataBeforeParseCallbackFunction;
         decimalRegex?: RegExp;
     }
-    export interface DataBeforeParseCallbackFunction {
-        (csv: string): string;
-    }
+
 }
+
+/* *
+ *
+ *  Register
+ *
+ * */
+
+DataJSON.addClass(CSVDataParser);
+
+/* *
+ *
+ *  Export
+ *
+ * */
 
 export default CSVDataParser;
