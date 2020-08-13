@@ -13,7 +13,6 @@
 
 import type Axis from '../Core/Axis/Axis';
 import type SVGPath from '../Core/Renderer/SVG/SVGPath';
-import Connection from './Connection.js';
 import Chart from '../Core/Chart/Chart.js';
 import H from '../Core/Globals.js';
 
@@ -23,113 +22,38 @@ import H from '../Core/Globals.js';
  */
 declare global {
     namespace Highcharts {
-        type PathfinderTypeValue = (
-            'straight'|
-            'fastAvoid'|
-            'simpleConnect'|
-            string
-        );
-        interface ChartLike {
-            pathfinder?: Pathfinder;
-        }
-        interface ConnectorsEndMarkerOptions {
-            align?: AlignValue;
-            color?: (ColorString|GradientColorObject|PatternObject);
-            enabled?: boolean;
-            height?: number;
-            inside?: boolean;
-            lineColor?: ColorString;
-            lineWidth?: number;
-            radius?: number;
-            symbol?: string;
-            verticalAlign?: VerticalAlignValue;
-            width?: number;
-        }
-        interface ConnectorsMarkerOptions {
-            align?: AlignValue;
-            color?: (ColorString|GradientColorObject|PatternObject);
-            enabled?: boolean;
-            height?: number;
-            inside?: boolean;
-            lineColor?: ColorString;
-            lineWidth?: number;
-            radius?: number;
-            symbol?: string;
-            verticalAlign?: VerticalAlignValue;
-            width?: number;
-        }
-        interface ConnectorsOptions {
-            algorithmMargin?: number;
-            dashStyle?: string;
-            enabled?: boolean;
-            endMarker?: ConnectorsEndMarkerOptions;
-            lineColor?: ColorString;
-            lineWidth?: number;
-            marker?: ConnectorsMarkerOptions;
-            startMarker?: ConnectorsStartMarkerOptions;
-            type?: PathfinderTypeValue;
-        }
-        interface ConnectorsStartMarkerOptions {
-            align?: AlignValue;
-            color?: (ColorString|GradientColorObject|PatternObject);
-            enabled?: boolean;
-            height?: number;
-            inside?: boolean;
-            lineColor?: ColorString;
-            lineWidth?: number;
-            radius?: number;
-            symbol?: string;
-            verticalAlign?: VerticalAlignValue;
-            width?: number;
-        }
-        interface Options {
-            connectors?: ConnectorsOptions;
-        }
-        interface PointLike {
-            getMarkerVector(
-                radians: number,
-                markerRadius: number,
-                anchor: PositionObject
-            ): PositionObject;
-            getPathfinderAnchorPoint(
-                markerOptions: ConnectorsMarkerOptions
-            ): PositionObject;
-            getRadiansToVector(v1: PositionObject, v2: PositionObject): number;
-        }
-        interface PointConnectOptionsObject {
-            to?: string;
-        }
-        interface PointOptionsObject {
-            connect?: PointConnectOptionsObject;
-            connectors?: ConnectorsOptions;
-        }
-        interface Series {
-            pathfinderRemoveRenderEvent?: Function;
-        }
-        interface SeriesOptions {
-            connectors?: ConnectorsOptions;
-        }
-        class Pathfinder {
-            public constructor(chart: Chart);
-            public algorithms: PathfinderAlgorithmsObject;
+        class Connection {
+            public constructor(
+                from: Point,
+                to: Point,
+                options?: ConnectorsOptions
+            );
             public chart: Chart;
-            public chartObstacles: Array<any>;
-            public chartObstacleMetrics: Dictionary<number>;
-            public connections: Array<Connection>;
-            public group: SVGElement;
-            public lineObstacles: Array<any>;
-            public getAlgorithmStartDirection(
-                markerOptions: ConnectorsMarkerOptions
-            ): (boolean|undefined);
-            public getChartObstacles(
-                options: { algorithmMargin?: number }
-            ): Array<any>;
-            public getObstacleMetrics(
-                obstacles: Array<any>
-            ): Dictionary<number>;
-            public init(chart: Chart): void;
-            public renderConnections(deferRender?: boolean): void;
-            public update(deferRender?: boolean): void;
+            public fromPoint: Point;
+            public graphics: Dictionary<SVGElement>;
+            public options?: ConnectorsOptions;
+            public pathfinder: Pathfinder;
+            public toPoint: Point;
+            public addMarker(
+                type: string,
+                options: ConnectorsMarkerOptions,
+                path: SVGPath
+            ): void;
+            public destroy(): void;
+            public getPath(
+                options: ConnectorsOptions
+            ): PathfinderAlgorithmResultObject;
+            public init(
+                from: Point,
+                to: Point,
+                options?: ConnectorsOptions
+            ): void;
+            public render(): void;
+            public renderPath(
+                path: SVGPath,
+                attribs?: SVGAttributes,
+                animation?: (boolean|Partial<AnimationOptionsObject>)
+            ): void;
         }
     }
 }
@@ -174,6 +98,7 @@ const {
     splat
 } = U;
 
+import type Pathfinder from './Pathfinder.js';
 import pathfinderAlgorithms from './PathfinderAlgorithms.js';
 import '../Extensions/ArrowSymbols.js';
 
@@ -578,351 +503,417 @@ function calculateObstacleMargin(obstacles: Array<any>): number {
 /* eslint-disable no-invalid-this, valid-jsdoc */
 
 /**
- * The Pathfinder class.
+ * The Connection class. Used internally to represent a connection between two
+ * points.
  *
  * @private
  * @class
- * @name Highcharts.Pathfinder
+ * @name Highcharts.Connection
  *
- * @param {Highcharts.Chart} chart
- *        The chart to operate on.
+ * @param {Highcharts.Point} from
+ *        Connection runs from this Point.
+ *
+ * @param {Highcharts.Point} to
+ *        Connection runs to this Point.
+ *
+ * @param {Highcharts.ConnectorsOptions} [options]
+ *        Connection options.
  */
-class Pathfinder {
+class Connection {
     public constructor(
-        chart: Chart
+        from: Point,
+        to: Point,
+        options?: Highcharts.ConnectorsOptions
     ) {
-        this.init(chart);
+        this.init(from, to, options);
     }
 
     /* *
-     *
-     * Properties
-     *
-     * */
-
+    *
+    * Properties
+    *
+    * */
     public chart: Chart = void 0 as any;
-    public chartObstacles: Array<any> = void 0 as any;
-    public chartObstacleMetrics: Highcharts.Dictionary<number> = void 0 as any;
-    public connections: Array<Highcharts.Connection> = void 0 as any;
-    public group: Highcharts.SVGElement = void 0 as any;
-    public lineObstacles: Array<any> = void 0 as any;
+    public fromPoint: Point = void 0 as any;
+    public graphics: Record<string, Highcharts.SVGElement> = void 0 as any;
+    public options?: Highcharts.ConnectorsOptions;
+    public pathfinder: Highcharts.Pathfinder = void 0 as any;
+    public toPoint: Point = void 0 as any;
 
     /**
-     * @name Highcharts.Pathfinder#algorithms
-     * @type {Highcharts.Dictionary<Function>}
-     */
-
-    /**
-     * Initialize the Pathfinder object.
+     * Initialize the Connection object. Used as constructor only.
      *
-     * @function Highcharts.Pathfinder#init
+     * @function Highcharts.Connection#init
      *
-     * @param {Highcharts.Chart} chart
-     *        The chart context.
+     * @param {Highcharts.Point} from
+     *        Connection runs from this Point.
+     *
+     * @param {Highcharts.Point} to
+     *        Connection runs to this Point.
+     *
+     * @param {Highcharts.ConnectorsOptions} [options]
+     *        Connection options.
      */
-    public init(chart: Chart): void {
-        // Initialize pathfinder with chart context
-        this.chart = chart;
-
-        // Init connection reference list
-        this.connections = [];
-
-        // Recalculate paths/obstacles on chart redraw
-        addEvent(chart, 'redraw', function (): void {
-            (this.pathfinder as any).update();
-        });
+    public init(
+        from: Point,
+        to: Point,
+        options?: Highcharts.ConnectorsOptions
+    ): void {
+        this.fromPoint = from;
+        this.toPoint = to;
+        this.options = options;
+        this.chart = from.series.chart;
+        this.pathfinder = this.chart.pathfinder as any;
     }
 
     /**
-     * Update Pathfinder connections from scratch.
+     * Add (or update) this connection's path on chart. Stores reference to the
+     * created element on this.graphics.path.
      *
-     * @function Highcharts.Pathfinder#update
+     * @function Highcharts.Connection#renderPath
      *
-     * @param {boolean} [deferRender]
-     *        Whether or not to defer rendering of connections until
-     *        series.afterAnimate event has fired. Used on first render.
+     * @param {Highcharts.SVGPathArray} path
+     *        Path to render, in array format. E.g. ['M', 0, 0, 'L', 10, 10]
+     *
+     * @param {Highcharts.SVGAttributes} [attribs]
+     *        SVG attributes for the path.
+     *
+     * @param {Partial<Highcharts.AnimationOptionsObject>} [animation]
+     *        Animation options for the rendering.
      */
-    public update(deferRender?: boolean): void {
-        var chart = this.chart,
-            pathfinder = this,
-            oldConnections = pathfinder.connections;
+    public renderPath(
+        path: SVGPath,
+        attribs?: Highcharts.SVGAttributes,
+        animation?: (boolean|Partial<Highcharts.AnimationOptionsObject>)
+    ): void {
+        var connection = this,
+            chart = this.chart,
+            styledMode = chart.styledMode,
+            pathfinder = chart.pathfinder,
+            animate =
+                !(chart.options.chart as any).forExport && animation !== false,
+            pathGraphic = connection.graphics && connection.graphics.path,
+            anim: Highcharts.SVGAttributes;
 
-        // Rebuild pathfinder connections from options
-        pathfinder.connections = [];
-        chart.series.forEach(function (series: Highcharts.Series): void {
-            if (series.visible && !series.options.isInternal) {
-                series.points.forEach(function (point: Point): void {
-                    var to: (
-                            Axis|
-                            Point|
-                            Highcharts.Series|
-                            undefined
-                        ),
-                        connects = (
-                            point.options &&
-                            point.options.connect &&
-                            splat(point.options.connect)
-                        );
+        // Add the SVG element of the pathfinder group if it doesn't exist
+        if (!(pathfinder as any).group) {
+            (pathfinder as any).group = chart.renderer.g()
+                .addClass('highcharts-pathfinder-group')
+                .attr({ zIndex: -1 })
+                .add(chart.seriesGroup);
+        }
 
-                    if (point.visible && point.isInside !== false && connects) {
-                        connects.forEach(function (
-                            connect: (string|Highcharts.Dictionary<string>)
-                        ): void {
-                            to = chart.get(
-                                typeof connect === 'string' ?
-                                    connect : connect.to
-                            );
-                            if (
-                                to instanceof Point &&
-                                to.series.visible &&
-                                to.visible &&
-                                to.isInside !== false
-                            ) {
-                                // Add new connection
-                                pathfinder.connections.push(
-                                    new (Connection as any)(
-                                        point, // from
-                                        to,
-                                        typeof connect === 'string' ?
-                                            {} :
-                                            connect
-                                    )
-                                );
-                            }
-                        });
-                    }
+        // Shift the group to compensate for plot area.
+        // Note: Do this always (even when redrawing a path) to avoid issues
+        // when updating chart in a way that changes plot metrics.
+        (pathfinder as any).group.translate(chart.plotLeft, chart.plotTop);
+
+        // Create path if does not exist
+        if (!(pathGraphic && pathGraphic.renderer)) {
+            pathGraphic = chart.renderer.path()
+                .add((pathfinder as any).group);
+            if (!styledMode) {
+                pathGraphic.attr({
+                    opacity: 0
                 });
             }
-        });
-
-        // Clear connections that should not be updated, and move old info over
-        // to new connections.
-        for (
-            var j = 0, k, found, lenOld = oldConnections.length,
-                lenNew = pathfinder.connections.length;
-            j < lenOld;
-            ++j
-        ) {
-            found = false;
-            for (k = 0; k < lenNew; ++k) {
-                if (
-                    oldConnections[j].fromPoint ===
-                        pathfinder.connections[k].fromPoint &&
-                    oldConnections[j].toPoint ===
-                        pathfinder.connections[k].toPoint
-                ) {
-                    pathfinder.connections[k].graphics =
-                        oldConnections[j].graphics;
-                    found = true;
-                    break;
-                }
-            }
-            if (!found) {
-                oldConnections[j].destroy();
-            }
         }
 
-        // Clear obstacles to force recalculation. This must be done on every
-        // redraw in case positions have changed. Recalculation is handled in
-        // Connection.getPath on demand.
-        delete this.chartObstacles;
-        delete this.lineObstacles;
+        // Set path attribs and animate to the new path
+        pathGraphic.attr(attribs);
+        anim = { d: path };
+        if (!styledMode) {
+            anim.opacity = 1;
+        }
+        pathGraphic[animate ? 'animate' : 'attr'](anim, animation as any);
 
-        // Draw the pending connections
-        pathfinder.renderConnections(deferRender);
+        // Store reference on connection
+        this.graphics = this.graphics || {};
+        this.graphics.path = pathGraphic;
     }
 
     /**
-     * Draw the chart's connecting paths.
+     * Calculate and add marker graphics for connection to the chart. The
+     * created/updated elements are stored on this.graphics.start and
+     * this.graphics.end.
      *
-     * @function Highcharts.Pathfinder#renderConnections
+     * @function Highcharts.Connection#addMarker
      *
-     * @param {boolean} [deferRender]
-     *        Whether or not to defer render until series animation is finished.
-     *        Used on first render.
+     * @param {string} type
+     *        Marker type, either 'start' or 'end'.
+     *
+     * @param {Highcharts.ConnectorsMarkerOptions} options
+     *        All options for this marker. Not calculated or merged with other
+     *        options.
+     *
+     * @param {Highcharts.SVGPathArray} path
+     *        Connection path in array format. This is used to calculate the
+     *        rotation angle of the markers.
      */
-    public renderConnections(
-        deferRender?: boolean
+    public addMarker(
+        type: string,
+        options: Highcharts.ConnectorsMarkerOptions,
+        path: SVGPath
     ): void {
-        if (deferRender) {
-            // Render after series are done animating
-            this.chart.series.forEach(function (
-                series: Highcharts.Series
-            ): void {
-                var render = function (): void {
-                    // Find pathfinder connections belonging to this series
-                    // that haven't rendered, and render them now.
-                    var pathfinder = series.chart.pathfinder,
-                        conns = pathfinder && pathfinder.connections || [];
-
-                    conns.forEach(function (
-                        connection: Highcharts.Connection
-                    ): void {
-                        if (
-                            connection.fromPoint &&
-                            connection.fromPoint.series === series
-                        ) {
-                            connection.render();
-                        }
-                    });
-                    if (series.pathfinderRemoveRenderEvent) {
-                        series.pathfinderRemoveRenderEvent();
-                        delete series.pathfinderRemoveRenderEvent;
-                    }
-                };
-
-                if (series.options.animation === false) {
-                    render();
-                } else {
-                    series.pathfinderRemoveRenderEvent = addEvent(
-                        series, 'afterAnimate', render
-                    );
-                }
-            });
-        } else {
-            // Go through connections and render them
-            this.connections.forEach(function (
-                connection: Highcharts.Connection
-            ): void {
-                connection.render();
-            });
-        }
-    }
-
-    /**
-     * Get obstacles for the points in the chart. Does not include connecting
-     * lines from Pathfinder. Applies algorithmMargin to the obstacles.
-     *
-     * @function Highcharts.Pathfinder#getChartObstacles
-     *
-     * @param {object} options
-     *        Options for the calculation. Currenlty only
-     *        options.algorithmMargin.
-     *
-     * @return {Array<object>}
-     *         An array of calculated obstacles. Each obstacle is defined as an
-     *         object with xMin, xMax, yMin and yMax properties.
-     */
-    public getChartObstacles(options: { algorithmMargin?: number }): Array<any> {
-        var obstacles = [],
-            series = this.chart.series,
-            margin = pick(options.algorithmMargin, 0),
-            calculatedMargin: number;
-
-        for (var i = 0, sLen = series.length; i < sLen; ++i) {
-            if (series[i].visible && !series[i].options.isInternal) {
-                for (
-                    var j = 0, pLen = series[i].points.length, bb, point;
-                    j < pLen;
-                    ++j
-                ) {
-                    point = series[i].points[j];
-                    if (point.visible) {
-                        bb = getPointBB(point);
-                        if (bb) {
-                            obstacles.push({
-                                xMin: bb.xMin - margin,
-                                xMax: bb.xMax + margin,
-                                yMin: bb.yMin - margin,
-                                yMax: bb.yMax + margin
-                            });
-                        }
-                    }
-                }
-            }
-        }
-
-        // Sort obstacles by xMin for optimization
-        obstacles = obstacles.sort(function (a: any, b: any): number {
-            return a.xMin - b.xMin;
-        });
-
-        // Add auto-calculated margin if the option is not defined
-        if (!defined(options.algorithmMargin)) {
-            calculatedMargin =
-                options.algorithmMargin =
-                calculateObstacleMargin(obstacles);
-            obstacles.forEach(function (obstacle: any): void {
-                obstacle.xMin -= calculatedMargin;
-                obstacle.xMax += calculatedMargin;
-                obstacle.yMin -= calculatedMargin;
-                obstacle.yMax += calculatedMargin;
-            });
-        }
-
-        return obstacles;
-    }
-
-    /**
-     * Utility function to get metrics for obstacles:
-     * - Widest obstacle width
-     * - Tallest obstacle height
-     *
-     * @function Highcharts.Pathfinder#getObstacleMetrics
-     *
-     * @param {Array<object>} obstacles
-     *        An array of obstacles to inspect.
-     *
-     * @return {object}
-     *         The calculated metrics, as an object with maxHeight and maxWidth
-     *         properties.
-     */
-    public getObstacleMetrics(obstacles: Array<any>): Highcharts.Dictionary<number> {
-        var maxWidth = 0,
-            maxHeight = 0,
+        var connection = this,
+            chart = connection.fromPoint.series.chart,
+            pathfinder = chart.pathfinder,
+            renderer = chart.renderer,
+            point = (
+                type === 'start' ?
+                    connection.fromPoint :
+                    connection.toPoint
+            ),
+            anchor = point.getPathfinderAnchorPoint(options),
+            markerVector,
+            radians,
+            rotation,
+            box,
             width,
             height,
-            i = obstacles.length;
+            pathVector: Highcharts.PositionObject,
+            segment: SVGPath.Segment;
 
-        while (i--) {
-            width = obstacles[i].xMax - obstacles[i].xMin;
-            height = obstacles[i].yMax - obstacles[i].yMin;
-            if (maxWidth < width) {
-                maxWidth = width;
-            }
-            if (maxHeight < height) {
-                maxHeight = height;
-            }
+
+        if (!options.enabled) {
+            return;
         }
 
-        return {
-            maxHeight: maxHeight,
-            maxWidth: maxWidth
-        };
+        // Last vector before start/end of path, used to get angle
+        if (type === 'start') {
+            segment = path[1];
+        } else { // 'end'
+            segment = path[path.length - 2];
+        }
+        if (segment && segment[0] === 'M' || segment[0] === 'L') {
+            pathVector = {
+                x: segment[1],
+                y: segment[2]
+            };
+
+            // Get angle between pathVector and anchor point and use it to
+            // create marker position.
+            radians = point.getRadiansToVector(pathVector, anchor);
+            markerVector = point.getMarkerVector(
+                radians,
+                options.radius as any,
+                anchor
+            );
+
+            // Rotation of marker is calculated from angle between pathVector
+            // and markerVector.
+            // (Note:
+            //  Used to recalculate radians between markerVector and pathVector,
+            //  but this should be the same as between pathVector and anchor.)
+            rotation = -radians / deg2rad;
+
+            if (options.width && options.height) {
+                width = options.width;
+                height = options.height;
+            } else {
+                width = height = (options.radius as any) * 2;
+            }
+
+            // Add graphics object if it does not exist
+            connection.graphics = connection.graphics || {};
+            box = {
+                x: markerVector.x - (width / 2),
+                y: markerVector.y - (height / 2),
+                width: width,
+                height: height,
+                rotation: rotation,
+                rotationOriginX: markerVector.x,
+                rotationOriginY: markerVector.y
+            };
+
+            if (!connection.graphics[type]) {
+
+                // Create new marker element
+                connection.graphics[type] = renderer
+                    .symbol(options.symbol as any)
+                    .addClass(
+                        'highcharts-point-connecting-path-' + type + '-marker'
+                    )
+                    .attr(box)
+                    .add((pathfinder as any).group);
+
+                if (!renderer.styledMode) {
+                    connection.graphics[type].attr({
+                        fill: options.color || connection.fromPoint.color,
+                        stroke: options.lineColor,
+                        'stroke-width': options.lineWidth,
+                        opacity: 0
+                    })
+                        .animate({
+                            opacity: 1
+                        }, point.series.options.animation);
+                }
+
+            } else {
+                connection.graphics[type].animate(box);
+            }
+        }
     }
 
     /**
-     * Utility to get which direction to start the pathfinding algorithm
-     * (X vs Y), calculated from a set of marker options.
+     * Calculate and return connection path.
+     * Note: Recalculates chart obstacles on demand if they aren't calculated.
      *
-     * @function Highcharts.Pathfinder#getAlgorithmStartDirection
+     * @function Highcharts.Connection#getPath
      *
-     * @param {Highcharts.ConnectorsMarkerOptions} markerOptions
-     *        Marker options to calculate from.
+     * @param {Highcharts.ConnectorsOptions} options
+     *        Connector options. Not calculated or merged with other options.
      *
-     * @return {boolean}
-     *         Returns true for X, false for Y, and undefined for autocalculate.
+     * @return {object|undefined}
+     *         Calculated SVG path data in array format.
      */
-    public getAlgorithmStartDirection(markerOptions: Highcharts.ConnectorsMarkerOptions): (boolean|undefined) {
-        var xCenter = markerOptions.align !== 'left' &&
-                        markerOptions.align !== 'right',
-            yCenter = markerOptions.verticalAlign !== 'top' &&
-                        markerOptions.verticalAlign !== 'bottom',
-            undef;
+    public getPath(
+        options: Highcharts.ConnectorsOptions
+    ): (Highcharts.PathfinderAlgorithmResultObject) {
+        var pathfinder = this.pathfinder,
+            chart = this.chart,
+            algorithm = pathfinder.algorithms[options.type as any],
+            chartObstacles = pathfinder.chartObstacles;
 
-        return xCenter ?
-            (yCenter ? undef : false) : // x is centered
-            (yCenter ? true : undef); // x is off-center
+        if (typeof algorithm !== 'function') {
+            error(
+                '"' + options.type + '" is not a Pathfinder algorithm.'
+            );
+            return {
+                path: [],
+                obstacles: []
+            };
+        }
+
+        // This function calculates obstacles on demand if they don't exist
+        if (algorithm.requiresObstacles && !chartObstacles) {
+            chartObstacles =
+                pathfinder.chartObstacles =
+                pathfinder.getChartObstacles(options);
+
+            // If the algorithmMargin was computed, store the result in default
+            // options.
+            (chart.options.connectors as any).algorithmMargin =
+                options.algorithmMargin;
+
+            // Cache some metrics too
+            pathfinder.chartObstacleMetrics =
+                pathfinder.getObstacleMetrics(chartObstacles);
+        }
+
+        // Get the SVG path
+        return algorithm(
+            // From
+            this.fromPoint.getPathfinderAnchorPoint(options.startMarker as any),
+            // To
+            this.toPoint.getPathfinderAnchorPoint(options.endMarker as any),
+            merge({
+                chartObstacles: chartObstacles,
+                lineObstacles: pathfinder.lineObstacles || [],
+                obstacleMetrics: pathfinder.chartObstacleMetrics as any,
+                hardBounds: {
+                    xMin: 0,
+                    xMax: chart.plotWidth,
+                    yMin: 0,
+                    yMax: chart.plotHeight
+                },
+                obstacleOptions: {
+                    margin: options.algorithmMargin
+                },
+                startDirectionX: pathfinder.getAlgorithmStartDirection(
+                    options.startMarker as any
+                )
+            }, options)
+        );
+    }
+
+    /**
+     * (re)Calculate and (re)draw the connection.
+     *
+     * @function Highcharts.Connection#render
+     */
+    public render(): void {
+        var connection = this,
+            fromPoint = connection.fromPoint,
+            series = fromPoint.series,
+            chart = series.chart,
+            pathfinder = chart.pathfinder,
+            pathResult: Highcharts.PathfinderAlgorithmResultObject,
+            path: SVGPath,
+            options = merge(
+                chart.options.connectors, series.options.connectors,
+                fromPoint.options.connectors, connection.options
+            ),
+            attribs = {} as Highcharts.SVGAttributes;
+
+        // Set path attribs
+        if (!chart.styledMode) {
+            attribs.stroke = options.lineColor || fromPoint.color;
+            attribs['stroke-width'] = options.lineWidth;
+            if (options.dashStyle) {
+                attribs.dashstyle = options.dashStyle;
+            }
+        }
+
+        attribs['class'] = // eslint-disable-line dot-notation
+            'highcharts-point-connecting-path ' +
+            'highcharts-color-' + fromPoint.colorIndex;
+        options = merge(attribs, options);
+
+        // Set common marker options
+        if (!defined((options.marker as any).radius)) {
+            (options.marker as any).radius = min(max(
+                Math.ceil((options.algorithmMargin || 8) / 2) - 1, 1
+            ), 5);
+        }
+        // Get the path
+        pathResult = connection.getPath(options);
+        path = pathResult.path;
+
+        // Always update obstacle storage with obstacles from this path.
+        // We don't know if future calls will need this for their algorithm.
+        if (pathResult.obstacles) {
+            (pathfinder as any).lineObstacles =
+                (pathfinder as any).lineObstacles || [];
+            (pathfinder as any).lineObstacles =
+                (pathfinder as any).lineObstacles.concat(pathResult.obstacles);
+        }
+
+        // Add the calculated path to the pathfinder group
+        connection.renderPath(path, attribs, series.options.animation);
+
+        // Render the markers
+        connection.addMarker(
+            'start',
+            merge(options.marker, options.startMarker),
+            path
+        );
+        connection.addMarker(
+            'end',
+            merge(options.marker, options.endMarker),
+            path
+        );
+    }
+
+    /**
+     * Destroy connection by destroying the added graphics elements.
+     *
+     * @function Highcharts.Connection#destroy
+     */
+    public destroy(): void {
+        if (this.graphics) {
+            objectEach(this.graphics, function (
+                val: Highcharts.SVGElement
+            ): void {
+                val.destroy();
+            });
+            delete this.graphics;
+        }
     }
 }
 
-interface Pathfinder {
-    algorithms: Highcharts.PathfinderAlgorithmsObject;
-}
-Pathfinder.prototype.algorithms = pathfinderAlgorithms;
-
 // Add to Highcharts namespace
-H.Pathfinder = Pathfinder as any;
+H.Connection = Connection as any;
 
 
 // Add pathfinding capabilities to Points
@@ -1137,18 +1128,4 @@ function warnLegacy(chart: Chart): void {
     }
 }
 
-
-// Initialize Pathfinder for charts
-Chart.prototype.callbacks.push(function (
-    chart: Chart
-): void {
-    var options = chart.options;
-
-    if ((options.connectors as any).enabled !== false) {
-        warnLegacy(chart);
-        this.pathfinder = new Pathfinder(this);
-        this.pathfinder.update(true); // First draw, defer render
-    }
-});
-
-export default Pathfinder;
+export default Connection;
