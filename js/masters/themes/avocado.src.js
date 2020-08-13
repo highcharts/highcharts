@@ -8,4 +8,4 @@
  * License: www.highcharts.com/license
  */
 'use strict';
-import '../../themes/avocado.js';
+import '../../Extensions/Themes/Avocado.js';

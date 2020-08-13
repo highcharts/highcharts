@@ -11,4 +11,4 @@
  * License: www.highcharts.com/license
  */
 'use strict';
-import '../../indicators/ichimoku-kinko-hyo.src.js';
+import '../../Stock/Indicators/IKHIndicator.js';

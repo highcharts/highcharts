@@ -11,4 +11,4 @@
  * License: www.highcharts.com/license
  */
 'use strict';
-import '../../indicators/accumulation-distribution.src.js';
+import '../../Stock/Indicators/ADIndicator.js';

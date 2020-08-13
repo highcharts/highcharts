@@ -14,11 +14,16 @@ const path = require('path');
 const SOURCE_DIRECTORY = 'js';
 
 const SOURCE_GLOBS = [
-    'annotations/**/*',
-    'indicators/**/*',
-    'modules/**/*',
-    'parts/**/*',
-    'parts-*/**/*'
+    'Accessibility/**/*',
+    'Boost/**/*',
+    'Core/**/*',
+    'Data/**/*',
+    'DataGrid/**/*',
+    'Extensions/**/*',
+    'Gantt/**/*',
+    'Maps/**/*',
+    'Stock/**/*',
+    'Series/**/*'
 ].map(
     glob => SOURCE_DIRECTORY + '/' + glob
 );

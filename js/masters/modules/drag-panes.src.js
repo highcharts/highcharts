@@ -12,4 +12,4 @@
  * License: www.highcharts.com/license
  */
 'use strict';
-import '../../modules/drag-panes.src.js';
+import '../../Extensions/DragPanes.js';

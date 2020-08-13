@@ -5,8 +5,8 @@
  */
 
 'use strict';
-//import H from '../parts/Globals.js';
-//import '../parts/Utilities.js';
+//import H from '../Core/Globals.js';
+//import '../Core/Utilities.js';
 var H = Highcharts;
 
 var each = H.each,
