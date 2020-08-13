@@ -3990,10 +3990,8 @@ null,
                     (stackThreshold ? 0 : threshold) ?
                 '-' :
                 '') + series.stackKey], pointStack, stackValues;
-            // Discard disallowed y values for log axes (#3434)
-            if (yAxis.positiveValuesOnly &&
-                yValue !== null &&
-                yValue <= 0) {
+            if (yAxis.positiveValuesOnly && !yAxis.validatePositiveValue(yValue) ||
+                xAxis.positiveValuesOnly && !xAxis.validatePositiveValue(xValue)) {
                 point.isNull = true;
             }
             // Get the plotX translation

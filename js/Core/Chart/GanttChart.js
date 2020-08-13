@@ -95,6 +95,9 @@ H.ganttChart = function (renderTo, options, callback) {
         },
         legend: {
             enabled: false
+        },
+        navigator: {
+            series: { type: 'gantt' }
         }
     }, options, // user's options
     // forced options

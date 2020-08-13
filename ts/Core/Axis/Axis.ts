@@ -485,6 +485,7 @@ declare global {
             ): void;
             public unsquish(): number;
             public updateNames(): void;
+            public validatePositiveValue(value: unknown): boolean;
             public zoom(newMin: number, newMax: number): boolean;
         }
         interface Axis extends AxisComposition {
@@ -4120,11 +4121,7 @@ class Axis implements AxisComposition, AxisLike {
         axis.plotLinesAndBandsGroups = {};
 
         // Shorthand types
-        axis.positiveValuesOnly = !!(
-            axis.logarithmic &&
-            !options.allowNegativeLog &&
-            !axis.allowNegativeLog // #13914 backwards compatibility
-        );
+        axis.positiveValuesOnly = !!axis.logarithmic;
 
         // Flag, if axis is linked to another axis
         axis.isLinked = defined(options.linkedTo);
@@ -4398,6 +4395,12 @@ class Axis implements AxisComposition, AxisLike {
                     if (axis.isXAxis) {
                         xData = series.xData as any;
                         if (xData.length) {
+                            const isPositive = (number: number): boolean => number > 0;
+
+                            xData = axis.logarithmic ?
+                                xData.filter(axis.validatePositiveValue) :
+                                xData;
+
                             xExtremes = series.getXExtremes(xData);
                             // If xData contains values which is not numbers,
                             // then filter them out. To prevent performance hit,
@@ -7755,6 +7758,21 @@ class Axis implements AxisComposition, AxisLike {
     */
     public hasVerticalPanning(): boolean {
         return /y/.test(this.chart.options.chart?.panning?.type || '');
+    }
+
+    /**
+    * Check whether the given value is a positive valid axis value.
+    *
+    * @private
+    * @function Highcharts.Axis#validatePositiveValue
+    *
+    * @param {unknown} value
+    * The axis value
+    * @return {boolean}
+    *
+    */
+    public validatePositiveValue(value: unknown): boolean {
+        return isNumber(value) && value > 0;
     }
 }
 

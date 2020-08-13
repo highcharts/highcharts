@@ -109,25 +109,9 @@ var LogarithmicAxisAdditions = /** @class */ (function () {
         return positions;
     };
     LogarithmicAxisAdditions.prototype.lin2log = function (num) {
-        if (this.axis.options.allowNegativeLog) {
-            var isNegative = num < 0;
-            num = Math.abs(num);
-            if (num < 1) {
-                return 0;
-            }
-            return (isNegative ? -1 : 1) * Math.pow(10, num);
-        }
         return Math.pow(10, num);
     };
     LogarithmicAxisAdditions.prototype.log2lin = function (num) {
-        if (this.axis.options.allowNegativeLog) {
-            var isNegative = num < 0;
-            num = Math.abs(num);
-            if (num < 1) {
-                return 0;
-            }
-            return (isNegative ? -1 : 1) * Math.log(num) / Math.LN10;
-        }
         return Math.log(num) / Math.LN10;
     };
     return LogarithmicAxisAdditions;
@@ -147,12 +131,8 @@ var LogarithmicAxis = /** @class */ (function () {
         // @todo Remove this in next major
         var axisProto = AxisClass.prototype;
         var logAxisProto = LogarithmicAxisAdditions.prototype;
-        axisProto.log2lin = function (num) {
-            return logAxisProto.log2lin.call({ axis: this }, num);
-        };
-        axisProto.lin2log = function (num) {
-            return logAxisProto.lin2log.call({ axis: this }, num);
-        };
+        axisProto.log2lin = logAxisProto.log2lin;
+        axisProto.lin2log = logAxisProto.lin2log;
         /* eslint-disable no-invalid-this */
         addEvent(AxisClass, 'init', function (e) {
             var axis = this;
@@ -194,14 +174,3 @@ var LogarithmicAxis = /** @class */ (function () {
 }());
 LogarithmicAxis.compose(Axis); // @todo move to factory functions
 export default LogarithmicAxis;
-/**
- * Activates rendering of negative logarithmic values.
- *
- * @sample highcharts/yaxis/type-log-negative
- *         Rendering negative logarithmic
- *
- * @type      {boolean}
- * @since     next
- * @apioption xAxis.allowNegativeLog
- */
-''; // keeps doclets above in transpiled file

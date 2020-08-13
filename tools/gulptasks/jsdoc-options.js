@@ -20,6 +20,7 @@ const SOURCE_GLOBS = [
     'Data/**/*',
     'DataGrid/**/*',
     'Extensions/**/*',
+    'modules/**/*',
     'Gantt/**/*',
     'Maps/**/*',
     'Stock/**/*',

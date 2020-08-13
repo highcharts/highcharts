@@ -182,6 +182,9 @@ TimelinePath.prototype.init = function (options) {
             new TimelineEvent({ time: options.silentWait })
         ] :
         this.options.events;
+    // Reference optionally provided by the user that indicates the intended
+    // duration of the path. Unused by TimelinePath itself.
+    this.targetDuration = options.targetDuration || options.silentWait;
     // We need to sort our events by time
     this.sortEvents();
     // Get map from event ID to index
