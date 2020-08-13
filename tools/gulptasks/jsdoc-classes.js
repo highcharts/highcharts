@@ -46,7 +46,7 @@ const SOURCE_GLOBS = [
     'js/Series/MapSeries.js',
     'js/Series/AreaRangeSeries.js',
     'js/Series/PackedBubbleSeries.js',
-    'js/Mixins/Ajax.js',
+    'js/Extensions/Ajax.js',
     'js/Accessibility/*.js',
     'js/Extensions/Data.js',
     'js/Extensions/DraggablePoints.js',
