@@ -2663,14 +2663,14 @@ var Axis = /** @class */ (function () {
      * The tick index.
      */
     Axis.prototype.renderTick = function (pos, i) {
+        var _a;
         var axis = this;
         var isLinked = axis.isLinked;
         var ticks = axis.ticks;
         var slideInTicks = axis.chart.hasRendered && isNumber(axis.oldMin);
         // Linked axes need an extra check to find out if
         if (!isLinked ||
-            (pos >= axis.min && pos <= axis.max) ||
-            axis.grid) {
+            (pos >= axis.min && pos <= axis.max) || ((_a = axis.grid) === null || _a === void 0 ? void 0 : _a.isColumn)) {
             if (!ticks[pos]) {
                 ticks[pos] = new Tick(axis, pos);
             }

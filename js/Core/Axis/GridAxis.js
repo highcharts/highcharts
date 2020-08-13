@@ -535,12 +535,6 @@ var GridAxis = /** @class */ (function () {
                     tickLength = (axis.tickSize('tick') || [1])[0], distance = (tickLength - 1) * ((axis.side === GridAxis.Side.top ||
                         axis.side === GridAxis.Side.left) ? -1 : 1);
                     var axisLineExtraXposition = void 0;
-                    if (axis.opposite) {
-                        axisLineExtraXposition = axis.chart.chartWidth - axis.chart.spacing[1];
-                    }
-                    else {
-                        axisLineExtraXposition = axis.chart.spacing[3];
-                    }
                     // If axis is horizontal, reposition line path vertically
                     if (startPoint[0] === 'M' && endPoint[0] === 'L') {
                         if (axis.horiz) {
@@ -550,8 +544,8 @@ var GridAxis = /** @class */ (function () {
                         else {
                             // If the axis is vertical, the extra line should
                             // always start on the outer edge of the chart.
-                            startPoint[1] = axisLineExtraXposition;
-                            endPoint[1] = axisLineExtraXposition;
+                            startPoint[1] += distance;
+                            endPoint[1] += distance;
                         }
                     }
                     // If it doesn't exist, add an upper and lower border

@@ -808,13 +808,6 @@ class GridAxis {
                             axis.side === GridAxis.Side.top ||
                             axis.side === GridAxis.Side.left
                         ) ? -1 : 1);
-                    let axisLineExtraXposition;
-
-                    if (axis.opposite) {
-                        axisLineExtraXposition = axis.chart.chartWidth - axis.chart.spacing[1];
-                    } else {
-                        axisLineExtraXposition = axis.chart.spacing[3];
-                    }
 
                     // If axis is horizontal, reposition line path vertically
                     if (startPoint[0] === 'M' && endPoint[0] === 'L') {
@@ -822,10 +815,8 @@ class GridAxis {
                             startPoint[2] += distance;
                             endPoint[2] += distance;
                         } else {
-                            // If the axis is vertical, the extra line should
-                            // always start on the outer edge of the chart.
-                            startPoint[1] = axisLineExtraXposition;
-                            endPoint[1] = axisLineExtraXposition;
+                            startPoint[1] += distance;
+                            endPoint[1] += distance;
                         }
                     }
 
