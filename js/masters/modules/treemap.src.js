@@ -9,4 +9,4 @@
  * License: www.highcharts.com/license
  */
 'use strict';
-import '../../modules/treemap.src.js';
+import '../../Series/TreemapSeries.js';

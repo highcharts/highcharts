@@ -11,4 +11,4 @@
  * License: www.highcharts.com/license
  */
 'use strict';
-import '../../modules/solid-gauge.src.js';
+import '../../Series/SolidGaugeSeries.js';

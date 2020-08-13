@@ -11,4 +11,4 @@
  * License: www.highcharts.com/license
  */
 'use strict';
-import '../../indicators/cci.src.js';
+import '../../Stock/Indicators/CCIIndicator.js';

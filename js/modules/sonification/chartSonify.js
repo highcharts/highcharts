@@ -94,9 +94,9 @@ import H from '../../Core/Globals.js';
 * @type {Function|undefined}
 */
 ''; // detach doclets above
-import Point from '../../parts/Point.js';
+import Point from '../../Core/Series/Point.js';
 import U from '../../Core/Utilities.js';
-var find = U.find, isArray = U.isArray, merge = U.merge, pick = U.pick, splat = U.splat;
+var find = U.find, isArray = U.isArray, merge = U.merge, pick = U.pick, splat = U.splat, objectEach = U.objectEach;
 import utilities from './utilities.js';
 /**
  * Get the relative time value of a point.
@@ -679,19 +679,31 @@ function getSeriesInstrumentOptions(series, options) {
     }
     var defaultInstrOpts = ((_a = series.chart.options.sonification) === null || _a === void 0 ? void 0 : _a.defaultInstrumentOptions) || {};
     var seriesInstrOpts = ((_b = series.options.sonification) === null || _b === void 0 ? void 0 : _b.instruments) || [{}];
+    var removeNullsFromObject = function (obj) {
+        objectEach(obj, function (val, key) {
+            if (val === null) {
+                delete obj[key];
+            }
+        });
+    };
     // Convert series options to PointInstrumentObjects and merge with
     // default options
-    return (seriesInstrOpts).map(function (optionSet) { return ({
-        instrument: optionSet.instrument || defaultInstrOpts.instrument,
-        instrumentOptions: merge(defaultInstrOpts, optionSet, {
-            // Instrument options are lifted to root in the API options object,
-            // so merge all in order to avoid missing any. But remove the
-            // following which are not instrumentOptions:
-            mapping: void 0,
-            instrument: void 0
-        }),
-        instrumentMapping: merge(defaultInstrOpts.mapping, optionSet.mapping)
-    }); });
+    return (seriesInstrOpts).map(function (optionSet) {
+        // Allow setting option to null to use default
+        removeNullsFromObject(optionSet.mapping || {});
+        removeNullsFromObject(optionSet);
+        return {
+            instrument: optionSet.instrument || defaultInstrOpts.instrument,
+            instrumentOptions: merge(defaultInstrOpts, optionSet, {
+                // Instrument options are lifted to root in the API options
+                // object, so merge all in order to avoid missing any. But
+                // remove the following which are not instrumentOptions:
+                mapping: void 0,
+                instrument: void 0
+            }),
+            instrumentMapping: merge(defaultInstrOpts.mapping, optionSet.mapping)
+        };
+    });
 }
 /**
  * Utility function to translate between options set in chart configuration and
