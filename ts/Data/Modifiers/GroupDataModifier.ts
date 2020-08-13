@@ -12,8 +12,8 @@
 
 import DataJSON from '../DataJSON.js';
 import DataModifier from './DataModifier.js';
-import DataRow from '../DataRow';
 import DataTable from '../DataTable.js';
+import DataTableRow from '../DataTableRow.js';
 import U from '../../Core/Utilities.js';
 const {
     merge
@@ -81,8 +81,8 @@ class GroupDataModifier extends DataModifier implements DataJSON.Class {
             groupTables: Array<DataTable> = [],
             groupValues: Array<DataJSON.Primitives> = [];
 
-        let row: (DataRow|undefined),
-            value: DataRow.ColumnTypes,
+        let row: (DataTableRow|undefined),
+            value: DataTableRow.ColumnTypes,
             valueIndex: number;
 
         for (let i = 0, iEnd = table.getRowCount(); i < iEnd; ++i) {
@@ -115,7 +115,7 @@ class GroupDataModifier extends DataModifier implements DataJSON.Class {
         table = new DataTable();
 
         for (let i = 0, iEnd = groupTables.length; i < iEnd; ++i) {
-            table.insertRow(new DataRow({
+            table.insertRow(new DataTableRow({
                 id: `${i}`,
                 value: groupValues[i],
                 table: groupTables[i]

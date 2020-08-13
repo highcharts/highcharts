@@ -16,7 +16,7 @@
  *
  * */
 
-import DataRow from './DataRow.js';
+import DataTableRow from './DataTableRow.js';
 import DataTable from './DataTable.js';
 
 /* *
@@ -75,7 +75,7 @@ class DataConverter {
                 return new DataTable();
             }
         }
-        return new DataTable([new DataRow({ value })]);
+        return new DataTable([new DataTableRow({ value })]);
     }
 
     /**

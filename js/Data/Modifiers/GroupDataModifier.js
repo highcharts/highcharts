@@ -24,8 +24,8 @@ var __extends = (this && this.__extends) || (function () {
 })();
 import DataJSON from '../DataJSON.js';
 import DataModifier from './DataModifier.js';
-import DataRow from '../DataRow';
 import DataTable from '../DataTable.js';
+import DataTableRow from '../DataTableRow.js';
 import U from '../../Core/Utilities.js';
 var merge = U.merge;
 var GroupDataModifier = /** @class */ (function (_super) {
@@ -80,7 +80,7 @@ var GroupDataModifier = /** @class */ (function (_super) {
         }
         table = new DataTable();
         for (var i = 0, iEnd = groupTables.length; i < iEnd; ++i) {
-            table.insertRow(new DataRow({
+            table.insertRow(new DataTableRow({
                 id: "" + i,
                 value: groupValues[i],
                 table: groupTables[i]
