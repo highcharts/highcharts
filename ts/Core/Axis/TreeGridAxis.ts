@@ -435,6 +435,15 @@ namespace TreeGridAxis {
                         if (s.visible) {
                             // Push all data to array
                             (s.options.data || []).forEach(function (data): void {
+                                // For using keys - rebuild the data structure
+                                if (s.options.keys && s.options.keys.length) {
+                                    const pt = {
+                                        series: s, initialData: data
+                                    };
+
+                                    (s as any).pointClass.prototype.applyOptions.apply(pt, [data]);
+                                    (data as any) = pt;
+                                }
                                 if (isObject(data, true)) {
                                     // Set series index on data. Removed again
                                     // after use.
@@ -479,15 +488,25 @@ namespace TreeGridAxis {
 
                     // Update yData now that we have calculated the y values
                     axis.series.forEach(function (series: Highcharts.Series): void {
-                        var data = (series.options.data || []).map(function (
+                        var axisData = (series.options.data || []).map(function (
                             d: Highcharts.PointOptionsType
                         ): Highcharts.PointOptionsType {
-                            return isObject(d, true) ? merge(d) : d;
+
+                            if (series.options.keys && series.options.keys.length) {
+                                // Get the axisData from the data array used to
+                                // build the treeGrid where has been defined
+                                data.forEach(function (point: Highcharts.PointOptionsObject): void {
+                                    if ((point as any).initialData === d) {
+                                        d = point;
+                                    }
+                                });
+                            }
+                            return d;
                         });
 
                         // Avoid destroying points when series is not visible
                         if (series.visible) {
-                            series.setData(data, false);
+                            series.setData(axisData, false);
                         }
                     });
 

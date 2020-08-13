@@ -236,6 +236,14 @@ var TreeGridAxis;
                     if (s.visible) {
                         // Push all data to array
                         (s.options.data || []).forEach(function (data) {
+                            // For using keys - rebuild the data structure
+                            if (s.options.keys && s.options.keys.length) {
+                                var pt = {
+                                    series: s, initialData: data
+                                };
+                                s.pointClass.prototype.applyOptions.apply(pt, [data]);
+                                data = pt;
+                            }
                             if (isObject(data, true)) {
                                 // Set series index on data. Removed again
                                 // after use.
@@ -271,12 +279,21 @@ var TreeGridAxis;
                 axis.treeGrid.tree = treeGrid.tree;
                 // Update yData now that we have calculated the y values
                 axis.series.forEach(function (series) {
-                    var data = (series.options.data || []).map(function (d) {
-                        return isObject(d, true) ? merge(d) : d;
+                    var axisData = (series.options.data || []).map(function (d) {
+                        if (series.options.keys && series.options.keys.length) {
+                            // Get the axisData from the data array used to
+                            // build the treeGrid where has been defined
+                            data.forEach(function (point) {
+                                if (point.initialData === d) {
+                                    d = point;
+                                }
+                            });
+                        }
+                        return d;
                     });
                     // Avoid destroying points when series is not visible
                     if (series.visible) {
-                        series.setData(data, false);
+                        series.setData(axisData, false);
                     }
                 });
                 // Calculate the label options for each level in the tree.

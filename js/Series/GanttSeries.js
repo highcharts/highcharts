@@ -164,7 +164,7 @@ seriesType('gantt', 'xrange'
     /**
      * @private
      */
-    setGanttPointAliases: function (options, keys) {
+    setGanttPointAliases: function (options) {
         /**
          * Add a value to options if the value exists.
          * @private
@@ -174,20 +174,10 @@ seriesType('gantt', 'xrange'
                 options[prop] = val;
             }
         }
-        if (keys) {
-            var data_1 = options;
-            // Change the options array into the empty object
-            // and assign keys values #13768
-            options = {};
-            keys.forEach(function (key, i) {
-                options[key] = data_1[i];
-            });
-        }
         addIfExists('x', pick(options.start, options.x));
         addIfExists('x2', pick(options.end, options.x2));
         addIfExists('partialFill', pick(options.completed, options.partialFill));
         addIfExists('connect', pick(options.dependency, options.connect));
-        return options;
     }
     /* eslint-enable valid-jsdoc */
 }, merge(parent.prototype.pointClass.prototype, {
@@ -210,10 +200,10 @@ seriesType('gantt', 'xrange'
      *         The Point instance
      */
     applyOptions: function (options, x) {
-        var point = this, retVal = merge(options);
-        H.seriesTypes.gantt.prototype.setGanttPointAliases(retVal);
+        var point = this, retVal = options;
         retVal = parent.prototype.pointClass.prototype.applyOptions
             .call(point, retVal, x);
+        H.seriesTypes.gantt.prototype.setGanttPointAliases(retVal);
         return retVal;
     },
     isValid: function () {

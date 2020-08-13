@@ -54,7 +54,7 @@ declare global {
             public points: Array<GanttPoint>;
             public setData: Series['setData'];
             public drawPoint(point: GanttPoint, verb: string): void;
-            public setGanttPointAliases(options: GanttPointOptions, keys?: Array<string>): void;
+            public setGanttPointAliases(options: GanttPointOptions): void;
             public translatePoint(point: GanttPoint): void;
         }
         interface GanttAnimationOptionsObject extends Partial<AnimationOptionsObject> {
@@ -303,9 +303,8 @@ seriesType<Highcharts.GanttSeries>('gantt', 'xrange'
          */
         setGanttPointAliases: function (
             this: Highcharts.GanttSeriesOptions,
-            options: Highcharts.GanttPointOptions,
-            keys: Array<string>
-        ): Highcharts.GanttPointOptions {
+            options: Highcharts.GanttPointOptions
+        ): void {
             /**
              * Add a value to options if the value exists.
              * @private
@@ -314,16 +313,6 @@ seriesType<Highcharts.GanttSeries>('gantt', 'xrange'
                 if (typeof val !== 'undefined') {
                     (options as any)[prop] = val;
                 }
-            }
-
-            if (keys) {
-                const data = options;
-                // Change the options array into the empty object
-                // and assign keys values #13768
-                options = {};
-                keys.forEach((key, i): void => {
-                    (options as any)[key] = (data as any)[i];
-                });
             }
 
             addIfExists('x', pick(options.start, options.x));
@@ -335,7 +324,6 @@ seriesType<Highcharts.GanttSeries>('gantt', 'xrange'
                 options.dependency, options.connect as any
             ));
 
-            return options;
         }
 
         /* eslint-enable valid-jsdoc */
@@ -366,14 +354,14 @@ seriesType<Highcharts.GanttSeries>('gantt', 'xrange'
             this: Highcharts.GanttPoint,
             options: Highcharts.GanttPointOptions,
             x: number
-        ): Point {
+        ): Highcharts.GanttPointOptions {
             var point = this,
-                retVal = merge(options) as any;
+                retVal = options;
 
+            (retVal as any) = parent.prototype.pointClass.prototype.applyOptions
+                .call(point, retVal, x);
             H.seriesTypes.gantt.prototype.setGanttPointAliases(retVal);
 
-            retVal = parent.prototype.pointClass.prototype.applyOptions
-                .call(point, retVal, x);
             return retVal;
         },
         isValid: function (this: Highcharts.GanttPoint): boolean {
