@@ -77,7 +77,7 @@ function getHTML(path) {
  *         JavaScript extended with the sample data.
  */
 function resolveJSON(js) {
-    const regex = /(\$|Highcharts)\.getJSON\([ \n]*'([^']+)/g;
+    const regex = /(?:(\$|Highcharts)\.getJSON|fetch)\([ \n]*'([^']+)/g;
     let match;
     const codeblocks = [];
 
@@ -86,7 +86,7 @@ function resolveJSON(js) {
 
         let innerMatch = src.match(
             /^(https:\/\/cdn.jsdelivr.net\/gh\/highcharts\/highcharts@[a-z0-9\.]+|https:\/\/www.highcharts.com)\/samples\/data\/([a-z0-9\-\.]+$)/
-        );
+        ) || src.match(/^(https:\/\/demo-live-data.highcharts.com)\/([a-z0-9\-\.]+$)/);
 
         if (innerMatch) {
 

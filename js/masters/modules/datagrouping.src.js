@@ -10,5 +10,5 @@
  * License: www.highcharts.com/license
  */
 'use strict';
-import dataGrouping from '../../parts/DataGrouping.js';
+import dataGrouping from '../../Extensions/DataGrouping.js';
 export default dataGrouping;

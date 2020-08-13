@@ -2584,7 +2584,7 @@ window.onload = function () {
         highchartsReset.addEventListener('click', function () {
             if (confirm('Are you sure you want to clear the chart?')) {
                 Highcharts.ajax({
-                    url: 'https://www.highcharts.com/samples/data/aapl-ohlc.json',
+                    url: 'https://demo-live-data.highcharts.com/aapl-ohlc.json',
                     dataType: 'text',
                     success: function (data) {
                         var chart = Highcharts.getChartById('container-inner');
@@ -2641,7 +2641,7 @@ window.onload = function () {
         );
     } else {
         Highcharts.ajax({
-            url: 'https://www.highcharts.com/samples/data/aapl-ohlc.json',
+            url: 'https://demo-live-data.highcharts.com/aapl-ohlc.json',
             dataType: 'text',
             success: function (data) {
                 data = data.replace(/\/\*.*\*\//g, '');

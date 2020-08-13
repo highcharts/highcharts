@@ -1,4 +1,4 @@
-Highcharts.getJSON('https://www.highcharts.com/samples/data/aapl-v.json', function (data) {
+Highcharts.getJSON('https://demo-live-data.highcharts.com/aapl-v.json', function (data) {
 
     Highcharts.stockChart('container', {
 

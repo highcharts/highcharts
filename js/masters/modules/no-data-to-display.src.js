@@ -11,4 +11,4 @@
  * License: www.highcharts.com/license
  */
 'use strict';
-import '../../modules/no-data-to-display.src.js';
+import '../../Extensions/NoDataToDisplay.js';

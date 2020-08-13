@@ -879,3 +879,83 @@ QUnit.test('Animation and text alignment', function (assert) {
 
     }
 });
+
+QUnit.test('Defer test #12901', function (assert) {
+
+    // Hijack animation
+    var clock = TestUtilities.lolexInstall();
+
+    try {
+
+        var div = document.createElement('div');
+        document.body.appendChild(div);
+
+        var ren = new Highcharts.Renderer(
+            div,
+            600,
+            400
+        );
+
+        var circle = ren.circle(200, 80, 20)
+            .attr({
+                fill: '#FCFFC5'
+            })
+            .add();
+
+        var circ = ren.circle(10, 10, 3)
+            .attr({
+                fill: 'red'
+            })
+            .add();
+
+        circ.animate({
+            x: 300,
+            y: 300
+        }, {
+            duration: 200,
+            defer: 200
+        });
+
+        circle.animate({
+            x: 500
+        }, {
+            defer: 500,
+            duration: 200
+        });
+        circle.animate({
+            x: 50
+        }, {
+            duration: 1000
+        });
+
+        setTimeout(function () {
+            assert.strictEqual(
+                circ.attr('x'),
+                10,
+                'X should be not changed until the defer time will be gone'
+            );
+        }, 100);
+
+        setTimeout(function () {
+            assert.strictEqual(
+                circle.attr('x') !== 200,
+                true,
+                'X should be different than the initial position - element cannot be back to the initial position after the defer time #12901.'
+            );
+            assert.strictEqual(
+                circ.attr('x'),
+                300,
+                'X should be in the final position after sum of the duration and defer time'
+            );
+            document.body.removeChild(div);
+        }, 500);
+
+        // Reset animation
+        TestUtilities.lolexRunAndUninstall(clock);
+
+    } finally {
+
+        TestUtilities.lolexUninstall(clock);
+
+    }
+});

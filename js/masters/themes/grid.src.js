@@ -8,4 +8,4 @@
  * License: www.highcharts.com/license
  */
 'use strict';
-import '../../themes/grid.js';
+import '../../Extensions/Themes/Grid.js';

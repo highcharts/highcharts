@@ -54,7 +54,7 @@ async function putS3Object(key, body, config = {}) {
                     log.success(`Saved object to ${key}`);
                     resolve(resp);
                 } else {
-                    log.warn(`An error occured while storing an object to ${config.BUCKET}/${key}`, error);
+                    log.warn(`An error occured while storing an object to ${config.Bucket}/${key}`, error);
                     reject(error);
                 }
             });
@@ -163,6 +163,20 @@ function uploadFiles(params) {
     });
 }
 
+/**
+ * Transforms a filepath to a similar named S3 destination path.
+ * @param {string} fromPath file to create a S3 destination path for.
+ * @param {string} removeFromDestPath, anything in the fromPath that you want to remove from destination path.
+ * @param {string} prefix for S3 destination key.
+ * @return {{from: *, to: string}} object for upload api.
+ */
+function toS3Path(fromPath, removeFromDestPath, prefix) {
+    return {
+        from: fromPath,
+        to: `${prefix ? prefix + '/' : ''}${fromPath.replace(removeFromDestPath, '')}`
+    };
+}
+
 
 module.exports = {
     uploadFiles,
@@ -171,5 +185,6 @@ module.exports = {
     isDirectoryOrSystemFile,
     getS3Object,
     putS3Object,
-    getGitIgnoreMeProperties
+    getGitIgnoreMeProperties,
+    toS3Path
 };

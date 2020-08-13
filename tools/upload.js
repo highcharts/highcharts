@@ -43,6 +43,8 @@ const uploadFiles = params => {
         eot: 'application/vnd.ms-fontobject',
         gif: 'image/gif',
         html: 'text/html',
+        htm: 'text/html',
+        php: 'text/plain',
         ico: 'image/x-icon',
         jpeg: 'image/jpeg',
         jpg: 'image/jpeg',
@@ -92,7 +94,7 @@ const uploadFiles = params => {
                 const fileMime = mimeType[fileType];
                 if (content && content.length > 0) {
                     filePromise = storage.push(cdn, to, content, fileMime, s3Params)
-                        .then(() => isFunction(callback) && callback(from, to))
+                        .then(() => isFunction(callback) && callback(from, to, fileMime))
                         .catch(err => {
                             const error = {
                                 message: `S3: ${(err.pri && err.pri.message) || (err.internal && err.internal.message)}`,
