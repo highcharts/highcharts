@@ -11,7 +11,7 @@
  * */
 import DataConverter from './DataConverter.js';
 import DataJSON from './DataJSON.js';
-import DataRow from './DataRow.js';
+import DataTableRow from './DataTableRow.js';
 import U from '../Core/Utilities.js';
 var addEvent = U.addEvent, fireEvent = U.fireEvent, uniqueKey = U.uniqueKey;
 /* *
@@ -29,10 +29,10 @@ var DataTable = /** @class */ (function () {
      *
      * */
     /**
-     * Constructs an instance of the DataRow class.
+     * Constructs an instance of the DataTable class.
      *
-     * @param {Array<DataRow>} [rows]
-     * Array of table rows as DataRow instances.
+     * @param {Array<DataTableRow>} [rows]
+     * Array of table rows as DataTableRow instances.
      *
      * @param {DataConverter} [converter]
      * Converter for value conversions in table rows.
@@ -63,7 +63,7 @@ var DataTable = /** @class */ (function () {
     /**
      * Converts a supported class JSON to a DataTable instance.
      *
-     * @param {DataRow.ClassJSON} json
+     * @param {DataTableRow.ClassJSON} json
      * Class JSON (usually with a $class property) to convert.
      *
      * @return {DataTable}
@@ -73,7 +73,7 @@ var DataTable = /** @class */ (function () {
         var rows = json.rows, dataRows = [];
         try {
             for (var i = 0, iEnd = rows.length; i < iEnd; ++i) {
-                dataRows[i] = DataRow.fromJSON(rows[i]);
+                dataRows[i] = DataTableRow.fromJSON(rows[i]);
             }
             return new DataTable(dataRows);
         }
@@ -90,7 +90,7 @@ var DataTable = /** @class */ (function () {
             var rowsLength = columns[0].length;
             var i = 0;
             while (i < rowsLength) {
-                var row = new DataRow();
+                var row = new DataTableRow();
                 for (var j = 0; j < columnsLength; ++j) {
                     row.insertColumn((headers.length ? headers[j] : uniqueKey()), columns[j][i]);
                 }
@@ -165,7 +165,7 @@ var DataTable = /** @class */ (function () {
     /**
      * Returns a copy of the internal array with rows.
      *
-     * @return {Array<DataRow>}
+     * @return {Array<DataTableRow>}
      * Copy of the internal array with rows.
      */
     DataTable.prototype.getAllRows = function () {
@@ -177,7 +177,7 @@ var DataTable = /** @class */ (function () {
      * @param {number|string} row
      * Row index or row ID.
      *
-     * @return {DataRow.ColumnTypes}
+     * @return {DataTableRow.ColumnTypes}
      * Column value of the column in this row.
      */
     DataTable.prototype.getRow = function (row) {
@@ -211,7 +211,7 @@ var DataTable = /** @class */ (function () {
     /**
      * Adds a row to this table.
      *
-     * @param {DataRow} row
+     * @param {DataTableRow} row
      * Row to add to this table.
      *
      * @return {boolean}
@@ -234,10 +234,10 @@ var DataTable = /** @class */ (function () {
     /**
      * Registers a callback for a specific event.
      *
-     * @param {DataRow.EventTypes} type
+     * @param {DataTableRow.EventTypes} type
      * Event type as a string.
      *
-     * @param {DataRow.EventCallbacks} callback
+     * @param {DataTableRow.EventCallbacks} callback
      * Function to register for an event callback.
      *
      * @return {Function}
@@ -249,7 +249,7 @@ var DataTable = /** @class */ (function () {
     /**
      * Watchs for events in a row to keep the version tag of the table updated.
      *
-     * @param {DataRow} row
+     * @param {DataTableRow} row
      * Row the watch for modifications.
      */
     DataTable.prototype.watchRow = function (row) {

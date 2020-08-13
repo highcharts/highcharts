@@ -37,7 +37,8 @@ const {
 /**
  * Class to manage a row with column values.
  */
-class DataRow implements DataEventEmitter<DataRow.EventObjects>, DataJSON.Class {
+class DataTableRow
+implements DataEventEmitter<DataTableRow.EventObjects>, DataJSON.Class {
 
     /* *
      *
@@ -46,20 +47,20 @@ class DataRow implements DataEventEmitter<DataRow.EventObjects>, DataJSON.Class 
      * */
 
     /**
-     * Converts a supported class JSON to a DataRow instance.
+     * Converts a supported class JSON to a DataTableRow instance.
      *
-     * @param {DataRow.ClassJSON} json
+     * @param {DataTableRow.ClassJSON} json
      * Class JSON (usually with a $class property) to convert.
      *
-     * @return {DataRow}
-     * DataRow instance from the class JSON.
+     * @return {DataTableRow}
+     * DataTableRow instance from the class JSON.
      */
-    public static fromJSON(json: DataRow.ClassJSON): DataRow {
+    public static fromJSON(json: DataTableRow.ClassJSON): DataTableRow {
         const keys = Object.keys(json).reverse(),
-            columns: DataRow.Columns = {};
+            columns: DataTableRow.Columns = {};
 
         let columnName: (string|undefined),
-            columnValue: (DataJSON.Primitives|DataTable.ClassJSON|Array<DataRow.ClassJSON>),
+            columnValue: (DataJSON.Primitives|DataTable.ClassJSON|Array<DataTableRow.ClassJSON>),
             table: DataTable;
 
         while (typeof (columnName = keys.pop()) !== 'undefined') {
@@ -89,7 +90,7 @@ class DataRow implements DataEventEmitter<DataRow.EventObjects>, DataJSON.Class 
             }
         }
 
-        return new DataRow(columns);
+        return new DataTableRow(columns);
     }
 
     /* *
@@ -99,16 +100,16 @@ class DataRow implements DataEventEmitter<DataRow.EventObjects>, DataJSON.Class 
      * */
 
     /**
-     * Constructs an instance of the DataRow class.
+     * Constructs an instance of the DataTableRow class.
      *
-     * @param {DataRow.Columns} [columns]
+     * @param {DataTableRow.Columns} [columns]
      * Column values in a record object.
      *
      * @param {DataConverter} [converter]
      * Converter for value conversions.
      */
     constructor(
-        columns: DataRow.Columns = {},
+        columns: DataTableRow.Columns = {},
         converter: DataConverter = new DataConverter()
     ) {
         columns = merge(columns);
@@ -149,7 +150,7 @@ class DataRow implements DataEventEmitter<DataRow.EventObjects>, DataJSON.Class 
      * Record object of all columnNames with their values in this rows.
      * @private
      */
-    private columns: DataRow.Columns;
+    private columns: DataTableRow.Columns;
 
     /**
      * Converter for value conversions.
@@ -170,8 +171,8 @@ class DataRow implements DataEventEmitter<DataRow.EventObjects>, DataJSON.Class 
     /**
      * Removes all columns with the values from this row.
      *
-     * @emits DataRow#clearRow
-     * @emits DataRow#afterClearRow
+     * @emits DataTableRow#clearRow
+     * @emits DataTableRow#afterClearRow
      */
     public clear(): void {
 
@@ -192,8 +193,8 @@ class DataRow implements DataEventEmitter<DataRow.EventObjects>, DataJSON.Class 
      * @return {boolean}
      * Returns true, if the delete was successful, otherwise false.
      *
-     * @emits DataRow#deleteColumn
-     * @emits DataRow#afterDeleteColumn
+     * @emits DataTableRow#deleteColumn
+     * @emits DataTableRow#afterDeleteColumn
      */
     public deleteColumn(columnName: string): boolean {
         const row = this,
@@ -217,20 +218,20 @@ class DataRow implements DataEventEmitter<DataRow.EventObjects>, DataJSON.Class 
      * Emits an event on this row to all registered callbacks of the given
      * event.
      *
-     * @param {DataRow.EventObjects} e
+     * @param {DataTableRow.EventObjects} e
      * Event object with event information.
      */
-    public emit(e: DataRow.EventObjects): void {
+    public emit(e: DataTableRow.EventObjects): void {
         fireEvent(this, e.type, e);
     }
 
     /**
      * Returns a copy of the record object of all columnNames with their values.
      *
-     * @return {DataRow.Columns}
+     * @return {DataTableRow.Columns}
      * Copy of the record object of all columnNames with their values.
      */
-    public getAllColumns(): DataRow.Columns {
+    public getAllColumns(): DataTableRow.Columns {
         return merge(this.columns);
     }
 
@@ -240,10 +241,10 @@ class DataRow implements DataEventEmitter<DataRow.EventObjects>, DataJSON.Class 
      * @param {number|string} column
      * Column name or column index.
      *
-     * @return {DataRow.ColumnTypes}
+     * @return {DataTableRow.ColumnTypes}
      * Column value of the column in this row.
      */
-    public getColumn(column: (number|string)): DataRow.ColumnTypes {
+    public getColumn(column: (number|string)): DataTableRow.ColumnTypes {
 
         if (typeof column === 'number') {
             return this.columns[this.columnNames[column]];
@@ -348,7 +349,7 @@ class DataRow implements DataEventEmitter<DataRow.EventObjects>, DataJSON.Class 
      * @param {string} columnName
      * Name of the column.
      *
-     * @param {DataRow.ColumnTypes} columnValue
+     * @param {DataTableRow.ColumnTypes} columnValue
      * Value of the column in this row.
      *
      * @return {boolean}
@@ -357,7 +358,7 @@ class DataRow implements DataEventEmitter<DataRow.EventObjects>, DataJSON.Class 
      */
     public insertColumn(
         columnName: string,
-        columnValue: DataRow.ColumnTypes
+        columnValue: DataTableRow.ColumnTypes
     ): boolean {
 
         if (
@@ -380,18 +381,18 @@ class DataRow implements DataEventEmitter<DataRow.EventObjects>, DataJSON.Class 
     /**
      * Registers a callback for a specific event.
      *
-     * @param {DataRow.EventTypes} type
+     * @param {DataTableRow.EventTypes} type
      * Event type as a string.
      *
-     * @param {DataRow.EventCallbacks} callback
+     * @param {DataTableRow.EventCallbacks} callback
      * Function to register for an event callback.
      *
      * @return {Function}
      * Function to unregister callback from the event.
      */
     public on(
-        type: DataRow.EventObjects['type'],
-        callback: DataEventEmitter.EventCallback<this, DataRow.EventObjects>
+        type: DataTableRow.EventObjects['type'],
+        callback: DataEventEmitter.EventCallback<this, DataTableRow.EventObjects>
     ): Function {
         return addEvent(this, type, callback);
     }
@@ -402,15 +403,15 @@ class DataRow implements DataEventEmitter<DataRow.EventObjects>, DataJSON.Class 
      * @return {DataJSON.ClassJSON}
      * Class JSON of this row.
      */
-    public toJSON(): DataRow.ClassJSON {
+    public toJSON(): DataTableRow.ClassJSON {
         const columns = this.getAllColumns(),
             columnKeys = Object.keys(columns),
-            json: DataRow.ClassJSON = {
-                $class: 'DataRow'
+            json: DataTableRow.ClassJSON = {
+                $class: 'DataTableRow'
             };
 
         let key: string,
-            value: DataRow.ColumnTypes;
+            value: DataTableRow.ColumnTypes;
 
         if (!this.autoId) {
             json.id = this.id;
@@ -450,7 +451,7 @@ class DataRow implements DataEventEmitter<DataRow.EventObjects>, DataJSON.Class 
      * @param {string} columnKey
      * Column name in this row to update.
      *
-     * @param {DataRow.ColumnTypes} columnValue
+     * @param {DataTableRow.ColumnTypes} columnValue
      * Column value to update to.
      *
      * @return {boolean}
@@ -458,7 +459,7 @@ class DataRow implements DataEventEmitter<DataRow.EventObjects>, DataJSON.Class 
      */
     public updateColumn(
         columnKey: string,
-        columnValue: DataRow.ColumnTypes
+        columnValue: DataTableRow.ColumnTypes
     ): boolean {
         const row = this;
 
@@ -486,7 +487,7 @@ class DataRow implements DataEventEmitter<DataRow.EventObjects>, DataJSON.Class 
 /**
  * Additionally provided types for columns, events, and JSON conversion.
  */
-namespace DataRow {
+namespace DataTableRow {
 
     /**
      * Event types related to a column of a row.
@@ -511,7 +512,7 @@ namespace DataRow {
     export type ColumnTypes = (boolean|null|number|string|Date|DataTable|undefined);
 
     /**
-     * All information objects of DataRow events.
+     * All information objects of DataTableRow events.
      */
     export type EventObjects = (ColumnEventObject|RowEventObject);
 
@@ -523,10 +524,10 @@ namespace DataRow {
     );
 
     /**
-     * Describes the class JSON of a DataRow.
+     * Describes the class JSON of a DataTableRow.
      */
     export interface ClassJSON extends DataJSON.ClassJSON {
-        [key: string]: (DataJSON.Primitives|DataTable.ClassJSON|Array<DataRow.ClassJSON>);
+        [key: string]: (DataJSON.Primitives|DataTable.ClassJSON|Array<DataTableRow.ClassJSON>);
     }
 
     /**
@@ -552,7 +553,7 @@ namespace DataRow {
  *
  * */
 
-DataJSON.addClass(DataRow);
+DataJSON.addClass(DataTableRow);
 
 /* *
  *
@@ -560,4 +561,4 @@ DataJSON.addClass(DataRow);
  *
  * */
 
-export default DataRow;
+export default DataTableRow;

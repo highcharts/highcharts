@@ -10,7 +10,7 @@
  *
  * */
 
-import type DataRow from '../DataRow';
+import type DataTableRow from '../DataTableRow';
 import DataJSON from '../DataJSON.js';
 import DataModifier from './DataModifier.js';
 import DataTable from '../DataTable.js';
@@ -84,9 +84,9 @@ class RangeDataModifier extends DataModifier implements DataJSON.Class {
             rows = table.getAllRows(),
             result = new DataTable();
 
-        let column: DataRow.ColumnTypes,
+        let column: DataTableRow.ColumnTypes,
             range: RangeDataModifier.RangeOptions,
-            row: DataRow;
+            row: DataTableRow;
 
         this.emit({ type: 'execute', table });
 

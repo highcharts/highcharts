@@ -6,23 +6,23 @@ QUnit.test('RangeDataModifier.execute', function (assert) {
     const tableJSON = {
             $class: 'DataTable',
             rows: [{
-                $class: 'DataRow',
+                $class: 'DataTableRow',
                 x: -2,
                 y: 'a'
             }, {
-                $class: 'DataRow',
+                $class: 'DataTableRow',
                 x: -1,
                 y: 'b'
             }, {
-                $class: 'DataRow',
+                $class: 'DataTableRow',
                 x: 0,
                 y: 'c'
             }, {
-                $class: 'DataRow',
+                $class: 'DataTableRow',
                 x: 1,
                 y: 'd'
             }, {
-                $class: 'DataRow',
+                $class: 'DataTableRow',
                 x: 2,
                 y: 'e'
             }]

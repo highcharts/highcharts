@@ -37,13 +37,13 @@ QUnit.test('DataTable and DataRow events', function (assert) {
     const dataTable = DataTable.fromJSON({
         $class: 'DataTable',
         rows: [{
-            $class: 'DataRow',
+            $class: 'DataTableRow',
             id: 'a',
             text: 'text'
         }]
     });
     const dataRow = new DataRow({
-        $class: 'DataRow',
+        $class: 'DataTableRow',
         id: 'b',
         text: 'text'
     });
@@ -140,34 +140,34 @@ QUnit.test('DataTable JSON support', function (assert) {
     const json = {
         $class: 'DataTable',
         rows: [{
-            $class: 'DataRow',
+            $class: 'DataTableRow',
             id: 'a',
             column1: 'value1',
             column2: 0.0002,
             column3: false
         }, {
-            $class: 'DataRow',
+            $class: 'DataTableRow',
             id: 'b',
             column1: 'value1',
             column2: 'value2',
             column3: {
                 $class: 'DataTable',
                 rows: [{
-                    $class: 'DataRow',
+                    $class: 'DataTableRow',
                     id: 'ba',
                     column1: 'value1'
                 }, {
-                    $class: 'DataRow',
+                    $class: 'DataTableRow',
                     id: 'bb',
                     column1: 'value1'
                 }, {
-                    $class: 'DataRow',
+                    $class: 'DataTableRow',
                     id: 'bc',
                     column1: 'value1'
                 }]
             }
         }, {
-            $class: 'DataRow',
+            $class: 'DataTableRow',
             id: 'c',
             column1: 'value1',
             column2: 'value2',
