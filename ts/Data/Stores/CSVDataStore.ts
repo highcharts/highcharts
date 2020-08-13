@@ -22,9 +22,8 @@ const { ajax } = Ajax;
 /* eslint-disable no-invalid-this, require-jsdoc, valid-jsdoc */
 
 /**
- * @private
+ * Class that handles creating a datastore from CSV
  */
-
 class CSVDataStore extends DataStore<CSVDataStore.EventObjects> implements DataJSON.Class {
 
     /* *
@@ -44,6 +43,16 @@ class CSVDataStore extends DataStore<CSVDataStore.EventObjects> implements DataJ
      *  Static Functions
      *
      * */
+
+    /**
+     * Creates a CSVDatastore from a ClassJSON object.
+     *
+     * @param {CSVDataStore.ClassJSON} json
+     * Class JSON (usually with a $class property) to convert.
+     *
+     * @return {CSVDataStore}
+     * CSVDataStore from the class JSON.
+     */
     public static fromJSON(json: CSVDataStore.ClassJSON): CSVDataStore {
         const options = json.options,
             parser = CSVDataParser.fromJSON(json.parser),
@@ -61,9 +70,21 @@ class CSVDataStore extends DataStore<CSVDataStore.EventObjects> implements DataJ
     *
     * */
 
+    /**
+     * Constructs an instance of CSVDataStore
+     *
+     * @param {DataTable} table
+     * Optional DataTable to create the store from
+     *
+     * @param {CSVDataStore.OptionsType} options
+     * Options for the store and parser
+     *
+     * @param {DataParser} parser
+     * Optional parser to replace the default parser
+     */
     public constructor(
         table: DataTable = new DataTable(),
-        options: Partial<(CSVDataStore.Options&CSVDataParser.Options)> = {},
+        options: CSVDataStore.OptionsType = {},
         parser?: CSVDataParser
     ) {
         super(table);
@@ -80,14 +101,30 @@ class CSVDataStore extends DataStore<CSVDataStore.EventObjects> implements DataJ
     *  Properties
     *
     * */
+
+    /**
+     * Options related to the handling of the CSV datastore,
+     * i.e. source, fetching, polling
+     */
     public readonly options: CSVDataStore.Options;
+
+    /**
+     * The attached parser, which can be customized in the constructor
+     */
     public readonly parser: CSVDataParser;
 
+    /**
+     * The URL to fetch if the source is external
+     */
     private liveDataURL?: string;
+
+    /**
+     * The current timeout ID if polling is enabled
+     */
     private liveDataTimeout?: number;
 
     /**
-     * Handle polling of live data
+     * Handles polling of live data
      */
     private poll(): void {
         const { dataRefreshRate, enablePolling: pollingEnabled, csvURL } = this.options;
@@ -100,6 +137,16 @@ class CSVDataStore extends DataStore<CSVDataStore.EventObjects> implements DataJ
         }
     }
 
+    /**
+     * Fetches CSV from external source
+     *
+     * @param {boolean} initialFetch
+     * Indicates whether this is a single fetch or a repeated fetch
+     *
+     * @emits CSVDataStore#load
+     * @emits CSVDataStore#afterLoad
+     * @emits CSVDataStore#loadError
+     */
     private fetchCSV(initialFetch?: boolean): void {
         const store = this,
             maxRetries = 3,
@@ -133,6 +180,11 @@ class CSVDataStore extends DataStore<CSVDataStore.EventObjects> implements DataJ
         });
     }
 
+    /**
+     * Initiates the loading of the CSV source to the store
+     * @emits CSVDataParser#load
+     * @emits CSVDataParser#afterLoad
+     */
     public load(): void {
         const store = this,
             { csv, csvURL } = store.options;
@@ -151,6 +203,12 @@ class CSVDataStore extends DataStore<CSVDataStore.EventObjects> implements DataJ
 
     }
 
+    /**
+     * Converts the store to a class JSON.
+     *
+     * @return {DataJSON.ClassJSON}
+     * Class JSON of this store.
+     */
     public toJSON(): CSVDataStore.ClassJSON {
         const json: CSVDataStore.ClassJSON = {
             $class: 'CSVDataStore',
@@ -164,12 +222,30 @@ class CSVDataStore extends DataStore<CSVDataStore.EventObjects> implements DataJ
     }
 }
 
+/**
+ *
+ *  Namespace
+ *
+ */
+
+/**
+ * Types for class-specific options and events
+ */
 namespace CSVDataStore {
 
+    /**
+     * Event objects fired from CSVDataStore events
+     */
     export type EventObjects = (ErrorEventObject|LoadEventObject);
 
-    export type OptionsType = (CSVDataStore.Options | CSVDataParser.Options)
+    /**
+     * Options for the CSVDataStore class constructor
+     */
+    export type OptionsType = Partial<(CSVDataStore.Options & CSVDataParser.Options)>
 
+    /**
+     * The class JSON when importing/exporting CSVDataStore
+     */
     export interface ClassJSON extends DataJSON.ClassJSON {
         metadata: DataStore.MetadataJSON;
         options: Options;
@@ -177,21 +253,33 @@ namespace CSVDataStore {
         table: DataTable.ClassJSON;
     }
 
+    /**
+     * @todo move this to the dataparser?
+     */
     export interface DataBeforeParseCallbackFunction {
         (csv: string): string;
     }
 
+    /**
+     * The event object that is provided on errors within CSVDataStore
+     */
     export interface ErrorEventObject extends DataStore.EventObject {
         type: ('loadError');
         error: (string|Error);
         xhr: XMLHttpRequest;
     }
 
+    /**
+     * The event object that is provided on load events within CSVDataStore
+     */
     export interface LoadEventObject extends DataStore.EventObject {
         type: ('load'|'afterLoad');
         csv?: string;
     }
 
+    /**
+     * Internal options for CSVDataStore
+     */
     export interface Options extends DataJSON.Object {
         csv: string;
         csvURL: string;
@@ -200,5 +288,11 @@ namespace CSVDataStore {
     }
 
 }
+
+/* *
+ *
+ *  Export
+ *
+ * */
 
 export default CSVDataStore;

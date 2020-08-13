@@ -42,7 +42,7 @@ import CSVDataParser from '../Parsers/CSVDataParser.js';
 var ajax = Ajax.ajax;
 /* eslint-disable no-invalid-this, require-jsdoc, valid-jsdoc */
 /**
- * @private
+ * Class that handles creating a datastore from CSV
  */
 var CSVDataStore = /** @class */ (function (_super) {
     __extends(CSVDataStore, _super);
@@ -51,6 +51,18 @@ var CSVDataStore = /** @class */ (function (_super) {
     *  Constructors
     *
     * */
+    /**
+     * Constructs an instance of CSVDataStore
+     *
+     * @param {DataTable} table
+     * Optional DataTable to create the store from
+     *
+     * @param {CSVDataStore.OptionsType} options
+     * Options for the store and parser
+     *
+     * @param {DataParser} parser
+     * Optional parser to replace the default parser
+     */
     function CSVDataStore(table, options, parser) {
         if (table === void 0) { table = new DataTable(); }
         if (options === void 0) { options = {}; }
@@ -65,13 +77,22 @@ var CSVDataStore = /** @class */ (function (_super) {
      *  Static Functions
      *
      * */
+    /**
+     * Creates a CSVDatastore from a ClassJSON object.
+     *
+     * @param {CSVDataStore.ClassJSON} json
+     * Class JSON (usually with a $class property) to convert.
+     *
+     * @return {CSVDataStore}
+     * CSVDataStore from the class JSON.
+     */
     CSVDataStore.fromJSON = function (json) {
         var options = json.options, parser = CSVDataParser.fromJSON(json.parser), table = DataTable.fromJSON(json.table), store = new CSVDataStore(table, options, parser);
         store.describe(DataStore.getMetadataFromJSON(json.metadata));
         return store;
     };
     /**
-     * Handle polling of live data
+     * Handles polling of live data
      */
     CSVDataStore.prototype.poll = function () {
         var _this = this;
@@ -84,6 +105,16 @@ var CSVDataStore = /** @class */ (function (_super) {
             }, updateIntervalMs);
         }
     };
+    /**
+     * Fetches CSV from external source
+     *
+     * @param {boolean} initialFetch
+     * Indicates whether this is a single fetch or a repeated fetch
+     *
+     * @emits CSVDataStore#load
+     * @emits CSVDataStore#afterLoad
+     * @emits CSVDataStore#loadError
+     */
     CSVDataStore.prototype.fetchCSV = function (initialFetch) {
         var store = this, maxRetries = 3, csvURL = store.options.csvURL;
         var currentRetries;
@@ -111,6 +142,11 @@ var CSVDataStore = /** @class */ (function (_super) {
             }
         });
     };
+    /**
+     * Initiates the loading of the CSV source to the store
+     * @emits CSVDataParser#load
+     * @emits CSVDataParser#afterLoad
+     */
     CSVDataStore.prototype.load = function () {
         var store = this, _a = store.options, csv = _a.csv, csvURL = _a.csvURL;
         if (csv) {
@@ -125,6 +161,12 @@ var CSVDataStore = /** @class */ (function (_super) {
     };
     CSVDataStore.prototype.save = function () {
     };
+    /**
+     * Converts the store to a class JSON.
+     *
+     * @return {DataJSON.ClassJSON}
+     * Class JSON of this store.
+     */
     CSVDataStore.prototype.toJSON = function () {
         var json = {
             $class: 'CSVDataStore',
@@ -148,4 +190,9 @@ var CSVDataStore = /** @class */ (function (_super) {
     };
     return CSVDataStore;
 }(DataStore));
+/* *
+ *
+ *  Export
+ *
+ * */
 export default CSVDataStore;

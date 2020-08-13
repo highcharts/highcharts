@@ -3,6 +3,23 @@ import U from '/base/js/Core/Utilities.js';
 
 const { test, only } = QUnit;
 
+/**
+ * Register store events, also optionally do a test on the event type
+ * @param {DataStore} datastore
+ * @param {} assertObj QUnit assert
+ */
+function registerStoreEvents(datastore, eventArray, assertObj = {}) {
+    const eventTypes = ['afterLoad', 'load', 'loadError'];
+    eventTypes.forEach(eventType => {
+        datastore.on(eventType, (e) => {
+            eventArray.push(e.type)
+            if (Object.keys(assertObj).length) {
+                assertObj.strictEqual(e.type, eventType, `Event has correct type: ${eventType}`);
+            }
+        });
+    })
+}
+
 const csv = `Grade,Ounce,Gram,Inch,mm,PPO
 "#TriBall",0.7199,  20.41,    0.60,15.24,   1 #this is a comment
 "#0000", 0.1943,   5.51,    0.38, 9.40,   5
@@ -48,22 +65,27 @@ test('CSVDataStore from string', function (assert) {
 })
 
 test('CSVDataStore from URL', function (assert) {
+    const registeredEvents = [];
 
     const datastore = new CSVDataStore(undefined, {
         csvURL: 'https://demo-live-data.highcharts.com/sine-data.csv',
         enablePolling: true
     });
-    datastore.load();
+
+
+    registerStoreEvents(datastore, registeredEvents, assert)
 
     let pollNumber = 0;
-
     let states = [];
 
-    const startedLoad = assert.async(2);
     const doneLoading = assert.async(2);
+
     datastore.on('afterLoad', (e) => {
-        assert.ok(datastore.table.getRowCount() > 1, 'Datastore got rows')
-        states[pollNumber] = new CSVDataStore(datastore.table);
+        assert.ok(e.table.getRowCount() > 1, 'Datastore got rows')
+
+        // Check that the store is updated
+        // with the new dataset when polling
+        states[pollNumber] = new CSVDataStore(e.table);
 
         if (pollNumber > 0) {
             const currentValue = states[pollNumber].table.getRow(2).getColumnAsNumber('X');
@@ -75,16 +97,59 @@ test('CSVDataStore from URL', function (assert) {
                 'Fetched new data'
             )
         }
+
         pollNumber++;
         doneLoading();
+
+        function getExpectedEvents(){
+            const expectedArray = [];
+            const events = ['load', 'afterLoad'];
+            let i = 0;
+            while (i < pollNumber) {
+                expectedArray.push(...events);
+                i++;
+            }
+            return expectedArray;
+        }
+
+        assert.deepEqual(registeredEvents, getExpectedEvents(), 'Events are fired in correct order');
+        assert.ok(e.csv, 'AfterLoad event has CSV attached')
     });
+
     datastore.on('load', (e) => {
-        assert.ok(true)
-        startedLoad();
+        assert.deepEqual(e.table, datastore.table, 'DataTable from event is same as DataTable from datastore')
     });
+
     datastore.on('loadError', (e) => {
-        console.log(e)
-        assert.ok(true)
+        // In case of an error do a log and finish the test
+        console.warn(e.error);
         doneLoading();
     });
+
+    // Do the load
+    datastore.load();
+
+})
+
+// TODO: test amount of retries, event orders
+test('CSVDatastore error', function(assert){
+
+    const registeredEvents = [];
+
+    const datastore = new CSVDataStore(undefined, {
+        csvURL: 'https://data.highcharts.com/sine-data.csv'
+    });
+
+    const afterError = assert.async();
+
+    datastore.on('load', (e) =>{
+        // console.log('Attempting to load');
+    })
+
+    datastore.on('loadError', (e)=>{
+        assert.ok(true);
+        afterError();
+    })
+
+    datastore.load();
 })
