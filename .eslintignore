@@ -5,6 +5,7 @@ js/Extensions/**/*.js
 js/Gantt/**/*.js
 js/Maps/**/*.js
 js/Mixins/**/*.js
+js/modules/**/*.js
 js/Series/**/*.js
 js/Stock/**/*.js
 js/Themes/**/*.js
