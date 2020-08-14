@@ -11,4 +11,4 @@
  * License: www.highcharts.com/license
  */
 'use strict';
-import '../../modules/export-data.src.js';
+import '../../Extensions/ExportData.js';

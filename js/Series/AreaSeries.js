@@ -11,7 +11,7 @@
 import H from '../Core/Globals.js';
 import Color from '../Core/Color.js';
 var color = Color.parse;
-import LegendSymbolMixin from '../mixins/legend-symbol.js';
+import LegendSymbolMixin from '../Mixins/LegendSymbol.js';
 import U from '../Core/Utilities.js';
 var objectEach = U.objectEach, pick = U.pick, seriesType = U.seriesType;
 import '../Core/Series/Series.js';
@@ -322,7 +322,7 @@ seriesType('area', 'line',
             }
             isNull = points[i].isNull;
             plotX = pick(points[i].rectPlotX, points[i].plotX);
-            yBottom = pick(points[i].yBottom, translatedThreshold);
+            yBottom = stacking ? points[i].yBottom : translatedThreshold;
             if (!isNull || connectNulls) {
                 if (!connectNulls) {
                     addDummyPoints(i, i - 1, 'left');

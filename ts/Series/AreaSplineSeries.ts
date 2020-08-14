@@ -41,7 +41,7 @@ declare global {
     }
 }
 
-import LegendSymbolMixin from '../mixins/legend-symbol.js';
+import LegendSymbolMixin from '../Mixins/LegendSymbol.js';
 import O from '../Core/Options.js';
 const { defaultOptions } = O;
 import U from '../Core/Utilities.js';
@@ -76,7 +76,7 @@ seriesType<Highcharts.AreaSplineSeries>(
      *         Area spline chart
      *
      * @extends   plotOptions.area
-     * @excluding step
+     * @excluding step, boostThreshold, boostBlending
      * @product   highcharts highstock
      * @apioption plotOptions.areaspline
      */
@@ -95,7 +95,7 @@ seriesType<Highcharts.AreaSplineSeries>(
  *
  *
  * @extends   series,plotOptions.areaspline
- * @excluding dataParser, dataURL, step
+ * @excluding dataParser, dataURL, step, boostThreshold, boostBlending
  * @product   highcharts highstock
  * @apioption series.areaspline
  */

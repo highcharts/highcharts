@@ -41,6 +41,8 @@ const {
     pick
 } = U;
 
+import './Series.js';
+
 /* eslint-disable no-invalid-this */
 
 // Wrap the translate method to post-translate points into 3D perspective

@@ -329,14 +329,14 @@ seriesType<Highcharts.AreaRangeSeries>('arearange', 'area', {
             linePath: SVGPath & Highcharts.Dictionary<any>,
             lowerPath: SVGPath & Highcharts.Dictionary<any>,
             options = this.options,
-            connectEnds = this.chart.polar && options.connectEnds !== false,
+            polar = this.chart.polar,
+            connectEnds = polar && options.connectEnds !== false,
             connectNulls = options.connectNulls,
             step = options.step,
             higherPath,
             higherAreaPath;
 
         points = points || this.points;
-        i = points.length;
 
         // Create the top line and the top part of the area fill. The area fill
         // compensates for null points by drawing down to the lower graph,
@@ -345,17 +345,24 @@ seriesType<Highcharts.AreaRangeSeries>('arearange', 'area', {
         while (i--) {
             point = points[i];
 
+            // Support for polar
+            var highAreaPoint = polar ? {
+                plotX: point.rectPlotX,
+                plotY: point.yBottom,
+                doCurve: false // #5186, gaps in areasplinerange fill
+            } : {
+                plotX: point.plotX,
+                plotY: point.plotY,
+                doCurve: false // #5186, gaps in areasplinerange fill
+            } as any;
+
             if (
                 !point.isNull &&
                 !connectEnds &&
                 !connectNulls &&
                 (!points[i + 1] || points[i + 1].isNull)
             ) {
-                highAreaPoints.push({
-                    plotX: point.plotX,
-                    plotY: point.plotY,
-                    doCurve: false // #5186, gaps in areasplinerange fill
-                } as any);
+                highAreaPoints.push(highAreaPoint);
             }
 
             pointShim = {
@@ -378,11 +385,7 @@ seriesType<Highcharts.AreaRangeSeries>('arearange', 'area', {
                 !connectNulls &&
                 (!points[i - 1] || points[i - 1].isNull)
             ) {
-                highAreaPoints.push({
-                    plotX: point.plotX,
-                    plotY: point.plotY,
-                    doCurve: false // #5186, gaps in areasplinerange fill
-                } as any);
+                highAreaPoints.push(highAreaPoint);
             }
         }
 

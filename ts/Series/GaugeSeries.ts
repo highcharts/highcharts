@@ -118,7 +118,8 @@ var noop = H.noop,
  *               connectEnds, connectNulls, cropThreshold, dashStyle, dragDrop,
  *               findNearestPointBy, getExtremesFromAll, marker, negativeColor,
  *               pointPlacement, shadow, softThreshold, stacking, states, step,
- *               threshold, turboThreshold, xAxis, zoneAxis, zones, dataSorting
+ *               threshold, turboThreshold, xAxis, zoneAxis, zones, dataSorting,
+ *               boostBlending
  * @product      highcharts
  * @requires     highcharts-more
  * @optionparent plotOptions.gauge
@@ -646,7 +647,7 @@ seriesType<Highcharts.GaugeSeries>('gauge', 'line', {
  *            cropThreshold, dashStyle, dataParser, dataURL, findNearestPointBy,
  *            getExtremesFromAll, marker, negativeColor, pointPlacement, shadow,
  *            softThreshold, stack, stacking, states, step, threshold,
- *            turboThreshold, zoneAxis, zones, dataSorting
+ *            turboThreshold, zoneAxis, zones, dataSorting, boostBlending
  * @product   highcharts
  * @requires  highcharts-more
  * @apioption series.gauge

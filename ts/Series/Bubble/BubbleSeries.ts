@@ -127,7 +127,6 @@ var Axis = H.Axis,
     Series = H.Series,
     seriesTypes = H.seriesTypes;
 
-
 /**
  * A bubble series is a three dimensional series type where each point renders
  * an X, Y and Z value. Each points is drawn as a bubble where the position

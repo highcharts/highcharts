@@ -56,7 +56,7 @@ import Color from '../Core/Color.js';
 const {
     parse: color
 } = Color;
-import LegendSymbolMixin from '../mixins/legend-symbol.js';
+import LegendSymbolMixin from '../Mixins/LegendSymbol.js';
 import U from '../Core/Utilities.js';
 const {
     objectEach,
@@ -480,7 +480,7 @@ seriesType<Highcharts.AreaSeries>(
 
                 isNull = points[i].isNull;
                 plotX = pick(points[i].rectPlotX, points[i].plotX);
-                yBottom = pick(points[i].yBottom, translatedThreshold);
+                yBottom = stacking ? points[i].yBottom : translatedThreshold;
 
                 if (!isNull || connectNulls) {
 

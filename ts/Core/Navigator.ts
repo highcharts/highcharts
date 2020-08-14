@@ -487,8 +487,7 @@ extend(defaultOptions, {
         series: {
 
             /**
-             * The type of the navigator series. Defaults to `areaspline` if
-             * defined, otherwise `line`.
+             * The type of the navigator series.
              *
              * Heads up:
              * In column-type navigator, zooming is limited to at least one
@@ -498,7 +497,8 @@ extend(defaultOptions, {
              *         Column type navigator
              *
              * @type    {string}
-             * @default areaspline
+             * @default {highstock} `areaspline` if defined, otherwise `line`
+             * @default {gantt} gantt
              */
             type: defaultSeriesType,
 
@@ -1673,8 +1673,8 @@ class Navigator {
             inverted = chart.inverted,
             verb = navigator.rendered && !navigator.hasDragged ?
                 'animate' : 'attr',
-            zoomedMax = Math.round(navigator.zoomedMax),
-            zoomedMin = Math.round(navigator.zoomedMin),
+            zoomedMax,
+            zoomedMin,
             unionExtremes,
             fixedMin,
             fixedMax,
@@ -1744,7 +1744,13 @@ class Navigator {
         }
 
         // Update position of navigator shades, outline and handles (#12573)
-        if (navigator.navigatorEnabled) {
+        if (
+            navigator.navigatorEnabled &&
+            isNumber(navigator.zoomedMin) &&
+            isNumber(navigator.zoomedMax)
+        ) {
+            zoomedMin = Math.round(navigator.zoomedMin);
+            zoomedMax = Math.round(navigator.zoomedMax);
             if (navigator.shades) {
                 navigator.drawMasks(zoomedMin, zoomedMax, inverted, verb);
             }

@@ -14,7 +14,7 @@ import type { AxisType } from '../Axis/Types';
 import type Chart from '../Chart/Chart';
 import type SVGPath from '../Renderer/SVG/SVGPath';
 import H from '../Globals.js';
-import LegendSymbolMixin from '../../mixins/legend-symbol.js';
+import LegendSymbolMixin from '../../Mixins/LegendSymbol.js';
 import O from '../Options.js';
 const { defaultOptions } = O;
 import Point from './Point.js';
@@ -3361,7 +3361,6 @@ H.Series = seriesType<Highcharts.LineSeries>(
         colorCounter: 0,
         cropShoulder: 1,
         directTouch: false,
-        eventsToUnbind: [],
         isCartesian: true,
         // each point's x and y values are stored in this.xData and this.yData
         parallelArrays: ['x', 'y'],
@@ -3385,6 +3384,11 @@ H.Series = seriesType<Highcharts.LineSeries>(
             // programmatically). These are updated through Series.update()
             // (#10861).
             this.eventOptions = this.eventOptions || {};
+
+            // The 'eventsToUnbind' property moved from prototype into the
+            // Series init to avoid reference to the same array between
+            // the different series and charts. #12959, #13937
+            this.eventsToUnbind = [];
 
             /**
              * Read only. The chart that the series belongs to.
@@ -5242,10 +5246,9 @@ H.Series = seriesType<Highcharts.LineSeries>(
                     pointStack,
                     stackValues;
 
-                // Discard disallowed y values for log axes (#3434)
-                if (yAxis.positiveValuesOnly &&
-                    yValue !== null &&
-                    (yValue as any) <= 0
+                if (
+                    yAxis.positiveValuesOnly && !yAxis.validatePositiveValue(yValue) ||
+                    xAxis.positiveValuesOnly && !xAxis.validatePositiveValue(xValue)
                 ) {
                     point.isNull = true;
                 }
@@ -6650,7 +6653,7 @@ H.Series = seriesType<Highcharts.LineSeries>(
             // Avoid setting undefined opacity, or in styled mode
             if (
                 typeof this.opacity !== 'undefined' &&
-                !this.chart.styledMode
+                !this.chart.styledMode && this.state !== 'inactive' // #13719
             ) {
                 attrs.opacity = this.opacity;
             }

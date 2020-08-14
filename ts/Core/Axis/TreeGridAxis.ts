@@ -17,7 +17,8 @@ import Axis from './Axis.js';
 import Tick from './Tick.js';
 import Tree from '../../Gantt/Tree.js';
 import TreeGridTick from './TreeGridTick.js';
-import TreeSeriesMixin from '../../mixins/tree-series.js';
+import mixinTreeSeries from '../../Mixins/TreeSeries.js';
+const { getLevelOptions } = mixinTreeSeries;
 import U from '../Utilities.js';
 const {
     addEvent,
@@ -410,7 +411,8 @@ namespace TreeGridAxis {
                     numberOfSeries = 0,
                     isDirty: (boolean|undefined),
                     data: Array<PointOptionsObject>,
-                    treeGrid: TreeGridObject;
+                    treeGrid: TreeGridObject,
+                    max = options.max;
                 // Check whether any of series is rendering for the first time,
                 // visibility has changed, or its data is dirty,
                 // and only then update. #10570, #10580
@@ -448,6 +450,19 @@ namespace TreeGridAxis {
                         }
                         return arr;
                     }, []);
+
+                    // If max is higher than set data - add a
+                    // dummy data to render categories #10779
+                    if (max && data.length < max) {
+                        for (let i = data.length; i <= max; i++) {
+                            data.push({
+                                // Use the zero-width character
+                                // to avoid conflict with uniqueNames
+                                name: i + '\u200B'
+                            });
+                        }
+                    }
+
                     // setScale is fired after all the series is initialized,
                     // which is an ideal time to update the axis.categories.
                     treeGrid = getTreeGridFromData(
@@ -478,7 +493,7 @@ namespace TreeGridAxis {
 
                     // Calculate the label options for each level in the tree.
                     axis.treeGrid.mapOptionsToLevel =
-                        TreeSeriesMixin.getLevelOptions({
+                        getLevelOptions({
                             defaults: labelOptions,
                             from: 1,
                             levels: labelOptions && labelOptions.levels,

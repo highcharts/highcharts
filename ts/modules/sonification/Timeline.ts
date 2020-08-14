@@ -92,6 +92,7 @@ declare global {
             public nextScheduledPlay?: number;
             public options: TimelinePathOptionsObject;
             public signalHandler: SignalHandler;
+            public targetDuration?: number;
             public timeline: (Timeline|undefined);
             public addTimelineEvents(newEvents: Array<TimelineEvent>): void;
             public getCursor(): TimelineEvent;
@@ -114,6 +115,7 @@ declare global {
             onEventStart?: Function;
             onStart?: Function;
             silentWait?: number;
+            targetDuration?: number;
         }
     }
 }
@@ -324,6 +326,10 @@ TimelinePath.prototype.init = function (
             new (TimelineEvent as any)({ time: options.silentWait })
         ] :
         this.options.events;
+
+    // Reference optionally provided by the user that indicates the intended
+    // duration of the path. Unused by TimelinePath itself.
+    this.targetDuration = options.targetDuration || options.silentWait;
 
     // We need to sort our events by time
     this.sortEvents();
@@ -646,7 +652,7 @@ Timeline.prototype.init = function (
 ): void {
     this.options = options;
     this.cursor = 0;
-    this.paths = options.paths;
+    this.paths = options.paths || [];
     this.pathsPlaying = {};
     this.signalHandler = new utilities.SignalHandler(
         ['playOnEnd', 'masterOnEnd', 'onPathStart', 'onPathEnd']
@@ -701,11 +707,21 @@ Timeline.prototype.playPaths = function (
     this: Highcharts.Timeline,
     direction: number
 ): void {
+    const timeline = this;
+    const signalHandler = timeline.signalHandler;
+
+    if (!timeline.paths.length) {
+        const emptySignal: Highcharts.SignalDataObject = {
+            cancelled: false
+        };
+        signalHandler.emitSignal('playOnEnd', emptySignal);
+        signalHandler.emitSignal('masterOnEnd', emptySignal);
+        return;
+    }
+
     var curPaths: Array<Highcharts.TimelinePath> =
             splat(this.paths[this.cursor]),
         nextPaths = this.paths[this.cursor + direction],
-        timeline = this,
-        signalHandler = this.signalHandler,
         pathsEnded = 0,
         // Play a path
         playPath = function (path: Highcharts.TimelinePath): void {
@@ -882,7 +898,10 @@ Timeline.prototype.getCursor = function (
  * True if timeline is at the beginning.
  */
 Timeline.prototype.atStart = function (this: Highcharts.Timeline): boolean {
-    return !this.getCurrentPlayingPaths().some(function (
+    if (this.cursor) {
+        return false;
+    }
+    return !splat(this.paths[0]).some(function (
         path: Highcharts.TimelinePath
     ): number {
         return path.cursor;
@@ -899,6 +918,9 @@ Timeline.prototype.atStart = function (this: Highcharts.Timeline): boolean {
 Timeline.prototype.getCurrentPlayingPaths = function (
     this: Highcharts.Timeline
 ): Array<Highcharts.TimelinePath> {
+    if (!this.paths.length) {
+        return [];
+    }
     return splat(this.paths[this.cursor]);
 };
 

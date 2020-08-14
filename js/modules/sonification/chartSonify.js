@@ -96,7 +96,7 @@ import H from '../../Core/Globals.js';
 ''; // detach doclets above
 import Point from '../../Core/Series/Point.js';
 import U from '../../Core/Utilities.js';
-var find = U.find, isArray = U.isArray, merge = U.merge, pick = U.pick, splat = U.splat;
+var find = U.find, isArray = U.isArray, merge = U.merge, pick = U.pick, splat = U.splat, objectEach = U.objectEach;
 import utilities from './utilities.js';
 /**
  * Get the relative time value of a point.
@@ -251,6 +251,31 @@ function applyMasterVolumeToInstruments(instruments, masterVolume) {
     return instruments;
 }
 /**
+ * Utility function to find the duration of the final note in a series.
+ * @private
+ * @param {Highcharts.Series} series The data series to calculate on.
+ * @param {Array<Highcharts.PointInstrumentObject>} instruments The instrument options for this series.
+ * @param {Highcharts.Dictionary<Highcharts.RangeObject>} dataExtremes Value extremes for the data series props.
+ * @return {number} The duration of the final note in milliseconds.
+ */
+function getFinalNoteDuration(series, instruments, dataExtremes) {
+    var finalPoint = series.points[series.points.length - 1];
+    return instruments.reduce(function (duration, instrument) {
+        var mapping = instrument.instrumentMapping.duration;
+        var instrumentDuration;
+        if (typeof mapping === 'string') {
+            instrumentDuration = 0; // Ignore, no easy way to map this
+        }
+        else if (typeof mapping === 'function') {
+            instrumentDuration = mapping(finalPoint, dataExtremes);
+        }
+        else {
+            instrumentDuration = mapping;
+        }
+        return Math.max(duration, instrumentDuration);
+    }, 0);
+}
+/**
  * Create a TimelinePath from a series. Takes the same options as seriesSonify.
  * To intuitively allow multiple series to play simultaneously we make copies of
  * the instruments for each series.
@@ -266,12 +291,14 @@ function buildTimelinePathFromSeries(series, options) {
     // options.timeExtremes is internal and used so that the calculations from
     // chart.sonify can be reused.
     var timeExtremes = options.timeExtremes || getTimeExtremes(series, options.pointPlayTime), 
+    // Compute any data extremes that aren't defined yet
+    dataExtremes = getExtremesForInstrumentProps(series.chart, options.instruments, options.dataExtremes), 
+    // Get the duration of the final note
+    finalNoteDuration = getFinalNoteDuration(series, options.instruments, dataExtremes), 
     // Get time offset for a point, relative to duration
     pointToTime = function (point) {
-        return utilities.virtualAxisTranslate(getPointTimeValue(point, options.pointPlayTime), timeExtremes, { min: 0, max: options.duration });
-    }, 
-    // Compute any data extremes that aren't defined yet
-    dataExtremes = getExtremesForInstrumentProps(series.chart, options.instruments, options.dataExtremes), masterVolume = pick(options.masterVolume, 1), 
+        return utilities.virtualAxisTranslate(getPointTimeValue(point, options.pointPlayTime), timeExtremes, { min: 0, max: options.duration - finalNoteDuration });
+    }, masterVolume = pick(options.masterVolume, 1), 
     // Make copies of the instruments used for this series, to allow
     // multiple series with the same instrument to play together
     instrumentCopies = makeInstrumentCopies(options.instruments), instruments = applyMasterVolumeToInstruments(instrumentCopies, masterVolume), 
@@ -339,7 +366,8 @@ function buildTimelinePathFromSeries(series, options) {
             if (options.onEnd) {
                 options.onEnd(series);
             }
-        }
+        },
+        targetDuration: options.duration
     });
 }
 /* eslint-disable no-invalid-this, valid-jsdoc */
@@ -679,19 +707,31 @@ function getSeriesInstrumentOptions(series, options) {
     }
     var defaultInstrOpts = ((_a = series.chart.options.sonification) === null || _a === void 0 ? void 0 : _a.defaultInstrumentOptions) || {};
     var seriesInstrOpts = ((_b = series.options.sonification) === null || _b === void 0 ? void 0 : _b.instruments) || [{}];
+    var removeNullsFromObject = function (obj) {
+        objectEach(obj, function (val, key) {
+            if (val === null) {
+                delete obj[key];
+            }
+        });
+    };
     // Convert series options to PointInstrumentObjects and merge with
     // default options
-    return (seriesInstrOpts).map(function (optionSet) { return ({
-        instrument: optionSet.instrument || defaultInstrOpts.instrument,
-        instrumentOptions: merge(defaultInstrOpts, optionSet, {
-            // Instrument options are lifted to root in the API options object,
-            // so merge all in order to avoid missing any. But remove the
-            // following which are not instrumentOptions:
-            mapping: void 0,
-            instrument: void 0
-        }),
-        instrumentMapping: merge(defaultInstrOpts.mapping, optionSet.mapping)
-    }); });
+    return (seriesInstrOpts).map(function (optionSet) {
+        // Allow setting option to null to use default
+        removeNullsFromObject(optionSet.mapping || {});
+        removeNullsFromObject(optionSet);
+        return {
+            instrument: optionSet.instrument || defaultInstrOpts.instrument,
+            instrumentOptions: merge(defaultInstrOpts, optionSet, {
+                // Instrument options are lifted to root in the API options
+                // object, so merge all in order to avoid missing any. But
+                // remove the following which are not instrumentOptions:
+                mapping: void 0,
+                instrument: void 0
+            }),
+            instrumentMapping: merge(defaultInstrOpts.mapping, optionSet.mapping)
+        };
+    });
 }
 /**
  * Utility function to translate between options set in chart configuration and

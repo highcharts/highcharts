@@ -297,9 +297,11 @@ extend(SVGRenderer.prototype, /** @lends SVGRenderer.prototype */ {
                         function (value, key) {
                             if (key === 'align') {
                                 // Do not overwrite the SVGElement.align method. Same as VML.
-                                key = 'textAlign';
+                                wrapper.alignValue = wrapper.textAlign = value;
                             }
-                            wrapper[key] = value;
+                            else {
+                                wrapper[key] = value;
+                            }
                             wrapper.doTransform = true;
                         };
         // Runs at the end of .attr()

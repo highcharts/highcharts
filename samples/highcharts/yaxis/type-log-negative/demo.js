@@ -7,7 +7,7 @@
     H.addEvent(H.Axis, 'afterInit', function () {
         const logarithmic = this.logarithmic;
 
-        if (logarithmic && this.options.allowNegativeLog) {
+        if (logarithmic && this.options.custom.allowNegativeLog) {
 
             // Avoid errors on negative numbers on a log axis
             this.positiveValuesOnly = false;
@@ -53,7 +53,9 @@ Highcharts.chart('container', {
 
     yAxis: {
         type: 'logarithmic',
-        allowNegativeLog: true
+        custom: {
+            allowNegativeLog: true
+        }
     },
 
     series: [{
