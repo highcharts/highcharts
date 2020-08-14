@@ -6,25 +6,6 @@
  *
  *  !!!!!!! SOURCE GETS TRANSPILED BY TYPESCRIPT. EDIT TS FILE ONLY. !!!!!!!
  *
- * Renderer: http://jsfiddle.net/highcharts/p9Lkm5j1/
- * Pen test: https://jsfiddle.net/highcharts/abr5czg7/
- *
- * @todo
- * - Go over the code base and look for assignments of innerHTML, setAttribute
- *   etc to look for unfiltered inputs from config. Attributes set directly from
- *   API may be vulnerable to javascript: directive and on* attributes.
- *   - https://jsfiddle.net/highcharts/Lukjm510/
- *   - Test/validate all options in highcharts.d.ts that have SVGAttributes as
- *     input type (roughly 10 cases). Most can be whitelisted to fill, stroke,
- *     stroke-width, maybe style and class and a few more.
- * - More tags in whitelist?
- * - Avoid setting innerHTML wherever possible. In the A11y module, use
- *   SVGRenderer.addTree like demonstrated in export-data.
- * - Consider standardized AST format, like https://github.com/syntax-tree/hast,
- *   or simpler, just create a subnode for attributes (attrs, properties?)
- *   instead of registering them on the main object.
- *   - Then the legacy .definition function must translate to this format.
- *   - Rename functions to addAST, getTableAST etc
  * */
 
 'use strict';
