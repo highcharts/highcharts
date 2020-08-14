@@ -323,13 +323,13 @@ class TextBuilder {
             // Apply styling to text tags
             if (tagName === 'b' || tagName === 'strong') {
                 if (styledMode) {
-                    elem.class = 'highcharts-strong';
+                    elem['class'] = 'highcharts-strong'; // eslint-disable-line dot-notation
                 } else {
                     elem.style = 'font-weight:bold;' + (elem.style || '');
                 }
             } else if (tagName === 'i' || tagName === 'em') {
                 if (styledMode) {
-                    elem.class = 'highcharts-emphasized';
+                    elem['class'] = 'highcharts-emphasized'; // eslint-disable-line dot-notation
                 } else {
                     elem.style = 'font-style:italic;' + (elem.style || '');
                 }
