@@ -31,8 +31,8 @@ declare global {
 const options = {
     sonification: {
         enabled: false,
-        duration: 2000,
-        afterSeriesWait: 900,
+        duration: 2500,
+        afterSeriesWait: 700,
         masterVolume: 1,
         order: 'sequential',
         defaultInstrumentOptions: {
@@ -42,7 +42,7 @@ const options = {
             maxFrequency: 1046,
             mapping: {
                 pointPlayTime: 'x',
-                duration: 400,
+                duration: 200,
                 frequency: 'y'
             }
         }

@@ -495,6 +495,7 @@ function buildTimelinePathFromSeries(
         dataExtremes = getExtremesForInstrumentProps(
             series.chart, options.instruments, options.dataExtremes as any
         ),
+        minimumSeriesDurationMs = 10,
         // Get the duration of the final note
         finalNoteDuration = getFinalNoteDuration(series, options.instruments, dataExtremes),
         // Get time offset for a point, relative to duration
@@ -502,7 +503,7 @@ function buildTimelinePathFromSeries(
             return utilities.virtualAxisTranslate(
                 getPointTimeValue(point, options.pointPlayTime),
                 timeExtremes,
-                { min: 0, max: options.duration - finalNoteDuration }
+                { min: 0, max: Math.max(options.duration - finalNoteDuration, minimumSeriesDurationMs) }
             );
         },
         masterVolume = pick(options.masterVolume, 1),
