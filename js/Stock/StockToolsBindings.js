@@ -1545,7 +1545,7 @@ var stockToolsBindings = {
     /**
      * Displays chart in fullscreen.
      *
-     * **Note**: Fullscreen is not supported on iPhone due to iOS limits.
+     * **Note**: Fullscreen is not supported on iPhone due to iOS limitations.
      *
      * @type    {Highcharts.NavigationBindingsOptionsObject}
      * @product highstock
