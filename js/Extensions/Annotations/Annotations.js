@@ -1239,15 +1239,10 @@ chartProto.callbacks.push(function (chart) {
                             var wasAdded = false;
                             // Annotation not connected to any xAxis -
                             // add new row.
-                            var isNotPie, i;
-                            var series = chart.series;
-                            for (i = 0; i < series.length; i++) {
-                                isNotPie = series[i].is('pie') === false;
-                            }
-                            if (isNotPie && xAxisIndex === -1) {
+                            if (xAxisIndex === -1) {
                                 var n = event.dataRows[0].length, newRow = new Array(n);
-                                for (var i_1 = 0; i_1 < n; ++i_1) {
-                                    newRow[i_1] = '';
+                                for (var i = 0; i < n; ++i) {
+                                    newRow[i] = '';
                                 }
                                 newRow.push(annotationText_1);
                                 newRow.xValues = [];
@@ -1279,8 +1274,8 @@ chartProto.callbacks.push(function (chart) {
                             // but connected to the xAxis - add new row
                             if (!wasAdded) {
                                 var n = event.dataRows[0].length, newRow = new Array(n);
-                                for (var i_2 = 0; i_2 < n; ++i_2) {
-                                    newRow[i_2] = '';
+                                for (var i = 0; i < n; ++i) {
+                                    newRow[i] = '';
                                 }
                                 newRow[0] = annotationX;
                                 newRow.push(annotationText_1);
