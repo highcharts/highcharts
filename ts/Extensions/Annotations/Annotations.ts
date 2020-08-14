@@ -1796,14 +1796,7 @@ chartProto.callbacks.push(function (
 
                             // Annotation not connected to any xAxis -
                             // add new row.
-                            let isNotPie, i;
-                            const series = chart.series;
-
-                            for (i = 0; i < series.length; i++) {
-                                isNotPie = series[i].is('pie') === false;
-                            }
-
-                            if (isNotPie && xAxisIndex === -1) {
+                            if (xAxisIndex === -1) {
                                 const n = event.dataRows[0].length,
                                     newRow: any = new Array(n);
 
