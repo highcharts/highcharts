@@ -161,7 +161,7 @@ bindingsUtils.manageIndicators = function (data) {
         defaultOptions = getOptions().plotOptions;
         // Make sure that indicator uses the SUM approx if SUM approx is used
         // by parent series (#13950).
-        if (parentSeries &&
+        if (typeof parentSeries !== 'undefined' &&
             parentSeries instanceof Highcharts.Series &&
             parentSeries.getDGApproximation() === 'sum' &&
             // If indicator has defined approx type, use it (e.g. "ranges")
