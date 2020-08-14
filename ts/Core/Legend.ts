@@ -572,7 +572,7 @@ class Legend {
             };
 
             if (defined(legendGroup.translateY)) {
-                legendGroup.animate(attribs, { complete });
+                legendGroup.animate(attribs, void 0, complete);
             } else {
                 legendGroup.attr(attribs);
                 complete();

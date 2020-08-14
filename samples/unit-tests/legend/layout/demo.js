@@ -81,7 +81,7 @@ QUnit.test(
     }
 );
 
-QUnit.skip(
+QUnit.test(
     'Proximate layout and dataGrouping',
     assert => {
         const chart = new Highcharts.chart(
