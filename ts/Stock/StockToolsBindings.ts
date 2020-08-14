@@ -257,6 +257,7 @@ bindingsUtils.manageIndicators = function (
             'linearRegressionAngle'
         ],
         yAxis,
+        parentSeries,
         series: Highcharts.Series;
 
     if (data.actionType === 'edit') {
@@ -289,6 +290,19 @@ bindingsUtils.manageIndicators = function (
     } else {
         seriesConfig.id = uniqueKey();
         navigation.fieldsToOptions(data.fields, seriesConfig);
+        parentSeries = chart.get(seriesConfig.linkedTo);
+
+        // Make sure that indicator uses the SUM approx if SUM approx is used
+        // by parent series (#13950).
+        if (
+            parentSeries &&
+            parentSeries instanceof Highcharts.Series &&
+            parentSeries.getDGApproximation() === 'sum'
+        ) {
+            seriesConfig.dataGrouping = {
+                approximation: 'sum'
+            };
+        }
 
         if (indicatorsWithAxes.indexOf(data.type) >= 0) {
             yAxis = chart.addAxis({
