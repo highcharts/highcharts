@@ -321,3 +321,31 @@ QUnit.test(
         );
     }
 );
+
+QUnit.test(
+    'Networkgraph and series updates',
+    assert => {
+        var chart = Highcharts.chart('container', {
+            chart: {
+                type: 'line'
+            },
+            series: [{
+                data: [
+                    ['a', 'b']
+                ],
+                type: "networkgraph"
+            }]
+        });
+
+        chart.update({
+            chart: {
+                type: 'column'
+            },
+            series: [{
+                color: 'red'
+            }]
+        });
+
+        assert.ok(true, 'No errors when updating series and chart at the same time (#13570).');
+    }
+);

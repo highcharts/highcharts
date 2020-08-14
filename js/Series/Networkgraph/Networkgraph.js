@@ -457,7 +457,9 @@ seriesType('networkgraph', 'line',
      */
     createNode: NodesMixin.createNode,
     destroy: function () {
-        this.layout.removeElementFromCollection(this, this.layout.series);
+        if (this.layout) {
+            this.layout.removeElementFromCollection(this, this.layout.series);
+        }
         NodesMixin.destroy.call(this);
     },
     /* eslint-disable no-invalid-this, valid-jsdoc */
