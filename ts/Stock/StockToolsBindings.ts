@@ -22,7 +22,6 @@ import type Point from '../Core/Series/Point';
 import H from '../Core/Globals.js';
 import NavigationBindings from '../Extensions/Annotations/NavigationBindings.js';
 import U from '../Core/Utilities.js';
-import dataGrouping from '../Extensions/DataGrouping';
 const {
     correctFloat,
     defined,
