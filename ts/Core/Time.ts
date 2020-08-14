@@ -159,6 +159,17 @@ declare global {
  * Timezone offset in minutes.
  */
 
+/**
+ * Allows to manually load the `moment.js` library from Highcharts options
+ * instead of the `window`.
+ * In case of loading the library from a `script` tag,
+ * this option is not needed, it will be loaded from there by default.
+ *
+ * @type {function}
+ * @since next
+ * @apioption time.moment
+ */
+
 import U from './Utilities.js';
 const {
     defined,
