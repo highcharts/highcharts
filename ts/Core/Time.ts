@@ -45,6 +45,7 @@ declare global {
             timezone?: string;
             timezoneOffset?: number;
             useUTC?: boolean;
+            moment?: any;
         }
         interface TimeFormatCallbackFunction {
             (timestamp: number): string;
@@ -486,9 +487,9 @@ class Time {
      *         A getTimezoneOffset function
      */
     public timezoneOffsetFunction(): (timestamp: (number|Date)) => number {
-        var time = this,
+        const time = this,
             options = this.options,
-            moment = win.moment;
+            moment = options.moment || win.moment;
 
         if (!this.useUTC) {
             return function (timestamp: (number|Date)): number {

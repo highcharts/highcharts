@@ -326,7 +326,7 @@ var Time = /** @class */ (function () {
      *         A getTimezoneOffset function
      */
     Time.prototype.timezoneOffsetFunction = function () {
-        var time = this, options = this.options, moment = win.moment;
+        var time = this, options = this.options, moment = options.moment || win.moment;
         if (!this.useUTC) {
             return function (timestamp) {
                 return new Date(timestamp.toString()).getTimezoneOffset() * 60000;
