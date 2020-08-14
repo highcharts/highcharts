@@ -1116,19 +1116,21 @@ class Legend {
                 target,
                 top;
 
-            if ((item as any).yAxis && (item as any).points) {
+            if ((item as any).yAxis) {
 
                 if ((item as any).xAxis.options.reversed) {
                     useFirstPoint = !useFirstPoint;
                 }
-                lastPoint = find(
-                    useFirstPoint ?
-                        (item as any).points :
-                        (item as any).points.slice(0).reverse(),
-                    function (item: Point): boolean {
-                        return isNumber(item.plotY);
-                    }
-                );
+                if ((item as any).points) {
+                    lastPoint = find(
+                        useFirstPoint ?
+                            (item as any).points :
+                            (item as any).points.slice(0).reverse(),
+                        function (item: Point): boolean {
+                            return isNumber(item.plotY);
+                        }
+                    );
+                }
 
                 height = this.itemMarginTop +
                     (item.legendItem as any).getBBox().height +
