@@ -142,7 +142,13 @@ module.exports = function (config) {
             [{
                 pattern: 'test/typescript-karma/*/*/tests.js',
                 type: 'module'
-            }]
+            },
+            {
+
+                pattern: 'test/typescript-karma/*/utils.js',
+                type: 'module'
+            }
+        ]
     )
 
     let options = {

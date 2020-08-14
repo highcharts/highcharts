@@ -84,7 +84,7 @@ var CSVDataStore = /** @class */ (function (_super) {
      * Class JSON (usually with a $class property) to convert.
      *
      * @return {CSVDataStore}
-     * CSVDataStore from the class JSON.
+     * CSVDataStore from the ClassJSON.
      */
     CSVDataStore.fromJSON = function (json) {
         var options = json.options, parser = CSVDataParser.fromJSON(json.parser), table = DataTable.fromJSON(json.table), store = new CSVDataStore(table, options, parser);

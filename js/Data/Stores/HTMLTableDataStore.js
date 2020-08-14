@@ -31,7 +31,7 @@ import U from '../../Core/Utilities.js';
 var merge = U.merge;
 /** eslint-disable valid-jsdoc */
 /**
- * @private
+ * Class that handles creating a datastore from an HTML table
  */
 var HTMLTableDataStore = /** @class */ (function (_super) {
     __extends(HTMLTableDataStore, _super);
@@ -40,6 +40,18 @@ var HTMLTableDataStore = /** @class */ (function (_super) {
      *  Constructors
      *
      * */
+    /**
+     * Constructs an instance of HTMLTableDataStore
+     *
+     * @param {DataTable} table
+     * Optional DataTable to create the store from
+     *
+     * @param {HTMLTableDataStore.OptionsType} options
+     * Options for the store and parser
+     *
+     * @param {DataParser} parser
+     * Optional parser to replace the default parser
+     */
     function HTMLTableDataStore(table, options, parser) {
         if (table === void 0) { table = new DataTable(); }
         if (options === void 0) { options = {}; }
@@ -54,6 +66,15 @@ var HTMLTableDataStore = /** @class */ (function (_super) {
      *  Static Functions
      *
      * */
+    /**
+     * Creates an HTMLTableStore from ClassJSON
+     *
+     * @param {HTMLTableDataStore.ClassJSON} json
+     * Class JSON (usually with a $class property) to convert.
+     *
+     * @return {HTMLTableDataStore}
+     * HTMLTableStore from the ClassJSON
+     */
     HTMLTableDataStore.fromJSON = function (json) {
         var options = {
             tableHTML: json.tableElement
@@ -62,7 +83,7 @@ var HTMLTableDataStore = /** @class */ (function (_super) {
         return store;
     };
     /**
-     * Handle supplied table being either an ID or an actual table
+     * Handles retrieving the HTML table by ID if an ID is provided
      */
     HTMLTableDataStore.prototype.fetchTable = function () {
         var store = this, tableHTML = store.options.tableHTML;
@@ -75,6 +96,12 @@ var HTMLTableDataStore = /** @class */ (function (_super) {
         }
         store.tableElement = tableElement;
     };
+    /**
+     * Initiates creating the datastore from the HTML table
+     * @emits HTMLTableDataStore#load
+     * @emits HTMLTableDataStore#afterLoad
+     * @emits HTMLTableDataStore#loadError
+     */
     HTMLTableDataStore.prototype.load = function () {
         var store = this;
         store.fetchTable();
@@ -129,4 +156,9 @@ var HTMLTableDataStore = /** @class */ (function (_super) {
     };
     return HTMLTableDataStore;
 }(DataStore));
+/* *
+ *
+ *  Export
+ *
+ * */
 export default HTMLTableDataStore;

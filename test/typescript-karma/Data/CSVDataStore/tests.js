@@ -99,7 +99,11 @@ test('CSVDataStore from URL', function (assert) {
         }
 
         pollNumber++;
-        doneLoading();
+
+        // Stop polling
+        if(pollNumber > 1){
+            datastore.options.enablePolling = false
+        }
 
         function getExpectedEvents(){
             const expectedArray = [];
@@ -114,6 +118,8 @@ test('CSVDataStore from URL', function (assert) {
 
         assert.deepEqual(registeredEvents, getExpectedEvents(), 'Events are fired in correct order');
         assert.ok(e.csv, 'AfterLoad event has CSV attached')
+
+        doneLoading();
     });
 
     datastore.on('load', (e) => {
@@ -140,7 +146,7 @@ test('CSVDatastore error', function(assert){
         csvURL: 'https://data.highcharts.com/sine-data.csv'
     });
 
-    const afterError = assert.async();
+    const afterError = assert.async(1);
 
     datastore.on('load', (e) =>{
         // console.log('Attempting to load');

@@ -51,7 +51,7 @@ class CSVDataStore extends DataStore<CSVDataStore.EventObjects> implements DataJ
      * Class JSON (usually with a $class property) to convert.
      *
      * @return {CSVDataStore}
-     * CSVDataStore from the class JSON.
+     * CSVDataStore from the ClassJSON.
      */
     public static fromJSON(json: CSVDataStore.ClassJSON): CSVDataStore {
         const options = json.options,
@@ -109,7 +109,7 @@ class CSVDataStore extends DataStore<CSVDataStore.EventObjects> implements DataJ
     public readonly options: CSVDataStore.Options;
 
     /**
-     * The attached parser, which can be customized in the constructor
+     * The attached parser, which can be replaced in the constructor
      */
     public readonly parser: CSVDataParser;
 

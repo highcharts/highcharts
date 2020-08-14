@@ -22,9 +22,8 @@ const { merge } = U;
 /** eslint-disable valid-jsdoc */
 
 /**
- * @private
+ * Class that handles creating a datastore from an HTML table
  */
-
 class HTMLTableDataStore extends DataStore<HTMLTableDataStore.EventObjects> implements DataJSON.Class {
 
     /* *
@@ -43,8 +42,17 @@ class HTMLTableDataStore extends DataStore<HTMLTableDataStore.EventObjects> impl
      *
      * */
 
+    /**
+     * Creates an HTMLTableStore from ClassJSON
+     *
+     * @param {HTMLTableDataStore.ClassJSON} json
+     * Class JSON (usually with a $class property) to convert.
+     *
+     * @return {HTMLTableDataStore}
+     * HTMLTableStore from the ClassJSON
+     */
     public static fromJSON(json: HTMLTableDataStore.ClassJSON): HTMLTableDataStore {
-        const options: Partial<(HTMLTableDataStore.Options&HTMLTableParser.Options)> = {
+        const options: HTMLTableDataStore.OptionsType = {
                 tableHTML: json.tableElement
             },
             parser = HTMLTableParser.fromJSON(json.parser),
@@ -62,6 +70,18 @@ class HTMLTableDataStore extends DataStore<HTMLTableDataStore.EventObjects> impl
      *
      * */
 
+    /**
+     * Constructs an instance of HTMLTableDataStore
+     *
+     * @param {DataTable} table
+     * Optional DataTable to create the store from
+     *
+     * @param {HTMLTableDataStore.OptionsType} options
+     * Options for the store and parser
+     *
+     * @param {DataParser} parser
+     * Optional parser to replace the default parser
+     */
     public constructor(
         table: DataTable = new DataTable(),
         options: Partial<(HTMLTableDataStore.Options&HTMLTableParser.Options)> = {},
@@ -80,12 +100,25 @@ class HTMLTableDataStore extends DataStore<HTMLTableDataStore.EventObjects> impl
     *
     * */
 
+    /**
+     * Options for the HTMLTable datastore
+     * @todo this should not include parsing options
+     */
     public readonly options: (HTMLTableDataStore.Options&HTMLTableParser.Options);
+
+    /**
+     * The attached parser, which can be replaced in the constructor
+     */
     public readonly parser: HTMLTableParser;
+
+    /**
+     * The table element to create the store from.
+     * Is either supplied directly or is fetched by an ID.
+     */
     public tableElement: (HTMLElement|null);
 
     /**
-     * Handle supplied table being either an ID or an actual table
+     * Handles retrieving the HTML table by ID if an ID is provided
      */
     private fetchTable(): void {
         const store = this,
@@ -102,6 +135,12 @@ class HTMLTableDataStore extends DataStore<HTMLTableDataStore.EventObjects> impl
         store.tableElement = tableElement;
     }
 
+    /**
+     * Initiates creating the datastore from the HTML table
+     * @emits HTMLTableDataStore#load
+     * @emits HTMLTableDataStore#afterLoad
+     * @emits HTMLTableDataStore#loadError
+     */
     public load(): void {
         const store = this;
 
@@ -163,10 +202,31 @@ class HTMLTableDataStore extends DataStore<HTMLTableDataStore.EventObjects> impl
     }
 }
 
+
+/**
+ *
+ *  Namespace
+ *
+ */
+
+/**
+ * Types for class-specific options and events
+ */
 namespace HTMLTableDataStore {
 
+    /**
+     * Type for event object fired from HTMLTableDataStore
+     */
     export type EventObjects = (ErrorEventObject|LoadEventObject);
 
+    /**
+     * Options used in the constructor of HTMLTableDataStore
+     */
+    export type OptionsType = Partial<(Options&HTMLTableParser.Options)>
+
+    /**
+     * The ClassJSON used to import/export HTMLTableDataStore
+     */
     export interface ClassJSON extends DataJSON.ClassJSON {
         metadata: DataStore.MetadataJSON;
         parser: HTMLTableParser.ClassJSON;
@@ -174,20 +234,35 @@ namespace HTMLTableDataStore {
         tableElement: string;
     }
 
+    /**
+     * Provided event object on errors within HTMLTableDataStore
+     */
     export interface ErrorEventObject extends DataStore.EventObject {
         type: 'loadError';
         error: (string|Error);
     }
 
+    /**
+     * Provided event object on load events within HTMLTableDataStore
+     */
     export interface LoadEventObject extends DataStore.EventObject {
         type: ('load'|'afterLoad');
         tableElement?: (HTMLElement|null);
     }
 
+    /**
+     * Internal options for the HTMLTableDataStore class
+     */
     export interface Options {
         tableHTML: (string | HTMLElement);
     }
 
 }
+
+/* *
+ *
+ *  Export
+ *
+ * */
 
 export default HTMLTableDataStore;

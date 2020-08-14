@@ -1,6 +1,6 @@
 import HTMLTableDataStore from '/base/js/Data/Stores/HTMLTableDataStore.js'
 import U from '/base/js/Core/Utilities.js';
-
+import { registerStoreEvents } from '../utils.js'
 const { test, only } = QUnit;
 const { createElement } = U;
 
@@ -267,16 +267,31 @@ const tableHTML = `<table id="data">
 </tr>
 </table>`;
 
-test('HTMLTableDataStore', function (assert) {
+test('HTMLTableDataStore from HTML element', function (assert) {
+    const registeredEvents = [];
 
     const tableElement = createElement('div');
     tableElement.innerHTML = tableHTML;
 
     const datastore = new HTMLTableDataStore(undefined, { tableHTML: tableElement });
+
+    const doneLoading = assert.async();
+
+    registerStoreEvents(datastore, registeredEvents, assert);
+
+    datastore.on('afterLoad', (e) => {
+        assert.deepEqual(
+            registeredEvents,
+            ['load', 'afterLoad'],
+            'Events are fired in the correct order'
+        )
+        assert.strictEqual(
+            e.table.getRowCount(),
+            tableElement.querySelectorAll('tr').length,
+            'Datastore loaded from HTML element has same amount of rows'
+        )
+        doneLoading();
+    });
+
     datastore.load()
-    assert.strictEqual(
-        datastore.table.getRowCount(),
-        tableElement.querySelectorAll('tr').length,
-        'Datastore loaded from HTML element has same amount of rows'
-    )
 })
