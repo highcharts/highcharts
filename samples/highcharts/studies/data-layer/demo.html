@@ -4,26 +4,19 @@
     </head>
     <body>
         <div id="container"></div>
-        <script type="module">
-            import '../../../../code/es-modules/Core/Renderer/SVG/SVGRenderer.js';
-            import Chart from '../../../../code/es-modules/Core/Chart/Chart.js';
-            import GoogleDataStore from '../../../../code/es-modules/Data/Stores/GoogleDataStore.js';
-
-            const chart = new Chart('container', {});
-            const store = new GoogleDataStore({
-                googleSpreadsheetKey: '14632VxDAT-TAL06ICnoLsV_JyvjEBXdVY-J34br5iXY',
-                startColumn: 1,
-                endColumn: 8,
-                startRow: 2,
-                endRow: 52
-            });
-            store.on('load', e => console.log('load', e));
-            store.on('afterLoad', e => {
-                console.log(e.table.toJSON());
-            });
-            store.on('loadError', e => console.log(e));
-
-            store.load();
+        <script type="module" src="demo.js">
         </script>
+
+        <h2>Data modification</h2>
+        <div style="display: flex; flex-direction: row;">
+            <code style="display: flex; flex-direction: column;">
+                All states <br> (Before modification)
+                <pre id="datastore-before"></pre>
+            </code>
+            <code style="display: flex; flex-direction: column;">
+                States where Trump had a negative margin <br>(after modification)
+                <pre id="datastore-after"></pre>
+            </code>
+        </div>
     </body>
 </html>

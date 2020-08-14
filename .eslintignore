@@ -14,6 +14,7 @@ samples/highcharts/common-js/**/*.js
 samples/highcharts/esm/async-await/demo.js
 samples/cloud/**/**/*.js
 samples/static/*.js
+samples/highcharts/studies/data-layer/**/*.js
 test/test-controller.js
 test/test-template.js
 test/test-utilities.js

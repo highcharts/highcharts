@@ -176,9 +176,13 @@ class GoogleDataStore extends DataStore<GoogleDataStore.EventObjects> implements
 
         // Insert null for empty spreadsheet cells (#5298)
         for (i = 0; i < colCount; i++) {
-            for (j = 0; j < cellCount; i++) {
-                if (typeof columns[i][j] === 'undefined') {
-                    columns[i][j] = null as any;
+            const column = columns[i];
+            // TODO: should this check be necessary?
+            if (column.length) {
+                for (i = 0; i < column.length; i++) {
+                    if (typeof column[i] === 'undefined') {
+                        column[i] = null as any;
+                    }
                 }
             }
         }
