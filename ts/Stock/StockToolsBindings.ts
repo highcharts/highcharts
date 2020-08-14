@@ -19,11 +19,13 @@ import type Point from '../Core/Series/Point';
 import H from '../Core/Globals.js';
 import NavigationBindings from '../Extensions/Annotations/NavigationBindings.js';
 import U from '../Core/Utilities.js';
+import dataGrouping from '../Extensions/DataGrouping';
 const {
     correctFloat,
     defined,
     extend,
     fireEvent,
+    getOptions,
     isNumber,
     merge,
     pick,
@@ -255,6 +257,7 @@ bindingsUtils.manageIndicators = function (
         ],
         yAxis,
         parentSeries,
+        defaultOptions,
         series: Highcharts.Series;
 
     if (data.actionType === 'edit') {
@@ -288,13 +291,19 @@ bindingsUtils.manageIndicators = function (
         seriesConfig.id = uniqueKey();
         navigation.fieldsToOptions(data.fields, seriesConfig);
         parentSeries = chart.get(seriesConfig.linkedTo);
+        defaultOptions = getOptions().plotOptions as any;
 
         // Make sure that indicator uses the SUM approx if SUM approx is used
         // by parent series (#13950).
         if (
             parentSeries &&
             parentSeries instanceof Highcharts.Series &&
-            parentSeries.getDGApproximation() === 'sum'
+            parentSeries.getDGApproximation() === 'sum' &&
+            // If indicator has defined approx type, use it (e.g. "ranges")
+            !defined(
+                defaultOptions && defaultOptions[seriesConfig.type] &&
+                defaultOptions.dataGrouping?.approximation
+            )
         ) {
             seriesConfig.dataGrouping = {
                 approximation: 'sum'
