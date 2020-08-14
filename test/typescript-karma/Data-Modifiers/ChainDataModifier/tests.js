@@ -61,6 +61,7 @@ QUnit.test('ChainDataModifier.execute', function (assert) {
             $class: 'DataTable',
             rows: [{
                 $class: 'DataTableRow',
+                groupBy: 'y',
                 id: '0',
                 table: {
                     $class: 'DataTable',
@@ -77,6 +78,7 @@ QUnit.test('ChainDataModifier.execute', function (assert) {
                 value: 'a'
             }, {
                 $class: 'DataTableRow',
+                groupBy: 'y',
                 id: '1',
                 table: {
                     $class: 'DataTable',

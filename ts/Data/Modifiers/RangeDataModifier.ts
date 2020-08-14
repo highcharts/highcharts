@@ -10,6 +10,12 @@
  *
  * */
 
+/* *
+ *
+ *  Imports
+ *
+ * */
+
 import type DataTableRow from '../DataTableRow';
 import DataJSON from '../DataJSON.js';
 import DataModifier from './DataModifier.js';
@@ -19,6 +25,15 @@ const {
     merge
 } = U;
 
+/* *
+ *
+ *  Class
+ *
+ * */
+
+/**
+ * Filters out table rows with a specific value range.
+ */
 class RangeDataModifier extends DataModifier {
 
     /* *
@@ -27,6 +42,9 @@ class RangeDataModifier extends DataModifier {
      *
      * */
 
+    /**
+     * Default options for the range modifier.
+     */
     public static readonly defaultOptions: RangeDataModifier.Options = {
         modifier: 'Range',
         strict: false,
@@ -45,8 +63,17 @@ class RangeDataModifier extends DataModifier {
      *
      * */
 
-    public static fromJSON(): RangeDataModifier {
-        return new RangeDataModifier();
+    /**
+     * Converts a class JSON to a range modifier.
+     *
+     * @param {RangeDataModifier.ClassJSON} json
+     * Class JSON to convert to an instance of range modifier.
+     *
+     * @return {RangeDataModifier}
+     * GrouRangep modifier of the class JSON.
+     */
+    public static fromJSON(json: RangeDataModifier.ClassJSON): RangeDataModifier {
+        return new RangeDataModifier(json.options);
     }
 
     /* *
@@ -55,6 +82,12 @@ class RangeDataModifier extends DataModifier {
      *
      * */
 
+    /**
+     * Constructs an instance of the range modifier.
+     *
+     * @param {RangeDataModifier.Options} [options]
+     * Options to configure the range modifier.
+     */
     public constructor(options?: DeepPartial<RangeDataModifier.Options>) {
         super();
 
@@ -67,6 +100,9 @@ class RangeDataModifier extends DataModifier {
      *
      * */
 
+    /**
+     * Options of the range modifier.
+     */
     public options: RangeDataModifier.Options;
 
     /* *
@@ -75,6 +111,16 @@ class RangeDataModifier extends DataModifier {
      *
      * */
 
+    /**
+     * Applies modifications to the table rows and returns a new table with
+     * subtable, containing only the filtered rows.
+     *
+     * @param {DataTable} table
+     * Table to modify.
+     *
+     * @return {DataTable}
+     * New modified table.
+     */
     public execute(table: DataTable): DataTable {
         const modifier = this,
             {
@@ -121,6 +167,7 @@ class RangeDataModifier extends DataModifier {
                 ) {
                     continue;
                 }
+
                 if (
                     column >= range.minValue &&
                     column <= range.maxValue
@@ -135,6 +182,13 @@ class RangeDataModifier extends DataModifier {
         return result;
     }
 
+    /**
+     * Converts the range modifier to a class JSON, including all containing all
+     * modifiers.
+     *
+     * @return {DataJSON.ClassJSON}
+     * Class JSON of this range modifier.
+     */
     public toJSON(): RangeDataModifier.ClassJSON {
         return {
             $class: 'RangeDataModifier',
@@ -143,12 +197,28 @@ class RangeDataModifier extends DataModifier {
     }
 }
 
+/* *
+ *
+ *  Namespace
+ *
+ * */
+
+/**
+ * Additionally provided types for modifier events and options, and JSON
+ * conversion.
+ */
 namespace RangeDataModifier {
 
+    /**
+     * Interface of the class JSON to convert to modifier instances.
+     */
     export interface ClassJSON extends DataModifier.ClassJSON {
         options: Options;
     }
 
+    /**
+     * Options to configure the modifier.
+     */
     export interface Options extends DataModifier.Options {
         /**
          * Value ranges to include in the result.
@@ -160,6 +230,9 @@ namespace RangeDataModifier {
         strict: boolean;
     }
 
+    /**
+     * Options to configure a range.
+     */
     export interface RangeOptions extends DataJSON.Object {
         /**
          * Column containing the filtered values. This can be an index or a
@@ -178,7 +251,19 @@ namespace RangeDataModifier {
 
 }
 
+/* *
+ *
+ *  Register
+ *
+ * */
+
 DataJSON.addClass(RangeDataModifier);
 DataModifier.addModifier(RangeDataModifier);
+
+/* *
+ *
+ *  Export
+ *
+ * */
 
 export default RangeDataModifier;

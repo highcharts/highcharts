@@ -47,7 +47,7 @@ class DataJSON {
     private static readonly nameRegExp = /^function\s+(\w*?)\s*\(/;
 
     /**
-     * Registry as a record object with class names and their class types.
+     * Registry as a record object with class names and their class.
      */
     private static readonly registry: DataJSON.ClassRegistry = {};
 
@@ -58,8 +58,8 @@ class DataJSON {
      * */
 
     /**
-     * Adds a class type to the registry. The class has to provide two methods
-     * to convert JSON to a class instance (`public static fromJSON`) and to
+     * Adds a class to the registry. The class has to provide two methods to
+     * convert JSON to a class instance (`public static fromJSON`) and to
      * convert a class instance to JSON (`public toJSON`).
      *
      * @param {DataJSON.ClassType} classType
@@ -67,7 +67,7 @@ class DataJSON {
      *
      * @return {boolean}
      * Returns true, if the registration was successful. False is returned, if
-     * their is already a class type registered with this name.
+     * their is already a class registered with this name.
      */
     public static addClass(classType: DataJSON.ClassType): boolean {
 
@@ -84,14 +84,14 @@ class DataJSON {
     }
 
     /**
-     * Converts JSON to the matching class type and returns an instance.
+     * Converts JSON to the matching class and returns an instance.
      *
      * @param {DataJSON.ClassJSON} json
      * Class JSON to convert to a class instance.
      *
      * @return {DataJSON.Class|undefined}
-     * Returns a class instance of the JSON, if the matching class type was
-     * found, otherwise `undefined`.
+     * Returns a class instance of the JSON, if the matching class was found in
+     * the registry, otherwise `undefined`.
      */
     public static fromJSON(json: DataJSON.ClassJSON): (DataJSON.Class|undefined) {
 
@@ -116,9 +116,10 @@ class DataJSON {
 
     /**
      * Returns a copy of the class registry as record object with class names
-     * and their class types.
+     * and their class type.
      *
      * @return {DataJSON.ClassRegistry}
+     * Copy of the class registry.
      */
     public static getAllClassTypes(): DataJSON.ClassRegistry {
         return merge(DataJSON.registry);
@@ -127,14 +128,14 @@ class DataJSON {
     /**
      * Returns a class type (aka class constructor) of the given class name.
      *
-     * @param {string} className
-     * Registered class name of the class type.
+     * @param {string} name
+     * Registered class name of the class.
      *
      * @return {DataJSON.ClassType|undefined}
-     * Returns a class type, if the class name was found, otherwise `undefined`.
+     * Class type, if the class name was found, otherwise `undefined`.
      */
-    public static getClass(className: string): (DataJSON.ClassType|undefined) {
-        return DataJSON.registry[className];
+    public static getClass(name: string): (DataJSON.ClassType|undefined) {
+        return DataJSON.registry[name];
     }
 
     /**
@@ -144,8 +145,7 @@ class DataJSON {
      * Class type to extract the name from.
      *
      * @return {string}
-     * Returns the class name, if the extraction was successful, otherwise an
-     * empty string.
+     * Class name, if the extraction was successful, otherwise an empty string.
      */
     private static getName(classType: DataJSON.ClassType): string {
         return (

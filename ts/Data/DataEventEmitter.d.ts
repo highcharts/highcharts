@@ -25,11 +25,8 @@ declare interface DataEventEmitter<TEventObject extends DataEventEmitter.EventOb
      * Emits an event on the class instance to all registered callbacks of this
      * event.
      *
-     * @param {string} type
-     * Event type as a string.
-     *
-     * @param {DataEventEmitter.EventObject} [e]
-     * Event object with additional event information.
+     * @param {DataEventEmitter.EventObject} e
+     * Event object containing additonal event information.
      */
     emit(e: TEventObject): void;
 
@@ -39,7 +36,7 @@ declare interface DataEventEmitter<TEventObject extends DataEventEmitter.EventOb
      * @param {string} type
      * Event type as a string.
      *
-     * @param {DataEventEmitter.EventCallback} callack
+     * @param {DataEventEmitter.EventCallback} callback
      * Function to register for an event callback.
      *
      * @return {Function}
