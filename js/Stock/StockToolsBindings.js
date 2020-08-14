@@ -129,7 +129,7 @@ bindingsUtils.manageIndicators = function (data) {
         'linearRegressionSlope',
         'linearRegressionIntercept',
         'linearRegressionAngle'
-    ], yAxis, series;
+    ], yAxis, parentSeries, series;
     if (data.actionType === 'edit') {
         navigation.fieldsToOptions(data.fields, seriesConfig);
         series = chart.get(data.seriesId);
@@ -156,6 +156,16 @@ bindingsUtils.manageIndicators = function (data) {
     else {
         seriesConfig.id = uniqueKey();
         navigation.fieldsToOptions(data.fields, seriesConfig);
+        parentSeries = chart.get(seriesConfig.linkedTo);
+        // Make sure that indicator uses the SUM approx if SUM approx is used
+        // by parent series (#13950).
+        if (parentSeries &&
+            parentSeries instanceof Highcharts.Series &&
+            parentSeries.getDGApproximation() === 'sum') {
+            seriesConfig.dataGrouping = {
+                approximation: 'sum'
+            };
+        }
         if (indicatorsWithAxes.indexOf(data.type) >= 0) {
             yAxis = chart.addAxis({
                 id: uniqueKey(),
