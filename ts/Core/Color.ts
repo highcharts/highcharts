@@ -133,7 +133,7 @@ declare global {
  * @name Highcharts.GradientColorStopObject#1
  * @type {Highcharts.ColorString}
  *//**
- * @name Highcharts.GradoentColorStopObject#color
+ * @name Highcharts.GradientColorStopObject#color
  * @type {Highcharts.Color|undefined}
  */
 
