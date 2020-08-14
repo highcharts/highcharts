@@ -10,6 +10,12 @@
  *
  * */
 
+/* *
+ *
+ *  Imports
+ *
+ * */
+
 import DataJSON from '../DataJSON.js';
 import DataModifier from './DataModifier.js';
 import DataTable from '../DataTable.js';
@@ -19,6 +25,15 @@ const {
     merge
 } = U;
 
+/* *
+ *
+ *  Class
+ *
+ * */
+
+/**
+ * Groups table rows into subtables depending on column values.
+ */
 class GroupDataModifier extends DataModifier {
 
     /* *
@@ -27,6 +42,9 @@ class GroupDataModifier extends DataModifier {
      *
      * */
 
+    /**
+     * Default options to group table rows.
+     */
     public static readonly defaultOptions: GroupDataModifier.Options = {
         modifier: 'Group',
         groupColumn: 0
@@ -38,6 +56,15 @@ class GroupDataModifier extends DataModifier {
      *
      * */
 
+    /**
+     * Converts a class JSON to a group modifier.
+     *
+     * @param {ChainDataModifier.ClassJSON} json
+     * Class JSON to convert to an instance of group modifier.
+     *
+     * @return {ChainDataModifier}
+     * Group modifier of the class JSON.
+     */
     public static fromJSON(json: GroupDataModifier.ClassJSON): GroupDataModifier {
         return new GroupDataModifier(json.options);
     }
@@ -48,6 +75,12 @@ class GroupDataModifier extends DataModifier {
      *
      * */
 
+    /**
+     * Constructs an instance of the group modifier.
+     *
+     * @param {GroupDataModifier.Options} [options]
+     * Options to configure the group modifier.
+     */
     public constructor(options?: DeepPartial<GroupDataModifier.Options>) {
         super();
 
@@ -60,6 +93,9 @@ class GroupDataModifier extends DataModifier {
      *
      * */
 
+    /**
+     * Options of the group modifier.
+     */
     public options: GroupDataModifier.Options;
 
     /* *
@@ -68,6 +104,20 @@ class GroupDataModifier extends DataModifier {
      *
      * */
 
+    /**
+     * Applies modifications to the table rows and returns a new table with
+     * subtable, containing the grouped rows. The rows of the new table contain
+     * three columns:
+     * - `groupBy`: Column name used to group rows by.
+     * - `table`: Subtable containing the grouped rows.
+     * - `value`: containing the common value of the group
+     *
+     * @param {DataTable} table
+     * Table to modify.
+     *
+     * @return {DataTable}
+     * New modified table.
+     */
     public execute(table: DataTable): DataTable {
 
         this.emit({ type: 'execute', table });
@@ -78,8 +128,9 @@ class GroupDataModifier extends DataModifier {
                 invalidValues,
                 validValues
             } = modifier.options,
-            groupTables: Array<DataTable> = [],
-            groupValues: Array<DataJSON.Primitives> = [];
+            columnGroups: Array<string> = [],
+            tableGroups: Array<DataTable> = [],
+            valueGroups: Array<DataJSON.Primitives> = [];
 
         let row: (DataTableRow|undefined),
             value: DataTableRow.ColumnTypes,
@@ -102,23 +153,25 @@ class GroupDataModifier extends DataModifier {
                 ) {
                     continue;
                 }
-                valueIndex = groupValues.indexOf(value);
+                valueIndex = valueGroups.indexOf(value);
                 if (valueIndex === -1) {
-                    groupTables.push(new DataTable([row]));
-                    groupValues.push(value);
+                    columnGroups.push(groupColumn.toString());
+                    tableGroups.push(new DataTable([row]));
+                    valueGroups.push(value);
                 } else {
-                    groupTables[valueIndex].insertRow(row);
+                    tableGroups[valueIndex].insertRow(row);
                 }
             }
         }
 
         table = new DataTable();
 
-        for (let i = 0, iEnd = groupTables.length; i < iEnd; ++i) {
+        for (let i = 0, iEnd = tableGroups.length; i < iEnd; ++i) {
             table.insertRow(new DataTableRow({
                 id: `${i}`,
-                value: groupValues[i],
-                table: groupTables[i]
+                groupBy: columnGroups[i],
+                table: tableGroups[i],
+                value: valueGroups[i]
             }));
         }
 
@@ -127,6 +180,13 @@ class GroupDataModifier extends DataModifier {
         return table;
     }
 
+    /**
+     * Converts the group modifier to a class JSON, including all containing all
+     * modifiers.
+     *
+     * @return {DataJSON.ClassJSON}
+     * Class JSON of this group modifier.
+     */
     public toJSON(): GroupDataModifier.ClassJSON {
         const json = {
             $class: 'GroupDataModifier',
@@ -138,12 +198,28 @@ class GroupDataModifier extends DataModifier {
 
 }
 
+/* *
+ *
+ *  Namespace
+ *
+ * */
+
+/**
+ * Additionally provided types for modifier events and options, and JSON
+ * conversion.
+ */
 namespace GroupDataModifier {
 
+    /**
+     * Interface of the class JSON to convert to modifier instances.
+     */
     export interface ClassJSON extends DataModifier.ClassJSON {
         // nothing here yet
     }
 
+    /**
+     * Options to configure the modifier.
+     */
     export interface Options extends DataModifier.Options {
         /**
          * Column to group by values.
@@ -161,7 +237,19 @@ namespace GroupDataModifier {
 
 }
 
+/* *
+ *
+ *  Register
+ *
+ * */
+
 DataJSON.addClass(GroupDataModifier);
 DataModifier.addModifier(GroupDataModifier);
+
+/* *
+ *
+ *  Export
+ *
+ * */
 
 export default GroupDataModifier;

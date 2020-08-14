@@ -38,13 +38,14 @@ QUnit.test('RangeDataModifier.execute', function (assert) {
     assert.deepEqual(
         modifiedTable.toJSON(),
         {
-            "$class": "DataTable",
-            "rows": [{
-                "$class": "DataTableRow",
-                "id": "0",
-                "table": {
-                    "$class": "DataTable",
-                    "rows": [{
+            $class: 'DataTable',
+            rows: [{
+                $class: 'DataTableRow',
+                groupBy: 'y',
+                id: '0',
+                table: {
+                    $class: 'DataTable',
+                    rows: [{
                         $class: 'DataTableRow',
                         x: 0,
                         y: 'a'
@@ -54,13 +55,14 @@ QUnit.test('RangeDataModifier.execute', function (assert) {
                         y: 'a'
                     }]
                 },
-                "value": "a"
+                value: 'a'
             }, {
-                "$class": "DataTableRow",
-                "id": "1",
-                "table": {
-                    "$class": "DataTable",
-                    "rows": [{
+                $class: 'DataTableRow',
+                groupBy: 'y',
+                id: '1',
+                table: {
+                    $class: 'DataTable',
+                    rows: [{
                         $class: 'DataTableRow',
                         x: 0,
                         y: 'b'
@@ -70,7 +72,7 @@ QUnit.test('RangeDataModifier.execute', function (assert) {
                         y: 'b'
                     }]
                 },
-                "value": "b"
+                value: 'b'
             }]
         },
         'JSON of filtered table should have two subtables.'

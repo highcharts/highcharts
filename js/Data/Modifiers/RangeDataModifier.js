@@ -27,6 +27,14 @@ import DataModifier from './DataModifier.js';
 import DataTable from '../DataTable.js';
 import U from '../../Core/Utilities.js';
 var merge = U.merge;
+/* *
+ *
+ *  Class
+ *
+ * */
+/**
+ * Filters out table rows with a specific value range.
+ */
 var RangeDataModifier = /** @class */ (function (_super) {
     __extends(RangeDataModifier, _super);
     /* *
@@ -34,6 +42,12 @@ var RangeDataModifier = /** @class */ (function (_super) {
      *  Constructor
      *
      * */
+    /**
+     * Constructs an instance of the range modifier.
+     *
+     * @param {RangeDataModifier.Options} [options]
+     * Options to configure the range modifier.
+     */
     function RangeDataModifier(options) {
         var _this = _super.call(this) || this;
         _this.options = merge(RangeDataModifier.defaultOptions, options);
@@ -44,14 +58,33 @@ var RangeDataModifier = /** @class */ (function (_super) {
      *  Static Functions
      *
      * */
-    RangeDataModifier.fromJSON = function () {
-        return new RangeDataModifier();
+    /**
+     * Converts a class JSON to a range modifier.
+     *
+     * @param {RangeDataModifier.ClassJSON} json
+     * Class JSON to convert to an instance of range modifier.
+     *
+     * @return {RangeDataModifier}
+     * GrouRangep modifier of the class JSON.
+     */
+    RangeDataModifier.fromJSON = function (json) {
+        return new RangeDataModifier(json.options);
     };
     /* *
      *
      *  Functions
      *
      * */
+    /**
+     * Applies modifications to the table rows and returns a new table with
+     * subtable, containing only the filtered rows.
+     *
+     * @param {DataTable} table
+     * Table to modify.
+     *
+     * @return {DataTable}
+     * New modified table.
+     */
     RangeDataModifier.prototype.execute = function (table) {
         var modifier = this, _a = modifier.options, ranges = _a.ranges, strict = _a.strict, rows = table.getAllRows(), result = new DataTable();
         var column, range, row;
@@ -88,6 +121,13 @@ var RangeDataModifier = /** @class */ (function (_super) {
         this.emit({ type: 'afterExecute', table: result });
         return result;
     };
+    /**
+     * Converts the range modifier to a class JSON, including all containing all
+     * modifiers.
+     *
+     * @return {DataJSON.ClassJSON}
+     * Class JSON of this range modifier.
+     */
     RangeDataModifier.prototype.toJSON = function () {
         return {
             $class: 'RangeDataModifier',
@@ -99,6 +139,9 @@ var RangeDataModifier = /** @class */ (function (_super) {
      *  Static Properties
      *
      * */
+    /**
+     * Default options for the range modifier.
+     */
     RangeDataModifier.defaultOptions = {
         modifier: 'Range',
         strict: false,
@@ -112,6 +155,16 @@ var RangeDataModifier = /** @class */ (function (_super) {
     };
     return RangeDataModifier;
 }(DataModifier));
+/* *
+ *
+ *  Register
+ *
+ * */
 DataJSON.addClass(RangeDataModifier);
 DataModifier.addModifier(RangeDataModifier);
+/* *
+ *
+ *  Export
+ *
+ * */
 export default RangeDataModifier;

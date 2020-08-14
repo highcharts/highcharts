@@ -44,8 +44,8 @@ var DataJSON = /** @class */ (function () {
      *
      * */
     /**
-     * Adds a class type to the registry. The class has to provide two methods
-     * to convert JSON to a class instance (`public static fromJSON`) and to
+     * Adds a class to the registry. The class has to provide two methods to
+     * convert JSON to a class instance (`public static fromJSON`) and to
      * convert a class instance to JSON (`public toJSON`).
      *
      * @param {DataJSON.ClassType} classType
@@ -53,7 +53,7 @@ var DataJSON = /** @class */ (function () {
      *
      * @return {boolean}
      * Returns true, if the registration was successful. False is returned, if
-     * their is already a class type registered with this name.
+     * their is already a class registered with this name.
      */
     DataJSON.addClass = function (classType) {
         var className = DataJSON.getName(classType), registry = DataJSON.registry;
@@ -64,14 +64,14 @@ var DataJSON = /** @class */ (function () {
         return true;
     };
     /**
-     * Converts JSON to the matching class type and returns an instance.
+     * Converts JSON to the matching class and returns an instance.
      *
      * @param {DataJSON.ClassJSON} json
      * Class JSON to convert to a class instance.
      *
      * @return {DataJSON.Class|undefined}
-     * Returns a class instance of the JSON, if the matching class type was
-     * found, otherwise `undefined`.
+     * Returns a class instance of the JSON, if the matching class was found in
+     * the registry, otherwise `undefined`.
      */
     DataJSON.fromJSON = function (json) {
         var classType = DataJSON.registry[json.$class];
@@ -91,9 +91,10 @@ var DataJSON = /** @class */ (function () {
     };
     /**
      * Returns a copy of the class registry as record object with class names
-     * and their class types.
+     * and their class type.
      *
      * @return {DataJSON.ClassRegistry}
+     * Copy of the class registry.
      */
     DataJSON.getAllClassTypes = function () {
         return merge(DataJSON.registry);
@@ -101,14 +102,14 @@ var DataJSON = /** @class */ (function () {
     /**
      * Returns a class type (aka class constructor) of the given class name.
      *
-     * @param {string} className
-     * Registered class name of the class type.
+     * @param {string} name
+     * Registered class name of the class.
      *
      * @return {DataJSON.ClassType|undefined}
-     * Returns a class type, if the class name was found, otherwise `undefined`.
+     * Class type, if the class name was found, otherwise `undefined`.
      */
-    DataJSON.getClass = function (className) {
-        return DataJSON.registry[className];
+    DataJSON.getClass = function (name) {
+        return DataJSON.registry[name];
     };
     /**
      * Extracts the class name from a given class type.
@@ -117,8 +118,7 @@ var DataJSON = /** @class */ (function () {
      * Class type to extract the name from.
      *
      * @return {string}
-     * Returns the class name, if the extraction was successful, otherwise an
-     * empty string.
+     * Class name, if the extraction was successful, otherwise an empty string.
      */
     DataJSON.getName = function (classType) {
         return (classType.toString().match(DataJSON.nameRegExp) ||
@@ -135,7 +135,7 @@ var DataJSON = /** @class */ (function () {
      */
     DataJSON.nameRegExp = /^function\s+(\w*?)\s*\(/;
     /**
-     * Registry as a record object with class names and their class types.
+     * Registry as a record object with class names and their class.
      */
     DataJSON.registry = {};
     return DataJSON;
