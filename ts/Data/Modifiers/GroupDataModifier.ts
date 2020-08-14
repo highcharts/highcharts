@@ -19,7 +19,7 @@ const {
     merge
 } = U;
 
-class GroupDataModifier extends DataModifier implements DataJSON.Class {
+class GroupDataModifier extends DataModifier {
 
     /* *
      *
@@ -27,7 +27,7 @@ class GroupDataModifier extends DataModifier implements DataJSON.Class {
      *
      * */
 
-    public static defaultOptions: GroupDataModifier.Options = {
+    public static readonly defaultOptions: GroupDataModifier.Options = {
         modifier: 'Group',
         groupColumn: 0
     };

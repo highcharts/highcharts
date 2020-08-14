@@ -9,7 +9,6 @@
  *  !!!!!!! SOURCE GETS TRANSPILED BY TYPESCRIPT. EDIT TS FILE ONLY. !!!!!!!
  *
  * */
-'use strict';
 var __extends = (this && this.__extends) || (function () {
     var extendStatics = function (d, b) {
         extendStatics = Object.setPrototypeOf ||
@@ -34,7 +33,6 @@ import DataJSON from '../DataJSON.js';
 import DataModifier from './DataModifier.js';
 import U from '../../Core/Utilities.js';
 var merge = U.merge;
-/** eslint-disable valid-jsdoc */
 var ChainDataModifier = /** @class */ (function (_super) {
     __extends(ChainDataModifier, _super);
     /* *
@@ -48,8 +46,9 @@ var ChainDataModifier = /** @class */ (function (_super) {
             modifiers[_i - 1] = arguments[_i];
         }
         var _this = _super.call(this) || this;
-        _this.modifiers = modifiers;
-        _this.options = merge(ChainDataModifier.defaultOptions, options);
+        var completeOptions = merge(ChainDataModifier.defaultOptions, options);
+        _this.modifiers = completeOptions.reverse ? modifiers.reverse() : modifiers;
+        _this.options = completeOptions;
         return _this;
     }
     /* *
@@ -76,7 +75,7 @@ var ChainDataModifier = /** @class */ (function (_super) {
         this.modifiers.length = 0;
     };
     ChainDataModifier.prototype.execute = function (table) {
-        var modifier = this, modifiers = this.modifiers;
+        var modifiers = this.modifiers.slice();
         this.emit({ type: 'execute', table: table });
         for (var i = 0, iEnd = modifiers.length; i < iEnd; ++i) {
             table = modifiers[i].execute(table);
@@ -87,9 +86,6 @@ var ChainDataModifier = /** @class */ (function (_super) {
     ChainDataModifier.prototype.remove = function (modifier) {
         var modifiers = this.modifiers;
         modifiers.splice(modifiers.indexOf(modifier), 1);
-    };
-    ChainDataModifier.prototype.reverse = function () {
-        this.modifiers = this.modifiers.reverse();
     };
     ChainDataModifier.prototype.toJSON = function () {
         var modifiers = this.modifiers, json = {
@@ -108,9 +104,11 @@ var ChainDataModifier = /** @class */ (function (_super) {
      *
      * */
     ChainDataModifier.defaultOptions = {
-        modifier: 'Chain'
+        modifier: 'Chain',
+        reverse: false
     };
     return ChainDataModifier;
 }(DataModifier));
 DataJSON.addClass(ChainDataModifier);
+DataModifier.addModifier(ChainDataModifier);
 export default ChainDataModifier;

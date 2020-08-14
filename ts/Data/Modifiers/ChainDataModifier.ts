@@ -10,8 +10,6 @@
  *
  * */
 
-'use strict';
-
 import DataJSON from '../DataJSON.js';
 import DataModifier from './DataModifier.js';
 import DataTable from '../DataTable.js';
@@ -20,9 +18,7 @@ const {
     merge
 } = U;
 
-/** eslint-disable valid-jsdoc */
-
-class ChainDataModifier extends DataModifier implements DataJSON.Class {
+class ChainDataModifier extends DataModifier {
 
     /* *
      *
@@ -31,7 +27,8 @@ class ChainDataModifier extends DataModifier implements DataJSON.Class {
      * */
 
     public static readonly defaultOptions: ChainDataModifier.Options = {
-        modifier: 'Chain'
+        modifier: 'Chain',
+        reverse: false
     };
 
     /* *
@@ -58,13 +55,15 @@ class ChainDataModifier extends DataModifier implements DataJSON.Class {
      * */
 
     public constructor(
-        options: DeepPartial<ChainDataModifier.Options>,
+        options?: DeepPartial<ChainDataModifier.Options>,
         ...modifiers: Array<DataModifier>
     ) {
         super();
 
-        this.modifiers = modifiers;
-        this.options = merge(ChainDataModifier.defaultOptions, options);
+        const completeOptions = merge(ChainDataModifier.defaultOptions, options);
+
+        this.modifiers = completeOptions.reverse ? modifiers.reverse() : modifiers;
+        this.options = completeOptions;
     }
 
     /* *
@@ -73,7 +72,7 @@ class ChainDataModifier extends DataModifier implements DataJSON.Class {
      *
      * */
 
-    private modifiers: Array<DataModifier>;
+    public readonly modifiers: Array<DataModifier>;
 
     public readonly options: ChainDataModifier.Options;
 
@@ -92,8 +91,7 @@ class ChainDataModifier extends DataModifier implements DataJSON.Class {
     }
 
     public execute(table: DataTable): DataTable {
-        const modifier = this,
-            modifiers = this.modifiers;
+        const modifiers = this.modifiers.slice();
 
         this.emit({ type: 'execute', table });
 
@@ -108,11 +106,8 @@ class ChainDataModifier extends DataModifier implements DataJSON.Class {
 
     public remove(modifier: DataModifier): void {
         const modifiers = this.modifiers;
-        modifiers.splice(modifiers.indexOf(modifier), 1);
-    }
 
-    public reverse(): void {
-        this.modifiers = this.modifiers.reverse();
+        modifiers.splice(modifiers.indexOf(modifier), 1);
     }
 
     public toJSON(): ChainDataModifier.ClassJSON {
@@ -132,6 +127,12 @@ class ChainDataModifier extends DataModifier implements DataJSON.Class {
 
 }
 
+/* *
+ *
+ *  Namespace
+ *
+ * */
+
 namespace ChainDataModifier {
 
     export interface ClassJSON extends DataModifier.ClassJSON {
@@ -139,11 +140,12 @@ namespace ChainDataModifier {
     }
 
     export interface Options extends DataModifier.Options {
-        // nothing here at the moment
+        reverse: boolean;
     }
 
 }
 
 DataJSON.addClass(ChainDataModifier);
+DataModifier.addModifier(ChainDataModifier);
 
 export default ChainDataModifier;

@@ -19,7 +19,7 @@ const {
     merge
 } = U;
 
-class RangeDataModifier extends DataModifier implements DataJSON.Class {
+class RangeDataModifier extends DataModifier {
 
     /* *
      *

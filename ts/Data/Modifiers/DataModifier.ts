@@ -34,7 +34,8 @@ const {
  *
  * */
 
-abstract class DataModifier implements DataEventEmitter<DataModifier.EventObject> {
+abstract class DataModifier
+implements DataEventEmitter<DataModifier.EventObject>, DataJSON.Class {
 
     /* *
      *
