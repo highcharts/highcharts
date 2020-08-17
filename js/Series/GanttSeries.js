@@ -177,7 +177,6 @@ seriesType('gantt', 'xrange'
         addIfExists('x', pick(options.start, options.x));
         addIfExists('x2', pick(options.end, options.x2));
         addIfExists('partialFill', pick(options.completed, options.partialFill));
-        addIfExists('connect', pick(options.dependency, options.connect));
     }
     /* eslint-enable valid-jsdoc */
 }, merge(parent.prototype.pointClass.prototype, {

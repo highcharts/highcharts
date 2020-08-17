@@ -261,7 +261,7 @@ namespace TreeGridAxis {
                     hasSameName = function (x: GridNode): boolean {
                         return x.name === name;
                     },
-                    gridNode: (GridNode|undefined),
+                    gridNode: (GridNode | undefined),
                     pos;
 
                 // If not unique names, look for sibling node with the same name
@@ -409,7 +409,7 @@ namespace TreeGridAxis {
                     labelOptions = options.labels,
                     uniqueNames = options.uniqueNames,
                     numberOfSeries = 0,
-                    isDirty: (boolean|undefined),
+                    isDirty: (boolean | undefined),
                     data: Array<PointOptionsObject>,
                     treeGrid: TreeGridObject,
                     max = options.max;
@@ -437,9 +437,7 @@ namespace TreeGridAxis {
                             (s.options.data || []).forEach(function (data): void {
                                 // For using keys - rebuild the data structure
                                 if (s.options.keys && s.options.keys.length) {
-                                    const pt = {
-                                        series: s, initialData: data
-                                    };
+                                    const pt = { series: s, initialData: data };
 
                                     (s as any).pointClass.prototype.applyOptions.apply(pt, [data]);
                                     (data as any) = pt;
@@ -494,7 +492,7 @@ namespace TreeGridAxis {
 
                             if (series.options.keys && series.options.keys.length) {
                                 // Get the axisData from the data array used to
-                                // build the treeGrid where has been defined
+                                // build the treeGrid where has been modified
                                 data.forEach(function (point: Highcharts.PointOptionsObject): void {
                                     if ((point as any).initialData === d) {
                                         d = point;
@@ -552,7 +550,7 @@ namespace TreeGridAxis {
             ticks = axis.ticks;
         let tick = ticks[pos],
             levelOptions,
-            options: (TreeGridAxis.Options|undefined),
+            options: (TreeGridAxis.Options | undefined),
             gridNode;
 
         if (

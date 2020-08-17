@@ -719,6 +719,11 @@ Pathfinder.prototype = {
         chart.series.forEach(function (series) {
             if (series.visible && !series.options.isInternal) {
                 series.points.forEach(function (point) {
+                    // For Gantt series the connect could be
+                    // defined as a dependency
+                    if (point.options && point.options.dependency) {
+                        point.options.connect = point.options.dependency;
+                    }
                     var to, connects = (point.options &&
                         point.options.connect &&
                         splat(point.options.connect));

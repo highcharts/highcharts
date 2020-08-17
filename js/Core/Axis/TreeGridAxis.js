@@ -238,9 +238,7 @@ var TreeGridAxis;
                         (s.options.data || []).forEach(function (data) {
                             // For using keys - rebuild the data structure
                             if (s.options.keys && s.options.keys.length) {
-                                var pt = {
-                                    series: s, initialData: data
-                                };
+                                var pt = { series: s, initialData: data };
                                 s.pointClass.prototype.applyOptions.apply(pt, [data]);
                                 data = pt;
                             }
@@ -282,7 +280,7 @@ var TreeGridAxis;
                     var axisData = (series.options.data || []).map(function (d) {
                         if (series.options.keys && series.options.keys.length) {
                             // Get the axisData from the data array used to
-                            // build the treeGrid where has been defined
+                            // build the treeGrid where has been modified
                             data.forEach(function (point) {
                                 if (point.initialData === d) {
                                     d = point;

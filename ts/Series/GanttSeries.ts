@@ -320,10 +320,6 @@ seriesType<Highcharts.GanttSeries>('gantt', 'xrange'
             addIfExists(
                 'partialFill', pick(options.completed, options.partialFill)
             );
-            addIfExists('connect', pick(
-                options.dependency, options.connect as any
-            ));
-
         }
 
         /* eslint-enable valid-jsdoc */
