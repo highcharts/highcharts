@@ -97,11 +97,12 @@ Chart.prototype.adjustHeight = function (): void {
                 height = Math.max(height, staticScale as any);
 
                 diff = height - chart.plotHeight;
-
-                if (Math.abs(diff) >= 1) {
-                    chart.plotHeight = height;
-                    chart.redrawTrigger = 'adjustHeight';
-                    chart.setSize(void 0, chart.chartHeight + diff, animate);
+                if (!chart.scrollablePixelsY) {
+                    if (Math.abs(diff) >= 1) {
+                        chart.plotHeight = height;
+                        chart.redrawTrigger = 'adjustHeight';
+                        chart.setSize(void 0, chart.chartHeight + diff, animate);
+                    }
                 }
 
                 // Make sure clip rects have the right height before initial

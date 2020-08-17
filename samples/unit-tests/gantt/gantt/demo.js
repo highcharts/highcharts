@@ -474,4 +474,82 @@
 
         assert.notOk(chart.series[1].requireSorting, "No error 15 in the console.");
     });
+
+    QUnit.test('ScrollablePlotArea in Gantt with navigation should not increase chart size and mask should be placed correctly, (#13917).', function (assert) {
+        const chart = Highcharts.ganttChart('container', {
+            chart: {
+                scrollablePlotArea: {
+                    minHeight: 600
+                }
+            },
+            yAxis: {
+                staticScale: 60
+            },
+            series: [{
+                data: [{
+                    start: 1,
+                    end: 2,
+                    name: 'Task A',
+                    y: 0
+                }, {
+                    start: 3,
+                    end: 4,
+                    name: 'Task B',
+                    y: 1
+                }, {
+                    start: 5,
+                    end: 6,
+                    name: 'Task C',
+                    y: 2
+                }, {
+                    start: 6,
+                    end: 9,
+                    name: 'Task D',
+                    y: 3
+                }, {
+                    start: 4,
+                    end: 10,
+                    name: 'Task E',
+                    y: 4
+                }, {
+                    start: 4,
+                    end: 10,
+                    name: 'Task E',
+                    y: 5
+                }, {
+                    start: 4,
+                    end: 10,
+                    name: 'Task E',
+                    y: 6
+                }]
+            }]
+        });
+        const chartHeight = chart.chartHeight;
+        chart.update({
+            navigator: {
+                enabled: true
+            }
+        });
+
+        assert.strictEqual(
+            chart.chartHeight,
+            chartHeight,
+            'After enabling the navigator the chart height should remain the same.'
+        );
+        assert.ok(
+            chart.navigator.top < chart.chartHeight,
+            'The navigator should be inside the plot area.'
+        );
+        chart.setSize(0, 250);
+
+        assert.strictEqual(
+            chart.chartHeight,
+            250,
+            'After an update, the height of the chart with navigator should equal 250px.'
+        );
+        assert.ok(
+            chart.navigator.top < chart.chartHeight,
+            'The navigator should be still inside the plot area.'
+        );
+    });
 }());
