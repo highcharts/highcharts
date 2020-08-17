@@ -39,12 +39,13 @@ var DataSeriesConverter = /** @class */ (function () {
     *  Functions
     *
     * */
-    DataSeriesConverter.prototype.getSeriesData = function (rowIndex) {
-        var table = this.table, row = table.getRow(rowIndex), dataOptions = [], seriesTypeData = this.getSeriesTypeData(this.options.type || 'line');
-        var column;
-        if (row) {
-            for (var i = 0, iEnd = row.getColumnCount(); i < iEnd; i++) {
-                column = row.getColumn(i);
+    DataSeriesConverter.prototype.getSeriesData = function (columnIndex) {
+        var table = this.table, options = this.options || {}, dataOptions = [], seriesTypeData = this.getSeriesTypeData(options.type || 'line');
+        var row, column;
+        for (var i = 0, iEnd = table.getRowCount(); i < iEnd; i++) {
+            row = table.getRow(i);
+            if (row) {
+                column = row.getColumn(columnIndex);
                 if (typeof column === 'number') {
                     dataOptions.push(seriesTypeData(column));
                 }
@@ -86,11 +87,17 @@ var DataSeriesConverter = /** @class */ (function () {
         };
     };
     DataSeriesConverter.prototype.getAllSeriesData = function () {
-        var table = this.table, seriesOptions = [];
-        for (var i = 0, iEnd = table.getRowCount(); i < iEnd; i++) {
-            seriesOptions.push({
-                data: this.getSeriesData(i)
-            });
+        var table = this.table, seriesOptions = [], row = table.getRow(0);
+        var seriesData;
+        if (row) {
+            for (var i = 0, iEnd = row.getColumnCount(); i < iEnd; i++) {
+                seriesData = this.getSeriesData(i);
+                if (seriesData.length > 0) {
+                    seriesOptions.push({
+                        data: seriesData
+                    });
+                }
+            }
         }
         return seriesOptions;
     };

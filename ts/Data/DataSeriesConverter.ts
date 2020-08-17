@@ -45,18 +45,21 @@ class DataSeriesConverter {
     *  Functions
     *
     * */
-    getSeriesData(rowIndex: number): Array<Highcharts.PointOptionsObject> {
+    getSeriesData(columnIndex: number): Array<Highcharts.PointOptionsObject> {
         const table = this.table,
-            row = table.getRow(rowIndex),
+            options = this.options || {},
             dataOptions = [],
-            seriesTypeData = this.getSeriesTypeData(this.options.type || 'line');
+            seriesTypeData = this.getSeriesTypeData(options.type || 'line');
 
-        let column;
+        let row,
+            column;
 
-        if (row) {
-            for (let i = 0, iEnd = row.getColumnCount(); i < iEnd; i++) {
+        for (let i = 0, iEnd = table.getRowCount(); i < iEnd; i++) {
 
-                column = row.getColumn(i);
+            row = table.getRow(i);
+
+            if (row) {
+                column = row.getColumn(columnIndex);
 
                 if (typeof column === 'number') {
                     dataOptions.push(
@@ -65,6 +68,7 @@ class DataSeriesConverter {
                 }
             }
         }
+
         return dataOptions;
     }
 
@@ -109,12 +113,24 @@ class DataSeriesConverter {
 
     getAllSeriesData(): Array<Highcharts.SeriesOptions> {
         const table = this.table,
-            seriesOptions = [];
-        for (let i = 0, iEnd = table.getRowCount(); i < iEnd; i++) {
-            seriesOptions.push({
-                data: this.getSeriesData(i)
-            });
+            seriesOptions = [],
+            row = table.getRow(0);
+        
+        let seriesData;
+
+        if (row) {
+            for (let i = 0, iEnd = row.getColumnCount(); i < iEnd; i++) {
+
+                seriesData = this.getSeriesData(i);
+
+                if (seriesData.length > 0) {
+                    seriesOptions.push({
+                        data: seriesData
+                    });
+                }
+            }
         }
+
         return seriesOptions;
     }
 }
