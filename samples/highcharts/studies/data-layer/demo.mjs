@@ -9,8 +9,7 @@ import DataSeriesConverter from '../../../../code/es-modules/Data/DataSeriesConv
 
 let dataSeriesConverter;
 
-let chart = Highcharts.chart('container', { });
-
+const chart = Highcharts.chart('container', { });
 const store = new GoogleDataStore(undefined, {
     googleSpreadsheetKey: '14632VxDAT-TAL06ICnoLsV_JyvjEBXdVY-J34br5iXY',
     // startColumn: 1,
@@ -40,21 +39,10 @@ store.on('afterLoad', e => {
 
     // convert data to series
     dataSeriesConverter = new DataSeriesConverter(e.table, { type: 'line' });
-    const series = dataSeriesConverter.getAllSeriesData();
 
-    /**
-     *
-     * chart.update({
-     *  series: dataSeriesConverter.getAllSeriesData()
-     * })
-     *
-     * does not work
-     *
-     */
-
-    for (let i = 0; i < series.length; i++) {
-        chart.addSeries(series[i]);
-    }
+    chart.update({
+        series: dataSeriesConverter.getAllSeriesData()
+    }, true, true, true);
 });
 
 modiferToUse.on('afterExecute', e => {
