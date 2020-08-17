@@ -111,7 +111,7 @@ declare global {
         }
         class Pathfinder {
             public constructor(chart: Chart);
-            public algorithms: PathfinderAlgorithmsObject;
+            public algorithms: Record<string, PathfinderAlgorithmFunction>;
             public chart: Chart;
             public chartObstacles: Array<any>;
             public chartObstacleMetrics: Dictionary<number>;
@@ -917,7 +917,7 @@ class Pathfinder {
 }
 
 interface Pathfinder {
-    algorithms: Highcharts.PathfinderAlgorithmsObject;
+    algorithms: Record<string, Highcharts.PathfinderAlgorithmFunction>;
 }
 Pathfinder.prototype.algorithms = pathfinderAlgorithms;
 
