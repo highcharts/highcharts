@@ -1,14 +1,15 @@
 import '../../../../code/es-modules/Core/Renderer/SVG/SVGRenderer.js';
-import Chart from '../../../../code/es-modules/Core/Chart/Chart.js';
 import GoogleDataStore from '../../../../code/es-modules/Data/Stores/GoogleDataStore.js';
 import GroupDataModifier from '../../../../code/es-modules/Data/Modifiers/GroupDataModifier.js';
 
-import ChainDataModifier from "../../../../code/es-modules/Data/Modifiers/ChainDataModifier.js";
-import RangeDataModifier from "../../../../code/es-modules/Data/Modifiers/RangeDataModifier.js";
+import ChainDataModifier from '../../../../code/es-modules/Data/Modifiers/ChainDataModifier.js';
+import RangeDataModifier from '../../../../code/es-modules/Data/Modifiers/RangeDataModifier.js';
 
+import DataSeriesConverter from '../../../../code/es-modules/Data/DataSeriesConverter.js';
 
-let chart = new Chart('container', {
-});
+let dataSeriesConverter;
+
+let chart = Highcharts.chart('container', { });
 
 const store = new GoogleDataStore(undefined, {
     googleSpreadsheetKey: '14632VxDAT-TAL06ICnoLsV_JyvjEBXdVY-J34br5iXY',
@@ -35,7 +36,25 @@ store.on('afterLoad', e => {
         .innerHTML = e.table.getAllRows().map(row => row.getColumn('Margin  (Trump)')).join('\n');
 
     // Do the modification
-    modiferToUse.execute(e.table)
+    console.log('modi', modiferToUse.execute(e.table));
+
+    // convert data to series
+    dataSeriesConverter = new DataSeriesConverter(e.table, { type: 'line' });
+    const series = dataSeriesConverter.getAllSeriesData();
+
+    /**
+     *
+     * chart.update({
+     *  series: dataSeriesConverter.getAllSeriesData()
+     * })
+     *
+     * does not work
+     *
+     */
+
+    for (let i = 0; i < series.length; i++) {
+        chart.addSeries(series[i]);
+    }
 });
 
 modiferToUse.on('afterExecute', e => {
@@ -45,7 +64,7 @@ modiferToUse.on('afterExecute', e => {
             //console.log(row)
             return row.getColumn(1)
         }).join('\n');
-})
+});
 
 store.on('loadError', e => console.log(e));
 
