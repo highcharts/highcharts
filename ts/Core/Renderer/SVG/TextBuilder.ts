@@ -262,7 +262,7 @@ class TextBuilder {
                                 words.join(' ').replace(/- /g, '-')
                             )
                         );
-                        this.svgElement.element.insertBefore(
+                        lastTspan.parentNode.insertBefore(
                             insertedTspan,
                             lastTspan.nextSibling
                         );
@@ -316,7 +316,8 @@ class TextBuilder {
     private modifyTree(
         elements: Highcharts.NodeTreeObject[]
     ): void {
-        elements.forEach((elem, i): void => {
+
+        const modifyChild = (elem: Highcharts.NodeTreeObject, i: number): void => {
             const tagName = elem.tagName;
             const styledMode = this.renderer.styledMode;
 
@@ -355,7 +356,16 @@ class TextBuilder {
             if (tagName !== 'a' && tagName !== 'br') {
                 elem.tagName = 'tspan';
             }
-        });
+
+            // Recurse
+            if (elem.children) {
+                elem.children
+                    .filter((c): boolean => c.tagName !== '#text')
+                    .forEach(modifyChild);
+            }
+        };
+
+        elements.forEach(modifyChild);
     }
 
     private parseAttribute(

@@ -157,7 +157,7 @@ var TextBuilder = /** @class */ (function () {
                         }
                         // Start by appending the full remaining text
                         insertedTspan.appendChild(doc.createTextNode(words.join(' ').replace(/- /g, '-')));
-                        _this.svgElement.element.insertBefore(insertedTspan, lastTspan.nextSibling);
+                        lastTspan.parentNode.insertBefore(insertedTspan, lastTspan.nextSibling);
                         lastTspan = insertedTspan;
                     }
                     // For each line, truncate the remaining
@@ -193,7 +193,7 @@ var TextBuilder = /** @class */ (function () {
     // Transform HTML to SVG, validate
     TextBuilder.prototype.modifyTree = function (elements) {
         var _this = this;
-        elements.forEach(function (elem, i) {
+        var modifyChild = function (elem, i) {
             var tagName = elem.tagName;
             var styledMode = _this.renderer.styledMode;
             // Apply styling to text tags
@@ -228,7 +228,14 @@ var TextBuilder = /** @class */ (function () {
             if (tagName !== 'a' && tagName !== 'br') {
                 elem.tagName = 'tspan';
             }
-        });
+            // Recurse
+            if (elem.children) {
+                elem.children
+                    .filter(function (c) { return c.tagName !== '#text'; })
+                    .forEach(modifyChild);
+            }
+        };
+        elements.forEach(modifyChild);
     };
     TextBuilder.prototype.parseAttribute = function (s, attr) {
         var start, delimiter;
