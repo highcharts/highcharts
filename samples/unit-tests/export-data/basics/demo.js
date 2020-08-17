@@ -1084,6 +1084,32 @@ QUnit.test('Point name with category (#13293)', function (assert) {
     );
 });
 
+QUnit.test('Toggle data table (#13690)', function (assert) {
+    var chart = Highcharts.chart('container', {
+        series: [{
+            data: [2, 5, 1, 6, 7, 8, 5]
+        }]
+    });
+
+    assert.notOk(
+        chart.dataTableDiv,
+        'Table should not be visible.'
+    );
+    chart.viewData();
+
+    assert.ok(
+        chart.dataTableDiv,
+        'Table should be visible.'
+    );
+    chart.hideData();
+
+    assert.strictEqual(
+        chart.dataTableDiv.style.display,
+        'none',
+        'Table should not be visible again.'
+    );
+});
+
 QUnit.test('Point without y data, but with value (#13785)', function (assert) {
     var chart = Highcharts.chart('container', {
 
