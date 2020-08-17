@@ -217,6 +217,14 @@ var TextBuilder = /** @class */ (function () {
             if (isString(elem.style)) {
                 elem.style = elem.style.replace(/(;| |^)color([ :])/, '$1fill$2');
             }
+            // Trim whitespace off the beginning of new lines
+            if (tagName === 'br') {
+                var nextElem = elements[i + 1];
+                if (nextElem && nextElem.textContent) {
+                    nextElem.textContent =
+                        nextElem.textContent.replace(/^ +/gm, '');
+                }
+            }
             if (tagName !== 'a' && tagName !== 'br') {
                 elem.tagName = 'tspan';
             }
