@@ -548,19 +548,19 @@ var GridAxis = /** @class */ (function () {
                     // If it doesn't exist, add an upper and lower border
                     // for the vertical grid axis.
                     if (!axis.horiz && axis.chart.marginRight) {
-                        var upperBorderStartPoint = startPoint, upperBorderEndPoint = ['L', axis.chart.chartWidth - axis.chart.marginRight, startPoint[2]], upperBorderPath = [upperBorderStartPoint, upperBorderEndPoint], lowerBorderEndPoint = ['L', axis.chart.chartWidth - axis.chart.marginRight, axis.toPixels(axis.max + axis.tickmarkOffset)], lowerBorderStartPoint = ['M', endPoint[1], axis.toPixels(axis.max + axis.tickmarkOffset)], lowerBorderPath = [lowerBorderStartPoint, lowerBorderEndPoint];
-                        if (!axis.grid.upperBorder) {
+                        var upperBorderStartPoint = startPoint, upperBorderEndPoint = ['L', axis.left, startPoint[2]], upperBorderPath = [upperBorderStartPoint, upperBorderEndPoint], lowerBorderEndPoint = ['L', axis.chart.chartWidth - axis.chart.marginRight, axis.toPixels(axis.max + axis.tickmarkOffset)], lowerBorderStartPoint = ['M', endPoint[1], axis.toPixels(axis.max + axis.tickmarkOffset)], lowerBorderPath = [lowerBorderStartPoint, lowerBorderEndPoint];
+                        if (!axis.grid.upperBorder && axis.min % 1 !== 0) {
                             axis.grid.upperBorder = axis.grid.renderBorder(upperBorderPath);
                         }
-                        else {
+                        if (axis.grid.upperBorder) {
                             axis.grid.upperBorder.animate({
                                 d: upperBorderPath
                             });
                         }
-                        if (!axis.grid.lowerBorder) {
+                        if (!axis.grid.lowerBorder && axis.max % 1 !== 0) {
                             axis.grid.lowerBorder = axis.grid.renderBorder(lowerBorderPath);
                         }
-                        else {
+                        if (axis.grid.lowerBorder) {
                             axis.grid.lowerBorder.animate({
                                 d: lowerBorderPath
                             });
@@ -596,13 +596,13 @@ var GridAxis = /** @class */ (function () {
                     axis.ticks[firstTick].label.show();
                 }
                 // Hide/show last tick mark/label.
-                if (lastTick - max >= tickmarkOffset) {
+                if (lastTick - max > tickmarkOffset) {
                     axis.ticks[lastTick].label.hide();
                 }
                 else {
                     axis.ticks[lastTick].label.show();
                 }
-                if (lastTick - max <= tickmarkOffset && lastTick - max >= 0 && axis.ticks[lastTick].isLast) {
+                if (lastTick - max < tickmarkOffset && lastTick - max > 0 && axis.ticks[lastTick].isLast) {
                     axis.ticks[lastTick].mark.hide();
                 }
                 else {

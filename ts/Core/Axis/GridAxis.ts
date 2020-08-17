@@ -824,7 +824,7 @@ class GridAxis {
                     // for the vertical grid axis.
                     if (!axis.horiz && axis.chart.marginRight) {
                         const upperBorderStartPoint = startPoint,
-                            upperBorderEndPoint = ['L', axis.chart.chartWidth - axis.chart.marginRight, startPoint[2]],
+                            upperBorderEndPoint = ['L', axis.left, startPoint[2]],
                             upperBorderPath = [upperBorderStartPoint, upperBorderEndPoint],
                             lowerBorderEndPoint = ['L', axis.chart.chartWidth - axis.chart.marginRight,
                                 axis.toPixels(axis.max as any + axis.tickmarkOffset)],
@@ -832,17 +832,19 @@ class GridAxis {
                                 axis.toPixels(axis.max as any + axis.tickmarkOffset)],
                             lowerBorderPath = [lowerBorderStartPoint, lowerBorderEndPoint];
 
-                        if (!axis.grid.upperBorder) {
+                        if (!axis.grid.upperBorder && axis.min as any % 1 !== 0) {
                             axis.grid.upperBorder = axis.grid.renderBorder(upperBorderPath as any);
-                        } else {
+                        }
+                        if (axis.grid.upperBorder) {
                             axis.grid.upperBorder.animate({
                                 d: upperBorderPath as any
                             });
                         }
 
-                        if (!axis.grid.lowerBorder) {
+                        if (!axis.grid.lowerBorder && axis.max as any % 1 !== 0) {
                             axis.grid.lowerBorder = axis.grid.renderBorder(lowerBorderPath as any);
-                        } else {
+                        }
+                        if (axis.grid.lowerBorder) {
                             axis.grid.lowerBorder.animate({
                                 d: lowerBorderPath as any
                             });
@@ -887,13 +889,13 @@ class GridAxis {
                 }
 
                 // Hide/show last tick mark/label.
-                if (lastTick - max >= tickmarkOffset) {
+                if (lastTick - max > tickmarkOffset) {
                     (axis.ticks[lastTick].label as any).hide();
                 } else {
                     (axis.ticks[lastTick].label as any).show();
                 }
 
-                if (lastTick - max <= tickmarkOffset && lastTick - max >= 0 && axis.ticks[lastTick].isLast) {
+                if (lastTick - max < tickmarkOffset && lastTick - max > 0 && axis.ticks[lastTick].isLast) {
                     (axis.ticks[lastTick].mark as any).hide();
                 } else {
                     (axis.ticks[lastTick - 1].mark as any).show();

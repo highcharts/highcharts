@@ -518,13 +518,13 @@
             chart.yAxis[0].grid.columns[0].grid.axisLineExtra,
             'The extra left line for grid should exist.'
         );
-        assert.ok(
+        assert.notOk(
             chart.yAxis[0].grid.columns[0].grid.lowerBorder,
-            'The extra lower border for grid should exist.'
+            'The extra lower border for grid should not exist because the last tick mark exists.'
         );
-        assert.ok(
+        assert.notOk(
             chart.yAxis[0].grid.columns[0].grid.upperBorder,
-            'The extra upper border for grid should exist.'
+            'The extra upper border for grid should not exist because the first tick mark exists.'
         );
 
         assert.strictEqual(
@@ -539,6 +539,14 @@
         );
         chart.yAxis[0].setExtremes(0.4, 2.4);
 
+        assert.ok(
+            chart.yAxis[0].grid.columns[0].grid.lowerBorder,
+            'The extra lower border for grid should exist.'
+        );
+        assert.ok(
+            chart.yAxis[0].grid.columns[0].grid.upperBorder,
+            'The extra upper border for grid should exist.'
+        );
         assert.strictEqual(
             chart.yAxis[0].grid.columns[0].ticks[0].label.textStr,
             'Task A',
