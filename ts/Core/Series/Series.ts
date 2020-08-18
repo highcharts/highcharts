@@ -368,7 +368,6 @@ declare global {
             boostThreshold?: number;
             borderColor?: ColorType;
             borderWidth?: number;
-            centerInCategory?: boolean;
             className?: string;
             clip?: boolean;
             color?: ColorType;
