@@ -46,7 +46,7 @@ var merge = U.merge, splat = U.splat, uniqueKey = U.uniqueKey;
 * @name Highcharts.TimelineEventOptionsObject#onEnd
 * @type {Function|undefined}
 */
-import utilities from './utilities.js';
+import utilities from './Utilities.js';
 /* eslint-disable no-invalid-this, valid-jsdoc */
 /**
  * The TimelineEvent class. Represents a sound event on a timeline.

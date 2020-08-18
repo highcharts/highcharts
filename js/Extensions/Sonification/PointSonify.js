@@ -183,7 +183,7 @@ var error = U.error, merge = U.merge, pick = U.pick;
 * @name Highcharts.PointSonifyOptionsObject#onEnd
 * @type {Function|undefined}
 */
-import utilities from './utilities.js';
+import utilities from './Utilities.js';
 // Defaults for the instrument options
 // NOTE: Also change defaults in Highcharts.PointInstrumentOptionsObject if
 //       making changes here.

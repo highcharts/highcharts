@@ -228,7 +228,7 @@ const {
     objectEach
 } = U;
 
-import utilities from './utilities.js';
+import utilities from './Utilities.js';
 
 
 /**
