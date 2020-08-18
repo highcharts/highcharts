@@ -92,8 +92,7 @@ var GoogleDataStore = /** @class */ (function (_super) {
                 cellInner = cell.gs$cell || cell.content;
                 val = null;
                 if (cellInner.numericValue) {
-                    if (cellInner.$t.indexOf('/') >= 0 ||
-                        cellInner.$t.indexOf('-') >= 0) {
+                    if (cellInner.$t.indexOf('/') >= 0 || (cellInner.$t.indexOf('-') >= 0 && cellInner.$t.indexOf('.') === -1)) {
                         // This is a date - for future reference.
                         val = cellInner.$t;
                     }

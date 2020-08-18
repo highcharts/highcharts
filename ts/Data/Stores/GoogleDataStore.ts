@@ -156,8 +156,9 @@ class GoogleDataStore extends DataStore<GoogleDataStore.EventObjects> implements
                 val = null;
 
                 if (cellInner.numericValue) {
-                    if (cellInner.$t.indexOf('/') >= 0 ||
-                        cellInner.$t.indexOf('-') >= 0) {
+                    if (cellInner.$t.indexOf('/') >= 0 || (
+                        cellInner.$t.indexOf('-') >= 0 && cellInner.$t.indexOf('.') === -1
+                    )) {
                         // This is a date - for future reference.
                         val = cellInner.$t;
                     } else if (cellInner.$t.indexOf('%') > 0) {
