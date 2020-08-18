@@ -31,24 +31,6 @@ declare global {
             after?: Function;
             before?: Function;
         }
-        interface Tree {
-            getListOfParents(
-                data: Array<TreePointOptionsObject>,
-                ids: Array<string>
-            ): Dictionary<Array<TreePointOptionsObject>>;
-            getNode(
-                id: string,
-                parent: (string|null),
-                level: number,
-                data: (TreePointOptionsObject|null),
-                mapOfIdToChildren: Dictionary<Array<TreePointOptionsObject>>,
-                options: TreeGetOptionsObject
-            ): TreeNode;
-            getTree(
-                data: Array<TreePointOptionsObject>,
-                options: TreeGetOptionsObject
-            ): TreeNode;
-        }
         interface TreeNode {
             children: Array<TreeNode>;
             data: (TreePointOptionsObject|null);
@@ -222,10 +204,10 @@ const getTree = function (
     return getNode('', null, 1, null, mapOfIdToChildren, options);
 };
 
-const Tree: Highcharts.Tree = {
-    getListOfParents: getListOfParents,
-    getNode: getNode,
-    getTree: getTree
+const Tree = {
+    getListOfParents,
+    getNode,
+    getTree
 };
 
 export default Tree;
