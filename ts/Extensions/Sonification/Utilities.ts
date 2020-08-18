@@ -14,7 +14,7 @@
 
 import type Chart from '../../Core/Chart/Chart';
 import type Point from '../../Core/Series/Point';
-import musicalFrequencies from './musicalFrequencies.js';
+import musicalFrequencies from './MusicalFrequencies.js';
 import U from '../../Core/Utilities.js';
 const { clamp } = U;
 

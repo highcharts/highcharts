@@ -242,7 +242,7 @@ declare global {
  */
 
 
-import utilities from './utilities.js';
+import utilities from './Utilities.js';
 
 // Defaults for the instrument options
 // NOTE: Also change defaults in Highcharts.PointInstrumentOptionsObject if

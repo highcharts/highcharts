@@ -17,13 +17,13 @@ import Point from '../../Core/Series/Point.js';
 import U from '../../Core/Utilities.js';
 var addEvent = U.addEvent, extend = U.extend, merge = U.merge;
 import Instrument from './Instrument.js';
-import instruments from './instrumentDefinitions.js';
+import instruments from './InstrumentDefinitions.js';
 import Earcon from './Earcon.js';
-import pointSonifyFunctions from './pointSonify.js';
-import chartSonifyFunctions from './chartSonify.js';
-import utilities from './utilities.js';
+import pointSonifyFunctions from './PointSonify.js';
+import chartSonifyFunctions from './ChartSonify.js';
+import utilities from './Utilities.js';
 import TimelineClasses from './Timeline.js';
-import sonificationOptions from './options.js';
+import sonificationOptions from './Options.js';
 import '../../Core/Series/Series.js';
 // Expose on the Highcharts object
 /**

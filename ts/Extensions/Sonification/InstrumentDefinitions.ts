@@ -37,7 +37,7 @@ declare global {
 }
 
 import Instrument from './Instrument.js';
-import utilities from './utilities.js';
+import utilities from './Utilities.js';
 
 var instruments: Highcharts.InstrumentsDictionary = {} as any;
 

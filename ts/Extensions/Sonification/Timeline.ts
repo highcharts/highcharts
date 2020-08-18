@@ -156,7 +156,7 @@ declare global {
  */
 
 
-import utilities from './utilities.js';
+import utilities from './Utilities.js';
 
 /* eslint-disable no-invalid-this, valid-jsdoc */
 

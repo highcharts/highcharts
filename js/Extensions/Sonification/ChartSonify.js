@@ -97,7 +97,7 @@ import H from '../../Core/Globals.js';
 import Point from '../../Core/Series/Point.js';
 import U from '../../Core/Utilities.js';
 var find = U.find, isArray = U.isArray, merge = U.merge, pick = U.pick, splat = U.splat, objectEach = U.objectEach;
-import utilities from './utilities.js';
+import utilities from './Utilities.js';
 /**
  * Get the relative time value of a point.
  * @private

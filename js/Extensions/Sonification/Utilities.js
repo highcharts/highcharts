@@ -10,7 +10,7 @@
  *
  * */
 'use strict';
-import musicalFrequencies from './musicalFrequencies.js';
+import musicalFrequencies from './MusicalFrequencies.js';
 import U from '../../Core/Utilities.js';
 var clamp = U.clamp;
 /* eslint-disable no-invalid-this, valid-jsdoc */
