@@ -282,6 +282,22 @@ BaseSeries.seriesType('pie', 'line',
          */
         distance: 30,
         enabled: true,
+        /**
+         * A
+         * [format string](https://www.highcharts.com/docs/chart-concepts/labels-and-string-formatting)
+         * for the data label. Available variables are the same as for
+         * `formatter`.
+         *
+         * @sample {highcharts} highcharts/plotoptions/series-datalabels-format/
+         *         Add a unit
+         * @sample {highmaps} maps/plotoptions/series-datalabels-format/
+         *         Formatted value in the data label
+         *
+         * @type      {string}
+         * @default   point.name
+         * @since     3.0
+         * @apioption plotOptions.pie.dataLabels.format
+         */
         formatter: function () {
             return this.point.isNull ? void 0 : this.point.name;
         },
