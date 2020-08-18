@@ -25,7 +25,7 @@ var addEvent = U.addEvent, defined = U.defined, merge = U.merge, objectEach = U.
  *       tagName: 'path',
  *       attrs: {
  *         d: 'M 0 0 L 10 5 L 0 10 Z',
- *         strokeWidth: 0
+ *         'stroke-width': 0
  *       }
  *     }]
  *   }
@@ -60,7 +60,7 @@ var defaultMarkers = {
         children: [{
                 tagName: 'path',
                 d: 'M 0 0 L 10 5 L 0 10 Z',
-                strokeWidth: 0
+                'stroke-width': 0
             }]
     },
     /**
@@ -78,7 +78,7 @@ var defaultMarkers = {
                 tagName: 'path',
                 // reverse triangle (used as an arrow)
                 d: 'M 0 5 L 10 0 L 10 10 Z',
-                strokeWidth: 0
+                'stroke-width': 0
             }]
     }
 };

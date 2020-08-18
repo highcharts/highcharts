@@ -59,7 +59,7 @@ declare global {
  *       tagName: 'path',
  *       attrs: {
  *         d: 'M 0 0 L 10 5 L 0 10 Z',
- *         strokeWidth: 0
+ *         'stroke-width': 0
  *       }
  *     }]
  *   }
@@ -94,7 +94,7 @@ var defaultMarkers: Record<string, Highcharts.NodeTreeObject> = {
         children: [{
             tagName: 'path',
             d: 'M 0 0 L 10 5 L 0 10 Z', // triangle (used as an arrow)
-            strokeWidth: 0
+            'stroke-width': 0
         }]
     },
     /**
@@ -112,7 +112,7 @@ var defaultMarkers: Record<string, Highcharts.NodeTreeObject> = {
             tagName: 'path',
             // reverse triangle (used as an arrow)
             d: 'M 0 5 L 10 0 L 10 10 Z',
-            strokeWidth: 0
+            'stroke-width': 0
         }]
     }
 };
