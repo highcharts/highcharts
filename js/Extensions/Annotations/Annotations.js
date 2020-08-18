@@ -995,7 +995,7 @@ merge(Annotation.prototype,
              *         Basic shape annotation
              *
              * @type      {string}
-             * @default   'rect'
+             * @default   rect
              * @apioption annotations.shapeOptions.type
              */
             /**
