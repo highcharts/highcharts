@@ -783,3 +783,32 @@ QUnit.test('The tick interval after updating series visibility should stay the s
         "After adding columns series the tick interval should change to make a place for columns."
     );
 });
+
+QUnit.test('tickAmount with min', function (assert) {
+    const chart = Highcharts.chart('container', {
+        chart: {
+            type: 'scatter'
+        },
+        xAxis: {
+            tickAmount: 5,
+            min: 0
+        },
+        series: [{
+            data: [
+                [8.4, 4]
+            ]
+        }]
+    });
+
+    assert.deepEqual(
+        chart.xAxis[0].haveSeriesEqualValues(),
+        true,
+        "haveSeriesEqualValues() method should return true when series.dataMin === series.dataMax"
+    );
+
+    assert.deepEqual(
+        chart.xAxis[0].tickPositions[0],
+        0,
+        "There should not be negative ticks when the data is positive and xAxis.min is equal 0"
+    );
+});
