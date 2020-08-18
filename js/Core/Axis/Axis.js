@@ -1705,6 +1705,17 @@ var Axis = /** @class */ (function () {
         this.tickAmount = tickAmount;
     };
     /**
+     * Check if the series assigned to the axis have equal values
+     *
+     * @private
+     * @function Highcharts.Axis#haveSeriesEqualValues
+     * @return {boolean}
+     */
+    Axis.prototype.haveSeriesEqualValues = function () {
+        var series = this.series, seriesWithEqualValues = series.filter(function (series) { return series.dataMin === series.dataMax; });
+        return seriesWithEqualValues.length === series.length;
+    };
+    /**
      * When using multiple axes, adjust the number of ticks to match the highest
      * number of ticks in that group.
      *
@@ -1712,14 +1723,17 @@ var Axis = /** @class */ (function () {
      * @function Highcharts.Axis#adjustTickAmount
      */
     Axis.prototype.adjustTickAmount = function () {
-        var axis = this, axisOptions = axis.options, tickInterval = axis.tickInterval, tickPositions = axis.tickPositions, tickAmount = axis.tickAmount, finalTickAmt = axis.finalTickAmt, currentTickAmount = tickPositions && tickPositions.length, threshold = pick(axis.threshold, axis.softThreshold ? 0 : null), min, len, i;
+        var axis = this, axisOptions = axis.options, series = this.series, tickInterval = axis.tickInterval, tickPositions = axis.tickPositions, tickAmount = axis.tickAmount, finalTickAmt = axis.finalTickAmt, currentTickAmount = tickPositions && tickPositions.length, threshold = pick(axis.threshold, axis.softThreshold ? 0 : null);
+        var min, len, i;
         if (axis.hasData()) {
             if (currentTickAmount < tickAmount) {
                 min = axis.min;
                 while (tickPositions.length < tickAmount) {
+                    var isMinHigherThanTickInterval = (min || min === 0) && (min < tickInterval);
                     // Extend evenly for both sides unless we're on the
                     // threshold (#3965)
-                    if (tickPositions.length % 2 ||
+                    if ((isMinHigherThanTickInterval && axis.haveSeriesEqualValues()) ||
+                        tickPositions.length % 2 ||
                         min === threshold) {
                         // to the end
                         tickPositions.push(correctFloat(tickPositions[tickPositions.length - 1] +

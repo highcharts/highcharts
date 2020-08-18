@@ -5890,6 +5890,18 @@ class Axis implements AxisComposition, AxisLike {
 
         this.tickAmount = (tickAmount as any);
     }
+    /**
+     * Check if the series assigned to the axis have equal values
+     *
+     * @private
+     * @function Highcharts.Axis#haveSeriesEqualValues
+     * @return {boolean}
+     */
+    public haveSeriesEqualValues(): boolean {
+        const series = this.series,
+            seriesWithEqualValues = series.filter((series): boolean => series.dataMin === series.dataMax);
+        return seriesWithEqualValues.length === series.length;
+    }
 
     /**
      * When using multiple axes, adjust the number of ticks to match the highest
@@ -5899,27 +5911,29 @@ class Axis implements AxisComposition, AxisLike {
      * @function Highcharts.Axis#adjustTickAmount
      */
     public adjustTickAmount(): void {
-        var axis = this,
+        const axis = this,
             axisOptions = axis.options,
+            series = this.series,
             tickInterval = axis.tickInterval,
             tickPositions = axis.tickPositions,
             tickAmount = axis.tickAmount,
             finalTickAmt = axis.finalTickAmt,
             currentTickAmount = tickPositions && tickPositions.length,
-            threshold = pick(axis.threshold, axis.softThreshold ? 0 : null),
-            min,
-            len,
-            i;
+            threshold = pick(axis.threshold, axis.softThreshold ? 0 : null);
+
+        let min, len, i;
 
         if (axis.hasData()) {
             if (currentTickAmount < tickAmount) {
                 min = axis.min;
 
                 while (tickPositions.length < tickAmount) {
+                    const isMinHigherThanTickInterval = (min || min === 0) && (min < tickInterval);
 
                     // Extend evenly for both sides unless we're on the
                     // threshold (#3965)
                     if (
+                        (isMinHigherThanTickInterval && axis.haveSeriesEqualValues()) ||
                         tickPositions.length % 2 ||
                         min === threshold
                     ) {
