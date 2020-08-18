@@ -84,7 +84,7 @@ declare global {
  * @return {Highcharts.Dictionary<Array<*>>}
  *         Map from parent id to children index in data
  */
-var getListOfParents = function (
+const getListOfParents = function (
     data: Array<Highcharts.TreePointOptionsObject>,
     ids: Array<string>
 ): Highcharts.Dictionary<Array<Highcharts.TreePointOptionsObject>> {
@@ -121,7 +121,7 @@ var getListOfParents = function (
     });
     return listOfParents;
 };
-var getNode = function (
+const getNode = function (
     id: string,
     parent: (string|null),
     level: number,
@@ -210,7 +210,7 @@ var getNode = function (
 
     return node;
 };
-var getTree = function (
+const getTree = function (
     data: Array<Highcharts.TreePointOptionsObject>,
     options: Highcharts.TreeGetOptionsObject
 ): Highcharts.TreeNode {
@@ -222,7 +222,7 @@ var getTree = function (
     return getNode('', null, 1, null, mapOfIdToChildren, options);
 };
 
-var Tree: Highcharts.Tree = {
+const Tree: Highcharts.Tree = {
     getListOfParents: getListOfParents,
     getNode: getNode,
     getTree: getTree
