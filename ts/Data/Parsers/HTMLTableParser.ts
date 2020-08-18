@@ -37,13 +37,8 @@ class HTMLTableParser extends DataParser<DataParser.EventObject> {
      *
      * */
 
-    public static readonly defaultOptions: HTMLTableParser.Options = {
-        startColumn: 0,
-        endColumn: Number.MAX_VALUE,
-        startRow: 0,
-        endRow: Number.MAX_VALUE,
-        firstRowAsNames: true
-    };
+    public static readonly defaultOptions: HTMLTableParser.Options =
+    DataParser.defaultOptions;
 
     /* *
      *
@@ -84,7 +79,7 @@ class HTMLTableParser extends DataParser<DataParser.EventObject> {
     private columns: DataValueType[][];
     private headers: string[];
     public options: HTMLTableParser.Options;
-    public tableElement: (HTMLElement|null);
+    public tableElement: (HTMLElement | null);
 
     /* *
      *
@@ -218,11 +213,6 @@ namespace HTMLTableParser {
     }
 
     export interface Options extends DataParser.Options {
-        firstRowAsNames: boolean;
-        startRow: number;
-        endRow: number;
-        startColumn: number;
-        endColumn: number;
     }
 
     export interface ParseOptions {

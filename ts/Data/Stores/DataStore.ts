@@ -194,7 +194,7 @@ implements DataEventEmitter<TEventObject>, DataJSON.Class {
     }
 
     /**
-     * Emits an event on the modifier to all registered callbacks of this event.
+     * Emits an event on the store to all registered callbacks of this event.
      *
      * @param {DataStore.EventObject} [e]
      * Event object containing additional event information.
@@ -204,7 +204,7 @@ implements DataEventEmitter<TEventObject>, DataJSON.Class {
     }
 
     /**
-     * Registers a callback for a specific modifier event.
+     * Registers a callback for a specific store event.
      *
      * @param {string} type
      * Event type as a string.

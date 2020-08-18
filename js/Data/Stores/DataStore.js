@@ -131,7 +131,7 @@ var DataStore = /** @class */ (function () {
         fireEvent(this, 'afterLoad', { table: this.table });
     };
     /**
-     * Emits an event on the modifier to all registered callbacks of this event.
+     * Emits an event on the store to all registered callbacks of this event.
      *
      * @param {DataStore.EventObject} [e]
      * Event object containing additional event information.
@@ -140,7 +140,7 @@ var DataStore = /** @class */ (function () {
         fireEvent(this, e.type, e);
     };
     /**
-     * Registers a callback for a specific modifier event.
+     * Registers a callback for a specific store event.
      *
      * @param {string} type
      * Event type as a string.

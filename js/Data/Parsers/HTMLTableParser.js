@@ -129,13 +129,7 @@ var HTMLTableParser = /** @class */ (function (_super) {
      *  Static Properties
      *
      * */
-    HTMLTableParser.defaultOptions = {
-        startColumn: 0,
-        endColumn: Number.MAX_VALUE,
-        startRow: 0,
-        endRow: Number.MAX_VALUE,
-        firstRowAsNames: true
-    };
+    HTMLTableParser.defaultOptions = DataParser.defaultOptions;
     return HTMLTableParser;
 }(DataParser));
 /* *

@@ -36,13 +36,9 @@ class CSVDataParser extends DataParser<DataParser.EventObject> {
      * Default options
      */
     protected static readonly defaultOptions: CSVDataParser.Options = {
-        startColumn: 0,
-        endColumn: Number.MAX_VALUE,
-        startRow: 0,
-        endRow: Number.MAX_VALUE,
+        ...DataParser.defaultOptions,
         decimalPoint: '.',
-        lineDelimiter: '\n',
-        firstRowAsNames: true
+        lineDelimiter: '\n'
     };
 
     /* *

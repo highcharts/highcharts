@@ -22,6 +22,17 @@ var __extends = (this && this.__extends) || (function () {
         d.prototype = b === null ? Object.create(b) : (__.prototype = b.prototype, new __());
     };
 })();
+var __assign = (this && this.__assign) || function () {
+    __assign = Object.assign || function(t) {
+        for (var s, i = 1, n = arguments.length; i < n; i++) {
+            s = arguments[i];
+            for (var p in s) if (Object.prototype.hasOwnProperty.call(s, p))
+                t[p] = s[p];
+        }
+        return t;
+    };
+    return __assign.apply(this, arguments);
+};
 import DataJSON from '../DataJSON.js';
 import DataParser from './DataParser.js';
 import DataTable from '../DataTable.js';
@@ -279,15 +290,7 @@ var CSVDataParser = /** @class */ (function (_super) {
     /**
      * Default options
      */
-    CSVDataParser.defaultOptions = {
-        startColumn: 0,
-        endColumn: Number.MAX_VALUE,
-        startRow: 0,
-        endRow: Number.MAX_VALUE,
-        decimalPoint: '.',
-        lineDelimiter: '\n',
-        firstRowAsNames: true
-    };
+    CSVDataParser.defaultOptions = __assign(__assign({}, DataParser.defaultOptions), { decimalPoint: '.', lineDelimiter: '\n' });
     return CSVDataParser;
 }(DataParser));
 /* *
