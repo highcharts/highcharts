@@ -7,9 +7,26 @@ import RangeDataModifier from '../../../../code/es-modules/Data/Modifiers/RangeD
 
 import DataSeriesConverter from '../../../../code/es-modules/Data/DataSeriesConverter.js';
 
-let dataSeriesConverter;
+let dataSeriesConverter, modifiedDataSeriesConverter;
 
-const chart = Highcharts.chart('container', { });
+const chart1 = Highcharts.chart('container1', {
+    title: {
+        text: 'All states'
+    },
+    subtitle: {
+        text: 'Before modification'
+    }
+});
+
+const chart2 = Highcharts.chart('container2', {
+    title: {
+        text: 'States where Trump had a negative margin'
+    },
+    subtitle: {
+        text: 'After modification'
+    }
+});
+
 const store = new GoogleDataStore(undefined, {
     googleSpreadsheetKey: '14632VxDAT-TAL06ICnoLsV_JyvjEBXdVY-J34br5iXY',
     // startColumn: 1,
@@ -20,7 +37,7 @@ const store = new GoogleDataStore(undefined, {
 
 const modifierChain = new ChainDataModifier();
 const groupModifier = new GroupDataModifier({ groupColumn: 'Margin  (Trump)' });
-const rangeModifier = new RangeDataModifier({ ranges: [{ column: 1, maxValue: 0, minValue: -100 }] })
+const rangeModifier = new RangeDataModifier({ ranges: [{ column: 3, maxValue: 0, minValue: -100 }] });
 
 modifierChain.add(groupModifier);
 modifierChain.add(rangeModifier);
@@ -40,7 +57,7 @@ store.on('afterLoad', e => {
     // convert data to series
     dataSeriesConverter = new DataSeriesConverter(e.table, { type: 'line' });
 
-    chart.update({
+    chart1.update({
         series: dataSeriesConverter.getAllSeriesData()
     }, true, true, true);
 });
@@ -48,10 +65,14 @@ store.on('afterLoad', e => {
 modiferToUse.on('afterExecute', e => {
     // Write the modified margins
     document.getElementById('datastore-after')
-        .innerHTML = e.table.getAllRows().map(row => {
-            //console.log(row)
-            return row.getColumn(1)
-        }).join('\n');
+        .innerHTML = e.table.getAllRows().map(row => row.getColumn(3)).join('\n');
+
+    // convert modified data to series
+    modifiedDataSeriesConverter = new DataSeriesConverter(e.table, { type: 'line' });
+
+    chart2.update({
+        series: modifiedDataSeriesConverter.getAllSeriesData()
+    }, true, true, true);
 });
 
 store.on('loadError', e => console.log(e));

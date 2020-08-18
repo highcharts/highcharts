@@ -115,7 +115,7 @@ class DataSeriesConverter {
         const table = this.table,
             seriesOptions = [],
             row = table.getRow(0);
-        
+
         let seriesData;
 
         if (row) {
