@@ -274,7 +274,7 @@ seriesType<Highcharts.MapSeries>(
          *         Borders demo
          *
          * @type      {Highcharts.ColorString|Highcharts.GradientColorObject|Highcharts.PatternObject}
-         * @default   '#cccccc'
+         * @default   #cccccc
          * @product   highmaps
          * @apioption plotOptions.series.borderColor
          *
@@ -301,6 +301,7 @@ seriesType<Highcharts.MapSeries>(
         borderWidth: 1,
 
         /**
+         * @type      {string}
          * @default   value
          * @apioption plotOptions.map.colorKey
          */
@@ -332,8 +333,6 @@ seriesType<Highcharts.MapSeries>(
          * @default   hc-key
          * @product   highmaps
          * @apioption plotOptions.series.joinBy
-         *
-         * @private
          */
         joinBy: 'hc-key',
 
