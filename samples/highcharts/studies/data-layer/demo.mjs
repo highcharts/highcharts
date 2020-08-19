@@ -6,10 +6,11 @@ import ChainDataModifier from '../../../../code/es-modules/Data/Modifiers/ChainD
 import RangeDataModifier from '../../../../code/es-modules/Data/Modifiers/RangeDataModifier.js';
 
 import DataSeriesConverter from '../../../../code/es-modules/Data/DataSeriesConverter.js';
+import DataTable from '../../../../code/es-modules/Data/DataTable.js';
 
 let dataSeriesConverter, modifiedDataSeriesConverter;
 
-const chart1 = Highcharts.chart('container1', {
+const chart1 = Highcharts.chart('chart1', {
     title: {
         text: 'All states'
     },
@@ -18,7 +19,7 @@ const chart1 = Highcharts.chart('container1', {
     }
 });
 
-const chart2 = Highcharts.chart('container2', {
+const chart2 = Highcharts.chart('chart2', {
     title: {
         text: 'States where Trump had a negative margin'
     },
@@ -26,6 +27,30 @@ const chart2 = Highcharts.chart('container2', {
         text: 'After modification'
     }
 });
+
+const chart3 = Highcharts.chart('chart3', {
+    title: {
+        text: 'All states'
+    },
+    subtitle: {
+        text: 'Create datatable from series'
+    },
+    series: [{
+        data: [1, 2, 3]
+    }, {
+        data: [
+            [0, 4],
+            [1, 7],
+            [2, 5]
+        ]
+    }]
+}, function (chart) {
+    const dataSeriesConverter = new DataSeriesConverter();
+
+    dataSeriesConverter.setDataTable(chart.series);
+});
+
+
 
 const store = new GoogleDataStore(undefined, {
     googleSpreadsheetKey: '14632VxDAT-TAL06ICnoLsV_JyvjEBXdVY-J34br5iXY',
@@ -52,10 +77,10 @@ store.on('afterLoad', e => {
         .innerHTML = e.table.getAllRows().map(row => row.getColumn('Margin  (Trump)')).join('\n');
 
     // Do the modification
-    console.log('modi', modiferToUse.execute(e.table));
+    modiferToUse.execute(e.table);
 
     // convert data to series
-    dataSeriesConverter = new DataSeriesConverter(e.table, { type: 'line' });
+    dataSeriesConverter = new DataSeriesConverter(e.table);
 
     chart1.update({
         series: dataSeriesConverter.getAllSeriesData()
@@ -68,7 +93,7 @@ modiferToUse.on('afterExecute', e => {
         .innerHTML = e.table.getAllRows().map(row => row.getColumn(3)).join('\n');
 
     // convert modified data to series
-    modifiedDataSeriesConverter = new DataSeriesConverter(e.table, { type: 'line' });
+    modifiedDataSeriesConverter = new DataSeriesConverter(e.table);
 
     chart2.update({
         series: modifiedDataSeriesConverter.getAllSeriesData()
