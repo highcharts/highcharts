@@ -692,6 +692,7 @@ seriesType<Highcharts.OrganizationSeries>(
  * @extends   series,plotOptions.organization
  * @exclude   dataSorting, boostThreshold, boostBlending
  * @product   highcharts
+ * @requires  modules/sankey
  * @requires  modules/organization
  * @apioption series.organization
  */
