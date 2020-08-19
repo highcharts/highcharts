@@ -11,6 +11,7 @@
 
 'use strict';
 
+import H from '../Globals.js';
 import type AxisTypes from './Types';
 import type Chart from '../Chart/Chart';
 import Axis from './Axis.js';
@@ -437,10 +438,10 @@ namespace TreeGridAxis {
                             (s.options.data || []).forEach(function (data): void {
                                 // For using keys - rebuild the data structure
                                 if (s.options.keys && s.options.keys.length) {
-                                    const pt = { series: s, initialData: data };
 
-                                    (s as any).pointClass.prototype.applyOptions.apply(pt, [data]);
-                                    (data as any) = pt;
+                                    data = s.pointClass.prototype.optionsToObject.call({ series: s }, data);
+                                    H.seriesTypes.gantt.prototype.setGanttPointAliases(data);
+
                                 }
                                 if (isObject(data, true)) {
                                     // Set series index on data. Removed again
@@ -493,13 +494,13 @@ namespace TreeGridAxis {
                             if (series.options.keys && series.options.keys.length) {
                                 // Get the axisData from the data array used to
                                 // build the treeGrid where has been modified
-                                data.forEach(function (point: Highcharts.PointOptionsObject): void {
-                                    if ((point as any).initialData === d) {
+                                data.forEach(function (point: Highcharts.GanttPointOptions): void {
+                                    if ((d as any).includes(point.x) && (d as any).includes(point.x2)) {
                                         d = point;
                                     }
                                 });
                             }
-                            return d;
+                            return isObject(d, true) ? merge(d) : d;
                         });
 
                         // Avoid destroying points when series is not visible

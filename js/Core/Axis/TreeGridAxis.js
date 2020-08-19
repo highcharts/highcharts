@@ -9,6 +9,7 @@
  *
  * */
 'use strict';
+import H from '../Globals.js';
 import Axis from './Axis.js';
 import Tick from './Tick.js';
 import Tree from '../../Gantt/Tree.js';
@@ -238,9 +239,8 @@ var TreeGridAxis;
                         (s.options.data || []).forEach(function (data) {
                             // For using keys - rebuild the data structure
                             if (s.options.keys && s.options.keys.length) {
-                                var pt = { series: s, initialData: data };
-                                s.pointClass.prototype.applyOptions.apply(pt, [data]);
-                                data = pt;
+                                data = s.pointClass.prototype.optionsToObject.call({ series: s }, data);
+                                H.seriesTypes.gantt.prototype.setGanttPointAliases(data);
                             }
                             if (isObject(data, true)) {
                                 // Set series index on data. Removed again
@@ -282,12 +282,12 @@ var TreeGridAxis;
                             // Get the axisData from the data array used to
                             // build the treeGrid where has been modified
                             data.forEach(function (point) {
-                                if (point.initialData === d) {
+                                if (d.includes(point.x) && d.includes(point.x2)) {
                                     d = point;
                                 }
                             });
                         }
-                        return d;
+                        return isObject(d, true) ? merge(d) : d;
                     });
                     // Avoid destroying points when series is not visible
                     if (series.visible) {
