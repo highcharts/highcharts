@@ -5928,12 +5928,12 @@ class Axis implements AxisComposition, AxisLike {
                 min = axis.min;
 
                 while (tickPositions.length < tickAmount) {
-                    const isMinHigherThanTickInterval = (min || min === 0) && (min < tickInterval);
+                    const isMinLowerThanTickInterval = (min || min === 0) && (min < tickInterval);
 
                     // Extend evenly for both sides unless we're on the
                     // threshold (#3965)
                     if (
-                        (isMinHigherThanTickInterval && axis.haveSeriesEqualValues()) ||
+                        (isMinLowerThanTickInterval && axis.haveSeriesEqualValues()) ||
                         tickPositions.length % 2 ||
                         min === threshold
                     ) {

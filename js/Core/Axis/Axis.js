@@ -1729,10 +1729,10 @@ var Axis = /** @class */ (function () {
             if (currentTickAmount < tickAmount) {
                 min = axis.min;
                 while (tickPositions.length < tickAmount) {
-                    var isMinHigherThanTickInterval = (min || min === 0) && (min < tickInterval);
+                    var isMinLowerThanTickInterval = (min || min === 0) && (min < tickInterval);
                     // Extend evenly for both sides unless we're on the
                     // threshold (#3965)
-                    if ((isMinHigherThanTickInterval && axis.haveSeriesEqualValues()) ||
+                    if ((isMinLowerThanTickInterval && axis.haveSeriesEqualValues()) ||
                         tickPositions.length % 2 ||
                         min === threshold) {
                         // to the end
