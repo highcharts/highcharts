@@ -1661,6 +1661,9 @@ extend(chartProto, /** @lends Highcharts.Chart# */ {
 
         if (pick(redraw, true)) {
             annotation.redraw();
+            annotation.graphic.attr({
+                opacity: 1
+            });
         }
 
         return annotation;
