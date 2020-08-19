@@ -1057,7 +1057,7 @@ seriesType<Highcharts.PieSeries>(
                 options = this.options;
 
             // Draw auxiliary graph if there're no visible points.
-            if (this.total === 0) {
+            if (this.total === 0 && this.center) {
                 centerX = this.center[0];
                 centerY = this.center[1];
 
@@ -1074,8 +1074,8 @@ seriesType<Highcharts.PieSeries>(
                         centerY,
                         this.center[2] / 2,
                         0, {
-                            start: start,
-                            end: end,
+                            start,
+                            end,
                             innerR: this.center[3] / 2
                         }
                     )
