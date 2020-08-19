@@ -1146,6 +1146,9 @@ extend(chartProto, /** @lends Highcharts.Chart# */ {
         this.options.annotations.push(annotation.options);
         if (pick(redraw, true)) {
             annotation.redraw();
+            annotation.graphic.attr({
+                opacity: 1
+            });
         }
         return annotation;
     },
