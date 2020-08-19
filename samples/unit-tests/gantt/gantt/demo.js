@@ -593,4 +593,29 @@
             'Tick marker with index 3 should be visible again.'
         );
     });
+
+    QUnit.test('When navigator enabled there should be no errors in the console caused by unsorted data, (#13376).', function (assert) {
+        const chart = Highcharts.ganttChart('container', {
+            navigator: {
+                enabled: true
+            },
+            series: [{
+                data: [{
+                    name: 'Task 1',
+                    start: 2,
+                    end: 3
+                }, {
+                    name: 'Task 2',
+                    start: 3,
+                    end: 4
+                }, {
+                    name: 'Task 3',
+                    start: 1,
+                    end: 2
+                }]
+            }]
+        });
+
+        assert.notOk(chart.series[1].requireSorting, "No error 15 in the console.");
+    });
 }());

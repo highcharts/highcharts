@@ -318,7 +318,7 @@ var Legend = /** @class */ (function () {
                 fireEvent(_this, 'afterPositionItem', { item: item });
             };
             if (defined(legendGroup.translateY)) {
-                legendGroup.animate(attribs, { complete: complete });
+                legendGroup.animate(attribs, void 0, complete);
             }
             else {
                 legendGroup.attr(attribs);
@@ -686,15 +686,17 @@ var Legend = /** @class */ (function () {
         var chart = this.chart, boxes = [], alignLeft = this.options.align === 'left';
         this.allItems.forEach(function (item) {
             var lastPoint, height, useFirstPoint = alignLeft, target, top;
-            if (item.yAxis && item.points) {
+            if (item.yAxis) {
                 if (item.xAxis.options.reversed) {
                     useFirstPoint = !useFirstPoint;
                 }
-                lastPoint = find(useFirstPoint ?
-                    item.points :
-                    item.points.slice(0).reverse(), function (item) {
-                    return isNumber(item.plotY);
-                });
+                if (item.points) {
+                    lastPoint = find(useFirstPoint ?
+                        item.points :
+                        item.points.slice(0).reverse(), function (item) {
+                        return isNumber(item.plotY);
+                    });
+                }
                 height = this.itemMarginTop +
                     item.legendItem.getBBox().height +
                     this.itemMarginBottom;

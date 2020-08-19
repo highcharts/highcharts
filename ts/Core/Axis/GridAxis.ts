@@ -117,7 +117,8 @@ var applyGridOptions = function applyGridOptions(axis: Highcharts.Axis): void {
  * different units may be used, for example the `day` unit can be used
  * on midnight and `hour` unit be used for intermediate values on the
  * same axis.
- * For Gantt possible to declare as a list to provide different
+ * For grid axes (like in Gantt charts),
+ * it is possible to declare as a list to provide different
  * formats depending on available space.
  * For an overview of the replacement codes, see
  * [dateFormat](/class-reference/Highcharts#dateFormat).
@@ -239,7 +240,7 @@ Axis.prototype.getMaxLabelDimensions = function (
         if (isObject(tick)) {
             label = isObject(tick.label) ? tick.label : ({} as any);
 
-            // Find width and height of tick
+            // Find width and height of label
             labelHeight = label.getBBox ? label.getBBox().height : 0;
             if (label.textStr && !isNumber(label.textPxLength)) {
                 label.textPxLength = label.getBBox().width;
@@ -250,9 +251,9 @@ Axis.prototype.getMaxLabelDimensions = function (
                 0;
 
             if (label.textStr) {
-                // Set the tickWidth same as the label
-                // width after ellipsis applied #10281
-                labelWidth = label.getBBox().width;
+                // Set the tickWidth same as the label width after ellipsis
+                // applied #10281
+                labelWidth = Math.round(label.getBBox().width);
             }
             // Update the result if width and/or height are larger
             dimensions.height = Math.max(labelHeight, dimensions.height);

@@ -71,6 +71,16 @@ import Highcharts from './Globals.js';
  * @return {number}
  * Timezone offset in minutes.
  */
+/**
+ * Allows to manually load the `moment.js` library from Highcharts options
+ * instead of the `window`.
+ * In case of loading the library from a `script` tag,
+ * this option is not needed, it will be loaded from there by default.
+ *
+ * @type {function}
+ * @since next
+ * @apioption time.moment
+ */
 import U from './Utilities.js';
 var defined = U.defined, error = U.error, extend = U.extend, isObject = U.isObject, merge = U.merge, objectEach = U.objectEach, pad = U.pad, pick = U.pick, splat = U.splat, timeUnits = U.timeUnits;
 var H = Highcharts, win = H.win;
@@ -326,7 +336,7 @@ var Time = /** @class */ (function () {
      *         A getTimezoneOffset function
      */
     Time.prototype.timezoneOffsetFunction = function () {
-        var time = this, options = this.options, moment = win.moment;
+        var time = this, options = this.options, moment = options.moment || win.moment;
         if (!this.useUTC) {
             return function (timestamp) {
                 return new Date(timestamp.toString()).getTimezoneOffset() * 60000;

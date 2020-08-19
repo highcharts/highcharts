@@ -1240,8 +1240,10 @@ chartProto.callbacks.push(function (chart) {
                             // Annotation not connected to any xAxis -
                             // add new row.
                             if (xAxisIndex === -1) {
-                                var newRow = new Array(event.dataRows[0].length);
-                                newRow.fill('');
+                                var n = event.dataRows[0].length, newRow = new Array(n);
+                                for (var i = 0; i < n; ++i) {
+                                    newRow[i] = '';
+                                }
                                 newRow.push(annotationText_1);
                                 newRow.xValues = [];
                                 newRow.xValues[xAxisIndex] = annotationX;
@@ -1271,8 +1273,10 @@ chartProto.callbacks.push(function (chart) {
                             // Annotation not placed on any exported data point,
                             // but connected to the xAxis - add new row
                             if (!wasAdded) {
-                                var newRow = new Array(event.dataRows[0].length);
-                                newRow.fill('');
+                                var n = event.dataRows[0].length, newRow = new Array(n);
+                                for (var i = 0; i < n; ++i) {
+                                    newRow[i] = '';
+                                }
                                 newRow[0] = annotationX;
                                 newRow.push(annotationText_1);
                                 newRow.xValues = [];

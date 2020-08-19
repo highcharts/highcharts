@@ -1747,7 +1747,7 @@ QUnit.test('yAxis label adjustment #10281', assert => {
 
     assert.strictEqual(
         yAxis.maxLabelDimensions.width,
-        label.getBBox().width,
+        Math.round(label.getBBox().width),
         'The yAxis max label dimensions should be same as the width of the longest label (#10281)'
     );
 });

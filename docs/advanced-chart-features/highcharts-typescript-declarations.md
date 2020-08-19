@@ -9,6 +9,43 @@ fail-proofed development cycle for your Highcharts-based solutions.
 
 
 
+Summary of Changes from v7.2.1 to v8.0.0
+----------------------------------------
+
+With Highcharts v8 the file size of TypeScript declarations has been reduced by
+40 percent. This has been achieved by combining individual options to more
+generic shared options. Following are the most significant changes:
+
+|  Name Scheme in v7.2.1                 |  Name Scheme in v8.0.0                      |
+| -------------------------------------: | :------------------------------------------ |
+| `AccessibilityAnnounceNewDataOptions`  | `AccessibilityAnnounceNewDataOptionsObject` |
+| `DataLabelsFilterOperatorValue`        | `OptionsOperatorValue`                      |
+| `ExportingButtonsContextButtonOptions` | `ExportingButtonsOptionsObject`             |
+| `NavigatorSeriesDataGroupingOptions`   | `DataGroupingOptionsObject`                 |
+| `PlotLineAccessibilityOptions`¹        | `SeriesAccessibilityOptionsObject`          |
+| `PlotLineAnimationOptions`¹            | `AnimationOptionsObject`                    |
+| `PlotLineConnectorsOptions`¹           | `SeriesConnectorsOptionsObject`             |
+| `PlotLineDataGroupingOptions`¹         | `DataGroupingOptionsObject`                 |
+| `PlotLineEventsOptions`¹               | `SeriesEventsOptionsObject`                 |
+| `PlotLineLabelOptions`¹                | `SeriesLabelOptionsObject`                  |
+| `PlotLineMarkerOptions`¹               | `PointMarkerOptionsObject`                  |
+| `PlotLinePointOptions`¹                | `PlotSeriesPointOptions`                    |
+| `PlotLineStatesOptions`¹               | `SeriesStatesOptionsObject`                 |
+| `PlotLineTooltipOptions`¹              | `SeriesTooltipOptionsObject`                |
+| `PlotLineZonesOptions`¹                | `SeriesZonesOptionsObject`                  |
+| `SeriesLineDataOptions`²               | `PointOptionsObject`                        |
+| `XAxisAccessibilityOptions`³           | `AxisAccessibilityOptionsObject`            |
+| `XAxisCrosshairOptions`³               | `AxisCrosshairOptions`                      |
+| `XAxisCurrentDateIndicatorOptions`³    | `AxisCurrentDateIndicatorOptions`           |
+| `XAxisDateTimeLabelFormatsOptions`³    | `AxisDateTimeLabelFormatsOptions`           |
+| `XAxisMarkerOptions`³                  | `PointMarkerOptionsObject`                  |
+
+1) *Example, other series options like `PlotColumn…` are similar affected.*
+2) *Example, other series options like `SeriesColumn…` are similar affected.*
+3) *Example, other axis options like `ColorAxis…` are similar affected.*
+
+
+
 Installation
 ------------
 

@@ -92,6 +92,7 @@ declare global {
             public nextScheduledPlay?: number;
             public options: TimelinePathOptionsObject;
             public signalHandler: SignalHandler;
+            public targetDuration?: number;
             public timeline: (Timeline|undefined);
             public addTimelineEvents(newEvents: Array<TimelineEvent>): void;
             public getCursor(): TimelineEvent;
@@ -114,6 +115,7 @@ declare global {
             onEventStart?: Function;
             onStart?: Function;
             silentWait?: number;
+            targetDuration?: number;
         }
     }
 }
@@ -324,6 +326,10 @@ TimelinePath.prototype.init = function (
             new (TimelineEvent as any)({ time: options.silentWait })
         ] :
         this.options.events;
+
+    // Reference optionally provided by the user that indicates the intended
+    // duration of the path. Unused by TimelinePath itself.
+    this.targetDuration = options.targetDuration || options.silentWait;
 
     // We need to sort our events by time
     this.sortEvents();
