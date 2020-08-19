@@ -13,6 +13,11 @@
 import type SVGPath from '../Core/Renderer/SVG/SVGPath';
 import H from '../Core/Globals.js';
 import LegendSymbolMixin from '../Mixins/LegendSymbol.js';
+import mapModule from '../Maps/Map.js';
+const {
+    maps,
+    splitPath
+} = mapModule;
 import Point from '../Core/Series/Point.js';
 import SVGRenderer from '../Core/Renderer/SVG/SVGRenderer.js';
 import U from '../Core/Utilities.js';
@@ -496,7 +501,7 @@ seriesType<Highcharts.MapSeries>(
 
                 if (point.path) {
                     if (typeof point.path === 'string') {
-                        point.path = H.splitPath(point.path);
+                        point.path = splitPath(point.path);
 
                     // Legacy one-dimensional array
                     } else if (point.path[0] as any === 'M') {
@@ -707,7 +712,7 @@ seriesType<Highcharts.MapSeries>(
             // Collect mapData from chart options if not defined on series
             if (!mapData && globalMapData) {
                 mapData = typeof globalMapData === 'string' ?
-                    H.maps[globalMapData] :
+                    maps[globalMapData] :
                     globalMapData;
             }
 

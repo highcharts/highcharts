@@ -10,6 +10,8 @@
 'use strict';
 import H from '../Core/Globals.js';
 import LegendSymbolMixin from '../Mixins/LegendSymbol.js';
+import mapModule from '../Maps/Map.js';
+var maps = mapModule.maps, splitPath = mapModule.splitPath;
 import Point from '../Core/Series/Point.js';
 import SVGRenderer from '../Core/Renderer/SVG/SVGRenderer.js';
 import U from '../Core/Utilities.js';
@@ -297,7 +299,7 @@ seriesType('map', 'scatter',
         (paths || []).forEach(function (point) {
             if (point.path) {
                 if (typeof point.path === 'string') {
-                    point.path = H.splitPath(point.path);
+                    point.path = splitPath(point.path);
                     // Legacy one-dimensional array
                 }
                 else if (point.path[0] === 'M') {
@@ -430,7 +432,7 @@ seriesType('map', 'scatter',
         // Collect mapData from chart options if not defined on series
         if (!mapData && globalMapData) {
             mapData = typeof globalMapData === 'string' ?
-                H.maps[globalMapData] :
+                maps[globalMapData] :
                 globalMapData;
         }
         // Pick up numeric values, add index
