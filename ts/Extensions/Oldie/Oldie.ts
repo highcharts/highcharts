@@ -12,11 +12,12 @@
 
 'use strict';
 
-import type SVGPath from '../Core/Renderer/SVG/SVGPath';
-import Chart from '../Core/Chart/Chart.js';
-import Color from '../Core/Color.js';
+import type SVGPath from '../../Core/Renderer/SVG/SVGPath';
+import Axis from '../../Core/Axis/Axis.js';
+import Chart from '../../Core/Chart/Chart.js';
+import Color from '../../Core/Color.js';
 const color = Color.parse;
-import H from '../Core/Globals.js';
+import H from '../../Core/Globals.js';
 const {
     deg2rad,
     doc,
@@ -24,10 +25,10 @@ const {
     svg,
     win
 } = H;
-import Pointer from '../Core/Pointer.js';
-import SVGElement from '../Core/Renderer/SVG/SVGElement.js';
-import SVGRenderer from '../Core/Renderer/SVG/SVGRenderer.js';
-import U from '../Core/Utilities.js';
+import Pointer from '../../Core/Pointer.js';
+import SVGElement from '../../Core/Renderer/SVG/SVGElement.js';
+import SVGRenderer from '../../Core/Renderer/SVG/SVGRenderer.js';
+import U from '../../Core/Utilities.js';
 const {
     addEvent,
     createElement,
@@ -45,8 +46,11 @@ const {
     offset,
     pick,
     pInt,
+    setOptions,
     uniqueKey
 } = U;
+import VMLAxis3D from './VMLAxis3D.js';
+import VMLRenderer3D from './VMLRenderer3D.js';
 
 /**
  * Internal types
@@ -2122,3 +2126,9 @@ SVGRenderer.prototype.measureSpanWidth = function (
     discardElement(measuringSpan); // #2463
     return offsetWidth;
 };
+
+// 3D additions
+if (typeof SVGRenderer.prototype.arc3d === 'function') {
+    VMLRenderer3D.compose(VMLRenderer);
+    VMLAxis3D.compose(Axis);
+}
