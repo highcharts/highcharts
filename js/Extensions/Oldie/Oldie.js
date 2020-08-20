@@ -23,7 +23,7 @@ import U from '../../Core/Utilities.js';
 var addEvent = U.addEvent, createElement = U.createElement, css = U.css, defined = U.defined, discardElement = U.discardElement, erase = U.erase, extend = U.extend, extendClass = U.extendClass, getOptions = U.getOptions, isArray = U.isArray, isNumber = U.isNumber, isObject = U.isObject, merge = U.merge, offset = U.offset, pick = U.pick, pInt = U.pInt, setOptions = U.setOptions, uniqueKey = U.uniqueKey;
 import VMLAxis3D from './VMLAxis3D.js';
 import VMLRenderer3D from './VMLRenderer3D.js';
-var VMLRenderer, VMLRendererExtension, VMLElement;
+var VMLRenderer, VMLElement;
 /**
  * Path to the pattern image required by VML browsers in order to
  * draw radial gradients.
@@ -707,7 +707,7 @@ if (!svg) {
      *
      * @augments Highcharts.SVGRenderer
      */
-    VMLRendererExtension = {
+    var VMLRendererExtension = {
         Element: VMLElement,
         isIE8: win.navigator.userAgent.indexOf('MSIE 8.0') > -1,
         /**
@@ -1218,9 +1218,14 @@ if (!svg) {
     H.VMLRenderer = VMLRenderer = function () {
         this.init.apply(this, arguments);
     };
-    VMLRenderer.prototype = merge(SVGRenderer.prototype, VMLRendererExtension);
+    VMLRenderer.prototype = merge(VMLRenderer.prototype, SVGRenderer.prototype, VMLRendererExtension);
     // general renderer
     H.Renderer = VMLRenderer;
+    // 3D additions
+    if (typeof SVGRenderer.prototype.arc3d === 'function') {
+        VMLRenderer3D.compose(VMLRenderer);
+        VMLAxis3D.compose(Axis);
+    }
 }
 SVGRenderer.prototype.getSpanWidth = function (wrapper, tspan) {
     var renderer = this, bBox = wrapper.getBBox(true), actualWidth = bBox.width;
@@ -1240,8 +1245,3 @@ SVGRenderer.prototype.measureSpanWidth = function (text, styles) {
     discardElement(measuringSpan); // #2463
     return offsetWidth;
 };
-// 3D additions
-if (typeof SVGRenderer.prototype.arc3d === 'function') {
-    VMLRenderer3D.compose(VMLRenderer);
-    VMLAxis3D.compose(Axis);
-}
