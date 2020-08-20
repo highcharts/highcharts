@@ -5744,7 +5744,7 @@ var Axis = /** @class */ (function () {
              * @sample {highcharts} highcharts/plotoptions/animation-defer/
              *          Animation defer settings
              * @type {boolean|Partial<Highcharts.AnimationOptionsObject>}
-             * @since next
+             * @since 8.2.0
              * @apioption yAxis.stackLabels.animation
              */
             animation: {},
@@ -5754,7 +5754,7 @@ var Axis = /** @class */ (function () {
              * As `undefined` inherits defer time from the [series.animation.defer](#plotOptions.series.animation.defer).
              *
              * @type      {number}
-             * @since     next
+             * @since 8.2.0
              * @apioption yAxis.stackLabels.animation.defer
              */
             /**
