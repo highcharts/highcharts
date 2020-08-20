@@ -240,7 +240,7 @@ declare global {
         }
         /** @requires highcharts/modules/oldies */
         class VMLRenderer {
-            public Element: VMLElement;
+            public Element: typeof VMLElement;
             public alignedObjects: SVGRenderer['alignedObjects'];
             public box: HTMLDOMElement;
             public boxWrapper: VMLElement;
@@ -349,8 +349,7 @@ declare global {
     }
 }
 
-var VMLRenderer,
-    VMLRendererExtension,
+let VMLRenderer: typeof Highcharts.VMLRenderer,
     VMLElement: typeof Highcharts.VMLElement;
 
 /**
@@ -1333,7 +1332,7 @@ if (!svg) {
      *
      * @augments Highcharts.SVGRenderer
      */
-    VMLRendererExtension = { // inherit SVGRenderer
+    const VMLRendererExtension = { // inherit SVGRenderer
 
         Element: VMLElement,
         isIE8: win.navigator.userAgent.indexOf('MSIE 8.0') > -1,
@@ -2084,10 +2083,16 @@ if (!svg) {
     ): void {
         this.init.apply(this, arguments as any);
     } as any;
-    VMLRenderer.prototype = merge(SVGRenderer.prototype, VMLRendererExtension);
+    VMLRenderer.prototype = merge(VMLRenderer.prototype, SVGRenderer.prototype, VMLRendererExtension);
 
     // general renderer
     H.Renderer = VMLRenderer as any;
+
+    // 3D additions
+    if (typeof SVGRenderer.prototype.arc3d === 'function') {
+        VMLRenderer3D.compose(VMLRenderer);
+        VMLAxis3D.compose(Axis);
+    }
 }
 
 SVGRenderer.prototype.getSpanWidth = function (
@@ -2126,9 +2131,3 @@ SVGRenderer.prototype.measureSpanWidth = function (
     discardElement(measuringSpan); // #2463
     return offsetWidth;
 };
-
-// 3D additions
-if (typeof SVGRenderer.prototype.arc3d === 'function') {
-    VMLRenderer3D.compose(VMLRenderer);
-    VMLAxis3D.compose(Axis);
-}
