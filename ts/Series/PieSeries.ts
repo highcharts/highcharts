@@ -444,11 +444,23 @@ seriesType<Highcharts.PieSeries>(
              *         Formatted value in the data label
              *
              * @type      {string}
-             * @default   point.name
+             * @default   undefined
              * @since     3.0
              * @apioption plotOptions.pie.dataLabels.format
              */
 
+            // eslint-disable-next-line valid-jsdoc
+            /**
+             * Callback JavaScript function to format the data label. Note that
+             * if a `format` is defined, the format takes precedence and the
+             * formatter is ignored.
+             *
+             * @sample {highmaps} maps/plotoptions/series-datalabels-format/
+             *         Formatted value
+             *
+             * @type {Highcharts.DataLabelsFormatterCallbackFunction}
+             * @default function () { return this.point.isNull ? void 0 : this.point.name; }
+             */
             formatter: function (
                 this: Highcharts.PointLabelObject
             ): (string|undefined) { // #2945
