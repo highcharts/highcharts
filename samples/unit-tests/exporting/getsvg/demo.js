@@ -23,7 +23,9 @@ QUnit.test('getSVG', function (assert) {
 
     var initialChartsLength = Highcharts.charts.length,
         svg,
-        output;
+        output,
+        isIframe,
+        siblings;
 
     svg = chart.getSVG({
         yAxis: [{
@@ -95,6 +97,25 @@ QUnit.test('getSVG', function (assert) {
         'Reference by id, series name ok'
     );
 
+    chart.getSVG({
+        chart: {
+            styledMode: true
+        }
+    });
+
+    siblings = Array.prototype.slice.call(
+        chart.container.parentNode.parentNode.childNodes
+    );
+
+    isIframe = siblings.some(function (elem) {
+        return elem.tagName === 'IFRAME';
+    });
+
+    assert.strictEqual( // (#12273)
+        isIframe,
+        false,
+        'Iframe should be destroyed in DOM after getSVG().'
+    );
 });
 
 QUnit.test('Hide label with useHTML', function (assert) {
