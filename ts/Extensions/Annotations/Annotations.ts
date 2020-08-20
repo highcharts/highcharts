@@ -1012,7 +1012,7 @@ merge<Annotation>(
                  * @sample {highcharts} highcharts/annotations/defer/
                  *          Animation defer settings
                  * @type {boolean|Partial<Highcharts.AnimationOptionsObject>}
-                 * @since next
+                 * @since 8.2.0
                  * @apioption annotations.animation
                  */
                 animation: {},
@@ -1023,7 +1023,7 @@ merge<Annotation>(
                  * As `undefined` inherits defer time from the [series.animation.defer](#plotOptions.series.animation.defer).
                  *
                  * @type      {number}
-                 * @since     next
+                 * @since 8.2.0
                  * @apioption annotations.animation.defer
                  */
 
@@ -1183,7 +1183,7 @@ merge<Annotation>(
                      * @sample highcharts/annotations/include-in-data-export/
                      *         Do not include in the data export
                      *
-                     * @since   next
+                     * @since 8.2.0
                      * @requires modules/export-data
                      */
                     includeInDataExport: true,
