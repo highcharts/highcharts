@@ -27,7 +27,7 @@ const {
 } = H;
 import Pointer from '../../Core/Pointer.js';
 import SVGElement from '../../Core/Renderer/SVG/SVGElement.js';
-import SVGRenderer from '../../Core/Renderer/SVG/SVGRenderer.js';
+import SVGRenderer from '../../Core/Renderer/SVG/SVGRenderer3D.js';
 import U from '../../Core/Utilities.js';
 const {
     addEvent,
@@ -49,7 +49,6 @@ const {
     setOptions,
     uniqueKey
 } = U;
-import VMLAxis3D from './VMLAxis3D.js';
 import VMLRenderer3D from './VMLRenderer3D.js';
 
 /**
@@ -2089,10 +2088,7 @@ if (!svg) {
     H.Renderer = VMLRenderer as any;
 
     // 3D additions
-    if (typeof SVGRenderer.prototype.arc3d === 'function') {
-        VMLRenderer3D.compose(VMLRenderer);
-        VMLAxis3D.compose(Axis);
-    }
+    VMLRenderer3D.compose(VMLRenderer, SVGRenderer);
 }
 
 SVGRenderer.prototype.getSpanWidth = function (

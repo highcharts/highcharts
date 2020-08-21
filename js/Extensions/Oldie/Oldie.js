@@ -10,7 +10,6 @@
  *
  * */
 'use strict';
-import Axis from '../../Core/Axis/Axis.js';
 import Chart from '../../Core/Chart/Chart.js';
 import Color from '../../Core/Color.js';
 var color = Color.parse;
@@ -18,10 +17,9 @@ import H from '../../Core/Globals.js';
 var deg2rad = H.deg2rad, doc = H.doc, noop = H.noop, svg = H.svg, win = H.win;
 import Pointer from '../../Core/Pointer.js';
 import SVGElement from '../../Core/Renderer/SVG/SVGElement.js';
-import SVGRenderer from '../../Core/Renderer/SVG/SVGRenderer.js';
+import SVGRenderer from '../../Core/Renderer/SVG/SVGRenderer3D.js';
 import U from '../../Core/Utilities.js';
 var addEvent = U.addEvent, createElement = U.createElement, css = U.css, defined = U.defined, discardElement = U.discardElement, erase = U.erase, extend = U.extend, extendClass = U.extendClass, getOptions = U.getOptions, isArray = U.isArray, isNumber = U.isNumber, isObject = U.isObject, merge = U.merge, offset = U.offset, pick = U.pick, pInt = U.pInt, setOptions = U.setOptions, uniqueKey = U.uniqueKey;
-import VMLAxis3D from './VMLAxis3D.js';
 import VMLRenderer3D from './VMLRenderer3D.js';
 var VMLRenderer, VMLElement;
 /**
@@ -1222,10 +1220,7 @@ if (!svg) {
     // general renderer
     H.Renderer = VMLRenderer;
     // 3D additions
-    if (typeof SVGRenderer.prototype.arc3d === 'function') {
-        VMLRenderer3D.compose(VMLRenderer);
-        VMLAxis3D.compose(Axis);
-    }
+    VMLRenderer3D.compose(VMLRenderer, SVGRenderer);
 }
 SVGRenderer.prototype.getSpanWidth = function (wrapper, tspan) {
     var renderer = this, bBox = wrapper.getBBox(true), actualWidth = bBox.width;
