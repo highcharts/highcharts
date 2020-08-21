@@ -6,7 +6,6 @@ import ChainDataModifier from '../../../../code/es-modules/Data/Modifiers/ChainD
 import RangeDataModifier from '../../../../code/es-modules/Data/Modifiers/RangeDataModifier.js';
 
 import DataSeriesConverter from '../../../../code/es-modules/Data/DataSeriesConverter.js';
-import DataTable from '../../../../code/es-modules/Data/DataTable.js';
 
 let dataSeriesConverter, modifiedDataSeriesConverter;
 
@@ -38,19 +37,29 @@ const chart3 = Highcharts.chart('chart3', {
     series: [{
         data: [1, 2, 3]
     }, {
+        keys: ['y', 'x'],
         data: [
-            [0, 4],
-            [1, 7],
-            [2, 5]
+            [4, 5],
+            [7, 1],
+            [5, 0]
         ]
+    }, {
+        data: [{
+            x: 0,
+            y: 4
+        }, {
+            x: 3,
+            y: 10
+        }, {
+            x: 5,
+            y: 8
+        }]
     }]
 }, function (chart) {
     const dataSeriesConverter = new DataSeriesConverter();
-
-    dataSeriesConverter.setDataTable(chart.series);
+    const table = dataSeriesConverter.setDataTable(chart.series);
+    console.log('table from series -> ', table);
 });
-
-
 
 const store = new GoogleDataStore(undefined, {
     googleSpreadsheetKey: '14632VxDAT-TAL06ICnoLsV_JyvjEBXdVY-J34br5iXY',

@@ -15,6 +15,8 @@
  *
  * */
 import DataTable from './DataTable.js';
+import DataTableRow from './DataTableRow.js';
+
 /* *
  *
  *  Class
@@ -132,6 +134,66 @@ class DataSeriesConverter {
         }
 
         return seriesOptions;
+    }
+
+    setDataTable(allSeries: Array<Highcharts.Series>): DataTable {
+        const table = this.table;
+
+        let columns: Record<string, DataTableRow.ColumnTypes>,
+            series,
+            pointArrayMap,
+            valueCount,
+            options,
+            keys,
+            data,
+            elem,
+            row,
+            y,
+            xIndex,
+            yIndex,
+            id;
+
+        for (let i = 0, iEnd = allSeries.length; i < iEnd; i++) {
+            series = allSeries[i];
+            pointArrayMap = series.pointArrayMap;
+            valueCount = pointArrayMap && pointArrayMap.length;
+            options = series.options;
+            keys = options.keys;
+            data = series.options.data || [];
+
+            for (let j = 0, jEnd = data.length; j < jEnd; j++) {
+                elem = data[j];
+                // temporarily series.name -> change it to eg series.id?
+                y = 'y_' + series.name;
+                columns = {};
+
+                if (typeof elem === 'number') {
+                    columns[y] = elem;
+                    columns.x = j;
+                } else if (elem instanceof Array) {
+                    xIndex = keys ? keys.indexOf('x') : 0;
+                    yIndex = keys ? keys.indexOf('y') : 1;
+                    columns[y] = elem[yIndex];
+                    columns.x = elem[xIndex];
+                } else if (elem instanceof Object) {
+                    columns[y] = elem.y;
+                    columns.x = elem.x || j;
+                }
+
+                id = '' + columns.x;
+                row = table.getRow(id);
+
+                if (!row) {
+                    columns.id = id;
+                    row = new DataTableRow(columns);
+                    table.insertRow(row);
+                } else if (columns[y]) {
+                    row.insertColumn(y, columns[y]);
+                }
+            }
+        }
+
+        return table;
     }
 }
 /* *
