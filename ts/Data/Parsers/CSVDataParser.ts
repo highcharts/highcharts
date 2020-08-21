@@ -93,7 +93,7 @@ class CSVDataParser extends DataParser<DataParser.EventObject> {
     /**
      * Initiates parsing of CSV
      *
-     * @param {CSVDataParser.ParserOptions & CSVDataParser.ClassJSONOptions}[options]
+     * @param {CSVDataParser.OptionsType}[options]
      * Options for the parser
      *
      * @emits CSVDataParser#parse
