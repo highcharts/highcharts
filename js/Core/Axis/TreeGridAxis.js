@@ -278,11 +278,11 @@ var TreeGridAxis;
                 // Update yData now that we have calculated the y values
                 axis.series.forEach(function (series) {
                     var axisData = (series.options.data || []).map(function (d) {
-                        if (series.options.keys && series.options.keys.length) {
+                        if (H.isArray(d) && series.options.keys && series.options.keys.length) {
                             // Get the axisData from the data array used to
                             // build the treeGrid where has been modified
                             data.forEach(function (point) {
-                                if (d.includes(point.x) && d.includes(point.x2)) {
+                                if (d.indexOf(point.x) >= 0 && d.indexOf(point.x2) >= 0) {
                                     d = point;
                                 }
                             });

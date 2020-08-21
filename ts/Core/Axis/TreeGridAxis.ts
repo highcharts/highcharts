@@ -491,11 +491,11 @@ namespace TreeGridAxis {
                             d: Highcharts.PointOptionsType
                         ): Highcharts.PointOptionsType {
 
-                            if (series.options.keys && series.options.keys.length) {
+                            if (H.isArray(d) && series.options.keys && series.options.keys.length) {
                                 // Get the axisData from the data array used to
                                 // build the treeGrid where has been modified
                                 data.forEach(function (point: Highcharts.GanttPointOptions): void {
-                                    if ((d as any).includes(point.x) && (d as any).includes(point.x2)) {
+                                    if ((d as any).indexOf(point.x) >= 0 && (d as any).indexOf(point.x2) >= 0) {
                                         d = point;
                                     }
                                 });
