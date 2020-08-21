@@ -70,6 +70,12 @@ declare global {
             setUpKeyToAxis(): void;
             /** @requires modules/export-data */
             viewData(): void;
+            /** @requires modules/export-data */
+            toggleDataTable(): void;
+            /** @requires modules/export-data */
+            hideData(): void;
+            /** @requires modules/export-data */
+            isDataTableVisible: boolean;
         }
         interface AnnotationInDataTable {
             itemDelimiter?: string;
@@ -108,6 +114,7 @@ declare global {
             downloadXLS?: string;
             exportData?: ExportDataOptions;
             viewData?: string;
+            hideData?: string;
         }
         interface Series {
             exportKey?: string;
@@ -239,7 +246,7 @@ setOptions({
              *
              * Options for annotations in the export-data table.
              *
-             * @since    next
+             * @since 8.2.0
              * @requires modules/export-data
              * @requires modules/annotations
              *
@@ -250,7 +257,7 @@ setOptions({
                 * The way to mark the separator for annotations
                 * combined in one export-data table cell.
                 *
-                * @since   next
+                * @since 8.2.0
                 * @requires modules/annotations
                 */
                 itemDelimiter: '; ',
@@ -262,7 +269,7 @@ setOptions({
                 * @sample highcharts/export-data/join-annotations/
                 *         Concatenate point annotations with itemDelimiter set.
                 *
-                * @since   next
+                * @since 8.2.0
                 * @requires modules/annotations
                 */
                 join: false
@@ -423,7 +430,14 @@ setOptions({
          * @since    6.0.0
          * @requires modules/export-data
          */
-        viewData: 'View data table'
+        viewData: 'View data table',
+        /**
+         * The text for the menu item.
+         *
+         * @since 8.2.0
+         * @requires modules/export-data
+         */
+        hideData: 'Hide data table'
     }
 });
 
@@ -435,7 +449,8 @@ addEvent(Chart, 'render', function (): void {
         this.options &&
         this.options.exporting &&
         this.options.exporting.showTable &&
-        !(this.options.chart as any).forExport
+        !(this.options.chart as any).forExport &&
+        !this.dataTableDiv
     ) {
         this.viewData();
     }
@@ -1299,25 +1314,69 @@ Chart.prototype.downloadXLS = function (): void {
  * @fires Highcharts.Chart#event:afterViewData
  */
 Chart.prototype.viewData = function (): void {
+    // Create div and generate the data table.
     if (!this.dataTableDiv) {
         this.dataTableDiv = doc.createElement('div');
         this.dataTableDiv.className = 'highcharts-data-table';
-
         // Insert after the chart container
         (this.renderTo.parentNode as any).insertBefore(
             this.dataTableDiv,
             this.renderTo.nextSibling
         );
+        this.dataTableDiv.innerHTML = this.getTable();
     }
+    // Show the data table again.
+    if (this.dataTableDiv.style.display === '' || this.dataTableDiv.style.display === 'none') {
+        this.dataTableDiv.style.display = 'block';
+    }
+
+    this.isDataTableVisible = true;
 
     this.renderer.addTree(this.getTableTree(), this.dataTableDiv);
     fireEvent(this, 'afterViewData', this.dataTableDiv);
 };
 
+/**
+ * Export-data module required. Hide the data table when visible.
+ *
+ * @function Highcharts.Chart#hideData
+ */
+Chart.prototype.hideData = function (): void {
+    if (this.dataTableDiv && this.dataTableDiv.style.display === 'block') {
+        this.dataTableDiv.style.display = 'none';
+    }
+
+    this.isDataTableVisible = false;
+};
+
+Chart.prototype.toggleDataTable = function (): void {
+    var exportDivElements = this.exportDivElements,
+        menuItems = exportingOptions?.buttons?.contextButton.menuItems,
+        lang = this.options.lang;
+
+    if (this.isDataTableVisible) {
+        this.hideData();
+    } else {
+        this.viewData();
+    }
+
+    // Change the button text based on table visibility.
+    if (
+        exportingOptions?.menuItemDefinitions &&
+        lang?.viewData &&
+        lang.hideData &&
+        menuItems &&
+        exportDivElements &&
+        exportDivElements.length
+    ) {
+        exportDivElements[menuItems.indexOf('viewData')]
+            .innerHTML = this.isDataTableVisible ? lang.hideData : lang.viewData;
+    }
+};
+
 
 // Add "Download CSV" to the exporting menu.
 var exportingOptions = getOptions().exporting;
-
 if (exportingOptions) {
 
     extend(exportingOptions.menuItemDefinitions, {
@@ -1336,7 +1395,7 @@ if (exportingOptions) {
         viewData: {
             textKey: 'viewData',
             onclick: function (): void {
-                this.viewData();
+                this.toggleDataTable();
             }
         }
     } as Highcharts.Dictionary<Highcharts.ExportingMenuObject>);

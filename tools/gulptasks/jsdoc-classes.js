@@ -43,7 +43,6 @@ const SOURCE_GLOBS = [
     'js/Extensions/GeoJSON.js',
     'js/Maps/Map.js',
     'js/Maps/MapNavigation.js',
-    'js/modules/sonification/*.js',
     'js/Series/MapSeries.js',
     'js/Series/AreaRangeSeries.js',
     'js/Series/PackedBubbleSeries.js',

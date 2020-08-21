@@ -679,10 +679,12 @@ seriesType<Highcharts.NetworkgraphSeries>(
          */
         createNode: NodesMixin.createNode,
         destroy: function (this: Highcharts.NetworkgraphSeries): void {
-            this.layout.removeElementFromCollection<Highcharts.Series>(
-                this,
-                this.layout.series
-            );
+            if (this.layout) {
+                this.layout.removeElementFromCollection<Highcharts.Series>(
+                    this,
+                    this.layout.series
+                );
+            }
             NodesMixin.destroy.call(this);
         },
 

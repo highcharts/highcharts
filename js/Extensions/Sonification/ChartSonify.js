@@ -97,7 +97,7 @@ import H from '../../Core/Globals.js';
 import Point from '../../Core/Series/Point.js';
 import U from '../../Core/Utilities.js';
 var find = U.find, isArray = U.isArray, merge = U.merge, pick = U.pick, splat = U.splat, objectEach = U.objectEach;
-import utilities from './utilities.js';
+import utilities from './Utilities.js';
 /**
  * Get the relative time value of a point.
  * @private
@@ -292,12 +292,12 @@ function buildTimelinePathFromSeries(series, options) {
     // chart.sonify can be reused.
     var timeExtremes = options.timeExtremes || getTimeExtremes(series, options.pointPlayTime), 
     // Compute any data extremes that aren't defined yet
-    dataExtremes = getExtremesForInstrumentProps(series.chart, options.instruments, options.dataExtremes), 
+    dataExtremes = getExtremesForInstrumentProps(series.chart, options.instruments, options.dataExtremes), minimumSeriesDurationMs = 10, 
     // Get the duration of the final note
     finalNoteDuration = getFinalNoteDuration(series, options.instruments, dataExtremes), 
     // Get time offset for a point, relative to duration
     pointToTime = function (point) {
-        return utilities.virtualAxisTranslate(getPointTimeValue(point, options.pointPlayTime), timeExtremes, { min: 0, max: options.duration - finalNoteDuration });
+        return utilities.virtualAxisTranslate(getPointTimeValue(point, options.pointPlayTime), timeExtremes, { min: 0, max: Math.max(options.duration - finalNoteDuration, minimumSeriesDurationMs) });
     }, masterVolume = pick(options.masterVolume, 1), 
     // Make copies of the instruments used for this series, to allow
     // multiple series with the same instrument to play together

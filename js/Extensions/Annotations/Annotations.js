@@ -589,7 +589,7 @@ merge(Annotation.prototype,
          * @sample {highcharts} highcharts/annotations/defer/
          *          Animation defer settings
          * @type {boolean|Partial<Highcharts.AnimationOptionsObject>}
-         * @since next
+         * @since 8.2.0
          * @apioption annotations.animation
          */
         animation: {},
@@ -599,7 +599,7 @@ merge(Annotation.prototype,
          * As `undefined` inherits defer time from the [series.animation.defer](#plotOptions.series.animation.defer).
          *
          * @type      {number}
-         * @since     next
+         * @since 8.2.0
          * @apioption annotations.animation.defer
          */
         /**
@@ -744,7 +744,7 @@ merge(Annotation.prototype,
              * @sample highcharts/annotations/include-in-data-export/
              *         Do not include in the data export
              *
-             * @since   next
+             * @since 8.2.0
              * @requires modules/export-data
              */
             includeInDataExport: true,
@@ -1146,6 +1146,9 @@ extend(chartProto, /** @lends Highcharts.Chart# */ {
         this.options.annotations.push(annotation.options);
         if (pick(redraw, true)) {
             annotation.redraw();
+            annotation.graphic.attr({
+                opacity: 1
+            });
         }
         return annotation;
     },
@@ -1240,8 +1243,10 @@ chartProto.callbacks.push(function (chart) {
                             // Annotation not connected to any xAxis -
                             // add new row.
                             if (xAxisIndex === -1) {
-                                var newRow = new Array(event.dataRows[0].length);
-                                newRow.fill('');
+                                var n = event.dataRows[0].length, newRow = new Array(n);
+                                for (var i = 0; i < n; ++i) {
+                                    newRow[i] = '';
+                                }
                                 newRow.push(annotationText_1);
                                 newRow.xValues = [];
                                 newRow.xValues[xAxisIndex] = annotationX;
@@ -1271,8 +1276,10 @@ chartProto.callbacks.push(function (chart) {
                             // Annotation not placed on any exported data point,
                             // but connected to the xAxis - add new row
                             if (!wasAdded) {
-                                var newRow = new Array(event.dataRows[0].length);
-                                newRow.fill('');
+                                var n = event.dataRows[0].length, newRow = new Array(n);
+                                for (var i = 0; i < n; ++i) {
+                                    newRow[i] = '';
+                                }
                                 newRow[0] = annotationX;
                                 newRow.push(annotationText_1);
                                 newRow.xValues = [];

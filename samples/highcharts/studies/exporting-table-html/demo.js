@@ -36,7 +36,7 @@ Highcharts.addEvent(Highcharts.Chart, 'render', function () {
 
         // Add the table as the subtitle to make it part of the export
         this.setTitle(null, {
-            text: table.outerHTML,
+            text: table.innerHTML,
             useHTML: true
         });
         if (table.parentNode) {

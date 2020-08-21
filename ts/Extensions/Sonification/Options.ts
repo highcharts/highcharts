@@ -9,13 +9,30 @@
  *  !!!!!!! SOURCE GETS TRANSPILED BY TYPESCRIPT. EDIT TS FILE ONLY. !!!!!!!
  *
  * */
+
 'use strict';
+
+/**
+ * Internal types.
+ * @private
+ */
+declare global {
+    namespace Highcharts {
+        interface Options {
+            sonification?: ChartSonificationOptions;
+        }
+        interface SeriesOptions {
+            sonification?: SeriesSonificationOptions;
+        }
+    }
+}
+
 // Experimental, disabled by default, not exposed in API
-var options = {
+const options = {
     sonification: {
         enabled: false,
-        duration: 2000,
-        afterSeriesWait: 900,
+        duration: 2500,
+        afterSeriesWait: 700,
         masterVolume: 1,
         order: 'sequential',
         defaultInstrumentOptions: {
@@ -25,10 +42,11 @@ var options = {
             maxFrequency: 1046,
             mapping: {
                 pointPlayTime: 'x',
-                duration: 400,
+                duration: 200,
                 frequency: 'y'
             }
         }
     }
 };
+
 export default options;
