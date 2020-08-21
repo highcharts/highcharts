@@ -101,7 +101,7 @@
     "rimraf": "^2.6.3",
     "semver": "^6.3.0",
     "tsutils": "^3.17.1",
-    "typescript": "^3.6.3",
+    "typescript": "~3.6.3",
     "undertaker-forward-reference": "^1.0.2",
     "webpack": "^4.39.3",
     "yargs": "^13.3.0"

@@ -4229,6 +4229,7 @@ extend(SVGRenderer.prototype, /** @lends Highcharts.SVGRenderer.prototype */ {
                                 renderer.SVG_NS,
                                 'tspan'
                             ) as any,
+                            a,
                             classAttribute,
                             styleAttribute, // #390
                             hrefAttribute;
@@ -4250,15 +4251,22 @@ extend(SVGRenderer.prototype, /** @lends Highcharts.SVGRenderer.prototype */ {
                         // Not for export - #1529
                         hrefAttribute = parseAttribute(span, 'href');
                         if (hrefAttribute && !forExport) {
-                            attr(
-                                tspan,
-                                'onclick',
-                                'location.href=\"' + hrefAttribute + '\"'
-                            );
-                            attr(tspan, 'class', 'highcharts-anchor');
+                            if (
+                                // Stop JavaScript links, vulnerable to XSS
+                                hrefAttribute.split(':')[0].toLowerCase()
+                                    .indexOf('javascript') === -1
+                            ) {
+                                a = doc.createElementNS(
+                                    renderer.SVG_NS,
+                                    'a'
+                                ) as any;
+                                attr(a, 'href', hrefAttribute);
+                                attr(tspan, 'class', 'highcharts-anchor');
+                                a.appendChild(tspan);
 
-                            if (!renderer.styledMode) {
-                                css(tspan, { cursor: 'pointer' });
+                                if (!renderer.styledMode) {
+                                    css(tspan, { cursor: 'pointer' });
+                                }
                             }
                         }
 
@@ -4287,7 +4295,7 @@ extend(SVGRenderer.prototype, /** @lends Highcharts.SVGRenderer.prototype */ {
                             attr(tspan, attributes);
 
                             // Append it
-                            textNode.appendChild(tspan);
+                            textNode.appendChild(a || tspan);
 
                             // first span on subsequent line, add the line
                             // height
