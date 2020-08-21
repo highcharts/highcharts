@@ -290,8 +290,6 @@ BaseSeries.seriesType('pie', 'line',
          *
          * @sample {highcharts} highcharts/plotoptions/series-datalabels-format/
          *         Add a unit
-         * @sample {highmaps} maps/plotoptions/series-datalabels-format/
-         *         Formatted value in the data label
          *
          * @type      {string}
          * @default   undefined
@@ -304,8 +302,6 @@ BaseSeries.seriesType('pie', 'line',
          * if a `format` is defined, the format takes precedence and the
          * formatter is ignored.
          *
-         * @sample {highmaps} maps/plotoptions/series-datalabels-format/
-         *         Formatted value
          *
          * @type {Highcharts.DataLabelsFormatterCallbackFunction}
          * @default function () { return this.point.isNull ? void 0 : this.point.name; }
