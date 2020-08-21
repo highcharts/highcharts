@@ -106,7 +106,7 @@ var win = H.win,
  *
  * @function Highcharts.initCanvasBoost
  */
-const initCanvasBoost = H.initCanvasBoost = function (): void {
+const initCanvasBoost = function (): void {
     if (H.seriesTypes.heatmap) {
         wrap(H.seriesTypes.heatmap.prototype, 'drawPoints', function (
             this: Highcharts.HeatmapSeries
