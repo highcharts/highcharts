@@ -241,7 +241,7 @@ namespace CSVDataStore {
     /**
      * Options for the CSVDataStore class constructor
      */
-    export type OptionsType = Partial<(CSVDataStore.Options & CSVDataParser.Options)>
+    export type OptionsType = Partial<(CSVDataStore.Options & CSVDataParser.OptionsType)>
 
     /**
      * The class JSON when importing/exporting CSVDataStore

@@ -21,9 +21,8 @@ const { merge } = U;
 /* eslint-disable no-invalid-this, require-jsdoc, valid-jsdoc */
 
 /**
- * @private
+ * Handles parsing and transforming CSV to a DataTable
  */
-
 class CSVDataParser extends DataParser<DataParser.EventObject> {
 
     /* *
@@ -35,7 +34,7 @@ class CSVDataParser extends DataParser<DataParser.EventObject> {
     /**
      * Default options
      */
-    protected static readonly defaultOptions: CSVDataParser.Options = {
+    protected static readonly defaultOptions: CSVDataParser.ClassJSONOptions = {
         ...DataParser.defaultOptions,
         decimalPoint: '.',
         lineDelimiter: '\n'
@@ -47,6 +46,15 @@ class CSVDataParser extends DataParser<DataParser.EventObject> {
      *
      * */
 
+    /**
+     * Creates a CSVDataParser instance from ClassJSON.
+     *
+     * @param {CSVDataParser.ClassJSON} json
+     * Class JSON to convert to the parser instance.
+     *
+     * @return {CSVDataParser}
+     * An instance of CSVDataParser.
+     */
     public static fromJSON(json: CSVDataParser.ClassJSON): CSVDataParser {
         return new CSVDataParser(json.options);
     }
@@ -57,7 +65,13 @@ class CSVDataParser extends DataParser<DataParser.EventObject> {
      *
      * */
 
-    public constructor(options?: Partial<CSVDataParser.Options>) {
+    /**
+     * Constructs an instance of the CSV parser.
+     *
+     * @param {CSVDataParser.ClassJSONOptions} [options]
+     * Options for the CSV parser.
+     */
+    public constructor(options?: CSVDataParser.OptionsType) {
         super();
 
         this.options = merge(CSVDataParser.defaultOptions, options);
@@ -68,17 +82,25 @@ class CSVDataParser extends DataParser<DataParser.EventObject> {
      *  Properties
      *
      * */
-
     private columns: Array<Array<DataValueType>> = [];
     private headers: Array<string> = [];
     private guessedItemDelimiter?: string;
     private guessedDecimalPoint?: string;
     private decimalRegex?: RegExp;
-    private options: CSVDataParser.Options;
+    private options: CSVDataParser.ClassJSONOptions;
 
 
+    /**
+     * Initiates parsing of CSV
+     *
+     * @param {CSVDataParser.ParserOptions & CSVDataParser.ClassJSONOptions}[options]
+     * Options for the parser
+     *
+     * @emits CSVDataParser#parse
+     * @emits CSVDataParser#afterParse
+     */
     public parse(
-        options: Partial<(CSVDataParser.ParseOptions&CSVDataParser.Options)>
+        options: CSVDataParser.OptionsType
     ): void {
         const parser = this,
             parserOptions = merge(this.options, options),
@@ -101,7 +123,6 @@ class CSVDataParser extends DataParser<DataParser.EventObject> {
 
         this.columns = [];
 
-        // todo parse should have a payload
         this.emit({ type: 'parse', columns: parser.columns, headers: parser.headers });
 
         if (csv && beforeParse) {
@@ -151,6 +172,9 @@ class CSVDataParser extends DataParser<DataParser.EventObject> {
         parser.emit({ type: 'afterParse', columns: parser.columns, headers: parser.headers });
     }
 
+    /**
+     * Internal method that parses a single CSV row
+     */
     private parseCSVRow(
         columnStr: string,
         rowNumber: number
@@ -245,6 +269,12 @@ class CSVDataParser extends DataParser<DataParser.EventObject> {
 
     }
 
+    /**
+     * Internal method that guesses the delimiter from the first
+     * 13 lines of the CSV
+     * @param {Array<string>} lines
+     * The CSV, split into lines
+     */
     private guessDelimiter(lines: Array<string>): string {
 
         const { decimalPoint } = this.options;
@@ -362,12 +392,22 @@ class CSVDataParser extends DataParser<DataParser.EventObject> {
 
         return guessed;
     }
-
-    // Todo: handle exisiting datatable
+    /**
+     * Handles converting the parsed data to a DataTable
+     *
+     * @returns {DataTable}
+     * A DataTable from the parsed CSV
+     */
     public getTable(): DataTable {
         return DataTable.fromColumns(this.columns, this.headers);
     }
 
+    /**
+     * Converts the parser instance to ClassJSON.
+     *
+     * @returns {CSVDataParser.ClassJSON}
+     * ClassJSON from the parser instance.
+     */
     public toJSON(): CSVDataParser.ClassJSON {
         const parser = this,
             {
@@ -384,31 +424,43 @@ class CSVDataParser extends DataParser<DataParser.EventObject> {
 
 namespace CSVDataParser {
 
+    /**
+     * ClassJSON for CSVDataParser
+     */
     export interface ClassJSON extends DataJSON.ClassJSON {
-        options: Options;
+        options: ClassJSONOptions;
     }
 
+    /**
+     * Interface for the BeforeParse callback function
+     *
+     */
     export interface DataBeforeParseCallbackFunction {
         (csv: string): string;
     }
 
-    export interface Options extends DataParser.Options {
+    /**
+     * All available options for the parser
+     */
+    export type OptionsType = Partial<ClassJSONOptions & ParserOptions>;
+
+    /**
+     * Options for the CSV parser that are compatible with ClassJSON
+     */
+    export interface ClassJSONOptions extends DataParser.Options {
         csv?: string;
         decimalPoint: string;
         itemDelimiter?: string;
         lineDelimiter: string;
-        firstRowAsNames: boolean;
-        startRow: number;
-        endRow: number;
-        startColumn: number;
-        endColumn: number;
     }
 
-    export interface ParseOptions {
+    /**
+     * Options that are not compatible with ClassJSON
+     */
+    export interface ParserOptions {
         beforeParse?: DataBeforeParseCallbackFunction;
         decimalRegex?: RegExp;
     }
-
 }
 
 /* *
