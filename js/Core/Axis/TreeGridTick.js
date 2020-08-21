@@ -78,7 +78,7 @@ var TreeGridTick;
      * @private
      */
     function onTickHoverExit(label, options) {
-        var css = defined(options.style) ? options.style : {};
+        var css = isObject(options.style) ? options.style : {};
         label.removeClass('highcharts-treegrid-node-active');
         if (!label.renderer.styledMode) {
             label.css({ textDecoration: css.textDecoration });
