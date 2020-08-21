@@ -12,9 +12,8 @@
 
 'use strict';
 
+import type SVGRenderer3D from '../../Core/Renderer/SVG/SVGRenderer3D';
 import Axis from '../../Core/Axis/Axis.js';
-import H from '../../Core/Globals.js';
-import SVGRenderer from '../../Core/Renderer/SVG/SVGRenderer.js';
 import U from '../../Core/Utilities.js';
 const { setOptions } = U;
 import VMLAxis3D from './VMLAxis3D.js';
@@ -52,31 +51,34 @@ class VMLRenderer3D {
      *
      * */
 
-    public static compose(VMLRenderer: typeof Highcharts.VMLRenderer): void {
+    public static compose(vmlClass: typeof Highcharts.VMLRenderer, svgClass: typeof SVGRenderer3D): void {
+        const svgProto = svgClass.prototype;
+        const vmlProto = vmlClass.prototype;
+
         setOptions({ animate: false } as any);
 
-        VMLRenderer.prototype.face3d = SVGRenderer.prototype.face3d;
-        VMLRenderer.prototype.polyhedron = SVGRenderer.prototype.polyhedron;
+        vmlProto.face3d = svgProto.face3d;
+        vmlProto.polyhedron = svgProto.polyhedron;
 
-        VMLRenderer.prototype.elements3d = SVGRenderer.prototype.elements3d;
-        VMLRenderer.prototype.element3d = SVGRenderer.prototype.element3d;
-        VMLRenderer.prototype.cuboid = SVGRenderer.prototype.cuboid;
-        VMLRenderer.prototype.cuboidPath = SVGRenderer.prototype.cuboidPath;
+        vmlProto.elements3d = svgProto.elements3d;
+        vmlProto.element3d = svgProto.element3d;
+        vmlProto.cuboid = svgProto.cuboid;
+        vmlProto.cuboidPath = svgProto.cuboidPath;
 
-        VMLRenderer.prototype.toLinePath = SVGRenderer.prototype.toLinePath;
-        VMLRenderer.prototype.toLineSegments = SVGRenderer.prototype.toLineSegments;
+        vmlProto.toLinePath = svgProto.toLinePath;
+        vmlProto.toLineSegments = svgProto.toLineSegments;
 
-        VMLRenderer.prototype.arc3d = function (
+        vmlProto.arc3d = function (
             this: Highcharts.VMLRenderer,
             shapeArgs: Highcharts.SVGAttributes
         ): Highcharts.VMLElement {
-            var result = SVGRenderer.prototype.arc3d.call(this, shapeArgs);
+            var result = svgProto.arc3d.call(this, shapeArgs);
 
             result.css({ zIndex: result.zIndex });
             return result as any;
         };
 
-        H.VMLRenderer.prototype.arc3dPath = SVGRenderer.prototype.arc3dPath;
+        vmlProto.arc3dPath = svgProto.arc3dPath;
 
         VMLAxis3D.compose(Axis);
     }

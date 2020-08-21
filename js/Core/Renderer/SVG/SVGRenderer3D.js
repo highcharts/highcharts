@@ -880,3 +880,4 @@ SVGRenderer.prototype.arc3dPath = function (shapeArgs) {
         zSide2: a2 * 0.99
     };
 };
+export default SVGRenderer;
