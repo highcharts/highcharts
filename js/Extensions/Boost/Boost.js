@@ -10,7 +10,6 @@
  *
  * */
 'use strict';
-import H from '../../Core/Globals.js';
 import butils from './BoostUtils.js';
 import init from './BoostInit.js';
 import initCanvasBoost from '../../Extensions/BoostCanvas.js';
@@ -23,7 +22,7 @@ var hasWebGLSupport = butils.hasWebGLSupport;
 if (!hasWebGLSupport()) {
     if (typeof initCanvasBoost !== 'undefined') {
         // Fallback to canvas boost
-        H.initCanvasBoost();
+        initCanvasBoost();
     }
     else {
         error(26);

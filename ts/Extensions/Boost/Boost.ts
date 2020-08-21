@@ -28,7 +28,7 @@ var hasWebGLSupport = butils.hasWebGLSupport;
 if (!hasWebGLSupport()) {
     if (typeof initCanvasBoost !== 'undefined') {
         // Fallback to canvas boost
-        H.initCanvasBoost();
+        initCanvasBoost();
     } else {
         error(26);
     }
