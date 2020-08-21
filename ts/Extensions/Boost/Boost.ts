@@ -14,6 +14,7 @@
 import H from '../../Core/Globals.js';
 import butils from './BoostUtils.js';
 import init from './BoostInit.js';
+import initCanvasBoost from '../../Extensions/BoostCanvas.js';
 import './BoostOverrides.js';
 import './NamedColors.js';
 import U from '../../Core/Utilities.js';
@@ -25,7 +26,7 @@ const {
 var hasWebGLSupport = butils.hasWebGLSupport;
 
 if (!hasWebGLSupport()) {
-    if (typeof H.initCanvasBoost !== 'undefined') {
+    if (typeof initCanvasBoost !== 'undefined') {
         // Fallback to canvas boost
         H.initCanvasBoost();
     } else {
