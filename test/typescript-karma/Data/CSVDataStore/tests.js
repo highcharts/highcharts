@@ -1,24 +1,8 @@
 import CSVDataStore from '/base/js/Data/Stores/CSVDataStore.js'
+import { registerStoreEvents } from '../utils.js'
 import U from '/base/js/Core/Utilities.js';
 
 const { test, only } = QUnit;
-
-/**
- * Register store events, also optionally do a test on the event type
- * @param {DataStore} datastore
- * @param {} assertObj QUnit assert
- */
-function registerStoreEvents(datastore, eventArray, assertObj = {}) {
-    const eventTypes = ['afterLoad', 'load', 'loadError'];
-    eventTypes.forEach(eventType => {
-        datastore.on(eventType, (e) => {
-            eventArray.push(e.type)
-            if (Object.keys(assertObj).length) {
-                assertObj.strictEqual(e.type, eventType, `Event has correct type: ${eventType}`);
-            }
-        });
-    })
-}
 
 const csv = `Grade,Ounce,Gram,Inch,mm,PPO
 "#TriBall",0.7199,  20.41,    0.60,15.24,   1 #this is a comment
@@ -78,7 +62,7 @@ test('CSVDataStore from URL', function (assert) {
     let pollNumber = 0;
     let states = [];
 
-    const doneLoading = assert.async(2);
+    const doneLoading = assert.async(3);
 
     datastore.on('afterLoad', (e) => {
         assert.ok(e.table.getRowCount() > 1, 'Datastore got rows')
@@ -146,7 +130,7 @@ test('CSVDatastore error', function(assert){
         csvURL: 'https://data.highcharts.com/sine-data.csv'
     });
 
-    const afterError = assert.async(1);
+    const afterError = assert.async();
 
     datastore.on('load', (e) =>{
         // console.log('Attempting to load');
