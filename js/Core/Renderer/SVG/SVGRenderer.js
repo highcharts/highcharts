@@ -472,16 +472,18 @@ var SVGRenderer = /** @class */ (function () {
                 }
                 else if (item.tagName) {
                     node = doc.createElementNS(NS, item.tagName);
-                    var attribs_1 = {};
-                    // Set attributes
+                    var attributes_1 = item.attributes || {};
+                    // Apply attributes from root of AST node, legacy from
+                    // from before TextBuilder
                     objectEach(item, function (val, key) {
                         if (key !== 'tagName' &&
+                            key !== 'attributes' &&
                             key !== 'children' &&
                             key !== 'textContent') {
-                            attribs_1[key] = val;
+                            attributes_1[key] = val;
                         }
                     });
-                    attr(node, attribs_1);
+                    attr(node, attributes_1);
                     // Add text content
                     if (textNode) {
                         node.appendChild(textNode);

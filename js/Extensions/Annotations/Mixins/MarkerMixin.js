@@ -48,19 +48,23 @@ var defaultMarkers = {
      */
     arrow: {
         tagName: 'marker',
-        render: false,
-        id: 'arrow',
-        refY: 5,
-        refX: 9,
-        markerWidth: 10,
-        markerHeight: 10,
+        attributes: {
+            display: 'none',
+            id: 'arrow',
+            refY: 5,
+            refX: 9,
+            markerWidth: 10,
+            markerHeight: 10
+        },
         /**
          * @type {Array<Highcharts.DefsOptions>}
          */
         children: [{
                 tagName: 'path',
-                d: 'M 0 0 L 10 5 L 0 10 Z',
-                'stroke-width': 0
+                attributes: {
+                    d: 'M 0 0 L 10 5 L 0 10 Z',
+                    'stroke-width': 0
+                }
             }]
     },
     /**
@@ -68,17 +72,21 @@ var defaultMarkers = {
      */
     'reverse-arrow': {
         tagName: 'marker',
-        render: false,
-        id: 'reverse-arrow',
-        refY: 5,
-        refX: 1,
-        markerWidth: 10,
-        markerHeight: 10,
+        attributes: {
+            display: 'none',
+            id: 'reverse-arrow',
+            refY: 5,
+            refX: 1,
+            markerWidth: 10,
+            markerHeight: 10
+        },
         children: [{
                 tagName: 'path',
-                // reverse triangle (used as an arrow)
-                d: 'M 0 5 L 10 0 L 10 10 Z',
-                'stroke-width': 0
+                attributes: {
+                    // reverse triangle (used as an arrow)
+                    d: 'M 0 5 L 10 0 L 10 10 Z',
+                    'stroke-width': 0
+                }
             }]
     }
 };
@@ -92,11 +100,13 @@ SVGRenderer.prototype.addMarker = function (id, markerOptions) {
         return merge(attrs, child);
     });
     var marker = this.definition(merge(true, {
-        markerWidth: 20,
-        markerHeight: 20,
-        refX: 0,
-        refY: 0,
-        orient: 'auto'
+        attributes: {
+            markerWidth: 20,
+            markerHeight: 20,
+            refX: 0,
+            refY: 0,
+            orient: 'auto'
+        }
     }, markerOptions, options));
     marker.id = id;
     return marker;
@@ -127,11 +137,14 @@ var markerMixin = {
         var itemOptions = item.options, chart = item.chart, defs = chart.options.defs, fill = itemOptions.fill, color = defined(fill) && fill !== 'none' ?
             fill :
             itemOptions.stroke, setMarker = function (markerType) {
+            var _a;
             var markerId = itemOptions[markerType], def, predefinedMarker, key, marker;
             if (markerId) {
                 for (key in defs) { // eslint-disable-line guard-for-in
                     def = defs[key];
-                    if (markerId === def.id &&
+                    if ((markerId === ((_a = def.attributes) === null || _a === void 0 ? void 0 : _a.id) ||
+                        // Legacy, for unit-tests/annotations/annotations-shapes
+                        markerId === def.id) &&
                         def.tagName === 'marker') {
                         predefinedMarker = def;
                         break;
@@ -140,7 +153,7 @@ var markerMixin = {
                 if (predefinedMarker) {
                     marker = item[markerType] = chart.renderer
                         .addMarker((itemOptions.id || uniqueKey()) + '-' +
-                        predefinedMarker.id, merge(predefinedMarker, { color: color }));
+                        markerId, merge(predefinedMarker, { color: color }));
                     item.attr(markerType, marker.getAttribute('id'));
                 }
             }
@@ -151,8 +164,11 @@ var markerMixin = {
 addEvent(Chart, 'afterGetContainer', function () {
     this.options.defs = merge(defaultMarkers, this.options.defs || {});
     objectEach(this.options.defs, function (def) {
-        if (def.tagName === 'marker' && def.render !== false) {
-            this.renderer.addMarker(def.id, def);
+        var attributes = def.attributes;
+        if (def.tagName === 'marker' &&
+            attributes &&
+            attributes.display !== 'none') {
+            this.renderer.addMarker(attributes.id, def);
         }
     }, this);
 });

@@ -632,14 +632,13 @@ Chart.prototype.getTable = function (useLocalDecimalPoint) {
             // Text node
             return node.textContent || '';
         }
+        var attributes = node.attributes;
         var html = "<" + node.tagName;
-        Object.keys(node).forEach(function (key) {
-            if (key !== 'children' &&
-                key !== 'tagName' &&
-                key !== 'textContent') {
-                html += " " + key + "=\"" + node[key] + "\"";
-            }
-        });
+        if (attributes) {
+            Object.keys(attributes).forEach(function (key) {
+                html += " " + key + "=\"" + attributes[key] + "\"";
+            });
+        }
         html += '>';
         html += node.textContent || '';
         (node.children || []).forEach(function (child) {
@@ -685,24 +684,25 @@ Chart.prototype.getTableTree = function (useLocalDecimalPoint) {
         return true;
     }, 
     // Get table cell HTML from value
-    getCellHTMLFromValue = function (tagName, classes, attrs, value) {
-        var val = pick(value, ''), className = 'text' + (classes ? ' ' + classes : '');
+    getCellHTMLFromValue = function (tagName, classes, attributes, value) {
+        var textContent = pick(value, ''), className = 'text' + (classes ? ' ' + classes : '');
         // Convert to string if number
-        if (typeof val === 'number') {
-            val = val.toString();
+        if (typeof textContent === 'number') {
+            textContent = textContent.toString();
             if (decimalPoint === ',') {
-                val = val.replace('.', decimalPoint);
+                textContent = textContent.replace('.', decimalPoint);
             }
             className = 'number';
         }
         else if (!value) {
             className = 'empty';
         }
-        return extend({
+        attributes = extend({ 'class': className }, attributes);
+        return {
             tagName: tagName,
-            'class': className,
-            textContent: val
-        }, attrs);
+            attributes: attributes,
+            textContent: textContent
+        };
     }, 
     // Get table header markup from row data
     getTableHeaderHTML = function (topheaders, subheaders, rowLength) {
@@ -749,9 +749,9 @@ Chart.prototype.getTableTree = function (useLocalDecimalPoint) {
                         rowspan = 1;
                     }
                     var cell = getCellHTMLFromValue('th', 'highcharts-table-topheading', { scope: 'col' }, cur);
-                    if (rowspan > 1) {
-                        cell.valign = 'top';
-                        cell.rowspan = rowspan;
+                    if (rowspan > 1 && cell.attributes) {
+                        cell.attributes.valign = 'top';
+                        cell.attributes.rowspan = rowspan;
                     }
                     trChildren.push(cell);
                 }
@@ -783,7 +783,9 @@ Chart.prototype.getTableTree = function (useLocalDecimalPoint) {
     if (options.exporting.tableCaption !== false) {
         treeChildren.push({
             tagName: 'caption',
-            'class': 'highcharts-table-caption',
+            attributes: {
+                'class': 'highcharts-table-caption'
+            },
             textContent: pick(options.exporting.tableCaption, (options.title.text ?
                 htmlencode(options.title.text) :
                 'Chart'))

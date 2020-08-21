@@ -82,19 +82,23 @@ var defaultMarkers: Record<string, Highcharts.NodeTreeObject> = {
      */
     arrow: {
         tagName: 'marker',
-        render: false,
-        id: 'arrow',
-        refY: 5,
-        refX: 9,
-        markerWidth: 10,
-        markerHeight: 10,
+        attributes: {
+            display: 'none',
+            id: 'arrow',
+            refY: 5,
+            refX: 9,
+            markerWidth: 10,
+            markerHeight: 10
+        },
         /**
          * @type {Array<Highcharts.DefsOptions>}
          */
         children: [{
             tagName: 'path',
-            d: 'M 0 0 L 10 5 L 0 10 Z', // triangle (used as an arrow)
-            'stroke-width': 0
+            attributes: {
+                d: 'M 0 0 L 10 5 L 0 10 Z', // triangle (used as an arrow)
+                'stroke-width': 0
+            }
         }]
     },
     /**
@@ -102,17 +106,21 @@ var defaultMarkers: Record<string, Highcharts.NodeTreeObject> = {
      */
     'reverse-arrow': {
         tagName: 'marker',
-        render: false,
-        id: 'reverse-arrow',
-        refY: 5,
-        refX: 1,
-        markerWidth: 10,
-        markerHeight: 10,
+        attributes: {
+            display: 'none',
+            id: 'reverse-arrow',
+            refY: 5,
+            refX: 1,
+            markerWidth: 10,
+            markerHeight: 10
+        },
         children: [{
             tagName: 'path',
-            // reverse triangle (used as an arrow)
-            d: 'M 0 5 L 10 0 L 10 10 Z',
-            'stroke-width': 0
+            attributes: {
+                // reverse triangle (used as an arrow)
+                d: 'M 0 5 L 10 0 L 10 10 Z',
+                'stroke-width': 0
+            }
         }]
     }
 };
@@ -135,11 +143,13 @@ SVGRenderer.prototype.addMarker = function (
     });
 
     var marker = this.definition(merge(true, {
-        markerWidth: 20,
-        markerHeight: 20,
-        refX: 0,
-        refY: 0,
-        orient: 'auto'
+        attributes: {
+            markerWidth: 20,
+            markerHeight: 20,
+            refX: 0,
+            refY: 0,
+            orient: 'auto'
+        }
     }, markerOptions, options));
 
     marker.id = id;
@@ -193,7 +203,11 @@ var markerMixin: Highcharts.AnnotationMarkerMixin = {
                         def = defs[key];
 
                         if (
-                            markerId === def.id &&
+                            (
+                                markerId === def.attributes?.id ||
+                                // Legacy, for unit-tests/annotations/annotations-shapes
+                                markerId === (def as any).id
+                            ) &&
                             def.tagName === 'marker'
                         ) {
                             predefinedMarker = def;
@@ -205,7 +219,7 @@ var markerMixin: Highcharts.AnnotationMarkerMixin = {
                         marker = item[markerType] = chart.renderer
                             .addMarker(
                                 (itemOptions.id || uniqueKey()) + '-' +
-                                predefinedMarker.id,
+                                markerId,
                                 merge(predefinedMarker, { color: color })
                             );
 
@@ -222,8 +236,13 @@ addEvent(Chart, 'afterGetContainer', function (): void {
     this.options.defs = merge(defaultMarkers, this.options.defs || {});
 
     objectEach(this.options.defs, function (def): void {
-        if (def.tagName === 'marker' && def.render !== false) {
-            this.renderer.addMarker(def.id as any, def);
+        const attributes = def.attributes;
+        if (
+            def.tagName === 'marker' &&
+            attributes &&
+            attributes.display !== 'none'
+        ) {
+            this.renderer.addMarker(attributes.id, def);
         }
     }, this);
 });

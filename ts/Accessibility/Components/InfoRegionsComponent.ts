@@ -684,8 +684,10 @@ extend(InfoRegionsComponent.prototype, /** @lends Highcharts.InfoRegionsComponen
                 this.viewDataTableButton.setAttribute('aria-expanded', 'true');
             }
 
-            e.tree.tabindex = -1;
-            e.tree.summary = getTableSummary(chart);
+            const attributes = e.tree.attributes || {};
+            attributes.tabindex = -1;
+            attributes.summary = getTableSummary(chart);
+            e.tree.attributes = attributes;
         }
     },
 

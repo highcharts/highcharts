@@ -196,26 +196,27 @@ var TextBuilder = /** @class */ (function () {
         var modifyChild = function (elem, i) {
             var tagName = elem.tagName;
             var styledMode = _this.renderer.styledMode;
+            var attributes = elem.attributes || {};
             // Apply styling to text tags
             if (tagName === 'b' || tagName === 'strong') {
                 if (styledMode) {
-                    elem['class'] = 'highcharts-strong'; // eslint-disable-line dot-notation
+                    attributes['class'] = 'highcharts-strong'; // eslint-disable-line dot-notation
                 }
                 else {
-                    elem.style = 'font-weight:bold;' + (elem.style || '');
+                    attributes.style = 'font-weight:bold;' + (attributes.style || '');
                 }
             }
             else if (tagName === 'i' || tagName === 'em') {
                 if (styledMode) {
-                    elem['class'] = 'highcharts-emphasized'; // eslint-disable-line dot-notation
+                    attributes['class'] = 'highcharts-emphasized'; // eslint-disable-line dot-notation
                 }
                 else {
-                    elem.style = 'font-style:italic;' + (elem.style || '');
+                    attributes.style = 'font-style:italic;' + (attributes.style || '');
                 }
             }
             // Modify attributes
-            if (isString(elem.style)) {
-                elem.style = elem.style.replace(/(;| |^)color([ :])/, '$1fill$2');
+            if (isString(attributes.style)) {
+                attributes.style = attributes.style.replace(/(;| |^)color([ :])/, '$1fill$2');
             }
             // Trim whitespace off the beginning of new lines
             if (tagName === 'br') {
@@ -228,6 +229,7 @@ var TextBuilder = /** @class */ (function () {
             if (tagName !== 'a' && tagName !== 'br') {
                 elem.tagName = 'tspan';
             }
+            elem.attributes = attributes;
             // Recurse
             if (elem.children) {
                 elem.children
@@ -282,22 +284,24 @@ var TextBuilder = /** @class */ (function () {
             var tagName = node.nodeName.toLowerCase();
             // Add allowed tags
             if (TextBuilder.allowedTags.indexOf(tagName) !== -1) {
-                var astNode_1 = {
+                var astNode = {
                     tagName: tagName
                 };
                 if (tagName === '#text') {
-                    astNode_1.textContent = (_a = node.textContent) === null || _a === void 0 ? void 0 : _a.toString();
+                    astNode.textContent = (_a = node.textContent) === null || _a === void 0 ? void 0 : _a.toString();
                 }
-                var attributes = node.attributes;
+                var parsedAttributes = node.attributes;
                 // Add allowed attributes
-                if (attributes) {
-                    [].forEach.call(attributes, function (attrib) {
+                if (parsedAttributes) {
+                    var attributes_1 = {};
+                    [].forEach.call(parsedAttributes, function (attrib) {
                         if (TextBuilder.allowedAttributes
                             .indexOf(attrib.name) !== -1 &&
                             validateDirective(attrib)) {
-                            astNode_1[attrib.name] = attrib.value;
+                            attributes_1[attrib.name] = attrib.value;
                         }
                     });
+                    astNode.attributes = attributes_1;
                 }
                 // Handle children
                 if (node.childNodes.length) {
@@ -306,10 +310,10 @@ var TextBuilder = /** @class */ (function () {
                         validateChildNodes(childNode, children_1);
                     });
                     if (children_1.length) {
-                        astNode_1.children = children_1;
+                        astNode.children = children_1;
                     }
                 }
-                addTo.push(astNode_1);
+                addTo.push(astNode);
             }
         };
         [].forEach.call(doc.body.childNodes, function (childNode) { return validateChildNodes(childNode, tree); });
@@ -431,6 +435,7 @@ var TextBuilder = /** @class */ (function () {
         'a',
         'b',
         'br',
+        'caption',
         'code',
         'div',
         'em',

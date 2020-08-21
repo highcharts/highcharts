@@ -73,7 +73,7 @@ declare global {
             width: number;
         }
         interface NodeTreeObject {
-            [key: string]: (boolean|number|string|Array<NodeTreeObject>|undefined);
+            attributes?: SVGAttributes;
             children?: Array<NodeTreeObject>;
             tagName?: string;
             textContent?: string;
@@ -821,19 +821,21 @@ class SVGRenderer {
 
                 } else if (item.tagName) {
                     node = doc.createElementNS(NS, item.tagName);
-                    const attribs: Highcharts.SVGAttributes = {};
+                    const attributes = item.attributes || {};
 
-                    // Set attributes
+                    // Apply attributes from root of AST node, legacy from
+                    // from before TextBuilder
                     objectEach(item, function (val, key): void {
                         if (
                             key !== 'tagName' &&
+                            key !== 'attributes' &&
                             key !== 'children' &&
                             key !== 'textContent'
                         ) {
-                            attribs[key] = val;
+                            attributes[key] = val;
                         }
                     });
-                    attr(node as any, attribs);
+                    attr(node as any, attributes);
 
                     // Add text content
                     if (textNode) {

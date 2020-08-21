@@ -36,6 +36,7 @@ class TextBuilder {
         'a',
         'b',
         'br',
+        'caption',
         'code',
         'div',
         'em',
@@ -332,25 +333,26 @@ class TextBuilder {
         const modifyChild = (elem: Highcharts.NodeTreeObject, i: number): void => {
             const tagName = elem.tagName;
             const styledMode = this.renderer.styledMode;
+            const attributes = elem.attributes || {};
 
             // Apply styling to text tags
             if (tagName === 'b' || tagName === 'strong') {
                 if (styledMode) {
-                    elem['class'] = 'highcharts-strong'; // eslint-disable-line dot-notation
+                    attributes['class'] = 'highcharts-strong'; // eslint-disable-line dot-notation
                 } else {
-                    elem.style = 'font-weight:bold;' + (elem.style || '');
+                    attributes.style = 'font-weight:bold;' + (attributes.style || '');
                 }
             } else if (tagName === 'i' || tagName === 'em') {
                 if (styledMode) {
-                    elem['class'] = 'highcharts-emphasized'; // eslint-disable-line dot-notation
+                    attributes['class'] = 'highcharts-emphasized'; // eslint-disable-line dot-notation
                 } else {
-                    elem.style = 'font-style:italic;' + (elem.style || '');
+                    attributes.style = 'font-style:italic;' + (attributes.style || '');
                 }
             }
 
             // Modify attributes
-            if (isString(elem.style)) {
-                elem.style = elem.style.replace(
+            if (isString(attributes.style)) {
+                attributes.style = attributes.style.replace(
                     /(;| |^)color([ :])/,
                     '$1fill$2'
                 );
@@ -368,6 +370,7 @@ class TextBuilder {
             if (tagName !== 'a' && tagName !== 'br') {
                 elem.tagName = 'tspan';
             }
+            elem.attributes = attributes;
 
             // Recurse
             if (elem.children) {
@@ -451,19 +454,21 @@ class TextBuilder {
                 if (tagName === '#text') {
                     astNode.textContent = node.textContent?.toString();
                 }
-                const attributes = (node as any).attributes;
+                const parsedAttributes = (node as any).attributes;
 
                 // Add allowed attributes
-                if (attributes) {
-                    [].forEach.call(attributes, (attrib: Attribute): void => {
+                if (parsedAttributes) {
+                    const attributes: Highcharts.SVGAttributes = {};
+                    [].forEach.call(parsedAttributes, (attrib: Attribute): void => {
                         if (
                             TextBuilder.allowedAttributes
                                 .indexOf(attrib.name) !== -1 &&
                             validateDirective(attrib)
                         ) {
-                            astNode[attrib.name] = attrib.value;
+                            attributes[attrib.name] = attrib.value;
                         }
                     });
+                    astNode.attributes = attributes;
                 }
 
                 // Handle children

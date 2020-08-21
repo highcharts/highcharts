@@ -928,16 +928,14 @@ Chart.prototype.getTable = function (
             return node.textContent || '';
         }
 
+        const attributes = node.attributes;
         let html = `<${node.tagName}`;
-        Object.keys(node).forEach((key): void => {
-            if (
-                key !== 'children' &&
-                key !== 'tagName' &&
-                key !== 'textContent'
-            ) {
-                html += ` ${key}="${node[key]}"`;
-            }
-        });
+
+        if (attributes) {
+            Object.keys(attributes).forEach((key): void => {
+                html += ` ${key}="${attributes[key]}"`;
+            });
+        }
         html += '>';
 
         html += node.textContent || '';
@@ -972,7 +970,7 @@ Chart.prototype.getTable = function (
 Chart.prototype.getTableTree = function (
     useLocalDecimalPoint?: boolean
 ): Highcharts.NodeTreeObject {
-    const treeChildren = [];
+    const treeChildren: Highcharts.NodeTreeObject[] = [];
     var options = this.options,
         decimalPoint = useLocalDecimalPoint ? (1.1).toLocaleString()[1] : '.',
         useMultiLevelHeaders = pick(
@@ -1004,28 +1002,33 @@ Chart.prototype.getTableTree = function (
         getCellHTMLFromValue = function (
             tagName: string,
             classes: (string|null),
-            attrs: Highcharts.Dictionary<string|number>,
+            attributes: Highcharts.SVGAttributes,
             value: (number|string)
         ): Highcharts.NodeTreeObject {
-            var val = pick(value, ''),
+            var textContent = pick(value, ''),
                 className = 'text' + (classes ? ' ' + classes : '');
 
             // Convert to string if number
-            if (typeof val === 'number') {
-                val = val.toString();
+            if (typeof textContent === 'number') {
+                textContent = textContent.toString();
                 if (decimalPoint === ',') {
-                    val = val.replace('.', decimalPoint);
+                    textContent = textContent.replace('.', decimalPoint);
                 }
                 className = 'number';
             } else if (!value) {
                 className = 'empty';
             }
 
-            return extend({
+            attributes = extend(
+                { 'class': className },
+                attributes
+            );
+
+            return {
                 tagName,
-                'class': className,
-                textContent: val
-            }, attrs);
+                attributes,
+                textContent
+            };
 
         },
         // Get table header markup from row data
@@ -1093,9 +1096,9 @@ Chart.prototype.getTableTree = function (
                             { scope: 'col' },
                             cur
                         );
-                        if (rowspan > 1) {
-                            cell.valign = 'top';
-                            cell.rowspan = rowspan;
+                        if (rowspan > 1 && cell.attributes) {
+                            cell.attributes.valign = 'top';
+                            cell.attributes.rowspan = rowspan;
                         }
 
                         trChildren.push(cell);
@@ -1137,7 +1140,9 @@ Chart.prototype.getTableTree = function (
     if ((options.exporting as any).tableCaption !== false) {
         treeChildren.push({
             tagName: 'caption',
-            'class': 'highcharts-table-caption',
+            attributes: {
+                'class': 'highcharts-table-caption'
+            },
             textContent: pick(
                 (options.exporting as any).tableCaption,
                 (
