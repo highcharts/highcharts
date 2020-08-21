@@ -453,7 +453,6 @@ seriesType<Highcharts.PieSeries>(
              * if a `format` is defined, the format takes precedence and the
              * formatter is ignored.
              *
-             *
              * @type {Highcharts.DataLabelsFormatterCallbackFunction}
              * @default function () { return this.point.isNull ? void 0 : this.point.name; }
              */
