@@ -10,6 +10,7 @@
  *
  * */
 'use strict';
+import Chart from '../Core/Chart/Chart.js';
 import H from '../Core/Globals.js';
 import Point from '../Core/Series/Point.js';
 import U from '../Core/Utilities.js';
@@ -1677,7 +1678,7 @@ function dragMove(e, point) {
  * @return {Highcharts.SVGElement}
  *         The modified guide box.
  */
-H.Chart.prototype.setGuideBoxState = function (state, options) {
+Chart.prototype.setGuideBoxState = function (state, options) {
     var guideBox = this.dragGuideBox, guideBoxOptions = merge(defaultGuideBoxOptions, options), stateOptions = merge(guideBoxOptions['default'], // eslint-disable-line dot-notation
     guideBoxOptions[state]);
     return guideBox
