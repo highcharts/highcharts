@@ -27,7 +27,7 @@ const chart2 = Highcharts.chart('chart2', {
     }
 });
 
-const chart3 = Highcharts.chart('chart3', {
+Highcharts.chart('chart3', {
     title: {
         text: 'All states'
     },
@@ -58,11 +58,35 @@ const chart3 = Highcharts.chart('chart3', {
 }, function (chart) {
     const dataSeriesConverter = new DataSeriesConverter();
     const table = dataSeriesConverter.setDataTable(chart.series);
-    console.log('table from series -> ', table);
+    console.log('table from LINE series -> ', table);
+});
+
+Highcharts.stockChart('chart4', {
+    title: {
+        text: 'All states'
+    },
+    subtitle: {
+        text: 'Create datatable from series'
+    },
+    series: [{
+        type: 'ohlc',
+        name: 'AAPL',
+        data: [
+            [1541514600000, 201.92, 204.72, 201.69, 203.77],
+            [1541601000000, 205.97, 210.06, 204.13, 209.95],
+            [1541687400000, 209.98, 210.12, 206.75, 208.49],
+            [1541773800000, 205.55, 206.01, 202.25, 204.47],
+            [1542033000000, 199, 199.85, 193.79, 194.17]
+        ]
+    }]
+}, function (chart) {
+    const dataSeriesConverter = new DataSeriesConverter();
+    const table = dataSeriesConverter.setDataTable(chart.series);
+    console.log('table from OHLC series -> ', table);
 });
 
 const store = new GoogleDataStore(undefined, {
-    googleSpreadsheetKey: '14632VxDAT-TAL06ICnoLsV_JyvjEBXdVY-J34br5iXY',
+    googleSpreadsheetKey: '14632VxDAT-TAL06ICnoLsV_JyvjEBXdVY-J34br5iXY'
     // startColumn: 1,
     // endColumn: 8,
     // startRow: 0,

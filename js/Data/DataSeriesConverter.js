@@ -104,31 +104,51 @@ var DataSeriesConverter = /** @class */ (function () {
     };
     DataSeriesConverter.prototype.setDataTable = function (allSeries) {
         var table = this.table;
-        var columns, series, pointArrayMap, valueCount, options, keys, data, elem, row, y, xIndex, yIndex, id;
+        var columns, series, pointArrayMap, pointArrayMapLength, options, keys, data, elem, row, y, isArrayData, xIndex, yIndex, yValueName, yValueIndex, yValueId, id;
         for (var i = 0, iEnd = allSeries.length; i < iEnd; i++) {
             series = allSeries[i];
-            pointArrayMap = series.pointArrayMap;
-            valueCount = pointArrayMap && pointArrayMap.length;
+            // temporarily series.name -> change it to eg series.id?
+            yValueId = '_' + series.name.replace(' ', '');
+            pointArrayMap = series.pointArrayMap || ['y'];
+            pointArrayMapLength = pointArrayMap.length;
             options = series.options;
             keys = options.keys;
             data = series.options.data || [];
             for (var j = 0, jEnd = data.length; j < jEnd; j++) {
                 elem = data[j];
-                // temporarily series.name -> change it to eg series.id?
-                y = 'y_' + series.name;
+                y = 'y' + yValueId;
                 columns = {};
+                isArrayData = pointArrayMapLength > 2;
                 if (typeof elem === 'number') {
                     columns[y] = elem;
                     columns.x = j;
                 }
                 else if (elem instanceof Array) {
-                    xIndex = keys ? keys.indexOf('x') : 0;
-                    yIndex = keys ? keys.indexOf('y') : 1;
-                    columns[y] = elem[yIndex];
-                    columns.x = elem[xIndex];
+                    xIndex = keys && keys.indexOf('x') > -1 ? keys.indexOf('x') : 0;
+                    yIndex = keys && keys.indexOf('y') > -1 ? keys.indexOf('y') : 1;
+                    if (isArrayData) {
+                        for (var k = 0; k < pointArrayMapLength; k++) {
+                            yValueName = pointArrayMap[k];
+                            yValueIndex = keys && keys.indexOf(yValueName) > -1 ?
+                                keys.indexOf(yValueName) : k + elem.length - pointArrayMapLength;
+                            columns[yValueName + yValueId] = elem[yValueIndex];
+                        }
+                    }
+                    else {
+                        columns[y] = elem[yIndex];
+                    }
+                    columns.x = elem.length - pointArrayMapLength > 0 ? elem[xIndex] : j;
                 }
                 else if (elem instanceof Object) {
-                    columns[y] = elem.y;
+                    if (isArrayData) {
+                        for (var k = 0; k < pointArrayMapLength; k++) {
+                            yValueName = pointArrayMap[k];
+                            columns[yValueName + yValueId] = elem[yValueName];
+                        }
+                    }
+                    else {
+                        columns[y] = elem.y;
+                    }
                     columns.x = elem.x || j;
                 }
                 id = '' + columns.x;
