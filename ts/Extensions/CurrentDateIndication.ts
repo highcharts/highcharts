@@ -67,7 +67,7 @@ import PlotLineOrBand from '../Core/Axis/PlotLineOrBand.js';
 var Axis = H.Axis;
 
 
-var defaultConfig: (
+const defaultConfig: (
     Highcharts.CurrentDateIndicatorOptions &
     Highcharts.XAxisOptions
 ) = {
