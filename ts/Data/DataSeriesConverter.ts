@@ -137,7 +137,8 @@ class DataSeriesConverter {
     }
 
     setDataTable(allSeries: Array<Highcharts.Series>): DataTable {
-        const table = this.table;
+        const table = this.table,
+            columnMap = (this.options || {}).columnMap || {};
 
         let columns: Record<string, DataTableRow.ColumnTypes>,
             series,
@@ -170,7 +171,7 @@ class DataSeriesConverter {
 
             for (let j = 0, jEnd = data.length; j < jEnd; j++) {
                 elem = data[j];
-                y = 'y' + yValueId;
+                y = columnMap.y ? columnMap.y + yValueId : 'y' + yValueId;
                 columns = {};
                 needsArrayMap = pointArrayMapLength > 1;
 
@@ -183,10 +184,11 @@ class DataSeriesConverter {
 
                     if (needsArrayMap) {
                         for (let k = 0; k < pointArrayMapLength; k++) {
-                            yValueName = pointArrayMap[k];
-                            yValueIndex = keys && keys.indexOf(yValueName) > -1 ?
-                                keys.indexOf(yValueName) : k + elem.length - pointArrayMapLength;
+                            yValueIndex = keys && keys.indexOf(pointArrayMap[k]) > -1 ?
+                                keys.indexOf(pointArrayMap[k]) : k + elem.length - pointArrayMapLength;
 
+                            yValueName = columnMap[pointArrayMap[k]] ?
+                                columnMap[pointArrayMap[k]] : pointArrayMap[k];
                             columns[yValueName + yValueId] = elem[yValueIndex];
                         }
                     } else {
@@ -200,7 +202,8 @@ class DataSeriesConverter {
                         const elemSet = elem as Record<string, DataTableRow.ColumnTypes>;
 
                         for (let k = 0; k < pointArrayMapLength; k++) {
-                            yValueName = pointArrayMap[k];
+                            yValueName = columnMap[pointArrayMap[k]] ?
+                                columnMap[pointArrayMap[k]] : pointArrayMap[k];
                             columns[yValueName + yValueId] = elemSet[yValueName];
                         }
                     } else {
@@ -234,6 +237,7 @@ class DataSeriesConverter {
 namespace DataSeriesConverter {
     export interface Options {
         type?: string;
+        columnMap?: Record<string, string>;
     }
 }
 /* *

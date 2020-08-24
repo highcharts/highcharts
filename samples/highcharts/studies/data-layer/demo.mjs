@@ -56,7 +56,11 @@ Highcharts.chart('chart3', {
         }]
     }]
 }, function (chart) {
-    const dataSeriesConverter = new DataSeriesConverter();
+    const dataSeriesConverter = new DataSeriesConverter(undefined, {
+        columnMap: {
+            y: 'customY'
+        }
+    });
     const table = dataSeriesConverter.setDataTable(chart.series);
     console.log('table from LINE series -> ', table);
 });
@@ -80,7 +84,11 @@ Highcharts.stockChart('chart4', {
         ]
     }]
 }, function (chart) {
-    const dataSeriesConverter = new DataSeriesConverter();
+    const dataSeriesConverter = new DataSeriesConverter(undefined, {
+        columnMap: {
+            open: 'customOpen'
+        }
+    });
     const table = dataSeriesConverter.setDataTable(chart.series);
     console.log('table from OHLC series -> ', table);
 });

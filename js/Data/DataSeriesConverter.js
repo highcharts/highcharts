@@ -103,7 +103,7 @@ var DataSeriesConverter = /** @class */ (function () {
         return seriesOptions;
     };
     DataSeriesConverter.prototype.setDataTable = function (allSeries) {
-        var table = this.table;
+        var table = this.table, columnMap = (this.options || {}).columnMap || {};
         var columns, series, pointArrayMap, pointArrayMapLength, options, keys, data, elem, row, y, needsArrayMap, xIndex, yIndex, yValueName, yValueIndex, yValueId, id;
         for (var i = 0, iEnd = allSeries.length; i < iEnd; i++) {
             series = allSeries[i];
@@ -116,7 +116,7 @@ var DataSeriesConverter = /** @class */ (function () {
             data = series.options.data || [];
             for (var j = 0, jEnd = data.length; j < jEnd; j++) {
                 elem = data[j];
-                y = 'y' + yValueId;
+                y = columnMap.y ? columnMap.y + yValueId : 'y' + yValueId;
                 columns = {};
                 needsArrayMap = pointArrayMapLength > 1;
                 if (typeof elem === 'number') {
@@ -128,9 +128,10 @@ var DataSeriesConverter = /** @class */ (function () {
                     yIndex = keys && keys.indexOf('y') > -1 ? keys.indexOf('y') : 1;
                     if (needsArrayMap) {
                         for (var k = 0; k < pointArrayMapLength; k++) {
-                            yValueName = pointArrayMap[k];
-                            yValueIndex = keys && keys.indexOf(yValueName) > -1 ?
-                                keys.indexOf(yValueName) : k + elem.length - pointArrayMapLength;
+                            yValueIndex = keys && keys.indexOf(pointArrayMap[k]) > -1 ?
+                                keys.indexOf(pointArrayMap[k]) : k + elem.length - pointArrayMapLength;
+                            yValueName = columnMap[pointArrayMap[k]] ?
+                                columnMap[pointArrayMap[k]] : pointArrayMap[k];
                             columns[yValueName + yValueId] = elem[yValueIndex];
                         }
                     }
@@ -143,7 +144,8 @@ var DataSeriesConverter = /** @class */ (function () {
                     if (needsArrayMap) {
                         var elemSet = elem;
                         for (var k = 0; k < pointArrayMapLength; k++) {
-                            yValueName = pointArrayMap[k];
+                            yValueName = columnMap[pointArrayMap[k]] ?
+                                columnMap[pointArrayMap[k]] : pointArrayMap[k];
                             columns[yValueName + yValueId] = elemSet[yValueName];
                         }
                     }
