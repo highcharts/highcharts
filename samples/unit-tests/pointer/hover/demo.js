@@ -114,9 +114,9 @@ QUnit.test('Testing hovering over panes.', function (assert) {
 
     controller.moveTo(x, y);
 
-    assert.strictEqual(
-        chart.hoverPoint,
-        chart.series[0].points[2],
+    assert.deepEqual(
+        [chart.hoverPoint.series.index, chart.hoverPoint.index],
+        [0, 2],
         'The other pane\'s point should be ignored' // #11148
     );
 
