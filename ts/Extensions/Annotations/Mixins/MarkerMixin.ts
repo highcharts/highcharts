@@ -205,7 +205,8 @@ var markerMixin: Highcharts.AnnotationMarkerMixin = {
                         if (
                             (
                                 markerId === def.attributes?.id ||
-                                // Legacy, for unit-tests/annotations/annotations-shapes
+                                // Legacy, for
+                                // unit-tests/annotations/annotations-shapes
                                 markerId === (def as any).id
                             ) &&
                             def.tagName === 'marker'
