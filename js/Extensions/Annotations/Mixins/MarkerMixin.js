@@ -143,7 +143,8 @@ var markerMixin = {
                 for (key in defs) { // eslint-disable-line guard-for-in
                     def = defs[key];
                     if ((markerId === ((_a = def.attributes) === null || _a === void 0 ? void 0 : _a.id) ||
-                        // Legacy, for unit-tests/annotations/annotations-shapes
+                        // Legacy, for
+                        // unit-tests/annotations/annotations-shapes
                         markerId === def.id) &&
                         def.tagName === 'marker') {
                         predefinedMarker = def;
