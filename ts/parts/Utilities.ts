@@ -3371,7 +3371,7 @@ if ((win as any).jQuery) {
 
             // Create the chart
             if (args[0]) {
-                new (H as any)[ // eslint-disable-line no-new
+                new (H as any)[ // eslint-disable-line
                     // Constructor defaults to Chart
                     isString(args[0]) ? args.shift() : 'Chart'
                 ](this[0], args[0], args[1]);
