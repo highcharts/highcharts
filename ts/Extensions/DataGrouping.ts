@@ -189,7 +189,7 @@ var Axis = H.Axis,
  * @name Highcharts.approximations
  * @type {Highcharts.Dictionary<Function>}
  */
-var approximations: Highcharts.DataGroupingApproximationsDictionary =
+const approximations: Highcharts.DataGroupingApproximationsDictionary =
 H.approximations = {
     sum: function (
         arr: Highcharts.DataGroupingApproximationsArray
@@ -306,7 +306,7 @@ H.approximations = {
     }
 };
 
-var groupData = function (
+const groupData = function (
     this: Highcharts.Series,
     xData: Array<number>,
     yData: (
@@ -493,7 +493,7 @@ var dataGrouping = {
 // -----------------------------------------------------------------------------
 // The following code applies to implementation of data grouping on a Series
 
-var seriesProto = Series.prototype,
+const seriesProto = Series.prototype,
     baseProcessData = seriesProto.processData,
     baseGeneratePoints = seriesProto.generatePoints,
     /** @ignore */
