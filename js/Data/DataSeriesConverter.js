@@ -104,7 +104,7 @@ var DataSeriesConverter = /** @class */ (function () {
     };
     DataSeriesConverter.prototype.setDataTable = function (allSeries) {
         var table = this.table;
-        var columns, series, pointArrayMap, pointArrayMapLength, options, keys, data, elem, row, y, isArrayData, xIndex, yIndex, yValueName, yValueIndex, yValueId, id;
+        var columns, series, pointArrayMap, pointArrayMapLength, options, keys, data, elem, row, y, needsArrayMap, xIndex, yIndex, yValueName, yValueIndex, yValueId, id;
         for (var i = 0, iEnd = allSeries.length; i < iEnd; i++) {
             series = allSeries[i];
             // temporarily series.name -> change it to eg series.id?
@@ -118,7 +118,7 @@ var DataSeriesConverter = /** @class */ (function () {
                 elem = data[j];
                 y = 'y' + yValueId;
                 columns = {};
-                isArrayData = pointArrayMapLength > 2;
+                needsArrayMap = pointArrayMapLength > 1;
                 if (typeof elem === 'number') {
                     columns[y] = elem;
                     columns.x = j;
@@ -126,7 +126,7 @@ var DataSeriesConverter = /** @class */ (function () {
                 else if (elem instanceof Array) {
                     xIndex = keys && keys.indexOf('x') > -1 ? keys.indexOf('x') : 0;
                     yIndex = keys && keys.indexOf('y') > -1 ? keys.indexOf('y') : 1;
-                    if (isArrayData) {
+                    if (needsArrayMap) {
                         for (var k = 0; k < pointArrayMapLength; k++) {
                             yValueName = pointArrayMap[k];
                             yValueIndex = keys && keys.indexOf(yValueName) > -1 ?
@@ -140,10 +140,11 @@ var DataSeriesConverter = /** @class */ (function () {
                     columns.x = elem.length - pointArrayMapLength > 0 ? elem[xIndex] : j;
                 }
                 else if (elem instanceof Object) {
-                    if (isArrayData) {
+                    if (needsArrayMap) {
+                        var elemSet = elem;
                         for (var k = 0; k < pointArrayMapLength; k++) {
                             yValueName = pointArrayMap[k];
-                            columns[yValueName + yValueId] = elem[yValueName];
+                            columns[yValueName + yValueId] = elemSet[yValueName];
                         }
                     }
                     else {

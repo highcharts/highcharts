@@ -149,7 +149,7 @@ class DataSeriesConverter {
             elem,
             row,
             y,
-            isArrayData,
+            needsArrayMap,
             xIndex,
             yIndex,
             yValueName,
@@ -172,7 +172,7 @@ class DataSeriesConverter {
                 elem = data[j];
                 y = 'y' + yValueId;
                 columns = {};
-                isArrayData = pointArrayMapLength > 2;
+                needsArrayMap = pointArrayMapLength > 1;
 
                 if (typeof elem === 'number') {
                     columns[y] = elem;
@@ -181,7 +181,7 @@ class DataSeriesConverter {
                     xIndex = keys && keys.indexOf('x') > -1 ? keys.indexOf('x') : 0;
                     yIndex = keys && keys.indexOf('y') > -1 ? keys.indexOf('y') : 1;
 
-                    if (isArrayData) {
+                    if (needsArrayMap) {
                         for (let k = 0; k < pointArrayMapLength; k++) {
                             yValueName = pointArrayMap[k];
                             yValueIndex = keys && keys.indexOf(yValueName) > -1 ?
@@ -196,10 +196,12 @@ class DataSeriesConverter {
                     columns.x = elem.length - pointArrayMapLength > 0 ? elem[xIndex] : j;
 
                 } else if (elem instanceof Object) {
-                    if (isArrayData) {
+                    if (needsArrayMap) {
+                        const elemSet = elem as Record<string, DataTableRow.ColumnTypes>;
+
                         for (let k = 0; k < pointArrayMapLength; k++) {
                             yValueName = pointArrayMap[k];
-                            columns[yValueName + yValueId] = (elem as any)[yValueName];
+                            columns[yValueName + yValueId] = elemSet[yValueName];
                         }
                     } else {
                         columns[y] = elem.y;
