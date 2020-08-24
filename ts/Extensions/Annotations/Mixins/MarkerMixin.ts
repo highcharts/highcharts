@@ -34,7 +34,7 @@ declare global {
             setItemMarkers(this: ControllablePath, item: ControllablePath): void;
         }
         interface Options {
-            defs?: Dictionary<NodeTreeObject>;
+            defs?: Dictionary<ASTObject>;
         }
         interface SVGRenderer {
             addMarker(id: string, markerOptions: SVGAttributes): SVGElement;
@@ -72,13 +72,13 @@ declare global {
  * @sample highcharts/css/annotations-markers/
  *         Define markers in a styled mode
  *
- * @type         {Highcharts.Dictionary<Highcharts.NodeTreeObject>}
+ * @type         {Highcharts.Dictionary<Highcharts.ASTObject>}
  * @since        6.0.0
  * @optionparent defs
  */
-var defaultMarkers: Record<string, Highcharts.NodeTreeObject> = {
+var defaultMarkers: Record<string, Highcharts.ASTObject> = {
     /**
-     * @type {Highcharts.NodeTreeObject}
+     * @type {Highcharts.ASTObject}
      */
     arrow: {
         tagName: 'marker',
@@ -102,7 +102,7 @@ var defaultMarkers: Record<string, Highcharts.NodeTreeObject> = {
         }]
     },
     /**
-     * @type {Highcharts.NodeTreeObject}
+     * @type {Highcharts.ASTObject}
      */
     'reverse-arrow': {
         tagName: 'marker',
@@ -129,7 +129,7 @@ SVGRenderer.prototype.addMarker = function (
     id: string,
     markerOptions: Highcharts.SVGAttributes
 ): Highcharts.SVGElement {
-    var options: Highcharts.NodeTreeObject = { id: id } as any;
+    var options: Highcharts.ASTObject = { attributes: { id } };
 
     var attrs: Highcharts.SVGAttributes = {
         stroke: markerOptions.color || 'none',
@@ -137,12 +137,12 @@ SVGRenderer.prototype.addMarker = function (
     };
 
     options.children = markerOptions.children.map(function (
-        child: Highcharts.NodeTreeObject
-    ): Highcharts.NodeTreeObject {
+        child: Highcharts.ASTObject
+    ): Highcharts.ASTObject {
         return merge(attrs, child);
     });
 
-    var marker = this.definition(merge(true, {
+    const ast = merge(true, {
         attributes: {
             markerWidth: 20,
             markerHeight: 20,
@@ -150,7 +150,9 @@ SVGRenderer.prototype.addMarker = function (
             refY: 0,
             orient: 'auto'
         }
-    }, markerOptions, options));
+    }, markerOptions, options);
+
+    var marker = this.definition(ast);
 
     marker.id = id;
 

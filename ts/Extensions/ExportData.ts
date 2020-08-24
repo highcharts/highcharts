@@ -65,7 +65,8 @@ declare global {
             ): Array<Array<(number|string)>>;
             /** @requires modules/export-data */
             getTable(useLocalDecimalPoint?: boolean): string;
-            getTableTree(useLocalDecimalPoint?: boolean): NodeTreeObject;
+            /** @requires modules/export-data */
+            getTableAST(useLocalDecimalPoint?: boolean): ASTObject;
             /** @requires modules/export-data */
             setUpKeyToAxis(): void;
             /** @requires modules/export-data */
@@ -922,7 +923,7 @@ Chart.prototype.getCSV = function (
 Chart.prototype.getTable = function (
     useLocalDecimalPoint?: boolean
 ): string {
-    const serialize = (node: Highcharts.NodeTreeObject): string => {
+    const serialize = (node: Highcharts.ASTObject): string => {
         if (!node.tagName || node.tagName === '#text') {
             // Text node
             return node.textContent || '';
@@ -948,7 +949,7 @@ Chart.prototype.getTable = function (
         return html;
     };
 
-    const tree = this.getTableTree(useLocalDecimalPoint);
+    const tree = this.getTableAST(useLocalDecimalPoint);
     return serialize(tree);
 };
 
@@ -957,20 +958,20 @@ Chart.prototype.getTable = function (
  *
  * @private
  *
- * @function Highcharts.Chart#getTableTree
+ * @function Highcharts.Chart#getTableAST
  *
  * @param {boolean} [useLocalDecimalPoint]
  *        Whether to use the local decimal point as detected from the browser.
  *        This makes it easier to export data to Excel in the same locale as the
  *        user is.
  *
- * @return {Highcharts.NodeTreeObject}
+ * @return {Highcharts.ASTObject}
  *         The abstract syntax tree
  */
-Chart.prototype.getTableTree = function (
+Chart.prototype.getTableAST = function (
     useLocalDecimalPoint?: boolean
-): Highcharts.NodeTreeObject {
-    const treeChildren: Highcharts.NodeTreeObject[] = [];
+): Highcharts.ASTObject {
+    const treeChildren: Highcharts.ASTObject[] = [];
     var options = this.options,
         decimalPoint = useLocalDecimalPoint ? (1.1).toLocaleString()[1] : '.',
         useMultiLevelHeaders = pick(
@@ -1004,7 +1005,7 @@ Chart.prototype.getTableTree = function (
             classes: (string|null),
             attributes: Highcharts.SVGAttributes,
             value: (number|string)
-        ): Highcharts.NodeTreeObject {
+        ): Highcharts.ASTObject {
             var textContent = pick(value, ''),
                 className = 'text' + (classes ? ' ' + classes : '');
 
@@ -1036,8 +1037,8 @@ Chart.prototype.getTableTree = function (
             topheaders: (Array<(number|string)>|null|undefined),
             subheaders: Array<(number|string)>,
             rowLength?: number
-        ): Highcharts.NodeTreeObject {
-            const theadChildren: Highcharts.NodeTreeObject[] = [];
+        ): Highcharts.ASTObject {
+            const theadChildren: Highcharts.ASTObject[] = [];
 
             var i = 0,
                 len = rowLength || subheaders && subheaders.length,
@@ -1169,7 +1170,7 @@ Chart.prototype.getTableTree = function (
     ));
 
     // Transform the rows to HTML
-    const trs: Highcharts.NodeTreeObject[] = [];
+    const trs: Highcharts.ASTObject[] = [];
     rows.forEach(function (row: Array<(number|string)>): void {
         const trChildren = [];
         for (var j = 0; j < rowLength; j++) {
@@ -1198,10 +1199,10 @@ Chart.prototype.getTableTree = function (
             tagName: 'table',
             id: `highcharts-data-table-${this.index}`,
             children: treeChildren
-        } as Highcharts.NodeTreeObject
+        } as Highcharts.ASTObject
 
     };
-    fireEvent(this, 'aftergetTableTree', e);
+    fireEvent(this, 'aftergetTableAST', e);
 
     return e.tree;
 };
@@ -1337,7 +1338,7 @@ Chart.prototype.viewData = function (): void {
 
     this.isDataTableVisible = true;
 
-    this.renderer.addTree(this.getTableTree(), this.dataTableDiv);
+    this.renderer.addAST(this.getTableAST(), this.dataTableDiv);
     fireEvent(this, 'afterViewData', this.dataTableDiv);
 };
 

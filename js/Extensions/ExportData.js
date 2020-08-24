@@ -647,7 +647,7 @@ Chart.prototype.getTable = function (useLocalDecimalPoint) {
         html += "</" + node.tagName + ">";
         return html;
     };
-    var tree = this.getTableTree(useLocalDecimalPoint);
+    var tree = this.getTableAST(useLocalDecimalPoint);
     return serialize(tree);
 };
 /**
@@ -655,17 +655,17 @@ Chart.prototype.getTable = function (useLocalDecimalPoint) {
  *
  * @private
  *
- * @function Highcharts.Chart#getTableTree
+ * @function Highcharts.Chart#getTableAST
  *
  * @param {boolean} [useLocalDecimalPoint]
  *        Whether to use the local decimal point as detected from the browser.
  *        This makes it easier to export data to Excel in the same locale as the
  *        user is.
  *
- * @return {Highcharts.NodeTreeObject}
+ * @return {Highcharts.ASTObject}
  *         The abstract syntax tree
  */
-Chart.prototype.getTableTree = function (useLocalDecimalPoint) {
+Chart.prototype.getTableAST = function (useLocalDecimalPoint) {
     var treeChildren = [];
     var options = this.options, decimalPoint = useLocalDecimalPoint ? (1.1).toLocaleString()[1] : '.', useMultiLevelHeaders = pick(options.exporting.useMultiLevelHeaders, true), rows = this.getDataRows(useMultiLevelHeaders), rowLength = 0, topHeaders = useMultiLevelHeaders ? rows.shift() : null, subHeaders = rows.shift(), 
     // Compare two rows for equality
@@ -825,7 +825,7 @@ Chart.prototype.getTableTree = function (useLocalDecimalPoint) {
             children: treeChildren
         }
     };
-    fireEvent(this, 'aftergetTableTree', e);
+    fireEvent(this, 'aftergetTableAST', e);
     return e.tree;
 };
 /**
@@ -929,7 +929,7 @@ Chart.prototype.viewData = function () {
         this.dataTableDiv.style.display = 'block';
     }
     this.isDataTableVisible = true;
-    this.renderer.addTree(this.getTableTree(), this.dataTableDiv);
+    this.renderer.addAST(this.getTableAST(), this.dataTableDiv);
     fireEvent(this, 'afterViewData', this.dataTableDiv);
 };
 /**

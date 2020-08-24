@@ -75,7 +75,7 @@ var TextBuilder = /** @class */ (function () {
             // Step 2. Do as many as we can of the modifications to the tree
             // structure before it is added to the DOM
             this.modifyTree(tree);
-            renderer.addTree(tree, wrapper.element);
+            renderer.addAST(tree, wrapper.element);
             // Step 3. Some modifications can't be done until the structure is
             // in the DOM, because we need to read computed metrics.
             this.modifyDOM();

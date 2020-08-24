@@ -130,18 +130,18 @@ var addEvent = U.addEvent, attr = U.attr, createElement = U.createElement, css =
  * Serialized form of an SVG definition, including children. Some key
  * property names are reserved: tagName, textContent, and children.
  *
- * @interface Highcharts.NodeTreeObject
+ * @interface Highcharts.ASTObject
  */ /**
-* @name Highcharts.NodeTreeObject#[key:string]
-* @type {boolean|number|string|Array<Highcharts.NodeTreeObject>|undefined}
+* @name Highcharts.ASTObject#[key:string]
+* @type {boolean|number|string|Array<Highcharts.ASTObject>|undefined}
 */ /**
-* @name Highcharts.NodeTreeObject#children
-* @type {Array<Highcharts.NodeTreeObject>|undefined}
+* @name Highcharts.ASTObject#children
+* @type {Array<Highcharts.ASTObject>|undefined}
 */ /**
-* @name Highcharts.NodeTreeObject#tagName
+* @name Highcharts.ASTObject#tagName
 * @type {string|undefined}
 */ /**
-* @name Highcharts.NodeTreeObject#textContent
+* @name Highcharts.ASTObject#textContent
 * @type {string|undefined}
 */
 /**
@@ -443,9 +443,9 @@ var SVGRenderer = /** @class */ (function () {
      *
      * @private
      *
-     * @function Highcharts.SVGRenderer#addTree
+     * @function Highcharts.SVGRenderer#addAST
      *
-     * @param {Highcharts.NodeTreeObject} tree
+     * @param {Highcharts.ASTObject} tree
      * A serialized form of an SVG subtree, including children.
      * @param {SVGElement} parent
      * The node where it should be added
@@ -453,11 +453,11 @@ var SVGRenderer = /** @class */ (function () {
      * @return {Highcharts.SVGElement}
      * The inserted node.
      */
-    SVGRenderer.prototype.addTree = function (tree, parent) {
+    SVGRenderer.prototype.addAST = function (tree, parent) {
         var NS = parent.namespaceURI || SVG_NS;
         /**
          * @private
-         * @param {Highcharts.NodeTreeObject} subtree - SVG definition
+         * @param {Highcharts.ASTObject} subtree - SVG definition
          * @param {Element} [parentNode] - parent node
          */
         function recurse(subtree, subParent) {
@@ -512,14 +512,14 @@ var SVGRenderer = /** @class */ (function () {
      *
      * @function Highcharts.SVGRenderer#definition
      *
-     * @param {Highcharts.NodeTreeObject} def
+     * @param {Highcharts.ASTObject} def
      * A serialized form of an SVG definition, including children.
      *
      * @return {Highcharts.SVGElement}
      * The inserted node.
      */
     SVGRenderer.prototype.definition = function (def) {
-        return this.addTree(def, this.defs.element);
+        return this.addAST(def, this.defs.element);
     };
     /**
      * Get the global style setting for the renderer.

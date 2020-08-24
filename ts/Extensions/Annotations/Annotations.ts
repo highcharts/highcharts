@@ -60,7 +60,7 @@ declare global {
         }
         interface AnnotationChartOptionsObject extends Options {
             annotations: Array<AnnotationsOptions>;
-            defs: Dictionary<NodeTreeObject>;
+            defs: Dictionary<ASTObject>;
             navigation: NavigationOptions;
         }
         interface AnnotationControlPointEventsOptionsObject {

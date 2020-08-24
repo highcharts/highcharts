@@ -38,13 +38,13 @@ var addEvent = U.addEvent, defined = U.defined, merge = U.merge, objectEach = U.
  * @sample highcharts/css/annotations-markers/
  *         Define markers in a styled mode
  *
- * @type         {Highcharts.Dictionary<Highcharts.NodeTreeObject>}
+ * @type         {Highcharts.Dictionary<Highcharts.ASTObject>}
  * @since        6.0.0
  * @optionparent defs
  */
 var defaultMarkers = {
     /**
-     * @type {Highcharts.NodeTreeObject}
+     * @type {Highcharts.ASTObject}
      */
     arrow: {
         tagName: 'marker',
@@ -68,7 +68,7 @@ var defaultMarkers = {
             }]
     },
     /**
-     * @type {Highcharts.NodeTreeObject}
+     * @type {Highcharts.ASTObject}
      */
     'reverse-arrow': {
         tagName: 'marker',
@@ -91,7 +91,7 @@ var defaultMarkers = {
     }
 };
 SVGRenderer.prototype.addMarker = function (id, markerOptions) {
-    var options = { id: id };
+    var options = { attributes: { id: id } };
     var attrs = {
         stroke: markerOptions.color || 'none',
         fill: markerOptions.color || 'rgba(0, 0, 0, 0.75)'
@@ -99,7 +99,7 @@ SVGRenderer.prototype.addMarker = function (id, markerOptions) {
     options.children = markerOptions.children.map(function (child) {
         return merge(attrs, child);
     });
-    var marker = this.definition(merge(true, {
+    var ast = merge(true, {
         attributes: {
             markerWidth: 20,
             markerHeight: 20,
@@ -107,7 +107,8 @@ SVGRenderer.prototype.addMarker = function (id, markerOptions) {
             refY: 0,
             orient: 'auto'
         }
-    }, markerOptions, options));
+    }, markerOptions, options);
+    var marker = this.definition(ast);
     marker.id = id;
     return marker;
 };

@@ -156,7 +156,7 @@ class TextBuilder {
             // structure before it is added to the DOM
             this.modifyTree(tree);
 
-            renderer.addTree(tree, wrapper.element);
+            renderer.addAST(tree, wrapper.element);
 
             // Step 3. Some modifications can't be done until the structure is
             // in the DOM, because we need to read computed metrics.
@@ -327,10 +327,10 @@ class TextBuilder {
 
     // Transform HTML to SVG, validate
     private modifyTree(
-        elements: Highcharts.NodeTreeObject[]
+        elements: Highcharts.ASTObject[]
     ): void {
 
-        const modifyChild = (elem: Highcharts.NodeTreeObject, i: number): void => {
+        const modifyChild = (elem: Highcharts.ASTObject, i: number): void => {
             const tagName = elem.tagName;
             const styledMode = this.renderer.styledMode;
             const attributes = elem.attributes || {};
@@ -407,14 +407,14 @@ class TextBuilder {
     /*
      * @param markup
      */
-    public parseMarkup(markup: string): Highcharts.NodeTreeObject[] {
+    public parseMarkup(markup: string): Highcharts.ASTObject[] {
 
         interface Attribute {
             name: string;
             value: string;
         }
 
-        const tree: Highcharts.NodeTreeObject[] = [];
+        const tree: Highcharts.ASTObject[] = [];
         let doc;
         let body;
         if (
@@ -442,13 +442,13 @@ class TextBuilder {
 
         const validateChildNodes = (
             node: ChildNode,
-            addTo: Highcharts.NodeTreeObject[]
+            addTo: Highcharts.ASTObject[]
         ): void => {
             const tagName = node.nodeName.toLowerCase();
 
             // Add allowed tags
             if (TextBuilder.allowedTags.indexOf(tagName) !== -1) {
-                const astNode: Highcharts.NodeTreeObject = {
+                const astNode: Highcharts.ASTObject = {
                     tagName
                 };
                 if (tagName === '#text') {
@@ -473,7 +473,7 @@ class TextBuilder {
 
                 // Handle children
                 if (node.childNodes.length) {
-                    const children: Highcharts.NodeTreeObject[] = [];
+                    const children: Highcharts.ASTObject[] = [];
                     [].forEach.call(
                         node.childNodes,
                         (childNode: ChildNode): void => {

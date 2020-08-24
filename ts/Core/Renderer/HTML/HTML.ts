@@ -445,7 +445,7 @@ extend(SVGRenderer.prototype, /** @lends SVGRenderer.prototype */ {
                 if (pick(value, '') !== '') {
                     const builder = new TextBuilder(this);
                     const tree = builder.parseMarkup(value);
-                    renderer.addTree(tree, this.element);
+                    renderer.addAST(tree, this.element);
                 }
 
                 this.textStr = value;
