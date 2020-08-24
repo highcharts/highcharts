@@ -1941,7 +1941,7 @@ Point.prototype.showDragHandles = function () {
  * @function Highcharts.Chart#hideDragHandles
  * @return {void}
  */
-H.Chart.prototype.hideDragHandles = function () {
+Chart.prototype.hideDragHandles = function () {
     var chart = this;
     if (chart.dragHandles) {
         objectEach(chart.dragHandles, function (val, key) {
@@ -2194,7 +2194,7 @@ addEvent(Point, 'remove', function () {
  * @return {boolean}
  *         True if the zoom or pan keys are pressed. False otherwise.
  */
-H.Chart.prototype.zoomOrPanKeyPressed = function (e) {
+Chart.prototype.zoomOrPanKeyPressed = function (e) {
     // Check whether the panKey and zoomKey are set in chart.userOptions
     var chartOptions = this.userOptions.chart || {}, panKey = chartOptions.panKey && chartOptions.panKey + 'Key', zoomKey = chartOptions.zoomKey && chartOptions.zoomKey + 'Key';
     return (e[zoomKey] || e[panKey]);
@@ -2235,7 +2235,7 @@ function addDragDropEvents(chart) {
 }
 // Add event listener to Chart.render that checks whether or not we should add
 // dragdrop.
-addEvent(H.Chart, 'render', function () {
+addEvent(Chart, 'render', function () {
     // If we don't have dragDrop events, see if we should add them
     if (!this.hasAddedDragDropEvents) {
         addDragDropEvents(this);
