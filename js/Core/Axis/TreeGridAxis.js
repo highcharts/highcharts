@@ -17,7 +17,7 @@ import TreeGridTick from './TreeGridTick.js';
 import mixinTreeSeries from '../../Mixins/TreeSeries.js';
 var getLevelOptions = mixinTreeSeries.getLevelOptions;
 import U from '../Utilities.js';
-var addEvent = U.addEvent, find = U.find, fireEvent = U.fireEvent, isNumber = U.isNumber, isObject = U.isObject, isString = U.isString, merge = U.merge, pick = U.pick, wrap = U.wrap;
+var addEvent = U.addEvent, find = U.find, fireEvent = U.fireEvent, isArray = U.isArray, isNumber = U.isNumber, isObject = U.isObject, isString = U.isString, merge = U.merge, pick = U.pick, wrap = U.wrap;
 import './GridAxis.js';
 import './BrokenAxis.js';
 /**
@@ -278,7 +278,7 @@ var TreeGridAxis;
                 // Update yData now that we have calculated the y values
                 axis.series.forEach(function (series) {
                     var axisData = (series.options.data || []).map(function (d) {
-                        if (H.isArray(d) && series.options.keys && series.options.keys.length) {
+                        if (isArray(d) && series.options.keys && series.options.keys.length) {
                             // Get the axisData from the data array used to
                             // build the treeGrid where has been modified
                             data.forEach(function (point) {

@@ -25,6 +25,7 @@ const {
     addEvent,
     find,
     fireEvent,
+    isArray,
     isNumber,
     isObject,
     isString,
@@ -491,7 +492,7 @@ namespace TreeGridAxis {
                             d: Highcharts.PointOptionsType
                         ): Highcharts.PointOptionsType {
 
-                            if (H.isArray(d) && series.options.keys && series.options.keys.length) {
+                            if (isArray(d) && series.options.keys && series.options.keys.length) {
                                 // Get the axisData from the data array used to
                                 // build the treeGrid where has been modified
                                 data.forEach(function (point: Highcharts.GanttPointOptions): void {

@@ -33,6 +33,13 @@ const {
  */
 declare global {
     namespace Highcharts {
+        type GanttDependencyOption =
+            (
+                string|
+                GanttConnectorsOptions|
+                Array<GanttConnectorsOptions>|
+                Array<string>
+            );
         class GanttPoint extends XRangePoint {
             public end?: GanttPointOptions['end'];
             public milestone?: GanttPointOptions['milestone'];
@@ -351,14 +358,13 @@ seriesType<Highcharts.GanttSeries>('gantt', 'xrange'
             options: Highcharts.GanttPointOptions,
             x: number
         ): Highcharts.GanttPointOptions {
-            var point = this,
-                retVal = options;
+            var point = this;
 
-            (retVal as any) = parent.prototype.pointClass.prototype.applyOptions
-                .call(point, retVal, x);
-            H.seriesTypes.gantt.prototype.setGanttPointAliases(retVal);
+            (options as any) = parent.prototype.pointClass.prototype.applyOptions
+                .call(point, options, x);
+            H.seriesTypes.gantt.prototype.setGanttPointAliases(options);
 
-            return retVal;
+            return options;
         },
         isValid: function (this: Highcharts.GanttPoint): boolean {
             return (

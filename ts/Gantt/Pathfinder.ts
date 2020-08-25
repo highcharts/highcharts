@@ -99,7 +99,7 @@ declare global {
             to?: string;
         }
         interface PointOptionsObject {
-            connect?: PointConnectOptionsObject;
+            connect?: PointConnectOptionsObject | GanttDependencyOption;
             connectors?: ConnectorsOptions;
         }
         interface Series {
@@ -1081,10 +1081,11 @@ Pathfinder.prototype = {
         chart.series.forEach(function (series: Highcharts.Series): void {
             if (series.visible && !series.options.isInternal) {
                 series.points.forEach(function (point: Point): void {
+                    const ganttPointOptions: Highcharts.GanttPointOptions = point.options;
                     // For Gantt series the connect could be
                     // defined as a dependency
-                    if (point.options && (point.options as Highcharts.GanttPointOptions).dependency) {
-                        (point.options as any).connect = (point.options as Highcharts.GanttPointOptions).dependency;
+                    if (ganttPointOptions && ganttPointOptions.dependency) {
+                        ganttPointOptions.connect = ganttPointOptions.dependency;
                     }
                     var to: (
                             Axis|

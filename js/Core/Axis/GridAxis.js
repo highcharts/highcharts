@@ -432,7 +432,7 @@ var GridAxis = /** @class */ (function () {
                     return p[axis.isXAxis ? 'x' : 'y'] === value;
                 });
                 var pointCopy;
-                if (point && series.is('gantt') && !point.initialData) {
+                if (point && series.is('gantt')) {
                     // For the Gantt set point aliases to the pointCopy
                     // to do not change the original point
                     pointCopy = merge(point);
