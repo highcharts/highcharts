@@ -45,6 +45,9 @@ declare global {
             barW?: number;
             pointXOffset?: number;
         }
+        interface SeriesOptions {
+            centerInCategory?: boolean;
+        }
         interface SeriesStatesHoverOptionsObject {
             borderColor?: (ColorString|GradientColorObject|PatternObject);
             brightness?: number;
@@ -230,6 +233,8 @@ seriesType<Highcharts.ColumnSeries>(
          *
          * @since   8.0.1
          * @product highcharts highstock gantt
+         *
+         * @private
          */
         centerInCategory: false,
 

@@ -1012,7 +1012,7 @@ merge<Annotation>(
                  * @sample {highcharts} highcharts/annotations/defer/
                  *          Animation defer settings
                  * @type {boolean|Partial<Highcharts.AnimationOptionsObject>}
-                 * @since next
+                 * @since 8.2.0
                  * @apioption annotations.animation
                  */
                 animation: {},
@@ -1023,7 +1023,7 @@ merge<Annotation>(
                  * As `undefined` inherits defer time from the [series.animation.defer](#plotOptions.series.animation.defer).
                  *
                  * @type      {number}
-                 * @since     next
+                 * @since 8.2.0
                  * @apioption annotations.animation.defer
                  */
 
@@ -1183,7 +1183,7 @@ merge<Annotation>(
                      * @sample highcharts/annotations/include-in-data-export/
                      *         Do not include in the data export
                      *
-                     * @since   next
+                     * @since 8.2.0
                      * @requires modules/export-data
                      */
                     includeInDataExport: true,
@@ -1461,7 +1461,7 @@ merge<Annotation>(
                      *         Basic shape annotation
                      *
                      * @type      {string}
-                     * @default   'rect'
+                     * @default   rect
                      * @apioption annotations.shapeOptions.type
                      */
 
@@ -1661,6 +1661,9 @@ extend(chartProto, /** @lends Highcharts.Chart# */ {
 
         if (pick(redraw, true)) {
             annotation.redraw();
+            annotation.graphic.attr({
+                opacity: 1
+            });
         }
 
         return annotation;
@@ -1797,9 +1800,12 @@ chartProto.callbacks.push(function (
                             // Annotation not connected to any xAxis -
                             // add new row.
                             if (xAxisIndex === -1) {
-                                const newRow: any = new Array(event.dataRows[0].length);
+                                const n = event.dataRows[0].length,
+                                    newRow: any = new Array(n);
 
-                                newRow.fill('');
+                                for (let i = 0; i < n; ++i) {
+                                    newRow[i] = '';
+                                }
                                 newRow.push(annotationText);
                                 newRow.xValues = [];
                                 newRow.xValues[xAxisIndex] = annotationX;
@@ -1834,9 +1840,12 @@ chartProto.callbacks.push(function (
                             // Annotation not placed on any exported data point,
                             // but connected to the xAxis - add new row
                             if (!wasAdded) {
-                                const newRow: any = new Array(event.dataRows[0].length);
+                                const n = event.dataRows[0].length,
+                                    newRow: any = new Array(n);
 
-                                newRow.fill('');
+                                for (let i = 0; i < n; ++i) {
+                                    newRow[i] = '';
+                                }
                                 newRow[0] = annotationX;
                                 newRow.push(annotationText);
                                 newRow.xValues = [];

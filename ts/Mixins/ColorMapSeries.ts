@@ -72,7 +72,7 @@ var noop = H.noop,
  * @private
  * @mixin Highcharts.colorMapPointMixin
  */
-H.colorMapPointMixin = {
+const colorMapPointMixin = {
     dataLabelOnNull: true,
     /* eslint-disable valid-jsdoc */
     /**
@@ -113,7 +113,7 @@ H.colorMapPointMixin = {
  * @private
  * @mixin Highcharts.colorMapSeriesMixin
  */
-H.colorMapSeriesMixin = {
+const colorMapSeriesMixin = {
     pointArrayMap: ['value'],
     axisTypes: ['xAxis', 'yAxis', 'colorAxis'],
     trackerGroups: ['group', 'markerGroup', 'dataLabelsGroup'],
@@ -143,3 +143,10 @@ H.colorMapSeriesMixin = {
         return ret;
     }
 };
+
+const exports = {
+    colorMapPointMixin,
+    colorMapSeriesMixin
+};
+
+export default exports;

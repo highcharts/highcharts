@@ -35,7 +35,7 @@ seriesType('dependencywheel', 'sankey',
  * @exclude      dataSorting
  * @since        7.1.0
  * @product      highcharts
- * @requires     modules/dependencywheel
+ * @requires     modules/dependency-wheel
  * @optionparent plotOptions.dependencywheel
  */
 {
@@ -287,7 +287,8 @@ seriesType('dependencywheel', 'sankey',
  * @extends   series,plotOptions.dependencywheel
  * @exclude   dataSorting
  * @product   highcharts
- * @requires  modules/dependencywheel
+ * @requires  modules/sankey
+ * @requires  modules/dependency-wheel
  * @apioption series.dependencywheel
  */
 /**

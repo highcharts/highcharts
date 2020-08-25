@@ -112,6 +112,8 @@ seriesType('column', 'line',
      *
      * @since   8.0.1
      * @product highcharts highstock gantt
+     *
+     * @private
      */
     centerInCategory: false,
     /**

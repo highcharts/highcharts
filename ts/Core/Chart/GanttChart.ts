@@ -152,6 +152,9 @@ H.ganttChart = function (
             },
             legend: {
                 enabled: false
+            },
+            navigator: {
+                series: { type: 'gantt' }
             }
         } as Highcharts.Options,
 

@@ -289,6 +289,8 @@ declare global {
     }
 }
 
+import colorMapMixin from '../Mixins/ColorMapSeries.js';
+const { colorMapSeriesMixin } = colorMapMixin;
 import mixinTreeSeries from '../Mixins/TreeSeries.js';
 const {
     getColor,
@@ -988,7 +990,6 @@ seriesType<Highcharts.TreemapSeries>(
             options: Highcharts.TreemapSeriesOptions
         ): void {
             var series = this,
-                colorMapSeriesMixin = H.colorMapSeriesMixin,
                 setOptionsEvent;
 
             // If color series logic is loaded, add some properties

@@ -45,6 +45,7 @@ declare global {
             timezone?: string;
             timezoneOffset?: number;
             useUTC?: boolean;
+            moment?: any;
         }
         interface TimeFormatCallbackFunction {
             (timestamp: number): string;
@@ -156,6 +157,17 @@ declare global {
  *
  * @return {number}
  * Timezone offset in minutes.
+ */
+
+/**
+ * Allows to manually load the `moment.js` library from Highcharts options
+ * instead of the `window`.
+ * In case of loading the library from a `script` tag,
+ * this option is not needed, it will be loaded from there by default.
+ *
+ * @type {function}
+ * @since 8.2.0
+ * @apioption time.moment
  */
 
 import U from './Utilities.js';
@@ -486,9 +498,9 @@ class Time {
      *         A getTimezoneOffset function
      */
     public timezoneOffsetFunction(): (timestamp: (number|Date)) => number {
-        var time = this,
+        const time = this,
             options = this.options,
-            moment = win.moment;
+            moment = options.moment || win.moment;
 
         if (!this.useUTC) {
             return function (timestamp: (number|Date)): number {

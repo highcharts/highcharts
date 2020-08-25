@@ -1,16 +1,11 @@
-function getFirstEventsInTimeline(timeline) {
-    return timeline.paths[0][0].events;
-}
-
 // Get an instrument object from a basic timeline
 function getTimelineInstrumentObject(timeline) {
-    return getFirstEventsInTimeline(timeline)[0].options.playOptions.instruments[0];
+    return timeline.paths[0][0].events[0].options.playOptions.instruments[0];
 }
 
 // Crude function to get duration of a basic timeline
 function getTimelineDuration(timeline) {
-    const events = getFirstEventsInTimeline(timeline);
-    return events[events.length - 1].time;
+    return timeline.paths[0][0].targetDuration;
 }
 
 // Crude test to see if two instruments are the same

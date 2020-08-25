@@ -777,7 +777,7 @@ seriesType('pie', 'line',
     drawEmpty: function () {
         var centerX, centerY, start = this.startAngleRad, end = this.endAngleRad, options = this.options;
         // Draw auxiliary graph if there're no visible points.
-        if (this.total === 0) {
+        if (this.total === 0 && this.center) {
             centerX = this.center[0];
             centerY = this.center[1];
             if (!this.graph) {
