@@ -14,7 +14,6 @@ import H from '../../Globals.js';
 import SVGElement from '../SVG/SVGElement.js';
 import SVGRenderer from '../SVG/SVGRenderer.js';
 import U from '../../Utilities.js';
-import TextBuilder from '../SVG/TextBuilder.js';
 const {
     attr,
     createElement,
@@ -440,13 +439,7 @@ extend(SVGRenderer.prototype, /** @lends SVGRenderer.prototype */ {
                 delete this.bBox;
                 delete this.oldTextWidth;
 
-                element.innerHTML = '';
-
-                if (pick(value, '') !== '') {
-                    const builder = new TextBuilder(this);
-                    const tree = builder.parseMarkup(value);
-                    renderer.addAST(tree, this.element);
-                }
+                renderer.setHTML(this.element, pick(value, ''));
 
                 this.textStr = value;
                 wrapper.doTransform = true;

@@ -922,7 +922,6 @@ Chart.prototype.viewData = function () {
         this.dataTableDiv.className = 'highcharts-data-table';
         // Insert after the chart container
         this.renderTo.parentNode.insertBefore(this.dataTableDiv, this.renderTo.nextSibling);
-        this.dataTableDiv.innerHTML = this.getTable();
     }
     // Show the data table again.
     if (this.dataTableDiv.style.display === '' || this.dataTableDiv.style.display === 'none') {
@@ -958,8 +957,7 @@ Chart.prototype.toggleDataTable = function () {
         menuItems &&
         exportDivElements &&
         exportDivElements.length) {
-        exportDivElements[menuItems.indexOf('viewData')]
-            .innerHTML = this.isDataTableVisible ? lang.hideData : lang.viewData;
+        this.renderer.setHTML(exportDivElements[menuItems.indexOf('viewData')], this.isDataTableVisible ? lang.hideData : lang.viewData);
     }
 };
 // Add "Download CSV" to the exporting menu.

@@ -12,7 +12,6 @@ import H from '../../Globals.js';
 import SVGElement from '../SVG/SVGElement.js';
 import SVGRenderer from '../SVG/SVGRenderer.js';
 import U from '../../Utilities.js';
-import TextBuilder from '../SVG/TextBuilder.js';
 var attr = U.attr, createElement = U.createElement, css = U.css, defined = U.defined, extend = U.extend, pick = U.pick, pInt = U.pInt;
 var isFirefox = H.isFirefox, isMS = H.isMS, isWebKit = H.isWebKit, win = H.win;
 /* eslint-disable valid-jsdoc */
@@ -275,12 +274,7 @@ extend(SVGRenderer.prototype, /** @lends SVGRenderer.prototype */ {
             if (value !== this.textStr) {
                 delete this.bBox;
                 delete this.oldTextWidth;
-                element.innerHTML = '';
-                if (pick(value, '') !== '') {
-                    var builder = new TextBuilder(this);
-                    var tree = builder.parseMarkup(value);
-                    renderer.addAST(tree, this.element);
-                }
+                renderer.setHTML(this.element, pick(value, ''));
                 this.textStr = value;
                 wrapper.doTransform = true;
             }

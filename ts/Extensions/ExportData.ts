@@ -1329,7 +1329,6 @@ Chart.prototype.viewData = function (): void {
             this.dataTableDiv,
             this.renderTo.nextSibling
         );
-        this.dataTableDiv.innerHTML = this.getTable();
     }
     // Show the data table again.
     if (this.dataTableDiv.style.display === '' || this.dataTableDiv.style.display === 'none') {
@@ -1375,8 +1374,10 @@ Chart.prototype.toggleDataTable = function (): void {
         exportDivElements &&
         exportDivElements.length
     ) {
-        exportDivElements[menuItems.indexOf('viewData')]
-            .innerHTML = this.isDataTableVisible ? lang.hideData : lang.viewData;
+        this.renderer.setHTML(
+            exportDivElements[menuItems.indexOf('viewData')],
+            this.isDataTableVisible ? lang.hideData : lang.viewData
+        );
     }
 };
 

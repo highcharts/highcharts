@@ -171,10 +171,9 @@ var Fullscreen = /** @class */ (function () {
             menuItems &&
             exportDivElements &&
             exportDivElements.length) {
-            exportDivElements[menuItems.indexOf('viewFullscreen')].innerHTML = '';
-            exportDivElements[menuItems.indexOf('viewFullscreen')].appendChild(doc.createTextNode(!this.isOpen ?
+            chart.renderer.setHTML(exportDivElements[menuItems.indexOf('viewFullscreen')], !this.isOpen ?
                 (exportingOptions.menuItemDefinitions.viewFullscreen.text ||
-                    lang.viewFullscreen) : lang.exitFullscreen));
+                    lang.viewFullscreen) : lang.exitFullscreen);
         }
     };
     /**

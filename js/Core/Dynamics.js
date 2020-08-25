@@ -220,7 +220,7 @@ extend(Chart.prototype, /** @lends Highcharts.Chart.prototype */ {
      *        [lang.loading](https://api.highcharts.com/highcharts/lang.loading).
      */
     showLoading: function (str) {
-        var chart = this, options = chart.options, loadingDiv = chart.loadingDiv, loadingOptions = options.loading, setLoadingSize = function () {
+        var chart = this, options = chart.options, loadingDiv = chart.loadingDiv, loadingSpan = chart.loadingSpan, loadingOptions = options.loading, setLoadingSize = function () {
             if (loadingDiv) {
                 css(loadingDiv, {
                     left: chart.plotLeft + 'px',
@@ -235,19 +235,20 @@ extend(Chart.prototype, /** @lends Highcharts.Chart.prototype */ {
             chart.loadingDiv = loadingDiv = createElement('div', {
                 className: 'highcharts-loading highcharts-loading-hidden'
             }, null, chart.container);
-            chart.loadingSpan = createElement('span', { className: 'highcharts-loading-inner' }, null, loadingDiv);
+        }
+        if (!loadingSpan) {
+            chart.loadingSpan = loadingSpan = createElement('span', { className: 'highcharts-loading-inner' }, null, loadingDiv);
             addEvent(chart, 'redraw', setLoadingSize); // #1080
         }
         loadingDiv.className = 'highcharts-loading';
         // Update text
-        chart.loadingSpan.innerHTML =
-            pick(str, options.lang.loading, '');
+        chart.renderer.setHTML(loadingSpan, pick(str, options.lang.loading, ''));
         if (!chart.styledMode) {
             // Update visuals
             css(loadingDiv, extend(loadingOptions.style, {
                 zIndex: 10
             }));
-            css(chart.loadingSpan, loadingOptions.labelStyle);
+            css(loadingSpan, loadingOptions.labelStyle);
             // Show it
             if (!chart.loadingShown) {
                 css(loadingDiv, {

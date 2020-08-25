@@ -267,15 +267,13 @@ class Fullscreen {
             exportDivElements &&
             exportDivElements.length
         ) {
-            exportDivElements[menuItems.indexOf('viewFullscreen')].innerHTML = '';
-            exportDivElements[menuItems.indexOf('viewFullscreen')].appendChild(
-                doc.createTextNode(
-                    !this.isOpen ?
-                        (
-                            exportingOptions.menuItemDefinitions.viewFullscreen.text ||
-                            lang.viewFullscreen
-                        ) : lang.exitFullscreen
-                )
+            chart.renderer.setHTML(
+                exportDivElements[menuItems.indexOf('viewFullscreen')],
+                !this.isOpen ?
+                    (
+                        exportingOptions.menuItemDefinitions.viewFullscreen.text ||
+                        lang.viewFullscreen
+                    ) : lang.exitFullscreen
             );
         }
     }

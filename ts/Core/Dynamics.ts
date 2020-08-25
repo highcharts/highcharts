@@ -425,6 +425,7 @@ extend(Chart.prototype, /** @lends Highcharts.Chart.prototype */ {
         var chart = this,
             options = chart.options,
             loadingDiv = chart.loadingDiv,
+            loadingSpan = chart.loadingSpan,
             loadingOptions = options.loading,
             setLoadingSize = function (): void {
                 if (loadingDiv) {
@@ -442,8 +443,10 @@ extend(Chart.prototype, /** @lends Highcharts.Chart.prototype */ {
             chart.loadingDiv = loadingDiv = createElement('div', {
                 className: 'highcharts-loading highcharts-loading-hidden'
             }, null as any, chart.container);
+        }
 
-            chart.loadingSpan = createElement(
+        if (!loadingSpan) {
+            chart.loadingSpan = loadingSpan = createElement(
                 'span',
                 { className: 'highcharts-loading-inner' },
                 null as any,
@@ -455,15 +458,17 @@ extend(Chart.prototype, /** @lends Highcharts.Chart.prototype */ {
         loadingDiv.className = 'highcharts-loading';
 
         // Update text
-        (chart.loadingSpan as any).innerHTML =
-            pick(str, (options.lang as any).loading, '');
+        chart.renderer.setHTML(
+            loadingSpan,
+            pick(str, (options.lang as any).loading, '')
+        );
 
         if (!chart.styledMode) {
             // Update visuals
             css(loadingDiv, extend((loadingOptions as any).style, {
                 zIndex: 10
             }));
-            css((chart.loadingSpan as any), (loadingOptions as any).labelStyle);
+            css(loadingSpan, (loadingOptions as any).labelStyle);
 
             // Show it
             if (!chart.loadingShown) {
