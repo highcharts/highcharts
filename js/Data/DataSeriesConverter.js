@@ -16,6 +16,8 @@
  * */
 import DataTable from './DataTable.js';
 import DataTableRow from './DataTableRow.js';
+import U from './../Core/Utilities.js';
+var defined = U.defined, uniqueKey = U.uniqueKey;
 /* *
  *
  *  Class
@@ -107,8 +109,9 @@ var DataSeriesConverter = /** @class */ (function () {
         var columns, series, pointArrayMap, pointArrayMapLength, options, keys, data, elem, row, y, needsArrayMap, xIndex, yIndex, yValueName, yValueIndex, yValueId, id;
         for (var i = 0, iEnd = allSeries.length; i < iEnd; i++) {
             series = allSeries[i];
-            // temporarily series.name -> change it to eg series.id?
-            yValueId = '_' + series.name.replace(' ', '');
+            // Add a unique ID to the series if none is assigned.
+            series.id = defined(series.id) ? series.id : uniqueKey();
+            yValueId = '_' + series.id;
             pointArrayMap = series.pointArrayMap || ['y'];
             pointArrayMapLength = pointArrayMap.length;
             options = series.options;

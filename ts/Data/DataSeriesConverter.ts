@@ -16,6 +16,12 @@
  * */
 import DataTable from './DataTable.js';
 import DataTableRow from './DataTableRow.js';
+import U from './../Core/Utilities.js';
+
+const {
+    defined,
+    uniqueKey
+} = U;
 
 /* *
  *
@@ -160,9 +166,9 @@ class DataSeriesConverter {
 
         for (let i = 0, iEnd = allSeries.length; i < iEnd; i++) {
             series = allSeries[i];
-
-            // temporarily series.name -> change it to eg series.id?
-            yValueId = '_' + series.name.replace(' ', '');
+            // Add a unique ID to the series if none is assigned.
+            series.id = defined(series.id) ? series.id : uniqueKey();
+            yValueId = '_' + series.id;
             pointArrayMap = series.pointArrayMap || ['y'];
             pointArrayMapLength = pointArrayMap.length;
             options = series.options;
