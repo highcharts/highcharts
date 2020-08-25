@@ -132,11 +132,13 @@ declare global {
 
 import '../Core/Options.js';
 import '../Core/Series/Series.js';
-import '../Mixins/ColorMapSeries.js';
+import colorMapMixin from '../Mixins/ColorMapSeries.js';
+const {
+    colorMapPointMixin,
+    colorMapSeriesMixin
+} = colorMapMixin;
 
-var colorMapPointMixin = H.colorMapPointMixin,
-    colorMapSeriesMixin = H.colorMapSeriesMixin,
-    noop = H.noop,
+var noop = H.noop,
     Series = H.Series,
     seriesTypes = H.seriesTypes,
     symbols = SVGRenderer.prototype.symbols;

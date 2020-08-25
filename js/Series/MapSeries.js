@@ -19,8 +19,9 @@ var extend = U.extend, fireEvent = U.fireEvent, getNestedProperty = U.getNestedP
 import '../Core/Options.js';
 import '../Series/ScatterSeries.js';
 import '../Core/Series/Series.js';
-import '../Mixins/ColorMapSeries.js';
-var colorMapPointMixin = H.colorMapPointMixin, colorMapSeriesMixin = H.colorMapSeriesMixin, noop = H.noop, Series = H.Series, seriesTypes = H.seriesTypes;
+import colorMapMixin from '../Mixins/ColorMapSeries.js';
+var colorMapPointMixin = colorMapMixin.colorMapPointMixin, colorMapSeriesMixin = colorMapMixin.colorMapSeriesMixin;
+var noop = H.noop, Series = H.Series, seriesTypes = H.seriesTypes;
 /**
  * @private
  * @class
