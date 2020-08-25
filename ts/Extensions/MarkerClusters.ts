@@ -261,7 +261,7 @@ declare global {
 
 /* eslint-disable no-invalid-this */
 
-import '../Core/Axis/Axis.js';
+import Axis from '../Core/Axis/Axis.js';
 import '../Core/Series/Series.js';
 
 var Series = H.Series,
@@ -298,7 +298,7 @@ var Series = H.Series,
  *
  * @private
  */
-var clusterDefaultOptions = {
+const clusterDefaultOptions = {
     /**
      * Whether to enable the marker-clusters module.
      *
@@ -2391,7 +2391,7 @@ addEvent(Point, 'drillToCluster', function (
 });
 
 // Destroy the old tooltip after zoom.
-addEvent(H.Axis, 'setExtremes', function (
+addEvent(Axis, 'setExtremes', function (
     this: Highcharts.Axis
 ): void {
     var chart = this.chart,
