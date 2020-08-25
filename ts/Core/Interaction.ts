@@ -1362,7 +1362,8 @@ extend(Point.prototype, /** @lends Highcharts.Point.prototype */ {
                         'fill': point.color || series.color,
                         'fill-opacity': haloOptions.opacity
                     } as Highcharts.SVGAttributes,
-                    haloOptions.attributes
+                    chart.renderer
+                        .filterUserAttributes(haloOptions.attributes) || {}
                 ));
             }
 

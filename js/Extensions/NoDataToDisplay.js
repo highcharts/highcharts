@@ -135,7 +135,7 @@ chartPrototype.showNoData = function (str) {
             .label(text, 0, 0, null, null, null, noDataOptions.useHTML, null, 'no-data');
         if (!chart.styledMode) {
             chart.noDataLabel
-                .attr(noDataOptions.attr)
+                .attr(this.renderer.filterUserAttributes(noDataOptions.attr || {}))
                 .css(noDataOptions.style);
         }
         chart.noDataLabel.add();

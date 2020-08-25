@@ -1598,7 +1598,8 @@ var SVGElement = /** @class */ (function () {
                 textAnchor: 'middle'
             }
         }, textPathOptions);
-        attrs = textPathOptions.attributes;
+        attrs = this.renderer
+            .filterUserAttributes(textPathOptions.attributes) || {};
         if (path && textPathOptions && textPathOptions.enabled) {
             // In case of fixed width for a text, string is rebuilt
             // (e.g. ellipsis is applied), so we need to rebuild textPath too

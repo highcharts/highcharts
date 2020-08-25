@@ -683,7 +683,7 @@ var SVGRenderer = /** @class */ (function () {
      * @param {Highcharts.EventCallbackFunction<Highcharts.SVGElement>} callback
      * The function to execute on button click or touch.
      *
-     * @param {Highcharts.SVGAttributes} [normalState]
+     * @param {Highcharts.SVGAttributes} [theme]
      * SVG attributes for the normal state.
      *
      * @param {Highcharts.SVGAttributes} [hoverState]
@@ -704,15 +704,13 @@ var SVGRenderer = /** @class */ (function () {
      * @return {Highcharts.SVGElement}
      * The button element.
      */
-    SVGRenderer.prototype.button = function (text, x, y, callback, normalState, hoverState, pressedState, disabledState, shape, useHTML) {
+    SVGRenderer.prototype.button = function (text, x, y, callback, theme, hoverState, pressedState, disabledState, shape, useHTML) {
         var label = this.label(text, x, y, shape, void 0, void 0, useHTML, void 0, 'button'), curState = 0, styledMode = this.styledMode, 
         // Make a copy of normalState (#13798)
         // (reference to options.rangeSelector.buttonTheme)
-        normalState = normalState ? merge(normalState) : normalState, userNormalStyle = normalState && normalState.style || {};
+        normalState = theme ? merge(theme) : {}, width = normalState.width, height = normalState.height, userNormalStyle = normalState && normalState.style || {};
         // Remove stylable attributes
-        if (normalState && normalState.style) {
-            delete normalState.style;
-        }
+        normalState = this.filterUserAttributes(normalState) || {};
         // Default, non-stylable attributes
         label.attr(merge({ padding: 8, r: 2 }, normalState));
         if (!styledMode) {
@@ -721,13 +719,15 @@ var SVGRenderer = /** @class */ (function () {
             // Normal state - prepare the attributes
             normalState = merge({
                 fill: '${palette.neutralColor3}',
+                height: height,
                 stroke: '${palette.neutralColor20}',
                 'stroke-width': 1,
                 style: {
                     color: '${palette.neutralColor80}',
                     cursor: 'pointer',
                     fontWeight: 'normal'
-                }
+                },
+                width: width
             }, {
                 style: userNormalStyle
             }, normalState);
@@ -736,7 +736,7 @@ var SVGRenderer = /** @class */ (function () {
             // Hover state
             hoverState = merge(normalState, {
                 fill: '${palette.neutralColor10}'
-            }, hoverState);
+            }, this.filterUserAttributes(hoverState));
             hoverStyle = hoverState.style;
             delete hoverState.style;
             // Pressed state
@@ -746,7 +746,7 @@ var SVGRenderer = /** @class */ (function () {
                     color: '${palette.neutralColor100}',
                     fontWeight: 'bold'
                 }
-            }, pressedState);
+            }, this.filterUserAttributes(pressedState));
             pressedStyle = pressedState.style;
             delete pressedState.style;
             // Disabled state
@@ -754,7 +754,7 @@ var SVGRenderer = /** @class */ (function () {
                 style: {
                     color: '${palette.neutralColor20}'
                 }
-            }, disabledState);
+            }, this.filterUserAttributes(disabledState));
             disabledStyle = disabledState.style;
             delete disabledState.style;
         }
@@ -843,6 +843,32 @@ var SVGRenderer = /** @class */ (function () {
                 Math[roundingFunction](start[2]) + (width % 2 / 2);
         }
         return points;
+    };
+    SVGRenderer.prototype.filterUserAttributes = function (attributes) {
+        var allowedUserSVGAttributes = [
+            'class',
+            'd',
+            'dx',
+            'dy',
+            'fill',
+            'padding',
+            'r',
+            'startOffset',
+            'stroke',
+            'stroke-linecap',
+            'stroke-width',
+            'textAnchor',
+            'textLength',
+            'zIndex'
+        ];
+        if (attributes) {
+            Object.keys(attributes).forEach(function (key) {
+                if (allowedUserSVGAttributes.indexOf(key) === -1) {
+                    delete attributes[key];
+                }
+            });
+        }
+        return attributes;
     };
     /**
      * Draw a path, wraps the SVG `path` element.

@@ -845,7 +845,8 @@ extend(Point.prototype, /** @lends Highcharts.Point.prototype */ {
                 halo.attr(extend({
                     'fill': point.color || series.color,
                     'fill-opacity': haloOptions.opacity
-                }, haloOptions.attributes));
+                }, chart.renderer
+                    .filterUserAttributes(haloOptions.attributes) || {}));
             }
         }
         else if (halo && halo.point && halo.point.haloPath) {

@@ -183,6 +183,9 @@ declare global {
             ): SVGPath;
             public definition(def: ASTObject): SVGElement;
             public destroy(): null;
+            public filterUserAttributes(
+                attributes: Highcharts.SVGAttributes
+            ): Highcharts.SVGAttributes|undefined;
             public g(name?: string): SVGElement;
             public getContrast(rgba: ColorString): ColorString;
             public getRadialAttr(
@@ -1065,7 +1068,7 @@ class SVGRenderer {
      * @param {Highcharts.EventCallbackFunction<Highcharts.SVGElement>} callback
      * The function to execute on button click or touch.
      *
-     * @param {Highcharts.SVGAttributes} [normalState]
+     * @param {Highcharts.SVGAttributes} [theme]
      * SVG attributes for the normal state.
      *
      * @param {Highcharts.SVGAttributes} [hoverState]
@@ -1091,7 +1094,7 @@ class SVGRenderer {
         x: number,
         y: number,
         callback: Highcharts.EventCallbackFunction<SVGElement>,
-        normalState?: Highcharts.SVGAttributes,
+        theme?: Highcharts.SVGAttributes,
         hoverState?: Highcharts.SVGAttributes,
         pressedState?: Highcharts.SVGAttributes,
         disabledState?: Highcharts.SVGAttributes,
@@ -1113,13 +1116,13 @@ class SVGRenderer {
             styledMode = this.styledMode,
             // Make a copy of normalState (#13798)
             // (reference to options.rangeSelector.buttonTheme)
-            normalState = normalState ? merge(normalState) : normalState,
+            normalState = theme ? merge(theme) : {},
+            width = normalState.width,
+            height = normalState.height,
             userNormalStyle = normalState && normalState.style || {};
 
         // Remove stylable attributes
-        if (normalState && normalState.style) {
-            delete normalState.style;
-        }
+        normalState = this.filterUserAttributes(normalState) || {};
 
         // Default, non-stylable attributes
         label.attr(merge({ padding: 8, r: 2 }, normalState));
@@ -1134,13 +1137,15 @@ class SVGRenderer {
             // Normal state - prepare the attributes
             normalState = merge({
                 fill: '${palette.neutralColor3}',
+                height,
                 stroke: '${palette.neutralColor20}',
                 'stroke-width': 1,
                 style: {
                     color: '${palette.neutralColor80}',
                     cursor: 'pointer',
                     fontWeight: 'normal'
-                }
+                },
+                width
             }, {
                 style: userNormalStyle
             }, normalState);
@@ -1150,7 +1155,7 @@ class SVGRenderer {
             // Hover state
             hoverState = merge(normalState, {
                 fill: '${palette.neutralColor10}'
-            }, hoverState);
+            }, this.filterUserAttributes(hoverState));
             hoverStyle = hoverState.style;
             delete hoverState.style;
 
@@ -1161,7 +1166,7 @@ class SVGRenderer {
                     color: '${palette.neutralColor100}',
                     fontWeight: 'bold'
                 }
-            }, pressedState);
+            }, this.filterUserAttributes(pressedState));
             pressedStyle = pressedState.style;
             delete pressedState.style;
 
@@ -1170,7 +1175,7 @@ class SVGRenderer {
                 style: {
                     color: '${palette.neutralColor20}'
                 }
-            }, disabledState);
+            }, this.filterUserAttributes(disabledState));
             disabledStyle = disabledState.style;
             delete disabledState.style;
         }
@@ -1280,6 +1285,35 @@ class SVGRenderer {
                 Math[roundingFunction](start[2]) + (width % 2 / 2);
         }
         return points;
+    }
+
+    public filterUserAttributes(
+        attributes?: Highcharts.SVGAttributes
+    ): Highcharts.SVGAttributes|undefined {
+        const allowedUserSVGAttributes = [
+            'class',
+            'd',
+            'dx',
+            'dy',
+            'fill',
+            'padding',
+            'r',
+            'startOffset',
+            'stroke',
+            'stroke-linecap',
+            'stroke-width',
+            'textAnchor',
+            'textLength',
+            'zIndex'
+        ];
+        if (attributes) {
+            Object.keys(attributes).forEach((key): void => {
+                if (allowedUserSVGAttributes.indexOf(key) === -1) {
+                    delete attributes[key];
+                }
+            });
+        }
+        return attributes;
     }
 
 

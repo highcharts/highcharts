@@ -205,7 +205,9 @@ chartPrototype.showNoData = function (str?: string): void {
 
         if (!chart.styledMode) {
             chart.noDataLabel
-                .attr(noDataOptions.attr)
+                .attr(
+                    this.renderer.filterUserAttributes(noDataOptions.attr || {})
+                )
                 .css(noDataOptions.style as any);
         }
 
