@@ -12,6 +12,7 @@
 
 'use strict';
 
+import Axis from '../Core/Axis/Axis.js';
 import Chart from '../Core/Chart/Chart.js';
 import Color from '../Core/Color.js';
 import H from '../Core/Globals.js';
@@ -1385,7 +1386,7 @@ Point.prototype.doDrilldown = function (
  * @param {global.MouseEvent} e
  *        Click event
  */
-H.Axis.prototype.drilldownCategory = function (
+Axis.prototype.drilldownCategory = function (
     x: number,
     e: MouseEvent
 ): void {
@@ -1412,7 +1413,7 @@ H.Axis.prototype.drilldownCategory = function (
  * @return {Array<(boolean|Highcharts.Point)>|undefined}
  *         Drillable points
  */
-H.Axis.prototype.getDDPoints = function (
+Axis.prototype.getDDPoints = function (
     x: number
 ): (Array<(boolean|Point)>|undefined) {
     return this.ddPoints && this.ddPoints[x];
@@ -1544,7 +1545,7 @@ addEvent(H.Series, 'afterDrawDataLabels', function (): void {
 });
 
 
-var applyCursorCSS = function (
+const applyCursorCSS = function (
     element: Highcharts.SVGElement,
     cursor: Highcharts.CursorValue,
     addClass?: boolean,
