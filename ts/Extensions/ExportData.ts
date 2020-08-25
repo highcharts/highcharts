@@ -1284,7 +1284,7 @@ Chart.prototype.toggleDataTable = function (): void {
 
 
 // Add "Download CSV" to the exporting menu.
-var exportingOptions = getOptions().exporting;
+const exportingOptions = getOptions().exporting;
 if (exportingOptions) {
 
     extend(exportingOptions.menuItemDefinitions, {
