@@ -10,6 +10,7 @@
  *
  * */
 'use strict';
+import Axis from '../Core/Axis/Axis.js';
 import Chart from '../Core/Chart/Chart.js';
 import Color from '../Core/Color.js';
 import H from '../Core/Globals.js';
@@ -946,7 +947,7 @@ Point.prototype.doDrilldown = function (_holdRedraw, category, originalEvent) {
  * @param {global.MouseEvent} e
  *        Click event
  */
-H.Axis.prototype.drilldownCategory = function (x, e) {
+Axis.prototype.drilldownCategory = function (x, e) {
     objectEach(this.getDDPoints(x), function (point) {
         if (point &&
             point.series &&
@@ -967,7 +968,7 @@ H.Axis.prototype.drilldownCategory = function (x, e) {
  * @return {Array<(boolean|Highcharts.Point)>|undefined}
  *         Drillable points
  */
-H.Axis.prototype.getDDPoints = function (x) {
+Axis.prototype.getDDPoints = function (x) {
     return this.ddPoints && this.ddPoints[x];
 };
 /**
