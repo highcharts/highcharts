@@ -10,17 +10,24 @@
  *
  * */
 
-'use strict';
-
 import type SVGPath from '../Core/Renderer/SVG/SVGPath';
+import BaseSeries from '../Core/Series/BaseSeries.js';
 import H from '../Core/Globals.js';
 import U from '../Core/Utilities.js';
 const {
     animObject,
     arrayMax,
-    pick,
-    seriesType
+    pick
 } = U;
+
+/**
+ * @private
+ */
+declare module '../Core/Series/Types' {
+    interface SeriesTypeRegistry {
+        vector: typeof Highcharts.VectorSeries;
+    }
+}
 
 /**
  * Internal types
@@ -51,9 +58,6 @@ declare global {
             ): SVGAttributes;
             public translate(): void;
         }
-        interface SeriesTypesDictionary {
-            vector: typeof VectorSeries;
-        }
         interface VectorPointOptions extends ScatterPointOptions {
             direction?: number;
             length?: number;
@@ -78,7 +82,7 @@ import './ScatterSeries.js';
  *
  * @augments Highcharts.seriesTypes.scatter
  */
-seriesType<Highcharts.VectorSeries>('vector', 'scatter'
+BaseSeries.seriesType<Highcharts.VectorSeries>('vector', 'scatter'
 
     /**
      * A vector plot is a type of cartesian chart where each point has an X and

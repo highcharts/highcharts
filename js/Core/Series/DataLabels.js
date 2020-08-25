@@ -33,7 +33,7 @@ var arrayMax = U.arrayMax, clamp = U.clamp, defined = U.defined, extend = U.exte
  *
  * @typedef {"allow"|"justify"} Highcharts.DataLabelsOverflowValue
  */
-import './Series.js';
+import './CatesianSeries.js';
 var Series = H.Series;
 /* eslint-disable valid-jsdoc */
 /**

@@ -33,7 +33,7 @@ import Tooltip from '../Core/Tooltip.js';
 import U from '../Core/Utilities.js';
 var addEvent = U.addEvent, arrayMax = U.arrayMax, arrayMin = U.arrayMin, correctFloat = U.correctFloat, defined = U.defined, error = U.error, extend = U.extend, format = U.format, isNumber = U.isNumber, merge = U.merge, pick = U.pick;
 import '../Core/Axis/Axis.js';
-import '../Core/Series/Series.js';
+import '../Core/Series/CatesianSeries.js';
 var Axis = H.Axis, Series = H.Series;
 /* ************************************************************************** *
  *  Start data grouping module                                                *

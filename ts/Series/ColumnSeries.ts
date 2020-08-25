@@ -8,9 +8,27 @@
  *
  * */
 
-'use strict';
-
+import BaseSeries from '../Core/Series/BaseSeries.js';
+import Color from '../Core/Color.js';
+const {
+    parse: color
+} = Color;
 import H from '../Core/Globals.js';
+const {
+    noop
+} = H;
+import LegendSymbolMixin from '../Mixins/LegendSymbol.js';
+import U from '../Core/Utilities.js';
+const {
+    animObject,
+    clamp,
+    defined,
+    extend,
+    isNumber,
+    merge,
+    pick,
+    objectEach
+} = U;
 
 /**
  * Internal types
@@ -53,9 +71,6 @@ declare global {
             brightness?: number;
             color?: (ColorString|GradientColorObject|PatternObject);
             dashStyle?: DashStyleValue;
-        }
-        interface SeriesTypesDictionary {
-            column: typeof ColumnSeries;
         }
         interface SeriesZonesOptions {
             borderColor?: (ColorString|GradientColorObject|PatternObject);
@@ -105,6 +120,15 @@ declare global {
 }
 
 /**
+ * @private
+ */
+declare module '../Core/Series/Types' {
+    interface SeriesTypeRegistry {
+        column: typeof Highcharts.ColumnSeries;
+    }
+}
+
+/**
  * Adjusted width and x offset of the columns for grouping.
  *
  * @private
@@ -121,30 +145,10 @@ declare global {
 
 ''; // detach doclets above
 
-import Color from '../Core/Color.js';
-const {
-    parse: color
-} = Color;
-import LegendSymbolMixin from '../Mixins/LegendSymbol.js';
-import U from '../Core/Utilities.js';
-const {
-    animObject,
-    clamp,
-    defined,
-    extend,
-    isNumber,
-    merge,
-    pick,
-    seriesType,
-    objectEach
-} = U;
-
-import '../Core/Series/Series.js';
+import '../Core/Series/CatesianSeries.js';
 import '../Core/Options.js';
 
-var noop = H.noop,
-    Series = H.Series,
-    svg = H.svg;
+var Series = H.Series;
 
 /**
  * The column series type.
@@ -155,7 +159,7 @@ var noop = H.noop,
  *
  * @augments Highcharts.Series
  */
-seriesType<Highcharts.ColumnSeries>(
+BaseSeries.seriesType<Highcharts.ColumnSeries>(
     'column',
     'line',
 
@@ -585,7 +589,7 @@ seriesType<Highcharts.ColumnSeries>(
             // series affected by a new column
             if (chart.hasRendered) {
                 chart.series.forEach(function (
-                    otherSeries: Highcharts.Series
+                    otherSeries: BaseSeries
                 ): void {
                     if (otherSeries.type === series.type) {
                         otherSeries.isDirty = true;
@@ -625,7 +629,7 @@ seriesType<Highcharts.ColumnSeries>(
             if (options.grouping === false) {
                 columnCount = 1;
             } else {
-                series.chart.series.forEach(function (
+                (series.chart.series as Array<Highcharts.Series>).forEach(function (
                     otherSeries: Highcharts.Series
                 ): void {
                     var otherYAxis = otherSeries.yAxis,
@@ -1281,7 +1285,7 @@ seriesType<Highcharts.ColumnSeries>(
             // as they are either stacked or grouped
             if (chart.hasRendered) {
                 chart.series.forEach(function (
-                    otherSeries: Highcharts.Series
+                    otherSeries: BaseSeries
                 ): void {
                     if (otherSeries.type === series.type) {
                         otherSeries.isDirty = true;

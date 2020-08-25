@@ -88,7 +88,7 @@ declare global {
     }
 }
 
-import '../Core/Series/Series.js';
+import '../Core/Series/CatesianSeries.js';
 
 const NodesMixin = H.NodesMixin = {
 

@@ -9,9 +9,17 @@
  *  !!!!!!! SOURCE GETS TRANSPILED BY TYPESCRIPT. EDIT TS FILE ONLY. !!!!!!!
  *
  * */
-'use strict';
+import BaseSeries from '../Core/Series/BaseSeries.js';
+import Color from '../Core/Color.js';
 import H from '../Core/Globals.js';
 import NodesMixin from '../Mixins/Nodes.js';
+import Point from '../Core/Series/Point.js';
+import U from '../Core/Utilities.js';
+var defined = U.defined, find = U.find, isObject = U.isObject, merge = U.merge, pick = U.pick, relativeLength = U.relativeLength, stableSort = U.stableSort;
+import TreeSeriesMixin from '../Mixins/TreeSeries.js';
+var getLevelOptions = TreeSeriesMixin.getLevelOptions;
+import '../Core/Options.js';
+import './ColumnSeries.js';
 /**
  * A node in a sankey diagram.
  *
@@ -90,14 +98,7 @@ import NodesMixin from '../Mixins/Nodes.js';
 * @name Highcharts.SeriesSankeyDataLabelsFormatterContextObject#point
 * @type {Highcharts.SankeyNodeObject}
 */
-import Color from '../Core/Color.js';
-import Point from '../Core/Series/Point.js';
-import U from '../Core/Utilities.js';
-var defined = U.defined, find = U.find, isObject = U.isObject, merge = U.merge, pick = U.pick, relativeLength = U.relativeLength, seriesType = U.seriesType, stableSort = U.stableSort;
-import TreeSeriesMixin from '../Mixins/TreeSeries.js';
-var getLevelOptions = TreeSeriesMixin.getLevelOptions;
-import '../Core/Options.js';
-import './ColumnSeries.js';
+''; // detach doclets above
 // eslint-disable-next-line valid-jsdoc
 /**
  * @private
@@ -119,7 +120,7 @@ var getDLOptions = function getDLOptions(params) {
  *
  * @augments Highcharts.Series
  */
-seriesType('sankey', 'column', 
+BaseSeries.seriesType('sankey', 'column', 
 /**
  * A sankey diagram is a type of flow diagram, in which the width of the
  * link between two nodes is shown proportionally to the flow quantity.

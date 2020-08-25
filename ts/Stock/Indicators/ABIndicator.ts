@@ -6,9 +6,13 @@
  *
  * */
 
-'use strict';
-
-import H from '../../Core/Globals.js';
+import BaseSeries from '../../Core/Series/BaseSeries.js';
+import MultipleLinesMixin from '../../Mixins/MultipleLines.js';
+import U from '../../Core/Utilities.js';
+const {
+    correctFloat,
+    merge
+} = U;
 
 /**
  * Internal types
@@ -48,24 +52,18 @@ declare global {
         class ABandsIndicatorPoint extends SMAIndicatorPoint {
             public series: ABandsIndicator;
         }
-
-        interface SeriesTypesDictionary {
-            abands: typeof ABandsIndicator;
-        }
     }
 }
 
+declare module '../../Core/Series/Types' {
+    interface SeriesTypeRegistry {
+        abands: typeof Highcharts.ABandsIndicator;
+    }
+}
 
-import U from '../../Core/Utilities.js';
-const {
-    correctFloat,
-    merge,
-    seriesType
-} = U;
+import './SMAIndicator.js';
 
-import multipleLinesMixin from '../../Mixins/MultipleLines.js';
-
-var SMA = H.seriesTypes.sma;
+var SMA = BaseSeries.seriesTypes.sma;
 
 /* eslint-disable valid-jsdoc */
 /**
@@ -91,6 +89,7 @@ function getPointUB(high: number, base: number): number {
 function getPointLB(low: number, base: number): number {
     return low * (correctFloat(1 - 2 * base));
 }
+
 /* eslint-enable valid-jsdoc */
 
 /**
@@ -102,7 +101,7 @@ function getPointLB(low: number, base: number): number {
  *
  * @augments Highcharts.Series
  */
-seriesType<Highcharts.ABandsIndicator>(
+BaseSeries.seriesType<Highcharts.ABandsIndicator>(
     'abands',
     'sma',
     /**
@@ -160,7 +159,7 @@ seriesType<Highcharts.ABandsIndicator>(
     /**
      * @lends Highcharts.Series#
      */
-    merge(multipleLinesMixin, {
+    merge(MultipleLinesMixin, {
         pointArrayMap: ['top', 'middle', 'bottom'],
         pointValKey: 'middle',
         nameBase: 'Acceleration Bands',

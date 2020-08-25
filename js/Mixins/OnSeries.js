@@ -11,7 +11,7 @@
 import H from '../Core/Globals.js';
 import U from '../Core/Utilities.js';
 var defined = U.defined, stableSort = U.stableSort;
-import '../Core/Series/Series.js';
+import '../Core/Series/CatesianSeries.js';
 var seriesTypes = H.seriesTypes;
 /**
  * @private

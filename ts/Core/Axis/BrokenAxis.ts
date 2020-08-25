@@ -57,7 +57,7 @@ declare module './Types' {
     }
 }
 
-import '../Series/Series.js';
+import '../Series/CatesianSeries.js';
 import StackItem from '../../Extensions/Stacking.js';
 
 var Series = H.Series;

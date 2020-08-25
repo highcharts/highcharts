@@ -6,9 +6,14 @@
  *
  * */
 
-'use strict';
+import BaseSeries from '../../Core/Series/BaseSeries.js';
+import RequiredIndicatorMixin from '../../Mixins/IndicatorRequired.js';
+import U from '../../Core/Utilities.js';
+const {
+    correctFloat,
+    isArray
+} = U;
 
-import H from '../../Core/Globals.js';
 
 /**
  * Internal types
@@ -52,23 +57,18 @@ declare global {
         interface DEMAIndicatorOptions extends EMAIndicatorOptions {
             params?: DEMAIndicatorParamsOptions;
         }
-
-        interface SeriesTypesDictionary {
-            dema: typeof DEMAIndicator;
-        }
     }
 }
 
-import U from '../../Core/Utilities.js';
-const {
-    correctFloat,
-    isArray,
-    seriesType
-} = U;
+declare module '../../Core/Series/Types' {
+    interface SeriesTypeRegistry {
+        dema: typeof Highcharts.DEMAIndicator;
+    }
+}
 
-import requiredIndicator from '../../Mixins/IndicatorRequired.js';
+import './EMAIndicator.js';
 
-var EMAindicator = H.seriesTypes.ema;
+var EMAindicator = BaseSeries.seriesTypes.ema;
 
 /**
  * The DEMA series Type
@@ -79,7 +79,7 @@ var EMAindicator = H.seriesTypes.ema;
  *
  * @augments Highcharts.Series
  */
-seriesType<Highcharts.DEMAIndicator>(
+BaseSeries.seriesType<Highcharts.DEMAIndicator>(
     'dema',
     'ema',
     /**
@@ -111,7 +111,7 @@ seriesType<Highcharts.DEMAIndicator>(
             var args = arguments,
                 ctx = this;
 
-            requiredIndicator.isParentLoaded(
+            RequiredIndicatorMixin.isParentLoaded(
                 (EMAindicator as any),
                 'ema',
                 ctx.type,

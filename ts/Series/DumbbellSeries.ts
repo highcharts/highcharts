@@ -8,14 +8,18 @@
  *
  * */
 
-'use strict';
-
 import type SVGPath from '../Core/Renderer/SVG/SVGPath';
+import BaseSeries from '../Core/Series/BaseSeries.js';
+import SVGRenderer from '../Core/Renderer/SVG/SVGRenderer.js';
 import H from '../Core/Globals.js';
-
 const {
-    SVGRenderer
+    noop
 } = H;
+import U from '../Core/Utilities.js';
+const {
+    extend,
+    pick
+} = U;
 
 /**
  * Internal types
@@ -39,9 +43,6 @@ declare global {
         }
         interface SeriesStatesHoverOptionsObject {
             connectorWidthPlus?: number;
-        }
-        interface SeriesTypesDictionary {
-            dumbbell: typeof AreaRangeSeries;
         }
         class DumbbellPoint extends AreaRangePoint {
             public series: DumbbellSeries;
@@ -81,21 +82,30 @@ declare global {
         }
     }
 }
-import U from '../Core/Utilities.js';
-const {
-    extend,
-    pick,
-    seriesType
-} = U;
+
+/**
+ * @private
+ */
+declare module '../Core/Series/Types' {
+    interface SeriesTypeRegistry {
+        dumbbell: typeof Highcharts.AreaRangeSeries;
+    }
+}
 
 import './AreaRangeSeries.js';
+import './ColumnRangeSeries.js';
+import './ColumnSeries.js';
+import '../Core/Interaction.js';
 
-var seriesTypes = H.seriesTypes,
-    seriesProto = H.Series.prototype,
+var seriesProto = H.Series.prototype,
+    seriesTypes = BaseSeries.seriesTypes,
     areaRangeProto = seriesTypes.arearange.prototype,
     columnRangeProto = seriesTypes.columnrange.prototype,
     colProto = seriesTypes.column.prototype,
-    areaRangePointProto = areaRangeProto.pointClass.prototype;
+    areaRangePointProto = areaRangeProto.pointClass.prototype,
+    TrackerMixin = H.TrackerMixin; // Interaction
+
+
 /**
  * The dumbbell series is a cartesian series with higher and lower values for
  * each point along an X axis, connected with a line between the values.
@@ -113,7 +123,7 @@ var seriesTypes = H.seriesTypes,
  * @since 8.0.0
  * @optionparent plotOptions.dumbbell
  */
-seriesType<Highcharts.DumbbellSeries>('dumbbell', 'arearange', {
+BaseSeries.seriesType<Highcharts.DumbbellSeries>('dumbbell', 'arearange', {
     /** @ignore-option */
     trackByArea: false,
     /** @ignore-option */
@@ -167,8 +177,8 @@ seriesType<Highcharts.DumbbellSeries>('dumbbell', 'arearange', {
     }
 }, {
     trackerGroups: ['group', 'markerGroup', 'dataLabelsGroup'],
-    drawTracker: H.TrackerMixin.drawTrackerPoint,
-    drawGraph: H.noop,
+    drawTracker: TrackerMixin.drawTrackerPoint,
+    drawGraph: noop,
 
     crispCol: colProto.crispCol,
     /**

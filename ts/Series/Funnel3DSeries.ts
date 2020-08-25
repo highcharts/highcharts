@@ -12,13 +12,27 @@
  *
  * */
 
-'use strict';
-
 import type Chart from '../Core/Chart/Chart';
 import type SVGPath from '../Core/Renderer/SVG/SVGPath';
+import BaseSeries from '../Core/Series/BaseSeries.js';
+import Color from '../Core/Color.js';
+const {
+    parse: color
+} = Color;
 import H from '../Core/Globals.js';
+const {
+    charts
+} = H;
 import Math3D from '../Extensions/Math3D.js';
 const { perspective } = Math3D;
+import U from '../Core/Utilities.js';
+const {
+    error,
+    extend,
+    merge,
+    pick,
+    relativeLength
+} = U;
 
 /**
  * Internal types
@@ -96,23 +110,19 @@ declare global {
     }
 }
 
-import Color from '../Core/Color.js';
-const color = Color.parse;
-import U from '../Core/Utilities.js';
-const {
-    error,
-    extend,
-    merge,
-    pick,
-    relativeLength,
-    seriesType
-} = U;
+/**
+ * @private
+ */
+declare module '../Core/Series/Types' {
+    interface SeriesTypeRegistry {
+        funnel3d: typeof Highcharts.Funnel3dSeries;
+    }
+}
 
 import './ColumnSeries.js';
 import '../Core/Renderer/SVG/SVGRenderer.js';
 
-var charts = H.charts,
-    seriesTypes = H.seriesTypes,
+var seriesTypes = BaseSeries.seriesTypes,
     // Use H.Renderer instead of SVGRenderer for VML support.
     RendererProto = H.Renderer.prototype,
     //
@@ -128,7 +138,7 @@ var charts = H.charts,
  * @requires modules/cylinder
  * @requires modules/funnel3d
  */
-seriesType<Highcharts.Funnel3dSeries>('funnel3d', 'column',
+BaseSeries.seriesType<Highcharts.Funnel3dSeries>('funnel3d', 'column',
     /**
      * A funnel3d is a 3d version of funnel series type. Funnel charts are
      * a type of chart often used to visualize stages in a sales project,

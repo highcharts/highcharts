@@ -76,7 +76,7 @@ declare module '../Core/Axis/Types' {
     }
 }
 
-import '../Core/Series/Series.js';
+import '../Core/Series/CatesianSeries.js';
 
 // Extensions for parallel coordinates plot.
 var ChartProto = Chart.prototype;

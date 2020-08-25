@@ -196,7 +196,7 @@ declare global {
 
 ''; // detached doclets above
 
-import '../Core/Series/Series.js';
+import '../Core/Series/CatesianSeries.js';
 
 var Series = H.Series;
 

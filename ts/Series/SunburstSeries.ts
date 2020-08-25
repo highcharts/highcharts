@@ -12,8 +12,41 @@
  *
  * */
 
-'use strict';
+import BaseSeries from '../Core/Series/BaseSeries.js';
+const {
+    seriesTypes
+} = BaseSeries;
+import CenteredSeriesMixin from '../Mixins/CenteredSeries.js';
+const {
+    getCenter,
+    getStartAndEndRadians
+} = CenteredSeriesMixin;
+import DrawPointMixin from '../Mixins/DrawPoint.js';
+const {
+    drawPoint
+} = DrawPointMixin;
 import H from '../Core/Globals.js';
+const {
+    noop
+} = H;
+import TreeSeriesMixin from '../Mixins/TreeSeries.js';
+const {
+    getColor,
+    getLevelOptions,
+    setTreeValues,
+    updateRootId
+} = TreeSeriesMixin;
+import U from '../Core/Utilities.js';
+const {
+    correctFloat,
+    error,
+    extend,
+    isNumber,
+    isObject,
+    isString,
+    merge,
+    splat
+} = U;
 
 /**
  * Internal types
@@ -62,9 +95,6 @@ declare global {
                 dataLabel: SVGElement,
                 labelOptions: DataLabelsOptions
             ): void;
-        }
-        interface SeriesTypesDictionary {
-            sunburst: typeof SunburstSeries;
         }
         interface SunburstAnimationParams {
             center: PositionObject;
@@ -170,41 +200,20 @@ declare global {
     }
 }
 
-import U from '../Core/Utilities.js';
-const {
-    correctFloat,
-    error,
-    extend,
-    isNumber,
-    isObject,
-    isString,
-    merge,
-    seriesType,
-    splat
-} = U;
+declare module '../Core/Series/Types' {
+    interface SeriesTypeRegistry {
+        sunburst: typeof Highcharts.SunburstSeries;
+    }
+}
 
-import centeredSeriesMixin from '../Mixins/CenteredSeries.js';
-import drawPointModule from '../Mixins/DrawPoint.js';
-const { drawPoint } = drawPointModule;
-import mixinTreeSeries from '../Mixins/TreeSeries.js';
-const {
-    getColor,
-    getLevelOptions,
-    setTreeValues,
-    updateRootId
-} = mixinTreeSeries;
-import '../Core/Series/Series.js';
+import '../Core/Series/CatesianSeries.js';
 import './TreemapSeries.js';
 
 var Series = H.Series,
-    getCenter = centeredSeriesMixin.getCenter,
-    getStartAndEndRadians = centeredSeriesMixin.getStartAndEndRadians,
     isBoolean = function (x: unknown): x is boolean {
         return typeof x === 'boolean';
     },
-    noop = H.noop,
-    rad2deg = 180 / Math.PI,
-    seriesTypes = H.seriesTypes;
+    rad2deg = 180 / Math.PI;
 
 // TODO introduce step, which should default to 1.
 var range = function range(from: unknown, to: unknown): Array<number> {
@@ -1202,7 +1211,7 @@ var sunburstSeries = {
         }) as any;
         // NOTE consider doing calculateLevelSizes in a callback to
         // getLevelOptions
-        mapOptionsToLevel = calculateLevelSizes(mapOptionsToLevel, {
+        mapOptionsToLevel = calculateLevelSizes(mapOptionsToLevel as any, {
             diffRadius,
             from,
             to
@@ -1429,6 +1438,8 @@ var sunburstPoint = {
   * @apioption series.sunburst.data.sliced
   */
 
+''; // detach doclets above
+
 /**
  * @private
  * @class
@@ -1436,7 +1447,7 @@ var sunburstPoint = {
  *
  * @augments Highcharts.Series
  */
-seriesType<Highcharts.SunburstSeries>(
+BaseSeries.seriesType<Highcharts.SunburstSeries>(
     'sunburst',
     'treemap',
     sunburstOptions,

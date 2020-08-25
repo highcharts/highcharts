@@ -8,11 +8,31 @@
  *
  * */
 
-'use strict';
-
 import type SVGPath from '../Core/Renderer/SVG/SVGPath';
+import BaseSeries from '../Core/Series/BaseSeries.js';
+import CenteredSeriesMixin from '../Mixins/CenteredSeries.js';
+const {
+    getStartAndEndRadians
+} = CenteredSeriesMixin;
 import H from '../Core/Globals.js';
+const {
+    noop
+} = H;
+import LegendSymbolMixin from '../Mixins/LegendSymbol.js';
+import Point from '../Core/Series/Point.js';
 import SVGRenderer from '../Core/Renderer/SVG/SVGRenderer.js';
+import U from '../Core/Utilities.js';
+const {
+    addEvent,
+    clamp,
+    defined,
+    fireEvent,
+    isNumber,
+    merge,
+    pick,
+    relativeLength,
+    setAnimation
+} = U;
 
 /**
  * Internal types
@@ -116,36 +136,22 @@ declare global {
         interface SeriesStatesHoverOptionsObject {
             brightness?: number;
         }
-        interface SeriesTypesDictionary {
-            pie: typeof PieSeries;
-        }
     }
 }
 
-import LegendSymbolMixin from '../Mixins/LegendSymbol.js';
-import Point from '../Core/Series/Point.js';
-import U from '../Core/Utilities.js';
-const {
-    addEvent,
-    clamp,
-    defined,
-    fireEvent,
-    isNumber,
-    merge,
-    pick,
-    relativeLength,
-    seriesType,
-    setAnimation
-} = U;
+/**
+ * @private
+ */
+declare module '../Core/Series/Types' {
+    interface SeriesTypeRegistry {
+        pie: typeof Highcharts.PieSeries;
+    }
+}
 
-import './ColumnSeries.js';
-import centeredSeriesMixin from '../Mixins/CenteredSeries.js';
 import '../Core/Options.js';
+import '../Core/Series/CatesianSeries.js';
 
-var getStartAndEndRadians = centeredSeriesMixin.getStartAndEndRadians,
-    noop = H.noop,
-    Series = H.Series,
-    seriesTypes = H.seriesTypes;
+var Series = H.Series;
 
 /**
  * Pie series type.
@@ -156,7 +162,7 @@ var getStartAndEndRadians = centeredSeriesMixin.getStartAndEndRadians,
  *
  * @augments Highcharts.Series
  */
-seriesType<Highcharts.PieSeries>(
+BaseSeries.seriesType<Highcharts.PieSeries>(
     'pie',
     'line',
 
@@ -735,7 +741,7 @@ seriesType<Highcharts.PieSeries>(
         noSharedTooltip: true,
         trackerGroups: ['group', 'dataLabelsGroup'],
         axisTypes: [],
-        pointAttribs: seriesTypes.column.prototype.pointAttribs,
+        pointAttribs: BaseSeries.seriesTypes.column.prototype.pointAttribs,
 
         /**
          * Animate the pies in
@@ -1261,7 +1267,7 @@ seriesType<Highcharts.PieSeries>(
          * @private
          * @borrows Highcharts.CenteredSeriesMixin.getCenter as Highcharts.seriesTypes.pie#getCenter
          */
-        getCenter: centeredSeriesMixin.getCenter,
+        getCenter: CenteredSeriesMixin.getCenter,
 
         /**
          * Pies don't have point marker symbols.

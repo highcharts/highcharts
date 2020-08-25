@@ -12,9 +12,11 @@
  *
  * */
 
-'use strict';
-
 import type SVGPath from '../Core/Renderer/SVG/SVGPath';
+import BaseSeries from '../Core/Series/BaseSeries.js';
+const {
+    seriesTypes
+} = BaseSeries;
 import H from '../Core/Globals.js';
 import LegendSymbolMixin from '../Mixins/LegendSymbol.js';
 import Point from '../Core/Series/Point.js';
@@ -28,8 +30,7 @@ const {
     isNumber,
     merge,
     objectEach,
-    pick,
-    seriesType
+    pick
 } = U;
 
 /**
@@ -85,9 +86,6 @@ declare global {
             ): SVGAttributes;
             public processData(): undefined;
         }
-        interface SeriesTypesDictionary {
-            timeline: typeof TimelineSeries;
-        }
         interface TimelineDataLabelsFormatterCallbackFunction
             extends DataLabelsFormatterCallbackFunction
         {
@@ -133,6 +131,20 @@ declare global {
 }
 
 /**
+ * @private
+ */
+declare module '../Core/Series/Types' {
+    interface SeriesTypeRegistry {
+        timeline: typeof Highcharts.TimelineSeries;
+    }
+}
+
+import '../Core/Series/CatesianSeries.js';
+
+var TrackerMixin = H.TrackerMixin,
+    Series = H.Series;
+
+/**
  * Callback JavaScript function to format the data label as a string. Note that
  * if a `format` is defined, the format takes precedence and the formatter is
  * ignored.
@@ -162,12 +174,6 @@ declare global {
 
 ''; // dettach doclets above
 
-import '../Core/Series/Series.js';
-
-var TrackerMixin = H.TrackerMixin,
-    Series = H.Series,
-    seriesTypes = H.seriesTypes;
-
 /**
  * The timeline series type.
  *
@@ -177,7 +183,7 @@ var TrackerMixin = H.TrackerMixin,
  *
  * @augments Highcharts.Series
  */
-seriesType<Highcharts.TimelineSeries>('timeline', 'line',
+BaseSeries.seriesType<Highcharts.TimelineSeries>('timeline', 'line',
 
     /**
      * The timeline series presents given events along a drawn line.
@@ -658,9 +664,7 @@ seriesType<Highcharts.TimelineSeries>('timeline', 'line',
             var series = this,
                 seriesMarkerOptions: Highcharts.PointMarkerOptionsObject =
                     series.options.marker as any,
-                seriesStateOptions: Highcharts.SeriesStateOptionsObject<(
-                    Highcharts.TimelineSeries
-                )>,
+                seriesStateOptions: Highcharts.SeriesStateOptionsObject<Highcharts.TimelineSeries>,
                 pointMarkerOptions = point.marker || {},
                 symbol = (
                     pointMarkerOptions.symbol || seriesMarkerOptions.symbol
@@ -696,7 +700,7 @@ seriesType<Highcharts.TimelineSeries>('timeline', 'line',
                     pointStateOptions.radius,
                     seriesStateOptions.radius,
                     radius + (
-                        seriesStateOptions.radiusPlus || 0
+                        seriesStateOptions.radiusPlus as any || 0
                     )
                 );
             }

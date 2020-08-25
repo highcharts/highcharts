@@ -6,9 +6,12 @@
  *
  * */
 
-'use strict';
-
-import H from '../../Core/Globals.js';
+import BaseSeries from '../../Core/Series/BaseSeries.js';
+import U from '../../Core/Utilities.js';
+const {
+    isArray,
+    merge
+} = U;
 
 /**
  * Internal types
@@ -66,22 +69,18 @@ declare global {
             bottomLine?: Dictionary<CSSObject>;
             topLine?: Dictionary<CSSObject>;
         }
-
-        interface SeriesTypesDictionary {
-            priceenvelopes: typeof PriceEnvelopesIndicator;
-        }
-
     }
 }
 
-import U from '../../Core/Utilities.js';
-const {
-    isArray,
-    merge,
-    seriesType
-} = U;
+declare module '../../Core/Series/Types' {
+    interface SeriesTypeRegistry {
+        priceenvelopes: typeof Highcharts.PriceEnvelopesIndicator;
+    }
+}
 
-var SMA = H.seriesTypes.sma;
+import './SMAIndicator.js';
+
+var SMA = BaseSeries.seriesTypes.sma;
 
 /**
  * The Price Envelopes series type.
@@ -92,7 +91,7 @@ var SMA = H.seriesTypes.sma;
  *
  * @augments Highcharts.Series
  */
-seriesType<Highcharts.PriceEnvelopesIndicator>(
+BaseSeries.seriesType<Highcharts.PriceEnvelopesIndicator>(
     'priceenvelopes',
     'sma',
     /**

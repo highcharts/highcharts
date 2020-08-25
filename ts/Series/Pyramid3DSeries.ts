@@ -11,7 +11,7 @@
  *
  * */
 
-'use strict';
+import BaseSeries from '../Core/Series/BaseSeries.js';
 
 /**
  * Internal types
@@ -34,18 +34,20 @@ declare global {
         interface Pyramid3dSeriesOptions extends Funnel3dSeriesOptions {
             states?: SeriesStatesOptionsObject<Pyramid3dSeries>;
         }
-        interface SeriesTypesDictionary {
-            pyramid3d: typeof Pyramid3dSeries;
-        }
     }
 }
 
-import U from '../Core/Utilities.js';
-const {
-    seriesType
-} = U;
-import '../Series/ColumnSeries.js';
+/**
+ * @private
+ */
+declare module '../Core/Series/Types' {
+    interface SeriesTypeRegistry {
+        pyramid3d: typeof Highcharts.Pyramid3dSeries;
+    }
+}
+
 import '../Core/Renderer/SVG/SVGRenderer.js';
+import './Funnel3DSeries.js';
 
 /**
  * The pyramid3d series type.
@@ -57,7 +59,7 @@ import '../Core/Renderer/SVG/SVGRenderer.js';
  * @requires modules/funnel3d
  * @requires modules/pyramid3d
  */
-seriesType<Highcharts.Pyramid3dSeries>('pyramid3d', 'funnel3d',
+BaseSeries.seriesType<Highcharts.Pyramid3dSeries>('pyramid3d', 'funnel3d',
     /**
      * A pyramid3d is a 3d version of pyramid series type. Pyramid charts are
      * a type of chart often used to visualize stages in a sales project,

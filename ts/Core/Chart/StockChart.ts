@@ -10,6 +10,7 @@
 
 'use strict';
 
+import type { SeriesPlotOptionsType } from '../Series/Types';
 import type SVGPath from '../Renderer/SVG/SVGPath';
 import Axis from '../Axis/Axis.js';
 import Chart from '../Chart/Chart.js';
@@ -77,7 +78,7 @@ declare global {
 }
 
 import '../Pointer.js';
-import '../Series/Series.js';
+import '../Series/CatesianSeries.js';
 // Has a dependency on Navigator due to the use of
 // defaultOptions.navigator
 import '../Navigator.js';
@@ -332,7 +333,7 @@ H.StockChart = H.stockChart = function (
 // series options are handled.
 addEvent(Series, 'setOptions', function (
     this: Highcharts.Series,
-    e: { plotOptions: Highcharts.PlotOptions }
+    e: { plotOptions: SeriesPlotOptionsType }
 ): void {
     var overrides;
 

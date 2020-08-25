@@ -12,7 +12,7 @@ import Axis from './Axis.js';
 import H from '../Globals.js';
 import U from '../Utilities.js';
 var addEvent = U.addEvent, find = U.find, fireEvent = U.fireEvent, isArray = U.isArray, isNumber = U.isNumber, pick = U.pick;
-import '../Series/Series.js';
+import '../Series/CatesianSeries.js';
 import StackItem from '../../Extensions/Stacking.js';
 var Series = H.Series;
 /* eslint-disable valid-jsdoc */

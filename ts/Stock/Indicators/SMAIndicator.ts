@@ -6,9 +6,12 @@
  *
  * */
 
-'use strict';
-
+import type { AxisType } from '../../Core/Axis/Types';
 import type Chart from '../../Core/Chart/Chart';
+import BaseSeries from '../../Core/Series/BaseSeries.js';
+const {
+    seriesTypes
+} = BaseSeries;
 import H from '../../Core/Globals.js';
 import requiredIndicator from '../../Mixins/IndicatorRequired.js';
 import U from '../../Core/Utilities.js';
@@ -18,7 +21,6 @@ const {
     extend,
     isArray,
     pick,
-    seriesType,
     splat
 } = U;
 
@@ -28,7 +30,7 @@ const {
  */
 declare global {
     namespace Highcharts {
-        class SMAIndicator extends Series {
+        class SMAIndicator extends LineSeries {
             public bindTo: SMAIndicatorBindToObject;
             public calculateOn: string;
             public data: Array<SMAIndicatorPoint>;
@@ -83,10 +85,6 @@ declare global {
             period?: number;
         }
 
-        interface SeriesTypesDictionary {
-            sma: typeof SMAIndicator;
-        }
-
         interface SMAIndicatorBindToObject {
             eventName: string;
             series: boolean;
@@ -104,11 +102,17 @@ declare global {
     }
 }
 
-import '../../Core/Series/Series.js';
+declare module '../../Core/Series/Types' {
+    interface SeriesTypeRegistry {
+        sma: typeof Highcharts.SMAIndicator;
+    }
+}
+
+import '../../Core/Series/CatesianSeries.js';
+import '../../Series/OHLCSeries.js';
 
 var Series = H.Series,
-    seriesTypes = H.seriesTypes,
-    ohlcProto = H.seriesTypes.ohlc.prototype,
+    ohlcProto = seriesTypes.ohlc.prototype,
     generateMessage = requiredIndicator.generateMessage;
 
 /**
@@ -170,7 +174,7 @@ addEvent(Series, 'afterSetOptions', function (
  *
  * @augments Highcharts.Series
  */
-seriesType<Highcharts.SMAIndicator>(
+BaseSeries.seriesType<Highcharts.SMAIndicator>(
     'sma',
     'line',
     /**
@@ -282,7 +286,7 @@ seriesType<Highcharts.SMAIndicator>(
             // the object with missing indicator's name.
             this.requiredIndicators.forEach(function (indicator: string): void {
                 if (seriesTypes[indicator]) {
-                    seriesTypes[indicator].prototype.requireIndicators();
+                    (seriesTypes[indicator].prototype as Highcharts.SMAIndicator).requireIndicators();
                 } else {
                     obj.allLoaded = false;
                     obj.needed = indicator;
@@ -434,9 +438,10 @@ seriesType<Highcharts.SMAIndicator>(
             }
 
             indicator.dataEventsToUnbind.push(
-                addEvent(
+                addEvent<Highcharts.Series|AxisType>(
                     indicator.bindTo.series ?
-                        indicator.linkedParent : indicator.linkedParent.xAxis,
+                        indicator.linkedParent :
+                        indicator.linkedParent.xAxis,
                     indicator.bindTo.eventName,
                     recalculateValues
                 )

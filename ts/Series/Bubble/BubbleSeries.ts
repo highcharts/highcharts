@@ -11,7 +11,27 @@
 'use strict';
 
 import type SVGPath from '../../Core/Renderer/SVG/SVGPath';
+import Axis from '../../Core/Axis/Axis.js';
+import BaseSeries from '../../Core/Series/BaseSeries.js';
+import Color from '../../Core/Color.js';
+const {
+    parse: color
+} = Color;
 import H from '../../Core/Globals.js';
+const {
+    noop
+} = H;
+import Point from '../../Core/Series/Point.js';
+import U from '../../Core/Utilities.js';
+const {
+    arrayMax,
+    arrayMin,
+    clamp,
+    extend,
+    isNumber,
+    pick,
+    pInt
+} = U;
 
 /**
  * Internal types
@@ -89,43 +109,31 @@ declare global {
             specialGroup?: BubbleSeries['specialGroup'];
             zData?: BubbleSeries['zData'];
         }
-        interface SeriesTypesDictionary {
-            bubble: typeof BubbleSeries;
-        }
         type BubbleSizeByValue = ('area'|'width');
     }
 }
 
 /**
- * @typedef {"area"|"width"} Highcharts.BubbleSizeByValue
+ * @private
  */
+declare module '../../Core/Series/Types' {
+    interface SeriesTypeRegistry {
+        bubble: typeof Highcharts.BubbleSeries;
+    }
+}
 
-import Color from '../../Core/Color.js';
-const {
-    parse: color
-} = Color;
-import Point from '../../Core/Series/Point.js';
-import U from '../../Core/Utilities.js';
-const {
-    arrayMax,
-    arrayMin,
-    clamp,
-    extend,
-    isNumber,
-    pick,
-    pInt,
-    seriesType
-} = U;
-
-import '../../Core/Axis/Axis.js';
-import '../../Core/Series/Series.js';
+import '../../Core/Series/CatesianSeries.js';
 import '../../Series/ScatterSeries.js';
 import './BubbleLegend.js';
 
-var Axis = H.Axis,
-    noop = H.noop,
-    Series = H.Series,
-    seriesTypes = H.seriesTypes;
+var Series = H.Series,
+    seriesTypes = BaseSeries.seriesTypes;
+
+/**
+ * @typedef {"area"|"width"} Highcharts.BubbleSizeByValue
+ */
+
+''; // detach doclets above
 
 /**
  * A bubble series is a three dimensional series type where each point renders
@@ -142,7 +150,7 @@ var Axis = H.Axis,
  * @requires     highcharts-more
  * @optionparent plotOptions.bubble
  */
-seriesType<Highcharts.BubbleSeries>('bubble', 'scatter', {
+BaseSeries.seriesType<Highcharts.BubbleSeries>('bubble', 'scatter', {
 
     dataLabels: {
         formatter: function (

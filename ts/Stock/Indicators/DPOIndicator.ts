@@ -6,13 +6,11 @@
  *
  * */
 
-'use strict';
-
+import BaseSeries from '../../Core/Series/BaseSeries.js';
 import U from '../../Core/Utilities.js';
 const {
     correctFloat,
-    pick,
-    seriesType
+    pick
 } = U;
 
 /**
@@ -44,13 +42,16 @@ declare global {
         class DPOIndicatorPoint extends SMAIndicatorPoint {
             public series: DPOIndicator;
         }
-
-        interface SeriesTypesDictionary {
-            dpo: typeof DPOIndicator;
-        }
-
     }
 }
+
+declare module '../../Core/Series/Types' {
+    interface SeriesTypeRegistry {
+        dpo: typeof Highcharts.DPOIndicator;
+    }
+}
+
+import './SMAIndicator.js';
 
 /* eslint-disable valid-jsdoc */
 // Utils
@@ -73,6 +74,7 @@ function accumulatePoints(
     }
     return correctFloat(sum + price);
 }
+
 /* eslint-enable valid-jsdoc */
 
 /**
@@ -84,7 +86,7 @@ function accumulatePoints(
  *
  * @augments Highcharts.Series
  */
-seriesType<Highcharts.DPOIndicator>(
+BaseSeries.seriesType<Highcharts.DPOIndicator>(
     'dpo',
     'sma',
     /**

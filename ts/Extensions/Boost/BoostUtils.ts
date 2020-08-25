@@ -35,7 +35,7 @@ declare global {
     }
 }
 
-import '../../Core/Series/Series.js';
+import '../../Core/Series/CatesianSeries.js';
 import boostableMap from './BoostableMap.js';
 import createAndAttachRenderer from './BoostAttach.js';
 

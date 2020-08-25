@@ -64,7 +64,7 @@ var addEvent = U.addEvent, createElement = U.createElement, css = U.css, defined
  * @param {Highcharts.PointInteractionEventObject} event
  *        Event that occured.
  */
-import './Series/Series.js';
+import './Series/CatesianSeries.js';
 var hasTouch = H.hasTouch, Series = H.Series, seriesTypes = H.seriesTypes, svg = H.svg, TrackerMixin;
 /* eslint-disable valid-jsdoc */
 /**

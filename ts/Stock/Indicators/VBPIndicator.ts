@@ -10,13 +10,26 @@
  *
  * */
 
-'use strict';
-
 import type { AxisType } from '../../Core/Axis/Types';
 import type Chart from '../../Core/Chart/Chart';
 import type SVGPath from '../../Core/Renderer/SVG/SVGPath';
+import BaseSeries from '../../Core/Series/BaseSeries.js';
 import H from '../../Core/Globals.js';
-
+const {
+    noop
+} = H;
+import Point from '../../Core/Series/Point.js';
+import U from '../../Core/Utilities.js';
+const {
+    addEvent,
+    animObject,
+    arrayMax,
+    arrayMin,
+    correctFloat,
+    error,
+    extend,
+    isArray
+} = U;
 
 /**
  * Internal types
@@ -117,26 +130,8 @@ declare global {
             zIndex?: number;
             zoneLines?: VBPIndicatorStyleOptions;
         }
-
-        interface SeriesTypesDictionary {
-            vpb: typeof VBPIndicator;
-        }
     }
 }
-
-import Point from '../../Core/Series/Point.js';
-import U from '../../Core/Utilities.js';
-const {
-    addEvent,
-    animObject,
-    arrayMax,
-    arrayMin,
-    correctFloat,
-    error,
-    extend,
-    isArray,
-    seriesType
-} = U;
 
 /* eslint-disable require-jsdoc */
 
@@ -170,8 +165,7 @@ function arrayExtremesOHLC(
 /* eslint-enable require-jsdoc */
 
 var abs = Math.abs,
-    noop = H.noop,
-    columnPrototype = H.seriesTypes.column.prototype;
+    columnPrototype = BaseSeries.seriesTypes.column.prototype;
 
 /**
  * The Volume By Price (VBP) series type.
@@ -182,7 +176,7 @@ var abs = Math.abs,
  *
  * @augments Highcharts.Series
  */
-seriesType<Highcharts.VBPIndicator>(
+BaseSeries.seriesType<Highcharts.VBPIndicator>(
     'vbp',
     'sma',
     /**

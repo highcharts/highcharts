@@ -10,13 +10,7 @@
  *
  * */
 
-'use strict';
-
-import U from '../../Core/Utilities.js';
-const {
-    seriesType
-} = U;
-
+import BaseSeries from '../../Core/Series/BaseSeries.js';
 
 /**
  * Internal types
@@ -49,12 +43,16 @@ declare global {
         interface PSARIndicatorOptions extends SMAIndicatorOptions {
             params?: PSARIndicatorParamsOptions;
         }
-
-        interface SeriesTypesDictionary {
-            psar: typeof PSARIndicator;
-        }
     }
 }
+
+declare module '../../Core/Series/Types' {
+    interface SeriesTypeRegistry {
+        psar: typeof Highcharts.PSARIndicator;
+    }
+}
+
+import './SMAIndicator.js';
 
 /* eslint-disable require-jsdoc */
 
@@ -178,7 +176,7 @@ function getPSAR(
  *
  * @augments Highcharts.Series
  */
-seriesType<Highcharts.PSARIndicator>(
+BaseSeries.seriesType<Highcharts.PSARIndicator>(
     'psar',
     'sma',
     /**

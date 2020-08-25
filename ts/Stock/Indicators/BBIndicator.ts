@@ -6,9 +6,14 @@
  *
  * */
 
-'use strict';
-
+import BaseSeries from '../../Core/Series/BaseSeries.js';
 import H from '../../Core/Globals.js';
+import MultipleLinesMixin from '../../Mixins/MultipleLines.js';
+import U from '../../Core/Utilities.js';
+const {
+    isArray,
+    merge
+} = U;
 
 /**
  * Internal types
@@ -46,23 +51,18 @@ declare global {
             params?: BBIndicatorParamsOptions;
             topLine?: Dictionary<CSSObject>;
         }
-
-        interface SeriesTypesDictionary {
-            bb: typeof BBIndicator;
-        }
     }
 }
 
-import U from '../../Core/Utilities.js';
-const {
-    isArray,
-    merge,
-    seriesType
-} = U;
+declare module '../../Core/Series/Types' {
+    interface SeriesTypeRegistry {
+        bb: typeof Highcharts.BBIndicator;
+    }
+}
 
-import multipleLinesMixin from '../../Mixins/MultipleLines.js';
+import './SMAIndicator.js';
 
-var SMA = H.seriesTypes.sma;
+var SMA = BaseSeries.seriesTypes.sma;
 
 /* eslint-disable valid-jsdoc */
 
@@ -91,6 +91,7 @@ function getStandardDeviation(
     std = Math.sqrt(variance);
     return std;
 }
+
 /* eslint-enable valid-jsdoc */
 
 /**
@@ -102,7 +103,7 @@ function getStandardDeviation(
  *
  * @augments Highcharts.Series
  */
-seriesType<Highcharts.BBIndicator>(
+BaseSeries.seriesType<Highcharts.BBIndicator>(
     'bb',
     'sma',
     /**
@@ -176,7 +177,7 @@ seriesType<Highcharts.BBIndicator>(
     /**
      * @lends Highcharts.Series#
      */
-    merge(multipleLinesMixin, {
+    merge(MultipleLinesMixin, {
         pointArrayMap: ['top', 'middle', 'bottom'],
         pointValKey: 'middle',
         nameComponents: ['period', 'standardDeviation'],

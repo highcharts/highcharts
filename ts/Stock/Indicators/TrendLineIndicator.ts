@@ -6,7 +6,11 @@
  *
  * */
 
-'use strict';
+import BaseSeries from '../../Core/Series/BaseSeries.js';
+import U from '../../Core/Utilities.js';
+const {
+    isArray
+} = U;
 
 /**
  * Internal types
@@ -38,18 +42,16 @@ declare global {
         interface TrendLineIndicatorOptions extends SMAIndicatorOptions {
             params?: TrendLineIndicatorParamsOptions;
         }
-
-        interface SeriesTypesDictionary {
-            trendline: typeof TrendLineIndicator;
-        }
     }
 }
 
-import U from '../../Core/Utilities.js';
-const {
-    isArray,
-    seriesType
-} = U;
+declare module '../../Core/Series/Types' {
+    interface SeriesTypeRegistry {
+        trendline: typeof Highcharts.TrendLineIndicator;
+    }
+}
+
+import './SMAIndicator.js';
 
 /**
  * The Trend line series type.
@@ -60,7 +62,7 @@ const {
  *
  * @augments Highcharts.Series
  */
-seriesType<Highcharts.TrendLineIndicator>(
+BaseSeries.seriesType<Highcharts.TrendLineIndicator>(
     'trendline',
     'sma',
     /**

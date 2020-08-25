@@ -7,12 +7,14 @@
  *  !!!!!!! SOURCE GETS TRANSPILED BY TYPESCRIPT. EDIT TS FILE ONLY. !!!!!!!
  *
  * */
-'use strict';
+import BaseSeries from '../Core/Series/BaseSeries.js';
 import H from '../Core/Globals.js';
+var noop = H.noop;
 import U from '../Core/Utilities.js';
-var pick = U.pick, seriesType = U.seriesType;
+var pick = U.pick;
+import './ColumnSeries.js';
 import '../Core/Options.js';
-var noop = H.noop, seriesTypes = H.seriesTypes;
+var columnProto = BaseSeries.seriesTypes.column.prototype;
 /**
  * The boxplot series type.
  *
@@ -38,7 +40,7 @@ var noop = H.noop, seriesTypes = H.seriesTypes;
  * @requires     highcharts-more
  * @optionparent plotOptions.boxplot
  */
-seriesType('boxplot', 'column', {
+BaseSeries.seriesType('boxplot', 'column', {
     threshold: null,
     tooltip: {
         pointFormat: '<span style="color:{point.color}">\u25CF</span> <b> ' +
@@ -295,7 +297,7 @@ seriesType('boxplot', 'column', {
     // Translate data points from raw values x and y to plotX and plotY
     translate: function () {
         var series = this, yAxis = series.yAxis, pointArrayMap = series.pointArrayMap;
-        seriesTypes.column.prototype.translate.apply(series);
+        columnProto.translate.apply(series);
         // do the translation on each point dimension
         series.points.forEach(function (point) {
             pointArrayMap.forEach(function (key) {

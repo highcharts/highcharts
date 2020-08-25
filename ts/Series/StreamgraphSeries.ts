@@ -10,7 +10,7 @@
  *
  * */
 
-'use strict';
+import BaseSeries from '../Core/Series/BaseSeries.js';
 
 /**
  * Internal types
@@ -34,9 +34,6 @@ declare global {
                 i: number
             ): void;
         }
-        interface SeriesTypesDictionary {
-            streamgraph: typeof StreamgraphSeries;
-        }
         interface StreamgraphPointOptions extends AreaSplinePointOptions {
         }
         interface StreamgraphSeriesOptions extends AreaSplineSeriesOptions {
@@ -46,11 +43,16 @@ declare global {
     }
 }
 
-import '../Series/AreaSeries.js';
-import U from '../Core/Utilities.js';
-const {
-    seriesType
-} = U;
+/**
+ * @private
+ */
+declare module '../Core/Series/Types' {
+    interface SeriesTypeRegistry {
+        streamgraph: typeof Highcharts.StreamgraphSeries;
+    }
+}
+
+import '../Series/AreaSplineSeries.js';
 
 /**
  * @private
@@ -59,7 +61,7 @@ const {
  *
  * @augments Highcharts.Series
  */
-seriesType<Highcharts.StreamgraphSeries>('streamgraph', 'areaspline'
+BaseSeries.seriesType<Highcharts.StreamgraphSeries>('streamgraph', 'areaspline'
 
     /**
      * A streamgraph is a type of stacked area graph which is displaced around a

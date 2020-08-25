@@ -10,10 +10,50 @@
  *
  * */
 
-'use strict';
-
 import type Chart from '../Core/Chart/Chart';
+import BaseSeries from '../Core/Series/BaseSeries.js';
+const {
+    seriesTypes
+} = BaseSeries;
+import Color from '../Core/Color.js';
+const {
+    parse: color
+} = Color;
+import ColorMapMixin from '../Mixins/ColorMapSeries.js';
+const { colorMapSeriesMixin } = ColorMapMixin;
+import DrawPointMixin from '../Mixins/DrawPoint.js';
+const {
+    drawPoint
+} = DrawPointMixin;
 import H from '../Core/Globals.js';
+const {
+    noop
+} = H;
+import LegendSymbolMixin from '../Mixins/LegendSymbol.js';
+import Point from '../Core/Series/Point.js';
+import TreeSeriesMixin from '../Mixins/TreeSeries.js';
+const {
+    getColor,
+    getLevelOptions,
+    updateRootId
+} = TreeSeriesMixin;
+import U from '../Core/Utilities.js';
+const {
+    addEvent,
+    correctFloat,
+    defined,
+    error,
+    extend,
+    fireEvent,
+    isArray,
+    isNumber,
+    isObject,
+    isString,
+    merge,
+    objectEach,
+    pick,
+    stableSort
+} = U;
 
 /**
  * Internal types
@@ -171,9 +211,6 @@ declare global {
             ): Array<unknown>;
             public translate(): void;
         }
-        interface SeriesTypesDictionary {
-            treemap: typeof TreemapSeries;
-        }
         interface TreemapAlgorithmLPObject {
             lH: number;
             lR: number;
@@ -288,51 +325,23 @@ declare global {
     }
 }
 
-import colorMapMixin from '../Mixins/ColorMapSeries.js';
-const { colorMapSeriesMixin } = colorMapMixin;
-import mixinTreeSeries from '../Mixins/TreeSeries.js';
-const {
-    getColor,
-    getLevelOptions,
-    updateRootId
-} = mixinTreeSeries;
-import drawPointModule from '../Mixins/DrawPoint.js';
-const { drawPoint } = drawPointModule;
-import Color from '../Core/Color.js';
-const {
-    parse: color
-} = Color;
-import LegendSymbolMixin from '../Mixins/LegendSymbol.js';
-import Point from '../Core/Series/Point.js';
-import U from '../Core/Utilities.js';
-const {
-    addEvent,
-    correctFloat,
-    defined,
-    error,
-    extend,
-    fireEvent,
-    isArray,
-    isNumber,
-    isObject,
-    isString,
-    merge,
-    objectEach,
-    pick,
-    seriesType,
-    stableSort
-} = U;
+/**
+ * @private
+ */
+declare module '../Core/Series/Types' {
+    interface SeriesTypeRegistry {
+        treemap: typeof Highcharts.TreemapSeries;
+    }
+}
 
 import '../Core/Options.js';
-import '../Core/Series/Series.js';
+import './ScatterSeries.js';
 
 /* eslint-disable no-invalid-this */
 const AXIS_MAX = 100;
 
-var seriesTypes = H.seriesTypes,
-    noop = H.noop,
-    // @todo Similar to eachObject, this function is likely redundant
-    isBoolean = function (x: unknown): x is boolean {
+// @todo Similar to eachObject, this function is likely redundant
+var isBoolean = function (x: unknown): x is boolean {
         return typeof x === 'boolean';
     },
     Series = H.Series,
@@ -375,7 +384,7 @@ var seriesTypes = H.seriesTypes,
  *
  * @augments Highcharts.Series
  */
-seriesType<Highcharts.TreemapSeries>(
+BaseSeries.seriesType<Highcharts.TreemapSeries>(
     'treemap',
     'scatter'
 

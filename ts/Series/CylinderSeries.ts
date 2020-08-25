@@ -12,11 +12,19 @@
  *
  * */
 
-'use strict';
-
 import type Chart from '../Core/Chart/Chart';
 import type SVGPath from '../Core/Renderer/SVG/SVGPath';
+import BaseSeries from '../Core/Series/BaseSeries.js';
 import H from '../Core/Globals.js';
+import Color from '../Core/Color.js';
+const color = Color.parse;
+import Math3D from '../Extensions/Math3D.js';
+const { perspective } = Math3D;
+import U from '../Core/Utilities.js';
+const {
+    merge,
+    pick
+} = U;
 
 /**
  * Internal types
@@ -73,39 +81,31 @@ declare global {
                 bottomPath: SVGPath
             ): SVGPath;
         }
-        interface SeriesTypesDictionary {
-            cylinder: typeof CylinderSeries;
-        }
     }
 }
 
-import Color from '../Core/Color.js';
-const color = Color.parse;
-import Math3D from '../Extensions/Math3D.js';
-const { perspective } = Math3D;
-import U from '../Core/Utilities.js';
-const {
-    merge,
-    pick,
-    seriesType
-} = U;
+/**
+ * @private
+ */
+declare module '../Core/Series/Types' {
+    interface SeriesTypeRegistry {
+        cylinder: typeof Highcharts.CylinderSeries;
+    }
+}
 
 import '../Series/ColumnSeries.js';
 import '../Core/Renderer/SVG/SVGRenderer.js';
 
-var charts = H.charts,
+const charts = H.charts,
     deg2rad = H.deg2rad,
-
     // Work on H.Renderer instead of SVGRenderer for VML support.
     RendererProto = H.Renderer.prototype,
-    cuboidPath = RendererProto.cuboidPath,
-    cylinderMethods;
+    cuboidPath = RendererProto.cuboidPath;
 
 // Check if a path is simplified. The simplified path contains only lineTo
 // segments, whereas non-simplified contain curves.
 const isSimplified = (path: SVGPath): boolean =>
     !path.some((seg): boolean => seg[0] === 'C');
-
 
 /**
   * The cylinder series type.
@@ -119,7 +119,7 @@ const isSimplified = (path: SVGPath): boolean =>
   *
   * @augments Highcharts.Series
   */
-seriesType<Highcharts.CylinderSeries>(
+BaseSeries.seriesType<Highcharts.CylinderSeries>(
     'cylinder',
     'column',
     /**
@@ -224,7 +224,7 @@ seriesType<Highcharts.CylinderSeries>(
  */
 
 // cylinder extends cuboid
-cylinderMethods = merge(RendererProto.elements3d.cuboid, {
+const cylinderMethods = merge(RendererProto.elements3d.cuboid, {
     parts: ['top', 'bottom', 'front', 'back'],
     pathType: 'cylinder',
 

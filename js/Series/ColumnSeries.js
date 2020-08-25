@@ -7,8 +7,14 @@
  *  !!!!!!! SOURCE GETS TRANSPILED BY TYPESCRIPT. EDIT TS FILE ONLY. !!!!!!!
  *
  * */
-'use strict';
+import BaseSeries from '../Core/Series/BaseSeries.js';
+import Color from '../Core/Color.js';
+var color = Color.parse;
 import H from '../Core/Globals.js';
+var noop = H.noop;
+import LegendSymbolMixin from '../Mixins/LegendSymbol.js';
+import U from '../Core/Utilities.js';
+var animObject = U.animObject, clamp = U.clamp, defined = U.defined, extend = U.extend, isNumber = U.isNumber, merge = U.merge, pick = U.pick, objectEach = U.objectEach;
 /**
  * Adjusted width and x offset of the columns for grouping.
  *
@@ -24,14 +30,9 @@ import H from '../Core/Globals.js';
 * @type {number}
 */
 ''; // detach doclets above
-import Color from '../Core/Color.js';
-var color = Color.parse;
-import LegendSymbolMixin from '../Mixins/LegendSymbol.js';
-import U from '../Core/Utilities.js';
-var animObject = U.animObject, clamp = U.clamp, defined = U.defined, extend = U.extend, isNumber = U.isNumber, merge = U.merge, pick = U.pick, seriesType = U.seriesType, objectEach = U.objectEach;
-import '../Core/Series/Series.js';
+import '../Core/Series/CatesianSeries.js';
 import '../Core/Options.js';
-var noop = H.noop, Series = H.Series, svg = H.svg;
+var Series = H.Series;
 /**
  * The column series type.
  *
@@ -41,7 +42,7 @@ var noop = H.noop, Series = H.Series, svg = H.svg;
  *
  * @augments Highcharts.Series
  */
-seriesType('column', 'line', 
+BaseSeries.seriesType('column', 'line', 
 /**
  * Column series display one column per value along an X axis.
  *

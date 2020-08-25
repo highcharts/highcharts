@@ -7,9 +7,7 @@
  *  !!!!!!! SOURCE GETS TRANSPILED BY TYPESCRIPT. EDIT TS FILE ONLY. !!!!!!!
  *
  * */
-'use strict';
-import U from '../Core/Utilities.js';
-var seriesType = U.seriesType;
+import BaseSeries from '../Core/Series/BaseSeries.js';
 import './ColumnSeries.js';
 /**
  * Bar series type.
@@ -20,7 +18,7 @@ import './ColumnSeries.js';
  *
  * @augments Highcharts.Series
  */
-seriesType('bar', 'column', 
+BaseSeries.seriesType('bar', 'column', 
 /**
  * A bar series is a special type of column series where the columns are
  * horizontal.

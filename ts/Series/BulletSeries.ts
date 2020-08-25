@@ -8,9 +8,14 @@
  *
  * */
 
-'use strict';
-
-import H from '../Core/Globals.js';
+import BaseSeries from '../Core/Series/BaseSeries.js';
+import U from '../Core/Utilities.js';
+const {
+    isNumber,
+    merge,
+    pick,
+    relativeLength
+} = U;
 
 /**
  * Internal types
@@ -52,22 +57,21 @@ declare global {
             height?: number;
             width?: (number|string);
         }
-        interface SeriesTypesDictionary {
-            bullet: typeof BulletSeries;
-        }
     }
 }
 
-import U from '../Core/Utilities.js';
-const {
-    isNumber,
-    merge,
-    pick,
-    relativeLength,
-    seriesType
-} = U;
+/**
+ * @private
+ */
+declare module '../Core/Series/Types' {
+    interface SeriesTypeRegistry {
+        bullet: typeof Highcharts.BulletSeries;
+    }
+}
 
-var columnProto = H.seriesTypes.column.prototype;
+import './ColumnSeries.js';
+
+var columnProto = BaseSeries.seriesTypes.column.prototype;
 
 /**
  * The bullet series type.
@@ -78,7 +82,7 @@ var columnProto = H.seriesTypes.column.prototype;
  *
  * @augments Highcharts.Series
  */
-seriesType<Highcharts.BulletSeries>('bullet', 'column'
+BaseSeries.seriesType<Highcharts.BulletSeries>('bullet', 'column'
 
     /**
      * A bullet graph is a variation of a bar graph. The bullet graph features

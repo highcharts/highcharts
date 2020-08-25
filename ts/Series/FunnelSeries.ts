@@ -12,16 +12,16 @@
 
 /* eslint indent: 0 */
 
-'use strict';
-
 import type Point from '../Core/Series/Point';
 import type SVGPath from '../Core/Renderer/SVG/SVGPath';
+import BaseSeries from '../Core/Series/BaseSeries.js';
+const {
+    seriesTypes
+} = BaseSeries;
 import Chart from '../Core/Chart/Chart.js';
 import H from '../Core/Globals.js';
 const {
-    noop,
-    seriesType,
-    seriesTypes
+    noop
 } = H;
 import U from '../Core/Utilities.js';
 const {
@@ -94,22 +94,25 @@ declare global {
             borderColor?: ColorType;
             color?: ColorType;
         }
-        interface SeriesTypesDictionary {
-            funnel: typeof FunnelSeries;
-        }
         interface PyramidPointOptions extends FunnelPointOptions {
         }
         interface PyramidSeriesOptions extends FunnelSeriesOptions {
             states?: SeriesStatesOptionsObject<PyramidSeries>;
         }
-        interface SeriesTypesDictionary {
-            pyramid: typeof PyramidSeries;
-        }
+    }
+}
+
+/**
+ * @private
+ */
+declare module '../Core/Series/Types' {
+    interface SeriesTypeRegistry {
+        funnel: typeof Highcharts.FunnelSeries;
     }
 }
 
 import '../Core/Options.js';
-import '../Core/Series/Series.js';
+import '../Core/Series/CatesianSeries.js';
 
 /**
  * @private
@@ -118,7 +121,7 @@ import '../Core/Series/Series.js';
  *
  * @augments Highcharts.Series
  */
-seriesType<Highcharts.FunnelSeries>(
+BaseSeries.seriesType<Highcharts.FunnelSeries>(
     'funnel',
     'pie',
     /**
@@ -706,7 +709,7 @@ addEvent(Chart, 'afterHideAllOverlappingLabels', function (): void {
  *
  * @augments Highcharts.Series
  */
-seriesType<Highcharts.PyramidSeries>(
+BaseSeries.seriesType<Highcharts.PyramidSeries>(
     'pyramid',
     'funnel',
     /**

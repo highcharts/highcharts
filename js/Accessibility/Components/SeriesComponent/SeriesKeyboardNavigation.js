@@ -10,6 +10,8 @@
  *
  * */
 'use strict';
+import BaseSeries from '../../../Core/Series/BaseSeries.js';
+var seriesTypes = BaseSeries.seriesTypes;
 import Chart from '../../../Core/Chart/Chart.js';
 import H from '../../../Core/Globals.js';
 import Point from '../../../Core/Series/Point.js';
@@ -28,8 +30,8 @@ import '../../../Series/PieSeries.js';
  */
 H.Series.prototype.keyboardMoveVertical = true;
 ['column', 'pie'].forEach(function (type) {
-    if (H.seriesTypes[type]) {
-        H.seriesTypes[type].prototype.keyboardMoveVertical = false;
+    if (seriesTypes[type]) {
+        seriesTypes[type].prototype.keyboardMoveVertical = false;
     }
 });
 /**

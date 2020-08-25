@@ -6,10 +6,19 @@
  *
  * */
 
-'use strict';
-
 import type Point from '../../Core/Series/Point';
+import BaseSeries from '../../Core/Series/BaseSeries.js';
+const {
+    seriesTypes
+} = BaseSeries;
 import H from '../../Core/Globals.js';
+import U from '../../Core/Utilities.js';
+const {
+    correctFloat,
+    isArray,
+    merge,
+    objectEach
+} = U;
 
 /**
  * Internal types
@@ -81,25 +90,20 @@ declare global {
             params?: SupertrendIndicatorParamsOptions;
             risingTrendColor?: ColorType;
         }
-
-        interface SeriesTypesDictionary {
-            supertrend: typeof SupertrendIndicator;
-        }
     }
 }
 
-import U from '../../Core/Utilities.js';
-const {
-    correctFloat,
-    merge,
-    seriesType
-} = U;
+declare module '../../Core/Series/Types' {
+    interface SeriesTypeRegistry {
+        supertrend: typeof Highcharts.SupertrendIndicator;
+    }
+}
 
-var isArray = U.isArray,
-    objectEach = U.objectEach;
+import './ATRIndicator.js';
+import './SMAIndicator.js';
 
-var ATR = H.seriesTypes.atr,
-    SMA = H.seriesTypes.sma;
+var ATR = seriesTypes.atr,
+    SMA = seriesTypes.sma;
 
 /* eslint-disable require-jsdoc */
 // Utils:
@@ -126,7 +130,7 @@ function createPointObj(
  *
  * @augments Highcharts.Series
  */
-seriesType<Highcharts.SupertrendIndicator>(
+BaseSeries.seriesType<Highcharts.SupertrendIndicator>(
     'supertrend',
     'sma',
     /**

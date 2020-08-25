@@ -10,10 +10,19 @@
  *
  * */
 
-'use strict';
-
 import type SVGPath from '../Core/Renderer/SVG/SVGPath';
+import BaseSeries from '../Core/Series/BaseSeries.js';
 import H from '../Core/Globals.js';
+const {
+    deg2rad,
+    svg
+} = H;
+import U from '../Core/Utilities.js';
+const {
+    pick,
+    wrap
+} = U;
+
 
 /**
  * Internal types
@@ -29,15 +38,7 @@ declare global {
     }
 }
 
-import U from '../Core/Utilities.js';
-const {
-    pick,
-    wrap
-} = U;
-
-var deg2rad = H.deg2rad,
-    seriesTypes = H.seriesTypes,
-    svg = H.svg;
+const seriesTypes = BaseSeries.seriesTypes;
 
 /**
  * The thickness of a 3D pie.

@@ -8,8 +8,7 @@
  *
  * */
 
-'use strict';
-
+import BaseSeries from '../Core/Series/BaseSeries.js';
 import Chart from '../Core/Chart/Chart.js';
 import Color from '../Core/Color.js';
 const color = Color.parse;
@@ -26,8 +25,7 @@ const {
     isArray,
     isNumber,
     merge,
-    pick,
-    seriesType
+    pick
 } = U;
 
 /**
@@ -216,9 +214,6 @@ declare global {
         interface PointLike {
             degree?: number;
         }
-        interface SeriesTypesDictionary {
-            packedbubble: typeof PackedBubbleSeries;
-        }
         type PackedBubbleData = [
             (number|null),
             (number|null),
@@ -229,6 +224,23 @@ declare global {
         ];
     }
 }
+
+/**
+ * @private
+ */
+declare module '../Core/Series/Types' {
+    interface SeriesTypeRegistry {
+        packedbubble: typeof Highcharts.PackedBubbleSeries;
+    }
+}
+
+import './Bubble/BubbleSeries.js';
+import '../Series/Networkgraph/DraggableNodes.js';
+import '../Series/Networkgraph/Layouts.js';
+
+var Series = H.Series,
+    Reingold = H.layouts['reingold-fruchterman'],
+    dragNodesMixin = H.dragNodesMixin;
 
 /**
  * Formatter callback function.
@@ -267,14 +279,7 @@ declare global {
  * @since 7.0.0
  */
 
-import '../Core/Axis/Axis.js';
-import './Bubble/BubbleSeries.js';
-import '../Series/Networkgraph/DraggableNodes.js';
-import '../Series/Networkgraph/Layouts.js';
-
-var Series = H.Series,
-    Reingold = H.layouts['reingold-fruchterman'],
-    dragNodesMixin = H.dragNodesMixin;
+''; // detach doclets above
 
 Chart.prototype.getSelectedParentNodes = function (): Array<Highcharts.PackedBubblePoint> {
     const chart = this,
@@ -521,7 +526,7 @@ H.layouts.packedbubble = extendClass(
  *
  * @extends Highcharts.Series
  */
-seriesType<Highcharts.PackedBubbleSeries>(
+BaseSeries.seriesType<Highcharts.PackedBubbleSeries>(
     'packedbubble',
     'bubble',
     /**

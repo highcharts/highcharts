@@ -18,16 +18,14 @@
  *   Highcharts symbols.
  */
 
-'use strict';
-
 import type SVGPath from '../Core/Renderer/SVG/SVGPath';
+import BaseSeries from '../Core/Series/BaseSeries.js';
 import SVGRenderer from '../Core/Renderer/SVG/SVGRenderer.js';
 import U from '../Core/Utilities.js';
 const {
     extend,
     objectEach,
-    pick,
-    seriesType
+    pick
 } = U;
 
 declare global {
@@ -52,13 +50,19 @@ declare global {
             itemPadding?: number;
             states?: SeriesStatesOptionsObject<DotplotSeries>;
         }
-        interface SeriesTypesDictionary {
-            dotplot: typeof DotplotSeries;
-        }
     }
 }
 
-import '../Core/Series/Series.js';
+/**
+ * @private
+ */
+declare module '../Core/Series/Types' {
+    interface SeriesTypeRegistry {
+        dotplot: typeof Highcharts.DotplotSeries;
+    }
+}
+
+import './ColumnSeries.js';
 
 /**
  * @private
@@ -67,7 +71,7 @@ import '../Core/Series/Series.js';
  *
  * @augments Highcharts.Series
  */
-seriesType<Highcharts.DotplotSeries>('dotplot', 'column', {
+BaseSeries.seriesType<Highcharts.DotplotSeries>('dotplot', 'column', {
     itemPadding: 0.2,
     marker: {
         symbol: 'circle',

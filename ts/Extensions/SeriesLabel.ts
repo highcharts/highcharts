@@ -122,7 +122,7 @@ declare global {
 
 ''; // detach doclets above
 
-import '../Core/Series/Series.js';
+import '../Core/Series/CatesianSeries.js';
 
 const labelDistance = 3,
     Series = H.Series;

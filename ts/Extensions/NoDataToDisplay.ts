@@ -53,7 +53,7 @@ const {
     getOptions
 } = U;
 
-import '../Core/Series/Series.js';
+import '../Core/Series/CatesianSeries.js';
 
 var chartPrototype = H.Chart.prototype,
     defaultOptions = getOptions();

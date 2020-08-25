@@ -39,7 +39,7 @@ declare global {
     }
 }
 
-import '../../Core/Series/Series.js';
+import '../../Core/Series/CatesianSeries.js';
 
 import butils from './BoostUtils.js';
 import createAndAttachRenderer from './BoostAttach.js';

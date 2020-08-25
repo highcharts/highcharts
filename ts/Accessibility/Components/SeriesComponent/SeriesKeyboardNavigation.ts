@@ -12,6 +12,10 @@
 
 'use strict';
 
+import BaseSeries from '../../../Core/Series/BaseSeries.js';
+const {
+    seriesTypes
+} = BaseSeries;
 import Chart from '../../../Core/Chart/Chart.js';
 import H from '../../../Core/Globals.js';
 import Point from '../../../Core/Series/Point.js';
@@ -105,9 +109,9 @@ import '../../../Series/PieSeries.js';
  * up/down arrows, and which series types should just move to next series.
  */
 H.Series.prototype.keyboardMoveVertical = true;
-['column', 'pie'].forEach(function (type: string): void {
-    if (H.seriesTypes[type]) {
-        H.seriesTypes[type].prototype.keyboardMoveVertical = false;
+(['column', 'pie'] as Array<('column'|'pie')>).forEach(function (type): void {
+    if (seriesTypes[type]) {
+        seriesTypes[type].prototype.keyboardMoveVertical = false;
     }
 });
 

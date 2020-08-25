@@ -9,18 +9,11 @@
  *  !!!!!!! SOURCE GETS TRANSPILED BY TYPESCRIPT. EDIT TS FILE ONLY. !!!!!!!
  *
  * */
-/**
- * @private
- * @todo
- * - Check update, remove etc.
- * - Custom icons like persons, carts etc. Either as images, font icons or
- *   Highcharts symbols.
- */
-'use strict';
+import BaseSeries from '../Core/Series/BaseSeries.js';
 import SVGRenderer from '../Core/Renderer/SVG/SVGRenderer.js';
 import U from '../Core/Utilities.js';
-var extend = U.extend, objectEach = U.objectEach, pick = U.pick, seriesType = U.seriesType;
-import '../Core/Series/Series.js';
+var extend = U.extend, objectEach = U.objectEach, pick = U.pick;
+import './ColumnSeries.js';
 /**
  * @private
  * @class
@@ -28,7 +21,7 @@ import '../Core/Series/Series.js';
  *
  * @augments Highcharts.Series
  */
-seriesType('dotplot', 'column', {
+BaseSeries.seriesType('dotplot', 'column', {
     itemPadding: 0.2,
     marker: {
         symbol: 'circle',

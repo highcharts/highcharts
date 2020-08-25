@@ -10,12 +10,13 @@
  *
  * */
 'use strict';
+import BaseSeries from '../Core/Series/BaseSeries.js';
 import H from '../Core/Globals.js';
-import U from '../Core/Utilities.js';
-var animObject = U.animObject, isNumber = U.isNumber, pick = U.pick, seriesType = U.seriesType;
-import onSeriesMixin from '../Mixins/OnSeries.js';
-import './ColumnSeries.js';
 var noop = H.noop;
+import OnSeriesMixin from '../Mixins/OnSeries.js';
+import U from '../Core/Utilities.js';
+var animObject = U.animObject, isNumber = U.isNumber, pick = U.pick;
+import './ColumnSeries.js';
 // eslint-disable-next-line valid-jsdoc
 /**
  * Once off, register the windbarb approximation for data grouping. This can be
@@ -51,7 +52,7 @@ registerApproximation();
  *
  * @augments Highcharts.Series
  */
-seriesType('windbarb', 'column'
+BaseSeries.seriesType('windbarb', 'column'
 /**
  * Wind barbs are a convenient way to represent wind speed and direction in
  * one graphical form. Wind direction is given by the stem direction, and
@@ -188,7 +189,7 @@ seriesType('windbarb', 'column'
     markerAttribs: function () {
         return;
     },
-    getPlotBox: onSeriesMixin.getPlotBox,
+    getPlotBox: OnSeriesMixin.getPlotBox,
     // Create a single wind arrow. It is later rotated around the zero
     // centerpoint.
     windArrow: function (point) {
@@ -240,7 +241,7 @@ seriesType('windbarb', 'column'
     },
     translate: function () {
         var beaufortFloor = this.beaufortFloor, beaufortName = this.beaufortName;
-        onSeriesMixin.translate.call(this);
+        OnSeriesMixin.translate.call(this);
         this.points.forEach(function (point) {
             var level = 0;
             // Find the beaufort level (zero based)

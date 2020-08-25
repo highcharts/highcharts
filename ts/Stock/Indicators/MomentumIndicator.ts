@@ -6,7 +6,11 @@
  *
  * */
 
-'use strict';
+import BaseSeries from '../../Core/Series/BaseSeries.js';
+import U from '../../Core/Utilities.js';
+const {
+    isArray
+} = U;
 
 /**
  * Internal types
@@ -38,18 +42,16 @@ declare global {
         interface MomentumIndicatorOptions extends SMAIndicatorOptions {
             params?: MomentumIndicatorParamsOptions;
         }
-
-        interface SeriesTypesDictionary {
-            momentum: typeof MomentumIndicator;
-        }
     }
 }
 
-import U from '../../Core/Utilities.js';
-const {
-    isArray,
-    seriesType
-} = U;
+declare module '../../Core/Series/Types' {
+    interface SeriesTypeRegistry {
+        momentum: typeof Highcharts.MomentumIndicator;
+    }
+}
+
+import './SMAIndicator.js';
 
 /* eslint-disable require-jsdoc */
 
@@ -79,7 +81,7 @@ function populateAverage(
  *
  * @augments Highcharts.Series
  */
-seriesType<Highcharts.MomentumIndicator>(
+BaseSeries.seriesType<Highcharts.MomentumIndicator>(
     'momentum',
     'sma',
     /**

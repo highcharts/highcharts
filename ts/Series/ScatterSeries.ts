@@ -8,9 +8,12 @@
  *
  * */
 
-'use strict';
-
+import BaseSeries from '../Core/Series/BaseSeries.js';
 import H from '../Core/Globals.js';
+import U from '../Core/Utilities.js';
+const {
+    addEvent
+} = U;
 
 /**
  * Internal types
@@ -32,9 +35,6 @@ declare global {
         interface Series {
             takeOrdinalPosition?: boolean;
         }
-        interface SeriesTypesDictionary {
-            scatter: typeof ScatterSeries;
-        }
         class ScatterPoint extends LinePoint {
             public options: ScatterPointOptions;
             public series: ScatterSeries;
@@ -50,14 +50,17 @@ declare global {
     }
 }
 
-import U from '../Core/Utilities.js';
-const {
-    addEvent,
-    seriesType
-} = U;
+/**
+ * @private
+ */
+declare module '../Core/Series/Types' {
+    interface SeriesTypeRegistry {
+        scatter: typeof Highcharts.ScatterSeries;
+    }
+}
 
 import '../Core/Options.js';
-import '../Core/Series/Series.js';
+import '../Core/Series/CatesianSeries.js';
 
 var Series = H.Series;
 
@@ -70,7 +73,7 @@ var Series = H.Series;
  *
  * @augments Highcharts.Series
  */
-seriesType<Highcharts.ScatterSeries>(
+BaseSeries.seriesType<Highcharts.ScatterSeries>(
     'scatter',
     'line',
 

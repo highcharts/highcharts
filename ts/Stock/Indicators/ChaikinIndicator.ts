@@ -6,9 +6,16 @@
  *
  * */
 
-'use strict';
-
-import H from '../../Core/Globals.js';
+import BaseSeries from '../../Core/Series/BaseSeries.js';
+const {
+    seriesTypes
+} = BaseSeries;
+import RequiredIndicatorMixin from '../../Mixins/IndicatorRequired.js';
+import U from '../../Core/Utilities.js';
+const {
+    correctFloat,
+    error
+} = U;
 
 /**
  * Internal types
@@ -43,25 +50,20 @@ declare global {
         interface ChaikinIndicatorOptions extends EMAIndicatorOptions {
             params?: ChaikinIndicatorParamsOptions;
         }
+    }
+}
 
-        interface SeriesTypesDictionary {
-            chaikin: typeof ChaikinIndicator;
-        }
+declare module '../../Core/Series/Types' {
+    interface SeriesTypeRegistry {
+        chaikin: typeof Highcharts.ChaikinIndicator;
     }
 }
 
 import './ADIndicator.js';
-import U from '../../Core/Utilities.js';
-const {
-    correctFloat,
-    error,
-    seriesType
-} = U;
+import './EMAIndicator.js';
 
-import requiredIndicator from '../../Mixins/IndicatorRequired.js';
-
-var EMA = H.seriesTypes.ema,
-    AD = H.seriesTypes.ad;
+var EMA = seriesTypes.ema,
+    AD = seriesTypes.ad;
 
 /**
  * The Chaikin series type.
@@ -72,7 +74,7 @@ var EMA = H.seriesTypes.ema,
  *
  * @augments Highcharts.Series
  */
-seriesType<Highcharts.ChaikinIndicator>(
+BaseSeries.seriesType<Highcharts.ChaikinIndicator>(
     'chaikin',
     'ema',
     /**
@@ -127,7 +129,7 @@ seriesType<Highcharts.ChaikinIndicator>(
             var args = arguments,
                 ctx = this;
 
-            requiredIndicator.isParentLoaded(
+            RequiredIndicatorMixin.isParentLoaded(
                 (EMA as any),
                 'ema',
                 ctx.type,

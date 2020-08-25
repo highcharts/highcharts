@@ -8,9 +8,7 @@
  *
  * */
 
-'use strict';
-
-import H from '../Core/Globals.js';
+import BaseSeries from '../Core/Series/BaseSeries.js';
 
 /**
  * Internal types
@@ -42,20 +40,22 @@ declare global {
             fillColor?: ColorType;
             states?: SeriesStatesOptionsObject<MapLineSeries>;
         }
-        interface SeriesTypesDictionary {
-            mapline: typeof MapLineSeries;
-        }
     }
 }
 
+/**
+ * @private
+ */
+declare module '../Core/Series/Types' {
+    interface SeriesTypeRegistry {
+        mapline: typeof Highcharts.MapLineSeries;
+    }
+}
 
-import U from '../Core/Utilities.js';
-const {
-    seriesType
-} = U;
 import '../Core/Options.js';
+import './MapSeries.js';
 
-var seriesTypes = H.seriesTypes;
+var seriesTypes = BaseSeries.seriesTypes;
 
 /**
  * @private
@@ -64,7 +64,7 @@ var seriesTypes = H.seriesTypes;
  *
  * @augments Highcharts.Series
  */
-seriesType<Highcharts.MapLineSeries>(
+BaseSeries.seriesType<Highcharts.MapLineSeries>(
     'mapline',
     'map',
 

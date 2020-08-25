@@ -8,9 +8,12 @@
  *
  * */
 
-'use strict';
-
-import H from '../Core/Globals.js';
+import BaseSeries from '../Core/Series/BaseSeries.js';
+import U from '../Core/Utilities.js';
+const {
+    clamp,
+    pick
+} = U;
 
 /**
  * Internal types
@@ -40,16 +43,9 @@ declare global {
     }
 }
 
-import U from '../Core/Utilities.js';
-const {
-    clamp,
-    pick,
-    seriesType
-} = U;
+import './ColumnSeries.js';
 
-var seriesTypes = H.seriesTypes;
-
-var colProto = seriesTypes.column.prototype;
+const colProto = BaseSeries.seriesTypes.column.prototype;
 
 /**
  * The ColumnPyramidSeries class
@@ -60,7 +56,7 @@ var colProto = seriesTypes.column.prototype;
  *
  * @augments Highcharts.Series
  */
-seriesType<Highcharts.ColumnPyramidSeries>(
+BaseSeries.seriesType<Highcharts.ColumnPyramidSeries>(
     'columnpyramid',
     'column',
 

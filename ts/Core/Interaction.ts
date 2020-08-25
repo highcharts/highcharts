@@ -10,6 +10,7 @@
 
 'use strict';
 
+import type { SeriesOptionsType } from './Series/Types';
 import type SVGPath from './Renderer/SVG/SVGPath';
 import Chart from './Chart/Chart.js';
 import H from './Globals.js';
@@ -181,7 +182,7 @@ declare global {
  *        Event that occured.
  */
 
-import './Series/Series.js';
+import './Series/CatesianSeries.js';
 
 var hasTouch = H.hasTouch,
     Series = H.Series,
@@ -1105,7 +1106,7 @@ extend(Point.prototype, /** @lends Highcharts.Point.prototype */ {
                 options = merge(
                     point.series.options.point,
                     point.options
-                ) as Highcharts.SeriesOptionsType,
+                ) as SeriesOptionsType,
                 events = options.events;
 
             point.events = events;

@@ -10,9 +10,22 @@
  *
  * */
 
-'use strict';
-
+import BaseSeries from '../Core/Series/BaseSeries.js';
 import H from '../Core/Globals.js';
+import O from '../Core/Options.js';
+const {
+    defaultOptions
+} = O;
+import U from '../Core/Utilities.js';
+const {
+    defined,
+    extend,
+    fireEvent,
+    isNumber,
+    merge,
+    objectEach,
+    pick
+} = U;
 
 /**
  * Internal types
@@ -71,23 +84,18 @@ declare global {
     }
 }
 
-import O from '../Core/Options.js';
-const { defaultOptions } = O;
-import U from '../Core/Utilities.js';
-const {
-    defined,
-    extend,
-    fireEvent,
-    isNumber,
-    merge,
-    objectEach,
-    pick,
-    seriesType
-} = U;
+/**
+ * @private
+ */
+declare module '../Core/Series/Types' {
+    interface SeriesTypeRegistry {
+        item: typeof Highcharts.ItemSeries;
+    }
+}
 
-import '../Core/Series/Series.js';
+import './PieSeries.js';
 
-var piePoint = H.seriesTypes.pie.prototype.pointClass.prototype;
+var piePoint = BaseSeries.seriesTypes.pie.prototype.pointClass.prototype;
 
 /**
  * The item series type.
@@ -100,7 +108,7 @@ var piePoint = H.seriesTypes.pie.prototype.pointClass.prototype;
  *
  * @augments Highcharts.seriesTypes.pie
  */
-seriesType<Highcharts.ItemSeries>(
+BaseSeries.seriesType<Highcharts.ItemSeries>(
     'item',
     // Inherits pie as the most tested non-cartesian series with individual
     // point legend, tooltips etc. Only downside is we need to re-enable

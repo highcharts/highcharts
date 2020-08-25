@@ -8,10 +8,14 @@
  *
  * */
 
-'use strict';
-
 import type SVGPath from '../Core/Renderer/SVG/SVGPath';
-import H from '../Core/Globals.js';
+import BaseSeries from '../Core/Series/BaseSeries.js';
+import O from '../Core/Options.js';
+const { defaultOptions } = O;
+import U from '../Core/Utilities.js';
+const {
+    merge
+} = U;
 
 /**
  * Internal types
@@ -46,15 +50,10 @@ declare global {
     }
 }
 
-import O from '../Core/Options.js';
-const { defaultOptions } = O;
-import U from '../Core/Utilities.js';
-const {
-    merge,
-    seriesType
-} = U;
+import './ColumnSeries.js';
+import './OHLCSeries.js';
 
-var seriesTypes = H.seriesTypes;
+const columnProto = BaseSeries.seriesTypes.column.prototype;
 
 /**
  * A candlestick chart is a style of financial chart used to describe price
@@ -179,7 +178,7 @@ var candlestickOptions = {
  *
  * @augments Highcharts.seriesTypes.ohlc
  */
-seriesType<Highcharts.CandlestickSeries>(
+BaseSeries.seriesType<Highcharts.CandlestickSeries>(
     'candlestick',
     'ohlc',
     merge(
@@ -208,7 +207,7 @@ seriesType<Highcharts.CandlestickSeries>(
             point: Highcharts.CandlestickPoint,
             state?: string
         ): Highcharts.SVGAttributes {
-            var attribs = seriesTypes.column.prototype.pointAttribs.call(
+            var attribs = columnProto.pointAttribs.call(
                     this,
                     point,
                     state

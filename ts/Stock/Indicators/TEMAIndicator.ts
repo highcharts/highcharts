@@ -6,9 +6,13 @@
  *
  * */
 
-'use strict';
-
-import H from '../../Core/Globals.js';
+import BaseSeries from '../../Core/Series/BaseSeries.js';
+import RequiredIndicatorMixin from '../../Mixins/IndicatorRequired.js';
+import U from '../../Core/Utilities.js';
+const {
+    correctFloat,
+    isArray
+} = U;
 
 /**
  * Internal types
@@ -66,24 +70,12 @@ declare global {
             params?: TEMAIndicatorParamsOptions;
         }
 
-        interface SeriesTypesDictionary {
-            tema: typeof TEMAIndicator;
-        }
-
     }
 }
 
-import U from '../../Core/Utilities.js';
-const {
-    correctFloat,
-    isArray,
-    seriesType
-} = U;
+import './EMAIndicator.js';
 
-
-import requiredIndicator from '../../Mixins/IndicatorRequired.js';
-
-var EMAindicator = H.seriesTypes.ema;
+var EMAindicator = BaseSeries.seriesTypes.ema;
 
 /**
  * The TEMA series type.
@@ -94,7 +86,7 @@ var EMAindicator = H.seriesTypes.ema;
  *
  * @augments Highcharts.Series
  */
-seriesType<Highcharts.TEMAIndicator>(
+BaseSeries.seriesType<Highcharts.TEMAIndicator>(
     'tema',
     'ema',
     /**
@@ -126,7 +118,7 @@ seriesType<Highcharts.TEMAIndicator>(
             var args = arguments,
                 ctx = this;
 
-            requiredIndicator.isParentLoaded(
+            RequiredIndicatorMixin.isParentLoaded(
                 (EMAindicator as any),
                 'ema',
                 ctx.type,

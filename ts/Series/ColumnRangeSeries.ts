@@ -8,9 +8,19 @@
  *
  * */
 
-'use strict';
-
+import BaseSeries from '../Core/Series/BaseSeries.js';
 import H from '../Core/Globals.js';
+const {
+    noop
+} = H;
+import O from '../Core/Options.js';
+const { defaultOptions } = O;
+import U from '../Core/Utilities.js';
+const {
+    clamp,
+    merge,
+    pick
+} = U;
 
 /**
  * Internal types
@@ -46,26 +56,21 @@ declare global {
             minPointLength?: number;
             states?: SeriesStatesOptionsObject<ColumnRangeSeries>;
         }
-        interface SeriesTypesDictionary {
-            columnrange: typeof ColumnRangeSeries;
-        }
     }
 }
 
-import O from '../Core/Options.js';
-const { defaultOptions } = O;
-import U from '../Core/Utilities.js';
-const {
-    clamp,
-    merge,
-    pick,
-    seriesType
-} = U;
+/**
+ * @private
+ */
+declare module '../Core/Series/Types' {
+    interface SeriesTypeRegistry {
+        columnrange: typeof Highcharts.ColumnRangeSeries;
+    }
+}
 
-var noop = H.noop,
-    seriesTypes = H.seriesTypes;
+import './ColumnSeries.js';
 
-var colProto = (seriesTypes.column as typeof Highcharts.ColumnSeries).prototype;
+var columnProto = BaseSeries.seriesTypes.column.prototype;
 
 /**
  * The column range is a cartesian series type with higher and lower
@@ -119,7 +124,7 @@ var columnRangeOptions: Highcharts.ColumnRangeSeriesOptions = {
  *
  * @augments Highcharts.Series
  */
-seriesType<Highcharts.ColumnRangeSeries>('columnrange', 'arearange', merge(
+BaseSeries.seriesType<Highcharts.ColumnRangeSeries>('columnrange', 'arearange', merge(
     (defaultOptions.plotOptions as any).column,
     (defaultOptions.plotOptions as any).arearange,
     columnRangeOptions
@@ -151,7 +156,7 @@ seriesType<Highcharts.ColumnRangeSeries>('columnrange', 'arearange', merge(
         }
 
 
-        colProto.translate.apply(series);
+        columnProto.translate.apply(series);
 
         // Set plotLow and plotHigh
         series.points.forEach(function (
@@ -226,38 +231,38 @@ seriesType<Highcharts.ColumnRangeSeries>('columnrange', 'arearange', merge(
     crispCol: function (
         this: Highcharts.ColumnRangeSeries
     ): Highcharts.BBoxObject {
-        return colProto.crispCol.apply(this, arguments as any);
+        return columnProto.crispCol.apply(this, arguments as any);
     },
     drawPoints: function (this: Highcharts.ColumnRangeSeries): void {
-        return colProto.drawPoints.apply(this, arguments as any);
+        return columnProto.drawPoints.apply(this, arguments as any);
     },
     drawTracker: function (this: Highcharts.ColumnRangeSeries): void {
-        return colProto.drawTracker.apply(this, arguments as any);
+        return columnProto.drawTracker.apply(this, arguments as any);
     },
     getColumnMetrics: function (
         this: Highcharts.ColumnRangeSeries
     ): Highcharts.ColumnMetricsObject {
-        return colProto.getColumnMetrics.apply(this, arguments as any);
+        return columnProto.getColumnMetrics.apply(this, arguments as any);
     },
     pointAttribs: function (
         this: Highcharts.ColumnRangeSeries
     ): Highcharts.SVGAttributes {
-        return colProto.pointAttribs.apply(this, arguments as any);
+        return columnProto.pointAttribs.apply(this, arguments as any);
     },
     animate: function (this: Highcharts.ColumnRangeSeries): void {
-        return colProto.animate.apply(this, arguments as any);
+        return columnProto.animate.apply(this, arguments as any);
     },
     polarArc: function (this: Highcharts.ColumnRangeSeries): void {
-        return (colProto as any).polarArc.apply(this, arguments);
+        return (columnProto as any).polarArc.apply(this, arguments);
     },
     translate3dPoints: function (this: Highcharts.ColumnRangeSeries): void {
-        return colProto.translate3dPoints.apply(this, arguments as any);
+        return columnProto.translate3dPoints.apply(this, arguments as any);
     },
     translate3dShapes: function (this: Highcharts.ColumnRangeSeries): void {
-        return colProto.translate3dShapes.apply(this, arguments as any);
+        return columnProto.translate3dShapes.apply(this, arguments as any);
     }
 }, {
-    setState: colProto.pointClass.prototype.setState
+    setState: columnProto.pointClass.prototype.setState
 });
 
 

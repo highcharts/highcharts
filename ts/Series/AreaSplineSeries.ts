@@ -8,9 +8,12 @@
  *
  * */
 
-'use strict';
-
-import H from '../Core/Globals.js';
+import BaseSeries from '../Core/Series/BaseSeries.js';
+import LegendSymbolMixin from '../Mixins/LegendSymbol.js';
+import O from '../Core/Options.js';
+const {
+    defaultOptions
+} = O;
 
 /**
  * Internal types
@@ -22,9 +25,6 @@ declare global {
         }
         interface AreaSplineSeriesOptions extends SplineSeriesOptions {
             states?: SeriesStatesOptionsObject<AreaSplineSeries>;
-        }
-        interface SeriesTypesDictionary {
-            areaspline: typeof AreaSplineSeries;
         }
         class AreaSplinePoint extends SplinePoint {
             public isCliff?: AreaPoint['isCliff'];
@@ -41,17 +41,19 @@ declare global {
     }
 }
 
-import LegendSymbolMixin from '../Mixins/LegendSymbol.js';
-import O from '../Core/Options.js';
-const { defaultOptions } = O;
-import U from '../Core/Utilities.js';
-const {
-    seriesType
-} = U;
+/**
+ * @private
+ */
+declare module '../Core/Series/Types' {
+    interface SeriesTypeRegistry {
+        areaspline: typeof Highcharts.AreaSplineSeries;
+    }
+}
+
 import './AreaSeries.js';
 import './SplineSeries.js';
 
-var areaProto = H.seriesTypes.area.prototype as Highcharts.AreaSeries;
+var areaProto = BaseSeries.seriesTypes.area.prototype;
 
 /**
  * AreaSpline series type.
@@ -62,7 +64,7 @@ var areaProto = H.seriesTypes.area.prototype as Highcharts.AreaSeries;
  *
  * @augments Highcharts.Series
  */
-seriesType<Highcharts.AreaSplineSeries>(
+BaseSeries.seriesType<Highcharts.AreaSplineSeries>(
     'areaspline',
     'spline',
 

@@ -7,7 +7,7 @@
  *  !!!!!!! SOURCE GETS TRANSPILED BY TYPESCRIPT. EDIT TS FILE ONLY. !!!!!!!
  *
  * */
-'use strict';
+import BaseSeries from './BaseSeries.js';
 import H from '../Globals.js';
 import LegendSymbolMixin from '../../Mixins/LegendSymbol.js';
 import O from '../Options.js';
@@ -15,7 +15,7 @@ var defaultOptions = O.defaultOptions;
 import Point from './Point.js';
 import SVGElement from '../Renderer/SVG/SVGElement.js';
 import U from '../Utilities.js';
-var addEvent = U.addEvent, animObject = U.animObject, arrayMax = U.arrayMax, arrayMin = U.arrayMin, clamp = U.clamp, correctFloat = U.correctFloat, defined = U.defined, erase = U.erase, error = U.error, extend = U.extend, find = U.find, fireEvent = U.fireEvent, getNestedProperty = U.getNestedProperty, isArray = U.isArray, isFunction = U.isFunction, isNumber = U.isNumber, isString = U.isString, merge = U.merge, objectEach = U.objectEach, pick = U.pick, removeEvent = U.removeEvent, seriesType = U.seriesType, splat = U.splat, syncTimeout = U.syncTimeout;
+var addEvent = U.addEvent, animObject = U.animObject, arrayMax = U.arrayMax, arrayMin = U.arrayMin, clamp = U.clamp, correctFloat = U.correctFloat, defined = U.defined, erase = U.erase, error = U.error, extend = U.extend, find = U.find, fireEvent = U.fireEvent, getNestedProperty = U.getNestedProperty, isArray = U.isArray, isFunction = U.isFunction, isNumber = U.isNumber, isString = U.isString, merge = U.merge, objectEach = U.objectEach, pick = U.pick, removeEvent = U.removeEvent, splat = U.splat, syncTimeout = U.syncTimeout;
 /**
  * This is a placeholder type of the possible series options for
  * [Highcharts](../highcharts/series), [Highstock](../highstock/series),
@@ -233,7 +233,7 @@ var addEvent = U.addEvent, animObject = U.animObject, arrayMax = U.arrayMax, arr
  * @typedef {"hover"|"inactive"|"normal"|"select"} Highcharts.SeriesStateValue
  */
 ''; // detach doclets above
-var seriesTypes = H.seriesTypes, win = H.win;
+var seriesTypes = BaseSeries.seriesTypes, win = H.win;
 /**
  * This is the base series prototype that all other series types inherit from.
  * A new series is initialized either through the
@@ -298,7 +298,7 @@ var seriesTypes = H.seriesTypes, win = H.win;
 *
 * @augments Highcharts.Series
 */
-H.Series = seriesType('line', 
+H.Series = BaseSeries.seriesType('line', 
 /**
  * Series options for specific data and the data itself. In TypeScript you
  * have to cast the series options to specific series types, to get all
@@ -429,7 +429,7 @@ H.Series = seriesType('line',
  * @product   highcharts highstock
  * @apioption series.zIndex
  */
-null, 
+void 0, 
 /**
  * General options for all series types.
  *
@@ -582,7 +582,7 @@ null,
     /**
      * @default   0
      * @type      {number}
-     * @since 8.2.0
+     * @since     8.2.0
      * @apioption plotOptions.series.animation.defer
      */
     /**
@@ -1737,8 +1737,9 @@ null,
          *
          * @sample {highcharts} highcharts/plotoptions/animation-defer/
          *          Animation defer settings
-         * @type {boolean|Partial<Highcharts.AnimationOptionsObject>}
-         * @since 8.2.0
+         *
+         * @type      {boolean|Partial<Highcharts.AnimationOptionsObject>}
+         * @since     8.2.0
          * @apioption plotOptions.series.dataLabels.animation
          */
         animation: {},
@@ -1748,7 +1749,7 @@ null,
          * As `undefined` inherits defer time from the [series.animation.defer](#plotOptions.series.animation.defer).
          *
          * @type      {number}
-         * @since 8.2.0
+         * @since     8.2.0
          * @apioption plotOptions.series.dataLabels.animation.defer
          */
         /**

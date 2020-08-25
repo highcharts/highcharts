@@ -30,10 +30,23 @@ export interface AxisBreakObject {
     to: number;
 }
 
+/**
+ * Helper interface for axis compositions to add optional composition members
+ * to all axis instances.
+ *
+ * Use the `declare module 'Types'` pattern to overload the interface in this
+ * definition file.
+ */
 export interface AxisComposition extends AxisLike {
-    // interface for composition types
 }
 
+/**
+ * Helper interface for axis types to add optional members to all axis
+ * instances.
+ *
+ * Use the `declare module 'Types'` pattern to overload the interface in this
+ * definition file.
+ */
 export interface AxisLike {
     categories?: Array<string>;
     chart: Chart;
@@ -50,6 +63,12 @@ export interface AxisLike {
     visible: boolean;
 }
 
-interface AxisTypeRegistry {
+/**
+ * Helper interface to add axis types to `AxisType`.
+ *
+ * Use the `declare module 'Types'` pattern to overload the interface in this
+ * definition file.
+ */
+export interface AxisTypeRegistry extends Record<string, Axis> {
     Axis: Axis;
 }

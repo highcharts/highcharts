@@ -10,15 +10,15 @@
  *  !!!!!!! SOURCE GETS TRANSPILED BY TYPESCRIPT. EDIT TS FILE ONLY. !!!!!!!
  *
  * */
-'use strict';
+import BaseSeries from '../Core/Series/BaseSeries.js';
 import H from '../Core/Globals.js';
+import U from '../Core/Utilities.js';
+var addEvent = U.addEvent, clamp = U.clamp, extend = U.extend, pick = U.pick;
+import '../Series/HeatmapSeries.js';
 /**
  * @typedef {"circle"|"diamond"|"hexagon"|"square"} Highcharts.TilemapShapeValue
  */
 ''; // detach doclets above
-import U from '../Core/Utilities.js';
-var addEvent = U.addEvent, clamp = U.clamp, extend = U.extend, pick = U.pick, seriesType = U.seriesType;
-import '../Series/HeatmapSeries.js';
 /**
  * Utility func to get padding definition from tile size division
  * @private
@@ -311,7 +311,7 @@ addEvent(H.Axis, 'afterSetAxisTranslation', function () {
  *
  * @augments Highcharts.Series
  */
-seriesType('tilemap', 'heatmap'
+BaseSeries.seriesType('tilemap', 'heatmap'
 /**
  * A tilemap series is a type of heatmap where the tile shapes are
  * configurable.

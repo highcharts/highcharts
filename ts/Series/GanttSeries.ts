@@ -10,10 +10,9 @@
  *
  * */
 
-'use strict';
-
 import type Point from '../Core/Series/Point';
 import type SVGPath from '../Core/Renderer/SVG/SVGPath';
+import BaseSeries from '../Core/Series/BaseSeries.js';
 import H from '../Core/Globals.js';
 import O from '../Core/Options.js';
 const { dateFormat } = O;
@@ -23,7 +22,6 @@ const {
     isNumber,
     merge,
     pick,
-    seriesType,
     splat
 } = U;
 
@@ -85,9 +83,15 @@ declare global {
             connectors?: GanttConnectorsOptions;
             states?: SeriesStatesOptionsObject<GanttSeries>;
         }
-        interface SeriesTypesDictionary {
-            gantt: typeof GanttSeries;
-        }
+    }
+}
+
+/**
+ * @private
+ */
+declare module '../Core/Series/Types' {
+    interface SeriesTypeRegistry {
+        gantt: typeof Highcharts.GanttSeries;
     }
 }
 
@@ -96,8 +100,8 @@ import '../Extensions/StaticScale.js';
 import '../Gantt/Pathfinder.js';
 import './XRangeSeries.js';
 
-var seriesTypes = H.seriesTypes,
-    Series = H.Series,
+var Series = H.Series,
+    seriesTypes = BaseSeries.seriesTypes,
     parent = seriesTypes.xrange;
 
 /**
@@ -107,7 +111,7 @@ var seriesTypes = H.seriesTypes,
  *
  * @augments Highcharts.Series
  */
-seriesType<Highcharts.GanttSeries>('gantt', 'xrange'
+BaseSeries.seriesType<Highcharts.GanttSeries>('gantt', 'xrange'
 
     /**
      * A `gantt` series. If the [type](#series.gantt.type) option is not specified,

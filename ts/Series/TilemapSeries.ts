@@ -11,11 +11,17 @@
  *
  * */
 
-'use strict';
-
 import type Point from '../Core/Series/Point';
 import type SVGPath from '../Core/Renderer/SVG/SVGPath';
+import BaseSeries from '../Core/Series/BaseSeries.js';
 import H from '../Core/Globals.js';
+import U from '../Core/Utilities.js';
+const {
+    addEvent,
+    clamp,
+    extend,
+    pick
+} = U;
 
 /**
  * Internal types
@@ -54,9 +60,6 @@ declare global {
         interface SeriesStatesHoverHaloOptions {
             enabled?: boolean;
         }
-        interface SeriesTypesDictionary {
-            tilemap: typeof TilemapSeries;
-        }
         interface TilemapPaddingObject {
             xPad: number;
             yPad: number;
@@ -89,21 +92,21 @@ declare global {
 }
 
 /**
+ * @private
+ */
+declare module '../Core/Series/Types' {
+    interface SeriesTypeRegistry {
+        tilemap: typeof Highcharts.TilemapSeries;
+    }
+}
+
+import '../Series/HeatmapSeries.js';
+
+/**
  * @typedef {"circle"|"diamond"|"hexagon"|"square"} Highcharts.TilemapShapeValue
  */
 
 ''; // detach doclets above
-
-import U from '../Core/Utilities.js';
-const {
-    addEvent,
-    clamp,
-    extend,
-    pick,
-    seriesType
-} = U;
-
-import '../Series/HeatmapSeries.js';
 
 /**
  * Utility func to get padding definition from tile size division
@@ -703,7 +706,7 @@ addEvent(H.Axis, 'afterSetAxisTranslation', function (): void {
  *
  * @augments Highcharts.Series
  */
-seriesType<Highcharts.TilemapSeries>('tilemap', 'heatmap'
+BaseSeries.seriesType<Highcharts.TilemapSeries>('tilemap', 'heatmap'
 
     /**
      * A tilemap series is a type of heatmap where the tile shapes are

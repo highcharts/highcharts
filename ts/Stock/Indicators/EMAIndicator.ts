@@ -6,7 +6,12 @@
  *
  * */
 
-'use strict';
+import BaseSeries from '../../Core/Series/BaseSeries.js';
+import U from '../../Core/Utilities.js';
+const {
+    correctFloat,
+    isArray
+} = U;
 
 /**
  * Internal types
@@ -51,20 +56,14 @@ declare global {
         class EMAIndicatorPoint extends SMAIndicatorPoint {
             public series: EMAIndicator;
         }
-
-        interface SeriesTypesDictionary {
-            ema: typeof EMAIndicator;
-        }
-
     }
 }
 
-import U from '../../Core/Utilities.js';
-const {
-    correctFloat,
-    isArray,
-    seriesType
-} = U;
+declare module '../../Core/Series/Types' {
+    interface SeriesTypeRegistry {
+        ema: typeof Highcharts.EMAIndicator;
+    }
+}
 
 /**
  * The EMA series type.
@@ -75,7 +74,7 @@ const {
  *
  * @augments Highcharts.Series
  */
-seriesType<Highcharts.EMAIndicator>(
+BaseSeries.seriesType<Highcharts.EMAIndicator>(
     'ema',
     'sma',
     /**

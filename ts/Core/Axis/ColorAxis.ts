@@ -124,7 +124,7 @@ declare global {
 ''; // detach doclet above
 
 import '../../Mixins/ColorSeries.js';
-import '../Series/Series.js';
+import '../Series/CatesianSeries.js';
 
 var Series = H.Series,
     colorPointMixin = H.colorPointMixin,

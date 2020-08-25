@@ -10,7 +10,9 @@
 
 'use strict';
 
+import type BaseSeries from './Series/BaseSeries';
 import type ColorAxis from './Axis/ColorAxis';
+import type { SeriesOptionsType } from './Series/Types';
 import Axis from './Axis/Axis.js';
 import Chart from './Chart/Chart.js';
 import H from './Globals.js';
@@ -138,7 +140,7 @@ declare global {
                 animation?: (boolean|Partial<AnimationOptionsObject>)
             ): void;
             setName(name: string): void;
-            update(options: SeriesOptionsType, redraw?: boolean): void;
+            update(options: DeepPartial<SeriesOptionsType>, redraw?: boolean): Series;
         }
         interface XAxisOptions {
             index?: number;
@@ -147,10 +149,10 @@ declare global {
     }
 }
 
-import './Series/Series.js';
+import './Series/CatesianSeries.js';
 
 var Series = H.Series,
-    seriesTypes = H.seriesTypes;
+    seriesTypes = H.seriesTypes as unknown as Record<string, BaseSeries>;
 
 /* eslint-disable valid-jsdoc */
 
@@ -226,7 +228,7 @@ extend(Chart.prototype, /** @lends Highcharts.Chart.prototype */ {
      */
     addSeries: function (
         this: Chart,
-        options: Highcharts.SeriesOptionsType,
+        options: SeriesOptionsType,
         redraw?: boolean,
         animation?: (boolean|Partial<Highcharts.AnimationOptionsObject>)
     ): Highcharts.Series {
@@ -241,7 +243,7 @@ extend(Chart.prototype, /** @lends Highcharts.Chart.prototype */ {
                 'addSeries',
                 { options: options },
                 function (): void {
-                    series = chart.initSeries(options);
+                    series = chart.initSeries(options) as Highcharts.Series;
 
                     chart.isDirtyLegend = true;
                     chart.linkSeries();
@@ -1455,7 +1457,7 @@ extend(Series.prototype, /** @lends Series.prototype */ {
      */
     update: function (
         this: Highcharts.Series,
-        options: Highcharts.SeriesOptionsType,
+        options: SeriesOptionsType,
         redraw?: boolean
     ): void {
 

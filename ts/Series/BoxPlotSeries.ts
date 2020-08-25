@@ -8,10 +8,16 @@
  *
  * */
 
-'use strict';
-
 import type SVGPath from '../Core/Renderer/SVG/SVGPath';
+import BaseSeries from '../Core/Series/BaseSeries.js';
 import H from '../Core/Globals.js';
+const {
+    noop
+} = H;
+import U from '../Core/Utilities.js';
+const {
+    pick
+} = U;
 
 /**
  * Internal types
@@ -86,22 +92,22 @@ declare global {
             whiskerLength?: BoxPlotPoint['whiskerLength'];
             whiskerWidth?: BoxPlotPoint['whiskerWidth'];
         }
-        interface SeriesTypesDictionary {
-            boxplot: typeof BoxPlotSeries;
-        }
     }
 }
 
-import U from '../Core/Utilities.js';
-const {
-    pick,
-    seriesType
-} = U;
+/**
+ * @private
+ */
+declare module '../Core/Series/Types' {
+    interface SeriesTypeRegistry {
+        boxplot: typeof Highcharts.BoxPlotSeries;
+    }
+}
 
+import './ColumnSeries.js';
 import '../Core/Options.js';
 
-var noop = H.noop,
-    seriesTypes = H.seriesTypes;
+var columnProto = BaseSeries.seriesTypes.column.prototype;
 
 /**
  * The boxplot series type.
@@ -129,7 +135,7 @@ var noop = H.noop,
  * @requires     highcharts-more
  * @optionparent plotOptions.boxplot
  */
-seriesType<Highcharts.BoxPlotSeries>(
+BaseSeries.seriesType<Highcharts.BoxPlotSeries>(
     'boxplot',
     'column',
     {
@@ -417,7 +423,7 @@ seriesType<Highcharts.BoxPlotSeries>(
                 yAxis = series.yAxis,
                 pointArrayMap = series.pointArrayMap;
 
-            seriesTypes.column.prototype.translate.apply(series);
+            columnProto.translate.apply(series);
 
             // do the translation on each point dimension
             series.points.forEach(function (point: Highcharts.BoxPlotPoint): void {

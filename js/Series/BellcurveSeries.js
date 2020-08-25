@@ -9,10 +9,10 @@
  *  !!!!!!! SOURCE GETS TRANSPILED BY TYPESCRIPT. EDIT TS FILE ONLY. !!!!!!!
  *
  * */
-'use strict';
+import BaseSeries from '../Core/Series/BaseSeries.js';
+import DerivedSeriesMixin from '../Mixins/DerivedSeries.js';
 import U from '../Core/Utilities.js';
-var correctFloat = U.correctFloat, isNumber = U.isNumber, merge = U.merge, seriesType = U.seriesType;
-import derivedSeriesMixin from '../Mixins/DerivedSeries.js';
+var correctFloat = U.correctFloat, isNumber = U.isNumber, merge = U.merge;
 /* ************************************************************************** *
  *  BELL CURVE                                                                *
  * ************************************************************************** */
@@ -56,7 +56,7 @@ function normalDensity(x, mean, standardDeviation) {
  *
  * @augments Highcharts.Series
  */
-seriesType('bellcurve', 'areaspline'
+BaseSeries.seriesType('bellcurve', 'areaspline'
 /**
  * A bell curve is an areaspline series which represents the probability
  * density function of the normal distribution. It calculates mean and
@@ -94,7 +94,7 @@ seriesType('bellcurve', 'areaspline'
     marker: {
         enabled: false
     }
-}, merge(derivedSeriesMixin, {
+}, merge(DerivedSeriesMixin, {
     setMean: function () {
         this.mean = correctFloat(mean(this.baseSeries.yData));
     },

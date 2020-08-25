@@ -8,11 +8,11 @@
  *
  * */
 
-'use strict';
-
 import type { AxisType } from '../Axis/Types';
 import type Chart from '../Chart/Chart';
+import type { SeriesOptionsType, SeriesPlotOptionsType } from './Types';
 import type SVGPath from '../Renderer/SVG/SVGPath';
+import BaseSeries from './BaseSeries.js';
 import H from '../Globals.js';
 import LegendSymbolMixin from '../../Mixins/LegendSymbol.js';
 import O from '../Options.js';
@@ -42,7 +42,6 @@ const {
     objectEach,
     pick,
     removeEvent,
-    seriesType,
     splat,
     syncTimeout
 } = U;
@@ -63,7 +62,7 @@ declare global {
             public pointClass: typeof LinePoint;
             public points: Array<LinePoint>;
         }
-        class Series {
+        class Series extends BaseSeries {
             public constructor(chart?: Chart, options?: SeriesOptionsType);
             public _i: number;
             public animationTimeout?: number;
@@ -113,7 +112,7 @@ declare global {
             public name: string;
             public opacity?: number;
             public optionalAxis?: string;
-            public options: SeriesOptionsType;
+            public options: BaseSeries.Options;
             public parallelArrays: Array<string>;
             public pointClass: typeof Point;
             public pointInterval?: number;
@@ -130,7 +129,7 @@ declare global {
             public symbol?: string;
             public tooltipOptions: TooltipOptions;
             public type: string;
-            public userOptions: SeriesOptionsType;
+            public userOptions: DeepPartial<BaseSeries.Options>;
             public visible: boolean;
             public xAxis: AxisType;
             public xData?: Array<number>;
@@ -208,7 +207,7 @@ declare global {
             ): Array<Array<string>>;
             public hasData(): boolean;
             public init(chart: Chart, options: SeriesOptionsType): void;
-            public insert(collection: Array<Series>): number;
+            public insert(collection: Array<BaseSeries>): number;
             public invertGroups(inverted?: boolean): void;
             public is (type: string): boolean;
             public isPointInside (point: Dictionary<number>|Point): boolean;
@@ -363,7 +362,7 @@ declare global {
         interface SeriesOptions {
             allAreas?: boolean;
             allowPointSelect?: boolean;
-            animation?: (boolean|Partial<AnimationOptionsObject>);
+            animation?: (boolean|DeepPartial<AnimationOptionsObject>);
             animationLimit?: number;
             boostThreshold?: number;
             borderColor?: ColorType;
@@ -504,13 +503,25 @@ declare global {
         }
         type SeriesLinecapValue = ('butt'|'round'|'square'|string);
         type SeriesFindNearestPointByValue = ('x'|'xy');
-        type SeriesOptionsType = SeriesOptions;
         type SeriesPointIntervalUnitValue = ('day'|'month'|'year');
         type SeriesStepValue = ('center'|'left'|'right');
         type SeriesStateOptionsObject<TSeries extends Series> = (
             Omit<TSeries['options'], ('states'|'data')>
         );
         type SeriesStateValue = keyof SeriesStatesOptionsObject<Series>;
+    }
+}
+
+/**
+ * @private
+ */
+declare module './Types' {
+    interface SeriesLike {
+        pointArrayMap?: Array<string>;
+    }
+    interface SeriesTypeRegistry {
+        line: typeof Highcharts.LineSeries;
+        series: typeof Highcharts.Series;
     }
 }
 
@@ -749,7 +760,7 @@ declare global {
 
 ''; // detach doclets above
 
-var seriesTypes = H.seriesTypes,
+var seriesTypes = BaseSeries.seriesTypes as unknown as Record<string, BaseSeries>,
     win = H.win;
 
 /**
@@ -816,7 +827,7 @@ var seriesTypes = H.seriesTypes,
  *
  * @augments Highcharts.Series
  */
-H.Series = seriesType<Highcharts.LineSeries>(
+H.Series = BaseSeries.seriesType<Highcharts.LineSeries>(
     'line',
 
     /**
@@ -958,7 +969,7 @@ H.Series = seriesType<Highcharts.LineSeries>(
      * @apioption series.zIndex
      */
 
-    null as any,
+    void 0,
 
     /**
      * General options for all series types.
@@ -1120,7 +1131,7 @@ H.Series = seriesType<Highcharts.LineSeries>(
         /**
          * @default   0
          * @type      {number}
-         * @since 8.2.0
+         * @since     8.2.0
          * @apioption plotOptions.series.animation.defer
          */
 
@@ -2358,8 +2369,9 @@ H.Series = seriesType<Highcharts.LineSeries>(
              *
              * @sample {highcharts} highcharts/plotoptions/animation-defer/
              *          Animation defer settings
-             * @type {boolean|Partial<Highcharts.AnimationOptionsObject>}
-             * @since 8.2.0
+             *
+             * @type      {boolean|Partial<Highcharts.AnimationOptionsObject>}
+             * @since     8.2.0
              * @apioption plotOptions.series.dataLabels.animation
              */
             animation: {},
@@ -2369,7 +2381,7 @@ H.Series = seriesType<Highcharts.LineSeries>(
              * As `undefined` inherits defer time from the [series.animation.defer](#plotOptions.series.animation.defer).
              *
              * @type      {number}
-             * @since 8.2.0
+             * @since     8.2.0
              * @apioption plotOptions.series.dataLabels.animation.defer
              */
 
@@ -3349,7 +3361,7 @@ H.Series = seriesType<Highcharts.LineSeries>(
          */
         findNearestPointBy: 'x'
 
-    } as Highcharts.SeriesOptionsType,
+    } as SeriesOptionsType,
 
     /* eslint-disable no-invalid-this, valid-jsdoc */
 
@@ -3369,7 +3381,7 @@ H.Series = seriesType<Highcharts.LineSeries>(
         init: function (
             this: Highcharts.Series,
             chart: Chart,
-            options: Highcharts.SeriesOptionsType
+            options: SeriesOptionsType
         ): void {
 
             fireEvent(this, 'init', { options: options });
@@ -3823,14 +3835,14 @@ H.Series = seriesType<Highcharts.LineSeries>(
          */
         setOptions: function <TSeries extends Highcharts.Series> (
             this: TSeries,
-            itemOptions: Highcharts.SeriesOptionsType
+            itemOptions: SeriesOptionsType
         ): TSeries['options'] {
             var chart = this.chart,
                 chartOptions = chart.options,
                 plotOptions = chartOptions.plotOptions,
                 userOptions = chart.userOptions || {},
                 seriesUserOptions = merge(itemOptions),
-                options: Highcharts.SeriesOptionsType,
+                options: SeriesOptionsType,
                 zones,
                 zone,
                 styledMode = chart.styledMode,
@@ -3844,7 +3856,7 @@ H.Series = seriesType<Highcharts.LineSeries>(
             // These may be modified by the event
             var typeOptions = (e.plotOptions as any)[this.type],
                 userPlotOptions = (
-                    userOptions.plotOptions || {} as Highcharts.PlotOptions
+                    userOptions.plotOptions || {} as SeriesPlotOptionsType
                 );
 
             // use copy to prevent undetected changes (#9762)
@@ -6173,7 +6185,9 @@ H.Series = seriesType<Highcharts.LineSeries>(
                         ]];
 
                     // Generate the spline as defined in the SplineSeries object
-                    } else if ((series as Partial<Highcharts.SplineSeries>).getPointSpline) {
+                    } else if (
+                        (series as unknown as Partial<Highcharts.SplineSeries>).getPointSpline
+                    ) {
 
                         pathToPoint = [(
                             series as Highcharts.SplineSeries

@@ -10,10 +10,25 @@
  *
  * */
 
-'use strict';
-
+import BaseSeries from '../Core/Series/BaseSeries.js';
+import Color from '../Core/Color.js';
 import H from '../Core/Globals.js';
 import NodesMixin from '../Mixins/Nodes.js';
+import Point from '../Core/Series/Point.js';
+import U from '../Core/Utilities.js';
+const {
+    defined,
+    find,
+    isObject,
+    merge,
+    pick,
+    relativeLength,
+    stableSort
+} = U;
+import TreeSeriesMixin from '../Mixins/TreeSeries.js';
+const {
+    getLevelOptions
+} = TreeSeriesMixin;
 
 /**
  * Internal types
@@ -167,11 +182,20 @@ declare global {
         interface Series {
             invertable?: boolean;
         }
-        interface SeriesTypesDictionary {
-            sankey: typeof SankeySeries;
-        }
     }
 }
+
+/**
+ * @private
+ */
+declare module '../Core/Series/Types' {
+    interface SeriesTypeRegistry {
+        sankey: typeof Highcharts.SankeySeries;
+    }
+}
+
+import '../Core/Options.js';
+import './ColumnSeries.js';
 
 /**
  * A node in a sankey diagram.
@@ -254,26 +278,7 @@ declare global {
  * @type {Highcharts.SankeyNodeObject}
  */
 
-import Color from '../Core/Color.js';
-import Point from '../Core/Series/Point.js';
-import U from '../Core/Utilities.js';
-const {
-    defined,
-    find,
-    isObject,
-    merge,
-    pick,
-    relativeLength,
-    seriesType,
-    stableSort
-} = U;
-import TreeSeriesMixin from '../Mixins/TreeSeries.js';
-const {
-    getLevelOptions
-} = TreeSeriesMixin;
-
-import '../Core/Options.js';
-import './ColumnSeries.js';
+''; // detach doclets above
 
 // eslint-disable-next-line valid-jsdoc
 /**
@@ -308,7 +313,7 @@ var getDLOptions = function getDLOptions(
  *
  * @augments Highcharts.Series
  */
-seriesType<Highcharts.SankeySeries>(
+BaseSeries.seriesType<Highcharts.SankeySeries>(
     'sankey',
     'column',
     /**

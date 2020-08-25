@@ -6,10 +6,13 @@
  *
  * */
 
-'use strict';
-
-import H from '../../Core/Globals.js';
-
+import BaseSeries from '../../Core/Series/BaseSeries.js';
+import multipleLinesMixin from '../../Mixins/MultipleLines.js';
+import requiredIndicator from '../../Mixins/IndicatorRequired.js';
+import U from '../../Core/Utilities.js';
+const {
+    merge
+} = U;
 
 /**
  * Internal types
@@ -48,22 +51,18 @@ declare global {
             params?: AroonOscillatorIndicatorParamsOptions;
             tooltip?: TooltipOptions;
         }
-
-        interface SeriesTypesDictionary {
-            aroonoscillator: typeof AroonOscillatorIndicator;
-        }
     }
 }
 
-import multipleLinesMixin from '../../Mixins/MultipleLines.js';
-import requiredIndicator from '../../Mixins/IndicatorRequired.js';
-import U from '../../Core/Utilities.js';
-const {
-    merge,
-    seriesType
-} = U;
+declare module '../../Core/Series/Types' {
+    interface SeriesTypeRegistry {
+        aroonoscillator: typeof Highcharts.AroonOscillatorIndicator;
+    }
+}
 
-var AROON = H.seriesTypes.aroon;
+import './AroonIndicator.js';
+
+var AROON = BaseSeries.seriesTypes.aroon;
 
 /**
  * The Aroon Oscillator series type.
@@ -74,7 +73,7 @@ var AROON = H.seriesTypes.aroon;
  *
  * @augments Highcharts.Series
  */
-seriesType<Highcharts.AroonOscillatorIndicator>(
+BaseSeries.seriesType<Highcharts.AroonOscillatorIndicator>(
     'aroonoscillator',
     'aroon',
     /**

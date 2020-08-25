@@ -124,7 +124,7 @@ declare global {
     }
 }
 
-import '../Core/Series/Series.js';
+import '../Core/Series/CatesianSeries.js';
 
 // Extensions for polar charts. Additionally, much of the geometry required for
 // polar charts is gathered in RadialAxes.js.

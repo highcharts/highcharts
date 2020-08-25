@@ -10,8 +10,18 @@
  *
  * */
 
-'use strict';
-import H from '../Core/Globals.js';
+import BaseSeries from '../Core/Series/BaseSeries.js';
+const {
+    seriesTypes
+} = BaseSeries;
+import U from '../Core/Utilities.js';
+const {
+    arrayMax,
+    arrayMin,
+    clamp,
+    fireEvent,
+    pick
+} = U;
 
 /**
  * Internal types
@@ -42,9 +52,6 @@ declare global {
             public redraw(): void;
             public zValEval(zVal: (number|string|undefined)): (boolean|null);
         }
-        interface SeriesTypesDictionary {
-            variablepie: typeof VariablePieSeries;
-        }
         interface VariablePiePointOptions extends PiePointOptions {
         }
         interface VariablePieSeriesOptions extends PieSeriesOptions {
@@ -60,22 +67,24 @@ declare global {
 }
 
 /**
+ * @private
+ */
+declare module '../Core/Series/Types' {
+    interface SeriesTypeRegistry {
+        variablepie: typeof Highcharts.VariablePieSeries;
+    }
+}
+
+import '../Core/Options.js';
+import './PieSeries.js';
+
+var pieProto = seriesTypes.pie.prototype;
+
+/**
  * @typedef {"area"|"radius"} Highcharts.VariablePieSizeByValue
  */
 
-import U from '../Core/Utilities.js';
-const {
-    arrayMax,
-    arrayMin,
-    clamp,
-    fireEvent,
-    pick,
-    seriesType
-} = U;
-
-import '../Core/Options.js';
-
-var pieProto = H.seriesTypes.pie.prototype;
+''; // detach doclets above
 
 /**
  * The variablepie series type.
@@ -86,7 +95,7 @@ var pieProto = H.seriesTypes.pie.prototype;
  *
  * @augments Highcharts.Series
  */
-seriesType<Highcharts.VariablePieSeries>(
+BaseSeries.seriesType<Highcharts.VariablePieSeries>(
     'variablepie',
     'pie',
     /**

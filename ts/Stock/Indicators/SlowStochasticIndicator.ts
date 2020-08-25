@@ -6,13 +6,12 @@
  *
  * */
 
-'use strict';
-
-import H from '../../Core/Globals.js';
-import U from '../../Core/Utilities.js';
+import BaseSeries from '../../Core/Series/BaseSeries.js';
 const {
-    seriesType
-} = U;
+    seriesTypes
+} = BaseSeries;
+import H from '../../Core/Globals.js';
+import RequiredIndicatorMixin from '../../Mixins/IndicatorRequired.js';
 
 /**
  * Internal types
@@ -41,16 +40,16 @@ declare global {
             extends StochasticIndicatorOptions, MultipleLinesIndicatorOptions {
             params?: SlowStochasticIndicatorParamsOptions;
         }
-
-        interface SeriesTypesDictionary {
-            slowstochastic: typeof SlowStochasticIndicator;
-        }
     }
 }
 
-import requiredIndicator from '../../Mixins/IndicatorRequired.js';
+declare module '../../Core/Series/Types' {
+    interface SeriesTypeRegistry {
+        slowstochastic: typeof Highcharts.SlowStochasticIndicator;
+    }
+}
 
-var seriesTypes = H.seriesTypes;
+import './StochasticIndicator.js';
 
 /**
  * The Slow Stochastic series type.
@@ -61,7 +60,7 @@ var seriesTypes = H.seriesTypes;
  *
  * @augments Highcharts.Series
  */
-seriesType<Highcharts.SlowStochasticIndicator>(
+BaseSeries.seriesType<Highcharts.SlowStochasticIndicator>(
     'slowstochastic',
     'stochastic',
     /**
@@ -100,8 +99,8 @@ seriesType<Highcharts.SlowStochasticIndicator>(
             const args = arguments,
                 ctx = this;
 
-            requiredIndicator.isParentLoaded(
-                (H.seriesTypes.stochastic as any),
+            RequiredIndicatorMixin.isParentLoaded(
+                (seriesTypes.stochastic as any),
                 'stochastic',
                 ctx.type,
                 function (indicator: Highcharts.Indicator): undefined {

@@ -7,14 +7,18 @@
  *  !!!!!!! SOURCE GETS TRANSPILED BY TYPESCRIPT. EDIT TS FILE ONLY. !!!!!!!
  *
  * */
-'use strict';
+import BaseSeries from '../Core/Series/BaseSeries.js';
 import Chart from '../Core/Chart/Chart.js';
 import Color from '../Core/Color.js';
 var color = Color.parse;
 import H from '../Core/Globals.js';
 import Point from '../Core/Series/Point.js';
 import U from '../Core/Utilities.js';
-var addEvent = U.addEvent, clamp = U.clamp, defined = U.defined, extend = U.extend, extendClass = U.extendClass, fireEvent = U.fireEvent, isArray = U.isArray, isNumber = U.isNumber, merge = U.merge, pick = U.pick, seriesType = U.seriesType;
+var addEvent = U.addEvent, clamp = U.clamp, defined = U.defined, extend = U.extend, extendClass = U.extendClass, fireEvent = U.fireEvent, isArray = U.isArray, isNumber = U.isNumber, merge = U.merge, pick = U.pick;
+import './Bubble/BubbleSeries.js';
+import '../Series/Networkgraph/DraggableNodes.js';
+import '../Series/Networkgraph/Layouts.js';
+var Series = H.Series, Reingold = H.layouts['reingold-fruchterman'], dragNodesMixin = H.dragNodesMixin;
 /**
  * Formatter callback function.
  *
@@ -50,11 +54,7 @@ var addEvent = U.addEvent, clamp = U.clamp, defined = U.defined, extend = U.exte
 * @type {string}
 * @since 7.0.0
 */
-import '../Core/Axis/Axis.js';
-import './Bubble/BubbleSeries.js';
-import '../Series/Networkgraph/DraggableNodes.js';
-import '../Series/Networkgraph/Layouts.js';
-var Series = H.Series, Reingold = H.layouts['reingold-fruchterman'], dragNodesMixin = H.dragNodesMixin;
+''; // detach doclets above
 Chart.prototype.getSelectedParentNodes = function () {
     var chart = this, series = chart.series, selectedParentsNodes = [];
     series.forEach(function (series) {
@@ -194,7 +194,7 @@ H.layouts.packedbubble = extendClass(Reingold, {
  *
  * @extends Highcharts.Series
  */
-seriesType('packedbubble', 'bubble', 
+BaseSeries.seriesType('packedbubble', 'bubble', 
 /**
  * A packed bubble series is a two dimensional series type, where each point
  * renders a value in X, Y position. Each point is drawn as a bubble

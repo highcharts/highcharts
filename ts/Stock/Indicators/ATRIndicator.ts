@@ -6,7 +6,11 @@
  *
  * */
 
-'use strict';
+import BaseSeries from '../../Core/Series/BaseSeries.js';
+import U from '../../Core/Utilities.js';
+const {
+    isArray
+} = U;
 
 /**
  * Internal types
@@ -35,21 +39,16 @@ declare global {
         class ATRIndicatorPoint extends SMAIndicatorPoint {
             public series: ATRIndicator
         }
-
-        interface SeriesTypesDictionary {
-            atr: typeof ATRIndicator;
-        }
     }
 }
 
+declare module '../../Core/Series/Types' {
+    interface SeriesTypeRegistry {
+        atr: typeof Highcharts.ATRIndicator;
+    }
+}
 
-import U from '../../Core/Utilities.js';
-const {
-    isArray,
-    seriesType
-} = U;
-
-var UNDEFINED: undefined;
+import './SMAIndicator.js';
 
 /* eslint-disable valid-jsdoc */
 // Utils:
@@ -75,8 +74,8 @@ function getTR(currentPoint: Array<number>, prevPoint: Array<number>): number {
     var pointY = currentPoint,
         prevY = prevPoint,
         HL = pointY[1] - pointY[2],
-        HCp = prevY === UNDEFINED ? 0 : Math.abs(pointY[1] - prevY[3]),
-        LCp = prevY === UNDEFINED ? 0 : Math.abs(pointY[2] - prevY[3]),
+        HCp = typeof prevY === 'undefined' ? 0 : Math.abs(pointY[1] - prevY[3]),
+        LCp = typeof prevY === 'undefined' ? 0 : Math.abs(pointY[2] - prevY[3]),
         TR = Math.max(HL, HCp, LCp);
 
     return TR;
@@ -101,6 +100,7 @@ function populateAverage(
 
     return [x, y];
 }
+
 /* eslint-enable valid-jsdoc */
 
 /**
@@ -112,7 +112,7 @@ function populateAverage(
  *
  * @augments Highcharts.Series
  */
-seriesType<Highcharts.ATRIndicator>(
+BaseSeries.seriesType<Highcharts.ATRIndicator>(
     'atr',
     'sma',
     /**

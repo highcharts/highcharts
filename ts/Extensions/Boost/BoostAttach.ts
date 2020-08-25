@@ -50,7 +50,7 @@ declare global {
     }
 }
 
-import '../../Core/Series/Series.js';
+import '../../Core/Series/CatesianSeries.js';
 
 var mainCanvas = doc.createElement('canvas');
 

@@ -15,13 +15,42 @@
  *
  * */
 
-'use strict';
-
 import type Chart from '../Core/Chart/Chart';
 import type SVGPath from '../Core/Renderer/SVG/SVGPath';
+import BaseSeries from '../Core/Series/BaseSeries.js';
+const {
+    seriesTypes
+} = BaseSeries;
 import Color from '../Core/Color.js';
-const color = Color.parse;
-import H from '../Core/Globals.js';
+const {
+    parse: color
+} = Color;
+import DrawPointMixin from '../Mixins/DrawPoint.js';
+const {
+    draw
+} = DrawPointMixin;
+import GeometryMixin from '../Mixins/Geometry.js';
+const {
+    getCenterOfPoints,
+    getDistanceBetweenPoints
+} = GeometryMixin;
+import GeometryCirclesModule from '../Mixins/GeometryCircles.js';
+const {
+    getAreaOfCircle,
+    getAreaOfIntersectionBetweenCircles,
+    getCircleCircleIntersection,
+    getCirclesIntersectionPolygon,
+    getOverlapBetweenCircles: getOverlapBetweenCirclesByDistance,
+    isCircle1CompletelyOverlappingCircle2,
+    isPointInsideAllCircles,
+    isPointInsideCircle,
+    isPointOutsideAllCircles
+} = GeometryCirclesModule;
+
+import NelderMeadMixin from '../Mixins/NelderMead.js';
+const {
+    nelderMead
+} = NelderMeadMixin;
 import U from '../Core/Utilities.js';
 const {
     addEvent,
@@ -31,10 +60,17 @@ const {
     isNumber,
     isObject,
     isString,
-    merge,
-    seriesType
+    merge
 } = U;
 
+/**
+ * @private
+ */
+declare module '../Core/Series/Types' {
+    interface SeriesTypeRegistry {
+        venn: typeof Highcharts.VennSeries;
+    }
+}
 
 /**
  * Internal types
@@ -66,9 +102,6 @@ declare global {
             public animate(init?: boolean): void;
             public drawPoints(): void;
             public translate(): void;
-        }
-        interface SeriesTypesDictionary {
-            venn: typeof VennSeries;
         }
         interface VennLabelPositionObject {
             point: PositionObject;
@@ -143,33 +176,7 @@ declare global {
     }
 }
 
-import drawPointModule from '../Mixins/DrawPoint.js';
-const { draw } = drawPointModule;
-import geometry from '../Mixins/Geometry.js';
-
-import geometryCirclesModule from '../Mixins/GeometryCircles.js';
-const {
-    getAreaOfCircle,
-    getAreaOfIntersectionBetweenCircles,
-    getCircleCircleIntersection,
-    getCirclesIntersectionPolygon,
-    getOverlapBetweenCircles: getOverlapBetweenCirclesByDistance,
-    isCircle1CompletelyOverlappingCircle2,
-    isPointInsideAllCircles,
-    isPointInsideCircle,
-    isPointOutsideAllCircles
-} = geometryCirclesModule;
-
-import nelderMeadMixin from '../Mixins/NelderMead.js';
-const {
-    nelderMead
-} = nelderMeadMixin;
-
-import '../Core/Series/Series.js';
-
-var getCenterOfPoints = geometry.getCenterOfPoints,
-    getDistanceBetweenPoints = geometry.getDistanceBetweenPoints,
-    seriesTypes = H.seriesTypes;
+import './ScatterSeries.js';
 
 var objectValues = function objectValues<T>(
     obj: Highcharts.Dictionary<T>
@@ -1383,14 +1390,14 @@ var vennSeries = {
     },
     utils: {
         addOverlapToSets: addOverlapToSets,
-        geometry: geometry,
-        geometryCircles: geometryCirclesModule,
+        geometry: GeometryMixin,
+        geometryCircles: GeometryCirclesModule,
         getLabelWidth: getLabelWidth,
         getMarginFromCircles: getMarginFromCircles,
         getDistanceBetweenCirclesByOverlap: getDistanceBetweenCirclesByOverlap,
         layoutGreedyVenn: layoutGreedyVenn,
         loss: loss,
-        nelderMead: nelderMeadMixin,
+        nelderMead: NelderMeadMixin,
         processVennData: processVennData,
         sortByTotalOverlap: sortByTotalOverlap
     }
@@ -1490,6 +1497,8 @@ var vennPoint = {
  * @apioption series.venn.states.select
  */
 
+''; // detach doclets above
+
 /**
  * @private
  * @class
@@ -1497,7 +1506,7 @@ var vennPoint = {
  *
  * @augments Highcharts.Series
  */
-seriesType<Highcharts.VennSeries>(
+BaseSeries.seriesType<Highcharts.VennSeries>(
     'venn', 'scatter', vennOptions, vennSeries, vennPoint
 );
 

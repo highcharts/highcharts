@@ -10,7 +10,14 @@
  *
  * */
 
-'use strict';
+import BaseSeries from '../Core/Series/BaseSeries.js';
+import DerivedSeriesMixin from '../Mixins/DerivedSeries.js';
+import U from '../Core/Utilities.js';
+const {
+    correctFloat,
+    isNumber,
+    merge
+} = U;
 
 /**
  * Internal types
@@ -59,21 +66,17 @@ declare global {
             pointsInInterval?: number;
             states?: SeriesStatesOptionsObject<BellcurveSeries>;
         }
-        interface SeriesTypesDictionary {
-            bellcurve: typeof BellcurveSeries;
-        }
     }
 }
 
-import U from '../Core/Utilities.js';
-const {
-    correctFloat,
-    isNumber,
-    merge,
-    seriesType
-} = U;
-
-import derivedSeriesMixin from '../Mixins/DerivedSeries.js';
+/**
+ * @private
+ */
+declare module '../Core/Series/BaseSeries' {
+    interface SeriesTypeRegistry {
+        bellcurve: typeof Highcharts.BellcurveSeries;
+    }
+}
 
 /* ************************************************************************** *
  *  BELL CURVE                                                                *
@@ -141,7 +144,7 @@ function normalDensity(
  *
  * @augments Highcharts.Series
  */
-seriesType<Highcharts.BellcurveSeries>('bellcurve', 'areaspline'
+BaseSeries.seriesType<Highcharts.BellcurveSeries>('bellcurve', 'areaspline'
 
     /**
      * A bell curve is an areaspline series which represents the probability
@@ -183,7 +186,7 @@ seriesType<Highcharts.BellcurveSeries>('bellcurve', 'areaspline'
             enabled: false
         }
 
-    }, merge(derivedSeriesMixin, {
+    }, merge(DerivedSeriesMixin, {
         setMean: function (this: Highcharts.BellcurveSeries): void {
             this.mean = correctFloat(
                 mean(

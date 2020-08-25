@@ -10,14 +10,18 @@
  *
  * */
 
-'use strict';
-
 import type ColorAxis from '../Core/Axis/ColorAxis';
 import type RadialAxis from '../Core/Axis/RadialAxis';
 import type SVGPath from '../Core/Renderer/SVG/SVGPath';
+import BaseSeries from '../Core/Series/BaseSeries.js';
 import Color from '../Core/Color.js';
-const color = Color.parse;
+const {
+    parse: color
+} = Color;
 import H from '../Core/Globals.js';
+const {
+    Renderer
+} = H;
 import LegendSymbolMixin from '../Mixins/LegendSymbol.js';
 import U from '../Core/Utilities.js';
 const {
@@ -27,7 +31,6 @@ const {
     merge,
     pick,
     pInt,
-    seriesType,
     wrap
 } = U;
 
@@ -54,9 +57,6 @@ declare global {
             public drawPoints(): void;
             public translate(): void;
         }
-        interface SeriesTypesDictionary {
-            solidgauge: typeof SolidGaugeSeries;
-        }
         interface SolidGaugePointOptions extends GaugePointOptions {
             innerRadius?: (number|string);
             radius?: (number|string);
@@ -77,6 +77,18 @@ declare global {
 }
 
 /**
+ * @private
+ */
+declare module '../Core/Series/Types' {
+    interface SeriesTypeRegistry {
+        solidgauge: typeof Highcharts.SolidGaugeSeries;
+    }
+}
+
+import '../Core/Options.js';
+import '../Series/GaugeSeries.js';
+
+/**
  * Additional options, depending on the actual symbol drawn.
  *
  * @interface Highcharts.SymbolOptionsObject
@@ -85,11 +97,6 @@ declare global {
  * @name Highcharts.SymbolOptionsObject#rounded
  * @type {boolean|undefined}
  */
-
-import '../Core/Options.js';
-import '../Series/GaugeSeries.js';
-
-const Renderer = H.Renderer;
 
 /**
  * Symbol definition of an arc with round edges.
@@ -436,9 +443,8 @@ var solidGaugeOptions: Highcharts.SolidGaugeSeriesOptions = {
 
 };
 
-
 // The solidgauge series type
-seriesType<Highcharts.SolidGaugeSeries>(
+BaseSeries.seriesType<Highcharts.SolidGaugeSeries>(
     'solidgauge',
     'gauge',
     solidGaugeOptions,

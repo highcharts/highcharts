@@ -6,7 +6,13 @@
  *
  * */
 
-'use strict';
+import BaseSeries from '../../Core/Series/BaseSeries.js';
+import MultipleLinesMixin from '../../Mixins/MultipleLines.js';
+import ReduceArrayMixin from '../../Mixins/ReduceArray.js';
+import U from '../../Core/Utilities.js';
+const {
+    merge
+} = U;
 
 /**
  * Internal types
@@ -48,22 +54,18 @@ declare global {
             bottomLine: Dictionary<CSSObject>;
             topLine: Dictionary<CSSObject>;
         }
-
-        interface SeriesTypesDictionary {
-            pc: typeof PCIndicator;
-        }
     }
 }
 
-import U from '../../Core/Utilities.js';
-const {
-    merge,
-    seriesType
-} = U;
-import reduceArrayMixin from '../../Mixins/ReduceArray.js';
-import multipleLinesMixin from '../../Mixins/MultipleLines.js';
+declare module '../../Core/Series/Types' {
+    interface SeriesTypeRegistry {
+        pc: typeof Highcharts.PCIndicator;
+    }
+}
 
-var getArrayExtremes = reduceArrayMixin.getArrayExtremes;
+import './SMAIndicator.js';
+
+var getArrayExtremes = ReduceArrayMixin.getArrayExtremes;
 
 /**
  * The Price Channel series type.
@@ -74,7 +76,7 @@ var getArrayExtremes = reduceArrayMixin.getArrayExtremes;
  *
  * @augments Highcharts.Series
  */
-seriesType<Highcharts.PCIndicator>(
+BaseSeries.seriesType<Highcharts.PCIndicator>(
     'pc',
     'sma',
     /**
@@ -140,7 +142,7 @@ seriesType<Highcharts.PCIndicator>(
     /**
      * @lends Highcharts.Series#
      */
-    merge(multipleLinesMixin, {
+    merge(MultipleLinesMixin, {
         pointArrayMap: ['top', 'middle', 'bottom'],
         pointValKey: 'middle',
         nameBase: 'Price Channel',

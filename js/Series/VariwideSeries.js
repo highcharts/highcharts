@@ -9,12 +9,12 @@
  *  !!!!!!! SOURCE GETS TRANSPILED BY TYPESCRIPT. EDIT TS FILE ONLY. !!!!!!!
  *
  * */
-'use strict';
+import BaseSeries from '../Core/Series/BaseSeries.js';
+var seriesTypes = BaseSeries.seriesTypes;
 import H from '../Core/Globals.js';
 import U from '../Core/Utilities.js';
-var addEvent = U.addEvent, isNumber = U.isNumber, pick = U.pick, seriesType = U.seriesType, wrap = U.wrap;
+var addEvent = U.addEvent, isNumber = U.isNumber, pick = U.pick, wrap = U.wrap;
 import '../Series/AreaSeries.js';
-var seriesTypes = H.seriesTypes;
 /**
  * @private
  * @class
@@ -22,7 +22,7 @@ var seriesTypes = H.seriesTypes;
  *
  * @augments Highcharts.Series
  */
-seriesType('variwide', 'column'
+BaseSeries.seriesType('variwide', 'column'
 /**
  * A variwide chart (related to marimekko chart) is a column chart with a
  * variable width expressing a third dimension.

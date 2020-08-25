@@ -8,11 +8,20 @@
  *
  * */
 
-'use strict';
-
 import type StackingAxis from '../Core/Axis/StackingAxis';
 import type SVGPath from '../Core/Renderer/SVG/SVGPath';
+import BaseSeries from '../Core/Series/BaseSeries.js';
+import Color from '../Core/Color.js';
+const {
+    parse: color
+} = Color;
 import H from '../Core/Globals.js';
+import LegendSymbolMixin from '../Mixins/LegendSymbol.js';
+import U from '../Core/Utilities.js';
+const {
+    objectEach,
+    pick
+} = U;
 
 /**
  * Internal types
@@ -46,25 +55,19 @@ declare global {
             negativeFillColor?: ColorType;
             states?: SeriesStatesOptionsObject<AreaSeries>;
         }
-        interface SeriesTypesDictionary {
-            area: typeof AreaSeries;
-        }
     }
 }
 
-import Color from '../Core/Color.js';
-const {
-    parse: color
-} = Color;
-import LegendSymbolMixin from '../Mixins/LegendSymbol.js';
-import U from '../Core/Utilities.js';
-const {
-    objectEach,
-    pick,
-    seriesType
-} = U;
+/**
+ * @private
+ */
+declare module '../Core/Series/Types' {
+    interface SeriesTypeRegistry {
+        area: typeof Highcharts.AreaSeries;
+    }
+}
 
-import '../Core/Series/Series.js';
+import '../Core/Series/CatesianSeries.js';
 import '../Core/Options.js';
 
 var Series = H.Series;
@@ -78,7 +81,7 @@ var Series = H.Series;
  *
  * @augments Highcharts.Series
  */
-seriesType<Highcharts.AreaSeries>(
+BaseSeries.seriesType<Highcharts.AreaSeries>(
     'area',
     'line',
 

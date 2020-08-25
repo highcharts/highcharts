@@ -10,6 +10,7 @@
 
 'use strict';
 
+import type { SeriesOptionsType } from './Series/Types';
 import type SVGPath from './Renderer/SVG/SVGPath';
 import Axis from './Axis/Axis.js';
 import Chart from './Chart/Chart.js';
@@ -195,7 +196,7 @@ declare global {
     }
 }
 
-import './Series/Series.js';
+import './Series/CatesianSeries.js';
 
 var hasTouch = H.hasTouch,
     isTouchDevice = H.isTouchDevice,
@@ -2085,7 +2086,7 @@ class Navigator {
      * @return {void}
      */
     public setBaseSeries(
-        baseSeriesOptions?: Highcharts.SeriesOptionsType,
+        baseSeriesOptions?: SeriesOptionsType,
         redraw?: boolean
     ): void {
         var chart = this.chart,
@@ -2115,8 +2116,8 @@ class Navigator {
                 (
                     series.options.showInNavigator ||
                     (
-                        i === baseSeriesOptions ||
-                        series.options.id === baseSeriesOptions
+                        i === (baseSeriesOptions as any) ||
+                        series.options.id === (baseSeriesOptions as any)
                     ) &&
                     series.options.showInNavigator !== false
                 )
@@ -2149,7 +2150,7 @@ class Navigator {
             chart = navigator.chart,
             baseSeries = navigator.baseSeries,
             baseOptions,
-            mergedNavSeriesOptions: Highcharts.SeriesOptionsType,
+            mergedNavSeriesOptions: SeriesOptionsType,
             chartNavigatorSeriesOptions = navigator.navigatorOptions.series,
             baseNavigatorOptions,
             navSeriesMixin = {
@@ -2282,7 +2283,7 @@ class Navigator {
             chartNavigatorSeriesOptions =
                 (splat(chartNavigatorSeriesOptions) as any);
             (chartNavigatorSeriesOptions as any).forEach(function (
-                userSeriesOptions: Highcharts.SeriesOptionsType,
+                userSeriesOptions: SeriesOptionsType,
                 i: number
             ): void {
                 navSeriesMixin.name =
