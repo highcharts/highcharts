@@ -59,7 +59,7 @@ var HTMLTableDataStore = /** @class */ (function (_super) {
         var _this = _super.call(this, table) || this;
         _this.tableElement = null;
         _this.options = merge(HTMLTableDataStore.defaultOptions, options);
-        _this.parser = parser || new HTMLTableParser(_this.tableElement, _this.options);
+        _this.parser = parser || new HTMLTableParser(_this.options, _this.tableElement);
         return _this;
     }
     /* *

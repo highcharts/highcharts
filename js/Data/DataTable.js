@@ -81,6 +81,20 @@ var DataTable = /** @class */ (function () {
             return new DataTable();
         }
     };
+    /**
+     * Converts a simple two dimensional array to a DataTable instance. The
+     * array needs to be structured like a DataFrame, so that the first
+     * dimension becomes the columns and the second dimension the rows.
+     *
+     * @param {Array<Array<DataValueType>>} [columns]
+     * Array to convert.
+     *
+     * @param {Array<string>} [headers]
+     * Column names to use.
+     *
+     * @return {DataTable}
+     * DataTable instance from the arrays.
+     */
     DataTable.fromColumns = function (columns, headers) {
         if (columns === void 0) { columns = []; }
         if (headers === void 0) { headers = []; }

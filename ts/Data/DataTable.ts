@@ -68,7 +68,24 @@ class DataTable implements DataEventEmitter<DataTable.EventObjects>, DataJSON.Cl
         }
     }
 
-    public static fromColumns(columns: DataValueType[][] = [], headers: string [] = []): DataTable {
+    /**
+     * Converts a simple two dimensional array to a DataTable instance. The
+     * array needs to be structured like a DataFrame, so that the first
+     * dimension becomes the columns and the second dimension the rows.
+     *
+     * @param {Array<Array<DataValueType>>} [columns]
+     * Array to convert.
+     *
+     * @param {Array<string>} [headers]
+     * Column names to use.
+     *
+     * @return {DataTable}
+     * DataTable instance from the arrays.
+     */
+    public static fromColumns(
+        columns: DataValueType[][] = [],
+        headers: string [] = []
+    ): DataTable {
         const table = new DataTable();
         const columnsLength = columns.length;
         if (columnsLength) {

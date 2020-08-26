@@ -65,8 +65,8 @@ class HTMLTableParser extends DataParser<DataParser.EventObject> {
      */
     public static fromJSON(json: HTMLTableParser.ClassJSON): HTMLTableParser {
         return new HTMLTableParser(
-            document.getElementById(json.tableElementID),
-            json.options
+            json.options,
+            document.getElementById(json.tableElementID)
         );
     }
 
@@ -79,14 +79,14 @@ class HTMLTableParser extends DataParser<DataParser.EventObject> {
     /**
      * Constructs an instance of the HTML table parser.
      *
-     * @param {HTMLElement | null} tableElement
-     * The HTML table to parse
      * @param {HTMLTableParser.OptionsType} [options]
      * Options for the CSV parser.
+     * @param {HTMLElement | null} tableElement
+     * The HTML table to parse
      */
     constructor(
-        tableElement: (HTMLElement | null) = null,
-        options?: Partial<HTMLTableParser.OptionsType>
+        options?: Partial<HTMLTableParser.OptionsType>,
+        tableElement: (HTMLElement | null) = null
     ) {
         super();
         this.columns = [];

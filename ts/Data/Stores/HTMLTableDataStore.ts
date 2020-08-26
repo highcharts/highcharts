@@ -90,7 +90,7 @@ class HTMLTableDataStore extends DataStore<HTMLTableDataStore.EventObjects> impl
         this.tableElement = null;
 
         this.options = merge(HTMLTableDataStore.defaultOptions, options);
-        this.parser = parser || new HTMLTableParser(this.tableElement, this.options);
+        this.parser = parser || new HTMLTableParser(this.options, this.tableElement);
     }
 
     /* *
