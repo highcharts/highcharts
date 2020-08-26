@@ -16,3 +16,25 @@ export function registerStoreEvents(datastore, eventArray, assertObj = {}) {
         });
     })
 }
+
+/**
+ * Utility function for comparing an exported store with the original
+ *
+ * @todo deeper comparisons?
+ *
+ * @param {DataTable} originalTable
+ * @param {DataTable} exportedTable
+ * @param {*} assert QUnit assert object
+ */
+export function testExportedDataTable(originalTable, exportedTable, assert) {
+    assert.strictEqual(
+        exportedTable.getRowCount(),
+        originalTable.getRowCount(),
+        'Exported ClassJSON has same amount of rows'
+    )
+    assert.strictEqual(
+        exportedTable.getRow(0).getColumnCount(),
+        originalTable.getRow(0).getColumnCount(),
+        'Exported ClassJSON has same amount of columns'
+    )
+}

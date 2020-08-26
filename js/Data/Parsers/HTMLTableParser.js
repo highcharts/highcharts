@@ -56,12 +56,12 @@ var HTMLTableParser = /** @class */ (function (_super) {
     /**
      * Constructs an instance of the HTML table parser.
      *
-     * @param {HTMLElement | null} tableElement
-     * The HTML table to parse
      * @param {HTMLTableParser.OptionsType} [options]
      * Options for the CSV parser.
+     * @param {HTMLElement | null} tableElement
+     * The HTML table to parse
      */
-    function HTMLTableParser(tableElement, options) {
+    function HTMLTableParser(options, tableElement) {
         if (tableElement === void 0) { tableElement = null; }
         var _this = _super.call(this) || this;
         _this.columns = [];
@@ -92,7 +92,7 @@ var HTMLTableParser = /** @class */ (function (_super) {
      * An instance of CSVDataParser.
      */
     HTMLTableParser.fromJSON = function (json) {
-        return new HTMLTableParser(document.getElementById(json.tableElementID), json.options);
+        return new HTMLTableParser(json.options, document.getElementById(json.tableElementID));
     };
     /* *
      *

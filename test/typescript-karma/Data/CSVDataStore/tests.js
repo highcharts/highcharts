@@ -1,5 +1,5 @@
 import CSVDataStore from '/base/js/Data/Stores/CSVDataStore.js'
-import { registerStoreEvents } from '../utils.js'
+import { registerStoreEvents, testExportedDataTable } from '../utils.js'
 import U from '/base/js/Core/Utilities.js';
 
 const { test, only } = QUnit;
@@ -43,6 +43,11 @@ test('CSVDataStore from string', function (assert) {
         datastore.table.getRow(0).getColumnCount(), csv.split('\n')[0].split(',').length,
         'Datastore has correct amount of columns'
     );
+
+    const dataStoreFromJSON = CSVDataStore.fromJSON(datastore.toJSON());
+    dataStoreFromJSON.load();
+
+    testExportedDataTable(datastore.table, dataStoreFromJSON.table, assert);
 
     const foundComment = Object.values(datastore.table.getRow(1).getAllColumns()).some((col) => { ('' + col).includes('#this is a comment') });
     assert.ok(!foundComment, 'Comment is not added to the dataTable');
