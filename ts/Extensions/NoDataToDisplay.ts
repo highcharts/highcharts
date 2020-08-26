@@ -14,7 +14,13 @@
 
 'use strict';
 
-import H from '../Core/Globals.js';
+import Chart from '../Core/Chart/Chart.js';
+import U from '../Core/Utilities.js';
+const {
+    addEvent,
+    extend,
+    getOptions
+} = U;
 
 /**
  * Internal types
@@ -46,16 +52,7 @@ declare global {
     }
 }
 
-import U from '../Core/Utilities.js';
-const {
-    addEvent,
-    extend,
-    getOptions
-} = U;
-
-import '../Series/LineSeries.js';
-
-var chartPrototype = H.Chart.prototype,
+var chartPrototype = Chart.prototype,
     defaultOptions = getOptions();
 
 // Add language option
@@ -261,7 +258,7 @@ chartPrototype.hasData = function (): (boolean|undefined) {
 /* eslint-disable no-invalid-this */
 
 // Add event listener to handle automatic show or hide no-data message.
-addEvent(H.Chart, 'render', function handleNoData(): void {
+addEvent(Chart, 'render', function handleNoData(): void {
     if (this.hasData()) {
         this.hideNoData();
     } else {
