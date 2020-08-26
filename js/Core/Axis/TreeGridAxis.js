@@ -542,6 +542,30 @@ var TreeGridAxis;
          *
          * */
         /**
+         * Set the collapse status.
+         *
+         * @private
+         *
+         * @param {Highcharts.Axis} axis
+         * The axis to check against.
+         *
+         * @param {Highcharts.GridNode} node
+         * The node to collapse.
+         */
+        Additions.prototype.setCollapsedStatus = function (node) {
+            var axis = this.axis, chart = axis.chart;
+            axis.series.forEach(function (series) {
+                var data = series.options.data;
+                if (node.id && data) {
+                    var point = chart.get(node.id), dataPoint = data[series.data.indexOf(point)];
+                    if (point && dataPoint) {
+                        point.collapsed = node.collapsed;
+                        dataPoint.collapsed = node.collapsed;
+                    }
+                }
+            });
+        };
+        /**
          * Calculates the new axis breaks to collapse a node.
          *
          * @private
@@ -563,16 +587,7 @@ var TreeGridAxis;
             breaks.push(obj);
             // Change the collapsed flag #13838
             node.collapsed = true;
-            axis.series.forEach(function (series) {
-                var data = series.options.data;
-                if (data && data.length) {
-                    data.forEach(function (data) {
-                        if (data.id === node.id) {
-                            data.collapsed = true;
-                        }
-                    });
-                }
-            });
+            axis.treeGrid.setCollapsedStatus(node);
             return breaks;
         };
         /**
@@ -596,16 +611,7 @@ var TreeGridAxis;
             var axis = this.axis, breaks = (axis.options.breaks || []), obj = getBreakFromNode(node, axis.max);
             // Change the collapsed flag #13838
             node.collapsed = false;
-            axis.series.forEach(function (series) {
-                var data = series.options.data;
-                if (data && data.length) {
-                    data.forEach(function (data) {
-                        if (data.id === node.id) {
-                            data.collapsed = false;
-                        }
-                    });
-                }
-            });
+            axis.treeGrid.setCollapsedStatus(node);
             // Remove the break from the axis breaks array.
             return breaks.reduce(function (arr, b) {
                 if (b.to !== obj.to || b.from !== obj.from) {

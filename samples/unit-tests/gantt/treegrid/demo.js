@@ -439,4 +439,10 @@ QUnit.test('series.data[].collapsed', assert => {
         false,
         'This point should be expanded #13838'
     );
+
+    assert.strictEqual(
+        axis.series[0].options.data[0].collapsed,
+        false,
+        'This point should be expanded #13838'
+    );
 });
