@@ -879,6 +879,7 @@ var SVGRenderer = /** @class */ (function () {
             'stroke',
             'stroke-linecap',
             'stroke-width',
+            'style',
             'text-align',
             'textAnchor',
             'textLength',
