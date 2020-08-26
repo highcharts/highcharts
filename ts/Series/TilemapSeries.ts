@@ -103,6 +103,8 @@ const {
     seriesType
 } = U;
 
+import colorSeriesModule from '../Mixins/ColorSeries.js';
+const { colorPointMixin } = colorSeriesModule;
 import '../Series/HeatmapSeries.js';
 
 /**
@@ -934,7 +936,7 @@ seriesType<Highcharts.TilemapSeries>('tilemap', 'heatmap'
             );
         }
     },
-    H.colorPointMixin)
+    colorPointMixin)
 );
 
 /**

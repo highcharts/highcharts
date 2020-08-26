@@ -38,9 +38,10 @@ var addEvent = U.addEvent, erase = U.erase, extend = U.extend, Fx = U.Fx, isNumb
  * @typedef {"linear"|"logarithmic"} Highcharts.ColorAxisTypeValue
  */
 ''; // detach doclet above
-import '../../Mixins/ColorSeries.js';
+import colorSeriesModule from '../../Mixins/ColorSeries.js';
+var colorPointMixin = colorSeriesModule.colorPointMixin, colorSeriesMixin = colorSeriesModule.colorSeriesMixin;
 import '../Series/Series.js';
-var Series = H.Series, colorPointMixin = H.colorPointMixin, colorSeriesMixin = H.colorSeriesMixin;
+var Series = H.Series;
 extend(Series.prototype, colorSeriesMixin);
 extend(Point.prototype, colorPointMixin);
 Chart.prototype.collectionsWithUpdate.push('colorAxis');
