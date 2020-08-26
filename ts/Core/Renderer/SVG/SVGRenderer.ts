@@ -1152,11 +1152,12 @@ class SVGRenderer {
             height = normalState.height,
             userNormalStyle = normalState && normalState.style || {};
 
+
         // Remove stylable attributes
         normalState = this.filterUserAttributes(normalState) || {};
 
         // Default, non-stylable attributes
-        label.attr(merge({ padding: 8, r: 2 }, normalState));
+        label.attr(merge({ padding: 8, r: 2, width, height }, normalState));
 
         if (!styledMode) {
             // Presentational
@@ -1168,15 +1169,13 @@ class SVGRenderer {
             // Normal state - prepare the attributes
             normalState = merge({
                 fill: '${palette.neutralColor3}',
-                height,
                 stroke: '${palette.neutralColor20}',
                 'stroke-width': 1,
                 style: {
                     color: '${palette.neutralColor80}',
                     cursor: 'pointer',
                     fontWeight: 'normal'
-                },
-                width
+                }
             }, {
                 style: userNormalStyle
             }, normalState);

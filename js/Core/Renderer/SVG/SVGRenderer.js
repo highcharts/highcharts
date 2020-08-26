@@ -735,22 +735,20 @@ var SVGRenderer = /** @class */ (function () {
         // Remove stylable attributes
         normalState = this.filterUserAttributes(normalState) || {};
         // Default, non-stylable attributes
-        label.attr(merge({ padding: 8, r: 2 }, normalState));
+        label.attr(merge({ padding: 8, r: 2, width: width, height: height }, normalState));
         if (!styledMode) {
             // Presentational
             var normalStyle, hoverStyle, pressedStyle, disabledStyle;
             // Normal state - prepare the attributes
             normalState = merge({
                 fill: '${palette.neutralColor3}',
-                height: height,
                 stroke: '${palette.neutralColor20}',
                 'stroke-width': 1,
                 style: {
                     color: '${palette.neutralColor80}',
                     cursor: 'pointer',
                     fontWeight: 'normal'
-                },
-                width: width
+                }
             }, {
                 style: userNormalStyle
             }, normalState);
