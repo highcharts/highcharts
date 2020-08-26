@@ -463,7 +463,14 @@ class TextBuilder {
                     tagName
                 };
                 if (tagName === '#text') {
-                    astNode.textContent = node.textContent?.toString();
+                    const textContent = node.textContent || '';
+
+                    // Whitespace text node, don't append it to the AST
+                    if (/^[\s]*$/.test(textContent)) {
+                        return;
+                    }
+
+                    astNode.textContent = textContent;
                 }
                 const parsedAttributes = (node as any).attributes;
 

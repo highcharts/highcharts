@@ -280,7 +280,6 @@ var TextBuilder = /** @class */ (function () {
             return true;
         };
         var validateChildNodes = function (node, addTo) {
-            var _a;
             var tagName = node.nodeName.toLowerCase();
             // Add allowed tags
             if (TextBuilder.allowedTags.indexOf(tagName) !== -1) {
@@ -288,7 +287,12 @@ var TextBuilder = /** @class */ (function () {
                     tagName: tagName
                 };
                 if (tagName === '#text') {
-                    astNode.textContent = (_a = node.textContent) === null || _a === void 0 ? void 0 : _a.toString();
+                    var textContent = node.textContent || '';
+                    // Whitespace text node, don't append it to the AST
+                    if (/^[\s]*$/.test(textContent)) {
+                        return;
+                    }
+                    astNode.textContent = textContent;
                 }
                 var parsedAttributes = node.attributes;
                 // Add allowed attributes
