@@ -357,14 +357,15 @@ seriesType<Highcharts.GanttSeries>('gantt', 'xrange'
             this: Highcharts.GanttPoint,
             options: Highcharts.GanttPointOptions,
             x: number
-        ): Highcharts.GanttPointOptions {
-            var point = this;
+        ): Highcharts.GanttPoint {
+            var point = this,
+                ganttPoint;
 
-            (options as any) = parent.prototype.pointClass.prototype.applyOptions
-                .call(point, options, x);
-            H.seriesTypes.gantt.prototype.setGanttPointAliases(options);
+            ganttPoint = parent.prototype.pointClass.prototype.applyOptions
+                .call(point, options, x) as Highcharts.GanttPoint;
+            H.seriesTypes.gantt.prototype.setGanttPointAliases(ganttPoint as Highcharts.GanttPointOptions);
 
-            return options;
+            return ganttPoint;
         },
         isValid: function (this: Highcharts.GanttPoint): boolean {
             return (

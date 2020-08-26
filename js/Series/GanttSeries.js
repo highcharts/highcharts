@@ -199,11 +199,11 @@ seriesType('gantt', 'xrange'
      *         The Point instance
      */
     applyOptions: function (options, x) {
-        var point = this;
-        options = parent.prototype.pointClass.prototype.applyOptions
+        var point = this, ganttPoint;
+        ganttPoint = parent.prototype.pointClass.prototype.applyOptions
             .call(point, options, x);
-        H.seriesTypes.gantt.prototype.setGanttPointAliases(options);
-        return options;
+        H.seriesTypes.gantt.prototype.setGanttPointAliases(ganttPoint);
+        return ganttPoint;
     },
     isValid: function () {
         return ((typeof this.start === 'number' ||
