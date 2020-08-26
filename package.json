@@ -101,8 +101,8 @@
     "rimraf": "^3.0.2",
     "semver": "^7.3.2",
     "tsutils": "^3.17.1",
-    "typedoc": "~0.18.0",
-    "typescript": "~3.9.7",
+    "typedoc": "^0.18.0",
+    "typescript": "^3.9.7",
     "undertaker-forward-reference": "^1.0.2",
     "webpack": "^4.44.0",
     "yargs": "^15.4.1"

@@ -20,16 +20,13 @@
  *
  * Things to consider:
  *
- * - Seires.options.data currently also holds point properties that are not
+ * - Series.options.data currently also holds point properties that are not
  *   strictly data, like `color`, `id`, `name`, and more complex, `marker`,
  *   `dataGrouping` etc. What to do about those.
  *
  * Discussion points:
  *
- * - Filter Pool: should this be owned by a specific data store, or the data
- *   layer as a whole?
- *
- * - Filters need an order/priority
+ * - Modifieres might need an order property to resort chain arrays
  *
  * @fires storeAdded:
  * When a new data store has been added/becomes available
@@ -40,12 +37,12 @@
 interface Data {
 
     /**
-     * Constructor for creating a new data store.
+     * Constructor for creating a new data store. Should go into DataStore.
      */
     createStore(identifier: unknown, ...sth: Array<unknown>): unknown;
 
     /**
-     * Iterate through created stores.
+     * Iterate through created stores. Should go into DataStore.
      */
     eachStore(): unknown;
 
@@ -295,11 +292,11 @@ interface DataTableRow {
 }
 
 /**
- * Events need to have an origin associated with them. This is so that it’s
- * possible to build event filters on top of this. One use case is a websocket
- * scenario where CRUD is done in real-time: Changes that come from the network
- * should not cause an event trigger that sends the update back to the network
- * (thus causing a loop).
+ * Events need to have an ~origin~ identifier string associated with them. This
+ * is so that it’s possible to build event filters on top of this. One use case
+ * is a websocket scenario where CRUD is done in real-time: Changes that come
+ * from the network should not cause an event trigger that sends the update back
+ * to the network (thus causing a loop).
  */
 interface Event {
     // nothing here
