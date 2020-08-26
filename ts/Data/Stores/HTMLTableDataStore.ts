@@ -52,9 +52,7 @@ class HTMLTableDataStore extends DataStore<HTMLTableDataStore.EventObjects> impl
      * HTMLTableStore from the ClassJSON
      */
     public static fromJSON(json: HTMLTableDataStore.ClassJSON): HTMLTableDataStore {
-        const options: HTMLTableDataStore.OptionsType = {
-                tableHTML: json.tableElement
-            },
+        const options = json.options,
             parser = HTMLTableParser.fromJSON(json.parser),
             table = DataTable.fromJSON(json.table),
             store = new HTMLTableDataStore(table, options, parser);
@@ -84,13 +82,14 @@ class HTMLTableDataStore extends DataStore<HTMLTableDataStore.EventObjects> impl
      */
     public constructor(
         table: DataTable = new DataTable(),
-        options: Partial<(HTMLTableDataStore.Options&HTMLTableParser.Options)> = {},
+        options: HTMLTableDataStore.OptionsType = {},
         parser?: HTMLTableParser
     ) {
         super(table);
 
         this.tableElement = null;
-        this.options = merge(HTMLTableDataStore.defaultOptions, HTMLTableParser.defaultOptions, options);
+
+        this.options = merge(HTMLTableDataStore.defaultOptions, options);
         this.parser = parser || new HTMLTableParser(this.tableElement, this.options);
     }
 
@@ -104,7 +103,7 @@ class HTMLTableDataStore extends DataStore<HTMLTableDataStore.EventObjects> impl
      * Options for the HTMLTable datastore
      * @todo this should not include parsing options
      */
-    public readonly options: (HTMLTableDataStore.Options&HTMLTableParser.Options);
+    public readonly options: (HTMLTableDataStore.Options&HTMLTableParser.OptionsType);
 
     /**
      * The attached parser, which can be replaced in the constructor
@@ -117,6 +116,8 @@ class HTMLTableDataStore extends DataStore<HTMLTableDataStore.EventObjects> impl
      */
     public tableElement: (HTMLElement|null);
 
+    public tableID?: string;
+
     /**
      * Handles retrieving the HTML table by ID if an ID is provided
      */
@@ -127,9 +128,11 @@ class HTMLTableDataStore extends DataStore<HTMLTableDataStore.EventObjects> impl
         let tableElement: (HTMLElement|null);
 
         if (typeof tableHTML === 'string') {
+            store.tableID = tableHTML;
             tableElement = win.document.getElementById(tableHTML);
         } else {
             tableElement = tableHTML;
+            store.tableID = tableElement.id;
         }
 
         store.tableElement = tableElement;
@@ -189,13 +192,8 @@ class HTMLTableDataStore extends DataStore<HTMLTableDataStore.EventObjects> impl
                 metadata: store.getMetadataJSON(),
                 parser: store.parser.toJSON(),
                 table: store.table.toJSON(),
-                tableElement: (
-                    typeof store.tableElement === 'string' ?
-                        store.tableElement :
-                        store.tableElement ?
-                            store.tableElement.id :
-                            ''
-                )
+                options: merge(this.options),
+                tableElementID: store.tableID || ''
             };
 
         return json;
@@ -222,7 +220,7 @@ namespace HTMLTableDataStore {
     /**
      * Options used in the constructor of HTMLTableDataStore
      */
-    export type OptionsType = Partial<(Options&HTMLTableParser.Options)>
+    export type OptionsType = Partial<(HTMLTableDataStore.Options&HTMLTableParser.OptionsType)>
 
     /**
      * The ClassJSON used to import/export HTMLTableDataStore
@@ -231,7 +229,8 @@ namespace HTMLTableDataStore {
         metadata: DataStore.MetadataJSON;
         parser: HTMLTableParser.ClassJSON;
         table: DataTable.ClassJSON;
-        tableElement: string;
+        options: HTMLTableDataStore.OptionsType;
+        tableElementID: string;
     }
 
     /**
@@ -258,6 +257,14 @@ namespace HTMLTableDataStore {
     }
 
 }
+
+/* *
+ *
+ *  Register
+ *
+ * */
+
+DataJSON.addClass(HTMLTableDataStore);
 
 /* *
  *

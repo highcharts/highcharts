@@ -52,7 +52,7 @@ var CSVDataParser = /** @class */ (function (_super) {
     /**
      * Constructs an instance of the CSV parser.
      *
-     * @param {CSVDataParser.ClassJSONOptions} [options]
+     * @param {CSVDataParser.OptionsType} [options]
      * Options for the CSV parser.
      */
     function CSVDataParser(options) {

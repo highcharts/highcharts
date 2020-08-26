@@ -22,6 +22,17 @@ var __extends = (this && this.__extends) || (function () {
         d.prototype = b === null ? Object.create(b) : (__.prototype = b.prototype, new __());
     };
 })();
+var __assign = (this && this.__assign) || function () {
+    __assign = Object.assign || function(t) {
+        for (var s, i = 1, n = arguments.length; i < n; i++) {
+            s = arguments[i];
+            for (var p in s) if (Object.prototype.hasOwnProperty.call(s, p))
+                t[p] = s[p];
+        }
+        return t;
+    };
+    return __assign.apply(this, arguments);
+};
 import DataJSON from '../DataJSON.js';
 import DataParser from './DataParser.js';
 import DataTable from '../DataTable.js';
@@ -32,6 +43,9 @@ var merge = U.merge;
  *  Class
  *
  * */
+/**
+ * Handles parsing and transformation of an HTML table to a DataTable
+ */
 var HTMLTableParser = /** @class */ (function (_super) {
     __extends(HTMLTableParser, _super);
     /* *
@@ -39,13 +53,28 @@ var HTMLTableParser = /** @class */ (function (_super) {
      *  Constructor
      *
      * */
+    /**
+     * Constructs an instance of the HTML table parser.
+     *
+     * @param {HTMLElement | null} tableElement
+     * The HTML table to parse
+     * @param {HTMLTableParser.OptionsType} [options]
+     * Options for the CSV parser.
+     */
     function HTMLTableParser(tableElement, options) {
         if (tableElement === void 0) { tableElement = null; }
         var _this = _super.call(this) || this;
         _this.columns = [];
         _this.headers = [];
         _this.options = merge(HTMLTableParser.defaultOptions, options);
-        _this.tableElement = tableElement;
+        if (tableElement) {
+            _this.tableElement = tableElement;
+            _this.tableElementID = tableElement.id;
+        }
+        else if (options === null || options === void 0 ? void 0 : options.tableHTML) {
+            _this.tableElement = options.tableHTML;
+            _this.tableElementID = options === null || options === void 0 ? void 0 : options.tableHTML.id;
+        }
         return _this;
     }
     /* *
@@ -53,16 +82,36 @@ var HTMLTableParser = /** @class */ (function (_super) {
      *  Static Functions
      *
      * */
+    /**
+     * Creates a HTMLTableParser instance from ClassJSON.
+     *
+     * @param {HTMLTableParser.ClassJSON} json
+     * Class JSON to convert to the parser instance.
+     *
+     * @return {HTMLTableParser}
+     * An instance of CSVDataParser.
+     */
     HTMLTableParser.fromJSON = function (json) {
-        return new HTMLTableParser(document.getElementById(json.tableElement), json.options);
+        return new HTMLTableParser(document.getElementById(json.tableElementID), json.options);
     };
     /* *
      *
      *  Functions
      *
      * */
+    /**
+     * Initiates the parsing of the HTML table
+     *
+     * @param {HTMLTableParser.OptionsType}[options]
+     * Options for the parser
+     *
+     * @emits CSVDataParser#parse
+     * @emits CSVDataParser#afterParse
+     * @emits HTMLTableParser#parseError
+     */
     HTMLTableParser.prototype.parse = function (options) {
-        var parser = this, columns = [], headers = [], parseOptions = merge(parser.options, options), startRow = parseOptions.startRow, endRow = parseOptions.endRow, startColumn = parseOptions.startColumn, endColumn = parseOptions.endColumn, tableHTML = parseOptions.tableHTML;
+        var parser = this, columns = [], headers = [], parseOptions = merge(parser.options, options), startRow = parseOptions.startRow, endRow = parseOptions.endRow, startColumn = parseOptions.startColumn, endColumn = parseOptions.endColumn;
+        var tableHTML = parseOptions.tableHTML || this.tableElement;
         if (!(tableHTML instanceof HTMLElement)) {
             parser.emit({
                 type: 'parseError',
@@ -72,6 +121,9 @@ var HTMLTableParser = /** @class */ (function (_super) {
             });
             return;
         }
+        parser.tableElement = this.tableElement;
+        parser.tableElementID = tableHTML.id;
+        this.emit({ type: 'parse', columns: parser.columns, headers: parser.headers });
         var colsCount, rowNo, colNo, item;
         var rows = tableHTML.getElementsByTagName('tr'), rowsCount = rows.length;
         rowNo = 0;
@@ -110,17 +162,28 @@ var HTMLTableParser = /** @class */ (function (_super) {
         }
         this.columns = columns;
         this.headers = headers;
+        this.emit({ type: 'afterParse', columns: columns, headers: headers });
     };
+    /**
+     * Handles converting the parsed data to a DataTable
+     *
+     * @return {DataTable}
+     * A DataTable from the parsed HTML table
+     */
     HTMLTableParser.prototype.getTable = function () {
         return DataTable.fromColumns(this.columns, this.headers);
     };
+    /**
+     * Converts the parser instance to ClassJSON.
+     *
+     * @return {HTMLTableParser.ClassJSON}
+     * ClassJSON from the parser instance.
+     */
     HTMLTableParser.prototype.toJSON = function () {
-        var parser = this, options = parser.options, tableElement = parser.tableElement, json = {
+        var parser = this, options = parser.options, tableElementID = parser.tableElementID, json = {
             $class: 'HTMLTableParser',
             options: options,
-            tableElement: (tableElement &&
-                tableElement.getAttribute('id') ||
-                '')
+            tableElementID: tableElementID ? tableElementID : ''
         };
         return json;
     };
@@ -129,7 +192,10 @@ var HTMLTableParser = /** @class */ (function (_super) {
      *  Static Properties
      *
      * */
-    HTMLTableParser.defaultOptions = DataParser.defaultOptions;
+    /**
+     * Default options
+     */
+    HTMLTableParser.defaultOptions = __assign({}, DataParser.defaultOptions);
     return HTMLTableParser;
 }(DataParser));
 /* *
