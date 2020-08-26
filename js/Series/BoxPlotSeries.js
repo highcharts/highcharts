@@ -7,14 +7,13 @@
  *  !!!!!!! SOURCE GETS TRANSPILED BY TYPESCRIPT. EDIT TS FILE ONLY. !!!!!!!
  *
  * */
-import BaseSeries from '../Core/Series/Series.js';
+import Series from '../Core/Series/Series.js';
+import ColumnSeries from './ColumnSeries.js';
+var columnProto = ColumnSeries.prototype;
 import H from '../Core/Globals.js';
 var noop = H.noop;
 import U from '../Core/Utilities.js';
 var pick = U.pick;
-import './ColumnSeries.js';
-import '../Core/Options.js';
-var columnProto = BaseSeries.seriesTypes.column.prototype;
 /**
  * The boxplot series type.
  *
@@ -40,7 +39,7 @@ var columnProto = BaseSeries.seriesTypes.column.prototype;
  * @requires     highcharts-more
  * @optionparent plotOptions.boxplot
  */
-BaseSeries.seriesType('boxplot', 'column', {
+Series.seriesType('boxplot', 'column', {
     threshold: null,
     tooltip: {
         pointFormat: '<span style="color:{point.color}">\u25CF</span> <b> ' +

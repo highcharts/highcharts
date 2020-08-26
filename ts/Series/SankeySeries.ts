@@ -10,11 +10,17 @@
  *
  * */
 
-import BaseSeries from '../Core/Series/Series.js';
+import Series from '../Core/Series/Series.js';
+import CatesianSeries from '../Core/Series/CatesianSeries.js';
 import Color from '../Core/Color.js';
+import ColumnSeries from './ColumnSeries.js';
 import H from '../Core/Globals.js';
 import NodesMixin from '../Mixins/Nodes.js';
 import Point from '../Core/Series/Point.js';
+import TreeSeriesMixin from '../Mixins/TreeSeries.js';
+const {
+    getLevelOptions
+} = TreeSeriesMixin;
 import U from '../Core/Utilities.js';
 const {
     defined,
@@ -25,10 +31,15 @@ const {
     relativeLength,
     stableSort
 } = U;
-import TreeSeriesMixin from '../Mixins/TreeSeries.js';
-const {
-    getLevelOptions
-} = TreeSeriesMixin;
+
+/**
+ * @private
+ */
+declare module '../Core/Series/Types' {
+    interface SeriesTypeRegistry {
+        sankey: typeof Highcharts.SankeySeries;
+    }
+}
 
 /**
  * Internal types
@@ -186,18 +197,6 @@ declare global {
 }
 
 /**
- * @private
- */
-declare module '../Core/Series/Types' {
-    interface SeriesTypeRegistry {
-        sankey: typeof Highcharts.SankeySeries;
-    }
-}
-
-import '../Core/Options.js';
-import './ColumnSeries.js';
-
-/**
  * A node in a sankey diagram.
  *
  * @interface Highcharts.SankeyNodeObject
@@ -313,7 +312,7 @@ var getDLOptions = function getDLOptions(
  *
  * @augments Highcharts.Series
  */
-BaseSeries.seriesType<typeof Highcharts.SankeySeries>(
+Series.seriesType<typeof Highcharts.SankeySeries>(
     'sankey',
     'column',
     /**
@@ -1314,13 +1313,13 @@ BaseSeries.seriesType<typeof Highcharts.SankeySeries>(
             var points = this.points;
 
             this.points = this.points.concat(this.nodes || []);
-            H.seriesTypes.column.prototype.render.call(this);
+            ColumnSeries.prototype.render.call(this);
             this.points = points;
         },
 
         /* eslint-enable valid-jsdoc */
 
-        animate: H.Series.prototype.animate
+        animate: CatesianSeries.prototype.animate
     }, {
         applyOptions: function (
             this: Highcharts.SankeyPoint,

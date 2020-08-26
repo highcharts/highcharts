@@ -9,11 +9,10 @@
  *  !!!!!!! SOURCE GETS TRANSPILED BY TYPESCRIPT. EDIT TS FILE ONLY. !!!!!!!
  *
  * */
-import BaseSeries from '../Core/Series/Series.js';
+import Series from '../Core/Series/Series.js';
 import SVGRenderer from '../Core/Renderer/SVG/SVGRenderer.js';
 import U from '../Core/Utilities.js';
 var extend = U.extend, objectEach = U.objectEach, pick = U.pick;
-import './ColumnSeries.js';
 /**
  * @private
  * @class
@@ -21,7 +20,7 @@ import './ColumnSeries.js';
  *
  * @augments Highcharts.Series
  */
-BaseSeries.seriesType('dotplot', 'column', {
+Series.seriesType('dotplot', 'column', {
     itemPadding: 0.2,
     marker: {
         symbol: 'circle',

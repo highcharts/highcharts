@@ -8,7 +8,8 @@
  *
  * */
 
-import BaseSeries from '../Core/Series/Series.js';
+import _ColumnSeries from './ColumnSeries.js';
+import Series from '../Core/Series/Series.js';
 
 /**
  * @private
@@ -45,8 +46,6 @@ declare global {
     }
 }
 
-import './ColumnSeries.js';
-
 /**
  * Bar series type.
  *
@@ -56,7 +55,7 @@ import './ColumnSeries.js';
  *
  * @augments Highcharts.Series
  */
-BaseSeries.seriesType<typeof Highcharts.BarSeries>(
+Series.seriesType<typeof Highcharts.BarSeries>(
     'bar',
     'column',
 

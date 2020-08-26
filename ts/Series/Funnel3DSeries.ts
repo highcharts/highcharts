@@ -14,17 +14,28 @@
 
 import type Chart from '../Core/Chart/Chart';
 import type SVGPath from '../Core/Renderer/SVG/SVGPath';
-import BaseSeries from '../Core/Series/Series.js';
 import Color from '../Core/Color.js';
 const {
     parse: color
 } = Color;
+import _ColumnSeries from './ColumnSeries.js';
 import H from '../Core/Globals.js';
 const {
-    charts
+    charts,
+    // Use H.Renderer instead of SVGRenderer for VML support.
+    Renderer: {
+        prototype: RendererProto
+    }
 } = H;
 import Math3D from '../Extensions/Math3D.js';
-const { perspective } = Math3D;
+const {
+    perspective
+} = Math3D;
+import Series from '../Core/Series/Series.js';
+const {
+    seriesTypes
+} = Series;
+import _SVGRenderer from '../Core/Renderer/SVG/SVGRenderer.js';
 import U from '../Core/Utilities.js';
 const {
     error,
@@ -33,6 +44,15 @@ const {
     pick,
     relativeLength
 } = U;
+
+/**
+ * @private
+ */
+declare module '../Core/Series/Types' {
+    interface SeriesTypeRegistry {
+        funnel3d: typeof Highcharts.Funnel3dSeries;
+    }
+}
 
 /**
  * Internal types
@@ -110,23 +130,7 @@ declare global {
     }
 }
 
-/**
- * @private
- */
-declare module '../Core/Series/Types' {
-    interface SeriesTypeRegistry {
-        funnel3d: typeof Highcharts.Funnel3dSeries;
-    }
-}
-
-import './ColumnSeries.js';
-import '../Core/Renderer/SVG/SVGRenderer.js';
-
-var seriesTypes = BaseSeries.seriesTypes,
-    // Use H.Renderer instead of SVGRenderer for VML support.
-    RendererProto = H.Renderer.prototype,
-    //
-    cuboidPath = RendererProto.cuboidPath,
+var cuboidPath = RendererProto.cuboidPath,
     funnel3dMethods: Highcharts.Funnel3dMethodsObject;
 
 /**
@@ -138,7 +142,7 @@ var seriesTypes = BaseSeries.seriesTypes,
  * @requires modules/cylinder
  * @requires modules/funnel3d
  */
-BaseSeries.seriesType<typeof Highcharts.Funnel3dSeries>('funnel3d', 'column',
+Series.seriesType<typeof Highcharts.Funnel3dSeries>('funnel3d', 'column',
     /**
      * A funnel3d is a 3d version of funnel series type. Funnel charts are
      * a type of chart often used to visualize stages in a sales project,

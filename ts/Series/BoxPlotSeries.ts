@@ -9,7 +9,11 @@
  * */
 
 import type SVGPath from '../Core/Renderer/SVG/SVGPath';
-import BaseSeries from '../Core/Series/Series.js';
+import Series from '../Core/Series/Series.js';
+import ColumnSeries from './ColumnSeries.js';
+const {
+    prototype: columnProto
+} = ColumnSeries;
 import H from '../Core/Globals.js';
 const {
     noop
@@ -18,6 +22,15 @@ import U from '../Core/Utilities.js';
 const {
     pick
 } = U;
+
+/**
+ * @private
+ */
+declare module '../Core/Series/Types' {
+    interface SeriesTypeRegistry {
+        boxplot: typeof Highcharts.BoxPlotSeries;
+    }
+}
 
 /**
  * Internal types
@@ -96,20 +109,6 @@ declare global {
 }
 
 /**
- * @private
- */
-declare module '../Core/Series/Types' {
-    interface SeriesTypeRegistry {
-        boxplot: typeof Highcharts.BoxPlotSeries;
-    }
-}
-
-import './ColumnSeries.js';
-import '../Core/Options.js';
-
-var columnProto = BaseSeries.seriesTypes.column.prototype;
-
-/**
  * The boxplot series type.
  *
  * @private
@@ -135,7 +134,7 @@ var columnProto = BaseSeries.seriesTypes.column.prototype;
  * @requires     highcharts-more
  * @optionparent plotOptions.boxplot
  */
-BaseSeries.seriesType<typeof Highcharts.BoxPlotSeries>(
+Series.seriesType<typeof Highcharts.BoxPlotSeries>(
     'boxplot',
     'column',
     {

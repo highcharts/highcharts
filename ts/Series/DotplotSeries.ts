@@ -19,7 +19,8 @@
  */
 
 import type SVGPath from '../Core/Renderer/SVG/SVGPath';
-import BaseSeries from '../Core/Series/Series.js';
+import _ColumnSeries from './ColumnSeries.js';
+import Series from '../Core/Series/Series.js';
 import SVGRenderer from '../Core/Renderer/SVG/SVGRenderer.js';
 import U from '../Core/Utilities.js';
 const {
@@ -28,6 +29,19 @@ const {
     pick
 } = U;
 
+/**
+ * @private
+ */
+declare module '../Core/Series/Types' {
+    interface SeriesTypeRegistry {
+        dotplot: typeof Highcharts.DotplotSeries;
+    }
+}
+
+/**
+ * Internal types.
+ * @private
+ */
 declare global {
     namespace Highcharts {
         class DotplotPoint extends ColumnPoint {
@@ -55,23 +69,12 @@ declare global {
 
 /**
  * @private
- */
-declare module '../Core/Series/Types' {
-    interface SeriesTypeRegistry {
-        dotplot: typeof Highcharts.DotplotSeries;
-    }
-}
-
-import './ColumnSeries.js';
-
-/**
- * @private
  * @class
  * @name Highcharts.seriesTypes.dotplot
  *
  * @augments Highcharts.Series
  */
-BaseSeries.seriesType<typeof Highcharts.DotplotSeries>('dotplot', 'column', {
+Series.seriesType<typeof Highcharts.DotplotSeries>('dotplot', 'column', {
     itemPadding: 0.2,
     marker: {
         symbol: 'circle',

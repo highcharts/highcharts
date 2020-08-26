@@ -45,6 +45,7 @@ declare global {
     }
 }
 
+import '../Options.js';
 
 /**
  * @class

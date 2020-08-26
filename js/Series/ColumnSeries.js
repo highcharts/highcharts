@@ -13,6 +13,7 @@ var color = Color.parse;
 import H from '../Core/Globals.js';
 var noop = H.noop;
 import LegendSymbolMixin from '../Mixins/LegendSymbol.js';
+import LineSeries from './LineSeries.js';
 import U from '../Core/Utilities.js';
 var animObject = U.animObject, clamp = U.clamp, defined = U.defined, extend = U.extend, isNumber = U.isNumber, merge = U.merge, pick = U.pick, objectEach = U.objectEach;
 /**
@@ -30,9 +31,6 @@ var animObject = U.animObject, clamp = U.clamp, defined = U.defined, extend = U.
 * @type {number}
 */
 ''; // detach doclets above
-import './LineSeries.js';
-import '../Core/Options.js';
-var Series = H.Series;
 /**
  * The column series type.
  *
@@ -42,7 +40,7 @@ var Series = H.Series;
  *
  * @augments Highcharts.Series
  */
-BaseSeries.seriesType('column', 'line', 
+var ColumnSeries = BaseSeries.seriesType('column', 'line', 
 /**
  * Column series display one column per value along an X axis.
  *
@@ -426,7 +424,7 @@ BaseSeries.seriesType('column', 'line',
      * @return {void}
      */
     init: function () {
-        Series.prototype.init.apply(this, arguments);
+        LineSeries.prototype.init.apply(this, arguments);
         var series = this, chart = series.chart;
         // if the series is added dynamically, force redraw of other
         // series affected by a new column
@@ -632,7 +630,7 @@ BaseSeries.seriesType('column', 'line',
         if (options.pointPadding) {
             seriesBarW = Math.ceil(seriesBarW);
         }
-        Series.prototype.translate.apply(series);
+        LineSeries.prototype.translate.apply(series);
         // Record the new values
         series.points.forEach(function (point) {
             var yBottom = pick(point.yBottom, translatedThreshold), safeDistance = 999 + Math.abs(yBottom), pointWidth = seriesPointWidth, plotX = point.plotX || 0, 
@@ -911,7 +909,7 @@ BaseSeries.seriesType('column', 'line',
                 }
             });
         }
-        Series.prototype.remove.apply(series, arguments);
+        LineSeries.prototype.remove.apply(series, arguments);
     }
 });
 /* eslint-enable valid-jsdoc */
@@ -1044,3 +1042,4 @@ BaseSeries.seriesType('column', 'line',
  * @apioption series.column.states.select
  */
 ''; // includes above doclets in transpilat
+export default ColumnSeries;

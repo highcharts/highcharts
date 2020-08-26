@@ -9,6 +9,10 @@
  * */
 
 import BaseSeries from '../Core/Series/Series.js';
+import ColumnSeries from './ColumnSeries.js';
+const {
+    prototype: colProto
+} = ColumnSeries;
 import U from '../Core/Utilities.js';
 const {
     clamp,
@@ -42,10 +46,6 @@ declare global {
         }
     }
 }
-
-import './ColumnSeries.js';
-
-const colProto = BaseSeries.seriesTypes.column.prototype;
 
 /**
  * The ColumnPyramidSeries class

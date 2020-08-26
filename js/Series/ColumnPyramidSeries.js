@@ -8,10 +8,10 @@
  *
  * */
 import BaseSeries from '../Core/Series/Series.js';
+import ColumnSeries from './ColumnSeries.js';
+var colProto = ColumnSeries.prototype;
 import U from '../Core/Utilities.js';
 var clamp = U.clamp, pick = U.pick;
-import './ColumnSeries.js';
-var colProto = BaseSeries.seriesTypes.column.prototype;
 /**
  * The ColumnPyramidSeries class
  *

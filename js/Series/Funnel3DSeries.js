@@ -11,22 +11,17 @@
  *  !!!!!!! SOURCE GETS TRANSPILED BY TYPESCRIPT. EDIT TS FILE ONLY. !!!!!!!
  *
  * */
-import BaseSeries from '../Core/Series/Series.js';
 import Color from '../Core/Color.js';
 var color = Color.parse;
 import H from '../Core/Globals.js';
-var charts = H.charts;
+var charts = H.charts, RendererProto = H.Renderer.prototype;
 import Math3D from '../Extensions/Math3D.js';
 var perspective = Math3D.perspective;
+import Series from '../Core/Series/Series.js';
+var seriesTypes = Series.seriesTypes;
 import U from '../Core/Utilities.js';
 var error = U.error, extend = U.extend, merge = U.merge, pick = U.pick, relativeLength = U.relativeLength;
-import './ColumnSeries.js';
-import '../Core/Renderer/SVG/SVGRenderer.js';
-var seriesTypes = BaseSeries.seriesTypes, 
-// Use H.Renderer instead of SVGRenderer for VML support.
-RendererProto = H.Renderer.prototype, 
-//
-cuboidPath = RendererProto.cuboidPath, funnel3dMethods;
+var cuboidPath = RendererProto.cuboidPath, funnel3dMethods;
 /**
  * The funnel3d series type.
  *
@@ -36,7 +31,7 @@ cuboidPath = RendererProto.cuboidPath, funnel3dMethods;
  * @requires modules/cylinder
  * @requires modules/funnel3d
  */
-BaseSeries.seriesType('funnel3d', 'column', 
+Series.seriesType('funnel3d', 'column', 
 /**
  * A funnel3d is a 3d version of funnel series type. Funnel charts are
  * a type of chart often used to visualize stages in a sales project,

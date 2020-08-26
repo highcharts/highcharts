@@ -14,17 +14,40 @@
 
 import type Chart from '../Core/Chart/Chart';
 import type SVGPath from '../Core/Renderer/SVG/SVGPath';
-import BaseSeries from '../Core/Series/Series.js';
-import H from '../Core/Globals.js';
 import Color from '../Core/Color.js';
-const color = Color.parse;
+const {
+    parse: color
+} = Color;
+import _ColumnSeries from '../Series/ColumnSeries.js';
+import H from '../Core/Globals.js';
+const {
+    charts,
+    deg2rad,
+    // Work on H.Renderer instead of SVGRenderer for VML support.
+    Renderer: {
+        prototype: RendererProto
+    }
+} = H;
 import Math3D from '../Extensions/Math3D.js';
-const { perspective } = Math3D;
+const {
+    perspective
+} = Math3D;
+import Series from '../Core/Series/Series.js';
+import _SVGRenderer from '../Core/Renderer/SVG/SVGRenderer.js';
 import U from '../Core/Utilities.js';
 const {
     merge,
     pick
 } = U;
+
+/**
+ * @private
+ */
+declare module '../Core/Series/Types' {
+    interface SeriesTypeRegistry {
+        cylinder: typeof Highcharts.CylinderSeries;
+    }
+}
 
 /**
  * Internal types
@@ -84,23 +107,7 @@ declare global {
     }
 }
 
-/**
- * @private
- */
-declare module '../Core/Series/Types' {
-    interface SeriesTypeRegistry {
-        cylinder: typeof Highcharts.CylinderSeries;
-    }
-}
-
-import '../Series/ColumnSeries.js';
-import '../Core/Renderer/SVG/SVGRenderer.js';
-
-const charts = H.charts,
-    deg2rad = H.deg2rad,
-    // Work on H.Renderer instead of SVGRenderer for VML support.
-    RendererProto = H.Renderer.prototype,
-    cuboidPath = RendererProto.cuboidPath;
+const cuboidPath = RendererProto.cuboidPath;
 
 // Check if a path is simplified. The simplified path contains only lineTo
 // segments, whereas non-simplified contain curves.
@@ -119,7 +126,7 @@ const isSimplified = (path: SVGPath): boolean =>
   *
   * @augments Highcharts.Series
   */
-BaseSeries.seriesType<typeof Highcharts.CylinderSeries>(
+Series.seriesType<typeof Highcharts.CylinderSeries>(
     'cylinder',
     'column',
     /**

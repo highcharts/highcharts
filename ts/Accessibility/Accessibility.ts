@@ -15,7 +15,24 @@
 import type Chart from '../Core/Chart/Chart';
 import ChartUtilities from './Utils/ChartUtilities.js';
 import H from '../Core/Globals.js';
+const {
+    doc
+} = H;
 import KeyboardNavigationHandler from './KeyboardNavigationHandler.js';
+import CatesianSeries from '../Core/Series/CatesianSeries.js';
+import O from '../Core/Options.js';
+const {
+    defaultOptions
+} = O;
+import Point from '../Core/Series/Point.js';
+import U from '../Core/Utilities.js';
+const {
+    addEvent,
+    extend,
+    fireEvent,
+    merge
+} = U;
+
 
 /**
  * Internal types.
@@ -67,19 +84,6 @@ declare global {
         let A11yChartUtilities: A11yChartUtilities;
     }
 }
-
-import O from '../Core/Options.js';
-const { defaultOptions } = O;
-import Point from '../Core/Series/Point.js';
-import U from '../Core/Utilities.js';
-const {
-    addEvent,
-    extend,
-    fireEvent,
-    merge
-} = U;
-
-var doc = H.win.document;
 
 import AccessibilityComponent from './AccessibilityComponent.js';
 import KeyboardNavigation from './KeyboardNavigation.js';
@@ -389,7 +393,7 @@ addEvent(Point, 'update', function (): void {
     });
 });
 ['update', 'updatedData', 'remove'].forEach(function (event: string): void {
-    addEvent(H.Series, event, function (): void {
+    addEvent(CatesianSeries, event, function (): void {
         if (this.chart.accessibility) {
             this.chart.a11yDirty = true;
         }

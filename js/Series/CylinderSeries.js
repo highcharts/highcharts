@@ -11,19 +11,16 @@
  *  !!!!!!! SOURCE GETS TRANSPILED BY TYPESCRIPT. EDIT TS FILE ONLY. !!!!!!!
  *
  * */
-import BaseSeries from '../Core/Series/Series.js';
-import H from '../Core/Globals.js';
 import Color from '../Core/Color.js';
 var color = Color.parse;
+import H from '../Core/Globals.js';
+var charts = H.charts, deg2rad = H.deg2rad, RendererProto = H.Renderer.prototype;
 import Math3D from '../Extensions/Math3D.js';
 var perspective = Math3D.perspective;
+import Series from '../Core/Series/Series.js';
 import U from '../Core/Utilities.js';
 var merge = U.merge, pick = U.pick;
-import '../Series/ColumnSeries.js';
-import '../Core/Renderer/SVG/SVGRenderer.js';
-var charts = H.charts, deg2rad = H.deg2rad, 
-// Work on H.Renderer instead of SVGRenderer for VML support.
-RendererProto = H.Renderer.prototype, cuboidPath = RendererProto.cuboidPath;
+var cuboidPath = RendererProto.cuboidPath;
 // Check if a path is simplified. The simplified path contains only lineTo
 // segments, whereas non-simplified contain curves.
 var isSimplified = function (path) {
@@ -41,7 +38,7 @@ var isSimplified = function (path) {
   *
   * @augments Highcharts.Series
   */
-BaseSeries.seriesType('cylinder', 'column', 
+Series.seriesType('cylinder', 'column', 
 /**
  * A cylinder graph is a variation of a 3d column graph. The cylinder graph
  * features cylindrical points.

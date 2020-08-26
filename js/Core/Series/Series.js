@@ -11,6 +11,7 @@ import H from '../Globals.js';
 import Point from './Point.js';
 import U from '../Utilities.js';
 var error = U.error, extendClass = U.extendClass, fireEvent = U.fireEvent, getOptions = U.getOptions, isObject = U.isObject, merge = U.merge, objectEach = U.objectEach;
+import '../Options.js';
 /**
  * @class
  * @name Highcharts.Series

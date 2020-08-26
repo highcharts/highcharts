@@ -18,6 +18,7 @@ const {
     noop
 } = H;
 import LegendSymbolMixin from '../Mixins/LegendSymbol.js';
+import LineSeries from './LineSeries.js';
 import U from '../Core/Utilities.js';
 const {
     animObject,
@@ -29,6 +30,15 @@ const {
     pick,
     objectEach
 } = U;
+
+/**
+ * @private
+ */
+declare module '../Core/Series/Types' {
+    interface SeriesTypeRegistry {
+        column: typeof Highcharts.ColumnSeries;
+    }
+}
 
 /**
  * Internal types
@@ -120,15 +130,6 @@ declare global {
 }
 
 /**
- * @private
- */
-declare module '../Core/Series/Types' {
-    interface SeriesTypeRegistry {
-        column: typeof Highcharts.ColumnSeries;
-    }
-}
-
-/**
  * Adjusted width and x offset of the columns for grouping.
  *
  * @private
@@ -145,11 +146,6 @@ declare module '../Core/Series/Types' {
 
 ''; // detach doclets above
 
-import './LineSeries.js';
-import '../Core/Options.js';
-
-var Series = H.Series;
-
 /**
  * The column series type.
  *
@@ -159,7 +155,7 @@ var Series = H.Series;
  *
  * @augments Highcharts.Series
  */
-BaseSeries.seriesType<typeof Highcharts.ColumnSeries>(
+const ColumnSeries = BaseSeries.seriesType<typeof Highcharts.ColumnSeries>(
     'column',
     'line',
 
@@ -580,7 +576,7 @@ BaseSeries.seriesType<typeof Highcharts.ColumnSeries>(
          * @return {void}
          */
         init: function (this: Highcharts.ColumnSeries): void {
-            Series.prototype.init.apply(this, arguments as any);
+            LineSeries.prototype.init.apply(this, arguments as any);
 
             var series = this,
                 chart = series.chart;
@@ -887,7 +883,7 @@ BaseSeries.seriesType<typeof Highcharts.ColumnSeries>(
                 seriesBarW = Math.ceil(seriesBarW);
             }
 
-            Series.prototype.translate.apply(series);
+            LineSeries.prototype.translate.apply(series);
 
             // Record the new values
             series.points.forEach(function (
@@ -1293,7 +1289,7 @@ BaseSeries.seriesType<typeof Highcharts.ColumnSeries>(
                 });
             }
 
-            Series.prototype.remove.apply(series, arguments as any);
+            LineSeries.prototype.remove.apply(series, arguments as any);
         }
     }
 );
@@ -1437,3 +1433,5 @@ BaseSeries.seriesType<typeof Highcharts.ColumnSeries>(
  */
 
 ''; // includes above doclets in transpilat
+
+export default ColumnSeries;

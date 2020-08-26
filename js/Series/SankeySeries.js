@@ -9,17 +9,17 @@
  *  !!!!!!! SOURCE GETS TRANSPILED BY TYPESCRIPT. EDIT TS FILE ONLY. !!!!!!!
  *
  * */
-import BaseSeries from '../Core/Series/Series.js';
+import Series from '../Core/Series/Series.js';
+import CatesianSeries from '../Core/Series/CatesianSeries.js';
 import Color from '../Core/Color.js';
+import ColumnSeries from './ColumnSeries.js';
 import H from '../Core/Globals.js';
 import NodesMixin from '../Mixins/Nodes.js';
 import Point from '../Core/Series/Point.js';
-import U from '../Core/Utilities.js';
-var defined = U.defined, find = U.find, isObject = U.isObject, merge = U.merge, pick = U.pick, relativeLength = U.relativeLength, stableSort = U.stableSort;
 import TreeSeriesMixin from '../Mixins/TreeSeries.js';
 var getLevelOptions = TreeSeriesMixin.getLevelOptions;
-import '../Core/Options.js';
-import './ColumnSeries.js';
+import U from '../Core/Utilities.js';
+var defined = U.defined, find = U.find, isObject = U.isObject, merge = U.merge, pick = U.pick, relativeLength = U.relativeLength, stableSort = U.stableSort;
 /**
  * A node in a sankey diagram.
  *
@@ -120,7 +120,7 @@ var getDLOptions = function getDLOptions(params) {
  *
  * @augments Highcharts.Series
  */
-BaseSeries.seriesType('sankey', 'column', 
+Series.seriesType('sankey', 'column', 
 /**
  * A sankey diagram is a type of flow diagram, in which the width of the
  * link between two nodes is shown proportionally to the flow quantity.
@@ -849,11 +849,11 @@ BaseSeries.seriesType('sankey', 'column',
     render: function () {
         var points = this.points;
         this.points = this.points.concat(this.nodes || []);
-        H.seriesTypes.column.prototype.render.call(this);
+        ColumnSeries.prototype.render.call(this);
         this.points = points;
     },
     /* eslint-enable valid-jsdoc */
-    animate: H.Series.prototype.animate
+    animate: CatesianSeries.prototype.animate
 }, {
     applyOptions: function (options, x) {
         Point.prototype.applyOptions.call(this, options, x);
