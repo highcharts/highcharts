@@ -1148,16 +1148,13 @@ class SVGRenderer {
             // Make a copy of normalState (#13798)
             // (reference to options.rangeSelector.buttonTheme)
             normalState = theme ? merge(theme) : {},
-            width = normalState.width,
-            height = normalState.height,
             userNormalStyle = normalState && normalState.style || {};
-
 
         // Remove stylable attributes
         normalState = this.filterUserAttributes(normalState) || {};
 
         // Default, non-stylable attributes
-        label.attr(merge({ padding: 8, r: 2, width, height }, normalState));
+        label.attr(merge({ padding: 8, r: 2 }, normalState));
 
         if (!styledMode) {
             // Presentational
@@ -1326,14 +1323,17 @@ class SVGRenderer {
             'dx',
             'dy',
             'fill',
+            'height',
             'padding',
             'r',
             'startOffset',
             'stroke',
             'stroke-linecap',
             'stroke-width',
+            'text-align',
             'textAnchor',
             'textLength',
+            'width',
             'zIndex'
         ];
         if (attributes) {
