@@ -90,7 +90,7 @@ const base = BaseSeries.seriesTypes.sankey.prototype;
  *
  * @augments Highcharts.seriesTypes.sankey
  */
-BaseSeries.seriesType<Highcharts.DependencyWheelSeries>(
+BaseSeries.seriesType<typeof Highcharts.DependencyWheelSeries>(
     'dependencywheel',
     'sankey',
     /**

@@ -144,7 +144,7 @@ function normalDensity(
  *
  * @augments Highcharts.Series
  */
-BaseSeries.seriesType<Highcharts.BellcurveSeries>('bellcurve', 'areaspline'
+BaseSeries.seriesType<typeof Highcharts.BellcurveSeries>('bellcurve', 'areaspline'
 
     /**
      * A bell curve is an areaspline series which represents the probability

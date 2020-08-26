@@ -87,7 +87,7 @@ function meanDeviation(arr: Array<number>, sma: number): number {
  *
  * @augments Highcharts.Series
  */
-BaseSeries.seriesType<Highcharts.CCIIndicator>(
+BaseSeries.seriesType<typeof Highcharts.CCIIndicator>(
     'cci',
     'sma',
     /**

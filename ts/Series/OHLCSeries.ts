@@ -79,7 +79,7 @@ import './ColumnSeries.js';
  *
  * @augments Highcharts.Series
  */
-BaseSeries.seriesType<Highcharts.OHLCSeries>(
+BaseSeries.seriesType<typeof Highcharts.OHLCSeries>(
     'ohlc',
     'column'
 

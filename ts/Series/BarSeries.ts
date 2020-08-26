@@ -56,7 +56,7 @@ import './ColumnSeries.js';
  *
  * @augments Highcharts.Series
  */
-BaseSeries.seriesType<Highcharts.BarSeries>(
+BaseSeries.seriesType<typeof Highcharts.BarSeries>(
     'bar',
     'column',
 

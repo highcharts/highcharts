@@ -62,7 +62,7 @@ import './SMAIndicator.js';
  *
  * @augments Highcharts.Series
  */
-BaseSeries.seriesType<Highcharts.WilliamsRIndicator>(
+BaseSeries.seriesType<typeof Highcharts.WilliamsRIndicator>(
     'williamsr',
     'sma',
     /**

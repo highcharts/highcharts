@@ -60,7 +60,7 @@ declare module '../Core/Series/Types' {
 }
 
 import '../Core/Options.js';
-import '../Core/Series/CatesianSeries.js';
+import '../Series/LineSeries.js';
 
 var Series = H.Series;
 
@@ -73,7 +73,7 @@ var Series = H.Series;
  *
  * @augments Highcharts.Series
  */
-BaseSeries.seriesType<Highcharts.ScatterSeries>(
+BaseSeries.seriesType<typeof Highcharts.ScatterSeries>(
     'scatter',
     'line',
 

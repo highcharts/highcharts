@@ -60,7 +60,7 @@ import './StochasticIndicator.js';
  *
  * @augments Highcharts.Series
  */
-BaseSeries.seriesType<Highcharts.SlowStochasticIndicator>(
+BaseSeries.seriesType<typeof Highcharts.SlowStochasticIndicator>(
     'slowstochastic',
     'stochastic',
     /**

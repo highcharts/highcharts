@@ -14,7 +14,7 @@ import H from '../Core/Globals.js';
 import LegendSymbolMixin from '../Mixins/LegendSymbol.js';
 import U from '../Core/Utilities.js';
 var objectEach = U.objectEach, pick = U.pick;
-import '../Core/Series/CatesianSeries.js';
+import '../Series/LineSeries.js';
 import '../Core/Options.js';
 var Series = H.Series;
 /**

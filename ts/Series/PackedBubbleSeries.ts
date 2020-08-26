@@ -526,7 +526,7 @@ H.layouts.packedbubble = extendClass(
  *
  * @extends Highcharts.Series
  */
-BaseSeries.seriesType<Highcharts.PackedBubbleSeries>(
+BaseSeries.seriesType<typeof Highcharts.PackedBubbleSeries>(
     'packedbubble',
     'bubble',
     /**

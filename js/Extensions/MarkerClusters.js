@@ -35,7 +35,7 @@ var addEvent = U.addEvent, animObject = U.animObject, defined = U.defined, error
 ''; // detach doclets from following code
 /* eslint-disable no-invalid-this */
 import Axis from '../Core/Axis/Axis.js';
-import '../Core/Series/CatesianSeries.js';
+import '../Series/LineSeries.js';
 var Series = H.Series, Scatter = BaseSeries.seriesTypes.scatter, baseGeneratePoints = Series.prototype.generatePoints, stateIdCounter = 0, 
 // Points that ids are included in the oldPointsStateId array
 // are hidden before animation. Other ones are destroyed.

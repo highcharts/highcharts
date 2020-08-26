@@ -166,7 +166,7 @@ const {
 } = U;
 
 import '../Core/Axis/Axis.js';
-import '../Core/Series/CatesianSeries.js';
+import '../Series/LineSeries.js';
 
 var Axis = H.Axis,
     Series = H.Series;

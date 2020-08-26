@@ -112,7 +112,7 @@ declare module '../Core/Series/Types' {
 }
 
 import '../Core/Options.js';
-import '../Core/Series/CatesianSeries.js';
+import '../Series/LineSeries.js';
 
 /**
  * @private
@@ -121,7 +121,7 @@ import '../Core/Series/CatesianSeries.js';
  *
  * @augments Highcharts.Series
  */
-BaseSeries.seriesType<Highcharts.FunnelSeries>(
+BaseSeries.seriesType<typeof Highcharts.FunnelSeries>(
     'funnel',
     'pie',
     /**
@@ -709,7 +709,7 @@ addEvent(Chart, 'afterHideAllOverlappingLabels', function (): void {
  *
  * @augments Highcharts.Series
  */
-BaseSeries.seriesType<Highcharts.PyramidSeries>(
+BaseSeries.seriesType<typeof Highcharts.PyramidSeries>(
     'pyramid',
     'funnel',
     /**

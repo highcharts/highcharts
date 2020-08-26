@@ -325,7 +325,7 @@ declare module '../Core/Series/Types' {
  * @type {"drillup"}
  */
 
-import '../Core/Series/CatesianSeries.js';
+import '../Series/LineSeries.js';
 import '../Series/ColumnSeries.js';
 
 var seriesTypes = H.seriesTypes,

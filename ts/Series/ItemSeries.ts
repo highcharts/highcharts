@@ -108,7 +108,7 @@ var piePoint = BaseSeries.seriesTypes.pie.prototype.pointClass.prototype;
  *
  * @augments Highcharts.seriesTypes.pie
  */
-BaseSeries.seriesType<Highcharts.ItemSeries>(
+BaseSeries.seriesType<typeof Highcharts.ItemSeries>(
     'item',
     // Inherits pie as the most tested non-cartesian series with individual
     // point legend, tooltips etc. Only downside is we need to re-enable

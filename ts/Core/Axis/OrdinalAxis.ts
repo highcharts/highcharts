@@ -66,7 +66,7 @@ declare module './Types' {
 import '../Chart/Chart.js';
 // Has a dependency on Navigator due to the use of Axis.toFixedRange
 import '../Navigator.js';
-import '../Series/CatesianSeries.js';
+import '../../Series/LineSeries.js';
 
 var Chart = H.Chart,
     Series = H.Series;

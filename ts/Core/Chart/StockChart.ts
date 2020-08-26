@@ -78,7 +78,7 @@ declare global {
 }
 
 import '../Pointer.js';
-import '../Series/CatesianSeries.js';
+import '../../Series/LineSeries.js';
 // Has a dependency on Navigator due to the use of
 // defaultOptions.navigator
 import '../Navigator.js';

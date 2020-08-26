@@ -72,7 +72,7 @@ declare module '../Core/Series/Types' {
  * @requires     highcharts-more
  * @optionparent plotOptions.errorbar
  */
-BaseSeries.seriesType<Highcharts.ErrorBarSeries>('errorbar', 'boxplot', {
+BaseSeries.seriesType<typeof Highcharts.ErrorBarSeries>('errorbar', 'boxplot', {
 
     /**
      * The main color of the bars. This can be overridden by

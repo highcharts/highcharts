@@ -20,7 +20,7 @@ import SVGRenderer from '../Core/Renderer/SVG/SVGRenderer.js';
 import U from '../Core/Utilities.js';
 var extend = U.extend, fireEvent = U.fireEvent, getNestedProperty = U.getNestedProperty, isArray = U.isArray, isNumber = U.isNumber, merge = U.merge, objectEach = U.objectEach, pick = U.pick, splat = U.splat;
 import '../Core/Options.js';
-import '../Core/Series/CatesianSeries.js';
+import '../Series/LineSeries.js';
 import './ScatterSeries.js';
 var Series = H.Series, seriesTypes = BaseSeries.seriesTypes;
 /**

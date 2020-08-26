@@ -74,7 +74,7 @@ var EMA = seriesTypes.ema,
  *
  * @augments Highcharts.Series
  */
-BaseSeries.seriesType<Highcharts.ChaikinIndicator>(
+BaseSeries.seriesType<typeof Highcharts.ChaikinIndicator>(
     'chaikin',
     'ema',
     /**

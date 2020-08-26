@@ -62,7 +62,7 @@ declare global {
 }
 
 import './ColumnSeries.js';
-import '../Core/Series/CatesianSeries.js';
+import '../Series/LineSeries.js';
 
 var Series = H.Series,
     columnProto = BaseSeries.seriesTypes.column.prototype,

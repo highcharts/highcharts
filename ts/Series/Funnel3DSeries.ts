@@ -138,7 +138,7 @@ var seriesTypes = BaseSeries.seriesTypes,
  * @requires modules/cylinder
  * @requires modules/funnel3d
  */
-BaseSeries.seriesType<Highcharts.Funnel3dSeries>('funnel3d', 'column',
+BaseSeries.seriesType<typeof Highcharts.Funnel3dSeries>('funnel3d', 'column',
     /**
      * A funnel3d is a 3d version of funnel series type. Funnel charts are
      * a type of chart often used to visualize stages in a sales project,

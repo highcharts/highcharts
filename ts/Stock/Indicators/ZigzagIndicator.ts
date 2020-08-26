@@ -64,7 +64,7 @@ import './SMAIndicator.js';
  *
  * @augments Highcharts.Series
  */
-BaseSeries.seriesType<Highcharts.ZigzagIndicator>(
+BaseSeries.seriesType<typeof Highcharts.ZigzagIndicator>(
     'zigzag',
     'sma',
     /**

@@ -151,7 +151,7 @@ const base = BaseSeries.seriesTypes.sankey.prototype;
  *
  * @augments Highcharts.seriesTypes.sankey
  */
-BaseSeries.seriesType<Highcharts.OrganizationSeries>(
+BaseSeries.seriesType<typeof Highcharts.OrganizationSeries>(
     'organization',
     'sankey',
     /**

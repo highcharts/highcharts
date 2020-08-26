@@ -41,7 +41,7 @@ const {
     pick
 } = U;
 
-import './CatesianSeries.js';
+import '../../Series/LineSeries.js';
 
 /* eslint-disable no-invalid-this */
 

@@ -92,7 +92,7 @@ var SMA = seriesTypes.sma,
  *
  * @augments Highcharts.Series
  */
-BaseSeries.seriesType<Highcharts.KeltnerChannelsIndicator>(
+BaseSeries.seriesType<typeof Highcharts.KeltnerChannelsIndicator>(
     'keltnerchannels',
     'sma',
     /**

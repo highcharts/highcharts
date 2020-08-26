@@ -61,7 +61,7 @@ import '../Series/AreaSplineSeries.js';
  *
  * @augments Highcharts.Series
  */
-BaseSeries.seriesType<Highcharts.StreamgraphSeries>('streamgraph', 'areaspline'
+BaseSeries.seriesType<typeof Highcharts.StreamgraphSeries>('streamgraph', 'areaspline'
 
     /**
      * A streamgraph is a type of stacked area graph which is displaced around a

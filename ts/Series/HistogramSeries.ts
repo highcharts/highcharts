@@ -128,7 +128,7 @@ function fitToBinLeftClosed(bins: Array<number>): Function {
  * @name Highcharts.seriesTypes.histogram
  * @augments Highcharts.Series
  */
-BaseSeries.seriesType<Highcharts.HistogramSeries>(
+BaseSeries.seriesType<typeof Highcharts.HistogramSeries>(
     'histogram',
     'column',
     /**

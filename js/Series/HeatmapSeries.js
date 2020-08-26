@@ -17,7 +17,7 @@ import SVGRenderer from '../Core/Renderer/SVG/SVGRenderer.js';
 import U from '../Core/Utilities.js';
 var clamp = U.clamp, extend = U.extend, fireEvent = U.fireEvent, isNumber = U.isNumber, merge = U.merge, pick = U.pick;
 import '../Core/Options.js';
-import '../Core/Series/CatesianSeries.js';
+import '../Series/LineSeries.js';
 var Series = H.Series, seriesTypes = BaseSeries.seriesTypes, symbols = SVGRenderer.prototype.symbols;
 /* *
  * @interface Highcharts.PointOptionsObject in parts/Point.ts

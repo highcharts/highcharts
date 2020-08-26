@@ -263,7 +263,7 @@ declare global {
 /* eslint-disable no-invalid-this */
 
 import Axis from '../Core/Axis/Axis.js';
-import '../Core/Series/CatesianSeries.js';
+import '../Series/LineSeries.js';
 
 var Series = H.Series,
     Scatter = BaseSeries.seriesTypes.scatter,

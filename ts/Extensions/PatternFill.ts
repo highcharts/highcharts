@@ -28,7 +28,7 @@ const {
     wrap
 } = U;
 
-import '../Core/Series/CatesianSeries.js';
+import '../Series/LineSeries.js';
 
 /**
  * Internal types

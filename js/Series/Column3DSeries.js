@@ -15,7 +15,7 @@ import StackItem from '../Extensions/Stacking.js';
 import U from '../Core/Utilities.js';
 var addEvent = U.addEvent, pick = U.pick, wrap = U.wrap;
 import './ColumnSeries.js';
-import '../Core/Series/CatesianSeries.js';
+import '../Series/LineSeries.js';
 var Series = H.Series, columnProto = BaseSeries.seriesTypes.column.prototype, svg = H.svg;
 /**
  * Depth of the columns in a 3D column chart.

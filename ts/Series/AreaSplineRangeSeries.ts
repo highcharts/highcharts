@@ -61,7 +61,7 @@ import '../Core/Options.js';
  * @requires  highcharts-more
  * @apioption plotOptions.areasplinerange
  */
-BaseSeries.seriesType<Highcharts.AreaSplineSeries>(
+BaseSeries.seriesType<typeof Highcharts.AreaSplineSeries>(
     'areasplinerange',
     'arearange',
     null as any,

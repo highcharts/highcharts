@@ -258,7 +258,7 @@ H.approximations['ichimoku-averages'] = function ():
  *
  * @augments Highcharts.Series
  */
-BaseSeries.seriesType<Highcharts.IKHIndicator>(
+BaseSeries.seriesType<typeof Highcharts.IKHIndicator>(
     'ikh',
     'sma',
     /**

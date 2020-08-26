@@ -176,7 +176,7 @@ function getPSAR(
  *
  * @augments Highcharts.Series
  */
-BaseSeries.seriesType<Highcharts.PSARIndicator>(
+BaseSeries.seriesType<typeof Highcharts.PSARIndicator>(
     'psar',
     'sma',
     /**

@@ -12,7 +12,7 @@ import H from '../Core/Globals.js';
 import U from '../Core/Utilities.js';
 var addEvent = U.addEvent;
 import '../Core/Options.js';
-import '../Core/Series/CatesianSeries.js';
+import '../Series/LineSeries.js';
 var Series = H.Series;
 /**
  * Scatter series type.

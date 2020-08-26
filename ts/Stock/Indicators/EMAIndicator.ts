@@ -74,7 +74,7 @@ declare module '../../Core/Series/Types' {
  *
  * @augments Highcharts.Series
  */
-BaseSeries.seriesType<Highcharts.EMAIndicator>(
+BaseSeries.seriesType<typeof Highcharts.EMAIndicator>(
     'ema',
     'sma',
     /**

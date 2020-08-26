@@ -66,7 +66,7 @@ declare module '../Core/Series/Types' {
 }
 
 import '../Core/Options.js';
-import '../Core/Series/CatesianSeries.js';
+import '../Series/LineSeries.js';
 
 /**
  * The pareto series type.
@@ -77,7 +77,7 @@ import '../Core/Series/CatesianSeries.js';
  *
  * @augments Highcharts.Series
  */
-BaseSeries.seriesType<Highcharts.ParetoSeries>('pareto', 'line'
+BaseSeries.seriesType<typeof Highcharts.ParetoSeries>('pareto', 'line'
 
     /**
      * A pareto diagram is a type of chart that contains both bars and a line

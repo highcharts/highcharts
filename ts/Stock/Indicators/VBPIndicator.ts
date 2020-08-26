@@ -176,7 +176,7 @@ var abs = Math.abs,
  *
  * @augments Highcharts.Series
  */
-BaseSeries.seriesType<Highcharts.VBPIndicator>(
+BaseSeries.seriesType<typeof Highcharts.VBPIndicator>(
     'vbp',
     'sma',
     /**

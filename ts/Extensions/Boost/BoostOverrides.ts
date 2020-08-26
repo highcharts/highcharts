@@ -69,7 +69,7 @@ declare module '../../Core/Series/Types' {
     }
 }
 
-import '../../Core/Series/CatesianSeries.js';
+import '../../Series/LineSeries.js';
 import '../../Core/Options.js';
 
 import '../../Core/Interaction.js';

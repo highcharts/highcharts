@@ -76,7 +76,7 @@ import './SMAIndicator.js';
  *
  * @augments Highcharts.Series
  */
-BaseSeries.seriesType<Highcharts.CMFIndicator>('cmf', 'sma',
+BaseSeries.seriesType<typeof Highcharts.CMFIndicator>('cmf', 'sma',
     /**
      * Chaikin Money Flow indicator (cmf).
      *

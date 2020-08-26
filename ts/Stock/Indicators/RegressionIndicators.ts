@@ -155,7 +155,7 @@ import './SMAIndicator.js';
  *
  * @augments Highcharts.Series
  */
-BaseSeries.seriesType<Highcharts.LinearRegressionIndicator>(
+BaseSeries.seriesType<typeof Highcharts.LinearRegressionIndicator>(
     'linearRegression',
     'sma',
     /**
@@ -444,7 +444,7 @@ BaseSeries.seriesType<Highcharts.LinearRegressionIndicator>(
  *
  * @augments Highcharts.Series
  */
-BaseSeries.seriesType<Highcharts.LinearRegressionSlopesIndicator>(
+BaseSeries.seriesType<typeof Highcharts.LinearRegressionSlopesIndicator>(
     'linearRegressionSlope',
     'linearRegression',
     /**
@@ -500,7 +500,7 @@ BaseSeries.seriesType<Highcharts.LinearRegressionSlopesIndicator>(
  *
  * @augments Highcharts.Series
  */
-BaseSeries.seriesType<Highcharts.LinearRegressionInterceptIndicator>(
+BaseSeries.seriesType<typeof Highcharts.LinearRegressionInterceptIndicator>(
     'linearRegressionIntercept',
     'linearRegression',
     /**
@@ -556,7 +556,7 @@ BaseSeries.seriesType<Highcharts.LinearRegressionInterceptIndicator>(
  *
  * @augments Highcharts.Series
  */
-BaseSeries.seriesType<Highcharts.LinearRegressionAngleIndicator>(
+BaseSeries.seriesType<typeof Highcharts.LinearRegressionAngleIndicator>(
     'linearRegressionAngle',
     'linearRegression',
     /**

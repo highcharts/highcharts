@@ -71,7 +71,7 @@ const Series = H.Series;
  *
  * @augments Highcharts.Series
  */
-BaseSeries.seriesType<Highcharts.MapPointSeries>(
+BaseSeries.seriesType<typeof Highcharts.MapPointSeries>(
     'mappoint',
     'scatter',
     /**

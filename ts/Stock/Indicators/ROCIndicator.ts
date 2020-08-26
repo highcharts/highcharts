@@ -102,7 +102,7 @@ function populateAverage(
  *
  * @augments Highcharts.Series
  */
-BaseSeries.seriesType<Highcharts.ROCIndicator>(
+BaseSeries.seriesType<typeof Highcharts.ROCIndicator>(
     'roc',
     'sma',
     /**

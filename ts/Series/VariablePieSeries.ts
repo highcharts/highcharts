@@ -95,7 +95,7 @@ var pieProto = seriesTypes.pie.prototype;
  *
  * @augments Highcharts.Series
  */
-BaseSeries.seriesType<Highcharts.VariablePieSeries>(
+BaseSeries.seriesType<typeof Highcharts.VariablePieSeries>(
     'variablepie',
     'pie',
     /**

@@ -196,7 +196,7 @@ declare global {
     }
 }
 
-import './Series/CatesianSeries.js';
+import '../Series/LineSeries.js';
 
 var hasTouch = H.hasTouch,
     isTouchDevice = H.isTouchDevice,

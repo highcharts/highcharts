@@ -140,7 +140,7 @@ declare module '../Core/Series/Types' {
  *
  * @augments Highcharts.Series
  */
-BaseSeries.seriesType<Highcharts.FlagsSeries>(
+BaseSeries.seriesType<typeof Highcharts.FlagsSeries>(
     'flags',
     'column'
 

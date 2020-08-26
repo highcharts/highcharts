@@ -125,7 +125,7 @@ function populateAverage(
  *
  * @augments Highcharts.Series
  */
-BaseSeries.seriesType<Highcharts.WMAIndicator>(
+BaseSeries.seriesType<typeof Highcharts.WMAIndicator>(
     'wma',
     'sma',
     /**

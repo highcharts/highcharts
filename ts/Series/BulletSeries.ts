@@ -82,7 +82,7 @@ var columnProto = BaseSeries.seriesTypes.column.prototype;
  *
  * @augments Highcharts.Series
  */
-BaseSeries.seriesType<Highcharts.BulletSeries>('bullet', 'column'
+BaseSeries.seriesType<typeof Highcharts.BulletSeries>('bullet', 'column'
 
     /**
      * A bullet graph is a variation of a bar graph. The bullet graph features

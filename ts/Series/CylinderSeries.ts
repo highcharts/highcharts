@@ -119,7 +119,7 @@ const isSimplified = (path: SVGPath): boolean =>
   *
   * @augments Highcharts.Series
   */
-BaseSeries.seriesType<Highcharts.CylinderSeries>(
+BaseSeries.seriesType<typeof Highcharts.CylinderSeries>(
     'cylinder',
     'column',
     /**

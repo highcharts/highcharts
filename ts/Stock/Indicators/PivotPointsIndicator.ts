@@ -116,7 +116,7 @@ function destroyExtraLabels(
  *
  * @augments Highcharts.Series
  */
-BaseSeries.seriesType<Highcharts.PivotPointsIndicator>(
+BaseSeries.seriesType<typeof Highcharts.PivotPointsIndicator>(
     'pivotpoints',
     'sma',
     /**

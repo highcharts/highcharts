@@ -1322,7 +1322,7 @@ var wordCloudPoint: Partial<Highcharts.WordcloudPoint> = {
  *
  * @augments Highcharts.Series
  */
-BaseSeries.seriesType<Highcharts.WordcloudSeries>(
+BaseSeries.seriesType<typeof Highcharts.WordcloudSeries>(
     'wordcloud',
     'column',
     wordCloudOptions,

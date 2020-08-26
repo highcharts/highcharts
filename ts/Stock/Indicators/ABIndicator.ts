@@ -101,7 +101,7 @@ function getPointLB(low: number, base: number): number {
  *
  * @augments Highcharts.Series
  */
-BaseSeries.seriesType<Highcharts.ABandsIndicator>(
+BaseSeries.seriesType<typeof Highcharts.ABandsIndicator>(
     'abands',
     'sma',
     /**

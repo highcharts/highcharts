@@ -105,7 +105,7 @@ declare module '../Core/Series/Types' {
 
 import '../Core/Options.js';
 import '../Core/Series/Point.js';
-import '../Core/Series/CatesianSeries.js';
+import '../Series/LineSeries.js';
 import '../Core/Interaction.js';
 
 var Series = H.Series,
@@ -129,7 +129,7 @@ var Series = H.Series,
  * @requires     highcharts-more
  * @optionparent plotOptions.gauge
  */
-BaseSeries.seriesType<Highcharts.GaugeSeries>('gauge', 'line', {
+BaseSeries.seriesType<typeof Highcharts.GaugeSeries>('gauge', 'line', {
 
     /**
      * When this option is `true`, the dial will wrap around the axes. For

@@ -16,7 +16,7 @@ var defined = U.defined, extend = U.extend, isArray = U.isArray, isNumber = U.is
 import './AreaSeries.js';
 import './ColumnSeries.js';
 import '../Core/Options.js';
-import '../Core/Series/CatesianSeries.js';
+import '../Series/LineSeries.js';
 var Series = H.Series, areaProto = BaseSeries.seriesTypes.area.prototype, columnProto = BaseSeries.seriesTypes.column.prototype, pointProto = Point.prototype, seriesProto = Series.prototype;
 /**
  * The area range series is a carteseian series with higher and lower values for

@@ -59,7 +59,7 @@ var ATR = BaseSeries.seriesTypes.atr;
  *
  * @augments Highcharts.Series
  */
-BaseSeries.seriesType<Highcharts.NATRIndicator>('natr', 'sma',
+BaseSeries.seriesType<typeof Highcharts.NATRIndicator>('natr', 'sma',
     /**
      * Normalized average true range indicator (NATR). This series requires
      * `linkedTo` option to be set and should be loaded after the

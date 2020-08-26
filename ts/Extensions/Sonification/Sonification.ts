@@ -100,7 +100,7 @@ import utilities from './Utilities.js';
 import TimelineClasses from './Timeline.js';
 import sonificationOptions from './Options.js';
 
-import '../../Core/Series/CatesianSeries.js';
+import '../../Series/LineSeries.js';
 
 // Expose on the Highcharts object
 

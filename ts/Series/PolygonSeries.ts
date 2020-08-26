@@ -80,7 +80,7 @@ var Series = H.Series;
  * @requires     highcharts-more
  * @optionparent plotOptions.polygon
  */
-BaseSeries.seriesType<Highcharts.PolygonSeries>('polygon', 'scatter', {
+BaseSeries.seriesType<typeof Highcharts.PolygonSeries>('polygon', 'scatter', {
     marker: {
         enabled: false,
         states: {

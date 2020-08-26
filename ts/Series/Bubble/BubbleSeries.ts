@@ -122,7 +122,7 @@ declare module '../../Core/Series/Types' {
     }
 }
 
-import '../../Core/Series/CatesianSeries.js';
+import '../../Series/LineSeries.js';
 import '../../Series/ScatterSeries.js';
 import './BubbleLegend.js';
 
@@ -150,7 +150,7 @@ var Series = H.Series,
  * @requires     highcharts-more
  * @optionparent plotOptions.bubble
  */
-BaseSeries.seriesType<Highcharts.BubbleSeries>('bubble', 'scatter', {
+BaseSeries.seriesType<typeof Highcharts.BubbleSeries>('bubble', 'scatter', {
 
     dataLabels: {
         formatter: function (

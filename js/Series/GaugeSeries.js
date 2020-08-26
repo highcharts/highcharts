@@ -14,7 +14,7 @@ import U from '../Core/Utilities.js';
 var clamp = U.clamp, isNumber = U.isNumber, merge = U.merge, pick = U.pick, pInt = U.pInt;
 import '../Core/Options.js';
 import '../Core/Series/Point.js';
-import '../Core/Series/CatesianSeries.js';
+import '../Series/LineSeries.js';
 import '../Core/Interaction.js';
 var Series = H.Series, TrackerMixin = H.TrackerMixin;
 /**

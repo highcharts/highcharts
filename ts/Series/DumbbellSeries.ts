@@ -123,7 +123,7 @@ var seriesProto = H.Series.prototype,
  * @since 8.0.0
  * @optionparent plotOptions.dumbbell
  */
-BaseSeries.seriesType<Highcharts.DumbbellSeries>('dumbbell', 'arearange', {
+BaseSeries.seriesType<typeof Highcharts.DumbbellSeries>('dumbbell', 'arearange', {
     /** @ignore-option */
     trackByArea: false,
     /** @ignore-option */

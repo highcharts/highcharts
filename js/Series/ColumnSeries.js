@@ -30,7 +30,7 @@ var animObject = U.animObject, clamp = U.clamp, defined = U.defined, extend = U.
 * @type {number}
 */
 ''; // detach doclets above
-import '../Core/Series/CatesianSeries.js';
+import './LineSeries.js';
 import '../Core/Options.js';
 var Series = H.Series;
 /**

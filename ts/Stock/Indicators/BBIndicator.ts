@@ -103,7 +103,7 @@ function getStandardDeviation(
  *
  * @augments Highcharts.Series
  */
-BaseSeries.seriesType<Highcharts.BBIndicator>(
+BaseSeries.seriesType<typeof Highcharts.BBIndicator>(
     'bb',
     'sma',
     /**

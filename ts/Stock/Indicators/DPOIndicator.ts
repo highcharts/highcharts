@@ -86,7 +86,7 @@ function accumulatePoints(
  *
  * @augments Highcharts.Series
  */
-BaseSeries.seriesType<Highcharts.DPOIndicator>(
+BaseSeries.seriesType<typeof Highcharts.DPOIndicator>(
     'dpo',
     'sma',
     /**

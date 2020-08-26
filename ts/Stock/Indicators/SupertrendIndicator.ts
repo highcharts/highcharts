@@ -130,7 +130,7 @@ function createPointObj(
  *
  * @augments Highcharts.Series
  */
-BaseSeries.seriesType<Highcharts.SupertrendIndicator>(
+BaseSeries.seriesType<typeof Highcharts.SupertrendIndicator>(
     'supertrend',
     'sma',
     /**

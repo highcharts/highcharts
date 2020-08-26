@@ -1506,7 +1506,7 @@ var vennPoint = {
  *
  * @augments Highcharts.Series
  */
-BaseSeries.seriesType<Highcharts.VennSeries>(
+BaseSeries.seriesType<typeof Highcharts.VennSeries>(
     'venn', 'scatter', vennOptions, vennSeries, vennPoint
 );
 

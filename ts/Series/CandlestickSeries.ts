@@ -178,7 +178,7 @@ var candlestickOptions = {
  *
  * @augments Highcharts.seriesTypes.ohlc
  */
-BaseSeries.seriesType<Highcharts.CandlestickSeries>(
+BaseSeries.seriesType<typeof Highcharts.CandlestickSeries>(
     'candlestick',
     'ohlc',
     merge(

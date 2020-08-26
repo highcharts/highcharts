@@ -64,7 +64,7 @@ var areaProto = BaseSeries.seriesTypes.area.prototype;
  *
  * @augments Highcharts.Series
  */
-BaseSeries.seriesType<Highcharts.AreaSplineSeries>(
+BaseSeries.seriesType<typeof Highcharts.AreaSplineSeries>(
     'areaspline',
     'spline',
 

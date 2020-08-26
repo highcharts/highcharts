@@ -56,7 +56,7 @@ const colProto = BaseSeries.seriesTypes.column.prototype;
  *
  * @augments Highcharts.Series
  */
-BaseSeries.seriesType<Highcharts.ColumnPyramidSeries>(
+BaseSeries.seriesType<typeof Highcharts.ColumnPyramidSeries>(
     'columnpyramid',
     'column',
 

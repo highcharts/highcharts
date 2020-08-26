@@ -91,7 +91,7 @@ var SMA = BaseSeries.seriesTypes.sma;
  *
  * @augments Highcharts.Series
  */
-BaseSeries.seriesType<Highcharts.PriceEnvelopesIndicator>(
+BaseSeries.seriesType<typeof Highcharts.PriceEnvelopesIndicator>(
     'priceenvelopes',
     'sma',
     /**

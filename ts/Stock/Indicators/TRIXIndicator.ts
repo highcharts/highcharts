@@ -67,7 +67,7 @@ var TEMA = BaseSeries.seriesTypes.tema;
  *
  * @augments Highcharts.Series
  */
-BaseSeries.seriesType<Highcharts.TRIXIndicator>(
+BaseSeries.seriesType<typeof Highcharts.TRIXIndicator>(
     'trix',
     'tema',
     /**

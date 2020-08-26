@@ -135,7 +135,7 @@ var addEvent = U.addEvent, removeEvent = U.removeEvent, animObject = U.animObjec
 * @name Highcharts.DrillupEventObject#type
 * @type {"drillup"}
 */
-import '../Core/Series/CatesianSeries.js';
+import '../Series/LineSeries.js';
 import '../Series/ColumnSeries.js';
 var seriesTypes = H.seriesTypes, PieSeries = seriesTypes.pie, ColumnSeries = seriesTypes.column, ddSeriesId = 1;
 // Add language

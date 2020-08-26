@@ -149,7 +149,7 @@ declare global {
     }
 }
 
-import './Series/CatesianSeries.js';
+import '../Series/LineSeries.js';
 
 var Series = H.Series,
     seriesTypes = H.seriesTypes as unknown as Record<string, BaseSeries>;

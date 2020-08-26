@@ -81,7 +81,7 @@ function populateAverage(
  *
  * @augments Highcharts.Series
  */
-BaseSeries.seriesType<Highcharts.MomentumIndicator>(
+BaseSeries.seriesType<typeof Highcharts.MomentumIndicator>(
     'momentum',
     'sma',
     /**

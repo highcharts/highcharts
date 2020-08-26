@@ -706,7 +706,7 @@ addEvent(H.Axis, 'afterSetAxisTranslation', function (): void {
  *
  * @augments Highcharts.Series
  */
-BaseSeries.seriesType<Highcharts.TilemapSeries>('tilemap', 'heatmap'
+BaseSeries.seriesType<typeof Highcharts.TilemapSeries>('tilemap', 'heatmap'
 
     /**
      * A tilemap series is a type of heatmap where the tile shapes are

@@ -124,7 +124,7 @@ var columnRangeOptions: Highcharts.ColumnRangeSeriesOptions = {
  *
  * @augments Highcharts.Series
  */
-BaseSeries.seriesType<Highcharts.ColumnRangeSeries>('columnrange', 'arearange', merge(
+BaseSeries.seriesType<typeof Highcharts.ColumnRangeSeries>('columnrange', 'arearange', merge(
     (defaultOptions.plotOptions as any).column,
     (defaultOptions.plotOptions as any).arearange,
     columnRangeOptions

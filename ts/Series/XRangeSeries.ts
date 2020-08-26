@@ -173,7 +173,7 @@ import './ColumnSeries.js';
  *
  * @augments Highcharts.Series
  */
-BaseSeries.seriesType<Highcharts.XRangeSeries>('xrange', 'column'
+BaseSeries.seriesType<typeof Highcharts.XRangeSeries>('xrange', 'column'
 
     /**
      * The X-range series displays ranges on the X axis, typically time

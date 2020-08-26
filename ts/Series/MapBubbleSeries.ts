@@ -75,7 +75,7 @@ if (seriesTypes.bubble) {
      *
      * @augments Highcharts.Series
      */
-    BaseSeries.seriesType<Highcharts.MapBubbleSeries>('mapbubble', 'bubble'
+    BaseSeries.seriesType<typeof Highcharts.MapBubbleSeries>('mapbubble', 'bubble'
 
         /**
          * A map bubble series is a bubble series laid out on top of a map

@@ -16,7 +16,7 @@ import SVGRenderer from '../Renderer/SVG/SVGRenderer.js';
 import U from '../Utilities.js';
 var addEvent = U.addEvent, arrayMax = U.arrayMax, arrayMin = U.arrayMin, clamp = U.clamp, defined = U.defined, extend = U.extend, find = U.find, format = U.format, getOptions = U.getOptions, isNumber = U.isNumber, isString = U.isString, merge = U.merge, pick = U.pick, splat = U.splat;
 import '../Pointer.js';
-import '../Series/CatesianSeries.js';
+import '../../Series/LineSeries.js';
 // Has a dependency on Navigator due to the use of
 // defaultOptions.navigator
 import '../Navigator.js';

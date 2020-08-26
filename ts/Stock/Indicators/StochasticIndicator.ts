@@ -83,7 +83,7 @@ var SMA = BaseSeries.seriesTypes.sma,
  *
  * @augments Highcharts.Series
  */
-BaseSeries.seriesType<Highcharts.StochasticIndicator>(
+BaseSeries.seriesType<typeof Highcharts.StochasticIndicator>(
     'stochastic',
     'sma',
     /**

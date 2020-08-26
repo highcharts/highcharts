@@ -76,7 +76,7 @@ const seriesTypes = BaseSeries.seriesTypes,
  * @since 8.0.0
  * @optionparent plotOptions.lollipop
  */
-BaseSeries.seriesType<Highcharts.LollipopSeries>('lollipop', 'dumbbell', {
+BaseSeries.seriesType<typeof Highcharts.LollipopSeries>('lollipop', 'dumbbell', {
     /** @ignore-option */
     lowColor: void 0,
     /** @ignore-option */

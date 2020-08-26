@@ -73,7 +73,7 @@ var AROON = BaseSeries.seriesTypes.aroon;
  *
  * @augments Highcharts.Series
  */
-BaseSeries.seriesType<Highcharts.AroonOscillatorIndicator>(
+BaseSeries.seriesType<typeof Highcharts.AroonOscillatorIndicator>(
     'aroonoscillator',
     'aroon',
     /**

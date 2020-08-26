@@ -56,7 +56,7 @@ const {
     defined
 } = U;
 
-import '../Core/Series/CatesianSeries.js';
+import '../Series/LineSeries.js';
 
 var Series = H.Series,
     noop = H.noop;

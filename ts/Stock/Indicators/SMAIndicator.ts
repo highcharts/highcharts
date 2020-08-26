@@ -108,7 +108,7 @@ declare module '../../Core/Series/Types' {
     }
 }
 
-import '../../Core/Series/CatesianSeries.js';
+import '../../Series/LineSeries.js';
 import '../../Series/OHLCSeries.js';
 
 var Series = H.Series,
@@ -174,7 +174,7 @@ addEvent(Series, 'afterSetOptions', function (
  *
  * @augments Highcharts.Series
  */
-BaseSeries.seriesType<Highcharts.SMAIndicator>(
+BaseSeries.seriesType<typeof Highcharts.SMAIndicator>(
     'sma',
     'line',
     /**

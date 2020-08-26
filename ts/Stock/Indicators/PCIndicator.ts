@@ -76,7 +76,7 @@ var getArrayExtremes = ReduceArrayMixin.getArrayExtremes;
  *
  * @augments Highcharts.Series
  */
-BaseSeries.seriesType<Highcharts.PCIndicator>(
+BaseSeries.seriesType<typeof Highcharts.PCIndicator>(
     'pc',
     'sma',
     /**

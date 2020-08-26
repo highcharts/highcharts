@@ -313,7 +313,7 @@ var getDLOptions = function getDLOptions(
  *
  * @augments Highcharts.Series
  */
-BaseSeries.seriesType<Highcharts.SankeySeries>(
+BaseSeries.seriesType<typeof Highcharts.SankeySeries>(
     'sankey',
     'column',
     /**

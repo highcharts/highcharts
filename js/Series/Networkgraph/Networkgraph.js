@@ -19,7 +19,7 @@ var addEvent = U.addEvent, css = U.css, defined = U.defined, pick = U.pick;
 import '../../Core/Options.js';
 import './Layouts.js';
 import './DraggableNodes.js';
-import '../../Core/Series/CatesianSeries.js';
+import '../../Series/LineSeries.js';
 var Series = H.Series, seriesTypes = BaseSeries.seriesTypes, dragNodesMixin = H.dragNodesMixin;
 /**
  * Formatter callback function.

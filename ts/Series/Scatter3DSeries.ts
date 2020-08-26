@@ -59,7 +59,7 @@ import './ScatterSeries.js';
  *
  * @augments Highcharts.Series
  */
-BaseSeries.seriesType<Highcharts.Scatter3dSeries>(
+BaseSeries.seriesType<typeof Highcharts.Scatter3dSeries>(
     'scatter3d',
     'scatter',
     /**

@@ -17,7 +17,7 @@ var noop = H.noop;
 import Point from '../../Core/Series/Point.js';
 import U from '../../Core/Utilities.js';
 var arrayMax = U.arrayMax, arrayMin = U.arrayMin, clamp = U.clamp, extend = U.extend, isNumber = U.isNumber, pick = U.pick, pInt = U.pInt;
-import '../../Core/Series/CatesianSeries.js';
+import '../../Series/LineSeries.js';
 import '../../Series/ScatterSeries.js';
 import './BubbleLegend.js';
 var Series = H.Series, seriesTypes = BaseSeries.seriesTypes;

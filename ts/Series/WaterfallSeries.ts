@@ -350,7 +350,7 @@ namespace WaterfallAxis {
  * @requires     highcharts-more
  * @optionparent plotOptions.waterfall
  */
-BaseSeries.seriesType<Highcharts.WaterfallSeries>('waterfall', 'column', {
+BaseSeries.seriesType<typeof Highcharts.WaterfallSeries>('waterfall', 'column', {
 
     /**
      * @type      {Highcharts.ColorString|Highcharts.GradientColorObject|Highcharts.PatternObject}

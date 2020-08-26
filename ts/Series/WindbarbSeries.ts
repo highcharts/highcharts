@@ -148,7 +148,7 @@ registerApproximation();
  *
  * @augments Highcharts.Series
  */
-BaseSeries.seriesType<Highcharts.WindbarbSeries>('windbarb', 'column'
+BaseSeries.seriesType<typeof Highcharts.WindbarbSeries>('windbarb', 'column'
 
     /**
      * Wind barbs are a convenient way to represent wind speed and direction in

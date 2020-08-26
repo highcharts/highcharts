@@ -94,7 +94,7 @@ declare module '../Core/Series/Types' {
  *
  * @augments Highcharts.Series
  */
-BaseSeries.seriesType<Highcharts.VariwideSeries>('variwide', 'column'
+BaseSeries.seriesType<typeof Highcharts.VariwideSeries>('variwide', 'column'
 
     /**
      * A variwide chart (related to marimekko chart) is a column chart with a

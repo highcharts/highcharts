@@ -62,7 +62,7 @@ import './SMAIndicator.js';
  *
  * @augments Highcharts.Series
  */
-BaseSeries.seriesType<Highcharts.TrendLineIndicator>(
+BaseSeries.seriesType<typeof Highcharts.TrendLineIndicator>(
     'trendline',
     'sma',
     /**

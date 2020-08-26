@@ -145,7 +145,7 @@ declare module '../Core/Series/Types' {
 
 ''; // detach doclets above
 
-import '../Core/Series/CatesianSeries.js';
+import './LineSeries.js';
 import '../Core/Options.js';
 
 var Series = H.Series;
@@ -159,7 +159,7 @@ var Series = H.Series;
  *
  * @augments Highcharts.Series
  */
-BaseSeries.seriesType<Highcharts.ColumnSeries>(
+BaseSeries.seriesType<typeof Highcharts.ColumnSeries>(
     'column',
     'line',
 

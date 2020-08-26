@@ -210,7 +210,7 @@ declare global {
  * @typedef {"allow"|"justify"} Highcharts.DataLabelsOverflowValue
  */
 
-import './CatesianSeries.js';
+import '../../Series/LineSeries.js';
 var Series = H.Series;
 
 /* eslint-disable valid-jsdoc */

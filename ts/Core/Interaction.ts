@@ -182,7 +182,7 @@ declare global {
  *        Event that occured.
  */
 
-import './Series/CatesianSeries.js';
+import '../Series/LineSeries.js';
 
 var hasTouch = H.hasTouch,
     Series = H.Series,

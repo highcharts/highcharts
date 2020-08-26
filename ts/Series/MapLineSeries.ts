@@ -64,7 +64,7 @@ var seriesTypes = BaseSeries.seriesTypes;
  *
  * @augments Highcharts.Series
  */
-BaseSeries.seriesType<Highcharts.MapLineSeries>(
+BaseSeries.seriesType<typeof Highcharts.MapLineSeries>(
     'mapline',
     'map',
 

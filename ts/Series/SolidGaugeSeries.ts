@@ -444,7 +444,7 @@ var solidGaugeOptions: Highcharts.SolidGaugeSeriesOptions = {
 };
 
 // The solidgauge series type
-BaseSeries.seriesType<Highcharts.SolidGaugeSeries>(
+BaseSeries.seriesType<typeof Highcharts.SolidGaugeSeries>(
     'solidgauge',
     'gauge',
     solidGaugeOptions,

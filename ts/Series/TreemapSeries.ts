@@ -384,7 +384,7 @@ var isBoolean = function (x: unknown): x is boolean {
  *
  * @augments Highcharts.Series
  */
-BaseSeries.seriesType<Highcharts.TreemapSeries>(
+BaseSeries.seriesType<typeof Highcharts.TreemapSeries>(
     'treemap',
     'scatter'
 

@@ -204,7 +204,7 @@ declare module '../../Core/Series/Types' {
 import '../../Core/Options.js';
 import './Layouts.js';
 import './DraggableNodes.js';
-import '../../Core/Series/CatesianSeries.js';
+import '../../Series/LineSeries.js';
 
 var Series = H.Series,
     seriesTypes = BaseSeries.seriesTypes,
@@ -256,7 +256,7 @@ var Series = H.Series,
  *
  * @extends Highcharts.Series
  */
-BaseSeries.seriesType<Highcharts.NetworkgraphSeries>(
+BaseSeries.seriesType<typeof Highcharts.NetworkgraphSeries>(
     'networkgraph',
     'line',
 

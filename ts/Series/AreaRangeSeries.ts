@@ -107,7 +107,7 @@ declare module '../Core/Series/Types' {
 import './AreaSeries.js';
 import './ColumnSeries.js';
 import '../Core/Options.js';
-import '../Core/Series/CatesianSeries.js';
+import '../Series/LineSeries.js';
 
 var Series = H.Series,
     areaProto = BaseSeries.seriesTypes.area.prototype,
@@ -130,7 +130,7 @@ var Series = H.Series,
  * @requires     highcharts-more
  * @optionparent plotOptions.arearange
  */
-BaseSeries.seriesType<Highcharts.AreaRangeSeries>('arearange', 'area', {
+BaseSeries.seriesType<typeof Highcharts.AreaRangeSeries>('arearange', 'area', {
 
     /**
      * Whether to apply a drop shadow to the graph line. Since 2.3 the shadow

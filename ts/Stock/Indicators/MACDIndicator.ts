@@ -127,7 +127,7 @@ var SMA = H.seriesTypes.sma,
  *
  * @augments Highcharts.Series
  */
-BaseSeries.seriesType<Highcharts.MACDIndicator>(
+BaseSeries.seriesType<typeof Highcharts.MACDIndicator>(
     'macd',
     'sma',
 

@@ -59,7 +59,7 @@ import './Funnel3DSeries.js';
  * @requires modules/funnel3d
  * @requires modules/pyramid3d
  */
-BaseSeries.seriesType<Highcharts.Pyramid3dSeries>('pyramid3d', 'funnel3d',
+BaseSeries.seriesType<typeof Highcharts.Pyramid3dSeries>('pyramid3d', 'funnel3d',
     /**
      * A pyramid3d is a 3d version of pyramid series type. Pyramid charts are
      * a type of chart often used to visualize stages in a sales project,

@@ -39,7 +39,7 @@ var addEvent = U.addEvent, erase = U.erase, extend = U.extend, Fx = U.Fx, isNumb
  */
 ''; // detach doclet above
 import '../../Mixins/ColorSeries.js';
-import '../Series/CatesianSeries.js';
+import '../../Series/LineSeries.js';
 var Series = H.Series, colorPointMixin = H.colorPointMixin, colorSeriesMixin = H.colorSeriesMixin;
 extend(Series.prototype, colorSeriesMixin);
 extend(Point.prototype, colorPointMixin);

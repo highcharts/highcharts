@@ -112,7 +112,7 @@ function populateAverage(
  *
  * @augments Highcharts.Series
  */
-BaseSeries.seriesType<Highcharts.ATRIndicator>(
+BaseSeries.seriesType<typeof Highcharts.ATRIndicator>(
     'atr',
     'sma',
     /**

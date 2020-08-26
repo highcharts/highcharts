@@ -91,7 +91,7 @@ function calculateRawMoneyFlow(typicalPrice: number, volume: number): number {
  *
  * @augments Highcharts.Series
  */
-BaseSeries.seriesType<Highcharts.MFIIndicator>(
+BaseSeries.seriesType<typeof Highcharts.MFIIndicator>(
     'mfi',
     'sma',
     /**

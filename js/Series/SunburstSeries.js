@@ -23,7 +23,7 @@ import TreeSeriesMixin from '../Mixins/TreeSeries.js';
 var getColor = TreeSeriesMixin.getColor, getLevelOptions = TreeSeriesMixin.getLevelOptions, setTreeValues = TreeSeriesMixin.setTreeValues, updateRootId = TreeSeriesMixin.updateRootId;
 import U from '../Core/Utilities.js';
 var correctFloat = U.correctFloat, error = U.error, extend = U.extend, isNumber = U.isNumber, isObject = U.isObject, isString = U.isString, merge = U.merge, splat = U.splat;
-import '../Core/Series/CatesianSeries.js';
+import '../Series/LineSeries.js';
 import './TreemapSeries.js';
 var Series = H.Series, isBoolean = function (x) {
     return typeof x === 'boolean';

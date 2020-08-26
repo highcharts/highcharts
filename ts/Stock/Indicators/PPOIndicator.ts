@@ -68,7 +68,7 @@ var EMA = BaseSeries.seriesTypes.ema;
  *
  * @augments Highcharts.Series
  */
-BaseSeries.seriesType<Highcharts.PPOIndicator>(
+BaseSeries.seriesType<typeof Highcharts.PPOIndicator>(
     'ppo',
     'ema',
     /**

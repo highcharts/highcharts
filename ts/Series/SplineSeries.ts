@@ -17,7 +17,7 @@ const {
     pick
 } = U;
 import '../Core/Options.js';
-import '../Core/Series/CatesianSeries.js';
+import '../Series/LineSeries.js';
 
 /**
  * Internal types
@@ -60,7 +60,7 @@ declare module '../Core/Series/Types' {
     }
 }
 
-import '../Core/Series/CatesianSeries.js';
+import '../Series/LineSeries.js';
 
 /**
  * Spline series type.
@@ -71,7 +71,7 @@ import '../Core/Series/CatesianSeries.js';
  *
  * @augments Highcarts.Series
  */
-BaseSeries.seriesType<Highcharts.SplineSeries>(
+BaseSeries.seriesType<typeof Highcharts.SplineSeries>(
     'spline',
     'line',
     /**

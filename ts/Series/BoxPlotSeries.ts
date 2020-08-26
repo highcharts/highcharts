@@ -135,7 +135,7 @@ var columnProto = BaseSeries.seriesTypes.column.prototype;
  * @requires     highcharts-more
  * @optionparent plotOptions.boxplot
  */
-BaseSeries.seriesType<Highcharts.BoxPlotSeries>(
+BaseSeries.seriesType<typeof Highcharts.BoxPlotSeries>(
     'boxplot',
     'column',
     {

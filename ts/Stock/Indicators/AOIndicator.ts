@@ -72,7 +72,7 @@ import './SMAIndicator.js';
  *
  * @augments Highcharts.Series
  */
-BaseSeries.seriesType<Highcharts.AOIndicator>(
+BaseSeries.seriesType<typeof Highcharts.AOIndicator>(
     'ao',
     'sma',
     /**

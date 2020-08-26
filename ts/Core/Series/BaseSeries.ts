@@ -35,12 +35,12 @@ const {
 declare global {
     namespace Highcharts {
         let seriesTypes: SeriesTypeRegistry;
-        function seriesType<T extends BaseSeries>(
-            type: string,
-            parent: string,
-            options: T['options'],
-            props?: Partial<T>,
-            pointProps?: Partial<T['pointClass']['prototype']>
+        function seriesType<T extends typeof BaseSeries>(
+            type: keyof SeriesTypeRegistry,
+            parent: (keyof SeriesTypeRegistry|undefined),
+            options: DeepPartial<T['prototype']['options']>,
+            props?: DeepPartial<T['prototype']>,
+            pointProps?: DeepPartial<T['prototype']['pointClass']['prototype']>
         ): T;
     }
 }
@@ -168,12 +168,12 @@ abstract class BaseSeries {
      * derivatives.
      */
     // docs: add to API + extending Highcharts
-    public static seriesType<T extends BaseSeries>(
-        type: string,
-        parent: (string|undefined),
-        options: DeepPartial<T['options']>,
-        seriesProto?: DeepPartial<T>,
-        pointProto?: DeepPartial<T['pointClass']['prototype']>
+    public static seriesType<T extends typeof BaseSeries>(
+        type: keyof SeriesTypeRegistry,
+        parent: (keyof SeriesTypeRegistry|undefined),
+        options: DeepPartial<T['prototype']['options']>,
+        seriesProto?: DeepPartial<T['prototype']>,
+        pointProto?: DeepPartial<T['prototype']['pointClass']['prototype']>
     ): T {
         const defaultOptions: Record<string, any> = getOptions().plotOptions || {},
             seriesTypes = BaseSeries.seriesTypes;

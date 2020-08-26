@@ -11,7 +11,7 @@ import H from '../../Core/Globals.js';
 import requiredIndicator from '../../Mixins/IndicatorRequired.js';
 import U from '../../Core/Utilities.js';
 var addEvent = U.addEvent, error = U.error, extend = U.extend, isArray = U.isArray, pick = U.pick, splat = U.splat;
-import '../../Core/Series/CatesianSeries.js';
+import '../../Series/LineSeries.js';
 import '../../Series/OHLCSeries.js';
 var Series = H.Series, ohlcProto = seriesTypes.ohlc.prototype, generateMessage = requiredIndicator.generateMessage;
 /**

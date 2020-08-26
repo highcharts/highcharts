@@ -12,8 +12,8 @@ import BaseSeries from '../Core/Series/BaseSeries.js';
 import U from '../Core/Utilities.js';
 var pick = U.pick;
 import '../Core/Options.js';
-import '../Core/Series/CatesianSeries.js';
-import '../Core/Series/CatesianSeries.js';
+import '../Series/LineSeries.js';
+import '../Series/LineSeries.js';
 /**
  * Spline series type.
  *

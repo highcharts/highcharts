@@ -86,7 +86,7 @@ function populateAverage(
  *
  * @augments Highcharts.Series
  */
-BaseSeries.seriesType<Highcharts.ADIndicator>('ad', 'sma',
+BaseSeries.seriesType<typeof Highcharts.ADIndicator>('ad', 'sma',
     /**
      * Accumulation Distribution (AD). This series requires `linkedTo` option to
      * be set.

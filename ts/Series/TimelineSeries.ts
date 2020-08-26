@@ -139,7 +139,7 @@ declare module '../Core/Series/Types' {
     }
 }
 
-import '../Core/Series/CatesianSeries.js';
+import '../Series/LineSeries.js';
 
 var TrackerMixin = H.TrackerMixin,
     Series = H.Series;
@@ -183,7 +183,7 @@ var TrackerMixin = H.TrackerMixin,
  *
  * @augments Highcharts.Series
  */
-BaseSeries.seriesType<Highcharts.TimelineSeries>('timeline', 'line',
+BaseSeries.seriesType<typeof Highcharts.TimelineSeries>('timeline', 'line',
 
     /**
      * The timeline series presents given events along a drawn line.

@@ -103,7 +103,7 @@ function getExtremeIndexInArray(arr: Array<number>, extreme: string): number {
  *
  * @augments Highcharts.Series
  */
-BaseSeries.seriesType<Highcharts.AroonIndicator>(
+BaseSeries.seriesType<typeof Highcharts.AroonIndicator>(
     'aroon',
     'sma',
     /**

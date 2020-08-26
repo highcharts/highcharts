@@ -14,7 +14,7 @@
 'use strict';
 import H from '../../Core/Globals.js';
 var win = H.win, doc = H.doc;
-import '../../Core/Series/CatesianSeries.js';
+import '../../Series/LineSeries.js';
 import boostableMap from './BoostableMap.js';
 import createAndAttachRenderer from './BoostAttach.js';
 import U from '../../Core/Utilities.js';

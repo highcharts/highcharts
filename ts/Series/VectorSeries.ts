@@ -82,7 +82,7 @@ import './ScatterSeries.js';
  *
  * @augments Highcharts.seriesTypes.scatter
  */
-BaseSeries.seriesType<Highcharts.VectorSeries>('vector', 'scatter'
+BaseSeries.seriesType<typeof Highcharts.VectorSeries>('vector', 'scatter'
 
     /**
      * A vector plot is a type of cartesian chart where each point has an X and

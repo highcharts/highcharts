@@ -42,7 +42,7 @@ declare global {
     }
 }
 
-import '../Core/Series/CatesianSeries.js';
+import '../Series/LineSeries.js';
 
 var seriesTypes = H.seriesTypes;
 

@@ -111,7 +111,7 @@ var Series = H.Series,
  *
  * @augments Highcharts.Series
  */
-BaseSeries.seriesType<Highcharts.GanttSeries>('gantt', 'xrange'
+BaseSeries.seriesType<typeof Highcharts.GanttSeries>('gantt', 'xrange'
 
     /**
      * A `gantt` series. If the [type](#series.gantt.type) option is not specified,

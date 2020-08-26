@@ -68,7 +68,7 @@ function toFixed(a: number, n: number): number {
  *
  * @augments Highcharts.Series
  */
-BaseSeries.seriesType<Highcharts.RSIIndicator>(
+BaseSeries.seriesType<typeof Highcharts.RSIIndicator>(
     'rsi',
     'sma',
     /**

@@ -206,7 +206,7 @@ declare module '../Core/Series/Types' {
     }
 }
 
-import '../Core/Series/CatesianSeries.js';
+import '../Series/LineSeries.js';
 import './TreemapSeries.js';
 
 var Series = H.Series,
@@ -1447,7 +1447,7 @@ var sunburstPoint = {
  *
  * @augments Highcharts.Series
  */
-BaseSeries.seriesType<Highcharts.SunburstSeries>(
+BaseSeries.seriesType<typeof Highcharts.SunburstSeries>(
     'sunburst',
     'treemap',
     sunburstOptions,

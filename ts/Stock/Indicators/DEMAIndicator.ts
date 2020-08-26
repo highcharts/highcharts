@@ -79,7 +79,7 @@ var EMAindicator = BaseSeries.seriesTypes.ema;
  *
  * @augments Highcharts.Series
  */
-BaseSeries.seriesType<Highcharts.DEMAIndicator>(
+BaseSeries.seriesType<typeof Highcharts.DEMAIndicator>(
     'dema',
     'ema',
     /**
