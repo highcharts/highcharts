@@ -69,7 +69,7 @@ import H from './Globals.js';
 * @name Highcharts.GradientColorStopObject#1
 * @type {Highcharts.ColorString}
 */ /**
-* @name Highcharts.GradoentColorStopObject#color
+* @name Highcharts.GradientColorStopObject#color
 * @type {Highcharts.Color|undefined}
 */
 /**

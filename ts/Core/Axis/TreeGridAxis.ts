@@ -45,7 +45,7 @@ declare global {
             utils: TreeGridAxisUtilsObject;
         }
         interface TreeGridAxisUtilsObject {
-            getNode: Tree['getNode'];
+            getNode: typeof Tree['getNode'];
         }
     }
 }

@@ -22,6 +22,7 @@ var __extends = (this && this.__extends) || (function () {
         d.prototype = b === null ? Object.create(b) : (__.prototype = b.prototype, new __());
     };
 })();
+import DataJSON from '../DataJSON.js';
 import DataStore from './DataStore.js';
 import DataTable from '../DataTable.js';
 import H from '../../Core/Globals.js';
@@ -57,7 +58,7 @@ var HTMLTableDataStore = /** @class */ (function (_super) {
         if (options === void 0) { options = {}; }
         var _this = _super.call(this, table) || this;
         _this.tableElement = null;
-        _this.options = merge(HTMLTableDataStore.defaultOptions, HTMLTableParser.defaultOptions, options);
+        _this.options = merge(HTMLTableDataStore.defaultOptions, options);
         _this.parser = parser || new HTMLTableParser(_this.tableElement, _this.options);
         return _this;
     }
@@ -76,9 +77,7 @@ var HTMLTableDataStore = /** @class */ (function (_super) {
      * HTMLTableStore from the ClassJSON
      */
     HTMLTableDataStore.fromJSON = function (json) {
-        var options = {
-            tableHTML: json.tableElement
-        }, parser = HTMLTableParser.fromJSON(json.parser), table = DataTable.fromJSON(json.table), store = new HTMLTableDataStore(table, options, parser);
+        var options = json.options, parser = HTMLTableParser.fromJSON(json.parser), table = DataTable.fromJSON(json.table), store = new HTMLTableDataStore(table, options, parser);
         store.describe(DataStore.getMetadataFromJSON(json.metadata));
         return store;
     };
@@ -89,10 +88,12 @@ var HTMLTableDataStore = /** @class */ (function (_super) {
         var store = this, tableHTML = store.options.tableHTML;
         var tableElement;
         if (typeof tableHTML === 'string') {
+            store.tableID = tableHTML;
             tableElement = win.document.getElementById(tableHTML);
         }
         else {
             tableElement = tableHTML;
+            store.tableID = tableElement.id;
         }
         store.tableElement = tableElement;
     };
@@ -138,11 +139,8 @@ var HTMLTableDataStore = /** @class */ (function (_super) {
             metadata: store.getMetadataJSON(),
             parser: store.parser.toJSON(),
             table: store.table.toJSON(),
-            tableElement: (typeof store.tableElement === 'string' ?
-                store.tableElement :
-                store.tableElement ?
-                    store.tableElement.id :
-                    '')
+            options: merge(this.options),
+            tableElementID: store.tableID || ''
         };
         return json;
     };
@@ -156,6 +154,12 @@ var HTMLTableDataStore = /** @class */ (function (_super) {
     };
     return HTMLTableDataStore;
 }(DataStore));
+/* *
+ *
+ *  Register
+ *
+ * */
+DataJSON.addClass(HTMLTableDataStore);
 /* *
  *
  *  Export

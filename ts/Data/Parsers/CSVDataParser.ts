@@ -68,7 +68,7 @@ class CSVDataParser extends DataParser<DataParser.EventObject> {
     /**
      * Constructs an instance of the CSV parser.
      *
-     * @param {CSVDataParser.ClassJSONOptions} [options]
+     * @param {CSVDataParser.OptionsType} [options]
      * Options for the CSV parser.
      */
     public constructor(options?: CSVDataParser.OptionsType) {

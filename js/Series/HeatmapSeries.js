@@ -28,8 +28,9 @@ var clamp = U.clamp, extend = U.extend, fireEvent = U.fireEvent, isNumber = U.is
 ''; // detach doclets above
 import '../Core/Options.js';
 import '../Core/Series/Series.js';
-import '../Mixins/ColorMapSeries.js';
-var colorMapPointMixin = H.colorMapPointMixin, colorMapSeriesMixin = H.colorMapSeriesMixin, noop = H.noop, Series = H.Series, seriesTypes = H.seriesTypes, symbols = SVGRenderer.prototype.symbols;
+import colorMapMixin from '../Mixins/ColorMapSeries.js';
+var colorMapPointMixin = colorMapMixin.colorMapPointMixin, colorMapSeriesMixin = colorMapMixin.colorMapSeriesMixin;
+var noop = H.noop, Series = H.Series, seriesTypes = H.seriesTypes, symbols = SVGRenderer.prototype.symbols;
 /**
  * @private
  * @class

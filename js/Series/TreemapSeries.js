@@ -11,6 +11,8 @@
  * */
 'use strict';
 import H from '../Core/Globals.js';
+import colorMapMixin from '../Mixins/ColorMapSeries.js';
+var colorMapSeriesMixin = colorMapMixin.colorMapSeriesMixin;
 import mixinTreeSeries from '../Mixins/TreeSeries.js';
 var getColor = mixinTreeSeries.getColor, getLevelOptions = mixinTreeSeries.getLevelOptions, updateRootId = mixinTreeSeries.updateRootId;
 import drawPointModule from '../Mixins/DrawPoint.js';
@@ -580,7 +582,7 @@ seriesType('treemap', 'scatter'
         return !!this.processedXData.length; // != 0
     },
     init: function (chart, options) {
-        var series = this, colorMapSeriesMixin = H.colorMapSeriesMixin, setOptionsEvent;
+        var series = this, setOptionsEvent;
         // If color series logic is loaded, add some properties
         if (colorMapSeriesMixin) {
             this.colorAttribs = colorMapSeriesMixin.colorAttribs;

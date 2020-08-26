@@ -29,6 +29,9 @@ const { merge } = U;
  *
  * */
 
+/**
+ * Handles parsing and transformation of an HTML table to a DataTable
+ */
 class HTMLTableParser extends DataParser<DataParser.EventObject> {
 
     /* *
@@ -37,8 +40,12 @@ class HTMLTableParser extends DataParser<DataParser.EventObject> {
      *
      * */
 
-    public static readonly defaultOptions: HTMLTableParser.Options =
-    DataParser.defaultOptions;
+    /**
+     * Default options
+     */
+    protected static readonly defaultOptions: HTMLTableParser.ClassJSONOptions = {
+        ...DataParser.defaultOptions
+    }
 
     /* *
      *
@@ -46,9 +53,19 @@ class HTMLTableParser extends DataParser<DataParser.EventObject> {
      *
      * */
 
+
+    /**
+     * Creates a HTMLTableParser instance from ClassJSON.
+     *
+     * @param {HTMLTableParser.ClassJSON} json
+     * Class JSON to convert to the parser instance.
+     *
+     * @return {HTMLTableParser}
+     * An instance of CSVDataParser.
+     */
     public static fromJSON(json: HTMLTableParser.ClassJSON): HTMLTableParser {
         return new HTMLTableParser(
-            document.getElementById(json.tableElement),
+            document.getElementById(json.tableElementID),
             json.options
         );
     }
@@ -59,15 +76,30 @@ class HTMLTableParser extends DataParser<DataParser.EventObject> {
      *
      * */
 
+    /**
+     * Constructs an instance of the HTML table parser.
+     *
+     * @param {HTMLElement | null} tableElement
+     * The HTML table to parse
+     * @param {HTMLTableParser.OptionsType} [options]
+     * Options for the CSV parser.
+     */
     constructor(
-        tableElement: (HTMLElement|null) = null,
-        options?: Partial<HTMLTableParser.Options>
+        tableElement: (HTMLElement | null) = null,
+        options?: Partial<HTMLTableParser.OptionsType>
     ) {
         super();
         this.columns = [];
         this.headers = [];
         this.options = merge(HTMLTableParser.defaultOptions, options);
-        this.tableElement = tableElement;
+
+        if (tableElement) {
+            this.tableElement = tableElement;
+            this.tableElementID = tableElement.id;
+        } else if (options?.tableHTML) {
+            this.tableElement = options.tableHTML;
+            this.tableElementID = options?.tableHTML.id;
+        }
     }
 
     /* *
@@ -78,8 +110,9 @@ class HTMLTableParser extends DataParser<DataParser.EventObject> {
 
     private columns: DataValueType[][];
     private headers: string[];
-    public options: HTMLTableParser.Options;
-    public tableElement: (HTMLElement | null);
+    public options: HTMLTableParser.ClassJSONOptions;
+    public tableElement?: HTMLElement
+    public tableElementID?: string;
 
     /* *
      *
@@ -87,8 +120,18 @@ class HTMLTableParser extends DataParser<DataParser.EventObject> {
      *
      * */
 
+    /**
+     * Initiates the parsing of the HTML table
+     *
+     * @param {HTMLTableParser.OptionsType}[options]
+     * Options for the parser
+     *
+     * @emits CSVDataParser#parse
+     * @emits CSVDataParser#afterParse
+     * @emits HTMLTableParser#parseError
+     */
     public parse(
-        options: Partial<(HTMLTableParser.Options&HTMLTableParser.ParseOptions)>
+        options: HTMLTableParser.OptionsType
     ): void {
         const parser = this,
             columns: [] = [],
@@ -98,9 +141,10 @@ class HTMLTableParser extends DataParser<DataParser.EventObject> {
                 startRow,
                 endRow,
                 startColumn,
-                endColumn,
-                tableHTML
+                endColumn
             } = parseOptions;
+
+        const tableHTML = parseOptions.tableHTML || this.tableElement;
 
         if (!(tableHTML instanceof HTMLElement)) {
             parser.emit({
@@ -111,6 +155,10 @@ class HTMLTableParser extends DataParser<DataParser.EventObject> {
             });
             return;
         }
+        parser.tableElement = this.tableElement;
+        parser.tableElementID = tableHTML.id;
+
+        this.emit({ type: 'parse', columns: parser.columns, headers: parser.headers });
 
         let colsCount: number,
             rowNo: number,
@@ -172,26 +220,36 @@ class HTMLTableParser extends DataParser<DataParser.EventObject> {
         }
         this.columns = columns;
         this.headers = headers;
+
+        this.emit({ type: 'afterParse', columns, headers });
     }
 
+    /**
+     * Handles converting the parsed data to a DataTable
+     *
+     * @return {DataTable}
+     * A DataTable from the parsed HTML table
+     */
     public getTable(): DataTable {
         return DataTable.fromColumns(this.columns, this.headers);
     }
 
+    /**
+     * Converts the parser instance to ClassJSON.
+     *
+     * @return {HTMLTableParser.ClassJSON}
+     * ClassJSON from the parser instance.
+     */
     public toJSON(): HTMLTableParser.ClassJSON {
         const parser = this,
             {
                 options,
-                tableElement
+                tableElementID
             } = parser,
             json: HTMLTableParser.ClassJSON = {
                 $class: 'HTMLTableParser',
                 options,
-                tableElement: (
-                    tableElement &&
-                    tableElement.getAttribute('id') ||
-                    ''
-                )
+                tableElementID: tableElementID ? tableElementID : ''
             };
 
         return json;
@@ -207,16 +265,30 @@ class HTMLTableParser extends DataParser<DataParser.EventObject> {
 
 namespace HTMLTableParser {
 
+    /**
+     * The available options for the parser
+     */
+    export type OptionsType = Partial<ParserOptions & DataParser.Options>
+
+    /**
+     * ClassJSON for HTMLTableParser
+     */
     export interface ClassJSON extends DataJSON.ClassJSON {
-        tableElement: string;
-        options: Options;
+        options: ClassJSONOptions;
+        tableElementID: string;
     }
 
-    export interface Options extends DataParser.Options {
+    /**
+     * Options for the parser compatible with ClassJSON
+     */
+    export interface ClassJSONOptions extends DataParser.Options {
     }
 
-    export interface ParseOptions {
-        tableHTML?: (HTMLElement|null);
+    /**
+     * Options not compatible with ClassJSON
+     */
+    export interface ParserOptions {
+        tableHTML?: (HTMLElement | null);
     }
 
 }

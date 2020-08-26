@@ -1352,3 +1352,5 @@ SVGRenderer.prototype.arc3dPath = function (
         zSide2: a2 * 0.99
     };
 };
+
+export default SVGRenderer;

@@ -12,4 +12,4 @@
 
 'use strict';
 
-import '../../modules/sonification/sonification.js';
+import '../../Extensions/Sonification/Sonification.js';

@@ -10,6 +10,8 @@
 'use strict';
 import H from '../Core/Globals.js';
 import LegendSymbolMixin from '../Mixins/LegendSymbol.js';
+import mapModule from '../Maps/Map.js';
+var maps = mapModule.maps, splitPath = mapModule.splitPath;
 import Point from '../Core/Series/Point.js';
 import SVGRenderer from '../Core/Renderer/SVG/SVGRenderer.js';
 import U from '../Core/Utilities.js';
@@ -17,8 +19,9 @@ var extend = U.extend, fireEvent = U.fireEvent, getNestedProperty = U.getNestedP
 import '../Core/Options.js';
 import '../Series/ScatterSeries.js';
 import '../Core/Series/Series.js';
-import '../Mixins/ColorMapSeries.js';
-var colorMapPointMixin = H.colorMapPointMixin, colorMapSeriesMixin = H.colorMapSeriesMixin, noop = H.noop, Series = H.Series, seriesTypes = H.seriesTypes;
+import colorMapMixin from '../Mixins/ColorMapSeries.js';
+var colorMapPointMixin = colorMapMixin.colorMapPointMixin, colorMapSeriesMixin = colorMapMixin.colorMapSeriesMixin;
+var noop = H.noop, Series = H.Series, seriesTypes = H.seriesTypes;
 /**
  * @private
  * @class
@@ -118,7 +121,7 @@ seriesType('map', 'scatter',
      *         Borders demo
      *
      * @type      {Highcharts.ColorString|Highcharts.GradientColorObject|Highcharts.PatternObject}
-     * @default   '#cccccc'
+     * @default   #cccccc
      * @product   highmaps
      * @apioption plotOptions.series.borderColor
      *
@@ -143,6 +146,7 @@ seriesType('map', 'scatter',
      */
     borderWidth: 1,
     /**
+     * @type      {string}
      * @default   value
      * @apioption plotOptions.map.colorKey
      */
@@ -173,8 +177,6 @@ seriesType('map', 'scatter',
      * @default   hc-key
      * @product   highmaps
      * @apioption plotOptions.series.joinBy
-     *
-     * @private
      */
     joinBy: 'hc-key',
     /**
@@ -297,7 +299,7 @@ seriesType('map', 'scatter',
         (paths || []).forEach(function (point) {
             if (point.path) {
                 if (typeof point.path === 'string') {
-                    point.path = H.splitPath(point.path);
+                    point.path = splitPath(point.path);
                     // Legacy one-dimensional array
                 }
                 else if (point.path[0] === 'M') {
@@ -430,7 +432,7 @@ seriesType('map', 'scatter',
         // Collect mapData from chart options if not defined on series
         if (!mapData && globalMapData) {
             mapData = typeof globalMapData === 'string' ?
-                H.maps[globalMapData] :
+                maps[globalMapData] :
                 globalMapData;
         }
         // Pick up numeric values, add index

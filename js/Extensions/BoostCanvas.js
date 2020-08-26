@@ -28,7 +28,7 @@ var win = H.win, doc = win.document, noop = function () { }, Series = H.Series, 
  *
  * @function Highcharts.initCanvasBoost
  */
-H.initCanvasBoost = function () {
+var initCanvasBoost = function () {
     if (H.seriesTypes.heatmap) {
         wrap(H.seriesTypes.heatmap.prototype, 'drawPoints', function () {
             var chart = this.chart, ctx = this.getContext(), inverted = this.chart.inverted, xAxis = this.xAxis, yAxis = this.yAxis;
@@ -503,3 +503,4 @@ H.initCanvasBoost = function () {
         addEvent(chart, 'render', canvasToSVG);
     });
 };
+export default initCanvasBoost;

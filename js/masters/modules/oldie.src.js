@@ -11,4 +11,4 @@
  * License: www.highcharts.com/license
  */
 'use strict';
-import '../../Extensions/Oldie.js';
+import '../../Extensions/Oldie/Oldie.js';

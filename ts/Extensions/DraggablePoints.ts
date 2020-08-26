@@ -12,7 +12,7 @@
 
 'use strict';
 
-import type Chart from '../Core/Chart/Chart';
+import Chart from '../Core/Chart/Chart.js';
 import type SVGElement from '../Core/Renderer/SVG/SVGElement';
 import type SVGPath from '../Core/Renderer/SVG/SVGPath';
 import H from '../Core/Globals.js';
@@ -439,7 +439,7 @@ Supported options for each prop:
 */
 
 // 90deg rotated column handle path, used in multiple series types
-var horizHandleFormatter = function (
+const horizHandleFormatter = function (
     point: Point
 ): SVGPath {
     var shapeArgs = point.shapeArgs || (point.graphic as any).getBBox(),
@@ -461,7 +461,7 @@ var horizHandleFormatter = function (
 };
 
 // Line series - only draggableX/Y, no drag handles
-var lineDragDropProps = seriesTypes.line.prototype.dragDropProps = {
+const lineDragDropProps = seriesTypes.line.prototype.dragDropProps = {
     x: {
         axis: 'x',
         move: true
@@ -479,7 +479,7 @@ if (seriesTypes.flags) {
 
 // Column series - x can be moved, y can only be resized. Note extra
 // functionality for handling upside down columns (below threshold).
-var columnDragDropProps = seriesTypes.column.prototype.dragDropProps = {
+const columnDragDropProps = seriesTypes.column.prototype.dragDropProps = {
     x: {
         axis: 'x',
         move: true
@@ -1245,7 +1245,7 @@ if (seriesTypes.xrange) {
  *
  * @private
  */
-var defaultDragSensitivity = 2;
+const defaultDragSensitivity = 2;
 
 /**
  * Style options for the guide box. The guide box has one state by default, the
@@ -1257,7 +1257,7 @@ var defaultDragSensitivity = 2;
  *
  * @private
  */
-var defaultGuideBoxOptions: (
+const defaultGuideBoxOptions: (
     Highcharts.Dictionary<Highcharts.DragDropGuideBoxOptionsObject>
 ) = {
     /**
@@ -1324,7 +1324,7 @@ var defaultGuideBoxOptions: (
  *
  * @private
  */
-var defaultDragHandleOptions: Highcharts.DragDropHandleOptionsObject = {
+const defaultDragHandleOptions: Highcharts.DragDropHandleOptionsObject = {
 
     /**
      * Function to define the SVG path to use for the drag handles. Takes the
@@ -2243,7 +2243,7 @@ function dragMove(
  * @return {Highcharts.SVGElement}
  *         The modified guide box.
  */
-H.Chart.prototype.setGuideBoxState = function (
+Chart.prototype.setGuideBoxState = function (
     state: string,
     options?: Highcharts.Dictionary<Highcharts.DragDropGuideBoxOptionsObject>
 ): Highcharts.SVGElement {
@@ -2649,7 +2649,7 @@ Point.prototype.showDragHandles = function (): void {
  * @function Highcharts.Chart#hideDragHandles
  * @return {void}
  */
-H.Chart.prototype.hideDragHandles = function (): void {
+Chart.prototype.hideDragHandles = function (): void {
     var chart = this;
 
     if (chart.dragHandles) {
@@ -2986,7 +2986,7 @@ addEvent(Point, 'remove', function (): void {
  * @return {boolean}
  *         True if the zoom or pan keys are pressed. False otherwise.
  */
-H.Chart.prototype.zoomOrPanKeyPressed = function (e: Event): boolean {
+Chart.prototype.zoomOrPanKeyPressed = function (e: Event): boolean {
     // Check whether the panKey and zoomKey are set in chart.userOptions
     var chartOptions = this.userOptions.chart || {},
         panKey = chartOptions.panKey && chartOptions.panKey + 'Key',
@@ -3054,7 +3054,7 @@ function addDragDropEvents(chart: Chart): void {
 
 // Add event listener to Chart.render that checks whether or not we should add
 // dragdrop.
-addEvent(H.Chart, 'render', function (): void {
+addEvent(Chart, 'render', function (): void {
     // If we don't have dragDrop events, see if we should add them
     if (!this.hasAddedDragDropEvents) {
         addDragDropEvents(this);
