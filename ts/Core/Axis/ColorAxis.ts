@@ -123,12 +123,14 @@ declare global {
 
 ''; // detach doclet above
 
-import '../../Mixins/ColorSeries.js';
+import colorSeriesModule from '../../Mixins/ColorSeries.js';
+const {
+    colorPointMixin,
+    colorSeriesMixin
+} = colorSeriesModule;
 import '../Series/Series.js';
 
-var Series = H.Series,
-    colorPointMixin = H.colorPointMixin,
-    colorSeriesMixin = H.colorSeriesMixin;
+var Series = H.Series;
 
 extend(Series.prototype, colorSeriesMixin);
 extend(Point.prototype, colorPointMixin);

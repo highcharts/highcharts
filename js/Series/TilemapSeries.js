@@ -18,6 +18,8 @@ import H from '../Core/Globals.js';
 ''; // detach doclets above
 import U from '../Core/Utilities.js';
 var addEvent = U.addEvent, clamp = U.clamp, extend = U.extend, pick = U.pick, seriesType = U.seriesType;
+import colorSeriesModule from '../Mixins/ColorSeries.js';
+var colorPointMixin = colorSeriesModule.colorPointMixin;
 import '../Series/HeatmapSeries.js';
 /**
  * Utility func to get padding definition from tile size division
@@ -472,7 +474,7 @@ seriesType('tilemap', 'heatmap'
     haloPath: function () {
         return this.series.tileShape.haloPath.apply(this, Array.prototype.slice.call(arguments));
     }
-}, H.colorPointMixin));
+}, colorPointMixin));
 /**
  * A `tilemap` series. If the [type](#series.tilemap.type) option is
  * not specified, it is inherited from [chart.type](#chart.type).
