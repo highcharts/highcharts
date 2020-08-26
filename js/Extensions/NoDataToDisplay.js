@@ -12,11 +12,11 @@
  *
  * */
 'use strict';
-import H from '../Core/Globals.js';
 import U from '../Core/Utilities.js';
 var addEvent = U.addEvent, extend = U.extend, getOptions = U.getOptions;
+import Chart from '../Core/Chart/Chart.js';
 import '../Core/Series/Series.js';
-var chartPrototype = H.Chart.prototype, defaultOptions = getOptions();
+var chartPrototype = Chart.prototype, defaultOptions = getOptions();
 // Add language option
 extend(defaultOptions.lang, 
 /**
@@ -176,7 +176,7 @@ chartPrototype.hasData = function () {
 };
 /* eslint-disable no-invalid-this */
 // Add event listener to handle automatic show or hide no-data message.
-addEvent(H.Chart, 'render', function handleNoData() {
+addEvent(Chart, 'render', function handleNoData() {
     if (this.hasData()) {
         this.hideNoData();
     }
