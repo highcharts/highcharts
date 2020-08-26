@@ -101,7 +101,7 @@ namespace TreeGridAxis {
         collapseStart?: number;
         depth: number;
         descendants?: number;
-        id?: number | string | null;
+        id?: string;
         height?: number;
         name: string;
         nodes: [TreeGridNode];
@@ -864,6 +864,35 @@ namespace TreeGridAxis {
          * */
 
         /**
+         * Set the collapse status.
+         *
+         * @private
+         *
+         * @param {Highcharts.Axis} axis
+         * The axis to check against.
+         *
+         * @param {Highcharts.GridNode} node
+         * The node to collapse.
+         */
+        public setCollapsedStatus(node: GridNode): void {
+            const axis = this.axis,
+                chart = axis.chart;
+
+            axis.series.forEach(function (series): void {
+                const data = series.options.data;
+                if (node.id && data) {
+                    const point = chart.get(node.id),
+                        dataPoint = data[series.data.indexOf(point as Highcharts.GanttPoint)];
+
+                    if (point && dataPoint) {
+                        (point as Highcharts.GanttPoint).collapsed = node.collapsed;
+                        (dataPoint as Highcharts.GanttPoint).collapsed = node.collapsed;
+                    }
+                }
+            });
+        }
+
+        /**
          * Calculates the new axis breaks to collapse a node.
          *
          * @private
@@ -888,17 +917,7 @@ namespace TreeGridAxis {
             breaks.push(obj);
             // Change the collapsed flag #13838
             node.collapsed = true;
-            axis.series.forEach(function (series): void {
-                const data = series.options.data;
-
-                if (data && data.length) {
-                    data.forEach(function (data): void {
-                        if ((data as PointOptionsObject).id === node.id) {
-                            (data as PointOptionsObject).collapsed = true;
-                        }
-                    });
-                }
-            });
+            axis.treeGrid.setCollapsedStatus(node);
 
             return breaks;
         }
@@ -927,17 +946,7 @@ namespace TreeGridAxis {
 
             // Change the collapsed flag #13838
             node.collapsed = false;
-            axis.series.forEach(function (series): void {
-                const data = series.options.data;
-
-                if (data && data.length) {
-                    data.forEach(function (data): void {
-                        if ((data as PointOptionsObject).id === node.id) {
-                            (data as PointOptionsObject).collapsed = false;
-                        }
-                    });
-                }
-            });
+            axis.treeGrid.setCollapsedStatus(node);
 
             // Remove the break from the axis breaks array.
             return breaks.reduce(function (

@@ -39,6 +39,7 @@ declare global {
                 Array<string>
             );
         class GanttPoint extends XRangePoint {
+            public collapsed?: boolean;
             public end?: GanttPointOptions['end'];
             public milestone?: GanttPointOptions['milestone'];
             public options: GanttPointOptions;
