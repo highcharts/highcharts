@@ -9,7 +9,7 @@
  *  !!!!!!! SOURCE GETS TRANSPILED BY TYPESCRIPT. EDIT TS FILE ONLY. !!!!!!!
  *
  * */
-import BaseSeries from '../../Core/Series/BaseSeries.js';
+import BaseSeries from '../../Core/Series/Series.js';
 import U from '../../Core/Utilities.js';
 var error = U.error, isArray = U.isArray;
 import './SMAIndicator.js';

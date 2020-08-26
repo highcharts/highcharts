@@ -12,7 +12,7 @@ import type { AxisType } from '../Axis/Types';
 import type Chart from '../Chart/Chart';
 import type { SeriesOptionsType, SeriesPlotOptionsType } from './Types';
 import type SVGPath from '../Renderer/SVG/SVGPath';
-import BaseSeries from './BaseSeries.js';
+import BaseSeries from './Series.js';
 import H from '../Globals.js';
 import LegendSymbolMixin from '../../Mixins/LegendSymbol.js';
 import O from '../Options.js';

@@ -10,7 +10,7 @@
  *
  * */
 'use strict';
-import BaseSeries from '../Core/Series/BaseSeries.js';
+import BaseSeries from '../Core/Series/Series.js';
 import H from '../Core/Globals.js';
 var noop = H.noop;
 import OnSeriesMixin from '../Mixins/OnSeries.js';

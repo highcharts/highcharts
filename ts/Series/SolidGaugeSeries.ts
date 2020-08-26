@@ -13,7 +13,7 @@
 import type ColorAxis from '../Core/Axis/ColorAxis';
 import type RadialAxis from '../Core/Axis/RadialAxis';
 import type SVGPath from '../Core/Renderer/SVG/SVGPath';
-import BaseSeries from '../Core/Series/BaseSeries.js';
+import BaseSeries from '../Core/Series/Series.js';
 import Color from '../Core/Color.js';
 const {
     parse: color

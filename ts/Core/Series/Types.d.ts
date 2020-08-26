@@ -8,7 +8,7 @@
  *
  * */
 
-import type Series from './BaseSeries';
+import type Series from './Series';
 
 /**
  * All possible series options.

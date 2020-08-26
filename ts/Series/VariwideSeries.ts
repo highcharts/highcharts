@@ -11,7 +11,7 @@
  * */
 
 import type StackingAxis from '../Core/Axis/StackingAxis';
-import BaseSeries from '../Core/Series/BaseSeries.js';
+import BaseSeries from '../Core/Series/Series.js';
 const {
     seriesTypes
 } = BaseSeries;

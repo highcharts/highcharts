@@ -8,7 +8,7 @@
  *
  * */
 
-import BaseSeries from '../../Core/Series/BaseSeries.js';
+import BaseSeries from '../../Core/Series/Series.js';
 
 /**
  * Internal types

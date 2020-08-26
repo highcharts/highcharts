@@ -9,7 +9,7 @@
  * */
 
 import type SVGPath from '../Core/Renderer/SVG/SVGPath';
-import BaseSeries from '../Core/Series/BaseSeries.js';
+import BaseSeries from '../Core/Series/Series.js';
 import ColorMapMixin from '../Mixins/ColorMapSeries.js';
 const {
     colorMapPointMixin,

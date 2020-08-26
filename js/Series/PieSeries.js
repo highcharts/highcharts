@@ -7,19 +7,18 @@
  *  !!!!!!! SOURCE GETS TRANSPILED BY TYPESCRIPT. EDIT TS FILE ONLY. !!!!!!!
  *
  * */
-import BaseSeries from '../Core/Series/BaseSeries.js';
+import BaseSeries from '../Core/Series/Series.js';
 import CenteredSeriesMixin from '../Mixins/CenteredSeries.js';
 var getStartAndEndRadians = CenteredSeriesMixin.getStartAndEndRadians;
 import H from '../Core/Globals.js';
 var noop = H.noop;
 import LegendSymbolMixin from '../Mixins/LegendSymbol.js';
+import LineSeries from '../Series/LineSeries.js';
 import Point from '../Core/Series/Point.js';
 import SVGRenderer from '../Core/Renderer/SVG/SVGRenderer.js';
 import U from '../Core/Utilities.js';
 var addEvent = U.addEvent, clamp = U.clamp, defined = U.defined, fireEvent = U.fireEvent, isNumber = U.isNumber, merge = U.merge, pick = U.pick, relativeLength = U.relativeLength, setAnimation = U.setAnimation;
 import '../Core/Options.js';
-import '../Series/LineSeries.js';
-var Series = H.Series;
 /**
  * Pie series type.
  *
@@ -631,7 +630,7 @@ BaseSeries.seriesType('pie', 'line',
      * @return {void}
      */
     generatePoints: function () {
-        Series.prototype.generatePoints.call(this);
+        LineSeries.prototype.generatePoints.call(this);
         this.updateTotals();
     },
     /**

@@ -6,7 +6,7 @@
  *
  * */
 
-import BaseSeries from '../../Core/Series/BaseSeries.js';
+import BaseSeries from '../../Core/Series/Series.js';
 import multipleLinesMixin from '../../Mixins/MultipleLines.js';
 import requiredIndicator from '../../Mixins/IndicatorRequired.js';
 import U from '../../Core/Utilities.js';

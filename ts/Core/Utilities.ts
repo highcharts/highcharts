@@ -10,7 +10,7 @@
 
 'use strict';
 
-import type BaseSeries from './Series/BaseSeries';
+import type BaseSeries from './Series/Series';
 import type Chart from './Chart/Chart';
 import type { SeriesOptionsType } from './Series/Types';
 import type SVGPath from './Renderer/SVG/SVGPath';

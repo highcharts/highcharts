@@ -7,7 +7,7 @@
  *  !!!!!!! SOURCE GETS TRANSPILED BY TYPESCRIPT. EDIT TS FILE ONLY. !!!!!!!
  *
  * */
-import BaseSeries from './BaseSeries.js';
+import BaseSeries from './Series.js';
 import H from '../Globals.js';
 import LegendSymbolMixin from '../../Mixins/LegendSymbol.js';
 import O from '../Options.js';

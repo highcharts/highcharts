@@ -16,7 +16,7 @@ import Ajax from '../Extensions/Ajax.js';
 const {
     ajax
 } = Ajax;
-import BaseSeries from '../Core/Series/BaseSeries.js';
+import BaseSeries from '../Core/Series/Series.js';
 import Chart from '../Core/Chart/Chart.js';
 import H from '../Core/Globals.js';
 const {

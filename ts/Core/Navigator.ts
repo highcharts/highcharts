@@ -13,12 +13,21 @@
 import type { SeriesOptionsType } from './Series/Types';
 import type SVGPath from './Renderer/SVG/SVGPath';
 import Axis from './Axis/Axis.js';
+import BaseSeries from './Series/Series.js';
+const {
+    seriesTypes
+} = BaseSeries;
 import Chart from './Chart/Chart.js';
 import Color from './Color.js';
 const {
     parse: color
 } = Color;
 import H from './Globals.js';
+const {
+    hasTouch,
+    isTouchDevice
+} = H;
+import LineSeries from '../Series/LineSeries.js';
 import NavigatorAxis from './Axis/NavigatorAxis.js';
 import O from './Options.js';
 const { defaultOptions } = O;
@@ -196,14 +205,7 @@ declare global {
     }
 }
 
-import '../Series/LineSeries.js';
-
-var hasTouch = H.hasTouch,
-    isTouchDevice = H.isTouchDevice,
-    Series = H.Series,
-    seriesTypes = H.seriesTypes,
-
-    defaultSeriesType,
+var defaultSeriesType,
 
     // Finding the min or max of a set of variables where we don't know if they
     // are defined, is a pattern that is repeated several places in Highcharts.
@@ -2788,7 +2790,7 @@ if (!H.Navigator) {
     });
 
     // Handle updating series
-    addEvent(Series, 'afterUpdate', function (this: Highcharts.Series): void {
+    addEvent(LineSeries, 'afterUpdate', function (this: Highcharts.Series): void {
         if (this.chart.navigator && !this.options.isInternal) {
             this.chart.navigator.setBaseSeries(null as any, false);
         }

@@ -13,7 +13,7 @@
 import type { AxisType } from '../../Core/Axis/Types';
 import type Chart from '../../Core/Chart/Chart';
 import type SVGPath from '../../Core/Renderer/SVG/SVGPath';
-import BaseSeries from '../../Core/Series/BaseSeries.js';
+import BaseSeries from '../../Core/Series/Series.js';
 import H from '../../Core/Globals.js';
 const {
     noop

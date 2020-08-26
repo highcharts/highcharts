@@ -9,7 +9,7 @@
  * */
 'use strict';
 import Axis from '../../Core/Axis/Axis.js';
-import BaseSeries from '../../Core/Series/BaseSeries.js';
+import BaseSeries from '../../Core/Series/Series.js';
 import Color from '../../Core/Color.js';
 var color = Color.parse;
 import H from '../../Core/Globals.js';

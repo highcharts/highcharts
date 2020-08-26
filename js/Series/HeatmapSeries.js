@@ -7,7 +7,7 @@
  *  !!!!!!! SOURCE GETS TRANSPILED BY TYPESCRIPT. EDIT TS FILE ONLY. !!!!!!!
  *
  * */
-import BaseSeries from '../Core/Series/BaseSeries.js';
+import BaseSeries from '../Core/Series/Series.js';
 import ColorMapMixin from '../Mixins/ColorMapSeries.js';
 var colorMapPointMixin = ColorMapMixin.colorMapPointMixin, colorMapSeriesMixin = ColorMapMixin.colorMapSeriesMixin;
 import H from '../Core/Globals.js';

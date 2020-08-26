@@ -12,9 +12,18 @@
 
 import type { SeriesOptionsType } from './Series/Types';
 import type SVGPath from './Renderer/SVG/SVGPath';
+import BaseSeries from './Series/Series.js';
+const {
+    seriesTypes
+} = BaseSeries;
 import Chart from './Chart/Chart.js';
 import H from './Globals.js';
+const {
+    hasTouch,
+    svg
+} = H;
 import Legend from './Legend.js';
+import LineSeries from '../Series/LineSeries.js';
 import O from './Options.js';
 const {
     defaultOptions
@@ -182,13 +191,7 @@ declare global {
  *        Event that occured.
  */
 
-import '../Series/LineSeries.js';
-
-var hasTouch = H.hasTouch,
-    Series = H.Series,
-    seriesTypes = H.seriesTypes,
-    svg = H.svg,
-    TrackerMixin;
+''; // detach doclets above
 
 /* eslint-disable valid-jsdoc */
 
@@ -198,7 +201,7 @@ var hasTouch = H.hasTouch,
  * @private
  * @mixin Highcharts.TrackerMixin
  */
-TrackerMixin = H.TrackerMixin = {
+const TrackerMixin = H.TrackerMixin = {
 
     /**
      * Draw the tracker for a point.
@@ -1410,7 +1413,7 @@ extend(Point.prototype, /** @lends Highcharts.Point.prototype */ {
 });
 
 // Extend the Series object with interaction
-extend(Series.prototype, /** @lends Highcharts.Series.prototype */ {
+extend(LineSeries.prototype, /** @lends Highcharts.Series.prototype */ {
 
     /**
      * Runs on mouse over the series graphical items.

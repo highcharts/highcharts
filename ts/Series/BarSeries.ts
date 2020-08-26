@@ -8,7 +8,16 @@
  *
  * */
 
-import BaseSeries from '../Core/Series/BaseSeries.js';
+import BaseSeries from '../Core/Series/Series.js';
+
+/**
+ * @private
+ */
+declare module '../Core/Series/Types' {
+    interface SeriesTypeRegistry {
+        bar: typeof Highcharts.BarSeries;
+    }
+}
 
 /**
  * Internal types
@@ -33,15 +42,6 @@ declare global {
             public pointClass: typeof BarPoint;
             public points: Array<BarPoint>;
         }
-    }
-}
-
-/**
- * @private
- */
-declare module '../Core/Series/BaseSeries' {
-    interface SeriesTypeRegistry {
-        bar: typeof Highcharts.BarSeries;
     }
 }
 

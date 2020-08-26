@@ -10,7 +10,7 @@
  *
  * */
 'use strict';
-import BaseSeries from '../../Core/Series/BaseSeries.js';
+import BaseSeries from '../../Core/Series/Series.js';
 import H from '../../Core/Globals.js';
 import NodesMixin from '../../Mixins/Nodes.js';
 import Point from '../../Core/Series/Point.js';

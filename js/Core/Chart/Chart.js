@@ -9,7 +9,7 @@
  * */
 'use strict';
 import Axis from '../Axis/Axis.js';
-import BaseSeries from '../Series/BaseSeries.js';
+import BaseSeries from '../Series/Series.js';
 import H from '../Globals.js';
 var charts = H.charts, doc = H.doc, win = H.win;
 import Legend from '../Legend.js';

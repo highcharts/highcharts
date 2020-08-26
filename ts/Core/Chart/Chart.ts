@@ -15,7 +15,7 @@ import type Point from '../../Core/Series/Point';
 import type { SeriesOptionsType, SeriesPlotOptionsType } from '../Series/Types';
 import type SVGElement from '../Renderer/SVG/SVGElement';
 import Axis from '../Axis/Axis.js';
-import BaseSeries from '../Series/BaseSeries.js';
+import BaseSeries from '../Series/Series.js';
 import H from '../Globals.js';
 const {
     charts,

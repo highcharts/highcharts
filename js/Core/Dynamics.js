@@ -9,16 +9,17 @@
  * */
 'use strict';
 import Axis from './Axis/Axis.js';
+import BaseSeries from './Series/Series.js';
+var seriesTypes = BaseSeries.seriesTypes;
 import Chart from './Chart/Chart.js';
 import H from './Globals.js';
+import LineSeries from '../Series/LineSeries.js';
 import O from './Options.js';
 var time = O.time;
 import Point from '../Core/Series/Point.js';
 import Time from './Time.js';
 import U from './Utilities.js';
 var addEvent = U.addEvent, animate = U.animate, createElement = U.createElement, css = U.css, defined = U.defined, erase = U.erase, error = U.error, extend = U.extend, fireEvent = U.fireEvent, isArray = U.isArray, isNumber = U.isNumber, isObject = U.isObject, isString = U.isString, merge = U.merge, objectEach = U.objectEach, pick = U.pick, relativeLength = U.relativeLength, setAnimation = U.setAnimation, splat = U.splat;
-import '../Series/LineSeries.js';
-var Series = H.Series, seriesTypes = H.seriesTypes;
 /* eslint-disable valid-jsdoc */
 /**
  * Remove settings that have not changed, to avoid unnecessary rendering or
@@ -793,7 +794,7 @@ extend(Point.prototype, /** @lends Highcharts.Point.prototype */ {
     }
 });
 // Extend the series prototype for dynamic methods
-extend(Series.prototype, /** @lends Series.prototype */ {
+extend(LineSeries.prototype, /** @lends Series.prototype */ {
     /**
      * Add a point to the series after render time. The point can be added at
      * the end, or by giving it an X value, to the start or in the middle of the

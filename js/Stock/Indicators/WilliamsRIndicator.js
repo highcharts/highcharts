@@ -5,7 +5,7 @@
  *  !!!!!!! SOURCE GETS TRANSPILED BY TYPESCRIPT. EDIT TS FILE ONLY. !!!!!!!
  *
  * */
-import BaseSeries from '../../Core/Series/BaseSeries.js';
+import BaseSeries from '../../Core/Series/Series.js';
 import ReduceArrayMixin from '../../Mixins/ReduceArray.js';
 var getArrayExtremes = ReduceArrayMixin.getArrayExtremes;
 import U from '../../Core/Utilities.js';

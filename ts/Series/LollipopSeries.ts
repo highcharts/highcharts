@@ -9,7 +9,7 @@
  * */
 
 import type Point from '../Core/Series/Point';
-import BaseSeries from '../Core/Series/BaseSeries.js';
+import BaseSeries from '../Core/Series/Series.js';
 import H from '../Core/Globals.js';
 
 /**

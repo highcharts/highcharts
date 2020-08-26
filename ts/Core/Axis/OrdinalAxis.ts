@@ -13,6 +13,7 @@
 import type NavigatorAxis from './NavigatorAxis';
 import Axis from './Axis.js';
 import H from '../Globals.js';
+import LineSeries from '../../Series/LineSeries.js';
 import Point from '../Series/Point.js';
 import U from '../Utilities.js';
 const {
@@ -66,10 +67,8 @@ declare module './Types' {
 import '../Chart/Chart.js';
 // Has a dependency on Navigator due to the use of Axis.toFixedRange
 import '../Navigator.js';
-import '../../Series/LineSeries.js';
 
-var Chart = H.Chart,
-    Series = H.Series;
+var Chart = H.Chart;
 
 /* eslint-disable valid-jsdoc */
 
@@ -605,7 +604,7 @@ namespace OrdinalAxis {
     export function compose(
         AxisClass: typeof Axis,
         ChartClass: typeof Chart,
-        SeriesClass: typeof Series
+        SeriesClass: typeof LineSeries
     ): void {
 
         AxisClass.keepProps.push('ordinal');
@@ -1182,6 +1181,6 @@ namespace OrdinalAxis {
     }
 }
 
-OrdinalAxis.compose(Axis, Chart, Series); // @todo move to StockChart, remove from master
+OrdinalAxis.compose(Axis, Chart, LineSeries); // @todo move to StockChart, remove from master
 
 export default OrdinalAxis;

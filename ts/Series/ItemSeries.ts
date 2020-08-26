@@ -10,7 +10,7 @@
  *
  * */
 
-import BaseSeries from '../Core/Series/BaseSeries.js';
+import BaseSeries from '../Core/Series/Series.js';
 import H from '../Core/Globals.js';
 import O from '../Core/Options.js';
 const {

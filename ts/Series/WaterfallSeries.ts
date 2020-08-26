@@ -13,7 +13,7 @@
 import type SVGElement from '../Core/Renderer/SVG/SVGElement';
 import type SVGPath from '../Core/Renderer/SVG/SVGPath';
 import Axis from '../Core/Axis/Axis.js';
-import BaseSeries from '../Core/Series/BaseSeries.js';
+import BaseSeries from '../Core/Series/Series.js';
 const {
     seriesTypes
 } = BaseSeries;

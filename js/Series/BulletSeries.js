@@ -7,7 +7,7 @@
  *  !!!!!!! SOURCE GETS TRANSPILED BY TYPESCRIPT. EDIT TS FILE ONLY. !!!!!!!
  *
  * */
-import BaseSeries from '../Core/Series/BaseSeries.js';
+import BaseSeries from '../Core/Series/Series.js';
 import U from '../Core/Utilities.js';
 var isNumber = U.isNumber, merge = U.merge, pick = U.pick, relativeLength = U.relativeLength;
 import './ColumnSeries.js';

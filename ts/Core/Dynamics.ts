@@ -10,12 +10,16 @@
 
 'use strict';
 
-import type BaseSeries from './Series/BaseSeries';
 import type ColorAxis from './Axis/ColorAxis';
 import type { SeriesOptionsType } from './Series/Types';
 import Axis from './Axis/Axis.js';
+import BaseSeries from './Series/Series.js';
+const {
+    seriesTypes
+} = BaseSeries;
 import Chart from './Chart/Chart.js';
 import H from './Globals.js';
+import LineSeries from '../Series/LineSeries.js';
 import O from './Options.js';
 const { time } = O;
 import Point from '../Core/Series/Point.js';
@@ -148,11 +152,6 @@ declare global {
         function cleanRecursively<T>(newer: T, older: unknown): T;
     }
 }
-
-import '../Series/LineSeries.js';
-
-var Series = H.Series,
-    seriesTypes = H.seriesTypes as unknown as Record<string, BaseSeries>;
 
 /* eslint-disable valid-jsdoc */
 
@@ -1151,7 +1150,7 @@ extend(Point.prototype, /** @lends Highcharts.Point.prototype */ {
 });
 
 // Extend the series prototype for dynamic methods
-extend(Series.prototype, /** @lends Series.prototype */ {
+extend(LineSeries.prototype, /** @lends Series.prototype */ {
     /**
      * Add a point to the series after render time. The point can be added at
      * the end, or by giving it an X value, to the start or in the middle of the

@@ -10,7 +10,7 @@
  *
  * */
 
-import BaseSeries from '../Core/Series/BaseSeries.js';
+import BaseSeries from '../Core/Series/Series.js';
 const {
     seriesTypes
 } = BaseSeries;

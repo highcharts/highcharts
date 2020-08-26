@@ -10,7 +10,7 @@
  *
  * */
 'use strict';
-import BaseSeries from '../../../Core/Series/BaseSeries.js';
+import BaseSeries from '../../../Core/Series/Series.js';
 var seriesTypes = BaseSeries.seriesTypes;
 import Chart from '../../../Core/Chart/Chart.js';
 import H from '../../../Core/Globals.js';

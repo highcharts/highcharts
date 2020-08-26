@@ -10,7 +10,7 @@
  *
  * */
 
-import BaseSeries from '../Core/Series/BaseSeries.js';
+import BaseSeries from '../Core/Series/Series.js';
 import DerivedSeriesMixin from '../Mixins/DerivedSeries.js';
 import U from '../Core/Utilities.js';
 const {
@@ -18,6 +18,15 @@ const {
     isNumber,
     merge
 } = U;
+
+/**
+ * @private
+ */
+declare module '../Core/Series/Types' {
+    interface SeriesTypeRegistry {
+        bellcurve: typeof Highcharts.BellcurveSeries;
+    }
+}
 
 /**
  * Internal types
@@ -66,15 +75,6 @@ declare global {
             pointsInInterval?: number;
             states?: SeriesStatesOptionsObject<BellcurveSeries>;
         }
-    }
-}
-
-/**
- * @private
- */
-declare module '../Core/Series/BaseSeries' {
-    interface SeriesTypeRegistry {
-        bellcurve: typeof Highcharts.BellcurveSeries;
     }
 }
 

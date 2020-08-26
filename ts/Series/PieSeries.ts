@@ -9,7 +9,7 @@
  * */
 
 import type SVGPath from '../Core/Renderer/SVG/SVGPath';
-import BaseSeries from '../Core/Series/BaseSeries.js';
+import BaseSeries from '../Core/Series/Series.js';
 import CenteredSeriesMixin from '../Mixins/CenteredSeries.js';
 const {
     getStartAndEndRadians
@@ -19,6 +19,7 @@ const {
     noop
 } = H;
 import LegendSymbolMixin from '../Mixins/LegendSymbol.js';
+import LineSeries from '../Series/LineSeries.js';
 import Point from '../Core/Series/Point.js';
 import SVGRenderer from '../Core/Renderer/SVG/SVGRenderer.js';
 import U from '../Core/Utilities.js';
@@ -33,6 +34,15 @@ const {
     relativeLength,
     setAnimation
 } = U;
+
+/**
+ * @private
+ */
+declare module '../Core/Series/Types' {
+    interface SeriesTypeRegistry {
+        pie: typeof Highcharts.PieSeries;
+    }
+}
 
 /**
  * Internal types
@@ -139,19 +149,7 @@ declare global {
     }
 }
 
-/**
- * @private
- */
-declare module '../Core/Series/Types' {
-    interface SeriesTypeRegistry {
-        pie: typeof Highcharts.PieSeries;
-    }
-}
-
 import '../Core/Options.js';
-import '../Series/LineSeries.js';
-
-var Series = H.Series;
 
 /**
  * Pie series type.
@@ -834,7 +832,7 @@ BaseSeries.seriesType<typeof Highcharts.PieSeries>(
          * @return {void}
          */
         generatePoints: function (this: Highcharts.PieSeries): void {
-            Series.prototype.generatePoints.call(this);
+            LineSeries.prototype.generatePoints.call(this);
             this.updateTotals();
         },
 

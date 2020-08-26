@@ -24,6 +24,7 @@ const {
 } = H;
 import Legend from '../Legend.js';
 import LegendSymbolMixin from '../../Mixins/LegendSymbol.js';
+import LineSeries from '../../Series/LineSeries.js';
 import Point from '../Series/Point.js';
 import U from '../Utilities.js';
 const {
@@ -124,13 +125,11 @@ declare global {
 ''; // detach doclet above
 
 import '../../Mixins/ColorSeries.js';
-import '../../Series/LineSeries.js';
 
-var Series = H.Series,
-    colorPointMixin = H.colorPointMixin,
+var colorPointMixin = H.colorPointMixin,
     colorSeriesMixin = H.colorSeriesMixin;
 
-extend(Series.prototype, colorSeriesMixin);
+extend(LineSeries.prototype, colorSeriesMixin);
 extend(Point.prototype, colorPointMixin);
 
 Chart.prototype.collectionsWithUpdate.push('colorAxis');
@@ -1138,7 +1137,7 @@ class ColorAxis extends Axis implements AxisLike {
                 cSeries.maxColorValue = (cSeries as any)[colorKey + 'Max'];
 
             } else {
-                const cExtremes = Series.prototype.getExtremes.call(
+                const cExtremes = LineSeries.prototype.getExtremes.call(
                     cSeries,
                     colorValArray
                 );
@@ -1155,7 +1154,7 @@ class ColorAxis extends Axis implements AxisLike {
             }
 
             if (!calculatedExtremes) {
-                Series.prototype.applyExtremes.call(cSeries);
+                LineSeries.prototype.applyExtremes.call(cSeries);
             }
         }
     }
@@ -1463,7 +1462,7 @@ addEvent(Chart, 'afterGetAxes', function (): void {
 
 
 // Add colorAxis to series axisTypes
-addEvent(Series, 'bindAxes', function (): void {
+addEvent(LineSeries, 'bindAxes', function (): void {
     var axisTypes = this.axisTypes;
 
     if (!axisTypes) {
@@ -1555,7 +1554,7 @@ addEvent(Legend, 'afterUpdate', function (this: Highcharts.Legend): void {
 });
 
 // Calculate and set colors for points
-addEvent(Series as any, 'afterTranslate', function (): void {
+addEvent(LineSeries as any, 'afterTranslate', function (): void {
     if (
         this.chart.colorAxis &&
         this.chart.colorAxis.length ||

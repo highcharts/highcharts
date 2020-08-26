@@ -11,7 +11,7 @@
  * */
 
 import type SVGPath from '../Core/Renderer/SVG/SVGPath';
-import BaseSeries from '../Core/Series/BaseSeries.js';
+import BaseSeries from '../Core/Series/Series.js';
 import H from '../Core/Globals.js';
 const {
     deg2rad,

@@ -9,7 +9,7 @@
  * */
 
 import type SVGPath from '../Core/Renderer/SVG/SVGPath';
-import BaseSeries from '../Core/Series/BaseSeries.js';
+import BaseSeries from '../Core/Series/Series.js';
 import O from '../Core/Options.js';
 const { defaultOptions } = O;
 import U from '../Core/Utilities.js';

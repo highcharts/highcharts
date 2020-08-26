@@ -12,7 +12,7 @@
 
 import type SVGPath from '../../Core/Renderer/SVG/SVGPath';
 import Axis from '../../Core/Axis/Axis.js';
-import BaseSeries from '../../Core/Series/BaseSeries.js';
+import BaseSeries from '../../Core/Series/Series.js';
 import Color from '../../Core/Color.js';
 const {
     parse: color

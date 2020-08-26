@@ -9,7 +9,7 @@
  *  !!!!!!! SOURCE GETS TRANSPILED BY TYPESCRIPT. EDIT TS FILE ONLY. !!!!!!!
  *
  * */
-import BaseSeries from '../Core/Series/BaseSeries.js';
+import BaseSeries from '../Core/Series/Series.js';
 import H from '../Core/Globals.js';
 import U from '../Core/Utilities.js';
 var css = U.css, pick = U.pick, wrap = U.wrap;

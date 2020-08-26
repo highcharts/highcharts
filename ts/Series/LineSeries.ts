@@ -9,7 +9,7 @@
  * */
 
 import type { AxisType } from '../Core/Axis/Types';
-import type BaseSeries from '../Core/Series/BaseSeries';
+import type BaseSeries from '../Core/Series/Series';
 import type Chart from '../Core/Chart/Chart';
 import type Point from '../Core/Series/Point';
 import type { SeriesOptionsType } from '../Core/Series/Types';
