@@ -96,7 +96,8 @@ addEvent(H.Chart, 'displayError', function (
                 /<h1>(.*)<\/h1>/g,
                 '<br><span style="font-size: 24px">$1</span><br>'
             )
-            .replace(/<\/p>/g, '</p><br>');
+            .replace(/<p>/g, '')
+            .replace(/<\/p>/g, '<br>');
 
         // Render red chart frame.
         chart.errorElements[0] = renderer.rect(
