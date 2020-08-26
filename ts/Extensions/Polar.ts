@@ -543,7 +543,7 @@ wrap(seriesProto, 'getGraphPath', function (
 });
 
 
-var polarAnimate = function (
+const polarAnimate = function (
     this: Highcharts.PolarSeries,
     proceed: Function,
     init?: boolean
