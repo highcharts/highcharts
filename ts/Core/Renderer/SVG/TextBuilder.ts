@@ -55,14 +55,25 @@ class TextBuilder {
         'small',
         'span',
         'strong',
+        'sub',
+        'sup',
         'table',
         'tbody',
         'td',
+        'th',
         'tr',
         'ul',
         '#text'
     ];
-    public static allowedAttributes = ['class', 'href', 'id', 'src', 'style'];
+    public static allowedAttributes = [
+        'class',
+        'colspan',
+        'href',
+        'id',
+        'src',
+        'rowspan',
+        'style'
+    ];
 
     public constructor(svgElement: Highcharts.SVGElement) {
         const textStyles = svgElement.styles;

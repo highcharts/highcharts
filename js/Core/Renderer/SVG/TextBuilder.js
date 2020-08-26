@@ -454,14 +454,25 @@ var TextBuilder = /** @class */ (function () {
         'small',
         'span',
         'strong',
+        'sub',
+        'sup',
         'table',
         'tbody',
         'td',
+        'th',
         'tr',
         'ul',
         '#text'
     ];
-    TextBuilder.allowedAttributes = ['class', 'href', 'id', 'src', 'style'];
+    TextBuilder.allowedAttributes = [
+        'class',
+        'colspan',
+        'href',
+        'id',
+        'src',
+        'rowspan',
+        'style'
+    ];
     return TextBuilder;
 }());
 export default TextBuilder;
