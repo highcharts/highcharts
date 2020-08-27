@@ -151,16 +151,21 @@ Instrument.prototype.init = function (options) {
     this.masterVolume = this.options.masterVolume || 0;
     // Init the audio nodes
     var ctx = H.audioContext;
+    // Note: Destination node can be overridden by setting
+    // Highcharts.sonification.Instrument.prototype.destinationNode.
+    // This allows for inserting an additional chain of nodes after
+    // the default processing.
+    var destination = this.destinationNode || ctx.destination;
     this.gainNode = ctx.createGain();
     this.setGain(0);
     this.panNode = ctx.createStereoPanner && ctx.createStereoPanner();
     if (this.panNode) {
         this.setPan(0);
         this.gainNode.connect(this.panNode);
-        this.panNode.connect(ctx.destination);
+        this.panNode.connect(destination);
     }
     else {
-        this.gainNode.connect(ctx.destination);
+        this.gainNode.connect(destination);
     }
     // Oscillator initialization
     if (this.options.type === 'oscillator') {
