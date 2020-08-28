@@ -52,7 +52,7 @@ declare global {
 
 import '../../Series/LineSeries.js';
 
-var mainCanvas = doc.createElement('canvas');
+const mainCanvas = doc.createElement('canvas');
 
 /**
  * Create a canvas + context and attach it to the target
