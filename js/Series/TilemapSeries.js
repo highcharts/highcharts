@@ -11,6 +11,8 @@
  *
  * */
 import BaseSeries from '../Core/Series/Series.js';
+import ColorSeriesModule from '../Mixins/ColorSeries.js';
+var colorPointMixin = ColorSeriesModule.colorPointMixin;
 import H from '../Core/Globals.js';
 import U from '../Core/Utilities.js';
 var addEvent = U.addEvent, clamp = U.clamp, extend = U.extend, pick = U.pick;
@@ -472,7 +474,7 @@ BaseSeries.seriesType('tilemap', 'heatmap'
     haloPath: function () {
         return this.series.tileShape.haloPath.apply(this, Array.prototype.slice.call(arguments));
     }
-}, H.colorPointMixin));
+}, colorPointMixin));
 /**
  * A `tilemap` series. If the [type](#series.tilemap.type) option is
  * not specified, it is inherited from [chart.type](#chart.type).

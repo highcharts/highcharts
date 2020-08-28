@@ -144,7 +144,7 @@ function getScript(
  * @param {string} svg
  * @return {string}
  */
-H.svgToDataUrl = function (svg: string): string {
+function svgToDataUrl(svg: string): string {
     // Webkit and not chrome
     var webKit = (
         nav.userAgent.indexOf('WebKit') > -1 &&
@@ -164,7 +164,7 @@ H.svgToDataUrl = function (svg: string): string {
         // Ignore
     }
     return 'data:image/svg+xml;charset=UTF-8,' + encodeURIComponent(svg);
-};
+}
 
 /**
  * Get data:URL from image URL. Pass in callbacks to handle results.
@@ -200,7 +200,7 @@ H.svgToDataUrl = function (svg: string): string {
  *
  * @return {void}
  */
-H.imageToDataUrl = function (
+function imageToDataUrl(
     imageURL: string,
     imageType: string,
     callbackArgs: unknown,
@@ -287,7 +287,7 @@ H.imageToDataUrl = function (
     img.onload = loadHandler;
     img.onerror = errorHandler;
     img.src = imageURL;
-};
+}
 
 /* eslint-enable valid-jsdoc */
 
@@ -322,7 +322,7 @@ H.imageToDataUrl = function (
  *
  * @return {void}
  */
-H.downloadSVGLocal = function (
+function downloadSVGLocal(
     svg: string,
     options: Highcharts.ExportingOptions,
     failCallback: Function,
@@ -455,7 +455,7 @@ H.downloadSVGLocal = function (
                 blob.append(svg);
                 svgurl = blob.getBlob('image/svg+xml') as any;
             } else {
-                svgurl = H.svgToDataUrl(svg);
+                svgurl = svgToDataUrl(svg);
             }
             downloadURL(svgurl, filename);
             if (successCallback) {
@@ -481,7 +481,7 @@ H.downloadSVGLocal = function (
     } else {
         // PNG/JPEG download - create bitmap from SVG
 
-        svgurl = H.svgToDataUrl(svg);
+        svgurl = svgToDataUrl(svg);
         finallyHandler = function (): void {
             try {
                 domurl.revokeObjectURL(svgurl);
@@ -490,7 +490,7 @@ H.downloadSVGLocal = function (
             }
         };
         // First, try to get PNG by rendering on canvas
-        H.imageToDataUrl(
+        imageToDataUrl(
             svgurl,
             imageType,
             {},
@@ -566,7 +566,7 @@ H.downloadSVGLocal = function (
             }
         );
     }
-};
+}
 
 /* eslint-disable valid-jsdoc */
 
@@ -662,7 +662,7 @@ Chart.prototype.getSVGForLocalExport = function (
                 'href'
             );
             if (href) {
-                H.imageToDataUrl(
+                imageToDataUrl(
                     href,
                     'image/png',
                     { imageElement: el },
@@ -741,7 +741,7 @@ Chart.prototype.exportChartLocal = function (
                     'for charts with embedded HTML' as any
                 );
             } else {
-                H.downloadSVGLocal(
+                downloadSVGLocal(
                     svg,
                     extend(
                         { filename: chart.getFilename() },

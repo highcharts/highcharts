@@ -25,6 +25,8 @@ import Axis from './Axis.js';
 import Chart from '../Chart/Chart.js';
 import Color from '../Color.js';
 var color = Color.parse;
+import ColorSeriesModule from '../../Mixins/ColorSeries.js';
+var colorPointMixin = ColorSeriesModule.colorPointMixin, colorSeriesMixin = ColorSeriesModule.colorSeriesMixin;
 import H from '../Globals.js';
 var noop = H.noop;
 import Legend from '../Legend.js';
@@ -39,8 +41,6 @@ var addEvent = U.addEvent, erase = U.erase, extend = U.extend, Fx = U.Fx, isNumb
  * @typedef {"linear"|"logarithmic"} Highcharts.ColorAxisTypeValue
  */
 ''; // detach doclet above
-import '../../Mixins/ColorSeries.js';
-var colorPointMixin = H.colorPointMixin, colorSeriesMixin = H.colorSeriesMixin;
 extend(LineSeries.prototype, colorSeriesMixin);
 extend(Point.prototype, colorPointMixin);
 Chart.prototype.collectionsWithUpdate.push('colorAxis');

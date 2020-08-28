@@ -18,6 +18,11 @@ import Color from '../Color.js';
 const {
     parse: color
 } = Color;
+import ColorSeriesModule from '../../Mixins/ColorSeries.js';
+const {
+    colorPointMixin,
+    colorSeriesMixin
+} = ColorSeriesModule;
 import H from '../Globals.js';
 const {
     noop
@@ -123,11 +128,6 @@ declare global {
  */
 
 ''; // detach doclet above
-
-import '../../Mixins/ColorSeries.js';
-
-var colorPointMixin = H.colorPointMixin,
-    colorSeriesMixin = H.colorSeriesMixin;
 
 extend(LineSeries.prototype, colorSeriesMixin);
 extend(Point.prototype, colorPointMixin);
