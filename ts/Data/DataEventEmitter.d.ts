@@ -78,6 +78,11 @@ declare namespace DataEventEmitter {
     }
 
     /**
+     * Custom information for an event object.
+     */
+    export type EventDetail = Record<string, string>;
+
+    /**
      * Event object with additional event information. This interface can be
      * extended by implementing classes.
      */
@@ -86,7 +91,7 @@ declare namespace DataEventEmitter {
         /**
          * Additional meta information regarding the event.
          */
-        readonly detail?: Record<string, string>;
+        readonly detail?: EventDetail;
 
         /**
          * Event type as a string.
