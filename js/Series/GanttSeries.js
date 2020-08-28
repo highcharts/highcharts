@@ -55,8 +55,8 @@ seriesType('gantt', 'xrange'
             if (!format) {
                 format = splat(tooltip.getDateFormat(xAxis.closestPointRange, point.start, startOfWeek, formats))[0];
             }
-            start = dateFormat(format, point.start);
-            end = dateFormat(format, point.end);
+            start = series.chart.time.dateFormat(format, point.start);
+            end = series.chart.time.dateFormat(format, point.end);
             retVal += '<br/>';
             if (!milestone) {
                 retVal += 'Start: ' + start + '<br/>';
