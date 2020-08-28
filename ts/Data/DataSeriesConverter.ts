@@ -9,15 +9,16 @@
  *  !!!!!!! SOURCE GETS TRANSPILED BY TYPESCRIPT. EDIT TS FILE ONLY. !!!!!!!
  *
  * */
+
 /* *
  *
  *  Imports
  *
  * */
+
 import DataTable from './DataTable.js';
 import DataTableRow from './DataTableRow.js';
 import U from './../Core/Utilities.js';
-
 const {
     defined,
     uniqueKey
@@ -28,31 +29,36 @@ const {
  *  Class
  *
  * */
+
 /**
-* Class to convert DataTable to Highcharts series data.
-*/
+ * Class to convert DataTable to Highcharts series data.
+ */
 class DataSeriesConverter {
+
     /* *
-    *
-    *  Constructors
-    *
-    * */
+     *
+     *  Constructor
+     *
+     * */
     public constructor(table: DataTable = new DataTable(), options: DataSeriesConverter.Options) {
         this.table = table;
         this.options = options;
     }
+
     /* *
-    *
-    *  Properties
-    *
-    * */
+     *
+     *  Properties
+     *
+     * */
     public table: DataTable;
     public options: DataSeriesConverter.Options;
+
     /* *
-    *
-    *  Functions
-    *
-    * */
+     *
+     *  Functions
+     *
+     * */
+
     getSeriesData(columnIndex: number): Array<Highcharts.PointOptionsObject> {
         const table = this.table,
             options = this.options || {},
@@ -142,11 +148,14 @@ class DataSeriesConverter {
         return seriesOptions;
     }
 
-    setDataTable(allSeries: Array<Highcharts.Series>): DataTable {
+    setDataTable(
+        allSeries: Array<Highcharts.Series>,
+        eventDetail?: Record<string, string>
+    ): DataTable {
         const table = this.table,
             columnMap = (this.options || {}).columnMap || {};
 
-        let columns: Record<string, DataTableRow.ColumnTypes>,
+        let columns: Record<string, DataTableRow.ColumnValueType>,
             series,
             pointArrayMap,
             pointArrayMapLength,
@@ -205,7 +214,7 @@ class DataSeriesConverter {
 
                 } else if (elem instanceof Object) {
                     if (needsArrayMap) {
-                        const elemSet = elem as Record<string, DataTableRow.ColumnTypes>;
+                        const elemSet = elem as Record<string, DataTableRow.ColumnValueType>;
 
                         for (let k = 0; k < pointArrayMapLength; k++) {
                             yValueName = columnMap[pointArrayMap[k]] ?
@@ -225,9 +234,9 @@ class DataSeriesConverter {
                 if (!row) {
                     columns.id = id;
                     row = new DataTableRow(columns);
-                    table.insertRow(row);
+                    table.insertRow(row, eventDetail);
                 } else if (columns[y]) {
-                    row.insertColumn(y, columns[y]);
+                    row.insertColumn(y, columns[y], eventDetail);
                 }
             }
         }

@@ -37,7 +37,7 @@ const {
 /**
  * Class to manage rows in a table structure.
  */
-class DataTable implements DataEventEmitter<DataTable.EventObjects>, DataJSON.Class {
+class DataTable implements DataEventEmitter<DataTable.EventObject>, DataJSON.Class {
 
     /* *
      *
@@ -192,12 +192,15 @@ class DataTable implements DataEventEmitter<DataTable.EventObjects>, DataJSON.Cl
     /**
      * Removes all rows from this table.
      *
+     * @param {Record<string, string>} [eventDetail]
+     * Custom information for pending events.
+     *
      * @emits DataTable#clearTable
      * @emits DataTable#afterClearTable
      */
-    public clear(): void {
+    public clear(eventDetail?: Record<string, string>): void {
 
-        this.emit({ type: 'clearTable' });
+        this.emit({ type: 'clearTable', detail: eventDetail });
 
         const rowIds = this.getAllRowIds();
 
@@ -209,7 +212,7 @@ class DataTable implements DataEventEmitter<DataTable.EventObjects>, DataJSON.Cl
         this.rowsIdMap = {};
         this.watchsIdMap = {};
 
-        this.emit({ type: 'afterClearTable' });
+        this.emit({ type: 'afterClearTable', detail: eventDetail });
     }
 
     /**
@@ -218,23 +221,29 @@ class DataTable implements DataEventEmitter<DataTable.EventObjects>, DataJSON.Cl
      * @param {string} rowId
      * Name of the row to delete.
      *
+     * @param {Record<string, string>} [eventDetail]
+     * Custom information for pending events.
+     *
      * @return {boolean}
      * Returns true, if the delete was successful, otherwise false.
      *
      * @emits DataTable#deleteRow
      * @emits DataTable#afterDeleteRow
      */
-    public deleteRow(rowId: string): (DataTableRow|undefined) {
+    public deleteRow(
+        rowId: string,
+        eventDetail?: Record<string, string>
+    ): (DataTableRow|undefined) {
         const row = this.rowsIdMap[rowId],
             index = this.rows.indexOf(row);
 
-        this.emit({ type: 'deleteRow', index, row });
+        this.emit({ type: 'deleteRow', detail: eventDetail, index, row });
 
         this.rows[index] = row;
         delete this.rowsIdMap[rowId];
         this.unwatchRow(rowId);
 
-        this.emit({ type: 'afterDeleteRow', index, row });
+        this.emit({ type: 'afterDeleteRow', detail: eventDetail, index, row });
 
         return row;
     }
@@ -243,10 +252,10 @@ class DataTable implements DataEventEmitter<DataTable.EventObjects>, DataJSON.Cl
      * Emits an event on this row to all registered callbacks of the given
      * event.
      *
-     * @param {DataTable.EventObjects} [e]
+     * @param {DataTable.EventObject} [e]
      * Event object with event information.
      */
-    public emit(e: DataTable.EventObjects): void {
+    public emit(e: DataTable.EventObject): void {
         fireEvent(this, e.type, e);
     }
 
@@ -276,7 +285,7 @@ class DataTable implements DataEventEmitter<DataTable.EventObjects>, DataJSON.Cl
      * @param {number|string} row
      * Row index or row ID.
      *
-     * @return {DataTableRow.ColumnTypes}
+     * @return {DataTableRow.ColumnValueType}
      * Column value of the column in this row.
      */
     public getRow(row: (number|string)): (DataTableRow|undefined) {
@@ -318,11 +327,20 @@ class DataTable implements DataEventEmitter<DataTable.EventObjects>, DataJSON.Cl
      * @param {DataTableRow} row
      * Row to add to this table.
      *
+     * @param {Record<string, string>} [eventDetail]
+     * Custom information for pending events.
+     *
      * @return {boolean}
      * Returns true, if the row has been added to the table. Returns false, if
      * a row with the same row ID already exists in the table.
+     *
+     * @emits DataTable#insertRow
+     * @emits DataTable#afterInsertRow
      */
-    public insertRow(row: DataTableRow): boolean {
+    public insertRow(
+        row: DataTableRow,
+        eventDetail?: Record<string, string>
+    ): boolean {
         const rowId = row.id;
         const index = this.rows.length;
 
@@ -330,13 +348,13 @@ class DataTable implements DataEventEmitter<DataTable.EventObjects>, DataJSON.Cl
             return false;
         }
 
-        this.emit({ type: 'insertRow', index, row });
+        this.emit({ type: 'insertRow', detail: eventDetail, index, row });
 
         this.rows.push(row);
         this.rowsIdMap[rowId] = row;
         this.watchRow(row);
 
-        this.emit({ type: 'afterInsertRow', index, row });
+        this.emit({ type: 'afterInsertRow', detail: eventDetail, index, row });
 
         return true;
     }
@@ -354,8 +372,8 @@ class DataTable implements DataEventEmitter<DataTable.EventObjects>, DataJSON.Cl
      * Function to unregister callback from the event.
      */
     public on(
-        type: DataTable.EventObjects['type'],
-        callback: DataEventEmitter.EventCallback<this, DataTable.EventObjects>
+        type: DataTable.EventObject['type'],
+        callback: DataEventEmitter.EventCallback<this, DataTable.EventObject>
     ): Function {
         return addEvent(this, type, callback);
     }
@@ -365,6 +383,8 @@ class DataTable implements DataEventEmitter<DataTable.EventObjects>, DataJSON.Cl
      *
      * @param {DataTableRow} row
      * Row the watch for modifications.
+     *
+     * @emits DataTable#afterUpdateRow
      */
     private watchRow(row: DataTableRow): void {
         const table = this,
@@ -372,10 +392,14 @@ class DataTable implements DataEventEmitter<DataTable.EventObjects>, DataJSON.Cl
             watchsIdMap = table.watchsIdMap,
             watchs: Array<Function> = [];
 
-        /** @private */
-        function callback(): void {
+        /**
+         * @private
+         * @param {DataTableRow.EventObject} e
+         * Received event.
+         */
+        function callback(e: DataTableRow.EventObject): void {
             table.versionTag = uniqueKey();
-            fireEvent(table, 'afterUpdateRow', { index, row });
+            fireEvent(table, 'afterUpdateRow', { detail: e.detail, index, row });
         }
 
         watchs.push(row.on('afterClearRow', callback));
@@ -446,12 +470,12 @@ namespace DataTable {
     /**
      * All information objects of DataTable events.
      */
-    export type EventObjects = (RowEventObject|TableEventObject);
+    export type EventObject = (RowEventObject|TableEventObject);
 
     /**
      * Event types related to a row in a table.
      */
-    export type RowEventTypes = (
+    export type RowEventType = (
         'deleteRow'|'afterDeleteRow'|
         'insertRow'|'afterInsertRow'|
         'afterUpdateRow'
@@ -460,7 +484,7 @@ namespace DataTable {
     /**
      * Event types related to the table itself.
      */
-    export type TableEventTypes = (
+    export type TableEventType = (
         'clearTable'|'afterClearTable'
     );
 
@@ -475,6 +499,7 @@ namespace DataTable {
      * Describes the information object for row-related events.
      */
     export interface RowEventObject extends DataEventEmitter.EventObject {
+        readonly type: RowEventType;
         readonly index: number;
         readonly row: DataTableRow;
     }
@@ -483,7 +508,7 @@ namespace DataTable {
      * Describes the information object for table-related events.
      */
     export interface TableEventObject extends DataEventEmitter.EventObject {
-        // nothing here yet
+        readonly type: TableEventType;
     }
 
 }

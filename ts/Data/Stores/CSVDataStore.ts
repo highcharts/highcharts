@@ -143,11 +143,17 @@ class CSVDataStore extends DataStore<CSVDataStore.EventObjects> implements DataJ
      * @param {boolean} initialFetch
      * Indicates whether this is a single fetch or a repeated fetch
      *
+     * @param {Record<string,string>} [eventDetail]
+     * Custom information for pending events.
+     *
      * @emits CSVDataStore#load
      * @emits CSVDataStore#afterLoad
      * @emits CSVDataStore#loadError
      */
-    private fetchCSV(initialFetch?: boolean): void {
+    private fetchCSV(
+        initialFetch?: boolean,
+        eventDetail?: Record<string, string>
+    ): void {
         const store = this,
             maxRetries = 3,
             { csvURL } = store.options;
@@ -158,7 +164,7 @@ class CSVDataStore extends DataStore<CSVDataStore.EventObjects> implements DataJ
             store.liveDataURL = csvURL;
         }
 
-        store.emit({ type: 'load', table: store.table });
+        store.emit({ type: 'load', detail: eventDetail, table: store.table });
 
         ajax({
             url: store.liveDataURL,
@@ -169,33 +175,58 @@ class CSVDataStore extends DataStore<CSVDataStore.EventObjects> implements DataJ
                     store.poll();
                 }
                 store.table = store.parser.getTable();
-                store.emit({ type: 'afterLoad', csv, table: store.table });
+                store.emit({
+                    type: 'afterLoad',
+                    csv,
+                    detail: eventDetail,
+                    table: store.table
+                });
             },
             error: function (xhr, error): void {
                 if (++currentRetries < maxRetries) {
                     store.poll();
                 }
-                store.emit({ type: 'loadError', error, table: store.table, xhr });
+                store.emit({
+                    type: 'loadError',
+                    detail: eventDetail,
+                    error,
+                    table: store.table,
+                    xhr
+                });
             }
         });
     }
 
     /**
      * Initiates the loading of the CSV source to the store
+     *
+     * @param {Record<string,string>} [eventDetail]
+     * Custom information for pending events.
+     *
      * @emits CSVDataParser#load
      * @emits CSVDataParser#afterLoad
      */
-    public load(): void {
+    public load(eventDetail?: Record<string, string>): void {
         const store = this,
             { csv, csvURL } = store.options;
 
         if (csv) {
-            store.emit({ type: 'load', csv, table: store.table });
+            store.emit({
+                type: 'load',
+                csv,
+                detail: eventDetail,
+                table: store.table
+            });
             store.parser.parse({ csv });
             store.table = store.parser.getTable();
-            store.emit({ type: 'afterLoad', csv, table: store.table });
+            store.emit({
+                type: 'afterLoad',
+                csv,
+                detail: eventDetail,
+                table: store.table
+            });
         } else if (csvURL) {
-            store.fetchCSV(true);
+            store.fetchCSV(true, eventDetail);
         }
     }
 
@@ -287,6 +318,18 @@ namespace CSVDataStore {
         dataRefreshRate: number;
     }
 
+}
+
+/* *
+ *
+ *  Registry
+ *
+ * */
+
+declare module './Types' {
+    interface DataStoreTypeRegistry {
+        CSV: typeof CSVDataStore;
+    }
 }
 
 /* *

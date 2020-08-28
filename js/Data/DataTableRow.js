@@ -103,14 +103,17 @@ var DataTableRow = /** @class */ (function () {
     /**
      * Removes all columns with the values from this row.
      *
+     * @param {Record<string, string>} [eventDetail]
+     * Custom information for pending events.
+     *
      * @emits DataTableRow#clearRow
      * @emits DataTableRow#afterClearRow
      */
-    DataTableRow.prototype.clear = function () {
-        this.emit({ type: 'clearRow' });
+    DataTableRow.prototype.clear = function (eventDetail) {
+        this.emit({ type: 'clearRow', detail: eventDetail });
         this.columnNames.length = 0;
         this.columns.length = 0;
-        this.emit({ type: 'afterClearRow' });
+        this.emit({ type: 'afterClearRow', detail: eventDetail });
     };
     /**
      * Deletes a column in this row.
@@ -118,28 +121,41 @@ var DataTableRow = /** @class */ (function () {
      * @param {string} columnName
      * Name of the column to delete.
      *
+     * @param {Record<string, string>} [eventDetail]
+     * Custom information for pending events.
+     *
      * @return {boolean}
      * Returns true, if the delete was successful, otherwise false.
      *
      * @emits DataTableRow#deleteColumn
      * @emits DataTableRow#afterDeleteColumn
      */
-    DataTableRow.prototype.deleteColumn = function (columnName) {
+    DataTableRow.prototype.deleteColumn = function (columnName, eventDetail) {
         var row = this, columnValue = row.columns[columnName];
         if (columnName === 'id') {
             return false;
         }
-        this.emit({ type: 'deleteColumn', columnKey: columnName, columnValue: columnValue });
+        this.emit({
+            type: 'deleteColumn',
+            columnName: columnName,
+            columnValue: columnValue,
+            detail: eventDetail
+        });
         row.columnNames.splice(row.columnNames.indexOf(columnName), 1);
         delete row.columns[columnName];
-        this.emit({ type: 'afterDeleteColumn', columnKey: columnName, columnValue: columnValue });
+        this.emit({
+            type: 'afterDeleteColumn',
+            columnName: columnName,
+            columnValue: columnValue,
+            detail: eventDetail
+        });
         return true;
     };
     /**
      * Emits an event on this row to all registered callbacks of the given
      * event.
      *
-     * @param {DataTableRow.EventObjects} e
+     * @param {DataTableRow.EventObject} e
      * Event object with event information.
      */
     DataTableRow.prototype.emit = function (e) {
@@ -160,7 +176,7 @@ var DataTableRow = /** @class */ (function () {
      * @param {number|string} column
      * Column name or column index.
      *
-     * @return {DataTableRow.ColumnTypes}
+     * @return {DataTableRow.ColumnValueType}
      * Column value of the column in this row.
      */
     DataTableRow.prototype.getColumn = function (column) {
@@ -258,22 +274,38 @@ var DataTableRow = /** @class */ (function () {
      * @param {string} columnName
      * Name of the column.
      *
-     * @param {DataTableRow.ColumnTypes} columnValue
+     * @param {DataTableRow.ColumnValueType} columnValue
      * Value of the column in this row.
+     *
+     * @param {Record<string, string>} [eventDetail]
+     * Custom information for pending events.
      *
      * @return {boolean}
      * Returns true, if the column was added to the row. Returns false, if
      * `id` was used the column name, or if the column already exists.
+     *
+     * @emits DataTableRow#insertColumn
+     * @emits DataTableRow#afterInsertColumn
      */
-    DataTableRow.prototype.insertColumn = function (columnName, columnValue) {
+    DataTableRow.prototype.insertColumn = function (columnName, columnValue, eventDetail) {
         if (columnName === 'id' ||
             this.columnNames.indexOf(columnName) !== -1) {
             return false;
         }
-        this.emit({ type: 'insertColumn', columnKey: columnName, columnValue: columnValue });
+        this.emit({
+            type: 'insertColumn',
+            columnName: columnName,
+            columnValue: columnValue,
+            detail: eventDetail
+        });
         this.columnNames.push(columnName);
         this.columns[columnName] = columnValue;
-        this.emit({ type: 'afterInsertColumn', columnKey: columnName, columnValue: columnValue });
+        this.emit({
+            type: 'afterInsertColumn',
+            columnName: columnName,
+            columnValue: columnValue,
+            detail: eventDetail
+        });
         return true;
     };
     /**
@@ -335,23 +367,34 @@ var DataTableRow = /** @class */ (function () {
     /**
      * Updates the value of a column in this row.
      *
-     * @param {string} columnKey
+     * @param {string} columnName
      * Column name in this row to update.
      *
-     * @param {DataTableRow.ColumnTypes} columnValue
+     * @param {DataTableRow.ColumnValueType} columnValue
      * Column value to update to.
+     *
+     * @param {Record<string, string>} [eventDetail]
+     * Custom information for pending events.
      *
      * @return {boolean}
      * True, if the column was found and updated, otherwise false.
+     *
+     * @emits DataTableRow#updateColumn
+     * @emits DataTableRow#afterUpdateColumn
      */
-    DataTableRow.prototype.updateColumn = function (columnKey, columnValue) {
+    DataTableRow.prototype.updateColumn = function (columnName, columnValue, eventDetail) {
         var row = this;
-        if (columnKey === 'id') {
+        if (columnName === 'id') {
             return false;
         }
-        row.emit({ type: 'updateColumn', columnKey: columnKey, columnValue: columnValue });
-        row.columns[columnKey] = columnValue;
-        row.emit({ type: 'afterUpdateColumn', columnKey: columnKey, columnValue: columnValue });
+        row.emit({
+            type: 'updateColumn',
+            columnName: columnName,
+            columnValue: columnValue,
+            detail: eventDetail
+        });
+        row.columns[columnName] = columnValue;
+        row.emit({ type: 'afterUpdateColumn', columnName: columnName, columnValue: columnValue });
         return true;
     };
     return DataTableRow;

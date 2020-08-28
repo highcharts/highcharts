@@ -1,12 +1,12 @@
 
-import GoogleDataStore from '/base/js/Data/Stores/GoogleDataStore.js'
+import GoogleSheetsStore from '/base/js/Data/Stores/GoogleSheetsStore.js'
 import { registerStoreEvents } from '../utils.js'
 const { test, only } = QUnit;
 
 test('GoogleDataStore', function (assert) {
     const registeredEvents = [];
 
-    const datastore = new GoogleDataStore(undefined, { googleSpreadsheetKey: '0AoIaUO7wH1HwdENPcGVEVkxfUDJkMmFBcXMzOVVPdHc' });
+    const datastore = new GoogleSheetsStore(undefined, { googleSpreadsheetKey: '0AoIaUO7wH1HwdENPcGVEVkxfUDJkMmFBcXMzOVVPdHc' });
 
     const doneLoading = assert.async();
 
@@ -27,7 +27,7 @@ test('GoogleDataStore', function (assert) {
 test('GoogleDataStore, bad spreadsheetkey', function (assert) {
     const registeredEvents = [];
 
-    const datastore = new GoogleDataStore(undefined, { googleSpreadsheetKey: 'thisisnotaworkingspreadsheet' });
+    const datastore = new GoogleSheetsStore(undefined, { googleSpreadsheetKey: 'thisisnotaworkingspreadsheet' });
 
     const hasErrored = assert.async();
 

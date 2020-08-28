@@ -82,13 +82,16 @@ var RangeDataModifier = /** @class */ (function (_super) {
      * @param {DataTable} table
      * Table to modify.
      *
+     * @param {Record<string,string>} [eventDetail]
+     * Custom information for pending events.
+     *
      * @return {DataTable}
      * New modified table.
      */
-    RangeDataModifier.prototype.execute = function (table) {
+    RangeDataModifier.prototype.execute = function (table, eventDetail) {
         var modifier = this, _a = modifier.options, ranges = _a.ranges, strict = _a.strict, rows = table.getAllRows(), result = new DataTable();
         var column, range, row;
-        this.emit({ type: 'execute', table: table });
+        this.emit({ type: 'execute', detail: eventDetail, table: table });
         for (var i = 0, iEnd = ranges.length; i < iEnd; ++i) {
             range = ranges[i];
             if (strict &&
@@ -118,7 +121,7 @@ var RangeDataModifier = /** @class */ (function (_super) {
                 }
             }
         }
-        this.emit({ type: 'afterExecute', table: result });
+        this.emit({ type: 'afterExecute', detail: eventDetail, table: result });
         return result;
     };
     /**

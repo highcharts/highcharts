@@ -68,7 +68,7 @@ implements DataEventEmitter<TEventObject>, DataJSON.Class {
      * @param {DataParser.EventObject} [e]
      * Event object containing additional event data
      */
-    public emit(e: TEventObject): void {
+    public emit<T extends DataEventEmitter.EventObject>(e: T): void {
         fireEvent(this, e.type, e);
     }
 
@@ -84,9 +84,9 @@ implements DataEventEmitter<TEventObject>, DataJSON.Class {
      * @return {Function}
      * Function to unregister callback from the modifier event.
      */
-    public on(
-        type: TEventObject['type'],
-        callback: DataEventEmitter.EventCallback<this, TEventObject>
+    public on<T extends DataEventEmitter.EventObject>(
+        type: T['type'],
+        callback: DataEventEmitter.EventCallback<this, T>
     ): Function {
         return addEvent(this, type, callback);
     }

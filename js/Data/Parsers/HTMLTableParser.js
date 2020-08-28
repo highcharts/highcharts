@@ -105,17 +105,21 @@ var HTMLTableParser = /** @class */ (function (_super) {
      * @param {HTMLTableParser.OptionsType}[options]
      * Options for the parser
      *
+     * @param {Record<string,string>} [eventDetail]
+     * Custom information for pending events.
+     *
      * @emits CSVDataParser#parse
      * @emits CSVDataParser#afterParse
      * @emits HTMLTableParser#parseError
      */
-    HTMLTableParser.prototype.parse = function (options) {
+    HTMLTableParser.prototype.parse = function (options, eventDetail) {
         var parser = this, columns = [], headers = [], parseOptions = merge(parser.options, options), startRow = parseOptions.startRow, endRow = parseOptions.endRow, startColumn = parseOptions.startColumn, endColumn = parseOptions.endColumn;
         var tableHTML = parseOptions.tableHTML || this.tableElement;
         if (!(tableHTML instanceof HTMLElement)) {
             parser.emit({
                 type: 'parseError',
                 columns: columns,
+                detail: eventDetail,
                 headers: headers,
                 error: 'Not a valid HTML Table'
             });
@@ -123,7 +127,12 @@ var HTMLTableParser = /** @class */ (function (_super) {
         }
         parser.tableElement = this.tableElement;
         parser.tableElementID = tableHTML.id;
-        this.emit({ type: 'parse', columns: parser.columns, headers: parser.headers });
+        this.emit({
+            type: 'parse',
+            columns: parser.columns,
+            detail: eventDetail,
+            headers: parser.headers
+        });
         var colsCount, rowNo, colNo, item;
         var rows = tableHTML.getElementsByTagName('tr'), rowsCount = rows.length;
         rowNo = 0;
@@ -162,7 +171,12 @@ var HTMLTableParser = /** @class */ (function (_super) {
         }
         this.columns = columns;
         this.headers = headers;
-        this.emit({ type: 'afterParse', columns: columns, headers: headers });
+        this.emit({
+            type: 'afterParse',
+            columns: columns,
+            detail: eventDetail,
+            headers: headers
+        });
     };
     /**
      * Handles converting the parsed data to a DataTable

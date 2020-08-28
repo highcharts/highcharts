@@ -111,18 +111,21 @@ var CSVDataStore = /** @class */ (function (_super) {
      * @param {boolean} initialFetch
      * Indicates whether this is a single fetch or a repeated fetch
      *
+     * @param {Record<string,string>} [eventDetail]
+     * Custom information for pending events.
+     *
      * @emits CSVDataStore#load
      * @emits CSVDataStore#afterLoad
      * @emits CSVDataStore#loadError
      */
-    CSVDataStore.prototype.fetchCSV = function (initialFetch) {
+    CSVDataStore.prototype.fetchCSV = function (initialFetch, eventDetail) {
         var store = this, maxRetries = 3, csvURL = store.options.csvURL;
         var currentRetries;
         if (initialFetch) {
             clearTimeout(store.liveDataTimeout);
             store.liveDataURL = csvURL;
         }
-        store.emit({ type: 'load', table: store.table });
+        store.emit({ type: 'load', detail: eventDetail, table: store.table });
         ajax({
             url: store.liveDataURL,
             dataType: 'text',
@@ -132,31 +135,56 @@ var CSVDataStore = /** @class */ (function (_super) {
                     store.poll();
                 }
                 store.table = store.parser.getTable();
-                store.emit({ type: 'afterLoad', csv: csv, table: store.table });
+                store.emit({
+                    type: 'afterLoad',
+                    csv: csv,
+                    detail: eventDetail,
+                    table: store.table
+                });
             },
             error: function (xhr, error) {
                 if (++currentRetries < maxRetries) {
                     store.poll();
                 }
-                store.emit({ type: 'loadError', error: error, table: store.table, xhr: xhr });
+                store.emit({
+                    type: 'loadError',
+                    detail: eventDetail,
+                    error: error,
+                    table: store.table,
+                    xhr: xhr
+                });
             }
         });
     };
     /**
      * Initiates the loading of the CSV source to the store
+     *
+     * @param {Record<string,string>} [eventDetail]
+     * Custom information for pending events.
+     *
      * @emits CSVDataParser#load
      * @emits CSVDataParser#afterLoad
      */
-    CSVDataStore.prototype.load = function () {
+    CSVDataStore.prototype.load = function (eventDetail) {
         var store = this, _a = store.options, csv = _a.csv, csvURL = _a.csvURL;
         if (csv) {
-            store.emit({ type: 'load', csv: csv, table: store.table });
+            store.emit({
+                type: 'load',
+                csv: csv,
+                detail: eventDetail,
+                table: store.table
+            });
             store.parser.parse({ csv: csv });
             store.table = store.parser.getTable();
-            store.emit({ type: 'afterLoad', csv: csv, table: store.table });
+            store.emit({
+                type: 'afterLoad',
+                csv: csv,
+                detail: eventDetail,
+                table: store.table
+            });
         }
         else if (csvURL) {
-            store.fetchCSV(true);
+            store.fetchCSV(true, eventDetail);
         }
     };
     CSVDataStore.prototype.save = function () {

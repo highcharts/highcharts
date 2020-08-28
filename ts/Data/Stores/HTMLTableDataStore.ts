@@ -140,17 +140,22 @@ class HTMLTableDataStore extends DataStore<HTMLTableDataStore.EventObjects> impl
 
     /**
      * Initiates creating the datastore from the HTML table
+     *
+     * @param {Record<string,string>} [eventDetail]
+     * Custom information for pending events.
+     *
      * @emits HTMLTableDataStore#load
      * @emits HTMLTableDataStore#afterLoad
      * @emits HTMLTableDataStore#loadError
      */
-    public load(): void {
+    public load(eventDetail?: Record<string, string>): void {
         const store = this;
 
         store.fetchTable();
 
         store.emit({
             type: 'load',
+            detail: eventDetail,
             table: store.table,
             tableElement: store.tableElement
         });
@@ -158,6 +163,7 @@ class HTMLTableDataStore extends DataStore<HTMLTableDataStore.EventObjects> impl
         if (!store.tableElement) {
             store.emit({
                 type: 'loadError',
+                detail: eventDetail,
                 error: 'HTML table not provided, or element with ID not found',
                 table: store.table
             });
@@ -165,13 +171,15 @@ class HTMLTableDataStore extends DataStore<HTMLTableDataStore.EventObjects> impl
         }
 
         store.parser.parse(
-            merge({ tableHTML: store.tableElement }, store.options)
+            merge({ tableHTML: store.tableElement }, store.options),
+            eventDetail
         );
 
         store.table = store.parser.getTable();
 
         store.emit({
             type: 'afterLoad',
+            detail: eventDetail,
             table: store.table,
             tableElement: store.tableElement
         });
@@ -180,8 +188,11 @@ class HTMLTableDataStore extends DataStore<HTMLTableDataStore.EventObjects> impl
     /**
      * Save
      * @todo implement
+     *
+     * @param {Record<string,string>} [eventDetail]
+     * Custom information for pending events.
      */
-    public save(): void {
+    public save(eventDetail?: Record<string, string>): void {
 
     }
 
@@ -265,6 +276,12 @@ namespace HTMLTableDataStore {
  * */
 
 DataJSON.addClass(HTMLTableDataStore);
+
+declare module './Types' {
+    interface DataStoreTypeRegistry {
+        HTMLTable: typeof HTMLTableDataStore;
+    }
+}
 
 /* *
  *

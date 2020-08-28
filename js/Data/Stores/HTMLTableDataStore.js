@@ -99,30 +99,37 @@ var HTMLTableDataStore = /** @class */ (function (_super) {
     };
     /**
      * Initiates creating the datastore from the HTML table
+     *
+     * @param {Record<string,string>} [eventDetail]
+     * Custom information for pending events.
+     *
      * @emits HTMLTableDataStore#load
      * @emits HTMLTableDataStore#afterLoad
      * @emits HTMLTableDataStore#loadError
      */
-    HTMLTableDataStore.prototype.load = function () {
+    HTMLTableDataStore.prototype.load = function (eventDetail) {
         var store = this;
         store.fetchTable();
         store.emit({
             type: 'load',
+            detail: eventDetail,
             table: store.table,
             tableElement: store.tableElement
         });
         if (!store.tableElement) {
             store.emit({
                 type: 'loadError',
+                detail: eventDetail,
                 error: 'HTML table not provided, or element with ID not found',
                 table: store.table
             });
             return;
         }
-        store.parser.parse(merge({ tableHTML: store.tableElement }, store.options));
+        store.parser.parse(merge({ tableHTML: store.tableElement }, store.options), eventDetail);
         store.table = store.parser.getTable();
         store.emit({
             type: 'afterLoad',
+            detail: eventDetail,
             table: store.table,
             tableElement: store.tableElement
         });
@@ -130,8 +137,11 @@ var HTMLTableDataStore = /** @class */ (function (_super) {
     /**
      * Save
      * @todo implement
+     *
+     * @param {Record<string,string>} [eventDetail]
+     * Custom information for pending events.
      */
-    HTMLTableDataStore.prototype.save = function () {
+    HTMLTableDataStore.prototype.save = function (eventDetail) {
     };
     HTMLTableDataStore.prototype.toJSON = function () {
         var store = this, json = {

@@ -115,12 +115,18 @@ class GroupDataModifier extends DataModifier {
      * @param {DataTable} table
      * Table to modify.
      *
+     * @param {Record<string,string>} [eventDetail]
+     * Custom information for pending events.
+     *
      * @return {DataTable}
      * New modified table.
      */
-    public execute(table: DataTable): DataTable {
+    public execute(
+        table: DataTable,
+        eventDetail?: Record<string, string>
+    ): DataTable {
 
-        this.emit({ type: 'execute', table });
+        this.emit({ type: 'execute', detail: eventDetail, table });
 
         const modifier = this,
             {
@@ -133,7 +139,7 @@ class GroupDataModifier extends DataModifier {
             valueGroups: Array<DataJSON.Primitives> = [];
 
         let row: (DataTableRow|undefined),
-            value: DataTableRow.ColumnTypes,
+            value: DataTableRow.ColumnValueType,
             valueIndex: number;
 
         for (let i = 0, iEnd = table.getRowCount(); i < iEnd; ++i) {
@@ -175,7 +181,7 @@ class GroupDataModifier extends DataModifier {
             }));
         }
 
-        this.emit({ type: 'afterExecute', table });
+        this.emit({ type: 'afterExecute', detail: eventDetail, table });
 
         return table;
     }
@@ -245,6 +251,12 @@ namespace GroupDataModifier {
 
 DataJSON.addClass(GroupDataModifier);
 DataModifier.addModifier(GroupDataModifier);
+
+declare module './Types' {
+    interface DataModifierTypeRegistry {
+        Group: typeof GroupDataModifier;
+    }
+}
 
 /* *
  *

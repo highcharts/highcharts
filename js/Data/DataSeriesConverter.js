@@ -24,24 +24,24 @@ var defined = U.defined, uniqueKey = U.uniqueKey;
  *
  * */
 /**
-* Class to convert DataTable to Highcharts series data.
-*/
+ * Class to convert DataTable to Highcharts series data.
+ */
 var DataSeriesConverter = /** @class */ (function () {
     /* *
-    *
-    *  Constructors
-    *
-    * */
+     *
+     *  Constructor
+     *
+     * */
     function DataSeriesConverter(table, options) {
         if (table === void 0) { table = new DataTable(); }
         this.table = table;
         this.options = options;
     }
     /* *
-    *
-    *  Functions
-    *
-    * */
+     *
+     *  Functions
+     *
+     * */
     DataSeriesConverter.prototype.getSeriesData = function (columnIndex) {
         var table = this.table, options = this.options || {}, dataOptions = [], seriesTypeData = this.getSeriesTypeData(options.type || 'line');
         var row, column;
@@ -104,7 +104,7 @@ var DataSeriesConverter = /** @class */ (function () {
         }
         return seriesOptions;
     };
-    DataSeriesConverter.prototype.setDataTable = function (allSeries) {
+    DataSeriesConverter.prototype.setDataTable = function (allSeries, eventDetail) {
         var table = this.table, columnMap = (this.options || {}).columnMap || {};
         var columns, series, pointArrayMap, pointArrayMapLength, options, keys, data, elem, row, y, needsArrayMap, xIndex, yIndex, yValueName, yValueIndex, yValueId, id;
         for (var i = 0, iEnd = allSeries.length; i < iEnd; i++) {
@@ -162,10 +162,10 @@ var DataSeriesConverter = /** @class */ (function () {
                 if (!row) {
                     columns.id = id;
                     row = new DataTableRow(columns);
-                    table.insertRow(row);
+                    table.insertRow(row, eventDetail);
                 }
                 else if (columns[y]) {
-                    row.insertColumn(y, columns[y]);
+                    row.insertColumn(y, columns[y], eventDetail);
                 }
             }
         }

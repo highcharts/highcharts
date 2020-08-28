@@ -126,12 +126,16 @@ class HTMLTableParser extends DataParser<DataParser.EventObject> {
      * @param {HTMLTableParser.OptionsType}[options]
      * Options for the parser
      *
+     * @param {Record<string,string>} [eventDetail]
+     * Custom information for pending events.
+     *
      * @emits CSVDataParser#parse
      * @emits CSVDataParser#afterParse
      * @emits HTMLTableParser#parseError
      */
     public parse(
-        options: HTMLTableParser.OptionsType
+        options: HTMLTableParser.OptionsType,
+        eventDetail?: Record<string, string>
     ): void {
         const parser = this,
             columns: [] = [],
@@ -147,9 +151,10 @@ class HTMLTableParser extends DataParser<DataParser.EventObject> {
         const tableHTML = parseOptions.tableHTML || this.tableElement;
 
         if (!(tableHTML instanceof HTMLElement)) {
-            parser.emit({
+            parser.emit<DataParser.EventObject>({
                 type: 'parseError',
                 columns,
+                detail: eventDetail,
                 headers,
                 error: 'Not a valid HTML Table'
             });
@@ -158,7 +163,12 @@ class HTMLTableParser extends DataParser<DataParser.EventObject> {
         parser.tableElement = this.tableElement;
         parser.tableElementID = tableHTML.id;
 
-        this.emit({ type: 'parse', columns: parser.columns, headers: parser.headers });
+        this.emit<DataParser.EventObject>({
+            type: 'parse',
+            columns: parser.columns,
+            detail: eventDetail,
+            headers: parser.headers
+        });
 
         let colsCount: number,
             rowNo: number,
@@ -221,7 +231,12 @@ class HTMLTableParser extends DataParser<DataParser.EventObject> {
         this.columns = columns;
         this.headers = headers;
 
-        this.emit({ type: 'afterParse', columns, headers });
+        this.emit<DataParser.EventObject>({
+            type: 'afterParse',
+            columns,
+            detail: eventDetail,
+            headers
+        });
     }
 
     /**

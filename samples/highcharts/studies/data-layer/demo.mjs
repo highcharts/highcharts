@@ -1,5 +1,5 @@
 import '../../../../code/es-modules/Core/Renderer/SVG/SVGRenderer.js';
-import GoogleDataStore from '../../../../code/es-modules/Data/Stores/GoogleDataStore.js';
+import GoogleSheetsStore from '../../../../code/es-modules/Data/Stores/GoogleSheetsStore.js';
 import GroupDataModifier from '../../../../code/es-modules/Data/Modifiers/GroupDataModifier.js';
 
 import ChainDataModifier from '../../../../code/es-modules/Data/Modifiers/ChainDataModifier.js';
@@ -93,7 +93,7 @@ Highcharts.stockChart('chart4', {
     console.log('table from OHLC series -> ', table);
 });
 
-const store = new GoogleDataStore(undefined, {
+const store = new GoogleSheetsStore(undefined, {
     googleSpreadsheetKey: '14632VxDAT-TAL06ICnoLsV_JyvjEBXdVY-J34br5iXY'
     // startColumn: 1,
     // endColumn: 8,

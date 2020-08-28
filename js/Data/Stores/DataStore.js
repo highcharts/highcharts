@@ -156,4 +156,9 @@ var DataStore = /** @class */ (function () {
     };
     return DataStore;
 }());
+/* *
+ *
+ *  Export
+ *
+ * */
 export default DataStore;

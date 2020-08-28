@@ -32,17 +32,17 @@ var merge = U.merge;
 /**
  * @private
  */
-var GoogleDataStore = /** @class */ (function (_super) {
-    __extends(GoogleDataStore, _super);
+var GoogleSheetsStore = /** @class */ (function (_super) {
+    __extends(GoogleSheetsStore, _super);
     /* *
      *
      *  Constructors
      *
      * */
-    function GoogleDataStore(table, options) {
+    function GoogleSheetsStore(table, options) {
         var _this = _super.call(this, table) || this;
         _this.parser = void 0;
-        _this.options = merge(GoogleDataStore.defaultOptions, options);
+        _this.options = merge(GoogleSheetsStore.defaultOptions, options);
         _this.columns = [];
         return _this;
     }
@@ -51,8 +51,8 @@ var GoogleDataStore = /** @class */ (function (_super) {
      *  Static Functions
      *
      * */
-    GoogleDataStore.fromJSON = function (json) {
-        var options = json.options, table = DataTable.fromJSON(json.table), store = new GoogleDataStore(table, options);
+    GoogleSheetsStore.fromJSON = function (json) {
+        var options = json.options, table = DataTable.fromJSON(json.table), store = new GoogleSheetsStore(table, options);
         store.describe(DataStore.getMetadataFromJSON(json.metadata));
         return store;
     };
@@ -61,7 +61,7 @@ var GoogleDataStore = /** @class */ (function (_super) {
      *  Functions
      *
      * */
-    GoogleDataStore.prototype.getSheetColumns = function (json) {
+    GoogleSheetsStore.prototype.getSheetColumns = function (json) {
         var store = this, _a = store.options, startColumn = _a.startColumn, endColumn = _a.endColumn, startRow = _a.startRow, endRow = _a.endRow, columns = [], cells = json.feed.entry, cellCount = (cells || []).length;
         var cell, colCount = 0, rowCount = 0, val, gr, gc, cellInner, i, j;
         // First, find the total number of columns and rows that
@@ -124,7 +124,7 @@ var GoogleDataStore = /** @class */ (function (_super) {
         }
         return columns;
     };
-    GoogleDataStore.prototype.parseSheet = function (json) {
+    GoogleSheetsStore.prototype.parseSheet = function (json) {
         var store = this, cells = json.feed.entry, columns = [];
         if (!cells || cells.length === 0) {
             return false;
@@ -134,7 +134,11 @@ var GoogleDataStore = /** @class */ (function (_super) {
         store.columns = columns;
         // parser.emit({ type: 'afterParse', columns });
     };
-    GoogleDataStore.prototype.fetchSheet = function () {
+    /**
+     * @param {Record<string,string>} [eventDetail]
+     * Custom information for pending events.
+     */
+    GoogleSheetsStore.prototype.fetchSheet = function (eventDetail) {
         var store = this, headers = [], _a = store.options, enablePolling = _a.enablePolling, dataRefreshRate = _a.dataRefreshRate, googleSpreadsheetKey = _a.googleSpreadsheetKey, worksheet = _a.worksheet, url = [
             'https://spreadsheets.google.com/feeds/cells',
             googleSpreadsheetKey,
@@ -142,7 +146,12 @@ var GoogleDataStore = /** @class */ (function (_super) {
             'public/values?alt=json'
         ].join('/');
         var i, colsCount;
-        store.emit({ type: 'load', table: store.table, url: url });
+        store.emit({
+            type: 'load',
+            detail: eventDetail,
+            table: store.table,
+            url: url
+        });
         ajax({
             url: url,
             dataType: 'json',
@@ -159,7 +168,12 @@ var GoogleDataStore = /** @class */ (function (_super) {
                         store.fetchSheet();
                     }, dataRefreshRate * 1000);
                 }
-                store.emit({ type: 'afterLoad', table: table, url: url });
+                store.emit({
+                    type: 'afterLoad',
+                    detail: eventDetail,
+                    table: table,
+                    url: url
+                });
             },
             error: function (xhr, error) {
                 /* *
@@ -169,18 +183,29 @@ var GoogleDataStore = /** @class */ (function (_super) {
                  *
                  * */
                 // console.log(text);
-                store.emit({ type: 'loadError', error: error, table: store.table, xhr: xhr });
+                store.emit({
+                    type: 'loadError',
+                    detail: eventDetail,
+                    error: error,
+                    table: store.table,
+                    xhr: xhr
+                });
             }
         });
         // return true;
     };
-    GoogleDataStore.prototype.load = function () {
-        return this.options.googleSpreadsheetKey ?
-            this.fetchSheet() : void 0;
+    /**
+     * @param {Record<string,string>} [eventDetail]
+     * Custom information for pending events.
+     */
+    GoogleSheetsStore.prototype.load = function (eventDetail) {
+        if (this.options.googleSpreadsheetKey) {
+            this.fetchSheet(eventDetail);
+        }
     };
-    GoogleDataStore.prototype.toJSON = function () {
+    GoogleSheetsStore.prototype.toJSON = function () {
         var json = {
-            $class: 'GoogleDataStore',
+            $class: 'GoogleSheetsStore',
             options: merge(this.options),
             table: this.table.toJSON(),
             metadata: this.getMetadataJSON()
@@ -192,7 +217,7 @@ var GoogleDataStore = /** @class */ (function (_super) {
      *  Static Properties
      *
      * */
-    GoogleDataStore.defaultOptions = {
+    GoogleSheetsStore.defaultOptions = {
         googleSpreadsheetKey: '',
         worksheet: 1,
         startColumn: 0,
@@ -202,6 +227,11 @@ var GoogleDataStore = /** @class */ (function (_super) {
         enablePolling: false,
         dataRefreshRate: 2
     };
-    return GoogleDataStore;
+    return GoogleSheetsStore;
 }(DataStore));
-export default GoogleDataStore;
+/* *
+ *
+ *  Export
+ *
+ * */
+export default GoogleSheetsStore;

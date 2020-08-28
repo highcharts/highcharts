@@ -118,10 +118,16 @@ class RangeDataModifier extends DataModifier {
      * @param {DataTable} table
      * Table to modify.
      *
+     * @param {Record<string,string>} [eventDetail]
+     * Custom information for pending events.
+     *
      * @return {DataTable}
      * New modified table.
      */
-    public execute(table: DataTable): DataTable {
+    public execute(
+        table: DataTable,
+        eventDetail?: Record<string, string>
+    ): DataTable {
         const modifier = this,
             {
                 ranges,
@@ -130,11 +136,11 @@ class RangeDataModifier extends DataModifier {
             rows = table.getAllRows(),
             result = new DataTable();
 
-        let column: DataTableRow.ColumnTypes,
+        let column: DataTableRow.ColumnValueType,
             range: RangeDataModifier.RangeOptions,
             row: DataTableRow;
 
-        this.emit({ type: 'execute', table });
+        this.emit({ type: 'execute', detail: eventDetail, table });
 
         for (let i = 0, iEnd = ranges.length; i < iEnd; ++i) {
             range = ranges[i];
@@ -177,7 +183,7 @@ class RangeDataModifier extends DataModifier {
             }
         }
 
-        this.emit({ type: 'afterExecute', table: result });
+        this.emit({ type: 'afterExecute', detail: eventDetail, table: result });
 
         return result;
     }
@@ -259,6 +265,12 @@ namespace RangeDataModifier {
 
 DataJSON.addClass(RangeDataModifier);
 DataModifier.addModifier(RangeDataModifier);
+
+declare module './Types' {
+    interface DataModifierTypeRegistry {
+        Range: typeof RangeDataModifier;
+    }
+}
 
 /* *
  *

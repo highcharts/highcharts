@@ -270,4 +270,22 @@ namespace DataStore {
 
 }
 
+/* *
+ *
+ *  Registry
+ *
+ * */
+
+declare module './Types' {
+    interface DataStoreTypeRegistry {
+        '': typeof DataStore;
+    }
+}
+
+/* *
+ *
+ *  Export
+ *
+ * */
+
 export default DataStore;

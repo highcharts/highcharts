@@ -18,6 +18,7 @@
 
 import type DataEventEmitter from '../DataEventEmitter';
 import type DataJSON from '../DataJSON';
+import type { DataModifierRegistryType } from './Types';
 import type DataTable from '../DataTable';
 import U from '../../Core/Utilities.js';
 const {
@@ -37,8 +38,8 @@ const {
 /**
  * Abstract class to provide an interface for modifying DataTable.
  */
-abstract class DataModifier
-implements DataEventEmitter<DataModifier.EventObject>, DataJSON.Class {
+abstract class DataModifier<TEventObject extends DataEventEmitter.EventObject = DataModifier.EventObject>
+implements DataEventEmitter<TEventObject>, DataJSON.Class {
 
     /* *
      *
@@ -55,7 +56,7 @@ implements DataEventEmitter<DataModifier.EventObject>, DataJSON.Class {
     /**
      * Registry as a record object with modifier names and their class.
      */
-    private static readonly registry: DataModifier.ModifierRegistry = {};
+    private static readonly registry = {} as Record<string, DataModifierRegistryType>;
 
     /* *
      *
@@ -75,12 +76,12 @@ implements DataEventEmitter<DataModifier.EventObject>, DataJSON.Class {
      * Returns true, if the registration was successful. False is returned, if
      * their is already a modifier registered with this name.
      */
-    public static addModifier(modifier: typeof DataModifier): boolean {
+    public static addModifier(modifier: DataModifierRegistryType): boolean {
         const name = DataModifier.getName(modifier),
             registry = DataModifier.registry;
 
         if (
-            !name ||
+            typeof name === 'undefined' ||
             registry[name]
         ) {
             return false;
@@ -105,10 +106,10 @@ implements DataEventEmitter<DataModifier.EventObject>, DataJSON.Class {
      * Returns a copy of the modifier registry as record object with
      * modifier names and their modifier class.
      *
-     * @return {DataModifier.ModifierRegistry}
+     * @return {Record<string,DataModifierRegistryType>}
      * Copy of the modifier registry.
      */
-    public static getAllModifiers(): DataModifier.ModifierRegistry {
+    public static getAllModifiers(): Record<string, DataModifierRegistryType> {
         return merge(DataModifier.registry);
     }
 
@@ -122,7 +123,7 @@ implements DataEventEmitter<DataModifier.EventObject>, DataJSON.Class {
      * @return {DataModifier|undefined}
      * Class type, if the class name was found, otherwise `undefined`.
      */
-    public static getModifier(name: string): (typeof DataModifier|undefined) {
+    public static getModifier(name: string): (DataModifierRegistryType|undefined) {
         return DataModifier.registry[name];
     }
 
@@ -178,7 +179,7 @@ implements DataEventEmitter<DataModifier.EventObject>, DataJSON.Class {
      * @param {DataEventEmitter.EventObject} [e]
      * Event object containing additonal event information.
      */
-    public emit(e: DataModifier.EventObject): void {
+    public emit(e: TEventObject): void {
         fireEvent(this, e.type, e);
     }
 
@@ -195,8 +196,8 @@ implements DataEventEmitter<DataModifier.EventObject>, DataJSON.Class {
      * Function to unregister callback from the modifier event.
      */
     public on(
-        type: DataModifier.EventObject['type'],
-        callback: DataEventEmitter.EventCallback<this, DataModifier.EventObject>
+        type: TEventObject['type'],
+        callback: DataEventEmitter.EventCallback<this, TEventObject>
     ): Function {
         return addEvent(this, type, callback);
     }
@@ -247,16 +248,10 @@ namespace DataModifier {
      * Event object with additional event information.
      */
     export interface EventObject extends DataEventEmitter.EventObject {
-        readonly type: ('execute'|'afterExecute');
+        readonly type: (
+            'execute'|'afterExecute'
+        );
         readonly table: DataTable;
-    }
-
-    /**
-     * Describes the class registry as a record object with class name and their
-     * class types (aka class constructor).
-     */
-    export interface ModifierRegistry extends Record<string, typeof DataModifier> {
-        // nothing here yet
     }
 
     /**
@@ -269,6 +264,18 @@ namespace DataModifier {
         modifier: string;
     }
 
+}
+
+/* *
+ *
+ *  Register
+ *
+ * */
+
+declare module './Types' {
+    interface DataModifierTypeRegistry {
+        '': typeof DataModifier;
+    }
 }
 
 /* *

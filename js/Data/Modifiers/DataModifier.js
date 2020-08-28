@@ -42,7 +42,7 @@ var DataModifier = /** @class */ (function () {
      */
     DataModifier.addModifier = function (modifier) {
         var name = DataModifier.getName(modifier), registry = DataModifier.registry;
-        if (!name ||
+        if (typeof name === 'undefined' ||
             registry[name]) {
             return false;
         }
@@ -62,7 +62,7 @@ var DataModifier = /** @class */ (function () {
      * Returns a copy of the modifier registry as record object with
      * modifier names and their modifier class.
      *
-     * @return {DataModifier.ModifierRegistry}
+     * @return {Record<string,DataModifierRegistryType>}
      * Copy of the modifier registry.
      */
     DataModifier.getAllModifiers = function () {

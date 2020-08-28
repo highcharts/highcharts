@@ -90,14 +90,22 @@ var CSVDataParser = /** @class */ (function (_super) {
      * @param {CSVDataParser.OptionsType}[options]
      * Options for the parser
      *
+     * @param {Record<string,string>} [eventDetail]
+     * Custom information for pending events.
+     *
      * @emits CSVDataParser#parse
      * @emits CSVDataParser#afterParse
      */
-    CSVDataParser.prototype.parse = function (options) {
+    CSVDataParser.prototype.parse = function (options, eventDetail) {
         var parser = this, parserOptions = merge(this.options, options), beforeParse = parserOptions.beforeParse, lineDelimiter = parserOptions.lineDelimiter, firstRowAsNames = parserOptions.firstRowAsNames, itemDelimiter = parserOptions.itemDelimiter;
         var lines, rowIt = 0, csv = parserOptions.csv, startRow = parserOptions.startRow, endRow = parserOptions.endRow, i, colsCount;
         this.columns = [];
-        this.emit({ type: 'parse', columns: parser.columns, headers: parser.headers });
+        this.emit({
+            type: 'parse',
+            columns: parser.columns,
+            detail: eventDetail,
+            headers: parser.headers
+        });
         if (csv && beforeParse) {
             csv = beforeParse(csv);
         }
@@ -134,7 +142,12 @@ var CSVDataParser = /** @class */ (function (_super) {
                 parser.headers[i] = '' + parser.columns[i][0];
             }
         }
-        parser.emit({ type: 'afterParse', columns: parser.columns, headers: parser.headers });
+        parser.emit({
+            type: 'afterParse',
+            columns: parser.columns,
+            detail: eventDetail,
+            headers: parser.headers
+        });
     };
     /**
      * Internal method that parses a single CSV row

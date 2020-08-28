@@ -96,11 +96,15 @@ class CSVDataParser extends DataParser<DataParser.EventObject> {
      * @param {CSVDataParser.OptionsType}[options]
      * Options for the parser
      *
+     * @param {Record<string,string>} [eventDetail]
+     * Custom information for pending events.
+     *
      * @emits CSVDataParser#parse
      * @emits CSVDataParser#afterParse
      */
     public parse(
-        options: CSVDataParser.OptionsType
+        options: CSVDataParser.OptionsType,
+        eventDetail?: Record<string, string>
     ): void {
         const parser = this,
             parserOptions = merge(this.options, options),
@@ -123,7 +127,12 @@ class CSVDataParser extends DataParser<DataParser.EventObject> {
 
         this.columns = [];
 
-        this.emit({ type: 'parse', columns: parser.columns, headers: parser.headers });
+        this.emit<DataParser.EventObject>({
+            type: 'parse',
+            columns: parser.columns,
+            detail: eventDetail,
+            headers: parser.headers
+        });
 
         if (csv && beforeParse) {
             csv = beforeParse(csv);
@@ -169,7 +178,12 @@ class CSVDataParser extends DataParser<DataParser.EventObject> {
             }
         }
 
-        parser.emit({ type: 'afterParse', columns: parser.columns, headers: parser.headers });
+        parser.emit<DataParser.EventObject>({
+            type: 'afterParse',
+            columns: parser.columns,
+            detail: eventDetail,
+            headers: parser.headers
+        });
     }
 
     /**

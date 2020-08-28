@@ -100,15 +100,39 @@ var ChainDataModifier = /** @class */ (function (_super) {
      *
      * @param {DataModifier} modifier
      * Configured modifier to add.
+     *
+     * @param {Record<string, string>} [eventDetail]
+     * Custom information for pending events.
      */
-    ChainDataModifier.prototype.add = function (modifier) {
+    ChainDataModifier.prototype.add = function (modifier, eventDetail) {
+        this.emit({
+            type: 'addModifier',
+            detail: eventDetail,
+            modifier: modifier
+        });
         this.modifiers.push(modifier);
+        this.emit({
+            type: 'addModifier',
+            detail: eventDetail,
+            modifier: modifier
+        });
     };
     /**
      * Clears all modifiers from the chain.
+     *
+     * @param {Record<string, string>} [eventDetail]
+     * Custom information for pending events.
      */
-    ChainDataModifier.prototype.clear = function () {
+    ChainDataModifier.prototype.clear = function (eventDetail) {
+        this.emit({
+            type: 'clearChain',
+            detail: eventDetail
+        });
         this.modifiers.length = 0;
+        this.emit({
+            type: 'afterClearChain',
+            detail: eventDetail
+        });
     };
     /**
      * Applies modifications to the table rows and returns a new table with the
@@ -117,18 +141,44 @@ var ChainDataModifier = /** @class */ (function (_super) {
      * @param {DataTable} table
      * Table to modify.
      *
+     * @param {Record<string, string>} [eventDetail]
+     * Custom information for pending events.
+     *
      * @return {DataTable}
      * New modified table.
+     *
+     * @emits ChainDataModifier#execute
+     * @emits ChainDataModifier#afterExecute
      */
-    ChainDataModifier.prototype.execute = function (table) {
-        var modifier = this, modifiers = (modifier.options.reverse ?
-            modifier.modifiers.reverse() :
-            modifier.modifiers.slice());
-        modifier.emit({ type: 'execute', table: table });
+    ChainDataModifier.prototype.execute = function (table, eventDetail) {
+        var modifiers = (this.options.reverse ?
+            this.modifiers.reverse() :
+            this.modifiers.slice());
+        var modifier;
+        this.emit({
+            type: 'execute',
+            detail: eventDetail,
+            table: table
+        });
         for (var i = 0, iEnd = modifiers.length; i < iEnd; ++i) {
-            table = modifiers[i].execute(table);
+            modifier = modifiers[i];
+            this.emit({
+                type: 'executeModifier',
+                detail: eventDetail,
+                modifier: modifier
+            });
+            table = modifier.execute(table);
+            this.emit({
+                type: 'afterExecuteModifier',
+                detail: eventDetail,
+                modifier: modifier
+            });
         }
-        modifier.emit({ type: 'afterExecute', table: table });
+        this.emit({
+            type: 'afterExecute',
+            detail: eventDetail,
+            table: table
+        });
         return table;
     };
     /**
@@ -136,10 +186,23 @@ var ChainDataModifier = /** @class */ (function (_super) {
      *
      * @param {DataModifier} modifier
      * Configured modifier to remove.
+     *
+     * @param {Record<string, string>} [eventDetail]
+     * Custom information for pending events.
      */
-    ChainDataModifier.prototype.remove = function (modifier) {
+    ChainDataModifier.prototype.remove = function (modifier, eventDetail) {
         var modifiers = this.modifiers;
+        this.emit({
+            type: 'removeModifier',
+            detail: eventDetail,
+            modifier: modifier
+        });
         modifiers.splice(modifiers.indexOf(modifier), 1);
+        this.emit({
+            type: 'afterRemoveModifier',
+            detail: eventDetail,
+            modifier: modifier
+        });
     };
     /**
      * Converts the modifier chain to a class JSON, including all containing all

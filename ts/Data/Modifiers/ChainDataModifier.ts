@@ -10,6 +10,7 @@
  *
  * */
 
+import type DataEventEmitter from '../DataEventEmitter';
 import DataJSON from '../DataJSON.js';
 import DataModifier from './DataModifier.js';
 import DataTable from '../DataTable.js';
@@ -21,7 +22,7 @@ const {
 /**
  * Modifies a table with the help of modifiers in an ordered chain.
  */
-class ChainDataModifier extends DataModifier {
+class ChainDataModifier extends DataModifier<ChainDataModifier.EventObject> {
 
     /* *
      *
@@ -124,16 +125,47 @@ class ChainDataModifier extends DataModifier {
      *
      * @param {DataModifier} modifier
      * Configured modifier to add.
+     *
+     * @param {Record<string, string>} [eventDetail]
+     * Custom information for pending events.
      */
-    public add(modifier: DataModifier): void {
+    public add(
+        modifier: DataModifier,
+        eventDetail?: Record<string, string>
+    ): void {
+        this.emit({
+            type: 'addModifier',
+            detail: eventDetail,
+            modifier
+        });
+
         this.modifiers.push(modifier);
+
+        this.emit({
+            type: 'addModifier',
+            detail: eventDetail,
+            modifier
+        });
     }
 
     /**
      * Clears all modifiers from the chain.
+     *
+     * @param {Record<string, string>} [eventDetail]
+     * Custom information for pending events.
      */
-    public clear(): void {
+    public clear(eventDetail?: Record<string, string>): void {
+        this.emit({
+            type: 'clearChain',
+            detail: eventDetail
+        });
+
         this.modifiers.length = 0;
+
+        this.emit({
+            type: 'afterClearChain',
+            detail: eventDetail
+        });
     }
 
     /**
@@ -143,24 +175,56 @@ class ChainDataModifier extends DataModifier {
      * @param {DataTable} table
      * Table to modify.
      *
+     * @param {Record<string, string>} [eventDetail]
+     * Custom information for pending events.
+     *
      * @return {DataTable}
      * New modified table.
+     *
+     * @emits ChainDataModifier#execute
+     * @emits ChainDataModifier#afterExecute
      */
-    public execute(table: DataTable): DataTable {
-        const modifier = this,
-            modifiers = (
-                modifier.options.reverse ?
-                    modifier.modifiers.reverse() :
-                    modifier.modifiers.slice()
-            );
+    public execute(
+        table: DataTable,
+        eventDetail?: Record<string, string>
+    ): DataTable {
+        const modifiers = (
+            this.options.reverse ?
+                this.modifiers.reverse() :
+                this.modifiers.slice()
+        );
 
-        modifier.emit({ type: 'execute', table });
+        let modifier: DataModifier;
+
+        this.emit({
+            type: 'execute',
+            detail: eventDetail,
+            table
+        });
 
         for (let i = 0, iEnd = modifiers.length; i < iEnd; ++i) {
-            table = modifiers[i].execute(table);
+            modifier = modifiers[i];
+
+            this.emit({
+                type: 'executeModifier',
+                detail: eventDetail,
+                modifier
+            });
+
+            table = modifier.execute(table);
+
+            this.emit({
+                type: 'afterExecuteModifier',
+                detail: eventDetail,
+                modifier
+            });
         }
 
-        modifier.emit({ type: 'afterExecute', table });
+        this.emit({
+            type: 'afterExecute',
+            detail: eventDetail,
+            table
+        });
 
         return table;
     }
@@ -170,11 +234,29 @@ class ChainDataModifier extends DataModifier {
      *
      * @param {DataModifier} modifier
      * Configured modifier to remove.
+     *
+     * @param {Record<string, string>} [eventDetail]
+     * Custom information for pending events.
      */
-    public remove(modifier: DataModifier): void {
+    public remove(
+        modifier: DataModifier,
+        eventDetail?: Record<string, string>
+    ): void {
         const modifiers = this.modifiers;
 
+        this.emit({
+            type: 'removeModifier',
+            detail: eventDetail,
+            modifier
+        });
+
         modifiers.splice(modifiers.indexOf(modifier), 1);
+
+        this.emit({
+            type: 'afterRemoveModifier',
+            detail: eventDetail,
+            modifier
+        });
     }
 
     /**
@@ -214,6 +296,17 @@ class ChainDataModifier extends DataModifier {
 namespace ChainDataModifier {
 
     /**
+     * Event object
+     */
+    export interface ChainEventObject extends DataEventEmitter.EventObject {
+        readonly type: (
+            'clearChain'|'afterClearChain'|
+            DataModifier.EventObject['type']
+        );
+        readonly table?: DataTable;
+    }
+
+    /**
      * Interface of the class JSON to convert to modifier instances.
      */
     export interface ClassJSON extends DataModifier.ClassJSON {
@@ -221,6 +314,23 @@ namespace ChainDataModifier {
          * Class JSON of all modifiers, the chain contains.
          */
         modifiers: Array<DataModifier.ClassJSON>;
+    }
+
+    /**
+     * Event information.
+     */
+    export type EventObject = (ChainEventObject|ModifierEventObject);
+
+    /**
+     * Event information for modifier operations.
+     */
+    export interface ModifierEventObject extends DataEventEmitter.EventObject {
+        readonly type: (
+            'addModifier'|'afterAddModifier'|
+            'executeModifier'|'afterExecuteModifier'|
+            'removeModifier'|'afterRemoveModifier'
+        );
+        readonly modifier: DataModifier;
     }
 
     /**
@@ -243,6 +353,12 @@ namespace ChainDataModifier {
 
 DataJSON.addClass(ChainDataModifier);
 DataModifier.addModifier(ChainDataModifier);
+
+declare module './Types' {
+    interface DataModifierTypeRegistry {
+        Chain: typeof ChainDataModifier;
+    }
+}
 
 /* *
  *

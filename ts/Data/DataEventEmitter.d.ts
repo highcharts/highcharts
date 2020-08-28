@@ -82,10 +82,16 @@ declare namespace DataEventEmitter {
      * extended by implementing classes.
      */
     export interface EventObject {
+
+        /**
+         * Additional meta information regarding the event.
+         */
+        readonly detail?: Record<string, string>;
+
         /**
          * Event type as a string.
          */
-        readonly type: string;
+        readonly type: ('test'|string);
     }
 }
 

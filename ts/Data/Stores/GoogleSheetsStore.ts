@@ -30,7 +30,7 @@ const {
  * @private
  */
 
-class GoogleDataStore extends DataStore<GoogleDataStore.EventObjects> implements DataJSON.Class {
+class GoogleSheetsStore extends DataStore<GoogleDataStore.EventObject> implements DataJSON.Class {
 
     /* *
      *
@@ -55,10 +55,10 @@ class GoogleDataStore extends DataStore<GoogleDataStore.EventObjects> implements
      *
      * */
 
-    public static fromJSON(json: GoogleDataStore.ClassJSON): GoogleDataStore {
+    public static fromJSON(json: GoogleDataStore.ClassJSON): GoogleSheetsStore {
         const options = json.options,
             table = DataTable.fromJSON(json.table),
-            store = new GoogleDataStore(table, options);
+            store = new GoogleSheetsStore(table, options);
 
         store.describe(DataStore.getMetadataFromJSON(json.metadata));
 
@@ -80,7 +80,7 @@ class GoogleDataStore extends DataStore<GoogleDataStore.EventObjects> implements
     ) {
         super(table);
 
-        this.options = merge(GoogleDataStore.defaultOptions, options);
+        this.options = merge(GoogleSheetsStore.defaultOptions, options);
         this.columns = [];
     }
 
@@ -208,7 +208,11 @@ class GoogleDataStore extends DataStore<GoogleDataStore.EventObjects> implements
         // parser.emit({ type: 'afterParse', columns });
     }
 
-    private fetchSheet(): void {
+    /**
+     * @param {Record<string,string>} [eventDetail]
+     * Custom information for pending events.
+     */
+    private fetchSheet(eventDetail?: Record<string, string>): void {
         const store = this,
             headers: string[] = [],
             {
@@ -227,7 +231,12 @@ class GoogleDataStore extends DataStore<GoogleDataStore.EventObjects> implements
         let i: number,
             colsCount: number;
 
-        store.emit({ type: 'load', table: store.table, url });
+        store.emit({
+            type: 'load',
+            detail: eventDetail,
+            table: store.table,
+            url
+        });
 
         ajax({
             url: url,
@@ -252,7 +261,12 @@ class GoogleDataStore extends DataStore<GoogleDataStore.EventObjects> implements
                     );
                 }
 
-                store.emit({ type: 'afterLoad', table, url });
+                store.emit({
+                    type: 'afterLoad',
+                    detail: eventDetail,
+                    table,
+                    url
+                });
             },
             error: function (
                 xhr: XMLHttpRequest,
@@ -266,21 +280,32 @@ class GoogleDataStore extends DataStore<GoogleDataStore.EventObjects> implements
                  * */
                 // console.log(text);
 
-                store.emit({ type: 'loadError', error, table: store.table, xhr });
+                store.emit({
+                    type: 'loadError',
+                    detail: eventDetail,
+                    error,
+                    table: store.table,
+                    xhr
+                });
             }
         });
 
         // return true;
     }
 
-    public load(): void {
-        return this.options.googleSpreadsheetKey ?
-            this.fetchSheet() : void 0;
+    /**
+     * @param {Record<string,string>} [eventDetail]
+     * Custom information for pending events.
+     */
+    public load(eventDetail?: Record<string, string>): void {
+        if (this.options.googleSpreadsheetKey) {
+            this.fetchSheet(eventDetail);
+        }
     }
 
     public toJSON(): GoogleDataStore.ClassJSON {
         const json: GoogleDataStore.ClassJSON = {
-            $class: 'GoogleDataStore',
+            $class: 'GoogleSheetsStore',
             options: merge(this.options),
             table: this.table.toJSON(),
             metadata: this.getMetadataJSON()
@@ -301,17 +326,17 @@ class GoogleDataStore extends DataStore<GoogleDataStore.EventObjects> implements
 
 namespace GoogleDataStore {
 
-    export type EventObjects = (ErrorEventObject|LoadEventObject);
+    export type EventObject = (ErrorEventObject|LoadEventObject);
 
     export interface ErrorEventObject extends DataStore.EventObject {
-        type: 'loadError';
-        error: (string|Error);
-        xhr: XMLHttpRequest;
+        readonly type: 'loadError';
+        readonly error: (string|Error);
+        readonly xhr: XMLHttpRequest;
     }
 
     export interface LoadEventObject extends DataStore.EventObject {
-        type: ('load'|'afterLoad');
-        url: string;
+        readonly type: ('load'|'afterLoad');
+        readonly url: string;
     }
 
     export interface Options extends DataJSON.Object {
@@ -333,4 +358,22 @@ namespace GoogleDataStore {
 
 }
 
-export default GoogleDataStore;
+/* *
+ *
+ *  Registry
+ *
+ * */
+
+declare module './Types' {
+    interface DataStoreTypeRegistry {
+        Google: typeof GoogleSheetsStore;
+    }
+}
+
+/* *
+ *
+ *  Export
+ *
+ * */
+
+export default GoogleSheetsStore;

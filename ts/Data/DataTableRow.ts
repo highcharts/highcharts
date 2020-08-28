@@ -38,7 +38,7 @@ const {
  * Class to manage a row with column values.
  */
 class DataTableRow
-implements DataEventEmitter<DataTableRow.EventObjects>, DataJSON.Class {
+implements DataEventEmitter<DataTableRow.EventObject>, DataJSON.Class {
 
     /* *
      *
@@ -171,17 +171,20 @@ implements DataEventEmitter<DataTableRow.EventObjects>, DataJSON.Class {
     /**
      * Removes all columns with the values from this row.
      *
+     * @param {Record<string, string>} [eventDetail]
+     * Custom information for pending events.
+     *
      * @emits DataTableRow#clearRow
      * @emits DataTableRow#afterClearRow
      */
-    public clear(): void {
+    public clear(eventDetail?: Record<string, string>): void {
 
-        this.emit({ type: 'clearRow' });
+        this.emit({ type: 'clearRow', detail: eventDetail });
 
         this.columnNames.length = 0;
         this.columns.length = 0;
 
-        this.emit({ type: 'afterClearRow' });
+        this.emit({ type: 'afterClearRow', detail: eventDetail });
     }
 
     /**
@@ -190,13 +193,19 @@ implements DataEventEmitter<DataTableRow.EventObjects>, DataJSON.Class {
      * @param {string} columnName
      * Name of the column to delete.
      *
+     * @param {Record<string, string>} [eventDetail]
+     * Custom information for pending events.
+     *
      * @return {boolean}
      * Returns true, if the delete was successful, otherwise false.
      *
      * @emits DataTableRow#deleteColumn
      * @emits DataTableRow#afterDeleteColumn
      */
-    public deleteColumn(columnName: string): boolean {
+    public deleteColumn(
+        columnName: string,
+        eventDetail?: Record<string, string>
+    ): boolean {
         const row = this,
             columnValue = row.columns[columnName];
 
@@ -204,12 +213,22 @@ implements DataEventEmitter<DataTableRow.EventObjects>, DataJSON.Class {
             return false;
         }
 
-        this.emit({ type: 'deleteColumn', columnKey: columnName, columnValue });
+        this.emit({
+            type: 'deleteColumn',
+            columnName: columnName,
+            columnValue,
+            detail: eventDetail
+        });
 
         row.columnNames.splice(row.columnNames.indexOf(columnName), 1);
         delete row.columns[columnName];
 
-        this.emit({ type: 'afterDeleteColumn', columnKey: columnName, columnValue });
+        this.emit({
+            type: 'afterDeleteColumn',
+            columnName: columnName,
+            columnValue,
+            detail: eventDetail
+        });
 
         return true;
     }
@@ -218,10 +237,10 @@ implements DataEventEmitter<DataTableRow.EventObjects>, DataJSON.Class {
      * Emits an event on this row to all registered callbacks of the given
      * event.
      *
-     * @param {DataTableRow.EventObjects} e
+     * @param {DataTableRow.EventObject} e
      * Event object with event information.
      */
-    public emit(e: DataTableRow.EventObjects): void {
+    public emit(e: DataTableRow.EventObject): void {
         fireEvent(this, e.type, e);
     }
 
@@ -241,10 +260,10 @@ implements DataEventEmitter<DataTableRow.EventObjects>, DataJSON.Class {
      * @param {number|string} column
      * Column name or column index.
      *
-     * @return {DataTableRow.ColumnTypes}
+     * @return {DataTableRow.ColumnValueType}
      * Column value of the column in this row.
      */
-    public getColumn(column: (number|string)): DataTableRow.ColumnTypes {
+    public getColumn(column: (number|string)): DataTableRow.ColumnValueType {
 
         if (typeof column === 'number') {
             return this.columns[this.columnNames[column]];
@@ -349,16 +368,23 @@ implements DataEventEmitter<DataTableRow.EventObjects>, DataJSON.Class {
      * @param {string} columnName
      * Name of the column.
      *
-     * @param {DataTableRow.ColumnTypes} columnValue
+     * @param {DataTableRow.ColumnValueType} columnValue
      * Value of the column in this row.
+     *
+     * @param {Record<string, string>} [eventDetail]
+     * Custom information for pending events.
      *
      * @return {boolean}
      * Returns true, if the column was added to the row. Returns false, if
      * `id` was used the column name, or if the column already exists.
+     *
+     * @emits DataTableRow#insertColumn
+     * @emits DataTableRow#afterInsertColumn
      */
     public insertColumn(
         columnName: string,
-        columnValue: DataTableRow.ColumnTypes
+        columnValue: DataTableRow.ColumnValueType,
+        eventDetail?: Record<string, string>
     ): boolean {
 
         if (
@@ -368,12 +394,22 @@ implements DataEventEmitter<DataTableRow.EventObjects>, DataJSON.Class {
             return false;
         }
 
-        this.emit({ type: 'insertColumn', columnKey: columnName, columnValue });
+        this.emit({
+            type: 'insertColumn',
+            columnName,
+            columnValue,
+            detail: eventDetail
+        });
 
         this.columnNames.push(columnName);
         this.columns[columnName] = columnValue;
 
-        this.emit({ type: 'afterInsertColumn', columnKey: columnName, columnValue });
+        this.emit({
+            type: 'afterInsertColumn',
+            columnName,
+            columnValue,
+            detail: eventDetail
+        });
 
         return true;
     }
@@ -391,8 +427,8 @@ implements DataEventEmitter<DataTableRow.EventObjects>, DataJSON.Class {
      * Function to unregister callback from the event.
      */
     public on(
-        type: DataTableRow.EventObjects['type'],
-        callback: DataEventEmitter.EventCallback<this, DataTableRow.EventObjects>
+        type: DataTableRow.EventObject['type'],
+        callback: DataEventEmitter.EventCallback<this, DataTableRow.EventObject>
     ): Function {
         return addEvent(this, type, callback);
     }
@@ -411,7 +447,7 @@ implements DataEventEmitter<DataTableRow.EventObjects>, DataJSON.Class {
             };
 
         let key: string,
-            value: DataTableRow.ColumnTypes;
+            value: DataTableRow.ColumnValueType;
 
         if (!this.autoId) {
             json.id = this.id;
@@ -448,30 +484,42 @@ implements DataEventEmitter<DataTableRow.EventObjects>, DataJSON.Class {
     /**
      * Updates the value of a column in this row.
      *
-     * @param {string} columnKey
+     * @param {string} columnName
      * Column name in this row to update.
      *
-     * @param {DataTableRow.ColumnTypes} columnValue
+     * @param {DataTableRow.ColumnValueType} columnValue
      * Column value to update to.
+     *
+     * @param {Record<string, string>} [eventDetail]
+     * Custom information for pending events.
      *
      * @return {boolean}
      * True, if the column was found and updated, otherwise false.
+     *
+     * @emits DataTableRow#updateColumn
+     * @emits DataTableRow#afterUpdateColumn
      */
     public updateColumn(
-        columnKey: string,
-        columnValue: DataTableRow.ColumnTypes
+        columnName: string,
+        columnValue: DataTableRow.ColumnValueType,
+        eventDetail?: Record<string, string>
     ): boolean {
         const row = this;
 
-        if (columnKey === 'id') {
+        if (columnName === 'id') {
             return false;
         }
 
-        row.emit({ type: 'updateColumn', columnKey, columnValue });
+        row.emit({
+            type: 'updateColumn',
+            columnName,
+            columnValue,
+            detail: eventDetail
+        });
 
-        row.columns[columnKey] = columnValue;
+        row.columns[columnName] = columnValue;
 
-        row.emit({ type: 'afterUpdateColumn', columnKey, columnValue });
+        row.emit({ type: 'afterUpdateColumn', columnName, columnValue });
 
         return true;
     }
@@ -492,7 +540,7 @@ namespace DataTableRow {
     /**
      * Event types related to a column of a row.
      */
-    export type ColumnEventTypes = (
+    export type ColumnEventType = (
         'deleteColumn'|'afterDeleteColumn'|
         'insertColumn'|'afterInsertColumn'|
         'updateColumn'|'afterUpdateColumn'
@@ -501,7 +549,7 @@ namespace DataTableRow {
     /**
      * Record object with column names and their values in a row.
      */
-    export type Columns = Record<string, ColumnTypes>;
+    export type Columns = Record<string, ColumnValueType>;
 
     /**
      * Possible value types for a column in a row.
@@ -509,17 +557,19 @@ namespace DataTableRow {
      * *Please note:* `Date` and `DataTable` are not JSON-compatible and have
      * to be converted with the help of their `toJSON()` function.
      */
-    export type ColumnTypes = (boolean|null|number|string|Date|DataTable|undefined);
+    export type ColumnValueType = (
+        boolean|null|number|string|Date|DataTable|undefined
+    );
 
     /**
      * All information objects of DataTableRow events.
      */
-    export type EventObjects = (ColumnEventObject|RowEventObject);
+    export type EventObject = (ColumnEventObject|RowEventObject);
 
     /**
      * Event types related to the row itself.
      */
-    export type RowEventTypes = (
+    export type RowEventType = (
         'clearRow'|'afterClearRow'
     );
 
@@ -534,15 +584,16 @@ namespace DataTableRow {
      * Describes the information object for column-related events.
      */
     export interface ColumnEventObject extends DataEventEmitter.EventObject {
-        readonly columnKey: string;
-        readonly columnValue: ColumnTypes;
+        readonly type: ColumnEventType;
+        readonly columnName: string;
+        readonly columnValue: ColumnValueType;
     }
 
     /**
      * Describes the information object for row-related events.
      */
     export interface RowEventObject extends DataEventEmitter.EventObject {
-        // nothing here yet
+        readonly type: RowEventType;
     }
 
 }

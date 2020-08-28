@@ -26,7 +26,7 @@
     "lib"
   ],
   "scripts": {
-    "test": "npx gulp test --force --speak",
+    "test": "npx gulp test-ts --force && npx gulp test --force --speak",
     "testall": "npx gulp test --browsers all --force --speak",
     "prebuild": "rimraf build/*.zip build/dist/ code/",
     "build": "npx gulp dist",

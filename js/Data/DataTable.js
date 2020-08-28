@@ -122,11 +122,14 @@ var DataTable = /** @class */ (function () {
     /**
      * Removes all rows from this table.
      *
+     * @param {Record<string, string>} [eventDetail]
+     * Custom information for pending events.
+     *
      * @emits DataTable#clearTable
      * @emits DataTable#afterClearTable
      */
-    DataTable.prototype.clear = function () {
-        this.emit({ type: 'clearTable' });
+    DataTable.prototype.clear = function (eventDetail) {
+        this.emit({ type: 'clearTable', detail: eventDetail });
         var rowIds = this.getAllRowIds();
         for (var i = 0, iEnd = rowIds.length; i < iEnd; ++i) {
             this.unwatchRow(rowIds[i], true);
@@ -134,7 +137,7 @@ var DataTable = /** @class */ (function () {
         this.rows.length = 0;
         this.rowsIdMap = {};
         this.watchsIdMap = {};
-        this.emit({ type: 'afterClearTable' });
+        this.emit({ type: 'afterClearTable', detail: eventDetail });
     };
     /**
      * Deletes a row in this table.
@@ -142,26 +145,29 @@ var DataTable = /** @class */ (function () {
      * @param {string} rowId
      * Name of the row to delete.
      *
+     * @param {Record<string, string>} [eventDetail]
+     * Custom information for pending events.
+     *
      * @return {boolean}
      * Returns true, if the delete was successful, otherwise false.
      *
      * @emits DataTable#deleteRow
      * @emits DataTable#afterDeleteRow
      */
-    DataTable.prototype.deleteRow = function (rowId) {
+    DataTable.prototype.deleteRow = function (rowId, eventDetail) {
         var row = this.rowsIdMap[rowId], index = this.rows.indexOf(row);
-        this.emit({ type: 'deleteRow', index: index, row: row });
+        this.emit({ type: 'deleteRow', detail: eventDetail, index: index, row: row });
         this.rows[index] = row;
         delete this.rowsIdMap[rowId];
         this.unwatchRow(rowId);
-        this.emit({ type: 'afterDeleteRow', index: index, row: row });
+        this.emit({ type: 'afterDeleteRow', detail: eventDetail, index: index, row: row });
         return row;
     };
     /**
      * Emits an event on this row to all registered callbacks of the given
      * event.
      *
-     * @param {DataTable.EventObjects} [e]
+     * @param {DataTable.EventObject} [e]
      * Event object with event information.
      */
     DataTable.prototype.emit = function (e) {
@@ -191,7 +197,7 @@ var DataTable = /** @class */ (function () {
      * @param {number|string} row
      * Row index or row ID.
      *
-     * @return {DataTableRow.ColumnTypes}
+     * @return {DataTableRow.ColumnValueType}
      * Column value of the column in this row.
      */
     DataTable.prototype.getRow = function (row) {
@@ -228,21 +234,27 @@ var DataTable = /** @class */ (function () {
      * @param {DataTableRow} row
      * Row to add to this table.
      *
+     * @param {Record<string, string>} [eventDetail]
+     * Custom information for pending events.
+     *
      * @return {boolean}
      * Returns true, if the row has been added to the table. Returns false, if
      * a row with the same row ID already exists in the table.
+     *
+     * @emits DataTable#insertRow
+     * @emits DataTable#afterInsertRow
      */
-    DataTable.prototype.insertRow = function (row) {
+    DataTable.prototype.insertRow = function (row, eventDetail) {
         var rowId = row.id;
         var index = this.rows.length;
         if (typeof this.rowsIdMap[rowId] !== 'undefined') {
             return false;
         }
-        this.emit({ type: 'insertRow', index: index, row: row });
+        this.emit({ type: 'insertRow', detail: eventDetail, index: index, row: row });
         this.rows.push(row);
         this.rowsIdMap[rowId] = row;
         this.watchRow(row);
-        this.emit({ type: 'afterInsertRow', index: index, row: row });
+        this.emit({ type: 'afterInsertRow', detail: eventDetail, index: index, row: row });
         return true;
     };
     /**
@@ -265,13 +277,19 @@ var DataTable = /** @class */ (function () {
      *
      * @param {DataTableRow} row
      * Row the watch for modifications.
+     *
+     * @emits DataTable#afterUpdateRow
      */
     DataTable.prototype.watchRow = function (row) {
         var table = this, index = table.rows.indexOf(row), watchsIdMap = table.watchsIdMap, watchs = [];
-        /** @private */
-        function callback() {
+        /**
+         * @private
+         * @param {DataTableRow.EventObject} e
+         * Received event.
+         */
+        function callback(e) {
             table.versionTag = uniqueKey();
-            fireEvent(table, 'afterUpdateRow', { index: index, row: row });
+            fireEvent(table, 'afterUpdateRow', { detail: e.detail, index: index, row: row });
         }
         watchs.push(row.on('afterClearRow', callback));
         watchs.push(row.on('afterDeleteColumn', callback));

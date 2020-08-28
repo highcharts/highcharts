@@ -92,11 +92,14 @@ var GroupDataModifier = /** @class */ (function (_super) {
      * @param {DataTable} table
      * Table to modify.
      *
+     * @param {Record<string,string>} [eventDetail]
+     * Custom information for pending events.
+     *
      * @return {DataTable}
      * New modified table.
      */
-    GroupDataModifier.prototype.execute = function (table) {
-        this.emit({ type: 'execute', table: table });
+    GroupDataModifier.prototype.execute = function (table, eventDetail) {
+        this.emit({ type: 'execute', detail: eventDetail, table: table });
         var modifier = this, _a = modifier.options, groupColumn = _a.groupColumn, invalidValues = _a.invalidValues, validValues = _a.validValues, columnGroups = [], tableGroups = [], valueGroups = [];
         var row, value, valueIndex;
         for (var i = 0, iEnd = table.getRowCount(); i < iEnd; ++i) {
@@ -130,7 +133,7 @@ var GroupDataModifier = /** @class */ (function (_super) {
                 value: valueGroups[i]
             }));
         }
-        this.emit({ type: 'afterExecute', table: table });
+        this.emit({ type: 'afterExecute', detail: eventDetail, table: table });
         return table;
     };
     /**
