@@ -22,11 +22,6 @@ var __extends = (this && this.__extends) || (function () {
         d.prototype = b === null ? Object.create(b) : (__.prototype = b.prototype, new __());
     };
 })();
-/* *
- *
- *  Imports
- *
- * */
 import DataJSON from '../DataJSON.js';
 import DataModifier from './DataModifier.js';
 import DataTable from '../DataTable.js';
@@ -92,7 +87,7 @@ var GroupDataModifier = /** @class */ (function (_super) {
      * @param {DataTable} table
      * Table to modify.
      *
-     * @param {Record<string,string>} [eventDetail]
+     * @param {DataEventEmitter.EventDetail} [eventDetail]
      * Custom information for pending events.
      *
      * @return {DataTable}

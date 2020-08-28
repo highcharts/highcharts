@@ -10,6 +10,7 @@
  *
  * */
 
+import type DataEventEmitter from '../DataEventEmitter';
 import DataJSON from '../DataJSON.js';
 import DataStore from './DataStore.js';
 import DataTable from '../DataTable.js';
@@ -141,14 +142,14 @@ class HTMLTableDataStore extends DataStore<HTMLTableDataStore.EventObjects> impl
     /**
      * Initiates creating the datastore from the HTML table
      *
-     * @param {Record<string,string>} [eventDetail]
+     * @param {DataEventEmitter.EventDetail} [eventDetail]
      * Custom information for pending events.
      *
      * @emits HTMLTableDataStore#load
      * @emits HTMLTableDataStore#afterLoad
      * @emits HTMLTableDataStore#loadError
      */
-    public load(eventDetail?: Record<string, string>): void {
+    public load(eventDetail?: DataEventEmitter.EventDetail): void {
         const store = this;
 
         store.fetchTable();
@@ -189,10 +190,10 @@ class HTMLTableDataStore extends DataStore<HTMLTableDataStore.EventObjects> impl
      * Save
      * @todo implement
      *
-     * @param {Record<string,string>} [eventDetail]
+     * @param {DataEventEmitter.EventDetail} [eventDetail]
      * Custom information for pending events.
      */
-    public save(eventDetail?: Record<string, string>): void {
+    public save(eventDetail?: DataEventEmitter.EventDetail): void {
 
     }
 

@@ -61,27 +61,6 @@ var DataTable = /** @class */ (function () {
      *
      * */
     /**
-     * Converts a supported class JSON to a DataTable instance.
-     *
-     * @param {DataTableRow.ClassJSON} json
-     * Class JSON (usually with a $class property) to convert.
-     *
-     * @return {DataTable}
-     * DataTable instance from the class JSON.
-     */
-    DataTable.fromJSON = function (json) {
-        var rows = json.rows, dataRows = [];
-        try {
-            for (var i = 0, iEnd = rows.length; i < iEnd; ++i) {
-                dataRows[i] = DataTableRow.fromJSON(rows[i]);
-            }
-            return new DataTable(dataRows);
-        }
-        catch (error) {
-            return new DataTable();
-        }
-    };
-    /**
      * Converts a simple two dimensional array to a DataTable instance. The
      * array needs to be structured like a DataFrame, so that the first
      * dimension becomes the columns and the second dimension the rows.
@@ -114,6 +93,27 @@ var DataTable = /** @class */ (function () {
         }
         return table;
     };
+    /**
+     * Converts a supported class JSON to a DataTable instance.
+     *
+     * @param {DataTable.ClassJSON} json
+     * Class JSON (usually with a $class property) to convert.
+     *
+     * @return {DataTable}
+     * DataTable instance from the class JSON.
+     */
+    DataTable.fromJSON = function (json) {
+        var rows = json.rows, dataRows = [];
+        try {
+            for (var i = 0, iEnd = rows.length; i < iEnd; ++i) {
+                dataRows[i] = DataTableRow.fromJSON(rows[i]);
+            }
+            return new DataTable(dataRows);
+        }
+        catch (error) {
+            return new DataTable();
+        }
+    };
     /* *
      *
      *  Functions
@@ -122,7 +122,7 @@ var DataTable = /** @class */ (function () {
     /**
      * Removes all rows from this table.
      *
-     * @param {Record<string, string>} [eventDetail]
+     * @param {DataEventEmitter.EventDetail} [eventDetail]
      * Custom information for pending events.
      *
      * @emits DataTable#clearTable
@@ -145,7 +145,7 @@ var DataTable = /** @class */ (function () {
      * @param {string} rowId
      * Name of the row to delete.
      *
-     * @param {Record<string, string>} [eventDetail]
+     * @param {DataEventEmitter.EventDetail} [eventDetail]
      * Custom information for pending events.
      *
      * @return {boolean}
@@ -164,10 +164,10 @@ var DataTable = /** @class */ (function () {
         return row;
     };
     /**
-     * Emits an event on this row to all registered callbacks of the given
+     * Emits an event on this table to all registered callbacks of the given
      * event.
      *
-     * @param {DataTable.EventObject} [e]
+     * @param {DataTable.EventObject} e
      * Event object with event information.
      */
     DataTable.prototype.emit = function (e) {
@@ -234,7 +234,7 @@ var DataTable = /** @class */ (function () {
      * @param {DataTableRow} row
      * Row to add to this table.
      *
-     * @param {Record<string, string>} [eventDetail]
+     * @param {DataEventEmitter.EventDetail} [eventDetail]
      * Custom information for pending events.
      *
      * @return {boolean}
@@ -260,10 +260,10 @@ var DataTable = /** @class */ (function () {
     /**
      * Registers a callback for a specific event.
      *
-     * @param {DataTableRow.EventTypes} type
+     * @param {string} type
      * Event type as a string.
      *
-     * @param {DataTableRow.EventCallbacks} callback
+     * @param {DataEventEmitter.EventCallback} callback
      * Function to register for an event callback.
      *
      * @return {Function}

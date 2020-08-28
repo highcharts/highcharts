@@ -100,7 +100,7 @@ var HTMLTableDataStore = /** @class */ (function (_super) {
     /**
      * Initiates creating the datastore from the HTML table
      *
-     * @param {Record<string,string>} [eventDetail]
+     * @param {DataEventEmitter.EventDetail} [eventDetail]
      * Custom information for pending events.
      *
      * @emits HTMLTableDataStore#load
@@ -138,7 +138,7 @@ var HTMLTableDataStore = /** @class */ (function (_super) {
      * Save
      * @todo implement
      *
-     * @param {Record<string,string>} [eventDetail]
+     * @param {DataEventEmitter.EventDetail} [eventDetail]
      * Custom information for pending events.
      */
     HTMLTableDataStore.prototype.save = function (eventDetail) {

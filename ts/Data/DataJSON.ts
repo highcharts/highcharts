@@ -147,7 +147,7 @@ class DataJSON {
      * @return {string}
      * Class name, if the extraction was successful, otherwise an empty string.
      */
-    private static getName(classType: DataJSON.ClassType): string {
+    public static getName(classType: DataJSON.ClassType): string {
         return (
             classType.toString().match(DataJSON.nameRegExp) ||
             ['', '']

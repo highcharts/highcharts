@@ -135,7 +135,7 @@ var GoogleSheetsStore = /** @class */ (function (_super) {
         // parser.emit({ type: 'afterParse', columns });
     };
     /**
-     * @param {Record<string,string>} [eventDetail]
+     * @param {DataEventEmitter.EventDetail} [eventDetail]
      * Custom information for pending events.
      */
     GoogleSheetsStore.prototype.fetchSheet = function (eventDetail) {
@@ -195,7 +195,7 @@ var GoogleSheetsStore = /** @class */ (function (_super) {
         // return true;
     };
     /**
-     * @param {Record<string,string>} [eventDetail]
+     * @param {DataEventEmitter.EventDetail} [eventDetail]
      * Custom information for pending events.
      */
     GoogleSheetsStore.prototype.load = function (eventDetail) {

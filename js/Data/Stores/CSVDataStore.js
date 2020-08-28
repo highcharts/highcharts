@@ -34,12 +34,12 @@ var __rest = (this && this.__rest) || function (s, e) {
     return t;
 };
 import Ajax from '../../Extensions/Ajax.js';
+import CSVDataParser from '../Parsers/CSVDataParser.js';
+var ajax = Ajax.ajax;
 import DataStore from './DataStore.js';
 import DataTable from '../DataTable.js';
 import U from '../../Core/Utilities.js';
 var merge = U.merge;
-import CSVDataParser from '../Parsers/CSVDataParser.js';
-var ajax = Ajax.ajax;
 /* eslint-disable no-invalid-this, require-jsdoc, valid-jsdoc */
 /**
  * Class that handles creating a datastore from CSV
@@ -111,7 +111,7 @@ var CSVDataStore = /** @class */ (function (_super) {
      * @param {boolean} initialFetch
      * Indicates whether this is a single fetch or a repeated fetch
      *
-     * @param {Record<string,string>} [eventDetail]
+     * @param {DataEventEmitter.EventDetail} [eventDetail]
      * Custom information for pending events.
      *
      * @emits CSVDataStore#load
@@ -159,7 +159,7 @@ var CSVDataStore = /** @class */ (function (_super) {
     /**
      * Initiates the loading of the CSV source to the store
      *
-     * @param {Record<string,string>} [eventDetail]
+     * @param {DataEventEmitter.EventDetail} [eventDetail]
      * Custom information for pending events.
      *
      * @emits CSVDataParser#load

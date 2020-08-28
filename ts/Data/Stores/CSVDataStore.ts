@@ -10,14 +10,19 @@
  *
  * */
 
+import type DataEventEmitter from '../DataEventEmitter';
 import Ajax from '../../Extensions/Ajax.js';
+import CSVDataParser from '../Parsers/CSVDataParser.js';
+import DataJSON from './../DataJSON.js';
+const {
+    ajax
+} = Ajax;
 import DataStore from './DataStore.js';
 import DataTable from '../DataTable.js';
 import U from '../../Core/Utilities.js';
-const { merge } = U;
-import CSVDataParser from '../Parsers/CSVDataParser.js';
-import DataJSON from './../DataJSON.js';
-const { ajax } = Ajax;
+const {
+    merge
+} = U;
 
 /* eslint-disable no-invalid-this, require-jsdoc, valid-jsdoc */
 
@@ -143,7 +148,7 @@ class CSVDataStore extends DataStore<CSVDataStore.EventObjects> implements DataJ
      * @param {boolean} initialFetch
      * Indicates whether this is a single fetch or a repeated fetch
      *
-     * @param {Record<string,string>} [eventDetail]
+     * @param {DataEventEmitter.EventDetail} [eventDetail]
      * Custom information for pending events.
      *
      * @emits CSVDataStore#load
@@ -152,7 +157,7 @@ class CSVDataStore extends DataStore<CSVDataStore.EventObjects> implements DataJ
      */
     private fetchCSV(
         initialFetch?: boolean,
-        eventDetail?: Record<string, string>
+        eventDetail?: DataEventEmitter.EventDetail
     ): void {
         const store = this,
             maxRetries = 3,
@@ -200,13 +205,13 @@ class CSVDataStore extends DataStore<CSVDataStore.EventObjects> implements DataJ
     /**
      * Initiates the loading of the CSV source to the store
      *
-     * @param {Record<string,string>} [eventDetail]
+     * @param {DataEventEmitter.EventDetail} [eventDetail]
      * Custom information for pending events.
      *
      * @emits CSVDataParser#load
      * @emits CSVDataParser#afterLoad
      */
-    public load(eventDetail?: Record<string, string>): void {
+    public load(eventDetail?: DataEventEmitter.EventDetail): void {
         const store = this,
             { csv, csvURL } = store.options;
 

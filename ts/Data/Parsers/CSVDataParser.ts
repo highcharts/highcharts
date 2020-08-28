@@ -10,7 +10,8 @@
  *
  * */
 
-import type DataValueType from '../DataValueType.js';
+import type DataEventEmitter from '../DataEventEmitter';
+import type DataValueType from '../DataValueType';
 import DataJSON from '../DataJSON.js';
 import DataParser from './DataParser.js';
 import DataTable from '../DataTable.js';
@@ -96,7 +97,7 @@ class CSVDataParser extends DataParser<DataParser.EventObject> {
      * @param {CSVDataParser.OptionsType}[options]
      * Options for the parser
      *
-     * @param {Record<string,string>} [eventDetail]
+     * @param {DataEventEmitter.EventDetail} [eventDetail]
      * Custom information for pending events.
      *
      * @emits CSVDataParser#parse
@@ -104,7 +105,7 @@ class CSVDataParser extends DataParser<DataParser.EventObject> {
      */
     public parse(
         options: CSVDataParser.OptionsType,
-        eventDetail?: Record<string, string>
+        eventDetail?: DataEventEmitter.EventDetail
     ): void {
         const parser = this,
             parserOptions = merge(this.options, options),

@@ -16,6 +16,7 @@
  *
  * */
 
+import type DataEventEmitter from '../DataEventEmitter';
 import DataJSON from '../DataJSON.js';
 import DataModifier from './DataModifier.js';
 import DataTable from '../DataTable.js';
@@ -115,7 +116,7 @@ class GroupDataModifier extends DataModifier {
      * @param {DataTable} table
      * Table to modify.
      *
-     * @param {Record<string,string>} [eventDetail]
+     * @param {DataEventEmitter.EventDetail} [eventDetail]
      * Custom information for pending events.
      *
      * @return {DataTable}
@@ -123,7 +124,7 @@ class GroupDataModifier extends DataModifier {
      */
     public execute(
         table: DataTable,
-        eventDetail?: Record<string, string>
+        eventDetail?: DataEventEmitter.EventDetail
     ): DataTable {
 
         this.emit({ type: 'execute', detail: eventDetail, table });

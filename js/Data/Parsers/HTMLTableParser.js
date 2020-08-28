@@ -105,7 +105,7 @@ var HTMLTableParser = /** @class */ (function (_super) {
      * @param {HTMLTableParser.OptionsType}[options]
      * Options for the parser
      *
-     * @param {Record<string,string>} [eventDetail]
+     * @param {DataEventEmitter.EventDetail} [eventDetail]
      * Custom information for pending events.
      *
      * @emits CSVDataParser#parse

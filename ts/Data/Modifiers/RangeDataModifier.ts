@@ -16,6 +16,7 @@
  *
  * */
 
+import type DataEventEmitter from '../DataEventEmitter';
 import type DataTableRow from '../DataTableRow';
 import DataJSON from '../DataJSON.js';
 import DataModifier from './DataModifier.js';
@@ -118,7 +119,7 @@ class RangeDataModifier extends DataModifier {
      * @param {DataTable} table
      * Table to modify.
      *
-     * @param {Record<string,string>} [eventDetail]
+     * @param {DataEventEmitter.EventDetail} [eventDetail]
      * Custom information for pending events.
      *
      * @return {DataTable}
@@ -126,7 +127,7 @@ class RangeDataModifier extends DataModifier {
      */
     public execute(
         table: DataTable,
-        eventDetail?: Record<string, string>
+        eventDetail?: DataEventEmitter.EventDetail
     ): DataTable {
         const modifier = this,
             {

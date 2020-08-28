@@ -126,12 +126,12 @@ class ChainDataModifier extends DataModifier<ChainDataModifier.EventObject> {
      * @param {DataModifier} modifier
      * Configured modifier to add.
      *
-     * @param {Record<string, string>} [eventDetail]
+     * @param {DataEventEmitter.EventDetail} [eventDetail]
      * Custom information for pending events.
      */
     public add(
         modifier: DataModifier,
-        eventDetail?: Record<string, string>
+        eventDetail?: DataEventEmitter.EventDetail
     ): void {
         this.emit({
             type: 'addModifier',
@@ -151,10 +151,10 @@ class ChainDataModifier extends DataModifier<ChainDataModifier.EventObject> {
     /**
      * Clears all modifiers from the chain.
      *
-     * @param {Record<string, string>} [eventDetail]
+     * @param {DataEventEmitter.EventDetail} [eventDetail]
      * Custom information for pending events.
      */
-    public clear(eventDetail?: Record<string, string>): void {
+    public clear(eventDetail?: DataEventEmitter.EventDetail): void {
         this.emit({
             type: 'clearChain',
             detail: eventDetail
@@ -175,7 +175,7 @@ class ChainDataModifier extends DataModifier<ChainDataModifier.EventObject> {
      * @param {DataTable} table
      * Table to modify.
      *
-     * @param {Record<string, string>} [eventDetail]
+     * @param {DataEventEmitter.EventDetail} [eventDetail]
      * Custom information for pending events.
      *
      * @return {DataTable}
@@ -186,7 +186,7 @@ class ChainDataModifier extends DataModifier<ChainDataModifier.EventObject> {
      */
     public execute(
         table: DataTable,
-        eventDetail?: Record<string, string>
+        eventDetail?: DataEventEmitter.EventDetail
     ): DataTable {
         const modifiers = (
             this.options.reverse ?
@@ -235,12 +235,12 @@ class ChainDataModifier extends DataModifier<ChainDataModifier.EventObject> {
      * @param {DataModifier} modifier
      * Configured modifier to remove.
      *
-     * @param {Record<string, string>} [eventDetail]
+     * @param {DataEventEmitter.EventDetail} [eventDetail]
      * Custom information for pending events.
      */
     public remove(
         modifier: DataModifier,
-        eventDetail?: Record<string, string>
+        eventDetail?: DataEventEmitter.EventDetail
     ): void {
         const modifiers = this.modifiers;
 

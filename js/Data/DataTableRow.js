@@ -103,7 +103,7 @@ var DataTableRow = /** @class */ (function () {
     /**
      * Removes all columns with the values from this row.
      *
-     * @param {Record<string, string>} [eventDetail]
+     * @param {DataEventEmitter.EventDetail} [eventDetail]
      * Custom information for pending events.
      *
      * @emits DataTableRow#clearRow
@@ -121,7 +121,7 @@ var DataTableRow = /** @class */ (function () {
      * @param {string} columnName
      * Name of the column to delete.
      *
-     * @param {Record<string, string>} [eventDetail]
+     * @param {DataEventEmitter.EventDetail} [eventDetail]
      * Custom information for pending events.
      *
      * @return {boolean}
@@ -277,7 +277,7 @@ var DataTableRow = /** @class */ (function () {
      * @param {DataTableRow.ColumnValueType} columnValue
      * Value of the column in this row.
      *
-     * @param {Record<string, string>} [eventDetail]
+     * @param {DataEventEmitter.EventDetail} [eventDetail]
      * Custom information for pending events.
      *
      * @return {boolean}
@@ -373,7 +373,7 @@ var DataTableRow = /** @class */ (function () {
      * @param {DataTableRow.ColumnValueType} columnValue
      * Column value to update to.
      *
-     * @param {Record<string, string>} [eventDetail]
+     * @param {DataEventEmitter.EventDetail} [eventDetail]
      * Custom information for pending events.
      *
      * @return {boolean}

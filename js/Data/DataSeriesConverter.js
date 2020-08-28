@@ -9,11 +9,6 @@
  *  !!!!!!! SOURCE GETS TRANSPILED BY TYPESCRIPT. EDIT TS FILE ONLY. !!!!!!!
  *
  * */
-/* *
- *
- *  Imports
- *
- * */
 import DataTable from './DataTable.js';
 import DataTableRow from './DataTableRow.js';
 import U from './../Core/Utilities.js';

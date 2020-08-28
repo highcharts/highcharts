@@ -46,29 +46,6 @@ class DataTable implements DataEventEmitter<DataTable.EventObject>, DataJSON.Cla
      * */
 
     /**
-     * Converts a supported class JSON to a DataTable instance.
-     *
-     * @param {DataTableRow.ClassJSON} json
-     * Class JSON (usually with a $class property) to convert.
-     *
-     * @return {DataTable}
-     * DataTable instance from the class JSON.
-     */
-    public static fromJSON(json: DataTable.ClassJSON): DataTable {
-        const rows = json.rows,
-            dataRows: Array<DataTableRow> = [];
-
-        try {
-            for (let i = 0, iEnd = rows.length; i < iEnd; ++i) {
-                dataRows[i] = DataTableRow.fromJSON(rows[i]);
-            }
-            return new DataTable(dataRows);
-        } catch (error) {
-            return new DataTable();
-        }
-    }
-
-    /**
      * Converts a simple two dimensional array to a DataTable instance. The
      * array needs to be structured like a DataFrame, so that the first
      * dimension becomes the columns and the second dimension the rows.
@@ -102,6 +79,29 @@ class DataTable implements DataEventEmitter<DataTable.EventObject>, DataJSON.Cla
             }
         }
         return table;
+    }
+
+    /**
+     * Converts a supported class JSON to a DataTable instance.
+     *
+     * @param {DataTable.ClassJSON} json
+     * Class JSON (usually with a $class property) to convert.
+     *
+     * @return {DataTable}
+     * DataTable instance from the class JSON.
+     */
+    public static fromJSON(json: DataTable.ClassJSON): DataTable {
+        const rows = json.rows,
+            dataRows: Array<DataTableRow> = [];
+
+        try {
+            for (let i = 0, iEnd = rows.length; i < iEnd; ++i) {
+                dataRows[i] = DataTableRow.fromJSON(rows[i]);
+            }
+            return new DataTable(dataRows);
+        } catch (error) {
+            return new DataTable();
+        }
     }
 
     /* *
@@ -192,13 +192,13 @@ class DataTable implements DataEventEmitter<DataTable.EventObject>, DataJSON.Cla
     /**
      * Removes all rows from this table.
      *
-     * @param {Record<string, string>} [eventDetail]
+     * @param {DataEventEmitter.EventDetail} [eventDetail]
      * Custom information for pending events.
      *
      * @emits DataTable#clearTable
      * @emits DataTable#afterClearTable
      */
-    public clear(eventDetail?: Record<string, string>): void {
+    public clear(eventDetail?: DataEventEmitter.EventDetail): void {
 
         this.emit({ type: 'clearTable', detail: eventDetail });
 
@@ -221,7 +221,7 @@ class DataTable implements DataEventEmitter<DataTable.EventObject>, DataJSON.Cla
      * @param {string} rowId
      * Name of the row to delete.
      *
-     * @param {Record<string, string>} [eventDetail]
+     * @param {DataEventEmitter.EventDetail} [eventDetail]
      * Custom information for pending events.
      *
      * @return {boolean}
@@ -232,7 +232,7 @@ class DataTable implements DataEventEmitter<DataTable.EventObject>, DataJSON.Cla
      */
     public deleteRow(
         rowId: string,
-        eventDetail?: Record<string, string>
+        eventDetail?: DataEventEmitter.EventDetail
     ): (DataTableRow|undefined) {
         const row = this.rowsIdMap[rowId],
             index = this.rows.indexOf(row);
@@ -249,10 +249,10 @@ class DataTable implements DataEventEmitter<DataTable.EventObject>, DataJSON.Cla
     }
 
     /**
-     * Emits an event on this row to all registered callbacks of the given
+     * Emits an event on this table to all registered callbacks of the given
      * event.
      *
-     * @param {DataTable.EventObject} [e]
+     * @param {DataTable.EventObject} e
      * Event object with event information.
      */
     public emit(e: DataTable.EventObject): void {
@@ -327,7 +327,7 @@ class DataTable implements DataEventEmitter<DataTable.EventObject>, DataJSON.Cla
      * @param {DataTableRow} row
      * Row to add to this table.
      *
-     * @param {Record<string, string>} [eventDetail]
+     * @param {DataEventEmitter.EventDetail} [eventDetail]
      * Custom information for pending events.
      *
      * @return {boolean}
@@ -339,7 +339,7 @@ class DataTable implements DataEventEmitter<DataTable.EventObject>, DataJSON.Cla
      */
     public insertRow(
         row: DataTableRow,
-        eventDetail?: Record<string, string>
+        eventDetail?: DataEventEmitter.EventDetail
     ): boolean {
         const rowId = row.id;
         const index = this.rows.length;
@@ -362,10 +362,10 @@ class DataTable implements DataEventEmitter<DataTable.EventObject>, DataJSON.Cla
     /**
      * Registers a callback for a specific event.
      *
-     * @param {DataTableRow.EventTypes} type
+     * @param {string} type
      * Event type as a string.
      *
-     * @param {DataTableRow.EventCallbacks} callback
+     * @param {DataEventEmitter.EventCallback} callback
      * Function to register for an event callback.
      *
      * @return {Function}

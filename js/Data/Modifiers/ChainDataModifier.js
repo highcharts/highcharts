@@ -101,7 +101,7 @@ var ChainDataModifier = /** @class */ (function (_super) {
      * @param {DataModifier} modifier
      * Configured modifier to add.
      *
-     * @param {Record<string, string>} [eventDetail]
+     * @param {DataEventEmitter.EventDetail} [eventDetail]
      * Custom information for pending events.
      */
     ChainDataModifier.prototype.add = function (modifier, eventDetail) {
@@ -120,7 +120,7 @@ var ChainDataModifier = /** @class */ (function (_super) {
     /**
      * Clears all modifiers from the chain.
      *
-     * @param {Record<string, string>} [eventDetail]
+     * @param {DataEventEmitter.EventDetail} [eventDetail]
      * Custom information for pending events.
      */
     ChainDataModifier.prototype.clear = function (eventDetail) {
@@ -141,7 +141,7 @@ var ChainDataModifier = /** @class */ (function (_super) {
      * @param {DataTable} table
      * Table to modify.
      *
-     * @param {Record<string, string>} [eventDetail]
+     * @param {DataEventEmitter.EventDetail} [eventDetail]
      * Custom information for pending events.
      *
      * @return {DataTable}
@@ -187,7 +187,7 @@ var ChainDataModifier = /** @class */ (function (_super) {
      * @param {DataModifier} modifier
      * Configured modifier to remove.
      *
-     * @param {Record<string, string>} [eventDetail]
+     * @param {DataEventEmitter.EventDetail} [eventDetail]
      * Custom information for pending events.
      */
     ChainDataModifier.prototype.remove = function (modifier, eventDetail) {

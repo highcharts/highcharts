@@ -82,7 +82,7 @@ var RangeDataModifier = /** @class */ (function (_super) {
      * @param {DataTable} table
      * Table to modify.
      *
-     * @param {Record<string,string>} [eventDetail]
+     * @param {DataEventEmitter.EventDetail} [eventDetail]
      * Custom information for pending events.
      *
      * @return {DataTable}

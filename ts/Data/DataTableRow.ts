@@ -171,13 +171,13 @@ implements DataEventEmitter<DataTableRow.EventObject>, DataJSON.Class {
     /**
      * Removes all columns with the values from this row.
      *
-     * @param {Record<string, string>} [eventDetail]
+     * @param {DataEventEmitter.EventDetail} [eventDetail]
      * Custom information for pending events.
      *
      * @emits DataTableRow#clearRow
      * @emits DataTableRow#afterClearRow
      */
-    public clear(eventDetail?: Record<string, string>): void {
+    public clear(eventDetail?: DataEventEmitter.EventDetail): void {
 
         this.emit({ type: 'clearRow', detail: eventDetail });
 
@@ -193,7 +193,7 @@ implements DataEventEmitter<DataTableRow.EventObject>, DataJSON.Class {
      * @param {string} columnName
      * Name of the column to delete.
      *
-     * @param {Record<string, string>} [eventDetail]
+     * @param {DataEventEmitter.EventDetail} [eventDetail]
      * Custom information for pending events.
      *
      * @return {boolean}
@@ -204,7 +204,7 @@ implements DataEventEmitter<DataTableRow.EventObject>, DataJSON.Class {
      */
     public deleteColumn(
         columnName: string,
-        eventDetail?: Record<string, string>
+        eventDetail?: DataEventEmitter.EventDetail
     ): boolean {
         const row = this,
             columnValue = row.columns[columnName];
@@ -371,7 +371,7 @@ implements DataEventEmitter<DataTableRow.EventObject>, DataJSON.Class {
      * @param {DataTableRow.ColumnValueType} columnValue
      * Value of the column in this row.
      *
-     * @param {Record<string, string>} [eventDetail]
+     * @param {DataEventEmitter.EventDetail} [eventDetail]
      * Custom information for pending events.
      *
      * @return {boolean}
@@ -384,7 +384,7 @@ implements DataEventEmitter<DataTableRow.EventObject>, DataJSON.Class {
     public insertColumn(
         columnName: string,
         columnValue: DataTableRow.ColumnValueType,
-        eventDetail?: Record<string, string>
+        eventDetail?: DataEventEmitter.EventDetail
     ): boolean {
 
         if (
@@ -490,7 +490,7 @@ implements DataEventEmitter<DataTableRow.EventObject>, DataJSON.Class {
      * @param {DataTableRow.ColumnValueType} columnValue
      * Column value to update to.
      *
-     * @param {Record<string, string>} [eventDetail]
+     * @param {DataEventEmitter.EventDetail} [eventDetail]
      * Custom information for pending events.
      *
      * @return {boolean}
@@ -502,7 +502,7 @@ implements DataEventEmitter<DataTableRow.EventObject>, DataJSON.Class {
     public updateColumn(
         columnName: string,
         columnValue: DataTableRow.ColumnValueType,
-        eventDetail?: Record<string, string>
+        eventDetail?: DataEventEmitter.EventDetail
     ): boolean {
         const row = this;
 

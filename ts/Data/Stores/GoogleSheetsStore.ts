@@ -10,7 +10,8 @@
  *
  * */
 
-import type DataValueType from '../DataValueType.js';
+import type DataEventEmitter from '../DataEventEmitter';
+import type DataValueType from '../DataValueType';
 import AjaxMixin from '../../Extensions/Ajax.js';
 const {
     ajax
@@ -209,10 +210,10 @@ class GoogleSheetsStore extends DataStore<GoogleDataStore.EventObject> implement
     }
 
     /**
-     * @param {Record<string,string>} [eventDetail]
+     * @param {DataEventEmitter.EventDetail} [eventDetail]
      * Custom information for pending events.
      */
-    private fetchSheet(eventDetail?: Record<string, string>): void {
+    private fetchSheet(eventDetail?: DataEventEmitter.EventDetail): void {
         const store = this,
             headers: string[] = [],
             {
@@ -294,10 +295,10 @@ class GoogleSheetsStore extends DataStore<GoogleDataStore.EventObject> implement
     }
 
     /**
-     * @param {Record<string,string>} [eventDetail]
+     * @param {DataEventEmitter.EventDetail} [eventDetail]
      * Custom information for pending events.
      */
-    public load(eventDetail?: Record<string, string>): void {
+    public load(eventDetail?: DataEventEmitter.EventDetail): void {
         if (this.options.googleSpreadsheetKey) {
             this.fetchSheet(eventDetail);
         }

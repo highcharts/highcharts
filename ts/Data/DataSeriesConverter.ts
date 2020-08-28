@@ -16,6 +16,7 @@
  *
  * */
 
+import type DataEventEmitter from './DataEventEmitter';
 import DataTable from './DataTable.js';
 import DataTableRow from './DataTableRow.js';
 import U from './../Core/Utilities.js';
@@ -150,7 +151,7 @@ class DataSeriesConverter {
 
     setDataTable(
         allSeries: Array<Highcharts.Series>,
-        eventDetail?: Record<string, string>
+        eventDetail?: DataEventEmitter.EventDetail
     ): DataTable {
         const table = this.table,
             columnMap = (this.options || {}).columnMap || {};
