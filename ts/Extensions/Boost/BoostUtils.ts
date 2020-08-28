@@ -46,7 +46,7 @@ const {
 
 
 // This should be a const.
-var CHUNK_SIZE = 3000;
+const CHUNK_SIZE = 3000;
 
 /**
  * Tolerant max() function.
@@ -343,7 +343,7 @@ function pointDrawHandler(this: Highcharts.Series, proceed: Function): void {
 
 /* eslint-enable no-invalid-this, valid-jsdoc */
 
-var funs = {
+const funs = {
     patientMax: patientMax,
     boostEnabled: boostEnabled,
     shouldForceChartSeriesBoosting: shouldForceChartSeriesBoosting,
