@@ -171,8 +171,8 @@ BaseSeries.seriesType<typeof Highcharts.GanttSeries>('gantt', 'xrange'
                     )[0];
                 }
 
-                start = dateFormat(format as any, point.start as any);
-                end = dateFormat(format as any, point.end as any);
+                start = series.chart.time.dateFormat(format as any, point.start as any);
+                end = series.chart.time.dateFormat(format as any, point.end as any);
 
                 retVal += '<br/>';
 
