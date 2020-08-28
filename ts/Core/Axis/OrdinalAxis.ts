@@ -13,7 +13,7 @@
 import type NavigatorAxis from './NavigatorAxis';
 import Axis from './Axis.js';
 import H from '../Globals.js';
-import CatesianSeries from '../Series/CatesianSeries.js';
+import CartesianSeries from '../Series/CartesianSeries.js';
 import Point from '../Series/Point.js';
 import U from '../Utilities.js';
 const {
@@ -411,7 +411,7 @@ namespace OrdinalAxis {
                         xData: (series.xData as any).slice(),
                         chart: chart,
                         destroyGroupedData: H.noop,
-                        getProcessedData: CatesianSeries.prototype.getProcessedData
+                        getProcessedData: CartesianSeries.prototype.getProcessedData
                     } as any;
 
                     fakeSeries.xData = (fakeSeries.xData as any).concat(
@@ -604,7 +604,7 @@ namespace OrdinalAxis {
     export function compose(
         AxisClass: typeof Axis,
         ChartClass: typeof Chart,
-        SeriesClass: typeof CatesianSeries
+        SeriesClass: typeof CartesianSeries
     ): void {
 
         AxisClass.keepProps.push('ordinal');
@@ -1181,6 +1181,6 @@ namespace OrdinalAxis {
     }
 }
 
-OrdinalAxis.compose(Axis, Chart, CatesianSeries); // @todo move to StockChart, remove from master
+OrdinalAxis.compose(Axis, Chart, CartesianSeries); // @todo move to StockChart, remove from master
 
 export default OrdinalAxis;

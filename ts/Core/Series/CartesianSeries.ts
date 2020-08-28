@@ -613,7 +613,7 @@ var seriesTypes = BaseSeries.seriesTypes as unknown as Record<string, BaseSeries
  *
  * @augments Highcharts.Series
  */
-const CatesianSeries = BaseSeries.seriesType<typeof Highcharts.LineSeries>(
+const CartesianSeries = BaseSeries.seriesType<typeof Highcharts.LineSeries>(
     'line',
 
     /**
@@ -7266,4 +7266,4 @@ const CatesianSeries = BaseSeries.seriesType<typeof Highcharts.LineSeries>(
 
 ''; // include precedent doclets in transpilat
 
-export default CatesianSeries;
+export default CartesianSeries;

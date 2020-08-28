@@ -19,7 +19,7 @@ const {
     doc
 } = H;
 import KeyboardNavigationHandler from './KeyboardNavigationHandler.js';
-import CatesianSeries from '../Core/Series/CatesianSeries.js';
+import CartesianSeries from '../Core/Series/CartesianSeries.js';
 import O from '../Core/Options.js';
 const {
     defaultOptions
@@ -393,7 +393,7 @@ addEvent(Point, 'update', function (): void {
     });
 });
 ['update', 'updatedData', 'remove'].forEach(function (event: string): void {
-    addEvent(CatesianSeries, event, function (): void {
+    addEvent(CartesianSeries, event, function (): void {
         if (this.chart.accessibility) {
             this.chart.a11yDirty = true;
         }

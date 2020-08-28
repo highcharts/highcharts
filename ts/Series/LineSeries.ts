@@ -14,7 +14,7 @@ import type Chart from '../Core/Chart/Chart';
 import type Point from '../Core/Series/Point';
 import type { SeriesOptionsType } from '../Core/Series/Types';
 import type SVGPath from '../Core/Renderer/SVG/SVGPath';
-import CatesianSeries from '../Core/Series/CatesianSeries.js';
+import CartesianSeries from '../Core/Series/CartesianSeries.js';
 import H from '../Core/Globals.js';
 
 /**
@@ -245,6 +245,6 @@ declare global {
     }
 }
 
-H.Series = CatesianSeries as typeof Highcharts.LineSeries; // backwards compatibility
+H.Series = CartesianSeries as typeof Highcharts.LineSeries; // backwards compatibility
 
 export default H.Series as typeof Highcharts.LineSeries;

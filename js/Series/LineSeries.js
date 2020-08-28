@@ -7,7 +7,7 @@
  *  !!!!!!! SOURCE GETS TRANSPILED BY TYPESCRIPT. EDIT TS FILE ONLY. !!!!!!!
  *
  * */
-import CatesianSeries from '../Core/Series/CatesianSeries.js';
+import CartesianSeries from '../Core/Series/CartesianSeries.js';
 import H from '../Core/Globals.js';
-H.Series = CatesianSeries; // backwards compatibility
+H.Series = CartesianSeries; // backwards compatibility
 export default H.Series;

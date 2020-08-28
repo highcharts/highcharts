@@ -298,7 +298,7 @@ var seriesTypes = BaseSeries.seriesTypes, win = H.win;
 *
 * @augments Highcharts.Series
 */
-var CatesianSeries = BaseSeries.seriesType('line', 
+var CartesianSeries = BaseSeries.seriesType('line', 
 /**
  * Series options for specific data and the data itself. In TypeScript you
  * have to cast the series options to specific series types, to get all
@@ -5547,4 +5547,4 @@ void 0,
  * @apioption series.line.data.marker
  */
 ''; // include precedent doclets in transpilat
-export default CatesianSeries;
+export default CartesianSeries;

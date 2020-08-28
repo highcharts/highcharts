@@ -11,7 +11,7 @@
  * */
 
 import Series from '../Core/Series/Series.js';
-import CatesianSeries from '../Core/Series/CatesianSeries.js';
+import CartesianSeries from '../Core/Series/CartesianSeries.js';
 import Color from '../Core/Color.js';
 import ColumnSeries from './ColumnSeries.js';
 import H from '../Core/Globals.js';
@@ -1319,7 +1319,7 @@ Series.seriesType<typeof Highcharts.SankeySeries>(
 
         /* eslint-enable valid-jsdoc */
 
-        animate: CatesianSeries.prototype.animate
+        animate: CartesianSeries.prototype.animate
     }, {
         applyOptions: function (
             this: Highcharts.SankeyPoint,
