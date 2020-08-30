@@ -14,7 +14,13 @@
 
 'use strict';
 
-import H from '../Core/Globals.js';
+import Chart from '../Core/Chart/Chart.js';
+import U from '../Core/Utilities.js';
+const {
+    addEvent,
+    extend,
+    getOptions
+} = U;
 
 /**
  * Internal types
@@ -45,16 +51,6 @@ declare global {
         }
     }
 }
-
-import U from '../Core/Utilities.js';
-const {
-    addEvent,
-    extend,
-    getOptions
-} = U;
-
-import Chart from '../Core/Chart/Chart.js';
-import '../Core/Series/Series.js';
 
 var chartPrototype = Chart.prototype,
     defaultOptions = getOptions();

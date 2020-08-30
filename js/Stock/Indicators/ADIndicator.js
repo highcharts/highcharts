@@ -4,9 +4,10 @@
  *
  *  !!!!!!! SOURCE GETS TRANSPILED BY TYPESCRIPT. EDIT TS FILE ONLY. !!!!!!!
  * */
-'use strict';
+import BaseSeries from '../../Core/Series/Series.js';
 import U from '../../Core/Utilities.js';
-var error = U.error, seriesType = U.seriesType;
+var error = U.error;
+import './SMAIndicator.js';
 /* eslint-disable valid-jsdoc */
 // Utils:
 /**
@@ -28,7 +29,7 @@ function populateAverage(xVal, yVal, yValVolume, i) {
  *
  * @augments Highcharts.Series
  */
-seriesType('ad', 'sma', 
+BaseSeries.seriesType('ad', 'sma', 
 /**
  * Accumulation Distribution (AD). This series requires `linkedTo` option to
  * be set.

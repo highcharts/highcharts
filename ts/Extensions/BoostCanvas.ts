@@ -88,7 +88,7 @@ const {
     wrap
 } = U;
 
-import '../Core/Series/Series.js';
+import '../Series/LineSeries.js';
 import '../Core/Options.js';
 
 var win = H.win,

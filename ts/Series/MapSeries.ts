@@ -8,10 +8,17 @@
  *
  * */
 
-'use strict';
-
 import type SVGPath from '../Core/Renderer/SVG/SVGPath';
+import BaseSeries from '../Core/Series/Series.js';
+import ColorMapMixin from '../Mixins/ColorMapSeries.js';
+const {
+    colorMapPointMixin,
+    colorMapSeriesMixin
+} = ColorMapMixin;
 import H from '../Core/Globals.js';
+const {
+    noop
+} = H;
 import LegendSymbolMixin from '../Mixins/LegendSymbol.js';
 import mapModule from '../Maps/Map.js';
 const {
@@ -30,7 +37,6 @@ const {
     merge,
     objectEach,
     pick,
-    seriesType,
     splat
 } = U;
 
@@ -151,24 +157,24 @@ declare global {
             /** @requires modules/map */
             mapData?: (Array<MapPointOptions>|any);
         }
-        interface SeriesTypesDictionary {
-            map: typeof MapSeries;
-        }
+    }
+}
+
+/**
+ * @private
+ */
+declare module '../Core/Series/Types' {
+    interface SeriesTypeRegistry {
+        map: typeof Highcharts.MapSeries;
     }
 }
 
 import '../Core/Options.js';
-import '../Series/ScatterSeries.js';
-import '../Core/Series/Series.js';
-import colorMapMixin from '../Mixins/ColorMapSeries.js';
-const {
-    colorMapPointMixin,
-    colorMapSeriesMixin
-} = colorMapMixin;
+import '../Series/LineSeries.js';
+import './ScatterSeries.js';
 
-var noop = H.noop,
-    Series = H.Series,
-    seriesTypes = H.seriesTypes;
+var Series = H.Series,
+    seriesTypes = BaseSeries.seriesTypes;
 
 /**
  * @private
@@ -177,7 +183,7 @@ var noop = H.noop,
  *
  * @augments Highcharts.Series
  */
-seriesType<Highcharts.MapSeries>(
+BaseSeries.seriesType<typeof Highcharts.MapSeries>(
     'map',
     'scatter',
     /**

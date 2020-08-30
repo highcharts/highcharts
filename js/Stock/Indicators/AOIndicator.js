@@ -5,11 +5,12 @@
  *  !!!!!!! SOURCE GETS TRANSPILED BY TYPESCRIPT. EDIT TS FILE ONLY. !!!!!!!
  *
  * */
-'use strict';
+import BaseSeries from '../../Core/Series/Series.js';
 import H from '../../Core/Globals.js';
-import U from '../../Core/Utilities.js';
-var correctFloat = U.correctFloat, isArray = U.isArray, seriesType = U.seriesType;
 var noop = H.noop;
+import U from '../../Core/Utilities.js';
+var correctFloat = U.correctFloat, isArray = U.isArray;
+import './SMAIndicator.js';
 /**
  * The AO series type
  *
@@ -19,7 +20,7 @@ var noop = H.noop;
  *
  * @augments Highcharts.Series
  */
-seriesType('ao', 'sma', 
+BaseSeries.seriesType('ao', 'sma', 
 /**
  * Awesome Oscillator. This series requires the `linkedTo` option to
  * be set and should be loaded after the `stock/indicators/indicators.js`

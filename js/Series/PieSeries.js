@@ -7,17 +7,18 @@
  *  !!!!!!! SOURCE GETS TRANSPILED BY TYPESCRIPT. EDIT TS FILE ONLY. !!!!!!!
  *
  * */
-'use strict';
+import BaseSeries from '../Core/Series/Series.js';
+import CenteredSeriesMixin from '../Mixins/CenteredSeries.js';
+var getStartAndEndRadians = CenteredSeriesMixin.getStartAndEndRadians;
 import H from '../Core/Globals.js';
-import SVGRenderer from '../Core/Renderer/SVG/SVGRenderer.js';
+var noop = H.noop;
 import LegendSymbolMixin from '../Mixins/LegendSymbol.js';
+import LineSeries from '../Series/LineSeries.js';
 import Point from '../Core/Series/Point.js';
+import SVGRenderer from '../Core/Renderer/SVG/SVGRenderer.js';
 import U from '../Core/Utilities.js';
-var addEvent = U.addEvent, clamp = U.clamp, defined = U.defined, fireEvent = U.fireEvent, isNumber = U.isNumber, merge = U.merge, pick = U.pick, relativeLength = U.relativeLength, seriesType = U.seriesType, setAnimation = U.setAnimation;
-import './ColumnSeries.js';
-import centeredSeriesMixin from '../Mixins/CenteredSeries.js';
+var addEvent = U.addEvent, clamp = U.clamp, defined = U.defined, fireEvent = U.fireEvent, isNumber = U.isNumber, merge = U.merge, pick = U.pick, relativeLength = U.relativeLength, setAnimation = U.setAnimation;
 import '../Core/Options.js';
-var getStartAndEndRadians = centeredSeriesMixin.getStartAndEndRadians, noop = H.noop, Series = H.Series, seriesTypes = H.seriesTypes;
 /**
  * Pie series type.
  *
@@ -27,7 +28,7 @@ var getStartAndEndRadians = centeredSeriesMixin.getStartAndEndRadians, noop = H.
  *
  * @augments Highcharts.Series
  */
-seriesType('pie', 'line', 
+BaseSeries.seriesType('pie', 'line', 
 /**
  * A pie chart is a circular graphic which is divided into slices to
  * illustrate numerical proportion.
@@ -554,7 +555,7 @@ seriesType('pie', 'line',
     noSharedTooltip: true,
     trackerGroups: ['group', 'dataLabelsGroup'],
     axisTypes: [],
-    pointAttribs: seriesTypes.column.prototype.pointAttribs,
+    pointAttribs: BaseSeries.seriesTypes.column.prototype.pointAttribs,
     /**
      * Animate the pies in
      *
@@ -629,7 +630,7 @@ seriesType('pie', 'line',
      * @return {void}
      */
     generatePoints: function () {
-        Series.prototype.generatePoints.call(this);
+        LineSeries.prototype.generatePoints.call(this);
         this.updateTotals();
     },
     /**
@@ -930,7 +931,7 @@ seriesType('pie', 'line',
      * @private
      * @borrows Highcharts.CenteredSeriesMixin.getCenter as Highcharts.seriesTypes.pie#getCenter
      */
-    getCenter: centeredSeriesMixin.getCenter,
+    getCenter: CenteredSeriesMixin.getCenter,
     /**
      * Pies don't have point marker symbols.
      *

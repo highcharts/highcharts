@@ -9,10 +9,8 @@
  *  !!!!!!! SOURCE GETS TRANSPILED BY TYPESCRIPT. EDIT TS FILE ONLY. !!!!!!!
  *
  * */
-'use strict';
-import '../Series/AreaSeries.js';
-import U from '../Core/Utilities.js';
-var seriesType = U.seriesType;
+import BaseSeries from '../Core/Series/Series.js';
+import '../Series/AreaSplineSeries.js';
 /**
  * @private
  * @class
@@ -20,7 +18,7 @@ var seriesType = U.seriesType;
  *
  * @augments Highcharts.Series
  */
-seriesType('streamgraph', 'areaspline'
+BaseSeries.seriesType('streamgraph', 'areaspline'
 /**
  * A streamgraph is a type of stacked area graph which is displaced around a
  * central axis, resulting in a flowing, organic shape.

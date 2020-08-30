@@ -6,9 +6,13 @@
  *
  * */
 
-'use strict';
-
-import H from '../../Core/Globals.js';
+import BaseSeries from '../../Core/Globals.js';
+import RequiredIndicatorMixin from '../../Mixins/IndicatorRequired.js';
+import U from '../../Core/Utilities.js';
+const {
+    correctFloat,
+    error
+} = U;
 
 /**
  * Internal types
@@ -42,24 +46,18 @@ declare global {
         interface PPOIndicatorOptions extends EMAIndicatorOptions {
             params?: PPOIndicatorParamsOptions;
         }
-
-        interface SeriesTypesDictionary {
-            ppo: typeof PPOIndicator;
-        }
     }
 }
 
+declare module '../../Core/Series/Types' {
+    interface SeriesTypeRegistry {
+        ppo: typeof Highcharts.PPOIndicator;
+    }
+}
 
-import U from '../../Core/Utilities.js';
-const {
-    correctFloat,
-    error,
-    seriesType
-} = U;
+import './EMAIndicator.js';
 
-import requiredIndicator from '../../Mixins/IndicatorRequired.js';
-
-var EMA = H.seriesTypes.ema;
+var EMA = BaseSeries.seriesTypes.ema;
 
 /**
  * The PPO series type.
@@ -70,7 +68,7 @@ var EMA = H.seriesTypes.ema;
  *
  * @augments Highcharts.Series
  */
-seriesType<Highcharts.PPOIndicator>(
+BaseSeries.seriesType<typeof Highcharts.PPOIndicator>(
     'ppo',
     'ema',
     /**
@@ -119,7 +117,7 @@ seriesType<Highcharts.PPOIndicator>(
             var args = arguments,
                 ctx = this;
 
-            requiredIndicator.isParentLoaded(
+            RequiredIndicatorMixin.isParentLoaded(
                 (EMA as any),
                 'ema',
                 ctx.type,

@@ -12,10 +12,9 @@
  *
  * */
 'use strict';
+import Chart from '../Core/Chart/Chart.js';
 import U from '../Core/Utilities.js';
 var addEvent = U.addEvent, extend = U.extend, getOptions = U.getOptions;
-import Chart from '../Core/Chart/Chart.js';
-import '../Core/Series/Series.js';
 var chartPrototype = Chart.prototype, defaultOptions = getOptions();
 // Add language option
 extend(defaultOptions.lang, 

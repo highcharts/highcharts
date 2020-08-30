@@ -6,7 +6,11 @@
  *
  * */
 
-'use strict';
+import BaseSeries from '../../Core/Series/Series.js';
+import U from '../../Core/Utilities.js';
+const {
+    isArray
+} = U;
 
 /**
  * Internal types
@@ -36,18 +40,16 @@ declare global {
         interface RSIIndicatorOptions extends SMAIndicatorOptions {
             params?: RSIIndicatorParamsOptions;
         }
-
-        interface SeriesTypesDictionary {
-            rsi: typeof RSIIndicator;
-        }
     }
 }
 
-import U from '../../Core/Utilities.js';
-const {
-    isArray,
-    seriesType
-} = U;
+declare module '../../Core/Series/Types' {
+    interface SeriesTypeRegistry {
+        rsi: typeof Highcharts.RSIIndicator;
+    }
+}
+
+import './SMAIndicator.js';
 
 /* eslint-disable require-jsdoc */
 
@@ -66,7 +68,7 @@ function toFixed(a: number, n: number): number {
  *
  * @augments Highcharts.Series
  */
-seriesType<Highcharts.RSIIndicator>(
+BaseSeries.seriesType<typeof Highcharts.RSIIndicator>(
     'rsi',
     'sma',
     /**

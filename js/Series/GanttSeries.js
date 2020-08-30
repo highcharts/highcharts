@@ -9,18 +9,18 @@
  *  !!!!!!! SOURCE GETS TRANSPILED BY TYPESCRIPT. EDIT TS FILE ONLY. !!!!!!!
  *
  * */
-'use strict';
+import BaseSeries from '../Core/Series/Series.js';
 import H from '../Core/Globals.js';
 import O from '../Core/Options.js';
 var dateFormat = O.dateFormat;
 import '../Core/Axis/TreeGridAxis.js';
 import U from '../Core/Utilities.js';
-var isNumber = U.isNumber, merge = U.merge, pick = U.pick, seriesType = U.seriesType, splat = U.splat;
+var isNumber = U.isNumber, merge = U.merge, pick = U.pick, splat = U.splat;
 import '../Extensions/CurrentDateIndication.js';
 import '../Extensions/StaticScale.js';
 import '../Gantt/Pathfinder.js';
 import './XRangeSeries.js';
-var seriesTypes = H.seriesTypes, Series = H.Series, parent = seriesTypes.xrange;
+var Series = H.Series, seriesTypes = BaseSeries.seriesTypes, parent = seriesTypes.xrange;
 /**
  * @private
  * @class
@@ -28,7 +28,7 @@ var seriesTypes = H.seriesTypes, Series = H.Series, parent = seriesTypes.xrange;
  *
  * @augments Highcharts.Series
  */
-seriesType('gantt', 'xrange'
+BaseSeries.seriesType('gantt', 'xrange'
 /**
  * A `gantt` series. If the [type](#series.gantt.type) option is not specified,
  * it is inherited from [chart.type](#chart.type).

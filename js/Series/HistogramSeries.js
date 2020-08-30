@@ -8,10 +8,11 @@
  *  !!!!!!! SOURCE GETS TRANSPILED BY TYPESCRIPT. EDIT TS FILE ONLY. !!!!!!!
  *
  * */
-'use strict';
+import BaseSeries from '../Core/Series/Series.js';
+import DerivedSeriesMixin from '../Mixins/DerivedSeries.js';
 import U from '../Core/Utilities.js';
-var arrayMax = U.arrayMax, arrayMin = U.arrayMin, correctFloat = U.correctFloat, isNumber = U.isNumber, merge = U.merge, objectEach = U.objectEach, seriesType = U.seriesType;
-import derivedSeriesMixin from '../Mixins/DerivedSeries.js';
+var arrayMax = U.arrayMax, arrayMin = U.arrayMin, correctFloat = U.correctFloat, isNumber = U.isNumber, merge = U.merge, objectEach = U.objectEach;
+import './ColumnSeries.js';
 /* ************************************************************************** *
  *  HISTOGRAM
  * ************************************************************************** */
@@ -52,7 +53,7 @@ function fitToBinLeftClosed(bins) {
  * @name Highcharts.seriesTypes.histogram
  * @augments Highcharts.Series
  */
-seriesType('histogram', 'column', 
+BaseSeries.seriesType('histogram', 'column', 
 /**
  * A histogram is a column series which represents the distribution of the
  * data set in the base series. Histogram splits data into bins and shows
@@ -100,7 +101,7 @@ seriesType('histogram', 'column',
             '<span style="color:{point.color}">\u25CF</span>' +
             ' {series.name} <b>{point.y}</b><br/>')
     }
-}, merge(derivedSeriesMixin, {
+}, merge(DerivedSeriesMixin, {
     setDerivedData: function () {
         var yData = this.baseSeries.yData;
         if (!yData.length) {

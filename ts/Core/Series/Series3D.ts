@@ -41,7 +41,7 @@ const {
     pick
 } = U;
 
-import './Series.js';
+import '../../Series/LineSeries.js';
 
 /* eslint-disable no-invalid-this */
 

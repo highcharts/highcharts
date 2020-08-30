@@ -7,15 +7,16 @@
  *  !!!!!!! SOURCE GETS TRANSPILED BY TYPESCRIPT. EDIT TS FILE ONLY. !!!!!!!
  *
  * */
-'use strict';
+import BaseSeries from '../Core/Series/Series.js';
 import H from '../Core/Globals.js';
+var noop = H.noop;
 import U from '../Core/Utilities.js';
-var clamp = U.clamp, isNumber = U.isNumber, merge = U.merge, pick = U.pick, pInt = U.pInt, seriesType = U.seriesType;
+var clamp = U.clamp, isNumber = U.isNumber, merge = U.merge, pick = U.pick, pInt = U.pInt;
 import '../Core/Options.js';
 import '../Core/Series/Point.js';
-import '../Core/Series/Series.js';
+import '../Series/LineSeries.js';
 import '../Core/Interaction.js';
-var noop = H.noop, Series = H.Series, TrackerMixin = H.TrackerMixin;
+var Series = H.Series, TrackerMixin = H.TrackerMixin;
 /**
  * Gauges are circular plots displaying one or more values with a dial pointing
  * to values along the perimeter.
@@ -34,7 +35,7 @@ var noop = H.noop, Series = H.Series, TrackerMixin = H.TrackerMixin;
  * @requires     highcharts-more
  * @optionparent plotOptions.gauge
  */
-seriesType('gauge', 'line', {
+BaseSeries.seriesType('gauge', 'line', {
     /**
      * When this option is `true`, the dial will wrap around the axes. For
      * instance, in a full-range gauge going from 0 to 360, a value of 400

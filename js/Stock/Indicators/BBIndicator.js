@@ -5,12 +5,12 @@
  *  !!!!!!! SOURCE GETS TRANSPILED BY TYPESCRIPT. EDIT TS FILE ONLY. !!!!!!!
  *
  * */
-'use strict';
-import H from '../../Core/Globals.js';
+import BaseSeries from '../../Core/Series/Series.js';
+import MultipleLinesMixin from '../../Mixins/MultipleLines.js';
 import U from '../../Core/Utilities.js';
-var isArray = U.isArray, merge = U.merge, seriesType = U.seriesType;
-import multipleLinesMixin from '../../Mixins/MultipleLines.js';
-var SMA = H.seriesTypes.sma;
+var isArray = U.isArray, merge = U.merge;
+import './SMAIndicator.js';
+var SMA = BaseSeries.seriesTypes.sma;
 /* eslint-disable valid-jsdoc */
 // Utils:
 /**
@@ -36,7 +36,7 @@ function getStandardDeviation(arr, index, isOHLC, mean) {
  *
  * @augments Highcharts.Series
  */
-seriesType('bb', 'sma', 
+BaseSeries.seriesType('bb', 'sma', 
 /**
  * Bollinger bands (BB). This series requires the `linkedTo` option to be
  * set and should be loaded after the `stock/indicators/indicators.js` file.
@@ -108,7 +108,7 @@ seriesType('bb', 'sma',
 /**
  * @lends Highcharts.Series#
  */
-merge(multipleLinesMixin, {
+merge(MultipleLinesMixin, {
     pointArrayMap: ['top', 'middle', 'bottom'],
     pointValKey: 'middle',
     nameComponents: ['period', 'standardDeviation'],

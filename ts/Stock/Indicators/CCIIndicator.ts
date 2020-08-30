@@ -5,7 +5,11 @@
  *  !!!!!!! SOURCE GETS TRANSPILED BY TYPESCRIPT. EDIT TS FILE ONLY. !!!!!!!
  * */
 
-'use strict';
+import BaseSeries from '../../Core/Series/Series.js';
+import U from '../../Core/Utilities.js';
+const {
+    isArray
+} = U;
 
 /**
  * Internal types
@@ -35,18 +39,16 @@ declare global {
         class CCIIndicatorPoint extends SMAIndicatorPoint {
             public series: CCIIndicator;
         }
-
-        interface SeriesTypesDictionary {
-            cci: typeof CCIIndicator;
-        }
     }
 }
 
-import U from '../../Core/Utilities.js';
-const {
-    isArray,
-    seriesType
-} = U;
+declare module '../../Core/Series/Types' {
+    interface SeriesTypeRegistry {
+        cci: typeof Highcharts.CCIIndicator;
+    }
+}
+
+import './SMAIndicator.js';
 
 /* eslint-disable valid-jsdoc */
 // Utils:
@@ -73,6 +75,7 @@ function meanDeviation(arr: Array<number>, sma: number): number {
 
     return sum;
 }
+
 /* eslint-enable valid-jsdoc */
 
 /**
@@ -84,7 +87,7 @@ function meanDeviation(arr: Array<number>, sma: number): number {
  *
  * @augments Highcharts.Series
  */
-seriesType<Highcharts.CCIIndicator>(
+BaseSeries.seriesType<typeof Highcharts.CCIIndicator>(
     'cci',
     'sma',
     /**

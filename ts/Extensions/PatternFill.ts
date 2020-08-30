@@ -29,7 +29,7 @@ const {
     wrap
 } = U;
 
-import '../Core/Series/Series.js';
+import '../Series/LineSeries.js';
 
 /**
  * Internal types

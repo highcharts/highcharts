@@ -15,6 +15,7 @@
 'use strict';
 
 import type SVGPath from '../Core/Renderer/SVG/SVGPath';
+import BaseSeries from '../Core/Series/Series.js';
 import Chart from '../Core/Chart/Chart.js';
 import H from '../Core/Globals.js';
 import O from '../Core/Options.js';
@@ -262,10 +263,10 @@ declare global {
 /* eslint-disable no-invalid-this */
 
 import Axis from '../Core/Axis/Axis.js';
-import '../Core/Series/Series.js';
+import '../Series/LineSeries.js';
 
 var Series = H.Series,
-    Scatter = H.seriesTypes.scatter,
+    Scatter = BaseSeries.seriesTypes.scatter,
     baseGeneratePoints = Series.prototype.generatePoints,
     stateIdCounter = 0,
     // Points that ids are included in the oldPointsStateId array

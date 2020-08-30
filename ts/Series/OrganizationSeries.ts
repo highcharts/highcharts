@@ -10,15 +10,13 @@
  *
  * */
 
-'use strict';
-
 import type SVGPath from '../Core/Renderer/SVG/SVGPath';
+import BaseSeries from '../Core/Series/Series.js';
 import H from '../Core/Globals.js';
 import U from '../Core/Utilities.js';
 const {
     css,
     pick,
-    seriesType,
     wrap
 } = U;
 
@@ -119,12 +117,22 @@ declare global {
             nodes?: Array<OrganizationSeriesNodeOptions>;
             states?: SeriesStatesOptionsObject<OrganizationSeries>;
         }
-        interface SeriesTypesDictionary {
-            organization: typeof OrganizationSeries;
-        }
         type OrganizationNodesLayoutValue = ('normal'|'hanging');
     }
 }
+
+/**
+ * @private
+ */
+declare module '../Core/Series/Types' {
+    interface SeriesTypeRegistry {
+        organization: typeof Highcharts.OrganizationSeries;
+    }
+}
+
+import './SankeySeries.js';
+
+const base = BaseSeries.seriesTypes.sankey.prototype;
 
 /**
  * Layout value for the child nodes in an organization chart. If `hanging`, this
@@ -134,7 +142,7 @@ declare global {
  * @typedef {"normal"|"hanging"} Highcharts.SeriesOrganizationNodesLayoutValue
  */
 
-var base = H.seriesTypes.sankey.prototype;
+''; // detach doclets above
 
 /**
  * @private
@@ -143,7 +151,7 @@ var base = H.seriesTypes.sankey.prototype;
  *
  * @augments Highcharts.seriesTypes.sankey
  */
-seriesType<Highcharts.OrganizationSeries>(
+BaseSeries.seriesType<typeof Highcharts.OrganizationSeries>(
     'organization',
     'sankey',
     /**

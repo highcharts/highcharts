@@ -52,7 +52,7 @@ declare global {
             public renderPath(
                 path: SVGPath,
                 attribs?: SVGAttributes,
-                animation?: (boolean|Partial<AnimationOptionsObject>)
+                animation?: (boolean|DeepPartial<AnimationOptionsObject>)
             ): void;
         }
     }
@@ -584,7 +584,7 @@ class Connection {
     public renderPath(
         path: SVGPath,
         attribs?: Highcharts.SVGAttributes,
-        animation?: (boolean|Partial<Highcharts.AnimationOptionsObject>)
+        animation?: (boolean|DeepPartial<Highcharts.AnimationOptionsObject>)
     ): void {
         var connection = this,
             chart = this.chart,

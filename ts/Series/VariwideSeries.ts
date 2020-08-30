@@ -10,9 +10,11 @@
  *
  * */
 
-'use strict';
-
 import type StackingAxis from '../Core/Axis/StackingAxis';
+import BaseSeries from '../Core/Series/Series.js';
+const {
+    seriesTypes
+} = BaseSeries;
 import H from '../Core/Globals.js';
 
 /**
@@ -54,9 +56,6 @@ declare global {
         interface PointLike {
             crosshairWidth?: VariwidePoint['crosshairWidth'];
         }
-        interface SeriesTypesDictionary {
-            variwide: typeof VariwideSeries;
-        }
         interface Tick {
             postTranslate(
                 xy: PositionObject,
@@ -77,13 +76,16 @@ const {
     addEvent,
     isNumber,
     pick,
-    seriesType,
     wrap
 } = U;
 
 import '../Series/AreaSeries.js';
 
-var seriesTypes = H.seriesTypes;
+declare module '../Core/Series/Types' {
+    interface SeriesTypeRegistry {
+        variwide: typeof Highcharts.VariwideSeries;
+    }
+}
 
 /**
  * @private
@@ -92,7 +94,7 @@ var seriesTypes = H.seriesTypes;
  *
  * @augments Highcharts.Series
  */
-seriesType<Highcharts.VariwideSeries>('variwide', 'column'
+BaseSeries.seriesType<typeof Highcharts.VariwideSeries>('variwide', 'column'
 
     /**
      * A variwide chart (related to marimekko chart) is a column chart with a

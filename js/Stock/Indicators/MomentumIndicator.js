@@ -5,9 +5,10 @@
  *  !!!!!!! SOURCE GETS TRANSPILED BY TYPESCRIPT. EDIT TS FILE ONLY. !!!!!!!
  *
  * */
-'use strict';
+import BaseSeries from '../../Core/Series/Series.js';
 import U from '../../Core/Utilities.js';
-var isArray = U.isArray, seriesType = U.seriesType;
+var isArray = U.isArray;
+import './SMAIndicator.js';
 /* eslint-disable require-jsdoc */
 function populateAverage(points, xVal, yVal, i, period) {
     var mmY = yVal[i - 1][3] - yVal[i - period - 1][3], mmX = xVal[i - 1];
@@ -24,7 +25,7 @@ function populateAverage(points, xVal, yVal, i, period) {
  *
  * @augments Highcharts.Series
  */
-seriesType('momentum', 'sma', 
+BaseSeries.seriesType('momentum', 'sma', 
 /**
  * Momentum. This series requires `linkedTo` option to be set.
  *

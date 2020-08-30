@@ -7,9 +7,10 @@
  *  !!!!!!! SOURCE GETS TRANSPILED BY TYPESCRIPT. EDIT TS FILE ONLY. !!!!!!!
  *
  * */
-'use strict';
+import BaseSeries from '../../Core/Series/Series.js';
 import U from '../../Core/Utilities.js';
-var isArray = U.isArray, seriesType = U.seriesType;
+var isArray = U.isArray;
+import './SMAIndicator.js';
 /* eslint-disable require-jsdoc */
 // Utils:
 function populateAverage(xVal, yVal, i, period, index) {
@@ -46,7 +47,7 @@ function populateAverage(xVal, yVal, i, period, index) {
  *
  * @augments Highcharts.Series
  */
-seriesType('roc', 'sma', 
+BaseSeries.seriesType('roc', 'sma', 
 /**
  * Rate of change indicator (ROC). The indicator value for each point
  * is defined as:

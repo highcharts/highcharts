@@ -7,12 +7,18 @@
  *  !!!!!!! SOURCE GETS TRANSPILED BY TYPESCRIPT. EDIT TS FILE ONLY. !!!!!!!
  *
  * */
-'use strict';
+import BaseSeries from '../Core/Series/Series.js';
+import ColorMapMixin from '../Mixins/ColorMapSeries.js';
+var colorMapPointMixin = ColorMapMixin.colorMapPointMixin, colorMapSeriesMixin = ColorMapMixin.colorMapSeriesMixin;
 import H from '../Core/Globals.js';
+var noop = H.noop;
 import LegendSymbolMixin from '../Mixins/LegendSymbol.js';
 import SVGRenderer from '../Core/Renderer/SVG/SVGRenderer.js';
 import U from '../Core/Utilities.js';
-var clamp = U.clamp, extend = U.extend, fireEvent = U.fireEvent, isNumber = U.isNumber, merge = U.merge, pick = U.pick, seriesType = U.seriesType;
+var clamp = U.clamp, extend = U.extend, fireEvent = U.fireEvent, isNumber = U.isNumber, merge = U.merge, pick = U.pick;
+import '../Core/Options.js';
+import '../Series/LineSeries.js';
+var Series = H.Series, seriesTypes = BaseSeries.seriesTypes, symbols = SVGRenderer.prototype.symbols;
 /* *
  * @interface Highcharts.PointOptionsObject in parts/Point.ts
  */ /**
@@ -26,11 +32,6 @@ var clamp = U.clamp, extend = U.extend, fireEvent = U.fireEvent, isNumber = U.is
 * @type {number|null|undefined}
 */
 ''; // detach doclets above
-import '../Core/Options.js';
-import '../Core/Series/Series.js';
-import colorMapMixin from '../Mixins/ColorMapSeries.js';
-var colorMapPointMixin = colorMapMixin.colorMapPointMixin, colorMapSeriesMixin = colorMapMixin.colorMapSeriesMixin;
-var noop = H.noop, Series = H.Series, seriesTypes = H.seriesTypes, symbols = SVGRenderer.prototype.symbols;
 /**
  * @private
  * @class
@@ -38,7 +39,7 @@ var noop = H.noop, Series = H.Series, seriesTypes = H.seriesTypes, symbols = SVG
  *
  * @augments Highcharts.Series
  */
-seriesType('heatmap', 'scatter', 
+BaseSeries.seriesType('heatmap', 'scatter', 
 /**
  * A heatmap is a graphical representation of data where the individual
  * values contained in a matrix are represented as colors.

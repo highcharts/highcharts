@@ -50,7 +50,7 @@ declare global {
     }
 }
 
-import '../../Core/Series/Series.js';
+import '../../Series/LineSeries.js';
 
 var mainCanvas = doc.createElement('canvas');
 

@@ -10,11 +10,16 @@
  *
  * */
 'use strict';
+import Ajax from '../Extensions/Ajax.js';
+var ajax = Ajax.ajax;
+import BaseSeries from '../Core/Series/Series.js';
 import Chart from '../Core/Chart/Chart.js';
 import H from '../Core/Globals.js';
+var doc = H.doc;
 import Point from '../Core/Series/Point.js';
 import U from '../Core/Utilities.js';
 var addEvent = U.addEvent, defined = U.defined, extend = U.extend, fireEvent = U.fireEvent, isNumber = U.isNumber, merge = U.merge, objectEach = U.objectEach, pick = U.pick, splat = U.splat;
+var seriesTypes = BaseSeries.seriesTypes;
 /**
  * Callback function to modify the CSV before parsing it by the data module.
  *
@@ -87,10 +92,6 @@ var addEvent = U.addEvent, defined = U.defined, extend = U.extend, fireEvent = U
  *         Return `false` to stop completion, or call `this.complete()` to
  *         continue async.
  */
-import Ajax from '../Extensions/Ajax.js';
-var ajax = Ajax.ajax;
-// Utilities
-var win = H.win, doc = win.document;
 /**
  * The Data module provides a simplified interface for adding data to
  * a chart from sources like CVS, HTML tables or grid views. See also
@@ -613,12 +614,9 @@ var Data = /** @class */ (function () {
      */
     Data.prototype.getColumnDistribution = function () {
         var chartOptions = this.chartOptions, options = this.options, xColumns = [], getValueCount = function (type) {
-            return (H.seriesTypes[type || 'line'].prototype
-                .pointArrayMap ||
-                [0]).length;
+            return (seriesTypes[type || 'line'].prototype.pointArrayMap || [0]).length;
         }, getPointArrayMap = function (type) {
-            return H.seriesTypes[type || 'line']
-                .prototype.pointArrayMap;
+            return seriesTypes[type || 'line'].prototype.pointArrayMap;
         }, globalType = (chartOptions &&
             chartOptions.chart &&
             chartOptions.chart.type), individualCounts = [], seriesBuilders = [], seriesIndex = 0, 

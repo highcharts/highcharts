@@ -18,18 +18,30 @@
  *   Highcharts symbols.
  */
 
-'use strict';
-
 import type SVGPath from '../Core/Renderer/SVG/SVGPath';
+import _ColumnSeries from './ColumnSeries.js';
+import Series from '../Core/Series/Series.js';
 import SVGRenderer from '../Core/Renderer/SVG/SVGRenderer.js';
 import U from '../Core/Utilities.js';
 const {
     extend,
     objectEach,
-    pick,
-    seriesType
+    pick
 } = U;
 
+/**
+ * @private
+ */
+declare module '../Core/Series/Types' {
+    interface SeriesTypeRegistry {
+        dotplot: typeof Highcharts.DotplotSeries;
+    }
+}
+
+/**
+ * Internal types.
+ * @private
+ */
 declare global {
     namespace Highcharts {
         class DotplotPoint extends ColumnPoint {
@@ -52,13 +64,8 @@ declare global {
             itemPadding?: number;
             states?: SeriesStatesOptionsObject<DotplotSeries>;
         }
-        interface SeriesTypesDictionary {
-            dotplot: typeof DotplotSeries;
-        }
     }
 }
-
-import '../Core/Series/Series.js';
 
 /**
  * @private
@@ -67,7 +74,7 @@ import '../Core/Series/Series.js';
  *
  * @augments Highcharts.Series
  */
-seriesType<Highcharts.DotplotSeries>('dotplot', 'column', {
+Series.seriesType<typeof Highcharts.DotplotSeries>('dotplot', 'column', {
     itemPadding: 0.2,
     marker: {
         symbol: 'circle',

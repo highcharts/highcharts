@@ -174,10 +174,7 @@ declare global {
         }
         interface Series {
             /** @requires modules/draggable-points */
-            dragDropProps?: (
-                Dictionary<Partial<SeriesDragDropPropsObject>>|
-                null
-            );
+            dragDropProps?: (Record<string, Partial<SeriesDragDropPropsObject>>|null);
             /** @requires modules/draggable-points */
             getGuideBox(points: Array<Point>): SVGElement;
         }
@@ -200,6 +197,12 @@ declare global {
         interface SeriesOptions {
             dragDrop?: DragDropOptionsObject;
         }
+    }
+}
+
+declare module '../Core/Series/Types' {
+    interface SeriesLike {
+        dragDropProps?: (Record<string, Partial<Highcharts.SeriesDragDropPropsObject>>|null);
     }
 }
 
@@ -369,7 +372,7 @@ declare global {
 
 ''; // detaches doclets above
 
-import '../Core/Series/Series.js';
+import '../Series/LineSeries.js';
 
 var seriesTypes = H.seriesTypes;
 

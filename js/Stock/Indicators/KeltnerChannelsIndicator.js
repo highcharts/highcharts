@@ -5,12 +5,15 @@
  *  !!!!!!! SOURCE GETS TRANSPILED BY TYPESCRIPT. EDIT TS FILE ONLY. !!!!!!!
  *
  * */
-'use strict';
-import H from '../../Core/Globals.js';
+import BaseSeries from '../../Core/Series/Series.js';
+var seriesTypes = BaseSeries.seriesTypes;
+import MultipleLinesMixin from '../../Mixins/MultipleLines.js';
 import U from '../../Core/Utilities.js';
-var correctFloat = U.correctFloat, merge = U.merge, seriesType = U.seriesType;
-import multipleLinesMixin from '../../Mixins/MultipleLines.js';
-var SMA = H.seriesTypes.sma, EMA = H.seriesTypes.ema, ATR = H.seriesTypes.atr;
+var correctFloat = U.correctFloat, merge = U.merge;
+import './ATRIndicator.js';
+import './EMAIndicator.js';
+import './SMAIndicator.js';
+var SMA = seriesTypes.sma, EMA = seriesTypes.ema, ATR = seriesTypes.atr;
 /**
  * The Keltner Channels series type.
  *
@@ -20,7 +23,7 @@ var SMA = H.seriesTypes.sma, EMA = H.seriesTypes.ema, ATR = H.seriesTypes.atr;
  *
  * @augments Highcharts.Series
  */
-seriesType('keltnerchannels', 'sma', 
+BaseSeries.seriesType('keltnerchannels', 'sma', 
 /**
  * Keltner Channels. This series requires the `linkedTo` option to be set
  * and should be loaded after the `stock/indicators/indicators.js`,
@@ -98,7 +101,7 @@ seriesType('keltnerchannels', 'sma',
 /**
  * @lends Highcharts.Series#
  */
-merge(multipleLinesMixin, {
+merge(MultipleLinesMixin, {
     pointArrayMap: ['top', 'middle', 'bottom'],
     pointValKey: 'middle',
     nameBase: 'Keltner Channels',

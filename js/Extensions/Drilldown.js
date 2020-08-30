@@ -14,6 +14,7 @@ import Axis from '../Core/Axis/Axis.js';
 import Chart from '../Core/Chart/Chart.js';
 import Color from '../Core/Color.js';
 import H from '../Core/Globals.js';
+var noop = H.noop;
 import O from '../Core/Options.js';
 var defaultOptions = O.defaultOptions;
 import Point from '../Core/Series/Point.js';
@@ -134,9 +135,9 @@ var addEvent = U.addEvent, removeEvent = U.removeEvent, animObject = U.animObjec
 * @name Highcharts.DrillupEventObject#type
 * @type {"drillup"}
 */
-import '../Core/Series/Series.js';
+import '../Series/LineSeries.js';
 import '../Series/ColumnSeries.js';
-var noop = H.noop, seriesTypes = H.seriesTypes, PieSeries = seriesTypes.pie, ColumnSeries = seriesTypes.column, ddSeriesId = 1;
+var seriesTypes = H.seriesTypes, PieSeries = seriesTypes.pie, ColumnSeries = seriesTypes.column, ddSeriesId = 1;
 // Add language
 extend(defaultOptions.lang, 
 /**

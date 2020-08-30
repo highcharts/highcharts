@@ -8,11 +8,19 @@
  *
  * */
 
-'use strict';
-
 import type Point from '../Core/Series/Point';
+import type { SeriesOptionsType } from '../Core/Series/Types';
 import type SVGPath from '../Core/Renderer/SVG/SVGPath';
+import BaseSeries from '../Core/Series/Series.js';
+import ColorMapMixin from '../Mixins/ColorMapSeries.js';
+const {
+    colorMapPointMixin,
+    colorMapSeriesMixin
+} = ColorMapMixin;
 import H from '../Core/Globals.js';
+const {
+    noop
+} = H;
 import LegendSymbolMixin from '../Mixins/LegendSymbol.js';
 import SVGRenderer from '../Core/Renderer/SVG/SVGRenderer.js';
 import U from '../Core/Utilities.js';
@@ -22,8 +30,7 @@ const {
     fireEvent,
     isNumber,
     merge,
-    pick,
-    seriesType
+    pick
 } = U;
 
 /**
@@ -92,28 +99,38 @@ declare global {
             pointPadding?: HeatmapPoint['pointPadding'];
             value?: HeatmapPoint['value'];
         }
-        interface HeatmapSeriesOptions
-            extends ScatterSeriesOptions
-        {
+        interface HeatmapSeriesOptions extends ScatterSeriesOptions {
             colsize?: number;
             nullColor?: (ColorString|GradientColorObject|PatternObject);
             pointPadding?: HeatmapPoint['pointPadding'];
             rowsize?: number;
             states?: SeriesStatesOptionsObject<HeatmapSeries>;
         }
-        interface SeriesStatesHoverOptions
-        {
+        interface SeriesStatesHoverOptions {
             brightness?: number;
         }
         interface Series {
             valueMax?: number;
             valueMin?: number;
         }
-        interface SeriesTypesDictionary {
-            heatmap: typeof HeatmapSeries;
-        }
     }
 }
+
+/**
+ * @private
+ */
+declare module '../Core/Series/Types' {
+    interface SeriesTypeRegistry {
+        heatmap: typeof Highcharts.HeatmapSeries;
+    }
+}
+
+import '../Core/Options.js';
+import '../Series/LineSeries.js';
+
+var Series = H.Series,
+    seriesTypes = BaseSeries.seriesTypes,
+    symbols = SVGRenderer.prototype.symbols;
 
 /* *
  * @interface Highcharts.PointOptionsObject in parts/Point.ts
@@ -130,19 +147,6 @@ declare global {
 
 ''; // detach doclets above
 
-import '../Core/Options.js';
-import '../Core/Series/Series.js';
-import colorMapMixin from '../Mixins/ColorMapSeries.js';
-const {
-    colorMapPointMixin,
-    colorMapSeriesMixin
-} = colorMapMixin;
-
-var noop = H.noop,
-    Series = H.Series,
-    seriesTypes = H.seriesTypes,
-    symbols = SVGRenderer.prototype.symbols;
-
 /**
  * @private
  * @class
@@ -150,7 +154,7 @@ var noop = H.noop,
  *
  * @augments Highcharts.Series
  */
-seriesType<Highcharts.HeatmapSeries>(
+BaseSeries.seriesType<typeof Highcharts.HeatmapSeries>(
     'heatmap',
     'scatter',
 
