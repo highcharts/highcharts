@@ -35,6 +35,7 @@ var __rest = (this && this.__rest) || function (s, e) {
 };
 import Ajax from '../../Extensions/Ajax.js';
 import CSVParser from '../Parsers/CSVParser.js';
+import DataJSON from '../DataJSON.js';
 var ajax = Ajax.ajax;
 import DataStore from './DataStore.js';
 import DataTable from '../DataTable.js';
@@ -197,7 +198,7 @@ var CSVStore = /** @class */ (function (_super) {
      */
     CSVStore.prototype.toJSON = function () {
         var json = {
-            $class: 'CSVDataStore',
+            $class: 'CSVStore',
             metadata: this.getMetadataJSON(),
             options: merge(this.options),
             parser: this.parser.toJSON(),
@@ -218,6 +219,13 @@ var CSVStore = /** @class */ (function (_super) {
     };
     return CSVStore;
 }(DataStore));
+/* *
+ *
+ *  Registry
+ *
+ * */
+DataJSON.addClass(CSVStore);
+DataStore.addStore(CSVStore);
 /* *
  *
  *  Export

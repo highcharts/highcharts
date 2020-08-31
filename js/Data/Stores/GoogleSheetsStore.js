@@ -24,6 +24,7 @@ var __extends = (this && this.__extends) || (function () {
 })();
 import AjaxMixin from '../../Extensions/Ajax.js';
 var ajax = AjaxMixin.ajax;
+import DataJSON from './../DataJSON.js';
 import DataStore from './DataStore.js';
 import DataTable from '../DataTable.js';
 import U from '../../Core/Utilities.js';
@@ -229,6 +230,13 @@ var GoogleSheetsStore = /** @class */ (function (_super) {
     };
     return GoogleSheetsStore;
 }(DataStore));
+/* *
+ *
+ *  Registry
+ *
+ * */
+DataJSON.addClass(GoogleSheetsStore);
+DataStore.addStore(GoogleSheetsStore);
 /* *
  *
  *  Export

@@ -200,7 +200,7 @@ class HTMLTableStore extends DataStore<HTMLTableStore.EventObjects> implements D
     public toJSON(): HTMLTableStore.ClassJSON {
         const store = this,
             json: HTMLTableStore.ClassJSON = {
-                $class: 'HTMLTableDataStore',
+                $class: 'HTMLTableStore',
                 metadata: store.getMetadataJSON(),
                 parser: store.parser.toJSON(),
                 table: store.table.toJSON(),
@@ -277,6 +277,7 @@ namespace HTMLTableStore {
  * */
 
 DataJSON.addClass(HTMLTableStore);
+DataStore.addStore(HTMLTableStore);
 
 declare module './Types' {
     interface DataStoreTypeRegistry {

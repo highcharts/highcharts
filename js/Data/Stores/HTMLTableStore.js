@@ -145,7 +145,7 @@ var HTMLTableStore = /** @class */ (function (_super) {
     };
     HTMLTableStore.prototype.toJSON = function () {
         var store = this, json = {
-            $class: 'HTMLTableDataStore',
+            $class: 'HTMLTableStore',
             metadata: store.getMetadataJSON(),
             parser: store.parser.toJSON(),
             table: store.table.toJSON(),
@@ -170,6 +170,7 @@ var HTMLTableStore = /** @class */ (function (_super) {
  *
  * */
 DataJSON.addClass(HTMLTableStore);
+DataStore.addStore(HTMLTableStore);
 /* *
  *
  *  Export

@@ -1,5 +1,8 @@
 
-import DataStore from '/base/js/Data/Stores/DataStore.js'
+import DataStore from '/base/js/Data/Stores/DataStore.js';
+import '/base/js/Data/Stores/CSVStore.js';
+import '/base/js/Data/Stores/GoogleSheetsStore.js';
+import '/base/js/Data/Stores/HTMLTableStore.js';
 
 const { test, only } = QUnit;
 
@@ -37,5 +40,26 @@ test('DataStore metadata', function (assert) {
     );
     assert.ok(datastore.whatIs('columnX'), 'ColumnX was added');
     assert.ok(datastore.whatIs('column1'), 'Column1 is still there');
+
+})
+
+test('DataStore registry', function (assert) {
+    // Todo: maybe empty the registry
+    // before adding the stores back
+    // DataStore.registry = {};
+
+    const stores = [
+        'CSVStore',
+        'HTMLTableStore',
+        'GoogleSheetsStore'
+    ];
+
+    stores.forEach(store => {
+        assert.strictEqual(
+            typeof DataStore.getStore(store),
+            'function',
+            `${store} is registered`
+        )
+   });
 
 })

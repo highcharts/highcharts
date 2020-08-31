@@ -247,7 +247,7 @@ class CSVStore extends DataStore<CSVStore.EventObjects> implements DataJSON.Clas
      */
     public toJSON(): CSVStore.ClassJSON {
         const json: CSVStore.ClassJSON = {
-            $class: 'CSVDataStore',
+            $class: 'CSVStore',
             metadata: this.getMetadataJSON(),
             options: merge(this.options),
             parser: this.parser.toJSON(),
@@ -330,12 +330,15 @@ namespace CSVStore {
  *  Registry
  *
  * */
+DataJSON.addClass(CSVStore);
+DataStore.addStore(CSVStore);
 
 declare module './Types' {
     interface DataStoreTypeRegistry {
-        CSV: typeof CSVStore;
+        CSVStore: typeof CSVStore;
     }
 }
+
 
 /* *
  *
