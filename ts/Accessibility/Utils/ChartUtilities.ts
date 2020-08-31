@@ -78,16 +78,14 @@ function getChartTitle(chart: Highcharts.AccessibilityChart): string {
  * @return {string}
  */
 function getAxisDescription(axis: Highcharts.Axis): string {
-    return stripHTMLTags(
-        axis && (
-            axis.userOptions && axis.userOptions.accessibility &&
-                axis.userOptions.accessibility.description ||
-            axis.axisTitle && axis.axisTitle.textStr ||
-            axis.options.id ||
-            axis.categories && 'categories' ||
-            axis.dateTime && 'Time' ||
-            'values'
-        )
+    return axis && (
+        axis.userOptions && axis.userOptions.accessibility &&
+            axis.userOptions.accessibility.description ||
+        axis.axisTitle && axis.axisTitle.textStr ||
+        axis.options.id ||
+        axis.categories && 'categories' ||
+        axis.dateTime && 'Time' ||
+        'values'
     );
 }
 

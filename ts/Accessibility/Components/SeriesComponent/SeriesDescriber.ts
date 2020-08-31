@@ -42,7 +42,6 @@ const getPointAnnotationTexts = AnnotationsA11y.getPointAnnotationTexts;
 
 import HTMLUtilities from '../../Utils/HTMLUtilities.js';
 const {
-    escapeStringForHTML,
     reverseChildNodes,
     stripHTMLTagsFromString: stripHTMLTags
 } = HTMLUtilities;
@@ -537,14 +536,12 @@ function setPointScreenReaderAttribs(
     var series = point.series,
         a11yPointOptions = series.chart.options.accessibility.point || {},
         seriesA11yOptions = series.options.accessibility || {},
-        label = escapeStringForHTML(
-            stripHTMLTags(
-                seriesA11yOptions.pointDescriptionFormatter &&
-                seriesA11yOptions.pointDescriptionFormatter(point) ||
-                a11yPointOptions.descriptionFormatter &&
-                a11yPointOptions.descriptionFormatter(point) ||
-                defaultPointDescriptionFormatter(point)
-            )
+        label = stripHTMLTags(
+            seriesA11yOptions.pointDescriptionFormatter &&
+            seriesA11yOptions.pointDescriptionFormatter(point) ||
+            a11yPointOptions.descriptionFormatter &&
+            a11yPointOptions.descriptionFormatter(point) ||
+            defaultPointDescriptionFormatter(point)
         );
 
     pointElement.setAttribute('role', 'img');
@@ -653,12 +650,10 @@ function describeSeriesElement(
     seriesElement.style.outline = '0'; // Don't show browser outline on click, despite tabindex
     seriesElement.setAttribute(
         'aria-label',
-        escapeStringForHTML(
-            stripHTMLTags(
-                (a11yOptions.series as any).descriptionFormatter &&
-                (a11yOptions.series as any).descriptionFormatter(series) ||
-                defaultSeriesDescriptionFormatter(series)
-            )
+        stripHTMLTags(
+            (a11yOptions.series as any).descriptionFormatter &&
+            (a11yOptions.series as any).descriptionFormatter(series) ||
+            defaultSeriesDescriptionFormatter(series)
         )
     );
 }

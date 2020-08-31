@@ -108,11 +108,11 @@ extend(ContainerComponent.prototype, /** @lends Highcharts.ContainerComponent */
      */
     setSVGContainerLabel: function (this: Highcharts.ContainerComponent): void {
         var chart = this.chart,
-            svgContainerLabel = stripHTMLTags(chart.langFormat(
+            svgContainerLabel = chart.langFormat(
                 'accessibility.svgContainerLabel', {
                     chartTitle: getChartTitle(chart)
                 }
-            ));
+            );
 
         if (chart.renderer.box && svgContainerLabel.length) {
             chart.renderer.box.setAttribute('aria-label', svgContainerLabel);
@@ -174,10 +174,8 @@ extend(ContainerComponent.prototype, /** @lends Highcharts.ContainerComponent */
         if (credits) {
             if (credits.textStr) {
                 credits.element.setAttribute(
-                    'aria-label', stripHTMLTags(
-                        chart.langFormat(
-                            'accessibility.credits', { creditsStr: credits.textStr }
-                        )
+                    'aria-label', chart.langFormat(
+                        'accessibility.credits', { creditsStr: credits.textStr }
                     )
                 );
             }

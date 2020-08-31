@@ -160,8 +160,7 @@ function setElAttrs(
         if (val === null) {
             el.removeAttribute(attr);
         } else {
-            var cleanedVal = escapeStringForHTML('' + val);
-            el.setAttribute(attr, cleanedVal);
+            el.setAttribute(attr, val);
         }
     });
 }
