@@ -34,8 +34,8 @@ var merge = U.merge;
 /**
  * Class that handles creating a datastore from an HTML table
  */
-var HTMLTableDataStore = /** @class */ (function (_super) {
-    __extends(HTMLTableDataStore, _super);
+var HTMLTableStore = /** @class */ (function (_super) {
+    __extends(HTMLTableStore, _super);
     /* *
      *
      *  Constructors
@@ -47,18 +47,18 @@ var HTMLTableDataStore = /** @class */ (function (_super) {
      * @param {DataTable} table
      * Optional DataTable to create the store from
      *
-     * @param {HTMLTableDataStore.OptionsType} options
+     * @param {HTMLTableStore.OptionsType} options
      * Options for the store and parser
      *
      * @param {DataParser} parser
      * Optional parser to replace the default parser
      */
-    function HTMLTableDataStore(table, options, parser) {
+    function HTMLTableStore(table, options, parser) {
         if (table === void 0) { table = new DataTable(); }
         if (options === void 0) { options = {}; }
         var _this = _super.call(this, table) || this;
         _this.tableElement = null;
-        _this.options = merge(HTMLTableDataStore.defaultOptions, options);
+        _this.options = merge(HTMLTableStore.defaultOptions, options);
         _this.parser = parser || new HTMLTableParser(_this.options, _this.tableElement);
         return _this;
     }
@@ -70,21 +70,21 @@ var HTMLTableDataStore = /** @class */ (function (_super) {
     /**
      * Creates an HTMLTableStore from ClassJSON
      *
-     * @param {HTMLTableDataStore.ClassJSON} json
+     * @param {HTMLTableStore.ClassJSON} json
      * Class JSON (usually with a $class property) to convert.
      *
-     * @return {HTMLTableDataStore}
+     * @return {HTMLTableStore}
      * HTMLTableStore from the ClassJSON
      */
-    HTMLTableDataStore.fromJSON = function (json) {
-        var options = json.options, parser = HTMLTableParser.fromJSON(json.parser), table = DataTable.fromJSON(json.table), store = new HTMLTableDataStore(table, options, parser);
+    HTMLTableStore.fromJSON = function (json) {
+        var options = json.options, parser = HTMLTableParser.fromJSON(json.parser), table = DataTable.fromJSON(json.table), store = new HTMLTableStore(table, options, parser);
         store.describe(DataStore.getMetadataFromJSON(json.metadata));
         return store;
     };
     /**
      * Handles retrieving the HTML table by ID if an ID is provided
      */
-    HTMLTableDataStore.prototype.fetchTable = function () {
+    HTMLTableStore.prototype.fetchTable = function () {
         var store = this, tableHTML = store.options.tableHTML;
         var tableElement;
         if (typeof tableHTML === 'string') {
@@ -107,7 +107,7 @@ var HTMLTableDataStore = /** @class */ (function (_super) {
      * @emits HTMLTableDataStore#afterLoad
      * @emits HTMLTableDataStore#loadError
      */
-    HTMLTableDataStore.prototype.load = function (eventDetail) {
+    HTMLTableStore.prototype.load = function (eventDetail) {
         var store = this;
         store.fetchTable();
         store.emit({
@@ -141,9 +141,9 @@ var HTMLTableDataStore = /** @class */ (function (_super) {
      * @param {DataEventEmitter.EventDetail} [eventDetail]
      * Custom information for pending events.
      */
-    HTMLTableDataStore.prototype.save = function (eventDetail) {
+    HTMLTableStore.prototype.save = function (eventDetail) {
     };
-    HTMLTableDataStore.prototype.toJSON = function () {
+    HTMLTableStore.prototype.toJSON = function () {
         var store = this, json = {
             $class: 'HTMLTableDataStore',
             metadata: store.getMetadataJSON(),
@@ -159,20 +159,20 @@ var HTMLTableDataStore = /** @class */ (function (_super) {
      *  Static Properties
      *
      * */
-    HTMLTableDataStore.defaultOptions = {
+    HTMLTableStore.defaultOptions = {
         tableHTML: ''
     };
-    return HTMLTableDataStore;
+    return HTMLTableStore;
 }(DataStore));
 /* *
  *
  *  Register
  *
  * */
-DataJSON.addClass(HTMLTableDataStore);
+DataJSON.addClass(HTMLTableStore);
 /* *
  *
  *  Export
  *
  * */
-export default HTMLTableDataStore;
+export default HTMLTableStore;

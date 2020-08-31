@@ -1,4 +1,4 @@
-import HTMLTableDataStore from '/base/js/Data/Stores/HTMLTableDataStore.js'
+import HTMLTableStore from '/base/js/Data/Stores/HTMLTableStore.js'
 import HTMLTableParser from '/base/js/Data/Parsers/HTMLTableParser.js'
 import U from '/base/js/Core/Utilities.js';
 import { registerStoreEvents, testExportedDataTable } from '../utils.js'
@@ -268,13 +268,13 @@ const tableHTML = `<table id="data">
 </tr>
 </table>`;
 
-test('HTMLTableDataStore from HTML element', function (assert) {
+test('HTMLTableStore from HTML element', function (assert) {
     const registeredEvents = [];
 
     const tableElement = createElement('div');
     tableElement.innerHTML = tableHTML;
 
-    const datastore = new HTMLTableDataStore(undefined, { tableHTML: tableElement });
+    const datastore = new HTMLTableStore(undefined, { tableHTML: tableElement });
 
     const doneLoading = assert.async();
 
@@ -292,7 +292,7 @@ test('HTMLTableDataStore from HTML element', function (assert) {
             'Datastore loaded from HTML element has same amount of rows'
         )
 
-        const datastoreFromJSON = HTMLTableDataStore.fromJSON(datastore.toJSON());
+        const datastoreFromJSON = HTMLTableStore.fromJSON(datastore.toJSON());
         datastoreFromJSON.load();
 
         testExportedDataTable(e.table, datastoreFromJSON.table, assert);

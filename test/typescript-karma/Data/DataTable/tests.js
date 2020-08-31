@@ -1,4 +1,4 @@
-import DataRow from '/base/js/Data/DataRow.js';
+import DataRow from '/base/js/Data/DataTableRow.js';
 import DataTable from '/base/js/Data/DataTable.js';
 
 QUnit.test('DataTable and DataRow events', function (assert) {
