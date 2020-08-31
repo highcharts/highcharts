@@ -100,7 +100,7 @@ var RangeDataModifier = /** @class */ (function (_super) {
             }
             for (var j = 0, jEnd = rows.length; j < jEnd; ++j) {
                 row = rows[j];
-                column = row.getColumn(range.column);
+                column = row.getCell(range.column);
                 /* eslint-disable @typescript-eslint/indent */
                 switch (typeof column) {
                     default:

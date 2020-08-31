@@ -30,11 +30,11 @@ export function testExportedDataTable(originalTable, exportedTable, assert) {
     assert.strictEqual(
         exportedTable.getRowCount(),
         originalTable.getRowCount(),
-        'Exported ClassJSON has same amount of rows'
+        'Exported ClassJSON should have the same amount of rows.'
     )
     assert.strictEqual(
-        exportedTable.getRow(0).getColumnCount(),
-        originalTable.getRow(0).getColumnCount(),
-        'Exported ClassJSON has same amount of columns'
+        exportedTable.getRow(0).getCellCount(),
+        originalTable.getRow(0).getCellCount(),
+        'Exported ClassJSON should have the same amount of cells.'
     )
 }

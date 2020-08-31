@@ -65,11 +65,14 @@ var DataTable = /** @class */ (function () {
      * array needs to be structured like a DataFrame, so that the first
      * dimension becomes the columns and the second dimension the rows.
      *
-     * @param {Array<Array<DataValueType>>} [columns]
+     * @param {Array<Array<DataFrame.ValueType>>} [columns]
      * Array to convert.
      *
      * @param {Array<string>} [headers]
      * Column names to use.
+     *
+     * @param {DataConverter} [converter]
+     * Converter for value conversions in table rows.
      *
      * @return {DataTable}
      * DataTable instance from the arrays.
@@ -85,7 +88,7 @@ var DataTable = /** @class */ (function () {
             while (i < rowsLength) {
                 var row = new DataTableRow();
                 for (var j = 0; j < columnsLength; ++j) {
-                    row.insertColumn((headers.length ? headers[j] : uniqueKey()), columns[j][i]);
+                    row.insertCell((headers.length ? headers[j] : uniqueKey()), columns[j][i]);
                 }
                 table.insertRow(row);
                 ++i;
@@ -197,7 +200,7 @@ var DataTable = /** @class */ (function () {
      * @param {number|string} row
      * Row index or row ID.
      *
-     * @return {DataTableRow.ColumnValueType}
+     * @return {DataTableRow.CellType}
      * Column value of the column in this row.
      */
     DataTable.prototype.getRow = function (row) {
@@ -227,6 +230,36 @@ var DataTable = /** @class */ (function () {
      */
     DataTable.prototype.getVersionTag = function () {
         return this.versionTag || (this.versionTag = uniqueKey());
+    };
+    DataTable.prototype.insertColumn = function (column, cells, eventDetail) {
+        var _a;
+        var table = this, rowsIdMap = table.rowsIdMap, uniqueColumn = uniqueKey();
+        if (cells instanceof Array) {
+            var record = {};
+            for (var i = 0, iEnd = cells.length; i < iEnd; ++i) {
+                record["" + i] = cells[i];
+            }
+            cells = record;
+        }
+        var rowIds = Object.keys(cells);
+        var row, rowId, success = false;
+        for (var i = 0, iEnd = rowIds.length; i < iEnd; ++i) {
+            rowId = rowIds[i];
+            row = rowsIdMap[rowId];
+            if (!row) {
+                row = new DataTableRow((_a = {},
+                    _a[rowId] = cells[rowId],
+                    _a));
+                success = success && table.insertRow(row);
+            }
+            else {
+                if (typeof column === 'number') {
+                    column = (row.getCellNames()[column] || uniqueColumn);
+                }
+                success = success && row.insertCell(column, cells[rowId]);
+            }
+        }
+        return success;
     };
     /**
      * Adds a row to this table.
@@ -292,9 +325,9 @@ var DataTable = /** @class */ (function () {
             fireEvent(table, 'afterUpdateRow', { detail: e.detail, index: index, row: row });
         }
         watchs.push(row.on('afterClearRow', callback));
-        watchs.push(row.on('afterDeleteColumn', callback));
-        watchs.push(row.on('afterInsertColumn', callback));
-        watchs.push(row.on('afterUpdateColumn', callback));
+        watchs.push(row.on('afterDeleteCell', callback));
+        watchs.push(row.on('afterInsertCell', callback));
+        watchs.push(row.on('afterUpdateCell', callback));
         watchsIdMap[row.id] = watchs;
     };
     /**

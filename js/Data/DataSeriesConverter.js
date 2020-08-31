@@ -43,7 +43,7 @@ var DataSeriesConverter = /** @class */ (function () {
         for (var i = 0, iEnd = table.getRowCount(); i < iEnd; i++) {
             row = table.getRow(i);
             if (row) {
-                column = row.getColumn(columnIndex);
+                column = row.getCell(columnIndex);
                 if (typeof column === 'number') {
                     dataOptions.push(seriesTypeData(column));
                 }
@@ -88,7 +88,7 @@ var DataSeriesConverter = /** @class */ (function () {
         var table = this.table, seriesOptions = [], row = table.getRow(0);
         var seriesData;
         if (row) {
-            for (var i = 0, iEnd = row.getColumnCount(); i < iEnd; i++) {
+            for (var i = 0, iEnd = row.getCellCount(); i < iEnd; i++) {
                 seriesData = this.getSeriesData(i);
                 if (seriesData.length > 0) {
                     seriesOptions.push({
@@ -160,7 +160,7 @@ var DataSeriesConverter = /** @class */ (function () {
                     table.insertRow(row, eventDetail);
                 }
                 else if (columns[y]) {
-                    row.insertColumn(y, columns[y], eventDetail);
+                    row.insertCell(y, columns[y], eventDetail);
                 }
             }
         }

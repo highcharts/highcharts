@@ -100,7 +100,7 @@ var GroupDataModifier = /** @class */ (function (_super) {
         for (var i = 0, iEnd = table.getRowCount(); i < iEnd; ++i) {
             row = table.getRow(i);
             if (row) {
-                value = row.getColumn(groupColumn);
+                value = row.getCell(groupColumn);
                 if (value instanceof DataTable ||
                     value instanceof Date ||
                     (invalidValues &&

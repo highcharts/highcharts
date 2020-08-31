@@ -74,7 +74,7 @@ class DataSeriesConverter {
             row = table.getRow(i);
 
             if (row) {
-                column = row.getColumn(columnIndex);
+                column = row.getCell(columnIndex);
 
                 if (typeof column === 'number') {
                     dataOptions.push(
@@ -134,7 +134,7 @@ class DataSeriesConverter {
         let seriesData;
 
         if (row) {
-            for (let i = 0, iEnd = row.getColumnCount(); i < iEnd; i++) {
+            for (let i = 0, iEnd = row.getCellCount(); i < iEnd; i++) {
 
                 seriesData = this.getSeriesData(i);
 
@@ -156,7 +156,7 @@ class DataSeriesConverter {
         const table = this.table,
             columnMap = (this.options || {}).columnMap || {};
 
-        let columns: Record<string, DataTableRow.ColumnValueType>,
+        let columns: Record<string, DataTableRow.CellType>,
             series,
             pointArrayMap,
             pointArrayMapLength,
@@ -215,7 +215,7 @@ class DataSeriesConverter {
 
                 } else if (elem instanceof Object) {
                     if (needsArrayMap) {
-                        const elemSet = elem as Record<string, DataTableRow.ColumnValueType>;
+                        const elemSet = elem as Record<string, DataTableRow.CellType>;
 
                         for (let k = 0; k < pointArrayMapLength; k++) {
                             yValueName = columnMap[pointArrayMap[k]] ?
@@ -237,7 +237,7 @@ class DataSeriesConverter {
                     row = new DataTableRow(columns);
                     table.insertRow(row, eventDetail);
                 } else if (columns[y]) {
-                    row.insertColumn(y, columns[y], eventDetail);
+                    row.insertCell(y, columns[y], eventDetail);
                 }
             }
         }

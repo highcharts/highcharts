@@ -31,7 +31,7 @@ QUnit.test('RangeDataModifier.execute', function (assert) {
 
     assert.ok(
         modifiedTable !== table &&
-        modifiedTable.getRow(0).getColumn('table') instanceof DataTable,
+        modifiedTable.getRow(0).getCell('table') instanceof DataTable,
         'Filtered table should contain subtables.'
     );
 

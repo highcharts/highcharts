@@ -57,7 +57,7 @@ implements DataEventEmitter<DataTableRow.EventObject>, DataJSON.Class {
      */
     public static fromJSON(json: DataTableRow.ClassJSON): DataTableRow {
         const keys = Object.keys(json).reverse(),
-            columns: DataTableRow.Columns = {};
+            columns: DataTableRow.Cells = {};
 
         let columnName: (string|undefined),
             columnValue: (DataJSON.Primitives|DataTable.ClassJSON|Array<DataTableRow.ClassJSON>),
@@ -102,31 +102,31 @@ implements DataEventEmitter<DataTableRow.EventObject>, DataJSON.Class {
     /**
      * Constructs an instance of the DataTableRow class.
      *
-     * @param {DataTableRow.Columns} [columns]
-     * Column values in a record object.
+     * @param {DataTableRow.Cells} [cells]
+     * Cell values in a record object.
      *
      * @param {DataConverter} [converter]
      * Converter for value conversions.
      */
     constructor(
-        columns: DataTableRow.Columns = {},
+        cells: DataTableRow.Cells = {},
         converter: DataConverter = new DataConverter()
     ) {
-        columns = merge(columns);
+        cells = merge(cells);
 
         this.autoId = false;
-        this.columnNames = Object.keys(columns);
-        this.columns = columns;
+        this.cellNames = Object.keys(cells);
+        this.cells = cells;
         this.converter = converter;
 
-        if (typeof columns.id === 'string') {
-            this.id = columns.id;
+        if (typeof cells.id === 'string') {
+            this.id = cells.id;
         } else {
             this.autoId = true;
             this.id = uniqueKey();
         }
 
-        delete columns.id;
+        delete cells.id;
     }
 
     /* *
@@ -136,21 +136,21 @@ implements DataEventEmitter<DataTableRow.EventObject>, DataJSON.Class {
      * */
 
     /**
-     * Indicates an automatically generated id, if no id column was provided.
+     * Indicates an automatically generated id, if no ID-cell was provided.
      */
     public autoId: boolean;
 
     /**
-     * Names of all containing columns.
+     * Names of all containing cells.
      * @private
      */
-    private columnNames: Array<string>;
+    private cellNames: Array<string>;
 
     /**
-     * Record object of all columnNames with their values in this rows.
+     * Record object of all cell names with their values in this rows.
      * @private
      */
-    private columns: DataTableRow.Columns;
+    private cells: DataTableRow.Cells;
 
     /**
      * Converter for value conversions.
@@ -169,7 +169,7 @@ implements DataEventEmitter<DataTableRow.EventObject>, DataJSON.Class {
      * */
 
     /**
-     * Removes all columns with the values from this row.
+     * Removes all cells from this row.
      *
      * @param {DataEventEmitter.EventDetail} [eventDetail]
      * Custom information for pending events.
@@ -181,17 +181,17 @@ implements DataEventEmitter<DataTableRow.EventObject>, DataJSON.Class {
 
         this.emit({ type: 'clearRow', detail: eventDetail });
 
-        this.columnNames.length = 0;
-        this.columns.length = 0;
+        this.cellNames.length = 0;
+        this.cells.length = 0;
 
         this.emit({ type: 'afterClearRow', detail: eventDetail });
     }
 
     /**
-     * Deletes a column in this row.
+     * Deletes a cell in this row.
      *
-     * @param {string} columnName
-     * Name of the column to delete.
+     * @param {string} cell
+     * Cell name.
      *
      * @param {DataEventEmitter.EventDetail} [eventDetail]
      * Custom information for pending events.
@@ -199,34 +199,39 @@ implements DataEventEmitter<DataTableRow.EventObject>, DataJSON.Class {
      * @return {boolean}
      * Returns true, if the delete was successful, otherwise false.
      *
-     * @emits DataTableRow#deleteColumn
-     * @emits DataTableRow#afterDeleteColumn
+     * @emits DataTableRow#deleteCell
+     * @emits DataTableRow#afterDeleteCell
      */
-    public deleteColumn(
-        columnName: string,
+    public deleteCell(
+        cell: (number|string),
         eventDetail?: DataEventEmitter.EventDetail
     ): boolean {
-        const row = this,
-            columnValue = row.columns[columnName];
+        const row = this;
 
-        if (columnName === 'id') {
+        if (typeof cell === 'number') {
+            cell = (row.cellNames[cell] || '');
+        }
+
+        const cellValue = row.cells[cell];
+
+        if (cell === 'id') {
             return false;
         }
 
         this.emit({
-            type: 'deleteColumn',
-            columnName: columnName,
-            columnValue,
+            type: 'deleteCell',
+            cellName: cell,
+            cellValue: cellValue,
             detail: eventDetail
         });
 
-        row.columnNames.splice(row.columnNames.indexOf(columnName), 1);
-        delete row.columns[columnName];
+        row.cellNames.splice(row.cellNames.indexOf(cell), 1);
+        delete row.cells[cell];
 
         this.emit({
-            type: 'afterDeleteColumn',
-            columnName: columnName,
-            columnValue,
+            type: 'afterDeleteCell',
+            cellName: cell,
+            cellValue: cellValue,
             detail: eventDetail
         });
 
@@ -245,169 +250,169 @@ implements DataEventEmitter<DataTableRow.EventObject>, DataJSON.Class {
     }
 
     /**
-     * Returns a copy of the record object of all columnNames with their values.
+     * Returns a copy of the record object of all cell names with their values.
      *
-     * @return {DataTableRow.Columns}
-     * Copy of the record object of all columnNames with their values.
+     * @return {DataTableRow.Cells}
+     * Copy of the record object with all cell names and values.
      */
-    public getAllColumns(): DataTableRow.Columns {
-        return merge(this.columns);
+    public getAllCells(): DataTableRow.Cells {
+        return merge(this.cells);
     }
 
     /**
-     * Returns the value of the given column name or column index.
+     * Returns the value of the given cell name or cell index.
      *
-     * @param {number|string} column
-     * Column name or column index.
+     * @param {number|string} cell
+     * Cell name or cell index.
      *
-     * @return {DataTableRow.ColumnValueType}
-     * Column value of the column in this row.
+     * @return {DataTableRow.CellType}
+     * Cell value in this row.
      */
-    public getColumn(column: (number|string)): DataTableRow.ColumnValueType {
+    public getCell(cell: (number|string)): DataTableRow.CellType {
 
-        if (typeof column === 'number') {
-            return this.columns[this.columnNames[column]];
+        if (typeof cell === 'number') {
+            return this.cells[this.cellNames[cell]];
         }
 
-        return this.columns[column];
+        return this.cells[cell];
     }
 
     /**
-     * Converts the value of the given column name or column index to a boolean
-     * and returns it.
-     *
-     * @param {number|string} column
-     * Column name or column index.
-     *
-     * @return {boolean}
-     * Converted column value of the column in this row.
-     */
-    public getColumnAsBoolean(column: (number|string)): boolean {
-        return this.converter.asBoolean(this.getColumn(column));
-    }
-
-    /**
-     * Converts the value of the given column name or column index to a
-     * DataTable and returns it.
-     *
-     * @param {number|string} column
-     * Column name or column index.
-     *
-     * @return {DataTable}
-     * Converted column value of the column in this row.
-     */
-    public getColumnAsDataTable(column: (number|string)): DataTable {
-        return this.converter.asDataTable(this.getColumn(column));
-    }
-
-    /**
-     * Converts the value of the given column name or column index to a Date and
+     * Converts the value of the given cell name or cell index to a boolean and
      * returns it.
      *
-     * @param {number|string} column
-     * Column name or column index.
+     * @param {number|string} cell
+     * Cell name or cell index.
+     *
+     * @return {boolean}
+     * Converted cell value of the cell in this row.
+     */
+    public getCellAsBoolean(cell: (number|string)): boolean {
+        return this.converter.asBoolean(this.getCell(cell));
+    }
+
+    /**
+     * Converts the value of the given cell name or cell index to a DataTable
+     * and returns it.
+     *
+     * @param {number|string} cell
+     * Cell name or cell index.
+     *
+     * @return {DataTable}
+     * Converted cell value of the cell in this row.
+     */
+    public getCellAsDataTable(cell: (number|string)): DataTable {
+        return this.converter.asDataTable(this.getCell(cell));
+    }
+
+    /**
+     * Converts the value of the given cell name or cell index to a Date and
+     * returns it.
+     *
+     * @param {number|string} cell
+     * Cell name or cell index.
      *
      * @return {Date}
-     * Converted column value of the column in this row.
+     * Converted cell value of the cell in this row.
      */
-    public getColumnAsDate(column: (number|string)): Date {
-        return this.converter.asDate(this.getColumn(column));
+    public getCellAsDate(cell: (number|string)): Date {
+        return this.converter.asDate(this.getCell(cell));
     }
 
     /**
-     * Converts the value of the given column name or column index to a number
-     * and returns it.
+     * Converts the value of the given cell name or cell index to a number and
+     * returns it.
      *
-     * @param {number|string} column
-     * Column name or column index.
+     * @param {number|string} cell
+     * Cell name or cell index.
      *
      * @return {number}
-     * Converted column value of the column in this row.
+     * Converted cell value of the cell in this row.
      */
-    public getColumnAsNumber(column: (number|string)): number {
-        return this.converter.asNumber(this.getColumn(column));
+    public getCellAsNumber(cell: (number|string)): number {
+        return this.converter.asNumber(this.getCell(cell));
     }
 
     /**
-     * Converts the value of the given column name or column index to a string
-     * and returns it.
+     * Converts the value of the given cell name or cell index to a string and
+     * returns it.
      *
-     * @param {number|string} column
-     * Column name or column index.
+     * @param {number|string} cell
+     * Cell name or cell index.
      *
      * @return {string}
-     * Converted column value of the column in this row.
+     * Converted cell value of the cell in this row.
      */
-    public getColumnAsString(column: (number|string)): string {
-        return this.converter.asString(this.getColumn(column));
+    public getCellAsString(cell: (number|string)): string {
+        return this.converter.asString(this.getCell(cell));
     }
 
     /**
-     * Returns the number of columns in this row.
+     * Returns the number of cell in this row.
      *
      * @return {number}
-     * Number of columns in this row.
+     * Number of cells in this row.
      */
-    public getColumnCount(): number {
-        return this.getColumnNames().length;
+    public getCellCount(): number {
+        return this.getCellNames().length;
     }
 
     /**
-     * Returns the column names in this row.
+     * Returns the cell names in this row.
      *
      * @return {Array<string>}
-     * Column names in this row.
+     * Cell names in this row.
      */
-    public getColumnNames(): Array<string> {
-        return this.columnNames.slice();
+    public getCellNames(): Array<string> {
+        return this.cellNames.slice();
     }
 
     /**
-     * Adds a column to this row.
+     * Adds a cell to this row.
      *
-     * @param {string} columnName
-     * Name of the column.
+     * @param {string} cellName
+     * Name of the cell.
      *
-     * @param {DataTableRow.ColumnValueType} columnValue
-     * Value of the column in this row.
+     * @param {DataTableRow.CellType} cellValue
+     * Value of the cell.
      *
      * @param {DataEventEmitter.EventDetail} [eventDetail]
      * Custom information for pending events.
      *
      * @return {boolean}
-     * Returns true, if the column was added to the row. Returns false, if
-     * `id` was used the column name, or if the column already exists.
+     * Returns true, if the cell was added to the row. Returns false, if `id`
+     * was used as cell name, or if the cell already exists.
      *
-     * @emits DataTableRow#insertColumn
-     * @emits DataTableRow#afterInsertColumn
+     * @emits DataTableRow#insertCell
+     * @emits DataTableRow#afterInsertCell
      */
-    public insertColumn(
-        columnName: string,
-        columnValue: DataTableRow.ColumnValueType,
+    public insertCell(
+        cellName: string,
+        cellValue: DataTableRow.CellType,
         eventDetail?: DataEventEmitter.EventDetail
     ): boolean {
 
         if (
-            columnName === 'id' ||
-            this.columnNames.indexOf(columnName) !== -1
+            cellName === 'id' ||
+            this.cellNames.indexOf(cellName) !== -1
         ) {
             return false;
         }
 
         this.emit({
-            type: 'insertColumn',
-            columnName,
-            columnValue,
+            type: 'insertCell',
+            cellName,
+            cellValue,
             detail: eventDetail
         });
 
-        this.columnNames.push(columnName);
-        this.columns[columnName] = columnValue;
+        this.cellNames.push(cellName);
+        this.cells[cellName] = cellValue;
 
         this.emit({
-            type: 'afterInsertColumn',
-            columnName,
-            columnValue,
+            type: 'afterInsertCell',
+            cellName,
+            cellValue,
             detail: eventDetail
         });
 
@@ -440,14 +445,14 @@ implements DataEventEmitter<DataTableRow.EventObject>, DataJSON.Class {
      * Class JSON of this row.
      */
     public toJSON(): DataTableRow.ClassJSON {
-        const columns = this.getAllColumns(),
+        const columns = this.getAllCells(),
             columnKeys = Object.keys(columns),
             json: DataTableRow.ClassJSON = {
                 $class: 'DataTableRow'
             };
 
         let key: string,
-            value: DataTableRow.ColumnValueType;
+            value: DataTableRow.CellType;
 
         if (!this.autoId) {
             json.id = this.id;
@@ -482,44 +487,48 @@ implements DataEventEmitter<DataTableRow.EventObject>, DataJSON.Class {
     }
 
     /**
-     * Updates the value of a column in this row.
+     * Updates the value of a cell in this row.
      *
-     * @param {string} columnName
-     * Column name in this row to update.
+     * @param {string} cellName
+     * Cell name in this row to update.
      *
-     * @param {DataTableRow.ColumnValueType} columnValue
-     * Column value to update to.
+     * @param {DataTableRow.CellType} cellValue
+     * Cell value to update to.
      *
      * @param {DataEventEmitter.EventDetail} [eventDetail]
      * Custom information for pending events.
      *
      * @return {boolean}
-     * True, if the column was found and updated, otherwise false.
+     * True, if the cell was found and updated, otherwise false.
      *
-     * @emits DataTableRow#updateColumn
-     * @emits DataTableRow#afterUpdateColumn
+     * @emits DataTableRow#updateCell
+     * @emits DataTableRow#afterUpdateCell
      */
-    public updateColumn(
-        columnName: string,
-        columnValue: DataTableRow.ColumnValueType,
+    public updateCell(
+        cellName: string,
+        cellValue: DataTableRow.CellType,
         eventDetail?: DataEventEmitter.EventDetail
     ): boolean {
         const row = this;
 
-        if (columnName === 'id') {
+        if (cellName === 'id') {
             return false;
         }
 
         row.emit({
-            type: 'updateColumn',
-            columnName,
-            columnValue,
+            type: 'updateCell',
+            cellName,
+            cellValue,
             detail: eventDetail
         });
 
-        row.columns[columnName] = columnValue;
+        row.cells[cellName] = cellValue;
 
-        row.emit({ type: 'afterUpdateColumn', columnName, columnValue });
+        row.emit({
+            type: 'afterUpdateCell',
+            cellName,
+            cellValue
+        });
 
         return true;
     }
@@ -533,23 +542,27 @@ implements DataEventEmitter<DataTableRow.EventObject>, DataJSON.Class {
  * */
 
 /**
- * Additionally provided types for columns, events, and JSON conversion.
+ * Additionally provided types for cells, events, and JSON conversion.
  */
 namespace DataTableRow {
 
     /**
-     * Event types related to a column of a row.
+     * Describes the information object for cell-related events.
      */
-    export type ColumnEventType = (
-        'deleteColumn'|'afterDeleteColumn'|
-        'insertColumn'|'afterInsertColumn'|
-        'updateColumn'|'afterUpdateColumn'
-    );
+    export interface CellEventObject extends DataEventEmitter.EventObject {
+        readonly type: (
+            'deleteCell'|'afterDeleteCell'|
+            'insertCell'|'afterInsertCell'|
+            'updateCell'|'afterUpdateCell'
+        );
+        readonly cellName: string;
+        readonly cellValue: CellType;
+    }
 
     /**
      * Record object with column names and their values in a row.
      */
-    export type Columns = Record<string, ColumnValueType>;
+    export type Cells = Record<string, CellType>;
 
     /**
      * Possible value types for a column in a row.
@@ -557,20 +570,8 @@ namespace DataTableRow {
      * *Please note:* `Date` and `DataTable` are not JSON-compatible and have
      * to be converted with the help of their `toJSON()` function.
      */
-    export type ColumnValueType = (
+    export type CellType = (
         boolean|null|number|string|Date|DataTable|undefined
-    );
-
-    /**
-     * All information objects of DataTableRow events.
-     */
-    export type EventObject = (ColumnEventObject|RowEventObject);
-
-    /**
-     * Event types related to the row itself.
-     */
-    export type RowEventType = (
-        'clearRow'|'afterClearRow'
     );
 
     /**
@@ -581,19 +582,17 @@ namespace DataTableRow {
     }
 
     /**
-     * Describes the information object for column-related events.
+     * All information objects of DataTableRow events.
      */
-    export interface ColumnEventObject extends DataEventEmitter.EventObject {
-        readonly type: ColumnEventType;
-        readonly columnName: string;
-        readonly columnValue: ColumnValueType;
-    }
+    export type EventObject = (CellEventObject|RowEventObject);
 
     /**
      * Describes the information object for row-related events.
      */
     export interface RowEventObject extends DataEventEmitter.EventObject {
-        readonly type: RowEventType;
+        readonly type: (
+            'clearRow'|'afterClearRow'
+        );
     }
 
 }

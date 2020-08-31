@@ -40,7 +40,7 @@ test('CSVDataStore from string', function (assert) {
         'Datastore has correct amount of rows'
     );
     assert.strictEqual(
-        datastore.table.getRow(0).getColumnCount(), csv.split('\n')[0].split(',').length,
+        datastore.table.getRow(0).getCellCount(), csv.split('\n')[0].split(',').length,
         'Datastore has correct amount of columns'
     );
 
@@ -49,7 +49,7 @@ test('CSVDataStore from string', function (assert) {
 
     testExportedDataTable(datastore.table, dataStoreFromJSON.table, assert);
 
-    const foundComment = Object.values(datastore.table.getRow(1).getAllColumns()).some((col) => { ('' + col).includes('#this is a comment') });
+    const foundComment = Object.values(datastore.table.getRow(1).getAllCells()).some((col) => { ('' + col).includes('#this is a comment') });
     assert.ok(!foundComment, 'Comment is not added to the dataTable');
 })
 
@@ -77,8 +77,8 @@ test('CSVDataStore from URL', function (assert) {
         states[pollNumber] = new CSVDataStore(e.table);
 
         if (pollNumber > 0) {
-            const currentValue = states[pollNumber].table.getRow(2).getColumnAsNumber('X');
-            const previousValue = states[pollNumber - 1].table.getRow(2).getColumnAsNumber('X')
+            const currentValue = states[pollNumber].table.getRow(2).getCellAsNumber('X');
+            const previousValue = states[pollNumber - 1].table.getRow(2).getCellAsNumber('X')
 
             assert.notStrictEqual(
                 currentValue,

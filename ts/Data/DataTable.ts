@@ -50,11 +50,14 @@ class DataTable implements DataEventEmitter<DataTable.EventObject>, DataJSON.Cla
      * array needs to be structured like a DataFrame, so that the first
      * dimension becomes the columns and the second dimension the rows.
      *
-     * @param {Array<Array<DataValueType>>} [columns]
+     * @param {Array<Array<DataFrame.ValueType>>} [columns]
      * Array to convert.
      *
      * @param {Array<string>} [headers]
      * Column names to use.
+     *
+     * @param {DataConverter} [converter]
+     * Converter for value conversions in table rows.
      *
      * @return {DataTable}
      * DataTable instance from the arrays.
@@ -72,7 +75,7 @@ class DataTable implements DataEventEmitter<DataTable.EventObject>, DataJSON.Cla
             while (i < rowsLength) {
                 const row = new DataTableRow();
                 for (let j = 0; j < columnsLength; ++j) {
-                    row.insertColumn((headers.length ? headers[j] : uniqueKey()), columns[j][i]);
+                    row.insertCell((headers.length ? headers[j] : uniqueKey()), columns[j][i]);
                 }
                 table.insertRow(row);
                 ++i;
@@ -285,7 +288,7 @@ class DataTable implements DataEventEmitter<DataTable.EventObject>, DataJSON.Cla
      * @param {number|string} row
      * Row index or row ID.
      *
-     * @return {DataTableRow.ColumnValueType}
+     * @return {DataTableRow.CellType}
      * Column value of the column in this row.
      */
     public getRow(row: (number|string)): (DataTableRow|undefined) {
@@ -319,6 +322,51 @@ class DataTable implements DataEventEmitter<DataTable.EventObject>, DataJSON.Cla
      */
     public getVersionTag(): string {
         return this.versionTag || (this.versionTag = uniqueKey());
+    }
+
+    public insertColumn(
+        column: (number|string),
+        cells: (
+            Array<DataTableRow.CellType>|Record<string, DataTableRow.CellType>
+        ),
+        eventDetail?: DataEventEmitter.EventDetail
+    ): boolean {
+        const table = this,
+            rowsIdMap = table.rowsIdMap,
+            uniqueColumn = uniqueKey();
+
+        if (cells instanceof Array) {
+            const record: Record<string, DataTableRow.CellType> = {};
+            for (let i = 0, iEnd = cells.length; i < iEnd; ++i) {
+                record[`${i}`] = cells[i];
+            }
+            cells = record;
+        }
+
+        const rowIds = Object.keys(cells);
+
+        let row: (DataTableRow|undefined),
+            rowId: string,
+            success = false;
+
+        for (let i = 0, iEnd = rowIds.length; i < iEnd; ++i) {
+            rowId = rowIds[i];
+            row = rowsIdMap[rowId];
+
+            if (!row) {
+                row = new DataTableRow({
+                    [rowId]: cells[rowId]
+                });
+                success = success && table.insertRow(row);
+            } else {
+                if (typeof column === 'number') {
+                    column = (row.getCellNames()[column] || uniqueColumn);
+                }
+                success = success && row.insertCell(column, cells[rowId]);
+            }
+        }
+
+        return success;
     }
 
     /**
@@ -403,9 +451,9 @@ class DataTable implements DataEventEmitter<DataTable.EventObject>, DataJSON.Cla
         }
 
         watchs.push(row.on('afterClearRow', callback));
-        watchs.push(row.on('afterDeleteColumn', callback));
-        watchs.push(row.on('afterInsertColumn', callback));
-        watchs.push(row.on('afterUpdateColumn', callback));
+        watchs.push(row.on('afterDeleteCell', callback));
+        watchs.push(row.on('afterInsertCell', callback));
+        watchs.push(row.on('afterUpdateCell', callback));
 
         watchsIdMap[row.id] = watchs;
     }

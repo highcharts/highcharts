@@ -140,13 +140,13 @@ class GroupDataModifier extends DataModifier {
             valueGroups: Array<DataJSON.Primitives> = [];
 
         let row: (DataTableRow|undefined),
-            value: DataTableRow.ColumnValueType,
+            value: DataTableRow.CellType,
             valueIndex: number;
 
         for (let i = 0, iEnd = table.getRowCount(); i < iEnd; ++i) {
             row = table.getRow(i);
             if (row) {
-                value = row.getColumn(groupColumn);
+                value = row.getCell(groupColumn);
                 if (
                     value instanceof DataTable ||
                     value instanceof Date ||

@@ -35,7 +35,7 @@ var DataConverter = /** @class */ (function () {
     /**
      * Converts a value to a boolean.
      *
-     * @param {DataConverter.Types} value
+     * @param {DataConverter.Type} value
      * Value to convert.
      *
      * @return {boolean}
@@ -53,7 +53,7 @@ var DataConverter = /** @class */ (function () {
     /**
      * Converts a value to a DataTable.
      *
-     * @param {DataConverter.Types} value
+     * @param {DataConverter.Type} value
      * Value to convert.
      *
      * @return {DataTable}
@@ -76,7 +76,7 @@ var DataConverter = /** @class */ (function () {
     /**
      * Converts a value to a Date.
      *
-     * @param {DataConverter.Types} value
+     * @param {DataConverter.Type} value
      * Value to convert.
      *
      * @return {globalThis.Date}
@@ -91,7 +91,7 @@ var DataConverter = /** @class */ (function () {
     /**
      * Converts a value to a number.
      *
-     * @param {DataConverter.Types} value
+     * @param {DataConverter.Type} value
      * Value to convert.
      *
      * @return {number}
@@ -118,7 +118,7 @@ var DataConverter = /** @class */ (function () {
     /**
      * Converts a value to a string.
      *
-     * @param {DataConverter.Types} value
+     * @param {DataConverter.Type} value
      * Value to convert.
      *
      * @return {string}

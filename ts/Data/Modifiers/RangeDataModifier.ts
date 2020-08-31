@@ -137,7 +137,7 @@ class RangeDataModifier extends DataModifier {
             rows = table.getAllRows(),
             result = new DataTable();
 
-        let column: DataTableRow.ColumnValueType,
+        let column: DataTableRow.CellType,
             range: RangeDataModifier.RangeOptions,
             row: DataTableRow;
 
@@ -155,7 +155,7 @@ class RangeDataModifier extends DataModifier {
 
             for (let j = 0, jEnd = rows.length; j < jEnd; ++j) {
                 row = rows[j];
-                column = row.getColumn(range.column);
+                column = row.getCell(range.column);
 
                 /* eslint-disable @typescript-eslint/indent */
                 switch (typeof column) {
