@@ -664,13 +664,19 @@ class GridAxis {
                     ): boolean {
                         return (p as any)[axis.isXAxis ? 'x' : 'y'] === value;
                     });
+                let pointCopy;
 
+                if (point && series.is('gantt')) {
+                    // For the Gantt set point aliases to the pointCopy
+                    // to do not change the original point
+                    pointCopy = merge(point);
+                    H.seriesTypes.gantt.prototype.setGanttPointAliases(pointCopy as any);
+                }
                 // Make additional properties available for the
                 // formatter
                 this.isFirst = isFirst;
                 this.isLast = isLast;
-                this.point = point;
-
+                this.point = pointCopy;
                 // Call original labelFormatter
                 return proceed.call(this);
             });

@@ -31,6 +31,13 @@ const {
  */
 declare global {
     namespace Highcharts {
+        type GanttDependencyOption =
+            (
+                string|
+                GanttConnectorsOptions|
+                Array<GanttConnectorsOptions>|
+                Array<string>
+            );
         class GanttPoint extends XRangePoint {
             public end?: GanttPointOptions['end'];
             public milestone?: GanttPointOptions['milestone'];
@@ -318,14 +325,12 @@ BaseSeries.seriesType<typeof Highcharts.GanttSeries>('gantt', 'xrange'
                     (options as any)[prop] = val;
                 }
             }
+
             addIfExists('x', pick(options.start, options.x));
             addIfExists('x2', pick(options.end, options.x2));
             addIfExists(
                 'partialFill', pick(options.completed, options.partialFill)
             );
-            addIfExists('connect', pick(
-                options.dependency, options.connect as any
-            ));
         }
 
         /* eslint-enable valid-jsdoc */
@@ -356,15 +361,15 @@ BaseSeries.seriesType<typeof Highcharts.GanttSeries>('gantt', 'xrange'
             this: Highcharts.GanttPoint,
             options: Highcharts.GanttPointOptions,
             x: number
-        ): Point {
+        ): Highcharts.GanttPoint {
             var point = this,
-                retVal = merge(options) as any;
+                ganttPoint;
 
-            H.seriesTypes.gantt.prototype.setGanttPointAliases(retVal);
+            ganttPoint = parent.prototype.pointClass.prototype.applyOptions
+                .call(point, options, x) as Highcharts.GanttPoint;
+            H.seriesTypes.gantt.prototype.setGanttPointAliases(ganttPoint as Highcharts.GanttPointOptions);
 
-            retVal = parent.prototype.pointClass.prototype.applyOptions
-                .call(point, retVal, x);
-            return retVal;
+            return ganttPoint;
         },
         isValid: function (this: Highcharts.GanttPoint): boolean {
             return (

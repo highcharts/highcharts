@@ -11,6 +11,7 @@
 
 'use strict';
 
+import H from '../Globals.js';
 import type AxisTypes from './Types';
 import type Chart from '../Chart/Chart';
 import Axis from './Axis.js';
@@ -24,6 +25,7 @@ const {
     addEvent,
     find,
     fireEvent,
+    isArray,
     isNumber,
     isObject,
     isString,
@@ -261,7 +263,7 @@ namespace TreeGridAxis {
                     hasSameName = function (x: GridNode): boolean {
                         return x.name === name;
                     },
-                    gridNode: (GridNode|undefined),
+                    gridNode: (GridNode | undefined),
                     pos;
 
                 // If not unique names, look for sibling node with the same name
@@ -409,7 +411,7 @@ namespace TreeGridAxis {
                     labelOptions = options.labels,
                     uniqueNames = options.uniqueNames,
                     numberOfSeries = 0,
-                    isDirty: (boolean|undefined),
+                    isDirty: (boolean | undefined),
                     data: Array<PointOptionsObject>,
                     treeGrid: TreeGridObject,
                     max = options.max;
@@ -435,6 +437,13 @@ namespace TreeGridAxis {
                         if (s.visible) {
                             // Push all data to array
                             (s.options.data || []).forEach(function (data): void {
+                                // For using keys - rebuild the data structure
+                                if (s.options.keys && s.options.keys.length) {
+
+                                    data = s.pointClass.prototype.optionsToObject.call({ series: s }, data);
+                                    H.seriesTypes.gantt.prototype.setGanttPointAliases(data);
+
+                                }
                                 if (isObject(data, true)) {
                                     // Set series index on data. Removed again
                                     // after use.
@@ -479,15 +488,25 @@ namespace TreeGridAxis {
 
                     // Update yData now that we have calculated the y values
                     axis.series.forEach(function (series: Highcharts.Series): void {
-                        var data = (series.options.data || []).map(function (
+                        var axisData = (series.options.data || []).map(function (
                             d: Highcharts.PointOptionsType
                         ): Highcharts.PointOptionsType {
+
+                            if (isArray(d) && series.options.keys && series.options.keys.length) {
+                                // Get the axisData from the data array used to
+                                // build the treeGrid where has been modified
+                                data.forEach(function (point: Highcharts.GanttPointOptions): void {
+                                    if ((d as any).indexOf(point.x) >= 0 && (d as any).indexOf(point.x2) >= 0) {
+                                        d = point;
+                                    }
+                                });
+                            }
                             return isObject(d, true) ? merge(d) : d;
                         });
 
                         // Avoid destroying points when series is not visible
                         if (series.visible) {
-                            series.setData(data, false);
+                            series.setData(axisData, false);
                         }
                     });
 
@@ -533,7 +552,7 @@ namespace TreeGridAxis {
             ticks = axis.ticks;
         let tick = ticks[pos],
             levelOptions,
-            options: (TreeGridAxis.Options|undefined),
+            options: (TreeGridAxis.Options | undefined),
             gridNode;
 
         if (

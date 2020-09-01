@@ -168,14 +168,6 @@ H.ganttChart = function (
 
     options.series = userOptions.series = seriesOptions;
 
-    (options.series || []).forEach(function (series): void {
-        if (series.data) {
-            series.data.forEach(function (point): void {
-                H.seriesTypes.gantt.prototype.setGanttPointAliases(point as any);
-            });
-        }
-    });
-
     return hasRenderToArg ?
         new Chart(renderTo, options, callback) :
         new Chart(options as any, options); // @todo does not look correct

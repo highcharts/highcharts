@@ -9,6 +9,7 @@
  *
  * */
 'use strict';
+import H from '../Globals.js';
 import Axis from './Axis.js';
 import Tick from './Tick.js';
 import Tree from '../../Gantt/Tree.js';
@@ -16,7 +17,7 @@ import TreeGridTick from './TreeGridTick.js';
 import mixinTreeSeries from '../../Mixins/TreeSeries.js';
 var getLevelOptions = mixinTreeSeries.getLevelOptions;
 import U from '../Utilities.js';
-var addEvent = U.addEvent, find = U.find, fireEvent = U.fireEvent, isNumber = U.isNumber, isObject = U.isObject, isString = U.isString, merge = U.merge, pick = U.pick, wrap = U.wrap;
+var addEvent = U.addEvent, find = U.find, fireEvent = U.fireEvent, isArray = U.isArray, isNumber = U.isNumber, isObject = U.isObject, isString = U.isString, merge = U.merge, pick = U.pick, wrap = U.wrap;
 import './GridAxis.js';
 import './BrokenAxis.js';
 /**
@@ -236,6 +237,11 @@ var TreeGridAxis;
                     if (s.visible) {
                         // Push all data to array
                         (s.options.data || []).forEach(function (data) {
+                            // For using keys - rebuild the data structure
+                            if (s.options.keys && s.options.keys.length) {
+                                data = s.pointClass.prototype.optionsToObject.call({ series: s }, data);
+                                H.seriesTypes.gantt.prototype.setGanttPointAliases(data);
+                            }
                             if (isObject(data, true)) {
                                 // Set series index on data. Removed again
                                 // after use.
@@ -271,12 +277,21 @@ var TreeGridAxis;
                 axis.treeGrid.tree = treeGrid.tree;
                 // Update yData now that we have calculated the y values
                 axis.series.forEach(function (series) {
-                    var data = (series.options.data || []).map(function (d) {
+                    var axisData = (series.options.data || []).map(function (d) {
+                        if (isArray(d) && series.options.keys && series.options.keys.length) {
+                            // Get the axisData from the data array used to
+                            // build the treeGrid where has been modified
+                            data.forEach(function (point) {
+                                if (d.indexOf(point.x) >= 0 && d.indexOf(point.x2) >= 0) {
+                                    d = point;
+                                }
+                            });
+                        }
                         return isObject(d, true) ? merge(d) : d;
                     });
                     // Avoid destroying points when series is not visible
                     if (series.visible) {
-                        series.setData(data, false);
+                        series.setData(axisData, false);
                     }
                 });
                 // Calculate the label options for each level in the tree.
