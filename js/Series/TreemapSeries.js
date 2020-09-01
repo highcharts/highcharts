@@ -9,25 +9,28 @@
  *  !!!!!!! SOURCE GETS TRANSPILED BY TYPESCRIPT. EDIT TS FILE ONLY. !!!!!!!
  *
  * */
-'use strict';
-import H from '../Core/Globals.js';
-import mixinTreeSeries from '../Mixins/TreeSeries.js';
-var getColor = mixinTreeSeries.getColor, getLevelOptions = mixinTreeSeries.getLevelOptions, updateRootId = mixinTreeSeries.updateRootId;
-import drawPointModule from '../Mixins/DrawPoint.js';
-var drawPoint = drawPointModule.drawPoint;
+import BaseSeries from '../Core/Series/Series.js';
+var seriesTypes = BaseSeries.seriesTypes;
 import Color from '../Core/Color.js';
 var color = Color.parse;
+import ColorMapMixin from '../Mixins/ColorMapSeries.js';
+var colorMapSeriesMixin = ColorMapMixin.colorMapSeriesMixin;
+import DrawPointMixin from '../Mixins/DrawPoint.js';
+var drawPoint = DrawPointMixin.drawPoint;
+import H from '../Core/Globals.js';
+var noop = H.noop;
 import LegendSymbolMixin from '../Mixins/LegendSymbol.js';
 import Point from '../Core/Series/Point.js';
+import TreeSeriesMixin from '../Mixins/TreeSeries.js';
+var getColor = TreeSeriesMixin.getColor, getLevelOptions = TreeSeriesMixin.getLevelOptions, updateRootId = TreeSeriesMixin.updateRootId;
 import U from '../Core/Utilities.js';
-var addEvent = U.addEvent, correctFloat = U.correctFloat, defined = U.defined, error = U.error, extend = U.extend, fireEvent = U.fireEvent, isArray = U.isArray, isNumber = U.isNumber, isObject = U.isObject, isString = U.isString, merge = U.merge, objectEach = U.objectEach, pick = U.pick, seriesType = U.seriesType, stableSort = U.stableSort;
+var addEvent = U.addEvent, correctFloat = U.correctFloat, defined = U.defined, error = U.error, extend = U.extend, fireEvent = U.fireEvent, isArray = U.isArray, isNumber = U.isNumber, isObject = U.isObject, isString = U.isString, merge = U.merge, objectEach = U.objectEach, pick = U.pick, stableSort = U.stableSort;
 import '../Core/Options.js';
-import '../Core/Series/Series.js';
+import './ScatterSeries.js';
 /* eslint-disable no-invalid-this */
 var AXIS_MAX = 100;
-var seriesTypes = H.seriesTypes, noop = H.noop, 
 // @todo Similar to eachObject, this function is likely redundant
-isBoolean = function (x) {
+var isBoolean = function (x) {
     return typeof x === 'boolean';
 }, Series = H.Series, 
 // @todo Similar to recursive, this function is likely redundant
@@ -55,7 +58,7 @@ recursive = function (item, func, context) {
  *
  * @augments Highcharts.Series
  */
-seriesType('treemap', 'scatter'
+BaseSeries.seriesType('treemap', 'scatter'
 /**
  * A treemap displays hierarchical data using nested rectangles. The data
  * can be laid out in varying ways depending on options.
@@ -580,7 +583,7 @@ seriesType('treemap', 'scatter'
         return !!this.processedXData.length; // != 0
     },
     init: function (chart, options) {
-        var series = this, colorMapSeriesMixin = H.colorMapSeriesMixin, setOptionsEvent;
+        var series = this, setOptionsEvent;
         // If color series logic is loaded, add some properties
         if (colorMapSeriesMixin) {
             this.colorAttribs = colorMapSeriesMixin.colorAttribs;

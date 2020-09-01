@@ -5,13 +5,14 @@
  *  !!!!!!! SOURCE GETS TRANSPILED BY TYPESCRIPT. EDIT TS FILE ONLY. !!!!!!!
  *
  * */
-'use strict';
-import H from '../../Core/Globals.js';
-import './ADIndicator.js';
+import BaseSeries from '../../Core/Series/Series.js';
+var seriesTypes = BaseSeries.seriesTypes;
+import RequiredIndicatorMixin from '../../Mixins/IndicatorRequired.js';
 import U from '../../Core/Utilities.js';
-var correctFloat = U.correctFloat, error = U.error, seriesType = U.seriesType;
-import requiredIndicator from '../../Mixins/IndicatorRequired.js';
-var EMA = H.seriesTypes.ema, AD = H.seriesTypes.ad;
+var correctFloat = U.correctFloat, error = U.error;
+import './ADIndicator.js';
+import './EMAIndicator.js';
+var EMA = seriesTypes.ema, AD = seriesTypes.ad;
 /**
  * The Chaikin series type.
  *
@@ -21,7 +22,7 @@ var EMA = H.seriesTypes.ema, AD = H.seriesTypes.ad;
  *
  * @augments Highcharts.Series
  */
-seriesType('chaikin', 'ema', 
+BaseSeries.seriesType('chaikin', 'ema', 
 /**
  * Chaikin Oscillator. This series requires the `linkedTo` option to
  * be set and should be loaded after the `stock/indicators/indicators.js`
@@ -72,7 +73,7 @@ seriesType('chaikin', 'ema',
     nameComponents: ['periods'],
     init: function () {
         var args = arguments, ctx = this;
-        requiredIndicator.isParentLoaded(EMA, 'ema', ctx.type, function (indicator) {
+        RequiredIndicatorMixin.isParentLoaded(EMA, 'ema', ctx.type, function (indicator) {
             indicator.prototype.init.apply(ctx, args);
             return;
         });

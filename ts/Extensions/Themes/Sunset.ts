@@ -13,13 +13,12 @@
  *
  * */
 
-'use strict';
-
-import Highcharts from '../../Core/Globals.js';
+import type { SeriesPlotOptionsType } from '../../Core/Series/Types';
+import H from '../../Core/Globals.js';
 import U from '../../Core/Utilities.js';
 const { setOptions } = U;
 
-Highcharts.theme = {
+H.theme = {
     colors: ['#FDD089', '#FF7F79', '#A0446E', '#251535'],
 
     colorAxis: {
@@ -31,7 +30,7 @@ Highcharts.theme = {
         map: {
             nullColor: '#fefefc'
         }
-    } as Highcharts.PlotOptions,
+    } as SeriesPlotOptionsType,
 
     navigator: {
         series: {
@@ -42,4 +41,4 @@ Highcharts.theme = {
 };
 
 // Apply the theme
-setOptions(Highcharts.theme);
+setOptions(H.theme);

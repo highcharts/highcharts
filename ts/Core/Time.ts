@@ -166,7 +166,7 @@ declare global {
  * this option is not needed, it will be loaded from there by default.
  *
  * @type {function}
- * @since next
+ * @since 8.2.0
  * @apioption time.moment
  */
 

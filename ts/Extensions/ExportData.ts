@@ -245,7 +245,7 @@ setOptions({
              *
              * Options for annotations in the export-data table.
              *
-             * @since    next
+             * @since 8.2.0
              * @requires modules/export-data
              * @requires modules/annotations
              *
@@ -256,7 +256,7 @@ setOptions({
                 * The way to mark the separator for annotations
                 * combined in one export-data table cell.
                 *
-                * @since   next
+                * @since 8.2.0
                 * @requires modules/annotations
                 */
                 itemDelimiter: '; ',
@@ -268,7 +268,7 @@ setOptions({
                 * @sample highcharts/export-data/join-annotations/
                 *         Concatenate point annotations with itemDelimiter set.
                 *
-                * @since   next
+                * @since 8.2.0
                 * @requires modules/annotations
                 */
                 join: false
@@ -433,7 +433,7 @@ setOptions({
         /**
          * The text for the menu item.
          *
-         * @since    next
+         * @since 8.2.0
          * @requires modules/export-data
          */
         hideData: 'Hide data table'
@@ -1284,7 +1284,7 @@ Chart.prototype.toggleDataTable = function (): void {
 
 
 // Add "Download CSV" to the exporting menu.
-var exportingOptions = getOptions().exporting;
+const exportingOptions = getOptions().exporting;
 if (exportingOptions) {
 
     extend(exportingOptions.menuItemDefinitions, {

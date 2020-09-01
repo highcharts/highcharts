@@ -15,6 +15,7 @@
 'use strict';
 
 import type SVGPath from '../Core/Renderer/SVG/SVGPath';
+import BaseSeries from '../Core/Series/Series.js';
 import Chart from '../Core/Chart/Chart.js';
 import H from '../Core/Globals.js';
 import O from '../Core/Options.js';
@@ -261,11 +262,11 @@ declare global {
 
 /* eslint-disable no-invalid-this */
 
-import '../Core/Axis/Axis.js';
-import '../Core/Series/Series.js';
+import Axis from '../Core/Axis/Axis.js';
+import '../Series/LineSeries.js';
 
 var Series = H.Series,
-    Scatter = H.seriesTypes.scatter,
+    Scatter = BaseSeries.seriesTypes.scatter,
     baseGeneratePoints = Series.prototype.generatePoints,
     stateIdCounter = 0,
     // Points that ids are included in the oldPointsStateId array
@@ -298,7 +299,7 @@ var Series = H.Series,
  *
  * @private
  */
-var clusterDefaultOptions = {
+const clusterDefaultOptions = {
     /**
      * Whether to enable the marker-clusters module.
      *
@@ -2391,7 +2392,7 @@ addEvent(Point, 'drillToCluster', function (
 });
 
 // Destroy the old tooltip after zoom.
-addEvent(H.Axis, 'setExtremes', function (
+addEvent(Axis, 'setExtremes', function (
     this: Highcharts.Axis
 ): void {
     var chart = this.chart,

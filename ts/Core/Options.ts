@@ -10,6 +10,7 @@
 
 'use strict';
 
+import type { SeriesOptionsType, SeriesPlotOptionsType } from './Series/Types';
 import type Chart from './Chart/Chart';
 import type Point from '../Core/Series/Point';
 import H from './Globals.js';
@@ -281,7 +282,7 @@ declare global {
             lang?: LangOptions;
             legend?: LegendOptions;
             loading?: LoadingOptions;
-            plotOptions?: PlotOptions;
+            plotOptions?: SeriesPlotOptionsType;
             subtitle?: SubtitleOptions;
             symbols?: Array<SymbolKeyValue>;
             time?: TimeOptions;
@@ -356,15 +357,6 @@ declare global {
             (TitleOptions|SubtitleOptions|CaptionOptions);
         type OptionsOverflowValue = ('allow'|'justify');
         type OptionsPosition3dValue = ('chart'|'flap'|'offset'|'ortho');
-        type PlotOptions = {
-            [TSeriesType in keyof SeriesTypesDictionary]?: (
-                Omit<SeriesTypesDictionary[TSeriesType]['prototype']['options'],
-                (
-                    'data'|'id'|'index'|'legendIndex'|'mapData'|'name'|'stack'|
-                    'treemap'|'type'|'xAxis'|'yAxis'|'zIndex'
-                )>
-            )
-        };
     }
 }
 

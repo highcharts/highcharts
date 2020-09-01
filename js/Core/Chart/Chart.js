@@ -9,8 +9,9 @@
  * */
 'use strict';
 import Axis from '../Axis/Axis.js';
+import BaseSeries from '../Series/Series.js';
 import H from '../Globals.js';
-var charts = H.charts, doc = H.doc, seriesTypes = H.seriesTypes, win = H.win;
+var charts = H.charts, doc = H.doc, win = H.win;
 import Legend from '../Legend.js';
 import MSPointer from '../MSPointer.js';
 import O from '../Options.js';
@@ -374,13 +375,15 @@ var Chart = /** @class */ (function () {
     Chart.prototype.initSeries = function (options) {
         var chart = this, optionsChart = chart.options.chart, type = (options.type ||
             optionsChart.type ||
-            optionsChart.defaultSeriesType), series, Constr = seriesTypes[type];
+            optionsChart.defaultSeriesType), series, Constr = BaseSeries.seriesTypes[type];
         // No such series type
         if (!Constr) {
             error(17, true, chart, { missingModuleFor: type });
         }
-        series = new Constr();
-        series.init(this, options);
+        series = new Constr(chart, options);
+        if (typeof series.init === 'function') {
+            series.init(this, options);
+        }
         return series;
     };
     /**
@@ -530,7 +533,7 @@ var Chart = /** @class */ (function () {
         series.forEach(function (serie) {
             if (serie.isDirty) {
                 if (serie.options.legendType === 'point') {
-                    if (serie.updateTotals) {
+                    if (typeof serie.updateTotals === 'function') {
                         serie.updateTotals();
                     }
                     redrawLegend = true;
@@ -1578,7 +1581,7 @@ var Chart = /** @class */ (function () {
          */
         ['inverted', 'angular', 'polar'].forEach(function (key) {
             // The default series type's class
-            klass = seriesTypes[(optionsChart.type ||
+            klass = BaseSeries.seriesTypes[(optionsChart.type ||
                 optionsChart.defaultSeriesType)];
             // Get the value from available chart-wide properties
             value =
@@ -1590,7 +1593,7 @@ var Chart = /** @class */ (function () {
             // 4. Check if any the chart's series require it
             i = seriesOptions && seriesOptions.length;
             while (!value && i--) {
-                klass = seriesTypes[seriesOptions[i].type];
+                klass = BaseSeries.seriesTypes[seriesOptions[i].type];
                 if (klass && klass.prototype[key]) {
                     value = true;
                 }

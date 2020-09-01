@@ -5,12 +5,13 @@
  *  !!!!!!! SOURCE GETS TRANSPILED BY TYPESCRIPT. EDIT TS FILE ONLY. !!!!!!!
  *
  * */
-'use strict';
-import H from '../../Core/Globals.js';
+import BaseSeries from '../../Core/Series/Series.js';
+var seriesTypes = BaseSeries.seriesTypes;
 import U from '../../Core/Utilities.js';
-var correctFloat = U.correctFloat, merge = U.merge, seriesType = U.seriesType;
-var isArray = U.isArray, objectEach = U.objectEach;
-var ATR = H.seriesTypes.atr, SMA = H.seriesTypes.sma;
+var correctFloat = U.correctFloat, isArray = U.isArray, merge = U.merge, objectEach = U.objectEach;
+import './ATRIndicator.js';
+import './SMAIndicator.js';
+var ATR = seriesTypes.atr, SMA = seriesTypes.sma;
 /* eslint-disable require-jsdoc */
 // Utils:
 function createPointObj(mainSeries, index, close) {
@@ -30,7 +31,7 @@ function createPointObj(mainSeries, index, close) {
  *
  * @augments Highcharts.Series
  */
-seriesType('supertrend', 'sma', 
+BaseSeries.seriesType('supertrend', 'sma', 
 /**
  * Supertrend indicator. This series requires the `linkedTo` option to be
  * set and should be loaded after the `stock/indicators/indicators.js` and

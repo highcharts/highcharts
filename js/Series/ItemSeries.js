@@ -9,14 +9,14 @@
  *  !!!!!!! SOURCE GETS TRANSPILED BY TYPESCRIPT. EDIT TS FILE ONLY. !!!!!!!
  *
  * */
-'use strict';
+import BaseSeries from '../Core/Series/Series.js';
 import H from '../Core/Globals.js';
 import O from '../Core/Options.js';
 var defaultOptions = O.defaultOptions;
 import U from '../Core/Utilities.js';
-var defined = U.defined, extend = U.extend, fireEvent = U.fireEvent, isNumber = U.isNumber, merge = U.merge, objectEach = U.objectEach, pick = U.pick, seriesType = U.seriesType;
-import '../Core/Series/Series.js';
-var piePoint = H.seriesTypes.pie.prototype.pointClass.prototype;
+var defined = U.defined, extend = U.extend, fireEvent = U.fireEvent, isNumber = U.isNumber, merge = U.merge, objectEach = U.objectEach, pick = U.pick;
+import './PieSeries.js';
+var piePoint = BaseSeries.seriesTypes.pie.prototype.pointClass.prototype;
 /**
  * The item series type.
  *
@@ -28,7 +28,7 @@ var piePoint = H.seriesTypes.pie.prototype.pointClass.prototype;
  *
  * @augments Highcharts.seriesTypes.pie
  */
-seriesType('item', 
+BaseSeries.seriesType('item', 
 // Inherits pie as the most tested non-cartesian series with individual
 // point legend, tooltips etc. Only downside is we need to re-enable
 // marker options.

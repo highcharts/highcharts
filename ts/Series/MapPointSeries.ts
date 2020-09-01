@@ -8,9 +8,13 @@
  *
  * */
 
-'use strict';
-
+import BaseSeries from '../Core/Series/Series.js';
 import H from '../Core/Globals.js';
+import Point from '../Core/Series/Point.js';
+import U from '../Core/Utilities.js';
+const {
+    merge
+} = U;
 
 /**
  * Internal types
@@ -43,23 +47,22 @@ declare global {
         interface MapPointSeriesOptions extends ScatterSeriesOptions {
             states?: SeriesStatesOptionsObject<MapPointSeries>;
         }
-        interface SeriesTypesDictionary {
-            mappoint: typeof MapPointSeries;
-        }
     }
 }
 
-import '../Core/Utilities.js';
+/**
+ * @private
+ */
+declare module '../Core/Series/Types' {
+    interface SeriesTypeRegistry {
+        mappoint: typeof Highcharts.MapPointSeries;
+    }
+}
+
 import '../Core/Options.js';
-import '../Core/Series/Point.js';
 import '../Series/ScatterSeries.js';
 
-const {
-    merge,
-    Point,
-    Series,
-    seriesType
-} = H;
+const Series = H.Series;
 
 /**
  * @private
@@ -68,7 +71,7 @@ const {
  *
  * @augments Highcharts.Series
  */
-seriesType<Highcharts.MapPointSeries>(
+BaseSeries.seriesType<typeof Highcharts.MapPointSeries>(
     'mappoint',
     'scatter',
     /**

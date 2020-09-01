@@ -619,3 +619,26 @@
         assert.notOk(chart.series[1].requireSorting, "No error 15 in the console.");
     });
 }());
+
+    QUnit.test('Gantt using the keys feature #13768', function (assert) {
+        var chart = Highcharts.ganttChart('container', {
+            series: [{
+                keys: ['start', 'end'],
+                data: [
+                    [Date.UTC(2014, 10, 20), Date.UTC(2014, 10, 25)]
+                ]
+            }]
+        });
+
+        assert.strictEqual(
+            chart.series[0].processedXData[0] !== undefined,
+            true,
+            'The processedXData should be applied by using the keys feature #13768'
+        );
+        assert.strictEqual(
+            chart.series[0].processedYData[0] !== undefined,
+            true,
+            'The processedYData should be applied by using the keys feature #13768'
+        );
+    });
+}());

@@ -2188,8 +2188,8 @@ var stockToolsBindings: Highcharts.Dictionary<Highcharts.NavigationBindingsOptio
             var navigation = this,
                 chart = navigation.chart,
                 annotations: Array<Highcharts.AnnotationsOptions> = [],
-                indicators: Array<Highcharts.SeriesOptions> = [],
-                flags: Array<Highcharts.SeriesOptions> = [],
+                indicators: Array<DeepPartial<Highcharts.SeriesOptions>> = [],
+                flags: Array<DeepPartial<Highcharts.SeriesOptions>> = [],
                 yAxes: Array<Highcharts.YAxisOptions> = [];
 
             chart.annotations.forEach(function (

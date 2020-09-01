@@ -7,19 +7,23 @@
  *  !!!!!!! SOURCE GETS TRANSPILED BY TYPESCRIPT. EDIT TS FILE ONLY. !!!!!!!
  *
  * */
-'use strict';
+import BaseSeries from '../Core/Series/Series.js';
 import H from '../Core/Globals.js';
+var noop = H.noop;
+import OnSeriesMixin from '../Mixins/OnSeries.js';
 import SVGElement from '../Core/Renderer/SVG/SVGElement.js';
 import SVGRenderer from '../Core/Renderer/SVG/SVGRenderer.js';
 import U from '../Core/Utilities.js';
-var addEvent = U.addEvent, defined = U.defined, isNumber = U.isNumber, merge = U.merge, objectEach = U.objectEach, seriesType = U.seriesType, wrap = U.wrap;
+var addEvent = U.addEvent, defined = U.defined, isNumber = U.isNumber, merge = U.merge, objectEach = U.objectEach, wrap = U.wrap;
+import './ColumnSeries.js';
+import '../Core/Interaction.js';
+import '../Core/Renderer/SVG/SVGRenderer.js';
+var Renderer = H.Renderer, Series = H.Series, TrackerMixin = H.TrackerMixin, // Interaction
+VMLRenderer = H.VMLRenderer, symbols = SVGRenderer.prototype.symbols;
 /**
  * @typedef {"circlepin"|"flag"|"squarepin"} Highcharts.FlagsShapeValue
  */
-import '../Core/Series/Series.js';
-import '../Core/Renderer/SVG/SVGRenderer.js';
-import onSeriesMixin from '../Mixins/OnSeries.js';
-var noop = H.noop, Renderer = H.Renderer, Series = H.Series, TrackerMixin = H.TrackerMixin, VMLRenderer = H.VMLRenderer, symbols = SVGRenderer.prototype.symbols;
+''; // detach doclets above
 /**
  * The Flags series.
  *
@@ -29,7 +33,7 @@ var noop = H.noop, Renderer = H.Renderer, Series = H.Series, TrackerMixin = H.Tr
  *
  * @augments Highcharts.Series
  */
-seriesType('flags', 'column'
+BaseSeries.seriesType('flags', 'column'
 /**
  * Flags are used to mark events in stock charts. They can be added on the
  * timeline, or attached to a specific series.
@@ -282,8 +286,8 @@ seriesType('flags', 'column'
             'stroke-width': lineWidth || options.lineWidth || 0
         };
     },
-    translate: onSeriesMixin.translate,
-    getPlotBox: onSeriesMixin.getPlotBox,
+    translate: OnSeriesMixin.translate,
+    getPlotBox: OnSeriesMixin.getPlotBox,
     /**
      * Draw the markers.
      *

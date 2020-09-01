@@ -7,12 +7,8 @@
  *  !!!!!!! SOURCE GETS TRANSPILED BY TYPESCRIPT. EDIT TS FILE ONLY. !!!!!!!
  *
  * */
-'use strict';
-import H from '../Core/Globals.js';
-import U from '../Core/Utilities.js';
-var seriesType = U.seriesType;
+import BaseSeries from '../Core/Series/Series.js';
 import '../Core/Options.js';
-var seriesTypes = H.seriesTypes;
 /**
  * The area spline range is a cartesian series type with higher and
  * lower Y values along an X axis. The area inside the range is colored, and
@@ -28,8 +24,8 @@ var seriesTypes = H.seriesTypes;
  * @requires  highcharts-more
  * @apioption plotOptions.areasplinerange
  */
-seriesType('areasplinerange', 'arearange', null, {
-    getPointSpline: seriesTypes.spline.prototype.getPointSpline
+BaseSeries.seriesType('areasplinerange', 'arearange', null, {
+    getPointSpline: BaseSeries.seriesTypes.spline.prototype.getPointSpline
 });
 /**
  * A `areasplinerange` series. If the [type](#series.areasplinerange.type)

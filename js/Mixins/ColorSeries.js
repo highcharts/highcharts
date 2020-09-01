@@ -8,14 +8,13 @@
  *
  * */
 'use strict';
-import H from '../Core/Globals.js';
 /**
  * Mixin for maps and heatmaps
  *
  * @private
  * @mixin Highcharts.colorPointMixin
  */
-H.colorPointMixin = {
+var colorPointMixin = {
     /* eslint-disable valid-jsdoc */
     /**
      * Set the visibility of a single point
@@ -41,7 +40,7 @@ H.colorPointMixin = {
  * @private
  * @mixin Highcharts.colorSeriesMixin
  */
-H.colorSeriesMixin = {
+var colorSeriesMixin = {
     optionalAxis: 'colorAxis',
     colorAxis: 0,
     /* eslint-disable valid-jsdoc */
@@ -72,3 +71,8 @@ H.colorSeriesMixin = {
     }
     /* eslint-enable valid-jsdoc */
 };
+var exports = {
+    colorPointMixin: colorPointMixin,
+    colorSeriesMixin: colorSeriesMixin
+};
+export default exports;

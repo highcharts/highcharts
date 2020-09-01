@@ -10,22 +10,19 @@
  *
  * */
 
-'use strict';
-
-/* global document */
-
-// Load the fonts
-import Highcharts from '../../Core/Globals.js';
+import type { SeriesPlotOptionsType } from '../../Core/Series/Types';
+import H from '../../Core/Globals.js';
 import U from '../../Core/Utilities.js';
 const { setOptions } = U;
 
-Highcharts.createElement('link', {
+// Load the fonts
+H.createElement('link', {
     href: 'https://fonts.googleapis.com/css?family=Unica+One',
     rel: 'stylesheet',
     type: 'text/css'
 }, null as any, document.getElementsByTagName('head')[0]);
 
-Highcharts.theme = {
+H.theme = {
     colors: ['#2b908f', '#90ee7e', '#f45b5b', '#7798BF', '#aaeeee', '#ff0066',
         '#eeaaee', '#55BF3B', '#DF5353', '#7798BF', '#aaeeee'],
     chart: {
@@ -115,7 +112,7 @@ Highcharts.theme = {
         errorbar: {
             color: 'white'
         }
-    } as Highcharts.PlotOptions,
+    } as SeriesPlotOptionsType,
     legend: {
         backgroundColor: 'rgba(0, 0, 0, 0.5)',
         itemStyle: {
@@ -226,4 +223,4 @@ Highcharts.theme = {
 };
 
 // Apply the theme
-setOptions(Highcharts.theme);
+setOptions(H.theme);

@@ -7,13 +7,14 @@
  *  !!!!!!! SOURCE GETS TRANSPILED BY TYPESCRIPT. EDIT TS FILE ONLY. !!!!!!!
  *
  * */
-'use strict';
-import H from '../Core/Globals.js';
+import BaseSeries from '../Core/Series/Series.js';
 import O from '../Core/Options.js';
 var defaultOptions = O.defaultOptions;
 import U from '../Core/Utilities.js';
-var merge = U.merge, seriesType = U.seriesType;
-var seriesTypes = H.seriesTypes;
+var merge = U.merge;
+import './ColumnSeries.js';
+import './OHLCSeries.js';
+var columnProto = BaseSeries.seriesTypes.column.prototype;
 /**
  * A candlestick chart is a style of financial chart used to describe price
  * movements over time.
@@ -124,7 +125,7 @@ var candlestickOptions = {
  *
  * @augments Highcharts.seriesTypes.ohlc
  */
-seriesType('candlestick', 'ohlc', merge(defaultOptions.plotOptions.column, candlestickOptions), 
+BaseSeries.seriesType('candlestick', 'ohlc', merge(defaultOptions.plotOptions.column, candlestickOptions), 
 /**
  * @lends seriesTypes.candlestick
  */
@@ -140,7 +141,7 @@ seriesType('candlestick', 'ohlc', merge(defaultOptions.plotOptions.column, candl
      * @return {Highcharts.SVGAttributes}
      */
     pointAttribs: function (point, state) {
-        var attribs = seriesTypes.column.prototype.pointAttribs.call(this, point, state), options = this.options, isUp = point.open < point.close, stroke = options.lineColor || this.color, stateOptions;
+        var attribs = columnProto.pointAttribs.call(this, point, state), options = this.options, isUp = point.open < point.close, stroke = options.lineColor || this.color, stateOptions;
         attribs['stroke-width'] = options.lineWidth;
         attribs.fill = point.options.color ||
             (isUp ? (options.upColor || this.color) : this.color);

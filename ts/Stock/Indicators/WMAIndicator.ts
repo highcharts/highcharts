@@ -8,7 +8,11 @@
  *
  * */
 
-'use strict';
+import BaseSeries from '../../Core/Series/Series.js';
+import U from '../../Core/Utilities.js';
+const {
+    isArray
+} = U;
 
 /**
  * Internal types
@@ -41,19 +45,16 @@ declare global {
         class WMAIndicatorPoint extends SMAIndicatorPoint {
             public series: WMAIndicator;
         }
-
-        interface SeriesTypesDictionary {
-            wma: typeof WMAIndicator;
-        }
     }
 }
 
+declare module '../../Core/Series/Types' {
+    interface SeriesTypeRegistry {
+        wma: typeof Highcharts.WMAIndicator;
+    }
+}
 
-import U from '../../Core/Utilities.js';
-const {
-    isArray,
-    seriesType
-} = U;
+import './SMAIndicator.js';
 
 /* eslint-disable valid-jsdoc */
 // Utils:
@@ -124,7 +125,7 @@ function populateAverage(
  *
  * @augments Highcharts.Series
  */
-seriesType<Highcharts.WMAIndicator>(
+BaseSeries.seriesType<typeof Highcharts.WMAIndicator>(
     'wma',
     'sma',
     /**

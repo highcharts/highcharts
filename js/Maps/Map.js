@@ -15,8 +15,6 @@ var defaultOptions = O.defaultOptions;
 import SVGRenderer from '../Core/Renderer/SVG/SVGRenderer.js';
 import U from '../Core/Utilities.js';
 var extend = U.extend, getOptions = U.getOptions, merge = U.merge, pick = U.pick;
-import '../Core/Options.js';
-import '../Core/Chart/Chart.js';
 var Renderer = H.Renderer, VMLRenderer = H.VMLRenderer;
 // Add language
 extend(defaultOptions.lang, {
@@ -261,7 +259,7 @@ defaultOptions.mapNavigation = {
  *
  * @return {Highcharts.SVGPathArray}
  */
-H.splitPath = function (path) {
+var splitPath = H.splitPath = function (path) {
     var arr;
     if (typeof path === 'string') {
         path = path
@@ -291,7 +289,7 @@ H.splitPath = function (path) {
  * @requires modules/map
  *
  * @name Highcharts.maps
- * @type {Highcharts.Dictionary<*>}
+ * @type {Record<string,*>}
  */
 H.maps = {};
 /**
@@ -367,7 +365,7 @@ if (Renderer === VMLRenderer) {
  * @return {Highcharts.Chart}
  *         The chart object.
  */
-H.Map = H.mapChart = function (a, b, c) {
+var mapChart = H.Map /* fake class for jQuery */ = H.mapChart = function (a, b, c) {
     var hasRenderToArg = typeof a === 'string' || a.nodeName, options = arguments[hasRenderToArg ? 1 : 0], userOptions = options, hiddenAxis = {
         endOnTick: false,
         visible: false,
@@ -413,3 +411,9 @@ H.Map = H.mapChart = function (a, b, c) {
         new Chart(a, options, c) :
         new Chart(options, b);
 };
+var mapModule = {
+    mapChart: mapChart,
+    maps: H.maps,
+    splitPath: splitPath
+};
+export default mapModule;

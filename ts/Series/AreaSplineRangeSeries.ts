@@ -8,9 +8,7 @@
  *
  * */
 
-'use strict';
-
-import H from '../Core/Globals.js';
+import BaseSeries from '../Core/Series/Series.js';
 
 /**
  * Internal types
@@ -34,19 +32,19 @@ declare global {
         interface AreaSplineRangeSeriesOptions extends AreaRangeSeriesOptions {
             states?: SeriesStatesOptionsObject<AreaSplineSeries>;
         }
-        interface SeriesTypesDictionary {
-            areasplinerange: typeof AreaSplineRangeSeries;
-        }
     }
 }
 
-import U from '../Core/Utilities.js';
-const {
-    seriesType
-} = U;
-import '../Core/Options.js';
+/**
+ * @private
+ */
+declare module '../Core/Series/Types' {
+    interface SeriesTypeRegistry {
+        areasplinerange: typeof Highcharts.AreaSplineRangeSeries;
+    }
+}
 
-var seriesTypes = H.seriesTypes;
+import '../Core/Options.js';
 
 /**
  * The area spline range is a cartesian series type with higher and
@@ -63,13 +61,13 @@ var seriesTypes = H.seriesTypes;
  * @requires  highcharts-more
  * @apioption plotOptions.areasplinerange
  */
-seriesType<Highcharts.AreaSplineSeries>(
+BaseSeries.seriesType<typeof Highcharts.AreaSplineSeries>(
     'areasplinerange',
     'arearange',
     null as any,
     {
         getPointSpline: (
-            seriesTypes.spline as typeof Highcharts.SplineSeries
+            BaseSeries.seriesTypes.spline as typeof Highcharts.SplineSeries
         ).prototype.getPointSpline
     }
 );

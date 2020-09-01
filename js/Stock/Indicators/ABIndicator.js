@@ -5,12 +5,12 @@
  *  !!!!!!! SOURCE GETS TRANSPILED BY TYPESCRIPT. EDIT TS FILE ONLY. !!!!!!!
  *
  * */
-'use strict';
-import H from '../../Core/Globals.js';
+import BaseSeries from '../../Core/Series/Series.js';
+import MultipleLinesMixin from '../../Mixins/MultipleLines.js';
 import U from '../../Core/Utilities.js';
-var correctFloat = U.correctFloat, merge = U.merge, seriesType = U.seriesType;
-import multipleLinesMixin from '../../Mixins/MultipleLines.js';
-var SMA = H.seriesTypes.sma;
+var correctFloat = U.correctFloat, merge = U.merge;
+import './SMAIndicator.js';
+var SMA = BaseSeries.seriesTypes.sma;
 /* eslint-disable valid-jsdoc */
 /**
  * @private
@@ -41,7 +41,7 @@ function getPointLB(low, base) {
  *
  * @augments Highcharts.Series
  */
-seriesType('abands', 'sma', 
+BaseSeries.seriesType('abands', 'sma', 
 /**
  * Acceleration bands (ABANDS). This series requires the `linkedTo` option
  * to be set and should be loaded after the
@@ -97,7 +97,7 @@ seriesType('abands', 'sma',
 /**
  * @lends Highcharts.Series#
  */
-merge(multipleLinesMixin, {
+merge(MultipleLinesMixin, {
     pointArrayMap: ['top', 'middle', 'bottom'],
     pointValKey: 'middle',
     nameBase: 'Acceleration Bands',

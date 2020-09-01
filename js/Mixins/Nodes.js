@@ -7,7 +7,7 @@ import H from '../Core/Globals.js';
 import Point from '../Core/Series/Point.js';
 import U from '../Core/Utilities.js';
 var defined = U.defined, extend = U.extend, find = U.find, pick = U.pick;
-import '../Core/Series/Series.js';
+import '../Series/LineSeries.js';
 var NodesMixin = H.NodesMixin = {
     /* eslint-disable valid-jsdoc */
     /**

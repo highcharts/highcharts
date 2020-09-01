@@ -7,11 +7,12 @@
  *  !!!!!!! SOURCE GETS TRANSPILED BY TYPESCRIPT. EDIT TS FILE ONLY. !!!!!!!
  *
  * */
-'use strict';
+import BaseSeries from '../Core/Series/Series.js';
+import DerivedSeriesMixin from '../Mixins/DerivedSeries.js';
 import U from '../Core/Utilities.js';
-var correctFloat = U.correctFloat, merge = U.merge, seriesType = U.seriesType;
+var correctFloat = U.correctFloat, merge = U.merge;
 import '../Core/Options.js';
-import derivedSeriesMixin from '../Mixins/DerivedSeries.js';
+import '../Series/LineSeries.js';
 /**
  * The pareto series type.
  *
@@ -21,7 +22,7 @@ import derivedSeriesMixin from '../Mixins/DerivedSeries.js';
  *
  * @augments Highcharts.Series
  */
-seriesType('pareto', 'line'
+BaseSeries.seriesType('pareto', 'line'
 /**
  * A pareto diagram is a type of chart that contains both bars and a line
  * graph, where individual values are represented in descending order by
@@ -51,7 +52,7 @@ seriesType('pareto', 'line'
     zIndex: 3
 }, 
 /* eslint-disable no-invalid-this, valid-jsdoc */
-merge(derivedSeriesMixin, {
+merge(DerivedSeriesMixin, {
     /**
      * Calculate sum and return percent points.
      *

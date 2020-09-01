@@ -6,9 +6,12 @@
  *
  * */
 
-'use strict';
-
-import H from '../../Core/Globals.js';
+import BaseSeries from '../../Core/Series/Series.js';
+import RequiredIndicatorMixin from '../../Mixins/IndicatorRequired.js';
+import U from '../../Core/Utilities.js';
+const {
+    correctFloat
+} = U;
 
 /**
  * Internal types
@@ -42,22 +45,18 @@ declare global {
         interface TRIXIndicatorOptions extends TEMAIndicatorOptions {
             params?: TRIXIndicatorParamsOptions;
         }
-
-        interface SeriesTypesDictionary {
-            trix: typeof TRIXIndicator;
-        }
     }
 }
 
-import U from '../../Core/Utilities.js';
-const {
-    correctFloat,
-    seriesType
-} = U;
+declare module '../../Core/Series/Types' {
+    interface SeriesTypeRegistry {
+        tema: typeof Highcharts.TRIXIndicator;
+    }
+}
 
-import requiredIndicator from '../../Mixins/IndicatorRequired.js';
+import './TEMAIndicator.js';
 
-var TEMA = H.seriesTypes.tema;
+var TEMA = BaseSeries.seriesTypes.tema;
 
 /**
  * The TRIX series type.
@@ -68,7 +67,7 @@ var TEMA = H.seriesTypes.tema;
  *
  * @augments Highcharts.Series
  */
-seriesType<Highcharts.TRIXIndicator>(
+BaseSeries.seriesType<typeof Highcharts.TRIXIndicator>(
     'trix',
     'tema',
     /**
@@ -99,7 +98,7 @@ seriesType<Highcharts.TRIXIndicator>(
             var args = arguments,
                 ctx = this;
 
-            requiredIndicator.isParentLoaded(
+            RequiredIndicatorMixin.isParentLoaded(
                 (TEMA as any),
                 'tema',
                 ctx.type,

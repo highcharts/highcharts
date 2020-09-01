@@ -50,9 +50,6 @@ declare global {
             useCommonDataGrouping?: any; // @todo indicators
             getPoint: Function; // @todo boost module
         }
-        interface SeriesTypesDictionary {
-            [key: string]: typeof Series;
-        }
         const SVG_NS: string;
         const charts: Array<Chart|undefined>;
         const dateFormats: Dictionary<TimeFormatCallbackFunction>;
@@ -71,7 +68,6 @@ declare global {
         const product: string;
         const symbolSizes: Dictionary<SizeObject>;
         const win: GlobalWindow;
-        const seriesTypes: SeriesTypesDictionary;
         const svg: boolean;
         const version: string;
         let theme: (Options|undefined);

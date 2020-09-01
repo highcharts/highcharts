@@ -8,7 +8,7 @@
  *
  * */
 
-'use strict';
+import BaseSeries from '../../Core/Series/Series.js';
 
 /**
  * Internal types
@@ -32,9 +32,6 @@ declare global {
         class ZigzagIndicatorPoint extends SMAIndicatorPoint {
             series: ZigzagIndicator;
         }
-        interface SeriesTypesDictionary {
-            zigzag: typeof ZigzagIndicator;
-        }
 
         interface ZigzagIndicatorOptions extends SMAIndicatorOptions {
             params?: ZigzagIndicatorParamsOptions;
@@ -50,12 +47,13 @@ declare global {
     }
 }
 
-import U from '../../Core/Utilities.js';
-const {
-    seriesType
-} = U;
+declare module '../../Core/Series/Types' {
+    interface SeriesTypeRegistry {
+        zigzag: typeof Highcharts.ZigzagIndicator;
+    }
+}
 
-var UNDEFINED: undefined;
+import './SMAIndicator.js';
 
 /**
  * The Zig Zag series type.
@@ -66,7 +64,7 @@ var UNDEFINED: undefined;
  *
  * @augments Highcharts.Series
  */
-seriesType<Highcharts.ZigzagIndicator>(
+BaseSeries.seriesType<typeof Highcharts.ZigzagIndicator>(
     'zigzag',
     'sma',
     /**
@@ -155,8 +153,8 @@ seriesType<Highcharts.ZigzagIndicator>(
                 (
                     yValLen &&
                     (
-                        yVal[0][lowIndex] === UNDEFINED ||
-                        yVal[0][highIndex] === UNDEFINED
+                        typeof yVal[0][lowIndex] === 'undefined' ||
+                        typeof yVal[0][highIndex] === 'undefined'
                     )
                 )
             ) {

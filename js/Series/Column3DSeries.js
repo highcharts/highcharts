@@ -7,15 +7,16 @@
  *  !!!!!!! SOURCE GETS TRANSPILED BY TYPESCRIPT. EDIT TS FILE ONLY. !!!!!!!
  *
  * */
-'use strict';
+import BaseSeries from '../Core/Series/Series.js';
 import H from '../Core/Globals.js';
 import Math3D from '../Extensions/Math3D.js';
 var perspective = Math3D.perspective;
 import StackItem from '../Extensions/Stacking.js';
 import U from '../Core/Utilities.js';
 var addEvent = U.addEvent, pick = U.pick, wrap = U.wrap;
-import '../Core/Series/Series.js';
-var Series = H.Series, seriesTypes = H.seriesTypes, svg = H.svg;
+import './ColumnSeries.js';
+import '../Series/LineSeries.js';
+var Series = H.Series, columnProto = BaseSeries.seriesTypes.column.prototype, svg = H.svg;
 /**
  * Depth of the columns in a 3D column chart.
  *
@@ -79,7 +80,7 @@ function retrieveStacks(chart, stacking) {
     stacks.totalStacks = i + 1;
     return stacks;
 }
-wrap(seriesTypes.column.prototype, 'translate', function (proceed) {
+wrap(columnProto, 'translate', function (proceed) {
     proceed.apply(this, [].slice.call(arguments, 1));
     // Do not do this if the chart is not 3D
     if (this.chart.is3d()) {
@@ -92,8 +93,8 @@ wrap(Series.prototype, 'justifyDataLabel', function (proceed) {
         proceed.apply(this, [].slice.call(arguments, 1)) :
         false;
 });
-seriesTypes.column.prototype.translate3dPoints = function () { };
-seriesTypes.column.prototype.translate3dShapes = function () {
+columnProto.translate3dPoints = function () { };
+columnProto.translate3dShapes = function () {
     var series = this, chart = series.chart, seriesOptions = series.options, depth = seriesOptions.depth, stack = seriesOptions.stacking ?
         (seriesOptions.stack || 0) :
         series.index, // #4743
@@ -182,7 +183,7 @@ seriesTypes.column.prototype.translate3dShapes = function () {
     // store for later use #4067
     series.z = z;
 };
-wrap(seriesTypes.column.prototype, 'animate', function (proceed) {
+wrap(columnProto, 'animate', function (proceed) {
     if (!this.chart.is3d()) {
         proceed.apply(this, [].slice.call(arguments, 1));
     }
@@ -232,7 +233,7 @@ wrap(seriesTypes.column.prototype, 'animate', function (proceed) {
 // In case of 3d columns there is no sense to add this columns to a specific
 // series group - if series is added to a group all columns will have the same
 // zIndex in comparison with different series.
-wrap(seriesTypes.column.prototype, 'plotGroup', function (proceed, prop, name, visibility, zIndex, parent) {
+wrap(columnProto, 'plotGroup', function (proceed, prop, name, visibility, zIndex, parent) {
     if (prop !== 'dataLabelsGroup') {
         if (this.chart.is3d()) {
             if (this[prop]) {
@@ -257,7 +258,7 @@ wrap(seriesTypes.column.prototype, 'plotGroup', function (proceed, prop, name, v
 });
 // When series is not added to group it is needed to change setVisible method to
 // allow correct Legend funcionality. This wrap is basing on pie chart series.
-wrap(seriesTypes.column.prototype, 'setVisible', function (proceed, vis) {
+wrap(columnProto, 'setVisible', function (proceed, vis) {
     var series = this, pointVis;
     if (series.chart.is3d()) {
         series.data.forEach(function (point) {
@@ -276,8 +277,7 @@ wrap(seriesTypes.column.prototype, 'setVisible', function (proceed, vis) {
     }
     proceed.apply(this, Array.prototype.slice.call(arguments, 1));
 });
-seriesTypes.column.prototype
-    .handle3dGrouping = true;
+columnProto.handle3dGrouping = true;
 addEvent(Series, 'afterInit', function () {
     if (this.chart.is3d() &&
         this.handle3dGrouping) {
@@ -347,17 +347,16 @@ function hasNewShapeType(proceed) {
         this.graphic && this.graphic.element.nodeName !== 'g' :
         proceed.apply(this, args);
 }
-wrap(seriesTypes.column.prototype, 'pointAttribs', pointAttribs);
-wrap(seriesTypes.column.prototype, 'setState', setState);
-wrap(seriesTypes.column.prototype.pointClass.prototype, 'hasNewShapeType', hasNewShapeType);
-if (seriesTypes.columnrange) {
-    wrap(seriesTypes.columnrange.prototype, 'pointAttribs', pointAttribs);
-    wrap(seriesTypes.columnrange.prototype, 'setState', setState);
-    wrap(seriesTypes.columnrange.prototype.pointClass.prototype, 'hasNewShapeType', hasNewShapeType);
-    seriesTypes.columnrange.prototype.plotGroup =
-        seriesTypes.column.prototype.plotGroup;
-    seriesTypes.columnrange.prototype.setVisible =
-        seriesTypes.column.prototype.setVisible;
+wrap(columnProto, 'pointAttribs', pointAttribs);
+wrap(columnProto, 'setState', setState);
+wrap(columnProto.pointClass.prototype, 'hasNewShapeType', hasNewShapeType);
+if (BaseSeries.seriesTypes.columnRange) {
+    var columnRangeProto = BaseSeries.seriesTypes.columnrange.prototype;
+    wrap(columnRangeProto, 'pointAttribs', pointAttribs);
+    wrap(columnRangeProto, 'setState', setState);
+    wrap(columnRangeProto.pointClass.prototype, 'hasNewShapeType', hasNewShapeType);
+    columnRangeProto.plotGroup = columnProto.plotGroup;
+    columnRangeProto.setVisible = columnProto.setVisible;
 }
 wrap(Series.prototype, 'alignDataLabel', function (proceed, point, dataLabel, options, alignTo) {
     var chart = this.chart;
@@ -409,7 +408,7 @@ wrap(StackItem.prototype, 'getStackBox', function (proceed, chart, stackItem, x,
         // use its barW, z and depth parameters
         // for correct stackLabels position calculation
         if (columnSeries &&
-            columnSeries instanceof seriesTypes.column) {
+            columnSeries instanceof BaseSeries.seriesTypes.column) {
             var dLPosition = {
                 x: stackBox.x + (chart.inverted ? h : xWidth / 2),
                 y: stackBox.y,
@@ -433,3 +432,58 @@ wrap(StackItem.prototype, 'getStackBox', function (proceed, chart, stackItem, x,
     }
     return stackBox;
 });
+/*
+    @merge v6.2
+    @todo
+    EXTENSION FOR 3D CYLINDRICAL COLUMNS
+    Not supported
+*/
+/*
+var defaultOptions = H.getOptions();
+defaultOptions.plotOptions.cylinder =
+    merge(defaultOptions.plotOptions.column);
+var CylinderSeries = extendClass(seriesTypes.column, {
+    type: 'cylinder'
+});
+seriesTypes.cylinder = CylinderSeries;
+
+wrap(seriesTypes.cylinder.prototype, 'translate', function (proceed) {
+    proceed.apply(this, [].slice.call(arguments, 1));
+
+    // Do not do this if the chart is not 3D
+    if (!this.chart.is3d()) {
+        return;
+    }
+
+    var series = this,
+        chart = series.chart,
+        options = chart.options,
+        cylOptions = options.plotOptions.cylinder,
+        options3d = options.chart.options3d,
+        depth = cylOptions.depth || 0,
+        alpha = chart.alpha3d;
+
+    var z = cylOptions.stacking ?
+        (this.options.stack || 0) * depth :
+        series._i * depth;
+    z += depth / 2;
+
+    if (cylOptions.grouping !== false) { z = 0; }
+
+    each(series.data, function (point) {
+        var shapeArgs = point.shapeArgs,
+            deg2rad = H.deg2rad;
+        point.shapeType = 'arc3d';
+        shapeArgs.x += depth / 2;
+        shapeArgs.z = z;
+        shapeArgs.start = 0;
+        shapeArgs.end = 2 * PI;
+        shapeArgs.r = depth * 0.95;
+        shapeArgs.innerR = 0;
+        shapeArgs.depth =
+            shapeArgs.height * (1 / sin((90 - alpha) * deg2rad)) - z;
+        shapeArgs.alpha = 90 - alpha;
+        shapeArgs.beta = 0;
+    });
+});
+*/

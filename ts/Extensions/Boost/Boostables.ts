@@ -12,7 +12,7 @@
 
 // These are the series we allow boosting for.
 
-var boostables = [
+const boostables = [
     'area',
     'arearange',
     'column',

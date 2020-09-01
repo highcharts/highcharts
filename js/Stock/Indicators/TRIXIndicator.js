@@ -5,12 +5,12 @@
  *  !!!!!!! SOURCE GETS TRANSPILED BY TYPESCRIPT. EDIT TS FILE ONLY. !!!!!!!
  *
  * */
-'use strict';
-import H from '../../Core/Globals.js';
+import BaseSeries from '../../Core/Series/Series.js';
+import RequiredIndicatorMixin from '../../Mixins/IndicatorRequired.js';
 import U from '../../Core/Utilities.js';
-var correctFloat = U.correctFloat, seriesType = U.seriesType;
-import requiredIndicator from '../../Mixins/IndicatorRequired.js';
-var TEMA = H.seriesTypes.tema;
+var correctFloat = U.correctFloat;
+import './TEMAIndicator.js';
+var TEMA = BaseSeries.seriesTypes.tema;
 /**
  * The TRIX series type.
  *
@@ -20,7 +20,7 @@ var TEMA = H.seriesTypes.tema;
  *
  * @augments Highcharts.Series
  */
-seriesType('trix', 'tema', 
+BaseSeries.seriesType('trix', 'tema', 
 /**
  * Triple exponential average (TRIX) oscillator. This series requires
  * `linkedTo` option to be set.
@@ -47,7 +47,7 @@ seriesType('trix', 'tema',
 {
     init: function () {
         var args = arguments, ctx = this;
-        requiredIndicator.isParentLoaded(TEMA, 'tema', ctx.type, function (indicator) {
+        RequiredIndicatorMixin.isParentLoaded(TEMA, 'tema', ctx.type, function (indicator) {
             indicator.prototype.init.apply(ctx, args);
             return;
         });

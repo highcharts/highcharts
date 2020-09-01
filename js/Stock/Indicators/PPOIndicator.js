@@ -5,12 +5,12 @@
  *  !!!!!!! SOURCE GETS TRANSPILED BY TYPESCRIPT. EDIT TS FILE ONLY. !!!!!!!
  *
  * */
-'use strict';
-import H from '../../Core/Globals.js';
+import BaseSeries from '../../Core/Globals.js';
+import RequiredIndicatorMixin from '../../Mixins/IndicatorRequired.js';
 import U from '../../Core/Utilities.js';
-var correctFloat = U.correctFloat, error = U.error, seriesType = U.seriesType;
-import requiredIndicator from '../../Mixins/IndicatorRequired.js';
-var EMA = H.seriesTypes.ema;
+var correctFloat = U.correctFloat, error = U.error;
+import './EMAIndicator.js';
+var EMA = BaseSeries.seriesTypes.ema;
 /**
  * The PPO series type.
  *
@@ -20,7 +20,7 @@ var EMA = H.seriesTypes.ema;
  *
  * @augments Highcharts.Series
  */
-seriesType('ppo', 'ema', 
+BaseSeries.seriesType('ppo', 'ema', 
 /**
  * Percentage Price Oscillator. This series requires the
  * `linkedTo` option to be set and should be loaded after the
@@ -65,7 +65,7 @@ seriesType('ppo', 'ema',
     nameComponents: ['periods'],
     init: function () {
         var args = arguments, ctx = this;
-        requiredIndicator.isParentLoaded(EMA, 'ema', ctx.type, function (indicator) {
+        RequiredIndicatorMixin.isParentLoaded(EMA, 'ema', ctx.type, function (indicator) {
             indicator.prototype.init.apply(ctx, args);
             return;
         });

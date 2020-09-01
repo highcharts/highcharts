@@ -19,7 +19,7 @@ import Color from '../Core/Color.js';
 var color = Color.parse;
 import U from '../Core/Utilities.js';
 var addEvent = U.addEvent, extend = U.extend, fireEvent = U.fireEvent, isNumber = U.isNumber, merge = U.merge, pick = U.pick, wrap = U.wrap;
-import '../Core/Series/Series.js';
+import '../Series/LineSeries.js';
 import '../Core/Options.js';
 var win = H.win, doc = win.document, noop = function () { }, Series = H.Series, seriesTypes = H.seriesTypes, CHUNK_SIZE = 50000, destroyLoadingDiv;
 /* eslint-disable no-invalid-this, valid-jsdoc */
@@ -28,7 +28,7 @@ var win = H.win, doc = win.document, noop = function () { }, Series = H.Series, 
  *
  * @function Highcharts.initCanvasBoost
  */
-H.initCanvasBoost = function () {
+var initCanvasBoost = function () {
     if (H.seriesTypes.heatmap) {
         wrap(H.seriesTypes.heatmap.prototype, 'drawPoints', function () {
             var chart = this.chart, ctx = this.getContext(), inverted = this.chart.inverted, xAxis = this.xAxis, yAxis = this.yAxis;
@@ -503,3 +503,4 @@ H.initCanvasBoost = function () {
         addEvent(chart, 'render', canvasToSVG);
     });
 };
+export default initCanvasBoost;

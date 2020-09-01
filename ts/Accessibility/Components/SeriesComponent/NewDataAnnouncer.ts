@@ -15,6 +15,7 @@
 import type Chart from '../../../Core/Chart/Chart';
 import type Point from '../../../Core/Series/Point';
 import H from '../../../Core/Globals.js';
+import CartesianSeries from '../../../Core/Series/CartesianSeries.js';
 import U from '../../../Core/Utilities.js';
 var extend = U.extend,
     defined = U.defined;
@@ -188,7 +189,7 @@ extend(NewDataAnnouncer.prototype, {
             announcer.lastAnnouncementTime = 0;
         });
 
-        e.addEvent(H.Series, 'updatedData', function (): void {
+        e.addEvent(CartesianSeries, 'updatedData', function (): void {
             announcer.onSeriesUpdatedData(this);
         });
 
@@ -198,7 +199,7 @@ extend(NewDataAnnouncer.prototype, {
             announcer.onSeriesAdded(e.series);
         });
 
-        e.addEvent(H.Series, 'addPoint', function (
+        e.addEvent(CartesianSeries, 'addPoint', function (
             e: { point: Point }
         ): void {
             announcer.onPointAdded(e.point);

@@ -12,6 +12,7 @@
 
 'use strict';
 
+import type { SeriesOptionsType } from '../Core/Series/Types';
 import type SVGPath from '../Core/Renderer/SVG/SVGPath';
 import Chart from '../Core/Chart/Chart.js';
 import chartNavigationMixin from '../Mixins/Navigation.js';
@@ -1406,13 +1407,13 @@ extend(Chart.prototype, /** @lends Highcharts.Chart.prototype */ {
      */
     getSVG: function (
         this: Chart,
-        chartOptions?: Highcharts.Options
+        chartOptions?: DeepPartial<Highcharts.Options>
     ): string {
         var chart = this,
             chartCopy: Chart,
             sandbox,
             svg,
-            seriesOptions: Highcharts.SeriesOptions,
+            seriesOptions: DeepPartial<SeriesOptionsType>,
             sourceWidth: number,
             sourceHeight: number,
             cssWidth: string,
@@ -2551,7 +2552,9 @@ Chart.prototype.inlineStyles = function (): void {
      * @return {void}
      */
     function tearDown(): void {
-        (dummySVG.parentNode as any).removeChild(dummySVG);
+        (dummySVG.parentNode as any).remove();
+        // Remove trash from DOM that stayed after each exporting
+        iframe.remove();
     }
 
     recurse(this.container.querySelector('svg') as any);

@@ -35,7 +35,7 @@ declare global {
     }
 }
 
-import '../../Core/Series/Series.js';
+import '../../Series/LineSeries.js';
 import boostableMap from './BoostableMap.js';
 import createAndAttachRenderer from './BoostAttach.js';
 
@@ -46,7 +46,7 @@ const {
 
 
 // This should be a const.
-var CHUNK_SIZE = 3000;
+const CHUNK_SIZE = 3000;
 
 /**
  * Tolerant max() function.
@@ -343,7 +343,7 @@ function pointDrawHandler(this: Highcharts.Series, proceed: Function): void {
 
 /* eslint-enable no-invalid-this, valid-jsdoc */
 
-var funs = {
+const funs = {
     patientMax: patientMax,
     boostEnabled: boostEnabled,
     shouldForceChartSeriesBoosting: shouldForceChartSeriesBoosting,
