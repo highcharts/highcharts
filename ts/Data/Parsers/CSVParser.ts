@@ -9,85 +9,92 @@
  *  !!!!!!! SOURCE GETS TRANSPILED BY TYPESCRIPT. EDIT TS FILE ONLY. !!!!!!!
  *
  * */
-var __extends = (this && this.__extends) || (function () {
-    var extendStatics = function (d, b) {
-        extendStatics = Object.setPrototypeOf ||
-            ({ __proto__: [] } instanceof Array && function (d, b) { d.__proto__ = b; }) ||
-            function (d, b) { for (var p in b) if (b.hasOwnProperty(p)) d[p] = b[p]; };
-        return extendStatics(d, b);
-    };
-    return function (d, b) {
-        extendStatics(d, b);
-        function __() { this.constructor = d; }
-        d.prototype = b === null ? Object.create(b) : (__.prototype = b.prototype, new __());
-    };
-})();
-var __assign = (this && this.__assign) || function () {
-    __assign = Object.assign || function(t) {
-        for (var s, i = 1, n = arguments.length; i < n; i++) {
-            s = arguments[i];
-            for (var p in s) if (Object.prototype.hasOwnProperty.call(s, p))
-                t[p] = s[p];
-        }
-        return t;
-    };
-    return __assign.apply(this, arguments);
-};
+
+import type DataEventEmitter from '../DataEventEmitter';
+import type DataValueType from '../DataValueType';
 import DataJSON from '../DataJSON.js';
 import DataParser from './DataParser.js';
 import DataTable from '../DataTable.js';
 import U from '../../Core/Utilities.js';
-var merge = U.merge;
+
+const { merge } = U;
+
 /* eslint-disable no-invalid-this, require-jsdoc, valid-jsdoc */
+
 /**
  * Handles parsing and transforming CSV to a DataTable
  */
-var CSVDataParser = /** @class */ (function (_super) {
-    __extends(CSVDataParser, _super);
+class CSVParser extends DataParser<DataParser.EventObject> {
+
     /* *
      *
-     *  Constructor
+     *  Static Properties
      *
      * */
+
     /**
-     * Constructs an instance of the CSV parser.
-     *
-     * @param {CSVDataParser.OptionsType} [options]
-     * Options for the CSV parser.
+     * Default options
      */
-    function CSVDataParser(options) {
-        var _this = _super.call(this) || this;
-        /* *
-         *
-         *  Properties
-         *
-         * */
-        _this.columns = [];
-        _this.headers = [];
-        _this.options = merge(CSVDataParser.defaultOptions, options);
-        return _this;
-    }
+    protected static readonly defaultOptions: CSVParser.ClassJSONOptions = {
+        ...DataParser.defaultOptions,
+        decimalPoint: '.',
+        lineDelimiter: '\n'
+    };
+
     /* *
      *
      *  Static Functions
      *
      * */
+
     /**
      * Creates a CSVDataParser instance from ClassJSON.
      *
-     * @param {CSVDataParser.ClassJSON} json
+     * @param {CSVParser.ClassJSON} json
      * Class JSON to convert to the parser instance.
      *
-     * @return {CSVDataParser}
+     * @return {CSVParser}
      * An instance of CSVDataParser.
      */
-    CSVDataParser.fromJSON = function (json) {
-        return new CSVDataParser(json.options);
-    };
+    public static fromJSON(json: CSVParser.ClassJSON): CSVParser {
+        return new CSVParser(json.options);
+    }
+
+    /* *
+     *
+     *  Constructor
+     *
+     * */
+
+    /**
+     * Constructs an instance of the CSV parser.
+     *
+     * @param {CSVParser.OptionsType} [options]
+     * Options for the CSV parser.
+     */
+    public constructor(options?: CSVParser.OptionsType) {
+        super();
+
+        this.options = merge(CSVParser.defaultOptions, options);
+    }
+
+    /* *
+     *
+     *  Properties
+     *
+     * */
+    private columns: Array<Array<DataValueType>> = [];
+    private headers: Array<string> = [];
+    private guessedItemDelimiter?: string;
+    private guessedDecimalPoint?: string;
+    private decimalRegex?: RegExp;
+    private options: CSVParser.ClassJSONOptions;
+
+
     /**
      * Initiates parsing of CSV
      *
-     * @param {CSVDataParser.OptionsType}[options]
+     * @param {CSVParser.OptionsType}[options]
      * Options for the parser
      *
      * @param {DataEventEmitter.EventDetail} [eventDetail]
@@ -96,45 +103,74 @@ var CSVDataParser = /** @class */ (function (_super) {
      * @emits CSVDataParser#parse
      * @emits CSVDataParser#afterParse
      */
-    CSVDataParser.prototype.parse = function (options, eventDetail) {
-        var parser = this, parserOptions = merge(this.options, options), beforeParse = parserOptions.beforeParse, lineDelimiter = parserOptions.lineDelimiter, firstRowAsNames = parserOptions.firstRowAsNames, itemDelimiter = parserOptions.itemDelimiter;
-        var lines, rowIt = 0, csv = parserOptions.csv, startRow = parserOptions.startRow, endRow = parserOptions.endRow, i, colsCount;
+    public parse(
+        options: CSVParser.OptionsType,
+        eventDetail?: DataEventEmitter.EventDetail
+    ): void {
+        const parser = this,
+            parserOptions = merge(this.options, options),
+            {
+                beforeParse,
+                lineDelimiter,
+                firstRowAsNames,
+                itemDelimiter
+            } = parserOptions;
+
+        let lines,
+            rowIt = 0,
+            {
+                csv,
+                startRow,
+                endRow
+            } = parserOptions,
+            i: number,
+            colsCount: number;
+
         this.columns = [];
-        this.emit({
+
+        this.emit<DataParser.EventObject>({
             type: 'parse',
             columns: parser.columns,
             detail: eventDetail,
             headers: parser.headers
         });
+
         if (csv && beforeParse) {
             csv = beforeParse(csv);
         }
+
         if (csv) {
             lines = csv
                 .replace(/\r\n/g, '\n') // Unix
                 .replace(/\r/g, '\n') // Mac
                 .split(lineDelimiter);
+
             if (!startRow || startRow < 0) {
                 startRow = 0;
             }
+
             if (!endRow || endRow >= lines.length) {
                 endRow = lines.length - 1;
             }
+
             if (!itemDelimiter) {
                 parser.guessedItemDelimiter = parser.guessDelimiter(lines);
             }
+
             var offset = 0;
+
             for (rowIt = startRow; rowIt <= endRow; rowIt++) {
                 if (lines[rowIt][0] === '#') {
                     offset++;
-                }
-                else {
+                } else {
                     parser.parseCSVRow(lines[rowIt], rowIt - startRow - offset);
                 }
             }
         }
+
         if (firstRowAsNames && parser.columns) {
             colsCount = parser.columns.length;
+
             for (i = 0; i < colsCount; i++) {
                 if (!parser.headers) {
                     parser.headers = [];
@@ -142,222 +178,318 @@ var CSVDataParser = /** @class */ (function (_super) {
                 parser.headers[i] = '' + parser.columns[i][0];
             }
         }
-        parser.emit({
+
+        parser.emit<DataParser.EventObject>({
             type: 'afterParse',
             columns: parser.columns,
             detail: eventDetail,
             headers: parser.headers
         });
-    };
+    }
+
     /**
      * Internal method that parses a single CSV row
      */
-    CSVDataParser.prototype.parseCSVRow = function (columnStr, rowNumber) {
-        var parser = this, columns = parser.columns || [], _a = parser.options, startColumn = _a.startColumn, endColumn = _a.endColumn, itemDelimiter = parser.options.itemDelimiter || parser.guessedItemDelimiter;
-        var i = 0, c = '', cl = '', cn = '', token = '', actualColumn = 0, column = 0;
+    private parseCSVRow(
+        columnStr: string,
+        rowNumber: number
+    ): void {
+        const parser = this,
+            columns = parser.columns || [],
+            { startColumn, endColumn } = parser.options,
+            itemDelimiter = parser.options.itemDelimiter || parser.guessedItemDelimiter;
+        let i = 0,
+            c = '',
+            cl = '',
+            cn = '',
+            token = '',
+            actualColumn = 0,
+            column = 0;
+
         /**
          * @private
          */
-        function read(j) {
+        function read(j: number): void {
             c = columnStr[j];
             cl = columnStr[j - 1];
             cn = columnStr[j + 1];
         }
+
         /**
          * @private
          */
-        function push() {
+        function push(): void {
             if (startColumn > actualColumn || actualColumn > endColumn) {
                 // Skip this column, but increment the column count (#7272)
                 ++actualColumn;
                 token = '';
                 return;
             }
+
             if (columns.length < column + 1) {
                 columns.push([]);
             }
+
+
             columns[column][rowNumber] = token;
+
             token = '';
             ++column;
             ++actualColumn;
         }
+
         if (!columnStr.trim().length) {
             return;
         }
+
         if (columnStr.trim()[0] === '#') {
             return;
         }
+
         for (; i < columnStr.length; i++) {
             read(i);
+
             // Quoted string
             if (c === '#') {
                 // The rest of the row is a comment
                 push();
                 return;
             }
+
             if (c === '"') {
                 read(++i);
+
                 while (i < columnStr.length) {
                     if (c === '"' && cl !== '"' && cn !== '"') {
                         break;
                     }
+
                     if (c !== '"' || (c === '"' && cl !== '"')) {
                         token += c;
                     }
+
                     read(++i);
                 }
-            }
-            else if (c === itemDelimiter) {
+
+            } else if (c === itemDelimiter) {
                 push();
+
                 // Actual column data
-            }
-            else {
+            } else {
                 token += c;
             }
         }
+
         push();
-    };
+
+    }
+
     /**
      * Internal method that guesses the delimiter from the first
      * 13 lines of the CSV
      * @param {Array<string>} lines
      * The CSV, split into lines
      */
-    CSVDataParser.prototype.guessDelimiter = function (lines) {
-        var decimalPoint = this.options.decimalPoint;
-        var points = 0, commas = 0, guessed;
-        var potDelimiters = {
-            ',': 0,
-            ';': 0,
-            '\t': 0
-        }, linesCount = lines.length;
-        for (var i = 0; i < linesCount; i++) {
-            var inStr = false, c, cn, cl, token = '';
+    private guessDelimiter(lines: Array<string>): string {
+
+        const { decimalPoint } = this.options;
+        var points = 0,
+            commas = 0,
+            guessed: string;
+        const potDelimiters: Record<string, number> = {
+                ',': 0,
+                ';': 0,
+                '\t': 0
+            },
+            linesCount = lines.length;
+
+        for (let i = 0; i < linesCount; i++) {
+            var inStr = false,
+                c,
+                cn,
+                cl,
+                token = '';
+
             // We should be able to detect dateformats within 13 rows
             if (i > 13) {
                 break;
             }
-            var columnStr = lines[i];
+
+            const columnStr = lines[i];
             for (var j = 0; j < columnStr.length; j++) {
                 c = columnStr[j];
                 cn = columnStr[j + 1];
                 cl = columnStr[j - 1];
+
                 if (c === '#') {
                     // Skip the rest of the line - it's a comment
                     break;
                 }
+
                 if (c === '"') {
                     if (inStr) {
                         if (cl !== '"' && cn !== '"') {
                             while (cn === ' ' && j < columnStr.length) {
                                 cn = columnStr[++j];
                             }
+
                             // After parsing a string, the next non-blank
                             // should be a delimiter if the CSV is properly
                             // formed.
+
                             if (typeof potDelimiters[cn] !== 'undefined') {
                                 potDelimiters[cn]++;
                             }
+
                             inStr = false;
                         }
-                    }
-                    else {
+                    } else {
                         inStr = true;
                     }
-                }
-                else if (typeof potDelimiters[c] !== 'undefined') {
+                } else if (typeof potDelimiters[c] !== 'undefined') {
+
                     token = token.trim();
+
                     if (!isNaN(Date.parse(token))) {
                         potDelimiters[c]++;
-                    }
-                    else if (isNaN(Number(token)) ||
-                        !isFinite(Number(token))) {
+                    } else if (
+                        isNaN(Number(token)) ||
+                        !isFinite(Number(token))
+                    ) {
                         potDelimiters[c]++;
                     }
+
                     token = '';
-                }
-                else {
+
+                } else {
                     token += c;
                 }
+
                 if (c === ',') {
                     commas++;
                 }
+
                 if (c === '.') {
                     points++;
                 }
             }
         }
+
         // Count the potential delimiters.
         // This could be improved by checking if the number of delimiters
         // equals the number of columns - 1
+
         if (potDelimiters[';'] > potDelimiters[',']) {
             guessed = ';';
-        }
-        else if (potDelimiters[','] > potDelimiters[';']) {
+        } else if (potDelimiters[','] > potDelimiters[';']) {
             guessed = ',';
-        }
-        else {
+        } else {
             // No good guess could be made..
             guessed = ',';
         }
+
         // Try to deduce the decimal point if it's not explicitly set.
         // If both commas or points is > 0 there is likely an issue
         if (!decimalPoint) {
             if (points > commas) {
                 this.guessedDecimalPoint = '.';
-            }
-            else {
+            } else {
                 this.guessedDecimalPoint = ',';
             }
+
             // Apply a new decimal regex based on the presumed decimal sep.
-            this.decimalRegex = new RegExp('^(-?[0-9]+)' +
+            this.decimalRegex = new RegExp(
+                '^(-?[0-9]+)' +
                 decimalPoint +
-                '([0-9]+)$');
+                '([0-9]+)$'
+            );
         }
+
         return guessed;
-    };
+    }
     /**
      * Handles converting the parsed data to a DataTable
      *
      * @returns {DataTable}
      * A DataTable from the parsed CSV
      */
-    CSVDataParser.prototype.getTable = function () {
+    public getTable(): DataTable {
         return DataTable.fromColumns(this.columns, this.headers);
-    };
+    }
+
     /**
      * Converts the parser instance to ClassJSON.
      *
-     * @returns {CSVDataParser.ClassJSON}
+     * @returns {CSVParser.ClassJSON}
      * ClassJSON from the parser instance.
      */
-    CSVDataParser.prototype.toJSON = function () {
-        var parser = this, options = parser.options, json = {
-            $class: 'CSVDataParser',
-            options: options
-        };
+    public toJSON(): CSVParser.ClassJSON {
+        const parser = this,
+            {
+                options
+            } = parser,
+            json: CSVParser.ClassJSON = {
+                $class: 'CSVDataParser',
+                options
+            };
+
         return json;
-    };
-    /* *
-     *
-     *  Static Properties
-     *
-     * */
+    }
+}
+
+namespace CSVParser {
+
     /**
-     * Default options
+     * ClassJSON for CSVDataParser
      */
-    CSVDataParser.defaultOptions = __assign(__assign({}, DataParser.defaultOptions), { decimalPoint: '.', lineDelimiter: '\n' });
-    return CSVDataParser;
-}(DataParser));
+    export interface ClassJSON extends DataJSON.ClassJSON {
+        options: ClassJSONOptions;
+    }
+
+    /**
+     * Interface for the BeforeParse callback function
+     *
+     */
+    export interface DataBeforeParseCallbackFunction {
+        (csv: string): string;
+    }
+
+    /**
+     * All available options for the parser
+     */
+    export type OptionsType = Partial<ClassJSONOptions & ParserOptions>;
+
+    /**
+     * Options for the CSV parser that are compatible with ClassJSON
+     */
+    export interface ClassJSONOptions extends DataParser.Options {
+        csv?: string;
+        decimalPoint: string;
+        itemDelimiter?: string;
+        lineDelimiter: string;
+    }
+
+    /**
+     * Options that are not compatible with ClassJSON
+     */
+    export interface ParserOptions {
+        beforeParse?: DataBeforeParseCallbackFunction;
+        decimalRegex?: RegExp;
+    }
+}
+
 /* *
  *
  *  Register
  *
  * */
-DataJSON.addClass(CSVDataParser);
+
+DataJSON.addClass(CSVParser);
+
 /* *
  *
  *  Export
  *
  * */
-export default CSVDataParser;
+
+export default CSVParser;

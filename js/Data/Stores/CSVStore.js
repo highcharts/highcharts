@@ -34,7 +34,8 @@ var __rest = (this && this.__rest) || function (s, e) {
     return t;
 };
 import Ajax from '../../Extensions/Ajax.js';
-import CSVDataParser from '../Parsers/CSVDataParser.js';
+import CSVParser from '../Parsers/CSVParser.js';
+import DataJSON from '../DataJSON.js';
 var ajax = Ajax.ajax;
 import DataStore from './DataStore.js';
 import DataTable from '../DataTable.js';
@@ -44,8 +45,8 @@ var merge = U.merge;
 /**
  * Class that handles creating a datastore from CSV
  */
-var CSVDataStore = /** @class */ (function (_super) {
-    __extends(CSVDataStore, _super);
+var CSVStore = /** @class */ (function (_super) {
+    __extends(CSVStore, _super);
     /* *
     *
     *  Constructors
@@ -57,19 +58,19 @@ var CSVDataStore = /** @class */ (function (_super) {
      * @param {DataTable} table
      * Optional DataTable to create the store from
      *
-     * @param {CSVDataStore.OptionsType} options
+     * @param {CSVStore.OptionsType} options
      * Options for the store and parser
      *
      * @param {DataParser} parser
      * Optional parser to replace the default parser
      */
-    function CSVDataStore(table, options, parser) {
+    function CSVStore(table, options, parser) {
         if (table === void 0) { table = new DataTable(); }
         if (options === void 0) { options = {}; }
         var _this = _super.call(this, table) || this;
         var csv = options.csv, csvURL = options.csvURL, enablePolling = options.enablePolling, dataRefreshRate = options.dataRefreshRate, parserOptions = __rest(options, ["csv", "csvURL", "enablePolling", "dataRefreshRate"]);
-        _this.options = merge(CSVDataStore.defaultOptions, { csv: csv, csvURL: csvURL, enablePolling: enablePolling, dataRefreshRate: dataRefreshRate });
-        _this.parser = parser || new CSVDataParser(parserOptions);
+        _this.options = merge(CSVStore.defaultOptions, { csv: csv, csvURL: csvURL, enablePolling: enablePolling, dataRefreshRate: dataRefreshRate });
+        _this.parser = parser || new CSVParser(parserOptions);
         return _this;
     }
     /* *
@@ -80,21 +81,21 @@ var CSVDataStore = /** @class */ (function (_super) {
     /**
      * Creates a CSVDatastore from a ClassJSON object.
      *
-     * @param {CSVDataStore.ClassJSON} json
+     * @param {CSVStore.ClassJSON} json
      * Class JSON (usually with a $class property) to convert.
      *
-     * @return {CSVDataStore}
+     * @return {CSVStore}
      * CSVDataStore from the ClassJSON.
      */
-    CSVDataStore.fromJSON = function (json) {
-        var options = json.options, parser = CSVDataParser.fromJSON(json.parser), table = DataTable.fromJSON(json.table), store = new CSVDataStore(table, options, parser);
+    CSVStore.fromJSON = function (json) {
+        var options = json.options, parser = CSVParser.fromJSON(json.parser), table = DataTable.fromJSON(json.table), store = new CSVStore(table, options, parser);
         store.describe(DataStore.getMetadataFromJSON(json.metadata));
         return store;
     };
     /**
      * Handles polling of live data
      */
-    CSVDataStore.prototype.poll = function () {
+    CSVStore.prototype.poll = function () {
         var _this = this;
         var _a = this.options, dataRefreshRate = _a.dataRefreshRate, pollingEnabled = _a.enablePolling, csvURL = _a.csvURL;
         var updateIntervalMs = (dataRefreshRate > 1 ? dataRefreshRate : 1) * 1000;
@@ -118,7 +119,7 @@ var CSVDataStore = /** @class */ (function (_super) {
      * @emits CSVDataStore#afterLoad
      * @emits CSVDataStore#loadError
      */
-    CSVDataStore.prototype.fetchCSV = function (initialFetch, eventDetail) {
+    CSVStore.prototype.fetchCSV = function (initialFetch, eventDetail) {
         var store = this, maxRetries = 3, csvURL = store.options.csvURL;
         var currentRetries;
         if (initialFetch) {
@@ -162,10 +163,10 @@ var CSVDataStore = /** @class */ (function (_super) {
      * @param {DataEventEmitter.EventDetail} [eventDetail]
      * Custom information for pending events.
      *
-     * @emits CSVDataParser#load
-     * @emits CSVDataParser#afterLoad
+     * @emits CSVParser#load
+     * @emits CSVParser#afterLoad
      */
-    CSVDataStore.prototype.load = function (eventDetail) {
+    CSVStore.prototype.load = function (eventDetail) {
         var store = this, _a = store.options, csv = _a.csv, csvURL = _a.csvURL;
         if (csv) {
             store.emit({
@@ -187,7 +188,7 @@ var CSVDataStore = /** @class */ (function (_super) {
             store.fetchCSV(true, eventDetail);
         }
     };
-    CSVDataStore.prototype.save = function () {
+    CSVStore.prototype.save = function () {
     };
     /**
      * Converts the store to a class JSON.
@@ -195,9 +196,9 @@ var CSVDataStore = /** @class */ (function (_super) {
      * @return {DataJSON.ClassJSON}
      * Class JSON of this store.
      */
-    CSVDataStore.prototype.toJSON = function () {
+    CSVStore.prototype.toJSON = function () {
         var json = {
-            $class: 'CSVDataStore',
+            $class: 'CSVStore',
             metadata: this.getMetadataJSON(),
             options: merge(this.options),
             parser: this.parser.toJSON(),
@@ -210,17 +211,24 @@ var CSVDataStore = /** @class */ (function (_super) {
      *  Static Properties
      *
      * */
-    CSVDataStore.defaultOptions = {
+    CSVStore.defaultOptions = {
         csv: '',
         csvURL: '',
         enablePolling: false,
         dataRefreshRate: 1
     };
-    return CSVDataStore;
+    return CSVStore;
 }(DataStore));
+/* *
+ *
+ *  Registry
+ *
+ * */
+DataJSON.addClass(CSVStore);
+DataStore.addStore(CSVStore);
 /* *
  *
  *  Export
  *
  * */
-export default CSVDataStore;
+export default CSVStore;

@@ -25,7 +25,7 @@ const { merge } = U;
 /**
  * Class that handles creating a datastore from an HTML table
  */
-class HTMLTableDataStore extends DataStore<HTMLTableDataStore.EventObjects> implements DataJSON.Class {
+class HTMLTableStore extends DataStore<HTMLTableStore.EventObjects> implements DataJSON.Class {
 
     /* *
      *
@@ -33,7 +33,7 @@ class HTMLTableDataStore extends DataStore<HTMLTableDataStore.EventObjects> impl
      *
      * */
 
-    protected static readonly defaultOptions: HTMLTableDataStore.Options = {
+    protected static readonly defaultOptions: HTMLTableStore.Options = {
         tableHTML: ''
     };
 
@@ -46,17 +46,17 @@ class HTMLTableDataStore extends DataStore<HTMLTableDataStore.EventObjects> impl
     /**
      * Creates an HTMLTableStore from ClassJSON
      *
-     * @param {HTMLTableDataStore.ClassJSON} json
+     * @param {HTMLTableStore.ClassJSON} json
      * Class JSON (usually with a $class property) to convert.
      *
-     * @return {HTMLTableDataStore}
+     * @return {HTMLTableStore}
      * HTMLTableStore from the ClassJSON
      */
-    public static fromJSON(json: HTMLTableDataStore.ClassJSON): HTMLTableDataStore {
+    public static fromJSON(json: HTMLTableStore.ClassJSON): HTMLTableStore {
         const options = json.options,
             parser = HTMLTableParser.fromJSON(json.parser),
             table = DataTable.fromJSON(json.table),
-            store = new HTMLTableDataStore(table, options, parser);
+            store = new HTMLTableStore(table, options, parser);
 
         store.describe(DataStore.getMetadataFromJSON(json.metadata));
 
@@ -75,7 +75,7 @@ class HTMLTableDataStore extends DataStore<HTMLTableDataStore.EventObjects> impl
      * @param {DataTable} table
      * Optional DataTable to create the store from
      *
-     * @param {HTMLTableDataStore.OptionsType} options
+     * @param {HTMLTableStore.OptionsType} options
      * Options for the store and parser
      *
      * @param {DataParser} parser
@@ -83,14 +83,14 @@ class HTMLTableDataStore extends DataStore<HTMLTableDataStore.EventObjects> impl
      */
     public constructor(
         table: DataTable = new DataTable(),
-        options: HTMLTableDataStore.OptionsType = {},
+        options: HTMLTableStore.OptionsType = {},
         parser?: HTMLTableParser
     ) {
         super(table);
 
         this.tableElement = null;
 
-        this.options = merge(HTMLTableDataStore.defaultOptions, options);
+        this.options = merge(HTMLTableStore.defaultOptions, options);
         this.parser = parser || new HTMLTableParser(this.options, this.tableElement);
     }
 
@@ -104,7 +104,7 @@ class HTMLTableDataStore extends DataStore<HTMLTableDataStore.EventObjects> impl
      * Options for the HTMLTable datastore
      * @todo this should not include parsing options
      */
-    public readonly options: (HTMLTableDataStore.Options&HTMLTableParser.OptionsType);
+    public readonly options: (HTMLTableStore.Options&HTMLTableParser.OptionsType);
 
     /**
      * The attached parser, which can be replaced in the constructor
@@ -197,10 +197,10 @@ class HTMLTableDataStore extends DataStore<HTMLTableDataStore.EventObjects> impl
 
     }
 
-    public toJSON(): HTMLTableDataStore.ClassJSON {
+    public toJSON(): HTMLTableStore.ClassJSON {
         const store = this,
-            json: HTMLTableDataStore.ClassJSON = {
-                $class: 'HTMLTableDataStore',
+            json: HTMLTableStore.ClassJSON = {
+                $class: 'HTMLTableStore',
                 metadata: store.getMetadataJSON(),
                 parser: store.parser.toJSON(),
                 table: store.table.toJSON(),
@@ -222,7 +222,7 @@ class HTMLTableDataStore extends DataStore<HTMLTableDataStore.EventObjects> impl
 /**
  * Types for class-specific options and events
  */
-namespace HTMLTableDataStore {
+namespace HTMLTableStore {
 
     /**
      * Type for event object fired from HTMLTableDataStore
@@ -232,7 +232,7 @@ namespace HTMLTableDataStore {
     /**
      * Options used in the constructor of HTMLTableDataStore
      */
-    export type OptionsType = Partial<(HTMLTableDataStore.Options&HTMLTableParser.OptionsType)>
+    export type OptionsType = Partial<(HTMLTableStore.Options&HTMLTableParser.OptionsType)>
 
     /**
      * The ClassJSON used to import/export HTMLTableDataStore
@@ -241,7 +241,7 @@ namespace HTMLTableDataStore {
         metadata: DataStore.MetadataJSON;
         parser: HTMLTableParser.ClassJSON;
         table: DataTable.ClassJSON;
-        options: HTMLTableDataStore.OptionsType;
+        options: HTMLTableStore.OptionsType;
         tableElementID: string;
     }
 
@@ -276,11 +276,12 @@ namespace HTMLTableDataStore {
  *
  * */
 
-DataJSON.addClass(HTMLTableDataStore);
+DataJSON.addClass(HTMLTableStore);
+DataStore.addStore(HTMLTableStore);
 
 declare module './Types' {
     interface DataStoreTypeRegistry {
-        HTMLTable: typeof HTMLTableDataStore;
+        HTMLTable: typeof HTMLTableStore;
     }
 }
 
@@ -290,4 +291,4 @@ declare module './Types' {
  *
  * */
 
-export default HTMLTableDataStore;
+export default HTMLTableStore;

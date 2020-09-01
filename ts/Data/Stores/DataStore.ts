@@ -21,11 +21,14 @@
 import type DataEventEmitter from '../DataEventEmitter';
 import type DataJSON from '../DataJSON';
 import type DataParser from '../Parsers/DataParser';
+import type { DataStoreRegistryType } from './Types';
 import DataTable from '../DataTable.js';
 import U from '../../Core/Utilities.js';
+
 const {
     addEvent,
-    fireEvent
+    fireEvent,
+    merge
 } = U;
 
 
@@ -40,12 +43,109 @@ const {
  */
 abstract class DataStore<TEventObject extends DataStore.EventObject>
 implements DataEventEmitter<TEventObject>, DataJSON.Class {
+    /* *
+     *
+     *  Static Properties
+     *
+     * */
+
+    /**
+     * Registry as a record object with store names and their class.
+     */
+    private static readonly registry = {} as Record<string, DataStoreRegistryType>;
+
+    /**
+     * Regular expression to extract the store name (group 1) from the
+     * stringified class type.
+     */
+    private static readonly nameRegExp = /^function\s+(\w*?)(?:DataStore)?\s*\(/;
 
     /* *
      *
      *  Static Functions
      *
      * */
+
+
+    /**
+     * Adds a dataStore class to the registry. The store has to provide the
+     * `DataStore.options` property and the `DataStore.load` method to
+     * modify the DataTable.
+     *
+     * @param {DataStore} dataStore
+     * Store class (aka class constructor) to register.
+     *
+     * @return {boolean}
+     * Returns true, if the registration was successful. False is returned, if
+     * their is already a store registered with this name.
+     */
+    public static addStore(dataStore: DataStoreRegistryType): boolean {
+        const name = DataStore.getName(dataStore),
+            registry = DataStore.registry;
+
+        if (
+            typeof name === 'undefined' ||
+            registry[name]
+        ) {
+            return false;
+        }
+
+        registry[name] = dataStore;
+
+        return true;
+    }
+
+    /**
+     * Returns all registered dataStore names.
+     *
+     * @return {Array<string>}
+     * All registered store names.
+     */
+    public static getAllStoreNames(): Array<string> {
+        return Object.keys(DataStore.registry);
+    }
+
+    /**
+     * Returns a copy of the dataStore registry as record object with
+     * dataStore names and their dataStore class.
+     *
+     * @return {Record<string,DataStoreRegistryType>}
+     * Copy of the dataStore registry.
+     */
+    public static getAllStores(): Record<string, DataStoreRegistryType> {
+        return merge(DataStore.registry);
+    }
+
+    /**
+     * Returns a dataStore class (aka class constructor) of the given dataStore
+     * name.
+     *
+     * @param {string} name
+     * Registered class name of the class type.
+     *
+     * @return {DataStoreRegistryType|undefined}
+     * Class type, if the class name was found, otherwise `undefined`.
+     */
+    public static getStore(name: string): (DataStoreRegistryType | undefined) {
+        return DataStore.registry[name];
+    }
+
+    /**
+     * Extracts the name from a given dataStore class.
+     *
+     * @param {DataStore} dataStore
+     * DataStore class to extract the name from.
+     *
+     * @return {string}
+     * DataStore name, if the extraction was successful, otherwise an empty
+     * string.
+     */
+    private static getName(dataStore: (typeof DataStore | Function)): string {
+        return (
+            dataStore.toString().match(DataStore.nameRegExp) ||
+            ['', '']
+        )[1];
+    }
 
     /**
      * Function for converting MetadataJSON to metadata array used within the
@@ -210,10 +310,10 @@ implements DataEventEmitter<TEventObject>, DataJSON.Class {
      * Event type as a string.
      *
      * @param {DataEventEmitter.EventCallback} callback
-     * Function to register for an modifier callback.
+     * Function to register for the store callback.
      *
      * @return {Function}
-     * Function to unregister callback from the modifier event.
+     * Function to unregister callback from the store event.
      */
     public on(
         type: TEventObject['type'],

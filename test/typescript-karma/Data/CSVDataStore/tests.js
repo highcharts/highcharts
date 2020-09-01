@@ -1,4 +1,4 @@
-import CSVDataStore from '/base/js/Data/Stores/CSVDataStore.js'
+import CSVStore from '/base/js/Data/Stores/CSVStore.js'
 import { registerStoreEvents, testExportedDataTable } from '../utils.js'
 import U from '/base/js/Core/Utilities.js';
 
@@ -31,8 +31,8 @@ const csv = `Grade,Ounce,Gram,Inch,mm,PPO
 "9",       0.0017,   0.047,   0.079,2.01, 603
 "12",      0.0005,   0.014,   0.050,1.30,2025`;
 
-test('CSVDataStore from string', function (assert) {
-    const datastore = new CSVDataStore(undefined, { csv });
+test('CSVStore from string', function (assert) {
+    const datastore = new CSVStore(undefined, { csv });
     datastore.load();
 
     assert.strictEqual(
@@ -44,7 +44,7 @@ test('CSVDataStore from string', function (assert) {
         'Datastore has correct amount of columns'
     );
 
-    const dataStoreFromJSON = CSVDataStore.fromJSON(datastore.toJSON());
+    const dataStoreFromJSON = CSVStore.fromJSON(datastore.toJSON());
     dataStoreFromJSON.load();
 
     testExportedDataTable(datastore.table, dataStoreFromJSON.table, assert);
@@ -53,10 +53,10 @@ test('CSVDataStore from string', function (assert) {
     assert.ok(!foundComment, 'Comment is not added to the dataTable');
 })
 
-test('CSVDataStore from URL', function (assert) {
+test('CSVStore from URL', function (assert) {
     const registeredEvents = [];
 
-    const datastore = new CSVDataStore(undefined, {
+    const datastore = new CSVStore(undefined, {
         csvURL: 'https://demo-live-data.highcharts.com/sine-data.csv',
         enablePolling: true
     });
@@ -74,7 +74,7 @@ test('CSVDataStore from URL', function (assert) {
 
         // Check that the store is updated
         // with the new dataset when polling
-        states[pollNumber] = new CSVDataStore(e.table);
+        states[pollNumber] = new CSVStore(e.table);
 
         if (pollNumber > 0) {
             const currentValue = states[pollNumber].table.getRow(2).getCellAsNumber('X');
@@ -127,11 +127,11 @@ test('CSVDataStore from URL', function (assert) {
 })
 
 // TODO: test amount of retries, event orders
-test('CSVDatastore error', function(assert){
+test('CSVStore error', function(assert){
 
     const registeredEvents = [];
 
-    const datastore = new CSVDataStore(undefined, {
+    const datastore = new CSVStore(undefined, {
         csvURL: 'https://data.highcharts.com/sine-data.csv'
     });
 
