@@ -285,7 +285,8 @@ H.dateFormats.W = function (this: Highcharts.Time, timestamp: number): string {
 
 // First letter of the day of the week, e.g. 'M' for 'Monday'.
 H.dateFormats.E = function (timestamp: number): string {
-    return dateFormat('%a', timestamp, true).charAt(0);
+    const time = new Highcharts.Time(this.options as any);
+    return time.dateFormat('%a', timestamp, true).charAt(0);
 };
 
 /* eslint-disable no-invalid-this */

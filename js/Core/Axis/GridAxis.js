@@ -193,7 +193,8 @@ H.dateFormats.W = function (timestamp) {
 };
 // First letter of the day of the week, e.g. 'M' for 'Monday'.
 H.dateFormats.E = function (timestamp) {
-    return dateFormat('%a', timestamp, true).charAt(0);
+    var time = new Highcharts.Time(this.options);
+    return time.dateFormat('%a', timestamp, true).charAt(0);
 };
 /* eslint-disable no-invalid-this */
 addEvent(Chart, 'afterSetChartSize', function () {
