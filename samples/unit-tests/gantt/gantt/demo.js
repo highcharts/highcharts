@@ -618,7 +618,6 @@
 
         assert.notOk(chart.series[1].requireSorting, "No error 15 in the console.");
     });
-}());
 
     QUnit.test('Gantt using the keys feature #13768', function (assert) {
         var chart = Highcharts.ganttChart('container', {
