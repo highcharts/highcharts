@@ -51,7 +51,7 @@ class RangeDataModifier extends DataModifier {
         strict: false,
         ranges: [
             {
-                column: 0,
+                column: '',
                 maxValue: (Number.POSITIVE_INFINITY - 1),
                 minValue: (Number.NEGATIVE_INFINITY + 1)
             }
@@ -139,6 +139,7 @@ class RangeDataModifier extends DataModifier {
 
         let column: DataTableRow.CellType,
             range: RangeDataModifier.RangeOptions,
+            rangeColumn: string,
             row: DataTableRow;
 
         this.emit({ type: 'execute', detail: eventDetail, table });
@@ -153,9 +154,16 @@ class RangeDataModifier extends DataModifier {
                 continue;
             }
 
+            rangeColumn = range.column;
+
             for (let j = 0, jEnd = rows.length; j < jEnd; ++j) {
                 row = rows[j];
-                column = row.getCell(range.column);
+
+                if (!rangeColumn) {
+                    rangeColumn = row.getCellNames()[0];
+                }
+
+                column = row.getCell(rangeColumn);
 
                 /* eslint-disable @typescript-eslint/indent */
                 switch (typeof column) {
@@ -245,7 +253,7 @@ namespace RangeDataModifier {
          * Column containing the filtered values. This can be an index or a
          * name.
          */
-        column: (number|string);
+        column: string;
         /**
          * Maximum including value (`<=` operator).
          */

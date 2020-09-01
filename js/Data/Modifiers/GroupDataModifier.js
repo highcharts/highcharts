@@ -95,11 +95,14 @@ var GroupDataModifier = /** @class */ (function (_super) {
      */
     GroupDataModifier.prototype.execute = function (table, eventDetail) {
         this.emit({ type: 'execute', detail: eventDetail, table: table });
-        var modifier = this, _a = modifier.options, groupColumn = _a.groupColumn, invalidValues = _a.invalidValues, validValues = _a.validValues, columnGroups = [], tableGroups = [], valueGroups = [];
-        var row, value, valueIndex;
+        var modifier = this, _a = modifier.options, invalidValues = _a.invalidValues, validValues = _a.validValues, columnGroups = [], tableGroups = [], valueGroups = [];
+        var groupColumn = modifier.options.groupColumn, row, value, valueIndex;
         for (var i = 0, iEnd = table.getRowCount(); i < iEnd; ++i) {
             row = table.getRow(i);
             if (row) {
+                if (!groupColumn) {
+                    groupColumn = row.getCellNames()[0];
+                }
                 value = row.getCell(groupColumn);
                 if (value instanceof DataTable ||
                     value instanceof Date ||
@@ -110,7 +113,7 @@ var GroupDataModifier = /** @class */ (function (_super) {
                 }
                 valueIndex = valueGroups.indexOf(value);
                 if (valueIndex === -1) {
-                    columnGroups.push(groupColumn.toString());
+                    columnGroups.push(groupColumn);
                     tableGroups.push(new DataTable([row]));
                     valueGroups.push(value);
                 }
@@ -155,7 +158,7 @@ var GroupDataModifier = /** @class */ (function (_super) {
      */
     GroupDataModifier.defaultOptions = {
         modifier: 'Group',
-        groupColumn: 0
+        groupColumn: ''
     };
     return GroupDataModifier;
 }(DataModifier));

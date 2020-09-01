@@ -90,7 +90,7 @@ var RangeDataModifier = /** @class */ (function (_super) {
      */
     RangeDataModifier.prototype.execute = function (table, eventDetail) {
         var modifier = this, _a = modifier.options, ranges = _a.ranges, strict = _a.strict, rows = table.getAllRows(), result = new DataTable();
-        var column, range, row;
+        var column, range, rangeColumn, row;
         this.emit({ type: 'execute', detail: eventDetail, table: table });
         for (var i = 0, iEnd = ranges.length; i < iEnd; ++i) {
             range = ranges[i];
@@ -98,9 +98,13 @@ var RangeDataModifier = /** @class */ (function (_super) {
                 typeof range.minValue !== typeof range.maxValue) {
                 continue;
             }
+            rangeColumn = range.column;
             for (var j = 0, jEnd = rows.length; j < jEnd; ++j) {
                 row = rows[j];
-                column = row.getCell(range.column);
+                if (!rangeColumn) {
+                    rangeColumn = row.getCellNames()[0];
+                }
+                column = row.getCell(rangeColumn);
                 /* eslint-disable @typescript-eslint/indent */
                 switch (typeof column) {
                     default:
@@ -150,7 +154,7 @@ var RangeDataModifier = /** @class */ (function (_super) {
         strict: false,
         ranges: [
             {
-                column: 0,
+                column: '',
                 maxValue: (Number.POSITIVE_INFINITY - 1),
                 minValue: (Number.NEGATIVE_INFINITY + 1)
             }

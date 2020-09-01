@@ -48,7 +48,7 @@ class GroupDataModifier extends DataModifier {
      */
     public static readonly defaultOptions: GroupDataModifier.Options = {
         modifier: 'Group',
-        groupColumn: 0
+        groupColumn: ''
     };
 
     /* *
@@ -131,7 +131,6 @@ class GroupDataModifier extends DataModifier {
 
         const modifier = this,
             {
-                groupColumn,
                 invalidValues,
                 validValues
             } = modifier.options,
@@ -139,14 +138,20 @@ class GroupDataModifier extends DataModifier {
             tableGroups: Array<DataTable> = [],
             valueGroups: Array<DataJSON.Primitives> = [];
 
-        let row: (DataTableRow|undefined),
+        let groupColumn = modifier.options.groupColumn,
+            row: (DataTableRow|undefined),
             value: DataTableRow.CellType,
             valueIndex: number;
 
         for (let i = 0, iEnd = table.getRowCount(); i < iEnd; ++i) {
             row = table.getRow(i);
             if (row) {
+                if (!groupColumn) {
+                    groupColumn = row.getCellNames()[0];
+                }
+
                 value = row.getCell(groupColumn);
+
                 if (
                     value instanceof DataTable ||
                     value instanceof Date ||
@@ -160,9 +165,11 @@ class GroupDataModifier extends DataModifier {
                 ) {
                     continue;
                 }
+
                 valueIndex = valueGroups.indexOf(value);
+
                 if (valueIndex === -1) {
-                    columnGroups.push(groupColumn.toString());
+                    columnGroups.push(groupColumn);
                     tableGroups.push(new DataTable([row]));
                     valueGroups.push(value);
                 } else {
@@ -231,7 +238,7 @@ namespace GroupDataModifier {
         /**
          * Column to group by values.
          */
-        groupColumn: (number|string);
+        groupColumn: string;
         /**
          * Array of invalid group values.
          */

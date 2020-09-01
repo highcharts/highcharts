@@ -43,7 +43,7 @@ var DataSeriesConverter = /** @class */ (function () {
         for (var i = 0, iEnd = table.getRowCount(); i < iEnd; i++) {
             row = table.getRow(i);
             if (row) {
-                column = row.getCell(columnIndex);
+                column = row.getCell(row.getCellNames()[columnIndex]);
                 if (typeof column === 'number') {
                     dataOptions.push(seriesTypeData(column));
                 }

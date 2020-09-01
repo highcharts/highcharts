@@ -41,7 +41,6 @@ var DataTableRow = /** @class */ (function () {
         if (converter === void 0) { converter = new DataConverter(); }
         cells = merge(cells);
         this.autoId = false;
-        this.cellNames = Object.keys(cells);
         this.cells = cells;
         this.converter = converter;
         if (typeof cells.id === 'string') {
@@ -111,14 +110,13 @@ var DataTableRow = /** @class */ (function () {
      */
     DataTableRow.prototype.clear = function (eventDetail) {
         this.emit({ type: 'clearRow', detail: eventDetail });
-        this.cellNames.length = 0;
-        this.cells.length = 0;
+        this.cells = {};
         this.emit({ type: 'afterClearRow', detail: eventDetail });
     };
     /**
      * Deletes a cell in this row.
      *
-     * @param {string} cell
+     * @param {string} cellName
      * Cell name.
      *
      * @param {DataEventEmitter.EventDetail} [eventDetail]
@@ -130,26 +128,21 @@ var DataTableRow = /** @class */ (function () {
      * @emits DataTableRow#deleteCell
      * @emits DataTableRow#afterDeleteCell
      */
-    DataTableRow.prototype.deleteCell = function (cell, eventDetail) {
-        var row = this;
-        if (typeof cell === 'number') {
-            cell = (row.cellNames[cell] || '');
-        }
-        var cellValue = row.cells[cell];
-        if (cell === 'id') {
+    DataTableRow.prototype.deleteCell = function (cellName, eventDetail) {
+        var row = this, cellValue = row.cells[cellName];
+        if (cellName === 'id') {
             return false;
         }
         this.emit({
             type: 'deleteCell',
-            cellName: cell,
+            cellName: cellName,
             cellValue: cellValue,
             detail: eventDetail
         });
-        row.cellNames.splice(row.cellNames.indexOf(cell), 1);
-        delete row.cells[cell];
+        delete row.cells[cellName];
         this.emit({
             type: 'afterDeleteCell',
-            cellName: cell,
+            cellName: cellName,
             cellValue: cellValue,
             detail: eventDetail
         });
@@ -177,82 +170,79 @@ var DataTableRow = /** @class */ (function () {
     /**
      * Returns the value of the given cell name or cell index.
      *
-     * @param {number|string} cell
-     * Cell name or cell index.
+     * @param {string} cellName
+     * Cell name to fetch.
      *
      * @return {DataTableRow.CellType}
      * Cell value in this row.
      */
-    DataTableRow.prototype.getCell = function (cell) {
-        if (typeof cell === 'number') {
-            return this.cells[this.cellNames[cell]];
-        }
-        return this.cells[cell];
+    DataTableRow.prototype.getCell = function (cellName) {
+        return this.cells[cellName];
     };
     /**
      * Converts the value of the given cell name or cell index to a boolean and
      * returns it.
      *
-     * @param {number|string} cell
-     * Cell name or cell index.
+     * @param {string} cellName
+     * Cell name to fetch.
      *
      * @return {boolean}
      * Converted cell value of the cell in this row.
      */
-    DataTableRow.prototype.getCellAsBoolean = function (cell) {
-        return this.converter.asBoolean(this.getCell(cell));
+    DataTableRow.prototype.getCellAsBoolean = function (cellName) {
+        return this.converter.asBoolean(this.getCell(cellName));
     };
     /**
      * Converts the value of the given cell name or cell index to a DataTable
      * and returns it.
      *
-     * @param {number|string} cell
-     * Cell name or cell index.
+     * @param {string} cellName
+     * Cell name to fetch.
      *
      * @return {DataTable}
      * Converted cell value of the cell in this row.
      */
-    DataTableRow.prototype.getCellAsDataTable = function (cell) {
-        return this.converter.asDataTable(this.getCell(cell));
+    DataTableRow.prototype.getCellAsDataTable = function (cellName) {
+        return this.converter.asDataTable(this.getCell(cellName));
     };
     /**
      * Converts the value of the given cell name or cell index to a Date and
      * returns it.
      *
-     * @param {number|string} cell
-     * Cell name or cell index.
+     * @param {string} cellName
+     * Cell name to fetch.
      *
      * @return {Date}
      * Converted cell value of the cell in this row.
      */
-    DataTableRow.prototype.getCellAsDate = function (cell) {
-        return this.converter.asDate(this.getCell(cell));
+    DataTableRow.prototype.getCellAsDate = function (cellName) {
+        return this.converter.asDate(this.getCell(cellName));
     };
     /**
      * Converts the value of the given cell name or cell index to a number and
      * returns it.
      *
-     * @param {number|string} cell
-     * Cell name or cell index.
+     * @param {string} cellName
+     * Cell name to fetch.
      *
      * @return {number}
      * Converted cell value of the cell in this row.
      */
-    DataTableRow.prototype.getCellAsNumber = function (cell) {
-        return this.converter.asNumber(this.getCell(cell));
+    DataTableRow.prototype.getCellAsNumber = function (cellName) {
+        return this.converter.asNumber(this.getCell(cellName));
     };
     /**
      * Converts the value of the given cell name or cell index to a string and
      * returns it.
      *
-     * @param {number|string} cell
-     * Cell name or cell index.
+     * @param {string} cellName
+     * Cell name to fetch.
      *
      * @return {string}
      * Converted cell value of the cell in this row.
      */
-    DataTableRow.prototype.getCellAsString = function (cell) {
-        return this.converter.asString(this.getCell(cell));
+    DataTableRow.prototype.getCellAsString = function (cellName) {
+        return this.converter.asString(this.getCell(cellName));
     };
     /**
      * Returns the number of cell in this row.
@@ -270,7 +260,7 @@ var DataTableRow = /** @class */ (function () {
      * Cell names in this row.
      */
     DataTableRow.prototype.getCellNames = function () {
-        return this.cellNames.slice();
+        return Object.keys(this.cells);
     };
     /**
      * Adds a cell to this row.
@@ -292,19 +282,19 @@ var DataTableRow = /** @class */ (function () {
      * @emits DataTableRow#afterInsertCell
      */
     DataTableRow.prototype.insertCell = function (cellName, cellValue, eventDetail) {
+        var row = this, cells = row.cells;
         if (cellName === 'id' ||
-            this.cellNames.indexOf(cellName) !== -1) {
+            Object.keys(cells).indexOf(cellName) !== -1) {
             return false;
         }
-        this.emit({
+        row.emit({
             type: 'insertCell',
             cellName: cellName,
             cellValue: cellValue,
             detail: eventDetail
         });
-        this.cellNames.push(cellName);
-        this.cells[cellName] = cellValue;
-        this.emit({
+        row.cells[cellName] = cellValue;
+        row.emit({
             type: 'afterInsertCell',
             cellName: cellName,
             cellValue: cellValue,
@@ -334,27 +324,27 @@ var DataTableRow = /** @class */ (function () {
      * Class JSON of this row.
      */
     DataTableRow.prototype.toJSON = function () {
-        var columns = this.getAllCells(), columnKeys = Object.keys(columns), json = {
+        var row = this, cells = row.getAllCells(), cellNames = Object.keys(cells), json = {
             $class: 'DataTableRow'
         };
-        var key, value;
+        var name, value;
         if (!this.autoId) {
             json.id = this.id;
         }
-        for (var i = 0, iEnd = columnKeys.length; i < iEnd; ++i) {
-            key = columnKeys[i];
-            value = columns[key];
+        for (var i = 0, iEnd = cellNames.length; i < iEnd; ++i) {
+            name = cellNames[i];
+            value = cells[name];
             /* eslint-disable @typescript-eslint/indent */
             switch (typeof value) {
                 default:
                     if (value === null) {
-                        json[key] = value;
+                        json[name] = value;
                     }
                     else if (value instanceof Date) {
-                        json[key] = value.getTime();
+                        json[name] = value.getTime();
                     }
                     else { // DataTable
-                        json[key] = value.toJSON();
+                        json[name] = value.toJSON();
                     }
                     continue;
                 case 'undefined':
@@ -362,7 +352,7 @@ var DataTableRow = /** @class */ (function () {
                 case 'boolean':
                 case 'number':
                 case 'string':
-                    json[key] = value;
+                    json[name] = value;
                     continue;
             }
         }

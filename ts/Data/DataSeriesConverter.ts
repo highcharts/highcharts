@@ -74,7 +74,7 @@ class DataSeriesConverter {
             row = table.getRow(i);
 
             if (row) {
-                column = row.getCell(columnIndex);
+                column = row.getCell(row.getCellNames()[columnIndex]);
 
                 if (typeof column === 'number') {
                     dataOptions.push(

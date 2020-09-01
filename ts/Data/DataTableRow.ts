@@ -115,7 +115,6 @@ implements DataEventEmitter<DataTableRow.EventObject>, DataJSON.Class {
         cells = merge(cells);
 
         this.autoId = false;
-        this.cellNames = Object.keys(cells);
         this.cells = cells;
         this.converter = converter;
 
@@ -139,12 +138,6 @@ implements DataEventEmitter<DataTableRow.EventObject>, DataJSON.Class {
      * Indicates an automatically generated id, if no ID-cell was provided.
      */
     public autoId: boolean;
-
-    /**
-     * Names of all containing cells.
-     * @private
-     */
-    private cellNames: Array<string>;
 
     /**
      * Record object of all cell names with their values in this rows.
@@ -181,8 +174,7 @@ implements DataEventEmitter<DataTableRow.EventObject>, DataJSON.Class {
 
         this.emit({ type: 'clearRow', detail: eventDetail });
 
-        this.cellNames.length = 0;
-        this.cells.length = 0;
+        this.cells = {};
 
         this.emit({ type: 'afterClearRow', detail: eventDetail });
     }
@@ -190,7 +182,7 @@ implements DataEventEmitter<DataTableRow.EventObject>, DataJSON.Class {
     /**
      * Deletes a cell in this row.
      *
-     * @param {string} cell
+     * @param {string} cellName
      * Cell name.
      *
      * @param {DataEventEmitter.EventDetail} [eventDetail]
@@ -203,35 +195,29 @@ implements DataEventEmitter<DataTableRow.EventObject>, DataJSON.Class {
      * @emits DataTableRow#afterDeleteCell
      */
     public deleteCell(
-        cell: (number|string),
+        cellName: string,
         eventDetail?: DataEventEmitter.EventDetail
     ): boolean {
-        const row = this;
+        const row = this,
+            cellValue = row.cells[cellName];
 
-        if (typeof cell === 'number') {
-            cell = (row.cellNames[cell] || '');
-        }
-
-        const cellValue = row.cells[cell];
-
-        if (cell === 'id') {
+        if (cellName === 'id') {
             return false;
         }
 
         this.emit({
             type: 'deleteCell',
-            cellName: cell,
-            cellValue: cellValue,
+            cellName,
+            cellValue,
             detail: eventDetail
         });
 
-        row.cellNames.splice(row.cellNames.indexOf(cell), 1);
-        delete row.cells[cell];
+        delete row.cells[cellName];
 
         this.emit({
             type: 'afterDeleteCell',
-            cellName: cell,
-            cellValue: cellValue,
+            cellName,
+            cellValue,
             detail: eventDetail
         });
 
@@ -262,89 +248,84 @@ implements DataEventEmitter<DataTableRow.EventObject>, DataJSON.Class {
     /**
      * Returns the value of the given cell name or cell index.
      *
-     * @param {number|string} cell
-     * Cell name or cell index.
+     * @param {string} cellName
+     * Cell name to fetch.
      *
      * @return {DataTableRow.CellType}
      * Cell value in this row.
      */
-    public getCell(cell: (number|string)): DataTableRow.CellType {
-
-        if (typeof cell === 'number') {
-            return this.cells[this.cellNames[cell]];
-        }
-
-        return this.cells[cell];
+    public getCell(cellName: string): DataTableRow.CellType {
+        return this.cells[cellName];
     }
 
     /**
      * Converts the value of the given cell name or cell index to a boolean and
      * returns it.
      *
-     * @param {number|string} cell
-     * Cell name or cell index.
+     * @param {string} cellName
+     * Cell name to fetch.
      *
      * @return {boolean}
      * Converted cell value of the cell in this row.
      */
-    public getCellAsBoolean(cell: (number|string)): boolean {
-        return this.converter.asBoolean(this.getCell(cell));
+    public getCellAsBoolean(cellName: string): boolean {
+        return this.converter.asBoolean(this.getCell(cellName));
     }
 
     /**
      * Converts the value of the given cell name or cell index to a DataTable
      * and returns it.
      *
-     * @param {number|string} cell
-     * Cell name or cell index.
+     * @param {string} cellName
+     * Cell name to fetch.
      *
      * @return {DataTable}
      * Converted cell value of the cell in this row.
      */
-    public getCellAsDataTable(cell: (number|string)): DataTable {
-        return this.converter.asDataTable(this.getCell(cell));
+    public getCellAsDataTable(cellName: string): DataTable {
+        return this.converter.asDataTable(this.getCell(cellName));
     }
 
     /**
      * Converts the value of the given cell name or cell index to a Date and
      * returns it.
      *
-     * @param {number|string} cell
-     * Cell name or cell index.
+     * @param {string} cellName
+     * Cell name to fetch.
      *
      * @return {Date}
      * Converted cell value of the cell in this row.
      */
-    public getCellAsDate(cell: (number|string)): Date {
-        return this.converter.asDate(this.getCell(cell));
+    public getCellAsDate(cellName: string): Date {
+        return this.converter.asDate(this.getCell(cellName));
     }
 
     /**
      * Converts the value of the given cell name or cell index to a number and
      * returns it.
      *
-     * @param {number|string} cell
-     * Cell name or cell index.
+     * @param {string} cellName
+     * Cell name to fetch.
      *
      * @return {number}
      * Converted cell value of the cell in this row.
      */
-    public getCellAsNumber(cell: (number|string)): number {
-        return this.converter.asNumber(this.getCell(cell));
+    public getCellAsNumber(cellName: string): number {
+        return this.converter.asNumber(this.getCell(cellName));
     }
 
     /**
      * Converts the value of the given cell name or cell index to a string and
      * returns it.
      *
-     * @param {number|string} cell
-     * Cell name or cell index.
+     * @param {string} cellName
+     * Cell name to fetch.
      *
      * @return {string}
      * Converted cell value of the cell in this row.
      */
-    public getCellAsString(cell: (number|string)): string {
-        return this.converter.asString(this.getCell(cell));
+    public getCellAsString(cellName: string): string {
+        return this.converter.asString(this.getCell(cellName));
     }
 
     /**
@@ -364,7 +345,7 @@ implements DataEventEmitter<DataTableRow.EventObject>, DataJSON.Class {
      * Cell names in this row.
      */
     public getCellNames(): Array<string> {
-        return this.cellNames.slice();
+        return Object.keys(this.cells);
     }
 
     /**
@@ -391,25 +372,26 @@ implements DataEventEmitter<DataTableRow.EventObject>, DataJSON.Class {
         cellValue: DataTableRow.CellType,
         eventDetail?: DataEventEmitter.EventDetail
     ): boolean {
+        const row = this,
+            cells = row.cells;
 
         if (
             cellName === 'id' ||
-            this.cellNames.indexOf(cellName) !== -1
+            Object.keys(cells).indexOf(cellName) !== -1
         ) {
             return false;
         }
 
-        this.emit({
+        row.emit({
             type: 'insertCell',
             cellName,
             cellValue,
             detail: eventDetail
         });
 
-        this.cellNames.push(cellName);
-        this.cells[cellName] = cellValue;
+        row.cells[cellName] = cellValue;
 
-        this.emit({
+        row.emit({
             type: 'afterInsertCell',
             cellName,
             cellValue,
@@ -445,32 +427,33 @@ implements DataEventEmitter<DataTableRow.EventObject>, DataJSON.Class {
      * Class JSON of this row.
      */
     public toJSON(): DataTableRow.ClassJSON {
-        const columns = this.getAllCells(),
-            columnKeys = Object.keys(columns),
+        const row = this,
+            cells = row.getAllCells(),
+            cellNames = Object.keys(cells),
             json: DataTableRow.ClassJSON = {
                 $class: 'DataTableRow'
             };
 
-        let key: string,
+        let name: string,
             value: DataTableRow.CellType;
 
         if (!this.autoId) {
             json.id = this.id;
         }
 
-        for (let i = 0, iEnd = columnKeys.length; i < iEnd; ++i) {
-            key = columnKeys[i];
-            value = columns[key];
+        for (let i = 0, iEnd = cellNames.length; i < iEnd; ++i) {
+            name = cellNames[i];
+            value = cells[name];
 
             /* eslint-disable @typescript-eslint/indent */
             switch (typeof value) {
                 default:
                     if (value === null) {
-                        json[key] = value;
+                        json[name] = value;
                     } else if (value instanceof Date) {
-                        json[key] = value.getTime();
+                        json[name] = value.getTime();
                     } else { // DataTable
-                        json[key] = value.toJSON();
+                        json[name] = value.toJSON();
                     }
                     continue;
                 case 'undefined':
@@ -478,7 +461,7 @@ implements DataEventEmitter<DataTableRow.EventObject>, DataJSON.Class {
                 case 'boolean':
                 case 'number':
                 case 'string':
-                    json[key] = value;
+                    json[name] = value;
                     continue;
             }
         }
