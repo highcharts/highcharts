@@ -70,3 +70,70 @@ QUnit.test('Organization single data', assert => {
         'The SVG should not contain NaN'
     );
 });
+
+QUnit.test('Drilldown in the organization chart should be allowed, #13711.', assert => {
+    var clock = TestUtilities.lolexInstall(),
+        chart = Highcharts.chart('container', {
+            chart: {
+                type: 'organization'
+            },
+            series: [{
+                data: [{
+                    from: "A",
+                    to: "B"
+                }],
+                nodes: [{
+                    id: 'B',
+                    drilldown: "B-drill"
+                }]
+            }],
+            drilldown: {
+                activeDataLabelStyle: {
+                    color: 'contrast'
+                },
+                series: [{
+                    id: "B-drill",
+                    name: "CD",
+                    keys: ['from', 'to'],
+                    data: [
+                        ['C', 'D']
+                    ]
+                }]
+            }
+        });
+
+    assert.strictEqual(
+        chart.series[0].points[0].from,
+        'A',
+        'The chart should render correctly.'
+    );
+
+    chart.series[0].points[0].toNode.doDrilldown();
+
+    setTimeout(function () {
+        assert.strictEqual(
+            chart.series[0].points[0].from,
+            'C',
+            'Drilldown should be performed and the points should be changed.'
+        );
+        assert.ok(
+            chart.series[0].nodes[0].graphic.visibility !== 'hidden',
+            'Node should be visible.'
+        );
+        chart.drillUp();
+    }, 500);
+
+    setTimeout(function () {
+        assert.strictEqual(
+            chart.series[0].points[0].from,
+            'A',
+            'Drillup should be performed and the points should be changed.'
+        );
+        assert.ok(
+            chart.series[0].nodes[0].graphic.visibility !== 'hidden',
+            'Node should be visible.'
+        );
+    }, 1000);
+
+    TestUtilities.lolexRunAndUninstall(clock);
+});
