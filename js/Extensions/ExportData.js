@@ -917,23 +917,7 @@ Chart.prototype.downloadXLS = function () {
  * @fires Highcharts.Chart#event:afterViewData
  */
 Chart.prototype.viewData = function () {
-    // Create div and generate the data table.
-    if (!this.dataTableDiv) {
-        this.dataTableDiv = doc.createElement('div');
-        this.dataTableDiv.className = 'highcharts-data-table';
-        // Insert after the chart container
-        this.renderTo.parentNode.insertBefore(this.dataTableDiv, this.renderTo.nextSibling);
-    }
-    // Show the data table again.
-    if (this.dataTableDiv.style.display === '' || this.dataTableDiv.style.display === 'none') {
-        this.dataTableDiv.style.display = 'block';
-    }
-    this.isDataTableVisible = true;
-    // Update table content
-    this.dataTableDiv.innerHTML = '';
-    var ast = new AST([this.getTableAST()]);
-    ast.addToDOM(this.dataTableDiv);
-    fireEvent(this, 'afterViewData', this.dataTableDiv);
+    this.toggleDataTable(true);
 };
 /**
  * Export-data module required. Hide the data table when visible.
@@ -941,23 +925,35 @@ Chart.prototype.viewData = function () {
  * @function Highcharts.Chart#hideData
  */
 Chart.prototype.hideData = function () {
-    if (this.dataTableDiv && this.dataTableDiv.style.display === 'block') {
-        this.dataTableDiv.style.display = 'none';
-    }
-    this.isDataTableVisible = false;
-    fireEvent(this, 'afterHideData', this.dataTableDiv);
+    this.toggleDataTable(false);
 };
-Chart.prototype.toggleDataTable = function () {
+Chart.prototype.toggleDataTable = function (show) {
     var _a;
+    show = pick(show, !this.isDataTableVisible);
+    // Create the div
+    if (show && !this.dataTableDiv) {
+        this.dataTableDiv = doc.createElement('div');
+        this.dataTableDiv.className = 'highcharts-data-table';
+        // Insert after the chart container
+        this.renderTo.parentNode.insertBefore(this.dataTableDiv, this.renderTo.nextSibling);
+    }
+    // Toggle the visibility
+    if (this.dataTableDiv) {
+        this.dataTableDiv.style.display = show ? 'block' : 'none';
+        // Generate the data table
+        if (show) {
+            this.dataTableDiv.innerHTML = '';
+            var ast = new AST([this.getTableAST()]);
+            ast.addToDOM(this.dataTableDiv);
+            fireEvent(this, 'afterViewData', this.dataTableDiv);
+        }
+    }
+    // Set the flag
+    this.isDataTableVisible = show;
+    // Change the menu item text
     var exportDivElements = this.exportDivElements, menuItems = (_a = exportingOptions === null || exportingOptions === void 0 ? void 0 : exportingOptions.buttons) === null || _a === void 0 ? void 0 : _a.contextButton.menuItems, lang = this.options.lang;
-    if (this.isDataTableVisible) {
-        this.hideData();
-    }
-    else {
-        this.viewData();
-    }
-    // Change the button text based on table visibility.
-    if ((exportingOptions === null || exportingOptions === void 0 ? void 0 : exportingOptions.menuItemDefinitions) && (lang === null || lang === void 0 ? void 0 : lang.viewData) &&
+    if (exportingOptions &&
+        exportingOptions.menuItemDefinitions && (lang === null || lang === void 0 ? void 0 : lang.viewData) &&
         lang.hideData &&
         menuItems &&
         exportDivElements &&

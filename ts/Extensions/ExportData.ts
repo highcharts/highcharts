@@ -73,7 +73,7 @@ declare global {
             /** @requires modules/export-data */
             viewData(): void;
             /** @requires modules/export-data */
-            toggleDataTable(): void;
+            toggleDataTable(show?: boolean): void;
             /** @requires modules/export-data */
             hideData(): void;
             /** @requires modules/export-data */
@@ -1320,29 +1320,7 @@ Chart.prototype.downloadXLS = function (): void {
  * @fires Highcharts.Chart#event:afterViewData
  */
 Chart.prototype.viewData = function (): void {
-    // Create div and generate the data table.
-    if (!this.dataTableDiv) {
-        this.dataTableDiv = doc.createElement('div');
-        this.dataTableDiv.className = 'highcharts-data-table';
-        // Insert after the chart container
-        (this.renderTo.parentNode as any).insertBefore(
-            this.dataTableDiv,
-            this.renderTo.nextSibling
-        );
-    }
-    // Show the data table again.
-    if (this.dataTableDiv.style.display === '' || this.dataTableDiv.style.display === 'none') {
-        this.dataTableDiv.style.display = 'block';
-    }
-
-    this.isDataTableVisible = true;
-
-    // Update table content
-    this.dataTableDiv.innerHTML = '';
-    const ast = new AST([this.getTableAST()]);
-    ast.addToDOM(this.dataTableDiv);
-
-    fireEvent(this, 'afterViewData', this.dataTableDiv);
+    this.toggleDataTable(true);
 };
 
 /**
@@ -1351,29 +1329,50 @@ Chart.prototype.viewData = function (): void {
  * @function Highcharts.Chart#hideData
  */
 Chart.prototype.hideData = function (): void {
-    if (this.dataTableDiv && this.dataTableDiv.style.display === 'block') {
-        this.dataTableDiv.style.display = 'none';
-    }
-
-    this.isDataTableVisible = false;
-
-    fireEvent(this, 'afterHideData', this.dataTableDiv);
+    this.toggleDataTable(false);
 };
 
-Chart.prototype.toggleDataTable = function (): void {
-    var exportDivElements = this.exportDivElements,
+Chart.prototype.toggleDataTable = function (show?: boolean): void {
+
+    show = pick(show, !this.isDataTableVisible);
+
+    // Create the div
+    if (show && !this.dataTableDiv) {
+        this.dataTableDiv = doc.createElement('div');
+        this.dataTableDiv.className = 'highcharts-data-table';
+        // Insert after the chart container
+        (this.renderTo.parentNode as any).insertBefore(
+            this.dataTableDiv,
+            this.renderTo.nextSibling
+        );
+    }
+
+    // Toggle the visibility
+    if (this.dataTableDiv) {
+
+        this.dataTableDiv.style.display = show ? 'block' : 'none';
+
+        // Generate the data table
+        if (show) {
+            this.dataTableDiv.innerHTML = '';
+            const ast = new AST([this.getTableAST()]);
+    		ast.addToDOM(this.dataTableDiv);
+            fireEvent(this, 'afterViewData', this.dataTableDiv);
+        }
+    }
+
+    // Set the flag
+    this.isDataTableVisible = show;
+
+
+    // Change the menu item text
+    const exportDivElements = this.exportDivElements,
         menuItems = exportingOptions?.buttons?.contextButton.menuItems,
         lang = this.options.lang;
 
-    if (this.isDataTableVisible) {
-        this.hideData();
-    } else {
-        this.viewData();
-    }
-
-    // Change the button text based on table visibility.
     if (
-        exportingOptions?.menuItemDefinitions &&
+        exportingOptions &&
+        exportingOptions.menuItemDefinitions &&
         lang?.viewData &&
         lang.hideData &&
         menuItems &&
