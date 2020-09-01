@@ -118,8 +118,8 @@ var DataTableRow = /** @class */ (function () {
     /**
      * Deletes a cell in this row.
      *
-     * @param {number|string} cell
-     * Column name or column index.
+     * @param {string} cell
+     * Cell name.
      *
      * @param {DataEventEmitter.EventDetail} [eventDetail]
      * Custom information for pending events.
@@ -127,10 +127,10 @@ var DataTableRow = /** @class */ (function () {
      * @return {boolean}
      * Returns true, if the delete was successful, otherwise false.
      *
-     * @emits DataTableRow#deleteColumn
-     * @emits DataTableRow#afterDeleteColumn
+     * @emits DataTableRow#deleteCell
+     * @emits DataTableRow#afterDeleteCell
      */
-    DataTableRow.prototype.deleteColumn = function (cell, eventDetail) {
+    DataTableRow.prototype.deleteCell = function (cell, eventDetail) {
         var row = this;
         if (typeof cell === 'number') {
             cell = (row.cellNames[cell] || '');

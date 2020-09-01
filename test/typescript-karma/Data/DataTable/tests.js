@@ -1,25 +1,25 @@
-import DataRow from '/base/js/Data/DataTableRow.js';
+import DataTableRow from '/base/js/Data/DataTableRow.js';
 import DataTable from '/base/js/Data/DataTable.js';
 
-QUnit.test('DataTable and DataRow events', function (assert) {
+QUnit.test('DataTable and DataTableRow events', function (assert) {
 
     const registeredEvents = [];
 
-    /** @param {DataRow.ColumnEventObject|DataTable.RowEventObject} e */
+    /** @param {DataTableRow.CellEventObject|DataTable.RowEventObject} e */
     function registerEvent(e) {
         registeredEvents.push(e.type);
     }
 
-    /** @param {DataRow} row */
-    function registerRow(row) {
+    /** @param {DataTableRow} row */
+    function registerTableRow(row) {
         row.on('clearRow', registerEvent);
         row.on('afterClearRow', registerEvent);
-        row.on('deleteColumn', registerEvent);
-        row.on('afterDeleteColumn', registerEvent);
-        row.on('insertColumn', registerEvent);
-        row.on('afterInsertColumn', registerEvent);
-        row.on('updateColumn', registerEvent);
-        row.on('afterUpdateColumn', registerEvent);
+        row.on('deleteCell', registerEvent);
+        row.on('afterDeleteCell', registerEvent);
+        row.on('insertCell', registerEvent);
+        row.on('afterInsertCell', registerEvent);
+        row.on('updateCell', registerEvent);
+        row.on('afterUpdateCell', registerEvent);
     }
 
     /** @param {DataTable} table */
@@ -31,7 +31,7 @@ QUnit.test('DataTable and DataRow events', function (assert) {
         table.on('insertRow', registerEvent);
         table.on('afterInsertRow', registerEvent);
         table.on('afterUpdateRow', registerEvent);
-        table.getAllRows().forEach(registerRow);
+        table.getAllRows().forEach(registerTableRow);
     }
 
     const dataTable = DataTable.fromJSON({
@@ -42,14 +42,14 @@ QUnit.test('DataTable and DataRow events', function (assert) {
             text: 'text'
         }]
     });
-    const dataRow = new DataRow({
+    const dataRow = new DataTableRow({
         $class: 'DataTableRow',
         id: 'b',
         text: 'text'
     });
 
     registerTable(dataTable);
-    registerRow(dataRow);
+    registerTableRow(dataRow);
 
     registeredEvents.length = 0;
     dataTable.insertRow(dataRow);
@@ -63,51 +63,51 @@ QUnit.test('DataTable and DataRow events', function (assert) {
     );
 
     registeredEvents.length = 0;
-    dataTable.getRow('a').updateColumn('text', 'test');
+    dataTable.getRow('a').updateCell('text', 'test');
     assert.deepEqual(
         registeredEvents,
         [
-            'updateColumn',
+            'updateCell',
             'afterUpdateRow', // table gets informed first because of initial JSON
-            'afterUpdateColumn',
+            'afterUpdateCell',
         ],
-        'Events for DataRow.updateColumn (1) should be in expected order.'
+        'Events for DataTableRow.updateCell (1) should be in expected order.'
     );
 
     registeredEvents.length = 0;
-    dataRow.insertColumn('new', 'new');
+    dataRow.insertCell('new', 'new');
     assert.deepEqual(
         registeredEvents,
         [
-            'insertColumn',
-            'afterInsertColumn',
+            'insertCell',
+            'afterInsertCell',
             'afterUpdateRow',
         ],
-        'Events DataRow.insertColumn should be in expected order.'
+        'Events DataTableRow.insertCell should be in expected order.'
     );
 
     registeredEvents.length = 0;
-    dataRow.updateColumn('text', 'test');
+    dataRow.updateCell('text', 'test');
     assert.deepEqual(
         registeredEvents,
         [
-            'updateColumn',
-            'afterUpdateColumn',
+            'updateCell',
+            'afterUpdateCell',
             'afterUpdateRow',
         ],
-        'Events DataRow.updateColumn (2) should be in expected order.'
+        'Events DataTableRow.updateCell (2) should be in expected order.'
     );
 
     registeredEvents.length = 0;
-    dataRow.deleteColumn('new');
+    dataRow.deleteCell('new');
     assert.deepEqual(
         registeredEvents,
         [
-            'deleteColumn',
-            'afterDeleteColumn',
+            'deleteCell',
+            'afterDeleteCell',
             'afterUpdateRow',
         ],
-        'Events DataRow.updateColumn (2) should be in expected order.'
+        'Events DataTableRow.updateCell (2) should be in expected order.'
     );
 
     registeredEvents.length = 0;
@@ -119,7 +119,7 @@ QUnit.test('DataTable and DataRow events', function (assert) {
             'afterClearRow',
             'afterUpdateRow',
         ],
-        'Events DataRow.clear should be in expected order.'
+        'Events DataTableRow.clear should be in expected order.'
     );
 
     registeredEvents.length = 0;
@@ -197,7 +197,7 @@ QUnit.test('DataTable JSON support', function (assert) {
     );
 
     assert.deepEqual(
-        rowA && rowA.getAllColumns(),
+        rowA && rowA.getAllCells(),
         {
             'column1': 'value1',
             'column2': 0.0002,
@@ -206,7 +206,7 @@ QUnit.test('DataTable JSON support', function (assert) {
         'First row should contain three columns.'
     );
 
-    const tableB3 = rowB.getColumn('column3');
+    const tableB3 = rowB.getCell('column3');
     const rowBA = tableB3.getRow('ba');
     const rowBB = tableB3.getRow('bb');
     const rowBC = tableB3.getRow('bc');
