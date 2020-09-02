@@ -101,6 +101,12 @@ BaseSeries.seriesType<typeof Highcharts.AreaSeries>(
      * @optionparent plotOptions.area
      */
     {
+        /**
+         * @see [fillColor](#plotOptions.area.fillColor)
+         * @see [fillOpacity](#plotOptions.area.fillOpacity)
+         *
+         * @apioption plotOptions.area.color
+         */
 
         /**
          * Fill color or gradient for the area. When `null`, the series' `color`
@@ -108,6 +114,9 @@ BaseSeries.seriesType<typeof Highcharts.AreaSeries>(
          *
          * In styled mode, the fill color can be set with the `.highcharts-area`
          * class name.
+         *
+         * @see [color](#plotOptions.area.color)
+         * @see [fillOpacity](#plotOptions.area.fillOpacity)
          *
          * @sample {highcharts} highcharts/plotoptions/area-fillcolor-default/
          *         Null by default
@@ -128,6 +137,9 @@ BaseSeries.seriesType<typeof Highcharts.AreaSeries>(
          *
          * In styled mode, the fill opacity can be set with the
          * `.highcharts-area` class name.
+         *
+         * @see [color](#plotOptions.area.color)
+         * @see [fillColor](#plotOptions.area.fillColor)
          *
          * @sample {highcharts} highcharts/plotoptions/area-fillopacity/
          *         Automatic fill color and fill opacity of 0.1
@@ -623,6 +635,13 @@ BaseSeries.seriesType<typeof Highcharts.AreaSeries>(
  */
 
 /**
+ * @see [fillColor](#series.area.fillColor)
+ * @see [fillOpacity](#series.area.fillOpacity)
+ *
+ * @apioption series.area.color
+ */
+
+/**
  * An array of data points for the series. For the `area` series type,
  * points can be given in the following ways:
  *
@@ -680,6 +699,20 @@ BaseSeries.seriesType<typeof Highcharts.AreaSeries>(
  * @extends   series.line.data
  * @product   highcharts highstock
  * @apioption series.area.data
+ */
+
+/**
+ * @see [color](#series.area.color)
+ * @see [fillOpacity](#series.area.fillOpacity)
+ *
+ * @apioption series.area.fillColor
+ */
+
+/**
+ * @see [color](#series.area.color)
+ * @see [fillColor](#series.area.fillColor)
+ *
+ * @apioption series.area.fillOpacity
  */
 
 ''; // adds doclets above to transpilat
