@@ -15,7 +15,7 @@ import Math3D from '../../Extensions/Math3D.js';
 var perspective = Math3D.perspective;
 import U from '../Utilities.js';
 var addEvent = U.addEvent, pick = U.pick;
-import './Series.js';
+import '../../Series/LineSeries.js';
 /* eslint-disable no-invalid-this */
 // Wrap the translate method to post-translate points into 3D perspective
 addEvent(H.Series, 'afterTranslate', function () {

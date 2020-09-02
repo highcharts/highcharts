@@ -12,13 +12,14 @@
 'use strict';
 import ChartUtilities from './Utils/ChartUtilities.js';
 import H from '../Core/Globals.js';
+var doc = H.doc;
 import KeyboardNavigationHandler from './KeyboardNavigationHandler.js';
+import CartesianSeries from '../Core/Series/CartesianSeries.js';
 import O from '../Core/Options.js';
 var defaultOptions = O.defaultOptions;
 import Point from '../Core/Series/Point.js';
 import U from '../Core/Utilities.js';
 var addEvent = U.addEvent, extend = U.extend, fireEvent = U.fireEvent, merge = U.merge;
-var doc = H.win.document;
 import AccessibilityComponent from './AccessibilityComponent.js';
 import KeyboardNavigation from './KeyboardNavigation.js';
 import LegendComponent from './Components/LegendComponent.js';
@@ -258,7 +259,7 @@ addEvent(Point, 'update', function () {
     });
 });
 ['update', 'updatedData', 'remove'].forEach(function (event) {
-    addEvent(H.Series, event, function () {
+    addEvent(CartesianSeries, event, function () {
         if (this.chart.accessibility) {
             this.chart.a11yDirty = true;
         }

@@ -12,9 +12,14 @@
 
 'use strict';
 
+import type { SeriesOptionsType } from '../Core/Series/Types';
+import Axis from '../Core/Axis/Axis.js';
 import Chart from '../Core/Chart/Chart.js';
 import Color from '../Core/Color.js';
 import H from '../Core/Globals.js';
+const {
+    noop
+} = H;
 import O from '../Core/Options.js';
 const {
     defaultOptions
@@ -59,7 +64,7 @@ declare global {
             ): void;
             addSingleSeriesAsDrilldown(
                 point: Point,
-                ddOptions: DrilldownOptions
+                ddOptions: SeriesOptionsType
             ): void;
             applyDrilldown(): void;
             drillUp(): void;
@@ -109,7 +114,7 @@ declare global {
             target: Chart;
             type: 'drilldown';
         }
-        interface DrilldownOptions {
+        interface DrilldownOptions extends Options {
             activeAxisLabelStyle?: CSSObject;
             activeDataLabelStyle?: (
                 CSSObject|DrilldownActiveDataLabelStyleOptions
@@ -175,7 +180,7 @@ declare global {
         interface Series {
             drilldownLevel?: DrilldownLevelObject;
             isDrilling?: boolean;
-            purgedOptions?: SeriesOptions;
+            purgedOptions?: SeriesOptionsType;
             animateDrilldown?(init?: boolean): void;
             animateDrillupFrom?(level: DrilldownLevelObject): void;
             animateDrillupTo?(init?: boolean): void;
@@ -192,6 +197,12 @@ declare global {
         interface Tick {
             drillable(): void;
         }
+    }
+}
+
+declare module '../Core/Series/Types' {
+    interface SeriesLike {
+        purgedOptions?: SeriesLikeOptions;
     }
 }
 
@@ -314,11 +325,10 @@ declare global {
  * @type {"drillup"}
  */
 
-import '../Core/Series/Series.js';
+import '../Series/LineSeries.js';
 import '../Series/ColumnSeries.js';
 
-var noop = H.noop,
-    seriesTypes = H.seriesTypes,
+var seriesTypes = H.seriesTypes,
     PieSeries = seriesTypes.pie,
     ColumnSeries = seriesTypes.column,
     ddSeriesId = 1;
@@ -665,14 +675,14 @@ SVGRenderer.prototype.Element.prototype.fadeIn = function (
  */
 Chart.prototype.addSeriesAsDrilldown = function (
     point: Point,
-    options: Highcharts.SeriesOptionsType
+    options: SeriesOptionsType
 ): void {
     this.addSingleSeriesAsDrilldown(point, options);
     this.applyDrilldown();
 };
 Chart.prototype.addSingleSeriesAsDrilldown = function (
     point: Point,
-    ddOptions: Highcharts.SeriesOptions
+    ddOptions: SeriesOptionsType
 ): void {
     var oldSeries = point.series,
         xAxis = oldSeries.xAxis,
@@ -724,7 +734,7 @@ Chart.prototype.addSingleSeriesAsDrilldown = function (
                 levelSeries.push(series);
 
                 // (#10597)
-                series.purgedOptions = merge({
+                series.purgedOptions = merge<SeriesOptionsType>({
                     _ddSeriesId: series.options._ddSeriesId,
                     _levelNumber: series.options._levelNumber,
                     selected: series.options.selected
@@ -1385,7 +1395,7 @@ Point.prototype.doDrilldown = function (
  * @param {global.MouseEvent} e
  *        Click event
  */
-H.Axis.prototype.drilldownCategory = function (
+Axis.prototype.drilldownCategory = function (
     x: number,
     e: MouseEvent
 ): void {
@@ -1412,7 +1422,7 @@ H.Axis.prototype.drilldownCategory = function (
  * @return {Array<(boolean|Highcharts.Point)>|undefined}
  *         Drillable points
  */
-H.Axis.prototype.getDDPoints = function (
+Axis.prototype.getDDPoints = function (
     x: number
 ): (Array<(boolean|Point)>|undefined) {
     return this.ddPoints && this.ddPoints[x];
@@ -1544,7 +1554,7 @@ addEvent(H.Series, 'afterDrawDataLabels', function (): void {
 });
 
 
-var applyCursorCSS = function (
+const applyCursorCSS = function (
     element: Highcharts.SVGElement,
     cursor: Highcharts.CursorValue,
     addClass?: boolean,

@@ -100,7 +100,7 @@ declare global {
             to?: string;
         }
         interface PointOptionsObject {
-            connect?: PointConnectOptionsObject;
+            connect?: PointConnectOptionsObject | GanttDependencyOption;
             connectors?: ConnectorsOptions;
         }
         interface Series {
@@ -111,7 +111,7 @@ declare global {
         }
         class Pathfinder {
             public constructor(chart: Chart);
-            public algorithms: PathfinderAlgorithmsObject;
+            public algorithms: Record<string, PathfinderAlgorithmFunction>;
             public chart: Chart;
             public chartObstacles: Array<any>;
             public chartObstacleMetrics: Dictionary<number>;
@@ -652,6 +652,12 @@ class Pathfinder {
         chart.series.forEach(function (series: Highcharts.Series): void {
             if (series.visible && !series.options.isInternal) {
                 series.points.forEach(function (point: Point): void {
+                    const ganttPointOptions: Highcharts.GanttPointOptions = point.options;
+                    // For Gantt series the connect could be
+                    // defined as a dependency
+                    if (ganttPointOptions && ganttPointOptions.dependency) {
+                        ganttPointOptions.connect = ganttPointOptions.dependency;
+                    }
                     var to: (
                             Axis|
                             Point|
@@ -917,7 +923,7 @@ class Pathfinder {
 }
 
 interface Pathfinder {
-    algorithms: Highcharts.PathfinderAlgorithmsObject;
+    algorithms: Record<string, Highcharts.PathfinderAlgorithmFunction>;
 }
 Pathfinder.prototype.algorithms = pathfinderAlgorithms;
 

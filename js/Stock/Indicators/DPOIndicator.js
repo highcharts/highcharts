@@ -5,9 +5,10 @@
  *  !!!!!!! SOURCE GETS TRANSPILED BY TYPESCRIPT. EDIT TS FILE ONLY. !!!!!!!
  *
  * */
-'use strict';
+import BaseSeries from '../../Core/Series/Series.js';
 import U from '../../Core/Utilities.js';
-var correctFloat = U.correctFloat, pick = U.pick, seriesType = U.seriesType;
+var correctFloat = U.correctFloat, pick = U.pick;
+import './SMAIndicator.js';
 /* eslint-disable valid-jsdoc */
 // Utils
 /**
@@ -30,7 +31,7 @@ function accumulatePoints(sum, yVal, i, index, subtract) {
  *
  * @augments Highcharts.Series
  */
-seriesType('dpo', 'sma', 
+BaseSeries.seriesType('dpo', 'sma', 
 /**
  * Detrended Price Oscillator. This series requires the `linkedTo` option to
  * be set and should be loaded after the `stock/indicators/indicators.js`.

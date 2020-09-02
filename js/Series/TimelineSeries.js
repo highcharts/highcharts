@@ -11,13 +11,16 @@
  *  !!!!!!! SOURCE GETS TRANSPILED BY TYPESCRIPT. EDIT TS FILE ONLY. !!!!!!!
  *
  * */
-'use strict';
+import BaseSeries from '../Core/Series/Series.js';
+var seriesTypes = BaseSeries.seriesTypes;
 import H from '../Core/Globals.js';
 import LegendSymbolMixin from '../Mixins/LegendSymbol.js';
 import Point from '../Core/Series/Point.js';
 import SVGElement from '../Core/Renderer/SVG/SVGElement.js';
 import U from '../Core/Utilities.js';
-var addEvent = U.addEvent, arrayMax = U.arrayMax, arrayMin = U.arrayMin, defined = U.defined, isNumber = U.isNumber, merge = U.merge, objectEach = U.objectEach, pick = U.pick, seriesType = U.seriesType;
+var addEvent = U.addEvent, arrayMax = U.arrayMax, arrayMin = U.arrayMin, defined = U.defined, isNumber = U.isNumber, merge = U.merge, objectEach = U.objectEach, pick = U.pick;
+import '../Series/LineSeries.js';
+var TrackerMixin = H.TrackerMixin, Series = H.Series;
 /**
  * Callback JavaScript function to format the data label as a string. Note that
  * if a `format` is defined, the format takes precedence and the formatter is
@@ -45,8 +48,6 @@ var addEvent = U.addEvent, arrayMax = U.arrayMax, arrayMin = U.arrayMin, defined
 * @type {Highcharts.Series}
 */
 ''; // dettach doclets above
-import '../Core/Series/Series.js';
-var TrackerMixin = H.TrackerMixin, Series = H.Series, seriesTypes = H.seriesTypes;
 /**
  * The timeline series type.
  *
@@ -56,7 +57,7 @@ var TrackerMixin = H.TrackerMixin, Series = H.Series, seriesTypes = H.seriesType
  *
  * @augments Highcharts.Series
  */
-seriesType('timeline', 'line', 
+BaseSeries.seriesType('timeline', 'line', 
 /**
  * The timeline series presents given events along a drawn line.
  *

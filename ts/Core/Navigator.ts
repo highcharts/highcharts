@@ -10,14 +10,24 @@
 
 'use strict';
 
+import type { SeriesOptionsType } from './Series/Types';
 import type SVGPath from './Renderer/SVG/SVGPath';
 import Axis from './Axis/Axis.js';
+import BaseSeries from './Series/Series.js';
+const {
+    seriesTypes
+} = BaseSeries;
 import Chart from './Chart/Chart.js';
 import Color from './Color.js';
 const {
     parse: color
 } = Color;
 import H from './Globals.js';
+const {
+    hasTouch,
+    isTouchDevice
+} = H;
+import LineSeries from '../Series/LineSeries.js';
 import NavigatorAxis from './Axis/NavigatorAxis.js';
 import O from './Options.js';
 const { defaultOptions } = O;
@@ -195,14 +205,7 @@ declare global {
     }
 }
 
-import './Series/Series.js';
-
-var hasTouch = H.hasTouch,
-    isTouchDevice = H.isTouchDevice,
-    Series = H.Series,
-    seriesTypes = H.seriesTypes,
-
-    defaultSeriesType,
+var defaultSeriesType,
 
     // Finding the min or max of a set of variables where we don't know if they
     // are defined, is a pattern that is repeated several places in Highcharts.
@@ -2085,7 +2088,7 @@ class Navigator {
      * @return {void}
      */
     public setBaseSeries(
-        baseSeriesOptions?: Highcharts.SeriesOptionsType,
+        baseSeriesOptions?: SeriesOptionsType,
         redraw?: boolean
     ): void {
         var chart = this.chart,
@@ -2115,8 +2118,8 @@ class Navigator {
                 (
                     series.options.showInNavigator ||
                     (
-                        i === baseSeriesOptions ||
-                        series.options.id === baseSeriesOptions
+                        i === (baseSeriesOptions as any) ||
+                        series.options.id === (baseSeriesOptions as any)
                     ) &&
                     series.options.showInNavigator !== false
                 )
@@ -2149,7 +2152,7 @@ class Navigator {
             chart = navigator.chart,
             baseSeries = navigator.baseSeries,
             baseOptions,
-            mergedNavSeriesOptions: Highcharts.SeriesOptionsType,
+            mergedNavSeriesOptions: SeriesOptionsType,
             chartNavigatorSeriesOptions = navigator.navigatorOptions.series,
             baseNavigatorOptions,
             navSeriesMixin = {
@@ -2282,7 +2285,7 @@ class Navigator {
             chartNavigatorSeriesOptions =
                 (splat(chartNavigatorSeriesOptions) as any);
             (chartNavigatorSeriesOptions as any).forEach(function (
-                userSeriesOptions: Highcharts.SeriesOptionsType,
+                userSeriesOptions: SeriesOptionsType,
                 i: number
             ): void {
                 navSeriesMixin.name =
@@ -2787,7 +2790,7 @@ if (!H.Navigator) {
     });
 
     // Handle updating series
-    addEvent(Series, 'afterUpdate', function (this: Highcharts.Series): void {
+    addEvent(LineSeries, 'afterUpdate', function (this: Highcharts.Series): void {
         if (this.chart.navigator && !this.options.isInternal) {
             this.chart.navigator.setBaseSeries(null as any, false);
         }

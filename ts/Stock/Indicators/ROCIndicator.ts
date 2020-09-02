@@ -8,7 +8,11 @@
  *
  * */
 
-'use strict';
+import BaseSeries from '../../Core/Series/Series.js';
+import U from '../../Core/Utilities.js';
+const {
+    isArray
+} = U;
 
 /**
  * Internal types
@@ -40,19 +44,16 @@ declare global {
         interface ROCIndicatorOptions extends SMAIndicatorOptions {
             params?: ROCIndicatorParamsOptions;
         }
-
-        interface SeriesTypesDictionary {
-            roc: typeof ROCIndicator;
-        }
-
     }
 }
 
-import U from '../../Core/Utilities.js';
-const {
-    isArray,
-    seriesType
-} = U;
+declare module '../../Core/Series/Types' {
+    interface SeriesTypeRegistry {
+        roc: typeof Highcharts.ROCIndicator;
+    }
+}
+
+import './SMAIndicator.js';
 
 /* eslint-disable require-jsdoc */
 
@@ -101,7 +102,7 @@ function populateAverage(
  *
  * @augments Highcharts.Series
  */
-seriesType<Highcharts.ROCIndicator>(
+BaseSeries.seriesType<typeof Highcharts.ROCIndicator>(
     'roc',
     'sma',
     /**

@@ -8,9 +8,37 @@
  *
  * */
 
-'use strict';
-
+import BaseSeries from '../Core/Series/Series.js';
+import Color from '../Core/Color.js';
+const {
+    parse: color
+} = Color;
 import H from '../Core/Globals.js';
+const {
+    noop
+} = H;
+import LegendSymbolMixin from '../Mixins/LegendSymbol.js';
+import LineSeries from './LineSeries.js';
+import U from '../Core/Utilities.js';
+const {
+    animObject,
+    clamp,
+    defined,
+    extend,
+    isNumber,
+    merge,
+    pick,
+    objectEach
+} = U;
+
+/**
+ * @private
+ */
+declare module '../Core/Series/Types' {
+    interface SeriesTypeRegistry {
+        column: typeof Highcharts.ColumnSeries;
+    }
+}
 
 /**
  * Internal types
@@ -45,14 +73,14 @@ declare global {
             barW?: number;
             pointXOffset?: number;
         }
+        interface SeriesOptions {
+            centerInCategory?: boolean;
+        }
         interface SeriesStatesHoverOptionsObject {
             borderColor?: (ColorString|GradientColorObject|PatternObject);
             brightness?: number;
             color?: (ColorString|GradientColorObject|PatternObject);
             dashStyle?: DashStyleValue;
-        }
-        interface SeriesTypesDictionary {
-            column: typeof ColumnSeries;
         }
         interface SeriesZonesOptions {
             borderColor?: (ColorString|GradientColorObject|PatternObject);
@@ -118,31 +146,6 @@ declare global {
 
 ''; // detach doclets above
 
-import Color from '../Core/Color.js';
-const {
-    parse: color
-} = Color;
-import LegendSymbolMixin from '../Mixins/LegendSymbol.js';
-import U from '../Core/Utilities.js';
-const {
-    animObject,
-    clamp,
-    defined,
-    extend,
-    isNumber,
-    merge,
-    pick,
-    seriesType,
-    objectEach
-} = U;
-
-import '../Core/Series/Series.js';
-import '../Core/Options.js';
-
-var noop = H.noop,
-    Series = H.Series,
-    svg = H.svg;
-
 /**
  * The column series type.
  *
@@ -152,7 +155,7 @@ var noop = H.noop,
  *
  * @augments Highcharts.Series
  */
-seriesType<Highcharts.ColumnSeries>(
+const ColumnSeries = BaseSeries.seriesType<typeof Highcharts.ColumnSeries>(
     'column',
     'line',
 
@@ -230,6 +233,8 @@ seriesType<Highcharts.ColumnSeries>(
          *
          * @since   8.0.1
          * @product highcharts highstock gantt
+         *
+         * @private
          */
         centerInCategory: false,
 
@@ -571,7 +576,7 @@ seriesType<Highcharts.ColumnSeries>(
          * @return {void}
          */
         init: function (this: Highcharts.ColumnSeries): void {
-            Series.prototype.init.apply(this, arguments as any);
+            LineSeries.prototype.init.apply(this, arguments as any);
 
             var series = this,
                 chart = series.chart;
@@ -580,7 +585,7 @@ seriesType<Highcharts.ColumnSeries>(
             // series affected by a new column
             if (chart.hasRendered) {
                 chart.series.forEach(function (
-                    otherSeries: Highcharts.Series
+                    otherSeries: BaseSeries
                 ): void {
                     if (otherSeries.type === series.type) {
                         otherSeries.isDirty = true;
@@ -620,7 +625,7 @@ seriesType<Highcharts.ColumnSeries>(
             if (options.grouping === false) {
                 columnCount = 1;
             } else {
-                series.chart.series.forEach(function (
+                (series.chart.series as Array<Highcharts.Series>).forEach(function (
                     otherSeries: Highcharts.Series
                 ): void {
                     var otherYAxis = otherSeries.yAxis,
@@ -878,7 +883,7 @@ seriesType<Highcharts.ColumnSeries>(
                 seriesBarW = Math.ceil(seriesBarW);
             }
 
-            Series.prototype.translate.apply(series);
+            LineSeries.prototype.translate.apply(series);
 
             // Record the new values
             series.points.forEach(function (
@@ -1276,7 +1281,7 @@ seriesType<Highcharts.ColumnSeries>(
             // as they are either stacked or grouped
             if (chart.hasRendered) {
                 chart.series.forEach(function (
-                    otherSeries: Highcharts.Series
+                    otherSeries: BaseSeries
                 ): void {
                     if (otherSeries.type === series.type) {
                         otherSeries.isDirty = true;
@@ -1284,7 +1289,7 @@ seriesType<Highcharts.ColumnSeries>(
                 });
             }
 
-            Series.prototype.remove.apply(series, arguments as any);
+            LineSeries.prototype.remove.apply(series, arguments as any);
         }
     }
 );
@@ -1428,3 +1433,5 @@ seriesType<Highcharts.ColumnSeries>(
  */
 
 ''; // includes above doclets in transpilat
+
+export default ColumnSeries;

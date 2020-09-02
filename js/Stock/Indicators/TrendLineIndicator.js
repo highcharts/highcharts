@@ -5,9 +5,10 @@
  *  !!!!!!! SOURCE GETS TRANSPILED BY TYPESCRIPT. EDIT TS FILE ONLY. !!!!!!!
  *
  * */
-'use strict';
+import BaseSeries from '../../Core/Series/Series.js';
 import U from '../../Core/Utilities.js';
-var isArray = U.isArray, seriesType = U.seriesType;
+var isArray = U.isArray;
+import './SMAIndicator.js';
 /**
  * The Trend line series type.
  *
@@ -17,7 +18,7 @@ var isArray = U.isArray, seriesType = U.seriesType;
  *
  * @augments Highcharts.Series
  */
-seriesType('trendline', 'sma', 
+BaseSeries.seriesType('trendline', 'sma', 
 /**
  * Trendline (linear regression) fits a straight line to the selected data
  * using a method called the Sum Of Least Squares. This series requires the

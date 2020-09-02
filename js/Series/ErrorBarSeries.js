@@ -7,13 +7,11 @@
  *  !!!!!!! SOURCE GETS TRANSPILED BY TYPESCRIPT. EDIT TS FILE ONLY. !!!!!!!
  *
  * */
-'use strict';
+import BaseSeries from '../Core/Series/Series.js';
 import H from '../Core/Globals.js';
-import U from '../Core/Utilities.js';
-var seriesType = U.seriesType;
 import '../Core/Options.js';
 import './BoxPlotSeries.js';
-var noop = H.noop, seriesTypes = H.seriesTypes;
+var noop = H.noop, seriesTypes = BaseSeries.seriesTypes;
 /**
  * Error bars are a graphical representation of the variability of data and are
  * used on graphs to indicate the error, or uncertainty in a reported
@@ -30,7 +28,7 @@ var noop = H.noop, seriesTypes = H.seriesTypes;
  * @requires     highcharts-more
  * @optionparent plotOptions.errorbar
  */
-seriesType('errorbar', 'boxplot', {
+BaseSeries.seriesType('errorbar', 'boxplot', {
     /**
      * The main color of the bars. This can be overridden by
      * [stemColor](#plotOptions.errorbar.stemColor) and

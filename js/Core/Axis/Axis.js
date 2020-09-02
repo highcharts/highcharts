@@ -2667,13 +2667,14 @@ var Axis = /** @class */ (function () {
      * The tick index.
      */
     Axis.prototype.renderTick = function (pos, i) {
+        var _a;
         var axis = this;
         var isLinked = axis.isLinked;
         var ticks = axis.ticks;
         var slideInTicks = axis.chart.hasRendered && isNumber(axis.oldMin);
         // Linked axes need an extra check to find out if
         if (!isLinked ||
-            (pos >= axis.min && pos <= axis.max)) {
+            (pos >= axis.min && pos <= axis.max) || ((_a = axis.grid) === null || _a === void 0 ? void 0 : _a.isColumn)) {
             if (!ticks[pos]) {
                 ticks[pos] = new Tick(axis, pos);
             }
@@ -5744,7 +5745,7 @@ var Axis = /** @class */ (function () {
              * @sample {highcharts} highcharts/plotoptions/animation-defer/
              *          Animation defer settings
              * @type {boolean|Partial<Highcharts.AnimationOptionsObject>}
-             * @since next
+             * @since 8.2.0
              * @apioption yAxis.stackLabels.animation
              */
             animation: {},
@@ -5754,7 +5755,7 @@ var Axis = /** @class */ (function () {
              * As `undefined` inherits defer time from the [series.animation.defer](#plotOptions.series.animation.defer).
              *
              * @type      {number}
-             * @since     next
+             * @since 8.2.0
              * @apioption yAxis.stackLabels.animation.defer
              */
             /**

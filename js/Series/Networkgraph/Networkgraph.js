@@ -10,11 +10,17 @@
  *
  * */
 'use strict';
+import BaseSeries from '../../Core/Series/Series.js';
 import H from '../../Core/Globals.js';
 import NodesMixin from '../../Mixins/Nodes.js';
 import Point from '../../Core/Series/Point.js';
 import U from '../../Core/Utilities.js';
-var addEvent = U.addEvent, css = U.css, defined = U.defined, pick = U.pick, seriesType = U.seriesType;
+var addEvent = U.addEvent, css = U.css, defined = U.defined, pick = U.pick;
+import '../../Core/Options.js';
+import './Layouts.js';
+import './DraggableNodes.js';
+import '../../Series/LineSeries.js';
+var Series = H.Series, seriesTypes = BaseSeries.seriesTypes, dragNodesMixin = H.dragNodesMixin;
 /**
  * Formatter callback function.
  *
@@ -51,11 +57,6 @@ var addEvent = U.addEvent, css = U.css, defined = U.defined, pick = U.pick, seri
 * @since 7.0.0
 */
 ''; // detach doclets above
-import '../../Core/Options.js';
-import './Layouts.js';
-import './DraggableNodes.js';
-import '../../Core/Series/Series.js';
-var seriesTypes = H.seriesTypes, Series = H.Series, dragNodesMixin = H.dragNodesMixin;
 /**
  * @private
  * @class
@@ -63,7 +64,7 @@ var seriesTypes = H.seriesTypes, Series = H.Series, dragNodesMixin = H.dragNodes
  *
  * @extends Highcharts.Series
  */
-seriesType('networkgraph', 'line', 
+BaseSeries.seriesType('networkgraph', 'line', 
 /**
  * A networkgraph is a type of relationship chart, where connnections
  * (links) attracts nodes (points) and other nodes repulse each other.

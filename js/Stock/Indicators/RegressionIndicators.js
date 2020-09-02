@@ -7,9 +7,10 @@
  *  !!!!!!! SOURCE GETS TRANSPILED BY TYPESCRIPT. EDIT TS FILE ONLY. !!!!!!!
  *
  * */
-'use strict';
+import BaseSeries from '../../Core/Series/Series.js';
 import U from '../../Core/Utilities.js';
-var isArray = U.isArray, seriesType = U.seriesType;
+var isArray = U.isArray;
+import './SMAIndicator.js';
 /**
  * Linear regression series type.
  *
@@ -19,7 +20,7 @@ var isArray = U.isArray, seriesType = U.seriesType;
  *
  * @augments Highcharts.Series
  */
-seriesType('linearRegression', 'sma', 
+BaseSeries.seriesType('linearRegression', 'sma', 
 /**
  * Linear regression indicator. This series requires `linkedTo` option to be
  * set.
@@ -223,7 +224,7 @@ seriesType('linearRegression', 'sma',
  *
  * @augments Highcharts.Series
  */
-seriesType('linearRegressionSlope', 'linearRegression', 
+BaseSeries.seriesType('linearRegressionSlope', 'linearRegression', 
 /**
  * Linear regression slope indicator. This series requires `linkedTo`
  * option to be set.
@@ -271,7 +272,7 @@ seriesType('linearRegressionSlope', 'linearRegression',
  *
  * @augments Highcharts.Series
  */
-seriesType('linearRegressionIntercept', 'linearRegression', 
+BaseSeries.seriesType('linearRegressionIntercept', 'linearRegression', 
 /**
  * Linear regression intercept indicator. This series requires `linkedTo`
  * option to be set.
@@ -319,7 +320,7 @@ seriesType('linearRegressionIntercept', 'linearRegression',
  *
  * @augments Highcharts.Series
  */
-seriesType('linearRegressionAngle', 'linearRegression', 
+BaseSeries.seriesType('linearRegressionAngle', 'linearRegression', 
 /**
  * Linear regression angle indicator. This series requires `linkedTo`
  * option to be set.

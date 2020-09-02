@@ -11,20 +11,23 @@
  *  !!!!!!! SOURCE GETS TRANSPILED BY TYPESCRIPT. EDIT TS FILE ONLY. !!!!!!!
  *
  * */
-'use strict';
+import BaseSeries from '../Core/Series/Series.js';
+var seriesTypes = BaseSeries.seriesTypes;
+import CenteredSeriesMixin from '../Mixins/CenteredSeries.js';
+var getCenter = CenteredSeriesMixin.getCenter, getStartAndEndRadians = CenteredSeriesMixin.getStartAndEndRadians;
+import DrawPointMixin from '../Mixins/DrawPoint.js';
+var drawPoint = DrawPointMixin.drawPoint;
 import H from '../Core/Globals.js';
+var noop = H.noop;
+import TreeSeriesMixin from '../Mixins/TreeSeries.js';
+var getColor = TreeSeriesMixin.getColor, getLevelOptions = TreeSeriesMixin.getLevelOptions, setTreeValues = TreeSeriesMixin.setTreeValues, updateRootId = TreeSeriesMixin.updateRootId;
 import U from '../Core/Utilities.js';
-var correctFloat = U.correctFloat, error = U.error, extend = U.extend, isNumber = U.isNumber, isObject = U.isObject, isString = U.isString, merge = U.merge, seriesType = U.seriesType, splat = U.splat;
-import centeredSeriesMixin from '../Mixins/CenteredSeries.js';
-import drawPointModule from '../Mixins/DrawPoint.js';
-var drawPoint = drawPointModule.drawPoint;
-import mixinTreeSeries from '../Mixins/TreeSeries.js';
-var getColor = mixinTreeSeries.getColor, getLevelOptions = mixinTreeSeries.getLevelOptions, setTreeValues = mixinTreeSeries.setTreeValues, updateRootId = mixinTreeSeries.updateRootId;
-import '../Core/Series/Series.js';
+var correctFloat = U.correctFloat, error = U.error, extend = U.extend, isNumber = U.isNumber, isObject = U.isObject, isString = U.isString, merge = U.merge, splat = U.splat;
+import '../Series/LineSeries.js';
 import './TreemapSeries.js';
-var Series = H.Series, getCenter = centeredSeriesMixin.getCenter, getStartAndEndRadians = centeredSeriesMixin.getStartAndEndRadians, isBoolean = function (x) {
+var Series = H.Series, isBoolean = function (x) {
     return typeof x === 'boolean';
-}, noop = H.noop, rad2deg = 180 / Math.PI, seriesTypes = H.seriesTypes;
+}, rad2deg = 180 / Math.PI;
 // TODO introduce step, which should default to 1.
 var range = function range(from, to) {
     var result = [], i;
@@ -948,6 +951,7 @@ var sunburstPoint = {
   * @product   highcharts
   * @apioption series.sunburst.data.sliced
   */
+''; // detach doclets above
 /**
  * @private
  * @class
@@ -955,4 +959,4 @@ var sunburstPoint = {
  *
  * @augments Highcharts.Series
  */
-seriesType('sunburst', 'treemap', sunburstOptions, sunburstSeries, sunburstPoint);
+BaseSeries.seriesType('sunburst', 'treemap', sunburstOptions, sunburstSeries, sunburstPoint);

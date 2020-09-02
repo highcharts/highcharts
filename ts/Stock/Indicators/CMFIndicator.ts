@@ -12,12 +12,7 @@
  *
  * */
 
-'use strict';
-
-import U from '../../Core/Utilities.js';
-const {
-    seriesType
-} = U;
+import BaseSeries from '../../Core/Series/Series.js';
 
 /**
  * @private
@@ -61,12 +56,16 @@ declare global {
         class CMFIndicatorPoint extends SMAIndicatorPoint {
             public series: CMFIndicator;
         }
-
-        interface SeriesTypesDictionary {
-            cmf: typeof CMFIndicator;
-        }
     }
 }
+
+declare module '../../Core/Series/Types' {
+    interface SeriesTypeRegistry {
+        cmf: typeof Highcharts.CMFIndicator;
+    }
+}
+
+import './SMAIndicator.js';
 
 /**
  * The CMF series type.
@@ -77,7 +76,7 @@ declare global {
  *
  * @augments Highcharts.Series
  */
-seriesType<Highcharts.CMFIndicator>('cmf', 'sma',
+BaseSeries.seriesType<typeof Highcharts.CMFIndicator>('cmf', 'sma',
     /**
      * Chaikin Money Flow indicator (cmf).
      *

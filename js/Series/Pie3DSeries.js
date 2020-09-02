@@ -9,11 +9,12 @@
  *  !!!!!!! SOURCE GETS TRANSPILED BY TYPESCRIPT. EDIT TS FILE ONLY. !!!!!!!
  *
  * */
-'use strict';
+import BaseSeries from '../Core/Series/Series.js';
 import H from '../Core/Globals.js';
+var deg2rad = H.deg2rad, svg = H.svg;
 import U from '../Core/Utilities.js';
 var pick = U.pick, wrap = U.wrap;
-var deg2rad = H.deg2rad, seriesTypes = H.seriesTypes, svg = H.svg;
+var seriesTypes = BaseSeries.seriesTypes;
 /**
  * The thickness of a 3D pie.
  *

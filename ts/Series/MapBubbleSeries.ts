@@ -8,9 +8,12 @@
  *
  * */
 
-'use strict';
-
-import H from '../Core/Globals.js';
+import BaseSeries from '../Core/Series/Series.js';
+import Point from '../Core/Series/Point.js';
+import U from '../Core/Utilities.js';
+const {
+    merge
+} = U;
 
 /**
  * Internal types
@@ -46,23 +49,21 @@ declare global {
         interface MapBubbleSeriesOptions extends BubbleSeriesOptions {
             states?: SeriesStatesOptionsObject<MapBubbleSeries>;
         }
-        interface SeriesTypesDictionary {
-            mapbubble: typeof MapBubbleSeries;
-        }
     }
 }
 
-import Point from '../Core/Series/Point.js';
-import U from '../Core/Utilities.js';
-const {
-    merge,
-    seriesType
-} = U;
+/**
+ * @private
+ */
+declare module '../Core/Series/Types' {
+    interface SeriesTypeRegistry {
+        mapbubble: typeof Highcharts.MapBubbleSeries;
+    }
+}
 
 import '../Core/Options.js';
-import '../Series/Bubble/BubbleSeries.js';
 
-var seriesTypes = H.seriesTypes;
+const seriesTypes = BaseSeries.seriesTypes;
 
 // The mapbubble series type
 if (seriesTypes.bubble) {
@@ -74,7 +75,7 @@ if (seriesTypes.bubble) {
      *
      * @augments Highcharts.Series
      */
-    seriesType<Highcharts.MapBubbleSeries>('mapbubble', 'bubble'
+    BaseSeries.seriesType<typeof Highcharts.MapBubbleSeries>('mapbubble', 'bubble'
 
         /**
          * A map bubble series is a bubble series laid out on top of a map

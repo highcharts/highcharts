@@ -135,7 +135,7 @@ declare global {
             public alignSetter(value: ('left'|'center'|'right')): void;
             public animate(
                 params: SVGAttributes,
-                options?: (boolean|Partial<AnimationOptionsObject>),
+                options?: (boolean|DeepPartial<AnimationOptionsObject>),
                 complete?: Function
             ): SVGElement;
             public applyTextOutline(textOutline: string): void;

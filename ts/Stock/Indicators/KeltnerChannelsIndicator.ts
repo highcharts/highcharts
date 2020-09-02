@@ -6,17 +6,16 @@
  *
  * */
 
-'use strict';
-
-import H from '../../Core/Globals.js';
+import BaseSeries from '../../Core/Series/Series.js';
+const {
+    seriesTypes
+} = BaseSeries;
+import MultipleLinesMixin from '../../Mixins/MultipleLines.js';
 import U from '../../Core/Utilities.js';
 const {
     correctFloat,
-    merge,
-    seriesType
+    merge
 } = U;
-
-import multipleLinesMixin from '../../Mixins/MultipleLines.js';
 
 /**
  * Internal types
@@ -67,17 +66,22 @@ declare global {
         class KeltnerChannelsIndicatorPoint extends SMAIndicatorPoint {
             public series: KeltnerChannelsIndicator;
         }
-
-        interface SeriesTypesDictionary {
-            keltnerchannels: typeof KeltnerChannelsIndicator;
-        }
     }
 }
 
+declare module '../../Core/Series/Types' {
+    interface SeriesTypeRegistry {
+        keltnerchannels: typeof Highcharts.KeltnerChannelsIndicator;
+    }
+}
 
-var SMA = H.seriesTypes.sma,
-    EMA = H.seriesTypes.ema,
-    ATR = H.seriesTypes.atr;
+import './ATRIndicator.js';
+import './EMAIndicator.js';
+import './SMAIndicator.js';
+
+var SMA = seriesTypes.sma,
+    EMA = seriesTypes.ema,
+    ATR = seriesTypes.atr;
 
 /**
  * The Keltner Channels series type.
@@ -88,7 +92,7 @@ var SMA = H.seriesTypes.sma,
  *
  * @augments Highcharts.Series
  */
-seriesType<Highcharts.KeltnerChannelsIndicator>(
+BaseSeries.seriesType<typeof Highcharts.KeltnerChannelsIndicator>(
     'keltnerchannels',
     'sma',
     /**
@@ -168,7 +172,7 @@ seriesType<Highcharts.KeltnerChannelsIndicator>(
     /**
      * @lends Highcharts.Series#
      */
-    merge(multipleLinesMixin, {
+    merge(MultipleLinesMixin, {
         pointArrayMap: ['top', 'middle', 'bottom'],
         pointValKey: 'middle',
         nameBase: 'Keltner Channels',

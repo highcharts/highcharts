@@ -5,11 +5,14 @@
  *  !!!!!!! SOURCE GETS TRANSPILED BY TYPESCRIPT. EDIT TS FILE ONLY. !!!!!!!
  *
  * */
-'use strict';
+import BaseSeries from '../../Core/Series/Series.js';
 import H from '../../Core/Globals.js';
+var noop = H.noop;
 import U from '../../Core/Utilities.js';
-var correctFloat = U.correctFloat, defined = U.defined, merge = U.merge, seriesType = U.seriesType;
-var noop = H.noop, SMA = H.seriesTypes.sma, EMA = H.seriesTypes.ema;
+var correctFloat = U.correctFloat, defined = U.defined, merge = U.merge;
+import './EMAIndicator.js';
+import './SMAIndicator.js';
+var SMA = H.seriesTypes.sma, EMA = H.seriesTypes.ema;
 /**
  * The MACD series type.
  *
@@ -19,7 +22,7 @@ var noop = H.noop, SMA = H.seriesTypes.sma, EMA = H.seriesTypes.ema;
  *
  * @augments Highcharts.Series
  */
-seriesType('macd', 'sma', 
+BaseSeries.seriesType('macd', 'sma', 
 /**
  * Moving Average Convergence Divergence (MACD). This series requires
  * `linkedTo` option to be set and should be loaded after the

@@ -7,13 +7,17 @@
  *  !!!!!!! SOURCE GETS TRANSPILED BY TYPESCRIPT. EDIT TS FILE ONLY. !!!!!!!
  *
  * */
-'use strict';
+import BaseSeries from '../Core/Series/Series.js';
+import SVGRenderer from '../Core/Renderer/SVG/SVGRenderer.js';
 import H from '../Core/Globals.js';
-var SVGRenderer = H.SVGRenderer;
+var noop = H.noop;
 import U from '../Core/Utilities.js';
-var extend = U.extend, pick = U.pick, seriesType = U.seriesType;
+var extend = U.extend, pick = U.pick;
 import './AreaRangeSeries.js';
-var seriesTypes = H.seriesTypes, seriesProto = H.Series.prototype, areaRangeProto = seriesTypes.arearange.prototype, columnRangeProto = seriesTypes.columnrange.prototype, colProto = seriesTypes.column.prototype, areaRangePointProto = areaRangeProto.pointClass.prototype;
+import './ColumnRangeSeries.js';
+import './ColumnSeries.js';
+import '../Core/Interaction.js';
+var seriesProto = H.Series.prototype, seriesTypes = BaseSeries.seriesTypes, areaRangeProto = seriesTypes.arearange.prototype, columnRangeProto = seriesTypes.columnrange.prototype, colProto = seriesTypes.column.prototype, areaRangePointProto = areaRangeProto.pointClass.prototype, TrackerMixin = H.TrackerMixin; // Interaction
 /**
  * The dumbbell series is a cartesian series with higher and lower values for
  * each point along an X axis, connected with a line between the values.
@@ -31,7 +35,7 @@ var seriesTypes = H.seriesTypes, seriesProto = H.Series.prototype, areaRangeProt
  * @since 8.0.0
  * @optionparent plotOptions.dumbbell
  */
-seriesType('dumbbell', 'arearange', {
+BaseSeries.seriesType('dumbbell', 'arearange', {
     /** @ignore-option */
     trackByArea: false,
     /** @ignore-option */
@@ -85,8 +89,8 @@ seriesType('dumbbell', 'arearange', {
     }
 }, {
     trackerGroups: ['group', 'markerGroup', 'dataLabelsGroup'],
-    drawTracker: H.TrackerMixin.drawTrackerPoint,
-    drawGraph: H.noop,
+    drawTracker: TrackerMixin.drawTrackerPoint,
+    drawGraph: noop,
     crispCol: colProto.crispCol,
     /**
      * Get connector line path and styles that connects dumbbell point's low and

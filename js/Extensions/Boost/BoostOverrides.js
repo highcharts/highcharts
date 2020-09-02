@@ -15,7 +15,7 @@ import H from '../../Core/Globals.js';
 import Point from '../../Core/Series/Point.js';
 import U from '../../Core/Utilities.js';
 var addEvent = U.addEvent, error = U.error, getOptions = U.getOptions, isArray = U.isArray, isNumber = U.isNumber, pick = U.pick, wrap = U.wrap;
-import '../../Core/Series/Series.js';
+import '../../Series/LineSeries.js';
 import '../../Core/Options.js';
 import '../../Core/Interaction.js';
 import butils from './BoostUtils.js';

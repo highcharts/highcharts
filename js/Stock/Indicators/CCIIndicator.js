@@ -4,9 +4,10 @@
  *
  *  !!!!!!! SOURCE GETS TRANSPILED BY TYPESCRIPT. EDIT TS FILE ONLY. !!!!!!!
  * */
-'use strict';
+import BaseSeries from '../../Core/Series/Series.js';
 import U from '../../Core/Utilities.js';
-var isArray = U.isArray, seriesType = U.seriesType;
+var isArray = U.isArray;
+import './SMAIndicator.js';
 /* eslint-disable valid-jsdoc */
 // Utils:
 /**
@@ -37,7 +38,7 @@ function meanDeviation(arr, sma) {
  *
  * @augments Highcharts.Series
  */
-seriesType('cci', 'sma', 
+BaseSeries.seriesType('cci', 'sma', 
 /**
  * Commodity Channel Index (CCI). This series requires `linkedTo` option to
  * be set.

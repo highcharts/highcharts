@@ -10,9 +10,13 @@
  *
  * */
 
-'use strict';
-
 import type Chart from '../../Core/Chart/Chart';
+import BaseSeries from '../../Core/Series/Series.js';
+import U from '../../Core/Utilities.js';
+const {
+    error,
+    isArray
+} = U;
 
 /**
  * Internal types
@@ -51,19 +55,16 @@ declare global {
         interface VWAPIndicatorOptions extends SMAIndicatorOptions {
             params?: VWAPIndicatorParamsOptions;
         }
-
-        interface SeriesTypesDictionary {
-            vwap: typeof VWAPIndicator;
-        }
     }
 }
 
-import U from '../../Core/Utilities.js';
-const {
-    error,
-    isArray,
-    seriesType
-} = U;
+declare module '../../Core/Series/Types' {
+    interface SeriesTypeRegistry {
+        vwap: typeof Highcharts.VWAPIndicator;
+    }
+}
+
+import './SMAIndicator.js';
 
 /**
  * The Volume Weighted Average Price (VWAP) series type.
@@ -74,7 +75,7 @@ const {
  *
  * @augments Highcharts.Series
  */
-seriesType<Highcharts.VWAPIndicator>('vwap', 'sma',
+BaseSeries.seriesType<typeof Highcharts.VWAPIndicator>('vwap', 'sma',
     /**
      * Volume Weighted Average Price indicator.
      *

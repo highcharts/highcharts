@@ -9,9 +9,10 @@
  *  !!!!!!! SOURCE GETS TRANSPILED BY TYPESCRIPT. EDIT TS FILE ONLY. !!!!!!!
  *
  * */
-'use strict';
+import BaseSeries from '../../Core/Series/Series.js';
 import U from '../../Core/Utilities.js';
-var error = U.error, isArray = U.isArray, seriesType = U.seriesType;
+var error = U.error, isArray = U.isArray;
+import './SMAIndicator.js';
 /**
  * The Volume Weighted Average Price (VWAP) series type.
  *
@@ -21,7 +22,7 @@ var error = U.error, isArray = U.isArray, seriesType = U.seriesType;
  *
  * @augments Highcharts.Series
  */
-seriesType('vwap', 'sma', 
+BaseSeries.seriesType('vwap', 'sma', 
 /**
  * Volume Weighted Average Price indicator.
  *

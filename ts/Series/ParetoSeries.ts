@@ -8,9 +8,13 @@
  *
  * */
 
-'use strict';
-
-import H from '../Core/Globals.js';
+import BaseSeries from '../Core/Series/Series.js';
+import DerivedSeriesMixin from '../Mixins/DerivedSeries.js';
+import U from '../Core/Utilities.js';
+const {
+    correctFloat,
+    merge
+} = U;
 
 /**
  * Internal types
@@ -49,20 +53,20 @@ declare global {
         interface ParetoSeriesOptions extends LineSeriesOptions {
             states?: SeriesStatesOptionsObject<ParetoSeries>;
         }
-        interface SeriesTypesDictionary {
-            pareto: typeof ParetoSeries;
-        }
     }
 }
 
-import U from '../Core/Utilities.js';
-const {
-    correctFloat,
-    merge,
-    seriesType
-} = U;
+/**
+ * @private
+ */
+declare module '../Core/Series/Types' {
+    interface SeriesTypeRegistry {
+        pareto: typeof Highcharts.ParetoSeries;
+    }
+}
+
 import '../Core/Options.js';
-import derivedSeriesMixin from '../Mixins/DerivedSeries.js';
+import '../Series/LineSeries.js';
 
 /**
  * The pareto series type.
@@ -73,7 +77,7 @@ import derivedSeriesMixin from '../Mixins/DerivedSeries.js';
  *
  * @augments Highcharts.Series
  */
-seriesType<Highcharts.ParetoSeries>('pareto', 'line'
+BaseSeries.seriesType<typeof Highcharts.ParetoSeries>('pareto', 'line'
 
     /**
      * A pareto diagram is a type of chart that contains both bars and a line
@@ -106,7 +110,7 @@ seriesType<Highcharts.ParetoSeries>('pareto', 'line'
 
     /* eslint-disable no-invalid-this, valid-jsdoc */
 
-    merge(derivedSeriesMixin, {
+    merge(DerivedSeriesMixin, {
         /**
          * Calculate sum and return percent points.
          *

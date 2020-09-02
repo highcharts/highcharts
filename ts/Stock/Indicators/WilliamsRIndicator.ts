@@ -6,7 +6,15 @@
  *
  * */
 
-'use strict';
+import BaseSeries from '../../Core/Series/Series.js';
+import ReduceArrayMixin from '../../Mixins/ReduceArray.js';
+const {
+    getArrayExtremes
+} = ReduceArrayMixin;
+import U from '../../Core/Utilities.js';
+const {
+    isArray
+} = U;
 
 /**
  * Internal types
@@ -27,9 +35,6 @@ declare global {
         class WilliamsRIndicatorPoint extends SMAIndicatorPoint {
             series: WilliamsRIndicator;
         }
-        interface SeriesTypesDictionary {
-            williamsr: typeof WilliamsRIndicator;
-        }
         interface WilliamsRIndicatorOptions extends SMAIndicatorOptions {
             params?: WilliamsRIndicatorParamsOptions;
         }
@@ -40,15 +45,13 @@ declare global {
     }
 }
 
-import U from '../../Core/Utilities.js';
-const {
-    isArray,
-    seriesType
-} = U;
+declare module '../../Core/Series/Types' {
+    interface SeriesTypeRegistry {
+        williamsr: typeof Highcharts.WilliamsRIndicator;
+    }
+}
 
-import reduceArrayMixin from '../../Mixins/ReduceArray.js';
-
-var getArrayExtremes = reduceArrayMixin.getArrayExtremes;
+import './SMAIndicator.js';
 
 /**
  * The Williams %R series type.
@@ -59,7 +62,7 @@ var getArrayExtremes = reduceArrayMixin.getArrayExtremes;
  *
  * @augments Highcharts.Series
  */
-seriesType<Highcharts.WilliamsRIndicator>(
+BaseSeries.seriesType<typeof Highcharts.WilliamsRIndicator>(
     'williamsr',
     'sma',
     /**

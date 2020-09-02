@@ -7,7 +7,7 @@ In data visualization sonification is used for exploring the data without visual
 
 For Highcharts, we provide a sonification module to allow you full control of playing your data using sound. The sonification module supports a wide range of different use cases, and is designed with flexibility in mind.
 
-Note that this module is still considered experimental and that certain features work best in Google Chrome. Legacy browsers are not supported.
+Note that this module is still considered experimental. Legacy browsers are not supported.
 
 <iframe style="width: 100%; height: 635px; border: none;" src=https://www.highcharts.com/samples/embed/highcharts/demo/sonification allow="fullscreen"></iframe>
 
@@ -16,7 +16,7 @@ Installation
 
 Requires the `sonification.js` module. This adds the functions [Chart.sonify](https://api.highcharts.com/class-reference/Highcharts.Chart#sonify), [Series.sonify](https://api.highcharts.com/class-reference/Highcharts.Series#sonify), and [Point.sonify](https://api.highcharts.com/class-reference/Highcharts.Point#sonify), as well as several helper classes and functionality for controlling the playback of the chart. These are detailed below.
 
-Describe feature(s) or configuration option(s)
+Features
 ----------------------------------------------
 
 **Highlights:**
@@ -34,7 +34,7 @@ Describe feature(s) or configuration option(s)
 
 See the [API documentation](https://api.highcharts.com/class-reference/Highcharts.Chart#sonify) for configuration details.
 
-**Earcons:**  
+**Earcons:**
 Earcons are ear-icons, predefined sounds that play to indicate something noteworthy. You might use an Earcon to play a specific sound to indicate the end of each series, or to indicate a point of interest on the chart.
 
 <iframe style="width: 100%; height: 470px; border: none;" src=https://www.highcharts.com/samples/embed/highcharts/sonification/chart-earcon allow="fullscreen"></iframe>

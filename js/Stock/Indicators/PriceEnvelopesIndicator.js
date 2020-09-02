@@ -5,11 +5,11 @@
  *  !!!!!!! SOURCE GETS TRANSPILED BY TYPESCRIPT. EDIT TS FILE ONLY. !!!!!!!
  *
  * */
-'use strict';
-import H from '../../Core/Globals.js';
+import BaseSeries from '../../Core/Series/Series.js';
 import U from '../../Core/Utilities.js';
-var isArray = U.isArray, merge = U.merge, seriesType = U.seriesType;
-var SMA = H.seriesTypes.sma;
+var isArray = U.isArray, merge = U.merge;
+import './SMAIndicator.js';
+var SMA = BaseSeries.seriesTypes.sma;
 /**
  * The Price Envelopes series type.
  *
@@ -19,7 +19,7 @@ var SMA = H.seriesTypes.sma;
  *
  * @augments Highcharts.Series
  */
-seriesType('priceenvelopes', 'sma', 
+BaseSeries.seriesType('priceenvelopes', 'sma', 
 /**
  * Price envelopes indicator based on [SMA](#plotOptions.sma) calculations.
  * This series requires the `linkedTo` option to be set and should be loaded

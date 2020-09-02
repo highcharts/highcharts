@@ -8,10 +8,10 @@
  *
  * */
 'use strict';
-import H from '../Core/Globals.js';
+import Axis from '../Core/Axis/Axis.js';
+import Chart from '../Core/Chart/Chart.js';
 import U from '../Core/Utilities.js';
 var addEvent = U.addEvent, defined = U.defined, isNumber = U.isNumber, pick = U.pick;
-var Chart = H.Chart;
 /* eslint-disable no-invalid-this */
 /**
  * For vertical axes only. Setting the static scale ensures that each tick unit
@@ -29,7 +29,7 @@ var Chart = H.Chart;
  * @product   gantt
  * @apioption yAxis.staticScale
  */
-addEvent(H.Axis, 'afterSetOptions', function () {
+addEvent(Axis, 'afterSetOptions', function () {
     var chartOptions = this.chart.options && this.chart.options.chart;
     if (!this.horiz &&
         isNumber(this.options.staticScale) &&

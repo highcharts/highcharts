@@ -11,9 +11,15 @@
 'use strict';
 
 import type ColorAxis from './Axis/ColorAxis';
+import type { SeriesOptionsType } from './Series/Types';
 import Axis from './Axis/Axis.js';
+import BaseSeries from './Series/Series.js';
+const {
+    seriesTypes
+} = BaseSeries;
 import Chart from './Chart/Chart.js';
 import H from './Globals.js';
+import LineSeries from '../Series/LineSeries.js';
 import O from './Options.js';
 const { time } = O;
 import Point from '../Core/Series/Point.js';
@@ -138,7 +144,7 @@ declare global {
                 animation?: (boolean|Partial<AnimationOptionsObject>)
             ): void;
             setName(name: string): void;
-            update(options: SeriesOptionsType, redraw?: boolean): void;
+            update(options: DeepPartial<SeriesOptionsType>, redraw?: boolean): Series;
         }
         interface XAxisOptions {
             index?: number;
@@ -146,11 +152,6 @@ declare global {
         function cleanRecursively<T>(newer: T, older: unknown): T;
     }
 }
-
-import './Series/Series.js';
-
-var Series = H.Series,
-    seriesTypes = H.seriesTypes;
 
 /* eslint-disable valid-jsdoc */
 
@@ -226,7 +227,7 @@ extend(Chart.prototype, /** @lends Highcharts.Chart.prototype */ {
      */
     addSeries: function (
         this: Chart,
-        options: Highcharts.SeriesOptionsType,
+        options: SeriesOptionsType,
         redraw?: boolean,
         animation?: (boolean|Partial<Highcharts.AnimationOptionsObject>)
     ): Highcharts.Series {
@@ -241,7 +242,7 @@ extend(Chart.prototype, /** @lends Highcharts.Chart.prototype */ {
                 'addSeries',
                 { options: options },
                 function (): void {
-                    series = chart.initSeries(options);
+                    series = chart.initSeries(options) as Highcharts.Series;
 
                     chart.isDirtyLegend = true;
                     chart.linkSeries();
@@ -1149,7 +1150,7 @@ extend(Point.prototype, /** @lends Highcharts.Point.prototype */ {
 });
 
 // Extend the series prototype for dynamic methods
-extend(Series.prototype, /** @lends Series.prototype */ {
+extend(LineSeries.prototype, /** @lends Series.prototype */ {
     /**
      * Add a point to the series after render time. The point can be added at
      * the end, or by giving it an X value, to the start or in the middle of the
@@ -1455,7 +1456,7 @@ extend(Series.prototype, /** @lends Series.prototype */ {
      */
     update: function (
         this: Highcharts.Series,
-        options: Highcharts.SeriesOptionsType,
+        options: SeriesOptionsType,
         redraw?: boolean
     ): void {
 

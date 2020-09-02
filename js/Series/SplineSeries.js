@@ -8,10 +8,12 @@
  *
  * */
 'use strict';
+import BaseSeries from '../Core/Series/Series.js';
 import U from '../Core/Utilities.js';
-var pick = U.pick, seriesType = U.seriesType;
+var pick = U.pick;
 import '../Core/Options.js';
-import '../Core/Series/Series.js';
+import '../Series/LineSeries.js';
+import '../Series/LineSeries.js';
 /**
  * Spline series type.
  *
@@ -21,7 +23,7 @@ import '../Core/Series/Series.js';
  *
  * @augments Highcarts.Series
  */
-seriesType('spline', 'line', 
+BaseSeries.seriesType('spline', 'line', 
 /**
  * A spline series is a special type of line series, where the segments
  * between the data points are smoothed.

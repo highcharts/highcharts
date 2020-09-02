@@ -5,10 +5,10 @@
  *  !!!!!!! SOURCE GETS TRANSPILED BY TYPESCRIPT. EDIT TS FILE ONLY. !!!!!!!
  *
  * */
-'use strict';
+import BaseSeries from '../../Core/Series/Series.js';
 import U from '../../Core/Utilities.js';
-var isArray = U.isArray, seriesType = U.seriesType;
-var UNDEFINED;
+var isArray = U.isArray;
+import './SMAIndicator.js';
 /* eslint-disable valid-jsdoc */
 // Utils:
 /**
@@ -22,7 +22,7 @@ function accumulateAverage(points, xVal, yVal, i) {
  * @private
  */
 function getTR(currentPoint, prevPoint) {
-    var pointY = currentPoint, prevY = prevPoint, HL = pointY[1] - pointY[2], HCp = prevY === UNDEFINED ? 0 : Math.abs(pointY[1] - prevY[3]), LCp = prevY === UNDEFINED ? 0 : Math.abs(pointY[2] - prevY[3]), TR = Math.max(HL, HCp, LCp);
+    var pointY = currentPoint, prevY = prevPoint, HL = pointY[1] - pointY[2], HCp = typeof prevY === 'undefined' ? 0 : Math.abs(pointY[1] - prevY[3]), LCp = typeof prevY === 'undefined' ? 0 : Math.abs(pointY[2] - prevY[3]), TR = Math.max(HL, HCp, LCp);
     return TR;
 }
 /**
@@ -43,7 +43,7 @@ function populateAverage(points, xVal, yVal, i, period, prevATR) {
  *
  * @augments Highcharts.Series
  */
-seriesType('atr', 'sma', 
+BaseSeries.seriesType('atr', 'sma', 
 /**
  * Average true range indicator (ATR). This series requires `linkedTo`
  * option to be set.

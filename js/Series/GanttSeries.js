@@ -9,18 +9,18 @@
  *  !!!!!!! SOURCE GETS TRANSPILED BY TYPESCRIPT. EDIT TS FILE ONLY. !!!!!!!
  *
  * */
-'use strict';
+import BaseSeries from '../Core/Series/Series.js';
 import H from '../Core/Globals.js';
 import O from '../Core/Options.js';
 var dateFormat = O.dateFormat;
 import '../Core/Axis/TreeGridAxis.js';
 import U from '../Core/Utilities.js';
-var isNumber = U.isNumber, merge = U.merge, pick = U.pick, seriesType = U.seriesType, splat = U.splat;
+var isNumber = U.isNumber, merge = U.merge, pick = U.pick, splat = U.splat;
 import '../Extensions/CurrentDateIndication.js';
 import '../Extensions/StaticScale.js';
 import '../Gantt/Pathfinder.js';
 import './XRangeSeries.js';
-var seriesTypes = H.seriesTypes, Series = H.Series, parent = seriesTypes.xrange;
+var Series = H.Series, seriesTypes = BaseSeries.seriesTypes, parent = seriesTypes.xrange;
 /**
  * @private
  * @class
@@ -28,7 +28,7 @@ var seriesTypes = H.seriesTypes, Series = H.Series, parent = seriesTypes.xrange;
  *
  * @augments Highcharts.Series
  */
-seriesType('gantt', 'xrange'
+BaseSeries.seriesType('gantt', 'xrange'
 /**
  * A `gantt` series. If the [type](#series.gantt.type) option is not specified,
  * it is inherited from [chart.type](#chart.type).
@@ -55,8 +55,8 @@ seriesType('gantt', 'xrange'
             if (!format) {
                 format = splat(tooltip.getDateFormat(xAxis.closestPointRange, point.start, startOfWeek, formats))[0];
             }
-            start = dateFormat(format, point.start);
-            end = dateFormat(format, point.end);
+            start = series.chart.time.dateFormat(format, point.start);
+            end = series.chart.time.dateFormat(format, point.end);
             retVal += '<br/>';
             if (!milestone) {
                 retVal += 'Start: ' + start + '<br/>';
@@ -177,7 +177,6 @@ seriesType('gantt', 'xrange'
         addIfExists('x', pick(options.start, options.x));
         addIfExists('x2', pick(options.end, options.x2));
         addIfExists('partialFill', pick(options.completed, options.partialFill));
-        addIfExists('connect', pick(options.dependency, options.connect));
     }
     /* eslint-enable valid-jsdoc */
 }, merge(parent.prototype.pointClass.prototype, {
@@ -200,11 +199,11 @@ seriesType('gantt', 'xrange'
      *         The Point instance
      */
     applyOptions: function (options, x) {
-        var point = this, retVal = merge(options);
-        H.seriesTypes.gantt.prototype.setGanttPointAliases(retVal);
-        retVal = parent.prototype.pointClass.prototype.applyOptions
-            .call(point, retVal, x);
-        return retVal;
+        var point = this, ganttPoint;
+        ganttPoint = parent.prototype.pointClass.prototype.applyOptions
+            .call(point, options, x);
+        H.seriesTypes.gantt.prototype.setGanttPointAliases(ganttPoint);
+        return ganttPoint;
     },
     isValid: function () {
         return ((typeof this.start === 'number' ||

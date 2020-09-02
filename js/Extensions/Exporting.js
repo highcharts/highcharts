@@ -1872,7 +1872,9 @@ Chart.prototype.inlineStyles = function () {
      * @return {void}
      */
     function tearDown() {
-        dummySVG.parentNode.removeChild(dummySVG);
+        dummySVG.parentNode.remove();
+        // Remove trash from DOM that stayed after each exporting
+        iframe.remove();
     }
     recurse(this.container.querySelector('svg'));
     tearDown();
