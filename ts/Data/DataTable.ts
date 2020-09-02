@@ -83,7 +83,45 @@ class DataTable implements DataEventEmitter<DataTable.EventObject>, DataJSON.Cla
         }
         return table;
     }
+    /**
+     * Converts a DataTable to a record of columns
+     * @param {DataTable} dataTable
+     * The datatable to convert
+     *
+     * @return {DataTable.ColumnCollection}
+     * An object with column names as keys,
+     * and value an array of cell values
+     */
+    public static toColumns(dataTable: DataTable): DataTable.ColumnCollection {
+        const columnsObject: DataTable.ColumnCollection = {};
+        for (let i = 0, rowCount = dataTable.getRowCount(); i < rowCount; i++) {
+            const row = dataTable.rows[i],
+                cellNames = row.getCellNames(),
+                cellCount = cellNames.length;
 
+            for (let j = 0; j < cellCount; j++) {
+                const cellName = cellNames[j],
+                    cell = row.getCell(cellName);
+
+                if (!columnsObject[cellName]) {
+                    columnsObject[cellName] = [];
+                }
+                let cellValue: DataJSON.Types;
+
+                if (cell instanceof DataTable) {
+                    cellValue = cell.toJSON();
+                } else if (cell instanceof Date) {
+                    cellValue = row.getCellAsNumber(cellName);
+                } else {
+                    cellValue = cell;
+                }
+
+                columnsObject[cellName][i] = cellValue;
+            }
+        }
+
+        return columnsObject;
+    }
     /**
      * Converts a supported class JSON to a DataTable instance.
      *
@@ -324,6 +362,15 @@ class DataTable implements DataEventEmitter<DataTable.EventObject>, DataJSON.Cla
         return this.versionTag || (this.versionTag = uniqueKey());
     }
 
+    /**
+     * Converts the datatable instance to a record of columns
+     * @return {DataTable.ColumnCollection}
+     * A record of columns
+     */
+    public toColumns(): DataTable.ColumnCollection {
+        return DataTable.toColumns(this);
+    }
+
     public insertColumn(
         column: (number|string),
         cells: (
@@ -535,6 +582,14 @@ namespace DataTable {
     export type TableEventType = (
         'clearTable'|'afterClearTable'
     );
+
+    /**
+     * A record of columns, where the key is the column name
+     * and the value is an array of column values
+     */
+    export interface ColumnCollection {
+        [className: string]: Array<DataJSON.Types>;
+    }
 
     /**
      * Describes the class JSON of a DataTable.

@@ -252,3 +252,56 @@ QUnit.test('DataTableRow functions', function (assert) {
     );
 
 });
+
+QUnit.test('DataTable.toColumns', function(assert){
+
+    const table = DataTable.fromJSON({
+        $class: 'DataTable',
+        rows: [{
+            $class: 'DataTableRow',
+            id: 'a',
+            column1: 'value1',
+            column2: 0.0002,
+            column3: false
+        }, {
+            $class: 'DataTableRow',
+            id: 'b',
+            column1: 'value1',
+            column2: 'value2',
+            column3: {
+                $class: 'DataTable',
+                rows: [{
+                    $class: 'DataTableRow',
+                    id: 'ba',
+                    column1: 'value1'
+                }, {
+                    $class: 'DataTableRow',
+                    id: 'bb',
+                    column1: 'value1'
+                }, {
+                    $class: 'DataTableRow',
+                    id: 'bc',
+                    column1: 'value1'
+                }]
+            }
+        }]
+    });
+
+    const columns = table.toColumns();
+
+    assert.deepEqual(
+        Object.keys(columns),
+        ['column1', 'column2', 'column3'],
+        'Result has correct column names'
+    );
+
+    Object.keys(columns).forEach(key =>{
+        const column = columns[key];
+        assert.strictEqual(
+            column.length,
+            2,
+            'Result has correct amount of column values'
+        );
+    });
+
+});

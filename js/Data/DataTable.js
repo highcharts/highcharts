@@ -97,6 +97,39 @@ var DataTable = /** @class */ (function () {
         return table;
     };
     /**
+     * Converts a DataTable to a record of columns
+     * @param {DataTable} dataTable
+     * The datatable to convert
+     *
+     * @return {DataTable.ColumnCollection}
+     * An object with column names as keys,
+     * and value an array of cell values
+     */
+    DataTable.toColumns = function (dataTable) {
+        var columnsObject = {};
+        for (var i = 0, rowCount = dataTable.getRowCount(); i < rowCount; i++) {
+            var row = dataTable.rows[i], cellNames = row.getCellNames(), cellCount = cellNames.length;
+            for (var j = 0; j < cellCount; j++) {
+                var cellName = cellNames[j], cell = row.getCell(cellName);
+                if (!columnsObject[cellName]) {
+                    columnsObject[cellName] = [];
+                }
+                var cellValue = void 0;
+                if (cell instanceof DataTable) {
+                    cellValue = cell.toJSON();
+                }
+                else if (cell instanceof Date) {
+                    cellValue = row.getCellAsNumber(cellName);
+                }
+                else {
+                    cellValue = cell;
+                }
+                columnsObject[cellName][i] = cellValue;
+            }
+        }
+        return columnsObject;
+    };
+    /**
      * Converts a supported class JSON to a DataTable instance.
      *
      * @param {DataTable.ClassJSON} json
@@ -230,6 +263,14 @@ var DataTable = /** @class */ (function () {
      */
     DataTable.prototype.getVersionTag = function () {
         return this.versionTag || (this.versionTag = uniqueKey());
+    };
+    /**
+     * Converts the datatable instance to a record of columns
+     * @return {DataTable.ColumnCollection}
+     * A record of columns
+     */
+    DataTable.prototype.toColumns = function () {
+        return DataTable.toColumns(this);
     };
     DataTable.prototype.insertColumn = function (column, cells, eventDetail) {
         var _a;
