@@ -15,6 +15,7 @@ import Color from '../../Color.js';
 import H from '../../Globals.js';
 import SVGElement from './SVGElement.js';
 import SVGLabel from './SVGLabel.js';
+import AST from '../HTML/AST.js';
 import TextBuilder from './TextBuilder.js';
 import U from '../../Utilities.js';
 const {
@@ -71,12 +72,6 @@ declare global {
         interface SizeObject {
             height: number;
             width: number;
-        }
-        interface ASTObject {
-            attributes?: SVGAttributes;
-            children?: Array<ASTObject>;
-            tagName?: string;
-            textContent?: string;
         }
         interface SymbolFunction {
             (
@@ -140,10 +135,6 @@ declare global {
             public unSubPixelFix?: Function;
             public url: string;
             public width: number;
-            public addAST(
-                def: ASTObject|Array<ASTObject>,
-                parent: Element
-            ): SVGElement;
             public arc(attribs: SVGAttributes): SVGElement;
             public arc(
                 x?: number,
@@ -181,7 +172,7 @@ declare global {
                 width: number,
                 roundingFunction?: ('round'|'floor'|'ceil')
             ): SVGPath;
-            public definition(def: ASTObject): SVGElement;
+            public definition(def: ASTNode): SVGElement;
             public destroy(): null;
             public filterUserAttributes(
                 attributes: Highcharts.SVGAttributes
@@ -387,25 +378,6 @@ declare global {
  *//**
  * @name Highcharts.SizeObject#width
  * @type {number}
- */
-
-/**
- * Serialized form of an SVG definition, including children. Some key
- * property names are reserved: tagName, textContent, and children.
- *
- * @interface Highcharts.ASTObject
- *//**
- * @name Highcharts.ASTObject#[key:string]
- * @type {boolean|number|string|Array<Highcharts.ASTObject>|undefined}
- *//**
- * @name Highcharts.ASTObject#children
- * @type {Array<Highcharts.ASTObject>|undefined}
- *//**
- * @name Highcharts.ASTObject#tagName
- * @type {string|undefined}
- *//**
- * @name Highcharts.ASTObject#textContent
- * @type {string|undefined}
  */
 
 /**
@@ -777,95 +749,6 @@ class SVGRenderer {
         }
     }
 
-    /**
-     * Add a tree defined as a hierarchical JS structure to the DOM
-     *
-     * @private
-     *
-     * @function Highcharts.SVGRenderer#addAST
-     *
-     * @param {Highcharts.ASTObject} tree
-     * A serialized form of an SVG subtree, including children.
-     * @param {SVGElement} parent
-     * The node where it should be added
-     *
-     * @return {Highcharts.SVGElement}
-     * The inserted node.
-     */
-    public addAST(
-        tree: (
-            Highcharts.ASTObject|
-            Array<Highcharts.ASTObject>
-        ),
-        parent: Element
-    ): SVGElement {
-        const NS = parent.namespaceURI || SVG_NS;
-
-        /**
-         * @private
-         * @param {Highcharts.ASTObject} subtree - SVG definition
-         * @param {Element} [parentNode] - parent node
-         */
-        function recurse(
-            subtree: (
-                Highcharts.ASTObject|
-                Array<Highcharts.ASTObject>
-            ),
-            subParent: Element
-        ): SVGElement {
-            var ret: any;
-
-            splat(subtree).forEach(function (
-                item: Highcharts.ASTObject
-            ): void {
-                const textNode = item.textContent ?
-                    doc.createTextNode(item.textContent) :
-                    void 0;
-                let node;
-
-                if (item.tagName === '#text') {
-                    node = textNode;
-
-                } else if (item.tagName) {
-                    node = doc.createElementNS(NS, item.tagName);
-                    const attributes = item.attributes || {};
-
-                    // Apply attributes from root of AST node, legacy from
-                    // from before TextBuilder
-                    objectEach(item, function (val, key): void {
-                        if (
-                            key !== 'tagName' &&
-                            key !== 'attributes' &&
-                            key !== 'children' &&
-                            key !== 'textContent'
-                        ) {
-                            attributes[key] = val;
-                        }
-                    });
-                    attr(node as any, attributes);
-
-                    // Add text content
-                    if (textNode) {
-                        node.appendChild(textNode);
-                    }
-
-                    // Recurse
-                    recurse(item.children || [], node);
-                }
-
-                // Add to the tree
-                if (node) {
-                    subParent.appendChild(node);
-                }
-
-                ret = node;
-            });
-
-            // Return last node added (on top level it's the only one)
-            return ret;
-        }
-        return recurse(tree, parent);
-    }
 
     /**
      * Safely set the inner HTML. The provided markup is parsed to an AST,
@@ -887,10 +770,8 @@ class SVGRenderer {
     public setHTML(parent: Element, html: string): void {
         parent.innerHTML = ''; // Clear previous
         if (html) {
-            this.addAST(
-                TextBuilder.prototype.parseMarkup(html),
-                parent
-            );
+            const ast = new AST(html);
+            ast.addToDOM(parent);
         }
     }
 
@@ -904,14 +785,15 @@ class SVGRenderer {
      *
      * @function Highcharts.SVGRenderer#definition
      *
-     * @param {Highcharts.ASTObject} def
+     * @param {Highcharts.ASTNode} def
      * A serialized form of an SVG definition, including children.
      *
      * @return {Highcharts.SVGElement}
      * The inserted node.
      */
-    public definition(def: Highcharts.ASTObject): SVGElement {
-        return this.addAST(def, this.defs.element);
+    public definition(def: Highcharts.ASTNode): SVGElement {
+        const ast = new AST([def]);
+        return ast.addToDOM(this.defs.element) as unknown as SVGElement;
     }
 
     /**

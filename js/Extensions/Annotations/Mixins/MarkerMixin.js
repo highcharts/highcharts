@@ -38,13 +38,13 @@ var addEvent = U.addEvent, defined = U.defined, merge = U.merge, objectEach = U.
  * @sample highcharts/css/annotations-markers/
  *         Define markers in a styled mode
  *
- * @type         {Highcharts.Dictionary<Highcharts.ASTObject>}
+ * @type         {Highcharts.Dictionary<Highcharts.ASTNode>}
  * @since        6.0.0
  * @optionparent defs
  */
 var defaultMarkers = {
     /**
-     * @type {Highcharts.ASTObject}
+     * @type {Highcharts.ASTNode}
      */
     arrow: {
         tagName: 'marker',
@@ -68,7 +68,7 @@ var defaultMarkers = {
             }]
     },
     /**
-     * @type {Highcharts.ASTObject}
+     * @type {Highcharts.ASTNode}
      */
     'reverse-arrow': {
         tagName: 'marker',

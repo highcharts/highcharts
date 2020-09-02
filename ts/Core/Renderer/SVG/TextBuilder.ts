@@ -12,6 +12,7 @@
 
 import H from '../../Globals.js';
 import U from '../../Utilities.js';
+import AST from '../HTML/AST.js';
 const {
     doc,
     SVG_NS
@@ -31,49 +32,6 @@ const {
  * @name Highcharts.TextBuilder
  */
 class TextBuilder {
-
-    public static allowedTags = [
-        'a',
-        'b',
-        'br',
-        'caption',
-        'code',
-        'div',
-        'em',
-        'h1',
-        'h2',
-        'h3',
-        'h4',
-        'h5',
-        'h6',
-        'i',
-        'img',
-        'li',
-        'ol',
-        'p',
-        'pre',
-        'small',
-        'span',
-        'strong',
-        'sub',
-        'sup',
-        'table',
-        'tbody',
-        'td',
-        'th',
-        'tr',
-        'ul',
-        '#text'
-    ];
-    public static allowedAttributes = [
-        'class',
-        'colspan',
-        'href',
-        'id',
-        'src',
-        'rowspan',
-        'style'
-    ];
 
     public constructor(svgElement: Highcharts.SVGElement) {
         const textStyles = svgElement.styles;
@@ -161,13 +119,13 @@ class TextBuilder {
 
             // Step 1. Parse the markup safely and directly into a tree
             // structure.
-            const tree = this.parseMarkup(textStr);
+            const ast = new AST(textStr);
 
             // Step 2. Do as many as we can of the modifications to the tree
             // structure before it is added to the DOM
-            this.modifyTree(tree);
+            this.modifyTree(ast.nodes);
 
-            renderer.addAST(tree, wrapper.element);
+            ast.addToDOM(wrapper.element);
 
             // Step 3. Some modifications can't be done until the structure is
             // in the DOM, because we need to read computed metrics.
@@ -338,10 +296,10 @@ class TextBuilder {
 
     // Transform HTML to SVG, validate
     private modifyTree(
-        elements: Highcharts.ASTObject[]
+        elements: Highcharts.ASTNode[]
     ): void {
 
-        const modifyChild = (elem: Highcharts.ASTObject, i: number): void => {
+        const modifyChild = (elem: Highcharts.ASTNode, i: number): void => {
             const tagName = elem.tagName;
             const styledMode = this.renderer.styledMode;
             const attributes = elem.attributes || {};
@@ -413,112 +371,6 @@ class TextBuilder {
                 return s.substring(0, s.indexOf(delimiter));
             }
         }
-    }
-
-    /*
-     * @param markup
-     */
-    public parseMarkup(markup: string): Highcharts.ASTObject[] {
-
-        interface Attribute {
-            name: string;
-            value: string;
-        }
-
-        const tree: Highcharts.ASTObject[] = [];
-        let doc;
-        let body;
-        if (
-            // IE9 is only able to parse XML
-            /MSIE 9.0/.test(navigator.userAgent) ||
-            // IE8-
-            typeof DOMParser === 'undefined'
-        ) {
-            body = H.createElement('div');
-            body.innerHTML = markup;
-            doc = { body };
-        } else {
-            doc = new DOMParser().parseFromString(markup, 'text/html');
-        }
-
-        const validateDirective = (attrib: Attribute): boolean => {
-            if (
-                ['background', 'dynsrc', 'href', 'lowsrc', 'src']
-                    .indexOf(attrib.name) !== -1
-            ) {
-                return /^(http|\/)/.test(attrib.value);
-            }
-            return true;
-        };
-
-        const validateChildNodes = (
-            node: ChildNode,
-            addTo: Highcharts.ASTObject[]
-        ): void => {
-            const tagName = node.nodeName.toLowerCase();
-
-            // Add allowed tags
-            if (TextBuilder.allowedTags.indexOf(tagName) !== -1) {
-                const astNode: Highcharts.ASTObject = {
-                    tagName
-                };
-                if (tagName === '#text') {
-                    const textContent = node.textContent || '';
-
-                    // Whitespace text node, don't append it to the AST
-                    if (/^[\s]*$/.test(textContent)) {
-                        return;
-                    }
-
-                    astNode.textContent = textContent;
-                }
-                const parsedAttributes = (node as any).attributes;
-
-                // Add allowed attributes
-                if (parsedAttributes) {
-                    const attributes: Highcharts.SVGAttributes = {};
-                    [].forEach.call(parsedAttributes, (attrib: Attribute): void => {
-                        if (
-                            TextBuilder.allowedAttributes
-                                .indexOf(attrib.name) !== -1 &&
-                            validateDirective(attrib)
-                        ) {
-                            attributes[attrib.name] = attrib.value;
-                        }
-                    });
-                    astNode.attributes = attributes;
-                }
-
-                // Handle children
-                if (node.childNodes.length) {
-                    const children: Highcharts.ASTObject[] = [];
-                    [].forEach.call(
-                        node.childNodes,
-                        (childNode: ChildNode): void => {
-                            validateChildNodes(
-                                childNode,
-                                children
-                            );
-                        }
-                    );
-                    if (children.length) {
-                        astNode.children = children;
-                    }
-                }
-
-                addTo.push(astNode);
-            }
-        };
-
-        [].forEach.call(
-            doc.body.childNodes,
-            (childNode): void => validateChildNodes(childNode, tree)
-        );
-
-        if (body) {
-            H.discardElement(body);
-        }
-        return tree;
     }
 
     /*

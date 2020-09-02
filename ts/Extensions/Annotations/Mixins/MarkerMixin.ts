@@ -34,7 +34,7 @@ declare global {
             setItemMarkers(this: ControllablePath, item: ControllablePath): void;
         }
         interface Options {
-            defs?: Dictionary<ASTObject>;
+            defs?: Dictionary<ASTNode>;
         }
         interface SVGRenderer {
             addMarker(id: string, markerOptions: SVGAttributes): SVGElement;
@@ -72,13 +72,13 @@ declare global {
  * @sample highcharts/css/annotations-markers/
  *         Define markers in a styled mode
  *
- * @type         {Highcharts.Dictionary<Highcharts.ASTObject>}
+ * @type         {Highcharts.Dictionary<Highcharts.ASTNode>}
  * @since        6.0.0
  * @optionparent defs
  */
-var defaultMarkers: Record<string, Highcharts.ASTObject> = {
+var defaultMarkers: Record<string, Highcharts.ASTNode> = {
     /**
-     * @type {Highcharts.ASTObject}
+     * @type {Highcharts.ASTNode}
      */
     arrow: {
         tagName: 'marker',
@@ -102,7 +102,7 @@ var defaultMarkers: Record<string, Highcharts.ASTObject> = {
         }]
     },
     /**
-     * @type {Highcharts.ASTObject}
+     * @type {Highcharts.ASTNode}
      */
     'reverse-arrow': {
         tagName: 'marker',
@@ -129,7 +129,7 @@ SVGRenderer.prototype.addMarker = function (
     id: string,
     markerOptions: Highcharts.SVGAttributes
 ): Highcharts.SVGElement {
-    var options: Highcharts.ASTObject = { attributes: { id } };
+    var options: Highcharts.ASTNode = { attributes: { id } };
 
     var attrs: Highcharts.SVGAttributes = {
         stroke: markerOptions.color || 'none',
@@ -137,8 +137,8 @@ SVGRenderer.prototype.addMarker = function (
     };
 
     options.children = markerOptions.children.map(function (
-        child: Highcharts.ASTObject
-    ): Highcharts.ASTObject {
+        child: Highcharts.ASTNode
+    ): Highcharts.ASTNode {
         return merge(attrs, child);
     });
 

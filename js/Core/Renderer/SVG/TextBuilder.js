@@ -10,6 +10,7 @@
 'use strict';
 import H from '../../Globals.js';
 import U from '../../Utilities.js';
+import AST from '../HTML/AST.js';
 var doc = H.doc, SVG_NS = H.SVG_NS;
 var attr = U.attr, isString = U.isString, objectEach = U.objectEach, pick = U.pick;
 /**
@@ -71,11 +72,11 @@ var TextBuilder = /** @class */ (function () {
             }
             // Step 1. Parse the markup safely and directly into a tree
             // structure.
-            var tree = this.parseMarkup(textStr);
+            var ast = new AST(textStr);
             // Step 2. Do as many as we can of the modifications to the tree
             // structure before it is added to the DOM
-            this.modifyTree(tree);
-            renderer.addAST(tree, wrapper.element);
+            this.modifyTree(ast.nodes);
+            ast.addToDOM(wrapper.element);
             // Step 3. Some modifications can't be done until the structure is
             // in the DOM, because we need to read computed metrics.
             this.modifyDOM();
@@ -254,79 +255,6 @@ var TextBuilder = /** @class */ (function () {
         }
     };
     /*
-     * @param markup
-     */
-    TextBuilder.prototype.parseMarkup = function (markup) {
-        var tree = [];
-        var doc;
-        var body;
-        if (
-        // IE9 is only able to parse XML
-        /MSIE 9.0/.test(navigator.userAgent) ||
-            // IE8-
-            typeof DOMParser === 'undefined') {
-            body = H.createElement('div');
-            body.innerHTML = markup;
-            doc = { body: body };
-        }
-        else {
-            doc = new DOMParser().parseFromString(markup, 'text/html');
-        }
-        var validateDirective = function (attrib) {
-            if (['background', 'dynsrc', 'href', 'lowsrc', 'src']
-                .indexOf(attrib.name) !== -1) {
-                return /^(http|\/)/.test(attrib.value);
-            }
-            return true;
-        };
-        var validateChildNodes = function (node, addTo) {
-            var tagName = node.nodeName.toLowerCase();
-            // Add allowed tags
-            if (TextBuilder.allowedTags.indexOf(tagName) !== -1) {
-                var astNode = {
-                    tagName: tagName
-                };
-                if (tagName === '#text') {
-                    var textContent = node.textContent || '';
-                    // Whitespace text node, don't append it to the AST
-                    if (/^[\s]*$/.test(textContent)) {
-                        return;
-                    }
-                    astNode.textContent = textContent;
-                }
-                var parsedAttributes = node.attributes;
-                // Add allowed attributes
-                if (parsedAttributes) {
-                    var attributes_1 = {};
-                    [].forEach.call(parsedAttributes, function (attrib) {
-                        if (TextBuilder.allowedAttributes
-                            .indexOf(attrib.name) !== -1 &&
-                            validateDirective(attrib)) {
-                            attributes_1[attrib.name] = attrib.value;
-                        }
-                    });
-                    astNode.attributes = attributes_1;
-                }
-                // Handle children
-                if (node.childNodes.length) {
-                    var children_1 = [];
-                    [].forEach.call(node.childNodes, function (childNode) {
-                        validateChildNodes(childNode, children_1);
-                    });
-                    if (children_1.length) {
-                        astNode.children = children_1;
-                    }
-                }
-                addTo.push(astNode);
-            }
-        };
-        [].forEach.call(doc.body.childNodes, function (childNode) { return validateChildNodes(childNode, tree); });
-        if (body) {
-            H.discardElement(body);
-        }
-        return tree;
-    };
-    /*
      * Truncate the text node contents to a given length. Used when the css
      * width is set. If the `textOverflow` is `ellipsis`, the text is truncated
      * character by character to the given length. If not, the text is
@@ -435,48 +363,6 @@ var TextBuilder = /** @class */ (function () {
         });
         return inputStr;
     };
-    TextBuilder.allowedTags = [
-        'a',
-        'b',
-        'br',
-        'caption',
-        'code',
-        'div',
-        'em',
-        'h1',
-        'h2',
-        'h3',
-        'h4',
-        'h5',
-        'h6',
-        'i',
-        'img',
-        'li',
-        'ol',
-        'p',
-        'pre',
-        'small',
-        'span',
-        'strong',
-        'sub',
-        'sup',
-        'table',
-        'tbody',
-        'td',
-        'th',
-        'tr',
-        'ul',
-        '#text'
-    ];
-    TextBuilder.allowedAttributes = [
-        'class',
-        'colspan',
-        'href',
-        'id',
-        'src',
-        'rowspan',
-        'style'
-    ];
     return TextBuilder;
 }());
 export default TextBuilder;

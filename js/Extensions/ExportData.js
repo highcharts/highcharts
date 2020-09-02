@@ -15,6 +15,7 @@
 'use strict';
 import Axis from '../Core/Axis/Axis.js';
 import Chart from '../Core/Chart/Chart.js';
+import AST from '../Core/Renderer/HTML/AST.js';
 import H from '../Core/Globals.js';
 var doc = H.doc, seriesTypes = H.seriesTypes, win = H.win;
 import U from '../Core/Utilities.js';
@@ -662,7 +663,7 @@ Chart.prototype.getTable = function (useLocalDecimalPoint) {
  *        This makes it easier to export data to Excel in the same locale as the
  *        user is.
  *
- * @return {Highcharts.ASTObject}
+ * @return {Highcharts.ASTNode}
  *         The abstract syntax tree
  */
 Chart.prototype.getTableAST = function (useLocalDecimalPoint) {
@@ -928,7 +929,8 @@ Chart.prototype.viewData = function () {
         this.dataTableDiv.style.display = 'block';
     }
     this.isDataTableVisible = true;
-    this.renderer.addAST(this.getTableAST(), this.dataTableDiv);
+    var ast = new AST([this.getTableAST()]);
+    ast.addToDOM(this.dataTableDiv);
     fireEvent(this, 'afterViewData', this.dataTableDiv);
 };
 /**
