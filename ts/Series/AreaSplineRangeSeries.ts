@@ -82,6 +82,8 @@ BaseSeries.seriesType<typeof Highcharts.AreaSplineSeries>(
      * @see [color](#plotOptions.areasplinerange.color)
      * @see [fillColor](#plotOptions.areasplinerange.fillColor)
      *
+     * @default   {highcharts} 0.75
+     * @default   {highstock} 0.75
      * @apioption plotOptions.areasplinerange.fillOpacity
      */
 
@@ -177,6 +179,8 @@ BaseSeries.seriesType<typeof Highcharts.AreaSplineSeries>(
  * @see [color](#series.areasplinerange.color)
  * @see [fillColor](#series.areasplinerange.fillColor)
  *
+ * @default   {highcharts} 0.75
+ * @default   {highstock} 0.75
  * @apioption series.areasplinerange.fillOpacity
  */
 

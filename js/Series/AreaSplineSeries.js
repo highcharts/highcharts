@@ -54,6 +54,8 @@ BaseSeries.seriesType('areaspline', 'spline',
  * @see [color](#plotOptions.areaspline.color)
  * @see [fillColor](#plotOptions.areaspline.fillColor)
  *
+ * @default   {highcharts} 0.75
+ * @default   {highstock} 0.75
  * @apioption plotOptions.areaspline.fillOpacity
  */
 defaultOptions.plotOptions.area, {
@@ -147,6 +149,8 @@ defaultOptions.plotOptions.area, {
  * @see [color](#series.areaspline.color)
  * @see [fillColor](#series.areaspline.fillColor)
  *
+ * @default   {highcharts} 0.75
+ * @default   {highstock} 0.75
  * @apioption series.areaspline.fillOpacity
  */
 ''; // adds doclets above into transpilat

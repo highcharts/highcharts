@@ -712,6 +712,8 @@ BaseSeries.seriesType<typeof Highcharts.AreaSeries>(
  * @see [color](#series.area.color)
  * @see [fillColor](#series.area.fillColor)
  *
+ * @default   {highcharts} 0.75
+ * @default   {highstock} 0.75
  * @apioption series.area.fillOpacity
  */
 

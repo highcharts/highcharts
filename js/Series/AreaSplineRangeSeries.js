@@ -41,6 +41,8 @@ BaseSeries.seriesType('areasplinerange', 'arearange',
  * @see [color](#plotOptions.areasplinerange.color)
  * @see [fillColor](#plotOptions.areasplinerange.fillColor)
  *
+ * @default   {highcharts} 0.75
+ * @default   {highstock} 0.75
  * @apioption plotOptions.areasplinerange.fillOpacity
  */
 null, {
@@ -126,6 +128,8 @@ null, {
  * @see [color](#series.areasplinerange.color)
  * @see [fillColor](#series.areasplinerange.fillColor)
  *
+ * @default   {highcharts} 0.75
+ * @default   {highstock} 0.75
  * @apioption series.areasplinerange.fillOpacity
  */
 ''; // adds doclets above to transpiled file
