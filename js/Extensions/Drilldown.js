@@ -169,6 +169,8 @@ extend(defaultOptions.lang,
  * @product      highcharts highmaps
  * @requires     modules/drilldown
  * @optionparent drilldown
+ * @sample {highcharts} highcharts/series-organization/drilldown
+ *         Organization chart drilldown
  */
 defaultOptions.drilldown = {
     /**
@@ -406,8 +408,6 @@ defaultOptions.drilldown = {
  *
  * @sample {highcharts} highcharts/drilldown/basic/
  *         Basic drilldown
- * @sample {highcharts} highcharts/series-organization/drilldown
- *         Organization chart drilldown
  *
  * @type      {string}
  * @since     3.0.8
