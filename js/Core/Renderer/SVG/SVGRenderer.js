@@ -12,6 +12,7 @@ import Color from '../../Color.js';
 import H from '../../Globals.js';
 import SVGElement from './SVGElement.js';
 import SVGLabel from './SVGLabel.js';
+import AST from '../HTML/AST.js';
 import TextBuilder from './TextBuilder.js';
 import U from '../../Utilities.js';
 var addEvent = U.addEvent, attr = U.attr, createElement = U.createElement, css = U.css, defined = U.defined, destroyObjectProperties = U.destroyObjectProperties, extend = U.extend, isArray = U.isArray, isNumber = U.isNumber, isObject = U.isObject, isString = U.isString, merge = U.merge, objectEach = U.objectEach, pick = U.pick, pInt = U.pInt, splat = U.splat, uniqueKey = U.uniqueKey;
@@ -125,24 +126,6 @@ var addEvent = U.addEvent, attr = U.attr, createElement = U.createElement, css =
 */ /**
 * @name Highcharts.SizeObject#width
 * @type {number}
-*/
-/**
- * Serialized form of an SVG definition, including children. Some key
- * property names are reserved: tagName, textContent, and children.
- *
- * @interface Highcharts.ASTObject
- */ /**
-* @name Highcharts.ASTObject#[key:string]
-* @type {boolean|number|string|Array<Highcharts.ASTObject>|undefined}
-*/ /**
-* @name Highcharts.ASTObject#children
-* @type {Array<Highcharts.ASTObject>|undefined}
-*/ /**
-* @name Highcharts.ASTObject#tagName
-* @type {string|undefined}
-*/ /**
-* @name Highcharts.ASTObject#textContent
-* @type {string|undefined}
 */
 /**
  * Array of path commands, that will go into the `d` attribute of an SVG
@@ -439,70 +422,6 @@ var SVGRenderer = /** @class */ (function () {
         }
     };
     /**
-     * Add a tree defined as a hierarchical JS structure to the DOM
-     *
-     * @private
-     *
-     * @function Highcharts.SVGRenderer#addAST
-     *
-     * @param {Highcharts.ASTObject} tree
-     * A serialized form of an SVG subtree, including children.
-     * @param {SVGElement} parent
-     * The node where it should be added
-     *
-     * @return {Highcharts.SVGElement}
-     * The inserted node.
-     */
-    SVGRenderer.prototype.addAST = function (tree, parent) {
-        var NS = parent.namespaceURI || SVG_NS;
-        /**
-         * @private
-         * @param {Highcharts.ASTObject} subtree - SVG definition
-         * @param {Element} [parentNode] - parent node
-         */
-        function recurse(subtree, subParent) {
-            var ret;
-            splat(subtree).forEach(function (item) {
-                var textNode = item.textContent ?
-                    doc.createTextNode(item.textContent) :
-                    void 0;
-                var node;
-                if (item.tagName === '#text') {
-                    node = textNode;
-                }
-                else if (item.tagName) {
-                    node = doc.createElementNS(NS, item.tagName);
-                    var attributes_1 = item.attributes || {};
-                    // Apply attributes from root of AST node, legacy from
-                    // from before TextBuilder
-                    objectEach(item, function (val, key) {
-                        if (key !== 'tagName' &&
-                            key !== 'attributes' &&
-                            key !== 'children' &&
-                            key !== 'textContent') {
-                            attributes_1[key] = val;
-                        }
-                    });
-                    attr(node, attributes_1);
-                    // Add text content
-                    if (textNode) {
-                        node.appendChild(textNode);
-                    }
-                    // Recurse
-                    recurse(item.children || [], node);
-                }
-                // Add to the tree
-                if (node) {
-                    subParent.appendChild(node);
-                }
-                ret = node;
-            });
-            // Return last node added (on top level it's the only one)
-            return ret;
-        }
-        return recurse(tree, parent);
-    };
-    /**
      * Safely set the inner HTML. The provided markup is parsed to an AST,
      * filtered by allowed tags and attributes and inserted via the DOM.
      *
@@ -522,7 +441,8 @@ var SVGRenderer = /** @class */ (function () {
     SVGRenderer.prototype.setHTML = function (parent, html) {
         parent.innerHTML = ''; // Clear previous
         if (html) {
-            this.addAST(TextBuilder.prototype.parseMarkup(html), parent);
+            var ast = new AST(html);
+            ast.addToDOM(parent);
         }
     };
     /**
@@ -535,14 +455,15 @@ var SVGRenderer = /** @class */ (function () {
      *
      * @function Highcharts.SVGRenderer#definition
      *
-     * @param {Highcharts.ASTObject} def
+     * @param {Highcharts.ASTNode} def
      * A serialized form of an SVG definition, including children.
      *
      * @return {Highcharts.SVGElement}
      * The inserted node.
      */
     SVGRenderer.prototype.definition = function (def) {
-        return this.addAST(def, this.defs.element);
+        var ast = new AST([def]);
+        return ast.addToDOM(this.defs.element);
     };
     /**
      * Get the global style setting for the renderer.
