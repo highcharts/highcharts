@@ -656,11 +656,11 @@ var TreeGridAxis;
          * List of positions.
          */
         Additions.prototype.getTickPositions = function () {
-            var axis = this.axis;
+            var axis = this.axis, roundedMin = Math.floor(axis.min / axis.tickInterval) * axis.tickInterval, roundedMax = Math.ceil(axis.max / axis.tickInterval) * axis.tickInterval;
             return Object.keys(axis.treeGrid.mapOfPosToGridNode || {}).reduce(function (arr, key) {
                 var pos = +key;
-                if (axis.min <= pos &&
-                    axis.max >= pos &&
+                if (pos >= roundedMin &&
+                    pos <= roundedMax &&
                     !(axis.brokenAxis && axis.brokenAxis.isInAnyBreak(pos))) {
                     arr.push(pos);
                 }
