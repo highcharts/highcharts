@@ -64,6 +64,27 @@ import '../Core/Options.js';
 BaseSeries.seriesType<typeof Highcharts.AreaSplineSeries>(
     'areasplinerange',
     'arearange',
+    /**
+     * @see [fillColor](#plotOptions.areasplinerange.fillColor)
+     * @see [fillOpacity](#plotOptions.areasplinerange.fillOpacity)
+     *
+     * @apioption plotOptions.areasplinerange.color
+     */
+
+    /**
+     * @see [color](#plotOptions.areasplinerange.color)
+     * @see [fillOpacity](#plotOptions.areasplinerange.fillOpacity)
+     *
+     * @apioption plotOptions.areasplinerange.fillColor
+     */
+
+    /**
+     * @see [color](#plotOptions.areasplinerange.color)
+     * @see [fillColor](#plotOptions.areasplinerange.fillColor)
+     *
+     * @apioption plotOptions.areasplinerange.fillOpacity
+     */
+
     null as any,
     {
         getPointSpline: (
@@ -81,6 +102,13 @@ BaseSeries.seriesType<typeof Highcharts.AreaSplineSeries>(
  * @product   highcharts highstock
  * @requires  highcharts-more
  * @apioption series.areasplinerange
+ */
+
+/**
+ * @see [fillColor](#series.areasplinerange.fillColor)
+ * @see [fillOpacity](#series.areasplinerange.fillOpacity)
+ *
+ * @apioption series.areasplinerange.color
  */
 
 /**
@@ -136,6 +164,20 @@ BaseSeries.seriesType<typeof Highcharts.AreaSplineSeries>(
  * @extends   series.arearange.data
  * @product   highcharts highstock
  * @apioption series.areasplinerange.data
+ */
+
+/**
+ * @see [color](#series.areasplinerange.color)
+ * @see [fillOpacity](#series.areasplinerange.fillOpacity)
+ *
+ * @apioption series.areasplinerange.fillColor
+ */
+
+/**
+ * @see [color](#series.areasplinerange.color)
+ * @see [fillColor](#series.areasplinerange.fillColor)
+ *
+ * @apioption series.areasplinerange.fillOpacity
  */
 
 ''; // adds doclets above to transpiled file
