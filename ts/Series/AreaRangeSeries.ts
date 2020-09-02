@@ -155,6 +155,8 @@ BaseSeries.seriesType<typeof Highcharts.AreaRangeSeries>('arearange', 'area', {
      * @see [color](#plotOptions.arearange.color)
      * @see [fillColor](#plotOptions.arearange.fillColor)
      *
+     * @default   {highcharts} 0.75
+     * @default   {highstock} 0.75
      * @apioption plotOptions.arearange.fillOpacity
      */
 
@@ -902,6 +904,8 @@ BaseSeries.seriesType<typeof Highcharts.AreaRangeSeries>('arearange', 'area', {
  * @see [color](#series.arearange.color)
  * @see [fillColor](#series.arearange.fillColor)
  *
+ * @default   {highcharts} 0.75
+ * @default   {highstock} 0.75
  * @apioption series.arearange.fillOpacity
  */
 
