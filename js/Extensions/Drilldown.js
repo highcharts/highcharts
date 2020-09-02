@@ -406,7 +406,7 @@ defaultOptions.drilldown = {
  *
  * @sample {highcharts} highcharts/drilldown/basic/
  *         Basic drilldown
- * @sample {highcharts} highcharts/demo/organization-drilldown
+ * @sample {highcharts} highcharts/series-organization/drilldown
  *         Organization chart drilldown
  *
  * @type      {string}
@@ -775,14 +775,14 @@ ColumnSeries.prototype.animateDrillupTo = function (init) {
         syncTimeout(function () {
             if (newSeries.points) { // May be destroyed in the meantime, #3389
                 // Unable to drillup with nodes, #13711
-                var seriesWithNodes = [];
+                var pointsWithNodes = [];
                 newSeries.data.forEach(function (el) {
-                    seriesWithNodes.push(el);
+                    pointsWithNodes.push(el);
                 });
                 if (newSeries.nodes) {
-                    seriesWithNodes = seriesWithNodes.concat(newSeries.nodes);
+                    pointsWithNodes = pointsWithNodes.concat(newSeries.nodes);
                 }
-                seriesWithNodes.forEach(function (point, i) {
+                pointsWithNodes.forEach(function (point, i) {
                     // Fade in other points
                     var verb = i === (level && level.pointIndex) ? 'show' : 'fadeIn', inherit = verb === 'show' ? true : void 0, dataLabel = point.dataLabel;
                     if (point.graphic) { // #3407
