@@ -867,7 +867,7 @@ BaseSeries.seriesType<typeof Highcharts.IKHIndicator>(
                     indicator.nextPoints
                 );
 
-                if (spanA.length) {
+                if (spanA && spanA.length) {
                     spanA[0][0] = 'L';
 
                     path = SMA.prototype.getGraphPath.call(
