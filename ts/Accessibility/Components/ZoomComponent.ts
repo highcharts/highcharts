@@ -13,20 +13,28 @@
 'use strict';
 
 import type Chart from '../../Core/Chart/Chart';
+import type {
+    DOMElementType,
+    HTMLDOMElement
+} from '../../Core/Renderer/DOMElementType';
+import AccessibilityComponent from '../AccessibilityComponent.js';
+import ChartUtilities from '../Utils/ChartUtilities.js';
+const {
+    unhideChartElementFromAT
+} = ChartUtilities;
 import H from '../../Core/Globals.js';
+const {
+    noop
+} = H;
+import HTMLUtilities from '../Utils/HTMLUtilities.js';
+const {
+    removeElement,
+    setElAttrs
+} = HTMLUtilities;
+import KeyboardNavigationHandler from '../KeyboardNavigationHandler.js';
 import U from '../../Core/Utilities.js';
 var extend = U.extend,
     pick = U.pick;
-
-import AccessibilityComponent from '../AccessibilityComponent.js';
-import KeyboardNavigationHandler from '../KeyboardNavigationHandler.js';
-
-import ChartUtilities from '../Utils/ChartUtilities.js';
-var unhideChartElementFromAT = ChartUtilities.unhideChartElementFromAT;
-
-import HTMLUtilities from '../Utils/HTMLUtilities.js';
-var setElAttrs = HTMLUtilities.setElAttrs,
-    removeElement = HTMLUtilities.removeElement;
 
 /**
  * Internal types.
@@ -65,7 +73,7 @@ declare global {
                 label: string
             ): void;
             setMapNavButtonAttrs(
-                button: (HTMLDOMElement|SVGDOMElement),
+                button: DOMElementType,
                 labelFormatKey: string
             ): void;
             simpleButtonNavigation(
@@ -138,8 +146,7 @@ H.Axis.prototype.panStep = function (
  * @class
  * @name Highcharts.ZoomComponent
  */
-var ZoomComponent: typeof Highcharts.ZoomComponent =
-    function (): void {} as any;
+var ZoomComponent: typeof Highcharts.ZoomComponent = noop as any;
 ZoomComponent.prototype = new (AccessibilityComponent as any)();
 extend(ZoomComponent.prototype, /** @lends Highcharts.ZoomComponent */ {
 
@@ -189,7 +196,7 @@ extend(ZoomComponent.prototype, /** @lends Highcharts.ZoomComponent */ {
      */
     setMapNavButtonAttrs: function (
         this: Highcharts.ZoomComponent,
-        button: (Highcharts.HTMLDOMElement|Highcharts.SVGDOMElement),
+        button: DOMElementType,
         labelFormatKey: string
     ): void {
         var chart = this.chart,

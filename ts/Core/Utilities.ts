@@ -12,7 +12,14 @@
 
 import type BaseSeries from './Series/Series';
 import type Chart from './Chart/Chart';
-import type ColorString from './Color/ColorString';
+import type CSSObject from './Renderer/CSSObject';
+import type {
+    DOMElementType,
+    HTMLDOMElement,
+    SVGDOMElement
+} from './Renderer/DOMElementType';
+import type SVGAttributes from './Renderer/SVG/SVGAttributes';
+import type SVGElement from './Renderer/SVG/SVGElement';
 import type SVGPath from './Renderer/SVG/SVGPath';
 import H from './Globals.js';
 type NonArray<T> = T extends Array<unknown> ? never : T;
@@ -34,15 +41,6 @@ declare global {
         easeInOutSine(pos: number): number;
     }
     namespace Highcharts {
-        type CursorValue = (
-            'alias'|'all-scroll'|'auto'|'cell'|'col-resize'|'context-menu'|
-            'copy'|'crosshair'|'default'|'e-resize'|'ew-resize'|'grab'|
-            'grabbing'|'help'|'move'|'n-resize'|'ne-resize'|'nesw-resize'|
-            'no-drop'|'none'|'not-allowed'|'ns-resize'|'nw-resize'|
-            'nwse-resize'|'pointer'|'progress'|'row-resize'|'s-resize'|
-            'se-resize'|'sw-resize'|'text'|'vertical-text'|'w-resize'|'wait'|
-            'zoom-in'|'zoom-out'
-        );
         type DashStyleValue = (
             'Dash'|'DashDot'|'Dot'|'LongDash'|'LongDashDot'|'LongDashDotDot'|
             'ShortDash'|'ShortDashDot'|'ShortDashDotDot'|'ShortDot'|'Solid'
@@ -65,19 +63,6 @@ declare global {
         }
         interface Class<T = any> extends Function {
             new(...args: Array<any>): T;
-        }
-        interface CSSObject {
-            [key: string]: (boolean|number|string|undefined);
-            backgroundColor?: ColorString;
-            borderRadius?: (number|string);
-            color?: ('contrast'|ColorString);
-            cursor?: CursorValue;
-            fontSize?: (number|string);
-            lineWidth?: (number|string);
-            pointerEvents?: string;
-            stroke?: ColorString;
-            strokeWidth?: (number|string);
-            width?: string;
         }
         /**
          * @deprecated
@@ -172,11 +157,11 @@ declare global {
         function arrayMax(data: Array<any>): number;
         function arrayMin(data: Array<any>): number;
         function attr(
-            elem: (HTMLDOMElement|SVGDOMElement),
+            elem: DOMElementType,
             prop: (HTMLAttributes|SVGAttributes)
         ): undefined;
         function attr(
-            elem: (HTMLDOMElement|SVGDOMElement),
+            elem: DOMElementType,
             prop: string,
             value?: undefined
         ): (string|null);
@@ -1476,7 +1461,7 @@ H.isObject = isObject;
  * @return {boolean}
  *         True if the argument is a HTML Element.
  */
-const isDOMElement = H.isDOMElement = function isDOMElement(obj: unknown): obj is Highcharts.HTMLDOMElement {
+const isDOMElement = H.isDOMElement = function isDOMElement(obj: unknown): obj is HTMLDOMElement {
     return isObject(obj) && typeof (obj as any).nodeType === 'number';
 };
 
@@ -1557,16 +1542,16 @@ const defined = H.defined = function defined<T>(obj: T): obj is NonNullable<T> {
 };
 
 function attr(
-    elem: (Highcharts.HTMLDOMElement|Highcharts.SVGDOMElement),
-    prop: (Highcharts.HTMLAttributes|Highcharts.SVGAttributes)
+    elem: DOMElementType,
+    prop: (Highcharts.HTMLAttributes|SVGAttributes)
 ): undefined;
 function attr(
-    elem: (Highcharts.HTMLDOMElement|Highcharts.SVGDOMElement),
+    elem: DOMElementType,
     prop: string,
     value?: undefined
 ): (string|null);
 function attr(
-    elem: (Highcharts.HTMLDOMElement|Highcharts.SVGDOMElement),
+    elem: DOMElementType,
     prop: string,
     value: (number|string)
 ): undefined;
@@ -1590,8 +1575,8 @@ function attr(
  *         When used as a getter, return the value.
  */
 function attr(
-    elem: (Highcharts.HTMLDOMElement|Highcharts.SVGDOMElement),
-    prop: (string|Highcharts.HTMLAttributes|Highcharts.SVGAttributes),
+    elem: DOMElementType,
+    prop: (string|Highcharts.HTMLAttributes|SVGAttributes),
     value?: (number|string)
 ): (string|null|undefined) {
     let ret;
@@ -1773,8 +1758,8 @@ H.pick = pick;
  * @return {void}
  */
 const css = H.css = function css(
-    el: (Highcharts.HTMLDOMElement|Highcharts.SVGDOMElement),
-    styles: Highcharts.CSSObject
+    el: DOMElementType,
+    styles: CSSObject
 ): void {
     if (H.isMS && !H.svg) { // #2686
         if (styles && typeof styles.opacity !== 'undefined') {
@@ -1811,10 +1796,10 @@ const css = H.css = function css(
 const createElement = H.createElement = function createElement(
     tag: string,
     attribs?: Highcharts.HTMLAttributes,
-    styles?: Highcharts.CSSObject,
-    parent?: Highcharts.HTMLDOMElement,
+    styles?: CSSObject,
+    parent?: HTMLDOMElement,
     nopad?: boolean
-): Highcharts.HTMLDOMElement {
+): HTMLDOMElement {
     var el = doc.createElement(tag);
 
     if (attribs) {
@@ -2258,8 +2243,6 @@ const arrayMax = H.arrayMax = function arrayMax(data: Array<any>): number {
  *
  * @param {*} [except]
  *        Exception, do not destroy this property, only delete it.
- *
- * @return {void}
  */
 const destroyObjectProperties = H.destroyObjectProperties =
     function destroyObjectProperties(obj: any, except?: any): void {
@@ -2283,10 +2266,8 @@ const destroyObjectProperties = H.destroyObjectProperties =
  *
  * @param {Highcharts.HTMLDOMElement} element
  *        The HTML node to discard.
- *
- * @return {void}
  */
-const discardElement = H.discardElement = function discardElement(element?: Highcharts.HTMLDOMElement): void {
+const discardElement = H.discardElement = function discardElement(element?: HTMLDOMElement): void {
     var garbageBin = H.garbageBin;
 
     // create a garbage bin element, not part of the DOM
@@ -2332,8 +2313,6 @@ const correctFloat = H.correctFloat = function correctFloat(num: number, prec?: 
  *
  * @param {Highcharts.Chart} chart
  *        The chart instance.
- *
- * @return {void}
  *
  * @todo
  * This function always relates to a chart, and sets a property on the renderer,
@@ -2585,7 +2564,7 @@ function getNestedProperty(path: string, obj: unknown): unknown {
  *         The numeric value.
  */
 const getStyle = H.getStyle = function (
-    el: Highcharts.HTMLDOMElement,
+    el: HTMLDOMElement,
     prop: string,
     toInt?: boolean
 ): (number|string) {
@@ -3287,8 +3266,8 @@ const fireEvent = H.fireEvent = function<T> (
  * @return {void}
  */
 const animate = H.animate = function (
-    el: (Highcharts.HTMLDOMElement|Highcharts.SVGElement),
-    params: (Highcharts.CSSObject|Highcharts.SVGAttributes),
+    el: (HTMLDOMElement|SVGElement),
+    params: (CSSObject|SVGAttributes),
     opt?: Partial<Highcharts.AnimationOptionsObject>
 ): void {
     var start,

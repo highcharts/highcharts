@@ -13,8 +13,13 @@
 import type ColorString from './Color/ColorString';
 import type ColorType from './Color/ColorType';
 import type Chart from './Chart/Chart';
+import type CSSObject from './Renderer/CSSObject';
+import type {
+    HTMLDOMElement
+} from './Renderer/DOMElementType';
 import type Point from './Series/Point';
 import type { SeriesOptionsType, SeriesPlotOptionsType } from './Series/Types';
+import type SVGAttributes from './Renderer/SVG/SVGAttributes';
 import H from './Globals.js';
 const {
     isTouchDevice,

@@ -14,7 +14,11 @@
 
 import type ColorString from '../../Core/Color/ColorString';
 import type ColorType from '../../Core/Color/ColorType';
+import type CSSObject from '../../Core/Renderer/CSSObject';
 import type GradientColor from '../../Core/Color/GradientColor';
+import {
+    HTMLDOMElement
+} from '../../Core/Renderer/DOMElementType';
 import type SVGPath from '../../Core/Renderer/SVG/SVGPath';
 import Chart from '../../Core/Chart/Chart.js';
 import Color from '../../Core/Color/Color.js';
@@ -370,7 +374,7 @@ let VMLRenderer: typeof Highcharts.VMLRenderer,
 // Utilites
 if (doc && !doc.defaultView) {
     H.getStyle = U.getStyle = function (
-        el: Highcharts.HTMLDOMElement,
+        el: HTMLDOMElement,
         prop: string
     ): number {
         var val: string,
@@ -726,7 +730,7 @@ if (!svg) {
                     ', M12=', -sintheta, ', M21=', sintheta, ', M22=', costheta,
                     ', sizingMethod=\'auto expand\')'
                 ].join('') : 'none'
-            } as Highcharts.CSSObject);
+            });
         },
 
         /**
@@ -892,7 +896,7 @@ if (!svg) {
          */
         safeRemoveChild: function (
             this: Highcharts.VMLElement,
-            element: Highcharts.HTMLDOMElement
+            element: HTMLDOMElement
         ): void {
             // discardElement will detach the node from its parent before
             // attaching it to the garbage bin. Therefore it is important that
@@ -1103,7 +1107,7 @@ if (!svg) {
             this: Highcharts.VMLElement,
             value: string,
             key: string,
-            element: Highcharts.HTMLDOMElement
+            element: HTMLDOMElement
         ): void {
             var strokeElem =
                 element.getElementsByTagName('stroke')[0] as (
@@ -1350,7 +1354,7 @@ if (!svg) {
          */
         init: function (
             this: Highcharts.VMLRenderer,
-            container: Highcharts.HTMLDOMElement,
+            container: HTMLDOMElement,
             width: number,
             height: number
         ): void {
@@ -1450,7 +1454,7 @@ if (!svg) {
                 getCSS: function (
                     this: Highcharts.VMLClipRectObject,
                     wrapper: Highcharts.VMLElement
-                ): Highcharts.CSSObject {
+                ): CSSObject {
                     var element = wrapper.element,
                         nodeName = element.nodeName,
                         isShape = nodeName === 'shape',
@@ -1930,8 +1934,8 @@ if (!svg) {
          */
         invertChild: function (
             this: Highcharts.VMLRenderer,
-            element: Highcharts.HTMLDOMElement,
-            parentNode: Highcharts.HTMLDOMElement
+            element: HTMLDOMElement,
+            parentNode: HTMLDOMElement
         ): void {
             var ren = this,
                 parentStyle = parentNode.style,
@@ -1949,7 +1953,7 @@ if (!svg) {
             // Recursively invert child elements, needed for nested composite
             // shapes like box plots and error bars. #1680, #1806.
             [].forEach.call(element.childNodes, function (
-                child: Highcharts.HTMLDOMElement
+                child: HTMLDOMElement
             ): void {
                 ren.invertChild(child, element);
             });
@@ -2091,9 +2095,9 @@ if (!svg) {
 }
 
 SVGRenderer.prototype.getSpanWidth = function (
-    this: Highcharts.SVGRenderer,
-    wrapper: Highcharts.SVGElement,
-    tspan: Highcharts.HTMLDOMElement
+    this: SVGRenderer,
+    wrapper: SVGElement,
+    tspan: HTMLDOMElement
 ): number {
     var renderer = this,
         bBox = wrapper.getBBox(true),
@@ -2111,9 +2115,9 @@ SVGRenderer.prototype.getSpanWidth = function (
 
 // This method is used with exporting in old IE, when emulating SVG (see #2314)
 SVGRenderer.prototype.measureSpanWidth = function (
-    this: Highcharts.SVGRenderer,
+    this: SVGRenderer,
     text: string,
-    styles: Highcharts.CSSObject
+    styles: CSSObject
 ): number {
     var measuringSpan = doc.createElement('span'),
         offsetWidth,

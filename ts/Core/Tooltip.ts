@@ -12,7 +12,11 @@
 
 import type Chart from './Chart/Chart';
 import type ColorType from './Color/ColorType';
+import type {
+    HTMLDOMElement
+} from './Renderer/DOMElementType';
 import type Point from './Series/Point';
+import type SVGAttributes from './Renderer/SVG/SVGAttributes';
 import type SVGElement from './Renderer/SVG/SVGElement';
 import H from './Globals.js';
 const {
@@ -1533,10 +1537,10 @@ class Tooltip {
          * @return {Highcharts.SVGElement} Returns the updated partial tooltip
          */
         function updatePartialTooltip(
-            partialTooltip: (Highcharts.SVGElement|undefined),
+            partialTooltip: (SVGElement|undefined),
             point: (Point & { isHeader?: boolean }),
             str: (boolean|string)
-        ): Highcharts.SVGElement {
+        ): SVGElement {
             let tt = partialTooltip;
             const { isHeader, series } = point;
             const colorClass = 'highcharts-color-' + pick(
@@ -1544,7 +1548,7 @@ class Tooltip {
             );
             if (!tt) {
 
-                const attribs: Highcharts.SVGAttributes = {
+                const attribs: SVGAttributes = {
                     padding: options.padding,
                     r: options.borderRadius
                 };

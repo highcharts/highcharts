@@ -15,6 +15,10 @@
 'use strict';
 
 import type ColorType from '../Core/Color/ColorType';
+import type {
+    CursorValue
+} from '../Core/Renderer/CSSObject';
+import type SVGAttributes from '../Core/Renderer/SVG/SVGAttributes';
 import H from '../Core/Globals.js';
 const {
     hasTouch
@@ -322,7 +326,7 @@ class AxisResizer {
                 chart.plotTop,
                 chart.plotTop + chart.plotHeight
             ),
-            attr: Highcharts.SVGAttributes = {},
+            attr: SVGAttributes = {},
             lineWidth: number;
 
         if (!chart.styledMode) {

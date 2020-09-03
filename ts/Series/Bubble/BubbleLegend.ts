@@ -13,7 +13,9 @@
 'use strict';
 
 import type ColorType from '../../Core/Color/ColorType';
+import type CSSObject from '../../Core/Renderer/CSSObject';
 import type Point from '../../Core/Series/Point';
+import type SVGAttributes from '../../Core/Renderer/SVG/SVGAttributes';
 import Chart from '../../Core/Chart/Chart.js';
 import Color from '../../Core/Color/Color.js';
 const {
@@ -570,11 +572,11 @@ class BubbleLegend {
             options = this.options,
             series = this.chart.series[options.seriesIndex as any],
             baseline = this.legend.baseline,
-            bubbleStyle: Highcharts.SVGAttributes = {
+            bubbleStyle: SVGAttributes = {
                 'z-index': options.zIndex,
                 'stroke-width': options.borderWidth
             },
-            connectorStyle: Highcharts.SVGAttributes = {
+            connectorStyle: SVGAttributes = {
                 'z-index': options.zIndex,
                 'stroke-width': options.connectorWidth
             },
@@ -634,9 +636,9 @@ class BubbleLegend {
      * @function Highcharts.BubbleLegend#getLabelStyles
      * @return {Highcharts.CSSObject}
      */
-    public getLabelStyles(): Highcharts.CSSObject {
+    public getLabelStyles(): CSSObject {
         var options = this.options,
-            additionalLabelsStyle = {} as Highcharts.CSSObject,
+            additionalLabelsStyle: CSSObject = {},
             labelsOnLeft = (options.labels as any).align === 'left',
             rtl = this.legend.options.rtl;
 

@@ -12,6 +12,8 @@
 
 import type ColorString from '../Color/ColorString';
 import type ColorType from '../Color/ColorType';
+import type CSSObject from '../Renderer/CSSObject';
+import type SVGAttributes from '../Renderer/SVG/SVGAttributes';
 import type SVGPath from '../Renderer/SVG/SVGPath';
 import Axis from './Axis.js';
 import H from '../Globals.js';
@@ -234,11 +236,11 @@ class PlotLineOrBand {
             color = options.color,
             zIndex = pick(options.zIndex, 0),
             events = options.events,
-            attribs = {
+            attribs: SVGAttributes = {
                 'class': 'highcharts-plot-' + (isBand ? 'band ' : 'line ') +
                     (options.className || '')
-            } as Highcharts.SVGAttributes,
-            groupAttribs = {} as Highcharts.SVGAttributes,
+            },
+            groupAttribs: SVGAttributes = {},
             renderer = axis.chart.renderer,
             groupName = isBand ? 'bands' : 'lines',
             group;
@@ -392,7 +394,7 @@ class PlotLineOrBand {
         var plotLine = this,
             label = plotLine.label,
             renderer = plotLine.axis.chart.renderer,
-            attribs: Highcharts.SVGAttributes,
+            attribs: SVGAttributes,
             xBounds,
             yBounds,
             x,

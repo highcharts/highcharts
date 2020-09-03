@@ -13,7 +13,13 @@
 'use strict';
 
 import type ColorType from '../Core/Color/ColorType';
+import type {
+    CSSObject,
+    CursorValue
+} from '../Core/Renderer/CSSObject';
 import type { SeriesOptionsType } from '../Core/Series/Types';
+import type SVGAttributes from '../Core/Renderer/SVG/SVGAttributes';
+import type SVGElement from '../Core/Renderer/SVG/SVGElement';
 import Axis from '../Core/Axis/Axis.js';
 import Chart from '../Core/Chart/Chart.js';
 import Color from '../Core/Color/Color.js';
@@ -1157,7 +1163,7 @@ ColumnSeries.prototype.animateDrilldown = function (init?: boolean): void {
     var series = this,
         chart = this.chart,
         drilldownLevels = chart.drilldownLevels,
-        animateFrom: (Highcharts.SVGAttributes|undefined),
+        animateFrom: (SVGAttributes|undefined),
         animationOptions =
             animObject((chart.options.drilldown as any).animation),
         xAxis = this.xAxis,
@@ -1525,11 +1531,11 @@ addEvent(H.Series, 'afterDrawDataLabels', function (): void {
 
     this.points.forEach(function (point: Point): void {
         var dataLabelsOptions = point.options.dataLabels,
-            pointCSS: Highcharts.CSSObject = pick(
+            pointCSS = pick(
                 point.dlOptions as any,
                 dataLabelsOptions && (dataLabelsOptions as any).style,
-                {} as Highcharts.CSSObject
-            );
+                {}
+            ) as CSSObject;
 
         if (point.drilldown && point.dataLabel) {
 
@@ -1556,8 +1562,8 @@ addEvent(H.Series, 'afterDrawDataLabels', function (): void {
 
 
 const applyCursorCSS = function (
-    element: Highcharts.SVGElement,
-    cursor: Highcharts.CursorValue,
+    element: SVGElement,
+    cursor: CursorValue,
     addClass?: boolean,
     styledMode?: boolean
 ): void {

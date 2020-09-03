@@ -10,6 +10,7 @@
 
 import type ColorType from '../Core/Color/ColorType';
 import type StackingAxis from '../Core/Axis/StackingAxis';
+import type SVGAttributes from '../Core/Renderer/SVG/SVGAttributes';
 import type SVGPath from '../Core/Renderer/SVG/SVGPath';
 import BaseSeries from '../Core/Series/Series.js';
 import Color from '../Core/Color/Color.js';
@@ -570,7 +571,7 @@ BaseSeries.seriesType<typeof Highcharts.AreaSeries>(
                 var areaKey = prop[0],
                     area = (series as any)[areaKey],
                     verb = area ? 'animate' : 'attr',
-                    attribs = {} as Highcharts.SVGAttributes;
+                    attribs: SVGAttributes = {};
 
                 // Create or update the area
                 if (area) { // update

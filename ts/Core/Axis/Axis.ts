@@ -13,9 +13,11 @@
 import type { AxisComposition, AxisLike } from './Types';
 import type Chart from '../Chart/Chart';
 import type ColorType from '../Color/ColorType';
+import type CSSObject from '../Renderer/CSSObject';
 import type GradientColor from '../Color/GradientColor';
 import type PlotLineOrBand from './PlotLineOrBand';
 import type Point from '../../Core/Series/Point';
+import type SVGAttributes from '../Renderer/SVG/SVGAttributes';
 import type SVGPath from '../Renderer/SVG/SVGPath';
 import Color from '../Color/Color.js';
 import H from '../Globals.js';
@@ -6591,7 +6593,7 @@ class Axis implements AxisComposition, AxisLike {
                 1,
                 Math.round(slotWidth - 2 * ((labelOptions as any).padding || 5))
             ),
-            attr = {} as Highcharts.SVGAttributes,
+            attr: SVGAttributes = {},
             labelMetrics = this.labelMetrics(),
             textOverflowOption = ((labelOptions as any).style &&
                 (labelOptions as any).style.textOverflow),
@@ -6709,7 +6711,7 @@ class Axis implements AxisComposition, AxisLike {
             var tick = ticks[pos],
                 label = tick && tick.label,
                 widthOption = labelStyleOptions.width,
-                css = {} as Highcharts.CSSObject;
+                css: CSSObject = {};
 
             if (label) {
                 // This needs to go before the CSS in old IE (#4502)
@@ -6824,7 +6826,7 @@ class Axis implements AxisComposition, AxisLike {
                     zIndex: 7,
                     rotation: (axisTitleOptions as any).rotation || 0,
                     align: textAlign
-                } as Highcharts.SVGAttributes)
+                })
                 .addClass('highcharts-axis-title');
 
             // #7814, don't mutate style option
@@ -7725,7 +7727,7 @@ class Axis implements AxisComposition, AxisLike {
 
             graphic.show().attr({
                 d: path
-            } as Highcharts.SVGAttributes);
+            });
 
             if (categorized && !(options as any).width) {
                 graphic.attr({

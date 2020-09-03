@@ -7,7 +7,6 @@
  *  !!!!!!! SOURCE GETS TRANSPILED BY TYPESCRIPT. EDIT TS FILE ONLY. !!!!!!!
  *
  * */
-'use strict';
 import Axis from '../Axis/Axis.js';
 import Chart from '../Chart/Chart.js';
 import H from '../Globals.js';

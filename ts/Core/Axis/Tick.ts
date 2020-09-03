@@ -10,6 +10,8 @@
 
 'use strict';
 
+import type CSSObject from '../Renderer/CSSObject';
+import type SVGAttributes from '../Renderer/SVG/SVGAttributes';
 import type SVGPath from '../Renderer/SVG/SVGPath';
 import H from '../Globals.js';
 
@@ -714,7 +716,7 @@ class Tick {
                 left: 0,
                 center: 0.5,
                 right: 1
-            } as Highcharts.Dictionary<number>)[
+            } as Record<string, number>)[
                 axis.labelAlign || (label as any).attr('align')
             ],
             labelWidth = (label as any).getBBox().width,
@@ -725,7 +727,7 @@ class Tick {
             leftPos,
             rightPos,
             textWidth,
-            css = {} as Highcharts.CSSObject;
+            css: CSSObject = {};
 
         // Check if the label overshoots the chart spacing box. If it does, move
         // it. If it now overshoots the slotWidth, add ellipsis.
@@ -925,7 +927,7 @@ class Tick {
             options = axis.options,
             gridLine = tick.gridLine,
             gridLinePath,
-            attribs = {} as Highcharts.SVGAttributes,
+            attribs: SVGAttributes = {},
             pos = tick.pos,
             type = tick.type,
             tickmarkOffset = pick(tick.tickmarkOffset, axis.tickmarkOffset),

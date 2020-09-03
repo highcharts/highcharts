@@ -10,6 +10,7 @@
  *
  * */
 
+import type SVGAttributes from '../Core/Renderer/SVG/SVGAttributes';
 import type SVGPath from '../Core/Renderer/SVG/SVGPath';
 import BaseSeries from '../Core/Series/Series.js';
 import H from '../Core/Globals.js';
@@ -175,7 +176,7 @@ BaseSeries.seriesType<typeof Highcharts.VectorSeries>('vector', 'scatter'
             this: Highcharts.VectorSeries,
             point: Highcharts.VectorPoint,
             state?: string
-        ): Highcharts.SVGAttributes {
+        ): SVGAttributes {
             var options = this.options,
                 stroke = point.color || this.color,
                 strokeWidth = this.options.lineWidth;

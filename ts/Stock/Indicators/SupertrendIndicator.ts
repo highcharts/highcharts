@@ -7,7 +7,9 @@
  * */
 
 import type ColorType from '../../Core/Color/ColorType';
+import type CSSObject from '../../Core/Renderer/CSSObject';
 import type Point from '../../Core/Series/Point';
+import type SVGAttributes from '../../Core/Renderer/SVG/SVGAttributes';
 import BaseSeries from '../../Core/Series/Series.js';
 const {
     seriesTypes
@@ -54,7 +56,7 @@ declare global {
         }
 
         interface SupertrendLineObject {
-            [index: string]: (Dictionary<SVGAttributes>|undefined);
+            [index: string]: (Record<string, SVGAttributes>|undefined);
         }
 
         class SupertrendIndicator extends SMAIndicator {
@@ -85,7 +87,7 @@ declare global {
         }
 
         interface SupertrendIndicatorOptions extends SMAIndicatorOptions {
-            changeTrendLine?: Dictionary<CSSObject>;
+            changeTrendLine?: Record<string, CSSObject>;
             fallingTrendColor?: ColorType;
             params?: SupertrendIndicatorParamsOptions;
             risingTrendColor?: ColorType;

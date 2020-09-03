@@ -6,6 +6,7 @@
  *
  * */
 
+import type CSSObject from '../../Core/Renderer/CSSObject';
 import type Point from '../../Core/Series/Point';
 import BaseSeries from '../../Core/Series/Series.js';
 import H from '../../Core/Globals.js';

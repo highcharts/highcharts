@@ -11,6 +11,9 @@
 'use strict';
 
 import type ColorAxis from './Axis/ColorAxis';
+import type {
+    HTMLDOMElement
+} from './Renderer/DOMElementType';
 import type { SeriesOptionsType } from './Series/Types';
 import Axis from './Axis/Axis.js';
 import BaseSeries from './Series/Series.js';

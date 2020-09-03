@@ -11,6 +11,7 @@
 'use strict';
 
 import type ColorType from '../Color/ColorType';
+import type SVGAttributes from '../Renderer/SVG/SVGAttributes';
 import H from '../Globals.js';
 import U from '../Utilities.js';
 const {
@@ -441,7 +442,7 @@ class Point {
      */
     public series: Highcharts.Series = void 0 as any;
 
-    public shapeArgs?: Highcharts.SVGAttributes;
+    public shapeArgs?: SVGAttributes;
 
     public shapeType?: string;
 

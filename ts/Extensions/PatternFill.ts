@@ -14,6 +14,11 @@
 'use strict';
 
 import type ColorString from '../Core/Color/ColorString';
+import type SVGAttributes from '../Core/Renderer/SVG/SVGAttributes';
+import type {
+    SVGDOMElement
+} from '../Core/Renderer/DOMElementType';
+import type SVGElement from '../Core/Renderer/SVG/SVGElement';
 import Chart from '../Core/Chart/Chart.js';
 import H from '../Core/Globals.js';
 import Point from '../Core/Series/Point.js';
@@ -356,11 +361,11 @@ Point.prototype.calculatePatternDimensions = function (
 SVGRenderer.prototype.addPattern = function (
     options: PatternFill.PatternOptionsObject,
     animation?: (boolean|Partial<Highcharts.AnimationOptionsObject>)
-): (Highcharts.SVGElement|undefined) {
-    var pattern: (Highcharts.SVGElement|undefined),
+): (SVGElement|undefined) {
+    var pattern: (SVGElement|undefined),
         animate = pick(animation, true),
         animationOptions = animObject(animate),
-        path: Highcharts.SVGAttributes,
+        path: SVGAttributes,
         defaultSize = 32,
         width: number = options.width || (options._width as any) || defaultSize,
         height: number = (
@@ -374,7 +379,7 @@ SVGRenderer.prototype.addPattern = function (
                 .attr({ fill })
                 .add(pattern);
         },
-        attribs: Highcharts.SVGAttributes;
+        attribs: SVGAttributes;
 
     if (!id) {
         this.idCounter = this.idCounter || 0;
@@ -395,7 +400,7 @@ SVGRenderer.prototype.addPattern = function (
     this.defIds.push(id);
 
     // Calculate pattern element attributes
-    const attrs: Highcharts.SVGAttributes = {
+    const attrs: SVGAttributes = {
         id: id,
         patternUnits: 'userSpaceOnUse',
         patternContentUnits: options.patternContentUnits || 'userSpaceOnUse',
@@ -442,7 +447,7 @@ SVGRenderer.prototype.addPattern = function (
         if (animate) {
             this.image(
                 options.image, 0, 0, width, height, function (
-                    this: Highcharts.SVGElement
+                    this: SVGElement
                 ): void {
                     // Onload
                     this.animate({
@@ -459,7 +464,7 @@ SVGRenderer.prototype.addPattern = function (
     // For non-animated patterns, set opacity now
     if (!(options.image && animate) && typeof options.opacity !== 'undefined') {
         [].forEach.call(pattern.element.childNodes, function (
-            child: Highcharts.SVGDOMElement
+            child: SVGDOMElement
         ): void {
             child.setAttribute('opacity', options.opacity as any);
         });
@@ -574,7 +579,7 @@ addEvent(SVGRenderer, 'complexColor', function (
         args: [
             PatternFill.PatternObject,
             string,
-            Highcharts.SVGDOMElement
+            SVGDOMElement
         ];
     }
 ): boolean {
@@ -719,7 +724,7 @@ addEvent(Chart, 'redraw', function (): void {
             this.renderTo.querySelectorAll(
                 '[color^="url("], [fill^="url("], [stroke^="url("]'
             ),
-            function (node: Highcharts.SVGDOMElement): void {
+            function (node: SVGDOMElement): void {
                 var id = node.getAttribute('fill') ||
                         node.getAttribute('color') ||
                         node.getAttribute('stroke');
@@ -773,7 +778,7 @@ namespace PatternFill {
         id?: string;
         image?: string;
         opacity?: number;
-        path: (string|Highcharts.SVGAttributes);
+        path: (string|SVGAttributes);
         patternContentUnits?: 'string';
         patternTransform?: string;
         width: number;

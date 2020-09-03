@@ -9,6 +9,8 @@
  * */
 
 import type ColorType from '../Core/Color/ColorType';
+import type CSSObject from '../Core/Renderer/CSSObject';
+import type SVGAttributes from '../Core/Renderer/SVG/SVGAttributes';
 import type SVGPath from '../Core/Renderer/SVG/SVGPath';
 import BaseSeries from '../Core/Series/Series.js';
 import H from '../Core/Globals.js';
@@ -414,7 +416,7 @@ BaseSeries.seriesType<typeof Highcharts.FlagsSeries>(
             this: Highcharts.FlagsSeries,
             point: Highcharts.FlagsPoint,
             state?: string
-        ): Highcharts.SVGAttributes {
+        ): SVGAttributes {
             var options = this.options,
                 color = (point && point.color) || this.color,
                 lineColor = options.lineColor,
@@ -460,12 +462,11 @@ BaseSeries.seriesType<typeof Highcharts.FlagsSeries>(
                 graphic,
                 stackIndex,
                 anchorY,
-                attribs: Highcharts.SVGAttributes,
+                attribs: SVGAttributes,
                 outsideRight,
                 yAxis = series.yAxis,
-                boxesMap =
-                    {} as Highcharts.Dictionary<Highcharts.DataLabelsBoxObject>,
-                boxes = [] as Highcharts.DataLabelsBoxArray,
+                boxesMap: Record<string, Highcharts.DataLabelsBoxObject> = {},
+                boxes: Highcharts.DataLabelsBoxArray = [],
                 centered;
 
             i = points.length;

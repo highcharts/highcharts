@@ -13,6 +13,9 @@
 import Annotation from './Annotations.js';
 import chartNavigationMixin from '../../Mixins/Navigation.js';
 import H from '../../Core/Globals.js';
+import {
+    HTMLDOMElement
+} from '../../Core/Renderer/DOMElementType';
 import U from '../../Core/Utilities.js';
 const {
     addEvent,
@@ -303,14 +306,14 @@ class NavigationBindings {
     public activeAnnotation?: (false|Annotation);
     public boundClassNames: Highcharts.Dictionary<Highcharts.NavigationBindingsOptionsObject> = void 0 as any;
     public chart: Highcharts.AnnotationChart;
-    public container: HTMLCollectionOf<Highcharts.HTMLDOMElement>;
+    public container: HTMLCollectionOf<HTMLDOMElement>;
     public currentUserDetails?: Annotation;
     public eventsToUnbind: Array<Function>;
     public mouseMoveEvent?: (false|Function);
     public nextEvent?: (false|Function);
     public options: Highcharts.NavigationOptions;
     public popup?: Highcharts.Popup;
-    public selectedButtonElement?: (Highcharts.HTMLDOMElement|null);
+    public selectedButtonElement?: (HTMLDOMElement|null);
     public selectedButton: (Highcharts.NavigationBindingsOptionsObject|null) = void 0 as any;
     public stepIndex?: number;
     public steps?: boolean;
@@ -398,7 +401,7 @@ class NavigationBindings {
 
         navigation.eventsToUnbind.push(
             addEvent(chart.container, 'click', function (
-                this: Highcharts.HTMLDOMElement,
+                this: HTMLDOMElement,
                 e: Highcharts.PointerEventObject
             ): void {
                 if (
@@ -454,7 +457,7 @@ class NavigationBindings {
      *        Browser's click event
      */
     public bindingsButtonClick(
-        button: Highcharts.HTMLDOMElement,
+        button: HTMLDOMElement,
         events: Highcharts.NavigationBindingsOptionsObject,
         clickEvent: Highcharts.PointerEventObject
     ): void {
@@ -617,7 +620,7 @@ class NavigationBindings {
      *        Browser's move event.
      */
     public bindingsContainerMouseMove(
-        _container: Highcharts.HTMLDOMElement,
+        _container: HTMLDOMElement,
         moveEvent: Event
     ): void {
         if (this.mouseMoveEvent) {
@@ -867,11 +870,11 @@ class NavigationBindings {
      *         Array of class names with corresponding elements
      */
     public getClickedClassNames(
-        container: Highcharts.HTMLDOMElement,
+        container: HTMLDOMElement,
         event: Event
-    ): Array<[string, Highcharts.HTMLDOMElement]> {
-        var element: Highcharts.HTMLDOMElement = event.target as any,
-            classNames: Array<[string, Highcharts.HTMLDOMElement]> = [],
+    ): Array<[string, HTMLDOMElement]> {
+        var element: HTMLDOMElement = event.target as any,
+            classNames: Array<[string, HTMLDOMElement]> = [],
             elemClassName: (string|null|undefined);
 
         while (element) {
@@ -880,7 +883,7 @@ class NavigationBindings {
                 classNames = classNames.concat(
                     elemClassName
                         .split(' ')
-                        .map(function (name: string): [string, Highcharts.HTMLDOMElement] { // eslint-disable-line no-loop-func
+                        .map(function (name: string): [string, HTMLDOMElement] { // eslint-disable-line no-loop-func
                             return [
                                 name,
                                 element
@@ -915,7 +918,7 @@ class NavigationBindings {
      *         Object with events (init, start, steps, and end)
      */
     public getButtonEvents(
-        container: Highcharts.HTMLDOMElement,
+        container: HTMLDOMElement,
         event: Event
     ): Highcharts.NavigationBindingsButtonEventsObject {
         var navigation = this,
@@ -923,7 +926,7 @@ class NavigationBindings {
             bindings: (Highcharts.NavigationBindingsButtonEventsObject|undefined);
 
 
-        classNames.forEach(function (className: [string, Highcharts.HTMLDOMElement]): void {
+        classNames.forEach(function (className: [string, HTMLDOMElement]): void {
             if (navigation.boundClassNames[className[0]] && !bindings) {
                 bindings = {
                     events: navigation.boundClassNames[className[0]],

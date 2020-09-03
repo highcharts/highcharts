@@ -14,6 +14,7 @@
 
 import type Chart from '../../Core/Chart/Chart';
 import type ColorString from '../../Core/Color/ColorString';
+import type SVGAttributes from '../../Core/Renderer/SVG/SVGAttributes';
 import type SVGPath from '../../Core/Renderer/SVG/SVGPath';
 import BaseSeries from '../../Core/Series/Series.js';
 import H from '../../Core/Globals.js';
@@ -805,7 +806,7 @@ BaseSeries.seriesType<typeof Highcharts.NetworkgraphSeries>(
             this: Highcharts.NetworkgraphSeries,
             point: Highcharts.NetworkgraphPoint,
             state: string
-        ): Highcharts.SVGAttributes {
+        ): SVGAttributes {
             var attribs =
                 Series.prototype.markerAttribs.call(this, point, state);
 
@@ -968,7 +969,7 @@ BaseSeries.seriesType<typeof Highcharts.NetworkgraphSeries>(
             this: Highcharts.NetworkgraphSeries,
             point: Highcharts.NetworkgraphPoint,
             state?: string
-        ): Highcharts.SVGAttributes {
+        ): SVGAttributes {
             // By default, only `selected` state is passed on
             var pointState = state || point && point.state || 'normal',
                 attribs = Series.prototype.pointAttribs.call(
@@ -1099,7 +1100,7 @@ BaseSeries.seriesType<typeof Highcharts.NetworkgraphSeries>(
          */
         getLinkAttributes: function (
             this: Highcharts.NetworkgraphPoint
-        ): Highcharts.SVGAttributes {
+        ): SVGAttributes {
             var linkOptions = this.series.options.link,
                 pointOptions = this.options;
 
@@ -1126,7 +1127,7 @@ BaseSeries.seriesType<typeof Highcharts.NetworkgraphSeries>(
          * @private
          */
         renderLink: function (this: Highcharts.NetworkgraphPoint): void {
-            var attribs: Highcharts.SVGAttributes;
+            var attribs: SVGAttributes;
 
             if (!this.graphic) {
                 this.graphic = this.series.chart.renderer
@@ -1157,7 +1158,7 @@ BaseSeries.seriesType<typeof Highcharts.NetworkgraphSeries>(
          */
         redrawLink: function (this: Highcharts.NetworkgraphPoint): void {
             var path = this.getLinkPath(),
-                attribs: Highcharts.SVGAttributes;
+                attribs: SVGAttributes;
 
             if (this.graphic) {
                 this.shapeArgs = {

@@ -11,6 +11,7 @@
  * */
 
 import type ColorString from '../Core/Color/ColorString';
+import type SVGAttributes from '../Core/Renderer/SVG/SVGAttributes';
 import type SVGPath from '../Core/Renderer/SVG/SVGPath';
 import BaseSeries from '../Core/Series/Series.js';
 import H from '../Core/Globals.js';
@@ -132,7 +133,7 @@ wrap(
         proceed: Function,
         point: Highcharts.PiePoint,
         state: string
-    ): Highcharts.SVGAttributes {
+    ): SVGAttributes {
         var attr = proceed.call(this, point, state),
             options = this.options;
 
@@ -202,7 +203,7 @@ wrap(seriesTypes.pie.prototype, 'animate', function (
         var args = arguments,
             init = args[1],
             animation = this.options.animation,
-            attribs: Highcharts.SVGAttributes,
+            attribs: SVGAttributes,
             center = this.center,
             group = this.group,
             markerGroup = this.markerGroup;

@@ -8,9 +8,9 @@
  *
  * */
 
-'use strict';
-
+import type CSSObject from '../Core/Renderer/CSSObject';
 import type Point from '../Core/Series/Point';
+import type SVGAttributes from '../Core/Renderer/SVG/SVGAttributes';
 import type SVGPath from '../Core/Renderer/SVG/SVGPath';
 import Chart from '../Core/Chart/Chart.js';
 import H from '../Core/Globals.js';
@@ -890,7 +890,7 @@ Chart.prototype.drawSeriesLabels = function (): void {
                     );
 
                 if (!chart.renderer.styledMode) {
-                    label.css(extend<Highcharts.CSSObject>({
+                    label.css(extend<CSSObject>({
                         color: onArea ?
                             chart.renderer.getContrast(series.color as any) :
                             (series.color as any)
@@ -1054,12 +1054,12 @@ Chart.prototype.drawSeriesLabels = function (): void {
 
                     // Move fast and fade in - pure animation movement is
                     // distractive...
-                    var attr: Highcharts.SVGAttributes = {
+                    var attr: SVGAttributes = {
                             opacity: chart.renderer.forExport ? 1 : 0,
                             x: best.x,
                             y: best.y
                         },
-                        anim: Highcharts.SVGAttributes = {
+                        anim: SVGAttributes = {
                             opacity: 1
                         };
 
@@ -1087,7 +1087,7 @@ Chart.prototype.drawSeriesLabels = function (): void {
                                 (best.connectorPoint.plotX as any) + paneLeft,
                             anchorY: best.connectorPoint &&
                                 (best.connectorPoint.plotY as any) + paneTop
-                        }))
+                        } as SVGAttributes))
                         .animate(anim, animationOptions);
 
                     // Record closest point to stick to for sync redraw

@@ -15,7 +15,10 @@
 import type Chart from '../Core/Chart/Chart';
 import type ColorType from '../Core/Color/ColorType';
 import type GradientColor from '../Core/Color/GradientColor';
+import type SVGAttributes from '../Core/Renderer/SVG/SVGAttributes';
+import type SVGElement from '../Core/Renderer/SVG/SVGElement';
 import type SVGPath from '../Core/Renderer/SVG/SVGPath';
+import type SVGRenderer from '../Core/Renderer/SVG/SVGRenderer';
 import Color from '../Core/Color/Color.js';
 const {
     parse: color
@@ -295,7 +298,7 @@ Series.seriesType<typeof Highcharts.Funnel3dSeries>('funnel3d', 'column',
                 y5: (number|null),
                 //
                 h: number,
-                shapeArgs: Highcharts.SVGAttributes;
+                shapeArgs: SVGAttributes;
 
             // Return the width at a specific y coordinate
             series.getWidthAt = getWidthAt = function (y: number): number {
@@ -656,14 +659,14 @@ funnel3dMethods = merge(RendererProto.elements3d.cuboid, {
     },
 
     fillSetter: function (
-        this: Highcharts.SVGElement,
+        this: SVGElement,
         fill: ColorType
-    ): Highcharts.SVGElement {
+    ): SVGElement {
         // extract alpha channel to use the opacitySetter
         var funnel3d = this,
             fillColor: (Color|ColorType) = color(fill),
             alpha: number = (fillColor as any).rgba[3],
-            partsWithColor: Highcharts.Dictionary<ColorType> = {
+            partsWithColor: Record<string, ColorType> = {
                 // standard color for top and bottom
                 top: color(fill).brighten(0.1).get() as any,
                 bottom: color(fill).brighten(-0.2).get() as any
@@ -762,7 +765,7 @@ funnel3dMethods = merge(RendererProto.elements3d.cuboid, {
         // change gradientUnits to userSpaceOnUse for linearGradient
         if ((fillColor as any).linearGradient) {
             [funnel3d.frontLower, funnel3d.frontUpper].forEach(function (
-                part: Highcharts.Dictionary<Highcharts.SVGElement>
+                part: Record<string, SVGElement>
             ): void {
                 var elem: Highcharts.SVGElement = part.element,
                     grad = elem && funnel3d.renderer.gradients[elem.gradient];
@@ -778,7 +781,7 @@ funnel3dMethods = merge(RendererProto.elements3d.cuboid, {
         return funnel3d;
     },
 
-    adjustForGradient: function (this: Highcharts.SVGElement): void {
+    adjustForGradient: function (this: SVGElement): void {
         var funnel3d = this,
             bbox: Highcharts.BBoxObject;
 
@@ -820,7 +823,7 @@ funnel3dMethods = merge(RendererProto.elements3d.cuboid, {
         });
     },
 
-    zIndexSetter: function (this: Highcharts.SVGElement): boolean {
+    zIndexSetter: function (this: SVGElement): boolean {
         // this.added won't work, because zIndex is set after the prop is set,
         // but before the graphic is really added
         if (this.finishedOnAdd) {
@@ -833,7 +836,7 @@ funnel3dMethods = merge(RendererProto.elements3d.cuboid, {
         );
     },
 
-    onAdd: function (this: Highcharts.SVGElement): void {
+    onAdd: function (this: SVGElement): void {
         this.adjustForGradient();
         this.finishedOnAdd = true;
     }
@@ -842,15 +845,15 @@ funnel3dMethods = merge(RendererProto.elements3d.cuboid, {
 RendererProto.elements3d.funnel3d = funnel3dMethods;
 
 RendererProto.funnel3d = function (
-    this: Highcharts.SVGRenderer,
-    shapeArgs: Highcharts.SVGAttributes
+    this: SVGRenderer,
+    shapeArgs: SVGAttributes
 ): Highcharts.SVGElement {
     var renderer = this,
-        funnel3d: Highcharts.SVGElement =
+        funnel3d: SVGElement =
             renderer.element3d('funnel3d', shapeArgs) as any,
         styledMode = renderer.styledMode,
         // hide stroke for Firefox
-        strokeAttrs: Highcharts.SVGAttributes = {
+        strokeAttrs: SVGAttributes = {
             'stroke-width': 1,
             stroke: 'none'
         };
@@ -880,7 +883,7 @@ RendererProto.funnel3d = function (
         funnel3d.frontLower,
         funnel3d.backLower,
         funnel3d.rightLower
-    ].forEach(function (lowerElem: Highcharts.SVGElement): void {
+    ].forEach(function (lowerElem: SVGElement): void {
         if (!styledMode) {
             lowerElem.attr(strokeAttrs);
         }
@@ -898,8 +901,8 @@ RendererProto.funnel3d = function (
  * @private
  */
 RendererProto.funnel3dPath = function (
-    this: Highcharts.SVGRenderer,
-    shapeArgs: Highcharts.SVGAttributes
+    this: SVGRenderer,
+    shapeArgs: SVGAttributes
 ): Highcharts.Funnel3dPathsObject {
     // Check getCylinderEnd for better error message if
     // the cylinder module is missing
@@ -936,7 +939,7 @@ RendererProto.funnel3dPath = function (
             })
         ),
         bottomWidth = shapeArgs.bottom.width,
-        bottomArgs = merge<Highcharts.SVGAttributes>(shapeArgs, {
+        bottomArgs = merge<SVGAttributes>(shapeArgs, {
             width: bottomWidth,
             x: shapeArgs.x - bottomWidth / 2,
             z: shapeArgs.z - bottomWidth / 2,
@@ -955,7 +958,7 @@ RendererProto.funnel3dPath = function (
 
     if (hasMiddle) {
         middleWidth = shapeArgs.middle.width;
-        middleTopArgs = merge<Highcharts.SVGAttributes>(shapeArgs, {
+        middleTopArgs = merge<SVGAttributes>(shapeArgs, {
             y: shapeArgs.y + shapeArgs.middle.fraction * shapeArgs.height,
             width: middleWidth,
             x: shapeArgs.x - middleWidth / 2,

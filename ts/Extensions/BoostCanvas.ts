@@ -13,8 +13,7 @@
  *
  * */
 
-'use strict';
-
+import type SVGAttributes from '../Core/Renderer/SVG/SVGAttributes';
 import Chart from '../Core/Chart/Chart.js';
 import Color from '../Core/Color/Color.js';
 const {
@@ -127,8 +126,8 @@ const initCanvasBoost = function (): void {
                     point: Highcharts.HeatmapPoint
                 ): void {
                     var plotY = point.plotY,
-                        shapeArgs: Highcharts.SVGAttributes,
-                        pointAttr: Highcharts.SVGAttributes;
+                        shapeArgs: SVGAttributes,
+                        pointAttr: SVGAttributes;
 
                     if (
                         typeof plotY !== 'undefined' &&

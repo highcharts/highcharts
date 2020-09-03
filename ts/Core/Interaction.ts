@@ -11,6 +11,7 @@
 'use strict';
 
 import type { SeriesOptionsType } from './Series/Types';
+import type SVGAttributes from './Renderer/SVG/SVGAttributes';
 import type SVGPath from './Renderer/SVG/SVGPath';
 import BaseSeries from './Series/Series.js';
 const {
@@ -470,7 +471,7 @@ extend(Legend.prototype, {
 
                         if (!styledMode) {
                             legendItem.css(
-                                legend.options.itemHoverStyle as Highcharts.CSSObject
+                                legend.options.itemHoverStyle as any
                             );
                         }
                     })
@@ -479,8 +480,8 @@ extend(Legend.prototype, {
                             legendItem.css(
                                 merge(
                                     item.visible ?
-                                        legend.itemStyle as Highcharts.CSSObject :
-                                        legend.itemHiddenStyle as Highcharts.CSSObject
+                                        legend.itemStyle as any :
+                                        legend.itemHiddenStyle as any
                                 )
                             );
                         }
@@ -1170,7 +1171,7 @@ extend(Point.prototype, /** @lends Highcharts.Point.prototype */ {
             halo = series.halo,
             haloOptions,
             markerAttribs,
-            pointAttribs: Highcharts.SVGAttributes,
+            pointAttribs: SVGAttributes,
             pointAttribsAnimation: Highcharts.AnimationOptionsObject,
             hasMarkers = (markerOptions && series.markerAttribs),
             newSymbol;
@@ -1361,11 +1362,11 @@ extend(Point.prototype, /** @lends Highcharts.Point.prototype */ {
             halo.point = point; // #6055
 
             if (!chart.styledMode) {
-                halo.attr(extend(
+                halo.attr(extend<SVGAttributes>(
                     {
                         'fill': point.color || series.color,
                         'fill-opacity': haloOptions.opacity
-                    } as Highcharts.SVGAttributes,
+                    },
                     haloOptions.attributes
                 ));
             }

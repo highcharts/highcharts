@@ -11,8 +11,16 @@
 'use strict';
 
 import type { AxisType } from '../Axis/Types';
+import type {
+    CSSObject,
+    CursorValue
+} from '../Renderer/CSSObject';
 import type Point from '../../Core/Series/Point';
 import type { SeriesOptionsType, SeriesPlotOptionsType } from '../Series/Types';
+import type {
+    HTMLDOMElement
+} from '../Renderer/DOMElementType';
+import type SVGAttributes from '../Renderer/SVG/SVGAttributes';
 import type SVGElement from '../Renderer/SVG/SVGElement';
 import Axis from '../Axis/Axis.js';
 import BaseSeries from '../Series/Series.js';
@@ -264,7 +272,7 @@ class Chart {
      *
      * */
 
-    public _cursor?: (Highcharts.CursorValue|null);
+    public _cursor?: (CursorValue|null);
     public axes: Array<AxisType> = void 0 as any;
     public axisOffset: Array<number> = void 0 as any;
     public bounds: Record<string, Record<string, number>> = void 0 as any;
@@ -1349,7 +1357,7 @@ class Chart {
      */
     public temporaryDisplay(revert?: boolean): void {
         var node = this.renderTo,
-            tempStyle: Highcharts.CSSObject;
+            tempStyle: CSSObject;
 
         if (!revert) {
             while (node && node.style) {
@@ -1446,7 +1454,7 @@ class Chart {
 
         if (!renderTo) {
             chart.renderTo = renderTo =
-                optionsChart.renderTo as Highcharts.HTMLDOMElement;
+                optionsChart.renderTo as HTMLDOMElement;
         }
 
         if (isString(renderTo)) {
@@ -1533,7 +1541,7 @@ class Chart {
         chart.container = container;
 
         // cache the cursor (#1650)
-        chart._cursor = container.style.cursor as Highcharts.CursorValue;
+        chart._cursor = container.style.cursor as CursorValue;
 
         // Initialize the renderer
         Ren = (H as any)[optionsChart.renderer as any] || H.Renderer;
@@ -2045,7 +2053,7 @@ class Chart {
             plotBackgroundColor = optionsChart.plotBackgroundColor,
             plotBackgroundImage = optionsChart.plotBackgroundImage,
             mgn,
-            bgAttr: Highcharts.SVGAttributes,
+            bgAttr: SVGAttributes,
             plotLeft = chart.plotLeft,
             plotTop = chart.plotTop,
             plotWidth = chart.plotWidth,
@@ -2125,7 +2133,7 @@ class Chart {
                         plotBGImage.attr('href', plotBackgroundImage);
                     }
 
-                    plotBGImage.animate(plotBox as Highcharts.SVGAttributes);
+                    plotBGImage.animate(plotBox as SVGAttributes);
                 }
             }
         }

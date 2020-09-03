@@ -8,6 +8,7 @@
  *
  * */
 
+import type SVGAttributes from '../Core/Renderer/SVG/SVGAttributes';
 import type SVGPath from '../Core/Renderer/SVG/SVGPath';
 import BaseSeries from '../Core/Series/Series.js';
 import CenteredSeriesMixin from '../Mixins/CenteredSeries.js';
@@ -1137,8 +1138,8 @@ BaseSeries.seriesType<typeof Highcharts.PieSeries>(
                 renderer = chart.renderer,
                 groupTranslation,
                 graphic,
-                pointAttr: Highcharts.SVGAttributes,
-                shapeArgs,
+                pointAttr: SVGAttributes,
+                shapeArgs: (SVGAttributes|undefined),
                 shadow = series.options.shadow;
 
             this.drawEmpty();

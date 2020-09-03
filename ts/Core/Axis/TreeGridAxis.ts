@@ -9,11 +9,10 @@
  *
  * */
 
-'use strict';
-
-import H from '../Globals.js';
 import type AxisTypes from './Types';
 import type Chart from '../Chart/Chart';
+import type SVGAttributes from '../Renderer/SVG/SVGAttributes';
+import H from '../Globals.js';
 import Axis from './Axis.js';
 import Tick from './Tick.js';
 import Tree from '../../Gantt/Tree.js';
@@ -110,7 +109,7 @@ namespace TreeGridAxis {
 
     export interface LabelsOptions extends Highcharts.XAxisLabelsOptions {
         levels?: number;
-        symbol?: Highcharts.SVGAttributes;
+        symbol?: SVGAttributes;
     }
 
     export interface Options extends Highcharts.XAxisOptions {

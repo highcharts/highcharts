@@ -10,6 +10,8 @@
  *  !!!!!!! SOURCE GETS TRANSPILED BY TYPESCRIPT. EDIT TS FILE ONLY. !!!!!!!
  * */
 
+import type CSSObject from '../Core/Renderer/CSSObject';
+import type SVGAttributes from '../Core/Renderer/SVG/SVGAttributes';
 import BaseSeries from '../Core/Series/Series.js';
 import DrawPointMixin from '../Mixins/DrawPoint.js';
 const {
@@ -927,7 +929,7 @@ var wordCloudSeries: Partial<Highcharts.WordcloudSeries> = {
         this: Highcharts.WordcloudSeries,
         point: Highcharts.WordcloudPoint,
         state?: string
-    ): Highcharts.SVGAttributes {
+    ): SVGAttributes {
         var attribs = H.seriesTypes.column.prototype
             .pointAttribs.call(this, point, state);
 
@@ -1090,7 +1092,7 @@ var wordCloudSeries: Partial<Highcharts.WordcloudSeries> = {
                     spiral: spiral,
                     rotation: placement.rotation
                 }) as any,
-                animate: (Highcharts.SVGAttributes|undefined);
+                animate: (SVGAttributes|undefined);
 
             // If there is no space for the word, extend the playing field.
             if (!delta && allowExtendPlayingField) {

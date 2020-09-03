@@ -15,6 +15,7 @@
 import type Chart from '../../Core/Chart/Chart';
 import type ColorString from '../../Core/Color/ColorString';
 import type Point from '../../Core/Series/Point';
+import type SVGAttributes from '../../Core/Renderer/SVG/SVGAttributes';
 import Color from '../../Core/Color/Color.js';
 const {
     parse: color
@@ -568,7 +569,7 @@ function GLRenderer(
 
             points.forEach(function (point: Point): void {
                 var plotY = point.plotY,
-                    shapeArgs: Highcharts.SVGAttributes,
+                    shapeArgs: SVGAttributes,
                     swidth,
                     pointAttr;
 

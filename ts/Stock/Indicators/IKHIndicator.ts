@@ -7,6 +7,7 @@
  * */
 
 import type ColorType from '../../Core/Color/ColorType';
+import type CSSObject from '../../Core/Renderer/CSSObject';
 import type Point from '../../Core/Series/Point';
 import type SVGPath from '../../Core/Renderer/SVG/SVGPath';
 import BaseSeries from '../../Core/Series/Series.js';
@@ -79,15 +80,15 @@ declare global {
 
         interface IKHIndicatorOptions
             extends SMAIndicatorOptions {
-            chikouLine?: Dictionary<CSSObject>;
+            chikouLine?: Record<string, CSSObject>;
             gapSize?: number;
-            kijunLine?: Dictionary<CSSObject>;
+            kijunLine?: Record<string, CSSObject>;
             marker?: PointMarkerOptionsObject;
             params?: IKHIndicatorParamsOptions;
             senkouSpan?: IKHIndicatorSenkouSpanOptions;
-            senkouSpanA?: Dictionary<CSSObject>;
-            senkouSpanB?: Dictionary<CSSObject>;
-            tenkanLine?: Dictionary<CSSObject>;
+            senkouSpanA?: Record<string, CSSObject>;
+            senkouSpanB?: Record<string, CSSObject>;
+            tenkanLine?: Record<string, CSSObject>;
             tooltip?: TooltipOptions;
         }
 

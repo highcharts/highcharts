@@ -8,6 +8,7 @@
  *
  * */
 
+import type SVGAttributes from '../Core/Renderer/SVG/SVGAttributes';
 import BaseSeries from '../Core/Series/Series.js';
 import H from '../Core/Globals.js';
 const {
@@ -246,7 +247,7 @@ BaseSeries.seriesType<typeof Highcharts.ColumnRangeSeries>('columnrange', 'arear
     },
     pointAttribs: function (
         this: Highcharts.ColumnRangeSeries
-    ): Highcharts.SVGAttributes {
+    ): SVGAttributes {
         return columnProto.pointAttribs.apply(this, arguments as any);
     },
     animate: function (this: Highcharts.ColumnRangeSeries): void {

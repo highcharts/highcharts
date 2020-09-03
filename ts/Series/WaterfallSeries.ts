@@ -11,6 +11,7 @@
 'use strict';
 
 import type ColorType from '../Core/Color/ColorType';
+import type SVGAttributes from '../Core/Renderer/SVG/SVGAttributes';
 import type SVGElement from '../Core/Renderer/SVG/SVGElement';
 import type SVGPath from '../Core/Renderer/SVG/SVGPath';
 import Axis from '../Core/Axis/Axis.js';
@@ -828,10 +829,10 @@ BaseSeries.seriesType<typeof Highcharts.WaterfallSeries>('waterfall', 'column', 
         this: Highcharts.WaterfallSeries,
         point: Highcharts.WaterfallPoint,
         state: string
-    ): Highcharts.SVGAttributes {
+    ): SVGAttributes {
 
         var upColor = this.options.upColor,
-            attr: Highcharts.SVGAttributes;
+            attr: SVGAttributes;
 
         // Set or reset up color (#3710, update to negative)
         if (upColor && !point.options.color) {

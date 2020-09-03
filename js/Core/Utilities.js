@@ -1549,8 +1549,6 @@ var arrayMax = H.arrayMax = function arrayMax(data) {
  *
  * @param {*} [except]
  *        Exception, do not destroy this property, only delete it.
- *
- * @return {void}
  */
 var destroyObjectProperties = H.destroyObjectProperties =
     function destroyObjectProperties(obj, except) {
@@ -1571,8 +1569,6 @@ var destroyObjectProperties = H.destroyObjectProperties =
  *
  * @param {Highcharts.HTMLDOMElement} element
  *        The HTML node to discard.
- *
- * @return {void}
  */
 var discardElement = H.discardElement = function discardElement(element) {
     var garbageBin = H.garbageBin;
@@ -1614,8 +1610,6 @@ var correctFloat = H.correctFloat = function correctFloat(num, prec) {
  *
  * @param {Highcharts.Chart} chart
  *        The chart instance.
- *
- * @return {void}
  *
  * @todo
  * This function always relates to a chart, and sets a property on the renderer,

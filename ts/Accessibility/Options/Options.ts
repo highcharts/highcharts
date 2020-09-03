@@ -10,9 +10,11 @@
  *
  * */
 
-'use strict';
-
 import type Chart from '../../Core/Chart/Chart';
+import type CSSObject from '../../Core/Renderer/CSSObject';
+import type {
+    HTMLDOMElement
+} from '../../Core/Renderer/DOMElementType';
 import type Point from '../../Core/Series/Point';
 
 /**

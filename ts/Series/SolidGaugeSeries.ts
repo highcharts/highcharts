@@ -14,6 +14,7 @@ import type ColorAxis from '../Core/Axis/ColorAxis';
 import type ColorType from '../Core/Color/ColorType';
 import type GradientColor from '../Core/Color/GradientColor';
 import type RadialAxis from '../Core/Axis/RadialAxis';
+import type SVGAttributes from '../Core/Renderer/SVG/SVGAttributes';
 import type SVGPath from '../Core/Renderer/SVG/SVGPath';
 import BaseSeries from '../Core/Series/Series.js';
 import Color from '../Core/Color/Color.js';
@@ -529,7 +530,7 @@ BaseSeries.seriesType<typeof Highcharts.SolidGaugeSeries>(
                                 )
                             ) * center[2]
                         ) / 200),
-                        shapeArgs: (Highcharts.SVGAttributes|undefined),
+                        shapeArgs: (SVGAttributes|undefined),
                         d: (string|SVGPath|undefined),
                         toColor = yAxis.toColor(point.y as any, point),
                         axisMinAngle = Math.min(

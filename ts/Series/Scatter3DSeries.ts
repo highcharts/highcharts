@@ -10,6 +10,7 @@
  *
  * */
 
+import type SVGAttributes from '../Core/Renderer/SVG/SVGAttributes';
 import BaseSeries from '../Core/Series/Series.js';
 const { seriesTypes } = BaseSeries;
 import H from '../Core/Globals.js';
@@ -87,7 +88,7 @@ BaseSeries.seriesType<typeof Highcharts.Scatter3dSeries>(
         pointAttribs: function (
             this: Highcharts.Scatter3dSeries,
             point: Highcharts.Scatter3dPoint
-        ): Highcharts.SVGAttributes {
+        ): SVGAttributes {
             var attribs = seriesTypes.scatter.prototype.pointAttribs
                 .apply(this, arguments as any);
 

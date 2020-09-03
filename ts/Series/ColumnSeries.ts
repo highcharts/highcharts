@@ -9,6 +9,7 @@
  * */
 
 import type ColorType from '../Core/Color/ColorType';
+import type SVGAttributes from '../Core/Renderer/SVG/SVGAttributes';
 import BaseSeries from '../Core/Series/Series.js';
 import Color from '../Core/Color/Color.js';
 const {
@@ -1032,10 +1033,10 @@ const ColumnSeries = BaseSeries.seriesType<typeof Highcharts.ColumnSeries>(
             this: Highcharts.ColumnSeries,
             point: Highcharts.ColumnPoint|undefined,
             state: string
-        ): Highcharts.SVGAttributes {
+        ): SVGAttributes {
             var options = this.options,
                 stateOptions: Highcharts.SeriesStatesHoverOptionsObject,
-                ret: Highcharts.SVGAttributes,
+                ret: SVGAttributes,
                 p2o = (this as any).pointAttrToOptions || {},
                 strokeOption = p2o.stroke || 'borderColor',
                 strokeWidthOption = p2o['stroke-width'] || 'borderWidth',
@@ -1223,7 +1224,7 @@ const ColumnSeries = BaseSeries.seriesType<typeof Highcharts.ColumnSeries>(
                 yAxis = this.yAxis,
                 options = series.options,
                 inverted = this.chart.inverted,
-                attr = {} as Highcharts.SVGAttributes,
+                attr: SVGAttributes = {},
                 translateProp = inverted ? 'translateX' : 'translateY',
                 translateStart: number,
                 translatedThreshold;

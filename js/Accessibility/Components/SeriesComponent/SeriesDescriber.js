@@ -10,15 +10,15 @@
  *
  * */
 'use strict';
-import U from '../../../Core/Utilities.js';
-var find = U.find, format = U.format, isNumber = U.isNumber, numberFormat = U.numberFormat, pick = U.pick, defined = U.defined;
 import AnnotationsA11y from '../AnnotationsA11y.js';
 var getPointAnnotationTexts = AnnotationsA11y.getPointAnnotationTexts;
-import HTMLUtilities from '../../Utils/HTMLUtilities.js';
-var escapeStringForHTML = HTMLUtilities.escapeStringForHTML, reverseChildNodes = HTMLUtilities.reverseChildNodes, stripHTMLTags = HTMLUtilities.stripHTMLTagsFromString;
 import ChartUtilities from '../../Utils/ChartUtilities.js';
 var getAxisDescription = ChartUtilities.getAxisDescription, getSeriesFirstPointElement = ChartUtilities.getSeriesFirstPointElement, getSeriesA11yElement = ChartUtilities.getSeriesA11yElement, unhideChartElementFromAT = ChartUtilities.unhideChartElementFromAT;
+import HTMLUtilities from '../../Utils/HTMLUtilities.js';
+var escapeStringForHTML = HTMLUtilities.escapeStringForHTML, reverseChildNodes = HTMLUtilities.reverseChildNodes, stripHTMLTags = HTMLUtilities.stripHTMLTagsFromString;
 import Tooltip from '../../../Core/Tooltip.js';
+import U from '../../../Core/Utilities.js';
+var find = U.find, format = U.format, isNumber = U.isNumber, numberFormat = U.numberFormat, pick = U.pick, defined = U.defined;
 /* eslint-disable valid-jsdoc */
 /**
  * @private

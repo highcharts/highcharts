@@ -8,10 +8,11 @@
  *
  * */
 
-import type { AxisType } from '../Axis/Types';
+import type { CursorValue } from '../Renderer/CSSObject';
 import type Chart from '../Chart/Chart';
 import type ColorType from '../Color/ColorType';
 import type { SeriesOptionsType, SeriesPlotOptionsType } from './Types';
+import type SVGAttributes from '../Renderer/SVG/SVGAttributes';
 import type SVGPath from '../Renderer/SVG/SVGPath';
 import BaseSeries from './Series.js';
 import H from '../Globals.js';
@@ -5643,7 +5644,7 @@ const CartesianSeries = BaseSeries.seriesType<typeof Highcharts.LineSeries>(
             this: Highcharts.Series,
             point: Point,
             state?: string
-        ): Highcharts.SVGAttributes {
+        ): SVGAttributes {
             var seriesOptions = this.options,
                 seriesMarkerOptions = seriesOptions.marker,
                 seriesStateOptions: Highcharts.PointStatesHoverOptionsObject,
@@ -5657,7 +5658,7 @@ const CartesianSeries = BaseSeries.seriesType<typeof Highcharts.LineSeries>(
                     pointMarkerOptions.radius,
                     (seriesMarkerOptions as any).radius
                 ),
-                attribs: Highcharts.SVGAttributes;
+                attribs: SVGAttributes;
 
             // Handle hover and select states
             if (state) {
@@ -5719,7 +5720,7 @@ const CartesianSeries = BaseSeries.seriesType<typeof Highcharts.LineSeries>(
             this: Highcharts.Series,
             point?: Point,
             state?: string
-        ): Highcharts.SVGAttributes {
+        ): SVGAttributes {
             var seriesMarkerOptions = this.options.marker,
                 seriesStateOptions,
                 pointOptions = point && point.options,
@@ -6081,7 +6082,7 @@ const CartesianSeries = BaseSeries.seriesType<typeof Highcharts.LineSeries>(
                 var graphKey = prop[0],
                     graph = (series as any)[graphKey],
                     verb = graph ? 'animate' : 'attr',
-                    attribs: Highcharts.SVGAttributes;
+                    attribs: SVGAttributes;
 
                 if (graph) {
                     graph.endX = series.preventGraphAnimation ?
@@ -6441,7 +6442,7 @@ const CartesianSeries = BaseSeries.seriesType<typeof Highcharts.LineSeries>(
         ): Highcharts.SVGElement {
             var group = (this as any)[prop],
                 isNew = !group,
-                attrs: Highcharts.SVGAttributes = {
+                attrs: SVGAttributes = {
                     visibility,
                     zIndex: zIndex || 0.1 // IE8 and pointer logic use this
                 };

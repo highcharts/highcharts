@@ -9,6 +9,7 @@
  * */
 
 import type ColorType from '../Core/Color/ColorType';
+import type SVGAttributes from '../Core/Renderer/SVG/SVGAttributes';
 import type SVGPath from '../Core/Renderer/SVG/SVGPath';
 import BaseSeries from '../Core/Series/Series.js';
 const {
@@ -236,7 +237,7 @@ BaseSeries.seriesType<typeof Highcharts.OHLCSeries>(
             this: Highcharts.OHLCSeries,
             point: Highcharts.OHLCPoint,
             state: string
-        ): Highcharts.SVGAttributes {
+        ): SVGAttributes {
             var attribs = seriesTypes.column.prototype.pointAttribs.call(
                     this,
                     point,

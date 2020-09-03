@@ -4,8 +4,7 @@
  *
  * */
 
-'use strict';
-
+import type CSSObject from '../../../Core/Renderer/CSSObject';
 import type Point from '../../../Core/Series/Point';
 import type SVGPath from '../../../Core/Renderer/SVG/SVGPath';
 import Annotation from '../Annotations.js';

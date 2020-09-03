@@ -11,6 +11,7 @@
  * */
 
 import type ColorType from '../Core/Color/ColorType';
+import type SVGAttributes from '../Core/Renderer/SVG/SVGAttributes';
 import type SVGPath from '../Core/Renderer/SVG/SVGPath';
 import BaseSeries from '../Core/Series/Series.js';
 import H from '../Core/Globals.js';
@@ -223,7 +224,7 @@ BaseSeries.seriesType<typeof Highcharts.GanttSeries>('gantt', 'xrange'
             point: Highcharts.GanttPoint
         ): void {
             var series = this,
-                shapeArgs: Highcharts.SVGAttributes,
+                shapeArgs: SVGAttributes,
                 size: number;
 
             parent.prototype.translatePoint.call(series, point);
@@ -267,7 +268,7 @@ BaseSeries.seriesType<typeof Highcharts.GanttSeries>('gantt', 'xrange'
             var series = this,
                 seriesOpts = series.options,
                 renderer = series.chart.renderer,
-                shapeArgs: Highcharts.SVGAttributes = point.shapeArgs as any,
+                shapeArgs: SVGAttributes = point.shapeArgs as any,
                 plotY = point.plotY,
                 graphic = point.graphic,
                 state = point.selected && 'select',

@@ -10,8 +10,9 @@
  *
  * */
 
-'use strict';
-
+import type {
+    HTMLDOMElement
+} from '../Renderer/DOMElementType';
 import Chart from './Chart.js';
 import H from '../Globals.js';
 
@@ -74,7 +75,7 @@ import '../../Series/GanttSeries.js';
  *         Returns the Chart object.
  */
 H.ganttChart = function (
-    renderTo: (string|Highcharts.HTMLDOMElement),
+    renderTo: (string|HTMLDOMElement),
     options: Highcharts.Options,
     callback?: Chart.CallbackFunction
 ): Chart {

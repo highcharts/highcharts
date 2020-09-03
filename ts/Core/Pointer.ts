@@ -12,6 +12,9 @@
 
 import type Axis from './Axis/Axis';
 import type Chart from './Chart/Chart';
+import type {
+    DOMElementType
+} from './Renderer/DOMElementType';
 import type Point from '../Core/Series/Point';
 import type SVGElement from './Renderer/SVG/SVGElement';
 import Color from './Color/Color.js';
@@ -1012,7 +1015,7 @@ class Pointer {
      *         class name.
      */
     public inClass(
-        element: (Highcharts.SVGDOMElement|Highcharts.HTMLDOMElement),
+        element: DOMElementType,
         className: string
     ): (boolean|undefined) {
         var elemClassName;
