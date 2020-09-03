@@ -5,6 +5,10 @@
  * */
 
 import type Annotation from '../Annotations';
+import type {
+    CursorValue
+} from '../../../Core/Renderer/CSSObject';
+import type DOMElementType from '../../../Core/Renderer/DOMElementType';
 import H from '../../../Core/Globals.js';
 
 /**
@@ -80,9 +84,7 @@ const eventEmitterMixin: Highcharts.AnnotationEventEmitterMixin = {
      */
     addEvents: function (this: Highcharts.AnnotationEventEmitter): void {
         var emitter = this,
-            addMouseDownEvent = function (
-                element: (Highcharts.HTMLDOMElement|Highcharts.SVGDOMElement)
-            ): void {
+            addMouseDownEvent = function (element: DOMElementType): void {
                 addEvent(
                     element,
                     H.isTouchDevice ? 'touchstart' : 'mousedown',
@@ -133,7 +135,7 @@ const eventEmitterMixin: Highcharts.AnnotationEventEmitterMixin = {
                         x: 'ew-resize',
                         y: 'ns-resize',
                         xy: 'move'
-                    } as Highcharts.Dictionary<Highcharts.CursorValue>)[
+                    } as Record<string, CursorValue>)[
                         emitter.options.draggable
                     ]
                 };

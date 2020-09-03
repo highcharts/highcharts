@@ -8,6 +8,7 @@
  *
  * */
 
+import type SVGAttributes from '../Core/Renderer/SVG/SVGAttributes';
 import BaseSeries from '../Core/Series/Series.js';
 import Chart from '../Core/Chart/Chart.js';
 import Color from '../Core/Color/Color.js';
@@ -1122,10 +1123,10 @@ BaseSeries.seriesType<typeof Highcharts.PackedBubbleSeries>(
 
             var series = this,
                 chart = series.chart,
-                parentAttribs = {} as Highcharts.SVGAttributes,
+                parentAttribs: SVGAttributes = {},
                 nodeMarker: Highcharts.BubblePointMarkerOptions =
                     (this.layout.options.parentNodeOptions as any).marker,
-                parentOptions: Highcharts.SVGAttributes = {
+                parentOptions: SVGAttributes = {
                     fill: nodeMarker.fillColor || color(series.color).brighten(0.4).get(),
                     opacity: nodeMarker.fillOpacity,
                     stroke: nodeMarker.lineColor || series.color,

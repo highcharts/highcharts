@@ -9,6 +9,7 @@
  * */
 
 import type ColorType from '../Core/Color/ColorType';
+import type SVGAttributes from '../Core/Renderer/SVG/SVGAttributes';
 import BaseSeries from '../Core/Series/Series.js';
 
 /**
@@ -120,7 +121,7 @@ BaseSeries.seriesType<typeof Highcharts.MapLineSeries>(
             this: Highcharts.MapLineSeries,
             point: Highcharts.MapLinePoint,
             state: string
-        ): Highcharts.SVGAttributes {
+        ): SVGAttributes {
             var attr = seriesTypes.map.prototype.pointAttribs.call(
                 this,
                 point,

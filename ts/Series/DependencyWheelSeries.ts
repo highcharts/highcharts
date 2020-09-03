@@ -10,6 +10,7 @@
  *
  * */
 
+import type SVGAttributes from '../Core/Renderer/SVG/SVGAttributes';
 import BaseSeries from '../Core/Series/Series.js';
 import H from '../Core/Globals.js';
 import NodesMixin from '../Mixins/Nodes.js';

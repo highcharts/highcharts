@@ -13,7 +13,13 @@
 'use strict';
 
 import type ColorString from '../Core/Color/ColorString';
+import type CSSObject from '../Core/Renderer/CSSObject';
+import type {
+    HTMLDOMElement
+} from '../Core/Renderer/DOMElementType';
 import type { SeriesOptionsType } from '../Core/Series/Types';
+import type SVGAttributes from '../Core/Renderer/SVG/SVGAttributes';
+import type SVGElement from '../Core/Renderer/SVG/SVGElement';
 import type SVGPath from '../Core/Renderer/SVG/SVGPath';
 import Chart from '../Core/Chart/Chart.js';
 import chartNavigationMixin from '../Mixins/Navigation.js';
@@ -1676,17 +1682,14 @@ extend(Chart.prototype, /** @lends Highcharts.Chart.prototype */ {
     *        Move target
     * @return {void}
     */
-    moveContainers: function (
-        this: Chart,
-        moveTo: Highcharts.HTMLDOMElement
-    ): void {
+    moveContainers: function (this: Chart, moveTo: HTMLDOMElement): void {
         const chart = this;
         (
             chart.fixedDiv ? // When scrollablePlotArea is active (#9533)
                 [chart.fixedDiv, chart.scrollingContainer as any] :
                 [chart.container]
 
-        ).forEach(function (div: Highcharts.HTMLDOMElement): void {
+        ).forEach(function (div: HTMLDOMElement): void {
             moveTo.appendChild(div);
         });
     },
@@ -1733,7 +1736,7 @@ extend(Chart.prototype, /** @lends Highcharts.Chart.prototype */ {
 
         // hide all body content
         [].forEach.call(printReverseInfo.childNodes, function (
-            node: Highcharts.HTMLDOMElement,
+            node: HTMLDOMElement,
             i: number
         ): void {
             if (node.nodeType === 1) {
@@ -1776,7 +1779,7 @@ extend(Chart.prototype, /** @lends Highcharts.Chart.prototype */ {
 
         // restore all body content
         [].forEach.call(childNodes, function (
-            node: Highcharts.HTMLDOMElement,
+            node: HTMLDOMElement,
             i: number
         ): void {
             if (node.nodeType === 1) {
@@ -1873,7 +1876,7 @@ extend(Chart.prototype, /** @lends Highcharts.Chart.prototype */ {
         y: number,
         width: number,
         height: number,
-        button: Highcharts.SVGElement
+        button: SVGElement
     ): void {
         var chart = this,
             navOptions: Highcharts.NavigationOptions =
@@ -1883,8 +1886,8 @@ extend(Chart.prototype, /** @lends Highcharts.Chart.prototype */ {
             cacheName = 'cache-' + className,
             menu: Highcharts.ExportingDivElement = (chart as any)[cacheName],
             menuPadding = Math.max(width, height), // for mouse leave detection
-            innerMenu: Highcharts.HTMLDOMElement,
-            menuStyle: Highcharts.CSSObject;
+            innerMenu: HTMLDOMElement,
+            menuStyle: CSSObject;
 
         // create the menu only the first time
         if (!menu) {
@@ -1917,7 +1920,7 @@ extend(Chart.prototype, /** @lends Highcharts.Chart.prototype */ {
 
             // Presentational CSS
             if (!chart.styledMode) {
-                css(innerMenu, extend<Highcharts.CSSObject>({
+                css(innerMenu, extend<CSSObject>({
                     MozBoxShadow: '3px 3px 10px #888',
                     WebkitBoxShadow: '3px 3px 10px #888',
                     boxShadow: '3px 3px 10px #888'
@@ -2004,12 +2007,12 @@ extend(Chart.prototype, /** @lends Highcharts.Chart.prototype */ {
 
                         if (!chart.styledMode) {
                             element.onmouseover = function (
-                                this: Highcharts.HTMLDOMElement
+                                this: HTMLDOMElement
                             ): void {
                                 css(this, navOptions.menuItemHoverStyle as any);
                             } as any;
                             element.onmouseout = function (
-                                this: Highcharts.HTMLDOMElement
+                                this: HTMLDOMElement
                             ): void {
                                 css(this, navOptions.menuItemStyle as any);
                             } as any;
@@ -2078,7 +2081,7 @@ extend(Chart.prototype, /** @lends Highcharts.Chart.prototype */ {
             onclick = btnOptions.onclick,
             menuItems = btnOptions.menuItems,
             symbol,
-            button: Highcharts.SVGElement,
+            button: SVGElement,
             symbolSize = btnOptions.symbolSize || 12;
 
         if (!chart.btnCount) {
@@ -2096,12 +2099,12 @@ extend(Chart.prototype, /** @lends Highcharts.Chart.prototype */ {
         }
 
 
-        var attr: Highcharts.SVGAttributes = btnOptions.theme as any,
+        var attr: SVGAttributes = btnOptions.theme as any,
             states = attr.states,
             hover = states && states.hover,
             select = states && states.select,
             callback: (
-                Highcharts.EventCallbackFunction<Highcharts.SVGElement>|
+                Highcharts.EventCallbackFunction<SVGElement>|
                 undefined
             );
 
@@ -2114,7 +2117,7 @@ extend(Chart.prototype, /** @lends Highcharts.Chart.prototype */ {
 
         if (onclick) {
             callback = function (
-                this: Highcharts.SVGElement,
+                this: SVGElement,
                 e: (Event|Highcharts.Dictionary<any>)
             ): void {
                 if (e) {
@@ -2125,7 +2128,7 @@ extend(Chart.prototype, /** @lends Highcharts.Chart.prototype */ {
 
         } else if (menuItems) {
             callback = function (
-                this: Highcharts.SVGElement,
+                this: SVGElement,
                 e: (Event|Highcharts.Dictionary<any>)
             ): void {
                 // consistent with onclick call (#3495)
@@ -2252,7 +2255,7 @@ extend(Chart.prototype, /** @lends Highcharts.Chart.prototype */ {
         // Destroy the extra buttons added
         if (exportSVGElements) {
             exportSVGElements.forEach(function (
-                elem: Highcharts.SVGElement,
+                elem: SVGElement,
                 i: number
             ): void {
 
@@ -2363,7 +2366,7 @@ Chart.prototype.inlineStyles = function (): void {
         blacklist = renderer.inlineBlacklist,
         whitelist = renderer.inlineWhitelist, // For IE
         unstyledElements = renderer.unstyledElements,
-        defaultStyles: Highcharts.Dictionary<Highcharts.CSSObject> = {},
+        defaultStyles: Record<string, CSSObject> = {},
         dummySVG: Element,
         iframe: HTMLIFrameElement,
         iframeDoc: Document;
@@ -2407,9 +2410,9 @@ Chart.prototype.inlineStyles = function (): void {
      *        Element child
      * @return {void}
      */
-    function recurse(node: Highcharts.HTMLDOMElement): void {
-        var styles: Highcharts.CSSObject,
-            parentStyles: (Highcharts.CSSObject|Highcharts.SVGAttributes),
+    function recurse(node: HTMLDOMElement): void {
+        var styles: CSSObject,
+            parentStyles: (CSSObject|SVGAttributes),
             cssText = '',
             dummy: Element,
             styleAttr,

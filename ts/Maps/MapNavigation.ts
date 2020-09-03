@@ -8,8 +8,8 @@
  *
  * */
 
-'use strict';
-
+import type CSSObject from '../Core/Renderer/CSSObject';
+import type SVGAttributes from '../Core/Renderer/SVG/SVGAttributes';
 import Chart from '../Core/Chart/Chart.js';
 import H from '../Core/Globals.js';
 const {
@@ -162,10 +162,10 @@ MapNavigation.prototype.update = function (
     var chart = this.chart,
         o: Highcharts.MapNavigationOptions = chart.options.mapNavigation as any,
         buttonOptions,
-        attr: Highcharts.SVGAttributes,
-        states: Highcharts.SVGAttributes,
-        hoverStates: Highcharts.SVGAttributes,
-        selectStates: Highcharts.SVGAttributes,
+        attr: SVGAttributes,
+        states: SVGAttributes,
+        hoverStates: SVGAttributes,
+        selectStates: SVGAttributes,
         outerHandler = function (
             this: Highcharts.SVGElement,
             e: (Event|Highcharts.Dictionary<any>)

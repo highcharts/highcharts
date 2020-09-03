@@ -9,7 +9,6 @@
  *  !!!!!!! SOURCE GETS TRANSPILED BY TYPESCRIPT. EDIT TS FILE ONLY. !!!!!!!
  *
  * */
-'use strict';
 import Axis from '../../Core/Axis/Axis.js';
 import U from '../../Core/Utilities.js';
 var setOptions = U.setOptions;

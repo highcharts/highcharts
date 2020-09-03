@@ -12,6 +12,7 @@
 
 import type ColorString from '../Core/Color/ColorString';
 import type ColorType from '../Core/Color/ColorType';
+import type SVGAttributes from '../Core/Renderer/SVG/SVGAttributes';
 import Series from '../Core/Series/Series.js';
 import CartesianSeries from '../Core/Series/CartesianSeries.js';
 import Color from '../Core/Color/Color.js';
@@ -821,7 +822,7 @@ Series.seriesType<typeof Highcharts.SankeySeries>(
             this: Highcharts.SankeySeries,
             point: Highcharts.SankeyPoint,
             state: string
-        ): Highcharts.SVGAttributes {
+        ): SVGAttributes {
             var series = this,
                 level = point.isNode ? point.level : point.fromNode.level,
                 levelOptions =

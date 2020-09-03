@@ -11,6 +11,8 @@
  * */
 
 import type ColorString from '../Core/Color/ColorString';
+import type CSSObject from '../Core/Renderer/CSSObject';
+import type SVGAttributes from '../Core/Renderer/SVG/SVGAttributes';
 import type SVGPath from '../Core/Renderer/SVG/SVGPath';
 import BaseSeries from '../Core/Series/Series.js';
 import H from '../Core/Globals.js';
@@ -233,7 +235,7 @@ BaseSeries.seriesType<typeof Highcharts.OrganizationSeries>(
                 )
             ): string {
 
-                var outerStyle: Highcharts.CSSObject = {
+                var outerStyle: CSSObject = {
                         width: '100%',
                         height: '100%',
                         display: 'flex',
@@ -241,23 +243,23 @@ BaseSeries.seriesType<typeof Highcharts.OrganizationSeries>(
                         'align-items': 'center',
                         'justify-content': 'center'
                     },
-                    imageStyle: Highcharts.CSSObject = {
+                    imageStyle: CSSObject = {
                         'max-height': '100%',
                         'border-radius': '50%'
                     },
-                    innerStyle: Highcharts.CSSObject = {
+                    innerStyle: CSSObject = {
                         width: '100%',
                         padding: 0,
                         'text-align': 'center',
                         'white-space': 'normal'
                     },
-                    nameStyle: Highcharts.CSSObject = {
+                    nameStyle: CSSObject = {
                         margin: 0
                     },
-                    titleStyle: Highcharts.CSSObject = {
+                    titleStyle: CSSObject = {
                         margin: 0
                     },
-                    descriptionStyle: Highcharts.CSSObject = {
+                    descriptionStyle: CSSObject = {
                         opacity: 0.75,
                         margin: '5px'
                     };
@@ -266,7 +268,7 @@ BaseSeries.seriesType<typeof Highcharts.OrganizationSeries>(
                 /**
                  * @private
                  */
-                function styleAttr(style: Highcharts.CSSObject): string {
+                function styleAttr(style: CSSObject): string {
                     return Object.keys(style).reduce(function (
                         str: string,
                         key: string
@@ -369,7 +371,7 @@ BaseSeries.seriesType<typeof Highcharts.OrganizationSeries>(
             this: Highcharts.OrganizationSeries,
             point: Highcharts.OrganizationPoint,
             state: string
-        ): Highcharts.SVGAttributes {
+        ): SVGAttributes {
             var series = this,
                 attribs = base.pointAttribs.call(series, point, state),
                 level = point.isNode ? point.level : point.fromNode.level,

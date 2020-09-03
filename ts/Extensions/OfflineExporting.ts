@@ -10,10 +10,14 @@
  *
  * */
 
-'use strict';
-
 /* global MSBlobBuilder */
 
+import type {
+    DOMElementType,
+    HTMLDOMElement,
+    SVGDOMElement
+} from '../Core/Renderer/DOMElementType';
+import type SVGElement from '../Core/Renderer/SVG/SVGElement';
 import Chart from '../Core/Chart/Chart.js';
 import H from '../Core/Globals.js';
 const {
@@ -352,10 +356,7 @@ function downloadSVGLocal(
     /**
      * @private
      */
-    function svgToPdf(
-        svgElement: Highcharts.SVGElement,
-        margin: number
-    ): string {
+    function svgToPdf(svgElement: SVGElement, margin: number): string {
         var width = svgElement.width.baseVal.value + 2 * margin,
             height = svgElement.height.baseVal.value + 2 * margin,
             pdf = new win.jsPDF( // eslint-disable-line new-cap
@@ -369,7 +370,7 @@ function downloadSVGLocal(
         // later.
         [].forEach.call(
             svgElement.querySelectorAll('*[visibility="hidden"]'),
-            function (node: Highcharts.SVGDOMElement): void {
+            function (node: SVGDOMElement): void {
                 (node.parentNode as any).removeChild(node);
             }
         );
@@ -391,7 +392,7 @@ function downloadSVGLocal(
             // Searches up hierarchy until it finds prop, or hits the chart
             // container.
             setStylePropertyFromParents = function (
-                el: (Highcharts.HTMLDOMElement|Highcharts.SVGDOMElement),
+                el: DOMElementType,
                 propName: string
             ): void {
                 var curParent = el;
@@ -408,9 +409,7 @@ function downloadSVGLocal(
 
         // Workaround for the text styling. Making sure it does pick up settings
         // for parent elements.
-        [].forEach.call(textElements, function (
-            el: Highcharts.SVGDOMElement
-        ): void {
+        [].forEach.call(textElements, function (el: SVGDOMElement): void {
             // Workaround for the text styling. making sure it does pick up the
             // root element
             ['font-family', 'font-size'].forEach(function (
@@ -427,7 +426,7 @@ function downloadSVGLocal(
             // nodes
             titleElements = el.getElementsByTagName('title');
             [].forEach.call(titleElements, function (
-                titleElement: Highcharts.HTMLDOMElement
+                titleElement: HTMLDOMElement
             ): void {
                 el.removeChild(titleElement);
             });
@@ -593,7 +592,7 @@ Chart.prototype.getSVGForLocalExport = function (
     var chart = this,
         images,
         imagesEmbedded = 0,
-        chartCopyContainer: (Highcharts.HTMLDOMElement|undefined),
+        chartCopyContainer: (HTMLDOMElement|undefined),
         chartCopyOptions: (Highcharts.Options|undefined),
         el,
         i,
@@ -617,7 +616,7 @@ Chart.prototype.getSVGForLocalExport = function (
             imageURL: string,
             imageType: string,
             callbackArgs: {
-                imageElement: Highcharts.HTMLDOMElement;
+                imageElement: HTMLDOMElement;
             }
         ): void {
             ++imagesEmbedded;
@@ -758,7 +757,7 @@ Chart.prototype.exportChartLocal = function (
         hasExternalImages = function (): boolean {
             return [].some.call(
                 chart.container.getElementsByTagName('image'),
-                function (image: Highcharts.HTMLDOMElement): boolean {
+                function (image: HTMLDOMElement): boolean {
                     var href = image.getAttribute('href');
                     return href !== '' && (href as any).indexOf('data:') !== 0;
                 }

@@ -13,6 +13,10 @@
 'use strict';
 
 import type Chart from '../Core/Chart/Chart';
+import type {
+    DOMElementType,
+    HTMLDOMElement
+} from '../Core/Renderer/DOMElementType';
 import H from '../Core/Globals.js';
 const {
     doc,
@@ -44,25 +48,21 @@ declare global {
             public components: AccessibilityComponentsObject;
             public currentModuleIx: number;
             public eventProvider: EventProvider;
-            public exitAnchor: (HTMLDOMElement|SVGDOMElement);
+            public exitAnchor: DOMElementType;
             public exiting?: boolean;
             public isClickingChart?: boolean;
             public keyboardReset?: boolean;
             public modules: Array<KeyboardNavigationHandler>;
             public pointerIsOverChart?: boolean;
             public tabindexContainer: HTMLDOMElement;
-            public addExitAnchorEventsToEl(
-                element: (HTMLDOMElement|SVGDOMElement)
-            ): void;
+            public addExitAnchorEventsToEl(element: DOMElementType): void;
             public createExitAnchor(): void;
             public destroy(): void;
             public init(
                 chart: Chart,
                 components: AccessibilityComponentsObject
             ): void;
-            public makeElementAnExitAnchor(
-                el: (HTMLDOMElement|SVGDOMElement)
-            ): void;
+            public makeElementAnExitAnchor(el: DOMElementType): void;
             public move(direction: number): boolean;
             public next(): boolean;
             public onFocus(e: FocusEvent): void;
@@ -430,7 +430,7 @@ KeyboardNavigation.prototype = {
      */
     makeElementAnExitAnchor: function (
         this: Highcharts.KeyboardNavigation,
-        el: (Highcharts.HTMLDOMElement|Highcharts.SVGDOMElement)
+        el: DOMElementType
     ): void {
         const chartTabindex = this.tabindexContainer.getAttribute('tabindex') || 0;
         el.setAttribute('class', 'highcharts-exit-anchor');
@@ -473,7 +473,7 @@ KeyboardNavigation.prototype = {
      */
     addExitAnchorEventsToEl: function (
         this: Highcharts.KeyboardNavigation,
-        element: Highcharts.HTMLDOMElement
+        element: HTMLDOMElement
     ): void {
         var chart = this.chart,
             keyboardNavigation = this;

@@ -11,6 +11,11 @@
 'use strict';
 
 import type ColorString from '../Core/Color/ColorString';
+import type CSSObject from '../Core/Renderer/CSSObject';
+import type {
+    HTMLDOMElement
+} from '../Core/Renderer/DOMElementType';
+import type SVGAttributes from '../Core/Renderer/SVG/SVGAttributes';
 import Axis from '../Core/Axis/Axis.js';
 import Chart from '../Core/Chart/Chart.js';
 import H from '../Core/Globals.js';
@@ -745,7 +750,7 @@ class RangeSelector {
     public buttonOptions: Array<Highcharts.RangeSelectorButtonsOptions> = RangeSelector.prototype.defaultButtons;
     public chart: Chart;
     public deferredYTDClick?: number;
-    public div?: Highcharts.HTMLDOMElement;
+    public div?: HTMLDOMElement;
     public forcedDataGrouping?: boolean;
     public frozenStates?: boolean;
     public group?: Highcharts.SVGElement;
@@ -1236,7 +1241,7 @@ class RangeSelector {
             width: (dateBox.width - 2) + 'px',
             height: (dateBox.height - 2) + 'px',
             border: '2px solid silver'
-        } as Highcharts.CSSObject);
+        });
     }
 
     /**
@@ -1422,7 +1427,7 @@ class RangeSelector {
                 color: '${palette.neutralColor80}'
             }, chartStyle, options.inputStyle));
 
-            css(input, extend({
+            css(input, extend<CSSObject>({
                 position: 'absolute',
                 border: 0,
                 width: '1px', // Chrome needs a pixel to see it
@@ -1432,7 +1437,7 @@ class RangeSelector {
                 fontSize: chartStyle.fontSize,
                 fontFamily: chartStyle.fontFamily,
                 top: '-9999em' // #4798
-            } as Highcharts.CSSObject, options.inputStyle as any));
+            }, options.inputStyle as any));
         }
 
         // Blow up the input box

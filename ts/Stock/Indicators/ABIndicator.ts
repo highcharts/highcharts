@@ -6,6 +6,7 @@
  *
  * */
 
+import type CSSObject from '../../Core/Renderer/CSSObject';
 import BaseSeries from '../../Core/Series/Series.js';
 import MultipleLinesMixin from '../../Mixins/MultipleLines.js';
 import U from '../../Core/Utilities.js';
@@ -38,10 +39,10 @@ declare global {
 
         interface ABandsIndicatorOptions extends SMAIndicatorOptions,
             MultipleLinesIndicatorOptions {
-            bottomLine?: Dictionary<CSSObject>;
+            bottomLine?: Record<string, CSSObject>;
             lineWidth?: number;
             params?: ABandsIndicatorParamsOptions;
-            topLine?: Dictionary<CSSObject>;
+            topLine?: Record<string, CSSObject>;
         }
 
         interface ABandsIndicatorParamsOptions

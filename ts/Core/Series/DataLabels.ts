@@ -12,7 +12,9 @@
 
 import type ColorString from '../Color/ColorString';
 import type ColorType from '../Color/ColorType';
+import type CSSObject from '../Renderer/CSSObject';
 import type Point from './Point';
+import type SVGAttributes from '../Renderer/SVG/SVGAttributes';
 import type SVGElement from '../Renderer/SVG/SVGElement';
 import H from '../Globals.js';
 const {
@@ -1069,9 +1071,9 @@ CartesianSeries.prototype.setDataLabelStartPos = function (
  */
 CartesianSeries.prototype.justifyDataLabel = function (
     this: Highcharts.Series,
-    dataLabel: Highcharts.SVGElement,
+    dataLabel: SVGElement,
     options: Highcharts.DataLabelsOptions,
-    alignAttr: Highcharts.SVGAttributes,
+    alignAttr: SVGAttributes,
     bBox: Highcharts.BBoxObject,
     alignTo?: Highcharts.BBoxObject,
     isNew?: boolean

@@ -11,7 +11,7 @@
 
 'use strict';
 
-import type Axis from '../Core/Axis/Axis';
+import type SVGAttributes from '../Core/Renderer/SVG/SVGAttributes';
 import type SVGPath from '../Core/Renderer/SVG/SVGPath';
 import Chart from '../Core/Chart/Chart.js';
 import H from '../Core/Globals.js';
@@ -583,7 +583,7 @@ class Connection {
      */
     public renderPath(
         path: SVGPath,
-        attribs?: Highcharts.SVGAttributes,
+        attribs?: SVGAttributes,
         animation?: (boolean|DeepPartial<Highcharts.AnimationOptionsObject>)
     ): void {
         var connection = this,
@@ -593,7 +593,7 @@ class Connection {
             animate =
                 !(chart.options.chart as any).forExport && animation !== false,
             pathGraphic = connection.graphics && connection.graphics.path,
-            anim: Highcharts.SVGAttributes;
+            anim: SVGAttributes;
 
         // Add the SVG element of the pathfinder group if it doesn't exist
         if (!(pathfinder as any).group) {
@@ -844,7 +844,7 @@ class Connection {
                 chart.options.connectors, series.options.connectors,
                 fromPoint.options.connectors, connection.options
             ),
-            attribs = {} as Highcharts.SVGAttributes;
+            attribs: SVGAttributes = {};
 
         // Set path attribs
         if (!chart.styledMode) {

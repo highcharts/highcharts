@@ -12,7 +12,12 @@
 
 import type Chart from './Chart/Chart';
 import type ColorAxisGlobal from './Axis/ColorAxis';
-import type Point from '../Core/Series/Point';
+import type CSSObject from './Renderer/CSSObject';
+import type {
+    HTMLDOMElement
+} from './Renderer/DOMElementType';
+import type Point from './Series/Point';
+import type SVGAttributes from './Renderer/SVG/SVGAttributes';
 import H from './Globals.js';
 
 /**
@@ -278,13 +283,13 @@ class Legend {
 
     public itemHeight: number = 0;
 
-    public itemHiddenStyle?: Highcharts.CSSObject;
+    public itemHiddenStyle?: CSSObject;
 
     public itemMarginBottom: number = 0;
 
     public itemMarginTop: number = 0;
 
-    public itemStyle?: Highcharts.CSSObject;
+    public itemStyle?: CSSObject;
 
     public itemX: number = 0;
 
@@ -496,7 +501,7 @@ class Legend {
                     ((item as any).color || hiddenColor) :
                     hiddenColor,
                 markerOptions = item.options && (item.options as any).marker,
-                symbolAttr = { fill: symbolColor } as Highcharts.SVGAttributes;
+                symbolAttr: SVGAttributes = { fill: symbolColor };
 
             if (legendItem) {
                 legendItem.css({

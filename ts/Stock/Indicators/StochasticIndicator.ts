@@ -6,6 +6,7 @@
  *
  * */
 
+import type CSSObject from '../../Core/Renderer/CSSObject';
 import BaseSeries from '../../Core/Series/Series.js';
 import MultipleLinesMixin from '../../Mixins/MultipleLines.js';
 import ReduceArrayMixin from '../../Mixins/ReduceArray.js';
@@ -57,7 +58,7 @@ declare global {
             dataGrouping?: DataGroupingOptionsObject;
             marker?: PointMarkerOptionsObject;
             params?: StochasticIndicatorParamsOptions;
-            smoothedLine?: Dictionary<CSSObject>;
+            smoothedLine?: Record<string, CSSObject>;
             tooltip?: TooltipOptions;
         }
     }

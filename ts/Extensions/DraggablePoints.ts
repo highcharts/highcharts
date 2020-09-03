@@ -14,6 +14,7 @@
 
 import type ColorString from '../Core/Color/ColorString';
 import type ColorType from '../Core/Color/ColorType';
+import type SVGAttributes from '../Core/Renderer/SVG/SVGAttributes';
 import type SVGElement from '../Core/Renderer/SVG/SVGElement';
 import type SVGPath from '../Core/Renderer/SVG/SVGPath';
 import Chart from '../Core/Chart/Chart.js';
@@ -2552,7 +2553,7 @@ Point.prototype.showDragHandles = function (): void {
                 val.handleOptions,
                 options.dragHandle
             ),
-            handleAttrs: Highcharts.SVGAttributes = {
+            handleAttrs: SVGAttributes = {
                 className: handleOptions.className,
                 'stroke-width': handleOptions.lineWidth,
                 fill: handleOptions.color,

@@ -11,6 +11,7 @@
 import type ColorType from '../Core/Color/ColorType';
 import type Point from '../Core/Series/Point';
 import type { SeriesOptionsType } from '../Core/Series/Types';
+import type SVGAttributes from '../Core/Renderer/SVG/SVGAttributes';
 import type SVGPath from '../Core/Renderer/SVG/SVGPath';
 import BaseSeries from '../Core/Series/Series.js';
 import ColorMapMixin from '../Mixins/ColorMapSeries.js';
@@ -90,7 +91,7 @@ declare global {
             ): this['options'];
             public translate(): void;
         }
-        interface HeatmapPointCellAttributes extends Dictionary<number> {
+        interface HeatmapPointCellAttributes extends Record<string, number> {
             x1: number;
             x2: number;
             y1: number;
@@ -587,7 +588,7 @@ BaseSeries.seriesType<typeof Highcharts.HeatmapSeries>(
             this: Highcharts.HeatmapSeries,
             point: Highcharts.HeatmapPoint,
             state?: string
-        ): Highcharts.SVGAttributes {
+        ): SVGAttributes {
             var series = this,
                 attr = Series.prototype.pointAttribs
                     .call(series, point, state),
@@ -648,14 +649,14 @@ BaseSeries.seriesType<typeof Highcharts.HeatmapSeries>(
             this: Highcharts.HeatmapSeries,
             point: Highcharts.HeatmapPoint,
             state?: string
-        ): Highcharts.SVGAttributes {
+        ): SVGAttributes {
             var pointMarkerOptions = point.marker || {},
                 seriesMarkerOptions = this.options.marker || {},
                 seriesStateOptions: Highcharts.PointStatesHoverOptionsObject,
                 pointStateOptions: Highcharts.PointStatesHoverOptionsObject,
                 shapeArgs = point.shapeArgs || {},
                 hasImage = point.hasImage,
-                attribs: Highcharts.SVGAttributes = {};
+                attribs: SVGAttributes = {};
 
             if (hasImage) {
                 return {

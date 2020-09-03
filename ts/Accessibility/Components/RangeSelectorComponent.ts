@@ -13,18 +13,24 @@
 'use strict';
 
 import type Chart from '../../Core/Chart/Chart';
-import H from '../../Core/Globals.js';
-import U from '../../Core/Utilities.js';
-var extend = U.extend;
-
+import type {
+    HTMLDOMElement
+} from '../../Core/Renderer/DOMElementType';
 import AccessibilityComponent from '../AccessibilityComponent.js';
-import KeyboardNavigationHandler from '../KeyboardNavigationHandler.js';
-
 import ChartUtilities from '../Utils/ChartUtilities.js';
-var unhideChartElementFromAT = ChartUtilities.unhideChartElementFromAT;
-
+const {
+    unhideChartElementFromAT
+} = ChartUtilities;
+import H from '../../Core/Globals.js';
 import HTMLUtilities from '../Utils/HTMLUtilities.js';
-var setElAttrs = HTMLUtilities.setElAttrs;
+const {
+    setElAttrs
+} = HTMLUtilities;
+import KeyboardNavigationHandler from '../KeyboardNavigationHandler.js';
+import U from '../../Core/Utilities.js';
+const {
+    extend
+} = U;
 
 /**
  * Internal types.
@@ -210,7 +216,7 @@ extend(RangeSelectorComponent.prototype, /** @lends Highcharts.RangeSelectorComp
      */
     setRangeInputAttrs: function (
         this: Highcharts.RangeSelectorComponent,
-        input: Highcharts.HTMLDOMElement,
+        input: HTMLDOMElement,
         langKey: string
     ): void {
         var chart = this.chart;

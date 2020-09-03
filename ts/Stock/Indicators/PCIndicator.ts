@@ -6,6 +6,7 @@
  *
  * */
 
+import type CSSObject from '../../Core/Renderer/CSSObject';
 import BaseSeries from '../../Core/Series/Series.js';
 import MultipleLinesMixin from '../../Mixins/MultipleLines.js';
 import ReduceArrayMixin from '../../Mixins/ReduceArray.js';
@@ -51,8 +52,8 @@ declare global {
         interface PCIndicatorOptions extends SMAIndicatorOptions,
             MultipleLinesIndicatorOptions {
             params?: PCIndicatorParamsOptions;
-            bottomLine: Dictionary<CSSObject>;
-            topLine: Dictionary<CSSObject>;
+            bottomLine: Record<string, CSSObject>;
+            topLine: Record<string, CSSObject>;
         }
     }
 }

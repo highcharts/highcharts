@@ -11,7 +11,9 @@
 'use strict';
 
 import type ColorType from './Color/ColorType';
+import type CSSObject from './Renderer/CSSObject';
 import type { SeriesOptionsType } from './Series/Types';
+import type SVGElement from './Renderer/SVG/SVGElement';
 import type SVGPath from './Renderer/SVG/SVGPath';
 import Axis from './Axis/Axis.js';
 import BaseSeries from './Series/Series.js';
@@ -1041,10 +1043,10 @@ class Navigator {
             chart = navigator.chart,
             inverted = chart.inverted,
             renderer = chart.renderer,
-            navigatorGroup: Highcharts.SVGElement,
-            mouseCursor = {
+            navigatorGroup: SVGElement,
+            mouseCursor: CSSObject = {
                 cursor: inverted ? 'ns-resize' : 'ew-resize'
-            } as Highcharts.CSSObject;
+            };
 
         // Create the main navigator group
         navigator.navigatorGroup = navigatorGroup = renderer.g('navigator')

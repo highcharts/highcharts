@@ -12,11 +12,11 @@
  * */
 'use strict';
 import H from '../../Core/Globals.js';
-var doc = H.win.document;
-import U from '../../Core/Utilities.js';
-var extend = U.extend;
+var doc = H.doc;
 import HTMLUtilities from './HTMLUtilities.js';
 var removeElement = HTMLUtilities.removeElement;
+import U from '../../Core/Utilities.js';
+var extend = U.extend;
 /* eslint-disable no-invalid-this, valid-jsdoc */
 /**
  * @private

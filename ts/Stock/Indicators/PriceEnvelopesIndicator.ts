@@ -6,6 +6,7 @@
  *
  * */
 
+import type CSSObject from '../../Core/Renderer/CSSObject';
 import BaseSeries from '../../Core/Series/Series.js';
 import U from '../../Core/Utilities.js';
 const {
@@ -66,8 +67,8 @@ declare global {
 
         interface PriceEnvelopesIndicatorOptions extends SMAIndicatorOptions {
             params?: PriceEnvelopesIndicatorParamsOptions;
-            bottomLine?: Dictionary<CSSObject>;
-            topLine?: Dictionary<CSSObject>;
+            bottomLine?: Record<string, CSSObject>;
+            topLine?: Record<string, CSSObject>;
         }
     }
 }

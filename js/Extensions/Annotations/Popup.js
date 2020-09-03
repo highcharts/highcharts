@@ -9,7 +9,6 @@
  *  !!!!!!! SOURCE GETS TRANSPILED BY TYPESCRIPT. EDIT TS FILE ONLY. !!!!!!!
  *
  * */
-'use strict';
 import H from '../../Core/Globals.js';
 import NavigationBindings from './NavigationBindings.js';
 import Pointer from '../../Core/Pointer.js';

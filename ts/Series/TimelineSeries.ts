@@ -13,6 +13,7 @@
  * */
 
 import type ColorType from '../Core/Color/ColorType';
+import type SVGAttributes from '../Core/Renderer/SVG/SVGAttributes';
 import type SVGPath from '../Core/Renderer/SVG/SVGPath';
 import BaseSeries from '../Core/Series/Series.js';
 const {
@@ -423,8 +424,8 @@ BaseSeries.seriesType<typeof Highcharts.TimelineSeries>('timeline', 'line',
                         // target position (after animation) is needed to align
                         // connectors.
                         dataLabel.animate = function (
-                            this: Highcharts.SVGElement,
-                            params: Highcharts.SVGAttributes
+                            this: SVGElement,
+                            params: SVGAttributes
                         ): Highcharts.SVGElement {
                             if (this.targetPosition) {
                                 this.targetPosition = params;
@@ -661,7 +662,7 @@ BaseSeries.seriesType<typeof Highcharts.TimelineSeries>('timeline', 'line',
             this: Highcharts.TimelineSeries,
             point: Highcharts.TimelinePoint,
             state?: string
-        ): Highcharts.SVGAttributes {
+        ): SVGAttributes {
             var series = this,
                 seriesMarkerOptions: Highcharts.PointMarkerOptionsObject =
                     series.options.marker as any,
@@ -681,7 +682,7 @@ BaseSeries.seriesType<typeof Highcharts.TimelineSeries>('timeline', 'line',
                     seriesMarkerOptions.height as any
                 ),
                 radius = 0,
-                attribs: (Highcharts.SVGAttributes|undefined);
+                attribs: (SVGAttributes|undefined);
 
             // Call default markerAttribs method, when the xAxis type
             // is set to datetime.

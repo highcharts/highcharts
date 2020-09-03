@@ -10,6 +10,8 @@
  *
  * */
 
+import type SVGAttributes from '../Core/Renderer/SVG/SVGAttributes';
+import type SVGElement from '../Core/Renderer/SVG/SVGElement';
 import BaseSeries from '../Core/Series/Series.js';
 import H from '../Core/Globals.js';
 import O from '../Core/Options.js';
@@ -450,9 +452,9 @@ BaseSeries.seriesType<typeof Highcharts.ItemSeries>(
             //*/
 
             this.points.forEach(function (point: Highcharts.ItemPoint): void {
-                var attr: Highcharts.SVGAttributes,
-                    graphics: Highcharts.Dictionary<Highcharts.SVGElement>,
-                    pointAttr: (Highcharts.SVGAttributes|undefined),
+                var attr: SVGAttributes,
+                    graphics: Record<string, SVGElement>,
+                    pointAttr: (SVGAttributes|undefined),
                     pointMarkerOptions = point.marker || {},
                     symbol: string = (
                         pointMarkerOptions.symbol ||
@@ -547,7 +549,7 @@ BaseSeries.seriesType<typeof Highcharts.ItemSeries>(
                     }
                 }
                 objectEach(graphics, function (
-                    graphic: Highcharts.SVGElement,
+                    graphic: SVGElement,
                     key: string
                 ): void {
                     if (!graphic.isActive) {

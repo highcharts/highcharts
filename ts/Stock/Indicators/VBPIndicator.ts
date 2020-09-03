@@ -12,6 +12,8 @@
 
 import type { AxisType } from '../../Core/Axis/Types';
 import type Chart from '../../Core/Chart/Chart';
+import type CSSObject from '../../Core/Renderer/CSSObject';
+import type SVGAttributes from '../../Core/Renderer/SVG/SVGAttributes';
 import type SVGPath from '../../Core/Renderer/SVG/SVGPath';
 import BaseSeries from '../../Core/Series/Series.js';
 import H from '../../Core/Globals.js';
@@ -360,7 +362,7 @@ BaseSeries.seriesType<typeof Highcharts.VBPIndicator>(
             var series = this,
                 inverted = series.chart.inverted,
                 group = series.group,
-                attr: Highcharts.SVGAttributes = {},
+                attr: SVGAttributes = {},
                 translate,
                 position;
 
@@ -794,7 +796,7 @@ BaseSeries.seriesType<typeof Highcharts.VBPIndicator>(
             chart: Chart,
             yAxis: AxisType,
             zonesValues: Array<number>,
-            zonesStyles: Highcharts.CSSObject
+            zonesStyles: CSSObject
         ): void {
             var indicator = this,
                 renderer: Highcharts.Renderer = chart.renderer,

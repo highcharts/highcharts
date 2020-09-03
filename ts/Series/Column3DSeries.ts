@@ -11,6 +11,7 @@
 import type Axis from '../Core/Axis/Axis';
 import type Chart from '../Core/Chart/Chart';
 import type ColorString from '../Core/Color/ColorString';
+import type SVGAttributes from '../Core/Renderer/SVG/SVGAttributes';
 import BaseSeries from '../Core/Series/Series.js';
 import H from '../Core/Globals.js';
 import Math3D from '../Extensions/Math3D.js';
@@ -472,7 +473,7 @@ addEvent(Series, 'afterInit', function (): void {
 function pointAttribs(
     this: Highcharts.ColumnSeries,
     proceed: Function
-): Highcharts.SVGAttributes {
+): SVGAttributes {
     var attr = proceed.apply(this, [].slice.call(arguments, 1));
 
     if (this.chart.is3d && this.chart.is3d()) {

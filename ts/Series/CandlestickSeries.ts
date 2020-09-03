@@ -9,6 +9,7 @@
  * */
 
 import type ColorType from '../Core/Color/ColorType';
+import type SVGAttributes from '../Core/Renderer/SVG/SVGAttributes';
 import type SVGPath from '../Core/Renderer/SVG/SVGPath';
 import BaseSeries from '../Core/Series/Series.js';
 import O from '../Core/Options.js';
@@ -207,7 +208,7 @@ BaseSeries.seriesType<typeof Highcharts.CandlestickSeries>(
             this: Highcharts.CandlestickSeries,
             point: Highcharts.CandlestickPoint,
             state?: string
-        ): Highcharts.SVGAttributes {
+        ): SVGAttributes {
             var attribs = columnProto.pointAttribs.call(
                     this,
                     point,
