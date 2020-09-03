@@ -10,7 +10,7 @@
  *
  * */
 'use strict';
-import Color from '../../Core/Color.js';
+import Color from '../../Core/Color/Color.js';
 // Register color names since GL can't render those directly.
 // TODO: When supporting modern syntax, make this a const and a named export
 var defaultHTMLColorMap = {

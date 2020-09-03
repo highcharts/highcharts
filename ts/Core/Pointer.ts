@@ -14,7 +14,7 @@ import type Axis from './Axis/Axis';
 import type Chart from './Chart/Chart';
 import type Point from '../Core/Series/Point';
 import type SVGElement from './Renderer/SVG/SVGElement';
-import Color from './Color.js';
+import Color from './Color/Color.js';
 const color = Color.parse;
 import H from './Globals.js';
 const {

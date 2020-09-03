@@ -12,9 +12,10 @@
 
 'use strict';
 
+import type ColorType from '../../Core/Color/ColorType';
 import type Point from '../../Core/Series/Point';
 import Chart from '../../Core/Chart/Chart.js';
-import Color from '../../Core/Color.js';
+import Color from '../../Core/Color/Color.js';
 const {
     parse: color
 } = Color;
@@ -58,12 +59,12 @@ declare global {
             y?: number;
         }
         interface BubbleLegendOptions {
-            borderColor?: (ColorString|GradientColorObject|PatternObject);
+            borderColor?: ColorType;
             borderWidth?: number;
             className?: string;
-            color?: (ColorString|GradientColorObject|PatternObject);
+            color?: ColorType;
             connectorClassName?: string;
-            connectorColor?: (ColorString|GradientColorObject|PatternObject);
+            connectorColor?: ColorType;
             connectorDistance?: number;
             connectorWidth?: number;
             enabled?: boolean;
@@ -83,9 +84,9 @@ declare global {
             extends Partial<BubbleLegendFormatterContextObject>
         {
             autoRanges?: boolean;
-            borderColor?: (ColorString|GradientColorObject|PatternObject);
-            color?: (ColorString|GradientColorObject|PatternObject);
-            connectorColor?: (ColorString|GradientColorObject|PatternObject);
+            borderColor?: ColorType;
+            color?: ColorType;
+            connectorColor?: ColorType;
             bubbleStyle?: CSSObject;
             connectorStyle?: CSSObject;
             labelStyle?: CSSObject;

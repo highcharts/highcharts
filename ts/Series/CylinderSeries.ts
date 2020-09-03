@@ -12,9 +12,10 @@
  *
  * */
 
+import type ColorType from '../Core/Color/ColorType';
 import type Chart from '../Core/Chart/Chart';
 import type SVGPath from '../Core/Renderer/SVG/SVGPath';
-import Color from '../Core/Color.js';
+import Color from '../Core/Color/Color.js';
 const {
     parse: color
 } = Color;
@@ -237,7 +238,7 @@ const cylinderMethods = merge(RendererProto.elements3d.cuboid, {
 
     fillSetter: function (
         this: Highcharts.SVGElement,
-        fill: Highcharts.ColorType
+        fill: ColorType
     ): Highcharts.SVGElement {
         this.singleSetterForParts('fill', null, {
             front: fill,

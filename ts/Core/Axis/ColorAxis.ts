@@ -11,10 +11,13 @@
 'use strict';
 
 import type { AxisLike } from './Types';
+import type ColorString from '../Color/ColorString';
+import type ColorType from '../Color/ColorType';
+import type GradientColor from '../Color/GradientColor';
 import type SVGPath from '../Renderer/SVG/SVGPath';
 import Axis from './Axis.js';
 import Chart from '../Chart/Chart.js';
-import Color from '../Color.js';
+import Color from '../Color/Color.js';
 const {
     parse: color
 } = Color;
@@ -56,7 +59,7 @@ declare global {
             public coll: 'colorAxis';
             public checkbox: undefined;
             public dataClasses: Array<ColorAxis.DataClassesOptions>;
-            public legendColor?: GradientColorObject;
+            public legendColor?: GradientColor;
             public legendGroup?: SVGElement
             public legendItem: ColorAxis.LegendItemObject;
             public legendItemHeight?: number;
@@ -66,7 +69,7 @@ declare global {
             public options: ColorAxis.Options;
             public prototype: ColorAxis;
             public setVisible: Function;
-            public stops: GradientColorObject['stops'];
+            public stops: GradientColor['stops'];
             public visible: true;
             public drawCrosshair(e: PointerEventObject, point: Point): void;
             public drawLegendSymbol(legend: Legend, item: ColorAxis): void;
@@ -93,7 +96,7 @@ declare global {
             public toColor(
                 value: number,
                 point: Point
-            ): (ColorString|GradientColorObject|PatternObject|undefined);
+            ): (ColorType|undefined);
         }
         interface Axis {
             labelLeft?: number;
@@ -683,7 +686,7 @@ class ColorAxis extends Axis implements AxisLike {
     public chart: Chart = void 0 as any;
     public coll: 'colorAxis' = 'colorAxis';
     public dataClasses: Array<ColorAxis.DataClassesOptions> = void 0 as any;
-    public legendColor?: Highcharts.GradientColorObject;
+    public legendColor?: GradientColor;
     public legendGroup?: Highcharts.SVGElement;
     public legendItemHeight?: number;
     public legendItem: ColorAxis.LegendItemObject = void 0 as any;
@@ -692,7 +695,7 @@ class ColorAxis extends Axis implements AxisLike {
     public legendSymbol?: Highcharts.SVGElement;
     public name: string = ''; // Prevents 'undefined' in legend in IE8
     public options: ColorAxis.Options = void 0 as any;
-    public stops: Highcharts.GradientColorObject['stops'] = void 0 as any;
+    public stops: GradientColor['stops'] = void 0 as any;
     public visible: boolean = true;
 
     /* *
@@ -825,7 +828,7 @@ class ColorAxis extends Axis implements AxisLike {
             [1, axis.options.maxColor as any]
         ];
         axis.stops.forEach(function (
-            stop: Highcharts.GradientColorStopObject
+            stop: GradientColor['stops'][0]
         ): void {
             stop.color = color(stop[1]);
         });
@@ -898,10 +901,7 @@ class ColorAxis extends Axis implements AxisLike {
      * Translate from a value to a color.
      * @private
      */
-    public toColor(
-        value: number,
-        point: Point
-    ): (Highcharts.ColorType|undefined) {
+    public toColor(value: number, point: Point): (ColorType|undefined) {
         const axis = this;
         const dataClasses = axis.dataClasses;
         const stops = axis.stops;
@@ -909,7 +909,7 @@ class ColorAxis extends Axis implements AxisLike {
         let pos,
             from,
             to,
-            color: (Highcharts.ColorString|undefined),
+            color: (ColorString|undefined),
             dataClass,
             i;
 
@@ -1567,7 +1567,7 @@ addEvent(LineSeries as any, 'afterTranslate', function (): void {
 namespace ColorAxis {
 
     export interface DataClassesOptions {
-        color?: Highcharts.ColorType;
+        color?: ColorType;
         colorIndex?: number;
         from?: number;
         name?: string;
@@ -1588,7 +1588,7 @@ namespace ColorAxis {
 
     export interface MarkerOptions {
         animation?: (boolean|Partial<Highcharts.AnimationOptionsObject>);
-        color?: Highcharts.ColorType;
+        color?: ColorType;
         width?: number;
     }
 
@@ -1598,10 +1598,10 @@ namespace ColorAxis {
         layout?: string;
         legend?: Highcharts.LegendOptions;
         marker?: MarkerOptions;
-        maxColor?: Highcharts.ColorType;
-        minColor?: Highcharts.ColorType;
+        maxColor?: ColorType;
+        minColor?: ColorType;
         showInLegend?: boolean;
-        stops?: Highcharts.GradientColorObject['stops'];
+        stops?: GradientColor['stops'];
     }
 
 }

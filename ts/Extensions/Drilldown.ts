@@ -12,10 +12,11 @@
 
 'use strict';
 
+import type ColorType from '../Core/Color/ColorType';
 import type { SeriesOptionsType } from '../Core/Series/Types';
 import Axis from '../Core/Axis/Axis.js';
 import Chart from '../Core/Chart/Chart.js';
-import Color from '../Core/Color.js';
+import Color from '../Core/Color/Color.js';
 import H from '../Core/Globals.js';
 const {
     noop

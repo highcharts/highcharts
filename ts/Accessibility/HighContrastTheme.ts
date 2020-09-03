@@ -12,6 +12,8 @@
 
 'use strict';
 
+import type ColorType from '../Core/Color/ColorType';
+
 /**
  * Internal types
  * @private

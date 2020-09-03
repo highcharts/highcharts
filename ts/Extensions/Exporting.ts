@@ -12,6 +12,7 @@
 
 'use strict';
 
+import type ColorString from '../Core/Color/ColorString';
 import type { SeriesOptionsType } from '../Core/Series/Types';
 import type SVGPath from '../Core/Renderer/SVG/SVGPath';
 import Chart from '../Core/Chart/Chart.js';

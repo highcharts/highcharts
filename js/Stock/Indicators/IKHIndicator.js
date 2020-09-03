@@ -6,7 +6,7 @@
  *
  * */
 import BaseSeries from '../../Core/Series/Series.js';
-import Color from '../../Core/Color.js';
+import Color from '../../Core/Color/Color.js';
 var color = Color.parse;
 import H from '../../Core/Globals.js';
 import U from '../../Core/Utilities.js';

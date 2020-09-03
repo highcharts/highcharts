@@ -10,6 +10,7 @@
 
 'use strict';
 
+import type ColorType from '../Color/ColorType';
 import H from '../Globals.js';
 import U from '../Utilities.js';
 const {
@@ -352,7 +353,7 @@ class Point {
      */
     public category: string = void 0 as any;
 
-    public color?: Highcharts.ColorType;
+    public color?: ColorType;
 
     /**
      * The point's current color index, used in styled mode instead of
@@ -402,7 +403,7 @@ class Point {
      */
     public name: string = void 0 as any;
 
-    public nonZonedColor?: Highcharts.ColorType;
+    public nonZonedColor?: ColorType;
 
     /**
      * The point's options as applied in the initial configuration, or

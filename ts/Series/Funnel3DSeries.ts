@@ -13,8 +13,10 @@
  * */
 
 import type Chart from '../Core/Chart/Chart';
+import type ColorType from '../Core/Color/ColorType';
+import type GradientColor from '../Core/Color/GradientColor';
 import type SVGPath from '../Core/Renderer/SVG/SVGPath';
-import Color from '../Core/Color.js';
+import Color from '../Core/Color/Color.js';
 const {
     parse: color
 } = Color;
@@ -655,13 +657,13 @@ funnel3dMethods = merge(RendererProto.elements3d.cuboid, {
 
     fillSetter: function (
         this: Highcharts.SVGElement,
-        fill: Highcharts.ColorType
+        fill: ColorType
     ): Highcharts.SVGElement {
         // extract alpha channel to use the opacitySetter
         var funnel3d = this,
-            fillColor: (Highcharts.Color|Highcharts.ColorType) = color(fill),
+            fillColor: (Color|ColorType) = color(fill),
             alpha: number = (fillColor as any).rgba[3],
-            partsWithColor: Highcharts.Dictionary<Highcharts.ColorType> = {
+            partsWithColor: Highcharts.Dictionary<ColorType> = {
                 // standard color for top and bottom
                 top: color(fill).brighten(0.1).get() as any,
                 bottom: color(fill).brighten(-0.2).get() as any
@@ -701,9 +703,9 @@ funnel3dMethods = merge(RendererProto.elements3d.cuboid, {
             // color in steps, as each gradient will generate a key
             funnel3d.sideGroups.forEach(function (sideGroupName: string): void {
                 var box = funnel3d[sideGroupName].gradientBox,
-                    gradient: Highcharts.LinearGradientColorObject =
+                    gradient: NonNullable<GradientColor['linearGradient']> =
                         (fillColor as any).linearGradient,
-                    alteredGradient = merge<Highcharts.GradientColorObject>(
+                    alteredGradient = merge<GradientColor>(
                         (fillColor as any),
                         {
                             linearGradient: {

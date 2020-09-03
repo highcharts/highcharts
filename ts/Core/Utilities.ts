@@ -12,7 +12,7 @@
 
 import type BaseSeries from './Series/Series';
 import type Chart from './Chart/Chart';
-import type { SeriesOptionsType } from './Series/Types';
+import type ColorString from './Color/ColorString';
 import type SVGPath from './Renderer/SVG/SVGPath';
 import H from './Globals.js';
 type NonArray<T> = T extends Array<unknown> ? never : T;

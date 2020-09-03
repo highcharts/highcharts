@@ -10,6 +10,7 @@
 
 'use strict';
 
+import type ColorType from '../../Color/ColorType';
 import type SVGRenderer from './SVGRenderer';
 import SVGElement from './SVGElement.js';
 import U from '../../Utilities.js';
@@ -224,10 +225,7 @@ class SVGLabel extends SVGElement {
         return void 0;
     }
 
-    public fillSetter(
-        value: Highcharts.ColorType,
-        key: string
-    ): void {
+    public fillSetter(value: ColorType, key: string): void {
         if (value) {
             this.needsBox = true;
         }

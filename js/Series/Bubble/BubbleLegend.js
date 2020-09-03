@@ -11,7 +11,7 @@
  * */
 'use strict';
 import Chart from '../../Core/Chart/Chart.js';
-import Color from '../../Core/Color.js';
+import Color from '../../Core/Color/Color.js';
 var color = Color.parse;
 import H from '../../Core/Globals.js';
 import Legend from '../../Core/Legend.js';

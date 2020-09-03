@@ -12,10 +12,12 @@
 
 import type { AxisComposition, AxisLike } from './Types';
 import type Chart from '../Chart/Chart';
+import type ColorType from '../Color/ColorType';
+import type GradientColor from '../Color/GradientColor';
 import type PlotLineOrBand from './PlotLineOrBand';
 import type Point from '../../Core/Series/Point';
 import type SVGPath from '../Renderer/SVG/SVGPath';
-import Color from '../Color.js';
+import Color from '../Color/Color.js';
 import H from '../Globals.js';
 import Tick from './Tick.js';
 import U from '../Utilities.js';
@@ -297,7 +299,7 @@ declare global {
             maxColor?: ColorType;
             minColor?: ColorType;
             staticScale?: number;
-            stops?: Array<GradientColorStopObject>;
+            stops?: GradientColor['stops'];
             tooltipValueFormat?: string;
         }
         class Axis implements AxisLike {

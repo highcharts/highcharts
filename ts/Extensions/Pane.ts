@@ -10,6 +10,7 @@
 
 'use strict';
 
+import type ColorType from '../Core/Color/ColorType';
 import type RadialAxis from '../Core/Axis/RadialAxis';
 import Chart from '../Core/Chart/Chart.js';
 import H from '../Core/Globals.js';
@@ -42,8 +43,8 @@ declare global {
             pane?: PaneOptions;
         }
         interface PaneBackgroundOptions {
-            backgroundColor?: GradientColorObject;
-            borderColor?: (ColorString|GradientColorObject|PatternObject);
+            backgroundColor?: ColorType;
+            borderColor?: ColorType;
             borderWidth?: number;
             className?: string;
             from?: number;

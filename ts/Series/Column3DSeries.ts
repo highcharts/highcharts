@@ -10,6 +10,7 @@
 
 import type Axis from '../Core/Axis/Axis';
 import type Chart from '../Core/Chart/Chart';
+import type ColorString from '../Core/Color/ColorString';
 import BaseSeries from '../Core/Series/Series.js';
 import H from '../Core/Globals.js';
 import Math3D from '../Extensions/Math3D.js';

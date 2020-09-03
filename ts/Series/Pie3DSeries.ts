@@ -10,6 +10,7 @@
  *
  * */
 
+import type ColorString from '../Core/Color/ColorString';
 import type SVGPath from '../Core/Renderer/SVG/SVGPath';
 import BaseSeries from '../Core/Series/Series.js';
 import H from '../Core/Globals.js';

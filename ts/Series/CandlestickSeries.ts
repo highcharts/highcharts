@@ -8,6 +8,7 @@
  *
  * */
 
+import type ColorType from '../Core/Color/ColorType';
 import type SVGPath from '../Core/Renderer/SVG/SVGPath';
 import BaseSeries from '../Core/Series/Series.js';
 import O from '../Core/Options.js';
@@ -36,13 +37,13 @@ declare global {
             public points: Array<CandlestickPoint>;
         }
         interface CandlestickPointOptions extends OHLCPointOptions {
-            lineColor?: (ColorString|GradientColorObject|PatternObject);
-            upLineColor?: (ColorString|GradientColorObject|PatternObject);
+            lineColor?: ColorType;
+            upLineColor?: ColorType;
         }
         interface CandlestickSeriesOptions extends OHLCSeriesOptions {
-            lineColor?: (ColorString|GradientColorObject|PatternObject);
+            lineColor?: ColorType;
             states?: SeriesStatesOptionsObject<CandlestickSeries>;
-            upLineColor?: (ColorString|GradientColorObject|PatternObject);
+            upLineColor?: ColorType;
         }
         interface SeriesTypesDictionary {
             candlestick: typeof CandlestickSeries;

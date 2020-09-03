@@ -8,10 +8,11 @@
  *
  * */
 
+import type ColorType from '../Core/Color/ColorType';
 import type StackingAxis from '../Core/Axis/StackingAxis';
 import type SVGPath from '../Core/Renderer/SVG/SVGPath';
 import BaseSeries from '../Core/Series/Series.js';
-import Color from '../Core/Color.js';
+import Color from '../Core/Color/Color.js';
 const {
     parse: color
 } = Color;

@@ -10,6 +10,7 @@
 
 'use strict';
 
+import type ColorString from '../Core/Color/ColorString';
 import Axis from '../Core/Axis/Axis.js';
 import Chart from '../Core/Chart/Chart.js';
 import H from '../Core/Globals.js';

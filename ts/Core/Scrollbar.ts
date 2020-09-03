@@ -11,6 +11,7 @@
 'use strict';
 
 import type Chart from './Chart/Chart';
+import type ColorType from './Color/ColorType';
 import type SVGPath from './Renderer/SVG/SVGPath';
 import Axis from './Axis/Axis.js';
 import H from './Globals.js';
@@ -47,17 +48,13 @@ declare global {
             DOMEvent: Event;
         }
         interface ScrollbarOptions {
-            barBackgroundColor?: (
-                ColorString|GradientColorObject|PatternObject
-            );
-            barBorderColor?: (ColorString|GradientColorObject|PatternObject);
+            barBackgroundColor?: ColorType;
+            barBorderColor?: ColorType;
             barBorderRadius?: number;
             barBorderWidth?: number;
-            buttonArrowColor?: (ColorString|GradientColorObject|PatternObject);
-            buttonBackgroundColor?: (
-                ColorString|GradientColorObject|PatternObject
-            );
-            buttonBorderColor?: (ColorString|GradientColorObject|PatternObject);
+            buttonArrowColor?: ColorType;
+            buttonBackgroundColor?: ColorType;
+            buttonBorderColor?: ColorType;
             buttonBorderRadius?: number;
             buttonBorderWidth?: number;
             enabled?: boolean;
@@ -66,14 +63,12 @@ declare global {
             liveRedraw?: boolean;
             margin?: number;
             minWidth?: number;
-            rifleColor?: (ColorString|GradientColorObject|PatternObject);
+            rifleColor?: ColorType;
             showFull?: boolean;
             size?: number;
             step?: number;
-            trackBackgroundColor?: (
-                ColorString|GradientColorObject|PatternObject
-            );
-            trackBorderColor?: (ColorString|GradientColorObject|PatternObject);
+            trackBackgroundColor?: ColorType;
+            trackBorderColor?: ColorType;
             trackBorderRadius?: number;
             trackBorderWidth?: number;
             vertical?: boolean;

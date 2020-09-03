@@ -8,6 +8,8 @@
  *
  * */
 
+import type ColorString from '../Core/Color/ColorString';
+import type ColorType from '../Core/Color/ColorType';
 import type SVGPath from '../Core/Renderer/SVG/SVGPath';
 import BaseSeries from '../Core/Series/Series.js';
 import SVGRenderer from '../Core/Renderer/SVG/SVGRenderer.js';
@@ -206,11 +208,11 @@ BaseSeries.seriesType<typeof Highcharts.DumbbellSeries>('dumbbell', 'arearange',
                 seriesOptions.connectorWidth as any
             ),
             connectorColor = pick<
-            Highcharts.ColorType|undefined,
-            Highcharts.ColorString|undefined,
-            Highcharts.ColorType|undefined,
-            Highcharts.ColorType|undefined,
-            Highcharts.ColorType
+            ColorType|undefined,
+            ColorString|undefined,
+            ColorType|undefined,
+            ColorType|undefined,
+            ColorType
             >(
                 pointOptions.connectorColor,
                 seriesOptions.connectorColor,
@@ -262,11 +264,11 @@ BaseSeries.seriesType<typeof Highcharts.DumbbellSeries>('dumbbell', 'arearange',
             point.y = point.high;
             point.zone = point.zone ? point.getZone() : void 0;
             connectorColor = pick<
-            Highcharts.ColorType|undefined,
-            Highcharts.ColorString|undefined,
-            Highcharts.ColorType|undefined,
-            Highcharts.ColorType|undefined,
-            Highcharts.ColorType
+            ColorType|undefined,
+            ColorString|undefined,
+            ColorType|undefined,
+            ColorType|undefined,
+            ColorType
             >(
                 pointOptions.connectorColor,
                 seriesOptions.connectorColor,

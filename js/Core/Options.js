@@ -9,6 +9,12 @@
  * */
 'use strict';
 import H from './Globals.js';
+var isTouchDevice = H.isTouchDevice, svg = H.svg;
+import Color from './Color/Color.js';
+var color = Color.parse;
+import Time from './Time.js';
+import U from './Utilities.js';
+var merge = U.merge;
 /**
  * @typedef {"plotBox"|"spacingBox"} Highcharts.ButtonRelativeToValue
  */
@@ -175,12 +181,7 @@ import H from './Globals.js';
 * @name Highcharts.ChartSelectionAxisContextObject#min
 * @type {number}
 */
-import Time from './Time.js';
-import Color from './Color.js';
-var color = Color.parse;
-import U from './Utilities.js';
-var merge = U.merge;
-var isTouchDevice = H.isTouchDevice, svg = H.svg;
+''; // detach doclets above
 /* ************************************************************************** *
  * Handle the options                                                         *
  * ************************************************************************** */

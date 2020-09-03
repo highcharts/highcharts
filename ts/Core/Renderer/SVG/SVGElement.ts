@@ -10,8 +10,11 @@
 
 'use strict';
 
+import type ColorString from '../../Color/ColorString';
+import type ColorType from '../../Color/ColorType';
+import type GradientColor from '../../Color/GradientColor';
 import type SVGPath from './SVGPath';
-import Color from '../../Color.js';
+import Color from '../../Color/Color.js';
 import H from '../../Globals.js';
 const {
     deg2rad,
@@ -150,7 +153,7 @@ declare global {
             ): SVGElement;
             public clip(clipRect?: ClipRectElement): SVGElement;
             public complexColor(
-                color: GradientColorObject,
+                color: GradientColor,
                 prop: string,
                 elem: SVGDOMElement
             ): void;
@@ -475,7 +478,7 @@ class SVGElement {
     public scaleY?: number;
     public shadows?: Array<Highcharts.SVGDOMElement>;
     public stops?: Array<SVGElement>;
-    public stroke?: Highcharts.ColorType;
+    public stroke?: ColorType;
     public 'stroke-width'?: number;
     public styledMode?: boolean;
     public styles?: Highcharts.CSSObject;
@@ -890,7 +893,7 @@ class SVGElement {
             tspans: Array<Highcharts.SVGDOMElement>,
             hasContrast = textOutline.indexOf('contrast') !== -1,
             styles = {} as Highcharts.CSSObject,
-            color: Highcharts.ColorString,
+            color: ColorString,
             strokeWidth: string,
             firstRealChild: Highcharts.SVGDOMElement;
 
@@ -1226,18 +1229,18 @@ class SVGElement {
      * SVG element to apply the gradient on.
      */
     public complexColor(
-        colorOptions: (Highcharts.GradientColorObject|Highcharts.PatternObject),
+        colorOptions: Exclude<ColorType, ColorString>,
         prop: string,
         elem: Highcharts.SVGDOMElement
     ): void {
         var renderer = this.renderer,
             colorObject,
-            gradName: keyof Highcharts.GradientColorObject,
+            gradName: keyof GradientColor,
             gradAttr: Highcharts.SVGAttributes,
             radAttr: Highcharts.SVGAttributes,
             gradients: Record<string, SVGElement>,
-            stops: (Array<Highcharts.GradientColorStopObject>|undefined),
-            stopColor: Highcharts.ColorString,
+            stops: (GradientColor['stops']|undefined),
+            stopColor: ColorString,
             stopOpacity,
             radialReference: Array<number>,
             id,
@@ -1248,16 +1251,16 @@ class SVGElement {
             args: arguments
         }, function (): void {
             // Apply linear or radial gradients
-            if ((colorOptions as Highcharts.GradientColorObject).radialGradient) {
+            if ((colorOptions as GradientColor).radialGradient) {
                 gradName = 'radialGradient';
-            } else if ((colorOptions as Highcharts.GradientColorObject).linearGradient) {
+            } else if ((colorOptions as GradientColor).linearGradient) {
                 gradName = 'linearGradient';
             }
 
             if (gradName) {
-                gradAttr = (colorOptions as Highcharts.GradientColorObject)[gradName] as any;
+                gradAttr = (colorOptions as GradientColor)[gradName] as any;
                 gradients = renderer.gradients as any;
-                stops = (colorOptions as Highcharts.GradientColorObject).stops;
+                stops = (colorOptions as GradientColor).stops;
                 radialReference = (elem as any).radialReference;
 
                 // Keep < 2.2 kompatibility
@@ -1318,7 +1321,7 @@ class SVGElement {
                     // destroy them
                     gradientObject.stops = [];
                     (stops as any).forEach(function (
-                        stop: [number, Highcharts.ColorString]
+                        stop: [number, ColorString]
                     ): void {
                         var stopObject;
 
@@ -1731,12 +1734,12 @@ class SVGElement {
     /**
      * @private
      * @function Highcharts.SVGElement#fillSetter
-     * @param {Highcharts.ColorString|Highcharts.GradientColorObject|Highcharts.PatternObject} value
+     * @param {Highcharts.ColorType} value
      * @param {string} key
      * @param {Highcharts.SVGDOMElement} element
      */
     public fillSetter(
-        value: Highcharts.ColorType,
+        value: ColorType,
         key: string,
         element: Highcharts.SVGDOMElement
     ): void {

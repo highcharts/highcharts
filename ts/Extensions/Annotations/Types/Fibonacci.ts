@@ -6,6 +6,7 @@
 
 'use strict';
 
+import type ColorString from '../../../Core/Color/ColorString';
 import type SVGPath from '../../../Core/Renderer/SVG/SVGPath';
 import Annotation from '../Annotations.js';
 import MockPoint from '../MockPoint.js';

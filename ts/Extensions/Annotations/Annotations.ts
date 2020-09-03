@@ -11,6 +11,8 @@
 'use strict';
 
 import type { AxisType } from '../../Core/Axis/Types';
+import type ColorString from '../../Core/Color/ColorString';
+import type ColorType from '../../Core/Color/ColorType';
 import type Point from '../../Core/Series/Point';
 import type SVGPath from '../../Core/Renderer/SVG/SVGPath';
 import Chart from '../../Core/Chart/Chart.js';

@@ -11,7 +11,8 @@
 'use strict';
 
 import type Chart from './Chart/Chart';
-import type Point from '../Core/Series/Point';
+import type ColorType from './Color/ColorType';
+import type Point from './Series/Point';
 import type SVGElement from './Renderer/SVG/SVGElement';
 import H from './Globals.js';
 const {
@@ -133,7 +134,7 @@ declare global {
             ): (false|string|Array<string>);
         }
         interface TooltipFormatterContextObject {
-            color: (ColorString|GradientColorObject|PatternObject);
+            color: ColorType;
             colorIndex?: number;
             key: number;
             percentage?: number;

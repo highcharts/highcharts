@@ -12,8 +12,9 @@
 
 'use strict';
 
+import type ColorType from '../../Color/ColorType';
 import type SVGPath from './SVGPath';
-import Color from '../../Color.js';
+import Color from '../../Color/Color.js';
 const color = Color.parse;
 import H from '../../Globals.js';
 import Math3D from '../../../Extensions/Math3D.js';
@@ -587,7 +588,7 @@ cuboidMethods = merge(element3dMethods, {
     },
     fillSetter: function (
         this: Highcharts.SVGElement,
-        fill: Highcharts.ColorType
+        fill: ColorType
     ): Highcharts.SVGElement {
         var elem3d = this;
         elem3d.forcedSides = elem3d.forcedSides || [];
@@ -1004,7 +1005,7 @@ SVGRenderer.prototype.arc3d = function (
      */
     wrapper.fillSetter = function (
         this: Highcharts.SVGElement,
-        value: Highcharts.ColorType
+        value: ColorType
     ): Highcharts.SVGElement {
         var darker = color(value).brighten(-0.1).get();
 

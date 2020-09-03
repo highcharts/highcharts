@@ -12,6 +12,7 @@
 
 'use strict';
 
+import type ColorType from '../../Core/Color/ColorType';
 import type SVGRenderer3D from '../../Core/Renderer/SVG/SVGRenderer3D';
 import Axis from '../../Core/Axis/Axis.js';
 import U from '../../Core/Utilities.js';
@@ -25,7 +26,7 @@ import VMLAxis3D from './VMLAxis3D.js';
 declare global {
     namespace Highcharts {
         interface VMLElement {
-            color?: (ColorString|GradientColorObject|PatternObject);
+            color?: ColorType;
             front?: VMLElement;
         }
         interface VMLRenderer {

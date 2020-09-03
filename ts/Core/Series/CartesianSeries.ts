@@ -10,6 +10,7 @@
 
 import type { AxisType } from '../Axis/Types';
 import type Chart from '../Chart/Chart';
+import type ColorType from '../Color/ColorType';
 import type { SeriesOptionsType, SeriesPlotOptionsType } from './Types';
 import type SVGPath from '../Renderer/SVG/SVGPath';
 import BaseSeries from './Series.js';
@@ -292,9 +293,9 @@ declare global {
         }
         interface SeriesZonesOptions {
             className?: string;
-            color?: (ColorString|GradientColorObject|PatternObject);
+            color?: ColorType;
             dashStyle?: DashStyleValue;
-            fillColor?: (ColorString|GradientColorObject|PatternObject);
+            fillColor?: ColorType;
             value?: number;
         }
         interface SVGElement {
@@ -5726,12 +5727,7 @@ const CartesianSeries = BaseSeries.seriesType<typeof Highcharts.LineSeries>(
                     (pointOptions && pointOptions.marker) || {}
                 ),
                 pointStateOptions,
-                color: (
-                    Highcharts.ColorString|
-                    Highcharts.GradientColorObject|
-                    Highcharts.PatternObject|
-                    undefined
-                ) = this.color,
+                color: (ColorType|undefined) = this.color,
                 pointColorOption = pointOptions && pointOptions.color,
                 pointColor = point && point.color,
                 strokeWidth = pick(

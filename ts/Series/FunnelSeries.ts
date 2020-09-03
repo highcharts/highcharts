@@ -12,6 +12,7 @@
 
 /* eslint indent: 0 */
 
+import type ColorType from '../Core/Color/ColorType';
 import type Point from '../Core/Series/Point';
 import type SVGPath from '../Core/Renderer/SVG/SVGPath';
 import BaseSeries from '../Core/Series/Series.js';
