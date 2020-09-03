@@ -19,7 +19,8 @@ import U from '../Core/Utilities.js';
 const {
     addEvent,
     extend,
-    getOptions
+    getOptions,
+    merge
 } = U;
 
 /**
@@ -183,9 +184,13 @@ defaultOptions.noData = {
 chartPrototype.showNoData = function (str?: string): void {
     var chart = this,
         options = chart.options,
+        userOptions = chart.userOptions,
         text = str || (options && (options.lang as any).noData),
-        noDataOptions: Highcharts.NoDataOptions =
-            options && (options.noData as any);
+        noDataOptions: Highcharts.NoDataOptions = merge(
+            options && options.noData,
+            userOptions && userOptions.noData
+        );
+
     if (!chart.noDataLabel && chart.renderer) {
         chart.noDataLabel = chart.renderer
             .label(
@@ -213,8 +218,18 @@ chartPrototype.showNoData = function (str?: string): void {
             false,
             'plotBox'
         );
+    } else if (chart.noDataLabel) { // Update label if already exists. #13982
+        chart.noDataLabel.attr(noDataOptions)
+            .css(noDataOptions.style as any);
+
+        chart.noDataLabel.align(
+            extend(chart.noDataLabel.getBBox(), noDataOptions.position as any),
+            false,
+            'plotBox'
+        );
     }
 };
+
 
 /**
  * Hide no-data message.
