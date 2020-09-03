@@ -111,17 +111,7 @@ class DataTable implements DataEventEmitter<DataTable.EventObject>, DataJSON.Cla
                 if (!columnsObject[cellName]) {
                     columnsObject[cellName] = [];
                 }
-                let cellValue;
-
-                if (cell instanceof DataTable) {
-                    cellValue = JSON.stringify(cell.toJSON());
-                } else if (cell instanceof Date) {
-                    cellValue = cell.toJSON();
-                } else {
-                    cellValue = cell;
-                }
-
-                columnsObject[cellName][i] = cellValue;
+                columnsObject[cellName][i] = cell;
             }
         }
 
@@ -385,28 +375,28 @@ class DataTable implements DataEventEmitter<DataTable.EventObject>, DataJSON.Cla
     }
 
     /**
-     * Retrieves the given columns, either by the canonical column ID,
+     * Retrieves the given columns, either by the canonical column name,
      * or by an alias
      *
-     * @param {...string} columnIDOrAlias
-     * IDs or aliases for the columns to get, aliases taking precedence.
+     * @param {...string} columnNamesOrAlias
+     * Names or aliases for the columns to get, aliases taking precedence.
      *
      * @return {Array<Array<DataTableRow.CellType>>}
      * A two-dimensional array of the specified columns
      */
-    public getColumns(...columnIDOrAlias: Array<string>): Array<Array<DataTableRow.CellType>> {
+    public getColumns(...columnNamesOrAlias: Array<string>): Array<Array<DataTableRow.CellType>> {
         const columns = this.toColumns(),
             { aliasMap } = this;
 
-        const columnIDs = Object.keys(columns),
+        const columnNames = Object.keys(columns),
             columnArray = [];
 
-        for (let i = 0, idCount = columnIDOrAlias.length; i < idCount; i++) {
-            const id = columnIDOrAlias[i],
-                foundID = columnIDs[columnIDs.indexOf(aliasMap[id] || id)];
+        for (let i = 0, parameterCount = columnNamesOrAlias.length; i < parameterCount; i++) {
+            const parameter = columnNamesOrAlias[i],
+                foundName = columnNames[columnNames.indexOf(aliasMap[parameter] || parameter)];
 
-            if (foundID) {
-                columnArray.push(columns[foundID]);
+            if (foundName) {
+                columnArray.push(columns[foundName]);
             }
         }
 
@@ -416,7 +406,8 @@ class DataTable implements DataEventEmitter<DataTable.EventObject>, DataJSON.Cla
     /**
      * Create an alias for a column
      * @param {string} columnName
-     * The name/id for the column to create an alias for
+     * The name for the column to create an alias for
+     *
      * @param {string} alias
      * The alias for the column. Cannot be `id`, or an alias already in use
      *

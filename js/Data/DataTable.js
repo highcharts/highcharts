@@ -118,17 +118,7 @@ var DataTable = /** @class */ (function () {
                 if (!columnsObject[cellName]) {
                     columnsObject[cellName] = [];
                 }
-                var cellValue = void 0;
-                if (cell instanceof DataTable) {
-                    cellValue = JSON.stringify(cell.toJSON());
-                }
-                else if (cell instanceof Date) {
-                    cellValue = cell.toJSON();
-                }
-                else {
-                    cellValue = cell;
-                }
-                columnsObject[cellName][i] = cellValue;
+                columnsObject[cellName][i] = cell;
             }
         }
         return columnsObject;
@@ -277,26 +267,26 @@ var DataTable = /** @class */ (function () {
         return DataTable.toColumns(this);
     };
     /**
-     * Retrieves the given columns, either by the canonical column ID,
+     * Retrieves the given columns, either by the canonical column name,
      * or by an alias
      *
-     * @param {...string} columnIDOrAlias
-     * IDs or aliases for the columns to get, aliases taking precedence.
+     * @param {...string} columnNamesOrAlias
+     * Names or aliases for the columns to get, aliases taking precedence.
      *
      * @return {Array<Array<DataTableRow.CellType>>}
      * A two-dimensional array of the specified columns
      */
     DataTable.prototype.getColumns = function () {
-        var columnIDOrAlias = [];
+        var columnNamesOrAlias = [];
         for (var _i = 0; _i < arguments.length; _i++) {
-            columnIDOrAlias[_i] = arguments[_i];
+            columnNamesOrAlias[_i] = arguments[_i];
         }
         var columns = this.toColumns(), aliasMap = this.aliasMap;
-        var columnIDs = Object.keys(columns), columnArray = [];
-        for (var i = 0, idCount = columnIDOrAlias.length; i < idCount; i++) {
-            var id = columnIDOrAlias[i], foundID = columnIDs[columnIDs.indexOf(aliasMap[id] || id)];
-            if (foundID) {
-                columnArray.push(columns[foundID]);
+        var columnNames = Object.keys(columns), columnArray = [];
+        for (var i = 0, parameterCount = columnNamesOrAlias.length; i < parameterCount; i++) {
+            var parameter = columnNamesOrAlias[i], foundName = columnNames[columnNames.indexOf(aliasMap[parameter] || parameter)];
+            if (foundName) {
+                columnArray.push(columns[foundName]);
             }
         }
         return columnArray;
@@ -304,7 +294,8 @@ var DataTable = /** @class */ (function () {
     /**
      * Create an alias for a column
      * @param {string} columnName
-     * The name/id for the column to create an alias for
+     * The name for the column to create an alias for
+     *
      * @param {string} alias
      * The alias for the column. Cannot be `id`, or an alias already in use
      *
