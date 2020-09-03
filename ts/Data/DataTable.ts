@@ -93,11 +93,16 @@ class DataTable implements DataEventEmitter<DataTable.EventObject>, DataJSON.Cla
      * and value an array of cell values
      */
     public static toColumns(dataTable: DataTable): DataTable.ColumnCollection {
-        const columnsObject: DataTable.ColumnCollection = {};
+        const columnsObject: DataTable.ColumnCollection = {
+            id: []
+        };
+
         for (let i = 0, rowCount = dataTable.getRowCount(); i < rowCount; i++) {
             const row = dataTable.rows[i],
                 cellNames = row.getCellNames(),
                 cellCount = cellNames.length;
+
+            columnsObject.id.push(row.id); // Push the ID column
 
             for (let j = 0; j < cellCount; j++) {
                 const cellName = cellNames[j],
@@ -106,12 +111,12 @@ class DataTable implements DataEventEmitter<DataTable.EventObject>, DataJSON.Cla
                 if (!columnsObject[cellName]) {
                     columnsObject[cellName] = [];
                 }
-                let cellValue: DataJSON.Types;
+                let cellValue;
 
                 if (cell instanceof DataTable) {
-                    cellValue = cell.toJSON();
+                    cellValue = JSON.stringify(cell.toJSON());
                 } else if (cell instanceof Date) {
-                    cellValue = row.getCellAsNumber(cellName);
+                    cellValue = cell.toJSON();
                 } else {
                     cellValue = cell;
                 }
@@ -122,6 +127,7 @@ class DataTable implements DataEventEmitter<DataTable.EventObject>, DataJSON.Cla
 
         return columnsObject;
     }
+
     /**
      * Converts a supported class JSON to a DataTable instance.
      *
@@ -175,6 +181,7 @@ class DataTable implements DataEventEmitter<DataTable.EventObject>, DataJSON.Cla
         this.rows = rows;
         this.rowsIdMap = rowsIdMap;
         this.watchsIdMap = {};
+        this.aliasMap = {};
 
         for (let i = 0, iEnd = rows.length; i < iEnd; ++i) {
             row = rows[i];
@@ -200,6 +207,12 @@ class DataTable implements DataEventEmitter<DataTable.EventObject>, DataJSON.Cla
      * outer table.
      */
     public id: string;
+
+    /**
+     * A map of aliases for column names
+     * [Alias]: columnName
+     */
+    public readonly aliasMap: Record<string, string>;
 
     /**
      * Array of all rows in the table.
@@ -369,6 +382,70 @@ class DataTable implements DataEventEmitter<DataTable.EventObject>, DataJSON.Cla
      */
     public toColumns(): DataTable.ColumnCollection {
         return DataTable.toColumns(this);
+    }
+
+    /**
+     * Retrieves the given columns, either by the canonical column ID,
+     * or by an alias
+     *
+     * @param {...string} columnIDOrAlias
+     * IDs or aliases for the columns to get, aliases taking precedence.
+     *
+     * @return {Array<Array<DataTableRow.CellType>>}
+     * A two-dimensional array of the specified columns
+     */
+    public getColumns(...columnIDOrAlias: Array<string>): Array<Array<DataTableRow.CellType>> {
+        const columns = this.toColumns(),
+            { aliasMap } = this;
+
+        const columnIDs = Object.keys(columns),
+            columnArray = [];
+
+        for (let i = 0, idCount = columnIDOrAlias.length; i < idCount; i++) {
+            const id = columnIDOrAlias[i],
+                foundID = columnIDs[columnIDs.indexOf(aliasMap[id] || id)];
+
+            if (foundID) {
+                columnArray.push(columns[foundID]);
+            }
+        }
+
+        return columnArray;
+    }
+
+    /**
+     * Create an alias for a column
+     * @param {string} columnName
+     * The name/id for the column to create an alias for
+     * @param {string} alias
+     * The alias for the column. Cannot be `id`, or an alias already in use
+     *
+     * @return {boolean}
+     * True if successfully added, false if already in used or reserved.
+     */
+    public createColumnAlias(columnName: string, alias: string): boolean {
+        if (alias === 'id' || this.aliasMap[alias]) {
+            return false;
+        }
+        this.aliasMap[alias] = columnName;
+        return true;
+    }
+
+    /**
+     * Removes a column alias from the table
+     *
+     * @param {string} alias
+     * The alias to remove
+     *
+     * @return {boolean}
+     * True if successfully removed, false if the alias was not found
+     */
+    public removeColumnAlias(alias: string): boolean {
+        if (this.aliasMap[alias]) {
+            delete this.aliasMap[alias];
+            return true;
+        }
+        return false;
     }
 
     public insertColumn(
@@ -588,7 +665,7 @@ namespace DataTable {
      * and the value is an array of column values
      */
     export interface ColumnCollection {
-        [className: string]: Array<DataJSON.Types>;
+        [className: string]: Array<DataTableRow.CellType>;
     }
 
     /**

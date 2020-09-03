@@ -48,6 +48,7 @@ var DataTable = /** @class */ (function () {
         this.rows = rows;
         this.rowsIdMap = rowsIdMap;
         this.watchsIdMap = {};
+        this.aliasMap = {};
         for (var i = 0, iEnd = rows.length; i < iEnd; ++i) {
             row = rows[i];
             row.converter = converter;
@@ -106,9 +107,12 @@ var DataTable = /** @class */ (function () {
      * and value an array of cell values
      */
     DataTable.toColumns = function (dataTable) {
-        var columnsObject = {};
+        var columnsObject = {
+            id: []
+        };
         for (var i = 0, rowCount = dataTable.getRowCount(); i < rowCount; i++) {
             var row = dataTable.rows[i], cellNames = row.getCellNames(), cellCount = cellNames.length;
+            columnsObject.id.push(row.id); // Push the ID column
             for (var j = 0; j < cellCount; j++) {
                 var cellName = cellNames[j], cell = row.getCell(cellName);
                 if (!columnsObject[cellName]) {
@@ -116,10 +120,10 @@ var DataTable = /** @class */ (function () {
                 }
                 var cellValue = void 0;
                 if (cell instanceof DataTable) {
-                    cellValue = cell.toJSON();
+                    cellValue = JSON.stringify(cell.toJSON());
                 }
                 else if (cell instanceof Date) {
-                    cellValue = row.getCellAsNumber(cellName);
+                    cellValue = cell.toJSON();
                 }
                 else {
                     cellValue = cell;
@@ -271,6 +275,64 @@ var DataTable = /** @class */ (function () {
      */
     DataTable.prototype.toColumns = function () {
         return DataTable.toColumns(this);
+    };
+    /**
+     * Retrieves the given columns, either by the canonical column ID,
+     * or by an alias
+     *
+     * @param {...string} columnIDOrAlias
+     * IDs or aliases for the columns to get, aliases taking precedence.
+     *
+     * @return {Array<Array<DataTableRow.CellType>>}
+     * A two-dimensional array of the specified columns
+     */
+    DataTable.prototype.getColumns = function () {
+        var columnIDOrAlias = [];
+        for (var _i = 0; _i < arguments.length; _i++) {
+            columnIDOrAlias[_i] = arguments[_i];
+        }
+        var columns = this.toColumns(), aliasMap = this.aliasMap;
+        var columnIDs = Object.keys(columns), columnArray = [];
+        for (var i = 0, idCount = columnIDOrAlias.length; i < idCount; i++) {
+            var id = columnIDOrAlias[i], foundID = columnIDs[columnIDs.indexOf(aliasMap[id] || id)];
+            if (foundID) {
+                columnArray.push(columns[foundID]);
+            }
+        }
+        return columnArray;
+    };
+    /**
+     * Create an alias for a column
+     * @param {string} columnName
+     * The name/id for the column to create an alias for
+     * @param {string} alias
+     * The alias for the column. Cannot be `id`, or an alias already in use
+     *
+     * @return {boolean}
+     * True if successfully added, false if already in used or reserved.
+     */
+    DataTable.prototype.createColumnAlias = function (columnName, alias) {
+        if (alias === 'id' || this.aliasMap[alias]) {
+            return false;
+        }
+        this.aliasMap[alias] = columnName;
+        return true;
+    };
+    /**
+     * Removes a column alias from the table
+     *
+     * @param {string} alias
+     * The alias to remove
+     *
+     * @return {boolean}
+     * True if successfully removed, false if the alias was not found
+     */
+    DataTable.prototype.removeColumnAlias = function (alias) {
+        if (this.aliasMap[alias]) {
+            delete this.aliasMap[alias];
+            return true;
+        }
+        return false;
     };
     DataTable.prototype.insertColumn = function (column, cells, eventDetail) {
         var _a;

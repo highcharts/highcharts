@@ -291,7 +291,7 @@ QUnit.test('DataTable.toColumns', function(assert){
 
     assert.deepEqual(
         Object.keys(columns),
-        ['column1', 'column2', 'column3'],
+        ['id', 'column1', 'column2', 'column3'],
         'Result has correct column names'
     );
 
@@ -305,3 +305,63 @@ QUnit.test('DataTable.toColumns', function(assert){
     });
 
 });
+
+QUnit.test('getColumns', function(assert){
+    const table = new DataTable();
+
+    table.aliasMap = {
+        'x' : 'population',
+        'y' : 'gdp',
+        'z' : 'id',
+        'f' : 'population'
+    }
+
+    table.insertRow(DataTableRow.fromJSON({
+        $class: 'DataTableRow',
+        id: 'Norway',
+        population: 41251,
+        gdp: 150
+    }))
+
+    table.insertRow(DataTableRow.fromJSON({
+        $class: 'DataTableRow',
+        id: 'Sweden',
+        population: 21251,
+        gdp: 950
+    }))
+
+    table.insertRow(DataTableRow.fromJSON({
+        $class: 'DataTableRow',
+        id: 'Finland',
+        population: (new DataTable()).toJSON(),
+        gdp: 950,
+        nonexistant: 1
+    }));
+
+    table.createColumnAlias('nonexistant', 'beta')
+    assert.strictEqual(
+        table.createColumnAlias('a', 'beta'),
+        false,
+        'Returns false when attempting to add an existing alias'
+    );
+
+    assert.deepEqual(
+        table.getColumns('x'),
+        [table.toColumns()['population']],
+        'Alias retrieves correct columns'
+    );
+
+    table.createColumnAlias('gdp', 'population')
+    assert.deepEqual(
+        table.getColumns('population'),
+        [table.toColumns()['gdp']],
+        'Column alias is prioritized'
+    );
+
+    table.removeColumnAlias('population');
+    assert.deepEqual(
+        table.getColumns('population'),
+        [table.toColumns()['population']],
+        'After alias is removed, getColumns gets by canonical name'
+    );
+})
