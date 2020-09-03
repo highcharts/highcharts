@@ -14,6 +14,7 @@
 
 'use strict';
 
+import type ColorType from '../Core/Color/ColorType';
 import H from '../Core/Globals.js';
 const {
     hasTouch

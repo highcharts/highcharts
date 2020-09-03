@@ -6,12 +6,12 @@
  *
  * */
 
+import type ColorType from '../../Core/Color/ColorType';
 import type Point from '../../Core/Series/Point';
 import BaseSeries from '../../Core/Series/Series.js';
 const {
     seriesTypes
 } = BaseSeries;
-import H from '../../Core/Globals.js';
 import U from '../../Core/Utilities.js';
 const {
     correctFloat,
@@ -324,7 +324,7 @@ BaseSeries.seriesType<typeof Highcharts.SupertrendIndicator>(
                 prevPrevMainPoint: Highcharts.SupertrendLinkedParentPointObject,
 
                 // Used when particular point color is set
-                pointColor: Highcharts.ColorType,
+                pointColor: ColorType,
 
                 // Temporary points that fill groupedPoitns array
                 newPoint: Highcharts.SupertrendIndicatorPoint,

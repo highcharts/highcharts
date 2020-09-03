@@ -10,6 +10,8 @@
 
 'use strict';
 
+import type ColorString from '../Color/ColorString';
+import type ColorType from '../Color/ColorType';
 import type SVGPath from '../Renderer/SVG/SVGPath';
 import Axis from './Axis.js';
 import H from '../Globals.js';
@@ -61,7 +63,7 @@ declare global {
             borderColor?: ColorString;
             borderWidth?: number;
             className?: string;
-            color?: (ColorString|GradientColorObject|PatternObject);
+            color?: ColorType;
             events?: any;
             from?: number;
             id?: string;

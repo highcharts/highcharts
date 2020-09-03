@@ -10,8 +10,7 @@
  *
  * */
 
-'use strict';
-
+import type ColorString from '../Core/Color/ColorString';
 import H from '../Core/Globals.js';
 import O from '../Core/Options.js';
 const { dateFormat } = O;

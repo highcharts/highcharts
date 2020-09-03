@@ -8,7 +8,7 @@
  *
  * */
 'use strict';
-import Color from '../../Color.js';
+import Color from '../../Color/Color.js';
 import H from '../../Globals.js';
 var deg2rad = H.deg2rad, doc = H.doc, hasTouch = H.hasTouch, isFirefox = H.isFirefox, noop = H.noop, svg = H.svg, SVG_NS = H.SVG_NS, win = H.win;
 import U from '../../Utilities.js';
@@ -1160,7 +1160,7 @@ var SVGElement = /** @class */ (function () {
     /**
      * @private
      * @function Highcharts.SVGElement#fillSetter
-     * @param {Highcharts.ColorString|Highcharts.GradientColorObject|Highcharts.PatternObject} value
+     * @param {Highcharts.ColorType} value
      * @param {string} key
      * @param {Highcharts.SVGDOMElement} element
      */

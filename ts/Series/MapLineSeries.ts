@@ -8,6 +8,7 @@
  *
  * */
 
+import type ColorType from '../Core/Color/ColorType';
 import BaseSeries from '../Core/Series/Series.js';
 
 /**

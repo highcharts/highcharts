@@ -10,6 +10,7 @@
 
 'use strict';
 
+import type ColorType from './Color/ColorType';
 import type { SeriesOptionsType } from './Series/Types';
 import type SVGPath from './Renderer/SVG/SVGPath';
 import Axis from './Axis/Axis.js';
@@ -18,7 +19,7 @@ const {
     seriesTypes
 } = BaseSeries;
 import Chart from './Chart/Chart.js';
-import Color from './Color.js';
+import Color from './Color/Color.js';
 const {
     parse: color
 } = Color;
@@ -62,8 +63,8 @@ declare global {
             scroller?: Navigator;
         }
         interface NavigatorHandlesOptions {
-            backgroundColor?: (ColorString|GradientColorObject|PatternObject);
-            borderColor?: (ColorString|GradientColorObject|PatternObject);
+            backgroundColor?: ColorType;
+            borderColor?: ColorType;
             enabled?: boolean;
             height?: number;
             lineWidth?: number;
@@ -78,10 +79,10 @@ declare global {
             height?: number;
             isInternal?: boolean;
             margin?: number;
-            maskFill?: (ColorString|GradientColorObject|PatternObject);
+            maskFill?: ColorType;
             maskInside?: boolean;
             opposite?: boolean;
-            outlineColor?: (ColorString|GradientColorObject|PatternObject);
+            outlineColor?: ColorType;
             outlineWidth?: number;
             series?: SeriesOptionsType;
             top?: number;

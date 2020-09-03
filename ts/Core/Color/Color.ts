@@ -8,67 +8,15 @@
  *
  * */
 
-'use strict';
-
-import H from './Globals.js';
-
-/**
- * Internal types
- * @private
- */
-declare global {
-    namespace Highcharts {
-        type ColorNone = [];
-        type ColorRGBA = [number, number, number, number];
-        type ColorString = string;
-        type ColorType = (ColorString|GradientColorObject|PatternObject);
-        interface ColorParser {
-            regex: RegExp;
-            parse: (
-                result: RegExpExecArray
-            ) => ColorRGBA;
-        }
-        interface GradientColorObject {
-            linearGradient?: LinearGradientColorObject;
-            radialGradient?: RadialGradientColorObject;
-            stops: Array<GradientColorStopObject>;
-        }
-        interface GradientColorStopObject {
-            0: number;
-            1: ColorString;
-            color?: Highcharts.Color;
-        }
-        interface LinearGradientColorObject {
-            x1: number;
-            x2: number;
-            y1: number;
-            y2: number;
-        }
-        interface RadialGradientColorObject {
-            cx: number;
-            cy: number;
-            r: number;
-        }
-        class Color {
-            public static names: Record<string, ColorString>;
-            public static parse(input: (ColorType|undefined)): Color;
-            public constructor(
-                input: (ColorString|GradientColorObject|PatternObject|undefined)
-            );
-            public input?: ColorType;
-            public parsers: Array<ColorParser>;
-            public rgba: (ColorNone|ColorRGBA);
-            public stops?: Array<Color>;
-            public brighten(alpha: number): Color;
-            public get(format?: ('a'|'rgb'|'rgba')): Color['input'];
-            public setOpacity(alpha: number): Color;
-            public tweenTo(to: Color, alpha: number): ColorString;
-        }
-        function color(
-            input: (ColorString|GradientColorObject|PatternObject|undefined)
-        ): Color;
-    }
-}
+import type ColorString from './ColorString';
+import type { ColorLike, ColorType } from './ColorType';
+import H from '../Globals.js';
+import U from '../Utilities.js';
+const {
+    isNumber,
+    merge,
+    pInt
+} = U;
 
 /**
  * A valid color to be parsed and handled by Highcharts. Highcharts internally
@@ -179,12 +127,13 @@ declare global {
  * @type {number}
  */
 
-import U from './Utilities.js';
-const {
-    isNumber,
-    merge,
-    pInt
-} = U;
+''; // detach doclets above
+
+/* *
+ *
+ *  Class
+ *
+ * */
 
 /* eslint-disable no-invalid-this, valid-jsdoc */
 
@@ -197,7 +146,7 @@ const {
  * @param {Highcharts.ColorType} input
  * The input color in either rbga or hex format
  */
-class Color {
+class Color implements ColorLike {
 
     /* *
      *
@@ -207,7 +156,7 @@ class Color {
 
     // Collection of named colors. Can be extended from the outside by adding
     // colors to Highcharts.Color.names.
-    public static names: Record<string, Highcharts.ColorString> = {
+    public static names: Record<string, ColorString> = {
         white: '#ffffff',
         black: '#000000'
     };
@@ -229,7 +178,7 @@ class Color {
      * @return {Highcharts.Color}
      * Color instance.
      */
-    public static parse(input: (Highcharts.ColorType|undefined)): Highcharts.Color {
+    public static parse(input: (ColorType|undefined)): Color {
         return new Color(input);
     }
 
@@ -240,12 +189,19 @@ class Color {
      * */
 
     public constructor(
-        input: (Highcharts.ColorString|Highcharts.GradientColorObject|Highcharts.PatternObject|undefined)
+        input: (ColorType|undefined)
     ) {
+
+        // Backwards compatibility, allow class overwrite
+        if (H.Color !== Color) {
+            return new H.Color(input);
+        }
+
         // Backwards compatibility, allow instanciation without new (#13053)
         if (!(this instanceof Color)) {
             return new Color(input);
         }
+
         this.init(input);
     }
 
@@ -255,7 +211,7 @@ class Color {
      *
      * */
 
-    public input: (Highcharts.ColorString|Highcharts.GradientColorObject|Highcharts.PatternObject|undefined)
+    public input: (ColorType|undefined)
 
     // Collection of parsers. This can be extended from the outside by pushing
     // parsers to Highcharts.Color.prototype.parsers.
@@ -263,7 +219,7 @@ class Color {
         // RGBA color
         // eslint-disable-next-line max-len
         regex: /rgba\(\s*([0-9]{1,3})\s*,\s*([0-9]{1,3})\s*,\s*([0-9]{1,3})\s*,\s*([0-9]?(?:\.[0-9]+)?)\s*\)/,
-        parse: function (result: RegExpExecArray): Highcharts.ColorRGBA {
+        parse: function (result: RegExpExecArray): Color.RGBA {
             return [
                 pInt(result[1]),
                 pInt(result[2]),
@@ -275,12 +231,12 @@ class Color {
         // RGB color
         regex:
             /rgb\(\s*([0-9]{1,3})\s*,\s*([0-9]{1,3})\s*,\s*([0-9]{1,3})\s*\)/,
-        parse: function (result: RegExpExecArray): Highcharts.ColorRGBA {
+        parse: function (result: RegExpExecArray): Color.RGBA {
             return [pInt(result[1]), pInt(result[2]), pInt(result[3]), 1];
         }
     }];
 
-    public rgba: (Highcharts.ColorNone|Highcharts.ColorRGBA) = [];
+    public rgba: (Color.None|Color.RGBA) = [];
     public stops?: Array<Color>;
 
     /* *
@@ -301,12 +257,12 @@ class Color {
      * @return {void}
      */
     private init(
-        input: (Highcharts.ColorString|Highcharts.GradientColorObject|Highcharts.PatternObject|undefined)
+        input: (ColorType|undefined)
     ): void {
         var result: (RegExpExecArray|null),
             rgba: any,
             i: number,
-            parser: Highcharts.ColorParser,
+            parser: Color.Parser,
             len: number;
 
         this.input = input = Color.names[
@@ -318,8 +274,8 @@ class Color {
         // Gradients
         if (input && (input as any).stops) {
             this.stops = (input as any).stops.map(function (
-                stop: [number, Highcharts.ColorString]
-            ): Highcharts.Color {
+                stop: [number, ColorString]
+            ): Color {
                 return new Color(stop[1]);
             });
 
@@ -370,7 +326,7 @@ class Color {
                 i = this.parsers.length;
                 while (i-- && !rgba) {
                     parser = this.parsers[i];
-                    result = parser.regex.exec(input as Highcharts.ColorString);
+                    result = parser.regex.exec(input as ColorString);
                     if (result) {
                         rgba = parser.parse(result);
                     }
@@ -394,7 +350,7 @@ class Color {
     public get(format?: ('a'|'rgb'|'rgba')): Color['input'] {
         var input = this.input,
             rgba = this.rgba,
-            ret: Highcharts.Color['input'];
+            ret: Color['input'];
 
         if (typeof this.stops !== 'undefined') {
             ret = merge(input as any);
@@ -487,13 +443,13 @@ class Color {
      * @return {Highcharts.ColorString}
      *         The intermediate color in rgba notation.
      */
-    public tweenTo(to: Color, pos: number): Highcharts.ColorString {
+    public tweenTo(to: Color, pos: number): ColorString {
         // Check for has alpha, because rgba colors perform worse due to lack of
         // support in WebKit.
         var fromRgba = this.rgba,
             toRgba = to.rgba,
             hasAlpha,
-            ret: Highcharts.ColorString;
+            ret: ColorString;
 
         // Unsupported color, return to-color (#3920, #7034)
         if (!toRgba.length || !fromRgba || !fromRgba.length) {
@@ -522,6 +478,59 @@ class Color {
     }
 }
 
+/* *
+ *
+ *  Namespace
+ *
+ * */
+
+namespace Color {
+
+    export type None = [];
+
+    export interface Parser {
+        regex: RegExp;
+        parse: (
+            result: RegExpExecArray
+        ) => RGBA;
+    }
+
+    export type RGBA = [number, number, number, number];
+
+}
+
+/* *
+ *
+ *  Backwards Compatibility
+ *
+ * */
+
+type ColorClass = typeof Color; // reference workaround
+
+/**
+ * Internal types
+ * @private
+ */
+declare global {
+    namespace Highcharts {
+
+        /**
+         * Highcharts.Color class
+         * @deprecated
+         */
+        let Color: ColorClass;
+
+        /**
+         * Highcharts.color factory
+         * @deprecated
+         */
+        function color(
+            input: (ColorType|undefined)
+        ): Color;
+
+    }
+}
+
 H.Color = Color;
 
 /**
@@ -537,4 +546,10 @@ H.Color = Color;
  */
 H.color = Color.parse;
 
-export default H.Color;
+/* *
+ *
+ *  Export
+ *
+ * */
+
+export default Color;

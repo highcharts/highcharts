@@ -11,11 +11,13 @@
  * */
 
 import type Chart from '../Core/Chart/Chart';
+import type ColorString from '../Core/Color/ColorString';
+import type ColorType from '../Core/Color/ColorType';
 import BaseSeries from '../Core/Series/Series.js';
 const {
     seriesTypes
 } = BaseSeries;
-import Color from '../Core/Color.js';
+import Color from '../Core/Color/Color.js';
 const {
     parse: color
 } = Color;
@@ -1268,7 +1270,7 @@ BaseSeries.seriesType<typeof Highcharts.TreemapSeries>(
         setColorRecursive: function (
             this: Highcharts.TreemapSeries,
             node: Highcharts.TreemapNodeObject,
-            parentColor?: Highcharts.ColorString,
+            parentColor?: ColorString,
             colorIndex?: number,
             index?: number,
             siblings?: unknown

@@ -16,7 +16,27 @@
 'use strict';
 
 import Chart from '../Core/Chart/Chart.js';
+import Color from '../Core/Color/Color.js';
+const {
+    parse: color
+} = Color;
 import H from '../Core/Globals.js';
+const {
+    doc,
+    noop
+} = H;
+import LineSeries from '../Series/LineSeries.js';
+import Series from '../Core/Series/Series.js';
+import U from '../Core/Utilities.js';
+const {
+    addEvent,
+    extend,
+    fireEvent,
+    isNumber,
+    merge,
+    pick,
+    wrap
+} = U;
 
 /**
  * Internal types
@@ -75,27 +95,10 @@ declare global {
     }
 }
 
-import Color from '../Core/Color.js';
-const color = Color.parse;
-import U from '../Core/Utilities.js';
-const {
-    addEvent,
-    extend,
-    fireEvent,
-    isNumber,
-    merge,
-    pick,
-    wrap
-} = U;
 
-import '../Series/LineSeries.js';
 import '../Core/Options.js';
 
-var win = H.win,
-    doc = win.document,
-    noop = function (): void {},
-    Series = H.Series,
-    seriesTypes = H.seriesTypes,
+var seriesTypes = Series.seriesTypes,
     CHUNK_SIZE = 50000,
     destroyLoadingDiv: number;
 
@@ -177,7 +180,7 @@ const initCanvasBoost = function (): void {
     }
 
 
-    extend(Series.prototype, {
+    extend(LineSeries.prototype, {
 
         /**
          * Create a hidden canvas to draw the graph on. The contents is later

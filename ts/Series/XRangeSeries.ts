@@ -10,10 +10,11 @@
  *
  * */
 
+import type ColorType from '../Core/Color/ColorString';
 import Axis from '../Core/Axis/Axis.js';
 import BaseSeries from '../Core/Series/Series.js';
 import H from '../Core/Globals.js';
-import Color from '../Core/Color.js';
+import Color from '../Core/Color/Color.js';
 const {
     parse: color
 } = Color;

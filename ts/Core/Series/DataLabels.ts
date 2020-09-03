@@ -10,6 +10,8 @@
 
 'use strict';
 
+import type ColorString from '../Color/ColorString';
+import type ColorType from '../Color/ColorType';
 import type Point from './Point';
 import type SVGElement from '../Renderer/SVG/SVGElement';
 import H from '../Globals.js';
@@ -69,12 +71,12 @@ declare global {
             animation?: (boolean|Partial<AnimationOptionsObject>);
             align?: AlignValue;
             allowOverlap?: boolean;
-            backgroundColor?: (ColorString|GradientColorObject|PatternObject);
-            borderColor?: (ColorString|GradientColorObject|PatternObject);
+            backgroundColor?: ColorType;
+            borderColor?: ColorType;
             borderRadius?: number;
             borderWidth?: number;
             className?: string;
-            color?: (ColorString|GradientColorObject|PatternObject);
+            color?: ColorType;
             crop?: boolean;
             defer?: boolean;
             enabled?: boolean;

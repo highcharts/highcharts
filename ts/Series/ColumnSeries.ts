@@ -8,8 +8,9 @@
  *
  * */
 
+import type ColorType from '../Core/Color/ColorType';
 import BaseSeries from '../Core/Series/Series.js';
-import Color from '../Core/Color.js';
+import Color from '../Core/Color/Color.js';
 const {
     parse: color
 } = Color;
@@ -77,15 +78,15 @@ declare global {
             centerInCategory?: boolean;
         }
         interface SeriesStatesHoverOptionsObject {
-            borderColor?: (ColorString|GradientColorObject|PatternObject);
+            borderColor?: ColorType;
             brightness?: number;
-            color?: (ColorString|GradientColorObject|PatternObject);
+            color?: ColorType;
             dashStyle?: DashStyleValue;
         }
         interface SeriesZonesOptions {
-            borderColor?: (ColorString|GradientColorObject|PatternObject);
+            borderColor?: ColorType;
             borderWidth?: number;
-            color?: (ColorString|GradientColorObject|PatternObject);
+            color?: ColorType;
         }
         class ColumnPoint extends LinePoint {
             public allowShadow?: boolean;

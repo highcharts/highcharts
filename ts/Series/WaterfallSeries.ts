@@ -10,6 +10,7 @@
 
 'use strict';
 
+import type ColorType from '../Core/Color/ColorType';
 import type SVGElement from '../Core/Renderer/SVG/SVGElement';
 import type SVGPath from '../Core/Renderer/SVG/SVGPath';
 import Axis from '../Core/Axis/Axis.js';
@@ -97,7 +98,7 @@ declare global {
             y?: any;
         }
         interface WaterfallSeriesOptions extends ColumnSeriesOptions {
-            upColor?: (ColorString|GradientColorObject|PatternObject);
+            upColor?: ColorType;
             states?: SeriesStatesOptionsObject<WaterfallSeries>;
         }
     }

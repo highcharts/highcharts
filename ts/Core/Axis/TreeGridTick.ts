@@ -11,6 +11,7 @@
 
 'use strict';
 
+import type ColorType from '../Color/ColorType';
 import type Tick from './Tick';
 import type TreeGridAxis from './TreeGridAxis';
 import U from '../Utilities.js';
@@ -47,7 +48,7 @@ namespace TreeGridTick {
 
     export interface LabelIconOptionsObject {
         collapsed?: boolean;
-        color: Highcharts.ColorType;
+        color: ColorType;
         group?: Highcharts.SVGElement;
         options: Highcharts.SVGAttributes;
         renderer: Highcharts.Renderer;

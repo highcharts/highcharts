@@ -12,10 +12,12 @@
 
 'use strict';
 
+import type ColorString from '../../Core/Color/ColorString';
+import type ColorType from '../../Core/Color/ColorType';
+import type GradientColor from '../../Core/Color/GradientColor';
 import type SVGPath from '../../Core/Renderer/SVG/SVGPath';
-import Axis from '../../Core/Axis/Axis.js';
 import Chart from '../../Core/Chart/Chart.js';
-import Color from '../../Core/Color.js';
+import Color from '../../Core/Color/Color.js';
 const color = Color.parse;
 import H from '../../Core/Globals.js';
 const {
@@ -260,7 +262,7 @@ declare global {
                 width: number,
                 height: number
             ): VMLClipRectObject;
-            public color<T extends (ColorString|GradientColorObject)>(
+            public color<T extends ColorType>(
                 color: T,
                 elem: VMLDOMElement,
                 prop: string,
@@ -1506,10 +1508,7 @@ if (!svg) {
          *
          * @return {T}
          */
-        color: function<T extends (
-            Highcharts.ColorString|Highcharts.GradientColorObject|
-            Highcharts.PatternObject
-        )> (
+        color: function<T extends ColorType> (
             this: Highcharts.VMLRenderer,
             colorOption: T,
             elem: Highcharts.VMLDOMElement,
@@ -1526,12 +1525,12 @@ if (!svg) {
             // Check for linear or radial gradient
             if (
                 colorOption &&
-                (colorOption as Highcharts.GradientColorObject).linearGradient
+                (colorOption as GradientColor).linearGradient
             ) {
                 fillType = 'gradient';
             } else if (
                 colorOption &&
-                (colorOption as Highcharts.GradientColorObject).radialGradient
+                (colorOption as GradientColor).radialGradient
             ) {
                 fillType = 'pattern';
             }
@@ -1539,17 +1538,17 @@ if (!svg) {
 
             if (fillType) {
 
-                var stopColor: (Highcharts.ColorString|undefined),
+                var stopColor: (ColorString|undefined),
                     stopOpacity: number,
                     gradient: (
-                        Highcharts.LinearGradientColorObject|
-                        Highcharts.RadialGradientColorObject
+                        GradientColor['linearGradient']|
+                        GradientColor['radialGradient']
                     ) = (
                         (
-                            colorOption as Highcharts.GradientColorObject
+                            colorOption as GradientColor
                         ).linearGradient ||
                         (
-                            colorOption as Highcharts.GradientColorObject
+                            colorOption as GradientColor
                         ).radialGradient
                     ) as any,
                     x1,
@@ -1558,13 +1557,13 @@ if (!svg) {
                     y2,
                     opacity1: number,
                     opacity2: number,
-                    color1: (Highcharts.ColorString|undefined),
-                    color2: (Highcharts.ColorString|undefined),
+                    color1: (ColorString|undefined),
+                    color2: (ColorString|undefined),
                     fillAttr = '',
-                    stops = (colorOption as Highcharts.GradientColorObject).stops,
+                    stops = (colorOption as GradientColor).stops,
                     firstStop,
                     lastStop,
-                    colors = [] as Array<Highcharts.ColorString>,
+                    colors: Array<ColorString> = [],
                     addFillNode = function (): void {
                         // Add the fill subnode. When colors attribute is used,
                         // the meanings of opacity and o:opacity2 are reversed.
@@ -1598,7 +1597,7 @@ if (!svg) {
 
                 // Compute the stops
                 stops.forEach(function (
-                    stop: Highcharts.GradientColorStopObject,
+                    stop: GradientColor['stops'][0],
                     i: number
                 ): void {
                     if (regexRgba.test(stop[1])) {

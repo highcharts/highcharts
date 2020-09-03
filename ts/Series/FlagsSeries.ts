@@ -8,6 +8,7 @@
  *
  * */
 
+import type ColorType from '../Core/Color/ColorType';
 import type SVGPath from '../Core/Renderer/SVG/SVGPath';
 import BaseSeries from '../Core/Series/Series.js';
 import H from '../Core/Globals.js';
@@ -39,7 +40,7 @@ declare global {
             plotX?: number;
         }
         interface FlagsPointOptions extends ColumnPointOptions {
-            fillColor?: (ColorString|GradientColorObject|PatternObject);
+            fillColor?: ColorType;
             labelrank?: number;
             selected?: boolean;
             shape?: FlagsShapeValue;
@@ -49,9 +50,9 @@ declare global {
         }
         interface FlagsSeriesOptions extends ColumnSeriesOptions {
             allowOverlapX?: boolean;
-            fillColor?: (ColorString|GradientColorObject|PatternObject);
+            fillColor?: ColorType;
             height?: number;
-            lineColor?: (ColorString|GradientColorObject|PatternObject);
+            lineColor?: ColorType;
             lineWidth?: number;
             onKey?: string;
             onSeries?: string;
@@ -66,8 +67,8 @@ declare global {
             y?: number;
         }
         interface SeriesStatesHoverOptionsObject {
-            fillColor?: (ColorString|GradientColorObject|PatternObject);
-            lineColor?: (ColorString|GradientColorObject|PatternObject);
+            fillColor?: ColorType;
+            lineColor?: ColorType;
             shape?: FlagsShapeValue;
         }
         interface Series {
@@ -76,7 +77,7 @@ declare global {
         class FlagsPoint extends ColumnPoint {
             public _y?: number;
             public anchorX?: number;
-            public fillColor?: (ColorString|GradientColorObject|PatternObject);
+            public fillColor?: ColorType;
             public lineWidth?: number;
             public options: FlagsPointOptions;
             public raised?: boolean;

@@ -12,7 +12,7 @@ import Axis from './Axis/Axis.js';
 import BaseSeries from './Series/Series.js';
 var seriesTypes = BaseSeries.seriesTypes;
 import Chart from './Chart/Chart.js';
-import Color from './Color.js';
+import Color from './Color/Color.js';
 var color = Color.parse;
 import H from './Globals.js';
 var hasTouch = H.hasTouch, isTouchDevice = H.isTouchDevice;

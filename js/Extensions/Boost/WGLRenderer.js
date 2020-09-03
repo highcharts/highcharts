@@ -10,14 +10,14 @@
  *
  * */
 'use strict';
-import H from '../../Core/Globals.js';
+import Color from '../../Core/Color/Color.js';
+var color = Color.parse;
 import GLShader from './WGLShader.js';
 import GLVertexBuffer from './WGLVBuffer.js';
-import Color from '../../Core/Color.js';
-var color = Color.parse;
+import H from '../../Core/Globals.js';
+var doc = H.doc;
 import U from '../../Core/Utilities.js';
 var isNumber = U.isNumber, isObject = U.isObject, merge = U.merge, objectEach = U.objectEach, pick = U.pick;
-var win = H.win, doc = win.document;
 /* eslint-disable valid-jsdoc */
 /**
  * Main renderer. Used to render series.

@@ -12,9 +12,11 @@
 
 'use strict';
 
-import Chart from '../Core/Chart/Chart.js';
+import type ColorString from '../Core/Color/ColorString';
+import type ColorType from '../Core/Color/ColorType';
 import type SVGElement from '../Core/Renderer/SVG/SVGElement';
 import type SVGPath from '../Core/Renderer/SVG/SVGPath';
+import Chart from '../Core/Chart/Chart.js';
 import H from '../Core/Globals.js';
 import Point from '../Core/Series/Point.js';
 import U from '../Core/Utilities.js';

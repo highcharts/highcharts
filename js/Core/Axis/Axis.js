@@ -8,7 +8,7 @@
  *
  * */
 'use strict';
-import Color from '../Color.js';
+import Color from '../Color/Color.js';
 import H from '../Globals.js';
 import Tick from './Tick.js';
 import U from '../Utilities.js';

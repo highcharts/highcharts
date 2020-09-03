@@ -4,8 +4,10 @@
  *
  * */
 
+import type ColorString from '../Core/Color/ColorString';
+import type ColorType from '../Core/Color/ColorType';
 import type Point from '../Core/Series/Point';
-import Color from '../Core/Color.js';
+import Color from '../Core/Color/Color.js';
 import U from '../Core/Utilities.js';
 const {
     extend,
@@ -160,10 +162,10 @@ const getColor = function getColor(
     node: Highcharts.TreemapNodeObject,
     options: {
         colorIndex?: number;
-        colors: Array<Highcharts.ColorString>;
+        colors: Array<ColorString>;
         index: number;
         mapOptionsToLevel: Array<Highcharts.TreemapSeriesOptions>;
-        parentColor: Highcharts.ColorString;
+        parentColor: ColorString;
         parentColorIndex: number;
         series: Highcharts.Series;
         siblings: number;
@@ -190,7 +192,7 @@ const getColor = function getColor(
     /**
      * @private
      */
-    function variation(color: Highcharts.ColorString): Highcharts.ColorString {
+    function variation(color: ColorString): ColorString {
         var colorVariation = level && level.colorVariation;
 
         if (colorVariation) {

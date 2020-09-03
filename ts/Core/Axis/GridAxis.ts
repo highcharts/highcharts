@@ -11,6 +11,7 @@
 
 'use strict';
 
+import type ColorType from '../Color/ColorType';
 import type Point from '../Series/Point';
 import type SVGPath from '../Renderer/SVG/SVGPath';
 import Axis from './Axis.js';
@@ -1354,7 +1355,7 @@ interface GridAxis extends Axis {
 namespace GridAxis {
 
     export interface Options {
-        borderColor?: Highcharts.ColorType;
+        borderColor?: ColorType;
         borderWidth?: number;
         cellHeight?: number;
         columns?: Array<Highcharts.AxisOptions>;

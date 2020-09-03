@@ -8,6 +8,7 @@
  *
  * */
 
+import type ColorType from '../Core/Color/ColorType';
 import type Point from '../Core/Series/Point';
 import type { SeriesOptionsType } from '../Core/Series/Types';
 import type SVGPath from '../Core/Renderer/SVG/SVGPath';
@@ -101,7 +102,7 @@ declare global {
         }
         interface HeatmapSeriesOptions extends ScatterSeriesOptions {
             colsize?: number;
-            nullColor?: (ColorString|GradientColorObject|PatternObject);
+            nullColor?: ColorType;
             pointPadding?: HeatmapPoint['pointPadding'];
             rowsize?: number;
             states?: SeriesStatesOptionsObject<HeatmapSeries>;

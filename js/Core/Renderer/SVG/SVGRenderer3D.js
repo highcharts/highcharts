@@ -10,7 +10,7 @@
  *
  * */
 'use strict';
-import Color from '../../Color.js';
+import Color from '../../Color/Color.js';
 var color = Color.parse;
 import H from '../../Globals.js';
 import Math3D from '../../../Extensions/Math3D.js';

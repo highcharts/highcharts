@@ -12,6 +12,7 @@
  *
  * */
 
+import type ColorType from '../Core/Color/ColorType';
 import type SVGPath from '../Core/Renderer/SVG/SVGPath';
 import BaseSeries from '../Core/Series/Series.js';
 const {

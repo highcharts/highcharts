@@ -8,6 +8,7 @@
  *
  * */
 
+import type ColorType from '../Core/Color/ColorType';
 import type SVGPath from '../Core/Renderer/SVG/SVGPath';
 import BaseSeries from '../Core/Series/Series.js';
 const {
@@ -40,7 +41,7 @@ declare global {
         interface PolygonPointOptions extends ScatterPointOptions {
         }
         interface PolygonSeriesOptions extends ScatterSeriesOptions {
-            fillColor?: (ColorString|GradientColorObject|PatternObject);
+            fillColor?: ColorType;
             states?: SeriesStatesOptionsObject<PolygonSeries>;
             trackByArea?: boolean;
         }

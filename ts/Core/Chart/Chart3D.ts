@@ -12,6 +12,7 @@
 
 'use strict';
 
+import type ColorType from '../Color/ColorType';
 import Axis from '../Axis/Axis.js';
 import Axis3D from '../Axis/Axis3D.js';
 import Chart from './Chart.js';
@@ -107,7 +108,7 @@ namespace Chart3D {
     }
 
     export interface FrameSideOptions {
-        color?: Highcharts.ColorType;
+        color?: ColorType;
         size?: number;
         visible?: ('auto'|'default'|boolean);
     }

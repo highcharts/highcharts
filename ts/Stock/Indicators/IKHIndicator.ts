@@ -6,10 +6,11 @@
  *
  * */
 
+import type ColorType from '../../Core/Color/ColorType';
 import type Point from '../../Core/Series/Point';
 import type SVGPath from '../../Core/Renderer/SVG/SVGPath';
 import BaseSeries from '../../Core/Series/Series.js';
-import Color from '../../Core/Color.js';
+import Color from '../../Core/Color/Color.js';
 const color = Color.parse;
 import H from '../../Core/Globals.js';
 import U from '../../Core/Utilities.js';
@@ -571,11 +572,11 @@ BaseSeries.seriesType<typeof Highcharts.IKHIndicator>(
                 senkouSpanOptions: Highcharts.IKHIndicatorSenkouSpanOptions = (
                     indicator.options.senkouSpan as any
                 ),
-                color: Highcharts.ColorType = (
+                color: ColorType = (
                     senkouSpanOptions.color ||
                     (senkouSpanOptions.styles as any).fill
                 ),
-                negativeColor: (Highcharts.ColorType|undefined) = (
+                negativeColor: (ColorType|undefined) = (
                     senkouSpanOptions.negativeColor
                 ),
 

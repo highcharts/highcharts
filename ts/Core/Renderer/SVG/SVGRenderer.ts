@@ -10,8 +10,9 @@
 
 'use strict';
 
+import type ColorString from '../../Color/ColorString';
 import type SVGPath from './SVGPath';
-import Color from '../../Color.js';
+import Color from '../../Color/Color.js';
 import H from '../../Globals.js';
 import SVGElement from './SVGElement.js';
 import SVGLabel from './SVGLabel.js';
@@ -1539,7 +1540,7 @@ class SVGRenderer {
      * @return {Highcharts.ColorString}
      * The contrast color, either `#000000` or `#FFFFFF`.
      */
-    public getContrast(rgba: Highcharts.ColorString): Highcharts.ColorString {
+    public getContrast(rgba: ColorString): ColorString {
         rgba = Color.parse(rgba).rgba as any;
 
         // The threshold may be discussed. Here's a proposal for adding

@@ -11,7 +11,7 @@
  * */
 import BaseSeries from '../Core/Series/Series.js';
 var seriesTypes = BaseSeries.seriesTypes;
-import Color from '../Core/Color.js';
+import Color from '../Core/Color/Color.js';
 var color = Color.parse;
 import ColorMapMixin from '../Mixins/ColorMapSeries.js';
 var colorMapSeriesMixin = ColorMapMixin.colorMapSeriesMixin;
