@@ -115,7 +115,7 @@ const modiferToUse = modifierChain;
 store.on('afterLoad', e => {
     // Write the unmodified margins
     document.getElementById('datastore-before')
-        .innerHTML = e.table.getAllRows().map(row => row.getColumn('Margin  (Trump)')).join('\n');
+        .innerHTML = e.table.getAllRows().map(row => row.getCell('Margin  (Trump)')).join('\n');
 
     // Do the modification
     modiferToUse.execute(e.table);
@@ -131,7 +131,7 @@ store.on('afterLoad', e => {
 modiferToUse.on('afterExecute', e => {
     // Write the modified margins
     document.getElementById('datastore-after')
-        .innerHTML = e.table.getAllRows().map(row => row.getColumn(3)).join('\n');
+        .innerHTML = e.table.getAllRows().map(row => row.getCell(3)).join('\n');
 
     // convert modified data to series
     modifiedDataSeriesConverter = new DataSeriesConverter(e.table);
