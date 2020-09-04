@@ -2158,8 +2158,11 @@ class SVGElement {
         key: string,
         element: SVGDOMElement
     ): void {
-        (this as Record<string, any>)[key] = value;
-        element.setAttribute(key, value);
+        // Round off to avoid float errors, like tests where opacity lands on
+        // 9.86957e-06 instead of 0
+        const opacity = Number(Number(value).toFixed(3));
+        this.opacity = opacity;
+        element.setAttribute(key, opacity);
     }
 
     /**
