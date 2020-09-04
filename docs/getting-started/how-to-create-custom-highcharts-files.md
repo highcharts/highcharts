@@ -66,8 +66,8 @@ const build = require('./highcharts-assembler/index.js');
 
 
 
-Download the Highcharts parts files
------------------------------------
+Download the Highcharts source files
+------------------------------------
 
 Go to the [highcharts/highcharts](https://github.com/highcharts/highcharts)
 repository and click on “Clone or download” and select “Download ZIP”. Once the
@@ -86,11 +86,11 @@ will need a setup that looks something like this:
 
 ```js
 'use strict';
-import Highcharts from '../parts/Globals.js';
-import '../parts/SVGRenderer.js';
-import '../parts/Chart.js';
-import '../parts/Series.js';
-import '../parts/Interaction.js';
+import Highcharts from '../Core/Globals.js';
+import '../Core/Renderer/SVG/SVGRenderer.js';
+import '../Core/Chart/Chart.js';
+import '../Series/LineSeries.js';
+import '../Core/Interaction.js';
 export default Highcharts;
 ```
 
