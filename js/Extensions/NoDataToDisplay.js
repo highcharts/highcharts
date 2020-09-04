@@ -140,8 +140,7 @@ chartPrototype.showNoData = function (str) {
         chart.noDataLabel.add();
         chart.noDataLabel.align(extend(chart.noDataLabel.getBBox(), noDataOptions.position), false, 'plotBox');
     }
-    // Update label if already exists. #13982
-    else if (chart.noDataLabel) {
+    else if (chart.noDataLabel) { // Update label if already exists. #13982
         chart.noDataLabel.attr(noDataOptions)
             .css(noDataOptions.style);
         chart.noDataLabel.align(extend(chart.noDataLabel.getBBox(), noDataOptions.position), false, 'plotBox');
