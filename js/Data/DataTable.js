@@ -325,33 +325,85 @@ var DataTable = /** @class */ (function () {
         }
         return false;
     };
-    DataTable.prototype.insertColumn = function (column, cells, eventDetail) {
-        var _a;
-        var table = this, rowsIdMap = table.rowsIdMap, uniqueColumn = uniqueKey();
-        if (cells instanceof Array) {
-            var record = {};
-            for (var i = 0, iEnd = cells.length; i < iEnd; ++i) {
-                record["" + i] = cells[i];
-            }
-            cells = record;
+    /**
+     * Sets a cell value based on the rowID/index and column name/alias.
+     * Will insert a new row if the specified row does not exist.
+     *
+     * @param {string | number | undefined} rowID
+     * The ID or index of the row.
+     *
+     * @param {string} columnNameOrAlias
+     * The column name of the cell to set.
+     *
+     * @param {DataTableRow.CellType} value
+     * The value to set the cell to.
+     *
+     * @param {boolean} [allowUndefined]
+     * Whether to allow for an `undefined` rowID.
+     * If `true` the method will insert a new row with a generated ID.
+     * Defaults to `false`.
+     *
+     * @return {boolean}
+     * `true` if successful, `false` if not
+     */
+    DataTable.prototype.setRowCell = function (rowID, columnNameOrAlias, value, allowUndefined) {
+        if (allowUndefined === void 0) { allowUndefined = false; }
+        var cellName = this.aliasMap[columnNameOrAlias] || columnNameOrAlias;
+        if (!allowUndefined && !rowID) {
+            return false;
         }
-        var rowIds = Object.keys(cells);
-        var row, rowId, success = false;
-        for (var i = 0, iEnd = rowIds.length; i < iEnd; ++i) {
-            rowId = rowIds[i];
-            row = rowsIdMap[rowId];
-            if (!row) {
-                row = new DataTableRow((_a = {},
-                    _a[rowId] = cells[rowId],
-                    _a));
-                success = success && table.insertRow(row);
-            }
-            else {
-                if (typeof column === 'number') {
-                    column = (row.getCellNames()[column] || uniqueColumn);
-                }
-                success = success && row.insertCell(column, cells[rowId]);
-            }
+        // Insert a row with the specified ID if not found
+        if (!rowID || !this.getRow(rowID)) {
+            var rowToInsert = DataTableRow.fromJSON({
+                $class: 'DataTableRow',
+                id: rowID
+            });
+            this.insertRow(rowToInsert);
+            rowID = rowToInsert.id;
+        }
+        var row = this.getRow(rowID);
+        if (row) {
+            return (row.updateCell(cellName, value) ||
+                row.insertCell(cellName, value));
+        }
+        return false;
+    };
+    /**
+     * Retrieves a cell value based on row index/ID
+     * and column name/alias.
+     *
+     * @param {string | number} rowID
+     * The row to select.
+     *
+     * @param {string} columnNameOrAlias
+     * The column to get the value from.
+     *
+     * @return {DataTableRow.CellType}
+     * The value of the cell.
+     */
+    DataTable.prototype.getRowCell = function (rowID, columnNameOrAlias) {
+        var _a;
+        var cellName = this.aliasMap[columnNameOrAlias] || columnNameOrAlias;
+        return (_a = this.getRow(rowID)) === null || _a === void 0 ? void 0 : _a.getCell(cellName);
+    };
+    /**
+     * Sets a column of cells from an array of cell values
+     *
+     * @param {string} columnNameOrAlias
+     * Name or alias of the column to set.
+     *
+     * @param {Array<DataTableRow.CellType>} cells
+     * Ann array of cell values to set.
+     *
+     * @return {boolean}
+     * `true` if successful, `false` if unable to insert all values.
+     *
+     */
+    DataTable.prototype.setColumn = function (columnNameOrAlias, cells) {
+        var rowIDs = this.getAllRowIds();
+        var success = false;
+        for (var i = 0, iEnd = Math.max(cells.length, rowIDs.length); i < iEnd; i++) {
+            success = this.setRowCell(rowIDs[i], columnNameOrAlias, cells[i], true);
         }
         return success;
     };

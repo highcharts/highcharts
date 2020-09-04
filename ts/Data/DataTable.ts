@@ -439,46 +439,100 @@ class DataTable implements DataEventEmitter<DataTable.EventObject>, DataJSON.Cla
         return false;
     }
 
-    public insertColumn(
-        column: (number|string),
-        cells: (
-            Array<DataTableRow.CellType>|Record<string, DataTableRow.CellType>
-        ),
-        eventDetail?: DataEventEmitter.EventDetail
+    /**
+     * Sets a cell value based on the rowID/index and column name/alias.
+     * Will insert a new row if the specified row does not exist.
+     *
+     * @param {string | number | undefined} rowID
+     * The ID or index of the row.
+     *
+     * @param {string} columnNameOrAlias
+     * The column name of the cell to set.
+     *
+     * @param {DataTableRow.CellType} value
+     * The value to set the cell to.
+     *
+     * @param {boolean} [allowUndefined]
+     * Whether to allow for an `undefined` rowID.
+     * If `true` the method will insert a new row with a generated ID.
+     * Defaults to `false`.
+     *
+     * @return {boolean}
+     * `true` if successful, `false` if not
+     */
+    public setRowCell(
+        rowID: (string | number | undefined),
+        columnNameOrAlias: string,
+        value: DataTableRow.CellType,
+        allowUndefined: boolean = false
     ): boolean {
-        const table = this,
-            rowsIdMap = table.rowsIdMap,
-            uniqueColumn = uniqueKey();
+        const cellName = this.aliasMap[columnNameOrAlias] || columnNameOrAlias;
 
-        if (cells instanceof Array) {
-            const record: Record<string, DataTableRow.CellType> = {};
-            for (let i = 0, iEnd = cells.length; i < iEnd; ++i) {
-                record[`${i}`] = cells[i];
-            }
-            cells = record;
+        if (!allowUndefined && !rowID) {
+            return false;
         }
 
-        const rowIds = Object.keys(cells);
+        // Insert a row with the specified ID if not found
+        if (!rowID || !this.getRow(rowID)) {
+            const rowToInsert = DataTableRow.fromJSON({
+                $class: 'DataTableRow',
+                id: rowID
+            });
+            this.insertRow(rowToInsert);
+            rowID = rowToInsert.id;
+        }
 
-        let row: (DataTableRow|undefined),
-            rowId: string,
-            success = false;
+        const row = this.getRow(rowID);
+        if (row) {
+            return (
+                row.updateCell(cellName, value) ||
+                row.insertCell(cellName, value)
+            );
+        }
 
-        for (let i = 0, iEnd = rowIds.length; i < iEnd; ++i) {
-            rowId = rowIds[i];
-            row = rowsIdMap[rowId];
+        return false;
+    }
 
-            if (!row) {
-                row = new DataTableRow({
-                    [rowId]: cells[rowId]
-                });
-                success = success && table.insertRow(row);
-            } else {
-                if (typeof column === 'number') {
-                    column = (row.getCellNames()[column] || uniqueColumn);
-                }
-                success = success && row.insertCell(column, cells[rowId]);
-            }
+    /**
+     * Retrieves a cell value based on row index/ID
+     * and column name/alias.
+     *
+     * @param {string | number} rowID
+     * The row to select.
+     *
+     * @param {string} columnNameOrAlias
+     * The column to get the value from.
+     *
+     * @return {DataTableRow.CellType}
+     * The value of the cell.
+     */
+    public getRowCell(rowID: string | number, columnNameOrAlias: string): DataTableRow.CellType {
+        const cellName = this.aliasMap[columnNameOrAlias] || columnNameOrAlias;
+
+        return this.getRow(rowID)?.getCell(cellName);
+    }
+
+    /**
+     * Sets a column of cells from an array of cell values
+     *
+     * @param {string} columnNameOrAlias
+     * Name or alias of the column to set.
+     *
+     * @param {Array<DataTableRow.CellType>} cells
+     * Ann array of cell values to set.
+     *
+     * @return {boolean}
+     * `true` if successful, `false` if unable to insert all values.
+     *
+     */
+    public setColumn(
+        columnNameOrAlias: string,
+        cells: Array<DataTableRow.CellType>
+    ): boolean {
+        const rowIDs = this.getAllRowIds();
+        let success = false;
+        for (let i = 0, iEnd = Math.max(cells.length, rowIDs.length); i < iEnd; i++) {
+            success = this.setRowCell(rowIDs[i], columnNameOrAlias, cells[i], true);
         }
 
         return success;

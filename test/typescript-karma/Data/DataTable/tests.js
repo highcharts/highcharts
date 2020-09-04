@@ -306,7 +306,7 @@ QUnit.test('DataTable.toColumns', function(assert){
 
 });
 
-QUnit.test('getColumns', function(assert){
+QUnit.test('DataTable column methods', function(assert){
     const table = new DataTable();
 
     table.aliasMap = {
@@ -364,4 +364,42 @@ QUnit.test('getColumns', function(assert){
         [table.toColumns()['population']],
         'After alias is removed, getColumns gets by canonical name'
     );
+
+    assert.ok(
+        table.setRowCell('Finland', 'population', 4),
+        'Able to set by column name'
+    );
+    assert.ok(
+        table.setRowCell('Finland', 'x', 10),
+        'Able to set by column alias'
+    );
+    assert.strictEqual(
+        table.getRowCell('Finland', 'population'),
+        table.getRowCell('Finland', 'x'),
+        'Able to get by both column name and alias, values are the same'
+    );
+
+    assert.ok(
+        table.setRowCell('Iceland', 'population', 4),
+        'Able to insert cell with new row ID'
+    )
+
+    // Insert new column with two cells more than the current row count
+    const colArray = [
+        'Tourmalet',
+        'Du Fromage',
+        'des Montagnes',
+        'Ventoux',
+        'Grand Cucheron',
+        'des Aravis'
+    ];
+
+    table.setColumn('Cols', colArray );
+
+    assert.strictEqual(
+        table.getRowCount(),
+        colArray.length,
+        'New rows should be inserted'
+    );
+
 })
