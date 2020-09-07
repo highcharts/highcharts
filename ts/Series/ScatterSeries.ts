@@ -102,11 +102,6 @@ BaseSeries.seriesType<typeof Highcharts.ScatterSeries>(
          * @product highcharts highstock
          */
         lineWidth: 0,
-        states: {
-            hover: {
-                lineWidthPlus: 0
-            }
-        },
 
         findNearestPointBy: 'xy',
 

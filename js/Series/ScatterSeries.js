@@ -48,11 +48,6 @@ BaseSeries.seriesType('scatter', 'line',
      * @product highcharts highstock
      */
     lineWidth: 0,
-    states: {
-        hover: {
-            lineWidthPlus: 0
-        }
-    },
     findNearestPointBy: 'xy',
     /**
      * Apply a jitter effect for the rendered markers. When plotting
