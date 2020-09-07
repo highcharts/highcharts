@@ -2092,7 +2092,10 @@ class Axis implements AxisComposition, AxisLike {
          *         Y axis on left side
          *
          * @type      {boolean}
-         * @default   false
+         * @default   {highcharts} false
+         * @default   {highstock} false
+         * @default   {highmaps} false
+         * @default   {gantt} true
          * @apioption xAxis.opposite
          */
 
