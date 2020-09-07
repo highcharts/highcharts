@@ -5898,6 +5898,13 @@ class Axis implements AxisComposition, AxisLike {
      * @private
      * @function Highcharts.Axis#adjustTickAmount
      */
+    /**
+     * When using multiple axes, adjust the number of ticks to match the highest
+     * number of ticks in that group.
+     *
+     * @private
+     * @function Highcharts.Axis#adjustTickAmount
+     */
     public adjustTickAmount(): void {
         var axis = this,
             axisOptions = axis.options,
@@ -5917,22 +5924,54 @@ class Axis implements AxisComposition, AxisLike {
 
                 while (tickPositions.length < tickAmount) {
 
-                    // Extend evenly for both sides unless we're on the
-                    // threshold (#3965)
+                    const prependValue = correctFloat(
+                        tickPositions[0] - tickInterval
+                    );
+                    const appendValue = correctFloat(
+                        tickPositions[tickPositions.length - 1] +
+                        tickInterval
+                    );
+
+                    // By default, toggle between appending or prepending,
+                    // unless if the values exceeds a user set extreme. (#3965,
+                    // #13749)
+                    let append = Boolean(tickPositions.length % 2);
                     if (
-                        tickPositions.length % 2 ||
-                        min === threshold
+                        defined(axisOptions.max) &&
+                        appendValue > axisOptions.max
                     ) {
-                        // to the end
-                        tickPositions.push(correctFloat(
-                            tickPositions[tickPositions.length - 1] +
-                            tickInterval
-                        ));
+                        append = false;
+                    } else if (
+                        defined(axisOptions.min) &&
+                        prependValue < axisOptions.min
+                    ) {
+                        append = true;
+                    } else if (defined(threshold) && axis.softThreshold) {
+                        // If the data is below threshold, don't append ticks
+                        // above the threshold
+                        if (
+                            defined(axis.max) &&
+                            axis.max <= threshold &&
+                            appendValue > threshold
+                        ) {
+                            append = false;
+                        }
+                        // If the data is above threshold, don't prepend ticks
+                        // below the threshold
+                        if (
+                            defined(axis.min) &&
+                            axis.min >= threshold &&
+                            prependValue < threshold
+                        ) {
+                            append = true;
+                        }
+                    }
+
+                    // Append or prepend
+                    if (append) {
+                        tickPositions.push(appendValue);
                     } else {
-                        // to the start
-                        tickPositions.unshift(correctFloat(
-                            tickPositions[0] - tickInterval
-                        ));
+                        tickPositions.unshift(prependValue);
                     }
                 }
                 axis.transA *= (currentTickAmount - 1) / (tickAmount - 1);

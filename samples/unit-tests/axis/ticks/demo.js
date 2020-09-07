@@ -206,13 +206,19 @@ QUnit.test('Ticks for a single point.', function (assert) {
         'extend the ticks below 0'
     );
 
-
     chart.series[0].points[0].update(10);
     assert.strictEqual(
         chart.yAxis[0].min < 7 && chart.yAxis[0].max > 14,
         true,
         'ticks added via tickAmount increase both min and max (#3965)'
     );
+
+    chart.series[0].points[0].update(-1);
+    assert.ok(
+        chart.yAxis[0].max <= 0,
+        'With negative value and softThreshold and tickAmount, max should be below threshold'
+    );
+
 
     // Must be on init - redraw was fixing the issue
     chart = Highcharts.chart('container', {
@@ -259,6 +265,13 @@ QUnit.test('The tickAmount option', assert => {
     assert.ok(
         chart.xAxis[0].max > 1,
         'The axis extreme should be greater than the max value (#9841)'
+    );
+
+    chart.series[0].setData([1]);
+    chart.xAxis[0].update({ min: 0 });
+    assert.ok(
+        chart.xAxis[0].min >= 0,
+        'The axis should not go below min (#13749)'
     );
 });
 
