@@ -9,16 +9,17 @@
  *
  *  !!!!!!! SOURCE GETS TRANSPILED BY TYPESCRIPT. EDIT TS FILE ONLY. !!!!!!!
  * */
-'use strict';
+import BaseSeries from '../Core/Series/Series.js';
+import DrawPointMixin from '../Mixins/DrawPoint.js';
+var drawPoint = DrawPointMixin.drawPoint;
 import H from '../Core/Globals.js';
+var noop = H.noop;
+import PolygonMixin from '../Mixins/Polygon.js';
+var getBoundingBoxFromPolygon = PolygonMixin.getBoundingBoxFromPolygon, getPolygon = PolygonMixin.getPolygon, isPolygonsColliding = PolygonMixin.isPolygonsColliding, movePolygon = PolygonMixin.movePolygon, rotate2DToOrigin = PolygonMixin.rotate2DToOrigin, rotate2DToPoint = PolygonMixin.rotate2DToPoint;
 import U from '../Core/Utilities.js';
-var extend = U.extend, find = U.find, isArray = U.isArray, isNumber = U.isNumber, isObject = U.isObject, merge = U.merge, seriesType = U.seriesType;
-import drawPointModule from '../Mixins/DrawPoint.js';
-var drawPoint = drawPointModule.drawPoint;
-import polygonMixin from '../Mixins/Polygon.js';
-var getBoundingBoxFromPolygon = polygonMixin.getBoundingBoxFromPolygon, getPolygon = polygonMixin.getPolygon, isPolygonsColliding = polygonMixin.isPolygonsColliding, movePolygon = polygonMixin.movePolygon, rotate2DToOrigin = polygonMixin.rotate2DToOrigin, rotate2DToPoint = polygonMixin.rotate2DToPoint;
-import '../Core/Series/Series.js';
-var noop = H.noop, Series = H.Series;
+var extend = U.extend, find = U.find, isArray = U.isArray, isNumber = U.isNumber, isObject = U.isObject, merge = U.merge;
+import './ColumnSeries.js';
+var Series = H.Series;
 /**
  * Detects if there is a collision between two rectangles.
  *
@@ -924,6 +925,7 @@ var wordCloudPoint = {
  * @product   highcharts
  * @apioption series.sunburst.data.weight
  */
+''; // detach doclets above
 /**
  * @private
  * @class
@@ -931,4 +933,4 @@ var wordCloudPoint = {
  *
  * @augments Highcharts.Series
  */
-seriesType('wordcloud', 'column', wordCloudOptions, wordCloudSeries, wordCloudPoint);
+BaseSeries.seriesType('wordcloud', 'column', wordCloudOptions, wordCloudSeries, wordCloudPoint);

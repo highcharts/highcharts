@@ -7,12 +7,10 @@
  *  !!!!!!! SOURCE GETS TRANSPILED BY TYPESCRIPT. EDIT TS FILE ONLY. !!!!!!!
  *
  * */
-'use strict';
-import H from '../Core/Globals.js';
+import BaseSeries from '../Core/Series/Series.js';
+var seriesTypes = BaseSeries.seriesTypes;
 import Point from '../Core/Series/Point.js';
-import U from '../Core/Utilities.js';
-var seriesType = U.seriesType;
-var seriesTypes = H.seriesTypes;
+import './ColumnSeries.js';
 /**
  * The ohlc series type.
  *
@@ -22,7 +20,7 @@ var seriesTypes = H.seriesTypes;
  *
  * @augments Highcharts.Series
  */
-seriesType('ohlc', 'column'
+BaseSeries.seriesType('ohlc', 'column'
 /**
  * An OHLC chart is a style of financial chart used to describe price
  * movements over time. It displays open, high, low and close values per

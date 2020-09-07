@@ -8,7 +8,17 @@
  *
  * */
 
-'use strict';
+import _ColumnSeries from './ColumnSeries.js';
+import Series from '../Core/Series/Series.js';
+
+/**
+ * @private
+ */
+declare module '../Core/Series/Types' {
+    interface SeriesTypeRegistry {
+        bar: typeof Highcharts.BarSeries;
+    }
+}
 
 /**
  * Internal types
@@ -21,7 +31,6 @@ declare global {
         interface BarSeriesOptions extends ColumnSeriesOptions {
         }
         interface SeriesTypesDictionary {
-            bar: typeof BarSeries;
         }
         class BarPoint extends ColumnPoint {
             public options: BarPointOptions;
@@ -37,12 +46,6 @@ declare global {
     }
 }
 
-import U from '../Core/Utilities.js';
-const {
-    seriesType
-} = U;
-import './ColumnSeries.js';
-
 /**
  * Bar series type.
  *
@@ -52,7 +55,7 @@ import './ColumnSeries.js';
  *
  * @augments Highcharts.Series
  */
-seriesType<Highcharts.BarSeries>(
+Series.seriesType<typeof Highcharts.BarSeries>(
     'bar',
     'column',
 

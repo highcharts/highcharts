@@ -11,6 +11,7 @@
 'use strict';
 
 import type { AxisType } from '../Core/Axis/Types';
+import type { SeriesOptionsType, SeriesPlotOptionsType } from '../Core/Series/Types';
 import DateTimeAxis from '../Core/Axis/DateTimeAxis.js';
 import H from '../Core/Globals.js';
 
@@ -165,7 +166,7 @@ const {
 } = U;
 
 import '../Core/Axis/Axis.js';
-import '../Core/Series/Series.js';
+import '../Series/LineSeries.js';
 
 var Axis = H.Axis,
     Series = H.Series;
@@ -189,7 +190,7 @@ var Axis = H.Axis,
  * @name Highcharts.approximations
  * @type {Highcharts.Dictionary<Function>}
  */
-var approximations: Highcharts.DataGroupingApproximationsDictionary =
+const approximations: Highcharts.DataGroupingApproximationsDictionary =
 H.approximations = {
     sum: function (
         arr: Highcharts.DataGroupingApproximationsArray
@@ -306,7 +307,7 @@ H.approximations = {
     }
 };
 
-var groupData = function (
+const groupData = function (
     this: Highcharts.Series,
     xData: Array<number>,
     yData: (
@@ -493,7 +494,7 @@ var dataGrouping = {
 // -----------------------------------------------------------------------------
 // The following code applies to implementation of data grouping on a Series
 
-var seriesProto = Series.prototype,
+const seriesProto = Series.prototype,
     baseProcessData = seriesProto.processData,
     baseGeneratePoints = seriesProto.generatePoints,
     /** @ignore */
@@ -566,7 +567,7 @@ var seriesProto = Series.prototype,
         ohlc: {
             groupPixelWidth: 5
         }
-    } as Highcharts.PlotOptions,
+    } as SeriesPlotOptionsType,
 
     // units are defined in a separate array to allow complete overriding in
     // case of a user option
@@ -967,7 +968,7 @@ addEvent(Series, 'afterSetOptions', function (
 
     var options = e.options,
         type = this.type,
-        plotOptions: Highcharts.PlotOptions =
+        plotOptions: SeriesPlotOptionsType =
             this.chart.options.plotOptions as any,
         defaultOptions: Highcharts.DataGroupingOptionsObject =
             (O.defaultOptions.plotOptions as any)[type].dataGrouping,

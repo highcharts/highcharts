@@ -14,6 +14,7 @@
 
 import type Chart from '../../Core/Chart/Chart';
 import type SVGPath from '../../Core/Renderer/SVG/SVGPath';
+import BaseSeries from '../../Core/Series/Series.js';
 import H from '../../Core/Globals.js';
 import NodesMixin from '../../Mixins/Nodes.js';
 import Point from '../../Core/Series/Point.js';
@@ -22,8 +23,7 @@ const {
     addEvent,
     css,
     defined,
-    pick,
-    seriesType
+    pick
 } = U;
 
 
@@ -104,9 +104,6 @@ declare global {
         }
         interface Series {
             layout?: NetworkgraphLayout;
-        }
-        interface SeriesTypesDictionary {
-            networkgraph: typeof NetworkgraphSeries;
         }
         class NetworkgraphPoint
             extends LinePoint
@@ -196,6 +193,24 @@ declare global {
 }
 
 /**
+ * @private
+ */
+declare module '../../Core/Series/Types' {
+    interface SeriesTypeRegistry {
+        networkgraph: typeof Highcharts.NetworkgraphSeries;
+    }
+}
+
+import '../../Core/Options.js';
+import './Layouts.js';
+import './DraggableNodes.js';
+import '../../Series/LineSeries.js';
+
+var Series = H.Series,
+    seriesTypes = BaseSeries.seriesTypes,
+    dragNodesMixin = H.dragNodesMixin;
+
+/**
  * Formatter callback function.
  *
  * @callback Highcharts.SeriesNetworkgraphDataLabelsFormatterCallbackFunction
@@ -234,15 +249,6 @@ declare global {
 
 ''; // detach doclets above
 
-import '../../Core/Options.js';
-import './Layouts.js';
-import './DraggableNodes.js';
-import '../../Core/Series/Series.js';
-
-var seriesTypes = H.seriesTypes,
-    Series = H.Series,
-    dragNodesMixin = H.dragNodesMixin;
-
 /**
  * @private
  * @class
@@ -250,7 +256,7 @@ var seriesTypes = H.seriesTypes,
  *
  * @extends Highcharts.Series
  */
-seriesType<Highcharts.NetworkgraphSeries>(
+BaseSeries.seriesType<typeof Highcharts.NetworkgraphSeries>(
     'networkgraph',
     'line',
 
@@ -679,10 +685,12 @@ seriesType<Highcharts.NetworkgraphSeries>(
          */
         createNode: NodesMixin.createNode,
         destroy: function (this: Highcharts.NetworkgraphSeries): void {
-            this.layout.removeElementFromCollection<Highcharts.Series>(
-                this,
-                this.layout.series
-            );
+            if (this.layout) {
+                this.layout.removeElementFromCollection<Highcharts.Series>(
+                    this,
+                    this.layout.series
+                );
+            }
             NodesMixin.destroy.call(this);
         },
 
@@ -699,7 +707,7 @@ seriesType<Highcharts.NetworkgraphSeries>(
 
             Series.prototype.init.apply(this, arguments as any);
 
-            addEvent(this, 'updatedData', function (): void {
+            addEvent<Highcharts.NetworkgraphSeries>(this, 'updatedData', function (): void {
                 if (this.layout) {
                     this.layout.stop();
                 }

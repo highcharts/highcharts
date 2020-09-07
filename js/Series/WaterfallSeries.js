@@ -9,15 +9,17 @@
  * */
 'use strict';
 import Axis from '../Core/Axis/Axis.js';
+import BaseSeries from '../Core/Series/Series.js';
+var seriesTypes = BaseSeries.seriesTypes;
 import Chart from '../Core/Chart/Chart.js';
 import H from '../Core/Globals.js';
 import Point from '../Core/Series/Point.js';
 import StackItem from '../Extensions/Stacking.js';
 import U from '../Core/Utilities.js';
-var addEvent = U.addEvent, arrayMax = U.arrayMax, arrayMin = U.arrayMin, correctFloat = U.correctFloat, isNumber = U.isNumber, objectEach = U.objectEach, pick = U.pick, seriesType = U.seriesType;
+var addEvent = U.addEvent, arrayMax = U.arrayMax, arrayMin = U.arrayMin, correctFloat = U.correctFloat, isNumber = U.isNumber, objectEach = U.objectEach, pick = U.pick;
 import '../Core/Options.js';
-import '../Core/Series/Series.js';
-var Series = H.Series, seriesTypes = H.seriesTypes;
+import './ColumnSeries.js';
+var Series = H.Series;
 /**
  * Returns true if the key is a direct property of the object.
  * @private
@@ -174,7 +176,7 @@ var WaterfallAxis;
  * @requires     highcharts-more
  * @optionparent plotOptions.waterfall
  */
-seriesType('waterfall', 'column', {
+BaseSeries.seriesType('waterfall', 'column', {
     /**
      * @type      {Highcharts.ColorString|Highcharts.GradientColorObject|Highcharts.PatternObject}
      * @apioption plotOptions.waterfall.color

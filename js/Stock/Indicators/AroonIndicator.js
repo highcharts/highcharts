@@ -5,10 +5,11 @@
  *  !!!!!!! SOURCE GETS TRANSPILED BY TYPESCRIPT. EDIT TS FILE ONLY. !!!!!!!
  *
  * */
-'use strict';
+import BaseSeries from '../../Core/Series/Series.js';
+import MultipleLinesMixin from '../../Mixins/MultipleLines.js';
 import U from '../../Core/Utilities.js';
-var merge = U.merge, pick = U.pick, seriesType = U.seriesType;
-import multipleLinesMixin from '../../Mixins/MultipleLines.js';
+var merge = U.merge, pick = U.pick;
+import './SMAIndicator.js';
 /* eslint-disable valid-jsdoc */
 // Utils
 // Index of element with extreme value from array (min or max)
@@ -36,7 +37,7 @@ function getExtremeIndexInArray(arr, extreme) {
  *
  * @augments Highcharts.Series
  */
-seriesType('aroon', 'sma', 
+BaseSeries.seriesType('aroon', 'sma', 
 /**
  * Aroon. This series requires the `linkedTo` option to be
  * set and should be loaded after the `stock/indicators/indicators.js`.
@@ -101,7 +102,7 @@ seriesType('aroon', 'sma',
 /**
  * @lends Highcharts.Series#
  */
-merge(multipleLinesMixin, {
+merge(MultipleLinesMixin, {
     nameBase: 'Aroon',
     pointArrayMap: ['y', 'aroonDown'],
     pointValKey: 'y',

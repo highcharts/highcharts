@@ -7,14 +7,14 @@
  *  !!!!!!! SOURCE GETS TRANSPILED BY TYPESCRIPT. EDIT TS FILE ONLY. !!!!!!!
  *
  * */
-'use strict';
-import H from '../Core/Globals.js';
+import BaseSeries from '../Core/Series/Series.js';
 import Color from '../Core/Color.js';
 var color = Color.parse;
+import H from '../Core/Globals.js';
 import LegendSymbolMixin from '../Mixins/LegendSymbol.js';
 import U from '../Core/Utilities.js';
-var objectEach = U.objectEach, pick = U.pick, seriesType = U.seriesType;
-import '../Core/Series/Series.js';
+var objectEach = U.objectEach, pick = U.pick;
+import '../Series/LineSeries.js';
 import '../Core/Options.js';
 var Series = H.Series;
 /**
@@ -26,7 +26,7 @@ var Series = H.Series;
  *
  * @augments Highcharts.Series
  */
-seriesType('area', 'line', 
+BaseSeries.seriesType('area', 'line', 
 /**
  * The area series type.
  *

@@ -13,6 +13,10 @@
 import type SVGElement from '../Core/Renderer/SVG/SVGElement';
 import type SVGPath from '../Core/Renderer/SVG/SVGPath';
 import Axis from '../Core/Axis/Axis.js';
+import BaseSeries from '../Core/Series/Series.js';
+const {
+    seriesTypes
+} = BaseSeries;
 import Chart from '../Core/Chart/Chart.js';
 import H from '../Core/Globals.js';
 import Point from '../Core/Series/Point.js';
@@ -25,9 +29,17 @@ const {
     correctFloat,
     isNumber,
     objectEach,
-    pick,
-    seriesType
+    pick
 } = U;
+
+/**
+ * @private
+ */
+declare module '../Core/Series/Types' {
+    interface SeriesTypeRegistry {
+        waterfall: typeof Highcharts.WaterfallSeries;
+    }
+}
 
 /**
  * Internal types
@@ -88,18 +100,13 @@ declare global {
             upColor?: (ColorString|GradientColorObject|PatternObject);
             states?: SeriesStatesOptionsObject<WaterfallSeries>;
         }
-        interface SeriesTypesDictionary {
-            waterfall: typeof WaterfallSeries;
-        }
     }
 }
 
-
 import '../Core/Options.js';
-import '../Core/Series/Series.js';
+import './ColumnSeries.js';
 
-var Series = H.Series,
-    seriesTypes = H.seriesTypes;
+var Series = H.Series;
 
 /**
  * Returns true if the key is a direct property of the object.
@@ -343,7 +350,7 @@ namespace WaterfallAxis {
  * @requires     highcharts-more
  * @optionparent plotOptions.waterfall
  */
-seriesType<Highcharts.WaterfallSeries>('waterfall', 'column', {
+BaseSeries.seriesType<typeof Highcharts.WaterfallSeries>('waterfall', 'column', {
 
     /**
      * @type      {Highcharts.ColorString|Highcharts.GradientColorObject|Highcharts.PatternObject}

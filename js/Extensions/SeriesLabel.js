@@ -44,7 +44,7 @@ var addEvent = U.addEvent, animObject = U.animObject, extend = U.extend, fireEve
  * https://jsfiddle.net/highcharts/y5A37/
  */
 ''; // detach doclets above
-import '../Core/Series/Series.js';
+import '../Series/LineSeries.js';
 var labelDistance = 3, Series = H.Series;
 setOptions({
     /**

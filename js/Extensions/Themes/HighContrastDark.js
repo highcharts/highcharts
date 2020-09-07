@@ -13,12 +13,11 @@
  *  !!!!!!! SOURCE GETS TRANSPILED BY TYPESCRIPT. EDIT TS FILE ONLY. !!!!!!!
  *
  * */
-'use strict';
-import Highcharts from '../../Core/Globals.js';
+import H from '../../Core/Globals.js';
 import U from '../../Core/Utilities.js';
 var setOptions = U.setOptions;
 var textBright = '#F0F0F3';
-Highcharts.theme = {
+H.theme = {
     colors: [
         '#a6f0ff',
         '#70d49e',
@@ -208,4 +207,4 @@ Highcharts.theme = {
     }
 };
 // Apply the theme
-setOptions(Highcharts.theme);
+setOptions(H.theme);

@@ -5,11 +5,12 @@
  *  !!!!!!! SOURCE GETS TRANSPILED BY TYPESCRIPT. EDIT TS FILE ONLY. !!!!!!!
  *
  * */
-'use strict';
+import BaseSeries from '../../Core/Series/Series.js';
+import ReduceArrayMixin from '../../Mixins/ReduceArray.js';
+var getArrayExtremes = ReduceArrayMixin.getArrayExtremes;
 import U from '../../Core/Utilities.js';
-var isArray = U.isArray, seriesType = U.seriesType;
-import reduceArrayMixin from '../../Mixins/ReduceArray.js';
-var getArrayExtremes = reduceArrayMixin.getArrayExtremes;
+var isArray = U.isArray;
+import './SMAIndicator.js';
 /**
  * The Williams %R series type.
  *
@@ -19,7 +20,7 @@ var getArrayExtremes = reduceArrayMixin.getArrayExtremes;
  *
  * @augments Highcharts.Series
  */
-seriesType('williamsr', 'sma', 
+BaseSeries.seriesType('williamsr', 'sma', 
 /**
  * Williams %R. This series requires the `linkedTo` option to be
  * set and should be loaded after the `stock/indicators/indicators.js`.

@@ -95,6 +95,9 @@ H.ganttChart = function (renderTo, options, callback) {
         },
         legend: {
             enabled: false
+        },
+        navigator: {
+            series: { type: 'gantt' }
         }
     }, options, // user's options
     // forced options
@@ -102,13 +105,6 @@ H.ganttChart = function (renderTo, options, callback) {
         isGantt: true
     });
     options.series = userOptions.series = seriesOptions;
-    (options.series || []).forEach(function (series) {
-        if (series.data) {
-            series.data.forEach(function (point) {
-                H.seriesTypes.gantt.prototype.setGanttPointAliases(point);
-            });
-        }
-    });
     return hasRenderToArg ?
         new Chart(renderTo, options, callback) :
         new Chart(options, options); // @todo does not look correct

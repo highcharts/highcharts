@@ -5,12 +5,10 @@
  *  !!!!!!! SOURCE GETS TRANSPILED BY TYPESCRIPT. EDIT TS FILE ONLY. !!!!!!!
  *
  * */
-'use strict';
-import H from '../../Core/Globals.js';
-import U from '../../Core/Utilities.js';
-var seriesType = U.seriesType;
-import requiredIndicator from '../../Mixins/IndicatorRequired.js';
-var seriesTypes = H.seriesTypes;
+import BaseSeries from '../../Core/Series/Series.js';
+var seriesTypes = BaseSeries.seriesTypes;
+import RequiredIndicatorMixin from '../../Mixins/IndicatorRequired.js';
+import './StochasticIndicator.js';
 /**
  * The Slow Stochastic series type.
  *
@@ -20,7 +18,7 @@ var seriesTypes = H.seriesTypes;
  *
  * @augments Highcharts.Series
  */
-seriesType('slowstochastic', 'stochastic', 
+BaseSeries.seriesType('slowstochastic', 'stochastic', 
 /**
  * Slow Stochastic oscillator. This series requires the `linkedTo` option
  * to be set and should be loaded after `stock/indicators/indicators.js`
@@ -55,7 +53,7 @@ seriesType('slowstochastic', 'stochastic',
     nameBase: 'Slow Stochastic',
     init: function () {
         var args = arguments, ctx = this;
-        requiredIndicator.isParentLoaded(H.seriesTypes.stochastic, 'stochastic', ctx.type, function (indicator) {
+        RequiredIndicatorMixin.isParentLoaded(seriesTypes.stochastic, 'stochastic', ctx.type, function (indicator) {
             indicator.prototype.init.apply(ctx, args);
             return;
         });

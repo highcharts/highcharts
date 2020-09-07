@@ -152,6 +152,9 @@ H.ganttChart = function (
             },
             legend: {
                 enabled: false
+            },
+            navigator: {
+                series: { type: 'gantt' }
             }
         } as Highcharts.Options,
 
@@ -164,14 +167,6 @@ H.ganttChart = function (
     );
 
     options.series = userOptions.series = seriesOptions;
-
-    (options.series || []).forEach(function (series): void {
-        if (series.data) {
-            series.data.forEach(function (point): void {
-                H.seriesTypes.gantt.prototype.setGanttPointAliases(point as any);
-            });
-        }
-    });
 
     return hasRenderToArg ?
         new Chart(renderTo, options, callback) :

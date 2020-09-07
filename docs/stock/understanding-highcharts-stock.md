@@ -12,14 +12,14 @@ Navigator
 
 Allows you to fine tune the range of the chart which is displayed.
 
-See [Navigator](https://highcharts.com/docs/chart-concepts/navigator) for more information.
+See [Navigator](https://highcharts.com/docs/stock/navigator) for more information.
 
 Range selector
 --------------
 
 Allows you to quickly select a range to be shown on the chart or specify the exact interval to be shown.
 
-See [Range selector](https://highcharts.com/docs/chart-concepts/range-selector) for more information.
+See [Range selector](https://highcharts.com/docs/stock/range-selector) for more information.
 
 Scrollbar
 ---------

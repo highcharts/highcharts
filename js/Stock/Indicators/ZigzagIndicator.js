@@ -7,10 +7,8 @@
  *  !!!!!!! SOURCE GETS TRANSPILED BY TYPESCRIPT. EDIT TS FILE ONLY. !!!!!!!
  *
  * */
-'use strict';
-import U from '../../Core/Utilities.js';
-var seriesType = U.seriesType;
-var UNDEFINED;
+import BaseSeries from '../../Core/Series/Series.js';
+import './SMAIndicator.js';
 /**
  * The Zig Zag series type.
  *
@@ -20,7 +18,7 @@ var UNDEFINED;
  *
  * @augments Highcharts.Series
  */
-seriesType('zigzag', 'sma', 
+BaseSeries.seriesType('zigzag', 'sma', 
 /**
  * Zig Zag indicator.
  *
@@ -81,8 +79,8 @@ seriesType('zigzag', 'sma',
         // Exit if not enught points or no low or high values
         if (!xVal || xVal.length <= 1 ||
             (yValLen &&
-                (yVal[0][lowIndex] === UNDEFINED ||
-                    yVal[0][highIndex] === UNDEFINED))) {
+                (typeof yVal[0][lowIndex] === 'undefined' ||
+                    typeof yVal[0][highIndex] === 'undefined'))) {
             return;
         }
         // Set first zigzag point candidate

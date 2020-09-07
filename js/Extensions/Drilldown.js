@@ -10,9 +10,11 @@
  *
  * */
 'use strict';
+import Axis from '../Core/Axis/Axis.js';
 import Chart from '../Core/Chart/Chart.js';
 import Color from '../Core/Color.js';
 import H from '../Core/Globals.js';
+var noop = H.noop;
 import O from '../Core/Options.js';
 var defaultOptions = O.defaultOptions;
 import Point from '../Core/Series/Point.js';
@@ -133,9 +135,9 @@ var addEvent = U.addEvent, removeEvent = U.removeEvent, animObject = U.animObjec
 * @name Highcharts.DrillupEventObject#type
 * @type {"drillup"}
 */
-import '../Core/Series/Series.js';
+import '../Series/LineSeries.js';
 import '../Series/ColumnSeries.js';
-var noop = H.noop, seriesTypes = H.seriesTypes, PieSeries = seriesTypes.pie, ColumnSeries = seriesTypes.column, ddSeriesId = 1;
+var seriesTypes = H.seriesTypes, PieSeries = seriesTypes.pie, ColumnSeries = seriesTypes.column, ddSeriesId = 1;
 // Add language
 extend(defaultOptions.lang, 
 /**
@@ -167,6 +169,8 @@ extend(defaultOptions.lang,
  * @product      highcharts highmaps
  * @requires     modules/drilldown
  * @optionparent drilldown
+ * @sample {highcharts} highcharts/series-organization/drilldown
+ *         Organization chart drilldown
  */
 defaultOptions.drilldown = {
     /**
@@ -770,7 +774,15 @@ ColumnSeries.prototype.animateDrillupTo = function (init) {
         // Do dummy animation on first point to get to complete
         syncTimeout(function () {
             if (newSeries.points) { // May be destroyed in the meantime, #3389
-                newSeries.points.forEach(function (point, i) {
+                // Unable to drillup with nodes, #13711
+                var pointsWithNodes = [];
+                newSeries.data.forEach(function (el) {
+                    pointsWithNodes.push(el);
+                });
+                if (newSeries.nodes) {
+                    pointsWithNodes = pointsWithNodes.concat(newSeries.nodes);
+                }
+                pointsWithNodes.forEach(function (point, i) {
                     // Fade in other points
                     var verb = i === (level && level.pointIndex) ? 'show' : 'fadeIn', inherit = verb === 'show' ? true : void 0, dataLabel = point.dataLabel;
                     if (point.graphic) { // #3407
@@ -946,7 +958,7 @@ Point.prototype.doDrilldown = function (_holdRedraw, category, originalEvent) {
  * @param {global.MouseEvent} e
  *        Click event
  */
-H.Axis.prototype.drilldownCategory = function (x, e) {
+Axis.prototype.drilldownCategory = function (x, e) {
     objectEach(this.getDDPoints(x), function (point) {
         if (point &&
             point.series &&
@@ -967,7 +979,7 @@ H.Axis.prototype.drilldownCategory = function (x, e) {
  * @return {Array<(boolean|Highcharts.Point)>|undefined}
  *         Drillable points
  */
-H.Axis.prototype.getDDPoints = function (x) {
+Axis.prototype.getDDPoints = function (x) {
     return this.ddPoints && this.ddPoints[x];
 };
 /**

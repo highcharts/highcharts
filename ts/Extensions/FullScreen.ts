@@ -68,6 +68,8 @@ declare global {
 /**
  * Handles displaying chart's container in the fullscreen mode.
  *
+ * **Note**: Fullscreen is not supported on iPhone due to iOS limitations.
+ *
  * @class
  * @name Highcharts.Fullscreen
  * @hideconstructor

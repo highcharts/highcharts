@@ -7,15 +7,15 @@
  *  !!!!!!! SOURCE GETS TRANSPILED BY TYPESCRIPT. EDIT TS FILE ONLY. !!!!!!!
  *
  * */
-'use strict';
+import BaseSeries from '../Core/Series/Series.js';
+var seriesTypes = BaseSeries.seriesTypes;
 import H from '../Core/Globals.js';
+var noop = H.noop;
 import LegendSymbolMixin from '../Mixins/LegendSymbol.js';
-import U from '../Core/Utilities.js';
-var seriesType = U.seriesType;
 import '../Core/Options.js';
 import '../Core/Legend.js';
-import '../Series/ScatterSeries.js';
-var noop = H.noop, Series = H.Series, seriesTypes = H.seriesTypes;
+import './ScatterSeries.js';
+var Series = H.Series;
 /**
  * A polygon series can be used to draw any freeform shape in the cartesian
  * coordinate system. A fill is applied with the `color` option, and
@@ -34,7 +34,7 @@ var noop = H.noop, Series = H.Series, seriesTypes = H.seriesTypes;
  * @requires     highcharts-more
  * @optionparent plotOptions.polygon
  */
-seriesType('polygon', 'scatter', {
+BaseSeries.seriesType('polygon', 'scatter', {
     marker: {
         enabled: false,
         states: {

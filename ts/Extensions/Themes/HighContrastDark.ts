@@ -14,15 +14,14 @@
  *
  * */
 
-'use strict';
-
-import Highcharts from '../../Core/Globals.js';
+import type { SeriesPlotOptionsType } from '../../Core/Series/Types';
+import H from '../../Core/Globals.js';
 import U from '../../Core/Utilities.js';
 const { setOptions } = U;
 
 var textBright = '#F0F0F3';
 
-Highcharts.theme = {
+H.theme = {
     colors: [
         '#a6f0ff',
         '#70d49e',
@@ -116,7 +115,7 @@ Highcharts.theme = {
         map: {
             nullColor: '#353535'
         }
-    } as Highcharts.PlotOptions,
+    } as SeriesPlotOptionsType,
 
     legend: {
         backgroundColor: 'transparent',
@@ -229,4 +228,4 @@ Highcharts.theme = {
 };
 
 // Apply the theme
-setOptions(Highcharts.theme);
+setOptions(H.theme);

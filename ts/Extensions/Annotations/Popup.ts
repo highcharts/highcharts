@@ -14,6 +14,7 @@
 
 import type Annotation from './Annotations';
 import type Chart from '../../Core/Chart/Chart';
+import type { SeriesPlotOptionsType } from '../../Core/Series/Types';
 import H from '../../Core/Globals.js';
 import NavigationBindings from './NavigationBindings.js';
 import Pointer from '../../Core/Pointer.js';
@@ -802,7 +803,7 @@ H.Popup.prototype = {
                 .querySelectorAll('.' + PREFIX + 'popup-rhs-col-wrapper')[0];
 
             objectEach(series, function (
-                serie: (Highcharts.PlotOptions|Highcharts.Series),
+                serie: (SeriesPlotOptionsType|Highcharts.Series),
                 value: string
             ): void {
                 var seriesOptions = serie.options;

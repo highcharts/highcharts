@@ -8,10 +8,9 @@
  *
  * */
 
-'use strict';
-
 import type Axis from '../Core/Axis/Axis';
 import type Chart from '../Core/Chart/Chart';
+import BaseSeries from '../Core/Series/Series.js';
 import H from '../Core/Globals.js';
 import Math3D from '../Extensions/Math3D.js';
 const { perspective } = Math3D;
@@ -62,10 +61,11 @@ declare global {
     }
 }
 
-import '../Core/Series/Series.js';
+import './ColumnSeries.js';
+import '../Series/LineSeries.js';
 
 var Series = H.Series,
-    seriesTypes = H.seriesTypes,
+    columnProto = BaseSeries.seriesTypes.column.prototype,
     svg = H.svg;
 
 /**
@@ -124,7 +124,7 @@ function retrieveStacks(
     chart: Chart,
     stacking?: string
 ): Highcharts.Stack3dDictionary {
-    const series = chart.series,
+    const series = chart.series as Array<Highcharts.Series>,
         stacks = {} as Highcharts.Stack3dDictionary;
 
     let stackNumber: number,
@@ -147,7 +147,7 @@ function retrieveStacks(
     return stacks;
 }
 
-wrap(seriesTypes.column.prototype, 'translate', function (
+wrap(columnProto, 'translate', function (
     this: Highcharts.ColumnSeries,
     proceed: Function
 ): void {
@@ -168,9 +168,8 @@ wrap(Series.prototype, 'justifyDataLabel', function (
         proceed.apply(this, [].slice.call(arguments, 1)) :
         false;
 });
-
-seriesTypes.column.prototype.translate3dPoints = function (): void {};
-seriesTypes.column.prototype.translate3dShapes = function (): void {
+columnProto.translate3dPoints = function (): void {};
+columnProto.translate3dShapes = function (): void {
 
     var series: Highcharts.ColumnSeries = this,
         chart = series.chart,
@@ -291,7 +290,7 @@ seriesTypes.column.prototype.translate3dShapes = function (): void {
     series.z = z;
 };
 
-wrap(seriesTypes.column.prototype, 'animate', function (
+wrap(columnProto, 'animate', function (
     this: Highcharts.ColumnSeries,
     proceed: Function
 ): void {
@@ -359,7 +358,7 @@ wrap(seriesTypes.column.prototype, 'animate', function (
 // series group - if series is added to a group all columns will have the same
 // zIndex in comparison with different series.
 wrap(
-    seriesTypes.column.prototype,
+    columnProto,
     'plotGroup',
     function (
         this: Highcharts.ColumnSeries,
@@ -397,7 +396,7 @@ wrap(
 // When series is not added to group it is needed to change setVisible method to
 // allow correct Legend funcionality. This wrap is basing on pie chart series.
 wrap(
-    seriesTypes.column.prototype,
+    columnProto,
     'setVisible',
     function (
         this: Highcharts.ColumnSeries,
@@ -426,8 +425,7 @@ wrap(
     }
 );
 
-(seriesTypes.column.prototype as Highcharts.ColumnSeries)
-    .handle3dGrouping = true;
+columnProto.handle3dGrouping = true;
 addEvent(Series, 'afterInit', function (): void {
     if (
         this.chart.is3d() &&
@@ -526,26 +524,24 @@ function hasNewShapeType(
         proceed.apply(this, args);
 }
 
-wrap(seriesTypes.column.prototype, 'pointAttribs', pointAttribs);
-wrap(seriesTypes.column.prototype, 'setState', setState);
-wrap(
-    seriesTypes.column.prototype.pointClass.prototype,
+wrap(columnProto, 'pointAttribs', pointAttribs);
+wrap(columnProto, 'setState', setState);
+wrap(columnProto.pointClass.prototype,
     'hasNewShapeType',
     hasNewShapeType
 );
 
-if (seriesTypes.columnrange) {
-    wrap(seriesTypes.columnrange.prototype, 'pointAttribs', pointAttribs);
-    wrap(seriesTypes.columnrange.prototype, 'setState', setState);
+if (BaseSeries.seriesTypes.columnRange) {
+    const columnRangeProto = BaseSeries.seriesTypes.columnrange.prototype;
+    wrap(columnRangeProto, 'pointAttribs', pointAttribs);
+    wrap(columnRangeProto, 'setState', setState);
     wrap(
-        seriesTypes.columnrange.prototype.pointClass.prototype,
+        columnRangeProto.pointClass.prototype,
         'hasNewShapeType',
         hasNewShapeType
     );
-    seriesTypes.columnrange.prototype.plotGroup =
-        seriesTypes.column.prototype.plotGroup;
-    seriesTypes.columnrange.prototype.setVisible =
-        seriesTypes.column.prototype.setVisible;
+    columnRangeProto.plotGroup = columnProto.plotGroup;
+    columnRangeProto.setVisible = columnProto.setVisible;
 }
 
 wrap(Series.prototype, 'alignDataLabel', function (
@@ -630,7 +626,7 @@ wrap(StackItem.prototype, 'getStackBox', function (
         // for correct stackLabels position calculation
         if (
             columnSeries &&
-            columnSeries instanceof seriesTypes.column
+            columnSeries instanceof BaseSeries.seriesTypes.column
         ) {
             let dLPosition = {
                 x: stackBox.x + (chart.inverted ? h : xWidth / 2),

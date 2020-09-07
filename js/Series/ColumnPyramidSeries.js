@@ -7,12 +7,11 @@
  *  !!!!!!! SOURCE GETS TRANSPILED BY TYPESCRIPT. EDIT TS FILE ONLY. !!!!!!!
  *
  * */
-'use strict';
-import H from '../Core/Globals.js';
+import BaseSeries from '../Core/Series/Series.js';
+import ColumnSeries from './ColumnSeries.js';
+var colProto = ColumnSeries.prototype;
 import U from '../Core/Utilities.js';
-var clamp = U.clamp, pick = U.pick, seriesType = U.seriesType;
-var seriesTypes = H.seriesTypes;
-var colProto = seriesTypes.column.prototype;
+var clamp = U.clamp, pick = U.pick;
 /**
  * The ColumnPyramidSeries class
  *
@@ -22,7 +21,7 @@ var colProto = seriesTypes.column.prototype;
  *
  * @augments Highcharts.Series
  */
-seriesType('columnpyramid', 'column', 
+BaseSeries.seriesType('columnpyramid', 'column', 
 /**
  * Column pyramid series display one pyramid per value along an X axis.
  * To display horizontal pyramids, set [chart.inverted](#chart.inverted) to

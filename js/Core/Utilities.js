@@ -2441,49 +2441,6 @@ var animate = H.animate = function (el, params, opt) {
         fx.run(start, end, unit);
     });
 };
-/**
- * Factory to create new series prototypes.
- *
- * @function Highcharts.seriesType
- *
- * @param {string} type
- *        The series type name.
- *
- * @param {string} parent
- *        The parent series type name. Use `line` to inherit from the basic
- *        {@link Series} object.
- *
- * @param {Highcharts.SeriesOptionsType|Highcharts.Dictionary<*>} options
- *        The additional default options that are merged with the parent's
- *        options.
- *
- * @param {Highcharts.Dictionary<*>} [props]
- *        The properties (functions and primitives) to set on the new
- *        prototype.
- *
- * @param {Highcharts.Dictionary<*>} [pointProps]
- *        Members for a series-specific extension of the {@link Point}
- *        prototype if needed.
- *
- * @return {Highcharts.Series}
- *         The newly created prototype as extended from {@link Series} or its
- *         derivatives.
- */
-// docs: add to API + extending Highcharts
-var seriesType = H.seriesType = function (type, parent, options, props, pointProps) {
-    var defaultOptions = getOptions(), seriesTypes = H.seriesTypes;
-    // Merge the options
-    defaultOptions.plotOptions[type] = merge(defaultOptions.plotOptions[parent], options);
-    // Create the class
-    seriesTypes[type] = extendClass(seriesTypes[parent] || function () { }, props);
-    seriesTypes[type].prototype.type = type;
-    // Create the point class if needed
-    if (pointProps) {
-        seriesTypes[type].prototype.pointClass =
-            extendClass(H.Point, pointProps);
-    }
-    return seriesTypes[type];
-};
 var serialMode;
 /**
  * Get a unique key for using in internal element id's and pointers. The key is
@@ -2670,7 +2627,6 @@ var utilitiesModule = {
     pInt: pInt,
     relativeLength: relativeLength,
     removeEvent: removeEvent,
-    seriesType: seriesType,
     setAnimation: setAnimation,
     setOptions: setOptions,
     splat: splat,

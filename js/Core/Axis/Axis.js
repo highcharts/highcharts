@@ -642,6 +642,10 @@ var Axis = /** @class */ (function () {
                     if (axis.isXAxis) {
                         xData = series.xData;
                         if (xData.length) {
+                            var isPositive = function (number) { return number > 0; };
+                            xData = axis.logarithmic ?
+                                xData.filter(axis.validatePositiveValue) :
+                                xData;
                             xExtremes = series.getXExtremes(xData);
                             // If xData contains values which is not numbers,
                             // then filter them out. To prevent performance hit,
@@ -2663,13 +2667,14 @@ var Axis = /** @class */ (function () {
      * The tick index.
      */
     Axis.prototype.renderTick = function (pos, i) {
+        var _a;
         var axis = this;
         var isLinked = axis.isLinked;
         var ticks = axis.ticks;
         var slideInTicks = axis.chart.hasRendered && isNumber(axis.oldMin);
         // Linked axes need an extra check to find out if
         if (!isLinked ||
-            (pos >= axis.min && pos <= axis.max)) {
+            (pos >= axis.min && pos <= axis.max) || ((_a = axis.grid) === null || _a === void 0 ? void 0 : _a.isColumn)) {
             if (!ticks[pos]) {
                 ticks[pos] = new Tick(axis, pos);
             }
@@ -3040,6 +3045,20 @@ var Axis = /** @class */ (function () {
     Axis.prototype.hasVerticalPanning = function () {
         var _a, _b;
         return /y/.test(((_b = (_a = this.chart.options.chart) === null || _a === void 0 ? void 0 : _a.panning) === null || _b === void 0 ? void 0 : _b.type) || '');
+    };
+    /**
+    * Check whether the given value is a positive valid axis value.
+    *
+    * @private
+    * @function Highcharts.Axis#validatePositiveValue
+    *
+    * @param {unknown} value
+    * The axis value
+    * @return {boolean}
+    *
+    */
+    Axis.prototype.validatePositiveValue = function (value) {
+        return isNumber(value) && value > 0;
     };
     /* *
      *
@@ -5726,7 +5745,7 @@ var Axis = /** @class */ (function () {
              * @sample {highcharts} highcharts/plotoptions/animation-defer/
              *          Animation defer settings
              * @type {boolean|Partial<Highcharts.AnimationOptionsObject>}
-             * @since next
+             * @since 8.2.0
              * @apioption yAxis.stackLabels.animation
              */
             animation: {},
@@ -5736,7 +5755,7 @@ var Axis = /** @class */ (function () {
              * As `undefined` inherits defer time from the [series.animation.defer](#plotOptions.series.animation.defer).
              *
              * @type      {number}
-             * @since     next
+             * @since 8.2.0
              * @apioption yAxis.stackLabels.animation.defer
              */
             /**

@@ -6,9 +6,14 @@
  *
  * */
 
-'use strict';
-
-import H from '../../Core/Globals.js';
+import BaseSeries from '../../Core/Series/Series.js';
+import MultipleLinesMixin from '../../Mixins/MultipleLines.js';
+import ReduceArrayMixin from '../../Mixins/ReduceArray.js';
+import U from '../../Core/Utilities.js';
+const {
+    isArray,
+    merge
+} = U;
 
 /**
  * Internal types
@@ -55,25 +60,19 @@ declare global {
             smoothedLine?: Dictionary<CSSObject>;
             tooltip?: TooltipOptions;
         }
-
-        interface SeriesTypesDictionary {
-            stochastic: typeof StochasticIndicator;
-        }
     }
 }
 
-import U from '../../Core/Utilities.js';
-const {
-    isArray,
-    merge,
-    seriesType
-} = U;
+declare module '../../Core/Series/Types' {
+    interface SeriesTypeRegistry {
+        stochastic: typeof Highcharts.StochasticIndicator;
+    }
+}
 
-import reduceArrayMixin from '../../Mixins/ReduceArray.js';
-import multipleLinesMixin from '../../Mixins/MultipleLines.js';
+import './SMAIndicator.js';
 
-var SMA = H.seriesTypes.sma,
-    getArrayExtremes = reduceArrayMixin.getArrayExtremes;
+var SMA = BaseSeries.seriesTypes.sma,
+    getArrayExtremes = ReduceArrayMixin.getArrayExtremes;
 
 /**
  * The Stochastic series type.
@@ -84,7 +83,7 @@ var SMA = H.seriesTypes.sma,
  *
  * @augments Highcharts.Series
  */
-seriesType<Highcharts.StochasticIndicator>(
+BaseSeries.seriesType<typeof Highcharts.StochasticIndicator>(
     'stochastic',
     'sma',
     /**
@@ -152,7 +151,7 @@ seriesType<Highcharts.StochasticIndicator>(
     /**
      * @lends Highcharts.Series#
      */
-    merge(multipleLinesMixin, {
+    merge(MultipleLinesMixin, {
         nameComponents: ['periods'],
         nameBase: 'Stochastic',
         pointArrayMap: ['y', 'smoothed'],

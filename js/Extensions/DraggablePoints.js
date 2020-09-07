@@ -10,6 +10,7 @@
  *
  * */
 'use strict';
+import Chart from '../Core/Chart/Chart.js';
 import H from '../Core/Globals.js';
 import Point from '../Core/Series/Point.js';
 import U from '../Core/Utilities.js';
@@ -171,7 +172,7 @@ var addEvent = U.addEvent, clamp = U.clamp, merge = U.merge, objectEach = U.obje
 * @type {"drop"}
 */
 ''; // detaches doclets above
-import '../Core/Series/Series.js';
+import '../Series/LineSeries.js';
 var seriesTypes = H.seriesTypes;
 /**
  * Flip a side property, used with resizeRect. If input side is "left", return
@@ -1677,7 +1678,7 @@ function dragMove(e, point) {
  * @return {Highcharts.SVGElement}
  *         The modified guide box.
  */
-H.Chart.prototype.setGuideBoxState = function (state, options) {
+Chart.prototype.setGuideBoxState = function (state, options) {
     var guideBox = this.dragGuideBox, guideBoxOptions = merge(defaultGuideBoxOptions, options), stateOptions = merge(guideBoxOptions['default'], // eslint-disable-line dot-notation
     guideBoxOptions[state]);
     return guideBox
@@ -1940,7 +1941,7 @@ Point.prototype.showDragHandles = function () {
  * @function Highcharts.Chart#hideDragHandles
  * @return {void}
  */
-H.Chart.prototype.hideDragHandles = function () {
+Chart.prototype.hideDragHandles = function () {
     var chart = this;
     if (chart.dragHandles) {
         objectEach(chart.dragHandles, function (val, key) {
@@ -2193,7 +2194,7 @@ addEvent(Point, 'remove', function () {
  * @return {boolean}
  *         True if the zoom or pan keys are pressed. False otherwise.
  */
-H.Chart.prototype.zoomOrPanKeyPressed = function (e) {
+Chart.prototype.zoomOrPanKeyPressed = function (e) {
     // Check whether the panKey and zoomKey are set in chart.userOptions
     var chartOptions = this.userOptions.chart || {}, panKey = chartOptions.panKey && chartOptions.panKey + 'Key', zoomKey = chartOptions.zoomKey && chartOptions.zoomKey + 'Key';
     return (e[zoomKey] || e[panKey]);
@@ -2234,7 +2235,7 @@ function addDragDropEvents(chart) {
 }
 // Add event listener to Chart.render that checks whether or not we should add
 // dragdrop.
-addEvent(H.Chart, 'render', function () {
+addEvent(Chart, 'render', function () {
     // If we don't have dragDrop events, see if we should add them
     if (!this.hasAddedDragDropEvents) {
         addDragDropEvents(this);

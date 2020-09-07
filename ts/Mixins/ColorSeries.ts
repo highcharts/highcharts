@@ -50,7 +50,7 @@ declare global {
  * @private
  * @mixin Highcharts.colorPointMixin
  */
-H.colorPointMixin = {
+const colorPointMixin = {
 
     /* eslint-disable valid-jsdoc */
 
@@ -83,7 +83,7 @@ H.colorPointMixin = {
  * @private
  * @mixin Highcharts.colorSeriesMixin
  */
-H.colorSeriesMixin = {
+const colorSeriesMixin = {
     optionalAxis: 'colorAxis',
     colorAxis: 0,
 
@@ -129,3 +129,10 @@ H.colorSeriesMixin = {
     /* eslint-enable valid-jsdoc */
 
 };
+
+const exports = {
+    colorPointMixin,
+    colorSeriesMixin
+};
+
+export default exports;

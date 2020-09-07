@@ -10,6 +10,7 @@
 
 'use strict';
 
+import type { SeriesOptionsType, SeriesPlotOptionsType } from './Series/Types';
 import type Chart from './Chart/Chart';
 import type Point from '../Core/Series/Point';
 import H from './Globals.js';
@@ -281,7 +282,7 @@ declare global {
             lang?: LangOptions;
             legend?: LegendOptions;
             loading?: LoadingOptions;
-            plotOptions?: PlotOptions;
+            plotOptions?: SeriesPlotOptionsType;
             subtitle?: SubtitleOptions;
             symbols?: Array<SymbolKeyValue>;
             time?: TimeOptions;
@@ -356,15 +357,6 @@ declare global {
             (TitleOptions|SubtitleOptions|CaptionOptions);
         type OptionsOverflowValue = ('allow'|'justify');
         type OptionsPosition3dValue = ('chart'|'flap'|'offset'|'ortho');
-        type PlotOptions = {
-            [TSeriesType in keyof SeriesTypesDictionary]?: (
-                Omit<SeriesTypesDictionary[TSeriesType]['prototype']['options'],
-                (
-                    'data'|'id'|'index'|'legendIndex'|'mapData'|'name'|'stack'|
-                    'treemap'|'type'|'xAxis'|'yAxis'|'zIndex'
-                )>
-            )
-        };
     }
 }
 
@@ -3254,7 +3246,7 @@ H.defaultOptions = {
          * pixels. Since v7.0.2 it allows setting a percent string of the full
          * chart width, for example `40%`.
          *
-         * Defaults to the full chart width from legends below or above the
+         * Defaults to the full chart width for legends below or above the
          * chart, half the chart width for legends to the left and right.
          *
          * @sample {highcharts} highcharts/legend/width/

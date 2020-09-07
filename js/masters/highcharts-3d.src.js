@@ -18,4 +18,3 @@ import '../Core/Series/Series3D.js';
 import '../Series/Column3DSeries.js';
 import '../Series/Pie3DSeries.js';
 import '../Series/Scatter3DSeries.js';
-import '../Core/Renderer/VML/VMLRenderer3D.js';

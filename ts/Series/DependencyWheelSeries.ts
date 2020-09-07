@@ -10,9 +10,13 @@
  *
  * */
 
-'use strict';
-
+import BaseSeries from '../Core/Series/Series.js';
 import H from '../Core/Globals.js';
+import NodesMixin from '../Mixins/Nodes.js';
+import U from '../Core/Utilities.js';
+const {
+    animObject
+} = U;
 
 /**
  * Internal types
@@ -29,9 +33,6 @@ declare global {
             center?: Array<(number|string|null)>;
             startAngle?: number;
             states?: SeriesStatesOptionsObject<DependencyWheelSeries>;
-        }
-        interface SeriesTypesDictionary {
-            dependencywheel: typeof DependencyWheelSeries;
         }
         class DependencyWheelPoint extends SankeyPoint {
             public angle: number;
@@ -68,16 +69,19 @@ declare global {
     }
 }
 
-import U from '../Core/Utilities.js';
-const {
-    animObject,
-    seriesType
-} = U;
+/**
+ * @private
+ */
+declare module '../Core/Series/Types' {
+    interface SeriesTypeRegistry {
+        dependencywheel: typeof Highcharts.DependencyWheelSeries;
+    }
+}
 
+import './SankeySeries.js';
 import '../Core/Options.js';
-import NodesMixin from '../Mixins/Nodes.js';
 
-var base = H.seriesTypes.sankey.prototype;
+const base = BaseSeries.seriesTypes.sankey.prototype;
 
 /**
  * @private
@@ -86,7 +90,7 @@ var base = H.seriesTypes.sankey.prototype;
  *
  * @augments Highcharts.seriesTypes.sankey
  */
-seriesType<Highcharts.DependencyWheelSeries>(
+BaseSeries.seriesType<typeof Highcharts.DependencyWheelSeries>(
     'dependencywheel',
     'sankey',
     /**
@@ -100,7 +104,7 @@ seriesType<Highcharts.DependencyWheelSeries>(
      * @exclude      dataSorting
      * @since        7.1.0
      * @product      highcharts
-     * @requires     modules/dependencywheel
+     * @requires     modules/dependency-wheel
      * @optionparent plotOptions.dependencywheel
      */
     {
@@ -122,7 +126,7 @@ seriesType<Highcharts.DependencyWheelSeries>(
         startAngle: 0
     }, {
         orderNodes: false,
-        getCenter: H.seriesTypes.pie.prototype.getCenter,
+        getCenter: BaseSeries.seriesTypes.pie.prototype.getCenter,
 
         /* eslint-disable valid-jsdoc */
 
@@ -463,7 +467,8 @@ seriesType<Highcharts.DependencyWheelSeries>(
  * @extends   series,plotOptions.dependencywheel
  * @exclude   dataSorting
  * @product   highcharts
- * @requires  modules/dependencywheel
+ * @requires  modules/sankey
+ * @requires  modules/dependency-wheel
  * @apioption series.dependencywheel
  */
 

@@ -31,24 +31,6 @@ declare global {
             after?: Function;
             before?: Function;
         }
-        interface Tree {
-            getListOfParents(
-                data: Array<TreePointOptionsObject>,
-                ids: Array<string>
-            ): Dictionary<Array<TreePointOptionsObject>>;
-            getNode(
-                id: string,
-                parent: (string|null),
-                level: number,
-                data: (TreePointOptionsObject|null),
-                mapOfIdToChildren: Dictionary<Array<TreePointOptionsObject>>,
-                options: TreeGetOptionsObject
-            ): TreeNode;
-            getTree(
-                data: Array<TreePointOptionsObject>,
-                options: TreeGetOptionsObject
-            ): TreeNode;
-        }
         interface TreeNode {
             children: Array<TreeNode>;
             data: (TreePointOptionsObject|null);
@@ -84,7 +66,7 @@ declare global {
  * @return {Highcharts.Dictionary<Array<*>>}
  *         Map from parent id to children index in data
  */
-var getListOfParents = function (
+const getListOfParents = function (
     data: Array<Highcharts.TreePointOptionsObject>,
     ids: Array<string>
 ): Highcharts.Dictionary<Array<Highcharts.TreePointOptionsObject>> {
@@ -121,7 +103,7 @@ var getListOfParents = function (
     });
     return listOfParents;
 };
-var getNode = function (
+const getNode = function (
     id: string,
     parent: (string|null),
     level: number,
@@ -210,7 +192,7 @@ var getNode = function (
 
     return node;
 };
-var getTree = function (
+const getTree = function (
     data: Array<Highcharts.TreePointOptionsObject>,
     options: Highcharts.TreeGetOptionsObject
 ): Highcharts.TreeNode {
@@ -222,10 +204,10 @@ var getTree = function (
     return getNode('', null, 1, null, mapOfIdToChildren, options);
 };
 
-var Tree: Highcharts.Tree = {
-    getListOfParents: getListOfParents,
-    getNode: getNode,
-    getTree: getTree
+const Tree = {
+    getListOfParents,
+    getNode,
+    getTree
 };
 
 export default Tree;

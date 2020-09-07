@@ -6,13 +6,12 @@
  *
  * */
 
-'use strict';
-
+import BaseSeries from '../../Core/Series/Series.js';
+import MultipleLinesMixin from '../../Mixins/MultipleLines.js';
 import U from '../../Core/Utilities.js';
 const {
     merge,
-    pick,
-    seriesType
+    pick
 } = U;
 
 /**
@@ -57,15 +56,16 @@ declare global {
         class AroonIndicatorPoint extends SMAIndicatorPoint {
             public series: AroonIndicator;
         }
-
-        interface SeriesTypesDictionary {
-            aroon: typeof AroonIndicator;
-        }
     }
 }
 
+declare module '../../Core/Series/Types' {
+    interface SeriesTypeRegistry {
+        aroon: typeof Highcharts.AroonIndicator;
+    }
+}
 
-import multipleLinesMixin from '../../Mixins/MultipleLines.js';
+import './SMAIndicator.js';
 
 /* eslint-disable valid-jsdoc */
 // Utils
@@ -91,6 +91,7 @@ function getExtremeIndexInArray(arr: Array<number>, extreme: string): number {
 
     return valueIndex;
 }
+
 /* eslint-enable valid-jsdoc */
 
 /**
@@ -102,7 +103,7 @@ function getExtremeIndexInArray(arr: Array<number>, extreme: string): number {
  *
  * @augments Highcharts.Series
  */
-seriesType<Highcharts.AroonIndicator>(
+BaseSeries.seriesType<typeof Highcharts.AroonIndicator>(
     'aroon',
     'sma',
     /**
@@ -169,7 +170,7 @@ seriesType<Highcharts.AroonIndicator>(
     /**
      * @lends Highcharts.Series#
      */
-    merge(multipleLinesMixin, {
+    merge(MultipleLinesMixin, {
         nameBase: 'Aroon',
         pointArrayMap: ['y', 'aroonDown'],
         pointValKey: 'y',

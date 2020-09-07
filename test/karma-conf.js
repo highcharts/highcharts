@@ -722,13 +722,13 @@ function createVisualTestTemplate(argv, path, js, assertion) {
                         done();
                     `}
                     assert.test.resets = ${resets};
-                } else if (attempts < 50) {
+                } else if (attempts < 100) {
                     setTimeout(waitForChartToLoad, 100);
                     attempts++;
                 } else {
                     assert.ok(
                         false,
-                        \`Chart async chart test should load within \${attempts} attempts\`
+                        \`Chart async chart test should load within \${attempts} attempts (\${attempts/10} seconds). \`
                     );
                     done();
                     assert.test.resets = ${resets};

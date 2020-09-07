@@ -8,8 +8,7 @@
  *
  * */
 
-'use strict';
-
+import BaseSeries from '../Core/Series/Series.js';
 import H from '../Core/Globals.js';
 
 /**
@@ -42,21 +41,20 @@ declare global {
             states?: SeriesStatesOptionsObject<ErrorBarSeries>;
             whiskerWidth?: number;
         }
-        interface SeriesTypesDictionary {
-            errorbar: typeof ErrorBarSeries;
-        }
     }
 }
 
-import U from '../Core/Utilities.js';
-const {
-    seriesType
-} = U;
 import '../Core/Options.js';
 import './BoxPlotSeries.js';
 
 var noop = H.noop,
-    seriesTypes = H.seriesTypes;
+    seriesTypes = BaseSeries.seriesTypes;
+
+declare module '../Core/Series/Types' {
+    interface SeriesTypesDictionary {
+        errorbar: typeof Highcharts.ErrorBarSeries;
+    }
+}
 
 /**
  * Error bars are a graphical representation of the variability of data and are
@@ -74,7 +72,7 @@ var noop = H.noop,
  * @requires     highcharts-more
  * @optionparent plotOptions.errorbar
  */
-seriesType<Highcharts.ErrorBarSeries>('errorbar', 'boxplot', {
+BaseSeries.seriesType<typeof Highcharts.ErrorBarSeries>('errorbar', 'boxplot', {
 
     /**
      * The main color of the bars. This can be overridden by

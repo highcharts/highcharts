@@ -10,10 +10,9 @@
  *
  * */
 
-'use strict';
-
 import type Point from '../Core/Series/Point';
 import type SVGPath from '../Core/Renderer/SVG/SVGPath';
+import BaseSeries from '../Core/Series/Series.js';
 import H from '../Core/Globals.js';
 import O from '../Core/Options.js';
 const { dateFormat } = O;
@@ -23,7 +22,6 @@ const {
     isNumber,
     merge,
     pick,
-    seriesType,
     splat
 } = U;
 
@@ -33,7 +31,15 @@ const {
  */
 declare global {
     namespace Highcharts {
+        type GanttDependencyOption =
+            (
+                string|
+                GanttConnectorsOptions|
+                Array<GanttConnectorsOptions>|
+                Array<string>
+            );
         class GanttPoint extends XRangePoint {
+            public collapsed?: boolean;
             public end?: GanttPointOptions['end'];
             public milestone?: GanttPointOptions['milestone'];
             public options: GanttPointOptions;
@@ -85,9 +91,15 @@ declare global {
             connectors?: GanttConnectorsOptions;
             states?: SeriesStatesOptionsObject<GanttSeries>;
         }
-        interface SeriesTypesDictionary {
-            gantt: typeof GanttSeries;
-        }
+    }
+}
+
+/**
+ * @private
+ */
+declare module '../Core/Series/Types' {
+    interface SeriesTypeRegistry {
+        gantt: typeof Highcharts.GanttSeries;
     }
 }
 
@@ -96,8 +108,8 @@ import '../Extensions/StaticScale.js';
 import '../Gantt/Pathfinder.js';
 import './XRangeSeries.js';
 
-var seriesTypes = H.seriesTypes,
-    Series = H.Series,
+var Series = H.Series,
+    seriesTypes = BaseSeries.seriesTypes,
     parent = seriesTypes.xrange;
 
 /**
@@ -107,7 +119,7 @@ var seriesTypes = H.seriesTypes,
  *
  * @augments Highcharts.Series
  */
-seriesType<Highcharts.GanttSeries>('gantt', 'xrange'
+BaseSeries.seriesType<typeof Highcharts.GanttSeries>('gantt', 'xrange'
 
     /**
      * A `gantt` series. If the [type](#series.gantt.type) option is not specified,
@@ -159,8 +171,8 @@ seriesType<Highcharts.GanttSeries>('gantt', 'xrange'
                     )[0];
                 }
 
-                start = dateFormat(format as any, point.start as any);
-                end = dateFormat(format as any, point.end as any);
+                start = series.chart.time.dateFormat(format as any, point.start as any);
+                end = series.chart.time.dateFormat(format as any, point.end as any);
 
                 retVal += '<br/>';
 
@@ -314,14 +326,12 @@ seriesType<Highcharts.GanttSeries>('gantt', 'xrange'
                     (options as any)[prop] = val;
                 }
             }
+
             addIfExists('x', pick(options.start, options.x));
             addIfExists('x2', pick(options.end, options.x2));
             addIfExists(
                 'partialFill', pick(options.completed, options.partialFill)
             );
-            addIfExists('connect', pick(
-                options.dependency, options.connect as any
-            ));
         }
 
         /* eslint-enable valid-jsdoc */
@@ -352,15 +362,15 @@ seriesType<Highcharts.GanttSeries>('gantt', 'xrange'
             this: Highcharts.GanttPoint,
             options: Highcharts.GanttPointOptions,
             x: number
-        ): Point {
+        ): Highcharts.GanttPoint {
             var point = this,
-                retVal = merge(options) as any;
+                ganttPoint;
 
-            H.seriesTypes.gantt.prototype.setGanttPointAliases(retVal);
+            ganttPoint = parent.prototype.pointClass.prototype.applyOptions
+                .call(point, options, x) as Highcharts.GanttPoint;
+            H.seriesTypes.gantt.prototype.setGanttPointAliases(ganttPoint as Highcharts.GanttPointOptions);
 
-            retVal = parent.prototype.pointClass.prototype.applyOptions
-                .call(point, retVal, x);
-            return retVal;
+            return ganttPoint;
         },
         isValid: function (this: Highcharts.GanttPoint): boolean {
             return (

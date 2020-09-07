@@ -107,7 +107,7 @@ QUnit.test('Fixed range for initial range after add points (#6830)', function (a
                     chart.redraw();
 
                     assert.strictEqual(
-                        chart.rangeSelector.buttonOptions[  // eslint-disable-line no-underscore-dangle
+                        chart.rangeSelector.buttonOptions[// eslint-disable-line no-underscore-dangle
                             chart.rangeSelector.selected
                         ]._range,
                         chart.xAxis[0].max - chart.xAxis[0].min,
@@ -245,4 +245,13 @@ QUnit.test('Highstock with empty data', assert => {
         [3, 3, 3, 0, 3, 2],
         'Fixed-range buttons should be disabled with empty data'
     );
+
+    chart.navigator.onMouseUp({});
+
+    assert.notStrictEqual(
+        chart.navigator.shades[0].attr('x'),
+        'NaN',
+        'There should be no error on mouse up (#13788).'
+    );
+
 });

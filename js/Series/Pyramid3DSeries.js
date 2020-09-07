@@ -10,11 +10,9 @@
  *  !!!!!!! SOURCE GETS TRANSPILED BY TYPESCRIPT. EDIT TS FILE ONLY. !!!!!!!
  *
  * */
-'use strict';
-import U from '../Core/Utilities.js';
-var seriesType = U.seriesType;
-import '../Series/ColumnSeries.js';
+import BaseSeries from '../Core/Series/Series.js';
 import '../Core/Renderer/SVG/SVGRenderer.js';
+import './Funnel3DSeries.js';
 /**
  * The pyramid3d series type.
  *
@@ -25,7 +23,7 @@ import '../Core/Renderer/SVG/SVGRenderer.js';
  * @requires modules/funnel3d
  * @requires modules/pyramid3d
  */
-seriesType('pyramid3d', 'funnel3d', 
+BaseSeries.seriesType('pyramid3d', 'funnel3d', 
 /**
  * A pyramid3d is a 3d version of pyramid series type. Pyramid charts are
  * a type of chart often used to visualize stages in a sales project,

@@ -9,15 +9,15 @@
  *  !!!!!!! SOURCE GETS TRANSPILED BY TYPESCRIPT. EDIT TS FILE ONLY. !!!!!!!
  *
  * */
-/* eslint indent: 0 */
-'use strict';
+import BaseSeries from '../Core/Series/Series.js';
+var seriesTypes = BaseSeries.seriesTypes;
 import Chart from '../Core/Chart/Chart.js';
 import H from '../Core/Globals.js';
-var noop = H.noop, seriesType = H.seriesType, seriesTypes = H.seriesTypes;
+var noop = H.noop;
 import U from '../Core/Utilities.js';
 var addEvent = U.addEvent, fireEvent = U.fireEvent, isArray = U.isArray, pick = U.pick;
 import '../Core/Options.js';
-import '../Core/Series/Series.js';
+import '../Series/LineSeries.js';
 /**
  * @private
  * @class
@@ -25,7 +25,7 @@ import '../Core/Series/Series.js';
  *
  * @augments Highcharts.Series
  */
-seriesType('funnel', 'pie', 
+BaseSeries.seriesType('funnel', 'pie', 
 /**
  * Funnel charts are a type of chart often used to visualize stages in a
  * sales project, where the top are the initial stages with the most
@@ -459,7 +459,7 @@ addEvent(Chart, 'afterHideAllOverlappingLabels', function () {
  *
  * @augments Highcharts.Series
  */
-seriesType('pyramid', 'funnel', 
+BaseSeries.seriesType('pyramid', 'funnel', 
 /**
  * A pyramid series is a special type of funnel, without neck and reversed
  * by default.

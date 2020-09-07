@@ -10,8 +10,33 @@
  *  !!!!!!! SOURCE GETS TRANSPILED BY TYPESCRIPT. EDIT TS FILE ONLY. !!!!!!!
  * */
 
-'use strict';
+import BaseSeries from '../Core/Series/Series.js';
+import DrawPointMixin from '../Mixins/DrawPoint.js';
+const {
+    drawPoint
+} = DrawPointMixin;
 import H from '../Core/Globals.js';
+const {
+    noop
+} = H;
+import PolygonMixin from '../Mixins/Polygon.js';
+const {
+    getBoundingBoxFromPolygon,
+    getPolygon,
+    isPolygonsColliding,
+    movePolygon,
+    rotate2DToOrigin,
+    rotate2DToPoint
+} = PolygonMixin;
+import U from '../Core/Utilities.js';
+const {
+    extend,
+    find,
+    isArray,
+    isNumber,
+    isObject,
+    merge
+} = U;
 
 /**
  * Internal types
@@ -55,9 +80,6 @@ declare global {
                 point: WordcloudPoint,
                 state?: string
             ): SVGAttributes;
-        }
-        interface SeriesTypesDictionary {
-            wordcloud: typeof WordcloudSeries;
         }
         interface WordcloudFieldObject extends PolygonBoxObject, SizeObject {
             ratioX: number;
@@ -130,32 +152,15 @@ declare global {
     }
 }
 
-import U from '../Core/Utilities.js';
-const {
-    extend,
-    find,
-    isArray,
-    isNumber,
-    isObject,
-    merge,
-    seriesType
-} = U;
+declare module '../Core/Series/Types' {
+    interface SeriesTypeRegistry {
+        wordcloud: typeof Highcharts.WordcloudSeries;
+    }
+}
 
-import drawPointModule from '../Mixins/DrawPoint.js';
-const { drawPoint } = drawPointModule;
-import polygonMixin from '../Mixins/Polygon.js';
-const {
-    getBoundingBoxFromPolygon,
-    getPolygon,
-    isPolygonsColliding,
-    movePolygon,
-    rotate2DToOrigin,
-    rotate2DToPoint
-} = polygonMixin;
-import '../Core/Series/Series.js';
+import './ColumnSeries.js';
 
-var noop = H.noop,
-    Series = H.Series;
+var Series = H.Series;
 
 /**
  * Detects if there is a collision between two rectangles.
@@ -1160,7 +1165,7 @@ var wordCloudSeries: Partial<Highcharts.WordcloudSeries> = {
         var series = this;
 
         return (
-            isObject(series) &&
+            isObject(series) as any &&
             series.visible === true &&
             isArray(series.points) &&
             series.points.length > 0
@@ -1308,6 +1313,8 @@ var wordCloudPoint: Partial<Highcharts.WordcloudPoint> = {
  * @apioption series.sunburst.data.weight
  */
 
+''; // detach doclets above
+
 /**
  * @private
  * @class
@@ -1315,7 +1322,7 @@ var wordCloudPoint: Partial<Highcharts.WordcloudPoint> = {
  *
  * @augments Highcharts.Series
  */
-seriesType<Highcharts.WordcloudSeries>(
+BaseSeries.seriesType<typeof Highcharts.WordcloudSeries>(
     'wordcloud',
     'column',
     wordCloudOptions,

@@ -67,7 +67,7 @@ import PlotLineOrBand from '../Core/Axis/PlotLineOrBand.js';
 var Axis = H.Axis;
 
 
-var defaultConfig: (
+const defaultConfig: (
     Highcharts.CurrentDateIndicatorOptions &
     Highcharts.XAxisOptions
 ) = {
@@ -101,7 +101,7 @@ var defaultConfig: (
          * [dateFormat](/class-reference/Highcharts#dateFormat) function.
          *
          * @type      {string}
-         * @default   '%a, %b %d %Y, %H:%M'
+         * @default   %a, %b %d %Y, %H:%M
          * @product   gantt
          * @apioption xAxis.currentDateIndicator.label.format
          */

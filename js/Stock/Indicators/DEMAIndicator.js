@@ -5,12 +5,12 @@
  *  !!!!!!! SOURCE GETS TRANSPILED BY TYPESCRIPT. EDIT TS FILE ONLY. !!!!!!!
  *
  * */
-'use strict';
-import H from '../../Core/Globals.js';
+import BaseSeries from '../../Core/Series/Series.js';
+import RequiredIndicatorMixin from '../../Mixins/IndicatorRequired.js';
 import U from '../../Core/Utilities.js';
-var correctFloat = U.correctFloat, isArray = U.isArray, seriesType = U.seriesType;
-import requiredIndicator from '../../Mixins/IndicatorRequired.js';
-var EMAindicator = H.seriesTypes.ema;
+var correctFloat = U.correctFloat, isArray = U.isArray;
+import './EMAIndicator.js';
+var EMAindicator = BaseSeries.seriesTypes.ema;
 /**
  * The DEMA series Type
  *
@@ -20,7 +20,7 @@ var EMAindicator = H.seriesTypes.ema;
  *
  * @augments Highcharts.Series
  */
-seriesType('dema', 'ema', 
+BaseSeries.seriesType('dema', 'ema', 
 /**
  * Double exponential moving average (DEMA) indicator. This series requires
  * `linkedTo` option to be set and should be loaded after the
@@ -48,7 +48,7 @@ seriesType('dema', 'ema',
 {
     init: function () {
         var args = arguments, ctx = this;
-        requiredIndicator.isParentLoaded(EMAindicator, 'ema', ctx.type, function (indicator) {
+        RequiredIndicatorMixin.isParentLoaded(EMAindicator, 'ema', ctx.type, function (indicator) {
             indicator.prototype.init.apply(ctx, args);
             return;
         });

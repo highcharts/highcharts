@@ -88,7 +88,7 @@ const {
     wrap
 } = U;
 
-import '../Core/Series/Series.js';
+import '../Series/LineSeries.js';
 import '../Core/Options.js';
 
 var win = H.win,
@@ -106,7 +106,7 @@ var win = H.win,
  *
  * @function Highcharts.initCanvasBoost
  */
-H.initCanvasBoost = function (): void {
+const initCanvasBoost = function (): void {
     if (H.seriesTypes.heatmap) {
         wrap(H.seriesTypes.heatmap.prototype, 'drawPoints', function (
             this: Highcharts.HeatmapSeries
@@ -873,3 +873,5 @@ H.initCanvasBoost = function (): void {
         addEvent(chart, 'render', canvasToSVG);
     });
 };
+
+export default initCanvasBoost;

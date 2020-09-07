@@ -7,18 +7,22 @@
  *  !!!!!!! SOURCE GETS TRANSPILED BY TYPESCRIPT. EDIT TS FILE ONLY. !!!!!!!
  *
  * */
-'use strict';
+import BaseSeries from '../Core/Series/Series.js';
+import ColorMapMixin from '../Mixins/ColorMapSeries.js';
+var colorMapPointMixin = ColorMapMixin.colorMapPointMixin, colorMapSeriesMixin = ColorMapMixin.colorMapSeriesMixin;
 import H from '../Core/Globals.js';
+var noop = H.noop;
 import LegendSymbolMixin from '../Mixins/LegendSymbol.js';
+import mapModule from '../Maps/Map.js';
+var maps = mapModule.maps, splitPath = mapModule.splitPath;
 import Point from '../Core/Series/Point.js';
 import SVGRenderer from '../Core/Renderer/SVG/SVGRenderer.js';
 import U from '../Core/Utilities.js';
-var extend = U.extend, fireEvent = U.fireEvent, getNestedProperty = U.getNestedProperty, isArray = U.isArray, isNumber = U.isNumber, merge = U.merge, objectEach = U.objectEach, pick = U.pick, seriesType = U.seriesType, splat = U.splat;
+var extend = U.extend, fireEvent = U.fireEvent, getNestedProperty = U.getNestedProperty, isArray = U.isArray, isNumber = U.isNumber, merge = U.merge, objectEach = U.objectEach, pick = U.pick, splat = U.splat;
 import '../Core/Options.js';
-import '../Series/ScatterSeries.js';
-import '../Core/Series/Series.js';
-import '../Mixins/ColorMapSeries.js';
-var colorMapPointMixin = H.colorMapPointMixin, colorMapSeriesMixin = H.colorMapSeriesMixin, noop = H.noop, Series = H.Series, seriesTypes = H.seriesTypes;
+import '../Series/LineSeries.js';
+import './ScatterSeries.js';
+var Series = H.Series, seriesTypes = BaseSeries.seriesTypes;
 /**
  * @private
  * @class
@@ -26,7 +30,7 @@ var colorMapPointMixin = H.colorMapPointMixin, colorMapSeriesMixin = H.colorMapS
  *
  * @augments Highcharts.Series
  */
-seriesType('map', 'scatter', 
+BaseSeries.seriesType('map', 'scatter', 
 /**
  * The map series is used for basic choropleth maps, where each map area has
  * a color based on its value.
@@ -118,7 +122,7 @@ seriesType('map', 'scatter',
      *         Borders demo
      *
      * @type      {Highcharts.ColorString|Highcharts.GradientColorObject|Highcharts.PatternObject}
-     * @default   '#cccccc'
+     * @default   #cccccc
      * @product   highmaps
      * @apioption plotOptions.series.borderColor
      *
@@ -143,6 +147,7 @@ seriesType('map', 'scatter',
      */
     borderWidth: 1,
     /**
+     * @type      {string}
      * @default   value
      * @apioption plotOptions.map.colorKey
      */
@@ -173,8 +178,6 @@ seriesType('map', 'scatter',
      * @default   hc-key
      * @product   highmaps
      * @apioption plotOptions.series.joinBy
-     *
-     * @private
      */
     joinBy: 'hc-key',
     /**
@@ -297,7 +300,7 @@ seriesType('map', 'scatter',
         (paths || []).forEach(function (point) {
             if (point.path) {
                 if (typeof point.path === 'string') {
-                    point.path = H.splitPath(point.path);
+                    point.path = splitPath(point.path);
                     // Legacy one-dimensional array
                 }
                 else if (point.path[0] === 'M') {
@@ -430,7 +433,7 @@ seriesType('map', 'scatter',
         // Collect mapData from chart options if not defined on series
         if (!mapData && globalMapData) {
             mapData = typeof globalMapData === 'string' ?
-                H.maps[globalMapData] :
+                maps[globalMapData] :
                 globalMapData;
         }
         // Pick up numeric values, add index

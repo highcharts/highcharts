@@ -485,6 +485,7 @@ declare global {
             ): void;
             public unsquish(): number;
             public updateNames(): void;
+            public validatePositiveValue(value: unknown): boolean;
             public zoom(newMin: number, newMax: number): boolean;
         }
         interface Axis extends AxisComposition {
@@ -3622,7 +3623,7 @@ class Axis implements AxisComposition, AxisLike {
              * @sample {highcharts} highcharts/plotoptions/animation-defer/
              *          Animation defer settings
              * @type {boolean|Partial<Highcharts.AnimationOptionsObject>}
-             * @since next
+             * @since 8.2.0
              * @apioption yAxis.stackLabels.animation
              */
             animation: {},
@@ -3633,7 +3634,7 @@ class Axis implements AxisComposition, AxisLike {
              * As `undefined` inherits defer time from the [series.animation.defer](#plotOptions.series.animation.defer).
              *
              * @type      {number}
-             * @since     next
+             * @since 8.2.0
              * @apioption yAxis.stackLabels.animation.defer
              */
 
@@ -4394,6 +4395,12 @@ class Axis implements AxisComposition, AxisLike {
                     if (axis.isXAxis) {
                         xData = series.xData as any;
                         if (xData.length) {
+                            const isPositive = (number: number): boolean => number > 0;
+
+                            xData = axis.logarithmic ?
+                                xData.filter(axis.validatePositiveValue) :
+                                xData;
+
                             xExtremes = series.getXExtremes(xData);
                             // If xData contains values which is not numbers,
                             // then filter them out. To prevent performance hit,
@@ -7252,7 +7259,8 @@ class Axis implements AxisComposition, AxisLike {
 
         // Linked axes need an extra check to find out if
         if (!isLinked ||
-            (pos >= (axis.min as any) && pos <= (axis.max as any))
+            (pos >= (axis.min as any) && pos <= (axis.max as any)) ||
+             axis.grid?.isColumn
         ) {
 
             if (!ticks[pos]) {
@@ -7751,6 +7759,21 @@ class Axis implements AxisComposition, AxisLike {
     */
     public hasVerticalPanning(): boolean {
         return /y/.test(this.chart.options.chart?.panning?.type || '');
+    }
+
+    /**
+    * Check whether the given value is a positive valid axis value.
+    *
+    * @private
+    * @function Highcharts.Axis#validatePositiveValue
+    *
+    * @param {unknown} value
+    * The axis value
+    * @return {boolean}
+    *
+    */
+    public validatePositiveValue(value: unknown): boolean {
+        return isNumber(value) && value > 0;
     }
 }
 

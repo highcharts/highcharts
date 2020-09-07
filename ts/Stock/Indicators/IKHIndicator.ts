@@ -6,11 +6,19 @@
  *
  * */
 
-'use strict';
-
 import type Point from '../../Core/Series/Point';
 import type SVGPath from '../../Core/Renderer/SVG/SVGPath';
+import BaseSeries from '../../Core/Series/Series.js';
+import Color from '../../Core/Color.js';
+const color = Color.parse;
 import H from '../../Core/Globals.js';
+import U from '../../Core/Utilities.js';
+const {
+    defined,
+    isArray,
+    merge,
+    objectEach
+} = U;
 
 /* eslint-disable @typescript-eslint/interface-name-prefix */
 
@@ -100,28 +108,20 @@ declare global {
             public isNull: boolean;
             public intersectPoint?: boolean;
         }
+    }
+}
 
-        interface SeriesTypesDictionary {
-            ikh: typeof IKHIndicator;
-        }
+declare module '../../Core/Series/Types' {
+    interface SeriesTypeRegistry {
+        ikh: typeof Highcharts.IKHIndicator;
     }
 }
 
 /* eslint-enable @typescript-eslint/interface-name-prefix */
 
-import Color from '../../Core/Color.js';
-const color = Color.parse;
-import U from '../../Core/Utilities.js';
-const {
-    defined,
-    isArray,
-    merge,
-    objectEach,
-    seriesType
-} = U;
+import './SMAIndicator.js';
 
-var UNDEFINED: undefined,
-    SMA = H.seriesTypes.sma;
+var SMA = BaseSeries.seriesTypes.sma;
 
 /* eslint-disable require-jsdoc */
 
@@ -163,7 +163,7 @@ function getClosestPointRange(axis: Highcharts.Axis): (number|undefined) {
             for (i = loopLength; i > 0; i--) {
                 distance = xData[i] - xData[i - 1];
                 if (
-                    closestDataRange === UNDEFINED ||
+                    typeof closestDataRange === 'undefined' ||
                     distance < closestDataRange
                 ) {
                     closestDataRange = distance;
@@ -258,7 +258,7 @@ H.approximations['ichimoku-averages'] = function ():
  *
  * @augments Highcharts.Series
  */
-seriesType<Highcharts.IKHIndicator>(
+BaseSeries.seriesType<typeof Highcharts.IKHIndicator>(
     'ikh',
     'sma',
     /**
@@ -867,19 +867,20 @@ seriesType<Highcharts.IKHIndicator>(
                     indicator.nextPoints
                 );
 
-                spanA[0][0] = 'L';
+                if (spanA && spanA.length) {
+                    spanA[0][0] = 'L';
 
-                path = SMA.prototype.getGraphPath.call(
-                    indicator,
-                    points
-                );
+                    path = SMA.prototype.getGraphPath.call(
+                        indicator,
+                        points
+                    );
 
-                spanAarr = spanA.slice(0, path.length);
+                    spanAarr = spanA.slice(0, path.length);
 
-                for (let i = spanAarr.length - 1; i >= 0; i--) {
-                    path.push(spanAarr[i]);
+                    for (let i = spanAarr.length - 1; i >= 0; i--) {
+                        path.push(spanAarr[i]);
+                    }
                 }
-
             } else {
                 path = SMA.prototype.getGraphPath.apply(indicator, arguments);
             }
@@ -971,26 +972,26 @@ seriesType<Highcharts.IKHIndicator>(
 
                 date = xVal[i];
 
-                if (IKH[i] === UNDEFINED) {
+                if (typeof IKH[i] === 'undefined') {
                     IKH[i] = [];
                 }
 
-                if (IKH[i + period] === UNDEFINED) {
+                if (typeof IKH[i + period] === 'undefined') {
                     IKH[i + period] = [];
                 }
 
                 IKH[i + period][0] = TS;
                 IKH[i + period][1] = KS;
-                IKH[i + period][2] = UNDEFINED;
+                IKH[i + period][2] = void 0;
 
                 IKH[i][2] = CS;
 
                 if (i <= period) {
-                    IKH[i + period][3] = UNDEFINED;
-                    IKH[i + period][4] = UNDEFINED;
+                    IKH[i + period][3] = void 0;
+                    IKH[i + period][4] = void 0;
                 }
 
-                if (IKH[i + 2 * period] === UNDEFINED) {
+                if (typeof IKH[i + 2 * period] === 'undefined') {
                     IKH[i + 2 * period] = [];
                 }
 
