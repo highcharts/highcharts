@@ -37,6 +37,8 @@ const {
  * @type {string|undefined}
  */
 
+''; // detach doclets above
+
 /**
  * Internal types
  * @private

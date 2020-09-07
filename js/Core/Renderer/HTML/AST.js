@@ -12,6 +12,25 @@ import H from '../../Globals.js';
 import U from '../../Utilities.js';
 var attr = U.attr, objectEach = U.objectEach, splat = U.splat;
 /**
+ * Serialized form of an SVG/HTML definition, including children. Some key
+ * property names are reserved: tagName, textContent, and children.
+ *
+ * @interface Highcharts.ASTNode
+ */ /**
+* @name Highcharts.ASTNode#[key:string]
+* @type {boolean|number|string|Array<Highcharts.ASTNode>|undefined}
+*/ /**
+* @name Highcharts.ASTNode#children
+* @type {Array<Highcharts.ASTNode>|undefined}
+*/ /**
+* @name Highcharts.ASTNode#tagName
+* @type {string|undefined}
+*/ /**
+* @name Highcharts.ASTNode#textContent
+* @type {string|undefined}
+*/
+''; // detach doclets above
+/**
  * Represents an AST
  * @private
  * @class
