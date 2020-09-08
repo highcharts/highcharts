@@ -402,4 +402,20 @@ QUnit.test('DataTable column methods', function(assert){
         'New rows should be inserted'
     );
 
+    assert.ok(
+        table.deleteColumn('Cols'),
+        'Deleting existing column returns true'
+    );
+
+    assert.notOk(
+        table.deleteColumn('noexistantcolumnname'),
+        'Deleting column that does not exist returns false'
+    );
+
+    assert.strictEqual(
+        table.getColumns('Cols').length,
+        0,
+        'Deleted column is deleted'
+    );
+
 })

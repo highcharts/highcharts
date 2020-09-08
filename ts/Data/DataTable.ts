@@ -539,6 +539,25 @@ class DataTable implements DataEventEmitter<DataTable.EventObject>, DataJSON.Cla
     }
 
     /**
+     * Deletes a column of cells from the table.
+     * @param {string} columnName
+     * The name of the column to be deleted (not an alias).
+     *
+     * @return {boolean}
+     * `true` if the at least one cell is deleted.
+     */
+    public deleteColumn(
+        columnName: string
+    ): boolean {
+        const rows = this.getAllRows();
+        let success = false;
+        for (let i = 0, rowCount = rows.length; i < rowCount; i++) {
+            rows[i].deleteCell(columnName) && (success = true);
+        }
+        return success;
+    }
+
+    /**
      * Adds a row to this table.
      *
      * @param {DataTableRow} row

@@ -408,6 +408,22 @@ var DataTable = /** @class */ (function () {
         return success;
     };
     /**
+     * Deletes a column of cells from the table.
+     * @param {string} columnName
+     * The name of the column to be deleted (not an alias).
+     *
+     * @return {boolean}
+     * `true` if the at least one cell is deleted.
+     */
+    DataTable.prototype.deleteColumn = function (columnName) {
+        var rows = this.getAllRows();
+        var success = false;
+        for (var i = 0, rowCount = rows.length; i < rowCount; i++) {
+            rows[i].deleteCell(columnName) && (success = true);
+        }
+        return success;
+    };
+    /**
      * Adds a row to this table.
      *
      * @param {DataTableRow} row

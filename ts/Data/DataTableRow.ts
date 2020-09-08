@@ -201,7 +201,10 @@ implements DataEventEmitter<DataTableRow.EventObject>, DataJSON.Class {
         const row = this,
             cellValue = row.cells[cellName];
 
-        if (cellName === 'id') {
+        if (
+            cellName === 'id' ||
+            Object.keys(row.cells).indexOf(cellName) < 0
+        ) {
             return false;
         }
 

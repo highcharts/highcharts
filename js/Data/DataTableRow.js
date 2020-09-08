@@ -130,7 +130,8 @@ var DataTableRow = /** @class */ (function () {
      */
     DataTableRow.prototype.deleteCell = function (cellName, eventDetail) {
         var row = this, cellValue = row.cells[cellName];
-        if (cellName === 'id') {
+        if (cellName === 'id' ||
+            Object.keys(row.cells).indexOf(cellName) < 0) {
             return false;
         }
         this.emit({
