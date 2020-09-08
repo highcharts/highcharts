@@ -1571,11 +1571,12 @@ extend(LineSeries.prototype, /** @lends Highcharts.Series.prototype */ {
                 }
 
                 if (state) {
-                    lineWidthPlus = (stateOptions as any)[state].lineWidthPlus || 0;
                     lineWidth = (
                         (stateOptions as any)[state].lineWidth ||
-                        lineWidth + (lineWidth !== 0 ? lineWidthPlus : 0)
-                    ); // #4035, #13816
+                        lineWidth + (
+                            (stateOptions as any)[state].lineWidthPlus || 0
+                        )
+                    ); // #4035
 
                     opacity = pick(
                         (stateOptions as any)[state].opacity,

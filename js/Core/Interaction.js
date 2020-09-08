@@ -984,9 +984,8 @@ extend(LineSeries.prototype, /** @lends Highcharts.Series.prototype */ {
                     return;
                 }
                 if (state) {
-                    lineWidthPlus = stateOptions[state].lineWidthPlus || 0;
                     lineWidth = (stateOptions[state].lineWidth ||
-                        lineWidth + (lineWidth !== 0 ? lineWidthPlus : 0)); // #4035, #13816
+                        lineWidth + (stateOptions[state].lineWidthPlus || 0)); // #4035
                     opacity = pick(stateOptions[state].opacity, opacity);
                 }
                 if (graph && !graph.dashstyle) {

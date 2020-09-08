@@ -13,7 +13,14 @@ QUnit.test('Scatter series general tests.', function (assert) {
         }),
         series = chart.series[0];
 
-    series.update({ lineWidth: 0 });
+    series.update({
+        lineWidth: 0,
+        states: {
+            hover: {
+                lineWidthPlus: 0
+            }
+        }
+    });
     assert.strictEqual(
         series.graph.strokeWidth(),
         0,
