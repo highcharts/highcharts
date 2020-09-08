@@ -419,7 +419,9 @@ var DataTable = /** @class */ (function () {
         var rows = this.getAllRows();
         var success = false;
         for (var i = 0, rowCount = rows.length; i < rowCount; i++) {
-            rows[i].deleteCell(columnName) && (success = true);
+            if (rows[i].deleteCell(columnName)) {
+                success = true;
+            }
         }
         return success;
     };

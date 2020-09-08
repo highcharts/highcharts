@@ -552,7 +552,9 @@ class DataTable implements DataEventEmitter<DataTable.EventObject>, DataJSON.Cla
         const rows = this.getAllRows();
         let success = false;
         for (let i = 0, rowCount = rows.length; i < rowCount; i++) {
-            rows[i].deleteCell(columnName) && (success = true);
+            if (rows[i].deleteCell(columnName)) {
+                success = true;
+            }
         }
         return success;
     }

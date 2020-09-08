@@ -408,6 +408,11 @@ QUnit.test('DataTable column methods', function(assert){
     );
 
     assert.notOk(
+        table.deleteColumn('Cols'),
+        'Trying to delete again returns false'
+    );
+
+    assert.notOk(
         table.deleteColumn('noexistantcolumnname'),
         'Deleting column that does not exist returns false'
     );
