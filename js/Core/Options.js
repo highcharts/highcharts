@@ -687,9 +687,11 @@ H.defaultOptions = {
          * duration of 500 ms. If used as a configuration object, the following
          * properties are supported:
          *
-         * - **duration**: The duration of the animation in milliseconds.
+         * - `defer`: The animation delay time in milliseconds.
          *
-         * - **easing**: A string reference to an easing function set on the
+         * - `duration`: The duration of the animation in milliseconds.
+         *
+         * - `easing`: A string reference to an easing function set on the
          *   `Math` object. See
          *   [the easing demo](https://jsfiddle.net/gh/get/library/pure/highcharts/highcharts/tree/master/samples/highcharts/plotoptions/series-animation-easing/).
          *
@@ -708,7 +710,7 @@ H.defaultOptions = {
          * @sample {highmaps} maps/chart/animation-duration/
          *         With a longer duration
          *
-         * @type      {boolean|Highcharts.AnimationOptionsObject}
+         * @type      {boolean|Partial<Highcharts.AnimationOptionsObject>}
          * @default   undefined
          * @apioption chart.animation
          */
@@ -2369,7 +2371,7 @@ H.defaultOptions = {
              * @sample {highstock} highcharts/legend/navigation/
              *         Legend page navigation demonstrated
              *
-             * @type      {boolean|Highcharts.AnimationOptionsObject}
+             * @type      {boolean|Partial<Highcharts.AnimationOptionsObject>}
              * @default   true
              * @since     2.2.4
              * @apioption legend.navigation.animation
@@ -2697,7 +2699,7 @@ H.defaultOptions = {
          * pixels. Since v7.0.2 it allows setting a percent string of the full
          * chart width, for example `40%`.
          *
-         * Defaults to the full chart width from legends below or above the
+         * Defaults to the full chart width for legends below or above the
          * chart, half the chart width for legends to the left and right.
          *
          * @sample {highcharts} highcharts/legend/width/

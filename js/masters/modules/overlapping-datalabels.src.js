@@ -8,4 +8,4 @@
  * License: www.highcharts.com/license
  */
 'use strict';
-import '../../Extensions/OverlappingDataLabels.src.js';
+import '../../Extensions/OverlappingDataLabels.js';

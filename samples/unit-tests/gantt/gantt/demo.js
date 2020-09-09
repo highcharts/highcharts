@@ -449,4 +449,195 @@
 
         assert.ok(true, "Gantt should be initialized with no errors (#13246).");
     });
+
+    QUnit.test('The ticks should be generated correctly during scrolling with the grid axis, #13072.', assert => {
+        const chart = Highcharts.ganttChart('container', {
+            yAxis: {
+                min: 0,
+                max: 2,
+                type: 'category',
+                scrollbar: {
+                    enabled: true
+                },
+                grid: {
+                    enabled: true,
+                    columns: [{
+                        title: {
+                            text: 'Project'
+                        },
+                        labels: {
+                            format: '{point.name}'
+                        }
+                    }, {
+                        title: {
+                            text: 'Assignee'
+                        },
+                        labels: {
+                            format: '{point.assignee}'
+                        }
+                    }]
+                }
+            },
+            series: [{
+                name: 'Project 1',
+                data: [{
+                    start: 1,
+                    end: 2,
+                    name: 'Task A',
+                    assignee: 'Person 1',
+                    y: 0
+                }, {
+                    start: 3,
+                    end: 4,
+                    name: 'Task B',
+                    assignee: 'Person 2',
+                    y: 1
+                }, {
+                    start: 5,
+                    end: 6,
+                    name: 'Task C',
+                    assignee: 'Person 3',
+                    y: 2
+                }, {
+                    start: 6,
+                    end: 9,
+                    name: 'Task D',
+                    assignee: 'Person 4',
+                    y: 3
+                }, {
+                    start: 4,
+                    end: 10,
+                    name: 'Task E',
+                    assignee: 'Person 5',
+                    y: 4
+                }]
+            }]
+        });
+
+        assert.ok(
+            chart.yAxis[0].grid.columns[0].grid.axisLineExtra,
+            'The extra left line for grid should exist.'
+        );
+        assert.notOk(
+            chart.yAxis[0].grid.columns[0].grid.lowerBorder,
+            'The extra lower border for grid should not exist because the last tick mark exists.'
+        );
+        assert.notOk(
+            chart.yAxis[0].grid.columns[0].grid.upperBorder,
+            'The extra upper border for grid should not exist because the first tick mark exists.'
+        );
+
+        assert.strictEqual(
+            chart.yAxis[0].grid.columns[0].ticks[0].label.textStr,
+            'Task A',
+            'First tick on the left columns should be Task A.'
+        );
+        assert.strictEqual(
+            chart.yAxis[0].grid.columns[0].ticks[2].label.textStr,
+            'Task C',
+            'Third tick on the left columns should be Task C.'
+        );
+        chart.yAxis[0].setExtremes(0.4, 2.4);
+
+        assert.ok(
+            chart.yAxis[0].grid.columns[0].grid.lowerBorder,
+            'The extra lower border for grid should exist.'
+        );
+        assert.ok(
+            chart.yAxis[0].grid.columns[0].grid.upperBorder,
+            'The extra upper border for grid should exist.'
+        );
+        assert.strictEqual(
+            chart.yAxis[0].grid.columns[0].ticks[0].label.textStr,
+            'Task A',
+            'First tick on the left columns should be Task A.'
+        );
+        assert.strictEqual(
+            chart.yAxis[0].grid.columns[0].ticks[3].label.visibility,
+            "hidden",
+            'Fourth tick on the left columns should not be visible.'
+        );
+        chart.yAxis[0].setExtremes(0.8, 2.8);
+
+        assert.strictEqual(
+            chart.yAxis[0].grid.columns[0].ticks[0].label.visibility,
+            "hidden",
+            'First tick on the left columns should not be visible.'
+        );
+        assert.ok(
+            chart.yAxis[0].grid.columns[0].ticks[0].mark,
+            'First tick mark on the left columns should exist.'
+        );
+        assert.strictEqual(
+            chart.yAxis[0].grid.columns[0].ticks[3].label.textStr,
+            'Task D',
+            'Last visible tick on the left columns should be Task D.'
+        );
+        assert.strictEqual(
+            chart.yAxis[0].grid.columns[0].ticks[3].mark.visibility,
+            "hidden",
+            'Tick marker with index 3 should not be visible.'
+        );
+        chart.yAxis[0].setExtremes(1, 3);
+
+        assert.strictEqual(
+            chart.yAxis[0].grid.columns[0].ticks[3].label.textStr,
+            'Task D',
+            'Last visible tick on the left columns should be Task D.'
+        );
+        chart.yAxis[0].setExtremes(1.4, 3.4);
+
+        assert.strictEqual(
+            chart.yAxis[0].grid.columns[0].ticks[3].label.visibility,
+            "visible",
+            'Tick marker with index 3 should be visible again.'
+        );
+    });
+
+    QUnit.test('When navigator enabled there should be no errors in the console caused by unsorted data, (#13376).', function (assert) {
+        const chart = Highcharts.ganttChart('container', {
+            navigator: {
+                enabled: true
+            },
+            series: [{
+                data: [{
+                    name: 'Task 1',
+                    start: 2,
+                    end: 3
+                }, {
+                    name: 'Task 2',
+                    start: 3,
+                    end: 4
+                }, {
+                    name: 'Task 3',
+                    start: 1,
+                    end: 2
+                }]
+            }]
+        });
+
+        assert.notOk(chart.series[1].requireSorting, "No error 15 in the console.");
+    });
+
+    QUnit.test('Gantt using the keys feature #13768', function (assert) {
+        var chart = Highcharts.ganttChart('container', {
+            series: [{
+                keys: ['start', 'end'],
+                data: [
+                    [Date.UTC(2014, 10, 20), Date.UTC(2014, 10, 25)]
+                ]
+            }]
+        });
+
+        assert.strictEqual(
+            chart.series[0].processedXData[0] !== undefined,
+            true,
+            'The processedXData should be applied by using the keys feature #13768'
+        );
+        assert.strictEqual(
+            chart.series[0].processedYData[0] !== undefined,
+            true,
+            'The processedYData should be applied by using the keys feature #13768'
+        );
+    });
 }());

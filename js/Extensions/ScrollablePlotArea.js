@@ -183,10 +183,17 @@ Chart.prototype.setUpScrolling = function () {
     if (this.scrollablePixelsY) {
         attribs.overflowY = 'auto';
     }
+    // Insert a container with position relative
+    // that scrolling and fixed container renders to (#10555)
+    this.scrollingParent = createElement('div', {
+        className: 'highcharts-scrolling-parent'
+    }, {
+        position: 'relative'
+    }, this.renderTo);
     // Add the necessary divs to provide scrolling
     this.scrollingContainer = createElement('div', {
         'className': 'highcharts-scrolling'
-    }, attribs, this.renderTo);
+    }, attribs, this.scrollingParent);
     // On scroll, reset the chart position because it applies to the scrolled
     // container
     addEvent(this.scrollingContainer, 'scroll', function () {
@@ -250,7 +257,7 @@ Chart.prototype.moveFixedElements = function () {
  * @return {void}
  */
 Chart.prototype.applyFixed = function () {
-    var _a;
+    var _a, _b;
     var fixedRenderer, scrollableWidth, scrollableHeight, firstTime = !this.fixedDiv, scrollableOptions = this.options.chart.scrollablePlotArea;
     // First render
     if (firstTime) {
@@ -260,11 +267,12 @@ Chart.prototype.applyFixed = function () {
             position: 'absolute',
             overflow: 'hidden',
             pointerEvents: 'none',
-            zIndex: 2
+            zIndex: 2,
+            top: 0
         }, null, true);
-        this.renderTo.insertBefore(this.fixedDiv, this.renderTo.firstChild);
+        (_a = this.scrollingContainer) === null || _a === void 0 ? void 0 : _a.parentNode.insertBefore(this.fixedDiv, this.scrollingContainer);
         this.renderTo.style.overflow = 'visible';
-        this.fixedRenderer = fixedRenderer = new H.Renderer(this.fixedDiv, this.chartWidth, this.chartHeight, (_a = this.options.chart) === null || _a === void 0 ? void 0 : _a.style);
+        this.fixedRenderer = fixedRenderer = new H.Renderer(this.fixedDiv, this.chartWidth, this.chartHeight, (_b = this.options.chart) === null || _b === void 0 ? void 0 : _b.style);
         // Mask
         this.scrollableMask = fixedRenderer
             .path()

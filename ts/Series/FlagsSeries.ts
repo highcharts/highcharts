@@ -8,10 +8,13 @@
  *
  * */
 
-'use strict';
-
 import type SVGPath from '../Core/Renderer/SVG/SVGPath';
+import BaseSeries from '../Core/Series/Series.js';
 import H from '../Core/Globals.js';
+const {
+    noop
+} = H;
+import OnSeriesMixin from '../Mixins/OnSeries.js';
 import SVGElement from '../Core/Renderer/SVG/SVGElement.js';
 import SVGRenderer from '../Core/Renderer/SVG/SVGRenderer.js';
 import U from '../Core/Utilities.js';
@@ -21,7 +24,6 @@ const {
     isNumber,
     merge,
     objectEach,
-    seriesType,
     wrap
 } = U;
 
@@ -71,9 +73,6 @@ declare global {
         interface Series {
             allowDG?: boolean;
         }
-        interface SeriesTypesDictionary {
-            flags: typeof FlagsSeries;
-        }
         class FlagsPoint extends ColumnPoint {
             public _y?: number;
             public anchorX?: number;
@@ -102,20 +101,35 @@ declare global {
 }
 
 /**
+ * @private
+ */
+declare module '../Core/Series/Types' {
+    interface SeriesTypeRegistry {
+        flags: typeof Highcharts.FlagsSeries;
+    }
+}
+
+import './ColumnSeries.js';
+import '../Core/Interaction.js';
+import '../Core/Renderer/SVG/SVGRenderer.js';
+
+var Renderer = H.Renderer,
+    Series = H.Series,
+    TrackerMixin = H.TrackerMixin, // Interaction
+    VMLRenderer = H.VMLRenderer,
+    symbols = SVGRenderer.prototype.symbols;
+
+declare module '../Core/Series/Types' {
+    interface SeriesTypesDictionary {
+        flags: typeof Highcharts.FlagsSeries;
+    }
+}
+
+/**
  * @typedef {"circlepin"|"flag"|"squarepin"} Highcharts.FlagsShapeValue
  */
 
-
-import '../Core/Series/Series.js';
-import '../Core/Renderer/SVG/SVGRenderer.js';
-import onSeriesMixin from '../mixins/on-series.js';
-
-var noop = H.noop,
-    Renderer = H.Renderer,
-    Series = H.Series,
-    TrackerMixin = H.TrackerMixin,
-    VMLRenderer = H.VMLRenderer,
-    symbols = SVGRenderer.prototype.symbols;
+''; // detach doclets above
 
 /**
  * The Flags series.
@@ -126,7 +140,7 @@ var noop = H.noop,
  *
  * @augments Highcharts.Series
  */
-seriesType<Highcharts.FlagsSeries>(
+BaseSeries.seriesType<typeof Highcharts.FlagsSeries>(
     'flags',
     'column'
 
@@ -419,8 +433,8 @@ seriesType<Highcharts.FlagsSeries>(
             };
         },
 
-        translate: onSeriesMixin.translate,
-        getPlotBox: onSeriesMixin.getPlotBox,
+        translate: OnSeriesMixin.translate,
+        getPlotBox: OnSeriesMixin.getPlotBox,
 
         /**
          * Draw the markers.

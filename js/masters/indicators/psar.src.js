@@ -11,4 +11,4 @@
  * License: www.highcharts.com/license
  */
 'use strict';
-import '../../indicators/psar.src.js';
+import '../../Stock/Indicators/PSARIndicator.js';

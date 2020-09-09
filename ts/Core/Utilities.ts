@@ -10,7 +10,9 @@
 
 'use strict';
 
+import type BaseSeries from './Series/Series';
 import type Chart from './Chart/Chart';
+import type { SeriesOptionsType } from './Series/Types';
 import type SVGPath from './Renderer/SVG/SVGPath';
 import H from './Globals.js';
 type NonArray<T> = T extends Array<unknown> ? never : T;
@@ -24,6 +26,9 @@ type NullType = (null|undefined);
 declare global {
     type DeepPartial<T> = {
         [P in keyof T]?: (T[P]|DeepPartial<T[P]>);
+    }
+    type DeepRecord<K extends keyof any, T> = {
+        [P in K]: (T|DeepRecord<K, T>);
     }
     interface Math {
         easeInOutSine(pos: number): number;
@@ -50,7 +55,8 @@ declare global {
         interface AnimationOptionsObject {
             complete?: Function;
             curAnim?: Dictionary<boolean>;
-            duration?: number;
+            defer: number;
+            duration: number;
             easing?: (string|Function);
             step?: AnimationStepCallbackFunction;
         }
@@ -126,12 +132,12 @@ declare global {
         class Fx {
             public constructor(
                 elem: (HTMLDOMElement|SVGElement),
-                options: AnimationOptionsObject,
+                options: Partial<AnimationOptionsObject>,
                 prop: string
             );
             public elem: (HTMLElement|SVGElement);
             public end?: any;
-            public options: AnimationOptionsObject;
+            public options: Partial<AnimationOptionsObject>;
             public paths?: [SVGPath, SVGPath];
             public pos?: any;
             public prop: string;
@@ -158,7 +164,7 @@ declare global {
         function animate(
             el: (HTMLDOMElement|SVGElement),
             params: (CSSObject|SVGAttributes),
-            opt?: AnimationOptionsObject
+            opt?: Partial<AnimationOptionsObject>
         ): void;
         function animObject(
             animation?: (boolean|AnimationOptionsObject)
@@ -216,6 +222,11 @@ declare global {
             defaultFunction?: (EventCallbackFunction<T>|Function)
         ): void;
         function format(str: string, ctx: any, chart?: Chart): string;
+        function getDeferredAnimation(
+            chart: Chart,
+            animation: Partial<Highcharts.AnimationOptionsObject>,
+            series?: BaseSeries
+        ): Partial<Highcharts.AnimationOptionsObject>;
         function getMagnitude(num: number): number;
         function getStyle(
             el: HTMLDOMElement,
@@ -322,15 +333,8 @@ declare global {
             type?: string,
             fn?: (EventCallbackFunction<T>|Function)
         ): void
-        function seriesType<TSeries extends Series>(
-            type: string,
-            parent: string,
-            options: TSeries['options'],
-            props?: Partial<TSeries>,
-            pointProps?: Partial<TSeries['pointClass']['prototype']>
-        ): typeof Series;
         function setAnimation(
-            animation: (boolean|AnimationOptionsObject|undefined),
+            animation: (boolean|Partial<AnimationOptionsObject>|undefined),
             chart: Chart
         ): void
         function splat(obj: any): Array<any>;
@@ -356,13 +360,17 @@ declare global {
 /**
  * An animation configuration. Animation configurations can also be defined as
  * booleans, where `false` turns off animation and `true` defaults to a duration
- * of 500ms.
+ * of 500ms and defer of 0ms.
  *
  * @interface Highcharts.AnimationOptionsObject
  *//**
  * A callback function to exectute when the animation finishes.
  * @name Highcharts.AnimationOptionsObject#complete
  * @type {Function|undefined}
+ *//**
+ * The animation defer in milliseconds.
+ * @name Highcharts.AnimationOptionsObject#defer
+ * @type {number|undefined}
  *//**
  * The animation duration in milliseconds.
  * @name Highcharts.AnimationOptionsObject#duration
@@ -804,7 +812,7 @@ class Fx {
      * @param {Highcharts.HTMLDOMElement|Highcharts.SVGElement} elem
      *        The element to animate.
      *
-     * @param {Highcharts.AnimationOptionsObject} options
+     * @param {Partial<Highcharts.AnimationOptionsObject>} options
      *        Animation options.
      *
      * @param {string} prop
@@ -812,7 +820,7 @@ class Fx {
      */
     public constructor(
         elem: (Highcharts.HTMLElement|Highcharts.SVGElement),
-        options: Highcharts.AnimationOptionsObject,
+        options: Partial<Highcharts.AnimationOptionsObject>,
         prop: string
     ) {
         this.options = options;
@@ -830,7 +838,7 @@ class Fx {
     public end?: number;
     public from?: number;
     public now?: number;
-    public options: Highcharts.AnimationOptionsObject;
+    public options: Partial<Highcharts.AnimationOptionsObject>;
     public paths?: [SVGPath, SVGPath];
     public pos?: number;
     public prop: string;
@@ -1448,7 +1456,7 @@ function isObject<T>(obj: T, strict?: false): obj is object & NonFunction<NonNul
 function isObject<T>(
     obj: T,
     strict?: boolean
-): boolean {
+): obj is object & NonFunction<NonNullable<T>> {
     return (
         !!obj &&
         typeof obj === 'object' &&
@@ -2319,7 +2327,7 @@ const correctFloat = H.correctFloat = function correctFloat(num: number, prec?: 
  *
  * @function Highcharts.setAnimation
  *
- * @param {boolean|Highcharts.AnimationOptionsObject|undefined} animation
+ * @param {boolean|Partial<Highcharts.AnimationOptionsObject>|undefined} animation
  *        The animation object.
  *
  * @param {Highcharts.Chart} chart
@@ -2332,7 +2340,7 @@ const correctFloat = H.correctFloat = function correctFloat(num: number, prec?: 
  * so it should be moved to the SVGRenderer.
  */
 const setAnimation = H.setAnimation = function setAnimation(
-    animation: (boolean|Highcharts.AnimationOptionsObject|undefined),
+    animation: (boolean|Partial<Highcharts.AnimationOptionsObject>|undefined),
     chart: Chart
 ): void {
     chart.renderer.globalAnimation = pick(
@@ -2356,11 +2364,14 @@ const setAnimation = H.setAnimation = function setAnimation(
  *         An object with at least a duration property.
  */
 const animObject = H.animObject = function animObject(
-    animation?: (boolean|Highcharts.AnimationOptionsObject)
+    animation?: (boolean|DeepPartial<Highcharts.AnimationOptionsObject>)
 ): Highcharts.AnimationOptionsObject {
     return isObject(animation) ?
-        merge(animation as Highcharts.AnimationOptionsObject) as any :
-        { duration: animation as boolean ? 500 : 0 };
+        H.merge(
+            { duration: 500, defer: 0 },
+            animation as Highcharts.AnimationOptionsObject
+        ) as any :
+        { duration: animation as boolean ? 500 : 0, defer: 0 };
 };
 
 /**
@@ -2633,6 +2644,52 @@ const getStyle = H.getStyle = function (
         }
     }
     return style;
+};
+
+/**
+ * Get the defer as a number value from series animation options.
+ *
+ * @function Highcharts.getDeferredAnimation
+ *
+ * @param {Highcharts.Chart} chart
+ *        The chart instance.
+ *
+ * @return {number}
+ *        The numeric value.
+ */
+const getDeferredAnimation = H.getDeferredAnimation = function (
+    chart,
+    animation,
+    series?: BaseSeries
+): Partial<Highcharts.AnimationOptionsObject> {
+
+    const labelAnimation = animObject(animation);
+    const s = series ? [series] : chart.series;
+    let defer = 0;
+    let duration = 0;
+
+    s.forEach((series): void => {
+        const seriesAnim = animObject(series.options.animation);
+
+        defer = animation && defined(animation.defer) ?
+            labelAnimation.defer :
+            Math.max(
+                defer,
+                seriesAnim.duration + seriesAnim.defer
+            );
+        duration = Math.min(labelAnimation.duration, seriesAnim.duration);
+    });
+    // Disable defer for exporting
+    if (chart.renderer.forExport) {
+        defer = 0;
+    }
+
+    const anim = {
+        defer: Math.max(0, defer - duration),
+        duration: Math.min(defer, duration)
+    };
+
+    return anim;
 };
 
 /**
@@ -3224,7 +3281,7 @@ const fireEvent = H.fireEvent = function<T> (
  *        Supports numeric as pixel-based CSS properties for HTML objects and
  *        attributes for SVGElements.
  *
- * @param {Highcharts.AnimationOptionsObject} [opt]
+ * @param {Partial<Highcharts.AnimationOptionsObject>} [opt]
  *        Animation options.
  *
  * @return {void}
@@ -3232,7 +3289,7 @@ const fireEvent = H.fireEvent = function<T> (
 const animate = H.animate = function (
     el: (Highcharts.HTMLDOMElement|Highcharts.SVGElement),
     params: (Highcharts.CSSObject|Highcharts.SVGAttributes),
-    opt?: Highcharts.AnimationOptionsObject
+    opt?: Partial<Highcharts.AnimationOptionsObject>
 ): void {
     var start,
         unit = '',
@@ -3289,67 +3346,6 @@ const animate = H.animate = function (
         }
         fx.run(start as any, end, unit);
     });
-};
-
-/**
- * Factory to create new series prototypes.
- *
- * @function Highcharts.seriesType
- *
- * @param {string} type
- *        The series type name.
- *
- * @param {string} parent
- *        The parent series type name. Use `line` to inherit from the basic
- *        {@link Series} object.
- *
- * @param {Highcharts.SeriesOptionsType|Highcharts.Dictionary<*>} options
- *        The additional default options that are merged with the parent's
- *        options.
- *
- * @param {Highcharts.Dictionary<*>} [props]
- *        The properties (functions and primitives) to set on the new
- *        prototype.
- *
- * @param {Highcharts.Dictionary<*>} [pointProps]
- *        Members for a series-specific extension of the {@link Point}
- *        prototype if needed.
- *
- * @return {Highcharts.Series}
- *         The newly created prototype as extended from {@link Series} or its
- *         derivatives.
- */
-// docs: add to API + extending Highcharts
-const seriesType = H.seriesType = function<TSeries extends Highcharts.Series> (
-    type: string,
-    parent: string,
-    options: TSeries['options'],
-    props?: Partial<TSeries>,
-    pointProps?: Partial<TSeries['pointClass']['prototype']>
-): typeof Highcharts.Series {
-    var defaultOptions = getOptions(),
-        seriesTypes = H.seriesTypes;
-
-    // Merge the options
-    (defaultOptions.plotOptions as any)[type] = merge(
-        (defaultOptions.plotOptions as any)[parent],
-        options
-    );
-
-    // Create the class
-    seriesTypes[type] = extendClass(
-        seriesTypes[parent] || function (): void {},
-        props
-    );
-    seriesTypes[type].prototype.type = type;
-
-    // Create the point class if needed
-    if (pointProps) {
-        seriesTypes[type].prototype.pointClass =
-            extendClass(H.Point, pointProps);
-    }
-
-    return seriesTypes[type];
 };
 
 let serialMode: (boolean|undefined);
@@ -3540,6 +3536,7 @@ const utilitiesModule = {
     find,
     fireEvent,
     format,
+    getDeferredAnimation,
     getMagnitude,
     getNestedProperty,
     getOptions,
@@ -3562,7 +3559,6 @@ const utilitiesModule = {
     pInt,
     relativeLength,
     removeEvent,
-    seriesType,
     setAnimation,
     setOptions,
     splat,

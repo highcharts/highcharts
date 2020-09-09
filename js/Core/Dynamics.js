@@ -9,16 +9,17 @@
  * */
 'use strict';
 import Axis from './Axis/Axis.js';
+import BaseSeries from './Series/Series.js';
+var seriesTypes = BaseSeries.seriesTypes;
 import Chart from './Chart/Chart.js';
 import H from './Globals.js';
+import LineSeries from '../Series/LineSeries.js';
 import O from './Options.js';
 var time = O.time;
 import Point from '../Core/Series/Point.js';
 import Time from './Time.js';
 import U from './Utilities.js';
 var addEvent = U.addEvent, animate = U.animate, createElement = U.createElement, css = U.css, defined = U.defined, erase = U.erase, error = U.error, extend = U.extend, fireEvent = U.fireEvent, isArray = U.isArray, isNumber = U.isNumber, isObject = U.isObject, isString = U.isString, merge = U.merge, objectEach = U.objectEach, pick = U.pick, relativeLength = U.relativeLength, setAnimation = U.setAnimation, splat = U.splat;
-import '../Core/Series/Series.js';
-var Series = H.Series, seriesTypes = H.seriesTypes;
 /* eslint-disable valid-jsdoc */
 /**
  * Remove settings that have not changed, to avoid unnecessary rendering or
@@ -68,7 +69,7 @@ extend(Chart.prototype, /** @lends Highcharts.Chart.prototype */ {
      * @param {boolean} [redraw=true]
      *        Whether to redraw the chart after adding.
      *
-     * @param {boolean|Highcharts.AnimationOptionsObject} [animation]
+     * @param {boolean|Partial<Highcharts.AnimationOptionsObject>} [animation]
      *        Whether to apply animation, and optionally animation
      *        configuration.
      *
@@ -119,7 +120,7 @@ extend(Chart.prototype, /** @lends Highcharts.Chart.prototype */ {
      * @param {boolean} [redraw=true]
      *        Whether to redraw the chart after adding.
      *
-     * @param {boolean|Highcharts.AnimationOptionsObject} [animation=true]
+     * @param {boolean|Partial<Highcharts.AnimationOptionsObject>} [animation=true]
      *        Whether and how to apply animation in the redraw.
      *
      * @return {Highcharts.Axis}
@@ -146,7 +147,7 @@ extend(Chart.prototype, /** @lends Highcharts.Chart.prototype */ {
      * @param {boolean} [redraw=true]
      *        Whether to redraw the chart after adding.
      *
-     * @param {boolean|Highcharts.AnimationOptionsObject} [animation=true]
+     * @param {boolean|Partial<Highcharts.AnimationOptionsObject>} [animation=true]
      *        Whether and how to apply animation in the redraw.
      *
      * @return {Highcharts.ColorAxis}
@@ -399,7 +400,7 @@ extend(Chart.prototype, /** @lends Highcharts.Chart.prototype */ {
      *        series have id's, the new series options will be matched by id,
      *        and the remaining ones removed.
      *
-     * @param {boolean|Highcharts.AnimationOptionsObject} [animation=true]
+     * @param {boolean|Partial<Highcharts.AnimationOptionsObject>} [animation=true]
      *        Whether to apply animation, and optionally animation
      *        configuration.
      *
@@ -693,7 +694,7 @@ extend(Point.prototype, /** @lends Highcharts.Point.prototype */ {
      *        more operations on the chart, it is best practice to set
      *        `redraw` to false and call `chart.redraw()` after.
      *
-     * @param {boolean|Highcharts.AnimationOptionsObject} [animation=true]
+     * @param {boolean|Partial<Highcharts.AnimationOptionsObject>} [animation=true]
      *        Whether to apply animation, and optionally animation
      *        configuration.
      *
@@ -782,7 +783,7 @@ extend(Point.prototype, /** @lends Highcharts.Point.prototype */ {
      *        `point.remove()` in a loop, it is best practice to set `redraw`
      *        to false and call `chart.redraw()` after.
      *
-     * @param {boolean|Highcharts.AnimationOptionsObject} [animation=false]
+     * @param {boolean|Partial<Highcharts.AnimationOptionsObject>} [animation=false]
      *        Whether to apply animation, and optionally animation
      *        configuration.
      *
@@ -793,7 +794,7 @@ extend(Point.prototype, /** @lends Highcharts.Point.prototype */ {
     }
 });
 // Extend the series prototype for dynamic methods
-extend(Series.prototype, /** @lends Series.prototype */ {
+extend(LineSeries.prototype, /** @lends Series.prototype */ {
     /**
      * Add a point to the series after render time. The point can be added at
      * the end, or by giving it an X value, to the start or in the middle of the
@@ -834,7 +835,7 @@ extend(Series.prototype, /** @lends Series.prototype */ {
      *        If true, a point is shifted off the start of the series as one is
      *        appended to the end.
      *
-     * @param {boolean|Highcharts.AnimationOptionsObject} [animation]
+     * @param {boolean|Partial<Highcharts.AnimationOptionsObject>} [animation]
      *        Whether to apply animation, and optionally animation
      *        configuration.
      *
@@ -923,7 +924,7 @@ extend(Series.prototype, /** @lends Series.prototype */ {
      *        Highcharts.Chart#redraw} is explicitly called after the adding of
      *        points is finished.
      *
-     * @param {boolean|Highcharts.AnimationOptionsObject} [animation]
+     * @param {boolean|Partial<Highcharts.AnimationOptionsObject>} [animation]
      *        Whether and optionally how the series should be animated.
      *
      * @return {void}
@@ -970,7 +971,7 @@ extend(Series.prototype, /** @lends Series.prototype */ {
      *        Whether to redraw the chart or wait for an explicit call to
      *        {@link Highcharts.Chart#redraw}.
      *
-     * @param {boolean|Highcharts.AnimationOptionsObject} [animation]
+     * @param {boolean|Partial<Highcharts.AnimationOptionsObject>} [animation]
      *        Whether to apply animation, and optionally animation
      *        configuration.
      *

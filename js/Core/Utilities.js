@@ -12,13 +12,17 @@ import H from './Globals.js';
 /**
  * An animation configuration. Animation configurations can also be defined as
  * booleans, where `false` turns off animation and `true` defaults to a duration
- * of 500ms.
+ * of 500ms and defer of 0ms.
  *
  * @interface Highcharts.AnimationOptionsObject
  */ /**
 * A callback function to exectute when the animation finishes.
 * @name Highcharts.AnimationOptionsObject#complete
 * @type {Function|undefined}
+*/ /**
+* The animation defer in milliseconds.
+* @name Highcharts.AnimationOptionsObject#defer
+* @type {number|undefined}
 */ /**
 * The animation duration in milliseconds.
 * @name Highcharts.AnimationOptionsObject#duration
@@ -418,7 +422,7 @@ var Fx = /** @class */ (function () {
      * @param {Highcharts.HTMLDOMElement|Highcharts.SVGElement} elem
      *        The element to animate.
      *
-     * @param {Highcharts.AnimationOptionsObject} options
+     * @param {Partial<Highcharts.AnimationOptionsObject>} options
      *        Animation options.
      *
      * @param {string} prop
@@ -1605,7 +1609,7 @@ var correctFloat = H.correctFloat = function correctFloat(num, prec) {
  *
  * @function Highcharts.setAnimation
  *
- * @param {boolean|Highcharts.AnimationOptionsObject|undefined} animation
+ * @param {boolean|Partial<Highcharts.AnimationOptionsObject>|undefined} animation
  *        The animation object.
  *
  * @param {Highcharts.Chart} chart
@@ -1635,8 +1639,8 @@ var setAnimation = H.setAnimation = function setAnimation(animation, chart) {
  */
 var animObject = H.animObject = function animObject(animation) {
     return isObject(animation) ?
-        merge(animation) :
-        { duration: animation ? 500 : 0 };
+        H.merge({ duration: 500, defer: 0 }, animation) :
+        { duration: animation ? 500 : 0, defer: 0 };
 };
 /**
  * The time unit lookup
@@ -1851,6 +1855,39 @@ var getStyle = H.getStyle = function (el, prop, toInt) {
         }
     }
     return style;
+};
+/**
+ * Get the defer as a number value from series animation options.
+ *
+ * @function Highcharts.getDeferredAnimation
+ *
+ * @param {Highcharts.Chart} chart
+ *        The chart instance.
+ *
+ * @return {number}
+ *        The numeric value.
+ */
+var getDeferredAnimation = H.getDeferredAnimation = function (chart, animation, series) {
+    var labelAnimation = animObject(animation);
+    var s = series ? [series] : chart.series;
+    var defer = 0;
+    var duration = 0;
+    s.forEach(function (series) {
+        var seriesAnim = animObject(series.options.animation);
+        defer = animation && defined(animation.defer) ?
+            labelAnimation.defer :
+            Math.max(defer, seriesAnim.duration + seriesAnim.defer);
+        duration = Math.min(labelAnimation.duration, seriesAnim.duration);
+    });
+    // Disable defer for exporting
+    if (chart.renderer.forExport) {
+        defer = 0;
+    }
+    var anim = {
+        defer: Math.max(0, defer - duration),
+        duration: Math.min(defer, duration)
+    };
+    return anim;
 };
 /**
  * Search for an item in an array.
@@ -2353,7 +2390,7 @@ var fireEvent = H.fireEvent = function (el, type, eventArguments, defaultFunctio
  *        Supports numeric as pixel-based CSS properties for HTML objects and
  *        attributes for SVGElements.
  *
- * @param {Highcharts.AnimationOptionsObject} [opt]
+ * @param {Partial<Highcharts.AnimationOptionsObject>} [opt]
  *        Animation options.
  *
  * @return {void}
@@ -2403,49 +2440,6 @@ var animate = H.animate = function (el, params, opt) {
         }
         fx.run(start, end, unit);
     });
-};
-/**
- * Factory to create new series prototypes.
- *
- * @function Highcharts.seriesType
- *
- * @param {string} type
- *        The series type name.
- *
- * @param {string} parent
- *        The parent series type name. Use `line` to inherit from the basic
- *        {@link Series} object.
- *
- * @param {Highcharts.SeriesOptionsType|Highcharts.Dictionary<*>} options
- *        The additional default options that are merged with the parent's
- *        options.
- *
- * @param {Highcharts.Dictionary<*>} [props]
- *        The properties (functions and primitives) to set on the new
- *        prototype.
- *
- * @param {Highcharts.Dictionary<*>} [pointProps]
- *        Members for a series-specific extension of the {@link Point}
- *        prototype if needed.
- *
- * @return {Highcharts.Series}
- *         The newly created prototype as extended from {@link Series} or its
- *         derivatives.
- */
-// docs: add to API + extending Highcharts
-var seriesType = H.seriesType = function (type, parent, options, props, pointProps) {
-    var defaultOptions = getOptions(), seriesTypes = H.seriesTypes;
-    // Merge the options
-    defaultOptions.plotOptions[type] = merge(defaultOptions.plotOptions[parent], options);
-    // Create the class
-    seriesTypes[type] = extendClass(seriesTypes[parent] || function () { }, props);
-    seriesTypes[type].prototype.type = type;
-    // Create the point class if needed
-    if (pointProps) {
-        seriesTypes[type].prototype.pointClass =
-            extendClass(H.Point, pointProps);
-    }
-    return seriesTypes[type];
 };
 var serialMode;
 /**
@@ -2610,6 +2604,7 @@ var utilitiesModule = {
     find: find,
     fireEvent: fireEvent,
     format: format,
+    getDeferredAnimation: getDeferredAnimation,
     getMagnitude: getMagnitude,
     getNestedProperty: getNestedProperty,
     getOptions: getOptions,
@@ -2632,7 +2627,6 @@ var utilitiesModule = {
     pInt: pInt,
     relativeLength: relativeLength,
     removeEvent: removeEvent,
-    seriesType: seriesType,
     setAnimation: setAnimation,
     setOptions: setOptions,
     splat: splat,

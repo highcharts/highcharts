@@ -8,11 +8,20 @@
  *
  * */
 
-'use strict';
-
 import type StackingAxis from '../Core/Axis/StackingAxis';
 import type SVGPath from '../Core/Renderer/SVG/SVGPath';
+import BaseSeries from '../Core/Series/Series.js';
+import Color from '../Core/Color.js';
+const {
+    parse: color
+} = Color;
 import H from '../Core/Globals.js';
+import LegendSymbolMixin from '../Mixins/LegendSymbol.js';
+import U from '../Core/Utilities.js';
+const {
+    objectEach,
+    pick
+} = U;
 
 /**
  * Internal types
@@ -46,25 +55,19 @@ declare global {
             negativeFillColor?: ColorType;
             states?: SeriesStatesOptionsObject<AreaSeries>;
         }
-        interface SeriesTypesDictionary {
-            area: typeof AreaSeries;
-        }
     }
 }
 
-import Color from '../Core/Color.js';
-const {
-    parse: color
-} = Color;
-import LegendSymbolMixin from '../mixins/legend-symbol.js';
-import U from '../Core/Utilities.js';
-const {
-    objectEach,
-    pick,
-    seriesType
-} = U;
+/**
+ * @private
+ */
+declare module '../Core/Series/Types' {
+    interface SeriesTypeRegistry {
+        area: typeof Highcharts.AreaSeries;
+    }
+}
 
-import '../Core/Series/Series.js';
+import '../Series/LineSeries.js';
 import '../Core/Options.js';
 
 var Series = H.Series;
@@ -78,7 +81,7 @@ var Series = H.Series;
  *
  * @augments Highcharts.Series
  */
-seriesType<Highcharts.AreaSeries>(
+BaseSeries.seriesType<typeof Highcharts.AreaSeries>(
     'area',
     'line',
 
@@ -480,7 +483,7 @@ seriesType<Highcharts.AreaSeries>(
 
                 isNull = points[i].isNull;
                 plotX = pick(points[i].rectPlotX, points[i].plotX);
-                yBottom = pick(points[i].yBottom, translatedThreshold);
+                yBottom = stacking ? points[i].yBottom : translatedThreshold;
 
                 if (!isNull || connectNulls) {
 

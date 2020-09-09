@@ -85,6 +85,7 @@ declare global {
             stackLabels?: YAxisStackLabelsOptions;
         }
         interface YAxisStackLabelsOptions {
+            animation?: (boolean|Partial<AnimationOptionsObject>);
             align?: AlignValue;
             allowOverlap?: boolean;
             backgroundColor?: (ColorString|GradientColorObject|PatternObject);
@@ -195,7 +196,7 @@ declare global {
 
 ''; // detached doclets above
 
-import '../Core/Series/Series.js';
+import '../Series/LineSeries.js';
 
 var Series = H.Series;
 

@@ -10,6 +10,7 @@
 
 'use strict';
 
+import type { SeriesOptionsType, SeriesPlotOptionsType } from './Series/Types';
 import type Chart from './Chart/Chart';
 import type Point from '../Core/Series/Point';
 import H from './Globals.js';
@@ -65,7 +66,7 @@ declare global {
         }
         interface ChartOptions {
             alignTicks?: boolean;
-            animation?: (boolean|AnimationOptionsObject);
+            animation?: (boolean|Partial<AnimationOptionsObject>);
             backgroundColor?: (ColorString|GradientColorObject|PatternObject);
             borderColor?: (ColorString|GradientColorObject|PatternObject);
             borderRadius?: number;
@@ -203,7 +204,7 @@ declare global {
         }
         interface LegendNavigationOptions {
             activeColor?: (ColorString|GradientColorObject|PatternObject);
-            animation?: (boolean|AnimationOptionsObject);
+            animation?: (boolean|Partial<AnimationOptionsObject>);
             arrowSize?: number;
             enabled?: boolean;
             inactiveColor?: (ColorString|GradientColorObject|PatternObject);
@@ -281,7 +282,7 @@ declare global {
             lang?: LangOptions;
             legend?: LegendOptions;
             loading?: LoadingOptions;
-            plotOptions?: PlotOptions;
+            plotOptions?: SeriesPlotOptionsType;
             subtitle?: SubtitleOptions;
             symbols?: Array<SymbolKeyValue>;
             time?: TimeOptions;
@@ -356,15 +357,6 @@ declare global {
             (TitleOptions|SubtitleOptions|CaptionOptions);
         type OptionsOverflowValue = ('allow'|'justify');
         type OptionsPosition3dValue = ('chart'|'flap'|'offset'|'ortho');
-        type PlotOptions = {
-            [TSeriesType in keyof SeriesTypesDictionary]?: (
-                Omit<SeriesTypesDictionary[TSeriesType]['prototype']['options'],
-                (
-                    'data'|'id'|'index'|'legendIndex'|'mapData'|'name'|'stack'|
-                    'treemap'|'type'|'xAxis'|'yAxis'|'zIndex'
-                )>
-            )
-        };
     }
 }
 
@@ -1099,9 +1091,11 @@ H.defaultOptions = {
          * duration of 500 ms. If used as a configuration object, the following
          * properties are supported:
          *
-         * - **duration**: The duration of the animation in milliseconds.
+         * - `defer`: The animation delay time in milliseconds.
          *
-         * - **easing**: A string reference to an easing function set on the
+         * - `duration`: The duration of the animation in milliseconds.
+         *
+         * - `easing`: A string reference to an easing function set on the
          *   `Math` object. See
          *   [the easing demo](https://jsfiddle.net/gh/get/library/pure/highcharts/highcharts/tree/master/samples/highcharts/plotoptions/series-animation-easing/).
          *
@@ -1120,7 +1114,7 @@ H.defaultOptions = {
          * @sample {highmaps} maps/chart/animation-duration/
          *         With a longer duration
          *
-         * @type      {boolean|Highcharts.AnimationOptionsObject}
+         * @type      {boolean|Partial<Highcharts.AnimationOptionsObject>}
          * @default   undefined
          * @apioption chart.animation
          */
@@ -2904,7 +2898,7 @@ H.defaultOptions = {
              * @sample {highstock} highcharts/legend/navigation/
              *         Legend page navigation demonstrated
              *
-             * @type      {boolean|Highcharts.AnimationOptionsObject}
+             * @type      {boolean|Partial<Highcharts.AnimationOptionsObject>}
              * @default   true
              * @since     2.2.4
              * @apioption legend.navigation.animation
@@ -3252,7 +3246,7 @@ H.defaultOptions = {
          * pixels. Since v7.0.2 it allows setting a percent string of the full
          * chart width, for example `40%`.
          *
-         * Defaults to the full chart width from legends below or above the
+         * Defaults to the full chart width for legends below or above the
          * chart, half the chart width for legends to the left and right.
          *
          * @sample {highcharts} highcharts/legend/width/

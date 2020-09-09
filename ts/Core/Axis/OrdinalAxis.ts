@@ -13,7 +13,8 @@
 import type NavigatorAxis from './NavigatorAxis';
 import Axis from './Axis.js';
 import H from '../Globals.js';
-import Point from '../../Core/Series/Point.js';
+import CartesianSeries from '../Series/CartesianSeries.js';
+import Point from '../Series/Point.js';
 import U from '../Utilities.js';
 const {
     addEvent,
@@ -66,10 +67,8 @@ declare module './Types' {
 import '../Chart/Chart.js';
 // Has a dependency on Navigator due to the use of Axis.toFixedRange
 import '../Navigator.js';
-import '../../Core/Series/Series.js';
 
-var Chart = H.Chart,
-    Series = H.Series;
+var Chart = H.Chart;
 
 /* eslint-disable valid-jsdoc */
 
@@ -412,7 +411,7 @@ namespace OrdinalAxis {
                         xData: (series.xData as any).slice(),
                         chart: chart,
                         destroyGroupedData: H.noop,
-                        getProcessedData: H.Series.prototype.getProcessedData
+                        getProcessedData: CartesianSeries.prototype.getProcessedData
                     } as any;
 
                     fakeSeries.xData = (fakeSeries.xData as any).concat(
@@ -605,7 +604,7 @@ namespace OrdinalAxis {
     export function compose(
         AxisClass: typeof Axis,
         ChartClass: typeof Chart,
-        SeriesClass: typeof Series
+        SeriesClass: typeof CartesianSeries
     ): void {
 
         AxisClass.keepProps.push('ordinal');
@@ -1182,6 +1181,6 @@ namespace OrdinalAxis {
     }
 }
 
-OrdinalAxis.compose(Axis, Chart, Series); // @todo move to StockChart, remove from master
+OrdinalAxis.compose(Axis, Chart, CartesianSeries); // @todo move to StockChart, remove from master
 
 export default OrdinalAxis;

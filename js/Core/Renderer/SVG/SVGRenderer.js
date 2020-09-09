@@ -1010,7 +1010,10 @@ var SVGRenderer = /** @class */ (function () {
      * The button element.
      */
     SVGRenderer.prototype.button = function (text, x, y, callback, normalState, hoverState, pressedState, disabledState, shape, useHTML) {
-        var label = this.label(text, x, y, shape, void 0, void 0, useHTML, void 0, 'button'), curState = 0, styledMode = this.styledMode, userNormalStyle = normalState && normalState.style || {};
+        var label = this.label(text, x, y, shape, void 0, void 0, useHTML, void 0, 'button'), curState = 0, styledMode = this.styledMode, 
+        // Make a copy of normalState (#13798)
+        // (reference to options.rangeSelector.buttonTheme)
+        normalState = normalState ? merge(normalState) : normalState, userNormalStyle = normalState && normalState.style || {};
         // Remove stylable attributes
         if (normalState && normalState.style) {
             delete normalState.style;
@@ -1385,7 +1388,7 @@ var SVGRenderer = /** @class */ (function () {
      * @param {number} height
      * The new pixel height.
      *
-     * @param {boolean|Highcharts.AnimationOptionsObject} [animate=true]
+     * @param {boolean|Partial<Highcharts.AnimationOptionsObject>} [animate=true]
      * Whether and how to animate.
      */
     SVGRenderer.prototype.setSize = function (width, height, animate) {

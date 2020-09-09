@@ -18,17 +18,12 @@ const SOURCE_GLOBS = [
     'Boost/**/*',
     'Core/**/*',
     'Data/**/*',
-    'Data-Grid/**/*',
+    'DataGrid/**/*',
     'Extensions/**/*',
     'Gantt/**/*',
     'Maps/**/*',
     'Stock/**/*',
-    'Series/**/*',
-    'annotations/**/*',
-    'indicators/**/*',
-    'modules/**/*',
-    'parts/**/*',
-    'parts-*/**/*'
+    'Series/**/*'
 ].map(
     glob => SOURCE_DIRECTORY + '/' + glob
 );

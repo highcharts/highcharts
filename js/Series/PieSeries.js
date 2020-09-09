@@ -7,18 +7,18 @@
  *  !!!!!!! SOURCE GETS TRANSPILED BY TYPESCRIPT. EDIT TS FILE ONLY. !!!!!!!
  *
  * */
-'use strict';
+import BaseSeries from '../Core/Series/Series.js';
+import CenteredSeriesMixin from '../Mixins/CenteredSeries.js';
+var getStartAndEndRadians = CenteredSeriesMixin.getStartAndEndRadians;
 import H from '../Core/Globals.js';
-import SVGRenderer from '../Core/Renderer/SVG/SVGRenderer.js';
-import LegendSymbolMixin from '../mixins/legend-symbol.js';
+var noop = H.noop;
+import LegendSymbolMixin from '../Mixins/LegendSymbol.js';
+import LineSeries from '../Series/LineSeries.js';
 import Point from '../Core/Series/Point.js';
+import SVGRenderer from '../Core/Renderer/SVG/SVGRenderer.js';
 import U from '../Core/Utilities.js';
-var addEvent = U.addEvent, clamp = U.clamp, defined = U.defined, fireEvent = U.fireEvent, isNumber = U.isNumber, merge = U.merge, pick = U.pick, relativeLength = U.relativeLength, seriesType = U.seriesType, setAnimation = U.setAnimation;
-import './ColumnSeries.js';
-import centeredSeriesMixin from '../mixins/centered-series.js';
+var addEvent = U.addEvent, clamp = U.clamp, defined = U.defined, fireEvent = U.fireEvent, isNumber = U.isNumber, merge = U.merge, pick = U.pick, relativeLength = U.relativeLength, setAnimation = U.setAnimation;
 import '../Core/Options.js';
-import '../Core/Series/Series.js';
-var getStartAndEndRadians = centeredSeriesMixin.getStartAndEndRadians, noop = H.noop, Series = H.Series, seriesTypes = H.seriesTypes;
 /**
  * Pie series type.
  *
@@ -28,7 +28,7 @@ var getStartAndEndRadians = centeredSeriesMixin.getStartAndEndRadians, noop = H.
  *
  * @augments Highcharts.Series
  */
-seriesType('pie', 'line', 
+BaseSeries.seriesType('pie', 'line', 
 /**
  * A pie chart is a circular graphic which is divided into slices to
  * illustrate numerical proportion.
@@ -42,7 +42,8 @@ seriesType('pie', 'line',
  *               findNearestPointBy, getExtremesFromAll, label, lineWidth,
  *               marker, negativeColor, pointInterval, pointIntervalUnit,
  *               pointPlacement, pointStart, softThreshold, stacking, step,
- *               threshold, turboThreshold, zoneAxis, zones, dataSorting
+ *               threshold, turboThreshold, zoneAxis, zones, dataSorting,
+ *               boostBlending
  * @product      highcharts
  * @optionparent plotOptions.pie
  */
@@ -281,6 +282,29 @@ seriesType('pie', 'line',
          */
         distance: 30,
         enabled: true,
+        /**
+         * A
+         * [format string](https://www.highcharts.com/docs/chart-concepts/labels-and-string-formatting)
+         * for the data label. Available variables are the same as for
+         * `formatter`.
+         *
+         * @sample {highcharts} highcharts/plotoptions/series-datalabels-format/
+         *         Add a unit
+         *
+         * @type      {string}
+         * @default   undefined
+         * @since     3.0
+         * @apioption plotOptions.pie.dataLabels.format
+         */
+        // eslint-disable-next-line valid-jsdoc
+        /**
+         * Callback JavaScript function to format the data label. Note that
+         * if a `format` is defined, the format takes precedence and the
+         * formatter is ignored.
+         *
+         * @type {Highcharts.DataLabelsFormatterCallbackFunction}
+         * @default function () { return this.point.isNull ? void 0 : this.point.name; }
+         */
         formatter: function () {
             return this.point.isNull ? void 0 : this.point.name;
         },
@@ -554,7 +578,7 @@ seriesType('pie', 'line',
     noSharedTooltip: true,
     trackerGroups: ['group', 'dataLabelsGroup'],
     axisTypes: [],
-    pointAttribs: seriesTypes.column.prototype.pointAttribs,
+    pointAttribs: BaseSeries.seriesTypes.column.prototype.pointAttribs,
     /**
      * Animate the pies in
      *
@@ -629,7 +653,7 @@ seriesType('pie', 'line',
      * @return {void}
      */
     generatePoints: function () {
-        Series.prototype.generatePoints.call(this);
+        LineSeries.prototype.generatePoints.call(this);
         this.updateTotals();
     },
     /**
@@ -777,7 +801,7 @@ seriesType('pie', 'line',
     drawEmpty: function () {
         var centerX, centerY, start = this.startAngleRad, end = this.endAngleRad, options = this.options;
         // Draw auxiliary graph if there're no visible points.
-        if (this.total === 0) {
+        if (this.total === 0 && this.center) {
             centerX = this.center[0];
             centerY = this.center[1];
             if (!this.graph) {
@@ -930,7 +954,7 @@ seriesType('pie', 'line',
      * @private
      * @borrows Highcharts.CenteredSeriesMixin.getCenter as Highcharts.seriesTypes.pie#getCenter
      */
-    getCenter: centeredSeriesMixin.getCenter,
+    getCenter: CenteredSeriesMixin.getCenter,
     /**
      * Pies don't have point marker symbols.
      *
@@ -1032,7 +1056,7 @@ seriesType('pie', 'line',
      *        When undefined, the slice state is toggled.
      * @param {boolean} redraw
      *        Whether to redraw the chart. True by default.
-     * @param {boolean|Highcharts.AnimationOptionsObject}
+     * @param {boolean|Partial<Highcharts.AnimationOptionsObject>}
      *        Animation options.
      * @return {void}
      */
@@ -1177,7 +1201,7 @@ seriesType('pie', 'line',
  *
  * @extends   series,plotOptions.pie
  * @excluding cropThreshold, dataParser, dataURL, stack, xAxis, yAxis,
- *            dataSorting, step
+ *            dataSorting, step, boostThreshold, boostBlending
  * @product   highcharts
  * @apioption series.pie
  */

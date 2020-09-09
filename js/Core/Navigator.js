@@ -9,18 +9,21 @@
  * */
 'use strict';
 import Axis from './Axis/Axis.js';
+import BaseSeries from './Series/Series.js';
+var seriesTypes = BaseSeries.seriesTypes;
 import Chart from './Chart/Chart.js';
 import Color from './Color.js';
 var color = Color.parse;
 import H from './Globals.js';
+var hasTouch = H.hasTouch, isTouchDevice = H.isTouchDevice;
+import LineSeries from '../Series/LineSeries.js';
 import NavigatorAxis from './Axis/NavigatorAxis.js';
 import O from './Options.js';
 var defaultOptions = O.defaultOptions;
 import Scrollbar from './Scrollbar.js';
 import U from './Utilities.js';
 var addEvent = U.addEvent, clamp = U.clamp, correctFloat = U.correctFloat, defined = U.defined, destroyObjectProperties = U.destroyObjectProperties, erase = U.erase, extend = U.extend, find = U.find, isArray = U.isArray, isNumber = U.isNumber, merge = U.merge, pick = U.pick, removeEvent = U.removeEvent, splat = U.splat;
-import '../Core/Series/Series.js';
-var hasTouch = H.hasTouch, isTouchDevice = H.isTouchDevice, Series = H.Series, seriesTypes = H.seriesTypes, defaultSeriesType, 
+var defaultSeriesType, 
 // Finding the min or max of a set of variables where we don't know if they
 // are defined, is a pattern that is repeated several places in Highcharts.
 // Consider making this a global utility method.
@@ -281,8 +284,7 @@ extend(defaultOptions, {
          */
         series: {
             /**
-             * The type of the navigator series. Defaults to `areaspline` if
-             * defined, otherwise `line`.
+             * The type of the navigator series.
              *
              * Heads up:
              * In column-type navigator, zooming is limited to at least one
@@ -292,7 +294,8 @@ extend(defaultOptions, {
              *         Column type navigator
              *
              * @type    {string}
-             * @default areaspline
+             * @default {highstock} `areaspline` if defined, otherwise `line`
+             * @default {gantt} gantt
              */
             type: defaultSeriesType,
             /**
@@ -1131,7 +1134,7 @@ var Navigator = /** @class */ (function () {
      */
     Navigator.prototype.onMouseUp = function (e) {
         var navigator = this, chart = navigator.chart, xAxis = navigator.xAxis, scrollbar = navigator.scrollbar, DOMEvent = e.DOMEvent || e, inverted = chart.inverted, verb = navigator.rendered && !navigator.hasDragged ?
-            'animate' : 'attr', zoomedMax = Math.round(navigator.zoomedMax), zoomedMin = Math.round(navigator.zoomedMin), unionExtremes, fixedMin, fixedMax, ext;
+            'animate' : 'attr', zoomedMax, zoomedMin, unionExtremes, fixedMin, fixedMax, ext;
         if (
         // MouseUp is called for both, navigator and scrollbar (that order),
         // which causes calling afterSetExtremes twice. Prevent first call
@@ -1178,7 +1181,11 @@ var Navigator = /** @class */ (function () {
                         navigator.hasDragged = navigator.dragOffset = null;
         }
         // Update position of navigator shades, outline and handles (#12573)
-        if (navigator.navigatorEnabled) {
+        if (navigator.navigatorEnabled &&
+            isNumber(navigator.zoomedMin) &&
+            isNumber(navigator.zoomedMax)) {
+            zoomedMin = Math.round(navigator.zoomedMin);
+            zoomedMax = Math.round(navigator.zoomedMax);
             if (navigator.shades) {
                 navigator.drawMasks(zoomedMin, zoomedMax, inverted, verb);
             }
@@ -1894,7 +1901,7 @@ if (!H.Navigator) {
         }
     });
     // Handle updating series
-    addEvent(Series, 'afterUpdate', function () {
+    addEvent(LineSeries, 'afterUpdate', function () {
         if (this.chart.navigator && !this.options.isInternal) {
             this.chart.navigator.setBaseSeries(null, false);
         }

@@ -993,3 +993,19 @@ QUnit.test('Series.update with individual markers and data labels (#10649)', ass
         'First point data label should be preserved'
     );
 });
+
+QUnit.test('The eventsToUnbind array instance (#12959, #13937)', assert => {
+    const chart = Highcharts.chart('container', {
+        series: [{
+            data: [3, 2, 1]
+        }, {
+            data: [1, 2, 3]
+        }]
+    });
+
+    assert.notEqual(
+        chart.series[0].eventsToUnbind,
+        chart.series[1].eventsToUnbind,
+        'Different series are having a separate eventsToUnbind array instance.'
+    );
+});

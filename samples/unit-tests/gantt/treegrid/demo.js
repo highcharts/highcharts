@@ -433,4 +433,16 @@ QUnit.test('series.data[].collapsed', assert => {
         2,
         'should have axis.max equal 2 when "Node 1" is expanded.'
     );
+
+    assert.strictEqual(
+        axis.series[0].points[0].collapsed,
+        false,
+        'This point should be expanded #13838'
+    );
+
+    assert.strictEqual(
+        axis.series[0].options.data[0].collapsed,
+        false,
+        'This point should be expanded #13838'
+    );
 });

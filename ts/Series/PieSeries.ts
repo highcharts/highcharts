@@ -8,11 +8,41 @@
  *
  * */
 
-'use strict';
-
 import type SVGPath from '../Core/Renderer/SVG/SVGPath';
+import BaseSeries from '../Core/Series/Series.js';
+import CenteredSeriesMixin from '../Mixins/CenteredSeries.js';
+const {
+    getStartAndEndRadians
+} = CenteredSeriesMixin;
 import H from '../Core/Globals.js';
+const {
+    noop
+} = H;
+import LegendSymbolMixin from '../Mixins/LegendSymbol.js';
+import LineSeries from '../Series/LineSeries.js';
+import Point from '../Core/Series/Point.js';
 import SVGRenderer from '../Core/Renderer/SVG/SVGRenderer.js';
+import U from '../Core/Utilities.js';
+const {
+    addEvent,
+    clamp,
+    defined,
+    fireEvent,
+    isNumber,
+    merge,
+    pick,
+    relativeLength,
+    setAnimation
+} = U;
+
+/**
+ * @private
+ */
+declare module '../Core/Series/Types' {
+    interface SeriesTypeRegistry {
+        pie: typeof Highcharts.PieSeries;
+    }
+}
 
 /**
  * Internal types
@@ -40,7 +70,7 @@ declare global {
             public slice(
                 sliced: boolean,
                 redraw?: boolean,
-                animation?: (boolean|AnimationOptionsObject)
+                animation?: (boolean|Partial<AnimationOptionsObject>)
             ): void;
         }
         class PieSeries extends LineSeries {
@@ -116,37 +146,10 @@ declare global {
         interface SeriesStatesHoverOptionsObject {
             brightness?: number;
         }
-        interface SeriesTypesDictionary {
-            pie: typeof PieSeries;
-        }
     }
 }
 
-import LegendSymbolMixin from '../mixins/legend-symbol.js';
-import Point from '../Core/Series/Point.js';
-import U from '../Core/Utilities.js';
-const {
-    addEvent,
-    clamp,
-    defined,
-    fireEvent,
-    isNumber,
-    merge,
-    pick,
-    relativeLength,
-    seriesType,
-    setAnimation
-} = U;
-
-import './ColumnSeries.js';
-import centeredSeriesMixin from '../mixins/centered-series.js';
 import '../Core/Options.js';
-import '../Core/Series/Series.js';
-
-var getStartAndEndRadians = centeredSeriesMixin.getStartAndEndRadians,
-    noop = H.noop,
-    Series = H.Series,
-    seriesTypes = H.seriesTypes;
 
 /**
  * Pie series type.
@@ -157,7 +160,7 @@ var getStartAndEndRadians = centeredSeriesMixin.getStartAndEndRadians,
  *
  * @augments Highcharts.Series
  */
-seriesType<Highcharts.PieSeries>(
+BaseSeries.seriesType<typeof Highcharts.PieSeries>(
     'pie',
     'line',
 
@@ -174,7 +177,8 @@ seriesType<Highcharts.PieSeries>(
      *               findNearestPointBy, getExtremesFromAll, label, lineWidth,
      *               marker, negativeColor, pointInterval, pointIntervalUnit,
      *               pointPlacement, pointStart, softThreshold, stacking, step,
-     *               threshold, turboThreshold, zoneAxis, zones, dataSorting
+     *               threshold, turboThreshold, zoneAxis, zones, dataSorting,
+     *               boostBlending
      * @product      highcharts
      * @optionparent plotOptions.pie
      */
@@ -432,6 +436,30 @@ seriesType<Highcharts.PieSeries>(
 
             enabled: true,
 
+            /**
+             * A
+             * [format string](https://www.highcharts.com/docs/chart-concepts/labels-and-string-formatting)
+             * for the data label. Available variables are the same as for
+             * `formatter`.
+             *
+             * @sample {highcharts} highcharts/plotoptions/series-datalabels-format/
+             *         Add a unit
+             *
+             * @type      {string}
+             * @default   undefined
+             * @since     3.0
+             * @apioption plotOptions.pie.dataLabels.format
+             */
+
+            // eslint-disable-next-line valid-jsdoc
+            /**
+             * Callback JavaScript function to format the data label. Note that
+             * if a `format` is defined, the format takes precedence and the
+             * formatter is ignored.
+             *
+             * @type {Highcharts.DataLabelsFormatterCallbackFunction}
+             * @default function () { return this.point.isNull ? void 0 : this.point.name; }
+             */
             formatter: function (
                 this: Highcharts.PointLabelObject
             ): (string|undefined) { // #2945
@@ -735,7 +763,7 @@ seriesType<Highcharts.PieSeries>(
         noSharedTooltip: true,
         trackerGroups: ['group', 'dataLabelsGroup'],
         axisTypes: [],
-        pointAttribs: seriesTypes.column.prototype.pointAttribs,
+        pointAttribs: BaseSeries.seriesTypes.column.prototype.pointAttribs,
 
         /**
          * Animate the pies in
@@ -828,7 +856,7 @@ seriesType<Highcharts.PieSeries>(
          * @return {void}
          */
         generatePoints: function (this: Highcharts.PieSeries): void {
-            Series.prototype.generatePoints.call(this);
+            LineSeries.prototype.generatePoints.call(this);
             this.updateTotals();
         },
 
@@ -1057,7 +1085,7 @@ seriesType<Highcharts.PieSeries>(
                 options = this.options;
 
             // Draw auxiliary graph if there're no visible points.
-            if (this.total === 0) {
+            if (this.total === 0 && this.center) {
                 centerX = this.center[0];
                 centerY = this.center[1];
 
@@ -1074,8 +1102,8 @@ seriesType<Highcharts.PieSeries>(
                         centerY,
                         this.center[2] / 2,
                         0, {
-                            start: start,
-                            end: end,
+                            start,
+                            end,
                             innerR: this.center[3] / 2
                         }
                     )
@@ -1261,7 +1289,7 @@ seriesType<Highcharts.PieSeries>(
          * @private
          * @borrows Highcharts.CenteredSeriesMixin.getCenter as Highcharts.seriesTypes.pie#getCenter
          */
-        getCenter: centeredSeriesMixin.getCenter,
+        getCenter: CenteredSeriesMixin.getCenter,
 
         /**
          * Pies don't have point marker symbols.
@@ -1395,7 +1423,7 @@ seriesType<Highcharts.PieSeries>(
          *        When undefined, the slice state is toggled.
          * @param {boolean} redraw
          *        Whether to redraw the chart. True by default.
-         * @param {boolean|Highcharts.AnimationOptionsObject}
+         * @param {boolean|Partial<Highcharts.AnimationOptionsObject>}
          *        Animation options.
          * @return {void}
          */
@@ -1403,7 +1431,7 @@ seriesType<Highcharts.PieSeries>(
             this: Highcharts.PiePoint,
             sliced: boolean,
             redraw?: boolean,
-            animation?: (boolean|Highcharts.AnimationOptionsObject)
+            animation?: (boolean|Partial<Highcharts.AnimationOptionsObject>)
         ): void {
             var point = this,
                 series = point.series,
@@ -1612,7 +1640,7 @@ seriesType<Highcharts.PieSeries>(
  *
  * @extends   series,plotOptions.pie
  * @excluding cropThreshold, dataParser, dataURL, stack, xAxis, yAxis,
- *            dataSorting, step
+ *            dataSorting, step, boostThreshold, boostBlending
  * @product   highcharts
  * @apioption series.pie
  */

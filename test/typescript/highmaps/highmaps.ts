@@ -52,6 +52,7 @@ function test_series() {
         series: [{
             // Use the gb-all map with no data as a basemap
             type: 'map',
+            joinBy: [ 'custom.test' ],
             mapData: Highcharts.maps['countries/gb/gb-all'],
             name: 'Basemap',
             borderColor: '#707070',

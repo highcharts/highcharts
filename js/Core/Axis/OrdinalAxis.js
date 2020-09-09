@@ -10,13 +10,13 @@
 'use strict';
 import Axis from './Axis.js';
 import H from '../Globals.js';
+import CartesianSeries from '../Series/CartesianSeries.js';
 import U from '../Utilities.js';
 var addEvent = U.addEvent, css = U.css, defined = U.defined, pick = U.pick, timeUnits = U.timeUnits;
 import '../Chart/Chart.js';
 // Has a dependency on Navigator due to the use of Axis.toFixedRange
 import '../Navigator.js';
-import '../../Core/Series/Series.js';
-var Chart = H.Chart, Series = H.Series;
+var Chart = H.Chart;
 /**
  * Extends the axis with ordinal support.
  * @private
@@ -219,7 +219,7 @@ var OrdinalAxis;
                         xData: series.xData.slice(),
                         chart: chart,
                         destroyGroupedData: H.noop,
-                        getProcessedData: H.Series.prototype.getProcessedData
+                        getProcessedData: CartesianSeries.prototype.getProcessedData
                     };
                     fakeSeries.xData = fakeSeries.xData.concat(ordinal.getOverscrollPositions());
                     fakeSeries.options = {
@@ -773,5 +773,5 @@ var OrdinalAxis;
     }
     OrdinalAxis.compose = compose;
 })(OrdinalAxis || (OrdinalAxis = {}));
-OrdinalAxis.compose(Axis, Chart, Series); // @todo move to StockChart, remove from master
+OrdinalAxis.compose(Axis, Chart, CartesianSeries); // @todo move to StockChart, remove from master
 export default OrdinalAxis;

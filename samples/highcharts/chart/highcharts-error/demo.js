@@ -1,8 +1,8 @@
-Highcharts.error = function (code) {
+Highcharts.addEvent(Highcharts.Chart, 'displayError', function (event) {
     // See https://github.com/highcharts/highcharts/blob/master/errors/errors.xml
     // for error id's
     Highcharts.charts[0].renderer
-        .text('Chart error ' + code)
+        .text('Chart error ' + event.code)
         .attr({
             fill: 'red',
             zIndex: 20
@@ -12,7 +12,7 @@ Highcharts.error = function (code) {
             align: 'center',
             verticalAlign: 'middle'
         }, null, 'plotBox');
-};
+});
 
 
 Highcharts.chart('container', {

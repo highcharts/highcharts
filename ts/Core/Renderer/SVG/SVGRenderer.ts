@@ -128,7 +128,7 @@ declare global {
             public draw: Function;
             public escapes: Dictionary<string>;
             public forExport?: boolean;
-            public globalAnimation: AnimationOptionsObject;
+            public globalAnimation: Partial<AnimationOptionsObject>;
             public gradients: Dictionary<SVGElement>;
             public height: number;
             public imgCount: number;
@@ -238,7 +238,7 @@ declare global {
             public setSize(
                 width: number,
                 height: number,
-                animate?: (boolean|AnimationOptionsObject)
+                animate?: (boolean|Partial<AnimationOptionsObject>)
             ): void;
             public setStyle(style: CSSObject): void;
             public symbol(
@@ -617,7 +617,7 @@ class SVGRenderer {
      */
     public defs: SVGElement = void 0 as any;
     public forExport?: boolean;
-    public globalAnimation: Highcharts.AnimationOptionsObject = void 0 as any;
+    public globalAnimation: Partial<Highcharts.AnimationOptionsObject> = void 0 as any;
     public gradients: Record<string, SVGElement> = void 0 as any;
     public height: number = void 0 as any;
     public imgCount: number = void 0 as any;
@@ -1617,6 +1617,9 @@ class SVGRenderer {
             ),
             curState = 0,
             styledMode = this.styledMode,
+            // Make a copy of normalState (#13798)
+            // (reference to options.rangeSelector.buttonTheme)
+            normalState = normalState ? merge(normalState) : normalState,
             userNormalStyle = normalState && normalState.style || {};
 
         // Remove stylable attributes
@@ -2085,13 +2088,13 @@ class SVGRenderer {
      * @param {number} height
      * The new pixel height.
      *
-     * @param {boolean|Highcharts.AnimationOptionsObject} [animate=true]
+     * @param {boolean|Partial<Highcharts.AnimationOptionsObject>} [animate=true]
      * Whether and how to animate.
      */
     public setSize(
         width: number,
         height: number,
-        animate?: (boolean|Highcharts.AnimationOptionsObject)
+        animate?: (boolean|Partial<Highcharts.AnimationOptionsObject>)
     ): void {
         var renderer = this,
             alignedObjects = renderer.alignedObjects,

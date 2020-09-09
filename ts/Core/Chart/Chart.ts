@@ -12,13 +12,14 @@
 
 import type { AxisType } from '../Axis/Types';
 import type Point from '../../Core/Series/Point';
+import type { SeriesOptionsType, SeriesPlotOptionsType } from '../Series/Types';
 import type SVGElement from '../Renderer/SVG/SVGElement';
 import Axis from '../Axis/Axis.js';
+import BaseSeries from '../Series/Series.js';
 import H from '../Globals.js';
 const {
     charts,
     doc,
-    seriesTypes,
     win
 } = H;
 import Legend from '../Legend.js';
@@ -388,7 +389,7 @@ class Chart {
             // skip merging data points to increase performance
             seriesOptions = userOptions.series,
             userPlotOptions =
-                userOptions.plotOptions || {} as Highcharts.PlotOptions;
+                userOptions.plotOptions || {} as SeriesPlotOptionsType;
 
         // Fire the event with a default function
         fireEvent(this, 'init', { args: arguments }, function (): void {
@@ -577,16 +578,18 @@ class Chart {
                 optionsChart.type ||
                 optionsChart.defaultSeriesType
             ) as string,
-            series,
-            Constr = seriesTypes[type];
+            series: Highcharts.Series,
+            Constr: Highcharts.Series = BaseSeries.seriesTypes[type] as any;
 
         // No such series type
         if (!Constr) {
             error(17, true, chart as any, { missingModuleFor: type });
         }
 
-        series = new Constr();
-        series.init(this as any, options);
+        series = new Constr(chart, options);
+        if (typeof series.init === 'function') {
+            series.init(this, options);
+        }
         return series;
     }
 
@@ -705,7 +708,7 @@ class Chart {
      *
      * @function Highcharts.Chart#redraw
      *
-     * @param {boolean|Highcharts.AnimationOptionsObject} [animation]
+     * @param {boolean|Partial<Highcharts.AnimationOptionsObject>} [animation]
      * If or how to apply animation to the redraw.
      *
      * @fires Highcharts.Chart#event:afterSetExtremes
@@ -715,7 +718,7 @@ class Chart {
      * @fires Highcharts.Chart#event:render
      * @fires Highcharts.Chart#event:updatedData
      */
-    public redraw(animation?: (boolean|Highcharts.AnimationOptionsObject)): void {
+    public redraw(animation?: (boolean|Partial<Highcharts.AnimationOptionsObject>)): void {
 
         fireEvent(this, 'beforeRedraw');
 
@@ -781,7 +784,7 @@ class Chart {
         series.forEach(function (serie: Highcharts.Series): void {
             if (serie.isDirty) {
                 if (serie.options.legendType === 'point') {
-                    if ((serie as Partial<Highcharts.PieSeries>).updateTotals) {
+                    if (typeof (serie as Highcharts.PieSeries).updateTotals === 'function') {
                         (serie as Highcharts.PieSeries).updateTotals();
                     }
                     redrawLegend = true;
@@ -1776,7 +1779,7 @@ class Chart {
      *        be `undefined` in order to preserve the current value, or `null`
      *        in order to adapt to the height of the containing element.
      *
-     * @param {boolean|Highcharts.AnimationOptionsObject} [animation=true]
+     * @param {boolean|Partial<Highcharts.AnimationOptionsObject>} [animation=true]
      *        Whether and how to apply animation.
      *
      * @return {void}
@@ -1787,7 +1790,7 @@ class Chart {
     public setSize(
         width?: (number|null),
         height?: (number|null),
-        animation?: (boolean|Highcharts.AnimationOptionsObject)
+        animation?: (boolean|Partial<Highcharts.AnimationOptionsObject>)
     ): void {
         var chart = this,
             renderer = chart.renderer,
@@ -1852,7 +1855,7 @@ class Chart {
                     chart.isResizing -= 1;
                 });
             }
-        }, animObject(globalAnimation).duration || 0);
+        }, animObject(globalAnimation).duration);
     }
 
     /**
@@ -2198,7 +2201,7 @@ class Chart {
         ['inverted', 'angular', 'polar'].forEach(function (key: string): void {
 
             // The default series type's class
-            klass = seriesTypes[(optionsChart.type ||
+            klass = BaseSeries.seriesTypes[(optionsChart.type ||
                 optionsChart.defaultSeriesType) as any];
 
             // Get the value from available chart-wide properties
@@ -2212,7 +2215,7 @@ class Chart {
             // 4. Check if any the chart's series require it
             i = seriesOptions && seriesOptions.length;
             while (!value && i--) {
-                klass = seriesTypes[seriesOptions[i].type as any];
+                klass = BaseSeries.seriesTypes[seriesOptions[i].type as any];
                 if (klass && (klass.prototype as any)[key]) {
                     value = true;
                 }

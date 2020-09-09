@@ -8,4 +8,4 @@
  * License: www.highcharts.com/license
  */
 'use strict';
-import '../../modules/broken-axis.src.js';
+import '../../Core/Axis/BrokenAxis.js';

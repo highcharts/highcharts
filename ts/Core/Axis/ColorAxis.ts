@@ -18,12 +18,18 @@ import Color from '../Color.js';
 const {
     parse: color
 } = Color;
+import ColorSeriesModule from '../../Mixins/ColorSeries.js';
+const {
+    colorPointMixin,
+    colorSeriesMixin
+} = ColorSeriesModule;
 import H from '../Globals.js';
 const {
     noop
 } = H;
 import Legend from '../Legend.js';
-import LegendSymbolMixin from '../../mixins/legend-symbol.js';
+import LegendSymbolMixin from '../../Mixins/LegendSymbol.js';
+import LineSeries from '../../Series/LineSeries.js';
 import Point from '../Series/Point.js';
 import U from '../Utilities.js';
 const {
@@ -123,13 +129,7 @@ declare global {
 
 ''; // detach doclet above
 
-import '../../mixins/color-series.js';
-
-var Series = H.Series,
-    colorPointMixin = H.colorPointMixin,
-    colorSeriesMixin = H.colorSeriesMixin;
-
-extend(Series.prototype, colorSeriesMixin);
+extend(LineSeries.prototype, colorSeriesMixin);
 extend(Point.prototype, colorPointMixin);
 
 Chart.prototype.collectionsWithUpdate.push('colorAxis');
@@ -450,7 +450,7 @@ class ColorAxis extends Axis implements AxisLike {
              * Animation for the marker as it moves between values. Set to
              * `false` to disable animation. Defaults to `{ duration: 50 }`.
              *
-             * @type    {boolean|Highcharts.AnimationOptionsObject}
+             * @type    {boolean|Partial<Highcharts.AnimationOptionsObject>}
              * @product highcharts highstock highmaps
              */
             animation: {
@@ -1137,7 +1137,7 @@ class ColorAxis extends Axis implements AxisLike {
                 cSeries.maxColorValue = (cSeries as any)[colorKey + 'Max'];
 
             } else {
-                const cExtremes = Series.prototype.getExtremes.call(
+                const cExtremes = LineSeries.prototype.getExtremes.call(
                     cSeries,
                     colorValArray
                 );
@@ -1154,7 +1154,7 @@ class ColorAxis extends Axis implements AxisLike {
             }
 
             if (!calculatedExtremes) {
-                Series.prototype.applyExtremes.call(cSeries);
+                LineSeries.prototype.applyExtremes.call(cSeries);
             }
         }
     }
@@ -1462,7 +1462,7 @@ addEvent(Chart, 'afterGetAxes', function (): void {
 
 
 // Add colorAxis to series axisTypes
-addEvent(Series, 'bindAxes', function (): void {
+addEvent(LineSeries, 'bindAxes', function (): void {
     var axisTypes = this.axisTypes;
 
     if (!axisTypes) {
@@ -1554,7 +1554,7 @@ addEvent(Legend, 'afterUpdate', function (this: Highcharts.Legend): void {
 });
 
 // Calculate and set colors for points
-addEvent(Series as any, 'afterTranslate', function (): void {
+addEvent(LineSeries as any, 'afterTranslate', function (): void {
     if (
         this.chart.colorAxis &&
         this.chart.colorAxis.length ||
@@ -1579,7 +1579,7 @@ namespace ColorAxis {
         chart: Chart;
         name: string;
         options: object;
-        drawLegendSymbol: LegendSymbolMixin['drawRectangle'];
+        drawLegendSymbol: typeof LegendSymbolMixin['drawRectangle'];
         visible: boolean;
         setState: Function;
         isDataClass: true;
@@ -1587,7 +1587,7 @@ namespace ColorAxis {
     }
 
     export interface MarkerOptions {
-        animation?: (boolean|Highcharts.AnimationOptionsObject);
+        animation?: (boolean|Partial<Highcharts.AnimationOptionsObject>);
         color?: Highcharts.ColorType;
         width?: number;
     }

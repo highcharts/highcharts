@@ -7,16 +7,13 @@
  *  !!!!!!! SOURCE GETS TRANSPILED BY TYPESCRIPT. EDIT TS FILE ONLY. !!!!!!!
  *
  * */
-'use strict';
-import H from '../Core/Globals.js';
-import LegendSymbolMixin from '../mixins/legend-symbol.js';
+import BaseSeries from '../Core/Series/Series.js';
+import LegendSymbolMixin from '../Mixins/LegendSymbol.js';
 import O from '../Core/Options.js';
 var defaultOptions = O.defaultOptions;
-import U from '../Core/Utilities.js';
-var seriesType = U.seriesType;
 import './AreaSeries.js';
 import './SplineSeries.js';
-var areaProto = H.seriesTypes.area.prototype;
+var areaProto = BaseSeries.seriesTypes.area.prototype;
 /**
  * AreaSpline series type.
  *
@@ -26,7 +23,7 @@ var areaProto = H.seriesTypes.area.prototype;
  *
  * @augments Highcharts.Series
  */
-seriesType('areaspline', 'spline', 
+BaseSeries.seriesType('areaspline', 'spline', 
 /**
  * The area spline series is an area series where the graph between the
  * points is smoothed into a spline.
@@ -37,7 +34,7 @@ seriesType('areaspline', 'spline',
  *         Area spline chart
  *
  * @extends   plotOptions.area
- * @excluding step
+ * @excluding step, boostThreshold, boostBlending
  * @product   highcharts highstock
  * @apioption plotOptions.areaspline
  */
@@ -53,7 +50,7 @@ defaultOptions.plotOptions.area, {
  *
  *
  * @extends   series,plotOptions.areaspline
- * @excluding dataParser, dataURL, step
+ * @excluding dataParser, dataURL, step, boostThreshold, boostBlending
  * @product   highcharts highstock
  * @apioption series.areaspline
  */
