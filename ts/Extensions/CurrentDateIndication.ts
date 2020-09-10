@@ -12,6 +12,7 @@
 
 import type ColorString from '../Core/Color/ColorString';
 import type CSSObject from '../Core/Renderer/CSSObject';
+import Axis from '../Core/Axis/Axis.js';
 import H from '../Core/Globals.js';
 import O from '../Core/Options.js';
 const { dateFormat } = O;
@@ -63,8 +64,6 @@ const {
 } = U;
 
 import PlotLineOrBand from '../Core/Axis/PlotLineOrBand.js';
-
-var Axis = H.Axis;
 
 
 const defaultConfig: (

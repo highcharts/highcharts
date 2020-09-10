@@ -8,7 +8,7 @@
  *
  * */
 
-import type Point from '../Core/Series/Point';
+import Point from '../Core/Series/Point.js';
 import BaseSeries from '../Core/Series/Series.js';
 import H from '../Core/Globals.js';
 
@@ -53,6 +53,11 @@ declare module '../Core/Series/Types' {
 import './AreaSeries.js';
 import './ColumnSeries.js';
 import './DumbbellSeries.js';
+import U from '../Core/Utilities.js';
+const {
+    isObject,
+    pick
+} = U;
 
 const seriesTypes = BaseSeries.seriesTypes,
     areaProto = seriesTypes.area.prototype,
@@ -105,7 +110,7 @@ BaseSeries.seriesType<typeof Highcharts.LollipopSeries>('lollipop', 'dumbbell', 
     pointArrayMap: ['y'],
     pointValKey: 'y',
     toYData: function (point: Highcharts.LollipopPoint): Array<number> {
-        return [H.pick(point.y, point.low)];
+        return [pick(point.y, point.low)];
     },
     translatePoint: areaProto.translate,
     drawPoint: areaProto.drawPoints,
@@ -119,11 +124,11 @@ BaseSeries.seriesType<typeof Highcharts.LollipopSeries>('lollipop', 'dumbbell', 
         options: Highcharts.LollipopPointOptions,
         x?: number
     ): Point {
-        if (H.isObject(options) && 'low' in options) {
+        if (isObject(options) && 'low' in options) {
             options.y = options.low;
             delete options.low;
         }
-        return H.Point.prototype.init.apply(this, arguments);
+        return Point.prototype.init.apply(this, arguments);
     }
 });
 

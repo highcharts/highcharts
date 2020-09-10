@@ -523,7 +523,7 @@ function isInsidePane(
     ) <= center[2] / 2;
 }
 
-H.Chart.prototype.getHoverPane = function (
+Chart.prototype.getHoverPane = function (
     this: Highcharts.PaneChart,
     eventArgs: {
         chartX: number;

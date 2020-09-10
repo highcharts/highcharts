@@ -706,7 +706,7 @@ addEvent(Axis, 'afterRender', function (): void {
             // Resizer not present and enabled
             if (enabled) {
                 // Add new resizer
-                axis.resizer = new H.AxisResizer(axis);
+                axis.resizer = new AxisResizer(axis);
             }
             // Resizer not present and disabled, so do nothing
         }

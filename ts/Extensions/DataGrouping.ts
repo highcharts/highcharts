@@ -12,6 +12,7 @@
 
 import type { AxisType } from '../Core/Axis/Types';
 import type { SeriesOptionsType, SeriesPlotOptionsType } from '../Core/Series/Types';
+import Axis from '../Core/Axis/Axis.js';
 import DateTimeAxis from '../Core/Axis/DateTimeAxis.js';
 import H from '../Core/Globals.js';
 
@@ -168,8 +169,7 @@ const {
 import '../Core/Axis/Axis.js';
 import '../Series/LineSeries.js';
 
-var Axis = H.Axis,
-    Series = H.Series;
+var Series = H.Series;
 
 /* ************************************************************************** *
  *  Start data grouping module                                                *

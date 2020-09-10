@@ -899,11 +899,11 @@ setOptions({
 /* eslint-disable no-invalid-this, valid-jsdoc */
 
 // Run HTML generator
-addEvent(H.Chart, 'afterGetContainer', function (): void {
+addEvent(Chart, 'afterGetContainer', function (): void {
     this.setStockTools();
 });
 
-addEvent(H.Chart, 'getMargins', function (): void {
+addEvent(Chart, 'getMargins', function (): void {
     var listWrapper = this.stockTools && this.stockTools.listWrapper,
         offsetWidth = listWrapper && (
             (
@@ -918,13 +918,13 @@ addEvent(H.Chart, 'getMargins', function (): void {
     }
 });
 
-addEvent(H.Chart, 'destroy', function (): void {
+addEvent(Chart, 'destroy', function (): void {
     if (this.stockTools) {
         this.stockTools.destroy();
     }
 });
 
-addEvent(H.Chart, 'redraw', function (): void {
+addEvent(Chart, 'redraw', function (): void {
     if (this.stockTools && this.stockTools.guiEnabled) {
         this.stockTools.redraw();
     }
@@ -1619,7 +1619,7 @@ extend(Chart.prototype, {
             ),
             langOptions = lang.stockTools && lang.stockTools.gui;
 
-        this.stockTools = new H.Toolbar(guiOptions, langOptions, this);
+        this.stockTools = new Toolbar(guiOptions, langOptions, this);
 
         if ((this.stockTools as any).guiEnabled) {
             this.isDirtyBox = true;

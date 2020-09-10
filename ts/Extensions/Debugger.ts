@@ -32,6 +32,7 @@ declare global {
     }
 }
 
+import Chart from '../Core/Chart/Chart.js';
 import U from '../Core/Utilities.js';
 const {
     addEvent,
@@ -60,7 +61,7 @@ setOptions({
 
 /* eslint-disable no-invalid-this */
 
-addEvent(H.Chart, 'displayError', function (
+addEvent(Chart, 'displayError', function (
     e: Highcharts.ErrorMessageEventObject
 ): void {
     var chart = this,
@@ -138,7 +139,7 @@ addEvent(H.Chart, 'displayError', function (
     }
 });
 
-addEvent(H.Chart, 'beforeRedraw', function (): void {
+addEvent(Chart, 'beforeRedraw', function (): void {
     var errorElements = this.errorElements;
 
     if (errorElements && errorElements.length) {

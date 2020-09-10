@@ -1264,7 +1264,7 @@ BaseSeries.seriesType('packedbubble', 'bubble',
         if (point.isParentNode) {
             chart.getSelectedPoints = chart.getSelectedParentNodes;
             Point.prototype.select.apply(this, arguments);
-            chart.getSelectedPoints = H.Chart.prototype.getSelectedPoints;
+            chart.getSelectedPoints = Chart.prototype.getSelectedPoints;
         }
         else {
             Point.prototype.select.apply(this, arguments);
