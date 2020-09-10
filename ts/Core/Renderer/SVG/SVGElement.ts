@@ -8,8 +8,7 @@
  *
  * */
 
-'use strict';
-
+import type BBoxObject from '../BBoxObject';
 import type ColorString from '../../Color/ColorString';
 import type ColorType from '../../Color/ColorType';
 import type CSSObject from '../CSSObject';
@@ -19,6 +18,7 @@ import type {
     SVGDOMElement
 } from '../DOMElementType';
 import type GradientColor from '../../Color/GradientColor';
+import type RectangleObject from '../RectangleObject';
 import type SVGAttributes from './SVGAttributes';
 import type SVGPath from './SVGPath';
 import type SVGRenderer from './SVGRenderer';
@@ -58,6 +58,18 @@ const {
     uniqueKey
 } = U;
 
+type ImportedBBoxObject = BBoxObject;
+
+/**
+ * @private
+ */
+declare module '../CSSObject' {
+    interface CSSObject {
+        stroke?: ColorString;
+        strokeWidth?: (number|string);
+    }
+}
+
 /**
  * Internal types
  * @private
@@ -73,6 +85,7 @@ declare global {
     }
     namespace Highcharts {
         type AlignValue = ('center'|'left'|'right');
+        type BBoxObject = ImportedBBoxObject;
         type VerticalAlignValue = ('bottom'|'middle'|'top');
         interface AlignObject {
             align?: AlignValue;
@@ -80,12 +93,6 @@ declare global {
             verticalAlign?: VerticalAlignValue;
             x?: number;
             y?: number;
-        }
-        interface BBoxObject extends PositionObject, SizeObject {
-            height: number;
-            width: number;
-            x: number;
-            y: number;
         }
         interface ShadowOptionsObject {
             color: ColorString;
@@ -225,6 +232,9 @@ declare global {
             public xGetter(key: string): (number|string|null);
             public yGetter(key: string): (number|string|null);
             public zIndexSetter(value: number, key: string): boolean;
+        }
+        namespace SVGElement {
+            export type WrappedType = globalThis.SVGElement;
         }
     }
 }
@@ -695,7 +705,7 @@ class SVGElement {
     public align(
         alignOptions?: Highcharts.AlignObject,
         alignByTranslate?: boolean,
-        box?: (string|Highcharts.BBoxObject)
+        box?: (string|BBoxObject)
     ): SVGElement {
         var align: Highcharts.AlignValue,
             vAlign: Highcharts.VerticalAlignValue,
@@ -1166,9 +1176,9 @@ class SVGElement {
      * The modified rectangle arguments.
      */
     public crisp(
-        rect: Highcharts.RectangleObject,
+        rect: RectangleObject,
         strokeWidth?: number
-    ): Highcharts.RectangleObject {
+    ): RectangleObject {
 
         var wrapper = this,
             normalizer;
@@ -1756,10 +1766,7 @@ class SVGElement {
      * @return {Highcharts.BBoxObject}
      *         The bounding box with `x`, `y`, `width` and `height` properties.
      */
-    public getBBox(
-        reload?: boolean,
-        rot?: number
-    ): Highcharts.BBoxObject {
+    public getBBox(reload?: boolean, rot?: number): BBoxObject {
         var wrapper = this,
             bBox: any, // = wrapper.bBox,
             renderer = wrapper.renderer,
@@ -1993,7 +2000,7 @@ class SVGElement {
     /**
      * @private
      */
-    public htmlGetBBox(): Highcharts.BBoxObject {
+    public htmlGetBBox(): BBoxObject {
         return { height: 0, width: 0, x: 0, y: 0 };
     }
 
@@ -2010,7 +2017,7 @@ class SVGElement {
      * The SVG node name.
      */
     public init(
-        renderer: Highcharts.SVGRenderer,
+        renderer: SVGRenderer,
         nodeName: string
     ): void {
 
@@ -3097,6 +3104,8 @@ namespace SVGElement {
     export interface SetterFunction<T> {
         (value: T, key: string): void;
     }
+
+    export type WrappedType = globalThis.SVGElement;
 
 }
 

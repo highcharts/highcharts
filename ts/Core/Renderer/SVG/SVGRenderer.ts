@@ -8,8 +8,7 @@
  *
  * */
 
-'use strict';
-
+import type BBoxObject from '../BBoxObject';
 import type ColorString from '../../Color/ColorString';
 import type CSSObject from '../CSSObject';
 import type {
@@ -17,6 +16,9 @@ import type {
     HTMLDOMElement,
     SVGDOMElement
 } from '../DOMElementType';
+import type PositionObject from '../PositionObject';
+import type RectangleObject from '../RectangleObject';
+import type SizeObject from '../SizeObject';
 import type SVGAttributes from './SVGAttributes';
 import type SVGPath from './SVGPath';
 import Color from '../../Color/Color.js';
@@ -44,6 +46,10 @@ const {
     uniqueKey
 } = U;
 
+type ImportedPositionObject = PositionObject;
+type ImportedRectangleObject = RectangleObject;
+type ImportedSizeObject = SizeObject;
+
 /**
  * Internal types
  * @private
@@ -51,7 +57,10 @@ const {
 declare global {
     namespace Highcharts {
         type ClipRectElement = SVGElement;
+        type PositionObject = ImportedPositionObject;
+        type RectangleObject = ImportedRectangleObject;
         type Renderer = SVGRenderer;
+        type SizeObject = ImportedSizeObject;
         type SymbolKeyValue = (
             'arc'|'bottombutton'|'callout'|'circle'|'connector'|'diamond'|
             'rect'|'square'|'topbutton'|'triangle'|'triangle-down'
@@ -61,22 +70,11 @@ declare global {
             f: number;
             h: number;
         }
-        interface PositionObject {
-            x: number;
-            y: number;
-        }
-        interface RectangleObject extends BBoxObject {
-            strokeWidth?: number;
-        }
         interface ShadowOptionsObject {
             color: ColorString;
             offsetX: number;
             offsetY: number;
             opacity: number;
-            width: number;
-        }
-        interface SizeObject {
-            height: number;
             width: number;
         }
         interface SVGDefinitionObject {
@@ -611,7 +609,7 @@ class SVGRenderer {
      */
     public boxWrapper: SVGElement = void 0 as any;
 
-    public cache: Record<string, Highcharts.BBoxObject> = void 0 as any;
+    public cache: Record<string, BBoxObject> = void 0 as any;
 
     public cacheKeys: Array<string> = void 0 as any;
 
@@ -2685,7 +2683,7 @@ class SVGRenderer {
         baseline: number,
         rotation: number,
         alterY?: boolean
-    ): Highcharts.PositionObject {
+    ): PositionObject {
         var y = baseline;
 
         if (rotation && alterY) {
