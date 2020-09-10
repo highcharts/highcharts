@@ -1533,7 +1533,6 @@ extend(LineSeries.prototype, /** @lends Highcharts.Series.prototype */ {
                 (series.chart.options.chart as any).animation
             ),
             attribs,
-            lineWidthPlus,
             i = 0;
 
         state = state || '';

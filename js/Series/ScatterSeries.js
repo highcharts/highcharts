@@ -132,7 +132,8 @@ BaseSeries.seriesType('scatter', 'line',
      */
     drawGraph: function () {
         if (this.options.lineWidth ||
-            (this.options.lineWidth === 0 &&
+            ( // In case lineWidth = 0 update (#13816).
+            this.options.lineWidth === 0 &&
                 this.graph &&
                 this.graph.strokeWidth())) {
             Series.prototype.drawGraph.call(this);

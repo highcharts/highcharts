@@ -957,7 +957,7 @@ extend(LineSeries.prototype, /** @lends Highcharts.Series.prototype */ {
         // By default a quick animation to hover/inactive,
         // slower to un-hover
         stateAnimation = pick((stateOptions[state || 'normal'] &&
-            stateOptions[state || 'normal'].animation), series.chart.options.chart.animation), attribs, lineWidthPlus, i = 0;
+            stateOptions[state || 'normal'].animation), series.chart.options.chart.animation), attribs, i = 0;
         state = state || '';
         if (series.state !== state) {
             // Toggle class names
