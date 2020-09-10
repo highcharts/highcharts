@@ -1041,21 +1041,23 @@ extend(LineSeries.prototype, /** @lends Series.prototype */ {
         var series = this, chart = series.chart, 
         // must use user options when changing type because series.options
         // is merged in with type specific plotOptions
-        oldOptions = series.userOptions, seriesOptions, initialType = series.initialType || series.type, newType = (options.type ||
+        oldOptions = series.userOptions, seriesOptions, initialType = series.initialType || series.type, plotOptions = chart.options.plotOptions, newType = (options.type ||
             oldOptions.type ||
             chart.options.chart.type), keepPoints = !(
         // Indicators, histograms etc recalculate the data. It should be
         // possible to omit this.
         this.hasDerivedData ||
-            // Changes to data grouping requires new points in new groups
-            options.dataGrouping ||
             // New type requires new point classes
             (newType && newType !== this.type) ||
             // New options affecting how the data points are built
             typeof options.pointStart !== 'undefined' ||
-            options.pointInterval ||
-            options.pointIntervalUnit ||
-            options.keys), initialSeriesProto = seriesTypes[initialType].prototype, n, groups = [
+            typeof options.pointInterval !== 'undefined' ||
+            // Changes to data grouping requires new points in new group
+            series.hasOptionChanged('dataGrouping') ||
+            series.hasOptionChanged('pointStart') ||
+            series.hasOptionChanged('pointInterval') ||
+            series.hasOptionChanged('pointIntervalUnit') ||
+            series.hasOptionChanged('keys')), initialSeriesProto = seriesTypes[initialType].prototype, n, groups = [
             'group',
             'markerGroup',
             'dataLabelsGroup',
@@ -1098,7 +1100,7 @@ extend(LineSeries.prototype, /** @lends Series.prototype */ {
                 series.index : oldOptions.index,
             pointStart: pick(
             // when updating from blank (#7933)
-            oldOptions.pointStart, 
+            plotOptions && plotOptions.series && plotOptions.series.pointStart, oldOptions.pointStart, 
             // when updating after addPoint
             series.xData[0])
         }, (!keepPoints && { data: series.options.data }), options);
@@ -1188,6 +1190,24 @@ extend(LineSeries.prototype, /** @lends Series.prototype */ {
     setName: function (name) {
         this.name = this.options.name = this.userOptions.name = name;
         this.chart.isDirtyLegend = true;
+    },
+    /**
+     * Check if the option has changed.
+     *
+     * @private
+     * @function Highcharts.Series#hasOptionChanged
+     *
+     * @param {string} option
+     *
+     * @return {boolean}
+     */
+    hasOptionChanged: function (optionName) {
+        var chart = this.chart, option = this.options[optionName], plotOptions = chart.options.plotOptions, oldOption = this.userOptions[optionName];
+        if (oldOption) {
+            return option !== oldOption;
+        }
+        return option !==
+            pick(plotOptions && plotOptions[this.type] && plotOptions[this.type][optionName], plotOptions && plotOptions.series && plotOptions.series[optionName], option);
     }
 });
 // Extend the Axis.prototype for dynamic methods
