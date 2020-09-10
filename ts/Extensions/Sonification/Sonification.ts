@@ -12,7 +12,7 @@
 
 'use strict';
 
-import type Chart from '../../Core/Chart/Chart';
+import Chart from '../../Core/Chart/Chart.js';
 import H from '../../Core/Globals.js';
 import O from '../../Core/Options.js';
 const { defaultOptions } = O;
@@ -183,7 +183,7 @@ merge(
 Point.prototype.sonify = pointSonifyFunctions.pointSonify;
 Point.prototype.cancelSonify = pointSonifyFunctions.pointCancelSonify;
 H.Series.prototype.sonify = chartSonifyFunctions.seriesSonify;
-extend(H.Chart.prototype, {
+extend(Chart.prototype, {
     sonify: chartSonifyFunctions.chartSonify,
     pauseSonify: chartSonifyFunctions.pause,
     resumeSonify: chartSonifyFunctions.resume,
@@ -198,12 +198,12 @@ extend(H.Chart.prototype, {
 /* eslint-disable no-invalid-this */
 
 // Prepare charts for sonification on init
-addEvent(H.Chart, 'init', function (): void {
+addEvent(Chart, 'init', function (): void {
     this.sonification = {};
 });
 
 // Update with chart/series/point updates
-addEvent(H.Chart as any, 'update', function (
+addEvent(Chart as any, 'update', function (
     this: Highcharts.SonifyableChart,
     e: { options: Highcharts.Options }
 ): void {

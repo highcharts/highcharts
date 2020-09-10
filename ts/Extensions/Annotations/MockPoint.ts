@@ -114,7 +114,7 @@ var defined = U.defined,
     extend = U.extend,
     fireEvent = U.fireEvent;
 
-import '../../Core/Axis/Axis.js';
+import Axis from '../../Core/Axis/Axis.js';
 import '../../Series/LineSeries.js';
 
 /* eslint-disable no-invalid-this, valid-jsdoc */
@@ -385,7 +385,7 @@ class MockPoint {
             chart = this.series.chart;
 
         this.series[axisName] =
-            axisOptions instanceof H.Axis ?
+            axisOptions instanceof Axis ?
                 axisOptions :
                 defined(axisOptions) ?
                     (

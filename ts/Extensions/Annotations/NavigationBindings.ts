@@ -11,6 +11,7 @@
 'use strict';
 
 import Annotation from './Annotations.js';
+import Chart from '../../Core/Chart/Chart.js';
 import chartNavigationMixin from '../../Mixins/Navigation.js';
 import H from '../../Core/Globals.js';
 import {
@@ -979,7 +980,7 @@ interface NavigationBindings {
 NavigationBindings.prototype.utils = bindingsUtils;
 
 
-H.Chart.prototype.initNavigationBindings = function (this: Highcharts.AnnotationChart): void {
+Chart.prototype.initNavigationBindings = function (this: Highcharts.AnnotationChart): void {
     var chart = this,
         options = chart.options;
 
@@ -993,11 +994,11 @@ H.Chart.prototype.initNavigationBindings = function (this: Highcharts.Annotation
     }
 };
 
-addEvent(H.Chart, 'load', function (): void {
+addEvent(Chart, 'load', function (): void {
     this.initNavigationBindings();
 });
 
-addEvent(H.Chart, 'destroy', function (): void {
+addEvent(Chart, 'destroy', function (): void {
     if (this.navigationBindings) {
         this.navigationBindings.destroy();
     }

@@ -27,6 +27,7 @@ const {
     clamp,
     defined,
     extend,
+    isArray,
     isNumber,
     merge,
     pick,
@@ -822,7 +823,7 @@ const ColumnSeries = BaseSeries.seriesType<typeof Highcharts.ColumnSeries>(
 
                                 // If `stacking` is not enabled, look for the
                                 // index and total of the `group` stack.
-                                } else if (H.isArray(pointValues)) {
+                                } else if (isArray(pointValues)) {
                                     indexInCategory = pointValues[1];
                                     totalInCategory = total || 0;
                                 }

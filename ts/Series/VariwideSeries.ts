@@ -11,6 +11,7 @@
  * */
 
 import type StackingAxis from '../Core/Axis/StackingAxis';
+import Axis from '../Core/Axis/Axis.js';
 import BaseSeries from '../Core/Series/Series.js';
 const {
     seriesTypes
@@ -364,7 +365,7 @@ H.Tick.prototype.postTranslate = function (
 /* eslint-disable no-invalid-this */
 
 // Same width as the category (#8083)
-addEvent(H.Axis, 'afterDrawCrosshair', function (
+addEvent(Axis, 'afterDrawCrosshair', function (
     e: {
         point: Highcharts.VariwidePoint;
     }
@@ -378,7 +379,7 @@ addEvent(H.Axis, 'afterDrawCrosshair', function (
 });
 
 // On a vertical axis, apply anti-collision logic to the labels.
-addEvent(H.Axis, 'afterRender', function (): void {
+addEvent(Axis, 'afterRender', function (): void {
     var axis = this;
 
     if (!this.horiz && this.variwide) {

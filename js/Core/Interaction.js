@@ -518,11 +518,11 @@ extend(Chart.prototype, /** @lends Chart.prototype */ {
                         }
                     }
                 });
-                paddedMin = Math.min(H.pick(panningState === null || panningState === void 0 ? void 0 : panningState.startMin, extremes.dataMin), halfPointRange ?
+                paddedMin = Math.min(pick(panningState === null || panningState === void 0 ? void 0 : panningState.startMin, extremes.dataMin), halfPointRange ?
                     extremes.min :
                     axis.toValue(axis.toPixels(extremes.min) -
                         axis.minPixelPadding));
-                paddedMax = Math.max(H.pick(panningState === null || panningState === void 0 ? void 0 : panningState.startMax, extremes.dataMax), halfPointRange ?
+                paddedMax = Math.max(pick(panningState === null || panningState === void 0 ? void 0 : panningState.startMax, extremes.dataMax), halfPointRange ?
                     extremes.max :
                     axis.toValue(axis.toPixels(extremes.max) +
                         axis.minPixelPadding));

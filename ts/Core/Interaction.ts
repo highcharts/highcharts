@@ -867,7 +867,7 @@ extend(Chart.prototype, /** @lends Chart.prototype */ {
                 });
 
                 paddedMin = Math.min(
-                    H.pick(panningState?.startMin, extremes.dataMin),
+                    pick(panningState?.startMin, extremes.dataMin),
                     halfPointRange ?
                         extremes.min :
                         axis.toValue(
@@ -876,7 +876,7 @@ extend(Chart.prototype, /** @lends Chart.prototype */ {
                         )
                 );
                 paddedMax = Math.max(
-                    H.pick(panningState?.startMax, extremes.dataMax),
+                    pick(panningState?.startMax, extremes.dataMax),
                     halfPointRange ?
                         extremes.max :
                         axis.toValue(
