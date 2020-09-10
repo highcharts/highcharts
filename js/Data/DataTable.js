@@ -289,8 +289,9 @@ var DataTable = /** @class */ (function () {
      * @param {...string} columnNamesOrAlias
      * Names or aliases for the columns to get, aliases taking precedence.
      *
-     * @return {Array<Array<DataTableRow.CellType>>}
-     * A two-dimensional array of the specified columns
+     * @return {Array<Array<DataTableRow.CellType>|undefined>}
+     * A two-dimensional array of the specified columns,
+     * if the column does not exist it will be `undefined`
      */
     DataTable.prototype.getColumns = function () {
         var columnNamesOrAlias = [];
@@ -301,7 +302,7 @@ var DataTable = /** @class */ (function () {
         var columnNames = Object.keys(columns), columnArray = [];
         for (var i = 0, parameterCount = columnNamesOrAlias.length; i < parameterCount; i++) {
             var parameter = columnNamesOrAlias[i], foundName = columnNames[columnNames.indexOf(aliasMap[parameter] || parameter)];
-            columnArray.push(columns[foundName] || []); // return an empty array if not found
+            columnArray.push(columns[foundName] || void 0);
         }
         return columnArray;
     };
@@ -485,8 +486,12 @@ var DataTable = /** @class */ (function () {
             // setColumn will overwrite an alias, so check that it
             // does not exist
             if (!this.aliasMap[newColumnName] || overwriteAlias) {
-                var values = this.getColumns(columnName);
-                success = this.setColumn(newColumnName, values[0]);
+                var values = this.getColumns(columnName)[0];
+                // If no values, the column does not exist
+                if (!values) {
+                    return success;
+                }
+                success = this.setColumn(newColumnName, values);
                 if (success) {
                     // Roll back if unable to delete
                     if (!this.deleteColumn(columnName)) {

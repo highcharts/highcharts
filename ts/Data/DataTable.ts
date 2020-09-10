@@ -403,10 +403,11 @@ class DataTable implements DataEventEmitter<DataTable.EventObject>, DataJSON.Cla
      * @param {...string} columnNamesOrAlias
      * Names or aliases for the columns to get, aliases taking precedence.
      *
-     * @return {Array<Array<DataTableRow.CellType>>}
-     * A two-dimensional array of the specified columns
+     * @return {Array<Array<DataTableRow.CellType>|undefined>}
+     * A two-dimensional array of the specified columns,
+     * if the column does not exist it will be `undefined`
      */
-    public getColumns(...columnNamesOrAlias: Array<string>): Array<Array<DataTableRow.CellType>> {
+    public getColumns(...columnNamesOrAlias: Array<string>): Array<Array<DataTableRow.CellType>|undefined> {
         const columns = this.toColumns(),
             { aliasMap } = this;
 
@@ -417,7 +418,7 @@ class DataTable implements DataEventEmitter<DataTable.EventObject>, DataJSON.Cla
             const parameter = columnNamesOrAlias[i],
                 foundName = columnNames[columnNames.indexOf(aliasMap[parameter] || parameter)];
 
-            columnArray.push(columns[foundName] || []); // return an empty array if not found
+            columnArray.push(columns[foundName] || void 0);
         }
 
         return columnArray;
@@ -639,8 +640,14 @@ class DataTable implements DataEventEmitter<DataTable.EventObject>, DataJSON.Cla
             // setColumn will overwrite an alias, so check that it
             // does not exist
             if (!this.aliasMap[newColumnName] || overwriteAlias) {
-                const values = this.getColumns(columnName);
-                success = this.setColumn(newColumnName, values[0]);
+                const values = this.getColumns(columnName)[0];
+
+                // If no values, the column does not exist
+                if (!values) {
+                    return success;
+                }
+
+                success = this.setColumn(newColumnName, values);
 
                 if (success) {
                     // Roll back if unable to delete

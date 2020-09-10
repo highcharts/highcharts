@@ -417,10 +417,9 @@ QUnit.test('DataTable column methods', function(assert){
         'Deleting column that does not exist returns false'
     );
 
-    assert.strictEqual(
-        table.getColumns('Cols')[0].length,
-        0,
-        'Deleted column is deleted'
+    assert.notOk(
+        table.getColumns('Cols')[0],
+        'The column is deleted'
     );
 
     const expectedValues = table.getColumns('population')[0];
@@ -431,7 +430,7 @@ QUnit.test('DataTable column methods', function(assert){
     );
 
     assert.notOk(
-        table.getColumns('population')[0].length,
+        table.getColumns('population')[0],
         'the column is removed'
     )
 
