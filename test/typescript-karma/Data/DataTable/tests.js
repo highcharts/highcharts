@@ -188,11 +188,11 @@ QUnit.test('DataTable JSON support', function (assert) {
             rowB && rowB.id,
             rowC && rowC.id,
         ], [
-            3,
-            'a',
-            'b',
-            'c',
-        ],
+        3,
+        'a',
+        'b',
+        'c',
+    ],
         'Table should contain three rows.'
     );
 
@@ -218,11 +218,11 @@ QUnit.test('DataTable JSON support', function (assert) {
             rowBB && rowBB.id,
             rowBC && rowBC.id,
         ], [
-            3,
-            'ba',
-            'bb',
-            'bc',
-        ],
+        3,
+        'ba',
+        'bb',
+        'bc',
+    ],
         'Inner table should contain three rows.'
     );
 
@@ -253,7 +253,7 @@ QUnit.test('DataTableRow functions', function (assert) {
 
 });
 
-QUnit.test('DataTable.toColumns', function(assert){
+QUnit.test('DataTable.toColumns', function (assert) {
 
     const table = DataTable.fromJSON({
         $class: 'DataTable',
@@ -295,7 +295,7 @@ QUnit.test('DataTable.toColumns', function(assert){
         'Result has correct column names'
     );
 
-    Object.keys(columns).forEach(key =>{
+    Object.keys(columns).forEach(key => {
         const column = columns[key];
         assert.strictEqual(
             column.length,
@@ -306,14 +306,14 @@ QUnit.test('DataTable.toColumns', function(assert){
 
 });
 
-QUnit.test('DataTable column methods', function(assert){
+QUnit.test('DataTable column methods', function (assert) {
     const table = new DataTable();
 
     table.aliasMap = {
-        'x' : 'population',
-        'y' : 'gdp',
-        'z' : 'id',
-        'f' : 'population'
+        'x': 'population',
+        'y': 'gdp',
+        'z': 'id',
+        'f': 'population'
     }
 
     table.insertRow(DataTableRow.fromJSON({
@@ -394,7 +394,7 @@ QUnit.test('DataTable column methods', function(assert){
         'des Aravis'
     ];
 
-    table.setColumn('Cols', colArray );
+    table.setColumn('Cols', colArray);
 
     assert.strictEqual(
         table.getRowCount(),
@@ -434,9 +434,69 @@ QUnit.test('DataTable column methods', function(assert){
         'the column is removed'
     )
 
-})
+});
 
-QUnit.test('DataTable.toColumns with missing cells', function(assert){
+QUnit.test('table.renameColumn', function (assert) {
+
+    const table = new DataTable();
+
+    table.insertRow(new DataTableRow({
+        column1: true,
+        existingColumn: true
+    }));
+
+    // Move
+    assert.ok(
+        table.renameColumn('column1', 'newColumn'),
+        'is able to move the contents of one column to a new column'
+    );
+    assert.deepEqual(table.getColumns('column1', 'newColumn'), [undefined, [true]]);
+
+    // Force move
+    assert.ok(
+        table.renameColumn('newColumn', 'existingColumn', true),
+        'is able to move the contents from one column to an existing column (with force)'
+    );
+    assert.deepEqual(table.getColumns('newColumn', 'existingColumn'), [undefined, [true]]);
+
+    // Force move following alias
+    table.setColumn('newColumn', []);
+    table.createColumnAlias('newEmptyColumn', 'existingColumnAlias');
+
+    assert.ok(table.renameColumn('existingColumn', 'existingColumnAlias', true, true),
+        'is able to move the contents from one column to an existing column by an alias'
+    );
+    assert.deepEqual(table.getColumns('existingColumnAlias', 'existingColumn'), [[true], undefined]);
+
+    // fail when trying to move an non existing column
+    table.setColumn('existingColumn', [true])
+
+    assert.notOk(
+        table.renameColumn('nonexistant', 'existingColumn'),
+        'fails when trying to move a non-existant column'
+    );
+    assert.deepEqual(table.getColumns('nonexistant', 'existingColumn'), [undefined, [true]]);
+
+    assert.notOk(
+        table.renameColumn('existingColumn', 'existingColumn'),
+        'fails when trying to move an existing column without force'
+    );
+
+    assert.notOk(
+        table.renameColumn('id', 'newIDColumn'),
+        'fails when trying to move a column with the name `id`'
+    );
+    assert.deepEqual(table.getColumns('newIDColumn'), [undefined]);
+
+    assert.notOk(
+        table.renameColumn('existingColumn', 'id'),
+        'fails when trying to move a column with the name `id`'
+    );
+    assert.notDeepEqual(table.getColumns('id'), [true]);
+
+});
+
+QUnit.test('DataTable.toColumns with missing cells', function (assert) {
 
     const table = new DataTable();
 

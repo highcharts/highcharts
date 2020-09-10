@@ -612,14 +612,18 @@ class DataTable implements DataEventEmitter<DataTable.EventObject>, DataJSON.Cla
 
     /**
      * Renames a column of cells.
-     * @param {string} columnName
+     * @param {string} fromColumnName
      * The name of the column to be renamed.
      *
-     * @param {string} newColumnName
+     * @param {string} toColumnName
      * The new name of the column.
      * Cannot be `id` or an existing column name or alias.
      *
-     * @param {boolean} overwriteAlias
+     * @param {string} [force]
+     * If `true` the method will allow the `newColumnName`
+     * to be an existing column name
+     *
+     * @param {boolean} [followAlias]
      * If `true` the method will allow the `newColumnName` parameter
      * to be an alias.
      *
@@ -630,29 +634,34 @@ class DataTable implements DataEventEmitter<DataTable.EventObject>, DataJSON.Cla
      *
      */
     public renameColumn(
-        columnName: string,
-        newColumnName: string,
-        overwriteAlias: boolean = false
+        fromColumnName: string,
+        toColumnName: string,
+        force: boolean = false,
+        followAlias: boolean = false
     ): boolean {
         let success = false;
 
-        if (columnName !== 'id' && newColumnName !== 'id') {
+        if (fromColumnName !== 'id' && toColumnName !== 'id') {
             // setColumn will overwrite an alias, so check that it
             // does not exist
-            if (!this.aliasMap[newColumnName] || overwriteAlias) {
-                const values = this.getColumns(columnName)[0];
+            if (!this.aliasMap[toColumnName] || followAlias) {
+                const [fromColumnValues, toColumnValues] = this.getColumns(
+                    fromColumnName,
+                    toColumnName
+                );
 
-                // If no values, the column does not exist
-                if (!values) {
-                    return success;
+                // Check that the fromColumn exists,
+                // and that the toColumn does not
+                if (!fromColumnValues || (toColumnValues && !force)) {
+                    return false;
                 }
 
-                success = this.setColumn(newColumnName, values);
+                success = this.setColumn(toColumnName, fromColumnValues);
 
                 if (success) {
                     // Roll back if unable to delete
-                    if (!this.deleteColumn(columnName)) {
-                        this.deleteColumn(newColumnName);
+                    if (!this.deleteColumn(fromColumnName)) {
+                        this.deleteColumn(toColumnName);
                         success = false;
                     }
                 }
