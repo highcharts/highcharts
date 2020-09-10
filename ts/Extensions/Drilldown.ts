@@ -374,6 +374,8 @@ extend(
  * @product      highcharts highmaps
  * @requires     modules/drilldown
  * @optionparent drilldown
+ * @sample {highcharts} highcharts/series-organization/drilldown
+ *         Organization chart drilldown
  */
 defaultOptions.drilldown = {
 
@@ -1126,7 +1128,15 @@ ColumnSeries.prototype.animateDrillupTo = function (init?: boolean): void {
         // Do dummy animation on first point to get to complete
         syncTimeout(function (): void {
             if (newSeries.points) { // May be destroyed in the meantime, #3389
-                newSeries.points.forEach(function (
+                // Unable to drillup with nodes, #13711
+                var pointsWithNodes: Array<any> = [];
+                newSeries.data.forEach(function (el): void {
+                    pointsWithNodes.push(el);
+                });
+                if (newSeries.nodes) {
+                    pointsWithNodes = pointsWithNodes.concat(newSeries.nodes);
+                }
+                pointsWithNodes.forEach(function (
                     point: Point,
                     i: number
                 ): void {

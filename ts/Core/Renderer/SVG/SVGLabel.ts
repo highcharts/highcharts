@@ -8,8 +8,7 @@
  *
  * */
 
-'use strict';
-
+import type BBoxObject from '../BBoxObject';
 import type ColorType from '../../Color/ColorType';
 import type CSSObject from '../CSSObject';
 import type SVGAttributes from './SVGAttributes';
@@ -39,7 +38,7 @@ class SVGLabel extends SVGElement {
      *
      * */
 
-    public static readonly emptyBBox: Highcharts.BBoxObject = { width: 0, height: 0, x: 0, y: 0 };
+    public static readonly emptyBBox: BBoxObject = { width: 0, height: 0, x: 0, y: 0 };
 
     /* *
      *
@@ -239,7 +238,7 @@ class SVGLabel extends SVGElement {
     /*
      * Return the bounding box of the box, not the group.
      */
-    public getBBox(): Highcharts.BBoxObject {
+    public getBBox(): BBoxObject {
         const bBox = this.bBox;
         const padding = this.padding;
         return {

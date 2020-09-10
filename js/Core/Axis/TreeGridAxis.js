@@ -140,6 +140,7 @@ var TreeGridAxis;
                     mapOfPosToGridNode[pos] = gridNode = {
                         depth: parentGridNode ? parentGridNode.depth + 1 : 0,
                         name: name,
+                        id: data.id,
                         nodes: [node],
                         children: [],
                         pos: pos
@@ -566,6 +567,30 @@ var TreeGridAxis;
          *
          * */
         /**
+         * Set the collapse status.
+         *
+         * @private
+         *
+         * @param {Highcharts.Axis} axis
+         * The axis to check against.
+         *
+         * @param {Highcharts.GridNode} node
+         * The node to collapse.
+         */
+        Additions.prototype.setCollapsedStatus = function (node) {
+            var axis = this.axis, chart = axis.chart;
+            axis.series.forEach(function (series) {
+                var data = series.options.data;
+                if (node.id && data) {
+                    var point = chart.get(node.id), dataPoint = data[series.data.indexOf(point)];
+                    if (point && dataPoint) {
+                        point.collapsed = node.collapsed;
+                        dataPoint.collapsed = node.collapsed;
+                    }
+                }
+            });
+        };
+        /**
          * Calculates the new axis breaks to collapse a node.
          *
          * @private
@@ -585,6 +610,9 @@ var TreeGridAxis;
         Additions.prototype.collapse = function (node) {
             var axis = this.axis, breaks = (axis.options.breaks || []), obj = getBreakFromNode(node, axis.max);
             breaks.push(obj);
+            // Change the collapsed flag #13838
+            node.collapsed = true;
+            axis.treeGrid.setCollapsedStatus(node);
             return breaks;
         };
         /**
@@ -606,6 +634,9 @@ var TreeGridAxis;
          */
         Additions.prototype.expand = function (node) {
             var axis = this.axis, breaks = (axis.options.breaks || []), obj = getBreakFromNode(node, axis.max);
+            // Change the collapsed flag #13838
+            node.collapsed = false;
+            axis.treeGrid.setCollapsedStatus(node);
             // Remove the break from the axis breaks array.
             return breaks.reduce(function (arr, b) {
                 if (b.to !== obj.to || b.from !== obj.from) {
@@ -624,11 +655,11 @@ var TreeGridAxis;
          * List of positions.
          */
         Additions.prototype.getTickPositions = function () {
-            var axis = this.axis;
+            var axis = this.axis, roundedMin = Math.floor(axis.min / axis.tickInterval) * axis.tickInterval, roundedMax = Math.ceil(axis.max / axis.tickInterval) * axis.tickInterval;
             return Object.keys(axis.treeGrid.mapOfPosToGridNode || {}).reduce(function (arr, key) {
                 var pos = +key;
-                if (axis.min <= pos &&
-                    axis.max >= pos &&
+                if (pos >= roundedMin &&
+                    pos <= roundedMax &&
                     !(axis.brokenAxis && axis.brokenAxis.isInAnyBreak(pos))) {
                     arr.push(pos);
                 }

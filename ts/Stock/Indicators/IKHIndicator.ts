@@ -869,19 +869,20 @@ BaseSeries.seriesType<typeof Highcharts.IKHIndicator>(
                     indicator.nextPoints
                 );
 
-                spanA[0][0] = 'L';
+                if (spanA && spanA.length) {
+                    spanA[0][0] = 'L';
 
-                path = SMA.prototype.getGraphPath.call(
-                    indicator,
-                    points
-                );
+                    path = SMA.prototype.getGraphPath.call(
+                        indicator,
+                        points
+                    );
 
-                spanAarr = spanA.slice(0, path.length);
+                    spanAarr = spanA.slice(0, path.length);
 
-                for (let i = spanAarr.length - 1; i >= 0; i--) {
-                    path.push(spanAarr[i]);
+                    for (let i = spanAarr.length - 1; i >= 0; i--) {
+                        path.push(spanAarr[i]);
+                    }
                 }
-
             } else {
                 path = SMA.prototype.getGraphPath.apply(indicator, arguments);
             }

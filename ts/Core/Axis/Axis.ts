@@ -7263,7 +7263,8 @@ class Axis implements AxisComposition, AxisLike {
 
         // Linked axes need an extra check to find out if
         if (!isLinked ||
-            (pos >= (axis.min as any) && pos <= (axis.max as any))
+            (pos >= (axis.min as any) && pos <= (axis.max as any)) ||
+             axis.grid?.isColumn
         ) {
 
             if (!ticks[pos]) {
