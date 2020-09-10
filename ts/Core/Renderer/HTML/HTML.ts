@@ -8,8 +8,7 @@
  *
  * */
 
-'use strict';
-
+import type BBoxObject from '../BBoxObject';
 import type CSSObject from '../CSSObject';
 import type {
     DOMElementType,
@@ -145,7 +144,7 @@ extend(SVGElement.prototype, /** @lends SVGElement.prototype */ {
      */
     htmlGetBBox: function (
         this: Highcharts.HTMLElement
-    ): Highcharts.BBoxObject {
+    ): BBoxObject {
         var wrapper = this,
             element = wrapper.element;
 

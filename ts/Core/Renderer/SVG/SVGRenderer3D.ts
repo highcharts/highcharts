@@ -10,9 +10,9 @@
  *
  * */
 
-'use strict';
-
 import type ColorType from '../../Color/ColorType';
+import type Position3DObject from '../../Renderer/Position3DObject';
+import type PositionObject from '../../Renderer/PositionObject';
 import type SVGAttributes from './SVGAttributes';
 import type SVGPath from './SVGPath';
 import Color from '../../Color/Color.js';
@@ -102,7 +102,7 @@ declare global {
             attribs?: SVGAttributes;
             parts?: Array<string>;
             pathType?: string;
-            vertexes?: Array<Position3dObject>;
+            vertexes?: Array<Position3DObject>;
             initArgs: Element3dMethodsObject['initArgs'];
             setPaths(attribs: SVGAttributes): void;
         }
@@ -195,13 +195,13 @@ function curveTo(
 }
 
 SVGRenderer.prototype.toLinePath = function (
-    points: Array<Highcharts.PositionObject>,
+    points: Array<PositionObject>,
     closed?: boolean
 ): SVGPath {
     var result: SVGPath = [];
 
     // Put "L x y" for each point
-    points.forEach(function (point: Highcharts.PositionObject): void {
+    points.forEach(function (point: PositionObject): void {
         result.push(['L', point.x, point.y]);
     });
 
@@ -219,12 +219,12 @@ SVGRenderer.prototype.toLinePath = function (
 };
 
 SVGRenderer.prototype.toLineSegments = function (
-    points: Array<Highcharts.PositionObject>
+    points: Array<PositionObject>
 ): SVGPath {
     var result = [] as SVGPath,
         m = true;
 
-    points.forEach(function (point: Highcharts.PositionObject): void {
+    points.forEach(function (point: PositionObject): void {
         result.push(m ? ['M', point.x, point.y] : ['L', point.x, point.y]);
         m = !m;
     });
@@ -666,9 +666,9 @@ SVGRenderer.prototype.cuboidPath = function (
         left: Array<number>,
         right: Array<number>,
         shape: Array<number|Array<number>>,
-        path1: Array<Highcharts.PositionObject>,
-        path2: Array<Highcharts.PositionObject>,
-        path3: Array<Highcharts.PositionObject>,
+        path1: Array<PositionObject>,
+        path2: Array<PositionObject>,
+        path3: Array<PositionObject>,
         isFront: number,
         isTop: number,
         isRight: number,
@@ -729,7 +729,7 @@ SVGRenderer.prototype.cuboidPath = function (
      * helper method to decide which side is visible
      * @private
      */
-    function mapSidePath(i: number): Highcharts.Position3dObject {
+    function mapSidePath(i: number): Position3DObject {
         // Added support for 0 value in columns, where height is 0
         // but the shape is rendered.
         // Height is used from 1st to 6th element of pArr
@@ -775,7 +775,7 @@ SVGRenderer.prototype.cuboidPath = function (
      * method creating the final side
      * @private
      */
-    function mapPath(i: number): Highcharts.Position3dObject {
+    function mapPath(i: number): Position3DObject {
         return pArr[i];
     }
 
@@ -795,16 +795,16 @@ SVGRenderer.prototype.cuboidPath = function (
     ): Array<number|Array<number>> {
         var ret = [[] as any, -1],
             // An array of vertices for cuboid face
-            face1: Array<Highcharts.Position3dObject> =
+            face1: Array<Position3DObject> =
                 verticesIndex1.map(mapPath),
-            face2: Array<Highcharts.Position3dObject> =
+            face2: Array<Position3DObject> =
                 verticesIndex2.map(mapPath),
             // dummy face is calculated the same way as standard face,
             // but if cuboid height is 0 additional height is added so it is
             // possible to use this vertices array for visible face calculation
-            dummyFace1: Array<Highcharts.Position3dObject> =
+            dummyFace1: Array<Position3DObject> =
                 verticesIndex1.map(mapSidePath),
-            dummyFace2: Array<Highcharts.Position3dObject> =
+            dummyFace2: Array<Position3DObject> =
                 verticesIndex2.map(mapSidePath);
         if (shapeArea(face1) < 0) {
             ret = [face1, 0];
