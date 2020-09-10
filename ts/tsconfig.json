@@ -2,7 +2,7 @@
     "compilerOptions": {
         "allowJs": true,
         "allowSyntheticDefaultImports": true,
-        "alwaysStrict": true,
+        "alwaysStrict": false,
         "declaration": false,
         "esModuleInterop": true,
         "keyofStringsOnly": true,
