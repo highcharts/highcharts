@@ -150,6 +150,42 @@ var DataTableRow = /** @class */ (function () {
         return true;
     };
     /**
+     * Removes a cell and returns the content of the cell.
+     * @param {string} cellName
+     * The name of the cell to remove.
+     * Cells with the name `id` cannot be removed, and will return `undefined`.
+     *
+     * @param {DataEventEmitter.EventDetail} [eventDetail]
+     * Custom information for pending events.
+     *
+     * @return {DataTableRow.CellType}
+     * Returns the value of the removed cell.
+     *
+     * @emits DataTableRow#removeCell
+     * @emits DataTableRow#afterRemoveCell
+     */
+    DataTableRow.prototype.removeCell = function (cellName, eventDetail) {
+        var row = this, cellValue = row.cells[cellName];
+        if (cellName === 'id' ||
+            Object.keys(row.cells).indexOf(cellName) < 0) {
+            return void 0;
+        }
+        this.emit({
+            type: 'removeCell',
+            cellName: cellName,
+            cellValue: cellValue,
+            detail: eventDetail
+        });
+        row.deleteCell(cellName, eventDetail); // delete row.cells[cellName];
+        this.emit({
+            type: 'afterRemoveCell',
+            cellName: cellName,
+            cellValue: cellValue,
+            detail: eventDetail
+        });
+        return cellValue;
+    };
+    /**
      * Emits an event on this row to all registered callbacks of the given
      * event.
      *

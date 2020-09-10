@@ -110,15 +110,31 @@ var DataTable = /** @class */ (function () {
         var columnsObject = {
             id: []
         };
-        for (var i = 0, rowCount = dataTable.getRowCount(); i < rowCount; i++) {
-            var row = dataTable.rows[i], cellNames = row.getCellNames(), cellCount = cellNames.length;
+        for (var rowIndex = 0, rowCount = dataTable.getRowCount(); rowIndex < rowCount; rowIndex++) {
+            var row = dataTable.rows[rowIndex], cellNames = row.getCellNames(), cellCount = cellNames.length;
             columnsObject.id.push(row.id); // Push the ID column
             for (var j = 0; j < cellCount; j++) {
                 var cellName = cellNames[j], cell = row.getCell(cellName);
                 if (!columnsObject[cellName]) {
                     columnsObject[cellName] = [];
+                    // If row number is greater than 0
+                    // add the previous rows as undefined
+                    if (rowIndex > 0) {
+                        for (var rowNumber = 0; rowNumber < rowIndex; rowNumber++) {
+                            columnsObject[cellName][rowNumber] = void 0;
+                        }
+                    }
                 }
-                columnsObject[cellName][i] = cell;
+                columnsObject[cellName][rowIndex] = cell;
+            }
+            // If the object has columns that were not in the row
+            // add them as undefined
+            var columnsInObject = Object.keys(columnsObject);
+            for (var columnIndex = 0; columnIndex < columnsInObject.length; columnIndex++) {
+                var columnName = columnsInObject[columnIndex];
+                while (columnsObject[columnName].length - 1 < rowIndex) {
+                    columnsObject[columnName].push(void 0);
+                }
             }
         }
         return columnsObject;
@@ -285,9 +301,7 @@ var DataTable = /** @class */ (function () {
         var columnNames = Object.keys(columns), columnArray = [];
         for (var i = 0, parameterCount = columnNamesOrAlias.length; i < parameterCount; i++) {
             var parameter = columnNamesOrAlias[i], foundName = columnNames[columnNames.indexOf(aliasMap[parameter] || parameter)];
-            if (foundName) {
-                columnArray.push(columns[foundName]);
-            }
+            columnArray.push(columns[foundName] || []); // return an empty array if not found
         }
         return columnArray;
     };
@@ -421,6 +435,65 @@ var DataTable = /** @class */ (function () {
         for (var i = 0, rowCount = rows.length; i < rowCount; i++) {
             if (rows[i].deleteCell(columnName)) {
                 success = true;
+            }
+        }
+        return success;
+    };
+    /**
+     * Removes a column of cells from the table and returns the values.
+     * @param {string} columnName
+     * The name of the column to be deleted (not an alias).
+     *
+     * @param {DataEventEmitter.EventDetail} [eventDetail]
+     * Custom information for pending events.
+     *
+     * @return {Array<DataTableRow.CellType>}
+     * An array of the values of the column.
+     */
+    DataTable.prototype.removeColumn = function (columnName, eventDetail) {
+        var rows = this.getAllRows(), cellValueArray = [];
+        this.emit({ type: 'removeColumn', detail: eventDetail, columnName: columnName });
+        for (var i = 0, rowCount = rows.length; i < rowCount; i++) {
+            cellValueArray.push(rows[i].removeCell(columnName));
+        }
+        this.emit({ type: 'afterRemoveColumn', detail: eventDetail, columnName: columnName, values: cellValueArray });
+        return cellValueArray;
+    };
+    /**
+     * Renames a column of cells.
+     * @param {string} columnName
+     * The name of the column to be renamed.
+     *
+     * @param {string} newColumnName
+     * The new name of the column.
+     * Cannot be `id` or an existing column name or alias.
+     *
+     * @param {boolean} overwriteAlias
+     * If `true` the method will allow the `newColumnName` parameter
+     * to be an alias.
+     *
+     * @return {boolean}
+     * `true` if the operation succeeds,
+     * `false` if either column name is `id`, or if unable to set
+     * or delete the columns.
+     *
+     */
+    DataTable.prototype.renameColumn = function (columnName, newColumnName, overwriteAlias) {
+        if (overwriteAlias === void 0) { overwriteAlias = false; }
+        var success = false;
+        if (columnName !== 'id' && newColumnName !== 'id') {
+            // setColumn will overwrite an alias, so check that it
+            // does not exist
+            if (!this.aliasMap[newColumnName] || overwriteAlias) {
+                var values = this.getColumns(columnName);
+                success = this.setColumn(newColumnName, values[0]);
+                if (success) {
+                    // Roll back if unable to delete
+                    if (!this.deleteColumn(columnName)) {
+                        this.deleteColumn(newColumnName);
+                        success = false;
+                    }
+                }
             }
         }
         return success;

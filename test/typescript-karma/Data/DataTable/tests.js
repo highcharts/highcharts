@@ -418,9 +418,60 @@ QUnit.test('DataTable column methods', function(assert){
     );
 
     assert.strictEqual(
-        table.getColumns('Cols').length,
+        table.getColumns('Cols')[0].length,
         0,
         'Deleted column is deleted'
     );
+
+    const expectedValues = table.getColumns('population')[0];
+    assert.deepEqual(
+        table.removeColumn('population'),
+        expectedValues,
+        'RemoveColumn retrieves the same values as getColumns'
+    );
+
+    assert.notOk(
+        table.getColumns('population')[0].length,
+        'the column is removed'
+    )
+
+})
+
+QUnit.test('DataTable.toColumns with missing cells', function(assert){
+
+    const table = new DataTable();
+
+    table.insertRow(new DataTableRow(
+        {
+            id: 'Row1',
+            column1: 'value',
+            column3: 'value'
+        }
+    ))
+    table.insertRow(new DataTableRow(
+        {
+            id: 'Row2',
+            column3: 'value'
+        }
+    ))
+    table.insertRow(new DataTableRow(
+        {
+            id: 'Row3',
+            column4: 'value'
+        }
+    ))
+    table.insertRow(new DataTableRow(
+        {
+            id: 'Row4',
+            column1: 'value',
+            column3: 'value'
+        }
+    ))
+    const columns = table.toColumns();
+
+    assert.deepEqual(columns['id'], ['Row1', 'Row2', 'Row3', 'Row4']);
+    assert.deepEqual(columns['column1'], ['value', undefined, undefined, 'value']);
+    assert.deepEqual(columns['column3'], ['value', 'value', undefined, 'value']);
+    assert.deepEqual(columns['column4'], [undefined, undefined, 'value', undefined]);
 
 })

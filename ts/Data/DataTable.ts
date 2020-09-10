@@ -97,8 +97,8 @@ class DataTable implements DataEventEmitter<DataTable.EventObject>, DataJSON.Cla
             id: []
         };
 
-        for (let i = 0, rowCount = dataTable.getRowCount(); i < rowCount; i++) {
-            const row = dataTable.rows[i],
+        for (let rowIndex = 0, rowCount = dataTable.getRowCount(); rowIndex < rowCount; rowIndex++) {
+            const row = dataTable.rows[rowIndex],
                 cellNames = row.getCellNames(),
                 cellCount = cellNames.length;
 
@@ -110,8 +110,30 @@ class DataTable implements DataEventEmitter<DataTable.EventObject>, DataJSON.Cla
 
                 if (!columnsObject[cellName]) {
                     columnsObject[cellName] = [];
+                    // If row number is greater than 0
+                    // add the previous rows as undefined
+                    if (rowIndex > 0) {
+                        for (let rowNumber = 0; rowNumber < rowIndex; rowNumber++) {
+                            columnsObject[cellName][rowNumber] = void 0;
+                        }
+                    }
                 }
-                columnsObject[cellName][i] = cell;
+                columnsObject[cellName][rowIndex] = cell;
+            }
+
+            // If the object has columns that were not in the row
+            // add them as undefined
+            const columnsInObject = Object.keys(columnsObject);
+            for (
+                let columnIndex = 0;
+                columnIndex < columnsInObject.length;
+                columnIndex++
+            ) {
+                const columnName = columnsInObject[columnIndex];
+
+                while (columnsObject[columnName].length - 1 < rowIndex) {
+                    columnsObject[columnName].push(void 0);
+                }
             }
         }
 
@@ -395,9 +417,7 @@ class DataTable implements DataEventEmitter<DataTable.EventObject>, DataJSON.Cla
             const parameter = columnNamesOrAlias[i],
                 foundName = columnNames[columnNames.indexOf(aliasMap[parameter] || parameter)];
 
-            if (foundName) {
-                columnArray.push(columns[foundName]);
-            }
+            columnArray.push(columns[foundName] || []); // return an empty array if not found
         }
 
         return columnArray;
@@ -556,6 +576,82 @@ class DataTable implements DataEventEmitter<DataTable.EventObject>, DataJSON.Cla
                 success = true;
             }
         }
+
+        return success;
+    }
+
+    /**
+     * Removes a column of cells from the table and returns the values.
+     * @param {string} columnName
+     * The name of the column to be deleted (not an alias).
+     *
+     * @param {DataEventEmitter.EventDetail} [eventDetail]
+     * Custom information for pending events.
+     *
+     * @return {Array<DataTableRow.CellType>}
+     * An array of the values of the column.
+     */
+    public removeColumn(
+        columnName: string,
+        eventDetail?: DataEventEmitter.EventDetail
+    ): Array<DataTableRow.CellType> {
+        const rows = this.getAllRows(),
+            cellValueArray = [];
+
+        this.emit({ type: 'removeColumn', detail: eventDetail, columnName });
+
+        for (let i = 0, rowCount = rows.length; i < rowCount; i++) {
+            cellValueArray.push(rows[i].removeCell(columnName));
+        }
+
+        this.emit({ type: 'afterRemoveColumn', detail: eventDetail, columnName, values: cellValueArray });
+
+        return cellValueArray;
+    }
+
+    /**
+     * Renames a column of cells.
+     * @param {string} columnName
+     * The name of the column to be renamed.
+     *
+     * @param {string} newColumnName
+     * The new name of the column.
+     * Cannot be `id` or an existing column name or alias.
+     *
+     * @param {boolean} overwriteAlias
+     * If `true` the method will allow the `newColumnName` parameter
+     * to be an alias.
+     *
+     * @return {boolean}
+     * `true` if the operation succeeds,
+     * `false` if either column name is `id`, or if unable to set
+     * or delete the columns.
+     *
+     */
+    public renameColumn(
+        columnName: string,
+        newColumnName: string,
+        overwriteAlias: boolean = false
+    ): boolean {
+        let success = false;
+
+        if (columnName !== 'id' && newColumnName !== 'id') {
+            // setColumn will overwrite an alias, so check that it
+            // does not exist
+            if (!this.aliasMap[newColumnName] || overwriteAlias) {
+                const values = this.getColumns(columnName);
+                success = this.setColumn(newColumnName, values[0]);
+
+                if (success) {
+                    // Roll back if unable to delete
+                    if (!this.deleteColumn(columnName)) {
+                        this.deleteColumn(newColumnName);
+                        success = false;
+                    }
+                }
+            }
+        }
+
         return success;
     }
 
@@ -708,7 +804,7 @@ namespace DataTable {
     /**
      * All information objects of DataTable events.
      */
-    export type EventObject = (RowEventObject|TableEventObject);
+    export type EventObject = (RowEventObject|TableEventObject|ColumnEventObject);
 
     /**
      * Event types related to a row in a table.
@@ -717,6 +813,13 @@ namespace DataTable {
         'deleteRow'|'afterDeleteRow'|
         'insertRow'|'afterInsertRow'|
         'afterUpdateRow'
+    );
+
+    /**
+    * Event types related to a column in the table.
+    */
+    export type ColumnEventType = (
+        'removeColumn'|'afterRemoveColumn'
     );
 
     /**
@@ -749,7 +852,14 @@ namespace DataTable {
         readonly index: number;
         readonly row: DataTableRow;
     }
-
+    /**
+     * Describes the information object for column-related events.
+     */
+    export interface ColumnEventObject extends DataEventEmitter.EventObject {
+        readonly type: ColumnEventType;
+        readonly columnName: string;
+        readonly values?: Array<DataTableRow.CellType>;
+    }
     /**
      * Describes the information object for table-related events.
      */
