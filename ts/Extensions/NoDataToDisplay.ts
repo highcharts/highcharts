@@ -184,46 +184,36 @@ defaultOptions.noData = {
 chartPrototype.showNoData = function (str?: string): void {
     var chart = this,
         options = chart.options,
-        userOptions = chart.userOptions,
         text = str || (options && (options.lang as any).noData),
-        noDataOptions: Highcharts.NoDataOptions = merge(
-            options && options.noData,
-            userOptions && userOptions.noData
-        );
+        noDataOptions: Highcharts.NoDataOptions =
+            options && (options.noData || {});
 
-    if (!chart.noDataLabel && chart.renderer) {
-        chart.noDataLabel = chart.renderer
-            .label(
-                text,
-                0,
-                0,
-                null as any,
-                null as any,
-                null as any,
-                noDataOptions.useHTML,
-                null as any,
-                'no-data'
-            );
+    if (chart.renderer) { // Meaning chart is not destroyed
+
+        if (!chart.noDataLabel) {
+            chart.noDataLabel = chart.renderer
+                .label(
+                    text,
+                    0,
+                    0,
+                    void 0,
+                    void 0,
+                    void 0,
+                    noDataOptions.useHTML,
+                    void 0,
+                    'no-data'
+                )
+                .add();
+        }
 
         if (!chart.styledMode) {
             chart.noDataLabel
                 .attr(noDataOptions.attr)
-                .css(noDataOptions.style as any);
+                .css(noDataOptions.style || {});
         }
 
-        chart.noDataLabel.add();
-
         chart.noDataLabel.align(
-            extend(chart.noDataLabel.getBBox(), noDataOptions.position as any),
-            false,
-            'plotBox'
-        );
-    } else if (chart.noDataLabel) { // Update label if already exists. #13982
-        chart.noDataLabel.attr(noDataOptions)
-            .css(noDataOptions.style as any);
-
-        chart.noDataLabel.align(
-            extend(chart.noDataLabel.getBBox(), noDataOptions.position as any),
+            extend(chart.noDataLabel.getBBox(), noDataOptions.position || {}),
             false,
             'plotBox'
         );
