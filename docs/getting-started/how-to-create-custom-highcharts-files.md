@@ -43,7 +43,7 @@ export default Highcharts;
 
 Modify the setup according to your needs, then proceed with the next step.
 Please note that the order of the imported ES modules should match the
-dependencies of each file. Optional additions come therefor last.
+dependencies of each file. Optional additions therefore should come last.
 
 For similar examples take a look at the other master files.
 
@@ -52,8 +52,8 @@ For similar examples take a look at the other master files.
 Create the custom package file
 ------------------------------
 
-Run `npm test` to build all package files out of the master files and test
-common functionality.
+Run `npx gulp scripts` to build all package files out of the master files. For 
+running the automated tests in addition, run `npm test`.
 
 In our example the new file `js/masters/custom.src.js`
 becomes the new package file `code/custom.src.js`.
