@@ -196,7 +196,16 @@ BaseSeries.seriesType<typeof Highcharts.ScatterSeries>(
          * @function Highcharts.seriesTypes.scatter#drawGraph
          */
         drawGraph: function (this: Highcharts.ScatterSeries): void {
-            if (this.options.lineWidth) {
+            if (
+                this.options.lineWidth ||
+                // In case we have a graph from before and we update the line
+                // width to 0 (#13816)
+                (
+                    this.options.lineWidth === 0 &&
+                    this.graph &&
+                    this.graph.strokeWidth()
+                )
+            ) {
                 Series.prototype.drawGraph.call(this);
             }
         },

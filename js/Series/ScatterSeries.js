@@ -131,7 +131,11 @@ BaseSeries.seriesType('scatter', 'line',
      * @function Highcharts.seriesTypes.scatter#drawGraph
      */
     drawGraph: function () {
-        if (this.options.lineWidth) {
+        if (this.options.lineWidth ||
+            ( // In case lineWidth = 0 update (#13816).
+            this.options.lineWidth === 0 &&
+                this.graph &&
+                this.graph.strokeWidth())) {
             Series.prototype.drawGraph.call(this);
         }
     },

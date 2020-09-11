@@ -1577,6 +1577,7 @@ extend(LineSeries.prototype, /** @lends Highcharts.Series.prototype */ {
                             (stateOptions as any)[state].lineWidthPlus || 0
                         )
                     ); // #4035
+
                     opacity = pick(
                         (stateOptions as any)[state].opacity,
                         opacity
