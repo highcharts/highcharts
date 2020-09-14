@@ -128,7 +128,7 @@ var applyGridOptions = function applyGridOptions(axis: Highcharts.Axis): void {
  * }
  * ```
  *
- * @sample {gantt} gantt/demo/left-axis-table
+ * @sample {gantt} gantt/grid-axis/date-time-label-formats
  *         Gantt chart with custom axis date format.
  *
  * @apioption xAxis.dateTimeLabelFormats
