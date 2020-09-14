@@ -640,4 +640,49 @@
             'The processedYData should be applied by using the keys feature #13768'
         );
     });
+
+    QUnit.test('Collapsible nodes with scrollablePlotArea should not decrement the chart height, #13884.', assert => {
+        const { fireEvent } = Highcharts;
+        const chart = Highcharts.ganttChart('container', {
+            chart: {
+                scrollablePlotArea: {
+                    minHeight: 400,
+                    opacity: 1
+                },
+                height: 300
+            },
+            series: [{
+                data: [{
+                    name: 'New offices',
+                    id: 'new_offices'
+                }, {
+                    name: 'Prepare office building',
+                    parent: 'new_offices',
+                    start: 1,
+                    end: 10
+                }, {
+                    name: 'Inspect building',
+                    parent: 'new_offices',
+                    start: 3,
+                    end: 4
+                }, {
+                    name: 'Passed inspection',
+                    parent: 'new_offices',
+                    start: 3,
+                    milestone: true
+                }]
+            }]
+        });
+
+        const yAxis = chart.yAxis[0],
+            label = yAxis.ticks[0].label,
+            previousPlotHeight = chart.plotHeight;
+
+        fireEvent(label.element, 'click');
+        assert.strictEqual(
+            previousPlotHeight,
+            chart.plotHeight,
+            'The chart height should remain the same.'
+        );
+    });
 }());
