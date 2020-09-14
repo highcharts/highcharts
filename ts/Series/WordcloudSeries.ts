@@ -154,7 +154,7 @@ declare global {
     }
 }
 
-declare module '../Core/Series/Types' {
+declare module '../Core/Series/SeriesType' {
     interface SeriesTypeRegistry {
         wordcloud: typeof Highcharts.WordcloudSeries;
     }

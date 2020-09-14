@@ -10,7 +10,7 @@
  *
  * */
 
-import type { SeriesPlotOptionsType } from '../../Core/Series/Types';
+import type PlotOptions from '../../Core/Series/PlotOptions';
 import H from '../../Core/Globals.js';
 import U from '../../Core/Utilities.js';
 const { setOptions } = U;
@@ -150,7 +150,7 @@ H.theme = {
         candlestick: {
             lineColor: 'white'
         }
-    } as SeriesPlotOptionsType,
+    } as PlotOptions,
 
     toolbar: {
         itemStyle: {

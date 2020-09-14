@@ -107,7 +107,7 @@ declare global {
     }
 }
 
-declare module '../../Core/Series/Types' {
+declare module '../../Core/Series/SeriesType' {
     interface SeriesTypeRegistry {
         macd: typeof Highcharts.MACDIndicator;
     }

@@ -113,7 +113,7 @@ declare global {
     }
 }
 
-declare module '../../Core/Series/Types' {
+declare module '../../Core/Series/SeriesType' {
     interface SeriesTypeRegistry {
         ikh: typeof Highcharts.IKHIndicator;
     }

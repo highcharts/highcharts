@@ -11,7 +11,8 @@
 import type { CursorValue } from '../Renderer/CSSObject';
 import type Chart from '../Chart/Chart';
 import type ColorType from '../Color/ColorType';
-import type { SeriesOptionsType, SeriesPlotOptionsType } from './Types';
+import type { SeriesOptionsType } from './SeriesType';
+import type SeriesPlotOptionsType from './PlotOptions';
 import type SVGAttributes from '../Renderer/SVG/SVGAttributes';
 import type SVGPath from '../Renderer/SVG/SVGPath';
 import BaseSeries from './Series.js';
@@ -51,7 +52,7 @@ const {
 /**
  * @private
  */
-declare module './Types' {
+declare module './SeriesLike' {
     interface SeriesLike {
         pointArrayMap?: Array<string>;
     }

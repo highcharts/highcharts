@@ -17,8 +17,9 @@ import type CSSObject from './Renderer/CSSObject';
 import type {
     HTMLDOMElement
 } from './Renderer/DOMElementType';
+import type PlotOptions from './Series/PlotOptions';
 import type Point from './Series/Point';
-import type { SeriesOptionsType, SeriesPlotOptionsType } from './Series/Types';
+import type { SeriesOptionsType } from './Series/SeriesType';
 import type SVGAttributes from './Renderer/SVG/SVGAttributes';
 import H from './Globals.js';
 const {
@@ -299,7 +300,7 @@ declare global {
             lang?: LangOptions;
             legend?: LegendOptions;
             loading?: LoadingOptions;
-            plotOptions?: SeriesPlotOptionsType;
+            plotOptions?: PlotOptions;
             subtitle?: SubtitleOptions;
             symbols?: Array<SymbolKeyValue>;
             time?: TimeOptions;

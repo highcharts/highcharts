@@ -24,7 +24,7 @@ const {
 /**
  * @private
  */
-declare module '../Core/Series/Types' {
+declare module '../Core/Series/SeriesType' {
     interface SeriesTypeRegistry {
         vector: typeof Highcharts.VectorSeries;
     }

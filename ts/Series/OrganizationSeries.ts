@@ -127,7 +127,7 @@ declare global {
 /**
  * @private
  */
-declare module '../Core/Series/Types' {
+declare module '../Core/Series/SeriesType' {
     interface SeriesTypeRegistry {
         organization: typeof Highcharts.OrganizationSeries;
     }

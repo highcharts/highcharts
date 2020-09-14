@@ -13,7 +13,7 @@ import type BaseSeries from '../Core/Series/Series';
 import type Chart from '../Core/Chart/Chart';
 import type ColorType from '../Core/Color/ColorType';
 import type Point from '../Core/Series/Point';
-import type { SeriesOptionsType } from '../Core/Series/Types';
+import type { SeriesOptionsType } from '../Core/Series/SeriesType';
 import type SVGAttributes from '../Core/Renderer/SVG/SVGAttributes';
 import type SVGPath from '../Core/Renderer/SVG/SVGPath';
 import CartesianSeries from '../Core/Series/CartesianSeries.js';
@@ -22,7 +22,7 @@ import H from '../Core/Globals.js';
 /**
  * @private
  */
-declare module '../Core/Series/Types' {
+declare module '../Core/Series/SeriesType' {
     interface SeriesTypeRegistry {
         line: typeof Highcharts.LineSeries;
     }
@@ -94,7 +94,7 @@ declare global {
             public name: string;
             public opacity?: number;
             public optionalAxis?: string;
-            public options: BaseSeries.Options;
+            public options: SeriesOptionsType;
             public parallelArrays: Array<string>;
             public pointClass: typeof Point;
             public pointInterval?: number;
@@ -111,7 +111,7 @@ declare global {
             public symbol?: string;
             public tooltipOptions: TooltipOptions;
             public type: string;
-            public userOptions: DeepPartial<BaseSeries.Options>;
+            public userOptions: DeepPartial<SeriesOptionsType>;
             public visible: boolean;
             public xAxis: AxisType;
             public xData?: Array<number>;

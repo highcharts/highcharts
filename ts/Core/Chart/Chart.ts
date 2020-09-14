@@ -15,8 +15,9 @@ import type {
     CSSObject,
     CursorValue
 } from '../Renderer/CSSObject';
+import type PlotOptions from '../../Core/Series/PlotOptions';
 import type Point from '../../Core/Series/Point';
-import type { SeriesOptionsType, SeriesPlotOptionsType } from '../Series/Types';
+import type { SeriesOptionsType } from '../Series/SeriesType';
 import type {
     HTMLDOMElement
 } from '../Renderer/DOMElementType';
@@ -396,8 +397,8 @@ class Chart {
         var options: Highcharts.Options,
             // skip merging data points to increase performance
             seriesOptions = userOptions.series,
-            userPlotOptions =
-                userOptions.plotOptions || {} as SeriesPlotOptionsType;
+            userPlotOptions: PlotOptions =
+                userOptions.plotOptions || {};
 
         // Fire the event with a default function
         fireEvent(this, 'init', { args: arguments }, function (): void {

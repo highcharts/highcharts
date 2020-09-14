@@ -44,7 +44,7 @@ declare global {
     }
 }
 
-declare module '../../Core/Series/Types' {
+declare module '../../Core/Series/SeriesType' {
     interface SeriesTypeRegistry {
         ad: typeof Highcharts.ADIndicator;
     }

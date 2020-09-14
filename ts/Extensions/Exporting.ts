@@ -17,7 +17,7 @@ import type CSSObject from '../Core/Renderer/CSSObject';
 import type {
     HTMLDOMElement
 } from '../Core/Renderer/DOMElementType';
-import type { SeriesOptionsType } from '../Core/Series/Types';
+import type { SeriesOptionsType } from '../Core/Series/SeriesType';
 import type SVGAttributes from '../Core/Renderer/SVG/SVGAttributes';
 import type SVGElement from '../Core/Renderer/SVG/SVGElement';
 import type SVGPath from '../Core/Renderer/SVG/SVGPath';

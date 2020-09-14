@@ -16,14 +16,14 @@ import '../Options.js';
  * @class
  * @name Highcharts.Series
  */
-var BaseSeries = /** @class */ (function () {
+var Series = /** @class */ (function () {
     /* *
      *
      *  Constructor
      *
      * */
-    function BaseSeries(chart, options) {
-        var mergedOptions = merge(BaseSeries.defaultOptions, options);
+    function Series(chart, options) {
+        var mergedOptions = merge(Series.defaultOptions, options);
         this.chart = chart;
         this._i = chart.series.length;
         chart.series.push(this);
@@ -35,10 +35,10 @@ var BaseSeries = /** @class */ (function () {
      *  Static Functions
      *
      * */
-    BaseSeries.addSeries = function (seriesName, seriesType) {
-        BaseSeries.seriesTypes[seriesName] = seriesType;
+    Series.addSeries = function (seriesName, seriesType) {
+        Series.seriesTypes[seriesName] = seriesType;
     };
-    BaseSeries.cleanRecursively = function (toClean, reference) {
+    Series.cleanRecursively = function (toClean, reference) {
         var clean = {};
         objectEach(toClean, function (_val, key) {
             var ob;
@@ -46,7 +46,7 @@ var BaseSeries = /** @class */ (function () {
             if (isObject(toClean[key], true) &&
                 !toClean.nodeType && // #10044
                 reference[key]) {
-                ob = BaseSeries.cleanRecursively(toClean[key], reference[key]);
+                ob = Series.cleanRecursively(toClean[key], reference[key]);
                 if (Object.keys(ob).length) {
                     clean[key] = ob;
                 }
@@ -64,17 +64,17 @@ var BaseSeries = /** @class */ (function () {
      * Internal function to initialize an individual series.
      * @private
      */
-    BaseSeries.getSeries = function (chart, options) {
+    Series.getSeries = function (chart, options) {
         if (options === void 0) { options = {}; }
         var optionsChart = chart.options.chart, type = (options.type ||
             optionsChart.type ||
             optionsChart.defaultSeriesType ||
-            ''), Series = BaseSeries.seriesTypes[type];
+            ''), SeriesClass = Series.seriesTypes[type];
         // No such series type
-        if (!Series) {
+        if (!SeriesClass) {
             error(17, true, chart, { missingModuleFor: type });
         }
-        return new Series(chart, options);
+        return new SeriesClass(chart, options);
     };
     /**
      * Factory to create new series prototypes.
@@ -103,13 +103,13 @@ var BaseSeries = /** @class */ (function () {
      * derivatives.
      */
     // docs: add to API + extending Highcharts
-    BaseSeries.seriesType = function (type, parent, options, seriesProto, pointProto) {
-        var defaultOptions = getOptions().plotOptions || {}, seriesTypes = BaseSeries.seriesTypes;
+    Series.seriesType = function (type, parent, options, seriesProto, pointProto) {
+        var defaultOptions = getOptions().plotOptions || {}, seriesTypes = Series.seriesTypes;
         parent = parent || '';
         // Merge the options
         defaultOptions[type] = merge(defaultOptions[parent], options);
         // Create the class
-        BaseSeries.addSeries(type, extendClass(seriesTypes[parent] || function () { }, seriesProto));
+        Series.addSeries(type, extendClass(seriesTypes[parent] || function () { }, seriesProto));
         seriesTypes[type].prototype.type = type;
         // Create the point class if needed
         if (pointProto) {
@@ -118,14 +118,14 @@ var BaseSeries = /** @class */ (function () {
         }
         return seriesTypes[type];
     };
-    BaseSeries.prototype.update = function (newOptions, redraw) {
+    Series.prototype.update = function (newOptions, redraw) {
         if (redraw === void 0) { redraw = true; }
         var series = this;
-        newOptions = BaseSeries.cleanRecursively(newOptions, this.userOptions);
+        newOptions = Series.cleanRecursively(newOptions, this.userOptions);
         var newType = newOptions.type;
         if (typeof newType !== 'undefined' &&
             newType !== series.type) {
-            series = BaseSeries.getSeries(series.chart, newOptions);
+            series = Series.getSeries(series.chart, newOptions);
         }
         fireEvent(series, 'update', { newOptions: newOptions });
         series.userOptions = merge(newOptions);
@@ -140,19 +140,19 @@ var BaseSeries = /** @class */ (function () {
      *  Static Properties
      *
      * */
-    BaseSeries.defaultOptions = {
+    Series.defaultOptions = {
         type: 'base'
     };
-    BaseSeries.seriesTypes = {};
-    return BaseSeries;
+    Series.seriesTypes = {};
+    return Series;
 }());
-BaseSeries.prototype.pointClass = Point;
+Series.prototype.pointClass = Point;
 // backwards compatibility
-H.seriesType = BaseSeries.seriesType;
-H.seriesTypes = BaseSeries.seriesTypes;
+H.seriesType = Series.seriesType;
+H.seriesTypes = Series.seriesTypes;
 /* *
  *
  *  Export
  *
  * */
-export default BaseSeries;
+export default Series;

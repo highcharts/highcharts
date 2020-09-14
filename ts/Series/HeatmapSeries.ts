@@ -10,7 +10,7 @@
 
 import type ColorType from '../Core/Color/ColorType';
 import type Point from '../Core/Series/Point';
-import type { SeriesOptionsType } from '../Core/Series/Types';
+import type { SeriesOptionsType } from '../Core/Series/SeriesType';
 import type SVGAttributes from '../Core/Renderer/SVG/SVGAttributes';
 import type SVGPath from '../Core/Renderer/SVG/SVGPath';
 import BaseSeries from '../Core/Series/Series.js';
@@ -121,7 +121,7 @@ declare global {
 /**
  * @private
  */
-declare module '../Core/Series/Types' {
+declare module '../Core/Series/SeriesType' {
     interface SeriesTypeRegistry {
         heatmap: typeof Highcharts.HeatmapSeries;
     }

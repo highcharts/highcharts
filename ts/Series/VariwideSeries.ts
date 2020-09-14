@@ -82,7 +82,7 @@ const {
 
 import '../Series/AreaSeries.js';
 
-declare module '../Core/Series/Types' {
+declare module '../Core/Series/SeriesType' {
     interface SeriesTypeRegistry {
         variwide: typeof Highcharts.VariwideSeries;
     }

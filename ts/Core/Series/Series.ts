@@ -10,9 +10,9 @@
 
 import type {
     SeriesLike,
-    SeriesLikeOptions,
-    SeriesTypeRegistry
-} from './Types';
+    SeriesLikeOptions
+} from './SeriesLike';
+import { SeriesTypeRegistry } from './SeriesType';
 import type Chart from '../Chart/Chart';
 import H from '../Globals.js';
 import Point from './Point.js';
@@ -35,7 +35,7 @@ const {
 declare global {
     namespace Highcharts {
         let seriesTypes: SeriesTypeRegistry;
-        function seriesType<T extends typeof BaseSeries>(
+        function seriesType<T extends typeof Series>(
             type: keyof SeriesTypeRegistry,
             parent: (keyof SeriesTypeRegistry|undefined),
             options: DeepPartial<T['prototype']['options']>,
@@ -51,7 +51,7 @@ import '../Options.js';
  * @class
  * @name Highcharts.Series
  */
-abstract class BaseSeries {
+abstract class Series {
 
     /* *
      *
@@ -59,11 +59,11 @@ abstract class BaseSeries {
      *
      * */
 
-    public static readonly defaultOptions: BaseSeries.Options = {
+    public static readonly defaultOptions: SeriesLikeOptions = {
         type: 'base'
     };
 
-    public static readonly seriesTypes = {} as BaseSeries.SeriesTypesRegistry;
+    public static readonly seriesTypes = {} as SeriesTypeRegistry;
 
     /* *
      *
@@ -73,9 +73,9 @@ abstract class BaseSeries {
 
     public static addSeries(
         seriesName: string,
-        seriesType: typeof BaseSeries
+        seriesType: typeof Series
     ): void {
-        BaseSeries.seriesTypes[seriesName] = seriesType;
+        Series.seriesTypes[seriesName] = seriesType;
     }
 
     public static cleanRecursively<T>(
@@ -96,7 +96,7 @@ abstract class BaseSeries {
                 !toClean.nodeType && // #10044
                 reference[key]
             ) {
-                ob = BaseSeries.cleanRecursively<T>(
+                ob = Series.cleanRecursively<T>(
                     toClean[key] as DeepRecord<string, T>,
                     reference[key] as DeepRecord<string, T>
                 );
@@ -123,7 +123,7 @@ abstract class BaseSeries {
      */
     public static getSeries(
         chart: Chart,
-        options: DeepPartial<BaseSeries.Options> = {}
+        options: DeepPartial<SeriesLikeOptions> = {}
     ): Highcharts.Series {
         const optionsChart = chart.options.chart as Highcharts.ChartOptions,
             type = (
@@ -132,14 +132,14 @@ abstract class BaseSeries {
                 optionsChart.defaultSeriesType ||
                 ''
             ),
-            Series: Highcharts.Series = BaseSeries.seriesTypes[type] as any;
+            SeriesClass: Highcharts.Series = Series.seriesTypes[type] as any;
 
         // No such series type
-        if (!Series) {
+        if (!SeriesClass) {
             error(17, true, chart as any, { missingModuleFor: type });
         }
 
-        return new Series(chart, options);
+        return new SeriesClass(chart, options);
     }
 
     /**
@@ -169,7 +169,7 @@ abstract class BaseSeries {
      * derivatives.
      */
     // docs: add to API + extending Highcharts
-    public static seriesType<T extends typeof BaseSeries>(
+    public static seriesType<T extends typeof Series>(
         type: keyof SeriesTypeRegistry,
         parent: (keyof SeriesTypeRegistry|undefined),
         options: DeepPartial<T['prototype']['options']>,
@@ -177,7 +177,7 @@ abstract class BaseSeries {
         pointProto?: DeepPartial<T['prototype']['pointClass']['prototype']>
     ): T {
         const defaultOptions: Record<string, any> = getOptions().plotOptions || {},
-            seriesTypes = BaseSeries.seriesTypes;
+            seriesTypes = Series.seriesTypes;
 
         parent = parent || '';
 
@@ -188,7 +188,7 @@ abstract class BaseSeries {
         );
 
         // Create the class
-        BaseSeries.addSeries(type, extendClass(
+        Series.addSeries(type, extendClass(
             seriesTypes[parent] as any || function (): void {},
             seriesProto
         ) as any);
@@ -211,10 +211,10 @@ abstract class BaseSeries {
 
     public constructor(
         chart: Chart,
-        options?: DeepPartial<BaseSeries.Options>
+        options?: DeepPartial<SeriesLikeOptions>
     ) {
         const mergedOptions = merge(
-            BaseSeries.defaultOptions,
+            Series.defaultOptions,
             options
         );
 
@@ -224,7 +224,7 @@ abstract class BaseSeries {
         chart.series.push(this as any);
 
         this.options = mergedOptions;
-        this.userOptions = merge(options) as Highcharts.SeriesOptions;
+        this.userOptions = merge(options);
     }
 
     /* *
@@ -239,9 +239,9 @@ abstract class BaseSeries {
 
     public isDirty?: boolean;
 
-    public options: BaseSeries.Options;
+    public options: SeriesLikeOptions;
 
-    public userOptions: DeepPartial<BaseSeries.Options>;
+    public userOptions: DeepPartial<SeriesLikeOptions>;
 
     /* *
      *
@@ -254,12 +254,12 @@ abstract class BaseSeries {
     public abstract translate(): void;
 
     public update(
-        newOptions: DeepPartial<BaseSeries.Options>,
+        newOptions: DeepPartial<SeriesLikeOptions>,
         redraw: boolean = true
-    ): BaseSeries {
-        let series: BaseSeries = this;
+    ): Series {
+        let series: Series = this;
 
-        newOptions = BaseSeries.cleanRecursively(newOptions, this.userOptions);
+        newOptions = Series.cleanRecursively(newOptions, this.userOptions);
 
         const newType = newOptions.type;
 
@@ -267,7 +267,7 @@ abstract class BaseSeries {
             typeof newType !== 'undefined' &&
             newType !== series.type
         ) {
-            series = BaseSeries.getSeries(series.chart, newOptions);
+            series = Series.getSeries(series.chart, newOptions);
         }
 
         fireEvent(series, 'update', { newOptions });
@@ -284,35 +284,18 @@ abstract class BaseSeries {
     }
 }
 
-interface BaseSeries extends SeriesLike {
+interface Series extends SeriesLike {
     new(...args: Array<any>): this;
     pointClass: typeof Point;
     type: string;
 }
 
-BaseSeries.prototype.pointClass = Point;
-
-namespace BaseSeries {
-
-    export interface Options extends SeriesLikeOptions {
-        animation?: (boolean|DeepPartial<Highcharts.AnimationOptionsObject>);
-        dataSorting?: Highcharts.DataSortingOptionsObject; // cartasian series
-        index?: number;
-        /** @private */
-        isInternal?: boolean;
-        pointStart?: number;
-    }
-
-    export interface SeriesTypesRegistry extends SeriesTypeRegistry {
-        [key: string]: typeof BaseSeries;
-    }
-
-}
+Series.prototype.pointClass = Point;
 
 // backwards compatibility
 
-H.seriesType = BaseSeries.seriesType;
-H.seriesTypes = BaseSeries.seriesTypes;
+H.seriesType = Series.seriesType;
+H.seriesTypes = Series.seriesTypes;
 
 /* *
  *
@@ -320,4 +303,4 @@ H.seriesTypes = BaseSeries.seriesTypes;
  *
  * */
 
-export default BaseSeries;
+export default Series;

@@ -13,7 +13,7 @@
  *
  * */
 
-import type { SeriesPlotOptionsType } from '../../Core/Series/Types';
+import type PlotOptions from '../../Core/Series/PlotOptions';
 import H from '../../Core/Globals.js';
 import U from '../../Core/Utilities.js';
 const { setOptions } = U;
@@ -30,7 +30,7 @@ H.theme = {
         map: {
             nullColor: '#FCFEFE'
         }
-    } as SeriesPlotOptionsType,
+    } as PlotOptions,
 
     navigator: {
         maskFill: 'rgba(170, 205, 170, 0.5)',

@@ -29,6 +29,15 @@ const {
     pick
 } = U;
 
+declare module '../Core/Series/SeriesLike' {
+    interface SeriesLike {
+        /** @requires modules/draggable-points */
+        dragDropProps?: (Record<string, Partial<Highcharts.SeriesDragDropPropsObject>>|null);
+        /** @requires modules/draggable-points */
+        getGuideBox(points: Array<Point>): SVGElement;
+    }
+}
+
 /**
  * Internal types
  * @private
@@ -175,12 +184,6 @@ declare global {
             dragStart?: PointDragStartCallbackFunction;
             drop?: PointDropCallbackFunction;
         }
-        interface Series {
-            /** @requires modules/draggable-points */
-            dragDropProps?: (Record<string, Partial<SeriesDragDropPropsObject>>|null);
-            /** @requires modules/draggable-points */
-            getGuideBox(points: Array<Point>): SVGElement;
-        }
         interface SeriesDragDropPropsObject {
             axis: string;
             beforeResize?: Function;
@@ -203,7 +206,7 @@ declare global {
     }
 }
 
-declare module '../Core/Series/Types' {
+declare module '../Core/Series/SeriesType' {
     interface SeriesLike {
         dragDropProps?: (Record<string, Partial<Highcharts.SeriesDragDropPropsObject>>|null);
     }

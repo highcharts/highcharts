@@ -14,7 +14,7 @@ import Series from '../Core/Series/Series.js';
 /**
  * @private
  */
-declare module '../Core/Series/Types' {
+declare module '../Core/Series/SeriesType' {
     interface SeriesTypeRegistry {
         bar: typeof Highcharts.BarSeries;
     }

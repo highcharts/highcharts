@@ -22,7 +22,7 @@ const {
 /**
  * @private
  */
-declare module '../Core/Series/Types' {
+declare module '../Core/Series/SeriesType' {
     interface SeriesTypeRegistry {
         bellcurve: typeof Highcharts.BellcurveSeries;
     }

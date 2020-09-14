@@ -50,7 +50,7 @@ import './BoxPlotSeries.js';
 var noop = H.noop,
     seriesTypes = BaseSeries.seriesTypes;
 
-declare module '../Core/Series/Types' {
+declare module '../Core/Series/SeriesType' {
     interface SeriesTypesDictionary {
         errorbar: typeof Highcharts.ErrorBarSeries;
     }

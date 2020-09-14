@@ -17,7 +17,8 @@ import type {
     CSSObject,
     CursorValue
 } from '../Core/Renderer/CSSObject';
-import type { SeriesOptionsType } from '../Core/Series/Types';
+import type { SeriesLikeOptions } from '../Core/Series/SeriesLike';
+import type { SeriesOptionsType } from '../Core/Series/SeriesType';
 import type SVGAttributes from '../Core/Renderer/SVG/SVGAttributes';
 import type SVGElement from '../Core/Renderer/SVG/SVGElement';
 import Axis from '../Core/Axis/Axis.js';
@@ -207,7 +208,7 @@ declare global {
     }
 }
 
-declare module '../Core/Series/Types' {
+declare module '../Core/Series/SeriesType' {
     interface SeriesLike {
         purgedOptions?: SeriesLikeOptions;
     }
@@ -1164,7 +1165,7 @@ ColumnSeries.prototype.animateDrillupTo = function (init?: boolean): void {
         ));
 
         // Reset to prototype
-        delete this.animate;
+        delete (this as any).animate;
     }
 
 };
@@ -1222,7 +1223,7 @@ ColumnSeries.prototype.animateDrilldown = function (init?: boolean): void {
         });
 
         // Reset to prototype
-        delete this.animate;
+        delete (this as any).animate;
     }
 
 };
@@ -1256,7 +1257,7 @@ ColumnSeries.prototype.animateDrillupFrom = function (
     });
 
     if (removeGroup) {
-        delete this.group;
+        delete (this as any).group;
     }
 
     this.points.forEach(function (point: Point): void {
@@ -1342,7 +1343,7 @@ if (PieSeries) {
                     });
 
                     // Reset to prototype
-                    delete this.animate;
+                    delete (this as any).animate;
                 }
             }
         }

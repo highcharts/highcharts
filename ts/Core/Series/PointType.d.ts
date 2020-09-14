@@ -15,6 +15,7 @@
  * */
 
 import type Point from './Point';
+import type { PointLikeOptions } from './PointLike';
 
 /* *
  *
@@ -26,6 +27,19 @@ import type Point from './Point';
  * All possible series point types.
  */
 export type PointType = PointTypeRegistry[keyof PointTypeRegistry]['prototype'];
+
+/**
+ * All possible options of series types.
+ */
+export type PointTypeOptions = PointLikeOptions&PointType['options'];
+
+/**
+ * All possible options of series types.
+ *
+ * @name PointTypeOptions
+ * @todo Rename to `PointTypeOptions`
+ */
+export type PointOptionsObject = PointLikeOptions;
 
 /**
  * Helper interface to add series point types to `PointType`.

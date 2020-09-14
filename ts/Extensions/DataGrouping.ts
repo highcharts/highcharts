@@ -11,7 +11,8 @@
 'use strict';
 
 import type { AxisType } from '../Core/Axis/Types';
-import type { SeriesOptionsType, SeriesPlotOptionsType } from '../Core/Series/Types';
+import type PlotOptions from '../Core/Series/PlotOptions';
+import type { SeriesOptionsType } from '../Core/Series/SeriesType';
 import Axis from '../Core/Axis/Axis.js';
 import DateTimeAxis from '../Core/Axis/DateTimeAxis.js';
 import H from '../Core/Globals.js';
@@ -567,7 +568,7 @@ const seriesProto = Series.prototype,
         ohlc: {
             groupPixelWidth: 5
         }
-    } as SeriesPlotOptionsType,
+    } as PlotOptions,
 
     // units are defined in a separate array to allow complete overriding in
     // case of a user option
@@ -968,7 +969,7 @@ addEvent(Series, 'afterSetOptions', function (
 
     var options = e.options,
         type = this.type,
-        plotOptions: SeriesPlotOptionsType =
+        plotOptions: PlotOptions =
             this.chart.options.plotOptions as any,
         defaultOptions: Highcharts.DataGroupingOptionsObject =
             (O.defaultOptions.plotOptions as any)[type].dataGrouping,

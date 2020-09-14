@@ -31,7 +31,7 @@ const {
 /**
  * @private
  */
-declare module '../Core/Series/Types' {
+declare module '../Core/Series/SeriesType' {
     interface SeriesTypeRegistry {
         windbarb: typeof Highcharts.WindbarbSeries;
     }

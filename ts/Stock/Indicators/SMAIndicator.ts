@@ -102,7 +102,7 @@ declare global {
     }
 }
 
-declare module '../../Core/Series/Types' {
+declare module '../../Core/Series/SeriesType' {
     interface SeriesTypeRegistry {
         sma: typeof Highcharts.SMAIndicator;
     }

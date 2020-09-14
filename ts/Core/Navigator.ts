@@ -12,7 +12,7 @@
 
 import type ColorType from './Color/ColorType';
 import type CSSObject from './Renderer/CSSObject';
-import type { SeriesOptionsType } from './Series/Types';
+import type { SeriesOptionsType } from './Series/SeriesType';
 import type SVGElement from './Renderer/SVG/SVGElement';
 import type SVGPath from './Renderer/SVG/SVGPath';
 import Axis from './Axis/Axis.js';

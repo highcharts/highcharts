@@ -11,7 +11,7 @@
 import type {
     HTMLDOMElement
 } from '../Renderer/DOMElementType';
-import type { SeriesPlotOptionsType } from '../Series/Types';
+import type PlotOptions from '../Series/PlotOptions';
 import type SVGPath from '../Renderer/SVG/SVGPath';
 import Axis from '../Axis/Axis.js';
 import Chart from '../Chart/Chart.js';
@@ -333,7 +333,7 @@ H.StockChart = H.stockChart = function (
 // series options are handled.
 addEvent(LineSeries, 'setOptions', function (
     this: Highcharts.Series,
-    e: { plotOptions: SeriesPlotOptionsType }
+    e: { plotOptions: PlotOptions }
 ): void {
     var overrides;
 

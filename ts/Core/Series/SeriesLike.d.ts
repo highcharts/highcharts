@@ -14,8 +14,8 @@
  *
  * */
 
-import type PointLike from './PointLike';
-import type PointType from './PointType';
+import type { PointLike, PointLikeOptions } from './PointLike';
+import type SVGElement from '../Renderer/SVG/SVGElement';
 
 /* *
  *
@@ -55,8 +55,8 @@ export interface SeriesLike {
  * Use the `declare module 'Types'` pattern to overload the interface in this
  * definition file.
  */
-export interface SeriesLikeOptions /* @todo */ extends Highcharts.SeriesOptions {
-    data?: Array<PointType['options']>;
+export interface SeriesLikeOptions /* @todo no extends */ extends Highcharts.SeriesOptions {
+    data?: Array<(number|string|PointLikeOptions|Array<(number|string)>|null)>;
     type?: string;
 }
 

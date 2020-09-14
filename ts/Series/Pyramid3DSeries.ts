@@ -40,7 +40,7 @@ declare global {
 /**
  * @private
  */
-declare module '../Core/Series/Types' {
+declare module '../Core/Series/SeriesType' {
     interface SeriesTypeRegistry {
         pyramid3d: typeof Highcharts.Pyramid3dSeries;
     }

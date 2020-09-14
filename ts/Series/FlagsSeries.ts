@@ -106,7 +106,7 @@ declare global {
 /**
  * @private
  */
-declare module '../Core/Series/Types' {
+declare module '../Core/Series/SeriesType' {
     interface SeriesTypeRegistry {
         flags: typeof Highcharts.FlagsSeries;
     }
@@ -122,7 +122,7 @@ var Renderer = H.Renderer,
     VMLRenderer = H.VMLRenderer,
     symbols = SVGRenderer.prototype.symbols;
 
-declare module '../Core/Series/Types' {
+declare module '../Core/Series/SeriesType' {
     interface SeriesTypesDictionary {
         flags: typeof Highcharts.FlagsSeries;
     }

@@ -12,7 +12,7 @@
 
 'use strict';
 
-import type { SeriesPlotOptionsType } from '../../Core/Series/Types';
+import type PlotOptions from '../../Core/Series/PlotOptions';
 import type SVGAttributes from '../../Core/Renderer/SVG/SVGAttributes';
 import type SVGPath from '../../Core/Renderer/SVG/SVGPath';
 import Chart from '../../Core/Chart/Chart.js';
@@ -64,7 +64,7 @@ declare global {
     }
 }
 
-declare module '../../Core/Series/Types' {
+declare module '../../Core/Series/SeriesLike' {
     interface SeriesLike {
         fillOpacity?: boolean;
     }
@@ -83,7 +83,7 @@ var boostEnabled = butils.boostEnabled,
     shouldForceChartSeriesBoosting = butils.shouldForceChartSeriesBoosting,
     Series = H.Series,
     seriesTypes = H.seriesTypes,
-    plotOptions = getOptions().plotOptions as SeriesPlotOptionsType;
+    plotOptions = getOptions().plotOptions as PlotOptions;
 
 /**
  * Returns true if the chart is in series boost mode.

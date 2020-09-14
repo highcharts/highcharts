@@ -53,7 +53,7 @@ const {
 /**
  * @private
  */
-declare module '../Core/Series/Types' {
+declare module '../Core/Series/SeriesType' {
     interface SeriesTypeRegistry {
         funnel3d: typeof Highcharts.Funnel3dSeries;
     }

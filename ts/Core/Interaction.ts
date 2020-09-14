@@ -8,9 +8,7 @@
  *
  * */
 
-'use strict';
-
-import type { SeriesOptionsType } from './Series/Types';
+import type { SeriesOptionsType } from './Series/SeriesType';
 import type SVGAttributes from './Renderer/SVG/SVGAttributes';
 import type SVGPath from './Renderer/SVG/SVGPath';
 import BaseSeries from './Series/Series.js';
