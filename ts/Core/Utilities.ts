@@ -804,7 +804,7 @@ class Fx {
      *        The single attribute or CSS property to animate.
      */
     public constructor(
-        elem: (Highcharts.HTMLElement|Highcharts.SVGElement),
+        elem: (Highcharts.HTMLElement|SVGElement),
         options: Partial<Highcharts.AnimationOptionsObject>,
         prop: string
     ) {
@@ -819,7 +819,7 @@ class Fx {
      *
      * */
 
-    public elem: (Highcharts.HTMLElement|Highcharts.SVGElement);
+    public elem: (Highcharts.HTMLElement|SVGElement);
     public end?: number;
     public from?: number;
     public now?: number;
@@ -1065,7 +1065,7 @@ class Fx {
      *         they can be animated in parallel.
      */
     public initPath(
-        elem: Highcharts.SVGElement,
+        elem: SVGElement,
         fromD: SVGPath|undefined,
         toD: SVGPath
     ): [SVGPath, SVGPath] {
@@ -2793,7 +2793,7 @@ const offset = H.offset = function offset(el: Element): Highcharts.OffsetObject 
  * improvement in all cases where we stop the animation from .attr. Instead of
  * stopping everything, we can just stop the actual attributes we're setting.
  */
-const stop = H.stop = function (el: Highcharts.SVGElement, prop?: string): void {
+const stop = H.stop = function (el: SVGElement, prop?: string): void {
 
     var i = H.timers.length;
 

@@ -6200,7 +6200,7 @@ const CartesianSeries = BaseSeries.seriesType<typeof Highcharts.LineSeries>(
                 zones = this.zones,
                 translatedFrom,
                 translatedTo: (number|undefined),
-                clips = (this.clips || []) as Array<Highcharts.SVGElement>,
+                clips = (this.clips || []) as Array<SVGElement>,
                 clipAttr: Highcharts.Dictionary<number>,
                 graph = this.graph,
                 area = this.area,
@@ -6216,8 +6216,8 @@ const CartesianSeries = BaseSeries.seriesType<typeof Highcharts.LineSeries>(
                 pxPosMin: number,
                 pxPosMax: number,
                 ignoreZones = false,
-                zoneArea: Highcharts.SVGElement,
-                zoneGraph: Highcharts.SVGElement;
+                zoneArea: SVGElement,
+                zoneGraph: SVGElement;
 
             if (
                 zones.length &&
@@ -6438,8 +6438,8 @@ const CartesianSeries = BaseSeries.seriesType<typeof Highcharts.LineSeries>(
             name: string,
             visibility: string,
             zIndex?: number,
-            parent?: Highcharts.SVGElement
-        ): Highcharts.SVGElement {
+            parent?: SVGElement
+        ): SVGElement {
             var group = (this as any)[prop],
                 isNew = !group,
                 attrs: SVGAttributes = {

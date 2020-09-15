@@ -7,6 +7,7 @@
  * */
 
 import type CSSObject from '../../Core/Renderer/CSSObject';
+import type SVGElement from '../../Core/Renderer/SVG/SVGElement';
 import BaseSeries from '../../Core/Series/Series.js';
 import U from '../../Core/Utilities.js';
 const {
@@ -225,7 +226,7 @@ BaseSeries.seriesType<typeof Highcharts.PriceEnvelopesIndicator>(
                     indicator.options
                 ),
                 middleLinePath: (
-                    Highcharts.SVGElement|undefined
+                    SVGElement|undefined
                 ) = indicator.graph,
                 gappedExtend:
                 Highcharts.PriceEnvelopesIndicatorGappedExtensionObject = {

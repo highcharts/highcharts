@@ -14,6 +14,7 @@
 
 'use strict';
 
+import type SVGElement from '../Core/Renderer/SVG/SVGElement';
 import type SVGPath from '../Core/Renderer/SVG/SVGPath';
 import BaseSeries from '../Core/Series/Series.js';
 import Chart from '../Core/Chart/Chart.js';
@@ -645,7 +646,7 @@ function getDataState(
 }
 
 function fadeInElement(
-    elem: Highcharts.SVGElement,
+    elem: SVGElement,
     opacity?: number,
     animation?: (boolean|Partial<Highcharts.AnimationOptionsObject>)
 ): void {

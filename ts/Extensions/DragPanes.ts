@@ -19,6 +19,7 @@ import type {
     CursorValue
 } from '../Core/Renderer/CSSObject';
 import type SVGAttributes from '../Core/Renderer/SVG/SVGAttributes';
+import type SVGElement from '../Core/Renderer/SVG/SVGElement';
 import H from '../Core/Globals.js';
 const {
     hasTouch
@@ -276,7 +277,7 @@ class AxisResizer {
     /* eslint-enable no-invalid-this */
 
     public axis: Highcharts.Axis = void 0 as any;
-    public controlLine: Highcharts.SVGElement = void 0 as any;
+    public controlLine: SVGElement = void 0 as any;
     public eventsToUnbind?: Array<Function>;
     public grabbed?: boolean;
     public hasDragged?: boolean;

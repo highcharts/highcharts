@@ -441,7 +441,7 @@ Series.seriesType<typeof Highcharts.Funnel3dSeries>('funnel3d', 'column',
         alignDataLabel: function (
             this: Highcharts.Funnel3dSeries,
             point: Highcharts.Funnel3dPoint,
-            dataLabel: Highcharts.SVGElement,
+            dataLabel: SVGElement,
             options: Highcharts.DataLabelsOptions
         ): void {
             var series = this,
@@ -602,9 +602,9 @@ funnel3dMethods = merge(RendererProto.elements3d.cuboid, {
 
     // override opacity and color setters to control opacity
     opacitySetter: function (
-        this: Highcharts.SVGElement,
+        this: SVGElement,
         opacity: number
-    ): Highcharts.SVGElement {
+    ): SVGElement {
         var funnel3d = this,
             parts = funnel3d.parts,
             chart: Chart =
@@ -648,7 +648,7 @@ funnel3dMethods = merge(RendererProto.elements3d.cuboid, {
                 });
 
                 (funnel3d.sideGroups as any).forEach(function (
-                    group: Highcharts.SVGElement
+                    group: SVGElement
                 ): void {
                     group.addClass('highcharts-' + filterId);
                 });
@@ -767,7 +767,7 @@ funnel3dMethods = merge(RendererProto.elements3d.cuboid, {
             [funnel3d.frontLower, funnel3d.frontUpper].forEach(function (
                 part: Record<string, SVGElement>
             ): void {
-                var elem: Highcharts.SVGElement = part.element,
+                var elem: SVGElement = part.element,
                     grad = elem && funnel3d.renderer.gradients[elem.gradient];
 
                 if (grad && grad.attr('gradientUnits') !== 'userSpaceOnUse') {
@@ -847,7 +847,7 @@ RendererProto.elements3d.funnel3d = funnel3dMethods;
 RendererProto.funnel3d = function (
     this: SVGRenderer,
     shapeArgs: SVGAttributes
-): Highcharts.SVGElement {
+): SVGElement {
     var renderer = this,
         funnel3d: SVGElement =
             renderer.element3d('funnel3d', shapeArgs) as any,
@@ -867,7 +867,7 @@ RendererProto.funnel3d = function (
         funnel3d.frontUpper,
         funnel3d.backUpper,
         funnel3d.rightUpper
-    ].forEach(function (upperElem: Highcharts.SVGElement): void {
+    ].forEach(function (upperElem: SVGElement): void {
 
         if (!styledMode) {
             upperElem.attr(strokeAttrs);
