@@ -16,6 +16,7 @@ import type ColorType from '../../Core/Color/ColorType';
 import type CSSObject from '../../Core/Renderer/CSSObject';
 import type Point from '../../Core/Series/Point';
 import type SVGAttributes from '../../Core/Renderer/SVG/SVGAttributes';
+import type SVGElement from '../../Core/Renderer/SVG/SVGElement';
 import Chart from '../../Core/Chart/Chart.js';
 import Color from '../../Core/Color/Color.js';
 const {
@@ -445,16 +446,16 @@ class BubbleLegend {
     public chart: Chart = void 0 as any;
     public fontMetrics: Highcharts.FontMetricsObject = void 0 as any;
     public legend: Highcharts.Legend = void 0 as any;
-    public legendGroup: Highcharts.SVGElement = void 0 as any;
-    public legendItem: Highcharts.SVGElement = void 0 as any;
+    public legendGroup: SVGElement = void 0 as any;
+    public legendItem: SVGElement = void 0 as any;
     public legendItemHeight: number = void 0 as any;
     public legendItemWidth: number = void 0 as any;
-    public legendSymbol: Highcharts.SVGElement = void 0 as any;
+    public legendSymbol: SVGElement = void 0 as any;
     public maxLabel: Highcharts.BBoxObject = void 0 as any;
     public movementX: number = void 0 as any;
     public ranges: Array<Highcharts.BubbleLegendRangesOptions> = void 0 as any;
     public visible: boolean = void 0 as any;
-    public symbols: Highcharts.Dictionary<Array<Highcharts.SVGElement>>= void 0 as any;
+    public symbols: Highcharts.Dictionary<Array<SVGElement>>= void 0 as any;
     public options: Highcharts.BubbleLegendOptions = void 0 as any;
 
 
@@ -882,7 +883,7 @@ class BubbleLegend {
             maxLabel: (Highcharts.BBoxObject|undefined),
             labelSize: Highcharts.BBoxObject;
 
-        labels.forEach(function (label: Highcharts.SVGElement): void {
+        labels.forEach(function (label: SVGElement): void {
             labelSize = label.getBBox(true);
 
             if (maxLabel) {
@@ -935,7 +936,7 @@ class BubbleLegend {
 
             // Hide or show connectors
             symbols.labels.forEach(function (
-                label: Highcharts.SVGElement,
+                label: SVGElement,
                 index: number
             ): void {
                 if (!label.newOpacity) {

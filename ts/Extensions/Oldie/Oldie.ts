@@ -428,7 +428,7 @@ if (!svg) {
     // instead of the VMLRenderer
     // (#1079, #1063)
     addEvent(SVGElement, 'afterInit', function (
-        this: Highcharts.SVGElement
+        this: SVGElement
     ): void {
         if (this.element.nodeName === 'text') {
             this.css({
@@ -2035,7 +2035,7 @@ if (!svg) {
                 y: number,
                 w: number,
                 h: number,
-                wrapper: Highcharts.SVGElement
+                wrapper: SVGElement
             ): Highcharts.VMLPathArray {
 
                 if (wrapper && defined(wrapper.r)) {

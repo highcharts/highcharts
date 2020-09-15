@@ -7,6 +7,7 @@
  * */
 
 import type Point from '../../Core/Series/Point';
+import type SVGElement from '../../Core/Renderer/SVG/SVGElement';
 import type SVGPath from '../../Core/Renderer/SVG/SVGPath';
 import BaseSeries from '../../Core/Series/Series.js';
 import U from '../../Core/Utilities.js';
@@ -259,7 +260,7 @@ BaseSeries.seriesType<typeof Highcharts.PivotPointsIndicator>(
         drawDataLabels: function (this: Highcharts.PivotPointsIndicator): void {
             var indicator = this,
                 pointMapping: Array<(string|boolean)> = indicator.pointArrayMap,
-                currentLabel: (Highcharts.SVGElement|null),
+                currentLabel: (SVGElement|null),
                 pointsLength: number,
                 point: Highcharts.PivotPointsIndicatorPoint,
                 i: number;

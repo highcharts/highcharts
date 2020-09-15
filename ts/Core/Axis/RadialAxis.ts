@@ -13,6 +13,7 @@
 import type Chart from '../Chart/Chart';
 import type Pane from '../../Extensions/Pane';
 import type Point from '../Series/Point';
+import type SVGElement from '../Renderer/SVG/SVGElement';
 import type SVGPath from '../Renderer/SVG/SVGPath';
 import Axis from './Axis.js';
 import Tick from './Tick.js';
@@ -835,7 +836,7 @@ class RadialAxis {
 
             return function (
                 this: null
-            ): (Array<(Highcharts.SVGElement|undefined)>|undefined) {
+            ): (Array<(SVGElement|undefined)>|undefined) {
 
                 if (
                     axis.isRadial &&
@@ -846,11 +847,11 @@ class RadialAxis {
                     return axis.tickPositions
                         .map(function (
                             pos: number
-                        ): (Highcharts.SVGElement|undefined) {
+                        ): (SVGElement|undefined) {
                             return axis.ticks[pos] && axis.ticks[pos].label;
                         })
                         .filter(function (
-                            label: (Highcharts.SVGElement|undefined)
+                            label: (SVGElement|undefined)
                         ): boolean {
                             return Boolean(label);
                         });

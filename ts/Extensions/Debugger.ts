@@ -10,6 +10,7 @@
 
 'use strict';
 
+import type SVGElement from '../Core/Renderer/SVG/SVGElement';
 import H from '../Core/Globals.js';
 
 /**
@@ -73,7 +74,7 @@ addEvent(Chart, 'displayError', function (
         chartHeight;
 
     if (chart.errorElements) {
-        (chart.errorElements).forEach(function (el: Highcharts.SVGElement): void {
+        (chart.errorElements).forEach(function (el: SVGElement): void {
             if (el) {
                 el.destroy();
             }
@@ -143,7 +144,7 @@ addEvent(Chart, 'beforeRedraw', function (): void {
     var errorElements = this.errorElements;
 
     if (errorElements && errorElements.length) {
-        errorElements.forEach(function (el: Highcharts.SVGElement): void {
+        errorElements.forEach(function (el: SVGElement): void {
             el.destroy();
         });
     }

@@ -800,7 +800,7 @@ class Navigator {
     public grabbedCenter?: number;
     public grabbedLeft?: boolean;
     public grabbedRight?: boolean;
-    public handles: Array<Highcharts.SVGElement> = void 0 as any;
+    public handles: Array<SVGElement> = void 0 as any;
     public hasDragged?: boolean;
     public hasNavigatorData?: boolean;
     public height: number = void 0 as any;
@@ -808,13 +808,13 @@ class Navigator {
     public mouseMoveHandler?: Function ;
     public mouseUpHandler?: Function;
     public navigatorEnabled: boolean = void 0 as any;
-    public navigatorGroup: Highcharts.SVGElement = void 0 as any;
+    public navigatorGroup: SVGElement = void 0 as any;
     public navigatorOptions: Highcharts.NavigatorOptions = void 0 as any;
     public navigatorSeries: Highcharts.Series = void 0 as any;
     public navigatorSize: number = void 0 as any;
     public opposite: boolean = void 0 as any;
     public otherHandlePos?: number;
-    public outline: Highcharts.SVGElement = void 0 as any;
+    public outline: SVGElement = void 0 as any;
     public outlineHeight: number = void 0 as any;
     public range: number = void 0 as any;
     public rendered: boolean = void 0 as any;
@@ -824,7 +824,7 @@ class Navigator {
     public scrollbarHeight?: number;
     public scrollbarOptions?: Highcharts.ScrollbarOptions;
     public series?: Array<Highcharts.Series>;
-    public shades: Array<Highcharts.SVGElement> = void 0 as any;
+    public shades: Array<SVGElement> = void 0 as any;
     public size: number = void 0 as any;
     public top: number = void 0 as any;
     public unbindRedraw?: Function;
@@ -1010,7 +1010,7 @@ class Navigator {
             height = [navigatorHeight, navigatorHeight, navigatorHeight];
         }
         navigator.shades.forEach(function (
-            shade: Highcharts.SVGElement,
+            shade: SVGElement,
             i: number
         ): void {
             shade[verb]({
@@ -1431,7 +1431,7 @@ class Navigator {
 
         ['shades', 'handles'].forEach(function (name: string): void {
             (navigator as any)[name].forEach(function (
-                navigatorItem: Highcharts.SVGElement,
+                navigatorItem: SVGElement,
                 index: number
             ): void {
                 events.push(
@@ -2639,7 +2639,7 @@ class Navigator {
 
         // Destroy elements in collection
         [this.handles].forEach(function (
-            coll: Array<Highcharts.SVGElement>
+            coll: Array<SVGElement>
         ): void {
             destroyObjectProperties(coll);
         }, this);

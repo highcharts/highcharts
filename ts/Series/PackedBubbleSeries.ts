@@ -9,6 +9,7 @@
  * */
 
 import type SVGAttributes from '../Core/Renderer/SVG/SVGAttributes';
+import type SVGElement from '../Core/Renderer/SVG/SVGElement';
 import BaseSeries from '../Core/Series/Series.js';
 import Chart from '../Core/Chart/Chart.js';
 import Color from '../Core/Color/Color.js';
@@ -953,7 +954,7 @@ BaseSeries.seriesType<typeof Highcharts.PackedBubbleSeries>(
         },
         render: function (this: Highcharts.PackedBubbleSeries): void {
             var series = this,
-                dataLabels = [] as Array<Highcharts.SVGElement>;
+                dataLabels = [] as Array<SVGElement>;
             Series.prototype.render.apply(this, arguments as any);
             // #10823 - dataLabels should stay visible
             // when enabled allowOverlap.
@@ -963,7 +964,7 @@ BaseSeries.seriesType<typeof Highcharts.PackedBubbleSeries>(
                 ): void {
                     if (isArray(point.dataLabels)) {
                         point.dataLabels.forEach(function (
-                            dataLabel: Highcharts.SVGElement
+                            dataLabel: SVGElement
                         ): void {
                             dataLabels.push(dataLabel);
                         });
@@ -1260,7 +1261,7 @@ BaseSeries.seriesType<typeof Highcharts.PackedBubbleSeries>(
                 }
 
                 (dataLabels as any).forEach(function (
-                    dataLabel: Highcharts.SVGElement
+                    dataLabel: SVGElement
                 ): void {
                     if (dataLabel.div) {
                         dataLabel.div.point = parentNode;

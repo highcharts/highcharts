@@ -13,6 +13,7 @@
 import type ColorString from '../Core/Color/ColorString';
 import type CSSObject from '../Core/Renderer/CSSObject';
 import type SVGAttributes from '../Core/Renderer/SVG/SVGAttributes';
+import type SVGElement from '../Core/Renderer/SVG/SVGElement';
 import type SVGPath from '../Core/Renderer/SVG/SVGPath';
 import BaseSeries from '../Core/Series/Series.js';
 import H from '../Core/Globals.js';
@@ -635,7 +636,7 @@ BaseSeries.seriesType<typeof Highcharts.OrganizationSeries>(
         alignDataLabel: function (
             this: Highcharts.OrganizationSeries,
             point: Highcharts.OrganizationPoint,
-            dataLabel: Highcharts.SVGElement,
+            dataLabel: SVGElement,
             options: Highcharts.OrganizationDataLabelsOptionsObject
         ): void {
             // Align the data label to the point graphic
@@ -658,7 +659,7 @@ BaseSeries.seriesType<typeof Highcharts.OrganizationSeries>(
                 // Set the size of the surrounding div emulating `g`
                 const text = dataLabel.text;
                 if (text) {
-                    css(text.element.parentNode as SVGElement, {
+                    css(text.element.parentNode, {
                         width: width + 'px',
                         height: height + 'px'
                     });

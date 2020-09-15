@@ -344,9 +344,9 @@ class Tooltip {
 
     public tooltipTimeout?: number;
 
-    public tracker?: Highcharts.SVGElement;
+    public tracker?: SVGElement;
 
-    public tt?: Highcharts.SVGElement;
+    public tt?: SVGElement;
 
     /* *
      *
@@ -671,7 +671,7 @@ class Tooltip {
      * @function Highcharts.Tooltip#getLabel
      * @return {Highcharts.SVGElement}
      */
-    public getLabel(): Highcharts.SVGElement {
+    public getLabel(): SVGElement {
 
         var tooltip = this,
             renderer: (Highcharts.Renderer|Highcharts.SVGRenderer) = this.chart.renderer,

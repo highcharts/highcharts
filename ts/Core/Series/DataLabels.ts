@@ -413,7 +413,7 @@ CartesianSeries.prototype.drawDataLabels = function (this: Highcharts.Series): v
         points = series.points,
         pointOptions,
         hasRendered = series.hasRendered || 0,
-        dataLabelsGroup: Highcharts.SVGElement,
+        dataLabelsGroup: SVGElement,
         dataLabelAnim = (seriesDlOptions as any).animation,
         animationConfig = (seriesDlOptions as any).defer ?
             getDeferredAnimation(chart, dataLabelAnim, series) :
@@ -997,7 +997,7 @@ CartesianSeries.prototype.alignDataLabel = function (
 CartesianSeries.prototype.setDataLabelStartPos = function (
     this: Highcharts.Series,
     point: Highcharts.ColumnPoint,
-    dataLabel: Highcharts.SVGElement,
+    dataLabel: SVGElement,
     isNew: boolean,
     isInside: boolean,
     alignOptions: Highcharts.AlignObject
@@ -1187,7 +1187,7 @@ if (seriesTypes.pie) {
         // area. Right edges of the right-half labels touch the right edge of
         // the plot area.
         alignToPlotEdges: function (
-            dataLabel: Highcharts.SVGElement,
+            dataLabel: SVGElement,
             half: boolean,
             plotWidth: number,
             plotLeft: number

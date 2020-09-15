@@ -11,6 +11,7 @@
 import type CSSObject from '../Core/Renderer/CSSObject';
 import type Point from '../Core/Series/Point';
 import type SVGAttributes from '../Core/Renderer/SVG/SVGAttributes';
+import type SVGElement from '../Core/Renderer/SVG/SVGElement';
 import type SVGPath from '../Core/Renderer/SVG/SVGPath';
 import Chart from '../Core/Chart/Chart.js';
 import H from '../Core/Globals.js';
@@ -401,7 +402,7 @@ Series.prototype.getPointsOnGraph = function (
         n: (number|undefined),
         j: (number|undefined),
         d: (SVGPath|undefined),
-        graph: Highcharts.SVGElement = this.graph || (this.area as any),
+        graph: SVGElement = this.graph || (this.area as any),
         node: SVGPathElement = graph.element as any,
         inverted = this.chart.inverted,
         xAxis = this.xAxis,
@@ -819,7 +820,7 @@ Chart.prototype.drawSeriesLabels = function (): void {
             paneHeight = chart.inverted ? series.xAxis.len : series.yAxis.len,
             points: Array<Point> = series.interpolatedPoints as any,
             onArea = pick(labelOptions.onArea, !!series.area),
-            label: Highcharts.SVGElement = series.labelBySeries as any,
+            label: SVGElement = series.labelBySeries as any,
             isNew = !label,
             minFontSize = labelOptions.minFontSize,
             maxFontSize = labelOptions.maxFontSize,
@@ -1143,7 +1144,7 @@ function drawLabels(this: Chart, e: Event): void {
         chart.series.forEach(function (series: Highcharts.Series): void {
             var options: Highcharts.SeriesLabelOptionsObject =
                     series.options.label as any,
-                label: Highcharts.SVGElement = series.labelBySeries as any,
+                label: SVGElement = series.labelBySeries as any,
                 closest = label && label.closest;
 
             if (

@@ -1242,7 +1242,7 @@ ColumnSeries.prototype.animateDrillupFrom = function (
 ): void {
     var animationOptions =
             animObject((this.chart.options.drilldown as any).animation),
-        group: (Highcharts.SVGElement|undefined) = this.group,
+        group: (SVGElement|undefined) = this.group,
         // For 3d column series all columns are added to one group
         // so we should not delete the whole group. #5297
         removeGroup = group !== this.chart.columnGroup,

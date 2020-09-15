@@ -307,7 +307,7 @@ BaseSeries.seriesType<typeof Highcharts.WindbarbSeries>('windbarb', 'column'
         windArrow: function (
             this: Highcharts.WindbarbSeries,
             point: Highcharts.WindbarbPoint
-        ): (Highcharts.SVGElement|SVGPath) {
+        ): (SVGElement|SVGPath) {
             var knots = point.value * 1.943844,
                 level = point.beaufortLevel,
                 path: SVGPath,

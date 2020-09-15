@@ -606,7 +606,7 @@ BaseSeries.seriesType<typeof Highcharts.AreaRangeSeries>('arearange', 'area', {
                         point.dataLabelUpper as any,
                         point.dataLabel
                     ].filter(function (
-                        label: (Highcharts.SVGElement|undefined)
+                        label: (SVGElement|undefined)
                     ): boolean {
                         return !!label;
                     });

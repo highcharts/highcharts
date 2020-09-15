@@ -12,6 +12,7 @@
 'use strict';
 
 import type SVGAttributes from '../Core/Renderer/SVG/SVGAttributes';
+import type SVGElement from '../Core/Renderer/SVG/SVGElement';
 import type SVGPath from '../Core/Renderer/SVG/SVGPath';
 import Chart from '../Core/Chart/Chart.js';
 import H from '../Core/Globals.js';
@@ -535,7 +536,7 @@ class Connection {
     * */
     public chart: Chart = void 0 as any;
     public fromPoint: Point = void 0 as any;
-    public graphics: Record<string, Highcharts.SVGElement> = void 0 as any;
+    public graphics: Record<string, SVGElement> = void 0 as any;
     public options?: Highcharts.ConnectorsOptions;
     public pathfinder: Highcharts.Pathfinder = void 0 as any;
     public toPoint: Point = void 0 as any;
@@ -903,7 +904,7 @@ class Connection {
     public destroy(): void {
         if (this.graphics) {
             objectEach(this.graphics, function (
-                val: Highcharts.SVGElement
+                val: SVGElement
             ): void {
                 val.destroy();
             });

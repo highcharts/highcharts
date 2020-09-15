@@ -18,6 +18,7 @@ import type GradientColor from '../Color/GradientColor';
 import type PlotLineOrBand from './PlotLineOrBand';
 import type Point from '../../Core/Series/Point';
 import type SVGAttributes from '../Renderer/SVG/SVGAttributes';
+import type SVGElement from '../Renderer/SVG/SVGElement';
 import type SVGPath from '../Renderer/SVG/SVGPath';
 import Color from '../Color/Color.js';
 import H from '../Globals.js';
@@ -3880,18 +3881,18 @@ class Axis implements AxisComposition, AxisLike {
     public allowZoomOutside?: boolean;
     public alternateBands: Record<string, Highcharts.PlotLineOrBand> = void 0 as any;
     public autoRotation?: Array<number>;
-    public axisGroup?: Highcharts.SVGElement;
-    public axisLine?: Highcharts.SVGElement;
-    public axisParent?: Highcharts.SVGElement;
+    public axisGroup?: SVGElement;
+    public axisLine?: SVGElement;
+    public axisParent?: SVGElement;
     public axisPointRange?: number;
-    public axisTitle?: Highcharts.SVGElement;
+    public axisTitle?: SVGElement;
     public axisTitleMargin?: number;
     public bottom: number = void 0 as any;
     public categories: Array<string> = void 0 as any;
     public chart: Chart = void 0 as any;
     public closestPointRange: number = void 0 as any;
     public coll: string = void 0 as any;
-    public cross?: Highcharts.SVGElement;
+    public cross?: SVGElement;
     public crosshair?: Highcharts.AxisCrosshairOptions;
     public dataMax?: (null|number);
     public dataMin?: (null|number);
@@ -3899,7 +3900,7 @@ class Axis implements AxisComposition, AxisLike {
     public eventArgs?: any;
     public finalTickAmt?: number;
     public forceRedraw?: boolean;
-    public gridGroup?: Highcharts.SVGElement;
+    public gridGroup?: SVGElement;
     public hasNames: boolean = void 0 as any;
     public hasVisibleSeries: boolean = void 0 as any;
     public height: number = void 0 as any;
@@ -3914,7 +3915,7 @@ class Axis implements AxisComposition, AxisLike {
     public labelAlign?: Highcharts.AlignValue;
     public labelEdge: Array<null> = void 0 as any; // @todo
     public labelFormatter: Highcharts.AxisLabelsFormatterCallbackFunction = void 0 as any;
-    public labelGroup?: Highcharts.SVGElement;
+    public labelGroup?: SVGElement;
     public labelOffset?: number;
     public labelRotation?: number;
     public left: number = void 0 as any;
@@ -3943,7 +3944,7 @@ class Axis implements AxisComposition, AxisLike {
     public overlap: boolean = void 0 as any;
     public paddedTicks: Array<number> = void 0 as any;
     public plotLinesAndBands: Array<Highcharts.PlotLineOrBand> = void 0 as any;
-    public plotLinesAndBandsGroups: Record<string, Highcharts.SVGElement> = void 0 as any;
+    public plotLinesAndBandsGroups: Record<string, SVGElement> = void 0 as any;
     public pointRange: number = void 0 as any;
     public pointRangePadding: number = void 0 as any;
     public pos: number = void 0 as any;
