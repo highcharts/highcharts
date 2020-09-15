@@ -15,6 +15,7 @@ import type ColorString from '../../Core/Color/ColorString';
 import type ColorType from '../../Core/Color/ColorType';
 import type CSSObject from '../../Core/Renderer/CSSObject';
 import type Point from '../../Core/Series/Point';
+import type ShadowOptionsObject from '../../Core/Renderer/ShadowOptionsObject';
 import type SVGPath from '../../Core/Renderer/SVG/SVGPath';
 import Chart from '../../Core/Chart/Chart.js';
 const chartProto: Highcharts.AnnotationChart = Chart.prototype as any;

@@ -19,6 +19,7 @@ import type GradientColor from '../../Core/Color/GradientColor';
 import {
     HTMLDOMElement
 } from '../../Core/Renderer/DOMElementType';
+import type ShadowOptionsObject from '../../Core/Renderer/ShadowOptionsObject';
 import type SVGPath from '../../Core/Renderer/SVG/SVGPath';
 import Chart from '../../Core/Chart/Chart.js';
 import Color from '../../Core/Color/Color.js';
@@ -982,7 +983,7 @@ if (!svg) {
          */
         shadow: function (
             this: Highcharts.VMLElement,
-            shadowOptions: Partial<Highcharts.ShadowOptionsObject>,
+            shadowOptions: Partial<ShadowOptionsObject>,
             group: Highcharts.VMLElement,
             cutOff: boolean
         ): Highcharts.VMLElement {

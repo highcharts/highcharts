@@ -19,6 +19,7 @@ import type {
 } from './Renderer/DOMElementType';
 import type Point from './Series/Point';
 import type { SeriesOptionsType, SeriesPlotOptionsType } from './Series/Types';
+import type ShadowOptionsObject from './Renderer/ShadowOptionsObject';
 import type SVGAttributes from './Renderer/SVG/SVGAttributes';
 import H from './Globals.js';
 const {
