@@ -12,6 +12,7 @@
 'use strict';
 import H from '../../Core/Globals.js';
 var doc = H.doc;
+import AST from '../../Core/Renderer/HTML/AST.js';
 import U from '../../Core/Utilities.js';
 var extend = U.extend, format = U.format, pick = U.pick;
 import AccessibilityComponent from '../AccessibilityComponent.js';
@@ -21,8 +22,14 @@ var getAnnotationsInfoHTML = AnnotationsA11y.getAnnotationsInfoHTML;
 import ChartUtilities from '../Utils/ChartUtilities.js';
 var unhideChartElementFromAT = ChartUtilities.unhideChartElementFromAT, getChartTitle = ChartUtilities.getChartTitle, getAxisDescription = ChartUtilities.getAxisDescription;
 import HTMLUtilities from '../Utils/HTMLUtilities.js';
-var addClass = HTMLUtilities.addClass, setElAttrs = HTMLUtilities.setElAttrs, escapeStringForHTML = HTMLUtilities.escapeStringForHTML, stripHTMLTagsFromString = HTMLUtilities.stripHTMLTagsFromString, getElement = HTMLUtilities.getElement, visuallyHideElement = HTMLUtilities.visuallyHideElement;
+var addClass = HTMLUtilities.addClass, setElAttrs = HTMLUtilities.setElAttrs, stripHTMLTagsFromString = HTMLUtilities.stripHTMLTagsFromString, getElement = HTMLUtilities.getElement, visuallyHideElement = HTMLUtilities.visuallyHideElement;
 /* eslint-disable no-invalid-this, valid-jsdoc */
+/**
+ * @private
+ */
+function stripEmptyHTMLTags(str) {
+    return str.replace(/<(\w+)[^>]*?>\s*<\/\1>/g, '');
+}
 /**
  * @private
  */
@@ -56,27 +63,6 @@ function buildTypeDescriptionFromSeries(chart, types, context) {
  */
 function getTableSummary(chart) {
     return chart.langFormat('accessibility.table.tableSummary', { chart: chart });
-}
-/**
- * @private
- */
-function stripEmptyHTMLTags(str) {
-    return str.replace(/<(\w+)[^>]*?>\s*<\/\1>/g, '');
-}
-/**
- * @private
- */
-function enableSimpleHTML(str) {
-    return str
-        .replace(/&lt;(h[1-7]|p|div|ul|ol|li)&gt;/g, '<$1>')
-        .replace(/&lt;&#x2F;(h[1-7]|p|div|ul|ol|li|a|button)&gt;/g, '</$1>')
-        .replace(/&lt;(div|a|button) id=&quot;([a-zA-Z\-0-9#]*?)&quot;&gt;/g, '<$1 id="$2">');
-}
-/**
- * @private
- */
-function stringToSimpleHTML(str) {
-    return stripEmptyHTMLTags(enableSimpleHTML(escapeStringForHTML(str)));
 }
 /**
  * Return simplified explaination of chart type. Some types will not be familiar
@@ -123,7 +109,7 @@ extend(InfoRegionsComponent.prototype, /** @lends Highcharts.InfoRegionsComponen
         var chart = this.chart;
         var component = this;
         this.initRegionsDefinitions();
-        this.addEvent(chart, 'afterGetTree', function (e) {
+        this.addEvent(chart, 'aftergetTableAST', function (e) {
             component.onDataTableCreated(e);
         });
         this.addEvent(chart, 'afterViewData', function (tableDiv) {
@@ -132,6 +118,10 @@ extend(InfoRegionsComponent.prototype, /** @lends Highcharts.InfoRegionsComponen
             setTimeout(function () {
                 component.focusDataTable();
             }, 300);
+        });
+        this.addEvent(chart, 'afterHideData', function () {
+            var _a;
+            (_a = component.viewDataTableButton) === null || _a === void 0 ? void 0 : _a.setAttribute('aria-expanded', 'false');
         });
         this.announcer = new Announcer(chart, 'assertive');
     },
@@ -220,7 +210,7 @@ extend(InfoRegionsComponent.prototype, /** @lends Highcharts.InfoRegionsComponen
     updateScreenReaderSection: function (regionKey) {
         var chart = this.chart, region = this.screenReaderSections[regionKey], content = region.buildContent(chart), sectionDiv = region.element = (region.element || this.createElement('div')), hiddenDiv = (sectionDiv.firstChild || this.createElement('div'));
         this.setScreenReaderSectionAttribs(sectionDiv, regionKey);
-        hiddenDiv.innerHTML = content;
+        AST.setElementHTML(hiddenDiv, content);
         sectionDiv.appendChild(hiddenDiv);
         region.insertIntoDOM(sectionDiv, chart);
         visuallyHideElement(hiddenDiv);
@@ -274,7 +264,7 @@ extend(InfoRegionsComponent.prototype, /** @lends Highcharts.InfoRegionsComponen
         }, formattedString = H.i18nFormat(format, context, chart);
         this.dataTableButtonId = dataTableButtonId;
         this.sonifyButtonId = sonifyButtonId;
-        return stringToSimpleHTML(formattedString);
+        return stripEmptyHTMLTags(formattedString);
     },
     /**
      * @private
@@ -285,7 +275,7 @@ extend(InfoRegionsComponent.prototype, /** @lends Highcharts.InfoRegionsComponen
             .screenReaderSection.afterChartFormat, context = {
             endOfChartMarker: this.getEndOfChartMarkerText()
         }, formattedString = H.i18nFormat(format, context, chart);
-        return stringToSimpleHTML(formattedString);
+        return stripEmptyHTMLTags(formattedString);
     },
     /**
      * @private

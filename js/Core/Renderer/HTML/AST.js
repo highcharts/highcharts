@@ -42,6 +42,19 @@ var AST = /** @class */ (function () {
         this.nodes = typeof source === 'string' ?
             this.parseMarkup(source) : source;
     }
+    /**
+     * Utility function to set html content for an element by passing in a
+     * markup string. The markup is safely parsed by the AST class to avoid
+     * XSS vulnerabilities.
+     *
+     * @private
+     * @static
+     *
+     * @function Highcharts.AST#setElementHTML
+     *
+     * @param {SVGElement} el The node to set content of
+     * @param {string} html The markup string
+     */
     AST.setElementHTML = function (el, html) {
         el.innerHTML = ''; // Clear previous
         if (html) {
@@ -197,6 +210,7 @@ var AST = /** @class */ (function () {
         'a',
         'b',
         'br',
+        'button',
         'caption',
         'code',
         'div',
@@ -219,6 +233,7 @@ var AST = /** @class */ (function () {
         'sub',
         'sup',
         'table',
+        'thead',
         'tbody',
         'td',
         'th',
@@ -227,13 +242,29 @@ var AST = /** @class */ (function () {
         '#text'
     ];
     AST.allowedAttributes = [
+        'aria-controls',
+        'aria-describedby',
+        'aria-expanded',
+        'aria-haspopup',
+        'aria-hidden',
+        'aria-label',
+        'aria-labelledby',
+        'aria-live',
+        'aria-pressed',
+        'aria-readonly',
+        'aria-roledescription',
+        'aria-selected',
         'class',
         'colspan',
+        'disabled',
         'href',
         'id',
+        'role',
+        'scope',
         'src',
+        'style',
         'rowspan',
-        'style'
+        'tabindex'
     ];
     return AST;
 }());
