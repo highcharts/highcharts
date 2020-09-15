@@ -17,6 +17,7 @@ import H from '../../Core/Globals.js';
 const {
     doc
 } = H;
+import AST from '../../Core/Renderer/HTML/AST.js';
 import U from '../../Core/Utilities.js';
 const {
     extend,
@@ -37,7 +38,6 @@ var unhideChartElementFromAT = ChartUtilities.unhideChartElementFromAT,
 import HTMLUtilities from '../Utils/HTMLUtilities.js';
 var addClass = HTMLUtilities.addClass,
     setElAttrs = HTMLUtilities.setElAttrs,
-    escapeStringForHTML = HTMLUtilities.escapeStringForHTML,
     stripHTMLTagsFromString = HTMLUtilities.stripHTMLTagsFromString,
     getElement = HTMLUtilities.getElement,
     visuallyHideElement = HTMLUtilities.visuallyHideElement;
@@ -60,7 +60,7 @@ declare global {
             sonifyButton?: HTMLDOMElement|SVGDOMElement|null;
             public sonifyButtonId?: string;
             public viewDataTableButton?: (
-                ''|HTMLDOMElement|SVGDOMElement|null
+                HTMLDOMElement|SVGDOMElement|null
             );
             public defaultAfterChartFormatter(): string;
             public defaultBeforeChartFormatter(): string;
@@ -115,6 +115,13 @@ declare global {
 
 
 /* eslint-disable no-invalid-this, valid-jsdoc */
+
+/**
+ * @private
+ */
+function stripEmptyHTMLTags(str: string): string {
+    return str.replace(/<(\w+)[^>]*?>\s*<\/\1>/g, '');
+}
 
 /**
  * @private
@@ -188,33 +195,6 @@ function getTableSummary(chart: Chart): string {
     );
 }
 
-/**
- * @private
- */
-function stripEmptyHTMLTags(str: string): string {
-    return str.replace(/<(\w+)[^>]*?>\s*<\/\1>/g, '');
-}
-
-/**
- * @private
- */
-function enableSimpleHTML(str: string): string {
-    return str
-        .replace(/&lt;(h[1-7]|p|div|ul|ol|li)&gt;/g, '<$1>')
-        .replace(/&lt;&#x2F;(h[1-7]|p|div|ul|ol|li|a|button)&gt;/g, '</$1>')
-        .replace(
-            /&lt;(div|a|button) id=&quot;([a-zA-Z\-0-9#]*?)&quot;&gt;/g,
-            '<$1 id="$2">'
-        );
-}
-
-/**
- * @private
- */
-function stringToSimpleHTML(str: string): string {
-    return stripEmptyHTMLTags(enableSimpleHTML(escapeStringForHTML(str)));
-}
-
 
 /**
  * Return simplified explaination of chart type. Some types will not be familiar
@@ -273,7 +253,7 @@ extend(InfoRegionsComponent.prototype, /** @lends Highcharts.InfoRegionsComponen
 
         this.initRegionsDefinitions();
 
-        this.addEvent(chart, 'afterGetTree', function (
+        this.addEvent(chart, 'aftergetTableAST', function (
             e: { tree: Highcharts.ASTNode }
         ): void {
             component.onDataTableCreated(e);
@@ -288,6 +268,10 @@ extend(InfoRegionsComponent.prototype, /** @lends Highcharts.InfoRegionsComponen
             setTimeout(function (): void {
                 component.focusDataTable();
             }, 300);
+        });
+
+        this.addEvent(chart, 'afterHideData', (): void => {
+            component.viewDataTableButton?.setAttribute('aria-expanded', 'false');
         });
 
         this.announcer = new Announcer(chart, 'assertive');
@@ -434,7 +418,7 @@ extend(InfoRegionsComponent.prototype, /** @lends Highcharts.InfoRegionsComponen
             );
 
         this.setScreenReaderSectionAttribs(sectionDiv, regionKey);
-        hiddenDiv.innerHTML = content;
+        AST.setElementHTML(hiddenDiv, content);
         sectionDiv.appendChild(hiddenDiv);
         region.insertIntoDOM(sectionDiv, chart);
 
@@ -522,7 +506,7 @@ extend(InfoRegionsComponent.prototype, /** @lends Highcharts.InfoRegionsComponen
         this.dataTableButtonId = dataTableButtonId;
         this.sonifyButtonId = sonifyButtonId;
 
-        return stringToSimpleHTML(formattedString);
+        return stripEmptyHTMLTags(formattedString);
     },
 
 
@@ -541,7 +525,7 @@ extend(InfoRegionsComponent.prototype, /** @lends Highcharts.InfoRegionsComponen
             },
             formattedString = H.i18nFormat(format, context, chart);
 
-        return stringToSimpleHTML(formattedString);
+        return stripEmptyHTMLTags(formattedString);
     },
 
 

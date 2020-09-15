@@ -65,6 +65,7 @@ class AST {
         'a',
         'b',
         'br',
+        'button',
         'caption',
         'code',
         'div',
@@ -87,6 +88,7 @@ class AST {
         'sub',
         'sup',
         'table',
+        'thead',
         'tbody',
         'td',
         'th',
@@ -96,16 +98,44 @@ class AST {
     ];
 
     public static allowedAttributes = [
+        'aria-controls',
+        'aria-describedby',
+        'aria-expanded',
+        'aria-haspopup',
+        'aria-hidden',
+        'aria-label',
+        'aria-labelledby',
+        'aria-live',
+        'aria-pressed',
+        'aria-readonly',
+        'aria-roledescription',
+        'aria-selected',
         'class',
         'colspan',
+        'disabled',
         'href',
         'id',
+        'role',
+        'scope',
         'src',
+        'style',
         'rowspan',
-        'style'
+        'tabindex'
     ];
 
-
+    /**
+     * Utility function to set html content for an element by passing in a
+     * markup string. The markup is safely parsed by the AST class to avoid
+     * XSS vulnerabilities.
+     *
+     * @private
+     * @static
+     *
+     * @function Highcharts.AST#setElementHTML
+     *
+     * @param {SVGElement} el The node to set content of
+     * @param {string} html The markup string
+     */
     public static setElementHTML(el: Element, html: string): void {
         el.innerHTML = ''; // Clear previous
         if (html) {
@@ -113,7 +143,6 @@ class AST {
             ast.addToDOM(el);
         }
     }
-
 
     // Public list of the nodes of this tree, can be modified before adding the
     // tree to the DOM.

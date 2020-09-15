@@ -929,6 +929,8 @@ Chart.prototype.viewData = function () {
         this.dataTableDiv.style.display = 'block';
     }
     this.isDataTableVisible = true;
+    // Update table content
+    this.dataTableDiv.innerHTML = '';
     var ast = new AST([this.getTableAST()]);
     ast.addToDOM(this.dataTableDiv);
     fireEvent(this, 'afterViewData', this.dataTableDiv);
@@ -943,6 +945,7 @@ Chart.prototype.hideData = function () {
         this.dataTableDiv.style.display = 'none';
     }
     this.isDataTableVisible = false;
+    fireEvent(this, 'afterHideData', this.dataTableDiv);
 };
 Chart.prototype.toggleDataTable = function () {
     var _a;

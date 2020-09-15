@@ -1337,6 +1337,8 @@ Chart.prototype.viewData = function (): void {
 
     this.isDataTableVisible = true;
 
+    // Update table content
+    this.dataTableDiv.innerHTML = '';
     const ast = new AST([this.getTableAST()]);
     ast.addToDOM(this.dataTableDiv);
 
@@ -1354,6 +1356,8 @@ Chart.prototype.hideData = function (): void {
     }
 
     this.isDataTableVisible = false;
+
+    fireEvent(this, 'afterHideData', this.dataTableDiv);
 };
 
 Chart.prototype.toggleDataTable = function (): void {
