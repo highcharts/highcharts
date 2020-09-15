@@ -685,4 +685,40 @@
             'The chart height should remain the same.'
         );
     });
+
+    QUnit.test('The addPoint method should add only one point, #14188.', assert => {
+        const chart = Highcharts.ganttChart('container', {
+            plotOptions: {
+                series: {
+                    dragDrop: {
+                        draggableX: true
+                    }
+                }
+            },
+            series: [{
+                data: [{
+                    start: 1,
+                    end: 3,
+                    name: 'Task 1'
+                }, {
+                    start: 4,
+                    end: 8,
+                    name: 'Task 2'
+                }]
+            }]
+        });
+
+        const pointAmount = chart.series[0].data.length;
+
+        chart.series[0].addPoint({
+            start: 4,
+            end: 5,
+            name: 'Taks 3'
+        });
+
+        assert.ok(
+            chart.series[0].data.length - pointAmount === 1,
+            'Only one point should be added.'
+        );
+    });
 }());
