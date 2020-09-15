@@ -959,7 +959,7 @@ Chart.prototype.toggleDataTable = function () {
         menuItems &&
         exportDivElements &&
         exportDivElements.length) {
-        this.renderer.setHTML(exportDivElements[menuItems.indexOf('viewData')], this.isDataTableVisible ? lang.hideData : lang.viewData);
+        AST.setElementHTML(exportDivElements[menuItems.indexOf('viewData')], this.isDataTableVisible ? lang.hideData : lang.viewData);
     }
 };
 // Add "Download CSV" to the exporting menu.

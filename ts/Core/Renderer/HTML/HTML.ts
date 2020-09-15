@@ -13,6 +13,7 @@
 import H from '../../Globals.js';
 import SVGElement from '../SVG/SVGElement.js';
 import SVGRenderer from '../SVG/SVGRenderer.js';
+import AST from './AST.js';
 import U from '../../Utilities.js';
 const {
     attr,
@@ -439,7 +440,7 @@ extend(SVGRenderer.prototype, /** @lends SVGRenderer.prototype */ {
                 delete this.bBox;
                 delete this.oldTextWidth;
 
-                renderer.setHTML(this.element, pick(value, ''));
+                AST.setElementHTML(this.element, pick(value, ''));
 
                 this.textStr = value;
                 wrapper.doTransform = true;
