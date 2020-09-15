@@ -11,6 +11,7 @@
 import H from '../../Globals.js';
 import SVGElement from '../SVG/SVGElement.js';
 import SVGRenderer from '../SVG/SVGRenderer.js';
+import AST from './AST.js';
 import U from '../../Utilities.js';
 var attr = U.attr, createElement = U.createElement, css = U.css, defined = U.defined, extend = U.extend, pick = U.pick, pInt = U.pInt;
 var isFirefox = H.isFirefox, isMS = H.isMS, isWebKit = H.isWebKit, win = H.win;
@@ -274,7 +275,7 @@ extend(SVGRenderer.prototype, /** @lends SVGRenderer.prototype */ {
             if (value !== this.textStr) {
                 delete this.bBox;
                 delete this.oldTextWidth;
-                renderer.setHTML(this.element, pick(value, ''));
+                AST.setElementHTML(this.element, pick(value, ''));
                 this.textStr = value;
                 wrapper.doTransform = true;
             }

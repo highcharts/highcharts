@@ -105,6 +105,16 @@ class AST {
         'style'
     ];
 
+
+    public static setElementHTML(el: Element, html: string): void {
+        el.innerHTML = ''; // Clear previous
+        if (html) {
+            const ast = new AST(html);
+            ast.addToDOM(el);
+        }
+    }
+
+
     // Public list of the nodes of this tree, can be modified before adding the
     // tree to the DOM.
     public nodes: Highcharts.ASTNode[];

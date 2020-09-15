@@ -42,6 +42,13 @@ var AST = /** @class */ (function () {
         this.nodes = typeof source === 'string' ?
             this.parseMarkup(source) : source;
     }
+    AST.setElementHTML = function (el, html) {
+        el.innerHTML = ''; // Clear previous
+        if (html) {
+            var ast = new AST(html);
+            ast.addToDOM(el);
+        }
+    };
     /**
      * Add the tree defined as a hierarchical JS structure to the DOM
      *

@@ -13,6 +13,7 @@ import H from '../Core/Globals.js';
 const {
     doc
 } = H;
+import AST from '../Core/Renderer/HTML/AST.js';
 import U from '../Core/Utilities.js';
 const {
     addEvent
@@ -267,7 +268,7 @@ class Fullscreen {
             exportDivElements &&
             exportDivElements.length
         ) {
-            chart.renderer.setHTML(
+            AST.setElementHTML(
                 exportDivElements[menuItems.indexOf('viewFullscreen')],
                 !this.isOpen ?
                     (

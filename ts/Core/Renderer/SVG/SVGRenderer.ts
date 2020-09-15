@@ -234,10 +234,6 @@ declare global {
                 rotation: number,
                 alterY?: boolean
             ): PositionObject;
-            public setHTML(
-                parent: Element,
-                html: string
-            ): void;
             public setSize(
                 width: number,
                 height: number,
@@ -749,31 +745,6 @@ class SVGRenderer {
         }
     }
 
-
-    /**
-     * Safely set the inner HTML. The provided markup is parsed to an AST,
-     * filtered by allowed tags and attributes and inserted via the DOM.
-     *
-     * @private
-     *
-     * @function Highcharts.SVGRenderer#setHTML
-     *
-     * @param {SVGElement} parent
-     * The node where it should be added
-     *
-     * @param {html} string
-     * The HTML to be inserted. Unsupported tags and attributes are stripped
-     * out.
-     *
-     * @return {void}
-     */
-    public setHTML(parent: Element, html: string): void {
-        parent.innerHTML = ''; // Clear previous
-        if (html) {
-            const ast = new AST(html);
-            ast.addToDOM(parent);
-        }
-    }
 
     /**
      * General method for adding a definition to the SVG `defs` tag. Can be used

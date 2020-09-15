@@ -1376,7 +1376,7 @@ Chart.prototype.toggleDataTable = function (): void {
         exportDivElements &&
         exportDivElements.length
     ) {
-        this.renderer.setHTML(
+        AST.setElementHTML(
             exportDivElements[menuItems.indexOf('viewData')],
             this.isDataTableVisible ? lang.hideData : lang.viewData
         );

@@ -16,6 +16,7 @@ var time = O.time;
 import Point from '../Core/Series/Point.js';
 import Time from './Time.js';
 import U from './Utilities.js';
+import AST from './Renderer/HTML/AST.js';
 var addEvent = U.addEvent, animate = U.animate, createElement = U.createElement, css = U.css, defined = U.defined, erase = U.erase, error = U.error, extend = U.extend, fireEvent = U.fireEvent, isArray = U.isArray, isNumber = U.isNumber, isObject = U.isObject, isString = U.isString, merge = U.merge, objectEach = U.objectEach, pick = U.pick, relativeLength = U.relativeLength, setAnimation = U.setAnimation, splat = U.splat;
 import './Series/Series.js';
 var Series = H.Series, seriesTypes = H.seriesTypes;
@@ -242,7 +243,7 @@ extend(Chart.prototype, /** @lends Highcharts.Chart.prototype */ {
         }
         loadingDiv.className = 'highcharts-loading';
         // Update text
-        chart.renderer.setHTML(loadingSpan, pick(str, options.lang.loading, ''));
+        AST.setElementHTML(loadingSpan, pick(str, options.lang.loading, ''));
         if (!chart.styledMode) {
             // Update visuals
             css(loadingDiv, extend(loadingOptions.style, {

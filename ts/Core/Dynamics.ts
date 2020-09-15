@@ -19,6 +19,7 @@ const { time } = O;
 import Point from '../Core/Series/Point.js';
 import Time from './Time.js';
 import U from './Utilities.js';
+import AST from './Renderer/HTML/AST.js';
 const {
     addEvent,
     animate,
@@ -458,7 +459,7 @@ extend(Chart.prototype, /** @lends Highcharts.Chart.prototype */ {
         loadingDiv.className = 'highcharts-loading';
 
         // Update text
-        chart.renderer.setHTML(
+        AST.setElementHTML(
             loadingSpan,
             pick(str, (options.lang as any).loading, '')
         );
