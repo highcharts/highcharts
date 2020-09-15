@@ -11,6 +11,7 @@
  * */
 'use strict';
 import H from '../../Core/Globals.js';
+import AST from '../../Core/Renderer/HTML/AST.js';
 import DOMElementProvider from './DOMElementProvider.js';
 import HTMLUtilities from './HTMLUtilities.js';
 var visuallyHideElement = HTMLUtilities.visuallyHideElement;
@@ -25,7 +26,7 @@ var Announcer = /** @class */ (function () {
     };
     Announcer.prototype.announce = function (message) {
         var _this = this;
-        this.announceRegion.innerHTML = message;
+        AST.setElementHTML(this.announceRegion, message);
         // Delete contents after a little while to avoid user finding the live
         // region in the DOM.
         if (this.clearAnnouncementRegionTimer) {
