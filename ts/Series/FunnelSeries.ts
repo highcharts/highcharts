@@ -14,6 +14,7 @@
 
 import type ColorType from '../Core/Color/ColorType';
 import type Point from '../Core/Series/Point';
+import type SVGElement from '../Core/Renderer/SVG/SVGElement';
 import type SVGPath from '../Core/Renderer/SVG/SVGPath';
 import BaseSeries from '../Core/Series/Series.js';
 const {
@@ -540,7 +541,7 @@ BaseSeries.seriesType<typeof Highcharts.FunnelSeries>(
 
         alignDataLabel: function (
             point: Highcharts.FunnelPoint,
-            dataLabel: Highcharts.SVGElement,
+            dataLabel: SVGElement,
             options: Highcharts.FunnelSeriesDataLabelsOptionsObject,
             alignTo: Highcharts.BBoxObject,
             isNew?: boolean

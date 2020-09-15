@@ -12,6 +12,7 @@
 
 import type { SeriesOptionsType } from './Series/Types';
 import type SVGAttributes from './Renderer/SVG/SVGAttributes';
+import type SVGElement from './Renderer/SVG/SVGElement';
 import type SVGPath from './Renderer/SVG/SVGPath';
 import BaseSeries from './Series/Series.js';
 const {
@@ -239,7 +240,7 @@ const TrackerMixin = H.TrackerMixin = {
                 (point.graphic.element as any).point = point;
             }
             (dataLabels as any).forEach(function (
-                dataLabel: Highcharts.SVGElement
+                dataLabel: SVGElement
             ): void {
                 if (dataLabel.div) {
                     dataLabel.div.point = point;
@@ -359,7 +360,7 @@ const TrackerMixin = H.TrackerMixin = {
             // is covered by the marker group. So the marker group also needs to
             // capture events.
             [series.tracker, series.markerGroup].forEach(function (
-                tracker: (Highcharts.SVGElement|undefined)
+                tracker: (SVGElement|undefined)
             ): void {
                 (tracker as any).addClass('highcharts-tracker')
                     .on('mouseover', onMouseOver)
@@ -426,7 +427,7 @@ extend(Legend.prototype, {
     setItemEvents: function (
         this: Highcharts.Legend,
         item: (Highcharts.BubbleLegend|Point|Highcharts.Series),
-        legendItem: Highcharts.SVGElement,
+        legendItem: SVGElement,
         useHTML?: boolean
     ): void {
         var legend = this,
@@ -1234,7 +1235,7 @@ extend(Point.prototype, /** @lends Highcharts.Point.prototype */ {
                 // oppacity also for it's labels
                 if (series.options.inactiveOtherPoints && pointAttribs.opacity) {
                     (point.dataLabels || []).forEach(function (
-                        label: Highcharts.SVGElement
+                        label: SVGElement
                     ): void {
                         if (label) {
                             label.animate(
@@ -1546,7 +1547,7 @@ extend(LineSeries.prototype, /** @lends Highcharts.Series.prototype */ {
                 series.markerGroup,
                 series.dataLabelsGroup
             ].forEach(function (
-                group: (Highcharts.SVGElement|undefined)
+                group: (SVGElement|undefined)
             ): void {
                 if (group) {
                     // Old state
@@ -1609,7 +1610,7 @@ extend(LineSeries.prototype, /** @lends Highcharts.Series.prototype */ {
                         series.dataLabelsGroup,
                         series.labelBySeries
                     ].forEach(function (
-                        group: (Highcharts.SVGElement|undefined)
+                        group: (SVGElement|undefined)
                     ): void {
                         if (group) {
                             group.animate(

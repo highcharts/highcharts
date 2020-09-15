@@ -239,9 +239,9 @@ const cylinderMethods = merge(RendererProto.elements3d.cuboid, {
     pathType: 'cylinder',
 
     fillSetter: function (
-        this: Highcharts.SVGElement,
+        this: SVGElement,
         fill: ColorType
-    ): Highcharts.SVGElement {
+    ): SVGElement {
         this.singleSetterForParts('fill', null, {
             front: fill,
             back: fill,

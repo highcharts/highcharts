@@ -9,6 +9,7 @@ import type {
     CursorValue
 } from '../../../Core/Renderer/CSSObject';
 import type DOMElementType from '../../../Core/Renderer/DOMElementType';
+import type SVGElement from '../../../Core/Renderer/SVG/SVGElement';
 import H from '../../../Core/Globals.js';
 
 /**
@@ -263,10 +264,10 @@ const eventEmitterMixin: Highcharts.AnnotationEventEmitterMixin = {
             if ((this.points as any).length) {
                 (this as any).translate(translation.x, translation.y);
             } else {
-                (this.shapes as any).forEach(function (shape: Highcharts.SVGElement): void {
+                (this.shapes as any).forEach(function (shape: SVGElement): void {
                     shape.translate(translation.x, translation.y);
                 });
-                (this.labels as any).forEach(function (label: Highcharts.SVGElement): void {
+                (this.labels as any).forEach(function (label: SVGElement): void {
                     label.translate(translation.x, translation.y);
                 });
             }

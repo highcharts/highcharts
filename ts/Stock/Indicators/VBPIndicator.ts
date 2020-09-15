@@ -14,6 +14,7 @@ import type { AxisType } from '../../Core/Axis/Types';
 import type Chart from '../../Core/Chart/Chart';
 import type CSSObject from '../../Core/Renderer/CSSObject';
 import type SVGAttributes from '../../Core/Renderer/SVG/SVGAttributes';
+import type SVGElement from '../../Core/Renderer/SVG/SVGElement';
 import type SVGPath from '../../Core/Renderer/SVG/SVGPath';
 import BaseSeries from '../../Core/Series/Series.js';
 import H from '../../Core/Globals.js';
@@ -800,7 +801,7 @@ BaseSeries.seriesType<typeof Highcharts.VBPIndicator>(
         ): void {
             var indicator = this,
                 renderer: Highcharts.Renderer = chart.renderer,
-                zoneLinesSVG: Highcharts.SVGElement = indicator.zoneLinesSVG,
+                zoneLinesSVG: SVGElement = indicator.zoneLinesSVG,
                 zoneLinesPath: SVGPath = [],
                 leftLinePos = 0,
                 rightLinePos: number = chart.plotWidth,

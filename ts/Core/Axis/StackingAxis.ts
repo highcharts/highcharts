@@ -9,6 +9,7 @@
  * */
 
 import type StackItem from '../../Extensions/Stacking.js';
+import type SVGElement from '../Renderer/SVG/SVGElement';
 import Axis from './Axis.js';
 import U from '../Utilities.js';
 const {
@@ -61,7 +62,7 @@ class StackingAxisAdditions {
     oldStacks: Record<string, Record<string, StackItem>> = {};
     stacks: Record<string, Record<string, StackItem>> = {};
     stacksTouched: number = 0;
-    stackTotalGroup?: Highcharts.SVGElement;
+    stackTotalGroup?: SVGElement;
     usePercentage?: boolean;
 
     /* *

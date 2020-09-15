@@ -628,7 +628,7 @@ BaseSeries.seriesType<typeof Highcharts.FlagsSeries>(
                 wrap(series.markerGroup, 'on', function (
                     this: Highcharts.FlagsSeries,
                     proceed
-                ): Highcharts.SVGElement {
+                ): SVGElement {
                     return SVGElement.prototype.on.apply(
                         // for HTML
                         proceed.apply(this, [].slice.call(arguments, 1)),

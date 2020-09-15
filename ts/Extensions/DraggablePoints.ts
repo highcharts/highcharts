@@ -496,7 +496,7 @@ const columnDragDropProps = seriesTypes.column.prototype.dragDropProps = {
         resize: true,
         // Force guideBox start coordinates
         beforeResize: function (
-            guideBox: Highcharts.SVGElement,
+            guideBox: SVGElement,
             pointVals: Highcharts.Dictionary<number>,
             point: Highcharts.ColumnPoint
         ): void {
@@ -1818,7 +1818,7 @@ function hasDraggedPastSensitivity(
 function getPositionSnapshot(
     e: Highcharts.PointerEventObject,
     points: Array<Point>,
-    guideBox?: Highcharts.SVGElement
+    guideBox?: SVGElement
 ): Highcharts.DragDropPositionObject {
     var res: Highcharts.DragDropPositionObject = {
         chartX: e.chartX,
@@ -1923,7 +1923,7 @@ function getGroupedPoints(point: Point): Array<Point> {
  * @return {void}
  */
 function resizeRect(
-    rect: Highcharts.SVGElement,
+    rect: SVGElement,
     updateSide: string,
     update: Highcharts.PositionObject
 ): void {
@@ -2252,7 +2252,7 @@ function dragMove(
 Chart.prototype.setGuideBoxState = function (
     state: string,
     options?: Highcharts.Dictionary<Highcharts.DragDropGuideBoxOptionsObject>
-): Highcharts.SVGElement {
+): SVGElement {
     var guideBox = this.dragGuideBox,
         guideBoxOptions = merge(defaultGuideBoxOptions, options),
         stateOptions = merge(
@@ -2406,7 +2406,7 @@ Point.prototype.getDropValues = function (
  */
 H.Series.prototype.getGuideBox = function (
     points: Array<Point>
-): Highcharts.SVGElement {
+): SVGElement {
     var chart = this.chart,
         minX = Infinity,
         maxX = -Infinity,

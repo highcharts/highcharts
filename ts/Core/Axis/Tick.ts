@@ -12,6 +12,7 @@
 
 import type CSSObject from '../Renderer/CSSObject';
 import type SVGAttributes from '../Renderer/SVG/SVGAttributes';
+import type SVGElement from '../Renderer/SVG/SVGElement';
 import type SVGPath from '../Renderer/SVG/SVGPath';
 import H from '../Globals.js';
 
@@ -238,7 +239,7 @@ class Tick {
 
     public formatCtx!: Highcharts.AxisLabelsFormatterContextObject;
 
-    public gridLine?: Highcharts.SVGElement;
+    public gridLine?: SVGElement;
 
     public isActive?: boolean;
 
@@ -250,13 +251,13 @@ class Tick {
 
     public isLast?: boolean;
 
-    public label?: Highcharts.SVGElement;
+    public label?: SVGElement;
 
     public labelPos?: Highcharts.PositionObject;
 
-    public mark?: Highcharts.SVGElement;
+    public mark?: SVGElement;
 
-    public movedLabel?: Highcharts.SVGElement;
+    public movedLabel?: SVGElement;
 
     public options?: Highcharts.AxisOptions;
 
@@ -439,7 +440,7 @@ class Tick {
         xy: Highcharts.PositionObject,
         str: string,
         labelOptions: Highcharts.XAxisLabelsOptions
-    ): (Highcharts.SVGElement|undefined) {
+    ): (SVGElement|undefined) {
         var axis = this.axis,
             chart = axis.chart,
             label = defined(str) && labelOptions.enabled ?
@@ -570,7 +571,7 @@ class Tick {
     public getLabelPosition(
         x: number,
         y: number,
-        label: Highcharts.SVGElement,
+        label: SVGElement,
         horiz: boolean,
         labelOptions: Highcharts.PositionObject,
         tickmarkOffset: number,
