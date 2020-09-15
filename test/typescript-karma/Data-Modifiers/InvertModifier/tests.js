@@ -42,8 +42,9 @@ QUnit.test('InvertModifier.execute', function (assert) {
         rowId,
         columnName;
 
-    assert.ok(
-        invertedTable !== table,
+    assert.notStrictEqual(
+        invertedTable,
+        table,
         'The inverted table should be a new table instance.'
     );
 
