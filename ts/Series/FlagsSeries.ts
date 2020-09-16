@@ -8,6 +8,7 @@
  *
  * */
 
+import type { AlignValue } from '../Core/Renderer/AlignObject';
 import type ColorType from '../Core/Color/ColorType';
 import type CSSObject from '../Core/Renderer/CSSObject';
 import type SVGAttributes from '../Core/Renderer/SVG/SVGAttributes';

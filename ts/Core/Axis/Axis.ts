@@ -11,6 +11,7 @@
 'use strict';
 
 import type { AxisComposition, AxisLike } from './Types';
+import type { AlignValue } from '../Renderer/AlignObject';
 import type Chart from '../Chart/Chart';
 import type ColorType from '../Color/ColorType';
 import type CSSObject from '../Renderer/CSSObject';
@@ -3912,7 +3913,7 @@ class Axis implements AxisComposition, AxisLike {
     public isXAxis?: boolean;
     public isZAxis?: boolean;
     public keepProps?: Array<string>;
-    public labelAlign?: Highcharts.AlignValue;
+    public labelAlign?: AlignValue;
     public labelEdge: Array<null> = void 0 as any; // @todo
     public labelFormatter: Highcharts.AxisLabelsFormatterCallbackFunction = void 0 as any;
     public labelGroup?: SVGElement;
@@ -6341,9 +6342,9 @@ class Axis implements AxisComposition, AxisLike {
      * @return {Highcharts.AlignValue}
      * Can be `"center"`, `"left"` or `"right"`.
      */
-    public autoLabelAlign(rotation: number): Highcharts.AlignValue {
+    public autoLabelAlign(rotation: number): AlignValue {
         var angle = (pick(rotation, 0) - (this.side * 90) + 720) % 360,
-            evt = { align: 'center' as Highcharts.AlignValue };
+            evt = { align: 'center' as AlignValue };
 
         fireEvent(this, 'autoLabelAlign', evt, function (
             e: Highcharts.Dictionary<any>
@@ -6813,7 +6814,7 @@ class Axis implements AxisComposition, AxisLike {
                     low: opposite ? 'right' : 'left',
                     middle: 'center',
                     high: opposite ? 'left' : 'right'
-                }) as Highcharts.Dictionary<Highcharts.AlignValue>)[
+                }) as Highcharts.Dictionary<AlignValue>)[
                     (axisTitleOptions as any).align
                 ];
             }

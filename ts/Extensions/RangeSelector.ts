@@ -10,6 +10,11 @@
 
 'use strict';
 
+import type {
+    AlignObject,
+    AlignValue,
+    VerticalAlignValue
+} from '../Core/Renderer/AlignObject';
 import type ColorString from '../Core/Color/ColorString';
 import type CSSObject from '../Core/Renderer/CSSObject';
 import type {
@@ -1736,7 +1741,7 @@ class RangeSelector {
             width: buttonGroup.getBBox().width,
             align: (buttonPosition as any).align,
             x: translateX
-        } as Highcharts.AlignObject, true, chart.spacingBox);
+        } as AlignObject, true, chart.spacingBox);
 
         // skip animation
         (rangeSelector.group as any).placed = animate;
@@ -1778,7 +1783,7 @@ class RangeSelector {
                 align: (inputPosition as any).align,
                 // fix wrong getBBox() value on right align
                 x: (inputPosition as any).x + (translateX as any) - 2
-            } as Highcharts.AlignObject, true, chart.spacingBox);
+            } as AlignObject, true, chart.spacingBox);
 
             // detect collision
             inputGroupX = (
@@ -2269,7 +2274,7 @@ if (!H.RangeSelector) {
             unbindSetExtremes: Function,
             legend,
             alignTo,
-            verticalAlign: Highcharts.VerticalAlignValue|undefined;
+            verticalAlign: VerticalAlignValue|undefined;
 
         /**
          * @private

@@ -10,6 +10,11 @@
 
 'use strict';
 
+import type {
+    AlignObject,
+    AlignValue,
+    VerticalAlignValue
+} from '../Core/Renderer/AlignObject';
 import type ColorType from '../Core/Color/ColorType';
 import type CSSObject from '../Core/Renderer/CSSObject';
 import type SVGElement from '../Core/Renderer/SVG/SVGElement';
@@ -269,7 +274,7 @@ class StackItem {
         (inverted ? (isNegative ? 'right' : 'left') : 'center');
     }
 
-    public alignOptions: Highcharts.AlignObject;
+    public alignOptions: AlignObject;
     public axis: StackingAxis;
     public base?: string;
     public cumulative?: (null|number);
@@ -281,7 +286,7 @@ class StackItem {
     public points: Highcharts.Dictionary<Array<number>>;
     public rightCliff: number;
     public stack?: Highcharts.OptionsStackingValue;
-    public textAlign: Highcharts.AlignValue;
+    public textAlign: AlignValue;
     public total: (null|number);
     public touched?: number;
     public x: number;

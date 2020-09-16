@@ -8,6 +8,11 @@
  *
  * */
 
+import type {
+    AlignObject,
+    AlignValue,
+    VerticalAlignValue
+} from '../AlignObject';
 import type BBoxObject from '../BBoxObject';
 import type ColorString from '../../Color/ColorString';
 import type ColorType from '../../Color/ColorType';
@@ -60,6 +65,7 @@ const {
 } = U;
 
 type ImportedBBoxObject = BBoxObject;
+type ImportedAlignObject = AlignObject;
 
 /**
  * @private
@@ -85,16 +91,7 @@ declare global {
         cutHeight?: number;
     }
     namespace Highcharts {
-        type AlignValue = ('center'|'left'|'right');
         type BBoxObject = ImportedBBoxObject;
-        type VerticalAlignValue = ('bottom'|'middle'|'top');
-        interface AlignObject {
-            align?: AlignValue;
-            alignByTranslate?: boolean;
-            verticalAlign?: VerticalAlignValue;
-            x?: number;
-            y?: number;
-        }
         class SVGElement {
             public constructor();
             [key: string]: any;
@@ -431,7 +428,7 @@ class SVGElement {
     public added?: boolean;
     public alignAttr?: SVGAttributes;
     public alignByTranslate?: boolean;
-    public alignOptions?: Highcharts.AlignObject;
+    public alignOptions?: AlignObject;
     public alignTo?: string;
     public alignValue?: ('left'|'center'|'right');
     public clipPath?: SVGElement;
@@ -697,12 +694,12 @@ class SVGElement {
      * @return {Highcharts.SVGElement} Returns the SVGElement for chaining.
      */
     public align(
-        alignOptions?: Highcharts.AlignObject,
+        alignOptions?: AlignObject,
         alignByTranslate?: boolean,
         box?: (string|BBoxObject)
     ): SVGElement {
-        var align: Highcharts.AlignValue,
-            vAlign: Highcharts.VerticalAlignValue,
+        var align: AlignValue,
+            vAlign: VerticalAlignValue,
             x,
             y,
             attribs = {} as SVGAttributes,

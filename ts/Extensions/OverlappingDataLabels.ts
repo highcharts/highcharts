@@ -13,6 +13,7 @@
 
 'use strict';
 
+import type { AlignValue } from '../Core/Renderer/AlignObject';
 import type Point from '../Core/Series/Point';
 import type SVGElement from '../Core/Renderer/SVG/SVGElement';
 import Chart from '../Core/Chart/Chart.js';
@@ -190,7 +191,7 @@ Chart.prototype.hideOverlappingLabels = function (
                     left: '0',
                     center: '0.5',
                     right: '1'
-                }[label.alignValue as Highcharts.AlignValue];
+                }[label.alignValue as AlignValue];
 
                 if (alignValue) {
                     xOffset = +alignValue * boxWidth;

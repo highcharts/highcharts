@@ -10,6 +10,11 @@
 
 'use strict';
 
+import type {
+    AlignObject,
+    AlignValue,
+    VerticalAlignValue
+} from '../Renderer/AlignObject';
 import type ColorString from '../Color/ColorString';
 import type ColorType from '../Color/ColorType';
 import type CSSObject from '../Renderer/CSSObject';
@@ -851,7 +856,7 @@ CartesianSeries.prototype.alignDataLabel = function (
                     )
                 )
             ),
-        setStartPos = function (alignOptions: Highcharts.AlignObject): void {
+        setStartPos = function (alignOptions: AlignObject): void {
             if (enabledDataSorting && series.xAxis && !justify) {
                 series.setDataLabelStartPos(
                     point as Highcharts.ColumnPoint,
@@ -1000,7 +1005,7 @@ CartesianSeries.prototype.setDataLabelStartPos = function (
     dataLabel: SVGElement,
     isNew: boolean,
     isInside: boolean,
-    alignOptions: Highcharts.AlignObject
+    alignOptions: AlignObject
 ): void {
     var chart = this.chart,
         inverted = chart.inverted,
