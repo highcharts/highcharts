@@ -139,17 +139,17 @@ class HTMLTableParser extends DataParser<DataParser.EventObject> {
         eventDetail?: DataEventEmitter.EventDetail
     ): void {
         const parser = this,
-            columns: [] = [],
+            columns: DataValueType[][] = [],
             headers: string[] = [],
             parseOptions = merge(parser.options, options),
             {
-                startRow,
                 endRow,
                 startColumn,
-                endColumn
-            } = parseOptions;
+                endColumn,
+                firstRowAsNames
+            } = parseOptions,
+            tableHTML = parseOptions.tableHTML || this.tableElement;
 
-        const tableHTML = parseOptions.tableHTML || this.tableElement;
 
         if (!(tableHTML instanceof HTMLElement)) {
             parser.emit<DataParser.EventObject>({
@@ -170,64 +170,83 @@ class HTMLTableParser extends DataParser<DataParser.EventObject> {
             detail: eventDetail,
             headers: parser.headers
         });
-
-        let colsCount: number,
-            rowNo: number,
-            colNo: number,
-            item: Element;
         const rows = tableHTML.getElementsByTagName('tr'),
             rowsCount = rows.length;
 
-        rowNo = 0;
+        let rowIndex: number = 0,
+            item: Element,
+            { startRow } = parseOptions;
 
-        while (rowNo < rowsCount) {
-            if (rowNo >= startRow && rowNo <= endRow) {
+        // Insert headers from the first row
+        if (firstRowAsNames) {
+            const items = rows[0].children,
+                itemsLength = items.length;
 
-                const cols = rows[rowNo].children;
-                colsCount = cols.length;
-                colNo = 0;
+            for (let i = startColumn; i < itemsLength; i++) {
+                if (i > endColumn) {
+                    break;
+                }
 
-                while (colNo < colsCount) {
-                    const row = (columns as any)[colNo - startColumn];
-                    item = cols[colNo];
-                    let i = 1;
+                item = items[i];
+                if (
+                    item.tagName === 'TD' ||
+                    item.tagName === 'TH'
+                ) {
+                    headers.push(item.innerHTML);
+                }
+            }
+
+            startRow++;
+        }
+
+        while (rowIndex < rowsCount) {
+            if (rowIndex >= startRow && rowIndex <= endRow) {
+                const columnsInRow = rows[rowIndex].children,
+                    columnsInRowLength = columnsInRow.length;
+
+                let columnIndex = 0;
+
+                while (columnIndex < columnsInRowLength) {
+                    const relativeColumnIndex = columnIndex - startColumn,
+                        row = columns[relativeColumnIndex];
+
+                    item = columnsInRow[columnIndex];
 
                     if (
                         (
                             item.tagName === 'TD' ||
                             item.tagName === 'TH'
                         ) &&
-                        colNo >= startColumn &&
-                        colNo <= endColumn
+                        (
+                            columnIndex >= startColumn &&
+                            columnIndex <= endColumn
+                        )
                     ) {
-                        if (!(columns as any)[colNo - startColumn]) {
-                            (columns as any)[colNo - startColumn] = [];
+                        if (!columns[relativeColumnIndex]) {
+                            columns[relativeColumnIndex] = [];
                         }
 
-                        if (item.tagName === 'TH') {
-                            headers.push(item.innerHTML);
-                        }
-
-                        (columns as any)[colNo - startColumn][
-                            rowNo - startRow
+                        columns[relativeColumnIndex][
+                            rowIndex - startRow
                         ] = item.innerHTML;
 
                         // Loop over all previous indices and make sure
                         // they are nulls, not undefined.
+                        let i = 1;
                         while (
-                            rowNo - startRow >= i &&
-                            row[rowNo - startRow - i] === void 0
+                            rowIndex - startRow >= i &&
+                            row[rowIndex - startRow - i] === void 0
                         ) {
-                            row[rowNo - startRow - i] = null;
+                            row[rowIndex - startRow - i] = null;
                             i++;
                         }
                     }
 
-                    colNo++;
+                    columnIndex++;
                 }
             }
 
-            rowNo++;
+            rowIndex++;
         }
         this.columns = columns;
         this.headers = headers;
