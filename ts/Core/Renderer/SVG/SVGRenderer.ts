@@ -70,13 +70,6 @@ declare global {
             f: number;
             h: number;
         }
-        interface ShadowOptionsObject {
-            color: ColorString;
-            offsetX: number;
-            offsetY: number;
-            opacity: number;
-            width: number;
-        }
         interface SVGDefinitionObject {
             [key: string]: (boolean|number|string|Array<SVGDefinitionObject>|undefined);
             children?: Array<SVGDefinitionObject>;
