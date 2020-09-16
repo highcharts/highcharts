@@ -12,6 +12,7 @@
 
 'use strict';
 
+import type { AlignValue } from '../../Core/Renderer/AlignObject';
 import type ColorString from '../../Core/Color/ColorString';
 import type ColorType from '../../Core/Color/ColorType';
 import type CSSObject from '../../Core/Renderer/CSSObject';
@@ -745,7 +746,7 @@ if (!svg) {
             baseline: number,
             alignCorrection: number,
             rotation: number,
-            align: Highcharts.AlignValue
+            align: AlignValue
         ): void {
 
             var costheta = rotation ? Math.cos(rotation * deg2rad) : 1,

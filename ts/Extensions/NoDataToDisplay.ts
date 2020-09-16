@@ -12,6 +12,7 @@
  *
  * */
 
+import type AlignObject from '../Core/Renderer/AlignObject';
 import type CSSObject from '../Core/Renderer/CSSObject';
 import type SVGAttributes from '../Core/Renderer/SVG/SVGAttributes';
 import Chart from '../Core/Chart/Chart.js';

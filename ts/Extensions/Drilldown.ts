@@ -12,6 +12,11 @@
 
 'use strict';
 
+import type {
+    AlignObject,
+    AlignValue,
+    VerticalAlignValue
+} from '../Core/Renderer/AlignObject';
 import type ColorType from '../Core/Color/ColorType';
 import type {
     CSSObject,

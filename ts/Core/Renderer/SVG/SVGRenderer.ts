@@ -8,6 +8,7 @@
  *
  * */
 
+import type AlignObject from '../AlignObject';
 import type BBoxObject from '../BBoxObject';
 import type ColorString from '../../Color/ColorString';
 import type CSSObject from '../CSSObject';
@@ -49,6 +50,7 @@ const {
 type ImportedPositionObject = PositionObject;
 type ImportedRectangleObject = RectangleObject;
 type ImportedSizeObject = SizeObject;
+type ImportedAlignObject = AlignObject;
 
 /**
  * Internal types

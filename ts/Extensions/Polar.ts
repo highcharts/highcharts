@@ -10,6 +10,10 @@
 
 'use strict';
 
+import type {
+    AlignValue,
+    VerticalAlignValue
+} from '../Core/Renderer/AlignObject';
 import type Point from '../Core/Series/Point';
 import type RadialAxis from '../Core/Axis/RadialAxis';
 import type SVGAttributes from '../Core/Renderer/SVG/SVGAttributes';
@@ -912,8 +916,8 @@ if (seriesTypes.column) {
         angle: number,
         options: Highcharts.DataLabelsOptions
     ): Highcharts.DataLabelsOptions {
-        var align: Highcharts.AlignValue,
-            verticalAlign: Highcharts.VerticalAlignValue;
+        var align: AlignValue,
+            verticalAlign: VerticalAlignValue;
 
         if (options.align === null) {
             if (angle > 20 && angle < 160) {

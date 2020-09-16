@@ -8,6 +8,7 @@
  *
  * */
 
+import type { AlignValue } from '../AlignObject';
 import type BBoxObject from '../BBoxObject';
 import type ColorType from '../../Color/ColorType';
 import type CSSObject from '../CSSObject';
@@ -126,7 +127,7 @@ class SVGLabel extends SVGElement {
      *
      * */
 
-    public alignSetter(value: Highcharts.AlignValue): void {
+    public alignSetter(value: AlignValue): void {
         const alignFactor = ({
             left: 0,
             center: 0.5,

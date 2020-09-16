@@ -10,6 +10,10 @@
 
 'use strict';
 
+import type {
+    AlignValue,
+    VerticalAlignValue
+} from '../../Core/Renderer/AlignObject';
 import type { AxisType } from '../../Core/Axis/Types';
 import type ColorString from '../../Core/Color/ColorString';
 import type ColorType from '../../Core/Color/ColorType';

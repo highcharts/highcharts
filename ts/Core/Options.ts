@@ -10,6 +10,11 @@
 
 'use strict';
 
+import type {
+    AlignObject,
+    AlignValue,
+    VerticalAlignValue
+} from './Renderer/AlignObject';
 import type ColorString from './Color/ColorString';
 import type ColorType from './Color/ColorType';
 import type Chart from './Chart/Chart';

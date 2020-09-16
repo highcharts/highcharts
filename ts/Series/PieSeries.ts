@@ -8,6 +8,7 @@
  *
  * */
 
+import type { AlignValue } from '../Core/Renderer/AlignObject';
 import type SVGAttributes from '../Core/Renderer/SVG/SVGAttributes';
 import type SVGPath from '../Core/Renderer/SVG/SVGPath';
 import BaseSeries from '../Core/Series/Series.js';
