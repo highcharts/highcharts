@@ -12,7 +12,7 @@
 'use strict';
 import DataTable from '../DataTable.js';
 import U from '../../Core/Utilities.js';
-var addEvent = U.addEvent, fireEvent = U.fireEvent, merge = U.merge;
+var addEvent = U.addEvent, fireEvent = U.fireEvent, merge = U.merge, pick = U.pick;
 /* *
  *
  *  Class
@@ -125,11 +125,12 @@ var DataStore = /** @class */ (function () {
      * @param {string} name
      * The name of the column to be described.
      *
-     * @param {DataStore.MetaColumn} column
+     * @param {DataStore.MetaColumn} columnMeta
      * The metadata to apply to the column.
      */
-    DataStore.prototype.describeColumn = function (name, column) {
-        this.metadata.columns[name] = column;
+    DataStore.prototype.describeColumn = function (name, columnMeta) {
+        var store = this, columns = store.metadata.columns;
+        columns[name] = merge(columns[name] || {}, columnMeta);
     };
     /**
      * Method for applying columns meta information to the whole datastore.
@@ -138,26 +139,11 @@ var DataStore = /** @class */ (function () {
      * Pairs of column names and MetaColumn objects.
      */
     DataStore.prototype.describeColumns = function (columns) {
-        this.metadata.columns = merge(columns);
-    };
-    /**
-     * Method for retriving metadata from a single column
-     *
-     * @param {string} name
-     * The identifier for the column that should be described
-     *
-     * @return {DataStore.MetaColumn | undefined}
-     * Returns a MetaColumn object if found.
-     */
-    DataStore.prototype.whatIs = function (name) {
-        return this.metadata.columns[name];
-    };
-    /**
-     * The default load method, which fires the `afterLoad` event
-     * @emits DataStore#afterLoad
-     */
-    DataStore.prototype.load = function () {
-        fireEvent(this, 'afterLoad', { table: this.table });
+        var store = this, columnNames = Object.keys(columns);
+        var columnName;
+        while (typeof (columnName = columnNames.pop()) === 'string') {
+            store.describeColumn(columnName, columns[columnName]);
+        }
     };
     /**
      * Emits an event on the store to all registered callbacks of this event.
@@ -167,6 +153,28 @@ var DataStore = /** @class */ (function () {
      */
     DataStore.prototype.emit = function (e) {
         fireEvent(this, e.type, e);
+    };
+    /**
+     * Returns the order of columns.
+     *
+     * @return {Array<string>}
+     * Order of columns.
+     */
+    DataStore.prototype.getColumnOrder = function () {
+        var store = this, metadata = store.metadata, columns = metadata.columns, columnNames = Object.keys(columns), columnOrder = [];
+        var columnName;
+        for (var i = 0, iEnd = columnNames.length; i < iEnd; ++i) {
+            columnName = columnNames[i];
+            columnOrder[pick(columns[columnName].index, i)] = columnName;
+        }
+        return columnOrder;
+    };
+    /**
+     * The default load method, which fires the `afterLoad` event
+     * @emits DataStore#afterLoad
+     */
+    DataStore.prototype.load = function () {
+        fireEvent(this, 'afterLoad', { table: this.table });
     };
     /**
      * Registers a callback for a specific store event.
@@ -184,6 +192,18 @@ var DataStore = /** @class */ (function () {
         return addEvent(this, type, callback);
     };
     /**
+     * Sets the index and order of columns.
+     *
+     * @param {Array<string>} columnNames
+     * Order of columns.
+     */
+    DataStore.prototype.setColumnOrder = function (columnNames) {
+        var store = this;
+        for (var i = 0, iEnd = columnNames.length; i < iEnd; ++i) {
+            store.describeColumn(columnNames[i], { index: i });
+        }
+    };
+    /**
      * Converts the class instance to a class JSON.
      *
      * @return {DataStore.ClassJSON}
@@ -195,6 +215,18 @@ var DataStore = /** @class */ (function () {
             metadata: merge(this.metadata),
             table: this.table.toJSON()
         };
+    };
+    /**
+     * Method for retriving metadata from a single column.
+     *
+     * @param {string} name
+     * The identifier for the column that should be described
+     *
+     * @return {DataStore.MetaColumn | undefined}
+     * Returns a MetaColumn object if found.
+     */
+    DataStore.prototype.whatIs = function (name) {
+        return this.metadata.columns[name];
     };
     /* *
      *

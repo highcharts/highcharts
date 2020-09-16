@@ -28,7 +28,8 @@ import U from '../../Core/Utilities.js';
 const {
     addEvent,
     fireEvent,
-    merge
+    merge,
+    pick
 } = U;
 
 
@@ -204,14 +205,17 @@ implements DataEventEmitter<TEventObject>, DataJSON.Class {
      * @param {string} name
      * The name of the column to be described.
      *
-     * @param {DataStore.MetaColumn} column
+     * @param {DataStore.MetaColumn} columnMeta
      * The metadata to apply to the column.
      */
-    public describeColumn(name: string, column: DataStore.MetaColumn): void {
-        this.metadata.columns[name] = merge(
-            this.metadata.columns[name] || {},
-            column
-        );
+    public describeColumn(
+        name: string,
+        columnMeta: DataStore.MetaColumn
+    ): void {
+        const store = this,
+            columns = store.metadata.columns;
+
+        columns[name] = merge(columns[name] || {}, columnMeta);
     }
 
     /**
@@ -254,28 +258,14 @@ implements DataEventEmitter<TEventObject>, DataJSON.Class {
             columnNames = Object.keys(columns),
             columnOrder: Array<string> = [];
 
+        let columnName: string;
+
         for (let i = 0, iEnd = columnNames.length; i < iEnd; ++i) {
-            columnOrder[columns[i].index || i] = columnNames[i];
+            columnName = columnNames[i];
+            columnOrder[pick(columns[columnName].index, i)] = columnName;
         }
 
         return columnOrder;
-    }
-
-    /**
-     * Sets the index and order of columns.
-     *
-     * @param {Array<string>} columnNames
-     * Order of columns.
-     */
-    public setColumnOrder(columnNames: Array<string>): void {
-        const store = this,
-            metadata = store.metadata;
-
-        metadata.columnOrder = columnNames.slice();
-
-        for (let i = 0, iEnd = columnNames.length; i < iEnd; ++i) {
-            store.describeColumn(columnNames[i], { index: i });
-        }
     }
 
     /**
@@ -303,6 +293,20 @@ implements DataEventEmitter<TEventObject>, DataJSON.Class {
         callback: DataEventEmitter.EventCallback<this, TEventObject>
     ): Function {
         return addEvent(this, type, callback);
+    }
+
+    /**
+     * Sets the index and order of columns.
+     *
+     * @param {Array<string>} columnNames
+     * Order of columns.
+     */
+    public setColumnOrder(columnNames: Array<string>): void {
+        const store = this;
+
+        for (let i = 0, iEnd = columnNames.length; i < iEnd; ++i) {
+            store.describeColumn(columnNames[i], { index: i });
+        }
     }
 
     /**

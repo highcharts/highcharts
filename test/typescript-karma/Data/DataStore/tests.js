@@ -37,7 +37,22 @@ test('DataStore metadata', function (assert) {
     assert.ok(datastore.whatIs('columnX'), 'ColumnX was added');
     assert.ok(datastore.whatIs('column1'), 'Column1 is still there');
 
-})
+    datastore.setColumnOrder(['columnX', 'column1']);
+    assert.deepEqual(
+        [
+            datastore.whatIs('columnX').index,
+            datastore.whatIs('column1').index
+        ],
+        [0, 1],
+        'ColumnX should come before column1.'
+    );
+    assert.deepEqual(
+        datastore.getColumnOrder(),
+        ['columnX', 'column1'],
+        'Column order should be descendent.'
+    );
+
+});
 
 test('DataStore registry', function (assert) {
     // Todo: maybe empty the registry
@@ -58,4 +73,4 @@ test('DataStore registry', function (assert) {
         )
    });
 
-})
+});
