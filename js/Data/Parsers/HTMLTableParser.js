@@ -113,8 +113,7 @@ var HTMLTableParser = /** @class */ (function (_super) {
      * @emits HTMLTableParser#parseError
      */
     HTMLTableParser.prototype.parse = function (options, eventDetail) {
-        var parser = this, columns = [], headers = [], parseOptions = merge(parser.options, options), startRow = parseOptions.startRow, endRow = parseOptions.endRow, startColumn = parseOptions.startColumn, endColumn = parseOptions.endColumn;
-        var tableHTML = parseOptions.tableHTML || this.tableElement;
+        var parser = this, columns = [], headers = [], parseOptions = merge(parser.options, options), endRow = parseOptions.endRow, startColumn = parseOptions.startColumn, endColumn = parseOptions.endColumn, firstRowAsNames = parseOptions.firstRowAsNames, tableHTML = parseOptions.tableHTML || this.tableElement;
         if (!(tableHTML instanceof HTMLElement)) {
             parser.emit({
                 type: 'parseError',
@@ -133,41 +132,51 @@ var HTMLTableParser = /** @class */ (function (_super) {
             detail: eventDetail,
             headers: parser.headers
         });
-        var colsCount, rowNo, colNo, item;
         var rows = tableHTML.getElementsByTagName('tr'), rowsCount = rows.length;
-        rowNo = 0;
-        while (rowNo < rowsCount) {
-            if (rowNo >= startRow && rowNo <= endRow) {
-                var cols = rows[rowNo].children;
-                colsCount = cols.length;
-                colNo = 0;
-                while (colNo < colsCount) {
-                    var row = columns[colNo - startColumn];
-                    item = cols[colNo];
-                    var i = 1;
+        var rowIndex = 0, item, startRow = parseOptions.startRow;
+        // Insert headers from the first row
+        if (firstRowAsNames) {
+            var items = rows[0].children, itemsLength = items.length;
+            for (var i = startColumn; i < itemsLength; i++) {
+                if (i > endColumn) {
+                    break;
+                }
+                item = items[i];
+                if (item.tagName === 'TD' ||
+                    item.tagName === 'TH') {
+                    headers.push(item.innerHTML);
+                }
+            }
+            startRow++;
+        }
+        while (rowIndex < rowsCount) {
+            if (rowIndex >= startRow && rowIndex <= endRow) {
+                var columnsInRow = rows[rowIndex].children, columnsInRowLength = columnsInRow.length;
+                var columnIndex = 0;
+                while (columnIndex < columnsInRowLength) {
+                    var relativeColumnIndex = columnIndex - startColumn, row = columns[relativeColumnIndex];
+                    item = columnsInRow[columnIndex];
                     if ((item.tagName === 'TD' ||
                         item.tagName === 'TH') &&
-                        colNo >= startColumn &&
-                        colNo <= endColumn) {
-                        if (!columns[colNo - startColumn]) {
-                            columns[colNo - startColumn] = [];
+                        (columnIndex >= startColumn &&
+                            columnIndex <= endColumn)) {
+                        if (!columns[relativeColumnIndex]) {
+                            columns[relativeColumnIndex] = [];
                         }
-                        if (item.tagName === 'TH') {
-                            headers.push(item.innerHTML);
-                        }
-                        columns[colNo - startColumn][rowNo - startRow] = item.innerHTML;
+                        columns[relativeColumnIndex][rowIndex - startRow] = item.innerHTML;
                         // Loop over all previous indices and make sure
                         // they are nulls, not undefined.
-                        while (rowNo - startRow >= i &&
-                            row[rowNo - startRow - i] === void 0) {
-                            row[rowNo - startRow - i] = null;
+                        var i = 1;
+                        while (rowIndex - startRow >= i &&
+                            row[rowIndex - startRow - i] === void 0) {
+                            row[rowIndex - startRow - i] = null;
                             i++;
                         }
                     }
-                    colNo++;
+                    columnIndex++;
                 }
             }
-            rowNo++;
+            rowIndex++;
         }
         this.columns = columns;
         this.headers = headers;

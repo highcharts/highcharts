@@ -288,8 +288,8 @@ test('HTMLTableStore from HTML element', function (assert) {
         )
         assert.strictEqual(
             e.table.getRowCount(),
-            tableElement.querySelectorAll('tr').length,
-            'Datastore loaded from HTML element has same amount of rows'
+            tableElement.querySelectorAll('tr').length - 1,
+            'Datastore loaded from HTML element has same amount of rows minus the column names'
         )
 
         const datastoreFromJSON = HTMLTableStore.fromJSON(datastore.toJSON());
@@ -300,27 +300,27 @@ test('HTMLTableStore from HTML element', function (assert) {
         doneLoading();
     });
 
-    datastore.load()
+    datastore.load();
 });
 
-test('HTMLTableParser', function(assert){
+test('HTMLTableParser', function (assert) {
     const tableElement = createElement('div');
 
-    tableElement.setAttribute('id', 'myDivider')
+    tableElement.setAttribute('id', 'myDivider');
     tableElement.innerHTML = tableHTML;
 
     const dataparser = new HTMLTableParser({}, tableElement)
-    const done = assert.async()
+    const done = assert.async();
 
-    dataparser.on('afterParse', e =>{
+    dataparser.on('afterParse', e => {
         const result = dataparser.toJSON();
         assert.strictEqual(
             result.tableElementID,
             tableElement.id,
             'exported parser has correct `tableElementID`'
         );
-        assert.ok(true)
+        assert.ok(true);
         done();
     })
     dataparser.parse()
-})
+});
