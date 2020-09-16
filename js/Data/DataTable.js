@@ -164,11 +164,11 @@ var DataTable = /** @class */ (function () {
      * @emits DataTable#afterDeleteRow
      */
     DataTable.prototype.deleteRow = function (rowId, eventDetail) {
-        var row = this.rowsIdMap[rowId], index = this.rows.indexOf(row);
+        var rows = this.rows, rowsIdMap = this.rowsIdMap, row = rowsIdMap[rowId], index = rows.indexOf(row);
         this.emit({ type: 'deleteRow', detail: eventDetail, index: index, row: row });
-        this.rows[index] = row;
-        delete this.rowsIdMap[rowId];
         this.unwatchRow(rowId);
+        rows.splice(index, 1);
+        delete rowsIdMap[rowId];
         this.emit({ type: 'afterDeleteRow', detail: eventDetail, index: index, row: row });
         return row;
     };

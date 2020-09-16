@@ -75,6 +75,27 @@ QUnit.test('DataTable and DataTableRow events', function (assert) {
     );
 
     registeredEvents.length = 0;
+    assert.strictEqual(
+        dataTable.getRowCount(),
+        2,
+        'Table should contain two rows.'
+    );
+    dataTable.deleteRow('a');
+    assert.strictEqual(
+        dataTable.getRowCount(),
+        1,
+        'Table should contain one row.'
+    );
+    assert.deepEqual(
+        registeredEvents,
+        [
+            'deleteRow',
+            'afterDeleteRow'
+        ],
+        'Events for DataTableRow.deleteRow should be in expected order.'
+    );
+
+    registeredEvents.length = 0;
     dataRow.insertCell('new', 'new');
     assert.deepEqual(
         registeredEvents,
@@ -230,25 +251,6 @@ QUnit.test('DataTable JSON support', function (assert) {
         table.toJSON(),
         json,
         'Exported JSON of table should be equal to imported JSON.'
-    );
-
-});
-
-QUnit.test('DataTableRow functions', function (assert) {
-
-    const row = new DataTableRow({
-        cell1: 'value1',
-        cell2: 'value2',
-        cell3: 'value3'
-    });
-
-    // DataTableRow.clear()
-
-    row.clear();
-    assert.equal(
-        row.getCellCount(),
-        0,
-        'Row count after clear should be zero.'
     );
 
 });
@@ -436,7 +438,7 @@ QUnit.test('DataTable column methods', function (assert) {
 
 });
 
-QUnit.test('table.renameColumn', function (assert) {
+QUnit.test('DataTable.renameColumn', function (assert) {
 
     const table = new DataTable();
 
@@ -533,4 +535,5 @@ QUnit.test('DataTable.toColumns with missing cells', function (assert) {
     assert.deepEqual(columns['column3'], ['value', 'value', undefined, 'value']);
     assert.deepEqual(columns['column4'], [undefined, undefined, 'value', undefined]);
 
-})
+});
+
