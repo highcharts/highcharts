@@ -90,62 +90,6 @@ class DataTable implements DataEventEmitter<DataTable.EventObject>, DataJSON.Cla
         }
         return table;
     }
-    /**
-     * Converts a DataTable to a record of columns
-     * @param {DataTable} dataTable
-     * The datatable to convert
-     *
-     * @return {DataTable.ColumnCollection}
-     * An object with column names as keys,
-     * and value an array of cell values
-     */
-    public static toColumns(dataTable: DataTable): DataTable.ColumnCollection {
-        const columnsObject: DataTable.ColumnCollection = {
-            id: []
-        };
-
-        for (let rowIndex = 0, rowCount = dataTable.getRowCount(); rowIndex < rowCount; rowIndex++) {
-            const row = dataTable.rows[rowIndex],
-                cellNames = row.getCellNames(),
-                cellCount = cellNames.length;
-
-            columnsObject.id.push(row.id); // Push the ID column
-
-            for (let j = 0; j < cellCount; j++) {
-                const cellName = cellNames[j],
-                    cell = row.getCell(cellName);
-
-                if (!columnsObject[cellName]) {
-                    columnsObject[cellName] = [];
-                    // If row number is greater than 0
-                    // add the previous rows as undefined
-                    if (rowIndex > 0) {
-                        for (let rowNumber = 0; rowNumber < rowIndex; rowNumber++) {
-                            columnsObject[cellName][rowNumber] = void 0;
-                        }
-                    }
-                }
-                columnsObject[cellName][rowIndex] = cell;
-            }
-
-            // If the object has columns that were not in the row
-            // add them as undefined
-            const columnsInObject = Object.keys(columnsObject);
-            for (
-                let columnIndex = 0;
-                columnIndex < columnsInObject.length;
-                columnIndex++
-            ) {
-                const columnName = columnsInObject[columnIndex];
-
-                while (columnsObject[columnName].length - 1 < rowIndex) {
-                    columnsObject[columnName].push(void 0);
-                }
-            }
-        }
-
-        return columnsObject;
-    }
 
     /**
      * Converts a supported class JSON to a DataTable instance.
@@ -395,12 +339,60 @@ class DataTable implements DataEventEmitter<DataTable.EventObject>, DataJSON.Cla
     }
 
     /**
-     * Converts the datatable instance to a record of columns
+     * Converts the DataTable instance to a record of columns
+     *
      * @return {DataTable.ColumnCollection}
-     * A record of columns
+     * A record of columns, where the key is the name of the column,
+     * and the values are the content of the column.
      */
     public toColumns(): DataTable.ColumnCollection {
-        return DataTable.toColumns(this);
+        const columnsObject: DataTable.ColumnCollection = {
+                id: []
+            },
+            dataTable = this;
+
+        for (let rowIndex = 0, rowCount = dataTable.getRowCount(); rowIndex < rowCount; rowIndex++) {
+            const row = dataTable.rows[rowIndex],
+                cellNames = row.getCellNames(),
+                cellCount = cellNames.length;
+
+            columnsObject.id.push(row.id); // Push the ID column
+
+            for (let j = 0; j < cellCount; j++) {
+                const cellName = cellNames[j],
+                    cell = row.getCell(cellName);
+
+                if (!columnsObject[cellName]) {
+                    columnsObject[cellName] = [];
+                    // If row number is greater than 0
+                    // add the previous rows as undefined
+                    if (rowIndex > 0) {
+                        for (let rowNumber = 0; rowNumber < rowIndex; rowNumber++) {
+                            columnsObject[cellName][rowNumber] = void 0;
+                        }
+                    }
+                }
+                columnsObject[cellName][rowIndex] = cell;
+            }
+
+            // If the object has columns that were not in the row
+            // add them as undefined
+            const columnsInObject = Object.keys(columnsObject);
+
+            for (
+                let columnIndex = 0;
+                columnIndex < columnsInObject.length;
+                columnIndex++
+            ) {
+                const columnName = columnsInObject[columnIndex];
+
+                while (columnsObject[columnName].length - 1 < rowIndex) {
+                    columnsObject[columnName].push(void 0);
+                }
+            }
+        }
+
+        return columnsObject;
     }
 
     /**
