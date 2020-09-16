@@ -78,7 +78,7 @@ var HTMLTableStore = /** @class */ (function (_super) {
      */
     HTMLTableStore.fromJSON = function (json) {
         var options = json.options, parser = HTMLTableParser.fromJSON(json.parser), table = DataTable.fromJSON(json.table), store = new HTMLTableStore(table, options, parser);
-        store.describe(DataStore.getMetadataFromJSON(json.metadata));
+        store.metadata = merge(json.metadata);
         return store;
     };
     /**
@@ -146,10 +146,10 @@ var HTMLTableStore = /** @class */ (function (_super) {
     HTMLTableStore.prototype.toJSON = function () {
         var store = this, json = {
             $class: 'HTMLTableStore',
-            metadata: store.getMetadataJSON(),
+            metadata: merge(store.metadata),
+            options: merge(this.options),
             parser: store.parser.toJSON(),
             table: store.table.toJSON(),
-            options: merge(this.options),
             tableElementID: store.tableID || ''
         };
         return json;

@@ -74,7 +74,7 @@ class CSVStore extends DataStore<CSVStore.EventObjects> implements DataJSON.Clas
             table = DataTable.fromJSON(json.table),
             store = new CSVStore(table, options, parser);
 
-        store.describe(DataStore.getMetadataFromJSON(json.metadata));
+        store.metadata = merge(json.metadata);
 
         return store;
     }
@@ -313,7 +313,7 @@ class CSVStore extends DataStore<CSVStore.EventObjects> implements DataJSON.Clas
             let columnDataType;
 
             if (columnMeta) {
-                columnDataType = columnMeta.metadata?.dataType;
+                columnDataType = columnMeta?.dataType;
             }
 
             for (let rowIndex = 0; rowIndex < columnLength; rowIndex++) {
@@ -379,7 +379,7 @@ class CSVStore extends DataStore<CSVStore.EventObjects> implements DataJSON.Clas
     public toJSON(): CSVStore.ClassJSON {
         const json: CSVStore.ClassJSON = {
             $class: 'CSVStore',
-            metadata: this.getMetadataJSON(),
+            metadata: merge(this.metadata),
             options: merge(this.options),
             parser: this.parser.toJSON(),
             table: this.table.toJSON()
@@ -413,11 +413,9 @@ namespace CSVStore {
     /**
      * The class JSON when importing/exporting CSVDataStore
      */
-    export interface ClassJSON extends DataJSON.ClassJSON {
-        metadata: DataStore.MetadataJSON;
+    export interface ClassJSON extends DataStore.ClassJSON {
         options: Options;
         parser: CSVParser.ClassJSON;
-        table: DataTable.ClassJSON;
     }
 
     /**

@@ -54,7 +54,7 @@ var GoogleSheetsStore = /** @class */ (function (_super) {
      * */
     GoogleSheetsStore.fromJSON = function (json) {
         var options = json.options, table = DataTable.fromJSON(json.table), store = new GoogleSheetsStore(table, options);
-        store.describe(DataStore.getMetadataFromJSON(json.metadata));
+        store.metadata = merge(json.metadata);
         return store;
     };
     /* *
@@ -205,13 +205,12 @@ var GoogleSheetsStore = /** @class */ (function (_super) {
         }
     };
     GoogleSheetsStore.prototype.toJSON = function () {
-        var json = {
+        return {
             $class: 'GoogleSheetsStore',
+            metadata: merge(this.metadata),
             options: merge(this.options),
-            table: this.table.toJSON(),
-            metadata: this.getMetadataJSON()
+            table: this.table.toJSON()
         };
-        return json;
     };
     /* *
      *

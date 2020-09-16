@@ -28,14 +28,19 @@ var DataStore = /** @class */ (function () {
     *
     * */
     /**
-     * Constructor for the DataStore class
+     * Constructor for the DataStore class.
+     *
      * @param {DataTable} table
-     * Optional DataTable to create the DataStore from
+     * Optional DataTable to use in the DataStore.
+     *
+     * @param {DataStore.Metadata} metadata
+     * Optional metadata to use in the DataStore.
      */
-    function DataStore(table) {
+    function DataStore(table, metadata) {
         if (table === void 0) { table = new DataTable(); }
+        if (metadata === void 0) { metadata = { columns: {} }; }
         this.table = table;
-        this.metadata = [];
+        this.metadata = metadata;
     }
     /* *
      *
@@ -109,86 +114,43 @@ var DataStore = /** @class */ (function () {
         return (dataStore.toString().match(DataStore.nameRegExp) ||
             ['', ''])[1];
     };
-    /**
-     * Function for converting MetadataJSON to metadata array used within the
-     * datastore
-     * @param {DataStore.MetadataJSON} metadataJSON JSON containing metadata
-     * @return {Array<DataStore.MetaColumn>}
-     * Returns an array of MetaColumn objects
-     */
-    DataStore.getMetadataFromJSON = function (metadataJSON) {
-        var metadata = [];
-        var elem;
-        for (var i = 0, iEnd = metadataJSON.length; i < iEnd; i++) {
-            elem = metadataJSON[i];
-            if (elem instanceof Array && typeof elem[0] === 'string' &&
-                typeof elem[1] === 'object' && !Array.isArray(elem[1])) {
-                metadata.push({
-                    name: elem[0],
-                    metadata: elem[1] || {}
-                });
-            }
-        }
-        return metadata;
-    };
     /* *
      *
      *  Functions
      *
      * */
     /**
-     * Method for adding metadata for a single column
+     * Method for adding metadata for a single column.
+     *
      * @param {string} name
-     * The name of the column to be described
-     * @param {DataStore.Metadata} metadata
-     * The metadata to apply to the column
+     * The name of the column to be described.
+     *
+     * @param {DataStore.MetaColumn} column
+     * The metadata to apply to the column.
      */
-    DataStore.prototype.describeColumn = function (name, metadata) {
-        this.metadata.push({
-            name: name,
-            metadata: metadata
-        });
+    DataStore.prototype.describeColumn = function (name, column) {
+        this.metadata.columns[name] = column;
     };
     /**
-     * Method for applying metadata to the whole datastore
-     * @param {Array<DataStore.MetaColumn>} metadata
-     * An array of MetaColumn objects
+     * Method for applying columns meta information to the whole datastore.
+     *
+     * @param {Record<string, DataStore.MetaColumn>} columns
+     * Pairs of column names and MetaColumn objects.
      */
-    DataStore.prototype.describe = function (metadata) {
-        this.metadata = metadata;
+    DataStore.prototype.describeColumns = function (columns) {
+        this.metadata.columns = merge(columns);
     };
     /**
      * Method for retriving metadata from a single column
+     *
      * @param {string} name
      * The identifier for the column that should be described
-     * @return {DataStore.MetaColumn | void}
-     * Returns a MetaColumn object if found
+     *
+     * @return {DataStore.MetaColumn | undefined}
+     * Returns a MetaColumn object if found.
      */
     DataStore.prototype.whatIs = function (name) {
-        var metadata = this.metadata;
-        var i;
-        for (i = 0; i < metadata.length; i++) {
-            if (metadata[i].name === name) {
-                return metadata[i];
-            }
-        }
-    };
-    /**
-     * Internal method for converting metadata to MetadataJSON
-     * @return {DataStore.MetadataJSON}
-     * Metadata converted to the MetadataJSON scheme
-     */
-    DataStore.prototype.getMetadataJSON = function () {
-        var json = [];
-        var elem;
-        for (var i = 0, iEnd = this.metadata.length; i < iEnd; i++) {
-            elem = this.metadata[i];
-            json.push([
-                elem.name,
-                elem.metadata
-            ]);
-        }
-        return json;
+        return this.metadata.columns[name];
     };
     /**
      * The default load method, which fires the `afterLoad` event
@@ -220,6 +182,19 @@ var DataStore = /** @class */ (function () {
      */
     DataStore.prototype.on = function (type, callback) {
         return addEvent(this, type, callback);
+    };
+    /**
+     * Converts the class instance to a class JSON.
+     *
+     * @return {DataStore.ClassJSON}
+     * Class JSON of this DataStore instance.
+     */
+    DataStore.prototype.toJSON = function () {
+        return {
+            $class: DataStore.getName(this.constructor),
+            metadata: merge(this.metadata),
+            table: this.table.toJSON()
+        };
     };
     /* *
      *

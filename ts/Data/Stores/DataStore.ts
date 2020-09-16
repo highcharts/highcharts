@@ -147,33 +147,6 @@ implements DataEventEmitter<TEventObject>, DataJSON.Class {
         )[1];
     }
 
-    /**
-     * Function for converting MetadataJSON to metadata array used within the
-     * datastore
-     * @param {DataStore.MetadataJSON} metadataJSON JSON containing metadata
-     * @return {Array<DataStore.MetaColumn>}
-     * Returns an array of MetaColumn objects
-     */
-    public static getMetadataFromJSON(metadataJSON: DataStore.MetadataJSON):
-    Array<DataStore.MetaColumn> {
-        const metadata = [];
-        let elem;
-
-        for (let i = 0, iEnd = metadataJSON.length; i < iEnd; i++) {
-            elem = metadataJSON[i];
-
-            if (elem instanceof Array && typeof elem[0] === 'string' &&
-                typeof elem[1] === 'object' && !Array.isArray(elem[1])) {
-                metadata.push({
-                    name: elem[0],
-                    metadata: elem[1] || {}
-                });
-            }
-        }
-
-        return metadata;
-    }
-
     /* *
     *
     *  Constructors
@@ -181,13 +154,20 @@ implements DataEventEmitter<TEventObject>, DataJSON.Class {
     * */
 
     /**
-     * Constructor for the DataStore class
+     * Constructor for the DataStore class.
+     *
      * @param {DataTable} table
-     * Optional DataTable to create the DataStore from
+     * Optional DataTable to use in the DataStore.
+     *
+     * @param {DataStore.Metadata} metadata
+     * Optional metadata to use in the DataStore.
      */
-    public constructor(table: DataTable = new DataTable()) {
+    public constructor(
+        table: DataTable = new DataTable(),
+        metadata: DataStore.Metadata = { columns: {} }
+    ) {
         this.table = table;
-        this.metadata = [];
+        this.metadata = metadata;
     }
 
     /* *
@@ -197,19 +177,18 @@ implements DataEventEmitter<TEventObject>, DataJSON.Class {
     * */
 
     /**
-     * The DataParser responsible for handling converting the
-     * provided data to a DataStore
+     * The DataParser responsible for handling converting the provided data to
+     * a DataStore.
      */
     public abstract readonly parser: DataParser<DataParser.EventObject>;
 
     /**
-     * An array of MetaColumns that describes the content of each column in
-     * the DataStore
+     * Metadata to describe the store and the content of columns.
      */
-    public metadata: Array<DataStore.MetaColumn>;
+    public metadata: DataStore.Metadata;
 
     /**
-     * The DataTable that the DataStore manages
+     * DataTable managed by this DataStore instance.
      */
     public table: DataTable;
 
@@ -220,77 +199,36 @@ implements DataEventEmitter<TEventObject>, DataJSON.Class {
      * */
 
     /**
-     * Method for adding metadata for a single column
+     * Method for adding metadata for a single column.
+     *
      * @param {string} name
-     * The name of the column to be described
-     * @param {DataStore.Metadata} metadata
-     * The metadata to apply to the column
+     * The name of the column to be described.
+     *
+     * @param {DataStore.MetaColumn} column
+     * The metadata to apply to the column.
      */
-    public describeColumn(
-        name: string,
-        metadata: DataStore.MetadataType
-    ): void {
-
-        this.metadata.push({
-            name: name,
-            metadata: metadata
-        });
+    public describeColumn(name: string, column: DataStore.MetaColumn): void {
+        this.metadata.columns[name] = merge(
+            this.metadata.columns[name] || {},
+            column
+        );
     }
 
     /**
-     * Method for applying metadata to the whole datastore
-     * @param {Array<DataStore.MetaColumn>} metadata
-     * An array of MetaColumn objects
+     * Method for applying columns meta information to the whole datastore.
+     *
+     * @param {Record<string, DataStore.MetaColumn>} columns
+     * Pairs of column names and MetaColumn objects.
      */
-    public describe(metadata: Array<DataStore.MetaColumn>): void {
-        this.metadata = metadata;
-    }
+    public describeColumns(columns: Record<string, DataStore.MetaColumn>): void {
+        const store = this,
+            columnNames = Object.keys(columns);
 
-    /**
-     * Method for retriving metadata from a single column
-     * @param {string} name
-     * The identifier for the column that should be described
-     * @return {DataStore.MetaColumn | void}
-     * Returns a MetaColumn object if found
-     */
-    public whatIs(name: string): (DataStore.MetaColumn | void) {
-        const metadata = this.metadata;
-        let i;
+        let columnName: (string|undefined);
 
-        for (i = 0; i < metadata.length; i++) {
-            if (metadata[i].name === name) {
-                return metadata[i];
-            }
+        while (typeof (columnName = columnNames.pop()) === 'string') {
+            store.describeColumn(columnName, columns[columnName]);
         }
-    }
-
-    /**
-     * Internal method for converting metadata to MetadataJSON
-     * @return {DataStore.MetadataJSON}
-     * Metadata converted to the MetadataJSON scheme
-     */
-    protected getMetadataJSON(): DataStore.MetadataJSON {
-        const json = [];
-        let elem;
-
-        for (let i = 0, iEnd = this.metadata.length; i < iEnd; i++) {
-            elem = this.metadata[i];
-
-            json.push([
-                elem.name,
-                elem.metadata
-            ]);
-        }
-
-        return json;
-    }
-
-    /**
-     * The default load method, which fires the `afterLoad` event
-     * @emits DataStore#afterLoad
-     */
-    public load(): void {
-        fireEvent(this, 'afterLoad', { table: this.table });
     }
 
     /**
@@ -301,6 +239,51 @@ implements DataEventEmitter<TEventObject>, DataJSON.Class {
      */
     public emit(e: TEventObject): void {
         fireEvent(this, e.type, e);
+    }
+
+    /**
+     * Returns the order of columns.
+     *
+     * @return {Array<string>}
+     * Order of columns.
+     */
+    public getColumnOrder(): Array<string> {
+        const store = this,
+            metadata = store.metadata,
+            columns = metadata.columns,
+            columnNames = Object.keys(columns),
+            columnOrder: Array<string> = [];
+
+        for (let i = 0, iEnd = columnNames.length; i < iEnd; ++i) {
+            columnOrder[columns[i].index || i] = columnNames[i];
+        }
+
+        return columnOrder;
+    }
+
+    /**
+     * Sets the index and order of columns.
+     *
+     * @param {Array<string>} columnNames
+     * Order of columns.
+     */
+    public setColumnOrder(columnNames: Array<string>): void {
+        const store = this,
+            metadata = store.metadata;
+
+        metadata.columnOrder = columnNames.slice();
+
+        for (let i = 0, iEnd = columnNames.length; i < iEnd; ++i) {
+            store.describeColumn(columnNames[i], { index: i });
+        }
+    }
+
+    /**
+     * The default load method, which fires the `afterLoad` event
+     * @emits DataStore#afterLoad
+     */
+    public load(): void {
+        fireEvent(this, 'afterLoad', { table: this.table });
     }
 
     /**
@@ -323,9 +306,31 @@ implements DataEventEmitter<TEventObject>, DataJSON.Class {
     }
 
     /**
-     * Converts the class instance to ClassJSON
+     * Converts the class instance to a class JSON.
+     *
+     * @return {DataStore.ClassJSON}
+     * Class JSON of this DataStore instance.
      */
-    public abstract toJSON(): DataJSON.ClassJSON;
+    public toJSON(): DataStore.ClassJSON {
+        return {
+            $class: DataStore.getName(this.constructor),
+            metadata: merge(this.metadata),
+            table: this.table.toJSON()
+        };
+    }
+
+    /**
+     * Method for retriving metadata from a single column.
+     *
+     * @param {string} name
+     * The identifier for the column that should be described
+     *
+     * @return {DataStore.MetaColumn | undefined}
+     * Returns a MetaColumn object if found.
+     */
+    public whatIs(name: string): (DataStore.MetaColumn | undefined) {
+        return this.metadata.columns[name];
+    }
 
 }
 
@@ -338,9 +343,12 @@ implements DataEventEmitter<TEventObject>, DataJSON.Class {
 namespace DataStore {
 
     /**
-     * The JSON schema for datastore metadata
+     * Interface of the class JSON to convert to class instances.
      */
-    export type MetadataJSON = Array<DataJSON.Array>;
+    export interface ClassJSON extends DataJSON.ClassJSON {
+        table: DataTable.ClassJSON;
+        metadata: DataStore.Metadata;
+    }
 
     /**
      * The default event object for a datastore
@@ -354,18 +362,18 @@ namespace DataStore {
      * and a metadata object
      */
     export interface MetaColumn extends DataJSON.Object {
-        name?: string;
-        metadata?: Partial<MetadataType>;
+        dataType?: string;
+        // validator: Function;
+        defaultValue?: DataJSON.Primitives;
+        index?: number;
+        title?: string;
     }
 
     /**
-     * A metadata object
+     * Metadata
      */
-    export type MetadataType = {
-        title: string;
-        dataType: DataJSON.Types;
-        // validator: Function;
-        defaultValue: string;
+    export interface Metadata extends DataJSON.Object {
+        columns: Record<string, MetaColumn>;
     }
 
 }

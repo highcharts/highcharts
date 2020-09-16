@@ -58,7 +58,7 @@ class HTMLTableStore extends DataStore<HTMLTableStore.EventObjects> implements D
             table = DataTable.fromJSON(json.table),
             store = new HTMLTableStore(table, options, parser);
 
-        store.describe(DataStore.getMetadataFromJSON(json.metadata));
+        store.metadata = merge(json.metadata);
 
         return store;
     }
@@ -201,10 +201,10 @@ class HTMLTableStore extends DataStore<HTMLTableStore.EventObjects> implements D
         const store = this,
             json: HTMLTableStore.ClassJSON = {
                 $class: 'HTMLTableStore',
-                metadata: store.getMetadataJSON(),
+                metadata: merge(store.metadata),
+                options: merge(this.options),
                 parser: store.parser.toJSON(),
                 table: store.table.toJSON(),
-                options: merge(this.options),
                 tableElementID: store.tableID || ''
             };
 
@@ -237,11 +237,9 @@ namespace HTMLTableStore {
     /**
      * The ClassJSON used to import/export HTMLTableDataStore
      */
-    export interface ClassJSON extends DataJSON.ClassJSON {
-        metadata: DataStore.MetadataJSON;
-        parser: HTMLTableParser.ClassJSON;
-        table: DataTable.ClassJSON;
+    export interface ClassJSON extends DataStore.ClassJSON {
         options: HTMLTableStore.OptionsType;
+        parser: HTMLTableParser.ClassJSON;
         tableElementID: string;
     }
 

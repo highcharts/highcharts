@@ -90,7 +90,7 @@ var CSVStore = /** @class */ (function (_super) {
      */
     CSVStore.fromJSON = function (json) {
         var options = json.options, parser = CSVParser.fromJSON(json.parser), table = DataTable.fromJSON(json.table), store = new CSVStore(table, options, parser);
-        store.describe(DataStore.getMetadataFromJSON(json.metadata));
+        store.metadata = merge(json.metadata);
         return store;
     };
     /**
@@ -209,7 +209,6 @@ var CSVStore = /** @class */ (function (_super) {
      * A CSV string from the DataTable.
      */
     CSVStore.prototype.getCSVForExport = function (exportOptions) {
-        var _a;
         var columnsRecord = this.table.toColumns(), csvOptions = exportOptions, columnNames = (csvOptions.exportIDColumn ?
             Object.keys(columnsRecord) :
             Object.keys(columnsRecord).slice(1)), decimalPoint = pick(csvOptions.decimalPoint, csvOptions.itemDelimiter !== ',' && csvOptions.useLocalDecimalPoint ?
@@ -230,7 +229,7 @@ var CSVStore = /** @class */ (function (_super) {
             var columnMeta = this.whatIs(columnName);
             var columnDataType = void 0;
             if (columnMeta) {
-                columnDataType = (_a = columnMeta.metadata) === null || _a === void 0 ? void 0 : _a.dataType;
+                columnDataType = columnMeta === null || columnMeta === void 0 ? void 0 : columnMeta.dataType;
             }
             for (var rowIndex = 0; rowIndex < columnLength; rowIndex++) {
                 var cellValue = column[rowIndex];
@@ -285,7 +284,7 @@ var CSVStore = /** @class */ (function (_super) {
     CSVStore.prototype.toJSON = function () {
         var json = {
             $class: 'CSVStore',
-            metadata: this.getMetadataJSON(),
+            metadata: merge(this.metadata),
             options: merge(this.options),
             parser: this.parser.toJSON(),
             table: this.table.toJSON()

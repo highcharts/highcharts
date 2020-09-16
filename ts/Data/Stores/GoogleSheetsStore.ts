@@ -61,7 +61,7 @@ class GoogleSheetsStore extends DataStore<GoogleDataStore.EventObject> implement
             table = DataTable.fromJSON(json.table),
             store = new GoogleSheetsStore(table, options);
 
-        store.describe(DataStore.getMetadataFromJSON(json.metadata));
+        store.metadata = merge(json.metadata);
 
         return store;
     }
@@ -305,14 +305,12 @@ class GoogleSheetsStore extends DataStore<GoogleDataStore.EventObject> implement
     }
 
     public toJSON(): GoogleDataStore.ClassJSON {
-        const json: GoogleDataStore.ClassJSON = {
+        return {
             $class: 'GoogleSheetsStore',
+            metadata: merge(this.metadata),
             options: merge(this.options),
-            table: this.table.toJSON(),
-            metadata: this.getMetadataJSON()
+            table: this.table.toJSON()
         };
-
-        return json;
     }
 
     /* *
@@ -326,6 +324,10 @@ class GoogleSheetsStore extends DataStore<GoogleDataStore.EventObject> implement
 }
 
 namespace GoogleDataStore {
+
+    export interface ClassJSON extends DataStore.ClassJSON {
+        options: Options;
+    }
 
     export type EventObject = (ErrorEventObject|LoadEventObject);
 
@@ -349,12 +351,6 @@ namespace GoogleDataStore {
         endColumn: number;
         enablePolling: boolean;
         dataRefreshRate: number;
-    }
-
-    export interface ClassJSON extends DataJSON.ClassJSON {
-        table: DataTable.ClassJSON;
-        options: Options;
-        metadata: DataStore.MetadataJSON;
     }
 
 }

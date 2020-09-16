@@ -9,24 +9,20 @@ const { test, only } = QUnit;
 test('DataStore metadata', function (assert) {
     const datastore = new DataStore();
 
-    datastore.describe([
-        {
-            name: 'column1',
-            metadata: {
-                dataType: String,
-                title: 'This is a title',
-                defaultValue: 'banana'
-            }
+    datastore.describeColumns({
+        'column1': {
+            title: 'This is a title',
+            dataType: 'string',
+            defaultValue: 'banana'
         }
-    ]);
+    });
 
     const description = datastore.whatIs('column1');
-    const metaJSON = datastore.getMetadataJSON();
+    const metaJSON = datastore.toJSON().metadata;
 
     assert.ok(description, 'Managed to get `column1`');
-    datastore.describe([]); // Set metadata to empty array
 
-    datastore.describe(DataStore.getMetadataFromJSON(metaJSON))
+    datastore.describeColumns(metaJSON.columns)
 
     assert.deepEqual(
         datastore.whatIs('column1',),
@@ -36,7 +32,7 @@ test('DataStore metadata', function (assert) {
 
     datastore.describeColumn(
         'columnX',
-        { title: 'Column X', dataType: Number, defaultValue: -5 }
+        { title: 'Column X', dataType: 'number', defaultValue: -5 }
     );
     assert.ok(datastore.whatIs('columnX'), 'ColumnX was added');
     assert.ok(datastore.whatIs('column1'), 'Column1 is still there');

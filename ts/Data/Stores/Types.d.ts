@@ -12,14 +12,6 @@
 
 /* *
  *
- *  Imports
- *
- * */
-
-import type DataStore from './DataStore';
-
-/* *
- *
  *  Declarations
  *
  * */
