@@ -108,7 +108,7 @@ class CSVParser extends DataParser<DataParser.EventObject> {
         eventDetail?: DataEventEmitter.EventDetail
     ): void {
         const parser = this,
-            parserOptions = merge(this.options, options),
+            parserOptions = merge(true, this.options, options),
             {
                 beforeParse,
                 lineDelimiter,
@@ -157,6 +157,14 @@ class CSVParser extends DataParser<DataParser.EventObject> {
                 parser.guessedItemDelimiter = parser.guessDelimiter(lines);
             }
 
+            // If the first row contain names, add them to the
+            // headers array and skip the row.
+            if (firstRowAsNames) {
+                parser.headers = lines[0]
+                    .split(itemDelimiter || parser.guessedItemDelimiter || ',');
+                startRow++;
+            }
+
             var offset = 0;
 
             for (rowIt = startRow; rowIt <= endRow; rowIt++) {
@@ -165,17 +173,6 @@ class CSVParser extends DataParser<DataParser.EventObject> {
                 } else {
                     parser.parseCSVRow(lines[rowIt], rowIt - startRow - offset);
                 }
-            }
-        }
-
-        if (firstRowAsNames && parser.columns) {
-            colsCount = parser.columns.length;
-
-            for (i = 0; i < colsCount; i++) {
-                if (!parser.headers) {
-                    parser.headers = [];
-                }
-                parser.headers[i] = '' + parser.columns[i][0];
             }
         }
 
@@ -202,7 +199,7 @@ class CSVParser extends DataParser<DataParser.EventObject> {
             c = '',
             cl = '',
             cn = '',
-            token = '',
+            token: (number|string) = '',
             actualColumn = 0,
             column = 0;
 

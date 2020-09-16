@@ -36,7 +36,8 @@ test('CSVStore from string', function (assert) {
     datastore.load();
 
     assert.strictEqual(
-        datastore.table.getRowCount(), csv.split('\n').length,
+        // names are not loaded as data unless firstRowAsNames = false
+        datastore.table.getRowCount(), csv.split('\n').length - 1,
         'Datastore has correct amount of rows'
     );
     assert.strictEqual(
@@ -132,7 +133,7 @@ test('CSVStore error', function(assert){
     const registeredEvents = [];
 
     const datastore = new CSVStore(undefined, {
-        csvURL: 'https://data.highcharts.com/sine-data.csv'
+        csvURL: ''
     });
 
     const afterError = assert.async();
@@ -147,4 +148,4 @@ test('CSVStore error', function(assert){
     })
 
     datastore.load();
-})
+});

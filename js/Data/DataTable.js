@@ -83,13 +83,18 @@ var DataTable = /** @class */ (function () {
         if (headers === void 0) { headers = []; }
         var table = new DataTable();
         var columnsLength = columns.length;
+        // Assign an unique id for every column
+        // without a provided name
+        while (headers.length < columnsLength) {
+            headers.push(uniqueKey());
+        }
         if (columnsLength) {
             var rowsLength = columns[0].length;
             var i = 0;
             while (i < rowsLength) {
                 var row = new DataTableRow();
                 for (var j = 0; j < columnsLength; ++j) {
-                    row.insertCell((headers.length ? headers[j] : uniqueKey()), columns[j][i]);
+                    row.insertCell(headers[j], columns[j][i]);
                 }
                 table.insertRow(row);
                 ++i;

@@ -97,7 +97,7 @@ var CSVParser = /** @class */ (function (_super) {
      * @emits CSVDataParser#afterParse
      */
     CSVParser.prototype.parse = function (options, eventDetail) {
-        var parser = this, parserOptions = merge(this.options, options), beforeParse = parserOptions.beforeParse, lineDelimiter = parserOptions.lineDelimiter, firstRowAsNames = parserOptions.firstRowAsNames, itemDelimiter = parserOptions.itemDelimiter;
+        var parser = this, parserOptions = merge(true, this.options, options), beforeParse = parserOptions.beforeParse, lineDelimiter = parserOptions.lineDelimiter, firstRowAsNames = parserOptions.firstRowAsNames, itemDelimiter = parserOptions.itemDelimiter;
         var lines, rowIt = 0, csv = parserOptions.csv, startRow = parserOptions.startRow, endRow = parserOptions.endRow, i, colsCount;
         this.columns = [];
         this.emit({
@@ -123,6 +123,13 @@ var CSVParser = /** @class */ (function (_super) {
             if (!itemDelimiter) {
                 parser.guessedItemDelimiter = parser.guessDelimiter(lines);
             }
+            // If the first row contain names, add them to the
+            // headers array and skip the row.
+            if (firstRowAsNames) {
+                parser.headers = lines[0]
+                    .split(itemDelimiter || parser.guessedItemDelimiter || ',');
+                startRow++;
+            }
             var offset = 0;
             for (rowIt = startRow; rowIt <= endRow; rowIt++) {
                 if (lines[rowIt][0] === '#') {
@@ -131,15 +138,6 @@ var CSVParser = /** @class */ (function (_super) {
                 else {
                     parser.parseCSVRow(lines[rowIt], rowIt - startRow - offset);
                 }
-            }
-        }
-        if (firstRowAsNames && parser.columns) {
-            colsCount = parser.columns.length;
-            for (i = 0; i < colsCount; i++) {
-                if (!parser.headers) {
-                    parser.headers = [];
-                }
-                parser.headers[i] = '' + parser.columns[i][0];
             }
         }
         parser.emit({

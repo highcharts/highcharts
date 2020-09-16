@@ -40,7 +40,7 @@ var ajax = Ajax.ajax;
 import DataStore from './DataStore.js';
 import DataTable from '../DataTable.js';
 import U from '../../Core/Utilities.js';
-var merge = U.merge;
+var merge = U.merge, pick = U.pick, objectEach = U.objectEach;
 /* eslint-disable no-invalid-this, require-jsdoc, valid-jsdoc */
 /**
  * Class that handles creating a datastore from CSV
@@ -69,6 +69,7 @@ var CSVStore = /** @class */ (function (_super) {
         if (options === void 0) { options = {}; }
         var _this = _super.call(this, table) || this;
         var csv = options.csv, csvURL = options.csvURL, enablePolling = options.enablePolling, dataRefreshRate = options.dataRefreshRate, parserOptions = __rest(options, ["csv", "csvURL", "enablePolling", "dataRefreshRate"]);
+        _this.parserOptions = parserOptions;
         _this.options = merge(CSVStore.defaultOptions, { csv: csv, csvURL: csvURL, enablePolling: enablePolling, dataRefreshRate: dataRefreshRate });
         _this.parser = parser || new CSVParser(parserOptions);
         return _this;
@@ -187,8 +188,93 @@ var CSVStore = /** @class */ (function (_super) {
         else if (csvURL) {
             store.fetchCSV(true, eventDetail);
         }
+        else {
+            store.emit({
+                type: 'loadError',
+                table: store.table,
+                error: 'Unable to load: no CSV string or URL was provided',
+                detail: eventDetail
+            });
+        }
     };
-    CSVStore.prototype.save = function () {
+    /**
+     * Export a table to a CSV string.
+     * @param {DataTable} table
+     * The table to export.
+     *
+     * @param {CSVStore.CSVExportOptions} exportOptions
+     * The options used for the export.
+     *
+     * @return {string}
+     * A CSV string from the DataTable.
+     */
+    CSVStore.prototype.getCSVForExport = function (exportOptions) {
+        var _a;
+        var columnsRecord = this.table.toColumns(), csvOptions = exportOptions, columnNames = (csvOptions.exportIDColumn ?
+            Object.keys(columnsRecord) :
+            Object.keys(columnsRecord).slice(1)), decimalPoint = pick(csvOptions.decimalPoint, csvOptions.itemDelimiter !== ',' && csvOptions.useLocalDecimalPoint ?
+            (1.1).toLocaleString()[1] :
+            '.'), 
+        // use ';' for direct to Excel
+        itemDelimiter = pick(csvOptions.itemDelimiter, decimalPoint === ',' ? ';' : ','), 
+        // '\n' isn't working with the js csv data extraction
+        lineDelimiter = csvOptions.lineDelimiter, exportNames = (this.parserOptions.firstRowAsNames !== false);
+        var csvRows = [], columnsCount = columnNames.length;
+        var rowArray = [];
+        // Add the names as the first row if they should be exported
+        if (exportNames) {
+            csvRows.push(columnNames.join(itemDelimiter));
+        }
+        for (var columnIndex = 0; columnIndex < columnsCount; columnIndex++) {
+            var columnName = columnNames[columnIndex], column = columnsRecord[columnName], columnLength = column.length;
+            var columnMeta = this.whatIs(columnName);
+            var columnDataType = void 0;
+            if (columnMeta) {
+                columnDataType = (_a = columnMeta.metadata) === null || _a === void 0 ? void 0 : _a.dataType;
+            }
+            for (var rowIndex = 0; rowIndex < columnLength; rowIndex++) {
+                var cellValue = column[rowIndex];
+                if (!rowArray[rowIndex]) {
+                    rowArray[rowIndex] = [];
+                }
+                // Handle datatype
+                if (columnDataType === 'string') {
+                    cellValue = "\"" + cellValue + "\"";
+                }
+                if (columnDataType === 'number') {
+                    cellValue = String(cellValue).replace('.', decimalPoint);
+                }
+                rowArray[rowIndex][columnIndex] = cellValue;
+                // On the final column, push the row to the CSV
+                if (columnIndex === columnsCount - 1) {
+                    csvRows.push((rowArray[rowIndex]).join(itemDelimiter));
+                }
+            }
+        }
+        return csvRows.join(lineDelimiter);
+    };
+    /**
+     * Exports the datastore as a CSV string, using the options
+     * provided on import unless other options are provided.
+     *
+     * @param {CSVStore.CSVExportOptions} [csvExportOptions]
+     * Options to use instead of those used on import.
+     *
+     * @return {string}
+     * CSV from the store's current DataTable.
+     *
+     */
+    CSVStore.prototype.save = function (csvExportOptions) {
+        var exportOptions = CSVStore.defaultExportOptions;
+        // Merge in the provided parser options
+        objectEach(this.parserOptions, function (value, key) {
+            if (key in exportOptions) {
+                exportOptions[key] = value;
+            }
+        });
+        // Merge in provided options
+        merge(true, exportOptions, csvExportOptions);
+        return this.getCSVForExport(exportOptions);
     };
     /**
      * Converts the store to a class JSON.
@@ -216,6 +302,12 @@ var CSVStore = /** @class */ (function (_super) {
         csvURL: '',
         enablePolling: false,
         dataRefreshRate: 1
+    };
+    CSVStore.defaultExportOptions = {
+        decimalPoint: null,
+        itemDelimiter: null,
+        lineDelimiter: '\n',
+        exportIDColumn: false
     };
     return CSVStore;
 }(DataStore));

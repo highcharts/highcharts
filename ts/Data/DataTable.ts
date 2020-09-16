@@ -63,11 +63,18 @@ class DataTable implements DataEventEmitter<DataTable.EventObject>, DataJSON.Cla
      * DataTable instance from the arrays.
      */
     public static fromColumns(
-        columns: DataValueType[][] = [],
+        columns: DataTableRow.CellType[][] = [],
         headers: string [] = []
     ): DataTable {
         const table = new DataTable();
         const columnsLength = columns.length;
+
+        // Assign an unique id for every column
+        // without a provided name
+        while (headers.length < columnsLength) {
+            headers.push(uniqueKey());
+        }
+
         if (columnsLength) {
             const rowsLength = columns[0].length;
             let i = 0;
@@ -75,7 +82,7 @@ class DataTable implements DataEventEmitter<DataTable.EventObject>, DataJSON.Cla
             while (i < rowsLength) {
                 const row = new DataTableRow();
                 for (let j = 0; j < columnsLength; ++j) {
-                    row.insertCell((headers.length ? headers[j] : uniqueKey()), columns[j][i]);
+                    row.insertCell(headers[j], columns[j][i]);
                 }
                 table.insertRow(row);
                 ++i;

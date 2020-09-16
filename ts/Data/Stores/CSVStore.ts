@@ -20,8 +20,11 @@ const {
 import DataStore from './DataStore.js';
 import DataTable from '../DataTable.js';
 import U from '../../Core/Utilities.js';
+import DataTableRow from '../DataTableRow';
 const {
-    merge
+    merge,
+    pick,
+    objectEach
 } = U;
 
 /* eslint-disable no-invalid-this, require-jsdoc, valid-jsdoc */
@@ -41,6 +44,13 @@ class CSVStore extends DataStore<CSVStore.EventObjects> implements DataJSON.Clas
         csvURL: '',
         enablePolling: false,
         dataRefreshRate: 1
+    }
+
+    static readonly defaultExportOptions: CSVStore.CSVExportOptions = {
+        decimalPoint: null,
+        itemDelimiter: null,
+        lineDelimiter: '\n',
+        exportIDColumn: false
     }
 
     /* *
@@ -96,6 +106,7 @@ class CSVStore extends DataStore<CSVStore.EventObjects> implements DataJSON.Clas
 
         const { csv, csvURL, enablePolling, dataRefreshRate, ...parserOptions } = options;
 
+        this.parserOptions = parserOptions;
         this.options = merge(CSVStore.defaultOptions, { csv, csvURL, enablePolling, dataRefreshRate });
         this.parser = parser || new CSVParser(parserOptions);
     }
@@ -117,6 +128,11 @@ class CSVStore extends DataStore<CSVStore.EventObjects> implements DataJSON.Clas
      * The attached parser, which can be replaced in the constructor
      */
     public readonly parser: CSVParser;
+
+    /**
+     * The options that were passed to the parser.
+     */
+    private parserOptions: CSVParser.OptionsType;
 
     /**
      * The URL to fetch if the source is external
@@ -232,11 +248,126 @@ class CSVStore extends DataStore<CSVStore.EventObjects> implements DataJSON.Clas
             });
         } else if (csvURL) {
             store.fetchCSV(true, eventDetail);
+        } else {
+            store.emit(
+                {
+                    type: 'loadError',
+                    table: store.table,
+                    error: 'Unable to load: no CSV string or URL was provided',
+                    detail: eventDetail
+                }
+            );
         }
     }
 
-    public save(): void {
+    /**
+     * Export a table to a CSV string.
+     * @param {DataTable} table
+     * The table to export.
+     *
+     * @param {CSVStore.CSVExportOptions} exportOptions
+     * The options used for the export.
+     *
+     * @return {string}
+     * A CSV string from the DataTable.
+     */
+    public getCSVForExport(exportOptions: CSVStore.CSVExportOptions): string {
+        const columnsRecord = this.table.toColumns(),
+            csvOptions = exportOptions,
+            columnNames = (
+                csvOptions.exportIDColumn ?
+                    Object.keys(columnsRecord) :
+                    Object.keys(columnsRecord).slice(1)
+            ),
+            decimalPoint = pick(
+                csvOptions.decimalPoint,
+                csvOptions.itemDelimiter !== ',' && csvOptions.useLocalDecimalPoint ?
+                    (1.1).toLocaleString()[1] :
+                    '.'
+            ),
+            // use ';' for direct to Excel
+            itemDelimiter = pick(
+                csvOptions.itemDelimiter,
+                decimalPoint === ',' ? ';' : ','
+            ),
+            // '\n' isn't working with the js csv data extraction
+            lineDelimiter = csvOptions.lineDelimiter,
+            exportNames = (this.parserOptions.firstRowAsNames !== false);
 
+        const csvRows: Array<string> = [],
+            columnsCount = columnNames.length;
+
+        const rowArray: Array<Array<DataTableRow.CellType>> = [];
+
+        // Add the names as the first row if they should be exported
+        if (exportNames) {
+            csvRows.push(columnNames.join(itemDelimiter));
+        }
+
+        for (let columnIndex = 0; columnIndex < columnsCount; columnIndex++) {
+            const columnName = columnNames[columnIndex],
+                column = columnsRecord[columnName],
+                columnLength = column.length;
+
+            const columnMeta = this.whatIs(columnName);
+            let columnDataType;
+
+            if (columnMeta) {
+                columnDataType = columnMeta.metadata?.dataType;
+            }
+
+            for (let rowIndex = 0; rowIndex < columnLength; rowIndex++) {
+                let cellValue = column[rowIndex];
+
+                if (!rowArray[rowIndex]) {
+                    rowArray[rowIndex] = [];
+                }
+
+                // Handle datatype
+                if (columnDataType === 'string') {
+                    cellValue = `"${cellValue}"`;
+                }
+                if (columnDataType === 'number') {
+                    cellValue = String(cellValue).replace('.', decimalPoint);
+                }
+
+                rowArray[rowIndex][columnIndex] = cellValue;
+
+                // On the final column, push the row to the CSV
+                if (columnIndex === columnsCount - 1) {
+                    csvRows.push((rowArray[rowIndex]).join(itemDelimiter));
+                }
+            }
+        }
+
+        return csvRows.join(lineDelimiter);
+    }
+
+    /**
+     * Exports the datastore as a CSV string, using the options
+     * provided on import unless other options are provided.
+     *
+     * @param {CSVStore.CSVExportOptions} [csvExportOptions]
+     * Options to use instead of those used on import.
+     *
+     * @return {string}
+     * CSV from the store's current DataTable.
+     *
+     */
+    public save(csvExportOptions?: Partial<CSVStore.CSVExportOptions>): string {
+        const exportOptions = CSVStore.defaultExportOptions;
+
+        // Merge in the provided parser options
+        objectEach(this.parserOptions, function (value, key): void {
+            if (key in exportOptions) {
+                exportOptions[key] = value;
+            }
+        });
+
+        // Merge in provided options
+        merge(true, exportOptions, csvExportOptions);
+
+        return this.getCSVForExport(exportOptions);
     }
 
     /**
@@ -272,7 +403,7 @@ namespace CSVStore {
     /**
      * Event objects fired from CSVDataStore events
      */
-    export type EventObjects = (ErrorEventObject|LoadEventObject);
+    export type EventObjects = (ErrorEventObject | LoadEventObject);
 
     /**
      * Options for the CSVDataStore class constructor
@@ -301,15 +432,15 @@ namespace CSVStore {
      */
     export interface ErrorEventObject extends DataStore.EventObject {
         type: ('loadError');
-        error: (string|Error);
-        xhr: XMLHttpRequest;
+        error: (string | Error);
+        xhr?: XMLHttpRequest;
     }
 
     /**
      * The event object that is provided on load events within CSVDataStore
      */
     export interface LoadEventObject extends DataStore.EventObject {
-        type: ('load'|'afterLoad');
+        type: ('load' | 'afterLoad');
         csv?: string;
     }
 
@@ -321,6 +452,17 @@ namespace CSVStore {
         csvURL: string;
         enablePolling: boolean;
         dataRefreshRate: number;
+    }
+
+    /**
+     * The available options when exporting the table as CSV.
+     */
+    export interface CSVExportOptions extends DataJSON.Object {
+        decimalPoint: string | null;
+        itemDelimiter: string | null;
+        lineDelimiter: string;
+        useLocalDecimalPoint?: boolean;
+        exportIDColumn: boolean;
     }
 
 }
