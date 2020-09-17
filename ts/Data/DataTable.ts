@@ -41,6 +41,14 @@ class DataTable implements DataEventEmitter<DataTable.EventObject>, DataJSON.Cla
 
     /* *
      *
+     *  Static Properties
+     *
+     * */
+
+    public static readonly hcEvents: DataEventEmitter.EventEmitterType<DataTable, DataTable.EventObject>['hcEvents'];
+
+    /* *
+     *
      *  Static Functions
      *
      * */

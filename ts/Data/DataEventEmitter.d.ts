@@ -23,7 +23,7 @@ declare interface DataEventEmitter<TEventObject extends DataEventEmitter.EventOb
 
     /* *
      *
-     *  constructor
+     *  Constructor
      *
      * */
 
