@@ -21,6 +21,20 @@
  */
 declare interface DataEventEmitter<TEventObject extends DataEventEmitter.EventObject> {
 
+    /* *
+     *
+     *  constructor
+     *
+     * */
+
+    constructor: DataEventEmitter.EventEmitterType<this, TEventObject>;
+
+    /* *
+     *
+     *  Functions
+     *
+     * */
+
     /**
      * Emits an event on the class instance to all registered callbacks of this
      * event.
@@ -81,6 +95,28 @@ declare namespace DataEventEmitter {
      * Custom information for an event object.
      */
     export type EventDetail = Record<string, string>;
+
+    /**
+     * Describes structure of an event emitter type.
+     */
+    export interface EventEmitterType<TScope, TEventObject extends EventObject> {
+
+        /**
+         * Constructor function.
+         */
+        constructor: Function;
+
+        /**
+         * Registered events managed by Highcharts utility functions.
+         * @private
+         */
+        hcEvents?: Record<string, Array<EventCallback<TScope, TEventObject>>>;
+
+        /**
+         * Structure of the constructor instance.
+         */
+        prototype: DataEventEmitter<TEventObject>;
+    }
 
     /**
      * Event object with additional event information. This interface can be
