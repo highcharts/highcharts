@@ -130,7 +130,7 @@ namespace DataParser {
     /**
      * The shared options for all DataParser instances
      */
-    export interface Options extends DataJSON.Object {
+    export interface Options extends DataJSON.JSONObject {
         startRow: number;
         endRow: number;
         startColumn: number;

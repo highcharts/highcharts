@@ -60,7 +60,7 @@ implements DataEventEmitter<DataTableRow.EventObject>, DataJSON.Class {
             columns: DataTableRow.Cells = {};
 
         let columnName: (string|undefined),
-            columnValue: (DataJSON.Primitives|DataTable.ClassJSON|Array<DataTableRow.ClassJSON>),
+            columnValue: (DataJSON.JSONPrimitive|DataTable.ClassJSON|Array<DataTableRow.ClassJSON>),
             table: DataTable;
 
         while (typeof (columnName = keys.pop()) !== 'undefined') {
@@ -612,7 +612,7 @@ namespace DataTableRow {
      * Describes the class JSON of a DataTableRow.
      */
     export interface ClassJSON extends DataJSON.ClassJSON {
-        [key: string]: (DataJSON.Primitives|DataTable.ClassJSON|Array<DataTableRow.ClassJSON>);
+        [key: string]: (DataJSON.JSONPrimitive|DataTable.ClassJSON|Array<DataTableRow.ClassJSON>);
     }
 
     /**

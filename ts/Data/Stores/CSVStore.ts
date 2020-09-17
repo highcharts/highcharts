@@ -445,7 +445,7 @@ namespace CSVStore {
     /**
      * Internal options for CSVDataStore
      */
-    export interface Options extends DataJSON.Object {
+    export interface Options extends DataJSON.JSONObject {
         csv: string;
         csvURL: string;
         enablePolling: boolean;
@@ -455,7 +455,7 @@ namespace CSVStore {
     /**
      * The available options when exporting the table as CSV.
      */
-    export interface CSVExportOptions extends DataJSON.Object {
+    export interface CSVExportOptions extends DataJSON.JSONObject {
         decimalPoint: string | null;
         itemDelimiter: string | null;
         lineDelimiter: string;

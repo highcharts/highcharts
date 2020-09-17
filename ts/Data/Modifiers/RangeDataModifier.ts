@@ -248,7 +248,7 @@ namespace RangeDataModifier {
     /**
      * Options to configure a range.
      */
-    export interface RangeOptions extends DataJSON.Object {
+    export interface RangeOptions extends DataJSON.JSONObject {
         /**
          * Column containing the filtered values. This can be an index or a
          * name.

@@ -136,7 +136,7 @@ class GroupDataModifier extends DataModifier {
             } = modifier.options,
             columnGroups: Array<string> = [],
             tableGroups: Array<DataTable> = [],
-            valueGroups: Array<DataJSON.Primitives> = [];
+            valueGroups: Array<DataJSON.JSONPrimitive> = [];
 
         let groupColumn = modifier.options.groupColumn,
             row: (DataTableRow|undefined),
@@ -242,11 +242,11 @@ namespace GroupDataModifier {
         /**
          * Array of invalid group values.
          */
-        invalidValues?: Array<DataJSON.Primitives>;
+        invalidValues?: Array<DataJSON.JSONPrimitive>;
         /**
          * Array of valid group values.
          */
-        validValues?: Array<DataJSON.Primitives>;
+        validValues?: Array<DataJSON.JSONPrimitive>;
     }
 
 }

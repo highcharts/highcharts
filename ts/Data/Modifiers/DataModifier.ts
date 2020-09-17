@@ -257,7 +257,7 @@ namespace DataModifier {
     /**
      * Options to configure the modifier.
      */
-    export interface Options extends DataJSON.Object {
+    export interface Options extends DataJSON.JSONObject {
         /**
          * Name of the related modifier for these options.
          */

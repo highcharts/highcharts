@@ -342,7 +342,7 @@ namespace GoogleDataStore {
         readonly url: string;
     }
 
-    export interface Options extends DataJSON.Object {
+    export interface Options extends DataJSON.JSONObject {
         googleSpreadsheetKey: string;
         worksheet: number;
         startRow: number;

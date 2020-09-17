@@ -70,7 +70,6 @@ class DataJSON {
      * their is already a class registered with this name.
      */
     public static addClass(classType: DataJSON.ClassType): boolean {
-
         const className = DataJSON.getName(classType),
             registry = DataJSON.registry;
 
@@ -176,24 +175,6 @@ class DataJSON {
 namespace DataJSON {
 
     /**
-     * All primitive types, that are supported in JSON.
-     */
-    export type Primitives = (boolean|number|string|null|undefined);
-
-    /**
-     * All object types, that are supported in JSON.
-     */
-    // eslint-disable-next-line @typescript-eslint/ban-types
-    export type Types = (Array|Object|Primitives);
-
-    /**
-     * Type structor of arrays as it is supported in JSON.
-     */
-    export interface Array extends globalThis.Array<(Primitives|Types)> {
-        [index: number]: (Primitives|Types);
-    }
-
-    /**
      * Describes the instance of a class type, that is compatible to the class
      * registry.
      */
@@ -210,7 +191,7 @@ namespace DataJSON {
     /**
      * Interface of the class JSON to convert to class instances.
      */
-    export interface ClassJSON extends Object {
+    export interface ClassJSON extends JSONObject {
         /**
          * Regsitered name of the class.
          */
@@ -221,7 +202,7 @@ namespace DataJSON {
      * Describes the class registry as a record object with class name and their
      * class types (aka class constructor).
      */
-    export interface ClassRegistry extends Record<string, DataJSON.ClassType> {
+    export interface ClassRegistry extends Record<string, ClassType> {
         // nothing here yet
     }
 
@@ -251,11 +232,29 @@ namespace DataJSON {
     }
 
     /**
+     * Type structor of arrays as it is supported in JSON.
+     */
+    export interface JSONArray extends globalThis.Array<(JSONPrimitive|JSONType)> {
+        [index: number]: (JSONPrimitive|JSONType);
+    }
+
+    /**
      * Type structure of a record object as it is supported in JSON.
      */
-    export interface Object {
-        [key: string]: (Primitives|Types);
+    export interface JSONObject {
+        [key: string]: (JSONPrimitive|JSONType);
     }
+
+    /**
+     * All primitive types, that are supported in JSON.
+     */
+    export type JSONPrimitive = (boolean|number|string|null|undefined);
+
+    /**
+     * All object types, that are supported in JSON.
+     */
+    // eslint-disable-next-line @typescript-eslint/ban-types
+    export type JSONType = (JSONArray|JSONObject|JSONPrimitive);
 
 }
 

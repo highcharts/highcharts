@@ -365,10 +365,10 @@ namespace DataStore {
      * Metadata entry containing the name of the column
      * and a metadata object
      */
-    export interface MetaColumn extends DataJSON.Object {
+    export interface MetaColumn extends DataJSON.JSONObject {
         dataType?: string;
         // validator: Function;
-        defaultValue?: DataJSON.Primitives;
+        defaultValue?: DataJSON.JSONPrimitive;
         index?: number;
         title?: string;
     }
@@ -376,7 +376,7 @@ namespace DataStore {
     /**
      * Metadata
      */
-    export interface Metadata extends DataJSON.Object {
+    export interface Metadata extends DataJSON.JSONObject {
         columns: Record<string, MetaColumn>;
     }
 
