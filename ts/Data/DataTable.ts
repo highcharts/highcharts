@@ -17,7 +17,6 @@
  * */
 
 import type DataEventEmitter from './DataEventEmitter';
-import type DataValueType from './DataValueType';
 import DataConverter from './DataConverter.js';
 import DataJSON from './DataJSON.js';
 import DataTableRow from './DataTableRow.js';
@@ -38,18 +37,6 @@ const {
  * Class to manage rows in a table structure.
  */
 class DataTable implements DataEventEmitter<DataTable.EventObject>, DataJSON.Class {
-
-    /* *
-     *
-     *  Static Properties
-     *
-     * */
-
-    /**
-     * Registered events managed by Highcharts utility functions.
-     * @private
-     */
-    public static hcEvents: DataEventEmitter.EventEmitterType<DataTable, DataTable.EventObject>['hcEvents'];
 
     /* *
      *
@@ -817,6 +804,10 @@ class DataTable implements DataEventEmitter<DataTable.EventObject>, DataJSON.Cla
         }
     }
 
+}
+
+interface DataTable extends DataEventEmitter<DataTable.EventObject> {
+    // nothing here yet
 }
 
 /* *
