@@ -32,7 +32,7 @@ If the [minorTickInterval](https://api.highcharts.com/highcharts/xAxis.minorTick
 
 The axis labels can be found along the axis showing the value of the data it corresponds to. Labels can also be customized using a formatter function:
 
-    
+
     yAxis: {
         labels: {
             formatter: function() {
@@ -40,7 +40,7 @@ The axis labels can be found along the axis showing the value of the data it cor
             }
         },
     },
-    
+
 
 The above example takes the value of the y-axis label and adds a % symbol at the end of it.
 
@@ -50,14 +50,14 @@ Grid lines are collections of horizontal (and/or vertical) lines that divide a c
 
 To enable or disable gridlines for either the x or y-axis, set the [gridLineWidth](https://api.highcharts.com/highcharts/xAxis.gridLineWidth) of the respective axis:
 
-    
+
     xAxis: {
         gridLineWidth: 1
     },
     yAxis: {
         gridLineWidth: 1
     }
-    
+
 
 Grid lines for the y-axis are enabled by default (gridLineWidth: 1), and disabled by default for the x-axis  (gridLineWidth: 0).
 
@@ -70,7 +70,7 @@ Multiple axes
 
 It is possible to have multiple axes and linking them with different data series. To do this several axes needs to be created, like this:
 
-    
+
     yAxis: [{ //--- Primary yAxis
         title: {
             text: 'Temperature'
@@ -81,7 +81,7 @@ It is possible to have multiple axes and linking them with different data series
         },
         opposite: true
     }],
-    
+
     series: [{
         yAxis: 0,
         data: [49.9, 71.5, 106.4, 129.2, 144.0, 176.0, 135.6, 148.5, 216.4, 194.1, 95.6, 54.4]
@@ -89,7 +89,7 @@ It is possible to have multiple axes and linking them with different data series
         yAxis: 1,
         data: [7.0, 6.9, 9.5, 14.5, 18.2, 21.5, 25.2, 26.5, 23.3, 18.3, 13.9, 9.6]
     }]
-    
+
 
 Note that several axes are created using a list, so the first yAxis starts with index 0. And the "opposite: true" option puts the axis on the right side of the chart.
 
@@ -103,23 +103,23 @@ Axis types
 
 An axis can be either, linear, logarithmic, datetime or categories. The axis type is set like this:
 
-    
+
     // The types are 'linear', 'logarithmic' and 'datetime'
     yAxis: {
         type: 'linear',
     }
-    
+
     // Categories are set by using an array
     xAxis: {
         categories: ['Apples', 'Bananas', 'Oranges']
     }
-    
+
 
 ### Linear
 
 The numbers along the axis are of linear scale. This is the default axis type. If only y-values are present in a dataseries the x-axis is labeled from 0 to the number of y-values (shows the array index of the y-values):
 
-    
+
     var chart = new Highcharts.Chart({
             chart: {
                 renderTo: 'container',
@@ -165,13 +165,13 @@ A datetime axis prints labels of round date values in appropriate intervals. Int
 
 Some useful functions are:
 
-    
+
     // Get time in millis for UTC
     Date.UTC(year,month,day,hours,minutes,seconds,millisec)
-    
+
     // Get time in millis for your local time
     Date.parse("Month day, year");
-    
+
     // Built in Highcharts date formatter based on the [PHP strftime](https://php.net/manual/en/function.strftime.php) (see [API reference](https://api.highcharts.com/class-reference/Highcharts#.dateFormat) for usage)
     Highcharts.dateFormat("Month: %m Day: %d Year: %Y", 20, false);
 
@@ -185,7 +185,7 @@ If categories are present, the names of the categories are used instead of numbe
 
 ### What axis type should I use?
 
-Many of the examples in the [Highcharts demo](demo/) come with an xAxis with categories. However, it is important to understand when to use categories and when you are better off with a linear or datetime xAxis.
+Many of the examples on the [Highcharts demo page](https://highcharts.com/demo/) come with an xAxis with categories. However, it is important to understand when to use categories and when you are better off with a linear or datetime xAxis.
 
 Categories are groups of items, like for example "Apples", "Pears" and "Oranges", or "Red", "Green", "Blue", "Yellow". These categories have that in common that there are no intermediate values. There's no sliding transition between apples and pears. Also, if you leave one category out, the user isn't able to understand what is left out. Say if you print every second color of "Red", "Green", "Blue" or "Yellow", the user won't know what colors are missing. Therefore, Highcharts doesn't have automatic methods to hide categories if they become to dense on the axis. If you have problems with overlapping axis labels, try either the [xAxis.labels.staggerLines](https://api.highcharts.com/highcharts/xAxis.labels.staggerLines) option, or give the labels a rotation. If you find that you can skip category labels by the [xAxis.labels.step](https://api.highcharts.com/highcharts/xAxis.labels.step) option, chances are that you are better off using a linear or datetime axis.
 
