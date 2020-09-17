@@ -45,7 +45,11 @@ class DataTable implements DataEventEmitter<DataTable.EventObject>, DataJSON.Cla
      *
      * */
 
-    public static readonly hcEvents: DataEventEmitter.EventEmitterType<DataTable, DataTable.EventObject>['hcEvents'];
+    /**
+     * Registered events managed by Highcharts utility functions.
+     * @private
+     */
+    public static hcEvents: DataEventEmitter.EventEmitterType<DataTable, DataTable.EventObject>['hcEvents'];
 
     /* *
      *

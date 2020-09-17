@@ -27,6 +27,10 @@ declare interface DataEventEmitter<TEventObject extends DataEventEmitter.EventOb
      *
      * */
 
+    /**
+     * Internal type reference.
+     * @private
+     */
     constructor: DataEventEmitter.EventEmitterType<this, TEventObject>;
 
     /* *
@@ -110,7 +114,7 @@ declare namespace DataEventEmitter {
          * Registered events managed by Highcharts utility functions.
          * @private
          */
-        hcEvents?: Record<string, Array<EventCallback<TScope, TEventObject>>>;
+        hcEvents?: Record<TEventObject['type'], Array<EventCallback<TScope, TEventObject>>>;
 
         /**
          * Structure of the constructor instance.
