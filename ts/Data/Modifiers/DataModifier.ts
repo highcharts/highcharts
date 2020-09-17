@@ -18,7 +18,7 @@
 
 import type DataEventEmitter from '../DataEventEmitter';
 import type DataJSON from '../DataJSON';
-import type { DataModifierRegistryType } from './Types';
+import type ModifierType from './ModifierType';
 import type DataTable from '../DataTable';
 import U from '../../Core/Utilities.js';
 const {
@@ -56,7 +56,7 @@ implements DataEventEmitter<TEventObject>, DataJSON.Class {
     /**
      * Registry as a record object with modifier names and their class.
      */
-    private static readonly registry = {} as Record<string, DataModifierRegistryType>;
+    private static readonly registry = {} as Record<string, ModifierType>;
 
     /* *
      *
@@ -76,7 +76,7 @@ implements DataEventEmitter<TEventObject>, DataJSON.Class {
      * Returns true, if the registration was successful. False is returned, if
      * their is already a modifier registered with this name.
      */
-    public static addModifier(modifier: DataModifierRegistryType): boolean {
+    public static addModifier(modifier: ModifierType): boolean {
         const name = DataModifier.getName(modifier),
             registry = DataModifier.registry;
 
@@ -109,7 +109,7 @@ implements DataEventEmitter<TEventObject>, DataJSON.Class {
      * @return {Record<string,DataModifierRegistryType>}
      * Copy of the modifier registry.
      */
-    public static getAllModifiers(): Record<string, DataModifierRegistryType> {
+    public static getAllModifiers(): Record<string, ModifierType> {
         return merge(DataModifier.registry);
     }
 
@@ -123,7 +123,7 @@ implements DataEventEmitter<TEventObject>, DataJSON.Class {
      * @return {DataModifier|undefined}
      * Class type, if the class name was found, otherwise `undefined`.
      */
-    public static getModifier(name: string): (DataModifierRegistryType|undefined) {
+    public static getModifier(name: string): (ModifierType|undefined) {
         return DataModifier.registry[name];
     }
 
@@ -137,7 +137,7 @@ implements DataEventEmitter<TEventObject>, DataJSON.Class {
      * Modifier name, if the extraction was successful, otherwise an empty
      * string.
      */
-    private static getName(modifier: (typeof DataModifier|Function)): string {
+    private static getName(modifier: (NewableFunction|ModifierType)): string {
         return (
             modifier.toString().match(DataModifier.nameRegExp) ||
             ['', '']
@@ -272,8 +272,8 @@ namespace DataModifier {
  *
  * */
 
-declare module './Types' {
-    interface DataModifierTypeRegistry {
+declare module './ModifierType' {
+    interface ModifierTypeRegistry {
         '': typeof DataModifier;
     }
 }

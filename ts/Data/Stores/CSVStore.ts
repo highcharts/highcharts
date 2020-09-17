@@ -473,8 +473,8 @@ namespace CSVStore {
 DataJSON.addClass(CSVStore);
 DataStore.addStore(CSVStore);
 
-declare module './Types' {
-    interface DataStoreTypeRegistry {
+declare module './StoreType' {
+    interface StoreTypeRegistry {
         CSVStore: typeof CSVStore;
     }
 }

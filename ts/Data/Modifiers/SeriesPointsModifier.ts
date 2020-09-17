@@ -204,8 +204,8 @@ namespace SeriesPointsModifier {
 DataJSON.addClass(SeriesPointsModifier);
 DataModifier.addModifier(SeriesPointsModifier);
 
-declare module './Types' {
-    interface DataModifierTypeRegistry {
+declare module './ModifierType' {
+    interface ModifierTypeRegistry {
         SeriesPoints: typeof SeriesPointsModifier;
     }
 }

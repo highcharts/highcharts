@@ -88,19 +88,6 @@ var DataStore = /** @class */ (function () {
         return merge(DataStore.registry);
     };
     /**
-     * Returns a dataStore class (aka class constructor) of the given dataStore
-     * name.
-     *
-     * @param {string} name
-     * Registered class name of the class type.
-     *
-     * @return {DataStoreRegistryType|undefined}
-     * Class type, if the class name was found, otherwise `undefined`.
-     */
-    DataStore.getStore = function (name) {
-        return DataStore.registry[name];
-    };
-    /**
      * Extracts the name from a given dataStore class.
      *
      * @param {DataStore} dataStore
@@ -113,6 +100,19 @@ var DataStore = /** @class */ (function () {
     DataStore.getName = function (dataStore) {
         return (dataStore.toString().match(DataStore.nameRegExp) ||
             ['', ''])[1];
+    };
+    /**
+     * Returns a dataStore class (aka class constructor) of the given dataStore
+     * name.
+     *
+     * @param {string} name
+     * Registered class name of the class type.
+     *
+     * @return {DataStoreRegistryType|undefined}
+     * Class type, if the class name was found, otherwise `undefined`.
+     */
+    DataStore.getStore = function (name) {
+        return DataStore.registry[name];
     };
     /* *
      *

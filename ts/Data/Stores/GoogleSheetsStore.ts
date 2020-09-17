@@ -364,8 +364,8 @@ namespace GoogleDataStore {
 DataJSON.addClass(GoogleSheetsStore);
 DataStore.addStore(GoogleSheetsStore);
 
-declare module './Types' {
-    interface DataStoreTypeRegistry {
+declare module './StoreType' {
+    interface StoreTypeRegistry {
         Google: typeof GoogleSheetsStore;
     }
 }

@@ -260,8 +260,8 @@ namespace GroupDataModifier {
 DataJSON.addClass(GroupDataModifier);
 DataModifier.addModifier(GroupDataModifier);
 
-declare module './Types' {
-    interface DataModifierTypeRegistry {
+declare module './ModifierType' {
+    interface ModifierTypeRegistry {
         Group: typeof GroupDataModifier;
     }
 }

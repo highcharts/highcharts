@@ -21,7 +21,7 @@
 import type DataEventEmitter from '../DataEventEmitter';
 import type DataJSON from '../DataJSON';
 import type DataParser from '../Parsers/DataParser';
-import type { DataStoreRegistryType } from './Types';
+import type StoreType from './StoreType';
 import DataTable from '../DataTable.js';
 import U from '../../Core/Utilities.js';
 
@@ -53,7 +53,7 @@ implements DataEventEmitter<TEventObject>, DataJSON.Class {
     /**
      * Registry as a record object with store names and their class.
      */
-    private static readonly registry = {} as Record<string, DataStoreRegistryType>;
+    private static readonly registry = {} as Record<string, StoreType>;
 
     /**
      * Regular expression to extract the store name (group 1) from the
@@ -80,7 +80,7 @@ implements DataEventEmitter<TEventObject>, DataJSON.Class {
      * Returns true, if the registration was successful. False is returned, if
      * their is already a store registered with this name.
      */
-    public static addStore(dataStore: DataStoreRegistryType): boolean {
+    public static addStore(dataStore: StoreType): boolean {
         const name = DataStore.getName(dataStore),
             registry = DataStore.registry;
 
@@ -113,22 +113,8 @@ implements DataEventEmitter<TEventObject>, DataJSON.Class {
      * @return {Record<string,DataStoreRegistryType>}
      * Copy of the dataStore registry.
      */
-    public static getAllStores(): Record<string, DataStoreRegistryType> {
+    public static getAllStores(): Record<string, StoreType> {
         return merge(DataStore.registry);
-    }
-
-    /**
-     * Returns a dataStore class (aka class constructor) of the given dataStore
-     * name.
-     *
-     * @param {string} name
-     * Registered class name of the class type.
-     *
-     * @return {DataStoreRegistryType|undefined}
-     * Class type, if the class name was found, otherwise `undefined`.
-     */
-    public static getStore(name: string): (DataStoreRegistryType | undefined) {
-        return DataStore.registry[name];
     }
 
     /**
@@ -141,11 +127,25 @@ implements DataEventEmitter<TEventObject>, DataJSON.Class {
      * DataStore name, if the extraction was successful, otherwise an empty
      * string.
      */
-    private static getName(dataStore: (typeof DataStore | Function)): string {
+    private static getName(dataStore: (NewableFunction|StoreType)): string {
         return (
             dataStore.toString().match(DataStore.nameRegExp) ||
             ['', '']
         )[1];
+    }
+
+    /**
+     * Returns a dataStore class (aka class constructor) of the given dataStore
+     * name.
+     *
+     * @param {string} name
+     * Registered class name of the class type.
+     *
+     * @return {DataStoreRegistryType|undefined}
+     * Class type, if the class name was found, otherwise `undefined`.
+     */
+    public static getStore(name: string): (StoreType|undefined) {
+        return DataStore.registry[name];
     }
 
     /* *
@@ -388,8 +388,8 @@ namespace DataStore {
  *
  * */
 
-declare module './Types' {
-    interface DataStoreTypeRegistry {
+declare module './StoreType' {
+    interface StoreTypeRegistry {
         '': typeof DataStore;
     }
 }

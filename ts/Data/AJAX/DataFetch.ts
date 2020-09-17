@@ -82,7 +82,7 @@ class DataFetch implements DataEventEmitter<DataFetch.EventObject>, DataJSON.Cla
         fireEvent(this, e.type, e);
     }
 
-    public fetch(uri: string, options?: DeepPartial<DataFetch.Options>): void {
+    public fetch(resource: (string|Request), options?: DeepPartial<DataFetch.Options>): void {
         options = merge(this.options, options);
     }
 
@@ -118,9 +118,11 @@ namespace DataFetch {
         type: ('');
     }
 
-    export interface Options extends DataJSON.JSONObject, RequestInit {
+    export interface Options extends DataJSON.JSONObject {
         body?: string;
         cache?: RequestCache;
+        credentials?: (RequestCredentials|DataCredentialProvider.ClassJSON);
+        context?: string;
         headers?: Record<string, string>;
         integrity?: string;
         method: string;

@@ -12,14 +12,6 @@
 
 /* *
  *
- *  Imports
- *
- * */
-
-import type DataModifier from './DataModifier';
-
-/* *
- *
  *  Declarations
  *
  * */
@@ -27,12 +19,20 @@ import type DataModifier from './DataModifier';
 /**
  * Contains all possible types of the class registry.
  */
-export type DataModifierRegistryType = DataModifierTypeRegistry[keyof DataModifierTypeRegistry];
+export type StoreType = StoreTypeRegistry[keyof StoreTypeRegistry];
 
 /**
  * Describes the class registry as a record object with class name and their
  * class types (aka class constructor).
  */
-export interface DataModifierTypeRegistry {
+export interface StoreTypeRegistry {
     // nothing here yet
 }
+
+/* *
+ *
+ *  Export
+ *
+ * */
+
+export default StoreType;

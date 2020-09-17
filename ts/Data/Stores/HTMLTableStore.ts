@@ -277,8 +277,8 @@ namespace HTMLTableStore {
 DataJSON.addClass(HTMLTableStore);
 DataStore.addStore(HTMLTableStore);
 
-declare module './Types' {
-    interface DataStoreTypeRegistry {
+declare module './StoreType' {
+    interface StoreTypeRegistry {
         HTMLTable: typeof HTMLTableStore;
     }
 }

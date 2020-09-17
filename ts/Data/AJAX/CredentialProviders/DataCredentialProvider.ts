@@ -12,6 +12,15 @@
 
 /* *
  *
+ *  Imports
+ *
+ * */
+
+import type CredentialProviderType from './CredentialProviderType';
+import type DataJSON from '../../DataJSON';
+
+/* *
+ *
  *  Class
  *
  * */
@@ -45,20 +54,28 @@ abstract class DataCredentialProvider {
         return true;
     }
 
-    public static getName(providerType: typeof DataCredentialProvider): string {
+    public static getName(providerType: (CredentialProviderType|Function)): string {
         return (
             providerType.toString().match(DataCredentialProvider.nameRegExp) ||
             ['', '']
         )[1];
     }
 
-    public static getProviderType(providerName: string): (typeof DataCredentialProvider|undefined) {
+    public static getProviderType(providerName: string): (CredentialProviderType|undefined) {
         return DataCredentialProvider.registry[providerName];
     }
 
     public static getAllProviderNames(): Array<string> {
         return Object.keys(DataCredentialProvider.registry);
     }
+
+    /* *
+     *
+     *  Functions
+     *
+     * */
+
+    public abstract toJSON(): DataCredentialProvider.ClassJSON;
 
 }
 
@@ -70,12 +87,28 @@ abstract class DataCredentialProvider {
 
 namespace DataCredentialProvider {
 
-    export type ProviderName = string;
-
-    export interface ProviderRegistry extends Record<string, typeof DataCredentialProvider> {
+    export interface ClassJSON extends DataJSON.ClassJSON {
         // nothing here yet
     }
 
+    export type ProviderName = string;
+
+    export interface ProviderRegistry extends Record<string, CredentialProviderType> {
+        // nothing here yet
+    }
+
+}
+
+/* *
+ *
+ *  Registry
+ *
+ * */
+
+declare module './CredentialProviderType' {
+    interface CredentialProviderTypeRegistry {
+        DataCredentialProvider: typeof DataCredentialProvider;
+    }
 }
 
 /* *

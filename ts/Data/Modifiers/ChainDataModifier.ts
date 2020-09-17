@@ -354,8 +354,8 @@ namespace ChainDataModifier {
 DataJSON.addClass(ChainDataModifier);
 DataModifier.addModifier(ChainDataModifier);
 
-declare module './Types' {
-    interface DataModifierTypeRegistry {
+declare module './ModifierType' {
+    interface ModifierTypeRegistry {
         Chain: typeof ChainDataModifier;
     }
 }

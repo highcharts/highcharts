@@ -43,7 +43,7 @@ var DataFetch = /** @class */ (function () {
     DataFetch.prototype.emit = function (e) {
         fireEvent(this, e.type, e);
     };
-    DataFetch.prototype.fetch = function (uri, options) {
+    DataFetch.prototype.fetch = function (resource, options) {
         options = merge(this.options, options);
     };
     DataFetch.prototype.on = function (type, callback) {

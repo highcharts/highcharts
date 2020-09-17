@@ -275,8 +275,8 @@ namespace RangeDataModifier {
 DataJSON.addClass(RangeDataModifier);
 DataModifier.addModifier(RangeDataModifier);
 
-declare module './Types' {
-    interface DataModifierTypeRegistry {
+declare module './ModifierType' {
+    interface ModifierTypeRegistry {
         Range: typeof RangeDataModifier;
     }
 }

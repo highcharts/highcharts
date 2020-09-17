@@ -192,8 +192,8 @@ namespace InvertModifier {
 DataJSON.addClass(InvertModifier);
 DataModifier.addModifier(InvertModifier);
 
-declare module './Types' {
-    interface DataModifierTypeRegistry {
+declare module './ModifierType' {
+    interface ModifierTypeRegistry {
         Invert: typeof InvertModifier;
     }
 }
