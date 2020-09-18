@@ -475,9 +475,6 @@ extend(Chart.prototype, /** @lends Highcharts.Chart.prototype */ {
         if (!chart.styledMode && options.colors) {
             this.options.colors = options.colors;
         }
-        if (options.plotOptions) {
-            merge(true, this.options.plotOptions, options.plotOptions);
-        }
         // Maintaining legacy global time. If the chart is instanciated first
         // with global time, then updated with time options, we need to create a
         // new Time instance to avoid mutating the global time (#10536).
@@ -502,6 +499,12 @@ extend(Chart.prototype, /** @lends Highcharts.Chart.prototype */ {
             }
             else if (typeof chart[adders[key]] === 'function') {
                 chart[adders[key]](val);
+                // Else, just merge the options. For nodes like loading, noData,
+                // plotOptions
+            }
+            else if (key !== 'color' &&
+                chart.collectionsWithUpdate.indexOf(key) === -1) {
+                merge(true, chart.options[key], options[key]);
             }
             if (key !== 'chart' &&
                 chart.propsRequireUpdateSeries.indexOf(key) !== -1) {
@@ -595,10 +598,6 @@ extend(Chart.prototype, /** @lends Highcharts.Chart.prototype */ {
                     series.update({}, false);
                 }
             }, this);
-        }
-        // For loading, just update the options, do not redraw
-        if (options.loading) {
-            merge(true, chart.options.loading, options.loading);
         }
         // Update size. Redraw is forced.
         newWidth = optionsChart && optionsChart.width;

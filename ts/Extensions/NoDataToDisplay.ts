@@ -20,7 +20,8 @@ import U from '../Core/Utilities.js';
 const {
     addEvent,
     extend,
-    getOptions
+    getOptions,
+    merge
 } = U;
 
 /**
@@ -186,36 +187,40 @@ chartPrototype.showNoData = function (str?: string): void {
         options = chart.options,
         text = str || (options && (options.lang as any).noData),
         noDataOptions: Highcharts.NoDataOptions =
-            options && (options.noData as any);
-    if (!chart.noDataLabel && chart.renderer) {
-        chart.noDataLabel = chart.renderer
-            .label(
-                text,
-                0,
-                0,
-                null as any,
-                null as any,
-                null as any,
-                noDataOptions.useHTML,
-                null as any,
-                'no-data'
-            );
+            options && (options.noData || {});
+
+    if (chart.renderer) { // Meaning chart is not destroyed
+
+        if (!chart.noDataLabel) {
+            chart.noDataLabel = chart.renderer
+                .label(
+                    text,
+                    0,
+                    0,
+                    void 0,
+                    void 0,
+                    void 0,
+                    noDataOptions.useHTML,
+                    void 0,
+                    'no-data'
+                )
+                .add();
+        }
 
         if (!chart.styledMode) {
             chart.noDataLabel
                 .attr(noDataOptions.attr)
-                .css(noDataOptions.style as any);
+                .css(noDataOptions.style || {});
         }
 
-        chart.noDataLabel.add();
-
         chart.noDataLabel.align(
-            extend(chart.noDataLabel.getBBox(), noDataOptions.position as any),
+            extend(chart.noDataLabel.getBBox(), noDataOptions.position || {}),
             false,
             'plotBox'
         );
     }
 };
+
 
 /**
  * Hide no-data message.

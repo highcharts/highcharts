@@ -3470,7 +3470,9 @@ var Axis = /** @class */ (function () {
          * representations used for each unit. For intermediate values,
          * different units may be used, for example the `day` unit can be used
          * on midnight and `hour` unit be used for intermediate values on the
-         * same axis. For an overview of the replacement codes, see
+         * same axis.
+         *
+         * For an overview of the replacement codes, see
          * [dateFormat](/class-reference/Highcharts#dateFormat).
          *
          * Defaults to:
@@ -3493,7 +3495,7 @@ var Axis = /** @class */ (function () {
          *         More information in x axis labels
          *
          * @declare Highcharts.AxisDateTimeLabelFormatsOptions
-         * @product highcharts highstock
+         * @product highcharts highstock gantt
          */
         dateTimeLabelFormats: {
             /**
