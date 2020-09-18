@@ -36,15 +36,18 @@ var DataTable = /** @class */ (function () {
      *
      * @param {DataConverter} [converter]
      * Converter for value conversions in table rows.
+     *
+     * @param {string} [id]
+     * DataTable identifier.
      */
-    function DataTable(rows, converter) {
+    function DataTable(rows, converter, id) {
         if (rows === void 0) { rows = []; }
         if (converter === void 0) { converter = new DataConverter(); }
         var rowsIdMap = {};
         var row;
         rows = rows.slice();
         this.converter = converter;
-        this.id = uniqueKey();
+        this.id = id || uniqueKey();
         this.rows = rows;
         this.rowsIdMap = rowsIdMap;
         this.watchsIdMap = {};
@@ -147,6 +150,38 @@ var DataTable = /** @class */ (function () {
         this.rowsIdMap = {};
         this.watchsIdMap = {};
         this.emit({ type: 'afterClearTable', detail: eventDetail });
+    };
+    /**
+     * Create an empty copy of the table with all the informations
+     * from the original table.
+     *
+     * @return {DataTable}
+     * Returns new empty DataTable instance.
+     */
+    DataTable.prototype.clone = function () {
+        var table = this, newTable = new DataTable([], table.converter, table.id), aliasMapNames = Object.keys(table.aliasMap);
+        var eventNames, eventName, eventArr, eventFunction, alias;
+        if (table.hcEvents) {
+            eventNames = Object.keys(table.hcEvents);
+            for (var i = 0, iEnd = eventNames.length; i < iEnd; i++) {
+                eventName = eventNames[i];
+                eventArr = table.hcEvents[eventName];
+                for (var j = 0, jEnd = eventArr.length; j < jEnd; j++) {
+                    eventFunction = eventArr[j].fn;
+                    newTable.on(eventName, eventFunction);
+                }
+            }
+        }
+        if (table.versionTag) {
+            newTable.versionTag = table.versionTag;
+        }
+        if (table.aliasMap) {
+            for (var k = 0, kEnd = aliasMapNames.length; k < kEnd; k++) {
+                alias = aliasMapNames[k];
+                newTable.createColumnAlias(table.aliasMap[alias], alias);
+            }
+        }
+        return newTable;
     };
     /**
      * Deletes a row in this table.
