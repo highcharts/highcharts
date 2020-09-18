@@ -12,6 +12,7 @@ import type { CursorValue } from '../Renderer/CSSObject';
 import type Chart from '../Chart/Chart';
 import type ColorType from '../Color/ColorType';
 import type { SeriesOptionsType, SeriesPlotOptionsType } from './Types';
+import type ShadowOptionsObject from '../Renderer/ShadowOptionsObject';
 import type SVGAttributes from '../Renderer/SVG/SVGAttributes';
 import type SVGPath from '../Renderer/SVG/SVGPath';
 import BaseSeries from './Series.js';

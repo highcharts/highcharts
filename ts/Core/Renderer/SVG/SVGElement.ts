@@ -19,6 +19,7 @@ import type {
 } from '../DOMElementType';
 import type GradientColor from '../../Color/GradientColor';
 import type RectangleObject from '../RectangleObject';
+import type ShadowOptionsObject from '../ShadowOptionsObject';
 import type SVGAttributes from './SVGAttributes';
 import type SVGPath from './SVGPath';
 import type SVGRenderer from './SVGRenderer';
@@ -94,13 +95,6 @@ declare global {
             x?: number;
             y?: number;
         }
-        interface ShadowOptionsObject {
-            color: ColorString;
-            offsetX: number;
-            offsetY: number;
-            opacity: number;
-            width: number;
-        }
         class SVGElement {
             public constructor();
             [key: string]: any;
@@ -112,7 +106,7 @@ declare global {
             public renderer: SVGRenderer;
             public rotation?: number;
             public shadows?: Array<DOMElementType>;
-            public oldShadowOptions?: Highcharts.ShadowOptionsObject;
+            public oldShadowOptions?: ShadowOptionsObject;
             public styles?: CSSObject;
             public textStr?: string;
             public x?: number;
@@ -451,7 +445,7 @@ class SVGElement {
     public height: number = void 0 as any;
     public inverted?: boolean;
     public matrix?: Array<number>;
-    public oldShadowOptions?: Highcharts.ShadowOptionsObject;
+    public oldShadowOptions?: ShadowOptionsObject;
     public onAdd?: Function;
     public opacity = 1; // Default base for animation
     public options?: Record<string, any>;
@@ -2471,7 +2465,7 @@ class SVGElement {
      *         Returns the SVGElement for chaining.
      */
     public shadow(
-        shadowOptions?: (boolean|Partial<Highcharts.ShadowOptionsObject>),
+        shadowOptions?: (boolean|Partial<ShadowOptionsObject>),
         group?: SVGElement,
         cutOff?: boolean
     ): SVGElement {
@@ -2486,14 +2480,14 @@ class SVGElement {
             // compensate for inverted plot area
             transform;
 
-        const defaultShadowOptions: Highcharts.ShadowOptionsObject = {
+        const defaultShadowOptions: ShadowOptionsObject = {
             color: '${palette.neutralColor100}',
             offsetX: 1,
             offsetY: 1,
             opacity: 0.15,
             width: 3
         };
-        let options: Highcharts.ShadowOptionsObject|undefined;
+        let options: ShadowOptionsObject|undefined;
         if (shadowOptions === true) {
             options = defaultShadowOptions;
         } else if (typeof shadowOptions === 'object') {
