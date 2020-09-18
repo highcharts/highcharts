@@ -8,14 +8,14 @@
  *
  * */
 import BaseSeries from '../Core/Series/Series.js';
-import Color from '../Core/Color.js';
+import Color from '../Core/Color/Color.js';
 var color = Color.parse;
 import H from '../Core/Globals.js';
 var noop = H.noop;
 import LegendSymbolMixin from '../Mixins/LegendSymbol.js';
 import LineSeries from './LineSeries.js';
 import U from '../Core/Utilities.js';
-var animObject = U.animObject, clamp = U.clamp, defined = U.defined, extend = U.extend, isNumber = U.isNumber, merge = U.merge, pick = U.pick, objectEach = U.objectEach;
+var animObject = U.animObject, clamp = U.clamp, defined = U.defined, extend = U.extend, isArray = U.isArray, isNumber = U.isNumber, merge = U.merge, pick = U.pick, objectEach = U.objectEach;
 /**
  * Adjusted width and x offset of the columns for grouping.
  *
@@ -590,7 +590,7 @@ var ColumnSeries = BaseSeries.seriesType('column', 'line',
                             // If `stacking` is not enabled, look for the
                             // index and total of the `group` stack.
                         }
-                        else if (H.isArray(pointValues)) {
+                        else if (isArray(pointValues)) {
                             indexInCategory_1 = pointValues[1];
                             totalInCategory_1 = total || 0;
                         }

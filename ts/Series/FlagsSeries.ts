@@ -8,6 +8,9 @@
  *
  * */
 
+import type ColorType from '../Core/Color/ColorType';
+import type CSSObject from '../Core/Renderer/CSSObject';
+import type SVGAttributes from '../Core/Renderer/SVG/SVGAttributes';
 import type SVGPath from '../Core/Renderer/SVG/SVGPath';
 import BaseSeries from '../Core/Series/Series.js';
 import H from '../Core/Globals.js';
@@ -39,7 +42,7 @@ declare global {
             plotX?: number;
         }
         interface FlagsPointOptions extends ColumnPointOptions {
-            fillColor?: (ColorString|GradientColorObject|PatternObject);
+            fillColor?: ColorType;
             labelrank?: number;
             selected?: boolean;
             shape?: FlagsShapeValue;
@@ -49,9 +52,9 @@ declare global {
         }
         interface FlagsSeriesOptions extends ColumnSeriesOptions {
             allowOverlapX?: boolean;
-            fillColor?: (ColorString|GradientColorObject|PatternObject);
+            fillColor?: ColorType;
             height?: number;
-            lineColor?: (ColorString|GradientColorObject|PatternObject);
+            lineColor?: ColorType;
             lineWidth?: number;
             onKey?: string;
             onSeries?: string;
@@ -66,8 +69,8 @@ declare global {
             y?: number;
         }
         interface SeriesStatesHoverOptionsObject {
-            fillColor?: (ColorString|GradientColorObject|PatternObject);
-            lineColor?: (ColorString|GradientColorObject|PatternObject);
+            fillColor?: ColorType;
+            lineColor?: ColorType;
             shape?: FlagsShapeValue;
         }
         interface Series {
@@ -76,7 +79,7 @@ declare global {
         class FlagsPoint extends ColumnPoint {
             public _y?: number;
             public anchorX?: number;
-            public fillColor?: (ColorString|GradientColorObject|PatternObject);
+            public fillColor?: ColorType;
             public lineWidth?: number;
             public options: FlagsPointOptions;
             public raised?: boolean;
@@ -413,7 +416,7 @@ BaseSeries.seriesType<typeof Highcharts.FlagsSeries>(
             this: Highcharts.FlagsSeries,
             point: Highcharts.FlagsPoint,
             state?: string
-        ): Highcharts.SVGAttributes {
+        ): SVGAttributes {
             var options = this.options,
                 color = (point && point.color) || this.color,
                 lineColor = options.lineColor,
@@ -459,12 +462,11 @@ BaseSeries.seriesType<typeof Highcharts.FlagsSeries>(
                 graphic,
                 stackIndex,
                 anchorY,
-                attribs: Highcharts.SVGAttributes,
+                attribs: SVGAttributes,
                 outsideRight,
                 yAxis = series.yAxis,
-                boxesMap =
-                    {} as Highcharts.Dictionary<Highcharts.DataLabelsBoxObject>,
-                boxes = [] as Highcharts.DataLabelsBoxArray,
+                boxesMap: Record<string, Highcharts.DataLabelsBoxObject> = {},
+                boxes: Highcharts.DataLabelsBoxArray = [],
                 centered;
 
             i = points.length;
@@ -626,7 +628,7 @@ BaseSeries.seriesType<typeof Highcharts.FlagsSeries>(
                 wrap(series.markerGroup, 'on', function (
                     this: Highcharts.FlagsSeries,
                     proceed
-                ): Highcharts.SVGElement {
+                ): SVGElement {
                     return SVGElement.prototype.on.apply(
                         // for HTML
                         proceed.apply(this, [].slice.call(arguments, 1)),

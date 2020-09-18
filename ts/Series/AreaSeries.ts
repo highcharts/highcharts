@@ -8,10 +8,12 @@
  *
  * */
 
+import type ColorType from '../Core/Color/ColorType';
 import type StackingAxis from '../Core/Axis/StackingAxis';
+import type SVGAttributes from '../Core/Renderer/SVG/SVGAttributes';
 import type SVGPath from '../Core/Renderer/SVG/SVGPath';
 import BaseSeries from '../Core/Series/Series.js';
-import Color from '../Core/Color.js';
+import Color from '../Core/Color/Color.js';
 const {
     parse: color
 } = Color;
@@ -99,6 +101,12 @@ BaseSeries.seriesType<typeof Highcharts.AreaSeries>(
      * @optionparent plotOptions.area
      */
     {
+        /**
+         * @see [fillColor](#plotOptions.area.fillColor)
+         * @see [fillOpacity](#plotOptions.area.fillOpacity)
+         *
+         * @apioption plotOptions.area.color
+         */
 
         /**
          * Fill color or gradient for the area. When `null`, the series' `color`
@@ -106,6 +114,9 @@ BaseSeries.seriesType<typeof Highcharts.AreaSeries>(
          *
          * In styled mode, the fill color can be set with the `.highcharts-area`
          * class name.
+         *
+         * @see [color](#plotOptions.area.color)
+         * @see [fillOpacity](#plotOptions.area.fillOpacity)
          *
          * @sample {highcharts} highcharts/plotoptions/area-fillcolor-default/
          *         Null by default
@@ -126,6 +137,9 @@ BaseSeries.seriesType<typeof Highcharts.AreaSeries>(
          *
          * In styled mode, the fill opacity can be set with the
          * `.highcharts-area` class name.
+         *
+         * @see [color](#plotOptions.area.color)
+         * @see [fillColor](#plotOptions.area.fillColor)
          *
          * @sample {highcharts} highcharts/plotoptions/area-fillopacity/
          *         Automatic fill color and fill opacity of 0.1
@@ -569,7 +583,7 @@ BaseSeries.seriesType<typeof Highcharts.AreaSeries>(
                 var areaKey = prop[0],
                     area = (series as any)[areaKey],
                     verb = area ? 'animate' : 'attr',
-                    attribs = {} as Highcharts.SVGAttributes;
+                    attribs: SVGAttributes = {};
 
                 // Create or update the area
                 if (area) { // update
@@ -618,6 +632,13 @@ BaseSeries.seriesType<typeof Highcharts.AreaSeries>(
  * @excluding dataParser, dataURL, useOhlcData
  * @product   highcharts highstock
  * @apioption series.area
+ */
+
+/**
+ * @see [fillColor](#series.area.fillColor)
+ * @see [fillOpacity](#series.area.fillOpacity)
+ *
+ * @apioption series.area.color
  */
 
 /**
@@ -678,6 +699,22 @@ BaseSeries.seriesType<typeof Highcharts.AreaSeries>(
  * @extends   series.line.data
  * @product   highcharts highstock
  * @apioption series.area.data
+ */
+
+/**
+ * @see [color](#series.area.color)
+ * @see [fillOpacity](#series.area.fillOpacity)
+ *
+ * @apioption series.area.fillColor
+ */
+
+/**
+ * @see [color](#series.area.color)
+ * @see [fillColor](#series.area.fillColor)
+ *
+ * @default   {highcharts} 0.75
+ * @default   {highstock} 0.75
+ * @apioption series.area.fillOpacity
  */
 
 ''; // adds doclets above to transpilat

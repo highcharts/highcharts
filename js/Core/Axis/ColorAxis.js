@@ -23,7 +23,7 @@ var __extends = (this && this.__extends) || (function () {
 })();
 import Axis from './Axis.js';
 import Chart from '../Chart/Chart.js';
-import Color from '../Color.js';
+import Color from '../Color/Color.js';
 var color = Color.parse;
 import ColorSeriesModule from '../../Mixins/ColorSeries.js';
 var colorPointMixin = ColorSeriesModule.colorPointMixin, colorSeriesMixin = ColorSeriesModule.colorSeriesMixin;

@@ -12,9 +12,13 @@
 
 'use strict';
 
+import type ColorType from '../../Core/Color/ColorType';
+import type CSSObject from '../../Core/Renderer/CSSObject';
 import type Point from '../../Core/Series/Point';
+import type SVGAttributes from '../../Core/Renderer/SVG/SVGAttributes';
+import type SVGElement from '../../Core/Renderer/SVG/SVGElement';
 import Chart from '../../Core/Chart/Chart.js';
-import Color from '../../Core/Color.js';
+import Color from '../../Core/Color/Color.js';
 const {
     parse: color
 } = Color;
@@ -58,12 +62,12 @@ declare global {
             y?: number;
         }
         interface BubbleLegendOptions {
-            borderColor?: (ColorString|GradientColorObject|PatternObject);
+            borderColor?: ColorType;
             borderWidth?: number;
             className?: string;
-            color?: (ColorString|GradientColorObject|PatternObject);
+            color?: ColorType;
             connectorClassName?: string;
-            connectorColor?: (ColorString|GradientColorObject|PatternObject);
+            connectorColor?: ColorType;
             connectorDistance?: number;
             connectorWidth?: number;
             enabled?: boolean;
@@ -83,9 +87,9 @@ declare global {
             extends Partial<BubbleLegendFormatterContextObject>
         {
             autoRanges?: boolean;
-            borderColor?: (ColorString|GradientColorObject|PatternObject);
-            color?: (ColorString|GradientColorObject|PatternObject);
-            connectorColor?: (ColorString|GradientColorObject|PatternObject);
+            borderColor?: ColorType;
+            color?: ColorType;
+            connectorColor?: ColorType;
             bubbleStyle?: CSSObject;
             connectorStyle?: CSSObject;
             labelStyle?: CSSObject;
@@ -442,16 +446,16 @@ class BubbleLegend {
     public chart: Chart = void 0 as any;
     public fontMetrics: Highcharts.FontMetricsObject = void 0 as any;
     public legend: Highcharts.Legend = void 0 as any;
-    public legendGroup: Highcharts.SVGElement = void 0 as any;
-    public legendItem: Highcharts.SVGElement = void 0 as any;
+    public legendGroup: SVGElement = void 0 as any;
+    public legendItem: SVGElement = void 0 as any;
     public legendItemHeight: number = void 0 as any;
     public legendItemWidth: number = void 0 as any;
-    public legendSymbol: Highcharts.SVGElement = void 0 as any;
+    public legendSymbol: SVGElement = void 0 as any;
     public maxLabel: Highcharts.BBoxObject = void 0 as any;
     public movementX: number = void 0 as any;
     public ranges: Array<Highcharts.BubbleLegendRangesOptions> = void 0 as any;
     public visible: boolean = void 0 as any;
-    public symbols: Highcharts.Dictionary<Array<Highcharts.SVGElement>>= void 0 as any;
+    public symbols: Highcharts.Dictionary<Array<SVGElement>>= void 0 as any;
     public options: Highcharts.BubbleLegendOptions = void 0 as any;
 
 
@@ -569,11 +573,11 @@ class BubbleLegend {
             options = this.options,
             series = this.chart.series[options.seriesIndex as any],
             baseline = this.legend.baseline,
-            bubbleStyle: Highcharts.SVGAttributes = {
+            bubbleStyle: SVGAttributes = {
                 'z-index': options.zIndex,
                 'stroke-width': options.borderWidth
             },
-            connectorStyle: Highcharts.SVGAttributes = {
+            connectorStyle: SVGAttributes = {
                 'z-index': options.zIndex,
                 'stroke-width': options.connectorWidth
             },
@@ -633,9 +637,9 @@ class BubbleLegend {
      * @function Highcharts.BubbleLegend#getLabelStyles
      * @return {Highcharts.CSSObject}
      */
-    public getLabelStyles(): Highcharts.CSSObject {
+    public getLabelStyles(): CSSObject {
         var options = this.options,
-            additionalLabelsStyle = {} as Highcharts.CSSObject,
+            additionalLabelsStyle: CSSObject = {},
             labelsOnLeft = (options.labels as any).align === 'left',
             rtl = this.legend.options.rtl;
 
@@ -879,7 +883,7 @@ class BubbleLegend {
             maxLabel: (Highcharts.BBoxObject|undefined),
             labelSize: Highcharts.BBoxObject;
 
-        labels.forEach(function (label: Highcharts.SVGElement): void {
+        labels.forEach(function (label: SVGElement): void {
             labelSize = label.getBBox(true);
 
             if (maxLabel) {
@@ -932,7 +936,7 @@ class BubbleLegend {
 
             // Hide or show connectors
             symbols.labels.forEach(function (
-                label: Highcharts.SVGElement,
+                label: SVGElement,
                 index: number
             ): void {
                 if (!label.newOpacity) {

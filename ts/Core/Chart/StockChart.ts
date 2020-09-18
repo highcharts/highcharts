@@ -8,8 +8,9 @@
  *
  * */
 
-'use strict';
-
+import type {
+    HTMLDOMElement
+} from '../Renderer/DOMElementType';
 import type { SeriesPlotOptionsType } from '../Series/Types';
 import type SVGPath from '../Renderer/SVG/SVGPath';
 import Axis from '../Axis/Axis.js';
@@ -188,7 +189,7 @@ var seriesProto = LineSeries.prototype,
  *         The chart object.
  */
 H.StockChart = H.stockChart = function (
-    a: (string|Highcharts.HTMLDOMElement|Highcharts.Options),
+    a: (string|HTMLDOMElement|Highcharts.Options),
     b?: (Chart.CallbackFunction|Highcharts.Options),
     c?: Chart.CallbackFunction
 ): Highcharts.StockChart {

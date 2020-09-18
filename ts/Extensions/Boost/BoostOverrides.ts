@@ -13,6 +13,7 @@
 'use strict';
 
 import type { SeriesPlotOptionsType } from '../../Core/Series/Types';
+import type SVGAttributes from '../../Core/Renderer/SVG/SVGAttributes';
 import type SVGPath from '../../Core/Renderer/SVG/SVGPath';
 import Chart from '../../Core/Chart/Chart.js';
 import H from '../../Core/Globals.js';
@@ -235,8 +236,8 @@ wrap(Series.prototype, 'markerAttribs', function (
     this: Highcharts.Series,
     proceed: Function,
     point: Point
-): Highcharts.SVGAttributes {
-    var attribs: Highcharts.SVGAttributes,
+): SVGAttributes {
+    var attribs: SVGAttributes,
         series = this,
         chart = series.chart,
         plotX: number = point.plotX as any,

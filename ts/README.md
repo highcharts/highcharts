@@ -6,6 +6,25 @@ out of the doclets to be in sync with the official API documentation.
 
 
 
+Content
+-------
+* [Main Rules](#main-rules)
+* [Do's and Don'ts](#dos-and-donts)
+  * [Make use of type import](#make-use-of-type-import)
+  * [Combine ES6 class pattern with types](#combine-es6-class-pattern-with-types)
+  * [Make use of type definition files](#make-use-of-type-definition-files)
+  * [Avoid "any" casting](#avoid-any-casting)
+  * [Avoid "as" casting](#avoid-as-casting)
+  * [Test against "undefined" and "null"](#test-against-undefined-and-null)
+* [Good to Know](#good-to-know)
+  * [Make use of common ES6+ features](#make-use-of-common-es6-features)
+  * [Extend interfaces in type definition files](#extend-interfaces-in-type-definition-files)
+  * [Type check for interfaces](#type-check-for-interfaces)
+  * [Type union instead of new interface](#type-union-instead-of-new-interface)
+  * [Unit tests can be written in TypeScript](#unit-tests-can-be-written-in-typescript)
+
+
+
 Main Rules
 ----------
 - You have to sync types in code, doclets, and internals yourself
@@ -22,7 +41,7 @@ Main Rules
 Do's and Don'ts
 ---------------
 
-### Make use of type import ###
+### Make use of type import
 
 If you only need a class type of a file, but not the implementation, make use of
 the type import. This removes these import from the `*.js` output, as is is only
@@ -33,7 +52,7 @@ import type Chart from '../Core/Chart/Chart';
 ```
 
 
-### Combine ES6 class pattern with types ###
+### Combine ES6 class pattern with types
 
 When it comes to types that are only created by one class, the following pattern
 works the best:
@@ -59,7 +78,7 @@ like to add real members that should not be part of the class, move them in a
 new file.
 
 
-### Make use of type definition files ###
+### Make use of type definition files
 
 If a type is created by multiple files, it should go into its own `*.d.ts` file.
 That way multiple files can add properties to an interface in an `*.d.ts` file.
@@ -208,6 +227,60 @@ of them:
 
 * Nullish coalescing operator instead of pick():
   `const option = optionThatCanBeNullOrUndefined ?? defaultOption;`
+
+
+### Extend interfaces in type definition files
+
+TypeScript can combine interfaces with the same name into one virtual interface.
+In that way, modules can add optional properties to existing interfaces and to
+classes implementing that interface. Follow the following steps:
+
+1. First you have to decide, wich interface becomes the main interface. Move it
+   into a type definition file (`.d.ts`). In our example it will look like this:
+   ```ts
+   // file: Example.d.ts
+   export interface Example {
+       mainProperty1: boolean;
+       mainProperty2: number;
+       mainProperty3: string;
+   }
+   export default Example;
+   ```
+
+2. In every module, where you like to add optional properties to the interface,
+   create a module declaration with `declare module`. You can define now an
+   interface with the same name as an addition. In our example it will look like
+   this:
+   ```ts
+   // file: Module.ts
+   declare module './Example' {
+       interface Example {
+           optionalProperty1?: boolean;
+           optionalProperty2?: number;
+           optionalProperty3?: string;
+       }
+   }
+
+3. When you now import the interface in an other module or the same module, all
+   properties are available. In our example it would be like this:
+   ```ts
+   // file: OtherModule.ts
+   import type Example from './Example';
+   const example: Example = {
+       mainProperty1: false,
+       mainProperty2: 1,
+       mainProperty3: '',
+       optionalProperty1: true,
+   };
+   example.optionalProperty2 = example.mainProperty2 * 100;
+   example.optionalProperty3 = 'string';
+   ```
+
+**Note:** This technique can only extend interfaces in type definition files
+(`.d.ts`), not in regular source files (`.ts`). If the interface is in a regular
+source file, you have to move it in a separate type definition file with a new
+file name. You can not have a regular source file and a type definition file
+with the same name in the same folder.
 
 
 ### Type check for interfaces

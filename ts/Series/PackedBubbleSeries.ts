@@ -8,9 +8,11 @@
  *
  * */
 
+import type SVGAttributes from '../Core/Renderer/SVG/SVGAttributes';
+import type SVGElement from '../Core/Renderer/SVG/SVGElement';
 import BaseSeries from '../Core/Series/Series.js';
 import Chart from '../Core/Chart/Chart.js';
-import Color from '../Core/Color.js';
+import Color from '../Core/Color/Color.js';
 const color = Color.parse;
 import H from '../Core/Globals.js';
 import Point from '../Core/Series/Point.js';
@@ -952,7 +954,7 @@ BaseSeries.seriesType<typeof Highcharts.PackedBubbleSeries>(
         },
         render: function (this: Highcharts.PackedBubbleSeries): void {
             var series = this,
-                dataLabels = [] as Array<Highcharts.SVGElement>;
+                dataLabels = [] as Array<SVGElement>;
             Series.prototype.render.apply(this, arguments as any);
             // #10823 - dataLabels should stay visible
             // when enabled allowOverlap.
@@ -962,7 +964,7 @@ BaseSeries.seriesType<typeof Highcharts.PackedBubbleSeries>(
                 ): void {
                     if (isArray(point.dataLabels)) {
                         point.dataLabels.forEach(function (
-                            dataLabel: Highcharts.SVGElement
+                            dataLabel: SVGElement
                         ): void {
                             dataLabels.push(dataLabel);
                         });
@@ -1122,10 +1124,10 @@ BaseSeries.seriesType<typeof Highcharts.PackedBubbleSeries>(
 
             var series = this,
                 chart = series.chart,
-                parentAttribs = {} as Highcharts.SVGAttributes,
+                parentAttribs: SVGAttributes = {},
                 nodeMarker: Highcharts.BubblePointMarkerOptions =
                     (this.layout.options.parentNodeOptions as any).marker,
-                parentOptions: Highcharts.SVGAttributes = {
+                parentOptions: SVGAttributes = {
                     fill: nodeMarker.fillColor || color(series.color).brighten(0.4).get(),
                     opacity: nodeMarker.fillOpacity,
                     stroke: nodeMarker.lineColor || series.color,
@@ -1259,7 +1261,7 @@ BaseSeries.seriesType<typeof Highcharts.PackedBubbleSeries>(
                 }
 
                 (dataLabels as any).forEach(function (
-                    dataLabel: Highcharts.SVGElement
+                    dataLabel: SVGElement
                 ): void {
                     if (dataLabel.div) {
                         dataLabel.div.point = parentNode;
@@ -1975,7 +1977,7 @@ BaseSeries.seriesType<typeof Highcharts.PackedBubbleSeries>(
             if (point.isParentNode) {
                 chart.getSelectedPoints = chart.getSelectedParentNodes;
                 Point.prototype.select.apply(this, arguments);
-                chart.getSelectedPoints = H.Chart.prototype.getSelectedPoints;
+                chart.getSelectedPoints = Chart.prototype.getSelectedPoints;
             } else {
                 Point.prototype.select.apply(this, arguments);
             }

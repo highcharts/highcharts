@@ -6,10 +6,13 @@
  *
  * */
 
+import type ColorType from '../../Core/Color/ColorType';
+import type CSSObject from '../../Core/Renderer/CSSObject';
 import type Point from '../../Core/Series/Point';
+import type SVGElement from '../../Core/Renderer/SVG/SVGElement';
 import type SVGPath from '../../Core/Renderer/SVG/SVGPath';
 import BaseSeries from '../../Core/Series/Series.js';
-import Color from '../../Core/Color.js';
+import Color from '../../Core/Color/Color.js';
 const color = Color.parse;
 import H from '../../Core/Globals.js';
 import U from '../../Core/Utilities.js';
@@ -78,15 +81,15 @@ declare global {
 
         interface IKHIndicatorOptions
             extends SMAIndicatorOptions {
-            chikouLine?: Dictionary<CSSObject>;
+            chikouLine?: Record<string, CSSObject>;
             gapSize?: number;
-            kijunLine?: Dictionary<CSSObject>;
+            kijunLine?: Record<string, CSSObject>;
             marker?: PointMarkerOptionsObject;
             params?: IKHIndicatorParamsOptions;
             senkouSpan?: IKHIndicatorSenkouSpanOptions;
-            senkouSpanA?: Dictionary<CSSObject>;
-            senkouSpanB?: Dictionary<CSSObject>;
-            tenkanLine?: Dictionary<CSSObject>;
+            senkouSpanA?: Record<string, CSSObject>;
+            senkouSpanB?: Record<string, CSSObject>;
+            tenkanLine?: Record<string, CSSObject>;
             tooltip?: TooltipOptions;
         }
 
@@ -544,7 +547,7 @@ BaseSeries.seriesType<typeof Highcharts.IKHIndicator>(
                 mainLineOptions: Highcharts.IKHIndicatorOptions = (
                     indicator.options
                 ),
-                mainLinePath: (Highcharts.SVGElement|undefined) = (
+                mainLinePath: (SVGElement|undefined) = (
                     indicator.graph
                 ),
                 mainColor = indicator.color,
@@ -571,11 +574,11 @@ BaseSeries.seriesType<typeof Highcharts.IKHIndicator>(
                 senkouSpanOptions: Highcharts.IKHIndicatorSenkouSpanOptions = (
                     indicator.options.senkouSpan as any
                 ),
-                color: Highcharts.ColorType = (
+                color: ColorType = (
                     senkouSpanOptions.color ||
                     (senkouSpanOptions.styles as any).fill
                 ),
-                negativeColor: (Highcharts.ColorType|undefined) = (
+                negativeColor: (ColorType|undefined) = (
                     senkouSpanOptions.negativeColor
                 ),
 

@@ -133,6 +133,34 @@ var Series = H.Series,
 BaseSeries.seriesType<typeof Highcharts.AreaRangeSeries>('arearange', 'area', {
 
     /**
+     * @see [fillColor](#plotOptions.arearange.fillColor)
+     * @see [fillOpacity](#plotOptions.arearange.fillOpacity)
+     *
+     * @apioption plotOptions.arearange.color
+     */
+
+    /**
+     * @default   low
+     * @apioption plotOptions.arearange.colorKey
+     */
+
+    /**
+     * @see [color](#plotOptions.arearange.color)
+     * @see [fillOpacity](#plotOptions.arearange.fillOpacity)
+     *
+     * @apioption plotOptions.arearange.fillColor
+     */
+
+    /**
+     * @see [color](#plotOptions.arearange.color)
+     * @see [fillColor](#plotOptions.arearange.fillColor)
+     *
+     * @default   {highcharts} 0.75
+     * @default   {highstock} 0.75
+     * @apioption plotOptions.arearange.fillOpacity
+     */
+
+    /**
      * Whether to apply a drop shadow to the graph line. Since 2.3 the shadow
      * can be an object configuration containing `color`, `offsetX`, `offsetY`,
      * `opacity` and `width`.
@@ -140,11 +168,6 @@ BaseSeries.seriesType<typeof Highcharts.AreaRangeSeries>('arearange', 'area', {
      * @type      {boolean|Highcharts.ShadowOptionsObject}
      * @product   highcharts
      * @apioption plotOptions.arearange.shadow
-     */
-
-    /**
-     * @default   low
-     * @apioption plotOptions.arearange.colorKey
      */
 
     /**
@@ -583,7 +606,7 @@ BaseSeries.seriesType<typeof Highcharts.AreaRangeSeries>('arearange', 'area', {
                         point.dataLabelUpper as any,
                         point.dataLabel
                     ].filter(function (
-                        label: (Highcharts.SVGElement|undefined)
+                        label: (SVGElement|undefined)
                     ): boolean {
                         return !!label;
                     });
@@ -802,6 +825,13 @@ BaseSeries.seriesType<typeof Highcharts.AreaRangeSeries>('arearange', 'area', {
  */
 
 /**
+ * @see [fillColor](#series.arearange.fillColor)
+ * @see [fillOpacity](#series.arearange.fillOpacity)
+ *
+ * @apioption series.arearange.color
+ */
+
+/**
  * An array of data points for the series. For the `arearange` series type,
  * points can be given in the following ways:
  *
@@ -861,6 +891,22 @@ BaseSeries.seriesType<typeof Highcharts.AreaRangeSeries>('arearange', 'area', {
  * @extends   series.arearange.dataLabels
  * @product   highcharts highstock
  * @apioption series.arearange.data.dataLabels
+ */
+
+/**
+ * @see [color](#series.arearange.color)
+ * @see [fillOpacity](#series.arearange.fillOpacity)
+ *
+ * @apioption series.arearange.fillColor
+ */
+
+/**
+ * @see [color](#series.arearange.color)
+ * @see [fillColor](#series.arearange.fillColor)
+ *
+ * @default   {highcharts} 0.75
+ * @default   {highstock} 0.75
+ * @apioption series.arearange.fillOpacity
  */
 
 /**

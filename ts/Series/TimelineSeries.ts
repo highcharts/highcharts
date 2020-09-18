@@ -12,6 +12,8 @@
  *
  * */
 
+import type ColorType from '../Core/Color/ColorType';
+import type SVGAttributes from '../Core/Renderer/SVG/SVGAttributes';
 import type SVGPath from '../Core/Renderer/SVG/SVGPath';
 import BaseSeries from '../Core/Series/Series.js';
 const {
@@ -422,9 +424,9 @@ BaseSeries.seriesType<typeof Highcharts.TimelineSeries>('timeline', 'line',
                         // target position (after animation) is needed to align
                         // connectors.
                         dataLabel.animate = function (
-                            this: Highcharts.SVGElement,
-                            params: Highcharts.SVGAttributes
-                        ): Highcharts.SVGElement {
+                            this: SVGElement,
+                            params: SVGAttributes
+                        ): SVGElement {
                             if (this.targetPosition) {
                                 this.targetPosition = params;
                             }
@@ -468,7 +470,7 @@ BaseSeries.seriesType<typeof Highcharts.TimelineSeries>('timeline', 'line',
         alignDataLabel: function (
             this: Highcharts.TimelineSeries,
             point: Highcharts.TimelinePoint,
-            dataLabel: Highcharts.SVGElement,
+            dataLabel: SVGElement,
             options: Highcharts.TimelineDataLabelsOptionsObject,
             alignTo: Highcharts.BBoxObject
         ): void {
@@ -660,7 +662,7 @@ BaseSeries.seriesType<typeof Highcharts.TimelineSeries>('timeline', 'line',
             this: Highcharts.TimelineSeries,
             point: Highcharts.TimelinePoint,
             state?: string
-        ): Highcharts.SVGAttributes {
+        ): SVGAttributes {
             var series = this,
                 seriesMarkerOptions: Highcharts.PointMarkerOptionsObject =
                     series.options.marker as any,
@@ -680,7 +682,7 @@ BaseSeries.seriesType<typeof Highcharts.TimelineSeries>('timeline', 'line',
                     seriesMarkerOptions.height as any
                 ),
                 radius = 0,
-                attribs: (Highcharts.SVGAttributes|undefined);
+                attribs: (SVGAttributes|undefined);
 
             // Call default markerAttribs method, when the xAxis type
             // is set to datetime.
@@ -783,7 +785,7 @@ BaseSeries.seriesType<typeof Highcharts.TimelineSeries>('timeline', 'line',
                 xAxisLen = point.series.xAxis.len,
                 inverted = chart.inverted,
                 direction = inverted ? 'x2' : 'y2',
-                dl: Highcharts.SVGElement = point.dataLabel as any,
+                dl: SVGElement = point.dataLabel as any,
                 targetDLPos = dl.targetPosition,
                 coords: Highcharts.Dictionary<(number|string)> = {
                     x1: point.plotX as any,
@@ -853,8 +855,8 @@ BaseSeries.seriesType<typeof Highcharts.TimelineSeries>('timeline', 'line',
         alignConnector: function (this: Highcharts.TimelinePoint): void {
             var point = this,
                 series = point.series,
-                connector: Highcharts.SVGElement = point.connector as any,
-                dl: Highcharts.SVGElement = point.dataLabel as any,
+                connector: SVGElement = point.connector as any,
+                dl: SVGElement = point.dataLabel as any,
                 dlOptions = (point.dataLabel as any).options = merge(
                     series.options.dataLabels,
                     point.options.dataLabels

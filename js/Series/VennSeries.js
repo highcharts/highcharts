@@ -16,7 +16,7 @@
  * */
 import BaseSeries from '../Core/Series/Series.js';
 var seriesTypes = BaseSeries.seriesTypes;
-import Color from '../Core/Color.js';
+import Color from '../Core/Color/Color.js';
 var color = Color.parse;
 import DrawPointMixin from '../Mixins/DrawPoint.js';
 var draw = DrawPointMixin.draw;

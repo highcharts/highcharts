@@ -18,6 +18,8 @@
  *   Highcharts symbols.
  */
 
+import type SVGAttributes from '../Core/Renderer/SVG/SVGAttributes';
+import type SVGElement from '../Core/Renderer/SVG/SVGElement';
 import type SVGPath from '../Core/Renderer/SVG/SVGPath';
 import _ColumnSeries from './ColumnSeries.js';
 import Series from '../Core/Series/Series.js';
@@ -96,8 +98,8 @@ Series.seriesType<typeof Highcharts.DotplotSeries>('dotplot', 'column', {
 
         this.points.forEach(function (point: Highcharts.DotplotPoint): void {
             var yPos: number,
-                attr: Highcharts.SVGAttributes,
-                graphics: Highcharts.Dictionary<Highcharts.SVGElement>,
+                attr: SVGAttributes,
+                graphics: Highcharts.Dictionary<SVGElement>,
                 itemY: (number|undefined),
                 pointAttr,
                 pointMarkerOptions = point.marker || {},
@@ -175,7 +177,7 @@ Series.seriesType<typeof Highcharts.DotplotSeries>('dotplot', 'column', {
                 }
             }
             objectEach(graphics, function (
-                graphic: Highcharts.SVGElement,
+                graphic: SVGElement,
                 key: string
             ): void {
                 if (!graphic.isActive) {

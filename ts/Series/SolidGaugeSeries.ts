@@ -11,10 +11,13 @@
  * */
 
 import type ColorAxis from '../Core/Axis/ColorAxis';
+import type ColorType from '../Core/Color/ColorType';
+import type GradientColor from '../Core/Color/GradientColor';
 import type RadialAxis from '../Core/Axis/RadialAxis';
+import type SVGAttributes from '../Core/Renderer/SVG/SVGAttributes';
 import type SVGPath from '../Core/Renderer/SVG/SVGPath';
 import BaseSeries from '../Core/Series/Series.js';
-import Color from '../Core/Color.js';
+import Color from '../Core/Color/Color.js';
 const {
     parse: color
 } = Color;
@@ -174,7 +177,7 @@ interface SolidGaugeAxis extends RadialAxis {
     toColor(
         value: number,
         point: Highcharts.SolidGaugePoint
-    ): (Highcharts.ColorType|undefined);
+    ): (ColorType|undefined);
 }
 
 /**
@@ -257,7 +260,7 @@ namespace SolidGaugeAxis {
                 [1, this.options.maxColor as any]
             ];
             this.stops.forEach(function (
-                stop: Highcharts.GradientColorStopObject
+                stop: GradientColor['stops'][0]
             ): void {
                 stop.color = color(stop[1]);
             });
@@ -267,12 +270,12 @@ namespace SolidGaugeAxis {
             this: SolidGaugeAxis,
             value: number,
             point: Highcharts.SolidGaugePoint
-        ): (Highcharts.ColorType|undefined) {
+        ): (ColorType|undefined) {
             var pos: number,
                 stops = this.stops,
-                from: (number|Highcharts.GradientColorStopObject|undefined),
-                to: (number|Highcharts.GradientColorStopObject|undefined),
-                color: (Highcharts.ColorType|undefined),
+                from: (number|GradientColor['stops'][0]|undefined),
+                to: (number|GradientColor['stops'][0]|undefined),
+                color: (ColorType|undefined),
                 dataClasses = this.dataClasses,
                 dataClass: (ColorAxis.DataClassesOptions|undefined),
                 i: (number|undefined);
@@ -527,7 +530,7 @@ BaseSeries.seriesType<typeof Highcharts.SolidGaugeSeries>(
                                 )
                             ) * center[2]
                         ) / 200),
-                        shapeArgs: (Highcharts.SVGAttributes|undefined),
+                        shapeArgs: (SVGAttributes|undefined),
                         d: (string|SVGPath|undefined),
                         toColor = yAxis.toColor(point.y as any, point),
                         axisMinAngle = Math.min(

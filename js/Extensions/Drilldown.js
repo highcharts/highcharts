@@ -12,7 +12,7 @@
 'use strict';
 import Axis from '../Core/Axis/Axis.js';
 import Chart from '../Core/Chart/Chart.js';
-import Color from '../Core/Color.js';
+import Color from '../Core/Color/Color.js';
 import H from '../Core/Globals.js';
 var noop = H.noop;
 import O from '../Core/Options.js';

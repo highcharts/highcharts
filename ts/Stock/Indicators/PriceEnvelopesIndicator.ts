@@ -6,6 +6,8 @@
  *
  * */
 
+import type CSSObject from '../../Core/Renderer/CSSObject';
+import type SVGElement from '../../Core/Renderer/SVG/SVGElement';
 import BaseSeries from '../../Core/Series/Series.js';
 import U from '../../Core/Utilities.js';
 const {
@@ -66,8 +68,8 @@ declare global {
 
         interface PriceEnvelopesIndicatorOptions extends SMAIndicatorOptions {
             params?: PriceEnvelopesIndicatorParamsOptions;
-            bottomLine?: Dictionary<CSSObject>;
-            topLine?: Dictionary<CSSObject>;
+            bottomLine?: Record<string, CSSObject>;
+            topLine?: Record<string, CSSObject>;
         }
     }
 }
@@ -224,7 +226,7 @@ BaseSeries.seriesType<typeof Highcharts.PriceEnvelopesIndicator>(
                     indicator.options
                 ),
                 middleLinePath: (
-                    Highcharts.SVGElement|undefined
+                    SVGElement|undefined
                 ) = indicator.graph,
                 gappedExtend:
                 Highcharts.PriceEnvelopesIndicatorGappedExtensionObject = {

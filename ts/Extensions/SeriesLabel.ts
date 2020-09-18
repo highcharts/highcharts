@@ -8,9 +8,10 @@
  *
  * */
 
-'use strict';
-
+import type CSSObject from '../Core/Renderer/CSSObject';
 import type Point from '../Core/Series/Point';
+import type SVGAttributes from '../Core/Renderer/SVG/SVGAttributes';
+import type SVGElement from '../Core/Renderer/SVG/SVGElement';
 import type SVGPath from '../Core/Renderer/SVG/SVGPath';
 import Chart from '../Core/Chart/Chart.js';
 import H from '../Core/Globals.js';
@@ -401,7 +402,7 @@ Series.prototype.getPointsOnGraph = function (
         n: (number|undefined),
         j: (number|undefined),
         d: (SVGPath|undefined),
-        graph: Highcharts.SVGElement = this.graph || (this.area as any),
+        graph: SVGElement = this.graph || (this.area as any),
         node: SVGPathElement = graph.element as any,
         inverted = this.chart.inverted,
         xAxis = this.xAxis,
@@ -819,7 +820,7 @@ Chart.prototype.drawSeriesLabels = function (): void {
             paneHeight = chart.inverted ? series.xAxis.len : series.yAxis.len,
             points: Array<Point> = series.interpolatedPoints as any,
             onArea = pick(labelOptions.onArea, !!series.area),
-            label: Highcharts.SVGElement = series.labelBySeries as any,
+            label: SVGElement = series.labelBySeries as any,
             isNew = !label,
             minFontSize = labelOptions.minFontSize,
             maxFontSize = labelOptions.maxFontSize,
@@ -890,7 +891,7 @@ Chart.prototype.drawSeriesLabels = function (): void {
                     );
 
                 if (!chart.renderer.styledMode) {
-                    label.css(extend<Highcharts.CSSObject>({
+                    label.css(extend<CSSObject>({
                         color: onArea ?
                             chart.renderer.getContrast(series.color as any) :
                             (series.color as any)
@@ -1054,12 +1055,12 @@ Chart.prototype.drawSeriesLabels = function (): void {
 
                     // Move fast and fade in - pure animation movement is
                     // distractive...
-                    var attr: Highcharts.SVGAttributes = {
+                    var attr: SVGAttributes = {
                             opacity: chart.renderer.forExport ? 1 : 0,
                             x: best.x,
                             y: best.y
                         },
-                        anim: Highcharts.SVGAttributes = {
+                        anim: SVGAttributes = {
                             opacity: 1
                         };
 
@@ -1087,7 +1088,7 @@ Chart.prototype.drawSeriesLabels = function (): void {
                                 (best.connectorPoint.plotX as any) + paneLeft,
                             anchorY: best.connectorPoint &&
                                 (best.connectorPoint.plotY as any) + paneTop
-                        }))
+                        } as SVGAttributes))
                         .animate(anim, animationOptions);
 
                     // Record closest point to stick to for sync redraw
@@ -1143,7 +1144,7 @@ function drawLabels(this: Chart, e: Event): void {
         chart.series.forEach(function (series: Highcharts.Series): void {
             var options: Highcharts.SeriesLabelOptionsObject =
                     series.options.label as any,
-                label: Highcharts.SVGElement = series.labelBySeries as any,
+                label: SVGElement = series.labelBySeries as any,
                 closest = label && label.closest;
 
             if (

@@ -76,6 +76,26 @@ BaseSeries.seriesType('bellcurve', 'areaspline'
  */
 , {
     /**
+     * @see [fillColor](#plotOptions.bellcurve.fillColor)
+     * @see [fillOpacity](#plotOptions.bellcurve.fillOpacity)
+     *
+     * @apioption plotOptions.bellcurve.color
+     */
+    /**
+     * @see [color](#plotOptions.bellcurve.color)
+     * @see [fillOpacity](#plotOptions.bellcurve.fillOpacity)
+     *
+     * @apioption plotOptions.bellcurve.fillColor
+     */
+    /**
+     * @see [color](#plotOptions.bellcurve.color)
+     * @see [fillColor](#plotOptions.bellcurve.fillColor)
+     *
+     * @default   {highcharts} 0.75
+     * @default   {highstock} 0.75
+     * @apioption plotOptions.bellcurve.fillOpacity
+     */
+    /**
      * This option allows to define the length of the bell curve. A unit of
      * the length of the bell curve is standard deviation.
      *
@@ -140,5 +160,25 @@ BaseSeries.seriesType('bellcurve', 'areaspline'
  *
  * @type      {number|string}
  * @apioption series.bellcurve.baseSeries
+ */
+/**
+ * @see [fillColor](#series.bellcurve.fillColor)
+ * @see [fillOpacity](#series.bellcurve.fillOpacity)
+ *
+ * @apioption series.bellcurve.color
+ */
+/**
+ * @see [color](#series.bellcurve.color)
+ * @see [fillOpacity](#series.bellcurve.fillOpacity)
+ *
+ * @apioption series.bellcurve.fillColor
+ */
+/**
+ * @see [color](#series.bellcurve.color)
+ * @see [fillColor](#series.bellcurve.fillColor)
+ *
+ * @default   {highcharts} 0.75
+ * @default   {highstock} 0.75
+ * @apioption series.bellcurve.fillOpacity
  */
 ''; // adds doclets above to transpiled file

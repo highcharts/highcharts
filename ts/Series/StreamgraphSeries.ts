@@ -77,6 +77,26 @@ BaseSeries.seriesType<typeof Highcharts.StreamgraphSeries>('streamgraph', 'areas
      * @optionparent plotOptions.streamgraph
      */
     , {
+        /**
+         * @see [fillColor](#plotOptions.streamgraph.fillColor)
+         * @see [fillOpacity](#plotOptions.streamgraph.fillOpacity)
+         *
+         * @apioption plotOptions.streamgraph.color
+         */
+
+        /**
+         * @see [color](#plotOptions.streamgraph.color)
+         * @see [fillOpacity](#plotOptions.streamgraph.fillOpacity)
+         *
+         * @apioption plotOptions.streamgraph.fillColor
+         */
+
+        /**
+         * @see [color](#plotOptions.streamgraph.color)
+         * @see [fillColor](#plotOptions.streamgraph.fillColor)
+         *
+         * @apioption plotOptions.streamgraph.fillOpacity
+         */
         fillOpacity: 1,
         lineWidth: 0,
         marker: {
@@ -116,6 +136,13 @@ BaseSeries.seriesType<typeof Highcharts.StreamgraphSeries>('streamgraph', 'areas
  * @product   highcharts highstock
  * @requires  modules/streamgraph
  * @apioption series.streamgraph
+ */
+
+/**
+ * @see [fillColor](#series.streamgraph.fillColor)
+ * @see [fillOpacity](#series.streamgraph.fillOpacity)
+ *
+ * @apioption series.streamgraph.color
  */
 
 /**
@@ -176,6 +203,22 @@ BaseSeries.seriesType<typeof Highcharts.StreamgraphSeries>('streamgraph', 'areas
  * @extends   series.line.data
  * @product   highcharts highstock
  * @apioption series.streamgraph.data
+ */
+
+/**
+ * @see [color](#series.streamgraph.color)
+ * @see [fillOpacity](#series.streamgraph.fillOpacity)
+ *
+ * @apioption series.streamgraph.fillColor
+ */
+
+/**
+ * @see [color](#series.streamgraph.color)
+ * @see [fillColor](#series.streamgraph.fillColor)
+ *
+ * @type      {number}
+ * @default   1
+ * @apioption series.streamgraph.fillOpacity
  */
 
 ''; // adds doclets above to transpiled file

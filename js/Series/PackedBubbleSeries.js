@@ -9,7 +9,7 @@
  * */
 import BaseSeries from '../Core/Series/Series.js';
 import Chart from '../Core/Chart/Chart.js';
-import Color from '../Core/Color.js';
+import Color from '../Core/Color/Color.js';
 var color = Color.parse;
 import H from '../Core/Globals.js';
 import Point from '../Core/Series/Point.js';
@@ -1264,7 +1264,7 @@ BaseSeries.seriesType('packedbubble', 'bubble',
         if (point.isParentNode) {
             chart.getSelectedPoints = chart.getSelectedParentNodes;
             Point.prototype.select.apply(this, arguments);
-            chart.getSelectedPoints = H.Chart.prototype.getSelectedPoints;
+            chart.getSelectedPoints = Chart.prototype.getSelectedPoints;
         }
         else {
             Point.prototype.select.apply(this, arguments);

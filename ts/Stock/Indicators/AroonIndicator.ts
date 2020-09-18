@@ -6,6 +6,7 @@
  *
  * */
 
+import type CSSObject from '../../Core/Renderer/CSSObject';
 import BaseSeries from '../../Core/Series/Series.js';
 import MultipleLinesMixin from '../../Mixins/MultipleLines.js';
 import U from '../../Core/Utilities.js';
@@ -42,7 +43,7 @@ declare global {
 
         interface AroonIndicatorOptions
             extends SMAIndicatorOptions, MultipleLinesIndicatorOptions {
-            aroonDown?: Dictionary<CSSObject>;
+            aroonDown?: Record<string, CSSObject>;
             marker?: PointMarkerOptionsObject;
             params?: AroonIndicatorParamsOptions;
             tooltip?: TooltipOptions;

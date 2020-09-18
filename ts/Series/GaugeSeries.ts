@@ -8,7 +8,9 @@
  *
  * */
 
+import type ColorType from '../Core/Color/ColorType';
 import type RadialAxis from '../Core/Axis/RadialAxis';
+import type SVGAttributes from '../Core/Renderer/SVG/SVGAttributes';
 import type SVGPath from '../Core/Renderer/SVG/SVGPath';
 import BaseSeries from '../Core/Series/Series.js';
 import H from '../Core/Globals.js';
@@ -467,7 +469,7 @@ BaseSeries.seriesType<typeof Highcharts.GaugeSeries>('gauge', 'line', {
                 translateX: center[0],
                 translateY: center[1],
                 rotation: rotation
-            } as Highcharts.SVGAttributes;
+            };
 
             // Positions for data label
             point.plotX = center[0];
@@ -546,7 +548,7 @@ BaseSeries.seriesType<typeof Highcharts.GaugeSeries>('gauge', 'line', {
                         '${palette.neutralColor20}',
                     fill: (pivotOptions as any).backgroundColor ||
                         '${palette.neutralColor100}'
-                } as Highcharts.SVGAttributes);
+                });
             }
         }
     },

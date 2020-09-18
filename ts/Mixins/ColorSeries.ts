@@ -10,9 +10,13 @@
 
 'use strict';
 
+import type ColorType from '../Core/Color/ColorType';
 import type Point from '../Core/Series/Point';
-import H from '../Core/Globals.js';
 
+/**
+ * Internal types
+ * @private
+ */
 declare global {
     namespace Highcharts {
         interface ColorPoint extends Point {
@@ -37,7 +41,7 @@ declare global {
             translateColors: ColorSeries['translateColors'];
         }
         interface ColorSeriesOptions extends SeriesOptions {
-            nullColor?: (ColorString|GradientColorObject|PatternObject);
+            nullColor?: ColorType;
         }
         let colorPointMixin: ColorPointMixin;
         let colorSeriesMixin: ColorSeriesMixin;

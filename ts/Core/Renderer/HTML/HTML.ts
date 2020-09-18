@@ -8,8 +8,12 @@
  *
  * */
 
-'use strict';
-
+import type BBoxObject from '../BBoxObject';
+import type CSSObject from '../CSSObject';
+import type {
+    DOMElementType,
+    HTMLDOMElement
+} from '../DOMElementType';
 import H from '../../Globals.js';
 import SVGElement from '../SVG/SVGElement.js';
 import SVGRenderer from '../SVG/SVGRenderer.js';
@@ -87,7 +91,7 @@ extend(SVGElement.prototype, /** @lends SVGElement.prototype */ {
      */
     htmlCss: function (
         this: Highcharts.HTMLElement,
-        styles: Highcharts.CSSObject
+        styles: CSSObject
     ): Highcharts.HTMLElement {
         var wrapper = this,
             element = wrapper.element,
@@ -140,7 +144,7 @@ extend(SVGElement.prototype, /** @lends SVGElement.prototype */ {
      */
     htmlGetBBox: function (
         this: Highcharts.HTMLElement
-    ): Highcharts.BBoxObject {
+    ): BBoxObject {
         var wrapper = this,
             element = wrapper.element;
 
@@ -203,7 +207,7 @@ extend(SVGElement.prototype, /** @lends SVGElement.prototype */ {
 
         if (!renderer.styledMode && wrapper.shadows) { // used in labels/tooltip
             wrapper.shadows.forEach(function (
-                shadow: (Highcharts.HTMLDOMElement|Highcharts.SVGDOMElement)
+                shadow: DOMElementType
             ): void {
                 css(shadow, {
                     marginLeft: translateX + 1,
@@ -325,7 +329,7 @@ extend(SVGElement.prototype, /** @lends SVGElement.prototype */ {
         alignCorrection: number,
         baseline: number
     ): void {
-        var rotationStyle = {} as Highcharts.CSSObject,
+        var rotationStyle: CSSObject = {},
             cssTransformKey = this.renderer.getTransformKey();
 
         rotationStyle[cssTransformKey] = rotationStyle.transform =
@@ -508,7 +512,7 @@ extend(SVGRenderer.prototype, /** @lends SVGRenderer.prototype */ {
             ): Highcharts.HTMLElement {
 
                 var htmlGroup: (
-                        Highcharts.HTMLElement|Highcharts.HTMLDOMElement|null|
+                        Highcharts.HTMLElement|HTMLDOMElement|null|
                         undefined
                     ),
                     container = renderer.box.parentNode,
@@ -538,7 +542,7 @@ extend(SVGRenderer.prototype, /** @lends SVGRenderer.prototype */ {
                         parents.reverse().forEach(function (
                             parentGroup: Highcharts.HTMLElement
                         ): void {
-                            var htmlGroupStyle: Highcharts.CSSObject,
+                            var htmlGroupStyle: CSSObject,
                                 cls = attr(parentGroup.element, 'class');
 
                             /**

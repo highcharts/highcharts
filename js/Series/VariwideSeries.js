@@ -9,6 +9,7 @@
  *  !!!!!!! SOURCE GETS TRANSPILED BY TYPESCRIPT. EDIT TS FILE ONLY. !!!!!!!
  *
  * */
+import Axis from '../Core/Axis/Axis.js';
 import BaseSeries from '../Core/Series/Series.js';
 var seriesTypes = BaseSeries.seriesTypes;
 import H from '../Core/Globals.js';
@@ -192,13 +193,13 @@ H.Tick.prototype.postTranslate = function (xy, xOrY, index) {
 };
 /* eslint-disable no-invalid-this */
 // Same width as the category (#8083)
-addEvent(H.Axis, 'afterDrawCrosshair', function (e) {
+addEvent(Axis, 'afterDrawCrosshair', function (e) {
     if (this.variwide && this.cross) {
         this.cross.attr('stroke-width', (e.point && e.point.crosshairWidth));
     }
 });
 // On a vertical axis, apply anti-collision logic to the labels.
-addEvent(H.Axis, 'afterRender', function () {
+addEvent(Axis, 'afterRender', function () {
     var axis = this;
     if (!this.horiz && this.variwide) {
         this.chart.labelCollectors.push(function () {

@@ -10,7 +10,11 @@
 
 'use strict';
 
+import type ColorString from '../Color/ColorString';
+import type ColorType from '../Color/ColorType';
+import type CSSObject from '../Renderer/CSSObject';
 import type Point from './Point';
+import type SVGAttributes from '../Renderer/SVG/SVGAttributes';
 import type SVGElement from '../Renderer/SVG/SVGElement';
 import H from '../Globals.js';
 const {
@@ -69,12 +73,12 @@ declare global {
             animation?: (boolean|Partial<AnimationOptionsObject>);
             align?: AlignValue;
             allowOverlap?: boolean;
-            backgroundColor?: (ColorString|GradientColorObject|PatternObject);
-            borderColor?: (ColorString|GradientColorObject|PatternObject);
+            backgroundColor?: ColorType;
+            borderColor?: ColorType;
             borderRadius?: number;
             borderWidth?: number;
             className?: string;
-            color?: (ColorString|GradientColorObject|PatternObject);
+            color?: ColorType;
             crop?: boolean;
             defer?: boolean;
             enabled?: boolean;
@@ -408,7 +412,7 @@ CartesianSeries.prototype.drawDataLabels = function (this: Highcharts.Series): v
         points = series.points,
         pointOptions,
         hasRendered = series.hasRendered || 0,
-        dataLabelsGroup: Highcharts.SVGElement,
+        dataLabelsGroup: SVGElement,
         dataLabelAnim = (seriesDlOptions as any).animation,
         animationConfig = (seriesDlOptions as any).defer ?
             getDeferredAnimation(chart, dataLabelAnim, series) :
@@ -992,7 +996,7 @@ CartesianSeries.prototype.alignDataLabel = function (
 CartesianSeries.prototype.setDataLabelStartPos = function (
     this: Highcharts.Series,
     point: Highcharts.ColumnPoint,
-    dataLabel: Highcharts.SVGElement,
+    dataLabel: SVGElement,
     isNew: boolean,
     isInside: boolean,
     alignOptions: Highcharts.AlignObject
@@ -1067,9 +1071,9 @@ CartesianSeries.prototype.setDataLabelStartPos = function (
  */
 CartesianSeries.prototype.justifyDataLabel = function (
     this: Highcharts.Series,
-    dataLabel: Highcharts.SVGElement,
+    dataLabel: SVGElement,
     options: Highcharts.DataLabelsOptions,
-    alignAttr: Highcharts.SVGAttributes,
+    alignAttr: SVGAttributes,
     bBox: Highcharts.BBoxObject,
     alignTo?: Highcharts.BBoxObject,
     isNew?: boolean
@@ -1182,7 +1186,7 @@ if (seriesTypes.pie) {
         // area. Right edges of the right-half labels touch the right edge of
         // the plot area.
         alignToPlotEdges: function (
-            dataLabel: Highcharts.SVGElement,
+            dataLabel: SVGElement,
             half: boolean,
             plotWidth: number,
             plotLeft: number

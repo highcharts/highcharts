@@ -9,7 +9,6 @@
  *  !!!!!!! SOURCE GETS TRANSPILED BY TYPESCRIPT. EDIT TS FILE ONLY. !!!!!!!
  *
  * */
-'use strict';
 import Chart from './Chart.js';
 import H from '../Globals.js';
 import U from '../Utilities.js';

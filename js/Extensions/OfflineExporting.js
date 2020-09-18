@@ -9,8 +9,6 @@
  *  !!!!!!! SOURCE GETS TRANSPILED BY TYPESCRIPT. EDIT TS FILE ONLY. !!!!!!!
  *
  * */
-'use strict';
-/* global MSBlobBuilder */
 import Chart from '../Core/Chart/Chart.js';
 import H from '../Core/Globals.js';
 var win = H.win, doc = H.doc;

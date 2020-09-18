@@ -12,6 +12,8 @@
 
 import type Point from '../Core/Series/Point';
 import type RadialAxis from '../Core/Axis/RadialAxis';
+import type SVGAttributes from '../Core/Renderer/SVG/SVGAttributes';
+import type SVGElement from '../Core/Renderer/SVG/SVGElement';
 import type SVGPath from '../Core/Renderer/SVG/SVGPath';
 import Chart from '../Core/Chart/Chart.js';
 import H from '../Core/Globals.js';
@@ -556,7 +558,7 @@ const polarAnimate = function (
         center = this.xAxis.center,
         plotLeft = chart.plotLeft,
         plotTop = chart.plotTop,
-        attribs: Highcharts.SVGAttributes,
+        attribs: SVGAttributes,
         paneInnerR: number,
         graphic,
         shapeArgs,
@@ -655,7 +657,7 @@ if (seriesTypes.column) {
         high: number,
         start: number,
         end: number
-    ): Highcharts.SVGAttributes {
+    ): SVGAttributes {
         var center = this.xAxis.center,
             len = this.yAxis.len,
             paneInnerR = center[3] / 2,
@@ -950,7 +952,7 @@ if (seriesTypes.column) {
         this: (Highcharts.ColumnSeries | Highcharts.PolarSeries),
         proceed: Function,
         point: (Highcharts.ColumnPoint | Highcharts.PolarPoint),
-        dataLabel: Highcharts.SVGElement,
+        dataLabel: SVGElement,
         options: Highcharts.DataLabelsOptions,
         alignTo: Highcharts.BBoxObject,
         isNew?: boolean
@@ -1085,8 +1087,8 @@ SVGRenderer.prototype.clipCircle = function (
     y: number,
     r: number,
     innerR: number
-): Highcharts.SVGElement {
-    var wrapper: Highcharts.SVGElement,
+): SVGElement {
+    var wrapper: SVGElement,
         id = uniqueKey(),
 
         clipPath = this.createElement('clipPath').attr({

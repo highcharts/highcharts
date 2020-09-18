@@ -8,8 +8,10 @@
  *
  * */
 
+import type ColorType from '../Core/Color/ColorType';
+import type SVGAttributes from '../Core/Renderer/SVG/SVGAttributes';
 import BaseSeries from '../Core/Series/Series.js';
-import Color from '../Core/Color.js';
+import Color from '../Core/Color/Color.js';
 const {
     parse: color
 } = Color;
@@ -25,6 +27,7 @@ const {
     clamp,
     defined,
     extend,
+    isArray,
     isNumber,
     merge,
     pick,
@@ -77,15 +80,15 @@ declare global {
             centerInCategory?: boolean;
         }
         interface SeriesStatesHoverOptionsObject {
-            borderColor?: (ColorString|GradientColorObject|PatternObject);
+            borderColor?: ColorType;
             brightness?: number;
-            color?: (ColorString|GradientColorObject|PatternObject);
+            color?: ColorType;
             dashStyle?: DashStyleValue;
         }
         interface SeriesZonesOptions {
-            borderColor?: (ColorString|GradientColorObject|PatternObject);
+            borderColor?: ColorType;
             borderWidth?: number;
-            color?: (ColorString|GradientColorObject|PatternObject);
+            color?: ColorType;
         }
         class ColumnPoint extends LinePoint {
             public allowShadow?: boolean;
@@ -820,7 +823,7 @@ const ColumnSeries = BaseSeries.seriesType<typeof Highcharts.ColumnSeries>(
 
                                 // If `stacking` is not enabled, look for the
                                 // index and total of the `group` stack.
-                                } else if (H.isArray(pointValues)) {
+                                } else if (isArray(pointValues)) {
                                     indexInCategory = pointValues[1];
                                     totalInCategory = total || 0;
                                 }
@@ -1031,10 +1034,10 @@ const ColumnSeries = BaseSeries.seriesType<typeof Highcharts.ColumnSeries>(
             this: Highcharts.ColumnSeries,
             point: Highcharts.ColumnPoint|undefined,
             state: string
-        ): Highcharts.SVGAttributes {
+        ): SVGAttributes {
             var options = this.options,
                 stateOptions: Highcharts.SeriesStatesHoverOptionsObject,
-                ret: Highcharts.SVGAttributes,
+                ret: SVGAttributes,
                 p2o = (this as any).pointAttrToOptions || {},
                 strokeOption = p2o.stroke || 'borderColor',
                 strokeWidthOption = p2o['stroke-width'] || 'borderWidth',
@@ -1222,7 +1225,7 @@ const ColumnSeries = BaseSeries.seriesType<typeof Highcharts.ColumnSeries>(
                 yAxis = this.yAxis,
                 options = series.options,
                 inverted = this.chart.inverted,
-                attr = {} as Highcharts.SVGAttributes,
+                attr: SVGAttributes = {},
                 translateProp = inverted ? 'translateX' : 'translateY',
                 translateStart: number,
                 translatedThreshold;

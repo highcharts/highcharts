@@ -8,6 +8,10 @@
  *
  * */
 
+import type ColorString from '../Core/Color/ColorString';
+import type ColorType from '../Core/Color/ColorType';
+import type GradientColor from '../Core/Color/GradientColor';
+import type SVGAttributes from '../Core/Renderer/SVG/SVGAttributes';
 import type SVGPath from '../Core/Renderer/SVG/SVGPath';
 import Series from '../Core/Series/Series.js';
 import ColumnSeries from './ColumnSeries.js';
@@ -41,13 +45,13 @@ declare global {
         class BoxPlotPoint extends ColumnPoint {
             public box: SVGElement;
             public boxDashStyle: DashStyleValue;
-            public fillColor: (ColorString|GradientColorObject|PatternObject);
+            public fillColor: ColorType;
             public high: number;
             public highPlot: number;
             public low: number;
             public lowPlot: number;
             public median: number;
-            public medianColor: (ColorString|GradientColorObject);
+            public medianColor: (ColorString|GradientColor);
             public medianDashStyle: DashStyleValue;
             public medianPlot: number;
             public medianShape: SVGElement;
@@ -60,12 +64,10 @@ declare global {
             public series: BoxPlotSeries;
             public shapeArgs: SVGAttributes;
             public stem: SVGElement;
-            public stemColor: (ColorString|GradientColorObject|PatternObject);
+            public stemColor: ColorType;
             public stemDashStyle: DashStyleValue;
             public stemWidth: number;
-            public whiskerColor: (
-                ColorString|GradientColorObject|PatternObject
-            );
+            public whiskerColor: ColorType;
             public whiskerDashStyle: DashStyleValue;
             public whiskers: SVGElement;
             public whiskerLength: (number|string);
@@ -408,7 +410,7 @@ Series.seriesType<typeof Highcharts.BoxPlotSeries>(
         // Get presentational attributes
         pointAttribs: function (
             this: Highcharts.BoxPlotSeries
-        ): Highcharts.SVGAttributes {
+        ): SVGAttributes {
             // No attributes should be set on point.graphic which is the group
             return {};
         },
@@ -475,10 +477,10 @@ Series.seriesType<typeof Highcharts.BoxPlotSeries>(
                 var graphic = point.graphic,
                     verb = graphic ? 'animate' : 'attr',
                     shapeArgs = point.shapeArgs,
-                    boxAttr = {} as Highcharts.SVGAttributes,
-                    stemAttr = {} as Highcharts.SVGAttributes,
-                    whiskersAttr = {} as Highcharts.SVGAttributes,
-                    medianAttr = {} as Highcharts.SVGAttributes,
+                    boxAttr: SVGAttributes = {},
+                    stemAttr: SVGAttributes = {},
+                    whiskersAttr: SVGAttributes = {},
+                    medianAttr: SVGAttributes = {},
                     color = point.color || series.color;
 
                 if (typeof point.plotY !== 'undefined') {

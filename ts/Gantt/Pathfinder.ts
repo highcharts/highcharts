@@ -12,7 +12,9 @@
 'use strict';
 
 import type Axis from '../Core/Axis/Axis';
-import type SVGPath from '../Core/Renderer/SVG/SVGPath';
+import type ColorString from '../Core/Color/ColorString';
+import type ColorType from '../Core/Color/ColorType';
+import type SVGElement from '../Core/Renderer/SVG/SVGElement';
 import Connection from './Connection.js';
 import Chart from '../Core/Chart/Chart.js';
 import H from '../Core/Globals.js';
@@ -34,7 +36,7 @@ declare global {
         }
         interface ConnectorsEndMarkerOptions {
             align?: AlignValue;
-            color?: (ColorString|GradientColorObject|PatternObject);
+            color?: ColorType;
             enabled?: boolean;
             height?: number;
             inside?: boolean;
@@ -47,7 +49,7 @@ declare global {
         }
         interface ConnectorsMarkerOptions {
             align?: AlignValue;
-            color?: (ColorString|GradientColorObject|PatternObject);
+            color?: ColorType;
             enabled?: boolean;
             height?: number;
             inside?: boolean;
@@ -71,7 +73,7 @@ declare global {
         }
         interface ConnectorsStartMarkerOptions {
             align?: AlignValue;
-            color?: (ColorString|GradientColorObject|PatternObject);
+            color?: ColorType;
             enabled?: boolean;
             height?: number;
             inside?: boolean;
@@ -604,7 +606,7 @@ class Pathfinder {
     public chartObstacles: Array<any> = void 0 as any;
     public chartObstacleMetrics: Highcharts.Dictionary<number> = void 0 as any;
     public connections: Array<Highcharts.Connection> = void 0 as any;
-    public group: Highcharts.SVGElement = void 0 as any;
+    public group: SVGElement = void 0 as any;
     public lineObstacles: Array<any> = void 0 as any;
 
     /**

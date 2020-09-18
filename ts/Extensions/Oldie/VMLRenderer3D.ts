@@ -10,8 +10,8 @@
  *
  * */
 
-'use strict';
-
+import type ColorType from '../../Core/Color/ColorType';
+import type SVGAttributes from '../../Core/Renderer/SVG/SVGAttributes';
 import type SVGRenderer3D from '../../Core/Renderer/SVG/SVGRenderer3D';
 import Axis from '../../Core/Axis/Axis.js';
 import U from '../../Core/Utilities.js';
@@ -25,7 +25,7 @@ import VMLAxis3D from './VMLAxis3D.js';
 declare global {
     namespace Highcharts {
         interface VMLElement {
-            color?: (ColorString|GradientColorObject|PatternObject);
+            color?: ColorType;
             front?: VMLElement;
         }
         interface VMLRenderer {
@@ -70,7 +70,7 @@ class VMLRenderer3D {
 
         vmlProto.arc3d = function (
             this: Highcharts.VMLRenderer,
-            shapeArgs: Highcharts.SVGAttributes
+            shapeArgs: SVGAttributes
         ): Highcharts.VMLElement {
             var result = svgProto.arc3d.call(this, shapeArgs);
 

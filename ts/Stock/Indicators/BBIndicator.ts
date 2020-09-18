@@ -6,8 +6,8 @@
  *
  * */
 
+import type CSSObject from '../../Core/Renderer/CSSObject';
 import BaseSeries from '../../Core/Series/Series.js';
-import H from '../../Core/Globals.js';
 import MultipleLinesMixin from '../../Mixins/MultipleLines.js';
 import U from '../../Core/Utilities.js';
 const {
@@ -47,9 +47,9 @@ declare global {
 
         interface BBIndicatorOptions extends SMAIndicatorOptions,
             MultipleLinesIndicatorOptions {
-            bottomLine?: Dictionary<CSSObject>;
+            bottomLine?: Record<string, CSSObject>;
             params?: BBIndicatorParamsOptions;
-            topLine?: Dictionary<CSSObject>;
+            topLine?: Record<string, CSSObject>;
         }
     }
 }

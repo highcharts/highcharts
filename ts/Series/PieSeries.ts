@@ -8,12 +8,14 @@
  *
  * */
 
+import type SVGAttributes from '../Core/Renderer/SVG/SVGAttributes';
 import type SVGPath from '../Core/Renderer/SVG/SVGPath';
 import BaseSeries from '../Core/Series/Series.js';
 import CenteredSeriesMixin from '../Mixins/CenteredSeries.js';
 const {
     getStartAndEndRadians
 } = CenteredSeriesMixin;
+import ColorType from '../Core/Color/ColorType';
 import H from '../Core/Globals.js';
 const {
     noop
@@ -117,7 +119,7 @@ declare global {
             extends DataLabelsOptions
         {
             alignTo?: string;
-            connectorColor?: (ColorString|GradientColorObject|PatternObject);
+            connectorColor?: ColorType;
             connectorPadding?: number;
             connectorShape?: (string|Function);
             connectorWidth?: number;
@@ -130,7 +132,7 @@ declare global {
             center?: [(number|string|null), (number|string|null)];
             colorByPoint?: boolean;
             dataLabels?: PieSeriesDataLabelsOptionsObject;
-            fillColor?: (ColorString|GradientColorObject|PatternObject);
+            fillColor?: ColorType;
             ignoreHiddenPoint?: boolean;
             inactiveOtherPoints?: boolean;
             innerSize?: (number|string);
@@ -1136,8 +1138,8 @@ BaseSeries.seriesType<typeof Highcharts.PieSeries>(
                 renderer = chart.renderer,
                 groupTranslation,
                 graphic,
-                pointAttr: Highcharts.SVGAttributes,
-                shapeArgs,
+                pointAttr: SVGAttributes,
+                shapeArgs: (SVGAttributes|undefined),
                 shadow = series.options.shadow;
 
             this.drawEmpty();

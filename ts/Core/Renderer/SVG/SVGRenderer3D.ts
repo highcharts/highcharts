@@ -10,10 +10,12 @@
  *
  * */
 
-'use strict';
-
+import type ColorType from '../../Color/ColorType';
+import type Position3DObject from '../../Renderer/Position3DObject';
+import type PositionObject from '../../Renderer/PositionObject';
+import type SVGAttributes from './SVGAttributes';
 import type SVGPath from './SVGPath';
-import Color from '../../Color.js';
+import Color from '../../Color/Color.js';
 const color = Color.parse;
 import H from '../../Globals.js';
 import Math3D from '../../../Extensions/Math3D.js';
@@ -100,7 +102,7 @@ declare global {
             attribs?: SVGAttributes;
             parts?: Array<string>;
             pathType?: string;
-            vertexes?: Array<Position3dObject>;
+            vertexes?: Array<Position3DObject>;
             initArgs: Element3dMethodsObject['initArgs'];
             setPaths(attribs: SVGAttributes): void;
         }
@@ -193,13 +195,13 @@ function curveTo(
 }
 
 SVGRenderer.prototype.toLinePath = function (
-    points: Array<Highcharts.PositionObject>,
+    points: Array<PositionObject>,
     closed?: boolean
 ): SVGPath {
     var result: SVGPath = [];
 
     // Put "L x y" for each point
-    points.forEach(function (point: Highcharts.PositionObject): void {
+    points.forEach(function (point: PositionObject): void {
         result.push(['L', point.x, point.y]);
     });
 
@@ -217,12 +219,12 @@ SVGRenderer.prototype.toLinePath = function (
 };
 
 SVGRenderer.prototype.toLineSegments = function (
-    points: Array<Highcharts.PositionObject>
+    points: Array<PositionObject>
 ): SVGPath {
     var result = [] as SVGPath,
         m = true;
 
-    points.forEach(function (point: Highcharts.PositionObject): void {
+    points.forEach(function (point: PositionObject): void {
         result.push(m ? ['M', point.x, point.y] : ['L', point.x, point.y]);
         m = !m;
     });
@@ -233,20 +235,18 @@ SVGRenderer.prototype.toLineSegments = function (
 // A 3-D Face is defined by it's 3D vertexes, and is only visible if it's
 // vertexes are counter-clockwise (Back-face culling). It is used as a
 // polyhedron Element
-SVGRenderer.prototype.face3d = function (
-    args?: Highcharts.SVGAttributes
-): Highcharts.SVGElement {
+SVGRenderer.prototype.face3d = function (args?: SVGAttributes): SVGElement {
     var renderer = this,
-        ret: Highcharts.SVGElement = this.createElement('path');
+        ret: SVGElement = this.createElement('path');
 
     ret.vertexes = [];
     ret.insidePlotArea = false;
     ret.enabled = true;
 
     ret.attr = function (
-        this: Highcharts.SVGElement,
-        hash?: (string|Highcharts.SVGAttributes)
-    ): (number|string|Highcharts.SVGElement) {
+        this: SVGElement,
+        hash?: (string|SVGAttributes)
+    ): (number|string|SVGElement) {
 
         if (
             typeof hash === 'object' &&
@@ -283,9 +283,9 @@ SVGRenderer.prototype.face3d = function (
     } as any;
 
     ret.animate = function (
-        this: Highcharts.SVGElement,
-        params: Highcharts.SVGAttributes
-    ): Highcharts.SVGElement {
+        this: SVGElement,
+        params: SVGAttributes
+    ): SVGElement {
         if (
             typeof params === 'object' &&
             (
@@ -327,9 +327,7 @@ SVGRenderer.prototype.face3d = function (
 // A Polyhedron is a handy way of defining a group of 3-D faces. It's only
 // attribute is `faces`, an array of attributes of each one of it's Face3D
 // instances.
-SVGRenderer.prototype.polyhedron = function (
-    args?: Highcharts.SVGAttributes
-): Highcharts.SVGElement {
+SVGRenderer.prototype.polyhedron = function (args?: SVGAttributes): SVGElement {
     var renderer = this,
         result = this.g(),
         destroy = result.destroy;
@@ -352,12 +350,12 @@ SVGRenderer.prototype.polyhedron = function (
     };
 
     result.attr = function (
-        this: Highcharts.SVGElement,
-        hash?: (string|Highcharts.SVGAttributes),
+        this: SVGElement,
+        hash?: (string|SVGAttributes),
         val?: string,
         complete?: Function,
         continueAnimation?: boolean
-    ): (number|string|Highcharts.SVGElement) {
+    ): (number|string|SVGElement) {
         if (typeof hash === 'object' && defined(hash.faces)) {
             while (result.faces.length > hash.faces.length) {
                 result.faces.pop().destroy();
@@ -382,11 +380,11 @@ SVGRenderer.prototype.polyhedron = function (
     } as any;
 
     result.animate = function (
-        this: Highcharts.SVGElement,
-        params: Highcharts.SVGAttributes,
+        this: SVGElement,
+        params: SVGAttributes,
         duration?: (boolean|Partial<Highcharts.AnimationOptionsObject>),
         complete?: Function
-    ): Highcharts.SVGElement {
+    ): SVGElement {
         if (params && params.faces) {
             while (result.faces.length > params.faces.length) {
                 result.faces.pop().destroy();
@@ -412,8 +410,8 @@ element3dMethods = {
      * @private
      */
     initArgs: function (
-        this: Highcharts.SVGElement,
-        args: Highcharts.SVGAttributes
+        this: SVGElement,
+        args: SVGAttributes
     ): void {
         var elem3d = this,
             renderer = elem3d.renderer,
@@ -447,14 +445,14 @@ element3dMethods = {
      * @private
      */
     singleSetterForParts: function (
-        this: Highcharts.SVGElement,
+        this: SVGElement,
         prop: string,
         val: any,
         values?: Highcharts.Dictionary<any>,
         verb?: string,
         duration?: any,
         complete?: any
-    ): Highcharts.SVGElement {
+    ): SVGElement {
         var elem3d = this,
             newAttr = {} as Highcharts.Dictionary<any>,
             optionsToApply = [null, null, (verb || 'attr'), duration, complete],
@@ -491,13 +489,13 @@ element3dMethods = {
      * @private
      */
     processParts: function (
-        this: Highcharts.SVGElement,
+        this: SVGElement,
         props: any,
         partsProps: Highcharts.Dictionary<any>,
         verb: string,
         duration?: any,
         complete?: any
-    ): Highcharts.SVGElement {
+    ): SVGElement {
         var elem3d = this;
 
         (elem3d.parts as any).forEach(function (part: string): void {
@@ -518,7 +516,7 @@ element3dMethods = {
      * Destroy all parts
      * @private
      */
-    destroyParts: function (this: Highcharts.SVGElement): void {
+    destroyParts: function (this: SVGElement): void {
         this.processParts(null, null, 'destroy');
         return this.originalDestroy();
     }
@@ -530,17 +528,17 @@ cuboidMethods = merge(element3dMethods, {
     pathType: 'cuboid',
 
     attr: function (
-        this: Highcharts.SVGElement,
-        args: (string|Highcharts.SVGAttributes),
+        this: SVGElement,
+        args: (string|SVGAttributes),
         val?: (number|string),
         complete?: any,
         continueAnimation?: any
-    ): Highcharts.SVGElement {
+    ): SVGElement {
         // Resolve setting attributes by string name
         if (typeof args === 'string' && typeof val !== 'undefined') {
             var key = args;
 
-            args = {} as Highcharts.SVGAttributes;
+            args = {} as SVGAttributes;
             args[key] = val;
         }
 
@@ -559,11 +557,11 @@ cuboidMethods = merge(element3dMethods, {
         );
     },
     animate: function (
-        this: Highcharts.SVGElement,
-        args: Highcharts.SVGAttributes,
+        this: SVGElement,
+        args: SVGAttributes,
         duration?: (boolean|Partial<Highcharts.AnimationOptionsObject>),
         complete?: Function
-    ): Highcharts.SVGElement {
+    ): SVGElement {
         if (defined(args.x) && defined(args.y)) {
             var paths = (this.renderer as any)[this.pathType + 'Path'](args),
                 forcedSides = paths.forcedSides;
@@ -586,9 +584,9 @@ cuboidMethods = merge(element3dMethods, {
         return this;
     },
     fillSetter: function (
-        this: Highcharts.SVGElement,
-        fill: Highcharts.ColorType
-    ): Highcharts.SVGElement {
+        this: SVGElement,
+        fill: ColorType
+    ): SVGElement {
         var elem3d = this;
         elem3d.forcedSides = elem3d.forcedSides || [];
         elem3d.singleSetterForParts('fill', null, {
@@ -623,8 +621,8 @@ SVGRenderer.prototype.elements3d = {
 SVGRenderer.prototype.element3d = function (
     this: Highcharts.SVGRenderer,
     type: string,
-    shapeArgs: Highcharts.SVGAttributes
-): Highcharts.SVGElement {
+    shapeArgs: SVGAttributes
+): SVGElement {
     // base
     var ret = this.g();
 
@@ -640,16 +638,16 @@ SVGRenderer.prototype.element3d = function (
 
 // generelized, so now use simply
 SVGRenderer.prototype.cuboid = function (
-    this: Highcharts.SVGElement,
-    shapeArgs: Highcharts.SVGAttributes
-): Highcharts.SVGElement {
+    this: SVGElement,
+    shapeArgs: SVGAttributes
+): SVGElement {
     return this.element3d('cuboid', shapeArgs);
 };
 
 // Generates a cuboid path and zIndexes
 SVGRenderer.prototype.cuboidPath = function (
     this: Highcharts.SVGRenderer,
-    shapeArgs: Highcharts.SVGAttributes
+    shapeArgs: SVGAttributes
 ): Highcharts.CuboidPathsObject {
     var x = shapeArgs.x,
         y = shapeArgs.y,
@@ -668,9 +666,9 @@ SVGRenderer.prototype.cuboidPath = function (
         left: Array<number>,
         right: Array<number>,
         shape: Array<number|Array<number>>,
-        path1: Array<Highcharts.PositionObject>,
-        path2: Array<Highcharts.PositionObject>,
-        path3: Array<Highcharts.PositionObject>,
+        path1: Array<PositionObject>,
+        path2: Array<PositionObject>,
+        path3: Array<PositionObject>,
         isFront: number,
         isTop: number,
         isRight: number,
@@ -731,7 +729,7 @@ SVGRenderer.prototype.cuboidPath = function (
      * helper method to decide which side is visible
      * @private
      */
-    function mapSidePath(i: number): Highcharts.Position3dObject {
+    function mapSidePath(i: number): Position3DObject {
         // Added support for 0 value in columns, where height is 0
         // but the shape is rendered.
         // Height is used from 1st to 6th element of pArr
@@ -777,7 +775,7 @@ SVGRenderer.prototype.cuboidPath = function (
      * method creating the final side
      * @private
      */
-    function mapPath(i: number): Highcharts.Position3dObject {
+    function mapPath(i: number): Position3DObject {
         return pArr[i];
     }
 
@@ -797,16 +795,16 @@ SVGRenderer.prototype.cuboidPath = function (
     ): Array<number|Array<number>> {
         var ret = [[] as any, -1],
             // An array of vertices for cuboid face
-            face1: Array<Highcharts.Position3dObject> =
+            face1: Array<Position3DObject> =
                 verticesIndex1.map(mapPath),
-            face2: Array<Highcharts.Position3dObject> =
+            face2: Array<Position3DObject> =
                 verticesIndex2.map(mapPath),
             // dummy face is calculated the same way as standard face,
             // but if cuboid height is 0 additional height is added so it is
             // possible to use this vertices array for visible face calculation
-            dummyFace1: Array<Highcharts.Position3dObject> =
+            dummyFace1: Array<Position3DObject> =
                 verticesIndex1.map(mapSidePath),
-            dummyFace2: Array<Highcharts.Position3dObject> =
+            dummyFace2: Array<Position3DObject> =
                 verticesIndex2.map(mapSidePath);
         if (shapeArea(face1) < 0) {
             ret = [face1, 0];
@@ -893,9 +891,7 @@ SVGRenderer.prototype.cuboidPath = function (
 };
 
 // SECTORS //
-SVGRenderer.prototype.arc3d = function (
-    attribs: Highcharts.SVGAttributes
-): Highcharts.SVGElement {
+SVGRenderer.prototype.arc3d = function (attribs: SVGAttributes): SVGElement {
 
     var wrapper = this.g(),
         renderer = wrapper.renderer,
@@ -906,11 +902,9 @@ SVGRenderer.prototype.arc3d = function (
      * object with only custom attr.
      * @private
      */
-    function suckOutCustom(
-        params: Highcharts.SVGAttributes
-    ): (Highcharts.SVGAttributes|undefined) {
+    function suckOutCustom(params: SVGAttributes): (SVGAttributes|undefined) {
         var hasCA = false,
-            ca = {} as Highcharts.SVGAttributes,
+            ca = {} as SVGAttributes,
             key: string;
 
         params = merge(params); // Don't mutate the original object
@@ -972,7 +966,7 @@ SVGRenderer.prototype.arc3d = function (
      * Compute the transformed paths and set them to the composite shapes
      * @private
      */
-    wrapper.setPaths = function (attribs: Highcharts.SVGAttributes): void {
+    wrapper.setPaths = function (attribs: SVGAttributes): void {
 
         var paths = wrapper.renderer.arc3dPath(attribs),
             zIndex = paths.zTop * 100;
@@ -1003,9 +997,9 @@ SVGRenderer.prototype.arc3d = function (
      * @private
      */
     wrapper.fillSetter = function (
-        this: Highcharts.SVGElement,
-        value: Highcharts.ColorType
-    ): Highcharts.SVGElement {
+        this: SVGElement,
+        value: ColorType
+    ): SVGElement {
         var darker = color(value).brighten(-0.1).get();
 
         this.fill = value;
@@ -1039,9 +1033,9 @@ SVGRenderer.prototype.arc3d = function (
 
     // Override attr to remove shape attributes and use those to set child paths
     wrapper.attr = function (
-        this: Highcharts.SVGElement,
-        params?: (string|Highcharts.SVGAttributes)
-    ): (number|string|Highcharts.SVGElement) {
+        this: SVGElement,
+        params?: (string|SVGAttributes)
+    ): (number|string|SVGElement) {
         var ca, paramArr;
 
         if (typeof params === 'object') {
@@ -1059,14 +1053,14 @@ SVGRenderer.prototype.arc3d = function (
     // Override the animate function by sucking out custom parameters related to
     // the shapes directly, and update the shapes from the animation step.
     wrapper.animate = function (
-        this: Highcharts.SVGElement,
-        params: Highcharts.SVGAttributes,
+        this: SVGElement,
+        params: SVGAttributes,
         animation?: (boolean|Partial<Highcharts.AnimationOptionsObject>),
         complete?: Function
-    ): Highcharts.SVGElement {
+    ): SVGElement {
         var paramArr,
             from = this.attribs,
-            to: Highcharts.SVGAttributes,
+            to: SVGAttributes,
             anim,
             randomProp = 'data-' + Math.random().toString(26).substring(2, 9);
 
@@ -1125,7 +1119,7 @@ SVGRenderer.prototype.arc3d = function (
     };
 
     // destroy all children
-    wrapper.destroy = function (this: Highcharts.SVGElement): undefined {
+    wrapper.destroy = function (this: SVGElement): undefined {
         this.top.destroy();
         this.out.destroy();
         this.inn.destroy();
@@ -1135,7 +1129,7 @@ SVGRenderer.prototype.arc3d = function (
         return SVGElement.prototype.destroy.call(this);
     };
     // hide all children
-    wrapper.hide = function (this: Highcharts.SVGElement): void {
+    wrapper.hide = function (this: SVGElement): void {
         this.top.hide();
         this.out.hide();
         this.inn.hide();
@@ -1143,7 +1137,7 @@ SVGRenderer.prototype.arc3d = function (
         this.side2.hide();
     } as any;
     wrapper.show = function (
-        this: Highcharts.SVGElement,
+        this: SVGElement,
         inherit?: boolean
     ): void {
         this.top.show(inherit);
@@ -1157,7 +1151,7 @@ SVGRenderer.prototype.arc3d = function (
 
 // Generate the paths required to draw a 3D arc
 SVGRenderer.prototype.arc3dPath = function (
-    shapeArgs: Highcharts.SVGAttributes
+    shapeArgs: SVGAttributes
 ): Highcharts.Arc3dPaths {
     var cx: number = shapeArgs.x, // x coordinate of the center
         cy: number = shapeArgs.y, // y coordinate of the center

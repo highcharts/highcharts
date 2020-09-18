@@ -6,12 +6,15 @@
  *
  * */
 
+import type ColorType from '../../Core/Color/ColorType';
+import type CSSObject from '../../Core/Renderer/CSSObject';
 import type Point from '../../Core/Series/Point';
+import type SVGAttributes from '../../Core/Renderer/SVG/SVGAttributes';
+import type SVGElement from '../../Core/Renderer/SVG/SVGElement';
 import BaseSeries from '../../Core/Series/Series.js';
 const {
     seriesTypes
 } = BaseSeries;
-import H from '../../Core/Globals.js';
 import U from '../../Core/Utilities.js';
 const {
     correctFloat,
@@ -54,7 +57,7 @@ declare global {
         }
 
         interface SupertrendLineObject {
-            [index: string]: (Dictionary<SVGAttributes>|undefined);
+            [index: string]: (Record<string, SVGAttributes>|undefined);
         }
 
         class SupertrendIndicator extends SMAIndicator {
@@ -85,7 +88,7 @@ declare global {
         }
 
         interface SupertrendIndicatorOptions extends SMAIndicatorOptions {
-            changeTrendLine?: Dictionary<CSSObject>;
+            changeTrendLine?: Record<string, CSSObject>;
             fallingTrendColor?: ColorType;
             params?: SupertrendIndicatorParamsOptions;
             risingTrendColor?: ColorType;
@@ -261,7 +264,7 @@ BaseSeries.seriesType<typeof Highcharts.SupertrendIndicator>(
                 )> = (mainSeries ? mainSeries.points : []),
                 indicPoints: Array<Highcharts.SupertrendIndicatorPoint> =
                 indicator.points,
-                indicPath: (Highcharts.SVGElement|undefined) = indicator.graph,
+                indicPath: (SVGElement|undefined) = indicator.graph,
                 indicPointsLen: number = indicPoints.length,
 
                 // Points offset between lines
@@ -324,7 +327,7 @@ BaseSeries.seriesType<typeof Highcharts.SupertrendIndicator>(
                 prevPrevMainPoint: Highcharts.SupertrendLinkedParentPointObject,
 
                 // Used when particular point color is set
-                pointColor: Highcharts.ColorType,
+                pointColor: ColorType,
 
                 // Temporary points that fill groupedPoitns array
                 newPoint: Highcharts.SupertrendIndicatorPoint,

@@ -8,12 +8,11 @@
  *
  * */
 
-'use strict';
-
+import type SVGAttributes from '../../Core/Renderer/SVG/SVGAttributes';
 import type SVGPath from '../../Core/Renderer/SVG/SVGPath';
 import Axis from '../../Core/Axis/Axis.js';
 import BaseSeries from '../../Core/Series/Series.js';
-import Color from '../../Core/Color.js';
+import Color from '../../Core/Color/Color.js';
 const {
     parse: color
 } = Color;
@@ -412,7 +411,7 @@ BaseSeries.seriesType<typeof Highcharts.BubbleSeries>('bubble', 'scatter', {
         this: Highcharts.BubbleSeries,
         point: Highcharts.BubblePoint,
         state?: string
-    ): Highcharts.SVGAttributes {
+    ): SVGAttributes {
         var markerOptions = this.options.marker,
             fillOpacity = (markerOptions as any).fillOpacity,
             attr = Series.prototype.pointAttribs.call(this, point, state);

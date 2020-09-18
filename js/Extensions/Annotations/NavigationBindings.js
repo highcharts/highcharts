@@ -9,6 +9,7 @@
  * */
 'use strict';
 import Annotation from './Annotations.js';
+import Chart from '../../Core/Chart/Chart.js';
 import chartNavigationMixin from '../../Mixins/Navigation.js';
 import H from '../../Core/Globals.js';
 import U from '../../Core/Utilities.js';
@@ -640,7 +641,7 @@ var NavigationBindings = /** @class */ (function () {
  * @type {bindingsUtils}
  */
 NavigationBindings.prototype.utils = bindingsUtils;
-H.Chart.prototype.initNavigationBindings = function () {
+Chart.prototype.initNavigationBindings = function () {
     var chart = this, options = chart.options;
     if (options && options.navigation && options.navigation.bindings) {
         chart.navigationBindings = new NavigationBindings(chart, options.navigation);
@@ -648,10 +649,10 @@ H.Chart.prototype.initNavigationBindings = function () {
         chart.navigationBindings.initUpdate();
     }
 };
-addEvent(H.Chart, 'load', function () {
+addEvent(Chart, 'load', function () {
     this.initNavigationBindings();
 });
-addEvent(H.Chart, 'destroy', function () {
+addEvent(Chart, 'destroy', function () {
     if (this.navigationBindings) {
         this.navigationBindings.destroy();
     }

@@ -11,7 +11,9 @@
 
 'use strict';
 
+import type ColorType from '../Color/ColorType';
 import type Point from '../Series/Point';
+import type SVGElement from '../Renderer/SVG/SVGElement';
 import type SVGPath from '../Renderer/SVG/SVGPath';
 import Axis from './Axis.js';
 import H from '../Globals.js';
@@ -235,7 +237,7 @@ Axis.prototype.getMaxLabelDimensions = function (
         var tick = ticks[pos],
             labelHeight = 0,
             labelWidth = 0,
-            label: Highcharts.SVGElement;
+            label: SVGElement;
 
         if (isObject(tick)) {
             label = isObject(tick.label) ? tick.label : ({} as any);
@@ -456,9 +458,9 @@ class GridAxisAdditions {
      * */
 
     axis: GridAxis;
-    axisLineExtra?: Highcharts.SVGElement;
-    upperBorder?: Highcharts.SVGElement;
-    lowerBorder?: Highcharts.SVGElement;
+    axisLineExtra?: SVGElement;
+    upperBorder?: SVGElement;
+    lowerBorder?: SVGElement;
     columnIndex?: number;
     columns?: Array<GridAxis>;
     isColumn?: boolean;
@@ -526,7 +528,7 @@ class GridAxisAdditions {
      *
      * @return {Highcharts.SVGElement}
      */
-    public renderBorder(path: SVGPath): Highcharts.SVGElement {
+    public renderBorder(path: SVGPath): SVGElement {
         const axis = this.axis,
             renderer = axis.chart.renderer,
             options = axis.options,
@@ -1354,7 +1356,7 @@ interface GridAxis extends Axis {
 namespace GridAxis {
 
     export interface Options {
-        borderColor?: Highcharts.ColorType;
+        borderColor?: ColorType;
         borderWidth?: number;
         cellHeight?: number;
         columns?: Array<Highcharts.AxisOptions>;

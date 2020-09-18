@@ -11,7 +11,6 @@
  *  !!!!!!! SOURCE GETS TRANSPILED BY TYPESCRIPT. EDIT TS FILE ONLY. !!!!!!!
  *
  * */
-'use strict';
 import Chart from '../Core/Chart/Chart.js';
 import U from '../Core/Utilities.js';
 var addEvent = U.addEvent, extend = U.extend, getOptions = U.getOptions;

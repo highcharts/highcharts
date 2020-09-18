@@ -13,14 +13,21 @@
 
 'use strict';
 
+import type {
+    HTMLDOMElement
+} from '../../Core/Renderer/DOMElementType';
 import H from '../../Core/Globals.js';
-var doc = H.win.document;
-
-import U from '../../Core/Utilities.js';
-var extend = U.extend;
-
+const {
+    doc
+} = H;
 import HTMLUtilities from './HTMLUtilities.js';
-var removeElement = HTMLUtilities.removeElement;
+const {
+    removeElement
+} = HTMLUtilities;
+import U from '../../Core/Utilities.js';
+const {
+    extend
+} = U;
 
 /**
  * Internal types.
@@ -56,9 +63,7 @@ extend(DOMElementProvider.prototype, {
      * Same args as document.createElement
      * @private
      */
-    createElement: function (
-        this: Highcharts.DOMElementProvider
-    ): Highcharts.HTMLDOMElement {
+    createElement: function (this: Highcharts.DOMElementProvider): HTMLDOMElement {
         var el = doc.createElement.apply(doc, arguments);
         this.elements.push(el);
         return el;
@@ -72,9 +77,7 @@ extend(DOMElementProvider.prototype, {
     destroyCreatedElements: function (
         this: Highcharts.DOMElementProvider
     ): void {
-        this.elements.forEach(function (
-            element: Highcharts.HTMLDOMElement
-        ): void {
+        this.elements.forEach(function (element: HTMLDOMElement): void {
             removeElement(element);
         });
         this.elements = [];

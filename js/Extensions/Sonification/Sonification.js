@@ -10,6 +10,7 @@
  *
  * */
 'use strict';
+import Chart from '../../Core/Chart/Chart.js';
 import H from '../../Core/Globals.js';
 import O from '../../Core/Options.js';
 var defaultOptions = O.defaultOptions;
@@ -97,7 +98,7 @@ merge(true, defaultOptions, sonificationOptions);
 Point.prototype.sonify = pointSonifyFunctions.pointSonify;
 Point.prototype.cancelSonify = pointSonifyFunctions.pointCancelSonify;
 H.Series.prototype.sonify = chartSonifyFunctions.seriesSonify;
-extend(H.Chart.prototype, {
+extend(Chart.prototype, {
     sonify: chartSonifyFunctions.chartSonify,
     pauseSonify: chartSonifyFunctions.pause,
     resumeSonify: chartSonifyFunctions.resume,
@@ -110,11 +111,11 @@ extend(H.Chart.prototype, {
 });
 /* eslint-disable no-invalid-this */
 // Prepare charts for sonification on init
-addEvent(H.Chart, 'init', function () {
+addEvent(Chart, 'init', function () {
     this.sonification = {};
 });
 // Update with chart/series/point updates
-addEvent(H.Chart, 'update', function (e) {
+addEvent(Chart, 'update', function (e) {
     var newOptions = e.options.sonification;
     if (newOptions) {
         merge(true, this.options.sonification, newOptions);

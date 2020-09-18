@@ -11,7 +11,7 @@
  * */
 import Series from '../Core/Series/Series.js';
 import CartesianSeries from '../Core/Series/CartesianSeries.js';
-import Color from '../Core/Color.js';
+import Color from '../Core/Color/Color.js';
 import ColumnSeries from './ColumnSeries.js';
 import H from '../Core/Globals.js';
 import NodesMixin from '../Mixins/Nodes.js';

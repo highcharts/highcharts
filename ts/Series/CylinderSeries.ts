@@ -12,9 +12,12 @@
  *
  * */
 
+import type ColorType from '../Core/Color/ColorType';
 import type Chart from '../Core/Chart/Chart';
+import type SVGAttributes from '../Core/Renderer/SVG/SVGAttributes';
+import type SVGElement from '../Core/Renderer/SVG/SVGElement';
 import type SVGPath from '../Core/Renderer/SVG/SVGPath';
-import Color from '../Core/Color.js';
+import Color from '../Core/Color/Color.js';
 const {
     parse: color
 } = Color;
@@ -236,9 +239,9 @@ const cylinderMethods = merge(RendererProto.elements3d.cuboid, {
     pathType: 'cylinder',
 
     fillSetter: function (
-        this: Highcharts.SVGElement,
-        fill: Highcharts.ColorType
-    ): Highcharts.SVGElement {
+        this: SVGElement,
+        fill: ColorType
+    ): SVGElement {
         this.singleSetterForParts('fill', null, {
             front: fill,
             back: fill,
@@ -255,15 +258,13 @@ const cylinderMethods = merge(RendererProto.elements3d.cuboid, {
 
 RendererProto.elements3d.cylinder = cylinderMethods;
 
-RendererProto.cylinder = function (
-    shapeArgs: Highcharts.SVGAttributes
-): Highcharts.SVGElement {
+RendererProto.cylinder = function (shapeArgs: SVGAttributes): SVGElement {
     return this.element3d('cylinder', shapeArgs);
 };
 
 // Generates paths and zIndexes.
 RendererProto.cylinderPath = function (
-    shapeArgs: Highcharts.SVGAttributes
+    shapeArgs: SVGAttributes
 ): Highcharts.CylinderPathsObject {
     var renderer = this,
         chart = charts[renderer.chartIndex],
@@ -378,7 +379,7 @@ RendererProto.getCylinderBack = function (
 // Retruns cylinder path for top or bottom
 RendererProto.getCylinderEnd = function (
     chart: Chart,
-    shapeArgs: Highcharts.SVGAttributes,
+    shapeArgs: SVGAttributes,
     isBottom?: boolean
 ): SVGPath {
     // A half of the smaller one out of width or depth (optional, because

@@ -11,11 +11,16 @@
  * */
 
 import type Chart from '../Core/Chart/Chart';
+import type ColorString from '../Core/Color/ColorString';
+import type ColorType from '../Core/Color/ColorType';
+import type CSSObject from '../Core/Renderer/CSSObject';
+import type SVGAttributes from '../Core/Renderer/SVG/SVGAttributes';
+import type SVGElement from '../Core/Renderer/SVG/SVGElement';
 import BaseSeries from '../Core/Series/Series.js';
 const {
     seriesTypes
 } = BaseSeries;
-import Color from '../Core/Color.js';
+import Color from '../Core/Color/Color.js';
 const {
     parse: color
 } = Color;
@@ -1268,7 +1273,7 @@ BaseSeries.seriesType<typeof Highcharts.TreemapSeries>(
         setColorRecursive: function (
             this: Highcharts.TreemapSeries,
             node: Highcharts.TreemapNodeObject,
-            parentColor?: Highcharts.ColorString,
+            parentColor?: ColorString,
             colorIndex?: number,
             index?: number,
             siblings?: unknown
@@ -1739,10 +1744,10 @@ BaseSeries.seriesType<typeof Highcharts.TreemapSeries>(
         alignDataLabel: function (
             this: Highcharts.TreemapSeries,
             point: Highcharts.TreemapPoint,
-            dataLabel: Highcharts.SVGElement,
+            dataLabel: SVGElement,
             labelOptions: Highcharts.DataLabelsOptions
         ): void {
-            var style: Highcharts.SVGAttributes = labelOptions.style as any;
+            var style: SVGAttributes = labelOptions.style as any;
 
             // #8160: Prevent the label from exceeding the point's
             // boundaries in treemaps by applying ellipsis overflow.
@@ -1771,7 +1776,7 @@ BaseSeries.seriesType<typeof Highcharts.TreemapSeries>(
             this: Highcharts.TreemapSeries,
             point: Highcharts.TreemapPoint,
             state: string
-        ): Highcharts.SVGAttributes {
+        ): SVGAttributes {
             var series = this,
                 mapOptionsToLevel = (
                     isObject(series.mapOptionsToLevel) ?
@@ -1780,7 +1785,7 @@ BaseSeries.seriesType<typeof Highcharts.TreemapSeries>(
                 ),
                 level = point && mapOptionsToLevel[point.node.level] || {},
                 options = this.options,
-                attr: Highcharts.SVGAttributes,
+                attr: SVGAttributes,
                 stateOptions: Highcharts.SeriesStateOptionsObject<typeof this> =
                     (state && (options.states as any)[state]) || {},
                 className = (point && point.getClassName()) || '',
@@ -1850,8 +1855,8 @@ BaseSeries.seriesType<typeof Highcharts.TreemapSeries>(
             points.forEach(function (point: Highcharts.TreemapPoint): void {
                 var levelDynamic = point.node.levelDynamic,
                     animate: Partial<Highcharts.AnimationOptionsObject> = {},
-                    attr: Highcharts.SVGAttributes = {},
-                    css: Highcharts.CSSObject = {},
+                    attr: SVGAttributes = {},
+                    css: CSSObject = {},
                     groupKey = 'level-group-' + levelDynamic,
                     hasGraphic = !!point.graphic,
                     shouldAnimate = withinAnimationLimit && hasGraphic,

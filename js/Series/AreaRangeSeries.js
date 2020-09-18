@@ -35,6 +35,30 @@ var Series = H.Series, areaProto = BaseSeries.seriesTypes.area.prototype, column
  */
 BaseSeries.seriesType('arearange', 'area', {
     /**
+     * @see [fillColor](#plotOptions.arearange.fillColor)
+     * @see [fillOpacity](#plotOptions.arearange.fillOpacity)
+     *
+     * @apioption plotOptions.arearange.color
+     */
+    /**
+     * @default   low
+     * @apioption plotOptions.arearange.colorKey
+     */
+    /**
+     * @see [color](#plotOptions.arearange.color)
+     * @see [fillOpacity](#plotOptions.arearange.fillOpacity)
+     *
+     * @apioption plotOptions.arearange.fillColor
+     */
+    /**
+     * @see [color](#plotOptions.arearange.color)
+     * @see [fillColor](#plotOptions.arearange.fillColor)
+     *
+     * @default   {highcharts} 0.75
+     * @default   {highstock} 0.75
+     * @apioption plotOptions.arearange.fillOpacity
+     */
+    /**
      * Whether to apply a drop shadow to the graph line. Since 2.3 the shadow
      * can be an object configuration containing `color`, `offsetX`, `offsetY`,
      * `opacity` and `width`.
@@ -42,10 +66,6 @@ BaseSeries.seriesType('arearange', 'area', {
      * @type      {boolean|Highcharts.ShadowOptionsObject}
      * @product   highcharts
      * @apioption plotOptions.arearange.shadow
-     */
-    /**
-     * @default   low
-     * @apioption plotOptions.arearange.colorKey
      */
     /**
      * Pixel width of the arearange graph line.
@@ -550,6 +570,12 @@ BaseSeries.seriesType('arearange', 'area', {
  * @apioption series.arearange
  */
 /**
+ * @see [fillColor](#series.arearange.fillColor)
+ * @see [fillOpacity](#series.arearange.fillOpacity)
+ *
+ * @apioption series.arearange.color
+ */
+/**
  * An array of data points for the series. For the `arearange` series type,
  * points can be given in the following ways:
  *
@@ -608,6 +634,20 @@ BaseSeries.seriesType('arearange', 'area', {
  * @extends   series.arearange.dataLabels
  * @product   highcharts highstock
  * @apioption series.arearange.data.dataLabels
+ */
+/**
+ * @see [color](#series.arearange.color)
+ * @see [fillOpacity](#series.arearange.fillOpacity)
+ *
+ * @apioption series.arearange.fillColor
+ */
+/**
+ * @see [color](#series.arearange.color)
+ * @see [fillColor](#series.arearange.fillColor)
+ *
+ * @default   {highcharts} 0.75
+ * @default   {highstock} 0.75
+ * @apioption series.arearange.fillOpacity
  */
 /**
  * The high or maximum value for each data point.

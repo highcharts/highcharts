@@ -38,6 +38,26 @@ BaseSeries.seriesType('areaspline', 'spline',
  * @product   highcharts highstock
  * @apioption plotOptions.areaspline
  */
+/**
+ * @see [fillColor](#plotOptions.areaspline.fillColor)
+ * @see [fillOpacity](#plotOptions.areaspline.fillOpacity)
+ *
+ * @apioption plotOptions.areaspline.color
+ */
+/**
+ * @see [color](#plotOptions.areaspline.color)
+ * @see [fillOpacity](#plotOptions.areaspline.fillOpacity)
+ *
+ * @apioption plotOptions.areaspline.fillColor
+ */
+/**
+ * @see [color](#plotOptions.areaspline.color)
+ * @see [fillColor](#plotOptions.areaspline.fillColor)
+ *
+ * @default   {highcharts} 0.75
+ * @default   {highstock} 0.75
+ * @apioption plotOptions.areaspline.fillOpacity
+ */
 defaultOptions.plotOptions.area, {
     getStackPoints: areaProto.getStackPoints,
     getGraphPath: areaProto.getGraphPath,
@@ -53,6 +73,12 @@ defaultOptions.plotOptions.area, {
  * @excluding dataParser, dataURL, step, boostThreshold, boostBlending
  * @product   highcharts highstock
  * @apioption series.areaspline
+ */
+/**
+ * @see [fillColor](#series.areaspline.fillColor)
+ * @see [fillOpacity](#series.areaspline.fillOpacity)
+ *
+ * @apioption series.areaspline.color
  */
 /**
  * An array of data points for the series. For the `areaspline` series
@@ -112,5 +138,19 @@ defaultOptions.plotOptions.area, {
  * @extends   series.line.data
  * @product   highcharts highstock
  * @apioption series.areaspline.data
+ */
+/**
+ * @see [color](#series.areaspline.color)
+ * @see [fillOpacity](#series.areaspline.fillOpacity)
+ *
+ * @apioption series.areaspline.fillColor
+ */
+/**
+ * @see [color](#series.areaspline.color)
+ * @see [fillColor](#series.areaspline.fillColor)
+ *
+ * @default   {highcharts} 0.75
+ * @default   {highstock} 0.75
+ * @apioption series.areaspline.fillOpacity
  */
 ''; // adds doclets above into transpilat

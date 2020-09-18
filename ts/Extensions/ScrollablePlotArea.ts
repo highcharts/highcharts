@@ -20,6 +20,10 @@ WIP on vertical scrollable plot area (#9378). To do:
 
 'use strict';
 
+import type {
+    DOMElementType,
+    HTMLDOMElement
+} from '../Core/Renderer/DOMElementType';
 import type SVGPath from '../Core/Renderer/SVG/SVGPath';
 import Chart from '../Core/Chart/Chart.js';
 import H from '../Core/Globals.js';
@@ -331,9 +335,7 @@ Chart.prototype.moveFixedElements = function (): void {
     fixedSelectors.forEach(function (className: string): void {
         [].forEach.call(
             container.querySelectorAll(className),
-            function (
-                elem: (Highcharts.HTMLDOMElement|Highcharts.SVGDOMElement)
-            ): void {
+            function (elem: DOMElementType): void {
                 (
                     elem.namespaceURI === (fixedRenderer as any).SVG_NS ?
                         (fixedRenderer as any).box :
@@ -393,7 +395,7 @@ Chart.prototype.applyFixed = function (): void {
                 fill: (this.options.chart as any).backgroundColor || '#fff',
                 'fill-opacity': pick(scrollableOptions.opacity, 0.85),
                 zIndex: -1
-            } as Highcharts.SVGAttributes)
+            })
             .addClass('highcharts-scrollable-mask')
             .add();
 

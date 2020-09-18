@@ -13,6 +13,7 @@
 'use strict';
 
 import type Chart from '../Core/Chart/Chart';
+import type SVGAttributes from '../Core/Renderer/SVG/SVGAttributes';
 import type SVGPath from '../Core/Renderer/SVG/SVGPath';
 import BaseSeries from '../Core/Series/Series.js';
 import H from '../Core/Globals.js';
@@ -280,7 +281,7 @@ BaseSeries.seriesType<typeof Highcharts.WindbarbSeries>('windbarb', 'column'
             this: Highcharts.WindbarbSeries,
             point: Highcharts.WindbarbPoint,
             state?: string
-        ): Highcharts.SVGAttributes {
+        ): SVGAttributes {
             var options = this.options,
                 stroke = point.color || this.color,
                 strokeWidth = this.options.lineWidth;
@@ -306,7 +307,7 @@ BaseSeries.seriesType<typeof Highcharts.WindbarbSeries>('windbarb', 'column'
         windArrow: function (
             this: Highcharts.WindbarbSeries,
             point: Highcharts.WindbarbPoint
-        ): (Highcharts.SVGElement|SVGPath) {
+        ): (SVGElement|SVGPath) {
             var knots = point.value * 1.943844,
                 level = point.beaufortLevel,
                 path: SVGPath,

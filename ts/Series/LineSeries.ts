@@ -11,8 +11,10 @@
 import type { AxisType } from '../Core/Axis/Types';
 import type BaseSeries from '../Core/Series/Series';
 import type Chart from '../Core/Chart/Chart';
+import type ColorType from '../Core/Color/ColorType';
 import type Point from '../Core/Series/Point';
 import type { SeriesOptionsType } from '../Core/Series/Types';
+import type SVGAttributes from '../Core/Renderer/SVG/SVGAttributes';
 import type SVGPath from '../Core/Renderer/SVG/SVGPath';
 import CartesianSeries from '../Core/Series/CartesianSeries.js';
 import H from '../Core/Globals.js';
@@ -55,7 +57,7 @@ declare global {
             public closestPointRange?: number;
             public closestPointRangePx?: number;
             public coll: 'series';
-            public color?: (ColorString|GradientColorObject|PatternObject);
+            public color?: (ColorType);
             public colorCounter: number;
             public colorIndex?: number;
             public cropped?: boolean;
@@ -71,7 +73,7 @@ declare global {
             public enabledDataSorting?: boolean;
             public eventOptions: Dictionary<EventCallbackFunction<Series>>;
             public eventsToUnbind: Array<Function>;
-            public fillColor?: (ColorString|GradientColorObject|PatternObject);
+            public fillColor?: ColorType;
             public finishedAnimating?: boolean;
             public getExtremesFromAll?: boolean;
             public graph?: SVGElement;

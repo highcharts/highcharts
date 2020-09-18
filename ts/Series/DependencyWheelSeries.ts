@@ -10,6 +10,8 @@
  *
  * */
 
+import type SVGAttributes from '../Core/Renderer/SVG/SVGAttributes';
+import type SVGElement from '../Core/Renderer/SVG/SVGElement';
 import BaseSeries from '../Core/Series/Series.js';
 import H from '../Core/Globals.js';
 import NodesMixin from '../Mixins/Nodes.js';
@@ -419,8 +421,8 @@ BaseSeries.seriesType<typeof Highcharts.DependencyWheelSeries>(
          */
         getDataLabelPath: function (
             this: Highcharts.DependencyWheelPoint,
-            label: Highcharts.SVGElement
-        ): Highcharts.SVGElement {
+            label: SVGElement
+        ): SVGElement {
             var renderer = this.series.chart.renderer,
                 shapeArgs = this.shapeArgs,
                 upperHalf = this.angle < 0 || this.angle > Math.PI,

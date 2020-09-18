@@ -13,6 +13,12 @@
 
 'use strict';
 
+import type ColorString from '../Core/Color/ColorString';
+import type SVGAttributes from '../Core/Renderer/SVG/SVGAttributes';
+import type {
+    SVGDOMElement
+} from '../Core/Renderer/DOMElementType';
+import type SVGElement from '../Core/Renderer/SVG/SVGElement';
 import Chart from '../Core/Chart/Chart.js';
 import H from '../Core/Globals.js';
 import Point from '../Core/Series/Point.js';
@@ -42,43 +48,19 @@ declare global {
             aspectRatio?: number;
             aspectWidth?: number;
         }
-        interface PatternObject {
-            animation?: Partial<AnimationOptionsObject>;
-            pattern: PatternOptionsObject;
-            patternIndex?: number;
-        }
-        interface PatternOptionsObject {
-            _height?: (number|string);
-            _width?: (number|string);
-            _x?: number;
-            _y?: number;
-            aspectRatio?: number;
-            backgroundColor?: ColorString;
-            color: ColorString;
-            height: number;
-            id?: string;
-            image?: string;
-            opacity?: number;
-            path: (string|SVGAttributes);
-            patternContentUnits?: 'string';
-            patternTransform?: string;
-            width: number;
-            x?: number;
-            y?: number;
-        }
         interface PointLike {
-            calculatePatternDimensions(pattern: PatternOptionsObject): void;
+            calculatePatternDimensions(pattern: PatternFill.PatternOptionsObject): void;
         }
         interface SVGRenderer {
             defIds?: Array<string>;
             idCounter?: number;
             patternElements?: Dictionary<SVGElement>;
             addPattern(
-                options: PatternOptionsObject,
+                options: PatternFill.PatternOptionsObject,
                 animation?: (boolean|AnimationOptionsObject)
             ): (SVGElement|undefined);
         }
-        let patterns: Array<PatternOptionsObject>|undefined;
+        let patterns: Array<PatternFill.PatternOptionsObject>|undefined;
     }
 }
 
@@ -194,8 +176,8 @@ declare global {
 ''; // detach doclets above
 
 // Add the predefined patterns
-const patterns = ((): Array<Highcharts.PatternOptionsObject> => {
-    const patterns: Array<Highcharts.PatternOptionsObject> = [],
+const patterns = ((): Array<PatternFill.PatternOptionsObject> => {
+    const patterns: Array<PatternFill.PatternOptionsObject> = [],
         colors: Array<string> = getOptions().colors as any;
 
     [
@@ -284,7 +266,7 @@ function hashFromObject(obj: object, preSeed?: boolean): string {
  * @requires modules/pattern-fill
  */
 Point.prototype.calculatePatternDimensions = function (
-    pattern: Highcharts.PatternOptionsObject
+    pattern: PatternFill.PatternOptionsObject
 ): void {
     if (pattern.width && pattern.height) {
         return;
@@ -377,27 +359,27 @@ Point.prototype.calculatePatternDimensions = function (
  * @requires modules/pattern-fill
  */
 SVGRenderer.prototype.addPattern = function (
-    options: Highcharts.PatternOptionsObject,
+    options: PatternFill.PatternOptionsObject,
     animation?: (boolean|Partial<Highcharts.AnimationOptionsObject>)
-): (Highcharts.SVGElement|undefined) {
-    var pattern: (Highcharts.SVGElement|undefined),
+): (SVGElement|undefined) {
+    var pattern: (SVGElement|undefined),
         animate = pick(animation, true),
         animationOptions = animObject(animate),
-        path: Highcharts.SVGAttributes,
+        path: SVGAttributes,
         defaultSize = 32,
         width: number = options.width || (options._width as any) || defaultSize,
         height: number = (
             options.height || (options._height as any) || defaultSize
         ),
-        color: Highcharts.ColorString = options.color || '#343434',
+        color: ColorString = options.color || '#343434',
         id = options.id,
         ren = this,
-        rect = function (fill: Highcharts.ColorString): void {
+        rect = function (fill: ColorString): void {
             ren.rect(0, 0, width, height)
                 .attr({ fill })
                 .add(pattern);
         },
-        attribs: Highcharts.SVGAttributes;
+        attribs: SVGAttributes;
 
     if (!id) {
         this.idCounter = this.idCounter || 0;
@@ -418,7 +400,7 @@ SVGRenderer.prototype.addPattern = function (
     this.defIds.push(id);
 
     // Calculate pattern element attributes
-    const attrs: Highcharts.SVGAttributes = {
+    const attrs: SVGAttributes = {
         id: id,
         patternUnits: 'userSpaceOnUse',
         patternContentUnits: options.patternContentUnits || 'userSpaceOnUse',
@@ -465,7 +447,7 @@ SVGRenderer.prototype.addPattern = function (
         if (animate) {
             this.image(
                 options.image, 0, 0, width, height, function (
-                    this: Highcharts.SVGElement
+                    this: SVGElement
                 ): void {
                     // Onload
                     this.animate({
@@ -482,7 +464,7 @@ SVGRenderer.prototype.addPattern = function (
     // For non-animated patterns, set opacity now
     if (!(options.image && animate) && typeof options.opacity !== 'undefined') {
         [].forEach.call(pattern.element.childNodes, function (
-            child: Highcharts.SVGDOMElement
+            child: SVGDOMElement
         ): void {
             child.setAttribute('opacity', options.opacity as any);
         });
@@ -505,8 +487,8 @@ wrap(H.Series.prototype, 'getColor', function (
 
     // Temporarely remove color options to get defaults
     if (oldColor &&
-        (oldColor as Highcharts.PatternObject).pattern &&
-        !(oldColor as Highcharts.PatternObject).pattern.color
+        (oldColor as PatternFill.PatternObject).pattern &&
+        !(oldColor as PatternFill.PatternObject).pattern.color
     ) {
         delete this.options.color;
         // Get default
@@ -515,7 +497,7 @@ wrap(H.Series.prototype, 'getColor', function (
             Array.prototype.slice.call(arguments as any, 1) as any
         );
         // Replace with old, but add default color
-        (oldColor as Highcharts.PatternObject).pattern.color =
+        (oldColor as PatternFill.PatternObject).pattern.color =
             this.color as any;
         this.color = this.options.color = oldColor;
     } else {
@@ -538,7 +520,7 @@ addEvent(H.Series, 'render', function (): void {
 
             if (
                 colorOptions &&
-                (colorOptions as Highcharts.PatternObject).pattern
+                (colorOptions as PatternFill.PatternObject).pattern
             ) {
                 // For most points we want to recalculate the dimensions on
                 // render, where we have the shape args and bbox. But if we
@@ -552,13 +534,13 @@ addEvent(H.Series, 'render', function (): void {
                         point.shapeArgs.height
                     )
                 ) {
-                    (colorOptions as Highcharts.PatternObject).pattern._width =
+                    (colorOptions as PatternFill.PatternObject).pattern._width =
                         'defer';
-                    (colorOptions as Highcharts.PatternObject).pattern._height =
+                    (colorOptions as PatternFill.PatternObject).pattern._height =
                         'defer';
                 } else {
                     point.calculatePatternDimensions(
-                        (colorOptions as Highcharts.PatternObject).pattern
+                        (colorOptions as PatternFill.PatternObject).pattern
                     );
                 }
             }
@@ -570,7 +552,7 @@ addEvent(H.Series, 'render', function (): void {
 // Merge series color options to points
 addEvent(Point, 'afterInit', function (): void {
     var point = this,
-        colorOptions: (Highcharts.PatternObject|undefined) =
+        colorOptions: (PatternFill.PatternObject|undefined) =
             point.options.color as any;
 
     // Only do this if we have defined a specific color on this point. Otherwise
@@ -595,9 +577,9 @@ addEvent(Point, 'afterInit', function (): void {
 addEvent(SVGRenderer, 'complexColor', function (
     args: {
         args: [
-            Highcharts.PatternObject,
+            PatternFill.PatternObject,
             string,
-            Highcharts.SVGDOMElement
+            SVGDOMElement
         ];
     }
 ): boolean {
@@ -706,11 +688,11 @@ addEvent(Chart, 'endResize', function (): void {
 
                 if (
                     colorOptions &&
-                    (colorOptions as Highcharts.PatternObject).pattern
+                    (colorOptions as PatternFill.PatternObject).pattern
                 ) {
-                    (colorOptions as Highcharts.PatternObject).pattern._width =
+                    (colorOptions as PatternFill.PatternObject).pattern._width =
                         'defer';
-                    (colorOptions as Highcharts.PatternObject).pattern._height =
+                    (colorOptions as PatternFill.PatternObject).pattern._height =
                         'defer';
                 }
             });
@@ -742,7 +724,7 @@ addEvent(Chart, 'redraw', function (): void {
             this.renderTo.querySelectorAll(
                 '[color^="url("], [fill^="url("], [stroke^="url("]'
             ),
-            function (node: Highcharts.SVGDOMElement): void {
+            function (node: SVGDOMElement): void {
                 var id = node.getAttribute('fill') ||
                         node.getAttribute('color') ||
                         node.getAttribute('stroke');
@@ -769,3 +751,58 @@ addEvent(Chart, 'redraw', function (): void {
 });
 
 /* eslint-enable no-invalid-this */
+
+/* *
+ *
+ *  Namespace
+ *
+ * */
+
+namespace PatternFill {
+
+    export interface PatternObject {
+        animation?: Partial<Highcharts.AnimationOptionsObject>;
+        pattern: PatternOptionsObject;
+        patternIndex?: number;
+    }
+
+    export interface PatternOptionsObject {
+        _height?: (number|string);
+        _width?: (number|string);
+        _x?: number;
+        _y?: number;
+        aspectRatio?: number;
+        backgroundColor?: ColorString;
+        color: ColorString;
+        height: number;
+        id?: string;
+        image?: string;
+        opacity?: number;
+        path: (string|SVGAttributes);
+        patternContentUnits?: 'string';
+        patternTransform?: string;
+        width: number;
+        x?: number;
+        y?: number;
+    }
+}
+
+/* *
+ *
+ *  Registry
+ *
+ * */
+
+declare module '../Core/Color/ColorType' {
+    interface ColorTypeRegistry {
+        PatternFill: PatternFill.PatternObject;
+    }
+}
+
+/* *
+ *
+ *  Export
+ *
+ * */
+
+export default PatternFill;

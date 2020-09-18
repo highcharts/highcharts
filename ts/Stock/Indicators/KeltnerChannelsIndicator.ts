@@ -6,6 +6,7 @@
  *
  * */
 
+import type CSSObject from '../../Core/Renderer/CSSObject';
 import BaseSeries from '../../Core/Series/Series.js';
 const {
     seriesTypes
@@ -46,11 +47,11 @@ declare global {
 
         interface KeltnerChannelsIndicatorOptions
             extends SMAIndicatorOptions, MultipleLinesIndicatorOptions {
-            bottomLine?: Dictionary<CSSObject>;
+            bottomLine?: Record<string, CSSObject>;
             marker?: PointMarkerOptionsObject;
             params?: KeltnerChannelsIndicatorParamsOptions;
             tooltip?: TooltipOptions;
-            topLine?: Dictionary<CSSObject>;
+            topLine?: Record<string, CSSObject>;
         }
 
         interface KeltnerChannelsIndicatorParamsOptions

@@ -8,6 +8,9 @@
  *
  * */
 
+import type ColorString from '../Core/Color/ColorString';
+import type ColorType from '../Core/Color/ColorType';
+import type SVGAttributes from '../Core/Renderer/SVG/SVGAttributes';
 import type SVGPath from '../Core/Renderer/SVG/SVGPath';
 import BaseSeries from '../Core/Series/Series.js';
 import SVGRenderer from '../Core/Renderer/SVG/SVGRenderer.js';
@@ -194,7 +197,7 @@ BaseSeries.seriesType<typeof Highcharts.DumbbellSeries>('dumbbell', 'arearange',
     getConnectorAttribs: function (
         this: Highcharts.DumbbellSeries,
         point: Highcharts.DumbbellPoint
-    ): Highcharts.SVGAttributes {
+    ): SVGAttributes {
         var series = this,
             chart = series.chart,
             pointOptions = point.options,
@@ -206,11 +209,11 @@ BaseSeries.seriesType<typeof Highcharts.DumbbellSeries>('dumbbell', 'arearange',
                 seriesOptions.connectorWidth as any
             ),
             connectorColor = pick<
-            Highcharts.ColorType|undefined,
-            Highcharts.ColorString|undefined,
-            Highcharts.ColorType|undefined,
-            Highcharts.ColorType|undefined,
-            Highcharts.ColorType
+            ColorType|undefined,
+            ColorString|undefined,
+            ColorType|undefined,
+            ColorType|undefined,
+            ColorType
             >(
                 pointOptions.connectorColor,
                 seriesOptions.connectorColor,
@@ -230,7 +233,7 @@ BaseSeries.seriesType<typeof Highcharts.DumbbellSeries>('dumbbell', 'arearange',
             pointHeight = chart.inverted ?
                 yAxis.len - pxThreshold : pxThreshold,
             pointBottom = pick(point.plotHigh, pointHeight),
-            attribs: Highcharts.SVGAttributes,
+            attribs: SVGAttributes,
             origProps;
 
         if (point.state) {
@@ -262,11 +265,11 @@ BaseSeries.seriesType<typeof Highcharts.DumbbellSeries>('dumbbell', 'arearange',
             point.y = point.high;
             point.zone = point.zone ? point.getZone() : void 0;
             connectorColor = pick<
-            Highcharts.ColorType|undefined,
-            Highcharts.ColorString|undefined,
-            Highcharts.ColorType|undefined,
-            Highcharts.ColorType|undefined,
-            Highcharts.ColorType
+            ColorType|undefined,
+            ColorString|undefined,
+            ColorType|undefined,
+            ColorType|undefined,
+            ColorType
             >(
                 pointOptions.connectorColor,
                 seriesOptions.connectorColor,
@@ -460,7 +463,7 @@ BaseSeries.seriesType<typeof Highcharts.DumbbellSeries>('dumbbell', 'arearange',
      */
     markerAttribs: function (
         this: Highcharts.DumbbellSeries
-    ): Highcharts.SVGAttributes {
+    ): SVGAttributes {
         var ret = areaRangeProto.markerAttribs.apply(this, arguments as any);
 
         ret.x = Math.floor(ret.x);
@@ -484,7 +487,7 @@ BaseSeries.seriesType<typeof Highcharts.DumbbellSeries>('dumbbell', 'arearange',
         this: Highcharts.DumbbellSeries,
         point: Highcharts.DumbbellPoint,
         state: string
-    ): Highcharts.SVGAttributes {
+    ): SVGAttributes {
         var pointAttribs;
 
         pointAttribs = seriesProto.pointAttribs.apply(this, arguments as any);

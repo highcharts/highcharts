@@ -12,6 +12,9 @@
  *
  * */
 
+import type ColorString from '../Core/Color/ColorString';
+import type ColorType from '../Core/Color/ColorType';
+import type SVGElement from '../Core/Renderer/SVG/SVGElement';
 import BaseSeries from '../Core/Series/Series.js';
 const {
     seriesTypes
@@ -954,7 +957,7 @@ var sunburstSeries = {
         var series = this,
             mapOptionsToLevel = series.mapOptionsToLevel,
             shapeRoot = series.shapeRoot,
-            group: Highcharts.SVGElement = series.group as any,
+            group: SVGElement = series.group as any,
             hasRendered = series.hasRendered,
             idRoot = series.rootNode,
             idPreviousRoot = series.idPreviousRoot,
@@ -1255,7 +1258,7 @@ var sunburstSeries = {
     alignDataLabel: function (
         this: Highcharts.SunburstSeries,
         point: Highcharts.SunburstPoint,
-        dataLabel: Highcharts.SVGElement,
+        dataLabel: SVGElement,
         labelOptions: Highcharts.DataLabelsOptions): void {
 
         if (labelOptions.textPath && labelOptions.textPath.enabled) {
@@ -1275,7 +1278,7 @@ var sunburstSeries = {
             plotLeft = chart.plotLeft,
             plotTop = chart.plotTop,
             attribs,
-            group: Highcharts.SVGElement = this.group as any;
+            group: SVGElement = this.group as any;
 
         // Initialize the animation
         if (init) {
@@ -1323,8 +1326,8 @@ var sunburstPoint = {
     },
     getDataLabelPath: function (
         this: Highcharts.SunburstPoint,
-        label: Highcharts.SVGElement
-    ): Highcharts.SVGElement {
+        label: SVGElement
+    ): SVGElement {
         var renderer = this.series.chart.renderer,
             shapeArgs = this.shapeExisting,
             start = shapeArgs.start,

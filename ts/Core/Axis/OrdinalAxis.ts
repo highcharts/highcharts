@@ -64,11 +64,9 @@ declare module './Types' {
     }
 }
 
-import '../Chart/Chart.js';
+import Chart from '../Chart/Chart.js';
 // Has a dependency on Navigator due to the use of Axis.toFixedRange
 import '../Navigator.js';
-
-var Chart = H.Chart;
 
 /* eslint-disable valid-jsdoc */
 

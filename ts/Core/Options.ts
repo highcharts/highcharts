@@ -10,10 +10,31 @@
 
 'use strict';
 
-import type { SeriesOptionsType, SeriesPlotOptionsType } from './Series/Types';
+import type ColorString from './Color/ColorString';
+import type ColorType from './Color/ColorType';
 import type Chart from './Chart/Chart';
-import type Point from '../Core/Series/Point';
+import type CSSObject from './Renderer/CSSObject';
+import type {
+    HTMLDOMElement
+} from './Renderer/DOMElementType';
+import type Point from './Series/Point';
+import type { SeriesOptionsType, SeriesPlotOptionsType } from './Series/Types';
+import type SVGAttributes from './Renderer/SVG/SVGAttributes';
 import H from './Globals.js';
+const {
+    isTouchDevice,
+    svg
+} = H;
+import Color from './Color/Color.js';
+const {
+    parse: color
+} = Color;
+import Time from './Time.js';
+import U from './Utilities.js';
+const {
+    merge
+} = U;
+
 
 /**
  * Internal types
@@ -67,8 +88,8 @@ declare global {
         interface ChartOptions {
             alignTicks?: boolean;
             animation?: (boolean|Partial<AnimationOptionsObject>);
-            backgroundColor?: (ColorString|GradientColorObject|PatternObject);
-            borderColor?: (ColorString|GradientColorObject|PatternObject);
+            backgroundColor?: ColorType;
+            borderColor?: ColorType;
             borderRadius?: number;
             borderWidth?: number;
             className?: string;
@@ -90,11 +111,9 @@ declare global {
             panKey?: string;
             panning?: PanningOptions;
             pinchType?: string;
-            plotBackgroundColor?: (
-                ColorString|GradientColorObject|PatternObject
-            );
+            plotBackgroundColor?: ColorType;
             plotBackgroundImage?: string;
-            plotBorderColor?: (ColorString|GradientColorObject|PatternObject);
+            plotBorderColor?: ColorType;
             plotBorderWidth?: number;
             plotShadow?: (boolean|Partial<ShadowOptionsObject>);
             polar?: boolean;
@@ -102,9 +121,7 @@ declare global {
             renderTo?: (string|HTMLDOMElement);
             resetZoomButton?: ChartResetZoomButtonOptions;
             shadow?: (boolean|Partial<ShadowOptionsObject>);
-            selectionMarkerFill?: (
-                ColorString|GradientColorObject|PatternObject
-            );
+            selectionMarkerFill?: ColorType;
             showAxes?: boolean;
             spacing?: Array<number>;
             spacingBottom?: number;
@@ -203,18 +220,18 @@ declare global {
             zoomOut?: string;
         }
         interface LegendNavigationOptions {
-            activeColor?: (ColorString|GradientColorObject|PatternObject);
+            activeColor?: ColorType;
             animation?: (boolean|Partial<AnimationOptionsObject>);
             arrowSize?: number;
             enabled?: boolean;
-            inactiveColor?: (ColorString|GradientColorObject|PatternObject);
+            inactiveColor?: ColorType;
             style?: CSSObject;
         }
         interface LegendOptions {
             align?: AlignValue;
             alignColumns?: boolean;
-            backgroundColor?: (ColorString|GradientColorObject|PatternObject);
-            borderColor?: (ColorString|GradientColorObject|PatternObject);
+            backgroundColor?: ColorType;
+            borderColor?: ColorType;
             borderRadius?: number;
             borderWidth?: number;
             enabled?: boolean;
@@ -314,8 +331,8 @@ declare global {
         }
         interface TooltipOptions {
             animation?: boolean;
-            backgroundColor?: (ColorString|GradientColorObject|PatternObject);
-            borderColor?: (ColorString|GradientColorObject|PatternObject);
+            backgroundColor?: ColorType;
+            borderColor?: ColorType;
             borderRadius?: number;
             borderWidth?: number;
             className?: string;
@@ -538,16 +555,7 @@ declare global {
  * @type {number}
  */
 
-import Time from './Time.js';
-import Color from './Color.js';
-const color = Color.parse;
-import U from './Utilities.js';
-const {
-    merge
-} = U;
-
-var isTouchDevice = H.isTouchDevice,
-    svg = H.svg;
+''; // detach doclets above
 
 /* ************************************************************************** *
  * Handle the options                                                         *

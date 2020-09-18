@@ -10,6 +10,9 @@
 
 'use strict';
 
+import type ColorType from '../Core/Color/ColorType';
+import type CSSObject from '../Core/Renderer/CSSObject';
+import type SVGElement from '../Core/Renderer/SVG/SVGElement';
 import Axis from '../Core/Axis/Axis.js';
 import Chart from '../Core/Chart/Chart.js';
 import H from '../Core/Globals.js';
@@ -88,8 +91,8 @@ declare global {
             animation?: (boolean|Partial<AnimationOptionsObject>);
             align?: AlignValue;
             allowOverlap?: boolean;
-            backgroundColor?: (ColorString|GradientColorObject|PatternObject);
-            borderColor?: (ColorString|GradientColorObject|PatternObject);
+            backgroundColor?: ColorType;
+            borderColor?: ColorType;
             borderRadius?: number;
             borderWidth?: number;
             crop?: boolean;
@@ -272,7 +275,7 @@ class StackItem {
     public cumulative?: (null|number);
     public hasValidPoints: boolean;
     public isNegative: boolean;
-    public label?: Highcharts.SVGElement;
+    public label?: SVGElement;
     public leftCliff: number;
     public options: Highcharts.YAxisStackLabelsOptions;
     public points: Highcharts.Dictionary<Array<number>>;
@@ -298,7 +301,7 @@ class StackItem {
      * @function Highcharts.StackItem#render
      * @param {Highcharts.SVGElement} group
      */
-    public render(group: Highcharts.SVGElement): void {
+    public render(group: SVGElement): void {
         var chart = this.axis.chart,
             options = this.options,
             formatOption = options.format,

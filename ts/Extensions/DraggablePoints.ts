@@ -12,9 +12,12 @@
 
 'use strict';
 
-import Chart from '../Core/Chart/Chart.js';
+import type ColorString from '../Core/Color/ColorString';
+import type ColorType from '../Core/Color/ColorType';
+import type SVGAttributes from '../Core/Renderer/SVG/SVGAttributes';
 import type SVGElement from '../Core/Renderer/SVG/SVGElement';
 import type SVGPath from '../Core/Renderer/SVG/SVGPath';
+import Chart from '../Core/Chart/Chart.js';
 import H from '../Core/Globals.js';
 import Point from '../Core/Series/Point.js';
 import U from '../Core/Utilities.js';
@@ -493,7 +496,7 @@ const columnDragDropProps = seriesTypes.column.prototype.dragDropProps = {
         resize: true,
         // Force guideBox start coordinates
         beforeResize: function (
-            guideBox: Highcharts.SVGElement,
+            guideBox: SVGElement,
             pointVals: Highcharts.Dictionary<number>,
             point: Highcharts.ColumnPoint
         ): void {
@@ -1815,7 +1818,7 @@ function hasDraggedPastSensitivity(
 function getPositionSnapshot(
     e: Highcharts.PointerEventObject,
     points: Array<Point>,
-    guideBox?: Highcharts.SVGElement
+    guideBox?: SVGElement
 ): Highcharts.DragDropPositionObject {
     var res: Highcharts.DragDropPositionObject = {
         chartX: e.chartX,
@@ -1920,7 +1923,7 @@ function getGroupedPoints(point: Point): Array<Point> {
  * @return {void}
  */
 function resizeRect(
-    rect: Highcharts.SVGElement,
+    rect: SVGElement,
     updateSide: string,
     update: Highcharts.PositionObject
 ): void {
@@ -2249,7 +2252,7 @@ function dragMove(
 Chart.prototype.setGuideBoxState = function (
     state: string,
     options?: Highcharts.Dictionary<Highcharts.DragDropGuideBoxOptionsObject>
-): Highcharts.SVGElement {
+): SVGElement {
     var guideBox = this.dragGuideBox,
         guideBoxOptions = merge(defaultGuideBoxOptions, options),
         stateOptions = merge(
@@ -2403,7 +2406,7 @@ Point.prototype.getDropValues = function (
  */
 H.Series.prototype.getGuideBox = function (
     points: Array<Point>
-): Highcharts.SVGElement {
+): SVGElement {
     var chart = this.chart,
         minX = Infinity,
         maxX = -Infinity,
@@ -2550,7 +2553,7 @@ Point.prototype.showDragHandles = function (): void {
                 val.handleOptions,
                 options.dragHandle
             ),
-            handleAttrs: Highcharts.SVGAttributes = {
+            handleAttrs: SVGAttributes = {
                 className: handleOptions.className,
                 'stroke-width': handleOptions.lineWidth,
                 fill: handleOptions.color,

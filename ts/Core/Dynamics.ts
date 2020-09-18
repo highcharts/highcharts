@@ -11,6 +11,9 @@
 'use strict';
 
 import type ColorAxis from './Axis/ColorAxis';
+import type {
+    HTMLDOMElement
+} from './Renderer/DOMElementType';
 import type { SeriesOptionsType } from './Series/Types';
 import Axis from './Axis/Axis.js';
 import BaseSeries from './Series/Series.js';
@@ -144,6 +147,7 @@ declare global {
                 animation?: (boolean|Partial<AnimationOptionsObject>)
             ): void;
             setName(name: string): void;
+            hasOptionChanged(this: Highcharts.Series, optionName: string): boolean;
             update(options: DeepPartial<SeriesOptionsType>, redraw?: boolean): Series;
         }
         interface XAxisOptions {
@@ -970,7 +974,6 @@ extend(Chart.prototype, /** @lends Highcharts.Chart.prototype */ {
         this.applyDescription('caption', options);
         this.layOutTitles(redraw);
     }
-
 });
 
 /**
@@ -1471,6 +1474,7 @@ extend(LineSeries.prototype, /** @lends Series.prototype */ {
             oldOptions = series.userOptions,
             seriesOptions: Highcharts.SeriesOptions,
             initialType = series.initialType || series.type,
+            plotOptions = chart.options.plotOptions,
             newType = (
                 options.type ||
                 oldOptions.type ||
@@ -1480,15 +1484,17 @@ extend(LineSeries.prototype, /** @lends Series.prototype */ {
                 // Indicators, histograms etc recalculate the data. It should be
                 // possible to omit this.
                 this.hasDerivedData ||
-                // Changes to data grouping requires new points in new groups
-                options.dataGrouping ||
                 // New type requires new point classes
                 (newType && newType !== this.type) ||
                 // New options affecting how the data points are built
                 typeof options.pointStart !== 'undefined' ||
-                options.pointInterval ||
-                options.pointIntervalUnit ||
-                options.keys
+                typeof options.pointInterval !== 'undefined' ||
+                // Changes to data grouping requires new points in new group
+                series.hasOptionChanged('dataGrouping') ||
+                series.hasOptionChanged('pointStart') ||
+                series.hasOptionChanged('pointInterval') ||
+                series.hasOptionChanged('pointIntervalUnit') ||
+                series.hasOptionChanged('keys')
             ),
             initialSeriesProto = seriesTypes[initialType].prototype,
             n,
@@ -1557,6 +1563,7 @@ extend(LineSeries.prototype, /** @lends Series.prototype */ {
                 series.index : oldOptions.index,
             pointStart: pick(
                 // when updating from blank (#7933)
+                plotOptions && plotOptions.series && plotOptions.series.pointStart,
                 oldOptions.pointStart,
                 // when updating after addPoint
                 (series.xData as any)[0]
@@ -1668,6 +1675,33 @@ extend(LineSeries.prototype, /** @lends Series.prototype */ {
     setName: function (this: Highcharts.Series, name: string): void {
         this.name = this.options.name = this.userOptions.name = name;
         this.chart.isDirtyLegend = true;
+    },
+    /**
+     * Check if the option has changed.
+     *
+     * @private
+     * @function Highcharts.Series#hasOptionChanged
+     *
+     * @param {string} option
+     *
+     * @return {boolean}
+     */
+    hasOptionChanged(this: Highcharts.Series, optionName: string): boolean {
+        const chart = this.chart,
+            option = (this.options as any)[optionName],
+            plotOptions = chart.options.plotOptions,
+            oldOption = (this.userOptions as any)[optionName];
+
+        if (oldOption) {
+            return option !== oldOption;
+        }
+
+        return option !==
+            pick(
+                plotOptions && plotOptions[this.type] && (plotOptions[this.type] as any)[optionName],
+                plotOptions && plotOptions.series && (plotOptions as any).series[optionName],
+                option
+            );
     }
 });
 

@@ -9,6 +9,7 @@
  * */
 'use strict';
 import H from '../Core/Globals.js';
+import Chart from '../Core/Chart/Chart.js';
 import U from '../Core/Utilities.js';
 var addEvent = U.addEvent, isNumber = U.isNumber, setOptions = U.setOptions;
 setOptions({
@@ -30,7 +31,7 @@ setOptions({
     }
 });
 /* eslint-disable no-invalid-this */
-addEvent(H.Chart, 'displayError', function (e) {
+addEvent(Chart, 'displayError', function (e) {
     var chart = this, code = e.code, msg, options = chart.options.chart, renderer = chart.renderer, chartWidth, chartHeight;
     if (chart.errorElements) {
         (chart.errorElements).forEach(function (el) {
@@ -73,7 +74,7 @@ addEvent(H.Chart, 'displayError', function (e) {
         });
     }
 });
-addEvent(H.Chart, 'beforeRedraw', function () {
+addEvent(Chart, 'beforeRedraw', function () {
     var errorElements = this.errorElements;
     if (errorElements && errorElements.length) {
         errorElements.forEach(function (el) {

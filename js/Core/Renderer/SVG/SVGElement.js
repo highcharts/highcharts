@@ -7,8 +7,7 @@
  *  !!!!!!! SOURCE GETS TRANSPILED BY TYPESCRIPT. EDIT TS FILE ONLY. !!!!!!!
  *
  * */
-'use strict';
-import Color from '../../Color.js';
+import Color from '../../Color/Color.js';
 import H from '../../Globals.js';
 var deg2rad = H.deg2rad, doc = H.doc, hasTouch = H.hasTouch, isFirefox = H.isFirefox, noop = H.noop, svg = H.svg, SVG_NS = H.SVG_NS, win = H.win;
 import U from '../../Utilities.js';
@@ -1160,7 +1159,7 @@ var SVGElement = /** @class */ (function () {
     /**
      * @private
      * @function Highcharts.SVGElement#fillSetter
-     * @param {Highcharts.ColorString|Highcharts.GradientColorObject|Highcharts.PatternObject} value
+     * @param {Highcharts.ColorType} value
      * @param {string} key
      * @param {Highcharts.SVGDOMElement} element
      */
@@ -1497,8 +1496,11 @@ var SVGElement = /** @class */ (function () {
      * @param {Highcharts.SVGDOMElement} element
      */
     SVGElement.prototype.opacitySetter = function (value, key, element) {
-        this[key] = value;
-        element.setAttribute(key, value);
+        // Round off to avoid float errors, like tests where opacity lands on
+        // 9.86957e-06 instead of 0
+        var opacity = Number(Number(value).toFixed(3));
+        this.opacity = opacity;
+        element.setAttribute(key, opacity);
     };
     /**
      * Remove a class name from the element.

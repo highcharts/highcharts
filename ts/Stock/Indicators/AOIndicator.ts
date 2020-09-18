@@ -6,6 +6,7 @@
  *
  * */
 
+import type ColorString from '../../Core/Color/ColorString';
 import BaseSeries from '../../Core/Series/Series.js';
 import H from '../../Core/Globals.js';
 const {

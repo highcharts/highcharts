@@ -11,6 +11,8 @@
  * */
 
 import type StackingAxis from '../Core/Axis/StackingAxis';
+import type SVGElement from '../Core/Renderer/SVG/SVGElement';
+import Axis from '../Core/Axis/Axis.js';
 import BaseSeries from '../Core/Series/Series.js';
 const {
     seriesTypes
@@ -364,7 +366,7 @@ H.Tick.prototype.postTranslate = function (
 /* eslint-disable no-invalid-this */
 
 // Same width as the category (#8083)
-addEvent(H.Axis, 'afterDrawCrosshair', function (
+addEvent(Axis, 'afterDrawCrosshair', function (
     e: {
         point: Highcharts.VariwidePoint;
     }
@@ -378,12 +380,12 @@ addEvent(H.Axis, 'afterDrawCrosshair', function (
 });
 
 // On a vertical axis, apply anti-collision logic to the labels.
-addEvent(H.Axis, 'afterRender', function (): void {
+addEvent(Axis, 'afterRender', function (): void {
     var axis = this;
 
     if (!this.horiz && this.variwide) {
         this.chart.labelCollectors.push(
-            function (): Array<Highcharts.SVGElement> {
+            function (): Array<SVGElement> {
                 return axis.tickPositions
                     .filter(function (pos: number): boolean {
                         return axis.ticks[pos].label as any;
@@ -391,8 +393,8 @@ addEvent(H.Axis, 'afterRender', function (): void {
                     .map(function (
                         pos: number,
                         i: number
-                    ): Highcharts.SVGElement {
-                        var label: Highcharts.SVGElement =
+                    ): SVGElement {
+                        var label: SVGElement =
                             axis.ticks[pos].label as any;
 
                         label.labelrank = (axis.zData as any)[i];
@@ -423,7 +425,7 @@ wrap(H.Tick.prototype, 'getLabelPosition', function (
     proceed: Function,
     x: number,
     y: number,
-    label: Highcharts.SVGElement,
+    label: SVGElement,
     horiz: boolean,
     labelOptions: Highcharts.DataLabelsOptions,
     tickmarkOffset: number,

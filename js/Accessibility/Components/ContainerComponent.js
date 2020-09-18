@@ -9,16 +9,15 @@
  *  !!!!!!! SOURCE GETS TRANSPILED BY TYPESCRIPT. EDIT TS FILE ONLY. !!!!!!!
  *
  * */
-'use strict';
-import H from '../../Core/Globals.js';
-var doc = H.win.document;
-import U from '../../Core/Utilities.js';
-var extend = U.extend;
-import HTMLUtilities from '../Utils/HTMLUtilities.js';
-var stripHTMLTags = HTMLUtilities.stripHTMLTagsFromString;
+import AccessibilityComponent from '../AccessibilityComponent.js';
 import ChartUtilities from '../Utils/ChartUtilities.js';
 var unhideChartElementFromAT = ChartUtilities.unhideChartElementFromAT, getChartTitle = ChartUtilities.getChartTitle;
-import AccessibilityComponent from '../AccessibilityComponent.js';
+import H from '../../Core/Globals.js';
+var doc = H.doc;
+import HTMLUtilities from '../Utils/HTMLUtilities.js';
+var stripHTMLTags = HTMLUtilities.stripHTMLTagsFromString;
+import U from '../../Core/Utilities.js';
+var extend = U.extend;
 /* eslint-disable valid-jsdoc */
 /**
  * The ContainerComponent class
