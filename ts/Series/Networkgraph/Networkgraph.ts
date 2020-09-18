@@ -12,6 +12,7 @@
 
 'use strict';
 
+import type AnimationOptionsObject from '../../Core/Animation/AnimationOptionsObject';
 import type Chart from '../../Core/Chart/Chart';
 import type ColorString from '../../Core/Color/ColorString';
 import type SVGAttributes from '../../Core/Renderer/SVG/SVGAttributes';

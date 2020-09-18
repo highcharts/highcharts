@@ -8,9 +8,14 @@
  *
  * */
 
+import type AnimationOptionsObject from '../Core/Animation/AnimationOptionsObject';
 import type { AlignValue } from '../Core/Renderer/AlignObject';
 import type SVGAttributes from '../Core/Renderer/SVG/SVGAttributes';
 import type SVGPath from '../Core/Renderer/SVG/SVGPath';
+import A from '../Core/Animation/AnimationUtilities.js';
+const {
+    setAnimation
+} = A;
 import BaseSeries from '../Core/Series/Series.js';
 import CenteredSeriesMixin from '../Mixins/CenteredSeries.js';
 const {
@@ -34,8 +39,7 @@ const {
     isNumber,
     merge,
     pick,
-    relativeLength,
-    setAnimation
+    relativeLength
 } = U;
 
 /**
@@ -1434,7 +1438,7 @@ BaseSeries.seriesType<typeof Highcharts.PieSeries>(
             this: Highcharts.PiePoint,
             sliced: boolean,
             redraw?: boolean,
-            animation?: (boolean|Partial<Highcharts.AnimationOptionsObject>)
+            animation?: (boolean|Partial<AnimationOptionsObject>)
         ): void {
             var point = this,
                 series = point.series,

@@ -10,6 +10,7 @@
 
 'use strict';
 
+import type AnimationOptionsObject from './Animation/AnimationOptionsObject';
 import type Chart from './Chart/Chart';
 import type ColorAxisGlobal from './Axis/ColorAxis';
 import type CSSObject from './Renderer/CSSObject';
@@ -19,6 +20,11 @@ import type {
 import type Point from './Series/Point';
 import type SVGAttributes from './Renderer/SVG/SVGAttributes';
 import type SVGElement from './Renderer/SVG/SVGElement';
+import A from './Animation/AnimationUtilities.js';
+const {
+    animObject,
+    setAnimation
+} = A;
 import H from './Globals.js';
 
 /**
@@ -194,7 +200,6 @@ declare global {
 import U from './Utilities.js';
 const {
     addEvent,
-    animObject,
     css,
     defined,
     discardElement,
@@ -205,7 +210,6 @@ const {
     merge,
     pick,
     relativeLength,
-    setAnimation,
     stableSort,
     syncTimeout,
     wrap
@@ -1584,7 +1588,7 @@ class Legend {
      *
      * @return {void}
      */
-    public scroll(scrollBy: number, animation?: (boolean|Partial<Highcharts.AnimationOptionsObject>)): void {
+    public scroll(scrollBy: number, animation?: (boolean|Partial<AnimationOptionsObject>)): void {
         var chart = this.chart,
             pages = this.pages,
             pageCount = pages.length,

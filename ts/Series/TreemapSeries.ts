@@ -14,6 +14,7 @@ import type {
     AlignValue,
     VerticalAlignValue
 } from '../Core/Renderer/AlignObject';
+import type AnimationOptionsObject from '../Core/Animation/AnimationOptionsObject';
 import type Chart from '../Core/Chart/Chart';
 import type ColorString from '../Core/Color/ColorString';
 import type ColorType from '../Core/Color/ColorType';
@@ -1858,7 +1859,7 @@ BaseSeries.seriesType<typeof Highcharts.TreemapSeries>(
 
             points.forEach(function (point: Highcharts.TreemapPoint): void {
                 var levelDynamic = point.node.levelDynamic,
-                    animate: Partial<Highcharts.AnimationOptionsObject> = {},
+                    animate: Partial<AnimationOptionsObject> = {},
                     attr: SVGAttributes = {},
                     css: CSSObject = {},
                     groupKey = 'level-group-' + levelDynamic,

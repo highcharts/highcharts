@@ -8,6 +8,7 @@
  *
  * */
 
+import type AnimationOptionsObject from '../Animation/AnimationOptionsObject';
 import type {
     SeriesLike,
     SeriesLikeOptions,
@@ -295,7 +296,7 @@ BaseSeries.prototype.pointClass = Point;
 namespace BaseSeries {
 
     export interface Options extends SeriesLikeOptions {
-        animation?: (boolean|DeepPartial<Highcharts.AnimationOptionsObject>);
+        animation?: (boolean|DeepPartial<AnimationOptionsObject>);
         dataSorting?: Highcharts.DataSortingOptionsObject; // cartasian series
         index?: number;
         /** @private */

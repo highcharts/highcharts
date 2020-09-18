@@ -12,6 +12,7 @@
 
 'use strict';
 
+import type AnimationOptionsObject from '../Core/Animation/AnimationOptionsObject';
 import type ColorString from '../Core/Color/ColorString';
 import type ColorType from '../Core/Color/ColorType';
 import type SVGAttributes from '../Core/Renderer/SVG/SVGAttributes';
@@ -2098,7 +2099,7 @@ function getNewPoints(
  */
 function updatePoints(
     chart: Chart,
-    animate?: (boolean|Partial<Highcharts.AnimationOptionsObject>)
+    animate?: (boolean|Partial<AnimationOptionsObject>)
 ): void {
     var newPoints: Highcharts.Dictionary<Highcharts.DragDropPointObject> =
             (chart.dragDropData as any).newPoints,
