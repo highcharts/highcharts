@@ -2094,7 +2094,6 @@ var utilitiesModule = {
     setOptions: setOptions,
     splat: splat,
     stableSort: stableSort,
-    stop: stop,
     syncTimeout: syncTimeout,
     timeUnits: timeUnits,
     uniqueKey: uniqueKey,

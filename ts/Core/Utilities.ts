@@ -18,7 +18,6 @@ import type {
     SVGDOMElement
 } from './Renderer/DOMElementType';
 import type SVGAttributes from './Renderer/SVG/SVGAttributes';
-import type SVGElement from './Renderer/SVG/SVGElement';
 import H from './Globals.js';
 type NonArray<T> = T extends Array<unknown> ? never : T;
 type NonFunction<T> = T extends Function ? never : T;
@@ -269,7 +268,6 @@ declare global {
         ): void
         function splat(obj: any): Array<any>;
         function stableSort(arr: Array<any>, sortFunction: Function): void;
-        function stop(el: SVGElement, prop?: string): void;
         function syncTimeout(
             fn: Function,
             delay: number,
@@ -2797,7 +2795,6 @@ const utilitiesModule = {
     setOptions,
     splat,
     stableSort,
-    stop,
     syncTimeout,
     timeUnits,
     uniqueKey,

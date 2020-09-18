@@ -54,6 +54,7 @@ declare global {
             animation: (boolean|Partial<AnimationOptionsObject>|undefined),
             chart: Chart
         ): void
+        function stop(el: SVGElement, prop?: string): void;
     }
 }
 
