@@ -1711,13 +1711,6 @@ var Axis = /** @class */ (function () {
      * @private
      * @function Highcharts.Axis#adjustTickAmount
      */
-    /**
-     * When using multiple axes, adjust the number of ticks to match the highest
-     * number of ticks in that group.
-     *
-     * @private
-     * @function Highcharts.Axis#adjustTickAmount
-     */
     Axis.prototype.adjustTickAmount = function () {
         var axis = this, axisOptions = axis.options, tickInterval = axis.tickInterval, tickPositions = axis.tickPositions, tickAmount = axis.tickAmount, finalTickAmt = axis.finalTickAmt, currentTickAmount = tickPositions && tickPositions.length, threshold = pick(axis.threshold, axis.softThreshold ? 0 : null), min, len, i;
         if (axis.hasData()) {

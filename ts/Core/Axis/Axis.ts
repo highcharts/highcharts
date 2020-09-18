@@ -5904,13 +5904,6 @@ class Axis implements AxisComposition, AxisLike {
      * @private
      * @function Highcharts.Axis#adjustTickAmount
      */
-    /**
-     * When using multiple axes, adjust the number of ticks to match the highest
-     * number of ticks in that group.
-     *
-     * @private
-     * @function Highcharts.Axis#adjustTickAmount
-     */
     public adjustTickAmount(): void {
         var axis = this,
             axisOptions = axis.options,
