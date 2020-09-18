@@ -92,7 +92,7 @@ var chartSpeed = Highcharts.chart('container-speed', Highcharts.merge(gaugeOptio
 var chartRpm = Highcharts.chart('container-rpm', Highcharts.merge(gaugeOptions, {
     yAxis: {
         min: 0,
-        max: 5,
+        max: 6,
         title: {
             text: 'RPM'
         }
