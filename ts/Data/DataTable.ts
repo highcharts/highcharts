@@ -127,10 +127,14 @@ class DataTable implements DataEventEmitter<DataTable.EventObject>, DataJSON.Cla
      *
      * @param {DataConverter} [converter]
      * Converter for value conversions in table rows.
+     *
+     * @param {string} [id]
+     * DataTable identifier.
      */
     public constructor(
         rows: Array<DataTableRow> = [],
-        converter: DataConverter = new DataConverter()
+        converter: DataConverter = new DataConverter(),
+        id?: string
     ) {
         const rowsIdMap: Record<string, DataTableRow> = {};
 
@@ -139,7 +143,7 @@ class DataTable implements DataEventEmitter<DataTable.EventObject>, DataJSON.Cla
         rows = rows.slice();
 
         this.converter = converter;
-        this.id = uniqueKey();
+        this.id = id || uniqueKey();
         this.rows = rows;
         this.rowsIdMap = rowsIdMap;
         this.watchsIdMap = {};
@@ -229,6 +233,52 @@ class DataTable implements DataEventEmitter<DataTable.EventObject>, DataJSON.Cla
         this.watchsIdMap = {};
 
         this.emit({ type: 'afterClearTable', detail: eventDetail });
+    }
+
+    /**
+     * Create an empty copy of the table with all the informations
+     * from the original table.
+     *
+     * @return {DataTable}
+     * Returns new empty DataTable instance.
+     */
+    public clone(): DataTable {
+        const table = this,
+            newTable = new DataTable([], table.converter, table.id),
+            aliasMapNames = Object.keys(table.aliasMap);
+
+        let eventNames,
+            eventName: DataTable.EventObject['type'],
+            eventArr,
+            eventFunction,
+            alias;
+
+        if (table.hcEvents) {
+            eventNames = Object.keys(table.hcEvents);
+
+            for (let i = 0, iEnd = eventNames.length; i < iEnd; i++) {
+                eventName = eventNames[i] as DataTable.EventObject['type'];
+                eventArr = table.hcEvents[eventName];
+
+                for (let j = 0, jEnd = eventArr.length; j < jEnd; j++) {
+                    eventFunction = (eventArr[j] as any).fn;
+                    newTable.on(eventName, eventFunction);
+                }
+            }
+        }
+
+        if (table.versionTag) {
+            newTable.versionTag = table.versionTag;
+        }
+
+        if (table.aliasMap) {
+            for (let k = 0, kEnd = aliasMapNames.length; k < kEnd; k++) {
+                alias = aliasMapNames[k];
+                newTable.createColumnAlias(table.aliasMap[alias], alias);
+            }
+        }
+
+        return newTable;
     }
 
     /**

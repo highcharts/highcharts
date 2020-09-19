@@ -1,5 +1,6 @@
 import DataTableRow from '/base/js/Data/DataTableRow.js';
 import DataTable from '/base/js/Data/DataTable.js';
+import DataSeriesConverter from '/base/js/Data/DataSeriesConverter.js';
 
 QUnit.test('DataTable and DataTableRow events', function (assert) {
 
@@ -537,3 +538,58 @@ QUnit.test('DataTable.toColumns with missing cells', function (assert) {
 
 });
 
+QUnit.test('DataTable.clone', function (assert) {
+
+    const dataSeriesConverter = new DataSeriesConverter(undefined, {
+        columnMap: { y: 'y-test' }
+    });
+
+    const table = new DataTable([], dataSeriesConverter);
+    const row = new DataTableRow({ id: 'row1', x: 1 });
+
+    table.insertRow(row);
+    table.setRowCell('row1', 'x', 100);
+    table.createColumnAlias('x', 'x-alias');
+
+    table.on('deleteRow', function () { console.log('row removed 1!'); });
+    table.on('deleteRow', function () { console.log('row removed 2!'); });
+    table.on('afterDeleteRow', function () { console.log('row removed 3!'); });
+
+    const tableClone = table.clone();
+
+    assert.notStrictEqual(
+        table,
+        tableClone,
+        'Cloned table should be a new DataTable instance.'
+    );
+
+    assert.strictEqual(
+        table.converter,
+        tableClone.converter,
+        'Cloned and original table should have the same DataSeriesConverter reference.'
+    );
+
+    assert.deepEqual(
+        table.aliasMap,
+        tableClone.aliasMap,
+        'Cloned and original table should have the same aliasMap elements.'
+    );
+
+    assert.deepEqual(
+        table.hcEvents,
+        tableClone.hcEvents,
+        'Cloned and original table should have the same events.'
+    );
+
+    assert.strictEqual(
+        table.id,
+        tableClone.id,
+        'Cloned and original table should have the same id.'
+    );
+
+    assert.strictEqual(
+        table.versionTag,
+        tableClone.versionTag,
+        'Cloned and original table should have the same versionTag.'
+    );
+});
