@@ -10,6 +10,8 @@
  *
  * */
 import DataJSON from '../DataJSON.js';
+import H from '../../Core/Globals.js';
+var win = H.win;
 import U from '../../Core/Utilities.js';
 var addEvent = U.addEvent, fireEvent = U.fireEvent, merge = U.merge;
 /* *
@@ -40,14 +42,43 @@ var DataFetch = /** @class */ (function () {
      *  Functions
      *
      * */
+    DataFetch.prototype.abort = function (xhr, eventDetail) {
+        this.emit({ type: 'abortFetch', detail: eventDetail, xhr: xhr });
+        xhr.abort();
+        this.emit({ type: 'afterAbortFetch', detail: eventDetail, xhr: xhr });
+    };
     DataFetch.prototype.emit = function (e) {
         fireEvent(this, e.type, e);
     };
-    DataFetch.prototype.fetch = function (resource, options) {
+    DataFetch.prototype.error = function (xhr, eventDetail) {
+        this.emit({ type: 'error', detail: eventDetail, xhr: xhr });
+    };
+    DataFetch.prototype.fetch = function (resource, options, eventDetail) {
+        var xhr = new XMLHttpRequest();
+        xhr.addEventListener('abort', this.abort.bind(this, xhr, eventDetail));
+        xhr.addEventListener('error', this.error.bind(this, xhr, eventDetail));
+        xhr.addEventListener('load', this.loaded.bind(this, xhr, eventDetail));
+        xhr.addEventListener('timeout', this.timeout.bind(this, xhr, eventDetail));
+        var timeout;
+        if (typeof resource === 'object') {
+            options = merge(options, resource);
+        }
         options = merge(this.options, options);
+        this.emit({ type: 'fetch', detail: eventDetail, xhr: xhr });
+        if (options.timeout &&
+            options.timeout > 0) {
+            timeout = win.setTimeout(this.timeout.bind(this), 1000, xhr, eventDetail);
+        }
+        xhr.send(options.body);
+    };
+    DataFetch.prototype.loaded = function (xhr, eventDetail) {
+        this.emit({ type: 'afterFetch', detail: eventDetail, xhr: xhr });
     };
     DataFetch.prototype.on = function (type, callback) {
         return addEvent(this, type, callback);
+    };
+    DataFetch.prototype.timeout = function (xhr, eventDetail) {
+        this.emit({ type: 'abortFetch', detail: eventDetail, xhr: xhr });
     };
     DataFetch.prototype.toJSON = function () {
         return {
@@ -61,7 +92,8 @@ var DataFetch = /** @class */ (function () {
      *
      * */
     DataFetch.defaultOptions = {
-        method: 'GET'
+        method: 'GET',
+        timeout: 60000
     };
     return DataFetch;
 }());

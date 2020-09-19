@@ -16,6 +16,7 @@
  *
  * */
 
+import type AuthenticatorType from '../Authenticators/AuthenticatorType';
 import type CredentialProviderType from './CredentialProviderType';
 import type DataJSON from '../../DataJSON';
 
@@ -24,6 +25,7 @@ import type DataJSON from '../../DataJSON';
  *  Class
  *
  * */
+
 abstract class DataCredentialProvider {
 
     /* *
@@ -74,6 +76,8 @@ abstract class DataCredentialProvider {
      *  Functions
      *
      * */
+
+    public abstract setCredentials(authenticator: AuthenticatorType): boolean;
 
     public abstract toJSON(): DataCredentialProvider.ClassJSON;
 
