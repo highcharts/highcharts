@@ -237,7 +237,7 @@ declare global {
  * @param {number} labelHeight
  * Height of the tooltip.
  *
- * @param {Highcharts.Point|Highcharts.TooltipPositionerPointObject} point
+ * @param {Highcharts.TooltipPositionerPointObject} point
  * Point information for positioning a tooltip.
  *
  * @return {Highcharts.PositionObject}
@@ -248,6 +248,7 @@ declare global {
  * Point information for positioning a tooltip.
  *
  * @interface Highcharts.TooltipPositionerPointObject
+ * @extends Highcharts.Point
  *//**
  * If `tooltip.split` option is enabled and positioner is called for each of the
  * boxes separately, this property indicates the call on the xAxis header, which
