@@ -49,7 +49,7 @@ Chart.prototype.adjustHeight = function () {
                 // Minimum height is 1 x staticScale.
                 height = Math.max(height, staticScale);
                 diff = height - chart.plotHeight;
-                if (!chart.scrollablePixelsX && !chart.scrollablePixelsY) {
+                if (!chart.scrollablePixelsY) {
                     if (Math.abs(diff) >= 1) {
                         chart.plotHeight = height;
                         chart.redrawTrigger = 'adjustHeight';

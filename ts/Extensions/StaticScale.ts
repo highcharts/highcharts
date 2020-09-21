@@ -98,7 +98,7 @@ Chart.prototype.adjustHeight = function (): void {
 
                 diff = height - chart.plotHeight;
 
-                if (!chart.scrollablePixelsX && !chart.scrollablePixelsY) {
+                if (!chart.scrollablePixelsY) {
                     if (Math.abs(diff) >= 1) {
                         chart.plotHeight = height;
                         chart.redrawTrigger = 'adjustHeight';
