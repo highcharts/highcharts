@@ -13,8 +13,13 @@
  *  Declarations
  *
  * */
-export interface FxLike {
 
+/**
+ * Optional properties for the Fx class. Should be defined outside of this file
+ * by `declare module` pattern.
+ */
+export interface FxLike {
+    // nothing here yet
 }
 
 /* *
