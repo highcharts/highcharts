@@ -198,26 +198,23 @@ var CSVStore = /** @class */ (function (_super) {
         }
     };
     /**
-     * Export a table to a CSV string.
-     * @param {DataTable} table
-     * The table to export.
+     * Creates a CSV string from the datatable on the store instance.
      *
-     * @param {CSVStore.CSVExportOptions} exportOptions
+     * @param {CSVStore.ExportOptions} exportOptions
      * The options used for the export.
      *
      * @return {string}
      * A CSV string from the DataTable.
      */
     CSVStore.prototype.getCSVForExport = function (exportOptions) {
-        var columnsRecord = this.table.toColumns(), csvOptions = exportOptions, columnNames = (csvOptions.exportIDColumn ?
-            Object.keys(columnsRecord) :
-            Object.keys(columnsRecord).slice(1)), decimalPoint = pick(csvOptions.decimalPoint, csvOptions.itemDelimiter !== ',' && csvOptions.useLocalDecimalPoint ?
+        var csvOptions = exportOptions, decimalPoint = pick(csvOptions.decimalPoint, csvOptions.itemDelimiter !== ',' && csvOptions.useLocalDecimalPoint ?
             (1.1).toLocaleString()[1] :
             '.'), 
         // use ';' for direct to Excel
         itemDelimiter = pick(csvOptions.itemDelimiter, decimalPoint === ',' ? ';' : ','), 
         // '\n' isn't working with the js csv data extraction
         lineDelimiter = csvOptions.lineDelimiter, exportNames = (this.parserOptions.firstRowAsNames !== false);
+        var _a = this.getColumnsForExport(exportOptions.exportIDColumn), columnNames = _a.columnNames, columnValues = _a.columnValues;
         var csvRows = [], columnsCount = columnNames.length;
         var rowArray = [];
         // Add the names as the first row if they should be exported
@@ -225,7 +222,7 @@ var CSVStore = /** @class */ (function (_super) {
             csvRows.push(columnNames.join(itemDelimiter));
         }
         for (var columnIndex = 0; columnIndex < columnsCount; columnIndex++) {
-            var columnName = columnNames[columnIndex], column = columnsRecord[columnName], columnLength = column.length;
+            var columnName = columnNames[columnIndex], column = columnValues[columnIndex], columnLength = column.length;
             var columnMeta = this.whatIs(columnName);
             var columnDataType = void 0;
             if (columnMeta) {
@@ -256,7 +253,7 @@ var CSVStore = /** @class */ (function (_super) {
      * Exports the datastore as a CSV string, using the options
      * provided on import unless other options are provided.
      *
-     * @param {CSVStore.CSVExportOptions} [csvExportOptions]
+     * @param {CSVStore.ExportOptions} [csvExportOptions]
      * Options to use instead of those used on import.
      *
      * @return {string}

@@ -11,6 +11,7 @@
  * */
 
 import type DataEventEmitter from '../DataEventEmitter';
+import type DataTableRow from '../DataTableRow';
 import DataJSON from '../DataJSON.js';
 import DataStore from './DataStore.js';
 import DataTable from '../DataTable.js';
@@ -18,7 +19,7 @@ import H from '../../Core/Globals.js';
 const { win } = H;
 import HTMLTableParser from '../Parsers/HTMLTableParser.js';
 import U from '../../Core/Utilities.js';
-const { merge } = U;
+const { merge, objectEach } = U;
 
 /** eslint-disable valid-jsdoc */
 
@@ -34,9 +35,15 @@ class HTMLTableStore extends DataStore<HTMLTableStore.EventObjects> implements D
      * */
 
     protected static readonly defaultOptions: HTMLTableStore.Options = {
-        tableHTML: ''
+        table: ''
     };
 
+    static readonly defaultExportOptions: HTMLTableStore.ExportOptions = {
+        decimalPoint: null,
+        exportIDColumn: false,
+        useRowspanHeaders: true,
+        useMultiLevelHeaders: true
+    }
     /* *
      *
      *  Static Functions
@@ -90,7 +97,9 @@ class HTMLTableStore extends DataStore<HTMLTableStore.EventObjects> implements D
 
         this.tableElement = null;
 
+
         this.options = merge(HTMLTableStore.defaultOptions, options);
+        this.parserOptions = this.options;
         this.parser = parser || new HTMLTableParser(this.options, this.tableElement);
     }
 
@@ -104,7 +113,7 @@ class HTMLTableStore extends DataStore<HTMLTableStore.EventObjects> implements D
      * Options for the HTMLTable datastore
      * @todo this should not include parsing options
      */
-    public readonly options: (HTMLTableStore.Options&HTMLTableParser.OptionsType);
+    public readonly options: (HTMLTableStore.Options & HTMLTableParser.OptionsType);
 
     /**
      * The attached parser, which can be replaced in the constructor
@@ -115,18 +124,23 @@ class HTMLTableStore extends DataStore<HTMLTableStore.EventObjects> implements D
      * The table element to create the store from.
      * Is either supplied directly or is fetched by an ID.
      */
-    public tableElement: (HTMLElement|null);
+    public tableElement: (HTMLElement | null);
 
     public tableID?: string;
+
+    /**
+     * The options that were passed to the parser.
+     */
+    private parserOptions: HTMLTableParser.OptionsType;
 
     /**
      * Handles retrieving the HTML table by ID if an ID is provided
      */
     private fetchTable(): void {
         const store = this,
-            { tableHTML } = store.options;
+            { table: tableHTML } = store.options;
 
-        let tableElement: (HTMLElement|null);
+        let tableElement: (HTMLElement | null);
 
         if (typeof tableHTML === 'string') {
             store.tableID = tableHTML;
@@ -187,14 +201,292 @@ class HTMLTableStore extends DataStore<HTMLTableStore.EventObjects> implements D
     }
 
     /**
-     * Save
-     * @todo implement
+     * Creates an HTML table from the datatable on the store instance.
+     *
+     * @param {HTMLTableStore.ExportOptions} exportOptions
+     * Options used for exporting.
+     *
+     * @return {string}
+     * The HTML table.
+     */
+    private getHTMLTableForExport(exportOptions?: HTMLTableStore.ExportOptions): string {
+        const options = exportOptions,
+            decimalPoint = options?.useLocalDecimalPoint ? (1.1).toLocaleString()[1] : '.',
+            exportNames = (this.parserOptions.firstRowAsNames !== false),
+            useMultiLevelHeaders = options?.useMultiLevelHeaders,
+            useRowspanHeaders = options?.useRowspanHeaders;
+
+        const isRowEqual = function (
+            row1: Array<(number | string | undefined)>,
+            row2: Array<(number | string | undefined)>
+        ): boolean {
+            var i = row1.length;
+
+            if (row2.length === i) {
+                while (i--) {
+                    if (row1[i] !== row2[i]) {
+                        return false;
+                    }
+                }
+            } else {
+                return false;
+            }
+            return true;
+        };
+
+        const getTableHeaderHTML = function (
+            topheaders: (Array<(number | string)>),
+            subheaders: Array<(number | string | undefined)>,
+            rowLength?: number
+        ): string {
+            let html = '<thead>',
+                i = 0,
+                len = rowLength || subheaders && subheaders.length,
+                next,
+                cur,
+                curColspan = 0,
+                rowspan;
+
+            // Clean up multiple table headers. The store returns two
+            // levels of headers when using multilevel, not merged. We need to
+            // merge identical headers, remove redundant headers, and keep it
+            // all marked up nicely.
+            if (
+                useMultiLevelHeaders &&
+                topheaders &&
+                subheaders.length &&
+                !isRowEqual(topheaders, subheaders)
+            ) {
+                html += '<tr>';
+                for (; i < len; ++i) {
+                    cur = topheaders[i];
+                    next = topheaders[i + 1];
+                    if (cur === next) {
+                        ++curColspan;
+                    } else if (curColspan) {
+                        // Ended colspan
+                        // Add cur to HTML with colspan.
+                        html += getCellHTMLFromValue(
+                            'th',
+                            'highcharts-table-topheading',
+                            'scope="col" ' +
+                            'colspan="' + (curColspan + 1) + '"',
+                            cur
+                        );
+                        curColspan = 0;
+                    } else {
+                        if (!subheaders[i]) {
+                            if (useRowspanHeaders) {
+                                rowspan = 2;
+                                delete subheaders[i];
+                            } else {
+                                rowspan = 1;
+                                subheaders[i] = '';
+                            }
+                        } else {
+                            rowspan = 1;
+                        }
+                        html += getCellHTMLFromValue(
+                            'th',
+                            'highcharts-table-topheading',
+                            'scope="col"' +
+                            (rowspan > 1 ?
+                                ' valign="top" rowspan="' + rowspan + '"' :
+                                ''),
+                            cur
+                        );
+                    }
+                }
+                html += '</tr>';
+            }
+
+            if (!subheaders.length && !useMultiLevelHeaders) {
+                subheaders = topheaders;
+            }
+
+            if (subheaders.length) {
+                html += '<tr>';
+                for (i = 0, len = subheaders.length; i < len; ++i) {
+                    if (typeof subheaders[i] !== 'undefined') {
+                        html += getCellHTMLFromValue(
+                            'th', null, 'scope="col"', subheaders[i] || ''
+                        );
+                    }
+                }
+                html += '</tr>';
+            }
+
+            html += '</thead>';
+            return html;
+        };
+
+        const getCellHTMLFromValue = function (
+            tag: string,
+            classes: (string | null),
+            attrs: string,
+            value: (number | string)
+        ): string {
+            let val = value || '',
+                className = 'text' + (classes ? ' ' + classes : '');
+
+            // Convert to string if number
+            if (typeof val === 'number') {
+                val = val.toString();
+                if (decimalPoint === ',') {
+                    val = val.replace('.', decimalPoint);
+                }
+                className = 'number';
+            } else if (!value) {
+                className = 'empty';
+            }
+            return '<' + tag + (attrs ? ' ' + attrs : '') +
+                ' class="' + className + '">' +
+                val + '</' + tag + '>';
+        };
+
+        const { columnNames, columnValues } = this.getColumnsForExport(options?.exportIDColumn),
+            htmlRows: Array<string> = [],
+            columnsCount = columnNames.length;
+
+        const rowArray: Array<Array<DataTableRow.CellType>> = [];
+
+        let tableHead = '';
+
+        // Add the names as the first row if they should be exported
+        if (exportNames) {
+            const parentCategoryMap: Record<string, string[]> = {},
+                subcategories: (string | undefined)[] = [];
+
+            // If using multilevel headers, attempt make two arrays:
+            // The top level headers, and the subcategory headers
+            if (useMultiLevelHeaders) {
+                const regex = /\(.*\)/;
+
+                for (let i = 0; i < columnNames.length; i++) {
+                    const name = columnNames[i],
+                        result = regex.test(name);
+
+                    if (result) {
+                        const parentCategory = name.substring(0, name.indexOf('(') - 1);
+                        if (!parentCategoryMap[parentCategory]) {
+                            parentCategoryMap[parentCategory] = [];
+                        }
+                        // Add to the map
+                        parentCategoryMap[parentCategory].push(
+                            name.slice(name.indexOf('(') + 1, name.lastIndexOf(')'))
+                        );
+                        // remove subcategory
+                        columnNames[i] = parentCategory;
+                    }
+
+                    // Add the subcategories to another array
+                    // remove duplicate columnnames
+                    const subcategory = parentCategoryMap[columnNames[i]];
+                    if (subcategory) {
+                        subcategories[i] = subcategory.reverse().pop();
+                    }
+                }
+            }
+
+            tableHead = getTableHeaderHTML(columnNames, subcategories);
+        }
+
+        for (let columnIndex = 0; columnIndex < columnsCount; columnIndex++) {
+            const columnName = columnNames[columnIndex],
+                column = columnValues[columnIndex],
+                columnLength = column.length;
+
+            const columnMeta = this.whatIs(columnName);
+            let columnDataType;
+
+            if (columnMeta) {
+                columnDataType = columnMeta?.dataType;
+            }
+
+            for (let rowIndex = 0; rowIndex < columnLength; rowIndex++) {
+                let cellValue = column[rowIndex];
+
+                if (!rowArray[rowIndex]) {
+                    rowArray[rowIndex] = [];
+                }
+
+                // Handle datatype
+                // if(columnDataType && typeof cellValue !== columnDataType) {
+                //     do something?
+                // }
+                if (
+                    typeof cellValue !== 'string' ||
+                    typeof cellValue !== 'number'
+                ) {
+                    cellValue = (cellValue || '').toString();
+                }
+
+                rowArray[rowIndex][columnIndex] = getCellHTMLFromValue(
+                    'td',
+                    null,
+                    '',
+                    cellValue
+                );
+
+                // On the final column, push the row to the array
+                if (columnIndex === columnsCount - 1) {
+                    htmlRows.push('<tr>\n' +
+                        rowArray[rowIndex].join('\n') +
+                        '\n</tr>');
+                }
+            }
+        }
+
+        let caption = '';
+
+        // Add table caption
+        // Current exportdata falls back to chart title
+        // but that should probably be handled elsewhere?
+        if (options?.tableCaption) {
+            caption = '<caption class="highcharts-table-caption">' +
+                options.tableCaption +
+                '</caption>';
+        }
+
+        return (
+            '<table>\n' +
+            caption +
+            tableHead + '\n' +
+            '<tbody>\n' +
+            htmlRows.join('\n') +
+            '</tbody>' +
+            '\n</table>'
+        );
+    }
+
+    /**
+     * Exports the datastore as an HTML string, using the options
+     * provided on import unless other options are provided.
+     *
+     * @param {HTMLTableStore.ExportOptions} [htmlExportOptions]
+     * Options that override default or existing export options.
      *
      * @param {DataEventEmitter.EventDetail} [eventDetail]
      * Custom information for pending events.
+     *
+     * @return {string}
+     * HTML from the current dataTable.
+     *
      */
-    public save(eventDetail?: DataEventEmitter.EventDetail): void {
+    public save(htmlExportOptions: HTMLTableStore.ExportOptions, eventDetail?: DataEventEmitter.EventDetail): string {
+        const exportOptions = HTMLTableStore.defaultExportOptions;
 
+        // Merge in the provided parser options
+        objectEach(this.parserOptions, function (value, key): void {
+            if (key in exportOptions) {
+                exportOptions[key] = value;
+            }
+        });
+
+        // Merge in provided options
+        merge(true, exportOptions, htmlExportOptions);
+
+        return this.getHTMLTableForExport(exportOptions);
     }
 
     public toJSON(): HTMLTableStore.ClassJSON {
@@ -227,12 +519,12 @@ namespace HTMLTableStore {
     /**
      * Type for event object fired from HTMLTableDataStore
      */
-    export type EventObjects = (ErrorEventObject|LoadEventObject);
+    export type EventObjects = (ErrorEventObject | LoadEventObject);
 
     /**
      * Options used in the constructor of HTMLTableDataStore
      */
-    export type OptionsType = Partial<(HTMLTableStore.Options&HTMLTableParser.OptionsType)>
+    export type OptionsType = Partial<(HTMLTableStore.Options & HTMLTableParser.OptionsType)>
 
     /**
      * The ClassJSON used to import/export HTMLTableDataStore
@@ -244,26 +536,38 @@ namespace HTMLTableStore {
     }
 
     /**
+     * Options for exporting the store as an HTML table
+     */
+    export interface ExportOptions extends DataJSON.JSONObject {
+        decimalPoint?: string | null;
+        useLocalDecimalPoint?: boolean;
+        exportIDColumn: boolean;
+        tableCaption?: string;
+        useRowspanHeaders: boolean;
+        useMultiLevelHeaders: boolean;
+    }
+
+    /**
      * Provided event object on errors within HTMLTableDataStore
      */
     export interface ErrorEventObject extends DataStore.EventObject {
         type: 'loadError';
-        error: (string|Error);
+        error: (string | Error);
     }
 
     /**
      * Provided event object on load events within HTMLTableDataStore
      */
     export interface LoadEventObject extends DataStore.EventObject {
-        type: ('load'|'afterLoad');
-        tableElement?: (HTMLElement|null);
+        type: ('load' | 'afterLoad');
+        tableElement?: (HTMLElement | null);
     }
 
     /**
      * Internal options for the HTMLTableDataStore class
      */
     export interface Options {
-        tableHTML: (string | HTMLElement);
+        table: (string | HTMLElement);
     }
 
 }

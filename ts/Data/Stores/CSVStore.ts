@@ -46,7 +46,7 @@ class CSVStore extends DataStore<CSVStore.EventObjects> implements DataJSON.Clas
         dataRefreshRate: 1
     }
 
-    static readonly defaultExportOptions: CSVStore.CSVExportOptions = {
+    static readonly defaultExportOptions: CSVStore.ExportOptions = {
         decimalPoint: null,
         itemDelimiter: null,
         lineDelimiter: '\n',
@@ -261,24 +261,16 @@ class CSVStore extends DataStore<CSVStore.EventObjects> implements DataJSON.Clas
     }
 
     /**
-     * Export a table to a CSV string.
-     * @param {DataTable} table
-     * The table to export.
+     * Creates a CSV string from the datatable on the store instance.
      *
-     * @param {CSVStore.CSVExportOptions} exportOptions
+     * @param {CSVStore.ExportOptions} exportOptions
      * The options used for the export.
      *
      * @return {string}
      * A CSV string from the DataTable.
      */
-    public getCSVForExport(exportOptions: CSVStore.CSVExportOptions): string {
-        const columnsRecord = this.table.toColumns(),
-            csvOptions = exportOptions,
-            columnNames = (
-                csvOptions.exportIDColumn ?
-                    Object.keys(columnsRecord) :
-                    Object.keys(columnsRecord).slice(1)
-            ),
+    public getCSVForExport(exportOptions: CSVStore.ExportOptions): string {
+        const csvOptions = exportOptions,
             decimalPoint = pick(
                 csvOptions.decimalPoint,
                 csvOptions.itemDelimiter !== ',' && csvOptions.useLocalDecimalPoint ?
@@ -294,6 +286,7 @@ class CSVStore extends DataStore<CSVStore.EventObjects> implements DataJSON.Clas
             lineDelimiter = csvOptions.lineDelimiter,
             exportNames = (this.parserOptions.firstRowAsNames !== false);
 
+        const { columnNames, columnValues } = this.getColumnsForExport(exportOptions.exportIDColumn);
         const csvRows: Array<string> = [],
             columnsCount = columnNames.length;
 
@@ -306,7 +299,7 @@ class CSVStore extends DataStore<CSVStore.EventObjects> implements DataJSON.Clas
 
         for (let columnIndex = 0; columnIndex < columnsCount; columnIndex++) {
             const columnName = columnNames[columnIndex],
-                column = columnsRecord[columnName],
+                column = columnValues[columnIndex],
                 columnLength = column.length;
 
             const columnMeta = this.whatIs(columnName);
@@ -347,14 +340,14 @@ class CSVStore extends DataStore<CSVStore.EventObjects> implements DataJSON.Clas
      * Exports the datastore as a CSV string, using the options
      * provided on import unless other options are provided.
      *
-     * @param {CSVStore.CSVExportOptions} [csvExportOptions]
+     * @param {CSVStore.ExportOptions} [csvExportOptions]
      * Options to use instead of those used on import.
      *
      * @return {string}
      * CSV from the store's current DataTable.
      *
      */
-    public save(csvExportOptions?: Partial<CSVStore.CSVExportOptions>): string {
+    public save(csvExportOptions?: Partial<CSVStore.ExportOptions>): string {
         const exportOptions = CSVStore.defaultExportOptions;
 
         // Merge in the provided parser options
@@ -455,7 +448,7 @@ namespace CSVStore {
     /**
      * The available options when exporting the table as CSV.
      */
-    export interface CSVExportOptions extends DataJSON.JSONObject {
+    export interface ExportOptions extends DataJSON.JSONObject {
         decimalPoint: string | null;
         itemDelimiter: string | null;
         lineDelimiter: string;

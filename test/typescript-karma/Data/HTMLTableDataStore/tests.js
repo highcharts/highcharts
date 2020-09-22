@@ -2,6 +2,7 @@ import HTMLTableStore from '/base/js/Data/Stores/HTMLTableStore.js'
 import HTMLTableParser from '/base/js/Data/Parsers/HTMLTableParser.js'
 import U from '/base/js/Core/Utilities.js';
 import { registerStoreEvents, testExportedDataTable } from '../utils.js'
+import CSVStore from '/base/js/Data/Stores/CSVStore.js';
 const { test, only } = QUnit;
 const { createElement } = U;
 
@@ -274,7 +275,7 @@ test('HTMLTableStore from HTML element', function (assert) {
     const tableElement = createElement('div');
     tableElement.innerHTML = tableHTML;
 
-    const datastore = new HTMLTableStore(undefined, { tableHTML: tableElement });
+    const datastore = new HTMLTableStore(undefined, { table: tableElement });
 
     const doneLoading = assert.async();
 
@@ -324,3 +325,99 @@ test('HTMLTableParser', function (assert) {
     })
     dataparser.parse()
 });
+
+test('Export as HTML', function (assert) {
+    const tableCSV = `identifier,Range (low),Range (mid),Range (high),something else,Range (ultra)
+1,2,5,10,"Blue",22`;
+
+    // Load the table from the CSV
+    const csvdatastore = new CSVStore(undefined, { csv: tableCSV });
+    csvdatastore.load();
+
+    const htmlstore = new HTMLTableStore(csvdatastore.table)
+
+    // Export with default settings (multiline and rowspan should be enabled)
+    let htmlString = htmlstore.save()
+    const HTMLElement = createElement('div');
+    HTMLElement.innerHTML = htmlString;
+
+    assert.strictEqual(
+        HTMLElement.querySelectorAll('thead tr').length,
+        2,
+        'Table head should have two rows'
+    );
+    assert.strictEqual(
+        HTMLElement.querySelectorAll('th[colspan="3"]').length,
+        1,
+        'Exported table should have one header with colspan 3'
+    );
+    assert.strictEqual(
+        HTMLElement.querySelectorAll('th[rowspan="2"]').length,
+        2,
+        'Exported table should have 2 headers with rowspan 2'
+    );
+
+    // Multilevel headers disabled
+    htmlString = htmlstore.save({
+        useMultiLevelHeaders: false
+    });
+    HTMLElement.innerHTML = htmlString;
+
+    assert.strictEqual(
+        HTMLElement.querySelectorAll('thead tr').length,
+        1,
+        'Table head should have a single row'
+    );
+    assert.strictEqual(
+        HTMLElement.querySelectorAll('th[colspan]').length,
+        0,
+        'Exported table should have no headers with colspan'
+    );
+    assert.strictEqual(
+        HTMLElement.querySelectorAll('th[rowspan]').length,
+        0,
+        'Exported table should have no headers with rowspan'
+    );
+
+    // table caption
+    htmlString = htmlstore.save({
+        useMultiLevelHeaders: false,
+        tableCaption: 'My Data Table'
+    });
+
+    HTMLElement.innerHTML = htmlString;
+    const captionSearch = HTMLElement.querySelectorAll('caption');
+
+    assert.strictEqual(
+        captionSearch.length,
+        1,
+        'The table should have a single caption'
+    );
+    assert.strictEqual(
+        captionSearch[0].innerText,
+        'My Data Table'
+    );
+
+    // Make sure the exported table is parseable, and returns the same result
+    const storeFromExportedHTML = new HTMLTableStore(undefined, { table: HTMLElement });
+    const doneLoading = assert.async();
+
+    storeFromExportedHTML.on('afterLoad', e => {
+        assert.strictEqual(
+            storeFromExportedHTML.save(),
+            htmlstore.save(),
+            'Store from parsed table should produce same result as original store'
+        );
+        doneLoading();
+    });
+    storeFromExportedHTML.on('loadError', () => {
+        assert.ok(
+            false,
+            'The load failed'
+        )
+        doneLoading();
+    });
+
+    storeFromExportedHTML.load();
+    assert.ok(true)
+})

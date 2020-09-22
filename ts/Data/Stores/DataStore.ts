@@ -22,6 +22,7 @@ import type DataEventEmitter from '../DataEventEmitter';
 import type DataJSON from '../DataJSON';
 import type DataParser from '../Parsers/DataParser';
 import type StoreType from './StoreType';
+import DataTableRow from '../DataTableRow.js';
 import DataTable from '../DataTable.js';
 import U from '../../Core/Utilities.js';
 
@@ -266,6 +267,48 @@ implements DataEventEmitter<TEventObject>, DataJSON.Class {
         }
 
         return columnOrder;
+    }
+
+    /**
+     * Retrieves the columns of the the dataTable,
+     * applies column order from meta.
+     * @param {boolean} [includeIdColumn]
+     * Whether to include the `id` column in the returned array
+     * @return {{}}
+     * An object with the properties `columnNames` and `columnValues`
+     */
+    protected getColumnsForExport(includeIdColumn?: boolean): {
+        columnNames: Array<string>;
+        columnValues: Array<Array<DataTableRow.CellType>>;
+        columnHeaderFormatter?: Function;
+    } {
+        const columnsRecord = this.table.toColumns(),
+            columnNames = (
+                includeIdColumn ?
+                    Object.keys(columnsRecord) :
+                    Object.keys(columnsRecord).slice(1)
+            );
+
+        const columnOrder = this.getColumnOrder().reverse();
+
+        if (columnOrder.length) {
+            columnNames.sort((a, b): number => {
+                if (columnOrder.indexOf(a) < columnOrder.indexOf(b)) {
+                    return 1;
+                }
+                if (columnOrder.indexOf(a) > columnOrder.indexOf(b)) {
+                    return -1;
+                }
+                return 0;
+            });
+        }
+
+        return ({
+            columnNames,
+            columnValues: columnNames.map(function (name): DataTableRow.CellType[] {
+                return columnsRecord[name];
+            })
+        });
     }
 
     /**
