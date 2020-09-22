@@ -92,8 +92,7 @@ declare global {
             x: number;
             y: number;
             parentStateId?: string;
-            options?: (string | number | PointOptionsObject |
-            (string | number)[] | null);
+            options?: PointOptionsType;
         }
         interface MarkerClusterSplitDataArray
             extends Array<MarkerClusterSplitDataObject> {

@@ -160,7 +160,12 @@ declare global {
             events?: PointEventsOptionsObject;
         }
         type PointOptionsType = (
-            number|string|Array<(number|string)>|PointOptionsObject|null
+            number|
+            string|
+            Array<(number|string|null|undefined)>|
+            PointOptionsObject|
+            null|
+            undefined
         );
         type PointStateValue = keyof PointStatesOptionsObject;
         let Point: PointClass;
@@ -280,7 +285,7 @@ type PointClass = typeof Point;
 /**
  * Possible option types for a data point.
  *
- * @typedef {number|string|Array<(number|string)>|Highcharts.PointOptionsObject|null} Highcharts.PointOptionsType
+ * @typedef {number|string|Highcharts.PointOptionsObject|Array<(number|string|null|undefined)>|null|undefined} Highcharts.PointOptionsType
  */
 
 /**

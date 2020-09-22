@@ -117,7 +117,7 @@ var animObject = U.animObject, defined = U.defined, erase = U.erase, extend = U.
 /**
  * Possible option types for a data point.
  *
- * @typedef {number|string|Array<(number|string)>|Highcharts.PointOptionsObject|null} Highcharts.PointOptionsType
+ * @typedef {number|string|Highcharts.PointOptionsObject|Array<(number|string|null|undefined)>|null|undefined} Highcharts.PointOptionsType
  */
 /**
  * Gets fired when the point is removed using the `.remove()` method.
