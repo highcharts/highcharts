@@ -1860,7 +1860,7 @@ BaseSeries.seriesType<typeof Highcharts.TreemapSeries>(
                     animate: Partial<Highcharts.AnimationOptionsObject> = {},
                     attr: SVGAttributes = {},
                     css: CSSObject = {},
-                    groupKey = 'level-group-' + levelDynamic,
+                    groupKey = 'level-group-' + point.node.level,
                     hasGraphic = !!point.graphic,
                     shouldAnimate = withinAnimationLimit && hasGraphic,
                     shapeArgs = point.shapeArgs;

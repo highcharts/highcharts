@@ -423,5 +423,21 @@ QUnit.test('Traversing single top node', assert => {
         'The root node should now be the first real node'
     );
 
+    // Drill down and up again
+    series.setRootNode('1_0');
+    series.setRootNode('2_0');
+    series.drillUp();
+    series.drillUp();
+
+    assert.ok(
+        chart.get('2_0').graphic.parentGroup,
+        'Parent group should be truthy'
+    );
+    assert.strictEqual(
+        chart.get('2_0').graphic.parentGroup.element.className.baseVal,
+        chart.get('2_1').graphic.parentGroup.element.className.baseVal,
+        'The ephemeral 2_1 node should be in the same group as the 2_0 node (#12286)'
+    );
+
 
 });
