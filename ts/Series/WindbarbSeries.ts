@@ -15,6 +15,8 @@
 import type Chart from '../Core/Chart/Chart';
 import type SVGAttributes from '../Core/Renderer/SVG/SVGAttributes';
 import type SVGPath from '../Core/Renderer/SVG/SVGPath';
+import A from '../Core/Animation/AnimationUtilities.js';
+const { animObject } = A;
 import BaseSeries from '../Core/Series/Series.js';
 import H from '../Core/Globals.js';
 const {
@@ -23,7 +25,6 @@ const {
 import OnSeriesMixin from '../Mixins/OnSeries.js';
 import U from '../Core/Utilities.js';
 const {
-    animObject,
     isNumber,
     pick
 } = U;

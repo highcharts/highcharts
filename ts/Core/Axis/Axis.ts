@@ -10,6 +10,7 @@
 
 'use strict';
 
+import type AnimationOptionsObject from '../Animation/AnimationOptionsObject';
 import type { AxisComposition, AxisLike } from './Types';
 import type { AlignValue } from '../Renderer/AlignObject';
 import type Chart from '../Chart/Chart';
@@ -21,13 +22,16 @@ import type Point from '../../Core/Series/Point';
 import type SVGAttributes from '../Renderer/SVG/SVGAttributes';
 import type SVGElement from '../Renderer/SVG/SVGElement';
 import type SVGPath from '../Renderer/SVG/SVGPath';
+import A from '../Animation/AnimationUtilities.js';
+const {
+    animObject
+} = A;
 import Color from '../Color/Color.js';
 import H from '../Globals.js';
 import Tick from './Tick.js';
 import U from '../Utilities.js';
 const {
     addEvent,
-    animObject,
     arrayMax,
     arrayMin,
     clamp,
@@ -6106,7 +6110,7 @@ class Axis implements AxisComposition, AxisLike {
         newMin?: number,
         newMax?: number,
         redraw?: boolean,
-        animation?: (boolean|Partial<Highcharts.AnimationOptionsObject>),
+        animation?: (boolean|Partial<AnimationOptionsObject>),
         eventArguments?: any
     ): void {
         var axis = this,

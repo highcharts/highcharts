@@ -10,6 +10,7 @@
 
 'use strict';
 
+import type AnimationOptionsObject from '../Animation/AnimationOptionsObject';
 import type { AxisType } from '../Axis/Types';
 import type {
     CSSObject,
@@ -22,6 +23,12 @@ import type {
 } from '../Renderer/DOMElementType';
 import type SVGAttributes from '../Renderer/SVG/SVGAttributes';
 import type SVGElement from '../Renderer/SVG/SVGElement';
+import A from '../Animation/AnimationUtilities.js';
+const {
+    animate,
+    animObject,
+    setAnimation
+} = A;
 import Axis from '../Axis/Axis.js';
 import BaseSeries from '../Series/Series.js';
 import H from '../Globals.js';
@@ -40,8 +47,6 @@ import Time from '../Time.js';
 import U from '../Utilities.js';
 const {
     addEvent,
-    animate,
-    animObject,
     attr,
     createElement,
     css,
@@ -65,7 +70,6 @@ const {
     pInt,
     relativeLength,
     removeEvent,
-    setAnimation,
     splat,
     syncTimeout,
     uniqueKey
@@ -726,7 +730,7 @@ class Chart {
      * @fires Highcharts.Chart#event:render
      * @fires Highcharts.Chart#event:updatedData
      */
-    public redraw(animation?: (boolean|Partial<Highcharts.AnimationOptionsObject>)): void {
+    public redraw(animation?: (boolean|Partial<AnimationOptionsObject>)): void {
 
         fireEvent(this, 'beforeRedraw');
 
@@ -1798,7 +1802,7 @@ class Chart {
     public setSize(
         width?: (number|null),
         height?: (number|null),
-        animation?: (boolean|Partial<Highcharts.AnimationOptionsObject>)
+        animation?: (boolean|Partial<AnimationOptionsObject>)
     ): void {
         var chart = this,
             renderer = chart.renderer,

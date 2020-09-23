@@ -13,6 +13,7 @@ import type {
     AlignValue,
     VerticalAlignValue
 } from '../AlignObject';
+import type AnimationOptionsObject from '../../Animation/AnimationOptionsObject';
 import type BBoxObject from '../BBoxObject';
 import type ColorString from '../../Color/ColorString';
 import type ColorType from '../../Color/ColorType';
@@ -28,6 +29,12 @@ import type ShadowOptionsObject from '../ShadowOptionsObject';
 import type SVGAttributes from './SVGAttributes';
 import type SVGPath from './SVGPath';
 import type SVGRenderer from './SVGRenderer';
+import A from '../../Animation/AnimationUtilities.js';
+const {
+    animate,
+    animObject,
+    stop
+} = A;
 import Color from '../../Color/Color.js';
 import H from '../../Globals.js';
 const {
@@ -42,8 +49,6 @@ const {
 } = H;
 import U from '../../Utilities.js';
 const {
-    animate,
-    animObject,
     attr,
     createElement,
     css,
@@ -59,7 +64,6 @@ const {
     objectEach,
     pick,
     pInt,
-    stop,
     syncTimeout,
     uniqueKey
 } = U;
@@ -810,7 +814,7 @@ class SVGElement {
      */
     public animate(
         params: SVGAttributes,
-        options?: (boolean|Partial<Highcharts.AnimationOptionsObject>),
+        options?: (boolean|Partial<AnimationOptionsObject>),
         complete?: Function
     ): SVGElement {
         var animOptions = animObject(

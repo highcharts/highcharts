@@ -10,6 +10,7 @@
 
 'use strict';
 
+import type AnimationOptionsObject from '../Animation/AnimationOptionsObject';
 import type { AxisLike } from './Types';
 import type ColorString from '../Color/ColorString';
 import type ColorType from '../Color/ColorType';
@@ -27,6 +28,7 @@ const {
     colorPointMixin,
     colorSeriesMixin
 } = ColorSeriesModule;
+import Fx from '../Animation/Fx.js';
 import H from '../Globals.js';
 const {
     noop
@@ -40,7 +42,6 @@ const {
     addEvent,
     erase,
     extend,
-    Fx,
     isNumber,
     merge,
     pick,
@@ -1588,7 +1589,7 @@ namespace ColorAxis {
     }
 
     export interface MarkerOptions {
-        animation?: (boolean|Partial<Highcharts.AnimationOptionsObject>);
+        animation?: (boolean|Partial<AnimationOptionsObject>);
         color?: ColorType;
         width?: number;
     }

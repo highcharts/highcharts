@@ -10,13 +10,17 @@
  *
  * */
 
+import type AnimationOptionsObject from '../../Animation/AnimationOptionsObject';
 import type ColorType from '../../Color/ColorType';
 import type Position3DObject from '../../Renderer/Position3DObject';
 import type PositionObject from '../../Renderer/PositionObject';
 import type SVGAttributes from './SVGAttributes';
 import type SVGPath from './SVGPath';
+import A from '../../Animation/AnimationUtilities.js';
+const { animObject } = A;
 import Color from '../../Color/Color.js';
 const color = Color.parse;
+import type Fx from '../../Animation/Fx';
 import H from '../../Globals.js';
 import Math3D from '../../../Extensions/Math3D.js';
 const {
@@ -27,7 +31,6 @@ import SVGElement from './SVGElement.js';
 import SVGRenderer from './SVGRenderer.js';
 import U from '../../Utilities.js';
 const {
-    animObject,
     defined,
     extend,
     merge,
@@ -382,7 +385,7 @@ SVGRenderer.prototype.polyhedron = function (args?: SVGAttributes): SVGElement {
     result.animate = function (
         this: SVGElement,
         params: SVGAttributes,
-        duration?: (boolean|Partial<Highcharts.AnimationOptionsObject>),
+        duration?: (boolean|Partial<AnimationOptionsObject>),
         complete?: Function
     ): SVGElement {
         if (params && params.faces) {
@@ -559,7 +562,7 @@ cuboidMethods = merge(element3dMethods, {
     animate: function (
         this: SVGElement,
         args: SVGAttributes,
-        duration?: (boolean|Partial<Highcharts.AnimationOptionsObject>),
+        duration?: (boolean|Partial<AnimationOptionsObject>),
         complete?: Function
     ): SVGElement {
         if (defined(args.x) && defined(args.y)) {
@@ -1055,7 +1058,7 @@ SVGRenderer.prototype.arc3d = function (attribs: SVGAttributes): SVGElement {
     wrapper.animate = function (
         this: SVGElement,
         params: SVGAttributes,
-        animation?: (boolean|Partial<Highcharts.AnimationOptionsObject>),
+        animation?: (boolean|Partial<AnimationOptionsObject>),
         complete?: Function
     ): SVGElement {
         var paramArr,
@@ -1083,7 +1086,7 @@ SVGRenderer.prototype.arc3d = function (attribs: SVGAttributes): SVGElement {
 
             if (paramArr) {
                 to = paramArr[0]; // custom attr
-                anim.step = function (a: unknown, fx: Highcharts.Fx): void {
+                anim.step = function (a: unknown, fx: Fx): void {
 
                     /**
                      * @private

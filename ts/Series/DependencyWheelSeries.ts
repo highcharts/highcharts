@@ -12,13 +12,11 @@
 
 import type SVGAttributes from '../Core/Renderer/SVG/SVGAttributes';
 import type SVGElement from '../Core/Renderer/SVG/SVGElement';
+import A from '../Core/Animation/AnimationUtilities.js';
+const { animObject } = A;
 import BaseSeries from '../Core/Series/Series.js';
 import H from '../Core/Globals.js';
 import NodesMixin from '../Mixins/Nodes.js';
-import U from '../Core/Utilities.js';
-const {
-    animObject
-} = U;
 
 /**
  * Internal types

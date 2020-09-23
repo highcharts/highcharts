@@ -11,9 +11,11 @@
  * */
 'use strict';
 import Chart from '../../Core/Chart/Chart.js';
+import A from '../../Core/Animation/AnimationUtilities.js';
+var setAnimation = A.setAnimation;
 import H from '../../Core/Globals.js';
 import U from '../../Core/Utilities.js';
-var addEvent = U.addEvent, clamp = U.clamp, defined = U.defined, extend = U.extend, isFunction = U.isFunction, pick = U.pick, setAnimation = U.setAnimation;
+var addEvent = U.addEvent, clamp = U.clamp, defined = U.defined, extend = U.extend, isFunction = U.isFunction, pick = U.pick;
 import './Integrations.js';
 import './QuadTree.js';
 /* eslint-disable no-invalid-this, valid-jsdoc */

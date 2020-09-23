@@ -19,6 +19,8 @@ import type Chart from '../Core/Chart/Chart';
 import type SVGAttributes from '../Core/Renderer/SVG/SVGAttributes';
 import type SVGElement from '../Core/Renderer/SVG/SVGElement';
 import type SVGPath from '../Core/Renderer/SVG/SVGPath';
+import A from '../Core/Animation/AnimationUtilities.js';
+const { animObject } = A;
 import BaseSeries from '../Core/Series/Series.js';
 const {
     seriesTypes
@@ -56,7 +58,6 @@ const {
 import U from '../Core/Utilities.js';
 const {
     addEvent,
-    animObject,
     extend,
     isArray,
     isNumber,

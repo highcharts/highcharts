@@ -15,6 +15,7 @@ import type {
     AlignValue,
     VerticalAlignValue
 } from '../Renderer/AlignObject';
+import type AnimationOptionsObject from '../Animation/AnimationOptionsObject';
 import type ColorString from '../Color/ColorString';
 import type ColorType from '../Color/ColorType';
 import type CSSObject from '../Renderer/CSSObject';
@@ -22,6 +23,8 @@ import type Point from './Point';
 import type ShadowOptionsObject from '../Renderer/ShadowOptionsObject';
 import type SVGAttributes from '../Renderer/SVG/SVGAttributes';
 import type SVGElement from '../Renderer/SVG/SVGElement';
+import A from '../Animation/AnimationUtilities.js';
+const { getDeferredAnimation } = A;
 import H from '../Globals.js';
 const {
     noop,
@@ -36,7 +39,6 @@ const {
     extend,
     fireEvent,
     format,
-    getDeferredAnimation,
     isArray,
     merge,
     objectEach,

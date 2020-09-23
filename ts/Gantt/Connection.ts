@@ -11,6 +11,7 @@
 
 'use strict';
 
+import type AnimationOptionsObject from '../Core/Animation/AnimationOptionsObject';
 import type SVGAttributes from '../Core/Renderer/SVG/SVGAttributes';
 import type SVGElement from '../Core/Renderer/SVG/SVGElement';
 import type SVGPath from '../Core/Renderer/SVG/SVGPath';
@@ -585,7 +586,7 @@ class Connection {
     public renderPath(
         path: SVGPath,
         attribs?: SVGAttributes,
-        animation?: (boolean|DeepPartial<Highcharts.AnimationOptionsObject>)
+        animation?: (boolean|DeepPartial<AnimationOptionsObject>)
     ): void {
         var connection = this,
             chart = this.chart,
