@@ -521,7 +521,7 @@ BaseSeries.seriesType<typeof Highcharts.TreemapSeries>(
         /**
          * @ignore-option
          */
-        marker: false as any,
+        marker: void 0,
 
         /**
          * When using automatic point colors pulled from the `options.colors`
@@ -992,8 +992,8 @@ BaseSeries.seriesType<typeof Highcharts.TreemapSeries>(
                 }),
                 parentList = series.getListOfParents(this.data, allIds);
 
-            series.nodeMap = [] as any;
-            return series.buildNode('', -1, 0, parentList, null as any);
+            series.nodeMap = {};
+            return series.buildNode('', -1, 0, parentList);
         },
         // Define hasData function for non-cartesian series.
         // Returns true if the series has points at all.
@@ -1079,12 +1079,12 @@ BaseSeries.seriesType<typeof Highcharts.TreemapSeries>(
                 children.push(child);
             });
             node = {
-                id: id,
-                i: i,
-                children: children,
-                height: height,
-                level: level,
-                parent: parent,
+                id,
+                i,
+                children,
+                height,
+                level,
+                parent,
                 visible: false // @todo move this to better location
             } as any;
             series.nodeMap[node.id] = node;
@@ -1127,7 +1127,7 @@ BaseSeries.seriesType<typeof Highcharts.TreemapSeries>(
                 a: Highcharts.TreemapNodeObject,
                 b: Highcharts.TreemapNodeObject
             ): number {
-                return (a.sortIndex as any) - (b.sortIndex as any);
+                return (a.sortIndex || 0) - (b.sortIndex || 0);
             });
             // Set the values
             val = pick(point && point.options.value, childrenTotal);
@@ -1857,8 +1857,8 @@ BaseSeries.seriesType<typeof Highcharts.TreemapSeries>(
 
             points.forEach(function (point: Highcharts.TreemapPoint): void {
                 var levelDynamic = point.node.levelDynamic,
-                    animate: Partial<Highcharts.AnimationOptionsObject> = {},
-                    attr: SVGAttributes = {},
+                    animatableAttribs: Partial<Highcharts.AnimationOptionsObject> = {},
+                    attribs: SVGAttributes = {},
                     css: CSSObject = {},
                     groupKey = 'level-group-' + point.node.level,
                     hasGraphic = !!point.graphic,
@@ -1868,20 +1868,20 @@ BaseSeries.seriesType<typeof Highcharts.TreemapSeries>(
                 // Don't bother with calculate styling if the point is not drawn
                 if (point.shouldDraw()) {
                     if (borderRadius) {
-                        attr.r = borderRadius;
+                        attribs.r = borderRadius;
                     }
 
                     merge(
                         true, // Extend object
                         // Which object to extend
-                        shouldAnimate ? animate : attr,
+                        shouldAnimate ? animatableAttribs : attribs,
                         // Add shapeArgs to animate/attr if graphic exists
                         hasGraphic ? shapeArgs : {},
                         // Add style attribs if !styleMode
                         styledMode ?
                             {} :
                             series.pointAttribs(
-                                point, (point.selected && 'select') as any
+                                point, point.selected ? 'select' : void 0
                             )
                     );
 
@@ -1898,7 +1898,7 @@ BaseSeries.seriesType<typeof Highcharts.TreemapSeries>(
                             .attr({
                                 // @todo Set the zIndex based upon the number of
                                 // levels, instead of using 1000
-                                zIndex: 1000 - (levelDynamic as any)
+                                zIndex: 1000 - (levelDynamic || 0)
                             })
                             .add(series.group);
                         (series as any)[groupKey].survive = true;
@@ -1907,13 +1907,13 @@ BaseSeries.seriesType<typeof Highcharts.TreemapSeries>(
 
                 // Draw the point
                 point.draw({
-                    animatableAttribs: animate,
-                    attribs: attr,
-                    css: css,
+                    animatableAttribs,
+                    attribs,
+                    css,
                     group: (series as any)[groupKey],
-                    renderer: renderer,
-                    shadow: shadow,
-                    shapeArgs: shapeArgs,
+                    renderer,
+                    shadow,
+                    shapeArgs,
                     shapeType: 'rect'
                 });
 
@@ -2132,8 +2132,8 @@ BaseSeries.seriesType<typeof Highcharts.TreemapSeries>(
                 this.drillUpButton = this.chart.renderer
                     .button(
                         backText,
-                        null as any,
-                        null as any,
+                        0,
+                        0,
                         function (): void {
                             series.drillUp();
                         },
@@ -2228,7 +2228,7 @@ BaseSeries.seriesType<typeof Highcharts.TreemapSeries>(
          * @function Highcharts.Point#isValid
          */
         isValid: function (this: Highcharts.TreemapPoint): boolean {
-            return (this.id as any) || isNumber(this.value);
+            return Boolean(this.id || isNumber(this.value));
         },
         setState: function (
             this: Highcharts.TreemapPoint,
@@ -2244,8 +2244,7 @@ BaseSeries.seriesType<typeof Highcharts.TreemapSeries>(
             }
         },
         shouldDraw: function (this: Highcharts.TreemapPoint): boolean {
-            var point = this;
-            return isNumber(point.plotY) && point.y !== null;
+            return isNumber(this.plotY) && this.y !== null;
         }
     }
 );
