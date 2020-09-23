@@ -10,12 +10,21 @@
 
 'use strict';
 
+import type {
+    AlignObject,
+    AlignValue,
+    VerticalAlignValue
+} from '../Renderer/AlignObject';
+import type AnimationOptionsObject from '../Animation/AnimationOptionsObject';
 import type ColorString from '../Color/ColorString';
 import type ColorType from '../Color/ColorType';
 import type CSSObject from '../Renderer/CSSObject';
 import type Point from './Point';
+import type ShadowOptionsObject from '../Renderer/ShadowOptionsObject';
 import type SVGAttributes from '../Renderer/SVG/SVGAttributes';
 import type SVGElement from '../Renderer/SVG/SVGElement';
+import A from '../Animation/AnimationUtilities.js';
+const { getDeferredAnimation } = A;
 import H from '../Globals.js';
 const {
     noop,
@@ -30,7 +39,6 @@ const {
     extend,
     fireEvent,
     format,
-    getDeferredAnimation,
     isArray,
     merge,
     objectEach,
@@ -412,7 +420,7 @@ CartesianSeries.prototype.drawDataLabels = function (this: Highcharts.Series): v
         points = series.points,
         pointOptions,
         hasRendered = series.hasRendered || 0,
-        dataLabelsGroup: Highcharts.SVGElement,
+        dataLabelsGroup: SVGElement,
         dataLabelAnim = (seriesDlOptions as any).animation,
         animationConfig = (seriesDlOptions as any).defer ?
             getDeferredAnimation(chart, dataLabelAnim, series) :
@@ -850,7 +858,7 @@ CartesianSeries.prototype.alignDataLabel = function (
                     )
                 )
             ),
-        setStartPos = function (alignOptions: Highcharts.AlignObject): void {
+        setStartPos = function (alignOptions: AlignObject): void {
             if (enabledDataSorting && series.xAxis && !justify) {
                 series.setDataLabelStartPos(
                     point as Highcharts.ColumnPoint,
@@ -996,10 +1004,10 @@ CartesianSeries.prototype.alignDataLabel = function (
 CartesianSeries.prototype.setDataLabelStartPos = function (
     this: Highcharts.Series,
     point: Highcharts.ColumnPoint,
-    dataLabel: Highcharts.SVGElement,
+    dataLabel: SVGElement,
     isNew: boolean,
     isInside: boolean,
-    alignOptions: Highcharts.AlignObject
+    alignOptions: AlignObject
 ): void {
     var chart = this.chart,
         inverted = chart.inverted,
@@ -1186,7 +1194,7 @@ if (seriesTypes.pie) {
         // area. Right edges of the right-half labels touch the right edge of
         // the plot area.
         alignToPlotEdges: function (
-            dataLabel: Highcharts.SVGElement,
+            dataLabel: SVGElement,
             half: boolean,
             plotWidth: number,
             plotLeft: number

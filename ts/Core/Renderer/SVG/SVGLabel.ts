@@ -8,9 +8,11 @@
  *
  * */
 
+import type { AlignValue } from '../AlignObject';
 import type BBoxObject from '../BBoxObject';
 import type ColorType from '../../Color/ColorType';
 import type CSSObject from '../CSSObject';
+import type ShadowOptionsObject from '../ShadowOptionsObject';
 import type SVGAttributes from './SVGAttributes';
 import type SVGRenderer from './SVGRenderer';
 import SVGElement from './SVGElement.js';
@@ -125,7 +127,7 @@ class SVGLabel extends SVGElement {
      *
      * */
 
-    public alignSetter(value: Highcharts.AlignValue): void {
+    public alignSetter(value: AlignValue): void {
         const alignFactor = ({
             left: 0,
             center: 0.5,
@@ -347,7 +349,7 @@ class SVGLabel extends SVGElement {
     }
 
     public shadow(
-        b: (boolean|Highcharts.ShadowOptionsObject)
+        b: (boolean|ShadowOptionsObject)
     ): SVGLabel {
         if (b && !this.renderer.styledMode) {
             this.updateBoxSize();

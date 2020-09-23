@@ -10,6 +10,8 @@
 
 import type ColorType from '../Core/Color/ColorType';
 import type SVGAttributes from '../Core/Renderer/SVG/SVGAttributes';
+import A from '../Core/Animation/AnimationUtilities.js';
+const { animObject } = A;
 import BaseSeries from '../Core/Series/Series.js';
 import Color from '../Core/Color/Color.js';
 const {
@@ -23,7 +25,6 @@ import LegendSymbolMixin from '../Mixins/LegendSymbol.js';
 import LineSeries from './LineSeries.js';
 import U from '../Core/Utilities.js';
 const {
-    animObject,
     clamp,
     defined,
     extend,

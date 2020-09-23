@@ -11,6 +11,7 @@
  * */
 
 import type StackingAxis from '../Core/Axis/StackingAxis';
+import type SVGElement from '../Core/Renderer/SVG/SVGElement';
 import Axis from '../Core/Axis/Axis.js';
 import BaseSeries from '../Core/Series/Series.js';
 const {
@@ -384,7 +385,7 @@ addEvent(Axis, 'afterRender', function (): void {
 
     if (!this.horiz && this.variwide) {
         this.chart.labelCollectors.push(
-            function (): Array<Highcharts.SVGElement> {
+            function (): Array<SVGElement> {
                 return axis.tickPositions
                     .filter(function (pos: number): boolean {
                         return axis.ticks[pos].label as any;
@@ -392,8 +393,8 @@ addEvent(Axis, 'afterRender', function (): void {
                     .map(function (
                         pos: number,
                         i: number
-                    ): Highcharts.SVGElement {
-                        var label: Highcharts.SVGElement =
+                    ): SVGElement {
+                        var label: SVGElement =
                             axis.ticks[pos].label as any;
 
                         label.labelrank = (axis.zData as any)[i];
@@ -424,7 +425,7 @@ wrap(H.Tick.prototype, 'getLabelPosition', function (
     proceed: Function,
     x: number,
     y: number,
-    label: Highcharts.SVGElement,
+    label: SVGElement,
     horiz: boolean,
     labelOptions: Highcharts.DataLabelsOptions,
     tickmarkOffset: number,

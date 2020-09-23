@@ -10,7 +10,6 @@
 
 'use strict';
 
-import type BaseSeries from './Series/Series';
 import type Chart from './Chart/Chart';
 import type CSSObject from './Renderer/CSSObject';
 import type {
@@ -19,8 +18,6 @@ import type {
     SVGDOMElement
 } from './Renderer/DOMElementType';
 import type SVGAttributes from './Renderer/SVG/SVGAttributes';
-import type SVGElement from './Renderer/SVG/SVGElement';
-import type SVGPath from './Renderer/SVG/SVGPath';
 import H from './Globals.js';
 type NonArray<T> = T extends Array<unknown> ? never : T;
 type NonFunction<T> = T extends Function ? never : T;
@@ -50,17 +47,6 @@ declare global {
             Dictionary<(boolean|number|string|Function|undefined)>
         );
         type RelativeSize = (number|string);
-        interface AnimationOptionsObject {
-            complete?: Function;
-            curAnim?: Dictionary<boolean>;
-            defer: number;
-            duration: number;
-            easing?: (string|Function);
-            step?: AnimationStepCallbackFunction;
-        }
-        interface AnimationStepCallbackFunction {
-            (this: SVGElement, ...args: Array<any>): void;
-        }
         interface Class<T = any> extends Function {
             new(...args: Array<any>): T;
         }
@@ -114,31 +100,6 @@ declare global {
         interface WrapProceedFunction {
             (...args: Array<any>): any;
         }
-        class Fx {
-            public constructor(
-                elem: (HTMLDOMElement|SVGElement),
-                options: Partial<AnimationOptionsObject>,
-                prop: string
-            );
-            public elem: (HTMLElement|SVGElement);
-            public end?: any;
-            public options: Partial<AnimationOptionsObject>;
-            public paths?: [SVGPath, SVGPath];
-            public pos?: any;
-            public prop: string;
-            public start?: any;
-            public dSetter(): void;
-            public fillSetter(): void;
-            public initPath(
-                elem: SVGElement,
-                fromD: SVGPath,
-                toD: SVGPath
-            ): [SVGPath, SVGPath];
-            public run(from: number, to: number, unit: string): void;
-            public step(gotoEnd?: boolean): boolean;
-            public strokeSetter(): void;
-            public update(): void;
-        }
         let timers: Array<any>;
         function addEvent<T>(
             el: (Class<T>|T),
@@ -146,14 +107,6 @@ declare global {
             fn: (EventCallbackFunction<T>|Function),
             options?: EventOptionsObject
         ): Function;
-        function animate(
-            el: (HTMLDOMElement|SVGElement),
-            params: (CSSObject|SVGAttributes),
-            opt?: Partial<AnimationOptionsObject>
-        ): void;
-        function animObject(
-            animation?: (boolean|AnimationOptionsObject)
-        ): AnimationOptionsObject;
         function arrayMax(data: Array<any>): number;
         function arrayMin(data: Array<any>): number;
         function attr(
@@ -207,11 +160,6 @@ declare global {
             defaultFunction?: (EventCallbackFunction<T>|Function)
         ): void;
         function format(str: string, ctx: any, chart?: Chart): string;
-        function getDeferredAnimation(
-            chart: Chart,
-            animation: Partial<Highcharts.AnimationOptionsObject>,
-            series?: BaseSeries
-        ): Partial<Highcharts.AnimationOptionsObject>;
         function getMagnitude(num: number): number;
         function getStyle(
             el: HTMLDOMElement,
@@ -318,13 +266,8 @@ declare global {
             type?: string,
             fn?: (EventCallbackFunction<T>|Function)
         ): void
-        function setAnimation(
-            animation: (boolean|Partial<AnimationOptionsObject>|undefined),
-            chart: Chart
-        ): void
         function splat(obj: any): Array<any>;
         function stableSort(arr: Array<any>, sortFunction: Function): void;
-        function stop(el: SVGElement, prop?: string): void;
         function syncTimeout(
             fn: Function,
             delay: number,
@@ -768,482 +711,6 @@ namespace error {
     export const messages: Array<string> = [];
 }
 H.error = error;
-
-
-/* eslint-disable no-invalid-this, valid-jsdoc */
-/**
- * An animator object used internally. One instance applies to one property
- * (attribute or style prop) on one element. Animation is always initiated
- * through {@link SVGElement#animate}.
- *
- * @example
- * var rect = renderer.rect(0, 0, 10, 10).add();
- * rect.animate({ width: 100 });
- *
- * @private
- * @class
- * @name Highcharts.Fx
- */
-class Fx {
-
-    /* *
-     *
-     *  Constructors
-     *
-     * */
-
-    /**
-     *
-     * @param {Highcharts.HTMLDOMElement|Highcharts.SVGElement} elem
-     *        The element to animate.
-     *
-     * @param {Partial<Highcharts.AnimationOptionsObject>} options
-     *        Animation options.
-     *
-     * @param {string} prop
-     *        The single attribute or CSS property to animate.
-     */
-    public constructor(
-        elem: (Highcharts.HTMLElement|Highcharts.SVGElement),
-        options: Partial<Highcharts.AnimationOptionsObject>,
-        prop: string
-    ) {
-        this.options = options;
-        this.elem = elem;
-        this.prop = prop;
-    }
-
-    /* *
-     *
-     *  Properties
-     *
-     * */
-
-    public elem: (Highcharts.HTMLElement|Highcharts.SVGElement);
-    public end?: number;
-    public from?: number;
-    public now?: number;
-    public options: Partial<Highcharts.AnimationOptionsObject>;
-    public paths?: [SVGPath, SVGPath];
-    public pos?: number;
-    public prop: string;
-    public start?: number;
-    public startTime?: number;
-    public toD?: SVGPath;
-    public unit?: string;
-
-    /* *
-     *
-     *  Functions
-     *
-     * */
-
-    /**
-     * Set the current step of a path definition on SVGElement.
-     *
-     * @function Highcharts.Fx#dSetter
-     *
-     * @return {void}
-     */
-    public dSetter(): void {
-        var paths = this.paths,
-            start = paths && paths[0],
-            end = paths && paths[1],
-            path: SVGPath = [],
-            now = this.now || 0;
-
-        // Land on the final path without adjustment points appended in the ends
-        if (now === 1 || !start || !end) {
-            path = this.toD || [];
-
-        } else if (start.length === end.length && now < 1) {
-            for (let i = 0; i < end.length; i++) {
-
-                // Tween between the start segment and the end segment. Start
-                // with a copy of the end segment and tween the appropriate
-                // numerics
-                const startSeg = start[i];
-                const endSeg = end[i];
-                const tweenSeg = [];
-
-                for (let j = 0; j < endSeg.length; j++) {
-                    const startItem = startSeg[j];
-                    const endItem = endSeg[j];
-
-                    // Tween numbers
-                    if (
-                        typeof startItem === 'number' &&
-                        typeof endItem === 'number' &&
-                        // Arc boolean flags
-                        !(endSeg[0] === 'A' && (j === 4 || j === 5))
-                    ) {
-                        tweenSeg[j] = startItem + now * (endItem - startItem);
-
-                    // Strings, take directly from the end segment
-                    } else {
-                        tweenSeg[j] = endItem;
-                    }
-                }
-
-                path.push(tweenSeg as SVGPath.Segment);
-
-            }
-        // If animation is finished or length not matching, land on right value
-        } else {
-            path = end;
-        }
-
-        this.elem.attr('d', path, void 0, true);
-    }
-
-    /**
-     * Update the element with the current animation step.
-     *
-     * @function Highcharts.Fx#update
-     *
-     * @return {void}
-     */
-    public update(): void {
-        var elem = this.elem,
-            prop = this.prop, // if destroyed, it is null
-            now: number = this.now as any,
-            step = this.options.step;
-
-        // Animation setter defined from outside
-        if ((this as any)[prop + 'Setter']) {
-            (this as any)[prop + 'Setter']();
-
-        // Other animations on SVGElement
-        } else if (elem.attr) {
-            if (elem.element) {
-                elem.attr(prop, now, null as any, true);
-            }
-
-        // HTML styles, raw HTML content like container size
-        } else {
-            elem.style[prop] = now + (this.unit as any);
-        }
-
-        if (step) {
-            step.call(elem, now, this);
-        }
-
-    }
-
-    /**
-     * Run an animation.
-     *
-     * @function Highcharts.Fx#run
-     *
-     * @param {number} from
-     *        The current value, value to start from.
-     *
-     * @param {number} to
-     *        The end value, value to land on.
-     *
-     * @param {string} unit
-     *        The property unit, for example `px`.
-     *
-     * @return {void}
-     */
-    public run(from: number, to: number, unit: string): void {
-        var self = this,
-            options = self.options,
-            timer: Highcharts.Timer = function (gotoEnd?: boolean): boolean {
-                return timer.stopped ? false : self.step(gotoEnd);
-            },
-            requestAnimationFrame =
-                win.requestAnimationFrame ||
-                function (step: Function): void {
-                    setTimeout(step, 13);
-                },
-            step = function (): void {
-                for (var i = 0; i < H.timers.length; i++) {
-                    if (!H.timers[i]()) {
-                        H.timers.splice(i--, 1);
-                    }
-                }
-
-                if (H.timers.length) {
-                    requestAnimationFrame(step);
-                }
-            };
-
-        if (from === to && !this.elem['forceAnimate:' + this.prop]) {
-            delete (options.curAnim as any)[this.prop];
-            if (options.complete && Object.keys(options.curAnim as any).length === 0) {
-                options.complete.call(this.elem);
-            }
-        } else { // #7166
-            this.startTime = +new Date();
-            this.start = from;
-            this.end = to;
-            this.unit = unit;
-            this.now = this.start;
-            this.pos = 0;
-
-            timer.elem = this.elem;
-            timer.prop = this.prop;
-
-            if (timer() && H.timers.push(timer) === 1) {
-                requestAnimationFrame(step);
-            }
-        }
-    }
-
-    /**
-     * Run a single step in the animation.
-     *
-     * @function Highcharts.Fx#step
-     *
-     * @param {boolean} [gotoEnd]
-     *        Whether to go to the endpoint of the animation after abort.
-     *
-     * @return {boolean}
-     *         Returns `true` if animation continues.
-     */
-    public step(gotoEnd?: boolean): boolean {
-        var t = +new Date(),
-            ret,
-            done,
-            options = this.options,
-            elem = this.elem,
-            complete = options.complete,
-            duration: number = options.duration as any,
-            curAnim: Highcharts.Dictionary<boolean> = options.curAnim as any;
-
-        if (elem.attr && !elem.element) { // #2616, element is destroyed
-            ret = false;
-
-        } else if (gotoEnd || t >= duration + (this.startTime as any)) {
-            this.now = this.end;
-            this.pos = 1;
-            this.update();
-
-            curAnim[this.prop] = true;
-
-            done = true;
-
-            objectEach(curAnim, function (val: boolean): void {
-                if (val !== true) {
-                    done = false;
-                }
-            });
-
-            if (done && complete) {
-                complete.call(elem);
-            }
-            ret = false;
-
-        } else {
-            this.pos = (options.easing as Function)(
-                (t - (this.startTime as any)) / duration
-            );
-            this.now = (this.start as any) + (((this.end as any) - (this.start as any)) * (this.pos as any));
-            this.update();
-            ret = true;
-        }
-        return ret;
-    }
-
-    /**
-     * Prepare start and end values so that the path can be animated one to one.
-     *
-     * @function Highcharts.Fx#initPath
-     *
-     * @param {Highcharts.SVGElement} elem
-     *        The SVGElement item.
-     *
-     * @param {Highcharts.SVGPathArray|undefined} fromD
-     *        Starting path definition.
-     *
-     * @param {Highcharts.SVGPathArray} toD
-     *        Ending path definition.
-     *
-     * @return {Array<Highcharts.SVGPathArray,Highcharts.SVGPathArray>}
-     *         An array containing start and end paths in array form so that
-     *         they can be animated in parallel.
-     */
-    public initPath(
-        elem: Highcharts.SVGElement,
-        fromD: SVGPath|undefined,
-        toD: SVGPath
-    ): [SVGPath, SVGPath] {
-        var shift,
-            startX = elem.startX,
-            endX = elem.endX,
-            fullLength: number,
-            i: number,
-            start = fromD && fromD.slice(), // copy
-            end = toD.slice(), // copy
-            isArea = elem.isArea,
-            positionFactor = isArea ? 2 : 1,
-            reverse;
-
-        if (!start) {
-            return [end, end];
-        }
-
-        /**
-         * If shifting points, prepend a dummy point to the end path.
-         * @private
-         * @param {Highcharts.SVGPathArray} arr - array
-         * @param {Highcharts.SVGPathArray} other - array
-         * @return {void}
-         */
-        function prepend(
-            arr: SVGPath,
-            other: SVGPath
-        ): void {
-            while (arr.length < fullLength) {
-
-                // Move to, line to or curve to?
-                const moveSegment = arr[0],
-                    otherSegment = other[fullLength - arr.length];
-                if (otherSegment && moveSegment[0] === 'M') {
-                    if (otherSegment[0] === 'C') {
-                        arr[0] = [
-                            'C',
-                            moveSegment[1],
-                            moveSegment[2],
-                            moveSegment[1],
-                            moveSegment[2],
-                            moveSegment[1],
-                            moveSegment[2]
-                        ];
-                    } else {
-                        arr[0] = ['L', moveSegment[1], moveSegment[2]];
-                    }
-                }
-
-                // Prepend a copy of the first point
-                arr.unshift(moveSegment);
-
-                // For areas, the bottom path goes back again to the left, so we
-                // need to append a copy of the last point.
-                if (isArea) {
-                    arr.push(arr[arr.length - 1]);
-                }
-            }
-        }
-
-        /**
-         * Copy and append last point until the length matches the end length.
-         * @private
-         * @param {Highcharts.SVGPathArray} arr - array
-         * @param {Highcharts.SVGPathArray} other - array
-         * @return {void}
-         */
-        function append(
-            arr: SVGPath,
-            other: SVGPath
-        ): void {
-            while (arr.length < fullLength) {
-
-                // Pull out the slice that is going to be appended or inserted.
-                // In a line graph, the positionFactor is 1, and the last point
-                // is sliced out. In an area graph, the positionFactor is 2,
-                // causing the middle two points to be sliced out, since an area
-                // path starts at left, follows the upper path then turns and
-                // follows the bottom back.
-                const segmentToAdd = arr[arr.length / positionFactor - 1].slice();
-
-                // Disable the first control point of curve segments
-                if (segmentToAdd[0] === 'C') {
-                    segmentToAdd[1] = segmentToAdd[5];
-                    segmentToAdd[2] = segmentToAdd[6];
-                }
-
-                if (!isArea) {
-                    arr.push(segmentToAdd as SVGPath.Segment);
-
-                } else {
-
-                    const lowerSegmentToAdd = arr[arr.length / positionFactor].slice();
-                    arr.splice(
-                        arr.length / 2,
-                        0,
-                        segmentToAdd as SVGPath.Segment,
-                        lowerSegmentToAdd as SVGPath.Segment
-                    );
-                }
-            }
-        }
-
-        // For sideways animation, find out how much we need to shift to get the
-        // start path Xs to match the end path Xs.
-        if (startX && endX) {
-            for (i = 0; i < startX.length; i++) {
-                // Moving left, new points coming in on right
-                if (startX[i] === endX[0]) {
-                    shift = i;
-                    break;
-                // Moving right
-                } else if (startX[0] ===
-                        endX[endX.length - startX.length + i]) {
-                    shift = i;
-                    reverse = true;
-                    break;
-                // Fixed from the right side, "scaling" left
-                } else if (
-                    startX[startX.length - 1] ===
-                        endX[endX.length - startX.length + i]
-                ) {
-                    shift = startX.length - i;
-                    break;
-                }
-            }
-            if (typeof shift === 'undefined') {
-                start = [];
-            }
-        }
-
-        if (start.length && isNumber(shift)) {
-
-            // The common target length for the start and end array, where both
-            // arrays are padded in opposite ends
-            fullLength = end.length + shift * positionFactor;
-
-            if (!reverse) {
-                prepend(end, start);
-                append(start, end);
-            } else {
-                prepend(start, end);
-                append(end, start);
-            }
-        }
-        return [start, end];
-    }
-
-    /**
-     * Handle animation of the color attributes directly.
-     *
-     * @function Highcharts.Fx#fillSetter
-     *
-     * @return {void}
-     */
-    public fillSetter(): void {
-        Fx.prototype.strokeSetter.apply(this, arguments as any);
-    }
-
-    /**
-     * Handle animation of the color attributes directly.
-     *
-     * @function Highcharts.Fx#strokeSetter
-     *
-     * @return {void}
-     */
-    public strokeSetter(): void {
-        this.elem.attr(
-            this.prop,
-            H.color(this.start as any).tweenTo(H.color(this.end as any), this.pos as any),
-            null as any,
-            true
-        );
-    }
-}
-
-H.Fx = Fx;
 
 function merge<T1, T2 = object>(
     extend: boolean,
@@ -2302,56 +1769,6 @@ const correctFloat = H.correctFloat = function correctFloat(num: number, prec?: 
     );
 };
 
-/**
- * Set the global animation to either a given value, or fall back to the given
- * chart's animation option.
- *
- * @function Highcharts.setAnimation
- *
- * @param {boolean|Partial<Highcharts.AnimationOptionsObject>|undefined} animation
- *        The animation object.
- *
- * @param {Highcharts.Chart} chart
- *        The chart instance.
- *
- * @todo
- * This function always relates to a chart, and sets a property on the renderer,
- * so it should be moved to the SVGRenderer.
- */
-const setAnimation = H.setAnimation = function setAnimation(
-    animation: (boolean|Partial<Highcharts.AnimationOptionsObject>|undefined),
-    chart: Chart
-): void {
-    chart.renderer.globalAnimation = pick(
-        animation,
-        (chart.options.chart as any).animation,
-        true
-    );
-};
-
-/**
- * Get the animation in object form, where a disabled animation is always
- * returned as `{ duration: 0 }`.
- *
- * @function Highcharts.animObject
- *
- * @param {boolean|Highcharts.AnimationOptionsObject} [animation=0]
- *        An animation setting. Can be an object with duration, complete and
- *        easing properties, or a boolean to enable or disable.
- *
- * @return {Highcharts.AnimationOptionsObject}
- *         An object with at least a duration property.
- */
-const animObject = H.animObject = function animObject(
-    animation?: (boolean|DeepPartial<Highcharts.AnimationOptionsObject>)
-): Highcharts.AnimationOptionsObject {
-    return isObject(animation) ?
-        H.merge(
-            { duration: 500, defer: 0 },
-            animation as Highcharts.AnimationOptionsObject
-        ) as any :
-        { duration: animation as boolean ? 500 : 0, defer: 0 };
-};
 
 /**
  * The time unit lookup
@@ -2626,52 +2043,6 @@ const getStyle = H.getStyle = function (
 };
 
 /**
- * Get the defer as a number value from series animation options.
- *
- * @function Highcharts.getDeferredAnimation
- *
- * @param {Highcharts.Chart} chart
- *        The chart instance.
- *
- * @return {number}
- *        The numeric value.
- */
-const getDeferredAnimation = H.getDeferredAnimation = function (
-    chart,
-    animation,
-    series?: BaseSeries
-): Partial<Highcharts.AnimationOptionsObject> {
-
-    const labelAnimation = animObject(animation);
-    const s = series ? [series] : chart.series;
-    let defer = 0;
-    let duration = 0;
-
-    s.forEach((series): void => {
-        const seriesAnim = animObject(series.options.animation);
-
-        defer = animation && defined(animation.defer) ?
-            labelAnimation.defer :
-            Math.max(
-                defer,
-                seriesAnim.duration + seriesAnim.defer
-            );
-        duration = Math.min(labelAnimation.duration, seriesAnim.duration);
-    });
-    // Disable defer for exporting
-    if (chart.renderer.forExport) {
-        defer = 0;
-    }
-
-    const anim = {
-        defer: Math.max(0, defer - duration),
-        duration: Math.min(defer, duration)
-    };
-
-    return anim;
-};
-
-/**
  * Search for an item in an array.
  *
  * @function Highcharts.inArray
@@ -2770,39 +2141,6 @@ const offset = H.offset = function offset(el: Element): Highcharts.OffsetObject 
         left: box.left + (win.pageXOffset || docElem.scrollLeft) -
             (docElem.clientLeft || 0)
     };
-};
-
-/**
- * Stop running animation.
- *
- * @function Highcharts.stop
- *
- * @param {Highcharts.SVGElement} el
- *        The SVGElement to stop animation on.
- *
- * @param {string} [prop]
- *        The property to stop animating. If given, the stop method will stop a
- *        single property from animating, while others continue.
- *
- * @return {void}
- *
- * @todo
- * A possible extension to this would be to stop a single property, when
- * we want to continue animating others. Then assign the prop to the timer
- * in the Fx.run method, and check for the prop here. This would be an
- * improvement in all cases where we stop the animation from .attr. Instead of
- * stopping everything, we can just stop the actual attributes we're setting.
- */
-const stop = H.stop = function (el: Highcharts.SVGElement, prop?: string): void {
-
-    var i = H.timers.length;
-
-    // Remove timers related to this element (#4519)
-    while (i--) {
-        if (H.timers[i].elem === el && (!prop || prop === H.timers[i].prop)) {
-            H.timers[i].stopped = true; // #4667
-        }
-    }
 };
 
 /* eslint-disable valid-jsdoc */
@@ -3247,86 +2585,6 @@ const fireEvent = H.fireEvent = function<T> (
     }
 };
 
-/**
- * The global animate method, which uses Fx to create individual animators.
- *
- * @function Highcharts.animate
- *
- * @param {Highcharts.HTMLDOMElement|Highcharts.SVGElement} el
- *        The element to animate.
- *
- * @param {Highcharts.CSSObject|Highcharts.SVGAttributes} params
- *        An object containing key-value pairs of the properties to animate.
- *        Supports numeric as pixel-based CSS properties for HTML objects and
- *        attributes for SVGElements.
- *
- * @param {Partial<Highcharts.AnimationOptionsObject>} [opt]
- *        Animation options.
- *
- * @return {void}
- */
-const animate = H.animate = function (
-    el: (HTMLDOMElement|SVGElement),
-    params: (CSSObject|SVGAttributes),
-    opt?: Partial<Highcharts.AnimationOptionsObject>
-): void {
-    var start,
-        unit = '',
-        end,
-        fx,
-        args;
-
-    if (!isObject(opt)) { // Number or undefined/null
-        args = arguments;
-        opt = {
-            duration: args[2],
-            easing: args[3],
-            complete: args[4]
-        };
-    }
-    if (!isNumber(opt.duration)) {
-        opt.duration = 400;
-    }
-    opt.easing = typeof opt.easing === 'function' ?
-        opt.easing :
-        (Math[opt.easing as keyof Math] || Math.easeInOutSine) as any;
-    opt.curAnim = merge(params) as any;
-
-    objectEach(params, function (val, prop): void {
-        // Stop current running animation of this property
-        stop(el as any, prop);
-
-        fx = new Fx(el as any, opt as any, prop);
-        end = null;
-
-        if (prop === 'd' && isArray(params.d)) {
-            fx.paths = fx.initPath(
-                el as any,
-                (el as any).pathArray,
-                params.d
-            );
-            fx.toD = params.d as any;
-            start = 0;
-            end = 1;
-        } else if ((el as any).attr) {
-            start = (el as any).attr(prop);
-        } else {
-            start = parseFloat(getStyle(el as any, prop) as any) || 0;
-            if (prop !== 'opacity') {
-                unit = 'px';
-            }
-        }
-
-        if (!end) {
-            end = val;
-        }
-        if (end && end.match && end.match('px')) {
-            end = end.replace(/px/g, ''); // #4351
-        }
-        fx.run(start as any, end, unit);
-    });
-};
-
 let serialMode: (boolean|undefined);
 /**
  * Get a unique key for using in internal element id's and pointers. The key is
@@ -3493,10 +2751,7 @@ if ((win as any).jQuery) {
 
 // TODO use named exports when supported.
 const utilitiesModule = {
-    Fx: H.Fx as unknown as typeof Highcharts.Fx,
     addEvent,
-    animate,
-    animObject,
     arrayMax,
     arrayMin,
     attr,
@@ -3515,7 +2770,6 @@ const utilitiesModule = {
     find,
     fireEvent,
     format,
-    getDeferredAnimation,
     getMagnitude,
     getNestedProperty,
     getOptions,
@@ -3538,11 +2792,9 @@ const utilitiesModule = {
     pInt,
     relativeLength,
     removeEvent,
-    setAnimation,
     setOptions,
     splat,
     stableSort,
-    stop,
     syncTimeout,
     timeUnits,
     uniqueKey,

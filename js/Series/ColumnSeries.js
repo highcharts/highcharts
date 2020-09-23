@@ -7,6 +7,8 @@
  *  !!!!!!! SOURCE GETS TRANSPILED BY TYPESCRIPT. EDIT TS FILE ONLY. !!!!!!!
  *
  * */
+import A from '../Core/Animation/AnimationUtilities.js';
+var animObject = A.animObject;
 import BaseSeries from '../Core/Series/Series.js';
 import Color from '../Core/Color/Color.js';
 var color = Color.parse;
@@ -15,7 +17,7 @@ var noop = H.noop;
 import LegendSymbolMixin from '../Mixins/LegendSymbol.js';
 import LineSeries from './LineSeries.js';
 import U from '../Core/Utilities.js';
-var animObject = U.animObject, clamp = U.clamp, defined = U.defined, extend = U.extend, isArray = U.isArray, isNumber = U.isNumber, merge = U.merge, pick = U.pick, objectEach = U.objectEach;
+var clamp = U.clamp, defined = U.defined, extend = U.extend, isArray = U.isArray, isNumber = U.isNumber, merge = U.merge, pick = U.pick, objectEach = U.objectEach;
 /**
  * Adjusted width and x offset of the columns for grouping.
  *

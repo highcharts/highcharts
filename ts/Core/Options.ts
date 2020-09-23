@@ -10,6 +10,12 @@
 
 'use strict';
 
+import type {
+    AlignObject,
+    AlignValue,
+    VerticalAlignValue
+} from './Renderer/AlignObject';
+import type AnimationOptionsObject from './Animation/AnimationOptionsObject';
 import type ColorString from './Color/ColorString';
 import type ColorType from './Color/ColorType';
 import type Chart from './Chart/Chart';
@@ -20,6 +26,7 @@ import type {
 import type PlotOptions from './Series/PlotOptions';
 import type Point from './Series/Point';
 import type { SeriesOptionsType } from './Series/SeriesType';
+import type ShadowOptionsObject from './Renderer/ShadowOptionsObject';
 import type SVGAttributes from './Renderer/SVG/SVGAttributes';
 import H from './Globals.js';
 const {

@@ -10,12 +10,15 @@
 
 'use strict';
 
+import type AnimationOptionsObject from '../Animation/AnimationOptionsObject';
 import type ColorType from '../Color/ColorType';
 import type SVGAttributes from '../Renderer/SVG/SVGAttributes';
+import type SVGElement from '../Renderer/SVG/SVGElement';
+import A from '../Animation/AnimationUtilities.js';
+const { animObject } = A;
 import H from '../Globals.js';
 import U from '../Utilities.js';
 const {
-    animObject,
     defined,
     erase,
     extend,
@@ -365,7 +368,7 @@ class Point {
      */
     public colorIndex?: number = void 0;
 
-    public dataLabels?: Array<Highcharts.SVGElement>;
+    public dataLabels?: Array<SVGElement>;
 
     public formatPrefix: string = 'point';
 

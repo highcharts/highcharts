@@ -8,8 +8,13 @@
  *
  * */
 
+import type {
+    AlignValue,
+    VerticalAlignValue
+} from '../Core/Renderer/AlignObject';
 import type CSSObject from '../Core/Renderer/CSSObject';
 import type SVGAttributes from '../Core/Renderer/SVG/SVGAttributes';
+import type SVGElement from '../Core/Renderer/SVG/SVGElement';
 import Chart from '../Core/Chart/Chart.js';
 import H from '../Core/Globals.js';
 const {
@@ -167,7 +172,7 @@ MapNavigation.prototype.update = function (
         hoverStates: SVGAttributes,
         selectStates: SVGAttributes,
         outerHandler = function (
-            this: Highcharts.SVGElement,
+            this: SVGElement,
             e: (Event|Highcharts.Dictionary<any>)
         ): void {
             this.handler.call(chart, e);

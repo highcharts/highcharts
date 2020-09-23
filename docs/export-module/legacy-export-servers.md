@@ -47,55 +47,55 @@ The javascript files are already configured in the `resources.json` file which i
 
 Open a Dos/Shell prompt and navigate to the main folder of the export server, _highcharts-export_ and install it in your local Maven repository. This installs also all dependencies (libraries) for the module.
 
-$ cd highcharts-export/  
+$ cd highcharts-export/
 $ mvn install
 
 #### 1.5. Building a .war file
 
 After you have configured and installed the application, you can compile the project files. Open a commandline in a terminal or DOS and navigate to the `highchart-export-web` folder and while standing here, type the following in a terminal: mvn clean package
 
-$ cd highcharts-export-web/  
+$ cd highcharts-export-web/
 $ mvn clean package
 
 After compiling and the message BUILD SUCCESS, you will find a file: highcharts-export-web.war in the `highcharts-export/highcharts-export-web/target` folder.
 
-    
-    [INFO] ------------------------------------------------------------------------  
-     [INFO] BUILD SUCCESS  
-     [INFO] ------------------------------------------------------------------------  
-     [INFO] Total time: 2.476s  
-     [INFO] Finished at: Wed Jun 26 14:52:07 CEST 2013  
-     [INFO] Final Memory: 15M/215M  
-     [INFO] ------------------------------------------------------------------------  
-     highcharts-export-web $> ls target/  
-     classes                highcharts-export-web        maven-archiver  
-     generated-sources        **highcharts-export-web.war**    surefire  
-     Gerts-MacBook-Pro:highcharts-export-web gert$ 
+
+    [INFO] ------------------------------------------------------------------------
+     [INFO] BUILD SUCCESS
+     [INFO] ------------------------------------------------------------------------
+     [INFO] Total time: 2.476s
+     [INFO] Finished at: Wed Jun 26 14:52:07 CEST 2013
+     [INFO] Final Memory: 15M/215M
+     [INFO] ------------------------------------------------------------------------
+     highcharts-export-web $> ls target/
+     classes                highcharts-export-web        maven-archiver
+     generated-sources        **highcharts-export-web.war**    surefire
+     Gerts-MacBook-Pro:highcharts-export-web gert$
 
 Upload/copy this to the application server. You're done with setting up the highcharts-export server!
 
 #### 1.6. Some Tips
 
 *   We added the Jetty Server dependency in pom.xml file for testing convenience. For running the export-server locally, during development, navigate in a DOS/Shell to the highcharts-export/highcharts-export-web folder, and run this command: `mvn jetty:run`. This starts the Jetty application server and the application is now accessible at `http://localhost:8080/export`.
-    
+
 *   Change you url property for the [exporting option](https://api.highcharts.com/highcharts#exporting.url) in your (javascript) highcharts configuration, and point it to the new installed exporting-server, otherwise it still points at Highcharts export-server at http://export.highcharts.com
-    
-        
+
+
         exporting:{
         url:'http://new.server.com/highcharts-export/'
         }
 *   Remember to install necessary fonts on the server. When characters are missing, they will be displayed as squares on the exported charts. The application will automatically pick the fonts up after installation.
-    
-    Highcharts sets its font globally to Lucida Grande, so if you use for example a japanese font, you have to set the fontFamily to a japanese-able font with [Highcharts.setOptions](https://api.highcharts.com/highcharts#Highcharts.setOptions), for making the export work.
-    
-*   When having problems while using the export-server, the first thing you could do is to enable logging Debug messages. This can give you a clue of what's going wrong. To enable Debug messages, uncomment these lines in highcharts-export/highcharts-export-web/src/main/resources/log4j.properties
-    
 
-    
-    \# Debug specific class  
-     `log4j.logger.services=DEBUG`  
-     `log4j.logger.converter=DEBUG`  
-     `log4j.logger.exporter=DEBUG`  
+    Highcharts sets its font globally to Lucida Grande, so if you use for example a japanese font, you have to set the fontFamily to a japanese-able font with [Highcharts.setOptions](https://api.highcharts.com/highcharts#Highcharts.setOptions), for making the export work.
+
+*   When having problems while using the export-server, the first thing you could do is to enable logging Debug messages. This can give you a clue of what's going wrong. To enable Debug messages, uncomment these lines in highcharts-export/highcharts-export-web/src/main/resources/log4j.properties
+
+
+
+    \# Debug specific class
+     `log4j.logger.services=DEBUG`
+     `log4j.logger.converter=DEBUG`
+     `log4j.logger.exporter=DEBUG`
      `log4j.logger.pool=DEBUG`
 
 *   **When running on WebLogic**
@@ -106,19 +106,19 @@ By default WebLogic registers its own `URLStreamHandler to handle http` URLs. Th
 
 Change line 94,95 from
 
-    
-    URL url = new URL("http://" + host + ":"  
+
+    URL url = new URL("http://" + host + ":"
      + port + "/");
 
 to
 
-    
-    sun.net.www.protocol.http.Handler handler = new sun.net.www.protocol.http.Handler();  
+
+    sun.net.www.protocol.http.Handler handler = new sun.net.www.protocol.http.Handler();
     URL url = new URL(null, "http://" + host + ":" + port + "/", handler);
 
-2. Goto the folder java/highcharts-export  
-3. Update your local maven repository, Run: `mvn install`  
-4. Goto the folder java/highcharts-export/highcharts-export-web  
+2. Goto the folder java/highcharts-export
+3. Update your local maven repository, Run: `mvn install`
+4. Goto the folder java/highcharts-export/highcharts-export-web
 5. Create the .war file, Run: `mvn clean package`
 
 ### 2. EXPORT SERVER BASED ON PHP AND BATIK
@@ -130,22 +130,22 @@ The `index.php` file that handles the POST can be downloaded from our [GitHub re
 1.  Make sure that PHP and Java is installed on your server.
 2.  Upload the `index.php` file from the [exporting-server](https://github.com/highcharts/highcharts-export-server/tree/master/php/php-batik) repository to your server.
 3.  In your FTP program, create directory called `temp` in the same directory as `index.php` and chmod this new directory to 777 (Linux/Unix servers only).
-4.  Download Batik from the [Batik Distribution Mirror](https://www.apache.org/dyn/closer.cgi/xmlgraphics/batik). Find the binary distribution for your java version.  
-    
+4.  Download Batik from the [Batik Distribution Mirror](https://www.apache.org/dyn/closer.cgi/xmlgraphics/batik). Find the binary distribution for your java version.
+
 5.  Upload `batik-rasterizer.jar` and the entire `lib` directory to a location on your web server.
 6.  In the options in the top of the index.php file, set the path to batik-rasterier.jar.
-7.  In your chart options, set the [exporting.url](ref/#exporting) option to match your PHP file location.
+7.  In your chart options, set the [exporting.url](https://api.highcharts.com/highcharts/exporting.url) option to match your PHP file location.
 
 #### TROUBLESHOOTING
 
 If for any reason the export-server fails to export images, then consider pasting this code snippet to output error messages. Paste this before Line 78, beginning with the commenting text: `// Do the conversion.`
 
-    
-    // Troubleshoot snippet  
-    $command = "java -jar ". BATIK_PATH ." $typeString -d $outfile $width temp/$tempName.svg 2>&1";   
-    $output = shell_exec($command);  
-    echo "Command: $command <br>";  
-    echo "Output: $output";  
+
+    // Troubleshoot snippet
+    $command = "java -jar ". BATIK_PATH ." $typeString -d $outfile $width temp/$tempName.svg 2>&1";
+    $output = shell_exec($command);
+    echo "Command: $command <br>";
+    echo "Output: $output";
     die;
 
 ### 3. Other solutions

@@ -426,7 +426,7 @@ BaseSeries.seriesType<typeof Highcharts.TimelineSeries>('timeline', 'line',
                         dataLabel.animate = function (
                             this: SVGElement,
                             params: SVGAttributes
-                        ): Highcharts.SVGElement {
+                        ): SVGElement {
                             if (this.targetPosition) {
                                 this.targetPosition = params;
                             }
@@ -470,7 +470,7 @@ BaseSeries.seriesType<typeof Highcharts.TimelineSeries>('timeline', 'line',
         alignDataLabel: function (
             this: Highcharts.TimelineSeries,
             point: Highcharts.TimelinePoint,
-            dataLabel: Highcharts.SVGElement,
+            dataLabel: SVGElement,
             options: Highcharts.TimelineDataLabelsOptionsObject,
             alignTo: Highcharts.BBoxObject
         ): void {
@@ -785,7 +785,7 @@ BaseSeries.seriesType<typeof Highcharts.TimelineSeries>('timeline', 'line',
                 xAxisLen = point.series.xAxis.len,
                 inverted = chart.inverted,
                 direction = inverted ? 'x2' : 'y2',
-                dl: Highcharts.SVGElement = point.dataLabel as any,
+                dl: SVGElement = point.dataLabel as any,
                 targetDLPos = dl.targetPosition,
                 coords: Highcharts.Dictionary<(number|string)> = {
                     x1: point.plotX as any,
@@ -855,8 +855,8 @@ BaseSeries.seriesType<typeof Highcharts.TimelineSeries>('timeline', 'line',
         alignConnector: function (this: Highcharts.TimelinePoint): void {
             var point = this,
                 series = point.series,
-                connector: Highcharts.SVGElement = point.connector as any,
-                dl: Highcharts.SVGElement = point.dataLabel as any,
+                connector: SVGElement = point.connector as any,
+                dl: SVGElement = point.dataLabel as any,
                 dlOptions = (point.dataLabel as any).options = merge(
                     series.options.dataLabels,
                     point.options.dataLabels

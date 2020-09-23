@@ -10,8 +10,15 @@
 
 'use strict';
 
+import type {
+    AlignObject,
+    AlignValue,
+    VerticalAlignValue
+} from '../Core/Renderer/AlignObject';
+import type AnimationOptionsObject from '../Core/Animation/AnimationOptionsObject';
 import type ColorType from '../Core/Color/ColorType';
 import type CSSObject from '../Core/Renderer/CSSObject';
+import type SVGElement from '../Core/Renderer/SVG/SVGElement';
 import Axis from '../Core/Axis/Axis.js';
 import Chart from '../Core/Chart/Chart.js';
 import H from '../Core/Globals.js';
@@ -268,19 +275,19 @@ class StackItem {
         (inverted ? (isNegative ? 'right' : 'left') : 'center');
     }
 
-    public alignOptions: Highcharts.AlignObject;
+    public alignOptions: AlignObject;
     public axis: StackingAxis;
     public base?: string;
     public cumulative?: (null|number);
     public hasValidPoints: boolean;
     public isNegative: boolean;
-    public label?: Highcharts.SVGElement;
+    public label?: SVGElement;
     public leftCliff: number;
     public options: Highcharts.YAxisStackLabelsOptions;
     public points: Highcharts.Dictionary<Array<number>>;
     public rightCliff: number;
     public stack?: Highcharts.OptionsStackingValue;
-    public textAlign: Highcharts.AlignValue;
+    public textAlign: AlignValue;
     public total: (null|number);
     public touched?: number;
     public x: number;
@@ -300,7 +307,7 @@ class StackItem {
      * @function Highcharts.StackItem#render
      * @param {Highcharts.SVGElement} group
      */
-    public render(group: Highcharts.SVGElement): void {
+    public render(group: SVGElement): void {
         var chart = this.axis.chart,
             options = this.options,
             formatOption = options.format,

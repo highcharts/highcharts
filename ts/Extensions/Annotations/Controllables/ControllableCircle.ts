@@ -7,6 +7,7 @@
 'use strict';
 
 import type Annotation from '../Annotations';
+import type SVGElement from '../../../Core/Renderer/SVG/SVGElement';
 import ControllableMixin from '../Mixins/ControllableMixin.js';
 import ControllablePath from './ControllablePath.js';
 import U from '../../../Core/Utilities.js';
@@ -99,7 +100,7 @@ class ControllableCircle implements ControllableMixin.Type {
      *
      * */
 
-    public render(parent: Highcharts.SVGElement): void {
+    public render(parent: SVGElement): void {
         var attrs = this.attrsFromOptions(this.options);
 
         this.graphic = this.annotation.chart.renderer

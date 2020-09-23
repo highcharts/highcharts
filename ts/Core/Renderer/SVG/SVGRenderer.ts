@@ -8,6 +8,8 @@
  *
  * */
 
+import type AlignObject from '../AlignObject';
+import type AnimationOptionsObject from '../../Animation/AnimationOptionsObject';
 import type BBoxObject from '../BBoxObject';
 import type ColorString from '../../Color/ColorString';
 import type CSSObject from '../CSSObject';
@@ -49,6 +51,7 @@ const {
 type ImportedPositionObject = PositionObject;
 type ImportedRectangleObject = RectangleObject;
 type ImportedSizeObject = SizeObject;
+type ImportedAlignObject = AlignObject;
 
 /**
  * Internal types
@@ -69,13 +72,6 @@ declare global {
             b: number;
             f: number;
             h: number;
-        }
-        interface ShadowOptionsObject {
-            color: ColorString;
-            offsetX: number;
-            offsetY: number;
-            opacity: number;
-            width: number;
         }
         interface SVGDefinitionObject {
             [key: string]: (boolean|number|string|Array<SVGDefinitionObject>|undefined);
@@ -623,7 +619,7 @@ class SVGRenderer {
      */
     public defs: SVGElement = void 0 as any;
     public forExport?: boolean;
-    public globalAnimation: Partial<Highcharts.AnimationOptionsObject> = void 0 as any;
+    public globalAnimation: Partial<AnimationOptionsObject> = void 0 as any;
     public gradients: Record<string, SVGElement> = void 0 as any;
     public height: number = void 0 as any;
     public imgCount: number = void 0 as any;
@@ -2100,7 +2096,7 @@ class SVGRenderer {
     public setSize(
         width: number,
         height: number,
-        animate?: (boolean|Partial<Highcharts.AnimationOptionsObject>)
+        animate?: (boolean|Partial<AnimationOptionsObject>)
     ): void {
         var renderer = this,
             alignedObjects = renderer.alignedObjects,

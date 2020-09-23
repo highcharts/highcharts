@@ -7,6 +7,7 @@
  *  !!!!!!! SOURCE GETS TRANSPILED BY TYPESCRIPT. EDIT TS FILE ONLY. !!!!!!!
  *
  * */
+'use strict';
 import BaseSeries from './Series/Series.js';
 var seriesTypes = BaseSeries.seriesTypes;
 import Chart from './Chart/Chart.js';

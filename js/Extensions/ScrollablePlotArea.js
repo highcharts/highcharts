@@ -17,10 +17,12 @@ WIP on vertical scrollable plot area (#9378). To do:
 - API and demos
  */
 'use strict';
+import A from '../Core/Animation/AnimationUtilities.js';
+var stop = A.stop;
 import Chart from '../Core/Chart/Chart.js';
 import H from '../Core/Globals.js';
 import U from '../Core/Utilities.js';
-var addEvent = U.addEvent, createElement = U.createElement, pick = U.pick, stop = U.stop;
+var addEvent = U.addEvent, createElement = U.createElement, pick = U.pick;
 /**
  * Options for a scrollable plot area. This feature provides a minimum size for
  * the plot area of the chart. If the size gets smaller than this, typically

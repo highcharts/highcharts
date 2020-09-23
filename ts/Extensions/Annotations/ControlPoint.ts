@@ -5,6 +5,7 @@
  * */
 
 import type Annotation from './Annotations';
+import type SVGElement from '../../Core/Renderer/SVG/SVGElement';
 
 /**
  * Internal types.
@@ -112,7 +113,7 @@ class ControlPoint implements eventEmitterMixin.Type {
 
     public addEvents = eventEmitterMixin.addEvents;
     public chart: Highcharts.AnnotationChart;
-    public graphic: Highcharts.SVGElement = void 0 as any;
+    public graphic: SVGElement = void 0 as any;
     public index: number;
     public mouseMoveToRadians = eventEmitterMixin.mouseMoveToRadians;
     public mouseMoveToScale = eventEmitterMixin.mouseMoveToScale;

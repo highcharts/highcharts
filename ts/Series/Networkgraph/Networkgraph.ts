@@ -12,9 +12,11 @@
 
 'use strict';
 
+import type AnimationOptionsObject from '../../Core/Animation/AnimationOptionsObject';
 import type Chart from '../../Core/Chart/Chart';
 import type ColorString from '../../Core/Color/ColorString';
 import type SVGAttributes from '../../Core/Renderer/SVG/SVGAttributes';
+import type SVGElement from '../../Core/Renderer/SVG/SVGElement';
 import type SVGPath from '../../Core/Renderer/SVG/SVGPath';
 import BaseSeries from '../../Core/Series/Series.js';
 import H from '../../Core/Globals.js';
@@ -911,7 +913,7 @@ BaseSeries.seriesType<typeof Highcharts.NetworkgraphSeries>(
             var series = this,
                 points = series.points,
                 hoverPoint = series.chart.hoverPoint,
-                dataLabels = [] as Array<Highcharts.SVGElement>;
+                dataLabels = [] as Array<SVGElement>;
 
             // Render markers:
             series.points = series.nodes;
@@ -1141,7 +1143,7 @@ BaseSeries.seriesType<typeof Highcharts.NetworkgraphSeries>(
                     this.graphic.attr(attribs);
 
                     (this.dataLabels || []).forEach(function (
-                        label: Highcharts.SVGElement
+                        label: SVGElement
                     ): void {
                         if (label) {
                             label.attr({
@@ -1170,7 +1172,7 @@ BaseSeries.seriesType<typeof Highcharts.NetworkgraphSeries>(
                     this.graphic.attr(attribs);
 
                     (this.dataLabels || []).forEach(function (
-                        label: Highcharts.SVGElement
+                        label: SVGElement
                     ): void {
                         if (label) {
                             label.attr({

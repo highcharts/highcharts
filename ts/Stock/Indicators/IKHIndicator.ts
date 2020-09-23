@@ -9,6 +9,7 @@
 import type ColorType from '../../Core/Color/ColorType';
 import type CSSObject from '../../Core/Renderer/CSSObject';
 import type Point from '../../Core/Series/Point';
+import type SVGElement from '../../Core/Renderer/SVG/SVGElement';
 import type SVGPath from '../../Core/Renderer/SVG/SVGPath';
 import BaseSeries from '../../Core/Series/Series.js';
 import Color from '../../Core/Color/Color.js';
@@ -546,7 +547,7 @@ BaseSeries.seriesType<typeof Highcharts.IKHIndicator>(
                 mainLineOptions: Highcharts.IKHIndicatorOptions = (
                     indicator.options
                 ),
-                mainLinePath: (Highcharts.SVGElement|undefined) = (
+                mainLinePath: (SVGElement|undefined) = (
                     indicator.graph
                 ),
                 mainColor = indicator.color,

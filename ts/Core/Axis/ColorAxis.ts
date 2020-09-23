@@ -10,10 +10,12 @@
 
 'use strict';
 
+import type AnimationOptionsObject from '../Animation/AnimationOptionsObject';
 import type { AxisLike } from './Types';
 import type ColorString from '../Color/ColorString';
 import type ColorType from '../Color/ColorType';
 import type GradientColor from '../Color/GradientColor';
+import type SVGElement from '../Renderer/SVG/SVGElement';
 import type SVGPath from '../Renderer/SVG/SVGPath';
 import Axis from './Axis.js';
 import Chart from '../Chart/Chart.js';
@@ -26,6 +28,7 @@ const {
     colorPointMixin,
     colorSeriesMixin
 } = ColorSeriesModule;
+import Fx from '../Animation/Fx.js';
 import H from '../Globals.js';
 const {
     noop
@@ -39,7 +42,6 @@ const {
     addEvent,
     erase,
     extend,
-    Fx,
     isNumber,
     merge,
     pick,
@@ -687,12 +689,12 @@ class ColorAxis extends Axis implements AxisLike {
     public coll: 'colorAxis' = 'colorAxis';
     public dataClasses: Array<ColorAxis.DataClassesOptions> = void 0 as any;
     public legendColor?: GradientColor;
-    public legendGroup?: Highcharts.SVGElement;
+    public legendGroup?: SVGElement;
     public legendItemHeight?: number;
     public legendItem: ColorAxis.LegendItemObject = void 0 as any;
     public legendItems: Array<ColorAxis.LegendItemObject> = void 0 as any;
     public legendItemWidth?: number;
-    public legendSymbol?: Highcharts.SVGElement;
+    public legendSymbol?: SVGElement;
     public name: string = ''; // Prevents 'undefined' in legend in IE8
     public options: ColorAxis.Options = void 0 as any;
     public stops: GradientColor['stops'] = void 0 as any;
@@ -1587,7 +1589,7 @@ namespace ColorAxis {
     }
 
     export interface MarkerOptions {
-        animation?: (boolean|Partial<Highcharts.AnimationOptionsObject>);
+        animation?: (boolean|Partial<AnimationOptionsObject>);
         color?: ColorType;
         width?: number;
     }

@@ -10,6 +10,11 @@
 
 'use strict';
 
+import type {
+    AlignObject,
+    AlignValue,
+    VerticalAlignValue
+} from '../Core/Renderer/AlignObject';
 import type ColorString from '../Core/Color/ColorString';
 import type CSSObject from '../Core/Renderer/CSSObject';
 import type {
@@ -745,23 +750,23 @@ class RangeSelector {
      * Properties
      *
      * */
-    public buttons: Array<Highcharts.SVGElement> = void 0 as any;
-    public buttonGroup?: Highcharts.SVGElement;
+    public buttons: Array<SVGElement> = void 0 as any;
+    public buttonGroup?: SVGElement;
     public buttonOptions: Array<Highcharts.RangeSelectorButtonsOptions> = RangeSelector.prototype.defaultButtons;
     public chart: Chart;
     public deferredYTDClick?: number;
     public div?: HTMLDOMElement;
     public forcedDataGrouping?: boolean;
     public frozenStates?: boolean;
-    public group?: Highcharts.SVGElement;
-    public inputGroup?: Highcharts.SVGElement;
+    public group?: SVGElement;
+    public inputGroup?: SVGElement;
     public isActive?: boolean;
     public options: Highcharts.RangeSelectorOptions = void 0 as any;
     public rendered?: boolean;
     public selected?: number;
     public unMouseDown?: Function;
     public unResize?: Function;
-    public zoomText?: Highcharts.SVGElement;
+    public zoomText?: SVGElement;
 
     /**
      * The method to run when one of the buttons in the range selectors is
@@ -1567,7 +1572,7 @@ class RangeSelector {
             ) + 1,
             floating = options.floating,
             buttons = rangeSelector.buttons,
-            inputGroup = rangeSelector.inputGroup as Highcharts.SVGElement,
+            inputGroup = rangeSelector.inputGroup as SVGElement,
             buttonTheme = options.buttonTheme,
             buttonPosition = options.buttonPosition,
             inputPosition = options.inputPosition,
@@ -1575,8 +1580,8 @@ class RangeSelector {
             states = buttonTheme && buttonTheme.states,
             plotLeft = chart.plotLeft,
             buttonLeft: number,
-            buttonGroup = rangeSelector.buttonGroup as Highcharts.SVGElement,
-            group: Highcharts.SVGElement,
+            buttonGroup = rangeSelector.buttonGroup as SVGElement,
+            group: SVGElement,
             groupHeight,
             rendered = rangeSelector.rendered,
             verticalAlign = rangeSelector.options.verticalAlign,
@@ -1736,7 +1741,7 @@ class RangeSelector {
             width: buttonGroup.getBBox().width,
             align: (buttonPosition as any).align,
             x: translateX
-        } as Highcharts.AlignObject, true, chart.spacingBox);
+        } as AlignObject, true, chart.spacingBox);
 
         // skip animation
         (rangeSelector.group as any).placed = animate;
@@ -1778,7 +1783,7 @@ class RangeSelector {
                 align: (inputPosition as any).align,
                 // fix wrong getBBox() value on right align
                 x: (inputPosition as any).x + (translateX as any) - 2
-            } as Highcharts.AlignObject, true, chart.spacingBox);
+            } as AlignObject, true, chart.spacingBox);
 
             // detect collision
             inputGroupX = (
@@ -2269,7 +2274,7 @@ if (!H.RangeSelector) {
             unbindSetExtremes: Function,
             legend,
             alignTo,
-            verticalAlign: Highcharts.VerticalAlignValue|undefined;
+            verticalAlign: VerticalAlignValue|undefined;
 
         /**
          * @private

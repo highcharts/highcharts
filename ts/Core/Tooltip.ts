@@ -237,7 +237,7 @@ declare global {
  * @param {number} labelHeight
  * Height of the tooltip.
  *
- * @param {Highcharts.Point|Highcharts.TooltipPositionerPointObject} point
+ * @param {Highcharts.TooltipPositionerPointObject} point
  * Point information for positioning a tooltip.
  *
  * @return {Highcharts.PositionObject}
@@ -248,6 +248,7 @@ declare global {
  * Point information for positioning a tooltip.
  *
  * @interface Highcharts.TooltipPositionerPointObject
+ * @extends Highcharts.Point
  *//**
  * If `tooltip.split` option is enabled and positioner is called for each of the
  * boxes separately, this property indicates the call on the xAxis header, which
@@ -344,9 +345,9 @@ class Tooltip {
 
     public tooltipTimeout?: number;
 
-    public tracker?: Highcharts.SVGElement;
+    public tracker?: SVGElement;
 
-    public tt?: Highcharts.SVGElement;
+    public tt?: SVGElement;
 
     /* *
      *
@@ -671,7 +672,7 @@ class Tooltip {
      * @function Highcharts.Tooltip#getLabel
      * @return {Highcharts.SVGElement}
      */
-    public getLabel(): Highcharts.SVGElement {
+    public getLabel(): SVGElement {
 
         var tooltip = this,
             renderer: (Highcharts.Renderer|Highcharts.SVGRenderer) = this.chart.renderer,

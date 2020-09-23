@@ -12,6 +12,12 @@
 
 'use strict';
 
+import type {
+    AlignObject,
+    AlignValue,
+    VerticalAlignValue
+} from '../Core/Renderer/AlignObject';
+import type AnimationOptionsObject from '../Core/Animation/AnimationOptionsObject';
 import type ColorType from '../Core/Color/ColorType';
 import type {
     CSSObject,
@@ -21,6 +27,8 @@ import type { SeriesLikeOptions } from '../Core/Series/SeriesLike';
 import type { SeriesOptionsType } from '../Core/Series/SeriesType';
 import type SVGAttributes from '../Core/Renderer/SVG/SVGAttributes';
 import type SVGElement from '../Core/Renderer/SVG/SVGElement';
+import A from '../Core/Animation/AnimationUtilities.js';
+const { animObject } = A;
 import Axis from '../Core/Axis/Axis.js';
 import Chart from '../Core/Chart/Chart.js';
 import Color from '../Core/Color/Color.js';
@@ -39,7 +47,6 @@ import U from '../Core/Utilities.js';
 const {
     addEvent,
     removeEvent,
-    animObject,
     extend,
     fireEvent,
     format,
@@ -650,7 +657,7 @@ defaultOptions.drilldown = {
  * The animation options for the element fade.
  */
 SVGRenderer.prototype.Element.prototype.fadeIn = function (
-    animation?: (boolean|Partial<Highcharts.AnimationOptionsObject>)
+    animation?: (boolean|Partial<AnimationOptionsObject>)
 ): void {
     this
         .attr({
@@ -1243,7 +1250,7 @@ ColumnSeries.prototype.animateDrillupFrom = function (
 ): void {
     var animationOptions =
             animObject((this.chart.options.drilldown as any).animation),
-        group: (Highcharts.SVGElement|undefined) = this.group,
+        group: (SVGElement|undefined) = this.group,
         // For 3d column series all columns are added to one group
         // so we should not delete the whole group. #5297
         removeGroup = group !== this.chart.columnGroup,

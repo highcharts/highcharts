@@ -8,6 +8,7 @@
  *
  * */
 
+import type { AlignValue } from '../Core/Renderer/AlignObject';
 import type ColorType from '../Core/Color/ColorType';
 import type CSSObject from '../Core/Renderer/CSSObject';
 import type SVGAttributes from '../Core/Renderer/SVG/SVGAttributes';
@@ -628,7 +629,7 @@ BaseSeries.seriesType<typeof Highcharts.FlagsSeries>(
                 wrap(series.markerGroup, 'on', function (
                     this: Highcharts.FlagsSeries,
                     proceed
-                ): Highcharts.SVGElement {
+                ): SVGElement {
                     return SVGElement.prototype.on.apply(
                         // for HTML
                         proceed.apply(this, [].slice.call(arguments, 1)),

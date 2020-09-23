@@ -8,6 +8,12 @@
  *
  * */
 
+import type {
+    AlignObject,
+    AlignValue,
+    VerticalAlignValue
+} from '../AlignObject';
+import type AnimationOptionsObject from '../../Animation/AnimationOptionsObject';
 import type BBoxObject from '../BBoxObject';
 import type ColorString from '../../Color/ColorString';
 import type ColorType from '../../Color/ColorType';
@@ -19,9 +25,16 @@ import type {
 } from '../DOMElementType';
 import type GradientColor from '../../Color/GradientColor';
 import type RectangleObject from '../RectangleObject';
+import type ShadowOptionsObject from '../ShadowOptionsObject';
 import type SVGAttributes from './SVGAttributes';
 import type SVGPath from './SVGPath';
 import type SVGRenderer from './SVGRenderer';
+import A from '../../Animation/AnimationUtilities.js';
+const {
+    animate,
+    animObject,
+    stop
+} = A;
 import Color from '../../Color/Color.js';
 import H from '../../Globals.js';
 const {
@@ -36,8 +49,6 @@ const {
 } = H;
 import U from '../../Utilities.js';
 const {
-    animate,
-    animObject,
     attr,
     createElement,
     css,
@@ -53,12 +64,12 @@ const {
     objectEach,
     pick,
     pInt,
-    stop,
     syncTimeout,
     uniqueKey
 } = U;
 
 type ImportedBBoxObject = BBoxObject;
+type ImportedAlignObject = AlignObject;
 
 /**
  * @private
@@ -84,23 +95,7 @@ declare global {
         cutHeight?: number;
     }
     namespace Highcharts {
-        type AlignValue = ('center'|'left'|'right');
         type BBoxObject = ImportedBBoxObject;
-        type VerticalAlignValue = ('bottom'|'middle'|'top');
-        interface AlignObject {
-            align?: AlignValue;
-            alignByTranslate?: boolean;
-            verticalAlign?: VerticalAlignValue;
-            x?: number;
-            y?: number;
-        }
-        interface ShadowOptionsObject {
-            color: ColorString;
-            offsetX: number;
-            offsetY: number;
-            opacity: number;
-            width: number;
-        }
         class SVGElement {
             public constructor();
             [key: string]: any;
@@ -112,7 +107,7 @@ declare global {
             public renderer: SVGRenderer;
             public rotation?: number;
             public shadows?: Array<DOMElementType>;
-            public oldShadowOptions?: Highcharts.ShadowOptionsObject;
+            public oldShadowOptions?: ShadowOptionsObject;
             public styles?: CSSObject;
             public textStr?: string;
             public x?: number;
@@ -437,7 +432,7 @@ class SVGElement {
     public added?: boolean;
     public alignAttr?: SVGAttributes;
     public alignByTranslate?: boolean;
-    public alignOptions?: Highcharts.AlignObject;
+    public alignOptions?: AlignObject;
     public alignTo?: string;
     public alignValue?: ('left'|'center'|'right');
     public clipPath?: SVGElement;
@@ -451,7 +446,7 @@ class SVGElement {
     public height: number = void 0 as any;
     public inverted?: boolean;
     public matrix?: Array<number>;
-    public oldShadowOptions?: Highcharts.ShadowOptionsObject;
+    public oldShadowOptions?: ShadowOptionsObject;
     public onAdd?: Function;
     public opacity = 1; // Default base for animation
     public options?: Record<string, any>;
@@ -703,12 +698,12 @@ class SVGElement {
      * @return {Highcharts.SVGElement} Returns the SVGElement for chaining.
      */
     public align(
-        alignOptions?: Highcharts.AlignObject,
+        alignOptions?: AlignObject,
         alignByTranslate?: boolean,
         box?: (string|BBoxObject)
     ): SVGElement {
-        var align: Highcharts.AlignValue,
-            vAlign: Highcharts.VerticalAlignValue,
+        var align: AlignValue,
+            vAlign: VerticalAlignValue,
             x,
             y,
             attribs = {} as SVGAttributes,
@@ -819,7 +814,7 @@ class SVGElement {
      */
     public animate(
         params: SVGAttributes,
-        options?: (boolean|Partial<Highcharts.AnimationOptionsObject>),
+        options?: (boolean|Partial<AnimationOptionsObject>),
         complete?: Function
     ): SVGElement {
         var animOptions = animObject(
@@ -2471,7 +2466,7 @@ class SVGElement {
      *         Returns the SVGElement for chaining.
      */
     public shadow(
-        shadowOptions?: (boolean|Partial<Highcharts.ShadowOptionsObject>),
+        shadowOptions?: (boolean|Partial<ShadowOptionsObject>),
         group?: SVGElement,
         cutOff?: boolean
     ): SVGElement {
@@ -2486,14 +2481,14 @@ class SVGElement {
             // compensate for inverted plot area
             transform;
 
-        const defaultShadowOptions: Highcharts.ShadowOptionsObject = {
+        const defaultShadowOptions: ShadowOptionsObject = {
             color: '${palette.neutralColor100}',
             offsetX: 1,
             offsetY: 1,
             opacity: 0.15,
             width: 3
         };
-        let options: Highcharts.ShadowOptionsObject|undefined;
+        let options: ShadowOptionsObject|undefined;
         if (shadowOptions === true) {
             options = defaultShadowOptions;
         } else if (typeof shadowOptions === 'object') {

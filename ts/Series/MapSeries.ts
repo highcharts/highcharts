@@ -8,8 +8,10 @@
  *
  * */
 
+import type AnimationOptionsObject from '../Core/Animation/AnimationOptionsObject';
 import type ColorType from '../Core/Color/ColorType';
 import type SVGAttributes from '../Core/Renderer/SVG/SVGAttributes';
+import type SVGElement from '../Core/Renderer/SVG/SVGElement';
 import type SVGPath from '../Core/Renderer/SVG/SVGPath';
 import BaseSeries from '../Core/Series/Series.js';
 import ColorMapMixin from '../Mixins/ColorMapSeries.js';
@@ -702,7 +704,7 @@ BaseSeries.seriesType<typeof Highcharts.MapSeries>(
                 Array<(Highcharts.MapPointOptions|Highcharts.PointOptionsType)>
             ),
             redraw?: boolean,
-            animation?: (boolean|Partial<Highcharts.AnimationOptionsObject>),
+            animation?: (boolean|Partial<AnimationOptionsObject>),
             updatePoints?: boolean
         ): void {
             var options = this.options,
@@ -973,7 +975,7 @@ BaseSeries.seriesType<typeof Highcharts.MapSeries>(
                 translateX: number,
                 translateY: number,
                 baseTrans = this.baseTrans,
-                transformGroup: Highcharts.SVGElement,
+                transformGroup: SVGElement,
                 startTranslateX: number,
                 startTranslateY: number,
                 startScaleX: number,
@@ -1258,7 +1260,7 @@ BaseSeries.seriesType<typeof Highcharts.MapSeries>(
                         (this.chart.drilldownLevels as any).length - 1
                     ],
                 fromBox = level.bBox,
-                animationOptions: (boolean|Partial<Highcharts.AnimationOptionsObject>) =
+                animationOptions: (boolean|Partial<AnimationOptionsObject>) =
                     (this.chart.options.drilldown as any).animation,
                 scale;
 

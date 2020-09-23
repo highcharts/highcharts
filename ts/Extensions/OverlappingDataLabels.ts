@@ -13,6 +13,7 @@
 
 'use strict';
 
+import type { AlignValue } from '../Core/Renderer/AlignObject';
 import type Point from '../Core/Series/Point';
 import type SVGElement from '../Core/Renderer/SVG/SVGElement';
 import Chart from '../Core/Chart/Chart.js';
@@ -44,7 +45,7 @@ declare global {
 // to be considered because they are usually accompanied by data labels that lie
 // inside the columns.
 addEvent(Chart, 'render', function collectAndHide(): void {
-    var labels: Array<Highcharts.SVGElement|undefined> = [];
+    var labels: Array<SVGElement|undefined> = [];
 
     // Consider external label collectors
     (this.labelCollectors || []).forEach(function (
@@ -89,7 +90,7 @@ addEvent(Chart, 'render', function collectAndHide(): void {
                     );
 
                     dataLabels.forEach(function (
-                        label: Highcharts.SVGElement
+                        label: SVGElement
                     ): void {
                         var options = label.options;
 
@@ -151,10 +152,10 @@ Chart.prototype.hideOverlappingLabels = function (
         // Get the box with its position inside the chart, as opposed to getBBox
         // that only reports the position relative to the parent.
         getAbsoluteBox = function (
-            label: Highcharts.SVGElement
+            label: SVGElement
         ): (Highcharts.BBoxObject|undefined) {
             var pos: Highcharts.PositionObject,
-                parent: Highcharts.SVGElement,
+                parent: SVGElement,
                 bBox: Highcharts.BBoxObject,
                 // Substract the padding if no background or border (#4333)
                 padding = label.box ? 0 : (label.padding || 0),
@@ -190,7 +191,7 @@ Chart.prototype.hideOverlappingLabels = function (
                     left: '0',
                     center: '0.5',
                     right: '1'
-                }[label.alignValue as Highcharts.AlignValue];
+                }[label.alignValue as AlignValue];
 
                 if (alignValue) {
                     xOffset = +alignValue * boxWidth;
@@ -227,8 +228,8 @@ Chart.prototype.hideOverlappingLabels = function (
     // hide the previous one because the previous one always has lower rank.
     labels.sort(
         function (
-            a: Highcharts.SVGElement,
-            b: Highcharts.SVGElement
+            a: SVGElement,
+            b: SVGElement
         ): number {
             return (b.labelrank || 0) - (a.labelrank || 0);
         }
@@ -259,7 +260,7 @@ Chart.prototype.hideOverlappingLabels = function (
     }
 
     // Hide or show
-    labels.forEach(function (label: Highcharts.SVGElement): void {
+    labels.forEach(function (label: SVGElement): void {
         var complete: (Function|undefined),
             newOpacity: number;
 

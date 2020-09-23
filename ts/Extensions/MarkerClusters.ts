@@ -14,7 +14,13 @@
 
 'use strict';
 
+import type AnimationOptionsObject from '../Core/Animation/AnimationOptionsObject';
+import type SVGElement from '../Core/Renderer/SVG/SVGElement';
 import type SVGPath from '../Core/Renderer/SVG/SVGPath';
+import A from '../Core/Animation/AnimationUtilities.js';
+const {
+    animObject
+} = A;
 import BaseSeries from '../Core/Series/Series.js';
 import Chart from '../Core/Chart/Chart.js';
 import H from '../Core/Globals.js';
@@ -25,7 +31,6 @@ import SVGRenderer from '../Core/Renderer/SVG/SVGRenderer.js';
 import U from '../Core/Utilities.js';
 const {
     addEvent,
-    animObject,
     defined,
     error,
     isArray,
@@ -645,9 +650,9 @@ function getDataState(
 }
 
 function fadeInElement(
-    elem: Highcharts.SVGElement,
+    elem: SVGElement,
     opacity?: number,
-    animation?: (boolean|Partial<Highcharts.AnimationOptionsObject>)
+    animation?: (boolean|Partial<AnimationOptionsObject>)
 ): void {
     elem
         .attr({
@@ -661,7 +666,7 @@ function fadeInElement(
 function fadeInStatePoint(
     stateObj: Highcharts.MarkerClusterPointsState,
     opacity?: number,
-    animation?: (boolean|Partial<Highcharts.AnimationOptionsObject>),
+    animation?: (boolean|Partial<AnimationOptionsObject>),
     fadeinGraphic?: boolean,
     fadeinDataLabel?: boolean
 ): void {
@@ -710,7 +715,7 @@ function destroyOldPoints(
 function fadeInNewPointAndDestoryOld(
     newPointObj: Highcharts.MarkerClusterPointsState,
     oldPoints: Array<Highcharts.MarkerClusterPointsState>,
-    animation: (boolean|Partial<Highcharts.AnimationOptionsObject>),
+    animation: (boolean|Partial<AnimationOptionsObject>),
     opacity: number
 ): void {
     // Fade in new point.

@@ -8,6 +8,7 @@
  *
  * */
 
+import type AnimationOptionsObject from '../Core/Animation/AnimationOptionsObject';
 import type ColorType from '../Core/Color/ColorType';
 import type Point from '../Core/Series/Point';
 import type { SeriesOptionsType } from '../Core/Series/SeriesType';
@@ -490,7 +491,7 @@ BaseSeries.seriesType<typeof Highcharts.HeatmapSeries>(
          */
         setClip: function (
             this: Highcharts.HeatmapSeries,
-            animation?: (boolean|Highcharts.AnimationOptionsObject)
+            animation?: (boolean|AnimationOptionsObject)
         ): void {
             var series = this,
                 chart = series.chart;

@@ -6,6 +6,9 @@
 
 'use strict';
 
+import type {
+    AlignObject
+} from '../../../Core/Renderer/AlignObject';
 import type Annotation from '../Annotations';
 import type SVGAttributes from '../../../Core/Renderer/SVG/SVGAttributes';
 import type SVGElement from '../../../Core/Renderer/SVG/SVGElement';

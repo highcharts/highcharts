@@ -9,11 +9,11 @@
  *  !!!!!!! SOURCE GETS TRANSPILED BY TYPESCRIPT. EDIT TS FILE ONLY. !!!!!!!
  *
  * */
+import A from '../Core/Animation/AnimationUtilities.js';
+var animObject = A.animObject;
 import BaseSeries from '../Core/Series/Series.js';
 import H from '../Core/Globals.js';
 import NodesMixin from '../Mixins/Nodes.js';
-import U from '../Core/Utilities.js';
-var animObject = U.animObject;
 import './SankeySeries.js';
 import '../Core/Options.js';
 var base = BaseSeries.seriesTypes.sankey.prototype;

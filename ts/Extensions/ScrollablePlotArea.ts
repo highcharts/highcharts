@@ -25,14 +25,15 @@ import type {
     HTMLDOMElement
 } from '../Core/Renderer/DOMElementType';
 import type SVGPath from '../Core/Renderer/SVG/SVGPath';
+import A from '../Core/Animation/AnimationUtilities.js';
+const { stop } = A;
 import Chart from '../Core/Chart/Chart.js';
 import H from '../Core/Globals.js';
 import U from '../Core/Utilities.js';
 const {
     addEvent,
     createElement,
-    pick,
-    stop
+    pick
 } = U;
 
 /**

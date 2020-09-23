@@ -12,6 +12,11 @@
 
 'use strict';
 
+import type {
+    AlignValue,
+    VerticalAlignValue
+} from '../Core/Renderer/AlignObject';
+import type AnimationOptionsObject from '../Core/Animation/AnimationOptionsObject';
 import type ColorString from '../Core/Color/ColorString';
 import type CSSObject from '../Core/Renderer/CSSObject';
 import type {

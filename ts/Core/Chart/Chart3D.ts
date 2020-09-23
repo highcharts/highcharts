@@ -16,6 +16,7 @@ import type ColorType from '../Color/ColorType';
 import Axis from '../Axis/Axis.js';
 import Axis3D from '../Axis/Axis3D.js';
 import Chart from './Chart.js';
+import Fx from '../Animation/Fx.js';
 import H from '../Globals.js';
 import Math3D from '../../Extensions/Math3D.js';
 const {
@@ -29,13 +30,17 @@ const {
 import U from '../Utilities.js';
 const {
     addEvent,
-    Fx,
     isArray,
     merge,
     pick,
     wrap
 } = U;
 import ZAxis from '../Axis/ZAxis.js';
+declare module '../Animation/FxLike' {
+    interface FxLike {
+        matrixSetter?(): void;
+    }
+}
 
 /**
  * Internal types
@@ -52,9 +57,6 @@ declare global {
         }
         interface Edge3dObject extends Position3dObject {
             xDir: Position3dObject;
-        }
-        interface Fx {
-            matrixSetter?(): void;
         }
         interface Stack3dDictionary {
             [index: number]: Stack3dDictionaryObject;
@@ -902,10 +904,12 @@ namespace Chart3D {
          * Animation setter for matrix property.
          * @private
          */
+
         fxProto.matrixSetter = function (): void {
             let interpolated;
 
-            if (this.pos < 1 &&
+            if (
+                this.pos < 1 &&
                     (isArray(this.start) || isArray(this.end))) {
                 var start: Array<number> = (this.start as any) || [1, 0, 0, 1, 0, 0];
                 var end: Array<number> = (this.end as any) || [1, 0, 0, 1, 0, 0];

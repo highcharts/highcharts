@@ -12,6 +12,7 @@
 
 import type CSSObject from '../Core/Renderer/CSSObject';
 import type SVGAttributes from '../Core/Renderer/SVG/SVGAttributes';
+import type SVGElement from '../Core/Renderer/SVG/SVGElement';
 import BaseSeries from '../Core/Series/Series.js';
 import DrawPointMixin from '../Mixins/DrawPoint.js';
 const {
@@ -980,7 +981,7 @@ var wordCloudSeries: Partial<Highcharts.WordcloudSeries> = {
             animation = options.animation,
             allowExtendPlayingField = options.allowExtendPlayingField,
             renderer = chart.renderer,
-            testElement: Highcharts.SVGElement = renderer.text().add(group),
+            testElement: SVGElement = renderer.text().add(group),
             placed: Array<Highcharts.WordcloudPoint> = [],
             placementStrategy = series.placementStrategy[
                 options.placementStrategy as any

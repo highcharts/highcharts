@@ -10,7 +10,9 @@
 
 'use strict';
 
+import type AnimationOptionsObject from '../Animation/AnimationOptionsObject';
 import type { AxisComposition, AxisLike } from './Types';
+import type { AlignValue } from '../Renderer/AlignObject';
 import type Chart from '../Chart/Chart';
 import type ColorType from '../Color/ColorType';
 import type CSSObject from '../Renderer/CSSObject';
@@ -18,14 +20,18 @@ import type GradientColor from '../Color/GradientColor';
 import type PlotLineOrBand from './PlotLineOrBand';
 import type Point from '../../Core/Series/Point';
 import type SVGAttributes from '../Renderer/SVG/SVGAttributes';
+import type SVGElement from '../Renderer/SVG/SVGElement';
 import type SVGPath from '../Renderer/SVG/SVGPath';
+import A from '../Animation/AnimationUtilities.js';
+const {
+    animObject
+} = A;
 import Color from '../Color/Color.js';
 import H from '../Globals.js';
 import Tick from './Tick.js';
 import U from '../Utilities.js';
 const {
     addEvent,
-    animObject,
     arrayMax,
     arrayMin,
     clamp,
@@ -1200,7 +1206,9 @@ class Axis implements AxisComposition, AxisLike {
          * representations used for each unit. For intermediate values,
          * different units may be used, for example the `day` unit can be used
          * on midnight and `hour` unit be used for intermediate values on the
-         * same axis. For an overview of the replacement codes, see
+         * same axis.
+         *
+         * For an overview of the replacement codes, see
          * [dateFormat](/class-reference/Highcharts#dateFormat).
          *
          * Defaults to:
@@ -1223,7 +1231,7 @@ class Axis implements AxisComposition, AxisLike {
          *         More information in x axis labels
          *
          * @declare Highcharts.AxisDateTimeLabelFormatsOptions
-         * @product highcharts highstock
+         * @product highcharts highstock gantt
          */
         dateTimeLabelFormats: {
             /**
@@ -3880,18 +3888,18 @@ class Axis implements AxisComposition, AxisLike {
     public allowZoomOutside?: boolean;
     public alternateBands: Record<string, Highcharts.PlotLineOrBand> = void 0 as any;
     public autoRotation?: Array<number>;
-    public axisGroup?: Highcharts.SVGElement;
-    public axisLine?: Highcharts.SVGElement;
-    public axisParent?: Highcharts.SVGElement;
+    public axisGroup?: SVGElement;
+    public axisLine?: SVGElement;
+    public axisParent?: SVGElement;
     public axisPointRange?: number;
-    public axisTitle?: Highcharts.SVGElement;
+    public axisTitle?: SVGElement;
     public axisTitleMargin?: number;
     public bottom: number = void 0 as any;
     public categories: Array<string> = void 0 as any;
     public chart: Chart = void 0 as any;
     public closestPointRange: number = void 0 as any;
     public coll: string = void 0 as any;
-    public cross?: Highcharts.SVGElement;
+    public cross?: SVGElement;
     public crosshair?: Highcharts.AxisCrosshairOptions;
     public dataMax?: (null|number);
     public dataMin?: (null|number);
@@ -3899,7 +3907,7 @@ class Axis implements AxisComposition, AxisLike {
     public eventArgs?: any;
     public finalTickAmt?: number;
     public forceRedraw?: boolean;
-    public gridGroup?: Highcharts.SVGElement;
+    public gridGroup?: SVGElement;
     public hasNames: boolean = void 0 as any;
     public hasVisibleSeries: boolean = void 0 as any;
     public height: number = void 0 as any;
@@ -3911,10 +3919,10 @@ class Axis implements AxisComposition, AxisLike {
     public isXAxis?: boolean;
     public isZAxis?: boolean;
     public keepProps?: Array<string>;
-    public labelAlign?: Highcharts.AlignValue;
+    public labelAlign?: AlignValue;
     public labelEdge: Array<null> = void 0 as any; // @todo
     public labelFormatter: Highcharts.AxisLabelsFormatterCallbackFunction = void 0 as any;
-    public labelGroup?: Highcharts.SVGElement;
+    public labelGroup?: SVGElement;
     public labelOffset?: number;
     public labelRotation?: number;
     public left: number = void 0 as any;
@@ -3943,7 +3951,7 @@ class Axis implements AxisComposition, AxisLike {
     public overlap: boolean = void 0 as any;
     public paddedTicks: Array<number> = void 0 as any;
     public plotLinesAndBands: Array<Highcharts.PlotLineOrBand> = void 0 as any;
-    public plotLinesAndBandsGroups: Record<string, Highcharts.SVGElement> = void 0 as any;
+    public plotLinesAndBandsGroups: Record<string, SVGElement> = void 0 as any;
     public pointRange: number = void 0 as any;
     public pointRangePadding: number = void 0 as any;
     public pos: number = void 0 as any;
@@ -6102,7 +6110,7 @@ class Axis implements AxisComposition, AxisLike {
         newMin?: number,
         newMax?: number,
         redraw?: boolean,
-        animation?: (boolean|Partial<Highcharts.AnimationOptionsObject>),
+        animation?: (boolean|Partial<AnimationOptionsObject>),
         eventArguments?: any
     ): void {
         var axis = this,
@@ -6340,9 +6348,9 @@ class Axis implements AxisComposition, AxisLike {
      * @return {Highcharts.AlignValue}
      * Can be `"center"`, `"left"` or `"right"`.
      */
-    public autoLabelAlign(rotation: number): Highcharts.AlignValue {
+    public autoLabelAlign(rotation: number): AlignValue {
         var angle = (pick(rotation, 0) - (this.side * 90) + 720) % 360,
-            evt = { align: 'center' as Highcharts.AlignValue };
+            evt = { align: 'center' as AlignValue };
 
         fireEvent(this, 'autoLabelAlign', evt, function (
             e: Highcharts.Dictionary<any>
@@ -6812,7 +6820,7 @@ class Axis implements AxisComposition, AxisLike {
                     low: opposite ? 'right' : 'left',
                     middle: 'center',
                     high: opposite ? 'left' : 'right'
-                }) as Highcharts.Dictionary<Highcharts.AlignValue>)[
+                }) as Highcharts.Dictionary<AlignValue>)[
                     (axisTitleOptions as any).align
                 ];
             }

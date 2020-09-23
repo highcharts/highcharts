@@ -12,6 +12,7 @@
 
 'use strict';
 
+import type { AlignValue } from '../../Core/Renderer/AlignObject';
 import type ColorString from '../../Core/Color/ColorString';
 import type ColorType from '../../Core/Color/ColorType';
 import type CSSObject from '../../Core/Renderer/CSSObject';
@@ -19,6 +20,7 @@ import type GradientColor from '../../Core/Color/GradientColor';
 import {
     HTMLDOMElement
 } from '../../Core/Renderer/DOMElementType';
+import type ShadowOptionsObject from '../../Core/Renderer/ShadowOptionsObject';
 import type SVGPath from '../../Core/Renderer/SVG/SVGPath';
 import Chart from '../../Core/Chart/Chart.js';
 import Color from '../../Core/Color/Color.js';
@@ -427,7 +429,7 @@ if (!svg) {
     // instead of the VMLRenderer
     // (#1079, #1063)
     addEvent(SVGElement, 'afterInit', function (
-        this: Highcharts.SVGElement
+        this: SVGElement
     ): void {
         if (this.element.nodeName === 'text') {
             this.css({
@@ -744,7 +746,7 @@ if (!svg) {
             baseline: number,
             alignCorrection: number,
             rotation: number,
-            align: Highcharts.AlignValue
+            align: AlignValue
         ): void {
 
             var costheta = rotation ? Math.cos(rotation * deg2rad) : 1,
@@ -982,7 +984,7 @@ if (!svg) {
          */
         shadow: function (
             this: Highcharts.VMLElement,
-            shadowOptions: Partial<Highcharts.ShadowOptionsObject>,
+            shadowOptions: Partial<ShadowOptionsObject>,
             group: Highcharts.VMLElement,
             cutOff: boolean
         ): Highcharts.VMLElement {
@@ -2034,7 +2036,7 @@ if (!svg) {
                 y: number,
                 w: number,
                 h: number,
-                wrapper: Highcharts.SVGElement
+                wrapper: SVGElement
             ): Highcharts.VMLPathArray {
 
                 if (wrapper && defined(wrapper.r)) {

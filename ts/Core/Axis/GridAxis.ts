@@ -13,6 +13,7 @@
 
 import type ColorType from '../Color/ColorType';
 import type Point from '../Series/Point';
+import type SVGElement from '../Renderer/SVG/SVGElement';
 import type SVGPath from '../Renderer/SVG/SVGPath';
 import Axis from './Axis.js';
 import H from '../Globals.js';
@@ -112,40 +113,24 @@ var applyGridOptions = function applyGridOptions(axis: Highcharts.Axis): void {
 };
 
 /**
- * For a datetime axis, the scale will automatically adjust to the
- * appropriate unit. This member gives the default string
- * representations used for each unit. For intermediate values,
- * different units may be used, for example the `day` unit can be used
- * on midnight and `hour` unit be used for intermediate values on the
- * same axis.
+ * @productdesc {gantt}
  * For grid axes (like in Gantt charts),
  * it is possible to declare as a list to provide different
  * formats depending on available space.
- * For an overview of the replacement codes, see
- * [dateFormat](/class-reference/Highcharts#dateFormat).
  *
  * Defaults to:
  * ```js
  * {
-        hour: {
-            list: ['%H:%M', '%H']
-        },
-        day: {
-            list: ['%A, %e. %B', '%a, %e. %b', '%E']
-        },
-        week: {
-            list: ['Week %W', 'W%W']
-        },
-        month: {
-            list: ['%B', '%b', '%o']
-        }
-    },
+ *     hour: { list: ['%H:%M', '%H'] },
+ *     day: { list: ['%A, %e. %B', '%a, %e. %b', '%E'] },
+ *     week: { list: ['Week %W', 'W%W'] },
+ *     month: { list: ['%B', '%b', '%o'] }
+ * }
  * ```
  *
- * @sample {gantt} gantt/demo/left-axis-table
- *         Gantt Chart with custom axis date format.
+ * @sample {gantt} gantt/grid-axis/date-time-label-formats
+ *         Gantt chart with custom axis date format.
  *
- * @product gantt
  * @apioption xAxis.dateTimeLabelFormats
  */
 
@@ -236,7 +221,7 @@ Axis.prototype.getMaxLabelDimensions = function (
         var tick = ticks[pos],
             labelHeight = 0,
             labelWidth = 0,
-            label: Highcharts.SVGElement;
+            label: SVGElement;
 
         if (isObject(tick)) {
             label = isObject(tick.label) ? tick.label : ({} as any);
@@ -457,9 +442,9 @@ class GridAxisAdditions {
      * */
 
     axis: GridAxis;
-    axisLineExtra?: Highcharts.SVGElement;
-    upperBorder?: Highcharts.SVGElement;
-    lowerBorder?: Highcharts.SVGElement;
+    axisLineExtra?: SVGElement;
+    upperBorder?: SVGElement;
+    lowerBorder?: SVGElement;
     columnIndex?: number;
     columns?: Array<GridAxis>;
     isColumn?: boolean;
@@ -527,7 +512,7 @@ class GridAxisAdditions {
      *
      * @return {Highcharts.SVGElement}
      */
-    public renderBorder(path: SVGPath): Highcharts.SVGElement {
+    public renderBorder(path: SVGPath): SVGElement {
         const axis = this.axis,
             renderer = axis.chart.renderer,
             options = axis.options,

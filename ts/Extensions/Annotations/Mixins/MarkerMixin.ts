@@ -121,7 +121,7 @@ var defaultMarkers: Record<string, Highcharts.SVGDefinitionObject> = {
 SVGRenderer.prototype.addMarker = function (
     id: string,
     markerOptions: SVGAttributes
-): Highcharts.SVGElement {
+): SVGElement {
     var options: Highcharts.SVGDefinitionObject = { id: id } as any;
 
     var attrs: SVGAttributes = {

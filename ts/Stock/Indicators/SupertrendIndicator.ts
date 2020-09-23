@@ -10,6 +10,7 @@ import type ColorType from '../../Core/Color/ColorType';
 import type CSSObject from '../../Core/Renderer/CSSObject';
 import type Point from '../../Core/Series/Point';
 import type SVGAttributes from '../../Core/Renderer/SVG/SVGAttributes';
+import type SVGElement from '../../Core/Renderer/SVG/SVGElement';
 import BaseSeries from '../../Core/Series/Series.js';
 const {
     seriesTypes
@@ -263,7 +264,7 @@ BaseSeries.seriesType<typeof Highcharts.SupertrendIndicator>(
                 )> = (mainSeries ? mainSeries.points : []),
                 indicPoints: Array<Highcharts.SupertrendIndicatorPoint> =
                 indicator.points,
-                indicPath: (Highcharts.SVGElement|undefined) = indicator.graph,
+                indicPath: (SVGElement|undefined) = indicator.graph,
                 indicPointsLen: number = indicPoints.length,
 
                 // Points offset between lines
