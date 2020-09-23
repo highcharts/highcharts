@@ -118,7 +118,7 @@ declare global {
             public colorValueData?: Array<number>;
             public data: Array<TreemapPoint>;
             public directTouch: boolean;
-            public drillUpButton: SVGElement;
+            public drillUpButton?: SVGElement;
             public getExtremesFromAll: boolean;
             public idPreviousRoot?: string;
             public mapOptionsToLevel: Dictionary<TreemapSeriesOptions>;
@@ -180,7 +180,6 @@ declare global {
             ): TreemapListOfParentsObject;
             public getTree(): this['tree'];
             public hasData(): boolean;
-            public isDrillAllowed(targetNode: string): boolean;
             public init(chart: Chart, options: TreemapSeriesOptions): void;
             public onClickDrillToNode(event: { point: TreemapPoint }): void;
             public pointAttribs(
@@ -1937,8 +1936,7 @@ BaseSeries.seriesType<typeof Highcharts.TreemapSeries>(
                 drillId = point && point.drillId;
 
             // If a drill id is returned, add click event and cursor.
-            if (isString(drillId) &&
-                (series.isDrillAllowed ? series.isDrillAllowed(drillId) : true)) {
+            if (isString(drillId)) {
                 point.setState(''); // Remove hover
                 series.setRootNode(drillId, true, { trigger: 'click' });
             }
@@ -2105,30 +2103,6 @@ BaseSeries.seriesType<typeof Highcharts.TreemapSeries>(
             fireEvent(series, 'setRootNode', eventArgs, defaultFn);
         },
 
-        /**
-         * Check if the drill up/down is allowed.
-         *
-         * @private
-         */
-        isDrillAllowed: function (
-            this: Highcharts.TreemapSeries,
-            targetNode: string
-        ): boolean {
-            var tree = this.tree,
-                firstChild = tree.children[0];
-
-            // The sunburst series looks exactly the same on the level ''
-            // and level 1 if there’s only one element on level 1. Disable
-            // drilling up/down when it doesn't perform any visual
-            // difference (#13388).
-            return !(
-                tree.children.length === 1 && (
-                    (this.rootNode === '' && targetNode === firstChild.id) ||
-                    (this.rootNode === firstChild.id && targetNode === '')
-                )
-            );
-        },
-
         renderTraverseUpButton: function (
             this: Highcharts.TreemapSeries,
             rootId: string
@@ -2143,13 +2117,13 @@ BaseSeries.seriesType<typeof Highcharts.TreemapSeries>(
                 attr,
                 states;
 
-            if (rootId === '' ||
-                (series.isDrillAllowed ?
-                    !(isString(node.parent) && series.isDrillAllowed(node.parent)) : false)
-            ) {
+            if (rootId === '' || (
+                series.is('sunburst') &&
+                series.tree.children.length === 1 &&
+                rootId === series.tree.children[0].id
+            )) {
                 if (series.drillUpButton) {
-                    series.drillUpButton =
-                        series.drillUpButton.destroy() as any;
+                    series.drillUpButton = series.drillUpButton.destroy();
                 }
             } else if (!this.drillUpButton) {
                 attr = buttonOptions.theme;

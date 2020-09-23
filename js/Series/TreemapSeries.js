@@ -1205,8 +1205,7 @@ BaseSeries.seriesType('treemap', 'scatter'
     onClickDrillToNode: function (event) {
         var series = this, point = event.point, drillId = point && point.drillId;
         // If a drill id is returned, add click event and cursor.
-        if (isString(drillId) &&
-            (series.isDrillAllowed ? series.isDrillAllowed(drillId) : true)) {
+        if (isString(drillId)) {
             point.setState(''); // Remove hover
             series.setRootNode(drillId, true, { trigger: 'click' });
         }
@@ -1330,28 +1329,13 @@ BaseSeries.seriesType('treemap', 'scatter'
         // Fire setRootNode event.
         fireEvent(series, 'setRootNode', eventArgs, defaultFn);
     },
-    /**
-     * Check if the drill up/down is allowed.
-     *
-     * @private
-     */
-    isDrillAllowed: function (targetNode) {
-        var tree = this.tree, firstChild = tree.children[0];
-        // The sunburst series looks exactly the same on the level ''
-        // and level 1 if there’s only one element on level 1. Disable
-        // drilling up/down when it doesn't perform any visual
-        // difference (#13388).
-        return !(tree.children.length === 1 && ((this.rootNode === '' && targetNode === firstChild.id) ||
-            (this.rootNode === firstChild.id && targetNode === '')));
-    },
     renderTraverseUpButton: function (rootId) {
         var series = this, nodeMap = series.nodeMap, node = nodeMap[rootId], name = node.name, buttonOptions = series.options.traverseUpButton, backText = pick(buttonOptions.text, name, '< Back'), attr, states;
-        if (rootId === '' ||
-            (series.isDrillAllowed ?
-                !(isString(node.parent) && series.isDrillAllowed(node.parent)) : false)) {
+        if (rootId === '' || (series.is('sunburst') &&
+            series.tree.children.length === 1 &&
+            rootId === series.tree.children[0].id)) {
             if (series.drillUpButton) {
-                series.drillUpButton =
-                    series.drillUpButton.destroy();
+                series.drillUpButton = series.drillUpButton.destroy();
             }
         }
         else if (!this.drillUpButton) {
