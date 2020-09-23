@@ -2113,7 +2113,7 @@ BaseSeries.seriesType<typeof Highcharts.TreemapSeries>(
                 name = node.name,
                 buttonOptions: Highcharts.TreemapSeriesUpButtonOptions =
                     series.options.traverseUpButton as any,
-                backText = pick(buttonOptions.text, name, '< Back'),
+                backText = pick(buttonOptions.text, name, '◁ Back'),
                 attr,
                 states;
 

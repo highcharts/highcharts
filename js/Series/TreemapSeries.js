@@ -1330,7 +1330,7 @@ BaseSeries.seriesType('treemap', 'scatter'
         fireEvent(series, 'setRootNode', eventArgs, defaultFn);
     },
     renderTraverseUpButton: function (rootId) {
-        var series = this, nodeMap = series.nodeMap, node = nodeMap[rootId], name = node.name, buttonOptions = series.options.traverseUpButton, backText = pick(buttonOptions.text, name, '< Back'), attr, states;
+        var series = this, nodeMap = series.nodeMap, node = nodeMap[rootId], name = node.name, buttonOptions = series.options.traverseUpButton, backText = pick(buttonOptions.text, name, '◁ Back'), attr, states;
         if (rootId === '' || (series.is('sunburst') &&
             series.tree.children.length === 1 &&
             rootId === series.tree.children[0].id)) {
