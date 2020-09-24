@@ -15,6 +15,7 @@ import type {
     AlignValue,
     VerticalAlignValue
 } from './Renderer/AlignObject';
+import type AnimationOptionsObject from './Animation/AnimationOptionsObject';
 import type ColorString from './Color/ColorString';
 import type ColorType from './Color/ColorType';
 import type Chart from './Chart/Chart';

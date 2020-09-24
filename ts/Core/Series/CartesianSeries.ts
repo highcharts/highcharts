@@ -8,6 +8,7 @@
  *
  * */
 
+import type AnimationOptionsObject from '../Animation/AnimationOptionsObject';
 import type { CursorValue } from '../Renderer/CSSObject';
 import type Chart from '../Chart/Chart';
 import type ColorType from '../Color/ColorType';
@@ -15,6 +16,8 @@ import type { SeriesOptionsType, SeriesPlotOptionsType } from './Types';
 import type ShadowOptionsObject from '../Renderer/ShadowOptionsObject';
 import type SVGAttributes from '../Renderer/SVG/SVGAttributes';
 import type SVGPath from '../Renderer/SVG/SVGPath';
+import A from '../Animation/AnimationUtilities.js';
+const { animObject } = A;
 import BaseSeries from './Series.js';
 import H from '../Globals.js';
 import LegendSymbolMixin from '../../Mixins/LegendSymbol.js';
@@ -25,7 +28,6 @@ import SVGElement from '../Renderer/SVG/SVGElement.js';
 import U from '../Utilities.js';
 const {
     addEvent,
-    animObject,
     arrayMax,
     arrayMin,
     clamp,
@@ -3966,7 +3968,7 @@ const CartesianSeries = BaseSeries.seriesType<typeof Highcharts.LineSeries>(
         updateData: function (
             this: Highcharts.Series,
             data: Array<Highcharts.PointOptionsType>,
-            animation?: (boolean|Partial<Highcharts.AnimationOptionsObject>)
+            animation?: (boolean|Partial<AnimationOptionsObject>)
         ): boolean {
             var options = this.options,
                 dataSorting = options.dataSorting,
@@ -4171,7 +4173,7 @@ const CartesianSeries = BaseSeries.seriesType<typeof Highcharts.LineSeries>(
             this: Highcharts.Series,
             data: Array<Highcharts.PointOptionsType>,
             redraw?: boolean,
-            animation?: (boolean|Partial<Highcharts.AnimationOptionsObject>),
+            animation?: (boolean|Partial<AnimationOptionsObject>),
             updatePoints?: boolean
         ): void {
             var series = this,
@@ -5259,7 +5261,7 @@ const CartesianSeries = BaseSeries.seriesType<typeof Highcharts.LineSeries>(
          */
         getClipBox: function (
             this: Highcharts.Series,
-            animation?: (boolean|Partial<Highcharts.AnimationOptionsObject>),
+            animation?: (boolean|Partial<AnimationOptionsObject>),
             finalBox?: boolean
         ): Highcharts.Dictionary<number> {
             var series = this,
@@ -5314,7 +5316,7 @@ const CartesianSeries = BaseSeries.seriesType<typeof Highcharts.LineSeries>(
          */
         setClip: function (
             this: Highcharts.Series,
-            animation?: (boolean|Highcharts.AnimationOptionsObject)
+            animation?: (boolean|AnimationOptionsObject)
         ): void {
             var chart = this.chart,
                 options = this.options,

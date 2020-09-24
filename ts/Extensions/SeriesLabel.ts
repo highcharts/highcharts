@@ -8,18 +8,20 @@
  *
  * */
 
+import type AnimationOptionsObject from '../Core/Animation/AnimationOptionsObject';
 import type CSSObject from '../Core/Renderer/CSSObject';
 import type Point from '../Core/Series/Point';
 import type SVGAttributes from '../Core/Renderer/SVG/SVGAttributes';
 import type SVGElement from '../Core/Renderer/SVG/SVGElement';
 import type SVGPath from '../Core/Renderer/SVG/SVGPath';
+import A from '../Core/Animation/AnimationUtilities.js';
+const { animObject } = A;
 import Chart from '../Core/Chart/Chart.js';
 import H from '../Core/Globals.js';
 import SVGRenderer from '../Core/Renderer/SVG/SVGRenderer.js';
 import U from '../Core/Utilities.js';
 const {
     addEvent,
-    animObject,
     extend,
     fireEvent,
     format,
@@ -1075,7 +1077,7 @@ Chart.prototype.drawSeriesLabels = function (): void {
 
                     // Default initial animation to a fraction of the series
                     // animation (#9396)
-                    let animationOptions: Partial<Highcharts.AnimationOptionsObject>|undefined;
+                    let animationOptions: Partial<AnimationOptionsObject>|undefined;
                     if (isNew) {
                         animationOptions = animObject(series.options.animation);
                         // @todo: Safely remove any cast after merging #13005

@@ -10,12 +10,14 @@
  *
  * */
 'use strict';
+import A from '../Core/Animation/AnimationUtilities.js';
+var animObject = A.animObject;
 import BaseSeries from '../Core/Series/Series.js';
 import H from '../Core/Globals.js';
 var noop = H.noop;
 import OnSeriesMixin from '../Mixins/OnSeries.js';
 import U from '../Core/Utilities.js';
-var animObject = U.animObject, isNumber = U.isNumber, pick = U.pick;
+var isNumber = U.isNumber, pick = U.pick;
 import './ColumnSeries.js';
 // eslint-disable-next-line valid-jsdoc
 /**

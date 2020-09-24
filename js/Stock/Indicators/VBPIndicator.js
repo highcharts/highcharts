@@ -9,12 +9,14 @@
  *  !!!!!!! SOURCE GETS TRANSPILED BY TYPESCRIPT. EDIT TS FILE ONLY. !!!!!!!
  *
  * */
+import A from '../../Core/Animation/AnimationUtilities.js';
+var animObject = A.animObject;
 import BaseSeries from '../../Core/Series/Series.js';
 import H from '../../Core/Globals.js';
 var noop = H.noop;
 import Point from '../../Core/Series/Point.js';
 import U from '../../Core/Utilities.js';
-var addEvent = U.addEvent, animObject = U.animObject, arrayMax = U.arrayMax, arrayMin = U.arrayMin, correctFloat = U.correctFloat, error = U.error, extend = U.extend, isArray = U.isArray;
+var addEvent = U.addEvent, arrayMax = U.arrayMax, arrayMin = U.arrayMin, correctFloat = U.correctFloat, error = U.error, extend = U.extend, isArray = U.isArray;
 /* eslint-disable require-jsdoc */
 // Utils
 function arrayExtremesOHLC(data) {

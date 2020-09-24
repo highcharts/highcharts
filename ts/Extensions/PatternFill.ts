@@ -13,12 +13,15 @@
 
 'use strict';
 
+import type AnimationOptionsObject from '../Core/Animation/AnimationOptionsObject';
 import type ColorString from '../Core/Color/ColorString';
 import type SVGAttributes from '../Core/Renderer/SVG/SVGAttributes';
 import type {
     SVGDOMElement
 } from '../Core/Renderer/DOMElementType';
 import type SVGElement from '../Core/Renderer/SVG/SVGElement';
+import A from '../Core/Animation/AnimationUtilities.js';
+const { animObject } = A;
 import Chart from '../Core/Chart/Chart.js';
 import H from '../Core/Globals.js';
 import Point from '../Core/Series/Point.js';
@@ -26,7 +29,6 @@ import SVGRenderer from '../Core/Renderer/SVG/SVGRenderer.js';
 import U from '../Core/Utilities.js';
 const {
     addEvent,
-    animObject,
     erase,
     getOptions,
     merge,
@@ -360,7 +362,7 @@ Point.prototype.calculatePatternDimensions = function (
  */
 SVGRenderer.prototype.addPattern = function (
     options: PatternFill.PatternOptionsObject,
-    animation?: (boolean|Partial<Highcharts.AnimationOptionsObject>)
+    animation?: (boolean|Partial<AnimationOptionsObject>)
 ): (SVGElement|undefined) {
     var pattern: (SVGElement|undefined),
         animate = pick(animation, true),
@@ -761,7 +763,7 @@ addEvent(Chart, 'redraw', function (): void {
 namespace PatternFill {
 
     export interface PatternObject {
-        animation?: Partial<Highcharts.AnimationOptionsObject>;
+        animation?: Partial<AnimationOptionsObject>;
         pattern: PatternOptionsObject;
         patternIndex?: number;
     }

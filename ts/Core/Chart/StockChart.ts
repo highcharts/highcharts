@@ -1052,7 +1052,7 @@ addEvent(LineSeries, 'render', function (this: Highcharts.Series): void {
         }
 
         // First render, initial clip box
-        if (!this.clipBox && this.animate) {
+        if (!this.clipBox && !chart.hasRendered) {
             this.clipBox = merge(chart.clipBox);
             this.clipBox.width = this.xAxis.len;
             this.clipBox.height = clipHeight;

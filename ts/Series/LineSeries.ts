@@ -8,6 +8,7 @@
  *
  * */
 
+import type AnimationOptionsObject from '../Core/Animation/AnimationOptionsObject';
 import type { AxisType } from '../Core/Axis/Types';
 import type BaseSeries from '../Core/Series/Series';
 import type Chart from '../Core/Chart/Chart';

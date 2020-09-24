@@ -8,6 +8,8 @@
  *
  * */
 'use strict';
+import A from './Animation/AnimationUtilities.js';
+var animate = A.animate, setAnimation = A.setAnimation;
 import Axis from './Axis/Axis.js';
 import BaseSeries from './Series/Series.js';
 var seriesTypes = BaseSeries.seriesTypes;
@@ -19,7 +21,7 @@ var time = O.time;
 import Point from '../Core/Series/Point.js';
 import Time from './Time.js';
 import U from './Utilities.js';
-var addEvent = U.addEvent, animate = U.animate, createElement = U.createElement, css = U.css, defined = U.defined, erase = U.erase, error = U.error, extend = U.extend, fireEvent = U.fireEvent, isArray = U.isArray, isNumber = U.isNumber, isObject = U.isObject, isString = U.isString, merge = U.merge, objectEach = U.objectEach, pick = U.pick, relativeLength = U.relativeLength, setAnimation = U.setAnimation, splat = U.splat;
+var addEvent = U.addEvent, createElement = U.createElement, css = U.css, defined = U.defined, erase = U.erase, error = U.error, extend = U.extend, fireEvent = U.fireEvent, isArray = U.isArray, isNumber = U.isNumber, isObject = U.isObject, isString = U.isString, merge = U.merge, objectEach = U.objectEach, pick = U.pick, relativeLength = U.relativeLength, splat = U.splat;
 /* eslint-disable valid-jsdoc */
 /**
  * Remove settings that have not changed, to avoid unnecessary rendering or

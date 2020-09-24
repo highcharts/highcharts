@@ -8,9 +8,11 @@
  *
  * */
 'use strict';
+import A from '../Animation/AnimationUtilities.js';
+var animObject = A.animObject;
 import H from '../Globals.js';
 import U from '../Utilities.js';
-var animObject = U.animObject, defined = U.defined, erase = U.erase, extend = U.extend, fireEvent = U.fireEvent, format = U.format, getNestedProperty = U.getNestedProperty, isArray = U.isArray, isNumber = U.isNumber, isObject = U.isObject, syncTimeout = U.syncTimeout, pick = U.pick, removeEvent = U.removeEvent, uniqueKey = U.uniqueKey;
+var defined = U.defined, erase = U.erase, extend = U.extend, fireEvent = U.fireEvent, format = U.format, getNestedProperty = U.getNestedProperty, isArray = U.isArray, isNumber = U.isNumber, isObject = U.isObject, syncTimeout = U.syncTimeout, pick = U.pick, removeEvent = U.removeEvent, uniqueKey = U.uniqueKey;
 /**
  * Function callback when a series point is clicked. Return false to cancel the
  * action.
