@@ -15,6 +15,9 @@
 import type Annotation from '../Extensions/Annotations/Annotations';
 import type { AxisType } from '../Core/Axis/Types';
 import type Chart from '../Core/Chart/Chart';
+import type {
+    HTMLDOMElement
+} from '../Core/Renderer/DOMElementType';
 import type Point from '../Core/Series/Point';
 import H from '../Core/Globals.js';
 import NavigationBindings from '../Extensions/Annotations/NavigationBindings.js';
@@ -1835,7 +1838,7 @@ var stockToolsBindings: Highcharts.Dictionary<Highcharts.NavigationBindingsOptio
         /** @ignore-option */
         init: function (
             this: NavigationBindings,
-            button: Highcharts.HTMLDOMElement
+            button: HTMLDOMElement
         ): void {
             this.chart.update({
                 chart: {
@@ -1865,7 +1868,7 @@ var stockToolsBindings: Highcharts.Dictionary<Highcharts.NavigationBindingsOptio
         /** @ignore-option */
         init: function (
             this: NavigationBindings,
-            button: Highcharts.HTMLDOMElement
+            button: HTMLDOMElement
         ): void {
             this.chart.update({
                 chart: {
@@ -1894,7 +1897,7 @@ var stockToolsBindings: Highcharts.Dictionary<Highcharts.NavigationBindingsOptio
         /** @ignore-option */
         init: function (
             this: NavigationBindings,
-            button: Highcharts.HTMLDOMElement
+            button: HTMLDOMElement
         ): void {
             this.chart.update({
                 chart: {
@@ -1923,7 +1926,7 @@ var stockToolsBindings: Highcharts.Dictionary<Highcharts.NavigationBindingsOptio
         /** @ignore-option */
         init: function (
             this: NavigationBindings,
-            button: Highcharts.HTMLDOMElement
+            button: HTMLDOMElement
         ): void {
             this.chart.series[0].update({
                 type: 'line',
@@ -1951,7 +1954,7 @@ var stockToolsBindings: Highcharts.Dictionary<Highcharts.NavigationBindingsOptio
         /** @ignore-option */
         init: function (
             this: NavigationBindings,
-            button: Highcharts.HTMLDOMElement
+            button: HTMLDOMElement
         ): void {
             this.chart.series[0].update({
                 type: 'ohlc'
@@ -1978,7 +1981,7 @@ var stockToolsBindings: Highcharts.Dictionary<Highcharts.NavigationBindingsOptio
         /** @ignore-option */
         init: function (
             this: NavigationBindings,
-            button: Highcharts.HTMLDOMElement
+            button: HTMLDOMElement
         ): void {
             this.chart.series[0].update({
                 type: 'candlestick'
@@ -2007,7 +2010,7 @@ var stockToolsBindings: Highcharts.Dictionary<Highcharts.NavigationBindingsOptio
         /** @ignore-option */
         init: function (
             this: NavigationBindings,
-            button: Highcharts.HTMLDOMElement
+            button: HTMLDOMElement
         ): void {
             this.chart.fullscreen.toggle();
             fireEvent(
@@ -2033,7 +2036,7 @@ var stockToolsBindings: Highcharts.Dictionary<Highcharts.NavigationBindingsOptio
         /** @ignore-option */
         init: function (
             this: NavigationBindings,
-            button: Highcharts.HTMLDOMElement
+            button: HTMLDOMElement
         ): void {
             var chart = this.chart,
                 series = chart.series[0],
@@ -2131,7 +2134,7 @@ var stockToolsBindings: Highcharts.Dictionary<Highcharts.NavigationBindingsOptio
         /** @ignore-option */
         init: function (
             this: Highcharts.StockToolsNavigationBindings,
-            button: Highcharts.HTMLDOMElement
+            button: HTMLDOMElement
         ): void {
             var chart = this.chart,
                 gui: Highcharts.Toolbar = chart.stockTools as any,
@@ -2183,13 +2186,13 @@ var stockToolsBindings: Highcharts.Dictionary<Highcharts.NavigationBindingsOptio
         /** @ignore-option */
         init: function (
             this: Highcharts.StockToolsNavigationBindings,
-            button: Highcharts.HTMLDOMElement
+            button: HTMLDOMElement
         ): void {
             var navigation = this,
                 chart = navigation.chart,
                 annotations: Array<Highcharts.AnnotationsOptions> = [],
-                indicators: Array<Highcharts.SeriesOptions> = [],
-                flags: Array<Highcharts.SeriesOptions> = [],
+                indicators: Array<DeepPartial<Highcharts.SeriesOptions>> = [],
+                flags: Array<DeepPartial<Highcharts.SeriesOptions>> = [],
                 yAxes: Array<Highcharts.YAxisOptions> = [];
 
             chart.annotations.forEach(function (

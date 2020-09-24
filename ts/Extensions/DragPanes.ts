@@ -14,6 +14,12 @@
 
 'use strict';
 
+import type ColorType from '../Core/Color/ColorType';
+import type {
+    CursorValue
+} from '../Core/Renderer/CSSObject';
+import type SVGAttributes from '../Core/Renderer/SVG/SVGAttributes';
+import type SVGElement from '../Core/Renderer/SVG/SVGElement';
 import H from '../Core/Globals.js';
 const {
     hasTouch
@@ -271,7 +277,7 @@ class AxisResizer {
     /* eslint-enable no-invalid-this */
 
     public axis: Highcharts.Axis = void 0 as any;
-    public controlLine: Highcharts.SVGElement = void 0 as any;
+    public controlLine: SVGElement = void 0 as any;
     public eventsToUnbind?: Array<Function>;
     public grabbed?: boolean;
     public hasDragged?: boolean;
@@ -321,7 +327,7 @@ class AxisResizer {
                 chart.plotTop,
                 chart.plotTop + chart.plotHeight
             ),
-            attr: Highcharts.SVGAttributes = {},
+            attr: SVGAttributes = {},
             lineWidth: number;
 
         if (!chart.styledMode) {
@@ -701,7 +707,7 @@ addEvent(Axis, 'afterRender', function (): void {
             // Resizer not present and enabled
             if (enabled) {
                 // Add new resizer
-                axis.resizer = new H.AxisResizer(axis);
+                axis.resizer = new AxisResizer(axis);
             }
             // Resizer not present and disabled, so do nothing
         }

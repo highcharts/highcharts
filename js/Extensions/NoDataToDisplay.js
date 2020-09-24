@@ -11,12 +11,10 @@
  *  !!!!!!! SOURCE GETS TRANSPILED BY TYPESCRIPT. EDIT TS FILE ONLY. !!!!!!!
  *
  * */
-'use strict';
-import H from '../Core/Globals.js';
+import Chart from '../Core/Chart/Chart.js';
 import U from '../Core/Utilities.js';
-var addEvent = U.addEvent, extend = U.extend, getOptions = U.getOptions;
-import '../Core/Series/Series.js';
-var chartPrototype = H.Chart.prototype, defaultOptions = getOptions();
+var addEvent = U.addEvent, extend = U.extend, getOptions = U.getOptions, merge = U.merge;
+var chartPrototype = Chart.prototype, defaultOptions = getOptions();
 // Add language option
 extend(defaultOptions.lang, 
 /**
@@ -129,17 +127,19 @@ defaultOptions.noData = {
  * @requires modules/no-data-to-display
  */
 chartPrototype.showNoData = function (str) {
-    var chart = this, options = chart.options, text = str || (options && options.lang.noData), noDataOptions = options && options.noData;
-    if (!chart.noDataLabel && chart.renderer) {
-        chart.noDataLabel = chart.renderer
-            .label(text, 0, 0, null, null, null, noDataOptions.useHTML, null, 'no-data');
+    var chart = this, options = chart.options, text = str || (options && options.lang.noData), noDataOptions = options && (options.noData || {});
+    if (chart.renderer) { // Meaning chart is not destroyed
+        if (!chart.noDataLabel) {
+            chart.noDataLabel = chart.renderer
+                .label(text, 0, 0, void 0, void 0, void 0, noDataOptions.useHTML, void 0, 'no-data')
+                .add();
+        }
         if (!chart.styledMode) {
             chart.noDataLabel
                 .attr(noDataOptions.attr)
-                .css(noDataOptions.style);
+                .css(noDataOptions.style || {});
         }
-        chart.noDataLabel.add();
-        chart.noDataLabel.align(extend(chart.noDataLabel.getBBox(), noDataOptions.position), false, 'plotBox');
+        chart.noDataLabel.align(extend(chart.noDataLabel.getBBox(), noDataOptions.position || {}), false, 'plotBox');
     }
 };
 /**
@@ -176,7 +176,7 @@ chartPrototype.hasData = function () {
 };
 /* eslint-disable no-invalid-this */
 // Add event listener to handle automatic show or hide no-data message.
-addEvent(H.Chart, 'render', function handleNoData() {
+addEvent(Chart, 'render', function handleNoData() {
     if (this.hasData()) {
         this.hideNoData();
     }

@@ -10,9 +10,21 @@
 
 'use strict';
 
+import type {
+    AlignValue,
+    VerticalAlignValue
+} from '../../Core/Renderer/AlignObject';
+import type AnimationOptionsObject from '../../Core/Animation/AnimationOptionsObject';
 import type { AxisType } from '../../Core/Axis/Types';
+import type ColorString from '../../Core/Color/ColorString';
+import type ColorType from '../../Core/Color/ColorType';
+import type CSSObject from '../../Core/Renderer/CSSObject';
 import type Point from '../../Core/Series/Point';
+import type ShadowOptionsObject from '../../Core/Renderer/ShadowOptionsObject';
+import type SVGElement from '../../Core/Renderer/SVG/SVGElement';
 import type SVGPath from '../../Core/Renderer/SVG/SVGPath';
+import A from '../../Core/Animation/AnimationUtilities.js';
+const { getDeferredAnimation } = A;
 import Chart from '../../Core/Chart/Chart.js';
 const chartProto: Highcharts.AnnotationChart = Chart.prototype as any;
 import ControllableMixin from './Mixins/ControllableMixin.js';
@@ -35,7 +47,6 @@ const {
     extend,
     find,
     fireEvent,
-    getDeferredAnimation,
     merge,
     pick,
     splat,
@@ -400,23 +411,23 @@ class Annotation implements EventEmitterMixin.Type, ControllableMixin.Type {
 
     public annotation: ControllableMixin.Type['annotation'] = void 0 as any;
     public chart: Highcharts.AnnotationChart;
-    public clipRect?: Highcharts.SVGElement;
+    public clipRect?: SVGElement;
     public clipXAxis?: AxisType;
     public clipYAxis?: AxisType;
     public coll: 'annotations' = 'annotations';
     public collection: ControllableMixin.Type['collection'] = void 0 as any;
     public controlPoints: Array<ControlPoint>;
-    public animationConfig: Partial<Highcharts.AnimationOptionsObject> = void 0 as any;
-    public graphic: Highcharts.SVGElement = void 0 as any;
-    public group: Highcharts.SVGElement = void 0 as any;
+    public animationConfig: Partial<AnimationOptionsObject> = void 0 as any;
+    public graphic: SVGElement = void 0 as any;
+    public group: SVGElement = void 0 as any;
     public isUpdating?: boolean;
     public labelCollector: Chart.LabelCollectorFunction = void 0 as any;
     public labels: Array<Highcharts.AnnotationLabelType>;
-    public labelsGroup: Highcharts.SVGElement = void 0 as any;
+    public labelsGroup: SVGElement = void 0 as any;
     public options: Highcharts.AnnotationsOptions;
     public points: Array<Highcharts.AnnotationPointType>;
     public shapes: Array<Highcharts.AnnotationShapeType>;
-    public shapesGroup: Highcharts.SVGElement = void 0 as any;
+    public shapesGroup: SVGElement = void 0 as any;
     public userOptions: Highcharts.AnnotationsOptions;
 
     /* *
@@ -547,12 +558,12 @@ class Annotation implements EventEmitterMixin.Type, ControllableMixin.Type {
     public setLabelCollector(): void {
         var annotation = this;
 
-        annotation.labelCollector = function (): Array<Highcharts.SVGElement> {
+        annotation.labelCollector = function (): Array<SVGElement> {
             return annotation.labels.reduce(
                 function (
-                    labels: Array<Highcharts.SVGElement>,
+                    labels: Array<SVGElement>,
                     label: Highcharts.AnnotationLabelType
-                ): Array<Highcharts.SVGElement> {
+                ): Array<SVGElement> {
                     if (!label.options.allowOverlap) {
                         labels.push(label.graphic);
                     }

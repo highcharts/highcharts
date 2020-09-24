@@ -7,16 +7,13 @@
  *  !!!!!!! SOURCE GETS TRANSPILED BY TYPESCRIPT. EDIT TS FILE ONLY. !!!!!!!
  *
  * */
-'use strict';
-import H from '../Core/Globals.js';
+import BaseSeries from '../Core/Series/Series.js';
 import LegendSymbolMixin from '../Mixins/LegendSymbol.js';
 import O from '../Core/Options.js';
 var defaultOptions = O.defaultOptions;
-import U from '../Core/Utilities.js';
-var seriesType = U.seriesType;
 import './AreaSeries.js';
 import './SplineSeries.js';
-var areaProto = H.seriesTypes.area.prototype;
+var areaProto = BaseSeries.seriesTypes.area.prototype;
 /**
  * AreaSpline series type.
  *
@@ -26,7 +23,7 @@ var areaProto = H.seriesTypes.area.prototype;
  *
  * @augments Highcharts.Series
  */
-seriesType('areaspline', 'spline', 
+BaseSeries.seriesType('areaspline', 'spline', 
 /**
  * The area spline series is an area series where the graph between the
  * points is smoothed into a spline.
@@ -40,6 +37,26 @@ seriesType('areaspline', 'spline',
  * @excluding step, boostThreshold, boostBlending
  * @product   highcharts highstock
  * @apioption plotOptions.areaspline
+ */
+/**
+ * @see [fillColor](#plotOptions.areaspline.fillColor)
+ * @see [fillOpacity](#plotOptions.areaspline.fillOpacity)
+ *
+ * @apioption plotOptions.areaspline.color
+ */
+/**
+ * @see [color](#plotOptions.areaspline.color)
+ * @see [fillOpacity](#plotOptions.areaspline.fillOpacity)
+ *
+ * @apioption plotOptions.areaspline.fillColor
+ */
+/**
+ * @see [color](#plotOptions.areaspline.color)
+ * @see [fillColor](#plotOptions.areaspline.fillColor)
+ *
+ * @default   {highcharts} 0.75
+ * @default   {highstock} 0.75
+ * @apioption plotOptions.areaspline.fillOpacity
  */
 defaultOptions.plotOptions.area, {
     getStackPoints: areaProto.getStackPoints,
@@ -56,6 +73,12 @@ defaultOptions.plotOptions.area, {
  * @excluding dataParser, dataURL, step, boostThreshold, boostBlending
  * @product   highcharts highstock
  * @apioption series.areaspline
+ */
+/**
+ * @see [fillColor](#series.areaspline.fillColor)
+ * @see [fillOpacity](#series.areaspline.fillOpacity)
+ *
+ * @apioption series.areaspline.color
  */
 /**
  * An array of data points for the series. For the `areaspline` series
@@ -115,5 +138,19 @@ defaultOptions.plotOptions.area, {
  * @extends   series.line.data
  * @product   highcharts highstock
  * @apioption series.areaspline.data
+ */
+/**
+ * @see [color](#series.areaspline.color)
+ * @see [fillOpacity](#series.areaspline.fillOpacity)
+ *
+ * @apioption series.areaspline.fillColor
+ */
+/**
+ * @see [color](#series.areaspline.color)
+ * @see [fillColor](#series.areaspline.fillColor)
+ *
+ * @default   {highcharts} 0.75
+ * @default   {highstock} 0.75
+ * @apioption series.areaspline.fillOpacity
  */
 ''; // adds doclets above into transpilat

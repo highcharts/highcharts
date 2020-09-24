@@ -7,9 +7,10 @@
  *  !!!!!!! SOURCE GETS TRANSPILED BY TYPESCRIPT. EDIT TS FILE ONLY. !!!!!!!
  *
  * */
-'use strict';
+import BaseSeries from '../../Core/Series/Series.js';
 import U from '../../Core/Utilities.js';
-var isArray = U.isArray, seriesType = U.seriesType;
+var isArray = U.isArray;
+import './SMAIndicator.js';
 /* eslint-disable valid-jsdoc */
 // Utils:
 /**
@@ -50,7 +51,7 @@ function populateAverage(points, xVal, yVal, i) {
  *
  * @augments Highcharts.Series
  */
-seriesType('wma', 'sma', 
+BaseSeries.seriesType('wma', 'sma', 
 /**
  * Weighted moving average indicator (WMA). This series requires `linkedTo`
  * option to be set.

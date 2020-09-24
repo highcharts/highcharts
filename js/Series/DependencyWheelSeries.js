@@ -9,13 +9,14 @@
  *  !!!!!!! SOURCE GETS TRANSPILED BY TYPESCRIPT. EDIT TS FILE ONLY. !!!!!!!
  *
  * */
-'use strict';
+import A from '../Core/Animation/AnimationUtilities.js';
+var animObject = A.animObject;
+import BaseSeries from '../Core/Series/Series.js';
 import H from '../Core/Globals.js';
-import U from '../Core/Utilities.js';
-var animObject = U.animObject, seriesType = U.seriesType;
-import '../Core/Options.js';
 import NodesMixin from '../Mixins/Nodes.js';
-var base = H.seriesTypes.sankey.prototype;
+import './SankeySeries.js';
+import '../Core/Options.js';
+var base = BaseSeries.seriesTypes.sankey.prototype;
 /**
  * @private
  * @class
@@ -23,7 +24,7 @@ var base = H.seriesTypes.sankey.prototype;
  *
  * @augments Highcharts.seriesTypes.sankey
  */
-seriesType('dependencywheel', 'sankey', 
+BaseSeries.seriesType('dependencywheel', 'sankey', 
 /**
  * A dependency wheel chart is a type of flow diagram, where all nodes are
  * laid out in a circle, and the flow between the are drawn as link bands.
@@ -56,7 +57,7 @@ seriesType('dependencywheel', 'sankey',
     startAngle: 0
 }, {
     orderNodes: false,
-    getCenter: H.seriesTypes.pie.prototype.getCenter,
+    getCenter: BaseSeries.seriesTypes.pie.prototype.getCenter,
     /* eslint-disable valid-jsdoc */
     /**
      * Dependency wheel has only one column, it runs along the perimeter.

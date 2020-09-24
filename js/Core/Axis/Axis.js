@@ -8,11 +8,13 @@
  *
  * */
 'use strict';
-import Color from '../Color.js';
+import A from '../Animation/AnimationUtilities.js';
+var animObject = A.animObject;
+import Color from '../Color/Color.js';
 import H from '../Globals.js';
 import Tick from './Tick.js';
 import U from '../Utilities.js';
-var addEvent = U.addEvent, animObject = U.animObject, arrayMax = U.arrayMax, arrayMin = U.arrayMin, clamp = U.clamp, correctFloat = U.correctFloat, defined = U.defined, destroyObjectProperties = U.destroyObjectProperties, error = U.error, extend = U.extend, fireEvent = U.fireEvent, format = U.format, getMagnitude = U.getMagnitude, isArray = U.isArray, isFunction = U.isFunction, isNumber = U.isNumber, isString = U.isString, merge = U.merge, normalizeTickInterval = U.normalizeTickInterval, objectEach = U.objectEach, pick = U.pick, relativeLength = U.relativeLength, removeEvent = U.removeEvent, splat = U.splat, syncTimeout = U.syncTimeout;
+var addEvent = U.addEvent, arrayMax = U.arrayMax, arrayMin = U.arrayMin, clamp = U.clamp, correctFloat = U.correctFloat, defined = U.defined, destroyObjectProperties = U.destroyObjectProperties, error = U.error, extend = U.extend, fireEvent = U.fireEvent, format = U.format, getMagnitude = U.getMagnitude, isArray = U.isArray, isFunction = U.isFunction, isNumber = U.isNumber, isString = U.isString, merge = U.merge, normalizeTickInterval = U.normalizeTickInterval, objectEach = U.objectEach, pick = U.pick, relativeLength = U.relativeLength, removeEvent = U.removeEvent, splat = U.splat, syncTimeout = U.syncTimeout;
 /**
  * Options for the path on the Axis to be calculated.
  * @interface Highcharts.AxisPlotLinePathOptionsObject
@@ -2667,13 +2669,14 @@ var Axis = /** @class */ (function () {
      * The tick index.
      */
     Axis.prototype.renderTick = function (pos, i) {
+        var _a;
         var axis = this;
         var isLinked = axis.isLinked;
         var ticks = axis.ticks;
         var slideInTicks = axis.chart.hasRendered && isNumber(axis.oldMin);
         // Linked axes need an extra check to find out if
         if (!isLinked ||
-            (pos >= axis.min && pos <= axis.max)) {
+            (pos >= axis.min && pos <= axis.max) || ((_a = axis.grid) === null || _a === void 0 ? void 0 : _a.isColumn)) {
             if (!ticks[pos]) {
                 ticks[pos] = new Tick(axis, pos);
             }
@@ -3467,7 +3470,9 @@ var Axis = /** @class */ (function () {
          * representations used for each unit. For intermediate values,
          * different units may be used, for example the `day` unit can be used
          * on midnight and `hour` unit be used for intermediate values on the
-         * same axis. For an overview of the replacement codes, see
+         * same axis.
+         *
+         * For an overview of the replacement codes, see
          * [dateFormat](/class-reference/Highcharts#dateFormat).
          *
          * Defaults to:
@@ -3490,7 +3495,7 @@ var Axis = /** @class */ (function () {
          *         More information in x axis labels
          *
          * @declare Highcharts.AxisDateTimeLabelFormatsOptions
-         * @product highcharts highstock
+         * @product highcharts highstock gantt
          */
         dateTimeLabelFormats: {
             /**
@@ -4309,7 +4314,8 @@ var Axis = /** @class */ (function () {
          *         Y axis on left side
          *
          * @type      {boolean}
-         * @default   false
+         * @default   {highcharts|highstock|highmaps} false
+         * @default   {gantt} true
          * @apioption xAxis.opposite
          */
         /**

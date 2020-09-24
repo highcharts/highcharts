@@ -7,11 +7,11 @@
  *  !!!!!!! SOURCE GETS TRANSPILED BY TYPESCRIPT. EDIT TS FILE ONLY. !!!!!!!
  *
  * */
-'use strict';
-import H from '../Core/Globals.js';
+import BaseSeries from '../Core/Series/Series.js';
 import U from '../Core/Utilities.js';
-var isNumber = U.isNumber, merge = U.merge, pick = U.pick, relativeLength = U.relativeLength, seriesType = U.seriesType;
-var columnProto = H.seriesTypes.column.prototype;
+var isNumber = U.isNumber, merge = U.merge, pick = U.pick, relativeLength = U.relativeLength;
+import './ColumnSeries.js';
+var columnProto = BaseSeries.seriesTypes.column.prototype;
 /**
  * The bullet series type.
  *
@@ -21,7 +21,7 @@ var columnProto = H.seriesTypes.column.prototype;
  *
  * @augments Highcharts.Series
  */
-seriesType('bullet', 'column'
+BaseSeries.seriesType('bullet', 'column'
 /**
  * A bullet graph is a variation of a bar graph. The bullet graph features
  * a single measure, compares it to a target, and displays it in the context

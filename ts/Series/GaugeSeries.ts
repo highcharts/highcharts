@@ -8,11 +8,23 @@
  *
  * */
 
-'use strict';
-
+import type ColorType from '../Core/Color/ColorType';
 import type RadialAxis from '../Core/Axis/RadialAxis';
+import type SVGAttributes from '../Core/Renderer/SVG/SVGAttributes';
 import type SVGPath from '../Core/Renderer/SVG/SVGPath';
+import BaseSeries from '../Core/Series/Series.js';
 import H from '../Core/Globals.js';
+const {
+    noop
+} = H;
+import U from '../Core/Utilities.js';
+const {
+    clamp,
+    isNumber,
+    merge,
+    pick,
+    pInt
+} = U;
 
 /**
  * Internal types
@@ -81,29 +93,24 @@ declare global {
             fixedBox?: boolean;
             forceDL?: boolean;
         }
-        interface SeriesTypesDictionary {
-            gauge: typeof GaugeSeries;
-        }
     }
 }
 
-import U from '../Core/Utilities.js';
-const {
-    clamp,
-    isNumber,
-    merge,
-    pick,
-    pInt,
-    seriesType
-} = U;
+/**
+ * @private
+ */
+declare module '../Core/Series/Types' {
+    interface SeriesTypeRegistry {
+        gauge: typeof Highcharts.GaugeSeries;
+    }
+}
 
 import '../Core/Options.js';
 import '../Core/Series/Point.js';
-import '../Core/Series/Series.js';
+import '../Series/LineSeries.js';
 import '../Core/Interaction.js';
 
-var noop = H.noop,
-    Series = H.Series,
+var Series = H.Series,
     TrackerMixin = H.TrackerMixin;
 
 /**
@@ -124,7 +131,7 @@ var noop = H.noop,
  * @requires     highcharts-more
  * @optionparent plotOptions.gauge
  */
-seriesType<Highcharts.GaugeSeries>('gauge', 'line', {
+BaseSeries.seriesType<typeof Highcharts.GaugeSeries>('gauge', 'line', {
 
     /**
      * When this option is `true`, the dial will wrap around the axes. For
@@ -462,7 +469,7 @@ seriesType<Highcharts.GaugeSeries>('gauge', 'line', {
                 translateX: center[0],
                 translateY: center[1],
                 rotation: rotation
-            } as Highcharts.SVGAttributes;
+            };
 
             // Positions for data label
             point.plotX = center[0];
@@ -541,7 +548,7 @@ seriesType<Highcharts.GaugeSeries>('gauge', 'line', {
                         '${palette.neutralColor20}',
                     fill: (pivotOptions as any).backgroundColor ||
                         '${palette.neutralColor100}'
-                } as Highcharts.SVGAttributes);
+                });
             }
         }
     },

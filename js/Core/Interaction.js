@@ -8,9 +8,13 @@
  *
  * */
 'use strict';
+import BaseSeries from './Series/Series.js';
+var seriesTypes = BaseSeries.seriesTypes;
 import Chart from './Chart/Chart.js';
 import H from './Globals.js';
+var hasTouch = H.hasTouch, svg = H.svg;
 import Legend from './Legend.js';
+import LineSeries from '../Series/LineSeries.js';
 import O from './Options.js';
 var defaultOptions = O.defaultOptions;
 import Point from '../Core/Series/Point.js';
@@ -64,8 +68,7 @@ var addEvent = U.addEvent, createElement = U.createElement, css = U.css, defined
  * @param {Highcharts.PointInteractionEventObject} event
  *        Event that occured.
  */
-import './Series/Series.js';
-var hasTouch = H.hasTouch, Series = H.Series, seriesTypes = H.seriesTypes, svg = H.svg, TrackerMixin;
+''; // detach doclets above
 /* eslint-disable valid-jsdoc */
 /**
  * TrackerMixin for points and graphs.
@@ -73,7 +76,7 @@ var hasTouch = H.hasTouch, Series = H.Series, seriesTypes = H.seriesTypes, svg =
  * @private
  * @mixin Highcharts.TrackerMixin
  */
-TrackerMixin = H.TrackerMixin = {
+var TrackerMixin = H.TrackerMixin = {
     /**
      * Draw the tracker for a point.
      *
@@ -515,11 +518,11 @@ extend(Chart.prototype, /** @lends Chart.prototype */ {
                         }
                     }
                 });
-                paddedMin = Math.min(H.pick(panningState === null || panningState === void 0 ? void 0 : panningState.startMin, extremes.dataMin), halfPointRange ?
+                paddedMin = Math.min(pick(panningState === null || panningState === void 0 ? void 0 : panningState.startMin, extremes.dataMin), halfPointRange ?
                     extremes.min :
                     axis.toValue(axis.toPixels(extremes.min) -
                         axis.minPixelPadding));
-                paddedMax = Math.max(H.pick(panningState === null || panningState === void 0 ? void 0 : panningState.startMax, extremes.dataMax), halfPointRange ?
+                paddedMax = Math.max(pick(panningState === null || panningState === void 0 ? void 0 : panningState.startMax, extremes.dataMax), halfPointRange ?
                     extremes.max :
                     axis.toValue(axis.toPixels(extremes.max) +
                         axis.minPixelPadding));
@@ -875,7 +878,7 @@ extend(Point.prototype, /** @lends Highcharts.Point.prototype */ {
     }
 });
 // Extend the Series object with interaction
-extend(Series.prototype, /** @lends Highcharts.Series.prototype */ {
+extend(LineSeries.prototype, /** @lends Highcharts.Series.prototype */ {
     /**
      * Runs on mouse over the series graphical items.
      *

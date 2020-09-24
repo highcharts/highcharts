@@ -8,8 +8,12 @@
  *
  * */
 
-'use strict';
-
+import type { AlignValue } from '../AlignObject';
+import type BBoxObject from '../BBoxObject';
+import type ColorType from '../../Color/ColorType';
+import type CSSObject from '../CSSObject';
+import type ShadowOptionsObject from '../ShadowOptionsObject';
+import type SVGAttributes from './SVGAttributes';
 import type SVGRenderer from './SVGRenderer';
 import SVGElement from './SVGElement.js';
 import U from '../../Utilities.js';
@@ -36,7 +40,7 @@ class SVGLabel extends SVGElement {
      *
      * */
 
-    public static readonly emptyBBox: Highcharts.BBoxObject = { width: 0, height: 0, x: 0, y: 0 };
+    public static readonly emptyBBox: BBoxObject = { width: 0, height: 0, x: 0, y: 0 };
 
     /* *
      *
@@ -123,12 +127,12 @@ class SVGLabel extends SVGElement {
      *
      * */
 
-    public alignSetter(value: Highcharts.AlignValue): void {
+    public alignSetter(value: AlignValue): void {
         const alignFactor = ({
             left: 0,
             center: 0.5,
             right: 1
-        } as Highcharts.SVGAttributes)[value];
+        } as SVGAttributes)[value];
         if (alignFactor !== this.alignFactor) {
             this.alignFactor = alignFactor;
             // Bounding box exists, means we're dynamically changing
@@ -166,9 +170,9 @@ class SVGLabel extends SVGElement {
      * Pick up some properties and apply them to the text instead of the
      * wrapper.
      */
-    public css(styles: Highcharts.CSSObject): SVGElement {
+    public css(styles: CSSObject): SVGElement {
         if (styles) {
-            var textStyles = {} as Highcharts.CSSObject,
+            var textStyles: CSSObject = {},
                 isWidth: boolean,
                 isFontStyle: boolean;
 
@@ -224,10 +228,7 @@ class SVGLabel extends SVGElement {
         return void 0;
     }
 
-    public fillSetter(
-        value: Highcharts.ColorType,
-        key: string
-    ): void {
+    public fillSetter(value: ColorType, key: string): void {
         if (value) {
             this.needsBox = true;
         }
@@ -239,7 +240,7 @@ class SVGLabel extends SVGElement {
     /*
      * Return the bounding box of the box, not the group.
      */
-    public getBBox(): Highcharts.BBoxObject {
+    public getBBox(): BBoxObject {
         const bBox = this.bBox;
         const padding = this.padding;
         return {
@@ -348,7 +349,7 @@ class SVGLabel extends SVGElement {
     }
 
     public shadow(
-        b: (boolean|Highcharts.ShadowOptionsObject)
+        b: (boolean|ShadowOptionsObject)
     ): SVGLabel {
         if (b && !this.renderer.styledMode) {
             this.updateBoxSize();
@@ -400,7 +401,7 @@ class SVGLabel extends SVGElement {
     private updateBoxSize(): void {
         var style = this.text.element.style,
             crispAdjust,
-            attribs = {} as Highcharts.SVGAttributes;
+            attribs: SVGAttributes = {};
 
         const padding = this.padding;
         const paddingLeft = this.paddingLeft;

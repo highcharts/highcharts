@@ -10,7 +10,23 @@
  *
  * */
 
-'use strict';
+import BaseSeries from '../Core/Series/Series.js';
+import DerivedSeriesMixin from '../Mixins/DerivedSeries.js';
+import U from '../Core/Utilities.js';
+const {
+    correctFloat,
+    isNumber,
+    merge
+} = U;
+
+/**
+ * @private
+ */
+declare module '../Core/Series/Types' {
+    interface SeriesTypeRegistry {
+        bellcurve: typeof Highcharts.BellcurveSeries;
+    }
+}
 
 /**
  * Internal types
@@ -59,21 +75,8 @@ declare global {
             pointsInInterval?: number;
             states?: SeriesStatesOptionsObject<BellcurveSeries>;
         }
-        interface SeriesTypesDictionary {
-            bellcurve: typeof BellcurveSeries;
-        }
     }
 }
-
-import U from '../Core/Utilities.js';
-const {
-    correctFloat,
-    isNumber,
-    merge,
-    seriesType
-} = U;
-
-import derivedSeriesMixin from '../Mixins/DerivedSeries.js';
 
 /* ************************************************************************** *
  *  BELL CURVE                                                                *
@@ -141,7 +144,7 @@ function normalDensity(
  *
  * @augments Highcharts.Series
  */
-seriesType<Highcharts.BellcurveSeries>('bellcurve', 'areaspline'
+BaseSeries.seriesType<typeof Highcharts.BellcurveSeries>('bellcurve', 'areaspline'
 
     /**
      * A bell curve is an areaspline series which represents the probability
@@ -161,6 +164,29 @@ seriesType<Highcharts.BellcurveSeries>('bellcurve', 'areaspline'
      * @optionparent plotOptions.bellcurve
      */
     , {
+        /**
+         * @see [fillColor](#plotOptions.bellcurve.fillColor)
+         * @see [fillOpacity](#plotOptions.bellcurve.fillOpacity)
+         *
+         * @apioption plotOptions.bellcurve.color
+         */
+
+        /**
+         * @see [color](#plotOptions.bellcurve.color)
+         * @see [fillOpacity](#plotOptions.bellcurve.fillOpacity)
+         *
+         * @apioption plotOptions.bellcurve.fillColor
+         */
+
+        /**
+         * @see [color](#plotOptions.bellcurve.color)
+         * @see [fillColor](#plotOptions.bellcurve.fillColor)
+         *
+         * @default   {highcharts} 0.75
+         * @default   {highstock} 0.75
+         * @apioption plotOptions.bellcurve.fillOpacity
+         */
+
         /**
          * This option allows to define the length of the bell curve. A unit of
          * the length of the bell curve is standard deviation.
@@ -183,7 +209,7 @@ seriesType<Highcharts.BellcurveSeries>('bellcurve', 'areaspline'
             enabled: false
         }
 
-    }, merge(derivedSeriesMixin, {
+    }, merge(DerivedSeriesMixin, {
         setMean: function (this: Highcharts.BellcurveSeries): void {
             this.mean = correctFloat(
                 mean(
@@ -266,6 +292,29 @@ seriesType<Highcharts.BellcurveSeries>('bellcurve', 'areaspline'
  *
  * @type      {number|string}
  * @apioption series.bellcurve.baseSeries
+ */
+
+/**
+ * @see [fillColor](#series.bellcurve.fillColor)
+ * @see [fillOpacity](#series.bellcurve.fillOpacity)
+ *
+ * @apioption series.bellcurve.color
+ */
+
+/**
+ * @see [color](#series.bellcurve.color)
+ * @see [fillOpacity](#series.bellcurve.fillOpacity)
+ *
+ * @apioption series.bellcurve.fillColor
+ */
+
+/**
+ * @see [color](#series.bellcurve.color)
+ * @see [fillColor](#series.bellcurve.fillColor)
+ *
+ * @default   {highcharts} 0.75
+ * @default   {highstock} 0.75
+ * @apioption series.bellcurve.fillOpacity
  */
 
 ''; // adds doclets above to transpiled file

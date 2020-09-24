@@ -23,7 +23,7 @@ const {
 } = U;
 
 // These need to be fixed when we support named imports
-var hasWebGLSupport = butils.hasWebGLSupport;
+const hasWebGLSupport = butils.hasWebGLSupport;
 
 if (!hasWebGLSupport()) {
     if (typeof initCanvasBoost !== 'undefined') {

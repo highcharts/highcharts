@@ -5,13 +5,15 @@
  *  !!!!!!! SOURCE GETS TRANSPILED BY TYPESCRIPT. EDIT TS FILE ONLY. !!!!!!!
  *
  * */
-'use strict';
+import BaseSeries from '../../Core/Series/Series.js';
+var seriesTypes = BaseSeries.seriesTypes;
 import H from '../../Core/Globals.js';
 import requiredIndicator from '../../Mixins/IndicatorRequired.js';
 import U from '../../Core/Utilities.js';
-var addEvent = U.addEvent, error = U.error, extend = U.extend, isArray = U.isArray, pick = U.pick, seriesType = U.seriesType, splat = U.splat;
-import '../../Core/Series/Series.js';
-var Series = H.Series, seriesTypes = H.seriesTypes, ohlcProto = H.seriesTypes.ohlc.prototype, generateMessage = requiredIndicator.generateMessage;
+var addEvent = U.addEvent, error = U.error, extend = U.extend, isArray = U.isArray, pick = U.pick, splat = U.splat;
+import '../../Series/LineSeries.js';
+import '../../Series/OHLCSeries.js';
+var Series = H.Series, ohlcProto = seriesTypes.ohlc.prototype, generateMessage = requiredIndicator.generateMessage;
 /**
  * The parameter allows setting line series type and use OHLC indicators. Data
  * in OHLC format is required.
@@ -54,7 +56,7 @@ addEvent(Series, 'afterSetOptions', function (e) {
  *
  * @augments Highcharts.Series
  */
-seriesType('sma', 'line', 
+BaseSeries.seriesType('sma', 'line', 
 /**
  * Simple moving average indicator (SMA). This series requires `linkedTo`
  * option to be set.
@@ -241,7 +243,8 @@ seriesType('sma', 'line',
                 ' not found! Check `linkedTo`.', false, chart);
         }
         indicator.dataEventsToUnbind.push(addEvent(indicator.bindTo.series ?
-            indicator.linkedParent : indicator.linkedParent.xAxis, indicator.bindTo.eventName, recalculateValues));
+            indicator.linkedParent :
+            indicator.linkedParent.xAxis, indicator.bindTo.eventName, recalculateValues));
         if (indicator.calculateOn === 'init') {
             recalculateValues();
         }

@@ -9,9 +9,8 @@
  *  !!!!!!! SOURCE GETS TRANSPILED BY TYPESCRIPT. EDIT TS FILE ONLY. !!!!!!!
  *
  * */
-'use strict';
-import U from '../../Core/Utilities.js';
-var seriesType = U.seriesType;
+import BaseSeries from '../../Core/Series/Series.js';
+import './SMAIndicator.js';
 /* eslint-disable require-jsdoc */
 // Utils:
 function toFixed(a, n) {
@@ -93,7 +92,7 @@ function getPSAR(pdir, sDir, PSAR, pACCMulti, sLow, pLow, pHigh, sHigh, pEP) {
  *
  * @augments Highcharts.Series
  */
-seriesType('psar', 'sma', 
+BaseSeries.seriesType('psar', 'sma', 
 /**
  * Parabolic SAR. This series requires `linkedTo`
  * option to be set and should be loaded

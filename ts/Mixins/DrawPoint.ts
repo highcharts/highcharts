@@ -4,7 +4,11 @@
  *
  * */
 
+import type CSSObject from '../Core/Renderer/CSSObject';
 import type Point from '../Core/Series/Point';
+import type ShadowOptionsObject from '../Core/Renderer/ShadowOptionsObject';
+import type SVGAttributes from '../Core/Renderer/SVG/SVGAttributes';
+import type SVGElement from '../Core/Renderer/SVG/SVGElement';
 
 const isFn = function (x: unknown): x is Function {
     return typeof x === 'function';
@@ -102,15 +106,15 @@ namespace Mixin {
         shouldDraw(): boolean;
     }
     export interface DrawPointParams {
-        animatableAttribs: Highcharts.SVGAttributes;
-        attribs: Highcharts.SVGAttributes;
-        css?: Highcharts.CSSObject;
-        group: Highcharts.SVGElement;
+        animatableAttribs: SVGAttributes;
+        attribs: SVGAttributes;
+        css?: CSSObject;
+        group: SVGElement;
         onComplete?: Function;
         isNew?: boolean;
         renderer: Highcharts.Renderer;
-        shadow?: (boolean|Partial<Highcharts.ShadowOptionsObject>);
-        shapeArgs?: Highcharts.SVGAttributes;
+        shadow?: (boolean|Partial<ShadowOptionsObject>);
+        shapeArgs?: SVGAttributes;
         shapeType: string;
     }
 }

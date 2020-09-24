@@ -5,7 +5,11 @@
  *  !!!!!!! SOURCE GETS TRANSPILED BY TYPESCRIPT. EDIT TS FILE ONLY. !!!!!!!
  * */
 
-'use strict';
+import BaseSeries from '../../Core/Series/Series.js';
+import U from '../../Core/Utilities.js';
+const {
+    error
+} = U;
 
 /**
  * Internal types
@@ -37,18 +41,16 @@ declare global {
         interface ADIndicatorParamsOptions extends SMAIndicatorParamsOptions {
             volumeSeriesID?: string;
         }
-
-        interface SeriesTypesDictionary {
-            ad: typeof ADIndicator;
-        }
     }
 }
 
-import U from '../../Core/Utilities.js';
-const {
-    error,
-    seriesType
-} = U;
+declare module '../../Core/Series/Types' {
+    interface SeriesTypeRegistry {
+        ad: typeof Highcharts.ADIndicator;
+    }
+}
+
+import './SMAIndicator.js';
 
 /* eslint-disable valid-jsdoc */
 // Utils:
@@ -72,6 +74,7 @@ function populateAverage(
 
     return [adX, adY];
 }
+
 /* eslint-enable valid-jsdoc */
 
 /**
@@ -83,7 +86,7 @@ function populateAverage(
  *
  * @augments Highcharts.Series
  */
-seriesType<Highcharts.ADIndicator>('ad', 'sma',
+BaseSeries.seriesType<typeof Highcharts.ADIndicator>('ad', 'sma',
     /**
      * Accumulation Distribution (AD). This series requires `linkedTo` option to
      * be set.

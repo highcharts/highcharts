@@ -7,14 +7,14 @@
  *  !!!!!!! SOURCE GETS TRANSPILED BY TYPESCRIPT. EDIT TS FILE ONLY. !!!!!!!
  *
  * */
-'use strict';
-import H from '../Core/Globals.js';
-import Color from '../Core/Color.js';
+import BaseSeries from '../Core/Series/Series.js';
+import Color from '../Core/Color/Color.js';
 var color = Color.parse;
+import H from '../Core/Globals.js';
 import LegendSymbolMixin from '../Mixins/LegendSymbol.js';
 import U from '../Core/Utilities.js';
-var objectEach = U.objectEach, pick = U.pick, seriesType = U.seriesType;
-import '../Core/Series/Series.js';
+var objectEach = U.objectEach, pick = U.pick;
+import '../Series/LineSeries.js';
 import '../Core/Options.js';
 var Series = H.Series;
 /**
@@ -26,7 +26,7 @@ var Series = H.Series;
  *
  * @augments Highcharts.Series
  */
-seriesType('area', 'line', 
+BaseSeries.seriesType('area', 'line', 
 /**
  * The area series type.
  *
@@ -42,11 +42,20 @@ seriesType('area', 'line',
  */
 {
     /**
+     * @see [fillColor](#plotOptions.area.fillColor)
+     * @see [fillOpacity](#plotOptions.area.fillOpacity)
+     *
+     * @apioption plotOptions.area.color
+     */
+    /**
      * Fill color or gradient for the area. When `null`, the series' `color`
      * is used with the series' `fillOpacity`.
      *
      * In styled mode, the fill color can be set with the `.highcharts-area`
      * class name.
+     *
+     * @see [color](#plotOptions.area.color)
+     * @see [fillOpacity](#plotOptions.area.fillOpacity)
      *
      * @sample {highcharts} highcharts/plotoptions/area-fillcolor-default/
      *         Null by default
@@ -66,6 +75,9 @@ seriesType('area', 'line',
      *
      * In styled mode, the fill opacity can be set with the
      * `.highcharts-area` class name.
+     *
+     * @see [color](#plotOptions.area.color)
+     * @see [fillColor](#plotOptions.area.fillColor)
      *
      * @sample {highcharts} highcharts/plotoptions/area-fillopacity/
      *         Automatic fill color and fill opacity of 0.1
@@ -424,6 +436,12 @@ seriesType('area', 'line',
  * @apioption series.area
  */
 /**
+ * @see [fillColor](#series.area.fillColor)
+ * @see [fillOpacity](#series.area.fillOpacity)
+ *
+ * @apioption series.area.color
+ */
+/**
  * An array of data points for the series. For the `area` series type,
  * points can be given in the following ways:
  *
@@ -481,5 +499,19 @@ seriesType('area', 'line',
  * @extends   series.line.data
  * @product   highcharts highstock
  * @apioption series.area.data
+ */
+/**
+ * @see [color](#series.area.color)
+ * @see [fillOpacity](#series.area.fillOpacity)
+ *
+ * @apioption series.area.fillColor
+ */
+/**
+ * @see [color](#series.area.color)
+ * @see [fillColor](#series.area.fillColor)
+ *
+ * @default   {highcharts} 0.75
+ * @default   {highstock} 0.75
+ * @apioption series.area.fillOpacity
  */
 ''; // adds doclets above to transpilat

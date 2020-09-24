@@ -3,7 +3,7 @@
  *  !!!!!!! SOURCE GETS TRANSPILED BY TYPESCRIPT. EDIT TS FILE ONLY. !!!!!!!
  *
  * */
-import Color from '../Core/Color.js';
+import Color from '../Core/Color/Color.js';
 import U from '../Core/Utilities.js';
 var extend = U.extend, isArray = U.isArray, isNumber = U.isNumber, isObject = U.isObject, merge = U.merge, pick = U.pick;
 var isBoolean = function (x) {

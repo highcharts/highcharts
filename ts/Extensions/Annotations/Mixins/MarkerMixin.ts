@@ -7,6 +7,7 @@
 'use strict';
 
 import type ControllablePath from '../Controllables/ControllablePath';
+import type SVGAttributes from '../../../Core/Renderer/SVG/SVGAttributes';
 import type SVGElement from '../../../Core/Renderer/SVG/SVGElement';
 import Chart from '../../../Core/Chart/Chart.js';
 import SVGRenderer from '../../../Core/Renderer/SVG/SVGRenderer.js';
@@ -119,11 +120,11 @@ var defaultMarkers: Record<string, Highcharts.SVGDefinitionObject> = {
 
 SVGRenderer.prototype.addMarker = function (
     id: string,
-    markerOptions: Highcharts.SVGAttributes
-): Highcharts.SVGElement {
+    markerOptions: SVGAttributes
+): SVGElement {
     var options: Highcharts.SVGDefinitionObject = { id: id } as any;
 
-    var attrs: Highcharts.SVGAttributes = {
+    var attrs: SVGAttributes = {
         stroke: markerOptions.color || 'none',
         fill: markerOptions.color || 'rgba(0, 0, 0, 0.75)'
     };

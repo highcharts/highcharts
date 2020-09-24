@@ -10,11 +10,60 @@
  *
  * */
 
-'use strict';
-
+import type {
+    AlignValue,
+    VerticalAlignValue
+} from '../Core/Renderer/AlignObject';
+import type AnimationOptionsObject from '../Core/Animation/AnimationOptionsObject';
 import type Chart from '../Core/Chart/Chart';
-import type DrawPointMixin from '../Mixins/DrawPoint';
+import type ColorString from '../Core/Color/ColorString';
+import type ColorType from '../Core/Color/ColorType';
+import type CSSObject from '../Core/Renderer/CSSObject';
+import type SVGAttributes from '../Core/Renderer/SVG/SVGAttributes';
+import type SVGElement from '../Core/Renderer/SVG/SVGElement';
+import BaseSeries from '../Core/Series/Series.js';
+const {
+    seriesTypes
+} = BaseSeries;
+import Color from '../Core/Color/Color.js';
+const {
+    parse: color
+} = Color;
+import ColorMapMixin from '../Mixins/ColorMapSeries.js';
+const { colorMapSeriesMixin } = ColorMapMixin;
+import DrawPointMixin from '../Mixins/DrawPoint.js';
+const {
+    drawPoint
+} = DrawPointMixin;
 import H from '../Core/Globals.js';
+const {
+    noop
+} = H;
+import LegendSymbolMixin from '../Mixins/LegendSymbol.js';
+import Point from '../Core/Series/Point.js';
+import TreeSeriesMixin from '../Mixins/TreeSeries.js';
+const {
+    getColor,
+    getLevelOptions,
+    updateRootId
+} = TreeSeriesMixin;
+import U from '../Core/Utilities.js';
+const {
+    addEvent,
+    correctFloat,
+    defined,
+    error,
+    extend,
+    fireEvent,
+    isArray,
+    isNumber,
+    isObject,
+    isString,
+    merge,
+    objectEach,
+    pick,
+    stableSort
+} = U;
 
 /**
  * Internal types
@@ -172,9 +221,6 @@ declare global {
             ): Array<unknown>;
             public translate(): void;
         }
-        interface SeriesTypesDictionary {
-            treemap: typeof TreemapSeries;
-        }
         interface TreemapAlgorithmLPObject {
             lH: number;
             lR: number;
@@ -289,51 +335,23 @@ declare global {
     }
 }
 
-import colorMapMixin from '../Mixins/ColorMapSeries.js';
-const { colorMapSeriesMixin } = colorMapMixin;
-import mixinTreeSeries from '../Mixins/TreeSeries.js';
-const {
-    getColor,
-    getLevelOptions,
-    updateRootId
-} = mixinTreeSeries;
-import drawPointModule from '../Mixins/DrawPoint.js';
-const { drawPoint } = drawPointModule;
-import Color from '../Core/Color.js';
-const {
-    parse: color
-} = Color;
-import LegendSymbolMixin from '../Mixins/LegendSymbol.js';
-import Point from '../Core/Series/Point.js';
-import U from '../Core/Utilities.js';
-const {
-    addEvent,
-    correctFloat,
-    defined,
-    error,
-    extend,
-    fireEvent,
-    isArray,
-    isNumber,
-    isObject,
-    isString,
-    merge,
-    objectEach,
-    pick,
-    seriesType,
-    stableSort
-} = U;
+/**
+ * @private
+ */
+declare module '../Core/Series/Types' {
+    interface SeriesTypeRegistry {
+        treemap: typeof Highcharts.TreemapSeries;
+    }
+}
 
 import '../Core/Options.js';
-import '../Core/Series/Series.js';
+import './ScatterSeries.js';
 
 /* eslint-disable no-invalid-this */
 const AXIS_MAX = 100;
 
-var seriesTypes = H.seriesTypes,
-    noop = H.noop,
-    // @todo Similar to eachObject, this function is likely redundant
-    isBoolean = function (x: unknown): x is boolean {
+// @todo Similar to eachObject, this function is likely redundant
+var isBoolean = function (x: unknown): x is boolean {
         return typeof x === 'boolean';
     },
     Series = H.Series,
@@ -376,7 +394,7 @@ var seriesTypes = H.seriesTypes,
  *
  * @augments Highcharts.Series
  */
-seriesType<Highcharts.TreemapSeries>(
+BaseSeries.seriesType<typeof Highcharts.TreemapSeries>(
     'treemap',
     'scatter'
 
@@ -1260,7 +1278,7 @@ seriesType<Highcharts.TreemapSeries>(
         setColorRecursive: function (
             this: Highcharts.TreemapSeries,
             node: Highcharts.TreemapNodeObject,
-            parentColor?: Highcharts.ColorString,
+            parentColor?: ColorString,
             colorIndex?: number,
             index?: number,
             siblings?: unknown
@@ -1731,10 +1749,10 @@ seriesType<Highcharts.TreemapSeries>(
         alignDataLabel: function (
             this: Highcharts.TreemapSeries,
             point: Highcharts.TreemapPoint,
-            dataLabel: Highcharts.SVGElement,
+            dataLabel: SVGElement,
             labelOptions: Highcharts.DataLabelsOptions
         ): void {
-            var style: Highcharts.SVGAttributes = labelOptions.style as any;
+            var style: SVGAttributes = labelOptions.style as any;
 
             // #8160: Prevent the label from exceeding the point's
             // boundaries in treemaps by applying ellipsis overflow.
@@ -1763,7 +1781,7 @@ seriesType<Highcharts.TreemapSeries>(
             this: Highcharts.TreemapSeries,
             point: Highcharts.TreemapPoint,
             state: string
-        ): Highcharts.SVGAttributes {
+        ): SVGAttributes {
             var series = this,
                 mapOptionsToLevel = (
                     isObject(series.mapOptionsToLevel) ?
@@ -1772,7 +1790,7 @@ seriesType<Highcharts.TreemapSeries>(
                 ),
                 level = point && mapOptionsToLevel[point.node.level] || {},
                 options = this.options,
-                attr: Highcharts.SVGAttributes,
+                attr: SVGAttributes,
                 stateOptions: Highcharts.SeriesStateOptionsObject<typeof this> =
                     (state && (options.states as any)[state]) || {},
                 className = (point && point.getClassName()) || '',
@@ -1841,9 +1859,9 @@ seriesType<Highcharts.TreemapSeries>(
 
             points.forEach(function (point: Highcharts.TreemapPoint): void {
                 var levelDynamic = point.node.levelDynamic,
-                    animate: Partial<Highcharts.AnimationOptionsObject> = {},
-                    attr: Highcharts.SVGAttributes = {},
-                    css: Highcharts.CSSObject = {},
+                    animate: Partial<AnimationOptionsObject> = {},
+                    attr: SVGAttributes = {},
+                    css: CSSObject = {},
                     groupKey = 'level-group-' + levelDynamic,
                     hasGraphic = !!point.graphic,
                     shouldAnimate = withinAnimationLimit && hasGraphic,

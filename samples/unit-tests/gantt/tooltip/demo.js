@@ -56,3 +56,27 @@ QUnit.test('Gantt tooltip', assert => {
         'Intraday times - tooltip should show the date and time of day'
     );
 });
+
+QUnit.test('The tooltip should respect timezone/timezone offsets declared locally and globally (#10365)', function (assert) {
+    var chart = Highcharts.ganttChart('container', {
+            time: {
+                timezoneOffset: 6 * 60
+            },
+            series: [{
+                data: [{
+                    name: "Task 1",
+                    start: Date.UTC(2020, 5, 2),
+                    end: Date.UTC(2020, 5, 3)
+                }]
+            }]
+        }),
+        p1 = chart.series[0].points[0],
+        tooltip = chart.tooltip;
+
+    tooltip.refresh(p1);
+    assert.strictEqual(
+        chart.container.querySelector('.highcharts-tooltip').textContent,
+        'Series 1Task 1Start: Monday, Jun  1, 18:00End: Tuesday, Jun  2, 18:00',
+        'The tooltip should show the start and end shifted 6 hours relative to UTC.'
+    );
+});

@@ -10,10 +10,12 @@
  *
  * */
 
-'use strict';
-
 import type Annotation from './Annotations';
 import type Chart from '../../Core/Chart/Chart';
+import type {
+    HTMLDOMElement
+} from '../../Core/Renderer/DOMElementType';
+import type { SeriesPlotOptionsType } from '../../Core/Series/Types';
 import H from '../../Core/Globals.js';
 import NavigationBindings from './NavigationBindings.js';
 import Pointer from '../../Core/Pointer.js';
@@ -172,7 +174,7 @@ wrap(Pointer.prototype, 'onContainerMouseDown', function (this: Pointer, proceed
     }
 });
 
-H.Popup = function (this: Highcharts.Popup, parentDiv: Highcharts.HTMLDOMElement, iconsURL: string): void {
+H.Popup = function (this: Highcharts.Popup, parentDiv: HTMLDOMElement, iconsURL: string): void {
     this.init(parentDiv, iconsURL);
 } as any;
 
@@ -185,7 +187,7 @@ H.Popup.prototype = {
      * @param {string} iconsURL
      * Icon URL
      */
-    init: function (parentDiv: Highcharts.HTMLDOMElement, iconsURL: string): void {
+    init: function (parentDiv: HTMLDOMElement, iconsURL: string): void {
 
         // create popup div
         this.container = createElement(DIV, {
@@ -204,7 +206,7 @@ H.Popup.prototype = {
      */
     addCloseBtn: function (): void {
         var _self = this,
-            closeBtn: Highcharts.HTMLDOMElement;
+            closeBtn: HTMLDOMElement;
 
         // create close popup btn
         closeBtn = createElement(DIV, {
@@ -229,8 +231,8 @@ H.Popup.prototype = {
      * Reference to two HTML columns (lhsCol, rhsCol)
      */
     addColsContainer: function (
-        container: Highcharts.HTMLDOMElement
-    ): Highcharts.Dictionary<Highcharts.HTMLDOMElement> {
+        container: HTMLDOMElement
+    ): Record<string, HTMLDOMElement> {
         var rhsCol,
             lhsCol;
 
@@ -267,7 +269,7 @@ H.Popup.prototype = {
      * Default value of input i.e period value is 14, extracted from
      * defaultOptions (ADD mode) or series options (EDIT mode)
      */
-    addInput: function (option: string, type: string, parentDiv: Highcharts.HTMLDOMElement, value: string): void {
+    addInput: function (option: string, type: string, parentDiv: HTMLDOMElement, value: string): void {
         var optionParamList = option.split('.'),
             optionName = optionParamList[optionParamList.length - 1],
             lang = this.lang,
@@ -315,16 +317,16 @@ H.Popup.prototype = {
      * HTML button
      */
     addButton: function (
-        parentDiv: Highcharts.HTMLDOMElement,
+        parentDiv: HTMLDOMElement,
         label: string,
         type: string,
         callback: Function,
-        fieldsDiv: Highcharts.HTMLDOMElement
-    ): Highcharts.HTMLDOMElement {
+        fieldsDiv: HTMLDOMElement
+    ): HTMLDOMElement {
         var _self = this,
             closePopup = this.closePopup,
             getFields = this.getFields,
-            button: Highcharts.HTMLDOMElement;
+            button: HTMLDOMElement;
 
         button = createElement(BUTTON, {
             innerHTML: label
@@ -349,7 +351,10 @@ H.Popup.prototype = {
      * @param {string} - add | edit | remove
      * @return {Highcharts.PopupFieldsObject} - fields
      */
-    getFields: function (parentDiv: Highcharts.HTMLDOMElement, type: string): Highcharts.PopupFieldsObject {
+    getFields: function (
+        parentDiv: HTMLDOMElement,
+        type: string
+    ): Highcharts.PopupFieldsObject {
 
         var inputList = parentDiv.querySelectorAll('input'),
             optionSeries = '#' + PREFIX + 'select-series > option:checked',
@@ -620,7 +625,7 @@ H.Popup.prototype = {
          */
         addFormFields: function (
             this: Highcharts.Popup,
-            parentDiv: Highcharts.HTMLDOMElement,
+            parentDiv: HTMLDOMElement,
             chart: Highcharts.AnnotationChart,
             parentNode: string,
             options: Highcharts.AnnotationsOptions,
@@ -776,7 +781,7 @@ H.Popup.prototype = {
         addIndicatorList: function (
             this: Highcharts.Popup,
             chart: Highcharts.AnnotationChart,
-            parentDiv: Highcharts.HTMLDOMElement,
+            parentDiv: HTMLDOMElement,
             listType: string
         ): void {
             var _self = this,
@@ -790,8 +795,8 @@ H.Popup.prototype = {
                 ),
                 addFormFields = this.indicators.addFormFields,
                 rhsColWrapper: Element,
-                indicatorList: Highcharts.HTMLDOMElement,
-                item: Highcharts.HTMLDOMElement;
+                indicatorList: HTMLDOMElement,
+                item: HTMLDOMElement;
 
             // create wrapper for list
             indicatorList = createElement(UL, {
@@ -802,7 +807,7 @@ H.Popup.prototype = {
                 .querySelectorAll('.' + PREFIX + 'popup-rhs-col-wrapper')[0];
 
             objectEach(series, function (
-                serie: (Highcharts.PlotOptions|Highcharts.Series),
+                serie: (SeriesPlotOptionsType|Highcharts.Series),
                 value: string
             ): void {
                 var seriesOptions = serie.options;
@@ -904,7 +909,7 @@ H.Popup.prototype = {
             type: string,
             optionName: string,
             chart: Highcharts.AnnotationChart,
-            parentDiv: Highcharts.HTMLDOMElement,
+            parentDiv: HTMLDOMElement,
             selectedOption: string
         ): void {
             var selectName = PREFIX + optionName + '-type-' + type,
@@ -981,7 +986,7 @@ H.Popup.prototype = {
             chart: Highcharts.AnnotationChart,
             series: Highcharts.SMAIndicator,
             seriesType: string,
-            rhsColWrapper: Highcharts.HTMLDOMElement
+            rhsColWrapper: HTMLDOMElement
         ): void {
             var fields = (series as any).params || series.options.params,
                 getNameType = this.indicators.getNameType;
@@ -1065,7 +1070,7 @@ H.Popup.prototype = {
             parentNode: string,
             fields: Highcharts.PopupFieldsDictionary<string>,
             type: string,
-            parentDiv: Highcharts.HTMLDOMElement
+            parentDiv: HTMLDOMElement
         ): void {
             var _self = this,
                 addParamInputs = this.indicators.addParamInputs,
@@ -1161,7 +1166,7 @@ H.Popup.prototype = {
             this: Highcharts.Popup,
             tabName: string,
             disableTab?: number
-        ): Highcharts.HTMLDOMElement {
+        ): HTMLDOMElement {
             var popupDiv = this.popup.container,
                 className = PREFIX + 'tab-item',
                 lang = this.lang,
@@ -1191,7 +1196,7 @@ H.Popup.prototype = {
          * @private
          * @return {HTMLDOMElement} - created HTML tab-content element
          */
-        addContentItem: function (this: Highcharts.Popup): Highcharts.HTMLDOMElement {
+        addContentItem: function (this: Highcharts.Popup): HTMLDOMElement {
             var popupDiv = this.popup.container;
 
             return createElement(

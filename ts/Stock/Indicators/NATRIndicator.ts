@@ -6,13 +6,7 @@
  *
  * */
 
-'use strict';
-
-import H from '../../Core/Globals.js';
-import U from '../../Core/Utilities.js';
-const {
-    seriesType
-} = U;
+import BaseSeries from '../../Core/Series/Series.js';
 
 /**
  * Internal types
@@ -43,14 +37,18 @@ declare global {
             params?: NATRIndicatorParamsOptions;
             tooltip?: TooltipOptions;
         }
-
-        interface SeriesTypesDictionary {
-            natr: typeof NATRIndicator;
-        }
     }
 }
 
-var ATR = H.seriesTypes.atr;
+declare module '../../Core/Series/Types' {
+    interface SeriesTypeRegistry {
+        natr: typeof Highcharts.NATRIndicator;
+    }
+}
+
+import './ATRIndicator.js';
+
+var ATR = BaseSeries.seriesTypes.atr;
 
 /**
  * The NATR series type.
@@ -61,7 +59,7 @@ var ATR = H.seriesTypes.atr;
  *
  * @augments Highcharts.Series
  */
-seriesType<Highcharts.NATRIndicator>('natr', 'sma',
+BaseSeries.seriesType<typeof Highcharts.NATRIndicator>('natr', 'sma',
     /**
      * Normalized average true range indicator (NATR). This series requires
      * `linkedTo` option to be set and should be loaded after the

@@ -10,10 +10,15 @@
 
 'use strict';
 
+import type AnimationOptionsObject from '../Animation/AnimationOptionsObject';
+import type ColorType from '../Color/ColorType';
+import type SVGAttributes from '../Renderer/SVG/SVGAttributes';
+import type SVGElement from '../Renderer/SVG/SVGElement';
+import A from '../Animation/AnimationUtilities.js';
+const { animObject } = A;
 import H from '../Globals.js';
 import U from '../Utilities.js';
 const {
-    animObject,
     defined,
     erase,
     extend,
@@ -352,7 +357,7 @@ class Point {
      */
     public category: string = void 0 as any;
 
-    public color?: Highcharts.ColorType;
+    public color?: ColorType;
 
     /**
      * The point's current color index, used in styled mode instead of
@@ -363,7 +368,7 @@ class Point {
      */
     public colorIndex?: number = void 0;
 
-    public dataLabels?: Array<Highcharts.SVGElement>;
+    public dataLabels?: Array<SVGElement>;
 
     public formatPrefix: string = 'point';
 
@@ -402,7 +407,7 @@ class Point {
      */
     public name: string = void 0 as any;
 
-    public nonZonedColor?: Highcharts.ColorType;
+    public nonZonedColor?: ColorType;
 
     /**
      * The point's options as applied in the initial configuration, or
@@ -440,7 +445,7 @@ class Point {
      */
     public series: Highcharts.Series = void 0 as any;
 
-    public shapeArgs?: Highcharts.SVGAttributes;
+    public shapeArgs?: SVGAttributes;
 
     public shapeType?: string;
 

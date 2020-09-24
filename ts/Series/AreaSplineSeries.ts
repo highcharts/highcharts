@@ -8,9 +8,12 @@
  *
  * */
 
-'use strict';
-
-import H from '../Core/Globals.js';
+import BaseSeries from '../Core/Series/Series.js';
+import LegendSymbolMixin from '../Mixins/LegendSymbol.js';
+import O from '../Core/Options.js';
+const {
+    defaultOptions
+} = O;
 
 /**
  * Internal types
@@ -22,9 +25,6 @@ declare global {
         }
         interface AreaSplineSeriesOptions extends SplineSeriesOptions {
             states?: SeriesStatesOptionsObject<AreaSplineSeries>;
-        }
-        interface SeriesTypesDictionary {
-            areaspline: typeof AreaSplineSeries;
         }
         class AreaSplinePoint extends SplinePoint {
             public isCliff?: AreaPoint['isCliff'];
@@ -41,17 +41,19 @@ declare global {
     }
 }
 
-import LegendSymbolMixin from '../Mixins/LegendSymbol.js';
-import O from '../Core/Options.js';
-const { defaultOptions } = O;
-import U from '../Core/Utilities.js';
-const {
-    seriesType
-} = U;
+/**
+ * @private
+ */
+declare module '../Core/Series/Types' {
+    interface SeriesTypeRegistry {
+        areaspline: typeof Highcharts.AreaSplineSeries;
+    }
+}
+
 import './AreaSeries.js';
 import './SplineSeries.js';
 
-var areaProto = H.seriesTypes.area.prototype as Highcharts.AreaSeries;
+var areaProto = BaseSeries.seriesTypes.area.prototype;
 
 /**
  * AreaSpline series type.
@@ -62,7 +64,7 @@ var areaProto = H.seriesTypes.area.prototype as Highcharts.AreaSeries;
  *
  * @augments Highcharts.Series
  */
-seriesType<Highcharts.AreaSplineSeries>(
+BaseSeries.seriesType<typeof Highcharts.AreaSplineSeries>(
     'areaspline',
     'spline',
 
@@ -80,6 +82,30 @@ seriesType<Highcharts.AreaSplineSeries>(
      * @product   highcharts highstock
      * @apioption plotOptions.areaspline
      */
+
+    /**
+     * @see [fillColor](#plotOptions.areaspline.fillColor)
+     * @see [fillOpacity](#plotOptions.areaspline.fillOpacity)
+     *
+     * @apioption plotOptions.areaspline.color
+     */
+
+    /**
+     * @see [color](#plotOptions.areaspline.color)
+     * @see [fillOpacity](#plotOptions.areaspline.fillOpacity)
+     *
+     * @apioption plotOptions.areaspline.fillColor
+     */
+
+    /**
+     * @see [color](#plotOptions.areaspline.color)
+     * @see [fillColor](#plotOptions.areaspline.fillColor)
+     *
+     * @default   {highcharts} 0.75
+     * @default   {highstock} 0.75
+     * @apioption plotOptions.areaspline.fillOpacity
+     */
+
     (defaultOptions.plotOptions as any).area as any,
     {
         getStackPoints: areaProto.getStackPoints,
@@ -98,6 +124,13 @@ seriesType<Highcharts.AreaSplineSeries>(
  * @excluding dataParser, dataURL, step, boostThreshold, boostBlending
  * @product   highcharts highstock
  * @apioption series.areaspline
+ */
+
+/**
+ * @see [fillColor](#series.areaspline.fillColor)
+ * @see [fillOpacity](#series.areaspline.fillOpacity)
+ *
+ * @apioption series.areaspline.color
  */
 
 /**
@@ -158,6 +191,22 @@ seriesType<Highcharts.AreaSplineSeries>(
  * @extends   series.line.data
  * @product   highcharts highstock
  * @apioption series.areaspline.data
+ */
+
+/**
+ * @see [color](#series.areaspline.color)
+ * @see [fillOpacity](#series.areaspline.fillOpacity)
+ *
+ * @apioption series.areaspline.fillColor
+ */
+
+/**
+ * @see [color](#series.areaspline.color)
+ * @see [fillColor](#series.areaspline.fillColor)
+ *
+ * @default   {highcharts} 0.75
+ * @default   {highstock} 0.75
+ * @apioption series.areaspline.fillOpacity
  */
 
 ''; // adds doclets above into transpilat

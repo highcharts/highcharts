@@ -8,11 +8,22 @@
  *
  * */
 
-'use strict';
-
 import type RadialAxis from '../Core/Axis/RadialAxis';
 import type SVGPath from '../Core/Renderer/SVG/SVGPath';
+import BaseSeries from '../Core/Series/Series.js';
 import H from '../Core/Globals.js';
+const {
+    noop
+} = H;
+import Point from '../Core/Series/Point.js';
+import U from '../Core/Utilities.js';
+const {
+    defined,
+    extend,
+    isArray,
+    isNumber,
+    pick
+} = U;
 
 /**
  * Internal types
@@ -43,9 +54,6 @@ declare global {
         interface PointLike {
             plotHigh?: AreaRangePoint['plotHigh'];
             plotLow?: AreaRangePoint['plotLow'];
-        }
-        interface SeriesTypesDictionary {
-            arearange: typeof AreaRangeSeries;
         }
         class AreaRangePoint extends AreaPoint {
             public _plotY?: number;
@@ -87,25 +95,25 @@ declare global {
     }
 }
 
-import Point from '../Core/Series/Point.js';
-import U from '../Core/Utilities.js';
-const {
-    defined,
-    extend,
-    isArray,
-    isNumber,
-    pick,
-    seriesType
-} = U;
+/**
+ * @private
+ */
+declare module '../Core/Series/Types' {
+    interface SeriesTypeRegistry {
+        arearange: typeof Highcharts.AreaRangeSeries;
+    }
+}
 
+import './AreaSeries.js';
+import './ColumnSeries.js';
 import '../Core/Options.js';
-import '../Core/Series/Series.js';
+import '../Series/LineSeries.js';
 
-var noop = H.noop,
-    Series = H.Series,
-    seriesTypes = H.seriesTypes,
-    seriesProto = Series.prototype,
-    pointProto = Point.prototype;
+var Series = H.Series,
+    areaProto = BaseSeries.seriesTypes.area.prototype,
+    columnProto = BaseSeries.seriesTypes.column.prototype,
+    pointProto = Point.prototype,
+    seriesProto = Series.prototype;
 
 /**
  * The area range series is a carteseian series with higher and lower values for
@@ -122,7 +130,35 @@ var noop = H.noop,
  * @requires     highcharts-more
  * @optionparent plotOptions.arearange
  */
-seriesType<Highcharts.AreaRangeSeries>('arearange', 'area', {
+BaseSeries.seriesType<typeof Highcharts.AreaRangeSeries>('arearange', 'area', {
+
+    /**
+     * @see [fillColor](#plotOptions.arearange.fillColor)
+     * @see [fillOpacity](#plotOptions.arearange.fillOpacity)
+     *
+     * @apioption plotOptions.arearange.color
+     */
+
+    /**
+     * @default   low
+     * @apioption plotOptions.arearange.colorKey
+     */
+
+    /**
+     * @see [color](#plotOptions.arearange.color)
+     * @see [fillOpacity](#plotOptions.arearange.fillOpacity)
+     *
+     * @apioption plotOptions.arearange.fillColor
+     */
+
+    /**
+     * @see [color](#plotOptions.arearange.color)
+     * @see [fillColor](#plotOptions.arearange.fillColor)
+     *
+     * @default   {highcharts} 0.75
+     * @default   {highstock} 0.75
+     * @apioption plotOptions.arearange.fillOpacity
+     */
 
     /**
      * Whether to apply a drop shadow to the graph line. Since 2.3 the shadow
@@ -132,11 +168,6 @@ seriesType<Highcharts.AreaRangeSeries>('arearange', 'area', {
      * @type      {boolean|Highcharts.ShadowOptionsObject}
      * @product   highcharts
      * @apioption plotOptions.arearange.shadow
-     */
-
-    /**
-     * @default   low
-     * @apioption plotOptions.arearange.colorKey
      */
 
     /**
@@ -267,7 +298,7 @@ seriesType<Highcharts.AreaRangeSeries>('arearange', 'area', {
             yAxis = series.yAxis,
             hasModifyValue = !!series.modifyValue;
 
-        seriesTypes.area.prototype.translate.apply(series);
+        areaProto.translate.apply(series);
 
         // Set plotLow and plotHigh
         series.points.forEach(function (
@@ -323,7 +354,7 @@ seriesType<Highcharts.AreaRangeSeries>('arearange', 'area', {
         var highPoints = [],
             highAreaPoints: Array<Highcharts.AreaPoint> = [],
             i,
-            getGraphPath = seriesTypes.area.prototype.getGraphPath,
+            getGraphPath = areaProto.getGraphPath,
             point: any,
             pointShim: any,
             linePath: SVGPath & Highcharts.Dictionary<any>,
@@ -575,7 +606,7 @@ seriesType<Highcharts.AreaRangeSeries>('arearange', 'area', {
                         point.dataLabelUpper as any,
                         point.dataLabel
                     ].filter(function (
-                        label: (Highcharts.SVGElement|undefined)
+                        label: (SVGElement|undefined)
                     ): boolean {
                         return !!label;
                     });
@@ -588,8 +619,7 @@ seriesType<Highcharts.AreaRangeSeries>('arearange', 'area', {
     },
 
     alignDataLabel: function (this: Highcharts.AreaRangeSeries): void {
-        seriesTypes.column.prototype.alignDataLabel
-            .apply(this, arguments as any);
+        columnProto.alignDataLabel.apply(this, arguments as any);
     },
 
     drawPoints: function (this: Highcharts.AreaRangeSeries): void {
@@ -795,6 +825,13 @@ seriesType<Highcharts.AreaRangeSeries>('arearange', 'area', {
  */
 
 /**
+ * @see [fillColor](#series.arearange.fillColor)
+ * @see [fillOpacity](#series.arearange.fillOpacity)
+ *
+ * @apioption series.arearange.color
+ */
+
+/**
  * An array of data points for the series. For the `arearange` series type,
  * points can be given in the following ways:
  *
@@ -854,6 +891,22 @@ seriesType<Highcharts.AreaRangeSeries>('arearange', 'area', {
  * @extends   series.arearange.dataLabels
  * @product   highcharts highstock
  * @apioption series.arearange.data.dataLabels
+ */
+
+/**
+ * @see [color](#series.arearange.color)
+ * @see [fillOpacity](#series.arearange.fillOpacity)
+ *
+ * @apioption series.arearange.fillColor
+ */
+
+/**
+ * @see [color](#series.arearange.color)
+ * @see [fillColor](#series.arearange.fillColor)
+ *
+ * @default   {highcharts} 0.75
+ * @default   {highstock} 0.75
+ * @apioption series.arearange.fillOpacity
  */
 
 /**

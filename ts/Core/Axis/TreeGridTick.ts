@@ -11,6 +11,10 @@
 
 'use strict';
 
+import type ColorType from '../Color/ColorType';
+import type CSSObject from '../Renderer/CSSObject';
+import type SVGAttributes from '../Renderer/SVG/SVGAttributes';
+import type SVGElement from '../Renderer/SVG/SVGElement';
 import type Tick from './Tick';
 import type TreeGridAxis from './TreeGridAxis';
 import U from '../Utilities.js';
@@ -47,9 +51,9 @@ namespace TreeGridTick {
 
     export interface LabelIconOptionsObject {
         collapsed?: boolean;
-        color: Highcharts.ColorType;
-        group?: Highcharts.SVGElement;
-        options: Highcharts.SVGAttributes;
+        color: ColorType;
+        group?: SVGElement;
+        options: SVGAttributes;
         renderer: Highcharts.Renderer;
         show: boolean;
         xy: Highcharts.PositionObject;
@@ -110,7 +114,7 @@ namespace TreeGridTick {
     /**
      * @private
      */
-    function onTickHover(label: Highcharts.SVGElement): void {
+    function onTickHover(label: SVGElement): void {
         label.addClass('highcharts-treegrid-node-active');
 
         if (!label.renderer.styledMode) {
@@ -124,10 +128,10 @@ namespace TreeGridTick {
      * @private
      */
     function onTickHoverExit(
-        label: Highcharts.SVGElement,
-        options: Highcharts.SVGAttributes
+        label: SVGElement,
+        options: SVGAttributes
     ): void {
-        const css: Highcharts.CSSObject = defined(options.style) ? options.style : {};
+        const css: CSSObject = defined(options.style) ? options.style : {};
 
         label.removeClass('highcharts-treegrid-node-active');
 
@@ -342,7 +346,7 @@ namespace TreeGridTick {
 
             // Add events to both label text and icon
             [label, tick.treeGrid.labelIcon].forEach(function (
-                object: (Highcharts.SVGElement|undefined)
+                object: (SVGElement|undefined)
             ): void {
                 if (object && !object.attachedTreeGridEvents) {
                     // On hover
@@ -352,7 +356,7 @@ namespace TreeGridTick {
 
                     // On hover out
                     addEvent(object.element, 'mouseout', function (): void {
-                        onTickHoverExit(label, labelOptions as Highcharts.SVGAttributes);
+                        onTickHoverExit(label, labelOptions as SVGAttributes);
                     });
 
                     addEvent(object.element, 'click', function (): void {
@@ -396,7 +400,7 @@ namespace TreeGridTick {
          * */
 
         public tick: TreeGridTick;
-        public labelIcon?: Highcharts.SVGElement;
+        public labelIcon?: SVGElement;
 
         /* *
          *

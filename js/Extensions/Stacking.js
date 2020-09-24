@@ -54,7 +54,7 @@ var correctFloat = U.correctFloat, defined = U.defined, destroyObjectProperties 
 * @type {number}
 */
 ''; // detached doclets above
-import '../Core/Series/Series.js';
+import '../Series/LineSeries.js';
 var Series = H.Series;
 /* eslint-disable no-invalid-this, valid-jsdoc */
 /**

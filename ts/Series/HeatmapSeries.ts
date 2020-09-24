@@ -8,11 +8,22 @@
  *
  * */
 
-'use strict';
-
+import type AnimationOptionsObject from '../Core/Animation/AnimationOptionsObject';
+import type ColorType from '../Core/Color/ColorType';
 import type Point from '../Core/Series/Point';
+import type { SeriesOptionsType } from '../Core/Series/Types';
+import type SVGAttributes from '../Core/Renderer/SVG/SVGAttributes';
 import type SVGPath from '../Core/Renderer/SVG/SVGPath';
+import BaseSeries from '../Core/Series/Series.js';
+import ColorMapMixin from '../Mixins/ColorMapSeries.js';
+const {
+    colorMapPointMixin,
+    colorMapSeriesMixin
+} = ColorMapMixin;
 import H from '../Core/Globals.js';
+const {
+    noop
+} = H;
 import LegendSymbolMixin from '../Mixins/LegendSymbol.js';
 import SVGRenderer from '../Core/Renderer/SVG/SVGRenderer.js';
 import U from '../Core/Utilities.js';
@@ -22,8 +33,7 @@ const {
     fireEvent,
     isNumber,
     merge,
-    pick,
-    seriesType
+    pick
 } = U;
 
 /**
@@ -82,7 +92,7 @@ declare global {
             ): this['options'];
             public translate(): void;
         }
-        interface HeatmapPointCellAttributes extends Dictionary<number> {
+        interface HeatmapPointCellAttributes extends Record<string, number> {
             x1: number;
             x2: number;
             y1: number;
@@ -92,28 +102,38 @@ declare global {
             pointPadding?: HeatmapPoint['pointPadding'];
             value?: HeatmapPoint['value'];
         }
-        interface HeatmapSeriesOptions
-            extends ScatterSeriesOptions
-        {
+        interface HeatmapSeriesOptions extends ScatterSeriesOptions {
             colsize?: number;
-            nullColor?: (ColorString|GradientColorObject|PatternObject);
+            nullColor?: ColorType;
             pointPadding?: HeatmapPoint['pointPadding'];
             rowsize?: number;
             states?: SeriesStatesOptionsObject<HeatmapSeries>;
         }
-        interface SeriesStatesHoverOptions
-        {
+        interface SeriesStatesHoverOptions {
             brightness?: number;
         }
         interface Series {
             valueMax?: number;
             valueMin?: number;
         }
-        interface SeriesTypesDictionary {
-            heatmap: typeof HeatmapSeries;
-        }
     }
 }
+
+/**
+ * @private
+ */
+declare module '../Core/Series/Types' {
+    interface SeriesTypeRegistry {
+        heatmap: typeof Highcharts.HeatmapSeries;
+    }
+}
+
+import '../Core/Options.js';
+import '../Series/LineSeries.js';
+
+var Series = H.Series,
+    seriesTypes = BaseSeries.seriesTypes,
+    symbols = SVGRenderer.prototype.symbols;
 
 /* *
  * @interface Highcharts.PointOptionsObject in parts/Point.ts
@@ -130,19 +150,6 @@ declare global {
 
 ''; // detach doclets above
 
-import '../Core/Options.js';
-import '../Core/Series/Series.js';
-import colorMapMixin from '../Mixins/ColorMapSeries.js';
-const {
-    colorMapPointMixin,
-    colorMapSeriesMixin
-} = colorMapMixin;
-
-var noop = H.noop,
-    Series = H.Series,
-    seriesTypes = H.seriesTypes,
-    symbols = SVGRenderer.prototype.symbols;
-
 /**
  * @private
  * @class
@@ -150,7 +157,7 @@ var noop = H.noop,
  *
  * @augments Highcharts.Series
  */
-seriesType<Highcharts.HeatmapSeries>(
+BaseSeries.seriesType<typeof Highcharts.HeatmapSeries>(
     'heatmap',
     'scatter',
 
@@ -484,7 +491,7 @@ seriesType<Highcharts.HeatmapSeries>(
          */
         setClip: function (
             this: Highcharts.HeatmapSeries,
-            animation?: (boolean|Highcharts.AnimationOptionsObject)
+            animation?: (boolean|AnimationOptionsObject)
         ): void {
             var series = this,
                 chart = series.chart;
@@ -582,7 +589,7 @@ seriesType<Highcharts.HeatmapSeries>(
             this: Highcharts.HeatmapSeries,
             point: Highcharts.HeatmapPoint,
             state?: string
-        ): Highcharts.SVGAttributes {
+        ): SVGAttributes {
             var series = this,
                 attr = Series.prototype.pointAttribs
                     .call(series, point, state),
@@ -643,14 +650,14 @@ seriesType<Highcharts.HeatmapSeries>(
             this: Highcharts.HeatmapSeries,
             point: Highcharts.HeatmapPoint,
             state?: string
-        ): Highcharts.SVGAttributes {
+        ): SVGAttributes {
             var pointMarkerOptions = point.marker || {},
                 seriesMarkerOptions = this.options.marker || {},
                 seriesStateOptions: Highcharts.PointStatesHoverOptionsObject,
                 pointStateOptions: Highcharts.PointStatesHoverOptionsObject,
                 shapeArgs = point.shapeArgs || {},
                 hasImage = point.hasImage,
-                attribs: Highcharts.SVGAttributes = {};
+                attribs: SVGAttributes = {};
 
             if (hasImage) {
                 return {

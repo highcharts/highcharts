@@ -12,7 +12,38 @@
 
 'use strict';
 
+import type {
+    DOMElementType
+} from '../../../Core/Renderer/DOMElementType';
 import type Point from '../../../Core/Series/Point';
+import AnnotationsA11y from '../AnnotationsA11y.js';
+const {
+    getPointAnnotationTexts
+} = AnnotationsA11y;
+import ChartUtilities from '../../Utils/ChartUtilities.js';
+const {
+    getAxisDescription,
+    getSeriesFirstPointElement,
+    getSeriesA11yElement,
+    unhideChartElementFromAT
+} = ChartUtilities;
+import HTMLUtilities from '../../Utils/HTMLUtilities.js';
+const {
+    escapeStringForHTML,
+    reverseChildNodes,
+    stripHTMLTagsFromString: stripHTMLTags
+} = HTMLUtilities;
+import Tooltip from '../../../Core/Tooltip.js';
+import U from '../../../Core/Utilities.js';
+const {
+    find,
+    format,
+    isNumber,
+    numberFormat,
+    pick,
+    defined
+} = U;
+
 
 /**
  * Internal types.
@@ -26,36 +57,6 @@ declare global {
         }
     }
 }
-
-import U from '../../../Core/Utilities.js';
-const {
-    find,
-    format,
-    isNumber,
-    numberFormat,
-    pick,
-    defined
-} = U;
-
-import AnnotationsA11y from '../AnnotationsA11y.js';
-const getPointAnnotationTexts = AnnotationsA11y.getPointAnnotationTexts;
-
-import HTMLUtilities from '../../Utils/HTMLUtilities.js';
-const {
-    escapeStringForHTML,
-    reverseChildNodes,
-    stripHTMLTagsFromString: stripHTMLTags
-} = HTMLUtilities;
-
-import ChartUtilities from '../../Utils/ChartUtilities.js';
-const {
-    getAxisDescription,
-    getSeriesFirstPointElement,
-    getSeriesA11yElement,
-    unhideChartElementFromAT
-} = ChartUtilities;
-
-import Tooltip from '../../../Core/Tooltip.js';
 
 /**
  * Internal types.
@@ -140,7 +141,7 @@ function makeDummyElement(
  */
 function addDummyPointElement(
     point: Point
-): (Highcharts.HTMLDOMElement|Highcharts.SVGDOMElement|undefined) {
+): (DOMElementType|undefined) {
     var series = point.series,
         firstPointWithGraphic = findFirstPointWithGraphic(point),
         firstGraphic = firstPointWithGraphic && firstPointWithGraphic.graphic,
@@ -532,7 +533,7 @@ function defaultPointDescriptionFormatter(
  */
 function setPointScreenReaderAttribs(
     point: Highcharts.AccessibilityPoint,
-    pointElement: (Highcharts.HTMLDOMElement|Highcharts.SVGDOMElement)
+    pointElement: DOMElementType
 ): void {
     var series = point.series,
         a11yPointOptions = series.chart.options.accessibility.point || {},
@@ -636,7 +637,7 @@ function defaultSeriesDescriptionFormatter(
  */
 function describeSeriesElement(
     series: Highcharts.AccessibilitySeries,
-    seriesElement: (Highcharts.HTMLDOMElement|Highcharts.SVGDOMElement)
+    seriesElement: DOMElementType
 ): void {
     var seriesA11yOptions = series.options.accessibility || {},
         a11yOptions = series.chart.options.accessibility,

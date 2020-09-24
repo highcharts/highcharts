@@ -7,21 +7,23 @@
  *  !!!!!!! SOURCE GETS TRANSPILED BY TYPESCRIPT. EDIT TS FILE ONLY. !!!!!!!
  *
  * */
-'use strict';
+import Axis from '../../Core/Axis/Axis.js';
+import BaseSeries from '../../Core/Series/Series.js';
+import Color from '../../Core/Color/Color.js';
+var color = Color.parse;
 import H from '../../Core/Globals.js';
+var noop = H.noop;
+import Point from '../../Core/Series/Point.js';
+import U from '../../Core/Utilities.js';
+var arrayMax = U.arrayMax, arrayMin = U.arrayMin, clamp = U.clamp, extend = U.extend, isNumber = U.isNumber, pick = U.pick, pInt = U.pInt;
+import '../../Series/LineSeries.js';
+import '../../Series/ScatterSeries.js';
+import './BubbleLegend.js';
+var Series = H.Series, seriesTypes = BaseSeries.seriesTypes;
 /**
  * @typedef {"area"|"width"} Highcharts.BubbleSizeByValue
  */
-import Color from '../../Core/Color.js';
-var color = Color.parse;
-import Point from '../../Core/Series/Point.js';
-import U from '../../Core/Utilities.js';
-var arrayMax = U.arrayMax, arrayMin = U.arrayMin, clamp = U.clamp, extend = U.extend, isNumber = U.isNumber, pick = U.pick, pInt = U.pInt, seriesType = U.seriesType;
-import '../../Core/Axis/Axis.js';
-import '../../Core/Series/Series.js';
-import '../../Series/ScatterSeries.js';
-import './BubbleLegend.js';
-var Axis = H.Axis, noop = H.noop, Series = H.Series, seriesTypes = H.seriesTypes;
+''; // detach doclets above
 /**
  * A bubble series is a three dimensional series type where each point renders
  * an X, Y and Z value. Each points is drawn as a bubble where the position
@@ -37,7 +39,7 @@ var Axis = H.Axis, noop = H.noop, Series = H.Series, seriesTypes = H.seriesTypes
  * @requires     highcharts-more
  * @optionparent plotOptions.bubble
  */
-seriesType('bubble', 'scatter', {
+BaseSeries.seriesType('bubble', 'scatter', {
     dataLabels: {
         formatter: function () {
             return this.point.z;

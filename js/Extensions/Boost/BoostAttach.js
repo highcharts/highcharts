@@ -10,12 +10,13 @@
  *
  * */
 'use strict';
+import Chart from '../../Core/Chart/Chart.js';
 import GLRenderer from './WGLRenderer.js';
 import H from '../../Core/Globals.js';
 var doc = H.doc;
 import U from '../../Core/Utilities.js';
 var error = U.error;
-import '../../Core/Series/Series.js';
+import '../../Series/LineSeries.js';
 var mainCanvas = doc.createElement('canvas');
 /**
  * Create a canvas + context and attach it to the target
@@ -102,14 +103,14 @@ function createAndAttachRenderer(chart, series) {
                 mixedBlendMode: 'normal',
                 opacity: alpha
             });
-            if (target instanceof H.Chart) {
+            if (target instanceof Chart) {
                 target.markerGroup.translate(chart.plotLeft, chart.plotTop);
             }
         };
         target.boostClipRect = chart.renderer.clipRect();
         (target.renderTargetFo || target.renderTarget)
             .clip(target.boostClipRect);
-        if (target instanceof H.Chart) {
+        if (target instanceof Chart) {
             target.markerGroup = target.renderer.g().add(targetGroup);
             target.markerGroup.translate(series.xAxis.pos, series.yAxis.pos);
         }
@@ -137,7 +138,7 @@ function createAndAttachRenderer(chart, series) {
         }
         // target.ogl.clear();
         target.ogl.setOptions(chart.options.boost || {});
-        if (target instanceof H.Chart) {
+        if (target instanceof Chart) {
             target.ogl.allocateBuffer(chart);
         }
     }

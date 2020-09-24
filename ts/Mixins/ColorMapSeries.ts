@@ -8,8 +8,7 @@
  *
  * */
 
-'use strict';
-
+import type SVGAttributes from '../Core/Renderer/SVG/SVGAttributes';
 import H from '../Core/Globals.js';
 
 /**
@@ -134,8 +133,8 @@ const colorMapSeriesMixin = {
     colorAttribs: function (
         this: Highcharts.ColorMapSeries,
         point: Highcharts.ColorMapPoint
-    ): Highcharts.SVGAttributes {
-        var ret = {} as Highcharts.SVGAttributes;
+    ): SVGAttributes {
+        var ret: SVGAttributes = {};
 
         if (defined(point.color)) {
             ret[this.colorProp || 'fill'] = point.color;

@@ -11,9 +11,8 @@
  *  !!!!!!! SOURCE GETS TRANSPILED BY TYPESCRIPT. EDIT TS FILE ONLY. !!!!!!!
  *
  * */
-'use strict';
-import U from '../../Core/Utilities.js';
-var seriesType = U.seriesType;
+import BaseSeries from '../../Core/Series/Series.js';
+import './SMAIndicator.js';
 /**
  * The CMF series type.
  *
@@ -23,7 +22,7 @@ var seriesType = U.seriesType;
  *
  * @augments Highcharts.Series
  */
-seriesType('cmf', 'sma', 
+BaseSeries.seriesType('cmf', 'sma', 
 /**
  * Chaikin Money Flow indicator (cmf).
  *

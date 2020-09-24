@@ -7,12 +7,10 @@
  *  !!!!!!! SOURCE GETS TRANSPILED BY TYPESCRIPT. EDIT TS FILE ONLY. !!!!!!!
  *
  * */
-'use strict';
-import H from '../Core/Globals.js';
-import U from '../Core/Utilities.js';
-var seriesType = U.seriesType;
+import BaseSeries from '../Core/Series/Series.js';
 import '../Core/Options.js';
-var seriesTypes = H.seriesTypes;
+import './MapSeries.js';
+var seriesTypes = BaseSeries.seriesTypes;
 /**
  * @private
  * @class
@@ -20,7 +18,7 @@ var seriesTypes = H.seriesTypes;
  *
  * @augments Highcharts.Series
  */
-seriesType('mapline', 'map', 
+BaseSeries.seriesType('mapline', 'map', 
 /**
  * A mapline series is a special case of the map series where the value
  * colors are applied to the strokes rather than the fills. It can also be

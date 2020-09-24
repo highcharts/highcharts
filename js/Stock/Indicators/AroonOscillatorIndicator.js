@@ -5,13 +5,13 @@
  *  !!!!!!! SOURCE GETS TRANSPILED BY TYPESCRIPT. EDIT TS FILE ONLY. !!!!!!!
  *
  * */
-'use strict';
-import H from '../../Core/Globals.js';
+import BaseSeries from '../../Core/Series/Series.js';
 import multipleLinesMixin from '../../Mixins/MultipleLines.js';
 import requiredIndicator from '../../Mixins/IndicatorRequired.js';
 import U from '../../Core/Utilities.js';
-var merge = U.merge, seriesType = U.seriesType;
-var AROON = H.seriesTypes.aroon;
+var merge = U.merge;
+import './AroonIndicator.js';
+var AROON = BaseSeries.seriesTypes.aroon;
 /**
  * The Aroon Oscillator series type.
  *
@@ -21,7 +21,7 @@ var AROON = H.seriesTypes.aroon;
  *
  * @augments Highcharts.Series
  */
-seriesType('aroonoscillator', 'aroon', 
+BaseSeries.seriesType('aroonoscillator', 'aroon', 
 /**
  * Aroon Oscillator. This series requires the `linkedTo` option to be set
  * and should be loaded after the `stock/indicators/indicators.js` and

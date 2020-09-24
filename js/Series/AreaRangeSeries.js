@@ -7,14 +7,17 @@
  *  !!!!!!! SOURCE GETS TRANSPILED BY TYPESCRIPT. EDIT TS FILE ONLY. !!!!!!!
  *
  * */
-'use strict';
+import BaseSeries from '../Core/Series/Series.js';
 import H from '../Core/Globals.js';
+var noop = H.noop;
 import Point from '../Core/Series/Point.js';
 import U from '../Core/Utilities.js';
-var defined = U.defined, extend = U.extend, isArray = U.isArray, isNumber = U.isNumber, pick = U.pick, seriesType = U.seriesType;
+var defined = U.defined, extend = U.extend, isArray = U.isArray, isNumber = U.isNumber, pick = U.pick;
+import './AreaSeries.js';
+import './ColumnSeries.js';
 import '../Core/Options.js';
-import '../Core/Series/Series.js';
-var noop = H.noop, Series = H.Series, seriesTypes = H.seriesTypes, seriesProto = Series.prototype, pointProto = Point.prototype;
+import '../Series/LineSeries.js';
+var Series = H.Series, areaProto = BaseSeries.seriesTypes.area.prototype, columnProto = BaseSeries.seriesTypes.column.prototype, pointProto = Point.prototype, seriesProto = Series.prototype;
 /**
  * The area range series is a carteseian series with higher and lower values for
  * each point along an X axis, where the area between the values is shaded.
@@ -30,7 +33,31 @@ var noop = H.noop, Series = H.Series, seriesTypes = H.seriesTypes, seriesProto =
  * @requires     highcharts-more
  * @optionparent plotOptions.arearange
  */
-seriesType('arearange', 'area', {
+BaseSeries.seriesType('arearange', 'area', {
+    /**
+     * @see [fillColor](#plotOptions.arearange.fillColor)
+     * @see [fillOpacity](#plotOptions.arearange.fillOpacity)
+     *
+     * @apioption plotOptions.arearange.color
+     */
+    /**
+     * @default   low
+     * @apioption plotOptions.arearange.colorKey
+     */
+    /**
+     * @see [color](#plotOptions.arearange.color)
+     * @see [fillOpacity](#plotOptions.arearange.fillOpacity)
+     *
+     * @apioption plotOptions.arearange.fillColor
+     */
+    /**
+     * @see [color](#plotOptions.arearange.color)
+     * @see [fillColor](#plotOptions.arearange.fillColor)
+     *
+     * @default   {highcharts} 0.75
+     * @default   {highstock} 0.75
+     * @apioption plotOptions.arearange.fillOpacity
+     */
     /**
      * Whether to apply a drop shadow to the graph line. Since 2.3 the shadow
      * can be an object configuration containing `color`, `offsetX`, `offsetY`,
@@ -39,10 +66,6 @@ seriesType('arearange', 'area', {
      * @type      {boolean|Highcharts.ShadowOptionsObject}
      * @product   highcharts
      * @apioption plotOptions.arearange.shadow
-     */
-    /**
-     * @default   low
-     * @apioption plotOptions.arearange.colorKey
      */
     /**
      * Pixel width of the arearange graph line.
@@ -145,7 +168,7 @@ seriesType('arearange', 'area', {
      */
     translate: function () {
         var series = this, yAxis = series.yAxis, hasModifyValue = !!series.modifyValue;
-        seriesTypes.area.prototype.translate.apply(series);
+        areaProto.translate.apply(series);
         // Set plotLow and plotHigh
         series.points.forEach(function (point) {
             var high = point.high, plotY = point.plotY;
@@ -179,7 +202,7 @@ seriesType('arearange', 'area', {
      * @private
      */
     getGraphPath: function (points) {
-        var highPoints = [], highAreaPoints = [], i, getGraphPath = seriesTypes.area.prototype.getGraphPath, point, pointShim, linePath, lowerPath, options = this.options, polar = this.chart.polar, connectEnds = polar && options.connectEnds !== false, connectNulls = options.connectNulls, step = options.step, higherPath, higherAreaPath;
+        var highPoints = [], highAreaPoints = [], i, getGraphPath = areaProto.getGraphPath, point, pointShim, linePath, lowerPath, options = this.options, polar = this.chart.polar, connectEnds = polar && options.connectEnds !== false, connectNulls = options.connectNulls, step = options.step, higherPath, higherAreaPath;
         points = points || this.points;
         // Create the top line and the top part of the area fill. The area fill
         // compensates for null points by drawing down to the lower graph,
@@ -391,8 +414,7 @@ seriesType('arearange', 'area', {
         this.options.dataLabels = dataLabelOptions;
     },
     alignDataLabel: function () {
-        seriesTypes.column.prototype.alignDataLabel
-            .apply(this, arguments);
+        columnProto.alignDataLabel.apply(this, arguments);
     },
     drawPoints: function () {
         var series = this, pointLength = series.points.length, point, i;
@@ -548,6 +570,12 @@ seriesType('arearange', 'area', {
  * @apioption series.arearange
  */
 /**
+ * @see [fillColor](#series.arearange.fillColor)
+ * @see [fillOpacity](#series.arearange.fillOpacity)
+ *
+ * @apioption series.arearange.color
+ */
+/**
  * An array of data points for the series. For the `arearange` series type,
  * points can be given in the following ways:
  *
@@ -606,6 +634,20 @@ seriesType('arearange', 'area', {
  * @extends   series.arearange.dataLabels
  * @product   highcharts highstock
  * @apioption series.arearange.data.dataLabels
+ */
+/**
+ * @see [color](#series.arearange.color)
+ * @see [fillOpacity](#series.arearange.fillOpacity)
+ *
+ * @apioption series.arearange.fillColor
+ */
+/**
+ * @see [color](#series.arearange.color)
+ * @see [fillColor](#series.arearange.fillColor)
+ *
+ * @default   {highcharts} 0.75
+ * @default   {highstock} 0.75
+ * @apioption series.arearange.fillOpacity
  */
 /**
  * The high or maximum value for each data point.

@@ -10,9 +10,24 @@
  *
  * */
 
-'use strict';
-
+import type SVGAttributes from '../Core/Renderer/SVG/SVGAttributes';
+import type SVGElement from '../Core/Renderer/SVG/SVGElement';
+import BaseSeries from '../Core/Series/Series.js';
 import H from '../Core/Globals.js';
+import O from '../Core/Options.js';
+const {
+    defaultOptions
+} = O;
+import U from '../Core/Utilities.js';
+const {
+    defined,
+    extend,
+    fireEvent,
+    isNumber,
+    merge,
+    objectEach,
+    pick
+} = U;
 
 /**
  * Internal types
@@ -71,23 +86,18 @@ declare global {
     }
 }
 
-import O from '../Core/Options.js';
-const { defaultOptions } = O;
-import U from '../Core/Utilities.js';
-const {
-    defined,
-    extend,
-    fireEvent,
-    isNumber,
-    merge,
-    objectEach,
-    pick,
-    seriesType
-} = U;
+/**
+ * @private
+ */
+declare module '../Core/Series/Types' {
+    interface SeriesTypeRegistry {
+        item: typeof Highcharts.ItemSeries;
+    }
+}
 
-import '../Core/Series/Series.js';
+import './PieSeries.js';
 
-var piePoint = H.seriesTypes.pie.prototype.pointClass.prototype;
+var piePoint = BaseSeries.seriesTypes.pie.prototype.pointClass.prototype;
 
 /**
  * The item series type.
@@ -100,7 +110,7 @@ var piePoint = H.seriesTypes.pie.prototype.pointClass.prototype;
  *
  * @augments Highcharts.seriesTypes.pie
  */
-seriesType<Highcharts.ItemSeries>(
+BaseSeries.seriesType<typeof Highcharts.ItemSeries>(
     'item',
     // Inherits pie as the most tested non-cartesian series with individual
     // point legend, tooltips etc. Only downside is we need to re-enable
@@ -442,9 +452,9 @@ seriesType<Highcharts.ItemSeries>(
             //*/
 
             this.points.forEach(function (point: Highcharts.ItemPoint): void {
-                var attr: Highcharts.SVGAttributes,
-                    graphics: Highcharts.Dictionary<Highcharts.SVGElement>,
-                    pointAttr: (Highcharts.SVGAttributes|undefined),
+                var attr: SVGAttributes,
+                    graphics: Record<string, SVGElement>,
+                    pointAttr: (SVGAttributes|undefined),
                     pointMarkerOptions = point.marker || {},
                     symbol: string = (
                         pointMarkerOptions.symbol ||
@@ -539,7 +549,7 @@ seriesType<Highcharts.ItemSeries>(
                     }
                 }
                 objectEach(graphics, function (
-                    graphic: Highcharts.SVGElement,
+                    graphic: SVGElement,
                     key: string
                 ): void {
                     if (!graphic.isActive) {

@@ -7,8 +7,10 @@
  *  !!!!!!! SOURCE GETS TRANSPILED BY TYPESCRIPT. EDIT TS FILE ONLY. !!!!!!!
  *
  * */
+import A from '../Animation/AnimationUtilities.js';
+var getDeferredAnimation = A.getDeferredAnimation;
 import U from '../Utilities.js';
-var addEvent = U.addEvent, destroyObjectProperties = U.destroyObjectProperties, fireEvent = U.fireEvent, getDeferredAnimation = U.getDeferredAnimation, objectEach = U.objectEach, pick = U.pick;
+var addEvent = U.addEvent, destroyObjectProperties = U.destroyObjectProperties, fireEvent = U.fireEvent, objectEach = U.objectEach, pick = U.pick;
 /* eslint-disable valid-jsdoc */
 /**
  * Adds stacking support to axes.

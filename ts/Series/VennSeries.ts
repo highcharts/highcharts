@@ -15,27 +15,65 @@
  *
  * */
 
-'use strict';
-
 import type Chart from '../Core/Chart/Chart';
-import type DrawPointMixin from '../Mixins/DrawPoint';
+import type SVGAttributes from '../Core/Renderer/SVG/SVGAttributes';
+import type SVGElement from '../Core/Renderer/SVG/SVGElement';
 import type SVGPath from '../Core/Renderer/SVG/SVGPath';
-import Color from '../Core/Color.js';
-const color = Color.parse;
-import H from '../Core/Globals.js';
+import A from '../Core/Animation/AnimationUtilities.js';
+const { animObject } = A;
+import BaseSeries from '../Core/Series/Series.js';
+const {
+    seriesTypes
+} = BaseSeries;
+import Color from '../Core/Color/Color.js';
+const {
+    parse: color
+} = Color;
+import DrawPointMixin from '../Mixins/DrawPoint.js';
+const {
+    draw
+} = DrawPointMixin;
+import GeometryMixin from '../Mixins/Geometry.js';
+const {
+    getCenterOfPoints,
+    getDistanceBetweenPoints
+} = GeometryMixin;
+import GeometryCirclesModule from '../Mixins/GeometryCircles.js';
+const {
+    getAreaOfCircle,
+    getAreaOfIntersectionBetweenCircles,
+    getCircleCircleIntersection,
+    getCirclesIntersectionPolygon,
+    getOverlapBetweenCircles: getOverlapBetweenCirclesByDistance,
+    isCircle1CompletelyOverlappingCircle2,
+    isPointInsideAllCircles,
+    isPointInsideCircle,
+    isPointOutsideAllCircles
+} = GeometryCirclesModule;
+
+import NelderMeadMixin from '../Mixins/NelderMead.js';
+const {
+    nelderMead
+} = NelderMeadMixin;
 import U from '../Core/Utilities.js';
 const {
     addEvent,
-    animObject,
     extend,
     isArray,
     isNumber,
     isObject,
     isString,
-    merge,
-    seriesType
+    merge
 } = U;
 
+/**
+ * @private
+ */
+declare module '../Core/Series/Types' {
+    interface SeriesTypeRegistry {
+        venn: typeof Highcharts.VennSeries;
+    }
+}
 
 /**
  * Internal types
@@ -67,9 +105,6 @@ declare global {
             public animate(init?: boolean): void;
             public drawPoints(): void;
             public translate(): void;
-        }
-        interface SeriesTypesDictionary {
-            venn: typeof VennSeries;
         }
         interface VennLabelPositionObject {
             point: PositionObject;
@@ -144,33 +179,7 @@ declare global {
     }
 }
 
-import drawPointModule from '../Mixins/DrawPoint.js';
-const { draw } = drawPointModule;
-import geometry from '../Mixins/Geometry.js';
-
-import geometryCirclesModule from '../Mixins/GeometryCircles.js';
-const {
-    getAreaOfCircle,
-    getAreaOfIntersectionBetweenCircles,
-    getCircleCircleIntersection,
-    getCirclesIntersectionPolygon,
-    getOverlapBetweenCircles: getOverlapBetweenCirclesByDistance,
-    isCircle1CompletelyOverlappingCircle2,
-    isPointInsideAllCircles,
-    isPointInsideCircle,
-    isPointOutsideAllCircles
-} = geometryCirclesModule;
-
-import nelderMeadMixin from '../Mixins/NelderMead.js';
-const {
-    nelderMead
-} = nelderMeadMixin;
-
-import '../Core/Series/Series.js';
-
-var getCenterOfPoints = geometry.getCenterOfPoints,
-    getDistanceBetweenPoints = geometry.getDistanceBetweenPoints,
-    seriesTypes = H.seriesTypes;
+import './ScatterSeries.js';
 
 var objectValues = function objectValues<T>(
     obj: Highcharts.Dictionary<T>
@@ -1197,7 +1206,7 @@ var vennSeries = {
             var sets: Array<string> = isArray(point.sets) ? point.sets : [],
                 id = sets.join(),
                 shape = mapOfIdToShape[id],
-                shapeArgs: (Highcharts.SVGAttributes|undefined),
+                shapeArgs: (SVGAttributes|undefined),
                 dataLabelValues = mapOfIdToLabelValues[id] || {},
                 dataLabelWidth = dataLabelValues.width,
                 dataLabelPosition = dataLabelValues.position,
@@ -1274,7 +1283,7 @@ var vennSeries = {
         var series = this,
             // Series properties
             chart = series.chart,
-            group: Highcharts.SVGElement = series.group as any,
+            group: SVGElement = series.group as any,
             points = series.points || [],
             // Chart properties
             renderer = chart.renderer;
@@ -1284,7 +1293,7 @@ var vennSeries = {
             var attribs = {
                     zIndex: isArray(point.sets) ? point.sets.length : 0
                 },
-                shapeArgs: Highcharts.SVGAttributes = point.shapeArgs as any;
+                shapeArgs: SVGAttributes = point.shapeArgs as any;
 
             // Add point attribs
             if (!chart.styledMode) {
@@ -1317,7 +1326,7 @@ var vennSeries = {
         this: Highcharts.VennSeries,
         point: Highcharts.VennPoint,
         state?: keyof Highcharts.VennSeries['options']['states']
-    ): Highcharts.SVGAttributes {
+    ): SVGAttributes {
         var series = this,
             seriesOptions = series.options || {},
             pointOptions = point && point.options || {},
@@ -1351,8 +1360,8 @@ var vennSeries = {
                 var args = point.shapeArgs;
 
                 if (point.graphic && args) {
-                    var attr: Highcharts.SVGAttributes = {},
-                        animate: Highcharts.SVGAttributes = {};
+                    var attr: SVGAttributes = {},
+                        animate: SVGAttributes = {};
 
                     if (args.d) {
                         // If shape is a path, then animate opacity.
@@ -1384,14 +1393,14 @@ var vennSeries = {
     },
     utils: {
         addOverlapToSets: addOverlapToSets,
-        geometry: geometry,
-        geometryCircles: geometryCirclesModule,
+        geometry: GeometryMixin,
+        geometryCircles: GeometryCirclesModule,
         getLabelWidth: getLabelWidth,
         getMarginFromCircles: getMarginFromCircles,
         getDistanceBetweenCirclesByOverlap: getDistanceBetweenCirclesByOverlap,
         layoutGreedyVenn: layoutGreedyVenn,
         loss: loss,
-        nelderMead: nelderMeadMixin,
+        nelderMead: NelderMeadMixin,
         processVennData: processVennData,
         sortByTotalOverlap: sortByTotalOverlap
     }
@@ -1491,6 +1500,8 @@ var vennPoint = {
  * @apioption series.venn.states.select
  */
 
+''; // detach doclets above
+
 /**
  * @private
  * @class
@@ -1498,7 +1509,7 @@ var vennPoint = {
  *
  * @augments Highcharts.Series
  */
-seriesType<Highcharts.VennSeries>(
+BaseSeries.seriesType<typeof Highcharts.VennSeries>(
     'venn', 'scatter', vennOptions, vennSeries, vennPoint
 );
 

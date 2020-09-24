@@ -7,12 +7,12 @@
  *  !!!!!!! SOURCE GETS TRANSPILED BY TYPESCRIPT. EDIT TS FILE ONLY. !!!!!!!
  *
  * */
-'use strict';
+import BaseSeries from '../Core/Series/Series.js';
 import H from '../Core/Globals.js';
 import U from '../Core/Utilities.js';
-var addEvent = U.addEvent, seriesType = U.seriesType;
+var addEvent = U.addEvent;
 import '../Core/Options.js';
-import '../Core/Series/Series.js';
+import '../Series/LineSeries.js';
 var Series = H.Series;
 /**
  * Scatter series type.
@@ -23,7 +23,7 @@ var Series = H.Series;
  *
  * @augments Highcharts.Series
  */
-seriesType('scatter', 'line', 
+BaseSeries.seriesType('scatter', 'line', 
 /**
  * A scatter plot uses cartesian coordinates to display values for two
  * variables for a set of data.
@@ -131,7 +131,12 @@ seriesType('scatter', 'line',
      * @function Highcharts.seriesTypes.scatter#drawGraph
      */
     drawGraph: function () {
-        if (this.options.lineWidth) {
+        if (this.options.lineWidth ||
+            // In case we have a graph from before and we update the line
+            // width to 0 (#13816)
+            (this.options.lineWidth === 0 &&
+                this.graph &&
+                this.graph.strokeWidth())) {
             Series.prototype.drawGraph.call(this);
         }
     },

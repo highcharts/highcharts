@@ -7,12 +7,8 @@
  *  !!!!!!! SOURCE GETS TRANSPILED BY TYPESCRIPT. EDIT TS FILE ONLY. !!!!!!!
  *
  * */
-'use strict';
-import H from '../Core/Globals.js';
-import U from '../Core/Utilities.js';
-var seriesType = U.seriesType;
+import BaseSeries from '../Core/Series/Series.js';
 import '../Core/Options.js';
-var seriesTypes = H.seriesTypes;
 /**
  * The area spline range is a cartesian series type with higher and
  * lower Y values along an X axis. The area inside the range is colored, and
@@ -28,8 +24,29 @@ var seriesTypes = H.seriesTypes;
  * @requires  highcharts-more
  * @apioption plotOptions.areasplinerange
  */
-seriesType('areasplinerange', 'arearange', null, {
-    getPointSpline: seriesTypes.spline.prototype.getPointSpline
+BaseSeries.seriesType('areasplinerange', 'arearange', 
+/**
+ * @see [fillColor](#plotOptions.areasplinerange.fillColor)
+ * @see [fillOpacity](#plotOptions.areasplinerange.fillOpacity)
+ *
+ * @apioption plotOptions.areasplinerange.color
+ */
+/**
+ * @see [color](#plotOptions.areasplinerange.color)
+ * @see [fillOpacity](#plotOptions.areasplinerange.fillOpacity)
+ *
+ * @apioption plotOptions.areasplinerange.fillColor
+ */
+/**
+ * @see [color](#plotOptions.areasplinerange.color)
+ * @see [fillColor](#plotOptions.areasplinerange.fillColor)
+ *
+ * @default   {highcharts} 0.75
+ * @default   {highstock} 0.75
+ * @apioption plotOptions.areasplinerange.fillOpacity
+ */
+null, {
+    getPointSpline: BaseSeries.seriesTypes.spline.prototype.getPointSpline
 });
 /**
  * A `areasplinerange` series. If the [type](#series.areasplinerange.type)
@@ -40,6 +57,12 @@ seriesType('areasplinerange', 'arearange', null, {
  * @product   highcharts highstock
  * @requires  highcharts-more
  * @apioption series.areasplinerange
+ */
+/**
+ * @see [fillColor](#series.areasplinerange.fillColor)
+ * @see [fillOpacity](#series.areasplinerange.fillOpacity)
+ *
+ * @apioption series.areasplinerange.color
  */
 /**
  * An array of data points for the series. For the `areasplinerange`
@@ -94,5 +117,19 @@ seriesType('areasplinerange', 'arearange', null, {
  * @extends   series.arearange.data
  * @product   highcharts highstock
  * @apioption series.areasplinerange.data
+ */
+/**
+ * @see [color](#series.areasplinerange.color)
+ * @see [fillOpacity](#series.areasplinerange.fillOpacity)
+ *
+ * @apioption series.areasplinerange.fillColor
+ */
+/**
+ * @see [color](#series.areasplinerange.color)
+ * @see [fillColor](#series.areasplinerange.fillColor)
+ *
+ * @default   {highcharts} 0.75
+ * @default   {highstock} 0.75
+ * @apioption series.areasplinerange.fillOpacity
  */
 ''; // adds doclets above to transpiled file

@@ -6,16 +6,18 @@
  *
  * */
 
-'use strict';
-
+import type CSSObject from '../../Core/Renderer/CSSObject';
 import type Point from '../../Core/Series/Point';
+import BaseSeries from '../../Core/Series/Series.js';
 import H from '../../Core/Globals.js';
+const {
+    noop
+} = H;
 import U from '../../Core/Utilities.js';
 const {
     correctFloat,
     defined,
-    merge,
-    seriesType
+    merge
 } = U;
 
 /**
@@ -102,16 +104,19 @@ declare global {
             startIndex?: number;
             zones?: MACDIndicatorLineOptions['zones'];
         }
-
-        interface SeriesTypesDictionary {
-            macd: typeof MACDIndicator;
-        }
     }
 }
 
+declare module '../../Core/Series/Types' {
+    interface SeriesTypeRegistry {
+        macd: typeof Highcharts.MACDIndicator;
+    }
+}
 
-var noop = H.noop,
-    SMA = H.seriesTypes.sma,
+import './EMAIndicator.js';
+import './SMAIndicator.js';
+
+var SMA = H.seriesTypes.sma,
     EMA = H.seriesTypes.ema;
 
 /**
@@ -123,7 +128,7 @@ var noop = H.noop,
  *
  * @augments Highcharts.Series
  */
-seriesType<Highcharts.MACDIndicator>(
+BaseSeries.seriesType<typeof Highcharts.MACDIndicator>(
     'macd',
     'sma',
 

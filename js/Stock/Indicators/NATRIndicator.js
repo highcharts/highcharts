@@ -5,11 +5,9 @@
  *  !!!!!!! SOURCE GETS TRANSPILED BY TYPESCRIPT. EDIT TS FILE ONLY. !!!!!!!
  *
  * */
-'use strict';
-import H from '../../Core/Globals.js';
-import U from '../../Core/Utilities.js';
-var seriesType = U.seriesType;
-var ATR = H.seriesTypes.atr;
+import BaseSeries from '../../Core/Series/Series.js';
+import './ATRIndicator.js';
+var ATR = BaseSeries.seriesTypes.atr;
 /**
  * The NATR series type.
  *
@@ -19,7 +17,7 @@ var ATR = H.seriesTypes.atr;
  *
  * @augments Highcharts.Series
  */
-seriesType('natr', 'sma', 
+BaseSeries.seriesType('natr', 'sma', 
 /**
  * Normalized average true range indicator (NATR). This series requires
  * `linkedTo` option to be set and should be loaded after the

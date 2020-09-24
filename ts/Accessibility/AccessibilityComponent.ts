@@ -10,28 +10,34 @@
  *
  * */
 
-'use strict';
-
+import type {
+    DOMElementType,
+    HTMLDOMElement
+} from '../Core/Renderer/DOMElementType';
+import type SVGAttributes from '../Core/Renderer/SVG/SVGAttributes';
+import type SVGElement from '../Core/Renderer/SVG/SVGElement';
+import ChartUtilities from './Utils/ChartUtilities.js';
+const {
+    unhideChartElementFromAT
+} = ChartUtilities;
+import DOMElementProvider from './Utils/DOMElementProvider.js';
+import EventProvider from './Utils/EventProvider.js';
 import H from '../Core/Globals.js';
-var win = H.win,
-    doc = win.document;
-
+const {
+    doc,
+    win
+} = H;
+import HTMLUtilities from './Utils/HTMLUtilities.js';
+const {
+    removeElement,
+    getFakeMouseEvent
+} = HTMLUtilities;
 import U from '../Core/Utilities.js';
 const {
     extend,
     fireEvent,
     merge
 } = U;
-
-import HTMLUtilities from './Utils/HTMLUtilities.js';
-var removeElement = HTMLUtilities.removeElement,
-    getFakeMouseEvent = HTMLUtilities.getFakeMouseEvent;
-
-import ChartUtilities from './Utils/ChartUtilities.js';
-var unhideChartElementFromAT = ChartUtilities.unhideChartElementFromAT;
-
-import EventProvider from './Utils/EventProvider.js';
-import DOMElementProvider from './Utils/DOMElementProvider.js';
 
 /**
  * Internal types.
@@ -61,9 +67,7 @@ declare global {
                 preClickEvent?: Function
             ): HTMLDOMElement;
             public createProxyContainerElement(): HTMLDOMElement;
-            public fakeClickEvent(
-                element: (HTMLDOMElement|SVGDOMElement)
-            ): void;
+            public fakeClickEvent(element: DOMElementType): void;
             public getElementPosition(element: SVGElement): BBoxObject;
             public getKeyboardNavigation(): (
                 KeyboardNavigationHandler|Array<KeyboardNavigationHandler>
@@ -73,11 +77,11 @@ declare global {
             public onChartRender(): void;
             public onChartUpdate(): void;
             public proxyMouseEventsForButton(
-                source: (SVGElement|HTMLElement|HTMLDOMElement|SVGDOMElement),
+                source: (SVGElement|HTMLElement|DOMElementType),
                 button: HTMLDOMElement
             ): void;
             public fireEventOnWrappedOrUnwrappedElement(
-                el: (SVGElement|HTMLElement|HTMLDOMElement|SVGDOMElement),
+                el: (SVGElement|HTMLElement|DOMElementType),
                 eventObject: Event
             ): void;
             public setProxyButtonStyle(button: HTMLDOMElement): void;
@@ -196,7 +200,7 @@ AccessibilityComponent.prototype = {
      */
     createElement: function (
         this: Highcharts.AccessibilityComponent
-    ): Highcharts.HTMLDOMElement {
+    ): HTMLDOMElement {
         return (this.domElementProvider as any).createElement.apply(
             this.domElementProvider, arguments
         );
@@ -212,10 +216,7 @@ AccessibilityComponent.prototype = {
      * @param {Event} eventObject
      */
     fireEventOnWrappedOrUnwrappedElement: function (
-        el: (
-            Highcharts.HTMLElement|Highcharts.HTMLDOMElement|
-            Highcharts.SVGDOMElement|Highcharts.SVGElement
-        ),
+        el: (Highcharts.HTMLElement|SVGElement|DOMElementType),
         eventObject: Event
     ): void {
         const type = eventObject.type;
@@ -237,9 +238,7 @@ AccessibilityComponent.prototype = {
      * @private
      * @param {Highcharts.HTMLDOMElement|Highcharts.SVGDOMElement} element
      */
-    fakeClickEvent: function (
-        element: (Highcharts.HTMLDOMElement|Highcharts.SVGDOMElement)
-    ): void {
+    fakeClickEvent: function (element: DOMElementType): void {
         if (element) {
             const fakeEventObject = getFakeMouseEvent('click');
             this.fireEventOnWrappedOrUnwrappedElement(element, fakeEventObject);
@@ -259,7 +258,7 @@ AccessibilityComponent.prototype = {
     addProxyGroup: function (
         this: Highcharts.AccessibilityComponent,
         attrs?: Highcharts.HTMLAttributes
-    ): Highcharts.HTMLDOMElement {
+    ): HTMLDOMElement {
         this.createOrUpdateProxyContainer();
 
         var groupDiv = this.createElement('div');
@@ -301,7 +300,7 @@ AccessibilityComponent.prototype = {
      * @private
      * @return {Highcharts.HTMLDOMElement} element
      */
-    createProxyContainerElement: function (): Highcharts.HTMLDOMElement {
+    createProxyContainerElement: function (): HTMLDOMElement {
         var pc = doc.createElement('div');
         pc.className = 'highcharts-a11y-proxy-container';
         return pc;
@@ -328,11 +327,11 @@ AccessibilityComponent.prototype = {
     createProxyButton: function (
         this: Highcharts.AccessibilityComponent,
         svgElement: Highcharts.SVGElement,
-        parentGroup: Highcharts.HTMLDOMElement,
-        attributes?: Highcharts.SVGAttributes,
+        parentGroup: HTMLDOMElement,
+        attributes?: SVGAttributes,
         posElement?: Highcharts.SVGElement,
         preClickEvent?: Function
-    ): Highcharts.HTMLDOMElement {
+    ): HTMLDOMElement {
         var svgEl = svgElement.element,
             proxy = this.createElement('button'),
             attrs = merge({
@@ -375,10 +374,10 @@ AccessibilityComponent.prototype = {
      */
     getElementPosition: function (
         this: Highcharts.AccessibilityComponent,
-        element: Highcharts.SVGElement
+        element: SVGElement
     ): Highcharts.BBoxObject {
         var el = element.element,
-            div: Highcharts.HTMLDOMElement = (this.chart as any).renderTo;
+            div: HTMLDOMElement = (this.chart as any).renderTo;
 
         if (div && el && el.getBoundingClientRect) {
             var rectEl = el.getBoundingClientRect(),
@@ -400,7 +399,7 @@ AccessibilityComponent.prototype = {
      * @private
      * @param {Highcharts.HTMLElement} button The proxy element.
      */
-    setProxyButtonStyle: function (button: Highcharts.HTMLDOMElement): void {
+    setProxyButtonStyle: function (button: HTMLDOMElement): void {
         merge(true, button.style, {
             'border-width': 0,
             'background-color': 'transparent',
@@ -425,8 +424,8 @@ AccessibilityComponent.prototype = {
      * @param {Highcharts.SVGElement} posElement The element to overlay and take position from.
      */
     updateProxyButtonPosition: function (
-        proxy: Highcharts.HTMLDOMElement,
-        posElement: Highcharts.SVGElement
+        proxy: HTMLDOMElement,
+        posElement: SVGElement
     ): void {
         const bBox = this.getElementPosition(posElement);
         merge(true, proxy.style, {
@@ -447,10 +446,9 @@ AccessibilityComponent.prototype = {
     proxyMouseEventsForButton: function (
         this: Highcharts.AccessibilityComponent,
         source: (
-            Highcharts.HTMLElement|Highcharts.HTMLDOMElement|
-            Highcharts.SVGDOMElement|Highcharts.SVGElement
+            Highcharts.HTMLElement|SVGElement|DOMElementType
         ),
-        button: Highcharts.HTMLDOMElement
+        button: HTMLDOMElement
     ): void {
         var component = this;
 

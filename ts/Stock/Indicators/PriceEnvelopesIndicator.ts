@@ -6,9 +6,14 @@
  *
  * */
 
-'use strict';
-
-import H from '../../Core/Globals.js';
+import type CSSObject from '../../Core/Renderer/CSSObject';
+import type SVGElement from '../../Core/Renderer/SVG/SVGElement';
+import BaseSeries from '../../Core/Series/Series.js';
+import U from '../../Core/Utilities.js';
+const {
+    isArray,
+    merge
+} = U;
 
 /**
  * Internal types
@@ -63,25 +68,21 @@ declare global {
 
         interface PriceEnvelopesIndicatorOptions extends SMAIndicatorOptions {
             params?: PriceEnvelopesIndicatorParamsOptions;
-            bottomLine?: Dictionary<CSSObject>;
-            topLine?: Dictionary<CSSObject>;
+            bottomLine?: Record<string, CSSObject>;
+            topLine?: Record<string, CSSObject>;
         }
-
-        interface SeriesTypesDictionary {
-            priceenvelopes: typeof PriceEnvelopesIndicator;
-        }
-
     }
 }
 
-import U from '../../Core/Utilities.js';
-const {
-    isArray,
-    merge,
-    seriesType
-} = U;
+declare module '../../Core/Series/Types' {
+    interface SeriesTypeRegistry {
+        priceenvelopes: typeof Highcharts.PriceEnvelopesIndicator;
+    }
+}
 
-var SMA = H.seriesTypes.sma;
+import './SMAIndicator.js';
+
+var SMA = BaseSeries.seriesTypes.sma;
 
 /**
  * The Price Envelopes series type.
@@ -92,7 +93,7 @@ var SMA = H.seriesTypes.sma;
  *
  * @augments Highcharts.Series
  */
-seriesType<Highcharts.PriceEnvelopesIndicator>(
+BaseSeries.seriesType<typeof Highcharts.PriceEnvelopesIndicator>(
     'priceenvelopes',
     'sma',
     /**
@@ -225,7 +226,7 @@ seriesType<Highcharts.PriceEnvelopesIndicator>(
                     indicator.options
                 ),
                 middleLinePath: (
-                    Highcharts.SVGElement|undefined
+                    SVGElement|undefined
                 ) = indicator.graph,
                 gappedExtend:
                 Highcharts.PriceEnvelopesIndicatorGappedExtensionObject = {

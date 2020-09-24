@@ -10,10 +10,21 @@
  *
  * */
 
-'use strict';
-
+import type ColorString from '../Core/Color/ColorString';
+import type SVGAttributes from '../Core/Renderer/SVG/SVGAttributes';
 import type SVGPath from '../Core/Renderer/SVG/SVGPath';
+import BaseSeries from '../Core/Series/Series.js';
 import H from '../Core/Globals.js';
+const {
+    deg2rad,
+    svg
+} = H;
+import U from '../Core/Utilities.js';
+const {
+    pick,
+    wrap
+} = U;
+
 
 /**
  * Internal types
@@ -29,15 +40,7 @@ declare global {
     }
 }
 
-import U from '../Core/Utilities.js';
-const {
-    pick,
-    wrap
-} = U;
-
-var deg2rad = H.deg2rad,
-    seriesTypes = H.seriesTypes,
-    svg = H.svg;
+const seriesTypes = BaseSeries.seriesTypes;
 
 /**
  * The thickness of a 3D pie.
@@ -130,7 +133,7 @@ wrap(
         proceed: Function,
         point: Highcharts.PiePoint,
         state: string
-    ): Highcharts.SVGAttributes {
+    ): SVGAttributes {
         var attr = proceed.call(this, point, state),
             options = this.options;
 
@@ -200,7 +203,7 @@ wrap(seriesTypes.pie.prototype, 'animate', function (
         var args = arguments,
             init = args[1],
             animation = this.options.animation,
-            attribs: Highcharts.SVGAttributes,
+            attribs: SVGAttributes,
             center = this.center,
             group = this.group,
             markerGroup = this.markerGroup;

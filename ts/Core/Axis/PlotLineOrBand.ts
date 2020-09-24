@@ -10,6 +10,15 @@
 
 'use strict';
 
+import type {
+    AlignValue,
+    VerticalAlignValue
+} from '../Renderer/AlignObject';
+import type ColorString from '../Color/ColorString';
+import type ColorType from '../Color/ColorType';
+import type CSSObject from '../Renderer/CSSObject';
+import type SVGAttributes from '../Renderer/SVG/SVGAttributes';
+import type SVGElement from '../Renderer/SVG/SVGAttributes';
 import type SVGPath from '../Renderer/SVG/SVGPath';
 import Axis from './Axis.js';
 import H from '../Globals.js';
@@ -61,7 +70,7 @@ declare global {
             borderColor?: ColorString;
             borderWidth?: number;
             className?: string;
-            color?: (ColorString|GradientColorObject|PatternObject);
+            color?: ColorType;
             events?: any;
             from?: number;
             id?: string;
@@ -197,9 +206,9 @@ class PlotLineOrBand {
     public id?: string;
     public isActive?: boolean;
     public eventsAdded?: boolean;
-    public label?: Highcharts.SVGElement;
+    public label?: SVGElement;
     public options?: (Highcharts.AxisPlotLinesOptions|Highcharts.AxisPlotBandsOptions);
-    public svgElem?: Highcharts.SVGElement;
+    public svgElem?: SVGElement;
 
     /**
      * Render the plot line or plot band. If it is already existing,
@@ -232,11 +241,11 @@ class PlotLineOrBand {
             color = options.color,
             zIndex = pick(options.zIndex, 0),
             events = options.events,
-            attribs = {
+            attribs: SVGAttributes = {
                 'class': 'highcharts-plot-' + (isBand ? 'band ' : 'line ') +
                     (options.className || '')
-            } as Highcharts.SVGAttributes,
-            groupAttribs = {} as Highcharts.SVGAttributes,
+            },
+            groupAttribs: SVGAttributes = {},
             renderer = axis.chart.renderer,
             groupName = isBand ? 'bands' : 'lines',
             group;
@@ -390,7 +399,7 @@ class PlotLineOrBand {
         var plotLine = this,
             label = plotLine.label,
             renderer = plotLine.axis.chart.renderer,
-            attribs: Highcharts.SVGAttributes,
+            attribs: SVGAttributes,
             xBounds,
             yBounds,
             x,

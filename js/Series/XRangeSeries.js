@@ -9,14 +9,14 @@
  *  !!!!!!! SOURCE GETS TRANSPILED BY TYPESCRIPT. EDIT TS FILE ONLY. !!!!!!!
  *
  * */
-'use strict';
 import Axis from '../Core/Axis/Axis.js';
+import BaseSeries from '../Core/Series/Series.js';
 import H from '../Core/Globals.js';
-import Color from '../Core/Color.js';
+import Color from '../Core/Color/Color.js';
 var color = Color.parse;
 import Point from '../Core/Series/Point.js';
 import U from '../Core/Utilities.js';
-var addEvent = U.addEvent, clamp = U.clamp, correctFloat = U.correctFloat, defined = U.defined, find = U.find, isNumber = U.isNumber, isObject = U.isObject, merge = U.merge, pick = U.pick, seriesType = U.seriesType;
+var addEvent = U.addEvent, clamp = U.clamp, correctFloat = U.correctFloat, defined = U.defined, find = U.find, isNumber = U.isNumber, isObject = U.isObject, merge = U.merge, pick = U.pick;
 /* *
  * @interface Highcharts.PointOptionsObject in parts/Point.ts
  */ /**
@@ -25,8 +25,8 @@ var addEvent = U.addEvent, clamp = U.clamp, correctFloat = U.correctFloat, defin
 * @type {number|undefined}
 * @requires modules/xrange
 */
-import '../Core/Series/Series.js';
-var columnType = H.seriesTypes.column, seriesTypes = H.seriesTypes, Series = H.Series;
+import './ColumnSeries.js';
+var Series = H.Series, seriesTypes = BaseSeries.seriesTypes, columnType = seriesTypes.column;
 /**
  * Return color of a point based on its category.
  *
@@ -51,6 +51,7 @@ function getColorByCategory(series, point) {
         color: color
     };
 }
+import './ColumnSeries.js';
 /**
  * @private
  * @class
@@ -58,7 +59,7 @@ function getColorByCategory(series, point) {
  *
  * @augments Highcharts.Series
  */
-seriesType('xrange', 'column'
+BaseSeries.seriesType('xrange', 'column'
 /**
  * The X-range series displays ranges on the X axis, typically time
  * intervals with a start and end date.

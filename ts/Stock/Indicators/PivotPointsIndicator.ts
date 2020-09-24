@@ -6,11 +6,15 @@
  *
  * */
 
-'use strict';
-
 import type Point from '../../Core/Series/Point';
+import type SVGElement from '../../Core/Renderer/SVG/SVGElement';
 import type SVGPath from '../../Core/Renderer/SVG/SVGPath';
-import H from '../../Core/Globals.js';
+import BaseSeries from '../../Core/Series/Series.js';
+import U from '../../Core/Utilities.js';
+const {
+    defined,
+    isArray
+} = U;
 
 /**
  * Internal types
@@ -64,21 +68,18 @@ declare global {
         interface PivotPointsIndicatorOptions extends SMAIndicatorOptions {
             params?: PivotPointsIndicatorParamsOptions;
         }
-
-        interface SeriesTypesDictionary {
-            pivotpoints: typeof PivotPointsIndicator;
-        }
     }
 }
 
-import U from '../../Core/Utilities.js';
-const {
-    defined,
-    isArray,
-    seriesType
-} = U;
+declare module '../../Core/Series/Types' {
+    interface SeriesTypeRegistry {
+        pivotpoints: typeof Highcharts.PivotPointsIndicator;
+    }
+}
 
-var SMA = H.seriesTypes.sma;
+import './SMAIndicator.js';
+
+var SMA = BaseSeries.seriesTypes.sma;
 
 /* eslint-disable valid-jsdoc */
 
@@ -116,7 +117,7 @@ function destroyExtraLabels(
  *
  * @augments Highcharts.Series
  */
-seriesType<Highcharts.PivotPointsIndicator>(
+BaseSeries.seriesType<typeof Highcharts.PivotPointsIndicator>(
     'pivotpoints',
     'sma',
     /**
@@ -259,7 +260,7 @@ seriesType<Highcharts.PivotPointsIndicator>(
         drawDataLabels: function (this: Highcharts.PivotPointsIndicator): void {
             var indicator = this,
                 pointMapping: Array<(string|boolean)> = indicator.pointArrayMap,
-                currentLabel: (Highcharts.SVGElement|null),
+                currentLabel: (SVGElement|null),
                 pointsLength: number,
                 point: Highcharts.PivotPointsIndicatorPoint,
                 i: number;

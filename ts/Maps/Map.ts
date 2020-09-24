@@ -10,6 +10,9 @@
 
 'use strict';
 
+import type {
+    HTMLDOMElement
+} from '../Core/Renderer/DOMElementType';
 import type SVGPath from '../Core/Renderer/SVG/SVGPath';
 import Chart from '../Core/Chart/Chart.js';
 import H from '../Core/Globals.js';
@@ -456,7 +459,7 @@ if ((Renderer as any) === VMLRenderer) {
  *         The chart object.
  */
 const mapChart = H.Map /* fake class for jQuery */ = H.mapChart = function (
-    a: (string|Highcharts.HTMLDOMElement|Highcharts.Options),
+    a: (string|HTMLDOMElement|Highcharts.Options),
     b?: (Chart.CallbackFunction|Highcharts.Options),
     c?: Chart.CallbackFunction
 ): Chart {

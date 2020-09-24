@@ -11,7 +11,12 @@
 'use strict';
 
 import type Chart from './Chart/Chart';
-import type Point from '../Core/Series/Point';
+import type ColorType from './Color/ColorType';
+import type {
+    HTMLDOMElement
+} from './Renderer/DOMElementType';
+import type Point from './Series/Point';
+import type SVGAttributes from './Renderer/SVG/SVGAttributes';
 import type SVGElement from './Renderer/SVG/SVGElement';
 import H from './Globals.js';
 const {
@@ -133,7 +138,7 @@ declare global {
             ): (false|string|Array<string>);
         }
         interface TooltipFormatterContextObject {
-            color: (ColorString|GradientColorObject|PatternObject);
+            color: ColorType;
             colorIndex?: number;
             key: number;
             percentage?: number;
@@ -232,7 +237,7 @@ declare global {
  * @param {number} labelHeight
  * Height of the tooltip.
  *
- * @param {Highcharts.Point|Highcharts.TooltipPositionerPointObject} point
+ * @param {Highcharts.TooltipPositionerPointObject} point
  * Point information for positioning a tooltip.
  *
  * @return {Highcharts.PositionObject}
@@ -243,6 +248,7 @@ declare global {
  * Point information for positioning a tooltip.
  *
  * @interface Highcharts.TooltipPositionerPointObject
+ * @extends Highcharts.Point
  *//**
  * If `tooltip.split` option is enabled and positioner is called for each of the
  * boxes separately, this property indicates the call on the xAxis header, which
@@ -339,9 +345,9 @@ class Tooltip {
 
     public tooltipTimeout?: number;
 
-    public tracker?: Highcharts.SVGElement;
+    public tracker?: SVGElement;
 
-    public tt?: Highcharts.SVGElement;
+    public tt?: SVGElement;
 
     /* *
      *
@@ -666,7 +672,7 @@ class Tooltip {
      * @function Highcharts.Tooltip#getLabel
      * @return {Highcharts.SVGElement}
      */
-    public getLabel(): Highcharts.SVGElement {
+    public getLabel(): SVGElement {
 
         var tooltip = this,
             renderer: (Highcharts.Renderer|Highcharts.SVGRenderer) = this.chart.renderer,
@@ -1532,10 +1538,10 @@ class Tooltip {
          * @return {Highcharts.SVGElement} Returns the updated partial tooltip
          */
         function updatePartialTooltip(
-            partialTooltip: (Highcharts.SVGElement|undefined),
+            partialTooltip: (SVGElement|undefined),
             point: (Point & { isHeader?: boolean }),
             str: (boolean|string)
-        ): Highcharts.SVGElement {
+        ): SVGElement {
             let tt = partialTooltip;
             const { isHeader, series } = point;
             const colorClass = 'highcharts-color-' + pick(
@@ -1543,7 +1549,7 @@ class Tooltip {
             );
             if (!tt) {
 
-                const attribs: Highcharts.SVGAttributes = {
+                const attribs: SVGAttributes = {
                     padding: options.padding,
                     r: options.borderRadius
                 };

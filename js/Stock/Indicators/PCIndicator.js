@@ -5,12 +5,13 @@
  *  !!!!!!! SOURCE GETS TRANSPILED BY TYPESCRIPT. EDIT TS FILE ONLY. !!!!!!!
  *
  * */
-'use strict';
+import BaseSeries from '../../Core/Series/Series.js';
+import MultipleLinesMixin from '../../Mixins/MultipleLines.js';
+import ReduceArrayMixin from '../../Mixins/ReduceArray.js';
 import U from '../../Core/Utilities.js';
-var merge = U.merge, seriesType = U.seriesType;
-import reduceArrayMixin from '../../Mixins/ReduceArray.js';
-import multipleLinesMixin from '../../Mixins/MultipleLines.js';
-var getArrayExtremes = reduceArrayMixin.getArrayExtremes;
+var merge = U.merge;
+import './SMAIndicator.js';
+var getArrayExtremes = ReduceArrayMixin.getArrayExtremes;
 /**
  * The Price Channel series type.
  *
@@ -20,7 +21,7 @@ var getArrayExtremes = reduceArrayMixin.getArrayExtremes;
  *
  * @augments Highcharts.Series
  */
-seriesType('pc', 'sma', 
+BaseSeries.seriesType('pc', 'sma', 
 /**
  * Price channel (PC). This series requires the `linkedTo` option to be
  * set and should be loaded after the `stock/indicators/indicators.js`.
@@ -84,7 +85,7 @@ seriesType('pc', 'sma',
 /**
  * @lends Highcharts.Series#
  */
-merge(multipleLinesMixin, {
+merge(MultipleLinesMixin, {
     pointArrayMap: ['top', 'middle', 'bottom'],
     pointValKey: 'middle',
     nameBase: 'Price Channel',

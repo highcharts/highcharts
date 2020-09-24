@@ -18,18 +18,32 @@
  *   Highcharts symbols.
  */
 
-'use strict';
-
+import type SVGAttributes from '../Core/Renderer/SVG/SVGAttributes';
+import type SVGElement from '../Core/Renderer/SVG/SVGElement';
 import type SVGPath from '../Core/Renderer/SVG/SVGPath';
+import _ColumnSeries from './ColumnSeries.js';
+import Series from '../Core/Series/Series.js';
 import SVGRenderer from '../Core/Renderer/SVG/SVGRenderer.js';
 import U from '../Core/Utilities.js';
 const {
     extend,
     objectEach,
-    pick,
-    seriesType
+    pick
 } = U;
 
+/**
+ * @private
+ */
+declare module '../Core/Series/Types' {
+    interface SeriesTypeRegistry {
+        dotplot: typeof Highcharts.DotplotSeries;
+    }
+}
+
+/**
+ * Internal types.
+ * @private
+ */
 declare global {
     namespace Highcharts {
         class DotplotPoint extends ColumnPoint {
@@ -52,13 +66,8 @@ declare global {
             itemPadding?: number;
             states?: SeriesStatesOptionsObject<DotplotSeries>;
         }
-        interface SeriesTypesDictionary {
-            dotplot: typeof DotplotSeries;
-        }
     }
 }
-
-import '../Core/Series/Series.js';
 
 /**
  * @private
@@ -67,7 +76,7 @@ import '../Core/Series/Series.js';
  *
  * @augments Highcharts.Series
  */
-seriesType<Highcharts.DotplotSeries>('dotplot', 'column', {
+Series.seriesType<typeof Highcharts.DotplotSeries>('dotplot', 'column', {
     itemPadding: 0.2,
     marker: {
         symbol: 'circle',
@@ -89,8 +98,8 @@ seriesType<Highcharts.DotplotSeries>('dotplot', 'column', {
 
         this.points.forEach(function (point: Highcharts.DotplotPoint): void {
             var yPos: number,
-                attr: Highcharts.SVGAttributes,
-                graphics: Highcharts.Dictionary<Highcharts.SVGElement>,
+                attr: SVGAttributes,
+                graphics: Highcharts.Dictionary<SVGElement>,
                 itemY: (number|undefined),
                 pointAttr,
                 pointMarkerOptions = point.marker || {},
@@ -168,7 +177,7 @@ seriesType<Highcharts.DotplotSeries>('dotplot', 'column', {
                 }
             }
             objectEach(graphics, function (
-                graphic: Highcharts.SVGElement,
+                graphic: SVGElement,
                 key: string
             ): void {
                 if (!graphic.isActive) {

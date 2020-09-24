@@ -8,9 +8,12 @@
  *
  * */
 
-'use strict';
-
+import BaseSeries from '../Core/Series/Series.js';
 import H from '../Core/Globals.js';
+import U from '../Core/Utilities.js';
+const {
+    addEvent
+} = U;
 
 /**
  * Internal types
@@ -32,9 +35,6 @@ declare global {
         interface Series {
             takeOrdinalPosition?: boolean;
         }
-        interface SeriesTypesDictionary {
-            scatter: typeof ScatterSeries;
-        }
         class ScatterPoint extends LinePoint {
             public options: ScatterPointOptions;
             public series: ScatterSeries;
@@ -50,14 +50,17 @@ declare global {
     }
 }
 
-import U from '../Core/Utilities.js';
-const {
-    addEvent,
-    seriesType
-} = U;
+/**
+ * @private
+ */
+declare module '../Core/Series/Types' {
+    interface SeriesTypeRegistry {
+        scatter: typeof Highcharts.ScatterSeries;
+    }
+}
 
 import '../Core/Options.js';
-import '../Core/Series/Series.js';
+import '../Series/LineSeries.js';
 
 var Series = H.Series;
 
@@ -70,7 +73,7 @@ var Series = H.Series;
  *
  * @augments Highcharts.Series
  */
-seriesType<Highcharts.ScatterSeries>(
+BaseSeries.seriesType<typeof Highcharts.ScatterSeries>(
     'scatter',
     'line',
 
@@ -193,7 +196,16 @@ seriesType<Highcharts.ScatterSeries>(
          * @function Highcharts.seriesTypes.scatter#drawGraph
          */
         drawGraph: function (this: Highcharts.ScatterSeries): void {
-            if (this.options.lineWidth) {
+            if (
+                this.options.lineWidth ||
+                // In case we have a graph from before and we update the line
+                // width to 0 (#13816)
+                (
+                    this.options.lineWidth === 0 &&
+                    this.graph &&
+                    this.graph.strokeWidth()
+                )
+            ) {
                 Series.prototype.drawGraph.call(this);
             }
         },

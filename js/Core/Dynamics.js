@@ -8,17 +8,20 @@
  *
  * */
 'use strict';
+import A from './Animation/AnimationUtilities.js';
+var animate = A.animate, setAnimation = A.setAnimation;
 import Axis from './Axis/Axis.js';
+import BaseSeries from './Series/Series.js';
+var seriesTypes = BaseSeries.seriesTypes;
 import Chart from './Chart/Chart.js';
 import H from './Globals.js';
+import LineSeries from '../Series/LineSeries.js';
 import O from './Options.js';
 var time = O.time;
 import Point from '../Core/Series/Point.js';
 import Time from './Time.js';
 import U from './Utilities.js';
-var addEvent = U.addEvent, animate = U.animate, createElement = U.createElement, css = U.css, defined = U.defined, erase = U.erase, error = U.error, extend = U.extend, fireEvent = U.fireEvent, isArray = U.isArray, isNumber = U.isNumber, isObject = U.isObject, isString = U.isString, merge = U.merge, objectEach = U.objectEach, pick = U.pick, relativeLength = U.relativeLength, setAnimation = U.setAnimation, splat = U.splat;
-import './Series/Series.js';
-var Series = H.Series, seriesTypes = H.seriesTypes;
+var addEvent = U.addEvent, createElement = U.createElement, css = U.css, defined = U.defined, erase = U.erase, error = U.error, extend = U.extend, fireEvent = U.fireEvent, isArray = U.isArray, isNumber = U.isNumber, isObject = U.isObject, isString = U.isString, merge = U.merge, objectEach = U.objectEach, pick = U.pick, relativeLength = U.relativeLength, splat = U.splat;
 /* eslint-disable valid-jsdoc */
 /**
  * Remove settings that have not changed, to avoid unnecessary rendering or
@@ -472,9 +475,6 @@ extend(Chart.prototype, /** @lends Highcharts.Chart.prototype */ {
         if (!chart.styledMode && options.colors) {
             this.options.colors = options.colors;
         }
-        if (options.plotOptions) {
-            merge(true, this.options.plotOptions, options.plotOptions);
-        }
         // Maintaining legacy global time. If the chart is instanciated first
         // with global time, then updated with time options, we need to create a
         // new Time instance to avoid mutating the global time (#10536).
@@ -499,6 +499,12 @@ extend(Chart.prototype, /** @lends Highcharts.Chart.prototype */ {
             }
             else if (typeof chart[adders[key]] === 'function') {
                 chart[adders[key]](val);
+                // Else, just merge the options. For nodes like loading, noData,
+                // plotOptions
+            }
+            else if (key !== 'color' &&
+                chart.collectionsWithUpdate.indexOf(key) === -1) {
+                merge(true, chart.options[key], options[key]);
             }
             if (key !== 'chart' &&
                 chart.propsRequireUpdateSeries.indexOf(key) !== -1) {
@@ -592,10 +598,6 @@ extend(Chart.prototype, /** @lends Highcharts.Chart.prototype */ {
                     series.update({}, false);
                 }
             }, this);
-        }
-        // For loading, just update the options, do not redraw
-        if (options.loading) {
-            merge(true, chart.options.loading, options.loading);
         }
         // Update size. Redraw is forced.
         newWidth = optionsChart && optionsChart.width;
@@ -793,7 +795,7 @@ extend(Point.prototype, /** @lends Highcharts.Point.prototype */ {
     }
 });
 // Extend the series prototype for dynamic methods
-extend(Series.prototype, /** @lends Series.prototype */ {
+extend(LineSeries.prototype, /** @lends Series.prototype */ {
     /**
      * Add a point to the series after render time. The point can be added at
      * the end, or by giving it an X value, to the start or in the middle of the
@@ -1040,21 +1042,23 @@ extend(Series.prototype, /** @lends Series.prototype */ {
         var series = this, chart = series.chart, 
         // must use user options when changing type because series.options
         // is merged in with type specific plotOptions
-        oldOptions = series.userOptions, seriesOptions, initialType = series.initialType || series.type, newType = (options.type ||
+        oldOptions = series.userOptions, seriesOptions, initialType = series.initialType || series.type, plotOptions = chart.options.plotOptions, newType = (options.type ||
             oldOptions.type ||
             chart.options.chart.type), keepPoints = !(
         // Indicators, histograms etc recalculate the data. It should be
         // possible to omit this.
         this.hasDerivedData ||
-            // Changes to data grouping requires new points in new groups
-            options.dataGrouping ||
             // New type requires new point classes
             (newType && newType !== this.type) ||
             // New options affecting how the data points are built
             typeof options.pointStart !== 'undefined' ||
-            options.pointInterval ||
-            options.pointIntervalUnit ||
-            options.keys), initialSeriesProto = seriesTypes[initialType].prototype, n, groups = [
+            typeof options.pointInterval !== 'undefined' ||
+            // Changes to data grouping requires new points in new group
+            series.hasOptionChanged('dataGrouping') ||
+            series.hasOptionChanged('pointStart') ||
+            series.hasOptionChanged('pointInterval') ||
+            series.hasOptionChanged('pointIntervalUnit') ||
+            series.hasOptionChanged('keys')), initialSeriesProto = seriesTypes[initialType].prototype, n, groups = [
             'group',
             'markerGroup',
             'dataLabelsGroup',
@@ -1097,7 +1101,7 @@ extend(Series.prototype, /** @lends Series.prototype */ {
                 series.index : oldOptions.index,
             pointStart: pick(
             // when updating from blank (#7933)
-            oldOptions.pointStart, 
+            plotOptions && plotOptions.series && plotOptions.series.pointStart, oldOptions.pointStart, 
             // when updating after addPoint
             series.xData[0])
         }, (!keepPoints && { data: series.options.data }), options);
@@ -1187,6 +1191,24 @@ extend(Series.prototype, /** @lends Series.prototype */ {
     setName: function (name) {
         this.name = this.options.name = this.userOptions.name = name;
         this.chart.isDirtyLegend = true;
+    },
+    /**
+     * Check if the option has changed.
+     *
+     * @private
+     * @function Highcharts.Series#hasOptionChanged
+     *
+     * @param {string} option
+     *
+     * @return {boolean}
+     */
+    hasOptionChanged: function (optionName) {
+        var chart = this.chart, option = this.options[optionName], plotOptions = chart.options.plotOptions, oldOption = this.userOptions[optionName];
+        if (oldOption) {
+            return option !== oldOption;
+        }
+        return option !==
+            pick(plotOptions && plotOptions[this.type] && plotOptions[this.type][optionName], plotOptions && plotOptions.series && plotOptions.series[optionName], option);
     }
 });
 // Extend the Axis.prototype for dynamic methods

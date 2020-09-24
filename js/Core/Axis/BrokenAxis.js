@@ -9,12 +9,10 @@
  * */
 'use strict';
 import Axis from './Axis.js';
-import H from '../Globals.js';
+import LineSeries from '../../Series/LineSeries.js';
+import StackItem from '../../Extensions/Stacking.js';
 import U from '../Utilities.js';
 var addEvent = U.addEvent, find = U.find, fireEvent = U.fireEvent, isArray = U.isArray, isNumber = U.isNumber, pick = U.pick;
-import '../Series/Series.js';
-import StackItem from '../../Extensions/Stacking.js';
-var Series = H.Series;
 /* eslint-disable valid-jsdoc */
 /**
  * Provides support for broken axes.
@@ -319,7 +317,7 @@ var BrokenAxis = /** @class */ (function () {
      */
     BrokenAxis.compose = function (AxisClass, SeriesClass) {
         AxisClass.keepProps.push('brokenAxis');
-        var seriesProto = Series.prototype;
+        var seriesProto = LineSeries.prototype;
         /**
          * @private
          */
@@ -530,5 +528,5 @@ var BrokenAxis = /** @class */ (function () {
     };
     return BrokenAxis;
 }());
-BrokenAxis.compose(Axis, Series); // @todo remove automatism
+BrokenAxis.compose(Axis, LineSeries); // @todo remove automatism
 export default BrokenAxis;

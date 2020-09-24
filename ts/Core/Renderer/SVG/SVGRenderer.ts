@@ -8,10 +8,22 @@
  *
  * */
 
-'use strict';
-
+import type AlignObject from '../AlignObject';
+import type AnimationOptionsObject from '../../Animation/AnimationOptionsObject';
+import type BBoxObject from '../BBoxObject';
+import type ColorString from '../../Color/ColorString';
+import type CSSObject from '../CSSObject';
+import type {
+    DOMElementType,
+    HTMLDOMElement,
+    SVGDOMElement
+} from '../DOMElementType';
+import type PositionObject from '../PositionObject';
+import type RectangleObject from '../RectangleObject';
+import type SizeObject from '../SizeObject';
+import type SVGAttributes from './SVGAttributes';
 import type SVGPath from './SVGPath';
-import Color from '../../Color.js';
+import Color from '../../Color/Color.js';
 import H from '../../Globals.js';
 import SVGElement from './SVGElement.js';
 import SVGLabel from './SVGLabel.js';
@@ -36,6 +48,11 @@ const {
     uniqueKey
 } = U;
 
+type ImportedPositionObject = PositionObject;
+type ImportedRectangleObject = RectangleObject;
+type ImportedSizeObject = SizeObject;
+type ImportedAlignObject = AlignObject;
+
 /**
  * Internal types
  * @private
@@ -43,7 +60,10 @@ const {
 declare global {
     namespace Highcharts {
         type ClipRectElement = SVGElement;
+        type PositionObject = ImportedPositionObject;
+        type RectangleObject = ImportedRectangleObject;
         type Renderer = SVGRenderer;
+        type SizeObject = ImportedSizeObject;
         type SymbolKeyValue = (
             'arc'|'bottombutton'|'callout'|'circle'|'connector'|'diamond'|
             'rect'|'square'|'topbutton'|'triangle'|'triangle-down'
@@ -52,24 +72,6 @@ declare global {
             b: number;
             f: number;
             h: number;
-        }
-        interface PositionObject {
-            x: number;
-            y: number;
-        }
-        interface RectangleObject extends BBoxObject {
-            strokeWidth?: number;
-        }
-        interface ShadowOptionsObject {
-            color: ColorString;
-            offsetX: number;
-            offsetY: number;
-            opacity: number;
-            width: number;
-        }
-        interface SizeObject {
-            height: number;
-            width: number;
         }
         interface SVGDefinitionObject {
             [key: string]: (boolean|number|string|Array<SVGDefinitionObject>|undefined);
@@ -187,7 +189,7 @@ declare global {
             public getStyle(style: CSSObject): CSSObject;
             public fontMetrics(
                 fontSize?: (number|string),
-                elem?: (HTMLDOMElement|SVGElement|SVGDOMElement)
+                elem?: (DOMElementType|SVGElement)
             ): FontMetricsObject;
             public image(
                 src: string,
@@ -566,10 +568,10 @@ class SVGRenderer {
      * */
 
     public constructor(
-        container: Highcharts.HTMLDOMElement,
+        container: HTMLDOMElement,
         width: number,
         height: number,
-        style?: Highcharts.CSSObject,
+        style?: CSSObject,
         forExport?: boolean,
         allowHTML?: boolean,
         styledMode?: boolean
@@ -603,7 +605,7 @@ class SVGRenderer {
      */
     public boxWrapper: SVGElement = void 0 as any;
 
-    public cache: Record<string, Highcharts.BBoxObject> = void 0 as any;
+    public cache: Record<string, BBoxObject> = void 0 as any;
 
     public cacheKeys: Array<string> = void 0 as any;
 
@@ -617,12 +619,12 @@ class SVGRenderer {
      */
     public defs: SVGElement = void 0 as any;
     public forExport?: boolean;
-    public globalAnimation: Partial<Highcharts.AnimationOptionsObject> = void 0 as any;
+    public globalAnimation: Partial<AnimationOptionsObject> = void 0 as any;
     public gradients: Record<string, SVGElement> = void 0 as any;
     public height: number = void 0 as any;
     public imgCount: number = void 0 as any;
     public isSVG: boolean = void 0 as any;
-    public style: Highcharts.CSSObject = void 0 as any;
+    public style: CSSObject = void 0 as any;
     public styledMode?: boolean;
     public unSubPixelFix?: Function;
 
@@ -673,10 +675,10 @@ class SVGRenderer {
      * not when set explicitly through `.attr` and `.css` etc.
      */
     public init(
-        container: Highcharts.HTMLDOMElement,
+        container: HTMLDOMElement,
         width: number,
         height: number,
-        style?: Highcharts.CSSObject,
+        style?: CSSObject,
         forExport?: boolean,
         allowHTML?: boolean,
         styledMode?: boolean
@@ -811,7 +813,7 @@ class SVGRenderer {
                 item: Highcharts.SVGDefinitionObject
             ): void {
                 var node = ren.createElement(item.tagName as any),
-                    attr: Highcharts.SVGAttributes = {};
+                    attr: SVGAttributes = {};
 
                 // Set attributes
                 objectEach(item, function (val, key): void {
@@ -859,7 +861,7 @@ class SVGRenderer {
      * @return {Highcharts.CSSObject}
      * The style settings mixed with defaults.
      */
-    public getStyle(style: Highcharts.CSSObject): Highcharts.CSSObject {
+    public getStyle(style: CSSObject): CSSObject {
         this.style = extend({
 
             fontFamily: '"Lucida Grande", "Lucida Sans Unicode", ' +
@@ -878,7 +880,7 @@ class SVGRenderer {
      * @param {Highcharts.CSSObject} style
      * CSS to apply.
      */
-    public setStyle(style: Highcharts.CSSObject): void {
+    public setStyle(style: CSSObject): void {
         this.boxWrapper.css(this.getStyle(style));
     }
 
@@ -962,8 +964,8 @@ class SVGRenderer {
      */
     public getRadialAttr(
         radialReference: Array<number>,
-        gradAttr: Highcharts.SVGAttributes
-    ): Highcharts.SVGAttributes {
+        gradAttr: SVGAttributes
+    ): SVGAttributes {
         return {
             cx: (radialReference[0] - radialReference[2] / 2) +
                 gradAttr.cx * radialReference[2],
@@ -987,7 +989,7 @@ class SVGRenderer {
      */
     public truncate(
         wrapper: SVGElement,
-        tspan: Highcharts.HTMLDOMElement,
+        tspan: HTMLDOMElement,
         text: (string|undefined),
         words: (Array<string>|undefined),
         startAt: number,
@@ -1139,7 +1141,7 @@ class SVGRenderer {
             isSubsequentLine: number,
             i = childNodes.length,
             tempParent = width && !wrapper.added && this.box,
-            getLineHeight = function (tspan: Highcharts.SVGDOMElement): number {
+            getLineHeight = function (tspan: SVGDOMElement): number {
                 var fontSizeStyle;
 
                 if (!renderer.styledMode) {
@@ -1294,7 +1296,7 @@ class SVGRenderer {
 
                 spans.forEach(function buildTextSpans(span: string): void {
                     if (span !== '' || spans.length === 1) {
-                        var attributes = {} as Highcharts.SVGAttributes,
+                        var attributes: SVGAttributes = {},
                             tspan = doc.createElementNS(
                                 renderer.SVG_NS,
                                 'tspan'
@@ -1539,7 +1541,7 @@ class SVGRenderer {
      * @return {Highcharts.ColorString}
      * The contrast color, either `#000000` or `#FFFFFF`.
      */
-    public getContrast(rgba: Highcharts.ColorString): Highcharts.ColorString {
+    public getContrast(rgba: ColorString): ColorString {
         rgba = Color.parse(rgba).rgba as any;
 
         // The threshold may be discussed. Here's a proposal for adding
@@ -1597,10 +1599,10 @@ class SVGRenderer {
         x: number,
         y: number,
         callback: Highcharts.EventCallbackFunction<SVGElement>,
-        normalState?: Highcharts.SVGAttributes,
-        hoverState?: Highcharts.SVGAttributes,
-        pressedState?: Highcharts.SVGAttributes,
-        disabledState?: Highcharts.SVGAttributes,
+        normalState?: SVGAttributes,
+        hoverState?: SVGAttributes,
+        pressedState?: SVGAttributes,
+        disabledState?: SVGAttributes,
         shape?: Highcharts.SymbolKeyValue,
         useHTML?: boolean
     ): SVGElement {
@@ -1821,10 +1823,10 @@ class SVGRenderer {
      * @return {Highcharts.SVGElement}
      * The generated wrapper element.
      */
-    public path(path?: (Highcharts.SVGAttributes|SVGPath)): SVGElement {
-        var attribs = (this.styledMode ? {} : {
+    public path(path?: (SVGAttributes|SVGPath)): SVGElement {
+        var attribs: SVGAttributes = (this.styledMode ? {} : {
             fill: 'none'
-        }) as Highcharts.SVGAttributes;
+        });
 
         if (isArray(path)) {
             attribs.d = path;
@@ -1865,13 +1867,13 @@ class SVGRenderer {
      * The generated wrapper element.
      */
     public circle(
-        x?: (number|Highcharts.SVGAttributes),
+        x?: (number|SVGAttributes),
         y?: number,
         r?: number
     ): SVGElement {
-        var attribs = (
+        var attribs: SVGAttributes = (
                 isObject(x) ?
-                    x as Highcharts.SVGAttributes :
+                    x :
                     typeof x === 'undefined' ? {} : { x: x, y: y, r: r }
             ),
             wrapper = this.createElement('circle');
@@ -1880,7 +1882,7 @@ class SVGRenderer {
         wrapper.xSetter = wrapper.ySetter = function (
             value: string,
             key: string,
-            element: Highcharts.SVGDOMElement
+            element: SVGDOMElement
         ): void {
             element.setAttribute('c' + key, value);
         };
@@ -1888,7 +1890,7 @@ class SVGRenderer {
         return wrapper.attr(attribs);
     }
 
-    public arc(attribs: Highcharts.SVGAttributes): SVGElement;
+    public arc(attribs: SVGAttributes): SVGElement;
     public arc(
         x?: number,
         y?: number,
@@ -1939,7 +1941,7 @@ class SVGRenderer {
      * The generated wrapper element.
      */
     public arc(
-        x?: (number|Highcharts.SVGAttributes),
+        x?: (number|SVGAttributes),
         y?: number,
         r?: number,
         innerR?: number,
@@ -1947,10 +1949,10 @@ class SVGRenderer {
         end?: number
     ): SVGElement {
         var arc: SVGElement,
-            options: Highcharts.SVGAttributes;
+            options: SVGAttributes;
 
         if (isObject(x)) {
-            options = x as Highcharts.SVGAttributes;
+            options = x as SVGAttributes;
             y = options.y;
             r = options.r;
             innerR = options.innerR;
@@ -2021,7 +2023,7 @@ class SVGRenderer {
      * The generated wrapper element.
      */
     public rect(
-        x?: (number|Highcharts.SVGAttributes),
+        x?: (number|SVGAttributes),
         y?: number,
         width?: number,
         height?: number,
@@ -2032,8 +2034,8 @@ class SVGRenderer {
         r = isObject(x) ? (x as any).r : r;
 
         var wrapper = this.createElement('rect'),
-            attribs: Highcharts.SVGAttributes = isObject(x) ?
-                (x as any) :
+            attribs = isObject(x) ?
+                x as SVGAttributes :
                 typeof x === 'undefined' ?
                     {} :
                     {
@@ -2058,7 +2060,7 @@ class SVGRenderer {
         wrapper.rSetter = function (
             value: number,
             key: string,
-            element: Highcharts.SVGDOMElement
+            element: SVGDOMElement
         ): void {
             wrapper.r = value;
             attr(element, {
@@ -2094,7 +2096,7 @@ class SVGRenderer {
     public setSize(
         width: number,
         height: number,
-        animate?: (boolean|Partial<Highcharts.AnimationOptionsObject>)
+        animate?: (boolean|Partial<AnimationOptionsObject>)
     ): void {
         var renderer = this,
             alignedObjects = renderer.alignedObjects,
@@ -2183,8 +2185,8 @@ class SVGRenderer {
         height?: number,
         onload?: Function
     ): SVGElement {
-        var attribs =
-            { preserveAspectRatio: 'none' } as Highcharts.SVGAttributes,
+        var attribs: SVGAttributes =
+            { preserveAspectRatio: 'none' },
             elemWrapper: SVGElement,
             dummy,
             setSVGImageSource = function (
@@ -2358,7 +2360,7 @@ class SVGRenderer {
              */
             ['width', 'height'].forEach(function (key: string): void {
                 obj[key + 'Setter'] = function (value: any, key: string): void {
-                    var attribs = {} as Highcharts.SVGAttributes,
+                    var attribs: SVGAttributes = {},
                         imgSize = this['img' + key],
                         trans = key === 'width' ? 'translateX' : 'translateY';
 
@@ -2411,9 +2413,7 @@ class SVGRenderer {
 
                 // Create a dummy JavaScript image to get the width and height.
                 createElement('img', {
-                    onload: function (
-                        this: Highcharts.SVGDOMElement
-                    ): void {
+                    onload: function (this: SVGDOMElement): void {
 
                         var chart = charts[ren.chartIndex];
 
@@ -2461,7 +2461,7 @@ class SVGRenderer {
         return obj;
     }
 
-    public clipRect(attribs: Highcharts.SVGAttributes): Highcharts.ClipRectElement;
+    public clipRect(attribs: SVGAttributes): Highcharts.ClipRectElement;
     public clipRect(
         x?: number,
         y?: number,
@@ -2496,7 +2496,7 @@ class SVGRenderer {
      *         A clipping rectangle.
      */
     public clipRect(
-        x?: (number|Highcharts.SVGAttributes),
+        x?: (number|SVGAttributes),
         y?: number,
         width?: number,
         height?: number
@@ -2559,7 +2559,7 @@ class SVGRenderer {
         // declare variables
         var renderer = this,
             wrapper: SVGElement,
-            attribs = {} as Highcharts.SVGAttributes;
+            attribs: SVGAttributes = {};
 
         if (useHTML && (renderer.allowHTML || !renderer.forExport)) {
             return (renderer as any).html(str, x, y);
@@ -2580,7 +2580,7 @@ class SVGRenderer {
             wrapper.xSetter = function (
                 value: string,
                 key: string,
-                element: Highcharts.SVGDOMElement
+                element: SVGDOMElement
             ): void {
                 var tspans = element.getElementsByTagName('tspan'),
                     tspan,
@@ -2679,7 +2679,7 @@ class SVGRenderer {
         baseline: number,
         rotation: number,
         alterY?: boolean
-    ): Highcharts.PositionObject {
+    ): PositionObject {
         var y = baseline;
 
         if (rotation && alterY) {

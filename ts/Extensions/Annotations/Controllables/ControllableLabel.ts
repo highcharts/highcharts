@@ -6,7 +6,11 @@
 
 'use strict';
 
+import type {
+    AlignObject
+} from '../../../Core/Renderer/AlignObject';
 import type Annotation from '../Annotations';
+import type SVGAttributes from '../../../Core/Renderer/SVG/SVGAttributes';
 import type SVGElement from '../../../Core/Renderer/SVG/SVGElement';
 import type SVGPath from '../../../Core/Renderer/SVG/SVGPath';
 import ControllableMixin from '../Mixins/ControllableMixin.js';
@@ -152,9 +156,9 @@ class ControllableLabel implements ControllableMixin.Type {
      */
     public static justifiedOptions(
         chart: Highcharts.AnnotationChart,
-        label: Highcharts.SVGElement,
+        label: SVGElement,
         alignOptions: Highcharts.AnnotationAlignObject,
-        alignAttr: Highcharts.SVGAttributes
+        alignAttr: SVGAttributes
     ): Highcharts.AnnotationAlignObject {
         var align = alignOptions.align,
             verticalAlign = alignOptions.verticalAlign,
@@ -356,7 +360,7 @@ class ControllableLabel implements ControllableMixin.Type {
             label = this.graphic,
             point = this.points[0],
             anchor,
-            attrs: (Highcharts.SVGAttributes|null|undefined);
+            attrs: (SVGAttributes|null|undefined);
 
         label.attr({
             text: text ?

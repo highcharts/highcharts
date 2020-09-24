@@ -12,7 +12,7 @@
 
 'use strict';
 
-import type Chart from '../../Core/Chart/Chart';
+import Chart from '../../Core/Chart/Chart.js';
 import GLRenderer from './WGLRenderer.js';
 import H from '../../Core/Globals.js';
 const {
@@ -50,9 +50,9 @@ declare global {
     }
 }
 
-import '../../Core/Series/Series.js';
+import '../../Series/LineSeries.js';
 
-var mainCanvas = doc.createElement('canvas');
+const mainCanvas = doc.createElement('canvas');
 
 /**
  * Create a canvas + context and attach it to the target
@@ -171,7 +171,7 @@ function createAndAttachRenderer(
                     opacity: alpha
                 });
 
-            if (target instanceof H.Chart) {
+            if (target instanceof Chart) {
                 (target.markerGroup as any).translate(
                     chart.plotLeft,
                     chart.plotTop
@@ -184,7 +184,7 @@ function createAndAttachRenderer(
         (target.renderTargetFo || (target.renderTarget as any))
             .clip(target.boostClipRect);
 
-        if (target instanceof H.Chart) {
+        if (target instanceof Chart) {
             target.markerGroup = target.renderer.g().add(targetGroup);
 
             target.markerGroup.translate(series.xAxis.pos, series.yAxis.pos);
@@ -223,7 +223,7 @@ function createAndAttachRenderer(
         // target.ogl.clear();
         (target.ogl as any).setOptions(chart.options.boost || {});
 
-        if (target instanceof H.Chart) {
+        if (target instanceof Chart) {
             (target.ogl as any).allocateBuffer(chart);
         }
     }

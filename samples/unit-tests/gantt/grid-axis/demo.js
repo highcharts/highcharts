@@ -95,7 +95,7 @@ QUnit.test('dateFormats', function (assert) {
         );
 
         assert.equal(
-            Highcharts.dateFormats.E(date.valueOf()),
+            Highcharts.dateFormat('%E', date.valueOf()),
             expectedDay,
             `Single character week day format produces correct output`
         );
@@ -131,7 +131,7 @@ QUnit.test('dateFormats', function (assert) {
         );
 
         assert.equal(
-            Highcharts.dateFormats.E(date),
+            Highcharts.dateFormat('%E', date),
             expectedDay,
             `Single character week day format produces correct output when using UTC`
         );
@@ -1780,5 +1780,38 @@ QUnit.test('yAxis max value #10779', assert => {
         yAxis.tickPositions.length - 1,
         yAxis.max,
         'The tick amount should be same as the max value #10779'
+    );
+});
+
+QUnit.test('When the grid axis label has format "%E", time zone declared per chart should be respected., #13591.', assert => {
+    const chart = Highcharts.ganttChart('container', {
+        chart: {
+            width: 500
+        },
+        time: {
+            timezoneOffset: -4 * 60
+        },
+        xAxis: [{
+            min: Date.UTC(2020, 4, 29),
+            max: Date.UTC(2020, 5, 5)
+        }, {}],
+        series: [{
+            data: [{
+                name: "Task 1",
+                start: Date.UTC(2020, 5, 2),
+                end: Date.UTC(2020, 5, 3)
+            }]
+        }]
+    });
+
+    assert.strictEqual(
+        chart.xAxis[0].ticks[chart.xAxis[0].tickPositions[0]].label.textStr,
+        "F",
+        'The first tick should be "F" shortcut from Friday.'
+    );
+    assert.strictEqual(
+        chart.xAxis[0].ticks[chart.xAxis[0].tickPositions[1]].label.textStr,
+        "S",
+        'The second tick should be "S" shortcut from Saturday.'
     );
 });

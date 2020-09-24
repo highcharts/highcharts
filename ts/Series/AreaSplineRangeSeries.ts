@@ -8,9 +8,7 @@
  *
  * */
 
-'use strict';
-
-import H from '../Core/Globals.js';
+import BaseSeries from '../Core/Series/Series.js';
 
 /**
  * Internal types
@@ -34,19 +32,19 @@ declare global {
         interface AreaSplineRangeSeriesOptions extends AreaRangeSeriesOptions {
             states?: SeriesStatesOptionsObject<AreaSplineSeries>;
         }
-        interface SeriesTypesDictionary {
-            areasplinerange: typeof AreaSplineRangeSeries;
-        }
     }
 }
 
-import U from '../Core/Utilities.js';
-const {
-    seriesType
-} = U;
-import '../Core/Options.js';
+/**
+ * @private
+ */
+declare module '../Core/Series/Types' {
+    interface SeriesTypeRegistry {
+        areasplinerange: typeof Highcharts.AreaSplineRangeSeries;
+    }
+}
 
-var seriesTypes = H.seriesTypes;
+import '../Core/Options.js';
 
 /**
  * The area spline range is a cartesian series type with higher and
@@ -63,13 +61,36 @@ var seriesTypes = H.seriesTypes;
  * @requires  highcharts-more
  * @apioption plotOptions.areasplinerange
  */
-seriesType<Highcharts.AreaSplineSeries>(
+BaseSeries.seriesType<typeof Highcharts.AreaSplineSeries>(
     'areasplinerange',
     'arearange',
+    /**
+     * @see [fillColor](#plotOptions.areasplinerange.fillColor)
+     * @see [fillOpacity](#plotOptions.areasplinerange.fillOpacity)
+     *
+     * @apioption plotOptions.areasplinerange.color
+     */
+
+    /**
+     * @see [color](#plotOptions.areasplinerange.color)
+     * @see [fillOpacity](#plotOptions.areasplinerange.fillOpacity)
+     *
+     * @apioption plotOptions.areasplinerange.fillColor
+     */
+
+    /**
+     * @see [color](#plotOptions.areasplinerange.color)
+     * @see [fillColor](#plotOptions.areasplinerange.fillColor)
+     *
+     * @default   {highcharts} 0.75
+     * @default   {highstock} 0.75
+     * @apioption plotOptions.areasplinerange.fillOpacity
+     */
+
     null as any,
     {
         getPointSpline: (
-            seriesTypes.spline as typeof Highcharts.SplineSeries
+            BaseSeries.seriesTypes.spline as typeof Highcharts.SplineSeries
         ).prototype.getPointSpline
     }
 );
@@ -83,6 +104,13 @@ seriesType<Highcharts.AreaSplineSeries>(
  * @product   highcharts highstock
  * @requires  highcharts-more
  * @apioption series.areasplinerange
+ */
+
+/**
+ * @see [fillColor](#series.areasplinerange.fillColor)
+ * @see [fillOpacity](#series.areasplinerange.fillOpacity)
+ *
+ * @apioption series.areasplinerange.color
  */
 
 /**
@@ -138,6 +166,22 @@ seriesType<Highcharts.AreaSplineSeries>(
  * @extends   series.arearange.data
  * @product   highcharts highstock
  * @apioption series.areasplinerange.data
+ */
+
+/**
+ * @see [color](#series.areasplinerange.color)
+ * @see [fillOpacity](#series.areasplinerange.fillOpacity)
+ *
+ * @apioption series.areasplinerange.fillColor
+ */
+
+/**
+ * @see [color](#series.areasplinerange.color)
+ * @see [fillColor](#series.areasplinerange.fillColor)
+ *
+ * @default   {highcharts} 0.75
+ * @default   {highstock} 0.75
+ * @apioption series.areasplinerange.fillOpacity
  */
 
 ''; // adds doclets above to transpiled file

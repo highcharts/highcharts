@@ -10,8 +10,9 @@
  *
  * */
 
-'use strict';
-
+import type {
+    HTMLDOMElement
+} from '../Core/Renderer/DOMElementType';
 import Chart from '../Core/Chart/Chart.js';
 import H from '../Core/Globals.js';
 import NavigationBindings from '../Extensions/Annotations/NavigationBindings.js';
@@ -898,11 +899,11 @@ setOptions({
 /* eslint-disable no-invalid-this, valid-jsdoc */
 
 // Run HTML generator
-addEvent(H.Chart, 'afterGetContainer', function (): void {
+addEvent(Chart, 'afterGetContainer', function (): void {
     this.setStockTools();
 });
 
-addEvent(H.Chart, 'getMargins', function (): void {
+addEvent(Chart, 'getMargins', function (): void {
     var listWrapper = this.stockTools && this.stockTools.listWrapper,
         offsetWidth = listWrapper && (
             (
@@ -917,13 +918,13 @@ addEvent(H.Chart, 'getMargins', function (): void {
     }
 });
 
-addEvent(H.Chart, 'destroy', function (): void {
+addEvent(Chart, 'destroy', function (): void {
     if (this.stockTools) {
         this.stockTools.destroy();
     }
 });
 
-addEvent(H.Chart, 'redraw', function (): void {
+addEvent(Chart, 'redraw', function (): void {
     if (this.stockTools && this.stockTools.guiEnabled) {
         this.stockTools.redraw();
     }
@@ -940,7 +941,7 @@ addEvent(H.Chart, 'redraw', function (): void {
 class Toolbar {
     public constructor(
         options: Highcharts.StockToolsGuiOptions,
-        langOptions: (Highcharts.Dictionary<string>|undefined),
+        langOptions: (Record<string, string>|undefined),
         chart: Chart
     ) {
         this.chart = chart;
@@ -967,22 +968,22 @@ class Toolbar {
         fireEvent(this, 'afterInit');
     }
 
-    public arrowDown: Highcharts.HTMLDOMElement = void 0 as any;
-    public arrowUp: Highcharts.HTMLDOMElement = void 0 as any;
-    public arrowWrapper: Highcharts.HTMLDOMElement = void 0 as any;
+    public arrowDown: HTMLDOMElement = void 0 as any;
+    public arrowUp: HTMLDOMElement = void 0 as any;
+    public arrowWrapper: HTMLDOMElement = void 0 as any;
     public chart: Chart;
     public eventsToUnbind: Array<Function>;
     public guiEnabled: (boolean|undefined);
     public iconsURL: string;
-    public lang: (Highcharts.Dictionary<string>|undefined);
-    public listWrapper: Highcharts.HTMLDOMElement = void 0 as any;
+    public lang: (Record<string, string>|undefined);
+    public listWrapper: HTMLDOMElement = void 0 as any;
     public options: Highcharts.StockToolsGuiOptions;
     public placed: boolean;
-    public showhideBtn: Highcharts.HTMLDOMElement = void 0 as any;
-    public submenu: Highcharts.HTMLDOMElement = void 0 as any;
-    public toolbar: Highcharts.HTMLDOMElement = void 0 as any;
+    public showhideBtn: HTMLDOMElement = void 0 as any;
+    public submenu: HTMLDOMElement = void 0 as any;
+    public toolbar: HTMLDOMElement = void 0 as any;
     public visible: boolean;
-    public wrapper: Highcharts.HTMLDOMElement = void 0 as any;
+    public wrapper: HTMLDOMElement = void 0 as any;
 
     /**
      * Initialize the toolbar. Create buttons and submenu for each option
@@ -999,9 +1000,7 @@ class Toolbar {
             defs: Highcharts.StockToolsGuiDefinitionsOptions =
                 guiOptions.definitions as any,
             allButtons = toolbar.childNodes,
-            button: (
-                Highcharts.Dictionary<Highcharts.HTMLDOMElement>|undefined
-            );
+            button: (Record<string, HTMLDOMElement>|undefined);
 
         // create buttons
         buttons.forEach(function (btnName: string): void {
@@ -1037,7 +1036,7 @@ class Toolbar {
      * list of all buttons
      */
     public addSubmenu(
-        parentBtn: Highcharts.Dictionary<Highcharts.HTMLDOMElement>,
+        parentBtn: Record<string, HTMLDOMElement>,
         button: Highcharts.StockToolsGuiDefinitionsButtonsOptions
     ): void {
         var _self = this,
@@ -1048,7 +1047,7 @@ class Toolbar {
             menuWrapper = this.listWrapper,
             allButtons = this.toolbar.childNodes,
             topMargin = 0,
-            submenuWrapper: (Highcharts.HTMLDOMElement|undefined);
+            submenuWrapper: (HTMLDOMElement|undefined);
 
         // create submenu container
         this.submenu = submenuWrapper = createElement(UL, {
@@ -1118,7 +1117,7 @@ class Toolbar {
      *
      */
     public addSubmenuItems(
-        buttonWrapper: Highcharts.HTMLDOMElement,
+        buttonWrapper: HTMLDOMElement,
         button: Highcharts.StockToolsGuiDefinitionsButtonsOptions
     ): void {
         var _self = this,
@@ -1126,10 +1125,8 @@ class Toolbar {
             lang = this.lang,
             menuWrapper = this.listWrapper,
             items = button.items,
-            firstSubmenuItem: Highcharts.HTMLDOMElement,
-            submenuBtn: (
-                Highcharts.Dictionary<Highcharts.HTMLDOMElement>|undefined
-            );
+            firstSubmenuItem: HTMLDOMElement,
+            submenuBtn: (Record<string, HTMLDOMElement>|undefined);
 
         // add items to submenu
         items.forEach(function (btnName: string): void {
@@ -1157,7 +1154,7 @@ class Toolbar {
 
         // select first submenu item
         firstSubmenuItem = submenuWrapper
-            .querySelectorAll<Highcharts.HTMLDOMElement>('li > .' + PREFIX + 'menu-item-btn')[0];
+            .querySelectorAll<HTMLDOMElement>('li > .' + PREFIX + 'menu-item-btn')[0];
 
         // replace current symbol, in main button, with submenu's button style
         _self.switchSymbol(firstSubmenuItem, false);
@@ -1170,13 +1167,11 @@ class Toolbar {
      *
      */
     public eraseActiveButtons(
-        buttons: NodeListOf<Highcharts.HTMLDOMElement>,
-        currentButton: Highcharts.HTMLDOMElement,
-        submenuItems?: NodeListOf<Highcharts.HTMLDOMElement>
+        buttons: NodeListOf<HTMLDOMElement>,
+        currentButton: HTMLDOMElement,
+        submenuItems?: NodeListOf<HTMLDOMElement>
     ): void {
-        [].forEach.call(buttons, function (
-            btn: Highcharts.HTMLDOMElement
-        ): void {
+        [].forEach.call(buttons, function (btn: HTMLDOMElement): void {
             if (btn !== currentButton) {
                 btn.classList.remove(PREFIX + 'current');
                 btn.classList.remove(PREFIX + 'active');
@@ -1205,22 +1200,22 @@ class Toolbar {
      * @return {Object} - references to all created HTML elements
      */
     public addButton(
-        target: Highcharts.HTMLDOMElement,
+        target: HTMLDOMElement,
         options: (
             Highcharts.StockToolsGuiDefinitionsButtonsOptions|
             Highcharts.StockToolsGuiDefinitionsOptions
         ),
         btnName: string,
         lang: Highcharts.Dictionary<string> = {}
-    ): Highcharts.Dictionary<Highcharts.HTMLDOMElement> {
+    ): Record<string, HTMLDOMElement> {
         var btnOptions: Highcharts.StockToolsGuiDefinitionsButtonsOptions =
                 options[btnName] as any,
             items = btnOptions.items,
             classMapping = Toolbar.prototype.classMapping,
             userClassName = btnOptions.className || '',
-            mainButton: (Highcharts.HTMLDOMElement|undefined),
-            submenuArrow: (Highcharts.HTMLDOMElement|undefined),
-            buttonWrapper: (Highcharts.HTMLDOMElement|undefined);
+            mainButton: (HTMLDOMElement|undefined),
+            submenuArrow: (HTMLDOMElement|undefined),
+            buttonWrapper: (HTMLDOMElement|undefined);
 
         // main button wrapper
         buttonWrapper = createElement(LI, {
@@ -1396,7 +1391,7 @@ class Toolbar {
             toolbar = this.listWrapper,
             submenu = this.submenu,
             visible = this.visible,
-            showhideBtn: (Highcharts.HTMLDOMElement|undefined);
+            showhideBtn: (HTMLDOMElement|undefined);
 
         // Show hide toolbar
         this.showhideBtn = showhideBtn = createElement(DIV, {
@@ -1448,7 +1443,7 @@ class Toolbar {
      *
      */
     public switchSymbol(
-        button: Highcharts.HTMLDOMElement,
+        button: HTMLDOMElement,
         redraw?: boolean
     ): void {
         var buttonWrapper = button.parentNode,
@@ -1479,7 +1474,7 @@ class Toolbar {
      * @param {HTMLDOMElement} - button
      *
      */
-    public selectButton(button: Highcharts.HTMLDOMElement): void {
+    public selectButton(button: HTMLDOMElement): void {
         if (button.className.indexOf(activeClass) >= 0) {
             button.classList.remove(activeClass);
         } else {
@@ -1492,12 +1487,12 @@ class Toolbar {
      * @param {HTMLDOMElement} - button which should not be deactivated
      *
      */
-    public unselectAllButtons(button: Highcharts.HTMLDOMElement): void {
+    public unselectAllButtons(button: HTMLDOMElement): void {
         var activeButtons = (button.parentNode as any)
             .querySelectorAll('.' + activeClass);
 
         [].forEach.call(activeButtons, function (
-            activeBtn: Highcharts.HTMLDOMElement
+            activeBtn: HTMLDOMElement
         ): void {
             if (activeBtn !== button) {
                 activeBtn.classList.remove(activeClass);
@@ -1624,7 +1619,7 @@ extend(Chart.prototype, {
             ),
             langOptions = lang.stockTools && lang.stockTools.gui;
 
-        this.stockTools = new H.Toolbar(guiOptions, langOptions, this);
+        this.stockTools = new Toolbar(guiOptions, langOptions, this);
 
         if ((this.stockTools as any).guiEnabled) {
             this.isDirtyBox = true;
@@ -1634,7 +1629,7 @@ extend(Chart.prototype, {
 
 // Comunication with bindings:
 addEvent(NavigationBindings, 'selectButton', function (
-    event: Highcharts.Dictionary<Highcharts.HTMLDOMElement>
+    event: Record<string, HTMLDOMElement>
 ): void {
     var button = event.button,
         className = PREFIX + 'submenu-wrapper',
@@ -1654,7 +1649,7 @@ addEvent(NavigationBindings, 'selectButton', function (
 });
 
 addEvent(NavigationBindings, 'deselectButton', function (
-    event: Highcharts.Dictionary<Highcharts.HTMLDOMElement>
+    event: Record<string, HTMLDOMElement>
 ): void {
     var button = event.button,
         className = PREFIX + 'submenu-wrapper',

@@ -13,9 +13,14 @@
 'use strict';
 
 import type Chart from '../../Core/Chart/Chart';
+import type {
+    HTMLDOMElement
+} from '../../Core/Renderer/DOMElementType';
 import H from '../../Core/Globals.js';
 import U from '../../Core/Utilities.js';
-var extend = U.extend;
+const {
+    extend
+} = U;
 
 import AccessibilityComponent from '../AccessibilityComponent.js';
 import KeyboardNavigationHandler from '../KeyboardNavigationHandler.js';
@@ -358,7 +363,7 @@ extend(MenuComponent.prototype, /** @lends Highcharts.MenuComponent */ {
             });
 
             // Set accessibility properties on parent div
-            var parentDiv: Highcharts.HTMLDOMElement = (
+            var parentDiv: HTMLDOMElement = (
                 exportList[0].parentNode as any
             );
             parentDiv.removeAttribute('aria-hidden');

@@ -5,14 +5,15 @@
  *  !!!!!!! SOURCE GETS TRANSPILED BY TYPESCRIPT. EDIT TS FILE ONLY. !!!!!!!
  *
  * */
-'use strict';
-import H from '../../Core/Globals.js';
-/* eslint-enable @typescript-eslint/interface-name-prefix */
-import Color from '../../Core/Color.js';
+import BaseSeries from '../../Core/Series/Series.js';
+import Color from '../../Core/Color/Color.js';
 var color = Color.parse;
+import H from '../../Core/Globals.js';
 import U from '../../Core/Utilities.js';
-var defined = U.defined, isArray = U.isArray, merge = U.merge, objectEach = U.objectEach, seriesType = U.seriesType;
-var UNDEFINED, SMA = H.seriesTypes.sma;
+var defined = U.defined, isArray = U.isArray, merge = U.merge, objectEach = U.objectEach;
+/* eslint-enable @typescript-eslint/interface-name-prefix */
+import './SMAIndicator.js';
+var SMA = BaseSeries.seriesTypes.sma;
 /* eslint-disable require-jsdoc */
 // Utils:
 function maxHigh(arr) {
@@ -39,7 +40,7 @@ function getClosestPointRange(axis) {
             loopLength = series.xIncrement ? 1 : xData.length - 1;
             for (i = loopLength; i > 0; i--) {
                 distance = xData[i] - xData[i - 1];
-                if (closestDataRange === UNDEFINED ||
+                if (typeof closestDataRange === 'undefined' ||
                     distance < closestDataRange) {
                     closestDataRange = distance;
                 }
@@ -106,7 +107,7 @@ H.approximations['ichimoku-averages'] = function () {
  *
  * @augments Highcharts.Series
  */
-seriesType('ikh', 'sma', 
+BaseSeries.seriesType('ikh', 'sma', 
 /**
  * Ichimoku Kinko Hyo (IKH). This series requires `linkedTo` option to be
  * set.
@@ -548,11 +549,13 @@ seriesType('ikh', 'sma',
             spanA = SMA.prototype.getGraphPath.call(indicator, 
             // Reverse points, so Senkou Span A will start from the end:
             indicator.nextPoints);
-            spanA[0][0] = 'L';
-            path = SMA.prototype.getGraphPath.call(indicator, points);
-            spanAarr = spanA.slice(0, path.length);
-            for (var i = spanAarr.length - 1; i >= 0; i--) {
-                path.push(spanAarr[i]);
+            if (spanA && spanA.length) {
+                spanA[0][0] = 'L';
+                path = SMA.prototype.getGraphPath.call(indicator, points);
+                spanAarr = spanA.slice(0, path.length);
+                for (var i = spanAarr.length - 1; i >= 0; i--) {
+                    path.push(spanAarr[i]);
+                }
             }
         }
         else {
@@ -593,21 +596,21 @@ seriesType('ikh', 'sma',
             }
             CS = yVal[i][3];
             date = xVal[i];
-            if (IKH[i] === UNDEFINED) {
+            if (typeof IKH[i] === 'undefined') {
                 IKH[i] = [];
             }
-            if (IKH[i + period] === UNDEFINED) {
+            if (typeof IKH[i + period] === 'undefined') {
                 IKH[i + period] = [];
             }
             IKH[i + period][0] = TS;
             IKH[i + period][1] = KS;
-            IKH[i + period][2] = UNDEFINED;
+            IKH[i + period][2] = void 0;
             IKH[i][2] = CS;
             if (i <= period) {
-                IKH[i + period][3] = UNDEFINED;
-                IKH[i + period][4] = UNDEFINED;
+                IKH[i + period][3] = void 0;
+                IKH[i + period][4] = void 0;
             }
-            if (IKH[i + 2 * period] === UNDEFINED) {
+            if (typeof IKH[i + 2 * period] === 'undefined') {
                 IKH[i + 2 * period] = [];
             }
             IKH[i + 2 * period][3] = SSA;

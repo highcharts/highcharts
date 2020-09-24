@@ -9,10 +9,12 @@
  *  !!!!!!! SOURCE GETS TRANSPILED BY TYPESCRIPT. EDIT TS FILE ONLY. !!!!!!!
  *
  * */
-'use strict';
+import A from '../Core/Animation/AnimationUtilities.js';
+var animObject = A.animObject;
+import BaseSeries from '../Core/Series/Series.js';
 import H from '../Core/Globals.js';
 import U from '../Core/Utilities.js';
-var animObject = U.animObject, arrayMax = U.arrayMax, pick = U.pick, seriesType = U.seriesType;
+var arrayMax = U.arrayMax, pick = U.pick;
 import './ScatterSeries.js';
 /**
  * The vector series class.
@@ -23,7 +25,7 @@ import './ScatterSeries.js';
  *
  * @augments Highcharts.seriesTypes.scatter
  */
-seriesType('vector', 'scatter'
+BaseSeries.seriesType('vector', 'scatter'
 /**
  * A vector plot is a type of cartesian chart where each point has an X and
  * Y position, a length and a direction. Vectors are drawn as arrows.

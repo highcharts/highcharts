@@ -9,11 +9,14 @@
  *  !!!!!!! SOURCE GETS TRANSPILED BY TYPESCRIPT. EDIT TS FILE ONLY. !!!!!!!
  *
  * */
-'use strict';
+import A from '../../Core/Animation/AnimationUtilities.js';
+var animObject = A.animObject;
+import BaseSeries from '../../Core/Series/Series.js';
 import H from '../../Core/Globals.js';
+var noop = H.noop;
 import Point from '../../Core/Series/Point.js';
 import U from '../../Core/Utilities.js';
-var addEvent = U.addEvent, animObject = U.animObject, arrayMax = U.arrayMax, arrayMin = U.arrayMin, correctFloat = U.correctFloat, error = U.error, extend = U.extend, isArray = U.isArray, seriesType = U.seriesType;
+var addEvent = U.addEvent, arrayMax = U.arrayMax, arrayMin = U.arrayMin, correctFloat = U.correctFloat, error = U.error, extend = U.extend, isArray = U.isArray;
 /* eslint-disable require-jsdoc */
 // Utils
 function arrayExtremesOHLC(data) {
@@ -33,7 +36,7 @@ function arrayExtremesOHLC(data) {
     };
 }
 /* eslint-enable require-jsdoc */
-var abs = Math.abs, noop = H.noop, columnPrototype = H.seriesTypes.column.prototype;
+var abs = Math.abs, columnPrototype = BaseSeries.seriesTypes.column.prototype;
 /**
  * The Volume By Price (VBP) series type.
  *
@@ -43,7 +46,7 @@ var abs = Math.abs, noop = H.noop, columnPrototype = H.seriesTypes.column.protot
  *
  * @augments Highcharts.Series
  */
-seriesType('vbp', 'sma', 
+BaseSeries.seriesType('vbp', 'sma', 
 /**
  * Volume By Price indicator.
  *

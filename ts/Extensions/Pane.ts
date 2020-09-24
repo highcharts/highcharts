@@ -10,7 +10,9 @@
 
 'use strict';
 
+import type ColorType from '../Core/Color/ColorType';
 import type RadialAxis from '../Core/Axis/RadialAxis';
+import type SVGElement from '../Core/Renderer/SVG/SVGElement';
 import Chart from '../Core/Chart/Chart.js';
 import H from '../Core/Globals.js';
 import Pointer from '../Core/Pointer.js';
@@ -42,8 +44,8 @@ declare global {
             pane?: PaneOptions;
         }
         interface PaneBackgroundOptions {
-            backgroundColor?: GradientColorObject;
-            borderColor?: (ColorString|GradientColorObject|PatternObject);
+            backgroundColor?: ColorType;
+            borderColor?: ColorType;
             borderWidth?: number;
             className?: string;
             from?: number;
@@ -119,10 +121,10 @@ class Pane {
     }
 
     public axis?: RadialAxis;
-    public background: Array<Highcharts.SVGElement> = void 0 as any;
+    public background: Array<SVGElement> = void 0 as any;
     public center: Array<number> = void 0 as any;
     public chart: Highcharts.PaneChart = void 0 as any;
-    public group?: Highcharts.SVGElement;
+    public group?: SVGElement;
     public options: Highcharts.PaneOptions = void 0 as any;
 
     public coll = 'pane'; // Member of chart.pane
@@ -522,7 +524,7 @@ function isInsidePane(
     ) <= center[2] / 2;
 }
 
-H.Chart.prototype.getHoverPane = function (
+Chart.prototype.getHoverPane = function (
     this: Highcharts.PaneChart,
     eventArgs: {
         chartX: number;

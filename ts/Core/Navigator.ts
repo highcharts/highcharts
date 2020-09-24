@@ -10,14 +10,27 @@
 
 'use strict';
 
+import type ColorType from './Color/ColorType';
+import type CSSObject from './Renderer/CSSObject';
+import type { SeriesOptionsType } from './Series/Types';
+import type SVGElement from './Renderer/SVG/SVGElement';
 import type SVGPath from './Renderer/SVG/SVGPath';
 import Axis from './Axis/Axis.js';
+import BaseSeries from './Series/Series.js';
+const {
+    seriesTypes
+} = BaseSeries;
 import Chart from './Chart/Chart.js';
-import Color from './Color.js';
+import Color from './Color/Color.js';
 const {
     parse: color
 } = Color;
 import H from './Globals.js';
+const {
+    hasTouch,
+    isTouchDevice
+} = H;
+import LineSeries from '../Series/LineSeries.js';
 import NavigatorAxis from './Axis/NavigatorAxis.js';
 import O from './Options.js';
 const { defaultOptions } = O;
@@ -52,8 +65,8 @@ declare global {
             scroller?: Navigator;
         }
         interface NavigatorHandlesOptions {
-            backgroundColor?: (ColorString|GradientColorObject|PatternObject);
-            borderColor?: (ColorString|GradientColorObject|PatternObject);
+            backgroundColor?: ColorType;
+            borderColor?: ColorType;
             enabled?: boolean;
             height?: number;
             lineWidth?: number;
@@ -68,10 +81,10 @@ declare global {
             height?: number;
             isInternal?: boolean;
             margin?: number;
-            maskFill?: (ColorString|GradientColorObject|PatternObject);
+            maskFill?: ColorType;
             maskInside?: boolean;
             opposite?: boolean;
-            outlineColor?: (ColorString|GradientColorObject|PatternObject);
+            outlineColor?: ColorType;
             outlineWidth?: number;
             series?: SeriesOptionsType;
             top?: number;
@@ -195,14 +208,7 @@ declare global {
     }
 }
 
-import './Series/Series.js';
-
-var hasTouch = H.hasTouch,
-    isTouchDevice = H.isTouchDevice,
-    Series = H.Series,
-    seriesTypes = H.seriesTypes,
-
-    defaultSeriesType,
+var defaultSeriesType,
 
     // Finding the min or max of a set of variables where we don't know if they
     // are defined, is a pattern that is repeated several places in Highcharts.
@@ -794,7 +800,7 @@ class Navigator {
     public grabbedCenter?: number;
     public grabbedLeft?: boolean;
     public grabbedRight?: boolean;
-    public handles: Array<Highcharts.SVGElement> = void 0 as any;
+    public handles: Array<SVGElement> = void 0 as any;
     public hasDragged?: boolean;
     public hasNavigatorData?: boolean;
     public height: number = void 0 as any;
@@ -802,13 +808,13 @@ class Navigator {
     public mouseMoveHandler?: Function ;
     public mouseUpHandler?: Function;
     public navigatorEnabled: boolean = void 0 as any;
-    public navigatorGroup: Highcharts.SVGElement = void 0 as any;
+    public navigatorGroup: SVGElement = void 0 as any;
     public navigatorOptions: Highcharts.NavigatorOptions = void 0 as any;
     public navigatorSeries: Highcharts.Series = void 0 as any;
     public navigatorSize: number = void 0 as any;
     public opposite: boolean = void 0 as any;
     public otherHandlePos?: number;
-    public outline: Highcharts.SVGElement = void 0 as any;
+    public outline: SVGElement = void 0 as any;
     public outlineHeight: number = void 0 as any;
     public range: number = void 0 as any;
     public rendered: boolean = void 0 as any;
@@ -818,7 +824,7 @@ class Navigator {
     public scrollbarHeight?: number;
     public scrollbarOptions?: Highcharts.ScrollbarOptions;
     public series?: Array<Highcharts.Series>;
-    public shades: Array<Highcharts.SVGElement> = void 0 as any;
+    public shades: Array<SVGElement> = void 0 as any;
     public size: number = void 0 as any;
     public top: number = void 0 as any;
     public unbindRedraw?: Function;
@@ -1004,7 +1010,7 @@ class Navigator {
             height = [navigatorHeight, navigatorHeight, navigatorHeight];
         }
         navigator.shades.forEach(function (
-            shade: Highcharts.SVGElement,
+            shade: SVGElement,
             i: number
         ): void {
             shade[verb]({
@@ -1037,10 +1043,10 @@ class Navigator {
             chart = navigator.chart,
             inverted = chart.inverted,
             renderer = chart.renderer,
-            navigatorGroup: Highcharts.SVGElement,
-            mouseCursor = {
+            navigatorGroup: SVGElement,
+            mouseCursor: CSSObject = {
                 cursor: inverted ? 'ns-resize' : 'ew-resize'
-            } as Highcharts.CSSObject;
+            };
 
         // Create the main navigator group
         navigator.navigatorGroup = navigatorGroup = renderer.g('navigator')
@@ -1425,7 +1431,7 @@ class Navigator {
 
         ['shades', 'handles'].forEach(function (name: string): void {
             (navigator as any)[name].forEach(function (
-                navigatorItem: Highcharts.SVGElement,
+                navigatorItem: SVGElement,
                 index: number
             ): void {
                 events.push(
@@ -2085,7 +2091,7 @@ class Navigator {
      * @return {void}
      */
     public setBaseSeries(
-        baseSeriesOptions?: Highcharts.SeriesOptionsType,
+        baseSeriesOptions?: SeriesOptionsType,
         redraw?: boolean
     ): void {
         var chart = this.chart,
@@ -2115,8 +2121,8 @@ class Navigator {
                 (
                     series.options.showInNavigator ||
                     (
-                        i === baseSeriesOptions ||
-                        series.options.id === baseSeriesOptions
+                        i === (baseSeriesOptions as any) ||
+                        series.options.id === (baseSeriesOptions as any)
                     ) &&
                     series.options.showInNavigator !== false
                 )
@@ -2149,7 +2155,7 @@ class Navigator {
             chart = navigator.chart,
             baseSeries = navigator.baseSeries,
             baseOptions,
-            mergedNavSeriesOptions: Highcharts.SeriesOptionsType,
+            mergedNavSeriesOptions: SeriesOptionsType,
             chartNavigatorSeriesOptions = navigator.navigatorOptions.series,
             baseNavigatorOptions,
             navSeriesMixin = {
@@ -2282,7 +2288,7 @@ class Navigator {
             chartNavigatorSeriesOptions =
                 (splat(chartNavigatorSeriesOptions) as any);
             (chartNavigatorSeriesOptions as any).forEach(function (
-                userSeriesOptions: Highcharts.SeriesOptionsType,
+                userSeriesOptions: SeriesOptionsType,
                 i: number
             ): void {
                 navSeriesMixin.name =
@@ -2633,7 +2639,7 @@ class Navigator {
 
         // Destroy elements in collection
         [this.handles].forEach(function (
-            coll: Array<Highcharts.SVGElement>
+            coll: Array<SVGElement>
         ): void {
             destroyObjectProperties(coll);
         }, this);
@@ -2787,7 +2793,7 @@ if (!H.Navigator) {
     });
 
     // Handle updating series
-    addEvent(Series, 'afterUpdate', function (this: Highcharts.Series): void {
+    addEvent(LineSeries, 'afterUpdate', function (this: Highcharts.Series): void {
         if (this.chart.navigator && !this.options.isInternal) {
             this.chart.navigator.setBaseSeries(null as any, false);
         }

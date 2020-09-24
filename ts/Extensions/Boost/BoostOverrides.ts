@@ -12,6 +12,8 @@
 
 'use strict';
 
+import type { SeriesPlotOptionsType } from '../../Core/Series/Types';
+import type SVGAttributes from '../../Core/Renderer/SVG/SVGAttributes';
 import type SVGPath from '../../Core/Renderer/SVG/SVGPath';
 import Chart from '../../Core/Chart/Chart.js';
 import H from '../../Core/Globals.js';
@@ -62,7 +64,13 @@ declare global {
     }
 }
 
-import '../../Core/Series/Series.js';
+declare module '../../Core/Series/Types' {
+    interface SeriesLike {
+        fillOpacity?: boolean;
+    }
+}
+
+import '../../Series/LineSeries.js';
 import '../../Core/Options.js';
 
 import '../../Core/Interaction.js';
@@ -75,7 +83,7 @@ var boostEnabled = butils.boostEnabled,
     shouldForceChartSeriesBoosting = butils.shouldForceChartSeriesBoosting,
     Series = H.Series,
     seriesTypes = H.seriesTypes,
-    plotOptions: Highcharts.PlotOptions = getOptions().plotOptions as any;
+    plotOptions = getOptions().plotOptions as SeriesPlotOptionsType;
 
 /**
  * Returns true if the chart is in series boost mode.
@@ -228,8 +236,8 @@ wrap(Series.prototype, 'markerAttribs', function (
     this: Highcharts.Series,
     proceed: Function,
     point: Point
-): Highcharts.SVGAttributes {
-    var attribs: Highcharts.SVGAttributes,
+): SVGAttributes {
+    var attribs: SVGAttributes,
         series = this,
         chart = series.chart,
         plotX: number = point.plotX as any,

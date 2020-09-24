@@ -13,8 +13,27 @@
 'use strict';
 
 import type Chart from '../../Core/Chart/Chart';
+import type ColorString from '../../Core/Color/ColorString';
 import type Point from '../../Core/Series/Point';
+import type SVGAttributes from '../../Core/Renderer/SVG/SVGAttributes';
+import Color from '../../Core/Color/Color.js';
+const {
+    parse: color
+} = Color;
+import GLShader from './WGLShader.js';
+import GLVertexBuffer from './WGLVBuffer.js';
 import H from '../../Core/Globals.js';
+const {
+    doc
+} = H;
+import U from '../../Core/Utilities.js';
+const {
+    isNumber,
+    isObject,
+    merge,
+    objectEach,
+    pick
+} = U;
 
 /**
  * Internal types
@@ -107,22 +126,6 @@ declare global {
         readonly FUNC_MIN: number;
     }
 }
-
-import GLShader from './WGLShader.js';
-import GLVertexBuffer from './WGLVBuffer.js';
-import Color from '../../Core/Color.js';
-const color = Color.parse;
-import U from '../../Core/Utilities.js';
-const {
-    isNumber,
-    isObject,
-    merge,
-    objectEach,
-    pick
-} = U;
-
-var win = H.win,
-    doc = win.document;
 
 /* eslint-disable valid-jsdoc */
 
@@ -366,8 +369,8 @@ function GLRenderer(
             lastX: number = false as any,
             lastY: number = false as any,
             minVal: (number|undefined),
-            pcolor: Highcharts.ColorRGBA,
-            scolor: Highcharts.ColorRGBA,
+            pcolor: Color.RGBA,
+            scolor: Color.RGBA,
             sdata = isStacked ? series.data : (xData || rawData),
             closestLeft = { x: Number.MAX_VALUE, y: 0 },
             closestRight = { x: -Number.MAX_VALUE, y: 0 },
@@ -389,13 +392,13 @@ function GLRenderer(
             chartDestroyed = typeof chart.index === 'undefined',
             nextInside = false,
             prevInside = false,
-            pcolor: Highcharts.ColorRGBA = false as any,
+            pcolor: Color.RGBA = false as any,
             drawAsBar = asBar[series.type],
             isXInside = false,
             isYInside = true,
             firstPoint = true,
             zones = options.zones || false,
-            zoneDefColor: (Highcharts.Color|undefined) = false as any,
+            zoneDefColor: (Color|undefined) = false as any,
             threshold: number = options.threshold as any,
             gapSize: number = false as any;
 
@@ -438,7 +441,7 @@ function GLRenderer(
          * Push color to color buffer - need to do this per vertex.
          * @private
          */
-        function pushColor(color?: Highcharts.ColorRGBA): void {
+        function pushColor(color?: Color.RGBA): void {
             if (color) {
                 inst.colorData.push(color[0]);
                 inst.colorData.push(color[1]);
@@ -456,7 +459,7 @@ function GLRenderer(
             y: number,
             checkTreshold?: boolean,
             pointSize?: number,
-            color?: Highcharts.ColorRGBA
+            color?: Color.RGBA
         ): void {
             pushColor(color);
             if (settings.usePreallocated) {
@@ -511,7 +514,7 @@ function GLRenderer(
             y: number,
             w: number,
             h: number,
-            color?: Highcharts.ColorRGBA
+            color?: Color.RGBA
         ): void {
             pushColor(color);
             vertice(x + w, y);
@@ -566,7 +569,7 @@ function GLRenderer(
 
             points.forEach(function (point: Point): void {
                 var plotY = point.plotY,
-                    shapeArgs: Highcharts.SVGAttributes,
+                    shapeArgs: SVGAttributes,
                     swidth,
                     pointAttr;
 

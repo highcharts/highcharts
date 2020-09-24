@@ -39,7 +39,7 @@ let chart; // global
 ```
 
 ### Set up a data request function
-Here we use the [Fetch API]('https://developer.mozilla.org/en-US/docs/Web/API/Fetch_API/Using_Fetch') to retrieve the data from the server. After successfully receiving  the data, the point is added to the chart's first series using the [addPoint method](https://api.highcharts.com/class-reference/Highcharts.Series#addPoint). If the series length is greater than 20, we shift off the first point so that the series will move to the left rather than just cram the points tighter.
+Here we use the [Fetch API](https://developer.mozilla.org/en-US/docs/Web/API/Fetch_API/Using_Fetch) to retrieve the data from the server. After successfully receiving  the data, the point is added to the chart's first series using the [addPoint method](https://api.highcharts.com/class-reference/Highcharts.Series#addPoint). If the series length is greater than 20, we shift off the first point so that the series will move to the left rather than just cram the points tighter.
 
 ```javascript
 /**
@@ -62,7 +62,7 @@ async function requestData() {
   }
 }
 ```
-    
+
 
 ### Create the chart
 Notice how our requestData function is initially called from the chart's load event. The initial data is an empty array.

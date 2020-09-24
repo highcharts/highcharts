@@ -6,9 +6,17 @@
  *
  * */
 
-'use strict';
-
+import type ColorString from '../../Core/Color/ColorString';
+import BaseSeries from '../../Core/Series/Series.js';
 import H from '../../Core/Globals.js';
+const {
+    noop
+} = H;
+import U from '../../Core/Utilities.js';
+const {
+    correctFloat,
+    isArray
+} = U;
 
 /**
  * Internal types
@@ -45,23 +53,16 @@ declare global {
         class AOIndicatorPoint extends SMAIndicatorPoint {
             public series: AOIndicator;
         }
-
-        interface SeriesTypesDictionary {
-            ao: typeof AOIndicator;
-        }
-
     }
 }
 
+declare module '../../Core/Series/Types' {
+    interface SeriesTypeRegistry {
+        ao: typeof Highcharts.AOIndicator;
+    }
+}
 
-import U from '../../Core/Utilities.js';
-const {
-    correctFloat,
-    isArray,
-    seriesType
-} = U;
-
-var noop = H.noop;
+import './SMAIndicator.js';
 
 /**
  * The AO series type
@@ -72,7 +73,7 @@ var noop = H.noop;
  *
  * @augments Highcharts.Series
  */
-seriesType<Highcharts.AOIndicator>(
+BaseSeries.seriesType<typeof Highcharts.AOIndicator>(
     'ao',
     'sma',
     /**

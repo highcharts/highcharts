@@ -11,6 +11,8 @@
 'use strict';
 
 import type Chart from './Chart/Chart';
+import type ColorType from './Color/ColorType';
+import type SVGElement from './Renderer/SVG/SVGElement';
 import type SVGPath from './Renderer/SVG/SVGPath';
 import Axis from './Axis/Axis.js';
 import H from './Globals.js';
@@ -47,17 +49,13 @@ declare global {
             DOMEvent: Event;
         }
         interface ScrollbarOptions {
-            barBackgroundColor?: (
-                ColorString|GradientColorObject|PatternObject
-            );
-            barBorderColor?: (ColorString|GradientColorObject|PatternObject);
+            barBackgroundColor?: ColorType;
+            barBorderColor?: ColorType;
             barBorderRadius?: number;
             barBorderWidth?: number;
-            buttonArrowColor?: (ColorString|GradientColorObject|PatternObject);
-            buttonBackgroundColor?: (
-                ColorString|GradientColorObject|PatternObject
-            );
-            buttonBorderColor?: (ColorString|GradientColorObject|PatternObject);
+            buttonArrowColor?: ColorType;
+            buttonBackgroundColor?: ColorType;
+            buttonBorderColor?: ColorType;
             buttonBorderRadius?: number;
             buttonBorderWidth?: number;
             enabled?: boolean;
@@ -66,14 +64,12 @@ declare global {
             liveRedraw?: boolean;
             margin?: number;
             minWidth?: number;
-            rifleColor?: (ColorString|GradientColorObject|PatternObject);
+            rifleColor?: ColorType;
             showFull?: boolean;
             size?: number;
             step?: number;
-            trackBackgroundColor?: (
-                ColorString|GradientColorObject|PatternObject
-            );
-            trackBorderColor?: (ColorString|GradientColorObject|PatternObject);
+            trackBackgroundColor?: ColorType;
+            trackBorderColor?: ColorType;
             trackBorderRadius?: number;
             trackBorderWidth?: number;
             vertical?: boolean;
@@ -472,7 +468,7 @@ class Scrollbar {
 
     private grabbedCenter?: boolean;
 
-    public group: Highcharts.SVGElement = void 0 as any;
+    public group: SVGElement = void 0 as any;
 
     public hasDragged?: boolean;
 
@@ -486,15 +482,15 @@ class Scrollbar {
 
     public renderer: Highcharts.SVGRenderer;
 
-    public scrollbar: Highcharts.SVGElement = void 0 as any;
+    public scrollbar: SVGElement = void 0 as any;
 
-    public scrollbarButtons: Array<Highcharts.SVGElement> = [];
+    public scrollbarButtons: Array<SVGElement> = [];
 
-    public scrollbarGroup: Highcharts.SVGElement = void 0 as any;
+    public scrollbarGroup: SVGElement = void 0 as any;
 
     public scrollbarLeft: number = 0;
 
-    public scrollbarRifles: Highcharts.SVGElement = void 0 as any;
+    public scrollbarRifles: SVGElement = void 0 as any;
 
     public scrollbarStrokeWidth: number = 1;
 
@@ -504,7 +500,7 @@ class Scrollbar {
 
     public to: number = 0;
 
-    public track: Highcharts.SVGElement = void 0 as any;
+    public track: SVGElement = void 0 as any;
 
     public trackBorderWidth: number = 1;
 

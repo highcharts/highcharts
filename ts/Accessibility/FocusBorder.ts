@@ -10,8 +10,10 @@
  *
  * */
 
-'use strict';
-
+import type CSSObject from '../Core/Renderer/CSSObject';
+import type {
+    DOMElementType
+} from '../Core/Renderer/DOMElementType';
 import H from '../Core/Globals.js';
 import SVGElement from '../Core/Renderer/SVG/SVGElement.js';
 import SVGLabel from '../Core/Renderer/SVG/SVGLabel.js';
@@ -31,7 +33,7 @@ declare global {
             /** @requires modules/accessibility */
             setFocusToElement(
                 svgElement: SVGElement,
-                focusElement?: (HTMLDOMElement|SVGDOMElement)
+                focusElement?: DOMElementType
             ): void;
         }
         interface SVGElement {
@@ -64,7 +66,7 @@ const svgElementBorderUpdateTriggers = [
  * @private
  * @param el Element to add destroy hook to
  */
-function addDestroyFocusBorderHook(el: Highcharts.SVGElement): void {
+function addDestroyFocusBorderHook(el: SVGElement): void {
     if (el.focusBorderDestroyHook) {
         return;
     }
@@ -86,7 +88,7 @@ function addDestroyFocusBorderHook(el: Highcharts.SVGElement): void {
  * @private
  * @param el Element to remove destroy hook from
  */
-function removeDestroyFocusBorderHook(el: Highcharts.SVGElement): void {
+function removeDestroyFocusBorderHook(el: SVGElement): void {
     if (!el.focusBorderDestroyHook) {
         return;
     }
@@ -105,7 +107,7 @@ function removeDestroyFocusBorderHook(el: Highcharts.SVGElement): void {
  * @param updateParams Parameters to pass through to addFocusBorder when updating.
  */
 function addUpdateFocusBorderHooks(
-    el: Highcharts.SVGElement,
+    el: SVGElement,
     ...updateParams: any[]
 ): void {
     if (el.focusBorderUpdateHooks) {
@@ -135,7 +137,7 @@ function addUpdateFocusBorderHooks(
  * @private
  * @param el Element to remove update hooks from
  */
-function removeUpdateFocusBorderHooks(el: Highcharts.SVGElement): void {
+function removeUpdateFocusBorderHooks(el: SVGElement): void {
     if (!el.focusBorderUpdateHooks) {
         return;
     }
@@ -168,9 +170,9 @@ extend(SVGElement.prototype, {
      * @param {Highcharts.CSSObject} style
      */
     addFocusBorder: function (
-        this: Highcharts.SVGElement,
+        this: SVGElement,
         margin: number,
-        style: Highcharts.CSSObject
+        style: CSSObject
     ): void {
         // Allow updating by just adding new border
         if (this.focusBorder) {
@@ -197,7 +199,7 @@ extend(SVGElement.prototype, {
          *
          * @return {TextAnchorCorrectionObject}
          */
-        function getTextAnchorCorrection(text: Highcharts.SVGElement): TextAnchorCorrectionObject {
+        function getTextAnchorCorrection(text: SVGElement): TextAnchorCorrectionObject {
             let posXCorrection = 0,
                 posYCorrection = 0;
 
@@ -265,7 +267,7 @@ extend(SVGElement.prototype, {
      * @private
      * @function Highcharts.SVGElement#removeFocusBorder
      */
-    removeFocusBorder: function (this: Highcharts.SVGElement): void {
+    removeFocusBorder: function (this: SVGElement): void {
         removeUpdateFocusBorderHooks(this);
         removeDestroyFocusBorderHook(this);
 
@@ -319,8 +321,8 @@ H.Chart.prototype.renderFocusBorder = function (this: Highcharts.AccessibilityCh
  */
 H.Chart.prototype.setFocusToElement = function (
     this: Highcharts.AccessibilityChart,
-    svgElement: Highcharts.SVGElement,
-    focusElement?: (Highcharts.HTMLDOMElement|Highcharts.SVGDOMElement)
+    svgElement: SVGElement,
+    focusElement?: DOMElementType
 ): void {
     var focusBorderOptions: (
             Highcharts.AccessibilityKeyboardNavigationFocusBorderOptions

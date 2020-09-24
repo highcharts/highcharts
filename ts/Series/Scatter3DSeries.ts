@@ -10,9 +10,13 @@
  *
  * */
 
-'use strict';
-
+import type SVGAttributes from '../Core/Renderer/SVG/SVGAttributes';
+import BaseSeries from '../Core/Series/Series.js';
+const { seriesTypes } = BaseSeries;
 import H from '../Core/Globals.js';
+import Math3D from '../Extensions/Math3D.js';
+const { pointCameraDistance } = Math3D;
+import Point from '../Core/Series/Point.js';
 
 /**
  * Internal types
@@ -24,9 +28,6 @@ declare global {
             z?: number;
         }
         interface Scatter3dSeriesOptions extends ScatterSeriesOptions {
-        }
-        interface SeriesTypesDictionary {
-            scatter3d: typeof Scatter3dSeries;
         }
         class Scatter3dPoint extends ScatterPoint {
             public options: Scatter3dPointOptions;
@@ -41,15 +42,16 @@ declare global {
     }
 }
 
-import Math3D from '../Extensions/Math3D.js';
-const { pointCameraDistance } = Math3D;
-import Point from '../Core/Series/Point.js';
-import U from '../Core/Utilities.js';
-const {
-    seriesType
-} = U;
+/**
+ * @private
+ */
+declare module '../Core/Series/Types' {
+    interface SeriesTypeRegistry {
+        scatter3d: typeof Highcharts.Scatter3dSeries;
+    }
+}
 
-var seriesTypes = H.seriesTypes;
+import './ScatterSeries.js';
 
 /**
  * @private
@@ -58,7 +60,7 @@ var seriesTypes = H.seriesTypes;
  *
  * @augments Highcharts.Series
  */
-seriesType(
+BaseSeries.seriesType<typeof Highcharts.Scatter3dSeries>(
     'scatter3d',
     'scatter',
     /**
@@ -86,7 +88,7 @@ seriesType(
         pointAttribs: function (
             this: Highcharts.Scatter3dSeries,
             point: Highcharts.Scatter3dPoint
-        ): Highcharts.SVGAttributes {
+        ): SVGAttributes {
             var attribs = seriesTypes.scatter.prototype.pointAttribs
                 .apply(this, arguments as any);
 
