@@ -14,6 +14,7 @@ import type {
     DOMElementType,
     HTMLDOMElement
 } from '../Core/Renderer/DOMElementType';
+import type HTMLElement from '../Core/Renderer/HTML/HTMLElement';
 import type SVGAttributes from '../Core/Renderer/SVG/SVGAttributes';
 import type SVGElement from '../Core/Renderer/SVG/SVGElement';
 import ChartUtilities from './Utils/ChartUtilities.js';
@@ -216,7 +217,7 @@ AccessibilityComponent.prototype = {
      * @param {Event} eventObject
      */
     fireEventOnWrappedOrUnwrappedElement: function (
-        el: (Highcharts.HTMLElement|SVGElement|DOMElementType),
+        el: (HTMLElement|SVGElement|DOMElementType),
         eventObject: Event
     ): void {
         const type = eventObject.type;
@@ -446,7 +447,7 @@ AccessibilityComponent.prototype = {
     proxyMouseEventsForButton: function (
         this: Highcharts.AccessibilityComponent,
         source: (
-            Highcharts.HTMLElement|SVGElement|DOMElementType
+            HTMLElement|SVGElement|DOMElementType
         ),
         button: HTMLDOMElement
     ): void {

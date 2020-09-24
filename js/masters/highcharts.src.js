@@ -9,7 +9,8 @@
 'use strict';
 import Highcharts from '../Core/Globals.js';
 import '../Core/Renderer/SVG/SVGRenderer.js';
-import '../Core/Renderer/HTML/HTML.js';
+import '../Core/Renderer/HTML/HTMLElement.js';
+import '../Core/Renderer/HTML/HTMLRenderer.js';
 import '../Core/Axis/Axis.js';
 import '../Core/Axis/DateTimeAxis.js';
 import '../Core/Axis/LogarithmicAxis.js';

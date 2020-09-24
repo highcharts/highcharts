@@ -18,6 +18,7 @@ import type {
     HTMLDOMElement,
     SVGDOMElement
 } from './Renderer/DOMElementType';
+import type HTMLElement from './Renderer/HTML/HTMLElement';
 import type SVGAttributes from './Renderer/SVG/SVGAttributes';
 import type SVGElement from './Renderer/SVG/SVGElement';
 import type SVGPath from './Renderer/SVG/SVGPath';
@@ -804,7 +805,7 @@ class Fx {
      *        The single attribute or CSS property to animate.
      */
     public constructor(
-        elem: (Highcharts.HTMLElement|SVGElement),
+        elem: (HTMLElement|SVGElement),
         options: Partial<Highcharts.AnimationOptionsObject>,
         prop: string
     ) {
@@ -819,7 +820,7 @@ class Fx {
      *
      * */
 
-    public elem: (Highcharts.HTMLElement|SVGElement);
+    public elem: (HTMLElement|SVGElement);
     public end?: number;
     public from?: number;
     public now?: number;

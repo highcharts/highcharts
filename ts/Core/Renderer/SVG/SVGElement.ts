@@ -23,9 +23,11 @@ import type {
     SVGDOMElement
 } from '../DOMElementType';
 import type GradientColor from '../../Color/GradientColor';
+import type HTMLElement from '../HTML/HTMLElement';
 import type RectangleObject from '../RectangleObject';
 import type ShadowOptionsObject from '../ShadowOptionsObject';
 import type SVGAttributes from './SVGAttributes';
+import type SVGElementLike from './SVGElementLike';
 import type SVGPath from './SVGPath';
 import type SVGRenderer from './SVGRenderer';
 import Color from '../../Color/Color.js';
@@ -385,13 +387,6 @@ declare global {
  */
 
 ''; // detach doclets above
-
-/**
- * @private
- */
-interface SVGElement extends Highcharts.SVGElement {
-    // takes interfaces from internal namespace
-}
 
 /* eslint-disable no-invalid-this, valid-jsdoc */
 
@@ -2415,8 +2410,8 @@ class SVGElement {
 
         } else if (textPathWrapper) {
             // Reset to prototype
-            delete this.updateTransform;
-            delete this.applyTextOutline;
+            delete (this as any).updateTransform;
+            delete (this as any).applyTextOutline;
 
             // Restore DOM structure:
             this.destroyTextPath(elem as any, path);
@@ -3052,7 +3047,11 @@ class SVGElement {
 
 }
 
-interface SVGElement {
+/**
+ * @private
+ */
+interface SVGElement extends SVGElementLike, Highcharts.SVGElement {
+    // takes interfaces from shared interface and internal namespace
     matrixSetter: SVGElement.SetterFunction<(number|string|null)>;
     rotationOriginXSetter: SVGElement.SetterFunction<(number|string|null)>;
     rotationOriginYSetter: SVGElement.SetterFunction<(number|string|null)>;

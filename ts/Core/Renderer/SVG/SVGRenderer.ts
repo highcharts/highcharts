@@ -22,6 +22,7 @@ import type RectangleObject from '../RectangleObject';
 import type SizeObject from '../SizeObject';
 import type SVGAttributes from './SVGAttributes';
 import type SVGPath from './SVGPath';
+import type SVGRendererLike from './SVGRendererLike';
 import Color from '../../Color/Color.js';
 import H from '../../Globals.js';
 import SVGElement from './SVGElement.js';
@@ -3353,6 +3354,10 @@ SVGRenderer.prototype.symbols = {
         return path;
     }
 };
+
+interface SVGRenderer extends SVGRendererLike {
+
+}
 
 H.SVGRenderer = SVGRenderer;
 H.Renderer = H.SVGRenderer;
