@@ -745,11 +745,21 @@ extend(Chart.prototype, /** @lends Highcharts.Chart.prototype */ {
             this.options.colors = options.colors;
         }
 
-        // Maintaining legacy global time. If the chart is instanciated first
-        // with global time, then updated with time options, we need to create a
-        // new Time instance to avoid mutating the global time (#10536).
-        if (options.time && this.time === time) {
-            this.time = new Time(options.time);
+        if (options.time) {
+            // Maintaining legacy global time. If the chart is instanciated
+            // first with global time, then updated with time options, we need
+            // to create a new Time instance to avoid mutating the global time
+            // (#10536).
+            if (this.time === time) {
+                this.time = new Time(options.time);
+            }
+
+            // If we're updating, the time class is different from other chart
+            // classes (chart.legend, chart.tooltip etc) in that it doesn't know
+            // about the chart. The other chart[something].update functions also
+            // set the chart.options[something]. For the time class however we
+            // need to update the chart options separately. #14230.
+            merge(true, chart.options.time, options.time);
         }
 
         // Some option stuctures correspond one-to-one to chart objects that
