@@ -164,10 +164,9 @@ declare global {
         type PointOptionsType = (
             number|
             string|
-            Array<(number|string|null|undefined)>|
+            Array<(number|string|null)>|
             PointOptionsObject|
-            null|
-            undefined
+            null
         );
         type PointStateValue = keyof PointStatesOptionsObject;
         let Point: PointClass;
@@ -285,9 +284,9 @@ type PointClass = typeof Point;
  */
 
 /**
- * Possible option types for a data point.
+ * Possible option types for a data point. Use `null` to indicate a gap.
  *
- * @typedef {number|string|Highcharts.PointOptionsObject|Array<(number|string|null|undefined)>|null|undefined} Highcharts.PointOptionsType
+ * @typedef {number|string|Highcharts.PointOptionsObject|Array<(number|string|null)>|null} Highcharts.PointOptionsType
  */
 
 /**
