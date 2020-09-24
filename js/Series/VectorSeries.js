@@ -9,10 +9,12 @@
  *  !!!!!!! SOURCE GETS TRANSPILED BY TYPESCRIPT. EDIT TS FILE ONLY. !!!!!!!
  *
  * */
+import A from '../Core/Animation/AnimationUtilities.js';
+var animObject = A.animObject;
 import BaseSeries from '../Core/Series/Series.js';
 import H from '../Core/Globals.js';
 import U from '../Core/Utilities.js';
-var animObject = U.animObject, arrayMax = U.arrayMax, pick = U.pick;
+var arrayMax = U.arrayMax, pick = U.pick;
 import './ScatterSeries.js';
 /**
  * The vector series class.

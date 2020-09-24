@@ -10,13 +10,14 @@
 
 import type StackItem from '../../Extensions/Stacking.js';
 import type SVGElement from '../Renderer/SVG/SVGElement';
+import A from '../Animation/AnimationUtilities.js';
+const { getDeferredAnimation } = A;
 import Axis from './Axis.js';
 import U from '../Utilities.js';
 const {
     addEvent,
     destroyObjectProperties,
     fireEvent,
-    getDeferredAnimation,
     objectEach,
     pick
 } = U;

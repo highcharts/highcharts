@@ -4,6 +4,7 @@
  *
  * */
 
+import type AnimationOptionsObject from '../Core/Animation/AnimationOptionsObject';
 import H from '../Core/Globals.js';
 import Point from '../Core/Series/Point.js';
 import U from '../Core/Utilities.js';

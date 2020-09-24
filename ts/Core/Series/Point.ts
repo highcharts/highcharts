@@ -10,13 +10,15 @@
 
 'use strict';
 
+import type AnimationOptionsObject from '../Animation/AnimationOptionsObject';
 import type ColorType from '../Color/ColorType';
 import type SVGAttributes from '../Renderer/SVG/SVGAttributes';
 import type SVGElement from '../Renderer/SVG/SVGElement';
+import A from '../Animation/AnimationUtilities.js';
+const { animObject } = A;
 import H from '../Globals.js';
 import U from '../Utilities.js';
 const {
-    animObject,
     defined,
     erase,
     extend,
@@ -160,7 +162,11 @@ declare global {
             events?: PointEventsOptionsObject;
         }
         type PointOptionsType = (
-            number|string|Array<(number|string)>|PointOptionsObject|null
+            number|
+            string|
+            Array<(number|string|null)>|
+            PointOptionsObject|
+            null
         );
         type PointStateValue = keyof PointStatesOptionsObject;
         let Point: PointClass;
@@ -278,9 +284,9 @@ type PointClass = typeof Point;
  */
 
 /**
- * Possible option types for a data point.
+ * Possible option types for a data point. Use `null` to indicate a gap.
  *
- * @typedef {number|string|Array<(number|string)>|Highcharts.PointOptionsObject|null} Highcharts.PointOptionsType
+ * @typedef {number|string|Highcharts.PointOptionsObject|Array<(number|string|null)>|null} Highcharts.PointOptionsType
  */
 
 /**

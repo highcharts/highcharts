@@ -17,6 +17,7 @@ import type {
     AlignValue,
     VerticalAlignValue
 } from '../Core/Renderer/AlignObject';
+import type AnimationOptionsObject from '../Core/Animation/AnimationOptionsObject';
 import type ColorType from '../Core/Color/ColorType';
 import type {
     CSSObject,
@@ -25,6 +26,8 @@ import type {
 import type { SeriesOptionsType } from '../Core/Series/Types';
 import type SVGAttributes from '../Core/Renderer/SVG/SVGAttributes';
 import type SVGElement from '../Core/Renderer/SVG/SVGElement';
+import A from '../Core/Animation/AnimationUtilities.js';
+const { animObject } = A;
 import Axis from '../Core/Axis/Axis.js';
 import Chart from '../Core/Chart/Chart.js';
 import Color from '../Core/Color/Color.js';
@@ -43,7 +46,6 @@ import U from '../Core/Utilities.js';
 const {
     addEvent,
     removeEvent,
-    animObject,
     extend,
     fireEvent,
     format,
@@ -654,7 +656,7 @@ defaultOptions.drilldown = {
  * The animation options for the element fade.
  */
 SVGRenderer.prototype.Element.prototype.fadeIn = function (
-    animation?: (boolean|Partial<Highcharts.AnimationOptionsObject>)
+    animation?: (boolean|Partial<AnimationOptionsObject>)
 ): void {
     this
         .attr({

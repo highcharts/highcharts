@@ -8,6 +8,7 @@
  *
  * */
 
+import type AnimationOptionsObject from '../Core/Animation/AnimationOptionsObject';
 import type { AxisType } from '../Core/Axis/Types';
 import type BaseSeries from '../Core/Series/Series';
 import type Chart from '../Core/Chart/Chart';
@@ -127,7 +128,7 @@ declare global {
             public animate(init?: boolean): void;
             public applyExtremes(): DataExtremesObject;
             public applyZones(): void;
-            public autoIncrement(): void;
+            public autoIncrement(): number;
             public bindAxes(): void;
             public buildKDTree(e?: PointerEventObject): void;
             public cropData(

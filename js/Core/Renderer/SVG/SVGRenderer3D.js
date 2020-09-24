@@ -9,6 +9,8 @@
  *  !!!!!!! SOURCE GETS TRANSPILED BY TYPESCRIPT. EDIT TS FILE ONLY. !!!!!!!
  *
  * */
+import A from '../../Animation/AnimationUtilities.js';
+var animObject = A.animObject;
 import Color from '../../Color/Color.js';
 var color = Color.parse;
 import H from '../../Globals.js';
@@ -17,7 +19,7 @@ var perspective = Math3D.perspective, shapeArea = Math3D.shapeArea;
 import SVGElement from './SVGElement.js';
 import SVGRenderer from './SVGRenderer.js';
 import U from '../../Utilities.js';
-var animObject = U.animObject, defined = U.defined, extend = U.extend, merge = U.merge, objectEach = U.objectEach, pick = U.pick;
+var defined = U.defined, extend = U.extend, merge = U.merge, objectEach = U.objectEach, pick = U.pick;
 var cos = Math.cos, PI = Math.PI, sin = Math.sin;
 var charts = H.charts, deg2rad = H.deg2rad, 
 // internal:

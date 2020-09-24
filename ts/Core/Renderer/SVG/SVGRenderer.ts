@@ -9,6 +9,7 @@
  * */
 
 import type AlignObject from '../AlignObject';
+import type AnimationOptionsObject from '../../Animation/AnimationOptionsObject';
 import type BBoxObject from '../BBoxObject';
 import type ColorString from '../../Color/ColorString';
 import type CSSObject from '../CSSObject';
@@ -619,7 +620,7 @@ class SVGRenderer {
      */
     public defs: SVGElement = void 0 as any;
     public forExport?: boolean;
-    public globalAnimation: Partial<Highcharts.AnimationOptionsObject> = void 0 as any;
+    public globalAnimation: Partial<AnimationOptionsObject> = void 0 as any;
     public gradients: Record<string, SVGElement> = void 0 as any;
     public height: number = void 0 as any;
     public imgCount: number = void 0 as any;
@@ -2096,7 +2097,7 @@ class SVGRenderer {
     public setSize(
         width: number,
         height: number,
-        animate?: (boolean|Partial<Highcharts.AnimationOptionsObject>)
+        animate?: (boolean|Partial<AnimationOptionsObject>)
     ): void {
         var renderer = this,
             alignedObjects = renderer.alignedObjects,

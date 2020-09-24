@@ -8,9 +8,11 @@
  *
  * */
 'use strict';
+import A from '../Animation/AnimationUtilities.js';
+var animObject = A.animObject;
 import H from '../Globals.js';
 import U from '../Utilities.js';
-var animObject = U.animObject, defined = U.defined, erase = U.erase, extend = U.extend, fireEvent = U.fireEvent, format = U.format, getNestedProperty = U.getNestedProperty, isArray = U.isArray, isNumber = U.isNumber, isObject = U.isObject, syncTimeout = U.syncTimeout, pick = U.pick, removeEvent = U.removeEvent, uniqueKey = U.uniqueKey;
+var defined = U.defined, erase = U.erase, extend = U.extend, fireEvent = U.fireEvent, format = U.format, getNestedProperty = U.getNestedProperty, isArray = U.isArray, isNumber = U.isNumber, isObject = U.isObject, syncTimeout = U.syncTimeout, pick = U.pick, removeEvent = U.removeEvent, uniqueKey = U.uniqueKey;
 /**
  * Function callback when a series point is clicked. Return false to cancel the
  * action.
@@ -115,9 +117,9 @@ var animObject = U.animObject, defined = U.defined, erase = U.erase, extend = U.
  * @interface Highcharts.PointOptionsObject
  */
 /**
- * Possible option types for a data point.
+ * Possible option types for a data point. Use `null` to indicate a gap.
  *
- * @typedef {number|string|Array<(number|string)>|Highcharts.PointOptionsObject|null} Highcharts.PointOptionsType
+ * @typedef {number|string|Highcharts.PointOptionsObject|Array<(number|string|null)>|null} Highcharts.PointOptionsType
  */
 /**
  * Gets fired when the point is removed using the `.remove()` method.

@@ -14,6 +14,8 @@
  *  !!!!!!! SOURCE GETS TRANSPILED BY TYPESCRIPT. EDIT TS FILE ONLY. !!!!!!!
  *
  * */
+import A from '../Core/Animation/AnimationUtilities.js';
+var animObject = A.animObject;
 import BaseSeries from '../Core/Series/Series.js';
 var seriesTypes = BaseSeries.seriesTypes;
 import Color from '../Core/Color/Color.js';
@@ -27,7 +29,7 @@ var getAreaOfCircle = GeometryCirclesModule.getAreaOfCircle, getAreaOfIntersecti
 import NelderMeadMixin from '../Mixins/NelderMead.js';
 var nelderMead = NelderMeadMixin.nelderMead;
 import U from '../Core/Utilities.js';
-var addEvent = U.addEvent, animObject = U.animObject, extend = U.extend, isArray = U.isArray, isNumber = U.isNumber, isObject = U.isObject, isString = U.isString, merge = U.merge;
+var addEvent = U.addEvent, extend = U.extend, isArray = U.isArray, isNumber = U.isNumber, isObject = U.isObject, isString = U.isString, merge = U.merge;
 import './ScatterSeries.js';
 var objectValues = function objectValues(obj) {
     return Object.keys(obj).map(function (x) {

@@ -14,6 +14,7 @@ import type {
     AlignValue,
     VerticalAlignValue
 } from '../Core/Renderer/AlignObject';
+import type AnimationOptionsObject from '../Core/Animation/AnimationOptionsObject';
 import type Chart from '../Core/Chart/Chart';
 import type ColorString from '../Core/Color/ColorString';
 import type ColorType from '../Core/Color/ColorType';
@@ -118,7 +119,7 @@ declare global {
             public colorValueData?: Array<number>;
             public data: Array<TreemapPoint>;
             public directTouch: boolean;
-            public drillUpButton: SVGElement;
+            public drillUpButton?: SVGElement;
             public getExtremesFromAll: boolean;
             public idPreviousRoot?: string;
             public mapOptionsToLevel: Dictionary<TreemapSeriesOptions>;
@@ -180,7 +181,6 @@ declare global {
             ): TreemapListOfParentsObject;
             public getTree(): this['tree'];
             public hasData(): boolean;
-            public isDrillAllowed(targetNode: string): boolean;
             public init(chart: Chart, options: TreemapSeriesOptions): void;
             public onClickDrillToNode(event: { point: TreemapPoint }): void;
             public pointAttribs(
@@ -522,7 +522,7 @@ BaseSeries.seriesType<typeof Highcharts.TreemapSeries>(
         /**
          * @ignore-option
          */
-        marker: false as any,
+        marker: void 0,
 
         /**
          * When using automatic point colors pulled from the `options.colors`
@@ -993,8 +993,8 @@ BaseSeries.seriesType<typeof Highcharts.TreemapSeries>(
                 }),
                 parentList = series.getListOfParents(this.data, allIds);
 
-            series.nodeMap = [] as any;
-            return series.buildNode('', -1, 0, parentList, null as any);
+            series.nodeMap = {};
+            return series.buildNode('', -1, 0, parentList);
         },
         // Define hasData function for non-cartesian series.
         // Returns true if the series has points at all.
@@ -1080,12 +1080,12 @@ BaseSeries.seriesType<typeof Highcharts.TreemapSeries>(
                 children.push(child);
             });
             node = {
-                id: id,
-                i: i,
-                children: children,
-                height: height,
-                level: level,
-                parent: parent,
+                id,
+                i,
+                children,
+                height,
+                level,
+                parent,
                 visible: false // @todo move this to better location
             } as any;
             series.nodeMap[node.id] = node;
@@ -1128,7 +1128,7 @@ BaseSeries.seriesType<typeof Highcharts.TreemapSeries>(
                 a: Highcharts.TreemapNodeObject,
                 b: Highcharts.TreemapNodeObject
             ): number {
-                return (a.sortIndex as any) - (b.sortIndex as any);
+                return (a.sortIndex || 0) - (b.sortIndex || 0);
             });
             // Set the values
             val = pick(point && point.options.value, childrenTotal);
@@ -1858,10 +1858,10 @@ BaseSeries.seriesType<typeof Highcharts.TreemapSeries>(
 
             points.forEach(function (point: Highcharts.TreemapPoint): void {
                 var levelDynamic = point.node.levelDynamic,
-                    animate: Partial<Highcharts.AnimationOptionsObject> = {},
-                    attr: SVGAttributes = {},
+                    animatableAttribs: Partial<AnimationOptionsObject> = {},
+                    attribs: SVGAttributes = {},
                     css: CSSObject = {},
-                    groupKey = 'level-group-' + levelDynamic,
+                    groupKey = 'level-group-' + point.node.level,
                     hasGraphic = !!point.graphic,
                     shouldAnimate = withinAnimationLimit && hasGraphic,
                     shapeArgs = point.shapeArgs;
@@ -1869,20 +1869,20 @@ BaseSeries.seriesType<typeof Highcharts.TreemapSeries>(
                 // Don't bother with calculate styling if the point is not drawn
                 if (point.shouldDraw()) {
                     if (borderRadius) {
-                        attr.r = borderRadius;
+                        attribs.r = borderRadius;
                     }
 
                     merge(
                         true, // Extend object
                         // Which object to extend
-                        shouldAnimate ? animate : attr,
+                        shouldAnimate ? animatableAttribs : attribs,
                         // Add shapeArgs to animate/attr if graphic exists
                         hasGraphic ? shapeArgs : {},
                         // Add style attribs if !styleMode
                         styledMode ?
                             {} :
                             series.pointAttribs(
-                                point, (point.selected && 'select') as any
+                                point, point.selected ? 'select' : void 0
                             )
                     );
 
@@ -1899,7 +1899,7 @@ BaseSeries.seriesType<typeof Highcharts.TreemapSeries>(
                             .attr({
                                 // @todo Set the zIndex based upon the number of
                                 // levels, instead of using 1000
-                                zIndex: 1000 - (levelDynamic as any)
+                                zIndex: 1000 - (levelDynamic || 0)
                             })
                             .add(series.group);
                         (series as any)[groupKey].survive = true;
@@ -1908,13 +1908,13 @@ BaseSeries.seriesType<typeof Highcharts.TreemapSeries>(
 
                 // Draw the point
                 point.draw({
-                    animatableAttribs: animate,
-                    attribs: attr,
-                    css: css,
+                    animatableAttribs,
+                    attribs,
+                    css,
                     group: (series as any)[groupKey],
-                    renderer: renderer,
-                    shadow: shadow,
-                    shapeArgs: shapeArgs,
+                    renderer,
+                    shadow,
+                    shapeArgs,
                     shapeType: 'rect'
                 });
 
@@ -1937,8 +1937,7 @@ BaseSeries.seriesType<typeof Highcharts.TreemapSeries>(
                 drillId = point && point.drillId;
 
             // If a drill id is returned, add click event and cursor.
-            if (isString(drillId) &&
-                (series.isDrillAllowed ? series.isDrillAllowed(drillId) : true)) {
+            if (isString(drillId)) {
                 point.setState(''); // Remove hover
                 series.setRootNode(drillId, true, { trigger: 'click' });
             }
@@ -2105,30 +2104,6 @@ BaseSeries.seriesType<typeof Highcharts.TreemapSeries>(
             fireEvent(series, 'setRootNode', eventArgs, defaultFn);
         },
 
-        /**
-         * Check if the drill up/down is allowed.
-         *
-         * @private
-         */
-        isDrillAllowed: function (
-            this: Highcharts.TreemapSeries,
-            targetNode: string
-        ): boolean {
-            var tree = this.tree,
-                firstChild = tree.children[0];
-
-            // The sunburst series looks exactly the same on the level ''
-            // and level 1 if there’s only one element on level 1. Disable
-            // drilling up/down when it doesn't perform any visual
-            // difference (#13388).
-            return !(
-                tree.children.length === 1 && (
-                    (this.rootNode === '' && targetNode === firstChild.id) ||
-                    (this.rootNode === firstChild.id && targetNode === '')
-                )
-            );
-        },
-
         renderTraverseUpButton: function (
             this: Highcharts.TreemapSeries,
             rootId: string
@@ -2139,17 +2114,17 @@ BaseSeries.seriesType<typeof Highcharts.TreemapSeries>(
                 name = node.name,
                 buttonOptions: Highcharts.TreemapSeriesUpButtonOptions =
                     series.options.traverseUpButton as any,
-                backText = pick(buttonOptions.text, name, '< Back'),
+                backText = pick(buttonOptions.text, name, '◁ Back'),
                 attr,
                 states;
 
-            if (rootId === '' ||
-                (series.isDrillAllowed ?
-                    !(isString(node.parent) && series.isDrillAllowed(node.parent)) : false)
-            ) {
+            if (rootId === '' || (
+                series.is('sunburst') &&
+                series.tree.children.length === 1 &&
+                rootId === series.tree.children[0].id
+            )) {
                 if (series.drillUpButton) {
-                    series.drillUpButton =
-                        series.drillUpButton.destroy() as any;
+                    series.drillUpButton = series.drillUpButton.destroy();
                 }
             } else if (!this.drillUpButton) {
                 attr = buttonOptions.theme;
@@ -2158,8 +2133,8 @@ BaseSeries.seriesType<typeof Highcharts.TreemapSeries>(
                 this.drillUpButton = this.chart.renderer
                     .button(
                         backText,
-                        null as any,
-                        null as any,
+                        0,
+                        0,
                         function (): void {
                             series.drillUp();
                         },
@@ -2254,7 +2229,7 @@ BaseSeries.seriesType<typeof Highcharts.TreemapSeries>(
          * @function Highcharts.Point#isValid
          */
         isValid: function (this: Highcharts.TreemapPoint): boolean {
-            return (this.id as any) || isNumber(this.value);
+            return Boolean(this.id || isNumber(this.value));
         },
         setState: function (
             this: Highcharts.TreemapPoint,
@@ -2270,8 +2245,7 @@ BaseSeries.seriesType<typeof Highcharts.TreemapSeries>(
             }
         },
         shouldDraw: function (this: Highcharts.TreemapPoint): boolean {
-            var point = this;
-            return isNumber(point.plotY) && point.y !== null;
+            return isNumber(this.plotY) && this.y !== null;
         }
     }
 );
