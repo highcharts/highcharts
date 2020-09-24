@@ -14,7 +14,6 @@
  *  Imports
  *
  * */
-import DataTableRow from './DataTableRow.js';
 import DataTable from './DataTable.js';
 /* *
  *
@@ -71,7 +70,13 @@ var DataConverter = /** @class */ (function () {
                 return new DataTable();
             }
         }
-        return new DataTable([new DataTableRow({ value: value })]);
+        return DataTable.fromJSON({
+            $class: 'DataTable',
+            rows: [{
+                    $class: 'DataTableRow',
+                    cells: [JSON.parse((value === null || value === void 0 ? void 0 : value.toString()) || '')]
+                }]
+        });
     };
     /**
      * Converts a value to a Date.

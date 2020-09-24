@@ -15,8 +15,6 @@
  *  Imports
  *
  * */
-
-import DataTableRow from './DataTableRow.js';
 import DataTable from './DataTable.js';
 
 /* *
@@ -75,7 +73,14 @@ class DataConverter {
                 return new DataTable();
             }
         }
-        return new DataTable([new DataTableRow({ value })]);
+
+        return DataTable.fromJSON({
+            $class: 'DataTable',
+            rows: [{
+                $class: 'DataTableRow',
+                cells: [JSON.parse(value?.toString() || '')]
+            }]
+        });
     }
 
     /**
