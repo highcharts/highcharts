@@ -49,12 +49,11 @@ Chart.prototype.adjustHeight = function () {
                 // Minimum height is 1 x staticScale.
                 height = Math.max(height, staticScale);
                 diff = height - chart.plotHeight;
-                if (!chart.scrollablePixelsY) {
-                    if (Math.abs(diff) >= 1) {
-                        chart.plotHeight = height;
-                        chart.redrawTrigger = 'adjustHeight';
-                        chart.setSize(void 0, chart.chartHeight + diff, animate);
-                    }
+                // Adjust the size, but not if scrollable plot area (#13884)
+                if (!chart.scrollablePixelsY && Math.abs(diff) >= 1) {
+                    chart.plotHeight = height;
+                    chart.redrawTrigger = 'adjustHeight';
+                    chart.setSize(void 0, chart.chartHeight + diff, animate);
                 }
                 // Make sure clip rects have the right height before initial
                 // animation.
