@@ -260,7 +260,7 @@ var controllableMixin: Highcharts.AnnotationControllableMixin = {
         point: Highcharts.AnnotationPointType
     ): Highcharts.AnnotationAnchorObject {
         var plotBox = point.series.getPlotBox(),
-
+            chart = point.series.chart,
             box = point.mock ?
                 point.toAnchor() :
                 Tooltip.prototype.getAnchor.call({
@@ -278,7 +278,7 @@ var controllableMixin: Highcharts.AnnotationControllableMixin = {
             relativePosition: anchor,
             absolutePosition: merge(anchor, {
                 x: anchor.x + plotBox.translateX,
-                y: anchor.y + plotBox.translateY
+                y: anchor.y + (point.mock ? plotBox.translateY : chart.plotTop)
             })
         };
     },
