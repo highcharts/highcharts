@@ -8,6 +8,7 @@
  *
  * */
 'use strict';
+import AST from './Renderer/HTML/AST.js';
 import BaseSeries from './Series/Series.js';
 var seriesTypes = BaseSeries.seriesTypes;
 import Chart from './Chart/Chart.js';
@@ -848,8 +849,7 @@ extend(Point.prototype, /** @lends Highcharts.Point.prototype */ {
                 halo.attr(extend({
                     'fill': point.color || series.color,
                     'fill-opacity': haloOptions.opacity
-                }, chart.renderer
-                    .filterUserAttributes(haloOptions.attributes) || {}));
+                }, AST.filterUserAttributes(haloOptions.attributes || {})));
             }
         }
         else if (halo && halo.point && halo.point.haloPath) {

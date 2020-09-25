@@ -369,7 +369,7 @@ function error(code, stop, chart, params) {
         if (win.console &&
             error.messages.indexOf(message) === -1 // prevent console flooting
         ) {
-            console.log(message); // eslint-disable-line no-console
+            console.warn(message); // eslint-disable-line no-console
         }
     };
     if (typeof params !== 'undefined') {

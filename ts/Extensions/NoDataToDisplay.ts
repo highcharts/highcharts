@@ -15,13 +15,14 @@
 import type AlignObject from '../Core/Renderer/AlignObject';
 import type CSSObject from '../Core/Renderer/CSSObject';
 import type SVGAttributes from '../Core/Renderer/SVG/SVGAttributes';
+
+import AST from '../Core/Renderer/HTML/AST.js';
 import Chart from '../Core/Chart/Chart.js';
 import U from '../Core/Utilities.js';
 const {
     addEvent,
     extend,
-    getOptions,
-    merge
+    getOptions
 } = U;
 
 /**
@@ -209,7 +210,7 @@ chartPrototype.showNoData = function (str?: string): void {
 
         if (!chart.styledMode) {
             chart.noDataLabel
-                .attr(this.renderer.filterUserAttributes(noDataOptions.attr || {}))
+                .attr(AST.filterUserAttributes(noDataOptions.attr || {}))
                 .css(noDataOptions.style || {});
         }
 

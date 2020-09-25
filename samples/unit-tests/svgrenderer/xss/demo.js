@@ -43,9 +43,9 @@ QUnit.module('XSS', function () {
                 )
                 .add();
             assert.strictEqual(
-                text.element.childNodes.length,
-                1,
-                'No nested nodes should be applied'
+                text.element.textContent,
+                'javascript:/*-->', // eslint-disable-line
+                'No funny business should be allowed in the node'
             );
 
 
@@ -97,11 +97,15 @@ QUnit.module('XSS', function () {
                 'Malformed HTML, JS directives should be stripped out'
             );
             assert.ok(
-                !/alert/i.test(text.element.outerHTML),
+                !/alert/i.test(
+                    // Alerts as text content is allowed though
+                    text.element.outerHTML.replace(/<tspan>alert/g, '')
+                ),
                 'Malformed HTML, alerts should be stripped out from JS directives'
             );
+
             assert.ok(
-                !/alert/i.test(text.element.outerHTML),
+                !/script/i.test(text.element.outerHTML),
                 'Malformed HTML, scripts should be stripped out from DOM'
             );
 
@@ -190,11 +194,15 @@ QUnit.module('XSS', function () {
                 'Tag tricks, event attributes should be stripped'
             );
             assert.ok(
-                !/alert/i.test(text.element.outerHTML),
+                !/alert/i.test(
+                    // But alert as text content is allowed
+                    text.element.outerHTML.replace(/<tspan[^>]+>alert/g, '')
+                ),
                 'Tag tricks, alerts should be stripped out from JS directives'
             );
+
             assert.ok(
-                !/alert/i.test(text.element.outerHTML),
+                !/script/i.test(text.element.outerHTML),
                 'Tag tricks, scripts should be stripped out from DOM'
             );
 
@@ -205,4 +213,27 @@ QUnit.module('XSS', function () {
 
     });
 
+});
+
+QUnit.test('Script injection through AST options', assert => {
+    const chart = Highcharts.chart('container', {
+
+        chart: {
+            styledMode: true
+        },
+
+        defs: {
+            xss: {
+                tagName: 'script',
+                href: 'https://code.example.com',
+                onerror: 'javascript:console.log(\'XSS\')' // eslint-disable-line
+            }
+        }
+    });
+
+    assert.strictEqual(
+        chart.container.querySelector('script'),
+        null,
+        'No script tag should be allowed in the definitions'
+    );
 });

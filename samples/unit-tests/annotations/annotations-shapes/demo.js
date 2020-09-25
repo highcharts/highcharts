@@ -107,7 +107,7 @@ QUnit.test('Drawing path with a marker', function (assert) {
         defs: {
             marker0: {
                 attributes: {
-                    display: 'none'
+                    style: 'display: none'
                 },
                 id: 'arrow-marker',
                 tagName: 'marker',

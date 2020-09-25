@@ -14,6 +14,7 @@ import H from '../../Globals.js';
 import U from '../../Utilities.js';
 const {
     attr,
+    error,
     objectEach,
     splat
 } = U;
@@ -67,9 +68,20 @@ class AST {
         'br',
         'button',
         'caption',
+        'circle',
         'code',
         'div',
         'em',
+        'feComponentTransfer',
+        'feFuncA',
+        'feFuncB',
+        'feFuncG',
+        'feFuncR',
+        'feGaussianBlur',
+        'feOffset',
+        'feMerge',
+        'feMergeNode',
+        'filter',
         'h1',
         'h2',
         'h3',
@@ -79,17 +91,26 @@ class AST {
         'i',
         'img',
         'li',
+        'linearGradient',
+        'marker',
         'ol',
         'p',
+        'path',
+        'pattern',
         'pre',
+        'rect',
         'small',
         'span',
+        'stop',
         'strong',
+        'style',
         'sub',
         'sup',
         'table',
+        'text',
         'thead',
         'tbody',
+        'tspan',
         'td',
         'th',
         'tr',
@@ -111,17 +132,79 @@ class AST {
         'aria-roledescription',
         'aria-selected',
         'class',
+        'color',
         'colspan',
+        'cx',
+        'cy',
+        'd',
+        'dx',
+        'dy',
         'disabled',
+        'fill',
+        'height',
         'href',
         'id',
+        'in',
+        'markerHeight',
+        'markerWidth',
+        'offset',
+        'opacity',
+        'orient',
+        'padding',
+        'patternUnits',
+        'r',
+        'refX',
+        'refY',
         'role',
         'scope',
+        'slope',
         'src',
+        'startOffset',
+        'stdDeviation',
+        'stroke',
+        'stroke-linecap',
+        'stroke-width',
         'style',
+        'result',
         'rowspan',
-        'tabindex'
+        'summary',
+        'tabindex',
+        'text-align',
+        'textAnchor',
+        'textLength',
+        'type',
+        'valign',
+        'width',
+        'x',
+        'x1',
+        'xy',
+        'y',
+        'y1',
+        'y2',
+        'zIndex'
     ];
+
+    public static filterUserAttributes(
+        attributes: SVGAttributes
+    ): SVGAttributes {
+        objectEach(attributes, (val, key): void => {
+            let valid = true;
+            if (AST.allowedAttributes.indexOf(key) === -1) {
+                valid = false;
+            }
+            if (
+                ['background', 'dynsrc', 'href', 'lowsrc', 'src']
+                    .indexOf(key) !== -1
+            ) {
+                valid = /^(http|\/)/.test(val);
+            }
+            if (!valid) {
+                error(`Highcharts warning: Invalid attribute '${key}' in config`);
+                delete attributes[key];
+            }
+        });
+        return attributes;
+    }
 
     /**
      * Utility function to set html content for an element by passing in a
@@ -188,39 +271,49 @@ class AST {
             splat(subtree).forEach(function (
                 item: Highcharts.ASTNode
             ): void {
+                const tagName = item.tagName;
                 const textNode = item.textContent ?
                     H.doc.createTextNode(item.textContent) :
                     void 0;
-                let node;
+                let node: Text|Element|undefined;
 
-                if (item.tagName === '#text') {
-                    node = textNode;
+                if (tagName) {
+                    if (tagName === '#text') {
+                        node = textNode;
 
-                } else if (item.tagName) {
-                    node = H.doc.createElementNS(NS, item.tagName);
-                    const attributes = item.attributes || {};
+                    } else if (AST.allowedTags.indexOf(tagName) !== -1) {
+                        const element = H.doc.createElementNS(NS, tagName);
+                        const attributes = item.attributes || {};
 
-                    // Apply attributes from root of AST node, legacy from
-                    // from before TextBuilder
-                    objectEach(item, function (val, key): void {
-                        if (
-                            key !== 'tagName' &&
-                            key !== 'attributes' &&
-                            key !== 'children' &&
-                            key !== 'textContent'
-                        ) {
-                            attributes[key] = val;
+                        // Apply attributes from root of AST node, legacy from
+                        // from before TextBuilder
+                        objectEach(item, function (val, key): void {
+                            if (
+                                key !== 'tagName' &&
+                                key !== 'attributes' &&
+                                key !== 'children' &&
+                                key !== 'textContent'
+                            ) {
+                                attributes[key] = val;
+                            }
+                        });
+                        attr(
+                            element as any,
+                            AST.filterUserAttributes(attributes)
+                        );
+
+                        // Add text content
+                        if (textNode) {
+                            element.appendChild(textNode);
                         }
-                    });
-                    attr(node as any, attributes);
 
-                    // Add text content
-                    if (textNode) {
-                        node.appendChild(textNode);
+                        // Recurse
+                        recurse(item.children || [], element);
+                        node = element;
+
+                    } else {
+                        error(`Highcharts warning: Invalid tagName '${tagName}' in config`);
                     }
-
-                    // Recurse
-                    recurse(item.children || [], node);
                 }
 
                 // Add to the tree
@@ -271,78 +364,57 @@ class AST {
             doc = new DOMParser().parseFromString(markup, 'text/html');
         }
 
-        const validateDirective = (attrib: Attribute): boolean => {
-            if (
-                ['background', 'dynsrc', 'href', 'lowsrc', 'src']
-                    .indexOf(attrib.name) !== -1
-            ) {
-                return /^(http|\/)/.test(attrib.value);
-            }
-            return true;
-        };
-
-        const validateChildNodes = (
+        const appendChildNodes = (
             node: ChildNode,
             addTo: Highcharts.ASTNode[]
         ): void => {
             const tagName = node.nodeName.toLowerCase();
 
             // Add allowed tags
-            if (AST.allowedTags.indexOf(tagName) !== -1) {
-                const astNode: Highcharts.ASTNode = {
-                    tagName
-                };
-                if (tagName === '#text') {
-                    const textContent = node.textContent || '';
+            const astNode: Highcharts.ASTNode = {
+                tagName
+            };
+            if (tagName === '#text') {
+                const textContent = node.textContent || '';
 
-                    // Whitespace text node, don't append it to the AST
-                    if (/^[\s]*$/.test(textContent)) {
-                        return;
-                    }
-
-                    astNode.textContent = textContent;
-                }
-                const parsedAttributes = (node as any).attributes;
-
-                // Add allowed attributes
-                if (parsedAttributes) {
-                    const attributes: SVGAttributes = {};
-                    [].forEach.call(parsedAttributes, (attrib: Attribute): void => {
-                        if (
-                            AST.allowedAttributes
-                                .indexOf(attrib.name) !== -1 &&
-                            validateDirective(attrib)
-                        ) {
-                            attributes[attrib.name] = attrib.value;
-                        }
-                    });
-                    astNode.attributes = attributes;
+                // Whitespace text node, don't append it to the AST
+                if (/^[\s]*$/.test(textContent)) {
+                    return;
                 }
 
-                // Handle children
-                if (node.childNodes.length) {
-                    const children: Highcharts.ASTNode[] = [];
-                    [].forEach.call(
-                        node.childNodes,
-                        (childNode: ChildNode): void => {
-                            validateChildNodes(
-                                childNode,
-                                children
-                            );
-                        }
-                    );
-                    if (children.length) {
-                        astNode.children = children;
-                    }
-                }
-
-                addTo.push(astNode);
+                astNode.textContent = textContent;
             }
+            const parsedAttributes = (node as any).attributes;
+
+            // Add attributes
+            if (parsedAttributes) {
+                const attributes: SVGAttributes = {};
+                [].forEach.call(parsedAttributes, (attrib: Attribute): void => {
+                    attributes[attrib.name] = attrib.value;
+                });
+                astNode.attributes = attributes;
+            }
+
+            // Handle children
+            if (node.childNodes.length) {
+                const children: Highcharts.ASTNode[] = [];
+                [].forEach.call(
+                    node.childNodes,
+                    (childNode: ChildNode): void => {
+                        appendChildNodes(childNode, children);
+                    }
+                );
+                if (children.length) {
+                    astNode.children = children;
+                }
+            }
+
+            addTo.push(astNode);
         };
 
         [].forEach.call(
             doc.body.childNodes,
-            (childNode): void => validateChildNodes(childNode, nodes)
+            (childNode): void => appendChildNodes(childNode, nodes)
         );
 
         if (body) {

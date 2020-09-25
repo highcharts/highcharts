@@ -9,7 +9,7 @@
  * */
 import H from '../../Globals.js';
 import U from '../../Utilities.js';
-var attr = U.attr, objectEach = U.objectEach, splat = U.splat;
+var attr = U.attr, error = U.error, objectEach = U.objectEach, splat = U.splat;
 /**
  * Serialized form of an SVG/HTML definition, including children. Some key
  * property names are reserved: tagName, textContent, and children.
@@ -41,6 +41,23 @@ var AST = /** @class */ (function () {
         this.nodes = typeof source === 'string' ?
             this.parseMarkup(source) : source;
     }
+    AST.filterUserAttributes = function (attributes) {
+        objectEach(attributes, function (val, key) {
+            var valid = true;
+            if (AST.allowedAttributes.indexOf(key) === -1) {
+                valid = false;
+            }
+            if (['background', 'dynsrc', 'href', 'lowsrc', 'src']
+                .indexOf(key) !== -1) {
+                valid = /^(http|\/)/.test(val);
+            }
+            if (!valid) {
+                error("Highcharts warning: Invalid attribute '" + key + "' in config");
+                delete attributes[key];
+            }
+        });
+        return attributes;
+    };
     /**
      * Utility function to set html content for an element by passing in a
      * markup string. The markup is safely parsed by the AST class to avoid
@@ -85,33 +102,40 @@ var AST = /** @class */ (function () {
         function recurse(subtree, subParent) {
             var ret;
             splat(subtree).forEach(function (item) {
+                var tagName = item.tagName;
                 var textNode = item.textContent ?
                     H.doc.createTextNode(item.textContent) :
                     void 0;
                 var node;
-                if (item.tagName === '#text') {
-                    node = textNode;
-                }
-                else if (item.tagName) {
-                    node = H.doc.createElementNS(NS, item.tagName);
-                    var attributes_1 = item.attributes || {};
-                    // Apply attributes from root of AST node, legacy from
-                    // from before TextBuilder
-                    objectEach(item, function (val, key) {
-                        if (key !== 'tagName' &&
-                            key !== 'attributes' &&
-                            key !== 'children' &&
-                            key !== 'textContent') {
-                            attributes_1[key] = val;
-                        }
-                    });
-                    attr(node, attributes_1);
-                    // Add text content
-                    if (textNode) {
-                        node.appendChild(textNode);
+                if (tagName) {
+                    if (tagName === '#text') {
+                        node = textNode;
                     }
-                    // Recurse
-                    recurse(item.children || [], node);
+                    else if (AST.allowedTags.indexOf(tagName) !== -1) {
+                        var element = H.doc.createElementNS(NS, tagName);
+                        var attributes_1 = item.attributes || {};
+                        // Apply attributes from root of AST node, legacy from
+                        // from before TextBuilder
+                        objectEach(item, function (val, key) {
+                            if (key !== 'tagName' &&
+                                key !== 'attributes' &&
+                                key !== 'children' &&
+                                key !== 'textContent') {
+                                attributes_1[key] = val;
+                            }
+                        });
+                        attr(element, AST.filterUserAttributes(attributes_1));
+                        // Add text content
+                        if (textNode) {
+                            element.appendChild(textNode);
+                        }
+                        // Recurse
+                        recurse(item.children || [], element);
+                        node = element;
+                    }
+                    else {
+                        error("Highcharts warning: Invalid tagName '" + tagName + "' in config");
+                    }
                 }
                 // Add to the tree
                 if (node) {
@@ -151,55 +175,42 @@ var AST = /** @class */ (function () {
         else {
             doc = new DOMParser().parseFromString(markup, 'text/html');
         }
-        var validateDirective = function (attrib) {
-            if (['background', 'dynsrc', 'href', 'lowsrc', 'src']
-                .indexOf(attrib.name) !== -1) {
-                return /^(http|\/)/.test(attrib.value);
-            }
-            return true;
-        };
-        var validateChildNodes = function (node, addTo) {
+        var appendChildNodes = function (node, addTo) {
             var tagName = node.nodeName.toLowerCase();
             // Add allowed tags
-            if (AST.allowedTags.indexOf(tagName) !== -1) {
-                var astNode = {
-                    tagName: tagName
-                };
-                if (tagName === '#text') {
-                    var textContent = node.textContent || '';
-                    // Whitespace text node, don't append it to the AST
-                    if (/^[\s]*$/.test(textContent)) {
-                        return;
-                    }
-                    astNode.textContent = textContent;
+            var astNode = {
+                tagName: tagName
+            };
+            if (tagName === '#text') {
+                var textContent = node.textContent || '';
+                // Whitespace text node, don't append it to the AST
+                if (/^[\s]*$/.test(textContent)) {
+                    return;
                 }
-                var parsedAttributes = node.attributes;
-                // Add allowed attributes
-                if (parsedAttributes) {
-                    var attributes_2 = {};
-                    [].forEach.call(parsedAttributes, function (attrib) {
-                        if (AST.allowedAttributes
-                            .indexOf(attrib.name) !== -1 &&
-                            validateDirective(attrib)) {
-                            attributes_2[attrib.name] = attrib.value;
-                        }
-                    });
-                    astNode.attributes = attributes_2;
-                }
-                // Handle children
-                if (node.childNodes.length) {
-                    var children_1 = [];
-                    [].forEach.call(node.childNodes, function (childNode) {
-                        validateChildNodes(childNode, children_1);
-                    });
-                    if (children_1.length) {
-                        astNode.children = children_1;
-                    }
-                }
-                addTo.push(astNode);
+                astNode.textContent = textContent;
             }
+            var parsedAttributes = node.attributes;
+            // Add attributes
+            if (parsedAttributes) {
+                var attributes_2 = {};
+                [].forEach.call(parsedAttributes, function (attrib) {
+                    attributes_2[attrib.name] = attrib.value;
+                });
+                astNode.attributes = attributes_2;
+            }
+            // Handle children
+            if (node.childNodes.length) {
+                var children_1 = [];
+                [].forEach.call(node.childNodes, function (childNode) {
+                    appendChildNodes(childNode, children_1);
+                });
+                if (children_1.length) {
+                    astNode.children = children_1;
+                }
+            }
+            addTo.push(astNode);
         };
-        [].forEach.call(doc.body.childNodes, function (childNode) { return validateChildNodes(childNode, nodes); });
+        [].forEach.call(doc.body.childNodes, function (childNode) { return appendChildNodes(childNode, nodes); });
         if (body) {
             H.discardElement(body);
         }
@@ -211,9 +222,20 @@ var AST = /** @class */ (function () {
         'br',
         'button',
         'caption',
+        'circle',
         'code',
         'div',
         'em',
+        'feComponentTransfer',
+        'feFuncA',
+        'feFuncB',
+        'feFuncG',
+        'feFuncR',
+        'feGaussianBlur',
+        'feOffset',
+        'feMerge',
+        'feMergeNode',
+        'filter',
         'h1',
         'h2',
         'h3',
@@ -223,17 +245,26 @@ var AST = /** @class */ (function () {
         'i',
         'img',
         'li',
+        'linearGradient',
+        'marker',
         'ol',
         'p',
+        'path',
+        'pattern',
         'pre',
+        'rect',
         'small',
         'span',
+        'stop',
         'strong',
+        'style',
         'sub',
         'sup',
         'table',
+        'text',
         'thead',
         'tbody',
+        'tspan',
         'td',
         'th',
         'tr',
@@ -254,16 +285,56 @@ var AST = /** @class */ (function () {
         'aria-roledescription',
         'aria-selected',
         'class',
+        'color',
         'colspan',
+        'cx',
+        'cy',
+        'd',
+        'dx',
+        'dy',
         'disabled',
+        'fill',
+        'height',
         'href',
         'id',
+        'in',
+        'markerHeight',
+        'markerWidth',
+        'offset',
+        'opacity',
+        'orient',
+        'padding',
+        'patternUnits',
+        'r',
+        'refX',
+        'refY',
         'role',
         'scope',
+        'slope',
         'src',
+        'startOffset',
+        'stdDeviation',
+        'stroke',
+        'stroke-linecap',
+        'stroke-width',
         'style',
+        'result',
         'rowspan',
-        'tabindex'
+        'summary',
+        'tabindex',
+        'text-align',
+        'textAnchor',
+        'textLength',
+        'type',
+        'valign',
+        'width',
+        'x',
+        'x1',
+        'xy',
+        'y',
+        'y1',
+        'y2',
+        'zIndex'
     ];
     return AST;
 }());

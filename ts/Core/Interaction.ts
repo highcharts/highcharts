@@ -15,6 +15,8 @@ import type { SeriesOptionsType } from './Series/Types';
 import type SVGAttributes from './Renderer/SVG/SVGAttributes';
 import type SVGElement from './Renderer/SVG/SVGElement';
 import type SVGPath from './Renderer/SVG/SVGPath';
+
+import AST from './Renderer/HTML/AST.js';
 import BaseSeries from './Series/Series.js';
 const {
     seriesTypes
@@ -1369,8 +1371,7 @@ extend(Point.prototype, /** @lends Highcharts.Point.prototype */ {
                         'fill': point.color || series.color,
                         'fill-opacity': haloOptions.opacity
                     },
-                    chart.renderer
-                        .filterUserAttributes(haloOptions.attributes) || {}
+                    AST.filterUserAttributes(haloOptions.attributes || {})
                 ));
             }
 

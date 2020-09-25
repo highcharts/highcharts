@@ -629,7 +629,7 @@ var SVGRenderer = /** @class */ (function () {
         // (reference to options.rangeSelector.buttonTheme)
         normalState = theme ? merge(theme) : {}, userNormalStyle = normalState && normalState.style || {};
         // Remove stylable attributes
-        normalState = this.filterUserAttributes(normalState) || {};
+        normalState = AST.filterUserAttributes(normalState);
         // Default, non-stylable attributes
         label.attr(merge({ padding: 8, r: 2 }, normalState));
         if (!styledMode) {
@@ -653,7 +653,7 @@ var SVGRenderer = /** @class */ (function () {
             // Hover state
             hoverState = merge(normalState, {
                 fill: '${palette.neutralColor10}'
-            }, this.filterUserAttributes(hoverState));
+            }, AST.filterUserAttributes(hoverState || {}));
             hoverStyle = hoverState.style;
             delete hoverState.style;
             // Pressed state
@@ -663,7 +663,7 @@ var SVGRenderer = /** @class */ (function () {
                     color: '${palette.neutralColor100}',
                     fontWeight: 'bold'
                 }
-            }, this.filterUserAttributes(pressedState));
+            }, AST.filterUserAttributes(pressedState || {}));
             pressedStyle = pressedState.style;
             delete pressedState.style;
             // Disabled state
@@ -671,7 +671,7 @@ var SVGRenderer = /** @class */ (function () {
                 style: {
                     color: '${palette.neutralColor20}'
                 }
-            }, this.filterUserAttributes(disabledState));
+            }, AST.filterUserAttributes(disabledState || {}));
             disabledStyle = disabledState.style;
             delete disabledState.style;
         }
@@ -760,36 +760,6 @@ var SVGRenderer = /** @class */ (function () {
                 Math[roundingFunction](start[2]) + (width % 2 / 2);
         }
         return points;
-    };
-    SVGRenderer.prototype.filterUserAttributes = function (attributes) {
-        var allowedUserSVGAttributes = [
-            'class',
-            'd',
-            'dx',
-            'dy',
-            'fill',
-            'height',
-            'padding',
-            'r',
-            'startOffset',
-            'stroke',
-            'stroke-linecap',
-            'stroke-width',
-            'style',
-            'text-align',
-            'textAnchor',
-            'textLength',
-            'width',
-            'zIndex'
-        ];
-        if (attributes) {
-            Object.keys(attributes).forEach(function (key) {
-                if (allowedUserSVGAttributes.indexOf(key) === -1) {
-                    delete attributes[key];
-                }
-            });
-        }
-        return attributes;
     };
     /**
      * Draw a path, wraps the SVG `path` element.

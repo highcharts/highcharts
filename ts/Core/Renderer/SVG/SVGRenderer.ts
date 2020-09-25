@@ -182,9 +182,6 @@ declare global {
             ): SVGPath;
             public definition(def: ASTNode): SVGElement;
             public destroy(): null;
-            public filterUserAttributes(
-                attributes: SVGAttributes
-            ): SVGAttributes|undefined;
             public g(name?: string): SVGElement;
             public getContrast(rgba: ColorString): ColorString;
             public getRadialAttr(
@@ -1012,7 +1009,7 @@ class SVGRenderer {
             userNormalStyle = normalState && normalState.style || {};
 
         // Remove stylable attributes
-        normalState = this.filterUserAttributes(normalState) || {};
+        normalState = AST.filterUserAttributes(normalState);
 
         // Default, non-stylable attributes
         label.attr(merge({ padding: 8, r: 2 }, normalState));
@@ -1043,7 +1040,7 @@ class SVGRenderer {
             // Hover state
             hoverState = merge(normalState, {
                 fill: '${palette.neutralColor10}'
-            }, this.filterUserAttributes(hoverState));
+            }, AST.filterUserAttributes(hoverState || {}));
             hoverStyle = hoverState.style;
             delete hoverState.style;
 
@@ -1054,7 +1051,7 @@ class SVGRenderer {
                     color: '${palette.neutralColor100}',
                     fontWeight: 'bold'
                 }
-            }, this.filterUserAttributes(pressedState));
+            }, AST.filterUserAttributes(pressedState || {}));
             pressedStyle = pressedState.style;
             delete pressedState.style;
 
@@ -1063,7 +1060,7 @@ class SVGRenderer {
                 style: {
                     color: '${palette.neutralColor20}'
                 }
-            }, this.filterUserAttributes(disabledState));
+            }, AST.filterUserAttributes(disabledState || {}));
             disabledStyle = disabledState.style;
             delete disabledState.style;
         }
@@ -1174,40 +1171,6 @@ class SVGRenderer {
         }
         return points;
     }
-
-    public filterUserAttributes(
-        attributes?: SVGAttributes
-    ): SVGAttributes|undefined {
-        const allowedUserSVGAttributes = [
-            'class',
-            'd',
-            'dx',
-            'dy',
-            'fill',
-            'height',
-            'padding',
-            'r',
-            'startOffset',
-            'stroke',
-            'stroke-linecap',
-            'stroke-width',
-            'style',
-            'text-align',
-            'textAnchor',
-            'textLength',
-            'width',
-            'zIndex'
-        ];
-        if (attributes) {
-            Object.keys(attributes).forEach((key): void => {
-                if (allowedUserSVGAttributes.indexOf(key) === -1) {
-                    delete attributes[key];
-                }
-            });
-        }
-        return attributes;
-    }
-
 
     /**
      * Draw a path, wraps the SVG `path` element.
