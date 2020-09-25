@@ -8,10 +8,11 @@
  *
  * */
 
-'use strict';
-
+import type SVGAttributes from '../Core/Renderer/SVG/SVGAttributes';
+import type SVGElement from '../Core/Renderer/SVG/SVGElement';
+import BaseSeries from '../Core/Series/Series.js';
 import Chart from '../Core/Chart/Chart.js';
-import Color from '../Core/Color.js';
+import Color from '../Core/Color/Color.js';
 const color = Color.parse;
 import H from '../Core/Globals.js';
 import Point from '../Core/Series/Point.js';
@@ -26,8 +27,7 @@ const {
     isArray,
     isNumber,
     merge,
-    pick,
-    seriesType
+    pick
 } = U;
 
 /**
@@ -216,9 +216,6 @@ declare global {
         interface PointLike {
             degree?: number;
         }
-        interface SeriesTypesDictionary {
-            packedbubble: typeof PackedBubbleSeries;
-        }
         type PackedBubbleData = [
             (number|null),
             (number|null),
@@ -229,6 +226,23 @@ declare global {
         ];
     }
 }
+
+/**
+ * @private
+ */
+declare module '../Core/Series/Types' {
+    interface SeriesTypeRegistry {
+        packedbubble: typeof Highcharts.PackedBubbleSeries;
+    }
+}
+
+import './Bubble/BubbleSeries.js';
+import '../Series/Networkgraph/DraggableNodes.js';
+import '../Series/Networkgraph/Layouts.js';
+
+var Series = H.Series,
+    Reingold = H.layouts['reingold-fruchterman'],
+    dragNodesMixin = H.dragNodesMixin;
 
 /**
  * Formatter callback function.
@@ -267,14 +281,7 @@ declare global {
  * @since 7.0.0
  */
 
-import '../Core/Axis/Axis.js';
-import './Bubble/BubbleSeries.js';
-import '../Series/Networkgraph/DraggableNodes.js';
-import '../Series/Networkgraph/Layouts.js';
-
-var Series = H.Series,
-    Reingold = H.layouts['reingold-fruchterman'],
-    dragNodesMixin = H.dragNodesMixin;
+''; // detach doclets above
 
 Chart.prototype.getSelectedParentNodes = function (): Array<Highcharts.PackedBubblePoint> {
     const chart = this,
@@ -521,7 +528,7 @@ H.layouts.packedbubble = extendClass(
  *
  * @extends Highcharts.Series
  */
-seriesType<Highcharts.PackedBubbleSeries>(
+BaseSeries.seriesType<typeof Highcharts.PackedBubbleSeries>(
     'packedbubble',
     'bubble',
     /**
@@ -947,7 +954,7 @@ seriesType<Highcharts.PackedBubbleSeries>(
         },
         render: function (this: Highcharts.PackedBubbleSeries): void {
             var series = this,
-                dataLabels = [] as Array<Highcharts.SVGElement>;
+                dataLabels = [] as Array<SVGElement>;
             Series.prototype.render.apply(this, arguments as any);
             // #10823 - dataLabels should stay visible
             // when enabled allowOverlap.
@@ -957,7 +964,7 @@ seriesType<Highcharts.PackedBubbleSeries>(
                 ): void {
                     if (isArray(point.dataLabels)) {
                         point.dataLabels.forEach(function (
-                            dataLabel: Highcharts.SVGElement
+                            dataLabel: SVGElement
                         ): void {
                             dataLabels.push(dataLabel);
                         });
@@ -1117,10 +1124,10 @@ seriesType<Highcharts.PackedBubbleSeries>(
 
             var series = this,
                 chart = series.chart,
-                parentAttribs = {} as Highcharts.SVGAttributes,
+                parentAttribs: SVGAttributes = {},
                 nodeMarker: Highcharts.BubblePointMarkerOptions =
                     (this.layout.options.parentNodeOptions as any).marker,
-                parentOptions: Highcharts.SVGAttributes = {
+                parentOptions: SVGAttributes = {
                     fill: nodeMarker.fillColor || color(series.color).brighten(0.4).get(),
                     opacity: nodeMarker.fillOpacity,
                     stroke: nodeMarker.lineColor || series.color,
@@ -1254,7 +1261,7 @@ seriesType<Highcharts.PackedBubbleSeries>(
                 }
 
                 (dataLabels as any).forEach(function (
-                    dataLabel: Highcharts.SVGElement
+                    dataLabel: SVGElement
                 ): void {
                     if (dataLabel.div) {
                         dataLabel.div.point = parentNode;
@@ -1970,7 +1977,7 @@ seriesType<Highcharts.PackedBubbleSeries>(
             if (point.isParentNode) {
                 chart.getSelectedPoints = chart.getSelectedParentNodes;
                 Point.prototype.select.apply(this, arguments);
-                chart.getSelectedPoints = H.Chart.prototype.getSelectedPoints;
+                chart.getSelectedPoints = Chart.prototype.getSelectedPoints;
             } else {
                 Point.prototype.select.apply(this, arguments);
             }

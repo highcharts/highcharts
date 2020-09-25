@@ -10,8 +10,9 @@
  *
  * */
 
-'use strict';
-
+import type {
+    HTMLDOMElement
+} from '../Renderer/DOMElementType';
 import Chart from './Chart.js';
 import H from '../Globals.js';
 
@@ -74,7 +75,7 @@ import '../../Series/GanttSeries.js';
  *         Returns the Chart object.
  */
 H.ganttChart = function (
-    renderTo: (string|Highcharts.HTMLDOMElement),
+    renderTo: (string|HTMLDOMElement),
     options: Highcharts.Options,
     callback?: Chart.CallbackFunction
 ): Chart {
@@ -167,14 +168,6 @@ H.ganttChart = function (
     );
 
     options.series = userOptions.series = seriesOptions;
-
-    (options.series || []).forEach(function (series): void {
-        if (series.data) {
-            series.data.forEach(function (point): void {
-                H.seriesTypes.gantt.prototype.setGanttPointAliases(point as any);
-            });
-        }
-    });
 
     return hasRenderToArg ?
         new Chart(renderTo, options, callback) :

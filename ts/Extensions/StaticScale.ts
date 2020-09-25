@@ -29,6 +29,8 @@ declare global {
     }
 }
 
+import Axis from '../Core/Axis/Axis.js';
+import Chart from '../Core/Chart/Chart.js';
 import U from '../Core/Utilities.js';
 const {
     addEvent,
@@ -36,8 +38,6 @@ const {
     isNumber,
     pick
 } = U;
-
-var Chart = H.Chart;
 
 /* eslint-disable no-invalid-this */
 
@@ -58,7 +58,7 @@ var Chart = H.Chart;
  * @apioption yAxis.staticScale
  */
 
-addEvent(H.Axis, 'afterSetOptions', function (): void {
+addEvent(Axis, 'afterSetOptions', function (): void {
     var chartOptions = this.chart.options && this.chart.options.chart;
     if (
         !this.horiz &&

@@ -10,9 +10,21 @@
 
 'use strict';
 
+import type AnimationOptionsObject from './Animation/AnimationOptionsObject';
 import type Chart from './Chart/Chart';
 import type ColorAxisGlobal from './Axis/ColorAxis';
-import type Point from '../Core/Series/Point';
+import type CSSObject from './Renderer/CSSObject';
+import type {
+    HTMLDOMElement
+} from './Renderer/DOMElementType';
+import type Point from './Series/Point';
+import type SVGAttributes from './Renderer/SVG/SVGAttributes';
+import type SVGElement from './Renderer/SVG/SVGElement';
+import A from './Animation/AnimationUtilities.js';
+const {
+    animObject,
+    setAnimation
+} = A;
 import H from './Globals.js';
 
 /**
@@ -188,7 +200,6 @@ declare global {
 import U from './Utilities.js';
 const {
     addEvent,
-    animObject,
     css,
     defined,
     discardElement,
@@ -199,7 +210,6 @@ const {
     merge,
     pick,
     relativeLength,
-    setAnimation,
     stableSort,
     syncTimeout,
     wrap
@@ -248,15 +258,15 @@ class Legend {
 
     public baseline?: number;
 
-    public box: Highcharts.SVGElement = void 0 as any;
+    public box: SVGElement = void 0 as any;
 
     public chart: Chart;
 
     public clipHeight?: number;
 
-    public clipRect?: Highcharts.SVGElement
+    public clipRect?: SVGElement
 
-    public contentGroup: Highcharts.SVGElement = void 0 as any;
+    public contentGroup: SVGElement = void 0 as any;
 
     public createCheckboxForItem?: Highcharts.Legend['createCheckboxForItem'];
 
@@ -264,27 +274,27 @@ class Legend {
 
     public display: boolean = false;
 
-    public down?: Highcharts.SVGElement;
+    public down?: SVGElement;
 
-    public downTracker?: Highcharts.SVGElement;
+    public downTracker?: SVGElement;
 
     public fontMetrics?: Highcharts.FontMetricsObject;
 
     public fullHeight?: number;
 
-    public group: Highcharts.SVGElement = void 0 as any;
+    public group: SVGElement = void 0 as any;
 
     public initialItemY: number = 0;
 
     public itemHeight: number = 0;
 
-    public itemHiddenStyle?: Highcharts.CSSObject;
+    public itemHiddenStyle?: CSSObject;
 
     public itemMarginBottom: number = 0;
 
     public itemMarginTop: number = 0;
 
-    public itemStyle?: Highcharts.CSSObject;
+    public itemStyle?: CSSObject;
 
     public itemX: number = 0;
 
@@ -302,7 +312,7 @@ class Legend {
 
     public maxLegendWidth: number = 0;
 
-    public nav?: Highcharts.SVGElement;
+    public nav?: SVGElement;
 
     public offsetWidth: number = 0;
 
@@ -310,13 +320,13 @@ class Legend {
 
     public padding: number = 0;
 
-    public pager?: Highcharts.SVGElement;
+    public pager?: SVGElement;
 
     public pages: Array<number> = [];
 
     public proximate: boolean = false;
 
-    public scrollGroup: Highcharts.SVGElement = void 0 as any;
+    public scrollGroup: SVGElement = void 0 as any;
 
     public scrollOffset?: number;
 
@@ -326,7 +336,7 @@ class Legend {
 
     public symbolWidth: number = 0;
 
-    public title?: Highcharts.SVGElement;
+    public title?: SVGElement;
 
     public titleHeight: number = 0;
 
@@ -334,9 +344,9 @@ class Legend {
 
     public unchartrender?: Function;
 
-    public up?: Highcharts.SVGElement;
+    public up?: SVGElement;
 
-    public upTracker?: Highcharts.SVGElement;
+    public upTracker?: SVGElement;
 
     public widthOption: number = 0;
 
@@ -496,7 +506,7 @@ class Legend {
                     ((item as any).color || hiddenColor) :
                     hiddenColor,
                 markerOptions = item.options && (item.options as any).marker,
-                symbolAttr = { fill: symbolColor } as Highcharts.SVGAttributes;
+                symbolAttr: SVGAttributes = { fill: symbolColor };
 
             if (legendItem) {
                 legendItem.css({
@@ -1419,7 +1429,7 @@ class Legend {
                         'auto';
                 }
             },
-            addTracker = function (key: string): Highcharts.SVGElement {
+            addTracker = function (key: string): SVGElement {
                 (legend as any)[key] = renderer
                     .circle(0, 0, arrowSize * 1.3)
                     .translate(arrowSize / 2, arrowSize / 2)
@@ -1578,7 +1588,7 @@ class Legend {
      *
      * @return {void}
      */
-    public scroll(scrollBy: number, animation?: (boolean|Partial<Highcharts.AnimationOptionsObject>)): void {
+    public scroll(scrollBy: number, animation?: (boolean|Partial<AnimationOptionsObject>)): void {
         var chart = this.chart,
             pages = this.pages,
             pageCount = pages.length,
@@ -1616,7 +1626,7 @@ class Legend {
                 text: currentPage + '/' + pageCount
             });
             [this.down, this.downTracker].forEach(function (
-                elem: (Highcharts.SVGElement|undefined)
+                elem: (SVGElement|undefined)
             ): void {
                 (elem as any).attr({
                     // adjust to text width

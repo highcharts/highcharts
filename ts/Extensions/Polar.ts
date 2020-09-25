@@ -10,9 +10,17 @@
 
 'use strict';
 
+import type {
+    AlignValue,
+    VerticalAlignValue
+} from '../Core/Renderer/AlignObject';
 import type Point from '../Core/Series/Point';
 import type RadialAxis from '../Core/Axis/RadialAxis';
+import type SVGAttributes from '../Core/Renderer/SVG/SVGAttributes';
+import type SVGElement from '../Core/Renderer/SVG/SVGElement';
 import type SVGPath from '../Core/Renderer/SVG/SVGPath';
+import A from '../Core/Animation/AnimationUtilities.js';
+const { animObject } = A;
 import Chart from '../Core/Chart/Chart.js';
 import H from '../Core/Globals.js';
 import Pane from './Pane.js';
@@ -21,7 +29,6 @@ import SVGRenderer from '../Core/Renderer/SVG/SVGRenderer.js';
 import U from '../Core/Utilities.js';
 const {
     addEvent,
-    animObject,
     defined,
     find,
     isNumber,
@@ -124,7 +131,7 @@ declare global {
     }
 }
 
-import '../Core/Series/Series.js';
+import '../Series/LineSeries.js';
 
 // Extensions for polar charts. Additionally, much of the geometry required for
 // polar charts is gathered in RadialAxes.js.
@@ -543,7 +550,7 @@ wrap(seriesProto, 'getGraphPath', function (
 });
 
 
-var polarAnimate = function (
+const polarAnimate = function (
     this: Highcharts.PolarSeries,
     proceed: Function,
     init?: boolean
@@ -556,7 +563,7 @@ var polarAnimate = function (
         center = this.xAxis.center,
         plotLeft = chart.plotLeft,
         plotTop = chart.plotTop,
-        attribs: Highcharts.SVGAttributes,
+        attribs: SVGAttributes,
         paneInnerR: number,
         graphic,
         shapeArgs,
@@ -655,7 +662,7 @@ if (seriesTypes.column) {
         high: number,
         start: number,
         end: number
-    ): Highcharts.SVGAttributes {
+    ): SVGAttributes {
         var center = this.xAxis.center,
             len = this.yAxis.len,
             paneInnerR = center[3] / 2,
@@ -910,8 +917,8 @@ if (seriesTypes.column) {
         angle: number,
         options: Highcharts.DataLabelsOptions
     ): Highcharts.DataLabelsOptions {
-        var align: Highcharts.AlignValue,
-            verticalAlign: Highcharts.VerticalAlignValue;
+        var align: AlignValue,
+            verticalAlign: VerticalAlignValue;
 
         if (options.align === null) {
             if (angle > 20 && angle < 160) {
@@ -950,7 +957,7 @@ if (seriesTypes.column) {
         this: (Highcharts.ColumnSeries | Highcharts.PolarSeries),
         proceed: Function,
         point: (Highcharts.ColumnPoint | Highcharts.PolarPoint),
-        dataLabel: Highcharts.SVGElement,
+        dataLabel: SVGElement,
         options: Highcharts.DataLabelsOptions,
         alignTo: Highcharts.BBoxObject,
         isNew?: boolean
@@ -1085,8 +1092,8 @@ SVGRenderer.prototype.clipCircle = function (
     y: number,
     r: number,
     innerR: number
-): Highcharts.SVGElement {
-    var wrapper: Highcharts.SVGElement,
+): SVGElement {
+    var wrapper: SVGElement,
         id = uniqueKey(),
 
         clipPath = this.createElement('clipPath').attr({

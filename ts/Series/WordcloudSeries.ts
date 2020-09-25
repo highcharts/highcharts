@@ -10,8 +10,36 @@
  *  !!!!!!! SOURCE GETS TRANSPILED BY TYPESCRIPT. EDIT TS FILE ONLY. !!!!!!!
  * */
 
-'use strict';
+import type CSSObject from '../Core/Renderer/CSSObject';
+import type SVGAttributes from '../Core/Renderer/SVG/SVGAttributes';
+import type SVGElement from '../Core/Renderer/SVG/SVGElement';
+import BaseSeries from '../Core/Series/Series.js';
+import DrawPointMixin from '../Mixins/DrawPoint.js';
+const {
+    drawPoint
+} = DrawPointMixin;
 import H from '../Core/Globals.js';
+const {
+    noop
+} = H;
+import PolygonMixin from '../Mixins/Polygon.js';
+const {
+    getBoundingBoxFromPolygon,
+    getPolygon,
+    isPolygonsColliding,
+    movePolygon,
+    rotate2DToOrigin,
+    rotate2DToPoint
+} = PolygonMixin;
+import U from '../Core/Utilities.js';
+const {
+    extend,
+    find,
+    isArray,
+    isNumber,
+    isObject,
+    merge
+} = U;
 
 /**
  * Internal types
@@ -55,9 +83,6 @@ declare global {
                 point: WordcloudPoint,
                 state?: string
             ): SVGAttributes;
-        }
-        interface SeriesTypesDictionary {
-            wordcloud: typeof WordcloudSeries;
         }
         interface WordcloudFieldObject extends PolygonBoxObject, SizeObject {
             ratioX: number;
@@ -130,32 +155,15 @@ declare global {
     }
 }
 
-import U from '../Core/Utilities.js';
-const {
-    extend,
-    find,
-    isArray,
-    isNumber,
-    isObject,
-    merge,
-    seriesType
-} = U;
+declare module '../Core/Series/Types' {
+    interface SeriesTypeRegistry {
+        wordcloud: typeof Highcharts.WordcloudSeries;
+    }
+}
 
-import drawPointModule from '../Mixins/DrawPoint.js';
-const { drawPoint } = drawPointModule;
-import polygonMixin from '../Mixins/Polygon.js';
-const {
-    getBoundingBoxFromPolygon,
-    getPolygon,
-    isPolygonsColliding,
-    movePolygon,
-    rotate2DToOrigin,
-    rotate2DToPoint
-} = polygonMixin;
-import '../Core/Series/Series.js';
+import './ColumnSeries.js';
 
-var noop = H.noop,
-    Series = H.Series;
+var Series = H.Series;
 
 /**
  * Detects if there is a collision between two rectangles.
@@ -922,7 +930,7 @@ var wordCloudSeries: Partial<Highcharts.WordcloudSeries> = {
         this: Highcharts.WordcloudSeries,
         point: Highcharts.WordcloudPoint,
         state?: string
-    ): Highcharts.SVGAttributes {
+    ): SVGAttributes {
         var attribs = H.seriesTypes.column.prototype
             .pointAttribs.call(this, point, state);
 
@@ -973,7 +981,7 @@ var wordCloudSeries: Partial<Highcharts.WordcloudSeries> = {
             animation = options.animation,
             allowExtendPlayingField = options.allowExtendPlayingField,
             renderer = chart.renderer,
-            testElement: Highcharts.SVGElement = renderer.text().add(group),
+            testElement: SVGElement = renderer.text().add(group),
             placed: Array<Highcharts.WordcloudPoint> = [],
             placementStrategy = series.placementStrategy[
                 options.placementStrategy as any
@@ -1085,7 +1093,7 @@ var wordCloudSeries: Partial<Highcharts.WordcloudSeries> = {
                     spiral: spiral,
                     rotation: placement.rotation
                 }) as any,
-                animate: (Highcharts.SVGAttributes|undefined);
+                animate: (SVGAttributes|undefined);
 
             // If there is no space for the word, extend the playing field.
             if (!delta && allowExtendPlayingField) {
@@ -1160,7 +1168,7 @@ var wordCloudSeries: Partial<Highcharts.WordcloudSeries> = {
         var series = this;
 
         return (
-            isObject(series) &&
+            isObject(series) as any &&
             series.visible === true &&
             isArray(series.points) &&
             series.points.length > 0
@@ -1308,6 +1316,8 @@ var wordCloudPoint: Partial<Highcharts.WordcloudPoint> = {
  * @apioption series.sunburst.data.weight
  */
 
+''; // detach doclets above
+
 /**
  * @private
  * @class
@@ -1315,7 +1325,7 @@ var wordCloudPoint: Partial<Highcharts.WordcloudPoint> = {
  *
  * @augments Highcharts.Series
  */
-seriesType<Highcharts.WordcloudSeries>(
+BaseSeries.seriesType<typeof Highcharts.WordcloudSeries>(
     'wordcloud',
     'column',
     wordCloudOptions,

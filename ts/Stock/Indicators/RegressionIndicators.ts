@@ -8,7 +8,11 @@
  *
  * */
 
-'use strict';
+import BaseSeries from '../../Core/Series/Series.js';
+import U from '../../Core/Utilities.js';
+const {
+    isArray
+} = U;
 
 /**
  * Internal types
@@ -52,8 +56,7 @@ declare global {
             public series: LinearRegressionIndicator;
         }
 
-        interface LinearRegressionIndicatorOptions
-            extends SMAIndicatorParamsOptions {
+        interface LinearRegressionIndicatorOptions extends SMAIndicatorOptions {
             params?: LinearRegressionIndicatorParamsOptions;
             tooltip?: TooltipOptions;
         }
@@ -129,22 +132,19 @@ declare global {
             slope: number;
             intercept: number;
         }
-
-        interface SeriesTypesDictionary {
-            linearRegression: typeof LinearRegressionIndicator;
-            linearRegressionSlope: typeof LinearRegressionSlopesIndicator;
-            linearRegressionIntercept:
-                typeof LinearRegressionInterceptIndicator;
-            linearRegressionAngle: typeof LinearRegressionAngleIndicator;
-        }
     }
 }
 
-import U from '../../Core/Utilities.js';
-const {
-    isArray,
-    seriesType
-} = U;
+declare module '../../Core/Series/Types' {
+    interface SeriesTypeRegistry {
+        linearRegression: typeof Highcharts.LinearRegressionIndicator;
+        linearRegressionAngle: typeof Highcharts.LinearRegressionAngleIndicator;
+        linearRegressionIntercept: typeof Highcharts.LinearRegressionInterceptIndicator;
+        linearRegressionSlope: typeof Highcharts.LinearRegressionSlopesIndicator;
+    }
+}
+
+import './SMAIndicator.js';
 
 /**
  * Linear regression series type.
@@ -155,7 +155,7 @@ const {
  *
  * @augments Highcharts.Series
  */
-seriesType<Highcharts.LinearRegressionIndicator>(
+BaseSeries.seriesType<typeof Highcharts.LinearRegressionIndicator>(
     'linearRegression',
     'sma',
     /**
@@ -444,7 +444,7 @@ seriesType<Highcharts.LinearRegressionIndicator>(
  *
  * @augments Highcharts.Series
  */
-seriesType<Highcharts.LinearRegressionSlopesIndicator>(
+BaseSeries.seriesType<typeof Highcharts.LinearRegressionSlopesIndicator>(
     'linearRegressionSlope',
     'linearRegression',
     /**
@@ -500,7 +500,7 @@ seriesType<Highcharts.LinearRegressionSlopesIndicator>(
  *
  * @augments Highcharts.Series
  */
-seriesType<Highcharts.LinearRegressionInterceptIndicator>(
+BaseSeries.seriesType<typeof Highcharts.LinearRegressionInterceptIndicator>(
     'linearRegressionIntercept',
     'linearRegression',
     /**
@@ -556,7 +556,7 @@ seriesType<Highcharts.LinearRegressionInterceptIndicator>(
  *
  * @augments Highcharts.Series
  */
-seriesType<Highcharts.LinearRegressionAngleIndicator>(
+BaseSeries.seriesType<typeof Highcharts.LinearRegressionAngleIndicator>(
     'linearRegressionAngle',
     'linearRegression',
     /**

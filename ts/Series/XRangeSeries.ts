@@ -10,11 +10,11 @@
  *
  * */
 
-'use strict';
-
+import type ColorType from '../Core/Color/ColorString';
 import Axis from '../Core/Axis/Axis.js';
+import BaseSeries from '../Core/Series/Series.js';
 import H from '../Core/Globals.js';
-import Color from '../Core/Color.js';
+import Color from '../Core/Color/Color.js';
 const {
     parse: color
 } = Color;
@@ -29,8 +29,7 @@ const {
     isNumber,
     isObject,
     merge,
-    pick,
-    seriesType
+    pick
 } = U;
 
 /**
@@ -83,9 +82,6 @@ declare global {
             public translatePoint(point: XRangePoint): void;
             public init(): void;
         }
-        interface SeriesTypesDictionary {
-            xrange: typeof XRangeSeries;
-        }
         interface XRangePartialFillObject extends PositionObject, SizeObject {
             r?: number;
         }
@@ -122,11 +118,11 @@ declare global {
  * @requires modules/xrange
  */
 
-import '../Core/Series/Series.js';
+import './ColumnSeries.js';
 
-var columnType = H.seriesTypes.column,
-    seriesTypes = H.seriesTypes,
-    Series = H.Series;
+const Series = H.Series,
+    seriesTypes = BaseSeries.seriesTypes,
+    columnType = seriesTypes.column;
 
 /**
  * Return color of a point based on its category.
@@ -162,12 +158,23 @@ function getColorByCategory(
 
 /**
  * @private
+ */
+declare module '../Core/Series/Types' {
+    interface SeriesTypeRegistry {
+        xrange: typeof Highcharts.XRangeSeries;
+    }
+}
+
+import './ColumnSeries.js';
+
+/**
+ * @private
  * @class
  * @name Highcharts.seriesTypes.xrange
  *
  * @augments Highcharts.Series
  */
-seriesType<Highcharts.XRangeSeries>('xrange', 'column'
+BaseSeries.seriesType<typeof Highcharts.XRangeSeries>('xrange', 'column'
 
     /**
      * The X-range series displays ranges on the X axis, typically time

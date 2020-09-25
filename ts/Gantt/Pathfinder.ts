@@ -11,8 +11,14 @@
 
 'use strict';
 
+import type {
+    AlignValue,
+    VerticalAlignValue
+} from '../Core/Renderer/AlignObject';
 import type Axis from '../Core/Axis/Axis';
-import type SVGPath from '../Core/Renderer/SVG/SVGPath';
+import type ColorString from '../Core/Color/ColorString';
+import type ColorType from '../Core/Color/ColorType';
+import type SVGElement from '../Core/Renderer/SVG/SVGElement';
 import Connection from './Connection.js';
 import Chart from '../Core/Chart/Chart.js';
 import H from '../Core/Globals.js';
@@ -34,7 +40,7 @@ declare global {
         }
         interface ConnectorsEndMarkerOptions {
             align?: AlignValue;
-            color?: (ColorString|GradientColorObject|PatternObject);
+            color?: ColorType;
             enabled?: boolean;
             height?: number;
             inside?: boolean;
@@ -47,7 +53,7 @@ declare global {
         }
         interface ConnectorsMarkerOptions {
             align?: AlignValue;
-            color?: (ColorString|GradientColorObject|PatternObject);
+            color?: ColorType;
             enabled?: boolean;
             height?: number;
             inside?: boolean;
@@ -71,7 +77,7 @@ declare global {
         }
         interface ConnectorsStartMarkerOptions {
             align?: AlignValue;
-            color?: (ColorString|GradientColorObject|PatternObject);
+            color?: ColorType;
             enabled?: boolean;
             height?: number;
             inside?: boolean;
@@ -100,7 +106,7 @@ declare global {
             to?: string;
         }
         interface PointOptionsObject {
-            connect?: PointConnectOptionsObject;
+            connect?: PointConnectOptionsObject | GanttDependencyOption;
             connectors?: ConnectorsOptions;
         }
         interface Series {
@@ -604,7 +610,7 @@ class Pathfinder {
     public chartObstacles: Array<any> = void 0 as any;
     public chartObstacleMetrics: Highcharts.Dictionary<number> = void 0 as any;
     public connections: Array<Highcharts.Connection> = void 0 as any;
-    public group: Highcharts.SVGElement = void 0 as any;
+    public group: SVGElement = void 0 as any;
     public lineObstacles: Array<any> = void 0 as any;
 
     /**
@@ -652,6 +658,12 @@ class Pathfinder {
         chart.series.forEach(function (series: Highcharts.Series): void {
             if (series.visible && !series.options.isInternal) {
                 series.points.forEach(function (point: Point): void {
+                    const ganttPointOptions: Highcharts.GanttPointOptions = point.options;
+                    // For Gantt series the connect could be
+                    // defined as a dependency
+                    if (ganttPointOptions && ganttPointOptions.dependency) {
+                        ganttPointOptions.connect = ganttPointOptions.dependency;
+                    }
                     var to: (
                             Axis|
                             Point|

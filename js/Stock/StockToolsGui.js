@@ -9,7 +9,6 @@
  *  !!!!!!! SOURCE GETS TRANSPILED BY TYPESCRIPT. EDIT TS FILE ONLY. !!!!!!!
  *
  * */
-'use strict';
 import Chart from '../Core/Chart/Chart.js';
 import H from '../Core/Globals.js';
 import NavigationBindings from '../Extensions/Annotations/NavigationBindings.js';
@@ -742,10 +741,10 @@ setOptions({
 });
 /* eslint-disable no-invalid-this, valid-jsdoc */
 // Run HTML generator
-addEvent(H.Chart, 'afterGetContainer', function () {
+addEvent(Chart, 'afterGetContainer', function () {
     this.setStockTools();
 });
-addEvent(H.Chart, 'getMargins', function () {
+addEvent(Chart, 'getMargins', function () {
     var listWrapper = this.stockTools && this.stockTools.listWrapper, offsetWidth = listWrapper && ((listWrapper.startWidth +
         getStyle(listWrapper, 'padding-left') +
         getStyle(listWrapper, 'padding-right')) || listWrapper.offsetWidth);
@@ -753,12 +752,12 @@ addEvent(H.Chart, 'getMargins', function () {
         this.plotLeft += offsetWidth;
     }
 });
-addEvent(H.Chart, 'destroy', function () {
+addEvent(Chart, 'destroy', function () {
     if (this.stockTools) {
         this.stockTools.destroy();
     }
 });
-addEvent(H.Chart, 'redraw', function () {
+addEvent(Chart, 'redraw', function () {
     if (this.stockTools && this.stockTools.guiEnabled) {
         this.stockTools.redraw();
     }
@@ -1257,7 +1256,7 @@ extend(Chart.prototype, {
      */
     setStockTools: function (options) {
         var chartOptions = this.options, lang = chartOptions.lang, guiOptions = merge(chartOptions.stockTools && chartOptions.stockTools.gui, options && options.gui), langOptions = lang.stockTools && lang.stockTools.gui;
-        this.stockTools = new H.Toolbar(guiOptions, langOptions, this);
+        this.stockTools = new Toolbar(guiOptions, langOptions, this);
         if (this.stockTools.guiEnabled) {
             this.isDirtyBox = true;
         }

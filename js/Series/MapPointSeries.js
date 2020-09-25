@@ -7,13 +7,14 @@
  *  !!!!!!! SOURCE GETS TRANSPILED BY TYPESCRIPT. EDIT TS FILE ONLY. !!!!!!!
  *
  * */
-'use strict';
+import BaseSeries from '../Core/Series/Series.js';
 import H from '../Core/Globals.js';
-import '../Core/Utilities.js';
+import Point from '../Core/Series/Point.js';
+import U from '../Core/Utilities.js';
+var merge = U.merge;
 import '../Core/Options.js';
-import '../Core/Series/Point.js';
 import '../Series/ScatterSeries.js';
-var merge = H.merge, Point = H.Point, Series = H.Series, seriesType = H.seriesType;
+var Series = H.Series;
 /**
  * @private
  * @class
@@ -21,7 +22,7 @@ var merge = H.merge, Point = H.Point, Series = H.Series, seriesType = H.seriesTy
  *
  * @augments Highcharts.Series
  */
-seriesType('mappoint', 'scatter', 
+BaseSeries.seriesType('mappoint', 'scatter', 
 /**
  * A mappoint series is a special form of scatter series where the points
  * can be laid out in map coordinates on top of a map.

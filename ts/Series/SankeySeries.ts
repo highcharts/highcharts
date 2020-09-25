@@ -10,10 +10,39 @@
  *
  * */
 
-'use strict';
-
+import type ColorString from '../Core/Color/ColorString';
+import type ColorType from '../Core/Color/ColorType';
+import type SVGAttributes from '../Core/Renderer/SVG/SVGAttributes';
+import Series from '../Core/Series/Series.js';
+import CartesianSeries from '../Core/Series/CartesianSeries.js';
+import Color from '../Core/Color/Color.js';
+import ColumnSeries from './ColumnSeries.js';
 import H from '../Core/Globals.js';
 import NodesMixin from '../Mixins/Nodes.js';
+import Point from '../Core/Series/Point.js';
+import TreeSeriesMixin from '../Mixins/TreeSeries.js';
+const {
+    getLevelOptions
+} = TreeSeriesMixin;
+import U from '../Core/Utilities.js';
+const {
+    defined,
+    find,
+    isObject,
+    merge,
+    pick,
+    relativeLength,
+    stableSort
+} = U;
+
+/**
+ * @private
+ */
+declare module '../Core/Series/Types' {
+    interface SeriesTypeRegistry {
+        sankey: typeof Highcharts.SankeySeries;
+    }
+}
 
 /**
  * Internal types
@@ -167,9 +196,6 @@ declare global {
         interface Series {
             invertable?: boolean;
         }
-        interface SeriesTypesDictionary {
-            sankey: typeof SankeySeries;
-        }
     }
 }
 
@@ -254,26 +280,7 @@ declare global {
  * @type {Highcharts.SankeyNodeObject}
  */
 
-import Color from '../Core/Color.js';
-import Point from '../Core/Series/Point.js';
-import U from '../Core/Utilities.js';
-const {
-    defined,
-    find,
-    isObject,
-    merge,
-    pick,
-    relativeLength,
-    seriesType,
-    stableSort
-} = U;
-import TreeSeriesMixin from '../Mixins/TreeSeries.js';
-const {
-    getLevelOptions
-} = TreeSeriesMixin;
-
-import '../Core/Options.js';
-import './ColumnSeries.js';
+''; // detach doclets above
 
 // eslint-disable-next-line valid-jsdoc
 /**
@@ -308,7 +315,7 @@ var getDLOptions = function getDLOptions(
  *
  * @augments Highcharts.Series
  */
-seriesType<Highcharts.SankeySeries>(
+Series.seriesType<typeof Highcharts.SankeySeries>(
     'sankey',
     'column',
     /**
@@ -815,7 +822,7 @@ seriesType<Highcharts.SankeySeries>(
             this: Highcharts.SankeySeries,
             point: Highcharts.SankeyPoint,
             state: string
-        ): Highcharts.SVGAttributes {
+        ): SVGAttributes {
             var series = this,
                 level = point.isNode ? point.level : point.fromNode.level,
                 levelOptions =
@@ -1309,13 +1316,13 @@ seriesType<Highcharts.SankeySeries>(
             var points = this.points;
 
             this.points = this.points.concat(this.nodes || []);
-            H.seriesTypes.column.prototype.render.call(this);
+            ColumnSeries.prototype.render.call(this);
             this.points = points;
         },
 
         /* eslint-enable valid-jsdoc */
 
-        animate: H.Series.prototype.animate
+        animate: CartesianSeries.prototype.animate
     }, {
         applyOptions: function (
             this: Highcharts.SankeyPoint,

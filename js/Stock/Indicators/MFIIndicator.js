@@ -9,9 +9,10 @@
  *  !!!!!!! SOURCE GETS TRANSPILED BY TYPESCRIPT. EDIT TS FILE ONLY. !!!!!!!
  *
  * */
-'use strict';
+import BaseSeries from '../../Core/Series/Series.js';
 import U from '../../Core/Utilities.js';
-var error = U.error, isArray = U.isArray, seriesType = U.seriesType;
+var error = U.error, isArray = U.isArray;
+import './SMAIndicator.js';
 /* eslint-disable require-jsdoc */
 // Utils:
 function sumArray(array) {
@@ -38,7 +39,7 @@ function calculateRawMoneyFlow(typicalPrice, volume) {
  *
  * @augments Highcharts.Series
  */
-seriesType('mfi', 'sma', 
+BaseSeries.seriesType('mfi', 'sma', 
 /**
  * Money Flow Index. This series requires `linkedTo` option to be set and
  * should be loaded after the `stock/indicators/indicators.js` file.

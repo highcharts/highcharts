@@ -7,6 +7,7 @@
 'use strict';
 
 import type Annotation from '../Annotations';
+import type SVGAttributes from '../../../Core/Renderer/SVG/SVGAttributes';
 import type SVGElement from '../../../Core/Renderer/SVG/SVGElement';
 import ControlPoint from '../ControlPoint.js';
 import MockPoint from '../MockPoint.js';
@@ -221,9 +222,9 @@ var controllableMixin: Highcharts.AnnotationControllableMixin = {
     attrsFromOptions: function (
         this: Highcharts.AnnotationControllable,
         options: Highcharts.AnnotationControllableOptionsObject
-    ): Highcharts.SVGAttributes {
-        var map: Highcharts.SVGAttributes = (this.constructor as any).attrsMap,
-            attrs: Highcharts.SVGAttributes = {},
+    ): SVGAttributes {
+        var map: SVGAttributes = (this.constructor as any).attrsMap,
+            attrs: SVGAttributes = {},
             key: string,
             mappedKey,
             styledMode = this.chart.styledMode;

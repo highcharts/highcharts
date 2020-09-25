@@ -9,7 +9,17 @@
  *
  * */
 
-'use strict';
+import BaseSeries from '../Core/Series/Series.js';
+import DerivedSeriesMixin from '../Mixins/DerivedSeries.js';
+import U from '../Core/Utilities.js';
+const {
+    arrayMax,
+    arrayMin,
+    correctFloat,
+    isNumber,
+    merge,
+    objectEach
+} = U;
 
 /**
  * Internal types
@@ -57,18 +67,16 @@ declare global {
     }
 }
 
-import U from '../Core/Utilities.js';
-const {
-    arrayMax,
-    arrayMin,
-    correctFloat,
-    isNumber,
-    merge,
-    objectEach,
-    seriesType
-} = U;
+/**
+ * @private
+ */
+declare module '../Core/Series/Types' {
+    interface SeriesTypeRegistry {
+        histogram: typeof Highcharts.HistogramSeries;
+    }
+}
 
-import derivedSeriesMixin from '../Mixins/DerivedSeries.js';
+import './ColumnSeries.js';
 
 /* ************************************************************************** *
  *  HISTOGRAM
@@ -120,8 +128,7 @@ function fitToBinLeftClosed(bins: Array<number>): Function {
  * @name Highcharts.seriesTypes.histogram
  * @augments Highcharts.Series
  */
-
-seriesType<Highcharts.HistogramSeries>(
+BaseSeries.seriesType<typeof Highcharts.HistogramSeries>(
     'histogram',
     'column',
     /**
@@ -176,7 +183,7 @@ seriesType<Highcharts.HistogramSeries>(
         }
 
     },
-    merge(derivedSeriesMixin, {
+    merge(DerivedSeriesMixin, {
         setDerivedData: function (this: Highcharts.HistogramSeries): void {
             var yData = (this.baseSeries as any).yData;
 

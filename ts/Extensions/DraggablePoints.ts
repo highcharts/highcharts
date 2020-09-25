@@ -12,9 +12,13 @@
 
 'use strict';
 
-import type Chart from '../Core/Chart/Chart';
+import type AnimationOptionsObject from '../Core/Animation/AnimationOptionsObject';
+import type ColorString from '../Core/Color/ColorString';
+import type ColorType from '../Core/Color/ColorType';
+import type SVGAttributes from '../Core/Renderer/SVG/SVGAttributes';
 import type SVGElement from '../Core/Renderer/SVG/SVGElement';
 import type SVGPath from '../Core/Renderer/SVG/SVGPath';
+import Chart from '../Core/Chart/Chart.js';
 import H from '../Core/Globals.js';
 import Point from '../Core/Series/Point.js';
 import U from '../Core/Utilities.js';
@@ -174,10 +178,7 @@ declare global {
         }
         interface Series {
             /** @requires modules/draggable-points */
-            dragDropProps?: (
-                Dictionary<Partial<SeriesDragDropPropsObject>>|
-                null
-            );
+            dragDropProps?: (Record<string, Partial<SeriesDragDropPropsObject>>|null);
             /** @requires modules/draggable-points */
             getGuideBox(points: Array<Point>): SVGElement;
         }
@@ -200,6 +201,12 @@ declare global {
         interface SeriesOptions {
             dragDrop?: DragDropOptionsObject;
         }
+    }
+}
+
+declare module '../Core/Series/Types' {
+    interface SeriesLike {
+        dragDropProps?: (Record<string, Partial<Highcharts.SeriesDragDropPropsObject>>|null);
     }
 }
 
@@ -369,7 +376,7 @@ declare global {
 
 ''; // detaches doclets above
 
-import '../Core/Series/Series.js';
+import '../Series/LineSeries.js';
 
 var seriesTypes = H.seriesTypes;
 
@@ -439,7 +446,7 @@ Supported options for each prop:
 */
 
 // 90deg rotated column handle path, used in multiple series types
-var horizHandleFormatter = function (
+const horizHandleFormatter = function (
     point: Point
 ): SVGPath {
     var shapeArgs = point.shapeArgs || (point.graphic as any).getBBox(),
@@ -461,7 +468,7 @@ var horizHandleFormatter = function (
 };
 
 // Line series - only draggableX/Y, no drag handles
-var lineDragDropProps = seriesTypes.line.prototype.dragDropProps = {
+const lineDragDropProps = seriesTypes.line.prototype.dragDropProps = {
     x: {
         axis: 'x',
         move: true
@@ -479,7 +486,7 @@ if (seriesTypes.flags) {
 
 // Column series - x can be moved, y can only be resized. Note extra
 // functionality for handling upside down columns (below threshold).
-var columnDragDropProps = seriesTypes.column.prototype.dragDropProps = {
+const columnDragDropProps = seriesTypes.column.prototype.dragDropProps = {
     x: {
         axis: 'x',
         move: true
@@ -490,7 +497,7 @@ var columnDragDropProps = seriesTypes.column.prototype.dragDropProps = {
         resize: true,
         // Force guideBox start coordinates
         beforeResize: function (
-            guideBox: Highcharts.SVGElement,
+            guideBox: SVGElement,
             pointVals: Highcharts.Dictionary<number>,
             point: Highcharts.ColumnPoint
         ): void {
@@ -1245,7 +1252,7 @@ if (seriesTypes.xrange) {
  *
  * @private
  */
-var defaultDragSensitivity = 2;
+const defaultDragSensitivity = 2;
 
 /**
  * Style options for the guide box. The guide box has one state by default, the
@@ -1257,7 +1264,7 @@ var defaultDragSensitivity = 2;
  *
  * @private
  */
-var defaultGuideBoxOptions: (
+const defaultGuideBoxOptions: (
     Highcharts.Dictionary<Highcharts.DragDropGuideBoxOptionsObject>
 ) = {
     /**
@@ -1324,7 +1331,7 @@ var defaultGuideBoxOptions: (
  *
  * @private
  */
-var defaultDragHandleOptions: Highcharts.DragDropHandleOptionsObject = {
+const defaultDragHandleOptions: Highcharts.DragDropHandleOptionsObject = {
 
     /**
      * Function to define the SVG path to use for the drag handles. Takes the
@@ -1812,7 +1819,7 @@ function hasDraggedPastSensitivity(
 function getPositionSnapshot(
     e: Highcharts.PointerEventObject,
     points: Array<Point>,
-    guideBox?: Highcharts.SVGElement
+    guideBox?: SVGElement
 ): Highcharts.DragDropPositionObject {
     var res: Highcharts.DragDropPositionObject = {
         chartX: e.chartX,
@@ -1917,7 +1924,7 @@ function getGroupedPoints(point: Point): Array<Point> {
  * @return {void}
  */
 function resizeRect(
-    rect: Highcharts.SVGElement,
+    rect: SVGElement,
     updateSide: string,
     update: Highcharts.PositionObject
 ): void {
@@ -2092,7 +2099,7 @@ function getNewPoints(
  */
 function updatePoints(
     chart: Chart,
-    animate?: (boolean|Partial<Highcharts.AnimationOptionsObject>)
+    animate?: (boolean|Partial<AnimationOptionsObject>)
 ): void {
     var newPoints: Highcharts.Dictionary<Highcharts.DragDropPointObject> =
             (chart.dragDropData as any).newPoints,
@@ -2243,10 +2250,10 @@ function dragMove(
  * @return {Highcharts.SVGElement}
  *         The modified guide box.
  */
-H.Chart.prototype.setGuideBoxState = function (
+Chart.prototype.setGuideBoxState = function (
     state: string,
     options?: Highcharts.Dictionary<Highcharts.DragDropGuideBoxOptionsObject>
-): Highcharts.SVGElement {
+): SVGElement {
     var guideBox = this.dragGuideBox,
         guideBoxOptions = merge(defaultGuideBoxOptions, options),
         stateOptions = merge(
@@ -2400,7 +2407,7 @@ Point.prototype.getDropValues = function (
  */
 H.Series.prototype.getGuideBox = function (
     points: Array<Point>
-): Highcharts.SVGElement {
+): SVGElement {
     var chart = this.chart,
         minX = Infinity,
         maxX = -Infinity,
@@ -2547,7 +2554,7 @@ Point.prototype.showDragHandles = function (): void {
                 val.handleOptions,
                 options.dragHandle
             ),
-            handleAttrs: Highcharts.SVGAttributes = {
+            handleAttrs: SVGAttributes = {
                 className: handleOptions.className,
                 'stroke-width': handleOptions.lineWidth,
                 fill: handleOptions.color,
@@ -2649,7 +2656,7 @@ Point.prototype.showDragHandles = function (): void {
  * @function Highcharts.Chart#hideDragHandles
  * @return {void}
  */
-H.Chart.prototype.hideDragHandles = function (): void {
+Chart.prototype.hideDragHandles = function (): void {
     var chart = this;
 
     if (chart.dragHandles) {
@@ -2986,7 +2993,7 @@ addEvent(Point, 'remove', function (): void {
  * @return {boolean}
  *         True if the zoom or pan keys are pressed. False otherwise.
  */
-H.Chart.prototype.zoomOrPanKeyPressed = function (e: Event): boolean {
+Chart.prototype.zoomOrPanKeyPressed = function (e: Event): boolean {
     // Check whether the panKey and zoomKey are set in chart.userOptions
     var chartOptions = this.userOptions.chart || {},
         panKey = chartOptions.panKey && chartOptions.panKey + 'Key',
@@ -3054,7 +3061,7 @@ function addDragDropEvents(chart: Chart): void {
 
 // Add event listener to Chart.render that checks whether or not we should add
 // dragdrop.
-addEvent(H.Chart, 'render', function (): void {
+addEvent(Chart, 'render', function (): void {
     // If we don't have dragDrop events, see if we should add them
     if (!this.hasAddedDragDropEvents) {
         addDragDropEvents(this);

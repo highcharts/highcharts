@@ -6,9 +6,12 @@
  *
  * */
 
-'use strict';
-
-import H from '../../Core/Globals.js';
+import BaseSeries from '../../Core/Series/Series.js';
+import RequiredIndicatorMixin from '../../Mixins/IndicatorRequired.js';
+import U from '../../Core/Utilities.js';
+const {
+    error
+} = U;
 
 /**
  * Internal types
@@ -41,21 +44,18 @@ declare global {
         interface APOIndicatorOptions extends EMAIndicatorOptions {
             params?: APOIndicatorParamsOptions;
         }
-
-        interface SeriesTypesDictionary {
-            apo: typeof APOIndicator;
-        }
     }
 }
 
-import U from '../../Core/Utilities.js';
-const {
-    error,
-    seriesType
-} = U;
-import requiredIndicator from '../../Mixins/IndicatorRequired.js';
+declare module '../../Core/Series/Types' {
+    interface SeriesTypeRegistry {
+        apo: typeof Highcharts.APOIndicator;
+    }
+}
 
-var EMA = H.seriesTypes.ema;
+import './EMAIndicator.js';
+
+var EMA = BaseSeries.seriesTypes.ema;
 
 /**
  * The APO series type.
@@ -66,7 +66,7 @@ var EMA = H.seriesTypes.ema;
  *
  * @augments Highcharts.Series
  */
-seriesType<Highcharts.APOIndicator>(
+BaseSeries.seriesType<typeof Highcharts.APOIndicator>(
     'apo',
     'ema',
     /**
@@ -116,7 +116,7 @@ seriesType<Highcharts.APOIndicator>(
             var args = arguments,
                 ctx = this;
 
-            requiredIndicator.isParentLoaded(
+            RequiredIndicatorMixin.isParentLoaded(
                 (EMA as any),
                 'ema',
                 ctx.type,

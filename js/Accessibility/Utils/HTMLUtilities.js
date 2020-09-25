@@ -9,11 +9,10 @@
  *  !!!!!!! SOURCE GETS TRANSPILED BY TYPESCRIPT. EDIT TS FILE ONLY. !!!!!!!
  *
  * */
-'use strict';
+import H from '../../Core/Globals.js';
+var doc = H.doc, win = H.win;
 import U from '../../Core/Utilities.js';
 var merge = U.merge;
-import H from '../../Core/Globals.js';
-var win = H.win, doc = win.document;
 /* eslint-disable valid-jsdoc */
 /**
  * @private

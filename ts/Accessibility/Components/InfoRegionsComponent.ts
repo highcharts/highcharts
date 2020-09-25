@@ -10,9 +10,11 @@
  *
  * */
 
-'use strict';
-
 import type Chart from '../../Core/Chart/Chart';
+import type {
+    DOMElementType,
+    HTMLDOMElement
+} from '../../Core/Renderer/DOMElementType';
 import H from '../../Core/Globals.js';
 const {
     doc
@@ -57,11 +59,9 @@ declare global {
             public screenReaderSections: Dictionary<(
                 InfoRegionsComponentScreenReaderSectionObject
             )>;
-            sonifyButton?: HTMLDOMElement|SVGDOMElement|null;
+            sonifyButton?: (DOMElementType|null);
             public sonifyButtonId?: string;
-            public viewDataTableButton?: (
-                HTMLDOMElement|SVGDOMElement|null
-            );
+            public viewDataTableButton?: (''|DOMElementType|null);
             public defaultAfterChartFormatter(): string;
             public defaultBeforeChartFormatter(): string;
             public focusDataTable(): void;
@@ -260,7 +260,7 @@ extend(InfoRegionsComponent.prototype, /** @lends Highcharts.InfoRegionsComponen
         });
 
         this.addEvent(chart, 'afterViewData', function (
-            tableDiv: Highcharts.HTMLDOMElement
+            tableDiv: HTMLDOMElement
         ): void {
             component.dataTableDiv = tableDiv;
 
@@ -268,10 +268,6 @@ extend(InfoRegionsComponent.prototype, /** @lends Highcharts.InfoRegionsComponen
             setTimeout(function (): void {
                 component.focusDataTable();
             }, 300);
-        });
-
-        this.addEvent(chart, 'afterHideData', (): void => {
-            component.viewDataTableButton?.setAttribute('aria-expanded', 'false');
         });
 
         this.announcer = new Announcer(chart, 'assertive');
@@ -300,7 +296,7 @@ extend(InfoRegionsComponent.prototype, /** @lends Highcharts.InfoRegionsComponen
                         (component.defaultBeforeChartFormatter as any)(chart);
                 },
                 insertIntoDOM: function (
-                    el: Highcharts.HTMLDOMElement,
+                    el: HTMLDOMElement,
                     chart: Highcharts.AccessibilityChart
                 ): void {
                     chart.renderTo.insertBefore(
@@ -328,7 +324,7 @@ extend(InfoRegionsComponent.prototype, /** @lends Highcharts.InfoRegionsComponen
                         component.defaultAfterChartFormatter();
                 },
                 insertIntoDOM: function (
-                    el: Highcharts.HTMLDOMElement,
+                    el: HTMLDOMElement,
                     chart: Highcharts.AccessibilityChart
                 ): void {
                     chart.renderTo.insertBefore(
@@ -363,7 +359,7 @@ extend(InfoRegionsComponent.prototype, /** @lends Highcharts.InfoRegionsComponen
      */
     getLinkedDescriptionElement: function (
         this: Highcharts.InfoRegionsComponent
-    ): (Highcharts.HTMLDOMElement|undefined) {
+    ): (HTMLDOMElement|undefined) {
         var chartOptions = this.chart.options,
             linkedDescOption = chartOptions.accessibility.linkedDescription;
 
@@ -413,7 +409,7 @@ extend(InfoRegionsComponent.prototype, /** @lends Highcharts.InfoRegionsComponen
             sectionDiv = region.element = (
                 region.element || this.createElement('div')
             ),
-            hiddenDiv: Highcharts.HTMLDOMElement = (
+            hiddenDiv: HTMLDOMElement = (
                 (sectionDiv.firstChild as any) || this.createElement('div')
             );
 
@@ -437,7 +433,7 @@ extend(InfoRegionsComponent.prototype, /** @lends Highcharts.InfoRegionsComponen
      */
     setScreenReaderSectionAttribs: function (
         this: Highcharts.InfoRegionsComponent,
-        sectionDiv: Highcharts.HTMLDOMElement,
+        sectionDiv: HTMLDOMElement,
         regionKey: string
     ): void {
         var labelLangKey = (

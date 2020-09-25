@@ -10,10 +10,25 @@
 
 'use strict';
 
+import type AnimationOptionsObject from './Animation/AnimationOptionsObject';
 import type ColorAxis from './Axis/ColorAxis';
+import type {
+    HTMLDOMElement
+} from './Renderer/DOMElementType';
+import type { SeriesOptionsType } from './Series/Types';
+import A from './Animation/AnimationUtilities.js';
+const {
+    animate,
+    setAnimation
+} = A;
 import Axis from './Axis/Axis.js';
+import BaseSeries from './Series/Series.js';
+const {
+    seriesTypes
+} = BaseSeries;
 import Chart from './Chart/Chart.js';
 import H from './Globals.js';
+import LineSeries from '../Series/LineSeries.js';
 import O from './Options.js';
 const { time } = O;
 import Point from '../Core/Series/Point.js';
@@ -22,7 +37,6 @@ import U from './Utilities.js';
 import AST from './Renderer/HTML/AST.js';
 const {
     addEvent,
-    animate,
     createElement,
     css,
     defined,
@@ -38,7 +52,6 @@ const {
     objectEach,
     pick,
     relativeLength,
-    setAnimation,
     splat
 } = U;
 
@@ -139,7 +152,8 @@ declare global {
                 animation?: (boolean|Partial<AnimationOptionsObject>)
             ): void;
             setName(name: string): void;
-            update(options: SeriesOptionsType, redraw?: boolean): void;
+            hasOptionChanged(this: Highcharts.Series, optionName: string): boolean;
+            update(options: DeepPartial<SeriesOptionsType>, redraw?: boolean): Series;
         }
         interface XAxisOptions {
             index?: number;
@@ -147,11 +161,6 @@ declare global {
         function cleanRecursively<T>(newer: T, older: unknown): T;
     }
 }
-
-import './Series/Series.js';
-
-var Series = H.Series,
-    seriesTypes = H.seriesTypes;
 
 /* eslint-disable valid-jsdoc */
 
@@ -227,9 +236,9 @@ extend(Chart.prototype, /** @lends Highcharts.Chart.prototype */ {
      */
     addSeries: function (
         this: Chart,
-        options: Highcharts.SeriesOptionsType,
+        options: SeriesOptionsType,
         redraw?: boolean,
-        animation?: (boolean|Partial<Highcharts.AnimationOptionsObject>)
+        animation?: (boolean|Partial<AnimationOptionsObject>)
     ): Highcharts.Series {
         var series: (Highcharts.Series|undefined),
             chart = this;
@@ -242,7 +251,7 @@ extend(Chart.prototype, /** @lends Highcharts.Chart.prototype */ {
                 'addSeries',
                 { options: options },
                 function (): void {
-                    series = chart.initSeries(options);
+                    series = chart.initSeries(options) as Highcharts.Series;
 
                     chart.isDirtyLegend = true;
                     chart.linkSeries();
@@ -646,7 +655,7 @@ extend(Chart.prototype, /** @lends Highcharts.Chart.prototype */ {
         options: Highcharts.Options,
         redraw?: boolean,
         oneToOne?: boolean,
-        animation?: (boolean|Partial<Highcharts.AnimationOptionsObject>)
+        animation?: (boolean|Partial<AnimationOptionsObject>)
     ): void {
         var chart = this,
             adders = {
@@ -742,15 +751,21 @@ extend(Chart.prototype, /** @lends Highcharts.Chart.prototype */ {
             this.options.colors = options.colors;
         }
 
-        if (options.plotOptions) {
-            merge(true, this.options.plotOptions, options.plotOptions);
-        }
+        if (options.time) {
+            // Maintaining legacy global time. If the chart is instanciated
+            // first with global time, then updated with time options, we need
+            // to create a new Time instance to avoid mutating the global time
+            // (#10536).
+            if (this.time === time) {
+                this.time = new Time(options.time);
+            }
 
-        // Maintaining legacy global time. If the chart is instanciated first
-        // with global time, then updated with time options, we need to create a
-        // new Time instance to avoid mutating the global time (#10536).
-        if (options.time && this.time === time) {
-            this.time = new Time(options.time);
+            // If we're updating, the time class is different from other chart
+            // classes (chart.legend, chart.tooltip etc) in that it doesn't know
+            // about the chart. The other chart[something].update functions also
+            // set the chart.options[something]. For the time class however we
+            // need to update the chart options separately. #14230.
+            merge(true, chart.options.time, options.time);
         }
 
         // Some option stuctures correspond one-to-one to chart objects that
@@ -775,6 +790,14 @@ extend(Chart.prototype, /** @lends Highcharts.Chart.prototype */ {
             // If a one-to-one object does not exist, look for an adder function
             } else if (typeof (chart as any)[adders[key]] === 'function') {
                 (chart as any)[adders[key]](val);
+
+            // Else, just merge the options. For nodes like loading, noData,
+            // plotOptions
+            } else if (
+                key !== 'color' &&
+                chart.collectionsWithUpdate.indexOf(key) === -1
+            ) {
+                merge(true, (chart.options as any)[key], (options as any)[key]);
             }
 
             if (
@@ -900,11 +923,6 @@ extend(Chart.prototype, /** @lends Highcharts.Chart.prototype */ {
             }, this);
         }
 
-        // For loading, just update the options, do not redraw
-        if (options.loading) {
-            merge(true, chart.options.loading, options.loading);
-        }
-
         // Update size. Redraw is forced.
         newWidth = optionsChart && optionsChart.width;
         newHeight = optionsChart && optionsChart.height;
@@ -975,7 +993,6 @@ extend(Chart.prototype, /** @lends Highcharts.Chart.prototype */ {
         this.applyDescription('caption', options);
         this.layOutTitles(redraw);
     }
-
 });
 
 /**
@@ -1033,7 +1050,7 @@ extend(Point.prototype, /** @lends Highcharts.Point.prototype */ {
         this: Point,
         options: Highcharts.PointOptionsType,
         redraw?: boolean,
-        animation?: (boolean|Partial<Highcharts.AnimationOptionsObject>),
+        animation?: (boolean|Partial<AnimationOptionsObject>),
         runEvent?: boolean
     ): void {
         var point = this,
@@ -1144,7 +1161,7 @@ extend(Point.prototype, /** @lends Highcharts.Point.prototype */ {
     remove: function (
         this: Point,
         redraw?: boolean,
-        animation?: (boolean|Partial<Highcharts.AnimationOptionsObject>)
+        animation?: (boolean|Partial<AnimationOptionsObject>)
     ): void {
         this.series.removePoint(
             this.series.data.indexOf(this),
@@ -1155,7 +1172,7 @@ extend(Point.prototype, /** @lends Highcharts.Point.prototype */ {
 });
 
 // Extend the series prototype for dynamic methods
-extend(Series.prototype, /** @lends Series.prototype */ {
+extend(LineSeries.prototype, /** @lends Series.prototype */ {
     /**
      * Add a point to the series after render time. The point can be added at
      * the end, or by giving it an X value, to the start or in the middle of the
@@ -1212,7 +1229,7 @@ extend(Series.prototype, /** @lends Series.prototype */ {
         options: Highcharts.PointOptionsType,
         redraw?: boolean,
         shift?: boolean,
-        animation?: (boolean|Partial<Highcharts.AnimationOptionsObject>),
+        animation?: (boolean|Partial<AnimationOptionsObject>),
         withEvent?: boolean
     ): void {
         var series = this,
@@ -1326,7 +1343,7 @@ extend(Series.prototype, /** @lends Series.prototype */ {
         this: Highcharts.Series,
         i: number,
         redraw?: boolean,
-        animation?: (boolean|Partial<Highcharts.AnimationOptionsObject>)
+        animation?: (boolean|Partial<AnimationOptionsObject>)
     ): void {
 
         var series = this,
@@ -1397,7 +1414,7 @@ extend(Series.prototype, /** @lends Series.prototype */ {
     remove: function (
         this: Highcharts.Series,
         redraw?: boolean,
-        animation?: (boolean|Partial<Highcharts.AnimationOptionsObject>),
+        animation?: (boolean|Partial<AnimationOptionsObject>),
         withEvent?: boolean,
         keepEvents?: boolean
     ): void {
@@ -1461,7 +1478,7 @@ extend(Series.prototype, /** @lends Series.prototype */ {
      */
     update: function (
         this: Highcharts.Series,
-        options: Highcharts.SeriesOptionsType,
+        options: SeriesOptionsType,
         redraw?: boolean
     ): void {
 
@@ -1476,6 +1493,7 @@ extend(Series.prototype, /** @lends Series.prototype */ {
             oldOptions = series.userOptions,
             seriesOptions: Highcharts.SeriesOptions,
             initialType = series.initialType || series.type,
+            plotOptions = chart.options.plotOptions,
             newType = (
                 options.type ||
                 oldOptions.type ||
@@ -1485,15 +1503,17 @@ extend(Series.prototype, /** @lends Series.prototype */ {
                 // Indicators, histograms etc recalculate the data. It should be
                 // possible to omit this.
                 this.hasDerivedData ||
-                // Changes to data grouping requires new points in new groups
-                options.dataGrouping ||
                 // New type requires new point classes
                 (newType && newType !== this.type) ||
                 // New options affecting how the data points are built
                 typeof options.pointStart !== 'undefined' ||
-                options.pointInterval ||
-                options.pointIntervalUnit ||
-                options.keys
+                typeof options.pointInterval !== 'undefined' ||
+                // Changes to data grouping requires new points in new group
+                series.hasOptionChanged('dataGrouping') ||
+                series.hasOptionChanged('pointStart') ||
+                series.hasOptionChanged('pointInterval') ||
+                series.hasOptionChanged('pointIntervalUnit') ||
+                series.hasOptionChanged('keys')
             ),
             initialSeriesProto = seriesTypes[initialType].prototype,
             n,
@@ -1562,6 +1582,7 @@ extend(Series.prototype, /** @lends Series.prototype */ {
                 series.index : oldOptions.index,
             pointStart: pick(
                 // when updating from blank (#7933)
+                plotOptions && plotOptions.series && plotOptions.series.pointStart,
                 oldOptions.pointStart,
                 // when updating after addPoint
                 (series.xData as any)[0]
@@ -1673,6 +1694,33 @@ extend(Series.prototype, /** @lends Series.prototype */ {
     setName: function (this: Highcharts.Series, name: string): void {
         this.name = this.options.name = this.userOptions.name = name;
         this.chart.isDirtyLegend = true;
+    },
+    /**
+     * Check if the option has changed.
+     *
+     * @private
+     * @function Highcharts.Series#hasOptionChanged
+     *
+     * @param {string} option
+     *
+     * @return {boolean}
+     */
+    hasOptionChanged(this: Highcharts.Series, optionName: string): boolean {
+        const chart = this.chart,
+            option = (this.options as any)[optionName],
+            plotOptions = chart.options.plotOptions,
+            oldOption = (this.userOptions as any)[optionName];
+
+        if (oldOption) {
+            return option !== oldOption;
+        }
+
+        return option !==
+            pick(
+                plotOptions && plotOptions[this.type] && (plotOptions[this.type] as any)[optionName],
+                plotOptions && plotOptions.series && (plotOptions as any).series[optionName],
+                option
+            );
     }
 });
 

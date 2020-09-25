@@ -10,7 +10,12 @@
  *
  * */
 
-'use strict';
+import BaseSeries from '../../Core/Series/Series.js';
+import U from '../../Core/Utilities.js';
+const {
+    error,
+    isArray
+} = U;
 
 /**
  * Internal types
@@ -42,19 +47,16 @@ declare global {
         interface MFIIndicatorOptions extends SMAIndicatorOptions {
             params?: MFIIndicatorParamsOptions;
         }
-
-        interface SeriesTypesDictionary {
-            mfi: typeof MFIIndicator;
-        }
     }
 }
 
-import U from '../../Core/Utilities.js';
-const {
-    error,
-    isArray,
-    seriesType
-} = U;
+declare module '../../Core/Series/Types' {
+    interface SeriesTypeRegistry {
+        mfi: typeof Highcharts.MFIIndicator;
+    }
+}
+
+import './SMAIndicator.js';
 
 /* eslint-disable require-jsdoc */
 
@@ -89,7 +91,7 @@ function calculateRawMoneyFlow(typicalPrice: number, volume: number): number {
  *
  * @augments Highcharts.Series
  */
-seriesType<Highcharts.MFIIndicator>(
+BaseSeries.seriesType<typeof Highcharts.MFIIndicator>(
     'mfi',
     'sma',
     /**

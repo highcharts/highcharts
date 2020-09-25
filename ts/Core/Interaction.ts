@@ -10,10 +10,23 @@
 
 'use strict';
 
+import type AnimationOptionsObject from './Animation/AnimationOptionsObject';
+import type { SeriesOptionsType } from './Series/Types';
+import type SVGAttributes from './Renderer/SVG/SVGAttributes';
+import type SVGElement from './Renderer/SVG/SVGElement';
 import type SVGPath from './Renderer/SVG/SVGPath';
+import BaseSeries from './Series/Series.js';
+const {
+    seriesTypes
+} = BaseSeries;
 import Chart from './Chart/Chart.js';
 import H from './Globals.js';
+const {
+    hasTouch,
+    svg
+} = H;
 import Legend from './Legend.js';
+import LineSeries from '../Series/LineSeries.js';
 import O from './Options.js';
 const {
     defaultOptions
@@ -181,13 +194,7 @@ declare global {
  *        Event that occured.
  */
 
-import './Series/Series.js';
-
-var hasTouch = H.hasTouch,
-    Series = H.Series,
-    seriesTypes = H.seriesTypes,
-    svg = H.svg,
-    TrackerMixin;
+''; // detach doclets above
 
 /* eslint-disable valid-jsdoc */
 
@@ -197,7 +204,7 @@ var hasTouch = H.hasTouch,
  * @private
  * @mixin Highcharts.TrackerMixin
  */
-TrackerMixin = H.TrackerMixin = {
+const TrackerMixin = H.TrackerMixin = {
 
     /**
      * Draw the tracker for a point.
@@ -234,7 +241,7 @@ TrackerMixin = H.TrackerMixin = {
                 (point.graphic.element as any).point = point;
             }
             (dataLabels as any).forEach(function (
-                dataLabel: Highcharts.SVGElement
+                dataLabel: SVGElement
             ): void {
                 if (dataLabel.div) {
                     dataLabel.div.point = point;
@@ -354,7 +361,7 @@ TrackerMixin = H.TrackerMixin = {
             // is covered by the marker group. So the marker group also needs to
             // capture events.
             [series.tracker, series.markerGroup].forEach(function (
-                tracker: (Highcharts.SVGElement|undefined)
+                tracker: (SVGElement|undefined)
             ): void {
                 (tracker as any).addClass('highcharts-tracker')
                     .on('mouseover', onMouseOver)
@@ -421,7 +428,7 @@ extend(Legend.prototype, {
     setItemEvents: function (
         this: Highcharts.Legend,
         item: (Highcharts.BubbleLegend|Point|Highcharts.Series),
-        legendItem: Highcharts.SVGElement,
+        legendItem: SVGElement,
         useHTML?: boolean
     ): void {
         var legend = this,
@@ -466,7 +473,7 @@ extend(Legend.prototype, {
 
                         if (!styledMode) {
                             legendItem.css(
-                                legend.options.itemHoverStyle as Highcharts.CSSObject
+                                legend.options.itemHoverStyle as any
                             );
                         }
                     })
@@ -475,8 +482,8 @@ extend(Legend.prototype, {
                             legendItem.css(
                                 merge(
                                     item.visible ?
-                                        legend.itemStyle as Highcharts.CSSObject :
-                                        legend.itemHiddenStyle as Highcharts.CSSObject
+                                        legend.itemStyle as any :
+                                        legend.itemHiddenStyle as any
                                 )
                             );
                         }
@@ -862,7 +869,7 @@ extend(Chart.prototype, /** @lends Chart.prototype */ {
                 });
 
                 paddedMin = Math.min(
-                    H.pick(panningState?.startMin, extremes.dataMin),
+                    pick(panningState?.startMin, extremes.dataMin),
                     halfPointRange ?
                         extremes.min :
                         axis.toValue(
@@ -871,7 +878,7 @@ extend(Chart.prototype, /** @lends Chart.prototype */ {
                         )
                 );
                 paddedMax = Math.max(
-                    H.pick(panningState?.startMax, extremes.dataMax),
+                    pick(panningState?.startMax, extremes.dataMax),
                     halfPointRange ?
                         extremes.max :
                         axis.toValue(
@@ -1105,7 +1112,7 @@ extend(Point.prototype, /** @lends Highcharts.Point.prototype */ {
                 options = merge(
                     point.series.options.point,
                     point.options
-                ) as Highcharts.SeriesOptionsType,
+                ) as SeriesOptionsType,
                 events = options.events;
 
             point.events = events;
@@ -1166,8 +1173,8 @@ extend(Point.prototype, /** @lends Highcharts.Point.prototype */ {
             halo = series.halo,
             haloOptions,
             markerAttribs,
-            pointAttribs: Highcharts.SVGAttributes,
-            pointAttribsAnimation: Highcharts.AnimationOptionsObject,
+            pointAttribs: SVGAttributes,
+            pointAttribsAnimation: AnimationOptionsObject,
             hasMarkers = (markerOptions && series.markerAttribs),
             newSymbol;
 
@@ -1229,7 +1236,7 @@ extend(Point.prototype, /** @lends Highcharts.Point.prototype */ {
                 // oppacity also for it's labels
                 if (series.options.inactiveOtherPoints && pointAttribs.opacity) {
                     (point.dataLabels || []).forEach(function (
-                        label: Highcharts.SVGElement
+                        label: SVGElement
                     ): void {
                         if (label) {
                             label.animate(
@@ -1357,11 +1364,11 @@ extend(Point.prototype, /** @lends Highcharts.Point.prototype */ {
             halo.point = point; // #6055
 
             if (!chart.styledMode) {
-                halo.attr(extend(
+                halo.attr(extend<SVGAttributes>(
                     {
                         'fill': point.color || series.color,
                         'fill-opacity': haloOptions.opacity
-                    } as Highcharts.SVGAttributes,
+                    },
                     chart.renderer
                         .filterUserAttributes(haloOptions.attributes) || {}
                 ));
@@ -1410,7 +1417,7 @@ extend(Point.prototype, /** @lends Highcharts.Point.prototype */ {
 });
 
 // Extend the Series object with interaction
-extend(Series.prototype, /** @lends Highcharts.Series.prototype */ {
+extend(LineSeries.prototype, /** @lends Highcharts.Series.prototype */ {
 
     /**
      * Runs on mouse over the series graphical items.
@@ -1542,7 +1549,7 @@ extend(Series.prototype, /** @lends Highcharts.Series.prototype */ {
                 series.markerGroup,
                 series.dataLabelsGroup
             ].forEach(function (
-                group: (Highcharts.SVGElement|undefined)
+                group: (SVGElement|undefined)
             ): void {
                 if (group) {
                     // Old state
@@ -1573,6 +1580,7 @@ extend(Series.prototype, /** @lends Highcharts.Series.prototype */ {
                             (stateOptions as any)[state].lineWidthPlus || 0
                         )
                     ); // #4035
+
                     opacity = pick(
                         (stateOptions as any)[state].opacity,
                         opacity
@@ -1604,7 +1612,7 @@ extend(Series.prototype, /** @lends Highcharts.Series.prototype */ {
                         series.dataLabelsGroup,
                         series.labelBySeries
                     ].forEach(function (
-                        group: (Highcharts.SVGElement|undefined)
+                        group: (SVGElement|undefined)
                     ): void {
                         if (group) {
                             group.animate(

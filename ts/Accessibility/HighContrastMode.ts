@@ -12,7 +12,8 @@
 
 'use strict';
 
-import type Point from '../Core/Series/Point.js';
+import type ColorType from '../Core/Color/ColorType';
+import type Point from '../Core/Series/Point';
 import H from '../Core/Globals.js';
 
 /**

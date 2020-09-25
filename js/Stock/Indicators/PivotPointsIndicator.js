@@ -5,11 +5,11 @@
  *  !!!!!!! SOURCE GETS TRANSPILED BY TYPESCRIPT. EDIT TS FILE ONLY. !!!!!!!
  *
  * */
-'use strict';
-import H from '../../Core/Globals.js';
+import BaseSeries from '../../Core/Series/Series.js';
 import U from '../../Core/Utilities.js';
-var defined = U.defined, isArray = U.isArray, seriesType = U.seriesType;
-var SMA = H.seriesTypes.sma;
+var defined = U.defined, isArray = U.isArray;
+import './SMAIndicator.js';
+var SMA = BaseSeries.seriesTypes.sma;
 /* eslint-disable valid-jsdoc */
 /**
  * @private
@@ -36,7 +36,7 @@ function destroyExtraLabels(point, functionName) {
  *
  * @augments Highcharts.Series
  */
-seriesType('pivotpoints', 'sma', 
+BaseSeries.seriesType('pivotpoints', 'sma', 
 /**
  * Pivot points indicator. This series requires the `linkedTo` option to be
  * set and should be loaded after `stock/indicators/indicators.js` file.

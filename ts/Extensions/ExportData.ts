@@ -17,6 +17,8 @@
 'use strict';
 
 import type Point from '../Core/Series/Point';
+import type SVGAttributes from '../Core/Renderer/SVG/SVGAttributes';
+
 import Axis from '../Core/Axis/Axis.js';
 import Chart from '../Core/Chart/Chart.js';
 import AST from '../Core/Renderer/HTML/AST.js';
@@ -1004,7 +1006,7 @@ Chart.prototype.getTableAST = function (
         getCellHTMLFromValue = function (
             tagName: string,
             classes: (string|null),
-            attributes: Highcharts.SVGAttributes,
+            attributes: SVGAttributes,
             value: (number|string)
         ): Highcharts.ASTNode {
             var textContent = pick(value, ''),
@@ -1356,7 +1358,7 @@ Chart.prototype.toggleDataTable = function (show?: boolean): void {
         if (show) {
             this.dataTableDiv.innerHTML = '';
             const ast = new AST([this.getTableAST()]);
-    		ast.addToDOM(this.dataTableDiv);
+            ast.addToDOM(this.dataTableDiv);
             fireEvent(this, 'afterViewData', this.dataTableDiv);
         }
     }
@@ -1388,7 +1390,7 @@ Chart.prototype.toggleDataTable = function (show?: boolean): void {
 
 
 // Add "Download CSV" to the exporting menu.
-var exportingOptions = getOptions().exporting;
+const exportingOptions = getOptions().exporting;
 if (exportingOptions) {
 
     extend(exportingOptions.menuItemDefinitions, {

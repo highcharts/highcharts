@@ -10,22 +10,27 @@
  *
  * */
 
-'use strict';
-
-import H from '../../Core/Globals.js';
-var doc = H.win.document;
-
-import U from '../../Core/Utilities.js';
-var extend = U.extend;
-
-import HTMLUtilities from '../Utils/HTMLUtilities.js';
-var stripHTMLTags = HTMLUtilities.stripHTMLTagsFromString;
-
-import ChartUtilities from '../Utils/ChartUtilities.js';
-var unhideChartElementFromAT = ChartUtilities.unhideChartElementFromAT,
-    getChartTitle = ChartUtilities.getChartTitle;
-
+import type {
+    SVGDOMElement
+} from '../../Core/Renderer/DOMElementType';
 import AccessibilityComponent from '../AccessibilityComponent.js';
+import ChartUtilities from '../Utils/ChartUtilities.js';
+const {
+    unhideChartElementFromAT,
+    getChartTitle
+} = ChartUtilities;
+import H from '../../Core/Globals.js';
+const {
+    doc
+} = H;
+import HTMLUtilities from '../Utils/HTMLUtilities.js';
+const {
+    stripHTMLTagsFromString: stripHTMLTags
+} = HTMLUtilities;
+import U from '../../Core/Utilities.js';
+const {
+    extend
+} = U;
 
 /**
  * Internal types.

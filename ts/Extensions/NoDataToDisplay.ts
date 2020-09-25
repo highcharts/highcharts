@@ -12,9 +12,17 @@
  *
  * */
 
-'use strict';
-
-import H from '../Core/Globals.js';
+import type AlignObject from '../Core/Renderer/AlignObject';
+import type CSSObject from '../Core/Renderer/CSSObject';
+import type SVGAttributes from '../Core/Renderer/SVG/SVGAttributes';
+import Chart from '../Core/Chart/Chart.js';
+import U from '../Core/Utilities.js';
+const {
+    addEvent,
+    extend,
+    getOptions,
+    merge
+} = U;
 
 /**
  * Internal types
@@ -46,16 +54,7 @@ declare global {
     }
 }
 
-import U from '../Core/Utilities.js';
-const {
-    addEvent,
-    extend,
-    getOptions
-} = U;
-
-import '../Core/Series/Series.js';
-
-var chartPrototype = H.Chart.prototype,
+var chartPrototype = Chart.prototype,
     defaultOptions = getOptions();
 
 // Add language option
@@ -188,38 +187,40 @@ chartPrototype.showNoData = function (str?: string): void {
         options = chart.options,
         text = str || (options && (options.lang as any).noData),
         noDataOptions: Highcharts.NoDataOptions =
-            options && (options.noData as any);
-    if (!chart.noDataLabel && chart.renderer) {
-        chart.noDataLabel = chart.renderer
-            .label(
-                text,
-                0,
-                0,
-                null as any,
-                null as any,
-                null as any,
-                noDataOptions.useHTML,
-                null as any,
-                'no-data'
-            );
+            options && (options.noData || {});
+
+    if (chart.renderer) { // Meaning chart is not destroyed
+
+        if (!chart.noDataLabel) {
+            chart.noDataLabel = chart.renderer
+                .label(
+                    text,
+                    0,
+                    0,
+                    void 0,
+                    void 0,
+                    void 0,
+                    noDataOptions.useHTML,
+                    void 0,
+                    'no-data'
+                )
+                .add();
+        }
 
         if (!chart.styledMode) {
             chart.noDataLabel
-                .attr(
-                    this.renderer.filterUserAttributes(noDataOptions.attr || {})
-                )
-                .css(noDataOptions.style as any);
+                .attr(this.renderer.filterUserAttributes(noDataOptions.attr || {}))
+                .css(noDataOptions.style || {});
         }
 
-        chart.noDataLabel.add();
-
         chart.noDataLabel.align(
-            extend(chart.noDataLabel.getBBox(), noDataOptions.position as any),
+            extend(chart.noDataLabel.getBBox(), noDataOptions.position || {}),
             false,
             'plotBox'
         );
     }
 };
+
 
 /**
  * Hide no-data message.
@@ -263,7 +264,7 @@ chartPrototype.hasData = function (): (boolean|undefined) {
 /* eslint-disable no-invalid-this */
 
 // Add event listener to handle automatic show or hide no-data message.
-addEvent(H.Chart, 'render', function handleNoData(): void {
+addEvent(Chart, 'render', function handleNoData(): void {
     if (this.hasData()) {
         this.hideNoData();
     } else {

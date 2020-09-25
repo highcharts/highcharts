@@ -5,9 +5,9 @@
  *  !!!!!!! SOURCE GETS TRANSPILED BY TYPESCRIPT. EDIT TS FILE ONLY. !!!!!!!
  *
  * */
-'use strict';
+import BaseSeries from '../../Core/Series/Series.js';
 import U from '../../Core/Utilities.js';
-var correctFloat = U.correctFloat, isArray = U.isArray, seriesType = U.seriesType;
+var correctFloat = U.correctFloat, isArray = U.isArray;
 /**
  * The EMA series type.
  *
@@ -17,7 +17,7 @@ var correctFloat = U.correctFloat, isArray = U.isArray, seriesType = U.seriesTyp
  *
  * @augments Highcharts.Series
  */
-seriesType('ema', 'sma', 
+BaseSeries.seriesType('ema', 'sma', 
 /**
  * Exponential moving average indicator (EMA). This series requires the
  * `linkedTo` option to be set.

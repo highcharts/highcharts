@@ -7,7 +7,6 @@
  *  !!!!!!! SOURCE GETS TRANSPILED BY TYPESCRIPT. EDIT TS FILE ONLY. !!!!!!!
  *
  * */
-'use strict';
 import H from '../../Globals.js';
 import U from '../../Utilities.js';
 var attr = U.attr, objectEach = U.objectEach, splat = U.splat;

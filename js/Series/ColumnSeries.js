@@ -7,8 +7,17 @@
  *  !!!!!!! SOURCE GETS TRANSPILED BY TYPESCRIPT. EDIT TS FILE ONLY. !!!!!!!
  *
  * */
-'use strict';
+import A from '../Core/Animation/AnimationUtilities.js';
+var animObject = A.animObject;
+import BaseSeries from '../Core/Series/Series.js';
+import Color from '../Core/Color/Color.js';
+var color = Color.parse;
 import H from '../Core/Globals.js';
+var noop = H.noop;
+import LegendSymbolMixin from '../Mixins/LegendSymbol.js';
+import LineSeries from './LineSeries.js';
+import U from '../Core/Utilities.js';
+var clamp = U.clamp, defined = U.defined, extend = U.extend, isArray = U.isArray, isNumber = U.isNumber, merge = U.merge, pick = U.pick, objectEach = U.objectEach;
 /**
  * Adjusted width and x offset of the columns for grouping.
  *
@@ -24,14 +33,6 @@ import H from '../Core/Globals.js';
 * @type {number}
 */
 ''; // detach doclets above
-import Color from '../Core/Color.js';
-var color = Color.parse;
-import LegendSymbolMixin from '../Mixins/LegendSymbol.js';
-import U from '../Core/Utilities.js';
-var animObject = U.animObject, clamp = U.clamp, defined = U.defined, extend = U.extend, isNumber = U.isNumber, merge = U.merge, pick = U.pick, seriesType = U.seriesType, objectEach = U.objectEach;
-import '../Core/Series/Series.js';
-import '../Core/Options.js';
-var noop = H.noop, Series = H.Series, svg = H.svg;
 /**
  * The column series type.
  *
@@ -41,7 +42,7 @@ var noop = H.noop, Series = H.Series, svg = H.svg;
  *
  * @augments Highcharts.Series
  */
-seriesType('column', 'line', 
+var ColumnSeries = BaseSeries.seriesType('column', 'line', 
 /**
  * Column series display one column per value along an X axis.
  *
@@ -112,6 +113,8 @@ seriesType('column', 'line',
      *
      * @since   8.0.1
      * @product highcharts highstock gantt
+     *
+     * @private
      */
     centerInCategory: false,
     /**
@@ -423,7 +426,7 @@ seriesType('column', 'line',
      * @return {void}
      */
     init: function () {
-        Series.prototype.init.apply(this, arguments);
+        LineSeries.prototype.init.apply(this, arguments);
         var series = this, chart = series.chart;
         // if the series is added dynamically, force redraw of other
         // series affected by a new column
@@ -589,7 +592,7 @@ seriesType('column', 'line',
                             // If `stacking` is not enabled, look for the
                             // index and total of the `group` stack.
                         }
-                        else if (H.isArray(pointValues)) {
+                        else if (isArray(pointValues)) {
                             indexInCategory_1 = pointValues[1];
                             totalInCategory_1 = total || 0;
                         }
@@ -629,7 +632,7 @@ seriesType('column', 'line',
         if (options.pointPadding) {
             seriesBarW = Math.ceil(seriesBarW);
         }
-        Series.prototype.translate.apply(series);
+        LineSeries.prototype.translate.apply(series);
         // Record the new values
         series.points.forEach(function (point) {
             var yBottom = pick(point.yBottom, translatedThreshold), safeDistance = 999 + Math.abs(yBottom), pointWidth = seriesPointWidth, plotX = point.plotX || 0, 
@@ -908,7 +911,7 @@ seriesType('column', 'line',
                 }
             });
         }
-        Series.prototype.remove.apply(series, arguments);
+        LineSeries.prototype.remove.apply(series, arguments);
     }
 });
 /* eslint-enable valid-jsdoc */
@@ -1041,3 +1044,4 @@ seriesType('column', 'line',
  * @apioption series.column.states.select
  */
 ''; // includes above doclets in transpilat
+export default ColumnSeries;

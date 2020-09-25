@@ -12,8 +12,16 @@
 
 'use strict';
 
+import Ajax from '../Extensions/Ajax.js';
+const {
+    ajax
+} = Ajax;
+import BaseSeries from '../Core/Series/Series.js';
 import Chart from '../Core/Chart/Chart.js';
 import H from '../Core/Globals.js';
+const {
+    doc
+} = H;
 import Point from '../Core/Series/Point.js';
 import U from '../Core/Utilities.js';
 const {
@@ -181,6 +189,8 @@ declare global {
     }
 }
 
+const seriesTypes = BaseSeries.seriesTypes as Record<string, any>;
+
 /**
  * Callback function to modify the CSV before parsing it by the data module.
  *
@@ -259,13 +269,6 @@ declare global {
  *         Return `false` to stop completion, or call `this.complete()` to
  *         continue async.
  */
-
-import Ajax from '../Extensions/Ajax.js';
-const { ajax } = Ajax;
-
-// Utilities
-var win = H.win,
-    doc = win.document;
 
 /**
  * The Data module provides a simplified interface for adding data to
@@ -805,16 +808,13 @@ class Data {
             xColumns: Array<number> = [],
             getValueCount = function (type: string): number {
                 return (
-                    H.seriesTypes[type || 'line'].prototype
-                        .pointArrayMap ||
-                    [0]
+                    seriesTypes[type || 'line'].prototype.pointArrayMap || [0]
                 ).length;
             },
             getPointArrayMap = function (
                 type: string
             ): (Array<string>|undefined) {
-                return H.seriesTypes[type || 'line']
-                    .prototype.pointArrayMap;
+                return seriesTypes[type || 'line'].prototype.pointArrayMap;
             },
             globalType: string = (
                 chartOptions &&

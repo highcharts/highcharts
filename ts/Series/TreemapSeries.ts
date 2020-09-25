@@ -10,10 +10,60 @@
  *
  * */
 
-'use strict';
-
+import type {
+    AlignValue,
+    VerticalAlignValue
+} from '../Core/Renderer/AlignObject';
+import type AnimationOptionsObject from '../Core/Animation/AnimationOptionsObject';
 import type Chart from '../Core/Chart/Chart';
+import type ColorString from '../Core/Color/ColorString';
+import type ColorType from '../Core/Color/ColorType';
+import type CSSObject from '../Core/Renderer/CSSObject';
+import type SVGAttributes from '../Core/Renderer/SVG/SVGAttributes';
+import type SVGElement from '../Core/Renderer/SVG/SVGElement';
+import BaseSeries from '../Core/Series/Series.js';
+const {
+    seriesTypes
+} = BaseSeries;
+import Color from '../Core/Color/Color.js';
+const {
+    parse: color
+} = Color;
+import ColorMapMixin from '../Mixins/ColorMapSeries.js';
+const { colorMapSeriesMixin } = ColorMapMixin;
+import DrawPointMixin from '../Mixins/DrawPoint.js';
+const {
+    drawPoint
+} = DrawPointMixin;
 import H from '../Core/Globals.js';
+const {
+    noop
+} = H;
+import LegendSymbolMixin from '../Mixins/LegendSymbol.js';
+import Point from '../Core/Series/Point.js';
+import TreeSeriesMixin from '../Mixins/TreeSeries.js';
+const {
+    getColor,
+    getLevelOptions,
+    updateRootId
+} = TreeSeriesMixin;
+import U from '../Core/Utilities.js';
+const {
+    addEvent,
+    correctFloat,
+    defined,
+    error,
+    extend,
+    fireEvent,
+    isArray,
+    isNumber,
+    isObject,
+    isString,
+    merge,
+    objectEach,
+    pick,
+    stableSort
+} = U;
 
 /**
  * Internal types
@@ -69,7 +119,7 @@ declare global {
             public colorValueData?: Array<number>;
             public data: Array<TreemapPoint>;
             public directTouch: boolean;
-            public drillUpButton: SVGElement;
+            public drillUpButton?: SVGElement;
             public getExtremesFromAll: boolean;
             public idPreviousRoot?: string;
             public mapOptionsToLevel: Dictionary<TreemapSeriesOptions>;
@@ -131,7 +181,6 @@ declare global {
             ): TreemapListOfParentsObject;
             public getTree(): this['tree'];
             public hasData(): boolean;
-            public isDrillAllowed(targetNode: string): boolean;
             public init(chart: Chart, options: TreemapSeriesOptions): void;
             public onClickDrillToNode(event: { point: TreemapPoint }): void;
             public pointAttribs(
@@ -170,9 +219,6 @@ declare global {
                 children: Array<TreemapNodeObject>
             ): Array<unknown>;
             public translate(): void;
-        }
-        interface SeriesTypesDictionary {
-            treemap: typeof TreemapSeries;
         }
         interface TreemapAlgorithmLPObject {
             lH: number;
@@ -288,49 +334,23 @@ declare global {
     }
 }
 
-import mixinTreeSeries from '../Mixins/TreeSeries.js';
-const {
-    getColor,
-    getLevelOptions,
-    updateRootId
-} = mixinTreeSeries;
-import drawPointModule from '../Mixins/DrawPoint.js';
-const { drawPoint } = drawPointModule;
-import Color from '../Core/Color.js';
-const {
-    parse: color
-} = Color;
-import LegendSymbolMixin from '../Mixins/LegendSymbol.js';
-import Point from '../Core/Series/Point.js';
-import U from '../Core/Utilities.js';
-const {
-    addEvent,
-    correctFloat,
-    defined,
-    error,
-    extend,
-    fireEvent,
-    isArray,
-    isNumber,
-    isObject,
-    isString,
-    merge,
-    objectEach,
-    pick,
-    seriesType,
-    stableSort
-} = U;
+/**
+ * @private
+ */
+declare module '../Core/Series/Types' {
+    interface SeriesTypeRegistry {
+        treemap: typeof Highcharts.TreemapSeries;
+    }
+}
 
 import '../Core/Options.js';
-import '../Core/Series/Series.js';
+import './ScatterSeries.js';
 
 /* eslint-disable no-invalid-this */
 const AXIS_MAX = 100;
 
-var seriesTypes = H.seriesTypes,
-    noop = H.noop,
-    // @todo Similar to eachObject, this function is likely redundant
-    isBoolean = function (x: unknown): x is boolean {
+// @todo Similar to eachObject, this function is likely redundant
+var isBoolean = function (x: unknown): x is boolean {
         return typeof x === 'boolean';
     },
     Series = H.Series,
@@ -373,7 +393,7 @@ var seriesTypes = H.seriesTypes,
  *
  * @augments Highcharts.Series
  */
-seriesType<Highcharts.TreemapSeries>(
+BaseSeries.seriesType<typeof Highcharts.TreemapSeries>(
     'treemap',
     'scatter'
 
@@ -502,7 +522,7 @@ seriesType<Highcharts.TreemapSeries>(
         /**
          * @ignore-option
          */
-        marker: false as any,
+        marker: void 0,
 
         /**
          * When using automatic point colors pulled from the `options.colors`
@@ -973,8 +993,8 @@ seriesType<Highcharts.TreemapSeries>(
                 }),
                 parentList = series.getListOfParents(this.data, allIds);
 
-            series.nodeMap = [] as any;
-            return series.buildNode('', -1, 0, parentList, null as any);
+            series.nodeMap = {};
+            return series.buildNode('', -1, 0, parentList);
         },
         // Define hasData function for non-cartesian series.
         // Returns true if the series has points at all.
@@ -987,7 +1007,6 @@ seriesType<Highcharts.TreemapSeries>(
             options: Highcharts.TreemapSeriesOptions
         ): void {
             var series = this,
-                colorMapSeriesMixin = H.colorMapSeriesMixin,
                 setOptionsEvent;
 
             // If color series logic is loaded, add some properties
@@ -1061,12 +1080,12 @@ seriesType<Highcharts.TreemapSeries>(
                 children.push(child);
             });
             node = {
-                id: id,
-                i: i,
-                children: children,
-                height: height,
-                level: level,
-                parent: parent,
+                id,
+                i,
+                children,
+                height,
+                level,
+                parent,
                 visible: false // @todo move this to better location
             } as any;
             series.nodeMap[node.id] = node;
@@ -1109,7 +1128,7 @@ seriesType<Highcharts.TreemapSeries>(
                 a: Highcharts.TreemapNodeObject,
                 b: Highcharts.TreemapNodeObject
             ): number {
-                return (a.sortIndex as any) - (b.sortIndex as any);
+                return (a.sortIndex || 0) - (b.sortIndex || 0);
             });
             // Set the values
             val = pick(point && point.options.value, childrenTotal);
@@ -1258,7 +1277,7 @@ seriesType<Highcharts.TreemapSeries>(
         setColorRecursive: function (
             this: Highcharts.TreemapSeries,
             node: Highcharts.TreemapNodeObject,
-            parentColor?: Highcharts.ColorString,
+            parentColor?: ColorString,
             colorIndex?: number,
             index?: number,
             siblings?: unknown
@@ -1729,10 +1748,10 @@ seriesType<Highcharts.TreemapSeries>(
         alignDataLabel: function (
             this: Highcharts.TreemapSeries,
             point: Highcharts.TreemapPoint,
-            dataLabel: Highcharts.SVGElement,
+            dataLabel: SVGElement,
             labelOptions: Highcharts.DataLabelsOptions
         ): void {
-            var style: Highcharts.SVGAttributes = labelOptions.style as any;
+            var style: SVGAttributes = labelOptions.style as any;
 
             // #8160: Prevent the label from exceeding the point's
             // boundaries in treemaps by applying ellipsis overflow.
@@ -1761,7 +1780,7 @@ seriesType<Highcharts.TreemapSeries>(
             this: Highcharts.TreemapSeries,
             point: Highcharts.TreemapPoint,
             state: string
-        ): Highcharts.SVGAttributes {
+        ): SVGAttributes {
             var series = this,
                 mapOptionsToLevel = (
                     isObject(series.mapOptionsToLevel) ?
@@ -1770,7 +1789,7 @@ seriesType<Highcharts.TreemapSeries>(
                 ),
                 level = point && mapOptionsToLevel[point.node.level] || {},
                 options = this.options,
-                attr: Highcharts.SVGAttributes,
+                attr: SVGAttributes,
                 stateOptions: Highcharts.SeriesStateOptionsObject<typeof this> =
                     (state && (options.states as any)[state]) || {},
                 className = (point && point.getClassName()) || '',
@@ -1839,10 +1858,10 @@ seriesType<Highcharts.TreemapSeries>(
 
             points.forEach(function (point: Highcharts.TreemapPoint): void {
                 var levelDynamic = point.node.levelDynamic,
-                    animate: Partial<Highcharts.AnimationOptionsObject> = {},
-                    attr: Highcharts.SVGAttributes = {},
-                    css: Highcharts.CSSObject = {},
-                    groupKey = 'level-group-' + levelDynamic,
+                    animatableAttribs: Partial<AnimationOptionsObject> = {},
+                    attribs: SVGAttributes = {},
+                    css: CSSObject = {},
+                    groupKey = 'level-group-' + point.node.level,
                     hasGraphic = !!point.graphic,
                     shouldAnimate = withinAnimationLimit && hasGraphic,
                     shapeArgs = point.shapeArgs;
@@ -1850,20 +1869,20 @@ seriesType<Highcharts.TreemapSeries>(
                 // Don't bother with calculate styling if the point is not drawn
                 if (point.shouldDraw()) {
                     if (borderRadius) {
-                        attr.r = borderRadius;
+                        attribs.r = borderRadius;
                     }
 
                     merge(
                         true, // Extend object
                         // Which object to extend
-                        shouldAnimate ? animate : attr,
+                        shouldAnimate ? animatableAttribs : attribs,
                         // Add shapeArgs to animate/attr if graphic exists
                         hasGraphic ? shapeArgs : {},
                         // Add style attribs if !styleMode
                         styledMode ?
                             {} :
                             series.pointAttribs(
-                                point, (point.selected && 'select') as any
+                                point, point.selected ? 'select' : void 0
                             )
                     );
 
@@ -1880,7 +1899,7 @@ seriesType<Highcharts.TreemapSeries>(
                             .attr({
                                 // @todo Set the zIndex based upon the number of
                                 // levels, instead of using 1000
-                                zIndex: 1000 - (levelDynamic as any)
+                                zIndex: 1000 - (levelDynamic || 0)
                             })
                             .add(series.group);
                         (series as any)[groupKey].survive = true;
@@ -1889,13 +1908,13 @@ seriesType<Highcharts.TreemapSeries>(
 
                 // Draw the point
                 point.draw({
-                    animatableAttribs: animate,
-                    attribs: attr,
-                    css: css,
+                    animatableAttribs,
+                    attribs,
+                    css,
                     group: (series as any)[groupKey],
-                    renderer: renderer,
-                    shadow: shadow,
-                    shapeArgs: shapeArgs,
+                    renderer,
+                    shadow,
+                    shapeArgs,
                     shapeType: 'rect'
                 });
 
@@ -1918,8 +1937,7 @@ seriesType<Highcharts.TreemapSeries>(
                 drillId = point && point.drillId;
 
             // If a drill id is returned, add click event and cursor.
-            if (isString(drillId) &&
-                (series.isDrillAllowed ? series.isDrillAllowed(drillId) : true)) {
+            if (isString(drillId)) {
                 point.setState(''); // Remove hover
                 series.setRootNode(drillId, true, { trigger: 'click' });
             }
@@ -2086,30 +2104,6 @@ seriesType<Highcharts.TreemapSeries>(
             fireEvent(series, 'setRootNode', eventArgs, defaultFn);
         },
 
-        /**
-         * Check if the drill up/down is allowed.
-         *
-         * @private
-         */
-        isDrillAllowed: function (
-            this: Highcharts.TreemapSeries,
-            targetNode: string
-        ): boolean {
-            var tree = this.tree,
-                firstChild = tree.children[0];
-
-            // The sunburst series looks exactly the same on the level ''
-            // and level 1 if there’s only one element on level 1. Disable
-            // drilling up/down when it doesn't perform any visual
-            // difference (#13388).
-            return !(
-                tree.children.length === 1 && (
-                    (this.rootNode === '' && targetNode === firstChild.id) ||
-                    (this.rootNode === firstChild.id && targetNode === '')
-                )
-            );
-        },
-
         renderTraverseUpButton: function (
             this: Highcharts.TreemapSeries,
             rootId: string
@@ -2120,17 +2114,17 @@ seriesType<Highcharts.TreemapSeries>(
                 name = node.name,
                 buttonOptions: Highcharts.TreemapSeriesUpButtonOptions =
                     series.options.traverseUpButton as any,
-                backText = pick(buttonOptions.text, name, '< Back'),
+                backText = pick(buttonOptions.text, name, '◁ Back'),
                 attr,
                 states;
 
-            if (rootId === '' ||
-                (series.isDrillAllowed ?
-                    !(isString(node.parent) && series.isDrillAllowed(node.parent)) : false)
-            ) {
+            if (rootId === '' || (
+                series.is('sunburst') &&
+                series.tree.children.length === 1 &&
+                rootId === series.tree.children[0].id
+            )) {
                 if (series.drillUpButton) {
-                    series.drillUpButton =
-                        series.drillUpButton.destroy() as any;
+                    series.drillUpButton = series.drillUpButton.destroy();
                 }
             } else if (!this.drillUpButton) {
                 attr = buttonOptions.theme;
@@ -2139,8 +2133,8 @@ seriesType<Highcharts.TreemapSeries>(
                 this.drillUpButton = this.chart.renderer
                     .button(
                         backText,
-                        null as any,
-                        null as any,
+                        0,
+                        0,
                         function (): void {
                             series.drillUp();
                         },
@@ -2235,7 +2229,7 @@ seriesType<Highcharts.TreemapSeries>(
          * @function Highcharts.Point#isValid
          */
         isValid: function (this: Highcharts.TreemapPoint): boolean {
-            return (this.id as any) || isNumber(this.value);
+            return Boolean(this.id || isNumber(this.value));
         },
         setState: function (
             this: Highcharts.TreemapPoint,
@@ -2251,8 +2245,7 @@ seriesType<Highcharts.TreemapSeries>(
             }
         },
         shouldDraw: function (this: Highcharts.TreemapPoint): boolean {
-            var point = this;
-            return isNumber(point.plotY) && point.y !== null;
+            return isNumber(this.plotY) && this.y !== null;
         }
     }
 );

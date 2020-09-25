@@ -9,12 +9,13 @@
  *  !!!!!!! SOURCE GETS TRANSPILED BY TYPESCRIPT. EDIT TS FILE ONLY. !!!!!!!
  *
  * */
-'use strict';
+import Axis from '../Core/Axis/Axis.js';
+import BaseSeries from '../Core/Series/Series.js';
+var seriesTypes = BaseSeries.seriesTypes;
 import H from '../Core/Globals.js';
 import U from '../Core/Utilities.js';
-var addEvent = U.addEvent, isNumber = U.isNumber, pick = U.pick, seriesType = U.seriesType, wrap = U.wrap;
+var addEvent = U.addEvent, isNumber = U.isNumber, pick = U.pick, wrap = U.wrap;
 import '../Series/AreaSeries.js';
-var seriesTypes = H.seriesTypes;
 /**
  * @private
  * @class
@@ -22,7 +23,7 @@ var seriesTypes = H.seriesTypes;
  *
  * @augments Highcharts.Series
  */
-seriesType('variwide', 'column'
+BaseSeries.seriesType('variwide', 'column'
 /**
  * A variwide chart (related to marimekko chart) is a column chart with a
  * variable width expressing a third dimension.
@@ -192,13 +193,13 @@ H.Tick.prototype.postTranslate = function (xy, xOrY, index) {
 };
 /* eslint-disable no-invalid-this */
 // Same width as the category (#8083)
-addEvent(H.Axis, 'afterDrawCrosshair', function (e) {
+addEvent(Axis, 'afterDrawCrosshair', function (e) {
     if (this.variwide && this.cross) {
         this.cross.attr('stroke-width', (e.point && e.point.crosshairWidth));
     }
 });
 // On a vertical axis, apply anti-collision logic to the labels.
-addEvent(H.Axis, 'afterRender', function () {
+addEvent(Axis, 'afterRender', function () {
     var axis = this;
     if (!this.horiz && this.variwide) {
         this.chart.labelCollectors.push(function () {

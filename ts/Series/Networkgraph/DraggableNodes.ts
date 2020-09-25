@@ -156,11 +156,13 @@ H.dragNodesMixin = {
         point: Highcharts.DragNodesPoint,
         event?: Highcharts.PointerEventObject
     ): void {
-        if (point.fixedPosition && point.hasDragged) {
-            if (this.layout.enableSimulation) {
-                this.layout.start();
-            } else {
-                this.chart.redraw();
+        if (point.fixedPosition) {
+            if (point.hasDragged) {
+                if (this.layout.enableSimulation) {
+                    this.layout.start();
+                } else {
+                    this.chart.redraw();
+                }
             }
             point.inDragMode = point.hasDragged = false;
             if (!this.options.fixedDraggable) {
@@ -189,6 +191,7 @@ H.dragNodesMixin = {
         }
     }
 };
+
 /*
  * Draggable mode:
  */

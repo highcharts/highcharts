@@ -10,6 +10,9 @@
 
 'use strict';
 
+import type {
+    HTMLDOMElement
+} from '../Core/Renderer/DOMElementType';
 import type SVGPath from '../Core/Renderer/SVG/SVGPath';
 import Chart from '../Core/Chart/Chart.js';
 import H from '../Core/Globals.js';
@@ -30,18 +33,17 @@ const {
  */
 declare global {
     namespace Highcharts {
-        class Map extends Chart {
+        class Map {
+            // fake class for jQuery
+            // @todo remove
         }
-        let maps: Dictionary<any>;
-        function mapChart(): Map;
+        let maps: Record<string, any>;
+        function mapChart(): Chart;
         function splitPath(path: string): SVGPath;
     }
 }
 
-import '../Core/Options.js';
-import '../Core/Chart/Chart.js';
-
-var Renderer = H.Renderer,
+const Renderer = H.Renderer,
     VMLRenderer = H.VMLRenderer;
 
 // Add language
@@ -319,7 +321,7 @@ defaultOptions.mapNavigation = {
  *
  * @return {Highcharts.SVGPathArray}
  */
-H.splitPath = function (
+const splitPath = H.splitPath = function (
     path: string|Array<string|number>
 ): SVGPath {
     let arr: Array<string|number>;
@@ -355,7 +357,7 @@ H.splitPath = function (
  * @requires modules/map
  *
  * @name Highcharts.maps
- * @type {Highcharts.Dictionary<*>}
+ * @type {Record<string,*>}
  */
 H.maps = {};
 
@@ -456,11 +458,11 @@ if ((Renderer as any) === VMLRenderer) {
  * @return {Highcharts.Chart}
  *         The chart object.
  */
-H.Map = H.mapChart = function (
-    a: (string|Highcharts.HTMLDOMElement|Highcharts.Options),
+const mapChart = H.Map /* fake class for jQuery */ = H.mapChart = function (
+    a: (string|HTMLDOMElement|Highcharts.Options),
     b?: (Chart.CallbackFunction|Highcharts.Options),
     c?: Chart.CallbackFunction
-): Highcharts.Map {
+): Chart {
 
     var hasRenderToArg = typeof a === 'string' || (a as any).nodeName,
         options = arguments[hasRenderToArg ? 1 : 0],
@@ -525,6 +527,14 @@ H.Map = H.mapChart = function (
 
 
     return hasRenderToArg ?
-        (new Chart(a as any, options, c) as any) :
-        (new Chart(options, b as any) as any);
+        new Chart(a as any, options, c) :
+        new Chart(options, b as any);
 } as any;
+
+const mapModule = {
+    mapChart,
+    maps: H.maps,
+    splitPath
+};
+
+export default mapModule;

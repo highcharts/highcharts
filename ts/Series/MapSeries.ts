@@ -8,11 +8,27 @@
  *
  * */
 
-'use strict';
-
+import type AnimationOptionsObject from '../Core/Animation/AnimationOptionsObject';
+import type ColorType from '../Core/Color/ColorType';
+import type SVGAttributes from '../Core/Renderer/SVG/SVGAttributes';
+import type SVGElement from '../Core/Renderer/SVG/SVGElement';
 import type SVGPath from '../Core/Renderer/SVG/SVGPath';
+import BaseSeries from '../Core/Series/Series.js';
+import ColorMapMixin from '../Mixins/ColorMapSeries.js';
+const {
+    colorMapPointMixin,
+    colorMapSeriesMixin
+} = ColorMapMixin;
 import H from '../Core/Globals.js';
+const {
+    noop
+} = H;
 import LegendSymbolMixin from '../Mixins/LegendSymbol.js';
+import mapModule from '../Maps/Map.js';
+const {
+    maps,
+    splitPath
+} = mapModule;
 import Point from '../Core/Series/Point.js';
 import SVGRenderer from '../Core/Renderer/SVG/SVGRenderer.js';
 import U from '../Core/Utilities.js';
@@ -25,7 +41,6 @@ const {
     merge,
     objectEach,
     pick,
-    seriesType,
     splat
 } = U;
 
@@ -146,22 +161,24 @@ declare global {
             /** @requires modules/map */
             mapData?: (Array<MapPointOptions>|any);
         }
-        interface SeriesTypesDictionary {
-            map: typeof MapSeries;
-        }
+    }
+}
+
+/**
+ * @private
+ */
+declare module '../Core/Series/Types' {
+    interface SeriesTypeRegistry {
+        map: typeof Highcharts.MapSeries;
     }
 }
 
 import '../Core/Options.js';
-import '../Series/ScatterSeries.js';
-import '../Core/Series/Series.js';
-import '../Mixins/ColorMapSeries.js';
+import '../Series/LineSeries.js';
+import './ScatterSeries.js';
 
-var colorMapPointMixin = H.colorMapPointMixin,
-    colorMapSeriesMixin = H.colorMapSeriesMixin,
-    noop = H.noop,
-    Series = H.Series,
-    seriesTypes = H.seriesTypes;
+var Series = H.Series,
+    seriesTypes = BaseSeries.seriesTypes;
 
 /**
  * @private
@@ -170,7 +187,7 @@ var colorMapPointMixin = H.colorMapPointMixin,
  *
  * @augments Highcharts.Series
  */
-seriesType<Highcharts.MapSeries>(
+BaseSeries.seriesType<typeof Highcharts.MapSeries>(
     'map',
     'scatter',
     /**
@@ -274,7 +291,7 @@ seriesType<Highcharts.MapSeries>(
          *         Borders demo
          *
          * @type      {Highcharts.ColorString|Highcharts.GradientColorObject|Highcharts.PatternObject}
-         * @default   '#cccccc'
+         * @default   #cccccc
          * @product   highmaps
          * @apioption plotOptions.series.borderColor
          *
@@ -301,6 +318,7 @@ seriesType<Highcharts.MapSeries>(
         borderWidth: 1,
 
         /**
+         * @type      {string}
          * @default   value
          * @apioption plotOptions.map.colorKey
          */
@@ -332,8 +350,6 @@ seriesType<Highcharts.MapSeries>(
          * @default   hc-key
          * @product   highmaps
          * @apioption plotOptions.series.joinBy
-         *
-         * @private
          */
         joinBy: 'hc-key',
 
@@ -496,7 +512,7 @@ seriesType<Highcharts.MapSeries>(
 
                 if (point.path) {
                     if (typeof point.path === 'string') {
-                        point.path = H.splitPath(point.path);
+                        point.path = splitPath(point.path);
 
                     // Legacy one-dimensional array
                     } else if (point.path[0] as any === 'M') {
@@ -688,7 +704,7 @@ seriesType<Highcharts.MapSeries>(
                 Array<(Highcharts.MapPointOptions|Highcharts.PointOptionsType)>
             ),
             redraw?: boolean,
-            animation?: (boolean|Partial<Highcharts.AnimationOptionsObject>),
+            animation?: (boolean|Partial<AnimationOptionsObject>),
             updatePoints?: boolean
         ): void {
             var options = this.options,
@@ -707,7 +723,7 @@ seriesType<Highcharts.MapSeries>(
             // Collect mapData from chart options if not defined on series
             if (!mapData && globalMapData) {
                 mapData = typeof globalMapData === 'string' ?
-                    H.maps[globalMapData] :
+                    maps[globalMapData] :
                     globalMapData;
             }
 
@@ -922,7 +938,7 @@ seriesType<Highcharts.MapSeries>(
             this: Highcharts.MapSeries,
             point: Highcharts.MapPoint,
             state?: string
-        ): Highcharts.SVGAttributes {
+        ): SVGAttributes {
             var attr = point.series.chart.styledMode ?
                 this.colorAttribs(point) :
                 seriesTypes.column.prototype.pointAttribs.call(
@@ -959,7 +975,7 @@ seriesType<Highcharts.MapSeries>(
                 translateX: number,
                 translateY: number,
                 baseTrans = this.baseTrans,
-                transformGroup: Highcharts.SVGElement,
+                transformGroup: SVGElement,
                 startTranslateX: number,
                 startTranslateY: number,
                 startScaleX: number,
@@ -1244,7 +1260,7 @@ seriesType<Highcharts.MapSeries>(
                         (this.chart.drilldownLevels as any).length - 1
                     ],
                 fromBox = level.bBox,
-                animationOptions: (boolean|Partial<Highcharts.AnimationOptionsObject>) =
+                animationOptions: (boolean|Partial<AnimationOptionsObject>) =
                     (this.chart.options.drilldown as any).animation,
                 scale;
 

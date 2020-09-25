@@ -10,14 +10,21 @@
  *
  * */
 
-'use strict';
-
 import type ColorAxis from '../Core/Axis/ColorAxis';
+import type ColorType from '../Core/Color/ColorType';
+import type GradientColor from '../Core/Color/GradientColor';
 import type RadialAxis from '../Core/Axis/RadialAxis';
+import type SVGAttributes from '../Core/Renderer/SVG/SVGAttributes';
 import type SVGPath from '../Core/Renderer/SVG/SVGPath';
-import Color from '../Core/Color.js';
-const color = Color.parse;
+import BaseSeries from '../Core/Series/Series.js';
+import Color from '../Core/Color/Color.js';
+const {
+    parse: color
+} = Color;
 import H from '../Core/Globals.js';
+const {
+    Renderer
+} = H;
 import LegendSymbolMixin from '../Mixins/LegendSymbol.js';
 import U from '../Core/Utilities.js';
 const {
@@ -27,7 +34,6 @@ const {
     merge,
     pick,
     pInt,
-    seriesType,
     wrap
 } = U;
 
@@ -54,9 +60,6 @@ declare global {
             public drawPoints(): void;
             public translate(): void;
         }
-        interface SeriesTypesDictionary {
-            solidgauge: typeof SolidGaugeSeries;
-        }
         interface SolidGaugePointOptions extends GaugePointOptions {
             innerRadius?: (number|string);
             radius?: (number|string);
@@ -77,6 +80,18 @@ declare global {
 }
 
 /**
+ * @private
+ */
+declare module '../Core/Series/Types' {
+    interface SeriesTypeRegistry {
+        solidgauge: typeof Highcharts.SolidGaugeSeries;
+    }
+}
+
+import '../Core/Options.js';
+import '../Series/GaugeSeries.js';
+
+/**
  * Additional options, depending on the actual symbol drawn.
  *
  * @interface Highcharts.SymbolOptionsObject
@@ -85,11 +100,6 @@ declare global {
  * @name Highcharts.SymbolOptionsObject#rounded
  * @type {boolean|undefined}
  */
-
-import '../Core/Options.js';
-import '../Series/GaugeSeries.js';
-
-const Renderer = H.Renderer;
 
 /**
  * Symbol definition of an arc with round edges.
@@ -167,7 +177,7 @@ interface SolidGaugeAxis extends RadialAxis {
     toColor(
         value: number,
         point: Highcharts.SolidGaugePoint
-    ): (Highcharts.ColorType|undefined);
+    ): (ColorType|undefined);
 }
 
 /**
@@ -250,7 +260,7 @@ namespace SolidGaugeAxis {
                 [1, this.options.maxColor as any]
             ];
             this.stops.forEach(function (
-                stop: Highcharts.GradientColorStopObject
+                stop: GradientColor['stops'][0]
             ): void {
                 stop.color = color(stop[1]);
             });
@@ -260,12 +270,12 @@ namespace SolidGaugeAxis {
             this: SolidGaugeAxis,
             value: number,
             point: Highcharts.SolidGaugePoint
-        ): (Highcharts.ColorType|undefined) {
+        ): (ColorType|undefined) {
             var pos: number,
                 stops = this.stops,
-                from: (number|Highcharts.GradientColorStopObject|undefined),
-                to: (number|Highcharts.GradientColorStopObject|undefined),
-                color: (Highcharts.ColorType|undefined),
+                from: (number|GradientColor['stops'][0]|undefined),
+                to: (number|GradientColor['stops'][0]|undefined),
+                color: (ColorType|undefined),
                 dataClasses = this.dataClasses,
                 dataClass: (ColorAxis.DataClassesOptions|undefined),
                 i: (number|undefined);
@@ -436,9 +446,8 @@ var solidGaugeOptions: Highcharts.SolidGaugeSeriesOptions = {
 
 };
 
-
 // The solidgauge series type
-seriesType<Highcharts.SolidGaugeSeries>(
+BaseSeries.seriesType<typeof Highcharts.SolidGaugeSeries>(
     'solidgauge',
     'gauge',
     solidGaugeOptions,
@@ -521,7 +530,7 @@ seriesType<Highcharts.SolidGaugeSeries>(
                                 )
                             ) * center[2]
                         ) / 200),
-                        shapeArgs: (Highcharts.SVGAttributes|undefined),
+                        shapeArgs: (SVGAttributes|undefined),
                         d: (string|SVGPath|undefined),
                         toColor = yAxis.toColor(point.y as any, point),
                         axisMinAngle = Math.min(

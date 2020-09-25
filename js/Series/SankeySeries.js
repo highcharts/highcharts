@@ -9,9 +9,17 @@
  *  !!!!!!! SOURCE GETS TRANSPILED BY TYPESCRIPT. EDIT TS FILE ONLY. !!!!!!!
  *
  * */
-'use strict';
+import Series from '../Core/Series/Series.js';
+import CartesianSeries from '../Core/Series/CartesianSeries.js';
+import Color from '../Core/Color/Color.js';
+import ColumnSeries from './ColumnSeries.js';
 import H from '../Core/Globals.js';
 import NodesMixin from '../Mixins/Nodes.js';
+import Point from '../Core/Series/Point.js';
+import TreeSeriesMixin from '../Mixins/TreeSeries.js';
+var getLevelOptions = TreeSeriesMixin.getLevelOptions;
+import U from '../Core/Utilities.js';
+var defined = U.defined, find = U.find, isObject = U.isObject, merge = U.merge, pick = U.pick, relativeLength = U.relativeLength, stableSort = U.stableSort;
 /**
  * A node in a sankey diagram.
  *
@@ -90,14 +98,7 @@ import NodesMixin from '../Mixins/Nodes.js';
 * @name Highcharts.SeriesSankeyDataLabelsFormatterContextObject#point
 * @type {Highcharts.SankeyNodeObject}
 */
-import Color from '../Core/Color.js';
-import Point from '../Core/Series/Point.js';
-import U from '../Core/Utilities.js';
-var defined = U.defined, find = U.find, isObject = U.isObject, merge = U.merge, pick = U.pick, relativeLength = U.relativeLength, seriesType = U.seriesType, stableSort = U.stableSort;
-import TreeSeriesMixin from '../Mixins/TreeSeries.js';
-var getLevelOptions = TreeSeriesMixin.getLevelOptions;
-import '../Core/Options.js';
-import './ColumnSeries.js';
+''; // detach doclets above
 // eslint-disable-next-line valid-jsdoc
 /**
  * @private
@@ -119,7 +120,7 @@ var getDLOptions = function getDLOptions(params) {
  *
  * @augments Highcharts.Series
  */
-seriesType('sankey', 'column', 
+Series.seriesType('sankey', 'column', 
 /**
  * A sankey diagram is a type of flow diagram, in which the width of the
  * link between two nodes is shown proportionally to the flow quantity.
@@ -848,11 +849,11 @@ seriesType('sankey', 'column',
     render: function () {
         var points = this.points;
         this.points = this.points.concat(this.nodes || []);
-        H.seriesTypes.column.prototype.render.call(this);
+        ColumnSeries.prototype.render.call(this);
         this.points = points;
     },
     /* eslint-enable valid-jsdoc */
-    animate: H.Series.prototype.animate
+    animate: CartesianSeries.prototype.animate
 }, {
     applyOptions: function (options, x) {
         Point.prototype.applyOptions.call(this, options, x);

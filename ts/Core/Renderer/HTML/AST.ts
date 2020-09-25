@@ -8,7 +8,7 @@
  *
  * */
 
-'use strict';
+import type SVGAttributes from '../SVG/SVGAttributes';
 
 import H from '../../Globals.js';
 import U from '../../Utilities.js';
@@ -306,7 +306,7 @@ class AST {
 
                 // Add allowed attributes
                 if (parsedAttributes) {
-                    const attributes: Highcharts.SVGAttributes = {};
+                    const attributes: SVGAttributes = {};
                     [].forEach.call(parsedAttributes, (attrib: Attribute): void => {
                         if (
                             AST.allowedAttributes

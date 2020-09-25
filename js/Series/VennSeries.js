@@ -14,21 +14,23 @@
  *  !!!!!!! SOURCE GETS TRANSPILED BY TYPESCRIPT. EDIT TS FILE ONLY. !!!!!!!
  *
  * */
-'use strict';
-import Color from '../Core/Color.js';
+import A from '../Core/Animation/AnimationUtilities.js';
+var animObject = A.animObject;
+import BaseSeries from '../Core/Series/Series.js';
+var seriesTypes = BaseSeries.seriesTypes;
+import Color from '../Core/Color/Color.js';
 var color = Color.parse;
-import H from '../Core/Globals.js';
+import DrawPointMixin from '../Mixins/DrawPoint.js';
+var draw = DrawPointMixin.draw;
+import GeometryMixin from '../Mixins/Geometry.js';
+var getCenterOfPoints = GeometryMixin.getCenterOfPoints, getDistanceBetweenPoints = GeometryMixin.getDistanceBetweenPoints;
+import GeometryCirclesModule from '../Mixins/GeometryCircles.js';
+var getAreaOfCircle = GeometryCirclesModule.getAreaOfCircle, getAreaOfIntersectionBetweenCircles = GeometryCirclesModule.getAreaOfIntersectionBetweenCircles, getCircleCircleIntersection = GeometryCirclesModule.getCircleCircleIntersection, getCirclesIntersectionPolygon = GeometryCirclesModule.getCirclesIntersectionPolygon, getOverlapBetweenCirclesByDistance = GeometryCirclesModule.getOverlapBetweenCircles, isCircle1CompletelyOverlappingCircle2 = GeometryCirclesModule.isCircle1CompletelyOverlappingCircle2, isPointInsideAllCircles = GeometryCirclesModule.isPointInsideAllCircles, isPointInsideCircle = GeometryCirclesModule.isPointInsideCircle, isPointOutsideAllCircles = GeometryCirclesModule.isPointOutsideAllCircles;
+import NelderMeadMixin from '../Mixins/NelderMead.js';
+var nelderMead = NelderMeadMixin.nelderMead;
 import U from '../Core/Utilities.js';
-var addEvent = U.addEvent, animObject = U.animObject, extend = U.extend, isArray = U.isArray, isNumber = U.isNumber, isObject = U.isObject, isString = U.isString, merge = U.merge, seriesType = U.seriesType;
-import drawPointModule from '../Mixins/DrawPoint.js';
-var draw = drawPointModule.draw;
-import geometry from '../Mixins/Geometry.js';
-import geometryCirclesModule from '../Mixins/GeometryCircles.js';
-var getAreaOfCircle = geometryCirclesModule.getAreaOfCircle, getAreaOfIntersectionBetweenCircles = geometryCirclesModule.getAreaOfIntersectionBetweenCircles, getCircleCircleIntersection = geometryCirclesModule.getCircleCircleIntersection, getCirclesIntersectionPolygon = geometryCirclesModule.getCirclesIntersectionPolygon, getOverlapBetweenCirclesByDistance = geometryCirclesModule.getOverlapBetweenCircles, isCircle1CompletelyOverlappingCircle2 = geometryCirclesModule.isCircle1CompletelyOverlappingCircle2, isPointInsideAllCircles = geometryCirclesModule.isPointInsideAllCircles, isPointInsideCircle = geometryCirclesModule.isPointInsideCircle, isPointOutsideAllCircles = geometryCirclesModule.isPointOutsideAllCircles;
-import nelderMeadMixin from '../Mixins/NelderMead.js';
-var nelderMead = nelderMeadMixin.nelderMead;
-import '../Core/Series/Series.js';
-var getCenterOfPoints = geometry.getCenterOfPoints, getDistanceBetweenPoints = geometry.getDistanceBetweenPoints, seriesTypes = H.seriesTypes;
+var addEvent = U.addEvent, extend = U.extend, isArray = U.isArray, isNumber = U.isNumber, isObject = U.isObject, isString = U.isString, merge = U.merge;
+import './ScatterSeries.js';
 var objectValues = function objectValues(obj) {
     return Object.keys(obj).map(function (x) {
         return obj[x];
@@ -911,14 +913,14 @@ var vennSeries = {
     },
     utils: {
         addOverlapToSets: addOverlapToSets,
-        geometry: geometry,
-        geometryCircles: geometryCirclesModule,
+        geometry: GeometryMixin,
+        geometryCircles: GeometryCirclesModule,
         getLabelWidth: getLabelWidth,
         getMarginFromCircles: getMarginFromCircles,
         getDistanceBetweenCirclesByOverlap: getDistanceBetweenCirclesByOverlap,
         layoutGreedyVenn: layoutGreedyVenn,
         loss: loss,
-        nelderMead: nelderMeadMixin,
+        nelderMead: NelderMeadMixin,
         processVennData: processVennData,
         sortByTotalOverlap: sortByTotalOverlap
     }
@@ -1008,6 +1010,7 @@ var vennPoint = {
  * @excluding halo
  * @apioption series.venn.states.select
  */
+''; // detach doclets above
 /**
  * @private
  * @class
@@ -1015,7 +1018,7 @@ var vennPoint = {
  *
  * @augments Highcharts.Series
  */
-seriesType('venn', 'scatter', vennOptions, vennSeries, vennPoint);
+BaseSeries.seriesType('venn', 'scatter', vennOptions, vennSeries, vennPoint);
 /* eslint-disable no-invalid-this */
 // Modify final series options.
 addEvent(seriesTypes.venn, 'afterSetOptions', function (e) {

@@ -10,17 +10,20 @@
  *
  * */
 
-'use strict';
-
+import type {
+    DOMElementType,
+    HTMLDOMElement
+} from '../../Core/Renderer/DOMElementType';
+import type SVGAttributes from '../../Core/Renderer/SVG/SVGAttributes';
+import H from '../../Core/Globals.js';
+const {
+    doc,
+    win
+} = H;
 import U from '../../Core/Utilities.js';
 const {
     merge
 } = U;
-
-import H from '../../Core/Globals.js';
-var win = H.win,
-    doc = win.document;
-
 
 /* eslint-disable valid-jsdoc */
 
@@ -30,7 +33,7 @@ var win = H.win,
  * @param {string} className
  * @return {void}
  */
-function addClass(el: Highcharts.HTMLDOMElement, className: string): void {
+function addClass(el: HTMLDOMElement, className: string): void {
     if (el.classList) {
         el.classList.add(className);
     } else if (el.className.indexOf(className) < 0) {
@@ -66,7 +69,7 @@ function escapeStringForHTML(str: string): string {
  */
 function getElement(
     id: string
-): (Highcharts.HTMLDOMElement|Highcharts.SVGDOMElement|null) {
+): (DOMElementType|null) {
     return doc.getElementById(id);
 }
 
@@ -119,9 +122,7 @@ function getFakeMouseEvent(type: string): MouseEvent {
  * @param {Highcharts.HTMLDOMElement|Highcharts.SVGDOMElement} [element]
  * @return {void}
  */
-function removeElement(
-    element?: (Highcharts.HTMLDOMElement|Highcharts.SVGDOMElement)
-): void {
+function removeElement(element?: DOMElementType): void {
     if (element && element.parentNode) {
         element.parentNode.removeChild(element);
     }
@@ -134,9 +135,7 @@ function removeElement(
  * @param {Highcharts.HTMLDOMElement|Highcharts.SVGDOMElement} node
  * @return {void}
  */
-function reverseChildNodes(
-    node: (Highcharts.HTMLDOMElement|Highcharts.SVGDOMElement)
-): void {
+function reverseChildNodes(node: DOMElementType): void {
     var i = node.childNodes.length;
     while (i--) {
         node.appendChild(node.childNodes[i]);
@@ -152,8 +151,8 @@ function reverseChildNodes(
  * @return {void}
  */
 function setElAttrs(
-    el: (Highcharts.HTMLDOMElement|Highcharts.SVGDOMElement),
-    attrs: (Highcharts.HTMLAttributes|Highcharts.SVGAttributes)
+    el: DOMElementType,
+    attrs: (Highcharts.HTMLAttributes|SVGAttributes)
 ): void {
     Object.keys(attrs).forEach(function (attr: string): void {
         var val = attrs[attr];
@@ -186,7 +185,7 @@ function stripHTMLTagsFromString(str: string): string {
  * @param {Highcharts.HTMLDOMElement} element
  * @return {void}
  */
-function visuallyHideElement(element: Highcharts.HTMLDOMElement): void {
+function visuallyHideElement(element: HTMLDOMElement): void {
     var hiddenStyle = {
         position: 'absolute',
         width: '1px',

@@ -10,9 +10,13 @@
  *
  * */
 
-'use strict';
-
-import H from '../Core/Globals.js';
+import type {
+    AlignValue,
+    VerticalAlignValue
+} from '../Core/Renderer/AlignObject';
+import type ColorString from '../Core/Color/ColorString';
+import type CSSObject from '../Core/Renderer/CSSObject';
+import Axis from '../Core/Axis/Axis.js';
 import O from '../Core/Options.js';
 const { dateFormat } = O;
 
@@ -64,10 +68,8 @@ const {
 
 import PlotLineOrBand from '../Core/Axis/PlotLineOrBand.js';
 
-var Axis = H.Axis;
 
-
-var defaultConfig: (
+const defaultConfig: (
     Highcharts.CurrentDateIndicatorOptions &
     Highcharts.XAxisOptions
 ) = {
@@ -101,7 +103,7 @@ var defaultConfig: (
          * [dateFormat](/class-reference/Highcharts#dateFormat) function.
          *
          * @type      {string}
-         * @default   '%a, %b %d %Y, %H:%M'
+         * @default   %a, %b %d %Y, %H:%M
          * @product   gantt
          * @apioption xAxis.currentDateIndicator.label.format
          */

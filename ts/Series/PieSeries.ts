@@ -8,11 +8,48 @@
  *
  * */
 
-'use strict';
-
+import type AnimationOptionsObject from '../Core/Animation/AnimationOptionsObject';
+import type { AlignValue } from '../Core/Renderer/AlignObject';
+import type SVGAttributes from '../Core/Renderer/SVG/SVGAttributes';
 import type SVGPath from '../Core/Renderer/SVG/SVGPath';
+import A from '../Core/Animation/AnimationUtilities.js';
+const {
+    setAnimation
+} = A;
+import BaseSeries from '../Core/Series/Series.js';
+import CenteredSeriesMixin from '../Mixins/CenteredSeries.js';
+const {
+    getStartAndEndRadians
+} = CenteredSeriesMixin;
+import ColorType from '../Core/Color/ColorType';
 import H from '../Core/Globals.js';
+const {
+    noop
+} = H;
+import LegendSymbolMixin from '../Mixins/LegendSymbol.js';
+import LineSeries from '../Series/LineSeries.js';
+import Point from '../Core/Series/Point.js';
 import SVGRenderer from '../Core/Renderer/SVG/SVGRenderer.js';
+import U from '../Core/Utilities.js';
+const {
+    addEvent,
+    clamp,
+    defined,
+    fireEvent,
+    isNumber,
+    merge,
+    pick,
+    relativeLength
+} = U;
+
+/**
+ * @private
+ */
+declare module '../Core/Series/Types' {
+    interface SeriesTypeRegistry {
+        pie: typeof Highcharts.PieSeries;
+    }
+}
 
 /**
  * Internal types
@@ -87,7 +124,7 @@ declare global {
             extends DataLabelsOptions
         {
             alignTo?: string;
-            connectorColor?: (ColorString|GradientColorObject|PatternObject);
+            connectorColor?: ColorType;
             connectorPadding?: number;
             connectorShape?: (string|Function);
             connectorWidth?: number;
@@ -100,7 +137,7 @@ declare global {
             center?: [(number|string|null), (number|string|null)];
             colorByPoint?: boolean;
             dataLabels?: PieSeriesDataLabelsOptionsObject;
-            fillColor?: (ColorString|GradientColorObject|PatternObject);
+            fillColor?: ColorType;
             ignoreHiddenPoint?: boolean;
             inactiveOtherPoints?: boolean;
             innerSize?: (number|string);
@@ -116,36 +153,10 @@ declare global {
         interface SeriesStatesHoverOptionsObject {
             brightness?: number;
         }
-        interface SeriesTypesDictionary {
-            pie: typeof PieSeries;
-        }
     }
 }
 
-import LegendSymbolMixin from '../Mixins/LegendSymbol.js';
-import Point from '../Core/Series/Point.js';
-import U from '../Core/Utilities.js';
-const {
-    addEvent,
-    clamp,
-    defined,
-    fireEvent,
-    isNumber,
-    merge,
-    pick,
-    relativeLength,
-    seriesType,
-    setAnimation
-} = U;
-
-import './ColumnSeries.js';
-import centeredSeriesMixin from '../Mixins/CenteredSeries.js';
 import '../Core/Options.js';
-
-var getStartAndEndRadians = centeredSeriesMixin.getStartAndEndRadians,
-    noop = H.noop,
-    Series = H.Series,
-    seriesTypes = H.seriesTypes;
 
 /**
  * Pie series type.
@@ -156,7 +167,7 @@ var getStartAndEndRadians = centeredSeriesMixin.getStartAndEndRadians,
  *
  * @augments Highcharts.Series
  */
-seriesType<Highcharts.PieSeries>(
+BaseSeries.seriesType<typeof Highcharts.PieSeries>(
     'pie',
     'line',
 
@@ -432,6 +443,30 @@ seriesType<Highcharts.PieSeries>(
 
             enabled: true,
 
+            /**
+             * A
+             * [format string](https://www.highcharts.com/docs/chart-concepts/labels-and-string-formatting)
+             * for the data label. Available variables are the same as for
+             * `formatter`.
+             *
+             * @sample {highcharts} highcharts/plotoptions/series-datalabels-format/
+             *         Add a unit
+             *
+             * @type      {string}
+             * @default   undefined
+             * @since     3.0
+             * @apioption plotOptions.pie.dataLabels.format
+             */
+
+            // eslint-disable-next-line valid-jsdoc
+            /**
+             * Callback JavaScript function to format the data label. Note that
+             * if a `format` is defined, the format takes precedence and the
+             * formatter is ignored.
+             *
+             * @type {Highcharts.DataLabelsFormatterCallbackFunction}
+             * @default function () { return this.point.isNull ? void 0 : this.point.name; }
+             */
             formatter: function (
                 this: Highcharts.PointLabelObject
             ): (string|undefined) { // #2945
@@ -735,7 +770,7 @@ seriesType<Highcharts.PieSeries>(
         noSharedTooltip: true,
         trackerGroups: ['group', 'dataLabelsGroup'],
         axisTypes: [],
-        pointAttribs: seriesTypes.column.prototype.pointAttribs,
+        pointAttribs: BaseSeries.seriesTypes.column.prototype.pointAttribs,
 
         /**
          * Animate the pies in
@@ -828,7 +863,7 @@ seriesType<Highcharts.PieSeries>(
          * @return {void}
          */
         generatePoints: function (this: Highcharts.PieSeries): void {
-            Series.prototype.generatePoints.call(this);
+            LineSeries.prototype.generatePoints.call(this);
             this.updateTotals();
         },
 
@@ -1108,8 +1143,8 @@ seriesType<Highcharts.PieSeries>(
                 renderer = chart.renderer,
                 groupTranslation,
                 graphic,
-                pointAttr: Highcharts.SVGAttributes,
-                shapeArgs,
+                pointAttr: SVGAttributes,
+                shapeArgs: (SVGAttributes|undefined),
                 shadow = series.options.shadow;
 
             this.drawEmpty();
@@ -1261,7 +1296,7 @@ seriesType<Highcharts.PieSeries>(
          * @private
          * @borrows Highcharts.CenteredSeriesMixin.getCenter as Highcharts.seriesTypes.pie#getCenter
          */
-        getCenter: centeredSeriesMixin.getCenter,
+        getCenter: CenteredSeriesMixin.getCenter,
 
         /**
          * Pies don't have point marker symbols.
@@ -1403,7 +1438,7 @@ seriesType<Highcharts.PieSeries>(
             this: Highcharts.PiePoint,
             sliced: boolean,
             redraw?: boolean,
-            animation?: (boolean|Partial<Highcharts.AnimationOptionsObject>)
+            animation?: (boolean|Partial<AnimationOptionsObject>)
         ): void {
             var point = this,
                 series = point.series,

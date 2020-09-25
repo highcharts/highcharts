@@ -9,10 +9,10 @@
  *  !!!!!!! SOURCE GETS TRANSPILED BY TYPESCRIPT. EDIT TS FILE ONLY. !!!!!!!
  *
  * */
-'use strict';
+import BaseSeries from '../Core/Series/Series.js';
+import DerivedSeriesMixin from '../Mixins/DerivedSeries.js';
 import U from '../Core/Utilities.js';
-var correctFloat = U.correctFloat, isNumber = U.isNumber, merge = U.merge, seriesType = U.seriesType;
-import derivedSeriesMixin from '../Mixins/DerivedSeries.js';
+var correctFloat = U.correctFloat, isNumber = U.isNumber, merge = U.merge;
 /* ************************************************************************** *
  *  BELL CURVE                                                                *
  * ************************************************************************** */
@@ -56,7 +56,7 @@ function normalDensity(x, mean, standardDeviation) {
  *
  * @augments Highcharts.Series
  */
-seriesType('bellcurve', 'areaspline'
+BaseSeries.seriesType('bellcurve', 'areaspline'
 /**
  * A bell curve is an areaspline series which represents the probability
  * density function of the normal distribution. It calculates mean and
@@ -76,6 +76,26 @@ seriesType('bellcurve', 'areaspline'
  */
 , {
     /**
+     * @see [fillColor](#plotOptions.bellcurve.fillColor)
+     * @see [fillOpacity](#plotOptions.bellcurve.fillOpacity)
+     *
+     * @apioption plotOptions.bellcurve.color
+     */
+    /**
+     * @see [color](#plotOptions.bellcurve.color)
+     * @see [fillOpacity](#plotOptions.bellcurve.fillOpacity)
+     *
+     * @apioption plotOptions.bellcurve.fillColor
+     */
+    /**
+     * @see [color](#plotOptions.bellcurve.color)
+     * @see [fillColor](#plotOptions.bellcurve.fillColor)
+     *
+     * @default   {highcharts} 0.75
+     * @default   {highstock} 0.75
+     * @apioption plotOptions.bellcurve.fillOpacity
+     */
+    /**
      * This option allows to define the length of the bell curve. A unit of
      * the length of the bell curve is standard deviation.
      *
@@ -94,7 +114,7 @@ seriesType('bellcurve', 'areaspline'
     marker: {
         enabled: false
     }
-}, merge(derivedSeriesMixin, {
+}, merge(DerivedSeriesMixin, {
     setMean: function () {
         this.mean = correctFloat(mean(this.baseSeries.yData));
     },
@@ -140,5 +160,25 @@ seriesType('bellcurve', 'areaspline'
  *
  * @type      {number|string}
  * @apioption series.bellcurve.baseSeries
+ */
+/**
+ * @see [fillColor](#series.bellcurve.fillColor)
+ * @see [fillOpacity](#series.bellcurve.fillOpacity)
+ *
+ * @apioption series.bellcurve.color
+ */
+/**
+ * @see [color](#series.bellcurve.color)
+ * @see [fillOpacity](#series.bellcurve.fillOpacity)
+ *
+ * @apioption series.bellcurve.fillColor
+ */
+/**
+ * @see [color](#series.bellcurve.color)
+ * @see [fillColor](#series.bellcurve.fillColor)
+ *
+ * @default   {highcharts} 0.75
+ * @default   {highstock} 0.75
+ * @apioption series.bellcurve.fillOpacity
  */
 ''; // adds doclets above to transpiled file

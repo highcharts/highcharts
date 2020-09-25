@@ -7,14 +7,15 @@
  *  !!!!!!! SOURCE GETS TRANSPILED BY TYPESCRIPT. EDIT TS FILE ONLY. !!!!!!!
  *
  * */
-'use strict';
+import BaseSeries from '../Core/Series/Series.js';
 import H from '../Core/Globals.js';
+var noop = H.noop;
 import O from '../Core/Options.js';
 var defaultOptions = O.defaultOptions;
 import U from '../Core/Utilities.js';
-var clamp = U.clamp, merge = U.merge, pick = U.pick, seriesType = U.seriesType;
-var noop = H.noop, seriesTypes = H.seriesTypes;
-var colProto = seriesTypes.column.prototype;
+var clamp = U.clamp, merge = U.merge, pick = U.pick;
+import './ColumnSeries.js';
+var columnProto = BaseSeries.seriesTypes.column.prototype;
 /**
  * The column range is a cartesian series type with higher and lower
  * Y values along an X axis. To display horizontal bars, set
@@ -62,7 +63,7 @@ var columnRangeOptions = {
  *
  * @augments Highcharts.Series
  */
-seriesType('columnrange', 'arearange', merge(defaultOptions.plotOptions.column, defaultOptions.plotOptions.arearange, columnRangeOptions), {
+BaseSeries.seriesType('columnrange', 'arearange', merge(defaultOptions.plotOptions.column, defaultOptions.plotOptions.arearange, columnRangeOptions), {
     // eslint-disable-next-line valid-jsdoc
     /**
      * Translate data points from raw values x and y to plotX and plotY
@@ -78,7 +79,7 @@ seriesType('columnrange', 'arearange', merge(defaultOptions.plotOptions.column, 
         function safeBounds(pixelPos) {
             return clamp(pixelPos, -safeDistance, safeDistance);
         }
-        colProto.translate.apply(series);
+        columnProto.translate.apply(series);
         // Set plotLow and plotHigh
         series.points.forEach(function (point) {
             var shapeArgs = point.shapeArgs, minPointLength = series.options.minPointLength, heightDifference, height, y;
@@ -128,34 +129,34 @@ seriesType('columnrange', 'arearange', merge(defaultOptions.plotOptions.column, 
     getSymbol: noop,
     // Overrides from modules that may be loaded after this module
     crispCol: function () {
-        return colProto.crispCol.apply(this, arguments);
+        return columnProto.crispCol.apply(this, arguments);
     },
     drawPoints: function () {
-        return colProto.drawPoints.apply(this, arguments);
+        return columnProto.drawPoints.apply(this, arguments);
     },
     drawTracker: function () {
-        return colProto.drawTracker.apply(this, arguments);
+        return columnProto.drawTracker.apply(this, arguments);
     },
     getColumnMetrics: function () {
-        return colProto.getColumnMetrics.apply(this, arguments);
+        return columnProto.getColumnMetrics.apply(this, arguments);
     },
     pointAttribs: function () {
-        return colProto.pointAttribs.apply(this, arguments);
+        return columnProto.pointAttribs.apply(this, arguments);
     },
     animate: function () {
-        return colProto.animate.apply(this, arguments);
+        return columnProto.animate.apply(this, arguments);
     },
     polarArc: function () {
-        return colProto.polarArc.apply(this, arguments);
+        return columnProto.polarArc.apply(this, arguments);
     },
     translate3dPoints: function () {
-        return colProto.translate3dPoints.apply(this, arguments);
+        return columnProto.translate3dPoints.apply(this, arguments);
     },
     translate3dShapes: function () {
-        return colProto.translate3dShapes.apply(this, arguments);
+        return columnProto.translate3dShapes.apply(this, arguments);
     }
 }, {
-    setState: colProto.pointClass.prototype.setState
+    setState: columnProto.pointClass.prototype.setState
 });
 /**
  * A `columnrange` series. If the [type](#series.columnrange.type)

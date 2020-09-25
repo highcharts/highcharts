@@ -9,14 +9,12 @@
  *  !!!!!!! SOURCE GETS TRANSPILED BY TYPESCRIPT. EDIT TS FILE ONLY. !!!!!!!
  *
  * */
-'use strict';
-import H from '../Core/Globals.js';
+import BaseSeries from '../Core/Series/Series.js';
+var seriesTypes = BaseSeries.seriesTypes;
 import Math3D from '../Extensions/Math3D.js';
 var pointCameraDistance = Math3D.pointCameraDistance;
 import Point from '../Core/Series/Point.js';
-import U from '../Core/Utilities.js';
-var seriesType = U.seriesType;
-var seriesTypes = H.seriesTypes;
+import './ScatterSeries.js';
 /**
  * @private
  * @class
@@ -24,7 +22,7 @@ var seriesTypes = H.seriesTypes;
  *
  * @augments Highcharts.Series
  */
-seriesType('scatter3d', 'scatter', 
+BaseSeries.seriesType('scatter3d', 'scatter', 
 /**
  * A 3D scatter plot uses x, y and z coordinates to display values for three
  * variables for a set of data.

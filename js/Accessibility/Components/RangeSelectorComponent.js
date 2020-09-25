@@ -10,15 +10,15 @@
  *
  * */
 'use strict';
-import H from '../../Core/Globals.js';
-import U from '../../Core/Utilities.js';
-var extend = U.extend;
 import AccessibilityComponent from '../AccessibilityComponent.js';
-import KeyboardNavigationHandler from '../KeyboardNavigationHandler.js';
 import ChartUtilities from '../Utils/ChartUtilities.js';
 var unhideChartElementFromAT = ChartUtilities.unhideChartElementFromAT;
+import H from '../../Core/Globals.js';
 import HTMLUtilities from '../Utils/HTMLUtilities.js';
 var setElAttrs = HTMLUtilities.setElAttrs;
+import KeyboardNavigationHandler from '../KeyboardNavigationHandler.js';
+import U from '../../Core/Utilities.js';
+var extend = U.extend;
 /* eslint-disable no-invalid-this, valid-jsdoc */
 /**
  * @private

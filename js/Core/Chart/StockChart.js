@@ -7,16 +7,15 @@
  *  !!!!!!! SOURCE GETS TRANSPILED BY TYPESCRIPT. EDIT TS FILE ONLY. !!!!!!!
  *
  * */
-'use strict';
 import Axis from '../Axis/Axis.js';
 import Chart from '../Chart/Chart.js';
 import H from '../Globals.js';
+import LineSeries from '../../Series/LineSeries.js';
 import Point from '../Series/Point.js';
 import SVGRenderer from '../Renderer/SVG/SVGRenderer.js';
 import U from '../Utilities.js';
 var addEvent = U.addEvent, arrayMax = U.arrayMax, arrayMin = U.arrayMin, clamp = U.clamp, defined = U.defined, extend = U.extend, find = U.find, format = U.format, getOptions = U.getOptions, isNumber = U.isNumber, isString = U.isString, merge = U.merge, pick = U.pick, splat = U.splat;
 import '../Pointer.js';
-import '../Series/Series.js';
 // Has a dependency on Navigator due to the use of
 // defaultOptions.navigator
 import '../Navigator.js';
@@ -26,7 +25,7 @@ import '../Scrollbar.js';
 // Has a dependency on RangeSelector due to the use of
 // defaultOptions.rangeSelector
 import '../../Extensions/RangeSelector.js';
-var Series = H.Series, seriesProto = Series.prototype, seriesInit = seriesProto.init, seriesProcessData = seriesProto.processData, pointTooltipFormatter = Point.prototype.tooltipFormatter;
+var seriesProto = LineSeries.prototype, seriesInit = seriesProto.init, seriesProcessData = seriesProto.processData, pointTooltipFormatter = Point.prototype.tooltipFormatter;
 /**
  * Compare the values of the series against the first non-null, non-
  * zero value in the visible range. The y axis will show percentage
@@ -216,7 +215,7 @@ H.StockChart = H.stockChart = function (a, b, c) {
 };
 // Handle som Stock-specific series defaults, override the plotOptions before
 // series options are handled.
-addEvent(Series, 'setOptions', function (e) {
+addEvent(LineSeries, 'setOptions', function (e) {
     var overrides;
     if (this.chart.options.isStock) {
         if (this.is('column') || this.is('columnrange')) {
@@ -644,7 +643,7 @@ seriesProto.processData = function (force) {
     return;
 };
 // Modify series extremes
-addEvent(Series, 'afterGetExtremes', function (e) {
+addEvent(LineSeries, 'afterGetExtremes', function (e) {
     var dataExtremes = e.dataExtremes;
     if (this.modifyValue && dataExtremes) {
         var extremes = [
@@ -705,7 +704,7 @@ Point.prototype.tooltipFormatter = function (pointFormat) {
 // Extend the Series prototype to create a separate series clip box. This is
 // related to using multiple panes, and a future pane logic should incorporate
 // this feature (#2754).
-addEvent(Series, 'render', function () {
+addEvent(LineSeries, 'render', function () {
     var chart = this.chart, clipHeight;
     // Only do this on not 3d (#2939, #5904) nor polar (#6057) charts, and only
     // if the series type handles clipping in the animate method (#2975).
@@ -725,7 +724,7 @@ addEvent(Series, 'render', function () {
             }
         }
         // First render, initial clip box
-        if (!this.clipBox && this.animate) {
+        if (!this.clipBox && !chart.hasRendered) {
             this.clipBox = merge(chart.clipBox);
             this.clipBox.width = this.xAxis.len;
             this.clipBox.height = clipHeight;

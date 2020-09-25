@@ -9,6 +9,7 @@
  * */
 
 import type Point from '../Core/Series/Point';
+import type SVGAttributes from '../Core/Renderer/SVG/SVGAttributes';
 import H from '../Core/Globals.js';
 
 /**
@@ -124,7 +125,7 @@ const LegendSymbolMixin = H.LegendSymbolMixin = {
             legendItemGroup = this.legendGroup,
             verticalCenter = (legend.baseline as any) -
                 Math.round((legend.fontMetrics as any).b * 0.3),
-            attr = {} as Highcharts.SVGAttributes;
+            attr: SVGAttributes = {};
 
         // Draw the line
         if (!this.chart.styledMode) {

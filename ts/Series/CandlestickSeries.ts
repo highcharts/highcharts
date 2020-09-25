@@ -8,10 +8,16 @@
  *
  * */
 
-'use strict';
-
+import type ColorType from '../Core/Color/ColorType';
+import type SVGAttributes from '../Core/Renderer/SVG/SVGAttributes';
 import type SVGPath from '../Core/Renderer/SVG/SVGPath';
-import H from '../Core/Globals.js';
+import BaseSeries from '../Core/Series/Series.js';
+import O from '../Core/Options.js';
+const { defaultOptions } = O;
+import U from '../Core/Utilities.js';
+const {
+    merge
+} = U;
 
 /**
  * Internal types
@@ -32,13 +38,13 @@ declare global {
             public points: Array<CandlestickPoint>;
         }
         interface CandlestickPointOptions extends OHLCPointOptions {
-            lineColor?: (ColorString|GradientColorObject|PatternObject);
-            upLineColor?: (ColorString|GradientColorObject|PatternObject);
+            lineColor?: ColorType;
+            upLineColor?: ColorType;
         }
         interface CandlestickSeriesOptions extends OHLCSeriesOptions {
-            lineColor?: (ColorString|GradientColorObject|PatternObject);
+            lineColor?: ColorType;
             states?: SeriesStatesOptionsObject<CandlestickSeries>;
-            upLineColor?: (ColorString|GradientColorObject|PatternObject);
+            upLineColor?: ColorType;
         }
         interface SeriesTypesDictionary {
             candlestick: typeof CandlestickSeries;
@@ -46,15 +52,10 @@ declare global {
     }
 }
 
-import O from '../Core/Options.js';
-const { defaultOptions } = O;
-import U from '../Core/Utilities.js';
-const {
-    merge,
-    seriesType
-} = U;
+import './ColumnSeries.js';
+import './OHLCSeries.js';
 
-var seriesTypes = H.seriesTypes;
+const columnProto = BaseSeries.seriesTypes.column.prototype;
 
 /**
  * A candlestick chart is a style of financial chart used to describe price
@@ -179,7 +180,7 @@ var candlestickOptions = {
  *
  * @augments Highcharts.seriesTypes.ohlc
  */
-seriesType<Highcharts.CandlestickSeries>(
+BaseSeries.seriesType<typeof Highcharts.CandlestickSeries>(
     'candlestick',
     'ohlc',
     merge(
@@ -207,8 +208,8 @@ seriesType<Highcharts.CandlestickSeries>(
             this: Highcharts.CandlestickSeries,
             point: Highcharts.CandlestickPoint,
             state?: string
-        ): Highcharts.SVGAttributes {
-            var attribs = seriesTypes.column.prototype.pointAttribs.call(
+        ): SVGAttributes {
+            var attribs = columnProto.pointAttribs.call(
                     this,
                     point,
                     state

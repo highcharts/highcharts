@@ -14,7 +14,14 @@
 
 'use strict';
 
+import type AnimationOptionsObject from '../Core/Animation/AnimationOptionsObject';
+import type SVGElement from '../Core/Renderer/SVG/SVGElement';
 import type SVGPath from '../Core/Renderer/SVG/SVGPath';
+import A from '../Core/Animation/AnimationUtilities.js';
+const {
+    animObject
+} = A;
+import BaseSeries from '../Core/Series/Series.js';
 import Chart from '../Core/Chart/Chart.js';
 import H from '../Core/Globals.js';
 import O from '../Core/Options.js';
@@ -24,7 +31,6 @@ import SVGRenderer from '../Core/Renderer/SVG/SVGRenderer.js';
 import U from '../Core/Utilities.js';
 const {
     addEvent,
-    animObject,
     defined,
     error,
     isArray,
@@ -90,8 +96,7 @@ declare global {
             x: number;
             y: number;
             parentStateId?: string;
-            options?: (string | number | PointOptionsObject |
-            (string | number)[] | null);
+            options?: PointOptionsType;
         }
         interface MarkerClusterSplitDataArray
             extends Array<MarkerClusterSplitDataObject> {
@@ -261,11 +266,11 @@ declare global {
 
 /* eslint-disable no-invalid-this */
 
-import '../Core/Axis/Axis.js';
-import '../Core/Series/Series.js';
+import Axis from '../Core/Axis/Axis.js';
+import '../Series/LineSeries.js';
 
 var Series = H.Series,
-    Scatter = H.seriesTypes.scatter,
+    Scatter = BaseSeries.seriesTypes.scatter,
     baseGeneratePoints = Series.prototype.generatePoints,
     stateIdCounter = 0,
     // Points that ids are included in the oldPointsStateId array
@@ -298,7 +303,7 @@ var Series = H.Series,
  *
  * @private
  */
-var clusterDefaultOptions = {
+const clusterDefaultOptions = {
     /**
      * Whether to enable the marker-clusters module.
      *
@@ -644,9 +649,9 @@ function getDataState(
 }
 
 function fadeInElement(
-    elem: Highcharts.SVGElement,
+    elem: SVGElement,
     opacity?: number,
-    animation?: (boolean|Partial<Highcharts.AnimationOptionsObject>)
+    animation?: (boolean|Partial<AnimationOptionsObject>)
 ): void {
     elem
         .attr({
@@ -660,7 +665,7 @@ function fadeInElement(
 function fadeInStatePoint(
     stateObj: Highcharts.MarkerClusterPointsState,
     opacity?: number,
-    animation?: (boolean|Partial<Highcharts.AnimationOptionsObject>),
+    animation?: (boolean|Partial<AnimationOptionsObject>),
     fadeinGraphic?: boolean,
     fadeinDataLabel?: boolean
 ): void {
@@ -709,7 +714,7 @@ function destroyOldPoints(
 function fadeInNewPointAndDestoryOld(
     newPointObj: Highcharts.MarkerClusterPointsState,
     oldPoints: Array<Highcharts.MarkerClusterPointsState>,
-    animation: (boolean|Partial<Highcharts.AnimationOptionsObject>),
+    animation: (boolean|Partial<AnimationOptionsObject>),
     opacity: number
 ): void {
     // Fade in new point.
@@ -2391,7 +2396,7 @@ addEvent(Point, 'drillToCluster', function (
 });
 
 // Destroy the old tooltip after zoom.
-addEvent(H.Axis, 'setExtremes', function (
+addEvent(Axis, 'setExtremes', function (
     this: Highcharts.Axis
 ): void {
     var chart = this.chart,

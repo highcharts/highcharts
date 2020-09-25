@@ -9,15 +9,17 @@
  *  !!!!!!! SOURCE GETS TRANSPILED BY TYPESCRIPT. EDIT TS FILE ONLY. !!!!!!!
  *
  * */
-'use strict';
-import H from '../Core/Globals.js';
+import BaseSeries from '../Core/Series/Series.js';
+var seriesTypes = BaseSeries.seriesTypes;
+import U from '../Core/Utilities.js';
+var arrayMax = U.arrayMax, arrayMin = U.arrayMin, clamp = U.clamp, fireEvent = U.fireEvent, pick = U.pick;
+import '../Core/Options.js';
+import './PieSeries.js';
+var pieProto = seriesTypes.pie.prototype;
 /**
  * @typedef {"area"|"radius"} Highcharts.VariablePieSizeByValue
  */
-import U from '../Core/Utilities.js';
-var arrayMax = U.arrayMax, arrayMin = U.arrayMin, clamp = U.clamp, fireEvent = U.fireEvent, pick = U.pick, seriesType = U.seriesType;
-import '../Core/Options.js';
-var pieProto = H.seriesTypes.pie.prototype;
+''; // detach doclets above
 /**
  * The variablepie series type.
  *
@@ -27,7 +29,7 @@ var pieProto = H.seriesTypes.pie.prototype;
  *
  * @augments Highcharts.Series
  */
-seriesType('variablepie', 'pie', 
+BaseSeries.seriesType('variablepie', 'pie', 
 /**
  * A variable pie series is a two dimensional series type, where each point
  * renders an Y and Z value.  Each point is drawn as a pie slice where the

@@ -12,23 +12,24 @@
  *  !!!!!!! SOURCE GETS TRANSPILED BY TYPESCRIPT. EDIT TS FILE ONLY. !!!!!!!
  *
  * */
-'use strict';
 import Chart from '../Core/Chart/Chart.js';
-import H from '../Core/Globals.js';
-import Color from '../Core/Color.js';
+import Color from '../Core/Color/Color.js';
 var color = Color.parse;
+import H from '../Core/Globals.js';
+var doc = H.doc, noop = H.noop;
+import LineSeries from '../Series/LineSeries.js';
+import Series from '../Core/Series/Series.js';
 import U from '../Core/Utilities.js';
 var addEvent = U.addEvent, extend = U.extend, fireEvent = U.fireEvent, isNumber = U.isNumber, merge = U.merge, pick = U.pick, wrap = U.wrap;
-import '../Core/Series/Series.js';
 import '../Core/Options.js';
-var win = H.win, doc = win.document, noop = function () { }, Series = H.Series, seriesTypes = H.seriesTypes, CHUNK_SIZE = 50000, destroyLoadingDiv;
+var seriesTypes = Series.seriesTypes, CHUNK_SIZE = 50000, destroyLoadingDiv;
 /* eslint-disable no-invalid-this, valid-jsdoc */
 /**
  * Initialize the canvas boost.
  *
  * @function Highcharts.initCanvasBoost
  */
-H.initCanvasBoost = function () {
+var initCanvasBoost = function () {
     if (H.seriesTypes.heatmap) {
         wrap(H.seriesTypes.heatmap.prototype, 'drawPoints', function () {
             var chart = this.chart, ctx = this.getContext(), inverted = this.chart.inverted, xAxis = this.xAxis, yAxis = this.yAxis;
@@ -67,7 +68,7 @@ H.initCanvasBoost = function () {
             }
         });
     }
-    extend(Series.prototype, {
+    extend(LineSeries.prototype, {
         /**
          * Create a hidden canvas to draw the graph on. The contents is later
          * copied over to an SVG image element.
@@ -503,3 +504,4 @@ H.initCanvasBoost = function () {
         addEvent(chart, 'render', canvasToSVG);
     });
 };
+export default initCanvasBoost;

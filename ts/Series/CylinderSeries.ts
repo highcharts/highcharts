@@ -12,11 +12,45 @@
  *
  * */
 
-'use strict';
-
+import type ColorType from '../Core/Color/ColorType';
 import type Chart from '../Core/Chart/Chart';
+import type SVGAttributes from '../Core/Renderer/SVG/SVGAttributes';
+import type SVGElement from '../Core/Renderer/SVG/SVGElement';
 import type SVGPath from '../Core/Renderer/SVG/SVGPath';
+import Color from '../Core/Color/Color.js';
+const {
+    parse: color
+} = Color;
+import _ColumnSeries from '../Series/ColumnSeries.js';
 import H from '../Core/Globals.js';
+const {
+    charts,
+    deg2rad,
+    // Work on H.Renderer instead of SVGRenderer for VML support.
+    Renderer: {
+        prototype: RendererProto
+    }
+} = H;
+import Math3D from '../Extensions/Math3D.js';
+const {
+    perspective
+} = Math3D;
+import Series from '../Core/Series/Series.js';
+import _SVGRenderer from '../Core/Renderer/SVG/SVGRenderer.js';
+import U from '../Core/Utilities.js';
+const {
+    merge,
+    pick
+} = U;
+
+/**
+ * @private
+ */
+declare module '../Core/Series/Types' {
+    interface SeriesTypeRegistry {
+        cylinder: typeof Highcharts.CylinderSeries;
+    }
+}
 
 /**
  * Internal types
@@ -73,39 +107,15 @@ declare global {
                 bottomPath: SVGPath
             ): SVGPath;
         }
-        interface SeriesTypesDictionary {
-            cylinder: typeof CylinderSeries;
-        }
     }
 }
 
-import Color from '../Core/Color.js';
-const color = Color.parse;
-import Math3D from '../Extensions/Math3D.js';
-const { perspective } = Math3D;
-import U from '../Core/Utilities.js';
-const {
-    merge,
-    pick,
-    seriesType
-} = U;
-
-import '../Series/ColumnSeries.js';
-import '../Core/Renderer/SVG/SVGRenderer.js';
-
-var charts = H.charts,
-    deg2rad = H.deg2rad,
-
-    // Work on H.Renderer instead of SVGRenderer for VML support.
-    RendererProto = H.Renderer.prototype,
-    cuboidPath = RendererProto.cuboidPath,
-    cylinderMethods;
+const cuboidPath = RendererProto.cuboidPath;
 
 // Check if a path is simplified. The simplified path contains only lineTo
 // segments, whereas non-simplified contain curves.
 const isSimplified = (path: SVGPath): boolean =>
     !path.some((seg): boolean => seg[0] === 'C');
-
 
 /**
   * The cylinder series type.
@@ -119,7 +129,7 @@ const isSimplified = (path: SVGPath): boolean =>
   *
   * @augments Highcharts.Series
   */
-seriesType<Highcharts.CylinderSeries>(
+Series.seriesType<typeof Highcharts.CylinderSeries>(
     'cylinder',
     'column',
     /**
@@ -224,14 +234,14 @@ seriesType<Highcharts.CylinderSeries>(
  */
 
 // cylinder extends cuboid
-cylinderMethods = merge(RendererProto.elements3d.cuboid, {
+const cylinderMethods = merge(RendererProto.elements3d.cuboid, {
     parts: ['top', 'bottom', 'front', 'back'],
     pathType: 'cylinder',
 
     fillSetter: function (
-        this: Highcharts.SVGElement,
-        fill: Highcharts.ColorType
-    ): Highcharts.SVGElement {
+        this: SVGElement,
+        fill: ColorType
+    ): SVGElement {
         this.singleSetterForParts('fill', null, {
             front: fill,
             back: fill,
@@ -248,15 +258,13 @@ cylinderMethods = merge(RendererProto.elements3d.cuboid, {
 
 RendererProto.elements3d.cylinder = cylinderMethods;
 
-RendererProto.cylinder = function (
-    shapeArgs: Highcharts.SVGAttributes
-): Highcharts.SVGElement {
+RendererProto.cylinder = function (shapeArgs: SVGAttributes): SVGElement {
     return this.element3d('cylinder', shapeArgs);
 };
 
 // Generates paths and zIndexes.
 RendererProto.cylinderPath = function (
-    shapeArgs: Highcharts.SVGAttributes
+    shapeArgs: SVGAttributes
 ): Highcharts.CylinderPathsObject {
     var renderer = this,
         chart = charts[renderer.chartIndex],
@@ -371,7 +379,7 @@ RendererProto.getCylinderBack = function (
 // Retruns cylinder path for top or bottom
 RendererProto.getCylinderEnd = function (
     chart: Chart,
-    shapeArgs: Highcharts.SVGAttributes,
+    shapeArgs: SVGAttributes,
     isBottom?: boolean
 ): SVGPath {
     // A half of the smaller one out of width or depth (optional, because

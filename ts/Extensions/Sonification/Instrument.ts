@@ -30,6 +30,7 @@ declare global {
             public constructor(options: InstrumentOptionsObject);
             public _play?: Instrument['play'];
             public gainNode?: GainNode;
+            public destinationNode?: AudioNode;
             public id: string;
             public masterVolume: number;
             public options: InstrumentOptionsObject;
@@ -238,12 +239,18 @@ Instrument.prototype.init = function (
         error(29);
         return;
     }
+
     this.options = merge(defaultOptions, options);
     this.id = this.options.id = options && options.id || uniqueKey();
     this.masterVolume = this.options.masterVolume || 0;
 
     // Init the audio nodes
-    var ctx = H.audioContext;
+    const ctx = H.audioContext;
+    // Note: Destination node can be overridden by setting
+    // Highcharts.sonification.Instrument.prototype.destinationNode.
+    // This allows for inserting an additional chain of nodes after
+    // the default processing.
+    const destination = this.destinationNode || ctx.destination;
 
     this.gainNode = ctx.createGain();
     this.setGain(0);
@@ -251,9 +258,9 @@ Instrument.prototype.init = function (
     if (this.panNode) {
         this.setPan(0);
         this.gainNode.connect(this.panNode);
-        this.panNode.connect(ctx.destination);
+        this.panNode.connect(destination);
     } else {
-        this.gainNode.connect(ctx.destination);
+        this.gainNode.connect(destination);
     }
 
     // Oscillator initialization

@@ -14,6 +14,9 @@
 
 import type Axis from '../../Core/Axis/Axis';
 import type Chart from '../../Core/Chart/Chart';
+import type {
+    DOMElementType
+} from '../../Core/Renderer/DOMElementType';
 import type Point from '../../Core/Series/Point';
 import HTMLUtilities from './HTMLUtilities.js';
 const {
@@ -43,14 +46,14 @@ declare global {
             ): (Point|undefined);
             getSeriesFirstPointElement(
                 series: Series
-            ): (HTMLDOMElement|SVGDOMElement|undefined);
+            ): (DOMElementType|undefined);
             getSeriesFromName(chart: Chart, name: string): Array<Series>;
             getSeriesA11yElement(
                 series: Series
-            ): (HTMLDOMElement|SVGDOMElement|undefined);
+            ): (DOMElementType|undefined);
             unhideChartElementFromAT(
                 chart: Chart,
-                element: (HTMLDOMElement|SVGDOMElement)
+                element: DOMElementType
             ): void;
             hideSeriesFromAT(series: Series): void;
             scrollToPoint(point: Point): void;
@@ -100,7 +103,7 @@ function getAxisDescription(axis: Highcharts.Axis): string {
  */
 function getSeriesFirstPointElement(
     series: Highcharts.Series
-): (Highcharts.HTMLDOMElement|Highcharts.SVGDOMElement|undefined) {
+): (DOMElementType|undefined) {
     if (
         series.points &&
         series.points.length &&
@@ -121,7 +124,7 @@ function getSeriesFirstPointElement(
  */
 function getSeriesA11yElement(
     series: Highcharts.Series
-): (Highcharts.HTMLDOMElement|Highcharts.SVGDOMElement|undefined) {
+): (DOMElementType|undefined) {
     var firstPointEl = getSeriesFirstPointElement(series);
     return (
         firstPointEl &&
@@ -139,10 +142,7 @@ function getSeriesA11yElement(
  * @param {Highcharts.Chart} chart
  * @param {Highcharts.HTMLDOMElement|Highcharts.SVGDOMElement} element
  */
-function unhideChartElementFromAT(
-    chart: Chart,
-    element: (Highcharts.HTMLDOMElement|Highcharts.SVGDOMElement)
-): void {
+function unhideChartElementFromAT(chart: Chart, element: DOMElementType): void {
     element.setAttribute('aria-hidden', false);
     if (element === chart.renderTo || !element.parentNode) {
         return;
@@ -151,9 +151,7 @@ function unhideChartElementFromAT(
     // Hide siblings unless their hidden state is already explicitly set
     Array.prototype.forEach.call(
         element.parentNode.childNodes,
-        function (
-            node: (Highcharts.HTMLDOMElement|Highcharts.SVGDOMElement)
-        ): void {
+        function (node: DOMElementType): void {
             if (!node.hasAttribute('aria-hidden')) {
                 node.setAttribute('aria-hidden', true);
             }

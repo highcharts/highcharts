@@ -5,13 +5,13 @@
  *  !!!!!!! SOURCE GETS TRANSPILED BY TYPESCRIPT. EDIT TS FILE ONLY. !!!!!!!
  *
  * */
-'use strict';
-import H from '../../Core/Globals.js';
+import BaseSeries from '../../Core/Series/Series.js';
+import MultipleLinesMixin from '../../Mixins/MultipleLines.js';
+import ReduceArrayMixin from '../../Mixins/ReduceArray.js';
 import U from '../../Core/Utilities.js';
-var isArray = U.isArray, merge = U.merge, seriesType = U.seriesType;
-import reduceArrayMixin from '../../Mixins/ReduceArray.js';
-import multipleLinesMixin from '../../Mixins/MultipleLines.js';
-var SMA = H.seriesTypes.sma, getArrayExtremes = reduceArrayMixin.getArrayExtremes;
+var isArray = U.isArray, merge = U.merge;
+import './SMAIndicator.js';
+var SMA = BaseSeries.seriesTypes.sma, getArrayExtremes = ReduceArrayMixin.getArrayExtremes;
 /**
  * The Stochastic series type.
  *
@@ -21,7 +21,7 @@ var SMA = H.seriesTypes.sma, getArrayExtremes = reduceArrayMixin.getArrayExtreme
  *
  * @augments Highcharts.Series
  */
-seriesType('stochastic', 'sma', 
+BaseSeries.seriesType('stochastic', 'sma', 
 /**
  * Stochastic oscillator. This series requires the `linkedTo` option to be
  * set and should be loaded after the `stock/indicators/indicators.js` file.
@@ -87,7 +87,7 @@ seriesType('stochastic', 'sma',
 /**
  * @lends Highcharts.Series#
  */
-merge(multipleLinesMixin, {
+merge(MultipleLinesMixin, {
     nameComponents: ['periods'],
     nameBase: 'Stochastic',
     pointArrayMap: ['y', 'smoothed'],

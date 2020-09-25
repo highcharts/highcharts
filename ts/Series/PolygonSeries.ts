@@ -8,10 +8,17 @@
  *
  * */
 
-'use strict';
-
+import type ColorType from '../Core/Color/ColorType';
 import type SVGPath from '../Core/Renderer/SVG/SVGPath';
+import BaseSeries from '../Core/Series/Series.js';
+const {
+    seriesTypes
+} = BaseSeries;
 import H from '../Core/Globals.js';
+const {
+    noop
+} = H;
+import LegendSymbolMixin from '../Mixins/LegendSymbol.js';
 
 /**
  * Internal types
@@ -34,28 +41,27 @@ declare global {
         interface PolygonPointOptions extends ScatterPointOptions {
         }
         interface PolygonSeriesOptions extends ScatterSeriesOptions {
-            fillColor?: (ColorString|GradientColorObject|PatternObject);
+            fillColor?: ColorType;
             states?: SeriesStatesOptionsObject<PolygonSeries>;
             trackByArea?: boolean;
-        }
-        interface SeriesTypesDictionary {
-            polygon: typeof PolygonSeries;
         }
     }
 }
 
-import LegendSymbolMixin from '../Mixins/LegendSymbol.js';
-import U from '../Core/Utilities.js';
-const {
-    seriesType
-} = U;
+/**
+ * @private
+ */
+declare module '../Core/Series/Types' {
+    interface SeriesTypeRegistry {
+        polygon: typeof Highcharts.PolygonSeries;
+    }
+}
+
 import '../Core/Options.js';
 import '../Core/Legend.js';
-import '../Series/ScatterSeries.js';
+import './ScatterSeries.js';
 
-var noop = H.noop,
-    Series = H.Series,
-    seriesTypes = H.seriesTypes;
+var Series = H.Series;
 
 /**
  * A polygon series can be used to draw any freeform shape in the cartesian
@@ -75,7 +81,7 @@ var noop = H.noop,
  * @requires     highcharts-more
  * @optionparent plotOptions.polygon
  */
-seriesType<Highcharts.PolygonSeries>('polygon', 'scatter', {
+BaseSeries.seriesType<typeof Highcharts.PolygonSeries>('polygon', 'scatter', {
     marker: {
         enabled: false,
         states: {

@@ -10,6 +10,7 @@
 
 'use strict';
 
+import type SVGElement from '../Core/Renderer/SVG/SVGElement';
 import H from '../Core/Globals.js';
 
 /**
@@ -32,6 +33,7 @@ declare global {
     }
 }
 
+import Chart from '../Core/Chart/Chart.js';
 import U from '../Core/Utilities.js';
 const {
     addEvent,
@@ -60,7 +62,7 @@ setOptions({
 
 /* eslint-disable no-invalid-this */
 
-addEvent(H.Chart, 'displayError', function (
+addEvent(Chart, 'displayError', function (
     e: Highcharts.ErrorMessageEventObject
 ): void {
     var chart = this,
@@ -72,7 +74,7 @@ addEvent(H.Chart, 'displayError', function (
         chartHeight;
 
     if (chart.errorElements) {
-        (chart.errorElements).forEach(function (el: Highcharts.SVGElement): void {
+        (chart.errorElements).forEach(function (el: SVGElement): void {
             if (el) {
                 el.destroy();
             }
@@ -139,11 +141,11 @@ addEvent(H.Chart, 'displayError', function (
     }
 });
 
-addEvent(H.Chart, 'beforeRedraw', function (): void {
+addEvent(Chart, 'beforeRedraw', function (): void {
     var errorElements = this.errorElements;
 
     if (errorElements && errorElements.length) {
-        errorElements.forEach(function (el: Highcharts.SVGElement): void {
+        errorElements.forEach(function (el: SVGElement): void {
             el.destroy();
         });
     }

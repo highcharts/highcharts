@@ -8,12 +8,15 @@
  *
  * */
 
-'use strict';
-
+import type {
+    HTMLDOMElement
+} from '../Renderer/DOMElementType';
+import type { SeriesPlotOptionsType } from '../Series/Types';
 import type SVGPath from '../Renderer/SVG/SVGPath';
 import Axis from '../Axis/Axis.js';
 import Chart from '../Chart/Chart.js';
 import H from '../Globals.js';
+import LineSeries from '../../Series/LineSeries.js';
 import Point from '../Series/Point.js';
 import SVGRenderer from '../Renderer/SVG/SVGRenderer.js';
 import U from '../Utilities.js';
@@ -77,7 +80,6 @@ declare global {
 }
 
 import '../Pointer.js';
-import '../Series/Series.js';
 // Has a dependency on Navigator due to the use of
 // defaultOptions.navigator
 import '../Navigator.js';
@@ -88,8 +90,7 @@ import '../Scrollbar.js';
 // defaultOptions.rangeSelector
 import '../../Extensions/RangeSelector.js';
 
-var Series = H.Series,
-    seriesProto = Series.prototype,
+var seriesProto = LineSeries.prototype,
     seriesInit = seriesProto.init,
     seriesProcessData = seriesProto.processData,
     pointTooltipFormatter = Point.prototype.tooltipFormatter;
@@ -188,7 +189,7 @@ var Series = H.Series,
  *         The chart object.
  */
 H.StockChart = H.stockChart = function (
-    a: (string|Highcharts.HTMLDOMElement|Highcharts.Options),
+    a: (string|HTMLDOMElement|Highcharts.Options),
     b?: (Chart.CallbackFunction|Highcharts.Options),
     c?: Chart.CallbackFunction
 ): Highcharts.StockChart {
@@ -330,9 +331,9 @@ H.StockChart = H.stockChart = function (
 
 // Handle som Stock-specific series defaults, override the plotOptions before
 // series options are handled.
-addEvent(Series, 'setOptions', function (
+addEvent(LineSeries, 'setOptions', function (
     this: Highcharts.Series,
-    e: { plotOptions: Highcharts.PlotOptions }
+    e: { plotOptions: SeriesPlotOptionsType }
 ): void {
     var overrides;
 
@@ -936,7 +937,7 @@ seriesProto.processData = function (
 
 // Modify series extremes
 addEvent(
-    Series,
+    LineSeries,
     'afterGetExtremes',
     function (this: Highcharts.Series, e): void {
         const dataExtremes: Highcharts.DataExtremesObject = (e as any).dataExtremes;
@@ -1021,7 +1022,7 @@ Point.prototype.tooltipFormatter = function (
 // Extend the Series prototype to create a separate series clip box. This is
 // related to using multiple panes, and a future pane logic should incorporate
 // this feature (#2754).
-addEvent(Series, 'render', function (this: Highcharts.Series): void {
+addEvent(LineSeries, 'render', function (this: Highcharts.Series): void {
     var chart = this.chart,
         clipHeight;
 
@@ -1051,7 +1052,7 @@ addEvent(Series, 'render', function (this: Highcharts.Series): void {
         }
 
         // First render, initial clip box
-        if (!this.clipBox && this.animate) {
+        if (!this.clipBox && !chart.hasRendered) {
             this.clipBox = merge(chart.clipBox);
             this.clipBox.width = this.xAxis.len;
             this.clipBox.height = clipHeight;

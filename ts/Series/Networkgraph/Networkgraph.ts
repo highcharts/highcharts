@@ -12,8 +12,13 @@
 
 'use strict';
 
+import type AnimationOptionsObject from '../../Core/Animation/AnimationOptionsObject';
 import type Chart from '../../Core/Chart/Chart';
+import type ColorString from '../../Core/Color/ColorString';
+import type SVGAttributes from '../../Core/Renderer/SVG/SVGAttributes';
+import type SVGElement from '../../Core/Renderer/SVG/SVGElement';
 import type SVGPath from '../../Core/Renderer/SVG/SVGPath';
+import BaseSeries from '../../Core/Series/Series.js';
 import H from '../../Core/Globals.js';
 import NodesMixin from '../../Mixins/Nodes.js';
 import Point from '../../Core/Series/Point.js';
@@ -22,8 +27,7 @@ const {
     addEvent,
     css,
     defined,
-    pick,
-    seriesType
+    pick
 } = U;
 
 
@@ -104,9 +108,6 @@ declare global {
         }
         interface Series {
             layout?: NetworkgraphLayout;
-        }
-        interface SeriesTypesDictionary {
-            networkgraph: typeof NetworkgraphSeries;
         }
         class NetworkgraphPoint
             extends LinePoint
@@ -196,6 +197,24 @@ declare global {
 }
 
 /**
+ * @private
+ */
+declare module '../../Core/Series/Types' {
+    interface SeriesTypeRegistry {
+        networkgraph: typeof Highcharts.NetworkgraphSeries;
+    }
+}
+
+import '../../Core/Options.js';
+import './Layouts.js';
+import './DraggableNodes.js';
+import '../../Series/LineSeries.js';
+
+var Series = H.Series,
+    seriesTypes = BaseSeries.seriesTypes,
+    dragNodesMixin = H.dragNodesMixin;
+
+/**
  * Formatter callback function.
  *
  * @callback Highcharts.SeriesNetworkgraphDataLabelsFormatterCallbackFunction
@@ -234,15 +253,6 @@ declare global {
 
 ''; // detach doclets above
 
-import '../../Core/Options.js';
-import './Layouts.js';
-import './DraggableNodes.js';
-import '../../Core/Series/Series.js';
-
-var seriesTypes = H.seriesTypes,
-    Series = H.Series,
-    dragNodesMixin = H.dragNodesMixin;
-
 /**
  * @private
  * @class
@@ -250,7 +260,7 @@ var seriesTypes = H.seriesTypes,
  *
  * @extends Highcharts.Series
  */
-seriesType<Highcharts.NetworkgraphSeries>(
+BaseSeries.seriesType<typeof Highcharts.NetworkgraphSeries>(
     'networkgraph',
     'line',
 
@@ -701,7 +711,7 @@ seriesType<Highcharts.NetworkgraphSeries>(
 
             Series.prototype.init.apply(this, arguments as any);
 
-            addEvent(this, 'updatedData', function (): void {
+            addEvent<Highcharts.NetworkgraphSeries>(this, 'updatedData', function (): void {
                 if (this.layout) {
                     this.layout.stop();
                 }
@@ -798,7 +808,7 @@ seriesType<Highcharts.NetworkgraphSeries>(
             this: Highcharts.NetworkgraphSeries,
             point: Highcharts.NetworkgraphPoint,
             state: string
-        ): Highcharts.SVGAttributes {
+        ): SVGAttributes {
             var attribs =
                 Series.prototype.markerAttribs.call(this, point, state);
 
@@ -903,7 +913,7 @@ seriesType<Highcharts.NetworkgraphSeries>(
             var series = this,
                 points = series.points,
                 hoverPoint = series.chart.hoverPoint,
-                dataLabels = [] as Array<Highcharts.SVGElement>;
+                dataLabels = [] as Array<SVGElement>;
 
             // Render markers:
             series.points = series.nodes;
@@ -961,7 +971,7 @@ seriesType<Highcharts.NetworkgraphSeries>(
             this: Highcharts.NetworkgraphSeries,
             point: Highcharts.NetworkgraphPoint,
             state?: string
-        ): Highcharts.SVGAttributes {
+        ): SVGAttributes {
             // By default, only `selected` state is passed on
             var pointState = state || point && point.state || 'normal',
                 attribs = Series.prototype.pointAttribs.call(
@@ -1092,7 +1102,7 @@ seriesType<Highcharts.NetworkgraphSeries>(
          */
         getLinkAttributes: function (
             this: Highcharts.NetworkgraphPoint
-        ): Highcharts.SVGAttributes {
+        ): SVGAttributes {
             var linkOptions = this.series.options.link,
                 pointOptions = this.options;
 
@@ -1119,7 +1129,7 @@ seriesType<Highcharts.NetworkgraphSeries>(
          * @private
          */
         renderLink: function (this: Highcharts.NetworkgraphPoint): void {
-            var attribs: Highcharts.SVGAttributes;
+            var attribs: SVGAttributes;
 
             if (!this.graphic) {
                 this.graphic = this.series.chart.renderer
@@ -1133,7 +1143,7 @@ seriesType<Highcharts.NetworkgraphSeries>(
                     this.graphic.attr(attribs);
 
                     (this.dataLabels || []).forEach(function (
-                        label: Highcharts.SVGElement
+                        label: SVGElement
                     ): void {
                         if (label) {
                             label.attr({
@@ -1150,7 +1160,7 @@ seriesType<Highcharts.NetworkgraphSeries>(
          */
         redrawLink: function (this: Highcharts.NetworkgraphPoint): void {
             var path = this.getLinkPath(),
-                attribs: Highcharts.SVGAttributes;
+                attribs: SVGAttributes;
 
             if (this.graphic) {
                 this.shapeArgs = {
@@ -1162,7 +1172,7 @@ seriesType<Highcharts.NetworkgraphSeries>(
                     this.graphic.attr(attribs);
 
                     (this.dataLabels || []).forEach(function (
-                        label: Highcharts.SVGElement
+                        label: SVGElement
                     ): void {
                         if (label) {
                             label.attr({

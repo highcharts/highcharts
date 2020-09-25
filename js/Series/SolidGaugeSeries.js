@@ -9,13 +9,16 @@
  *  !!!!!!! SOURCE GETS TRANSPILED BY TYPESCRIPT. EDIT TS FILE ONLY. !!!!!!!
  *
  * */
-'use strict';
-import Color from '../Core/Color.js';
+import BaseSeries from '../Core/Series/Series.js';
+import Color from '../Core/Color/Color.js';
 var color = Color.parse;
 import H from '../Core/Globals.js';
+var Renderer = H.Renderer;
 import LegendSymbolMixin from '../Mixins/LegendSymbol.js';
 import U from '../Core/Utilities.js';
-var clamp = U.clamp, extend = U.extend, isNumber = U.isNumber, merge = U.merge, pick = U.pick, pInt = U.pInt, seriesType = U.seriesType, wrap = U.wrap;
+var clamp = U.clamp, extend = U.extend, isNumber = U.isNumber, merge = U.merge, pick = U.pick, pInt = U.pInt, wrap = U.wrap;
+import '../Core/Options.js';
+import '../Series/GaugeSeries.js';
 /**
  * Additional options, depending on the actual symbol drawn.
  *
@@ -25,9 +28,6 @@ var clamp = U.clamp, extend = U.extend, isNumber = U.isNumber, merge = U.merge, 
 * @name Highcharts.SymbolOptionsObject#rounded
 * @type {boolean|undefined}
 */
-import '../Core/Options.js';
-import '../Series/GaugeSeries.js';
-var Renderer = H.Renderer;
 /**
  * Symbol definition of an arc with round edges.
  *
@@ -269,7 +269,7 @@ var solidGaugeOptions = {
     }
 };
 // The solidgauge series type
-seriesType('solidgauge', 'gauge', solidGaugeOptions, {
+BaseSeries.seriesType('solidgauge', 'gauge', solidGaugeOptions, {
     drawLegendSymbol: LegendSymbolMixin.drawRectangle,
     // Extend the translate function to extend the Y axis with the necessary
     // decoration (#5895).

@@ -9,8 +9,6 @@
  *  !!!!!!! SOURCE GETS TRANSPILED BY TYPESCRIPT. EDIT TS FILE ONLY. !!!!!!!
  *
  * */
-'use strict';
-/* global MSBlobBuilder */
 import Chart from '../Core/Chart/Chart.js';
 import H from '../Core/Globals.js';
 var win = H.win, doc = H.doc;
@@ -53,7 +51,7 @@ function getScript(scriptLocation, callback) {
  * @param {string} svg
  * @return {string}
  */
-H.svgToDataUrl = function (svg) {
+function svgToDataUrl(svg) {
     // Webkit and not chrome
     var webKit = (nav.userAgent.indexOf('WebKit') > -1 &&
         nav.userAgent.indexOf('Chrome') < 0);
@@ -71,7 +69,7 @@ H.svgToDataUrl = function (svg) {
         // Ignore
     }
     return 'data:image/svg+xml;charset=UTF-8,' + encodeURIComponent(svg);
-};
+}
 /**
  * Get data:URL from image URL. Pass in callbacks to handle results.
  *
@@ -106,7 +104,7 @@ H.svgToDataUrl = function (svg) {
  *
  * @return {void}
  */
-H.imageToDataUrl = function (imageURL, imageType, callbackArgs, scale, successCallback, taintedCallback, noCanvasSupportCallback, failedLoadCallback, finallyCallback) {
+function imageToDataUrl(imageURL, imageType, callbackArgs, scale, successCallback, taintedCallback, noCanvasSupportCallback, failedLoadCallback, finallyCallback) {
     var img = new win.Image(), taintedHandler, loadHandler = function () {
         setTimeout(function () {
             var canvas = doc.createElement('canvas'), ctx = canvas.getContext && canvas.getContext('2d'), dataURL;
@@ -158,7 +156,7 @@ H.imageToDataUrl = function (imageURL, imageType, callbackArgs, scale, successCa
     img.onload = loadHandler;
     img.onerror = errorHandler;
     img.src = imageURL;
-};
+}
 /* eslint-enable valid-jsdoc */
 /**
  * Get data URL to an image of an SVG and call download on it options object:
@@ -191,7 +189,7 @@ H.imageToDataUrl = function (imageURL, imageType, callbackArgs, scale, successCa
  *
  * @return {void}
  */
-H.downloadSVGLocal = function (svg, options, failCallback, successCallback) {
+function downloadSVGLocal(svg, options, failCallback, successCallback) {
     var svgurl, blob, objectURLRevoke = true, finallyHandler, libURL = (options.libURL || getOptions().exporting.libURL), dummySVGContainer = doc.createElement('div'), imageType = options.type || 'image/png', filename = ((options.filename || 'chart') +
         '.' +
         (imageType === 'image/svg+xml' ? 'svg' : imageType.split('/')[1])), scale = options.scale || 1;
@@ -275,7 +273,7 @@ H.downloadSVGLocal = function (svg, options, failCallback, successCallback) {
                 svgurl = blob.getBlob('image/svg+xml');
             }
             else {
-                svgurl = H.svgToDataUrl(svg);
+                svgurl = svgToDataUrl(svg);
             }
             downloadURL(svgurl, filename);
             if (successCallback) {
@@ -304,7 +302,7 @@ H.downloadSVGLocal = function (svg, options, failCallback, successCallback) {
     }
     else {
         // PNG/JPEG download - create bitmap from SVG
-        svgurl = H.svgToDataUrl(svg);
+        svgurl = svgToDataUrl(svg);
         finallyHandler = function () {
             try {
                 domurl.revokeObjectURL(svgurl);
@@ -314,7 +312,7 @@ H.downloadSVGLocal = function (svg, options, failCallback, successCallback) {
             }
         };
         // First, try to get PNG by rendering on canvas
-        H.imageToDataUrl(svgurl, imageType, {}, scale, function (imageURL) {
+        imageToDataUrl(svgurl, imageType, {}, scale, function (imageURL) {
             // Success
             try {
                 downloadURL(imageURL, filename);
@@ -375,7 +373,7 @@ H.downloadSVGLocal = function (svg, options, failCallback, successCallback) {
             }
         });
     }
-};
+}
 /* eslint-disable valid-jsdoc */
 /**
  * Get SVG of chart prepared for client side export. This converts embedded
@@ -431,7 +429,7 @@ Chart.prototype.getSVGForLocalExport = function (options, chartOptions, failCall
             el = images[i];
             href = el.getAttributeNS('http://www.w3.org/1999/xlink', 'href');
             if (href) {
-                H.imageToDataUrl(href, 'image/png', { imageElement: el }, options.scale, embeddedSuccess, 
+                imageToDataUrl(href, 'image/png', { imageElement: el }, options.scale, embeddedSuccess, 
                 // Tainted canvas
                 failCallback, 
                 // No canvas support
@@ -495,7 +493,7 @@ Chart.prototype.exportChartLocal = function (exportingOptions, chartOptions) {
                 'for charts with embedded HTML');
         }
         else {
-            H.downloadSVGLocal(svg, extend({ filename: chart.getFilename() }, options), fallbackToExportServer);
+            downloadSVGLocal(svg, extend({ filename: chart.getFilename() }, options), fallbackToExportServer);
         }
     }, 
     // Return true if the SVG contains images with external data. With the

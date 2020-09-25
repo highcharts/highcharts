@@ -454,4 +454,20 @@ QUnit.test('Test algorithm on data updates.', function (assert) {
         chart.series[1].points.length - chart.series[1].options.params.periodSenkouSpanB,
         'After removePoint number of Ichimoku points is correct'
     );
+
+    chart.series[0].update({
+        id: 'main',
+        data: []
+    });
+
+    chart.series[1].update({
+        type: 'ikh',
+        linkedTo: 'main'
+    });
+
+    // Issue #13992
+    assert.ok(
+        true,
+        'No errors when created chart without series data (#13992)'
+    );
 });

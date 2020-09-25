@@ -13,6 +13,9 @@
 'use strict';
 
 import type Chart from '../../Core/Chart/Chart';
+import type {
+    HTMLDOMElement
+} from '../../Core/Renderer/DOMElementType';
 import H from '../../Core/Globals.js';
 import AST from '../../Core/Renderer/HTML/AST.js';
 import DOMElementProvider from './DOMElementProvider.js';
@@ -40,7 +43,7 @@ declare global {
 
 class Announcer {
     private domElementProvider: Highcharts.DOMElementProvider;
-    private announceRegion: Highcharts.HTMLDOMElement;
+    private announceRegion: HTMLDOMElement;
     private clearAnnouncementRegionTimer?: number;
 
     constructor(
@@ -72,7 +75,7 @@ class Announcer {
     }
 
 
-    private addAnnounceRegion(type: Highcharts.AnnouncerType): Highcharts.HTMLDOMElement {
+    private addAnnounceRegion(type: Highcharts.AnnouncerType): HTMLDOMElement {
         const chartContainer = this.chart.renderTo;
         const div = this.domElementProvider.createElement('div');
 

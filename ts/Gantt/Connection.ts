@@ -11,7 +11,9 @@
 
 'use strict';
 
-import type Axis from '../Core/Axis/Axis';
+import type AnimationOptionsObject from '../Core/Animation/AnimationOptionsObject';
+import type SVGAttributes from '../Core/Renderer/SVG/SVGAttributes';
+import type SVGElement from '../Core/Renderer/SVG/SVGElement';
 import type SVGPath from '../Core/Renderer/SVG/SVGPath';
 import Chart from '../Core/Chart/Chart.js';
 import H from '../Core/Globals.js';
@@ -52,7 +54,7 @@ declare global {
             public renderPath(
                 path: SVGPath,
                 attribs?: SVGAttributes,
-                animation?: (boolean|Partial<AnimationOptionsObject>)
+                animation?: (boolean|DeepPartial<AnimationOptionsObject>)
             ): void;
         }
     }
@@ -535,7 +537,7 @@ class Connection {
     * */
     public chart: Chart = void 0 as any;
     public fromPoint: Point = void 0 as any;
-    public graphics: Record<string, Highcharts.SVGElement> = void 0 as any;
+    public graphics: Record<string, SVGElement> = void 0 as any;
     public options?: Highcharts.ConnectorsOptions;
     public pathfinder: Highcharts.Pathfinder = void 0 as any;
     public toPoint: Point = void 0 as any;
@@ -583,8 +585,8 @@ class Connection {
      */
     public renderPath(
         path: SVGPath,
-        attribs?: Highcharts.SVGAttributes,
-        animation?: (boolean|Partial<Highcharts.AnimationOptionsObject>)
+        attribs?: SVGAttributes,
+        animation?: (boolean|DeepPartial<AnimationOptionsObject>)
     ): void {
         var connection = this,
             chart = this.chart,
@@ -593,7 +595,7 @@ class Connection {
             animate =
                 !(chart.options.chart as any).forExport && animation !== false,
             pathGraphic = connection.graphics && connection.graphics.path,
-            anim: Highcharts.SVGAttributes;
+            anim: SVGAttributes;
 
         // Add the SVG element of the pathfinder group if it doesn't exist
         if (!(pathfinder as any).group) {
@@ -844,7 +846,7 @@ class Connection {
                 chart.options.connectors, series.options.connectors,
                 fromPoint.options.connectors, connection.options
             ),
-            attribs = {} as Highcharts.SVGAttributes;
+            attribs: SVGAttributes = {};
 
         // Set path attribs
         if (!chart.styledMode) {
@@ -903,7 +905,7 @@ class Connection {
     public destroy(): void {
         if (this.graphics) {
             objectEach(this.graphics, function (
-                val: Highcharts.SVGElement
+                val: SVGElement
             ): void {
                 val.destroy();
             });

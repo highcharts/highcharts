@@ -13,13 +13,14 @@
 import Axis from '../Axis/Axis.js';
 import Axis3D from '../Axis/Axis3D.js';
 import Chart from './Chart.js';
+import Fx from '../Animation/Fx.js';
 import H from '../Globals.js';
 import Math3D from '../../Extensions/Math3D.js';
 var perspective = Math3D.perspective, shapeArea3D = Math3D.shapeArea3D;
 import O from '../Options.js';
 var genericDefaultOptions = O.defaultOptions;
 import U from '../Utilities.js';
-var addEvent = U.addEvent, Fx = U.Fx, isArray = U.isArray, merge = U.merge, pick = U.pick, wrap = U.wrap;
+var addEvent = U.addEvent, isArray = U.isArray, merge = U.merge, pick = U.pick, wrap = U.wrap;
 import ZAxis from '../Axis/ZAxis.js';
 var Chart3D;
 (function (Chart3D) {

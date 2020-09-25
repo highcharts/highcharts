@@ -9,10 +9,12 @@
  *  !!!!!!! SOURCE GETS TRANSPILED BY TYPESCRIPT. EDIT TS FILE ONLY. !!!!!!!
  *
  * */
-'use strict';
+import BaseSeries from '../Core/Series/Series.js';
 import H from '../Core/Globals.js';
 import U from '../Core/Utilities.js';
-var css = U.css, pick = U.pick, seriesType = U.seriesType, wrap = U.wrap;
+var css = U.css, pick = U.pick, wrap = U.wrap;
+import './SankeySeries.js';
+var base = BaseSeries.seriesTypes.sankey.prototype;
 /**
  * Layout value for the child nodes in an organization chart. If `hanging`, this
  * node's children will hang below their parent, allowing a tighter packing of
@@ -20,7 +22,7 @@ var css = U.css, pick = U.pick, seriesType = U.seriesType, wrap = U.wrap;
  *
  * @typedef {"normal"|"hanging"} Highcharts.SeriesOrganizationNodesLayoutValue
  */
-var base = H.seriesTypes.sankey.prototype;
+''; // detach doclets above
 /**
  * @private
  * @class
@@ -28,7 +30,7 @@ var base = H.seriesTypes.sankey.prototype;
  *
  * @augments Highcharts.seriesTypes.sankey
  */
-seriesType('organization', 'sankey', 
+BaseSeries.seriesType('organization', 'sankey', 
 /**
  * An organization chart is a diagram that shows the structure of an
  * organization and the relationships and relative ranks of its parts and
@@ -416,6 +418,7 @@ seriesType('organization', 'sankey',
  * @extends   series,plotOptions.organization
  * @exclude   dataSorting, boostThreshold, boostBlending
  * @product   highcharts
+ * @requires  modules/sankey
  * @requires  modules/organization
  * @apioption series.organization
  */

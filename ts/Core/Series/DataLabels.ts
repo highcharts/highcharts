@@ -10,13 +10,27 @@
 
 'use strict';
 
+import type {
+    AlignObject,
+    AlignValue,
+    VerticalAlignValue
+} from '../Renderer/AlignObject';
+import type AnimationOptionsObject from '../Animation/AnimationOptionsObject';
+import type ColorString from '../Color/ColorString';
+import type ColorType from '../Color/ColorType';
+import type CSSObject from '../Renderer/CSSObject';
 import type Point from './Point';
+import type ShadowOptionsObject from '../Renderer/ShadowOptionsObject';
+import type SVGAttributes from '../Renderer/SVG/SVGAttributes';
 import type SVGElement from '../Renderer/SVG/SVGElement';
+import A from '../Animation/AnimationUtilities.js';
+const { getDeferredAnimation } = A;
 import H from '../Globals.js';
 const {
     noop,
     seriesTypes
 } = H;
+import CartesianSeries from './CartesianSeries.js';
 import U from '../Utilities.js';
 const {
     arrayMax,
@@ -25,7 +39,6 @@ const {
     extend,
     fireEvent,
     format,
-    getDeferredAnimation,
     isArray,
     merge,
     objectEach,
@@ -68,12 +81,12 @@ declare global {
             animation?: (boolean|Partial<AnimationOptionsObject>);
             align?: AlignValue;
             allowOverlap?: boolean;
-            backgroundColor?: (ColorString|GradientColorObject|PatternObject);
-            borderColor?: (ColorString|GradientColorObject|PatternObject);
+            backgroundColor?: ColorType;
+            borderColor?: ColorType;
             borderRadius?: number;
             borderWidth?: number;
             className?: string;
-            color?: (ColorString|GradientColorObject|PatternObject);
+            color?: ColorType;
             crop?: boolean;
             defer?: boolean;
             enabled?: boolean;
@@ -210,8 +223,7 @@ declare global {
  * @typedef {"allow"|"justify"} Highcharts.DataLabelsOverflowValue
  */
 
-import './Series.js';
-var Series = H.Series;
+''; // detach doclets above
 
 /* eslint-disable valid-jsdoc */
 
@@ -400,7 +412,7 @@ H.distribute = function (
  * @return {void}
  * @fires Highcharts.Series#event:afterDrawDataLabels
  */
-Series.prototype.drawDataLabels = function (this: Highcharts.Series): void {
+CartesianSeries.prototype.drawDataLabels = function (this: Highcharts.Series): void {
     var series = this,
         chart = series.chart,
         seriesOptions = series.options,
@@ -408,7 +420,7 @@ Series.prototype.drawDataLabels = function (this: Highcharts.Series): void {
         points = series.points,
         pointOptions,
         hasRendered = series.hasRendered || 0,
-        dataLabelsGroup: Highcharts.SVGElement,
+        dataLabelsGroup: SVGElement,
         dataLabelAnim = (seriesDlOptions as any).animation,
         animationConfig = (seriesDlOptions as any).defer ?
             getDeferredAnimation(chart, dataLabelAnim, series) :
@@ -793,7 +805,7 @@ Series.prototype.drawDataLabels = function (this: Highcharts.Series): void {
  * @param {boolean} [isNew]
  * @return {void}
  */
-Series.prototype.alignDataLabel = function (
+CartesianSeries.prototype.alignDataLabel = function (
     this: Highcharts.Series,
     point: Point,
     dataLabel: SVGElement,
@@ -846,7 +858,7 @@ Series.prototype.alignDataLabel = function (
                     )
                 )
             ),
-        setStartPos = function (alignOptions: Highcharts.AlignObject): void {
+        setStartPos = function (alignOptions: AlignObject): void {
             if (enabledDataSorting && series.xAxis && !justify) {
                 series.setDataLabelStartPos(
                     point as Highcharts.ColumnPoint,
@@ -989,13 +1001,13 @@ Series.prototype.alignDataLabel = function (
  *
  * @return {void}
  */
-Series.prototype.setDataLabelStartPos = function (
+CartesianSeries.prototype.setDataLabelStartPos = function (
     this: Highcharts.Series,
     point: Highcharts.ColumnPoint,
-    dataLabel: Highcharts.SVGElement,
+    dataLabel: SVGElement,
     isNew: boolean,
     isInside: boolean,
-    alignOptions: Highcharts.AlignObject
+    alignOptions: AlignObject
 ): void {
     var chart = this.chart,
         inverted = chart.inverted,
@@ -1065,11 +1077,11 @@ Series.prototype.setDataLabelStartPos = function (
  * @param {boolean} [isNew]
  * @return {boolean|undefined}
  */
-Series.prototype.justifyDataLabel = function (
+CartesianSeries.prototype.justifyDataLabel = function (
     this: Highcharts.Series,
-    dataLabel: Highcharts.SVGElement,
+    dataLabel: SVGElement,
     options: Highcharts.DataLabelsOptions,
-    alignAttr: Highcharts.SVGAttributes,
+    alignAttr: SVGAttributes,
     bBox: Highcharts.BBoxObject,
     alignTo?: Highcharts.BBoxObject,
     isNew?: boolean
@@ -1182,7 +1194,7 @@ if (seriesTypes.pie) {
         // area. Right edges of the right-half labels touch the right edge of
         // the plot area.
         alignToPlotEdges: function (
-            dataLabel: Highcharts.SVGElement,
+            dataLabel: SVGElement,
             half: boolean,
             plotWidth: number,
             plotLeft: number
@@ -1285,7 +1297,7 @@ if (seriesTypes.pie) {
 
 
         // run parent method
-        Series.prototype.drawDataLabels.apply(series);
+        CartesianSeries.prototype.drawDataLabels.apply(series);
 
         data.forEach(function (point: Highcharts.PiePoint): void {
             if (point.dataLabel) {
@@ -1867,7 +1879,7 @@ if (seriesTypes.column) {
         );
 
         // Call the parent method
-        Series.prototype.alignDataLabel.call(
+        CartesianSeries.prototype.alignDataLabel.call(
             this,
             point,
             dataLabel,

@@ -7,11 +7,15 @@
  *  !!!!!!! SOURCE GETS TRANSPILED BY TYPESCRIPT. EDIT TS FILE ONLY. !!!!!!!
  *
  * */
-'use strict';
+import Point from '../Core/Series/Point.js';
+import BaseSeries from '../Core/Series/Series.js';
 import H from '../Core/Globals.js';
+import './AreaSeries.js';
+import './ColumnSeries.js';
+import './DumbbellSeries.js';
 import U from '../Core/Utilities.js';
-var seriesType = U.seriesType;
-var areaProto = H.seriesTypes.area.prototype, colProto = H.seriesTypes.column.prototype;
+var isObject = U.isObject, pick = U.pick;
+var seriesTypes = BaseSeries.seriesTypes, areaProto = seriesTypes.area.prototype, colProto = seriesTypes.column.prototype;
 /**
  * The lollipop series is a carteseian series with a line anchored from
  * the x axis and a dot at the end to mark the value.
@@ -30,7 +34,7 @@ var areaProto = H.seriesTypes.area.prototype, colProto = H.seriesTypes.column.pr
  * @since 8.0.0
  * @optionparent plotOptions.lollipop
  */
-seriesType('lollipop', 'dumbbell', {
+BaseSeries.seriesType('lollipop', 'dumbbell', {
     /** @ignore-option */
     lowColor: void 0,
     /** @ignore-option */
@@ -59,7 +63,7 @@ seriesType('lollipop', 'dumbbell', {
     pointArrayMap: ['y'],
     pointValKey: 'y',
     toYData: function (point) {
-        return [H.pick(point.y, point.low)];
+        return [pick(point.y, point.low)];
     },
     translatePoint: areaProto.translate,
     drawPoint: areaProto.drawPoints,
@@ -69,11 +73,11 @@ seriesType('lollipop', 'dumbbell', {
     pointSetState: areaProto.pointClass.prototype.setState,
     setState: H.seriesTypes.dumbbell.prototype.pointClass.prototype.setState,
     init: function (series, options, x) {
-        if (H.isObject(options) && 'low' in options) {
+        if (isObject(options) && 'low' in options) {
             options.y = options.low;
             delete options.low;
         }
-        return H.Point.prototype.init.apply(this, arguments);
+        return Point.prototype.init.apply(this, arguments);
     }
 });
 /**

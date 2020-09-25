@@ -8,7 +8,10 @@
  *
  * */
 
-'use strict';
+import type {
+    HTMLDOMElement,
+    SVGDOMElement
+} from '../DOMElementType';
 
 import H from '../../Globals.js';
 import U from '../../Utilities.js';
@@ -183,7 +186,7 @@ class TextBuilder {
             return;
         }
 
-        tspans.forEach((tspan: Highcharts.SVGDOMElement): void => {
+        tspans.forEach((tspan: SVGDOMElement): void => {
             const text = tspan.textContent || '';
             const words = text
                 .replace(/([^\^])-/g, '$1- ') // Split on hyphens
@@ -275,7 +278,7 @@ class TextBuilder {
         });
     }
 
-    private getLineHeight(tspan: Highcharts.SVGDOMElement): number {
+    private getLineHeight(tspan: SVGDOMElement): number {
         var fontSizeStyle;
 
         if (!this.renderer.styledMode) {
@@ -380,7 +383,7 @@ class TextBuilder {
      * word-wrapped line by line.
      */
     private truncate(
-        tspan: Highcharts.HTMLDOMElement|Highcharts.SVGDOMElement,
+        tspan: HTMLDOMElement|SVGDOMElement,
         text: (string|undefined),
         words: (Array<string>|undefined),
         startAt: number,

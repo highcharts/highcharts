@@ -10,13 +10,30 @@
  *
  * */
 
-'use strict';
-
 import type { AxisType } from '../../Core/Axis/Types';
 import type Chart from '../../Core/Chart/Chart';
+import type CSSObject from '../../Core/Renderer/CSSObject';
+import type SVGAttributes from '../../Core/Renderer/SVG/SVGAttributes';
+import type SVGElement from '../../Core/Renderer/SVG/SVGElement';
 import type SVGPath from '../../Core/Renderer/SVG/SVGPath';
+import A from '../../Core/Animation/AnimationUtilities.js';
+const { animObject } = A;
+import BaseSeries from '../../Core/Series/Series.js';
 import H from '../../Core/Globals.js';
-
+const {
+    noop
+} = H;
+import Point from '../../Core/Series/Point.js';
+import U from '../../Core/Utilities.js';
+const {
+    addEvent,
+    arrayMax,
+    arrayMin,
+    correctFloat,
+    error,
+    extend,
+    isArray
+} = U;
 
 /**
  * Internal types
@@ -117,26 +134,8 @@ declare global {
             zIndex?: number;
             zoneLines?: VBPIndicatorStyleOptions;
         }
-
-        interface SeriesTypesDictionary {
-            vpb: typeof VBPIndicator;
-        }
     }
 }
-
-import Point from '../../Core/Series/Point.js';
-import U from '../../Core/Utilities.js';
-const {
-    addEvent,
-    animObject,
-    arrayMax,
-    arrayMin,
-    correctFloat,
-    error,
-    extend,
-    isArray,
-    seriesType
-} = U;
 
 /* eslint-disable require-jsdoc */
 
@@ -170,8 +169,7 @@ function arrayExtremesOHLC(
 /* eslint-enable require-jsdoc */
 
 var abs = Math.abs,
-    noop = H.noop,
-    columnPrototype = H.seriesTypes.column.prototype;
+    columnPrototype = BaseSeries.seriesTypes.column.prototype;
 
 /**
  * The Volume By Price (VBP) series type.
@@ -182,7 +180,7 @@ var abs = Math.abs,
  *
  * @augments Highcharts.Series
  */
-seriesType<Highcharts.VBPIndicator>(
+BaseSeries.seriesType<typeof Highcharts.VBPIndicator>(
     'vbp',
     'sma',
     /**
@@ -366,7 +364,7 @@ seriesType<Highcharts.VBPIndicator>(
             var series = this,
                 inverted = series.chart.inverted,
                 group = series.group,
-                attr: Highcharts.SVGAttributes = {},
+                attr: SVGAttributes = {},
                 translate,
                 position;
 
@@ -800,11 +798,11 @@ seriesType<Highcharts.VBPIndicator>(
             chart: Chart,
             yAxis: AxisType,
             zonesValues: Array<number>,
-            zonesStyles: Highcharts.CSSObject
+            zonesStyles: CSSObject
         ): void {
             var indicator = this,
                 renderer: Highcharts.Renderer = chart.renderer,
-                zoneLinesSVG: Highcharts.SVGElement = indicator.zoneLinesSVG,
+                zoneLinesSVG: SVGElement = indicator.zoneLinesSVG,
                 zoneLinesPath: SVGPath = [],
                 leftLinePos = 0,
                 rightLinePos: number = chart.plotWidth,

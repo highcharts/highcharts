@@ -8,8 +8,7 @@
  *
  * */
 
-'use strict';
-
+import type SVGAttributes from '../Core/Renderer/SVG/SVGAttributes';
 import H from '../Core/Globals.js';
 
 /**
@@ -72,7 +71,7 @@ var noop = H.noop,
  * @private
  * @mixin Highcharts.colorMapPointMixin
  */
-H.colorMapPointMixin = {
+const colorMapPointMixin = {
     dataLabelOnNull: true,
     /* eslint-disable valid-jsdoc */
     /**
@@ -113,7 +112,7 @@ H.colorMapPointMixin = {
  * @private
  * @mixin Highcharts.colorMapSeriesMixin
  */
-H.colorMapSeriesMixin = {
+const colorMapSeriesMixin = {
     pointArrayMap: ['value'],
     axisTypes: ['xAxis', 'yAxis', 'colorAxis'],
     trackerGroups: ['group', 'markerGroup', 'dataLabelsGroup'],
@@ -134,8 +133,8 @@ H.colorMapSeriesMixin = {
     colorAttribs: function (
         this: Highcharts.ColorMapSeries,
         point: Highcharts.ColorMapPoint
-    ): Highcharts.SVGAttributes {
-        var ret = {} as Highcharts.SVGAttributes;
+    ): SVGAttributes {
+        var ret: SVGAttributes = {};
 
         if (defined(point.color)) {
             ret[this.colorProp || 'fill'] = point.color;
@@ -143,3 +142,10 @@ H.colorMapSeriesMixin = {
         return ret;
     }
 };
+
+const exports = {
+    colorMapPointMixin,
+    colorMapSeriesMixin
+};
+
+export default exports;

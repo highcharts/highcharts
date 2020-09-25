@@ -9,25 +9,28 @@
  *  !!!!!!! SOURCE GETS TRANSPILED BY TYPESCRIPT. EDIT TS FILE ONLY. !!!!!!!
  *
  * */
-'use strict';
-import H from '../Core/Globals.js';
-import mixinTreeSeries from '../Mixins/TreeSeries.js';
-var getColor = mixinTreeSeries.getColor, getLevelOptions = mixinTreeSeries.getLevelOptions, updateRootId = mixinTreeSeries.updateRootId;
-import drawPointModule from '../Mixins/DrawPoint.js';
-var drawPoint = drawPointModule.drawPoint;
-import Color from '../Core/Color.js';
+import BaseSeries from '../Core/Series/Series.js';
+var seriesTypes = BaseSeries.seriesTypes;
+import Color from '../Core/Color/Color.js';
 var color = Color.parse;
+import ColorMapMixin from '../Mixins/ColorMapSeries.js';
+var colorMapSeriesMixin = ColorMapMixin.colorMapSeriesMixin;
+import DrawPointMixin from '../Mixins/DrawPoint.js';
+var drawPoint = DrawPointMixin.drawPoint;
+import H from '../Core/Globals.js';
+var noop = H.noop;
 import LegendSymbolMixin from '../Mixins/LegendSymbol.js';
 import Point from '../Core/Series/Point.js';
+import TreeSeriesMixin from '../Mixins/TreeSeries.js';
+var getColor = TreeSeriesMixin.getColor, getLevelOptions = TreeSeriesMixin.getLevelOptions, updateRootId = TreeSeriesMixin.updateRootId;
 import U from '../Core/Utilities.js';
-var addEvent = U.addEvent, correctFloat = U.correctFloat, defined = U.defined, error = U.error, extend = U.extend, fireEvent = U.fireEvent, isArray = U.isArray, isNumber = U.isNumber, isObject = U.isObject, isString = U.isString, merge = U.merge, objectEach = U.objectEach, pick = U.pick, seriesType = U.seriesType, stableSort = U.stableSort;
+var addEvent = U.addEvent, correctFloat = U.correctFloat, defined = U.defined, error = U.error, extend = U.extend, fireEvent = U.fireEvent, isArray = U.isArray, isNumber = U.isNumber, isObject = U.isObject, isString = U.isString, merge = U.merge, objectEach = U.objectEach, pick = U.pick, stableSort = U.stableSort;
 import '../Core/Options.js';
-import '../Core/Series/Series.js';
+import './ScatterSeries.js';
 /* eslint-disable no-invalid-this */
 var AXIS_MAX = 100;
-var seriesTypes = H.seriesTypes, noop = H.noop, 
 // @todo Similar to eachObject, this function is likely redundant
-isBoolean = function (x) {
+var isBoolean = function (x) {
     return typeof x === 'boolean';
 }, Series = H.Series, 
 // @todo Similar to recursive, this function is likely redundant
@@ -55,7 +58,7 @@ recursive = function (item, func, context) {
  *
  * @augments Highcharts.Series
  */
-seriesType('treemap', 'scatter'
+BaseSeries.seriesType('treemap', 'scatter'
 /**
  * A treemap displays hierarchical data using nested rectangles. The data
  * can be laid out in varying ways depending on options.
@@ -172,7 +175,7 @@ seriesType('treemap', 'scatter'
     /**
      * @ignore-option
      */
-    marker: false,
+    marker: void 0,
     /**
      * When using automatic point colors pulled from the `options.colors`
      * collection, this option determines whether the chart should receive
@@ -571,8 +574,8 @@ seriesType('treemap', 'scatter'
         var series = this, allIds = this.data.map(function (d) {
             return d.id;
         }), parentList = series.getListOfParents(this.data, allIds);
-        series.nodeMap = [];
-        return series.buildNode('', -1, 0, parentList, null);
+        series.nodeMap = {};
+        return series.buildNode('', -1, 0, parentList);
     },
     // Define hasData function for non-cartesian series.
     // Returns true if the series has points at all.
@@ -580,7 +583,7 @@ seriesType('treemap', 'scatter'
         return !!this.processedXData.length; // != 0
     },
     init: function (chart, options) {
-        var series = this, colorMapSeriesMixin = H.colorMapSeriesMixin, setOptionsEvent;
+        var series = this, setOptionsEvent;
         // If color series logic is loaded, add some properties
         if (colorMapSeriesMixin) {
             this.colorAttribs = colorMapSeriesMixin.colorAttribs;
@@ -644,7 +647,7 @@ seriesType('treemap', 'scatter'
         });
         // Sort the children
         stableSort(children, function (a, b) {
-            return a.sortIndex - b.sortIndex;
+            return (a.sortIndex || 0) - (b.sortIndex || 0);
         });
         // Set the values
         val = pick(point && point.options.value, childrenTotal);
@@ -1145,21 +1148,21 @@ seriesType('treemap', 'scatter'
     drawPoints: function () {
         var series = this, chart = series.chart, renderer = chart.renderer, points = series.points, styledMode = chart.styledMode, options = series.options, shadow = styledMode ? {} : options.shadow, borderRadius = options.borderRadius, withinAnimationLimit = chart.pointCount < options.animationLimit, allowTraversingTree = options.allowTraversingTree;
         points.forEach(function (point) {
-            var levelDynamic = point.node.levelDynamic, animate = {}, attr = {}, css = {}, groupKey = 'level-group-' + levelDynamic, hasGraphic = !!point.graphic, shouldAnimate = withinAnimationLimit && hasGraphic, shapeArgs = point.shapeArgs;
+            var levelDynamic = point.node.levelDynamic, animatableAttribs = {}, attribs = {}, css = {}, groupKey = 'level-group-' + point.node.level, hasGraphic = !!point.graphic, shouldAnimate = withinAnimationLimit && hasGraphic, shapeArgs = point.shapeArgs;
             // Don't bother with calculate styling if the point is not drawn
             if (point.shouldDraw()) {
                 if (borderRadius) {
-                    attr.r = borderRadius;
+                    attribs.r = borderRadius;
                 }
                 merge(true, // Extend object
                 // Which object to extend
-                shouldAnimate ? animate : attr, 
+                shouldAnimate ? animatableAttribs : attribs, 
                 // Add shapeArgs to animate/attr if graphic exists
                 hasGraphic ? shapeArgs : {}, 
                 // Add style attribs if !styleMode
                 styledMode ?
                     {} :
-                    series.pointAttribs(point, (point.selected && 'select')));
+                    series.pointAttribs(point, point.selected ? 'select' : void 0));
                 // In styled mode apply point.color. Use CSS, otherwise the
                 // fill used in the style sheet will take precedence over
                 // the fill attribute.
@@ -1172,7 +1175,7 @@ seriesType('treemap', 'scatter'
                         .attr({
                         // @todo Set the zIndex based upon the number of
                         // levels, instead of using 1000
-                        zIndex: 1000 - levelDynamic
+                        zIndex: 1000 - (levelDynamic || 0)
                     })
                         .add(series.group);
                     series[groupKey].survive = true;
@@ -1180,8 +1183,8 @@ seriesType('treemap', 'scatter'
             }
             // Draw the point
             point.draw({
-                animatableAttribs: animate,
-                attribs: attr,
+                animatableAttribs: animatableAttribs,
+                attribs: attribs,
                 css: css,
                 group: series[groupKey],
                 renderer: renderer,
@@ -1202,8 +1205,7 @@ seriesType('treemap', 'scatter'
     onClickDrillToNode: function (event) {
         var series = this, point = event.point, drillId = point && point.drillId;
         // If a drill id is returned, add click event and cursor.
-        if (isString(drillId) &&
-            (series.isDrillAllowed ? series.isDrillAllowed(drillId) : true)) {
+        if (isString(drillId)) {
             point.setState(''); // Remove hover
             series.setRootNode(drillId, true, { trigger: 'click' });
         }
@@ -1327,35 +1329,20 @@ seriesType('treemap', 'scatter'
         // Fire setRootNode event.
         fireEvent(series, 'setRootNode', eventArgs, defaultFn);
     },
-    /**
-     * Check if the drill up/down is allowed.
-     *
-     * @private
-     */
-    isDrillAllowed: function (targetNode) {
-        var tree = this.tree, firstChild = tree.children[0];
-        // The sunburst series looks exactly the same on the level ''
-        // and level 1 if there’s only one element on level 1. Disable
-        // drilling up/down when it doesn't perform any visual
-        // difference (#13388).
-        return !(tree.children.length === 1 && ((this.rootNode === '' && targetNode === firstChild.id) ||
-            (this.rootNode === firstChild.id && targetNode === '')));
-    },
     renderTraverseUpButton: function (rootId) {
-        var series = this, nodeMap = series.nodeMap, node = nodeMap[rootId], name = node.name, buttonOptions = series.options.traverseUpButton, backText = pick(buttonOptions.text, name, '< Back'), attr, states;
-        if (rootId === '' ||
-            (series.isDrillAllowed ?
-                !(isString(node.parent) && series.isDrillAllowed(node.parent)) : false)) {
+        var series = this, nodeMap = series.nodeMap, node = nodeMap[rootId], name = node.name, buttonOptions = series.options.traverseUpButton, backText = pick(buttonOptions.text, name, '◁ Back'), attr, states;
+        if (rootId === '' || (series.is('sunburst') &&
+            series.tree.children.length === 1 &&
+            rootId === series.tree.children[0].id)) {
             if (series.drillUpButton) {
-                series.drillUpButton =
-                    series.drillUpButton.destroy();
+                series.drillUpButton = series.drillUpButton.destroy();
             }
         }
         else if (!this.drillUpButton) {
             attr = buttonOptions.theme;
             states = attr && attr.states;
             this.drillUpButton = this.chart.renderer
-                .button(backText, null, null, function () {
+                .button(backText, 0, 0, function () {
                 series.drillUp();
             }, attr, states && states.hover, states && states.select)
                 .addClass('highcharts-drillup-button')
@@ -1429,7 +1416,7 @@ seriesType('treemap', 'scatter'
      * @function Highcharts.Point#isValid
      */
     isValid: function () {
-        return this.id || isNumber(this.value);
+        return Boolean(this.id || isNumber(this.value));
     },
     setState: function (state) {
         Point.prototype.setState.call(this, state);
@@ -1441,8 +1428,7 @@ seriesType('treemap', 'scatter'
         }
     },
     shouldDraw: function () {
-        var point = this;
-        return isNumber(point.plotY) && point.y !== null;
+        return isNumber(this.plotY) && this.y !== null;
     }
 });
 addEvent(H.Series, 'afterBindAxes', function () {

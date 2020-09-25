@@ -4,7 +4,10 @@
  *
  * */
 
+import type CSSObject from '../Core/Renderer/CSSObject';
 import type Point from '../Core/Series/Point';
+import type ShadowOptionsObject from '../Core/Renderer/ShadowOptionsObject';
+import type SVGAttributes from '../Core/Renderer/SVG/SVGAttributes';
 
 /**
  * Internal types

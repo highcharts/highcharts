@@ -9,14 +9,12 @@
  *  !!!!!!! SOURCE GETS TRANSPILED BY TYPESCRIPT. EDIT TS FILE ONLY. !!!!!!!
  *
  * */
-'use strict';
-import H from '../Core/Globals.js';
+import Axis from '../Core/Axis/Axis.js';
 import O from '../Core/Options.js';
 var dateFormat = O.dateFormat;
 import U from '../Core/Utilities.js';
 var addEvent = U.addEvent, merge = U.merge, wrap = U.wrap;
 import PlotLineOrBand from '../Core/Axis/PlotLineOrBand.js';
-var Axis = H.Axis;
 var defaultConfig = {
     /**
      * Show an indicator on the axis for the current date and time. Can be a
@@ -48,7 +46,7 @@ var defaultConfig = {
          * [dateFormat](/class-reference/Highcharts#dateFormat) function.
          *
          * @type      {string}
-         * @default   '%a, %b %d %Y, %H:%M'
+         * @default   %a, %b %d %Y, %H:%M
          * @product   gantt
          * @apioption xAxis.currentDateIndicator.label.format
          */

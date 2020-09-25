@@ -10,7 +10,7 @@
  *
  * */
 
-'use strict';
+import BaseSeries from '../Core/Series/Series.js';
 
 /**
  * Internal types
@@ -34,9 +34,6 @@ declare global {
                 i: number
             ): void;
         }
-        interface SeriesTypesDictionary {
-            streamgraph: typeof StreamgraphSeries;
-        }
         interface StreamgraphPointOptions extends AreaSplinePointOptions {
         }
         interface StreamgraphSeriesOptions extends AreaSplineSeriesOptions {
@@ -46,11 +43,16 @@ declare global {
     }
 }
 
-import '../Series/AreaSeries.js';
-import U from '../Core/Utilities.js';
-const {
-    seriesType
-} = U;
+/**
+ * @private
+ */
+declare module '../Core/Series/Types' {
+    interface SeriesTypeRegistry {
+        streamgraph: typeof Highcharts.StreamgraphSeries;
+    }
+}
+
+import '../Series/AreaSplineSeries.js';
 
 /**
  * @private
@@ -59,7 +61,7 @@ const {
  *
  * @augments Highcharts.Series
  */
-seriesType<Highcharts.StreamgraphSeries>('streamgraph', 'areaspline'
+BaseSeries.seriesType<typeof Highcharts.StreamgraphSeries>('streamgraph', 'areaspline'
 
     /**
      * A streamgraph is a type of stacked area graph which is displaced around a
@@ -75,6 +77,26 @@ seriesType<Highcharts.StreamgraphSeries>('streamgraph', 'areaspline'
      * @optionparent plotOptions.streamgraph
      */
     , {
+        /**
+         * @see [fillColor](#plotOptions.streamgraph.fillColor)
+         * @see [fillOpacity](#plotOptions.streamgraph.fillOpacity)
+         *
+         * @apioption plotOptions.streamgraph.color
+         */
+
+        /**
+         * @see [color](#plotOptions.streamgraph.color)
+         * @see [fillOpacity](#plotOptions.streamgraph.fillOpacity)
+         *
+         * @apioption plotOptions.streamgraph.fillColor
+         */
+
+        /**
+         * @see [color](#plotOptions.streamgraph.color)
+         * @see [fillColor](#plotOptions.streamgraph.fillColor)
+         *
+         * @apioption plotOptions.streamgraph.fillOpacity
+         */
         fillOpacity: 1,
         lineWidth: 0,
         marker: {
@@ -114,6 +136,13 @@ seriesType<Highcharts.StreamgraphSeries>('streamgraph', 'areaspline'
  * @product   highcharts highstock
  * @requires  modules/streamgraph
  * @apioption series.streamgraph
+ */
+
+/**
+ * @see [fillColor](#series.streamgraph.fillColor)
+ * @see [fillOpacity](#series.streamgraph.fillOpacity)
+ *
+ * @apioption series.streamgraph.color
  */
 
 /**
@@ -174,6 +203,22 @@ seriesType<Highcharts.StreamgraphSeries>('streamgraph', 'areaspline'
  * @extends   series.line.data
  * @product   highcharts highstock
  * @apioption series.streamgraph.data
+ */
+
+/**
+ * @see [color](#series.streamgraph.color)
+ * @see [fillOpacity](#series.streamgraph.fillOpacity)
+ *
+ * @apioption series.streamgraph.fillColor
+ */
+
+/**
+ * @see [color](#series.streamgraph.color)
+ * @see [fillColor](#series.streamgraph.fillColor)
+ *
+ * @type      {number}
+ * @default   1
+ * @apioption series.streamgraph.fillOpacity
  */
 
 ''; // adds doclets above to transpiled file

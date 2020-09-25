@@ -8,10 +8,14 @@
  *
  * */
 
-'use strict';
-
+import type ColorType from '../Core/Color/ColorType';
+import type SVGAttributes from '../Core/Renderer/SVG/SVGAttributes';
 import type SVGPath from '../Core/Renderer/SVG/SVGPath';
-import H from '../Core/Globals.js';
+import BaseSeries from '../Core/Series/Series.js';
+const {
+    seriesTypes
+} = BaseSeries;
+import Point from '../Core/Series/Point.js';
 
 /**
  * Internal types
@@ -29,9 +33,6 @@ declare global {
         }
         interface Series {
             pointArrayMap?: OHLCSeries['pointArrayMap'];
-        }
-        interface SeriesTypesDictionary {
-            ohlc: typeof OHLCSeries;
         }
         class OHLCPoint extends ColumnPoint {
             public close: number;
@@ -60,13 +61,16 @@ declare global {
     }
 }
 
-import Point from '../Core/Series/Point.js';
-import U from '../Core/Utilities.js';
-const {
-    seriesType
-} = U;
+/**
+ * @private
+ */
+declare module '../Core/Series/Types' {
+    interface SeriesTypeRegistry {
+        ohlc: typeof Highcharts.OHLCSeries;
+    }
+}
 
-var seriesTypes = H.seriesTypes;
+import './ColumnSeries.js';
 
 /**
  * The ohlc series type.
@@ -77,7 +81,7 @@ var seriesTypes = H.seriesTypes;
  *
  * @augments Highcharts.Series
  */
-seriesType<Highcharts.OHLCSeries>(
+BaseSeries.seriesType<typeof Highcharts.OHLCSeries>(
     'ohlc',
     'column'
 
@@ -233,7 +237,7 @@ seriesType<Highcharts.OHLCSeries>(
             this: Highcharts.OHLCSeries,
             point: Highcharts.OHLCPoint,
             state: string
-        ): Highcharts.SVGAttributes {
+        ): SVGAttributes {
             var attribs = seriesTypes.column.prototype.pointAttribs.call(
                     this,
                     point,

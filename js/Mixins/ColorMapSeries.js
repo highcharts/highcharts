@@ -7,7 +7,6 @@
  *  !!!!!!! SOURCE GETS TRANSPILED BY TYPESCRIPT. EDIT TS FILE ONLY. !!!!!!!
  *
  * */
-'use strict';
 import H from '../Core/Globals.js';
 import Point from '../Core/Series/Point.js';
 import U from '../Core/Utilities.js';
@@ -19,7 +18,7 @@ var noop = H.noop, seriesTypes = H.seriesTypes;
  * @private
  * @mixin Highcharts.colorMapPointMixin
  */
-H.colorMapPointMixin = {
+var colorMapPointMixin = {
     dataLabelOnNull: true,
     /* eslint-disable valid-jsdoc */
     /**
@@ -55,7 +54,7 @@ H.colorMapPointMixin = {
  * @private
  * @mixin Highcharts.colorMapSeriesMixin
  */
-H.colorMapSeriesMixin = {
+var colorMapSeriesMixin = {
     pointArrayMap: ['value'],
     axisTypes: ['xAxis', 'yAxis', 'colorAxis'],
     trackerGroups: ['group', 'markerGroup', 'dataLabelsGroup'],
@@ -79,3 +78,8 @@ H.colorMapSeriesMixin = {
         return ret;
     }
 };
+var exports = {
+    colorMapPointMixin: colorMapPointMixin,
+    colorMapSeriesMixin: colorMapSeriesMixin
+};
+export default exports;

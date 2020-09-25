@@ -12,8 +12,44 @@
  *
  * */
 
-'use strict';
+import type ColorString from '../Core/Color/ColorString';
+import type ColorType from '../Core/Color/ColorType';
+import type SVGElement from '../Core/Renderer/SVG/SVGElement';
+import BaseSeries from '../Core/Series/Series.js';
+const {
+    seriesTypes
+} = BaseSeries;
+import CenteredSeriesMixin from '../Mixins/CenteredSeries.js';
+const {
+    getCenter,
+    getStartAndEndRadians
+} = CenteredSeriesMixin;
+import DrawPointMixin from '../Mixins/DrawPoint.js';
+const {
+    drawPoint
+} = DrawPointMixin;
 import H from '../Core/Globals.js';
+const {
+    noop
+} = H;
+import TreeSeriesMixin from '../Mixins/TreeSeries.js';
+const {
+    getColor,
+    getLevelOptions,
+    setTreeValues,
+    updateRootId
+} = TreeSeriesMixin;
+import U from '../Core/Utilities.js';
+const {
+    correctFloat,
+    error,
+    extend,
+    isNumber,
+    isObject,
+    isString,
+    merge,
+    splat
+} = U;
 
 /**
  * Internal types
@@ -62,9 +98,6 @@ declare global {
                 dataLabel: SVGElement,
                 labelOptions: DataLabelsOptions
             ): void;
-        }
-        interface SeriesTypesDictionary {
-            sunburst: typeof SunburstSeries;
         }
         interface SunburstAnimationParams {
             center: PositionObject;
@@ -170,41 +203,20 @@ declare global {
     }
 }
 
-import U from '../Core/Utilities.js';
-const {
-    correctFloat,
-    error,
-    extend,
-    isNumber,
-    isObject,
-    isString,
-    merge,
-    seriesType,
-    splat
-} = U;
+declare module '../Core/Series/Types' {
+    interface SeriesTypeRegistry {
+        sunburst: typeof Highcharts.SunburstSeries;
+    }
+}
 
-import centeredSeriesMixin from '../Mixins/CenteredSeries.js';
-import drawPointModule from '../Mixins/DrawPoint.js';
-const { drawPoint } = drawPointModule;
-import mixinTreeSeries from '../Mixins/TreeSeries.js';
-const {
-    getColor,
-    getLevelOptions,
-    setTreeValues,
-    updateRootId
-} = mixinTreeSeries;
-import '../Core/Series/Series.js';
+import '../Series/LineSeries.js';
 import './TreemapSeries.js';
 
 var Series = H.Series,
-    getCenter = centeredSeriesMixin.getCenter,
-    getStartAndEndRadians = centeredSeriesMixin.getStartAndEndRadians,
     isBoolean = function (x: unknown): x is boolean {
         return typeof x === 'boolean';
     },
-    noop = H.noop,
-    rad2deg = 180 / Math.PI,
-    seriesTypes = H.seriesTypes;
+    rad2deg = 180 / Math.PI;
 
 // TODO introduce step, which should default to 1.
 var range = function range(from: unknown, to: unknown): Array<number> {
@@ -945,7 +957,7 @@ var sunburstSeries = {
         var series = this,
             mapOptionsToLevel = series.mapOptionsToLevel,
             shapeRoot = series.shapeRoot,
-            group: Highcharts.SVGElement = series.group as any,
+            group: SVGElement = series.group as any,
             hasRendered = series.hasRendered,
             idRoot = series.rootNode,
             idPreviousRoot = series.idPreviousRoot,
@@ -1202,7 +1214,7 @@ var sunburstSeries = {
         }) as any;
         // NOTE consider doing calculateLevelSizes in a callback to
         // getLevelOptions
-        mapOptionsToLevel = calculateLevelSizes(mapOptionsToLevel, {
+        mapOptionsToLevel = calculateLevelSizes(mapOptionsToLevel as any, {
             diffRadius,
             from,
             to
@@ -1246,7 +1258,7 @@ var sunburstSeries = {
     alignDataLabel: function (
         this: Highcharts.SunburstSeries,
         point: Highcharts.SunburstPoint,
-        dataLabel: Highcharts.SVGElement,
+        dataLabel: SVGElement,
         labelOptions: Highcharts.DataLabelsOptions): void {
 
         if (labelOptions.textPath && labelOptions.textPath.enabled) {
@@ -1266,7 +1278,7 @@ var sunburstSeries = {
             plotLeft = chart.plotLeft,
             plotTop = chart.plotTop,
             attribs,
-            group: Highcharts.SVGElement = this.group as any;
+            group: SVGElement = this.group as any;
 
         // Initialize the animation
         if (init) {
@@ -1314,8 +1326,8 @@ var sunburstPoint = {
     },
     getDataLabelPath: function (
         this: Highcharts.SunburstPoint,
-        label: Highcharts.SVGElement
-    ): Highcharts.SVGElement {
+        label: SVGElement
+    ): SVGElement {
         var renderer = this.series.chart.renderer,
             shapeArgs = this.shapeExisting,
             start = shapeArgs.start,
@@ -1429,6 +1441,8 @@ var sunburstPoint = {
   * @apioption series.sunburst.data.sliced
   */
 
+''; // detach doclets above
+
 /**
  * @private
  * @class
@@ -1436,7 +1450,7 @@ var sunburstPoint = {
  *
  * @augments Highcharts.Series
  */
-seriesType<Highcharts.SunburstSeries>(
+BaseSeries.seriesType<typeof Highcharts.SunburstSeries>(
     'sunburst',
     'treemap',
     sunburstOptions,

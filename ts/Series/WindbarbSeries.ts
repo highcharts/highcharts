@@ -13,8 +13,30 @@
 'use strict';
 
 import type Chart from '../Core/Chart/Chart';
+import type SVGAttributes from '../Core/Renderer/SVG/SVGAttributes';
 import type SVGPath from '../Core/Renderer/SVG/SVGPath';
+import A from '../Core/Animation/AnimationUtilities.js';
+const { animObject } = A;
+import BaseSeries from '../Core/Series/Series.js';
 import H from '../Core/Globals.js';
+const {
+    noop
+} = H;
+import OnSeriesMixin from '../Mixins/OnSeries.js';
+import U from '../Core/Utilities.js';
+const {
+    isNumber,
+    pick
+} = U;
+
+/**
+ * @private
+ */
+declare module '../Core/Series/Types' {
+    interface SeriesTypeRegistry {
+        windbarb: typeof Highcharts.WindbarbSeries;
+    }
+}
 
 /**
  * Internal types
@@ -63,9 +85,6 @@ declare global {
                 directions: Array<number>
             ): Array<number>;
         }
-        interface SeriesTypesDictionary {
-            windbarb: typeof WindbarbSeries;
-        }
         interface WindbarbPointOptions extends ColumnPointOptions {
             direction?: number;
             value?: number;
@@ -80,18 +99,7 @@ declare global {
     }
 }
 
-import U from '../Core/Utilities.js';
-const {
-    animObject,
-    isNumber,
-    pick,
-    seriesType
-} = U;
-
-import onSeriesMixin from '../Mixins/OnSeries.js';
 import './ColumnSeries.js';
-
-var noop = H.noop;
 
 // eslint-disable-next-line valid-jsdoc
 /**
@@ -142,7 +150,7 @@ registerApproximation();
  *
  * @augments Highcharts.Series
  */
-seriesType<Highcharts.WindbarbSeries>('windbarb', 'column'
+BaseSeries.seriesType<typeof Highcharts.WindbarbSeries>('windbarb', 'column'
 
     /**
      * Wind barbs are a convenient way to represent wind speed and direction in
@@ -274,7 +282,7 @@ seriesType<Highcharts.WindbarbSeries>('windbarb', 'column'
             this: Highcharts.WindbarbSeries,
             point: Highcharts.WindbarbPoint,
             state?: string
-        ): Highcharts.SVGAttributes {
+        ): SVGAttributes {
             var options = this.options,
                 stroke = point.color || this.color,
                 strokeWidth = this.options.lineWidth;
@@ -294,13 +302,13 @@ seriesType<Highcharts.WindbarbSeries>('windbarb', 'column'
         markerAttribs: function (): undefined {
             return;
         } as any,
-        getPlotBox: onSeriesMixin.getPlotBox,
+        getPlotBox: OnSeriesMixin.getPlotBox,
         // Create a single wind arrow. It is later rotated around the zero
         // centerpoint.
         windArrow: function (
             this: Highcharts.WindbarbSeries,
             point: Highcharts.WindbarbPoint
-        ): (Highcharts.SVGElement|SVGPath) {
+        ): (SVGElement|SVGPath) {
             var knots = point.value * 1.943844,
                 level = point.beaufortLevel,
                 path: SVGPath,
@@ -379,7 +387,7 @@ seriesType<Highcharts.WindbarbSeries>('windbarb', 'column'
             var beaufortFloor = this.beaufortFloor,
                 beaufortName = this.beaufortName;
 
-            onSeriesMixin.translate.call(this);
+            OnSeriesMixin.translate.call(this);
 
             this.points.forEach(function (
                 point: Highcharts.WindbarbPoint

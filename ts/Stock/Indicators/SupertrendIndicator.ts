@@ -6,10 +6,22 @@
  *
  * */
 
-'use strict';
-
+import type ColorType from '../../Core/Color/ColorType';
+import type CSSObject from '../../Core/Renderer/CSSObject';
 import type Point from '../../Core/Series/Point';
-import H from '../../Core/Globals.js';
+import type SVGAttributes from '../../Core/Renderer/SVG/SVGAttributes';
+import type SVGElement from '../../Core/Renderer/SVG/SVGElement';
+import BaseSeries from '../../Core/Series/Series.js';
+const {
+    seriesTypes
+} = BaseSeries;
+import U from '../../Core/Utilities.js';
+const {
+    correctFloat,
+    isArray,
+    merge,
+    objectEach
+} = U;
 
 /**
  * Internal types
@@ -45,7 +57,7 @@ declare global {
         }
 
         interface SupertrendLineObject {
-            [index: string]: (Dictionary<SVGAttributes>|undefined);
+            [index: string]: (Record<string, SVGAttributes>|undefined);
         }
 
         class SupertrendIndicator extends SMAIndicator {
@@ -76,30 +88,25 @@ declare global {
         }
 
         interface SupertrendIndicatorOptions extends SMAIndicatorOptions {
-            changeTrendLine?: Dictionary<CSSObject>;
+            changeTrendLine?: Record<string, CSSObject>;
             fallingTrendColor?: ColorType;
             params?: SupertrendIndicatorParamsOptions;
             risingTrendColor?: ColorType;
         }
-
-        interface SeriesTypesDictionary {
-            supertrend: typeof SupertrendIndicator;
-        }
     }
 }
 
-import U from '../../Core/Utilities.js';
-const {
-    correctFloat,
-    merge,
-    seriesType
-} = U;
+declare module '../../Core/Series/Types' {
+    interface SeriesTypeRegistry {
+        supertrend: typeof Highcharts.SupertrendIndicator;
+    }
+}
 
-var isArray = U.isArray,
-    objectEach = U.objectEach;
+import './ATRIndicator.js';
+import './SMAIndicator.js';
 
-var ATR = H.seriesTypes.atr,
-    SMA = H.seriesTypes.sma;
+var ATR = seriesTypes.atr,
+    SMA = seriesTypes.sma;
 
 /* eslint-disable require-jsdoc */
 // Utils:
@@ -126,7 +133,7 @@ function createPointObj(
  *
  * @augments Highcharts.Series
  */
-seriesType<Highcharts.SupertrendIndicator>(
+BaseSeries.seriesType<typeof Highcharts.SupertrendIndicator>(
     'supertrend',
     'sma',
     /**
@@ -257,7 +264,7 @@ seriesType<Highcharts.SupertrendIndicator>(
                 )> = (mainSeries ? mainSeries.points : []),
                 indicPoints: Array<Highcharts.SupertrendIndicatorPoint> =
                 indicator.points,
-                indicPath: (Highcharts.SVGElement|undefined) = indicator.graph,
+                indicPath: (SVGElement|undefined) = indicator.graph,
                 indicPointsLen: number = indicPoints.length,
 
                 // Points offset between lines
@@ -320,7 +327,7 @@ seriesType<Highcharts.SupertrendIndicator>(
                 prevPrevMainPoint: Highcharts.SupertrendLinkedParentPointObject,
 
                 // Used when particular point color is set
-                pointColor: Highcharts.ColorType,
+                pointColor: ColorType,
 
                 // Temporary points that fill groupedPoitns array
                 newPoint: Highcharts.SupertrendIndicatorPoint,

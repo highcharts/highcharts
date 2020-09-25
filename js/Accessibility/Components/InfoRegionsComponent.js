@@ -9,7 +9,6 @@
  *  !!!!!!! SOURCE GETS TRANSPILED BY TYPESCRIPT. EDIT TS FILE ONLY. !!!!!!!
  *
  * */
-'use strict';
 import H from '../../Core/Globals.js';
 var doc = H.doc;
 import AST from '../../Core/Renderer/HTML/AST.js';
@@ -118,10 +117,6 @@ extend(InfoRegionsComponent.prototype, /** @lends Highcharts.InfoRegionsComponen
             setTimeout(function () {
                 component.focusDataTable();
             }, 300);
-        });
-        this.addEvent(chart, 'afterHideData', function () {
-            var _a;
-            (_a = component.viewDataTableButton) === null || _a === void 0 ? void 0 : _a.setAttribute('aria-expanded', 'false');
         });
         this.announcer = new Announcer(chart, 'assertive');
     },

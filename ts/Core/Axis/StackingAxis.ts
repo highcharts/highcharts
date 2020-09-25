@@ -9,13 +9,15 @@
  * */
 
 import type StackItem from '../../Extensions/Stacking.js';
+import type SVGElement from '../Renderer/SVG/SVGElement';
+import A from '../Animation/AnimationUtilities.js';
+const { getDeferredAnimation } = A;
 import Axis from './Axis.js';
 import U from '../Utilities.js';
 const {
     addEvent,
     destroyObjectProperties,
     fireEvent,
-    getDeferredAnimation,
     objectEach,
     pick
 } = U;
@@ -61,7 +63,7 @@ class StackingAxisAdditions {
     oldStacks: Record<string, Record<string, StackItem>> = {};
     stacks: Record<string, Record<string, StackItem>> = {};
     stacksTouched: number = 0;
-    stackTotalGroup?: Highcharts.SVGElement;
+    stackTotalGroup?: SVGElement;
     usePercentage?: boolean;
 
     /* *

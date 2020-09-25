@@ -10,13 +10,12 @@
  *
  * */
 
-'use strict';
-
-import Highcharts from '../../Core/Globals.js';
+import type { SeriesPlotOptionsType } from '../../Core/Series/Types';
+import H from '../../Core/Globals.js';
 import U from '../../Core/Utilities.js';
 const { setOptions } = U;
 
-Highcharts.theme = {
+H.theme = {
     colors: ['#DDDF0D', '#7798BF', '#55BF3B', '#DF5353', '#aaeeee',
         '#ff0066', '#eeaaee', '#55BF3B', '#DF5353', '#7798BF', '#aaeeee'],
     chart: {
@@ -151,7 +150,7 @@ Highcharts.theme = {
         candlestick: {
             lineColor: 'white'
         }
-    } as Highcharts.PlotOptions,
+    } as SeriesPlotOptionsType,
 
     toolbar: {
         itemStyle: {
@@ -272,4 +271,4 @@ Highcharts.theme = {
 };
 
 // Apply the theme
-setOptions(Highcharts.theme);
+setOptions(H.theme);
