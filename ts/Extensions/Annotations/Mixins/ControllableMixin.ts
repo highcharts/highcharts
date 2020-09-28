@@ -277,7 +277,7 @@ var controllableMixin: Highcharts.AnnotationControllableMixin = {
         return {
             relativePosition: anchor,
             absolutePosition: merge(anchor, {
-                x: anchor.x + plotBox.translateX,
+                x: anchor.x + (point.mock ? plotBox.translateX : chart.plotLeft),
                 y: anchor.y + (point.mock ? plotBox.translateY : chart.plotTop)
             })
         };
