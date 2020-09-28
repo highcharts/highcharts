@@ -20,6 +20,8 @@ import type GradientColor from '../../Core/Color/GradientColor';
 import {
     HTMLDOMElement
 } from '../../Core/Renderer/DOMElementType';
+import type HTMLElement from '../../Core/Renderer/HTML/HTMLElement';
+import type HTMLRenderer from '../../Core/Renderer/HTML/HTMLRenderer';
 import type ShadowOptionsObject from '../../Core/Renderer/ShadowOptionsObject';
 import type SVGPath from '../../Core/Renderer/SVG/SVGPath';
 import Chart from '../../Core/Chart/Chart.js';
@@ -332,10 +334,6 @@ declare global {
         /** @deprecated */
         detachEvent(event: string, pDisp: Function): (number|true);
     }
-    interface HTMLElement {
-        /** @deprecated */
-        currentStyle: ElementCSSInlineStyle;
-    }
     /** @deprecated */
     interface TridentNamespace {
         readonly name: string;
@@ -528,7 +526,7 @@ if (!svg) {
         doc.createElementNS = function (
             ns: string,
             tagName: string
-        ): HTMLElement {
+        ): HTMLDOMElement {
             return doc.createElement(tagName);
         } as any;
     }
@@ -704,9 +702,7 @@ if (!svg) {
          *
          * @function Highcharts.VMLElement#updateTransform
          */
-        updateTransform: SVGElement.prototype.htmlUpdateTransform as (
-            Highcharts.HTMLElement['htmlUpdateTransform']
-        ),
+        updateTransform: SVGElement.prototype.htmlUpdateTransform as HTMLElement['htmlUpdateTransform'],
 
         /**
          * Set the rotation of a span with oldIE's filter
@@ -1782,7 +1778,7 @@ if (!svg) {
          *
          * @param {number} y
          */
-        text: (SVGRenderer.prototype as Highcharts.HTMLRenderer).html,
+        text: (SVGRenderer.prototype as HTMLRenderer).html,
 
         /**
          * Create and return a path element
