@@ -440,6 +440,10 @@ QUnit.test('Positioning labels according to real points for half of the yAxis he
                 top: '50%',
                 height: '50%'
             }],
+            xAxis: [{
+                left: '50%',
+                width: '50%'
+            }],
             series: [{
                 data: [2, 11, 60, {
                     y: 44,
