@@ -17,6 +17,7 @@ import type {
     HTMLDOMElement,
     SVGDOMElement
 } from './Renderer/DOMElementType';
+import type HTMLElement from './Renderer/HTML/HTMLElement';
 import type SVGAttributes from './Renderer/SVG/SVGAttributes';
 import H from './Globals.js';
 type NonArray<T> = T extends Array<unknown> ? never : T;
