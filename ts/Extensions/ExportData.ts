@@ -19,6 +19,9 @@
 import type Point from '../Core/Series/Point';
 import Axis from '../Core/Axis/Axis.js';
 import Chart from '../Core/Chart/Chart.js';
+import DataTable from '../Data/DataTable.js';
+import DataTableRow from '../Data/DataTableRow.js';
+import CSVStore from '../Data/Stores/CSVStore.js';
 import H from '../Core/Globals.js';
 const {
     doc,
@@ -155,6 +158,7 @@ declare global {
 
 
 import DownloadURL from '../Extensions/DownloadURL.js';
+
 const { downloadURL } = DownloadURL;
 
 
@@ -851,52 +855,59 @@ Chart.prototype.getDataRows = function (
  *         CSV representation of the data
  */
 Chart.prototype.getCSV = function (
-    useLocalDecimalPoint?: boolean
+    useLocalDecimalPoint: boolean = false
 ): string {
-    var csv = '',
-        rows = this.getDataRows(),
+    const rows = this.getDataRows(),
         csvOptions: Highcharts.ExportingCsvOptions =
-            (this.options.exporting as any).csv,
-        decimalPoint = pick(
-            csvOptions.decimalPoint,
-            csvOptions.itemDelimiter !== ',' && useLocalDecimalPoint ?
-                (1.1).toLocaleString()[1] :
-                '.'
-        ),
-        // use ';' for direct to Excel
-        itemDelimiter = pick(
-            csvOptions.itemDelimiter,
-            decimalPoint === ',' ? ';' : ','
-        ),
-        // '\n' isn't working with the js csv data extraction
-        lineDelimiter = csvOptions.lineDelimiter;
+            (this.options.exporting as any).csv;
 
     // Transform the rows to CSV
-    rows.forEach(function (row: Array<(number|string)>, i: number): void {
-        var val: (number|string) = '',
-            j = row.length;
 
-        while (j--) {
-            val = row[j];
-            if (typeof val === 'string') {
-                val = '"' + val + '"';
+    const dataStore = new CSVStore(),
+        dataTable = new DataTable(),
+        names: string[] = rows.shift()?.map((name): string => '' + name) || [];
+
+
+    const firstCategoryIndex = names.indexOf('Category'),
+        lastCategoryIndex = names.lastIndexOf('Category');
+
+    // Since dataTables don't support multiple cells with
+    // the same name we have to append a thingie
+    // and set a metadata title (which is the exported name)
+    if (firstCategoryIndex < lastCategoryIndex) {
+        let categoryCount = 1;
+        let i = firstCategoryIndex + 1;
+        while (i <= lastCategoryIndex) {
+            if (names[i] === 'Category') {
+                names[i] += `_${categoryCount}`;
+                dataStore.describeColumn(names[i] + '', {
+                    title: 'Category'
+                });
+                categoryCount++;
             }
-            if (typeof val === 'number') {
-                if (decimalPoint !== '.') {
-                    val = val.toString().replace('.', decimalPoint);
-                }
-            }
-            row[j] = val;
+            i++;
         }
-        // Add the values
-        csv += row.join(itemDelimiter);
+    }
 
-        // Add the line delimiter
-        if (i < rows.length - 1) {
-            csv += lineDelimiter;
+    // Set the column order
+    dataStore.setColumnOrder(names);
+
+    rows.forEach((row): void => {
+        const dataRow = new DataTableRow();
+        if (row.length) {
+            row.forEach((value, cellIndex): void => {
+                dataRow.insertCell(
+                    names[cellIndex],
+                    typeof value === 'string' ? `"${value}"` : value
+                );
+            });
+            dataTable.insertRow(dataRow);
         }
     });
-    return csv;
+
+    dataStore.table = dataTable;
+
+    return dataStore.save({ ...csvOptions as any, useLocalDecimalPoint });
 };
 
 /**
@@ -933,8 +944,8 @@ Chart.prototype.getTable = function (
         subHeaders = rows.shift(),
         // Compare two rows for equality
         isRowEqual = function (
-            row1: Array<(number|string)>,
-            row2: Array<(number|string)>
+            row1: Array<(number | string)>,
+            row2: Array<(number | string)>
         ): boolean {
             var i = row1.length;
 
@@ -952,9 +963,9 @@ Chart.prototype.getTable = function (
         // Get table cell HTML from value
         getCellHTMLFromValue = function (
             tag: string,
-            classes: (string|null),
+            classes: (string | null),
             attrs: string,
-            value: (number|string)
+            value: (number | string)
         ): string {
             var val = pick(value, ''),
                 className = 'text' + (classes ? ' ' + classes : '');
@@ -970,13 +981,13 @@ Chart.prototype.getTable = function (
                 className = 'empty';
             }
             return '<' + tag + (attrs ? ' ' + attrs : '') +
-                    ' class="' + className + '">' +
-                    val + '</' + tag + '>';
+                ' class="' + className + '">' +
+                val + '</' + tag + '>';
         },
         // Get table header markup from row data
         getTableHeaderHTML = function (
-            topheaders: (Array<(number|string)>|null|undefined),
-            subheaders: Array<(number|string)>,
+            topheaders: (Array<(number | string)> | null | undefined),
+            subheaders: Array<(number | string)>,
             rowLength?: number
         ): string {
             var html = '<thead>',
@@ -1086,7 +1097,7 @@ Chart.prototype.getTable = function (
 
     // Transform the rows to HTML
     html += '<tbody>';
-    rows.forEach(function (row: Array<(number|string)>): void {
+    rows.forEach(function (row: Array<(number | string)>): void {
         html += '<tr>';
         for (var j = 0; j < rowLength; j++) {
             // Make first column a header too. Especially important for
@@ -1125,7 +1136,7 @@ Chart.prototype.getTable = function (
 function getBlobFromContent(
     content: string,
     type: string
-): (string|undefined) {
+): (string | undefined) {
     var nav = win.navigator,
         webKit = (
             nav.userAgent.indexOf('WebKit') > -1 &&
@@ -1170,7 +1181,7 @@ Chart.prototype.downloadCSV = function (): void {
 
     downloadURL(
         getBlobFromContent(csv, 'text/csv') ||
-            'data:text/csv,\uFEFF' + encodeURIComponent(csv),
+        'data:text/csv,\uFEFF' + encodeURIComponent(csv),
         this.getFilename() + '.csv'
     );
 };
@@ -1210,7 +1221,7 @@ Chart.prototype.downloadXLS = function (): void {
 
     downloadURL(
         getBlobFromContent(template, 'application/vnd.ms-excel') ||
-            uri + base64(template),
+        uri + base64(template),
         this.getFilename() + '.xls'
     );
 };

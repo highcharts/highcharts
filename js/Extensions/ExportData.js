@@ -13,8 +13,22 @@
 // - Set up systematic tests for all series types, paired with tests of the data
 //   module importing the same data.
 'use strict';
+var __assign = (this && this.__assign) || function () {
+    __assign = Object.assign || function(t) {
+        for (var s, i = 1, n = arguments.length; i < n; i++) {
+            s = arguments[i];
+            for (var p in s) if (Object.prototype.hasOwnProperty.call(s, p))
+                t[p] = s[p];
+        }
+        return t;
+    };
+    return __assign.apply(this, arguments);
+};
 import Axis from '../Core/Axis/Axis.js';
 import Chart from '../Core/Chart/Chart.js';
+import DataTable from '../Data/DataTable.js';
+import DataTableRow from '../Data/DataTableRow.js';
+import CSVStore from '../Data/Stores/CSVStore.js';
 import H from '../Core/Globals.js';
 var doc = H.doc, seriesTypes = H.seriesTypes, win = H.win;
 import U from '../Core/Utilities.js';
@@ -576,36 +590,42 @@ Chart.prototype.getDataRows = function (multiLevelHeaders) {
  *         CSV representation of the data
  */
 Chart.prototype.getCSV = function (useLocalDecimalPoint) {
-    var csv = '', rows = this.getDataRows(), csvOptions = this.options.exporting.csv, decimalPoint = pick(csvOptions.decimalPoint, csvOptions.itemDelimiter !== ',' && useLocalDecimalPoint ?
-        (1.1).toLocaleString()[1] :
-        '.'), 
-    // use ';' for direct to Excel
-    itemDelimiter = pick(csvOptions.itemDelimiter, decimalPoint === ',' ? ';' : ','), 
-    // '\n' isn't working with the js csv data extraction
-    lineDelimiter = csvOptions.lineDelimiter;
+    var _a;
+    if (useLocalDecimalPoint === void 0) { useLocalDecimalPoint = false; }
+    var rows = this.getDataRows(), csvOptions = this.options.exporting.csv;
     // Transform the rows to CSV
-    rows.forEach(function (row, i) {
-        var val = '', j = row.length;
-        while (j--) {
-            val = row[j];
-            if (typeof val === 'string') {
-                val = '"' + val + '"';
+    var dataStore = new CSVStore(), dataTable = new DataTable(), names = ((_a = rows.shift()) === null || _a === void 0 ? void 0 : _a.map(function (name) { return '' + name; })) || [];
+    var firstCategoryIndex = names.indexOf('Category'), lastCategoryIndex = names.lastIndexOf('Category');
+    // Since dataTables don't support multiple cells with
+    // the same name we have to append a thingie
+    // and set a metadata title (which is the exported name)
+    if (firstCategoryIndex < lastCategoryIndex) {
+        var categoryCount = 1;
+        var i = firstCategoryIndex + 1;
+        while (i <= lastCategoryIndex) {
+            if (names[i] === 'Category') {
+                names[i] += "_" + categoryCount;
+                dataStore.describeColumn(names[i] + '', {
+                    title: 'Category'
+                });
+                categoryCount++;
             }
-            if (typeof val === 'number') {
-                if (decimalPoint !== '.') {
-                    val = val.toString().replace('.', decimalPoint);
-                }
-            }
-            row[j] = val;
+            i++;
         }
-        // Add the values
-        csv += row.join(itemDelimiter);
-        // Add the line delimiter
-        if (i < rows.length - 1) {
-            csv += lineDelimiter;
+    }
+    // Set the column order
+    dataStore.setColumnOrder(names);
+    rows.forEach(function (row) {
+        var dataRow = new DataTableRow();
+        if (row.length) {
+            row.forEach(function (value, cellIndex) {
+                dataRow.insertCell(names[cellIndex], typeof value === 'string' ? "\"" + value + "\"" : value);
+            });
+            dataTable.insertRow(dataRow);
         }
     });
-    return csv;
+    dataStore.table = dataTable;
+    return dataStore.save(__assign(__assign({}, csvOptions), { useLocalDecimalPoint: useLocalDecimalPoint }));
 };
 /**
  * Export-data module required. Build a HTML table with the chart's current

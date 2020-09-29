@@ -304,7 +304,10 @@ implements DataEventEmitter<TEventObject>, DataJSON.Class {
         }
 
         return ({
-            columnNames,
+            columnNames: columnNames.map((name): string => {
+                const { title } = this.whatIs(name) || {};
+                return title || name;
+            }),
             columnValues: columnNames.map(function (name): DataTableRow.CellType[] {
                 return columnsRecord[name];
             })

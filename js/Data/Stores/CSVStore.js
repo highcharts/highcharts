@@ -207,19 +207,22 @@ var CSVStore = /** @class */ (function (_super) {
      * A CSV string from the DataTable.
      */
     CSVStore.prototype.getCSVForExport = function (exportOptions) {
-        var csvOptions = exportOptions, decimalPoint = pick(csvOptions.decimalPoint, csvOptions.itemDelimiter !== ',' && csvOptions.useLocalDecimalPoint ?
-            (1.1).toLocaleString()[1] :
-            '.'), 
-        // use ';' for direct to Excel
-        itemDelimiter = pick(csvOptions.itemDelimiter, decimalPoint === ',' ? ';' : ','), 
-        // '\n' isn't working with the js csv data extraction
-        lineDelimiter = csvOptions.lineDelimiter, exportNames = (this.parserOptions.firstRowAsNames !== false);
+        var useLocalDecimalPoint = exportOptions.useLocalDecimalPoint, lineDelimiter = exportOptions.lineDelimiter, exportNames = (this.parserOptions.firstRowAsNames !== false);
+        var decimalPoint = exportOptions.decimalPoint, itemDelimiter = exportOptions.itemDelimiter;
+        if (!decimalPoint) {
+            decimalPoint = itemDelimiter !== ',' && useLocalDecimalPoint ?
+                (1.1).toLocaleString()[1] :
+                '.';
+        }
+        if (!itemDelimiter) {
+            itemDelimiter = decimalPoint === ',' ? ';' : ',';
+        }
         var _a = this.getColumnsForExport(exportOptions.exportIDColumn), columnNames = _a.columnNames, columnValues = _a.columnValues;
         var csvRows = [], columnsCount = columnNames.length;
         var rowArray = [];
         // Add the names as the first row if they should be exported
         if (exportNames) {
-            csvRows.push(columnNames.join(itemDelimiter));
+            csvRows.push(columnNames.map(function (columnName) { return "\"" + columnName + "\""; }).join(itemDelimiter));
         }
         for (var columnIndex = 0; columnIndex < columnsCount; columnIndex++) {
             var columnName = columnNames[columnIndex], column = columnValues[columnIndex], columnLength = column.length;
@@ -234,16 +237,28 @@ var CSVStore = /** @class */ (function (_super) {
                     rowArray[rowIndex] = [];
                 }
                 // Handle datatype
-                if (columnDataType === 'string') {
-                    cellValue = "\"" + cellValue + "\"";
-                }
-                if (columnDataType === 'number') {
+                // if (typeof cellValue === 'string') {
+                //     cellValue = `"${cellValue}"`;
+                // }
+                if (typeof cellValue === 'number') {
                     cellValue = String(cellValue).replace('.', decimalPoint);
                 }
                 rowArray[rowIndex][columnIndex] = cellValue;
                 // On the final column, push the row to the CSV
                 if (columnIndex === columnsCount - 1) {
-                    csvRows.push((rowArray[rowIndex]).join(itemDelimiter));
+                    // Trim repeated undefined values starting at the end
+                    // Currently, we export the first "comma" even if the
+                    // second value is undefined
+                    var i = columnIndex;
+                    while (rowArray[rowIndex].length > 2) {
+                        var cellVal = rowArray[rowIndex][i];
+                        if (cellVal !== void 0) {
+                            break;
+                        }
+                        rowArray[rowIndex].pop();
+                        i--;
+                    }
+                    csvRows.push(rowArray[rowIndex].join(itemDelimiter));
                 }
             }
         }
@@ -268,9 +283,7 @@ var CSVStore = /** @class */ (function (_super) {
                 exportOptions[key] = value;
             }
         });
-        // Merge in provided options
-        merge(true, exportOptions, csvExportOptions);
-        return this.getCSVForExport(exportOptions);
+        return this.getCSVForExport(merge(exportOptions, csvExportOptions));
     };
     /**
      * Converts the store to a class JSON.

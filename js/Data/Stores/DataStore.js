@@ -178,6 +178,7 @@ var DataStore = /** @class */ (function () {
      * An object with the properties `columnNames` and `columnValues`
      */
     DataStore.prototype.getColumnsForExport = function (includeIdColumn) {
+        var _this = this;
         var columnsRecord = this.table.toColumns(), columnNames = (includeIdColumn ?
             Object.keys(columnsRecord) :
             Object.keys(columnsRecord).slice(1));
@@ -194,7 +195,10 @@ var DataStore = /** @class */ (function () {
             });
         }
         return ({
-            columnNames: columnNames,
+            columnNames: columnNames.map(function (name) {
+                var title = (_this.whatIs(name) || {}).title;
+                return title || name;
+            }),
             columnValues: columnNames.map(function (name) {
                 return columnsRecord[name];
             })
