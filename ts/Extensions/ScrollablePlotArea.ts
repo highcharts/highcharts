@@ -400,8 +400,6 @@ Chart.prototype.applyFixed = function (): void {
             .addClass('highcharts-scrollable-mask')
             .add();
 
-        this.moveFixedElements();
-
         addEvent(this, 'afterShowResetZoom', this.moveFixedElements);
         addEvent(this, 'afterLayOutTitles', this.moveFixedElements);
 
@@ -413,6 +411,8 @@ Chart.prototype.applyFixed = function (): void {
             this.chartHeight
         );
     }
+
+    this.moveFixedElements();
 
     // Increase the size of the scrollable renderer and background
     scrollableWidth = this.chartWidth + (this.scrollablePixelsX || 0);
