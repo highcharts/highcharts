@@ -118,7 +118,7 @@ For a [pie chart](https://highcharts.com/docs/chart-and-series-types/pie-chart) 
 3D Scatter
 ----------
 
-In addition to x & y coordinates like in a regular [scatter chart](https://highcharts.com/docs/chart-and-series-types/scatter-chart), the 3D plugin adds an extra z coordinate to each point to place in 3 dimensions. Similar to the normal chart these coordinates can be sent eithe literally or using an array:
+In addition to x & y coordinates like in a regular [scatter chart](https://highcharts.com/docs/chart-and-series-types/scatter-chart), the 3D plugin adds an extra z coordinate to each point to place in 3 dimensions. Similar to the normal chart these coordinates can be sent either literally or using an array:
 
 
     {x: 1, y: 1, z: 1} is the same point as [1,1,1]
