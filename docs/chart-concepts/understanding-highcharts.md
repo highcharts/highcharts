@@ -24,7 +24,7 @@ See [Series](https://highcharts.com/docs/chart-concepts/series) for more infor
 Tooltip
 -------
 
-When hovering over a series or a point on the chart you can get a tooltip that describes the values on that perticular part of the chart.
+When hovering over a series or a point on the chart you can get a tooltip that describes the values on that particular part of the chart.
 
 See [Tooltip](https://highcharts.com/docs/chart-concepts/tooltip) for more information.
 
