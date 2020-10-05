@@ -144,3 +144,13 @@ modiferToUse.on('afterExecute', e => {
 store.on('loadError', e => console.log(e));
 
 store.load();
+
+// demo - data module
+Highcharts.chart('chart5', {
+    title: {
+        text: 'Data module - google spreadsheet'
+    },
+    data: {
+        googleSpreadsheetKey: '0AoIaUO7wH1HwdENPcGVEVkxfUDJkMmFBcXMzOVVPdHc'
+    }
+});
