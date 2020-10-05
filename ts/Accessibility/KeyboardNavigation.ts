@@ -165,11 +165,15 @@ KeyboardNavigation.prototype = {
         ep.addEvent(this.tabindexContainer, 'focus',
             (e: FocusEvent): void => this.onFocus(e));
 
-        ep.addEvent(doc, 'mouseup', (): void => this.onMouseUp());
+        ['mouseup', 'touchend'].forEach((eventName): Function =>
+            ep.addEvent(doc, eventName, (): void => this.onMouseUp())
+        );
 
-        ep.addEvent(chart.renderTo, 'mousedown', (): void => {
-            this.isClickingChart = true;
-        });
+        ['mousedown', 'touchstart'].forEach((eventName): Function =>
+            ep.addEvent(chart.renderTo, eventName, (): void => {
+                this.isClickingChart = true;
+            })
+        );
 
         ep.addEvent(chart.renderTo, 'mouseover', (): void => {
             this.pointerIsOverChart = true;
