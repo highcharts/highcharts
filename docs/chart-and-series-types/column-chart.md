@@ -4,8 +4,7 @@ Column chart
 Column charts display data as vertical bars. A feature of column charts allows for different data to be compared alongside one another.
 It is similar to bar charts, the difference being that bar charts have a horizontal representation of the data.
 
-
-![column.png](column.png)
+<iframe style="width: 100%; height: 470px; border: none;" src="https://www.highcharts.com/samples/embed/highcharts/demo/column-basic" allow="fullscreen"></iframe>
 
 The column chart has the same options as a [series](https://highcharts.com/docs/chart-concepts/series). For an overview of the area chart options see the [API reference](https://api.highcharts.com/highcharts/plotOptions.column).
 
@@ -31,4 +30,4 @@ Stacked Column chart
 --------------------
 An essential feature of column charts is to represent data as stacked columns.
 
-<iframe style="width: 100%; height: 432px; border: none;" src="https://www.highcharts.com/samples/embed/highcharts/demo/column-stacked" allow="fullscreen"></iframe>
+<iframe style="width: 100%; height: 470px; border: none;" src="https://www.highcharts.com/samples/embed/highcharts/demo/column-stacked" allow="fullscreen"></iframe>
