@@ -76,11 +76,11 @@ Technically Highcharts Stock is implemented as a set of plugins for Highcharts. 
 
 Examples:
 
-*   [Using flags in Highcharts](https://jsfiddle.net/gh/get/library/pure/highcharts/highcharts/tree/master/samples/stock/highcharts-features/flags/)
+*   [Using flags in Highcharts](https://jsfiddle.net/gh/get/library/pure/highcharts/highcharts/tree/master/samples/stock/series-flags/in-highcharts/)
 
-*   [Enabling a scrollbar in Highcharts](https://jsfiddle.net/gh/get/library/pure/highcharts/highcharts/tree/master/samples/stock/highcharts-features/scrollbar/)
+*   [Enabling a scrollbar in Highcharts](https://jsfiddle.net/gh/get/library/pure/highcharts/highcharts/tree/master/samples/stock/scrollbar/in-highcharts/)
 
-*   [Gap size in Highcharts](https://jsfiddle.net/gh/get/library/pure/highcharts/highcharts/tree/master/samples/stock/highcharts-features/gap-size/)
+*   [Gap size in Highcharts](https://jsfiddle.net/gh/get/library/pure/highcharts/highcharts/tree/master/samples/stock/plotoptions/gapsize-in-highcharts/)
 
 * * *
 
