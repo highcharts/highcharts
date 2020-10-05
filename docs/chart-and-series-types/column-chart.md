@@ -6,7 +6,7 @@ It is similar to bar charts, the difference being that bar charts have a horizon
 
 <iframe style="width: 100%; height: 470px; border: none;" src="https://www.highcharts.com/samples/embed/highcharts/demo/column-basic" allow="fullscreen"></iframe>
 
-The column chart has the same options as a [series](https://highcharts.com/docs/chart-concepts/series). For an overview of the area chart options see the [API reference](https://api.highcharts.com/highcharts/plotOptions.column).
+The column chart has the same options as a [series](https://highcharts.com/docs/chart-concepts/series). For an overview of the column chart options see the [API reference](https://api.highcharts.com/highcharts/plotOptions.column).
 
 Histogram
 ---------
