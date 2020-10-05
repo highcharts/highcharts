@@ -28,6 +28,6 @@ Note that borderWidth and shadows are also turned off in the example so the colu
 
 Stacked Column chart
 --------------------
-An essential feature of column charts is to represent data as stacked columns.
+An essential feature of column charts is to represent data as stacked columns. Read more about [stacking charts](https://www.highcharts.com/docs/advanced-chart-features/stacking-charts).
 
 <iframe style="width: 100%; height: 470px; border: none;" src="https://www.highcharts.com/samples/embed/highcharts/demo/column-stacked" allow="fullscreen"></iframe>
