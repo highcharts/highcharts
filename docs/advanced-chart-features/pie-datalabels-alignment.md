@@ -67,7 +67,7 @@ Specifies the method that is used to generate the connector path. Highcharts pro
 
 **crookedLine**
 
-This option can be used with crookDistance parameter. It defines how far from the vertical plot edge the connector path should be crooked. Using `crookedLine` has the most sense (in most of the cases) when `alignTo` is set.
+This option can be used with the `crookDistance` parameter. It defines how far from the vertical plot edge the connector path should be crooked. Using `crookedLine` makes the most sense (in most cases) when `alignTo` is set.
 
     
     dataLabels: {
