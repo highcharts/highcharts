@@ -206,7 +206,7 @@ var HTMLTableStore = /** @class */ (function (_super) {
                 }
                 html += '</tr>';
             }
-            if (!subheaders.length && !useMultiLevelHeaders) {
+            if (!subheaders.length) {
                 subheaders = topheaders;
             }
             if (subheaders.length) {
@@ -222,7 +222,7 @@ var HTMLTableStore = /** @class */ (function (_super) {
             return html;
         };
         var getCellHTMLFromValue = function (tag, classes, attrs, value) {
-            var val = value || '', className = 'text' + (classes ? ' ' + classes : '');
+            var val = value, className = 'text' + (classes ? ' ' + classes : '');
             // Convert to string if number
             if (typeof val === 'number') {
                 val = val.toString();
@@ -232,6 +232,7 @@ var HTMLTableStore = /** @class */ (function (_super) {
                 className = 'number';
             }
             else if (!value) {
+                val = '';
                 className = 'empty';
             }
             return '<' + tag + (attrs ? ' ' + attrs : '') +
@@ -286,16 +287,17 @@ var HTMLTableStore = /** @class */ (function (_super) {
                 // if(columnDataType && typeof cellValue !== columnDataType) {
                 //     do something?
                 // }
-                if (typeof cellValue !== 'string' ||
-                    typeof cellValue !== 'number') {
+                if (!(typeof cellValue === 'string' ||
+                    typeof cellValue === 'number' ||
+                    typeof cellValue === 'undefined')) {
                     cellValue = (cellValue || '').toString();
                 }
-                rowArray[rowIndex][columnIndex] = getCellHTMLFromValue('td', null, '', cellValue);
+                rowArray[rowIndex][columnIndex] = getCellHTMLFromValue(columnIndex ? 'td' : 'th', null, columnIndex ? '' : 'scope="row"', cellValue);
                 // On the final column, push the row to the array
                 if (columnIndex === columnsCount - 1) {
-                    htmlRows.push('<tr>\n' +
-                        rowArray[rowIndex].join('\n') +
-                        '\n</tr>');
+                    htmlRows.push('<tr>' +
+                        rowArray[rowIndex].join('') +
+                        '</tr>');
                 }
             }
         }
@@ -308,13 +310,13 @@ var HTMLTableStore = /** @class */ (function (_super) {
                 options.tableCaption +
                 '</caption>';
         }
-        return ('<table>\n' +
+        return ('<table>' +
             caption +
-            tableHead + '\n' +
-            '<tbody>\n' +
-            htmlRows.join('\n') +
+            tableHead +
+            '<tbody>' +
+            htmlRows.join('') +
             '</tbody>' +
-            '\n</table>');
+            '</table>');
     };
     /**
      * Exports the datastore as an HTML string, using the options
@@ -339,8 +341,7 @@ var HTMLTableStore = /** @class */ (function (_super) {
             }
         });
         // Merge in provided options
-        merge(true, exportOptions, htmlExportOptions);
-        return this.getHTMLTableForExport(exportOptions);
+        return this.getHTMLTableForExport(merge(exportOptions, htmlExportOptions));
     };
     HTMLTableStore.prototype.toJSON = function () {
         var store = this, json = {

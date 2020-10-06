@@ -300,7 +300,7 @@ class HTMLTableStore extends DataStore<HTMLTableStore.EventObjects> implements D
                 html += '</tr>';
             }
 
-            if (!subheaders.length && !useMultiLevelHeaders) {
+            if (!subheaders.length) {
                 subheaders = topheaders;
             }
 
@@ -324,9 +324,9 @@ class HTMLTableStore extends DataStore<HTMLTableStore.EventObjects> implements D
             tag: string,
             classes: (string | null),
             attrs: string,
-            value: (number | string)
+            value: (number | string | undefined)
         ): string {
-            let val = value || '',
+            let val = value,
                 className = 'text' + (classes ? ' ' + classes : '');
 
             // Convert to string if number
@@ -337,6 +337,7 @@ class HTMLTableStore extends DataStore<HTMLTableStore.EventObjects> implements D
                 }
                 className = 'number';
             } else if (!value) {
+                val = '';
                 className = 'empty';
             }
             return '<' + tag + (attrs ? ' ' + attrs : '') +
@@ -415,24 +416,27 @@ class HTMLTableStore extends DataStore<HTMLTableStore.EventObjects> implements D
                 //     do something?
                 // }
                 if (
-                    typeof cellValue !== 'string' ||
-                    typeof cellValue !== 'number'
+                    !(
+                        typeof cellValue === 'string' ||
+                        typeof cellValue === 'number' ||
+                        typeof cellValue === 'undefined'
+                    )
                 ) {
                     cellValue = (cellValue || '').toString();
                 }
 
                 rowArray[rowIndex][columnIndex] = getCellHTMLFromValue(
-                    'td',
+                    columnIndex ? 'td' : 'th',
                     null,
-                    '',
+                    columnIndex ? '' : 'scope="row"',
                     cellValue
                 );
 
                 // On the final column, push the row to the array
                 if (columnIndex === columnsCount - 1) {
-                    htmlRows.push('<tr>\n' +
-                        rowArray[rowIndex].join('\n') +
-                        '\n</tr>');
+                    htmlRows.push('<tr>' +
+                        rowArray[rowIndex].join('') +
+                        '</tr>');
                 }
             }
         }
@@ -449,13 +453,13 @@ class HTMLTableStore extends DataStore<HTMLTableStore.EventObjects> implements D
         }
 
         return (
-            '<table>\n' +
+            '<table>' +
             caption +
-            tableHead + '\n' +
-            '<tbody>\n' +
-            htmlRows.join('\n') +
+            tableHead +
+            '<tbody>' +
+            htmlRows.join('') +
             '</tbody>' +
-            '\n</table>'
+            '</table>'
         );
     }
 
@@ -484,9 +488,8 @@ class HTMLTableStore extends DataStore<HTMLTableStore.EventObjects> implements D
         });
 
         // Merge in provided options
-        merge(true, exportOptions, htmlExportOptions);
 
-        return this.getHTMLTableForExport(exportOptions);
+        return this.getHTMLTableForExport(merge(exportOptions, htmlExportOptions));
     }
 
     public toJSON(): HTMLTableStore.ClassJSON {
