@@ -5,10 +5,10 @@ Since version 2.3, Highcharts is built in a modular way with extensions in mind.
 
 *   Major chart concepts correspond to JavaScript prototypes or "classes" which are exposed on the Highcharts namespace and can easily be modified. Examples are `Highcharts.Series`, `Highcharts.Tooltip`, `Highcharts.Chart`, `Highcharts.Axis`, `Highcharts.Legend` etc. Check [full list](https://api.highcharts.com/class-reference/classes.list) of classes.
 *   Constructor logic is consequently kept in a method, `init`, to allow overriding the initiation.
-*   Events can be added to the instance through framework event binding. If your framework is jQuery, you can for example run  
+*   Events can be added to the instance through framework event binding. If your framework is jQuery, you can for example run:
     `$(chart).bind('load', someFunction);`
 
-    or use Highcharts build-in method:
+    Or use the Highcharts built-in method:
 
     `Highcharts.addEvent(chart, 'load', someFunction);`
 *   Some, but not all, prototypes and properties are listed at [api.highcharts.com](https://api.highcharts.com/class-reference/classes.list) under Members and Methods. Some prototypes and properties are not listed, which means they may change in future versions as we optimize and adapt the library. We do not discourage using these members, but warn that your plugin should be tested with future versions of Highcharts. These members can be identified by inspecting the Highcharts namespace as well as generated chart objects in developer tools, and by studying the source code of `highcharts.src.js`.
@@ -29,7 +29,7 @@ Highcharts plugins should be wrapped in an anonymous self-executing function in
 Initializing an extension when the chart initializes
 ----------------------------------------------------
 
-Events can be added to both a class and an instance. In order to add a general listener to initialize the extension on every chart, a event can be added to the `Chart` class.
+Events can be added to both a class and an instance. In order to add a general listener to initialize the extension on every chart, an event can be added to the `Chart` class.
 
 ```js
 H.addEvent(H.Chart, 'load', function(e) {
