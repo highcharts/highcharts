@@ -315,31 +315,21 @@ QUnit.test('seriesTypes.treemap.onClickDrillToNode', function (assert) {
 });
 
 QUnit.test('traverseUpButton', assert => {
-    const { treemap: options } = Highcharts.defaultOptions.plotOptions;
-    const { renderTraverseUpButton } = Highcharts.seriesTypes.treemap.prototype;
-    const { SVGRenderer } = Highcharts;
-    const container = document.getElementById('container');
-    const renderer = new SVGRenderer(
-        container,
-        200,
-        200
-    );
-    const series = {
-        chart: { renderer: renderer },
-        nodeMap: {
-            '': {},
-            A: { parent: '', name: 'A' }
+    const chart = Highcharts.chart('container', {
+        chart: {
+            type: 'treemap'
         },
-        options: options
-    };
-    const after = () => {
-        container.removeChild(renderer.box);
-        renderer.destroy();
-        delete series.options.traverseUpButton.text;
-    };
+        series: [{
+            data: [{
+                id: 'A',
+                name: 'A'
+            }]
+        }]
+    });
+    const series = chart.series[0];
 
     // Render button when root id is ''
-    renderTraverseUpButton.call(series, '');
+    series.renderTraverseUpButton('');
     assert.strictEqual(
         series.drillUpButton,
         undefined,
@@ -347,7 +337,7 @@ QUnit.test('traverseUpButton', assert => {
     );
 
     // Render button when root id is 'A'
-    renderTraverseUpButton.call(series, 'A');
+    series.renderTraverseUpButton('A');
     assert.strictEqual(
         series.drillUpButton.text.textStr,
         'A',
@@ -356,13 +346,98 @@ QUnit.test('traverseUpButton', assert => {
 
     // Render button with custom text
     series.options.traverseUpButton.text = 'My Custom Text';
-    renderTraverseUpButton.call(series, 'A');
+    series.renderTraverseUpButton('A');
     assert.strictEqual(
         series.drillUpButton.text.textStr,
         'My Custom Text',
         'should set name to "My Custom Text" when traverseUpButton.text is set to "My Custom Text".'
     );
+});
 
-    // Clean up after the tests
-    after();
+QUnit.test('Traversing single top node', assert => {
+    const data = [{
+        value: 350,
+        id: "0_0",
+        name: "0_0",
+        parent: ""
+    }, {
+        value: 300,
+        id: "1_0",
+        name: "1_0",
+        parent: "0_0"
+    }, {
+        value: 50,
+        id: "1_1",
+        name: "1_1",
+        parent: "0_0"
+    }, {
+        value: 200,
+        id: "2_0",
+        name: "2_0",
+        parent: "1_0"
+    }, {
+        value: 100,
+        id: "2_1",
+        name: "2_1",
+        parent: "1_0"
+    }, {
+        value: 100,
+        id: "3_0",
+        name: "3_0",
+        parent: "2_0"
+    }, {
+        value: 100,
+        id: "3_1",
+        name: "3_1",
+        parent: "2_0"
+    }];
+
+    const chart = Highcharts.chart('container', {
+        series: [{
+            type: "treemap",
+            layoutAlgorithm: 'squarified',
+            levelIsConstant: false,
+            allowTraversingTree: true,
+            dataLabels: {
+                enabled: false
+            },
+            borderWidth: 3,
+            levels: [{
+                level: 1,
+                dataLabels: {
+                    enabled: true
+                },
+                borderWidth: 3
+            }],
+            data
+        }]
+    });
+
+    const series = chart.series[0];
+    const point = series.points[0];
+    series.onClickDrillToNode({ point });
+
+    assert.strictEqual(
+        series.rootNode,
+        '0_0',
+        'The root node should now be the first real node'
+    );
+
+    // Drill down and up again
+    series.setRootNode('1_0');
+    series.setRootNode('2_0');
+    series.drillUp();
+    series.drillUp();
+
+    assert.ok(
+        chart.get('2_0').graphic.parentGroup,
+        'Parent group should be truthy'
+    );
+    assert.strictEqual(
+        chart.get('2_0').graphic.parentGroup.element.className.baseVal,
+        chart.get('2_1').graphic.parentGroup.element.className.baseVal,
+        'The ephemeral 2_1 node should be in the same group as the 2_0 node (#12286)'
+    );
+
+
 });

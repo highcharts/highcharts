@@ -96,6 +96,8 @@ declare global {
     }
     interface Element {
         /** @deprecated */
+        currentStyle?: ElementCSSInlineStyle;
+        /** @deprecated */
         mozRequestFullScreen: Function;
         msMatchesSelector: Element['matches'];
         /** @deprecated */

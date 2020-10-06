@@ -128,7 +128,7 @@ declare global {
             public animate(init?: boolean): void;
             public applyExtremes(): DataExtremesObject;
             public applyZones(): void;
-            public autoIncrement(): void;
+            public autoIncrement(): number;
             public bindAxes(): void;
             public buildKDTree(e?: PointerEventObject): void;
             public cropData(

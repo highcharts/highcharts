@@ -74,6 +74,12 @@ QUnit.test('Time zone update', function (assert) {
         'Ticks should be placed on local (New York) midnights'
     );
 
+    assert.strictEqual(
+        chart.options.time.timezone,
+        'America/New_York',
+        'Chart-level options should also be updated (#14230)'
+    );
+
 });
 
 QUnit.test('Updating from global to instance time', assert => {
