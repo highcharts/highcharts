@@ -53,7 +53,7 @@ Text styles for the axis title. Replaces [axis.title.style](https://api.highcha
 
     .highcharts-background
 
-A rectangle for the chart background. Use it to set background fills or strokes. Replaces [chart.backgroundColor](https://api.highcharts.com/highcharts/chart.backgroundColor), [chart.borderColor](https://api.highcharts.com/highcharts/chart.borderColor) and [chart.borderWidth](https://api.highcharts.com/highcharts/chart.borderWidth) options. Backgrounds can also be set on the container div, but in that  they will not be part of the exported chart.
+A rectangle for the chart background. Use it to set background fills or strokes. Replaces [chart.backgroundColor](https://api.highcharts.com/highcharts/chart.backgroundColor), [chart.borderColor](https://api.highcharts.com/highcharts/chart.borderColor) and [chart.borderWidth](https://api.highcharts.com/highcharts/chart.borderWidth) options. Backgrounds can also be set on the container div, but in that they will not be part of the exported chart.
 
 [View live demo](https://jsfiddle.net/gh/get/jquery/1.7.2/highcharts/highcharts/tree/master/samples/highcharts/css/chart-border-background/).
 
