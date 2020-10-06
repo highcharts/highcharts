@@ -12,6 +12,7 @@
 
 'use strict';
 
+import type HTMLElement from '../../Core/Renderer/HTML/HTMLElement';
 import Chart from '../../Core/Chart/Chart.js';
 import GLRenderer from './WGLRenderer.js';
 import H from '../../Core/Globals.js';

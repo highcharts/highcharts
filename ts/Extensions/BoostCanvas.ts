@@ -13,6 +13,9 @@
  *
  * */
 
+'use strict';
+
+import type HTMLElement from '../Core/Renderer/HTML/HTMLElement';
 import type SVGAttributes from '../Core/Renderer/SVG/SVGAttributes';
 import Chart from '../Core/Chart/Chart.js';
 import Color from '../Core/Color/Color.js';
@@ -718,7 +721,7 @@ const initCanvasBoost = function (): void {
 
                 return !chartDestroyed;
             }, function (): void {
-                var loadingDiv: Highcharts.HTMLElement =
+                var loadingDiv: HTMLElement =
                         chart.loadingDiv as any,
                     loadingShown = chart.loadingShown;
 
@@ -755,7 +758,7 @@ const initCanvasBoost = function (): void {
                 }
 
                 // Go back to prototype, ready to build
-                delete series.buildKDTree;
+                delete (series as any).buildKDTree;
 
                 series.buildKDTree();
 
