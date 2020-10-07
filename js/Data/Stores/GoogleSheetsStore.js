@@ -163,6 +163,7 @@ var GoogleSheetsStore = /** @class */ (function (_super) {
                     headers.push('' + store.columns[i][0]);
                 }
                 var table = DataTable.fromColumns(store.columns, headers);
+                store.table = table;
                 // Polling
                 if (enablePolling) {
                     setTimeout(function () {
