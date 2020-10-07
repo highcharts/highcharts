@@ -436,7 +436,7 @@ BaseSeries.seriesType<typeof Highcharts.ItemSeries>(
                 cellHeight = this.chart.plotHeight / rows,
                 itemSize = this.itemSize || Math.min(cellWidth, cellHeight);
 
-            /*
+            /* @todo: remove if not needed
             this.slots.forEach(slot => {
                 this.chart.renderer.circle(slot.x, slot.y, 6)
                     .attr({
@@ -589,7 +589,8 @@ BaseSeries.seriesType<typeof Highcharts.ItemSeries>(
         connectorShapes: piePoint.connectorShapes,
         getConnectorPath: piePoint.getConnectorPath,
         setVisible: piePoint.setVisible,
-        getTranslate: piePoint.getTranslate
+        getTranslate: piePoint.getTranslate,
+        isValid: piePoint.isValid
     }
 );
 
