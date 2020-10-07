@@ -835,11 +835,9 @@ BaseSeries.seriesType<typeof Highcharts.PieSeries>(
             // Get the total sum
             for (i = 0; i < len; i++) {
                 point = points[i];
-                total += (ignoreHiddenPoint && !point.visible) ?
-                    0 :
-                    point.isNull ?
-                        0 :
-                        (point.y as any);
+                if (point.isValid() && (!ignoreHiddenPoint || point.visible)) {
+                    total += point.y as any;
+                }
             }
             this.total = total;
 
@@ -864,6 +862,16 @@ BaseSeries.seriesType<typeof Highcharts.PieSeries>(
          */
         generatePoints: function (this: Highcharts.PieSeries): void {
             LineSeries.prototype.generatePoints.call(this);
+            const data = this.data;
+            const yData = this.yData || [];
+            let point: Highcharts.PiePoint;
+            for (let i = 0, end = data.length; i < end; i++) {
+                point = data[i];
+                if (!point.isValid()) {
+                    point.y = null;
+                    yData[point.index || 0] = null;
+                }
+            }
             this.updateTotals();
         },
 

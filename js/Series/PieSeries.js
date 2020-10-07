@@ -629,11 +629,9 @@ BaseSeries.seriesType('pie', 'line',
         // Get the total sum
         for (i = 0; i < len; i++) {
             point = points[i];
-            total += (ignoreHiddenPoint && !point.visible) ?
-                0 :
-                point.isNull ?
-                    0 :
-                    point.y;
+            if (point.isValid() && (!ignoreHiddenPoint || point.visible)) {
+                total += point.y;
+            }
         }
         this.total = total;
         // Set each point's properties
@@ -656,6 +654,16 @@ BaseSeries.seriesType('pie', 'line',
      */
     generatePoints: function () {
         LineSeries.prototype.generatePoints.call(this);
+        var data = this.data;
+        var yData = this.yData || [];
+        var point;
+        for (var i = 0, end = data.length; i < end; i++) {
+            point = data[i];
+            if (!point.isValid()) {
+                point.y = null;
+                yData[point.index || 0] = null;
+            }
+        }
         this.updateTotals();
     },
     /**
