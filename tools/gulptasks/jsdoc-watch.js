@@ -35,7 +35,7 @@ function jsDocWatch() {
         require('./jsdoc.js');
         require('./jsdoc-server');
 
-        const watchProcess = gulp.watch(WATCH_GLOBS, gulp.task('jsdoc'));
+        const watchProcess = gulp.watch(WATCH_GLOBS, { delay: 5000 }, gulp.task('jsdoc'));
 
         watchProcess.on(
             'change',
