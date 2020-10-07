@@ -243,6 +243,9 @@ var CSVStore = /** @class */ (function (_super) {
                 if (typeof cellValue === 'number') {
                     cellValue = String(cellValue).replace('.', decimalPoint);
                 }
+                else if (typeof cellValue === 'string') {
+                    cellValue = "\"" + cellValue + "\"";
+                }
                 rowArray[rowIndex][columnIndex] = cellValue;
                 // On the final column, push the row to the CSV
                 if (columnIndex === columnsCount - 1) {

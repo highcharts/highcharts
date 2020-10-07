@@ -321,6 +321,8 @@ class CSVStore extends DataStore<CSVStore.EventObjects> implements DataJSON.Clas
                 // }
                 if (typeof cellValue === 'number') {
                     cellValue = String(cellValue).replace('.', decimalPoint);
+                } else if (typeof cellValue === 'string') {
+                    cellValue = `"${cellValue}"`;
                 }
 
                 rowArray[rowIndex][columnIndex] = cellValue;

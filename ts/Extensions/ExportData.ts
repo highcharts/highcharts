@@ -158,6 +158,7 @@ declare global {
 
 
 import DownloadURL from '../Extensions/DownloadURL.js';
+import HTMLTableStore from '../Data/Stores/HTMLTableStore.js';
 
 const { downloadURL } = DownloadURL;
 
@@ -484,6 +485,81 @@ Chart.prototype.setUpKeyToAxis = function (): void {
         };
     }
 };
+
+/**
+ * Adds rows from getDataRows to a data table
+ *
+ * @private
+ * @param {Chart} chart the chart to grab things from
+ * @param {CSVStore | HTMLTableStore} dataStoreProvided
+ * the data store to apply the rows to
+ * @todo should maybe use the datastore registry
+ * @todo replace forEaches
+ */
+function getDataTable(
+    chart: Chart,
+    dataStoreProvided: (CSVStore | HTMLTableStore)
+): void {
+
+    // Dont use multilevel headers with CSV export
+    const useMultiLevelHeaders = chart.options.exporting?.useMultiLevelHeaders &&
+        dataStoreProvided instanceof HTMLTableStore;
+
+    const rows = chart.getDataRows(useMultiLevelHeaders);
+
+    const dataStore = dataStoreProvided,
+        dataTable = new DataTable(),
+        categories = rows.shift();
+
+    // loop over the top level categories and replace duplicate names
+    if (categories) {
+        for (let index = 0; index < categories.length; index++) {
+            const categoryName = categories[index].toString(),
+                firstCategoryIndex = categories.indexOf(categoryName),
+                lastCategoryIndex = categories.lastIndexOf(categoryName);
+
+            // Since dataTables don't support multiple cells with
+            // the same name we have to append a thingie
+            // and set a metadata title (which is the exported name)
+            if (firstCategoryIndex < lastCategoryIndex) {
+                let categoryCount = 1;
+                let i = firstCategoryIndex + 1;
+                while (i <= lastCategoryIndex) {
+                    if (categories[i] === categoryName) {
+                        categories[i] += `_${categoryCount}`;
+                        dataStore.describeColumn(categories[i] + '', {
+                            title: categoryName
+                        });
+                        categoryCount++;
+                    }
+                    i++;
+                }
+            }
+        }
+    }
+
+    const names = categories?.map((name): string => name.toString()) || [];
+
+    // Set the column order
+    dataStore.setColumnOrder(names);
+
+    rows.forEach((row): void => {
+        const dataRow = new DataTableRow();
+        if (row.length) {
+            row.forEach((value, cellIndex): void => {
+                dataRow.insertCell(
+                    names[cellIndex],
+                    value
+                );
+            });
+            // Cannot insert directly to datastore.table for some reason
+            // DataConverter is not a constructor
+            dataTable.insertRow(dataRow);
+        }
+    });
+
+    dataStore.table = dataTable;
+}
 
 /**
  * Export-data module required. Returns a two-dimensional array containing the
@@ -857,55 +933,12 @@ Chart.prototype.getDataRows = function (
 Chart.prototype.getCSV = function (
     useLocalDecimalPoint: boolean = false
 ): string {
-    const rows = this.getDataRows(),
+    const dataStore = new CSVStore(),
         csvOptions: Highcharts.ExportingCsvOptions =
             (this.options.exporting as any).csv;
 
-    // Transform the rows to CSV
+    getDataTable(this, dataStore);
 
-    const dataStore = new CSVStore(),
-        dataTable = new DataTable(),
-        names: string[] = rows.shift()?.map((name): string => '' + name) || [];
-
-
-    const firstCategoryIndex = names.indexOf('Category'),
-        lastCategoryIndex = names.lastIndexOf('Category');
-
-    // Since dataTables don't support multiple cells with
-    // the same name we have to append a thingie
-    // and set a metadata title (which is the exported name)
-    if (firstCategoryIndex < lastCategoryIndex) {
-        let categoryCount = 1;
-        let i = firstCategoryIndex + 1;
-        while (i <= lastCategoryIndex) {
-            if (names[i] === 'Category') {
-                names[i] += `_${categoryCount}`;
-                dataStore.describeColumn(names[i] + '', {
-                    title: 'Category'
-                });
-                categoryCount++;
-            }
-            i++;
-        }
-    }
-
-    // Set the column order
-    dataStore.setColumnOrder(names);
-
-    rows.forEach((row): void => {
-        const dataRow = new DataTableRow();
-        if (row.length) {
-            row.forEach((value, cellIndex): void => {
-                dataRow.insertCell(
-                    names[cellIndex],
-                    typeof value === 'string' ? `"${value}"` : value
-                );
-            });
-            dataTable.insertRow(dataRow);
-        }
-    });
-
-    dataStore.table = dataTable;
 
     return dataStore.save({ ...csvOptions as any, useLocalDecimalPoint });
 };
@@ -932,189 +965,15 @@ Chart.prototype.getCSV = function (
 Chart.prototype.getTable = function (
     useLocalDecimalPoint?: boolean
 ): string {
-    var html = '<table id="highcharts-data-table-' + this.index + '">',
-        options = this.options,
-        decimalPoint = useLocalDecimalPoint ? (1.1).toLocaleString()[1] : '.',
-        useMultiLevelHeaders = pick(
-            (options.exporting as any).useMultiLevelHeaders, true
-        ),
-        rows = this.getDataRows(useMultiLevelHeaders),
-        rowLength = 0,
-        topHeaders = useMultiLevelHeaders ? rows.shift() : null,
-        subHeaders = rows.shift(),
-        // Compare two rows for equality
-        isRowEqual = function (
-            row1: Array<(number | string)>,
-            row2: Array<(number | string)>
-        ): boolean {
-            var i = row1.length;
 
-            if (row2.length === i) {
-                while (i--) {
-                    if (row1[i] !== row2[i]) {
-                        return false;
-                    }
-                }
-            } else {
-                return false;
-            }
-            return true;
-        },
-        // Get table cell HTML from value
-        getCellHTMLFromValue = function (
-            tag: string,
-            classes: (string | null),
-            attrs: string,
-            value: (number | string)
-        ): string {
-            var val = pick(value, ''),
-                className = 'text' + (classes ? ' ' + classes : '');
+    const dataStore = new HTMLTableStore(),
+        { exporting } = this.options,
+        tableCaption = exporting?.tableCaption || this.options.title?.text;
 
-            // Convert to string if number
-            if (typeof val === 'number') {
-                val = val.toString();
-                if (decimalPoint === ',') {
-                    val = val.replace('.', decimalPoint);
-                }
-                className = 'number';
-            } else if (!value) {
-                className = 'empty';
-            }
-            return '<' + tag + (attrs ? ' ' + attrs : '') +
-                ' class="' + className + '">' +
-                val + '</' + tag + '>';
-        },
-        // Get table header markup from row data
-        getTableHeaderHTML = function (
-            topheaders: (Array<(number | string)> | null | undefined),
-            subheaders: Array<(number | string)>,
-            rowLength?: number
-        ): string {
-            var html = '<thead>',
-                i = 0,
-                len = rowLength || subheaders && subheaders.length,
-                next,
-                cur,
-                curColspan = 0,
-                rowspan;
+    getDataTable(this, dataStore);
 
-            // Clean up multiple table headers. Chart.getDataRows() returns two
-            // levels of headers when using multilevel, not merged. We need to
-            // merge identical headers, remove redundant headers, and keep it
-            // all marked up nicely.
-            if (
-                useMultiLevelHeaders &&
-                topheaders &&
-                subheaders &&
-                !isRowEqual(topheaders, subheaders)
-            ) {
-                html += '<tr>';
-                for (; i < len; ++i) {
-                    cur = topheaders[i];
-                    next = topheaders[i + 1];
-                    if (cur === next) {
-                        ++curColspan;
-                    } else if (curColspan) {
-                        // Ended colspan
-                        // Add cur to HTML with colspan.
-                        html += getCellHTMLFromValue(
-                            'th',
-                            'highcharts-table-topheading',
-                            'scope="col" ' +
-                            'colspan="' + (curColspan + 1) + '"',
-                            cur
-                        );
-                        curColspan = 0;
-                    } else {
-                        // Cur is standalone. If it is same as sublevel,
-                        // remove sublevel and add just toplevel.
-                        if (cur === subheaders[i]) {
-                            if ((options.exporting as any).useRowspanHeaders) {
-                                rowspan = 2;
-                                delete subheaders[i];
-                            } else {
-                                rowspan = 1;
-                                subheaders[i] = '';
-                            }
-                        } else {
-                            rowspan = 1;
-                        }
-                        html += getCellHTMLFromValue(
-                            'th',
-                            'highcharts-table-topheading',
-                            'scope="col"' +
-                            (rowspan > 1 ?
-                                ' valign="top" rowspan="' + rowspan + '"' :
-                                ''),
-                            cur
-                        );
-                    }
-                }
-                html += '</tr>';
-            }
-
-            // Add the subheaders (the only headers if not using multilevels)
-            if (subheaders) {
-                html += '<tr>';
-                for (i = 0, len = subheaders.length; i < len; ++i) {
-                    if (typeof subheaders[i] !== 'undefined') {
-                        html += getCellHTMLFromValue(
-                            'th', null, 'scope="col"', subheaders[i]
-                        );
-                    }
-                }
-                html += '</tr>';
-            }
-            html += '</thead>';
-            return html;
-        };
-
-    // Add table caption
-    if ((options.exporting as any).tableCaption !== false) {
-        html += '<caption class="highcharts-table-caption">' + pick(
-            (options.exporting as any).tableCaption,
-            (
-                (options.title as any).text ?
-                    htmlencode((options.title as any).text) :
-                    'Chart'
-            )
-        ) + '</caption>';
-    }
-
-    // Find longest row
-    for (var i = 0, len = rows.length; i < len; ++i) {
-        if (rows[i].length > rowLength) {
-            rowLength = rows[i].length;
-        }
-    }
-
-    // Add header
-    html += getTableHeaderHTML(
-        topHeaders,
-        subHeaders as any,
-        Math.max(rowLength, (subHeaders as any).length)
-    );
-
-    // Transform the rows to HTML
-    html += '<tbody>';
-    rows.forEach(function (row: Array<(number | string)>): void {
-        html += '<tr>';
-        for (var j = 0; j < rowLength; j++) {
-            // Make first column a header too. Especially important for
-            // category axes, but also might make sense for datetime? Should
-            // await user feedback on this.
-            html += getCellHTMLFromValue(
-                j ? 'td' : 'th',
-                null,
-                j ? '' : 'scope="row"',
-                row[j]
-            );
-        }
-        html += '</tr>';
-    });
-    html += '</tbody></table>';
-
-    var e = { html: html };
+    const html = dataStore.save({ ...exporting as any, tableCaption, useLocalDecimalPoint }),
+        e = { html: html };
 
     fireEvent(this, 'afterGetTable', e);
 

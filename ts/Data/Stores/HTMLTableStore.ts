@@ -234,12 +234,13 @@ class HTMLTableStore extends DataStore<HTMLTableStore.EventObjects> implements D
             return true;
         };
 
+        // Get table header markup from row data
         const getTableHeaderHTML = function (
-            topheaders: (Array<(number | string)>),
+            topheaders: (Array<(number | string)> | null | undefined),
             subheaders: Array<(number | string | undefined)>,
             rowLength?: number
         ): string {
-            let html = '<thead>',
+            var html = '<thead>',
                 i = 0,
                 len = rowLength || subheaders && subheaders.length,
                 next,
@@ -247,14 +248,14 @@ class HTMLTableStore extends DataStore<HTMLTableStore.EventObjects> implements D
                 curColspan = 0,
                 rowspan;
 
-            // Clean up multiple table headers. The store returns two
+            // Clean up multiple table headers. Chart.getDataRows() returns two
             // levels of headers when using multilevel, not merged. We need to
             // merge identical headers, remove redundant headers, and keep it
             // all marked up nicely.
             if (
                 useMultiLevelHeaders &&
                 topheaders &&
-                subheaders.length &&
+                subheaders &&
                 !isRowEqual(topheaders, subheaders)
             ) {
                 html += '<tr>';
@@ -275,7 +276,9 @@ class HTMLTableStore extends DataStore<HTMLTableStore.EventObjects> implements D
                         );
                         curColspan = 0;
                     } else {
-                        if (!subheaders[i]) {
+                        // Cur is standalone. If it is same as sublevel,
+                        // remove sublevel and add just toplevel.
+                        if (cur === subheaders[i]) {
                             if (useRowspanHeaders) {
                                 rowspan = 2;
                                 delete subheaders[i];
@@ -300,22 +303,18 @@ class HTMLTableStore extends DataStore<HTMLTableStore.EventObjects> implements D
                 html += '</tr>';
             }
 
-            if (!subheaders.length) {
-                subheaders = topheaders;
-            }
-
-            if (subheaders.length) {
+            // Add the subheaders (the only headers if not using multilevels)
+            if (subheaders) {
                 html += '<tr>';
                 for (i = 0, len = subheaders.length; i < len; ++i) {
                     if (typeof subheaders[i] !== 'undefined') {
                         html += getCellHTMLFromValue(
-                            'th', null, 'scope="col"', subheaders[i] || ''
+                            'th', null, 'scope="col"', subheaders[i]
                         );
                     }
                 }
                 html += '</tr>';
             }
-
             html += '</thead>';
             return html;
         };
@@ -355,41 +354,20 @@ class HTMLTableStore extends DataStore<HTMLTableStore.EventObjects> implements D
 
         // Add the names as the first row if they should be exported
         if (exportNames) {
-            const parentCategoryMap: Record<string, string[]> = {},
-                subcategories: (string | undefined)[] = [];
+            const subcategories: (string | undefined)[] = [];
 
-            // If using multilevel headers, attempt make two arrays:
-            // The top level headers, and the subcategory headers
+            // If using multilevel headers, the first value
+            // of each column is a subcategory
             if (useMultiLevelHeaders) {
-                const regex = /\(.*\)/;
+                columnValues.forEach((column): void => {
+                    const subhead = (column.shift() || '').toString();
+                    subcategories.push(subhead);
+                });
 
-                for (let i = 0; i < columnNames.length; i++) {
-                    const name = columnNames[i],
-                        result = regex.test(name);
-
-                    if (result) {
-                        const parentCategory = name.substring(0, name.indexOf('(') - 1);
-                        if (!parentCategoryMap[parentCategory]) {
-                            parentCategoryMap[parentCategory] = [];
-                        }
-                        // Add to the map
-                        parentCategoryMap[parentCategory].push(
-                            name.slice(name.indexOf('(') + 1, name.lastIndexOf(')'))
-                        );
-                        // remove subcategory
-                        columnNames[i] = parentCategory;
-                    }
-
-                    // Add the subcategories to another array
-                    // remove duplicate columnnames
-                    const subcategory = parentCategoryMap[columnNames[i]];
-                    if (subcategory) {
-                        subcategories[i] = subcategory.reverse().pop();
-                    }
-                }
+                tableHead = getTableHeaderHTML(columnNames, subcategories);
+            } else {
+                tableHead = getTableHeaderHTML(null, columnNames);
             }
-
-            tableHead = getTableHeaderHTML(columnNames, subcategories);
         }
 
         for (let columnIndex = 0; columnIndex < columnsCount; columnIndex++) {
