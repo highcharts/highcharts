@@ -117,9 +117,9 @@ var defined = U.defined, erase = U.erase, extend = U.extend, fireEvent = U.fireE
  * @interface Highcharts.PointOptionsObject
  */
 /**
- * Possible option types for a data point.
+ * Possible option types for a data point. Use `null` to indicate a gap.
  *
- * @typedef {number|string|Array<(number|string)>|Highcharts.PointOptionsObject|null} Highcharts.PointOptionsType
+ * @typedef {number|string|Highcharts.PointOptionsObject|Array<(number|string|null)>|null} Highcharts.PointOptionsType
  */
 /**
  * Gets fired when the point is removed using the `.remove()` method.

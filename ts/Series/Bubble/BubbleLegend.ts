@@ -195,7 +195,7 @@ setOptions({ // Set default bubble legend options
              * individual range.
              *
              * @sample highcharts/bubble-legend/similartoseries/
-             *         Similat look to the bubble series
+             *         Similar look to the bubble series
              * @sample highcharts/bubble-legend/bordercolor/
              *         Individual bubble border color
              *
@@ -223,7 +223,7 @@ setOptions({ // Set default bubble legend options
              * individual color is not defined.
              *
              * @sample highcharts/bubble-legend/similartoseries/
-             *         Similat look to the bubble series
+             *         Similar look to the bubble series
              * @sample highcharts/bubble-legend/color/
              *         Individual bubble color
              *

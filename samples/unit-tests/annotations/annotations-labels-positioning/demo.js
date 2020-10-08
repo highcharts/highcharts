@@ -433,3 +433,39 @@ QUnit.test('Visibility of labels - point.isInsidePlot() - polar chart', function
     }
 
 });
+
+QUnit.test('Positioning labels according to real points for half of the yAxis height #13956', function (assert) {
+    var chart = Highcharts.chart('container', {
+            yAxis: [{
+                top: '50%',
+                height: '50%'
+            }],
+            xAxis: [{
+                left: '50%',
+                width: '50%'
+            }],
+            series: [{
+                data: [2, 11, 60, {
+                    y: 44,
+                    id: 'pointII'
+                }, 44]
+            }],
+
+            annotations: [{
+                labels: [{
+                    point: 'pointII',
+                    y: 0
+                }]
+            }]
+        }),
+
+        xAxis = chart.xAxis[0],
+        yAxis = chart.yAxis[0],
+        point = chart.series[0].points[3],
+        label = chart.annotations[0].labels[0].graphic,
+        y = yAxis.toPixels(point.y),
+        x = xAxis.toPixels(point.x);
+
+    assert.strictEqual(Math.round(label.x + label.width / 2), Math.round(x), 'x position');
+    assert.strictEqual(Math.round(label.y + label.height), Math.round(y), 'y position');
+});
