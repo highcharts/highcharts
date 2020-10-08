@@ -1288,8 +1288,12 @@ extend(Axis.prototype, /** @lends Highcharts.Axis.prototype */ {
                 'plotLines'
         )
     ): (Highcharts.PlotLineOrBand|undefined) {
-        var obj = new PlotLineOrBand(this, options).render(),
+        var obj: Highcharts.PlotLineOrBand|undefined = new Highcharts.PlotLineOrBand(this, options),
             userOptions = this.userOptions;
+
+        if (this.visible) {
+            obj = obj.render();
+        }
 
         if (obj) { // #2189
             // Add it to the user options for exporting and Axis.update
