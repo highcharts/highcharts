@@ -2119,8 +2119,10 @@ class SVGElement {
                 }
 
                 touchEventFired = true;
-                // prevent other events from being fired. #9682
-                e.preventDefault();
+                if (e.cancelable) {
+                    // prevent other events from being fired. #9682
+                    e.preventDefault();
+                }
             };
 
             element.onclick = function (e: Event): void {

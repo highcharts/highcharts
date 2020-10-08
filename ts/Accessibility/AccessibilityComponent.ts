@@ -469,7 +469,9 @@ AccessibilityComponent.prototype = {
                 }
 
                 e.stopPropagation();
-                e.preventDefault();
+                if (e.cancelable) {
+                    e.preventDefault();
+                }
             });
         });
     },
