@@ -232,6 +232,8 @@ var options: DeepPartial<Highcharts.Options> = {
      * on its features, see
      * [Highcharts Accessibility](https://www.highcharts.com/docs/chart-concepts/accessibility).
      *
+     * @see [General: Highcharts Accessibility](https://www.highcharts.com/docs/chart-concepts/accessibility)
+     *
      * @since        5.0.0
      * @requires     modules/accessibility
      * @optionparent accessibility
