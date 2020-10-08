@@ -1439,7 +1439,7 @@ class Pointer {
 
         // On touch devices, only proceed to trigger click if a handler is
         // defined
-        if (hasZoom && self.initiated && !fireClickEvent) {
+        if (hasZoom && self.initiated && !fireClickEvent && e.cancelable) {
             e.preventDefault();
         }
 
