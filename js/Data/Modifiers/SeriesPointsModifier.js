@@ -9,6 +9,7 @@
  *  !!!!!!! SOURCE GETS TRANSPILED BY TYPESCRIPT. EDIT TS FILE ONLY. !!!!!!!
  *
  * */
+'use strict';
 var __extends = (this && this.__extends) || (function () {
     var extendStatics = function (d, b) {
         extendStatics = Object.setPrototypeOf ||
@@ -26,8 +27,13 @@ import DataModifier from './DataModifier.js';
 import DataJSON from './../DataJSON.js';
 import DataTable from './../DataTable.js';
 import U from './../../Core/Utilities.js';
-import DataTableRow from './../DataTableRow.js';
 var merge = U.merge;
+import DataTableRow from './../DataTableRow.js';
+/* *
+ *
+ *  Class
+ *
+ * */
 var SeriesPointsModifier = /** @class */ (function (_super) {
     __extends(SeriesPointsModifier, _super);
     /* *
@@ -83,25 +89,25 @@ var SeriesPointsModifier = /** @class */ (function (_super) {
      */
     SeriesPointsModifier.prototype.execute = function (table, eventDetail) {
         var modifier = this, aliasMap = modifier.options.aliasMap || {}, aliasKeys = Object.keys(aliasMap), aliasValues = [], newTable = new DataTable();
-        var row, newRow, newCells, cellName, cellAliasOrName, cellNames, cell, aliasIndex;
+        var row, newCells, cellName, cellAliasOrName, cellNames, aliasIndex;
         this.emit({ type: 'execute', detail: eventDetail, table: table });
-        for (var k = 0, kEnd = aliasKeys.length; k < kEnd; k++) {
+        for (var k = 0, kEnd = aliasKeys.length; k < kEnd; ++k) {
             aliasValues.push(aliasMap[aliasKeys[k]]);
         }
-        for (var i = 0, iEnd = table.getRowCount(); i < iEnd; i++) {
+        for (var i = 0, iEnd = table.getRowCount(); i < iEnd; ++i) {
             row = table.getRow(i);
             if (row) {
                 newCells = {};
                 cellNames = row.getCellNames();
-                for (var j = 0, jEnd = row.getCellCount(); j < jEnd; j++) {
+                for (var j = 0, jEnd = cellNames.length; j < jEnd; ++j) {
                     cellName = cellNames[j];
                     aliasIndex = aliasValues.indexOf(cellName);
-                    cellAliasOrName = aliasIndex !== -1 ? aliasKeys[aliasIndex] : cellName;
-                    cell = row.getCell(cellName);
-                    newCells[cellAliasOrName] = cell;
+                    cellAliasOrName = (aliasIndex >= 0 ?
+                        aliasKeys[aliasIndex] :
+                        cellName);
+                    newCells[cellAliasOrName] = row.getCell(cellName);
                 }
-                newRow = new DataTableRow(newCells);
-                newTable.insertRow(newRow);
+                newTable.insertRow(new DataTableRow(newCells));
             }
         }
         this.emit({ type: 'afterExecute', detail: eventDetail, table: newTable });
@@ -130,8 +136,7 @@ var SeriesPointsModifier = /** @class */ (function (_super) {
      * Default options for the series points modifier.
      */
     SeriesPointsModifier.defaultOptions = {
-        modifier: 'SeriesPoints',
-        aliasMap: {}
+        modifier: 'SeriesPoints'
     };
     return SeriesPointsModifier;
 }(DataModifier));
