@@ -1725,7 +1725,6 @@ class Data {
 
         objectEach(table.toColumns(), function (elem, key): void {
             if (key !== 'id') {
-                elem.unshift(key);
                 columns.push(elem as any);
             }
         });
@@ -1754,9 +1753,7 @@ class Data {
             );
             let columns: Array<Array<Highcharts.DataValueType>> = [];
 
-            store.load();
-
-            store.on('afterLoad', (): boolean => {
+            store.on('afterLoad', (): void => {
                 columns = this.getDataColumnsFromDataTable(store.table);
                 if (columns.length > 0) {
                     if (chart && chart.series) {
@@ -1770,10 +1767,9 @@ class Data {
                         this.dataFound();
                     }
                 }
-
-                return false;
             });
 
+            store.load();
         }
 
         // This is an intermediate fetch, so always return false.

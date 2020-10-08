@@ -1291,7 +1291,6 @@ var Data = /** @class */ (function () {
         var columns = [];
         objectEach(table.toColumns(), function (elem, key) {
             if (key !== 'id') {
-                elem.unshift(key);
                 columns.push(elem);
             }
         });
@@ -1312,7 +1311,6 @@ var Data = /** @class */ (function () {
         if (options.googleSpreadsheetKey) {
             var store_1 = new GoogleSheetsStore(new DataTable(), options);
             var columns_1 = [];
-            store_1.load();
             store_1.on('afterLoad', function () {
                 columns_1 = _this.getDataColumnsFromDataTable(store_1.table);
                 if (columns_1.length > 0) {
@@ -1328,8 +1326,8 @@ var Data = /** @class */ (function () {
                         _this.dataFound();
                     }
                 }
-                return false;
             });
+            store_1.load();
         }
         // This is an intermediate fetch, so always return false.
         return false;
