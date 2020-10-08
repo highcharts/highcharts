@@ -78,7 +78,7 @@ class DataConverter {
             $class: 'DataTable',
             rows: [{
                 $class: 'DataTableRow',
-                cells: [JSON.parse(value?.toString() || '')]
+                cells: [JSON.parse((value || '').toString())]
             }]
         });
     }

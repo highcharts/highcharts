@@ -74,7 +74,7 @@ var DataConverter = /** @class */ (function () {
             $class: 'DataTable',
             rows: [{
                     $class: 'DataTableRow',
-                    cells: [JSON.parse((value === null || value === void 0 ? void 0 : value.toString()) || '')]
+                    cells: [JSON.parse((value || '').toString())]
                 }]
         });
     };
