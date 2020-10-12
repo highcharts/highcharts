@@ -2119,7 +2119,7 @@ class SVGElement {
                 }
 
                 touchEventFired = true;
-                if (typeof e.cancelable !== 'boolean' || e.cancelable) {
+                if (e.cancelable !== false) {
                     // prevent other events from being fired. #9682
                     e.preventDefault();
                 }
