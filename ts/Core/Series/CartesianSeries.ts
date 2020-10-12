@@ -2983,7 +2983,8 @@ const CartesianSeries = BaseSeries.seriesType<typeof Highcharts.LineSeries>(
          * @excluding animation, backgroundColor, borderColor, borderRadius,
          *            borderWidth, className, crosshairs, enabled, formatter,
          *            headerShape, hideDelay, outside, padding, positioner,
-         *            shadow, shape, shared, snap, split, style, useHTML
+         *            shadow, shape, shared, snap, split, stickOnContact,
+         *            style, useHTML
          * @apioption plotOptions.series.tooltip
          */
 
