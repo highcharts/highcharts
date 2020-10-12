@@ -1423,9 +1423,7 @@ Axis.prototype.drilldownCategory = function (
     x: number,
     e: MouseEvent
 ): void {
-    const ddPoints = this.getDDPoints(x);
-
-    ddPoints.forEach(function (point): void {
+    this.getDDPoints(x).forEach(function (point): void {
         if (
             point &&
             point.series &&
@@ -1435,7 +1433,6 @@ Axis.prototype.drilldownCategory = function (
             point.doDrilldown(true, x, e);
         }
     });
-
     this.chart.applyDrilldown();
 };
 
