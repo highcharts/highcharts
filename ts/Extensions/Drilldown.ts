@@ -62,10 +62,10 @@ const {
 declare global {
     namespace Highcharts {
         interface Axis {
-            ddPoints?: Dictionary<Array<(boolean|Point)>>;
+            ddPoints?: Dictionary<Array<(false|Point)>>;
             oldPos?: number;
             drilldownCategory(x: number, e: MouseEvent): void;
-            getDDPoints(x: number): (Array<(boolean|Point)>|undefined);
+            getDDPoints(x: number): Array<(false|Point)>;
         }
         interface ChartLike {
             ddDupes?: Array<string>;
@@ -1390,7 +1390,7 @@ Point.prototype.doDrilldown = function (
         originalEvent: originalEvent,
         points: (
             typeof category !== 'undefined' &&
-            (this.series.xAxis.getDDPoints(category) as any).slice(0)
+            this.series.xAxis.getDDPoints(category).slice(0)
         )
     } as Highcharts.DrilldownEventObject, function (
         e: Highcharts.DrilldownEventObject
@@ -1423,7 +1423,9 @@ Axis.prototype.drilldownCategory = function (
     x: number,
     e: MouseEvent
 ): void {
-    objectEach(this.getDDPoints(x), function (point: Point): void {
+    const ddPoints = this.getDDPoints(x);
+
+    ddPoints.forEach(function (point): void {
         if (
             point &&
             point.series &&
@@ -1433,6 +1435,7 @@ Axis.prototype.drilldownCategory = function (
             point.doDrilldown(true, x, e);
         }
     });
+
     this.chart.applyDrilldown();
 };
 
@@ -1443,13 +1446,13 @@ Axis.prototype.drilldownCategory = function (
  * @function Highcharts.Axis#getDDPoints
  * @param {number} x
  *        Tick position
- * @return {Array<(boolean|Highcharts.Point)>|undefined}
+ * @return {Array<(false|Highcharts.Point)>}
  *         Drillable points
  */
 Axis.prototype.getDDPoints = function (
     x: number
-): (Array<(boolean|Point)>|undefined) {
-    return this.ddPoints && this.ddPoints[x];
+): Array<(false|Point)> {
+    return (this.ddPoints && this.ddPoints[x] || []);
 };
 
 
