@@ -961,8 +961,7 @@ Point.prototype.doDrilldown = function (_holdRedraw, category, originalEvent) {
  *        Click event
  */
 Axis.prototype.drilldownCategory = function (x, e) {
-    var ddPoints = this.getDDPoints(x);
-    ddPoints.forEach(function (point) {
+    this.getDDPoints(x).forEach(function (point) {
         if (point &&
             point.series &&
             point.series.visible &&
