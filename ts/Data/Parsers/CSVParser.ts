@@ -39,7 +39,6 @@ class CSVParser extends DataParser<DataParser.EventObject> {
      */
     protected static readonly defaultOptions: CSVParser.ClassJSONOptions = {
         ...DataParser.defaultOptions,
-        decimalPoint: '.',
         lineDelimiter: '\n'
     };
 
@@ -197,8 +196,13 @@ class CSVParser extends DataParser<DataParser.EventObject> {
             converter = new DataConverter(),
             columns = parser.columns || [],
             { startColumn, endColumn } = parser.options,
-            decimalPoint = parser.options.decimalPoint || parser.guessedDecimalPoint,
             itemDelimiter = parser.options.itemDelimiter || parser.guessedItemDelimiter;
+
+        let { decimalPoint } = parser.options;
+        if (!decimalPoint || decimalPoint === itemDelimiter) {
+            decimalPoint = parser.guessedDecimalPoint || '.';
+        }
+
         let i = 0,
             c = '',
             cl = '',
@@ -479,7 +483,7 @@ namespace CSVParser {
      */
     export interface ClassJSONOptions extends DataParser.Options {
         csv?: string;
-        decimalPoint: string;
+        decimalPoint?: string;
         itemDelimiter?: string;
         lineDelimiter: string;
     }

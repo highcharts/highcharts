@@ -54,6 +54,37 @@ test('CSVStore from string', function (assert) {
     assert.ok(!foundComment, 'Comment is not added to the dataTable');
 })
 
+test('CSVStore from string, with decimalpoint option', function(assert){
+    const csv = 'Date;Value\n2016-01-01;1,100\n2016-01-02;2,000\n2016-01-03;3,000';
+    let store = new CSVStore(undefined, {
+        csv
+    });
+
+    store.load();
+    assert.strictEqual(
+        store.table.getRowCount(),
+        3
+    );
+    assert.strictEqual(
+        typeof store.table.getRow(2).getCell('Value'),
+        'number',
+        'The parser should be able to guess this decimalpoint'
+    )
+
+    store = new CSVStore(undefined,
+        {
+            csv,
+            decimalPoint: '.'
+        }
+    );
+    store.load()
+    assert.strictEqual(
+        typeof store.table.getRow(2).getCell('Value'),
+        'string',
+        'respects the given decimal point in options (result not a number because of the decimal point)'
+    );
+});
+
 test('CSVStore from URL', function (assert) {
     const registeredEvents = [];
 

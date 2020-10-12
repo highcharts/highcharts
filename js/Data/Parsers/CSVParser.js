@@ -152,7 +152,11 @@ var CSVParser = /** @class */ (function (_super) {
      * Internal method that parses a single CSV row
      */
     CSVParser.prototype.parseCSVRow = function (columnStr, rowNumber) {
-        var parser = this, converter = new DataConverter(), columns = parser.columns || [], _a = parser.options, startColumn = _a.startColumn, endColumn = _a.endColumn, decimalPoint = parser.options.decimalPoint || parser.guessedDecimalPoint, itemDelimiter = parser.options.itemDelimiter || parser.guessedItemDelimiter;
+        var parser = this, converter = new DataConverter(), columns = parser.columns || [], _a = parser.options, startColumn = _a.startColumn, endColumn = _a.endColumn, itemDelimiter = parser.options.itemDelimiter || parser.guessedItemDelimiter;
+        var decimalPoint = parser.options.decimalPoint;
+        if (!decimalPoint || decimalPoint === itemDelimiter) {
+            decimalPoint = parser.guessedDecimalPoint || '.';
+        }
         var i = 0, c = '', cl = '', cn = '', token = '', actualColumn = 0, column = 0;
         /**
          * @private
@@ -357,7 +361,7 @@ var CSVParser = /** @class */ (function (_super) {
     /**
      * Default options
      */
-    CSVParser.defaultOptions = __assign(__assign({}, DataParser.defaultOptions), { decimalPoint: '.', lineDelimiter: '\n' });
+    CSVParser.defaultOptions = __assign(__assign({}, DataParser.defaultOptions), { lineDelimiter: '\n' });
     return CSVParser;
 }(DataParser));
 /* *
