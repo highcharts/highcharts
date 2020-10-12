@@ -296,9 +296,7 @@ AccessibilityComponent.prototype = {
                     component.fireEventOnWrappedOrUnwrappedElement(source, clonedEvent);
                 }
                 e.stopPropagation();
-                if (e.cancelable) {
-                    e.preventDefault();
-                }
+                e.preventDefault();
             });
         });
     },

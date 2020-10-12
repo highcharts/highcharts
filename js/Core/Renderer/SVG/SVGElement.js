@@ -1474,7 +1474,7 @@ var SVGElement = /** @class */ (function () {
                     handler.call(element, e);
                 }
                 touchEventFired = true;
-                if (e.cancelable) {
+                if (typeof e.cancelable !== 'boolean' || e.cancelable) {
                     // prevent other events from being fired. #9682
                     e.preventDefault();
                 }
