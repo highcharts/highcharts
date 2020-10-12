@@ -111,7 +111,7 @@ BaseSeries.seriesType('histogram', 'column',
         this.setData(data, false);
     },
     derivedData: function (baseData, binsNumber, binWidth) {
-        var series = this, max = arrayMax(baseData), 
+        var series = this, max = correctFloat(arrayMax(baseData)), 
         // Float correction needed, because first frequency value is not
         // corrected when generating frequencies (within for loop).
         min = correctFloat(arrayMin(baseData)), frequencies = [], bins = {}, data = [], x, fitToBin;
@@ -140,8 +140,8 @@ BaseSeries.seriesType('histogram', 'column',
             bins[x] = 0;
         }
         if (bins[min] !== 0) {
-            frequencies.push(correctFloat(min));
-            bins[correctFloat(min)] = 0;
+            frequencies.push(min);
+            bins[min] = 0;
         }
         fitToBin = fitToBinLeftClosed(frequencies.map(function (elem) {
             return parseFloat(elem);

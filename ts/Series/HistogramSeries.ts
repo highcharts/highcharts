@@ -207,7 +207,7 @@ BaseSeries.seriesType<typeof Highcharts.HistogramSeries>(
             binWidth: number
         ): Array<Highcharts.HistogramPointOptions> {
             var series = this,
-                max = arrayMax(baseData),
+                max = correctFloat(arrayMax(baseData)),
                 // Float correction needed, because first frequency value is not
                 // corrected when generating frequencies (within for loop).
                 min = correctFloat(arrayMin(baseData)),
@@ -256,8 +256,8 @@ BaseSeries.seriesType<typeof Highcharts.HistogramSeries>(
             }
 
             if (bins[min] !== 0) {
-                frequencies.push(correctFloat(min));
-                bins[correctFloat(min)] = 0;
+                frequencies.push(min);
+                bins[min] = 0;
             }
 
             fitToBin = fitToBinLeftClosed(
