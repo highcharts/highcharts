@@ -10,6 +10,14 @@
  *
  * */
 
+'use strict';
+
+/* *
+ *
+ *  Imports
+ *
+ * */
+
 import type DataEventEmitter from '../DataEventEmitter';
 import DataJSON from '../DataJSON.js';
 import DataModifier from './DataModifier.js';
@@ -18,6 +26,12 @@ import U from '../../Core/Utilities.js';
 const {
     merge
 } = U;
+
+/* *
+ *
+ *  Class
+ *
+ * */
 
 /**
  * Modifies a table with the help of modifiers in an ordered chain.
@@ -91,10 +105,8 @@ class ChainDataModifier extends DataModifier<ChainDataModifier.EventObject> {
     ) {
         super();
 
-        const completeOptions = merge(ChainDataModifier.defaultOptions, options);
-
         this.modifiers = modifiers;
-        this.options = completeOptions;
+        this.options = merge(ChainDataModifier.defaultOptions, options);
     }
 
     /* *

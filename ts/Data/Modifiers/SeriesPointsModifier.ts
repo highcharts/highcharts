@@ -10,21 +10,29 @@
  *
  * */
 
+'use strict';
+
 /* *
  *
  *  Imports
  *
  * */
+
 import type DataEventEmitter from '../DataEventEmitter';
 import DataModifier from './DataModifier.js';
 import DataJSON from './../DataJSON.js';
 import DataTable from './../DataTable.js';
 import U from './../../Core/Utilities.js';
-import DataTableRow from './../DataTableRow.js';
-
 const {
     merge
 } = U;
+import DataTableRow from './../DataTableRow.js';
+
+/* *
+ *
+ *  Class
+ *
+ * */
 
 class SeriesPointsModifier extends DataModifier {
 
@@ -38,8 +46,7 @@ class SeriesPointsModifier extends DataModifier {
      * Default options for the series points modifier.
      */
     public static readonly defaultOptions: SeriesPointsModifier.Options = {
-        modifier: 'SeriesPoints',
-        aliasMap: {}
+        modifier: 'SeriesPoints'
     };
 
     /* *
@@ -119,39 +126,39 @@ class SeriesPointsModifier extends DataModifier {
             aliasValues = [],
             newTable = new DataTable();
 
-        let row,
-            newRow,
+        let row: (DataTableRow|undefined),
             newCells: Record<string, DataTableRow.CellType>,
-            cellName,
-            cellAliasOrName,
-            cellNames,
-            cell,
-            aliasIndex;
+            cellName: string,
+            cellAliasOrName: string,
+            cellNames: Array<string>,
+            aliasIndex: number;
 
         this.emit({ type: 'execute', detail: eventDetail, table });
 
-        for (let k = 0, kEnd = aliasKeys.length; k < kEnd; k++) {
+        for (let k = 0, kEnd = aliasKeys.length; k < kEnd; ++k) {
             aliasValues.push(aliasMap[aliasKeys[k]]);
         }
 
-        for (let i = 0, iEnd = table.getRowCount(); i < iEnd; i++) {
+        for (let i = 0, iEnd = table.getRowCount(); i < iEnd; ++i) {
             row = table.getRow(i);
 
             if (row) {
                 newCells = {};
                 cellNames = row.getCellNames();
 
-                for (let j = 0, jEnd = row.getCellCount(); j < jEnd; j++) {
+                for (let j = 0, jEnd = cellNames.length; j < jEnd; ++j) {
                     cellName = cellNames[j];
                     aliasIndex = aliasValues.indexOf(cellName);
-                    cellAliasOrName = aliasIndex !== -1 ? aliasKeys[aliasIndex] : cellName;
+                    cellAliasOrName = (
+                        aliasIndex >= 0 ?
+                            aliasKeys[aliasIndex] :
+                            cellName
+                    );
 
-                    cell = row.getCell(cellName);
-                    newCells[cellAliasOrName] = cell;
+                    newCells[cellAliasOrName] = row.getCell(cellName);
                 }
 
-                newRow = new DataTableRow(newCells);
-                newTable.insertRow(newRow);
+                newTable.insertRow(new DataTableRow(newCells));
             }
         }
 
@@ -182,7 +189,13 @@ class SeriesPointsModifier extends DataModifier {
  *  Namespace
  *
  * */
+
+/**
+ * Additionally provided types for modifier events and options, and JSON
+ * conversion.
+ */
 namespace SeriesPointsModifier {
+
     /**
      * Interface of the class JSON to convert to modifier instances.
      */
@@ -190,8 +203,11 @@ namespace SeriesPointsModifier {
         // nothing here yet
     }
 
+    /**
+     * Options to configure the modifier.
+     */
     export interface Options extends DataModifier.Options {
-        aliasMap: Record<string, string>;
+        aliasMap?: Record<string, string>;
     }
 }
 

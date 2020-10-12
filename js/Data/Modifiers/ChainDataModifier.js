@@ -9,6 +9,7 @@
  *  !!!!!!! SOURCE GETS TRANSPILED BY TYPESCRIPT. EDIT TS FILE ONLY. !!!!!!!
  *
  * */
+'use strict';
 var __extends = (this && this.__extends) || (function () {
     var extendStatics = function (d, b) {
         extendStatics = Object.setPrototypeOf ||
@@ -33,6 +34,11 @@ import DataJSON from '../DataJSON.js';
 import DataModifier from './DataModifier.js';
 import U from '../../Core/Utilities.js';
 var merge = U.merge;
+/* *
+ *
+ *  Class
+ *
+ * */
 /**
  * Modifies a table with the help of modifiers in an ordered chain.
  */
@@ -58,9 +64,8 @@ var ChainDataModifier = /** @class */ (function (_super) {
             modifiers[_i - 1] = arguments[_i];
         }
         var _this = _super.call(this) || this;
-        var completeOptions = merge(ChainDataModifier.defaultOptions, options);
         _this.modifiers = modifiers;
-        _this.options = completeOptions;
+        _this.options = merge(ChainDataModifier.defaultOptions, options);
         return _this;
     }
     /* *
