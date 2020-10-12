@@ -36,6 +36,7 @@ var __assign = (this && this.__assign) || function () {
 import DataJSON from '../DataJSON.js';
 import DataParser from './DataParser.js';
 import DataTable from '../DataTable.js';
+import DataConverter from '../DataConverter.js';
 import U from '../../Core/Utilities.js';
 var merge = U.merge;
 /* *
@@ -113,7 +114,7 @@ var HTMLTableParser = /** @class */ (function (_super) {
      * @emits HTMLTableParser#parseError
      */
     HTMLTableParser.prototype.parse = function (options, eventDetail) {
-        var parser = this, columns = [], headers = [], parseOptions = merge(parser.options, options), endRow = parseOptions.endRow, startColumn = parseOptions.startColumn, endColumn = parseOptions.endColumn, firstRowAsNames = parseOptions.firstRowAsNames, tableHTML = parseOptions.tableHTML || this.tableElement;
+        var parser = this, converter = new DataConverter(), columns = [], headers = [], parseOptions = merge(parser.options, options), endRow = parseOptions.endRow, startColumn = parseOptions.startColumn, endColumn = parseOptions.endColumn, firstRowAsNames = parseOptions.firstRowAsNames, tableHTML = parseOptions.tableHTML || this.tableElement;
         if (!(tableHTML instanceof HTMLElement)) {
             parser.emit({
                 type: 'parseError',
@@ -163,7 +164,8 @@ var HTMLTableParser = /** @class */ (function (_super) {
                         if (!columns[relativeColumnIndex]) {
                             columns[relativeColumnIndex] = [];
                         }
-                        columns[relativeColumnIndex][rowIndex - startRow] = item.innerHTML;
+                        var cellValue = converter.asGuessedType(item.innerHTML);
+                        columns[relativeColumnIndex][rowIndex - startRow] = cellValue;
                         // Loop over all previous indices and make sure
                         // they are nulls, not undefined.
                         var i = 1;

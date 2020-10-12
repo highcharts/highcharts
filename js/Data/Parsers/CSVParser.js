@@ -36,6 +36,7 @@ var __assign = (this && this.__assign) || function () {
 import DataJSON from '../DataJSON.js';
 import DataParser from './DataParser.js';
 import DataTable from '../DataTable.js';
+import DataConverter from '../DataConverter.js';
 import U from '../../Core/Utilities.js';
 var merge = U.merge;
 /* eslint-disable no-invalid-this, require-jsdoc, valid-jsdoc */
@@ -113,7 +114,7 @@ var CSVParser = /** @class */ (function (_super) {
             lines = csv
                 .replace(/\r\n/g, '\n') // Unix
                 .replace(/\r/g, '\n') // Mac
-                .split(lineDelimiter);
+                .split(lineDelimiter || '\n');
             if (!startRow || startRow < 0) {
                 startRow = 0;
             }
@@ -151,7 +152,7 @@ var CSVParser = /** @class */ (function (_super) {
      * Internal method that parses a single CSV row
      */
     CSVParser.prototype.parseCSVRow = function (columnStr, rowNumber) {
-        var parser = this, columns = parser.columns || [], _a = parser.options, startColumn = _a.startColumn, endColumn = _a.endColumn, itemDelimiter = parser.options.itemDelimiter || parser.guessedItemDelimiter;
+        var parser = this, converter = new DataConverter(), columns = parser.columns || [], _a = parser.options, startColumn = _a.startColumn, endColumn = _a.endColumn, decimalPoint = parser.options.decimalPoint || parser.guessedDecimalPoint, itemDelimiter = parser.options.itemDelimiter || parser.guessedItemDelimiter;
         var i = 0, c = '', cl = '', cn = '', token = '', actualColumn = 0, column = 0;
         /**
          * @private
@@ -174,7 +175,19 @@ var CSVParser = /** @class */ (function (_super) {
             if (columns.length < column + 1) {
                 columns.push([]);
             }
-            columns[column][rowNumber] = token;
+            // Try to apply the decimal point, and check if the token then is a
+            // number. If not, reapply the initial value
+            if (typeof token !== 'number' &&
+                converter.guessType(token) !== 'number' &&
+                decimalPoint) {
+                var initialValue = token;
+                token = token.replace(decimalPoint, '.');
+                if (converter.guessType(token) !== 'number') {
+                    token = initialValue;
+                }
+            }
+            columns[column][rowNumber] = typeof token !== 'number' ?
+                converter.asGuessedType(token) : token;
             token = '';
             ++column;
             ++actualColumn;
@@ -300,16 +313,16 @@ var CSVParser = /** @class */ (function (_super) {
         }
         // Try to deduce the decimal point if it's not explicitly set.
         // If both commas or points is > 0 there is likely an issue
+        if (points > commas) {
+            this.guessedDecimalPoint = '.';
+        }
+        else {
+            this.guessedDecimalPoint = ',';
+        }
         if (!decimalPoint) {
-            if (points > commas) {
-                this.guessedDecimalPoint = '.';
-            }
-            else {
-                this.guessedDecimalPoint = ',';
-            }
             // Apply a new decimal regex based on the presumed decimal sep.
             this.decimalRegex = new RegExp('^(-?[0-9]+)' +
-                decimalPoint +
+                this.guessedDecimalPoint +
                 '([0-9]+)$');
         }
         return guessed;

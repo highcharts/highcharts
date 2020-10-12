@@ -160,15 +160,16 @@ var HTMLTableStore = /** @class */ (function (_super) {
             }
             return true;
         };
+        // Get table header markup from row data
         var getTableHeaderHTML = function (topheaders, subheaders, rowLength) {
             var html = '<thead>', i = 0, len = rowLength || subheaders && subheaders.length, next, cur, curColspan = 0, rowspan;
-            // Clean up multiple table headers. The store returns two
+            // Clean up multiple table headers. Chart.getDataRows() returns two
             // levels of headers when using multilevel, not merged. We need to
             // merge identical headers, remove redundant headers, and keep it
             // all marked up nicely.
             if (useMultiLevelHeaders &&
                 topheaders &&
-                subheaders.length &&
+                subheaders &&
                 !isRowEqual(topheaders, subheaders)) {
                 html += '<tr>';
                 for (; i < len; ++i) {
@@ -185,7 +186,9 @@ var HTMLTableStore = /** @class */ (function (_super) {
                         curColspan = 0;
                     }
                     else {
-                        if (!subheaders[i]) {
+                        // Cur is standalone. If it is same as sublevel,
+                        // remove sublevel and add just toplevel.
+                        if (cur === subheaders[i]) {
                             if (useRowspanHeaders) {
                                 rowspan = 2;
                                 delete subheaders[i];
@@ -206,14 +209,12 @@ var HTMLTableStore = /** @class */ (function (_super) {
                 }
                 html += '</tr>';
             }
-            if (!subheaders.length && !useMultiLevelHeaders) {
-                subheaders = topheaders;
-            }
-            if (subheaders.length) {
+            // Add the subheaders (the only headers if not using multilevels)
+            if (subheaders) {
                 html += '<tr>';
                 for (i = 0, len = subheaders.length; i < len; ++i) {
                     if (typeof subheaders[i] !== 'undefined') {
-                        html += getCellHTMLFromValue('th', null, 'scope="col"', subheaders[i] || '');
+                        html += getCellHTMLFromValue('th', null, 'scope="col"', subheaders[i]);
                     }
                 }
                 html += '</tr>';
@@ -222,7 +223,7 @@ var HTMLTableStore = /** @class */ (function (_super) {
             return html;
         };
         var getCellHTMLFromValue = function (tag, classes, attrs, value) {
-            var val = value || '', className = 'text' + (classes ? ' ' + classes : '');
+            var val = value, className = 'text' + (classes ? ' ' + classes : '');
             // Convert to string if number
             if (typeof val === 'number') {
                 val = val.toString();
@@ -232,6 +233,7 @@ var HTMLTableStore = /** @class */ (function (_super) {
                 className = 'number';
             }
             else if (!value) {
+                val = '';
                 className = 'empty';
             }
             return '<' + tag + (attrs ? ' ' + attrs : '') +
@@ -243,32 +245,19 @@ var HTMLTableStore = /** @class */ (function (_super) {
         var tableHead = '';
         // Add the names as the first row if they should be exported
         if (exportNames) {
-            var parentCategoryMap = {}, subcategories = [];
-            // If using multilevel headers, attempt make two arrays:
-            // The top level headers, and the subcategory headers
+            var subcategories_1 = [];
+            // If using multilevel headers, the first value
+            // of each column is a subcategory
             if (useMultiLevelHeaders) {
-                var regex = /\(.*\)/;
-                for (var i = 0; i < columnNames.length; i++) {
-                    var name_1 = columnNames[i], result = regex.test(name_1);
-                    if (result) {
-                        var parentCategory = name_1.substring(0, name_1.indexOf('(') - 1);
-                        if (!parentCategoryMap[parentCategory]) {
-                            parentCategoryMap[parentCategory] = [];
-                        }
-                        // Add to the map
-                        parentCategoryMap[parentCategory].push(name_1.slice(name_1.indexOf('(') + 1, name_1.lastIndexOf(')')));
-                        // remove subcategory
-                        columnNames[i] = parentCategory;
-                    }
-                    // Add the subcategories to another array
-                    // remove duplicate columnnames
-                    var subcategory = parentCategoryMap[columnNames[i]];
-                    if (subcategory) {
-                        subcategories[i] = subcategory.reverse().pop();
-                    }
-                }
+                columnValues.forEach(function (column) {
+                    var subhead = (column.shift() || '').toString();
+                    subcategories_1.push(subhead);
+                });
+                tableHead = getTableHeaderHTML(columnNames, subcategories_1);
             }
-            tableHead = getTableHeaderHTML(columnNames, subcategories);
+            else {
+                tableHead = getTableHeaderHTML(null, columnNames);
+            }
         }
         for (var columnIndex = 0; columnIndex < columnsCount; columnIndex++) {
             var columnName = columnNames[columnIndex], column = columnValues[columnIndex], columnLength = column.length;
@@ -286,16 +275,17 @@ var HTMLTableStore = /** @class */ (function (_super) {
                 // if(columnDataType && typeof cellValue !== columnDataType) {
                 //     do something?
                 // }
-                if (typeof cellValue !== 'string' ||
-                    typeof cellValue !== 'number') {
+                if (!(typeof cellValue === 'string' ||
+                    typeof cellValue === 'number' ||
+                    typeof cellValue === 'undefined')) {
                     cellValue = (cellValue || '').toString();
                 }
-                rowArray[rowIndex][columnIndex] = getCellHTMLFromValue('td', null, '', cellValue);
+                rowArray[rowIndex][columnIndex] = getCellHTMLFromValue(columnIndex ? 'td' : 'th', null, columnIndex ? '' : 'scope="row"', cellValue);
                 // On the final column, push the row to the array
                 if (columnIndex === columnsCount - 1) {
-                    htmlRows.push('<tr>\n' +
-                        rowArray[rowIndex].join('\n') +
-                        '\n</tr>');
+                    htmlRows.push('<tr>' +
+                        rowArray[rowIndex].join('') +
+                        '</tr>');
                 }
             }
         }
@@ -308,13 +298,13 @@ var HTMLTableStore = /** @class */ (function (_super) {
                 options.tableCaption +
                 '</caption>';
         }
-        return ('<table>\n' +
+        return ('<table>' +
             caption +
-            tableHead + '\n' +
-            '<tbody>\n' +
-            htmlRows.join('\n') +
+            tableHead +
+            '<tbody>' +
+            htmlRows.join('') +
             '</tbody>' +
-            '\n</table>');
+            '</table>');
     };
     /**
      * Exports the datastore as an HTML string, using the options
@@ -339,8 +329,7 @@ var HTMLTableStore = /** @class */ (function (_super) {
             }
         });
         // Merge in provided options
-        merge(true, exportOptions, htmlExportOptions);
-        return this.getHTMLTableForExport(exportOptions);
+        return this.getHTMLTableForExport(merge(exportOptions, htmlExportOptions));
     };
     HTMLTableStore.prototype.toJSON = function () {
         var store = this, json = {

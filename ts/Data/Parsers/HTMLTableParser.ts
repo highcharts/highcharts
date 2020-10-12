@@ -18,9 +18,12 @@
 
 import type DataEventEmitter from '../DataEventEmitter';
 import type DataValueType from '../DataValueType';
+import type DataTableRow from '../DataTableRow.js';
 import DataJSON from '../DataJSON.js';
 import DataParser from './DataParser.js';
 import DataTable from '../DataTable.js';
+import DataConverter from '../DataConverter.js';
+
 import U from '../../Core/Utilities.js';
 const { merge } = U;
 
@@ -109,7 +112,7 @@ class HTMLTableParser extends DataParser<DataParser.EventObject> {
      *
      * */
 
-    private columns: DataValueType[][];
+    private columns: DataTableRow.CellType[][];
     private headers: string[];
     public options: HTMLTableParser.ClassJSONOptions;
     public tableElement?: HTMLElement
@@ -139,7 +142,8 @@ class HTMLTableParser extends DataParser<DataParser.EventObject> {
         eventDetail?: DataEventEmitter.EventDetail
     ): void {
         const parser = this,
-            columns: DataValueType[][] = [],
+            converter = new DataConverter(),
+            columns: DataTableRow.CellType[][] = [],
             headers: string[] = [],
             parseOptions = merge(parser.options, options),
             {
@@ -226,9 +230,10 @@ class HTMLTableParser extends DataParser<DataParser.EventObject> {
                             columns[relativeColumnIndex] = [];
                         }
 
+                        const cellValue = converter.asGuessedType(item.innerHTML);
                         columns[relativeColumnIndex][
                             rowIndex - startRow
-                        ] = item.innerHTML;
+                        ] = cellValue;
 
                         // Loop over all previous indices and make sure
                         // they are nulls, not undefined.

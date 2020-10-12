@@ -20,6 +20,7 @@ import type DataEventEmitter from '../DataEventEmitter';
 import type DataJSON from '../DataJSON';
 import type DataTable from '../DataTable';
 import type DataValueType from '../DataValueType';
+import type DataTableRow from '../DataTableRow.js';
 import U from '../../Core/Utilities.js';
 const {
     addEvent,
@@ -122,7 +123,7 @@ namespace DataParser {
      */
     export interface EventObject extends DataEventEmitter.EventObject {
         readonly type: ('parse' | 'afterParse' | 'parseError');
-        readonly columns: DataValueType[][];
+        readonly columns: DataTableRow.CellType[][];
         readonly error?: (string | Error);
         readonly headers: string[];
     }

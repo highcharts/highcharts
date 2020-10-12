@@ -270,21 +270,20 @@ class CSVStore extends DataStore<CSVStore.EventObjects> implements DataJSON.Clas
      * A CSV string from the DataTable.
      */
     public getCSVForExport(exportOptions: CSVStore.ExportOptions): string {
-        const csvOptions = exportOptions,
-            decimalPoint = pick(
-                csvOptions.decimalPoint,
-                csvOptions.itemDelimiter !== ',' && csvOptions.useLocalDecimalPoint ?
-                    (1.1).toLocaleString()[1] :
-                    '.'
-            ),
-            // use ';' for direct to Excel
-            itemDelimiter = pick(
-                csvOptions.itemDelimiter,
-                decimalPoint === ',' ? ';' : ','
-            ),
-            // '\n' isn't working with the js csv data extraction
-            lineDelimiter = csvOptions.lineDelimiter,
+        const { useLocalDecimalPoint, lineDelimiter } = exportOptions,
             exportNames = (this.parserOptions.firstRowAsNames !== false);
+
+        let { decimalPoint, itemDelimiter } = exportOptions;
+
+        if (!decimalPoint) {
+            decimalPoint = itemDelimiter !== ',' && useLocalDecimalPoint ?
+                (1.1).toLocaleString()[1] :
+                '.';
+        }
+
+        if (!itemDelimiter) {
+            itemDelimiter = decimalPoint === ',' ? ';' : ',';
+        }
 
         const { columnNames, columnValues } = this.getColumnsForExport(exportOptions.exportIDColumn);
         const csvRows: Array<string> = [],
@@ -294,7 +293,7 @@ class CSVStore extends DataStore<CSVStore.EventObjects> implements DataJSON.Clas
 
         // Add the names as the first row if they should be exported
         if (exportNames) {
-            csvRows.push(columnNames.join(itemDelimiter));
+            csvRows.push(columnNames.map((columnName): string => `"${columnName}"`).join(itemDelimiter));
         }
 
         for (let columnIndex = 0; columnIndex < columnsCount; columnIndex++) {
@@ -317,18 +316,33 @@ class CSVStore extends DataStore<CSVStore.EventObjects> implements DataJSON.Clas
                 }
 
                 // Handle datatype
-                if (columnDataType === 'string') {
-                    cellValue = `"${cellValue}"`;
-                }
-                if (columnDataType === 'number') {
+                // if (typeof cellValue === 'string') {
+                //     cellValue = `"${cellValue}"`;
+                // }
+                if (typeof cellValue === 'number') {
                     cellValue = String(cellValue).replace('.', decimalPoint);
+                } else if (typeof cellValue === 'string') {
+                    cellValue = `"${cellValue}"`;
                 }
 
                 rowArray[rowIndex][columnIndex] = cellValue;
 
                 // On the final column, push the row to the CSV
                 if (columnIndex === columnsCount - 1) {
-                    csvRows.push((rowArray[rowIndex]).join(itemDelimiter));
+                    // Trim repeated undefined values starting at the end
+                    // Currently, we export the first "comma" even if the
+                    // second value is undefined
+                    let i = columnIndex;
+                    while (rowArray[rowIndex].length > 2) {
+                        const cellVal = rowArray[rowIndex][i];
+                        if (cellVal !== void 0) {
+                            break;
+                        }
+                        rowArray[rowIndex].pop();
+                        i--;
+                    }
+
+                    csvRows.push(rowArray[rowIndex].join(itemDelimiter));
                 }
             }
         }
@@ -357,10 +371,7 @@ class CSVStore extends DataStore<CSVStore.EventObjects> implements DataJSON.Clas
             }
         });
 
-        // Merge in provided options
-        merge(true, exportOptions, csvExportOptions);
-
-        return this.getCSVForExport(exportOptions);
+        return this.getCSVForExport(merge(exportOptions, csvExportOptions));
     }
 
     /**
