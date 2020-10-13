@@ -584,8 +584,9 @@ Chart.prototype.getDrilldownBackText = function () {
     }
 };
 Chart.prototype.showDrillUpButton = function () {
+    var _a, _b;
     var chart = this, backText = this.getDrilldownBackText(), buttonOptions = chart.options.drilldown.drillUpButton, attr, states;
-    if (!this.drillUpButton) {
+    if (!this.drillUpButton && !((_b = (_a = chart.options.drilldown) === null || _a === void 0 ? void 0 : _a.breadcrumbs) === null || _b === void 0 ? void 0 : _b.enabled)) {
         attr = buttonOptions.theme;
         states = attr && attr.states;
         this.drillUpButton = this.renderer.button(backText, null, null, function () {
@@ -599,7 +600,7 @@ Chart.prototype.showDrillUpButton = function () {
             .add()
             .align(buttonOptions.position, false, buttonOptions.relativeTo || 'plotBox');
     }
-    else {
+    else if (this.drillUpButton) {
         this.drillUpButton.attr({
             text: backText
         })
@@ -615,6 +616,7 @@ Chart.prototype.showDrillUpButton = function () {
  * @function Highcharts.Chart#drillUp
  */
 Chart.prototype.drillUp = function () {
+    var _a, _b;
     if (!this.drilldownLevels || this.drilldownLevels.length === 0) {
         return;
     }
@@ -683,10 +685,10 @@ Chart.prototype.drillUp = function () {
         }
     }
     this.redraw();
-    if (this.drilldownLevels.length === 0) {
+    if (this.drilldownLevels.length === 0 && !((_b = (_a = chart.options.drilldown) === null || _a === void 0 ? void 0 : _a.breadcrumbs) === null || _b === void 0 ? void 0 : _b.enabled)) {
         this.drillUpButton = this.drillUpButton.destroy();
     }
-    else {
+    else if (this.drillUpButton) {
         this.drillUpButton.attr({
             text: this.getDrilldownBackText()
         })
