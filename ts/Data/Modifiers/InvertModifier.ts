@@ -10,23 +10,34 @@
  *
  * */
 
+'use strict';
+
 /* *
  *
  *  Imports
  *
  * */
+
 import type DataEventEmitter from '../DataEventEmitter';
 import DataModifier from './DataModifier.js';
 import DataJSON from '../DataJSON.js';
 import DataTable from '../DataTable.js';
-import U from '../../Core/Utilities.js';
 import DataTableRow from '../DataTableRow.js';
-
+import U from '../../Core/Utilities.js';
 const {
     merge,
     defined
 } = U;
 
+/* *
+ *
+ *  Class
+ *
+ * */
+
+/**
+ * Inverts columns and rows in a table.
+ */
 class InvertModifier extends DataModifier {
 
     /* *
@@ -118,10 +129,10 @@ class InvertModifier extends DataModifier {
             newRowIds = Object.keys(columns),
             oldRowsLength = table.getRowCount();
 
-        let oldRow,
+        let oldRow: (DataTableRow|undefined),
             newCells: Record<string, DataTableRow.CellType>,
-            newRow,
-            rowCell;
+            newRow: (DataTableRow|undefined),
+            rowCell: (DataTableRow.CellType|undefined);
 
         modifier.emit({ type: 'execute', detail: eventDetail, table });
 
@@ -133,7 +144,7 @@ class InvertModifier extends DataModifier {
 
                 for (let j = 0; j < oldRowsLength; j++) {
                     oldRow = table.getRow(j);
-                    rowCell = oldRow?.getCell(newRowIds[i]);
+                    rowCell = oldRow && oldRow.getCell(newRowIds[i]);
 
                     if (defined(rowCell) && oldRow?.id) {
                         newCells[oldRow.id] = rowCell;
@@ -158,12 +169,10 @@ class InvertModifier extends DataModifier {
      * Class JSON of this invert modifier.
      */
     public toJSON(): InvertModifier.ClassJSON {
-        const json = {
+        return {
             $class: 'InvertModifier',
             options: merge(this.options)
         };
-
-        return json;
     }
 }
 
@@ -172,7 +181,13 @@ class InvertModifier extends DataModifier {
  *  Namespace
  *
  * */
+
+/**
+ * Additionally provided types for modifier events and options, and JSON
+ * conversion.
+ */
 namespace InvertModifier {
+
     /**
      * Interface of the class JSON to convert to modifier instances.
      */
@@ -180,7 +195,12 @@ namespace InvertModifier {
         // nothing here yet
     }
 
-    export interface Options extends DataModifier.Options {}
+    /**
+     * Options to configure the modifier.
+     */
+    export interface Options extends DataModifier.Options {
+        // nothing here yet
+    }
 }
 
 /* *

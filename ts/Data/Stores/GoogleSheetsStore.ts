@@ -31,7 +31,7 @@ const {
  * @private
  */
 
-class GoogleSheetsStore extends DataStore<GoogleDataStore.EventObject> implements DataJSON.Class {
+class GoogleSheetsStore extends DataStore<GoogleSheetsStore.EventObject> implements DataJSON.Class {
 
     /* *
      *
@@ -39,7 +39,7 @@ class GoogleSheetsStore extends DataStore<GoogleDataStore.EventObject> implement
      *
      * */
 
-    protected static readonly defaultOptions: GoogleDataStore.Options = {
+    protected static readonly defaultOptions: GoogleSheetsStore.Options = {
         googleSpreadsheetKey: '',
         worksheet: 1,
         startColumn: 0,
@@ -56,7 +56,7 @@ class GoogleSheetsStore extends DataStore<GoogleDataStore.EventObject> implement
      *
      * */
 
-    public static fromJSON(json: GoogleDataStore.ClassJSON): GoogleSheetsStore {
+    public static fromJSON(json: GoogleSheetsStore.ClassJSON): GoogleSheetsStore {
         const options = json.options,
             table = DataTable.fromJSON(json.table),
             store = new GoogleSheetsStore(table, options);
@@ -75,12 +75,11 @@ class GoogleSheetsStore extends DataStore<GoogleDataStore.EventObject> implement
     public constructor(
         table: DataTable,
         options: (
-            Partial<GoogleDataStore.Options>&
+            Partial<GoogleSheetsStore.Options>&
             { googleSpreadsheetKey: string }
         )
     ) {
         super(table);
-
         this.options = merge(GoogleSheetsStore.defaultOptions, options);
         this.columns = [];
     }
@@ -92,7 +91,7 @@ class GoogleSheetsStore extends DataStore<GoogleDataStore.EventObject> implement
      * */
 
     public columns: Array<Array<DataValueType>>;
-    public readonly options: GoogleDataStore.Options;
+    public readonly options: GoogleSheetsStore.Options;
     public readonly parser: DataParser<DataParser.EventObject> = void 0 as any;
 
     /* *
@@ -243,6 +242,7 @@ class GoogleSheetsStore extends DataStore<GoogleDataStore.EventObject> implement
             url: url,
             dataType: 'json',
             success: function (json: Highcharts.JSONType): void {
+
                 store.parseSheet(json);
                 colsCount = store.columns.length;
 
@@ -251,6 +251,7 @@ class GoogleSheetsStore extends DataStore<GoogleDataStore.EventObject> implement
                 }
 
                 const table = DataTable.fromColumns(store.columns, headers);
+                store.table = table;
 
                 // Polling
                 if (enablePolling) {
@@ -304,7 +305,7 @@ class GoogleSheetsStore extends DataStore<GoogleDataStore.EventObject> implement
         }
     }
 
-    public toJSON(): GoogleDataStore.ClassJSON {
+    public toJSON(): GoogleSheetsStore.ClassJSON {
         return {
             $class: 'GoogleSheetsStore',
             metadata: merge(this.metadata),
@@ -323,7 +324,7 @@ class GoogleSheetsStore extends DataStore<GoogleDataStore.EventObject> implement
      * */
 }
 
-namespace GoogleDataStore {
+namespace GoogleSheetsStore {
 
     export interface ClassJSON extends DataStore.ClassJSON {
         options: Options;
@@ -344,7 +345,7 @@ namespace GoogleDataStore {
 
     export interface Options extends DataJSON.JSONObject {
         googleSpreadsheetKey: string;
-        worksheet: number;
+        worksheet?: number;
         startRow: number;
         endRow: number;
         startColumn: number;

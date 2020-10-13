@@ -11,12 +11,12 @@
  * */
 
 import type DataEventEmitter from '../DataEventEmitter';
-import type DataValueType from '../DataValueType';
+import type DataTableRow from '../DataTableRow';
 import DataJSON from '../DataJSON.js';
 import DataParser from './DataParser.js';
 import DataTable from '../DataTable.js';
+import DataConverter from '../DataConverter.js';
 import U from '../../Core/Utilities.js';
-
 const { merge } = U;
 
 /* eslint-disable no-invalid-this, require-jsdoc, valid-jsdoc */
@@ -37,7 +37,6 @@ class CSVParser extends DataParser<DataParser.EventObject> {
      */
     protected static readonly defaultOptions: CSVParser.ClassJSONOptions = {
         ...DataParser.defaultOptions,
-        decimalPoint: '.',
         lineDelimiter: '\n'
     };
 
@@ -83,7 +82,7 @@ class CSVParser extends DataParser<DataParser.EventObject> {
      *  Properties
      *
      * */
-    private columns: Array<Array<DataValueType>> = [];
+    private columns: Array<Array<DataTableRow.CellType>> = [];
     private headers: Array<string> = [];
     private guessedItemDelimiter?: string;
     private guessedDecimalPoint?: string;
@@ -143,7 +142,7 @@ class CSVParser extends DataParser<DataParser.EventObject> {
             lines = csv
                 .replace(/\r\n/g, '\n') // Unix
                 .replace(/\r/g, '\n') // Mac
-                .split(lineDelimiter);
+                .split(lineDelimiter || '\n');
 
             if (!startRow || startRow < 0) {
                 startRow = 0;
@@ -192,9 +191,16 @@ class CSVParser extends DataParser<DataParser.EventObject> {
         rowNumber: number
     ): void {
         const parser = this,
+            converter = new DataConverter(),
             columns = parser.columns || [],
             { startColumn, endColumn } = parser.options,
             itemDelimiter = parser.options.itemDelimiter || parser.guessedItemDelimiter;
+
+        let { decimalPoint } = parser.options;
+        if (!decimalPoint || decimalPoint === itemDelimiter) {
+            decimalPoint = parser.guessedDecimalPoint || '.';
+        }
+
         let i = 0,
             c = '',
             cl = '',
@@ -227,8 +233,22 @@ class CSVParser extends DataParser<DataParser.EventObject> {
                 columns.push([]);
             }
 
+            // Try to apply the decimal point, and check if the token then is a
+            // number. If not, reapply the initial value
+            if (
+                typeof token !== 'number' &&
+                converter.guessType(token) !== 'number' &&
+                decimalPoint
+            ) {
+                const initialValue = token;
+                token = token.replace(decimalPoint, '.');
+                if (converter.guessType(token) !== 'number') {
+                    token = initialValue;
+                }
+            }
 
-            columns[column][rowNumber] = token;
+            columns[column][rowNumber] = typeof token !== 'number' ?
+                converter.asGuessedType(token) : token;
 
             token = '';
             ++column;
@@ -387,17 +407,17 @@ class CSVParser extends DataParser<DataParser.EventObject> {
 
         // Try to deduce the decimal point if it's not explicitly set.
         // If both commas or points is > 0 there is likely an issue
-        if (!decimalPoint) {
-            if (points > commas) {
-                this.guessedDecimalPoint = '.';
-            } else {
-                this.guessedDecimalPoint = ',';
-            }
+        if (points > commas) {
+            this.guessedDecimalPoint = '.';
+        } else {
+            this.guessedDecimalPoint = ',';
+        }
 
+        if (!decimalPoint) {
             // Apply a new decimal regex based on the presumed decimal sep.
             this.decimalRegex = new RegExp(
                 '^(-?[0-9]+)' +
-                decimalPoint +
+                this.guessedDecimalPoint +
                 '([0-9]+)$'
             );
         }
@@ -461,7 +481,7 @@ namespace CSVParser {
      */
     export interface ClassJSONOptions extends DataParser.Options {
         csv?: string;
-        decimalPoint: string;
+        decimalPoint?: string;
         itemDelimiter?: string;
         lineDelimiter: string;
     }

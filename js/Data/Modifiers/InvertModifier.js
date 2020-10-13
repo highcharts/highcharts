@@ -9,6 +9,7 @@
  *  !!!!!!! SOURCE GETS TRANSPILED BY TYPESCRIPT. EDIT TS FILE ONLY. !!!!!!!
  *
  * */
+'use strict';
 var __extends = (this && this.__extends) || (function () {
     var extendStatics = function (d, b) {
         extendStatics = Object.setPrototypeOf ||
@@ -25,9 +26,17 @@ var __extends = (this && this.__extends) || (function () {
 import DataModifier from './DataModifier.js';
 import DataJSON from '../DataJSON.js';
 import DataTable from '../DataTable.js';
-import U from '../../Core/Utilities.js';
 import DataTableRow from '../DataTableRow.js';
+import U from '../../Core/Utilities.js';
 var merge = U.merge, defined = U.defined;
+/* *
+ *
+ *  Class
+ *
+ * */
+/**
+ * Inverts columns and rows in a table.
+ */
 var InvertModifier = /** @class */ (function (_super) {
     __extends(InvertModifier, _super);
     /* *
@@ -91,7 +100,7 @@ var InvertModifier = /** @class */ (function (_super) {
                 };
                 for (var j = 0; j < oldRowsLength; j++) {
                     oldRow = table.getRow(j);
-                    rowCell = oldRow === null || oldRow === void 0 ? void 0 : oldRow.getCell(newRowIds[i]);
+                    rowCell = oldRow && oldRow.getCell(newRowIds[i]);
                     if (defined(rowCell) && (oldRow === null || oldRow === void 0 ? void 0 : oldRow.id)) {
                         newCells[oldRow.id] = rowCell;
                     }
@@ -111,11 +120,10 @@ var InvertModifier = /** @class */ (function (_super) {
      * Class JSON of this invert modifier.
      */
     InvertModifier.prototype.toJSON = function () {
-        var json = {
+        return {
             $class: 'InvertModifier',
             options: merge(this.options)
         };
-        return json;
     };
     /* *
      *

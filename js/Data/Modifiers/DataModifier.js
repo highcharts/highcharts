@@ -9,6 +9,7 @@
  *  !!!!!!! SOURCE GETS TRANSPILED BY TYPESCRIPT. EDIT TS FILE ONLY. !!!!!!!
  *
  * */
+'use strict';
 import U from '../../Core/Utilities.js';
 var addEvent = U.addEvent, fireEvent = U.fireEvent, merge = U.merge;
 /** eslint-disable valid-jsdoc */

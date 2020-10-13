@@ -103,7 +103,7 @@ const store = new GoogleSheetsStore(undefined, {
 
 const modifierChain = new ChainDataModifier();
 const groupModifier = new GroupDataModifier({ groupColumn: 'Margin  (Trump)' });
-const rangeModifier = new RangeDataModifier({ ranges: [{ column: 3, maxValue: 0, minValue: -100 }] });
+const rangeModifier = new RangeDataModifier({ ranges: [{ column: 'value', maxValue: 0, minValue: -999 }] });
 
 modifierChain.add(groupModifier);
 modifierChain.add(rangeModifier);
@@ -131,7 +131,7 @@ store.on('afterLoad', e => {
 modiferToUse.on('afterExecute', e => {
     // Write the modified margins
     document.getElementById('datastore-after')
-        .innerHTML = e.table.getAllRows().map(row => row.getCell(3)).join('\n');
+        .innerHTML = e.table.getAllRows().map(row => row.getCell('value')).join('\n');
 
     // convert modified data to series
     modifiedDataSeriesConverter = new DataSeriesConverter(e.table);

@@ -74,7 +74,7 @@ var DataConverter = /** @class */ (function () {
             $class: 'DataTable',
             rows: [{
                     $class: 'DataTableRow',
-                    cells: [JSON.parse((value === null || value === void 0 ? void 0 : value.toString()) || '')]
+                    cells: [JSON.parse((value || '').toString())]
                 }]
         });
     };
@@ -131,6 +131,40 @@ var DataConverter = /** @class */ (function () {
      */
     DataConverter.prototype.asString = function (value) {
         return "" + value;
+    };
+    /**
+     * Guesses the potential type of a string value
+     * (for parsing CSV etc)
+     *
+     * @param {string} value
+     * The string to examine
+     * @return {string}
+     * `string`, `Date` or `number`
+     */
+    DataConverter.prototype.guessType = function (value) {
+        if (!isNaN(Number(value))) {
+            return 'number';
+        }
+        if (!isNaN(Date.parse(value.toString()))) {
+            return 'Date';
+        }
+        return 'string';
+    };
+    /**
+     * Casts a string value to it's guessed type
+     * @param {string} value
+     * The string to examine
+     *
+     * @return {number|Date|string}
+     * The converted value
+     */
+    DataConverter.prototype.asGuessedType = function (value) {
+        var typeMap = {
+            'number': this.asNumber,
+            'Date': this.asDate,
+            'string': this.asString
+        };
+        return typeMap[this.guessType(value)](value);
     };
     return DataConverter;
 }());
