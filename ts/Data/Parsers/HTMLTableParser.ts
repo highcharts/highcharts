@@ -17,8 +17,7 @@
  * */
 
 import type DataEventEmitter from '../DataEventEmitter';
-import type DataValueType from '../DataValueType';
-import type DataTableRow from '../DataTableRow.js';
+import type DataTableRow from '../DataTableRow';
 import DataJSON from '../DataJSON.js';
 import DataParser from './DataParser.js';
 import DataTable from '../DataTable.js';

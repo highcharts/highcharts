@@ -11,14 +11,12 @@
  * */
 
 import type DataEventEmitter from '../DataEventEmitter';
-import type DataValueType from '../DataValueType';
+import type DataTableRow from '../DataTableRow';
 import DataJSON from '../DataJSON.js';
 import DataParser from './DataParser.js';
 import DataTable from '../DataTable.js';
 import DataConverter from '../DataConverter.js';
 import U from '../../Core/Utilities.js';
-import DataTableRow from '../DataTableRow';
-
 const { merge } = U;
 
 /* eslint-disable no-invalid-this, require-jsdoc, valid-jsdoc */
