@@ -312,6 +312,10 @@ addEvent(Chart, 'render', function () {
         !this.dataTableDiv) {
         this.viewData();
     }
+    else if (this.dataTableDiv) {
+        // Data table was not re-rendered after a data update, #14320.
+        this.dataTableDiv.innerHTML = this.getTable();
+    }
 });
 /* eslint-enable no-invalid-this */
 /**
