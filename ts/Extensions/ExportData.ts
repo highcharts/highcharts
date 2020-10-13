@@ -19,9 +19,9 @@
 import type Point from '../Core/Series/Point';
 import Axis from '../Core/Axis/Axis.js';
 import Chart from '../Core/Chart/Chart.js';
-import DataTable from '../Data/DataTable.js';
-import DataTableRow from '../Data/DataTableRow.js';
 import CSVStore from '../Data/Stores/CSVStore.js';
+import HTMLTableStore from '../Data/Stores/HTMLTableStore.js';
+import DataTableRow from '../Data/DataTableRow.js';
 import H from '../Core/Globals.js';
 const {
     doc,
@@ -158,7 +158,6 @@ declare global {
 
 
 import DownloadURL from '../Extensions/DownloadURL.js';
-import HTMLTableStore from '../Data/Stores/HTMLTableStore.js';
 
 const { downloadURL } = DownloadURL;
 
@@ -490,75 +489,76 @@ Chart.prototype.setUpKeyToAxis = function (): void {
  * Adds rows from getDataRows to a data table
  *
  * @private
- * @param {Chart} chart the chart to grab things from
- * @param {CSVStore | HTMLTableStore} dataStoreProvided
- * the data store to apply the rows to
- * @todo should maybe use the datastore registry
- * @todo replace forEaches
+ *
+ * @function Highcharts.Chart#getDataTable
+ *
+ * @param {Chart} chart the
+ * Chart to get the data from from
+ *
+ * @param {CSVStore | HTMLTableStore} dataStore
+ * The DataStore to insert the values to
+ *
  */
 function getDataTable(
     chart: Chart,
-    dataStoreProvided: (CSVStore | HTMLTableStore)
+    dataStore: (CSVStore | HTMLTableStore)
 ): void {
 
     // Dont use multilevel headers with CSV export
     const useMultiLevelHeaders = chart.options.exporting?.useMultiLevelHeaders &&
-        dataStoreProvided instanceof HTMLTableStore;
+        dataStore instanceof HTMLTableStore;
 
-    const rows = chart.getDataRows(useMultiLevelHeaders);
-
-    const dataStore = dataStoreProvided,
-        dataTable = new DataTable(),
-        categories = rows.shift();
+    const rows = chart.getDataRows(useMultiLevelHeaders),
+        categories = rows[0];
 
     // loop over the top level categories and replace duplicate names
+    const names: string[] = [];
     if (categories) {
         for (let index = 0; index < categories.length; index++) {
             const categoryName = categories[index].toString(),
                 firstCategoryIndex = categories.indexOf(categoryName),
                 lastCategoryIndex = categories.lastIndexOf(categoryName);
 
-            // Since dataTables don't support multiple cells with
-            // the same name we have to append a thingie
-            // and set a metadata title (which is the exported name)
+            // If there are duplicate category names, replace the column names
+            // and set a metadata title (which takes precedence on export)
             if (firstCategoryIndex < lastCategoryIndex) {
-                let categoryCount = 1;
-                let i = firstCategoryIndex + 1;
-                while (i <= lastCategoryIndex) {
-                    if (categories[i] === categoryName) {
-                        categories[i] += `_${categoryCount}`;
-                        dataStore.describeColumn(categories[i] + '', {
+                let categoryCount = 1,
+                    categoryIndex = firstCategoryIndex + 1;
+                while (categoryIndex <= lastCategoryIndex) {
+                    if (categories[categoryIndex] === categoryName) {
+                        categories[categoryIndex] += `_${categoryCount}`;
+                        dataStore.describeColumn(categories[categoryIndex].toString(), {
                             title: categoryName
                         });
                         categoryCount++;
                     }
-                    i++;
+                    categoryIndex++;
                 }
             }
+            names[index] = categoryName;
         }
+
+        dataStore.setColumnOrder(names);
     }
 
-    const names = categories?.map((name): string => name.toString()) || [];
+    // Insert the new names to the store
+    // Start at 1 as first row is categories
+    const rowsLength = rows.length;
+    for (let rowIndex = 1; rowIndex < rowsLength; rowIndex++) {
+        const rowCells = rows[rowIndex],
+            rowJSON: DataTableRow.ClassJSON = {
+                $class: 'DataTableRow'
+            };
 
-    // Set the column order
-    dataStore.setColumnOrder(names);
-
-    rows.forEach((row): void => {
-        const dataRow = new DataTableRow();
-        if (row.length) {
-            row.forEach((value, cellIndex): void => {
-                dataRow.insertCell(
-                    names[cellIndex],
-                    value
-                );
-            });
-            // Cannot insert directly to datastore.table for some reason
-            // DataConverter is not a constructor
-            dataTable.insertRow(dataRow);
+        let cellIndex = 0;
+        while (Object.keys(rowJSON).length <= rowCells.length) {
+            const cellValue = rowCells[cellIndex];
+            rowJSON[names[cellIndex]] = cellValue;
+            cellIndex++;
         }
-    });
 
-    dataStore.table = dataTable;
+        dataStore.table.insertRow(DataTableRow.fromJSON(rowJSON));
+    }
 }
 
 /**
@@ -933,14 +933,15 @@ Chart.prototype.getDataRows = function (
 Chart.prototype.getCSV = function (
     useLocalDecimalPoint: boolean = false
 ): string {
-    const dataStore = new CSVStore(),
-        csvOptions: Highcharts.ExportingCsvOptions =
-            (this.options.exporting as any).csv;
+    const dataStore = new CSVStore();
 
     getDataTable(this, dataStore);
 
-
-    return dataStore.save({ ...csvOptions as any, useLocalDecimalPoint });
+    return dataStore.save({
+        ...this.options.exporting?.csv,
+        exportIDColumn: false,
+        useLocalDecimalPoint
+    });
 };
 
 /**
@@ -972,7 +973,12 @@ Chart.prototype.getTable = function (
 
     getDataTable(this, dataStore);
 
-    const html = dataStore.save({ ...exporting as any, tableCaption, useLocalDecimalPoint }),
+    const html = dataStore.save({
+            ...exporting,
+            tableCaption,
+            useLocalDecimalPoint,
+            exportIDColumn: false
+        }),
         e = { html: html };
 
     fireEvent(this, 'afterGetTable', e);

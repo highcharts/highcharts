@@ -11,16 +11,16 @@
  * */
 
 import type DataEventEmitter from '../DataEventEmitter';
-import Ajax from '../../Extensions/Ajax.js';
+import type DataTableRow from '../DataTableRow';
 import CSVParser from '../Parsers/CSVParser.js';
 import DataJSON from '../DataJSON.js';
+import Ajax from '../../Extensions/Ajax.js';
 const {
     ajax
 } = Ajax;
 import DataStore from './DataStore.js';
 import DataTable from '../DataTable.js';
 import U from '../../Core/Utilities.js';
-import DataTableRow from '../DataTableRow';
 const {
     merge,
     pick,
@@ -456,17 +456,17 @@ namespace CSVStore {
         dataRefreshRate: number;
     }
 
+
     /**
      * The available options when exporting the table as CSV.
      */
-    export interface ExportOptions extends DataJSON.JSONObject {
+    export interface ExportOptions extends Record<string, unknown>{
         decimalPoint: string | null;
         itemDelimiter: string | null;
         lineDelimiter: string;
         useLocalDecimalPoint?: boolean;
         exportIDColumn: boolean;
     }
-
 }
 
 /* *

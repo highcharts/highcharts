@@ -33,9 +33,9 @@ var __rest = (this && this.__rest) || function (s, e) {
         }
     return t;
 };
-import Ajax from '../../Extensions/Ajax.js';
 import CSVParser from '../Parsers/CSVParser.js';
 import DataJSON from '../DataJSON.js';
+import Ajax from '../../Extensions/Ajax.js';
 var ajax = Ajax.ajax;
 import DataStore from './DataStore.js';
 import DataTable from '../DataTable.js';

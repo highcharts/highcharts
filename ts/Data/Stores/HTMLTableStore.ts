@@ -455,7 +455,10 @@ class HTMLTableStore extends DataStore<HTMLTableStore.EventObjects> implements D
      * HTML from the current dataTable.
      *
      */
-    public save(htmlExportOptions: HTMLTableStore.ExportOptions, eventDetail?: DataEventEmitter.EventDetail): string {
+    public save(
+        htmlExportOptions: Partial<HTMLTableStore.ExportOptions>,
+        eventDetail?: DataEventEmitter.EventDetail
+    ): string {
         const exportOptions = HTMLTableStore.defaultExportOptions;
 
         // Merge in the provided parser options
@@ -466,7 +469,6 @@ class HTMLTableStore extends DataStore<HTMLTableStore.EventObjects> implements D
         });
 
         // Merge in provided options
-
         return this.getHTMLTableForExport(merge(exportOptions, htmlExportOptions));
     }
 
@@ -519,13 +521,13 @@ namespace HTMLTableStore {
     /**
      * Options for exporting the store as an HTML table
      */
-    export interface ExportOptions extends DataJSON.JSONObject {
+    export interface ExportOptions extends Record<string, unknown> {
         decimalPoint?: string | null;
         useLocalDecimalPoint?: boolean;
         exportIDColumn: boolean;
-        tableCaption?: string;
-        useRowspanHeaders: boolean;
-        useMultiLevelHeaders: boolean;
+        tableCaption?: string | boolean;
+        useRowspanHeaders?: boolean;
+        useMultiLevelHeaders?: boolean;
     }
 
     /**

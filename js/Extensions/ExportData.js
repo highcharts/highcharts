@@ -26,9 +26,9 @@ var __assign = (this && this.__assign) || function () {
 };
 import Axis from '../Core/Axis/Axis.js';
 import Chart from '../Core/Chart/Chart.js';
-import DataTable from '../Data/DataTable.js';
-import DataTableRow from '../Data/DataTableRow.js';
 import CSVStore from '../Data/Stores/CSVStore.js';
+import HTMLTableStore from '../Data/Stores/HTMLTableStore.js';
+import DataTableRow from '../Data/DataTableRow.js';
 import H from '../Core/Globals.js';
 var doc = H.doc, seriesTypes = H.seriesTypes, win = H.win;
 import U from '../Core/Utilities.js';
@@ -57,7 +57,6 @@ var addEvent = U.addEvent, defined = U.defined, extend = U.extend, find = U.find
 * @type {Array<Array<string>>}
 */
 import DownloadURL from '../Extensions/DownloadURL.js';
-import HTMLTableStore from '../Data/Stores/HTMLTableStore.js';
 var downloadURL = DownloadURL.downloadURL;
 // Can we add this to utils? Also used in screen-reader.js
 /**
@@ -356,57 +355,61 @@ Chart.prototype.setUpKeyToAxis = function () {
  * Adds rows from getDataRows to a data table
  *
  * @private
- * @param {Chart} chart the chart to grab things from
- * @param {CSVStore | HTMLTableStore} dataStoreProvided
- * the data store to apply the rows to
- * @todo should maybe use the datastore registry
- * @todo replace forEaches
+ *
+ * @function Highcharts.Chart#getDataTable
+ *
+ * @param {Chart} chart the
+ * Chart to get the data from from
+ *
+ * @param {CSVStore | HTMLTableStore} dataStore
+ * The DataStore to insert the values to
+ *
  */
-function getDataTable(chart, dataStoreProvided) {
+function getDataTable(chart, dataStore) {
     var _a;
     // Dont use multilevel headers with CSV export
     var useMultiLevelHeaders = ((_a = chart.options.exporting) === null || _a === void 0 ? void 0 : _a.useMultiLevelHeaders) &&
-        dataStoreProvided instanceof HTMLTableStore;
-    var rows = chart.getDataRows(useMultiLevelHeaders);
-    var dataStore = dataStoreProvided, dataTable = new DataTable(), categories = rows.shift();
+        dataStore instanceof HTMLTableStore;
+    var rows = chart.getDataRows(useMultiLevelHeaders), categories = rows[0];
     // loop over the top level categories and replace duplicate names
+    var names = [];
     if (categories) {
         for (var index = 0; index < categories.length; index++) {
             var categoryName = categories[index].toString(), firstCategoryIndex = categories.indexOf(categoryName), lastCategoryIndex = categories.lastIndexOf(categoryName);
-            // Since dataTables don't support multiple cells with
-            // the same name we have to append a thingie
-            // and set a metadata title (which is the exported name)
+            // If there are duplicate category names, replace the column names
+            // and set a metadata title (which takes precedence on export)
             if (firstCategoryIndex < lastCategoryIndex) {
-                var categoryCount = 1;
-                var i = firstCategoryIndex + 1;
-                while (i <= lastCategoryIndex) {
-                    if (categories[i] === categoryName) {
-                        categories[i] += "_" + categoryCount;
-                        dataStore.describeColumn(categories[i] + '', {
+                var categoryCount = 1, categoryIndex = firstCategoryIndex + 1;
+                while (categoryIndex <= lastCategoryIndex) {
+                    if (categories[categoryIndex] === categoryName) {
+                        categories[categoryIndex] += "_" + categoryCount;
+                        dataStore.describeColumn(categories[categoryIndex].toString(), {
                             title: categoryName
                         });
                         categoryCount++;
                     }
-                    i++;
+                    categoryIndex++;
                 }
             }
+            names[index] = categoryName;
         }
+        dataStore.setColumnOrder(names);
     }
-    var names = (categories === null || categories === void 0 ? void 0 : categories.map(function (name) { return name.toString(); })) || [];
-    // Set the column order
-    dataStore.setColumnOrder(names);
-    rows.forEach(function (row) {
-        var dataRow = new DataTableRow();
-        if (row.length) {
-            row.forEach(function (value, cellIndex) {
-                dataRow.insertCell(names[cellIndex], value);
-            });
-            // Cannot insert directly to datastore.table for some reason
-            // DataConverter is not a constructor
-            dataTable.insertRow(dataRow);
+    // Insert the new names to the store
+    // Start at 1 as first row is categories
+    var rowsLength = rows.length;
+    for (var rowIndex = 1; rowIndex < rowsLength; rowIndex++) {
+        var rowCells = rows[rowIndex], rowJSON = {
+            $class: 'DataTableRow'
+        };
+        var cellIndex = 0;
+        while (Object.keys(rowJSON).length <= rowCells.length) {
+            var cellValue = rowCells[cellIndex];
+            rowJSON[names[cellIndex]] = cellValue;
+            cellIndex++;
         }
-    });
-    dataStore.table = dataTable;
+        dataStore.table.insertRow(DataTableRow.fromJSON(rowJSON));
+    }
 }
 /**
  * Export-data module required. Returns a two-dimensional array containing the
@@ -647,10 +650,11 @@ Chart.prototype.getDataRows = function (multiLevelHeaders) {
  *         CSV representation of the data
  */
 Chart.prototype.getCSV = function (useLocalDecimalPoint) {
+    var _a;
     if (useLocalDecimalPoint === void 0) { useLocalDecimalPoint = false; }
-    var dataStore = new CSVStore(), csvOptions = this.options.exporting.csv;
+    var dataStore = new CSVStore();
     getDataTable(this, dataStore);
-    return dataStore.save(__assign(__assign({}, csvOptions), { useLocalDecimalPoint: useLocalDecimalPoint }));
+    return dataStore.save(__assign(__assign({}, (_a = this.options.exporting) === null || _a === void 0 ? void 0 : _a.csv), { exportIDColumn: false, useLocalDecimalPoint: useLocalDecimalPoint }));
 };
 /**
  * Export-data module required. Build a HTML table with the chart's current
@@ -675,7 +679,8 @@ Chart.prototype.getTable = function (useLocalDecimalPoint) {
     var _a;
     var dataStore = new HTMLTableStore(), exporting = this.options.exporting, tableCaption = (exporting === null || exporting === void 0 ? void 0 : exporting.tableCaption) || ((_a = this.options.title) === null || _a === void 0 ? void 0 : _a.text);
     getDataTable(this, dataStore);
-    var html = dataStore.save(__assign(__assign({}, exporting), { tableCaption: tableCaption, useLocalDecimalPoint: useLocalDecimalPoint })), e = { html: html };
+    var html = dataStore.save(__assign(__assign({}, exporting), { tableCaption: tableCaption,
+        useLocalDecimalPoint: useLocalDecimalPoint, exportIDColumn: false })), e = { html: html };
     fireEvent(this, 'afterGetTable', e);
     return e.html;
 };
