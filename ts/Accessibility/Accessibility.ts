@@ -33,6 +33,15 @@ const {
     merge
 } = U;
 
+declare module '../Core/Chart/ChartLike' {
+    interface ChartLike {
+        a11yDirty?: boolean;
+        accessibility?: Highcharts.Accessibility;
+        types?: Array<string>;
+        /** @require modules/accessibility */
+        updateA11yEnabled(): void;
+    }
+}
 
 /**
  * Internal types.
@@ -73,13 +82,6 @@ declare global {
             chart: AccessibilityChart;
             options: Required<SeriesOptions>;
             points: Array<AccessibilityPoint>;
-        }
-        interface ChartLike {
-            a11yDirty?: boolean;
-            accessibility?: Accessibility;
-            types?: Array<string>;
-            /** @require modules/accessibility */
-            updateA11yEnabled(): void;
         }
         let A11yChartUtilities: A11yChartUtilities;
     }

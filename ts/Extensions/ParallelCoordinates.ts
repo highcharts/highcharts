@@ -34,18 +34,22 @@ const {
     wrap
 } = U;
 
+declare module '../Core/Chart/ChartLike'{
+    interface ChartLike {
+        hasParallelCoordinates?: Highcharts.ParallelChart['hasParallelCoordinates'];
+        parallelInfo?: Highcharts.ParallelChart['parallelInfo'];
+        /** @requires modules/parallel-coordinates */
+        setParallelInfo(options: Highcharts.Options): void;
+    }
+}
+
 /**
  * Internal types
  * @private
  */
 declare global {
     namespace Highcharts {
-        interface ChartLike {
-            hasParallelCoordinates?: ParallelChart['hasParallelCoordinates'];
-            parallelInfo?: ParallelChart['parallelInfo'];
-            /** @requires modules/parallel-coordinates */
-            setParallelInfo(options: Options): void;
-        }
+
         interface ChartOptions {
             parallelAxes?: XAxisOptions;
             parallelCoordinates?: boolean;

@@ -27,17 +27,16 @@ const {
     pick
 } = U;
 
+declare module '../Core/Chart/ChartLike'{
+    interface ChartLike {
+        hideOverlappingLabels(labels: Array<SVGElement>): void;
+    }
+}
+
 /**
  * Internal type
  * @private
  */
-declare global {
-    namespace Highcharts {
-        interface ChartLike {
-            hideOverlappingLabels(labels: Array<SVGElement>): void;
-        }
-    }
-}
 
 /* eslint-disable no-invalid-this */
 

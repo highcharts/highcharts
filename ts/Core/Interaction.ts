@@ -49,6 +49,16 @@ const {
     pick
 } = U;
 
+declare module '../Core/Chart/ChartLike'{
+    interface ChartLike {
+        resetZoomButton?: SVGElement;
+        pan(e: Highcharts.PointerEventObject, panning: boolean|Highcharts.PanningOptions): void;
+        showResetZoom(): void;
+        zoom(event: Highcharts.SelectEventObject): void;
+        zoomOut(): void;
+    }
+}
+
 /**
  * Internal types
  * @private
@@ -57,13 +67,6 @@ declare global {
     namespace Highcharts {
         interface Axis {
             panningState?: AxisPanningState;
-        }
-        interface ChartLike {
-            resetZoomButton?: SVGElement;
-            pan(e: PointerEventObject, panning: boolean|PanningOptions): void;
-            showResetZoom(): void;
-            zoom(event: SelectEventObject): void;
-            zoomOut(): void;
         }
         interface Legend {
             createCheckboxForItem(item: (BubbleLegend|Point|Series)): void;

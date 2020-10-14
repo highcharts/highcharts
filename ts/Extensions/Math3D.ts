@@ -13,15 +13,18 @@
 import type Chart from '../Core/Chart/Chart';
 import H from '../Core/Globals.js';
 
+declare module '../Core/Chart/ChartLike'{
+    interface ChartLike {
+        scale3d?: number;
+    }
+}
+
 /**
  * Internal types
  * @private
  */
 declare global {
     namespace Highcharts {
-        interface ChartLike {
-            scale3d?: number;
-        }
         interface Position3dObject extends PositionObject {
             z: number;
         }

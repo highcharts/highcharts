@@ -12,15 +12,19 @@
 
 import type Chart from '../Core/Chart/Chart';
 
+declare module '../Core/Chart/ChartLike'{
+    interface ChartLike {
+        navigation?: Highcharts.ChartNavigationObject;
+    }
+}
+
 /**
  * Internal types
  * @private
  */
 declare global {
     namespace Highcharts {
-        interface ChartLike {
-            navigation?: ChartNavigationObject;
-        }
+
         interface ChartNavigationMixin {
             addUpdate(update: ChartNavigationUpdateFunction, chart: Chart): void;
             initUpdate(chart: Chart): void;

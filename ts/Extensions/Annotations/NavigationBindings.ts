@@ -34,6 +34,14 @@ const {
     setOptions
 } = U;
 
+declare module '../../Core/Chart/ChartLike'{
+    interface ChartLike {
+        navigationBindings?: NavigationBindings;
+        /** @requires modules/annotations */
+        initNavigationBindings(): void;
+    }
+}
+
 /**
  * Internal types.
  * @private
@@ -61,11 +69,6 @@ declare global {
         }
         interface AnnotationsOptions {
             langKey?: string;
-        }
-        interface ChartLike {
-            navigationBindings?: NavigationBindings;
-            /** @requires modules/annotations */
-            initNavigationBindings(): void;
         }
         interface LangNavigationOptions {
             popup?: Dictionary<string>;

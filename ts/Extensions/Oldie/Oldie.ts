@@ -61,18 +61,21 @@ const {
 } = U;
 import VMLRenderer3D from './VMLRenderer3D.js';
 
+declare module '../../Core/Chart/ChartLike'{
+    interface ChartLike {
+        /** @requires highcharts/modules/oldies */
+        ieSanitizeSVG(svg: string): string;
+        /** @requires highcharts/modules/oldies */
+        isReadyToRender(): boolean;
+    }
+}
+
 /**
  * Internal types
  * @private
  */
 declare global {
     namespace Highcharts {
-        interface ChartLike {
-            /** @requires highcharts/modules/oldies */
-            ieSanitizeSVG(svg: string): string;
-            /** @requires highcharts/modules/oldies */
-            isReadyToRender(): boolean;
-        }
         interface EventCallbackFunction<T> {
             /** @requires highcharts/modules/oldies */
             hcKey?: string;

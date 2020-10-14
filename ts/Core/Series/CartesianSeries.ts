@@ -60,15 +60,18 @@ declare module './Types' {
     }
 }
 
+declare module '../Chart/ChartLike'{
+    interface ChartLike {
+        runTrackerClick?: boolean;
+    }
+}
+
 /**
  * Internal types
  * @private
  */
 declare global {
     namespace Highcharts {
-        interface ChartLike {
-            runTrackerClick?: boolean;
-        }
         interface DataExtremesObject {
             dataMin?: number;
             dataMax?: number;

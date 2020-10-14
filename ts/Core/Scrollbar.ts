@@ -29,15 +29,18 @@ const {
     removeEvent
 } = U;
 
+declare module './Chart/ChartLike'{
+    interface ChartLike {
+        scrollbarsOffsets?: [number, number];
+    }
+}
+
 /**
  * Internal types
  * @private
  */
 declare global {
     namespace Highcharts {
-        interface ChartLike {
-            scrollbarsOffsets?: [number, number];
-        }
         interface Options {
             scrollbar?: ScrollbarOptions;
         }

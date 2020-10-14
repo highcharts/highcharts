@@ -33,6 +33,12 @@ const {
     pick
 } = U;
 
+declare module '../Core/Chart/ChartLike'{
+    interface ChartLike {
+        getStacks(): void;
+    }
+}
+
 /**
  * Internal types
  * @private
@@ -40,9 +46,6 @@ const {
 declare global {
     namespace Highcharts {
         type OptionsStackingValue = ('normal'|'overlap'|'percent'|'stream'|'group');
-        interface ChartLike {
-            getStacks(): void;
-        }
         interface PointLike {
             leftCliff?: number;
             rightCliff?: number;

@@ -30,17 +30,20 @@ const {
     setOptions
 } = U;
 
+declare module '../Core/Chart/ChartLike'{
+    interface ChartLike {
+        stockTools?: Toolbar;
+        /** @requires modules/stock-tools */
+        setStockTools(options?: Highcharts.StockToolsOptions): void;
+    }
+}
+
 /**
  * Internal types
  * @private
  */
 declare global {
     namespace Highcharts {
-        interface ChartLike {
-            stockTools?: Toolbar;
-            /** @requires modules/stock-tools */
-            setStockTools(options?: StockToolsOptions): void;
-        }
         interface LangOptions {
             stockTools?: LangStockToolsOptions;
         }

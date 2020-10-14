@@ -36,25 +36,19 @@ const {
     pick
 } = U;
 
-/**
- * Internal types
- * @private
- */
-declare global {
-    namespace Highcharts {
-        interface ChartLike {
-            fixedDiv?: HTMLDOMElement;
-            fixedRenderer?: Renderer;
-            innerContainer?: HTMLDOMElement;
-            scrollingContainer?: HTMLDOMElement;
-            scrollingParent?: HTMLDOMElement;
-            scrollableMask?: SVGElement;
-            scrollablePixelsX?: number;
-            scrollablePixelsY?: number;
-            applyFixed(): void;
-            moveFixedElements(): void;
-            setUpScrolling(): void;
-        }
+declare module '../Core/Chart/ChartLike'{
+    interface ChartLike {
+        fixedDiv?: HTMLDOMElement;
+        fixedRenderer?: Highcharts.Renderer;
+        innerContainer?: HTMLDOMElement;
+        scrollingContainer?: HTMLDOMElement;
+        scrollingParent?: HTMLDOMElement;
+        scrollableMask?: Highcharts.SVGElement;
+        scrollablePixelsX?: number;
+        scrollablePixelsY?: number;
+        applyFixed(): void;
+        moveFixedElements(): void;
+        setUpScrolling(): void;
     }
 }
 

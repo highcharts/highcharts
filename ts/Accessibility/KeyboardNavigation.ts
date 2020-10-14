@@ -33,6 +33,13 @@ const getElement = HTMLUtilities.getElement;
 
 import EventProvider from './Utils/EventProvider.js';
 
+declare module '../Core/Chart/ChartLike'{
+    interface ChartLike {
+        /** @requires modules/accessibility */
+        dismissPopupContent(): void;
+    }
+}
+
 /**
  * Internal types.
  * @private
@@ -73,10 +80,6 @@ declare global {
             public update(order?: Array<string>): void;
             public updateExitAnchor(): void;
             public updateContainerTabindex(): void;
-        }
-        interface ChartLike {
-            /** @requires modules/accessibility */
-            dismissPopupContent(): void;
         }
     }
 }

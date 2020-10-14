@@ -19,16 +19,19 @@ const {
     splat
 } = U;
 
+declare module '../Chart/ChartLike'{
+    interface ChartLike {
+        zAxis?: Array<ZAxis>;
+        addZAxis(options: Highcharts.AxisOptions): Axis;
+    }
+}
+
 /**
  * Internal types.
  * @private
  */
 declare global {
     namespace Highcharts {
-        interface ChartLike {
-            zAxis?: Array<ZAxis>;
-            addZAxis(options: Highcharts.AxisOptions): Axis;
-        }
         interface Options {
             zAxis?: (Highcharts.AxisOptions|Array<Highcharts.AxisOptions>);
         }
