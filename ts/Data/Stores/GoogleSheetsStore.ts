@@ -22,7 +22,8 @@ import DataStore from './DataStore.js';
 import DataTable from '../DataTable.js';
 import U from '../../Core/Utilities.js';
 const {
-    merge
+    merge,
+    uniqueKey
 } = U;
 
 /** eslint-disable valid-jsdoc */
@@ -247,7 +248,7 @@ class GoogleSheetsStore extends DataStore<GoogleSheetsStore.EventObject> impleme
                 colsCount = store.columns.length;
 
                 for (i = 0; i < colsCount; i++) {
-                    headers.push('' + store.columns[i][0]);
+                    headers.push(store.columns[i][0]?.toString() || uniqueKey());
                 }
 
                 const table = DataTable.fromColumns(store.columns, headers);

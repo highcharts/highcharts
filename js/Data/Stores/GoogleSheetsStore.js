@@ -28,7 +28,7 @@ import DataJSON from './../DataJSON.js';
 import DataStore from './DataStore.js';
 import DataTable from '../DataTable.js';
 import U from '../../Core/Utilities.js';
-var merge = U.merge;
+var merge = U.merge, uniqueKey = U.uniqueKey;
 /** eslint-disable valid-jsdoc */
 /**
  * @private
@@ -157,10 +157,11 @@ var GoogleSheetsStore = /** @class */ (function (_super) {
             url: url,
             dataType: 'json',
             success: function (json) {
+                var _a;
                 store.parseSheet(json);
                 colsCount = store.columns.length;
                 for (i = 0; i < colsCount; i++) {
-                    headers.push('' + store.columns[i][0]);
+                    headers.push(((_a = store.columns[i][0]) === null || _a === void 0 ? void 0 : _a.toString()) || uniqueKey());
                 }
                 var table = DataTable.fromColumns(store.columns, headers);
                 store.table = table;

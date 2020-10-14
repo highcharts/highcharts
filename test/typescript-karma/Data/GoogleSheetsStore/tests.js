@@ -18,6 +18,24 @@ test('GoogleDataStore', function (assert) {
             ['load', 'afterLoad'],
             'Events are fired in the correct order'
         )
+
+        const cells = e.table.getRow(1).getAllCells();
+        assert.deepEqual(
+            Object.values(cells).map(cellValue => typeof cellValue),
+            ['string', 'number', 'number', 'number'],
+            'The store table has the correct data types'
+        )
+
+        assert.notOk(
+            e.table.getRow(1).getCellNames().includes('null'),
+            'Columns where the first value is of type `null`, should be assigned an unique name'
+        )
+        e.table.getRow(1).insertCell('null');
+        assert.ok(
+            e.table.getRow(1).getCellNames().includes('null'),
+            'A string value of `null` is ok'
+        )
+
         doneLoading();
     });
 
