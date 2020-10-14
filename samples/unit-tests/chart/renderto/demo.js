@@ -109,11 +109,16 @@ QUnit.test('Container parent originally detached (#7024)', function (assert) {
         }]
     });
 
+    assert.notOk(
+        document.body.contains(chart.container),
+        'Chart should not be attached to DOM'
+    );
+
     document.getElementById('container').appendChild(parent);
 
     assert.ok(
         document.body.contains(chart.container),
-        'Chart is attached to DOM'
+        'Chart should be attached to DOM'
     );
     assert.strictEqual(
         chart.chartWidth,

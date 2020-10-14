@@ -22,6 +22,8 @@ import Pointer from '../Pointer.js';
 import Time from '../Time.js';
 import U from '../Utilities.js';
 var addEvent = U.addEvent, attr = U.attr, createElement = U.createElement, css = U.css, defined = U.defined, discardElement = U.discardElement, erase = U.erase, error = U.error, extend = U.extend, find = U.find, fireEvent = U.fireEvent, getStyle = U.getStyle, isArray = U.isArray, isFunction = U.isFunction, isNumber = U.isNumber, isObject = U.isObject, isString = U.isString, merge = U.merge, numberFormat = U.numberFormat, objectEach = U.objectEach, pick = U.pick, pInt = U.pInt, relativeLength = U.relativeLength, removeEvent = U.removeEvent, splat = U.splat, syncTimeout = U.syncTimeout, uniqueKey = U.uniqueKey;
+var detachedElements = [];
+var originalStyles = [];
 /**
  * Callback for chart constructors.
  *
@@ -959,56 +961,60 @@ var Chart = /** @class */ (function () {
      * Revert to the saved original styles.
      */
     Chart.prototype.temporaryDisplay = function (revert) {
-        var node = this.renderTo, tempStyle;
+        var tempStyle = [];
+        var node = this.renderTo;
         if (!revert) {
             while (node && node.style) {
+                var wasDetached = void 0;
                 // When rendering to a detached node, it needs to be temporarily
                 // attached in order to read styling and bounding boxes (#5783,
                 // #7024).
                 if (!doc.body.contains(node) && !node.parentNode) {
-                    node.hcOrigDetached = true;
+                    detachedElements.push(node);
                     doc.body.appendChild(node);
+                    wasDetached = true;
                 }
                 if (getStyle(node, 'display', false) === 'none' ||
-                    node.hcOricDetached) {
-                    node.hcOrigStyle = {
-                        display: node.style.display,
-                        height: node.style.height,
-                        overflow: node.style.overflow
-                    };
-                    tempStyle = {
-                        display: 'block',
-                        overflow: 'hidden'
-                    };
+                    wasDetached) {
+                    originalStyles.push({
+                        node: node,
+                        key: 'display',
+                        value: node.style.getPropertyValue('display'),
+                        priority: node.style.getPropertyPriority('display')
+                    }, {
+                        node: node,
+                        key: 'height',
+                        value: node.style.getPropertyValue('height'),
+                        priority: node.style.getPropertyPriority('height')
+                    }, {
+                        node: node,
+                        key: 'overflow',
+                        value: node.style.getPropertyValue('overflow'),
+                        priority: node.style.getPropertyPriority('overflow')
+                    });
+                    tempStyle.push(['display', 'block', 'important'], ['overflow', 'hidden', 'important']);
                     if (node !== this.renderTo) {
-                        tempStyle.height = 0;
+                        tempStyle.push(['height', '0', 'important']);
                     }
-                    css(node, tempStyle);
-                    // If it still doesn't have an offset width after setting
-                    // display to block, it probably has an !important priority
-                    // #2631, 6803
-                    if (!node.offsetWidth) {
-                        node.style.setProperty('display', 'block', 'important');
+                    for (var i = 0; i < tempStyle.length; i++) {
+                        node.style.setProperty.apply(node.style, tempStyle[i]);
                     }
                 }
-                node = node.parentNode;
+                node = node.parentElement;
                 if (node === doc.body) {
                     break;
                 }
             }
         }
         else {
-            while (node && node.style) {
-                if (node.hcOrigStyle) {
-                    css(node, node.hcOrigStyle);
-                    delete node.hcOrigStyle;
-                }
-                if (node.hcOrigDetached) {
-                    doc.body.removeChild(node);
-                    node.hcOrigDetached = false;
-                }
-                node = node.parentNode;
-            }
+            // Re-apply original styles up the DOM tree
+            originalStyles.forEach(function (cfg) {
+                cfg.node.style.setProperty(cfg.key, cfg.value, cfg.priority);
+            });
+            originalStyles.length = 0;
+            // Re-attach elements
+            detachedElements.forEach(function (element) { return doc.body.removeChild(element); });
+            detachedElements.length = 0;
         }
     };
     /**
