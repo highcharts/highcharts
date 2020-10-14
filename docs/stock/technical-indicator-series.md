@@ -92,7 +92,7 @@ Technical indicators require the [indicators/indicators.js](https://code.highcha
 
 _For more detailed samples and documentation check the [API.](https://api.highcharts.com/highstock/plotOptions.sma)_
 
-Technical indicators modules are implemented as series, that means almost all of the default options for [series](https://www.highcharts.com/docs/chart-concepts/series) are available. The main option, which needs to be set for an indicator, is `series.linkedTo`. That option binds an indicator to a series: an indicator will use `series.data` for all calculations, even when the dataset is changing (e.g. by `series.addPoint()`). Additionally, each indicator has its own list of parameters, available under `params` options, which allows easy customisation (e.g. `params.period`, `params.algorithm`).
+Technical indicators modules are implemented as series, that means almost all of the default options for [series](https://www.highcharts.com/docs/chart-concepts/series) are available. The main option, which needs to be set for an indicator, is `series.linkedTo`. That option binds an indicator to a series: an indicator will use `series.data` for all calculations, even when the dataset is changing (e.g. by `series.addPoint()`). Additionally, each indicator has its own list of parameters, available under `params` options, which allows easy customization (e.g. `params.period`, `params.algorithm`).
 
 There are no limitations to the number of technical indicators that can be bound to one main series. The following example creates a chart with four series: one main, two SMA, and one EMA:
 
@@ -125,7 +125,7 @@ series: [{
 
 Click [here](https://jsfiddle.net/gh/get/library/pure/highcharts/highcharts/tree/master/samples/stock/demo/macd-pivot-points) to check the code.
 
-yAxis bindigs
+yAxis bindings
 -------------
 
 Some technical indicators (Bollinger Bands, EMA, Ichimoku Kinko Hyo, Pivot Points, Price Envelopes, PSAR, SMA, VbP, VWAP, WMA, Zig Zag) can be placed on the same yAxis as the main series. However, other indicators (A/D, ATR, CCI, CMF, MACD, MFI, Momentum, RoC, RSI, Stochastic) should use a separate yAxis. This is caused by values calculated by algorithms: yAxis extremes for the main series can be <250, 255> but for the Stochastic technical indicator, values are within <0, 100> extremes. A technical indicator can be placed on a separate yAxis as any other series:

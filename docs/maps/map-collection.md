@@ -100,7 +100,7 @@ The **hc-key** property reflects the naming convention of the maps, and can be u
 
 Attempts are made to use commonly known codes for each level, to increase readability. As an example, most countries are identified by their two letter ISO-3166 code. Most admin1 areas are identified by their postal codes. For United States, admin2 (county) areas are identified by their FIPS codes.
 
-In addition to the above mentioned properties, all points have an **id** property that is stored on the point itself, rather than in the properties object. The **id** property is an unique ID for the point within the map. It follows a hierarchical system identical to that of the **hc-key** property, but uses capital letters and periods as delimiters.
+In addition to the above mentioned properties, all points have an **id** property that is stored on the point itself, rather than in the properties object. The **id** property is a unique ID for the point within the map. It follows a hierarchical system identical to that of the **hc-key** property, but uses capital letters and periods as delimiters.
 
 Some maps may provide additional properties that are not mentioned in the above table. Open the GeoJSON/Javascript source of the map in a text editor to find all available properties.
 

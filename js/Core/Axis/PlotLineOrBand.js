@@ -947,7 +947,10 @@ extend(Axis.prototype, /** @lends Highcharts.Axis.prototype */ {
      * @return {Highcharts.PlotLineOrBand|undefined}
      */
     addPlotBandOrLine: function (options, coll) {
-        var obj = new PlotLineOrBand(this, options).render(), userOptions = this.userOptions;
+        var obj = new Highcharts.PlotLineOrBand(this, options), userOptions = this.userOptions;
+        if (this.visible) {
+            obj = obj.render();
+        }
         if (obj) { // #2189
             // Add it to the user options for exporting and Axis.update
             if (coll) {

@@ -1,4 +1,4 @@
-Polar (Radar) Chart
+Polar (Radar) chart
 ===================
 
 Polar charts, also known as radar charts, require the highcharts-more.js file.
