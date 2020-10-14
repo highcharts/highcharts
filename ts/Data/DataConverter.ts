@@ -152,7 +152,7 @@ class DataConverter {
         if (!isNaN(Number(value))) {
             return 'number';
         }
-        if (!isNaN(Date.parse(value.toString()))) {
+        if (!isNaN(Date.parse(value))) {
             return 'Date';
         }
         return 'string';
@@ -166,14 +166,16 @@ class DataConverter {
      * @return {number|Date|string}
      * The converted value
      */
-    public asGuessedType(value: string): (number | Date | string) {
-        const typeMap: Record<('string' | 'Date' | 'number'), Function> = {
-            'number': this.asNumber,
-            'Date': this.asDate,
-            'string': this.asString
-        };
+    public asGuessedType = (value: string): (number | Date | string) => {
+        /* eslint-disable-next-line no-invalid-this */
+        const { asNumber, asString, asDate, guessType } = this,
+            typeMap: Record<('string' | 'Date' | 'number'), Function> = {
+                'number': asNumber,
+                'Date': asDate,
+                'string': asString
+            };
 
-        return typeMap[this.guessType(value)](value);
+        return typeMap[guessType(value)](value);
     }
 
 }

@@ -25,12 +25,30 @@ import DataTable from './DataTable.js';
  */
 var DataConverter = /** @class */ (function () {
     function DataConverter() {
+        /* *
+         *
+         *  Functions
+         *
+         * */
+        var _this = this;
+        /**
+         * Casts a string value to it's guessed type
+         * @param {string} value
+         * The string to examine
+         *
+         * @return {number|Date|string}
+         * The converted value
+         */
+        this.asGuessedType = function (value) {
+            /* eslint-disable-next-line no-invalid-this */
+            var _a = _this, asNumber = _a.asNumber, asString = _a.asString, asDate = _a.asDate, guessType = _a.guessType, typeMap = {
+                'number': asNumber,
+                'Date': asDate,
+                'string': asString
+            };
+            return typeMap[guessType(value)](value);
+        };
     }
-    /* *
-     *
-     *  Functions
-     *
-     * */
     /**
      * Converts a value to a boolean.
      *
@@ -145,26 +163,10 @@ var DataConverter = /** @class */ (function () {
         if (!isNaN(Number(value))) {
             return 'number';
         }
-        if (!isNaN(Date.parse(value.toString()))) {
+        if (!isNaN(Date.parse(value))) {
             return 'Date';
         }
         return 'string';
-    };
-    /**
-     * Casts a string value to it's guessed type
-     * @param {string} value
-     * The string to examine
-     *
-     * @return {number|Date|string}
-     * The converted value
-     */
-    DataConverter.prototype.asGuessedType = function (value) {
-        var typeMap = {
-            'number': this.asNumber,
-            'Date': this.asDate,
-            'string': this.asString
-        };
-        return typeMap[this.guessType(value)](value);
     };
     return DataConverter;
 }());
