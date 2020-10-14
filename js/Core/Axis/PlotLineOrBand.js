@@ -853,15 +853,15 @@ extend(Axis.prototype, /** @lends Highcharts.Axis.prototype */ {
      *         The SVG path definition in array form.
      */
     getPlotBandPath: function (from, to, options) {
-        var _a, _b;
+        if (options === void 0) { options = this.options; }
         var toPath = this.getPlotLinePath({
             value: to,
             force: true,
-            acrossPanes: (_a = options === null || options === void 0 ? void 0 : options.acrossPanes) !== null && _a !== void 0 ? _a : this.options.acrossPanes
+            acrossPanes: options.acrossPanes
         }), path = this.getPlotLinePath({
             value: from,
             force: true,
-            acrossPanes: (_b = options === null || options === void 0 ? void 0 : options.acrossPanes) !== null && _b !== void 0 ? _b : this.options.acrossPanes
+            acrossPanes: options.acrossPanes
         }), result = [], i, 
         // #4964 check if chart is inverted or plotband is on yAxis
         horiz = this.horiz, plus = 1, isFlat, outside = (from < this.min && to < this.min) ||
