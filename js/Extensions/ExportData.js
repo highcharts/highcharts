@@ -869,8 +869,8 @@ Chart.prototype.hideData = function () {
     this.isDataTableVisible = false;
 };
 Chart.prototype.toggleDataTable = function () {
-    var _a;
-    var exportDivElements = this.exportDivElements, menuItems = (_a = exportingOptions === null || exportingOptions === void 0 ? void 0 : exportingOptions.buttons) === null || _a === void 0 ? void 0 : _a.contextButton.menuItems, lang = this.options.lang;
+    var _a, _b;
+    var exportDivElements = this.exportDivElements, menuItems = (_b = (_a = this.options.exporting) === null || _a === void 0 ? void 0 : _a.buttons) === null || _b === void 0 ? void 0 : _b.contextButton.menuItems, lang = this.options.lang;
     if (this.isDataTableVisible) {
         this.hideData();
     }
