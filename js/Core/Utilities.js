@@ -216,6 +216,12 @@ import H from './Globals.js';
 * added.
 * @name Highcharts.EventOptionsObject#order
 * @type {number}
+*/ /**
+* Whether an event should be passive or not.
+* When set to `true`, the function specified by listener will never call
+* `preventDefault()`.
+* @name Highcharts.EventOptionsObject#passive
+* @type boolean
 */
 /**
  * Formats data as a string. Usually the data is accessible throught the `this`
@@ -1719,8 +1725,14 @@ var addEvent = H.addEvent = function (el, type, fn, options) {
         el.series.chart.runTrackerClick = true;
     }
     // Handle DOM events
+    // If the browser supports passive events, add it to improve performance
+    // on touch events (#11353).
     if (addEventListener) {
-        addEventListener.call(el, type, fn, false);
+        addEventListener.call(el, type, fn, H.isPassiveEvent ? {
+            passive: options.passive === void 0 ?
+                type.indexOf('touch') !== -1 : options.passive,
+            capture: false
+        } : false);
     }
     if (!events[type]) {
         events[type] = [];

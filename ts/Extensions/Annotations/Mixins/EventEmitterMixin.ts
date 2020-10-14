@@ -91,7 +91,8 @@ const eventEmitterMixin: Highcharts.AnnotationEventEmitterMixin = {
                     H.isTouchDevice ? 'touchstart' : 'mousedown',
                     (e: Highcharts.AnnotationEventObject): void => {
                         emitter.onMouseDown(e);
-                    }
+                    },
+                    { passive: false }
                 );
             };
 

@@ -26,7 +26,7 @@ var eventEmitterMixin = {
         var emitter = this, addMouseDownEvent = function (element) {
             addEvent(element, H.isTouchDevice ? 'touchstart' : 'mousedown', function (e) {
                 emitter.onMouseDown(e);
-            });
+            }, { passive: false });
         };
         addMouseDownEvent(this.graphic.element);
         (emitter.labels || []).forEach(function (label) {

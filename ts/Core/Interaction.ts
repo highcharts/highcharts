@@ -1117,14 +1117,16 @@ extend(Point.prototype, /** @lends Highcharts.Point.prototype */ {
 
             point.events = events;
 
-            objectEach(events, function (
-                event: Function,
-                eventType: string
-            ): void {
-                if (isFunction(event)) {
-                    addEvent(point, eventType, event);
+            objectEach(
+                events as Highcharts.PointEventsOptionsObject,
+                function (event, eventType): void {
+                    if (isFunction(event)) {
+                        addEvent(point, eventType, event);
+                    } else if (isObject(event)) {
+                        addEvent(point, eventType, event.listener, event.options);
+                    }
                 }
-            });
+            );
             this.hasImportedEvents = true;
 
         }

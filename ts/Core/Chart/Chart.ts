@@ -535,7 +535,7 @@ class Chart {
              */
             chart.index = charts.length; // Add the chart to the global lookup
 
-            charts.push(chart as any);
+            charts.push(chart);
             H.chartCount++;
 
             // Chart event handlers
@@ -543,6 +543,8 @@ class Chart {
                 objectEach(chartEvents, function (event, eventType): void {
                     if (isFunction(event)) {
                         addEvent(chart, eventType, event);
+                    } else if (isObject(event)) {
+                        addEvent(chart, eventType, event.listener, event.options);
                     }
                 });
             }

@@ -66,6 +66,7 @@ declare global {
         const marginNames: Array<string>;
         const noop: () => void;
         const product: string;
+        const isPassiveEvent: boolean;
         const symbolSizes: Dictionary<SizeObject>;
         const win: GlobalWindow;
         const svg: boolean;
@@ -164,7 +165,27 @@ var glob = ( // @todo UMD variable named `window`, and glob named `win`
     hasBidiBug = (
         isFirefox &&
         parseInt(userAgent.split('Firefox/')[1], 10) < 4 // issue #38
-    );
+    ),
+    noop = function (): void {},
+    // Checks whether the browser supports passive events, (#11353).
+    checkPassiveEvents = function (): boolean {
+        let supportsPassive = false;
+
+        // Object.defineProperty doesn't work on IE as well as passive events -
+        // instead of using polyfill, we can exclude IE totally.
+        if (!isMS) {
+            const opts = Object.defineProperty({}, 'passive', {
+                get: function (): void {
+                    supportsPassive = true;
+                }
+            });
+
+            glob.addEventListener('testPassive', noop, opts);
+            glob.removeEventListener('testPassive', noop, opts);
+        }
+
+        return supportsPassive;
+    };
 
 var H: typeof Highcharts = {
     product: 'Highcharts',
@@ -182,11 +203,12 @@ var H: typeof Highcharts = {
     SVG_NS: SVG_NS,
     chartCount: 0,
     seriesTypes: {} as Highcharts.SeriesTypesDictionary,
+    isPassiveEvent: checkPassiveEvents(),
     symbolSizes: {},
     svg: svg,
     win: glob,
     marginNames: ['plotTop', 'marginRight', 'marginBottom', 'plotLeft'],
-    noop: function (): void {},
+    noop: noop,
 
     /**
      * Theme options that should get applied to the chart. In module mode it

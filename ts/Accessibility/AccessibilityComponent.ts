@@ -470,7 +470,7 @@ AccessibilityComponent.prototype = {
 
                 e.stopPropagation();
                 e.preventDefault();
-            });
+            }, { passive: false });
         });
     },
 

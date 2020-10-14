@@ -1923,7 +1923,7 @@ Point.prototype.showDragHandles = function () {
             // Add events
             addEvents(handle.element, ['touchstart', 'mousedown'], function (e) {
                 onResizeHandleMouseDown(getNormalizedEvent(e, chart), point, key);
-            });
+            }, { passive: false });
             addEvent(chart.dragHandles.group.element, 'mouseover', function () {
                 chart.dragDropData = chart.dragDropData || {};
                 chart.dragDropData.isHoveringHandle = point.id;
@@ -2216,13 +2216,13 @@ function addDragDropEvents(chart) {
         });
         addEvents(container, ['mousemove', 'touchmove'], function (e) {
             mouseMove(getNormalizedEvent(e, chart), chart);
-        });
+        }, { passive: false });
         addEvent(container, 'mouseleave', function (e) {
             mouseUp(getNormalizedEvent(e, chart), chart);
         });
         chart.unbindDragDropMouseUp = addEvents(doc, ['mouseup', 'touchend'], function (e) {
             mouseUp(getNormalizedEvent(e, chart), chart);
-        });
+        }, { passive: false });
         // Add flag to avoid doing this again
         chart.hasAddedDragDropEvents = true;
         // Add cleanup to make sure we don't pollute document
