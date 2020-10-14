@@ -55,6 +55,27 @@ const {
     syncTimeout
 } = U;
 
+declare module '../Core/Chart/ChartLike' {
+    interface ChartLike {
+        ddDupes?: Array<string>;
+        drilldown?: Highcharts.ChartDrilldownObject;
+        drilldownLevels?: Array<Highcharts.DrilldownLevelObject>;
+        drillUpButton?: SVGElement;
+        addSeriesAsDrilldown(
+            point: Point,
+            options: SeriesOptionsType
+        ): void;
+        addSingleSeriesAsDrilldown(
+            point: Point,
+            ddOptions: SeriesOptionsType
+        ): void;
+        applyDrilldown(): void;
+        drillUp(): void;
+        getDrilldownBackText(): (string|undefined);
+        showDrillUpButton(): void;
+    }
+}
+
 /**
  * Internal types
  * @private
@@ -66,24 +87,6 @@ declare global {
             oldPos?: number;
             drilldownCategory(x: number, e: MouseEvent): void;
             getDDPoints(x: number): Array<(false|Point)>;
-        }
-        interface ChartLike {
-            ddDupes?: Array<string>;
-            drilldown?: ChartDrilldownObject;
-            drilldownLevels?: Array<DrilldownLevelObject>;
-            drillUpButton?: SVGElement;
-            addSeriesAsDrilldown(
-                point: Point,
-                options: SeriesOptionsType
-            ): void;
-            addSingleSeriesAsDrilldown(
-                point: Point,
-                ddOptions: SeriesOptionsType
-            ): void;
-            applyDrilldown(): void;
-            drillUp(): void;
-            getDrilldownBackText(): (string|undefined);
-            showDrillUpButton(): void;
         }
         interface ChartDrilldownObject {
             update(options: DrilldownOptions, redraw?: boolean): void;

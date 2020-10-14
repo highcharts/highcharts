@@ -42,16 +42,19 @@ declare module '../Animation/FxLike' {
     }
 }
 
+declare module '../Chart/ChartLike'{
+    interface ChartLike {
+        chart3d?: Chart3D['chart3d'];
+        is3d(): boolean;
+    }
+}
+
 /**
  * Internal types
  * @private
  */
 declare global {
     namespace Highcharts {
-        interface ChartLike {
-            chart3d?: Chart3D['chart3d'];
-            is3d(): boolean;
-        }
         interface ChartOptions {
             options3d?: Chart3D.Options;
         }

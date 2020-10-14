@@ -36,6 +36,14 @@ var stripHTMLTags = HTMLUtilities.stripHTMLTagsFromString,
 
 type LegendItem = Highcharts.BubbleLegend|Point|Highcharts.Series;
 
+declare module '../../Core/Chart/ChartLike'{
+    interface ChartLike {
+        highlightedLegendItemIx?: number;
+        /** @requires modules/accessibility */
+        highlightLegendItem(ix: number): boolean;
+    }
+}
+
 /**
  * Internal types.
  * @private
@@ -76,11 +84,6 @@ declare global {
         }
         interface BubbleLegend {
             a11yProxyElement?: HTMLDOMElement;
-        }
-        interface ChartLike {
-            highlightedLegendItemIx?: number;
-            /** @requires modules/accessibility */
-            highlightLegendItem(ix: number): boolean;
         }
         interface PointLike {
             a11yProxyElement?: HTMLDOMElement;

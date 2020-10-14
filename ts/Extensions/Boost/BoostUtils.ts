@@ -21,6 +21,12 @@ const {
     doc
 } = H;
 
+declare module '../../Core/Chart/ChartLike'{
+    interface ChartLike {
+        boostForceChartBoost?: boolean;
+    }
+}
+
 /**
  * Internal types
  * @private
@@ -29,9 +35,6 @@ declare global {
     namespace Highcharts {
         /** @requires modules/boost */
         function hasWebGLSupport(): boolean;
-        interface ChartLike {
-            boostForceChartBoost?: boolean;
-        }
     }
 }
 
