@@ -1151,17 +1151,17 @@ extend(Axis.prototype, /** @lends Highcharts.Axis.prototype */ {
         this: Highcharts.Axis,
         from: number,
         to: number,
-        options?: (Highcharts.AxisPlotBandsOptions|Highcharts.AxisPlotLinesOptions)
+        options: (Highcharts.AxisPlotBandsOptions|Highcharts.AxisPlotLinesOptions) = this.options
     ): SVGPath {
         var toPath = this.getPlotLinePath({
                 value: to,
                 force: true,
-                acrossPanes: options?.acrossPanes ?? (this.options as any).acrossPanes
+                acrossPanes: options.acrossPanes
             } as Highcharts.AxisPlotLinePathOptionsObject),
             path = this.getPlotLinePath({
                 value: from,
                 force: true,
-                acrossPanes: options?.acrossPanes ?? (this.options as any).acrossPanes
+                acrossPanes: options.acrossPanes
             } as Highcharts.AxisPlotLinePathOptionsObject),
             result = [] as SVGPath,
             i,
