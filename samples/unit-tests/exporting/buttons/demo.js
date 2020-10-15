@@ -132,3 +132,40 @@ QUnit.test('Export buttons', function (assert) {
 
     }
 });
+
+QUnit.test('View/hide data table button, #14338.', function (assert) {
+    const chart = Highcharts.chart('container', {
+        exporting: {
+            buttons: {
+                contextButton: {
+                    menuItems: ['viewData', 'viewFullscreen', 'viewFullscreen', 'viewFullscreen', 'viewFullscreen', 'viewFullscreen', 'viewFullscreen', 'viewFullscreen', 'viewFullscreen', 'viewFullscreen', 'viewFullscreen', 'viewFullscreen', 'viewFullscreen', 'viewFullscreen']
+                }
+            }
+        },
+        series: [{
+            data: [1, 4, 3, 5]
+        }]
+    });
+
+
+    // Test menu items
+    const controller = new TestController(chart),
+        alignAttr = chart.exportSVGElements[0].alignAttr;
+
+    // Click on the export menu to trigger list creation.
+    controller.click(alignAttr.translateX + 5, alignAttr.translateY + 5);
+
+    chart.toggleDataTable();
+    assert.strictEqual(
+        chart.exportDivElements[0].innerText,
+        'Hide data table',
+        'There should be text indicating that the table is visible and can be hidden.'
+    );
+
+    chart.toggleDataTable();
+    assert.strictEqual(
+        chart.exportDivElements[0].innerText,
+        'View data table',
+        'There should be text indicating that the table is hidden and can be visible again.'
+    );
+});
