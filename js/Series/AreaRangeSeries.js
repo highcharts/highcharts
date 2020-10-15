@@ -298,7 +298,7 @@ BaseSeries.seriesType('arearange', 'area', {
                 lowerDataLabelOptions = dataLabelOptions[1];
             }
             else {
-                upperDataLabelOptions = dataLabelOptions[0];
+                upperDataLabelOptions = dataLabelOptions[0] || { enabled: false };
                 lowerDataLabelOptions = { enabled: false };
             }
         }
