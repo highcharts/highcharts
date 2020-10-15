@@ -143,3 +143,33 @@ QUnit.test("Change of label alignment after add(#4605)", function (assert) {
 
 
 });
+
+QUnit.test('#14050: Empty dataLabels', function (assert) {
+    Highcharts.chart('container', {
+        series: [{
+            data: [
+                [1, 2],
+                [4, 5],
+                [3, 7],
+                [5, 6]
+            ],
+            dataLabels: [],
+            type: 'arearange'
+        }]
+    });
+
+    Highcharts.chart('container', {
+        series: [{
+            data: [
+                [1, 2],
+                [4, 5],
+                [3, 7],
+                [5, 6]
+            ],
+            dataLabels: [undefined, { enabled: false }],
+            type: 'arearange'
+        }]
+    });
+
+    assert.ok(true, 'Does not throw when passed empty dataLabels');
+});
