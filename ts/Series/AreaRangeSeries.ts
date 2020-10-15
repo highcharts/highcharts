@@ -490,7 +490,7 @@ BaseSeries.seriesType<typeof Highcharts.AreaRangeSeries>('arearange', 'area', {
                 upperDataLabelOptions = dataLabelOptions[0];
                 lowerDataLabelOptions = dataLabelOptions[1];
             } else {
-                upperDataLabelOptions = dataLabelOptions[0];
+                upperDataLabelOptions = dataLabelOptions[0] || { enabled: false };
                 lowerDataLabelOptions = { enabled: false };
             }
         } else {
