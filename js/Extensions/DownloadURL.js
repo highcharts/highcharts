@@ -22,7 +22,9 @@ var win = Highcharts.win, nav = win.navigator, doc = win.document, domurl = win.
  *         Blob
  */
 var dataURLtoBlob = Highcharts.dataURLtoBlob = function (dataURL) {
-    var parts = dataURL.match(/data:([^;]*)(;base64)?,([0-9A-Za-z+/]+)/);
+    var parts = dataURL
+        .replace(/filename=.*;/, '')
+        .match(/data:([^;]*)(;base64)?,([0-9A-Za-z+/]+)/);
     if (parts &&
         parts.length > 3 &&
         win.atob &&
@@ -31,11 +33,11 @@ var dataURLtoBlob = Highcharts.dataURLtoBlob = function (dataURL) {
         win.Blob &&
         domurl.createObjectURL) {
         // Try to convert data URL to Blob
-        var binStr = win.atob(parts[3]), buf = new win.ArrayBuffer(binStr.length), binary = new win.Uint8Array(buf), blob;
+        var binStr = win.atob(parts[3]), buf = new win.ArrayBuffer(binStr.length), binary = new win.Uint8Array(buf);
         for (var i = 0; i < binary.length; ++i) {
             binary[i] = binStr.charCodeAt(i);
         }
-        blob = new win.Blob([binary], { 'type': parts[1] });
+        var blob = new win.Blob([binary], { 'type': parts[1] });
         return domurl.createObjectURL(blob);
     }
 };
