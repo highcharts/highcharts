@@ -2064,18 +2064,21 @@ class Pointer {
             addEvent(
                 container,
                 'touchstart',
-                this.onContainerTouchStart.bind(this)
+                this.onContainerTouchStart.bind(this),
+                { passive: false }
             );
             addEvent(
                 container,
                 'touchmove',
-                this.onContainerTouchMove.bind(this)
+                this.onContainerTouchMove.bind(this),
+                { passive: false }
             );
             if (!H.unbindDocumentTouchEnd) {
                 H.unbindDocumentTouchEnd = addEvent(
                     ownerDoc,
                     'touchend',
-                    this.onDocumentTouchEnd.bind(this)
+                    this.onDocumentTouchEnd.bind(this),
+                    { passive: false }
                 );
             }
         }

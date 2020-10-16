@@ -394,7 +394,8 @@ class NavigationBindings {
                     addEvent(
                         navigation,
                         eventName,
-                        callback
+                        callback,
+                        { passive: false }
                     )
                 );
             }
@@ -421,7 +422,7 @@ class NavigationBindings {
                 e: Highcharts.PointerEventObject
             ): void {
                 navigation.bindingsContainerMouseMove(this, e);
-            })
+            }, H.isTouchDevice ? { passive: false } : void 0)
         );
     }
 
