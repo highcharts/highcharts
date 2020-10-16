@@ -559,3 +559,43 @@ QUnit.test('#14310: Visibility of dynamically added plotbands', function (assert
         'plotBand should render when axis visibility gets dynamically updated'
     );
 });
+
+QUnit.test('#14254: plotBands.acrossPanes', function (assert) {
+    var chart = Highcharts.stockChart('container', {
+        series: [{
+            data: [1, 2, 3, 4]
+        }, {
+            data: [1, 2, 3, 4],
+            yAxis: 1,
+            xAxis: 1
+        }],
+        yAxis: [{
+            height: '50%'
+        }, {
+            height: '50%',
+            top: '50%'
+        }],
+        xAxis: [{
+            plotBands: [{
+                from: 2,
+                to: 3,
+                acrossPanes: false
+            }, {
+                from: 2,
+                to: 3,
+                acrossPanes: true
+            }],
+            height: '50%'
+        }, {
+            top: '50%',
+            height: '50%'
+        }]
+    });
+
+    var bands = [
+        chart.xAxis[0].plotLinesAndBands[0].svgElem.getBBox(),
+        chart.xAxis[0].plotLinesAndBands[1].svgElem.getBBox()
+    ];
+
+    assert.ok(bands[1].height > bands[0].height, 'plotBand with acrossPanes = true has greater height');
+});
