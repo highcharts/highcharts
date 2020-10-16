@@ -106,12 +106,9 @@ function getAxisDescription(axis: Highcharts.Axis): string {
 function getSeriesFirstPointElement(
     series: Highcharts.Series
 ): (DOMElementType|undefined) {
-    if (
-        series.points &&
-        series.points.length &&
-        series.points[0].graphic
-    ) {
-        return series.points[0].graphic.element;
+    if (series.points?.length) {
+        const firstPointWithGraphic = find(series.points, (p: Point): boolean => !!p.graphic);
+        return firstPointWithGraphic?.graphic?.element;
     }
 }
 
