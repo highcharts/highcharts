@@ -25,6 +25,18 @@ const {
     extend
 } = U;
 
+declare module '../../../Core/Chart/ChartLike'{
+    interface ChartLike {
+        highlightedPoint?: Point;
+        /** @requires modules/accessibility */
+        highlightAdjacentPoint(next: boolean): (boolean|Point);
+        /** @requires modules/accessibility */
+        highlightAdjacentPointVertical(down: boolean): (boolean|Point);
+        /** @requires modules/accessibility */
+        highlightAdjacentSeries(down: boolean): (boolean|Point);
+    }
+}
+
 /**
  * Internal types.
  * @private
@@ -64,15 +76,6 @@ declare global {
                 keyCode: number
             ): number;
             public onSeriesDestroy(series: Highcharts.Series): void;
-        }
-        interface ChartLike {
-            highlightedPoint?: Point;
-            /** @requires modules/accessibility */
-            highlightAdjacentPoint(next: boolean): (boolean|Point);
-            /** @requires modules/accessibility */
-            highlightAdjacentPointVertical(down: boolean): (boolean|Point);
-            /** @requires modules/accessibility */
-            highlightAdjacentSeries(down: boolean): (boolean|Point);
         }
         interface PointLike {
             /** @requires modules/accessibility */

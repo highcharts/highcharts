@@ -9,7 +9,15 @@
  * */
 
 'use strict';
-import H from '../Core/Globals.js';
+
+declare module '../Core/Chart/ChartLike'{
+    interface ChartLike {
+        redrawTrigger?: string;
+        initiatedScale?: boolean;
+        /** @requires modules/static-scale */
+        adjustHeight(): void;
+    }
+}
 
 /**
  * Internal types
@@ -17,12 +25,6 @@ import H from '../Core/Globals.js';
  */
 declare global {
     namespace Highcharts {
-        interface ChartLike {
-            redrawTrigger?: string;
-            initiatedScale?: boolean;
-            /** @requires modules/static-scale */
-            adjustHeight(): void;
-        }
         interface XAxisOptions {
             staticScale?: number;
         }

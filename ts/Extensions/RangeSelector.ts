@@ -45,6 +45,15 @@ const {
     splat
 } = U;
 
+declare module '../Core/Chart/ChartLike'{
+    interface ChartLike {
+        extraBottomMargin?: boolean;
+        extraTopMargin?: boolean;
+        fixedRange?: number;
+        rangeSelector?: Highcharts.RangeSelector;
+    }
+}
+
 /**
  * Internal types
  * @private
@@ -58,12 +67,6 @@ declare global {
         interface Axis {
             newMax?: number;
             range?: (null|number|RangeSelectorButtonsOptions);
-        }
-        interface ChartLike {
-            extraBottomMargin?: boolean;
-            extraTopMargin?: boolean;
-            fixedRange?: number;
-            rangeSelector?: RangeSelector;
         }
         interface Options {
             rangeSelector?: RangeSelectorOptions;

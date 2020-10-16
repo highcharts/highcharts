@@ -29,6 +29,13 @@ const {
     pick
 } = U;
 
+declare module '../Core/Chart/ChartLike'{
+    interface ChartLike {
+        mapNavButtons?: Array<SVGElement>;
+        mapNavigation?: Highcharts.MapNavigation;
+    }
+}
+
 /**
  * Internal types
  * @private
@@ -36,10 +43,7 @@ const {
 declare global {
     namespace Highcharts {
         type ButtonRelativeToValue = ('plotBox'|'spacingBox');
-        interface ChartLike {
-            mapNavButtons?: Array<SVGElement>;
-            mapNavigation?: MapNavigation;
-        }
+
         interface MapNavigationButtonOptions {
             align?: AlignValue;
             alignTo?: ButtonRelativeToValue;

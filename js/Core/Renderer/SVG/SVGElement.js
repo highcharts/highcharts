@@ -1475,8 +1475,10 @@ var SVGElement = /** @class */ (function () {
                     handler.call(element, e);
                 }
                 touchEventFired = true;
-                // prevent other events from being fired. #9682
-                e.preventDefault();
+                if (e.cancelable !== false) {
+                    // prevent other events from being fired. #9682
+                    e.preventDefault();
+                }
             };
             element.onclick = function (e) {
                 // Do not call onclick handler if touch event was fired already.

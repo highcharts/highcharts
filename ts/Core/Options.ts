@@ -42,6 +42,12 @@ const {
     merge
 } = U;
 
+declare module './Chart/ChartLike'{
+    interface ChartLike {
+        marginRight: Highcharts.ChartOptions['marginRight'];
+        polar: Highcharts.ChartOptions['polar'];
+    }
+}
 
 /**
  * Internal types
@@ -56,10 +62,6 @@ declare global {
         ): string;
         function getOptions(): Options;
         function setOptions(options: Options): Options;
-        interface ChartLike {
-            marginRight: ChartOptions['marginRight'];
-            polar: ChartOptions['polar'];
-        }
         interface ChartAddSeriesCallbackFunction {
             (this: Chart, event: ChartAddSeriesEventObject): void;
         }

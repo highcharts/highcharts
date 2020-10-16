@@ -41,6 +41,36 @@ const {
     setOptions
 } = U;
 
+declare module '../Core/Chart/ChartLike'{
+    interface ChartLike {
+        dataTableDiv?: HTMLDivElement;
+        /** @requires modules/export-data */
+        downloadCSV(): void;
+        /** @requires modules/export-data */
+        downloadXLS(): void;
+        /** @requires modules/export-data */
+        getCSV(useLocalDecimalPoint?: boolean): string;
+        /** @requires modules/export-data */
+        getDataRows(
+            multiLevelHeaders?: boolean
+        ): Array<Array<(number|string)>>;
+        /** @requires modules/export-data */
+        getTable(useLocalDecimalPoint?: boolean): string;
+        /** @requires modules/export-data */
+        getTableAST(useLocalDecimalPoint?: boolean): Highcharts.ASTNode;
+        /** @requires modules/export-data */
+        setUpKeyToAxis(): void;
+        /** @requires modules/export-data */
+        viewData(): void;
+        /** @requires modules/export-data */
+        toggleDataTable(show?: boolean): void;
+        /** @requires modules/export-data */
+        hideData(): void;
+        /** @requires modules/export-data */
+        isDataTableVisible: boolean;
+    }
+}
+
 /**
  * Internal types
  * @private
@@ -53,33 +83,6 @@ declare global {
         interface ExportingCategoryDateTimeMap {
             categoryMap: ExportingCategoryMap;
             dateTimeValueAxisMap: ExportingDateTimeMap;
-        }
-        interface ChartLike {
-            dataTableDiv?: HTMLDivElement;
-            /** @requires modules/export-data */
-            downloadCSV(): void;
-            /** @requires modules/export-data */
-            downloadXLS(): void;
-            /** @requires modules/export-data */
-            getCSV(useLocalDecimalPoint?: boolean): string;
-            /** @requires modules/export-data */
-            getDataRows(
-                multiLevelHeaders?: boolean
-            ): Array<Array<(number|string)>>;
-            /** @requires modules/export-data */
-            getTable(useLocalDecimalPoint?: boolean): string;
-            /** @requires modules/export-data */
-            getTableAST(useLocalDecimalPoint?: boolean): ASTNode;
-            /** @requires modules/export-data */
-            setUpKeyToAxis(): void;
-            /** @requires modules/export-data */
-            viewData(): void;
-            /** @requires modules/export-data */
-            toggleDataTable(show?: boolean): void;
-            /** @requires modules/export-data */
-            hideData(): void;
-            /** @requires modules/export-data */
-            isDataTableVisible: boolean;
         }
         interface AnnotationInDataTable {
             itemDelimiter?: string;

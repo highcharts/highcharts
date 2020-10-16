@@ -53,17 +53,20 @@ const {
     splat
 } = U;
 
+declare module './Chart/ChartLike'{
+    interface ChartLike {
+        navigator?: Navigator;
+        scrollbar?: Scrollbar;
+        scroller?: Navigator;
+    }
+}
+
 /**
  * Internal types
  * @private
  */
 declare global {
     namespace Highcharts {
-        interface ChartLike {
-            navigator?: Navigator;
-            scrollbar?: Scrollbar;
-            scroller?: Navigator;
-        }
         interface NavigatorHandlesOptions {
             backgroundColor?: ColorType;
             borderColor?: ColorType;

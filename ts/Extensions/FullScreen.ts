@@ -19,15 +19,18 @@ const {
     addEvent
 } = U;
 
+declare module '../Core/Chart/ChartLike' {
+    interface ChartLike {
+        fullscreen: Highcharts.Fullscreen;
+    }
+}
+
 /**
  * Internal types
  * @private
  */
 declare global {
     namespace Highcharts {
-        interface ChartLike {
-            fullscreen: Fullscreen;
-        }
         class Fullscreen {
             public constructor(chart: Chart);
             public browserProps?: {

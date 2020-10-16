@@ -16,6 +16,7 @@ import type {
     CSSObject,
     CursorValue
 } from '../Renderer/CSSObject';
+import type ChartLike from './ChartLike';
 import type Point from '../../Core/Series/Point';
 import type { SeriesOptionsType, SeriesPlotOptionsType } from '../Series/Types';
 import type {
@@ -2756,7 +2757,7 @@ class Chart {
 
 }
 
-interface Chart extends Highcharts.ChartLike {
+interface Chart extends ChartLike {
     callbacks: Array<Chart.CallbackFunction>;
 }
 
@@ -2827,6 +2828,11 @@ function chart(
 ): Chart {
     return new Chart(a as any, b as any, c);
 }
+
+interface Chart extends ChartLike {
+    // Nothing here yet
+}
+
 
 H.chart = chart;
 H.Chart = Chart;

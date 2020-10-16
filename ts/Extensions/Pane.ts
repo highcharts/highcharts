@@ -25,6 +25,14 @@ const {
     splat
 } = U;
 
+declare module '../Core/Chart/ChartLike'{
+    interface ChartLike {
+        pane?: Array<Highcharts.Pane>;
+        hoverPane?: Highcharts.Pane;
+        getHoverPane?(eventArgs: any): Highcharts.Pane|undefined;
+    }
+}
+
 /**
  * Internal types
  * @private
@@ -34,11 +42,6 @@ declare global {
         type PaneBackgroundShapeValue = ('arc'|'circle'|'solid');
         interface Axis {
             pane?: Pane;
-        }
-        interface ChartLike {
-            pane?: Array<Pane>;
-            hoverPane?: Highcharts.Pane;
-            getHoverPane?(eventArgs: any): Highcharts.Pane|undefined;
         }
         interface Options {
             pane?: PaneOptions;

@@ -24,16 +24,19 @@ const {
     merge
 } = U;
 
+declare module '../../Core/Chart/ChartLike'{
+    interface ChartLike {
+        sonification?: Highcharts.SonifyableChart['sonification'];
+        sonify?: Highcharts.SonifyableChart['sonify'];
+    }
+}
+
 /**
  * Internal types.
  * @private
  */
 declare global {
     namespace Highcharts {
-        interface ChartLike {
-            sonification?: SonifyableChart['sonification'];
-            sonify?: SonifyableChart['sonify'];
-        }
         interface ChartSonificationStateObject {
             currentlyPlayingPoint?: SonifyablePoint;
             timeline?: Timeline;

@@ -32,6 +32,16 @@ const {
     extend
 } = U;
 
+declare module '../../Core/Chart/ChartLike'{
+    interface ChartLike {
+        highlightedInputRangeIx?: number;
+        highlightedRangeSelectorItemIx?: number;
+        oldRangeSelectorItemState?: number;
+        /** @requires modules/accessibility */
+        highlightRangeSelectorButton(ix: number): boolean;
+    }
+}
+
 /**
  * Internal types.
  * @private
@@ -61,13 +71,6 @@ declare global {
                 input: HTMLDOMElement,
                 langKey: string
             ): void;
-        }
-        interface ChartLike {
-            highlightedInputRangeIx?: number;
-            highlightedRangeSelectorItemIx?: number;
-            oldRangeSelectorItemState?: number;
-            /** @requires modules/accessibility */
-            highlightRangeSelectorButton(ix: number): boolean;
         }
         interface RangeSelector {
             maxInput?: HTMLDOMElement;

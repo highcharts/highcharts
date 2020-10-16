@@ -30,37 +30,40 @@ const {
     pick
 } = U;
 
+declare module '../Core/Chart/ChartLike'{
+    interface ChartLike {
+        /** @requires modules/draggable-points */
+        dragDropData?: Highcharts.DragDropDataObject;
+        /** @requires modules/draggable-points */
+        dragHandles?: Highcharts.DragHandlesObject;
+        /** @requires modules/draggable-points */
+        dragGuideBox?: SVGElement;
+        /** @requires modules/draggable-points */
+        hasAddedDragDropEvents?: boolean;
+        /** @requires modules/annotations */
+        hasDraggedAnnotation?: boolean;
+        /** @requires modules/draggable-points */
+        isDragDropAnimating?: boolean;
+        /** @requires modules/draggable-points */
+        unbindDragDropMouseUp?: Function;
+        /** @requires modules/draggable-points */
+        setGuideBoxState(
+            state: string,
+            options?: Record<string, Highcharts.DragDropGuideBoxOptionsObject>
+        ): SVGElement;
+        /** @requires modules/draggable-points */
+        hideDragHandles(): void;
+        /** @requires modules/draggable-points */
+        zoomOrPanKeyPressed(e: Event): boolean;
+    }
+}
+
 /**
  * Internal types
  * @private
  */
 declare global {
     namespace Highcharts {
-        interface ChartLike {
-            /** @requires modules/draggable-points */
-            dragDropData?: DragDropDataObject;
-            /** @requires modules/draggable-points */
-            dragHandles?: DragHandlesObject;
-            /** @requires modules/draggable-points */
-            dragGuideBox?: SVGElement;
-            /** @requires modules/draggable-points */
-            hasAddedDragDropEvents?: boolean;
-            /** @requires modules/annotations */
-            hasDraggedAnnotation?: boolean;
-            /** @requires modules/draggable-points */
-            isDragDropAnimating?: boolean;
-            /** @requires modules/draggable-points */
-            unbindDragDropMouseUp?: Function;
-            /** @requires modules/draggable-points */
-            setGuideBoxState(
-                state: string,
-                options?: Dictionary<DragDropGuideBoxOptionsObject>
-            ): SVGElement;
-            /** @requires modules/draggable-points */
-            hideDragHandles(): void;
-            /** @requires modules/draggable-points */
-            zoomOrPanKeyPressed(e: Event): boolean;
-        }
         interface ChartOptions {
             zoomKey?: string;
         }
