@@ -544,7 +544,9 @@ class Chart {
                     if (isFunction(event)) {
                         addEvent(chart, eventType, event);
                     } else if (isObject(event)) {
-                        addEvent(chart, eventType, event.listener, event.options);
+                        if (isFunction(event.listener)) {
+                            addEvent(chart, eventType, event.listener, event.options);
+                        }
                     }
                 });
             }

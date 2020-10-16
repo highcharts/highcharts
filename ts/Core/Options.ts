@@ -72,12 +72,9 @@ declare global {
         interface ChartClickCallbackFunction {
             (this: Chart, event: PointerEventObject): void;
         }
-        interface ChartClickCallbackObjectOptions {
-            passive?: boolean;
-        }
         interface ChartClickCallbackObject {
-            listener: ChartClickCallbackFunction;
-            options?: ChartClickCallbackObjectOptions;
+            listener?: ChartClickCallbackFunction;
+            options?: EventCallbackObjectOptions;
         }
         interface ChartClickEventAxisObject {
             axis: Axis;
@@ -194,6 +191,9 @@ declare global {
             widthAdjust?: number;
             x?: number;
             y?: number;
+        }
+        interface EventCallbackObjectOptions {
+            passive?: boolean;
         }
         interface GlobalOptions {
             /** @deprecated */

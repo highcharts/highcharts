@@ -1123,7 +1123,9 @@ extend(Point.prototype, /** @lends Highcharts.Point.prototype */ {
                     if (isFunction(event)) {
                         addEvent(point, eventType, event);
                     } else if (isObject(event)) {
-                        addEvent(point, eventType, event.listener, event.options);
+                        if (isFunction(event.listener)) {
+                            addEvent(point, eventType, event.listener, event.options);
+                        }
                     }
                 }
             );

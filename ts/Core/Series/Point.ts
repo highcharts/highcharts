@@ -51,19 +51,24 @@ declare global {
             (this: Point, event: PointClickEventObject): void;
         }
         interface PointClickCallbackObject {
-            listener: PointClickCallbackFunction;
-            options?: PointClickCallbackObjectOptions;
+            listener?: PointClickCallbackFunction;
+            options?: EventCallbackObjectOptions;
         }
-        interface PointClickCallbackObjectOptions {
-            passive?: boolean;
+        interface PointMouseOutCallbackObject {
+            listener?: PointMouseOutCallbackFunction;
+            options?: EventCallbackObjectOptions;
+        }
+        interface PointMouseOverCallbackObject {
+            listener?: PointMouseOverCallbackFunction;
+            options?: EventCallbackObjectOptions;
         }
         interface PointClickEventObject extends PointerEventObject {
             point: Point;
         }
         interface PointEventsOptionsObject {
             click?: PointClickCallbackFunction|PointClickCallbackObject;
-            mouseOut?: PointMouseOutCallbackFunction;
-            mouseOver?: PointMouseOverCallbackFunction;
+            mouseOut?: PointMouseOutCallbackFunction|PointMouseOutCallbackObject;
+            mouseOver?: PointMouseOverCallbackFunction|PointMouseOverCallbackObject;
             remove?: PointRemoveCallbackFunction;
             select?: PointSelectCallbackFunction;
             unselect?: PointUnselectCallbackFunction;
