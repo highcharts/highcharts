@@ -660,16 +660,6 @@ BaseSeries.seriesType('pie', 'line',
      */
     generatePoints: function () {
         LineSeries.prototype.generatePoints.call(this);
-        var data = this.data;
-        var yData = this.yData || [];
-        var point;
-        for (var i = 0, end = data.length; i < end; i++) {
-            point = data[i];
-            if (!point.isValid()) {
-                point.y = null;
-                yData[point.index || 0] = null;
-            }
-        }
         this.updateTotals();
     },
     /**
@@ -719,7 +709,7 @@ BaseSeries.seriesType('pie', 'line',
             point = points[i];
             // set start and end angle
             start = startAngleRad + (cumulative * circ);
-            if (!ignoreHiddenPoint || point.visible) {
+            if (point.isValid() && (!ignoreHiddenPoint || point.visible)) {
                 cumulative += point.percentage / 100;
             }
             end = startAngleRad + (cumulative * circ);
