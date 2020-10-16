@@ -862,16 +862,6 @@ BaseSeries.seriesType<typeof Highcharts.PieSeries>(
          */
         generatePoints: function (this: Highcharts.PieSeries): void {
             LineSeries.prototype.generatePoints.call(this);
-            const data = this.data;
-            const yData = this.yData || [];
-            let point: Highcharts.PiePoint;
-            for (let i = 0, end = data.length; i < end; i++) {
-                point = data[i];
-                if (!point.isValid()) {
-                    point.y = null;
-                    yData[point.index || 0] = null;
-                }
-            }
             this.updateTotals();
         },
 
@@ -968,7 +958,7 @@ BaseSeries.seriesType<typeof Highcharts.PieSeries>(
 
                 // set start and end angle
                 start = startAngleRad + (cumulative * circ);
-                if (!ignoreHiddenPoint || point.visible) {
+                if (point.isValid() && (!ignoreHiddenPoint || point.visible)) {
                     cumulative += (point.percentage as any) / 100;
                 }
                 end = startAngleRad + (cumulative * circ);
