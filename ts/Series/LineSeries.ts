@@ -6906,7 +6906,7 @@ declare module '../Core/Series/Types' {
         line: typeof Highcharts.LineSeries;
     }
 }
-BaseSeries.addSeries('line', LineSeries);
+BaseSeries.registerSeriesType('line', LineSeries);
 
 /* *
  *

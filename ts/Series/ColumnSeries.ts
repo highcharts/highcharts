@@ -1318,7 +1318,7 @@ declare module '../Core/Series/Types' {
         column: typeof Highcharts.ColumnSeries;
     }
 }
-BaseSeries.addSeries('column', ColumnSeries);
+BaseSeries.registerSeriesType('column', ColumnSeries);
 
 /* *
  *

@@ -30,7 +30,7 @@ var Series;
      *
      * */
     /** @private */
-    function addSeries(seriesType, seriesClass) {
+    function registerSeriesType(seriesType, seriesClass) {
         var defaultPlotOptions = getOptions().plotOptions || {}, seriesOptions = seriesClass.defaultOptions;
         if (!seriesClass.prototype.pointClass) {
             seriesClass.prototype.pointClass = Point;
@@ -41,7 +41,7 @@ var Series;
         }
         Series.seriesTypes[seriesType] = seriesClass;
     }
-    Series.addSeries = addSeries;
+    Series.registerSeriesType = registerSeriesType;
     /** @private */
     function cleanRecursively(toClean, reference) {
         var clean = {};
@@ -87,8 +87,9 @@ var Series;
     }
     Series.getSeries = getSeries;
     /**
-     * Factory to create new series prototypes.
+     * Old factory to create new series prototypes.
      *
+     * @deprecated
      * @function Highcharts.seriesType
      *
      * @param {string} type
@@ -118,7 +119,7 @@ var Series;
         // Merge the options
         defaultPlotOptions[type] = merge(defaultPlotOptions[parent], options);
         // Create the class
-        addSeries(type, extendClass(Series.seriesTypes[parent] || function () { }, seriesProto));
+        registerSeriesType(type, extendClass(Series.seriesTypes[parent] || function () { }, seriesProto));
         Series.seriesTypes[type].prototype.type = type;
         // Create the point class if needed
         if (pointProto) {

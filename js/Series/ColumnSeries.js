@@ -917,7 +917,7 @@ extend(ColumnSeries.prototype, {
     negStacks: true,
     trackerGroups: ['group', 'dataLabelsGroup']
 });
-BaseSeries.addSeries('column', ColumnSeries);
+BaseSeries.registerSeriesType('column', ColumnSeries);
 /* *
  *
  *  Export

@@ -70,7 +70,7 @@ namespace Series {
      * */
 
     /** @private */
-    export function addSeries(
+    export function registerSeriesType(
         seriesType: string,
         seriesClass: typeof LineSeries
     ): void {
@@ -161,8 +161,9 @@ namespace Series {
     }
 
     /**
-     * Factory to create new series prototypes.
+     * Old factory to create new series prototypes.
      *
+     * @deprecated
      * @function Highcharts.seriesType
      *
      * @param {string} type
@@ -204,7 +205,7 @@ namespace Series {
         );
 
         // Create the class
-        addSeries(type, extendClass(
+        registerSeriesType(type, extendClass(
             seriesTypes[parent] as any || function (): void {},
             seriesProto
         ) as any);

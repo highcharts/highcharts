@@ -4942,7 +4942,7 @@ extend(LineSeries.prototype, {
     // requires the data to be sorted
     sorted: true
 });
-BaseSeries.addSeries('line', LineSeries);
+BaseSeries.registerSeriesType('line', LineSeries);
 /* *
  *
  *  Compatibility
