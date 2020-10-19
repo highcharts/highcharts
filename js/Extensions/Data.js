@@ -19,8 +19,11 @@ var doc = H.doc;
 import Point from '../Core/Series/Point.js';
 import DataTable from '../Data/DataTable.js';
 import GoogleSheetsStore from '../Data/Stores/GoogleSheetsStore.js';
+import CSVStore from '../Data/Stores/CSVStore.js';
+import CSVParser from '../Data/Parsers/CSVParser.js';
 import U from '../Core/Utilities.js';
-var addEvent = U.addEvent, defined = U.defined, extend = U.extend, fireEvent = U.fireEvent, isNumber = U.isNumber, merge = U.merge, objectEach = U.objectEach, pick = U.pick, splat = U.splat;
+import DataConverter from '../Data/DataConverter.js';
+var addEvent = U.addEvent, defined = U.defined, extend = U.extend, fireEvent = U.fireEvent, isNumber = U.isNumber, isString = U.isString, merge = U.merge, objectEach = U.objectEach, pick = U.pick, splat = U.splat;
 var seriesTypes = BaseSeries.seriesTypes;
 /**
  * Callback function to modify the CSV before parsing it by the data module.
@@ -711,7 +714,7 @@ var Data = /** @class */ (function () {
         }
     };
     /**
-     * Parse a CSV input string
+     * Handle a CSV input string
      *
      * @function Highcharts.Data#parseCSV
      *
@@ -720,424 +723,29 @@ var Data = /** @class */ (function () {
      * @return {Array<Array<Highcharts.DataValueType>>}
      */
     Data.prototype.parseCSV = function (inOptions) {
-        var self = this, options = inOptions || this.options, csv = options.csv, columns, startRow = (typeof options.startRow !== 'undefined' && options.startRow ?
-            options.startRow :
-            0), endRow = options.endRow || Number.MAX_VALUE, startColumn = (typeof options.startColumn !== 'undefined' &&
-            options.startColumn) ? options.startColumn : 0, endColumn = options.endColumn || Number.MAX_VALUE, itemDelimiter, lines, rowIt = 0, 
-        // activeRowNo = 0,
-        dataTypes = [], 
-        // We count potential delimiters in the prepass, and use the
-        // result as the basis of half-intelligent guesses.
-        potDelimiters = {
-            ',': 0,
-            ';': 0,
-            '\t': 0
-        };
-        columns = this.columns = [];
-        /*
-            This implementation is quite verbose. It will be shortened once
-            it's stable and passes all the test.
-
-            It's also not written with speed in mind, instead everything is
-            very seggregated, and there a several redundant loops.
-            This is to make it easier to stabilize the code initially.
-
-            We do a pre-pass on the first 4 rows to make some intelligent
-            guesses on the set. Guessed delimiters are in this pass counted.
-
-            Auto detecting delimiters
-                - If we meet a quoted string, the next symbol afterwards
-                  (that's not \s, \t) is the delimiter
-                - If we meet a date, the next symbol afterwards is the delimiter
-
-            Date formats
-                - If we meet a column with date formats, check all of them to
-                  see if one of the potential months crossing 12. If it does,
-                  we now know the format
-
-            It would make things easier to guess the delimiter before
-            doing the actual parsing.
-
-            General rules:
-                - Quoting is allowed, e.g: "Col 1",123,321
-                - Quoting is optional, e.g.: Col1,123,321
-                - Doubble quoting is escaping, e.g. "Col ""Hello world""",123
-                - Spaces are considered part of the data: Col1 ,123
-                - New line is always the row delimiter
-                - Potential column delimiters are , ; \t
-                - First row may optionally contain headers
-                - The last row may or may not have a row delimiter
-                - Comments are optionally supported, in which case the comment
-                  must start at the first column, and the rest of the line will
-                  be ignored
-        */
-        /**
-         * Parse a single row.
-         * @private
-         */
-        function parseRow(columnStr, rowNumber, noAdd, callbacks) {
-            var i = 0, c = '', cl = '', cn = '', token = '', actualColumn = 0, column = 0;
-            /**
-             * @private
-             */
-            function read(j) {
-                c = columnStr[j];
-                cl = columnStr[j - 1];
-                cn = columnStr[j + 1];
-            }
-            /**
-             * @private
-             */
-            function pushType(type) {
-                if (dataTypes.length < column + 1) {
-                    dataTypes.push([type]);
-                }
-                if (dataTypes[column][dataTypes[column].length - 1] !== type) {
-                    dataTypes[column].push(type);
-                }
-            }
-            /**
-             * @private
-             */
-            function push() {
-                if (startColumn > actualColumn || actualColumn > endColumn) {
-                    // Skip this column, but increment the column count (#7272)
-                    ++actualColumn;
-                    token = '';
-                    return;
-                }
-                if (!isNaN(parseFloat(token)) && isFinite(token)) {
-                    token = parseFloat(token);
-                    pushType('number');
-                }
-                else if (!isNaN(Date.parse(token))) {
-                    token = token.replace(/\//g, '-');
-                    pushType('date');
-                }
-                else {
-                    pushType('string');
-                }
-                if (columns.length < column + 1) {
-                    columns.push([]);
-                }
-                if (!noAdd) {
-                    // Don't push - if there's a varrying amount of columns
-                    // for each row, pushing will skew everything down n slots
-                    columns[column][rowNumber] = token;
-                }
-                token = '';
-                ++column;
-                ++actualColumn;
-            }
-            if (!columnStr.trim().length) {
-                return;
-            }
-            if (columnStr.trim()[0] === '#') {
-                return;
-            }
-            for (; i < columnStr.length; i++) {
-                read(i);
-                // Quoted string
-                if (c === '#') {
-                    // The rest of the row is a comment
-                    push();
-                    return;
-                }
-                if (c === '"') {
-                    read(++i);
-                    while (i < columnStr.length) {
-                        if (c === '"' && cl !== '"' && cn !== '"') {
-                            break;
-                        }
-                        if (c !== '"' || (c === '"' && cl !== '"')) {
-                            token += c;
-                        }
-                        read(++i);
-                    }
-                    // Perform "plugin" handling
-                }
-                else if (callbacks && callbacks[c]) {
-                    if (callbacks[c](c, token)) {
-                        push();
-                    }
-                    // Delimiter - push current token
-                }
-                else if (c === itemDelimiter) {
-                    push();
-                    // Actual column data
-                }
-                else {
-                    token += c;
-                }
-            }
-            push();
-        }
-        /**
-         * Attempt to guess the delimiter. We do a separate parse pass here
-         * because we need to count potential delimiters softly without making
-         * any assumptions.
-         * @private
-         */
-        function guessDelimiter(lines) {
-            var points = 0, commas = 0, guessed = false;
-            lines.some(function (columnStr, i) {
-                var inStr = false, c, cn, cl, token = '';
-                // We should be able to detect dateformats within 13 rows
-                if (i > 13) {
-                    return true;
-                }
-                for (var j = 0; j < columnStr.length; j++) {
-                    c = columnStr[j];
-                    cn = columnStr[j + 1];
-                    cl = columnStr[j - 1];
-                    if (c === '#') {
-                        // Skip the rest of the line - it's a comment
-                        return;
-                    }
-                    if (c === '"') {
-                        if (inStr) {
-                            if (cl !== '"' && cn !== '"') {
-                                while (cn === ' ' && j < columnStr.length) {
-                                    cn = columnStr[++j];
-                                }
-                                // After parsing a string, the next non-blank
-                                // should be a delimiter if the CSV is properly
-                                // formed.
-                                if (typeof potDelimiters[cn] !== 'undefined') {
-                                    potDelimiters[cn]++;
-                                }
-                                inStr = false;
-                            }
-                        }
-                        else {
-                            inStr = true;
-                        }
-                    }
-                    else if (typeof potDelimiters[c] !== 'undefined') {
-                        token = token.trim();
-                        if (!isNaN(Date.parse(token))) {
-                            potDelimiters[c]++;
-                        }
-                        else if (isNaN(token) ||
-                            !isFinite(token)) {
-                            potDelimiters[c]++;
-                        }
-                        token = '';
-                    }
-                    else {
-                        token += c;
-                    }
-                    if (c === ',') {
-                        commas++;
-                    }
-                    if (c === '.') {
-                        points++;
-                    }
-                }
-            });
-            // Count the potential delimiters.
-            // This could be improved by checking if the number of delimiters
-            // equals the number of columns - 1
-            if (potDelimiters[';'] > potDelimiters[',']) {
-                guessed = ';';
-            }
-            else if (potDelimiters[','] > potDelimiters[';']) {
-                guessed = ',';
-            }
-            else {
-                // No good guess could be made..
-                guessed = ',';
-            }
-            // Try to deduce the decimal point if it's not explicitly set.
-            // If both commas or points is > 0 there is likely an issue
-            if (!options.decimalPoint) {
-                if (points > commas) {
-                    options.decimalPoint = '.';
-                }
-                else {
-                    options.decimalPoint = ',';
-                }
-                // Apply a new decimal regex based on the presumed decimal sep.
-                self.decimalRegex = new RegExp('^(-?[0-9]+)' +
-                    options.decimalPoint +
-                    '([0-9]+)$');
-            }
-            return guessed;
-        }
-        /**
-         * Tries to guess the date format
-         *  - Check if either month candidate exceeds 12
-         *  - Check if year is missing (use current year)
-         *  - Check if a shortened year format is used (e.g. 1/1/99)
-         *  - If no guess can be made, the user must be prompted
-         * data is the data to deduce a format based on
-         * @private
-         */
-        function deduceDateFormat(data, limit) {
-            var format = 'YYYY/mm/dd', thing, guessedFormat = [], calculatedFormat, i = 0, madeDeduction = false, 
-            // candidates = {},
-            stable = [], max = [], j;
-            if (!limit || limit > data.length) {
-                limit = data.length;
-            }
-            for (; i < limit; i++) {
-                if (typeof data[i] !== 'undefined' &&
-                    data[i] && data[i].length) {
-                    thing = data[i]
-                        .trim()
-                        .replace(/\//g, ' ')
-                        .replace(/\-/g, ' ')
-                        .replace(/\./g, ' ')
-                        .split(' ');
-                    guessedFormat = [
-                        '',
-                        '',
-                        ''
-                    ];
-                    for (j = 0; j < thing.length; j++) {
-                        if (j < guessedFormat.length) {
-                            thing[j] = parseInt(thing[j], 10);
-                            if (thing[j]) {
-                                max[j] = (!max[j] || max[j] < thing[j]) ?
-                                    thing[j] :
-                                    max[j];
-                                if (typeof stable[j] !== 'undefined') {
-                                    if (stable[j] !== thing[j]) {
-                                        stable[j] = false;
-                                    }
-                                }
-                                else {
-                                    stable[j] = thing[j];
-                                }
-                                if (thing[j] > 31) {
-                                    if (thing[j] < 100) {
-                                        guessedFormat[j] = 'YY';
-                                    }
-                                    else {
-                                        guessedFormat[j] = 'YYYY';
-                                    }
-                                    // madeDeduction = true;
-                                }
-                                else if (thing[j] > 12 &&
-                                    thing[j] <= 31) {
-                                    guessedFormat[j] = 'dd';
-                                    madeDeduction = true;
-                                }
-                                else if (!guessedFormat[j].length) {
-                                    guessedFormat[j] = 'mm';
-                                }
-                            }
-                        }
-                    }
-                }
-            }
-            if (madeDeduction) {
-                // This handles a few edge cases with hard to guess dates
-                for (j = 0; j < stable.length; j++) {
-                    if (stable[j] !== false) {
-                        if (max[j] > 12 &&
-                            guessedFormat[j] !== 'YY' &&
-                            guessedFormat[j] !== 'YYYY') {
-                            guessedFormat[j] = 'YY';
-                        }
-                    }
-                    else if (max[j] > 12 && guessedFormat[j] === 'mm') {
-                        guessedFormat[j] = 'dd';
-                    }
-                }
-                // If the middle one is dd, and the last one is dd,
-                // the last should likely be year.
-                if (guessedFormat.length === 3 &&
-                    guessedFormat[1] === 'dd' &&
-                    guessedFormat[2] === 'dd') {
-                    guessedFormat[2] = 'YY';
-                }
-                calculatedFormat = guessedFormat.join('/');
-                // If the caculated format is not valid, we need to present an
-                // error.
-                if (!(options.dateFormats || self.dateFormats)[calculatedFormat]) {
-                    // This should emit an event instead
-                    fireEvent('deduceDateFailed');
-                    return format;
-                }
-                return calculatedFormat;
-            }
-            return format;
-        }
-        /**
-         * @todo
-         * Figure out the best axis types for the data
-         * - If the first column is a number, we're good
-         * - If the first column is a date, set to date/time
-         * - If the first column is a string, set to categories
-         * @private
-         */
-        function deduceAxisTypes() {
-        }
-        if (csv && options.beforeParse) {
-            csv = options.beforeParse.call(this, csv);
-        }
+        var options = inOptions || this.options, csv = options.csv;
+        var columns = [], csvStore;
         if (csv) {
-            lines = csv
-                .replace(/\r\n/g, '\n') // Unix
-                .replace(/\r/g, '\n') // Mac
-                .split(options.lineDelimiter || '\n');
-            if (!startRow || startRow < 0) {
-                startRow = 0;
-            }
-            if (!endRow || endRow >= lines.length) {
-                endRow = lines.length - 1;
-            }
-            if (options.itemDelimiter) {
-                itemDelimiter = options.itemDelimiter;
-            }
-            else {
-                itemDelimiter = null;
-                itemDelimiter = guessDelimiter(lines);
-            }
-            var offset = 0;
-            for (rowIt = startRow; rowIt <= endRow; rowIt++) {
-                if (lines[rowIt][0] === '#') {
-                    offset++;
-                }
-                else {
-                    parseRow(lines[rowIt], rowIt - startRow - offset);
-                }
-            }
-            // //Make sure that there's header columns for everything
-            // columns.forEach(function (col) {
-            // });
-            deduceAxisTypes();
-            if ((!options.columnTypes || options.columnTypes.length === 0) &&
-                dataTypes.length &&
-                dataTypes[0].length &&
-                dataTypes[0][1] === 'date' &&
-                !options.dateFormat) {
-                options.dateFormat = deduceDateFormat(columns[0]);
-            }
-            // lines.forEach(function (line, rowNo) {
-            //    var trimmed = self.trim(line),
-            //        isComment = trimmed.indexOf('#') === 0,
-            //        isBlank = trimmed === '',
-            //        items;
-            //    if (
-            //        rowNo >= startRow &&
-            //        rowNo <= endRow &&
-            //        !isComment && !isBlank
-            //    ) {
-            //        items = line.split(itemDelimiter);
-            //        items.forEach(function (item, colNo) {
-            //            if (colNo >= startColumn && colNo <= endColumn) {
-            //                if (!columns[colNo - startColumn]) {
-            //                    columns[colNo - startColumn] = [];
-            //                }
-            //                columns[colNo - startColumn][activeRowNo] = item;
-            //            }
-            //        });
-            //        activeRowNo += 1;
-            //    }
-            // });
-            //
+            csvStore = this.dataStore = new CSVStore(new DataTable(), {
+                csv: csv,
+                csvURL: options.csvURL,
+                enablePolling: options.enablePolling,
+                dataRefreshRate: options.dataRefreshRate
+            }, new CSVParser({
+                csv: csv,
+                startRow: options.startRow,
+                endRow: options.endRow,
+                startColumn: options.startColumn,
+                endColumn: options.endColumn,
+                firstRowAsNames: options.firstRowAsNames,
+                switchRowsAndColumns: options.switchRowsAndColumns,
+                decimalPoint: options.decimalPoint,
+                itemDelimiter: options.itemDelimiter,
+                lineDelimiter: options.lineDelimiter
+                // beforeParse: options.beforeParse
+            }, new DataConverter({}, options.parseDate)));
+            csvStore.load();
+            columns = this.columns = this.getDataColumnsFromDataTable(csvStore.table);
             this.dataFound();
         }
         return columns;
@@ -1280,6 +888,7 @@ var Data = /** @class */ (function () {
     };
     /**
      * Get data columns from the data table.
+     * @private
      *
      * @function Highcharts.Data#getDataColumnsFromDataTable
      *
@@ -1289,9 +898,25 @@ var Data = /** @class */ (function () {
      */
     Data.prototype.getDataColumnsFromDataTable = function (table) {
         var columns = [];
-        objectEach(table.toColumns(), function (elem, key) {
+        var column, element;
+        objectEach(table.toColumns(), function (elemArr, key) {
             if (key !== 'id') {
-                columns.push(elem);
+                column = [];
+                for (var i = 0, iEnd = elemArr.length; i < iEnd; ++i) {
+                    element = elemArr[i];
+                    if (element instanceof Date) {
+                        column.push(element.toString());
+                    }
+                    else if (isNumber(element) || isString(element)) {
+                        column.push(element);
+                    }
+                    else {
+                        column.push(null);
+                    }
+                }
+                if (column.length) {
+                    columns.push(column);
+                }
             }
         });
         return columns;
@@ -1489,55 +1114,7 @@ var Data = /** @class */ (function () {
      * @return {number}
      */
     Data.prototype.parseDate = function (val) {
-        var parseDate = this.options.parseDate, ret, key, format, dateFormat = this.options.dateFormat || this.dateFormat, match;
-        if (parseDate) {
-            ret = parseDate(val);
-        }
-        else if (typeof val === 'string') {
-            // Auto-detect the date format the first time
-            if (!dateFormat) {
-                for (key in this.dateFormats) { // eslint-disable-line guard-for-in
-                    format = this.dateFormats[key];
-                    match = val.match(format.regex);
-                    if (match) {
-                        this.dateFormat = dateFormat = key;
-                        this.alternativeFormat = format.alternative;
-                        ret = format.parser(match);
-                        break;
-                    }
-                }
-                // Next time, use the one previously found
-            }
-            else {
-                format = this.dateFormats[dateFormat];
-                if (!format) {
-                    // The selected format is invalid
-                    format = this.dateFormats['YYYY/mm/dd'];
-                }
-                match = val.match(format.regex);
-                if (match) {
-                    ret = format.parser(match);
-                }
-            }
-            // Fall back to Date.parse
-            if (!match) {
-                match = Date.parse(val);
-                // External tools like Date.js and MooTools extend Date object
-                // and returns a date.
-                if (typeof match === 'object' &&
-                    match !== null &&
-                    match.getTime) {
-                    ret = (match.getTime() -
-                        match.getTimezoneOffset() *
-                            60000);
-                    // Timestamp
-                }
-                else if (isNumber(match)) {
-                    ret = match - (new Date(match)).getTimezoneOffset() * 60000;
-                }
-            }
-        }
-        return ret;
+        return new Date(val).getTime();
     };
     /**
      * Reorganize rows into columns.

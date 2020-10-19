@@ -106,6 +106,10 @@ implements DataEventEmitter<TEventObject>, DataJSON.Class {
      */
     public abstract toJSON(): DataJSON.ClassJSON;
 
+    /**
+     * DataConverter for the parser.
+     */
+    public abstract converter: DataConverter;
 }
 
 /* *

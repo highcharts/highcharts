@@ -70,11 +70,20 @@ class CSVParser extends DataParser<DataParser.EventObject> {
      *
      * @param {CSVParser.OptionsType} [options]
      * Options for the CSV parser.
+     *
+     * @param {DataConverter} converter
+     * Parser data converter.
      */
-    public constructor(options?: CSVParser.OptionsType) {
+    public constructor(
+        options?: CSVParser.OptionsType,
+        converter?: DataConverter
+        // parseDate?: DataParser.ParseDateFunction
+    ) {
         super();
 
         this.options = merge(CSVParser.defaultOptions, options);
+        this.converter = converter || new DataConverter();
+        // this.parseDate = parseDate;
     }
 
     /* *
@@ -84,10 +93,13 @@ class CSVParser extends DataParser<DataParser.EventObject> {
      * */
     private columns: Array<Array<DataTableRow.CellType>> = [];
     private headers: Array<string> = [];
+    private dataTypes: Array<Array<string>> = [];
     private guessedItemDelimiter?: string;
     private guessedDecimalPoint?: string;
     private decimalRegex?: RegExp;
     private options: CSVParser.ClassJSONOptions;
+    // private parseDate?: (DataParser.ParseDateFunction|undefined);
+    public converter: DataConverter;
 
 
     /**
@@ -107,6 +119,8 @@ class CSVParser extends DataParser<DataParser.EventObject> {
         eventDetail?: DataEventEmitter.EventDetail
     ): void {
         const parser = this,
+            dataTypes = parser.dataTypes,
+            converter = parser.converter,
             parserOptions = merge(true, this.options, options),
             {
                 beforeParse,
@@ -122,12 +136,13 @@ class CSVParser extends DataParser<DataParser.EventObject> {
                 startRow,
                 endRow
             } = parserOptions,
+            column,
             i: number,
             colsCount: number;
 
-        this.columns = [];
+        parser.columns = [];
 
-        this.emit<DataParser.EventObject>({
+        parser.emit<DataParser.EventObject>({
             type: 'parse',
             columns: parser.columns,
             detail: eventDetail,
@@ -173,6 +188,26 @@ class CSVParser extends DataParser<DataParser.EventObject> {
                     parser.parseCSVRow(lines[rowIt], rowIt - startRow - offset);
                 }
             }
+
+            if (dataTypes.length &&
+                dataTypes[0].length &&
+                dataTypes[0][1] === 'date' && // format is a string date
+                !parser.converter.getDateFormat()
+            ) {
+                parser.converter.deduceDateFormat(
+                    parser.columns[0] as Array<string>, null, true);
+            }
+
+            // Guess types.
+            for (let i = 0, iEnd = parser.columns.length; i < iEnd; ++i) {
+                column = parser.columns[i];
+
+                for (let j = 0, jEnd = column.length; j < jEnd; ++j) {
+                    if (column[j] && typeof column[j] === 'string') {
+                        parser.columns[i][j] = converter.asGuessedType(column[j] as string);
+                    }
+                }
+            }
         }
 
         parser.emit<DataParser.EventObject>({
@@ -191,8 +226,12 @@ class CSVParser extends DataParser<DataParser.EventObject> {
         rowNumber: number
     ): void {
         const parser = this,
-            converter = new DataConverter(),
+            converter = this.converter,
+            // converter = new DataConverter({}, parser.parseDate),
+            // -> tu powinno byc ustawione parseDate
+            // callback z opcji w data module!
             columns = parser.columns || [],
+            dataTypes = parser.dataTypes,
             { startColumn, endColumn } = parser.options,
             itemDelimiter = parser.options.itemDelimiter || parser.guessedItemDelimiter;
 
@@ -221,12 +260,39 @@ class CSVParser extends DataParser<DataParser.EventObject> {
         /**
          * @private
          */
+        function pushType(type: string): void {
+            if (dataTypes.length < column + 1) {
+                dataTypes.push([type]);
+            }
+            if (dataTypes[column][dataTypes[column].length - 1] !== type) {
+                dataTypes[column].push(type);
+            }
+        }
+
+        /**
+         * @private
+         */
         function push(): void {
             if (startColumn > actualColumn || actualColumn > endColumn) {
                 // Skip this column, but increment the column count (#7272)
                 ++actualColumn;
                 token = '';
                 return;
+            }
+
+            // Save the type of the token.
+            if (typeof token === 'string') {
+                if (!isNaN(parseFloat(token)) && isFinite(token as any)) {
+                    token = parseFloat(token) as any;
+                    pushType('number');
+                } else if (!isNaN(Date.parse(token))) {
+                    token = token.replace(/\//g, '-');
+                    pushType('date');
+                } else {
+                    pushType('string');
+                }
+            } else {
+                pushType('number');
             }
 
             if (columns.length < column + 1) {
@@ -247,8 +313,11 @@ class CSVParser extends DataParser<DataParser.EventObject> {
                 }
             }
 
-            columns[column][rowNumber] = typeof token !== 'number' ?
-                converter.asGuessedType(token) : token;
+            // ZA WCZEŚNIE NA TO CHYBA
+            // columns[column][rowNumber] = typeof token !== 'number' ?
+            //     converter.asGuessedType(token) : token;
+
+            columns[column][rowNumber] = token;
 
             token = '';
             ++column;

@@ -55,8 +55,13 @@ var CSVParser = /** @class */ (function (_super) {
      *
      * @param {CSVParser.OptionsType} [options]
      * Options for the CSV parser.
+     *
+     * @param {DataConverter} converter
+     * Parser data converter.
      */
-    function CSVParser(options) {
+    function CSVParser(options, converter
+    // parseDate?: DataParser.ParseDateFunction
+    ) {
         var _this = _super.call(this) || this;
         /* *
          *
@@ -65,8 +70,11 @@ var CSVParser = /** @class */ (function (_super) {
          * */
         _this.columns = [];
         _this.headers = [];
+        _this.dataTypes = [];
         _this.options = merge(CSVParser.defaultOptions, options);
+        _this.converter = converter || new DataConverter();
         return _this;
+        // this.parseDate = parseDate;
     }
     /* *
      *
@@ -98,10 +106,10 @@ var CSVParser = /** @class */ (function (_super) {
      * @emits CSVDataParser#afterParse
      */
     CSVParser.prototype.parse = function (options, eventDetail) {
-        var parser = this, parserOptions = merge(true, this.options, options), beforeParse = parserOptions.beforeParse, lineDelimiter = parserOptions.lineDelimiter, firstRowAsNames = parserOptions.firstRowAsNames, itemDelimiter = parserOptions.itemDelimiter;
-        var lines, rowIt = 0, csv = parserOptions.csv, startRow = parserOptions.startRow, endRow = parserOptions.endRow, i, colsCount;
-        this.columns = [];
-        this.emit({
+        var parser = this, dataTypes = parser.dataTypes, converter = parser.converter, parserOptions = merge(true, this.options, options), beforeParse = parserOptions.beforeParse, lineDelimiter = parserOptions.lineDelimiter, firstRowAsNames = parserOptions.firstRowAsNames, itemDelimiter = parserOptions.itemDelimiter;
+        var lines, rowIt = 0, csv = parserOptions.csv, startRow = parserOptions.startRow, endRow = parserOptions.endRow, column, i, colsCount;
+        parser.columns = [];
+        parser.emit({
             type: 'parse',
             columns: parser.columns,
             detail: eventDetail,
@@ -140,6 +148,21 @@ var CSVParser = /** @class */ (function (_super) {
                     parser.parseCSVRow(lines[rowIt], rowIt - startRow - offset);
                 }
             }
+            if (dataTypes.length &&
+                dataTypes[0].length &&
+                dataTypes[0][1] === 'date' && // format is a string date
+                !parser.converter.getDateFormat()) {
+                parser.converter.deduceDateFormat(parser.columns[0], null, true);
+            }
+            // Guess types.
+            for (var i_1 = 0, iEnd = parser.columns.length; i_1 < iEnd; ++i_1) {
+                column = parser.columns[i_1];
+                for (var j = 0, jEnd = column.length; j < jEnd; ++j) {
+                    if (column[j] && typeof column[j] === 'string') {
+                        parser.columns[i_1][j] = converter.asGuessedType(column[j]);
+                    }
+                }
+            }
         }
         parser.emit({
             type: 'afterParse',
@@ -152,7 +175,11 @@ var CSVParser = /** @class */ (function (_super) {
      * Internal method that parses a single CSV row
      */
     CSVParser.prototype.parseCSVRow = function (columnStr, rowNumber) {
-        var parser = this, converter = new DataConverter(), columns = parser.columns || [], _a = parser.options, startColumn = _a.startColumn, endColumn = _a.endColumn, itemDelimiter = parser.options.itemDelimiter || parser.guessedItemDelimiter;
+        var parser = this, converter = this.converter, 
+        // converter = new DataConverter({}, parser.parseDate),
+        // -> tu powinno byc ustawione parseDate
+        // callback z opcji w data module!
+        columns = parser.columns || [], dataTypes = parser.dataTypes, _a = parser.options, startColumn = _a.startColumn, endColumn = _a.endColumn, itemDelimiter = parser.options.itemDelimiter || parser.guessedItemDelimiter;
         var decimalPoint = parser.options.decimalPoint;
         if (!decimalPoint || decimalPoint === itemDelimiter) {
             decimalPoint = parser.guessedDecimalPoint || '.';
@@ -169,12 +196,40 @@ var CSVParser = /** @class */ (function (_super) {
         /**
          * @private
          */
+        function pushType(type) {
+            if (dataTypes.length < column + 1) {
+                dataTypes.push([type]);
+            }
+            if (dataTypes[column][dataTypes[column].length - 1] !== type) {
+                dataTypes[column].push(type);
+            }
+        }
+        /**
+         * @private
+         */
         function push() {
             if (startColumn > actualColumn || actualColumn > endColumn) {
                 // Skip this column, but increment the column count (#7272)
                 ++actualColumn;
                 token = '';
                 return;
+            }
+            // Save the type of the token.
+            if (typeof token === 'string') {
+                if (!isNaN(parseFloat(token)) && isFinite(token)) {
+                    token = parseFloat(token);
+                    pushType('number');
+                }
+                else if (!isNaN(Date.parse(token))) {
+                    token = token.replace(/\//g, '-');
+                    pushType('date');
+                }
+                else {
+                    pushType('string');
+                }
+            }
+            else {
+                pushType('number');
             }
             if (columns.length < column + 1) {
                 columns.push([]);
@@ -190,8 +245,10 @@ var CSVParser = /** @class */ (function (_super) {
                     token = initialValue;
                 }
             }
-            columns[column][rowNumber] = typeof token !== 'number' ?
-                converter.asGuessedType(token) : token;
+            // ZA WCZEŚNIE NA TO CHYBA
+            // columns[column][rowNumber] = typeof token !== 'number' ?
+            //     converter.asGuessedType(token) : token;
+            columns[column][rowNumber] = token;
             token = '';
             ++column;
             ++actualColumn;

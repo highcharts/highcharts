@@ -84,17 +84,23 @@ class HTMLTableParser extends DataParser<DataParser.EventObject> {
      *
      * @param {HTMLTableParser.OptionsType} [options]
      * Options for the CSV parser.
+     *
      * @param {HTMLElement | null} tableElement
      * The HTML table to parse
+     *
+     * @param {DataConverter} converter
+     * Parser data converter.
      */
     constructor(
         options?: Partial<HTMLTableParser.OptionsType>,
-        tableElement: (HTMLElement | null) = null
+        tableElement: (HTMLElement | null) = null,
+        converter?: DataConverter
     ) {
         super();
         this.columns = [];
         this.headers = [];
         this.options = merge(HTMLTableParser.defaultOptions, options);
+        this.converter = converter || new DataConverter();
 
         if (tableElement) {
             this.tableElement = tableElement;
@@ -113,6 +119,7 @@ class HTMLTableParser extends DataParser<DataParser.EventObject> {
 
     private columns: DataTableRow.CellType[][];
     private headers: string[];
+    public converter: DataConverter;
     public options: HTMLTableParser.ClassJSONOptions;
     public tableElement?: HTMLElement
     public tableElementID?: string;
@@ -141,7 +148,7 @@ class HTMLTableParser extends DataParser<DataParser.EventObject> {
         eventDetail?: DataEventEmitter.EventDetail
     ): void {
         const parser = this,
-            converter = new DataConverter(),
+            converter = this.converter,
             columns: DataTableRow.CellType[][] = [],
             headers: string[] = [],
             parseOptions = merge(parser.options, options),
