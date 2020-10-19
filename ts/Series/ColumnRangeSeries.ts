@@ -71,7 +71,8 @@ declare module '../Core/Series/Types' {
 
 import './ColumnSeries.js';
 
-var columnProto = BaseSeries.seriesTypes.column.prototype;
+var arearangeProto = BaseSeries.seriesTypes.arearange.prototype,
+    columnProto = BaseSeries.seriesTypes.column.prototype;
 
 /**
  * The column range is a cartesian series type with higher and lower
@@ -130,6 +131,30 @@ BaseSeries.seriesType<typeof Highcharts.ColumnRangeSeries>('columnrange', 'arear
     (defaultOptions.plotOptions as any).arearange,
     columnRangeOptions
 ), {
+    setOptions: function (this: Highcharts.ColumnRangeSeries): Highcharts.ColumnRangeSeriesOptions {
+        var options = arearangeProto.setOptions.apply(this, arguments),
+            dataLabels = options.dataLabels || [];
+
+        if (options.stacking) {
+            if (!(dataLabels instanceof Array)) {
+                options.dataLabels = dataLabels = [merge(dataLabels), merge(dataLabels)];
+            }
+
+            dataLabels.forEach(function (dataLabel, index): void {
+                if (dataLabel.enabled) {
+                    if (index === 0) {
+                        dataLabel.align = 'right';
+                        dataLabel.verticalAlign = 'top';
+                    }
+                    if (index === 1) {
+                        dataLabel.align = 'left';
+                        dataLabel.verticalAlign = 'bottom';
+                    }
+                }
+            });
+        }
+        return options;
+    },
 
     // eslint-disable-next-line valid-jsdoc
     /**
