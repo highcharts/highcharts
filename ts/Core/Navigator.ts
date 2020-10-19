@@ -1908,6 +1908,9 @@ class Navigator {
                     offset: 0,
                     index: yAxisIndex,
                     isInternal: true,
+                    reversed: pick((navigatorOptions.yAxis && navigatorOptions.yAxis.reversed),
+                        (chart.yAxis[0] && chart.yAxis[0].reversed),
+                        false), // #14060
                     zoomEnabled: false
                 }, chart.inverted ? {
                     width: height
