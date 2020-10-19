@@ -406,7 +406,7 @@ BaseSeries.seriesType('xrange', 'column'
                         pfOptions = {};
                     }
                     if (isObject(seriesOpts.partialFill)) {
-                        pfOptions = merge(pfOptions, seriesOpts.partialFill);
+                        pfOptions = merge({}, seriesOpts.partialFill, pfOptions);
                     }
                     fill = (pfOptions.fill ||
                         color(pointAttr.fill).brighten(-0.3).get() ||
