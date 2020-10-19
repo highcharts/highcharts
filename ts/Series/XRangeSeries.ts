@@ -696,7 +696,7 @@ BaseSeries.seriesType<typeof Highcharts.XRangeSeries>('xrange', 'column'
                         }
                         if (isObject(seriesOpts.partialFill)) {
                             pfOptions = merge(
-                                {}, seriesOpts.partialFill, pfOptions
+                                seriesOpts.partialFill, pfOptions
                             );
                         }
 

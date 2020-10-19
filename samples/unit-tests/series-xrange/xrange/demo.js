@@ -534,11 +534,11 @@ QUnit.test('#13811: partialFill application order', function (assert) {
     assert.strictEqual(
         chart.series[0].points[0].graphic.partRect.attr('fill'),
         'black',
-        'Point.partialFill takes priority'
+        'Point.partialFill should take priority'
     );
     assert.strictEqual(
         chart.series[0].points[2].graphic.partRect.attr('fill'),
         'red',
-        'Series.partialFill still works'
+        'Series.partialFill should still work'
     );
 });
