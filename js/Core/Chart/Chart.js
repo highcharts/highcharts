@@ -377,14 +377,14 @@ var Chart = /** @class */ (function () {
     Chart.prototype.initSeries = function (options) {
         var chart = this, optionsChart = chart.options.chart, type = (options.type ||
             optionsChart.type ||
-            optionsChart.defaultSeriesType), series, Constr = BaseSeries.seriesTypes[type];
+            optionsChart.defaultSeriesType), series, SeriesClass = BaseSeries.seriesTypes[type];
         // No such series type
-        if (!Constr) {
+        if (!SeriesClass) {
             error(17, true, chart, { missingModuleFor: type });
         }
-        series = new Constr(chart, options);
+        series = new SeriesClass();
         if (typeof series.init === 'function') {
-            series.init(this, options);
+            series.init(chart, options);
         }
         return series;
     };

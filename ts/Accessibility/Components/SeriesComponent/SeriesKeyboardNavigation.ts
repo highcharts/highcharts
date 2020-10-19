@@ -16,8 +16,8 @@ import Series from '../../../Core/Series/Series.js';
 const {
     seriesTypes
 } = Series;
-import CartesianSeries from '../../../Core/Series/CartesianSeries.js';
 import Chart from '../../../Core/Chart/Chart.js';
+import LineSeries from '../../../Series/LineSeries.js';
 import Point from '../../../Core/Series/Point.js';
 import U from '../../../Core/Utilities.js';
 const {
@@ -111,7 +111,7 @@ import '../../../Series/PieSeries.js';
  * Set for which series types it makes sense to move to the closest point with
  * up/down arrows, and which series types should just move to next series.
  */
-CartesianSeries.prototype.keyboardMoveVertical = true;
+LineSeries.prototype.keyboardMoveVertical = true;
 (['column', 'pie'] as Array<('column'|'pie')>).forEach(function (type): void {
     if (seriesTypes[type]) {
         seriesTypes[type].prototype.keyboardMoveVertical = false;
@@ -380,7 +380,7 @@ Chart.prototype.highlightAdjacentPoint = function (
  *
  * @return {boolean|Highcharts.Point}
  */
-CartesianSeries.prototype.highlightFirstValidPoint = function (
+LineSeries.prototype.highlightFirstValidPoint = function (
     this: Highcharts.AccessibilitySeries
 ): (boolean|Point) {
     var curPoint = this.chart.highlightedPoint,
@@ -626,7 +626,7 @@ extend(SeriesKeyboardNavigation.prototype, /** @lends Highcharts.SeriesKeyboardN
             chart = this.chart,
             e = this.eventProvider = new EventProvider();
 
-        e.addEvent(CartesianSeries, 'destroy', function (): void {
+        e.addEvent(LineSeries, 'destroy', function (): void {
             return keyboardNavigation.onSeriesDestroy(this);
         });
 

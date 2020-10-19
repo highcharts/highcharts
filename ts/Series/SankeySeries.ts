@@ -14,10 +14,10 @@ import type ColorString from '../Core/Color/ColorString';
 import type ColorType from '../Core/Color/ColorType';
 import type SVGAttributes from '../Core/Renderer/SVG/SVGAttributes';
 import Series from '../Core/Series/Series.js';
-import CartesianSeries from '../Core/Series/CartesianSeries.js';
 import Color from '../Core/Color/Color.js';
 import ColumnSeries from './ColumnSeries.js';
 import H from '../Core/Globals.js';
+import LineSeries from '../Series/LineSeries.js';
 import NodesMixin from '../Mixins/Nodes.js';
 import Point from '../Core/Series/Point.js';
 import TreeSeriesMixin from '../Mixins/TreeSeries.js';
@@ -1322,7 +1322,7 @@ Series.seriesType<typeof Highcharts.SankeySeries>(
 
         /* eslint-enable valid-jsdoc */
 
-        animate: CartesianSeries.prototype.animate
+        animate: LineSeries.prototype.animate
     }, {
         applyOptions: function (
             this: Highcharts.SankeyPoint,

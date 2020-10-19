@@ -10,7 +10,7 @@
 'use strict';
 import Axis from './Axis.js';
 import H from '../Globals.js';
-import CartesianSeries from '../Series/CartesianSeries.js';
+import LineSeries from '../../Series/LineSeries.js';
 import U from '../Utilities.js';
 var addEvent = U.addEvent, css = U.css, defined = U.defined, pick = U.pick, timeUnits = U.timeUnits;
 import Chart from '../Chart/Chart.js';
@@ -218,7 +218,7 @@ var OrdinalAxis;
                         xData: series.xData.slice(),
                         chart: chart,
                         destroyGroupedData: H.noop,
-                        getProcessedData: CartesianSeries.prototype.getProcessedData
+                        getProcessedData: LineSeries.prototype.getProcessedData
                     };
                     fakeSeries.xData = fakeSeries.xData.concat(ordinal.getOverscrollPositions());
                     fakeSeries.options = {
@@ -772,5 +772,5 @@ var OrdinalAxis;
     }
     OrdinalAxis.compose = compose;
 })(OrdinalAxis || (OrdinalAxis = {}));
-OrdinalAxis.compose(Axis, Chart, CartesianSeries); // @todo move to StockChart, remove from master
+OrdinalAxis.compose(Axis, Chart, LineSeries); // @todo move to StockChart, remove from master
 export default OrdinalAxis;

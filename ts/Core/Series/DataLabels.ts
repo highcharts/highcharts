@@ -30,7 +30,7 @@ const {
     noop,
     seriesTypes
 } = H;
-import CartesianSeries from './CartesianSeries.js';
+import LineSeries from '../../Series/LineSeries.js';
 import U from '../Utilities.js';
 const {
     arrayMax,
@@ -412,7 +412,7 @@ H.distribute = function (
  * @return {void}
  * @fires Highcharts.Series#event:afterDrawDataLabels
  */
-CartesianSeries.prototype.drawDataLabels = function (this: Highcharts.Series): void {
+LineSeries.prototype.drawDataLabels = function (this: Highcharts.Series): void {
     var series = this,
         chart = series.chart,
         seriesOptions = series.options,
@@ -805,7 +805,7 @@ CartesianSeries.prototype.drawDataLabels = function (this: Highcharts.Series): v
  * @param {boolean} [isNew]
  * @return {void}
  */
-CartesianSeries.prototype.alignDataLabel = function (
+LineSeries.prototype.alignDataLabel = function (
     this: Highcharts.Series,
     point: Point,
     dataLabel: SVGElement,
@@ -1001,7 +1001,7 @@ CartesianSeries.prototype.alignDataLabel = function (
  *
  * @return {void}
  */
-CartesianSeries.prototype.setDataLabelStartPos = function (
+LineSeries.prototype.setDataLabelStartPos = function (
     this: Highcharts.Series,
     point: Highcharts.ColumnPoint,
     dataLabel: SVGElement,
@@ -1077,7 +1077,7 @@ CartesianSeries.prototype.setDataLabelStartPos = function (
  * @param {boolean} [isNew]
  * @return {boolean|undefined}
  */
-CartesianSeries.prototype.justifyDataLabel = function (
+LineSeries.prototype.justifyDataLabel = function (
     this: Highcharts.Series,
     dataLabel: SVGElement,
     options: Highcharts.DataLabelsOptions,
@@ -1297,7 +1297,7 @@ if (seriesTypes.pie) {
 
 
         // run parent method
-        CartesianSeries.prototype.drawDataLabels.apply(series);
+        LineSeries.prototype.drawDataLabels.apply(series);
 
         data.forEach(function (point: Highcharts.PiePoint): void {
             if (point.dataLabel) {
@@ -1879,7 +1879,7 @@ if (seriesTypes.column) {
         );
 
         // Call the parent method
-        CartesianSeries.prototype.alignDataLabel.call(
+        LineSeries.prototype.alignDataLabel.call(
             this,
             point,
             dataLabel,

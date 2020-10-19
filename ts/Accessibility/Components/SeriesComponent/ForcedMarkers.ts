@@ -12,7 +12,7 @@
 
 'use strict';
 
-import CartesianSeries from '../../../Core/Series/CartesianSeries.js';
+import LineSeries from '../../../Series/LineSeries.js';
 import U from '../../../Core/Utilities.js';
 const {
     addEvent,
@@ -183,7 +183,7 @@ function addForceMarkersEvents(): void {
      * Keep track of forcing markers.
      * @private
      */
-    addEvent(CartesianSeries, 'render', function (): void {
+    addEvent(LineSeries, 'render', function (): void {
         const series = this as Highcharts.AccessibilitySeries,
             options = series.options;
 
@@ -208,7 +208,7 @@ function addForceMarkersEvents(): void {
      * Keep track of options to reset markers to if no longer forced.
      * @private
      */
-    addEvent(CartesianSeries, 'afterSetOptions', function (
+    addEvent(LineSeries, 'afterSetOptions', function (
         e: { options: Highcharts.SeriesOptions }
     ): void {
         this.resetA11yMarkerOptions = merge(
@@ -221,7 +221,7 @@ function addForceMarkersEvents(): void {
      * Process marker graphics after render
      * @private
      */
-    addEvent(CartesianSeries as any, 'afterRender', function (
+    addEvent(LineSeries as any, 'afterRender', function (
         this: Highcharts.AccessibilitySeries
     ): void {
         const series = this;

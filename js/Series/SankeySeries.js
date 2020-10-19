@@ -10,10 +10,10 @@
  *
  * */
 import Series from '../Core/Series/Series.js';
-import CartesianSeries from '../Core/Series/CartesianSeries.js';
 import Color from '../Core/Color/Color.js';
 import ColumnSeries from './ColumnSeries.js';
 import H from '../Core/Globals.js';
+import LineSeries from '../Series/LineSeries.js';
 import NodesMixin from '../Mixins/Nodes.js';
 import Point from '../Core/Series/Point.js';
 import TreeSeriesMixin from '../Mixins/TreeSeries.js';
@@ -853,7 +853,7 @@ Series.seriesType('sankey', 'column',
         this.points = points;
     },
     /* eslint-enable valid-jsdoc */
-    animate: CartesianSeries.prototype.animate
+    animate: LineSeries.prototype.animate
 }, {
     applyOptions: function (options, x) {
         Point.prototype.applyOptions.call(this, options, x);

@@ -11,7 +11,6 @@
 'use strict';
 
 import type AnimationOptionsObject from './AnimationOptionsObject';
-import type BaseSeries from '../Series/Series';
 import type Chart from '../Chart/Chart';
 import type CSSObject from '../Renderer/CSSObject';
 import type FxLike from './FxLike';
@@ -49,7 +48,7 @@ declare global {
         function getDeferredAnimation(
             chart: Chart,
             animation: Partial<AnimationOptionsObject>,
-            series?: BaseSeries
+            series?: Series
         ): Partial<AnimationOptionsObject>;
         function setAnimation(
             animation: (boolean|Partial<AnimationOptionsObject>|undefined),

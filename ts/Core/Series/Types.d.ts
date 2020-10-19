@@ -8,7 +8,7 @@
  *
  * */
 
-import type Series from './Series';
+import type LineSeries from '../../Series/LineSeries';
 
 /**
  * All possible series options.
@@ -66,5 +66,5 @@ export interface SeriesLikeOptions /* @todo */ extends Highcharts.SeriesOptions 
  * definition file.
  */
 export interface SeriesTypeRegistry {
-    [key: string]: typeof Series;
+    [key: string]: typeof Highcharts.Series;
 }

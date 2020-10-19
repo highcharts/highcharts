@@ -8,19 +8,24 @@
  *
  * */
 
+'use strict';
+
+/* *
+ *
+ *  Imports
+ *
+ * */
+
 import type ColorType from '../Core/Color/ColorType';
 import type SVGAttributes from '../Core/Renderer/SVG/SVGAttributes';
+import type SVGElement from '../Core/Renderer/SVG/SVGElement';
 import A from '../Core/Animation/AnimationUtilities.js';
 const { animObject } = A;
 import BaseSeries from '../Core/Series/Series.js';
 import Color from '../Core/Color/Color.js';
-const {
-    parse: color
-} = Color;
+const { parse: color } = Color;
 import H from '../Core/Globals.js';
-const {
-    noop
-} = H;
+const { noop } = H;
 import LegendSymbolMixin from '../Mixins/LegendSymbol.js';
 import LineSeries from './LineSeries.js';
 import U from '../Core/Utilities.js';
@@ -35,14 +40,11 @@ const {
     objectEach
 } = U;
 
-/**
- * @private
- */
-declare module '../Core/Series/Types' {
-    interface SeriesTypeRegistry {
-        column: typeof Highcharts.ColumnSeries;
-    }
-}
+/* *
+ *
+ *  Declarations
+ *
+ * */
 
 /**
  * Internal types
@@ -134,23 +136,6 @@ declare global {
 }
 
 /**
- * Adjusted width and x offset of the columns for grouping.
- *
- * @private
- * @interface Highcharts.ColumnMetricsObject
- *//**
- * Width of the columns.
- * @name Highcharts.ColumnMetricsObject#width
- * @type {number}
- *//**
- * Offset of the columns.
- * @name Highcharts.ColumnMetricsObject#offset
- * @type {number}
- */
-
-''; // detach doclets above
-
-/**
  * The column series type.
  *
  * @private
@@ -159,9 +144,13 @@ declare global {
  *
  * @augments Highcharts.Series
  */
-const ColumnSeries = BaseSeries.seriesType<typeof Highcharts.ColumnSeries>(
-    'column',
-    'line',
+class ColumnSeries extends LineSeries {
+
+    /* *
+     *
+     *  Static Properties
+     *
+     * */
 
     /**
      * Column series display one column per value along an X axis.
@@ -177,7 +166,7 @@ const ColumnSeries = BaseSeries.seriesType<typeof Highcharts.ColumnSeries>(
      * @product      highcharts highstock
      * @optionparent plotOptions.column
      */
-    {
+    public static defaultOptions: Highcharts.ColumnSeriesOptions = merge(LineSeries.defaultOptions, {
 
         /**
          * The corner radius of the border surrounding each column or bar.
@@ -555,442 +544,744 @@ const ColumnSeries = BaseSeries.seriesType<typeof Highcharts.ColumnSeries>(
          */
         borderColor: '${palette.backgroundColor}'
 
-    },
+    });
+
+    /* *
+     *
+     *  Properties
+     *
+     * */
+
+    public columnIndex?: number;
+
+    public columnMetrics?: Highcharts.ColumnMetricsObject;
+
+    public cropShould?: number;
+
+    public dashStyle?: Highcharts.DashStyleValue;
+
+    public dense?: boolean;
+
+    /* *
+     *
+     *  Functions
+     *
+     * */
+
+    /* eslint-disable valid-jsdoc */
+
     /**
-     * @lends seriesTypes.column.prototype
+     * Initialize the series. Extends the basic Series.init method by
+     * marking other series of the same type as dirty.
+     *
+     * @private
+     * @function Highcharts.seriesTypes.column#init
      */
-    {
-        cropShoulder: 0,
-        // When tooltip is not shared, this series (and derivatives) requires
-        // direct touch/hover. KD-tree does not apply.
-        directTouch: true,
-        trackerGroups: ['group', 'dataLabelsGroup'],
-        // use separate negative stacks, unlike area stacks where a negative
-        // point is substracted from previous (#1910)
-        negStacks: true,
+    public init(): void {
+        super.init.apply(this, arguments as any);
 
-        /* eslint-disable valid-jsdoc */
+        var series = this,
+            chart = series.chart;
 
-        /**
-         * Initialize the series. Extends the basic Series.init method by
-         * marking other series of the same type as dirty.
-         *
-         * @private
-         * @function Highcharts.seriesTypes.column#init
-         * @return {void}
-         */
-        init: function (this: Highcharts.ColumnSeries): void {
-            LineSeries.prototype.init.apply(this, arguments as any);
+        // if the series is added dynamically, force redraw of other
+        // series affected by a new column
+        if (chart.hasRendered) {
+            chart.series.forEach(function (otherSeries): void {
+                if (otherSeries.type === series.type) {
+                    otherSeries.isDirty = true;
+                }
+            });
+        }
+    }
 
-            var series = this,
-                chart = series.chart;
+    /**
+     * Return the width and x offset of the columns adjusted for grouping,
+     * groupPadding, pointPadding, pointWidth etc.
+     *
+     * @private
+     * @function Highcharts.seriesTypes.column#getColumnMetrics
+     * @return {Highcharts.ColumnMetricsObject}
+     */
+    public getColumnMetrics(): Highcharts.ColumnMetricsObject {
+        var series = this,
+            options = series.options,
+            xAxis = series.xAxis,
+            yAxis = series.yAxis,
+            reversedStacks = xAxis.options.reversedStacks,
+            // Keep backward compatibility: reversed xAxis had reversed
+            // stacks
+            reverseStacks = (xAxis.reversed && !reversedStacks) ||
+            (!xAxis.reversed && reversedStacks),
+            stackKey,
+            stackGroups = {} as Highcharts.Dictionary<number>,
+            columnCount = 0;
 
-            // if the series is added dynamically, force redraw of other
-            // series affected by a new column
-            if (chart.hasRendered) {
-                chart.series.forEach(function (
-                    otherSeries: BaseSeries
-                ): void {
-                    if (otherSeries.type === series.type) {
-                        otherSeries.isDirty = true;
-                    }
-                });
-            }
-        },
-
-        /**
-         * Return the width and x offset of the columns adjusted for grouping,
-         * groupPadding, pointPadding, pointWidth etc.
-         *
-         * @private
-         * @function Highcharts.seriesTypes.column#getColumnMetrics
-         * @return {Highcharts.ColumnMetricsObject}
-         */
-        getColumnMetrics: function (
-            this: Highcharts.ColumnSeries
-        ): Highcharts.ColumnMetricsObject {
-
-            var series = this,
-                options = series.options,
-                xAxis = series.xAxis,
-                yAxis = series.yAxis,
-                reversedStacks = xAxis.options.reversedStacks,
-                // Keep backward compatibility: reversed xAxis had reversed
-                // stacks
-                reverseStacks = (xAxis.reversed && !reversedStacks) ||
-                (!xAxis.reversed && reversedStacks),
-                stackKey,
-                stackGroups = {} as Highcharts.Dictionary<number>,
-                columnCount = 0;
-
-            // Get the total number of column type series. This is called on
-            // every series. Consider moving this logic to a chart.orderStacks()
-            // function and call it on init, addSeries and removeSeries
-            if (options.grouping === false) {
-                columnCount = 1;
-            } else {
-                (series.chart.series as Array<Highcharts.Series>).forEach(function (
-                    otherSeries: Highcharts.Series
-                ): void {
-                    var otherYAxis = otherSeries.yAxis,
-                        otherOptions = otherSeries.options,
-                        columnIndex;
-
-                    if (otherSeries.type === series.type &&
-                        (otherSeries.visible ||
-                        !(
-                            series.chart.options.chart as any)
-                            .ignoreHiddenSeries
-                        ) &&
-                        yAxis.len === otherYAxis.len &&
-                        yAxis.pos === otherYAxis.pos
-                    ) { // #642, #2086
-                        if (otherOptions.stacking && otherOptions.stacking !== 'group') {
-                            stackKey = otherSeries.stackKey;
-                            if (
-                                typeof stackGroups[stackKey as any] ===
-                                'undefined'
-                            ) {
-                                stackGroups[stackKey as any] = columnCount++;
-                            }
-                            columnIndex = stackGroups[stackKey as any];
-                        } else if (otherOptions.grouping !== false) { // #1162
-                            columnIndex = columnCount++;
-                        }
-                        (otherSeries as any).columnIndex = columnIndex;
-                    }
-                });
-            }
-
-            var categoryWidth = Math.min(
-                    Math.abs(xAxis.transA) * (
-                        (xAxis.ordinal && xAxis.ordinal.slope) ||
-                    options.pointRange ||
-                    xAxis.closestPointRange ||
-                    xAxis.tickInterval ||
-                    1
-                    ), // #2610
-                    xAxis.len // #1535
-                ),
-                groupPadding = categoryWidth * (options.groupPadding as any),
-                groupWidth = categoryWidth - 2 * groupPadding,
-                pointOffsetWidth = groupWidth / (columnCount || 1),
-                pointWidth = Math.min(
-                    options.maxPointWidth || xAxis.len,
-                    pick(
-                        options.pointWidth,
-                        pointOffsetWidth * (
-                            1 - 2 * (options.pointPadding as any)
-                        )
-                    )
-                ),
-                pointPadding = (pointOffsetWidth - pointWidth) / 2,
-                // #1251, #3737
-                colIndex = (series.columnIndex || 0) + (reverseStacks ? 1 : 0),
-                pointXOffset =
-                pointPadding +
-                (
-                    groupPadding +
-                    colIndex * pointOffsetWidth -
-                    (categoryWidth / 2)
-                ) * (reverseStacks ? -1 : 1);
-
-            // Save it for reading in linked series (Error bars particularly)
-            series.columnMetrics = {
-                width: pointWidth,
-                offset: pointXOffset,
-                paddedWidth: pointOffsetWidth,
-                columnCount
-            };
-            return series.columnMetrics;
-
-        },
-
-        /**
-         * Make the columns crisp. The edges are rounded to the nearest full
-         * pixel.
-         *
-         * @private
-         * @function Highcharts.seriesTypes.column#crispCol
-         * @param {number} x
-         * @param {number} y
-         * @param {number} w
-         * @param {number} h
-         * @return {Highcharts.BBoxObject}
-         */
-        crispCol: function (
-            this: Highcharts.ColumnSeries,
-            x: number,
-            y: number,
-            w: number,
-            h: number
-        ): Highcharts.BBoxObject {
-            var chart = this.chart,
-                borderWidth = this.borderWidth,
-                xCrisp = -((borderWidth as any) % 2 ? 0.5 : 0),
-                yCrisp = (borderWidth as any) % 2 ? 0.5 : 1,
-                right,
-                bottom,
-                fromTop;
-
-            if (chart.inverted && chart.renderer.isVML) {
-                yCrisp += 1;
-            }
-
-            // Horizontal. We need to first compute the exact right edge, then
-            // round it and compute the width from there.
-            if (this.options.crisp) {
-                right = Math.round(x + w) + xCrisp;
-                x = Math.round(x) + xCrisp;
-                w = right - x;
-            }
-
-            // Vertical
-            bottom = Math.round(y + h) + yCrisp;
-            fromTop = Math.abs(y) <= 0.5 && bottom > 0.5; // #4504, #4656
-            y = Math.round(y) + yCrisp;
-            h = bottom - y;
-
-            // Top edges are exceptions
-            if (fromTop && h) { // #5146
-                y -= 1;
-                h += 1;
-            }
-
-            return {
-                x: x,
-                y: y,
-                width: w,
-                height: h
-            };
-        },
-
-        /**
-         * Adjust for missing columns, according to the `centerInCategory`
-         * option. Missing columns are either single points or stacks where the
-         * point or points are either missing or null.
-         *
-         * @private
-         * @function Highcharts.seriesTypes.column#adjustForMissingColumns
-         * @param {number} x
-         *        The x coordinate of the column, left side
-         * @param {number} pointWidth
-         *        The pointWidth, already computed upstream
-         * @param {Highcharts.ColumnPoint} point
-         *        The point instance
-         * @param {Highcharts.ColumnMetricsObject} metrics
-         *        The series-wide column metrics
-         * @return {number}
-         *        The adjusted x position, or the original if not adjusted
-         */
-        adjustForMissingColumns: function (
-            this: Highcharts.ColumnSeries,
-            x: number,
-            pointWidth: number,
-            point: Highcharts.ColumnPoint,
-            metrics: Highcharts.ColumnMetricsObject
-        ): number {
-            const stacking = this.options.stacking;
-            if (!point.isNull && metrics.columnCount > 1) {
-                let indexInCategory = 0;
-                let totalInCategory = 0;
-
-                // Loop over all the stacks on the Y axis. When stacking is
-                // enabled, these are real point stacks. When stacking is not
-                // enabled, but `centerInCategory` is true, there is one stack
-                // handling the grouping of points in each category. This is
-                // done in the `setGroupedPoints` function.
-                objectEach(
-                    this.yAxis.stacking && this.yAxis.stacking.stacks,
-                    (stack: Highcharts.Dictionary<Highcharts.StackItem>): void => {
-                        if (typeof point.x === 'number') {
-                            const stackItem = stack[point.x.toString()];
-
-                            if (stackItem) {
-                                const pointValues = stackItem.points[this.index as any],
-                                    total = stackItem.total;
-
-                                // If true `stacking` is enabled, count the
-                                // total number of non-null stacks in the
-                                // category, and note which index this point is
-                                // within those stacks.
-                                if (stacking) {
-                                    if (pointValues) {
-                                        indexInCategory = totalInCategory;
-                                    }
-                                    if (stackItem.hasValidPoints) {
-                                        totalInCategory++;
-                                    }
-
-                                // If `stacking` is not enabled, look for the
-                                // index and total of the `group` stack.
-                                } else if (isArray(pointValues)) {
-                                    indexInCategory = pointValues[1];
-                                    totalInCategory = total || 0;
-                                }
-                            }
-                        }
-                    }
-                );
-
-                // Compute the adjusted x position
-                const boxWidth = (totalInCategory - 1) * metrics.paddedWidth +
-                    pointWidth;
-                x = (point.plotX || 0) + boxWidth / 2 - pointWidth -
-                    indexInCategory * metrics.paddedWidth;
-
-            }
-            return x;
-        },
-
-        /**
-         * Translate each point to the plot area coordinate system and find
-         * shape positions
-         *
-         * @private
-         * @function Highcharts.seriesTypes.column#translate
-         */
-        translate: function (this: Highcharts.ColumnSeries): void {
-            var series = this,
-                chart = series.chart,
-                options = series.options,
-                dense = series.dense =
-                    (series.closestPointRange as any) * series.xAxis.transA < 2,
-                borderWidth = series.borderWidth = pick(
-                    options.borderWidth,
-                    dense ? 0 : 1 // #3635
-                ),
-                xAxis = series.xAxis,
-                yAxis = series.yAxis,
-                threshold = options.threshold,
-                translatedThreshold = series.translatedThreshold =
-                    yAxis.getThreshold(threshold as any),
-                minPointLength = pick(options.minPointLength, 5),
-                metrics = series.getColumnMetrics(),
-                seriesPointWidth = metrics.width,
-                // postprocessed for border width
-                seriesBarW = series.barW =
-                    Math.max(seriesPointWidth, 1 + 2 * borderWidth),
-                seriesXOffset = series.pointXOffset = metrics.offset,
-                dataMin = series.dataMin,
-                dataMax = series.dataMax;
-
-            if (chart.inverted) {
-                (translatedThreshold as any) -= 0.5; // #3355
-            }
-
-            // When the pointPadding is 0, we want the columns to be packed
-            // tightly, so we allow individual columns to have individual sizes.
-            // When pointPadding is greater, we strive for equal-width columns
-            // (#2694).
-            if (options.pointPadding) {
-                seriesBarW = Math.ceil(seriesBarW);
-            }
-
-            LineSeries.prototype.translate.apply(series);
-
-            // Record the new values
-            series.points.forEach(function (
-                point: Highcharts.ColumnPoint
+        // Get the total number of column type series. This is called on
+        // every series. Consider moving this logic to a chart.orderStacks()
+        // function and call it on init, addSeries and removeSeries
+        if (options.grouping === false) {
+            columnCount = 1;
+        } else {
+            series.chart.series.forEach(function (
+                otherSeries: Highcharts.Series
             ): void {
-                var yBottom = pick(point.yBottom, translatedThreshold as any),
-                    safeDistance = 999 + Math.abs(yBottom),
-                    pointWidth = seriesPointWidth,
-                    plotX = point.plotX || 0,
-                    // Don't draw too far outside plot area (#1303, #2241,
-                    // #4264)
-                    plotY = clamp(
-                        point.plotY as any,
-                        -safeDistance,
-                        yAxis.len + safeDistance
-                    ),
-                    barX = plotX + seriesXOffset,
-                    barW = seriesBarW,
-                    barY = Math.min(plotY, yBottom),
-                    up,
-                    barH = Math.max(plotY, yBottom) - barY;
+                var otherYAxis = otherSeries.yAxis,
+                    otherOptions = otherSeries.options,
+                    columnIndex;
 
-                // Handle options.minPointLength
-                if (minPointLength && Math.abs(barH) < minPointLength) {
-                    barH = minPointLength;
-                    up = (!yAxis.reversed && !point.negative) ||
-                    (yAxis.reversed && point.negative);
-
-                    // Reverse zeros if there's no positive value in the series
-                    // in visible range (#7046)
-                    if (
-                        isNumber(threshold) &&
-                        isNumber(dataMax) &&
-                        point.y === threshold &&
-                        dataMax <= threshold &&
-                        // and if there's room for it (#7311)
-                        (yAxis.min || 0) < threshold &&
-                        // if all points are the same value (i.e zero) not draw
-                        // as negative points (#10646)
-                        dataMin !== dataMax
-                    ) {
-                        up = !up;
+                if (otherSeries.type === series.type &&
+                    (otherSeries.visible ||
+                    !(
+                        series.chart.options.chart as any)
+                        .ignoreHiddenSeries
+                    ) &&
+                    yAxis.len === otherYAxis.len &&
+                    yAxis.pos === otherYAxis.pos
+                ) { // #642, #2086
+                    if (otherOptions.stacking && otherOptions.stacking !== 'group') {
+                        stackKey = otherSeries.stackKey;
+                        if (
+                            typeof stackGroups[stackKey as any] ===
+                            'undefined'
+                        ) {
+                            stackGroups[stackKey as any] = columnCount++;
+                        }
+                        columnIndex = stackGroups[stackKey as any];
+                    } else if (otherOptions.grouping !== false) { // #1162
+                        columnIndex = columnCount++;
                     }
+                    (otherSeries as any).columnIndex = columnIndex;
+                }
+            });
+        }
 
-                    // If stacked...
-                    barY = (
-                        Math.abs(
-                            barY - (translatedThreshold as any)
-                        ) > minPointLength ?
-                            // ...keep position
-                            yBottom - minPointLength :
-                            // #1485, #4051
-                            (translatedThreshold as any) -
-                            (up ? minPointLength : 0)
+        var categoryWidth = Math.min(
+                Math.abs(xAxis.transA) * (
+                    (xAxis.ordinal && xAxis.ordinal.slope) ||
+                options.pointRange ||
+                xAxis.closestPointRange ||
+                xAxis.tickInterval ||
+                1
+                ), // #2610
+                xAxis.len // #1535
+            ),
+            groupPadding = categoryWidth * (options.groupPadding as any),
+            groupWidth = categoryWidth - 2 * groupPadding,
+            pointOffsetWidth = groupWidth / (columnCount || 1),
+            pointWidth = Math.min(
+                options.maxPointWidth || xAxis.len,
+                pick(
+                    options.pointWidth,
+                    pointOffsetWidth * (
+                        1 - 2 * (options.pointPadding as any)
+                    )
+                )
+            ),
+            pointPadding = (pointOffsetWidth - pointWidth) / 2,
+            // #1251, #3737
+            colIndex = (series.columnIndex || 0) + (reverseStacks ? 1 : 0),
+            pointXOffset =
+            pointPadding +
+            (
+                groupPadding +
+                colIndex * pointOffsetWidth -
+                (categoryWidth / 2)
+            ) * (reverseStacks ? -1 : 1);
+
+        // Save it for reading in linked series (Error bars particularly)
+        series.columnMetrics = {
+            width: pointWidth,
+            offset: pointXOffset,
+            paddedWidth: pointOffsetWidth,
+            columnCount
+        };
+        return series.columnMetrics;
+    }
+
+    /**
+     * Make the columns crisp. The edges are rounded to the nearest full
+     * pixel.
+     *
+     * @private
+     * @function Highcharts.seriesTypes.column#crispCol
+     */
+    public crispCol(
+        x: number,
+        y: number,
+        w: number,
+        h: number
+    ): Highcharts.BBoxObject {
+        var chart = this.chart,
+            borderWidth = this.borderWidth,
+            xCrisp = -((borderWidth as any) % 2 ? 0.5 : 0),
+            yCrisp = (borderWidth as any) % 2 ? 0.5 : 1,
+            right,
+            bottom,
+            fromTop;
+
+        if (chart.inverted && chart.renderer.isVML) {
+            yCrisp += 1;
+        }
+
+        // Horizontal. We need to first compute the exact right edge, then
+        // round it and compute the width from there.
+        if (this.options.crisp) {
+            right = Math.round(x + w) + xCrisp;
+            x = Math.round(x) + xCrisp;
+            w = right - x;
+        }
+
+        // Vertical
+        bottom = Math.round(y + h) + yCrisp;
+        fromTop = Math.abs(y) <= 0.5 && bottom > 0.5; // #4504, #4656
+        y = Math.round(y) + yCrisp;
+        h = bottom - y;
+
+        // Top edges are exceptions
+        if (fromTop && h) { // #5146
+            y -= 1;
+            h += 1;
+        }
+
+        return {
+            x: x,
+            y: y,
+            width: w,
+            height: h
+        };
+    }
+
+    /**
+     * Adjust for missing columns, according to the `centerInCategory`
+     * option. Missing columns are either single points or stacks where the
+     * point or points are either missing or null.
+     *
+     * @private
+     * @function Highcharts.seriesTypes.column#adjustForMissingColumns
+     * @param {number} x
+     * The x coordinate of the column, left side
+     *
+     * @param {number} pointWidth
+     * The pointWidth, already computed upstream
+     *
+     * @param {Highcharts.ColumnPoint} point
+     * The point instance
+     *
+     * @param {Highcharts.ColumnMetricsObject} metrics
+     * The series-wide column metrics
+     *
+     * @return {number}
+     * The adjusted x position, or the original if not adjusted
+     */
+    public adjustForMissingColumns(
+        x: number,
+        pointWidth: number,
+        point: Highcharts.ColumnPoint,
+        metrics: Highcharts.ColumnMetricsObject
+    ): number {
+        const stacking = this.options.stacking;
+        if (!point.isNull && metrics.columnCount > 1) {
+            let indexInCategory = 0;
+            let totalInCategory = 0;
+
+            // Loop over all the stacks on the Y axis. When stacking is
+            // enabled, these are real point stacks. When stacking is not
+            // enabled, but `centerInCategory` is true, there is one stack
+            // handling the grouping of points in each category. This is
+            // done in the `setGroupedPoints` function.
+            objectEach(
+                this.yAxis.stacking && this.yAxis.stacking.stacks,
+                (stack: Highcharts.Dictionary<Highcharts.StackItem>): void => {
+                    if (typeof point.x === 'number') {
+                        const stackItem = stack[point.x.toString()];
+
+                        if (stackItem) {
+                            const pointValues = stackItem.points[this.index as any],
+                                total = stackItem.total;
+
+                            // If true `stacking` is enabled, count the
+                            // total number of non-null stacks in the
+                            // category, and note which index this point is
+                            // within those stacks.
+                            if (stacking) {
+                                if (pointValues) {
+                                    indexInCategory = totalInCategory;
+                                }
+                                if (stackItem.hasValidPoints) {
+                                    totalInCategory++;
+                                }
+
+                            // If `stacking` is not enabled, look for the
+                            // index and total of the `group` stack.
+                            } else if (isArray(pointValues)) {
+                                indexInCategory = pointValues[1];
+                                totalInCategory = total || 0;
+                            }
+                        }
+                    }
+                }
+            );
+
+            // Compute the adjusted x position
+            const boxWidth = (totalInCategory - 1) * metrics.paddedWidth +
+                pointWidth;
+            x = (point.plotX || 0) + boxWidth / 2 - pointWidth -
+                indexInCategory * metrics.paddedWidth;
+
+        }
+        return x;
+    }
+
+    /**
+     * Translate each point to the plot area coordinate system and find
+     * shape positions
+     *
+     * @private
+     * @function Highcharts.seriesTypes.column#translate
+     */
+    public translate(): void {
+        var series = this,
+            chart = series.chart,
+            options = series.options,
+            dense = series.dense =
+                (series.closestPointRange as any) * series.xAxis.transA < 2,
+            borderWidth = series.borderWidth = pick(
+                options.borderWidth,
+                dense ? 0 : 1 // #3635
+            ),
+            xAxis = series.xAxis,
+            yAxis = series.yAxis,
+            threshold = options.threshold,
+            translatedThreshold = series.translatedThreshold =
+                yAxis.getThreshold(threshold as any),
+            minPointLength = pick(options.minPointLength, 5),
+            metrics = series.getColumnMetrics(),
+            seriesPointWidth = metrics.width,
+            // postprocessed for border width
+            seriesBarW = series.barW =
+                Math.max(seriesPointWidth, 1 + 2 * borderWidth),
+            seriesXOffset = series.pointXOffset = metrics.offset,
+            dataMin = series.dataMin,
+            dataMax = series.dataMax;
+
+        if (chart.inverted) {
+            (translatedThreshold as any) -= 0.5; // #3355
+        }
+
+        // When the pointPadding is 0, we want the columns to be packed
+        // tightly, so we allow individual columns to have individual sizes.
+        // When pointPadding is greater, we strive for equal-width columns
+        // (#2694).
+        if (options.pointPadding) {
+            seriesBarW = Math.ceil(seriesBarW);
+        }
+
+        LineSeries.prototype.translate.apply(series);
+
+        // Record the new values
+        series.points.forEach(function (
+            point: Highcharts.ColumnPoint
+        ): void {
+            var yBottom = pick(point.yBottom, translatedThreshold as any),
+                safeDistance = 999 + Math.abs(yBottom),
+                pointWidth = seriesPointWidth,
+                plotX = point.plotX || 0,
+                // Don't draw too far outside plot area (#1303, #2241,
+                // #4264)
+                plotY = clamp(
+                    point.plotY as any,
+                    -safeDistance,
+                    yAxis.len + safeDistance
+                ),
+                barX = plotX + seriesXOffset,
+                barW = seriesBarW,
+                barY = Math.min(plotY, yBottom),
+                up,
+                barH = Math.max(plotY, yBottom) - barY;
+
+            // Handle options.minPointLength
+            if (minPointLength && Math.abs(barH) < minPointLength) {
+                barH = minPointLength;
+                up = (!yAxis.reversed && !point.negative) ||
+                (yAxis.reversed && point.negative);
+
+                // Reverse zeros if there's no positive value in the series
+                // in visible range (#7046)
+                if (
+                    isNumber(threshold) &&
+                    isNumber(dataMax) &&
+                    point.y === threshold &&
+                    dataMax <= threshold &&
+                    // and if there's room for it (#7311)
+                    (yAxis.min || 0) < threshold &&
+                    // if all points are the same value (i.e zero) not draw
+                    // as negative points (#10646)
+                    dataMin !== dataMax
+                ) {
+                    up = !up;
+                }
+
+                // If stacked...
+                barY = (
+                    Math.abs(
+                        barY - (translatedThreshold as any)
+                    ) > minPointLength ?
+                        // ...keep position
+                        yBottom - minPointLength :
+                        // #1485, #4051
+                        (translatedThreshold as any) -
+                        (up ? minPointLength : 0)
+                );
+            }
+
+            // Handle point.options.pointWidth
+            // @todo Handle grouping/stacking too. Calculate offset properly
+            if (defined(point.options.pointWidth)) {
+                pointWidth = barW =
+                    Math.ceil(point.options.pointWidth as any);
+                barX -= Math.round((pointWidth - seriesPointWidth) / 2);
+            }
+
+            // Adjust for null or missing points
+            if (options.centerInCategory) {
+                barX = series.adjustForMissingColumns(barX, pointWidth, point, metrics);
+            }
+
+            // Cache for access in polar
+            point.barX = barX;
+            point.pointWidth = pointWidth;
+
+            // Fix the tooltip on center of grouped columns (#1216, #424,
+            // #3648)
+            point.tooltipPos = chart.inverted ?
+                [
+                    yAxis.len + yAxis.pos - chart.plotLeft - plotY,
+                    xAxis.len + xAxis.pos - chart.plotTop - (plotX || 0) - seriesXOffset - barW / 2,
+                    barH
+                ] :
+                [barX + barW / 2, plotY + (yAxis.pos as any) -
+                chart.plotTop, barH];
+
+            // Register shape type and arguments to be used in drawPoints
+            // Allow shapeType defined on pointClass level
+            point.shapeType = series.pointClass.prototype.shapeType || 'rect';
+            point.shapeArgs = series.crispCol.apply(
+                series,
+                point.isNull ?
+                // #3169, drilldown from null must have a position to work
+                // from #6585, dataLabel should be placed on xAxis, not
+                // floating in the middle of the chart
+                    [barX, translatedThreshold as any, barW, 0] :
+                    [barX, barY, barW, barH]
+            );
+        });
+    }
+
+    /**
+     * Columns have no graph
+     *
+     * @private
+     * @function Highcharts.seriesTypes.column#drawGraph
+     */
+    public drawGraph(): void {
+        this.group[
+            this.dense ? 'addClass' : 'removeClass'
+        ]('highcharts-dense-data');
+    }
+
+    /**
+     * Get presentational attributes
+     *
+     * @private
+     * @function Highcharts.seriesTypes.column#pointAttribs
+     */
+    public pointAttribs(
+        point: Highcharts.ColumnPoint|undefined,
+        state: string
+    ): SVGAttributes {
+        var options = this.options,
+            stateOptions: Highcharts.SeriesStatesHoverOptionsObject,
+            ret: SVGAttributes,
+            p2o = (this as any).pointAttrToOptions || {},
+            strokeOption = p2o.stroke || 'borderColor',
+            strokeWidthOption = p2o['stroke-width'] || 'borderWidth',
+            fill = (point && point.color) || this.color,
+            // set to fill when borderColor null:
+            stroke = (
+                (point && (point as any)[strokeOption]) ||
+                (options as any)[strokeOption] ||
+                this.color ||
+                fill
+            ),
+            strokeWidth = (point && (point as any)[strokeWidthOption]) ||
+                (options as any)[strokeWidthOption] ||
+                (this as any)[strokeWidthOption] || 0,
+            dashstyle =
+                (point && point.options.dashStyle) || options.dashStyle,
+            opacity = pick(point && point.opacity, options.opacity, 1),
+            zone,
+            brightness;
+
+        // Handle zone colors
+        if (point && this.zones.length) {
+            zone = point.getZone();
+            // When zones are present, don't use point.color (#4267).
+            // Changed order (#6527), added support for colorAxis (#10670)
+            fill = (
+                point.options.color ||
+                (zone && (zone.color || point.nonZonedColor)) ||
+                this.color
+            );
+
+            if (zone) {
+                stroke = zone.borderColor || stroke;
+                dashstyle = zone.dashStyle || dashstyle;
+                strokeWidth = zone.borderWidth || strokeWidth;
+            }
+        }
+
+        // Select or hover states
+        if (state && point) {
+            stateOptions = merge(
+                (options.states as any)[state],
+                // #6401
+                point.options.states &&
+                (point.options.states as any)[state] ||
+                {}
+            );
+            brightness = stateOptions.brightness;
+            fill =
+                stateOptions.color || (
+                    typeof brightness !== 'undefined' &&
+                    color(fill as any)
+                        .brighten(stateOptions.brightness as any)
+                        .get()
+                ) || fill;
+            stroke = (stateOptions as any)[strokeOption] || stroke;
+            strokeWidth =
+                (stateOptions as any)[strokeWidthOption] || strokeWidth;
+            dashstyle = stateOptions.dashStyle || dashstyle;
+            opacity = pick(stateOptions.opacity, opacity);
+        }
+
+        ret = {
+            fill: fill as any,
+            stroke: stroke,
+            'stroke-width': strokeWidth,
+            opacity: opacity
+        };
+
+        if (dashstyle) {
+            ret.dashstyle = dashstyle;
+        }
+
+        return ret;
+    }
+
+    /**
+     * Draw the columns. For bars, the series.group is rotated, so the same
+     * coordinates apply for columns and bars. This method is inherited by
+     * scatter series.
+     *
+     * @private
+     * @function Highcharts.seriesTypes.column#drawPoints
+     */
+    public drawPoints(): void {
+        var series = this,
+            chart = this.chart,
+            options = series.options,
+            renderer = chart.renderer,
+            animationLimit = options.animationLimit || 250,
+            shapeArgs;
+
+        // draw the columns
+        series.points.forEach(function (point): void {
+            var plotY = point.plotY,
+                graphic = point.graphic,
+                hasGraphic = !!graphic,
+                verb = graphic && chart.pointCount < animationLimit ?
+                    'animate' : 'attr';
+
+            if (isNumber(plotY) && point.y !== null) {
+                shapeArgs = point.shapeArgs;
+
+                // When updating a series between 2d and 3d or cartesian and
+                // polar, the shape type changes.
+                if (graphic && point.hasNewShapeType()) {
+                    graphic = graphic.destroy();
+                }
+
+                // Set starting position for point sliding animation.
+                if (series.enabledDataSorting) {
+                    point.startXPos = series.xAxis.reversed ?
+                        -(shapeArgs ? shapeArgs.width : 0) :
+                        series.xAxis.width;
+                }
+
+                if (!graphic) {
+                    point.graphic = graphic =
+                        (renderer as any)[point.shapeType as any](shapeArgs)
+                            .add(point.group || series.group);
+
+                    if (
+                        graphic &&
+                        series.enabledDataSorting &&
+                        chart.hasRendered &&
+                        chart.pointCount < animationLimit
+                    ) {
+                        graphic.attr({
+                            x: point.startXPos
+                        });
+
+                        hasGraphic = true;
+                        verb = 'animate';
+                    }
+                }
+
+                if (graphic && hasGraphic) { // update
+                    graphic[verb](
+                        merge(shapeArgs)
                     );
                 }
 
-                // Handle point.options.pointWidth
-                // @todo Handle grouping/stacking too. Calculate offset properly
-                if (defined(point.options.pointWidth)) {
-                    pointWidth = barW =
-                        Math.ceil(point.options.pointWidth as any);
-                    barX -= Math.round((pointWidth - seriesPointWidth) / 2);
+                // Border radius is not stylable (#6900)
+                if (options.borderRadius) {
+                    (graphic as any)[verb]({
+                        r: options.borderRadius
+                    });
                 }
 
-                // Adjust for null or missing points
-                if (options.centerInCategory) {
-                    barX = series.adjustForMissingColumns(barX, pointWidth, point, metrics);
+                // Presentational
+                if (!chart.styledMode) {
+                    (graphic as any)[verb](series.pointAttribs(
+                        point,
+                        (point.selected && 'select') as any
+                    ))
+                        .shadow(
+                            point.allowShadow !== false && options.shadow,
+                            null,
+                            options.stacking && !options.borderRadius
+                        );
                 }
 
-                // Cache for access in polar
-                point.barX = barX;
-                point.pointWidth = pointWidth;
+                (graphic as any).addClass(point.getClassName(), true);
 
-                // Fix the tooltip on center of grouped columns (#1216, #424,
-                // #3648)
-                point.tooltipPos = chart.inverted ?
-                    [
-                        yAxis.len + yAxis.pos - chart.plotLeft - plotY,
-                        xAxis.len + xAxis.pos - chart.plotTop - (plotX || 0) - seriesXOffset - barW / 2,
-                        barH
-                    ] :
-                    [barX + barW / 2, plotY + (yAxis.pos as any) -
-                    chart.plotTop, barH];
+            } else if (graphic) {
+                point.graphic = graphic.destroy(); // #1269
+            }
+        });
+    }
 
-                // Register shape type and arguments to be used in drawPoints
-                // Allow shapeType defined on pointClass level
-                point.shapeType =
-                    series.pointClass.prototype.shapeType || 'rect';
-                point.shapeArgs = series.crispCol.apply(
-                    series,
-                    point.isNull ?
-                    // #3169, drilldown from null must have a position to work
-                    // from #6585, dataLabel should be placed on xAxis, not
-                    // floating in the middle of the chart
-                        [barX, translatedThreshold as any, barW, 0] :
-                        [barX, barY, barW, barH]
-                );
+    /**
+     * Animate the column heights one by one from zero.
+     *
+     * @private
+     * @function Highcharts.seriesTypes.column#animate
+     *
+     * @param {boolean} init
+     *        Whether to initialize the animation or run it
+     */
+    public animate(init: boolean): void {
+        var series = this,
+            yAxis = this.yAxis,
+            options = series.options,
+            inverted = this.chart.inverted,
+            attr: SVGAttributes = {},
+            translateProp = inverted ? 'translateX' : 'translateY',
+            translateStart: number,
+            translatedThreshold;
+
+        if (init) {
+            attr.scaleY = 0.001;
+            translatedThreshold = clamp(
+                yAxis.toPixels(options.threshold as any),
+                yAxis.pos,
+                yAxis.pos + yAxis.len
+            );
+            if (inverted) {
+                attr.translateX = translatedThreshold - yAxis.len;
+            } else {
+                attr.translateY = translatedThreshold;
+            }
+
+            // apply finnal clipping (used in Highstock) (#7083)
+            // animation is done by scaleY, so cliping is for panes
+            if (series.clipBox) {
+                series.setClip();
+            }
+
+            series.group.attr(attr);
+
+        } else { // run the animation
+            translateStart = series.group.attr(translateProp) as any;
+            series.group.animate(
+                { scaleY: 1 },
+                extend(animObject(series.options.animation), {
+                    // Do the scale synchronously to ensure smooth
+                    // updating (#5030, #7228)
+                    step: function (val: any, fx: any): void {
+                        if (series.group) {
+                            attr[translateProp] = translateStart +
+                                fx.pos * (yAxis.pos - translateStart);
+                            series.group.attr(attr);
+                        }
+                    }
+                })
+            );
+        }
+    }
+
+    /**
+     * Remove this series from the chart
+     *
+     * @private
+     * @function Highcharts.seriesTypes.column#remove
+     */
+    public remove(): void {
+        var series = this,
+            chart = series.chart;
+
+        // column and bar series affects other series of the same type
+        // as they are either stacked or grouped
+        if (chart.hasRendered) {
+            chart.series.forEach(function (otherSeries): void {
+                if (otherSeries.type === series.type) {
+                    otherSeries.isDirty = true;
+                }
             });
+        }
 
-        },
+        LineSeries.prototype.remove.apply(series, arguments as any);
+    }
 
-        getSymbol: noop as any,
+    /* eslint-enable valid-jsdoc */
+
+}
+
+/* *
+ *
+ *  Prototype Properties
+ *
+ * */
+
+interface ColumnSeries extends LineSeries {
+    borderWidth: number;
+    data: Array<Highcharts.ColumnPoint>;
+    group: SVGElement;
+    options: Highcharts.ColumnSeriesOptions;
+    pointClass: typeof Highcharts.ColumnPoint;
+    points: Array<Highcharts.ColumnPoint>;
+    pointXOffset: number;
+    translatedThreshold?: number;
+}
+extend(
+    ColumnSeries.prototype,
+    {
+        cropShoulder: 0,
+
+        // When tooltip is not shared, this series (and derivatives) requires
+        // direct touch/hover. KD-tree does not apply.
+        directTouch: true,
 
         /**
          * Use a solid rectangle like the area series types
@@ -1006,299 +1297,65 @@ const ColumnSeries = BaseSeries.seriesType<typeof Highcharts.ColumnSeries>(
          */
         drawLegendSymbol: LegendSymbolMixin.drawRectangle,
 
+        getSymbol: noop as any,
 
-        /**
-         * Columns have no graph
-         *
-         * @private
-         * @function Highcharts.seriesTypes.column#drawGraph
-         */
-        drawGraph: function (this: Highcharts.ColumnSeries): void {
-            this.group[
-                this.dense ? 'addClass' : 'removeClass'
-            ]('highcharts-dense-data');
-        },
+        // use separate negative stacks, unlike area stacks where a negative
+        // point is substracted from previous (#1910)
+        negStacks: true,
 
-        /**
-         * Get presentational attributes
-         *
-         * @private
-         * @function Highcharts.seriesTypes.column#pointAttribs
-         *
-         * @param {Highcharts.ColumnPoint} point
-         *
-         * @param {string} state
-         *
-         * @return {Highcharts.SVGAttributes}
-         */
-        pointAttribs: function (
-            this: Highcharts.ColumnSeries,
-            point: Highcharts.ColumnPoint|undefined,
-            state: string
-        ): SVGAttributes {
-            var options = this.options,
-                stateOptions: Highcharts.SeriesStatesHoverOptionsObject,
-                ret: SVGAttributes,
-                p2o = (this as any).pointAttrToOptions || {},
-                strokeOption = p2o.stroke || 'borderColor',
-                strokeWidthOption = p2o['stroke-width'] || 'borderWidth',
-                fill = (point && point.color) || this.color,
-                // set to fill when borderColor null:
-                stroke = (
-                    (point && (point as any)[strokeOption]) ||
-                    (options as any)[strokeOption] ||
-                    this.color ||
-                    fill
-                ),
-                strokeWidth = (point && (point as any)[strokeWidthOption]) ||
-                    (options as any)[strokeWidthOption] ||
-                    (this as any)[strokeWidthOption] || 0,
-                dashstyle =
-                    (point && point.options.dashStyle) || options.dashStyle,
-                opacity = pick(point && point.opacity, options.opacity, 1),
-                zone,
-                brightness;
-
-            // Handle zone colors
-            if (point && this.zones.length) {
-                zone = point.getZone();
-                // When zones are present, don't use point.color (#4267).
-                // Changed order (#6527), added support for colorAxis (#10670)
-                fill = (
-                    point.options.color ||
-                    (zone && (zone.color || point.nonZonedColor)) ||
-                    this.color
-                );
-
-                if (zone) {
-                    stroke = zone.borderColor || stroke;
-                    dashstyle = zone.dashStyle || dashstyle;
-                    strokeWidth = zone.borderWidth || strokeWidth;
-                }
-            }
-
-            // Select or hover states
-            if (state && point) {
-                stateOptions = merge(
-                    (options.states as any)[state],
-                    // #6401
-                    point.options.states &&
-                    (point.options.states as any)[state] ||
-                    {}
-                );
-                brightness = stateOptions.brightness;
-                fill =
-                    stateOptions.color || (
-                        typeof brightness !== 'undefined' &&
-                        color(fill as any)
-                            .brighten(stateOptions.brightness as any)
-                            .get()
-                    ) || fill;
-                stroke = (stateOptions as any)[strokeOption] || stroke;
-                strokeWidth =
-                    (stateOptions as any)[strokeWidthOption] || strokeWidth;
-                dashstyle = stateOptions.dashStyle || dashstyle;
-                opacity = pick(stateOptions.opacity, opacity);
-            }
-
-            ret = {
-                fill: fill as any,
-                stroke: stroke,
-                'stroke-width': strokeWidth,
-                opacity: opacity
-            };
-
-            if (dashstyle) {
-                ret.dashstyle = dashstyle;
-            }
-
-            return ret;
-        },
-
-        /**
-         * Draw the columns. For bars, the series.group is rotated, so the same
-         * coordinates apply for columns and bars. This method is inherited by
-         * scatter series.
-         *
-         * @private
-         * @function Highcharts.seriesTypes.column#drawPoints
-         */
-        drawPoints: function (this: Highcharts.ColumnSeries): void {
-            var series = this,
-                chart = this.chart,
-                options = series.options,
-                renderer = chart.renderer,
-                animationLimit = options.animationLimit || 250,
-                shapeArgs;
-
-            // draw the columns
-            series.points.forEach(function (
-                point: Highcharts.ColumnPoint
-            ): void {
-                var plotY = point.plotY,
-                    graphic = point.graphic,
-                    hasGraphic = !!graphic,
-                    verb = graphic && chart.pointCount < animationLimit ?
-                        'animate' : 'attr';
-
-                if (isNumber(plotY) && point.y !== null) {
-                    shapeArgs = point.shapeArgs;
-
-                    // When updating a series between 2d and 3d or cartesian and
-                    // polar, the shape type changes.
-                    if (graphic && point.hasNewShapeType()) {
-                        graphic = graphic.destroy();
-                    }
-
-                    // Set starting position for point sliding animation.
-                    if (series.enabledDataSorting) {
-                        point.startXPos = series.xAxis.reversed ?
-                            -(shapeArgs ? shapeArgs.width : 0) :
-                            series.xAxis.width;
-                    }
-
-                    if (!graphic) {
-                        point.graphic = graphic =
-                            (renderer as any)[point.shapeType as any](shapeArgs)
-                                .add(point.group || series.group);
-
-                        if (
-                            graphic &&
-                            series.enabledDataSorting &&
-                            chart.hasRendered &&
-                            chart.pointCount < animationLimit
-                        ) {
-                            graphic.attr({
-                                x: point.startXPos
-                            });
-
-                            hasGraphic = true;
-                            verb = 'animate';
-                        }
-                    }
-
-                    if (graphic && hasGraphic) { // update
-                        graphic[verb](
-                            merge(shapeArgs)
-                        );
-                    }
-
-                    // Border radius is not stylable (#6900)
-                    if (options.borderRadius) {
-                        (graphic as any)[verb]({
-                            r: options.borderRadius
-                        });
-                    }
-
-                    // Presentational
-                    if (!chart.styledMode) {
-                        (graphic as any)[verb](series.pointAttribs(
-                            point,
-                            (point.selected && 'select') as any
-                        ))
-                            .shadow(
-                                point.allowShadow !== false && options.shadow,
-                                null,
-                                options.stacking && !options.borderRadius
-                            );
-                    }
-
-                    (graphic as any).addClass(point.getClassName(), true);
-
-
-                } else if (graphic) {
-                    point.graphic = graphic.destroy(); // #1269
-                }
-            });
-        },
-
-        /**
-         * Animate the column heights one by one from zero.
-         *
-         * @private
-         * @function Highcharts.seriesTypes.column#animate
-         *
-         * @param {boolean} init
-         *        Whether to initialize the animation or run it
-         */
-        animate: function (this: Highcharts.ColumnSeries, init: boolean): void {
-            var series = this,
-                yAxis = this.yAxis,
-                options = series.options,
-                inverted = this.chart.inverted,
-                attr: SVGAttributes = {},
-                translateProp = inverted ? 'translateX' : 'translateY',
-                translateStart: number,
-                translatedThreshold;
-
-            if (init) {
-                attr.scaleY = 0.001;
-                translatedThreshold = clamp(
-                    yAxis.toPixels(options.threshold as any),
-                    yAxis.pos,
-                    yAxis.pos + yAxis.len
-                );
-                if (inverted) {
-                    attr.translateX = translatedThreshold - yAxis.len;
-                } else {
-                    attr.translateY = translatedThreshold;
-                }
-
-                // apply finnal clipping (used in Highstock) (#7083)
-                // animation is done by scaleY, so cliping is for panes
-                if (series.clipBox) {
-                    series.setClip();
-                }
-
-                series.group.attr(attr);
-
-            } else { // run the animation
-                translateStart = series.group.attr(translateProp) as any;
-                series.group.animate(
-                    { scaleY: 1 },
-                    extend(animObject(series.options.animation), {
-                        // Do the scale synchronously to ensure smooth
-                        // updating (#5030, #7228)
-                        step: function (val: any, fx: any): void {
-                            if (series.group) {
-                                attr[translateProp] = translateStart +
-                                    fx.pos * (yAxis.pos - translateStart);
-                                series.group.attr(attr);
-                            }
-                        }
-                    })
-                );
-            }
-        },
-
-        /**
-         * Remove this series from the chart
-         *
-         * @private
-         * @function Highcharts.seriesTypes.column#remove
-         */
-        remove: function (this: Highcharts.ColumnSeries): void {
-            var series = this,
-                chart = series.chart;
-
-            // column and bar series affects other series of the same type
-            // as they are either stacked or grouped
-            if (chart.hasRendered) {
-                chart.series.forEach(function (
-                    otherSeries: BaseSeries
-                ): void {
-                    if (otherSeries.type === series.type) {
-                        otherSeries.isDirty = true;
-                    }
-                });
-            }
-
-            LineSeries.prototype.remove.apply(series, arguments as any);
-        }
+        trackerGroups: ['group', 'dataLabelsGroup']
     }
 );
 
-/* eslint-enable valid-jsdoc */
+/* *
+ *
+ *  Registry
+ *
+ * */
+
+declare module '../Core/Series/Types' {
+    interface SeriesTypeRegistry {
+        column: typeof Highcharts.ColumnSeries;
+    }
+}
+BaseSeries.addSeries('column', ColumnSeries);
+
+/* *
+ *
+ *  Export
+ *
+ * */
+
+export default ColumnSeries;
+
+/* *
+ *
+ *  API Declarations
+ *
+ * */
+
+/**
+ * Adjusted width and x offset of the columns for grouping.
+ *
+ * @private
+ * @interface Highcharts.ColumnMetricsObject
+ *//**
+ * Width of the columns.
+ * @name Highcharts.ColumnMetricsObject#width
+ * @type {number}
+ *//**
+ * Offset of the columns.
+ * @name Highcharts.ColumnMetricsObject#offset
+ * @type {number}
+ */
+
+''; // detach doclets above
+
+/* *
+ *
+ *  API Options
+ *
+ * */
 
 /**
  * A `column` series. If the [type](#series.column.type) option is
@@ -1437,5 +1494,3 @@ const ColumnSeries = BaseSeries.seriesType<typeof Highcharts.ColumnSeries>(
  */
 
 ''; // includes above doclets in transpilat
-
-export default ColumnSeries;

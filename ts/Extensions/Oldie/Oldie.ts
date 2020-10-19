@@ -2086,7 +2086,8 @@ if (!svg) {
     ): void {
         this.init.apply(this, arguments as any);
     } as any;
-    VMLRenderer.prototype = merge(VMLRenderer.prototype, SVGRenderer.prototype, VMLRendererExtension);
+    extend(VMLRenderer.prototype, SVGRenderer.prototype);
+    extend(VMLRenderer.prototype, VMLRendererExtension);
 
     // general renderer
     H.Renderer = VMLRenderer as any;

@@ -11,7 +11,6 @@
 'use strict';
 
 import type AnimationOptionsObject from './AnimationOptionsObject';
-import type BaseSeries from '../Series/Series';
 import type Chart from '../Chart/Chart';
 import type CSSObject from '../Renderer/CSSObject';
 import type { HTMLDOMElement } from '../Renderer/DOMElementType';
@@ -48,7 +47,7 @@ declare global {
         function getDeferredAnimation(
             chart: Chart,
             animation: Partial<AnimationOptionsObject>,
-            series?: BaseSeries
+            series?: Series
         ): Partial<AnimationOptionsObject>;
         function setAnimation(
             animation: (boolean|Partial<AnimationOptionsObject>|undefined),
@@ -130,7 +129,7 @@ const animObject = H.animObject = function animObject(
 const getDeferredAnimation = H.getDeferredAnimation = function (
     chart: Chart,
     animation: (false|DeepPartial<AnimationOptionsObject>),
-    series?: BaseSeries
+    series?: Highcharts.Series
 ): Partial<AnimationOptionsObject> {
 
     const labelAnimation = animObject(animation);

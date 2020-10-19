@@ -19,7 +19,7 @@ const {
     doc
 } = H;
 import KeyboardNavigationHandler from './KeyboardNavigationHandler.js';
-import CartesianSeries from '../Core/Series/CartesianSeries.js';
+import LineSeries from '../Series/LineSeries.js';
 import O from '../Core/Options.js';
 const {
     defaultOptions
@@ -395,7 +395,7 @@ addEvent(Point, 'update', function (): void {
     });
 });
 ['update', 'updatedData', 'remove'].forEach(function (event: string): void {
-    addEvent(CartesianSeries, event, function (): void {
+    addEvent(LineSeries, event, function (): void {
         if (this.chart.accessibility) {
             this.chart.a11yDirty = true;
         }

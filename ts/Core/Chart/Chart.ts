@@ -592,16 +592,16 @@ class Chart {
                 optionsChart.defaultSeriesType
             ) as string,
             series: Highcharts.Series,
-            Constr: Highcharts.Series = BaseSeries.seriesTypes[type] as any;
+            SeriesClass = BaseSeries.seriesTypes[type];
 
         // No such series type
-        if (!Constr) {
+        if (!SeriesClass) {
             error(17, true, chart as any, { missingModuleFor: type });
         }
 
-        series = new Constr(chart, options);
+        series = new SeriesClass();
         if (typeof series.init === 'function') {
-            series.init(this, options);
+            series.init(chart, options);
         }
         return series;
     }

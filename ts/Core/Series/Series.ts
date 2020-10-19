@@ -8,14 +8,17 @@
  *
  * */
 
-import type AnimationOptionsObject from '../Animation/AnimationOptionsObject';
+'use strict';
+
+import type LineSeries from '../../Series/LineSeries.js';
 import type {
-    SeriesLike,
-    SeriesLikeOptions,
+    SeriesOptionsType,
     SeriesTypeRegistry
 } from './Types';
 import type Chart from '../Chart/Chart';
 import H from '../Globals.js';
+import O from '../Options.js';
+const { defaultOptions } = O;
 import Point from './Point.js';
 import U from '../Utilities.js';
 const {
@@ -36,10 +39,10 @@ const {
 declare global {
     namespace Highcharts {
         let seriesTypes: SeriesTypeRegistry;
-        function seriesType<T extends typeof BaseSeries>(
+        function seriesType<T extends typeof LineSeries>(
             type: keyof SeriesTypeRegistry,
             parent: (keyof SeriesTypeRegistry|undefined),
-            options: DeepPartial<T['prototype']['options']>,
+            options: T['prototype']['options'],
             props?: DeepPartial<T['prototype']>,
             pointProps?: DeepPartial<T['prototype']['pointClass']['prototype']>
         ): T;
@@ -48,11 +51,9 @@ declare global {
 
 import '../Options.js';
 
-/**
- * @class
- * @name Highcharts.Series
- */
-abstract class BaseSeries {
+/* eslint-disable valid-jsdoc */
+
+namespace Series {
 
     /* *
      *
@@ -60,11 +61,7 @@ abstract class BaseSeries {
      *
      * */
 
-    public static readonly defaultOptions: BaseSeries.Options = {
-        type: 'base'
-    };
-
-    public static readonly seriesTypes = {} as BaseSeries.SeriesTypesRegistry;
+    export const seriesTypes = {} as SeriesTypeRegistry;
 
     /* *
      *
@@ -72,14 +69,29 @@ abstract class BaseSeries {
      *
      * */
 
-    public static addSeries(
-        seriesName: string,
-        seriesType: typeof BaseSeries
+    /** @private */
+    export function addSeries(
+        seriesType: string,
+        seriesClass: typeof LineSeries
     ): void {
-        BaseSeries.seriesTypes[seriesName] = seriesType;
+        const defaultPlotOptions = getOptions().plotOptions || {},
+            seriesOptions: Highcharts.SeriesOptions = (seriesClass as any).defaultOptions;
+
+        if (!seriesClass.prototype.pointClass) {
+            seriesClass.prototype.pointClass = Point;
+        }
+
+        seriesClass.prototype.type = seriesType;
+
+        if (seriesOptions) {
+            defaultPlotOptions[seriesType] = seriesOptions;
+        }
+
+        seriesTypes[seriesType] = seriesClass;
     }
 
-    public static cleanRecursively<T>(
+    /** @private */
+    export function cleanRecursively<T>(
         toClean: DeepRecord<string, T>,
         reference: DeepRecord<string, T>
     ): DeepRecord<string, T> {
@@ -97,7 +109,7 @@ abstract class BaseSeries {
                 !toClean.nodeType && // #10044
                 reference[key]
             ) {
-                ob = BaseSeries.cleanRecursively<T>(
+                ob = cleanRecursively<T>(
                     toClean[key] as DeepRecord<string, T>,
                     reference[key] as DeepRecord<string, T>
                 );
@@ -117,14 +129,13 @@ abstract class BaseSeries {
         return clean;
     }
 
-    // eslint-disable-next-line valid-jsdoc
     /**
      * Internal function to initialize an individual series.
      * @private
      */
-    public static getSeries(
+    export function getSeries(
         chart: Chart,
-        options: DeepPartial<BaseSeries.Options> = {}
+        options: DeepPartial<SeriesOptionsType> = {}
     ): Highcharts.Series {
         const optionsChart = chart.options.chart as Highcharts.ChartOptions,
             type = (
@@ -133,14 +144,20 @@ abstract class BaseSeries {
                 optionsChart.defaultSeriesType ||
                 ''
             ),
-            Series: Highcharts.Series = BaseSeries.seriesTypes[type] as any;
+            SeriesClass: typeof LineSeries = seriesTypes[type] as any;
 
         // No such series type
         if (!Series) {
             error(17, true, chart as any, { missingModuleFor: type });
         }
 
-        return new Series(chart, options);
+        const series = new SeriesClass();
+
+        if (typeof series.init === 'function') {
+            series.init(chart, options);
+        }
+
+        return series;
     }
 
     /**
@@ -169,27 +186,25 @@ abstract class BaseSeries {
      * The newly created prototype as extended from {@link Series} or its
      * derivatives.
      */
-    // docs: add to API + extending Highcharts
-    public static seriesType<T extends typeof BaseSeries>(
+    export function seriesType<T extends typeof Highcharts.Series>(
         type: keyof SeriesTypeRegistry,
         parent: (keyof SeriesTypeRegistry|undefined),
-        options: DeepPartial<T['prototype']['options']>,
+        options: T['prototype']['options'],
         seriesProto?: DeepPartial<T['prototype']>,
         pointProto?: DeepPartial<T['prototype']['pointClass']['prototype']>
     ): T {
-        const defaultOptions: Record<string, any> = getOptions().plotOptions || {},
-            seriesTypes = BaseSeries.seriesTypes;
+        const defaultPlotOptions = getOptions().plotOptions || {};
 
         parent = parent || '';
 
         // Merge the options
-        defaultOptions[type] = merge(
-            defaultOptions[parent],
+        defaultPlotOptions[type] = merge(
+            defaultPlotOptions[parent],
             options
         );
 
         // Create the class
-        BaseSeries.addSeries(type, extendClass(
+        addSeries(type, extendClass(
             seriesTypes[parent] as any || function (): void {},
             seriesProto
         ) as any);
@@ -204,116 +219,12 @@ abstract class BaseSeries {
         return seriesTypes[type] as unknown as T;
     }
 
-    /* *
-     *
-     *  Constructor
-     *
-     * */
-
-    public constructor(
-        chart: Chart,
-        options?: DeepPartial<BaseSeries.Options>
-    ) {
-        const mergedOptions = merge(
-            BaseSeries.defaultOptions,
-            options
-        );
-
-        this.chart = chart;
-        this._i = chart.series.length;
-
-        chart.series.push(this as any);
-
-        this.options = mergedOptions;
-        this.userOptions = merge(options) as Highcharts.SeriesOptions;
-    }
-
-    /* *
-     *
-     *  Properties
-     *
-     * */
-
-    public _i: number;
-
-    public readonly chart: Chart;
-
-    public isDirty?: boolean;
-
-    public options: BaseSeries.Options;
-
-    public userOptions: DeepPartial<BaseSeries.Options>;
-
-    /* *
-     *
-     *  Functions
-     *
-     * */
-
-    public abstract drawGraph(): void;
-
-    public abstract translate(): void;
-
-    public update(
-        newOptions: DeepPartial<BaseSeries.Options>,
-        redraw: boolean = true
-    ): BaseSeries {
-        let series: BaseSeries = this;
-
-        newOptions = BaseSeries.cleanRecursively(newOptions, this.userOptions);
-
-        const newType = newOptions.type;
-
-        if (
-            typeof newType !== 'undefined' &&
-            newType !== series.type
-        ) {
-            series = BaseSeries.getSeries(series.chart, newOptions);
-        }
-
-        fireEvent(series, 'update', { newOptions });
-
-        series.userOptions = merge(newOptions);
-
-        fireEvent(series, 'afterUpdate', { newOptions });
-
-        if (redraw) {
-            series.chart.redraw();
-        }
-
-        return series;
-    }
-}
-
-interface BaseSeries extends SeriesLike {
-    new(...args: Array<any>): this;
-    pointClass: typeof Point;
-    type: string;
-}
-
-BaseSeries.prototype.pointClass = Point;
-
-namespace BaseSeries {
-
-    export interface Options extends SeriesLikeOptions {
-        animation?: (boolean|DeepPartial<AnimationOptionsObject>);
-        dataSorting?: Highcharts.DataSortingOptionsObject; // cartasian series
-        index?: number;
-        /** @private */
-        isInternal?: boolean;
-        pointStart?: number;
-    }
-
-    export interface SeriesTypesRegistry extends SeriesTypeRegistry {
-        [key: string]: typeof BaseSeries;
-    }
-
 }
 
 // backwards compatibility
 
-H.seriesType = BaseSeries.seriesType;
-H.seriesTypes = BaseSeries.seriesTypes;
+H.seriesType = Series.seriesType;
+H.seriesTypes = Series.seriesTypes;
 
 /* *
  *
@@ -321,4 +232,4 @@ H.seriesTypes = BaseSeries.seriesTypes;
  *
  * */
 
-export default BaseSeries;
+export default Series;

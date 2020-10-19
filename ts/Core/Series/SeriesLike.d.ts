@@ -14,6 +14,7 @@
  *
  * */
 
+import type AnimationOptionsObject from '../Animation/AnimationOptionsObject';
 import type PointLike from './PointLike';
 import type PointType from './PointType';
 
@@ -56,7 +57,13 @@ export interface SeriesLike {
  * definition file.
  */
 export interface SeriesLikeOptions /* @todo */ extends Highcharts.SeriesOptions {
+    animation?: (boolean|DeepPartial<AnimationOptionsObject>);
     data?: Array<PointType['options']>;
+    dataSorting?: Highcharts.DataSortingOptionsObject; // cartasian series
+    index?: number;
+    /** @private */
+    isInternal?: boolean;
+    pointStart?: number;
     type?: string;
 }
 
