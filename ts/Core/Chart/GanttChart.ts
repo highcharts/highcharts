@@ -155,7 +155,11 @@ H.ganttChart = function (
                 enabled: false
             },
             navigator: {
-                series: { type: 'gantt' }
+                series: { type: 'gantt' },
+                // Bars were clipped, #14060.
+                yAxis: {
+                    type: 'category'
+                }
             }
         } as Highcharts.Options,
 
