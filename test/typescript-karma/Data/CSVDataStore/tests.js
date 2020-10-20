@@ -85,6 +85,23 @@ test('CSVStore from string, with decimalpoint option', function(assert){
     );
 });
 
+test('CSVStore, negative values', function (assert) {
+    // If the final value is undefined it will be trimmed
+    const array = [-3, -3.1, -.2, 2.1, undefined, 1];
+
+    let store = new CSVStore(undefined, {
+        csv: ['Values', ...array].join('\n')
+    });
+
+    store.load();
+
+    assert.deepEqual(
+        store.table.toColumns()['Values'],
+        array
+    );
+
+})
+
 test('CSVStore from URL', function (assert) {
     const registeredEvents = [];
 

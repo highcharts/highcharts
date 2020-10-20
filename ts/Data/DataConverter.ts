@@ -246,7 +246,8 @@ class DataConverter {
             return value ? 1 : 0;
         }
         if (typeof value === 'string') {
-            return parseFloat(`0${value}`);
+            const cast = parseFloat(value);
+            return !isNaN(cast) ? cast : 0;
         }
         if (value instanceof DataTable) {
             return value.getRowCount();
@@ -281,7 +282,10 @@ class DataConverter {
      */
     public guessType(value: string): ('string' | 'Date' | 'number') {
         const converter = this;
-
+        if (!value.length) {
+            // Empty string
+            return 'string';
+        }
         if (!isNaN(Number(value))) {
             return 'number';
         }

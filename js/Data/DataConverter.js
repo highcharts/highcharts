@@ -200,7 +200,8 @@ var DataConverter = /** @class */ (function () {
             return value ? 1 : 0;
         }
         if (typeof value === 'string') {
-            return parseFloat("0" + value);
+            var cast = parseFloat(value);
+            return !isNaN(cast) ? cast : 0;
         }
         if (value instanceof DataTable) {
             return value.getRowCount();
@@ -233,6 +234,10 @@ var DataConverter = /** @class */ (function () {
      */
     DataConverter.prototype.guessType = function (value) {
         var converter = this;
+        if (!value.length) {
+            // Empty string
+            return 'string';
+        }
         if (!isNaN(Number(value))) {
             return 'number';
         }
