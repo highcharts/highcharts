@@ -167,3 +167,45 @@ QUnit.test('#14050: Empty dataLabels', function (assert) {
 
     assert.ok(true, 'Does not throw when passed empty dataLabels');
 });
+
+QUnit.test('#14359: Correct datalabel alignment', function (assert) {
+    var chart = Highcharts.chart('container', {
+        chart: {
+            type: 'columnrange',
+            inverted: false
+        },
+        series: [{
+            data: [
+                [-9.0, 8.6]
+            ],
+            stacking: "normal",
+            dataLabels: {
+                enabled: true
+            }
+        }]
+    });
+    // getting coordinates
+    var series = chart.series[0];
+    var point = series.points[0];
+    var datalabel0 = point.dataLabels[0];
+    var datalabel1 = point.dataLabels[1];
+
+    assert.ok(
+        datalabel0.y < datalabel1.y,
+        'First label should come before second label'
+    );
+
+    chart.update({
+        chart: {
+            inverted: true
+        }
+    });
+
+    assert.ok(
+        datalabel0 === point.dataLabels[0],
+        'Point datalabels should be unchanged'
+    );
+
+    assert.ok(datalabel0.x > datalabel1.x, 'First label should come after second label');
+
+});

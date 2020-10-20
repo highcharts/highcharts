@@ -65,23 +65,29 @@ var columnRangeOptions = {
  */
 BaseSeries.seriesType('columnrange', 'arearange', merge(defaultOptions.plotOptions.column, defaultOptions.plotOptions.arearange, columnRangeOptions), {
     setOptions: function () {
-        var options = arearangeProto.setOptions.apply(this, arguments), dataLabels = options.dataLabels || [];
+        var options = arearangeProto.setOptions.apply(this, arguments), dataLabels = options.dataLabels || [], isInverted = this.chart.inverted;
         if (options.stacking) {
             if (!(dataLabels instanceof Array)) {
                 options.dataLabels = dataLabels = [merge(dataLabels), merge(dataLabels)];
             }
-            dataLabels.forEach(function (dataLabel, index) {
-                if (dataLabel.enabled) {
-                    if (index === 0) {
-                        dataLabel.align = 'right';
-                        dataLabel.verticalAlign = 'top';
-                    }
-                    if (index === 1) {
-                        dataLabel.align = 'left';
-                        dataLabel.verticalAlign = 'bottom';
-                    }
+            var dataLabel0 = dataLabels[0], dataLabel1 = dataLabels[1];
+            // Takes inversion into account when correcting
+            if (dataLabel0.enabled) {
+                if (isInverted) {
+                    dataLabel0.align = 'right';
                 }
-            });
+                else {
+                    dataLabel0.verticalAlign = 'top';
+                }
+            }
+            if (dataLabel1.enabled) {
+                if (isInverted) {
+                    dataLabel1.align = 'left';
+                }
+                else {
+                    dataLabel1.verticalAlign = 'bottom';
+                }
+            }
         }
         return options;
     },
