@@ -46,6 +46,8 @@ var columnRangeOptions = {
      */
     pointRange: null,
     /** @ignore-option */
+    stacking: void 0,
+    /** @ignore-option */
     marker: null,
     states: {
         hover: {
@@ -65,29 +67,9 @@ var columnRangeOptions = {
  */
 BaseSeries.seriesType('columnrange', 'arearange', merge(defaultOptions.plotOptions.column, defaultOptions.plotOptions.arearange, columnRangeOptions), {
     setOptions: function () {
-        var options = arearangeProto.setOptions.apply(this, arguments), dataLabels = options.dataLabels || [], isInverted = this.chart.inverted;
+        var options = arearangeProto.setOptions.apply(this, arguments);
         if (options.stacking) {
-            if (!(dataLabels instanceof Array)) {
-                options.dataLabels = dataLabels = [merge(dataLabels), merge(dataLabels)];
-            }
-            var dataLabel0 = dataLabels[0], dataLabel1 = dataLabels[1];
-            // Takes inversion into account when correcting
-            if (dataLabel0.enabled) {
-                if (isInverted) {
-                    dataLabel0.align = 'right';
-                }
-                else {
-                    dataLabel0.verticalAlign = 'top';
-                }
-            }
-            if (dataLabel1.enabled) {
-                if (isInverted) {
-                    dataLabel1.align = 'left';
-                }
-                else {
-                    dataLabel1.verticalAlign = 'bottom';
-                }
-            }
+            options.stacking = columnRangeOptions.stacking;
         }
         return options;
     },
