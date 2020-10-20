@@ -10,7 +10,7 @@ var seriesTypes = BaseSeries.seriesTypes;
 import RequiredIndicatorMixin from '../../Mixins/IndicatorRequired.js';
 import U from '../../Core/Utilities.js';
 var correctFloat = U.correctFloat, error = U.error;
-// im port './ADIndicator.js';
+import './ADIndicator.js';
 // im port './EMAIndicator.js';
 var EMA = seriesTypes.ema, AD = seriesTypes.ad;
 /**
