@@ -10,6 +10,12 @@
 
 'use strict';
 
+/* *
+ *
+ *  Imports
+ *
+ * */
+
 import type LineSeries from '../../Series/LineSeries.js';
 import type {
     SeriesOptionsType,
@@ -24,12 +30,16 @@ import U from '../Utilities.js';
 const {
     error,
     extendClass,
-    fireEvent,
-    getOptions,
     isObject,
     merge,
     objectEach
 } = U;
+
+/* *
+ *
+ *  Declarations
+ *
+ * */
 
 /**
  * Internal namespace
@@ -49,9 +59,11 @@ declare global {
     }
 }
 
-import '../Options.js';
-
-/* eslint-disable valid-jsdoc */
+/* *
+ *
+ *  Namespace
+ *
+ * */
 
 namespace Series {
 
@@ -69,12 +81,14 @@ namespace Series {
      *
      * */
 
+    /* eslint-disable valid-jsdoc */
+
     /** @private */
     export function registerSeriesType(
         seriesType: string,
         seriesClass: typeof LineSeries
     ): void {
-        const defaultPlotOptions = getOptions().plotOptions || {},
+        const defaultPlotOptions = defaultOptions.plotOptions || {},
             seriesOptions: Highcharts.SeriesOptions = (seriesClass as any).defaultOptions;
 
         if (!seriesClass.prototype.pointClass) {
@@ -194,7 +208,7 @@ namespace Series {
         seriesProto?: DeepPartial<T['prototype']>,
         pointProto?: DeepPartial<T['prototype']['pointClass']['prototype']>
     ): T {
-        const defaultPlotOptions = getOptions().plotOptions || {};
+        const defaultPlotOptions = defaultOptions.plotOptions || {};
 
         parent = parent || '';
 
@@ -220,9 +234,15 @@ namespace Series {
         return seriesTypes[type] as unknown as T;
     }
 
+    /* eslint-enable valid-jsdoc */
+
 }
 
-// backwards compatibility
+/* *
+ *
+ *  Compatibility
+ *
+ * */
 
 H.seriesType = Series.seriesType;
 H.seriesTypes = Series.seriesTypes;

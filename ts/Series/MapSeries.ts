@@ -8,6 +8,8 @@
  *
  * */
 
+'use strict';
+
 import type AnimationOptionsObject from '../Core/Animation/AnimationOptionsObject';
 import type ColorType from '../Core/Color/ColorType';
 import type SVGAttributes from '../Core/Renderer/SVG/SVGAttributes';
@@ -350,6 +352,8 @@ BaseSeries.seriesType<typeof Highcharts.MapSeries>(
          * @default   hc-key
          * @product   highmaps
          * @apioption plotOptions.series.joinBy
+         *
+         * @private
          */
         joinBy: 'hc-key',
 

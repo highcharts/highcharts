@@ -7,6 +7,7 @@
  *  !!!!!!! SOURCE GETS TRANSPILED BY TYPESCRIPT. EDIT TS FILE ONLY. !!!!!!!
  *
  * */
+'use strict';
 import BaseSeries from '../Core/Series/Series.js';
 import ColorMapMixin from '../Mixins/ColorMapSeries.js';
 var colorMapPointMixin = ColorMapMixin.colorMapPointMixin, colorMapSeriesMixin = ColorMapMixin.colorMapSeriesMixin;
@@ -178,6 +179,8 @@ BaseSeries.seriesType('map', 'scatter',
      * @default   hc-key
      * @product   highmaps
      * @apioption plotOptions.series.joinBy
+     *
+     * @private
      */
     joinBy: 'hc-key',
     /**

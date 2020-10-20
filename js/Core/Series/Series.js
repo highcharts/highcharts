@@ -13,9 +13,12 @@ import O from '../Options.js';
 var defaultOptions = O.defaultOptions;
 import Point from './Point.js';
 import U from '../Utilities.js';
-var error = U.error, extendClass = U.extendClass, fireEvent = U.fireEvent, getOptions = U.getOptions, isObject = U.isObject, merge = U.merge, objectEach = U.objectEach;
-import '../Options.js';
-/* eslint-disable valid-jsdoc */
+var error = U.error, extendClass = U.extendClass, isObject = U.isObject, merge = U.merge, objectEach = U.objectEach;
+/* *
+ *
+ *  Namespace
+ *
+ * */
 var Series;
 (function (Series) {
     /* *
@@ -29,9 +32,10 @@ var Series;
      *  Static Functions
      *
      * */
+    /* eslint-disable valid-jsdoc */
     /** @private */
     function registerSeriesType(seriesType, seriesClass) {
-        var defaultPlotOptions = getOptions().plotOptions || {}, seriesOptions = seriesClass.defaultOptions;
+        var defaultPlotOptions = defaultOptions.plotOptions || {}, seriesOptions = seriesClass.defaultOptions;
         if (!seriesClass.prototype.pointClass) {
             seriesClass.prototype.pointClass = Point;
         }
@@ -114,7 +118,7 @@ var Series;
      * derivatives.
      */
     function seriesType(type, parent, options, seriesProto, pointProto) {
-        var defaultPlotOptions = getOptions().plotOptions || {};
+        var defaultPlotOptions = defaultOptions.plotOptions || {};
         parent = parent || '';
         // Merge the options
         defaultPlotOptions[type] = merge(defaultPlotOptions[parent], options);
@@ -129,8 +133,13 @@ var Series;
         return Series.seriesTypes[type];
     }
     Series.seriesType = seriesType;
+    /* eslint-enable valid-jsdoc */
 })(Series || (Series = {}));
-// backwards compatibility
+/* *
+ *
+ *  Compatibility
+ *
+ * */
 H.seriesType = Series.seriesType;
 H.seriesTypes = Series.seriesTypes;
 /* *
