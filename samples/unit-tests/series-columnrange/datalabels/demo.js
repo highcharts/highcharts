@@ -184,28 +184,7 @@ QUnit.test('#14359: Correct datalabel alignment', function (assert) {
             }
         }]
     });
-    // getting coordinates
-    var series = chart.series[0];
-    var point = series.points[0];
-    var datalabel0 = point.dataLabels[0];
-    var datalabel1 = point.dataLabels[1];
-
-    assert.ok(
-        datalabel0.y < datalabel1.y,
-        'First label should come before second label'
-    );
-
-    chart.update({
-        chart: {
-            inverted: true
-        }
-    });
-
-    assert.ok(
-        datalabel0 === point.dataLabels[0],
-        'Point datalabels should be unchanged'
-    );
-
-    assert.ok(datalabel0.x > datalabel1.x, 'First label should come after second label');
-
+    // getting options
+    var stacking = chart.series[0].stacking;
+    assert.strictEqual(typeof stacking, 'undefined', 'Stacking should be undefined');
 });
