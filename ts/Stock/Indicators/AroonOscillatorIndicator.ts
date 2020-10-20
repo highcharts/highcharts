@@ -60,7 +60,7 @@ declare module '../../Core/Series/Types' {
     }
 }
 
-import './AroonIndicator.js';
+// im port './AroonIndicator.js';
 
 var AROON = BaseSeries.seriesTypes.aroon;
 

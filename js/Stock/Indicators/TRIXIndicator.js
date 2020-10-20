@@ -9,7 +9,7 @@ import BaseSeries from '../../Core/Series/Series.js';
 import RequiredIndicatorMixin from '../../Mixins/IndicatorRequired.js';
 import U from '../../Core/Utilities.js';
 var correctFloat = U.correctFloat;
-import './TEMAIndicator.js';
+// im port './TEMAIndicator.js';
 var TEMA = BaseSeries.seriesTypes.tema;
 /**
  * The TRIX series type.

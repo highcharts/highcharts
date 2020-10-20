@@ -8,7 +8,7 @@
 import BaseSeries from '../../Core/Series/Series.js';
 import U from '../../Core/Utilities.js';
 var defined = U.defined, isArray = U.isArray;
-import './SMAIndicator.js';
+// im port './SMAIndicator.js';
 var SMA = BaseSeries.seriesTypes.sma;
 /* eslint-disable valid-jsdoc */
 /**

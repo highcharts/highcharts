@@ -73,7 +73,7 @@ declare global {
     }
 }
 
-import './EMAIndicator.js';
+// im port './EMAIndicator.js';
 
 var EMAindicator = BaseSeries.seriesTypes.ema;
 

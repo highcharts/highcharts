@@ -8,7 +8,7 @@
 import BaseSeries from '../../Core/Series/Series.js';
 import U from '../../Core/Utilities.js';
 var correctFloat = U.correctFloat, pick = U.pick;
-import './SMAIndicator.js';
+// im port './SMAIndicator.js';
 /* eslint-disable valid-jsdoc */
 // Utils
 /**

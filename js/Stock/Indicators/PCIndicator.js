@@ -10,7 +10,7 @@ import MultipleLinesMixin from '../../Mixins/MultipleLines.js';
 import ReduceArrayMixin from '../../Mixins/ReduceArray.js';
 import U from '../../Core/Utilities.js';
 var merge = U.merge;
-import './SMAIndicator.js';
+// im port './SMAIndicator.js';
 var getArrayExtremes = ReduceArrayMixin.getArrayExtremes;
 /**
  * The Price Channel series type.

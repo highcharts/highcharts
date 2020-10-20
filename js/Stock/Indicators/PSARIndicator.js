@@ -10,7 +10,7 @@
  *
  * */
 import BaseSeries from '../../Core/Series/Series.js';
-import './SMAIndicator.js';
+// im port './SMAIndicator.js';
 /* eslint-disable require-jsdoc */
 // Utils:
 function toFixed(a, n) {

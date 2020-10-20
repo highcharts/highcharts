@@ -51,7 +51,7 @@ declare module '../../Core/Series/Types' {
     }
 }
 
-import './SMAIndicator.js';
+// im port './SMAIndicator.js';
 
 /**
  * The Trend line series type.
