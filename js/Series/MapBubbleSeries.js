@@ -12,6 +12,7 @@ import Point from '../Core/Series/Point.js';
 import U from '../Core/Utilities.js';
 var merge = U.merge;
 import '../Core/Options.js';
+import '../Series/Bubble/BubbleSeries.js';
 var seriesTypes = BaseSeries.seriesTypes;
 // The mapbubble series type
 if (seriesTypes.bubble) {
