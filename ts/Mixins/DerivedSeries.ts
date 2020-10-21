@@ -6,6 +6,10 @@
 
 'use strict';
 
+import type {
+    PointOptions,
+    PointShortOptions
+} from '../Core/Series/PointOptions';
 import H from '../Core/Globals.js';
 
 /**
@@ -21,7 +25,7 @@ declare global {
             destroy(): void;
             init(this: Series): void;
             setBaseSeries(): void;
-            setDerivedData(): Array<PointOptionsType>;
+            setDerivedData(): Array<(PointOptions|PointShortOptions)>;
         }
         interface DerivedSeriesOptions extends SeriesOptions {
             baseSeries?: (number|string);

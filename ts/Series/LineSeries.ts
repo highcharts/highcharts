@@ -21,7 +21,15 @@ import type { AxisType } from '../Core/Axis/Types';
 import type { CursorValue } from '../Core/Renderer/CSSObject';
 import type Chart from '../Core/Chart/Chart';
 import type ColorType from '../Core/Color/ColorType';
-import type { SeriesLike, SeriesOptionsType, SeriesPlotOptionsType } from '../Core/Series/Types';
+import type {
+    PointOptions,
+    PointShortOptions
+} from '../Core/Series/PointOptions';
+import type {
+    SeriesLike,
+    SeriesOptionsType,
+    SeriesPlotOptionsType
+} from '../Core/Series/Types';
 import type ShadowOptionsObject from '../Core/Renderer/ShadowOptionsObject';
 import type SVGAttributes from '../Core/Renderer/SVG/SVGAttributes';
 import type SVGPath from '../Core/Renderer/SVG/SVGPath';
@@ -71,6 +79,28 @@ const {
 declare module '../Core/Chart/ChartLike'{
     interface ChartLike {
         runTrackerClick?: boolean;
+    }
+}
+
+declare module '../Core/Series/PointLike' {
+    interface PointLike {
+        category?: string;
+        clientX?: number;
+        dataGroup?: Highcharts.DataGroupingInfoObject;
+        dist?: number;
+        distX?: number;
+        hasImage?: boolean;
+        index?: number;
+        isInside?: boolean;
+        low?: number;
+        negative?: boolean;
+        options: PointOptions;
+        plotX?: number;
+        plotY?: number;
+        stackTotal?: number;
+        stackY?: (number|null);
+        yBottom?: number;
+        zone?: Highcharts.SeriesZonesOptions;
     }
 }
 
@@ -195,7 +225,7 @@ declare global {
             public drawGraph(): void;
             public drawPoints(): void;
             public findPointIndex(
-                optionsObject: PointOptionsObject,
+                optionsObject: PointOptions,
                 fromIndex: number
             ): (number|undefined);
             public generatePoints(): void;
@@ -233,8 +263,8 @@ declare global {
             public getXExtremes(xData: Array<number>): RangeObject;
             public getFirstValidPoint (
                 this: Highcharts.Series,
-                data: Array<PointOptionsType>
-            ): PointOptionsType;
+                data: Array<(PointOptions|PointShortOptions)>
+            ): (PointOptions|PointShortOptions);
             public getZonesGraphs(
                 props: Array<Array<string>>
             ): Array<Array<string>>;
@@ -270,7 +300,7 @@ declare global {
             ): (Point|undefined);
             public setClip(animation?: (boolean|AnimationOptionsObject)): void;
             public setData(
-                data: Array<PointOptionsType>,
+                data: Array<(PointOptions|PointShortOptions)>,
                 redraw?: boolean,
                 animation?: (boolean|Partial<AnimationOptionsObject>),
                 updatePoints?: boolean
@@ -278,12 +308,12 @@ declare global {
             public setDataSortingOptions(): void;
             public setOptions(itemOptions: DeepPartial<SeriesOptionsType>): this['options'];
             public sortData(
-                data: Array<PointOptionsType>
-            ): Array<PointOptionsObject>;
+                data: Array<(PointOptions|PointShortOptions)>
+            ): Array<PointOptions>;
             public toYData(point: Point): Array<number>;
             public translate(): void;
             public updateData(
-                data: Array<PointOptionsType>,
+                data: Array<(PointOptions|PointShortOptions)>,
                 animation?: (boolean|Partial<AnimationOptionsObject>)
             ): boolean;
             public updateParallelArrays(point: Point, i: (number|string)): void;
@@ -307,29 +337,10 @@ declare global {
             clientX: number;
             plotY?: number;
         }
-        interface LinePointOptions extends PointOptionsObject {
+        interface LinePointOptions extends PointOptions {
         }
         interface LineSeriesOptions extends SeriesOptions {
             states?: SeriesStatesOptionsObject<LineSeries>;
-        }
-        interface PointLike {
-            category?: string;
-            clientX?: number;
-            dataGroup?: DataGroupingInfoObject;
-            dist?: number;
-            distX?: number;
-            hasImage?: boolean;
-            index?: number;
-            isInside?: boolean;
-            low?: number;
-            negative?: boolean;
-            options: PointOptionsObject;
-            plotX?: number;
-            plotY?: number;
-            stackTotal?: number;
-            stackY?: (number|null);
-            yBottom?: number;
-            zone?: SeriesZonesOptions;
         }
         interface SeriesAfterAnimateCallbackFunction {
             (this: Series, event: SeriesAfterAnimateEventObject): void;
@@ -408,7 +419,7 @@ declare global {
             cropThreshold?: number;
             cursor?: (string|CursorValue);
             dashStyle?: DashStyleValue;
-            data?: Array<PointOptionsType>;
+            data?: Array<(PointOptions|PointShortOptions)>;
             dataGrouping?: DataGroupingOptionsObject;
             dataLabels?: (
                 DataLabelsOptions|Array<DataLabelsOptions>
@@ -3798,7 +3809,7 @@ class LineSeries {
      *           match is found.
      */
     public findPointIndex(
-        optionsObject: Highcharts.PointOptionsObject,
+        optionsObject: PointOptions,
         fromIndex: number
     ): (number|undefined) {
         var id = optionsObject.id,
@@ -3870,13 +3881,13 @@ class LineSeries {
      * @function Highcharts.Series#updateData
      */
     public updateData(
-        data: Array<Highcharts.PointOptionsType>,
+        data: Array<(PointOptions|PointShortOptions)>,
         animation?: (boolean|Partial<AnimationOptionsObject>)
     ): boolean {
         var options = this.options,
             dataSorting = options.dataSorting,
             oldData = this.points,
-            pointsToAdd = [] as Array<Highcharts.PointOptionsType>,
+            pointsToAdd = [] as Array<(PointOptions|PointShortOptions)>,
             hasUpdatedByKey,
             i,
             point,
@@ -3888,10 +3899,7 @@ class LineSeries {
         this.xIncrement = null;
 
         // Iterate the new data
-        data.forEach(function (
-            pointOptions: Highcharts.PointOptionsType,
-            i: number
-        ): void {
+        data.forEach(function (pointOptions, i): void {
             var id,
                 x,
                 pointIndex,
@@ -3978,10 +3986,7 @@ class LineSeries {
         // If we did not find keys (ids or x-values), and the length is the
         // same, update one-to-one
         } else if (equalLength && (!dataSorting || !dataSorting.enabled)) {
-            data.forEach(function (
-                point: Highcharts.PointOptionsType,
-                i: number
-            ): void {
+            data.forEach(function (point, i): void {
                 // .update doesn't exist on a linked, hidden series (#3709)
                 // (#10187)
                 if (oldData[i].update && point !== oldData[i].y) {
@@ -4071,7 +4076,7 @@ class LineSeries {
      *        `false` to prevent.
      */
     public setData(
-        data: Array<Highcharts.PointOptionsType>,
+        data: Array<(PointOptions|PointShortOptions)>,
         redraw?: boolean,
         animation?: (boolean|Partial<AnimationOptionsObject>),
         updatePoints?: boolean
@@ -4243,8 +4248,8 @@ class LineSeries {
      * @return {Array<Highcharts.PointOptionsObject>}
      */
     public sortData(
-        data: Array<Highcharts.PointOptionsType>
-    ): Array<Highcharts.PointOptionsObject> {
+        data: Array<(PointOptions|PointShortOptions)>
+    ): Array<PointOptions> {
         var series = this,
             options = series.options,
             dataSorting = options.dataSorting as
@@ -4253,8 +4258,8 @@ class LineSeries {
             sortedData: Array<Point>,
             getPointOptionsObject = function (
                 series: Highcharts.Series,
-                pointOptions: Highcharts.PointOptionsType
-            ): Highcharts.PointOptionsObject {
+                pointOptions: (PointOptions|PointShortOptions)
+            ): PointOptions {
                 return (defined(pointOptions) &&
                     series.pointClass.prototype.optionsToObject.call({
                         series: series
@@ -4285,8 +4290,7 @@ class LineSeries {
         if (series.linkedSeries) {
             series.linkedSeries.forEach(function (linkedSeries): void {
                 var options = linkedSeries.options,
-                    seriesData = options.data as
-                        Array<Highcharts.PointOptionsObject>;
+                    seriesData = options.data as Array<PointOptions>;
 
                 if (
                     (!options.dataSorting ||
@@ -4850,8 +4854,8 @@ class LineSeries {
      * @return {Highcharts.PointOptionsType}
      */
     public getFirstValidPoint(
-        data: Array<Highcharts.PointOptionsType>
-    ): Highcharts.PointOptionsType {
+        data: Array<(PointOptions|PointShortOptions)>
+    ): (PointOptions|PointShortOptions) {
         var firstPoint = null,
             dataLength = data.length,
             i = 0;

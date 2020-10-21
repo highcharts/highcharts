@@ -15,12 +15,14 @@
 'use strict';
 
 import type AnimationOptionsObject from '../Core/Animation/AnimationOptionsObject';
+import type {
+    PointOptions,
+    PointShortOptions
+} from '../Core/Series/PointOptions';
 import type SVGElement from '../Core/Renderer/SVG/SVGElement';
 import type SVGPath from '../Core/Renderer/SVG/SVGPath';
 import A from '../Core/Animation/AnimationUtilities.js';
-const {
-    animObject
-} = A;
+const { animObject } = A;
 import BaseSeries from '../Core/Series/Series.js';
 import Chart from '../Core/Chart/Chart.js';
 import H from '../Core/Globals.js';
@@ -42,6 +44,21 @@ const {
     relativeLength,
     syncTimeout
 } = U;
+
+declare module '../Core/Series/PointLike' {
+    interface PointLike {
+        isCluster?: boolean;
+        clusteredData?: Array<Highcharts.MarkerClusterSplitDataObject>;
+        clusterPointsAmount?: number;
+    }
+}
+
+declare module '../Core/Series/PointOptions' {
+    interface PointOptions {
+        lat?: number;
+        lon?: number;
+    }
+}
 
 /**
  * Internal types
@@ -87,16 +104,12 @@ declare global {
             states?: PointStatesOptionsObject;
             events?: MarkerClusterEventsOptions;
         }
-        interface PointOptionsObject {
-            lat?: number;
-            lon?: number;
-        }
         interface MarkerClusterSplitDataObject {
             dataIndex: number;
             x: number;
             y: number;
             parentStateId?: string;
-            options?: PointOptionsType;
+            options?: (PointOptions|PointShortOptions);
         }
         interface MarkerClusterSplitDataArray
             extends Array<MarkerClusterSplitDataObject> {
@@ -143,8 +156,7 @@ declare global {
         }
         interface GroupMapOptionsObject extends SeriesOptions {
             formatPrefix?: string;
-            userOptions?: string | number |
-            PointOptionsObject | (string | number)[] | null;
+            userOptions?: (PointOptions|PointShortOptions);
             x?: number;
             y?: number;
         }
@@ -177,11 +189,6 @@ declare global {
         interface BaseClustersObject {
             clusters: Array<ClusterAndNoiseObject>;
             noise: Array<ClusterAndNoiseObject>;
-        }
-        interface PointLike {
-            isCluster?: boolean;
-            clusteredData?: Array<MarkerClusterSplitDataObject>;
-            clusterPointsAmount?: number;
         }
         interface SeriesOptions {
             cluster?: MarkerClusterOptions;

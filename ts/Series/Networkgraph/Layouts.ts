@@ -27,6 +27,20 @@ const {
     pick
 } = U;
 
+declare module '../../Core/Series/PointLike' {
+    interface PointLike {
+        dispX?: number;
+        dispY?: number;
+        fromNode?: Point;
+        linksFrom?: Array<Point>;
+        linksTo?: Array<Point>;
+        mass?: number;
+        prevX?: number;
+        prevY?: number;
+        toNode?: Point;
+    }
+}
+
 /**
  * Internal types
  * @private
@@ -57,17 +71,6 @@ declare global {
         }
         interface NetworkgraphSeriesOptions {
             layoutAlgorithm?: NetworkgraphLayoutAlgorithmOptions;
-        }
-        interface PointLike {
-            dispX?: number;
-            dispY?: number;
-            fromNode?: Point;
-            linksFrom?: Array<Point>;
-            linksTo?: Array<Point>;
-            mass?: number;
-            prevX?: number;
-            prevY?: number;
-            toNode?: Point;
         }
         interface Series {
             forces?: Array<string>;

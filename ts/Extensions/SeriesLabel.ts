@@ -41,6 +41,14 @@ declare module '../Core/Chart/ChartLike'{
     }
 }
 
+declare module '../Core/Series/PointLike' {
+    interface PointLike {
+        chartCenterY?: number;
+        chartX?: number;
+        chartY?: number;
+    }
+}
+
 /**
  * Internal types
  * @private
@@ -56,11 +64,6 @@ declare global {
             left: number;
             right: number;
             top: number;
-        }
-        interface PointLike {
-            chartCenterY?: number;
-            chartX?: number;
-            chartY?: number;
         }
         interface Series {
             interpolatedPoints?: Array<Point>;

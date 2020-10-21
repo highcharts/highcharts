@@ -12,6 +12,10 @@
 
 import type AnimationOptionsObject from '../Core/Animation/AnimationOptionsObject';
 import type ColorType from '../Core/Color/ColorType';
+import type {
+    PointOptions,
+    PointShortOptions
+} from '../Core/Series/PointOptions';
 import type SVGAttributes from '../Core/Renderer/SVG/SVGAttributes';
 import type SVGElement from '../Core/Renderer/SVG/SVGElement';
 import type SVGPath from '../Core/Renderer/SVG/SVGPath';
@@ -104,7 +108,7 @@ declare global {
             public pointAttribs(point: MapPoint, state?: string): SVGAttributes;
             public render(): void;
             public setData(
-                data: Array<(MapPointOptions|PointOptionsType)>,
+                data: Array<(PointOptions|PointShortOptions|MapPointOptions)>,
                 redraw?: boolean,
                 animation?: (boolean|Partial<AnimationOptionsObject>),
                 updatePoints?: boolean
@@ -144,7 +148,7 @@ declare global {
         interface MapSeriesOptions
             extends ColorSeriesOptions, ScatterSeriesOptions
         {
-            data?: Array<MapPointOptions|PointOptionsType>;
+            data?: Array<(PointOptions|PointShortOptions|MapPointOptions)>;
             nullColor?: ColorType;
             nullInteraction?: boolean;
             states?: SeriesStatesOptionsObject<MapSeries>;
@@ -705,7 +709,7 @@ BaseSeries.seriesType<typeof Highcharts.MapSeries>(
         setData: function (
             this: Highcharts.MapSeries,
             data: (
-                Array<(Highcharts.MapPointOptions|Highcharts.PointOptionsType)>
+                Array<(PointOptions|PointShortOptions|Highcharts.MapPointOptions)>
             ),
             redraw?: boolean,
             animation?: (boolean|Partial<AnimationOptionsObject>),
@@ -735,9 +739,7 @@ BaseSeries.seriesType<typeof Highcharts.MapSeries>(
             // Convert Array point definitions to objects using pointArrayMap
             if (data) {
                 data.forEach(function (
-                    val: (
-                        Highcharts.MapPointOptions|Highcharts.PointOptionsType
-                    ),
+                    val: (PointOptions|PointShortOptions|Highcharts.MapPointOptions),
                     i: number
                 ): void {
                     var ix = 0;

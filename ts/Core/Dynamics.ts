@@ -12,9 +12,11 @@
 
 import type AnimationOptionsObject from './Animation/AnimationOptionsObject';
 import type ColorAxis from './Axis/ColorAxis';
+import type { HTMLDOMElement } from './Renderer/DOMElementType';
 import type {
-    HTMLDOMElement
-} from './Renderer/DOMElementType';
+    PointOptions,
+    PointShortOptions
+} from './Series/PointOptions';
 import type { SeriesOptionsType } from './Series/Types';
 import A from './Animation/AnimationUtilities.js';
 const {
@@ -96,6 +98,22 @@ declare module './Chart/ChartLike'{
     }
 }
 
+declare module './Series/PointLike' {
+    interface PointLike {
+        touched?: boolean;
+        remove(
+            redraw?: boolean,
+            animation?: (boolean|Partial<AnimationOptionsObject>)
+        ): void;
+        update(
+            options: (PointOptions|PointShortOptions),
+            redraw?: boolean,
+            animation?: (boolean|Partial<AnimationOptionsObject>),
+            runEvent?: boolean
+        ): void;
+    }
+}
+
 /**
  * Internal types
  * @private
@@ -119,24 +137,11 @@ declare global {
             axis: AxisOptions | ColorAxis.Options;
             redraw: undefined | boolean;
         }
-        interface PointLike {
-            touched?: boolean;
-            remove(
-                redraw?: boolean,
-                animation?: (boolean|Partial<AnimationOptionsObject>)
-            ): void;
-            update(
-                options: PointOptionsType,
-                redraw?: boolean,
-                animation?: (boolean|Partial<AnimationOptionsObject>),
-                runEvent?: boolean
-            ): void;
-        }
         interface Series {
             initialType?: string;
             touched?: boolean;
             addPoint(
-                options: PointOptionsType,
+                options: (PointOptions|PointShortOptions),
                 redraw?: boolean,
                 shift?: boolean,
                 animation?: (boolean|Partial<AnimationOptionsObject>),
@@ -1045,7 +1050,7 @@ extend(Point.prototype, /** @lends Highcharts.Point.prototype */ {
      */
     update: function (
         this: Point,
-        options: Highcharts.PointOptionsType,
+        options: (PointOptions|PointShortOptions),
         redraw?: boolean,
         animation?: (boolean|Partial<AnimationOptionsObject>),
         runEvent?: boolean
@@ -1223,7 +1228,7 @@ extend(LineSeries.prototype, /** @lends Series.prototype */ {
      */
     addPoint: function (
         this: Highcharts.Series,
-        options: Highcharts.PointOptionsType,
+        options: (PointOptions|PointShortOptions),
         redraw?: boolean,
         shift?: boolean,
         animation?: (boolean|Partial<AnimationOptionsObject>),
@@ -1650,7 +1655,7 @@ extend(LineSeries.prototype, /** @lends Series.prototype */ {
                     kinds.dataLabel = 1;
                 }
             }
-            this.points.forEach(function (point: Point): void {
+            this.points.forEach(function (point): void {
                 if (point && point.series) {
                     point.resolveColor();
                     // Destroy elements in order to recreate based on updated

@@ -10,6 +10,12 @@
  *  !!!!!!! SOURCE GETS TRANSPILED BY TYPESCRIPT. EDIT TS FILE ONLY. !!!!!!!
  * */
 
+'use strict';
+
+import type {
+    PointOptions,
+    PointShortOptions
+} from '../Core/Series/PointOptions';
 import type CSSObject from '../Core/Renderer/CSSObject';
 import type SVGAttributes from '../Core/Renderer/SVG/SVGAttributes';
 import type SVGElement from '../Core/Renderer/SVG/SVGElement';
@@ -109,7 +115,7 @@ declare global {
         }
         interface WordcloudSeriesOptions extends ColumnSeriesOptions {
             allowExtendPlayingField?: boolean;
-            data?: Array<PointOptionsType|WordcloudPointOptions>;
+            data?: Array<(PointOptions|PointShortOptions|WordcloudPointOptions)>;
             maxFontSize?: number;
             minFontSize?: number;
             placementStrategy?: string;

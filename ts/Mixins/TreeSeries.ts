@@ -4,6 +4,9 @@
  *
  * */
 
+'use strict';
+
+import type PointOptions from '../Core/Series/PointOptions';
 import type ColorString from '../Core/Color/ColorString';
 import type ColorType from '../Core/Color/ColorType';
 import type Point from '../Core/Series/Point';
@@ -39,7 +42,7 @@ declare global {
         interface TreePoint extends Point {
             options: TreePointOptions;
         }
-        interface TreePointOptions extends PointOptionsObject {
+        interface TreePointOptions extends PointOptions {
             value?: (number|null);
         }
         interface TreeSeries extends Series {

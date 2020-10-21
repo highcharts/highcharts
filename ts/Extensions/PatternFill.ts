@@ -39,6 +39,13 @@ const {
 
 import '../Series/LineSeries.js';
 
+declare module '../Core/Series/PointLike' {
+    interface PointLike {
+        /** @requires modules/pattern-fill */
+        calculatePatternDimensions(pattern: PatternFill.PatternOptionsObject): void;
+    }
+}
+
 /**
  * Internal types
  * @private
@@ -49,9 +56,6 @@ declare global {
             aspectHeight?: number;
             aspectRatio?: number;
             aspectWidth?: number;
-        }
-        interface PointLike {
-            calculatePatternDimensions(pattern: PatternFill.PatternOptionsObject): void;
         }
         interface SVGRenderer {
             defIds?: Array<string>;

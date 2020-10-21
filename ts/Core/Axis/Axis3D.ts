@@ -32,18 +32,21 @@ const {
     wrap
 } = U;
 
+declare module '../Series/PointLike' {
+    interface PointLike {
+        crosshairPos?: number;
+        axisXpos?: number;
+        axisYpos?: number;
+        axisZpos?: number;
+    }
+}
+
 /**
  * Internal types
  * @private
  */
 declare global {
     namespace Highcharts {
-        interface PointLike {
-            crosshairPos?: number;
-            axisXpos?: number;
-            axisYpos?: number;
-            axisZpos?: number;
-        }
         interface Position3dObject {
             matrix?: Array<number>;
         }

@@ -37,9 +37,15 @@ const {
     splat
 } = U;
 
-declare module '../Chart/ChartLike'{
+declare module './ChartLike' {
     interface ChartLike {
         _labelPanes?: Record<string, Axis>;
+    }
+}
+
+declare module '../Series/PointLike' {
+    interface PointLike {
+        change?: number;
     }
 }
 
@@ -56,9 +62,6 @@ declare global {
 
         interface Options {
             isStock?: boolean;
-        }
-        interface PointLike {
-            change?: number;
         }
         interface Series {
             clipBox?: BBoxObject;

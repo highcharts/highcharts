@@ -13,6 +13,10 @@
 
 import type ColorType from '../Color/ColorType';
 import type Point from '../Series/Point';
+import type {
+    PointOptions,
+    PointShortOptions
+} from '../Series/PointOptions';
 import type SVGElement from '../Renderer/SVG/SVGElement';
 import type SVGPath from '../Renderer/SVG/SVGPath';
 import Axis from './Axis.js';
@@ -686,7 +690,7 @@ class GridAxis {
                 const isLast = value === tickPos[tickPos.length - 1];
                 const point: (Point|undefined) =
                     series && find(series.options.data as any, function (
-                        p: Highcharts.PointOptionsType
+                        p: (PointOptions|PointShortOptions)
                     ): boolean {
                         return (p as any)[axis.isXAxis ? 'x' : 'y'] === value;
                     });

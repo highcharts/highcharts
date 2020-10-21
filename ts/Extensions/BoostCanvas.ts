@@ -16,6 +16,10 @@
 'use strict';
 
 import type HTMLElement from '../Core/Renderer/HTML/HTMLElement';
+import type {
+    PointOptions,
+    PointShortOptions
+} from '../Core/Series/PointOptions';
 import type SVGAttributes from '../Core/Renderer/SVG/SVGAttributes';
 import Chart from '../Core/Chart/Chart.js';
 import Color from '../Core/Color/Color.js';
@@ -331,8 +335,7 @@ const initCanvasBoost = function (): void {
                 c = 0,
                 xData = series.processedXData,
                 yData = series.processedYData,
-                rawData: Array<Highcharts.PointOptionsType> =
-                    options.data as any,
+                rawData: Array<(PointOptions|PointShortOptions)> = options.data as any,
                 xExtremes = xAxis.getExtremes(),
                 xMin = xExtremes.min,
                 xMax = xExtremes.max,

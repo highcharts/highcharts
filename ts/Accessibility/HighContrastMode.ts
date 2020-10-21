@@ -15,28 +15,23 @@
 import type ColorType from '../Core/Color/ColorType';
 import type Point from '../Core/Series/Point';
 import H from '../Core/Globals.js';
+const {
+    doc,
+    isMS,
+    win
+} = H;
 
 declare module '../Core/Chart/ChartLike'{
     interface ChartLike {
         highContrastModeActive?: boolean;
     }
 }
-/**
- * Internal types.
- * @private
- */
-declare global {
-    namespace Highcharts {
 
-        interface PointOptionsObject {
-            borderColor?: ColorType;
-        }
+declare module '../Core/Series/PointLike' {
+    interface PointLike {
+        borderColor?: ColorType;
     }
 }
-
-var isMS = H.isMS,
-    win = H.win,
-    doc = win.document;
 
 var whcm = {
 
@@ -100,9 +95,8 @@ var whcm = {
         chart.update(theme, false);
 
         // Force series colors (plotOptions is not enough)
-        chart.series.forEach(function (s: Highcharts.Series): void {
-            var plotOpts: Highcharts.PointOptionsObject =
-                theme.plotOptions[s.type] || {};
+        chart.series.forEach(function (s): void {
+            var plotOpts = theme.plotOptions[s.type] || {};
             s.update({
                 color: plotOpts.color || 'windowText',
                 colors: [plotOpts.color || 'windowText'],
@@ -110,7 +104,7 @@ var whcm = {
             });
 
             // Force point colors if existing
-            s.points.forEach(function (p: Point): void {
+            s.points.forEach(function (p): void {
                 if (p.options && p.options.color) {
                     p.update({
                         color: plotOpts.color || 'windowText',

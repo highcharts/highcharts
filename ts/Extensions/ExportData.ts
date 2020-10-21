@@ -17,6 +17,10 @@
 'use strict';
 
 import type Point from '../Core/Series/Point';
+import type {
+    PointOptions,
+    PointShortOptions
+} from '../Core/Series/PointOptions';
 import Axis from '../Core/Axis/Axis.js';
 import Chart from '../Core/Chart/Chart.js';
 import H from '../Core/Globals.js';
@@ -691,7 +695,7 @@ Chart.prototype.getDataRows = function (
             // Export directly from options.data because we need the uncropped
             // data (#7913), and we need to support Boost (#7026).
             (series.options.data as any).forEach(function eachData(
-                options: Highcharts.PointOptionsType,
+                options: (PointOptions|PointShortOptions),
                 pIdx: number
             ): void {
                 var key: (number|string),

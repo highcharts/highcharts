@@ -18,16 +18,19 @@ import H from '../Globals.js';
 import Math3D from '../../Extensions/Math3D.js';
 const { perspective } = Math3D;
 
+declare module './PointLike' {
+    interface PointLike {
+        plotZ?: number;
+        z?: number;
+    }
+}
+
 /**
  * Internal types
  * @private
  */
 declare global {
     namespace Highcharts {
-        interface PointLike {
-            plotZ?: number;
-            z?: number;
-        }
         interface Series {
             zAxis?: ZAxis;
             translate3dPoints(): void;

@@ -15,6 +15,8 @@
 import type AnimationOptionsObject from '../Core/Animation/AnimationOptionsObject';
 import type ColorString from '../Core/Color/ColorString';
 import type ColorType from '../Core/Color/ColorType';
+import type PointerEvent from '../Core/PointerEvent';
+import type { PointOptions, PointShortOptions } from '../Core/Series/PointOptions';
 import type SVGAttributes from '../Core/Renderer/SVG/SVGAttributes';
 import type SVGElement from '../Core/Renderer/SVG/SVGElement';
 import type SVGPath from '../Core/Renderer/SVG/SVGPath';
@@ -55,6 +57,25 @@ declare module '../Core/Chart/ChartLike'{
         hideDragHandles(): void;
         /** @requires modules/draggable-points */
         zoomOrPanKeyPressed(e: Event): boolean;
+    }
+}
+
+declare module '../Core/Series/PointLike' {
+    interface PointLike {
+        /** @requires modules/draggable-points */
+        getDropValues(
+            origin: Highcharts.DragDropPositionObject,
+            newPos: PointerEvent,
+            updateProps: Record<string, Highcharts.SeriesDragDropPropsObject>
+        ): Record<string, number>;
+        /** @requires modules/draggable-points */
+        showDragHandles(): void;
+    }
+}
+
+declare module '../Core/Series/PointOptions' {
+    interface PointOptions {
+        dragDrop?: Highcharts.DragDropOptionsObject;
     }
 }
 
@@ -125,16 +146,6 @@ declare global {
             group: SVGElement;
             point: string;
         }
-        interface PointLike {
-            /** @requires modules/draggable-points */
-            getDropValues(
-                origin: DragDropPositionObject,
-                newPos: PointerEventObject,
-                updateProps: Dictionary<SeriesDragDropPropsObject>
-            ): Dictionary<number>;
-            /** @requires modules/draggable-points */
-            showDragHandles(): void;
-        }
         interface PointDragCallbackFunction {
             (this: Point, event: PointDragEventObject): void;
         }
@@ -169,9 +180,6 @@ declare global {
             preventDefault: Function;
             target: Point;
             type: 'drop';
-        }
-        interface PointOptionsObject {
-            dragDrop?: DragDropOptionsObject;
         }
         interface PointEventsOptionsObject {
             drag?: PointDragCallbackFunction;
@@ -1884,7 +1892,7 @@ function getGroupedPoints(point: Point): Array<Point> {
 
     if (series.isSeriesBoosting) { // #11156
         (series.options.data as any).forEach(function (
-            pointOptions: Highcharts.PointOptionsType,
+            pointOptions: (PointOptions|PointShortOptions),
             i: number
         ): void {
             points.push(

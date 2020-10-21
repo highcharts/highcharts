@@ -8,7 +8,13 @@
  *
  * */
 
+'use strict';
+
 import type ColorType from '../Core/Color/ColorType';
+import type {
+    PointOptions,
+    PointShortOptions
+} from '../Core/Series/PointOptions';
 import type RadialAxis from '../Core/Axis/RadialAxis';
 import type SVGAttributes from '../Core/Renderer/SVG/SVGAttributes';
 import type SVGPath from '../Core/Renderer/SVG/SVGPath';
@@ -61,7 +67,7 @@ declare global {
             public hasData(): boolean;
             public render(): void;
             public setData(
-                data: Array<PointOptionsType>,
+                data: Array<(PointOptions|PointShortOptions)>,
                 redraw?: boolean
             ): void;
             public translate(): void;
@@ -606,7 +612,7 @@ BaseSeries.seriesType<typeof Highcharts.GaugeSeries>('gauge', 'line', {
      */
     setData: function (
         this: Highcharts.GaugeSeries,
-        data: Array<Highcharts.PointOptionsType>,
+        data: Array<(PointOptions|PointShortOptions)>,
         redraw?: boolean
     ): void {
         Series.prototype.setData.call(this, data, false);

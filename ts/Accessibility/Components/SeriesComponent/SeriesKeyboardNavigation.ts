@@ -37,6 +37,13 @@ declare module '../../../Core/Chart/ChartLike'{
     }
 }
 
+declare module '../../../Core/Series/PointLike' {
+    interface PointLike {
+        /** @requires modules/accessibility */
+        highlight(): Point;
+    }
+}
+
 /**
  * Internal types.
  * @private
@@ -76,10 +83,6 @@ declare global {
                 keyCode: number
             ): number;
             public onSeriesDestroy(series: Highcharts.Series): void;
-        }
-        interface PointLike {
-            /** @requires modules/accessibility */
-            highlight(): Point;
         }
         interface Series {
             /** @requires modules/accessibility */

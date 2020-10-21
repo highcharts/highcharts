@@ -39,9 +39,15 @@ const {
     wrap
 } = U;
 
-declare module '../../Core/Chart/ChartLike'{
+declare module '../../Core/Chart/ChartLike' {
     interface ChartLike {
         getVisibleBubbleSeriesIndex(): number;
+    }
+}
+
+declare module '../../Core/Series/PointLike' {
+    interface PointLike {
+        isBubble?: boolean;
     }
 }
 
@@ -112,9 +118,6 @@ declare global {
         }
         interface LegendOptions {
             bubbleLegend?: BubbleLegendOptions;
-        }
-        interface PointLike {
-            isBubble?: boolean;
         }
         interface Series {
             isBubble?: boolean;

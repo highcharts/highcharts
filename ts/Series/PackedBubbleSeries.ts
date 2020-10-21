@@ -30,9 +30,15 @@ const {
     pick
 } = U;
 
-declare module '../Core/Chart/ChartLike'{
+declare module '../Core/Chart/ChartLike' {
     interface ChartLike {
         getSelectedParentNodes(): Array<Highcharts.PackedBubblePoint>;
+    }
+}
+
+declare module '../Core/Series/PointLike' {
+    interface PointLike {
+        degree?: number;
     }
 }
 
@@ -215,9 +221,6 @@ declare global {
             layoutAlgorithm?: PackedBubbleLayoutAlgorithmOptions;
             minSize?: (number|string);
             useSimulation?: boolean;
-        }
-        interface PointLike {
-            degree?: number;
         }
         type PackedBubbleData = [
             (number|null),

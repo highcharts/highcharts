@@ -16,7 +16,11 @@
 
 import type AnimationOptionsObject from '../Animation/AnimationOptionsObject';
 import type PointLike from './PointLike';
-import type PointType from './PointType';
+import type {
+    PointOptions,
+    PointShortOptions
+} from './PointOptions';
+import type SVGElement from '../Renderer/SVG/SVGElement';
 
 /* *
  *
@@ -58,7 +62,7 @@ export interface SeriesLike {
  */
 export interface SeriesLikeOptions /* @todo */ extends Highcharts.SeriesOptions {
     animation?: (boolean|DeepPartial<AnimationOptionsObject>);
-    data?: Array<PointType['options']>;
+    data?: Array<(PointOptions|PointShortOptions)>;
     dataSorting?: Highcharts.DataSortingOptionsObject; // cartasian series
     index?: number;
     /** @private */

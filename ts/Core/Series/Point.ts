@@ -12,6 +12,9 @@
 
 import type AnimationOptionsObject from '../Animation/AnimationOptionsObject';
 import type ColorType from '../Color/ColorType';
+import type PointLike from './PointLike';
+import type { PointOptions, PointShortOptions } from './PointOptions';
+import type { PointTypeOptions } from './PointType';
 import type SVGAttributes from '../Renderer/SVG/SVGAttributes';
 import type SVGElement from '../Renderer/SVG/SVGElement';
 import A from '../Animation/AnimationUtilities.js';
@@ -92,25 +95,6 @@ declare global {
         interface PointMouseOverCallbackFunction {
             (this: Point, event: PointerEvent): void;
         }
-        interface PointOptionsObject {
-            className?: string;
-            color?: ColorType;
-            colorIndex?: number;
-            custom?: Dictionary<any>;
-            drilldown?: string;
-            events?: PointEventsOptionsObject;
-            id?: string;
-            index?: number;
-            labelrank?: number;
-            legendIndex?: number;
-            marker?: PointMarkerOptionsObject;
-            name?: string;
-            selected?: boolean;
-            states?: PointStatesOptionsObject;
-            visible?: boolean;
-            x?: number;
-            y?: (null|number);
-        }
         interface PointRemoveCallbackFunction {
             (this: Point, event: Event): void;
         }
@@ -147,27 +131,20 @@ declare global {
             (this: Point, event: PointUpdateEventObject): void;
         }
         interface PointUpdateEventObject {
-            options?: PointOptionsType;
+            options?: PointTypeOptions;
         }
         interface Series {
             _hasPointLabels?: boolean;
             _hasPointMarkers?: boolean;
         }
         interface SeriesOptions {
-            data?: Array<PointOptionsType>;
+            data?: Array<(PointOptions|PointShortOptions)>;
             marker?: PointMarkerOptionsObject;
             point?: PlotSeriesPointOptions;
         }
         interface SeriesPointOptions {
             events?: PointEventsOptionsObject;
         }
-        type PointOptionsType = (
-            number|
-            string|
-            Array<(number|string|null)>|
-            PointOptionsObject|
-            null
-        );
         type PointStateValue = keyof PointStatesOptionsObject;
         let Point: PointClass;
     }
@@ -429,7 +406,7 @@ class Point {
      * @name Highcharts.Point#options
      * @type {Highcharts.PointOptionsObject}
      */
-    public options: Highcharts.PointOptionsObject = void 0 as any;
+    public options: PointOptions = void 0 as any;
 
     /**
      * The percentage for points in a stacked series or pies.
@@ -542,7 +519,7 @@ class Point {
      *         The Point instance.
      */
     public applyOptions(
-        options: Highcharts.PointOptionsType,
+        options: (PointOptions|PointShortOptions),
         x?: number
     ): Point {
         var point = this,
@@ -926,7 +903,7 @@ class Point {
      *
      * @fires Highcharts.Point#event:afterInit
      */
-    public init(series: Highcharts.Series, options: Highcharts.PointOptionsType, x?: number): Point {
+    public init(series: Highcharts.Series, options: (PointOptions|PointShortOptions), x?: number): Point {
 
         this.series = series;
 
@@ -959,8 +936,8 @@ class Point {
      * @return {Highcharts.Dictionary<*>}
      *         Transformed options.
      */
-    public optionsToObject(options: Highcharts.PointOptionsType): Highcharts.Dictionary<any> {
-        var ret = {} as Highcharts.Dictionary<any>,
+    public optionsToObject(options: (PointOptions|PointShortOptions)): this['options'] {
+        var ret = {} as Record<string, any>,
             series = this.series,
             keys = series.options.keys,
             pointArrayMap = keys || series.pointArrayMap || ['y'],
@@ -1158,7 +1135,7 @@ class Point {
     }
 }
 
-interface Point extends Highcharts.PointLike {
+interface Point extends PointLike {
     // merge extensions with point class
 }
 

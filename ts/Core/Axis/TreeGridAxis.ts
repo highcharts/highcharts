@@ -9,8 +9,14 @@
  *
  * */
 
+'use strict';
+
 import type AxisTypes from './Types';
 import type Chart from '../Chart/Chart';
+import type {
+    PointOptions,
+    PointShortOptions
+} from '../Series/PointOptions';
 import type SVGAttributes from '../Renderer/SVG/SVGAttributes';
 import H from '../Globals.js';
 import Axis from './Axis.js';
@@ -35,6 +41,13 @@ const {
 
 import './GridAxis.js';
 import './BrokenAxis.js';
+
+declare module '../Series/PointOptions' {
+    interface PointOptions extends Highcharts.TreePointOptionsObject {
+        collapsed?: boolean;
+        seriesIndex?: number;
+    }
+}
 
 /**
  * Internal types
@@ -117,13 +130,8 @@ namespace TreeGridAxis {
         labels?: LabelsOptions;
     }
 
-    export interface PointOptionsObject extends Highcharts.TreePointOptionsObject {
-        collapsed?: boolean;
-        seriesIndex?: number;
-    }
-
     export interface TreeGridNode extends Highcharts.TreeNode {
-        data: PointOptionsObject;
+        data: PointOptions;
         pos: number;
         seriesIndex: number;
     }
@@ -413,7 +421,7 @@ namespace TreeGridAxis {
                     uniqueNames = options.uniqueNames,
                     numberOfSeries = 0,
                     isDirty: (boolean | undefined),
-                    data: Array<PointOptionsObject>,
+                    data: Array<PointOptions>,
                     treeGrid: TreeGridObject,
                     max = options.max;
                 // Check whether any of series is rendering for the first time,
@@ -432,9 +440,9 @@ namespace TreeGridAxis {
                 if (isDirty) {
                     // Concatenate data from all series assigned to this axis.
                     data = axis.series.reduce(function (
-                        arr: Array<PointOptionsObject>,
+                        arr: Array<PointOptions>,
                         s: Highcharts.GanttSeries
-                    ): Array<PointOptionsObject> {
+                    ): Array<PointOptions> {
                         if (s.visible) {
                             // Push all data to array
                             (s.options.data || []).forEach(function (data): void {
@@ -448,8 +456,8 @@ namespace TreeGridAxis {
                                 if (isObject(data, true)) {
                                     // Set series index on data. Removed again
                                     // after use.
-                                    (data as PointOptionsObject).seriesIndex = numberOfSeries;
-                                    arr.push(data as PointOptionsObject);
+                                    (data as PointOptions).seriesIndex = numberOfSeries;
+                                    arr.push(data as PointOptions);
                                 }
                             });
 
@@ -488,10 +496,10 @@ namespace TreeGridAxis {
                     axis.treeGrid.tree = treeGrid.tree;
 
                     // Update yData now that we have calculated the y values
-                    axis.series.forEach(function (series: Highcharts.Series): void {
+                    axis.series.forEach(function (series): void {
                         var axisData = (series.options.data || []).map(function (
-                            d: Highcharts.PointOptionsType
-                        ): Highcharts.PointOptionsType {
+                            d: (PointOptions|PointShortOptions)
+                        ): (PointOptions|PointShortOptions) {
 
                             if (isArray(d) && series.options.keys && series.options.keys.length) {
                                 // Get the axisData from the data array used to

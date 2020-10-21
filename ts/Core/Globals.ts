@@ -12,12 +12,20 @@
 
 import type Chart from './Chart/Chart';
 
-declare module './Chart/ChartLike'{
+declare module './Chart/ChartLike' {
     interface ChartLike {
         frameShapes?: any; // @todo highcharts 3d
         isBoosting?: any; // @todo boost module
     }
 }
+
+declare module './Series/PointLike' {
+    interface PointLike {
+        startR?: any; // @todo solid-gauge
+        tooltipDateKeys?: any; // @todo xrange
+    }
+}
+
 /**
  * Internal types
  * @private
@@ -39,10 +47,6 @@ declare global {
         }
         interface Options {
             toolbar?: any; // @todo stock-tools
-        }
-        interface PointLike {
-            startR?: any; // @todo solid-gauge
-            tooltipDateKeys?: any; // @todo xrange
         }
         interface Series {
             fillGraph?: any; // @todo ichimoku indicator

@@ -48,9 +48,15 @@ const {
     splat
 } = U;
 
-declare module '../Chart/ChartLike'{
+declare module '../Chart/ChartLike' {
     interface ChartLike {
         colorAxis?: Array<Highcharts.ColorAxis>;
+    }
+}
+
+declare module '../Series/PointLike' {
+    interface PointLike {
+        dataClass?: number;
     }
 }
 
@@ -122,9 +128,6 @@ declare global {
         }
         interface Options {
             colorAxis?: (ColorAxis.Options|Array<ColorAxis.Options>);
-        }
-        interface PointLike {
-            dataClass?: number;
         }
     }
 }

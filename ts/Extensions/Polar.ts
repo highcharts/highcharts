@@ -38,6 +38,14 @@ const {
     wrap
 } = U;
 
+declare module '../Core/Series/PointLike' {
+    interface PointLike {
+        rectPlotX?: Highcharts.PolarPoint['rectPlotX'];
+        rectPlotY?: Highcharts.PolarPoint['rectPlotY'];
+        ttBelow?: boolean;
+    }
+}
+
 /**
  * Internal types
  * @private
@@ -53,11 +61,6 @@ declare global {
         interface ColumnSeries {
             polarArc: PolarSeries['polarArc'];
             findAlignments: PolarSeries['findAlignments'];
-        }
-        interface PointLike {
-            rectPlotX?: PolarPoint['rectPlotX'];
-            rectPlotY?: PolarPoint['rectPlotY'];
-            ttBelow?: boolean;
         }
         interface PolarConnector {
             leftContX: number;

@@ -12,9 +12,15 @@
  *
  * */
 
+'use strict';
+
 import type Chart from '../Core/Chart/Chart';
 import type ColorType from '../Core/Color/ColorType';
 import type GradientColor from '../Core/Color/GradientColor';
+import type {
+    PointOptions,
+    PointShortOptions
+} from '../Core/Series/PointOptions';
 import type SVGAttributes from '../Core/Renderer/SVG/SVGAttributes';
 import type SVGElement from '../Core/Renderer/SVG/SVGElement';
 import type SVGPath from '../Core/Renderer/SVG/SVGPath';
@@ -90,7 +96,7 @@ declare global {
         }
         interface Funnel3dSeriesOptions extends ColumnSeriesOptions {
             center?: Array<(number|string|null)>;
-            data?: Array<(Funnel3dPointOptions|PointOptionsType)>;
+            data?: Array<(PointOptions|PointShortOptions|Funnel3dPointOptions)>;
             gradientForSides?: boolean;
             height?: (number|string);
             ignoreHiddenPoint?: boolean;

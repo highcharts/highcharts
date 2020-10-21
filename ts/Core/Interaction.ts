@@ -31,7 +31,7 @@ import O from './Options.js';
 const {
     defaultOptions
 } = O;
-import Point from '../Core/Series/Point.js';
+import Point from './Series/Point.js';
 import U from './Utilities.js';
 const {
     addEvent,
@@ -49,13 +49,33 @@ const {
     pick
 } = U;
 
-declare module '../Core/Chart/ChartLike'{
+declare module './Chart/ChartLike' {
     interface ChartLike {
         resetZoomButton?: SVGElement;
         pan(e: Highcharts.PointerEventObject, panning: boolean|Highcharts.PanningOptions): void;
         showResetZoom(): void;
         zoom(event: Highcharts.SelectEventObject): void;
         zoomOut(): void;
+    }
+}
+
+declare module './Series/PointLike' {
+    interface PointLike {
+        className?: string;
+        events?: Highcharts.SeriesEventsOptions;
+        hasImportedEvents?: boolean;
+        selected?: boolean;
+        selectedStaging?: boolean;
+        state?: string;
+        haloPath(size: number): SVGPath;
+        importEvents(): void;
+        onMouseOut(): void;
+        onMouseOver(e?: Highcharts.PointerEventObject): void;
+        select(selected?: boolean | null, accumulate?: boolean): void;
+        setState(
+            state?: string,
+            move?: boolean
+        ): void;
     }
 }
 
@@ -80,23 +100,6 @@ declare global {
             startMin: (number);
             startMax: (number);
             isDirty?: boolean;
-        }
-        interface PointLike {
-            className?: string;
-            events?: SeriesEventsOptions;
-            hasImportedEvents?: boolean;
-            selected?: boolean;
-            selectedStaging?: boolean;
-            state?: string;
-            haloPath(size: number): SVGPath;
-            importEvents(): void;
-            onMouseOut(): void;
-            onMouseOver(e?: PointerEventObject): void;
-            select(selected?: boolean | null, accumulate?: boolean): void;
-            setState(
-                state?: string,
-                move?: boolean
-            ): void;
         }
         interface PointEventsOptionsObject {
             select?: PointSelectCallbackFunction;

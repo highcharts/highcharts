@@ -31,6 +31,13 @@ declare module '../../Core/Chart/ChartLike'{
     }
 }
 
+declare module '../../Core/Series/PointLike' {
+    interface PointLike {
+        cancelSonify?: Highcharts.SonifyablePoint['cancelSonify'];
+        sonify?: Highcharts.SonifyablePoint['sonify'];
+    }
+}
+
 /**
  * Internal types.
  * @private
@@ -41,10 +48,6 @@ declare global {
             currentlyPlayingPoint?: SonifyablePoint;
             timeline?: Timeline;
             duration?: number;
-        }
-        interface PointLike {
-            cancelSonify?: SonifyablePoint['cancelSonify'];
-            sonify?: SonifyablePoint['sonify'];
         }
         interface PointSonificationStateObject {
             currentlyPlayingPoint?: SonifyablePoint;

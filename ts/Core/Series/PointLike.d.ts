@@ -14,6 +14,7 @@
  *
  * */
 
+import type PointOptions from './PointOptions';
 import type SeriesLike from './SeriesLike';
 
 /* *
@@ -30,28 +31,8 @@ import type SeriesLike from './SeriesLike';
  * this definition file.
  */
 export interface PointLike {
-    options: PointLikeOptions;
+    options: PointOptions;
     series: SeriesLike;
-}
-
-/**
- * Helper interface for point types to add event options to all point options.
- *
- * Use the `declare module './PointLike'` pattern to overload the interface in
- * this definition file.
- */
-export interface PointLikeEventOptions {
-
-}
-
-/**
- * Helper interface for point types to add options to all point options.
- *
- * Use the `declare module './PointLike'` pattern to overload the interface in
- * this definition file.
- */
-export interface PointLikeOptions {
-    events?: PointLikeEventOptions;
 }
 
 /* *

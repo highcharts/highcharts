@@ -25,6 +25,13 @@ const {
     pick
 } = U;
 
+declare module '../Core/Series/PointLike' {
+    interface PointLike {
+        plotHigh?: Highcharts.AreaRangePoint['plotHigh'];
+        plotLow?: Highcharts.AreaRangePoint['plotLow'];
+    }
+}
+
 /**
  * Internal types
  * @private
@@ -50,10 +57,6 @@ declare global {
             );
             states?: SeriesStatesOptionsObject<AreaRangeSeries>;
             trackByArea?: boolean;
-        }
-        interface PointLike {
-            plotHigh?: AreaRangePoint['plotHigh'];
-            plotLow?: AreaRangePoint['plotLow'];
         }
         class AreaRangePoint extends AreaPoint {
             public _plotY?: number;

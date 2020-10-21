@@ -18,6 +18,7 @@ import type {
 import type Axis from '../Core/Axis/Axis';
 import type ColorString from '../Core/Color/ColorString';
 import type ColorType from '../Core/Color/ColorType';
+import type PositionObject from '../Core/Renderer/PositionObject';
 import type SVGElement from '../Core/Renderer/SVG/SVGElement';
 import Connection from './Connection.js';
 import Chart from '../Core/Chart/Chart.js';
@@ -26,6 +27,30 @@ import H from '../Core/Globals.js';
 declare module '../Core/Chart/ChartLike'{
     interface ChartLike {
         pathfinder?: Pathfinder;
+    }
+}
+
+declare module '../Core/Series/PointLike' {
+    interface PointLike {
+        getMarkerVector(
+            radians: number,
+            markerRadius: number,
+            anchor: PositionObject
+        ): PositionObject;
+        getPathfinderAnchorPoint(
+            markerOptions: Highcharts.ConnectorsMarkerOptions
+        ): PositionObject;
+        getRadiansToVector(v1: PositionObject, v2: PositionObject): number;
+    }
+}
+
+declare module '../Core/Series/PointOptions' {
+    interface PointOptions {
+        connect?: (
+            Highcharts.PointConnectOptionsObject|
+            Highcharts.GanttDependencyOption
+        );
+        connectors?: Highcharts.ConnectorsOptions;
     }
 }
 
@@ -94,23 +119,8 @@ declare global {
         interface Options {
             connectors?: ConnectorsOptions;
         }
-        interface PointLike {
-            getMarkerVector(
-                radians: number,
-                markerRadius: number,
-                anchor: PositionObject
-            ): PositionObject;
-            getPathfinderAnchorPoint(
-                markerOptions: ConnectorsMarkerOptions
-            ): PositionObject;
-            getRadiansToVector(v1: PositionObject, v2: PositionObject): number;
-        }
         interface PointConnectOptionsObject {
             to?: string;
-        }
-        interface PointOptionsObject {
-            connect?: PointConnectOptionsObject | GanttDependencyOption;
-            connectors?: ConnectorsOptions;
         }
         interface Series {
             pathfinderRemoveRenderEvent?: Function;

@@ -12,12 +12,19 @@
 
 'use strict';
 
+import type PointOptions from '../../../Core/Series/PointOptions';
 import LineSeries from '../../../Series/LineSeries.js';
 import U from '../../../Core/Utilities.js';
 const {
     addEvent,
     merge
 } = U;
+
+declare module '../../../Core/Series/PointLike' {
+    interface PointLike {
+        hasForcedA11yMarker?: boolean;
+    }
+}
 
 /**
  * Internal types.
@@ -32,9 +39,6 @@ declare global {
             a11yMarkersForced?: boolean;
             resetA11yMarkerOptions: PointMarkerOptionsObject;
             resetMarkerOptions?: unknown;
-        }
-        interface PointLike {
-            hasForcedA11yMarker?: boolean;
         }
     }
 }
@@ -107,7 +111,7 @@ function unforceSeriesMarkerOptions(series: Highcharts.AccessibilitySeries): voi
  * @private
  */
 function forceZeroOpacityMarkerOptions(
-    options: (Highcharts.PointOptionsObject|Highcharts.SeriesOptions)
+    options: (PointOptions|Highcharts.SeriesOptions)
 ): void {
     merge(true, options, {
         marker: {
@@ -125,9 +129,7 @@ function forceZeroOpacityMarkerOptions(
 /**
  * @private
  */
-function getPointMarkerOpacity(
-    pointOptions: Highcharts.PointOptionsObject
-): number {
+function getPointMarkerOpacity(pointOptions: PointOptions): number {
     return (pointOptions.marker as any).states &&
         (pointOptions.marker as any).states.normal &&
         (pointOptions.marker as any).states.normal.opacity || 1;
@@ -137,9 +139,7 @@ function getPointMarkerOpacity(
 /**
  * @private
  */
-function unforcePointMarkerOptions(
-    pointOptions: Highcharts.PointOptionsObject
-): void {
+function unforcePointMarkerOptions(pointOptions: PointOptions): void {
     merge(true, pointOptions.marker, {
         states: {
             normal: {

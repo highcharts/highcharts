@@ -10,6 +10,12 @@
  *
  * */
 
+'use strict';
+
+import type {
+    PointOptions,
+    PointShortOptions
+} from '../Core/Series/PointOptions';
 import BaseSeries from '../Core/Series/Series.js';
 import DerivedSeriesMixin from '../Mixins/DerivedSeries.js';
 import U from '../Core/Utilities.js';
@@ -231,7 +237,7 @@ BaseSeries.seriesType<typeof Highcharts.BellcurveSeries>('bellcurve', 'areasplin
 
         setDerivedData: function (
             this: Highcharts.BellcurveSeries
-        ): Array<Highcharts.PointOptionsType> {
+        ): Array<(PointOptions|PointShortOptions)> {
             if ((this.baseSeries as any).yData.length > 1) {
                 this.setMean();
                 this.setStandardDeviation();

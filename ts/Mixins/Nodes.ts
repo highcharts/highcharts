@@ -4,7 +4,10 @@
  *
  * */
 
+'use strict';
+
 import type AnimationOptionsObject from '../Core/Animation/AnimationOptionsObject';
+import type PointOptions from '../Core/Series/PointOptions';
 import H from '../Core/Globals.js';
 import Point from '../Core/Series/Point.js';
 import U from '../Core/Utilities.js';
@@ -14,6 +17,12 @@ const {
     find,
     pick
 } = U;
+
+declare module '../Core/Series/PointLike' {
+    interface PointLike {
+        name?: string;
+    }
+}
 
 /**
  * Internal types
@@ -34,13 +43,10 @@ declare global {
             ): void;
             setNodeState(this: NodesPoint, state: string): void;
         }
-        interface PointLike {
-            name?: string;
-        }
         interface Series {
             nodes?: Array<NodesPoint>;
         }
-        interface NodesPointOptions extends PointOptionsObject {
+        interface NodesPointOptions extends PointOptions {
             id?: string;
             level?: number;
             mass?: number;

@@ -8,7 +8,10 @@
  *
  * */
 
-import type LineSeries from '../../Series/LineSeries';
+import type {
+    PointOptions,
+    PointShortOptions
+} from './PointOptions';
 
 /**
  * All possible series options.
@@ -55,7 +58,7 @@ export interface SeriesLike {
  * definition file.
  */
 export interface SeriesLikeOptions /* @todo */ extends Highcharts.SeriesOptions {
-    data?: Array<Highcharts.PointOptionsType>;
+    data?: Array<(PointOptions|PointShortOptions)>;
     type?: string;
 }
 

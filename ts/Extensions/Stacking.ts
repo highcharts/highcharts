@@ -39,6 +39,13 @@ declare module '../Core/Chart/ChartLike'{
     }
 }
 
+declare module '../Core/Series/PointLike' {
+    interface PointLike {
+        leftCliff?: number;
+        rightCliff?: number;
+    }
+}
+
 /**
  * Internal types
  * @private
@@ -46,10 +53,6 @@ declare module '../Core/Chart/ChartLike'{
 declare global {
     namespace Highcharts {
         type OptionsStackingValue = ('normal'|'overlap'|'percent'|'stream'|'group');
-        interface PointLike {
-            leftCliff?: number;
-            rightCliff?: number;
-        }
         interface Series {
             isRadialBar?: boolean;
             negStacks?: any; // @todo

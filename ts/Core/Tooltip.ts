@@ -40,6 +40,12 @@ const {
     timeUnits
 } = U;
 
+declare module './Series/PointLike' {
+    interface PointLike {
+        tooltipPos?: Array<number>;
+    }
+}
+
 /**
  * Internal types
  * @private
@@ -120,9 +126,6 @@ declare global {
             ): string;
             public update(options: TooltipOptions): void;
             public updatePosition(point: Point): void;
-        }
-        interface PointLike {
-            tooltipPos?: Array<number>;
         }
         interface Series {
             noSharedTooltip?: boolean;

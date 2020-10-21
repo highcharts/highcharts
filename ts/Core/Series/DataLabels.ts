@@ -16,6 +16,7 @@ import type {
     VerticalAlignValue
 } from '../Renderer/AlignObject';
 import type AnimationOptionsObject from '../Animation/AnimationOptionsObject';
+import type BBoxObject from '../Renderer/BBoxObject';
 import type ColorString from '../Color/ColorString';
 import type ColorType from '../Color/ColorType';
 import type CSSObject from '../Renderer/CSSObject';
@@ -47,6 +48,37 @@ const {
     splat,
     stableSort
 } = U;
+
+declare module './PointLike' {
+    interface PointLike {
+        bottom?: number;
+        connector?: SVGElement;
+        connectors?: Array<SVGElement>;
+        contrastColor?: ColorString;
+        dataLabel?: SVGElement;
+        dataLabelOnNull?: boolean;
+        dataLabelPath?: SVGElement;
+        dataLabels?: Array<SVGElement>;
+        distributeBox?: Highcharts.DataLabelsBoxObject;
+        dlBox?: BBoxObject;
+        dlOptions?: Highcharts.DataLabelsOptions;
+        graphic?: SVGElement;
+        /** @deprecated */
+        positionIndex?: unknown;
+        top?: number;
+        getDataLabelPath(dataLabel: SVGElement): SVGElement;
+    }
+}
+
+declare module './PointOptions' {
+    interface PointOptions {
+        dataLabels?: (
+            Highcharts.DataLabelsOptions|
+            Array<Highcharts.DataLabelsOptions>
+        );
+        labelrank?: number;
+    }
+}
 
 /**
  * Internal types
@@ -111,30 +143,6 @@ declare global {
         interface DataLabelsTextPathOptionsObject {
             attributes?: SVGAttributes;
             enabled?: boolean;
-        }
-        interface PointLike {
-            bottom?: number;
-            connector?: SVGElement;
-            connectors?: Array<SVGElement>;
-            contrastColor?: ColorString;
-            dataLabel?: SVGElement;
-            dataLabelPath?: SVGElement;
-            dataLabels?: Array<SVGElement>;
-            distributeBox?: DataLabelsBoxObject;
-            dlBox?: BBoxObject;
-            dlOptions?: DataLabelsOptions;
-            graphic?: SVGElement;
-            /** @deprecated */
-            positionIndex?: unknown;
-            top?: number;
-            getDataLabelPath(dataLabel: SVGElement): SVGElement;
-        }
-        interface PointOptionsObject {
-            dataLabels?: (
-                DataLabelsOptions|
-                Array<DataLabelsOptions>
-            );
-            labelrank?: number;
         }
         interface Series {
             /** @deprecated */
@@ -558,7 +566,7 @@ LineSeries.prototype.drawDataLabels = function (this: Highcharts.Series): void {
         }
 
         // Make the labels for each point
-        points.forEach(function (point: Point): void {
+        points.forEach(function (point): void {
 
             // Merge in series options for the point.
             // @note dataLabelAttribs (like pointAttribs) would eradicate

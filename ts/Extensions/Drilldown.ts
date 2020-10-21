@@ -23,6 +23,10 @@ import type {
     CSSObject,
     CursorValue
 } from '../Core/Renderer/CSSObject';
+import type {
+    PointOptions,
+    PointShortOptions
+} from '../Core/Series/PointOptions';
 import type { SeriesOptionsType } from '../Core/Series/Types';
 import type SVGAttributes from '../Core/Renderer/SVG/SVGAttributes';
 import type SVGElement from '../Core/Renderer/SVG/SVGElement';
@@ -32,13 +36,9 @@ import Axis from '../Core/Axis/Axis.js';
 import Chart from '../Core/Chart/Chart.js';
 import Color from '../Core/Color/Color.js';
 import H from '../Core/Globals.js';
-const {
-    noop
-} = H;
+const { noop } = H;
 import O from '../Core/Options.js';
-const {
-    defaultOptions
-} = O;
+const { defaultOptions } = O;
 import Point from '../Core/Series/Point.js';
 import SVGRenderer from '../Core/Renderer/SVG/SVGRenderer.js';
 import Tick from '../Core/Axis/Tick.js';
@@ -73,6 +73,17 @@ declare module '../Core/Chart/ChartLike' {
         drillUp(): void;
         getDrilldownBackText(): (string|undefined);
         showDrillUpButton(): void;
+    }
+}
+
+declare module '../Core/Series/PointLike' {
+    interface PointLike {
+        drilldown?: string;
+        doDrilldown(
+            _holdRedraw: (boolean|undefined),
+            category: (number|undefined),
+            originalEvent: Event
+        ): void;
     }
 }
 
@@ -152,7 +163,7 @@ declare global {
             lowerSeriesOptions: SeriesOptions;
             oldExtremes: Dictionary<(number|undefined)>;
             pointIndex: number;
-            pointOptions: PointOptionsType;
+            pointOptions: (PointOptions|PointShortOptions);
             seriesOptions: SeriesOptions;
             seriesPurgedOptions: SeriesOptions;
             shapeArgs?: SVGAttributes;
@@ -185,14 +196,6 @@ declare global {
             animateDrillupFrom: ColumnSeries['animateDrillupFrom'];
             animateDrillupTo: ColumnSeries['animateDrillupTo'];
             animateDrilldown(init?: boolean): void;
-        }
-        interface PointLike {
-            drilldown?: string;
-            doDrilldown(
-                _holdRedraw: (boolean|undefined),
-                category: (number|undefined),
-                originalEvent: Event
-            ): void;
         }
         interface Series {
             drilldownLevel?: DrilldownLevelObject;

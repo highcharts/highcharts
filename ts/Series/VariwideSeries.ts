@@ -19,6 +19,12 @@ const {
 } = BaseSeries;
 import H from '../Core/Globals.js';
 
+declare module '../Core/Series/PointLike' {
+    interface PointLike {
+        crosshairWidth?: Highcharts.VariwidePoint['crosshairWidth'];
+    }
+}
+
 /**
  * Internal types
  * @private
@@ -54,9 +60,6 @@ declare global {
         interface Axis {
             variwide?: boolean;
             zData?: Array<number>;
-        }
-        interface PointLike {
-            crosshairWidth?: VariwidePoint['crosshairWidth'];
         }
         interface Tick {
             postTranslate(

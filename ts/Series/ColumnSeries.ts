@@ -46,6 +46,18 @@ const {
  *
  * */
 
+declare module '../Core/Series/PointLike' {
+    interface PointLike {
+        allowShadow?: boolean;
+    }
+}
+
+declare module '../Core/Series/PointOptions' {
+    interface PointOptions {
+        borderColor?: ColorType;
+    }
+}
+
 /**
  * Internal types
  * @private
@@ -71,9 +83,6 @@ declare global {
             pointPadding?: number;
             pointWidth?: number;
             states?: SeriesStatesOptionsObject<ColumnSeries>;
-        }
-        interface PointLike {
-            allowShadow?: ColumnPoint['allowShadow'];
         }
         interface Series {
             barW?: number;

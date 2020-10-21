@@ -280,10 +280,7 @@ BaseSeries.seriesType<typeof Highcharts.HistogramSeries>(
                 });
             });
 
-            data.sort(function (
-                a: Highcharts.PointOptionsObject,
-                b: Highcharts.PointOptionsObject
-            ): number {
+            data.sort(function (a, b): number {
                 return (a.x as any) - (b.x as any);
             });
 

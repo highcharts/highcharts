@@ -11,7 +11,14 @@
 'use strict';
 
 import type { AxisType } from '../Core/Axis/Types';
-import type { SeriesOptionsType, SeriesPlotOptionsType } from '../Core/Series/Types';
+import type {
+    PointOptions,
+    PointShortOptions
+} from '../Core/Series/PointOptions';
+import type {
+    SeriesOptionsType,
+    SeriesPlotOptionsType
+} from '../Core/Series/Types';
 import Axis from '../Core/Axis/Axis.js';
 import DateTimeAxis from '../Core/Axis/DateTimeAxis.js';
 import H from '../Core/Globals.js';
@@ -73,7 +80,7 @@ declare global {
         }
         interface DataGroupingInfoObject {
             length?: number;
-            options?: SeriesOptionsType;
+            options?: (PointOptions|PointShortOptions|SeriesOptionsType);
             start?: number;
         }
         interface DataGroupingOptionsObject {

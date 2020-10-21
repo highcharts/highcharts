@@ -44,6 +44,12 @@ declare module '../../Core/Chart/ChartLike'{
     }
 }
 
+declare module '../../Core/Series/PointLike' {
+    interface PointLike {
+        a11yProxyElement?: HTMLDOMElement;
+    }
+}
+
 /**
  * Internal types.
  * @private
@@ -83,9 +89,6 @@ declare global {
             posElement: SVGElement;
         }
         interface BubbleLegend {
-            a11yProxyElement?: HTMLDOMElement;
-        }
-        interface PointLike {
             a11yProxyElement?: HTMLDOMElement;
         }
         interface Series {

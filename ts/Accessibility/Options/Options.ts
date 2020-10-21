@@ -10,12 +10,20 @@
  *
  * */
 
+'use strict';
+
 import type Chart from '../../Core/Chart/Chart';
 import type CSSObject from '../../Core/Renderer/CSSObject';
 import type {
     HTMLDOMElement
 } from '../../Core/Renderer/DOMElementType';
 import type Point from '../../Core/Series/Point';
+
+declare module '../../Core/Series/PointOptions' {
+    interface PointOptions {
+        accessibility?: Highcharts.PointAccessibilityOptionsObject;
+    }
+}
 
 /**
  * Internal types.
@@ -122,9 +130,6 @@ declare global {
         }
         interface PointAccessibilityOptionsObject {
             description?: string;
-        }
-        interface PointOptionsObject {
-            accessibility?: PointAccessibilityOptionsObject;
         }
         interface ScreenReaderClickCallbackFunction {
             (evt: MouseEvent, chart?: AccessibilityChart): void;

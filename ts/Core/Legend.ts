@@ -26,6 +26,28 @@ const {
     setAnimation
 } = A;
 import H from './Globals.js';
+const {
+    isFirefox,
+    marginNames,
+    win
+} = H;
+import U from './Utilities.js';
+const {
+    addEvent,
+    css,
+    defined,
+    discardElement,
+    find,
+    fireEvent,
+    format,
+    isNumber,
+    merge,
+    pick,
+    relativeLength,
+    stableSort,
+    syncTimeout,
+    wrap
+} = U;
 
 /**
  * Internal types
@@ -196,28 +218,6 @@ declare global {
  * @name Highcharts.SeriesLegendItemClickEventObject#type
  * @type {"legendItemClick"}
  */
-
-import U from './Utilities.js';
-const {
-    addEvent,
-    css,
-    defined,
-    discardElement,
-    find,
-    fireEvent,
-    format,
-    isNumber,
-    merge,
-    pick,
-    relativeLength,
-    stableSort,
-    syncTimeout,
-    wrap
-} = U;
-
-var isFirefox = H.isFirefox,
-    marginNames = H.marginNames,
-    win = H.win;
 
 /* eslint-disable no-invalid-this, valid-jsdoc */
 

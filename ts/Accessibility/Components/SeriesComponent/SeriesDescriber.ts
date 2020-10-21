@@ -44,17 +44,10 @@ const {
     defined
 } = U;
 
-
-/**
- * Internal types.
- * @private
- */
-declare global {
-    namespace Highcharts {
-        interface PointLike {
-            /** @requires modules/accessibility */
-            hasDummyGraphic?: boolean;
-        }
+declare module '../../../Core/Series/PointLike' {
+    interface PointLike {
+        /** @requires modules/accessibility */
+        hasDummyGraphic?: boolean;
     }
 }
 

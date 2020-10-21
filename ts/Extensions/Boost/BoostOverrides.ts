@@ -13,6 +13,10 @@
 'use strict';
 
 import type BBoxObject from '../../Core/Renderer/BBoxObject';
+import type {
+    PointOptions,
+    PointShortOptions
+} from '../../Core/Series/PointOptions';
 import type { SeriesPlotOptionsType } from '../../Core/Series/Types';
 import type SVGAttributes from '../../Core/Renderer/SVG/SVGAttributes';
 import type SVGPath from '../../Core/Renderer/SVG/SVGPath';
@@ -374,7 +378,7 @@ wrap(Series.prototype, 'processData', function (
 
     var series = this,
         dataToMeasure = this.options.data,
-        firstPoint: Highcharts.PointOptionsType;
+        firstPoint: (PointOptions|PointShortOptions);
 
     /**
      * Used twice in this function, first on this.options.data, the second
@@ -383,7 +387,7 @@ wrap(Series.prototype, 'processData', function (
      * @todo Check what happens with data grouping
      */
     function getSeriesBoosting(
-        data?: Array<Highcharts.PointOptionsType>
+        data?: Array<(PointOptions|PointShortOptions)>
     ): boolean {
         return series.chart.isChartSeriesBoosting() || (
             (data ? data.length : 0) >=
@@ -512,7 +516,7 @@ Series.prototype.exitBoost = function (): void {
  */
 Series.prototype.hasExtremes = function (checkX?: boolean): boolean {
     var options = this.options,
-        data: Array<Highcharts.PointOptionsType> = options.data as any,
+        data: Array<(PointOptions|PointShortOptions)> = options.data as any,
         xAxis = this.xAxis && this.xAxis.options,
         yAxis = this.yAxis && this.yAxis.options,
         colorAxis = this.colorAxis && this.colorAxis.options;

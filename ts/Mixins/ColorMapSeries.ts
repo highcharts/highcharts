@@ -11,6 +11,12 @@
 import type SVGAttributes from '../Core/Renderer/SVG/SVGAttributes';
 import H from '../Core/Globals.js';
 
+declare module '../Core/Series/PointLike' {
+    interface PointLike {
+        dataLabelOnNull?: boolean;
+    }
+}
+
 /**
  * Internal types
  * @private
@@ -47,9 +53,6 @@ declare global {
             pointArrayMap: ColorMapSeries['pointArrayMap'];
             pointAttribs: ColorMapSeries['pointAttribs'];
             trackerGroups: ColorMapSeries['trackerGroups'];
-        }
-        interface PointLike {
-            dataLabelOnNull?: ColorMapPoint['dataLabelOnNull'];
         }
         let colorMapPointMixin: ColorMapPointMixin;
         let colorMapSeriesMixin: ColorMapSeriesMixin;
