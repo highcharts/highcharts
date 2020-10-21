@@ -436,8 +436,8 @@ var OrdinalAxis;
             // the same for all segments.
             if (segmentPositions) {
                 info = segmentPositions.info;
-                // Optionally identify ticks with higher rank, for example when the
-                // ticks have crossed midnight.
+                // Optionally identify ticks with higher rank, for example
+                // when the ticks have crossed midnight.
                 if (findHigherRanks && info.unitRange <= timeUnits.hour) {
                     end = groupPositions.length - 1;
                     // Compare points two by two
@@ -448,8 +448,8 @@ var OrdinalAxis;
                             hasCrossedHigherRank = true;
                         }
                     }
-                    // If the complete array has crossed midnight, we want to mark
-                    // the first positions also as higher rank
+                    // If the complete array has crossed midnight, we want
+                    // to mark the first positions also as higher rank
                     if (hasCrossedHigherRank) {
                         higherRanks[groupPositions[0]] = 'day';
                     }
