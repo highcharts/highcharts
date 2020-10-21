@@ -20,6 +20,7 @@ const {
     addEvent,
     css,
     defined,
+    error,
     pick,
     timeUnits
 } = U;
@@ -716,36 +717,40 @@ namespace OrdinalAxis {
 
             // Get the grouping info from the last of the segments. The info is
             // the same for all segments.
-            info = (segmentPositions as any).info;
+            if (segmentPositions) {
+                info = (segmentPositions as any).info;
 
-            // Optionally identify ticks with higher rank, for example when the
-            // ticks have crossed midnight.
-            if (findHigherRanks && info.unitRange <= timeUnits.hour) {
-                end = groupPositions.length - 1;
+                // Optionally identify ticks with higher rank, for example
+                // when the ticks have crossed midnight.
+                if (findHigherRanks && info.unitRange <= timeUnits.hour) {
+                    end = groupPositions.length - 1;
 
-                // Compare points two by two
-                for (start = 1; start < end; start++) {
-                    if (
-                        time.dateFormat('%d', groupPositions[start]) !==
-                        time.dateFormat('%d', groupPositions[start - 1])
-                    ) {
-                        higherRanks[groupPositions[start]] = 'day';
-                        hasCrossedHigherRank = true;
+                    // Compare points two by two
+                    for (start = 1; start < end; start++) {
+                        if (
+                            time.dateFormat('%d', groupPositions[start]) !==
+                            time.dateFormat('%d', groupPositions[start - 1])
+                        ) {
+                            higherRanks[groupPositions[start]] = 'day';
+                            hasCrossedHigherRank = true;
+                        }
                     }
+
+                    // If the complete array has crossed midnight, we want
+                    // to mark the first positions also as higher rank
+                    if (hasCrossedHigherRank) {
+                        higherRanks[groupPositions[0]] = 'day';
+                    }
+                    info.higherRanks = higherRanks;
                 }
 
-                // If the complete array has crossed midnight, we want to mark
-                // the first positions also as higher rank
-                if (hasCrossedHigherRank) {
-                    higherRanks[groupPositions[0]] = 'day';
-                }
-                info.higherRanks = higherRanks;
+                // Save the info
+                info.segmentStarts = segmentStarts;
+                groupPositions.info = info;
+
+            } else {
+                error(12, false, this.chart);
             }
-
-            // Save the info
-            info.segmentStarts = segmentStarts;
-            groupPositions.info = info;
-
             // Don't show ticks within a gap in the ordinal axis, where the
             // space between two points is greater than a portion of the tick
             // pixel interval
