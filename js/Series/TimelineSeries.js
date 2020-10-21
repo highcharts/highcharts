@@ -221,7 +221,7 @@ BaseSeries.seriesType('timeline', 'line',
     init: function () {
         var series = this;
         Series.prototype.init.apply(series, arguments);
-        addEvent(series, 'afterTranslate', function () {
+        series.eventsToUnbind.push(addEvent(series, 'afterTranslate', function () {
             var lastPlotX, closestPointRangePx = Number.MAX_VALUE;
             series.points.forEach(function (point) {
                 // Set the isInside parameter basing also on the real point
@@ -238,15 +238,15 @@ BaseSeries.seriesType('timeline', 'line',
                 }
             });
             series.closestPointRangePx = closestPointRangePx;
-        });
+        }));
         // Distribute data labels before rendering them. Distribution is
         // based on the 'dataLabels.distance' and 'dataLabels.alternate'
         // property.
-        addEvent(series, 'drawDataLabels', function () {
+        series.eventsToUnbind.push(addEvent(series, 'drawDataLabels', function () {
             // Distribute data labels basing on defined algorithm.
             series.distributeDL(); // @todo use this scope for series
-        });
-        addEvent(series, 'afterDrawDataLabels', function () {
+        }));
+        series.eventsToUnbind.push(addEvent(series, 'afterDrawDataLabels', function () {
             var dataLabel; // @todo use this scope for series
             // Draw or align connector for each point.
             series.points.forEach(function (point) {
@@ -273,8 +273,8 @@ BaseSeries.seriesType('timeline', 'line',
                     return point.drawConnector();
                 }
             });
-        });
-        addEvent(series.chart, 'afterHideOverlappingLabel', function () {
+        }));
+        series.eventsToUnbind.push(addEvent(series.chart, 'afterHideOverlappingLabel', function () {
             series.points.forEach(function (p) {
                 if (p.connector &&
                     p.dataLabel &&
@@ -282,7 +282,7 @@ BaseSeries.seriesType('timeline', 'line',
                     p.alignConnector();
                 }
             });
-        });
+        }));
     },
     alignDataLabel: function (point, dataLabel, options, alignTo) {
         var series = this, isInverted = series.chart.inverted, visiblePoints = series.visibilityMap.filter(function (point) {
