@@ -591,3 +591,5 @@ merge(true, getOptions().exporting, {
         }
     }
 });
+// Compatibility
+H.downloadSVGLocal = downloadSVGLocal;
