@@ -59,9 +59,7 @@ var CSVParser = /** @class */ (function (_super) {
      * @param {DataConverter} converter
      * Parser data converter.
      */
-    function CSVParser(options, converter
-    // parseDate?: DataParser.ParseDateFunction
-    ) {
+    function CSVParser(options, converter) {
         var _this = _super.call(this) || this;
         /* *
          *
@@ -74,7 +72,6 @@ var CSVParser = /** @class */ (function (_super) {
         _this.options = merge(CSVParser.defaultOptions, options);
         _this.converter = converter || new DataConverter();
         return _this;
-        // this.parseDate = parseDate;
     }
     /* *
      *
@@ -175,11 +172,7 @@ var CSVParser = /** @class */ (function (_super) {
      * Internal method that parses a single CSV row
      */
     CSVParser.prototype.parseCSVRow = function (columnStr, rowNumber) {
-        var parser = this, converter = this.converter, 
-        // converter = new DataConverter({}, parser.parseDate),
-        // -> tu powinno byc ustawione parseDate
-        // callback z opcji w data module!
-        columns = parser.columns || [], dataTypes = parser.dataTypes, _a = parser.options, startColumn = _a.startColumn, endColumn = _a.endColumn, itemDelimiter = parser.options.itemDelimiter || parser.guessedItemDelimiter;
+        var parser = this, converter = this.converter, columns = parser.columns || [], dataTypes = parser.dataTypes, _a = parser.options, startColumn = _a.startColumn, endColumn = _a.endColumn, itemDelimiter = parser.options.itemDelimiter || parser.guessedItemDelimiter;
         var decimalPoint = parser.options.decimalPoint;
         if (!decimalPoint || decimalPoint === itemDelimiter) {
             decimalPoint = parser.guessedDecimalPoint || '.';
@@ -245,9 +238,6 @@ var CSVParser = /** @class */ (function (_super) {
                     token = initialValue;
                 }
             }
-            // ZA WCZEŚNIE NA TO CHYBA
-            // columns[column][rowNumber] = typeof token !== 'number' ?
-            //     converter.asGuessedType(token) : token;
             columns[column][rowNumber] = token;
             token = '';
             ++column;

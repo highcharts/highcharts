@@ -62,8 +62,21 @@ class DataConverter {
         options?: DataConverter.Options,
         parseDate?: DataConverter.ParseDateFunction
     ) {
+        let decimalPoint;
+
         this.options = merge(DataConverter.defaultOptions, options);
         this.parseDateFn = parseDate;
+
+        decimalPoint = this.options.decimalPoint;
+
+        if (decimalPoint !== '.' && decimalPoint !== ',') {
+            decimalPoint = void 0;
+        }
+
+        this.decimalRegex = (
+            decimalPoint &&
+            new RegExp('^(-?[0-9]+)' + decimalPoint + '([0-9]+)$')
+        );
     }
 
     /* *
@@ -73,6 +86,7 @@ class DataConverter {
      * */
     private options: DataConverter.Options;
     private parseDateFn: (DataConverter.ParseDateFunction|undefined);
+    private decimalRegex: (RegExp|undefined);
 
     /**
      * A collection of available date formats, extendable from the outside to
@@ -246,7 +260,9 @@ class DataConverter {
             return value ? 1 : 0;
         }
         if (typeof value === 'string') {
-            const cast = parseFloat(value);
+            const trimVal = this.trim(value),
+                cast = parseFloat(trimVal);
+
             return !isNaN(cast) ? cast : 0;
         }
         if (value instanceof DataTable) {
@@ -272,6 +288,40 @@ class DataConverter {
     }
 
     /**
+     * Trim a string from whitespaces.
+     *
+     * @param {string} str
+     * String to trim.
+     *
+     * @param {boolean} [inside=false]
+     * Remove all spaces between numbers.
+     *
+     * @return {string}
+     * Trimed string
+     */
+    public trim(
+        str: string,
+        inside?: boolean
+    ): string {
+        const converter = this;
+
+        if (typeof str === 'string') {
+            str = str.replace(/^\s+|\s+$/g, '');
+
+            // Clear white space insdie the string, like thousands separators
+            if (inside && /^[0-9\s]+$/.test(str)) {
+                str = str.replace(/\s/g, '');
+            }
+
+            if (converter.decimalRegex) {
+                str = str.replace(converter.decimalRegex, '$1.$2');
+            }
+        }
+
+        return str;
+    }
+
+    /**
      * Guesses the potential type of a string value
      * (for parsing CSV etc)
      *
@@ -281,19 +331,42 @@ class DataConverter {
      * `string`, `Date` or `number`
      */
     public guessType(value: string): ('string' | 'Date' | 'number') {
-        const converter = this;
-        if (!value.length) {
-            // Empty string
-            return 'string';
-        }
-        if (!isNaN(Number(value))) {
-            return 'number';
+        const converter = this,
+            trimVal = converter.trim(value),
+            trimInsideVal = converter.trim(value, true),
+            floatVal = parseFloat(trimInsideVal);
+
+        let result: ('string' | 'Date' | 'number') = 'string',
+            dateVal;
+
+        // is numeric
+        if (+trimInsideVal === floatVal) {
+
+            // If the number is greater than milliseconds in a year, assume
+            // datetime.
+            if (
+                floatVal > 365 * 24 * 3600 * 1000
+            ) {
+                result = 'Date';
+            } else {
+                result = 'number';
+            }
+
+        // String, continue to determine if it is
+        // a date string or really a string.
+        } else {
+            if (trimVal && trimVal.length) {
+                dateVal = converter.parseDate(value);
+            }
+
+            if (dateVal && isNumber(dateVal)) {
+                result = 'Date';
+            } else {
+                result = 'string';
+            }
         }
 
-        if (converter.parseDate(value)) {
-            return 'Date';
-        }
-        return 'string';
+        return result;
     }
 
     /**
@@ -553,11 +626,12 @@ namespace DataConverter {
     );
 
     /**
-     * The shared options for all DataParser instances
+     * Internal options for DataConverter.
      */
     export interface Options extends DataJSON.JSONObject {
         dateFormat?: string;
         alternativeFormat?: string;
+        decimalPoint?: string;
     }
 
     /**

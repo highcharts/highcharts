@@ -20,7 +20,9 @@ import Point from '../Core/Series/Point.js';
 import DataTable from '../Data/DataTable.js';
 import GoogleSheetsStore from '../Data/Stores/GoogleSheetsStore.js';
 import CSVStore from '../Data/Stores/CSVStore.js';
+import HTMLTableStore from '../Data/Stores/HTMLTableStore.js';
 import CSVParser from '../Data/Parsers/CSVParser.js';
+import HTMLTableParser from '../Data/Parsers/HTMLTableParser.js';
 import U from '../Core/Utilities.js';
 import DataConverter from '../Data/DataConverter.js';
 var addEvent = U.addEvent, defined = U.defined, extend = U.extend, fireEvent = U.fireEvent, isNumber = U.isNumber, isString = U.isString, merge = U.merge, objectEach = U.objectEach, pick = U.pick, splat = U.splat;
@@ -758,36 +760,24 @@ var Data = /** @class */ (function () {
      * @return {Array<Array<Highcharts.DataValueType>>}
      */
     Data.prototype.parseTable = function () {
-        var options = this.options, table = options.table, columns = this.columns || [], startRow = options.startRow || 0, endRow = options.endRow || Number.MAX_VALUE, startColumn = options.startColumn || 0, endColumn = options.endColumn || Number.MAX_VALUE;
+        var options = this.options, table = options.table, startRow = options.startRow || 0, endRow = options.endRow || Number.MAX_VALUE, startColumn = options.startColumn || 0, endColumn = options.endColumn || Number.MAX_VALUE;
+        var columns = [], htmlStore;
         if (table) {
-            if (typeof table === 'string') {
-                table = doc.getElementById(table);
-            }
-            [].forEach.call(table.getElementsByTagName('tr'), function (tr, rowNo) {
-                if (rowNo >= startRow && rowNo <= endRow) {
-                    [].forEach.call(tr.children, function (item, colNo) {
-                        var row = columns[colNo - startColumn];
-                        var i = 1;
-                        if ((item.tagName === 'TD' ||
-                            item.tagName === 'TH') &&
-                            colNo >= startColumn &&
-                            colNo <= endColumn) {
-                            if (!columns[colNo - startColumn]) {
-                                columns[colNo - startColumn] = [];
-                            }
-                            columns[colNo - startColumn][rowNo - startRow] = item.innerHTML;
-                            // Loop over all previous indices and make sure
-                            // they are nulls, not undefined.
-                            while (rowNo - startRow >= i &&
-                                row[rowNo - startRow - i] === void 0) {
-                                row[rowNo - startRow - i] = null;
-                                i++;
-                            }
-                        }
-                    });
-                }
-            });
-            this.dataFound(); // continue
+            htmlStore = this.dataStore = new HTMLTableStore(new DataTable(), {
+                table: typeof table === 'string' ? table : table.id || ''
+            }, new HTMLTableParser({
+                startRow: startRow,
+                endRow: endRow,
+                startColumn: startColumn,
+                endColumn: endColumn,
+                firstRowAsNames: options.firstRowAsNames,
+                switchRowsAndColumns: options.switchRowsAndColumns
+            }, null, new DataConverter({
+                decimalPoint: options.decimalPoint
+            }, options.parseDate)));
+            htmlStore.load();
+            columns = this.columns = this.getDataColumnsFromDataTable(htmlStore.table);
+            this.dataFound();
         }
         return columns;
     };

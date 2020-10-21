@@ -77,13 +77,11 @@ class CSVParser extends DataParser<DataParser.EventObject> {
     public constructor(
         options?: CSVParser.OptionsType,
         converter?: DataConverter
-        // parseDate?: DataParser.ParseDateFunction
     ) {
         super();
 
         this.options = merge(CSVParser.defaultOptions, options);
         this.converter = converter || new DataConverter();
-        // this.parseDate = parseDate;
     }
 
     /* *
@@ -98,7 +96,6 @@ class CSVParser extends DataParser<DataParser.EventObject> {
     private guessedDecimalPoint?: string;
     private decimalRegex?: RegExp;
     private options: CSVParser.ClassJSONOptions;
-    // private parseDate?: (DataParser.ParseDateFunction|undefined);
     public converter: DataConverter;
 
 
@@ -227,9 +224,6 @@ class CSVParser extends DataParser<DataParser.EventObject> {
     ): void {
         const parser = this,
             converter = this.converter,
-            // converter = new DataConverter({}, parser.parseDate),
-            // -> tu powinno byc ustawione parseDate
-            // callback z opcji w data module!
             columns = parser.columns || [],
             dataTypes = parser.dataTypes,
             { startColumn, endColumn } = parser.options,
@@ -312,10 +306,6 @@ class CSVParser extends DataParser<DataParser.EventObject> {
                     token = initialValue;
                 }
             }
-
-            // ZA WCZEŚNIE NA TO CHYBA
-            // columns[column][rowNumber] = typeof token !== 'number' ?
-            //     converter.asGuessedType(token) : token;
 
             columns[column][rowNumber] = token;
 

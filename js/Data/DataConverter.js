@@ -101,8 +101,15 @@ var DataConverter = /** @class */ (function () {
                 }
             }
         };
+        var decimalPoint;
         this.options = merge(DataConverter.defaultOptions, options);
         this.parseDateFn = parseDate;
+        decimalPoint = this.options.decimalPoint;
+        if (decimalPoint !== '.' && decimalPoint !== ',') {
+            decimalPoint = void 0;
+        }
+        this.decimalRegex = (decimalPoint &&
+            new RegExp('^(-?[0-9]+)' + decimalPoint + '([0-9]+)$'));
     }
     /* *
      *
@@ -200,7 +207,7 @@ var DataConverter = /** @class */ (function () {
             return value ? 1 : 0;
         }
         if (typeof value === 'string') {
-            var cast = parseFloat(value);
+            var trimVal = this.trim(value), cast = parseFloat(trimVal);
             return !isNaN(cast) ? cast : 0;
         }
         if (value instanceof DataTable) {
@@ -224,6 +231,32 @@ var DataConverter = /** @class */ (function () {
         return "" + value;
     };
     /**
+     * Trim a string from whitespaces.
+     *
+     * @param {string} str
+     * String to trim.
+     *
+     * @param {boolean} [inside=false]
+     * Remove all spaces between numbers.
+     *
+     * @return {string}
+     * Trimed string
+     */
+    DataConverter.prototype.trim = function (str, inside) {
+        var converter = this;
+        if (typeof str === 'string') {
+            str = str.replace(/^\s+|\s+$/g, '');
+            // Clear white space insdie the string, like thousands separators
+            if (inside && /^[0-9\s]+$/.test(str)) {
+                str = str.replace(/\s/g, '');
+            }
+            if (converter.decimalRegex) {
+                str = str.replace(converter.decimalRegex, '$1.$2');
+            }
+        }
+        return str;
+    };
+    /**
      * Guesses the potential type of a string value
      * (for parsing CSV etc)
      *
@@ -233,18 +266,33 @@ var DataConverter = /** @class */ (function () {
      * `string`, `Date` or `number`
      */
     DataConverter.prototype.guessType = function (value) {
-        var converter = this;
-        if (!value.length) {
-            // Empty string
-            return 'string';
+        var converter = this, trimVal = converter.trim(value), trimInsideVal = converter.trim(value, true), floatVal = parseFloat(trimInsideVal);
+        var result = 'string', dateVal;
+        // is numeric
+        if (+trimInsideVal === floatVal) {
+            // If the number is greater than milliseconds in a year, assume
+            // datetime.
+            if (floatVal > 365 * 24 * 3600 * 1000) {
+                result = 'Date';
+            }
+            else {
+                result = 'number';
+            }
+            // String, continue to determine if it is
+            // a date string or really a string.
         }
-        if (!isNaN(Number(value))) {
-            return 'number';
+        else {
+            if (trimVal && trimVal.length) {
+                dateVal = converter.parseDate(value);
+            }
+            if (dateVal && isNumber(dateVal)) {
+                result = 'Date';
+            }
+            else {
+                result = 'string';
+            }
         }
-        if (converter.parseDate(value)) {
-            return 'Date';
-        }
-        return 'string';
+        return result;
     };
     /**
      * Casts a string value to it's guessed type

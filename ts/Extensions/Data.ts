@@ -28,6 +28,7 @@ import GoogleSheetsStore from '../Data/Stores/GoogleSheetsStore.js';
 import CSVStore from '../Data/Stores/CSVStore.js';
 import HTMLTableStore from '../Data/Stores/HTMLTableStore.js';
 import CSVParser from '../Data/Parsers/CSVParser.js';
+import HTMLTableParser from '../Data/Parsers/HTMLTableParser.js';
 import U from '../Core/Utilities.js';
 import DataConverter from '../Data/DataConverter.js';
 const {
@@ -1017,67 +1018,42 @@ class Data {
      * @return {Array<Array<Highcharts.DataValueType>>}
      */
     public parseTable(): Array<Array<Highcharts.DataValueType>> {
-        var options = this.options,
-            table: HTMLElement = options.table as any,
-            columns = this.columns || [],
+        const options = this.options,
+            table = options.table,
             startRow = options.startRow || 0,
             endRow = options.endRow || Number.MAX_VALUE,
             startColumn = options.startColumn || 0,
             endColumn = options.endColumn || Number.MAX_VALUE;
 
+        let columns: Array<Array<Highcharts.DataValueType>> = [],
+            htmlStore;
+
         if (table) {
+            htmlStore = this.dataStore = new HTMLTableStore(
+                new DataTable(),
+                {
+                    table: typeof table === 'string' ? table : table.id || ''
+                },
+                new HTMLTableParser({
+                    startRow: startRow,
+                    endRow: endRow,
+                    startColumn: startColumn,
+                    endColumn: endColumn,
+                    firstRowAsNames: options.firstRowAsNames,
+                    switchRowsAndColumns: options.switchRowsAndColumns
+                }, null, new DataConverter({
+                    decimalPoint: options.decimalPoint
+                }, options.parseDate))
+            );
 
-            if (typeof table === 'string') {
-                table = doc.getElementById(table) as any;
-            }
+            htmlStore.load();
+            columns = this.columns = this.getDataColumnsFromDataTable(htmlStore.table);
 
-            [].forEach.call(table.getElementsByTagName('tr'), function (
-                tr: HTMLTableRowElement,
-                rowNo: number
-            ): void {
-                if (rowNo >= startRow && rowNo <= endRow) {
-                    [].forEach.call(tr.children, function (
-                        item: Element,
-                        colNo: number
-                    ): void {
-                        const row = (columns as any)[colNo - startColumn];
-                        let i = 1;
-
-                        if (
-                            (
-                                item.tagName === 'TD' ||
-                                item.tagName === 'TH'
-                            ) &&
-                            colNo >= startColumn &&
-                            colNo <= endColumn
-                        ) {
-                            if (!(columns as any)[colNo - startColumn]) {
-                                (columns as any)[colNo - startColumn] = [];
-                            }
-
-                            (columns as any)[colNo - startColumn][
-                                rowNo - startRow
-                            ] = item.innerHTML;
-
-                            // Loop over all previous indices and make sure
-                            // they are nulls, not undefined.
-                            while (
-                                rowNo - startRow >= i &&
-                                row[rowNo - startRow - i] === void 0
-                            ) {
-                                row[rowNo - startRow - i] = null;
-                                i++;
-                            }
-                        }
-                    });
-                }
-            });
-
-            this.dataFound(); // continue
+            this.dataFound();
         }
+
         return columns;
     }
-
 
     /**
      * Fetch or refetch live data

@@ -21,14 +21,13 @@ test('guessType', function (assert) {
 })
 
 test('asNumber', function (assert) {
-    const { asNumber } = converter;
     assert.strictEqual(
-        asNumber('-3.1'),
+        converter.asNumber('-3.1'),
         -3.1,
         'Should handle negative numbers'
     );
     assert.strictEqual(
-        asNumber(''),
+        converter.asNumber(''),
         0,
         'Should handle empty strings'
     );
