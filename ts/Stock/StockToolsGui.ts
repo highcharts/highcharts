@@ -343,9 +343,10 @@ setOptions({
             toolbarClassName: 'stocktools-toolbar',
             /**
              * A collection of strings pointing to config options for the
-             * toolbar items. Each name refers to unique key from definitions
-             * object.
+             * toolbar items. Each name refers to a unique key from the
+             * definitions object.
              *
+             * @type    {Array<string>}
              * @default [
              *   'indicators',
              *   'separator',
