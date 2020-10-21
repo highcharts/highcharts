@@ -6452,7 +6452,7 @@ class Axis implements AxisComposition, AxisLike {
             step,
             bestScore = Number.MAX_VALUE,
             autoRotation: any,
-            range = (this.max as any) - (this.min as any),
+            range = Math.abs((this.max as any) - (this.min as any)),
             // Return the multiple of tickInterval that is needed to avoid
             // collision
             getStep = function (spaceNeeded: number): number {
