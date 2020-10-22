@@ -921,28 +921,35 @@ var Data = /** @class */ (function () {
      */
     Data.prototype.parseGoogleSpreadsheet = function () {
         var _this = this;
-        var chart = this.chart;
-        var options = this.options;
-        if (options.googleSpreadsheetKey) {
-            var store_1 = new GoogleSheetsStore(new DataTable(), options);
-            var columns_1 = [];
-            store_1.on('afterLoad', function () {
-                columns_1 = _this.getDataColumnsFromDataTable(store_1.table);
-                if (columns_1.length > 0) {
+        var chart = this.chart, options = this.options, googleSpreadsheetKey = options.googleSpreadsheetKey, startRow = options.startRow || 0, endRow = options.endRow || Number.MAX_VALUE, startColumn = options.startColumn || 0, endColumn = options.endColumn || Number.MAX_VALUE;
+        var columns = [], store;
+        if (googleSpreadsheetKey) {
+            store = this.dataStore = new GoogleSheetsStore(new DataTable(), {
+                googleSpreadsheetKey: googleSpreadsheetKey,
+                startRow: startRow,
+                endRow: endRow,
+                startColumn: startColumn,
+                endColumn: endColumn,
+                enablePolling: options.enablePolling,
+                dataRefreshRate: options.dataRefreshRate
+            });
+            store.on('afterLoad', function () {
+                columns = _this.getDataColumnsFromDataTable(store.table);
+                if (columns.length > 0) {
                     if (chart && chart.series) {
                         chart.update({
                             data: {
-                                columns: columns_1
+                                columns: columns
                             }
                         });
                     }
                     else { // #8245
-                        _this.columns = columns_1;
+                        _this.columns = columns;
                         _this.dataFound();
                     }
                 }
             });
-            store_1.load();
+            store.load();
         }
         // This is an intermediate fetch, so always return false.
         return false;

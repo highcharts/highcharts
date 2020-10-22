@@ -1242,20 +1242,34 @@ class Data {
      *         Always returns false, because it is an intermediate fetch.
      */
     public parseGoogleSpreadsheet(): boolean {
-        const chart = this.chart;
-        const options = this.options;
+        const chart = this.chart,
+            options = this.options,
+            googleSpreadsheetKey = options.googleSpreadsheetKey,
+            startRow = options.startRow || 0,
+            endRow = options.endRow || Number.MAX_VALUE,
+            startColumn = options.startColumn || 0,
+            endColumn = options.endColumn || Number.MAX_VALUE;
 
-        if (
-            options.googleSpreadsheetKey
-        ) {
-            const store = new GoogleSheetsStore(
+        let columns: Array<Array<Highcharts.DataValueType>> = [],
+            store: GoogleSheetsStore;
+
+        if (googleSpreadsheetKey) {
+            store = this.dataStore = new GoogleSheetsStore(
                 new DataTable(),
-                options as GoogleSheetsStore.Options
+                {
+                    googleSpreadsheetKey: googleSpreadsheetKey,
+                    startRow: startRow,
+                    endRow: endRow,
+                    startColumn: startColumn,
+                    endColumn: endColumn,
+                    enablePolling: options.enablePolling,
+                    dataRefreshRate: options.dataRefreshRate
+                }
             );
-            let columns: Array<Array<Highcharts.DataValueType>> = [];
 
             store.on('afterLoad', (): void => {
                 columns = this.getDataColumnsFromDataTable(store.table);
+
                 if (columns.length > 0) {
                     if (chart && chart.series) {
                         chart.update({
