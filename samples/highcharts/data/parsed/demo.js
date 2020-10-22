@@ -12,9 +12,9 @@ Highcharts.chart('container', {
         csv: document.getElementById('csv').innerHTML,
         parsed: function (columns) {
             // We want to keep the values since 1950 only
-            $.each(columns, function () {
+            columns.forEach(column => {
                 // Keep the first item which is the series name, then remove the following 70
-                this.splice(1, 70);
+                column.splice(1, 70);
             });
         }
     },

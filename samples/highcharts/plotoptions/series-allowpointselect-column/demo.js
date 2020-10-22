@@ -1,4 +1,4 @@
-var chart = Highcharts.chart('container', {
+const chart = Highcharts.chart('container', {
     chart: {
         type: 'column'
     },
@@ -15,10 +15,8 @@ var chart = Highcharts.chart('container', {
     }]
 });
 
-
-// the button action
-$('#button').click(function () {
-    var selectedPoints = chart.getSelectedPoints();
+document.getElementById('button').addEventListener('click', () =>  {
+    const selectedPoints = chart.getSelectedPoints();
 
     if (chart.lbl) {
         chart.lbl.destroy();

@@ -14,7 +14,7 @@ Highcharts.setOptions({
 });
 
 // Set up the chart
-var chart = Highcharts.chart('container', {
+const chart = Highcharts.chart('container', {
     chart: {
         margin: 100,
         type: 'scatter3d',
@@ -196,21 +196,19 @@ var chart = Highcharts.chart('container', {
 function start(eStart) {
     eStart = chart.pointer.normalize(eStart);
 
-    var posX = eStart.pageX,
+    const posX = eStart.pageX,
         posY = eStart.pageY,
         alpha = chart.options.chart.options3d.alpha,
         beta = chart.options.chart.options3d.beta,
-        newAlpha,
-        newBeta,
         sensitivity = 5; // lower is more sensitive
 
     const move = e => {
         // Run beta
-        newBeta = beta + (posX - e.pageX) / sensitivity;
+        const newBeta = beta + (posX - e.pageX) / sensitivity;
         chart.options.chart.options3d.beta = newBeta;
 
         // Run alpha
-        newAlpha = alpha + (e.pageY - posY) / sensitivity;
+        const newAlpha = alpha + (e.pageY - posY) / sensitivity;
         chart.options.chart.options3d.alpha = newAlpha;
 
         chart.redraw(false);
@@ -219,6 +217,9 @@ function start(eStart) {
     const end = () => {
         document.removeEventListener('mousemove', move);
         document.removeEventListener('touchdrag', move);
+
+        document.removeEventListener('mouseup', end);
+        document.removeEventListener('touchend', end);
     };
 
     document.addEventListener('mousemove', move);

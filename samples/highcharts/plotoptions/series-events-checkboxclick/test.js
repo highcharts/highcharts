@@ -1,3 +1,7 @@
 function test(chart) { // eslint-disable-line no-unused-vars
-    $('#container input').click();
+    document.querySelector('#container input').dispatchEvent(new MouseEvent('click', {
+        view: window,
+        bubbles: true,
+        cancelable: true
+    }));
 }

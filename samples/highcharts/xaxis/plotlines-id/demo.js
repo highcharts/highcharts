@@ -1,7 +1,6 @@
-var chart = Highcharts.chart('container', {
+const chart = Highcharts.chart('container', {
     xAxis: {
         categories: ['Jan', 'Feb', 'Mar', 'Apr', 'May', 'Jun', 'Jul', 'Aug', 'Sep', 'Oct', 'Nov', 'Dec'],
-
         plotLines: [{ // summer months - treat from/to as numbers
             color: '#FF0000',
             width: 2,
@@ -9,13 +8,11 @@ var chart = Highcharts.chart('container', {
             id: 'plotline-1'
         }]
     },
-
     series: [{
         data: [29.9, 71.5, 106.4, 129.2, 144.0, 176.0, 135.6, 148.5, 216.4, 194.1, 95.6, 54.4]
     }]
 });
 
-// button action
-$('#button').click(function () {
+document.getElementById('button').addEventListener('click', () => {
     chart.xAxis[0].removePlotLine('plotline-1');
 });

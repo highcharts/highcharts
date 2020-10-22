@@ -1,13 +1,10 @@
-var renderer;
-
-renderer = new Highcharts.Renderer(
-    $('#container')[0],
+const renderer = new Highcharts.Renderer(
+    document.getElementById('container'),
     400,
     300
 );
 
-var group = renderer.g().add(),
-    vis = true;
+const group = renderer.g().add();
 
 renderer.circle(200, 150, 100).attr({
     fill: '#FCFFC5',
@@ -21,12 +18,13 @@ renderer.rect(90, 150, 100, 100, 5).attr({
     'stroke-width': 1
 }).add(group);
 
-// add the button handler
-$('#button').click(function () {
-    if (vis) {
+let visible = true;
+
+document.getElementById('button').addEventListener('click', () => {
+    if (visible) {
         group.hide();
     } else {
         group.show();
     }
-    vis = !vis;
+    visible = !visible;
 });

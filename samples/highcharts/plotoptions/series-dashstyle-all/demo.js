@@ -1,6 +1,10 @@
-var renderer;
+const renderer = new Highcharts.Renderer(
+    document.getElementById('container'),
+    400,
+    400
+);
 
-var dashStyles = [
+[
     'Solid',
     'ShortDash',
     'ShortDot',
@@ -12,15 +16,7 @@ var dashStyles = [
     'DashDot',
     'LongDashDot',
     'LongDashDotDot'
-];
-
-renderer = new Highcharts.Renderer(
-    $('#container')[0],
-    400,
-    400
-);
-
-$.each(dashStyles, function (i, dashStyle) {
+].forEach((dashStyle, i) => {
     renderer.text(dashStyle, 10, 30 * i + 20)
         .add();
 

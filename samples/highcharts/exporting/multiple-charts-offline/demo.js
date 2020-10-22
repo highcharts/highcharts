@@ -115,11 +115,11 @@ var chart2 = Highcharts.chart('container2', {
 
 });
 
-$('#export-png').click(function () {
+document.getElementById('export-png').addEventListener('click', () => {
     Highcharts.exportCharts([chart1, chart2]);
 });
 
-$('#export-pdf').click(function () {
+document.getElementById('export-pdf').addEventListener('click', () => {
     Highcharts.exportCharts([chart1, chart2], {
         type: 'application/pdf'
     });

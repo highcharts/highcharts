@@ -1,9 +1,9 @@
-var chart = Highcharts.chart('container', {
+const chart = Highcharts.chart('container', {
     plotOptions: {
         series: {
             point: {
                 events: {
-                    remove: function () {
+                    remove: () => {
                         if (!confirm('Do you really want to remove the first point?')) {
                             return false;
                         }
@@ -17,9 +17,8 @@ var chart = Highcharts.chart('container', {
     }]
 });
 
-// button handler
-$('#button').click(function () {
-    var series = chart.series[0];
+document.getElementById('button').addEventListener('click', () => {
+    const series = chart.series[0];
     if (series.data.length) {
         chart.series[0].data[0].remove();
     }

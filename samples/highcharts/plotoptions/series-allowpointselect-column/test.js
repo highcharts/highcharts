@@ -19,5 +19,9 @@ function test(chart) { // eslint-disable-line no-unused-vars
         target: point.graphic.element
     });
 
-    $('#button').click();
+    document.getElementById('button').dispatchEvent(new MouseEvent('click', {
+        view: window,
+        bubbles: true,
+        cancelable: true
+    }));
 }

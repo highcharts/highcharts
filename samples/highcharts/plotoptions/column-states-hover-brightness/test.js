@@ -1,3 +1,3 @@
-function test() { // eslint-disable-line no-unused-vars
-    $('#container').highcharts().series[0].points[2].onMouseOver();
+function test(chart) { // eslint-disable-line no-unused-vars
+    chart.series[0].points[2].onMouseOver();
 }
