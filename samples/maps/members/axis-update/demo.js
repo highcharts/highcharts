@@ -37,7 +37,7 @@ Highcharts.getJSON('https://cdn.jsdelivr.net/gh/highcharts/highcharts@v7.0.0/sam
 let blackAndWhite = true,
     log = true;
 
-const updateColor = () => {
+document.getElementById('update-color').onclick = () => {
     const colorAxis = chart.colorAxis[0];
 
     colorAxis.update({
@@ -46,19 +46,11 @@ const updateColor = () => {
     blackAndWhite = !blackAndWhite;
 };
 
-const updateLinLog = () => {
+document.getElementById('update-linlog').onclick = () => {
     const colorAxis = chart.colorAxis[0];
 
     colorAxis.update({
         type: log ? 'linear' : 'logarithmic'
     });
     log = !log;
-};
-
-document.getElementById('update-color').onclick = () => {
-    updateColor();
-};
-
-document.getElementById('update-linlog').onclick = () => {
-    updateLinLog();
 };
