@@ -1281,7 +1281,7 @@ var timeUnits = H.timeUnits = {
 var numberFormat = H.numberFormat = function numberFormat(number, decimals, decimalPoint, thousandsSep) {
     number = +number || 0;
     decimals = +decimals;
-    var lang = H.defaultOptions.lang, origDec = (number.toString().split('.')[1] || '').split('e')[0].length, strinteger, thousands, ret, roundedNumber, exponent = number.toString().split('e'), fractionDigits;
+    var lang = H.defaultOptions.lang, origDec = (number.toString().split('.')[1] || '').split('e')[0].length, strinteger, thousands, ret, roundedNumber, exponent = number.toString().split('e'), fractionDigits, firstDecimals = decimals;
     if (decimals === -1) {
         // Preserve decimals. Not huge numbers (#3793).
         decimals = Math.min(origDec, 20);
@@ -1329,10 +1329,15 @@ var numberFormat = H.numberFormat = function numberFormat(number, decimals, deci
     // Add the leftover after grouping into thousands. For example, in the
     // number 42 000 000, this line adds 42.
     ret += thousands ? strinteger.substr(0, thousands) + thousandsSep : '';
-    // Add the remaining thousands groups, joined by the thousands separator
-    ret += strinteger
-        .substr(thousands)
-        .replace(/(\d{3})(?=\d)/g, '$1' + thousandsSep);
+    if (+exponent[1] < 0 && !firstDecimals) {
+        ret = '0';
+    }
+    else {
+        // Add the remaining thousands groups, joined by the thousands separator
+        ret += strinteger
+            .substr(thousands)
+            .replace(/(\d{3})(?=\d)/g, '$1' + thousandsSep);
+    }
     // Add the decimal point and the decimal component
     if (decimals) {
         // Get the decimal component
