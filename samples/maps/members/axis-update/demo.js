@@ -34,23 +34,31 @@ Highcharts.getJSON('https://cdn.jsdelivr.net/gh/highcharts/highcharts@v7.0.0/sam
     });
 });
 
-var blackAndWhite = true,
+let blackAndWhite = true,
     log = true;
 
-$('#update-color').click(function () {
-    var colorAxis = chart.colorAxis[0];
+const updateColor = () => {
+    const colorAxis = chart.colorAxis[0];
 
     colorAxis.update({
         maxColor: blackAndWhite ? '#980043' : '#000000'
     });
     blackAndWhite = !blackAndWhite;
-});
+};
 
-$('#update-linlog').click(function () {
-    var colorAxis = chart.colorAxis[0];
+const updateLinLog = () => {
+    const colorAxis = chart.colorAxis[0];
 
     colorAxis.update({
         type: log ? 'linear' : 'logarithmic'
     });
     log = !log;
-});
+};
+
+document.getElementById('update-color').onclick = () => {
+    updateColor();
+};
+
+document.getElementById('update-linlog').onclick = () => {
+    updateLinLog();
+};
