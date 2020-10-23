@@ -65,6 +65,7 @@ declare module '../Core/Series/SeriesType' {
 }
 
 import '../Core/Options.js';
+import '../Series/Bubble/BubbleSeries.js';
 
 const seriesTypes = BaseSeries.seriesTypes;
 

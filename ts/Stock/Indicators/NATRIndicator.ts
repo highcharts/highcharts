@@ -49,7 +49,7 @@ declare module '../../Core/Series/SeriesType' {
     }
 }
 
-import './ATRIndicator.js';
+// im port './ATRIndicator.js';
 
 var ATR = BaseSeries.seriesTypes.atr;
 

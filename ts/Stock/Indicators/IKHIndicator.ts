@@ -132,7 +132,7 @@ declare module '../../Core/Series/SeriesType' {
 
 /* eslint-enable @typescript-eslint/interface-name-prefix */
 
-import './SMAIndicator.js';
+// im port './SMAIndicator.js';
 
 var SMA = BaseSeries.seriesTypes.sma;
 

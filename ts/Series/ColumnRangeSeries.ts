@@ -72,6 +72,8 @@ declare module '../Core/Series/SeriesType' {
     }
 }
 
+var arearangeProto = BaseSeries.seriesTypes.arearange.prototype;
+
 /**
  * The column range is a cartesian series type with higher and lower
  * Y values along an X axis. To display horizontal bars, set
@@ -129,6 +131,10 @@ BaseSeries.seriesType<typeof Highcharts.ColumnRangeSeries>('columnrange', 'arear
     (defaultOptions.plotOptions as any).arearange,
     columnRangeOptions
 ), {
+    setOptions: function (this: Highcharts.ColumnRangeSeries): Highcharts.ColumnRangeSeriesOptions {
+        merge(true, arguments[0], { stacking: void 0 }); // #14359 Prevent side-effect from stacking.
+        return arearangeProto.setOptions.apply(this, arguments);
+    },
 
     // eslint-disable-next-line valid-jsdoc
     /**

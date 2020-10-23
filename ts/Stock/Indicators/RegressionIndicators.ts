@@ -147,7 +147,7 @@ declare module '../../Core/Series/SeriesType' {
     }
 }
 
-import './SMAIndicator.js';
+// im port './SMAIndicator.js';
 
 /**
  * Linear regression series type.

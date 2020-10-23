@@ -68,7 +68,7 @@ declare module '../../Core/Series/SeriesType' {
     }
 }
 
-import './SMAIndicator.js';
+// im port './SMAIndicator.js';
 
 /**
  * The CMF series type.

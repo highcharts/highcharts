@@ -49,7 +49,7 @@ declare module '../../Core/Series/SeriesType' {
     }
 }
 
-import './StochasticIndicator.js';
+// im port './StochasticIndicator.js';
 
 /**
  * The Slow Stochastic series type.

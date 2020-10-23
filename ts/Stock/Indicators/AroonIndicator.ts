@@ -66,7 +66,7 @@ declare module '../../Core/Series/SeriesType' {
     }
 }
 
-import './SMAIndicator.js';
+// im port './SMAIndicator.js';
 
 /* eslint-disable valid-jsdoc */
 // Utils

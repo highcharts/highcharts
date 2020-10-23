@@ -171,3 +171,63 @@ QUnit.test('Updating unidentified axes by index (#6019)', function (assert) {
         'Updated titles'
     );
 });
+
+QUnit.test('Stacking consistent after update', assert => {
+    const options = {
+        chart: {
+            width: 250,
+            type: "column"
+        },
+        yAxis: {
+            title: {
+                text: 'test 1'
+            }
+        },
+        plotOptions: {
+            series: {
+                stacking: "normal",
+                animation: false
+            }
+        },
+        series: [{
+            data: [500]
+        }, {
+            data: [300]
+        }],
+        legend: {
+            enabled: false
+        }
+    };
+
+    const chart = Highcharts.chart('container', options);
+
+    const getPositions = () => [
+        chart.series[0].points[0].graphic.getBBox().y,
+        chart.series[0].points[0].graphic.getBBox().height,
+        chart.series[1].points[0].graphic.getBBox().y,
+        chart.series[1].points[0].graphic.getBBox().height
+    ];
+    const originalPositions = getPositions();
+    chart.update({
+        chart: {
+            width: 200
+        },
+        yAxis: {
+            title: {
+                text: 'test 2'
+            }
+        },
+        series: [{
+            data: [500]
+        }, {
+            data: [300]
+        }]
+    }, undefined, undefined, false);
+
+    assert.deepEqual(
+        getPositions(),
+        originalPositions,
+        'Horizontal bar positions should not change after update (#14130)'
+    );
+
+});

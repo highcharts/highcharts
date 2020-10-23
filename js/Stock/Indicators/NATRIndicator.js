@@ -7,7 +7,7 @@
  * */
 'use strict';
 import BaseSeries from '../../Core/Series/Series.js';
-import './ATRIndicator.js';
+// im port './ATRIndicator.js';
 var ATR = BaseSeries.seriesTypes.atr;
 /**
  * The NATR series type.

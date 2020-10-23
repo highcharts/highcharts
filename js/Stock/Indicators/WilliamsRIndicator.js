@@ -11,7 +11,7 @@ import ReduceArrayMixin from '../../Mixins/ReduceArray.js';
 var getArrayExtremes = ReduceArrayMixin.getArrayExtremes;
 import U from '../../Core/Utilities.js';
 var isArray = U.isArray;
-import './SMAIndicator.js';
+// im port './SMAIndicator.js';
 /**
  * The Williams %R series type.
  *

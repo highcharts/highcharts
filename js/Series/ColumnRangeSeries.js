@@ -17,6 +17,7 @@ import O from '../Core/Options.js';
 var defaultOptions = O.defaultOptions;
 import U from '../Core/Utilities.js';
 var clamp = U.clamp, merge = U.merge, pick = U.pick;
+var arearangeProto = BaseSeries.seriesTypes.arearange.prototype;
 /**
  * The column range is a cartesian series type with higher and lower
  * Y values along an X axis. To display horizontal bars, set
@@ -65,6 +66,10 @@ var columnRangeOptions = {
  * @augments Highcharts.Series
  */
 BaseSeries.seriesType('columnrange', 'arearange', merge(defaultOptions.plotOptions.column, defaultOptions.plotOptions.arearange, columnRangeOptions), {
+    setOptions: function () {
+        merge(true, arguments[0], { stacking: void 0 }); // #14359 Prevent side-effect from stacking.
+        return arearangeProto.setOptions.apply(this, arguments);
+    },
     // eslint-disable-next-line valid-jsdoc
     /**
      * Translate data points from raw values x and y to plotX and plotY

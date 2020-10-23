@@ -387,12 +387,14 @@ declare global {
             public minRange?: (null|number);
             public names: Array<string>;
             public offset: number;
-            public oldAxisLength?: number;
-            public oldMax: (null|number);
-            public oldMin: (null|number);
-            public oldTransA?: number;
-            public oldUserMax?: number;
-            public oldUserMin?: number;
+            public old?: {
+                len: number;
+                max: number|null;
+                min: number|null;
+                transA: number;
+                userMax?: number;
+                userMin?: number;
+            }
             public opposite?: boolean;
             public options: AxisOptions;
             public overlap: boolean;
@@ -477,7 +479,7 @@ declare global {
             public renderTick(pos: number, i: number): void;
             public renderUnsquish(): void;
             public setAxisSize(): void;
-            public setAxisTranslation(saveOld?: boolean): void;
+            public setAxisTranslation(): void;
             public setExtremes(
                 newMin?: number,
                 newMax?: number,
@@ -4543,8 +4545,8 @@ class Axis {
         var axis: Highcharts.Axis = this.linkedParent || this as any, // #1417
             sign = 1,
             cvsOffset = 0,
-            localA = old ? axis.oldTransA : axis.transA,
-            localMin = old ? axis.oldMin : axis.min,
+            localA = old && axis.old ? axis.old.transA : axis.transA,
+            localMin = old && axis.old ? axis.old.min : axis.min,
             returnValue = 0,
             minPixelPadding = axis.minPixelPadding,
             doPostTranslate = (
@@ -5182,12 +5184,9 @@ class Axis {
      * @private
      * @function Highcharts.Axis#setAxisTranslation
      *
-     * @param {boolean} [saveOld]
-     * TO-DO: parameter description
-     *
      * @fires Highcharts.Axis#event:afterSetAxisTranslation
      */
-    public setAxisTranslation(saveOld?: boolean): void {
+    public setAxisTranslation(): void {
         var axis = this,
             range = (axis.max as any) - (axis.min as any),
             pointRange = axis.axisPointRange || 0,
@@ -5282,9 +5281,6 @@ class Axis {
         }
 
         // Secondary values
-        if (saveOld) {
-            axis.oldTransA = transA;
-        }
         axis.translationSlope = axis.transA = transA =
             axis.staticScale ||
             axis.len / ((range + pointRangePadding) || 1);
@@ -5541,13 +5537,13 @@ class Axis {
         if (isXAxis && !secondPass) {
             axis.series.forEach(function (series): void {
                 series.processData(
-                    axis.min !== axis.oldMin || axis.max !== axis.oldMax
+                    axis.min !== axis.old?.min || axis.max !== axis.old?.max
                 );
             });
         }
 
         // set the translation factor used in translate function
-        axis.setAxisTranslation(true);
+        axis.setAxisTranslation();
 
         // hook for ordinal axes and radial axes
         fireEvent(this, 'initialAxisTranslation');
@@ -6017,13 +6013,9 @@ class Axis {
             isXAxisDirty = isXAxisDirty || series.xAxis?.isDirty || false;
         });
 
-        axis.oldMin = axis.min;
-        axis.oldMax = axis.max;
-        axis.oldAxisLength = axis.len;
-
         // set the new axisLength
         axis.setAxisSize();
-        isDirtyAxisLength = axis.len !== axis.oldAxisLength;
+        isDirtyAxisLength = axis.len !== axis.old?.len;
 
         // do we really need to go through all this?
         if (
@@ -6032,8 +6024,8 @@ class Axis {
             isXAxisDirty ||
             axis.isLinked ||
             axis.forceRedraw ||
-            axis.userMin !== axis.oldUserMin ||
-            axis.userMax !== axis.oldUserMax ||
+            axis.userMin !== axis.old?.userMin ||
+            axis.userMax !== axis.old?.userMax ||
             axis.alignToOthers()
         ) {
 
@@ -6049,18 +6041,13 @@ class Axis {
             // get fixed positions based on tickInterval
             axis.setTickInterval();
 
-            // record old values to decide whether a rescale is necessary later
-            // on (#540)
-            axis.oldUserMin = axis.userMin;
-            axis.oldUserMax = axis.userMax;
-
             // Mark as dirty if it is not already set to dirty and extremes have
             // changed. #595.
             if (!axis.isDirty) {
                 axis.isDirty =
                     isDirtyAxisLength ||
-                    axis.min !== axis.oldMin ||
-                    axis.max !== axis.oldMax;
+                    axis.min !== axis.old?.min ||
+                    axis.max !== axis.old?.max;
             }
         } else if (axis.stacking) {
             axis.stacking.cleanStacks();
@@ -7245,7 +7232,7 @@ class Axis {
      */
     public renderMinorTick(pos: number): void {
         const axis: Highcharts.Axis = this as any;
-        const slideInTicks = axis.chart.hasRendered && isNumber(axis.oldMin);
+        const slideInTicks = axis.chart.hasRendered && axis.old;
         const minorTicks = axis.minorTicks;
 
         if (!minorTicks[pos]) {
@@ -7276,7 +7263,7 @@ class Axis {
         const axis: Highcharts.Axis = this as any;
         const isLinked = axis.isLinked;
         const ticks = axis.ticks;
-        const slideInTicks = axis.chart.hasRendered && isNumber(axis.oldMin);
+        const slideInTicks = axis.chart.hasRendered && axis.old;
 
         // Linked axes need an extra check to find out if
         if (!isLinked ||
@@ -7500,6 +7487,15 @@ class Axis {
         }
         // End stacked totals
 
+        // Record old scaling for updating/animation
+        axis.old = {
+            len: axis.len,
+            max: axis.max,
+            min: axis.min,
+            transA: axis.transA,
+            userMax: axis.userMax,
+            userMin: axis.userMin
+        };
         axis.isDirty = false;
 
         fireEvent(this, 'afterRender');

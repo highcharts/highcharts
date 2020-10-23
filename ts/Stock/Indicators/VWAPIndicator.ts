@@ -67,7 +67,7 @@ declare module '../../Core/Series/SeriesType' {
     }
 }
 
-import './SMAIndicator.js';
+// im port './SMAIndicator.js';
 
 /**
  * The Volume Weighted Average Price (VWAP) series type.

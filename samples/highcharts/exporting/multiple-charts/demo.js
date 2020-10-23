@@ -3,35 +3,36 @@
  * argument
  */
 Highcharts.getSVG = function (charts) {
-    var svgArr = [],
-        top = 0,
-        width = 0;
+    let top = 0;
+    let width = 0;
 
-    Highcharts.each(charts, function (chart) {
-        var svg = chart.getSVG(),
-            // Get width/height of SVG for export
-            svgWidth = +svg.match(
-                /^<svg[^>]*width\s*=\s*\"?(\d+)\"?[^>]*>/
-            )[1],
-            svgHeight = +svg.match(
-                /^<svg[^>]*height\s*=\s*\"?(\d+)\"?[^>]*>/
-            )[1];
+    const groups = charts.map(chart => {
+        let svg = chart.getSVG();
+        // Get width/height of SVG for export
+        const svgWidth = +svg.match(
+            /^<svg[^>]*width\s*=\s*\"?(\d+)\"?[^>]*>/
+        )[1];
+        const svgHeight = +svg.match(
+            /^<svg[^>]*height\s*=\s*\"?(\d+)\"?[^>]*>/
+        )[1];
 
-        svg = svg.replace(
-            '<svg',
-            '<g transform="translate(0,' + top + ')" '
-        );
-        svg = svg.replace('</svg>', '</g>');
+        svg = svg
+            .replace(
+                '<svg',
+                '<g transform="translate(0,' + top + ')" '
+            )
+            .replace('</svg>', '</g>');
 
         top += svgHeight;
         width = Math.max(width, svgWidth);
 
-        svgArr.push(svg);
-    });
+        return svg;
+    }).join('');
 
-    return '<svg height="' + top + '" width="' + width +
-        '" version="1.1" xmlns="http://www.w3.org/2000/svg">' +
-        svgArr.join('') + '</svg>';
+    return `<svg height="${top}" width="${width}" version="1.1"
+        xmlns="http://www.w3.org/2000/svg">
+            ${groups}
+        </svg>`;
 };
 
 /**
@@ -52,7 +53,7 @@ Highcharts.exportCharts = function (charts, options) {
     });
 };
 
-var chart1 = Highcharts.chart('container1', {
+const chart1 = Highcharts.chart('container1', {
 
     chart: {
         height: 200
@@ -83,7 +84,7 @@ var chart1 = Highcharts.chart('container1', {
 
 });
 
-var chart2 = Highcharts.chart('container2', {
+const chart2 = Highcharts.chart('container2', {
 
     chart: {
         type: 'column',
@@ -112,12 +113,14 @@ var chart2 = Highcharts.chart('container2', {
 
 });
 
-$('#export-png').click(function () {
-    Highcharts.exportCharts([chart1, chart2]);
-});
+document.getElementById('export-png').addEventListener(
+    'click',
+    () => Highcharts.exportCharts([chart1, chart2])
+);
 
-$('#export-pdf').click(function () {
-    Highcharts.exportCharts([chart1, chart2], {
+document.getElementById('export-pdf').addEventListener(
+    'click',
+    () => Highcharts.exportCharts([chart1, chart2], {
         type: 'application/pdf'
-    });
-});
+    })
+);

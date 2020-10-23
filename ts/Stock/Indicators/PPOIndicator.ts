@@ -58,7 +58,7 @@ declare module '../../Core/Series/SeriesType' {
     }
 }
 
-import './EMAIndicator.js';
+// im port './EMAIndicator.js';
 
 var EMA = BaseSeries.seriesTypes.ema;
 

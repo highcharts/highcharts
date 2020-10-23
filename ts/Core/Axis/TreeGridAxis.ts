@@ -815,7 +815,7 @@ namespace TreeGridAxis {
 
             // setAxisTranslation modifies the min and max according to
             // axis breaks.
-            axis.setAxisTranslation(true);
+            axis.setAxisTranslation();
 
             axis.tickmarkOffset = 0.5;
             axis.tickInterval = 1;

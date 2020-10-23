@@ -1292,7 +1292,7 @@ extend(Axis.prototype, /** @lends Highcharts.Axis.prototype */ {
                 'plotLines'
         )
     ): (Highcharts.PlotLineOrBand|undefined) {
-        var obj: Highcharts.PlotLineOrBand|undefined = new Highcharts.PlotLineOrBand(this, options),
+        var obj: Highcharts.PlotLineOrBand|undefined = new H.PlotLineOrBand(this, options),
             userOptions = this.userOptions;
 
         if (this.visible) {

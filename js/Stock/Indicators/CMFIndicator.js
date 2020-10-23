@@ -13,7 +13,7 @@
  * */
 'use strict';
 import BaseSeries from '../../Core/Series/Series.js';
-import './SMAIndicator.js';
+// im port './SMAIndicator.js';
 /**
  * The CMF series type.
  *

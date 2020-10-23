@@ -1831,7 +1831,8 @@ const numberFormat = H.numberFormat = function numberFormat(
         ret,
         roundedNumber,
         exponent = number.toString().split('e'),
-        fractionDigits;
+        fractionDigits,
+        firstDecimals = decimals;
 
     if (decimals === -1) {
         // Preserve decimals. Not huge numbers (#3793).
@@ -1886,10 +1887,14 @@ const numberFormat = H.numberFormat = function numberFormat(
     // number 42 000 000, this line adds 42.
     ret += thousands ? strinteger.substr(0, thousands) + thousandsSep : '';
 
-    // Add the remaining thousands groups, joined by the thousands separator
-    ret += strinteger
-        .substr(thousands)
-        .replace(/(\d{3})(?=\d)/g, '$1' + thousandsSep);
+    if (+exponent[1] < 0 && !firstDecimals) {
+        ret = '0';
+    } else {
+        // Add the remaining thousands groups, joined by the thousands separator
+        ret += strinteger
+            .substr(thousands)
+            .replace(/(\d{3})(?=\d)/g, '$1' + thousandsSep);
+    }
 
     // Add the decimal point and the decimal component
     if (decimals) {

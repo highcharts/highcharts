@@ -65,7 +65,7 @@ declare module '../../Core/Series/SeriesType' {
     }
 }
 
-import './SMAIndicator.js';
+// im port './SMAIndicator.js';
 
 var SMA = BaseSeries.seriesTypes.sma;
 
