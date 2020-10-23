@@ -107,9 +107,6 @@ var columnRangeOptions: Highcharts.ColumnRangeSeriesOptions = {
     pointRange: null,
 
     /** @ignore-option */
-    stacking: void 0,
-
-    /** @ignore-option */
     marker: null as any,
 
     states: {
@@ -135,11 +132,8 @@ BaseSeries.seriesType<typeof Highcharts.ColumnRangeSeries>('columnrange', 'arear
     columnRangeOptions
 ), {
     setOptions: function (this: Highcharts.ColumnRangeSeries): Highcharts.ColumnRangeSeriesOptions {
-        var options = arearangeProto.setOptions.apply(this, arguments);
-        if (options.stacking) {
-            options.stacking = columnRangeOptions.stacking;
-        }
-        return options;
+        merge(true, arguments[0], { stacking: void 0 }); // #14359 Prevent side-effect from stacking.
+        return arearangeProto.setOptions.apply(this, arguments);
     },
 
     // eslint-disable-next-line valid-jsdoc
