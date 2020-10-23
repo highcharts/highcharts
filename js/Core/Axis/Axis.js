@@ -1187,12 +1187,9 @@ var Axis = /** @class */ (function () {
      * @private
      * @function Highcharts.Axis#setAxisTranslation
      *
-     * @param {boolean} [saveOld]
-     * TO-DO: parameter description
-     *
      * @fires Highcharts.Axis#event:afterSetAxisTranslation
      */
-    Axis.prototype.setAxisTranslation = function (saveOld) {
+    Axis.prototype.setAxisTranslation = function () {
         var axis = this, range = axis.max - axis.min, pointRange = axis.axisPointRange || 0, closestPointRange, minPointOffset = 0, pointRangePadding = 0, linkedParent = axis.linkedParent, ordinalCorrection, hasCategories = !!axis.categories, transA = axis.transA, isXAxis = axis.isXAxis;
         // Adjust translation for padding. Y axis with categories need to go
         // through the same (#1784).
@@ -1252,9 +1249,6 @@ var Axis = /** @class */ (function () {
             }
         }
         // Secondary values
-        if (saveOld) {
-            axis.oldTransA = transA;
-        }
         axis.translationSlope = axis.transA = transA =
             axis.staticScale ||
                 axis.len / ((range + pointRangePadding) || 1);
@@ -1445,7 +1439,7 @@ var Axis = /** @class */ (function () {
             });
         }
         // set the translation factor used in translate function
-        axis.setAxisTranslation(true);
+        axis.setAxisTranslation();
         // hook for ordinal axes and radial axes
         fireEvent(this, 'initialAxisTranslation');
         // In column-like charts, don't cramp in more ticks than there are
@@ -2645,7 +2639,7 @@ var Axis = /** @class */ (function () {
      */
     Axis.prototype.renderMinorTick = function (pos) {
         var axis = this;
-        var slideInTicks = axis.chart.hasRendered && isNumber(axis.oldMin);
+        var slideInTicks = axis.chart.hasRendered && isNumber(axis.oldTransA);
         var minorTicks = axis.minorTicks;
         if (!minorTicks[pos]) {
             minorTicks[pos] = new Tick(axis, pos, 'minor');
@@ -2673,7 +2667,7 @@ var Axis = /** @class */ (function () {
         var axis = this;
         var isLinked = axis.isLinked;
         var ticks = axis.ticks;
-        var slideInTicks = axis.chart.hasRendered && isNumber(axis.oldMin);
+        var slideInTicks = axis.chart.hasRendered && isNumber(axis.oldTransA);
         // Linked axes need an extra check to find out if
         if (!isLinked ||
             (pos >= axis.min && pos <= axis.max) || ((_a = axis.grid) === null || _a === void 0 ? void 0 : _a.isColumn)) {
@@ -2827,6 +2821,7 @@ var Axis = /** @class */ (function () {
             axis.stacking.renderStackTotals();
         }
         // End stacked totals
+        axis.oldTransA = axis.transA;
         axis.isDirty = false;
         fireEvent(this, 'afterRender');
     };
