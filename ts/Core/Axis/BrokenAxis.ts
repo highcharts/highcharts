@@ -334,8 +334,8 @@ class BrokenAxisAdditions {
                 );
             };
 
-            axis.setAxisTranslation = function (saveOld?: boolean): void {
-                Axis.prototype.setAxisTranslation.call(this, saveOld);
+            axis.setAxisTranslation = function (): void {
+                Axis.prototype.setAxisTranslation.call(this);
 
                 brokenAxis.unitLength = null as any;
                 if (brokenAxis.hasBreaks) {

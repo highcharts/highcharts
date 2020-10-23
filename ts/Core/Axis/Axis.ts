@@ -465,7 +465,7 @@ declare global {
             public renderTick(pos: number, i: number): void;
             public renderUnsquish(): void;
             public setAxisSize(): void;
-            public setAxisTranslation(saveOld?: boolean): void;
+            public setAxisTranslation(): void;
             public setExtremes(
                 newMin?: number,
                 newMax?: number,
@@ -5172,12 +5172,9 @@ class Axis implements AxisComposition, AxisLike {
      * @private
      * @function Highcharts.Axis#setAxisTranslation
      *
-     * @param {boolean} [saveOld]
-     * TO-DO: parameter description
-     *
      * @fires Highcharts.Axis#event:afterSetAxisTranslation
      */
-    public setAxisTranslation(saveOld?: boolean): void {
+    public setAxisTranslation(): void {
         var axis = this,
             range = (axis.max as any) - (axis.min as any),
             pointRange = axis.axisPointRange || 0,
@@ -5272,9 +5269,6 @@ class Axis implements AxisComposition, AxisLike {
         }
 
         // Secondary values
-        if (saveOld) {
-            axis.oldTransA = transA;
-        }
         axis.translationSlope = axis.transA = transA =
             axis.staticScale ||
             axis.len / ((range + pointRangePadding) || 1);
@@ -5537,7 +5531,7 @@ class Axis implements AxisComposition, AxisLike {
         }
 
         // set the translation factor used in translate function
-        axis.setAxisTranslation(true);
+        axis.setAxisTranslation();
 
         // hook for ordinal axes and radial axes
         fireEvent(this, 'initialAxisTranslation');
@@ -7237,7 +7231,7 @@ class Axis implements AxisComposition, AxisLike {
      */
     public renderMinorTick(pos: number): void {
         const axis: Highcharts.Axis = this as any;
-        const slideInTicks = axis.chart.hasRendered && isNumber(axis.oldMin);
+        const slideInTicks = axis.chart.hasRendered && isNumber(axis.oldTransA);
         const minorTicks = axis.minorTicks;
 
         if (!minorTicks[pos]) {
@@ -7268,7 +7262,7 @@ class Axis implements AxisComposition, AxisLike {
         const axis: Highcharts.Axis = this as any;
         const isLinked = axis.isLinked;
         const ticks = axis.ticks;
-        const slideInTicks = axis.chart.hasRendered && isNumber(axis.oldMin);
+        const slideInTicks = axis.chart.hasRendered && isNumber(axis.oldTransA);
 
         // Linked axes need an extra check to find out if
         if (!isLinked ||
@@ -7492,6 +7486,7 @@ class Axis implements AxisComposition, AxisLike {
         }
         // End stacked totals
 
+        axis.oldTransA = axis.transA;
         axis.isDirty = false;
 
         fireEvent(this, 'afterRender');
