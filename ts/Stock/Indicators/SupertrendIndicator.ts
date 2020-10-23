@@ -102,8 +102,8 @@ declare module '../../Core/Series/Types' {
     }
 }
 
-import './ATRIndicator.js';
-import './SMAIndicator.js';
+// im port './ATRIndicator.js';
+// im port './SMAIndicator.js';
 
 var ATR = seriesTypes.atr,
     SMA = seriesTypes.sma;

@@ -951,7 +951,7 @@ extend(Axis.prototype, /** @lends Highcharts.Axis.prototype */ {
      * @return {Highcharts.PlotLineOrBand|undefined}
      */
     addPlotBandOrLine: function (options, coll) {
-        var obj = new Highcharts.PlotLineOrBand(this, options), userOptions = this.userOptions;
+        var obj = new H.PlotLineOrBand(this, options), userOptions = this.userOptions;
         if (this.visible) {
             obj = obj.render();
         }

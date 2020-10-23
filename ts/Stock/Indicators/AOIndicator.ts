@@ -62,7 +62,7 @@ declare module '../../Core/Series/Types' {
     }
 }
 
-import './SMAIndicator.js';
+// im port './SMAIndicator.js';
 
 /**
  * The AO series type

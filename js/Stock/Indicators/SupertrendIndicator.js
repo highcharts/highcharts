@@ -9,8 +9,8 @@ import BaseSeries from '../../Core/Series/Series.js';
 var seriesTypes = BaseSeries.seriesTypes;
 import U from '../../Core/Utilities.js';
 var correctFloat = U.correctFloat, isArray = U.isArray, merge = U.merge, objectEach = U.objectEach;
-import './ATRIndicator.js';
-import './SMAIndicator.js';
+// im port './ATRIndicator.js';
+// im port './SMAIndicator.js';
 var ATR = seriesTypes.atr, SMA = seriesTypes.sma;
 /* eslint-disable require-jsdoc */
 // Utils:

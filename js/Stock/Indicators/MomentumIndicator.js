@@ -8,7 +8,7 @@
 import BaseSeries from '../../Core/Series/Series.js';
 import U from '../../Core/Utilities.js';
 var isArray = U.isArray;
-import './SMAIndicator.js';
+// im port './SMAIndicator.js';
 /* eslint-disable require-jsdoc */
 function populateAverage(points, xVal, yVal, i, period) {
     var mmY = yVal[i - 1][3] - yVal[i - period - 1][3], mmX = xVal[i - 1];

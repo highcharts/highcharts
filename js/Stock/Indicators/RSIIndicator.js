@@ -8,7 +8,7 @@
 import BaseSeries from '../../Core/Series/Series.js';
 import U from '../../Core/Utilities.js';
 var isArray = U.isArray;
-import './SMAIndicator.js';
+// im port './SMAIndicator.js';
 /* eslint-disable require-jsdoc */
 // Utils:
 function toFixed(a, n) {
