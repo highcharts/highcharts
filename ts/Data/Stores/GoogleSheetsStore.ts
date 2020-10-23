@@ -12,6 +12,7 @@
 
 import type DataEventEmitter from '../DataEventEmitter';
 import type DataValueType from '../DataValueType';
+import type DataTableRow from './../DataTableRow';
 import AjaxMixin from '../../Extensions/Ajax.js';
 const {
     ajax
@@ -21,6 +22,8 @@ import DataParser from '../Parsers/DataParser.js';
 import DataStore from './DataStore.js';
 import DataTable from '../DataTable.js';
 import U from '../../Core/Utilities.js';
+import DataCredentialProvider from '../AJAX/CredentialProviders/DataCredentialProvider';
+import DataConverter from './../DataConverter.js';
 const {
     merge,
     uniqueKey
@@ -91,7 +94,7 @@ class GoogleSheetsStore extends DataStore<GoogleSheetsStore.EventObject> impleme
      *
      * */
 
-    public columns: Array<Array<DataValueType>>;
+    public columns: Array<Array<DataTableRow.CellType>> = [];
     public readonly options: GoogleSheetsStore.Options;
     public readonly parser: DataParser<DataParser.EventObject> = void 0 as any;
 
@@ -215,6 +218,7 @@ class GoogleSheetsStore extends DataStore<GoogleSheetsStore.EventObject> impleme
      */
     private fetchSheet(eventDetail?: DataEventEmitter.EventDetail): void {
         const store = this,
+            converter = new DataConverter(),
             headers: string[] = [],
             {
                 enablePolling,
@@ -229,8 +233,7 @@ class GoogleSheetsStore extends DataStore<GoogleSheetsStore.EventObject> impleme
                 'public/values?alt=json'
             ].join('/');
 
-        let i: number,
-            colsCount: number;
+        let column;
 
         store.emit({
             type: 'load',
@@ -245,10 +248,16 @@ class GoogleSheetsStore extends DataStore<GoogleSheetsStore.EventObject> impleme
             success: function (json: Highcharts.JSONType): void {
 
                 store.parseSheet(json);
-                colsCount = store.columns.length;
 
-                for (i = 0; i < colsCount; i++) {
+                for (let i = 0, iEnd = store.columns.length; i < iEnd; i++) {
                     headers.push(store.columns[i][0]?.toString() || uniqueKey());
+
+                    column = store.columns[i];
+                    for (let j = 0, jEnd = column.length; j < jEnd; ++j) {
+                        if (column[j] && typeof column[j] === 'string') {
+                            store.columns[i][j] = converter.asGuessedType(column[j] as string);
+                        }
+                    }
                 }
 
                 const table = DataTable.fromColumns(store.columns, headers);

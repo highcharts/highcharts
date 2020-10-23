@@ -28,6 +28,7 @@ import DataJSON from './../DataJSON.js';
 import DataStore from './DataStore.js';
 import DataTable from '../DataTable.js';
 import U from '../../Core/Utilities.js';
+import DataConverter from './../DataConverter.js';
 var merge = U.merge, uniqueKey = U.uniqueKey;
 /** eslint-disable valid-jsdoc */
 /**
@@ -42,6 +43,12 @@ var GoogleSheetsStore = /** @class */ (function (_super) {
      * */
     function GoogleSheetsStore(table, options) {
         var _this = _super.call(this, table) || this;
+        /* *
+         *
+         *  Properties
+         *
+         * */
+        _this.columns = [];
         _this.parser = void 0;
         _this.options = merge(GoogleSheetsStore.defaultOptions, options);
         _this.columns = [];
@@ -140,13 +147,13 @@ var GoogleSheetsStore = /** @class */ (function (_super) {
      * Custom information for pending events.
      */
     GoogleSheetsStore.prototype.fetchSheet = function (eventDetail) {
-        var store = this, headers = [], _a = store.options, enablePolling = _a.enablePolling, dataRefreshRate = _a.dataRefreshRate, googleSpreadsheetKey = _a.googleSpreadsheetKey, worksheet = _a.worksheet, url = [
+        var store = this, converter = new DataConverter(), headers = [], _a = store.options, enablePolling = _a.enablePolling, dataRefreshRate = _a.dataRefreshRate, googleSpreadsheetKey = _a.googleSpreadsheetKey, worksheet = _a.worksheet, url = [
             'https://spreadsheets.google.com/feeds/cells',
             googleSpreadsheetKey,
             worksheet,
             'public/values?alt=json'
         ].join('/');
-        var i, colsCount;
+        var column;
         store.emit({
             type: 'load',
             detail: eventDetail,
@@ -159,9 +166,14 @@ var GoogleSheetsStore = /** @class */ (function (_super) {
             success: function (json) {
                 var _a;
                 store.parseSheet(json);
-                colsCount = store.columns.length;
-                for (i = 0; i < colsCount; i++) {
+                for (var i = 0, iEnd = store.columns.length; i < iEnd; i++) {
                     headers.push(((_a = store.columns[i][0]) === null || _a === void 0 ? void 0 : _a.toString()) || uniqueKey());
+                    column = store.columns[i];
+                    for (var j = 0, jEnd = column.length; j < jEnd; ++j) {
+                        if (column[j] && typeof column[j] === 'string') {
+                            store.columns[i][j] = converter.asGuessedType(column[j]);
+                        }
+                    }
                 }
                 var table = DataTable.fromColumns(store.columns, headers);
                 store.table = table;
