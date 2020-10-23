@@ -16,20 +16,22 @@ import type {
     PointOptions,
     PointShortOptions
 } from '../Core/Series/PointOptions';
+import type { SeriesStatesOptions } from '../Core/Series/SeriesOptions';
+import type { StatesOptionsKey } from '../Core/Series/StatesOptions';
 import type SVGAttributes from '../Core/Renderer/SVG/SVGAttributes';
 import type SVGElement from '../Core/Renderer/SVG/SVGElement';
 import type SVGPath from '../Core/Renderer/SVG/SVGPath';
 import BaseSeries from '../Core/Series/Series.js';
+const { seriesTypes } = BaseSeries;
 import ColorMapMixin from '../Mixins/ColorMapSeries.js';
 const {
     colorMapPointMixin,
     colorMapSeriesMixin
 } = ColorMapMixin;
 import H from '../Core/Globals.js';
-const {
-    noop
-} = H;
+const { noop } = H;
 import LegendSymbolMixin from '../Mixins/LegendSymbol.js';
+import LineSeries from './LineSeries.js';
 import mapModule from '../Maps/Map.js';
 const {
     maps,
@@ -50,9 +52,29 @@ const {
     splat
 } = U;
 
+declare module '../Core/Series/SeriesLike' {
+    interface SeriesLike {
+        mapTitle?: string;
+        valueMax?: number;
+        valueMin?: number;
+    }
+}
+
+declare module '../Core/Series/SeriesOptions' {
+    interface SeriesOptions {
+        /** @requires modules/map */
+        mapData?: (Array<Highcharts.MapPointOptions>|any);
+    }
+    interface SeriesStateHoverOptions
+    {
+        brightness?: number;
+        color?: ColorType;
+    }
+}
+
 declare global {
     namespace Highcharts {
-        class MapPoint extends ScatterPoint implements ColorMapPointMixin {
+        class MapPoint extends ScatterPoint implements ColorMapPoint {
             public colorInterval?: unknown;
             public dataLabelOnNull: ColorMapPointMixin['dataLabelOnNull'];
             public isValid: ColorMapPointMixin['isValid'];
@@ -63,11 +85,11 @@ declare global {
             public properties?: object;
             public series: MapSeries;
             public value: (number|null);
-            public applyOptions(options: MapPointOptions, x: number): MapPoint;
-            public onMouseOver(e?: PointerEventObject): void;
+            public applyOptions(options: (MapPointOptions|PointShortOptions), x?: number): MapPoint;
+            public onMouseOver(e?: PointerEvent): void;
             public zoomTo(): void;
         }
-        class MapSeries extends ScatterSeries implements ColorMapSeriesMixin {
+        class MapSeries extends ScatterSeries implements ColorMapSeries {
             public baseTrans: MapBaseTransObject;
             public chart: MapChart;
             public colorAttribs: ColorMapSeriesMixin['colorAttribs'];
@@ -105,7 +127,10 @@ declare global {
             public getBox(paths: Array<MapPointOptions>): void;
             public getExtremes(): DataExtremesObject;
             public hasData(): boolean;
-            public pointAttribs(point: MapPoint, state?: string): SVGAttributes;
+            public pointAttribs(
+                point?: MapPoint,
+                state?: StatesOptionsKey
+            ): SVGAttributes;
             public render(): void;
             public setData(
                 data: Array<(PointOptions|PointShortOptions|MapPointOptions)>,
@@ -151,21 +176,7 @@ declare global {
             data?: Array<(PointOptions|PointShortOptions|MapPointOptions)>;
             nullColor?: ColorType;
             nullInteraction?: boolean;
-            states?: SeriesStatesOptionsObject<MapSeries>;
-        }
-        interface SeriesStatesHoverOptionsObject
-        {
-            brightness?: number;
-            color?: ColorType;
-        }
-        interface Series {
-            mapTitle?: string;
-            valueMax?: number;
-            valueMin?: number;
-        }
-        interface SeriesOptions {
-            /** @requires modules/map */
-            mapData?: (Array<MapPointOptions>|any);
+            states?: SeriesStatesOptions<MapSeries>;
         }
     }
 }
@@ -173,18 +184,14 @@ declare global {
 /**
  * @private
  */
-declare module '../Core/Series/Types' {
+declare module '../Core/Series/SeriesType' {
     interface SeriesTypeRegistry {
         map: typeof Highcharts.MapSeries;
     }
 }
 
 import '../Core/Options.js';
-import '../Series/LineSeries.js';
 import './ScatterSeries.js';
-
-var Series = H.Series,
-    seriesTypes = BaseSeries.seriesTypes;
 
 /**
  * @private
@@ -481,7 +488,7 @@ BaseSeries.seriesType<typeof Highcharts.MapSeries>(
             this: Highcharts.MapSeries,
             itemOptions: Highcharts.MapSeriesOptions
         ): Highcharts.MapSeriesOptions {
-            var options = Series.prototype.setOptions.call(this, itemOptions),
+            var options = LineSeries.prototype.setOptions.call(this, itemOptions),
                 joinBy = options.joinBy,
                 joinByNull = joinBy === null;
 
@@ -625,7 +632,7 @@ BaseSeries.seriesType<typeof Highcharts.MapSeries>(
             this: Highcharts.MapSeries
         ): Highcharts.DataExtremesObject {
             // Get the actual value extremes for colors
-            const { dataMin, dataMax } = Series.prototype.getExtremes
+            const { dataMin, dataMax } = LineSeries.prototype.getExtremes
                 .call(this, this.valueData);
 
             // Recalculate box on updated data
@@ -877,7 +884,7 @@ BaseSeries.seriesType<typeof Highcharts.MapSeries>(
                     this.getBox(dataUsed); // Issue #4784
                 }
             }
-            Series.prototype.setData.call(
+            LineSeries.prototype.setData.call(
                 this,
                 data,
                 redraw,
@@ -943,12 +950,12 @@ BaseSeries.seriesType<typeof Highcharts.MapSeries>(
         pointAttribs: function (
             this: Highcharts.MapSeries,
             point: Highcharts.MapPoint,
-            state?: string
+            state?: StatesOptionsKey
         ): SVGAttributes {
             var attr = point.series.chart.styledMode ?
                 this.colorAttribs(point) :
                 seriesTypes.column.prototype.pointAttribs.call(
-                    this, point, state
+                    this, point as any, state
                 );
 
             // Set the stroke-width on the group element and let all point
@@ -1189,7 +1196,7 @@ BaseSeries.seriesType<typeof Highcharts.MapSeries>(
         // dataLabelsGroup.
         drawMapDataLabels: function (this: Highcharts.MapSeries): void {
 
-            Series.prototype.drawDataLabels.call(this);
+            LineSeries.prototype.drawDataLabels.call(this);
             if (this.dataLabelsGroup) {
                 this.dataLabelsGroup.clip(this.chart.clipRect);
             }
@@ -1199,7 +1206,7 @@ BaseSeries.seriesType<typeof Highcharts.MapSeries>(
         // on the US counties demo.
         render: function (this: Highcharts.MapSeries): void {
             var series = this,
-                render = Series.prototype.render;
+                render = LineSeries.prototype.render;
 
             // Give IE8 some time to breathe.
             if (series.chart.renderer.isVML && series.data.length > 3000) {
@@ -1310,8 +1317,7 @@ BaseSeries.seriesType<typeof Highcharts.MapSeries>(
             this: Highcharts.MapSeries,
             level: Highcharts.DrilldownLevelObject
         ): void {
-            (seriesTypes.column.prototype as Highcharts.ColumnSeries)
-                .animateDrillupFrom.call(this, level);
+            seriesTypes.column.prototype.animateDrillupFrom.call(this, level);
         },
 
 
@@ -1321,8 +1327,7 @@ BaseSeries.seriesType<typeof Highcharts.MapSeries>(
             this: Highcharts.MapSeries,
             init?: boolean
         ): void {
-            (seriesTypes.column.prototype as Highcharts.ColumnSeries)
-                .animateDrillupTo.call(this, init);
+            seriesTypes.column.prototype.animateDrillupTo.call(this, init);
         }
 
     // Point class
@@ -1331,8 +1336,8 @@ BaseSeries.seriesType<typeof Highcharts.MapSeries>(
         // Extend the Point object to split paths
         applyOptions: function (
             this: Highcharts.MapPoint,
-            options: Highcharts.MapPointOptions,
-            x: number
+            options: (Highcharts.MapPointOptions|PointShortOptions),
+            x?: number
         ): Highcharts.MapPoint {
 
             var series = this.series,
@@ -1365,7 +1370,7 @@ BaseSeries.seriesType<typeof Highcharts.MapSeries>(
         // Stop the fade-out
         onMouseOver: function (
             this: Highcharts.MapPoint,
-            e?: Highcharts.PointerEventObject
+            e?: PointerEvent
         ): void {
             U.clearTimeout(this.colorInterval as any);
             if (this.value !== null || this.series.options.nullInteraction) {

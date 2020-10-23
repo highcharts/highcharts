@@ -14,12 +14,17 @@
 
 import type AnimationOptionsObject from '../../Core/Animation/AnimationOptionsObject';
 import type Chart from '../../Core/Chart/Chart';
-import type ColorString from '../../Core/Color/ColorString';
+import type ColorType from '../../Core/Color/ColorType';
+import type { PointShortOptions } from '../../Core/Series/PointOptions';
+import type { SeriesStatesOptions } from '../../Core/Series/SeriesOptions';
+import type { StatesOptionsKey } from '../../Core/Series/StatesOptions';
 import type SVGAttributes from '../../Core/Renderer/SVG/SVGAttributes';
 import type SVGElement from '../../Core/Renderer/SVG/SVGElement';
 import type SVGPath from '../../Core/Renderer/SVG/SVGPath';
 import BaseSeries from '../../Core/Series/Series.js';
+const { seriesTypes } = BaseSeries;
 import H from '../../Core/Globals.js';
+import LineSeries from '../LineSeries.js';
 import NodesMixin from '../../Mixins/Nodes.js';
 import Point from '../../Core/Series/Point.js';
 import U from '../../Core/Utilities.js';
@@ -30,6 +35,26 @@ const {
     pick
 } = U;
 
+declare module '../../Core/Series/PointOptions' {
+    interface PointStateInactiveOptions
+    {
+        animation?: (boolean|Partial<AnimationOptionsObject>);
+    }
+}
+
+declare module '../../Core/Series/SeriesLike' {
+    interface SeriesLike {
+        layout?: Highcharts.NetworkgraphLayout;
+    }
+}
+
+declare module '../../Core/Series/SeriesOptions' {
+    interface SeriesStateInactiveOptions
+    {
+        animation?: (boolean|Partial<AnimationOptionsObject>);
+        linkOpacity?: number;
+    }
+}
 
 /**
  * Internal types
@@ -47,31 +72,20 @@ declare global {
                 PointLabelObject
             )): (number|string|null|undefined);
         }
-        interface NetworkgraphDataLabelsFormatterContextObject
-            extends PointLabelObject
-        {
-            color: ColorString;
+        interface NetworkgraphDataLabelsFormatterContextObject extends PointLabelObject {
+            color: ColorType;
             key: string;
             point: NetworkgraphPoint;
         }
-        interface NetworkgraphDataLabelsOptionsObject
-            extends DataLabelsOptions
-        {
+        interface NetworkgraphDataLabelsOptionsObject extends DataLabelsOptions {
             format?: string;
             formatter?: NetworkgraphDataLabelsFormatterCallbackFunction;
             linkFormat?: string;
             linkFormatter?: NetworkgraphDataLabelsFormatterCallbackFunction;
             linkTextPath?: DataLabelsTextPathOptionsObject;
         }
-        interface NetworkgraphPointMarkerOptionsObject
-            extends PointMarkerOptionsObject
-        {
-            states: NetworkgraphPointStatesOptionsObject;
-        }
-        interface NetworkgraphPointOptions
-            extends LinePointOptions, NodesPointOptions
-        {
-            color?: ColorString;
+        interface NetworkgraphPointOptions extends LinePointOptions, NodesPointOptions {
+            color?: ColorType;
             colorIndex?: number;
             dashStyle?: string;
             mass?: number;
@@ -79,39 +93,16 @@ declare global {
             opacity?: number;
             width?: number;
         }
-        interface NetworkgraphPointStatesInactiveOptionsObject
-            extends PointStatesInactiveOptionsObject
-        {
-            animation?: (boolean|Partial<AnimationOptionsObject>);
-        }
-        interface NetworkgraphPointStatesOptionsObject
-            extends PointStatesOptionsObject
-        {
-            inactive?: NetworkgraphPointStatesInactiveOptionsObject;
-        }
-        interface NetworkgraphSeriesOptions
-            extends LineSeriesOptions, NodesSeriesOptions
-        {
+        interface NetworkgraphSeriesOptions extends LineSeriesOptions, NodesSeriesOptions {
             dataLabels?: NetworkgraphDataLabelsOptionsObject;
             draggable?: boolean;
             inactiveOtherPoints?: boolean;
             layoutAlgorithm?: NetworkgraphLayoutAlgorithmOptions;
             link?: SVGAttributes;
-            marker?: NetworkgraphPointMarkerOptionsObject;
             nodes?: Array<NetworkgraphPointOptions>;
-            states?: SeriesStatesOptionsObject<NetworkgraphSeries>;
+            states?: SeriesStatesOptions<NetworkgraphSeries>;
         }
-        interface SeriesStatesInactiveOptionsObject
-        {
-            animation?: (boolean|Partial<AnimationOptionsObject>);
-            linkOpacity?: number;
-        }
-        interface Series {
-            layout?: NetworkgraphLayout;
-        }
-        class NetworkgraphPoint
-            extends LinePoint
-            implements DragNodesPoint, NodesPoint {
+        class NetworkgraphPoint extends LinePoint implements DragNodesPoint, NodesPoint {
             public className: NodesPoint['className'];
             public degree: number;
             public fixedPosition: DragNodesPoint['fixedPosition'];
@@ -140,16 +131,14 @@ declare global {
             public getPointsCollection(): Array<NetworkgraphPoint>;
             public init(
                 series: NetworkgraphSeries,
-                options: NetworkgraphPointOptions,
+                options: (NetworkgraphPointOptions|PointShortOptions|Array<PointShortOptions>),
                 x?: number
             ): Highcharts.NetworkgraphPoint;
             public redrawLink(): void;
             public remove(redraw?: boolean, animation?: boolean): void;
             public renderLink(): void;
         }
-        class NetworkgraphSeries
-            extends LineSeries
-            implements DragNodesSeries, NodesSeries {
+        class NetworkgraphSeries extends LineSeries implements DragNodesSeries, NodesSeries {
             public chart: NetworkgraphChart;
             public createNode: NodesMixin['createNode'];
             public data: Array<NetworkgraphPoint>;
@@ -183,11 +172,11 @@ declare global {
             ): NetworkgraphSeries;
             public markerAttribs(
                 point: NetworkgraphPoint,
-                state: string
+                state?: StatesOptionsKey
             ): SVGAttributes;
             public pointAttribs(
-                point: NetworkgraphPoint,
-                state?: string
+                point?: NetworkgraphPoint,
+                state?: StatesOptionsKey
             ): SVGAttributes;
             public render(): void;
             public setState(state: string, inherit?: boolean): void;
@@ -199,7 +188,7 @@ declare global {
 /**
  * @private
  */
-declare module '../../Core/Series/Types' {
+declare module '../../Core/Series/SeriesType' {
     interface SeriesTypeRegistry {
         networkgraph: typeof Highcharts.NetworkgraphSeries;
     }
@@ -208,11 +197,8 @@ declare module '../../Core/Series/Types' {
 import '../../Core/Options.js';
 import './Layouts.js';
 import './DraggableNodes.js';
-import '../../Series/LineSeries.js';
 
-var Series = H.Series,
-    seriesTypes = BaseSeries.seriesTypes,
-    dragNodesMixin = H.dragNodesMixin;
+var dragNodesMixin = H.dragNodesMixin;
 
 /**
  * Formatter callback function.
@@ -690,7 +676,7 @@ BaseSeries.seriesType<typeof Highcharts.NetworkgraphSeries>(
         createNode: NodesMixin.createNode,
         destroy: function (this: Highcharts.NetworkgraphSeries): void {
             if (this.layout) {
-                this.layout.removeElementFromCollection<Highcharts.Series>(
+                this.layout.removeElementFromCollection(
                     this,
                     this.layout.series
                 );
@@ -709,7 +695,7 @@ BaseSeries.seriesType<typeof Highcharts.NetworkgraphSeries>(
             this: Highcharts.NetworkgraphSeries
         ): Highcharts.NetworkgraphSeries {
 
-            Series.prototype.init.apply(this, arguments as any);
+            LineSeries.prototype.init.apply(this, arguments as any);
 
             addEvent<Highcharts.NetworkgraphSeries>(this, 'updatedData', function (): void {
                 if (this.layout) {
@@ -807,10 +793,10 @@ BaseSeries.seriesType<typeof Highcharts.NetworkgraphSeries>(
         markerAttribs: function (
             this: Highcharts.NetworkgraphSeries,
             point: Highcharts.NetworkgraphPoint,
-            state: string
+            state?: StatesOptionsKey
         ): SVGAttributes {
             var attribs =
-                Series.prototype.markerAttribs.call(this, point, state);
+                LineSeries.prototype.markerAttribs.call(this, point, state);
 
             // series.render() is called before initial positions are set:
             if (!defined(point.plotY)) {
@@ -953,13 +939,13 @@ BaseSeries.seriesType<typeof Highcharts.NetworkgraphSeries>(
             var textPath = (this.options.dataLabels as any).textPath;
 
             // Render node labels:
-            Series.prototype.drawDataLabels.apply(this, arguments as any);
+            LineSeries.prototype.drawDataLabels.apply(this, arguments as any);
 
             // Render link labels:
             this.points = this.data;
             (this.options.dataLabels as any).textPath =
                 (this.options.dataLabels as any).linkTextPath;
-            Series.prototype.drawDataLabels.apply(this, arguments as any);
+            LineSeries.prototype.drawDataLabels.apply(this, arguments as any);
 
             // Restore nodes
             this.points = this.nodes;
@@ -969,12 +955,12 @@ BaseSeries.seriesType<typeof Highcharts.NetworkgraphSeries>(
         // Return the presentational attributes.
         pointAttribs: function (
             this: Highcharts.NetworkgraphSeries,
-            point: Highcharts.NetworkgraphPoint,
-            state?: string
+            point?: Highcharts.NetworkgraphPoint,
+            state?: StatesOptionsKey
         ): SVGAttributes {
             // By default, only `selected` state is passed on
             var pointState = state || point && point.state || 'normal',
-                attribs = Series.prototype.pointAttribs.call(
+                attribs = LineSeries.prototype.pointAttribs.call(
                     this,
                     point,
                     pointState
@@ -1042,10 +1028,10 @@ BaseSeries.seriesType<typeof Highcharts.NetworkgraphSeries>(
         ): void {
             if (inherit) {
                 this.points = this.nodes.concat(this.data);
-                Series.prototype.setState.apply(this, arguments as any);
+                LineSeries.prototype.setState.apply(this, arguments as any);
                 this.points = this.data;
             } else {
-                Series.prototype.setState.apply(this, arguments as any);
+                LineSeries.prototype.setState.apply(this, arguments as any);
             }
 
             // If simulation is done, re-render points with new states:
@@ -1317,7 +1303,7 @@ BaseSeries.seriesType<typeof Highcharts.NetworkgraphSeries>(
                             }
 
                             // Remove link from data/points collections
-                            Series.prototype.removePoint.call(
+                            LineSeries.prototype.removePoint.call(
                                 series,
                                 series.data.indexOf(linkFromTo),
                                 false,

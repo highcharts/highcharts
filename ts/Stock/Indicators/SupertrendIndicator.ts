@@ -6,9 +6,13 @@
  *
  * */
 
+'use strict';
+
 import type ColorType from '../../Core/Color/ColorType';
 import type CSSObject from '../../Core/Renderer/CSSObject';
+import type LineSeries from '../../Series/LineSeries';
 import type Point from '../../Core/Series/Point';
+import type { SeriesOptions } from '../../Core/Series/SeriesOptions';
 import type SVGAttributes from '../../Core/Renderer/SVG/SVGAttributes';
 import type SVGElement from '../../Core/Renderer/SVG/SVGElement';
 import BaseSeries from '../../Core/Series/Series.js';
@@ -35,7 +39,7 @@ declare global {
             x: number;
         }
 
-        interface SupertrendLinkedParentObject extends Series {
+        interface SupertrendLinkedParentObject extends LineSeries {
             data: Array<SupertrendLinkedParentPointObject>;
             points: Array<SupertrendLinkedParentPointObject>;
             xData: Array<number>;
@@ -63,7 +67,7 @@ declare global {
         class SupertrendIndicator extends SMAIndicator {
             public data: Array<SupertrendIndicatorPoint>;
             public drawGraph(): void;
-            public getValues<TLinkedSeries extends Series>(
+            public getValues<TLinkedSeries extends LineSeries>(
                 series: TLinkedSeries,
                 params: SupertrendIndicatorParamsOptions
             ): (IndicatorValuesObject<TLinkedSeries>|undefined);
@@ -96,7 +100,7 @@ declare global {
     }
 }
 
-declare module '../../Core/Series/Types' {
+declare module '../../Core/Series/SeriesType' {
     interface SeriesTypeRegistry {
         supertrend: typeof Highcharts.SupertrendIndicator;
     }
@@ -237,7 +241,7 @@ BaseSeries.seriesType<typeof Highcharts.SupertrendIndicator>(
         requiredIndicators: ['atr'],
         init: function (this: Highcharts.SupertrendIndicator): void {
             var options: Highcharts.SupertrendIndicatorOptions,
-                parentOptions: Highcharts.SeriesOptions;
+                parentOptions: SeriesOptions;
 
             SMA.prototype.init.apply(this, arguments);
 
@@ -566,7 +570,7 @@ BaseSeries.seriesType<typeof Highcharts.SupertrendIndicator>(
         //     ) THAN Current FINAL LOWERBAND
 
 
-        getValues: function<TLinkedSeries extends Highcharts.Series> (
+        getValues: function<TLinkedSeries extends LineSeries> (
             series: TLinkedSeries,
             params: Highcharts.SupertrendIndicatorParamsOptions
         ): (Highcharts.IndicatorValuesObject<TLinkedSeries>|undefined) {

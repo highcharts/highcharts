@@ -7,6 +7,7 @@
  *  !!!!!!! SOURCE GETS TRANSPILED BY TYPESCRIPT. EDIT TS FILE ONLY. !!!!!!!
  *
  * */
+'use strict';
 import Series from '../Core/Series/Series.js';
 import ColumnSeries from './ColumnSeries.js';
 var columnProto = ColumnSeries.prototype;

@@ -6,7 +6,11 @@
  *
  * */
 
+'use strict';
+
 import type CSSObject from '../../Core/Renderer/CSSObject';
+import type LineSeries from '../../Series/LineSeries';
+import type { PointMarkerOptions } from '../../Core/Series/PointOptions';
 import BaseSeries from '../../Core/Series/Series.js';
 import MultipleLinesMixin from '../../Mixins/MultipleLines.js';
 import U from '../../Core/Utilities.js';
@@ -21,10 +25,9 @@ const {
  */
 declare global {
     namespace Highcharts {
-        class AroonIndicator
-            extends SMAIndicator implements MultipleLinesIndicator {
+        class AroonIndicator extends SMAIndicator implements MultipleLinesIndicator {
             public data: Array<AroonIndicatorPoint>;
-            public getValues<TLinkedSeries extends Series>(
+            public getValues<TLinkedSeries extends LineSeries>(
                 series: TLinkedSeries,
                 params: AroonIndicatorParamsOptions
             ): IndicatorValuesObject<TLinkedSeries>;
@@ -40,27 +43,24 @@ declare global {
                 'getTranslatedLinesNames'
             ];
         }
-
         interface AroonIndicatorOptions
             extends SMAIndicatorOptions, MultipleLinesIndicatorOptions {
             aroonDown?: Record<string, CSSObject>;
-            marker?: PointMarkerOptionsObject;
+            marker?: PointMarkerOptions;
             params?: AroonIndicatorParamsOptions;
             tooltip?: TooltipOptions;
         }
-
         interface AroonIndicatorParamsOptions
             extends SMAIndicatorParamsOptions {
             period?: number;
         }
-
         class AroonIndicatorPoint extends SMAIndicatorPoint {
             public series: AroonIndicator;
         }
     }
 }
 
-declare module '../../Core/Series/Types' {
+declare module '../../Core/Series/SeriesType' {
     interface SeriesTypeRegistry {
         aroon: typeof Highcharts.AroonIndicator;
     }
@@ -176,7 +176,7 @@ BaseSeries.seriesType<typeof Highcharts.AroonIndicator>(
         pointArrayMap: ['y', 'aroonDown'],
         pointValKey: 'y',
         linesApiNames: ['aroonDown'],
-        getValues: function<TLinkedSeries extends Highcharts.Series> (
+        getValues: function<TLinkedSeries extends LineSeries> (
             series: TLinkedSeries,
             params: Highcharts.AroonIndicatorParamsOptions
         ): Highcharts.IndicatorValuesObject<TLinkedSeries> {

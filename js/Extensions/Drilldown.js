@@ -13,10 +13,14 @@
 import A from '../Core/Animation/AnimationUtilities.js';
 var animObject = A.animObject;
 import Axis from '../Core/Axis/Axis.js';
+import BaseSeries from '../Core/Series/Series.js';
+var seriesTypes = BaseSeries.seriesTypes;
 import Chart from '../Core/Chart/Chart.js';
 import Color from '../Core/Color/Color.js';
+import ColumnSeries from '../Series/ColumnSeries.js';
 import H from '../Core/Globals.js';
 var noop = H.noop;
+import LineSeries from '../Series/LineSeries.js';
 import O from '../Core/Options.js';
 var defaultOptions = O.defaultOptions;
 import Point from '../Core/Series/Point.js';
@@ -139,7 +143,7 @@ var addEvent = U.addEvent, removeEvent = U.removeEvent, extend = U.extend, fireE
 */
 import '../Series/LineSeries.js';
 import '../Series/ColumnSeries.js';
-var seriesTypes = H.seriesTypes, PieSeries = seriesTypes.pie, ColumnSeries = seriesTypes.column, ddSeriesId = 1;
+var PieSeries = seriesTypes.pie, ddSeriesId = 1;
 // Add language
 extend(defaultOptions.lang, 
 /**
@@ -1041,7 +1045,7 @@ addEvent(Point, 'afterInit', function () {
     }
     return point;
 });
-addEvent(H.Series, 'afterDrawDataLabels', function () {
+addEvent(LineSeries, 'afterDrawDataLabels', function () {
     var css = this.chart.options.drilldown.activeDataLabelStyle, renderer = this.chart.renderer, styledMode = this.chart.styledMode;
     this.points.forEach(function (point) {
         var dataLabelsOptions = point.options.dataLabels, pointCSS = pick(point.dlOptions, dataLabelsOptions && dataLabelsOptions.style, {});
@@ -1069,7 +1073,7 @@ var applyCursorCSS = function (element, cursor, addClass, styledMode) {
     }
 };
 // Mark the trackers with a pointer
-addEvent(H.Series, 'afterDrawTracker', function () {
+addEvent(LineSeries, 'afterDrawTracker', function () {
     var styledMode = this.chart.styledMode;
     this.points.forEach(function (point) {
         if (point.drilldown && point.graphic) {

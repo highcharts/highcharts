@@ -12,6 +12,12 @@
 
 'use strict';
 
+declare module '../../Core/Series/SeriesOptions' {
+    interface SeriesOptions {
+        sonification?: Highcharts.SeriesSonificationOptions;
+    }
+}
+
 /**
  * Internal types.
  * @private
@@ -20,9 +26,6 @@ declare global {
     namespace Highcharts {
         interface Options {
             sonification?: ChartSonificationOptions;
-        }
-        interface SeriesOptions {
-            sonification?: SeriesSonificationOptions;
         }
     }
 }

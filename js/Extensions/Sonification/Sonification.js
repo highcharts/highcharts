@@ -12,6 +12,7 @@
 'use strict';
 import Chart from '../../Core/Chart/Chart.js';
 import H from '../../Core/Globals.js';
+import LineSeries from '../../Series/LineSeries.js';
 import O from '../../Core/Options.js';
 var defaultOptions = O.defaultOptions;
 import Point from '../../Core/Series/Point.js';
@@ -97,7 +98,7 @@ merge(true, defaultOptions, sonificationOptions);
 // Chart specific
 Point.prototype.sonify = pointSonifyFunctions.pointSonify;
 Point.prototype.cancelSonify = pointSonifyFunctions.pointCancelSonify;
-H.Series.prototype.sonify = chartSonifyFunctions.seriesSonify;
+LineSeries.prototype.sonify = chartSonifyFunctions.seriesSonify;
 extend(Chart.prototype, {
     sonify: chartSonifyFunctions.chartSonify,
     pauseSonify: chartSonifyFunctions.pause,

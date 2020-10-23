@@ -9,6 +9,7 @@
  *  !!!!!!! SOURCE GETS TRANSPILED BY TYPESCRIPT. EDIT TS FILE ONLY. !!!!!!!
  *
  * */
+'use strict';
 import BaseSeries from '../Core/Series/Series.js';
 import H from '../Core/Globals.js';
 import O from '../Core/Options.js';
@@ -391,6 +392,11 @@ BaseSeries.seriesType('item',
     setVisible: piePoint.setVisible,
     getTranslate: piePoint.getTranslate
 });
+/* *
+ *
+ *  API Options
+ *
+ * */
 /**
  * An `item` series. If the [type](#series.item.type) option is not specified,
  * it is inherited from [chart.type](#chart.type).

@@ -211,10 +211,6 @@ var Pointer = /** @class */ (function () {
      *
      * @private
      * @function Highcharts.Pointer#drag
-     *
-     * @param {Highcharts.PointerEventObject} e
-     *
-     * @return {void}
      */
     Pointer.prototype.drag = function (e) {
         var chart = this.chart, chartOptions = chart.options.chart, chartX = e.chartX, chartY = e.chartY, zoomHor = this.zoomHor, zoomVert = this.zoomVert, plotLeft = chart.plotLeft, plotTop = chart.plotTop, plotWidth = chart.plotWidth, plotHeight = chart.plotHeight, clickedInside, size, selectionMarker = this.selectionMarker, mouseDownX = (this.mouseDownX || 0), mouseDownY = (this.mouseDownY || 0), panningEnabled = isObject(chartOptions.panning) ?
@@ -296,10 +292,6 @@ var Pointer = /** @class */ (function () {
      *
      * @private
      * @function Highcharts.Pointer#dragStart
-     *
-     * @param {Highcharts.PointerEventObject} e
-     *
-     * @return {void}
      */
     Pointer.prototype.dragStart = function (e) {
         var chart = this.chart;
@@ -633,10 +625,6 @@ var Pointer = /** @class */ (function () {
     /**
      * @private
      * @function Highcharts.Pointer#onTrackerMouseOut
-     *
-     * @param {Highcharts.PointerEventObject} e
-     *
-     * @return {void}
      */
     Pointer.prototype.onTrackerMouseOut = function (e) {
         var chart = this.chart;
@@ -1245,12 +1233,6 @@ var Pointer = /** @class */ (function () {
      * @private
      * @function Highcharts.Pointer#runPointActions
      *
-     * @param {global.Event} e
-     *
-     * @param {Highcharts.PointerEventObject} [p]
-     *
-     * @return {void}
-     *
      * @fires Highcharts.Point#event:mouseOut
      * @fires Highcharts.Point#event:mouseOver
      */
@@ -1368,12 +1350,6 @@ var Pointer = /** @class */ (function () {
      *
      * @private
      * @function Highcharts.Pointer#scaleGroups
-     *
-     * @param {Highcharts.SeriesPlotBoxObject} [attribs]
-     *
-     * @param {boolean} [clip]
-     *
-     * @return {void}
      */
     Pointer.prototype.scaleGroups = function (attribs, clip) {
         var chart = this.chart, seriesAttribs;
@@ -1402,8 +1378,6 @@ var Pointer = /** @class */ (function () {
      *
      * @private
      * @function Highcharts.Pointer#setDOMEvents
-     *
-     * @return {void}
      */
     Pointer.prototype.setDOMEvents = function () {
         var container = this.chart.container, ownerDoc = container.ownerDocument;
@@ -1447,12 +1421,6 @@ var Pointer = /** @class */ (function () {
      *
      * @private
      * @function Highcharts.Pointer#touch
-     *
-     * @param {Highcharts.PointerEventObject} e
-     *
-     * @param {boolean} [start]
-     *
-     * @return {void}
      */
     Pointer.prototype.touch = function (e, start) {
         var chart = this.chart, hasMoved, pinchDown, isInside;

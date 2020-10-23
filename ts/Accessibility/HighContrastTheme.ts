@@ -23,9 +23,6 @@ declare global {
         interface DataLabelsOptions {
             connectorColor?: ColorType;
         }
-        interface SeriesOptions {
-            fillColor?: ColorType;
-        }
     }
 }
 

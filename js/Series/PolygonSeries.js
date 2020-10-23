@@ -7,15 +7,16 @@
  *  !!!!!!! SOURCE GETS TRANSPILED BY TYPESCRIPT. EDIT TS FILE ONLY. !!!!!!!
  *
  * */
+'use strict';
 import BaseSeries from '../Core/Series/Series.js';
 var seriesTypes = BaseSeries.seriesTypes;
 import H from '../Core/Globals.js';
 var noop = H.noop;
 import LegendSymbolMixin from '../Mixins/LegendSymbol.js';
+import LineSeries from './LineSeries.js';
 import '../Core/Options.js';
 import '../Core/Legend.js';
 import './ScatterSeries.js';
-var Series = H.Series;
 /**
  * A polygon series can be used to draw any freeform shape in the cartesian
  * coordinate system. A fill is applied with the `color` option, and
@@ -53,7 +54,7 @@ BaseSeries.seriesType('polygon', 'scatter', {
 }, {
     type: 'polygon',
     getGraphPath: function () {
-        var graphPath = Series.prototype.getGraphPath.call(this), i = graphPath.length + 1;
+        var graphPath = LineSeries.prototype.getGraphPath.call(this), i = graphPath.length + 1;
         // Close all segments
         while (i--) {
             if ((i === graphPath.length || graphPath[i][0] === 'M') && i > 0) {
@@ -69,7 +70,7 @@ BaseSeries.seriesType('polygon', 'scatter', {
         seriesTypes.area.prototype.drawGraph.call(this);
     },
     drawLegendSymbol: LegendSymbolMixin.drawRectangle,
-    drawTracker: Series.prototype.drawTracker,
+    drawTracker: LineSeries.prototype.drawTracker,
     setStackedPoints: noop // No stacking points on polygons (#5310)
 });
 /**

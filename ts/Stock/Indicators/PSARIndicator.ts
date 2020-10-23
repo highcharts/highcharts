@@ -10,6 +10,9 @@
  *
  * */
 
+'use strict';
+
+import type LineSeries from '../../Series/LineSeries';
 import BaseSeries from '../../Core/Series/Series.js';
 
 /**
@@ -20,7 +23,7 @@ declare global {
     namespace Highcharts {
         class PSARIndicator extends SMAIndicator {
             public data: Array<PSARIndicatorPoint>;
-            public getValues<TLinkedSeries extends Series>(
+            public getValues<TLinkedSeries extends LineSeries>(
                 series: TLinkedSeries,
                 params: PSARIndicatorParamsOptions
             ): (IndicatorValuesObject<TLinkedSeries>|undefined);
@@ -46,7 +49,7 @@ declare global {
     }
 }
 
-declare module '../../Core/Series/Types' {
+declare module '../../Core/Series/SeriesType' {
     interface SeriesTypeRegistry {
         psar: typeof Highcharts.PSARIndicator;
     }
@@ -245,7 +248,7 @@ BaseSeries.seriesType<typeof Highcharts.PSARIndicator>(
         }
     }, {
         nameComponents: (false as any),
-        getValues: function<TLinkedSeries extends Highcharts.Series> (
+        getValues: function<TLinkedSeries extends LineSeries> (
             series: TLinkedSeries,
             params: Highcharts.PSARIndicatorParamsOptions
         ): (Highcharts.IndicatorValuesObject<TLinkedSeries>|undefined) {

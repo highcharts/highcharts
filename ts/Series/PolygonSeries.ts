@@ -8,17 +8,17 @@
  *
  * */
 
+'use strict';
+
 import type ColorType from '../Core/Color/ColorType';
+import type { SeriesStatesOptions } from '../Core/Series/SeriesOptions';
 import type SVGPath from '../Core/Renderer/SVG/SVGPath';
 import BaseSeries from '../Core/Series/Series.js';
-const {
-    seriesTypes
-} = BaseSeries;
+const { seriesTypes } = BaseSeries;
 import H from '../Core/Globals.js';
-const {
-    noop
-} = H;
+const { noop } = H;
 import LegendSymbolMixin from '../Mixins/LegendSymbol.js';
+import LineSeries from './LineSeries.js';
 
 /**
  * Internal types
@@ -42,7 +42,7 @@ declare global {
         }
         interface PolygonSeriesOptions extends ScatterSeriesOptions {
             fillColor?: ColorType;
-            states?: SeriesStatesOptionsObject<PolygonSeries>;
+            states?: SeriesStatesOptions<PolygonSeries>;
             trackByArea?: boolean;
         }
     }
@@ -51,7 +51,7 @@ declare global {
 /**
  * @private
  */
-declare module '../Core/Series/Types' {
+declare module '../Core/Series/SeriesType' {
     interface SeriesTypeRegistry {
         polygon: typeof Highcharts.PolygonSeries;
     }
@@ -60,8 +60,6 @@ declare module '../Core/Series/Types' {
 import '../Core/Options.js';
 import '../Core/Legend.js';
 import './ScatterSeries.js';
-
-var Series = H.Series;
 
 /**
  * A polygon series can be used to draw any freeform shape in the cartesian
@@ -104,7 +102,7 @@ BaseSeries.seriesType<typeof Highcharts.PolygonSeries>('polygon', 'scatter', {
         this: Highcharts.PolygonSeries
     ): SVGPath {
 
-        var graphPath: SVGPath = (Series.prototype.getGraphPath as any).call(this),
+        var graphPath: SVGPath = LineSeries.prototype.getGraphPath.call(this),
             i = graphPath.length + 1;
 
         // Close all segments
@@ -122,7 +120,7 @@ BaseSeries.seriesType<typeof Highcharts.PolygonSeries>('polygon', 'scatter', {
         seriesTypes.area.prototype.drawGraph.call(this);
     },
     drawLegendSymbol: LegendSymbolMixin.drawRectangle,
-    drawTracker: Series.prototype.drawTracker,
+    drawTracker: LineSeries.prototype.drawTracker,
     setStackedPoints: noop as any // No stacking points on polygons (#5310)
 });
 

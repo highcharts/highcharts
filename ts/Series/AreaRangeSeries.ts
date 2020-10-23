@@ -8,14 +8,21 @@
  *
  * */
 
+'use strict';
+
 import type RadialAxis from '../Core/Axis/RadialAxis';
+import type { SeriesStatesOptions } from '../Core/Series/SeriesOptions';
 import type SVGPath from '../Core/Renderer/SVG/SVGPath';
 import BaseSeries from '../Core/Series/Series.js';
+const { seriesTypes } = BaseSeries;
+import ColumnSeries from './ColumnSeries.js';
+const { prototype: columnProto } = ColumnSeries;
 import H from '../Core/Globals.js';
-const {
-    noop
-} = H;
+const { noop } = H;
+import LineSeries from '../Series/LineSeries.js';
+const { prototype: seriesProto } = LineSeries;
 import Point from '../Core/Series/Point.js';
+const { prototype: pointProto } = Point;
 import U from '../Core/Utilities.js';
 const {
     defined,
@@ -29,6 +36,12 @@ declare module '../Core/Series/PointLike' {
     interface PointLike {
         plotHigh?: Highcharts.AreaRangePoint['plotHigh'];
         plotLow?: Highcharts.AreaRangePoint['plotLow'];
+    }
+}
+
+declare module '../Core/Series/SeriesType' {
+    interface SeriesTypeRegistry {
+        arearange: typeof Highcharts.AreaRangeSeries;
     }
 }
 
@@ -55,7 +68,7 @@ declare global {
                 AreaRangeDataLabelsOptionsObject|
                 Array<AreaRangeDataLabelsOptionsObject>
             );
-            states?: SeriesStatesOptionsObject<AreaRangeSeries>;
+            states?: SeriesStatesOptions<AreaRangeSeries>;
             trackByArea?: boolean;
         }
         class AreaRangePoint extends AreaPoint {
@@ -98,25 +111,9 @@ declare global {
     }
 }
 
-/**
- * @private
- */
-declare module '../Core/Series/Types' {
-    interface SeriesTypeRegistry {
-        arearange: typeof Highcharts.AreaRangeSeries;
-    }
-}
-
 import './AreaSeries.js';
-import './ColumnSeries.js';
-import '../Core/Options.js';
-import '../Series/LineSeries.js';
 
-var Series = H.Series,
-    areaProto = BaseSeries.seriesTypes.area.prototype,
-    columnProto = BaseSeries.seriesTypes.column.prototype,
-    pointProto = Point.prototype,
-    seriesProto = Series.prototype;
+var areaProto = seriesTypes.area.prototype;
 
 /**
  * The area range series is a carteseian series with higher and lower values for

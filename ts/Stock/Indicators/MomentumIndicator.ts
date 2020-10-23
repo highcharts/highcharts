@@ -6,11 +6,12 @@
  *
  * */
 
+'use strict';
+
+import type LineSeries from '../../Series/LineSeries';
 import BaseSeries from '../../Core/Series/Series.js';
 import U from '../../Core/Utilities.js';
-const {
-    isArray
-} = U;
+const { isArray } = U;
 
 /**
  * Internal types
@@ -20,7 +21,7 @@ declare global {
     namespace Highcharts {
         class MomentumIndicator extends SMAIndicator {
             public data: Array<MomentumIndicatorPoint>;
-            public getValues<TLinkedSeries extends Series>(
+            public getValues<TLinkedSeries extends LineSeries>(
                 series: TLinkedSeries,
                 params: MomentumIndicatorParamsOptions
             ): (IndicatorValuesObject<TLinkedSeries>|undefined);
@@ -45,7 +46,7 @@ declare global {
     }
 }
 
-declare module '../../Core/Series/Types' {
+declare module '../../Core/Series/SeriesType' {
     interface SeriesTypeRegistry {
         momentum: typeof Highcharts.MomentumIndicator;
     }
@@ -107,7 +108,7 @@ BaseSeries.seriesType<typeof Highcharts.MomentumIndicator>(
      */
     {
         nameBase: 'Momentum',
-        getValues: function<TLinkedSeries extends Highcharts.Series> (
+        getValues: function<TLinkedSeries extends LineSeries> (
             series: TLinkedSeries,
             params: Highcharts.MomentumIndicatorParamsOptions
         ): (Highcharts.IndicatorValuesObject<TLinkedSeries>|undefined) {

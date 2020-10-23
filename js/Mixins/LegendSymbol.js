@@ -7,6 +7,7 @@
  *  !!!!!!! SOURCE GETS TRANSPILED BY TYPESCRIPT. EDIT TS FILE ONLY. !!!!!!!
  *
  * */
+'use strict';
 import H from '../Core/Globals.js';
 import U from '../Core/Utilities.js';
 var merge = U.merge, pick = U.pick;

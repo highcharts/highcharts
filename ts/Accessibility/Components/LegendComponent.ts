@@ -13,9 +13,8 @@
 'use strict';
 
 import type Chart from '../../Core/Chart/Chart';
-import type {
-    HTMLDOMElement
-} from '../../Core/Renderer/DOMElementType';
+import type { HTMLDOMElement } from '../../Core/Renderer/DOMElementType';
+import type LineSeries from '../../Series/LineSeries';
 import type Point from '../../Core/Series/Point';
 import H from '../../Core/Globals.js';
 import Legend from '../../Core/Legend.js';
@@ -34,7 +33,7 @@ import HTMLUtilities from '../Utils/HTMLUtilities.js';
 var stripHTMLTags = HTMLUtilities.stripHTMLTagsFromString,
     removeElement = HTMLUtilities.removeElement;
 
-type LegendItem = Highcharts.BubbleLegend|Point|Highcharts.Series;
+type LegendItem = (Highcharts.BubbleLegend|LineSeries|Point);
 
 declare module '../../Core/Chart/ChartLike'{
     interface ChartLike {
@@ -46,6 +45,12 @@ declare module '../../Core/Chart/ChartLike'{
 
 declare module '../../Core/Series/PointLike' {
     interface PointLike {
+        a11yProxyElement?: HTMLDOMElement;
+    }
+}
+
+declare module '../../Core/Series/SeriesLike' {
+    interface SeriesLike {
         a11yProxyElement?: HTMLDOMElement;
     }
 }
@@ -89,9 +94,6 @@ declare global {
             posElement: SVGElement;
         }
         interface BubbleLegend {
-            a11yProxyElement?: HTMLDOMElement;
-        }
-        interface Series {
             a11yProxyElement?: HTMLDOMElement;
         }
     }
@@ -371,16 +373,16 @@ extend(LegendComponent.prototype, /** @lends Highcharts.LegendComponent */ {
                 item.legendItem : item.legendGroup;
 
         item.a11yProxyElement = this.createProxyButton(
-            item.legendItem,
+            item.legendItem as any,
             this.legendProxyGroup as any,
             attribs,
-            proxyPositioningElement
+            proxyPositioningElement as any
         );
 
         this.proxyElementsList.push({
             item: item,
             element: item.a11yProxyElement,
-            posElement: proxyPositioningElement
+            posElement: proxyPositioningElement as any
         });
     },
 

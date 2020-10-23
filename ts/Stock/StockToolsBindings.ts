@@ -15,11 +15,12 @@
 import type Annotation from '../Extensions/Annotations/Annotations';
 import type { AxisType } from '../Core/Axis/Types';
 import type Chart from '../Core/Chart/Chart';
-import type {
-    HTMLDOMElement
-} from '../Core/Renderer/DOMElementType';
+import type { HTMLDOMElement } from '../Core/Renderer/DOMElementType';
 import type Point from '../Core/Series/Point';
+import type PointerEvent from '../Core/PointerEvent';
+import type { SeriesTypeOptions } from '../Core/Series/SeriesType';
 import H from '../Core/Globals.js';
+import LineSeries from '../Series/LineSeries.js';
 import NavigationBindings from '../Extensions/Annotations/NavigationBindings.js';
 import U from '../Core/Utilities.js';
 const {
@@ -69,7 +70,7 @@ declare global {
             x: number;
             y: number;
             below: boolean;
-            series: Series;
+            series: LineSeries;
             xAxis: number;
             yAxis: number;
         }
@@ -82,7 +83,7 @@ declare global {
             attractToPoint(e: Event, chart: Chart): NavigationBindingsAttractionObject;
             isNotNavigatorYAxis(axis: AxisType): boolean;
             manageIndicators(this: NavigationBindings, data: StockToolsFieldsObject): void;
-            updateHeight(this: NavigationBindings, e: PointerEventObject, annotation: Annotation): void;
+            updateHeight(this: NavigationBindings, e: PointerEvent, annotation: Annotation): void;
             updateNthPoint(startIndex: number): StockToolsNavigationBindingsUtilsObject['updateHeight'];
         }
         interface NavigationOptions {
@@ -260,7 +261,7 @@ bindingsUtils.manageIndicators = function (
         yAxis,
         parentSeries,
         defaultOptions,
-        series: Highcharts.Series;
+        series: LineSeries;
 
     if (data.actionType === 'edit') {
         navigation.fieldsToOptions(data.fields, seriesConfig);
@@ -275,9 +276,7 @@ bindingsUtils.manageIndicators = function (
             yAxis = series.yAxis;
 
             if (series.linkedSeries) {
-                series.linkedSeries.forEach(function (
-                    linkedSeries: Highcharts.Series
-                ): void {
+                series.linkedSeries.forEach(function (linkedSeries): void {
                     linkedSeries.remove(false);
                 });
             }
@@ -299,7 +298,7 @@ bindingsUtils.manageIndicators = function (
         // by parent series (#13950).
         if (
             typeof parentSeries !== 'undefined' &&
-            parentSeries instanceof Highcharts.Series &&
+            parentSeries instanceof LineSeries &&
             parentSeries.getDGApproximation() === 'sum' &&
             // If indicator has defined approx type, use it (e.g. "ranges")
             !defined(
@@ -335,7 +334,7 @@ bindingsUtils.manageIndicators = function (
 
         if (indicatorsWithVolume.indexOf(data.type) >= 0) {
             seriesConfig.params.volumeSeriesID = chart.series.filter(
-                function (series: Highcharts.Series): boolean {
+                function (series): boolean {
                     return series.options.type === 'column';
                 }
             )[0].options.id;
@@ -373,7 +372,7 @@ bindingsUtils.manageIndicators = function (
  */
 bindingsUtils.updateHeight = function (
     this: Highcharts.StockToolsNavigationBindings,
-    e: Highcharts.PointerEventObject,
+    e: PointerEvent,
     annotation: Annotation
 ): void {
     annotation.update({
@@ -387,7 +386,7 @@ bindingsUtils.updateHeight = function (
 // @todo
 // Consider using getHoverData(), but always kdTree (columns?)
 bindingsUtils.attractToPoint = function (
-    e: Highcharts.PointerEventObject,
+    e: PointerEvent,
     chart: Chart
 ): Highcharts.NavigationBindingsAttractionObject {
     var coords = chart.pointer.getCoordinates(e),
@@ -396,8 +395,8 @@ bindingsUtils.attractToPoint = function (
         distX = Number.MAX_VALUE,
         closestPoint: (Point|undefined);
 
-    chart.series.forEach(function (series: Highcharts.Series): void {
-        series.points.forEach(function (point: Point): void {
+    chart.series.forEach(function (series): void {
+        series.points.forEach(function (point): void {
             if (point && distX > Math.abs((point.x as any) - x)) {
                 distX = Math.abs((point.x as any) - x);
                 closestPoint = point;
@@ -452,7 +451,7 @@ bindingsUtils.updateNthPoint = function (
 ): Highcharts.StockToolsNavigationBindingsUtilsObject['updateHeight'] {
     return function (
         this: Highcharts.StockToolsNavigationBindings,
-        e: Highcharts.PointerEventObject,
+        e: PointerEvent,
         annotation: Annotation
     ): void {
         var options = annotation.options.typeOptions,
@@ -764,7 +763,7 @@ var stockToolsBindings: Highcharts.Dictionary<Highcharts.NavigationBindingsOptio
         className: 'highcharts-segment',
         // eslint-disable-next-line valid-jsdoc
         /** @ignore-option */
-        start: function (this: NavigationBindings, e: Highcharts.PointerEventObject): Annotation {
+        start: function (this: NavigationBindings, e: PointerEvent): Annotation {
             var coords = this.chart.pointer.getCoordinates(e),
                 navigation = this.chart.options.navigation,
                 options = merge(
@@ -805,7 +804,7 @@ var stockToolsBindings: Highcharts.Dictionary<Highcharts.NavigationBindingsOptio
         className: 'highcharts-arrow-segment',
         // eslint-disable-next-line valid-jsdoc
         /** @ignore-option */
-        start: function (this: NavigationBindings, e: Highcharts.PointerEventObject): Annotation {
+        start: function (this: NavigationBindings, e: PointerEvent): Annotation {
             var coords = this.chart.pointer.getCoordinates(e),
                 navigation = this.chart.options.navigation,
                 options = merge(
@@ -849,7 +848,7 @@ var stockToolsBindings: Highcharts.Dictionary<Highcharts.NavigationBindingsOptio
         className: 'highcharts-ray',
         // eslint-disable-next-line valid-jsdoc
         /** @ignore-option */
-        start: function (this: NavigationBindings, e: Highcharts.PointerEventObject): Annotation {
+        start: function (this: NavigationBindings, e: PointerEvent): Annotation {
             var coords = this.chart.pointer.getCoordinates(e),
                 navigation = this.chart.options.navigation,
                 options = merge(
@@ -891,7 +890,7 @@ var stockToolsBindings: Highcharts.Dictionary<Highcharts.NavigationBindingsOptio
         className: 'highcharts-arrow-ray',
         // eslint-disable-next-line valid-jsdoc
         /** @ignore-option */
-        start: function (this: NavigationBindings, e: Highcharts.PointerEventObject): Annotation {
+        start: function (this: NavigationBindings, e: PointerEvent): Annotation {
             var coords = this.chart.pointer.getCoordinates(e),
                 navigation = this.chart.options.navigation,
                 options = merge(
@@ -935,7 +934,7 @@ var stockToolsBindings: Highcharts.Dictionary<Highcharts.NavigationBindingsOptio
         className: 'highcharts-infinity-line',
         // eslint-disable-next-line valid-jsdoc
         /** @ignore-option */
-        start: function (this: NavigationBindings, e: Highcharts.PointerEventObject): Annotation {
+        start: function (this: NavigationBindings, e: PointerEvent): Annotation {
             var coords = this.chart.pointer.getCoordinates(e),
                 navigation = this.chart.options.navigation,
                 options = merge(
@@ -977,7 +976,7 @@ var stockToolsBindings: Highcharts.Dictionary<Highcharts.NavigationBindingsOptio
         className: 'highcharts-arrow-infinity-line',
         // eslint-disable-next-line valid-jsdoc
         /** @ignore-option */
-        start: function (this: NavigationBindings, e: Highcharts.PointerEventObject): Annotation {
+        start: function (this: NavigationBindings, e: PointerEvent): Annotation {
             var coords = this.chart.pointer.getCoordinates(e),
                 navigation = this.chart.options.navigation,
                 options = merge(
@@ -1021,7 +1020,7 @@ var stockToolsBindings: Highcharts.Dictionary<Highcharts.NavigationBindingsOptio
         className: 'highcharts-horizontal-line',
         // eslint-disable-next-line valid-jsdoc
         /** @ignore-option */
-        start: function (this: NavigationBindings, e: Highcharts.PointerEventObject): void {
+        start: function (this: NavigationBindings, e: PointerEvent): void {
             var coords = this.chart.pointer.getCoordinates(e),
                 navigation = this.chart.options.navigation,
                 options = merge(
@@ -1056,7 +1055,7 @@ var stockToolsBindings: Highcharts.Dictionary<Highcharts.NavigationBindingsOptio
         className: 'highcharts-vertical-line',
         // eslint-disable-next-line valid-jsdoc
         /** @ignore-option */
-        start: function (this: NavigationBindings, e: Highcharts.PointerEventObject): void {
+        start: function (this: NavigationBindings, e: PointerEvent): void {
             var coords = this.chart.pointer.getCoordinates(e),
                 navigation = this.chart.options.navigation,
                 options = merge(
@@ -1093,7 +1092,7 @@ var stockToolsBindings: Highcharts.Dictionary<Highcharts.NavigationBindingsOptio
         className: 'highcharts-crooked3',
         // eslint-disable-next-line valid-jsdoc
         /** @ignore-option */
-        start: function (this: NavigationBindings, e: Highcharts.PointerEventObject): Annotation {
+        start: function (this: NavigationBindings, e: PointerEvent): Annotation {
             var coords = this.chart.pointer.getCoordinates(e),
                 navigation = this.chart.options.navigation,
                 options = merge(
@@ -1138,7 +1137,7 @@ var stockToolsBindings: Highcharts.Dictionary<Highcharts.NavigationBindingsOptio
         className: 'highcharts-crooked5',
         // eslint-disable-next-line valid-jsdoc
         /** @ignore-option */
-        start: function (this: NavigationBindings, e: Highcharts.PointerEventObject): Annotation {
+        start: function (this: NavigationBindings, e: PointerEvent): Annotation {
             var coords = this.chart.pointer.getCoordinates(e),
                 navigation = this.chart.options.navigation,
                 options = merge(
@@ -1191,7 +1190,7 @@ var stockToolsBindings: Highcharts.Dictionary<Highcharts.NavigationBindingsOptio
         className: 'highcharts-elliott3',
         // eslint-disable-next-line valid-jsdoc
         /** @ignore-option */
-        start: function (this: NavigationBindings, e: Highcharts.PointerEventObject): Annotation {
+        start: function (this: NavigationBindings, e: PointerEvent): Annotation {
             var coords = this.chart.pointer.getCoordinates(e),
                 navigation = this.chart.options.navigation,
                 options = merge(
@@ -1245,7 +1244,7 @@ var stockToolsBindings: Highcharts.Dictionary<Highcharts.NavigationBindingsOptio
         className: 'highcharts-elliott5',
         // eslint-disable-next-line valid-jsdoc
         /** @ignore-option */
-        start: function (this: NavigationBindings, e: Highcharts.PointerEventObject): Annotation {
+        start: function (this: NavigationBindings, e: PointerEvent): Annotation {
             var coords = this.chart.pointer.getCoordinates(e),
                 navigation = this.chart.options.navigation,
                 options = merge(
@@ -1307,7 +1306,7 @@ var stockToolsBindings: Highcharts.Dictionary<Highcharts.NavigationBindingsOptio
         className: 'highcharts-measure-x',
         // eslint-disable-next-line valid-jsdoc
         /** @ignore-option */
-        start: function (this: NavigationBindings, e: Highcharts.PointerEventObject): Annotation {
+        start: function (this: NavigationBindings, e: PointerEvent): Annotation {
             var coords = this.chart.pointer.getCoordinates(e),
                 navigation = this.chart.options.navigation,
                 options = merge(
@@ -1368,7 +1367,7 @@ var stockToolsBindings: Highcharts.Dictionary<Highcharts.NavigationBindingsOptio
         className: 'highcharts-measure-y',
         // eslint-disable-next-line valid-jsdoc
         /** @ignore-option */
-        start: function (this: NavigationBindings, e: Highcharts.PointerEventObject): Annotation {
+        start: function (this: NavigationBindings, e: PointerEvent): Annotation {
             var coords = this.chart.pointer.getCoordinates(e),
                 navigation = this.chart.options.navigation,
                 options = merge(
@@ -1429,7 +1428,7 @@ var stockToolsBindings: Highcharts.Dictionary<Highcharts.NavigationBindingsOptio
         className: 'highcharts-measure-xy',
         // eslint-disable-next-line valid-jsdoc
         /** @ignore-option */
-        start: function (this: NavigationBindings, e: Highcharts.PointerEventObject): Annotation {
+        start: function (this: NavigationBindings, e: PointerEvent): Annotation {
             var coords = this.chart.pointer.getCoordinates(e),
                 navigation = this.chart.options.navigation,
                 options = merge(
@@ -1489,7 +1488,7 @@ var stockToolsBindings: Highcharts.Dictionary<Highcharts.NavigationBindingsOptio
         className: 'highcharts-fibonacci',
         // eslint-disable-next-line valid-jsdoc
         /** @ignore-option */
-        start: function (this: NavigationBindings, e: Highcharts.PointerEventObject): Annotation {
+        start: function (this: NavigationBindings, e: PointerEvent): Annotation {
             var coords = this.chart.pointer.getCoordinates(e),
                 navigation = this.chart.options.navigation,
                 options = merge(
@@ -1536,7 +1535,7 @@ var stockToolsBindings: Highcharts.Dictionary<Highcharts.NavigationBindingsOptio
         className: 'highcharts-parallel-channel',
         // eslint-disable-next-line valid-jsdoc
         /** @ignore-option */
-        start: function (this: NavigationBindings, e: Highcharts.PointerEventObject): Annotation {
+        start: function (this: NavigationBindings, e: PointerEvent): Annotation {
             var coords = this.chart.pointer.getCoordinates(e),
                 navigation = this.chart.options.navigation,
                 options = merge(
@@ -1578,7 +1577,7 @@ var stockToolsBindings: Highcharts.Dictionary<Highcharts.NavigationBindingsOptio
         className: 'highcharts-pitchfork',
         // eslint-disable-next-line valid-jsdoc
         /** @ignore-option */
-        start: function (this: NavigationBindings, e: Highcharts.PointerEventObject): Annotation {
+        start: function (this: NavigationBindings, e: PointerEvent): Annotation {
             var coords = this.chart.pointer.getCoordinates(e),
                 navigation = this.chart.options.navigation,
                 options = merge(
@@ -1636,7 +1635,7 @@ var stockToolsBindings: Highcharts.Dictionary<Highcharts.NavigationBindingsOptio
         className: 'highcharts-vertical-counter',
         // eslint-disable-next-line valid-jsdoc
         /** @ignore-option */
-        start: function (this: NavigationBindings, e: Highcharts.PointerEventObject): void {
+        start: function (this: NavigationBindings, e: PointerEvent): void {
             var closestPoint = bindingsUtils.attractToPoint(e, this.chart),
                 navigation = this.chart.options.navigation,
                 verticalCounter = !defined((this as any).verticalCounter) ? 0 :
@@ -1694,7 +1693,7 @@ var stockToolsBindings: Highcharts.Dictionary<Highcharts.NavigationBindingsOptio
         className: 'highcharts-vertical-label',
         // eslint-disable-next-line valid-jsdoc
         /** @ignore-option */
-        start: function (this: NavigationBindings, e: Highcharts.PointerEventObject): void {
+        start: function (this: NavigationBindings, e: PointerEvent): void {
             var closestPoint = bindingsUtils.attractToPoint(e, this.chart),
                 navigation = this.chart.options.navigation,
                 options = merge(
@@ -1747,7 +1746,7 @@ var stockToolsBindings: Highcharts.Dictionary<Highcharts.NavigationBindingsOptio
         className: 'highcharts-vertical-arrow',
         // eslint-disable-next-line valid-jsdoc
         /** @ignore-option */
-        start: function (this: NavigationBindings, e: Highcharts.PointerEventObject): void {
+        start: function (this: NavigationBindings, e: PointerEvent): void {
             var closestPoint = bindingsUtils.attractToPoint(e, this.chart),
                 navigation = this.chart.options.navigation,
                 options = merge(
@@ -2213,8 +2212,8 @@ var stockToolsBindings: Highcharts.Dictionary<Highcharts.NavigationBindingsOptio
             var navigation = this,
                 chart = navigation.chart,
                 annotations: Array<Highcharts.AnnotationsOptions> = [],
-                indicators: Array<DeepPartial<Highcharts.SeriesOptions>> = [],
-                flags: Array<DeepPartial<Highcharts.SeriesOptions>> = [],
+                indicators: Array<DeepPartial<SeriesTypeOptions>> = [],
+                flags: Array<DeepPartial<SeriesTypeOptions>> = [],
                 yAxes: Array<Highcharts.YAxisOptions> = [];
 
             chart.annotations.forEach(function (
@@ -2224,7 +2223,7 @@ var stockToolsBindings: Highcharts.Dictionary<Highcharts.NavigationBindingsOptio
                 annotations[index] = annotation.userOptions;
             });
 
-            chart.series.forEach(function (series: Highcharts.Series): void {
+            chart.series.forEach(function (series): void {
                 if (series.is('sma')) {
                     indicators.push(series.userOptions);
                 } else if (series.type === 'flags') {

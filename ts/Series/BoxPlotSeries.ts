@@ -8,9 +8,12 @@
  *
  * */
 
+'use strict';
+
 import type ColorString from '../Core/Color/ColorString';
 import type ColorType from '../Core/Color/ColorType';
 import type GradientColor from '../Core/Color/GradientColor';
+import type { SeriesStatesOptions } from '../Core/Series/SeriesOptions';
 import type SVGAttributes from '../Core/Renderer/SVG/SVGAttributes';
 import type SVGPath from '../Core/Renderer/SVG/SVGPath';
 import Series from '../Core/Series/Series.js';
@@ -30,7 +33,7 @@ const {
 /**
  * @private
  */
-declare module '../Core/Series/Types' {
+declare module '../Core/Series/SeriesType' {
     interface SeriesTypeRegistry {
         boxplot: typeof Highcharts.BoxPlotSeries;
     }
@@ -98,7 +101,7 @@ declare global {
             medianColor?: BoxPlotPoint['medianColor'];
             medianDashStyle?: BoxPlotPoint['medianDashStyle'];
             medianWidth?: BoxPlotPoint['medianWidth'];
-            states?: SeriesStatesOptionsObject<BoxPlotSeries>;
+            states?: SeriesStatesOptions<BoxPlotSeries>;
             stemColor?: BoxPlotPoint['stemColor'];
             stemDashStyle?: BoxPlotPoint['stemDashStyle'];
             stemWidth?: BoxPlotPoint['stemWidth'];

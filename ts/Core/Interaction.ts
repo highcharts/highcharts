@@ -11,14 +11,18 @@
 'use strict';
 
 import type AnimationOptionsObject from './Animation/AnimationOptionsObject';
-import type { SeriesOptionsType } from './Series/Types';
+import type PointerEvent from './PointerEvent';
+import type {
+    PointEventsOptions,
+    PointOptions,
+    PointStatesOptions
+} from './Series/PointOptions';
+import type { SeriesStatesOptions } from './Series/SeriesOptions';
 import type SVGAttributes from './Renderer/SVG/SVGAttributes';
 import type SVGElement from './Renderer/SVG/SVGElement';
 import type SVGPath from './Renderer/SVG/SVGPath';
 import BaseSeries from './Series/Series.js';
-const {
-    seriesTypes
-} = BaseSeries;
+const { seriesTypes } = BaseSeries;
 import Chart from './Chart/Chart.js';
 import H from './Globals.js';
 const {
@@ -28,9 +32,7 @@ const {
 import Legend from './Legend.js';
 import LineSeries from '../Series/LineSeries.js';
 import O from './Options.js';
-const {
-    defaultOptions
-} = O;
+const { defaultOptions } = O;
 import Point from './Series/Point.js';
 import U from './Utilities.js';
 const {
@@ -52,7 +54,7 @@ const {
 declare module './Chart/ChartLike' {
     interface ChartLike {
         resetZoomButton?: SVGElement;
-        pan(e: Highcharts.PointerEventObject, panning: boolean|Highcharts.PanningOptions): void;
+        pan(e: PointerEvent, panning: boolean|Highcharts.PanningOptions): void;
         showResetZoom(): void;
         zoom(event: Highcharts.SelectEventObject): void;
         zoomOut(): void;
@@ -62,7 +64,7 @@ declare module './Chart/ChartLike' {
 declare module './Series/PointLike' {
     interface PointLike {
         className?: string;
-        events?: Highcharts.SeriesEventsOptions;
+        events?: PointEventsOptions;
         hasImportedEvents?: boolean;
         selected?: boolean;
         selectedStaging?: boolean;
@@ -70,12 +72,41 @@ declare module './Series/PointLike' {
         haloPath(size: number): SVGPath;
         importEvents(): void;
         onMouseOut(): void;
-        onMouseOver(e?: Highcharts.PointerEventObject): void;
+        onMouseOver(e?: PointerEvent): void;
         select(selected?: boolean | null, accumulate?: boolean): void;
         setState(
             state?: string,
             move?: boolean
         ): void;
+    }
+}
+
+declare module './Series/SeriesLike' {
+    interface SeriesLike {
+        _hasTracking?: boolean;
+        halo?: SVGElement;
+        stateMarkerGraphic?: SVGElement;
+        tracker?: SVGElement;
+        trackerGroups?: Array<string>;
+        drawTracker: (
+            Highcharts.TrackerMixin['drawTrackerGraph']|
+            Highcharts.TrackerMixin['drawTrackerPoint']
+        );
+        hide(): void;
+        onMouseOut(): void;
+        onMouseOver(): void;
+        select(selected?: boolean): void;
+        setAllPointsToState(state?: string): void;
+        setState(state?: string, inherit?: boolean): void;
+        setVisible(visible?: boolean, redraw?: boolean): void;
+        show(): void;
+    }
+}
+
+declare module './Series/SeriesOptions' {
+    interface SeriesOptions {
+        inactiveOtherPoints?: boolean;
+        stickyTracking?: boolean;
     }
 }
 
@@ -89,9 +120,9 @@ declare global {
             panningState?: AxisPanningState;
         }
         interface Legend {
-            createCheckboxForItem(item: (BubbleLegend|Point|Series)): void;
+            createCheckboxForItem(item: (BubbleLegend|LineSeries|Point)): void;
             setItemEvents(
-                item: (BubbleLegend|Point|Series),
+                item: (BubbleLegend|LineSeries|Point),
                 legendItem: SVGElement,
                 useHTML?: boolean
             ): void;
@@ -118,32 +149,12 @@ declare global {
             type: ('x'|'y'|'xy');
             enabled: boolean;
         }
-        interface Series {
-            _hasTracking?: boolean;
-            halo?: SVGElement;
-            stateMarkerGraphic?: SVGElement;
-            tracker?: SVGElement;
-            trackerGroups?: Array<string>;
-            drawTracker: (
-                TrackerMixin['drawTrackerGraph']|
-                TrackerMixin['drawTrackerPoint']
-            );
-            hide(): void;
-            onMouseOut(): void;
-            onMouseOver(): void;
-            select(selected?: boolean): void;
-            setAllPointsToState(state?: string): void;
-            setState(state?: string, inherit?: boolean): void;
-            setVisible(visible?: boolean, redraw?: boolean): void;
-            show(): void;
-        }
-        interface SeriesOptions {
-            inactiveOtherPoints?: boolean;
-        }
         interface TrackerMixin {
-            drawTrackerGraph(this: Highcharts.Series): void;
-            drawTrackerPoint(this: Series): void;
+            drawTrackerGraph(this: LineSeries): void;
+            drawTrackerPoint(this: LineSeries): void;
         }
+        type PointStateValue = keyof PointStatesOptions<LineSeries['pointClass']['prototype']>;
+        type SeriesStateValue = keyof SeriesStatesOptions<LineSeries>;
         let TrackerMixin: TrackerMixin;
     }
 }
@@ -220,11 +231,11 @@ const TrackerMixin = H.TrackerMixin = {
      * @param {Highcharts.Series} this
      * @fires Highcharts.Series#event:afterDrawTracker
      */
-    drawTrackerPoint: function (this: Highcharts.Series): void {
+    drawTrackerPoint: function (this: LineSeries): void {
         var series = this,
             chart = series.chart,
             pointer = chart.pointer,
-            onMouseOver = function (e: Highcharts.PointerEventObject): void {
+            onMouseOver = function (e: PointerEvent): void {
                 var point = pointer.getPointFromEvent(e);
 
                 // undefined on graph in scatterchart
@@ -236,7 +247,7 @@ const TrackerMixin = H.TrackerMixin = {
             dataLabels;
 
         // Add reference to the point
-        series.points.forEach(function (point: Point): void {
+        series.points.forEach(function (point): void {
             dataLabels = (
                 isArray(point.dataLabels) ?
                     point.dataLabels :
@@ -265,9 +276,7 @@ const TrackerMixin = H.TrackerMixin = {
                     (series as any)[key]
                         .addClass('highcharts-tracker')
                         .on('mouseover', onMouseOver)
-                        .on('mouseout', function (
-                            e: Highcharts.PointerEventObject
-                        ): void {
+                        .on('mouseout', function (e: PointerEvent): void {
                             pointer.onTrackerMouseOut(e);
                         });
                     if (hasTouch) {
@@ -298,7 +307,7 @@ const TrackerMixin = H.TrackerMixin = {
      * @param {Highcharts.Series} this
      * @fires Highcharts.Series#event:afterDrawTracker
      */
-    drawTrackerGraph: function (this: Highcharts.Series): void {
+    drawTrackerGraph: function (this: LineSeries): void {
         var series = this,
             options = series.options,
             trackByArea =
@@ -315,7 +324,7 @@ const TrackerMixin = H.TrackerMixin = {
             snap = (chart.options.tooltip as any).snap,
             tracker = series.tracker,
             i: number,
-            onMouseOver = function (e: Highcharts.PointerEventObject): void {
+            onMouseOver = function (e: PointerEvent): void {
                 if (chart.hoverSeries !== series) {
                     series.onMouseOver();
                 }
@@ -371,9 +380,7 @@ const TrackerMixin = H.TrackerMixin = {
             ): void {
                 (tracker as any).addClass('highcharts-tracker')
                     .on('mouseover', onMouseOver)
-                    .on('mouseout', function (
-                        e: Highcharts.PointerEventObject
-                    ): void {
+                    .on('mouseout', function (e: PointerEvent): void {
                         pointer.onTrackerMouseOut(e);
                     });
 
@@ -433,7 +440,7 @@ extend(Legend.prototype, {
      */
     setItemEvents: function (
         this: Highcharts.Legend,
-        item: (Highcharts.BubbleLegend|Point|Highcharts.Series),
+        item: (Highcharts.BubbleLegend|LineSeries|Point),
         legendItem: SVGElement,
         useHTML?: boolean
     ): void {
@@ -456,12 +463,7 @@ extend(Legend.prototype, {
                 element
                     .on('mouseover', function (): void {
                         if (item.visible) {
-                            legend.allItems.forEach(function (
-                                inactiveItem: (
-                                    Highcharts.BubbleLegend|Point|
-                                    Highcharts.Series
-                                )
-                            ): void {
+                            legend.allItems.forEach(function (inactiveItem): void {
                                 if (item !== inactiveItem) {
                                     inactiveItem.setState('inactive', !isPoint);
                                 }
@@ -494,12 +496,7 @@ extend(Legend.prototype, {
                             );
                         }
 
-                        legend.allItems.forEach(function (
-                            inactiveItem: (
-                                Highcharts.BubbleLegend|Point|
-                                Highcharts.Series
-                            )
-                        ): void {
+                        legend.allItems.forEach(function (inactiveItem): void {
                             if (item !== inactiveItem) {
                                 inactiveItem.setState('', !isPoint);
                             }
@@ -511,19 +508,14 @@ extend(Legend.prototype, {
 
                         item.setState();
                     })
-                    .on('click', function (event: Highcharts.PointerEventObject): void {
+                    .on('click', function (event: PointerEvent): void {
                         var strLegendItemClick = 'legendItemClick',
                             fnLegendItemClick = function (): void {
                                 if ((item as any).setVisible) {
                                     (item as any).setVisible();
                                 }
                                 // Reset inactive state
-                                legend.allItems.forEach(function (
-                                    inactiveItem: (
-                                        Highcharts.BubbleLegend|Point|
-                                        Highcharts.Series
-                                    )
-                                ): void {
+                                legend.allItems.forEach(function (inactiveItem): void {
                                     if (item !== inactiveItem) {
                                         inactiveItem.setState(
                                             item.visible ? 'inactive' : '',
@@ -568,7 +560,7 @@ extend(Legend.prototype, {
      */
     createCheckboxForItem: function (
         this: Highcharts.Legend,
-        item: (Highcharts.BubbleLegend|Point|Highcharts.Series)
+        item: (Highcharts.BubbleLegend|LineSeries|Point)
     ): void {
         var legend = this;
 
@@ -579,9 +571,7 @@ extend(Legend.prototype, {
             defaultChecked: (item as any).selected // required by IE7
         }, legend.options.itemCheckboxStyle, legend.chart.container) as any;
 
-        addEvent(item.checkbox, 'click', function (
-            event: Highcharts.PointerEventObject
-        ): void {
+        addEvent(item.checkbox, 'click', function (event: PointerEvent): void {
             var target = event.target as Highcharts.LegendCheckBoxElement;
 
             fireEvent(
@@ -759,7 +749,7 @@ extend(Chart.prototype, /** @lends Chart.prototype */ {
      */
     pan: function (
         this: Chart,
-        e: Highcharts.PointerEventObject,
+        e: PointerEvent,
         panning: Highcharts.PanningOptions|boolean
     ): void {
 
@@ -790,7 +780,7 @@ extend(Chart.prototype, /** @lends Chart.prototype */ {
 
             // remove active points for shared tooltip
             if (hoverPoints) {
-                hoverPoints.forEach(function (point: Point): void {
+                hoverPoints.forEach(function (point): void {
                     point.setState();
                 });
             }
@@ -839,9 +829,7 @@ extend(Chart.prototype, /** @lends Chart.prototype */ {
 
                 // General calculations of panning state.
                 // This is related to using vertical panning. (#11315).
-                axis.series.forEach(function (
-                    series: Highcharts.Series
-                ): void {
+                axis.series.forEach(function (series): void {
                     if (
                         hasVerticalPanning &&
                         !isX && (
@@ -1067,7 +1055,7 @@ extend(Point.prototype, /** @lends Highcharts.Point.prototype */ {
      */
     onMouseOver: function (
         this: Point,
-        e?: Highcharts.PointerEventObject
+        e?: PointerEvent
     ): void {
         var point = this,
             series = point.series,
@@ -1078,7 +1066,7 @@ extend(Point.prototype, /** @lends Highcharts.Point.prototype */ {
             pointer.normalize(e) :
             // In cases where onMouseOver is called directly without an event
             pointer.getChartCoordinatesFromPoint(point, chart.inverted) as any;
-        pointer.runPointActions(e, point);
+        pointer.runPointActions(e as any, point);
     },
 
     /**
@@ -1116,9 +1104,9 @@ extend(Point.prototype, /** @lends Highcharts.Point.prototype */ {
         if (!this.hasImportedEvents) {
             var point = this,
                 options = merge(
-                    point.series.options.point,
+                    point.series.options.point as PointOptions,
                     point.options
-                ) as SeriesOptionsType,
+                ),
                 events = options.events;
 
             point.events = events;
@@ -1430,7 +1418,7 @@ extend(LineSeries.prototype, /** @lends Highcharts.Series.prototype */ {
      * @function Highcharts.Series#onMouseOver
      * @fires Highcharts.Series#event:mouseOver
      */
-    onMouseOver: function (this: Highcharts.Series): void {
+    onMouseOver: function (this: LineSeries): void {
         var series = this,
             chart = series.chart,
             hoverSeries = chart.hoverSeries,
@@ -1468,7 +1456,7 @@ extend(LineSeries.prototype, /** @lends Highcharts.Series.prototype */ {
      *
      * @fires Highcharts.Series#event:mouseOut
      */
-    onMouseOut: function (this: Highcharts.Series): void {
+    onMouseOut: function (this: LineSeries): void {
         // trigger the event only if listeners exist
         var series = this,
             options = series.options,
@@ -1500,7 +1488,7 @@ extend(LineSeries.prototype, /** @lends Highcharts.Series.prototype */ {
         }
 
         // Reset all inactive states
-        chart.series.forEach(function (s: Highcharts.Series): void {
+        chart.series.forEach(function (s): void {
             s.setState('', true);
         });
 
@@ -1521,7 +1509,7 @@ extend(LineSeries.prototype, /** @lends Highcharts.Series.prototype */ {
      *        Determines if state should be inherited by points too.
      */
     setState: function (
-        this: Highcharts.Series,
+        this: LineSeries,
         state?: (Highcharts.SeriesStateValue|''),
         inherit?: boolean
     ): void {
@@ -1650,10 +1638,10 @@ extend(LineSeries.prototype, /** @lends Highcharts.Series.prototype */ {
      *        Can be either `hover` or undefined to set to normal state.
      */
     setAllPointsToState: function (
-        this: Highcharts.Series,
+        this: LineSeries,
         state?: string
     ): void {
-        this.points.forEach(function (point: Point): void {
+        this.points.forEach(function (point): void {
             if (point.setState) {
                 point.setState(state);
             }
@@ -1678,7 +1666,7 @@ extend(LineSeries.prototype, /** @lends Highcharts.Series.prototype */ {
      * @fires Highcharts.Series#event:show
      */
     setVisible: function (
-        this: Highcharts.Series,
+        this: LineSeries,
         vis?: boolean,
         redraw?: boolean
     ): void {
@@ -1730,9 +1718,7 @@ extend(LineSeries.prototype, /** @lends Highcharts.Series.prototype */ {
         series.isDirty = true;
         // in a stack, all other series are affected
         if (series.options.stacking) {
-            chart.series.forEach(function (
-                otherSeries: Highcharts.Series
-            ): void {
+            chart.series.forEach(function (otherSeries): void {
                 if (otherSeries.options.stacking && otherSeries.visible) {
                     otherSeries.isDirty = true;
                 }
@@ -1740,9 +1726,7 @@ extend(LineSeries.prototype, /** @lends Highcharts.Series.prototype */ {
         }
 
         // show or hide linked series
-        series.linkedSeries.forEach(function (
-            otherSeries: Highcharts.Series
-        ): void {
+        series.linkedSeries.forEach(function (otherSeries): void {
             otherSeries.setVisible(vis, false);
         });
 
@@ -1766,7 +1750,7 @@ extend(LineSeries.prototype, /** @lends Highcharts.Series.prototype */ {
      * @function Highcharts.Series#show
      * @fires Highcharts.Series#event:show
      */
-    show: function (this: Highcharts.Series): void {
+    show: function (this: LineSeries): void {
         this.setVisible(true);
     },
 
@@ -1781,7 +1765,7 @@ extend(LineSeries.prototype, /** @lends Highcharts.Series.prototype */ {
      * @function Highcharts.Series#hide
      * @fires Highcharts.Series#event:hide
      */
-    hide: function (this: Highcharts.Series): void {
+    hide: function (this: LineSeries): void {
         this.setVisible(false);
     },
 
@@ -1805,7 +1789,7 @@ extend(LineSeries.prototype, /** @lends Highcharts.Series.prototype */ {
      * @fires Highcharts.Series#event:select
      * @fires Highcharts.Series#event:unselect
      */
-    select: function (this: Highcharts.Series, selected?: boolean): void {
+    select: function (this: LineSeries, selected?: boolean): void {
         var series = this;
 
         series.selected =

@@ -8,6 +8,7 @@
 
 import type ControllableCircle from '../Controllables/ControllableCircle';
 import type ControllableRect from '../Controllables/ControllableRect';
+import type PointerEvent from '../../../Core/PointerEvent';
 import Annotation from '../Annotations.js';
 import MockPoint from '../MockPoint.js';
 import U from '../../../Core/Utilities.js';
@@ -125,7 +126,7 @@ class BasicAnnotation extends Annotation {
             events: {
                 drag: function (
                     this: Annotation,
-                    e: Highcharts.PointerEventObject,
+                    e: PointerEvent,
                     target: ControllableRect
                 ): void {
                     var annotation = target.annotation,

@@ -6,10 +6,11 @@
  *
  * */
 
+'use strict';
+
+import type LineSeries from '../../Series/LineSeries';
 import BaseSeries from '../../Core/Series/Series.js';
-const {
-    seriesTypes
-} = BaseSeries;
+const { seriesTypes } = BaseSeries;
 import RequiredIndicatorMixin from '../../Mixins/IndicatorRequired.js';
 import U from '../../Core/Utilities.js';
 const {
@@ -26,7 +27,7 @@ declare global {
         class ChaikinIndicator extends EMAIndicator {
             public data: Array<ChaikinIndicatorPoint>;
             public init(): void;
-            public getValues<TLinkedSeries extends Series>(
+            public getValues<TLinkedSeries extends LineSeries>(
                 series: TLinkedSeries,
                 params: ChaikinIndicatorParamsOptions
             ): (IndicatorValuesObject<TLinkedSeries>|undefined)
@@ -53,7 +54,7 @@ declare global {
     }
 }
 
-declare module '../../Core/Series/Types' {
+declare module '../../Core/Series/SeriesType' {
     interface SeriesTypeRegistry {
         chaikin: typeof Highcharts.ChaikinIndicator;
     }
@@ -139,7 +140,7 @@ BaseSeries.seriesType<typeof Highcharts.ChaikinIndicator>(
                 }
             );
         },
-        getValues: function<TLinkedSeries extends Highcharts.Series> (
+        getValues: function<TLinkedSeries extends LineSeries> (
             series: TLinkedSeries,
             params: Highcharts.ChaikinIndicatorParamsOptions
         ): (Highcharts.IndicatorValuesObject<TLinkedSeries>|undefined) {

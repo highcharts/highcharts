@@ -9,6 +9,7 @@
  * */
 'use strict';
 import H from '../Core/Globals.js';
+import LineSeries from '../Series/LineSeries.js';
 import U from '../Core/Utilities.js';
 var defined = U.defined, stableSort = U.stableSort;
 import '../Series/LineSeries.js';
@@ -28,7 +29,7 @@ var onSeriesMixin = {
      * @return {Highcharts.SeriesPlotBoxObject}
      */
     getPlotBox: function () {
-        return H.Series.prototype.getPlotBox.call((this.options.onSeries &&
+        return LineSeries.prototype.getPlotBox.call((this.options.onSeries &&
             this.chart.get(this.options.onSeries)) || this);
     },
     /**

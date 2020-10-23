@@ -70,10 +70,10 @@ function rotate3D(x, y, z, angles) {
  * @private
  * @function Highcharts.perspective3D
  *
- * @param {Highcharts.Position3dObject} coordinate
+ * @param {Highcharts.Position3DObject} coordinate
  * 3D position
  *
- * @param {Highcharts.Position3dObject} origin
+ * @param {Highcharts.Position3DObject} origin
  * 3D root position
  *
  * @param {number} distance
@@ -99,7 +99,7 @@ var perspective3D = H.perspective3D = function (coordinate, origin, distance) {
  * @private
  * @function Highcharts.perspective
  *
- * @param {Array<Highcharts.Position3dObject>} points
+ * @param {Array<Highcharts.Position3DObject>} points
  * The array of points
  *
  * @param {Highcharts.Chart} chart
@@ -111,7 +111,7 @@ var perspective3D = H.perspective3D = function (coordinate, origin, distance) {
  * @param {boolean} [useInvertedPersp]
  * Whether to use inverted perspective in calculations
  *
- * @return {Array<Highcharts.Position3dObject>}
+ * @return {Array<Highcharts.Position3DObject>}
  * An array of transformed points
  *
  * @requires highcharts-3d
@@ -213,7 +213,7 @@ var shapeArea = H.shapeArea = function (vertexes) {
  * @private
  * @function Highcharts.shapeArea3d
  *
- * @param {Array<Highcharts.Position3dObject>} vertexes
+ * @param {Array<Highcharts.Position3DObject>} vertexes
  * 3D Polygon
  *
  * @param {Highcharts.Chart} chart

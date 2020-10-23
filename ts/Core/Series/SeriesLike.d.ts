@@ -14,12 +14,8 @@
  *
  * */
 
-import type AnimationOptionsObject from '../Animation/AnimationOptionsObject';
 import type PointLike from './PointLike';
-import type {
-    PointOptions,
-    PointShortOptions
-} from './PointOptions';
+import type SeriesOptions from './SeriesOptions';
 import type SVGElement from '../Renderer/SVG/SVGElement';
 
 /* *
@@ -45,30 +41,13 @@ export interface SeriesLike {
     linkedSeries: Array<SeriesLike>;
     markerGroup?: SVGElement;
     opacity?: number;
-    options: SeriesLikeOptions;
+    options: SeriesOptions;
     points: Array<PointLike>;
-    userOptions: DeepPartial<SeriesLikeOptions>;
+    userOptions: DeepPartial<SeriesOptions>;
     drawGraph(): void;
     render(): void;
     translate(): void;
-    update(options: DeepPartial<SeriesLikeOptions>): void;
-}
-
-/**
- * Helper interface for series types to add options to all series options.
- *
- * Use the `declare module 'Types'` pattern to overload the interface in this
- * definition file.
- */
-export interface SeriesLikeOptions /* @todo */ extends Highcharts.SeriesOptions {
-    animation?: (boolean|DeepPartial<AnimationOptionsObject>);
-    data?: Array<(PointOptions|PointShortOptions)>;
-    dataSorting?: Highcharts.DataSortingOptionsObject; // cartasian series
-    index?: number;
-    /** @private */
-    isInternal?: boolean;
-    pointStart?: number;
-    type?: string;
+    update(options: DeepPartial<SeriesOptions>): void;
 }
 
 /* *

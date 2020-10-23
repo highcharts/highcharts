@@ -15,7 +15,9 @@ import type Chart from './Chart/Chart';
 import type {
     DOMElementType
 } from './Renderer/DOMElementType';
-import type Point from '../Core/Series/Point';
+import type LineSeries from '../Series/LineSeries';
+import type Point from './Series/Point';
+import type PointerEvent from './PointerEvent';
 import type SVGElement from './Renderer/SVG/SVGElement';
 import Color from './Color/Color.js';
 const color = Color.parse;
@@ -45,9 +47,9 @@ const {
 declare module './Chart/ChartLike'{
     interface ChartLike {
         cancelClick?: boolean;
-        hoverPoint?: Highcharts.PointerHoverDataObject['hoverPoint'];
-        hoverPoints?: Highcharts.PointerHoverDataObject['hoverPoints'];
-        hoverSeries?: Highcharts.PointerHoverDataObject['hoverSeries'];
+        hoverPoint?: Point;
+        hoverPoints?: Array<Point>;
+        hoverSeries?: LineSeries;
         mouseDownX?: number;
         mouseDownY?: number;
         mouseIsDown?: (boolean|string);
@@ -80,13 +82,10 @@ declare global {
             hoverPoint?: Point;
             shared?: boolean;
         }
-        interface PointerEventObject extends PointerCoordinatesObject, PointerEvent {
-            touches?: Array<Touch>;
-        }
         interface PointerHoverDataObject {
             hoverPoint?: Point;
             hoverPoints: Array<Point>;
-            hoverSeries: Series;
+            hoverSeries: LineSeries;
         }
         interface SelectDataObject {
             axis: Axis;
@@ -309,11 +308,11 @@ class Pointer {
      * Currently hovered points
      */
     public applyInactiveState(points: Array<Point>): void {
-        var activeSeries = [] as Array<Highcharts.Series>,
-            series: Highcharts.Series;
+        var activeSeries = [] as Array<LineSeries>,
+            series: LineSeries;
 
         // Get all active series from the hovered points
-        (points || []).forEach(function (item: Point): void {
+        (points || []).forEach(function (item): void {
             series = item.series;
 
             // Include itself
@@ -337,9 +336,7 @@ class Pointer {
             }
         });
         // Now loop over all series, filtering out active series
-        this.chart.series.forEach(function (
-            inactiveSeries: Highcharts.Series
-        ): void {
+        this.chart.series.forEach(function (inactiveSeries): void {
             if (activeSeries.indexOf(inactiveSeries) === -1) {
                 // Inactive series
                 inactiveSeries.setState('inactive', true);
@@ -387,12 +384,8 @@ class Pointer {
      *
      * @private
      * @function Highcharts.Pointer#drag
-     *
-     * @param {Highcharts.PointerEventObject} e
-     *
-     * @return {void}
      */
-    public drag(e: Highcharts.PointerEventObject): void {
+    public drag(e: PointerEvent): void {
 
         var chart = this.chart,
             chartOptions = chart.options.chart as Highcharts.ChartOptions,
@@ -515,12 +508,8 @@ class Pointer {
      *
      * @private
      * @function Highcharts.Pointer#dragStart
-     *
-     * @param {Highcharts.PointerEventObject} e
-     *
-     * @return {void}
      */
-    public dragStart(e: Highcharts.PointerEventObject): void {
+    public dragStart(e: PointerEvent): void {
         var chart = this.chart;
 
         // Record the start position
@@ -670,9 +659,9 @@ class Pointer {
      *         The point closest to given coordinates.
      */
     public findNearestKDPoint(
-        series: Array<Highcharts.Series>,
+        series: Array<LineSeries>,
         shared: (boolean|undefined),
-        e: Highcharts.PointerEventObject
+        e: PointerEvent
     ): (Point|undefined) {
 
         const chart = this.chart;
@@ -721,7 +710,7 @@ class Pointer {
             return result;
         }
 
-        series.forEach(function (s: Highcharts.Series): void {
+        series.forEach(function (s): void {
             var noSharedTooltip = s.noSharedTooltip && shared,
                 compareX = (
                     !noSharedTooltip &&
@@ -809,7 +798,7 @@ class Pointer {
      *
      * @return {Highcharts.PointerAxisCoordinatesObject}
      */
-    public getCoordinates(e: Highcharts.PointerEventObject): Highcharts.PointerAxisCoordinatesObject {
+    public getCoordinates(e: PointerEvent): Highcharts.PointerAxisCoordinatesObject {
 
         var coordinates = {
             xAxis: [],
@@ -856,11 +845,11 @@ class Pointer {
      */
     public getHoverData(
         existingHoverPoint: (Point|undefined),
-        existingHoverSeries: (Highcharts.Series|undefined),
-        series: Array<Highcharts.Series>,
+        existingHoverSeries: (LineSeries|undefined),
+        series: Array<LineSeries>,
         isDirectTouch?: boolean,
         shared?: boolean,
-        e?: Highcharts.PointerEventObject
+        e?: PointerEvent
     ): Highcharts.PointerHoverDataObject {
         var hoverPoint: Point,
             hoverPoints = [] as Array<Point>,
@@ -875,7 +864,7 @@ class Pointer {
                 chartY: e ? e.chartY : void 0,
                 shared: shared
             },
-            filter = function (s: Highcharts.Series): boolean {
+            filter = function (s: LineSeries): boolean {
                 return (
                     s.visible &&
                     !(!shared && s.directTouch) && // #3821
@@ -890,7 +879,7 @@ class Pointer {
             // Only search on hovered series if it has stickyTracking false
             [hoverSeries as any] :
             // Filter what series to look in.
-            series.filter(function (s: Highcharts.Series): boolean {
+            series.filter(function (s): boolean {
                 return eventArgs.filter ? eventArgs.filter(s) : filter(s) &&
                     s.stickyTracking;
             });
@@ -907,17 +896,13 @@ class Pointer {
         if (hoverPoint) {
             // When tooltip is shared, it displays more than one point
             if (shared && !hoverSeries.noSharedTooltip) {
-                searchSeries = series.filter(function (
-                    s: Highcharts.Series
-                ): boolean {
+                searchSeries = series.filter(function (s): boolean {
                     return eventArgs.filter ?
                         eventArgs.filter(s) : filter(s) && !s.noSharedTooltip;
                 });
 
                 // Get all points with the same x value as the hoverPoint
-                searchSeries.forEach(function (
-                    s: Highcharts.Series
-                ): any {
+                searchSeries.forEach(function (s): any {
                     var point = find(s.points, function (p: Point): boolean {
                         return p.x === hoverPoint.x && !p.isNull;
                     });
@@ -971,12 +956,8 @@ class Pointer {
     /**
      * @private
      * @function Highcharts.Pointer#onTrackerMouseOut
-     *
-     * @param {Highcharts.PointerEventObject} e
-     *
-     * @return {void}
      */
-    public onTrackerMouseOut(e: Highcharts.PointerEventObject): void {
+    public onTrackerMouseOut(e: PointerEvent): void {
         const chart = this.chart;
         const relatedTarget = e.relatedTarget || e.toElement;
         const series = chart.hoverSeries;
@@ -1098,7 +1079,7 @@ class Pointer {
      * @return {Highcharts.PointerEventObject}
      *         A browser event with extended properties `chartX` and `chartY`.
      */
-    public normalize<T extends Highcharts.PointerEventObject>(
+    public normalize<T extends PointerEvent>(
         e: (T|MouseEvent|PointerEvent|TouchEvent),
         chartPosition?: Highcharts.OffsetObject
     ): T {
@@ -1215,7 +1196,7 @@ class Pointer {
                 e.preventDefault();
             }
 
-            this.dragStart(e as Highcharts.PointerEventObject);
+            this.dragStart(e as PointerEvent);
         }
     }
 
@@ -1238,7 +1219,7 @@ class Pointer {
         // #4886, MS Touch end fires mouseleave but with no related target
         if (
             chart &&
-            (e.relatedTarget || (e as Highcharts.PointerEventObject).toElement)
+            (e.relatedTarget || (e as PointerEvent).toElement)
         ) {
             chart.pointer.reset();
             // Also reset the chart position, used in #149 fix
@@ -1319,7 +1300,7 @@ class Pointer {
      *
      * @return {void}
      */
-    public onDocumentTouchEnd(e: Highcharts.PointerEventObject): void {
+    public onDocumentTouchEnd(e: PointerEvent): void {
         if (charts[H.hoverChartIndex as any]) {
             (charts[H.hoverChartIndex as any] as any).pointer.drop(e);
         }
@@ -1333,7 +1314,7 @@ class Pointer {
      *
      * @return {void}
      */
-    public onContainerTouchMove(e: Highcharts.PointerEventObject): void {
+    public onContainerTouchMove(e: PointerEvent): void {
         this.touch(e);
     }
 
@@ -1345,7 +1326,7 @@ class Pointer {
      *
      * @return {void}
      */
-    public onContainerTouchStart(e: Highcharts.PointerEventObject): void {
+    public onContainerTouchStart(e: PointerEvent): void {
         this.zoomOption(e);
         this.touch(e, true);
     }
@@ -1410,12 +1391,12 @@ class Pointer {
      *
      * @return {void}
      */
-    public pinch(e: Highcharts.PointerEventObject): void {
+    public pinch(e: PointerEvent): void {
 
         var self = this,
             chart = self.chart,
             pinchDown = self.pinchDown,
-            touches: (Array<Highcharts.PointerEventObject>|Array<Touch>) = (e.touches || []),
+            touches: (Array<PointerEvent>|Array<Touch>) = (e.touches || []),
             touchesLength = touches.length,
             lastValidTouch = self.lastValidTouch as any,
             hasZoom = self.hasZoom,
@@ -1444,16 +1425,14 @@ class Pointer {
         }
 
         // Normalize each touch
-        [].map.call(touches, function (
-            e: PointerEvent
-        ): Highcharts.PointerEventObject {
+        [].map.call(touches, function (e): PointerEvent {
             return self.normalize(e);
         });
 
         // Register the touch start position
         if (e.type === 'touchstart') {
             [].forEach.call(touches, function (
-                e: Highcharts.PointerEventObject,
+                e: PointerEvent,
                 i: number
             ): void {
                 pinchDown[i] = { chartX: e.chartX, chartY: e.chartY };
@@ -1557,7 +1536,7 @@ class Pointer {
      */
     public pinchTranslate(
         pinchDown: Array<any>,
-        touches: Array<Highcharts.PointerEventObject>,
+        touches: Array<PointerEvent>,
         transform: any,
         selectionMarker: any,
         clip: any,
@@ -1615,7 +1594,7 @@ class Pointer {
     public pinchTranslateDirection(
         horiz: boolean,
         pinchDown: Array<any>,
-        touches: Array<Highcharts.PointerEventObject>,
+        touches: Array<PointerEvent>,
         transform: any,
         selectionMarker: any,
         clip: any,
@@ -1805,7 +1784,7 @@ class Pointer {
             }
 
             // Remove crosshairs
-            chart.axes.forEach(function (axis: Axis): void {
+            chart.axes.forEach(function (axis): void {
                 axis.hideCrosshair();
             });
 
@@ -1820,16 +1799,10 @@ class Pointer {
      * @private
      * @function Highcharts.Pointer#runPointActions
      *
-     * @param {global.Event} e
-     *
-     * @param {Highcharts.PointerEventObject} [p]
-     *
-     * @return {void}
-     *
      * @fires Highcharts.Point#event:mouseOut
      * @fires Highcharts.Point#event:mouseOver
      */
-    public runPointActions(e?: Highcharts.PointerEventObject, p?: Point): void {
+    public runPointActions(e: PointerEvent, p?: Point): void {
         var pointer = this,
             chart = pointer.chart,
             series = chart.series,
@@ -1965,7 +1938,7 @@ class Pointer {
         }
 
         // Issues related to crosshair #4927, #5269 #5066, #5658
-        chart.axes.forEach(function drawAxisCrosshair(axis: Axis): void {
+        chart.axes.forEach(function drawAxisCrosshair(axis): void {
             const snap = pick((axis.crosshair || {}).snap, true);
 
             let point: Point|undefined;
@@ -1994,12 +1967,6 @@ class Pointer {
      *
      * @private
      * @function Highcharts.Pointer#scaleGroups
-     *
-     * @param {Highcharts.SeriesPlotBoxObject} [attribs]
-     *
-     * @param {boolean} [clip]
-     *
-     * @return {void}
      */
     public scaleGroups(attribs?: Highcharts.SeriesPlotBoxObject, clip?: boolean): void {
 
@@ -2007,7 +1974,7 @@ class Pointer {
             seriesAttribs;
 
         // Scale each series
-        chart.series.forEach(function (series: Highcharts.Series): void {
+        chart.series.forEach(function (series): void {
             seriesAttribs = attribs || series.getPlotBox(); // #1701
             if (series.xAxis && series.xAxis.zoomEnabled && series.group) {
                 series.group.attr(seriesAttribs);
@@ -2035,8 +2002,6 @@ class Pointer {
      *
      * @private
      * @function Highcharts.Pointer#setDOMEvents
-     *
-     * @return {void}
      */
     public setDOMEvents(): void {
 
@@ -2115,14 +2080,8 @@ class Pointer {
      *
      * @private
      * @function Highcharts.Pointer#touch
-     *
-     * @param {Highcharts.PointerEventObject} e
-     *
-     * @param {boolean} [start]
-     *
-     * @return {void}
      */
-    public touch(e: Highcharts.PointerEventObject, start?: boolean): void {
+    public touch(e: PointerEvent, start?: boolean): void {
         var chart = this.chart,
             hasMoved,
             pinchDown,

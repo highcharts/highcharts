@@ -30,6 +30,7 @@ export interface PointerEvent extends globalThis.PointerEvent {
     chartX: number;
     chartY: number;
     point?: Point;
+    touches?: Array<Touch>;
 }
 
 /* *

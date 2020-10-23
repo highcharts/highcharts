@@ -7,6 +7,7 @@
  *  !!!!!!! SOURCE GETS TRANSPILED BY TYPESCRIPT. EDIT TS FILE ONLY. !!!!!!!
  *
  * */
+'use strict';
 import A from '../Core/Animation/AnimationUtilities.js';
 var setAnimation = A.setAnimation;
 import BaseSeries from '../Core/Series/Series.js';

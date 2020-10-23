@@ -4,7 +4,9 @@
  *
  * */
 
-import H from '../../Core/Globals.js';
+'use strict';
+
+import LineSeries from '../../Series/LineSeries.js';
 
 /**
  * Internal types.
@@ -56,7 +58,7 @@ declare global {
         }
         interface AnnotationMockSeries {
             chart: AnnotationChart;
-            getPlotBox: Series['getPlotBox'];
+            getPlotBox: LineSeries['getPlotBox'];
             xAxis?: (Axis|null);
             yAxis?: (Axis|null);
             visible: boolean;
@@ -244,7 +246,7 @@ class MockPoint {
         this.series = {
             visible: true,
             chart: chart,
-            getPlotBox: H.Series.prototype.getPlotBox
+            getPlotBox: LineSeries.prototype.getPlotBox
         };
 
         /**

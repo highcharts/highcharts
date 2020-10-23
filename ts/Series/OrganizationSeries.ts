@@ -10,8 +10,12 @@
  *
  * */
 
+'use strict';
+
 import type ColorString from '../Core/Color/ColorString';
 import type CSSObject from '../Core/Renderer/CSSObject';
+import type { SeriesStatesOptions } from '../Core/Series/SeriesOptions';
+import type { StatesOptionsKey } from '../Core/Series/StatesOptions';
 import type SVGAttributes from '../Core/Renderer/SVG/SVGAttributes';
 import type SVGElement from '../Core/Renderer/SVG/SVGElement';
 import type SVGPath from '../Core/Renderer/SVG/SVGPath';
@@ -58,7 +62,7 @@ declare global {
             ): SVGPath;
             public pointAttribs(
                 point: OrganizationPoint,
-                state: string
+                state?: StatesOptionsKey
             ): SVGAttributes;
             public translateLink(point: OrganizationPoint): void;
             public translateNode(
@@ -101,7 +105,7 @@ declare global {
         interface OrganizationSeriesLevelsOptions
             extends SankeySeriesLevelsOptions
         {
-            states: Dictionary<OrganizationSeriesOptions>;
+            states: SeriesStatesOptions<OrganizationSeries>;
         }
         interface OrganizationSeriesNodeOptions
             extends SankeySeriesNodesOptions
@@ -119,7 +123,7 @@ declare global {
             linkLineWidth?: number;
             linkRadius?: number;
             nodes?: Array<OrganizationSeriesNodeOptions>;
-            states?: SeriesStatesOptionsObject<OrganizationSeries>;
+            states?: SeriesStatesOptions<OrganizationSeries>;
         }
         type OrganizationNodesLayoutValue = ('normal'|'hanging');
     }
@@ -128,7 +132,7 @@ declare global {
 /**
  * @private
  */
-declare module '../Core/Series/Types' {
+declare module '../Core/Series/SeriesType' {
     interface SeriesTypeRegistry {
         organization: typeof Highcharts.OrganizationSeries;
     }
@@ -371,7 +375,7 @@ BaseSeries.seriesType<typeof Highcharts.OrganizationSeries>(
         pointAttribs: function (
             this: Highcharts.OrganizationSeries,
             point: Highcharts.OrganizationPoint,
-            state: string
+            state?: StatesOptionsKey
         ): SVGAttributes {
             var series = this,
                 attribs = base.pointAttribs.call(series, point, state),
@@ -380,7 +384,7 @@ BaseSeries.seriesType<typeof Highcharts.OrganizationSeries>(
                     (series.mapOptionsToLevel as any)[level || 0] || {},
                 options = point.options,
                 stateOptions: Highcharts.OrganizationSeriesOptions = (
-                    levelOptions.states && levelOptions.states[state]
+                    levelOptions.states && (levelOptions.states as any)[state as any]
                 ) || {},
                 values: (
                     Highcharts.OrganizationPointOptions &

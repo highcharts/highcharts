@@ -15,12 +15,12 @@ import DrawPointMixin from '../Mixins/DrawPoint.js';
 var drawPoint = DrawPointMixin.drawPoint;
 import H from '../Core/Globals.js';
 var noop = H.noop;
+import LineSeries from './LineSeries.js';
 import PolygonMixin from '../Mixins/Polygon.js';
 var getBoundingBoxFromPolygon = PolygonMixin.getBoundingBoxFromPolygon, getPolygon = PolygonMixin.getPolygon, isPolygonsColliding = PolygonMixin.isPolygonsColliding, movePolygon = PolygonMixin.movePolygon, rotate2DToOrigin = PolygonMixin.rotate2DToOrigin, rotate2DToPoint = PolygonMixin.rotate2DToPoint;
 import U from '../Core/Utilities.js';
 var extend = U.extend, find = U.find, isArray = U.isArray, isNumber = U.isNumber, isObject = U.isObject, merge = U.merge;
 import './ColumnSeries.js';
-var Series = H.Series;
 /**
  * Detects if there is a collision between two rectangles.
  *
@@ -620,7 +620,7 @@ var wordCloudOptions = {
 };
 // Properties of the WordCloud series.
 var wordCloudSeries = {
-    animate: Series.prototype.animate,
+    animate: LineSeries.prototype.animate,
     animateDrilldown: noop,
     animateDrillupFrom: noop,
     setClip: noop,
@@ -634,7 +634,7 @@ var wordCloudSeries = {
             title: null,
             tickPositions: []
         };
-        Series.prototype.bindAxes.call(this);
+        LineSeries.prototype.bindAxes.call(this);
         extend(this.yAxis.options, wordcloudAxis);
         extend(this.xAxis.options, wordcloudAxis);
     },

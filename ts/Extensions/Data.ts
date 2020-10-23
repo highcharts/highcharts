@@ -12,6 +12,7 @@
 
 'use strict';
 
+import type SeriesOptions from '../Core/Series/SeriesOptions';
 import Ajax from '../Extensions/Ajax.js';
 const {
     ajax
@@ -845,7 +846,7 @@ class Data {
             i;
 
         ((chartOptions && chartOptions.series) || []).forEach(
-            function (series: Highcharts.SeriesOptions): void {
+            function (series): void {
                 individualCounts.push(getValueCount(series.type || globalType));
             }
         );
@@ -2336,7 +2337,7 @@ class Data {
             xColumns = [],
             type,
             options = this.options,
-            series: Array<Highcharts.SeriesOptions>,
+            series: Array<SeriesOptions>,
             data,
             i: number,
             j: number,

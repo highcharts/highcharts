@@ -3,7 +3,8 @@
  *  !!!!!!! SOURCE GETS TRANSPILED BY TYPESCRIPT. EDIT TS FILE ONLY. !!!!!!!
  *
  * */
-import H from '../../Core/Globals.js';
+'use strict';
+import LineSeries from '../../Series/LineSeries.js';
 /**
  * @private
  * @interface Highcharts.AnnotationMockLabelOptionsObject
@@ -96,7 +97,7 @@ var MockPoint = /** @class */ (function () {
         this.series = {
             visible: true,
             chart: chart,
-            getPlotBox: H.Series.prototype.getPlotBox
+            getPlotBox: LineSeries.prototype.getPlotBox
         };
         /**
          * @name Annotation.AnnotationMockPoint#target

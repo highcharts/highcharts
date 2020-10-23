@@ -15,8 +15,14 @@
 import type Point from './Point';
 import type ZAxis from '../Axis/ZAxis';
 import H from '../Globals.js';
+import LineSeries from '../../Series/LineSeries.js';
 import Math3D from '../../Extensions/Math3D.js';
 const { perspective } = Math3D;
+import U from '../Utilities.js';
+const {
+    addEvent,
+    pick
+} = U;
 
 declare module './PointLike' {
     interface PointLike {
@@ -25,45 +31,32 @@ declare module './PointLike' {
     }
 }
 
-/**
- * Internal types
- * @private
- */
-declare global {
-    namespace Highcharts {
-        interface Series {
-            zAxis?: ZAxis;
-            translate3dPoints(): void;
-        }
+declare module './SeriesLike' {
+    interface SeriesLike {
+        zAxis?: ZAxis;
+        /** @requires Core/Series/Series3D */
+        translate3dPoints(): void;
     }
 }
-
-import U from '../Utilities.js';
-const {
-    addEvent,
-    pick
-} = U;
-
-import '../../Series/LineSeries.js';
 
 /* eslint-disable no-invalid-this */
 
 // Wrap the translate method to post-translate points into 3D perspective
-addEvent(H.Series, 'afterTranslate', function (): void {
+addEvent(LineSeries, 'afterTranslate', function (): void {
     if (this.chart.is3d()) {
         this.translate3dPoints();
     }
 });
 
 // Translate the plotX, plotY properties and add plotZ.
-H.Series.prototype.translate3dPoints = function (): void {
+LineSeries.prototype.translate3dPoints = function (): void {
     var series = this,
         chart = series.chart,
         zAxis: ZAxis = pick(series.zAxis, (chart.options.zAxis as any)[0]),
-        rawPoints = [] as Array<Highcharts.Position3dObject>,
+        rawPoints = [] as Array<Highcharts.Position3DObject>,
         rawPoint: Point,
-        projectedPoints: Array<Highcharts.Position3dObject>,
-        projectedPoint: Highcharts.Position3dObject,
+        projectedPoints: Array<Highcharts.Position3DObject>,
+        projectedPoint: Highcharts.Position3DObject,
         zValue: (number|null|undefined),
         i: number;
 

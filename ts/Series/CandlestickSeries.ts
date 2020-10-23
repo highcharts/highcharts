@@ -8,7 +8,11 @@
  *
  * */
 
+'use strict';
+
 import type ColorType from '../Core/Color/ColorType';
+import type { SeriesStatesOptions } from '../Core/Series/SeriesOptions';
+import type { StatesOptionsKey } from '../Core/Series/StatesOptions';
 import type SVGAttributes from '../Core/Renderer/SVG/SVGAttributes';
 import type SVGPath from '../Core/Renderer/SVG/SVGPath';
 import BaseSeries from '../Core/Series/Series.js';
@@ -43,7 +47,7 @@ declare global {
         }
         interface CandlestickSeriesOptions extends OHLCSeriesOptions {
             lineColor?: ColorType;
-            states?: SeriesStatesOptionsObject<CandlestickSeries>;
+            states?: SeriesStatesOptions<CandlestickSeries>;
             upLineColor?: ColorType;
         }
         interface SeriesTypesDictionary {
@@ -200,14 +204,11 @@ BaseSeries.seriesType<typeof Highcharts.CandlestickSeries>(
          *
          * @private
          * @function Highcharts.seriesTypes.candlestick#pointAttribs
-         * @param {Highcharts.Point} point
-         * @param {string} [state]
-         * @return {Highcharts.SVGAttributes}
          */
         pointAttribs: function (
             this: Highcharts.CandlestickSeries,
             point: Highcharts.CandlestickPoint,
-            state?: string
+            state?: StatesOptionsKey
         ): SVGAttributes {
             var attribs = columnProto.pointAttribs.call(
                     this,

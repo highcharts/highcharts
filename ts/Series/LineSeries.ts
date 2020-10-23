@@ -21,16 +21,26 @@ import type { AxisType } from '../Core/Axis/Types';
 import type { CursorValue } from '../Core/Renderer/CSSObject';
 import type Chart from '../Core/Chart/Chart';
 import type ColorType from '../Core/Color/ColorType';
+import type { EventCallback } from '../Core/Callback';
+import type PointerEvent from '../Core/PointerEvent';
 import type {
     PointOptions,
-    PointShortOptions
+    PointShortOptions,
+    PointStateHoverOptions
 } from '../Core/Series/PointOptions';
+import type SeriesLike from '../Core/Series/SeriesLike';
 import type {
-    SeriesLike,
-    SeriesOptionsType,
-    SeriesPlotOptionsType
-} from '../Core/Series/Types';
+    SeriesOptions,
+    SeriesStateHoverOptions,
+    SeriesStatesOptions,
+    SeriesZonesOptions
+} from '../Core/Series/SeriesOptions';
+import type {
+    SeriesTypeOptions,
+    SeriesTypePlotOptions
+} from '../Core/Series/SeriesType';
 import type ShadowOptionsObject from '../Core/Renderer/ShadowOptionsObject';
+import type { StatesOptionsKey } from '../Core/Series/StatesOptions';
 import type SVGAttributes from '../Core/Renderer/SVG/SVGAttributes';
 import type SVGPath from '../Core/Renderer/SVG/SVGPath';
 import A from '../Core/Animation/AnimationUtilities.js';
@@ -100,13 +110,39 @@ declare module '../Core/Series/PointLike' {
         stackTotal?: number;
         stackY?: (number|null);
         yBottom?: number;
-        zone?: Highcharts.SeriesZonesOptions;
+        zone?: SeriesZonesOptions;
     }
 }
 
-declare module '../Core/Series/Types' {
+declare module '../Core/Series/PointOptions' {
+    interface PointOptions {
+        keys?: Array<string>;
+    }
+    interface PointStateHoverOptions {
+        radius?: number;
+        radiusPlus?: number;
+    }
+}
+
+declare module '../Core/Series/SeriesLike' {
     interface SeriesLike {
+        _hasPointMarkers?: boolean;
         pointArrayMap?: Array<string>;
+        pointValKey?: string;
+    }
+}
+
+declare module '../Core/Series/SeriesOptions' {
+    interface SeriesOptions {
+        allowPointSelect?: boolean;
+        dataSorting?: Highcharts.DataSortingOptionsObject; // cartasian series
+        getExtremesFromAll?: boolean;
+        pointValKey?: string;
+        selected?: boolean;
+    }
+    interface SeriesStateHoverOptions {
+        radius?: number;
+        radiusPlus?: number;
     }
 }
 
@@ -119,204 +155,6 @@ declare global {
         class LinePoint extends Point {
             public options: LinePointOptions;
             public series: LineSeries;
-        }
-        class LineSeries extends Series {
-            public data: Array<LinePoint>;
-            public options: LineSeriesOptions;
-            public pointClass: typeof LinePoint;
-            public points: Array<LinePoint>;
-        }
-        class Series implements SeriesLike {
-            public _i: number;
-            public animationTimeout?: number;
-            public area?: SVGElement;
-            public axisTypes: Array<string>;
-            public basePointRange?: number;
-            public buildingKdTree?: boolean;
-            public chart: Chart;
-            public clips?: Array<SVGElement>;
-            public closestPointRange?: number;
-            public closestPointRangePx?: number;
-            public coll: 'series';
-            public color?: (ColorType);
-            public colorCounter: number;
-            public colorIndex?: number;
-            public cropped?: boolean;
-            public cropShoulder: number;
-            public data: Array<Point>;
-            public dataMax?: number;
-            public dataMin?: number;
-            public directTouch: boolean;
-            public drawLegendSymbol: (
-                LegendSymbolMixin['drawLineMarker']|
-                LegendSymbolMixin['drawRectangle']
-            );
-            public enabledDataSorting?: boolean;
-            public eventOptions: Dictionary<EventCallbackFunction<Series>>;
-            public eventsToUnbind: Array<Function>;
-            public fillColor?: ColorType;
-            public finishedAnimating?: boolean;
-            public getExtremesFromAll?: boolean;
-            public graph?: SVGElement;
-            public graphPath?: SVGPath;
-            public group?: SVGElement;
-            public hasCartesianSeries?: Chart['hasCartesianSeries'];
-            public hasRendered?: boolean;
-            public hcEvents: Dictionary<Array<EventWrapperObject<Series>>>;
-            public id?: string;
-            public isCartesian: boolean;
-            public isDirty: boolean;
-            public isDirtyData: boolean;
-            public isRadialSeries?: boolean;
-            public kdAxisArray: Array<string>;
-            public kdTree?: KDNode;
-            public linkedSeries: Array<Series>;
-            public markerGroup?: SVGElement;
-            public name: string;
-            public opacity?: number;
-            public optionalAxis?: string;
-            public options: SeriesOptions;
-            public parallelArrays: Array<string>;
-            public pointClass: typeof Point;
-            public pointInterval?: number;
-            public points: Array<Point>;
-            public pointValKey?: string;
-            public processedXData: Array<number>;
-            public processedYData: (Array<number>|Array<Array<number>>);
-            public requireSorting: boolean;
-            public selected: boolean;
-            public sharedClipKey?: string;
-            public sorted: boolean;
-            public state: string;
-            public stickyTracking: boolean;
-            public symbol?: string;
-            public tooltipOptions: TooltipOptions;
-            public type: string;
-            public userOptions: DeepPartial<SeriesOptions>;
-            public visible: boolean;
-            public xAxis: AxisType;
-            public xData?: Array<number>;
-            public xIncrement?: (number|null);
-            public yAxis: AxisType;
-            public yData?: (
-                Array<(number|null|undefined)>|
-                Array<Array<(number|null|undefined)>>
-            );
-            public zoneAxis?: string;
-            public zones: Array<SeriesZonesOptions>;
-            public afterAnimate(): void;
-            public animate(init?: boolean): void;
-            public applyExtremes(): DataExtremesObject;
-            public applyZones(): void;
-            public autoIncrement(): number;
-            public bindAxes(): void;
-            public buildKDTree(e?: PointerEventObject): void;
-            public cropData(
-                xData: Array<number>,
-                yData: (
-                    Array<(number|null|undefined)>|
-                    Array<Array<(number|null|undefined)>>
-                ),
-                min: number,
-                max: number,
-                cropShoulder?: number
-            ): SeriesCropDataObject;
-            public destroy(keepEventsForUpdate?: boolean): void;
-            public drawGraph(): void;
-            public drawPoints(): void;
-            public findPointIndex(
-                optionsObject: PointOptions,
-                fromIndex: number
-            ): (number|undefined);
-            public generatePoints(): void;
-            public getClipBox(
-                animation?: (boolean|Partial<AnimationOptionsObject>),
-                finalBox?: boolean
-            ): Dictionary<number>;
-            public getColor(): void;
-            public getPointsCollection(): Array<Point>;
-            public getCyclic(
-                prop: string,
-                value?: any,
-                defaults?: Dictionary<any>
-            ): void;
-            public getExtremes(
-                yData?: (Array<number>|Array<Array<number>>),
-                forceExtremesFromAll?: boolean
-            ): DataExtremesObject;
-            public getName(): string;
-            public getGraphPath(
-                points: Array<Point>,
-                nullsAsZeroes?: boolean,
-                connectCliffs?: boolean
-            ): SVGPath;
-            public getPlotBox(): SeriesPlotBoxObject;
-            public getProcessedData(
-                forceExtremesFromAll?: boolean
-            ): SeriesProcessedDataObject;
-            public getSymbol(): void;
-            public getValidPoints(
-                points?: Array<Point>,
-                insideOnly?: boolean,
-                allowNull?: boolean
-            ): Array<Point>;
-            public getXExtremes(xData: Array<number>): RangeObject;
-            public getFirstValidPoint (
-                this: Highcharts.Series,
-                data: Array<(PointOptions|PointShortOptions)>
-            ): (PointOptions|PointShortOptions);
-            public getZonesGraphs(
-                props: Array<Array<string>>
-            ): Array<Array<string>>;
-            public hasData(): boolean;
-            public init(chart: Chart, options: DeepPartial<SeriesOptionsType>): void;
-            public insert(collection: Array<Series>): number;
-            public invertGroups(inverted?: boolean): void;
-            public is (type: string): boolean;
-            public isPointInside (point: Dictionary<number>|Point): boolean;
-            public markerAttribs(point: Point, state?: string): SVGAttributes;
-            public plotGroup(
-                prop: string,
-                name: string,
-                visibility: string,
-                zIndex?: number,
-                parent?: SVGElement
-            ): SVGElement;
-            public pointAttribs(point?: Point, state?: string): SVGAttributes;
-            public pointPlacementToXValue(): number;
-            public processData(force?: boolean): (boolean|undefined);
-            public redraw(): void;
-            public redrawPoints(): void;
-            public removeEvents(keepEventsForUpdate?: boolean): void;
-            public render(): void;
-            public searchKDTree(
-                point: KDPointSearchObject,
-                compareX?: boolean,
-                e?: PointerEventObject
-            ): (Point|undefined);
-            public searchPoint(
-                e: PointerEventObject,
-                compareX?: boolean
-            ): (Point|undefined);
-            public setClip(animation?: (boolean|AnimationOptionsObject)): void;
-            public setData(
-                data: Array<(PointOptions|PointShortOptions)>,
-                redraw?: boolean,
-                animation?: (boolean|Partial<AnimationOptionsObject>),
-                updatePoints?: boolean
-            ): void;
-            public setDataSortingOptions(): void;
-            public setOptions(itemOptions: DeepPartial<SeriesOptionsType>): this['options'];
-            public sortData(
-                data: Array<(PointOptions|PointShortOptions)>
-            ): Array<PointOptions>;
-            public toYData(point: Point): Array<number>;
-            public translate(): void;
-            public updateData(
-                data: Array<(PointOptions|PointShortOptions)>,
-                animation?: (boolean|Partial<AnimationOptionsObject>)
-            ): boolean;
-            public updateParallelArrays(point: Point, i: (number|string)): void;
         }
         interface DataExtremesObject {
             dataMin?: number;
@@ -340,67 +178,7 @@ declare global {
         interface LinePointOptions extends PointOptions {
         }
         interface LineSeriesOptions extends SeriesOptions {
-            states?: SeriesStatesOptionsObject<LineSeries>;
-        }
-        interface SeriesAfterAnimateCallbackFunction {
-            (this: Series, event: SeriesAfterAnimateEventObject): void;
-        }
-        interface SeriesAfterAnimateEventObject {
-            target: Series;
-            type: 'afterAnimate';
-        }
-        interface SeriesCheckboxClickCallbackFunction {
-            (this: Series, event: SeriesCheckboxClickEventObject): void;
-        }
-        interface SeriesCheckboxClickEventObject {
-            checked: boolean;
-            item: Series;
-            target: Series;
-            type: 'checkboxClick';
-        }
-        interface SeriesClickCallbackFunction {
-            (this: Series, event: SeriesClickEventObject): void;
-        }
-        interface SeriesClickEventObject extends Event {
-            point: Point;
-        }
-        interface SeriesCropDataObject {
-            end: number;
-            start: number;
-            xData: Array<number>;
-            yData: (Array<number>|Array<Array<number>>);
-        }
-        interface SeriesEventsOptions {
-            afterAnimate?: SeriesAfterAnimateCallbackFunction;
-            checkboxClick?: SeriesCheckboxClickCallbackFunction;
-            click?: SeriesClickCallbackFunction;
-            hide?: SeriesHideCallbackFunction;
-            legendItemClick?: SeriesLegendItemClickCallbackFunction;
-            mouseOut?: SeriesMouseOutCallbackFunction;
-            mouseOver?: SeriesMouseOverCallbackFunction;
-            show?: SeriesShowCallbackFunction;
-        }
-        interface SeriesHideCallbackFunction {
-            (this: Series, event: Event): void;
-        }
-        interface SeriesLegendItemClickCallbackFunction {
-            (this: Series, event: SeriesLegendItemClickEventObject): void;
-        }
-        interface SeriesLegendItemClickEventObject {
-            browserEvent: PointerEvent;
-            preventDefault: Function;
-            target: Series;
-            type: 'checkboxClick';
-        }
-        interface SeriesMouseOutCallbackFunction {
-            (this: Series, event: PointerEvent): void;
-        }
-        interface SeriesMouseOverCallbackFunction {
-            (this: Series, event: PointerEvent): void;
-        }
-        interface SeriesOptions {
             allAreas?: boolean;
-            allowPointSelect?: boolean;
             animation?: (boolean|DeepPartial<AnimationOptionsObject>);
             animationLimit?: number;
             boostThreshold?: number;
@@ -408,29 +186,20 @@ declare global {
             borderWidth?: number;
             className?: string;
             clip?: boolean;
-            color?: ColorType;
             colorAxis?: boolean;
             colorByPoint?: boolean;
-            colorIndex?: number;
             colors?: Array<ColorType>;
             connectEnds?: boolean;
             connectNulls?: boolean;
             crisp?: boolean|number;
-            cropThreshold?: number;
             cursor?: (string|CursorValue);
             dashStyle?: DashStyleValue;
-            data?: Array<(PointOptions|PointShortOptions)>;
-            dataGrouping?: DataGroupingOptionsObject;
             dataLabels?: (
                 DataLabelsOptions|Array<DataLabelsOptions>
             );
             dataSorting?: DataSortingOptionsObject;
             description?: string;
-            enableMouseTracking?: boolean;
-            events?: SeriesEventsOptions;
             findNearestPointBy?: SeriesFindNearestPointByValue;
-            getExtremesFromAll?: boolean;
-            grouping?: boolean;
             id?: string;
             index?: number;
             includeInDataExport?: boolean;
@@ -443,43 +212,28 @@ declare global {
             lineColor?: ColorType;
             lineWidth?: number;
             linkedTo?: string;
-            marker?: PointMarkerOptionsObject;
-            name?: string;
             navigatorOptions?: SeriesOptions;
-            negativeColor?: ColorType;
-            negativeFillColor?: ColorType;
             opacity?: number;
-            point?: PlotSeriesPointOptions;
             pointDescriptionFormatter?: Function;
-            pointInterval?: number;
-            pointIntervalUnit?: SeriesPointIntervalUnitValue;
             pointPlacement?: (number|string);
-            pointRange?: (number|null);
             pointStart?: number;
-            pointValKey?: string;
-            selected?: boolean;
             shadow?: (boolean|Partial<ShadowOptionsObject>);
-            showCheckbox?: boolean;
-            showInLegend?: boolean;
             showInNavigator?: boolean;
             skipKeyboardNavigation?: boolean;
-            softThreshold?: boolean;
-            stack?: (number|string);
-            stacking?: OptionsStackingValue;
-            startFromThreshold?: boolean;
-            states?: SeriesStatesOptionsObject<Series>;
+            states?: SeriesStatesOptions<LineSeries>;
             step?: SeriesStepValue;
-            stickyTracking?: boolean;
             supportingColor?: ColorType;
-            threshold?: number;
-            turboThreshold?: number;
-            type?: string;
             visible?: boolean;
             xAxis?: (number|string);
             yAxis?: (number|string);
             zIndex?: number;
             zoneAxis?: string;
-            zones?: Array<SeriesZonesOptions>;
+        }
+        interface SeriesCropDataObject {
+            end: number;
+            start: number;
+            xData: Array<number>;
+            yData: (Array<(number|null)>|Array<Array<(number|null)>>);
         }
         interface SeriesPlotBoxObject {
             scaleX: number;
@@ -489,53 +243,13 @@ declare global {
         }
         interface SeriesProcessedDataObject {
             xData: Array<number>;
-            yData: (Array<number>|Array<Array<number>>);
+            yData: (Array<(number|null)>|Array<Array<(number|null)>>);
             cropped: (boolean|undefined);
             cropStart: number;
             closestPointRange: (number|undefined);
         }
-        interface SeriesShowCallbackFunction {
-            (this: Series, event: Event): void;
-        }
-        interface SeriesStatesHoverHaloOptions {
-            attributes?: SVGAttributes;
-            opacity?: number;
-            size?: number;
-        }
-        interface SeriesStatesHoverOptionsObject {
-            animation?: (boolean|Partial<AnimationOptionsObject>);
-            enabled?: boolean;
-            halo?: (boolean|SeriesStatesHoverHaloOptions);
-            lineWidth?: SeriesOptions['lineWidth'];
-            lineWidthPlus?: number;
-            opacity?: SeriesOptions['opacity'];
-        }
-        interface SeriesStatesInactiveOptionsObject {
-        }
-        interface SeriesStatesOptionsObject<TSeries extends Series> {
-            hover?: (
-                SeriesStatesHoverOptionsObject&
-                SeriesStateOptionsObject<TSeries>
-            );
-            inactive?: (
-                SeriesStatesInactiveOptionsObject&
-                SeriesStateOptionsObject<TSeries>
-            );
-            normal?: SeriesStateOptionsObject<TSeries>;
-            select?: (
-                SeriesStatesHoverOptionsObject&
-                SeriesStateOptionsObject<TSeries>
-            );
-        }
         interface SeriesTypesDictionary {
             line: typeof LineSeries;
-        }
-        interface SeriesZonesOptions {
-            className?: string;
-            color?: ColorType;
-            dashStyle?: DashStyleValue;
-            fillColor?: ColorType;
-            value?: number;
         }
         interface SVGElement {
             survive?: boolean;
@@ -543,10 +257,6 @@ declare global {
         type SeriesFindNearestPointByValue = ('x'|'xy');
         type SeriesLinecapValue = ('butt'|'round'|'square'|string);
         type SeriesPointIntervalUnitValue = ('day'|'month'|'year');
-        type SeriesStateOptionsObject<TSeries extends Series> = (
-            Omit<TSeries['options'], ('states'|'data')>
-        );
-        type SeriesStateValue = keyof SeriesStatesOptionsObject<Series>;
         type SeriesStepValue = ('center'|'left'|'right');
     }
 }
@@ -3077,6 +2787,8 @@ class LineSeries {
 
     public kdTree?: Highcharts.KDNode;
 
+    public linkedParent?: LineSeries;
+
     public markerGroup?: SVGElement;
 
     public opacity?: number;
@@ -3096,8 +2808,8 @@ class LineSeries {
     public xIncrement?: (number|null);
 
     public yData?: (
-        Array<(number|null|undefined)>|
-        Array<Array<(number|null|undefined)>>
+        Array<(number|null)>|
+        Array<Array<(number|null)>>
     );
 
     public zoneAxis?: string;
@@ -3112,7 +2824,7 @@ class LineSeries {
 
     public init(
         chart: Chart,
-        options: DeepPartial<SeriesOptionsType>
+        options: DeepPartial<SeriesOptions>
     ): void {
 
         fireEvent(this, 'init', { options: options });
@@ -3292,7 +3004,7 @@ class LineSeries {
      * @return {number}
      *         The index of the series in the collection.
      */
-    public insert(collection: Array<Highcharts.Series>): number {
+    public insert(collection: Array<LineSeries>): number {
         var indexOption = this.options.index,
             i: any;
 
@@ -3327,8 +3039,6 @@ class LineSeries {
      *
      * @private
      * @function Highcharts.Series#bindAxes
-     * @return {void}
-     * @exception 18
      */
     public bindAxes(): void {
         var series = this,
@@ -3412,9 +3122,6 @@ class LineSeries {
      *
      * @private
      * @function Highcharts.Series#updateParallelArrays
-     * @param {Highcharts.Point} point
-     * @param {number|string} i
-     * @return {void}
      */
     public updateParallelArrays(
         point: Point,
@@ -3474,7 +3181,7 @@ class LineSeries {
      */
     public autoIncrement(): number {
 
-        var options = this.options,
+        var options: SeriesTypeOptions = this.options,
             xIncrement = this.xIncrement as number,
             date,
             pointInterval,
@@ -3558,15 +3265,13 @@ class LineSeries {
      *
      * @fires Highcharts.Series#event:afterSetOptions
      */
-    public setOptions(
-        itemOptions: DeepPartial<SeriesOptionsType>
-    ): this['options'] {
+    public setOptions(itemOptions: DeepPartial<SeriesTypeOptions>): this['options'] {
         var chart = this.chart,
             chartOptions = chart.options,
             plotOptions = chartOptions.plotOptions,
             userOptions = chart.userOptions || {},
             seriesUserOptions = merge(itemOptions),
-            options: SeriesOptionsType,
+            options: SeriesTypeOptions,
             zones,
             zone,
             styledMode = chart.styledMode,
@@ -3580,7 +3285,7 @@ class LineSeries {
         // These may be modified by the event
         var typeOptions = (e.plotOptions as any)[this.type],
             userPlotOptions = (
-                userOptions.plotOptions || {} as SeriesPlotOptionsType
+                userOptions.plotOptions || {} as SeriesTypePlotOptions
             );
 
         // use copy to prevent undetected changes (#9762)
@@ -3651,7 +3356,7 @@ class LineSeries {
                     options.threshold ||
                     0,
                 className: 'highcharts-negative'
-            } as Highcharts.SeriesZonesOptions;
+            } as SeriesZonesOptions;
             if (!styledMode) {
                 zone.color = options.negativeColor;
                 zone.fillColor = options.negativeFillColor;
@@ -4001,7 +3706,7 @@ class LineSeries {
             succeeded = false;
         }
 
-        oldData.forEach(function (point: Point): void {
+        oldData.forEach(function (point): void {
             if (point) {
                 point.touched = false;
             }
@@ -4134,7 +3839,7 @@ class LineSeries {
             series.colorCounter = 0; // for series with colorByPoint (#1547)
 
             // Update parallel arrays
-            this.parallelArrays.forEach(function (key: string): void {
+            this.parallelArrays.forEach(function (key): void {
                 (series as any)[key + 'Data'].length = 0;
             });
 
@@ -4257,7 +3962,7 @@ class LineSeries {
             sortKey = dataSorting.sortKey || 'y',
             sortedData: Array<Point>,
             getPointOptionsObject = function (
-                series: Highcharts.Series,
+                series: LineSeries,
                 pointOptions: (PointOptions|PointShortOptions)
             ): PointOptions {
                 return (defined(pointOptions) &&
@@ -4266,10 +3971,7 @@ class LineSeries {
                     }, pointOptions)) || {};
             };
 
-        data.forEach(function (
-            pointOptions,
-            i: number
-        ): void {
+        data.forEach(function (pointOptions, i): void {
             data[i] = getPointOptionsObject(series, pointOptions);
             (data[i] as any).index = i;
         }, this);
@@ -4335,7 +4037,7 @@ class LineSeries {
             // copied during slice operation:
             processedXData: Array<number> = series.xData as any,
             processedYData: (
-                Array<number>|Array<Array<number>>
+                Array<(number|null)>|Array<Array<(number|null)>>
             ) = (series.yData as any),
             dataLength = (processedXData as any).length,
             croppedData: Highcharts.SeriesCropDataObject,
@@ -4495,7 +4197,7 @@ class LineSeries {
      */
     public cropData(
         xData: Array<number>,
-        yData: Array<number>,
+        yData: (Array<(number|null)>|Array<Array<(number|null)>>),
         min: number,
         max: number,
         cropShoulder?: number
@@ -4727,7 +4429,7 @@ class LineSeries {
      * @return {Highcharts.DataExtremesObject}
      */
     public getExtremes(
-        yData?: (Array<number>|Array<Array<number>>),
+        yData?: (Array<(number|null)>|Array<Array<(number|null)>>),
         forceExtremesFromAll?: boolean
     ): Highcharts.DataExtremesObject {
         var xAxis = this.xAxis,
@@ -4747,7 +4449,7 @@ class LineSeries {
             shoulder = this.requireSorting ? this.cropShoulder : 0,
             positiveValuesOnly = yAxis ? yAxis.positiveValuesOnly : false,
             x,
-            y: (number|Array<number>),
+            y: (number|Array<(number|null)>|null),
             i,
             j;
 
@@ -5388,7 +5090,8 @@ class LineSeries {
                 )
             );
 
-        if ((seriesMarkerOptions as any).enabled !== false ||
+        if (
+            (seriesMarkerOptions as any).enabled !== false ||
             series._hasPointMarkers
         ) {
 
@@ -5522,17 +5225,17 @@ class LineSeries {
      */
     public markerAttribs(
         point: Point,
-        state?: string
+        state?: StatesOptionsKey
     ): SVGAttributes {
         var seriesOptions = this.options,
             seriesMarkerOptions = seriesOptions.marker,
-            seriesStateOptions: Highcharts.PointStatesHoverOptionsObject,
+            seriesStateOptions: SeriesStateHoverOptions,
             pointMarkerOptions = point.marker || {},
             symbol = (
                 pointMarkerOptions.symbol ||
                 (seriesMarkerOptions as any).symbol
             ),
-            pointStateOptions: Highcharts.PointStatesHoverOptionsObject,
+            pointStateOptions: PointStateHoverOptions,
             radius = pick(
                 pointMarkerOptions.radius,
                 (seriesMarkerOptions as any).radius
@@ -5596,7 +5299,7 @@ class LineSeries {
      */
     public pointAttribs(
         point?: Point,
-        state?: string
+        state?: StatesOptionsKey
     ): SVGAttributes {
         var seriesMarkerOptions = this.options.marker,
             seriesStateOptions,
@@ -5767,7 +5470,7 @@ class LineSeries {
      * @function Highcharts.Series#getGraphPath
      */
     public getGraphPath(
-        points: Array<Point>,
+        points?: Array<Point>,
         nullsAsZeroes?: boolean,
         connectCliffs?: boolean
     ): SVGPath {
@@ -5790,7 +5493,7 @@ class LineSeries {
         step = ({
             right: 1,
             center: 2
-        } as Highcharts.Dictionary<number>)[step as any] || (step && 3);
+        } as Record<string, number>)[step as any] || (step && 3);
         if (step && reversed) {
             step = 4 - step;
         }
@@ -5803,11 +5506,11 @@ class LineSeries {
         );
 
         // Build the line
-        points.forEach(function (point, i: number): void {
+        points.forEach(function (point, i): void {
 
             var plotX = point.plotX,
                 plotY = point.plotY,
-                lastPoint = points[i - 1],
+                lastPoint = (points as any)[i - 1],
                 // the path to this point from the previous
                 pathToPoint: SVGPath;
 
@@ -5945,7 +5648,7 @@ class LineSeries {
         props = series.getZonesGraphs(props);
 
         // Draw the graph
-        props.forEach(function (prop: Array<string>, i: number): void {
+        props.forEach(function (prop, i): void {
             var graphKey = prop[0],
                 graph = (series as any)[graphKey],
                 verb = graph ? 'animate' : 'attr',
@@ -6024,10 +5727,7 @@ class LineSeries {
      */
     public getZonesGraphs(props: Array<Array<string>>): Array<Array<string>> {
         // Add the zone properties if any
-        this.zones.forEach(function (
-            zone: Highcharts.SeriesZonesOptions,
-            i: number
-        ): void {
+        this.zones.forEach(function (zone, i): void {
             var propset = [
                 'zone-graph-' + i,
                 'highcharts-graph highcharts-zone-graph-' + i + ' ' +
@@ -6060,7 +5760,7 @@ class LineSeries {
             translatedFrom,
             translatedTo: (number|undefined),
             clips = (this.clips || []) as Array<SVGElement>,
-            clipAttr: Highcharts.Dictionary<number>,
+            clipAttr: Record<string, number>,
             graph = this.graph,
             area = this.area,
             chartSizeMax = Math.max(chart.chartWidth, chart.chartHeight),
@@ -6099,10 +5799,7 @@ class LineSeries {
 
             // Create the clips
             extremes = axis.getExtremes();
-            zones.forEach(function (
-                threshold: Highcharts.SeriesZonesOptions,
-                i: number
-            ): void {
+            zones.forEach(function (threshold, i): void {
 
                 translatedFrom = reversed ?
                     (horiz ? chart.plotWidth : 0) :
@@ -6565,7 +6262,7 @@ class LineSeries {
      * @function Highcharts.Series#searchPoint
      */
     public searchPoint(
-        e: Highcharts.PointerEventObject,
+        e: PointerEvent,
         compareX?: boolean
     ): (Point|undefined) {
         var series = this,
@@ -6592,7 +6289,7 @@ class LineSeries {
      * @private
      * @function Highcharts.Series#buildKDTree
      */
-    public buildKDTree(e?: Highcharts.PointerEventObject): void {
+    public buildKDTree(e?: PointerEvent): void {
 
         // Prevent multiple k-d-trees from being built simultaneously
         // (#6235)
@@ -6677,7 +6374,7 @@ class LineSeries {
     public searchKDTree(
         point: Highcharts.KDPointSearchObject,
         compareX?: boolean,
-        e?: Highcharts.PointerEventObject
+        e?: PointerEvent
     ): (Point|undefined) {
         var series = this,
             kdX = this.kdAxisArray[0],
@@ -6827,7 +6524,7 @@ class LineSeries {
  *
  * */
 
-interface LineSeries extends Highcharts.Series {
+interface LineSeries extends SeriesLike {
     _i: number;
     axisTypes: Array<string>;
     chart: Chart;
@@ -6840,21 +6537,21 @@ interface LineSeries extends Highcharts.Series {
         Highcharts.LegendSymbolMixin['drawLineMarker']|
         Highcharts.LegendSymbolMixin['drawRectangle']
     );
-    eventOptions: Record<string, Highcharts.EventCallbackFunction<Highcharts.Series>>;
+    eventOptions: Record<string, EventCallback<LineSeries, Event>>;
     eventsToUnbind: Array<Function>;
-    hcEvents: Record<string, Array<Highcharts.EventWrapperObject<Highcharts.Series>>>;
+    hcEvents: Record<string, Array<Highcharts.EventWrapperObject<LineSeries>>>;
     isCartesian: boolean;
     isDirty: boolean;
     isDirtyData: boolean;
     kdAxisArray: Array<string>;
-    linkedSeries: Array<Highcharts.Series>;
+    linkedSeries: Array<LineSeries>;
     name: string;
-    options: Highcharts.SeriesOptions;
+    options: Highcharts.LineSeriesOptions;
     parallelArrays: Array<string>;
     pointClass: typeof Point;
     points: Array<Point>;
     processedXData: Array<number>;
-    processedYData: (Array<number>|Array<Array<number>>);
+    processedYData: (Array<(number|null)>|Array<Array<(number|null)>>);
     requireSorting: boolean;
     selected: boolean;
     sorted: boolean;
@@ -6862,11 +6559,11 @@ interface LineSeries extends Highcharts.Series {
     stickyTracking: boolean;
     tooltipOptions: Highcharts.TooltipOptions;
     type: string;
-    userOptions: DeepPartial<Highcharts.SeriesOptions>;
+    userOptions: DeepPartial<SeriesOptions>;
     visible: boolean;
     xAxis: AxisType;
     yAxis: AxisType;
-    zones: Array<Highcharts.SeriesZonesOptions>;
+    zones: Array<SeriesZonesOptions>;
 }
 extend(
     LineSeries.prototype,
@@ -6905,9 +6602,9 @@ extend(
  *
  * */
 
-declare module '../Core/Series/Types' {
+declare module '../Core/Series/SeriesType' {
     interface SeriesTypeRegistry {
-        line: typeof Highcharts.LineSeries;
+        line: typeof LineSeries;
     }
 }
 BaseSeries.registerSeriesType('line', LineSeries);
@@ -6918,7 +6615,7 @@ BaseSeries.registerSeriesType('line', LineSeries);
  *
  * */
 
-H.Series = LineSeries; // backwards compatibility
+(H as any).Series = LineSeries; // backwards compatibility
 
 /* *
  *

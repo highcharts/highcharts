@@ -8,6 +8,9 @@
  *
  * */
 
+'use strict';
+
+import type { SeriesStatesOptions } from '../Core/Series/SeriesOptions';
 import BaseSeries from '../Core/Series/Series.js';
 import ColumnSeries from './ColumnSeries.js';
 const {
@@ -39,7 +42,7 @@ declare global {
         interface ColumnPyramidPointOptions extends ColumnPointOptions {
         }
         interface ColumnPyramidSeriesOptions extends ColumnSeriesOptions {
-            states?: SeriesStatesOptionsObject<ColumnPyramidSeries>;
+            states?: SeriesStatesOptions<ColumnPyramidSeries>;
         }
         interface SeriesTypesDictionary {
             columnpyramid: typeof ColumnPyramidSeries;

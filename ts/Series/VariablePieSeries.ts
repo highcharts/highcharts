@@ -10,10 +10,11 @@
  *
  * */
 
+'use strict';
+
+import type { SeriesStatesOptions } from '../Core/Series/SeriesOptions';
 import BaseSeries from '../Core/Series/Series.js';
-const {
-    seriesTypes
-} = BaseSeries;
+const { seriesTypes } = BaseSeries;
 import U from '../Core/Utilities.js';
 const {
     arrayMax,
@@ -58,7 +59,7 @@ declare global {
             maxPointSize?: (number|string);
             minPointSize?: (number|string);
             sizeBy?: VariablePieSizeByValue;
-            states?: SeriesStatesOptionsObject<VariablePieSeries>;
+            states?: SeriesStatesOptions<VariablePieSeries>;
             zMax?: number;
             zMin?: number;
         }
@@ -69,7 +70,7 @@ declare global {
 /**
  * @private
  */
-declare module '../Core/Series/Types' {
+declare module '../Core/Series/SeriesType' {
     interface SeriesTypeRegistry {
         variablepie: typeof Highcharts.VariablePieSeries;
     }

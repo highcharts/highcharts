@@ -12,7 +12,17 @@
 
 'use strict';
 
-import type PointOptions from '../../../Core/Series/PointOptions';
+/* *
+ *
+ *  Imports
+ *
+ * */
+
+import type {
+    PointMarkerOptions,
+    PointOptions
+} from '../../../Core/Series/PointOptions';
+import type SeriesOptions from '../../../Core/Series/SeriesOptions';
 import LineSeries from '../../../Series/LineSeries.js';
 import U from '../../../Core/Utilities.js';
 const {
@@ -20,26 +30,23 @@ const {
     merge
 } = U;
 
+/* *
+ *
+ *  Declarations
+ *
+ * */
+
 declare module '../../../Core/Series/PointLike' {
     interface PointLike {
         hasForcedA11yMarker?: boolean;
     }
 }
 
-/**
- * Internal types.
- * @private
- */
-declare global {
-    namespace Highcharts {
-        interface PointStatesNormalOptionsObject {
-            opacity?: number;
-        }
-        interface Series {
-            a11yMarkersForced?: boolean;
-            resetA11yMarkerOptions: PointMarkerOptionsObject;
-            resetMarkerOptions?: unknown;
-        }
+declare module '../../../Core/Series/SeriesLike' {
+    interface SeriesLike {
+        a11yMarkersForced?: boolean;
+        resetA11yMarkerOptions?: PointMarkerOptions;
+        resetMarkerOptions?: unknown;
     }
 }
 
@@ -79,7 +86,7 @@ function shouldForceMarkers(
 /**
  * @private
  */
-function hasIndividualPointMarkerOptions(series: Highcharts.Series): boolean {
+function hasIndividualPointMarkerOptions(series: LineSeries): boolean {
     return !!(series._hasPointMarkers && series.points && series.points.length);
 }
 
@@ -111,7 +118,7 @@ function unforceSeriesMarkerOptions(series: Highcharts.AccessibilitySeries): voi
  * @private
  */
 function forceZeroOpacityMarkerOptions(
-    options: (PointOptions|Highcharts.SeriesOptions)
+    options: (PointOptions|SeriesOptions)
 ): void {
     merge(true, options, {
         marker: {
@@ -153,7 +160,7 @@ function unforcePointMarkerOptions(pointOptions: PointOptions): void {
 /**
  * @private
  */
-function handleForcePointMarkers(series: Highcharts.Series): void {
+function handleForcePointMarkers(series: LineSeries): void {
     let i = series.points.length;
 
     while (i--) {
@@ -209,7 +216,7 @@ function addForceMarkersEvents(): void {
      * @private
      */
     addEvent(LineSeries, 'afterSetOptions', function (
-        e: { options: Highcharts.SeriesOptions }
+        e: { options: SeriesOptions }
     ): void {
         this.resetA11yMarkerOptions = merge(
             e.options.marker || {}, this.userOptions.marker || {}

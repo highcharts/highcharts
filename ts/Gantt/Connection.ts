@@ -12,6 +12,7 @@
 'use strict';
 
 import type AnimationOptionsObject from '../Core/Animation/AnimationOptionsObject';
+import type LineSeries from '../Series/LineSeries';
 import type SVGAttributes from '../Core/Renderer/SVG/SVGAttributes';
 import type SVGElement from '../Core/Renderer/SVG/SVGElement';
 import type SVGPath from '../Core/Renderer/SVG/SVGPath';
@@ -1104,10 +1105,7 @@ extend(Point.prototype, /** @lends Point.prototype */ {
 function warnLegacy(chart: Chart): void {
     if (
         (chart.options as any).pathfinder ||
-        chart.series.reduce(function (
-            acc: boolean,
-            series: Highcharts.Series
-        ): boolean {
+        chart.series.reduce(function (acc, series): boolean {
             if (series.options) {
                 merge(
                     true,

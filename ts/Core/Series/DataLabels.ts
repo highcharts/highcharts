@@ -26,11 +26,10 @@ import type SVGAttributes from '../Renderer/SVG/SVGAttributes';
 import type SVGElement from '../Renderer/SVG/SVGElement';
 import A from '../Animation/AnimationUtilities.js';
 const { getDeferredAnimation } = A;
+import BaseSeries from './Series.js';
+const { seriesTypes } = BaseSeries;
 import H from '../Globals.js';
-const {
-    noop,
-    seriesTypes
-} = H;
+const { noop } = H;
 import LineSeries from '../../Series/LineSeries.js';
 import U from '../Utilities.js';
 const {
@@ -77,6 +76,46 @@ declare module './PointOptions' {
             Array<Highcharts.DataLabelsOptions>
         );
         labelrank?: number;
+    }
+}
+
+declare module './SeriesLike' {
+    interface SeriesLike {
+        _hasPointLabels?: boolean;
+        /** @deprecated */
+        dataLabelsGroup?: SVGElement;
+        dataLabelPositioners?: Highcharts.SeriesDataLabelPositionersObject;
+        alignDataLabel(
+            point: Point,
+            dataLabel: SVGElement,
+            options: Highcharts.DataLabelsOptions,
+            alignTo: BBoxObject,
+            isNew?: boolean
+        ): void;
+        drawDataLabels(): void;
+        justifyDataLabel(
+            dataLabel: SVGElement,
+            options: Highcharts.DataLabelsOptions,
+            alignAttr: SVGAttributes,
+            bBox: BBoxObject,
+            alignTo?: BBoxObject,
+            isNew?: boolean
+        ): (boolean|undefined);
+        placeDataLabels?(): void;
+        setDataLabelStartPos(
+            point: Highcharts.ColumnPoint,
+            dataLabel: SVGElement,
+            isNew: boolean|undefined,
+            isInside: boolean,
+            alignOptions: AlignObject
+        ): void;
+        verifyDataLabelOverflow?(overflow: Array<number>): boolean;
+    }
+}
+
+declare module './SeriesOptions' {
+    interface SeriesOptions {
+        dataLabels?: (Highcharts.DataLabelsOptions|Array<Highcharts.DataLabelsOptions>);
     }
 }
 
@@ -144,36 +183,6 @@ declare global {
             attributes?: SVGAttributes;
             enabled?: boolean;
         }
-        interface Series {
-            /** @deprecated */
-            dataLabelsGroup?: SVGElement;
-            dataLabelPositioners?: SeriesDataLabelPositionersObject;
-            alignDataLabel(
-                point: Point,
-                dataLabel: SVGElement,
-                options: DataLabelsOptions,
-                alignTo: BBoxObject,
-                isNew?: boolean
-            ): void;
-            drawDataLabels(): void;
-            justifyDataLabel(
-                dataLabel: SVGElement,
-                options: DataLabelsOptions,
-                alignAttr: SVGAttributes,
-                bBox: BBoxObject,
-                alignTo?: BBoxObject,
-                isNew?: boolean
-            ): (boolean|undefined);
-            placeDataLabels?(): void;
-            setDataLabelStartPos(
-                point: ColumnPoint,
-                dataLabel: SVGElement,
-                isNew: boolean|undefined,
-                isInside: boolean,
-                alignOptions: AlignObject
-            ): void;
-            verifyDataLabelOverflow?(overflow: Array<number>): boolean;
-        }
         interface SeriesDataLabelPositionersObject {
             alignToConnectors(
                 points: Array<Point>,
@@ -193,7 +202,7 @@ declare global {
                 seriesCenter: Array<number>
             ): number;
             radialDistributionX(
-                series: Series,
+                series: LineSeries,
                 point: Point,
                 y: number,
                 naturalY: number
@@ -420,7 +429,7 @@ H.distribute = function (
  * @return {void}
  * @fires Highcharts.Series#event:afterDrawDataLabels
  */
-LineSeries.prototype.drawDataLabels = function (this: Highcharts.Series): void {
+LineSeries.prototype.drawDataLabels = function (): void {
     var series = this,
         chart = series.chart,
         seriesOptions = series.options,
@@ -814,11 +823,10 @@ LineSeries.prototype.drawDataLabels = function (this: Highcharts.Series): void {
  * @return {void}
  */
 LineSeries.prototype.alignDataLabel = function (
-    this: Highcharts.Series,
     point: Point,
     dataLabel: SVGElement,
     options: Highcharts.DataLabelsOptions,
-    alignTo: Highcharts.BBoxObject,
+    alignTo: BBoxObject,
     isNew?: boolean
 ): void {
     var series = this,
@@ -1010,7 +1018,6 @@ LineSeries.prototype.alignDataLabel = function (
  * @return {void}
  */
 LineSeries.prototype.setDataLabelStartPos = function (
-    this: Highcharts.Series,
     point: Highcharts.ColumnPoint,
     dataLabel: SVGElement,
     isNew: boolean,
@@ -1086,7 +1093,6 @@ LineSeries.prototype.setDataLabelStartPos = function (
  * @return {boolean|undefined}
  */
 LineSeries.prototype.justifyDataLabel = function (
-    this: Highcharts.Series,
     dataLabel: SVGElement,
     options: Highcharts.DataLabelsOptions,
     alignAttr: SVGAttributes,
@@ -1245,9 +1251,7 @@ if (seriesTypes.pie) {
      * @function Highcharts.seriesTypes.pie#drawDataLabels
      * @return {void}
      */
-    seriesTypes.pie.prototype.drawDataLabels = function (
-        this: Highcharts.PieSeries
-    ): void {
+    seriesTypes.pie.prototype.drawDataLabels = function (): void {
         var series = this,
             data = series.data,
             point,
@@ -1678,9 +1682,7 @@ if (seriesTypes.pie) {
      * @function Highcharts.seriesTypes.pie#placeDataLabels
      * @return {void}
      */
-    seriesTypes.pie.prototype.placeDataLabels = function (
-        this: Highcharts.PieSeries
-    ): void {
+    seriesTypes.pie.prototype.placeDataLabels = function (): void {
         this.points.forEach(function (point: Point): void {
             var dataLabel = point.dataLabel,
                 _pos;
@@ -1732,7 +1734,6 @@ if (seriesTypes.pie) {
      * @return {boolean}
      */
     seriesTypes.pie.prototype.verifyDataLabelOverflow = function (
-        this: Highcharts.PieSeries,
         overflow: Array<number>
     ): boolean {
 
@@ -1818,11 +1819,10 @@ if (seriesTypes.column) {
      * @return {void}
      */
     seriesTypes.column.prototype.alignDataLabel = function (
-        this: Highcharts.ColumnSeries,
         point: Point,
         dataLabel: SVGElement,
         options: Highcharts.DataLabelsOptions,
-        alignTo: Highcharts.BBoxObject,
+        alignTo: BBoxObject,
         isNew?: boolean
     ): void {
         var inverted = this.chart.inverted,

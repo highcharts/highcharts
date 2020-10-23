@@ -114,8 +114,7 @@ export interface PointStateHoverOptions extends StateHoverOptions {
     lineColor?: ColorType;
     lineWidth?: number;
     lineWidthPlus?: number;
-    radius?: number;
-    radiusPlus?: number;
+    opacity?: number;
 }
 
 export interface PointStateInactiveOptions extends StateInactiveOptions {
@@ -124,6 +123,7 @@ export interface PointStateInactiveOptions extends StateInactiveOptions {
 
 export interface PointStateNormalOptions extends StateNormalOptions {
     animation?: (boolean|DeepPartial<AnimationOptionsObject>);
+    opacity?: number;
 }
 
 export interface PointStatesOptions<T extends { options: Record<string, any> }> extends StatesOptions {
@@ -138,6 +138,7 @@ export interface PointStateSelectOptions extends StateSelectOptions {
     fillColor?: ColorType;
     lineColor?: ColorType;
     lineWidth?: number;
+    opacity?: number;
     radius?: number;
 }
 

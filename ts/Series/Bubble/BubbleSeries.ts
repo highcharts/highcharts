@@ -8,18 +8,21 @@
  *
  * */
 
+'use strict';
+
+import type ColumnSeries from '../ColumnSeries';
+import type { PointMarkerOptions } from '../../Core/Series/PointOptions';
+import type { StatesOptionsKey } from '../../Core/Series/StatesOptions';
 import type SVGAttributes from '../../Core/Renderer/SVG/SVGAttributes';
 import type SVGPath from '../../Core/Renderer/SVG/SVGPath';
 import Axis from '../../Core/Axis/Axis.js';
 import BaseSeries from '../../Core/Series/Series.js';
+const { seriesTypes } = BaseSeries;
 import Color from '../../Core/Color/Color.js';
-const {
-    parse: color
-} = Color;
+const { parse: color } = Color;
 import H from '../../Core/Globals.js';
-const {
-    noop
-} = H;
+const { noop } = H;
+import LineSeries from '../LineSeries.js';
 import Point from '../../Core/Series/Point.js';
 import U from '../../Core/Utilities.js';
 const {
@@ -31,6 +34,16 @@ const {
     pick,
     pInt
 } = U;
+
+declare module '../../Core/Series/SeriesLike' {
+    interface SeriesLike {
+        bubblePadding?: Highcharts.BubbleSeries['bubblePadding'];
+        maxPxSize?: Highcharts.BubbleSeries['maxPxSize'];
+        minPxSize?: Highcharts.BubbleSeries['minPxSize'];
+        specialGroup?: Highcharts.BubbleSeries['specialGroup'];
+        zData?: Highcharts.BubbleSeries['zData'];
+    }
+}
 
 /**
  * Internal types
@@ -58,8 +71,8 @@ declare global {
             public points: Array<BubblePoint>;
             public radii: Array<(number|null)>;
             public specialGroup: string;
-            public zData: Array<(number|null|undefined)>;
-            public yData: Array<(number|null|undefined)>;
+            public zData: Array<(number|null)>;
+            public yData: Array<(number|null)>;
             public zMax: BubbleSeriesOptions['zMax'];
             public zMin: BubbleSeriesOptions['zMin'];
             public zoneAxis: string;
@@ -84,7 +97,7 @@ declare global {
             ): SVGAttributes;
             public translate(): void;
         }
-        interface BubblePointMarkerOptions extends PointMarkerOptionsObject {
+        interface BubblePointMarkerOptions extends PointMarkerOptions {
             fillOpacity?: number;
         }
         interface BubblePointOptions extends ScatterPointOptions {
@@ -101,13 +114,6 @@ declare global {
             zMin?: number;
             zThreshold?: number;
         }
-        interface Series {
-            bubblePadding?: BubbleSeries['bubblePadding'];
-            maxPxSize?: BubbleSeries['maxPxSize'];
-            minPxSize?: BubbleSeries['minPxSize'];
-            specialGroup?: BubbleSeries['specialGroup'];
-            zData?: BubbleSeries['zData'];
-        }
         type BubbleSizeByValue = ('area'|'width');
     }
 }
@@ -115,18 +121,14 @@ declare global {
 /**
  * @private
  */
-declare module '../../Core/Series/Types' {
+declare module '../../Core/Series/SeriesType' {
     interface SeriesTypeRegistry {
         bubble: typeof Highcharts.BubbleSeries;
     }
 }
 
-import '../../Series/LineSeries.js';
-import '../../Series/ScatterSeries.js';
+import '../ScatterSeries.js';
 import './BubbleLegend.js';
-
-var Series = H.Series,
-    seriesTypes = BaseSeries.seriesTypes;
 
 /**
  * @typedef {"area"|"width"} Highcharts.BubbleSizeByValue
@@ -410,11 +412,11 @@ BaseSeries.seriesType<typeof Highcharts.BubbleSeries>('bubble', 'scatter', {
     pointAttribs: function (
         this: Highcharts.BubbleSeries,
         point: Highcharts.BubblePoint,
-        state?: string
+        state?: StatesOptionsKey
     ): SVGAttributes {
         var markerOptions = this.options.marker,
             fillOpacity = (markerOptions as any).fillOpacity,
-            attr = Series.prototype.pointAttribs.call(this, point, state);
+            attr = LineSeries.prototype.pointAttribs.call(this, point, state);
 
         if (fillOpacity !== 1) {
             attr.fill = color(attr.fill as any)
@@ -645,7 +647,7 @@ Axis.prototype.beforePadding = function (this: Highcharts.Axis): void {
         activeSeries = [] as Array<Highcharts.BubbleSeries>;
 
     // Handle padding on the second pass, or on redraw
-    this.series.forEach(function (series: Highcharts.Series): void {
+    this.series.forEach(function (series): void {
 
         var seriesOptions = series.options as Highcharts.BubbleSeriesOptions,
             zData;

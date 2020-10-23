@@ -8,6 +8,10 @@
  *
  * */
 
+'use strict';
+
+import type LineSeries from './LineSeries';
+import type { SeriesStatesOptions } from '../Core/Series/SeriesOptions';
 import BaseSeries from '../Core/Series/Series.js';
 import DerivedSeriesMixin from '../Mixins/DerivedSeries.js';
 import U from '../Core/Utilities.js';
@@ -51,7 +55,7 @@ declare global {
         interface ParetoPointOptions extends LinePointOptions {
         }
         interface ParetoSeriesOptions extends LineSeriesOptions {
-            states?: SeriesStatesOptionsObject<ParetoSeries>;
+            states?: SeriesStatesOptions<ParetoSeries>;
         }
     }
 }
@@ -59,7 +63,7 @@ declare global {
 /**
  * @private
  */
-declare module '../Core/Series/Types' {
+declare module '../Core/Series/SeriesType' {
     interface SeriesTypeRegistry {
         pareto: typeof Highcharts.ParetoSeries;
     }

@@ -19,6 +19,7 @@ import type { AxisType } from '../../Core/Axis/Types';
 import type ColorString from '../../Core/Color/ColorString';
 import type ColorType from '../../Core/Color/ColorType';
 import type CSSObject from '../../Core/Renderer/CSSObject';
+import type LineSeries from '../../Series/LineSeries';
 import type Point from '../../Core/Series/Point';
 import type ShadowOptionsObject from '../../Core/Renderer/ShadowOptionsObject';
 import type SVGElement from '../../Core/Renderer/SVG/SVGElement';
@@ -103,7 +104,7 @@ declare global {
         interface AnnotationPoint extends Point {
             series: AnnotationSeries;
         }
-        interface AnnotationSeries extends Series {
+        interface AnnotationSeries extends LineSeries {
             chart: AnnotationChart;
             points: Array<AnnotationPoint>;
         }

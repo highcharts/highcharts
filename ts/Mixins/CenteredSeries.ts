@@ -10,7 +10,9 @@
 
 'use strict';
 
+import type SeriesOptions from '../Core/Series/SeriesOptions';
 import H from '../Core/Globals.js';
+import LineSeries from '../Series/LineSeries.js';
 
 /**
  * Internal types
@@ -18,11 +20,11 @@ import H from '../Core/Globals.js';
  */
 declare global {
     namespace Highcharts {
-        interface CenteredSeries extends Series {
+        interface CenteredSeries extends LineSeries {
             options: CenteredSeriesOptions;
         }
         interface CenteredSeriesMixin {
-            getCenter(this: Series): Array<number>;
+            getCenter(this: LineSeries): Array<number>;
             getStartAndEndRadians(
                 start?: number,
                 end?: number
@@ -113,7 +115,7 @@ const centeredSeriesMixin = H.CenteredSeriesMixin = {
 
         // No need for inner size in angular (gauges) series but still required
         // for pie series
-        if (chart.angular && !(this instanceof H.Series)) {
+        if (chart.angular && !(this instanceof LineSeries)) {
             positions[3] = 0;
         }
 

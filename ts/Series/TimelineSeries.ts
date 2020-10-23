@@ -12,7 +12,15 @@
  *
  * */
 
+'use strict';
+
 import type ColorType from '../Core/Color/ColorType';
+import type {
+    PointMarkerOptions,
+    PointStatesOptions
+} from '../Core/Series/PointOptions';
+import type { SeriesStatesOptions } from '../Core/Series/SeriesOptions';
+import type { StatesOptionsKey } from '../Core/Series/StatesOptions';
 import type SVGAttributes from '../Core/Renderer/SVG/SVGAttributes';
 import type SVGPath from '../Core/Renderer/SVG/SVGPath';
 import BaseSeries from '../Core/Series/Series.js';
@@ -21,6 +29,7 @@ const {
 } = BaseSeries;
 import H from '../Core/Globals.js';
 import LegendSymbolMixin from '../Mixins/LegendSymbol.js';
+import LineSeries from '../Series/LineSeries.js';
 import Point from '../Core/Series/Point.js';
 import SVGElement from '../Core/Renderer/SVG/SVGElement.js';
 import U from '../Core/Utilities.js';
@@ -127,7 +136,7 @@ declare global {
             ignoreHiddenPoint?: boolean;
             radius?: number;
             radiusPlus?: number;
-            states?: SeriesStatesOptionsObject<TimelineSeries>;
+            states?: SeriesStatesOptions<TimelineSeries>;
         }
     }
 }
@@ -135,16 +144,13 @@ declare global {
 /**
  * @private
  */
-declare module '../Core/Series/Types' {
+declare module '../Core/Series/SeriesType' {
     interface SeriesTypeRegistry {
         timeline: typeof Highcharts.TimelineSeries;
     }
 }
 
-import '../Series/LineSeries.js';
-
-var TrackerMixin = H.TrackerMixin,
-    Series = H.Series;
+var TrackerMixin = H.TrackerMixin;
 
 /**
  * Callback JavaScript function to format the data label as a string. Note that
@@ -372,7 +378,7 @@ BaseSeries.seriesType<typeof Highcharts.TimelineSeries>('timeline', 'line',
         init: function (this: Highcharts.TimelineSeries): void {
             var series = this;
 
-            Series.prototype.init.apply(series, arguments);
+            LineSeries.prototype.init.apply(series, arguments);
 
             addEvent(series, 'afterTranslate', function (): void {
                 var lastPlotX: (number|undefined),
@@ -539,7 +545,7 @@ BaseSeries.seriesType<typeof Highcharts.TimelineSeries>('timeline', 'line',
                     dataLabel.shadow(dataLabelsOptions.shadow);
                 }
             }
-            Series.prototype.alignDataLabel.apply(series, arguments);
+            LineSeries.prototype.alignDataLabel.apply(series, arguments);
         },
         processData: function (this: Highcharts.TimelineSeries): undefined {
             var series = this,
@@ -566,7 +572,7 @@ BaseSeries.seriesType<typeof Highcharts.TimelineSeries>('timeline', 'line',
                 (series.yData as any)[i] = 1;
             }
 
-            Series.prototype.processData.call(this, arguments as any);
+            LineSeries.prototype.processData.call(this, arguments as any);
 
             return;
         },
@@ -591,11 +597,8 @@ BaseSeries.seriesType<typeof Highcharts.TimelineSeries>('timeline', 'line',
         generatePoints: function (this: Highcharts.TimelineSeries): void {
             var series = this;
 
-            Series.prototype.generatePoints.apply(series);
-            series.points.forEach(function (
-                point: Highcharts.TimelinePoint,
-                i: number
-            ): void {
+            LineSeries.prototype.generatePoints.apply(series);
+            series.points.forEach(function (point, i): void {
                 point.applyOptions({
                     x: (series.xData as any)[i]
                 }, (series.xData as any)[i]);
@@ -661,17 +664,16 @@ BaseSeries.seriesType<typeof Highcharts.TimelineSeries>('timeline', 'line',
         markerAttribs: function (
             this: Highcharts.TimelineSeries,
             point: Highcharts.TimelinePoint,
-            state?: string
+            state?: StatesOptionsKey
         ): SVGAttributes {
             var series = this,
-                seriesMarkerOptions: Highcharts.PointMarkerOptionsObject =
-                    series.options.marker as any,
-                seriesStateOptions: Highcharts.SeriesStateOptionsObject<Highcharts.TimelineSeries>,
+                seriesMarkerOptions: PointMarkerOptions = series.options.marker as any,
+                seriesStateOptions: SeriesStatesOptions<Highcharts.TimelineSeries>,
                 pointMarkerOptions = point.marker || {},
                 symbol = (
                     pointMarkerOptions.symbol || seriesMarkerOptions.symbol
                 ),
-                pointStateOptions,
+                pointStateOptions: PointStatesOptions<Highcharts.TimelinePoint>,
                 width = pick<number|undefined, number|undefined, number>(
                     pointMarkerOptions.width,
                     seriesMarkerOptions.width,
@@ -699,11 +701,9 @@ BaseSeries.seriesType<typeof Highcharts.TimelineSeries>('timeline', 'line',
                     (pointMarkerOptions.states as any)[state] || {};
 
                 radius = pick(
-                    pointStateOptions.radius,
-                    seriesStateOptions.radius,
-                    radius + (
-                        seriesStateOptions.radiusPlus as any || 0
-                    )
+                    (pointStateOptions as any).radius,
+                    (seriesStateOptions as any).radius,
+                    radius + ((seriesStateOptions as any).radiusPlus as any || 0)
                 );
             }
 
@@ -722,7 +722,7 @@ BaseSeries.seriesType<typeof Highcharts.TimelineSeries>('timeline', 'line',
         bindAxes: function (this: Highcharts.TimelineSeries): void {
             var series = this;
 
-            Series.prototype.bindAxes.call(series);
+            LineSeries.prototype.bindAxes.call(series);
 
             ['xAxis', 'yAxis'].forEach(function (axis: string): void {
                 // Initially set the linked xAxis type to category.
@@ -770,7 +770,7 @@ BaseSeries.seriesType<typeof Highcharts.TimelineSeries>('timeline', 'line',
             }
         },
         setState: function (this: Highcharts.TimelinePoint): void {
-            var proceed = Series.prototype.pointClass.prototype.setState;
+            var proceed = LineSeries.prototype.pointClass.prototype.setState;
 
             // Prevent triggering the setState method on null points.
             if (!this.isNull) {

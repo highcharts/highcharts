@@ -10,6 +10,9 @@
  *
  * */
 
+'use strict';
+
+import type LineSeries from '../../Series/LineSeries';
 import BaseSeries from '../../Core/Series/Series.js';
 import U from '../../Core/Utilities.js';
 const {
@@ -25,7 +28,7 @@ declare global {
     namespace Highcharts {
         class MFIIndicator extends SMAIndicator {
             public data: Array<MFIIndicatorPoint>;
-            public getValues<TLinkedSeries extends Series>(
+            public getValues<TLinkedSeries extends LineSeries>(
                 series: TLinkedSeries,
                 params: MFIIndicatorParamsOptions
             ): (IndicatorValuesObject<TLinkedSeries>|undefined);
@@ -50,7 +53,7 @@ declare global {
     }
 }
 
-declare module '../../Core/Series/Types' {
+declare module '../../Core/Series/SeriesType' {
     interface SeriesTypeRegistry {
         mfi: typeof Highcharts.MFIIndicator;
     }
@@ -132,7 +135,7 @@ BaseSeries.seriesType<typeof Highcharts.MFIIndicator>(
      */
     {
         nameBase: 'Money Flow Index',
-        getValues: function<TLinkedSeries extends Highcharts.Series> (
+        getValues: function<TLinkedSeries extends LineSeries> (
             series: TLinkedSeries,
             params: Highcharts.MFIIndicatorParamsOptions
         ): (Highcharts.IndicatorValuesObject<TLinkedSeries>|undefined) {
@@ -144,7 +147,7 @@ BaseSeries.seriesType<typeof Highcharts.MFIIndicator>(
                 // MFI starts calculations from the second point
                 // Cause we need to calculate change between two points
                 range = 1,
-                volumeSeries: (Highcharts.Series|undefined) = (
+                volumeSeries: (LineSeries|undefined) = (
                     series.chart.get((params.volumeSeriesID as any)) as any
                 ),
                 yValVolume: Array<number> = (

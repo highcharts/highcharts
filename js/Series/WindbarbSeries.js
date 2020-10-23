@@ -15,6 +15,7 @@ var animObject = A.animObject;
 import BaseSeries from '../Core/Series/Series.js';
 import H from '../Core/Globals.js';
 var noop = H.noop;
+import LineSeries from './LineSeries.js';
 import OnSeriesMixin from '../Mixins/OnSeries.js';
 import U from '../Core/Utilities.js';
 var isNumber = U.isNumber, pick = U.pick;
@@ -172,7 +173,7 @@ BaseSeries.seriesType('windbarb', 'column'
     trackerGroups: ['markerGroup'],
     init: function (chart, options) {
         registerApproximation();
-        H.Series.prototype.init.call(this, chart, options);
+        LineSeries.prototype.init.call(this, chart, options);
     },
     // Get presentational attributes.
     pointAttribs: function (point, state) {

@@ -15,7 +15,10 @@
  *
  * */
 
+'use strict';
+
 import type Chart from '../Core/Chart/Chart';
+import type { SeriesStatesOptions } from '../Core/Series/SeriesOptions';
 import type SVGAttributes from '../Core/Renderer/SVG/SVGAttributes';
 import type SVGElement from '../Core/Renderer/SVG/SVGElement';
 import type SVGPath from '../Core/Renderer/SVG/SVGPath';
@@ -69,7 +72,7 @@ const {
 /**
  * @private
  */
-declare module '../Core/Series/Types' {
+declare module '../Core/Series/SeriesType' {
     interface SeriesTypeRegistry {
         venn: typeof Highcharts.VennSeries;
     }
@@ -137,7 +140,7 @@ declare global {
             brighten?: number;
             brightness?: number;
             data?: Array<Highcharts.VennPointOptions>;
-            states?: SeriesStatesOptionsObject<VennSeries>;
+            states?: SeriesStatesOptions<VennSeries>;
         }
         interface VennUtilsObject {
             geometry: GeometryMixin;
@@ -1520,8 +1523,7 @@ addEvent(seriesTypes.venn, 'afterSetOptions', function (
     e: { options: Highcharts.VennSeriesOptions }
 ): void {
     var options = e.options,
-        states: Highcharts.SeriesStatesOptionsObject<Highcharts.VennSeries> =
-            options.states as any;
+        states: SeriesStatesOptions<Highcharts.VennSeries> = options.states as any;
 
     if (this.is('venn')) {
         // Explicitly disable all halo options.

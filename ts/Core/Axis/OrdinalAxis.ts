@@ -170,10 +170,7 @@ namespace OrdinalAxis {
             // Apply the ordinal logic
             if (isOrdinal || hasBreaks) { // #4167 YAxis is never ordinal ?
 
-                axis.series.forEach(function (
-                    series: Highcharts.Series,
-                    i: number
-                ): void {
+                axis.series.forEach(function (series, i): void {
                     uniqueOrdinalPositions = [];
 
                     if (
@@ -369,7 +366,7 @@ namespace OrdinalAxis {
                 overscroll = axis.options.overscroll,
                 extremes = axis.getExtremes(),
                 fakeAxis: OrdinalAxis,
-                fakeSeries: Highcharts.Series;
+                fakeSeries: LineSeries;
 
             // If this is the first time, or the ordinal index is deleted by
             // updatedData,
@@ -403,7 +400,7 @@ namespace OrdinalAxis {
 
                 // Add the fake series to hold the full data, then apply
                 // processData to it
-                axis.series.forEach(function (series: Highcharts.Series): void {
+                axis.series.forEach(function (series): void {
                     fakeSeries = {
                         xAxis: fakeAxis,
                         xData: (series.xData as any).slice(),
@@ -472,7 +469,7 @@ namespace OrdinalAxis {
         public getGroupIntervalFactor(
             xMin: number,
             xMax: number,
-            series: Highcharts.Series
+            series: LineSeries
         ): number {
             var ordinal = this,
                 axis = ordinal.axis,

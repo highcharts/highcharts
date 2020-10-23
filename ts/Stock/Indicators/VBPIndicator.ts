@@ -10,9 +10,13 @@
  *
  * */
 
+'use strict';
+
 import type { AxisType } from '../../Core/Axis/Types';
 import type Chart from '../../Core/Chart/Chart';
+import type ColumnSeries from '../../Series/ColumnSeries';
 import type CSSObject from '../../Core/Renderer/CSSObject';
+import type LineSeries from '../../Series/LineSeries';
 import type SVGAttributes from '../../Core/Renderer/SVG/SVGAttributes';
 import type SVGElement from '../../Core/Renderer/SVG/SVGElement';
 import type SVGPath from '../../Core/Renderer/SVG/SVGPath';
@@ -43,8 +47,8 @@ declare global {
     namespace Highcharts {
         class VBPIndicator extends SMAIndicator {
             public addCustomEvents(
-                baseSeries: Series,
-                volumeSeries: Series
+                baseSeries: LineSeries,
+                volumeSeries: LineSeries
             ): VBPIndicator;
             public animate(init: boolean): void;
             public crispCol: ColumnSeries['crispCol'];
@@ -57,7 +61,7 @@ declare global {
                 zonesStyles: CSSObject
             ): void;
             public getColumnMetrics: ColumnSeries['getColumnMetrics'];
-            public getValues<TLinkedSeries extends Series>(
+            public getValues<TLinkedSeries extends LineSeries>(
                 series: TLinkedSeries,
                 params: VBPIndicatorParamsOptions
             ): (IndicatorValuesObject<TLinkedSeries>|undefined);
@@ -76,13 +80,13 @@ declare global {
                 xValues: Array<number>,
                 yValues: Array<Array<number>>,
                 ranges: number,
-                volumeSeries: Series
+                volumeSeries: LineSeries
             ): Array<VBPIndicatorPriceZoneObject>;
             public translate(): void;
             public volumePerZone(
                 isOHLC: boolean,
                 priceZones: Array<VBPIndicatorPriceZoneObject>,
-                volumeSeries: Series,
+                volumeSeries: LineSeries,
                 xValues: Array<number>,
                 yValues: Array<Array<number>>
             ): Array<VBPIndicatorPriceZoneObject>;
@@ -134,6 +138,12 @@ declare global {
             zIndex?: number;
             zoneLines?: VBPIndicatorStyleOptions;
         }
+    }
+}
+
+declare module '../../Core/Series/SeriesType' {
+    interface SeriesTypeRegistry {
+        vbp: typeof Highcharts.VBPIndicator;
     }
 }
 
@@ -301,8 +311,8 @@ BaseSeries.seriesType<typeof Highcharts.VBPIndicator>(
         ): Highcharts.VBPIndicator {
             var indicator = this,
                 params: Highcharts.VBPIndicatorParamsOptions,
-                baseSeries: Highcharts.Series,
-                volumeSeries: Highcharts.Series;
+                baseSeries: LineSeries,
+                volumeSeries: LineSeries;
 
             H.seriesTypes.sma.prototype.init.apply(indicator, arguments);
 
@@ -317,8 +327,8 @@ BaseSeries.seriesType<typeof Highcharts.VBPIndicator>(
         // Adds events related with removing series
         addCustomEvents: function (
             this: Highcharts.VBPIndicator,
-            baseSeries: Highcharts.Series,
-            volumeSeries: Highcharts.Series
+            baseSeries: LineSeries,
+            volumeSeries: LineSeries
         ): Highcharts.VBPIndicator {
             var indicator = this;
 
@@ -553,7 +563,7 @@ BaseSeries.seriesType<typeof Highcharts.VBPIndicator>(
                 }
             }
         },
-        getValues: function<TLinkedSeries extends Highcharts.Series> (
+        getValues: function<TLinkedSeries extends LineSeries> (
             this: Highcharts.VBPIndicator,
             series: TLinkedSeries,
             params: Highcharts.VBPIndicatorParamsOptions
@@ -567,7 +577,7 @@ BaseSeries.seriesType<typeof Highcharts.VBPIndicator>(
                 xData: Array<number> = [],
                 yData: Array<number> = [],
                 isOHLC: boolean,
-                volumeSeries: Highcharts.Series,
+                volumeSeries: LineSeries,
                 priceZones: Array<Highcharts.VBPIndicatorPriceZoneObject>;
 
             // Checks if base series exists
@@ -643,7 +653,7 @@ BaseSeries.seriesType<typeof Highcharts.VBPIndicator>(
             xValues: Array<number>,
             yValues: Array<Array<number>>,
             ranges: number,
-            volumeSeries: Highcharts.Series
+            volumeSeries: LineSeries
         ): Array<Highcharts.VBPIndicatorPriceZoneObject> {
             var indicator = this,
                 rangeExtremes: (boolean|Highcharts.Dictionary<number>) = (
@@ -705,7 +715,7 @@ BaseSeries.seriesType<typeof Highcharts.VBPIndicator>(
             this: Highcharts.VBPIndicator,
             isOHLC: boolean,
             priceZones: Array<Highcharts.VBPIndicatorPriceZoneObject>,
-            volumeSeries: Highcharts.Series,
+            volumeSeries: LineSeries,
             xValues: Array<number>,
             yValues: Array<Array<number>>
         ): Array<Highcharts.VBPIndicatorPriceZoneObject> {

@@ -8,6 +8,9 @@
  *
  * */
 
+'use strict';
+
+import type { SeriesStatesOptions } from '../Core/Series/SeriesOptions';
 import BaseSeries from '../Core/Series/Series.js';
 import H from '../Core/Globals.js';
 
@@ -38,7 +41,7 @@ declare global {
         interface ErrorBarPointOptions extends BoxPlotPointOptions {
         }
         interface ErrorBarSeriesOptions extends BoxPlotSeriesOptions {
-            states?: SeriesStatesOptionsObject<ErrorBarSeries>;
+            states?: SeriesStatesOptions<ErrorBarSeries>;
             whiskerWidth?: number;
         }
     }
@@ -50,7 +53,7 @@ import './BoxPlotSeries.js';
 var noop = H.noop,
     seriesTypes = BaseSeries.seriesTypes;
 
-declare module '../Core/Series/Types' {
+declare module '../Core/Series/SeriesType' {
     interface SeriesTypesDictionary {
         errorbar: typeof Highcharts.ErrorBarSeries;
     }
@@ -149,9 +152,7 @@ BaseSeries.seriesType<typeof Highcharts.ErrorBarSeries>('errorbar', 'boxplot', {
     ): Highcharts.ColumnMetricsObject {
         return (
             (this.linkedParent && this.linkedParent.columnMetrics) ||
-            (
-                seriesTypes.column.prototype as Highcharts.ColumnSeries
-            ).getColumnMetrics.call(this)
+            seriesTypes.column.prototype.getColumnMetrics.call(this)
         );
     }
 });

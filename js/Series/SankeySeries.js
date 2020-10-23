@@ -9,7 +9,8 @@
  *  !!!!!!! SOURCE GETS TRANSPILED BY TYPESCRIPT. EDIT TS FILE ONLY. !!!!!!!
  *
  * */
-import Series from '../Core/Series/Series.js';
+'use strict';
+import BaseSeries from '../Core/Series/Series.js';
 import Color from '../Core/Color/Color.js';
 import ColumnSeries from './ColumnSeries.js';
 import H from '../Core/Globals.js';
@@ -120,7 +121,7 @@ var getDLOptions = function getDLOptions(params) {
  *
  * @augments Highcharts.Series
  */
-Series.seriesType('sankey', 'column', 
+BaseSeries.seriesType('sankey', 'column', 
 /**
  * A sankey diagram is a type of flow diagram, in which the width of the
  * link between two nodes is shown proportionally to the flow quantity.

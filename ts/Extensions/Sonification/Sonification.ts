@@ -14,6 +14,7 @@
 
 import Chart from '../../Core/Chart/Chart.js';
 import H from '../../Core/Globals.js';
+import LineSeries from '../../Series/LineSeries.js';
 import O from '../../Core/Options.js';
 const { defaultOptions } = O;
 import Point from '../../Core/Series/Point.js';
@@ -38,6 +39,12 @@ declare module '../../Core/Series/PointLike' {
     }
 }
 
+declare module '../../Core/Series/SeriesLike' {
+    interface SeriesLike {
+        sonify?: Highcharts.SonifyableSeries['sonify'];
+    }
+}
+
 /**
  * Internal types.
  * @private
@@ -53,9 +60,6 @@ declare global {
             currentlyPlayingPoint?: SonifyablePoint;
             instrumentsPlaying?: Dictionary<Instrument>;
             signalHandler?: SignalHandler;
-        }
-        interface Series {
-            sonify?: SonifyableSeries['sonify'];
         }
         interface SonificationObject {
             Earcon: typeof Earcon;
@@ -88,7 +92,7 @@ declare global {
             sonification: PointSonificationStateObject;
             sonify: PointSonifyFunctions['pointSonify'];
         }
-        interface SonifyableSeries extends Series {
+        interface SonifyableSeries extends LineSeries {
             chart: SonifyableChart;
             points: Array<SonifyablePoint>;
             sonify: SonifyChartFunctionsObject['seriesSonify'];
@@ -188,7 +192,7 @@ merge(
 // Chart specific
 Point.prototype.sonify = pointSonifyFunctions.pointSonify;
 Point.prototype.cancelSonify = pointSonifyFunctions.pointCancelSonify;
-H.Series.prototype.sonify = chartSonifyFunctions.seriesSonify;
+LineSeries.prototype.sonify = chartSonifyFunctions.seriesSonify;
 extend(Chart.prototype, {
     sonify: chartSonifyFunctions.chartSonify,
     pauseSonify: chartSonifyFunctions.pause,

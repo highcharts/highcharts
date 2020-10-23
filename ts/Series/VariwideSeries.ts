@@ -10,6 +10,10 @@
  *
  * */
 
+'use strict';
+
+import type ColumnSeries from '../Series/ColumnSeries';
+import type { SeriesStatesOptions } from '../Core/Series/SeriesOptions';
 import type StackingAxis from '../Core/Axis/StackingAxis';
 import type SVGElement from '../Core/Renderer/SVG/SVGElement';
 import Axis from '../Core/Axis/Axis.js';
@@ -71,7 +75,7 @@ declare global {
         interface VariwidePointOptions extends ColumnPointOptions {
         }
         interface VariwideSeriesOptions extends ColumnSeriesOptions {
-            states?: SeriesStatesOptionsObject<VariwideSeries>;
+            states?: SeriesStatesOptions<VariwideSeries>;
         }
     }
 }
@@ -86,7 +90,7 @@ const {
 
 import '../Series/AreaSeries.js';
 
-declare module '../Core/Series/Types' {
+declare module '../Core/Series/SeriesType' {
     interface SeriesTypeRegistry {
         variwide: typeof Highcharts.VariwideSeries;
     }

@@ -25,7 +25,7 @@ declare module '../Core/Chart/ChartLike'{
  */
 declare global {
     namespace Highcharts {
-        interface Position3dObject extends PositionObject {
+        interface Position3DObject extends PositionObject {
             z: number;
         }
         interface Rotation3dObject {
@@ -35,14 +35,14 @@ declare global {
             sinB: number;
         }
         function perspective(
-            points: Array<Position3dObject>,
+            points: Array<Position3DObject>,
             chart: Chart,
             insidePlotArea?: boolean,
             useInvertedPersp?: boolean
-        ): Array<Position3dObject>;
+        ): Array<Position3DObject>;
         function perspective3D(
-            coordinate: Position3dObject,
-            origin: Position3dObject,
+            coordinate: Position3DObject,
+            origin: Position3DObject,
             distance: number
         ): PositionObject;
         function pointCameraDistance(
@@ -51,7 +51,7 @@ declare global {
         ): number;
         function shapeArea(vertexes: Array<PositionObject>): number;
         function shapeArea3d(
-            vertexes: Array<Position3dObject>,
+            vertexes: Array<Position3DObject>,
             chart: Chart,
             insidePlotArea?: boolean
         ): number;
@@ -114,7 +114,7 @@ function rotate3D(
     y: number,
     z: number,
     angles: Highcharts.Rotation3dObject
-): Highcharts.Position3dObject {
+): Highcharts.Position3DObject {
     return {
         x: angles.cosB * x - angles.sinB * z,
         y: -angles.sinA * angles.sinB * x + angles.cosA * y -
@@ -130,10 +130,10 @@ function rotate3D(
  * @private
  * @function Highcharts.perspective3D
  *
- * @param {Highcharts.Position3dObject} coordinate
+ * @param {Highcharts.Position3DObject} coordinate
  * 3D position
  *
- * @param {Highcharts.Position3dObject} origin
+ * @param {Highcharts.Position3DObject} origin
  * 3D root position
  *
  * @param {number} distance
@@ -145,8 +145,8 @@ function rotate3D(
  * @requires highcharts-3d
  */
 const perspective3D = H.perspective3D = function (
-    coordinate: Highcharts.Position3dObject,
-    origin: Highcharts.Position3dObject,
+    coordinate: Highcharts.Position3DObject,
+    origin: Highcharts.Position3DObject,
     distance: number
 ): Highcharts.PositionObject {
     var projection = ((distance > 0) && (distance < Number.POSITIVE_INFINITY)) ?
@@ -165,7 +165,7 @@ const perspective3D = H.perspective3D = function (
  * @private
  * @function Highcharts.perspective
  *
- * @param {Array<Highcharts.Position3dObject>} points
+ * @param {Array<Highcharts.Position3DObject>} points
  * The array of points
  *
  * @param {Highcharts.Chart} chart
@@ -177,17 +177,17 @@ const perspective3D = H.perspective3D = function (
  * @param {boolean} [useInvertedPersp]
  * Whether to use inverted perspective in calculations
  *
- * @return {Array<Highcharts.Position3dObject>}
+ * @return {Array<Highcharts.Position3DObject>}
  * An array of transformed points
  *
  * @requires highcharts-3d
  */
 const perspective = H.perspective = function (
-    points: Array<Highcharts.Position3dObject>,
+    points: Array<Highcharts.Position3DObject>,
     chart: Chart,
     insidePlotArea?: boolean,
     useInvertedPersp?: boolean
-): Array<Highcharts.Position3dObject> {
+): Array<Highcharts.Position3DObject> {
     var options3d = (chart.options.chart as any).options3d,
         /* The useInvertedPersp argument is used for
          * inverted charts with already inverted elements,
@@ -217,8 +217,8 @@ const perspective = H.perspective = function (
 
     // Transform each point
     return points.map(function (
-        point: Highcharts.Position3dObject
-    ): Highcharts.Position3dObject {
+        point: Highcharts.Position3DObject
+    ): Highcharts.Position3DObject {
         var rotated = rotate3D(
                 (inverted ? point.y : point.x) - origin.x,
                 (inverted ? point.x : point.y) - origin.y,
@@ -226,7 +226,7 @@ const perspective = H.perspective = function (
                 angles
             ),
             // Apply perspective
-            coordinate: Highcharts.Position3dObject =
+            coordinate: Highcharts.Position3DObject =
                 perspective3D(rotated, origin, origin.vd) as any;
 
         // Apply translation
@@ -314,7 +314,7 @@ const shapeArea = H.shapeArea = function (vertexes: Array<Highcharts.PositionObj
  * @private
  * @function Highcharts.shapeArea3d
  *
- * @param {Array<Highcharts.Position3dObject>} vertexes
+ * @param {Array<Highcharts.Position3DObject>} vertexes
  * 3D Polygon
  *
  * @param {Highcharts.Chart} chart
@@ -329,7 +329,7 @@ const shapeArea = H.shapeArea = function (vertexes: Array<Highcharts.PositionObj
  * @requires highcharts-3d
  */
 const shapeArea3D = H.shapeArea3d = function (
-    vertexes: Array<Highcharts.Position3dObject>,
+    vertexes: Array<Highcharts.Position3DObject>,
     chart: Chart,
     insidePlotArea?: boolean
 ): number {

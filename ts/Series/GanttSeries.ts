@@ -10,14 +10,17 @@
  *
  * */
 
+'use strict';
+
 import type AnimationOptionsObject from '../Core/Animation/AnimationOptionsObject';
 import type ColorType from '../Core/Color/ColorType';
+import type { SeriesStatesOptions } from '../Core/Series/SeriesOptions';
 import type SVGAttributes from '../Core/Renderer/SVG/SVGAttributes';
 import type SVGPath from '../Core/Renderer/SVG/SVGPath';
 import BaseSeries from '../Core/Series/Series.js';
+const { seriesTypes } = BaseSeries;
 import H from '../Core/Globals.js';
-import O from '../Core/Options.js';
-const { dateFormat } = O;
+import LineSeries from './LineSeries.js';
 import '../Core/Axis/TreeGridAxis.js';
 import U from '../Core/Utilities.js';
 const {
@@ -60,7 +63,6 @@ declare global {
             public pointArrayMap: Array<string>;
             public pointClass: typeof GanttPoint;
             public points: Array<GanttPoint>;
-            public setData: Series['setData'];
             public drawPoint(point: GanttPoint, verb: string): void;
             public setGanttPointAliases(options: GanttPointOptions): void;
             public translatePoint(point: GanttPoint): void;
@@ -91,7 +93,7 @@ declare global {
         }
         interface GanttSeriesOptions extends XRangeSeriesOptions {
             connectors?: GanttConnectorsOptions;
-            states?: SeriesStatesOptionsObject<GanttSeries>;
+            states?: SeriesStatesOptions<GanttSeries>;
         }
     }
 }
@@ -99,7 +101,7 @@ declare global {
 /**
  * @private
  */
-declare module '../Core/Series/Types' {
+declare module '../Core/Series/SeriesType' {
     interface SeriesTypeRegistry {
         gantt: typeof Highcharts.GanttSeries;
     }
@@ -110,9 +112,7 @@ import '../Extensions/StaticScale.js';
 import '../Gantt/Pathfinder.js';
 import './XRangeSeries.js';
 
-var Series = H.Series,
-    seriesTypes = BaseSeries.seriesTypes,
-    parent = seriesTypes.xrange;
+var parent = seriesTypes.xrange;
 
 /**
  * @private
@@ -310,7 +310,7 @@ BaseSeries.seriesType<typeof Highcharts.GanttSeries>('gantt', 'xrange'
             }
         },
 
-        setData: Series.prototype.setData,
+        setData: LineSeries.prototype.setData,
 
         /**
          * @private

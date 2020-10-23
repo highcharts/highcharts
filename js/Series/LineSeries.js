@@ -275,8 +275,6 @@ var LineSeries = /** @class */ (function () {
      *
      * @private
      * @function Highcharts.Series#bindAxes
-     * @return {void}
-     * @exception 18
      */
     LineSeries.prototype.bindAxes = function () {
         var series = this, seriesOptions = series.options, chart = series.chart, axisOptions;
@@ -337,9 +335,6 @@ var LineSeries = /** @class */ (function () {
      *
      * @private
      * @function Highcharts.Series#updateParallelArrays
-     * @param {Highcharts.Point} point
-     * @param {number|string} i
-     * @return {void}
      */
     LineSeries.prototype.updateParallelArrays = function (point, i) {
         var series = point.series, args = arguments, fn = isNumber(i) ?

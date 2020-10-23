@@ -8,6 +8,10 @@
  *
  * */
 
+'use strict';
+
+import type LineSeries from '../../Series/LineSeries';
+import type { SeriesStatesOptions } from '../../Core/Series/SeriesOptions';
 import BaseSeries from '../../Core/Series/Series.js';
 import U from '../../Core/Utilities.js';
 const {
@@ -26,7 +30,7 @@ declare global {
             public options: WMAIndicatorOptions;
             public pointClass: typeof WMAIndicatorPoint;
             public points: Array<WMAIndicatorPoint>;
-            public getValues<TLinkedSeries extends Series>(
+            public getValues<TLinkedSeries extends LineSeries>(
                 series: TLinkedSeries,
                 params: WMAIndicatorParamsOptions
             ): (IndicatorValuesObject<TLinkedSeries>|undefined);
@@ -34,7 +38,7 @@ declare global {
 
         interface WMAIndicatorOptions extends SMAIndicatorOptions {
             params?: WMAIndicatorParamsOptions;
-            states?: SeriesStatesOptionsObject<WMAIndicator>;
+            states?: SeriesStatesOptions<WMAIndicator>;
         }
 
         interface WMAIndicatorParamsOptions
@@ -48,7 +52,7 @@ declare global {
     }
 }
 
-declare module '../../Core/Series/Types' {
+declare module '../../Core/Series/SeriesType' {
     interface SeriesTypeRegistry {
         wma: typeof Highcharts.WMAIndicator;
     }
@@ -152,7 +156,7 @@ BaseSeries.seriesType<typeof Highcharts.WMAIndicator>(
      * @lends Highcharts.Series#
      */
     {
-        getValues: function<TLinkedSeries extends Highcharts.Series> (
+        getValues: function<TLinkedSeries extends LineSeries> (
             series: TLinkedSeries,
             params: Highcharts.WMAIndicatorParamsOptions
         ): (Highcharts.IndicatorValuesObject<TLinkedSeries>|undefined) {

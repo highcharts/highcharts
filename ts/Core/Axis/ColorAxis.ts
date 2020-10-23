@@ -15,6 +15,7 @@ import type { AxisLike } from './Types';
 import type ColorString from '../Color/ColorString';
 import type ColorType from '../Color/ColorType';
 import type GradientColor from '../Color/GradientColor';
+import type PointerEvent from '../PointerEvent';
 import type SVGElement from '../Renderer/SVG/SVGElement';
 import type SVGPath from '../Renderer/SVG/SVGPath';
 import Axis from './Axis.js';
@@ -50,7 +51,7 @@ const {
 
 declare module '../Chart/ChartLike' {
     interface ChartLike {
-        colorAxis?: Array<Highcharts.ColorAxis>;
+        colorAxis?: Array<ColorAxis>;
     }
 }
 
@@ -60,77 +61,39 @@ declare module '../Series/PointLike' {
     }
 }
 
+declare module '../Series/SeriesLike' {
+    interface SeriesLike {
+        axisTypes?: Array<string>;
+        colorAxis?: ColorAxis;
+        colorKey?: string;
+        minColorValue?: number;
+        maxColorValue?: number;
+    }
+}
+
+declare module '../Series/SeriesOptions' {
+    interface SeriesOptions {
+        colorKey?: string;
+    }
+}
+
 /**
  * Internal types
  * @private
  */
 declare global {
     namespace Highcharts {
-        class ColorAxis extends Axis { // eslint-disable-line no-undef
-            public constructor(chart: Chart, userOptions: ColorAxis.Options);
-            public added?: boolean;
-            public chart: Chart;
-            public coll: 'colorAxis';
-            public checkbox: undefined;
-            public dataClasses: Array<ColorAxis.DataClassesOptions>;
-            public legendColor?: GradientColor;
-            public legendGroup?: SVGElement
-            public legendItem: ColorAxis.LegendItemObject;
-            public legendItemHeight?: number;
-            public legendItems: Array<ColorAxis.LegendItemObject>;
-            public legendItemWidth?: number;
-            public legendSymbol?: SVGElement;
-            public options: ColorAxis.Options;
-            public prototype: ColorAxis;
-            public setVisible: Function;
-            public stops: GradientColor['stops'];
-            public visible: true;
-            public drawCrosshair(e: PointerEventObject, point: Point): void;
-            public drawLegendSymbol(legend: Legend, item: ColorAxis): void;
-            public getDataClassLegendSymbols(): (
-                Array<ColorAxis.LegendItemObject>
-            );
-            public getOffset(): void;
-            public getPlotLinePath(
-                options: AxisPlotLinePathOptionsObject
-            ): (SVGPath|null);
-            public getSeriesExtremes(): void;
-            public hasData(): boolean;
-            public init(chart: Chart, userOptions: ColorAxis.Options): void;
-            public initDataClasses(userOptions: ColorAxis.Options): void;
-            public initStops(): void;
-            public normalizedValue(value: number): number;
-            public remove(redraw?: boolean): void;
-            public destroyItems(): void;
-            public setAxisSize(): void;
-            public setLegendColor(): void;
-            public setOptions(userOptions: DeepPartial<ColorAxis.Options>): void;
-            public setState(state?: string): void;
-            public setTickPositions(): void;
-            public toColor(
-                value: number,
-                point: Point
-            ): (ColorType|undefined);
-        }
         interface Axis {
             labelLeft?: number;
             labelRight?: number;
         }
-        interface Series {
-            axisTypes: Array<string>;
-            colorAxis?: ColorAxis;
-            colorKey: string;
-            minColorValue?: number;
-            maxColorValue?: number;
-        }
-        interface SeriesOptions {
-            colorKey?: string;
-        }
         interface Options {
             colorAxis?: (ColorAxis.Options|Array<ColorAxis.Options>);
         }
+        let ColorAxis: ColorAxisClass;
     }
 }
+type ColorAxisClass = typeof ColorAxis;
 
 /**
  * Color axis types
@@ -727,7 +690,7 @@ class ColorAxis extends Axis implements AxisLike {
         chart: Chart,
         userOptions: ColorAxis.Options
     ): void {
-        const axis = this as unknown as Highcharts.ColorAxis;
+        const axis = this as unknown as ColorAxis;
         const options = ColorAxis.buildOptions( // Build the options
             chart,
             ColorAxis.defaultOptions,
@@ -1068,9 +1031,7 @@ class ColorAxis extends Axis implements AxisLike {
      * @private
      */
     public setState(state?: string): void {
-        this.series.forEach(function (
-            series: Highcharts.Series
-        ): void {
+        this.series.forEach(function (series): void {
             series.setState(state);
         });
     }
@@ -1183,7 +1144,7 @@ class ColorAxis extends Axis implements AxisLike {
      * @fires Highcharts.ColorAxis#event:drawCrosshair
      */
     public drawCrosshair(
-        e?: Highcharts.PointerEventObject,
+        e?: PointerEvent,
         point?: Highcharts.ColorPoint
     ): void {
         const axis = this;
@@ -1286,7 +1247,7 @@ class ColorAxis extends Axis implements AxisLike {
             legend = chart.legend,
             updatedOptions = ColorAxis.buildOptions(chart, {}, newOptions);
 
-        this.series.forEach(function (series: Highcharts.Series): void {
+        this.series.forEach(function (series): void {
             // Needed for Axis.update when choropleth colors change
             series.isDirtyData = true;
         });
@@ -1396,9 +1357,7 @@ class ColorAxis extends Axis implements AxisLike {
                         isDataClass: true,
                         setVisible: function (this: ColorAxis.LegendItemObject): void {
                             vis = axis.visible = !vis;
-                            axis.series.forEach(function (
-                                series: Highcharts.Series
-                            ): void {
+                            axis.series.forEach(function (series): void {
                                 series.points.forEach(function (
                                     point: Point
                                 ): void {
@@ -1454,14 +1413,11 @@ addEvent(Chart, 'afterGetAxes', function (): void {
     var chart = this,
         options = chart.options;
 
-    this.colorAxis = [] as Array<Highcharts.ColorAxis>;
+    this.colorAxis = [];
 
     if (options.colorAxis) {
         options.colorAxis = splat(options.colorAxis);
-        options.colorAxis.forEach(function (
-            axisOptions: ColorAxis.Options,
-            i: number
-        ): void {
+        options.colorAxis.forEach(function (axisOptions, i): void {
             axisOptions.index = i;
             new ColorAxis(chart, axisOptions); // eslint-disable-line no-new
         });
@@ -1487,15 +1443,15 @@ addEvent(LineSeries, 'bindAxes', function (): void {
 addEvent(Legend, 'afterGetAllItems', function (
     this: Highcharts.Legend,
     e: {
-        allItems: Array<(Highcharts.ColorAxis|ColorAxis.LegendItemObject)>;
+        allItems: Array<(ColorAxis|ColorAxis.LegendItemObject)>;
     }
 ): void {
-    var colorAxisItems = [] as Array<(Highcharts.ColorAxis|ColorAxis.LegendItemObject)>,
+    var colorAxisItems = [] as Array<(ColorAxis|ColorAxis.LegendItemObject)>,
         colorAxes = this.chart.colorAxis || [],
         options: ColorAxis.Options,
         i;
 
-    colorAxes.forEach(function (colorAxis: Highcharts.ColorAxis): void {
+    colorAxes.forEach(function (colorAxis: ColorAxis): void {
         options = colorAxis.options;
 
         if (options && options.showInLegend) {
@@ -1511,9 +1467,7 @@ addEvent(Legend, 'afterGetAllItems', function (
             }
             // If dataClasses are defined or showInLegend option is not set to
             // true, do not add color axis' series to legend.
-            colorAxis.series.forEach(function (
-                series: Highcharts.Series
-            ): void {
+            colorAxis.series.forEach(function (series): void {
                 if (!series.options.showInLegend || options.dataClasses) {
                     if (series.options.legendType === 'point') {
                         series.points.forEach(function (
@@ -1539,7 +1493,7 @@ addEvent(Legend, 'afterGetAllItems', function (
 addEvent(Legend, 'afterColorizeItem', function (
     this: Highcharts.Legend,
     e: {
-        item: Highcharts.ColorAxis;
+        item: ColorAxis;
         visible: boolean;
     }
 ): void {
@@ -1555,7 +1509,7 @@ addEvent(Legend, 'afterUpdate', function (this: Highcharts.Legend): void {
     var colorAxes = this.chart.colorAxis;
 
     if (colorAxes) {
-        colorAxes.forEach(function (colorAxis: Highcharts.ColorAxis): void {
+        colorAxes.forEach(function (colorAxis): void {
             colorAxis.update({}, arguments[2]);
         });
     }
@@ -1584,6 +1538,7 @@ namespace ColorAxis {
 
     export interface LegendItemObject extends DataClassesOptions
     {
+        [key: string]: any;
         chart: Chart;
         name: string;
         options: object;

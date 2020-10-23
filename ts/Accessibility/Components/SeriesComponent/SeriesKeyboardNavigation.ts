@@ -44,6 +44,15 @@ declare module '../../../Core/Series/PointLike' {
     }
 }
 
+declare module '../../../Core/Series/SeriesLike' {
+    interface SeriesLike {
+        /** @requires modules/accessibility */
+        keyboardMoveVertical: boolean;
+        /** @requires modules/accessibility */
+        highlightFirstValidPoint(): (boolean|Point);
+    }
+}
+
 /**
  * Internal types.
  * @private
@@ -82,13 +91,7 @@ declare global {
                 handler: KeyboardNavigationHandler,
                 keyCode: number
             ): number;
-            public onSeriesDestroy(series: Highcharts.Series): void;
-        }
-        interface Series {
-            /** @requires modules/accessibility */
-            keyboardMoveVertical: boolean;
-            /** @requires modules/accessibility */
-            highlightFirstValidPoint(): (boolean|Point);
+            public onSeriesDestroy(series: LineSeries): void;
         }
         interface SeriesKeyboardNavigationDrilldownObject {
             x: (number|null);
@@ -555,7 +558,7 @@ function highlightFirstValidPointInChart(
 
     res = chart.series.reduce(function (
         acc: (boolean|Point),
-        cur: Highcharts.Series
+        cur: LineSeries
     ): (boolean|Point) {
         return acc || cur.highlightFirstValidPoint();
     }, false);
@@ -874,7 +877,7 @@ extend(SeriesKeyboardNavigation.prototype, /** @lends Highcharts.SeriesKeyboardN
      */
     onSeriesDestroy: function (
         this: Highcharts.SeriesKeyboardNavigation,
-        series: Highcharts.Series
+        series: LineSeries
     ): void {
         var chart = this.chart,
             currentHighlightedPointDestroyed = chart.highlightedPoint &&

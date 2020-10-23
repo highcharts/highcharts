@@ -6,6 +6,9 @@
  *
  * */
 
+'use strict';
+
+import type LineSeries from '../../Series/LineSeries';
 import BaseSeries from '../../Core/Series/Series.js';
 import ReduceArrayMixin from '../../Mixins/ReduceArray.js';
 const {
@@ -24,7 +27,7 @@ declare global {
     namespace Highcharts {
         class WilliamsRIndicator extends SMAIndicator {
             public data: Array<WilliamsRIndicatorPoint>;
-            public getValues<TLinkedSeries extends Series>(
+            public getValues<TLinkedSeries extends LineSeries>(
                 series: TLinkedSeries,
                 params: WilliamsRIndicatorParamsOptions
             ): (IndicatorValuesObject<TLinkedSeries>|undefined);
@@ -45,7 +48,7 @@ declare global {
     }
 }
 
-declare module '../../Core/Series/Types' {
+declare module '../../Core/Series/SeriesType' {
     interface SeriesTypeRegistry {
         williamsr: typeof Highcharts.WilliamsRIndicator;
     }
@@ -99,7 +102,7 @@ BaseSeries.seriesType<typeof Highcharts.WilliamsRIndicator>(
      */
     {
         nameBase: 'Williams %R',
-        getValues: function<TLinkedSeries extends Highcharts.Series> (
+        getValues: function<TLinkedSeries extends LineSeries> (
             this: Highcharts.WilliamsRIndicator,
             series: TLinkedSeries,
             params: Highcharts.WilliamsRIndicatorParamsOptions

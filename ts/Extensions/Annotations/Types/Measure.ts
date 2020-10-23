@@ -261,7 +261,7 @@ class Measure extends Annotation {
                 ),
                 isCalculated = false; // to avoid Infinity in formatter
 
-            series.forEach(function (serie: Highcharts.Series): void {
+            series.forEach(function (serie): void {
                 if (
                     serie.visible &&
                     serie.options.id !== 'highcharts-navigator-series'
@@ -299,7 +299,7 @@ class Measure extends Annotation {
                 ),
                 isCalculated = false; // to avoid Infinity in formatter
 
-            series.forEach(function (serie: Highcharts.Series): void {
+            series.forEach(function (serie): void {
                 if (
                     serie.visible &&
                     serie.options.id !== 'highcharts-navigator-series'
@@ -346,7 +346,7 @@ class Measure extends Annotation {
                 ),
                 isCalculated = false; // to avoid Infinity in formatter
 
-            series.forEach(function (serie: Highcharts.Series): void {
+            series.forEach(function (serie): void {
                 if (
                     serie.visible &&
                     serie.options.id !== 'highcharts-navigator-series'

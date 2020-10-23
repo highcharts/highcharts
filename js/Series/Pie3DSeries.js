@@ -10,11 +10,11 @@
  *
  * */
 import BaseSeries from '../Core/Series/Series.js';
+var seriesTypes = BaseSeries.seriesTypes;
 import H from '../Core/Globals.js';
 var deg2rad = H.deg2rad, svg = H.svg;
 import U from '../Core/Utilities.js';
 var pick = U.pick, wrap = U.wrap;
-var seriesTypes = BaseSeries.seriesTypes;
 /**
  * The thickness of a 3D pie.
  *

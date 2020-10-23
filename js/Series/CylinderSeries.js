@@ -11,6 +11,7 @@
  *  !!!!!!! SOURCE GETS TRANSPILED BY TYPESCRIPT. EDIT TS FILE ONLY. !!!!!!!
  *
  * */
+'use strict';
 import Color from '../Core/Color/Color.js';
 var color = Color.parse;
 import H from '../Core/Globals.js';
@@ -20,6 +21,7 @@ var perspective = Math3D.perspective;
 import Series from '../Core/Series/Series.js';
 import U from '../Core/Utilities.js';
 var merge = U.merge, pick = U.pick;
+import '../Series/ColumnSeries.js';
 var cuboidPath = RendererProto.cuboidPath;
 // Check if a path is simplified. The simplified path contains only lineTo
 // segments, whereas non-simplified contain curves.

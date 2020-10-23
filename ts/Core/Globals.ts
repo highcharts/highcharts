@@ -48,14 +48,6 @@ declare global {
         interface Options {
             toolbar?: any; // @todo stock-tools
         }
-        interface Series {
-            fillGraph?: any; // @todo ichimoku indicator
-            gappedPath?: any; // @todo broken axis module
-            isSeriesBoosting?: any; // @todo boost module
-            resetZones?: any; // @todo macd indicator
-            useCommonDataGrouping?: any; // @todo indicators
-            getPoint: Function; // @todo boost module
-        }
         const SVG_NS: string;
         const charts: Array<Chart|undefined>;
         const dateFormats: Dictionary<TimeFormatCallbackFunction>;

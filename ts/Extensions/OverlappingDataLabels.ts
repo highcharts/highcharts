@@ -14,6 +14,7 @@
 'use strict';
 
 import type { AlignValue } from '../Core/Renderer/AlignObject';
+import type LineSeries from '../Series/LineSeries';
 import type Point from '../Core/Series/Point';
 import type SVGElement from '../Core/Renderer/SVG/SVGElement';
 import Chart from '../Core/Chart/Chart.js';
@@ -71,16 +72,18 @@ addEvent(Chart, 'render', function collectAndHide(): void {
         }
     });
 
-    (this.series || []).forEach(function (series: Highcharts.Series): void {
+    (this.series || []).forEach(function (series): void {
         var dlOptions: Highcharts.DataLabelsOptions = (
             series.options.dataLabels as any
         );
 
         if (
             series.visible &&
-            !(dlOptions.enabled === false && !series._hasPointLabels)
+            !((dlOptions as any).enabled === false && !series._hasPointLabels)
         ) { // #3866
-            (series.nodes || series.points).forEach(function (point: Point): void {
+            ((series.nodes || series.points) as any).forEach(function (
+                point: (Highcharts.NodesPoint|Point)
+            ): void {
                 if (point.visible) {
                     var dataLabels = (
                         isArray(point.dataLabels) ?

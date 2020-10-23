@@ -6,6 +6,9 @@
  *
  * */
 
+'use strict';
+
+import type LineSeries from '../../Series/LineSeries';
 import BaseSeries from '../../Core/Series/Series.js';
 import multipleLinesMixin from '../../Mixins/MultipleLines.js';
 import requiredIndicator from '../../Mixins/IndicatorRequired.js';
@@ -20,10 +23,9 @@ const {
  */
 declare global {
     namespace Highcharts {
-        class AroonOscillatorIndicator extends AroonIndicator
-            implements MultipleLinesMixin {
+        class AroonOscillatorIndicator extends AroonIndicator implements MultipleLinesIndicator {
             public data: Array<AroonOscillatorIndicatorPoint>;
-            public getValues<TLinkedSeries extends Series>(
+            public getValues<TLinkedSeries extends LineSeries>(
                 series: TLinkedSeries,
                 params: AroonIndicatorParamsOptions
             ): IndicatorValuesObject<TLinkedSeries>;
@@ -54,7 +56,7 @@ declare global {
     }
 }
 
-declare module '../../Core/Series/Types' {
+declare module '../../Core/Series/SeriesType' {
     interface SeriesTypeRegistry {
         aroonoscillator: typeof Highcharts.AroonOscillatorIndicator;
     }
@@ -137,7 +139,7 @@ BaseSeries.seriesType<typeof Highcharts.AroonOscillatorIndicator>(
                 }
             );
         },
-        getValues: function<TLinkedSeries extends Highcharts.Series> (
+        getValues: function<TLinkedSeries extends LineSeries> (
             series: TLinkedSeries,
             params: Highcharts.AroonIndicatorParamsOptions
         ): Highcharts.IndicatorValuesObject<TLinkedSeries> {

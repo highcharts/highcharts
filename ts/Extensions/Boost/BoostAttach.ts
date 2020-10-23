@@ -16,9 +16,8 @@ import type HTMLElement from '../../Core/Renderer/HTML/HTMLElement';
 import Chart from '../../Core/Chart/Chart.js';
 import GLRenderer from './WGLRenderer.js';
 import H from '../../Core/Globals.js';
-const {
-    doc
-} = H;
+const { doc } = H;
+import LineSeries from '../../Series/LineSeries.js';
 import U from '../../Core/Utilities.js';
 const {
     error
@@ -26,6 +25,10 @@ const {
 
 declare module '../../Core/Chart/ChartLike'{
     interface ChartLike extends Highcharts.BoostTargetObject {}
+}
+
+declare module '../../Core/Series/SeriesLike' {
+    interface SeriesLike extends Highcharts.BoostTargetObject {}
 }
 
 /**
@@ -48,12 +51,8 @@ declare global {
             /** @requires modules/boost */
             boostResizeTarget(): void;
         }
-        interface Series extends BoostTargetObject {
-        }
     }
 }
-
-import '../../Series/LineSeries.js';
 
 const mainCanvas = doc.createElement('canvas');
 
@@ -74,7 +73,7 @@ const mainCanvas = doc.createElement('canvas');
  */
 function createAndAttachRenderer(
     chart: Chart,
-    series: Highcharts.Series
+    series: LineSeries
 ): Highcharts.BoostGLRenderer {
     var width = chart.chartWidth,
         height = chart.chartHeight,

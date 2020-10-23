@@ -17,7 +17,8 @@ import type {
     PointOptions,
     PointShortOptions
 } from './Series/PointOptions';
-import type { SeriesOptionsType } from './Series/Types';
+import type { SeriesOptions } from './Series/SeriesOptions';
+import type { SeriesTypeOptions } from './Series/SeriesType';
 import A from './Animation/AnimationUtilities.js';
 const {
     animate,
@@ -82,10 +83,10 @@ declare module './Chart/ChartLike'{
             options: Highcharts.CreateAxisOptionsObject
         ): Axis|ColorAxis;
         addSeries(
-            options: SeriesOptionsType,
+            options: SeriesTypeOptions,
             redraw?: boolean,
             animation?: (boolean|Partial<AnimationOptionsObject>)
-        ): Highcharts.Series;
+        ): LineSeries;
         setSubtitle(options: Highcharts.SubtitleOptions): void;
         hideLoading(): void;
         showLoading(str?: string): void;
@@ -114,6 +115,34 @@ declare module './Series/PointLike' {
     }
 }
 
+declare module './Series/SeriesLike' {
+    interface SeriesLike {
+        initialType?: string;
+        touched?: boolean;
+        addPoint(
+            options: (PointOptions|PointShortOptions),
+            redraw?: boolean,
+            shift?: boolean,
+            animation?: (boolean|Partial<AnimationOptionsObject>),
+            withEvent?: boolean
+        ): void;
+        remove(
+            redraw?: boolean,
+            animation?: (boolean|Partial<AnimationOptionsObject>),
+            withEvent?: boolean,
+            keepEvents?: boolean
+        ): void;
+        removePoint(
+            i: number,
+            redraw?: boolean,
+            animation?: (boolean|Partial<AnimationOptionsObject>)
+        ): void;
+        setName(name: string): void;
+        hasOptionChanged(this: LineSeries, optionName: string): boolean;
+        update(options: DeepPartial<SeriesTypeOptions>, redraw?: boolean): LineSeries;
+    }
+}
+
 /**
  * Internal types
  * @private
@@ -136,31 +165,6 @@ declare global {
             animation: undefined | boolean | Partial<AnimationOptionsObject>;
             axis: AxisOptions | ColorAxis.Options;
             redraw: undefined | boolean;
-        }
-        interface Series {
-            initialType?: string;
-            touched?: boolean;
-            addPoint(
-                options: (PointOptions|PointShortOptions),
-                redraw?: boolean,
-                shift?: boolean,
-                animation?: (boolean|Partial<AnimationOptionsObject>),
-                withEvent?: boolean
-            ): void;
-            remove(
-                redraw?: boolean,
-                animation?: (boolean|Partial<AnimationOptionsObject>),
-                withEvent?: boolean,
-                keepEvents?: boolean
-            ): void;
-            removePoint(
-                i: number,
-                redraw?: boolean,
-                animation?: (boolean|Partial<AnimationOptionsObject>)
-            ): void;
-            setName(name: string): void;
-            hasOptionChanged(this: Highcharts.Series, optionName: string): boolean;
-            update(options: DeepPartial<SeriesOptionsType>, redraw?: boolean): Series;
         }
         interface XAxisOptions {
             index?: number;
@@ -243,11 +247,11 @@ extend(Chart.prototype, /** @lends Highcharts.Chart.prototype */ {
      */
     addSeries: function (
         this: Chart,
-        options: SeriesOptionsType,
+        options: SeriesTypeOptions,
         redraw?: boolean,
         animation?: (boolean|Partial<AnimationOptionsObject>)
-    ): Highcharts.Series {
-        var series: (Highcharts.Series|undefined),
+    ): LineSeries {
+        var series: (LineSeries|undefined),
             chart = this;
 
         if (options) { // <- not necessary
@@ -258,7 +262,7 @@ extend(Chart.prototype, /** @lends Highcharts.Chart.prototype */ {
                 'addSeries',
                 { options: options },
                 function (): void {
-                    series = chart.initSeries(options) as Highcharts.Series;
+                    series = chart.initSeries(options);
 
                     chart.isDirtyLegend = true;
                     chart.linkSeries();
@@ -402,11 +406,11 @@ extend(Chart.prototype, /** @lends Highcharts.Chart.prototype */ {
             this.isDirtyLegend = true;
 
             // Clear before 'bindAxes' (#11924)
-            this.axes.forEach(function (axis: Highcharts.Axis): void {
+            this.axes.forEach(function (axis): void {
                 axis.series = [];
             });
 
-            this.series.forEach(function (series: Highcharts.Series): void {
+            this.series.forEach(function (series): void {
                 series.bindAxes();
                 series.isDirtyData = true;
             });
@@ -826,22 +830,16 @@ extend(Chart.prototype, /** @lends Highcharts.Chart.prototype */ {
                 // here (#8196).
                 if (coll === 'series') {
                     indexMap = [];
-                    chart[coll].forEach(function (
-                        s: Highcharts.Series,
-                        i: number
-                    ): void {
+                    chart[coll].forEach(function (s, i): void {
                         if (!s.options.isInternal) {
                             indexMap.push(pick(s.options.index, i));
                         }
                     });
                 }
 
-                splat((options as any)[coll]).forEach(function (
-                    newOptions: Highcharts.Dictionary<any>,
-                    i: number
-                ): void {
+                splat((options as any)[coll]).forEach(function (newOptions, i): void {
                     const hasId = defined(newOptions.id);
-                    let item: Axis|Point|Highcharts.Series|undefined;
+                    let item: (Axis|LineSeries|Point|undefined);
 
                     // Match by id
                     if (hasId) {
@@ -915,9 +913,7 @@ extend(Chart.prototype, /** @lends Highcharts.Chart.prototype */ {
         // Certain options require the whole series structure to be thrown away
         // and rebuilt
         if (updateAllSeries) {
-            chart.getSeriesOrderByLinks().forEach(function (
-                series: Highcharts.Series
-            ): void {
+            chart.getSeriesOrderByLinks().forEach(function (series): void {
                 // Avoid removed navigator series
                 if (series.chart) {
                     series.update({}, false);
@@ -1227,7 +1223,7 @@ extend(LineSeries.prototype, /** @lends Series.prototype */ {
      * @fires Highcharts.Series#event:addPoint
      */
     addPoint: function (
-        this: Highcharts.Series,
+        this: LineSeries,
         options: (PointOptions|PointShortOptions),
         redraw?: boolean,
         shift?: boolean,
@@ -1342,7 +1338,7 @@ extend(LineSeries.prototype, /** @lends Series.prototype */ {
      * @fires Highcharts.Point#event:remove
      */
     removePoint: function (
-        this: Highcharts.Series,
+        this: LineSeries,
         i: number,
         redraw?: boolean,
         animation?: (boolean|Partial<AnimationOptionsObject>)
@@ -1414,7 +1410,7 @@ extend(LineSeries.prototype, /** @lends Series.prototype */ {
      * @fires Highcharts.Series#event:remove
      */
     remove: function (
-        this: Highcharts.Series,
+        this: LineSeries,
         redraw?: boolean,
         animation?: (boolean|Partial<AnimationOptionsObject>),
         withEvent?: boolean,
@@ -1479,8 +1475,8 @@ extend(LineSeries.prototype, /** @lends Series.prototype */ {
      * @fires Highcharts.Series#event:afterUpdate
      */
     update: function (
-        this: Highcharts.Series,
-        options: SeriesOptionsType,
+        this: LineSeries,
+        options: SeriesTypeOptions,
         redraw?: boolean
     ): void {
 
@@ -1493,7 +1489,7 @@ extend(LineSeries.prototype, /** @lends Series.prototype */ {
             // must use user options when changing type because series.options
             // is merged in with type specific plotOptions
             oldOptions = series.userOptions,
-            seriesOptions: Highcharts.SeriesOptions,
+            seriesOptions: SeriesOptions,
             initialType = series.initialType || series.type,
             plotOptions = chart.options.plotOptions,
             newType = (
@@ -1693,7 +1689,7 @@ extend(LineSeries.prototype, /** @lends Series.prototype */ {
      *
      * @return {void}
      */
-    setName: function (this: Highcharts.Series, name: string): void {
+    setName: function (this: LineSeries, name: string): void {
         this.name = this.options.name = this.userOptions.name = name;
         this.chart.isDirtyLegend = true;
     },
@@ -1707,7 +1703,7 @@ extend(LineSeries.prototype, /** @lends Series.prototype */ {
      *
      * @return {boolean}
      */
-    hasOptionChanged(this: Highcharts.Series, optionName: string): boolean {
+    hasOptionChanged(this: LineSeries, optionName: string): boolean {
         const chart = this.chart,
             option = (this.options as any)[optionName],
             plotOptions = chart.options.plotOptions,

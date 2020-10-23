@@ -22,7 +22,7 @@ import type CSSObject from '../Core/Renderer/CSSObject';
 import type {
     HTMLDOMElement
 } from '../Core/Renderer/DOMElementType';
-import type { SeriesOptionsType } from '../Core/Series/Types';
+import type { SeriesTypeOptions } from '../Core/Series/SeriesType';
 import type SVGAttributes from '../Core/Renderer/SVG/SVGAttributes';
 import type SVGElement from '../Core/Renderer/SVG/SVGElement';
 import type SVGPath from '../Core/Renderer/SVG/SVGPath';
@@ -1428,7 +1428,7 @@ extend(Chart.prototype, /** @lends Highcharts.Chart.prototype */ {
             chartCopy: Chart,
             sandbox,
             svg,
-            seriesOptions: DeepPartial<SeriesOptionsType>,
+            seriesOptions: DeepPartial<SeriesTypeOptions>,
             sourceWidth: number,
             sourceHeight: number,
             cssWidth: string,
@@ -1482,7 +1482,7 @@ extend(Chart.prototype, /** @lends Highcharts.Chart.prototype */ {
 
         // prepare for replicating the chart
         options.series = [];
-        chart.series.forEach(function (serie: Highcharts.Series): void {
+        chart.series.forEach(function (serie): void {
             seriesOptions = merge(serie.userOptions, { // #4912
                 animation: false, // turn off animation
                 enableMouseTracking: false,

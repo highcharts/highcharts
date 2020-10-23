@@ -10,6 +10,9 @@
  *
  * */
 
+'use strict';
+
+import type { SeriesStatesOptions } from '../Core/Series/SeriesOptions';
 import type SVGAttributes from '../Core/Renderer/SVG/SVGAttributes';
 import type SVGElement from '../Core/Renderer/SVG/SVGElement';
 import A from '../Core/Animation/AnimationUtilities.js';
@@ -32,7 +35,7 @@ declare global {
         interface DependencyWheelSeriesOptions extends SankeySeriesOptions {
             center?: Array<(number|string|null)>;
             startAngle?: number;
-            states?: SeriesStatesOptionsObject<DependencyWheelSeries>;
+            states?: SeriesStatesOptions<DependencyWheelSeries>;
         }
         class DependencyWheelPoint extends SankeyPoint {
             public angle: number;
@@ -72,7 +75,7 @@ declare global {
 /**
  * @private
  */
-declare module '../Core/Series/Types' {
+declare module '../Core/Series/SeriesType' {
     interface SeriesTypeRegistry {
         dependencywheel: typeof Highcharts.DependencyWheelSeries;
     }

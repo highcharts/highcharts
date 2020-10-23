@@ -8,12 +8,12 @@
 
 import type { AxisType } from '../../Core/Axis/Types';
 import type Chart from '../../Core/Chart/Chart';
+import type SeriesType from '../../Core/Series/SeriesType';
 import BaseSeries from '../../Core/Series/Series.js';
-const {
-    seriesTypes
-} = BaseSeries;
+const { seriesTypes } = BaseSeries;
 import H from '../../Core/Globals.js';
-import requiredIndicator from '../../Mixins/IndicatorRequired.js';
+import LineSeries from '../../Series/LineSeries.js';
+import RequiredIndicatorMixin from '../../Mixins/IndicatorRequired.js';
 import U from '../../Core/Utilities.js';
 const {
     addEvent,
@@ -23,6 +23,20 @@ const {
     pick,
     splat
 } = U;
+
+declare module '../../Core/Series/SeriesLike' {
+    interface SeriesLike {
+        useCommonDataGrouping?: boolean;
+        /** @requires indicators/indicators */
+        requireIndicators(): Highcharts.SMAIndicatorRequireIndicatorsObject;
+    }
+}
+
+declare module '../../Core/Series/SeriesOptions' {
+    interface SeriesOptions {
+        useOhlcData?: boolean;
+    }
+}
 
 /**
  * Internal types
@@ -36,19 +50,19 @@ declare global {
             public data: Array<SMAIndicatorPoint>;
             public dataEventsToUnbind: Array<Function>;
             public hasDerivedData: boolean;
-            public linkedParent: Series;
+            public linkedParent: LineSeries;
             public nameBase?: string;
             public nameComponents: Array<string>;
             public nameSuffixes: Array<string>;
             public options: SMAIndicatorOptions;
             public pointClass: typeof SMAIndicatorPoint;
             public points: Array<SMAIndicatorPoint>;
-            public processData: Series['processData'];
+            public processData: LineSeries['processData'];
             public requiredIndicators: Array<string>;
             public useCommonDataGrouping: boolean;
             public init(chart: Chart, options: SMAIndicatorOptions): void;
             public getName(): string;
-            public getValues<TLinkedSeries extends Series>(
+            public getValues<TLinkedSeries extends LineSeries>(
                 series: TLinkedSeries,
                 params: SMAIndicatorParamsOptions
             ): (IndicatorValuesObject<TLinkedSeries>|undefined);
@@ -59,19 +73,13 @@ declare global {
             public series: SMAIndicator;
         }
 
-        interface IndicatorValuesObject<
-            TLinkedSeries extends Series
-        > {
+        interface IndicatorValuesObject<TLinkedSeries extends LineSeries> {
             values: Array<Array<(
                 ExtractArrayType<TLinkedSeries['xData']>|
                 ExtractArrayType<TLinkedSeries['yData']>
             )>>;
             xData: NonNullable<TLinkedSeries['xData']>;
             yData: NonNullable<TLinkedSeries['yData']>;
-        }
-
-        interface LineSeriesOptions {
-            useOhlcData?: boolean;
         }
 
         interface SMAIndicatorOptions extends LineSeriesOptions {
@@ -94,26 +102,19 @@ declare global {
             allLoaded: boolean;
             needed?: string;
         }
-
-        interface Series {
-            /** @requires indicators/indicators */
-            requireIndicators(): SMAIndicatorRequireIndicatorsObject;
-        }
     }
 }
 
-declare module '../../Core/Series/Types' {
+declare module '../../Core/Series/SeriesType' {
     interface SeriesTypeRegistry {
         sma: typeof Highcharts.SMAIndicator;
     }
 }
 
-import '../../Series/LineSeries.js';
 import '../../Series/OHLCSeries.js';
 
-var Series = H.Series,
-    ohlcProto = seriesTypes.ohlc.prototype,
-    generateMessage = requiredIndicator.generateMessage;
+var ohlcProto = seriesTypes.ohlc.prototype,
+    generateMessage = RequiredIndicatorMixin.generateMessage;
 
 /**
  * The parameter allows setting line series type and use OHLC indicators. Data
@@ -129,7 +130,7 @@ var Series = H.Series,
 
 /* eslint-disable no-invalid-this */
 
-addEvent(H.Series, 'init', function (
+addEvent(LineSeries, 'init', function (
     eventOptions: { options: Highcharts.SMAIndicatorOptions }
 ): void {
     var series = this,
@@ -148,7 +149,7 @@ addEvent(H.Series, 'init', function (
     }
 });
 
-addEvent(Series, 'afterSetOptions', function (
+addEvent(LineSeries, 'afterSetOptions', function (
     e: { options: Highcharts.LineSeriesOptions }
 ): void {
     var options = e.options,
@@ -256,7 +257,7 @@ BaseSeries.seriesType<typeof Highcharts.SMAIndicator>(
                 compareToMain = series.options.compareToMain,
                 linkedParent = series.linkedParent;
 
-            Series.prototype.processData.apply(series, arguments);
+            LineSeries.prototype.processData.apply(series, arguments);
 
             if (linkedParent && linkedParent.compareValue && compareToMain) {
                 series.compareValue = linkedParent.compareValue;
@@ -310,7 +311,7 @@ BaseSeries.seriesType<typeof Highcharts.SMAIndicator>(
                 )) as any;
             }
 
-            Series.prototype.init.call(
+            LineSeries.prototype.init.call(
                 indicator,
                 chart,
                 options
@@ -328,16 +329,15 @@ BaseSeries.seriesType<typeof Highcharts.SMAIndicator>(
             function recalculateValues(): void {
                 var oldData = indicator.points || [],
                     oldDataLength = (indicator.xData || []).length,
-                    processedData: Highcharts.IndicatorValuesObject<
-                    Highcharts.Series
-                    > = indicator.getValues(
-                        indicator.linkedParent,
-                        indicator.options.params as any
-                    ) || {
-                        values: [],
-                        xData: [],
-                        yData: []
-                    },
+                    processedData: Highcharts.IndicatorValuesObject<LineSeries> = (
+                        indicator.getValues(
+                            indicator.linkedParent,
+                            indicator.options.params as any
+                        ) || {
+                            values: [],
+                            xData: [],
+                            yData: []
+                        }),
                     croppedDataValues = [],
                     overwriteData = true,
                     oldFirstPointIndex,
@@ -438,7 +438,7 @@ BaseSeries.seriesType<typeof Highcharts.SMAIndicator>(
             }
 
             indicator.dataEventsToUnbind.push(
-                addEvent<Highcharts.Series|AxisType>(
+                addEvent<AxisType|SeriesType>(
                     indicator.bindTo.series ?
                         indicator.linkedParent :
                         indicator.linkedParent.xAxis,
@@ -487,15 +487,13 @@ BaseSeries.seriesType<typeof Highcharts.SMAIndicator>(
 
             return name;
         },
-        getValues: function<TLinkedSeries extends Highcharts.Series> (
+        getValues: function<TLinkedSeries extends LineSeries> (
             series: TLinkedSeries,
             params: Highcharts.SMAIndicatorParamsOptions
         ): (Highcharts.IndicatorValuesObject<TLinkedSeries>|undefined) {
             var period: number = params.period as any,
                 xVal: Array<number> = series.xData as any,
-                yVal: Array<(
-                    number|Array<(number|null|undefined)>|null|undefined
-                )> = series.yData as any,
+                yVal: Array<(number|Array<(number|null)>|null)> = series.yData as any,
                 yValLen = yVal.length,
                 range = 0,
                 sum = 0,
@@ -549,7 +547,7 @@ BaseSeries.seriesType<typeof Highcharts.SMAIndicator>(
             ): void {
                 unbinder();
             });
-            Series.prototype.destroy.apply(this, arguments);
+            LineSeries.prototype.destroy.apply(this, arguments);
         }
     }
 );

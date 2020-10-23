@@ -12,6 +12,7 @@
 
 import type Point from '../Core/Series/Point';
 import H from '../Core/Globals.js';
+import LineSeries from '../Series/LineSeries.js';
 import U from '../Core/Utilities.js';
 const {
     defined,
@@ -32,11 +33,11 @@ declare global {
         interface OnSeriesPoint extends Point {
             stackIndex?: number;
         }
-        interface OnSeriesSeries extends Series {
+        interface OnSeriesSeries extends LineSeries {
             options: OnSeriesSeriesOptions;
             onSeries?: OnSeriesSeries;
         }
-        interface OnSeriesSeriesOptions extends SeriesOptions {
+        interface OnSeriesSeriesOptions extends LineSeriesOptions {
             onSeries?: (string|null);
         }
     }
@@ -65,7 +66,7 @@ const onSeriesMixin = {
     getPlotBox: function (
         this: Highcharts.OnSeriesSeries
     ): Highcharts.SeriesPlotBoxObject {
-        return H.Series.prototype.getPlotBox.call(
+        return LineSeries.prototype.getPlotBox.call(
             (
                 this.options.onSeries &&
                 this.chart.get(this.options.onSeries)

@@ -16,7 +16,13 @@
  *
  * */
 
+import type Chart from '../Core/Chart/Chart';
 import type ColorType from '../Core/Color/ColorType';
+import type {
+    SeriesStateHoverOptions,
+    SeriesStatesOptions
+} from '../Core/Series/SeriesOptions';
+import type { StatesOptionsKey } from '../Core/Series/StatesOptions';
 import type SVGAttributes from '../Core/Renderer/SVG/SVGAttributes';
 import type SVGElement from '../Core/Renderer/SVG/SVGElement';
 import A from '../Core/Animation/AnimationUtilities.js';
@@ -58,6 +64,42 @@ declare module '../Core/Series/PointOptions' {
     }
 }
 
+declare module '../Core/Series/SeriesLike' {
+    interface SeriesLike {
+        barW?: number;
+        pointXOffset?: number;
+    }
+}
+
+declare module '../Core/Series/SeriesOptions' {
+    interface SeriesOptions {
+        borderColor?: ColorType;
+        borderDashStyle?: Highcharts.DashStyleValue;
+        borderRadius?: number;
+        borderWidth?: number;
+        centerInCategory?: boolean;
+        fillColor?: ColorType;
+        grouping?: boolean;
+        groupPadding?: number;
+        negativeFillColor?: ColorType;
+        pointRange?: (number|null);
+    }
+    interface SeriesStateHoverOptions {
+        borderColor?: ColorType;
+        borderDashStyle?: Highcharts.DashStyleValue;
+        borderRadius?: number;
+        borderWidth?: number;
+        brightness?: number;
+        color?: ColorType;
+        dashStyle?: Highcharts.DashStyleValue;
+    }
+    interface SeriesZonesOptions {
+        borderColor?: ColorType;
+        borderWidth?: number;
+        color?: ColorType;
+    }
+}
+
 /**
  * Internal types
  * @private
@@ -75,32 +117,11 @@ declare global {
             pointWidth?: number;
         }
         interface ColumnSeriesOptions extends LineSeriesOptions {
-            borderRadius?: number;
-            grouping?: boolean;
-            groupPadding?: number;
             maxPointWidth?: number;
             minPointLength?: number;
             pointPadding?: number;
             pointWidth?: number;
-            states?: SeriesStatesOptionsObject<ColumnSeries>;
-        }
-        interface Series {
-            barW?: number;
-            pointXOffset?: number;
-        }
-        interface SeriesOptions {
-            centerInCategory?: boolean;
-        }
-        interface SeriesStatesHoverOptionsObject {
-            borderColor?: ColorType;
-            brightness?: number;
-            color?: ColorType;
-            dashStyle?: DashStyleValue;
-        }
-        interface SeriesZonesOptions {
-            borderColor?: ColorType;
-            borderWidth?: number;
-            color?: ColorType;
+            states?: SeriesStatesOptions<ColumnSeries>;
         }
         class ColumnPoint extends LinePoint {
             public allowShadow?: boolean;
@@ -111,35 +132,6 @@ declare global {
             public pointWidth: number;
             public series: ColumnSeries;
             public shapeType: string;
-        }
-        class ColumnSeries extends LineSeries {
-            public borderWidth: number;
-            public columnIndex?: number;
-            public columnMetrics?: ColumnMetricsObject;
-            public cropShould?: number;
-            public dashStyle?: DashStyleValue;
-            public data: Array<ColumnPoint>;
-            public dense?: boolean;
-            public group: SVGElement;
-            public options: ColumnSeriesOptions;
-            public pointClass: typeof ColumnPoint;
-            public points: Array<ColumnPoint>;
-            public pointXOffset: number;
-            public translatedThreshold?: number;
-            public adjustForMissingColumns(
-                x: number,
-                pointWidth: number,
-                point: ColumnPoint,
-                metrics: ColumnMetricsObject
-            ): number;
-            public crispCol(
-                x: number,
-                y: number,
-                w: number,
-                h: number
-            ): BBoxObject;
-            public getColumnMetrics(): ColumnMetricsObject;
-            public remove(): void;
         }
     }
 }
@@ -586,7 +578,7 @@ class ColumnSeries extends LineSeries {
      * @private
      * @function Highcharts.seriesTypes.column#init
      */
-    public init(): void {
+    public init(chart: Chart, options: Highcharts.ColumnSeriesOptions): void {
         super.init.apply(this, arguments as any);
 
         var series = this,
@@ -622,7 +614,7 @@ class ColumnSeries extends LineSeries {
             reverseStacks = (xAxis.reversed && !reversedStacks) ||
             (!xAxis.reversed && reversedStacks),
             stackKey,
-            stackGroups = {} as Highcharts.Dictionary<number>,
+            stackGroups: Record<string, number> = {},
             columnCount = 0;
 
         // Get the total number of column type series. This is called on
@@ -631,9 +623,7 @@ class ColumnSeries extends LineSeries {
         if (options.grouping === false) {
             columnCount = 1;
         } else {
-            series.chart.series.forEach(function (
-                otherSeries: Highcharts.Series
-            ): void {
+            series.chart.series.forEach(function (otherSeries): void {
                 var otherYAxis = otherSeries.yAxis,
                     otherOptions = otherSeries.options,
                     columnIndex;
@@ -1005,11 +995,11 @@ class ColumnSeries extends LineSeries {
      * @function Highcharts.seriesTypes.column#pointAttribs
      */
     public pointAttribs(
-        point: Highcharts.ColumnPoint|undefined,
-        state: string
+        point?: Highcharts.ColumnPoint,
+        state?: StatesOptionsKey
     ): SVGAttributes {
         var options = this.options,
-            stateOptions: Highcharts.SeriesStatesHoverOptionsObject,
+            stateOptions: SeriesStateHoverOptions,
             ret: SVGAttributes,
             p2o = (this as any).pointAttrToOptions || {},
             strokeOption = p2o.stroke || 'borderColor',
@@ -1322,9 +1312,9 @@ extend(
  *
  * */
 
-declare module '../Core/Series/Types' {
+declare module '../Core/Series/SeriesType' {
     interface SeriesTypeRegistry {
-        column: typeof Highcharts.ColumnSeries;
+        column: typeof ColumnSeries;
     }
 }
 BaseSeries.registerSeriesType('column', ColumnSeries);

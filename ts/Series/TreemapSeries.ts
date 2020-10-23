@@ -10,6 +10,8 @@
  *
  * */
 
+'use strict';
+
 import type {
     AlignValue,
     VerticalAlignValue
@@ -19,6 +21,12 @@ import type Chart from '../Core/Chart/Chart';
 import type ColorString from '../Core/Color/ColorString';
 import type ColorType from '../Core/Color/ColorType';
 import type CSSObject from '../Core/Renderer/CSSObject';
+import type {
+    SeriesOptions,
+    SeriesStateHoverOptions,
+    SeriesStatesOptions
+} from '../Core/Series/SeriesOptions';
+import type { StatesOptionsKey } from '../Core/Series/StatesOptions';
 import type SVGAttributes from '../Core/Renderer/SVG/SVGAttributes';
 import type SVGElement from '../Core/Renderer/SVG/SVGElement';
 import BaseSeries from '../Core/Series/Series.js';
@@ -40,6 +48,7 @@ const {
     noop
 } = H;
 import LegendSymbolMixin from '../Mixins/LegendSymbol.js';
+import LineSeries from './LineSeries.js';
 import Point from '../Core/Series/Point.js';
 import TreeSeriesMixin from '../Mixins/TreeSeries.js';
 const {
@@ -64,6 +73,12 @@ const {
     pick,
     stableSort
 } = U;
+
+declare module '../Core/Series/SeriesOptions' {
+    interface SeriesOptions {
+        cropThreshold?: number;
+    }
+}
 
 /**
  * Internal types
@@ -131,7 +146,6 @@ declare global {
             public pointClass: typeof TreemapPoint;
             public points: Array<TreemapPoint>;
             public rootNode: string;
-            public setState: Series['setState'];
             public trackerGroups: Array<string>;
             public tree: TreemapNodeObject;
             public utils: TreemapSeriesUtilsObject;
@@ -185,7 +199,7 @@ declare global {
             public onClickDrillToNode(event: { point: TreemapPoint }): void;
             public pointAttribs(
                 point: TreemapPoint,
-                state?: string
+                state?: StatesOptionsKey
             ): SVGAttributes;
             public renderTraverseUpButton(rootId: string): void;
             public setColorRecursive(
@@ -285,7 +299,6 @@ declare global {
             borderRadius?: number;
             brightness?: number;
             colors?: Array<ColorType>;
-            cropThreshold?: number;
             data?: Array<TreemapPointOptions>;
             drillUpButton?: TreemapSeriesUpButtonOptions;
             ignoreHiddenPoint?: boolean;
@@ -296,7 +309,7 @@ declare global {
             levels?: Array<TreemapSeriesLevelsOptions>;
             setRootNode?: Function;
             sortIndex?: number;
-            states?: SeriesStatesOptionsObject<TreemapSeries>;
+            states?: SeriesStatesOptions<TreemapSeries>;
             traverseUpButton?: TreemapSeriesUpButtonOptions;
         }
         interface TreemapSeriesUpButtonOptions {
@@ -337,7 +350,7 @@ declare global {
 /**
  * @private
  */
-declare module '../Core/Series/Types' {
+declare module '../Core/Series/SeriesType' {
     interface SeriesTypeRegistry {
         treemap: typeof Highcharts.TreemapSeries;
     }
@@ -353,7 +366,6 @@ const AXIS_MAX = 100;
 var isBoolean = function (x: unknown): x is boolean {
         return typeof x === 'boolean';
     },
-    Series = H.Series,
     // @todo Similar to recursive, this function is likely redundant
     eachObject = function (
         this: unknown,
@@ -1038,7 +1050,7 @@ BaseSeries.seriesType<typeof Highcharts.TreemapSeries>(
                 }
             });
 
-            Series.prototype.init.call(series, chart, options);
+            LineSeries.prototype.init.call(series, chart, options);
 
             // Treemap's opacity is a different option from other series
             delete series.opacity;
@@ -1591,7 +1603,7 @@ BaseSeries.seriesType<typeof Highcharts.TreemapSeries>(
                 val: Highcharts.TreemapNodeValuesObject;
 
             // Call prototype function
-            Series.prototype.translate.call(series);
+            LineSeries.prototype.translate.call(series);
 
             // @todo Only if series.isDirtyData is true
             tree = series.tree = series.getTree();
@@ -1741,7 +1753,7 @@ BaseSeries.seriesType<typeof Highcharts.TreemapSeries>(
                 // Merge custom options with point options
                 point.dlOptions = merge(options, point.options.dataLabels);
             });
-            Series.prototype.drawDataLabels.call(this);
+            LineSeries.prototype.drawDataLabels.call(this);
         },
 
         // Over the alignment method by setting z index
@@ -1779,7 +1791,7 @@ BaseSeries.seriesType<typeof Highcharts.TreemapSeries>(
         pointAttribs: function (
             this: Highcharts.TreemapSeries,
             point: Highcharts.TreemapPoint,
-            state: string
+            state: StatesOptionsKey
         ): SVGAttributes {
             var series = this,
                 mapOptionsToLevel = (
@@ -1790,7 +1802,7 @@ BaseSeries.seriesType<typeof Highcharts.TreemapSeries>(
                 level = point && mapOptionsToLevel[point.node.level] || {},
                 options = this.options,
                 attr: SVGAttributes,
-                stateOptions: Highcharts.SeriesStateOptionsObject<typeof this> =
+                stateOptions: SeriesStateHoverOptions =
                     (state && (options.states as any)[state]) || {},
                 className = (point && point.getClassName()) || '',
                 opacity: number;
@@ -2167,13 +2179,13 @@ BaseSeries.seriesType<typeof Highcharts.TreemapSeries>(
             this: Highcharts.TreemapSeries
         ): Highcharts.DataExtremesObject {
             // Get the extremes from the value data
-            const { dataMin, dataMax } = Series.prototype.getExtremes
+            const { dataMin, dataMax } = LineSeries.prototype.getExtremes
                 .call(this, this.colorValueData);
             this.valueMin = dataMin;
             this.valueMax = dataMax;
 
             // Get the extremes from the y data
-            return Series.prototype.getExtremes.call(this);
+            return LineSeries.prototype.getExtremes.call(this);
         },
         getExtremesFromAll: true,
 
@@ -2189,7 +2201,7 @@ BaseSeries.seriesType<typeof Highcharts.TreemapSeries>(
             state: string
         ): void {
             this.options.inactiveOtherPoints = true;
-            Series.prototype.setState.call(this, state, false);
+            LineSeries.prototype.setState.call(this, state, false);
             this.options.inactiveOtherPoints = false;
         },
         utils: {
@@ -2250,7 +2262,7 @@ BaseSeries.seriesType<typeof Highcharts.TreemapSeries>(
     }
 );
 
-addEvent(H.Series, 'afterBindAxes', function (): void {
+addEvent(LineSeries, 'afterBindAxes', function (): void {
     var series = this,
         xAxis = series.xAxis,
         yAxis = series.yAxis,

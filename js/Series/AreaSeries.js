@@ -7,16 +7,14 @@
  *  !!!!!!! SOURCE GETS TRANSPILED BY TYPESCRIPT. EDIT TS FILE ONLY. !!!!!!!
  *
  * */
+'use strict';
 import BaseSeries from '../Core/Series/Series.js';
 import Color from '../Core/Color/Color.js';
 var color = Color.parse;
-import H from '../Core/Globals.js';
 import LegendSymbolMixin from '../Mixins/LegendSymbol.js';
+import LineSeries from './LineSeries.js';
 import U from '../Core/Utilities.js';
 var objectEach = U.objectEach, pick = U.pick;
-import '../Series/LineSeries.js';
-import '../Core/Options.js';
-var Series = H.Series;
 /**
  * Area series type.
  *
@@ -280,7 +278,7 @@ BaseSeries.seriesType('area', 'line',
      * @private
      */
     getGraphPath: function (points) {
-        var getGraphPath = Series.prototype.getGraphPath, graphPath, options = this.options, stacking = options.stacking, yAxis = this.yAxis, topPath, bottomPath, bottomPoints = [], graphPoints = [], seriesIndex = this.index, i, areaPath, plotX, stacks = yAxis.stacking.stacks[this.stackKey], threshold = options.threshold, translatedThreshold = Math.round(// #10909
+        var getGraphPath = LineSeries.prototype.getGraphPath, graphPath, options = this.options, stacking = options.stacking, yAxis = this.yAxis, topPath, bottomPath, bottomPoints = [], graphPoints = [], seriesIndex = this.index, i, areaPath, plotX, stacks = yAxis.stacking.stacks[this.stackKey], threshold = options.threshold, translatedThreshold = Math.round(// #10909
         yAxis.getThreshold(options.threshold)), isNull, yBottom, connectNulls = pick(// #10574
         options.connectNulls, stacking === 'percent'), 
         // To display null points in underlying stacked series, this
@@ -379,7 +377,7 @@ BaseSeries.seriesType('area', 'line',
         // Define or reset areaPath
         this.areaPath = [];
         // Call the base method
-        Series.prototype.drawGraph.apply(this);
+        LineSeries.prototype.drawGraph.apply(this);
         // Define local variables
         var series = this, areaPath = this.areaPath, options = this.options, zones = this.zones, props = [[
                 'area',

@@ -34,15 +34,18 @@ export interface StateHoverOptions {
 }
 
 export interface StateInactiveOptions {
-    // nothing here yet
+    color?: ColorType;
+    dashStyle?: Highcharts.DashStyleValue;
 }
 
 export interface StateNormalOptions {
-    // nothing here yet
+    color?: ColorType;
+    dashStyle?: Highcharts.DashStyleValue;
 }
 
 export interface StateSelectOptions extends StateHoverOptions {
-    // nothing here yet
+    color?: ColorType;
+    dashStyle?: Highcharts.DashStyleValue;
 }
 
 export type StatesOptionsKey = (''|keyof StatesOptions);

@@ -13,11 +13,13 @@
 'use strict';
 
 import type ColorType from '../Color/ColorType';
+import type SeriesOptions from '../Series/SeriesOptions';
 import Axis from '../Axis/Axis.js';
 import Axis3D from '../Axis/Axis3D.js';
 import Chart from './Chart.js';
 import Fx from '../Animation/Fx.js';
 import H from '../Globals.js';
+import LineSeries from '../../Series/LineSeries.js';
 import Math3D from '../../Extensions/Math3D.js';
 const {
     perspective,
@@ -58,16 +60,16 @@ declare global {
         interface ChartOptions {
             options3d?: Chart3D.Options;
         }
-        interface Edge3dObject extends Position3dObject {
-            xDir: Position3dObject;
+        interface Edge3DObject extends Position3DObject {
+            xDir: Position3DObject;
         }
-        interface Stack3dDictionary {
-            [index: number]: Stack3dDictionaryObject;
+        interface Stack3DDictionary {
+            [index: number]: Stack3DDictionaryObject;
             totalStacks: number;
         }
-        interface Stack3dDictionaryObject {
+        interface Stack3DDictionaryObject {
             position: number;
-            series: Array<Series>;
+            series: Array<LineSeries>;
         }
     }
 }
@@ -87,7 +89,7 @@ namespace Chart3D {
      * */
 
     export interface FrameObject extends FrameOptions {
-        axes: Record<string, Record<string, (Highcharts.Edge3dObject|null)>>;
+        axes: Record<string, Record<string, (Highcharts.Edge3DObject|null)>>;
         back: FrameSideObject;
         bottom: FrameSideObject;
         front: FrameSideObject;
@@ -176,7 +178,7 @@ namespace Chart3D {
                 zm = 0,
                 zp = options3d.depth,
                 faceOrientation = function (
-                    vertexes: Array<Highcharts.Position3dObject>
+                    vertexes: Array<Highcharts.Position3DObject>
                 ): number {
                     var area = shapeArea3D(vertexes, chart);
 
@@ -365,7 +367,7 @@ namespace Chart3D {
                     );
                 };
 
-                var yEdges = [] as Array<Highcharts.Edge3dObject>;
+                var yEdges = [] as Array<Highcharts.Edge3DObject>;
 
                 if (isValidEdge(ret.left, ret.front)) {
                     yEdges.push({
@@ -400,7 +402,7 @@ namespace Chart3D {
                     });
                 }
 
-                var xBottomEdges = [] as Array<Highcharts.Edge3dObject>;
+                var xBottomEdges = [] as Array<Highcharts.Edge3DObject>;
 
                 if (isValidEdge(ret.bottom, ret.front)) {
                     xBottomEdges.push({
@@ -419,7 +421,7 @@ namespace Chart3D {
                     });
                 }
 
-                var xTopEdges = [] as Array<Highcharts.Edge3dObject>;
+                var xTopEdges = [] as Array<Highcharts.Edge3DObject>;
 
                 if (isValidEdge(ret.top, ret.front)) {
                     xTopEdges.push({
@@ -438,7 +440,7 @@ namespace Chart3D {
                     });
                 }
 
-                var zBottomEdges = [] as Array<Highcharts.Edge3dObject>;
+                var zBottomEdges = [] as Array<Highcharts.Edge3DObject>;
 
                 if (isValidEdge(ret.bottom, ret.left)) {
                     zBottomEdges.push({
@@ -457,7 +459,7 @@ namespace Chart3D {
                     });
                 }
 
-                var zTopEdges = [] as Array<Highcharts.Edge3dObject>;
+                var zTopEdges = [] as Array<Highcharts.Edge3DObject>;
 
                 if (isValidEdge(ret.top, ret.left)) {
                     zTopEdges.push({
@@ -477,10 +479,10 @@ namespace Chart3D {
                 }
 
                 var pickEdge = function (
-                    edges: Array<Highcharts.Edge3dObject>,
+                    edges: Array<Highcharts.Edge3DObject>,
                     axis: string,
                     mult: number
-                ): (Highcharts.Edge3dObject|null) {
+                ): (Highcharts.Edge3DObject|null) {
                     if (edges.length === 0) {
                         return null;
                     }
@@ -590,7 +592,7 @@ namespace Chart3D {
                     minY: Number.MAX_VALUE,
                     maxY: -Number.MAX_VALUE
                 },
-                corners: Array<Highcharts.Position3dObject>,
+                corners: Array<Highcharts.Position3DObject>,
                 scale = 1;
 
             // Top left corners:
@@ -626,7 +628,7 @@ namespace Chart3D {
             corners = perspective(corners, chart, false);
 
             // Get bounding box of 3D element:
-            corners.forEach(function (corner: Highcharts.Position3dObject): void {
+            corners.forEach(function (corner: Highcharts.Position3DObject): void {
                 bbox3d.minX = Math.min(bbox3d.minX, corner.x);
                 bbox3d.maxX = Math.max(bbox3d.maxX, corner.x);
                 bbox3d.minY = Math.min(bbox3d.minY, corner.y);
@@ -958,7 +960,7 @@ namespace Chart3D {
     function onAddSeries(
         this: Chart,
         e: {
-            options: Highcharts.SeriesOptions;
+            options: SeriesOptions;
         }
     ): void {
         if (this.is3d()) {
@@ -1848,9 +1850,7 @@ namespace Chart3D {
         var options = this.options;
 
         if (this.is3d()) {
-            (options.series || []).forEach(function (
-                s: Highcharts.SeriesOptions
-            ): void {
+            (options.series || []).forEach(function (s): void {
                 var type = s.type ||
                     (options.chart as any).type ||
                     (options.chart as any).defaultSeriesType;

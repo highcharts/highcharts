@@ -59,7 +59,7 @@ var ColumnSeries = /** @class */ (function (_super) {
      * @private
      * @function Highcharts.seriesTypes.column#init
      */
-    ColumnSeries.prototype.init = function () {
+    ColumnSeries.prototype.init = function (chart, options) {
         _super.prototype.init.apply(this, arguments);
         var series = this, chart = series.chart;
         // if the series is added dynamically, force redraw of other

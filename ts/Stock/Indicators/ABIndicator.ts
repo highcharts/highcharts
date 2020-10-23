@@ -6,7 +6,10 @@
  *
  * */
 
+'use strict';
+
 import type CSSObject from '../../Core/Renderer/CSSObject';
+import type LineSeries from '../../Series/LineSeries';
 import BaseSeries from '../../Core/Series/Series.js';
 import MultipleLinesMixin from '../../Mixins/MultipleLines.js';
 import U from '../../Core/Utilities.js';
@@ -31,7 +34,7 @@ declare global {
             public options: ABandsIndicatorOptions;
             public pointClass: typeof ABandsIndicatorPoint;
             public points: Array<ABandsIndicatorPoint>;
-            public getValues<TLinkedSeries extends Series>(
+            public getValues<TLinkedSeries extends LineSeries>(
                 series: TLinkedSeries,
                 params: ABandsIndicatorParamsOptions
             ): (IndicatorValuesObject<TLinkedSeries>|undefined);
@@ -56,7 +59,7 @@ declare global {
     }
 }
 
-declare module '../../Core/Series/Types' {
+declare module '../../Core/Series/SeriesType' {
     interface SeriesTypeRegistry {
         abands: typeof Highcharts.ABandsIndicator;
     }
@@ -166,7 +169,7 @@ BaseSeries.seriesType<typeof Highcharts.ABandsIndicator>(
         nameBase: 'Acceleration Bands',
         nameComponents: ['period', 'factor'],
         linesApiNames: ['topLine', 'bottomLine'],
-        getValues: function <TLinkedSeries extends Highcharts.Series> (
+        getValues: function <TLinkedSeries extends LineSeries> (
             this: Highcharts.ABandsIndicator,
             series: TLinkedSeries,
             params: Highcharts.ABandsIndicatorParamsOptions

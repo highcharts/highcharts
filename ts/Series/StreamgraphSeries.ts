@@ -10,6 +10,9 @@
  *
  * */
 
+'use strict';
+
+import type { SeriesStatesOptions } from '../Core/Series/SeriesOptions';
 import BaseSeries from '../Core/Series/Series.js';
 
 /**
@@ -38,7 +41,7 @@ declare global {
         }
         interface StreamgraphSeriesOptions extends AreaSplineSeriesOptions {
             fillOpacity?: number;
-            states?: SeriesStatesOptionsObject<StreamgraphSeries>;
+            states?: SeriesStatesOptions<StreamgraphSeries>;
         }
     }
 }
@@ -46,7 +49,7 @@ declare global {
 /**
  * @private
  */
-declare module '../Core/Series/Types' {
+declare module '../Core/Series/SeriesType' {
     interface SeriesTypeRegistry {
         streamgraph: typeof Highcharts.StreamgraphSeries;
     }

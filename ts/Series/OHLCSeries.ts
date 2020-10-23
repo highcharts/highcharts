@@ -8,13 +8,16 @@
  *
  * */
 
+'use strict';
+
 import type ColorType from '../Core/Color/ColorType';
+import type ColumnSeries from './ColumnSeries';
+import type { SeriesStatesOptions } from '../Core/Series/SeriesOptions';
+import type { StatesOptionsKey } from '../Core/Series/StatesOptions';
 import type SVGAttributes from '../Core/Renderer/SVG/SVGAttributes';
 import type SVGPath from '../Core/Renderer/SVG/SVGPath';
 import BaseSeries from '../Core/Series/Series.js';
-const {
-    seriesTypes
-} = BaseSeries;
+const { seriesTypes } = BaseSeries;
 import Point from '../Core/Series/Point.js';
 
 /**
@@ -29,10 +32,7 @@ declare global {
         }
         interface OHLCSeriesOptions extends ColumnSeriesOptions {
             upColor?: ColorType;
-            states?: SeriesStatesOptionsObject<OHLCSeries>;
-        }
-        interface Series {
-            pointArrayMap?: OHLCSeries['pointArrayMap'];
+            states?: SeriesStatesOptions<OHLCSeries>;
         }
         class OHLCPoint extends ColumnPoint {
             public close: number;
@@ -50,7 +50,6 @@ declare global {
         class OHLCSeries extends ColumnSeries {
             public data: Array<OHLCPoint>;
             public options: OHLCSeriesOptions;
-            public pointArrayMap: Array<string>;
             public pointAttrToOptions: Dictionary<string>;
             public pointClass: typeof OHLCPoint;
             public points: Array<OHLCPoint>;
@@ -64,7 +63,7 @@ declare global {
 /**
  * @private
  */
-declare module '../Core/Series/Types' {
+declare module '../Core/Series/SeriesType' {
     interface SeriesTypeRegistry {
         ohlc: typeof Highcharts.OHLCSeries;
     }
@@ -236,7 +235,7 @@ BaseSeries.seriesType<typeof Highcharts.OHLCSeries>(
         pointAttribs: function (
             this: Highcharts.OHLCSeries,
             point: Highcharts.OHLCPoint,
-            state: string
+            state: StatesOptionsKey
         ): SVGAttributes {
             var attribs = seriesTypes.column.prototype.pointAttribs.call(
                     this,
@@ -280,9 +279,7 @@ BaseSeries.seriesType<typeof Highcharts.OHLCSeries>(
             seriesTypes.column.prototype.translate.apply(series);
 
             // Do the translation
-            series.points.forEach(function (
-                point: Highcharts.OHLCPoint
-            ): void {
+            series.points.forEach(function (point): void {
                 [point.open, point.high, point.low, point.close, point.low]
                     .forEach(
                         function (value: number, i: number): void {

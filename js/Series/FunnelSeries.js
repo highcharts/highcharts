@@ -9,15 +9,15 @@
  *  !!!!!!! SOURCE GETS TRANSPILED BY TYPESCRIPT. EDIT TS FILE ONLY. !!!!!!!
  *
  * */
+'use strict';
 import BaseSeries from '../Core/Series/Series.js';
 var seriesTypes = BaseSeries.seriesTypes;
 import Chart from '../Core/Chart/Chart.js';
 import H from '../Core/Globals.js';
 var noop = H.noop;
+import LineSeries from './LineSeries.js';
 import U from '../Core/Utilities.js';
 var addEvent = U.addEvent, fireEvent = U.fireEvent, isArray = U.isArray, pick = U.pick;
-import '../Core/Options.js';
-import '../Series/LineSeries.js';
 /**
  * @private
  * @class
@@ -363,7 +363,7 @@ BaseSeries.seriesType('funnel', 'pie',
         options.verticalAlign = 'bottom';
         // Call the parent method
         if (!inside || point.visible) {
-            Highcharts.Series.prototype.alignDataLabel.call(this, point, dataLabel, options, alignTo, isNew);
+            LineSeries.prototype.alignDataLabel.call(this, point, dataLabel, options, alignTo, isNew);
         }
         if (inside) {
             if (!point.visible && point.dataLabel) {

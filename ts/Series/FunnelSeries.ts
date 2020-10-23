@@ -10,21 +10,21 @@
  *
  * */
 
-/* eslint indent: 0 */
+'use strict';
+
+/* eslint-disable indent */
 
 import type ColorType from '../Core/Color/ColorType';
 import type Point from '../Core/Series/Point';
+import type { SeriesStatesOptions } from '../Core/Series/SeriesOptions';
 import type SVGElement from '../Core/Renderer/SVG/SVGElement';
 import type SVGPath from '../Core/Renderer/SVG/SVGPath';
 import BaseSeries from '../Core/Series/Series.js';
-const {
-    seriesTypes
-} = BaseSeries;
+const { seriesTypes } = BaseSeries;
 import Chart from '../Core/Chart/Chart.js';
 import H from '../Core/Globals.js';
-const {
-    noop
-} = H;
+const { noop } = H;
+import LineSeries from './LineSeries.js';
 import U from '../Core/Utilities.js';
 const {
     addEvent,
@@ -32,6 +32,13 @@ const {
     isArray,
     pick
 } = U;
+
+declare module '../Core/Series/SeriesOptions' {
+    interface SeriesStateHoverOptions {
+        borderColor?: ColorType;
+        color?: ColorType;
+    }
+}
 
 /**
  * Internal types
@@ -90,16 +97,12 @@ declare global {
             reversed?: boolean;
             size?: null;
             dataLabels?: FunnelSeriesDataLabelsOptionsObject;
-            states?: SeriesStatesOptionsObject<FunnelSeries>;
-        }
-        interface SeriesStatesHoverOptionsObject {
-            borderColor?: ColorType;
-            color?: ColorType;
+            states?: SeriesStatesOptions<FunnelSeries>;
         }
         interface PyramidPointOptions extends FunnelPointOptions {
         }
         interface PyramidSeriesOptions extends FunnelSeriesOptions {
-            states?: SeriesStatesOptionsObject<PyramidSeries>;
+            states?: SeriesStatesOptions<PyramidSeries>;
         }
     }
 }
@@ -107,14 +110,11 @@ declare global {
 /**
  * @private
  */
-declare module '../Core/Series/Types' {
+declare module '../Core/Series/SeriesType' {
     interface SeriesTypeRegistry {
         funnel: typeof Highcharts.FunnelSeries;
     }
 }
-
-import '../Core/Options.js';
-import '../Series/LineSeries.js';
 
 /**
  * @private
@@ -599,7 +599,7 @@ BaseSeries.seriesType<typeof Highcharts.FunnelSeries>(
 
             // Call the parent method
             if (!inside || point.visible) {
-                Highcharts.Series.prototype.alignDataLabel.call(
+                LineSeries.prototype.alignDataLabel.call(
                     this,
                     point,
                     dataLabel,

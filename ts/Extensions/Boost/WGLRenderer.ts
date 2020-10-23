@@ -14,18 +14,16 @@
 
 import type Chart from '../../Core/Chart/Chart';
 import type ColorString from '../../Core/Color/ColorString';
+import type LineSeries from '../../Series/LineSeries';
 import type Point from '../../Core/Series/Point';
+import type { SeriesZonesOptions } from '../../Core/Series/SeriesOptions';
 import type SVGAttributes from '../../Core/Renderer/SVG/SVGAttributes';
 import Color from '../../Core/Color/Color.js';
-const {
-    parse: color
-} = Color;
+const { parse: color } = Color;
 import GLShader from './WGLShader.js';
 import GLVertexBuffer from './WGLVBuffer.js';
 import H from '../../Core/Globals.js';
-const {
-    doc
-} = H;
+const { doc } = H;
 import U from '../../Core/Utilities.js';
 const {
     isNumber,
@@ -68,7 +66,7 @@ declare global {
             data: Array<Array<number>>;
             settings: BoostGLOptions;
             allocateBuffer(chart: Chart): void;
-            allocateBufferForSingleSeries(series: Series): void;
+            allocateBufferForSingleSeries(series: LineSeries): void;
             clear(): void;
             destroy(): void;
             flush(): void;
@@ -76,7 +74,7 @@ declare global {
             init(canvas?: HTMLCanvasElement, noFlush?: boolean): boolean;
             inited(): boolean;
             orthoMatrix(width: number, height: number): Array<number>;
-            pushSeries(s: Series): void;
+            pushSeries(s: LineSeries): void;
             render(chart: Chart): (false|undefined);
             setOptions(options: BoostOptions): void;
             setSize(w: number, h: number): void;
@@ -92,7 +90,7 @@ declare global {
             markerFrom: number;
             markerTo?: number;
             segments: Array<Dictionary<number>>;
-            series: Series;
+            series: LineSeries;
             showMarkers: boolean;
             skipTranslation?: boolean;
             zMax: number;
@@ -213,7 +211,7 @@ function GLRenderer(
     /**
      * @private
      */
-    function seriesPointCount(series: Highcharts.Series): number {
+    function seriesPointCount(series: LineSeries): number {
         var isStacked: boolean,
             xData: Array<number>,
             s: number;
@@ -253,7 +251,7 @@ function GLRenderer(
             return;
         }
 
-        chart.series.forEach(function (series: Highcharts.Series): void {
+        chart.series.forEach(function (series: LineSeries): void {
             if (series.isSeriesBoosting) {
                 s += seriesPointCount(series);
             }
@@ -265,7 +263,7 @@ function GLRenderer(
     /**
      * @private
      */
-    function allocateBufferForSingleSeries(series: Highcharts.Series): void {
+    function allocateBufferForSingleSeries(series: LineSeries): void {
         var s = 0;
 
         if (!settings.usePreallocated) {
@@ -321,7 +319,7 @@ function GLRenderer(
      * @private
      */
     function pushSeriesData(
-        series: Highcharts.Series,
+        series: LineSeries,
         inst: Highcharts.BoostGLSeriesObject
     ): void {
         var isRange = (
@@ -413,7 +411,7 @@ function GLRenderer(
         }
 
         if (zones) {
-            zones.some(function (zone: Highcharts.SeriesZonesOptions): (boolean) {
+            zones.some(function (zone): (boolean) {
                 if (typeof zone.value === 'undefined') {
                     zoneDefColor = new Color(zone.color);
                     return true;
@@ -818,10 +816,10 @@ function GLRenderer(
             if (zones) {
                 pcolor = (zoneDefColor as any).rgba;
                 zones.some(function ( // eslint-disable-line no-loop-func
-                    zone: Highcharts.SeriesZonesOptions,
+                    zone: SeriesZonesOptions,
                     i: number
                 ): boolean {
-                    var last: Highcharts.SeriesZonesOptions =
+                    var last: SeriesZonesOptions =
                             (zones as any)[i - 1];
 
                     if (typeof zone.value !== 'undefined' && y <= zone.value) {
@@ -1033,7 +1031,7 @@ function GLRenderer(
      * @private
      * @param s {Highchart.Series} - the series to push
      */
-    function pushSeries(s: Highcharts.Series): void {
+    function pushSeries(s: LineSeries): void {
         if (series.length > 0) {
             // series[series.length - 1].to = data.length;
             if (series[series.length - 1].hasMarkers) {

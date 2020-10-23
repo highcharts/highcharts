@@ -6,9 +6,13 @@
  *
  * */
 
+'use strict';
+
 import type ColorType from '../../Core/Color/ColorType';
 import type CSSObject from '../../Core/Renderer/CSSObject';
+import type LineSeries from '../../Series/LineSeries';
 import type Point from '../../Core/Series/Point';
+import type { PointMarkerOptions } from '../../Core/Series/PointOptions';
 import type SVGElement from '../../Core/Renderer/SVG/SVGElement';
 import type SVGPath from '../../Core/Renderer/SVG/SVGPath';
 import BaseSeries from '../../Core/Series/Series.js';
@@ -23,6 +27,12 @@ const {
     objectEach
 } = U;
 
+declare module '../../Core/Series/SeriesLike' {
+    interface SeriesLike {
+        fillGraph?: boolean;
+    }
+}
+
 /* eslint-disable @typescript-eslint/interface-name-prefix */
 
 /**
@@ -35,7 +45,7 @@ declare global {
         class IKHIndicator
             extends SMAIndicator {
             public data: Array<IKHIndicatorPoint>;
-            public getValues<TLinkedSeries extends Series>(
+            public getValues<TLinkedSeries extends LineSeries>(
                 series: TLinkedSeries,
                 params: IKHIndicatorParamsOptions
             ): (IndicatorValuesObject<TLinkedSeries>|undefined);
@@ -84,7 +94,7 @@ declare global {
             chikouLine?: Record<string, CSSObject>;
             gapSize?: number;
             kijunLine?: Record<string, CSSObject>;
-            marker?: PointMarkerOptionsObject;
+            marker?: PointMarkerOptions;
             params?: IKHIndicatorParamsOptions;
             senkouSpan?: IKHIndicatorSenkouSpanOptions;
             senkouSpanA?: Record<string, CSSObject>;
@@ -114,7 +124,7 @@ declare global {
     }
 }
 
-declare module '../../Core/Series/Types' {
+declare module '../../Core/Series/SeriesType' {
     interface SeriesTypeRegistry {
         ikh: typeof Highcharts.IKHIndicator;
     }
@@ -157,7 +167,7 @@ function getClosestPointRange(axis: Highcharts.Axis): (number|undefined) {
         xData: Array<number>,
         i: number;
 
-    axis.series.forEach(function (series: Highcharts.Series): void {
+    axis.series.forEach(function (series): void {
 
         if (series.xData) {
             xData = series.xData;
@@ -235,8 +245,7 @@ function drawSenkouSpan(
 // Data integrity in Ichimoku is different than default "averages":
 // Point: [undefined, value, value, ...] is correct
 // Point: [undefined, undefined, undefined, ...] is incorrect
-H.approximations['ichimoku-averages'] = function ():
-(Array<(number|null|undefined)>|undefined) {
+H.approximations['ichimoku-averages'] = function (): (Array<(number|null|undefined)>|undefined) {
     var ret: Array<(number|null|undefined)> = [],
         isEmptyRange: (boolean|undefined);
 
@@ -890,7 +899,7 @@ BaseSeries.seriesType<typeof Highcharts.IKHIndicator>(
 
             return path;
         },
-        getValues: function<TLinkedSeries extends Highcharts.Series> (
+        getValues: function<TLinkedSeries extends LineSeries> (
             series: TLinkedSeries,
             params: Highcharts.IKHIndicatorParamsOptions
         ): (Highcharts.IndicatorValuesObject<TLinkedSeries>|undefined) {

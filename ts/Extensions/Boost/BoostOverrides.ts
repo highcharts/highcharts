@@ -17,11 +17,13 @@ import type {
     PointOptions,
     PointShortOptions
 } from '../../Core/Series/PointOptions';
-import type { SeriesPlotOptionsType } from '../../Core/Series/Types';
+import type { SeriesTypePlotOptions } from '../../Core/Series/SeriesType';
 import type SVGAttributes from '../../Core/Renderer/SVG/SVGAttributes';
 import type SVGPath from '../../Core/Renderer/SVG/SVGPath';
+import BaseSeries from '../../Core/Series/Series.js';
+const { seriesTypes } = BaseSeries;
 import Chart from '../../Core/Chart/Chart.js';
-import H from '../../Core/Globals.js';
+import LineSeries from '../../Series/LineSeries.js';
 import Point from '../../Core/Series/Point.js';
 import U from '../../Core/Utilities.js';
 const {
@@ -43,6 +45,30 @@ declare module '../../Core/Chart/ChartLike'{
     }
 }
 
+declare module '../../Core/Series/SeriesLike' {
+    interface SeriesLike {
+        alteredByBoost?: Array<Highcharts.BoostAlteredObject>;
+        fillOpacity?: boolean;
+        isSeriesBoosting?: boolean;
+        /** @requires modules/boost */
+        destroyGraphics(): void;
+        /** @requires modules/boost */
+        enterBoost(): void;
+        /** @requires modules/boost */
+        exitBoost(): void;
+        /** @requires modules/boost */
+        hasExtremes(checkX?: boolean): boolean;
+        /** @requires modules/boost */
+        getPoint(boostPoint: (Record<string, number>|Point)): Point;
+    }
+}
+
+declare module '../../Core/Series/SeriesOptions' {
+    interface SeriesOptions {
+        boostData?: Array<unknown>;
+    }
+}
+
 /**
  * Internal types
  * @private
@@ -55,26 +81,6 @@ declare global {
             val: unknown;
             value: unknown;
         }
-        interface Series {
-            alteredByBoost?: Array<BoostAlteredObject>;
-            /** @requires modules/boost */
-            destroyGraphics(): void;
-            /** @requires modules/boost */
-            enterBoost(): void;
-            /** @requires modules/boost */
-            exitBoost(): void;
-            /** @requires modules/boost */
-            hasExtremes(checkX?: boolean): boolean;
-        }
-        interface SeriesOptions {
-            boostData?: Array<unknown>;
-        }
-    }
-}
-
-declare module '../../Core/Series/Types' {
-    interface SeriesLike {
-        fillOpacity?: boolean;
     }
 }
 
@@ -89,9 +95,7 @@ import boostableMap from './BoostableMap.js';
 
 var boostEnabled = butils.boostEnabled,
     shouldForceChartSeriesBoosting = butils.shouldForceChartSeriesBoosting,
-    Series = H.Series,
-    seriesTypes = H.seriesTypes,
-    plotOptions = getOptions().plotOptions as SeriesPlotOptionsType;
+    plotOptions = getOptions().plotOptions as SeriesTypePlotOptions;
 
 /**
  * Returns true if the chart is in series boost mode.
@@ -166,8 +170,8 @@ Chart.prototype.getBoostClipRect = function (
  * @return {Highcharts.Point}
  *         A Point object as per https://api.highcharts.com/highcharts#Point
  */
-Series.prototype.getPoint = function (
-    boostPoint: (Highcharts.Dictionary<number>|Point)
+LineSeries.prototype.getPoint = function (
+    boostPoint: (Record<string, number>|Point)
 ): Point {
     var point: Point = boostPoint as any,
         xData = (
@@ -203,8 +207,8 @@ Series.prototype.getPoint = function (
 /* eslint-disable no-invalid-this */
 
 // Return a point instance from the k-d-tree
-wrap(Series.prototype, 'searchPoint', function (
-    this: Highcharts.Series,
+wrap(LineSeries.prototype, 'searchPoint', function (
+    this: LineSeries,
     proceed: Function
 ): (Point|undefined) {
     return this.getPoint(
@@ -240,8 +244,8 @@ wrap(Point.prototype, 'haloPath', function (
     return halo;
 });
 
-wrap(Series.prototype, 'markerAttribs', function (
-    this: Highcharts.Series,
+wrap(LineSeries.prototype, 'markerAttribs', function (
+    this: LineSeries,
     proceed: Function,
     point: Point
 ): SVGAttributes {
@@ -272,7 +276,7 @@ wrap(Series.prototype, 'markerAttribs', function (
  * Normally this is handled by Series.destroy that calls Point.destroy,
  * but the fake search points are not registered like that.
  */
-addEvent(Series, 'destroy', function (): void {
+addEvent(LineSeries, 'destroy', function (): void {
     var series = this,
         chart = series.chart;
 
@@ -298,8 +302,8 @@ addEvent(Series, 'destroy', function (): void {
  * If we use this in the core, we can add the hook
  * to hasExtremes to the methods directly.
  */
-wrap(Series.prototype, 'getExtremes', function (
-    this: Highcharts.Series,
+wrap(LineSeries.prototype, 'getExtremes', function (
+    this: LineSeries,
     proceed: Function
 ): Highcharts.DataExtremesObject {
     if (!this.isSeriesBoosting || (!this.hasExtremes || !this.hasExtremes())) {
@@ -326,7 +330,7 @@ wrap(Series.prototype, 'getExtremes', function (
      * @private
      */
     function branch(
-        this: Highcharts.Series,
+        this: LineSeries,
         proceed: Function
     ): void {
         var letItPass = this.options.stacking &&
@@ -350,7 +354,7 @@ wrap(Series.prototype, 'getExtremes', function (
         }
     }
 
-    wrap(Series.prototype, method, branch);
+    wrap(LineSeries.prototype, method, branch);
 
     // A special case for some types - their translate method is already wrapped
     if (method === 'translate') {
@@ -371,8 +375,8 @@ wrap(Series.prototype, 'getExtremes', function (
 
 // If the series is a heatmap or treemap, or if the series is not boosting
 // do the default behaviour. Otherwise, process if the series has no extremes.
-wrap(Series.prototype, 'processData', function (
-    this: Highcharts.Series,
+wrap(LineSeries.prototype, 'processData', function (
+    this: LineSeries,
     proceed: Function
 ): void {
 
@@ -434,7 +438,7 @@ wrap(Series.prototype, 'processData', function (
     }
 });
 
-addEvent(Series, 'hide', function (): void {
+addEvent(LineSeries, 'hide', function (): void {
     if (this.canvas && this.renderTarget) {
         if (this.ogl) {
             this.ogl.clear();
@@ -449,14 +453,14 @@ addEvent(Series, 'hide', function (): void {
  *
  * @function Highcharts.Series#enterBoost
  */
-Series.prototype.enterBoost = function (): void {
+LineSeries.prototype.enterBoost = function (): void {
 
     this.alteredByBoost = [];
 
     // Save the original values, including whether it was an own property or
     // inherited from the prototype.
     ['allowDG', 'directTouch', 'stickyTracking'].forEach(function (
-        this: Highcharts.Series,
+        this: LineSeries,
         prop: string
     ): void {
         (this.alteredByBoost as any).push({
@@ -484,11 +488,11 @@ Series.prototype.enterBoost = function (): void {
  *
  * @function Highcharts.Series#exitBoost
  */
-Series.prototype.exitBoost = function (): void {
+LineSeries.prototype.exitBoost = function (): void {
     // Reset instance properties and/or delete instance properties and go back
     // to prototype
     (this.alteredByBoost || []).forEach(function (
-        this: Highcharts.Series,
+        this: LineSeries,
         setting: Highcharts.BoostAlteredObject
     ): void {
         if (setting.own) {
@@ -514,7 +518,7 @@ Series.prototype.exitBoost = function (): void {
  *
  * @return {boolean}
  */
-Series.prototype.hasExtremes = function (checkX?: boolean): boolean {
+LineSeries.prototype.hasExtremes = function (checkX?: boolean): boolean {
     var options = this.options,
         data: Array<(PointOptions|PointShortOptions)> = options.data as any,
         xAxis = this.xAxis && this.xAxis.options,
@@ -541,7 +545,7 @@ Series.prototype.hasExtremes = function (checkX?: boolean): boolean {
  *
  * @function Highcharts.Series#destroyGraphics
  */
-Series.prototype.destroyGraphics = function (this: Highcharts.Series): void {
+LineSeries.prototype.destroyGraphics = function (): void {
     var series = this,
         points = this.points,
         point: Point,

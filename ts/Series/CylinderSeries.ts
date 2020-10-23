@@ -12,16 +12,17 @@
  *
  * */
 
+'use strict';
+
 import type ColorType from '../Core/Color/ColorType';
+import type ColumnSeries from '../Series/ColumnSeries';
 import type Chart from '../Core/Chart/Chart';
+import type { SeriesStatesOptions } from '../Core/Series/SeriesOptions';
 import type SVGAttributes from '../Core/Renderer/SVG/SVGAttributes';
 import type SVGElement from '../Core/Renderer/SVG/SVGElement';
 import type SVGPath from '../Core/Renderer/SVG/SVGPath';
 import Color from '../Core/Color/Color.js';
-const {
-    parse: color
-} = Color;
-import _ColumnSeries from '../Series/ColumnSeries.js';
+const { parse: color } = Color;
 import H from '../Core/Globals.js';
 const {
     charts,
@@ -43,10 +44,9 @@ const {
     pick
 } = U;
 
-/**
- * @private
- */
-declare module '../Core/Series/Types' {
+import '../Series/ColumnSeries.js';
+
+declare module '../Core/Series/SeriesType' {
     interface SeriesTypeRegistry {
         cylinder: typeof Highcharts.CylinderSeries;
     }
@@ -84,7 +84,7 @@ declare global {
             shapeType?: string;
         }
         interface CylinderSeriesOptions extends ColumnSeriesOptions {
-            states?: SeriesStatesOptionsObject<CylinderSeries>;
+            states?: SeriesStatesOptions<CylinderSeries>;
         }
         interface Elements3dObject {
             cylinder?: CylinderMethodsObject;
@@ -403,7 +403,7 @@ RendererProto.getCylinderEnd = function (
         centerZ = depth / 2 + shapeArgs.z,
 
         // points could be generated in a loop, but readability will plummet
-        points: Array<Highcharts.Position3dObject> = [{ // M - starting point
+        points: Array<Highcharts.Position3DObject> = [{ // M - starting point
             x: 0,
             y: y,
             z: radius
@@ -468,7 +468,7 @@ RendererProto.getCylinderEnd = function (
 
     // rotete to match chart's beta and translate to the shape center
     points.forEach(function (
-        point: Highcharts.Position3dObject,
+        point: Highcharts.Position3DObject,
         i: number
     ): void {
         x = point.x;

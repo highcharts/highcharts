@@ -6,7 +6,11 @@
  *
  * */
 
+'use strict';
+
 import type CSSObject from '../../Core/Renderer/CSSObject';
+import type LineSeries from '../../Series/LineSeries';
+import type { PointMarkerOptions } from '../../Core/Series/PointOptions';
 import BaseSeries from '../../Core/Series/Series.js';
 import MultipleLinesMixin from '../../Mixins/MultipleLines.js';
 import ReduceArrayMixin from '../../Mixins/ReduceArray.js';
@@ -22,13 +26,12 @@ const {
  */
 declare global {
     namespace Highcharts {
-        class StochasticIndicator
-            extends SMAIndicator implements MultipleLinesIndicator {
+        class StochasticIndicator extends SMAIndicator implements MultipleLinesIndicator {
             public data: Array<StochasticIndicatorPoint>;
             public getTranslatedLinesNames: MultipleLinesMixin[
                 'getTranslatedLinesNames'
             ];
-            public getValues<TLinkedSeries extends Series>(
+            public getValues<TLinkedSeries extends LineSeries>(
                 series: TLinkedSeries,
                 params: StochasticIndicatorParamsOptions
             ): (IndicatorValuesObject<TLinkedSeries>|undefined);
@@ -56,7 +59,7 @@ declare global {
         interface StochasticIndicatorOptions
             extends SMAIndicatorOptions, MultipleLinesIndicatorOptions {
             dataGrouping?: DataGroupingOptionsObject;
-            marker?: PointMarkerOptionsObject;
+            marker?: PointMarkerOptions;
             params?: StochasticIndicatorParamsOptions;
             smoothedLine?: Record<string, CSSObject>;
             tooltip?: TooltipOptions;
@@ -64,7 +67,7 @@ declare global {
     }
 }
 
-declare module '../../Core/Series/Types' {
+declare module '../../Core/Series/SeriesType' {
     interface SeriesTypeRegistry {
         stochastic: typeof Highcharts.StochasticIndicator;
     }
@@ -171,7 +174,7 @@ BaseSeries.seriesType<typeof Highcharts.StochasticIndicator>(
                 }
             }, this.options);
         },
-        getValues: function<TLinkedSeries extends Highcharts.Series> (
+        getValues: function<TLinkedSeries extends LineSeries> (
             this: Highcharts.StochasticIndicator,
             series: TLinkedSeries,
             params: Highcharts.StochasticIndicatorParamsOptions
@@ -195,7 +198,7 @@ BaseSeries.seriesType<typeof Highcharts.StochasticIndicator>(
                 K: number,
                 D: number|null = null,
                 points: (
-                    Highcharts.IndicatorValuesObject<Highcharts.Series>|
+                    Highcharts.IndicatorValuesObject<LineSeries>|
                     undefined
                 ),
                 extremes: [number, number],

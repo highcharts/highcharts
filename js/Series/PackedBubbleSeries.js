@@ -7,18 +7,20 @@
  *  !!!!!!! SOURCE GETS TRANSPILED BY TYPESCRIPT. EDIT TS FILE ONLY. !!!!!!!
  *
  * */
+'use strict';
 import BaseSeries from '../Core/Series/Series.js';
 import Chart from '../Core/Chart/Chart.js';
 import Color from '../Core/Color/Color.js';
 var color = Color.parse;
 import H from '../Core/Globals.js';
+import LineSeries from '../Series/LineSeries.js';
 import Point from '../Core/Series/Point.js';
 import U from '../Core/Utilities.js';
 var addEvent = U.addEvent, clamp = U.clamp, defined = U.defined, extend = U.extend, extendClass = U.extendClass, fireEvent = U.fireEvent, isArray = U.isArray, isNumber = U.isNumber, merge = U.merge, pick = U.pick;
 import './Bubble/BubbleSeries.js';
 import '../Series/Networkgraph/DraggableNodes.js';
 import '../Series/Networkgraph/Layouts.js';
-var Series = H.Series, Reingold = H.layouts['reingold-fruchterman'], dragNodesMixin = H.dragNodesMixin;
+var Reingold = H.layouts['reingold-fruchterman'], dragNodesMixin = H.dragNodesMixin;
 /**
  * Formatter callback function.
  *
@@ -561,7 +563,7 @@ BaseSeries.seriesType('packedbubble', 'bubble',
         return allDataPoints;
     },
     init: function () {
-        Series.prototype.init.apply(this, arguments);
+        LineSeries.prototype.init.apply(this, arguments);
         // When one series is modified, the others need to be recomputed
         addEvent(this, 'updatedData', function () {
             this.chart.series.forEach(function (s) {
@@ -574,7 +576,7 @@ BaseSeries.seriesType('packedbubble', 'bubble',
     },
     render: function () {
         var series = this, dataLabels = [];
-        Series.prototype.render.apply(this, arguments);
+        LineSeries.prototype.render.apply(this, arguments);
         // #10823 - dataLabels should stay visible
         // when enabled allowOverlap.
         if (!series.options.dataLabels.allowOverlap) {
@@ -596,7 +598,7 @@ BaseSeries.seriesType('packedbubble', 'bubble',
     // Needed because of z-indexing issue if point is added in series.group
     setVisible: function () {
         var series = this;
-        Series.prototype.setVisible.apply(series, arguments);
+        LineSeries.prototype.setVisible.apply(series, arguments);
         if (series.parentNodeLayout && series.graph) {
             if (series.visible) {
                 series.graph.show();
@@ -629,14 +631,14 @@ BaseSeries.seriesType('packedbubble', 'bubble',
     drawDataLabels: function () {
         var textPath = this.options.dataLabels.textPath, points = this.points;
         // Render node labels:
-        Series.prototype.drawDataLabels.apply(this, arguments);
+        LineSeries.prototype.drawDataLabels.apply(this, arguments);
         // Render parentNode labels:
         if (this.parentNode) {
             this.parentNode.formatPrefix = 'parentNode';
             this.points = [this.parentNode];
             this.options.dataLabels.textPath =
                 this.options.dataLabels.parentNodeTextPath;
-            Series.prototype.drawDataLabels.apply(this, arguments);
+            LineSeries.prototype.drawDataLabels.apply(this, arguments);
             // Restore nodes
             this.points = points;
             this.options.dataLabels.textPath = textPath;
@@ -1231,9 +1233,9 @@ BaseSeries.seriesType('packedbubble', 'bubble',
                     this.parentNode.dataLabel.destroy();
             }
         }
-        H.Series.prototype.destroy.apply(this, arguments);
+        LineSeries.prototype.destroy.apply(this, arguments);
     },
-    alignDataLabel: H.Series.prototype.alignDataLabel
+    alignDataLabel: LineSeries.prototype.alignDataLabel
 }, {
     /**
      * Destroy point.

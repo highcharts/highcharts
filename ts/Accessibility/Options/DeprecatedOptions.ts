@@ -61,6 +61,7 @@
 
 'use strict';
 
+import type LineSeries from '../../Series/LineSeries';
 import Axis from '../../Core/Axis/Axis.js';
 import Chart from '../../Core/Chart/Chart.js';
 import U from '../../Core/Utilities.js';
@@ -209,7 +210,7 @@ function copyDeprecatedSeriesOptions(chart: Chart): void {
             'accessibility', 'keyboardNavigation', 'enabled'
         ]
     };
-    chart.series.forEach(function (series: Highcharts.Series): void {
+    chart.series.forEach(function (series: LineSeries): void {
         // Handle series wide options
         Object.keys(oldToNewSeriesOptions).forEach(function (
             oldOption: string

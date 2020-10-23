@@ -17,9 +17,14 @@ import type {
     HTMLDOMElement,
     SVGDOMElement
 } from './Renderer/DOMElementType';
-import type HTMLElement from './Renderer/HTML/HTMLElement';
 import type SVGAttributes from './Renderer/SVG/SVGAttributes';
 import H from './Globals.js';
+const {
+    charts,
+    doc,
+    win
+} = H;
+
 type NonArray<T> = T extends Array<unknown> ? never : T;
 type NonFunction<T> = T extends Function ? never : T;
 type NullType = (null|undefined);
@@ -619,10 +624,6 @@ declare global {
  */
 
 H.timers = [];
-
-var charts = H.charts,
-    doc = H.doc,
-    win = H.win;
 
 /**
  * Provide error messages for debugging, with links to online explanation. This
@@ -2332,8 +2333,8 @@ const addEvent = H.addEvent = function<T> (
 
     // Allow click events added to points, otherwise they will be prevented by
     // the TouchPointer.pinch function after a pinch zoom operation (#7091).
-    if (H.Point &&
-        el instanceof H.Point &&
+    if ((H as any).Point && // without H a dependency loop occurs
+        el instanceof (H as any).Point &&
         (el as any).series &&
         (el as any).series.chart
     ) {

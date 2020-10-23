@@ -8,6 +8,9 @@
  *
  * */
 
+'use strict';
+
+import type LineSeries from '../Series/LineSeries';
 import type SVGAttributes from '../Core/Renderer/SVG/SVGAttributes';
 import H from '../Core/Globals.js';
 
@@ -35,19 +38,19 @@ declare global {
             isValid: ColorMapPoint['isValid'];
             setState: ColorMapPoint['setState'];
         }
-        interface ColorMapSeries extends Series {
+        interface ColorMapSeries extends LineSeries {
             colorProp?: string;
             data: Array<ColorMapPoint>;
             parallelArrays: Array<string>;
             pointArrayMap: Array<string>;
-            pointAttribs: ColumnSeries['pointAttribs'];
+            pointAttribs: LineSeries['pointAttribs'];
             trackerGroups: Array<string>;
             colorAttribs(point: ColorMapPoint): SVGAttributes;
         }
         interface ColorMapSeriesMixin {
             axisTypes: ColorSeries['axisTypes'];
             colorAttribs: ColorMapSeries['colorAttribs'];
-            colorKey: ColorSeries['colorKey'];
+            colorKey?: ColorSeries['colorKey'];
             getSymbol: () => void;
             parallelArrays: ColorMapSeries['parallelArrays'];
             pointArrayMap: ColorMapSeries['pointArrayMap'];

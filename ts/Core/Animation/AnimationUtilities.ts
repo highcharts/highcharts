@@ -14,6 +14,7 @@ import type AnimationOptionsObject from './AnimationOptionsObject';
 import type Chart from '../Chart/Chart';
 import type CSSObject from '../Renderer/CSSObject';
 import type { HTMLDOMElement } from '../Renderer/DOMElementType';
+import type LineSeries from '../../Series/LineSeries';
 import type SVGAttributes from '../Renderer/SVG/SVGAttributes';
 import type SVGElement from '../Renderer/SVG/SVGElement';
 import Fx from './Fx.js';
@@ -47,7 +48,7 @@ declare global {
         function getDeferredAnimation(
             chart: Chart,
             animation: Partial<AnimationOptionsObject>,
-            series?: Series
+            series?: LineSeries
         ): Partial<AnimationOptionsObject>;
         function setAnimation(
             animation: (boolean|Partial<AnimationOptionsObject>|undefined),
@@ -129,7 +130,7 @@ const animObject = H.animObject = function animObject(
 const getDeferredAnimation = H.getDeferredAnimation = function (
     chart: Chart,
     animation: (false|DeepPartial<AnimationOptionsObject>),
-    series?: Highcharts.Series
+    series?: LineSeries
 ): Partial<AnimationOptionsObject> {
 
     const labelAnimation = animObject(animation);

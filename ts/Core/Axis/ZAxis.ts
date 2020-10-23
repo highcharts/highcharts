@@ -171,7 +171,7 @@ class ZAxis extends Axis implements AxisLike {
         }
 
         // loop through this axis' series
-        axis.series.forEach(function (series: Highcharts.Series): void {
+        axis.series.forEach(function (series): void {
 
             if (
                 series.visible ||

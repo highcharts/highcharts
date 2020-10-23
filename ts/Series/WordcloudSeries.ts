@@ -12,22 +12,22 @@
 
 'use strict';
 
+import type ColumnSeries from './ColumnSeries.js';
+import type CSSObject from '../Core/Renderer/CSSObject';
 import type {
     PointOptions,
     PointShortOptions
 } from '../Core/Series/PointOptions';
-import type CSSObject from '../Core/Renderer/CSSObject';
+import type { SeriesStatesOptions } from '../Core/Series/SeriesOptions';
+import type { StatesOptionsKey } from '../Core/Series/StatesOptions';
 import type SVGAttributes from '../Core/Renderer/SVG/SVGAttributes';
 import type SVGElement from '../Core/Renderer/SVG/SVGElement';
 import BaseSeries from '../Core/Series/Series.js';
 import DrawPointMixin from '../Mixins/DrawPoint.js';
-const {
-    drawPoint
-} = DrawPointMixin;
+const { drawPoint } = DrawPointMixin;
 import H from '../Core/Globals.js';
-const {
-    noop
-} = H;
+const { noop } = H;
+import LineSeries from './LineSeries.js';
 import PolygonMixin from '../Mixins/Polygon.js';
 const {
     getBoundingBoxFromPolygon,
@@ -46,6 +46,8 @@ const {
     isObject,
     merge
 } = U;
+
+import './ColumnSeries.js';
 
 /**
  * Internal types
@@ -67,7 +69,6 @@ declare global {
             public shouldDraw(): boolean;
         }
         class WordcloudSeries extends ColumnSeries {
-            public animate: Series['animate'];
             public data: Array<WordcloudPoint>;
             public options: WordcloudSeriesOptions;
             public placementStrategy: Dictionary<WordcloudPlacementFunction>;
@@ -87,7 +88,7 @@ declare global {
             public hasData(): boolean;
             public pointAttribs(
                 point: WordcloudPoint,
-                state?: string
+                state?: StatesOptionsKey
             ): SVGAttributes;
         }
         interface WordcloudFieldObject extends PolygonBoxObject, SizeObject {
@@ -121,7 +122,7 @@ declare global {
             placementStrategy?: string;
             rotation?: WordcloudSeriesRotationOptions;
             spiral?: string;
-            states?: SeriesStatesOptionsObject<WordcloudSeries>;
+            states?: SeriesStatesOptions<WordcloudSeries>;
             style?: CSSObject;
         }
         interface WordcloudSeriesRotationOptions {
@@ -161,15 +162,11 @@ declare global {
     }
 }
 
-declare module '../Core/Series/Types' {
+declare module '../Core/Series/SeriesType' {
     interface SeriesTypeRegistry {
         wordcloud: typeof Highcharts.WordcloudSeries;
     }
 }
-
-import './ColumnSeries.js';
-
-var Series = H.Series;
 
 /**
  * Detects if there is a collision between two rectangles.
@@ -912,7 +909,7 @@ var wordCloudOptions: Highcharts.WordcloudSeriesOptions = {
 
 // Properties of the WordCloud series.
 var wordCloudSeries: Partial<Highcharts.WordcloudSeries> = {
-    animate: Series.prototype.animate,
+    animate: LineSeries.prototype.animate,
     animateDrilldown: noop as any,
     animateDrillupFrom: noop as any,
     setClip: noop as any,
@@ -927,7 +924,7 @@ var wordCloudSeries: Partial<Highcharts.WordcloudSeries> = {
             tickPositions: []
         };
 
-        Series.prototype.bindAxes.call(this);
+        LineSeries.prototype.bindAxes.call(this);
         extend(this.yAxis.options, wordcloudAxis);
         extend(this.xAxis.options, wordcloudAxis);
     },
@@ -935,7 +932,7 @@ var wordCloudSeries: Partial<Highcharts.WordcloudSeries> = {
     pointAttribs: function (
         this: Highcharts.WordcloudSeries,
         point: Highcharts.WordcloudPoint,
-        state?: string
+        state?: StatesOptionsKey
     ): SVGAttributes {
         var attribs = H.seriesTypes.column.prototype
             .pointAttribs.call(this, point, state);

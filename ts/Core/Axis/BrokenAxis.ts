@@ -27,6 +27,22 @@ const {
     pick
 } = U;
 
+declare module '../Series/SeriesLike' {
+    interface SeriesLike {
+        /** @requires modules/broken-axis */
+        drawBreaks(axis: Axis, keys: Array<string>): void;
+        /** @requires modules/broken-axis */
+        gappedPath?(): SVGPath;
+    }
+}
+
+declare module '../Series/SeriesOptions' {
+    interface SeriesOptions {
+        gapSize?: number;
+        gapUnit?: string;
+    }
+}
+
 /**
  * @private
  */
@@ -45,14 +61,6 @@ declare module './Types' {
  */
 declare global {
     namespace Highcharts {
-        interface Series {
-            /** @requires modules/broken-axis */
-            drawBreaks(axis: Axis, keys: Array<string>): void;
-        }
-        interface SeriesOptions {
-            gapSize?: number;
-            gapUnit?: string;
-        }
         interface XAxisBreaksOptions {
             inclusive?: boolean;
         }

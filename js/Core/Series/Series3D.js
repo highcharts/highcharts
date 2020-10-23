@@ -10,21 +10,20 @@
  *
  * */
 'use strict';
-import H from '../Globals.js';
+import LineSeries from '../../Series/LineSeries.js';
 import Math3D from '../../Extensions/Math3D.js';
 var perspective = Math3D.perspective;
 import U from '../Utilities.js';
 var addEvent = U.addEvent, pick = U.pick;
-import '../../Series/LineSeries.js';
 /* eslint-disable no-invalid-this */
 // Wrap the translate method to post-translate points into 3D perspective
-addEvent(H.Series, 'afterTranslate', function () {
+addEvent(LineSeries, 'afterTranslate', function () {
     if (this.chart.is3d()) {
         this.translate3dPoints();
     }
 });
 // Translate the plotX, plotY properties and add plotZ.
-H.Series.prototype.translate3dPoints = function () {
+LineSeries.prototype.translate3dPoints = function () {
     var series = this, chart = series.chart, zAxis = pick(series.zAxis, chart.options.zAxis[0]), rawPoints = [], rawPoint, projectedPoints, projectedPoint, zValue, i;
     for (i = 0; i < series.data.length; i++) {
         rawPoint = series.data[i];

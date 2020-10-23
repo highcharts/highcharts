@@ -12,16 +12,20 @@
 
 import type AnimationOptionsObject from '../Animation/AnimationOptionsObject';
 import type { AxisType } from '../Axis/Types';
+import type BBoxObject from '../Renderer/BBoxObject';
 import type {
     CSSObject,
     CursorValue
 } from '../Renderer/CSSObject';
 import type ChartLike from './ChartLike';
-import type Point from '../../Core/Series/Point';
-import type { SeriesOptionsType, SeriesPlotOptionsType } from '../Series/Types';
+import type LineSeries from '../../Series/LineSeries';
+import type Point from '../Series/Point';
+import type SeriesOptions from '../Series/SeriesOptions';
 import type {
-    HTMLDOMElement
-} from '../Renderer/DOMElementType';
+    SeriesTypeOptions,
+    SeriesTypePlotOptions
+} from '../Series/SeriesType';
+import type { HTMLDOMElement } from '../Renderer/DOMElementType';
 import type SVGAttributes from '../Renderer/SVG/SVGAttributes';
 import type SVGElement from '../Renderer/SVG/SVGElement';
 import A from '../Animation/AnimationUtilities.js';
@@ -76,6 +80,12 @@ const {
     uniqueKey
 } = U;
 
+declare module '../Series/SeriesLike' {
+    interface SeriesLike {
+        index?: number;
+    }
+}
+
 /**
  * Internal types
  * @private
@@ -94,11 +104,7 @@ declare global {
             update(titleOptions: CaptionOptions, redraw?: boolean): void;
         }
         interface Options {
-            series?: Array<SeriesOptionsType>;
-        }
-        interface Series {
-            index?: number;
-            linkedParent?: Series;
+            series?: Array<SeriesTypeOptions>;
         }
         interface SubtitleObject extends SVGElement {
             update(titleOptions: SubtitleOptions, redraw?: boolean): void;
@@ -120,99 +126,6 @@ declare global {
 }
 type ChartClass = typeof Chart;
 
-/**
- * Callback for chart constructors.
- *
- * @callback Highcharts.ChartCallbackFunction
- *
- * @param {Highcharts.Chart} chart
- *        Created chart.
- */
-
-/**
- * Format a number and return a string based on input settings.
- *
- * @callback Highcharts.NumberFormatterCallbackFunction
- *
- * @param {number} number
- *        The input number to format.
- *
- * @param {number} decimals
- *        The amount of decimals. A value of -1 preserves the amount in the
- *        input number.
- *
- * @param {string} [decimalPoint]
- *        The decimal point, defaults to the one given in the lang options, or
- *        a dot.
- *
- * @param {string} [thousandsSep]
- *        The thousands separator, defaults to the one given in the lang
- *        options, or a space character.
- *
- * @return {string} The formatted number.
- */
-
-/**
- * The chart title. The title has an `update` method that allows modifying the
- * options directly or indirectly via `chart.update`.
- *
- * @interface Highcharts.TitleObject
- * @extends Highcharts.SVGElement
- *//**
- * Modify options for the title.
- *
- * @function Highcharts.TitleObject#update
- *
- * @param {Highcharts.TitleOptions} titleOptions
- *        Options to modify.
- *
- * @param {boolean} [redraw=true]
- *        Whether to redraw the chart after the title is altered. If doing more
- *        operations on the chart, it is a good idea to set redraw to false and
- *        call {@link Chart#redraw} after.
- */
-
-/**
- * The chart subtitle. The subtitle has an `update` method that
- * allows modifying the options directly or indirectly via
- * `chart.update`.
- *
- * @interface Highcharts.SubtitleObject
- * @extends Highcharts.SVGElement
- *//**
- * Modify options for the subtitle.
- *
- * @function Highcharts.SubtitleObject#update
- *
- * @param {Highcharts.SubtitleOptions} subtitleOptions
- *        Options to modify.
- *
- * @param {boolean} [redraw=true]
- *        Whether to redraw the chart after the subtitle is altered. If doing
- *        more operations on the chart, it is a good idea to set redraw to false
- *        and call {@link Chart#redraw} after.
- */
-
-/**
- * The chart caption. The caption has an `update` method that
- * allows modifying the options directly or indirectly via
- * `chart.update`.
- *
- * @interface Highcharts.CaptionObject
- * @extends Highcharts.SVGElement
- *//**
- * Modify options for the caption.
- *
- * @function Highcharts.CaptionObject#update
- *
- * @param {Highcharts.CaptionOptions} captionOptions
- *        Options to modify.
- *
- * @param {boolean} [redraw=true]
- *        Whether to redraw the chart after the caption is altered. If doing
- *        more operations on the chart, it is a good idea to set redraw to false
- *        and call {@link Chart#redraw} after.
- */
 
 var marginNames = H.marginNames;
 
@@ -326,10 +239,10 @@ class Chart {
     public reflowTimeout?: number;
     public renderer: Chart.Renderer = void 0 as any;
     public renderTo: globalThis.HTMLElement = void 0 as any;
-    public series: Array<Highcharts.Series> = void 0 as any;
+    public series: Array<LineSeries> = void 0 as any;
     public seriesGroup?: SVGElement;
     public spacing: Array<number> = void 0 as any;
-    public spacingBox: Highcharts.BBoxObject = void 0 as any;
+    public spacingBox: BBoxObject = void 0 as any;
     public styledMode?: boolean;
     public subtitle?: SVGElement;
     public symbolCounter: number = void 0 as any;
@@ -402,7 +315,7 @@ class Chart {
             // skip merging data points to increase performance
             seriesOptions = userOptions.series,
             userPlotOptions =
-                userOptions.plotOptions || {} as SeriesPlotOptionsType;
+                userOptions.plotOptions || {} as SeriesTypePlotOptions;
 
         // Fire the event with a default function
         fireEvent(this, 'init', { args: arguments }, function (): void {
@@ -583,7 +496,7 @@ class Chart {
      * @private
      * @function Highcharts.Chart#initSeries
      */
-    public initSeries(options: Highcharts.SeriesOptions): Highcharts.Series {
+    public initSeries(options: SeriesOptions): LineSeries {
         var chart = this,
             optionsChart = chart.options.chart as Highcharts.ChartOptions,
             type = (
@@ -591,7 +504,7 @@ class Chart {
                 optionsChart.type ||
                 optionsChart.defaultSeriesType
             ) as string,
-            series: Highcharts.Series,
+            series: LineSeries,
             SeriesClass = BaseSeries.seriesTypes[type];
 
         // No such series type
@@ -613,9 +526,7 @@ class Chart {
      * @function Highcharts.Chart#setSeriesData
      */
     public setSeriesData(): void {
-        this.getSeriesOrderByLinks().forEach(function (
-            series: Highcharts.Series
-        ): void {
+        this.getSeriesOrderByLinks().forEach(function (series): void {
             // We need to set data for series with sorting after series init
             if (!series.points && !series.data && series.enabledDataSorting) {
                 series.setData(series.options.data as any, false);
@@ -631,11 +542,8 @@ class Chart {
      * @function Highcharts.Series#getSeriesOrderByLinks
      * @return {Array<Highcharts.Series>}
      */
-    public getSeriesOrderByLinks(): Array<Highcharts.Series> {
-        return this.series.concat().sort(function (
-            a: Highcharts.Series,
-            b: Highcharts.Series
-        ): number {
+    public getSeriesOrderByLinks(): Array<LineSeries> {
+        return this.series.concat().sort(function (a, b): number {
             if (a.linkedSeries.length || b.linkedSeries.length) {
                 return b.linkedSeries.length - a.linkedSeries.length;
             }
@@ -794,7 +702,7 @@ class Chart {
         }
 
         // Handle updated data in the series
-        series.forEach(function (serie: Highcharts.Series): void {
+        series.forEach(function (serie): void {
             if (serie.isDirty) {
                 if (serie.options.legendType === 'point') {
                     if (typeof (serie as Highcharts.PieSeries).updateTotals === 'function') {
@@ -832,7 +740,7 @@ class Chart {
 
         if (hasCartesianSeries) {
             // set axes scales
-            axes.forEach(function (axis: Highcharts.Axis): void {
+            axes.forEach(function (axis): void {
                 // Don't do setScale again if we're only resizing. Regression
                 // #13507. But we need it after chart.update (responsive), as
                 // axis is initialized again (#12137).
@@ -847,7 +755,7 @@ class Chart {
 
         if (hasCartesianSeries) {
             // If one axis is dirty, all axes must be redrawn (#792, #2169)
-            axes.forEach(function (axis: Highcharts.Axis): void {
+            axes.forEach(function (axis): void {
                 if (axis.isDirty) {
                     isDirtyBox = true;
                 }
@@ -888,7 +796,7 @@ class Chart {
         fireEvent(chart, 'predraw');
 
         // redraw affected series
-        series.forEach(function (serie: Highcharts.Series): void {
+        series.forEach(function (serie): void {
             if ((isDirtyBox || serie.isDirty) && serie.visible) {
                 serie.redraw();
             }
@@ -914,7 +822,7 @@ class Chart {
         }
 
         // Fire callbacks that are put on hold until after the redraw
-        afterRedraw.forEach(function (callback: Function): void {
+        afterRedraw.forEach(function (callback): void {
             (callback.call as any)();
         });
     }
@@ -934,9 +842,9 @@ class Chart {
      * @return {Highcharts.Axis|Highcharts.Series|Highcharts.Point|undefined}
      * The retrieved item.
      */
-    public get(id: string): (Axis|Highcharts.Series|Point|undefined) {
+    public get(id: string): (Axis|LineSeries|Point|undefined) {
 
-        var ret: (Axis|Highcharts.Series|Point|undefined),
+        var ret: (Axis|LineSeries|Point|undefined),
             series = this.series,
             i;
 
@@ -945,9 +853,9 @@ class Chart {
          * @param {Highcharts.Axis|Highcharts.Series} item
          * @return {boolean}
          */
-        function itemById(item: (Highcharts.Axis|Highcharts.Series)): boolean {
+        function itemById(item: (Axis|LineSeries)): boolean {
             return (
-                (item as Highcharts.Series).id === id ||
+                (item as LineSeries).id === id ||
                 (item.options && item.options.id === id)
             );
         }
@@ -1023,7 +931,7 @@ class Chart {
     public getSelectedPoints(): Array<Point> {
         var points = [] as Array<Point>;
 
-        this.series.forEach(function (serie: Highcharts.Series): void {
+        this.series.forEach(function (serie): void {
             // For one-to-one points inspect series.data in order to retrieve
             // points outside the visible range (#6445). For grouped data,
             // inspect the generated series.points.
@@ -1056,8 +964,8 @@ class Chart {
      * @return {Array<Highcharts.Series>}
      *         The currently selected series.
      */
-    public getSelectedSeries(): Array<Highcharts.Series> {
-        return this.series.filter(function (serie: Highcharts.Series): boolean {
+    public getSelectedSeries(): Array<LineSeries> {
+        return this.series.filter(function (serie): boolean {
             return serie.selected;
         });
     }
@@ -1209,7 +1117,7 @@ class Chart {
         var titleOffset = [0, 0, 0],
             requiresDirtyBox,
             renderer = this.renderer,
-            spacingBox = this.spacingBox as Highcharts.BBoxObject;
+            spacingBox = this.spacingBox;
 
         // Lay out the title and the subtitle respectively
         ['title', 'subtitle', 'caption'].forEach(function (key: string): void {
@@ -2198,10 +2106,9 @@ class Chart {
      */
     public propFromSeries(): void {
         var chart = this,
-            optionsChart = chart.options.chart as Highcharts.ChartOptions,
+            optionsChart: Highcharts.ChartOptions = chart.options.chart as any,
             klass,
-            seriesOptions =
-                chart.options.series as Array<Highcharts.SeriesOptions>,
+            seriesOptions: Array<SeriesOptions> = chart.options.series as any,
             i,
             value;
 
@@ -2254,12 +2161,12 @@ class Chart {
             chartSeries = chart.series;
 
         // Reset links
-        chartSeries.forEach(function (series: Highcharts.Series): void {
+        chartSeries.forEach(function (series): void {
             series.linkedSeries.length = 0;
         });
 
         // Apply new links
-        chartSeries.forEach(function (series: Highcharts.Series): void {
+        chartSeries.forEach(function (series): void {
             var linkedTo = series.options.linkedTo;
 
             if (isString(linkedTo)) {
@@ -2296,7 +2203,7 @@ class Chart {
      * @function Highcharts.Chart#renderSeries
      */
     public renderSeries(): void {
-        this.series.forEach(function (serie: Highcharts.Series): void {
+        this.series.forEach(function (serie): void {
             serie.translate();
             serie.render();
         });
@@ -2673,9 +2580,9 @@ class Chart {
         chart.getAxes();
 
         // Initialize the series
-        (isArray(options.series) ? (options.series as any) : []).forEach(
+        (isArray(options.series) ? options.series : []).forEach(
             // #9680
-            function (serieOptions: Highcharts.SeriesOptions): void {
+            function (serieOptions): void {
                 chart.initSeries(serieOptions);
             }
         );
@@ -2760,9 +2667,13 @@ class Chart {
 interface Chart extends ChartLike {
     callbacks: Array<Chart.CallbackFunction>;
 }
-
-// Hook for adding callbacks in modules
-Chart.prototype.callbacks = [];
+extend(
+    Chart.prototype,
+    {
+        // Hook for adding callbacks in modules
+        callbacks: []
+    }
+);
 
 namespace Chart {
 
@@ -2780,6 +2691,12 @@ namespace Chart {
     }
 
 }
+
+/* *
+ *
+ *  Compatibility
+ *
+ * */
 
 function chart(
     options: Partial<Highcharts.Options>,
@@ -2828,13 +2745,115 @@ function chart(
 ): Chart {
     return new Chart(a as any, b as any, c);
 }
-
-interface Chart extends ChartLike {
-    // Nothing here yet
-}
-
-
 H.chart = chart;
 H.Chart = Chart;
 
+/* *
+ *
+ *  Export
+ *
+ * */
+
 export default Chart;
+
+/* *
+ *
+ *  API Declarations
+ *
+ * */
+
+/**
+ * Callback for chart constructors.
+ *
+ * @callback Highcharts.ChartCallbackFunction
+ *
+ * @param {Highcharts.Chart} chart
+ *        Created chart.
+ */
+
+/**
+ * Format a number and return a string based on input settings.
+ *
+ * @callback Highcharts.NumberFormatterCallbackFunction
+ *
+ * @param {number} number
+ *        The input number to format.
+ *
+ * @param {number} decimals
+ *        The amount of decimals. A value of -1 preserves the amount in the
+ *        input number.
+ *
+ * @param {string} [decimalPoint]
+ *        The decimal point, defaults to the one given in the lang options, or
+ *        a dot.
+ *
+ * @param {string} [thousandsSep]
+ *        The thousands separator, defaults to the one given in the lang
+ *        options, or a space character.
+ *
+ * @return {string} The formatted number.
+ */
+
+/**
+ * The chart title. The title has an `update` method that allows modifying the
+ * options directly or indirectly via `chart.update`.
+ *
+ * @interface Highcharts.TitleObject
+ * @extends Highcharts.SVGElement
+ *//**
+ * Modify options for the title.
+ *
+ * @function Highcharts.TitleObject#update
+ *
+ * @param {Highcharts.TitleOptions} titleOptions
+ *        Options to modify.
+ *
+ * @param {boolean} [redraw=true]
+ *        Whether to redraw the chart after the title is altered. If doing more
+ *        operations on the chart, it is a good idea to set redraw to false and
+ *        call {@link Chart#redraw} after.
+ */
+
+/**
+ * The chart subtitle. The subtitle has an `update` method that
+ * allows modifying the options directly or indirectly via
+ * `chart.update`.
+ *
+ * @interface Highcharts.SubtitleObject
+ * @extends Highcharts.SVGElement
+ *//**
+ * Modify options for the subtitle.
+ *
+ * @function Highcharts.SubtitleObject#update
+ *
+ * @param {Highcharts.SubtitleOptions} subtitleOptions
+ *        Options to modify.
+ *
+ * @param {boolean} [redraw=true]
+ *        Whether to redraw the chart after the subtitle is altered. If doing
+ *        more operations on the chart, it is a good idea to set redraw to false
+ *        and call {@link Chart#redraw} after.
+ */
+
+/**
+ * The chart caption. The caption has an `update` method that
+ * allows modifying the options directly or indirectly via
+ * `chart.update`.
+ *
+ * @interface Highcharts.CaptionObject
+ * @extends Highcharts.SVGElement
+ *//**
+ * Modify options for the caption.
+ *
+ * @function Highcharts.CaptionObject#update
+ *
+ * @param {Highcharts.CaptionOptions} captionOptions
+ *        Options to modify.
+ *
+ * @param {boolean} [redraw=true]
+ *        Whether to redraw the chart after the caption is altered. If doing
+ *        more operations on the chart, it is a good idea to set redraw to false
+ *        and call {@link Chart#redraw} after.
+ */
+
+''; // include doclets above in transpilat

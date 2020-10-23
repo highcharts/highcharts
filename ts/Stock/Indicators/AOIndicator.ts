@@ -6,12 +6,15 @@
  *
  * */
 
+'use strict';
+
 import type ColorString from '../../Core/Color/ColorString';
+import type ColumnSeries from '../../Series/ColumnSeries';
+import type LineSeries from '../../Series/LineSeries';
+import type { SeriesStatesOptions } from '../../Core/Series/SeriesOptions';
 import BaseSeries from '../../Core/Series/Series.js';
 import H from '../../Core/Globals.js';
-const {
-    noop
-} = H;
+const { noop } = H;
 import U from '../../Core/Utilities.js';
 const {
     correctFloat,
@@ -35,7 +38,7 @@ declare global {
             public drawGraph(): void;
             public drawPoints: ColumnSeries['drawPoints'];
             public getColumnMetrics: ColumnSeries['getColumnMetrics'];
-            public getValues<TLinkedSeries extends Series>(
+            public getValues<TLinkedSeries extends LineSeries>(
                 series: TLinkedSeries,
             ): (IndicatorValuesObject<TLinkedSeries>|undefined);
             public translate: ColumnSeries['translate'];
@@ -46,7 +49,7 @@ declare global {
             groupPadding?: number;
             lowerBarColor?: ColorString;
             pointPadding?: number;
-            states?: SeriesStatesOptionsObject<AOIndicator>;
+            states?: SeriesStatesOptions<AOIndicator>;
             threshold?: number;
         }
 
@@ -56,7 +59,7 @@ declare global {
     }
 }
 
-declare module '../../Core/Series/Types' {
+declare module '../../Core/Series/SeriesType' {
     interface SeriesTypeRegistry {
         ao: typeof Highcharts.AOIndicator;
     }
@@ -171,7 +174,7 @@ BaseSeries.seriesType<typeof Highcharts.AOIndicator>(
             }
         },
 
-        getValues: function<TLinkedSeries extends Highcharts.Series> (
+        getValues: function<TLinkedSeries extends LineSeries> (
             series: TLinkedSeries
         ): (Highcharts.IndicatorValuesObject<TLinkedSeries>|undefined) {
             var shortPeriod = 5,

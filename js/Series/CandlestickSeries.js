@@ -7,6 +7,7 @@
  *  !!!!!!! SOURCE GETS TRANSPILED BY TYPESCRIPT. EDIT TS FILE ONLY. !!!!!!!
  *
  * */
+'use strict';
 import BaseSeries from '../Core/Series/Series.js';
 import O from '../Core/Options.js';
 var defaultOptions = O.defaultOptions;
@@ -136,9 +137,6 @@ BaseSeries.seriesType('candlestick', 'ohlc', merge(defaultOptions.plotOptions.co
      *
      * @private
      * @function Highcharts.seriesTypes.candlestick#pointAttribs
-     * @param {Highcharts.Point} point
-     * @param {string} [state]
-     * @return {Highcharts.SVGAttributes}
      */
     pointAttribs: function (point, state) {
         var attribs = columnProto.pointAttribs.call(this, point, state), options = this.options, isUp = point.open < point.close, stroke = options.lineColor || this.color, stateOptions;

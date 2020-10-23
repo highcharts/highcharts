@@ -8,8 +8,11 @@
  *
  * */
 
+'use strict';
+
 import type ColorString from '../Core/Color/ColorString';
 import type ColorType from '../Core/Color/ColorType';
+import type ColumnSeries from './ColumnSeries';
 import BaseSeries from '../Core/Series/Series.js';
 import U from '../Core/Utilities.js';
 const {
@@ -65,7 +68,7 @@ declare global {
 /**
  * @private
  */
-declare module '../Core/Series/Types' {
+declare module '../Core/Series/SeriesType' {
     interface SeriesTypeRegistry {
         bullet: typeof Highcharts.BulletSeries;
     }

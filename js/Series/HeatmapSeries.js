@@ -7,18 +7,21 @@
  *  !!!!!!! SOURCE GETS TRANSPILED BY TYPESCRIPT. EDIT TS FILE ONLY. !!!!!!!
  *
  * */
+'use strict';
 import BaseSeries from '../Core/Series/Series.js';
+var seriesTypes = BaseSeries.seriesTypes;
 import ColorMapMixin from '../Mixins/ColorMapSeries.js';
 var colorMapPointMixin = ColorMapMixin.colorMapPointMixin, colorMapSeriesMixin = ColorMapMixin.colorMapSeriesMixin;
 import H from '../Core/Globals.js';
 var noop = H.noop;
+import Point from '../Core/Series/Point.js';
 import LegendSymbolMixin from '../Mixins/LegendSymbol.js';
+import LineSeries from '../Series/LineSeries.js';
 import SVGRenderer from '../Core/Renderer/SVG/SVGRenderer.js';
 import U from '../Core/Utilities.js';
 var clamp = U.clamp, extend = U.extend, fireEvent = U.fireEvent, isNumber = U.isNumber, merge = U.merge, pick = U.pick;
 import '../Core/Options.js';
-import '../Series/LineSeries.js';
-var Series = H.Series, seriesTypes = BaseSeries.seriesTypes, symbols = SVGRenderer.prototype.symbols;
+var symbols = SVGRenderer.prototype.symbols;
 /* *
  * @interface Highcharts.PointOptionsObject in parts/Point.ts
  */ /**
@@ -318,7 +321,7 @@ BaseSeries.seriesType('heatmap', 'scatter',
      */
     init: function () {
         var options;
-        Series.prototype.init.apply(this, arguments);
+        LineSeries.prototype.init.apply(this, arguments);
         options = this.options;
         // #3758, prevent resetting in setData
         options.pointRange = pick(options.pointRange, options.colsize || 1);
@@ -330,7 +333,7 @@ BaseSeries.seriesType('heatmap', 'scatter',
             rect: symbols.square
         });
     },
-    getSymbol: Series.prototype.getSymbol,
+    getSymbol: LineSeries.prototype.getSymbol,
     /**
      * @private
      * @function Highcharts.seriesTypes.heatmap#setClip
@@ -338,7 +341,7 @@ BaseSeries.seriesType('heatmap', 'scatter',
      */
     setClip: function (animation) {
         var series = this, chart = series.chart;
-        Series.prototype.setClip.apply(series, arguments);
+        LineSeries.prototype.setClip.apply(series, arguments);
         if (series.options.clip !== false || animation) {
             series.markerGroup
                 .clip((animation || series.clipBox) && series.sharedClipKey ?
@@ -402,8 +405,7 @@ BaseSeries.seriesType('heatmap', 'scatter',
      * @return {Highcharts.SVGAttributes}
      */
     pointAttribs: function (point, state) {
-        var series = this, attr = Series.prototype.pointAttribs
-            .call(series, point, state), seriesOptions = series.options || {}, plotOptions = series.chart.options.plotOptions || {}, seriesPlotOptions = plotOptions.series || {}, heatmapPlotOptions = plotOptions.heatmap || {}, stateOptions, brightness, 
+        var series = this, attr = LineSeries.prototype.pointAttribs.call(series, point, state), seriesOptions = series.options || {}, plotOptions = series.chart.options.plotOptions || {}, seriesPlotOptions = plotOptions.series || {}, heatmapPlotOptions = plotOptions.heatmap || {}, stateOptions, brightness, 
         // Get old properties in order to keep backward compatibility
         borderColor = seriesOptions.borderColor ||
             heatmapPlotOptions.borderColor ||
@@ -475,7 +477,7 @@ BaseSeries.seriesType('heatmap', 'scatter',
         // sheet will take precedence over the fill attribute.
         var seriesMarkerOptions = this.options.marker || {};
         if (seriesMarkerOptions.enabled || this._hasPointMarkers) {
-            Series.prototype.drawPoints.call(this);
+            LineSeries.prototype.drawPoints.call(this);
             this.points.forEach(function (point) {
                 point.graphic &&
                     point.graphic[_this.chart.styledMode ? 'css' : 'animate'](_this.colorAttribs(point));
@@ -490,7 +492,7 @@ BaseSeries.seriesType('heatmap', 'scatter',
     // Override to also allow null points, used when building the k-d-tree
     // for tooltips in boost mode.
     getValidPoints: function (points, insideOnly) {
-        return Series.prototype.getValidPoints.call(this, points, insideOnly, true);
+        return LineSeries.prototype.getValidPoints.call(this, points, insideOnly, true);
     },
     /**
      * @ignore
@@ -515,7 +517,7 @@ BaseSeries.seriesType('heatmap', 'scatter',
      */
     getExtremes: function () {
         // Get the extremes from the value data
-        var _a = Series.prototype.getExtremes
+        var _a = LineSeries.prototype.getExtremes
             .call(this, this.valueData), dataMin = _a.dataMin, dataMax = _a.dataMax;
         if (isNumber(dataMin)) {
             this.valueMin = dataMin;
@@ -524,7 +526,7 @@ BaseSeries.seriesType('heatmap', 'scatter',
             this.valueMax = dataMax;
         }
         // Get the extremes from the y data
-        return Series.prototype.getExtremes.call(this);
+        return LineSeries.prototype.getExtremes.call(this);
     }
     /* eslint-enable valid-jsdoc */
 }), merge(colorMapPointMixin, {
@@ -548,7 +550,7 @@ BaseSeries.seriesType('heatmap', 'scatter',
      * @return {Highcharts.SVGPathArray}
      */
     applyOptions: function (options, x) {
-        var point = H.Point.prototype
+        var point = Point.prototype
             .applyOptions.call(this, options, x);
         point.formatPrefix =
             point.isNull || point.value === null ?

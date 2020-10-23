@@ -17,10 +17,11 @@
  * */
 
 import type LineSeries from '../../Series/LineSeries.js';
+import type SeriesOptions from './SeriesOptions';
 import type {
-    SeriesOptionsType,
+    SeriesTypeOptions,
     SeriesTypeRegistry
-} from './Types';
+} from './SeriesType';
 import type Chart from '../Chart/Chart';
 import H from '../Globals.js';
 import O from '../Options.js';
@@ -89,7 +90,7 @@ namespace Series {
         seriesClass: typeof LineSeries
     ): void {
         const defaultPlotOptions = defaultOptions.plotOptions || {},
-            seriesOptions: Highcharts.SeriesOptions = (seriesClass as any).defaultOptions;
+            seriesOptions: SeriesOptions = (seriesClass as any).defaultOptions;
 
         if (!seriesClass.prototype.pointClass) {
             seriesClass.prototype.pointClass = Point;
@@ -149,8 +150,8 @@ namespace Series {
      */
     export function getSeries(
         chart: Chart,
-        options: DeepPartial<SeriesOptionsType> = {}
-    ): Highcharts.Series {
+        options: DeepPartial<SeriesTypeOptions> = {}
+    ): LineSeries {
         const optionsChart = chart.options.chart as Highcharts.ChartOptions,
             type = (
                 options.type ||
@@ -201,7 +202,7 @@ namespace Series {
      * The newly created prototype as extended from {@link Series} or its
      * derivatives.
      */
-    export function seriesType<T extends typeof Highcharts.Series>(
+    export function seriesType<T extends typeof LineSeries>(
         type: keyof SeriesTypeRegistry,
         parent: (keyof SeriesTypeRegistry|undefined),
         options: T['prototype']['options'],

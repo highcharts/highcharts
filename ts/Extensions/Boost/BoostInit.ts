@@ -11,8 +11,13 @@
  * */
 
 'use strict';
+
+import BaseSeries from '../../Core/Series/Series.js';
+const { seriesTypes } = BaseSeries;
 import Chart from '../../Core/Chart/Chart.js';
 import H from '../../Core/Globals.js';
+const { noop } = H;
+import LineSeries from '../../Series/LineSeries.js';
 import U from '../../Core/Utilities.js';
 const {
     addEvent,
@@ -24,21 +29,15 @@ const {
 declare module '../../Core/Chart/ChartLike'{
     interface ChartLike {
         didBoost?: boolean;
-        markerGroup?: Highcharts.Series['markerGroup'];
+        markerGroup?: LineSeries['markerGroup'];
     }
 }
 
-/**
- * Internal types
- * @private
- */
-declare global {
-    namespace Highcharts {
-        interface Series {
-            fill?: boolean;
-            fillOpacity?: boolean;
-            sampling?: boolean;
-        }
+declare module '../../Core/Series/SeriesLike' {
+    interface SeriesLike {
+        fill?: boolean;
+        fillOpacity?: boolean;
+        sampling?: boolean;
     }
 }
 
@@ -47,10 +46,7 @@ import '../../Series/LineSeries.js';
 import butils from './BoostUtils.js';
 import createAndAttachRenderer from './BoostAttach.js';
 
-var Series = H.Series,
-    seriesTypes = H.seriesTypes,
-    noop = function (): void {},
-    eachAsync = butils.eachAsync,
+var eachAsync = butils.eachAsync,
     pointDrawHandler = butils.pointDrawHandler,
     allocateIfNotSeriesBoosting = butils.allocateIfNotSeriesBoosting,
     renderIfNotSeriesBoosting = butils.renderIfNotSeriesBoosting,
@@ -66,12 +62,12 @@ var Series = H.Series,
  * @return {void}
  */
 function init(): void {
-    extend(Series.prototype, {
+    extend(LineSeries.prototype, {
         /**
          * @private
          * @function Highcharts.Series#renderCanvas
          */
-        renderCanvas: function (this: Highcharts.Series): void {
+        renderCanvas: function (this: LineSeries): void {
             var series = this,
                 options = series.options || {},
                 renderer: Highcharts.BoostGLRenderer = false as any,

@@ -10,12 +10,16 @@
  *
  * */
 
+'use strict';
+
+import type { SeriesStatesOptions } from '../Core/Series/SeriesOptions';
 import type SVGAttributes from '../Core/Renderer/SVG/SVGAttributes';
 import type SVGPath from '../Core/Renderer/SVG/SVGPath';
 import A from '../Core/Animation/AnimationUtilities.js';
 const { animObject } = A;
 import BaseSeries from '../Core/Series/Series.js';
 import H from '../Core/Globals.js';
+import LineSeries from './LineSeries.js';
 import U from '../Core/Utilities.js';
 const {
     arrayMax,
@@ -25,7 +29,7 @@ const {
 /**
  * @private
  */
-declare module '../Core/Series/Types' {
+declare module '../Core/Series/SeriesType' {
     interface SeriesTypeRegistry {
         vector: typeof Highcharts.VectorSeries;
     }
@@ -66,7 +70,7 @@ declare global {
         }
         interface VectorSeriesOptions extends ScatterSeriesOptions {
             rotationOrigin?: VectorRotationOriginValue;
-            states?: SeriesStatesOptionsObject<VectorSeries>;
+            states?: SeriesStatesOptions<VectorSeries>;
             vectorLength?: number;
         }
         type VectorRotationOriginValue = ('start'|'center'|'end');
@@ -254,7 +258,7 @@ BaseSeries.seriesType<typeof Highcharts.VectorSeries>('vector', 'scatter'
          * @function Highcharts.seriesTypes.vector#translate
          */
         translate: function (this: Highcharts.VectorSeries): void {
-            H.Series.prototype.translate.call(this);
+            LineSeries.prototype.translate.call(this);
 
             this.lengthMax = arrayMax(this.lengthData as any);
         },

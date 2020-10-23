@@ -8,7 +8,12 @@
  *
  * */
 
+'use strict';
+
 import type ColorType from '../Core/Color/ColorType';
+import type LineSeries from './LineSeries';
+import type { SeriesStatesOptions } from '../Core/Series/SeriesOptions';
+import type { StatesOptionsKey } from '../Core/Series/StatesOptions';
 import type SVGAttributes from '../Core/Renderer/SVG/SVGAttributes';
 import BaseSeries from '../Core/Series/Series.js';
 
@@ -33,14 +38,14 @@ declare global {
             public type: string;
             public pointAttribs(
                 point: MapLinePoint,
-                state: string
+                state: StatesOptionsKey
             ): SVGAttributes;
         }
         interface MapLinePointOptions extends MapPointOptions {
         }
         interface MapLineSeriesOptions extends MapSeriesOptions {
             fillColor?: ColorType;
-            states?: SeriesStatesOptionsObject<MapLineSeries>;
+            states?: SeriesStatesOptions<MapLineSeries>;
         }
     }
 }
@@ -48,7 +53,7 @@ declare global {
 /**
  * @private
  */
-declare module '../Core/Series/Types' {
+declare module '../Core/Series/SeriesType' {
     interface SeriesTypeRegistry {
         mapline: typeof Highcharts.MapLineSeries;
     }
@@ -120,7 +125,7 @@ BaseSeries.seriesType<typeof Highcharts.MapLineSeries>(
         pointAttribs: function (
             this: Highcharts.MapLineSeries,
             point: Highcharts.MapLinePoint,
-            state: string
+            state: StatesOptionsKey
         ): SVGAttributes {
             var attr = seriesTypes.map.prototype.pointAttribs.call(
                 this,

@@ -10,6 +10,8 @@
 
 'use strict';
 
+import type LineSeries from './LineSeries';
+import type { SeriesStatesOptions } from '../Core/Series/SeriesOptions';
 import type SVGPath from '../Core/Renderer/SVG/SVGPath';
 import BaseSeries from '../Core/Series/Series.js';
 import U from '../Core/Utilities.js';
@@ -28,7 +30,7 @@ declare global {
         interface SplinePointOptions extends LinePointOptions {
         }
         interface SplineSeriesOptions extends LineSeriesOptions {
-            states?: SeriesStatesOptionsObject<SplineSeries>;
+            states?: SeriesStatesOptions<SplineSeries>;
         }
         class SplinePoint extends LinePoint {
             public doCurve?: boolean;
@@ -54,7 +56,7 @@ declare global {
 /**
  * @private
  */
-declare module '../Core/Series/Types' {
+declare module '../Core/Series/SeriesType' {
     interface SeriesTypeRegistry {
         spline: typeof Highcharts.SplineSeries;
     }

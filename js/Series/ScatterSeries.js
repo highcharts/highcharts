@@ -7,13 +7,11 @@
  *  !!!!!!! SOURCE GETS TRANSPILED BY TYPESCRIPT. EDIT TS FILE ONLY. !!!!!!!
  *
  * */
+'use strict';
 import BaseSeries from '../Core/Series/Series.js';
-import H from '../Core/Globals.js';
+import LineSeries from './LineSeries.js';
 import U from '../Core/Utilities.js';
 var addEvent = U.addEvent;
-import '../Core/Options.js';
-import '../Series/LineSeries.js';
-var Series = H.Series;
 /**
  * Scatter series type.
  *
@@ -137,7 +135,7 @@ BaseSeries.seriesType('scatter', 'line',
             (this.options.lineWidth === 0 &&
                 this.graph &&
                 this.graph.strokeWidth())) {
-            Series.prototype.drawGraph.call(this);
+            LineSeries.prototype.drawGraph.call(this);
         }
     },
     // Optionally add the jitter effect
@@ -180,7 +178,7 @@ BaseSeries.seriesType('scatter', 'line',
     /* eslint-enable valid-jsdoc */
 });
 /* eslint-disable no-invalid-this */
-addEvent(Series, 'afterTranslate', function () {
+addEvent(LineSeries, 'afterTranslate', function () {
     if (this.applyJitter) {
         this.applyJitter();
     }

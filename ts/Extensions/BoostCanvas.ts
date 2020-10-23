@@ -15,6 +15,7 @@
 
 'use strict';
 
+import type ColumnSeries from '../Series/ColumnSeries';
 import type HTMLElement from '../Core/Renderer/HTML/HTMLElement';
 import type {
     PointOptions,
@@ -23,9 +24,7 @@ import type {
 import type SVGAttributes from '../Core/Renderer/SVG/SVGAttributes';
 import Chart from '../Core/Chart/Chart.js';
 import Color from '../Core/Color/Color.js';
-const {
-    parse: color
-} = Color;
+const { parse: color } = Color;
 import H from '../Core/Globals.js';
 const {
     doc,
@@ -44,6 +43,47 @@ const {
     wrap
 } = U;
 
+declare module '../Core/Series/SeriesLike' {
+    interface SeriesLike extends Highcharts.BoostTargetObject {
+        cvsStrokeBatch?: number;
+        /** @requires modules/boost-canvas */
+        canvasToSVG(): void;
+        /** @requires modules/boost-canvas */
+        cvsDrawPoint(
+            ctx: CanvasRenderingContext2D,
+            clientX: number,
+            plotY: number,
+            yBottom: number,
+            lastPoint?: Record<string, number>
+        ): void;
+        /** @requires modules/boost-canvas */
+        cvsLineTo(
+            ctx: CanvasRenderingContext2D,
+            clientX: number,
+            plotY: number
+        ): void;
+        /** @requires modules/boost-canvas */
+        cvsMarkerCircle(
+            ctx: CanvasRenderingContext2D,
+            clientX: number,
+            plotY: number,
+            r: number,
+            i?: number
+        ): void;
+        /** @requires modules/boost-canvas */
+        cvsMarkerSquare(
+            ctx: CanvasRenderingContext2D,
+            clientX: number,
+            plotY: number,
+            r: number
+        ): void;
+        /** @requires modules/boost-canvas */
+        getContext(): (CanvasRenderingContext2D|null|undefined);
+        /** @requires modules/boost-canvas */
+        renderCanvas(): void;
+    }
+}
+
 /**
  * Internal types
  * @private
@@ -56,44 +96,6 @@ declare global {
             timeRendering?: boolean;
             timeSeriesProcessing?: boolean;
             timeSetup?: boolean;
-        }
-        interface Series extends BoostTargetObject {
-            cvsStrokeBatch?: number;
-            /** @requires modules/boost-canvas */
-            canvasToSVG(): void;
-            /** @requires modules/boost-canvas */
-            cvsDrawPoint(
-                ctx: CanvasRenderingContext2D,
-                clientX: number,
-                plotY: number,
-                yBottom: number,
-                lastPoint?: Dictionary<number>
-            ): void;
-            /** @requires modules/boost-canvas */
-            cvsLineTo(
-                ctx: CanvasRenderingContext2D,
-                clientX: number,
-                plotY: number
-            ): void;
-            /** @requires modules/boost-canvas */
-            cvsMarkerCircle(
-                ctx: CanvasRenderingContext2D,
-                clientX: number,
-                plotY: number,
-                r: number,
-                i?: number
-            ): void;
-            /** @requires modules/boost-canvas */
-            cvsMarkerSquare(
-                ctx: CanvasRenderingContext2D,
-                clientX: number,
-                plotY: number,
-                r: number
-            ): void;
-            /** @requires modules/boost-canvas */
-            getContext(): (CanvasRenderingContext2D|null|undefined);
-            /** @requires modules/boost-canvas */
-            renderCanvas(): void;
         }
         interface BoostTargetObject {
             ctx?: (CanvasRenderingContext2D|null);
@@ -196,7 +198,7 @@ const initCanvasBoost = function (): void {
          * @function Highcharts.Series#getContext
          */
         getContext: function (
-            this: Highcharts.Series
+            this: LineSeries
         ): (CanvasRenderingContext2D|null|undefined) {
             var chart = this.chart,
                 width = chart.chartWidth,
@@ -297,7 +299,7 @@ const initCanvasBoost = function (): void {
          * @private
          * @function Highcharts.Series#canvasToSVG
          */
-        canvasToSVG: function (this: Highcharts.Series): void {
+        canvasToSVG: function (this: LineSeries): void {
             if (!this.chart.isChartSeriesBoosting()) {
                 if (this.boostCopy || this.chart.boostCopy) {
                     (this.boostCopy || this.chart.boostCopy)();
@@ -310,7 +312,7 @@ const initCanvasBoost = function (): void {
         },
 
         cvsLineTo: function (
-            this: Highcharts.Series,
+            this: LineSeries,
             ctx: CanvasRenderingContext2D,
             clientX: number,
             plotY: number
@@ -318,7 +320,7 @@ const initCanvasBoost = function (): void {
             ctx.lineTo(clientX, plotY);
         },
 
-        renderCanvas: function (this: Highcharts.Series): void {
+        renderCanvas: function (this: LineSeries): void {
             var series = this,
                 options = series.options,
                 chart = series.chart,
@@ -836,7 +838,7 @@ const initCanvasBoost = function (): void {
 
     extend(seriesTypes.column.prototype, {
         cvsDrawPoint: function (
-            this: Highcharts.ColumnSeries,
+            this: ColumnSeries,
             ctx: CanvasRenderingContext2D,
             clientX: number,
             plotY: number,

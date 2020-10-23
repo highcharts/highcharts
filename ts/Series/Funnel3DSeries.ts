@@ -16,20 +16,21 @@
 
 import type Chart from '../Core/Chart/Chart';
 import type ColorType from '../Core/Color/ColorType';
+import type ColumnSeries from './ColumnSeries';
 import type GradientColor from '../Core/Color/GradientColor';
 import type {
     PointOptions,
     PointShortOptions
 } from '../Core/Series/PointOptions';
+import type { SeriesStatesOptions } from '../Core/Series/SeriesOptions';
 import type SVGAttributes from '../Core/Renderer/SVG/SVGAttributes';
 import type SVGElement from '../Core/Renderer/SVG/SVGElement';
 import type SVGPath from '../Core/Renderer/SVG/SVGPath';
 import type SVGRenderer from '../Core/Renderer/SVG/SVGRenderer';
+import BaseSeries from '../Core/Series/Series.js';
+const { seriesTypes } = BaseSeries;
 import Color from '../Core/Color/Color.js';
-const {
-    parse: color
-} = Color;
-import _ColumnSeries from './ColumnSeries.js';
+const { parse: color } = Color;
 import H from '../Core/Globals.js';
 const {
     charts,
@@ -38,14 +39,9 @@ const {
         prototype: RendererProto
     }
 } = H;
+import LineSeries from './LineSeries.js';
 import Math3D from '../Extensions/Math3D.js';
-const {
-    perspective
-} = Math3D;
-import Series from '../Core/Series/Series.js';
-const {
-    seriesTypes
-} = Series;
+const { perspective } = Math3D;
 import _SVGRenderer from '../Core/Renderer/SVG/SVGRenderer.js';
 import U from '../Core/Utilities.js';
 const {
@@ -56,10 +52,12 @@ const {
     relativeLength
 } = U;
 
+import './ColumnSeries.js';
+
 /**
  * @private
  */
-declare module '../Core/Series/Types' {
+declare module '../Core/Series/SeriesType' {
     interface SeriesTypeRegistry {
         funnel3d: typeof Highcharts.Funnel3dSeries;
     }
@@ -103,7 +101,7 @@ declare global {
             neckHeight?: (number|string);
             neckWidth?: (number|string);
             reversed?: boolean;
-            states?: SeriesStatesOptionsObject<Funnel3dSeries>;
+            states?: SeriesStatesOptions<Funnel3dSeries>;
             width?: (number|string);
         }
         interface SVGElement {
@@ -153,7 +151,7 @@ var cuboidPath = RendererProto.cuboidPath,
  * @requires modules/cylinder
  * @requires modules/funnel3d
  */
-Series.seriesType<typeof Highcharts.Funnel3dSeries>('funnel3d', 'column',
+BaseSeries.seriesType<typeof Highcharts.Funnel3dSeries>('funnel3d', 'column',
     /**
      * A funnel3d is a 3d version of funnel series type. Funnel charts are
      * a type of chart often used to visualize stages in a sales project,
@@ -251,7 +249,7 @@ Series.seriesType<typeof Highcharts.Funnel3dSeries>('funnel3d', 'column',
     }, {
         // Override default axis options with series required options for axes
         bindAxes: function (this: Highcharts.Funnel3dSeries): void {
-            H.Series.prototype.bindAxes.apply(this, arguments);
+            LineSeries.prototype.bindAxes.apply(this, arguments);
 
             extend(this.xAxis.options, {
                 gridLineWidth: 0,
@@ -271,7 +269,7 @@ Series.seriesType<typeof Highcharts.Funnel3dSeries>('funnel3d', 'column',
         translate3dShapes: H.noop as any,
 
         translate: function (this: Highcharts.Funnel3dSeries): void {
-            H.Series.prototype.translate.apply(this, arguments);
+            LineSeries.prototype.translate.apply(this, arguments);
 
             var sum = 0,
                 series = this,

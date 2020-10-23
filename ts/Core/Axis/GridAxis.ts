@@ -12,6 +12,7 @@
 'use strict';
 
 import type ColorType from '../Color/ColorType';
+import type LineSeries from '../../Series/LineSeries';
 import type Point from '../Series/Point';
 import type {
     PointOptions,
@@ -681,7 +682,7 @@ class GridAxis {
                     value
                 } = this;
                 const tickPos = axis.tickPositions;
-                const series: Highcharts.Series = (
+                const series: LineSeries = (
                     axis.isLinked ?
                         (axis.linkedParent as any) :
                         axis
@@ -913,7 +914,7 @@ class GridAxis {
 
         if (axis.horiz) {
             if (gridOptions.enabled === true) {
-                axis.series.forEach(function (series: Highcharts.Series): void {
+                axis.series.forEach(function (series): void {
                     series.options.pointRange = 0;
                 });
             }

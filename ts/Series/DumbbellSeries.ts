@@ -8,21 +8,31 @@
  *
  * */
 
+'use strict';
+
 import type ColorString from '../Core/Color/ColorString';
 import type ColorType from '../Core/Color/ColorType';
+import type { SeriesStatesOptions } from '../Core/Series/SeriesOptions';
+import type { StatesOptionsKey } from '../Core/Series/StatesOptions';
 import type SVGAttributes from '../Core/Renderer/SVG/SVGAttributes';
 import type SVGPath from '../Core/Renderer/SVG/SVGPath';
 import BaseSeries from '../Core/Series/Series.js';
+import ColumnSeries from './ColumnSeries.js';
+import LineSeries from './LineSeries.js';
 import SVGRenderer from '../Core/Renderer/SVG/SVGRenderer.js';
 import H from '../Core/Globals.js';
-const {
-    noop
-} = H;
+const { noop } = H;
 import U from '../Core/Utilities.js';
 const {
     extend,
     pick
 } = U;
+
+declare module '../Core/Series/SeriesOptions' {
+    interface SeriesStateHoverOptions {
+        connectorWidthPlus?: number;
+    }
+}
 
 /**
  * Internal types
@@ -37,15 +47,12 @@ declare global {
             lowColor?: ColorType;
         }
         interface DumbbellSeriesOptions extends AreaRangeSeriesOptions {
-            states?: SeriesStatesOptionsObject<DumbbellSeries>;
+            states?: SeriesStatesOptions<DumbbellSeries>;
             connectorColor?: ColorString;
             connectorWidth?: number;
             groupPadding?: number;
             pointPadding?: number;
             lowColor?: ColorType;
-        }
-        interface SeriesStatesHoverOptionsObject {
-            connectorWidthPlus?: number;
         }
         class DumbbellPoint extends AreaRangePoint {
             public series: DumbbellSeries;
@@ -80,7 +87,7 @@ declare global {
             public markerAttribs(): SVGAttributes;
             public pointAttribs(
                 point: DumbbellPoint,
-                state: string
+                state?: StatesOptionsKey
             ): SVGAttributes;
         }
     }
@@ -89,7 +96,7 @@ declare global {
 /**
  * @private
  */
-declare module '../Core/Series/Types' {
+declare module '../Core/Series/SeriesType' {
     interface SeriesTypeRegistry {
         dumbbell: typeof Highcharts.AreaRangeSeries;
     }
@@ -97,14 +104,13 @@ declare module '../Core/Series/Types' {
 
 import './AreaRangeSeries.js';
 import './ColumnRangeSeries.js';
-import './ColumnSeries.js';
 import '../Core/Interaction.js';
 
-var seriesProto = H.Series.prototype,
+var seriesProto = LineSeries.prototype,
     seriesTypes = BaseSeries.seriesTypes,
     areaRangeProto = seriesTypes.arearange.prototype,
     columnRangeProto = seriesTypes.columnrange.prototype,
-    colProto = seriesTypes.column.prototype,
+    colProto = ColumnSeries.prototype,
     areaRangePointProto = areaRangeProto.pointClass.prototype,
     TrackerMixin = H.TrackerMixin; // Interaction
 

@@ -13,15 +13,16 @@
 'use strict';
 
 import type Chart from '../Core/Chart/Chart';
+import type ColumnSeries from './ColumnSeries.js';
+import type { SeriesStatesOptions } from '../Core/Series/SeriesOptions';
 import type SVGAttributes from '../Core/Renderer/SVG/SVGAttributes';
 import type SVGPath from '../Core/Renderer/SVG/SVGPath';
 import A from '../Core/Animation/AnimationUtilities.js';
 const { animObject } = A;
 import BaseSeries from '../Core/Series/Series.js';
 import H from '../Core/Globals.js';
-const {
-    noop
-} = H;
+const { noop } = H;
+import LineSeries from './LineSeries.js';
 import OnSeriesMixin from '../Mixins/OnSeries.js';
 import U from '../Core/Utilities.js';
 const {
@@ -32,7 +33,7 @@ const {
 /**
  * @private
  */
-declare module '../Core/Series/Types' {
+declare module '../Core/Series/SeriesType' {
     interface SeriesTypeRegistry {
         windbarb: typeof Highcharts.WindbarbSeries;
     }
@@ -74,7 +75,7 @@ declare global {
             ): SVGAttributes;
             public pointAttribs(
                 point: WindbarbPoint,
-                state?: string
+                state?: StatesOptionsKey
             ): SVGAttributes;
             public translate(): void;
             public windArrow(point: WindbarbPoint): (SVGElement|SVGPath);
@@ -91,7 +92,7 @@ declare global {
         }
         interface WindbarbSeriesOptions extends ColumnSeriesOptions {
             onSeries?: (string|null);
-            states?: SeriesStatesOptionsObject<WindbarbSeries>;
+            states?: SeriesStatesOptions<WindbarbSeries>;
             vectorLength?: number;
             xOffset?: number;
             yOffset?: number;
@@ -100,6 +101,7 @@ declare global {
 }
 
 import './ColumnSeries.js';
+import { StatesOptionsKey } from '../Core/Series/StatesOptions';
 
 // eslint-disable-next-line valid-jsdoc
 /**
@@ -274,14 +276,14 @@ BaseSeries.seriesType<typeof Highcharts.WindbarbSeries>('windbarb', 'column'
             options: Highcharts.WindbarbSeriesOptions
         ): void {
             registerApproximation();
-            H.Series.prototype.init.call(this, chart, options);
+            LineSeries.prototype.init.call(this, chart, options);
         },
 
         // Get presentational attributes.
         pointAttribs: function (
             this: Highcharts.WindbarbSeries,
             point: Highcharts.WindbarbPoint,
-            state?: string
+            state?: StatesOptionsKey
         ): SVGAttributes {
             var options = this.options,
                 stroke = point.color || this.color,

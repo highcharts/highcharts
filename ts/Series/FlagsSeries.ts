@@ -8,16 +8,19 @@
  *
  * */
 
+'use strict';
+
 import type { AlignValue } from '../Core/Renderer/AlignObject';
 import type ColorType from '../Core/Color/ColorType';
+import type ColumnSeries from './ColumnSeries';
 import type CSSObject from '../Core/Renderer/CSSObject';
+import type { SeriesStatesOptions } from '../Core/Series/SeriesOptions';
 import type SVGAttributes from '../Core/Renderer/SVG/SVGAttributes';
 import type SVGPath from '../Core/Renderer/SVG/SVGPath';
 import BaseSeries from '../Core/Series/Series.js';
 import H from '../Core/Globals.js';
-const {
-    noop
-} = H;
+const { noop } = H;
+import LineSeries from './LineSeries.js';
 import OnSeriesMixin from '../Mixins/OnSeries.js';
 import SVGElement from '../Core/Renderer/SVG/SVGElement.js';
 import SVGRenderer from '../Core/Renderer/SVG/SVGRenderer.js';
@@ -30,6 +33,20 @@ const {
     objectEach,
     wrap
 } = U;
+
+declare module '../Core/Series/SeriesLike' {
+    interface SeriesLike {
+        allowDG?: boolean;
+    }
+}
+
+declare module '../Core/Series/SeriesOptions' {
+    interface SeriesStateHoverOptions {
+        fillColor?: ColorType;
+        lineColor?: ColorType;
+        shape?: Highcharts.FlagsShapeValue;
+    }
+}
 
 /**
  * Internal types
@@ -61,21 +78,13 @@ declare global {
             onSeries?: string;
             shape?: FlagsShapeValue;
             stackDistance?: number;
-            states?: SeriesStatesOptionsObject<FlagsSeries>;
+            states?: SeriesStatesOptions<FlagsSeries>;
             style?: CSSObject;
             textAlign?: AlignValue;
             title?: string;
             useHTML?: boolean;
             width?: number;
             y?: number;
-        }
-        interface SeriesStatesHoverOptionsObject {
-            fillColor?: ColorType;
-            lineColor?: ColorType;
-            shape?: FlagsShapeValue;
-        }
-        interface Series {
-            allowDG?: boolean;
         }
         class FlagsPoint extends ColumnPoint {
             public _y?: number;
@@ -93,7 +102,7 @@ declare global {
             public allowDG: boolean;
             public data: Array<FlagsPoint>;
             public getPlotBox: OnSeriesMixin['getPlotBox'];
-            public onSeries?: Series;
+            public onSeries?: LineSeries;
             public options: FlagsSeriesOptions;
             public pointClass: typeof FlagsPoint;
             public points: Array<FlagsPoint>;
@@ -107,7 +116,7 @@ declare global {
 /**
  * @private
  */
-declare module '../Core/Series/Types' {
+declare module '../Core/Series/SeriesType' {
     interface SeriesTypeRegistry {
         flags: typeof Highcharts.FlagsSeries;
     }
@@ -118,12 +127,11 @@ import '../Core/Interaction.js';
 import '../Core/Renderer/SVG/SVGRenderer.js';
 
 var Renderer = H.Renderer,
-    Series = H.Series,
     TrackerMixin = H.TrackerMixin, // Interaction
     VMLRenderer = H.VMLRenderer,
     symbols = SVGRenderer.prototype.symbols;
 
-declare module '../Core/Series/Types' {
+declare module '../Core/Series/SeriesType' {
     interface SeriesTypesDictionary {
         flags: typeof Highcharts.FlagsSeries;
     }
@@ -399,7 +407,7 @@ BaseSeries.seriesType<typeof Highcharts.FlagsSeries>(
          * @private
          * @borrows Highcharts.Series#init as Highcharts.seriesTypes.flags#init
          */
-        init: Series.prototype.init,
+        init: LineSeries.prototype.init,
 
         /**
          * Get presentational attributes
@@ -717,7 +725,7 @@ BaseSeries.seriesType<typeof Highcharts.FlagsSeries>(
          * @return {void}
          */
         setClip: function (this: Highcharts.FlagsSeries): void {
-            Series.prototype.setClip.apply(this, arguments as any);
+            LineSeries.prototype.setClip.apply(this, arguments as any);
             if (this.options.clip !== false && this.sharedClipKey) {
                 (this.markerGroup as any)
                     .clip((this.chart as any)[this.sharedClipKey]);

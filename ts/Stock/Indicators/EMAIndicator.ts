@@ -6,6 +6,9 @@
  *
  * */
 
+'use strict';
+
+import type LineSeries from '../../Series/LineSeries';
 import BaseSeries from '../../Core/Series/Series.js';
 import U from '../../Core/Utilities.js';
 const {
@@ -39,7 +42,7 @@ declare global {
                 index: number,
                 SMA: number
             ): [number, number];
-            public getValues<TLinkedSeries extends Series>(
+            public getValues<TLinkedSeries extends LineSeries>(
                 series: TLinkedSeries,
                 params: EMAIndicatorParamsOptions
             ): (IndicatorValuesObject<TLinkedSeries>|undefined);
@@ -59,7 +62,7 @@ declare global {
     }
 }
 
-declare module '../../Core/Series/Types' {
+declare module '../../Core/Series/SeriesType' {
     interface SeriesTypeRegistry {
         ema: typeof Highcharts.EMAIndicator;
     }
@@ -148,7 +151,7 @@ BaseSeries.seriesType<typeof Highcharts.EMAIndicator>(
 
             return [x, y];
         },
-        getValues: function<TLinkedSeries extends Highcharts.Series> (
+        getValues: function<TLinkedSeries extends LineSeries> (
             this: Highcharts.EMAIndicator,
             series: TLinkedSeries,
             params: Highcharts.EMAIndicatorParamsOptions

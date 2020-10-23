@@ -8,6 +8,7 @@
  *
  * */
 import Series from '../Core/Series/Series.js';
+import './ColumnSeries.js';
 /**
  * Bar series type.
  *

@@ -11,7 +11,11 @@
  *
  * */
 
+'use strict';
+
+import type Axis from '../Core/Axis/Axis';
 import type Point from '../Core/Series/Point';
+import type { SeriesStatesOptions } from '../Core/Series/SeriesOptions';
 import type SVGPath from '../Core/Renderer/SVG/SVGPath';
 import BaseSeries from '../Core/Series/Series.js';
 import ColorSeriesModule from '../Mixins/ColorSeries.js';
@@ -26,6 +30,24 @@ const {
     extend,
     pick
 } = U;
+
+declare module '../Core/Axis/Types' {
+    interface AxisLike {
+        recomputingForTilemap?: boolean;
+    }
+}
+
+declare module '../Core/Series/SeriesLike' {
+    interface SeriesLike {
+        getSeriesPixelPadding?(axis: Axis): Record<string, number>;
+    }
+}
+
+declare module '../Core/Series/SeriesOptions' {
+    interface SeriesStateHoverHaloOptions {
+        enabled?: boolean;
+    }
+}
 
 /**
  * Internal types
@@ -55,15 +77,6 @@ declare global {
             public setOptions(): TilemapSeriesOptions;
             public translate(): void;
         }
-        interface Axis {
-            recomputingForTilemap?: boolean;
-        }
-        interface Series {
-            getSeriesPixelPadding?(axis: Axis): Dictionary<number>;
-        }
-        interface SeriesStatesHoverHaloOptions {
-            enabled?: boolean;
-        }
         interface TilemapPaddingObject {
             xPad: number;
             yPad: number;
@@ -71,7 +84,7 @@ declare global {
         interface TilemapPointOptions extends HeatmapPointOptions {
         }
         interface TilemapSeriesOptions extends HeatmapSeriesOptions {
-            state?: SeriesStateOptionsObject<HeatmapSeries>;
+            state?: SeriesStatesOptions<HeatmapSeries>;
             tileShape?: TilemapShapeValue;
         }
         interface TilemapShapeObject {
@@ -98,7 +111,7 @@ declare global {
 /**
  * @private
  */
-declare module '../Core/Series/Types' {
+declare module '../Core/Series/SeriesType' {
     interface SeriesTypeRegistry {
         tilemap: typeof Highcharts.TilemapSeries;
     }
@@ -669,16 +682,11 @@ addEvent(H.Axis, 'afterSetAxisTranslation', function (): void {
     var axis = this,
         // Find which series' padding to use
         seriesPadding = axis.series
-            .map(function (
-                series: Highcharts.Series
-            ): Highcharts.Dictionary<number>|undefined {
+            .map(function (series): Highcharts.Dictionary<number>|undefined {
                 return series.getSeriesPixelPadding &&
                     series.getSeriesPixelPadding(axis);
             })
-            .reduce(function (
-                a: (Highcharts.Dictionary<number>|undefined),
-                b: (Highcharts.Dictionary<number>|undefined)
-            ): Highcharts.Dictionary<number>|undefined {
+            .reduce(function (a, b): Highcharts.Dictionary<number>|undefined {
                 return (a && (a.padding as any)) > (b && (b.padding as any)) ?
                     a :
                     b;

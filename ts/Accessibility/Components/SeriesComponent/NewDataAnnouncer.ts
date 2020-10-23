@@ -53,30 +53,30 @@ declare global {
             public addEventListeners(): void;
             public announceDirtyData(): void;
             public buildAnnouncementMessage(
-                dirtySeries: Array<Series>,
-                newSeries?: Series,
+                dirtySeries: Array<LineSeries>,
+                newSeries?: LineSeries,
                 newPoint?: Point
             ): string;
             public destroy(): void;
             public init(): void;
             public onPointAdded(point: Point): void;
-            public onSeriesAdded(series: Series): void;
-            public onSeriesUpdatedData(series: Series): void;
+            public onSeriesAdded(series: LineSeries): void;
+            public onSeriesUpdatedData(series: LineSeries): void;
             public queueAnnouncement(
-                dirtySeries: Array<Series>,
-                newSeries?: Series,
+                dirtySeries: Array<LineSeries>,
+                newSeries?: LineSeries,
                 newPoint?: Point
             ): void;
         }
         interface NewDataAnnouncerDirtyObject {
-            allSeries: Dictionary<Series>;
+            allSeries: Dictionary<LineSeries>;
             hasDirty?: boolean;
             newPoint?: Point;
-            newSeries?: Series;
+            newSeries?: LineSeries;
         }
         interface NewDataAnnouncerQueuedAnnouncementObject {
             message: string;
-            series: Array<Series>;
+            series: Array<LineSeries>;
             time: number;
         }
     }
@@ -114,21 +114,21 @@ function findPointInDataArray(
  * @private
  */
 function getUniqueSeries(
-    arrayA?: Array<Highcharts.Series>,
-    arrayB?: Array<Highcharts.Series>
-): Array<Highcharts.Series> {
+    arrayA?: Array<LineSeries>,
+    arrayB?: Array<LineSeries>
+): Array<LineSeries> {
     var uniqueSeries = (arrayA || []).concat(arrayB || [])
         .reduce(function (
-            acc: Highcharts.Dictionary<Highcharts.Series>,
-            cur: Highcharts.Series
-        ): Highcharts.Dictionary<Highcharts.Series> {
+            acc: Highcharts.Dictionary<LineSeries>,
+            cur: LineSeries
+        ): Highcharts.Dictionary<LineSeries> {
             acc[cur.name + cur.index] = cur;
             return acc;
         }, {});
 
     return Object.keys(uniqueSeries).map(function (
         ix: string
-    ): Highcharts.Series {
+    ): LineSeries {
         return uniqueSeries[ix];
     });
 }
@@ -194,7 +194,7 @@ extend(NewDataAnnouncer.prototype, {
         });
 
         e.addEvent(chart, 'afterAddSeries', function (
-            e: { series: Highcharts.Series }
+            e: { series: LineSeries }
         ): void {
             announcer.onSeriesAdded(e.series);
         });
@@ -218,7 +218,7 @@ extend(NewDataAnnouncer.prototype, {
      */
     onSeriesUpdatedData: function (
         this: Highcharts.NewDataAnnouncer,
-        series: Highcharts.Series
+        series: LineSeries
     ): void {
         var chart = this.chart;
 
@@ -236,7 +236,7 @@ extend(NewDataAnnouncer.prototype, {
      */
     onSeriesAdded: function (
         this: Highcharts.NewDataAnnouncer,
-        series: Highcharts.Series
+        series: LineSeries
     ): void {
         if (chartHasAnnounceEnabled(this.chart)) {
             this.dirty.hasDirty = true;
@@ -291,7 +291,7 @@ extend(NewDataAnnouncer.prototype, {
             this.queueAnnouncement(
                 Object.keys(this.dirty.allSeries).map(function (
                     ix: string
-                ): Highcharts.Series {
+                ): LineSeries {
                     return announcer.dirty.allSeries[ix];
                 }),
                 this.dirty.newSeries,
@@ -318,8 +318,8 @@ extend(NewDataAnnouncer.prototype, {
      */
     queueAnnouncement: function (
         this: Highcharts.NewDataAnnouncer,
-        dirtySeries: Array<Highcharts.Series>,
-        newSeries?: Highcharts.Series,
+        dirtySeries: Array<LineSeries>,
+        newSeries?: LineSeries,
         newPoint?: Point
     ): void {
         const chart = this.chart;
@@ -388,7 +388,7 @@ extend(NewDataAnnouncer.prototype, {
      */
     buildAnnouncementMessage: function (
         this: Highcharts.NewDataAnnouncer,
-        dirtySeries: Array<Highcharts.Series>,
+        dirtySeries: Array<LineSeries>,
         newSeries?: Highcharts.AccessibilitySeries,
         newPoint?: Highcharts.AccessibilityPoint
     ): (string|null) {

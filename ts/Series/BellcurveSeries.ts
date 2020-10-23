@@ -16,6 +16,7 @@ import type {
     PointOptions,
     PointShortOptions
 } from '../Core/Series/PointOptions';
+import type { SeriesStatesOptions } from '../Core/Series/SeriesOptions';
 import BaseSeries from '../Core/Series/Series.js';
 import DerivedSeriesMixin from '../Mixins/DerivedSeries.js';
 import U from '../Core/Utilities.js';
@@ -28,7 +29,7 @@ const {
 /**
  * @private
  */
-declare module '../Core/Series/Types' {
+declare module '../Core/Series/SeriesType' {
     interface SeriesTypeRegistry {
         bellcurve: typeof Highcharts.BellcurveSeries;
     }
@@ -79,7 +80,7 @@ declare global {
             data?: undefined;
             intervals?: number;
             pointsInInterval?: number;
-            states?: SeriesStatesOptionsObject<BellcurveSeries>;
+            states?: SeriesStatesOptions<BellcurveSeries>;
         }
     }
 }

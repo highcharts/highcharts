@@ -6,6 +6,9 @@
  *
  * */
 
+'use strict';
+
+import type LineSeries from '../../Series/LineSeries';
 import BaseSeries from '../../Core/Series/Series.js';
 import RequiredIndicatorMixin from '../../Mixins/IndicatorRequired.js';
 import U from '../../Core/Utilities.js';
@@ -44,7 +47,7 @@ declare global {
                 EMAlevels: EMAIndicatorLevelsObject,
                 i: number
             ): ([number, (number|null)]|undefined);
-            public getValues<TLinkedSeries extends Series>(
+            public getValues<TLinkedSeries extends LineSeries>(
                 series: TLinkedSeries,
                 params: TEMAIndicatorParamsOptions
             ): (IndicatorValuesObject<TLinkedSeries>|undefined);
@@ -54,7 +57,7 @@ declare global {
             public points: Array<TEMAIndicatorPoint>;
         }
 
-        interface TEMAIndicatorLinkedParentSeries extends Series {
+        interface TEMAIndicatorLinkedParentSeries extends LineSeries {
             EMApercent?: number;
         }
 
@@ -70,6 +73,12 @@ declare global {
             params?: TEMAIndicatorParamsOptions;
         }
 
+    }
+}
+
+declare module '../../Core/Series/SeriesType' {
+    interface SeriesTypeRegistry {
+        tema: typeof Highcharts.TEMAIndicator;
     }
 }
 

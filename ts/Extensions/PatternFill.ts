@@ -24,6 +24,7 @@ import A from '../Core/Animation/AnimationUtilities.js';
 const { animObject } = A;
 import Chart from '../Core/Chart/Chart.js';
 import H from '../Core/Globals.js';
+import LineSeries from '../Series/LineSeries.js';
 import Point from '../Core/Series/Point.js';
 import SVGRenderer from '../Core/Renderer/SVG/SVGRenderer.js';
 import U from '../Core/Utilities.js';
@@ -485,9 +486,9 @@ SVGRenderer.prototype.addPattern = function (
 
 
 // Make sure we have a series color
-wrap(H.Series.prototype, 'getColor', function (
-    this: Highcharts.Series,
-    proceed: Highcharts.Series['getColor']
+wrap(LineSeries.prototype, 'getColor', function (
+    this: LineSeries,
+    proceed: LineSeries['getColor']
 ): void {
     var oldColor = this.options.color;
 
@@ -517,7 +518,7 @@ wrap(H.Series.prototype, 'getColor', function (
 
 
 // Calculate pattern dimensions on points that have their own pattern.
-addEvent(H.Series, 'render', function (): void {
+addEvent(LineSeries, 'render', function (): void {
     var isResizing = this.chart.isResizing;
 
     if (this.isDirtyData || isResizing || !this.chart.hasRendered) {
@@ -688,7 +689,7 @@ addEvent(Chart, 'endResize', function (): void {
     ) {
         // We have non-default patterns to fix. Find them by looping through
         // all points.
-        this.series.forEach(function (series: Highcharts.Series): void {
+        this.series.forEach(function (series: LineSeries): void {
             series.points.forEach(function (point: Point): void {
                 var colorOptions = point.options && point.options.color;
 

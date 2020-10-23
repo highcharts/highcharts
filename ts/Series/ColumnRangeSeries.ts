@@ -8,12 +8,15 @@
  *
  * */
 
+'use strict';
+
+import type { SeriesStatesOptions } from '../Core/Series/SeriesOptions';
 import type SVGAttributes from '../Core/Renderer/SVG/SVGAttributes';
 import BaseSeries from '../Core/Series/Series.js';
+import ColumnSeries from './ColumnSeries.js';
+const { prototype: columnProto } = ColumnSeries;
 import H from '../Core/Globals.js';
-const {
-    noop
-} = H;
+const { noop } = H;
 import O from '../Core/Options.js';
 const { defaultOptions } = O;
 import U from '../Core/Utilities.js';
@@ -48,14 +51,14 @@ declare global {
             public pointAttribs: ColumnSeries['pointAttribs'];
             public pointClass: typeof ColumnRangePoint;
             public points: Array<ColumnRangePoint>;
-            public polarArc: Function;
+            public polarArc: AreaRangeSeries['polarArc'];
             public translate(): void;
         }
         interface ColumnRangePointOptions extends AreaRangePointOptions {
         }
         interface ColumnRangeSeriesOptions extends AreaRangeSeriesOptions {
             minPointLength?: number;
-            states?: SeriesStatesOptionsObject<ColumnRangeSeries>;
+            states?: SeriesStatesOptions<ColumnRangeSeries>;
         }
     }
 }
@@ -63,15 +66,11 @@ declare global {
 /**
  * @private
  */
-declare module '../Core/Series/Types' {
+declare module '../Core/Series/SeriesType' {
     interface SeriesTypeRegistry {
         columnrange: typeof Highcharts.ColumnRangeSeries;
     }
 }
-
-import './ColumnSeries.js';
-
-var columnProto = BaseSeries.seriesTypes.column.prototype;
 
 /**
  * The column range is a cartesian series type with higher and lower

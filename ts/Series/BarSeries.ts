@@ -8,13 +8,15 @@
  *
  * */
 
-import _ColumnSeries from './ColumnSeries.js';
+import type ColumnSeries from './ColumnSeries';
 import Series from '../Core/Series/Series.js';
+
+import './ColumnSeries.js';
 
 /**
  * @private
  */
-declare module '../Core/Series/Types' {
+declare module '../Core/Series/SeriesType' {
     interface SeriesTypeRegistry {
         bar: typeof Highcharts.BarSeries;
     }

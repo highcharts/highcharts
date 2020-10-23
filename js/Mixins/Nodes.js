@@ -5,6 +5,7 @@
  * */
 'use strict';
 import H from '../Core/Globals.js';
+import LineSeries from '../Series/LineSeries.js';
 import Point from '../Core/Series/Point.js';
 import U from '../Core/Utilities.js';
 var defined = U.defined, extend = U.extend, find = U.find, pick = U.pick;
@@ -95,7 +96,7 @@ var NodesMixin = H.NodesMixin = {
      */
     generatePoints: function () {
         var chart = this.chart, nodeLookup = {};
-        H.Series.prototype.generatePoints.call(this);
+        LineSeries.prototype.generatePoints.call(this);
         if (!this.nodes) {
             this.nodes = []; // List of Point-like node items
         }
@@ -143,14 +144,14 @@ var NodesMixin = H.NodesMixin = {
             });
             this.nodes.length = 0;
         }
-        H.Series.prototype.setData.apply(this, arguments);
+        LineSeries.prototype.setData.apply(this, arguments);
     },
     // Destroy alll nodes and links
     destroy: function () {
         // Nodes must also be destroyed (#8682, #9300)
         this.data = []
             .concat(this.points || [], this.nodes);
-        return H.Series.prototype.destroy.apply(this, arguments);
+        return LineSeries.prototype.destroy.apply(this, arguments);
     },
     /**
      * When hovering node, highlight all connected links. When hovering a link,

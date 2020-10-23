@@ -5,14 +5,16 @@
  *  !!!!!!! SOURCE GETS TRANSPILED BY TYPESCRIPT. EDIT TS FILE ONLY. !!!!!!!
  *
  * */
+'use strict';
 import BaseSeries from '../../Core/Series/Series.js';
+var seriesTypes = BaseSeries.seriesTypes;
 import H from '../../Core/Globals.js';
 var noop = H.noop;
 import U from '../../Core/Utilities.js';
 var correctFloat = U.correctFloat, defined = U.defined, merge = U.merge;
 import './EMAIndicator.js';
 import './SMAIndicator.js';
-var SMA = H.seriesTypes.sma, EMA = H.seriesTypes.ema;
+var SMA = seriesTypes.sma, EMA = seriesTypes.ema;
 /**
  * The MACD series type.
  *
