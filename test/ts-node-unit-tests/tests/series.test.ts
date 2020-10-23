@@ -1,8 +1,9 @@
 import { deepStrictEqual } from 'assert';
+import { describe } from '../test-utils';
 
 export function testMapSeries() {
     const Highmaps = require('../../../code/highmaps.src.js')();
-    console.log('Testing maps series...');
+    describe('Testing maps series...');
 
     // Check if the series are in seriesTypes
     const expected = [
@@ -33,7 +34,7 @@ export function testMapSeries() {
 
 export function testStockSeries() {
     const Highstock = require('../../../code/highstock.src.js')();
-    console.log('Testing stock series...');
+    describe('Testing stock series...');
 
     // Check if the series are in seriesTypes
     const expected = [
@@ -61,7 +62,7 @@ export function testStockSeries() {
 
 export function testGanttSeries() {
     const Gantt = require('../../../code/highcharts-gantt.src.js')();
-    console.log('Testing Gantt series...');
+    describe('Testing Gantt series...');
 
     // Check if the series are in seriesTypes
     const expected = [
@@ -88,7 +89,7 @@ export function testGanttSeries() {
 
 export function testHighchartsSeries() {
     const Highcharts = require('../../../code/highcharts.src.js')();
-    console.log('Testing Highcharts Basic series...');
+    describe('Testing Highcharts Basic series...');
 
     // Check if the series are in seriesTypes
     const expected = [
@@ -114,7 +115,7 @@ export function testHighchartsSeries() {
 export function testHighchartsMoreSeries() {
     const Highcharts = require('../../../code/highcharts.src.js')();
     require('../../../code/highcharts-more.src.js')(Highcharts);
-    console.log('Testing Highcharts-more series...');
+    describe('Testing Highcharts-more series...');
 
     // Check if the series are in seriesTypes
     const expected = [
