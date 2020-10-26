@@ -45,7 +45,7 @@ declare module '../Core/Series/SeriesType' {
  */
 declare global {
     namespace Highcharts {
-        class WindbarbPoint extends ColumnPoint implements OnSeriesPoint {
+        class WindbarbPoint extends ColumnSeries.Point implements OnSeriesPoint {
             public beaufort: string;
             public beaufortLevel: number;
             public direction: number;
@@ -86,11 +86,11 @@ declare global {
                 directions: Array<number>
             ): Array<number>;
         }
-        interface WindbarbPointOptions extends ColumnPointOptions {
+        interface WindbarbPointOptions extends ColumnSeries.PointOptions {
             direction?: number;
             value?: number;
         }
-        interface WindbarbSeriesOptions extends ColumnSeriesOptions {
+        interface WindbarbSeriesOptions extends ColumnSeries.SeriesOptions {
             onSeries?: (string|null);
             states?: SeriesStatesOptions<WindbarbSeries>;
             vectorLength?: number;

@@ -15,6 +15,7 @@
 
 import type { AlignValue } from '../Core/Renderer/AlignObject';
 import type BBoxObject from '../Core/Renderer/BBoxObject';
+import type DataLabelOptions from '../Core/Series/DataLabelOptions';
 import type Point from '../Core/Series/Point';
 import type PositionObject from '../Core/Renderer/PositionObject';
 import type SVGElement from '../Core/Renderer/SVG/SVGElement';
@@ -74,7 +75,7 @@ addEvent(Chart, 'render', function collectAndHide(): void {
     });
 
     (this.series || []).forEach(function (series): void {
-        var dlOptions: Highcharts.DataLabelsOptions = (
+        var dlOptions: DataLabelOptions = (
             series.options.dataLabels as any
         );
 

@@ -85,27 +85,6 @@ namespace Series {
     /* eslint-disable valid-jsdoc */
 
     /** @private */
-    export function registerSeriesType(
-        seriesType: string,
-        seriesClass: typeof LineSeries
-    ): void {
-        const defaultPlotOptions = defaultOptions.plotOptions || {},
-            seriesOptions: SeriesOptions = (seriesClass as any).defaultOptions;
-
-        if (!seriesClass.prototype.pointClass) {
-            seriesClass.prototype.pointClass = Point;
-        }
-
-        seriesClass.prototype.type = seriesType;
-
-        if (seriesOptions) {
-            defaultPlotOptions[seriesType] = seriesOptions;
-        }
-
-        seriesTypes[seriesType] = seriesClass;
-    }
-
-    /** @private */
     export function cleanRecursively<T>(
         toClean: DeepRecord<string, T>,
         reference: DeepRecord<string, T>
@@ -173,6 +152,35 @@ namespace Series {
         }
 
         return series;
+    }
+
+    /**
+     * Registers class pattern of a series.
+     *
+     * @private
+     */
+    export function registerSeriesType(
+        seriesType: string,
+        seriesClass: typeof LineSeries
+    ): void {
+        const defaultPlotOptions = defaultOptions.plotOptions || {},
+            seriesOptions: SeriesOptions = (seriesClass as any).defaultOptions;
+
+        if (!seriesClass.prototype.pointClass) {
+            seriesClass.prototype.pointClass = Point;
+        }
+
+        if (!seriesClass.Point) {
+            seriesClass.Point = Point;
+        }
+
+        seriesClass.prototype.type = seriesType;
+
+        if (seriesOptions) {
+            defaultPlotOptions[seriesType] = seriesOptions;
+        }
+
+        seriesTypes[seriesType] = seriesClass;
     }
 
     /**

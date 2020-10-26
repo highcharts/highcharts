@@ -73,8 +73,8 @@ export interface PointMarkerOptions {
 /**
  * Helper interface for point types to add options to all point options.
  *
- * Use the `declare module './PointLike'` pattern to overload the interface in
- * this definition file.
+ * Use the `declare module './PointOptions'` pattern to overload the interface
+ * in this definition file.
  */
 export interface PointOptions {
     className?: string;

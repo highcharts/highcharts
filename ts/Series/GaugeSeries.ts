@@ -52,7 +52,7 @@ declare module '../Core/Series/SeriesLike' {
  */
 declare global {
     namespace Highcharts {
-        class GaugePoint extends LinePoint {
+        class GaugePoint extends LineSeries.Point {
             public dial?: SVGElement;
             public option: GaugePointOptions;
             public series: GaugeSeries;
@@ -80,7 +80,7 @@ declare global {
             ): void;
             public translate(): void;
         }
-        interface GaugePointOptions extends LinePointOptions {
+        interface GaugePointOptions extends LineSeries.PointOptions {
         }
         interface GaugeSeriesDialOptions {
             backgroundColor?: ColorType;
@@ -93,7 +93,7 @@ declare global {
             rearLength?: string;
             topWidth?: number;
         }
-        interface GaugeSeriesOptions extends LineSeriesOptions {
+        interface GaugeSeriesOptions extends LineSeries.SeriesOptions {
             dial?: GaugeSeriesDialOptions;
             overshoot?: number;
             pivot?: GaugeSeriesPivotOptions;

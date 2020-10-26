@@ -155,7 +155,7 @@ BaseSeries.seriesType<typeof Highcharts.BubbleSeries>('bubble', 'scatter', {
 
     dataLabels: {
         formatter: function (
-            this: Highcharts.PointLabelObject
+            this: Point.PointLabelObject
         ): (number|null|undefined) { // #2945
             return (this.point as Highcharts.BubblePoint).z;
         },

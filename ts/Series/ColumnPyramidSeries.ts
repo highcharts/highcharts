@@ -28,7 +28,7 @@ const {
  */
 declare global {
     namespace Highcharts {
-        class ColumnPyramidPoint extends ColumnPoint {
+        class ColumnPyramidPoint extends ColumnSeries.Point {
             public options: ColumnPyramidPointOptions;
             public series: ColumnPyramidSeries;
         }
@@ -39,9 +39,9 @@ declare global {
             public points: Array<ColumnPyramidPoint>;
             public translate(): void;
         }
-        interface ColumnPyramidPointOptions extends ColumnPointOptions {
+        interface ColumnPyramidPointOptions extends ColumnSeries.PointOptions {
         }
-        interface ColumnPyramidSeriesOptions extends ColumnSeriesOptions {
+        interface ColumnPyramidSeriesOptions extends ColumnSeries.SeriesOptions {
             states?: SeriesStatesOptions<ColumnPyramidSeries>;
         }
         interface SeriesTypesDictionary {

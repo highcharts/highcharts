@@ -58,7 +58,7 @@ import './ColumnSeries.js';
  */
 declare global {
     namespace Highcharts {
-        class WordcloudPoint extends ColumnPoint {
+        class WordcloudPoint extends ColumnSeries.Point {
             public dimensions: SizeObject;
             public draw: typeof drawPoint;
             public lastCollidedWith?: WordcloudPoint;
@@ -113,11 +113,11 @@ declare global {
             placed: Array<WordcloudPoint>;
             rotation: WordcloudSeriesRotationOptions;
         }
-        interface WordcloudPointOptions extends ColumnPointOptions {
+        interface WordcloudPointOptions extends ColumnSeries.PointOptions {
             name?: string;
             weight?: number;
         }
-        interface WordcloudSeriesOptions extends ColumnSeriesOptions {
+        interface WordcloudSeriesOptions extends ColumnSeries.SeriesOptions {
             allowExtendPlayingField?: boolean;
             data?: Array<(PointOptions|PointShortOptions|WordcloudPointOptions)>;
             maxFontSize?: number;

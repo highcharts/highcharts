@@ -34,12 +34,12 @@ const {
 declare global {
     namespace Highcharts {
         class ColumnRangePoint extends AreaRangePoint {
-            public barX: ColumnPoint['barX'];
+            public barX: ColumnSeries.Point['barX'];
             public options: ColumnRangePointOptions;
-            public pointWidth: ColumnPoint['pointWidth'];
+            public pointWidth: ColumnSeries.Point['pointWidth'];
             public series: ColumnRangeSeries;
             public shapeArgs: SVGAttributes;
-            public shapeType: ColumnPoint['shapeType'];
+            public shapeType: ColumnSeries.Point['shapeType'];
         }
         class ColumnRangeSeries extends AreaRangeSeries {
             public animate: ColumnSeries['animate'];
@@ -248,7 +248,7 @@ BaseSeries.seriesType<typeof Highcharts.ColumnRangeSeries>('columnrange', 'arear
     },
     getColumnMetrics: function (
         this: Highcharts.ColumnRangeSeries
-    ): Highcharts.ColumnMetricsObject {
+    ): ColumnSeries.MetricsObject {
         return columnProto.getColumnMetrics.apply(this, arguments as any);
     },
     pointAttribs: function (

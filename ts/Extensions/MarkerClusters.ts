@@ -21,6 +21,7 @@
  * */
 
 import type AnimationOptionsObject from '../Core/Animation/AnimationOptionsObject';
+import type DataLabelOptions from '../Core/Series/DataLabelOptions';
 import type {
     PointClickEvent,
     PointMarkerOptions,
@@ -186,7 +187,7 @@ declare global {
             animation?: (boolean|Partial<AnimationOptionsObject>);
             layoutAlgorithm: MarkerClusterLayoutAlgorithmOptions;
             marker?: PointMarkerOptions;
-            dataLabels?: DataLabelsOptions;
+            dataLabels?: DataLabelOptions;
             zones?: Array<MarkerClusterZonesOptions>;
             states?: PointStatesOptions<Point>;
             events?: MarkerClusterEventsOptions;

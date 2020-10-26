@@ -13,6 +13,7 @@
 'use strict';
 
 import type ColumnSeries from '../Series/ColumnSeries';
+import type DataLabelOptions from '../Core/Series/DataLabelOptions';
 import type PositionObject from '../Core/Renderer/PositionObject';
 import type { SeriesStatesOptions } from '../Core/Series/SeriesOptions';
 import type StackingAxis from '../Core/Axis/StackingAxis';
@@ -36,7 +37,7 @@ declare module '../Core/Series/PointLike' {
  */
 declare global {
     namespace Highcharts {
-        class VariwidePoint extends ColumnPoint {
+        class VariwidePoint extends ColumnSeries.Point {
             public crosshairWidth: number;
             public isValid: () => boolean;
             public options: VariwidePointOptions;
@@ -73,9 +74,9 @@ declare global {
                 index: number
             ): void;
         }
-        interface VariwidePointOptions extends ColumnPointOptions {
+        interface VariwidePointOptions extends ColumnSeries.PointOptions {
         }
-        interface VariwideSeriesOptions extends ColumnSeriesOptions {
+        interface VariwideSeriesOptions extends ColumnSeries.SeriesOptions {
             states?: SeriesStatesOptions<VariwideSeries>;
         }
     }
@@ -435,7 +436,7 @@ wrap(H.Tick.prototype, 'getLabelPosition', function (
     y: number,
     label: SVGElement,
     horiz: boolean,
-    labelOptions: Highcharts.DataLabelsOptions,
+    labelOptions: DataLabelOptions,
     tickmarkOffset: number,
     index: number
 ): PositionObject {

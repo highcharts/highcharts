@@ -32,7 +32,7 @@ const {
  */
 declare global {
     namespace Highcharts {
-        class HistogramPoint extends ColumnPoint {
+        class HistogramPoint extends ColumnSeries.Point {
             public options: HistogramPointOptions;
             public series: HistogramSeries;
         }
@@ -58,10 +58,10 @@ declare global {
                 binWidth: number
             ): Array<HistogramPointOptions>;
         }
-        interface HistogramPointOptions extends ColumnPointOptions {
+        interface HistogramPointOptions extends ColumnSeries.PointOptions {
             x2?: number;
         }
-        interface HistogramSeriesOptions extends ColumnSeriesOptions {
+        interface HistogramSeriesOptions extends ColumnSeries.SeriesOptions {
             baseSeries?: (number|string);
             binsNumber?: string;
             binWidth?: number;

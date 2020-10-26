@@ -14,6 +14,7 @@
 
 import type ColorString from '../Core/Color/ColorString';
 import type ColorType from '../Core/Color/ColorType';
+import type DataLabelOptions from '../Core/Series/DataLabelOptions';
 import type { SeriesStatesOptions } from '../Core/Series/SeriesOptions';
 import type { StatesOptionsKey } from '../Core/Series/StatesOptions';
 import type SVGAttributes from '../Core/Renderer/SVG/SVGAttributes';
@@ -57,7 +58,7 @@ declare module '../Core/Series/SeriesType' {
  */
 declare global {
     namespace Highcharts {
-        class SankeyPoint extends ColumnPoint implements NodesPoint {
+        class SankeyPoint extends ColumnSeries.Point implements NodesPoint {
             public className: NodesPoint['className'];
             public column?: number;
             public from: NodesPoint['from'];
@@ -138,20 +139,18 @@ declare global {
             (
                 this: (
                     SankeyDataLabelsFormatterContextObject|
-                    PointLabelObject
+                    Point.PointLabelObject
                 )
             ): (string|undefined);
         }
         interface SankeyDataLabelsFormatterContextObject {
             point: SankeyPoint;
         }
-        interface SankeyDataLabelsOptionsObject
-            extends DataLabelsOptions {
+        interface SankeyDataLabelsOptionsObject extends DataLabelOptions {
             nodeFormat?: string;
             nodeFormatter?: SankeyDataLabelsFormatterCallbackFunction;
         }
-        interface SankeyPointOptions
-            extends ColumnPointOptions, NodesPointOptions {
+        interface SankeyPointOptions extends ColumnSeries.PointOptions, NodesPointOptions {
             column?: number;
             from?: string;
             height?: number;
@@ -178,8 +177,7 @@ declare global {
             name?: string;
             offset?: (number|string);
         }
-        interface SankeySeriesOptions
-            extends ColumnSeriesOptions, NodesSeriesOptions {
+        interface SankeySeriesOptions extends ColumnSeries.SeriesOptions, NodesSeriesOptions {
             curveFactor?: number;
             dataLabels?: SankeyDataLabelsOptionsObject;
             height?: number;
@@ -401,7 +399,7 @@ BaseSeries.seriesType<typeof Highcharts.SankeySeries>(
             nodeFormatter: function (
                 this: (
                     Highcharts.SankeyDataLabelsFormatterContextObject|
-                    Highcharts.PointLabelObject
+                    Point.PointLabelObject
                 )
             ): (string|undefined) {
                 return this.point.name;

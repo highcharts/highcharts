@@ -12,6 +12,7 @@
 
 import type AnimationOptionsObject from '../Core/Animation/AnimationOptionsObject';
 import type { AlignValue } from '../Core/Renderer/AlignObject';
+import type DataLabelOptions from '../Core/Series/DataLabelOptions';
 import type PositionObject from '../Core/Renderer/PositionObject';
 import type { SeriesStatesOptions } from '../Core/Series/SeriesOptions';
 import type SVGAttributes from '../Core/Renderer/SVG/SVGAttributes';
@@ -64,7 +65,7 @@ declare module '../Core/Series/SeriesType' {
  */
 declare global {
     namespace Highcharts {
-        class PiePoint extends LinePoint {
+        class PiePoint extends LineSeries.Point {
             public angle?: number;
             public connectorShapes?: Dictionary<PiePointConnectorShapeFunction>;
             public delayedRendering?: boolean;
@@ -119,7 +120,7 @@ declare global {
             'final': Dictionary<undefined>;
             natural: PositionObject;
         }
-        interface PiePointOptions extends LinePointOptions {
+        interface PiePointOptions extends LineSeries.PointOptions {
             dataLabels?: PieSeriesDataLabelsOptionsObject;
             sliced?: boolean;
             visible?: boolean;
@@ -127,9 +128,7 @@ declare global {
         interface PiePositionObject extends PositionObject {
             alignment: AlignValue;
         }
-        interface PieSeriesDataLabelsOptionsObject
-            extends DataLabelsOptions
-        {
+        interface PieSeriesDataLabelsOptionsObject extends DataLabelOptions {
             alignTo?: string;
             connectorColor?: ColorType;
             connectorPadding?: number;
@@ -139,7 +138,7 @@ declare global {
             distance?: number;
             softConnector?: boolean;
         }
-        interface PieSeriesOptions extends LineSeriesOptions {
+        interface PieSeriesOptions extends LineSeries.SeriesOptions {
             endAngle?: number;
             center?: [(number|string|null), (number|string|null)];
             colorByPoint?: boolean;
@@ -472,7 +471,7 @@ BaseSeries.seriesType<typeof Highcharts.PieSeries>(
              * @default function () { return this.point.isNull ? void 0 : this.point.name; }
              */
             formatter: function (
-                this: Highcharts.PointLabelObject
+                this: Point.PointLabelObject
             ): (string|undefined) { // #2945
                 return this.point.isNull ? void 0 : this.point.name;
             },

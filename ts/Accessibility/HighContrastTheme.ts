@@ -14,15 +14,9 @@
 
 import type ColorType from '../Core/Color/ColorType';
 
-/**
- * Internal types
- * @private
- */
-declare global {
-    namespace Highcharts {
-        interface DataLabelsOptions {
-            connectorColor?: ColorType;
-        }
+declare module '../Core/Series/DataLabelOptions' {
+    interface DataLabelOptions {
+        connectorColor?: ColorType;
     }
 }
 

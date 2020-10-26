@@ -74,14 +74,14 @@ declare global {
             public seriesDrawPoints: AreaRangeSeries['drawPoints'];
             public drawTracker: TrackerMixin['drawTrackerPoint'];
             public drawGraph: any;
-            public columnMetrics: ColumnMetricsObject;
+            public columnMetrics: ColumnSeries.MetricsObject;
             public crispConnector(
                 points: SVGPath,
                 width: number
             ): SVGPath;
             public getConnectorAttribs(point: DumbbellPoint): SVGAttributes;
             public drawConnector(point: DumbbellPoint): void;
-            public getColumnMetrics(): ColumnMetricsObject;
+            public getColumnMetrics(): ColumnSeries.MetricsObject;
             public translate(): void;
             public drawPoints(): void;
             public markerAttribs(): SVGAttributes;
@@ -352,7 +352,7 @@ BaseSeries.seriesType<typeof Highcharts.DumbbellSeries>('dumbbell', 'arearange',
      */
     getColumnMetrics: function (
         this: Highcharts.DumbbellSeries
-    ): Highcharts.ColumnMetricsObject {
+    ): ColumnSeries.MetricsObject {
         var metrics = colProto.getColumnMetrics.apply(this, arguments as any);
 
         metrics.offset += metrics.width / 2;

@@ -28,7 +28,7 @@ const {
  */
 declare global {
     namespace Highcharts {
-        class BulletPoint extends ColumnPoint {
+        class BulletPoint extends ColumnSeries.Point {
             public borderColor: BulletPointOptions['borderColor'];
             public options: BulletPointOptions;
             public series: BulletSeries;
@@ -47,12 +47,12 @@ declare global {
             public drawPoints(): void;
             public getExtremes(yData?: Array<number>): DataExtremesObject;
         }
-        interface BulletPointOptions extends ColumnPointOptions {
+        interface BulletPointOptions extends ColumnSeries.PointOptions {
             borderColor?: ColorType;
             target?: number;
             targetOptions?: BulletSeriesTargetOptions;
         }
-        interface BulletSeriesOptions extends ColumnSeriesOptions {
+        interface BulletSeriesOptions extends ColumnSeries.SeriesOptions {
             targetOptions?: BulletSeriesTargetOptions;
         }
         interface BulletSeriesTargetOptions {

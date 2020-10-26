@@ -136,7 +136,7 @@ declare global {
             ): void;
             public styledModeFormat(formatString: string): string;
             public tooltipFooterHeaderFormatter(
-                labelConfig: PointLabelObject,
+                labelConfig: Point.PointLabelObject,
                 isFooter?: boolean
             ): string;
             public update(options: TooltipOptions): void;
@@ -1283,7 +1283,7 @@ class Tooltip {
             anchor,
             textConfig = {} as Highcharts.TooltipFormatterContextObject,
             text: (boolean|string),
-            pointConfig = [] as Array<Highcharts.PointLabelObject>,
+            pointConfig = [] as Array<Point.PointLabelObject>,
             formatter = options.formatter || tooltip.defaultFormatter,
             shared = tooltip.shared,
             currentSeries,
@@ -1854,7 +1854,7 @@ class Tooltip {
      * @param {boolean} [isFooter]
      * @return {string}
      */
-    public tooltipFooterHeaderFormatter(labelConfig: Highcharts.PointLabelObject, isFooter?: boolean): string {
+    public tooltipFooterHeaderFormatter(labelConfig: Point.PointLabelObject, isFooter?: boolean): string {
         var footOrHead = isFooter ? 'footer' : 'header',
             series = labelConfig.series,
             tooltipOptions = series.tooltipOptions,

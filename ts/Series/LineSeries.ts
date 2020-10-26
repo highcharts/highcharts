@@ -21,7 +21,10 @@ import type { AxisType } from '../Core/Axis/Types';
 import type { CursorValue } from '../Core/Renderer/CSSObject';
 import type Chart from '../Core/Chart/Chart';
 import type ColorType from '../Core/Color/ColorType';
+import type DashStyleValue from '../Core/Renderer/DashStyleValue';
+import type DataLabelOptions from '../Core/Series/DataLabelOptions';
 import type { EventCallback } from '../Core/Callback';
+import type PointClass from '../Core/Series/Point';
 import type PointerEvent from '../Core/PointerEvent';
 import type {
     PointOptions,
@@ -92,6 +95,8 @@ declare module '../Core/Chart/ChartLike'{
     }
 }
 
+type PointClassOptions = PointOptions;
+
 declare module '../Core/Series/PointLike' {
     interface PointLike {
         category?: string;
@@ -124,6 +129,8 @@ declare module '../Core/Series/PointOptions' {
     }
 }
 
+type SeriesClassOptions = SeriesOptions;
+
 declare module '../Core/Series/SeriesLike' {
     interface SeriesLike {
         _hasPointMarkers?: boolean;
@@ -152,10 +159,6 @@ declare module '../Core/Series/SeriesOptions' {
  */
 declare global {
     namespace Highcharts {
-        class LinePoint extends Point {
-            public options: LinePointOptions;
-            public series: LineSeries;
-        }
         interface DataExtremesObject {
             dataMin?: number;
             dataMax?: number;
@@ -174,60 +177,6 @@ declare global {
         interface KDPointSearchObject {
             clientX: number;
             plotY?: number;
-        }
-        interface LinePointOptions extends PointOptions {
-        }
-        interface LineSeriesOptions extends SeriesOptions {
-            allAreas?: boolean;
-            animation?: (boolean|DeepPartial<AnimationOptionsObject>);
-            animationLimit?: number;
-            boostThreshold?: number;
-            borderColor?: ColorType;
-            borderWidth?: number;
-            className?: string;
-            clip?: boolean;
-            colorAxis?: boolean;
-            colorByPoint?: boolean;
-            colors?: Array<ColorType>;
-            connectEnds?: boolean;
-            connectNulls?: boolean;
-            crisp?: boolean|number;
-            cursor?: (string|CursorValue);
-            dashStyle?: DashStyleValue;
-            dataLabels?: (
-                DataLabelsOptions|Array<DataLabelsOptions>
-            );
-            dataSorting?: DataSortingOptionsObject;
-            description?: string;
-            findNearestPointBy?: SeriesFindNearestPointByValue;
-            id?: string;
-            index?: number;
-            includeInDataExport?: boolean;
-            isInternal?: boolean;
-            joinBy?: (string|Array<string>);
-            kdNow?: boolean;
-            keys?: Array<string>;
-            legendIndex?: number;
-            linecap?: SeriesLinecapValue;
-            lineColor?: ColorType;
-            lineWidth?: number;
-            linkedTo?: string;
-            navigatorOptions?: SeriesOptions;
-            opacity?: number;
-            pointDescriptionFormatter?: Function;
-            pointPlacement?: (number|string);
-            pointStart?: number;
-            shadow?: (boolean|Partial<ShadowOptionsObject>);
-            showInNavigator?: boolean;
-            skipKeyboardNavigation?: boolean;
-            states?: SeriesStatesOptions<LineSeries>;
-            step?: SeriesStepValue;
-            supportingColor?: ColorType;
-            visible?: boolean;
-            xAxis?: (number|string);
-            yAxis?: (number|string);
-            zIndex?: number;
-            zoneAxis?: string;
         }
         interface SeriesCropDataObject {
             end: number;
@@ -344,7 +293,7 @@ class LineSeries {
      *
      * @optionparent plotOptions.series
      */
-    public static defaultOptions: Highcharts.LineSeriesOptions = {
+    public static defaultOptions: LineSeries.SeriesOptions = {
         // base series options
 
         /**
@@ -1989,7 +1938,7 @@ class LineSeries {
              *
              * @type {Highcharts.DataLabelsFormatterCallbackFunction}
              */
-            formatter: function (this: Highcharts.PointLabelObject): string {
+            formatter: function (this: Point.PointLabelObject): string {
                 const { numberFormatter } = this.series.chart;
                 return typeof this.y !== 'number' ? '' : numberFormatter(this.y, -1);
             },
@@ -2235,7 +2184,7 @@ class LineSeries {
              *         Vertical and positioned
              */
             y: 0
-        } as Highcharts.DataLabelsOptions,
+        },
 
         /**
          * When the series contains less points than the crop threshold, all
@@ -6520,7 +6469,7 @@ class LineSeries {
 
 /* *
  *
- *  Prototype Properties
+ *  Class Prototype
  *
  * */
 
@@ -6546,7 +6495,7 @@ interface LineSeries extends SeriesLike {
     kdAxisArray: Array<string>;
     linkedSeries: Array<LineSeries>;
     name: string;
-    options: Highcharts.LineSeriesOptions;
+    options: LineSeries.SeriesOptions;
     parallelArrays: Array<string>;
     pointClass: typeof Point;
     points: Array<Point>;
@@ -6595,6 +6544,71 @@ extend(
         sorted: true
     }
 );
+
+/* *
+ *
+ *  Class Namespace
+ *
+ * */
+
+namespace LineSeries {
+    export declare class Point extends PointClass {
+        options: PointOptions;
+        series: LineSeries;
+    }
+    export interface PointOptions extends PointClassOptions {
+    }
+    export interface SeriesOptions extends SeriesClassOptions {
+        allAreas?: boolean;
+        animation?: (boolean|DeepPartial<AnimationOptionsObject>);
+        animationLimit?: number;
+        boostThreshold?: number;
+        borderColor?: ColorType;
+        borderWidth?: number;
+        className?: string;
+        clip?: boolean;
+        colorAxis?: boolean;
+        colorByPoint?: boolean;
+        colors?: Array<ColorType>;
+        connectEnds?: boolean;
+        connectNulls?: boolean;
+        crisp?: boolean|number;
+        cursor?: (string|CursorValue);
+        dashStyle?: DashStyleValue;
+        dataLabels?: (DataLabelOptions|Array<DataLabelOptions>);
+        dataSorting?: Highcharts.DataSortingOptionsObject;
+        description?: string;
+        findNearestPointBy?: Highcharts.SeriesFindNearestPointByValue;
+        id?: string;
+        index?: number;
+        includeInDataExport?: boolean;
+        isInternal?: boolean;
+        joinBy?: (string|Array<string>);
+        kdNow?: boolean;
+        keys?: Array<string>;
+        legendIndex?: number;
+        linecap?: Highcharts.SeriesLinecapValue;
+        lineColor?: ColorType;
+        lineWidth?: number;
+        linkedTo?: string;
+        navigatorOptions?: SeriesOptions;
+        opacity?: number;
+        pointDescriptionFormatter?: Function;
+        pointPlacement?: (number|string);
+        pointStart?: number;
+        shadow?: (boolean|Partial<ShadowOptionsObject>);
+        showInNavigator?: boolean;
+        skipKeyboardNavigation?: boolean;
+        states?: SeriesStatesOptions<LineSeries>;
+        step?: Highcharts.SeriesStepValue;
+        supportingColor?: ColorType;
+        visible?: boolean;
+        xAxis?: (number|string);
+        yAxis?: (number|string);
+        zIndex?: number;
+        zoneAxis?: string;
+    }
+}
 
 /* *
  *

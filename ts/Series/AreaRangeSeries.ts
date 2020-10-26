@@ -10,6 +10,7 @@
 
 'use strict';
 
+import type DataLabelOptions from '../Core/Series/DataLabelOptions';
 import type RadialAxis from '../Core/Axis/RadialAxis';
 import type { SeriesStatesOptions } from '../Core/Series/SeriesOptions';
 import type SVGPath from '../Core/Renderer/SVG/SVGPath';
@@ -51,9 +52,7 @@ declare module '../Core/Series/SeriesType' {
  */
 declare global {
     namespace Highcharts {
-        interface AreaRangeDataLabelsOptionsObject
-            extends DataLabelsOptions
-        {
+        interface AreaRangeDataLabelsOptionsObject extends DataLabelOptions {
             xHigh?: number;
             xLow?: number;
             yHigh?: number;

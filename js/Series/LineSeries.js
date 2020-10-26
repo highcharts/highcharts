@@ -4937,6 +4937,13 @@ extend(LineSeries.prototype, {
     // requires the data to be sorted
     sorted: true
 });
+/* *
+ *
+ *  Class Namespace
+ *
+ * */
+(function (LineSeries) {
+})(LineSeries || (LineSeries = {}));
 BaseSeries.registerSeriesType('line', LineSeries);
 /* *
  *

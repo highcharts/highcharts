@@ -7,6 +7,7 @@
 'use strict';
 
 import type CSSObject from '../../../Core/Renderer/CSSObject';
+import type DashStyleValue from '../../../Core/Renderer/DashStyleValue';
 import type Point from '../../../Core/Series/Point';
 import type PositionObject from '../../../Core/Renderer/PositionObject';
 import type SVGPath from '../../../Core/Renderer/SVG/SVGPath';

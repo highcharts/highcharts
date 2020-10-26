@@ -10,6 +10,7 @@
 
 'use strict';
 
+import type ColumnSeries from '../Series/ColumnSeries';
 import type { SeriesStatesOptions } from '../Core/Series/SeriesOptions';
 import BaseSeries from '../Core/Series/Series.js';
 import H from '../Core/Globals.js';
@@ -34,7 +35,7 @@ declare global {
             public points: Array<ErrorBarPoint>;
             public pointValKey: string;
             public type: string;
-            public getColumnMetrics(): ColumnMetricsObject;
+            public getColumnMetrics(): ColumnSeries.MetricsObject;
             public drawDataLabels(): void;
             public toYData(point: ErrorBarPoint): Array<number>;
         }
@@ -149,7 +150,7 @@ BaseSeries.seriesType<typeof Highcharts.ErrorBarSeries>('errorbar', 'boxplot', {
     // standalone
     getColumnMetrics: function (
         this: Highcharts.ErrorBarSeries
-    ): Highcharts.ColumnMetricsObject {
+    ): ColumnSeries.MetricsObject {
         return (
             (this.linkedParent && this.linkedParent.columnMetrics) ||
             seriesTypes.column.prototype.getColumnMetrics.call(this)

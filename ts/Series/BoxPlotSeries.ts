@@ -12,6 +12,7 @@
 
 import type ColorString from '../Core/Color/ColorString';
 import type ColorType from '../Core/Color/ColorType';
+import type DashStyleValue from '../Core/Renderer/DashStyleValue';
 import type GradientColor from '../Core/Color/GradientColor';
 import type { SeriesStatesOptions } from '../Core/Series/SeriesOptions';
 import type SVGAttributes from '../Core/Renderer/SVG/SVGAttributes';
@@ -45,7 +46,7 @@ declare module '../Core/Series/SeriesType' {
  */
 declare global {
     namespace Highcharts {
-        class BoxPlotPoint extends ColumnPoint {
+        class BoxPlotPoint extends ColumnSeries.Point {
             public box: SVGElement;
             public boxDashStyle: DashStyleValue;
             public fillColor: ColorType;
@@ -88,14 +89,14 @@ declare global {
             public toYData(point: BoxPlotPoint): Array<number>;
             public translate(): void;
         }
-        interface BoxPlotPointOptions extends ColumnPointOptions {
+        interface BoxPlotPointOptions extends ColumnSeries.PointOptions {
             high?: BoxPlotPoint['high'];
             low?: BoxPlotPoint['low'];
             median?: BoxPlotPoint['median'];
             q1?: BoxPlotPoint['q1'];
             q3?: BoxPlotPoint['q3'];
         }
-        interface BoxPlotSeriesOptions extends ColumnSeriesOptions {
+        interface BoxPlotSeriesOptions extends ColumnSeries.SeriesOptions {
             boxDashStyle?: BoxPlotPoint['boxDashStyle'];
             fillColor?: BoxPlotPoint['fillColor'];
             medianColor?: BoxPlotPoint['medianColor'];

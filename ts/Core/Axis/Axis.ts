@@ -16,6 +16,7 @@ import type { AlignValue } from '../Renderer/AlignObject';
 import type Chart from '../Chart/Chart';
 import type ColorType from '../Color/ColorType';
 import type CSSObject from '../Renderer/CSSObject';
+import type DashStyleValue from '../Renderer/DashStyleValue';
 import type GradientColor from '../Color/GradientColor';
 import type LineSeries from '../../Series/LineSeries';
 import type PlotLineOrBand from './PlotLineOrBand';

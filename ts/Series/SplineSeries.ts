@@ -27,12 +27,12 @@ import '../Series/LineSeries.js';
  */
 declare global {
     namespace Highcharts {
-        interface SplinePointOptions extends LinePointOptions {
+        interface SplinePointOptions extends LineSeries.PointOptions {
         }
-        interface SplineSeriesOptions extends LineSeriesOptions {
+        interface SplineSeriesOptions extends LineSeries.SeriesOptions {
             states?: SeriesStatesOptions<SplineSeries>;
         }
-        class SplinePoint extends LinePoint {
+        class SplinePoint extends LineSeries.Point {
             public doCurve?: boolean;
             public options: SplinePointOptions;
             public rightContX?: number;

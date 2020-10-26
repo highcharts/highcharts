@@ -51,7 +51,7 @@ declare module '../Core/Series/SeriesType' {
  */
 declare global {
     namespace Highcharts {
-        class DotplotPoint extends ColumnPoint {
+        class DotplotPoint extends ColumnSeries.Point {
             public graphics?: Dictionary<SVGElement>;
             public options: DotplotPointOptions;
             public pointAttr?: SVGAttributes;
@@ -65,9 +65,9 @@ declare global {
             public points: Array<DotplotPoint>;
             public drawPoints(): void;
         }
-        interface DotplotPointOptions extends ColumnPointOptions {
+        interface DotplotPointOptions extends ColumnSeries.PointOptions {
         }
-        interface DotplotSeriesOptions extends ColumnSeriesOptions {
+        interface DotplotSeriesOptions extends ColumnSeries.SeriesOptions {
             itemPadding?: number;
             states?: SeriesStatesOptions<DotplotSeries>;
         }

@@ -15,6 +15,10 @@
 import type AnimationOptionsObject from '../../Core/Animation/AnimationOptionsObject';
 import type Chart from '../../Core/Chart/Chart';
 import type ColorType from '../../Core/Color/ColorType';
+import type {
+    DataLabelOptions,
+    DataLabelTextPathOptions
+} from '../../Core/Series/DataLabelOptions';
 import type { PointShortOptions } from '../../Core/Series/PointOptions';
 import type { SeriesStatesOptions } from '../../Core/Series/SeriesOptions';
 import type { StatesOptionsKey } from '../../Core/Series/StatesOptions';
@@ -69,22 +73,24 @@ declare global {
         interface NetworkgraphDataLabelsFormatterCallbackFunction {
             (this: (
                 NetworkgraphDataLabelsFormatterContextObject|
-                PointLabelObject
+                Point.PointLabelObject
             )): (number|string|null|undefined);
         }
-        interface NetworkgraphDataLabelsFormatterContextObject extends PointLabelObject {
+        interface NetworkgraphDataLabelsFormatterContextObject
+            extends Point.PointLabelObject
+        {
             color: ColorType;
             key: string;
             point: NetworkgraphPoint;
         }
-        interface NetworkgraphDataLabelsOptionsObject extends DataLabelsOptions {
+        interface NetworkgraphDataLabelsOptionsObject extends DataLabelOptions {
             format?: string;
             formatter?: NetworkgraphDataLabelsFormatterCallbackFunction;
             linkFormat?: string;
             linkFormatter?: NetworkgraphDataLabelsFormatterCallbackFunction;
-            linkTextPath?: DataLabelsTextPathOptionsObject;
+            linkTextPath?: DataLabelTextPathOptions;
         }
-        interface NetworkgraphPointOptions extends LinePointOptions, NodesPointOptions {
+        interface NetworkgraphPointOptions extends LineSeries.PointOptions, NodesPointOptions {
             color?: ColorType;
             colorIndex?: number;
             dashStyle?: string;
@@ -93,7 +99,7 @@ declare global {
             opacity?: number;
             width?: number;
         }
-        interface NetworkgraphSeriesOptions extends LineSeriesOptions, NodesSeriesOptions {
+        interface NetworkgraphSeriesOptions extends LineSeries.SeriesOptions, NodesSeriesOptions {
             dataLabels?: NetworkgraphDataLabelsOptionsObject;
             draggable?: boolean;
             inactiveOtherPoints?: boolean;
@@ -102,7 +108,7 @@ declare global {
             nodes?: Array<NetworkgraphPointOptions>;
             states?: SeriesStatesOptions<NetworkgraphSeries>;
         }
-        class NetworkgraphPoint extends LinePoint implements DragNodesPoint, NodesPoint {
+        class NetworkgraphPoint extends LineSeries.Point implements DragNodesPoint, NodesPoint {
             public className: NodesPoint['className'];
             public degree: number;
             public fixedPosition: DragNodesPoint['fixedPosition'];
@@ -369,7 +375,7 @@ BaseSeries.seriesType<typeof Highcharts.NetworkgraphSeries>(
              */
             formatter: function (
                 this: (
-                    Highcharts.PointLabelObject|
+                    Point.PointLabelObject|
                     Highcharts.NetworkgraphDataLabelsFormatterContextObject
                 )
             ): string {
@@ -402,7 +408,7 @@ BaseSeries.seriesType<typeof Highcharts.NetworkgraphSeries>(
              */
             linkFormatter: function (
                 this: (
-                    Highcharts.PointLabelObject|
+                    Point.PointLabelObject|
                     Highcharts.NetworkgraphDataLabelsFormatterContextObject
                 )
             ): string {

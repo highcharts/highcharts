@@ -48,7 +48,7 @@ const {
  */
 declare global {
     namespace Highcharts {
-        class XRangePoint extends ColumnPoint {
+        class XRangePoint extends ColumnSeries.Point {
             public clipRectArgs?: RectangleObject;
             public isValid: () => boolean;
             public len?: number;
@@ -87,7 +87,7 @@ declare global {
                 options: XRangePointOptions
             ): (number|undefined);
             public getAnimationVerb(): string;
-            public getColumnMetrics(): ColumnMetricsObject;
+            public getColumnMetrics(): ColumnSeries.MetricsObject;
             public translate(): void;
             public translatePoint(point: XRangePoint): void;
             public init(): void;
@@ -95,11 +95,11 @@ declare global {
         interface XRangePartialFillObject extends PositionObject, SizeObject {
             r?: number;
         }
-        interface XRangePointLabelObject extends PointLabelObject {
+        interface XRangePointLabelObject extends Point.PointLabelObject {
             x2?: XRangePoint['x2'];
             yCategory?: XRangePoint['yCategory'];
         }
-        interface XRangePointOptions extends ColumnPointOptions {
+        interface XRangePointOptions extends ColumnSeries.PointOptions {
             partialFill?: XRangePointPartialFillOptions;
             x2?: number;
         }
@@ -112,7 +112,7 @@ declare global {
             x?: number;
             y?: number;
         }
-        interface XRangeSeriesOptions extends ColumnSeriesOptions {
+        interface XRangeSeriesOptions extends ColumnSeries.SeriesOptions {
             partialFill?: XRangePointPartialFillOptions;
             states?: SeriesStatesOptions<XRangeSeries>;
         }
@@ -306,7 +306,7 @@ BaseSeries.seriesType<typeof Highcharts.XRangeSeries>('xrange', 'column'
          */
         getColumnMetrics: function (
             this: Highcharts.XRangeSeries
-        ): Highcharts.ColumnMetricsObject {
+        ): ColumnSeries.MetricsObject {
             var metrics,
                 chart = this.chart;
 
@@ -432,7 +432,7 @@ BaseSeries.seriesType<typeof Highcharts.XRangeSeries>('xrange', 'column'
             var series = this,
                 xAxis = series.xAxis,
                 yAxis = series.yAxis,
-                metrics: Highcharts.ColumnMetricsObject =
+                metrics: ColumnSeries.MetricsObject =
                     series.columnMetrics as any,
                 options = series.options,
                 minPointLength = options.minPointLength || 0,

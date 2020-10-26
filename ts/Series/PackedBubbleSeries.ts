@@ -10,6 +10,10 @@
 
 'use strict';
 
+import type {
+    DataLabelOptions,
+    DataLabelTextPathOptions
+} from '../Core/Series/DataLabelOptions';
 import type PointerEvent from '../Core/PointerEvent';
 import type { SeriesStatesOptions } from '../Core/Series/SeriesOptions';
 import type SVGAttributes from '../Core/Renderer/SVG/SVGAttributes';
@@ -165,22 +169,24 @@ declare global {
         }
         interface PackedBubbleDataLabelsFormatterCallbackFunction {
             (this: (
-                PointLabelObject|
+                Point.PointLabelObject|
                 PackedBubbleDataLabelsFormatterContextObject
             )): (number|string|null|undefined);
         }
-        interface PackedBubbleDataLabelsFormatterContextObject extends PointLabelObject {
+        interface PackedBubbleDataLabelsFormatterContextObject
+            extends Point.PointLabelObject
+        {
             point: PackedBubblePoint;
         }
-        interface PackedBubbleDataLabelsOptionsObject extends DataLabelsOptions {
+        interface PackedBubbleDataLabelsOptionsObject extends DataLabelOptions {
             format?: string;
             formatter?: PackedBubbleDataLabelsFormatterCallbackFunction;
             parentNodeFormat?: string;
             parentNodeFormatter?: (
                 PackedBubbleDataLabelsFormatterCallbackFunction
             );
-            parentNodeTextPath?: DataLabelsTextPathOptionsObject;
-            textPath?: DataLabelsTextPathOptionsObject;
+            parentNodeTextPath?: DataLabelTextPathOptions;
+            textPath?: DataLabelTextPathOptions;
         }
         interface PackedBubbleLayout extends NetworkgraphLayout {
             enableSimulation: boolean;
@@ -664,7 +670,7 @@ BaseSeries.seriesType<typeof Highcharts.PackedBubbleSeries>(
              */
             formatter: function (
                 this: (
-                    Highcharts.PointLabelObject|
+                    Point.PointLabelObject|
                     Highcharts.PackedBubbleDataLabelsFormatterContextObject
                 )
             ): (number|null) {
@@ -684,7 +690,7 @@ BaseSeries.seriesType<typeof Highcharts.PackedBubbleSeries>(
              */
             parentNodeFormatter: function (
                 this: (
-                    Highcharts.PointLabelObject|
+                    Point.PointLabelObject|
                     Highcharts.PackedBubbleDataLabelsFormatterContextObject
                 )
             ): string {

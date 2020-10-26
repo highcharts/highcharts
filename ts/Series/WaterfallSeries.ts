@@ -53,7 +53,7 @@ declare module '../Core/Series/SeriesType' {
  */
 declare global {
     namespace Highcharts {
-        class WaterfallPoint extends ColumnPoint {
+        class WaterfallPoint extends ColumnSeries.Point {
             public below?: boolean;
             public isIntermediateSum?: boolean;
             public isSum?: boolean;
@@ -95,11 +95,11 @@ declare global {
         interface WaterfallChart extends Chart {
             axes: Array<WaterfallAxis>;
         }
-        interface WaterfallPointOptions extends ColumnPointOptions {
+        interface WaterfallPointOptions extends ColumnSeries.PointOptions {
             isSum?: boolean;
             y?: any;
         }
-        interface WaterfallSeriesOptions extends ColumnSeriesOptions {
+        interface WaterfallSeriesOptions extends ColumnSeries.SeriesOptions {
             upColor?: ColorType;
             states?: SeriesStatesOptions<WaterfallSeries>;
         }

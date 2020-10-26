@@ -34,18 +34,18 @@ declare module '../Core/Series/SeriesType' {
  */
 declare global {
     namespace Highcharts {
-        interface ScatterPointOptions extends LinePointOptions {
+        interface ScatterPointOptions extends LineSeries.PointOptions {
             // placeholder for inheritance
         }
         interface ScatterSeriesJitterOptions {
             x?: number;
             y?: number;
         }
-        interface ScatterSeriesOptions extends LineSeriesOptions {
+        interface ScatterSeriesOptions extends LineSeries.SeriesOptions {
             jitter?: ScatterSeriesJitterOptions;
             states?: SeriesStatesOptions<ScatterSeries>;
         }
-        class ScatterPoint extends LinePoint {
+        class ScatterPoint extends LineSeries.Point {
             public options: ScatterPointOptions;
             public series: ScatterSeries;
         }

@@ -37,7 +37,7 @@ declare global {
             options: OnSeriesSeriesOptions;
             onSeries?: OnSeriesSeries;
         }
-        interface OnSeriesSeriesOptions extends LineSeriesOptions {
+        interface OnSeriesSeriesOptions extends LineSeries.SeriesOptions {
             onSeries?: (string|null);
         }
     }

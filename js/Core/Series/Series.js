@@ -34,19 +34,6 @@ var Series;
      * */
     /* eslint-disable valid-jsdoc */
     /** @private */
-    function registerSeriesType(seriesType, seriesClass) {
-        var defaultPlotOptions = defaultOptions.plotOptions || {}, seriesOptions = seriesClass.defaultOptions;
-        if (!seriesClass.prototype.pointClass) {
-            seriesClass.prototype.pointClass = Point;
-        }
-        seriesClass.prototype.type = seriesType;
-        if (seriesOptions) {
-            defaultPlotOptions[seriesType] = seriesOptions;
-        }
-        Series.seriesTypes[seriesType] = seriesClass;
-    }
-    Series.registerSeriesType = registerSeriesType;
-    /** @private */
     function cleanRecursively(toClean, reference) {
         var clean = {};
         objectEach(toClean, function (_val, key) {
@@ -90,6 +77,26 @@ var Series;
         return series;
     }
     Series.getSeries = getSeries;
+    /**
+     * Registers class pattern of a series.
+     *
+     * @private
+     */
+    function registerSeriesType(seriesType, seriesClass) {
+        var defaultPlotOptions = defaultOptions.plotOptions || {}, seriesOptions = seriesClass.defaultOptions;
+        if (!seriesClass.prototype.pointClass) {
+            seriesClass.prototype.pointClass = Point;
+        }
+        if (!seriesClass.Point) {
+            seriesClass.Point = Point;
+        }
+        seriesClass.prototype.type = seriesType;
+        if (seriesOptions) {
+            defaultPlotOptions[seriesType] = seriesOptions;
+        }
+        Series.seriesTypes[seriesType] = seriesClass;
+    }
+    Series.registerSeriesType = registerSeriesType;
     /**
      * Old factory to create new series prototypes.
      *

@@ -20,6 +20,7 @@ import type BBoxObject from '../../Core/Renderer/BBoxObject';
 import type ColorString from '../../Core/Color/ColorString';
 import type ColorType from '../../Core/Color/ColorType';
 import type CSSObject from '../../Core/Renderer/CSSObject';
+import type { DataLabelOverflowValue } from '../../Core/Series/DataLabelOptions';
 import type LineSeries from '../../Series/LineSeries';
 import type Point from '../../Core/Series/Point';
 import type ShadowOptionsObject from '../../Core/Renderer/ShadowOptionsObject';
@@ -128,7 +129,7 @@ declare global {
             format?: string;
             formatter: FormatterCallbackFunction<Point>;
             includeInDataExport: boolean;
-            overflow: DataLabelsOverflowValue;
+            overflow: DataLabelOverflowValue;
             padding: number;
             shadow: (boolean|Partial<ShadowOptionsObject>);
             shape: SymbolKeyValue;

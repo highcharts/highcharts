@@ -18,6 +18,7 @@ import type BBoxObject from '../Core/Renderer/BBoxObject';
 import type Chart from '../Core/Chart/Chart';
 import type ColorType from '../Core/Color/ColorType';
 import type ColumnSeries from './ColumnSeries';
+import type DataLabelOptions from '../Core/Series/DataLabelOptions';
 import type GradientColor from '../Core/Color/GradientColor';
 import type {
     PointOptions,
@@ -70,7 +71,7 @@ declare module '../Core/Series/SeriesType' {
  */
 declare global {
     namespace Highcharts {
-        class Funnel3dPoint extends ColumnPoint {
+        class Funnel3dPoint extends ColumnSeries.Point {
             public dlBoxRaw: Dictionary<number>;
             public options: Funnel3dPointOptions;
             public series: Funnel3dSeries;
@@ -88,12 +89,12 @@ declare global {
             public getWidthAt(y: number): number;
             public translate3dShapes(): void;
         }
-        interface Funnel3dPointOptions extends ColumnPointOptions {
+        interface Funnel3dPointOptions extends ColumnSeries.PointOptions {
             gradientForSides?: boolean;
             dlBox?: BBoxObject;
             y?: number;
         }
-        interface Funnel3dSeriesOptions extends ColumnSeriesOptions {
+        interface Funnel3dSeriesOptions extends ColumnSeries.SeriesOptions {
             center?: Array<(number|string|null)>;
             data?: Array<(PointOptions|PointShortOptions|Funnel3dPointOptions)>;
             gradientForSides?: boolean;
@@ -447,7 +448,7 @@ BaseSeries.seriesType<typeof Highcharts.Funnel3dSeries>('funnel3d', 'column',
             this: Highcharts.Funnel3dSeries,
             point: Highcharts.Funnel3dPoint,
             dataLabel: SVGElement,
-            options: Highcharts.DataLabelsOptions
+            options: DataLabelOptions
         ): void {
             var series = this,
                 dlBoxRaw = point.dlBoxRaw,

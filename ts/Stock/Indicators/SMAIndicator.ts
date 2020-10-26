@@ -6,12 +6,13 @@
  *
  * */
 
+'use strict';
+
 import type { AxisType } from '../../Core/Axis/Types';
 import type Chart from '../../Core/Chart/Chart';
 import type SeriesType from '../../Core/Series/SeriesType';
 import BaseSeries from '../../Core/Series/Series.js';
 const { seriesTypes } = BaseSeries;
-import H from '../../Core/Globals.js';
 import LineSeries from '../../Series/LineSeries.js';
 import RequiredIndicatorMixin from '../../Mixins/IndicatorRequired.js';
 import U from '../../Core/Utilities.js';
@@ -69,7 +70,7 @@ declare global {
             public requireIndicators(): SMAIndicatorRequireIndicatorsObject;
         }
 
-        class SMAIndicatorPoint extends LinePoint {
+        class SMAIndicatorPoint extends LineSeries.Point {
             public series: SMAIndicator;
         }
 
@@ -82,7 +83,7 @@ declare global {
             yData: NonNullable<TLinkedSeries['yData']>;
         }
 
-        interface SMAIndicatorOptions extends LineSeriesOptions {
+        interface SMAIndicatorOptions extends LineSeries.SeriesOptions {
             compareToMain?: boolean;
             data?: Array<Array<number>>;
             params?: SMAIndicatorParamsOptions;
@@ -150,7 +151,7 @@ addEvent(LineSeries, 'init', function (
 });
 
 addEvent(LineSeries, 'afterSetOptions', function (
-    e: { options: Highcharts.LineSeriesOptions }
+    e: { options: LineSeries.SeriesOptions }
 ): void {
     var options = e.options,
         dataGrouping = options.dataGrouping;

@@ -17,6 +17,7 @@
 import type AnimationOptionsObject from '../Animation/AnimationOptionsObject';
 import type { EventCallback } from '../Callback';
 import type ColorType from '../Color/ColorType';
+import type DashStyleValue from '../Renderer/DashStyleValue';
 import type Point from './Point';
 import type {
     PointEventsOptions,
@@ -146,7 +147,7 @@ export interface SeriesStatesOptions<T extends { options: Record<string, any> }>
 export interface SeriesZonesOptions {
     className?: string;
     color?: ColorType;
-    dashStyle?: Highcharts.DashStyleValue;
+    dashStyle?: DashStyleValue;
     fillColor?: ColorType;
     value?: number;
 }

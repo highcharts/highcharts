@@ -17,6 +17,10 @@
 import type BBoxObject from '../Core/Renderer/BBoxObject';
 import type ColorType from '../Core/Color/ColorType';
 import type {
+    DataLabelFormatterCallback,
+    DataLabelOptions
+} from '../Core/Series/DataLabelOptions';
+import type {
     PointMarkerOptions,
     PointStatesOptions
 } from '../Core/Series/PointOptions';
@@ -51,7 +55,7 @@ const {
  */
 declare global {
     namespace Highcharts {
-        class TimelinePoint extends LinePoint {
+        class TimelinePoint extends LineSeries.Point {
             public isValid: () => boolean;
             public label?: string;
             public options: TimelinePointOptions;
@@ -99,24 +103,23 @@ declare global {
             public processData(): undefined;
         }
         interface TimelineDataLabelsFormatterCallbackFunction
-            extends DataLabelsFormatterCallbackFunction
+            extends DataLabelFormatterCallback
         {
             (
                 this: (
-                    PointLabelObject|
+                    Point.PointLabelObject|
                     TimelineDataLabelsFormatterContextObject
                 )
             ): string;
         }
         interface TimelineDataLabelsFormatterContextObject
-            extends PointLabelObject
+            extends Point.PointLabelObject
         {
             key?: string;
             point: TimelinePoint;
             series: TimelineSeries;
         }
-        interface TimelineDataLabelsOptionsObject
-            extends DataLabelsOptions
+        interface TimelineDataLabelsOptionsObject extends DataLabelOptions
         {
             alternate?: boolean;
             connectorColor?: ColorType;
@@ -125,13 +128,13 @@ declare global {
             formatter?: TimelineDataLabelsFormatterCallbackFunction;
             width?: number;
         }
-        interface TimelinePointOptions extends LinePointOptions {
+        interface TimelinePointOptions extends LineSeries.PointOptions {
             dataLabels?: TimelineDataLabelsOptionsObject;
             isNull?: boolean;
             radius?: number;
             visible?: boolean;
         }
-        interface TimelineSeriesOptions extends LineSeriesOptions {
+        interface TimelineSeriesOptions extends LineSeries.SeriesOptions {
             data?: Array<TimelinePointOptions>;
             dataLabels?: TimelineDataLabelsOptionsObject;
             ignoreHiddenPoint?: boolean;
@@ -315,7 +318,7 @@ BaseSeries.seriesType<typeof Highcharts.TimelineSeries>('timeline', 'line',
              */
             formatter: function (
                 this: (
-                    Highcharts.PointLabelObject|
+                    Point.PointLabelObject|
                     Highcharts.TimelineDataLabelsFormatterContextObject
                 )
             ): string {

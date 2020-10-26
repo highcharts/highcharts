@@ -27,14 +27,14 @@ import Point from '../Core/Series/Point.js';
 declare global {
     namespace Highcharts {
         type OHLCYData = [number, number, number, number];
-        interface OHLCPointOptions extends ColumnPointOptions {
+        interface OHLCPointOptions extends ColumnSeries.PointOptions {
             upColor?: ColorType;
         }
-        interface OHLCSeriesOptions extends ColumnSeriesOptions {
+        interface OHLCSeriesOptions extends ColumnSeries.SeriesOptions {
             upColor?: ColorType;
             states?: SeriesStatesOptions<OHLCSeries>;
         }
-        class OHLCPoint extends ColumnPoint {
+        class OHLCPoint extends ColumnSeries.Point {
             public close: number;
             public high: number;
             public low: number;

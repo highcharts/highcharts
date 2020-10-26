@@ -18,6 +18,7 @@
 'use strict';
 
 import type Chart from '../Core/Chart/Chart';
+import type DashStyleValue from '../Core/Renderer/DashStyleValue';
 import type PositionObject from '../Core/Renderer/PositionObject';
 import type { SeriesStatesOptions } from '../Core/Series/SeriesOptions';
 import type SVGAttributes from '../Core/Renderer/SVG/SVGAttributes';

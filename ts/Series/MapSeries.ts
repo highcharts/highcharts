@@ -12,6 +12,7 @@
 
 import type AnimationOptionsObject from '../Core/Animation/AnimationOptionsObject';
 import type ColorType from '../Core/Color/ColorType';
+import type DataLabelOptions from '../Core/Series/DataLabelOptions';
 import type {
     PointOptions,
     PointShortOptions
@@ -160,7 +161,7 @@ declare global {
         }
         interface MapPointOptions extends ScatterPointOptions {
             color?: ColorType;
-            dataLabels?: DataLabelsOptions;
+            dataLabels?: DataLabelOptions;
             drilldown?: string;
             id?: string;
             labelrank?: number;

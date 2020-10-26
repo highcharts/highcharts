@@ -16,6 +16,8 @@
 
 import type ColorString from '../Core/Color/ColorString';
 import type ColorType from '../Core/Color/ColorType';
+import type DashStyleValue from '../Core/Renderer/DashStyleValue';
+import type DataLabelOptions from '../Core/Series/DataLabelOptions';
 import type PositionObject from '../Core/Renderer/PositionObject';
 import type { SeriesStatesOptions } from '../Core/Series/SeriesOptions';
 import type SVGElement from '../Core/Renderer/SVG/SVGElement';
@@ -95,7 +97,7 @@ declare global {
             public alignDataLabel(
                 point: SunburstPoint,
                 dataLabel: SVGElement,
-                labelOptions: DataLabelsOptions
+                labelOptions: DataLabelOptions
             ): void;
         }
         interface SunburstAnimationParams {
@@ -110,8 +112,7 @@ declare global {
             shapeRoot?: SunburstNodeValuesObject;
             visible: boolean;
         }
-        interface SunburstDataLabelsOptionsObject
-            extends DataLabelsOptions {
+        interface SunburstDataLabelsOptionsObject extends DataLabelOptions {
             allowOverlap?: boolean;
             rotationMode?: SunburstDataLabelsRotationValue;
         }
@@ -1256,7 +1257,8 @@ var sunburstSeries = {
         this: Highcharts.SunburstSeries,
         point: Highcharts.SunburstPoint,
         dataLabel: SVGElement,
-        labelOptions: Highcharts.DataLabelsOptions): void {
+        labelOptions: DataLabelOptions
+    ): void {
 
         if (labelOptions.textPath && labelOptions.textPath.enabled) {
             return;

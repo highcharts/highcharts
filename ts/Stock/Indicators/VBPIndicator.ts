@@ -16,6 +16,7 @@ import type { AxisType } from '../../Core/Axis/Types';
 import type Chart from '../../Core/Chart/Chart';
 import type ColumnSeries from '../../Series/ColumnSeries';
 import type CSSObject from '../../Core/Renderer/CSSObject';
+import type DataLabelOptions from '../../Core/Series/DataLabelOptions';
 import type LineSeries from '../../Series/LineSeries';
 import type SVGAttributes from '../../Core/Renderer/SVG/SVGAttributes';
 import type SVGElement from '../../Core/Renderer/SVG/SVGElement';
@@ -130,7 +131,7 @@ declare global {
             animationLimit?: number;
             crisp?: boolean;
             dataGrouping?: DataGroupingOptionsObject;
-            dataLabels?: DataLabelsOptions;
+            dataLabels?: DataLabelOptions;
             enableMouseTracking?: boolean;
             params?: VBPIndicatorParamsOptions;
             pointPadding?: number;

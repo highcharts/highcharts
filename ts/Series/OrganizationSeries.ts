@@ -15,6 +15,7 @@
 import type BBoxObject from '../Core/Renderer/BBoxObject';
 import type ColorString from '../Core/Color/ColorString';
 import type CSSObject from '../Core/Renderer/CSSObject';
+import type Point from '../Core/Series/Point';
 import type { SeriesStatesOptions } from '../Core/Series/SeriesOptions';
 import type { StatesOptionsKey } from '../Core/Series/StatesOptions';
 import type SVGAttributes from '../Core/Renderer/SVG/SVGAttributes';
@@ -86,7 +87,7 @@ declare global {
                 this: (
                     OrganizationDataLabelsFormatterContextObject|
                     SankeyDataLabelsFormatterContextObject|
-                    PointLabelObject
+                    Point.PointLabelObject
                 )
             ): (string|undefined);
         }
@@ -235,7 +236,7 @@ BaseSeries.seriesType<typeof Highcharts.OrganizationSeries>(
              */
             nodeFormatter: function (
                 this: (
-                    Highcharts.PointLabelObject|
+                    Point.PointLabelObject|
                     Highcharts.OrganizationDataLabelsFormatterContextObject|
                     Highcharts.SankeyDataLabelsFormatterContextObject
                 )

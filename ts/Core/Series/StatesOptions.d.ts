@@ -15,6 +15,7 @@
  * */
 
 import type ColorType from '../Color/ColorType';
+import type DashStyleValue from '../Renderer/DashStyleValue';
 
 /* *
  *
@@ -30,22 +31,22 @@ export type StateGenericOptions<T extends { options: Record<string, any> }> = (
 
 export interface StateHoverOptions {
     color?: ColorType;
-    dashStyle?: Highcharts.DashStyleValue;
+    dashStyle?: DashStyleValue;
 }
 
 export interface StateInactiveOptions {
     color?: ColorType;
-    dashStyle?: Highcharts.DashStyleValue;
+    dashStyle?: DashStyleValue;
 }
 
 export interface StateNormalOptions {
     color?: ColorType;
-    dashStyle?: Highcharts.DashStyleValue;
+    dashStyle?: DashStyleValue;
 }
 
 export interface StateSelectOptions extends StateHoverOptions {
     color?: ColorType;
-    dashStyle?: Highcharts.DashStyleValue;
+    dashStyle?: DashStyleValue;
 }
 
 export type StatesOptionsKey = (''|keyof StatesOptions);

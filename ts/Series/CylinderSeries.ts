@@ -60,7 +60,7 @@ declare module '../Core/Series/SeriesType' {
  */
 declare global {
     namespace Highcharts {
-        class CylinderPoint extends ColumnPoint {
+        class CylinderPoint extends ColumnSeries.Point {
             public options: CylinderPointOptions;
             public series: CylinderSeries;
         }
@@ -82,10 +82,10 @@ declare global {
             top: SVGPath;
             zIndexes: Dictionary<number>;
         }
-        interface CylinderPointOptions extends ColumnPointOptions {
+        interface CylinderPointOptions extends ColumnSeries.PointOptions {
             shapeType?: string;
         }
-        interface CylinderSeriesOptions extends ColumnSeriesOptions {
+        interface CylinderSeriesOptions extends ColumnSeries.SeriesOptions {
             states?: SeriesStatesOptions<CylinderSeries>;
         }
         interface Elements3dObject {

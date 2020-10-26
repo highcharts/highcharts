@@ -48,7 +48,7 @@ declare module '../Core/Series/SeriesType' {
  */
 declare global {
     namespace Highcharts {
-        class AreaPoint extends LinePoint {
+        class AreaPoint extends LineSeries.Point {
             public isCliff?: boolean;
             public leftNull?: boolean;
             public options: AreaPointOptions;
@@ -63,9 +63,9 @@ declare global {
             public points: Array<AreaPoint>;
             public getStackPoints(points: Array<AreaPoint>): Array<AreaPoint>;
         }
-        interface AreaPointOptions extends LinePointOptions {
+        interface AreaPointOptions extends LineSeries.PointOptions {
         }
-        interface AreaSeriesOptions extends LineSeriesOptions {
+        interface AreaSeriesOptions extends LineSeries.SeriesOptions {
             fillColor?: ColorType;
             fillOpacity?: number;
             negativeFillColor?: ColorType;

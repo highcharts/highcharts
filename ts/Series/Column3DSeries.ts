@@ -14,6 +14,7 @@ import type Axis from '../Core/Axis/Axis';
 import type BBoxObject from '../Core/Renderer/BBoxObject';
 import type Chart from '../Core/Chart/Chart';
 import type ColorString from '../Core/Color/ColorString';
+import type DataLabelOptions from '../Core/Series/DataLabelOptions';
 import type Position3DObject from '../Core/Renderer/Position3DObject';
 import type SVGAttributes from '../Core/Renderer/SVG/SVGAttributes';
 import type SVGElement from '../Core/Renderer/SVG/SVGElement';
@@ -36,6 +37,12 @@ const {
 declare module '../Core/Chart/ChartLike' {
     interface ChartLike {
         columnGroup: SVGElement;
+    }
+}
+
+declare module '../Core/Series/DataLabelOptions' {
+    interface DataLabelOptions {
+        outside3dPlot?: (boolean|null);
     }
 }
 
@@ -64,18 +71,6 @@ declare module '../Core/Series/SeriesOptions' {
         edgeWidth?: number;
         groupZPadding?: number;
         inactiveOtherPoints?: boolean;
-    }
-}
-
-/**
- * Internal types
- * @private
- */
-declare global {
-    namespace Highcharts {
-        interface DataLabelsOptions {
-            outside3dPlot?: (boolean|null);
-        }
     }
 }
 
@@ -202,7 +197,7 @@ columnProto.translate3dShapes = function (): void {
     }
 
     z += (seriesOptions.groupZPadding || 1);
-    series.data.forEach(function (point: Highcharts.ColumnPoint): void {
+    series.data.forEach(function (point): void {
         // #7103 Reset outside3dPlot flag
         point.outside3dPlot = null;
         if (point.y !== null) {
@@ -316,9 +311,7 @@ wrap(columnProto, 'animate', function (
 
         if (svg) { // VML is too slow anyway
             if (init) {
-                series.data.forEach(function (
-                    point: Highcharts.ColumnPoint
-                ): void {
+                series.data.forEach(function (point): void {
                     if (point.y !== null) {
                         point.height = (point.shapeArgs as any).height;
                         point.shapey = (point.shapeArgs as any).y; // #2968
@@ -342,9 +335,7 @@ wrap(columnProto, 'animate', function (
                 });
 
             } else { // run the animation
-                series.data.forEach(function (
-                    point: Highcharts.ColumnPoint
-                ): void {
+                series.data.forEach(function (point): void {
                     if (point.y !== null) {
                         (point.shapeArgs as any).height = point.height;
                         (point.shapeArgs as any).y = point.shapey; // #2968
@@ -418,7 +409,7 @@ wrap(
             pointVis: string;
 
         if (series.chart.is3d()) {
-            series.data.forEach(function (point: Highcharts.ColumnPoint): void {
+            series.data.forEach(function (point): void {
                 point.visible = point.options.visible = vis =
                     typeof vis === 'undefined' ?
                         !pick(series.visible, point.visible) : vis;
@@ -443,7 +434,7 @@ addEvent(LineSeries, 'afterInit', function (): void {
         (this as ColumnSeries).handle3dGrouping
     ) {
         var series = this as ColumnSeries,
-            seriesOptions: Highcharts.ColumnSeriesOptions = this.options,
+            seriesOptions: ColumnSeries.SeriesOptions = this.options,
             grouping = seriesOptions.grouping,
             stacking = seriesOptions.stacking,
             reversedStacks = pick(this.yAxis.options.reversedStacks, true),
@@ -526,8 +517,8 @@ function setState(
  * @private
  */
 function hasNewShapeType(
-    this: Highcharts.ColumnPoint,
-    proceed: Highcharts.ColumnPoint['hasNewShapeType'],
+    this: ColumnSeries.Point,
+    proceed: ColumnSeries.Point['hasNewShapeType'],
     ...args: []
 ): boolean|undefined {
     return this.series.chart.is3d() ?
@@ -558,9 +549,9 @@ if (BaseSeries.seriesTypes.columnRange) {
 wrap(LineSeries.prototype, 'alignDataLabel', function (
     this: LineSeries,
     proceed: Function,
-    point: Highcharts.ColumnPoint,
+    point: ColumnSeries.Point,
     dataLabel: SVGElement,
-    options: Highcharts.DataLabelsOptions,
+    options: DataLabelOptions,
     alignTo: BBoxObject
 ): void {
     const chart = this.chart;
@@ -575,7 +566,7 @@ wrap(LineSeries.prototype, 'alignDataLabel', function (
         this.is('column')
     ) {
         const series = this as ColumnSeries,
-            seriesOptions: Highcharts.ColumnSeriesOptions = series.options,
+            seriesOptions: ColumnSeries.SeriesOptions = series.options,
             inside = pick(options.inside, !!series.options.stacking),
             options3d = (chart.options.chart as any).options3d,
             xOffset = point.pointWidth / 2 || 0;

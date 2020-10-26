@@ -22,6 +22,8 @@ import type Chart from '../Core/Chart/Chart';
 import type ColorString from '../Core/Color/ColorString';
 import type ColorType from '../Core/Color/ColorType';
 import type CSSObject from '../Core/Renderer/CSSObject';
+import type DashStyleValue from '../Core/Renderer/DashStyleValue';
+import type DataLabelOptions from '../Core/Series/DataLabelOptions';
 import type PositionObject from '../Core/Renderer/PositionObject';
 import type {
     SeriesOptions,
@@ -170,7 +172,7 @@ declare global {
             public alignDataLabel(
                 point: TreemapPoint,
                 dataLabel: SVGElement,
-                labelOptions: DataLabelsOptions
+                labelOptions: DataLabelOptions
             ): void;
             public bindAxes(): void;
             public buildNode(
@@ -1723,7 +1725,7 @@ BaseSeries.seriesType<typeof Highcharts.TreemapSeries>(
                 ): boolean {
                     return n.node.visible;
                 }),
-                options: Highcharts.DataLabelsOptions,
+                options: DataLabelOptions,
                 level: Highcharts.TreemapSeriesOptions;
 
             points.forEach(function (point: Highcharts.TreemapPoint): void {
@@ -1763,7 +1765,7 @@ BaseSeries.seriesType<typeof Highcharts.TreemapSeries>(
             this: Highcharts.TreemapSeries,
             point: Highcharts.TreemapPoint,
             dataLabel: SVGElement,
-            labelOptions: Highcharts.DataLabelsOptions
+            labelOptions: DataLabelOptions
         ): void {
             var style: SVGAttributes = labelOptions.style as any;
 

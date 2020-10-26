@@ -8,6 +8,8 @@
  *
  * */
 
+'use strict';
+
 import type ColumnSeries from './ColumnSeries';
 import Series from '../Core/Series/Series.js';
 
@@ -28,13 +30,13 @@ declare module '../Core/Series/SeriesType' {
  */
 declare global {
     namespace Highcharts {
-        interface BarPointOptions extends ColumnPointOptions {
+        interface BarPointOptions extends ColumnSeries.PointOptions {
         }
-        interface BarSeriesOptions extends ColumnSeriesOptions {
+        interface BarSeriesOptions extends ColumnSeries.SeriesOptions {
         }
         interface SeriesTypesDictionary {
         }
-        class BarPoint extends ColumnPoint {
+        class BarPoint extends ColumnSeries.Point {
             public options: BarPointOptions;
             public series: BarSeries;
         }

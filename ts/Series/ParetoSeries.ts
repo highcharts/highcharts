@@ -26,7 +26,7 @@ const {
  */
 declare global {
     namespace Highcharts {
-        class ParetoPoint extends LinePoint {
+        class ParetoPoint extends LineSeries.Point {
             public options: ParetoPointOptions;
             public series: ParetoSeries;
         }
@@ -52,9 +52,9 @@ declare global {
                 isSum?: T
             ): (T extends true ? number : Array<Array<number>>);
         }
-        interface ParetoPointOptions extends LinePointOptions {
+        interface ParetoPointOptions extends LineSeries.PointOptions {
         }
-        interface ParetoSeriesOptions extends LineSeriesOptions {
+        interface ParetoSeriesOptions extends LineSeries.SeriesOptions {
             states?: SeriesStatesOptions<ParetoSeries>;
         }
     }

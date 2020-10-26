@@ -19,6 +19,7 @@ import type AnimationOptionsObject from '../Core/Animation/AnimationOptionsObjec
 import type BBoxObject from '../Core/Renderer/BBoxObject';
 import type ColorType from '../Core/Color/ColorType';
 import type CSSObject from '../Core/Renderer/CSSObject';
+import type { DataLabelOverflowValue } from '../Core/Series/DataLabelOptions';
 import type SVGElement from '../Core/Renderer/SVG/SVGElement';
 import Axis from '../Core/Axis/Axis.js';
 import Chart from '../Core/Chart/Chart.js';
@@ -123,7 +124,7 @@ declare global {
             enabled?: boolean;
             format?: string;
             formatter?: FormatterCallbackFunction<StackItemObject>;
-            overflow?: DataLabelsOverflowValue;
+            overflow?: DataLabelOverflowValue;
             rotation?: number;
             style?: CSSObject;
             textAlign?: AlignValue;

@@ -45,10 +45,6 @@ declare global {
         easeInOutSine(pos: number): number;
     }
     namespace Highcharts {
-        type DashStyleValue = (
-            'Dash'|'DashDot'|'Dot'|'LongDash'|'LongDashDot'|'LongDashDotDot'|
-            'ShortDash'|'ShortDashDot'|'ShortDashDotDot'|'ShortDot'|'Solid'
-        );
         type ExtractArrayType<T> = T extends (infer U)[] ? U : never;
         type RelativeSize = (number|string);
         interface Class<T = any> extends Function {

@@ -59,7 +59,7 @@ declare global {
             anchorX?: number;
             plotX?: number;
         }
-        interface FlagsPointOptions extends ColumnPointOptions {
+        interface FlagsPointOptions extends ColumnSeries.PointOptions {
             fillColor?: ColorType;
             labelrank?: number;
             selected?: boolean;
@@ -68,7 +68,7 @@ declare global {
             title?: string;
             x?: number;
         }
-        interface FlagsSeriesOptions extends ColumnSeriesOptions {
+        interface FlagsSeriesOptions extends ColumnSeries.SeriesOptions {
             allowOverlapX?: boolean;
             fillColor?: ColorType;
             height?: number;
@@ -86,7 +86,7 @@ declare global {
             width?: number;
             y?: number;
         }
-        class FlagsPoint extends ColumnPoint {
+        class FlagsPoint extends ColumnSeries.Point {
             public _y?: number;
             public anchorX?: number;
             public fillColor?: ColorType;

@@ -57,17 +57,6 @@ declare global {
         interface PlotSeriesPointOptions {
             events?: PointEventsOptionsObject;
         }
-        interface PointLabelObject {
-            x?: string;
-            y?: (number|null);
-            color?: ColorType;
-            colorIndex?: number;
-            key?: string;
-            series: LineSeries;
-            point: Point;
-            percentage?: number;
-            total?: number;
-        }
         interface PointUpdateCallbackFunction {
             (this: Point, event: PointUpdateEventObject): void;
         }
@@ -734,7 +723,7 @@ class Point {
      * @return {Highcharts.PointLabelObject}
      *         Abstract object used in formatters and formats.
      */
-    public getLabelConfig(): Highcharts.PointLabelObject {
+    public getLabelConfig(): Point.PointLabelObject {
         return {
             x: this.category,
             y: this.y,
@@ -1069,6 +1058,20 @@ class Point {
 
 interface Point extends PointLike {
     // merge extensions with point class
+}
+
+namespace Point {
+    export interface PointLabelObject {
+        x?: string;
+        y?: (number|null);
+        color?: ColorType;
+        colorIndex?: number;
+        key?: string;
+        series: LineSeries;
+        point: Point;
+        percentage?: number;
+        total?: number;
+    }
 }
 
 (H as any).Point = Point;

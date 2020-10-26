@@ -15,6 +15,7 @@
 
 import type Axis from '../Core/Axis/Axis';
 import type BBoxObject from '../Core/Renderer/BBoxObject';
+import type DataLabelOptions from '../Core/Series/DataLabelOptions';
 import type Point from '../Core/Series/Point';
 import type { SeriesStatesOptions } from '../Core/Series/SeriesOptions';
 import type SVGPath from '../Core/Renderer/SVG/SVGPath';
@@ -93,7 +94,7 @@ declare global {
                 this: TilemapSeries,
                 point: Point,
                 dataLabel: SVGElement,
-                options: DataLabelsOptions,
+                options: DataLabelOptions,
                 alignTo: BBoxObject,
                 isNew?: boolean
             ): void;
