@@ -6,6 +6,7 @@
 
 'use strict';
 
+import type PositionObject from '../../Core/Renderer/PositionObject';
 import LineSeries from '../../Series/LineSeries.js';
 
 /**
@@ -181,7 +182,7 @@ class MockPoint {
     public static pointToPixels(
         point: Highcharts.AnnotationPointType,
         paneCoordinates?: boolean
-    ): Highcharts.PositionObject {
+    ): PositionObject {
         var series = point.series,
             chart = series.chart,
             x: number = point.plotX as any,

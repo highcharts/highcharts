@@ -6,13 +6,12 @@
 
 'use strict';
 
+import type PositionObject from '../../../Core/Renderer/PositionObject';
 import Annotation from '../Annotations.js';
 import CrookedLine from './CrookedLine.js';
 import MockPoint from '../MockPoint.js';
 import U from '../../../Core/Utilities.js';
-const {
-    merge
-} = U;
+const { merge } = U;
 
 /**
  * Internal types
@@ -51,7 +50,7 @@ class InfinityLine extends CrookedLine {
      * */
 
     private static edgePoint(startIndex: number, endIndex: number): Function {
-        return function (target: any): Highcharts.PositionObject {
+        return function (target: any): PositionObject {
             var annotation = target.annotation,
                 points = annotation.points,
                 type = annotation.options.typeOptions.type;
@@ -97,8 +96,8 @@ class InfinityLine extends CrookedLine {
     }
 
     public static findEdgeCoordinate(
-        firstPoint: Highcharts.PositionObject,
-        secondPoint: Highcharts.PositionObject,
+        firstPoint: PositionObject,
+        secondPoint: PositionObject,
         xOrY: ('x'|'y'),
         edgePointFirstCoordinate: number
     ): number {
@@ -117,7 +116,7 @@ class InfinityLine extends CrookedLine {
     public static findEdgePoint(
         firstPoint: Highcharts.AnnotationPointType,
         secondPoint: Highcharts.AnnotationPointType
-    ): Highcharts.PositionObject {
+    ): PositionObject {
         var xAxis: Highcharts.Axis = firstPoint.series.xAxis as any,
             yAxis: Highcharts.Axis = secondPoint.series.yAxis as any,
             firstPointPixels = MockPoint.pointToPixels(firstPoint),

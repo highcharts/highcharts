@@ -18,6 +18,7 @@
 'use strict';
 
 import type Chart from '../Core/Chart/Chart';
+import type PositionObject from '../Core/Renderer/PositionObject';
 import type { SeriesStatesOptions } from '../Core/Series/SeriesOptions';
 import type SVGAttributes from '../Core/Renderer/SVG/SVGAttributes';
 import type SVGElement from '../Core/Renderer/SVG/SVGElement';
@@ -398,7 +399,7 @@ var isSet = function (
  * Returns the margin.
  */
 var getMarginFromCircles = function getMarginFromCircles(
-    point: Highcharts.PositionObject,
+    point: PositionObject,
     internal: Array<Highcharts.CircleObject>,
     external: Array<Highcharts.CircleObject>
 ): number {
@@ -440,7 +441,7 @@ var getMarginFromCircles = function getMarginFromCircles(
 var getLabelPosition = function getLabelPosition(
     internal: Array<Highcharts.CircleObject>,
     external: Array<Highcharts.CircleObject>
-): Highcharts.PositionObject {
+): PositionObject {
     // Get the best label position within the internal circles.
     var best = internal.reduce(function (
         best: Highcharts.VennLabelPositionObject,
@@ -461,7 +462,7 @@ var getLabelPosition = function getLabelPosition(
             // margin.
             .reduce(function (
                 best: Highcharts.VennLabelPositionObject,
-                point: Highcharts.PositionObject
+                point: PositionObject
             ): Highcharts.VennLabelPositionObject {
                 var margin = getMarginFromCircles(point, internal, external);
 
@@ -531,7 +532,7 @@ var getLabelPosition = function getLabelPosition(
  * Returns available width for the label.
  */
 var getLabelWidth = function getLabelWidth(
-    pos: Highcharts.PositionObject,
+    pos: PositionObject,
     internal: Array<Highcharts.CircleObject>,
     external: Array<Highcharts.CircleObject>
 ): number {
@@ -740,7 +741,7 @@ var layoutGreedyVenn = function layoutGreedyVenn(
      */
     var positionSet = function positionSet(
         set: Highcharts.VennRelationObject,
-        coordinates: Highcharts.PositionObject
+        coordinates: PositionObject
     ): void {
         var circle = set.circle;
 
@@ -793,7 +794,7 @@ var layoutGreedyVenn = function layoutGreedyVenn(
 
                 // Create a list of possible coordinates calculated from
                 // distance.
-                var possibleCoordinates: Array<Highcharts.PositionObject> = [
+                var possibleCoordinates: Array<PositionObject> = [
                     { x: positionedCircle.x + distance, y: positionedCircle.y },
                     { x: positionedCircle.x - distance, y: positionedCircle.y },
                     { x: positionedCircle.x, y: positionedCircle.y + distance },
@@ -828,9 +829,7 @@ var layoutGreedyVenn = function layoutGreedyVenn(
                 });
 
                 // Iterate all suggested coordinates and find the best one.
-                possibleCoordinates.forEach(function (
-                    coordinates: Highcharts.PositionObject
-                ): void {
+                possibleCoordinates.forEach(function (coordinates): void {
                     circle.x = coordinates.x;
                     circle.y = coordinates.y;
 

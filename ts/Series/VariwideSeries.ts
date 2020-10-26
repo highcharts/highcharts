@@ -13,6 +13,7 @@
 'use strict';
 
 import type ColumnSeries from '../Series/ColumnSeries';
+import type PositionObject from '../Core/Renderer/PositionObject';
 import type { SeriesStatesOptions } from '../Core/Series/SeriesOptions';
 import type StackingAxis from '../Core/Axis/StackingAxis';
 import type SVGElement from '../Core/Renderer/SVG/SVGElement';
@@ -352,8 +353,8 @@ BaseSeries.seriesType<typeof Highcharts.VariwideSeries>('variwide', 'column'
     });
 
 H.Tick.prototype.postTranslate = function (
-    xy: Highcharts.PositionObject,
-    xOrY: keyof Highcharts.PositionObject,
+    xy: PositionObject,
+    xOrY: keyof PositionObject,
     index: number
 ): void {
     var axis = this.axis,
@@ -414,12 +415,12 @@ addEvent(Axis, 'afterRender', function (): void {
 
 addEvent(H.Tick, 'afterGetPosition', function (
     e: {
-        pos: Highcharts.PositionObject;
-        xOrY: keyof Highcharts.PositionObject;
+        pos: PositionObject;
+        xOrY: keyof PositionObject;
     }
 ): void {
     var axis = this.axis,
-        xOrY: keyof Highcharts.PositionObject = axis.horiz ? 'x' : 'y';
+        xOrY: keyof PositionObject = axis.horiz ? 'x' : 'y';
 
     if (axis.variwide) {
         (this as any)[xOrY + 'Orig'] = e.pos[xOrY];
@@ -437,10 +438,10 @@ wrap(H.Tick.prototype, 'getLabelPosition', function (
     labelOptions: Highcharts.DataLabelsOptions,
     tickmarkOffset: number,
     index: number
-): Highcharts.PositionObject {
+): PositionObject {
     var args = Array.prototype.slice.call(arguments, 1),
-        xy: Highcharts.PositionObject,
-        xOrY: keyof Highcharts.PositionObject = horiz ? 'x' : 'y';
+        xy: PositionObject,
+        xOrY: keyof PositionObject = horiz ? 'x' : 'y';
 
     // Replace the x with the original x
     if (

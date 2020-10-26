@@ -13,8 +13,8 @@
 'use strict';
 
 import type Point from './Point';
+import type Position3DObject from '../Renderer/Position3DObject';
 import type ZAxis from '../Axis/ZAxis';
-import H from '../Globals.js';
 import LineSeries from '../../Series/LineSeries.js';
 import Math3D from '../../Extensions/Math3D.js';
 const { perspective } = Math3D;
@@ -53,10 +53,10 @@ LineSeries.prototype.translate3dPoints = function (): void {
     var series = this,
         chart = series.chart,
         zAxis: ZAxis = pick(series.zAxis, (chart.options.zAxis as any)[0]),
-        rawPoints = [] as Array<Highcharts.Position3DObject>,
+        rawPoints = [] as Array<Position3DObject>,
         rawPoint: Point,
-        projectedPoints: Array<Highcharts.Position3DObject>,
-        projectedPoint: Highcharts.Position3DObject,
+        projectedPoints: Array<Position3DObject>,
+        projectedPoint: Position3DObject,
         zValue: (number|null|undefined),
         i: number;
 

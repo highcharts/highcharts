@@ -19,7 +19,9 @@ import type {
     PointOptions,
     PointShortOptions
 } from '../Core/Series/PointOptions';
+import type PositionObject from '../Core/Renderer/PositionObject';
 import type { SeriesStatesOptions } from '../Core/Series/SeriesOptions';
+import type SizeObject from '../Core/Renderer/SizeObject';
 import type { StatesOptionsKey } from '../Core/Series/StatesOptions';
 import type SVGAttributes from '../Core/Renderer/SVG/SVGAttributes';
 import type SVGElement from '../Core/Renderer/SVG/SVGElement';
@@ -279,9 +281,9 @@ function intersectsAnyWord(
 function archimedeanSpiral(
     attempt: number,
     params?: Highcharts.WordcloudSpiralParamsObject
-): (boolean|Highcharts.PositionObject) {
+): (boolean|PositionObject) {
     var field: Highcharts.WordcloudFieldObject = (params as any).field,
-        result: (boolean|Highcharts.PositionObject) = false,
+        result: (boolean|PositionObject) = false,
         maxDelta = (field.width * field.width) + (field.height * field.height),
         t = attempt * 0.8; // 0.2 * 4 = 0.8. Enlarging the spiral.
 
@@ -317,7 +319,7 @@ function archimedeanSpiral(
 function squareSpiral(
     attempt: number,
     params?: Highcharts.WordcloudSpiralParamsObject
-): (boolean|Highcharts.PositionObject) {
+): (boolean|PositionObject) {
     var a = attempt * 4,
         k = Math.ceil((Math.sqrt(a) - 1) / 2),
         t = 2 * k + 1,
@@ -325,7 +327,7 @@ function squareSpiral(
         isBoolean = function (x: unknown): x is boolean {
             return typeof x === 'boolean';
         },
-        result: (boolean|Highcharts.PositionObject) = false;
+        result: (boolean|PositionObject) = false;
 
     t -= 1;
     if (attempt <= 10000) {
@@ -382,9 +384,8 @@ function squareSpiral(
 function rectangularSpiral(
     attempt: number,
     params?: Highcharts.WordcloudSpiralParamsObject
-): (boolean|Highcharts.PositionObject) {
-    var result: Highcharts.PositionObject =
-            squareSpiral(attempt, params) as any,
+): (boolean|PositionObject) {
+    var result: PositionObject = squareSpiral(attempt, params) as any,
         field: Highcharts.WordcloudFieldObject = (params as any).field;
 
     if (result) {
@@ -653,14 +654,14 @@ function outsidePlayingField(
 function intersectionTesting(
     point: Highcharts.WordcloudPoint,
     options: Highcharts.WordcloudTestOptionsObject
-): (boolean|Highcharts.PositionObject) {
+): (boolean|PositionObject) {
     var placed = options.placed,
         field = options.field,
         rectangle = options.rectangle,
         polygon = options.polygon,
         spiral = options.spiral,
         attempt = 1,
-        delta: Highcharts.PositionObject = {
+        delta: PositionObject = {
             x: 0,
             y: 0
         },
@@ -1089,7 +1090,7 @@ var wordCloudSeries: Partial<Highcharts.WordcloudSeries> = {
                     placement.rotation as any
                 ),
                 rectangle = getBoundingBoxFromPolygon(polygon),
-                delta: Highcharts.PositionObject = intersectionTesting(point, {
+                delta: PositionObject = intersectionTesting(point, {
                     rectangle: rectangle,
                     polygon: polygon,
                     field: field,

@@ -16,6 +16,7 @@
 
 import type ColorString from '../Core/Color/ColorString';
 import type ColorType from '../Core/Color/ColorType';
+import type PositionObject from '../Core/Renderer/PositionObject';
 import type { SeriesStatesOptions } from '../Core/Series/SeriesOptions';
 import type SVGElement from '../Core/Renderer/SVG/SVGElement';
 import BaseSeries from '../Core/Series/Series.js';
@@ -342,7 +343,7 @@ var getEndPoint = function getEndPoint(
     y: number,
     angle: number,
     distance: number
-): Highcharts.PositionObject {
+): PositionObject {
     return {
         x: x + (Math.cos(angle) * distance),
         y: y + (Math.sin(angle) * distance)

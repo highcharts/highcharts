@@ -656,7 +656,7 @@ if (seriesTypes.columnrange) {
             resizeSide: 'bottom',
             handlePositioner: function (
                 point: Highcharts.ColumnRangePoint
-            ): Highcharts.PositionObject {
+            ): PositionObject {
                 var bBox = point.shapeArgs || (point.graphic as any).getBBox();
 
                 return {
@@ -688,7 +688,7 @@ if (seriesTypes.columnrange) {
             resizeSide: 'top',
             handlePositioner: function (
                 point: Highcharts.ColumnRangePoint
-            ): Highcharts.PositionObject {
+            ): PositionObject {
                 var bBox = point.shapeArgs || (point.graphic as any).getBBox();
 
                 return {
@@ -727,7 +727,7 @@ if (seriesTypes.boxplot) {
             resizeSide: 'bottom',
             handlePositioner: function (
                 point: Highcharts.BoxPlotPoint
-            ): Highcharts.PositionObject {
+            ): PositionObject {
                 return {
                     x: point.shapeArgs.x,
                     y: point.lowPlot
@@ -757,7 +757,7 @@ if (seriesTypes.boxplot) {
             resizeSide: 'bottom',
             handlePositioner: function (
                 point: Highcharts.BoxPlotPoint
-            ): Highcharts.PositionObject {
+            ): PositionObject {
                 return {
                     x: point.shapeArgs.x,
                     y: point.q1Plot
@@ -793,7 +793,7 @@ if (seriesTypes.boxplot) {
             resizeSide: 'top',
             handlePositioner: function (
                 point: Highcharts.BoxPlotPoint
-            ): Highcharts.PositionObject {
+            ): PositionObject {
                 return {
                     x: point.shapeArgs.x,
                     y: point.q3Plot
@@ -861,7 +861,7 @@ if (seriesTypes.ohlc) {
             resizeSide: 'bottom',
             handlePositioner: function (
                 point: Highcharts.OHLCPoint
-            ): Highcharts.PositionObject {
+            ): PositionObject {
                 return {
                     x: (point.shapeArgs as any).x,
                     y: point.plotLow as any
@@ -891,7 +891,7 @@ if (seriesTypes.ohlc) {
             resizeSide: 'top',
             handlePositioner: function (
                 point: Highcharts.OHLCPoint
-            ): Highcharts.PositionObject {
+            ): PositionObject {
                 return {
                     x: (point.shapeArgs as any).x,
                     y: point.plotHigh as any
@@ -923,7 +923,7 @@ if (seriesTypes.ohlc) {
             },
             handlePositioner: function (
                 point: Highcharts.OHLCPoint
-            ): Highcharts.PositionObject {
+            ): PositionObject {
                 return {
                     x: (point.shapeArgs as any).x,
                     y: point.plotOpen
@@ -955,7 +955,7 @@ if (seriesTypes.ohlc) {
             },
             handlePositioner: function (
                 point: Highcharts.OHLCPoint
-            ): Highcharts.PositionObject {
+            ): PositionObject {
                 return {
                     x: (point.shapeArgs as any).x,
                     y: point.plotClose
@@ -1009,7 +1009,7 @@ if (seriesTypes.arearange) {
             resizeSide: 'bottom',
             handlePositioner: function (
                 point: Highcharts.AreaRangePoint
-            ): Highcharts.PositionObject {
+            ): PositionObject {
                 var bBox = point.lowerGraphic && point.lowerGraphic.getBBox();
 
                 return bBox ? {
@@ -1036,7 +1036,7 @@ if (seriesTypes.arearange) {
             resizeSide: 'top',
             handlePositioner: function (
                 point: Highcharts.AreaRangePoint
-            ): Highcharts.PositionObject {
+            ): PositionObject {
                 var bBox = point.upperGraphic && point.upperGraphic.getBBox();
 
                 return bBox ? {
@@ -1940,7 +1940,7 @@ function getGroupedPoints(point: Point): Array<Point> {
 function resizeRect(
     rect: SVGElement,
     updateSide: string,
-    update: Highcharts.PositionObject
+    update: PositionObject
 ): void {
     var resizeAttrs;
 

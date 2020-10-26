@@ -13,6 +13,7 @@
 'use strict';
 
 import type ColorType from '../Color/ColorType';
+import type Position3DObject from '../Renderer/Position3DObject';
 import type SeriesOptions from '../Series/SeriesOptions';
 import Axis from '../Axis/Axis.js';
 import Axis3D from '../Axis/Axis3D.js';
@@ -178,7 +179,7 @@ namespace Chart3D {
                 zm = 0,
                 zp = options3d.depth,
                 faceOrientation = function (
-                    vertexes: Array<Highcharts.Position3DObject>
+                    vertexes: Array<Position3DObject>
                 ): number {
                     var area = shapeArea3D(vertexes, chart);
 
@@ -592,7 +593,7 @@ namespace Chart3D {
                     minY: Number.MAX_VALUE,
                     maxY: -Number.MAX_VALUE
                 },
-                corners: Array<Highcharts.Position3DObject>,
+                corners: Array<Position3DObject>,
                 scale = 1;
 
             // Top left corners:
@@ -628,7 +629,7 @@ namespace Chart3D {
             corners = perspective(corners, chart, false);
 
             // Get bounding box of 3D element:
-            corners.forEach(function (corner: Highcharts.Position3DObject): void {
+            corners.forEach(function (corner): void {
                 bbox3d.minX = Math.min(bbox3d.minX, corner.x);
                 bbox3d.maxX = Math.max(bbox3d.maxX, corner.x);
                 bbox3d.minY = Math.min(bbox3d.minY, corner.y);

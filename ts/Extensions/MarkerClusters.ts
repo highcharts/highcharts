@@ -631,8 +631,8 @@ const clusterDefaultOptions = {
 
 /* eslint-disable require-jsdoc */
 function getClusterPosition(
-    points: Array<Highcharts.PositionObject>
-): Highcharts.PositionObject {
+    points: Array<PositionObject>
+): PositionObject {
     var pointsLen = points.length,
         sumX = 0,
         sumY = 0,

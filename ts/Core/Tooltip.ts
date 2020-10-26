@@ -16,6 +16,7 @@ import type { HTMLDOMElement } from './Renderer/DOMElementType';
 import type LineSeries from '../Series/LineSeries';
 import type Point from './Series/Point';
 import type PointerEvent from './PointerEvent';
+import type PositionObject from './Renderer/PositionObject';
 import type SVGAttributes from './Renderer/SVG/SVGAttributes';
 import type SVGElement from './Renderer/SVG/SVGElement';
 import H from './Globals.js';
@@ -843,11 +844,11 @@ class Tooltip {
      *
      * @return {Highcharts.PositionObject}
      */
-    public getPosition(boxWidth: number, boxHeight: number, point: Point): Highcharts.PositionObject {
+    public getPosition(boxWidth: number, boxHeight: number, point: Point): PositionObject {
 
         var chart = this.chart,
             distance = this.distance,
-            ret = {} as Highcharts.PositionObject,
+            ret = {} as PositionObject,
             // Don't use h if chart isn't inverted (#7242) ???
             h = (chart.inverted && (point as any).h) || 0, // #4117 ???
             swapped: (boolean|undefined),
@@ -1510,7 +1511,7 @@ class Tooltip {
             isHeader: boolean,
             boxWidth: number,
             alignedLeft = true
-        ): Highcharts.PositionObject {
+        ): PositionObject {
             let y;
             let x;
             if (isHeader) {

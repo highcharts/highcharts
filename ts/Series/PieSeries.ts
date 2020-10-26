@@ -12,6 +12,7 @@
 
 import type AnimationOptionsObject from '../Core/Animation/AnimationOptionsObject';
 import type { AlignValue } from '../Core/Renderer/AlignObject';
+import type PositionObject from '../Core/Renderer/PositionObject';
 import type { SeriesStatesOptions } from '../Core/Series/SeriesOptions';
 import type SVGAttributes from '../Core/Renderer/SVG/SVGAttributes';
 import type SVGPath from '../Core/Renderer/SVG/SVGPath';

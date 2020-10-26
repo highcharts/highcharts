@@ -6,13 +6,12 @@
 
 'use strict';
 
+import type PositionObject from '../../../Core/Renderer/PositionObject';
 import Annotation from '../Annotations.js';
 import InfinityLine from './InfinityLine.js';
 import MockPoint from '../MockPoint.js';
 import U from '../../../Core/Utilities.js';
-const {
-    merge
-} = U;
+const { merge } = U;
 
 /**
  * Internal types.
@@ -55,7 +54,7 @@ class Pitchfork extends InfinityLine {
      * */
 
     private static outerLineEdgePoint(firstPointIndex: number): Function {
-        return function (target: any): Highcharts.PositionObject {
+        return function (target: any): PositionObject {
             var annotation: Pitchfork = target.annotation,
                 points = annotation.points;
 
@@ -75,7 +74,7 @@ class Pitchfork extends InfinityLine {
         point: Highcharts.AnnotationPointType,
         firstAnglePoint: Highcharts.AnnotationPointType,
         secondAnglePoint?: Highcharts.AnnotationPointType
-    ): Highcharts.PositionObject {
+    ): PositionObject {
         var angle = Math.atan2(
                 (secondAnglePoint as any).plotY - (firstAnglePoint.plotY as any),
                 (secondAnglePoint as any).plotX - (firstAnglePoint.plotX as any)
@@ -88,7 +87,7 @@ class Pitchfork extends InfinityLine {
         };
     }
 
-    public static middleLineEdgePoint(target: Annotation): Highcharts.PositionObject {
+    public static middleLineEdgePoint(target: Annotation): PositionObject {
         var annotation: Pitchfork = target.annotation as any,
             points = annotation.points;
 

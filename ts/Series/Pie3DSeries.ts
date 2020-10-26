@@ -10,7 +10,10 @@
  *
  * */
 
+'use strict';
+
 import type ColorString from '../Core/Color/ColorString';
+import type PositionObject from '../Core/Renderer/PositionObject';
 import type SVGAttributes from '../Core/Renderer/SVG/SVGAttributes';
 import type SVGPath from '../Core/Renderer/SVG/SVGPath';
 import BaseSeries from '../Core/Series/Series.js';
@@ -172,7 +175,7 @@ wrap(seriesTypes.pie.prototype, 'drawDataLabels', function (
                 (labelPosition as any).natural,
                 connectorPosition.breakAt,
                 connectorPosition.touchingSliceAt
-            ].forEach(function (coordinates: Highcharts.PositionObject): void {
+            ].forEach(function (coordinates: PositionObject): void {
                 coordinates.x += xOffset;
                 coordinates.y += yOffset;
             });

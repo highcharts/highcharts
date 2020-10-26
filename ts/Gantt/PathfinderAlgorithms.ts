@@ -12,6 +12,7 @@
 'use strict';
 
 import type Point from '../Core/Series/Point';
+import type PositionObject from '../Core/Renderer/PositionObject';
 import type SVGPath from '../Core/Renderer/SVG/SVGPath';
 import U from '../Core/Utilities.js';
 const {
@@ -205,8 +206,8 @@ function limitObstacleToBounds(obstacle: any, bounds: any): void {
  *         path.
  */
 function straight(
-    start: Highcharts.PositionObject,
-    end: Highcharts.PositionObject
+    start: PositionObject,
+    end: PositionObject
 ): Highcharts.PathfinderAlgorithmResultObject {
     return {
         path: [
@@ -243,8 +244,8 @@ function straight(
  *         path.
  */
 const simpleConnect = extend(function (
-    start: Highcharts.PositionObject,
-    end: Highcharts.PositionObject,
+    start: PositionObject,
+    end: PositionObject,
     options: any
 ): Highcharts.PathfinderAlgorithmResultObject {
     var segments = [],
@@ -418,8 +419,8 @@ const simpleConnect = extend(function (
  *         path.
  */
 const fastAvoid = extend(function (
-    start: Highcharts.PositionObject,
-    end: Highcharts.PositionObject,
+    start: PositionObject,
+    end: PositionObject,
     options: any
 ): Highcharts.PathfinderAlgorithmResultObject {
     /*

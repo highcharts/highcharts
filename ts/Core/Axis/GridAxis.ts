@@ -18,14 +18,12 @@ import type {
     PointOptions,
     PointShortOptions
 } from '../Series/PointOptions';
+import type PositionObject from '../Renderer/PositionObject';
+import type SizeObject from '../Renderer/SizeObject';
 import type SVGElement from '../Renderer/SVG/SVGElement';
 import type SVGPath from '../Renderer/SVG/SVGPath';
 import Axis from './Axis.js';
 import H from '../Globals.js';
-import O from '../Options.js';
-const {
-    dateFormat
-} = O;
 import Tick from './Tick.js';
 import U from '../Utilities.js';
 const {
@@ -216,8 +214,8 @@ var applyGridOptions = function applyGridOptions(axis: Highcharts.Axis): void {
 Axis.prototype.getMaxLabelDimensions = function (
     ticks: Highcharts.Dictionary<Highcharts.Tick>,
     tickPositions: Array<(number|string)>
-): Highcharts.SizeObject {
-    var dimensions: Highcharts.SizeObject = {
+): SizeObject {
+    var dimensions: SizeObject = {
         width: 0,
         height: 0
     };
@@ -301,7 +299,7 @@ addEvent(
     function (
         this: Tick,
         e: {
-            pos: Highcharts.PositionObject;
+            pos: PositionObject;
             tickmarkOffset: number;
             index: number;
         }
@@ -596,7 +594,7 @@ class GridAxis {
      */
     public static onAfterGetTitlePosition(
         this: Axis,
-        e: { titlePosition: Highcharts.PositionObject }
+        e: { titlePosition: PositionObject }
     ): void {
         const axis = this;
         const options = axis.options;

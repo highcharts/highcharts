@@ -22,6 +22,7 @@ import type Chart from '../Core/Chart/Chart';
 import type ColorString from '../Core/Color/ColorString';
 import type ColorType from '../Core/Color/ColorType';
 import type CSSObject from '../Core/Renderer/CSSObject';
+import type PositionObject from '../Core/Renderer/PositionObject';
 import type {
     SeriesOptions,
     SeriesStateHoverOptions,

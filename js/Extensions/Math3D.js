@@ -84,7 +84,7 @@ function rotate3D(x, y, z, angles) {
  *
  * @requires highcharts-3d
  */
-var perspective3D = H.perspective3D = function (coordinate, origin, distance) {
+function perspective3D(coordinate, origin, distance) {
     var projection = ((distance > 0) && (distance < Number.POSITIVE_INFINITY)) ?
         distance / (coordinate.z + origin.z + distance) :
         1;
@@ -92,7 +92,8 @@ var perspective3D = H.perspective3D = function (coordinate, origin, distance) {
         x: coordinate.x * projection,
         y: coordinate.y * projection
     };
-};
+}
+H.perspective3D = perspective3D;
 /**
  * Transforms a given array of points according to the angles in chart.options.
  *
@@ -116,7 +117,7 @@ var perspective3D = H.perspective3D = function (coordinate, origin, distance) {
  *
  * @requires highcharts-3d
  */
-var perspective = H.perspective = function (points, chart, insidePlotArea, useInvertedPersp) {
+function perspective(points, chart, insidePlotArea, useInvertedPersp) {
     var options3d = chart.options.chart.options3d, 
     /* The useInvertedPersp argument is used for
      * inverted charts with already inverted elements,
@@ -152,7 +153,8 @@ var perspective = H.perspective = function (points, chart, insidePlotArea, useIn
             z: coordinate.z
         };
     });
-};
+}
+H.perspective = perspective;
 /**
  * Calculate a distance from camera to points - made for calculating zIndex of
  * scatter points.
@@ -171,7 +173,7 @@ var perspective = H.perspective = function (points, chart, insidePlotArea, useIn
  *
  * @requires highcharts-3d
  */
-var pointCameraDistance = H.pointCameraDistance = function (coordinates, chart) {
+function pointCameraDistance(coordinates, chart) {
     var options3d = chart.options.chart.options3d, cameraPosition = {
         x: chart.plotWidth / 2,
         y: chart.plotHeight / 2,
@@ -183,7 +185,8 @@ var pointCameraDistance = H.pointCameraDistance = function (coordinates, chart) 
         Math.pow(cameraPosition.y - pick(coordinates.plotY, coordinates.y), 2) +
         Math.pow(cameraPosition.z - pick(coordinates.plotZ, coordinates.z), 2));
     return distance;
-};
+}
+H.pointCameraDistance = pointCameraDistance;
 /**
  * Calculate area of a 2D polygon using Shoelace algorithm
  * https://en.wikipedia.org/wiki/Shoelace_formula
@@ -199,14 +202,15 @@ var pointCameraDistance = H.pointCameraDistance = function (coordinates, chart) 
  *
  * @requires highcharts-3d
  */
-var shapeArea = H.shapeArea = function (vertexes) {
+function shapeArea(vertexes) {
     var area = 0, i, j;
     for (i = 0; i < vertexes.length; i++) {
         j = (i + 1) % vertexes.length;
         area += vertexes[i].x * vertexes[j].y - vertexes[j].x * vertexes[i].y;
     }
     return area / 2;
-};
+}
+H.shapeArea = shapeArea;
 /**
  * Calculate area of a 3D polygon after perspective projection
  *
@@ -227,9 +231,10 @@ var shapeArea = H.shapeArea = function (vertexes) {
  *
  * @requires highcharts-3d
  */
-var shapeArea3D = H.shapeArea3d = function (vertexes, chart, insidePlotArea) {
+function shapeArea3D(vertexes, chart, insidePlotArea) {
     return shapeArea(perspective(vertexes, chart, insidePlotArea));
-};
+}
+H.shapeArea3d = shapeArea3D;
 var mathModule = {
     perspective: perspective,
     perspective3D: perspective3D,

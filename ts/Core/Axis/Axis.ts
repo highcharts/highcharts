@@ -21,6 +21,8 @@ import type LineSeries from '../../Series/LineSeries';
 import type PlotLineOrBand from './PlotLineOrBand';
 import type Point from '../Series/Point';
 import type PointerEvent from '../PointerEvent';
+import type PositionObject from '../Renderer/PositionObject';
+import type SizeObject from '../Renderer/SizeObject';
 import type SVGAttributes from '../Renderer/SVG/SVGAttributes';
 import type SVGElement from '../Renderer/SVG/SVGElement';
 import type SVGPath from '../Renderer/SVG/SVGPath';
@@ -3943,7 +3945,7 @@ class Axis {
     public len: number = void 0 as any;
     public linkedParent?: Axis;
     public max: (null|number) = void 0 as any;
-    public maxLabelDimensions?: Highcharts.SizeObject;
+    public maxLabelDimensions?: SizeObject;
     public maxLabelLength: number = void 0 as any;
     public min: (null|number) = void 0 as any;
     public minorTickInterval: number = void 0 as any;
@@ -3985,7 +3987,7 @@ class Axis {
     public tickInterval: number = void 0 as any;
     public tickmarkOffset: number = void 0 as any;
     public tickPositions: Highcharts.AxisTickPositionsArray = void 0 as any;
-    public tickRotCorr: Highcharts.PositionObject = void 0 as any;
+    public tickRotCorr: PositionObject = void 0 as any;
     public ticks: Record<string, Tick> = void 0 as any;
     public titleOffset?: number;
     public top: number = void 0 as any;
@@ -7159,7 +7161,7 @@ class Axis {
      * @return {Highcharts.PositionObject}
      * X and Y positions for the title.
      */
-    public getTitlePosition(): Highcharts.PositionObject {
+    public getTitlePosition(): PositionObject {
         // compute anchor points for each of the title align options
         var horiz = this.horiz,
             axisLeft = this.left,
@@ -7203,7 +7205,7 @@ class Axis {
                     fontMetrics.f, // bottom
                     -textHeightOvershoot // left
                 ][this.side],
-            titlePosition: Highcharts.PositionObject = {
+            titlePosition: PositionObject = {
                 x: horiz ?
                     alongAxis + xOption :
                     offAxis + (opposite ? this.width : 0) + offset + xOption,

@@ -14,6 +14,7 @@
 
 import type Axis from './Axis';
 import type Point from '../Series/Point';
+import type Position3DObject from '../Renderer/Position3DObject';
 import type SVGPath from '../Renderer/SVG/SVGPath';
 import H from '../Globals.js';
 import Math3D from '../../Extensions/Math3D.js';
@@ -32,6 +33,12 @@ const {
     wrap
 } = U;
 
+declare module '../Renderer/Position3DObject' {
+    interface Position3DObject {
+        matrix?: Array<number>;
+    }
+}
+
 declare module '../Series/PointLike' {
     interface PointLike {
         crosshairPos?: number;
@@ -47,9 +54,6 @@ declare module '../Series/PointLike' {
  */
 declare global {
     namespace Highcharts {
-        interface Position3DObject {
-            matrix?: Array<number>;
-        }
         interface XAxisLabelsOptions {
             position3d?: OptionsPosition3dValue;
             skew3d?: boolean;
@@ -123,9 +127,9 @@ class Axis3DAdditions {
      * Fixed position.
      */
     public fix3dPosition(
-        pos: Highcharts.Position3DObject,
+        pos: Position3DObject,
         isTitle?: boolean
-    ): Highcharts.Position3DObject {
+    ): Position3DObject {
         const axis3D = this;
         const axis = axis3D.axis;
         const chart = axis.chart;
@@ -159,7 +163,7 @@ class Axis3DAdditions {
             reverseFlap = false,
             offsetX = 0,
             offsetY = 0,
-            vecX: Highcharts.Position3DObject,
+            vecX: Position3DObject,
             vecY = { x: 0, y: 1, z: 0 };
 
         pos = axis.axis3D.swapZ({ x: pos.x, y: pos.y, z: 0 });
@@ -329,9 +333,9 @@ class Axis3DAdditions {
      * @private
      */
     public swapZ(
-        p: Highcharts.Position3DObject,
+        p: Position3DObject,
         insidePlotArea?: boolean
-    ): Highcharts.Position3DObject {
+    ): Position3DObject {
         const axis = this.axis;
 
         if (axis.isZAxis) {
@@ -663,7 +667,7 @@ class Axis3D {
             startSegment = path[0],
             endSegment = path[1],
             pArr,
-            pathSegments: Array<Highcharts.Position3DObject> = [];
+            pathSegments: Array<Position3DObject> = [];
 
         if (startSegment[0] === 'M' && endSegment[0] === 'L') {
             pArr = [
@@ -808,8 +812,8 @@ class Axis3D {
     public static wrapGetTitlePosition(
         this: Axis3D,
         proceed: Function
-    ): Highcharts.Position3DObject {
-        var pos: Highcharts.Position3DObject =
+    ): Position3DObject {
+        var pos: Position3DObject =
             proceed.apply(this, [].slice.call(arguments, 1));
 
         return this.axis3D ?

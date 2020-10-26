@@ -14,6 +14,7 @@ import type AnimationOptionsObject from '../Core/Animation/AnimationOptionsObjec
 import type BBoxObject from '../Core/Renderer/BBoxObject';
 import type CSSObject from '../Core/Renderer/CSSObject';
 import type Point from '../Core/Series/Point';
+import type PositionObject from '../Core/Renderer/PositionObject';
 import type SVGAttributes from '../Core/Renderer/SVG/SVGAttributes';
 import type SVGElement from '../Core/Renderer/SVG/SVGElement';
 import type SVGPath from '../Core/Renderer/SVG/SVGPath';

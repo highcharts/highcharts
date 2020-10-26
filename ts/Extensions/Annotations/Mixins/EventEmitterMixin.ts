@@ -8,6 +8,7 @@ import type Annotation from '../Annotations';
 import type { CursorValue } from '../../../Core/Renderer/CSSObject';
 import type DOMElementType from '../../../Core/Renderer/DOMElementType';
 import type PointerEvent from '../../../Core/PointerEvent';
+import type PositionObject from '../../../Core/Renderer/PositionObject';
 import type SVGElement from '../../../Core/Renderer/SVG/SVGElement';
 import H from '../../../Core/Globals.js';
 
@@ -309,7 +310,7 @@ const eventEmitterMixin: Highcharts.AnnotationEventEmitterMixin = {
     mouseMoveToTranslation: function (
         this: Highcharts.AnnotationEventEmitter,
         e: Highcharts.AnnotationEventObject
-    ): Highcharts.PositionObject {
+    ): PositionObject {
         var dx = e.chartX - e.prevChartX,
             dy = e.chartY - e.prevChartY,
             temp;
@@ -338,7 +339,7 @@ const eventEmitterMixin: Highcharts.AnnotationEventEmitterMixin = {
         e: Highcharts.AnnotationEventObject,
         cx: number,
         cy: number
-    ): Highcharts.PositionObject {
+    ): PositionObject {
         var prevDx = e.prevChartX - cx,
             prevDy = e.prevChartY - cy,
             dx = e.chartX - cx,

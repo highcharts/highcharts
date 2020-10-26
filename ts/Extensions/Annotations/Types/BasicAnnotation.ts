@@ -9,6 +9,7 @@
 import type ControllableCircle from '../Controllables/ControllableCircle';
 import type ControllableRect from '../Controllables/ControllableRect';
 import type PointerEvent from '../../../Core/PointerEvent';
+import type PositionObject from '../../../Core/Renderer/PositionObject';
 import Annotation from '../Annotations.js';
 import MockPoint from '../MockPoint.js';
 import U from '../../../Core/Utilities.js';
@@ -46,7 +47,7 @@ class BasicAnnotation extends Annotation {
             positioner: function (
                 this: Highcharts.AnnotationControlPoint,
                 target: Highcharts.AnnotationControllable
-            ): Highcharts.PositionObject {
+            ): PositionObject {
                 if (!target.graphic.placed) {
                     return {
                         x: 0,
@@ -81,7 +82,7 @@ class BasicAnnotation extends Annotation {
             positioner: function (
                 this: Highcharts.AnnotationControlPoint,
                 target: Highcharts.AnnotationControllable
-            ): Highcharts.PositionObject {
+            ): PositionObject {
                 if (!target.graphic.placed) {
                     return {
                         x: 0,
@@ -115,7 +116,7 @@ class BasicAnnotation extends Annotation {
         }],
 
         rectangle: [{
-            positioner: function (annotation: Annotation): Highcharts.PositionObject {
+            positioner: function (annotation: Annotation): PositionObject {
                 var xy = MockPoint
                     .pointToPixels(annotation.points[2]);
                 return {
@@ -154,7 +155,7 @@ class BasicAnnotation extends Annotation {
             positioner: function (
                 this: Highcharts.AnnotationControlPoint,
                 target: Highcharts.AnnotationControllable
-            ): Highcharts.PositionObject {
+            ): PositionObject {
                 var xy = MockPoint.pointToPixels(target.points[0]),
                     r: number = target.options.r as any;
                 return {

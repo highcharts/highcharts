@@ -13,10 +13,12 @@
 'use strict';
 
 import type ColorType from '../Core/Color/ColorString';
+import type PositionObject from '../Core/Renderer/PositionObject';
 import type {
     SeriesStateHoverOptions,
     SeriesStatesOptions
 } from '../Core/Series/SeriesOptions';
+import type SizeObject from '../Core/Renderer/SizeObject';
 import Axis from '../Core/Axis/Axis.js';
 import BaseSeries from '../Core/Series/Series.js';
 import H from '../Core/Globals.js';

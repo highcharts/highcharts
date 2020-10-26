@@ -16,6 +16,7 @@ import type Chart from '../../Core/Chart/Chart';
 import type ColorString from '../../Core/Color/ColorString';
 import type LineSeries from '../../Series/LineSeries';
 import type Point from '../../Core/Series/Point';
+import type PositionObject from '../../Core/Renderer/PositionObject';
 import type { SeriesZonesOptions } from '../../Core/Series/SeriesOptions';
 import type SVGAttributes from '../../Core/Renderer/SVG/SVGAttributes';
 import Color from '../../Core/Color/Color.js';
@@ -982,7 +983,7 @@ function GLRenderer(
          * @private
          */
         function pushSupplementPoint(
-            point: Highcharts.PositionObject,
+            point: PositionObject,
             atStart?: boolean
         ): void {
             if (!settings.useGPUTranslations) {

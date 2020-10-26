@@ -11,6 +11,7 @@
 'use strict';
 
 import type Chart from './Chart/Chart';
+import type SizeObject from './Renderer/SizeObject';
 
 declare module './Chart/ChartLike' {
     interface ChartLike {

@@ -13,6 +13,7 @@
 
 import type ColorType from '../Color/ColorType';
 import type CSSObject from '../Renderer/CSSObject';
+import type PositionObject from '../Renderer/PositionObject';
 import type SVGAttributes from '../Renderer/SVG/SVGAttributes';
 import type SVGElement from '../Renderer/SVG/SVGElement';
 import type Tick from './Tick';
@@ -56,7 +57,7 @@ namespace TreeGridTick {
         options: SVGAttributes;
         renderer: Highcharts.Renderer;
         show: boolean;
-        xy: Highcharts.PositionObject;
+        xy: PositionObject;
     }
 
     /* *
@@ -216,7 +217,7 @@ namespace TreeGridTick {
         tickmarkOffset: number,
         index: number,
         step: number
-    ): Highcharts.PositionObject {
+    ): PositionObject {
         const tick = this,
             lbOptions = pick(
                 tick.options && tick.options.labels,

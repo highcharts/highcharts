@@ -15,6 +15,8 @@
 import type { DOMElementType } from '../../../Core/Renderer/DOMElementType';
 import type LineSeries from '../../../Series/LineSeries';
 import type Point from '../../../Core/Series/Point';
+import type PositionObject from '../../../Core/Renderer/PositionObject';
+import type SVGElement from '../../../Core/Renderer/SVG/SVGElement';
 import AnnotationsA11y from '../AnnotationsA11y.js';
 const {
     getPointAnnotationTexts
@@ -109,8 +111,8 @@ function shouldAddDummyPoint(point: Point): boolean {
  */
 function makeDummyElement(
     point: Point,
-    pos: Highcharts.PositionObject
-): Highcharts.SVGElement {
+    pos: PositionObject
+): SVGElement {
     var renderer = point.series.chart.renderer,
         dummy = renderer.rect(pos.x, pos.y, 1, 1);
 

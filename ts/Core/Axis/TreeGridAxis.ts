@@ -17,6 +17,7 @@ import type {
     PointOptions,
     PointShortOptions
 } from '../Series/PointOptions';
+import type SizeObject from '../Renderer/SizeObject';
 import type SVGAttributes from '../Renderer/SVG/SVGAttributes';
 import H from '../Globals.js';
 import Axis from './Axis.js';
@@ -607,7 +608,7 @@ namespace TreeGridAxis {
     function wrapGetMaxLabelDimensions(
         this: TreeGridAxis,
         proceed: Function
-    ): Highcharts.SizeObject {
+    ): SizeObject {
         const axis = this,
             options = axis.options,
             labelOptions = options && options.labels,

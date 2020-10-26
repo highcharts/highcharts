@@ -22,6 +22,7 @@ import type HTMLElement from '../../Core/Renderer/HTML/HTMLElement';
 import type HTMLRenderer from '../../Core/Renderer/HTML/HTMLRenderer';
 import type PointerEvent from '../../Core/PointerEvent';
 import type ShadowOptionsObject from '../../Core/Renderer/ShadowOptionsObject';
+import type SizeObject from '../../Core/Renderer/SizeObject';
 import type SVGPath from '../../Core/Renderer/SVG/SVGPath';
 import Chart from '../../Core/Chart/Chart.js';
 import Color from '../../Core/Color/Color.js';
@@ -1432,7 +1433,7 @@ if (!svg) {
          */
         clipRect: function (
             this: Highcharts.VMLRenderer,
-            x: (number|Highcharts.SizeObject),
+            x: (number|SizeObject),
             y: number,
             width: number,
             height: number

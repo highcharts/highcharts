@@ -49,10 +49,7 @@ const {
     uniqueKey
 } = U;
 
-type ImportedPositionObject = PositionObject;
 type ImportedRectangleObject = RectangleObject;
-type ImportedSizeObject = SizeObject;
-type ImportedAlignObject = AlignObject;
 
 /**
  * Internal types
@@ -61,10 +58,8 @@ type ImportedAlignObject = AlignObject;
 declare global {
     namespace Highcharts {
         type ClipRectElement = SVGElement;
-        type PositionObject = ImportedPositionObject;
         type RectangleObject = ImportedRectangleObject;
         type Renderer = SVGRenderer;
-        type SizeObject = ImportedSizeObject;
         type SymbolKeyValue = (
             'arc'|'bottombutton'|'callout'|'circle'|'connector'|'diamond'|
             'rect'|'square'|'topbutton'|'triangle'|'triangle-down'

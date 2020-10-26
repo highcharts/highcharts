@@ -17,6 +17,8 @@
 import type ColorType from '../Core/Color/ColorType';
 import type ColumnSeries from '../Series/ColumnSeries';
 import type Chart from '../Core/Chart/Chart';
+import type Position3DObject from '../Core/Renderer/Position3DObject';
+import type PositionObject from '../Core/Renderer/PositionObject';
 import type { SeriesStatesOptions } from '../Core/Series/SeriesOptions';
 import type SVGAttributes from '../Core/Renderer/SVG/SVGAttributes';
 import type SVGElement from '../Core/Renderer/SVG/SVGElement';
@@ -403,7 +405,7 @@ RendererProto.getCylinderEnd = function (
         centerZ = depth / 2 + shapeArgs.z,
 
         // points could be generated in a loop, but readability will plummet
-        points: Array<Highcharts.Position3DObject> = [{ // M - starting point
+        points: Array<Position3DObject> = [{ // M - starting point
             x: 0,
             y: y,
             z: radius
@@ -467,10 +469,7 @@ RendererProto.getCylinderEnd = function (
         x, z;
 
     // rotete to match chart's beta and translate to the shape center
-    points.forEach(function (
-        point: Highcharts.Position3DObject,
-        i: number
-    ): void {
+    points.forEach(function (point, i): void {
         x = point.x;
         z = point.z;
 
@@ -504,9 +503,7 @@ RendererProto.getCylinderEnd = function (
 // Returns curved path in format of:
 // [ M, x, y, ...[C, cp1x, cp2y, cp2x, cp2y, epx, epy]*n_times ]
 // (cp - control point, ep - end point)
-RendererProto.getCurvedPath = function (
-    points: Array<Highcharts.PositionObject>
-): SVGPath {
+RendererProto.getCurvedPath = function (points: Array<PositionObject>): SVGPath {
     var path: SVGPath = [['M', points[0].x, points[0].y]],
         limit = points.length - 2,
         i;

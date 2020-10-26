@@ -769,7 +769,7 @@ extend(Point.prototype, /** @lends Point.prototype */ {
         var twoPI = Math.PI * 2.0, theta = radians, bb = getPointBB(this), rectWidth = bb.xMax - bb.xMin, rectHeight = bb.yMax - bb.yMin, rAtan = Math.atan2(rectHeight, rectWidth), tanTheta = 1, leftOrRightRegion = false, rectHalfWidth = rectWidth / 2.0, rectHalfHeight = rectHeight / 2.0, rectHorizontalCenter = bb.xMin + rectHalfWidth, rectVerticalCenter = bb.yMin + rectHalfHeight, edgePoint = {
             x: rectHorizontalCenter,
             y: rectVerticalCenter
-        }, markerPoint = {}, xFactor = 1, yFactor = 1;
+        }, xFactor = 1, yFactor = 1;
         while (theta < -Math.PI) {
             theta += twoPI;
         }
@@ -810,9 +810,10 @@ extend(Point.prototype, /** @lends Point.prototype */ {
         if (anchor.y !== rectVerticalCenter) {
             edgePoint.y = anchor.y;
         }
-        markerPoint.x = edgePoint.x + (markerRadius * Math.cos(theta));
-        markerPoint.y = edgePoint.y - (markerRadius * Math.sin(theta));
-        return markerPoint;
+        return {
+            x: edgePoint.x + (markerRadius * Math.cos(theta)),
+            y: edgePoint.y - (markerRadius * Math.sin(theta))
+        };
     }
 });
 /**

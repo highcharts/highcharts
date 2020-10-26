@@ -7,14 +7,13 @@
 'use strict';
 
 import type ColorString from '../../../Core/Color/ColorString';
+import type PositionObject from '../../../Core/Renderer/PositionObject';
 import type SVGPath from '../../../Core/Renderer/SVG/SVGPath';
 import Annotation from '../Annotations.js';
 import MockPoint from '../MockPoint.js';
 import Tunnel from './Tunnel.js';
 import U from '../../../Core/Utilities.js';
-const {
-    merge
-} = U;
+const { merge } = U;
 
 /**
  * Internal types.
@@ -66,8 +65,8 @@ var createPathDGenerator = function (retracementIndex: number, isBackground?: bo
                 ['M', Math.round(leftTop.x), Math.round(leftTop.y)],
                 ['L', Math.round(rightTop.x), Math.round(rightTop.y)]
             ],
-            rightBottom: Highcharts.PositionObject,
-            leftBottom: Highcharts.PositionObject;
+            rightBottom: PositionObject,
+            leftBottom: PositionObject;
 
         if (isBackground) {
             rightBottom = this.anchor(
