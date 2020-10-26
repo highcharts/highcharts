@@ -13,6 +13,7 @@
 'use strict';
 
 import type { AlignValue } from '../../Core/Renderer/AlignObject';
+import type BBoxObject from '../../Core/Renderer/BBoxObject';
 import type ColorType from '../../Core/Color/ColorType';
 import type CSSObject from '../../Core/Renderer/CSSObject';
 import type Point from '../../Core/Series/Point';
@@ -459,7 +460,7 @@ class BubbleLegend {
     public legendItemHeight: number = void 0 as any;
     public legendItemWidth: number = void 0 as any;
     public legendSymbol: SVGElement = void 0 as any;
-    public maxLabel: Highcharts.BBoxObject = void 0 as any;
+    public maxLabel: BBoxObject = void 0 as any;
     public movementX: number = void 0 as any;
     public ranges: Array<Highcharts.BubbleLegendRangesOptions> = void 0 as any;
     public visible: boolean = void 0 as any;
@@ -886,10 +887,10 @@ class BubbleLegend {
      * @function Highcharts.BubbleLegend#getMaxLabelSize
      * @return {Highcharts.BBoxObject}
      */
-    public getMaxLabelSize(): Highcharts.BBoxObject {
+    public getMaxLabelSize(): BBoxObject {
         var labels = this.symbols.labels,
-            maxLabel: (Highcharts.BBoxObject|undefined),
-            labelSize: Highcharts.BBoxObject;
+            maxLabel: (BBoxObject|undefined),
+            labelSize: BBoxObject;
 
         labels.forEach(function (label: SVGElement): void {
             labelSize = label.getBBox(true);

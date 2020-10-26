@@ -619,8 +619,8 @@ if (seriesTypes.bullet) {
             resizeSide: 'top',
             handlePositioner: function (
                 point: Highcharts.BulletPoint
-            ): Highcharts.PositionObject {
-                var bBox: Highcharts.BBoxObject =
+            ): PositionObject {
+                var bBox: BBoxObject =
                     (point.targetGraphic as any).getBBox();
 
                 return {
@@ -1843,13 +1843,13 @@ function getPositionSnapshot(
             y: guideBox.attr('y'),
             width: guideBox.attr('width'),
             height: guideBox.attr('height')
-        } as Highcharts.BBoxObject,
+        } as BBoxObject,
         points: {}
     };
 
     // Loop over the points and add their props
     points.forEach(function (point: Point): void {
-        var pointProps: Highcharts.Dictionary<number> = {};
+        var pointProps: Record<string, number> = {};
 
         // Add all of the props defined in the series' dragDropProps to the
         // snapshot

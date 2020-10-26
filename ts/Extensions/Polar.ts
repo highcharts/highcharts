@@ -14,6 +14,7 @@ import type {
     AlignValue,
     VerticalAlignValue
 } from '../Core/Renderer/AlignObject';
+import type BBoxObject from '../Core/Renderer/BBoxObject';
 import type ColumnSeries from '../Series/ColumnSeries';
 import type Point from '../Core/Series/Point';
 import type PointerEvent from '../Core/PointerEvent';
@@ -969,7 +970,7 @@ if (seriesTypes.column) {
         point: (Highcharts.ColumnPoint|Highcharts.PolarPoint),
         dataLabel: SVGElement,
         options: Highcharts.DataLabelsOptions,
-        alignTo: Highcharts.BBoxObject,
+        alignTo: BBoxObject,
         isNew?: boolean
     ): void {
         var chart = this.chart,

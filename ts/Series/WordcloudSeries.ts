@@ -12,6 +12,7 @@
 
 'use strict';
 
+import type BBoxObject from '../Core/Renderer/BBoxObject';
 import type ColumnSeries from './ColumnSeries.js';
 import type CSSObject from '../Core/Renderer/CSSObject';
 import type {
@@ -1030,7 +1031,7 @@ var wordCloudSeries: Partial<Highcharts.WordcloudSeries> = {
                 css = extend({
                     fontSize: fontSize + 'px'
                 }, options.style as any),
-                bBox: Highcharts.BBoxObject;
+                bBox: BBoxObject;
 
             testElement.css(css).attr({
                 x: 0,

@@ -135,9 +135,7 @@ Chart.prototype.isChartSeriesBoosting = function (): boolean {
  *
  * @return {Highcharts.BBoxObject}
  */
-Chart.prototype.getBoostClipRect = function (
-    target: Chart
-): Highcharts.BBoxObject {
+Chart.prototype.getBoostClipRect = function (target: Chart): BBoxObject {
     var clipBox = {
         x: this.plotLeft,
         y: this.plotTop,

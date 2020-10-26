@@ -1096,8 +1096,8 @@ LineSeries.prototype.justifyDataLabel = function (
     dataLabel: SVGElement,
     options: Highcharts.DataLabelsOptions,
     alignAttr: SVGAttributes,
-    bBox: Highcharts.BBoxObject,
-    alignTo?: Highcharts.BBoxObject,
+    bBox: BBoxObject,
+    alignTo?: BBoxObject,
     isNew?: boolean
 ): (boolean|undefined) {
     var chart = this.chart,

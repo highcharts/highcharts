@@ -11,6 +11,7 @@
 'use strict';
 
 import type Axis from '../Core/Axis/Axis';
+import type BBoxObject from '../Core/Renderer/BBoxObject';
 import type Chart from '../Core/Chart/Chart';
 import type ColorString from '../Core/Color/ColorString';
 import type Position3DObject from '../Core/Renderer/Position3DObject';
@@ -560,7 +561,7 @@ wrap(LineSeries.prototype, 'alignDataLabel', function (
     point: Highcharts.ColumnPoint,
     dataLabel: SVGElement,
     options: Highcharts.DataLabelsOptions,
-    alignTo: Highcharts.BBoxObject
+    alignTo: BBoxObject
 ): void {
     const chart = this.chart;
 

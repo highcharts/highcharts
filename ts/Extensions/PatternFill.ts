@@ -14,6 +14,7 @@
 'use strict';
 
 import type AnimationOptionsObject from '../Core/Animation/AnimationOptionsObject';
+import type BBoxObject from '../Core/Renderer/BBoxObject';
 import type ColorString from '../Core/Color/ColorString';
 import type SVGAttributes from '../Core/Renderer/SVG/SVGAttributes';
 import type {

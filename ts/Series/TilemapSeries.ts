@@ -14,6 +14,7 @@
 'use strict';
 
 import type Axis from '../Core/Axis/Axis';
+import type BBoxObject from '../Core/Renderer/BBoxObject';
 import type Point from '../Core/Series/Point';
 import type { SeriesStatesOptions } from '../Core/Series/SeriesOptions';
 import type SVGPath from '../Core/Renderer/SVG/SVGPath';

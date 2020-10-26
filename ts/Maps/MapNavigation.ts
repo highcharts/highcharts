@@ -12,6 +12,7 @@ import type {
     AlignValue,
     VerticalAlignValue
 } from '../Core/Renderer/AlignObject';
+import type BBoxObject from '../Core/Renderer/BBoxObject';
 import type CSSObject from '../Core/Renderer/CSSObject';
 import type PointerEvent from '../Core/PointerEvent';
 import type SVGAttributes from '../Core/Renderer/SVG/SVGAttributes';
@@ -344,9 +345,9 @@ extend(Chart.prototype, /** @lends Chart.prototype */ {
      */
     fitToBox: function (
         this: Highcharts.MapNavigationChart,
-        inner: Highcharts.BBoxObject,
-        outer: Highcharts.BBoxObject
-    ): Highcharts.BBoxObject {
+        inner: BBoxObject,
+        outer: BBoxObject
+    ): BBoxObject {
         [['x', 'width'], ['y', 'height']].forEach(function (
             dim: Array<string>
         ): void {

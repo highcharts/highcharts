@@ -12,8 +12,7 @@
 
 'use strict';
 
-/* eslint-disable indent */
-
+import type BBoxObject from '../Core/Renderer/BBoxObject';
 import type ColorType from '../Core/Color/ColorType';
 import type Point from '../Core/Series/Point';
 import type { SeriesStatesOptions } from '../Core/Series/SeriesOptions';
@@ -543,7 +542,7 @@ BaseSeries.seriesType<typeof Highcharts.FunnelSeries>(
             point: Highcharts.FunnelPoint,
             dataLabel: SVGElement,
             options: Highcharts.FunnelSeriesDataLabelsOptionsObject,
-            alignTo: Highcharts.BBoxObject,
+            alignTo: BBoxObject,
             isNew?: boolean
         ): void {
             var series = point.series,

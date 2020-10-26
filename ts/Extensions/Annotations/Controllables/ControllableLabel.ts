@@ -6,10 +6,9 @@
 
 'use strict';
 
-import type {
-    AlignObject
-} from '../../../Core/Renderer/AlignObject';
+import type { AlignObject } from '../../../Core/Renderer/AlignObject';
 import type Annotation from '../Annotations';
+import type BBoxObject from '../../../Core/Renderer/BBoxObject';
 import type SVGAttributes from '../../../Core/Renderer/SVG/SVGAttributes';
 import type SVGElement from '../../../Core/Renderer/SVG/SVGElement';
 import type SVGPath from '../../../Core/Renderer/SVG/SVGPath';
@@ -114,7 +113,7 @@ class ControllableLabel implements ControllableMixin.Type {
      */
     public static alignedPosition(
         alignOptions: Highcharts.AnnotationAlignObject,
-        box: Highcharts.BBoxObject
+        box: BBoxObject
     ): Highcharts.PositionObject {
         var align = alignOptions.align,
             vAlign = alignOptions.verticalAlign,

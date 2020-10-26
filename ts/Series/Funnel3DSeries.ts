@@ -14,6 +14,7 @@
 
 'use strict';
 
+import type BBoxObject from '../Core/Renderer/BBoxObject';
 import type Chart from '../Core/Chart/Chart';
 import type ColorType from '../Core/Color/ColorType';
 import type ColumnSeries from './ColumnSeries';
@@ -456,7 +457,7 @@ BaseSeries.seriesType<typeof Highcharts.Funnel3dSeries>('funnel3d', 'column',
                     series.yAxis.len
                 ),
                 inside = pick(options.inside, !!series.options.stacking),
-                dlBox: Highcharts.BBoxObject = {
+                dlBox: BBoxObject = {
                     x: dlBoxRaw.x,
                     y: dlBoxRaw.y,
                     height: 0
@@ -787,7 +788,7 @@ funnel3dMethods = merge(RendererProto.elements3d.cuboid, {
 
     adjustForGradient: function (this: SVGElement): void {
         var funnel3d = this,
-            bbox: Highcharts.BBoxObject;
+            bbox: BBoxObject;
 
         funnel3d.sideGroups.forEach(function (sideGroupName: string): void {
             // use common extremes for groups for matching gradients

@@ -16,6 +16,7 @@ import type {
 } from '../../Core/Renderer/AlignObject';
 import type AnimationOptionsObject from '../../Core/Animation/AnimationOptionsObject';
 import type { AxisType } from '../../Core/Axis/Types';
+import type BBoxObject from '../../Core/Renderer/BBoxObject';
 import type ColorString from '../../Core/Color/ColorString';
 import type ColorType from '../../Core/Color/ColorType';
 import type CSSObject from '../../Core/Renderer/CSSObject';
@@ -545,7 +546,7 @@ class Annotation implements EventEmitterMixin.Type, ControllableMixin.Type {
         this.clipYAxis = linkedAxes[1];
     }
 
-    public getClipBox(): (Highcharts.BBoxObject|void) {
+    public getClipBox(): (BBoxObject|void) {
         if (this.clipXAxis && this.clipYAxis) {
             return {
                 x: this.clipXAxis.left,

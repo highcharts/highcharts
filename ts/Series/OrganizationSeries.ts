@@ -12,6 +12,7 @@
 
 'use strict';
 
+import type BBoxObject from '../Core/Renderer/BBoxObject';
 import type ColorString from '../Core/Color/ColorString';
 import type CSSObject from '../Core/Renderer/CSSObject';
 import type { SeriesStatesOptions } from '../Core/Series/SeriesOptions';
@@ -680,7 +681,7 @@ BaseSeries.seriesType<typeof Highcharts.OrganizationSeries>(
 
                 // The getBBox function is used in `alignDataLabel` to align
                 // inside the box
-                dataLabel.getBBox = function (): Highcharts.BBoxObject {
+                dataLabel.getBBox = function (): BBoxObject {
                     return {
                         width: width,
                         height: height

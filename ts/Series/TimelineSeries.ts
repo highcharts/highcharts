@@ -14,6 +14,7 @@
 
 'use strict';
 
+import type BBoxObject from '../Core/Renderer/BBoxObject';
 import type ColorType from '../Core/Color/ColorType';
 import type {
     PointMarkerOptions,
@@ -478,7 +479,7 @@ BaseSeries.seriesType<typeof Highcharts.TimelineSeries>('timeline', 'line',
             point: Highcharts.TimelinePoint,
             dataLabel: SVGElement,
             options: Highcharts.TimelineDataLabelsOptionsObject,
-            alignTo: Highcharts.BBoxObject
+            alignTo: BBoxObject
         ): void {
             var series = this,
                 isInverted = series.chart.inverted,

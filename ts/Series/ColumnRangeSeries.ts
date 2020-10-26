@@ -10,6 +10,7 @@
 
 'use strict';
 
+import type BBoxObject from '../Core/Renderer/BBoxObject';
 import type { SeriesStatesOptions } from '../Core/Series/SeriesOptions';
 import type SVGAttributes from '../Core/Renderer/SVG/SVGAttributes';
 import BaseSeries from '../Core/Series/Series.js';
@@ -236,7 +237,7 @@ BaseSeries.seriesType<typeof Highcharts.ColumnRangeSeries>('columnrange', 'arear
     // Overrides from modules that may be loaded after this module
     crispCol: function (
         this: Highcharts.ColumnRangeSeries
-    ): Highcharts.BBoxObject {
+    ): BBoxObject {
         return columnProto.crispCol.apply(this, arguments as any);
     },
     drawPoints: function (this: Highcharts.ColumnRangeSeries): void {

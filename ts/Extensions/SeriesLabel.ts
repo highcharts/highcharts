@@ -811,7 +811,7 @@ Chart.prototype.drawSeriesLabels = function (): void {
             return;
         }
 
-        var bBox: (Highcharts.BBoxObject|undefined),
+        var bBox: (BBoxObject|undefined),
             x: (number|undefined),
             y: (number|undefined),
             results: Array<Highcharts.LabelClearPointObject> = [],

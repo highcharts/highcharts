@@ -16,6 +16,7 @@ import type {
     VerticalAlignValue
 } from '../Core/Renderer/AlignObject';
 import type AnimationOptionsObject from '../Core/Animation/AnimationOptionsObject';
+import type BBoxObject from '../Core/Renderer/BBoxObject';
 import type ColorType from '../Core/Color/ColorType';
 import type CSSObject from '../Core/Renderer/CSSObject';
 import type SVGElement from '../Core/Renderer/SVG/SVGElement';
@@ -533,7 +534,7 @@ class StackItem {
         xWidth: number,
         h: number,
         axis: Highcharts.Axis
-    ): Highcharts.BBoxObject {
+    ): BBoxObject {
         var reversed = stackItem.axis.reversed,
             inverted = chart.inverted,
             axisPos = axis.height + (axis.pos as any) -

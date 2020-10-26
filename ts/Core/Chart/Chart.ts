@@ -198,7 +198,7 @@ class Chart {
     public chartBackground?: SVGElement;
     public chartHeight: number = void 0 as any;
     public chartWidth: number = void 0 as any;
-    public clipBox: Highcharts.BBoxObject = void 0 as any;
+    public clipBox: BBoxObject = void 0 as any;
     public clipOffset?: Array<number>;
     public clipRect?: SVGElement;
     public colorCounter: number = void 0 as any;
@@ -227,7 +227,7 @@ class Chart {
     public plotBGImage?: SVGElement;
     public plotBorder?: SVGElement;
     public plotBorderWidth?: number;
-    public plotBox: Highcharts.BBoxObject = void 0 as any;
+    public plotBox: BBoxObject = void 0 as any;
     public plotHeight: number = void 0 as any;
     public plotLeft: number = void 0 as any;
     public plotSizeX?: number;
@@ -2681,8 +2681,8 @@ namespace Chart {
     }
 
     export interface Renderer extends SVGRenderer {
-        plotBox: Highcharts.BBoxObject;
-        spacingBox: Highcharts.BBoxObject;
+        plotBox: BBoxObject;
+        spacingBox: BBoxObject;
     }
 
 }

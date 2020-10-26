@@ -16,6 +16,7 @@
  *
  * */
 
+import type BBoxObject from '../Core/Renderer/BBoxObject';
 import type Chart from '../Core/Chart/Chart';
 import type ColorType from '../Core/Color/ColorType';
 import type {
@@ -709,7 +710,7 @@ class ColumnSeries extends LineSeries {
         y: number,
         w: number,
         h: number
-    ): Highcharts.BBoxObject {
+    ): BBoxObject {
         var chart = this.chart,
             borderWidth = this.borderWidth,
             xCrisp = -((borderWidth as any) % 2 ? 0.5 : 0),

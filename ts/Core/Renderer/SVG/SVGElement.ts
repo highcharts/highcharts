@@ -70,9 +70,6 @@ const {
     uniqueKey
 } = U;
 
-type ImportedBBoxObject = BBoxObject;
-type ImportedAlignObject = AlignObject;
-
 /**
  * @private
  */
@@ -97,7 +94,6 @@ declare global {
         cutHeight?: number;
     }
     namespace Highcharts {
-        type BBoxObject = ImportedBBoxObject;
         class SVGElement {
             public constructor();
             [key: string]: any;
