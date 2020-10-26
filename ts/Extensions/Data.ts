@@ -25,6 +25,7 @@ const {
 import Point from '../Core/Series/Point.js';
 import DataTable from '../Data/DataTable.js';
 import GoogleSheetsStore from '../Data/Stores/GoogleSheetsStore.js';
+import GoogleSheetsParser from '../Data/Parsers/GoogleSheetsParser.js';
 import CSVStore from '../Data/Stores/CSVStore.js';
 import HTMLTableStore from '../Data/Stores/HTMLTableStore.js';
 import CSVParser from '../Data/Parsers/CSVParser.js';
@@ -1258,13 +1259,20 @@ class Data {
                 new DataTable(),
                 {
                     googleSpreadsheetKey: googleSpreadsheetKey,
-                    startRow: startRow,
-                    endRow: endRow,
-                    startColumn: startColumn,
-                    endColumn: endColumn,
                     enablePolling: options.enablePolling,
                     dataRefreshRate: options.dataRefreshRate
-                }
+                },
+                new GoogleSheetsParser(
+                    {
+                        startRow: startRow,
+                        endRow: endRow,
+                        startColumn: startColumn,
+                        endColumn: endColumn
+                    },
+                    new DataConverter({
+                        decimalPoint: options.decimalPoint
+                    }, options.parseDate)
+                )
             );
 
             store.on('afterLoad', (): void => {
