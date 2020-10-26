@@ -17,6 +17,7 @@ import type {
     DOMElementType,
     HTMLDOMElement
 } from '../Core/Renderer/DOMElementType';
+import type HTMLAttributes from '../Core/Renderer/HTML/HTMLAttributes';
 import type HTMLElement from '../Core/Renderer/HTML/HTMLElement';
 import type SVGAttributes from '../Core/Renderer/SVG/SVGAttributes';
 import type SVGElement from '../Core/Renderer/SVG/SVGElement';
@@ -259,7 +260,7 @@ AccessibilityComponent.prototype = {
      */
     addProxyGroup: function (
         this: Highcharts.AccessibilityComponent,
-        attrs?: Highcharts.HTMLAttributes
+        attrs?: HTMLAttributes
     ): HTMLDOMElement {
         this.createOrUpdateProxyContainer();
 

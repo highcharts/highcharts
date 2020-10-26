@@ -12,15 +12,13 @@
 
 import type Axis from './Axis/Axis';
 import type Chart from './Chart/Chart';
-import type {
-    DOMElementType
-} from './Renderer/DOMElementType';
+import type { DOMElementType } from './Renderer/DOMElementType';
 import type LineSeries from '../Series/LineSeries';
 import type Point from './Series/Point';
 import type PointerEvent from './PointerEvent';
 import type SVGElement from './Renderer/SVG/SVGElement';
 import Color from './Color/Color.js';
-const color = Color.parse;
+const { parse: color } = Color;
 import H from './Globals.js';
 const {
     charts,

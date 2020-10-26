@@ -17,6 +17,7 @@ import type {
     HTMLDOMElement,
     SVGDOMElement
 } from './Renderer/DOMElementType';
+import type HTMLAttributes from './Renderer/HTML/HTMLAttributes';
 import type SVGAttributes from './Renderer/SVG/SVGAttributes';
 import H from './Globals.js';
 const {
@@ -49,9 +50,6 @@ declare global {
             'ShortDash'|'ShortDashDot'|'ShortDashDotDot'|'ShortDot'|'Solid'
         );
         type ExtractArrayType<T> = T extends (infer U)[] ? U : never;
-        type HTMLAttributes = (
-            Dictionary<(boolean|number|string|Function|undefined)>
-        );
         type RelativeSize = (number|string);
         interface Class<T = any> extends Function {
             new(...args: Array<any>): T;
@@ -1012,7 +1010,7 @@ const defined = H.defined = function defined<T>(obj: T): obj is NonNullable<T> {
 
 function attr(
     elem: DOMElementType,
-    prop: (Highcharts.HTMLAttributes|SVGAttributes)
+    prop: (HTMLAttributes|SVGAttributes)
 ): undefined;
 function attr(
     elem: DOMElementType,
@@ -1045,7 +1043,7 @@ function attr(
  */
 function attr(
     elem: DOMElementType,
-    prop: (string|Highcharts.HTMLAttributes|SVGAttributes),
+    prop: (string|HTMLAttributes|SVGAttributes),
     value?: (number|string)
 ): (string|null|undefined) {
     let ret;
@@ -1264,7 +1262,7 @@ const css = H.css = function css(
  */
 const createElement = H.createElement = function createElement(
     tag: string,
-    attribs?: Highcharts.HTMLAttributes,
+    attribs?: HTMLAttributes,
     styles?: CSSObject,
     parent?: HTMLDOMElement,
     nopad?: boolean

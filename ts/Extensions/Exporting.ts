@@ -19,9 +19,8 @@ import type {
 import type AnimationOptionsObject from '../Core/Animation/AnimationOptionsObject';
 import type ColorString from '../Core/Color/ColorString';
 import type CSSObject from '../Core/Renderer/CSSObject';
-import type {
-    HTMLDOMElement
-} from '../Core/Renderer/DOMElementType';
+import type HTMLAttributes from '../Core/Renderer/HTML/HTMLAttributes';
+import type { HTMLDOMElement } from '../Core/Renderer/DOMElementType';
 import type { SeriesTypeOptions } from '../Core/Series/SeriesType';
 import type SVGAttributes from '../Core/Renderer/SVG/SVGAttributes';
 import type SVGElement from '../Core/Renderer/SVG/SVGElement';
@@ -1255,7 +1254,7 @@ defaultOptions.exporting = {
 H.post = function (
     url: string,
     data: object,
-    formAttributes?: Highcharts.HTMLAttributes
+    formAttributes?: HTMLAttributes
 ): void {
     // create the form
     var form: HTMLFormElement = createElement('form', merge({
