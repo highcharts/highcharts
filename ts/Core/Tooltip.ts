@@ -17,6 +17,7 @@ import type LineSeries from '../Series/LineSeries';
 import type Point from './Series/Point';
 import type PointerEvent from './PointerEvent';
 import type PositionObject from './Renderer/PositionObject';
+import type RectangleObject from './Renderer/RectangleObject';
 import type SVGAttributes from './Renderer/SVG/SVGAttributes';
 import type SVGElement from './Renderer/SVG/SVGElement';
 import H from './Globals.js';
@@ -1783,7 +1784,7 @@ class Tooltip {
             return;
         }
 
-        const box: Highcharts.RectangleObject = {
+        const box: RectangleObject = {
             x: 0,
             y: 0,
             width: 0,

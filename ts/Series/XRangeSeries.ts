@@ -14,6 +14,7 @@
 
 import type ColorType from '../Core/Color/ColorString';
 import type PositionObject from '../Core/Renderer/PositionObject';
+import type RectangleObject from '../Core/Renderer/RectangleObject';
 import type {
     SeriesStateHoverOptions,
     SeriesStatesOptions

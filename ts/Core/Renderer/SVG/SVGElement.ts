@@ -24,7 +24,6 @@ import type {
     SVGDOMElement
 } from '../DOMElementType';
 import type GradientColor from '../../Color/GradientColor';
-import type HTMLElement from '../HTML/HTMLElement';
 import type RectangleObject from '../RectangleObject';
 import type ShadowOptionsObject from '../ShadowOptionsObject';
 import type SVGAttributes from './SVGAttributes';
