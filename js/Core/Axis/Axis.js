@@ -733,7 +733,7 @@ var Axis = /** @class */ (function () {
      */
     Axis.prototype.translate = function (val, backwards, cvsCoord, old, handleLog, pointPlacement) {
         var axis = this.linkedParent || this, // #1417
-        sign = 1, cvsOffset = 0, localA = old ? axis.oldTransA : axis.transA, localMin = old ? axis.oldMin : axis.min, returnValue = 0, minPixelPadding = axis.minPixelPadding, doPostTranslate = (axis.isOrdinal ||
+        sign = 1, cvsOffset = 0, localA = old && axis.old ? axis.old.transA : axis.transA, localMin = old && axis.old ? axis.old.min : axis.min, returnValue = 0, minPixelPadding = axis.minPixelPadding, doPostTranslate = (axis.isOrdinal ||
             axis.brokenAxis && axis.brokenAxis.hasBreaks ||
             (axis.logarithmic && handleLog)) && axis.lin2val;
         if (!localA) {
@@ -1187,12 +1187,9 @@ var Axis = /** @class */ (function () {
      * @private
      * @function Highcharts.Axis#setAxisTranslation
      *
-     * @param {boolean} [saveOld]
-     * TO-DO: parameter description
-     *
      * @fires Highcharts.Axis#event:afterSetAxisTranslation
      */
-    Axis.prototype.setAxisTranslation = function (saveOld) {
+    Axis.prototype.setAxisTranslation = function () {
         var axis = this, range = axis.max - axis.min, pointRange = axis.axisPointRange || 0, closestPointRange, minPointOffset = 0, pointRangePadding = 0, linkedParent = axis.linkedParent, ordinalCorrection, hasCategories = !!axis.categories, transA = axis.transA, isXAxis = axis.isXAxis;
         // Adjust translation for padding. Y axis with categories need to go
         // through the same (#1784).
@@ -1252,9 +1249,6 @@ var Axis = /** @class */ (function () {
             }
         }
         // Secondary values
-        if (saveOld) {
-            axis.oldTransA = transA;
-        }
         axis.translationSlope = axis.transA = transA =
             axis.staticScale ||
                 axis.len / ((range + pointRangePadding) || 1);
@@ -1441,11 +1435,12 @@ var Axis = /** @class */ (function () {
         // axes.
         if (isXAxis && !secondPass) {
             axis.series.forEach(function (series) {
-                series.processData(axis.min !== axis.oldMin || axis.max !== axis.oldMax);
+                var _a, _b;
+                series.processData(axis.min !== ((_a = axis.old) === null || _a === void 0 ? void 0 : _a.min) || axis.max !== ((_b = axis.old) === null || _b === void 0 ? void 0 : _b.max));
             });
         }
         // set the translation factor used in translate function
-        axis.setAxisTranslation(true);
+        axis.setAxisTranslation();
         // hook for ordinal axes and radial axes
         fireEvent(this, 'initialAxisTranslation');
         // In column-like charts, don't cramp in more ticks than there are
@@ -1771,6 +1766,7 @@ var Axis = /** @class */ (function () {
      * @fires Highcharts.Axis#event:afterSetScale
      */
     Axis.prototype.setScale = function () {
+        var _a, _b, _c, _d, _e;
         var axis = this, isDirtyAxisLength, isDirtyData = false, isXAxisDirty = false;
         axis.series.forEach(function (series) {
             var _a;
@@ -1779,20 +1775,17 @@ var Axis = /** @class */ (function () {
             // well:
             isXAxisDirty = isXAxisDirty || ((_a = series.xAxis) === null || _a === void 0 ? void 0 : _a.isDirty) || false;
         });
-        axis.oldMin = axis.min;
-        axis.oldMax = axis.max;
-        axis.oldAxisLength = axis.len;
         // set the new axisLength
         axis.setAxisSize();
-        isDirtyAxisLength = axis.len !== axis.oldAxisLength;
+        isDirtyAxisLength = axis.len !== ((_a = axis.old) === null || _a === void 0 ? void 0 : _a.len);
         // do we really need to go through all this?
         if (isDirtyAxisLength ||
             isDirtyData ||
             isXAxisDirty ||
             axis.isLinked ||
             axis.forceRedraw ||
-            axis.userMin !== axis.oldUserMin ||
-            axis.userMax !== axis.oldUserMax ||
+            axis.userMin !== ((_b = axis.old) === null || _b === void 0 ? void 0 : _b.userMin) ||
+            axis.userMax !== ((_c = axis.old) === null || _c === void 0 ? void 0 : _c.userMax) ||
             axis.alignToOthers()) {
             if (axis.stacking) {
                 axis.stacking.resetStacks();
@@ -1802,17 +1795,13 @@ var Axis = /** @class */ (function () {
             axis.getSeriesExtremes();
             // get fixed positions based on tickInterval
             axis.setTickInterval();
-            // record old values to decide whether a rescale is necessary later
-            // on (#540)
-            axis.oldUserMin = axis.userMin;
-            axis.oldUserMax = axis.userMax;
             // Mark as dirty if it is not already set to dirty and extremes have
             // changed. #595.
             if (!axis.isDirty) {
                 axis.isDirty =
                     isDirtyAxisLength ||
-                        axis.min !== axis.oldMin ||
-                        axis.max !== axis.oldMax;
+                        axis.min !== ((_d = axis.old) === null || _d === void 0 ? void 0 : _d.min) ||
+                        axis.max !== ((_e = axis.old) === null || _e === void 0 ? void 0 : _e.max);
             }
         }
         else if (axis.stacking) {
@@ -2645,7 +2634,7 @@ var Axis = /** @class */ (function () {
      */
     Axis.prototype.renderMinorTick = function (pos) {
         var axis = this;
-        var slideInTicks = axis.chart.hasRendered && isNumber(axis.oldMin);
+        var slideInTicks = axis.chart.hasRendered && axis.old;
         var minorTicks = axis.minorTicks;
         if (!minorTicks[pos]) {
             minorTicks[pos] = new Tick(axis, pos, 'minor');
@@ -2673,7 +2662,7 @@ var Axis = /** @class */ (function () {
         var axis = this;
         var isLinked = axis.isLinked;
         var ticks = axis.ticks;
-        var slideInTicks = axis.chart.hasRendered && isNumber(axis.oldMin);
+        var slideInTicks = axis.chart.hasRendered && axis.old;
         // Linked axes need an extra check to find out if
         if (!isLinked ||
             (pos >= axis.min && pos <= axis.max) || ((_a = axis.grid) === null || _a === void 0 ? void 0 : _a.isColumn)) {
@@ -2827,6 +2816,15 @@ var Axis = /** @class */ (function () {
             axis.stacking.renderStackTotals();
         }
         // End stacked totals
+        // Record old scaling for updating/animation
+        axis.old = {
+            len: axis.len,
+            max: axis.max,
+            min: axis.min,
+            transA: axis.transA,
+            userMax: axis.userMax,
+            userMin: axis.userMin
+        };
         axis.isDirty = false;
         fireEvent(this, 'afterRender');
     };
