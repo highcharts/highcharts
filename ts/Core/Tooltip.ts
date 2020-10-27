@@ -895,10 +895,12 @@ class Tooltip {
             first = buildDimensionArray('y'),
             second = buildDimensionArray('x'),
             // The far side is right or bottom
-            preferFarSide = !this.followPointer && pick(
-                point.ttBelow,
-                !chart.inverted === !!point.negative
-            ), // #4984
+            preferFarSide = !this.followPointer &&
+                !(chart.hoverSeries?.yAxis?.reversed) && // #13780
+                pick(
+                    point.ttBelow,
+                    !chart.inverted === !!point.negative
+                ), // #4984
 
             /*
              * Handle the preferred dimension. When the preferred dimension is

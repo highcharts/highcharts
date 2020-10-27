@@ -505,6 +505,7 @@ var Tooltip = /** @class */ (function () {
      * @return {Highcharts.PositionObject}
      */
     Tooltip.prototype.getPosition = function (boxWidth, boxHeight, point) {
+        var _a, _b;
         var chart = this.chart, distance = this.distance, ret = {}, 
         // Don't use h if chart isn't inverted (#7242) ???
         h = (chart.inverted && point.h) || 0, // #4117 ???
@@ -545,7 +546,9 @@ var Tooltip = /** @class */ (function () {
             ]);
         }, first = buildDimensionArray('y'), second = buildDimensionArray('x'), 
         // The far side is right or bottom
-        preferFarSide = !this.followPointer && pick(point.ttBelow, !chart.inverted === !!point.negative), // #4984
+        preferFarSide = !this.followPointer &&
+            !((_b = (_a = chart.hoverSeries) === null || _a === void 0 ? void 0 : _a.yAxis) === null || _b === void 0 ? void 0 : _b.reversed) && // #13780
+            pick(point.ttBelow, !chart.inverted === !!point.negative), // #4984
         /*
          * Handle the preferred dimension. When the preferred dimension is
          * tooltip on top or bottom of the point, it will look for space
