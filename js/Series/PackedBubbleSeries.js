@@ -563,13 +563,13 @@ BaseSeries.seriesType('packedbubble', 'bubble',
     init: function () {
         Series.prototype.init.apply(this, arguments);
         // When one series is modified, the others need to be recomputed
-        addEvent(this, 'updatedData', function () {
+        this.eventsToUnbind.push(addEvent(this, 'updatedData', function () {
             this.chart.series.forEach(function (s) {
                 if (s.type === this.type) {
                     s.isDirty = true;
                 }
             }, this);
-        });
+        }));
         return this;
     },
     render: function () {
