@@ -9,7 +9,7 @@
 'use strict';
 
 import type CSSObject from '../../Core/Renderer/CSSObject';
-import type LineSeries from '../../Series/LineSeries';
+import type LineSeries from '../../Series/Line/LineSeries';
 import type SVGElement from '../../Core/Renderer/SVG/SVGElement';
 import BaseSeries from '../../Core/Series/Series.js';
 import U from '../../Core/Utilities.js';

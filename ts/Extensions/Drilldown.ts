@@ -39,10 +39,10 @@ import BaseSeries from '../Core/Series/Series.js';
 const { seriesTypes } = BaseSeries;
 import Chart from '../Core/Chart/Chart.js';
 import Color from '../Core/Color/Color.js';
-import ColumnSeries from '../Series/ColumnSeries.js';
+import ColumnSeries from '../Series/Column/ColumnSeries.js';
 import H from '../Core/Globals.js';
 const { noop } = H;
-import LineSeries from '../Series/LineSeries.js';
+import LineSeries from '../Series/Line/LineSeries.js';
 import O from '../Core/Options.js';
 const { defaultOptions } = O;
 import Point from '../Core/Series/Point.js';
@@ -349,8 +349,8 @@ declare global {
  * @type {"drillup"}
  */
 
-import '../Series/LineSeries.js';
-import '../Series/ColumnSeries.js';
+import '../Series/Line/LineSeries.js';
+import '../Series/Column/ColumnSeries.js';
 
 var PieSeries = seriesTypes.pie,
     ddSeriesId = 1;

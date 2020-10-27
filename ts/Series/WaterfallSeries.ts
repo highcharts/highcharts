@@ -11,7 +11,7 @@
 'use strict';
 
 import type ColorType from '../Core/Color/ColorType';
-import type ColumnSeries from './ColumnSeries';
+import type ColumnSeries from './Column/ColumnSeries';
 import type { SeriesStatesOptions } from '../Core/Series/SeriesOptions';
 import type { StatesOptionsKey } from '../Core/Series/StatesOptions';
 import type SVGAttributes from '../Core/Renderer/SVG/SVGAttributes';
@@ -21,7 +21,7 @@ import Axis from '../Core/Axis/Axis.js';
 import BaseSeries from '../Core/Series/Series.js';
 const { seriesTypes } = BaseSeries;
 import Chart from '../Core/Chart/Chart.js';
-import LineSeries from './LineSeries.js';
+import LineSeries from './Line/LineSeries.js';
 import Point from '../Core/Series/Point.js';
 import StackItem from '../Extensions/Stacking.js';
 import U from '../Core/Utilities.js';

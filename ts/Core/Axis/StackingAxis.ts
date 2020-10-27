@@ -10,7 +10,7 @@
 
 'use strict';
 
-import type LineSeries from '../../Series/LineSeries';
+import type LineSeries from '../../Series/Line/LineSeries';
 import type StackItem from '../../Extensions/Stacking';
 import type SVGElement from '../Renderer/SVG/SVGElement';
 import A from '../Animation/AnimationUtilities.js';

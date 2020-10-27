@@ -21,7 +21,7 @@ import type ColorType from './Color/ColorType';
 import type Chart from './Chart/Chart';
 import type CSSObject from './Renderer/CSSObject';
 import type { HTMLDOMElement } from './Renderer/DOMElementType';
-import type LineSeries from '../Series/LineSeries';
+import type LineSeries from '../Series/Line/LineSeries';
 import type Point from './Series/Point';
 import type { SeriesTypeOptions, SeriesTypePlotOptions } from './Series/SeriesType';
 import type ShadowOptionsObject from './Renderer/ShadowOptionsObject';

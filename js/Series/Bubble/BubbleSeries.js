@@ -15,7 +15,7 @@ import Color from '../../Core/Color/Color.js';
 var color = Color.parse;
 import H from '../../Core/Globals.js';
 var noop = H.noop;
-import LineSeries from '../LineSeries.js';
+import LineSeries from '../Line/LineSeries.js';
 import Point from '../../Core/Series/Point.js';
 import U from '../../Core/Utilities.js';
 var arrayMax = U.arrayMax, arrayMin = U.arrayMin, clamp = U.clamp, extend = U.extend, isNumber = U.isNumber, pick = U.pick, pInt = U.pInt;

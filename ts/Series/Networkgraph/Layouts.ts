@@ -12,7 +12,7 @@
 
 'use strict';
 
-import type LineSeries from '../LineSeries';
+import type LineSeries from '../Line/LineSeries';
 import type Point from '../../Core/Series/Point';
 import Chart from '../../Core/Chart/Chart.js';
 import A from '../../Core/Animation/AnimationUtilities.js';

@@ -23,7 +23,7 @@ import type SVGPath from '../Core/Renderer/SVG/SVGPath';
 import BaseSeries from '../Core/Series/Series.js';
 import H from '../Core/Globals.js';
 const { noop } = H;
-import LineSeries from '../Series/LineSeries.js';
+import LineSeries from '../Series/Line/LineSeries.js';
 import U from '../Core/Utilities.js';
 const {
     clamp,

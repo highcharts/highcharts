@@ -10,7 +10,7 @@
 
 'use strict';
 
-import type LineSeries from '../Series/LineSeries';
+import type LineSeries from '../Series/Line/LineSeries';
 
 declare module '../Core/Chart/ChartLike'{
     interface ChartLike {

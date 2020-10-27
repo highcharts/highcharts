@@ -23,7 +23,7 @@ import type SVGPath from '../../Core/Renderer/SVG/SVGPath';
 import BaseSeries from '../../Core/Series/Series.js';
 const { seriesTypes } = BaseSeries;
 import Chart from '../../Core/Chart/Chart.js';
-import LineSeries from '../../Series/LineSeries.js';
+import LineSeries from '../../Series/Line/LineSeries.js';
 import Point from '../../Core/Series/Point.js';
 import U from '../../Core/Utilities.js';
 const {
@@ -84,7 +84,7 @@ declare global {
     }
 }
 
-import '../../Series/LineSeries.js';
+import '../../Series/Line/LineSeries.js';
 import '../../Core/Options.js';
 
 import '../../Core/Interaction.js';

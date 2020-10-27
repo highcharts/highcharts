@@ -25,9 +25,9 @@ import BaseSeries from '../Core/Series/Series.js';
 import H from '../Core/Globals.js';
 import Color from '../Core/Color/Color.js';
 const { parse: color } = Color;
-import ColumnSeries from './ColumnSeries.js';
+import ColumnSeries from './Column/ColumnSeries.js';
 const { prototype: columnProto } = ColumnSeries;
-import LineSeries from './LineSeries.js';
+import LineSeries from './Line/LineSeries.js';
 import Point from '../Core/Series/Point.js';
 import U from '../Core/Utilities.js';
 const {
@@ -171,7 +171,7 @@ declare module '../Core/Series/SeriesType' {
     }
 }
 
-import './ColumnSeries.js';
+import './Column/ColumnSeries.js';
 
 /**
  * @private

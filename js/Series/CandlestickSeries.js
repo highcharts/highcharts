@@ -13,7 +13,7 @@ import O from '../Core/Options.js';
 var defaultOptions = O.defaultOptions;
 import U from '../Core/Utilities.js';
 var merge = U.merge;
-import './ColumnSeries.js';
+import './Column/ColumnSeries.js';
 import './OHLCSeries.js';
 var columnProto = BaseSeries.seriesTypes.column.prototype;
 /**

@@ -14,7 +14,7 @@ import BaseSeries from '../Core/Series/Series.js';
 var seriesTypes = BaseSeries.seriesTypes;
 import Chart from '../Core/Chart/Chart.js';
 import H from '../Core/Globals.js';
-import LineSeries from '../Series/LineSeries.js';
+import LineSeries from '../Series/Line/LineSeries.js';
 import Pane from './Pane.js';
 import Pointer from '../Core/Pointer.js';
 import SVGRenderer from '../Core/Renderer/SVG/SVGRenderer.js';

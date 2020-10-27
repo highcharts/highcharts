@@ -16,7 +16,7 @@
  *
  * */
 
-import type LineSeries from '../../Series/LineSeries.js';
+import type LineSeries from '../../Series/Line/LineSeries.js';
 import type SeriesOptions from './SeriesOptions';
 import type {
     SeriesTypeOptions,

@@ -10,7 +10,7 @@
 'use strict';
 import Axis from './Axis.js';
 import H from '../Globals.js';
-import LineSeries from '../../Series/LineSeries.js';
+import LineSeries from '../../Series/Line/LineSeries.js';
 import U from '../Utilities.js';
 var addEvent = U.addEvent, css = U.css, defined = U.defined, error = U.error, pick = U.pick, timeUnits = U.timeUnits;
 import Chart from '../Chart/Chart.js';

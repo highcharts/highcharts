@@ -9,11 +9,11 @@
  * */
 'use strict';
 import BaseSeries from '../Core/Series/Series.js';
-import ColumnSeries from './ColumnSeries.js';
+import ColumnSeries from './Column/ColumnSeries.js';
 var columnProto = ColumnSeries.prototype;
 import H from '../Core/Globals.js';
 var svg = H.svg;
-import LineSeries from '../Series/LineSeries.js';
+import LineSeries from '../Series/Line/LineSeries.js';
 import Math3D from '../Extensions/Math3D.js';
 var perspective = Math3D.perspective;
 import StackItem from '../Extensions/Stacking.js';

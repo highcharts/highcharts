@@ -7,7 +7,7 @@
 'use strict';
 
 import type PositionObject from '../../Core/Renderer/PositionObject';
-import LineSeries from '../../Series/LineSeries.js';
+import LineSeries from '../../Series/Line/LineSeries.js';
 
 /**
  * Internal types.
@@ -118,7 +118,7 @@ var defined = U.defined,
     fireEvent = U.fireEvent;
 
 import Axis from '../../Core/Axis/Axis.js';
-import '../../Series/LineSeries.js';
+import '../../Series/Line/LineSeries.js';
 
 /* eslint-disable no-invalid-this, valid-jsdoc */
 

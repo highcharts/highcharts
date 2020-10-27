@@ -11,7 +11,7 @@
 'use strict';
 
 import type ColorAxis from '../Core/Axis/ColorAxis';
-import type LineSeries from '../Series/LineSeries';
+import type LineSeries from '../Series/Line/LineSeries';
 import type Point from '../Core/Series/Point';
 import type SVGAttributes from '../Core/Renderer/SVG/SVGAttributes';
 import H from '../Core/Globals.js';

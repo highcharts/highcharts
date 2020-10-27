@@ -11,7 +11,7 @@
 import Axis from '../Core/Axis/Axis.js';
 import Chart from '../Core/Chart/Chart.js';
 import H from '../Core/Globals.js';
-import LineSeries from '../Series/LineSeries.js';
+import LineSeries from '../Series/Line/LineSeries.js';
 import StackingAxis from '../Core/Axis/StackingAxis.js';
 import U from '../Core/Utilities.js';
 var correctFloat = U.correctFloat, defined = U.defined, destroyObjectProperties = U.destroyObjectProperties, format = U.format, isNumber = U.isNumber, pick = U.pick;

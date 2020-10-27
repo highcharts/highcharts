@@ -18,7 +18,7 @@ import type SVGPath from '../Renderer/SVG/SVGPath';
 import Axis from '../Axis/Axis.js';
 import Chart from '../Chart/Chart.js';
 import H from '../Globals.js';
-import LineSeries from '../../Series/LineSeries.js';
+import LineSeries from '../../Series/Line/LineSeries.js';
 import Point from '../Series/Point.js';
 import SVGRenderer from '../Renderer/SVG/SVGRenderer.js';
 import U from '../Utilities.js';

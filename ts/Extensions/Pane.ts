@@ -11,7 +11,7 @@
 'use strict';
 
 import type ColorType from '../Core/Color/ColorType';
-import type LineSeries from '../Series/LineSeries';
+import type LineSeries from '../Series/Line/LineSeries';
 import type RadialAxis from '../Core/Axis/RadialAxis';
 import type SVGElement from '../Core/Renderer/SVG/SVGElement';
 import Chart from '../Core/Chart/Chart.js';

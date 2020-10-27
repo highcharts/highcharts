@@ -12,7 +12,7 @@
 
 import type SeriesOptions from '../Core/Series/SeriesOptions';
 import H from '../Core/Globals.js';
-import LineSeries from '../Series/LineSeries.js';
+import LineSeries from '../Series/Line/LineSeries.js';
 
 /**
  * Internal types

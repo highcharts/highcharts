@@ -14,7 +14,7 @@
 
 'use strict';
 
-import type LineSeries from '../../Series/LineSeries';
+import type LineSeries from '../../Series/Line/LineSeries';
 import Chart from '../../Core/Chart/Chart.js';
 import H from '../../Core/Globals.js';
 const {
@@ -39,7 +39,7 @@ declare global {
     }
 }
 
-import '../../Series/LineSeries.js';
+import '../../Series/Line/LineSeries.js';
 import boostableMap from './BoostableMap.js';
 import createAndAttachRenderer from './BoostAttach.js';
 

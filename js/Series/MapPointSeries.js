@@ -9,7 +9,7 @@
  * */
 'use strict';
 import BaseSeries from '../Core/Series/Series.js';
-import LineSeries from './LineSeries.js';
+import LineSeries from './Line/LineSeries.js';
 import Point from '../Core/Series/Point.js';
 import U from '../Core/Utilities.js';
 var merge = U.merge;

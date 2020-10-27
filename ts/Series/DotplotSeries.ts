@@ -20,7 +20,7 @@
 
 'use strict';
 
-import type ColumnSeries from './ColumnSeries';
+import type ColumnSeries from './Column/ColumnSeries';
 import type { SeriesStatesOptions } from '../Core/Series/SeriesOptions';
 import type SVGAttributes from '../Core/Renderer/SVG/SVGAttributes';
 import type SVGElement from '../Core/Renderer/SVG/SVGElement';
@@ -34,7 +34,7 @@ const {
     pick
 } = U;
 
-import './ColumnSeries.js';
+import './Column/ColumnSeries.js';
 
 /**
  * @private

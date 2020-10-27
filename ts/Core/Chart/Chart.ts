@@ -18,7 +18,7 @@ import type {
     CursorValue
 } from '../Renderer/CSSObject';
 import type ChartLike from './ChartLike';
-import type LineSeries from '../../Series/LineSeries';
+import type LineSeries from '../../Series/Line/LineSeries';
 import type Point from '../Series/Point';
 import type SeriesOptions from '../Series/SeriesOptions';
 import type {

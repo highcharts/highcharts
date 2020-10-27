@@ -15,7 +15,7 @@ import type {
     VerticalAlignValue
 } from '../Core/Renderer/AlignObject';
 import type BBoxObject from '../Core/Renderer/BBoxObject';
-import type ColumnSeries from '../Series/ColumnSeries';
+import type ColumnSeries from '../Series/Column/ColumnSeries';
 import type DataLabelOptions from '../Core/Series/DataLabelOptions';
 import type Point from '../Core/Series/Point';
 import type PointerEvent from '../Core/PointerEvent';
@@ -29,7 +29,7 @@ import BaseSeries from '../Core/Series/Series.js';
 const { seriesTypes } = BaseSeries;
 import Chart from '../Core/Chart/Chart.js';
 import H from '../Core/Globals.js';
-import LineSeries from '../Series/LineSeries.js';
+import LineSeries from '../Series/Line/LineSeries.js';
 import Pane from './Pane.js';
 import Pointer from '../Core/Pointer.js';
 import SVGRenderer from '../Core/Renderer/SVG/SVGRenderer.js';

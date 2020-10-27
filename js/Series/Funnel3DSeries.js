@@ -18,12 +18,12 @@ import Color from '../Core/Color/Color.js';
 var color = Color.parse;
 import H from '../Core/Globals.js';
 var charts = H.charts, RendererProto = H.Renderer.prototype;
-import LineSeries from './LineSeries.js';
+import LineSeries from './Line/LineSeries.js';
 import Math3D from '../Extensions/Math3D.js';
 var perspective = Math3D.perspective;
 import U from '../Core/Utilities.js';
 var error = U.error, extend = U.extend, merge = U.merge, pick = U.pick, relativeLength = U.relativeLength;
-import './ColumnSeries.js';
+import './Column/ColumnSeries.js';
 var cuboidPath = RendererProto.cuboidPath, funnel3dMethods;
 /**
  * The funnel3d series type.

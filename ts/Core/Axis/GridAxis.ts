@@ -12,7 +12,7 @@
 'use strict';
 
 import type ColorType from '../Color/ColorType';
-import type LineSeries from '../../Series/LineSeries';
+import type LineSeries from '../../Series/Line/LineSeries';
 import type Point from '../Series/Point';
 import type {
     PointOptions,

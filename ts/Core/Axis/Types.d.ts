@@ -10,7 +10,7 @@
 
 import type Axis from './Axis';
 import type Chart from '../Chart/Chart';
-import type LineSeries from '../../Series/LineSeries';
+import type LineSeries from '../../Series/Line/LineSeries';
 import type Tick from './Tick';
 
 /**

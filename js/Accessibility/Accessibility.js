@@ -14,7 +14,7 @@ import ChartUtilities from './Utils/ChartUtilities.js';
 import H from '../Core/Globals.js';
 var doc = H.doc;
 import KeyboardNavigationHandler from './KeyboardNavigationHandler.js';
-import LineSeries from '../Series/LineSeries.js';
+import LineSeries from '../Series/Line/LineSeries.js';
 import O from '../Core/Options.js';
 var defaultOptions = O.defaultOptions;
 import Point from '../Core/Series/Point.js';

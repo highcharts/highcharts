@@ -8,7 +8,7 @@
 'use strict';
 import BaseSeries from '../../Core/Series/Series.js';
 var seriesTypes = BaseSeries.seriesTypes;
-import LineSeries from '../../Series/LineSeries.js';
+import LineSeries from '../../Series/Line/LineSeries.js';
 import RequiredIndicatorMixin from '../../Mixins/IndicatorRequired.js';
 import U from '../../Core/Utilities.js';
 var addEvent = U.addEvent, error = U.error, extend = U.extend, isArray = U.isArray, pick = U.pick, splat = U.splat;

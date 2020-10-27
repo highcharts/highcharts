@@ -13,10 +13,10 @@
 import Axis from '../Core/Axis/Axis.js';
 import Chart from '../Core/Chart/Chart.js';
 import H from '../Core/Globals.js';
-import LineSeries from '../Series/LineSeries.js';
+import LineSeries from '../Series/Line/LineSeries.js';
 import U from '../Core/Utilities.js';
 var addEvent = U.addEvent, arrayMax = U.arrayMax, arrayMin = U.arrayMin, defined = U.defined, erase = U.erase, extend = U.extend, format = U.format, merge = U.merge, pick = U.pick, setOptions = U.setOptions, splat = U.splat, wrap = U.wrap;
-import '../Series/LineSeries.js';
+import '../Series/Line/LineSeries.js';
 // Extensions for parallel coordinates plot.
 var ChartProto = Chart.prototype;
 var defaultXAxisOptions = {

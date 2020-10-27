@@ -13,7 +13,7 @@
 import BaseSeries from '../Core/Series/Series.js';
 var seriesTypes = BaseSeries.seriesTypes;
 import H from '../Core/Globals.js';
-import LineSeries from './LineSeries.js';
+import LineSeries from './Line/LineSeries.js';
 import '../Core/Axis/TreeGridAxis.js';
 import U from '../Core/Utilities.js';
 var isNumber = U.isNumber, merge = U.merge, pick = U.pick, splat = U.splat;

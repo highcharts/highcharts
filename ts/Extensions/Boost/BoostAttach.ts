@@ -17,7 +17,7 @@ import Chart from '../../Core/Chart/Chart.js';
 import GLRenderer from './WGLRenderer.js';
 import H from '../../Core/Globals.js';
 const { doc } = H;
-import LineSeries from '../../Series/LineSeries.js';
+import LineSeries from '../../Series/Line/LineSeries.js';
 import U from '../../Core/Utilities.js';
 const {
     error

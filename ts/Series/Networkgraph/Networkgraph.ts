@@ -28,7 +28,7 @@ import type SVGPath from '../../Core/Renderer/SVG/SVGPath';
 import BaseSeries from '../../Core/Series/Series.js';
 const { seriesTypes } = BaseSeries;
 import H from '../../Core/Globals.js';
-import LineSeries from '../LineSeries.js';
+import LineSeries from '../Line/LineSeries.js';
 import NodesMixin from '../../Mixins/Nodes.js';
 import Point from '../../Core/Series/Point.js';
 import U from '../../Core/Utilities.js';

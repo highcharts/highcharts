@@ -20,7 +20,7 @@ import DrawPointMixin from '../Mixins/DrawPoint.js';
 var drawPoint = DrawPointMixin.drawPoint;
 import H from '../Core/Globals.js';
 var noop = H.noop;
-import LineSeries from './LineSeries.js';
+import LineSeries from './Line/LineSeries.js';
 import TreeSeriesMixin from '../Mixins/TreeSeries.js';
 var getColor = TreeSeriesMixin.getColor, getLevelOptions = TreeSeriesMixin.getLevelOptions, setTreeValues = TreeSeriesMixin.setTreeValues, updateRootId = TreeSeriesMixin.updateRootId;
 import U from '../Core/Utilities.js';

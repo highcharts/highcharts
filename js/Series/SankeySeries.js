@@ -12,9 +12,9 @@
 'use strict';
 import BaseSeries from '../Core/Series/Series.js';
 import Color from '../Core/Color/Color.js';
-import ColumnSeries from './ColumnSeries.js';
+import ColumnSeries from './Column/ColumnSeries.js';
 import H from '../Core/Globals.js';
-import LineSeries from '../Series/LineSeries.js';
+import LineSeries from '../Series/Line/LineSeries.js';
 import NodesMixin from '../Mixins/Nodes.js';
 import Point from '../Core/Series/Point.js';
 import TreeSeriesMixin from '../Mixins/TreeSeries.js';

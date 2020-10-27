@@ -21,7 +21,7 @@ import type ColorString from '../../Core/Color/ColorString';
 import type ColorType from '../../Core/Color/ColorType';
 import type CSSObject from '../../Core/Renderer/CSSObject';
 import type { DataLabelOverflowValue } from '../../Core/Series/DataLabelOptions';
-import type LineSeries from '../../Series/LineSeries';
+import type LineSeries from '../../Series/Line/LineSeries';
 import type Point from '../../Core/Series/Point';
 import type ShadowOptionsObject from '../../Core/Renderer/ShadowOptionsObject';
 import type SVGElement from '../../Core/Renderer/SVG/SVGElement';

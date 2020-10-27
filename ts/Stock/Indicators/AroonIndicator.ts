@@ -9,7 +9,7 @@
 'use strict';
 
 import type CSSObject from '../../Core/Renderer/CSSObject';
-import type LineSeries from '../../Series/LineSeries';
+import type LineSeries from '../../Series/Line/LineSeries';
 import type { PointMarkerOptions } from '../../Core/Series/PointOptions';
 import BaseSeries from '../../Core/Series/Series.js';
 import MultipleLinesMixin from '../../Mixins/MultipleLines.js';

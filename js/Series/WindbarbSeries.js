@@ -15,11 +15,11 @@ var animObject = A.animObject;
 import BaseSeries from '../Core/Series/Series.js';
 import H from '../Core/Globals.js';
 var noop = H.noop;
-import LineSeries from './LineSeries.js';
+import LineSeries from './Line/LineSeries.js';
 import OnSeriesMixin from '../Mixins/OnSeries.js';
 import U from '../Core/Utilities.js';
 var isNumber = U.isNumber, pick = U.pick;
-import './ColumnSeries.js';
+import './Column/ColumnSeries.js';
 // eslint-disable-next-line valid-jsdoc
 /**
  * Once off, register the windbarb approximation for data grouping. This can be

@@ -10,7 +10,7 @@
 'use strict';
 import BaseSeries from '../Core/Series/Series.js';
 var seriesTypes = BaseSeries.seriesTypes;
-import ColumnSeries from './ColumnSeries.js';
+import ColumnSeries from './Column/ColumnSeries.js';
 var colProto = ColumnSeries.prototype;
 import H from '../Core/Globals.js';
 import Point from '../Core/Series/Point.js';

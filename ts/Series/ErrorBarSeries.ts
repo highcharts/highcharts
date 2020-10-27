@@ -10,7 +10,7 @@
 
 'use strict';
 
-import type ColumnSeries from '../Series/ColumnSeries';
+import type ColumnSeries from '../Series/Column/ColumnSeries';
 import type { SeriesStatesOptions } from '../Core/Series/SeriesOptions';
 import BaseSeries from '../Core/Series/Series.js';
 import H from '../Core/Globals.js';

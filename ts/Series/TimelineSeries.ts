@@ -34,7 +34,7 @@ const {
 } = BaseSeries;
 import H from '../Core/Globals.js';
 import LegendSymbolMixin from '../Mixins/LegendSymbol.js';
-import LineSeries from '../Series/LineSeries.js';
+import LineSeries from '../Series/Line/LineSeries.js';
 import Point from '../Core/Series/Point.js';
 import SVGElement from '../Core/Renderer/SVG/SVGElement.js';
 import U from '../Core/Utilities.js';

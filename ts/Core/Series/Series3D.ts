@@ -15,7 +15,7 @@
 import type Point from './Point';
 import type Position3DObject from '../Renderer/Position3DObject';
 import type ZAxis from '../Axis/ZAxis';
-import LineSeries from '../../Series/LineSeries.js';
+import LineSeries from '../../Series/Line/LineSeries.js';
 import Math3D from '../../Extensions/Math3D.js';
 const { perspective } = Math3D;
 import U from '../Utilities.js';

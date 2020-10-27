@@ -21,7 +21,7 @@ var perspective = Math3D.perspective;
 import Series from '../Core/Series/Series.js';
 import U from '../Core/Utilities.js';
 var merge = U.merge, pick = U.pick;
-import '../Series/ColumnSeries.js';
+import '../Series/Column/ColumnSeries.js';
 var cuboidPath = RendererProto.cuboidPath;
 // Check if a path is simplified. The simplified path contains only lineTo
 // segments, whereas non-simplified contain curves.

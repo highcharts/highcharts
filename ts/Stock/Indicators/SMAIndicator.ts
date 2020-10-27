@@ -13,7 +13,7 @@ import type Chart from '../../Core/Chart/Chart';
 import type SeriesType from '../../Core/Series/SeriesType';
 import BaseSeries from '../../Core/Series/Series.js';
 const { seriesTypes } = BaseSeries;
-import LineSeries from '../../Series/LineSeries.js';
+import LineSeries from '../../Series/Line/LineSeries.js';
 import RequiredIndicatorMixin from '../../Mixins/IndicatorRequired.js';
 import U from '../../Core/Utilities.js';
 const {

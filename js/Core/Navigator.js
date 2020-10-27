@@ -16,7 +16,7 @@ import Color from './Color/Color.js';
 var color = Color.parse;
 import H from './Globals.js';
 var hasTouch = H.hasTouch, isTouchDevice = H.isTouchDevice;
-import LineSeries from '../Series/LineSeries.js';
+import LineSeries from '../Series/Line/LineSeries.js';
 import NavigatorAxis from './Axis/NavigatorAxis.js';
 import O from './Options.js';
 var defaultOptions = O.defaultOptions;

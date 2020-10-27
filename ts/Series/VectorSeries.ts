@@ -19,7 +19,7 @@ import A from '../Core/Animation/AnimationUtilities.js';
 const { animObject } = A;
 import BaseSeries from '../Core/Series/Series.js';
 import H from '../Core/Globals.js';
-import LineSeries from './LineSeries.js';
+import LineSeries from './Line/LineSeries.js';
 import U from '../Core/Utilities.js';
 const {
     arrayMax,

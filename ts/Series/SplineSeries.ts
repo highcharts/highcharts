@@ -10,7 +10,7 @@
 
 'use strict';
 
-import type LineSeries from './LineSeries';
+import type LineSeries from './Line/LineSeries';
 import type { SeriesStatesOptions } from '../Core/Series/SeriesOptions';
 import type SVGPath from '../Core/Renderer/SVG/SVGPath';
 import BaseSeries from '../Core/Series/Series.js';
@@ -19,7 +19,7 @@ const {
     pick
 } = U;
 import '../Core/Options.js';
-import '../Series/LineSeries.js';
+import '../Series/Line/LineSeries.js';
 
 /**
  * Internal types
@@ -62,7 +62,7 @@ declare module '../Core/Series/SeriesType' {
     }
 }
 
-import '../Series/LineSeries.js';
+import '../Series/Line/LineSeries.js';
 
 /**
  * Spline series type.

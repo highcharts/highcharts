@@ -22,7 +22,7 @@ import type {
 import Axis from '../Core/Axis/Axis.js';
 import DateTimeAxis from '../Core/Axis/DateTimeAxis.js';
 import H from '../Core/Globals.js';
-import LineSeries from '../Series/LineSeries.js';
+import LineSeries from '../Series/Line/LineSeries.js';
 const { prototype: seriesProto } = LineSeries;
 import O from '../Core/Options.js';
 import Point from '../Core/Series/Point.js';

@@ -9,8 +9,8 @@
  * */
 'use strict';
 import BaseSeries from '../Core/Series/Series.js';
-import ColumnSeries from './ColumnSeries.js';
-import LineSeries from './LineSeries.js';
+import ColumnSeries from './Column/ColumnSeries.js';
+import LineSeries from './Line/LineSeries.js';
 import SVGRenderer from '../Core/Renderer/SVG/SVGRenderer.js';
 import H from '../Core/Globals.js';
 var noop = H.noop;

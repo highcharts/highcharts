@@ -31,7 +31,7 @@ const {
 } = BaseSeries;
 import Chart from './Chart/Chart.js';
 import H from './Globals.js';
-import LineSeries from '../Series/LineSeries.js';
+import LineSeries from '../Series/Line/LineSeries.js';
 import O from './Options.js';
 const { time } = O;
 import Point from '../Core/Series/Point.js';

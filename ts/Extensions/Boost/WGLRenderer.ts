@@ -14,7 +14,7 @@
 
 import type Chart from '../../Core/Chart/Chart';
 import type ColorString from '../../Core/Color/ColorString';
-import type LineSeries from '../../Series/LineSeries';
+import type LineSeries from '../../Series/Line/LineSeries';
 import type Point from '../../Core/Series/Point';
 import type PositionObject from '../../Core/Renderer/PositionObject';
 import type { SeriesZonesOptions } from '../../Core/Series/SeriesOptions';

@@ -13,7 +13,7 @@
 'use strict';
 
 import type BBoxObject from '../Core/Renderer/BBoxObject';
-import type ColumnSeries from './ColumnSeries.js';
+import type ColumnSeries from './Column/ColumnSeries.js';
 import type CSSObject from '../Core/Renderer/CSSObject';
 import type {
     PointOptions,
@@ -30,7 +30,7 @@ import DrawPointMixin from '../Mixins/DrawPoint.js';
 const { drawPoint } = DrawPointMixin;
 import H from '../Core/Globals.js';
 const { noop } = H;
-import LineSeries from './LineSeries.js';
+import LineSeries from './Line/LineSeries.js';
 import PolygonMixin from '../Mixins/Polygon.js';
 const {
     getBoundingBoxFromPolygon,
@@ -50,7 +50,7 @@ const {
     merge
 } = U;
 
-import './ColumnSeries.js';
+import './Column/ColumnSeries.js';
 
 /**
  * Internal types

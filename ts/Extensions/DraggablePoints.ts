@@ -16,7 +16,7 @@ import type AnimationOptionsObject from '../Core/Animation/AnimationOptionsObjec
 import type BBoxObject from '../Core/Renderer/BBoxObject';
 import type ColorString from '../Core/Color/ColorString';
 import type ColorType from '../Core/Color/ColorType';
-import type ColumnSeries from '../Series/ColumnSeries';
+import type ColumnSeries from '../Series/Column/ColumnSeries';
 import type PointerEvent from '../Core/PointerEvent';
 import type { PointOptions, PointShortOptions } from '../Core/Series/PointOptions';
 import type PositionObject from '../Core/Renderer/PositionObject';
@@ -25,7 +25,7 @@ import type SVGElement from '../Core/Renderer/SVG/SVGElement';
 import type SVGPath from '../Core/Renderer/SVG/SVGPath';
 import Chart from '../Core/Chart/Chart.js';
 import H from '../Core/Globals.js';
-import LineSeries from '../Series/LineSeries.js';
+import LineSeries from '../Series/Line/LineSeries.js';
 import Point from '../Core/Series/Point.js';
 import U from '../Core/Utilities.js';
 const {
@@ -391,7 +391,7 @@ declare global {
 
 ''; // detaches doclets above
 
-import '../Series/LineSeries.js';
+import '../Series/Line/LineSeries.js';
 
 var seriesTypes = H.seriesTypes;
 

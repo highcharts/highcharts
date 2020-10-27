@@ -17,10 +17,10 @@ import BaseSeries from '../Core/Series/Series.js';
 var seriesTypes = BaseSeries.seriesTypes;
 import Chart from '../Core/Chart/Chart.js';
 import Color from '../Core/Color/Color.js';
-import ColumnSeries from '../Series/ColumnSeries.js';
+import ColumnSeries from '../Series/Column/ColumnSeries.js';
 import H from '../Core/Globals.js';
 var noop = H.noop;
-import LineSeries from '../Series/LineSeries.js';
+import LineSeries from '../Series/Line/LineSeries.js';
 import O from '../Core/Options.js';
 var defaultOptions = O.defaultOptions;
 import Point from '../Core/Series/Point.js';
@@ -141,8 +141,8 @@ var addEvent = U.addEvent, removeEvent = U.removeEvent, extend = U.extend, fireE
 * @name Highcharts.DrillupEventObject#type
 * @type {"drillup"}
 */
-import '../Series/LineSeries.js';
-import '../Series/ColumnSeries.js';
+import '../Series/Line/LineSeries.js';
+import '../Series/Column/ColumnSeries.js';
 var PieSeries = seriesTypes.pie, ddSeriesId = 1;
 // Add language
 extend(defaultOptions.lang, 

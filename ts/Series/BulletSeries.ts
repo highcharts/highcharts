@@ -12,7 +12,7 @@
 
 import type ColorString from '../Core/Color/ColorString';
 import type ColorType from '../Core/Color/ColorType';
-import type ColumnSeries from './ColumnSeries';
+import type ColumnSeries from './Column/ColumnSeries';
 import BaseSeries from '../Core/Series/Series.js';
 import U from '../Core/Utilities.js';
 const {
@@ -74,7 +74,7 @@ declare module '../Core/Series/SeriesType' {
     }
 }
 
-import './ColumnSeries.js';
+import './Column/ColumnSeries.js';
 
 var columnProto = BaseSeries.seriesTypes.column.prototype;
 

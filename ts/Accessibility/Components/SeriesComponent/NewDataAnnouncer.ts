@@ -15,7 +15,7 @@
 import type Chart from '../../../Core/Chart/Chart';
 import type Point from '../../../Core/Series/Point';
 import H from '../../../Core/Globals.js';
-import LineSeries from '../../../Series/LineSeries.js';
+import LineSeries from '../../../Series/Line/LineSeries.js';
 import U from '../../../Core/Utilities.js';
 var extend = U.extend,
     defined = U.defined;

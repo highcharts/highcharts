@@ -10,10 +10,10 @@
 
 'use strict';
 
-import type ColumnSeries from './ColumnSeries';
+import type ColumnSeries from './Column/ColumnSeries';
 import Series from '../Core/Series/Series.js';
 
-import './ColumnSeries.js';
+import './Column/ColumnSeries.js';
 
 /**
  * @private

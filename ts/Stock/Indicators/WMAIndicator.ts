@@ -10,7 +10,7 @@
 
 'use strict';
 
-import type LineSeries from '../../Series/LineSeries';
+import type LineSeries from '../../Series/Line/LineSeries';
 import type { SeriesStatesOptions } from '../../Core/Series/SeriesOptions';
 import BaseSeries from '../../Core/Series/Series.js';
 import U from '../../Core/Utilities.js';

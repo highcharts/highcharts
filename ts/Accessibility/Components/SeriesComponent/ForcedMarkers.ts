@@ -23,7 +23,7 @@ import type {
     PointOptions
 } from '../../../Core/Series/PointOptions';
 import type SeriesOptions from '../../../Core/Series/SeriesOptions';
-import LineSeries from '../../../Series/LineSeries.js';
+import LineSeries from '../../../Series/Line/LineSeries.js';
 import U from '../../../Core/Utilities.js';
 const {
     addEvent,

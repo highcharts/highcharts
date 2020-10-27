@@ -11,7 +11,7 @@
 'use strict';
 
 import type ColorType from '../Core/Color/ColorType';
-import type ColumnSeries from './ColumnSeries';
+import type ColumnSeries from './Column/ColumnSeries';
 import type { SeriesStatesOptions } from '../Core/Series/SeriesOptions';
 import type { StatesOptionsKey } from '../Core/Series/StatesOptions';
 import type SVGAttributes from '../Core/Renderer/SVG/SVGAttributes';
@@ -69,7 +69,7 @@ declare module '../Core/Series/SeriesType' {
     }
 }
 
-import './ColumnSeries.js';
+import './Column/ColumnSeries.js';
 
 /**
  * The ohlc series type.

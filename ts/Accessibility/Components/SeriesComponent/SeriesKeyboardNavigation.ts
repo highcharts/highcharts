@@ -17,7 +17,7 @@ const {
     seriesTypes
 } = Series;
 import Chart from '../../../Core/Chart/Chart.js';
-import LineSeries from '../../../Series/LineSeries.js';
+import LineSeries from '../../../Series/Line/LineSeries.js';
 import Point from '../../../Core/Series/Point.js';
 import U from '../../../Core/Utilities.js';
 const {
@@ -108,7 +108,7 @@ var getPointFromXY = ChartUtilities.getPointFromXY,
     getSeriesFromName = ChartUtilities.getSeriesFromName,
     scrollToPoint = ChartUtilities.scrollToPoint;
 
-import '../../../Series/ColumnSeries.js';
+import '../../../Series/Column/ColumnSeries.js';
 import '../../../Series/PieSeries.js';
 
 /* eslint-disable no-invalid-this, valid-jsdoc */

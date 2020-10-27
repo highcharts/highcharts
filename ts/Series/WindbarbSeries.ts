@@ -13,7 +13,7 @@
 'use strict';
 
 import type Chart from '../Core/Chart/Chart';
-import type ColumnSeries from './ColumnSeries.js';
+import type ColumnSeries from './Column/ColumnSeries.js';
 import type { SeriesStatesOptions } from '../Core/Series/SeriesOptions';
 import type SVGAttributes from '../Core/Renderer/SVG/SVGAttributes';
 import type SVGPath from '../Core/Renderer/SVG/SVGPath';
@@ -22,7 +22,7 @@ const { animObject } = A;
 import BaseSeries from '../Core/Series/Series.js';
 import H from '../Core/Globals.js';
 const { noop } = H;
-import LineSeries from './LineSeries.js';
+import LineSeries from './Line/LineSeries.js';
 import OnSeriesMixin from '../Mixins/OnSeries.js';
 import U from '../Core/Utilities.js';
 const {
@@ -100,7 +100,7 @@ declare global {
     }
 }
 
-import './ColumnSeries.js';
+import './Column/ColumnSeries.js';
 import { StatesOptionsKey } from '../Core/Series/StatesOptions';
 
 // eslint-disable-next-line valid-jsdoc

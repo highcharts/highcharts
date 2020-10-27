@@ -14,7 +14,7 @@ import A from '../Core/Animation/AnimationUtilities.js';
 var animObject = A.animObject;
 import BaseSeries from '../Core/Series/Series.js';
 import H from '../Core/Globals.js';
-import LineSeries from './LineSeries.js';
+import LineSeries from './Line/LineSeries.js';
 import U from '../Core/Utilities.js';
 var arrayMax = U.arrayMax, pick = U.pick;
 import './ScatterSeries.js';

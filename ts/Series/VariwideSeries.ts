@@ -12,7 +12,7 @@
 
 'use strict';
 
-import type ColumnSeries from '../Series/ColumnSeries';
+import type ColumnSeries from '../Series/Column/ColumnSeries';
 import type DataLabelOptions from '../Core/Series/DataLabelOptions';
 import type PositionObject from '../Core/Renderer/PositionObject';
 import type { SeriesStatesOptions } from '../Core/Series/SeriesOptions';

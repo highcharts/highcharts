@@ -17,7 +17,7 @@ var animObject = A.animObject;
 import BaseSeries from '../Core/Series/Series.js';
 var seriesTypes = BaseSeries.seriesTypes;
 import Chart from '../Core/Chart/Chart.js';
-import LineSeries from '../Series/LineSeries.js';
+import LineSeries from '../Series/Line/LineSeries.js';
 import O from '../Core/Options.js';
 var defaultOptions = O.defaultOptions;
 import Point from '../Core/Series/Point.js';
@@ -38,7 +38,7 @@ var addEvent = U.addEvent, defined = U.defined, error = U.error, isArray = U.isA
 ''; // detach doclets from following code
 /* eslint-disable no-invalid-this */
 import Axis from '../Core/Axis/Axis.js';
-import '../Series/LineSeries.js';
+import '../Series/Line/LineSeries.js';
 var Scatter = seriesTypes.scatter, baseGeneratePoints = LineSeries.prototype.generatePoints, stateIdCounter = 0, 
 // Points that ids are included in the oldPointsStateId array
 // are hidden before animation. Other ones are destroyed.

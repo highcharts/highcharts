@@ -15,7 +15,7 @@
 'use strict';
 
 import type ColorType from '../Core/Color/ColorType';
-import type ColumnSeries from '../Series/ColumnSeries';
+import type ColumnSeries from '../Series/Column/ColumnSeries';
 import type Chart from '../Core/Chart/Chart';
 import type Position3DObject from '../Core/Renderer/Position3DObject';
 import type PositionObject from '../Core/Renderer/PositionObject';
@@ -46,7 +46,7 @@ const {
     pick
 } = U;
 
-import '../Series/ColumnSeries.js';
+import '../Series/Column/ColumnSeries.js';
 
 declare module '../Core/Series/SeriesType' {
     interface SeriesTypeRegistry {

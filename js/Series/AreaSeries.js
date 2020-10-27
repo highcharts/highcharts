@@ -12,7 +12,7 @@ import BaseSeries from '../Core/Series/Series.js';
 import Color from '../Core/Color/Color.js';
 var color = Color.parse;
 import LegendSymbolMixin from '../Mixins/LegendSymbol.js';
-import LineSeries from './LineSeries.js';
+import LineSeries from './Line/LineSeries.js';
 import U from '../Core/Utilities.js';
 var objectEach = U.objectEach, pick = U.pick;
 /**

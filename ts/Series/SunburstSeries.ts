@@ -32,7 +32,7 @@ import DrawPointMixin from '../Mixins/DrawPoint.js';
 const { drawPoint } = DrawPointMixin;
 import H from '../Core/Globals.js';
 const { noop } = H;
-import LineSeries from './LineSeries.js';
+import LineSeries from './Line/LineSeries.js';
 import TreeSeriesMixin from '../Mixins/TreeSeries.js';
 const {
     getColor,

@@ -9,10 +9,10 @@
  * */
 'use strict';
 import H from '../Core/Globals.js';
-import LineSeries from '../Series/LineSeries.js';
+import LineSeries from '../Series/Line/LineSeries.js';
 import U from '../Core/Utilities.js';
 var defined = U.defined, stableSort = U.stableSort;
-import '../Series/LineSeries.js';
+import '../Series/Line/LineSeries.js';
 var seriesTypes = H.seriesTypes;
 /**
  * @private

@@ -15,7 +15,7 @@ var colorMapPointMixin = ColorMapMixin.colorMapPointMixin, colorMapSeriesMixin =
 import H from '../Core/Globals.js';
 var noop = H.noop;
 import LegendSymbolMixin from '../Mixins/LegendSymbol.js';
-import LineSeries from './LineSeries.js';
+import LineSeries from './Line/LineSeries.js';
 import mapModule from '../Maps/Map.js';
 var maps = mapModule.maps, splitPath = mapModule.splitPath;
 import Point from '../Core/Series/Point.js';

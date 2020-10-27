@@ -11,7 +11,7 @@
 'use strict';
 
 import type SVGElement from '../Core/Renderer/SVG/SVGElement';
-import LineSeries from '../Series/LineSeries.js';
+import LineSeries from '../Series/Line/LineSeries.js';
 import U from '../Core/Utilities.js';
 const {
     addEvent,

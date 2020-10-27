@@ -17,7 +17,7 @@ const { seriesTypes } = BaseSeries;
 import Chart from '../../Core/Chart/Chart.js';
 import H from '../../Core/Globals.js';
 const { noop } = H;
-import LineSeries from '../../Series/LineSeries.js';
+import LineSeries from '../../Series/Line/LineSeries.js';
 import U from '../../Core/Utilities.js';
 const {
     addEvent,
@@ -41,7 +41,7 @@ declare module '../../Core/Series/SeriesLike' {
     }
 }
 
-import '../../Series/LineSeries.js';
+import '../../Series/Line/LineSeries.js';
 
 import butils from './BoostUtils.js';
 import createAndAttachRenderer from './BoostAttach.js';

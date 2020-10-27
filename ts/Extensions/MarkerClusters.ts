@@ -38,7 +38,7 @@ const { animObject } = A;
 import BaseSeries from '../Core/Series/Series.js';
 const { seriesTypes } = BaseSeries;
 import Chart from '../Core/Chart/Chart.js';
-import LineSeries from '../Series/LineSeries.js';
+import LineSeries from '../Series/Line/LineSeries.js';
 import O from '../Core/Options.js';
 const { defaultOptions } = O;
 import Point from '../Core/Series/Point.js';
@@ -298,7 +298,7 @@ declare global {
 /* eslint-disable no-invalid-this */
 
 import Axis from '../Core/Axis/Axis.js';
-import '../Series/LineSeries.js';
+import '../Series/Line/LineSeries.js';
 
 var Scatter = seriesTypes.scatter,
     baseGeneratePoints = LineSeries.prototype.generatePoints,

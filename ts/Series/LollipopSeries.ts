@@ -13,7 +13,7 @@
 import type { SeriesStatesOptions } from '../Core/Series/SeriesOptions';
 import BaseSeries from '../Core/Series/Series.js';
 const { seriesTypes } = BaseSeries;
-import ColumnSeries from './ColumnSeries.js';
+import ColumnSeries from './Column/ColumnSeries.js';
 const { prototype: colProto } = ColumnSeries;
 import H from '../Core/Globals.js';
 import Point from '../Core/Series/Point.js';

@@ -12,7 +12,7 @@
 
 import type Point from '../Core/Series/Point';
 import H from '../Core/Globals.js';
-import LineSeries from '../Series/LineSeries.js';
+import LineSeries from '../Series/Line/LineSeries.js';
 import U from '../Core/Utilities.js';
 const {
     defined,
@@ -43,7 +43,7 @@ declare global {
     }
 }
 
-import '../Series/LineSeries.js';
+import '../Series/Line/LineSeries.js';
 
 var seriesTypes = H.seriesTypes;
 

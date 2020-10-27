@@ -9,7 +9,7 @@
  * */
 'use strict';
 import Series from '../Core/Series/Series.js';
-import './ColumnSeries.js';
+import './Column/ColumnSeries.js';
 /**
  * Bar series type.
  *

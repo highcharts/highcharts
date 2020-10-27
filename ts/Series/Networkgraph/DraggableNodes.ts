@@ -12,7 +12,7 @@
 
 'use strict';
 
-import type LineSeries from '../../Series/LineSeries';
+import type LineSeries from '../../Series/Line/LineSeries';
 import type Point from '../../Core/Series/Point';
 import type PointerEvent from '../../Core/PointerEvent';
 import type SeriesOptions from '../../Core/Series/SeriesOptions';

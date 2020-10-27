@@ -25,7 +25,7 @@ import A from '../Core/Animation/AnimationUtilities.js';
 const { animObject } = A;
 import Chart from '../Core/Chart/Chart.js';
 import H from '../Core/Globals.js';
-import LineSeries from '../Series/LineSeries.js';
+import LineSeries from '../Series/Line/LineSeries.js';
 import Point from '../Core/Series/Point.js';
 import SVGRenderer from '../Core/Renderer/SVG/SVGRenderer.js';
 import U from '../Core/Utilities.js';
@@ -39,7 +39,7 @@ const {
     wrap
 } = U;
 
-import '../Series/LineSeries.js';
+import '../Series/Line/LineSeries.js';
 
 declare module '../Core/Series/PointLike' {
     interface PointLike {

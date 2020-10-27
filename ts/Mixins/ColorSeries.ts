@@ -12,7 +12,7 @@
 
 import type ColorAxis from '../Core/Axis/ColorAxis';
 import type ColorType from '../Core/Color/ColorType';
-import type LineSeries from '../Series/LineSeries';
+import type LineSeries from '../Series/Line/LineSeries';
 import type Point from '../Core/Series/Point';
 import type SeriesOptions from '../Core/Series/SeriesOptions';
 

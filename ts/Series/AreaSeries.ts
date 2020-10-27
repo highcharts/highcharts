@@ -22,7 +22,7 @@ import BaseSeries from '../Core/Series/Series.js';
 import Color from '../Core/Color/Color.js';
 const { parse: color } = Color;
 import LegendSymbolMixin from '../Mixins/LegendSymbol.js';
-import LineSeries from './LineSeries.js';
+import LineSeries from './Line/LineSeries.js';
 import U from '../Core/Utilities.js';
 const {
     objectEach,

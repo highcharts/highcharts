@@ -10,7 +10,7 @@
 
 'use strict';
 
-import type LineSeries from './LineSeries';
+import type LineSeries from './Line/LineSeries';
 import type { SeriesStatesOptions } from '../Core/Series/SeriesOptions';
 import BaseSeries from '../Core/Series/Series.js';
 import DerivedSeriesMixin from '../Mixins/DerivedSeries.js';
@@ -70,7 +70,7 @@ declare module '../Core/Series/SeriesType' {
 }
 
 import '../Core/Options.js';
-import '../Series/LineSeries.js';
+import '../Series/Line/LineSeries.js';
 
 /**
  * The pareto series type.

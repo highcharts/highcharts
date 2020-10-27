@@ -12,7 +12,7 @@
 
 import type ColorType from '../Color/ColorType';
 import type { EventCallback } from '../Callback';
-import type LineSeries from '../../Series/LineSeries';
+import type LineSeries from '../../Series/Line/LineSeries';
 import type PointLike from './PointLike';
 import type {
     PointMarkerOptions,

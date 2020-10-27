@@ -13,7 +13,7 @@
 'use strict';
 
 import type { DOMElementType } from '../../../Core/Renderer/DOMElementType';
-import type LineSeries from '../../../Series/LineSeries';
+import type LineSeries from '../../../Series/Line/LineSeries';
 import type Point from '../../../Core/Series/Point';
 import type PositionObject from '../../../Core/Renderer/PositionObject';
 import type SVGElement from '../../../Core/Renderer/SVG/SVGElement';

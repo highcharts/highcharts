@@ -8,18 +8,18 @@
  *
  * */
 'use strict';
-import A from '../Core/Animation/AnimationUtilities.js';
+import A from '../../Core/Animation/AnimationUtilities.js';
 var animObject = A.animObject;
-import BaseSeries from '../Core/Series/Series.js';
+import BaseSeries from '../../Core/Series/Series.js';
 var seriesTypes = BaseSeries.seriesTypes;
-import H from '../Core/Globals.js';
+import H from '../../Core/Globals.js';
 var win = H.win;
-import LegendSymbolMixin from '../Mixins/LegendSymbol.js';
-import O from '../Core/Options.js';
+import LegendSymbolMixin from '../../Mixins/LegendSymbol.js';
+import O from '../../Core/Options.js';
 var defaultOptions = O.defaultOptions;
-import Point from '../Core/Series/Point.js';
-import SVGElement from '../Core/Renderer/SVG/SVGElement.js';
-import U from '../Core/Utilities.js';
+import Point from '../../Core/Series/Point.js';
+import SVGElement from '../../Core/Renderer/SVG/SVGElement.js';
+import U from '../../Core/Utilities.js';
 var addEvent = U.addEvent, arrayMax = U.arrayMax, arrayMin = U.arrayMin, clamp = U.clamp, correctFloat = U.correctFloat, defined = U.defined, erase = U.erase, error = U.error, extend = U.extend, find = U.find, fireEvent = U.fireEvent, getNestedProperty = U.getNestedProperty, isArray = U.isArray, isFunction = U.isFunction, isNumber = U.isNumber, isString = U.isString, merge = U.merge, objectEach = U.objectEach, pick = U.pick, removeEvent = U.removeEvent, splat = U.splat, syncTimeout = U.syncTimeout;
 /* *
  *

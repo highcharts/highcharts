@@ -10,7 +10,7 @@
  *
  * */
 'use strict';
-import LineSeries from '../../Series/LineSeries.js';
+import LineSeries from '../../Series/Line/LineSeries.js';
 import Math3D from '../../Extensions/Math3D.js';
 var perspective = Math3D.perspective;
 import U from '../Utilities.js';

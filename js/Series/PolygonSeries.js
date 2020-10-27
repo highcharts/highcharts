@@ -13,7 +13,7 @@ var seriesTypes = BaseSeries.seriesTypes;
 import H from '../Core/Globals.js';
 var noop = H.noop;
 import LegendSymbolMixin from '../Mixins/LegendSymbol.js';
-import LineSeries from './LineSeries.js';
+import LineSeries from './Line/LineSeries.js';
 import '../Core/Options.js';
 import '../Core/Legend.js';
 import './ScatterSeries.js';

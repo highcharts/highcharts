@@ -13,7 +13,7 @@
 import Series from '../../../Core/Series/Series.js';
 var seriesTypes = Series.seriesTypes;
 import Chart from '../../../Core/Chart/Chart.js';
-import LineSeries from '../../../Series/LineSeries.js';
+import LineSeries from '../../../Series/Line/LineSeries.js';
 import Point from '../../../Core/Series/Point.js';
 import U from '../../../Core/Utilities.js';
 var defined = U.defined, extend = U.extend;
@@ -21,7 +21,7 @@ import KeyboardNavigationHandler from '../../KeyboardNavigationHandler.js';
 import EventProvider from '../../Utils/EventProvider.js';
 import ChartUtilities from '../../Utils/ChartUtilities.js';
 var getPointFromXY = ChartUtilities.getPointFromXY, getSeriesFromName = ChartUtilities.getSeriesFromName, scrollToPoint = ChartUtilities.scrollToPoint;
-import '../../../Series/ColumnSeries.js';
+import '../../../Series/Column/ColumnSeries.js';
 import '../../../Series/PieSeries.js';
 /* eslint-disable no-invalid-this, valid-jsdoc */
 /*

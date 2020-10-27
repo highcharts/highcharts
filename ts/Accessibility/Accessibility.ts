@@ -20,7 +20,7 @@ const {
     doc
 } = H;
 import KeyboardNavigationHandler from './KeyboardNavigationHandler.js';
-import LineSeries from '../Series/LineSeries.js';
+import LineSeries from '../Series/Line/LineSeries.js';
 import O from '../Core/Options.js';
 const {
     defaultOptions

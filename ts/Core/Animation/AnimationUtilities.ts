@@ -14,7 +14,7 @@ import type AnimationOptionsObject from './AnimationOptionsObject';
 import type Chart from '../Chart/Chart';
 import type CSSObject from '../Renderer/CSSObject';
 import type { HTMLDOMElement } from '../Renderer/DOMElementType';
-import type LineSeries from '../../Series/LineSeries';
+import type LineSeries from '../../Series/Line/LineSeries';
 import type SVGAttributes from '../Renderer/SVG/SVGAttributes';
 import type SVGElement from '../Renderer/SVG/SVGElement';
 import Fx from './Fx.js';

@@ -16,7 +16,7 @@ import H from '../Core/Globals.js';
 var noop = H.noop;
 import Point from '../Core/Series/Point.js';
 import LegendSymbolMixin from '../Mixins/LegendSymbol.js';
-import LineSeries from '../Series/LineSeries.js';
+import LineSeries from '../Series/Line/LineSeries.js';
 import SVGRenderer from '../Core/Renderer/SVG/SVGRenderer.js';
 import U from '../Core/Utilities.js';
 var clamp = U.clamp, extend = U.extend, fireEvent = U.fireEvent, isNumber = U.isNumber, merge = U.merge, pick = U.pick;

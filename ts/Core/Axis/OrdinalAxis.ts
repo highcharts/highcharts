@@ -13,7 +13,7 @@
 import type NavigatorAxis from './NavigatorAxis';
 import Axis from './Axis.js';
 import H from '../Globals.js';
-import LineSeries from '../../Series/LineSeries.js';
+import LineSeries from '../../Series/Line/LineSeries.js';
 import Point from '../Series/Point.js';
 import U from '../Utilities.js';
 const {

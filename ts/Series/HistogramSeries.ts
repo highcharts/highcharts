@@ -11,8 +11,8 @@
 
 'use strict';
 
-import type ColumnSeries from './ColumnSeries';
-import type LineSeries from './LineSeries';
+import type ColumnSeries from './Column/ColumnSeries';
+import type LineSeries from './Line/LineSeries';
 import type { SeriesStatesOptions } from '../Core/Series/SeriesOptions';
 import BaseSeries from '../Core/Series/Series.js';
 import DerivedSeriesMixin from '../Mixins/DerivedSeries.js';
@@ -79,7 +79,7 @@ declare module '../Core/Series/SeriesType' {
     }
 }
 
-import './ColumnSeries.js';
+import './Column/ColumnSeries.js';
 
 /* ************************************************************************** *
  *  HISTOGRAM

@@ -14,7 +14,7 @@
  *
  * */
 
-import type LineSeries from '../../Series/LineSeries';
+import type LineSeries from '../../Series/Line/LineSeries';
 
 /* *
  *

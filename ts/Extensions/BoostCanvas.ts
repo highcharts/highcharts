@@ -15,7 +15,7 @@
 
 'use strict';
 
-import type ColumnSeries from '../Series/ColumnSeries';
+import type ColumnSeries from '../Series/Column/ColumnSeries';
 import type HTMLElement from '../Core/Renderer/HTML/HTMLElement';
 import type {
     PointOptions,
@@ -30,7 +30,7 @@ const {
     doc,
     noop
 } = H;
-import LineSeries from '../Series/LineSeries.js';
+import LineSeries from '../Series/Line/LineSeries.js';
 import Series from '../Core/Series/Series.js';
 import U from '../Core/Utilities.js';
 const {

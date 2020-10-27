@@ -11,7 +11,7 @@
 import BaseSeries from '../Core/Series/Series.js';
 import U from '../Core/Utilities.js';
 var isNumber = U.isNumber, merge = U.merge, pick = U.pick, relativeLength = U.relativeLength;
-import './ColumnSeries.js';
+import './Column/ColumnSeries.js';
 var columnProto = BaseSeries.seriesTypes.column.prototype;
 /**
  * The bullet series type.

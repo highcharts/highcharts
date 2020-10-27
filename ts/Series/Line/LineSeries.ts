@@ -16,48 +16,48 @@
  *
  * */
 
-import type AnimationOptionsObject from '../Core/Animation/AnimationOptionsObject';
-import type { AxisType } from '../Core/Axis/Types';
-import type { CursorValue } from '../Core/Renderer/CSSObject';
-import type Chart from '../Core/Chart/Chart';
-import type ColorType from '../Core/Color/ColorType';
-import type DashStyleValue from '../Core/Renderer/DashStyleValue';
-import type DataLabelOptions from '../Core/Series/DataLabelOptions';
-import type { EventCallback } from '../Core/Callback';
-import type PointClass from '../Core/Series/Point';
-import type PointerEvent from '../Core/PointerEvent';
+import type AnimationOptionsObject from '../../Core/Animation/AnimationOptionsObject';
+import type { AxisType } from '../../Core/Axis/Types';
+import type { CursorValue } from '../../Core/Renderer/CSSObject';
+import type Chart from '../../Core/Chart/Chart';
+import type ColorType from '../../Core/Color/ColorType';
+import type DashStyleValue from '../../Core/Renderer/DashStyleValue';
+import type DataLabelOptions from '../../Core/Series/DataLabelOptions';
+import type { EventCallback } from '../../Core/Callback';
+import type PointClass from '../../Core/Series/Point';
+import type PointerEvent from '../../Core/PointerEvent';
 import type {
     PointOptions,
     PointShortOptions,
     PointStateHoverOptions
-} from '../Core/Series/PointOptions';
-import type SeriesLike from '../Core/Series/SeriesLike';
+} from '../../Core/Series/PointOptions';
+import type SeriesLike from '../../Core/Series/SeriesLike';
 import type {
     SeriesOptions,
     SeriesStateHoverOptions,
     SeriesStatesOptions,
     SeriesZonesOptions
-} from '../Core/Series/SeriesOptions';
+} from '../../Core/Series/SeriesOptions';
 import type {
     SeriesTypeOptions,
     SeriesTypePlotOptions
-} from '../Core/Series/SeriesType';
-import type ShadowOptionsObject from '../Core/Renderer/ShadowOptionsObject';
-import type { StatesOptionsKey } from '../Core/Series/StatesOptions';
-import type SVGAttributes from '../Core/Renderer/SVG/SVGAttributes';
-import type SVGPath from '../Core/Renderer/SVG/SVGPath';
-import A from '../Core/Animation/AnimationUtilities.js';
+} from '../../Core/Series/SeriesType';
+import type ShadowOptionsObject from '../../Core/Renderer/ShadowOptionsObject';
+import type { StatesOptionsKey } from '../../Core/Series/StatesOptions';
+import type SVGAttributes from '../../Core/Renderer/SVG/SVGAttributes';
+import type SVGPath from '../../Core/Renderer/SVG/SVGPath';
+import A from '../../Core/Animation/AnimationUtilities.js';
 const { animObject } = A;
-import BaseSeries from '../Core/Series/Series.js';
+import BaseSeries from '../../Core/Series/Series.js';
 const { seriesTypes } = BaseSeries;
-import H from '../Core/Globals.js';
+import H from '../../Core/Globals.js';
 const { win } = H;
-import LegendSymbolMixin from '../Mixins/LegendSymbol.js';
-import O from '../Core/Options.js';
+import LegendSymbolMixin from '../../Mixins/LegendSymbol.js';
+import O from '../../Core/Options.js';
 const { defaultOptions } = O;
-import Point from '../Core/Series/Point.js';
-import SVGElement from '../Core/Renderer/SVG/SVGElement.js';
-import U from '../Core/Utilities.js';
+import Point from '../../Core/Series/Point.js';
+import SVGElement from '../../Core/Renderer/SVG/SVGElement.js';
+import U from '../../Core/Utilities.js';
 const {
     addEvent,
     arrayMax,
@@ -89,7 +89,7 @@ const {
  *
  * */
 
-declare module '../Core/Chart/ChartLike'{
+declare module '../../Core/Chart/ChartLike'{
     interface ChartLike {
         runTrackerClick?: boolean;
     }
@@ -97,7 +97,7 @@ declare module '../Core/Chart/ChartLike'{
 
 type PointClassOptions = PointOptions;
 
-declare module '../Core/Series/PointLike' {
+declare module '../../Core/Series/PointLike' {
     interface PointLike {
         category?: string;
         clientX?: number;
@@ -119,7 +119,7 @@ declare module '../Core/Series/PointLike' {
     }
 }
 
-declare module '../Core/Series/PointOptions' {
+declare module '../../Core/Series/PointOptions' {
     interface PointOptions {
         keys?: Array<string>;
     }
@@ -131,7 +131,7 @@ declare module '../Core/Series/PointOptions' {
 
 type SeriesClassOptions = SeriesOptions;
 
-declare module '../Core/Series/SeriesLike' {
+declare module '../../Core/Series/SeriesLike' {
     interface SeriesLike {
         _hasPointMarkers?: boolean;
         pointArrayMap?: Array<string>;
@@ -139,7 +139,7 @@ declare module '../Core/Series/SeriesLike' {
     }
 }
 
-declare module '../Core/Series/SeriesOptions' {
+declare module '../../Core/Series/SeriesOptions' {
     interface SeriesOptions {
         allowPointSelect?: boolean;
         dataSorting?: Highcharts.DataSortingOptionsObject; // cartasian series
@@ -6616,7 +6616,7 @@ namespace LineSeries {
  *
  * */
 
-declare module '../Core/Series/SeriesType' {
+declare module '../../Core/Series/SeriesType' {
     interface SeriesTypeRegistry {
         line: typeof LineSeries;
     }

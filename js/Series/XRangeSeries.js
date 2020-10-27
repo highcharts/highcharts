@@ -15,9 +15,9 @@ import BaseSeries from '../Core/Series/Series.js';
 import H from '../Core/Globals.js';
 import Color from '../Core/Color/Color.js';
 var color = Color.parse;
-import ColumnSeries from './ColumnSeries.js';
+import ColumnSeries from './Column/ColumnSeries.js';
 var columnProto = ColumnSeries.prototype;
-import LineSeries from './LineSeries.js';
+import LineSeries from './Line/LineSeries.js';
 import Point from '../Core/Series/Point.js';
 import U from '../Core/Utilities.js';
 var addEvent = U.addEvent, clamp = U.clamp, correctFloat = U.correctFloat, defined = U.defined, find = U.find, isNumber = U.isNumber, isObject = U.isObject, merge = U.merge, pick = U.pick;
@@ -54,7 +54,7 @@ function getColorByCategory(series, point) {
         color: color
     };
 }
-import './ColumnSeries.js';
+import './Column/ColumnSeries.js';
 /**
  * @private
  * @class

@@ -14,7 +14,7 @@
 
 import Chart from '../../Core/Chart/Chart.js';
 import H from '../../Core/Globals.js';
-import LineSeries from '../../Series/LineSeries.js';
+import LineSeries from '../../Series/Line/LineSeries.js';
 import O from '../../Core/Options.js';
 const { defaultOptions } = O;
 import Point from '../../Core/Series/Point.js';
@@ -110,7 +110,7 @@ import utilities from './Utilities.js';
 import TimelineClasses from './Timeline.js';
 import sonificationOptions from './Options.js';
 
-import '../../Series/LineSeries.js';
+import '../../Series/Line/LineSeries.js';
 
 // Expose on the Highcharts object
 

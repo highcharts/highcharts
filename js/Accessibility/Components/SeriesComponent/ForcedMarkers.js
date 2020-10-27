@@ -10,7 +10,7 @@
  *
  * */
 'use strict';
-import LineSeries from '../../../Series/LineSeries.js';
+import LineSeries from '../../../Series/Line/LineSeries.js';
 import U from '../../../Core/Utilities.js';
 var addEvent = U.addEvent, merge = U.merge;
 /* eslint-disable no-invalid-this, valid-jsdoc */

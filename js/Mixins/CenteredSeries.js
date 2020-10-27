@@ -9,7 +9,7 @@
  * */
 'use strict';
 import H from '../Core/Globals.js';
-import LineSeries from '../Series/LineSeries.js';
+import LineSeries from '../Series/Line/LineSeries.js';
 /**
  * @private
  * @interface Highcharts.RadianAngles

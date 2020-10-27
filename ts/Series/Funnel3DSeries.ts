@@ -17,7 +17,7 @@
 import type BBoxObject from '../Core/Renderer/BBoxObject';
 import type Chart from '../Core/Chart/Chart';
 import type ColorType from '../Core/Color/ColorType';
-import type ColumnSeries from './ColumnSeries';
+import type ColumnSeries from './Column/ColumnSeries';
 import type DataLabelOptions from '../Core/Series/DataLabelOptions';
 import type GradientColor from '../Core/Color/GradientColor';
 import type {
@@ -41,7 +41,7 @@ const {
         prototype: RendererProto
     }
 } = H;
-import LineSeries from './LineSeries.js';
+import LineSeries from './Line/LineSeries.js';
 import Math3D from '../Extensions/Math3D.js';
 const { perspective } = Math3D;
 import _SVGRenderer from '../Core/Renderer/SVG/SVGRenderer.js';
@@ -54,7 +54,7 @@ const {
     relativeLength
 } = U;
 
-import './ColumnSeries.js';
+import './Column/ColumnSeries.js';
 
 /**
  * @private

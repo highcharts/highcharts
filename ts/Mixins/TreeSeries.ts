@@ -8,7 +8,7 @@
 
 import type ColorString from '../Core/Color/ColorString';
 import type ColorType from '../Core/Color/ColorType';
-import type LineSeries from '../Series/LineSeries';
+import type LineSeries from '../Series/Line/LineSeries';
 import type Point from '../Core/Series/Point';
 import type PointOptions from '../Core/Series/PointOptions';
 import Color from '../Core/Color/Color.js';

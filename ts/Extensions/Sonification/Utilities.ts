@@ -13,7 +13,7 @@
 'use strict';
 
 import type Chart from '../../Core/Chart/Chart';
-import type LineSeries from '../../Series/LineSeries';
+import type LineSeries from '../../Series/Line/LineSeries';
 import type Point from '../../Core/Series/Point';
 import musicalFrequencies from './MusicalFrequencies.js';
 import U from '../../Core/Utilities.js';

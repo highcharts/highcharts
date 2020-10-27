@@ -20,7 +20,7 @@ import type Point from '../Core/Series/Point';
 import type PointerEvent from '../Core/PointerEvent';
 import type { SeriesTypeOptions } from '../Core/Series/SeriesType';
 import H from '../Core/Globals.js';
-import LineSeries from '../Series/LineSeries.js';
+import LineSeries from '../Series/Line/LineSeries.js';
 import NavigationBindings from '../Extensions/Annotations/NavigationBindings.js';
 import U from '../Core/Utilities.js';
 const {

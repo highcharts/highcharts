@@ -10,7 +10,7 @@
 
 'use strict';
 
-import type ColumnSeries from '../ColumnSeries';
+import type ColumnSeries from '../Column/ColumnSeries';
 import type { PointMarkerOptions } from '../../Core/Series/PointOptions';
 import type { StatesOptionsKey } from '../../Core/Series/StatesOptions';
 import type SVGAttributes from '../../Core/Renderer/SVG/SVGAttributes';
@@ -22,7 +22,7 @@ import Color from '../../Core/Color/Color.js';
 const { parse: color } = Color;
 import H from '../../Core/Globals.js';
 const { noop } = H;
-import LineSeries from '../LineSeries.js';
+import LineSeries from '../Line/LineSeries.js';
 import Point from '../../Core/Series/Point.js';
 import U from '../../Core/Utilities.js';
 const {

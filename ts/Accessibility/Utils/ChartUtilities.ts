@@ -15,7 +15,7 @@
 import type Axis from '../../Core/Axis/Axis';
 import type Chart from '../../Core/Chart/Chart';
 import type { DOMElementType } from '../../Core/Renderer/DOMElementType';
-import type LineSeries from '../../Series/LineSeries';
+import type LineSeries from '../../Series/Line/LineSeries';
 import type Point from '../../Core/Series/Point';
 import HTMLUtilities from './HTMLUtilities.js';
 const {

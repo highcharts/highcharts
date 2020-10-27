@@ -11,7 +11,7 @@
  * */
 'use strict';
 import H from '../../../Core/Globals.js';
-import LineSeries from '../../../Series/LineSeries.js';
+import LineSeries from '../../../Series/Line/LineSeries.js';
 import U from '../../../Core/Utilities.js';
 var extend = U.extend, defined = U.defined;
 import ChartUtilities from '../../Utils/ChartUtilities.js';

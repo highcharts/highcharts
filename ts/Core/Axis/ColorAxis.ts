@@ -36,7 +36,7 @@ const {
 } = H;
 import Legend from '../Legend.js';
 import LegendSymbolMixin from '../../Mixins/LegendSymbol.js';
-import LineSeries from '../../Series/LineSeries.js';
+import LineSeries from '../../Series/Line/LineSeries.js';
 import Point from '../Series/Point.js';
 import U from '../Utilities.js';
 const {

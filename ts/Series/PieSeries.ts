@@ -26,7 +26,7 @@ import ColorType from '../Core/Color/ColorType';
 import H from '../Core/Globals.js';
 const { noop } = H;
 import LegendSymbolMixin from '../Mixins/LegendSymbol.js';
-import LineSeries from '../Series/LineSeries.js';
+import LineSeries from '../Series/Line/LineSeries.js';
 import Point from '../Core/Series/Point.js';
 import SVGRenderer from '../Core/Renderer/SVG/SVGRenderer.js';
 import U from '../Core/Utilities.js';

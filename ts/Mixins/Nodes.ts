@@ -10,7 +10,7 @@ import type AnimationOptionsObject from '../Core/Animation/AnimationOptionsObjec
 import type PointOptions from '../Core/Series/PointOptions';
 import type SeriesOptions from '../Core/Series/SeriesOptions';
 import H from '../Core/Globals.js';
-import LineSeries from '../Series/LineSeries.js';
+import LineSeries from '../Series/Line/LineSeries.js';
 import Point from '../Core/Series/Point.js';
 import U from '../Core/Utilities.js';
 const {
@@ -100,7 +100,7 @@ declare global {
     }
 }
 
-import '../Series/LineSeries.js';
+import '../Series/Line/LineSeries.js';
 
 const NodesMixin = H.NodesMixin = {
 

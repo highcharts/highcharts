@@ -11,7 +11,7 @@
 import BaseSeries from '../Core/Series/Series.js';
 var seriesTypes = BaseSeries.seriesTypes;
 import Point from '../Core/Series/Point.js';
-import './ColumnSeries.js';
+import './Column/ColumnSeries.js';
 /**
  * The ohlc series type.
  *

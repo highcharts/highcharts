@@ -16,7 +16,7 @@
 
 'use strict';
 
-import type LineSeries from '../Series/LineSeries.js';
+import type LineSeries from '../Series/Line/LineSeries.js';
 import type Point from '../Core/Series/Point';
 import type {
     PointOptions,

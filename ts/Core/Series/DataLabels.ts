@@ -13,7 +13,7 @@
 import type AlignObject from '../Renderer/AlignObject';
 import type BBoxObject from '../Renderer/BBoxObject';
 import type ColorString from '../Color/ColorString';
-import type ColumnSeries from '../../Series/ColumnSeries';
+import type ColumnSeries from '../../Series/Column/ColumnSeries';
 import type DataLabelOptions from './DataLabelOptions';
 import type Point from './Point';
 import type SVGAttributes from '../Renderer/SVG/SVGAttributes';
@@ -24,7 +24,7 @@ import BaseSeries from './Series.js';
 const { seriesTypes } = BaseSeries;
 import H from '../Globals.js';
 const { noop } = H;
-import LineSeries from '../../Series/LineSeries.js';
+import LineSeries from '../../Series/Line/LineSeries.js';
 import U from '../Utilities.js';
 const {
     arrayMax,

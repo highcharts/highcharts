@@ -11,13 +11,13 @@
 import BaseSeries from '../Core/Series/Series.js';
 import H from '../Core/Globals.js';
 var noop = H.noop;
-import LineSeries from './LineSeries.js';
+import LineSeries from './Line/LineSeries.js';
 import OnSeriesMixin from '../Mixins/OnSeries.js';
 import SVGElement from '../Core/Renderer/SVG/SVGElement.js';
 import SVGRenderer from '../Core/Renderer/SVG/SVGRenderer.js';
 import U from '../Core/Utilities.js';
 var addEvent = U.addEvent, defined = U.defined, isNumber = U.isNumber, merge = U.merge, objectEach = U.objectEach, wrap = U.wrap;
-import './ColumnSeries.js';
+import './Column/ColumnSeries.js';
 import '../Core/Interaction.js';
 import '../Core/Renderer/SVG/SVGRenderer.js';
 var Renderer = H.Renderer, TrackerMixin = H.TrackerMixin, // Interaction

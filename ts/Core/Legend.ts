@@ -16,7 +16,7 @@ import type Chart from './Chart/Chart';
 import type ColorAxis from './Axis/ColorAxis';
 import type CSSObject from './Renderer/CSSObject';
 import type { HTMLDOMElement } from './Renderer/DOMElementType';
-import type LineSeries from '../Series/LineSeries';
+import type LineSeries from '../Series/Line/LineSeries';
 import type Point from './Series/Point';
 import type SVGAttributes from './Renderer/SVG/SVGAttributes';
 import type SVGElement from './Renderer/SVG/SVGElement';

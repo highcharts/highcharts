@@ -19,7 +19,7 @@ import type SeriesOptions from '../Core/Series/SeriesOptions';
 import Axis from '../Core/Axis/Axis.js';
 import Chart from '../Core/Chart/Chart.js';
 import H from '../Core/Globals.js';
-import LineSeries from '../Series/LineSeries.js';
+import LineSeries from '../Series/Line/LineSeries.js';
 import U from '../Core/Utilities.js';
 const {
     addEvent,
@@ -82,7 +82,7 @@ declare module '../Core/Axis/Types' {
     }
 }
 
-import '../Series/LineSeries.js';
+import '../Series/Line/LineSeries.js';
 
 // Extensions for parallel coordinates plot.
 var ChartProto = Chart.prototype;

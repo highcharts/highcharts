@@ -18,7 +18,7 @@ import type {
 import type Axis from '../Core/Axis/Axis';
 import type ColorString from '../Core/Color/ColorString';
 import type ColorType from '../Core/Color/ColorType';
-import type LineSeries from '../Series/LineSeries';
+import type LineSeries from '../Series/Line/LineSeries';
 import type PositionObject from '../Core/Renderer/PositionObject';
 import type SVGElement from '../Core/Renderer/SVG/SVGElement';
 import Connection from './Connection.js';

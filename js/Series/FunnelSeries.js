@@ -15,7 +15,7 @@ var seriesTypes = BaseSeries.seriesTypes;
 import Chart from '../Core/Chart/Chart.js';
 import H from '../Core/Globals.js';
 var noop = H.noop;
-import LineSeries from './LineSeries.js';
+import LineSeries from './Line/LineSeries.js';
 import U from '../Core/Utilities.js';
 var addEvent = U.addEvent, fireEvent = U.fireEvent, isArray = U.isArray, pick = U.pick;
 /**

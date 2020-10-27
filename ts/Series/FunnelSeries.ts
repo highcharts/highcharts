@@ -23,7 +23,7 @@ const { seriesTypes } = BaseSeries;
 import Chart from '../Core/Chart/Chart.js';
 import H from '../Core/Globals.js';
 const { noop } = H;
-import LineSeries from './LineSeries.js';
+import LineSeries from './Line/LineSeries.js';
 import U from '../Core/Utilities.js';
 const {
     addEvent,

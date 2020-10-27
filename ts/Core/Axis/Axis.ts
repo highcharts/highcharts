@@ -18,7 +18,7 @@ import type ColorType from '../Color/ColorType';
 import type CSSObject from '../Renderer/CSSObject';
 import type DashStyleValue from '../Renderer/DashStyleValue';
 import type GradientColor from '../Color/GradientColor';
-import type LineSeries from '../../Series/LineSeries';
+import type LineSeries from '../../Series/Line/LineSeries';
 import type PlotLineOrBand from './PlotLineOrBand';
 import type Point from '../Series/Point';
 import type PointerEvent from '../PointerEvent';

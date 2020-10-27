@@ -31,7 +31,7 @@ const {
     hasTouch,
     isTouchDevice
 } = H;
-import LineSeries from '../Series/LineSeries.js';
+import LineSeries from '../Series/Line/LineSeries.js';
 import NavigatorAxis from './Axis/NavigatorAxis.js';
 import O from './Options.js';
 const { defaultOptions } = O;

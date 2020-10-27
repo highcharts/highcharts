@@ -13,7 +13,7 @@
 'use strict';
 
 import type Chart from '../../Core/Chart/Chart';
-import type LineSeries from '../../Series/LineSeries';
+import type LineSeries from '../../Series/Line/LineSeries';
 import BaseSeries from '../../Core/Series/Series.js';
 import U from '../../Core/Utilities.js';
 const {

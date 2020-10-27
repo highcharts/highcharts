@@ -18,7 +18,7 @@ const { seriesTypes } = BaseSeries;
 import H from '../Core/Globals.js';
 const { noop } = H;
 import LegendSymbolMixin from '../Mixins/LegendSymbol.js';
-import LineSeries from './LineSeries.js';
+import LineSeries from './Line/LineSeries.js';
 
 /**
  * Internal types

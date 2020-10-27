@@ -10,7 +10,7 @@
 
 import type ColorType from '../../Core/Color/ColorType';
 import type CSSObject from '../../Core/Renderer/CSSObject';
-import type LineSeries from '../../Series/LineSeries';
+import type LineSeries from '../../Series/Line/LineSeries';
 import type Point from '../../Core/Series/Point';
 import type { PointMarkerOptions } from '../../Core/Series/PointOptions';
 import type SVGElement from '../../Core/Renderer/SVG/SVGElement';

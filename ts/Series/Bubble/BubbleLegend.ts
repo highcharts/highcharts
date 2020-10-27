@@ -25,7 +25,7 @@ const { parse: color } = Color;
 import H from '../../Core/Globals.js';
 const { noop } = H;
 import Legend from '../../Core/Legend.js';
-import LineSeries from '../LineSeries.js';
+import LineSeries from '../Line/LineSeries.js';
 import U from '../../Core/Utilities.js';
 const {
     addEvent,

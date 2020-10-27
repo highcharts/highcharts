@@ -25,7 +25,7 @@ import type {
     PointOptions,
     PointShortOptions
 } from './PointOptions';
-import type LineSeries from '../../Series/LineSeries';
+import type LineSeries from '../../Series/Line/LineSeries';
 import type {
     StateGenericOptions,
     StateHoverOptions,

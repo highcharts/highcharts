@@ -13,7 +13,7 @@
 import type AnimationOptionsObject from '../Core/Animation/AnimationOptionsObject';
 import type ColorAxis from '../Core/Axis/ColorAxis';
 import type ColorType from '../Core/Color/ColorType';
-import type ColumnSeries from './ColumnSeries';
+import type ColumnSeries from './Column/ColumnSeries';
 import type { PointStateHoverOptions } from '../Core/Series/PointOptions';
 import type {
     SeriesOptions,
@@ -33,7 +33,7 @@ import H from '../Core/Globals.js';
 const { noop } = H;
 import Point from '../Core/Series/Point.js';
 import LegendSymbolMixin from '../Mixins/LegendSymbol.js';
-import LineSeries from '../Series/LineSeries.js';
+import LineSeries from '../Series/Line/LineSeries.js';
 import SVGRenderer from '../Core/Renderer/SVG/SVGRenderer.js';
 import U from '../Core/Utilities.js';
 const {

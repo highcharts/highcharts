@@ -6,7 +6,7 @@
 'use strict';
 import H from '../Core/Globals.js';
 var noop = H.noop;
-import LineSeries from '../Series/LineSeries.js';
+import LineSeries from '../Series/Line/LineSeries.js';
 import U from '../Core/Utilities.js';
 var addEvent = U.addEvent, defined = U.defined;
 /* ************************************************************************** *

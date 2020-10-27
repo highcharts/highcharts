@@ -14,7 +14,7 @@ import BaseSeries from './Series.js';
 var seriesTypes = BaseSeries.seriesTypes;
 import H from '../Globals.js';
 var noop = H.noop;
-import LineSeries from '../../Series/LineSeries.js';
+import LineSeries from '../../Series/Line/LineSeries.js';
 import U from '../Utilities.js';
 var arrayMax = U.arrayMax, clamp = U.clamp, defined = U.defined, extend = U.extend, fireEvent = U.fireEvent, format = U.format, isArray = U.isArray, merge = U.merge, objectEach = U.objectEach, pick = U.pick, relativeLength = U.relativeLength, splat = U.splat, stableSort = U.stableSort;
 /**

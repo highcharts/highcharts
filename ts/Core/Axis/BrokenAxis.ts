@@ -15,7 +15,7 @@ import type { AxisBreakBorderObject, AxisBreakObject } from './Types';
 import type Point from '../Series/Point';
 import type SVGPath from '../Renderer/SVG/SVGPath';
 import Axis from './Axis.js';
-import LineSeries from '../../Series/LineSeries.js';
+import LineSeries from '../../Series/Line/LineSeries.js';
 import StackItem from '../../Extensions/Stacking.js';
 import U from '../Utilities.js';
 const {

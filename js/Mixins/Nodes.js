@@ -5,11 +5,11 @@
  * */
 'use strict';
 import H from '../Core/Globals.js';
-import LineSeries from '../Series/LineSeries.js';
+import LineSeries from '../Series/Line/LineSeries.js';
 import Point from '../Core/Series/Point.js';
 import U from '../Core/Utilities.js';
 var defined = U.defined, extend = U.extend, find = U.find, pick = U.pick;
-import '../Series/LineSeries.js';
+import '../Series/Line/LineSeries.js';
 var NodesMixin = H.NodesMixin = {
     /* eslint-disable valid-jsdoc */
     /**

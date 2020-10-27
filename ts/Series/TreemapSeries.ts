@@ -52,7 +52,7 @@ const {
     noop
 } = H;
 import LegendSymbolMixin from '../Mixins/LegendSymbol.js';
-import LineSeries from './LineSeries.js';
+import LineSeries from './Line/LineSeries.js';
 import Point from '../Core/Series/Point.js';
 import TreeSeriesMixin from '../Mixins/TreeSeries.js';
 const {

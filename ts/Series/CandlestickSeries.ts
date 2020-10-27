@@ -56,7 +56,7 @@ declare global {
     }
 }
 
-import './ColumnSeries.js';
+import './Column/ColumnSeries.js';
 import './OHLCSeries.js';
 
 const columnProto = BaseSeries.seriesTypes.column.prototype;

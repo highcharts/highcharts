@@ -13,7 +13,7 @@
 import type Axis from './Axis/Axis';
 import type Chart from './Chart/Chart';
 import type { DOMElementType } from './Renderer/DOMElementType';
-import type LineSeries from '../Series/LineSeries';
+import type LineSeries from '../Series/Line/LineSeries';
 import type Point from './Series/Point';
 import type PointerEvent from './PointerEvent';
 import type SVGElement from './Renderer/SVG/SVGElement';

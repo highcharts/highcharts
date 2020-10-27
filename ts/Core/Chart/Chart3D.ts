@@ -20,7 +20,7 @@ import Axis3D from '../Axis/Axis3D.js';
 import Chart from './Chart.js';
 import Fx from '../Animation/Fx.js';
 import H from '../Globals.js';
-import LineSeries from '../../Series/LineSeries.js';
+import LineSeries from '../../Series/Line/LineSeries.js';
 import Math3D from '../../Extensions/Math3D.js';
 const {
     perspective,

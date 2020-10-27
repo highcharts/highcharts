@@ -9,7 +9,7 @@
  * */
 'use strict';
 import BaseSeries from '../Core/Series/Series.js';
-import ColumnSeries from './ColumnSeries.js';
+import ColumnSeries from './Column/ColumnSeries.js';
 var columnProto = ColumnSeries.prototype;
 import H from '../Core/Globals.js';
 var noop = H.noop;

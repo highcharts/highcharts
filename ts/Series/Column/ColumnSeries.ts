@@ -16,27 +16,27 @@
  *
  * */
 
-import type BBoxObject from '../Core/Renderer/BBoxObject';
-import type Chart from '../Core/Chart/Chart';
-import type ColorType from '../Core/Color/ColorType';
-import type DashStyleValue from '../Core/Renderer/DashStyleValue';
+import type BBoxObject from '../../Core/Renderer/BBoxObject';
+import type Chart from '../../Core/Chart/Chart';
+import type ColorType from '../../Core/Color/ColorType';
+import type DashStyleValue from '../../Core/Renderer/DashStyleValue';
 import type {
     SeriesStateHoverOptions,
     SeriesStatesOptions
-} from '../Core/Series/SeriesOptions';
-import type { StatesOptionsKey } from '../Core/Series/StatesOptions';
-import type SVGAttributes from '../Core/Renderer/SVG/SVGAttributes';
-import type SVGElement from '../Core/Renderer/SVG/SVGElement';
-import A from '../Core/Animation/AnimationUtilities.js';
+} from '../../Core/Series/SeriesOptions';
+import type { StatesOptionsKey } from '../../Core/Series/StatesOptions';
+import type SVGAttributes from '../../Core/Renderer/SVG/SVGAttributes';
+import type SVGElement from '../../Core/Renderer/SVG/SVGElement';
+import A from '../../Core/Animation/AnimationUtilities.js';
 const { animObject } = A;
-import BaseSeries from '../Core/Series/Series.js';
-import Color from '../Core/Color/Color.js';
+import BaseSeries from '../../Core/Series/Series.js';
+import Color from '../../Core/Color/Color.js';
 const { parse: color } = Color;
-import H from '../Core/Globals.js';
+import H from '../../Core/Globals.js';
 const { noop } = H;
-import LegendSymbolMixin from '../Mixins/LegendSymbol.js';
-import LineSeries from './LineSeries.js';
-import U from '../Core/Utilities.js';
+import LegendSymbolMixin from '../../Mixins/LegendSymbol.js';
+import LineSeries from '../Line/LineSeries.js';
+import U from '../../Core/Utilities.js';
 const {
     clamp,
     defined,
@@ -54,26 +54,26 @@ const {
  *
  * */
 
-declare module '../Core/Series/PointLike' {
+declare module '../../Core/Series/PointLike' {
     interface PointLike {
         allowShadow?: boolean;
     }
 }
 
-declare module '../Core/Series/PointOptions' {
+declare module '../../Core/Series/PointOptions' {
     interface PointOptions {
         borderColor?: ColorType;
     }
 }
 
-declare module '../Core/Series/SeriesLike' {
+declare module '../../Core/Series/SeriesLike' {
     interface SeriesLike {
         barW?: number;
         pointXOffset?: number;
     }
 }
 
-declare module '../Core/Series/SeriesOptions' {
+declare module '../../Core/Series/SeriesOptions' {
     interface SeriesOptions {
         borderColor?: ColorType;
         borderDashStyle?: DashStyleValue;
@@ -1312,7 +1312,7 @@ namespace ColumnSeries {
  *
  * */
 
-declare module '../Core/Series/SeriesType' {
+declare module '../../Core/Series/SeriesType' {
     interface SeriesTypeRegistry {
         column: typeof ColumnSeries;
     }
