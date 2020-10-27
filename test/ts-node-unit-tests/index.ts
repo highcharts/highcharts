@@ -1,17 +1,21 @@
-import type { AssertionError } from 'assert';
-
 import { readdirSync, existsSync } from 'fs';
 import { join } from 'path';
-import { starting, finished, failure, success } from '../../tools/gulptasks/lib/log.js';
-
+import { reportError } from './test-utils';
+import { starting, finished, success, warn } from '../../tools/gulptasks/lib/log.js';
 
 const TEST_PATH = join(__dirname, './tests');
+const CODE_PATH = join(__dirname, '../../code');
 
 const errors = [];
 let testCounter: number = 0;
 
 starting('Unit tests')
 // require('./prepare-data');
+
+if(!existsSync(CODE_PATH)){
+    warn('Code has not been compiled. Run npx gulp scripts first');
+    process.exit();
+}
 
 if (existsSync(TEST_PATH)) {
     const testFiles = readdirSync(TEST_PATH)
@@ -26,7 +30,7 @@ if (existsSync(TEST_PATH)) {
                     test();
                 }
             } catch (error) {
-                failure(report(error));
+                reportError(error);
                 errors.push(error.code);
             }
         });
@@ -39,16 +43,3 @@ if (errors.length) {
 
 success(`Ran ${ testCounter } successful tests`)
 finished('Unit tests');
-
-function report(error: AssertionError): string {
-    const { actual, expected, code, operator, message } = error;
-
-    const printArrayOrString = (array: string | []) => (Array.isArray(array) ? JSON.stringify(array, undefined, 4) : array);
-
-    return `${code} ${message}
-
-Got: ${printArrayOrString(actual)}
-
-Expected: ${printArrayOrString(expected)}
-`;
-}
