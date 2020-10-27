@@ -23,21 +23,24 @@ const {
     uniqueKey
 } = U;
 
+declare module './Chart/ChartLike' {
+    interface ChartLike {
+        currentResponsive?: Highcharts.ResponsiveCurrentObject;
+        currentOptions(options: Highcharts.Options): Highcharts.Options;
+        matchResponsiveRule(
+            rule: Highcharts.ResponsiveRulesOptions,
+            matches: Array<string>
+        ): void;
+        setResponsive(redraw?: boolean, reset?: boolean): void;
+    }
+}
+
 /**
  * Internal types
  * @private
  */
 declare global {
     namespace Highcharts {
-        interface ChartLike {
-            currentResponsive?: ResponsiveCurrentObject;
-            currentOptions(options: Options): Options;
-            matchResponsiveRule(
-                rule: ResponsiveRulesOptions,
-                matches: Array<string>
-            ): void;
-            setResponsive(redraw?: boolean, reset?: boolean): void;
-        }
         interface Options {
             isResponsiveOptions?: boolean;
             responsive?: ResponsiveOptions;

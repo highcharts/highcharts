@@ -182,7 +182,7 @@ The `order` option specifies the order in which the series are being played. Thi
 
 The `afterSeriesWait` option adds a silent wait after each series, to more easily distinguish between them.
 
-For a full overview of the available options, see [Chart.sonify](https://api.highcharts.com/class-reference/Highcharts.Chart#sonify)
+For a full overview of the available options, see [Chart.sonify](https://api.highcharts.com/class-reference/Highcharts.Chart#sonify).
 
 **Using Earcons**
 

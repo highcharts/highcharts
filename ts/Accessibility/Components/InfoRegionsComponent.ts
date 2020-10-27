@@ -44,6 +44,13 @@ var addClass = HTMLUtilities.addClass,
     getElement = HTMLUtilities.getElement,
     visuallyHideElement = HTMLUtilities.visuallyHideElement;
 
+declare module '../../Core/Chart/ChartLike' {
+    interface ChartLike {
+        /** @requires modules/accessibility */
+        getTypeDescription(types: Array<string>): string;
+    }
+}
+
 /**
  * Internal types.
  * @private
@@ -93,10 +100,6 @@ declare global {
                 regionKey: string
             ): void;
             public updateScreenReaderSection(regionKey: string): void;
-        }
-        interface ChartLike {
-            /** @requires modules/accessibility */
-            getTypeDescription(types: Array<string>): string;
         }
         interface InfoRegionsComponentTypeDescFormatContextObject {
             chart: Chart;

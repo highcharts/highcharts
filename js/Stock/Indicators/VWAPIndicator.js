@@ -12,7 +12,7 @@
 import BaseSeries from '../../Core/Series/Series.js';
 import U from '../../Core/Utilities.js';
 var error = U.error, isArray = U.isArray;
-import './SMAIndicator.js';
+// im port './SMAIndicator.js';
 /**
  * The Volume Weighted Average Price (VWAP) series type.
  *

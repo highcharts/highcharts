@@ -38,37 +38,37 @@ PhantomJS is started from the command line with our highcharts-convert.js script
 
 Description of command line parameters:
 
-\-infile
+`-infile`
 
-The file to convert, the script have to find if this is a javascript file with a options object or a svg file.  It checks the input file for beginning with "<svg", "<?xml" or "<!doctype". Then it's a svg file, otherwise it's presumed to be an options file.
+The file to convert, the script has to find out if this is a javascript file with an options object or a svg file.  It checks if the input file begins with `<svg`, `<?xml` or `<!doctype`. If it does then it's a svg file, otherwise it's presumed to be an options file.
 
-\-outfile
+`-outfile`
 
 The file to output. Must be a filename with the extension .jpg, .png .pdf or .svg.
 
-\-type
+`-type`
 
-The type can be of jpg, png, pfd or svg. Ignored when 'outfile' is defined. This parameter is usefull when the script runs in servermode and outputs an image as a 64bit string. When not running in servermode the output file is stored in 'tmpdir'.
+The type can be of jpg, png, pfd or svg. Ignored when `-outfile` is set. This parameter is useful when the script runs in servermode and outputs an image as a 64bit string. When not running in servermode the output file is stored in `-tmpdir`.
 
-\-scale
+`-scale`
 
-To set the zoomFactor of the page rendered by PhantomJs. For example, if the chart.width option in the chart configuration is set to 600 and the scale is set to 2, the output raster image will have a pixel width of 1200. So this is a convenient way of increasing the resolution without decreasing the font size and line widths in the chart. This is ignored if the -width parameter is set.
+Set the zoomFactor of the page rendered by PhantomJs. For example, if the chart.width option in the chart configuration is set to 600 and the scale is set to 2, the output raster image will have a pixel width of 1200. So this is a convenient way of increasing the resolution without decreasing the font size and line widths in the chart. This is ignored if the `-width` parameter is set.
 
-\-width
+`-width`
 
-Set the exact pixel width of the exported image or pdf. This overrides the -scale parameter.
+Set the exact pixel width of the exported image or pdf. This overrides the `-scale` parameter.
 
-\-constr
+`-constr`
 
-The constructor name. Can be one of Chart or StockChart. This depends on whether you want to generate Highcharts Stock or basic Highcharts.
+The constructor name. Can be one of `Chart` or `StockChart`. This depends on whether you want to generate Highcharts Stock or basic Highcharts.
 
-\-callback
+`-callback`
 
-Filename containing a callback JavaScript. The callback is a function which will be called in the constructor of Highcharts to be executed on chart load. All code of the callback must be enclosed by a function. Example of contents of the callback file: function(chart) { chart.renderer.arc(200, 150, 100, 50, -Math.PI, 0).attr({ fill : '#FCFFC5', stroke : 'black', 'stroke-width' : 1 }).add(); }
+File containing a JavaScript callback. The callback is a function which will be called in the constructor of Highcharts to be executed on chart load. All code of the callback must be enclosed by a function. Example contents of the callback file: `function(chart) { chart.renderer.arc(200, 150, 100, 50, -Math.PI, 0).attr({ fill : '#FCFFC5', stroke : 'black', 'stroke-width' : 1 }).add(); }`
 
-\-resources
+`-resources`
 
-Stringified JSON which can contain three properties js, css and files. See below here for an example
+Stringified JSON which can contain three properties: js, css and files. Example:
 
 ```json
 { 
@@ -79,49 +79,49 @@ Stringified JSON which can contain three properties js, css and files. See below
 ```
 
 *   `files`: A comma separated string of filenames that need to be injected to the page for rendering a chart. Only files with the extensions `.css` and `.js` are injected, the rest is ignored.
-*   `css`: css inserted in the body of the page
-*   `js`: javascript inserted in the body of the page
+*   `css`: Css inserted in the body of the page
+*   `js`: Javascript inserted in the body of the page
 
-\-host
+`-host`
 
-Specify the host for running the script as an lightweight http-server. The server responds to JSON objects send to the server in a POST
+Specify the host for running the script as a lightweight HTTP server. The server responds to JSON objects sent to the server in a POST request.
 
-\-port
+`-port`
 
-The portnumber Phantomjs is listening on for POST-requests.
+The port number PhantomJS is listening on for POST requests.
 
-\-tmpdir
+`-tmpdir`
 
 Specify where the scipt stores temporary- or output files, when output isn't defined.
 
 ### Start as a web server
 
-You can also let the script start a web server. By doing so, we don't have to start a PhantomJS process over and over again for every conversion job and this results in a better performance. While running the script in web server mode, the result isn’t saved to a file, but returned as a base64 string, unless when you want to export to SVG or PDF.
+You can also let the script start a web server. By doing so, we don't have to start a PhantomJS process over and over again for every conversion job and this results in better performance. While running the script in web server mode, the result isn’t saved to a file, but returned as a base64 string, unless when you want to export to SVG or PDF.
 
 This is how you start a web server in PhantomJS with the highcharts-convert.js script, change the host and port to your needs. However do not expose the PhantomJS web server to the outside world, it’s not intended as a general production server.
 
     
     phantomjs highcharts-convert.js -host 127.0.0.1 -port 3003
 
-Note that the web server listens only to POST requests. Use the same parameters as for command line usage, but wrap them in a JSON structure. See this example for the content of a POST request. Note these parameters are defined: 'infile', 'callback' and 'constr';
+Note that the web server listens only to POST requests. Use the same parameters as for command line usage, but wrap them in a JSON structure. See this example for the content of a POST request. Note that these parameters are defined: `infile`, `callback` and `constr`;
 
 ```json
 {"infile":"{xAxis: {categories: ['Jan', 'Feb', 'Mar', 'Apr', 'May', 'Jun', 'Jul', 'Aug', 'Sep', 'Oct', 'Nov', 'Dec']},series: [{data: [29.9, 71.5, 106.4, 129.2, 144.0, 176.0, 135.6, 148.5, 216.4, 194.1, 95.6, 54.4]}]};","callback":"function(chart) {chart.renderer.arc(200, 150, 100, 50, -Math.PI, 0).attr({fill : '#FCFFC5',stroke : 'black','stroke-width' : 1}).add();}","constr":"Chart"}
 ```
 
-This is how you can send a POST from the command line with Curl (MAC & Ubuntu);
+This is how you can send a POST from the command line with curl (Mac & Linux):
 
 ```sh
 curl -H "Content-Type: application/json" -X POST -d '{"infile":"{xAxis: {categories: [\"Jan\", \"Feb\", \"Mar\"]},series: [{data: [29.9, 71.5, 106.4]}]}"}' 127.0.0.1:3005
 ```
 
-Example of sending the contents of a file
+Example of sending the contents of a file:
 
 ```sh
 curl http://127.0.0.1:3005 -H "Content-Type: application/json" -X POST --data-binary "@/Users/yourname/yourfolder/chart-config.json"
 ```
 
-This is how you can send a POST from the commandline with Curl (Windows);
+This is how you can send a POST from the command line with curl (Windows):
 
 ```sh
 curl -H "Content-Type: application/json" -X POST -d "{\"infile\":\"{series:[{data:[29.9,71.5,106.4]}]}\"}" 127.0.0.1:3005
@@ -129,8 +129,8 @@ curl -H "Content-Type: application/json" -X POST -d "{\"infile\":\"{series:[{dat
 
 ### Setting it up
 
-1.  For download and install of PhantomJS, see [https://phantomjs.org/download.html](https://phantomjs.org/download.html)
-2.  Clone the [highcharts-export-server](https://github.com/highcharts/highcharts-export-server) repository from GitHub or download the zip file containing the repository and copy the [phantomjs](https://github.com/highcharts/highcharts-export-server/blob/master/phantomjs) folder to your installation folder
+1.  To download and install of PhantomJS, see [https://phantomjs.org/download.html](https://phantomjs.org/download.html).
+2.  Clone the [highcharts-export-server](https://github.com/highcharts/highcharts-export-server) repository from GitHub or download the zip file containing the repository and copy the [phantomjs](https://github.com/highcharts/highcharts-export-server/blob/master/phantomjs) folder to your installation folder.
 3.  In the copied phantomjs folder is a file named [resources.json](https://github.com/highcharts/highcharts-export-server/blob/master/phantomjs/resources.json). This file specifies the Highcharts javascript files for creating the charts. Make sure the files can be looked up through the resources.json file. The files will be looked up relative to the working directory of PhantomJS, but you can also specify your own locations.
-4.  If you experience issues with PDF export not matching the page size, try changing the dpiCorrection setting in the highcharts-convert.js script. The issue is likely related to this PhantomJS [bug](https://github.com/ariya/phantomjs/issues/12685).
+4.  If you experience issues with PDF export not matching the page size, try changing the `dpiCorrection` setting in the highcharts-convert.js script. The issue is likely related to this PhantomJS [bug](https://github.com/ariya/phantomjs/issues/12685).
 5.  You're good to go!

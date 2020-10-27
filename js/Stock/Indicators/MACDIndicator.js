@@ -10,8 +10,8 @@ import H from '../../Core/Globals.js';
 var noop = H.noop;
 import U from '../../Core/Utilities.js';
 var correctFloat = U.correctFloat, defined = U.defined, merge = U.merge;
-import './EMAIndicator.js';
-import './SMAIndicator.js';
+// im port './EMAIndicator.js';
+// im port './SMAIndicator.js';
 var SMA = H.seriesTypes.sma, EMA = H.seriesTypes.ema;
 /**
  * The MACD series type.

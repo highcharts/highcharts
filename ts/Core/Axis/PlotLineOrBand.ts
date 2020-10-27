@@ -1141,23 +1141,27 @@ extend(Axis.prototype, /** @lends Highcharts.Axis.prototype */ {
      * @param {number} to
      *        The axis value to end on.
      *
+     * @param {Highcharts.AxisPlotBandsOptions|Highcharts.AxisPlotLinesOptions} options
+     *        The plotBand or plotLine configuration object.
+     *
      * @return {Highcharts.SVGPathArray}
      *         The SVG path definition in array form.
      */
     getPlotBandPath: function (
         this: Highcharts.Axis,
         from: number,
-        to: number
+        to: number,
+        options: (Highcharts.AxisPlotBandsOptions|Highcharts.AxisPlotLinesOptions) = this.options
     ): SVGPath {
         var toPath = this.getPlotLinePath({
                 value: to,
                 force: true,
-                acrossPanes: (this.options as any).acrossPanes
+                acrossPanes: options.acrossPanes
             } as Highcharts.AxisPlotLinePathOptionsObject),
             path = this.getPlotLinePath({
                 value: from,
                 force: true,
-                acrossPanes: (this.options as any).acrossPanes
+                acrossPanes: options.acrossPanes
             } as Highcharts.AxisPlotLinePathOptionsObject),
             result = [] as SVGPath,
             i,
@@ -1288,8 +1292,12 @@ extend(Axis.prototype, /** @lends Highcharts.Axis.prototype */ {
                 'plotLines'
         )
     ): (Highcharts.PlotLineOrBand|undefined) {
-        var obj = new PlotLineOrBand(this, options).render(),
+        var obj: Highcharts.PlotLineOrBand|undefined = new H.PlotLineOrBand(this, options),
             userOptions = this.userOptions;
+
+        if (this.visible) {
+            obj = obj.render();
+        }
 
         if (obj) { // #2189
             // Add it to the user options for exporting and Axis.update

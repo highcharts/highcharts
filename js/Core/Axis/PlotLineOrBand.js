@@ -846,18 +846,22 @@ extend(Axis.prototype, /** @lends Highcharts.Axis.prototype */ {
      * @param {number} to
      *        The axis value to end on.
      *
+     * @param {Highcharts.AxisPlotBandsOptions|Highcharts.AxisPlotLinesOptions} options
+     *        The plotBand or plotLine configuration object.
+     *
      * @return {Highcharts.SVGPathArray}
      *         The SVG path definition in array form.
      */
-    getPlotBandPath: function (from, to) {
+    getPlotBandPath: function (from, to, options) {
+        if (options === void 0) { options = this.options; }
         var toPath = this.getPlotLinePath({
             value: to,
             force: true,
-            acrossPanes: this.options.acrossPanes
+            acrossPanes: options.acrossPanes
         }), path = this.getPlotLinePath({
             value: from,
             force: true,
-            acrossPanes: this.options.acrossPanes
+            acrossPanes: options.acrossPanes
         }), result = [], i, 
         // #4964 check if chart is inverted or plotband is on yAxis
         horiz = this.horiz, plus = 1, isFlat, outside = (from < this.min && to < this.min) ||
@@ -947,7 +951,10 @@ extend(Axis.prototype, /** @lends Highcharts.Axis.prototype */ {
      * @return {Highcharts.PlotLineOrBand|undefined}
      */
     addPlotBandOrLine: function (options, coll) {
-        var obj = new PlotLineOrBand(this, options).render(), userOptions = this.userOptions;
+        var obj = new H.PlotLineOrBand(this, options), userOptions = this.userOptions;
+        if (this.visible) {
+            obj = obj.render();
+        }
         if (obj) { // #2189
             // Add it to the user options for exporting and Axis.update
             if (coll) {

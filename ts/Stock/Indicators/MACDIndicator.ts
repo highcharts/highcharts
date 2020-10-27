@@ -113,8 +113,8 @@ declare module '../../Core/Series/Types' {
     }
 }
 
-import './EMAIndicator.js';
-import './SMAIndicator.js';
+// im port './EMAIndicator.js';
+// im port './SMAIndicator.js';
 
 var SMA = H.seriesTypes.sma,
     EMA = H.seriesTypes.ema;

@@ -30,17 +30,20 @@ const {
     setOptions
 } = U;
 
+declare module '../Core/Chart/ChartLike'{
+    interface ChartLike {
+        stockTools?: Toolbar;
+        /** @requires modules/stock-tools */
+        setStockTools(options?: Highcharts.StockToolsOptions): void;
+    }
+}
+
 /**
  * Internal types
  * @private
  */
 declare global {
     namespace Highcharts {
-        interface ChartLike {
-            stockTools?: Toolbar;
-            /** @requires modules/stock-tools */
-            setStockTools(options?: StockToolsOptions): void;
-        }
         interface LangOptions {
             stockTools?: LangStockToolsOptions;
         }
@@ -340,9 +343,10 @@ setOptions({
             toolbarClassName: 'stocktools-toolbar',
             /**
              * A collection of strings pointing to config options for the
-             * toolbar items. Each name refers to unique key from definitions
-             * object.
+             * toolbar items. Each name refers to a unique key from the
+             * definitions object.
              *
+             * @type    {Array<string>}
              * @default [
              *   'indicators',
              *   'separator',

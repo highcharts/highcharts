@@ -35,6 +35,12 @@ const {
 
 type YAxisOptions = (typeof Axis)['defaultYAxisOptions'];
 
+declare module '../Chart/ChartLike'{
+    interface ChartLike {
+        inverted?: boolean;
+    }
+}
+
 /**
  * Internal types
  * @private
@@ -58,9 +64,6 @@ declare global {
             isCrosshair?: boolean;
             point?: Point;
             reverse?: boolean;
-        }
-        interface ChartLike {
-            inverted?: boolean;
         }
     }
 }

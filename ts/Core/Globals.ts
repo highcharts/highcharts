@@ -12,6 +12,12 @@
 
 import type Chart from './Chart/Chart';
 
+declare module './Chart/ChartLike'{
+    interface ChartLike {
+        frameShapes?: any; // @todo highcharts 3d
+        isBoosting?: any; // @todo boost module
+    }
+}
 /**
  * Internal types
  * @private
@@ -27,10 +33,6 @@ declare global {
         }
         interface XAxisOptions {
             stackLabels?: any; // @todo
-        }
-        interface ChartLike {
-            frameShapes?: any; // @todo highcharts 3d
-            isBoosting?: any; // @todo boost module
         }
         interface ChartOptions {
             forExport?: any; // @todo

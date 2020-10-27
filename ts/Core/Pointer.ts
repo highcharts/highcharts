@@ -42,22 +42,25 @@ const {
     splat
 } = U;
 
+declare module './Chart/ChartLike'{
+    interface ChartLike {
+        cancelClick?: boolean;
+        hoverPoint?: Highcharts.PointerHoverDataObject['hoverPoint'];
+        hoverPoints?: Highcharts.PointerHoverDataObject['hoverPoints'];
+        hoverSeries?: Highcharts.PointerHoverDataObject['hoverSeries'];
+        mouseDownX?: number;
+        mouseDownY?: number;
+        mouseIsDown?: (boolean|string);
+        tooltip?: Tooltip;
+    }
+}
+
 /**
  * Internal types
  * @private
  */
 declare global {
     namespace Highcharts {
-        interface ChartLike {
-            cancelClick?: boolean;
-            hoverPoint?: PointerHoverDataObject['hoverPoint'];
-            hoverPoints?: PointerHoverDataObject['hoverPoints'];
-            hoverSeries?: PointerHoverDataObject['hoverSeries'];
-            mouseDownX?: number;
-            mouseDownY?: number;
-            mouseIsDown?: (boolean|string);
-            tooltip?: Tooltip;
-        }
         interface PointerAxisCoordinateObject {
             axis: Axis;
             value: number;
@@ -1436,7 +1439,7 @@ class Pointer {
 
         // On touch devices, only proceed to trigger click if a handler is
         // defined
-        if (hasZoom && self.initiated && !fireClickEvent) {
+        if (hasZoom && self.initiated && !fireClickEvent && e.cancelable !== false) {
             e.preventDefault();
         }
 

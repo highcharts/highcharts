@@ -30,15 +30,18 @@ const {
     pick
 } = U;
 
+declare module '../Core/Chart/ChartLike'{
+    interface ChartLike {
+        getSelectedParentNodes(): Array<Highcharts.PackedBubblePoint>;
+    }
+}
+
 /**
  * Internal types
  * @private
  */
 declare global {
     namespace Highcharts {
-        interface ChartLike {
-            getSelectedParentNodes(): Array<PackedBubblePoint>;
-        }
         class PackedBubblePoint extends BubblePoint implements DragNodesPoint {
             public collisionNmb?: number;
             public dataLabelOnNull?: boolean;

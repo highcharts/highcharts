@@ -6,13 +6,13 @@ All Highcharts elements are customizable through options. 
 Layout and positioning
 ----------------------
 
-Most Highcharts elements displayed on a chart can be positioned using x and y values relative to the top left corner and using the "align" and "verticalAlign" options. The "align" option can have the values 'left', 'right' and 'center'. The "verticalAlign" align option can have the values 'top', 'bottom' and 'middle'.
+Most Highcharts elements displayed on a chart can be positioned using x and y values relative to the top left corner and using the `align` and `verticalAlign` options. The `align` option can have the values `'left'`, `'right'` and `'center'`. The `verticalAlign` option can have the values `'top'`, `'bottom'` and `'middle'`.
 
 ### Chart
 
 The chart's position in the HTML page is defined by the position of the container div. Height and width is set either by setting a height and width of the container div, or by setting the [chart.height](https://api.highcharts.com/highcharts/chart.height) and [chart.width](https://api.highcharts.com/highcharts/chart.width) Highcharts options.
 
-The _plot area_ is the square area within the axes, where the series are drawn. There are two sets of options that decide where the plot area is placed within the chart. The _margin_ options (marginLeft, marginTop etc) give the margin to the actual plot area and does not apply to other elements on the chart (labels, legend etc). The _spacing_ options (spacingLeft, spacingTop etc) decide the padding between the outer area and all elements inside a chart. In this mode, the chart is adjusted to make room for title and legend, axis labels etc. By default, the margins are null. Margins are only used in legacy charts as well as in situations where you want to make sure plot areas are align between multiple charts. Margins override their counterpart spacing options.
+The _plot area_ is the square area within the axes, where the series are drawn. There are two sets of options that decide where the plot area is placed within the chart. The _margin_ options (marginLeft, marginTop etc) give the margin to the actual plot area and does not apply to other elements on the chart (labels, legend etc). The _spacing_ options (spacingLeft, spacingTop etc) decide the padding between the outer area and all elements inside a chart. In this mode, the chart is adjusted to make room for title and legend, axis labels etc. By default, the margins are null. Margins are only used in legacy charts as well as in situations where you want to make sure plot areas are aligned between multiple charts. Margins override their counterpart spacing options.
 
 ![chartPosition.png](chartPosition.png)
 
@@ -77,7 +77,7 @@ See [api.highcharts.com#legend](https://api.highcharts.com/highcharts/legend) fo
 
 ### Title and subtitle
 
-The title and subtitle can be positioned using the "align", "verticalAlign", "x" and "y" options. They can also float setting the "floating" option to true.
+The title and subtitle can be positioned using the "align", "verticalAlign", "x" and "y" options. They can also float by setting the "floating" option to true.
 
 General text styling is set in the _style_ option. The text can also be styled inline using spans and CSS.
 

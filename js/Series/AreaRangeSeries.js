@@ -293,14 +293,8 @@ BaseSeries.seriesType('arearange', 'area', {
         // since we now have to loop over all the points multiple times to work
         // around the data label logic.
         if (isArray(dataLabelOptions)) {
-            if (dataLabelOptions.length > 1) {
-                upperDataLabelOptions = dataLabelOptions[0];
-                lowerDataLabelOptions = dataLabelOptions[1];
-            }
-            else {
-                upperDataLabelOptions = dataLabelOptions[0];
-                lowerDataLabelOptions = { enabled: false };
-            }
+            upperDataLabelOptions = dataLabelOptions[0] || { enabled: false };
+            lowerDataLabelOptions = dataLabelOptions[1] || { enabled: false };
         }
         else {
             // Make copies

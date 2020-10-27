@@ -12,7 +12,7 @@ import H from '../../Core/Globals.js';
 import U from '../../Core/Utilities.js';
 var defined = U.defined, isArray = U.isArray, merge = U.merge, objectEach = U.objectEach;
 /* eslint-enable @typescript-eslint/interface-name-prefix */
-import './SMAIndicator.js';
+// im port './SMAIndicator.js';
 var SMA = BaseSeries.seriesTypes.sma;
 /* eslint-disable require-jsdoc */
 // Utils:

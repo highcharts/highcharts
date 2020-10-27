@@ -38,7 +38,7 @@ function distZip() {
 
         const zipFileName = `${name.replace(/ /g, '-')}-${version}.zip`;
         const excludedDir = `!${dirToZip}/js-gzip/**`;
-        log.message(`Zipping file: ${zipFileName}, excluding sub-directory ${excludedDir}`);
+        log.message(`Zipping file: ${DIST_DIR}/${zipFileName}, excluding sub-directory ${excludedDir}`);
 
         return new Promise((resolve, reject) => {
             gulp.src([dirToZip + '/**', excludedDir])
