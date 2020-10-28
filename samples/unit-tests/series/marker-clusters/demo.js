@@ -371,8 +371,13 @@ QUnit.test('General marker-clusters', function (assert) {
             events: {
                 load: function () {
                     var chart = this,
+                        oldPointClicked = false,
                         point,
-                        graphicBBox;
+                        graphicBBox,
+                        oldPoint,
+                        oldPointPlotX,
+                        oldPointPlotY,
+                        isAnimationCorrect;
 
                     chart.xAxis[0].setExtremes(49, 52);
 
@@ -394,7 +399,59 @@ QUnit.test('General marker-clusters', function (assert) {
                             'correctly after the zoom (#13302).'
                     );
 
-                    done();
+                    // Check points position before animation.
+                    Highcharts.wrap(
+                        Highcharts.seriesTypes.scatter.prototype,
+                        'animateClusterPoint',
+                        function (proceed) {
+                            var p = arguments[1].point;
+
+                            if (oldPoint) {
+                                oldPoint.plotX = oldPointPlotX;
+                                oldPoint.plotY = oldPointPlotY;
+                            }
+
+                            proceed.apply(this, Array.prototype.slice.call(arguments, 1));
+
+                            if (
+                                oldPointClicked &&
+                                Math.abs(oldPointPlotX - p.graphic.attr('x')) > 1 &&
+                                Math.abs(oldPointPlotY - p.graphic.attr('y')) > 1
+                            ) {
+                                isAnimationCorrect = false;
+                            }
+                        }
+                    );
+
+                    Highcharts.addEvent(chart, 'render', function () {
+                        if (oldPointClicked) {
+                            oldPointClicked = false;
+
+                            assert.ok(
+                                isAnimationCorrect,
+                                'Image markers animation should start from the ' +
+                                'old cluster position (#14342).'
+                            );
+
+                            done();
+                        }
+                    });
+
+                    chart.xAxis[0].setExtremes(0, 100);
+                    chart.series[0].update({
+                        cluster: {
+                            animation: {
+                                duration: 1
+                            }
+                        }
+                    });
+
+                    oldPoint = chart.series[0].points[0];
+                    oldPointPlotX = oldPoint.plotX;
+                    oldPointPlotY = oldPoint.plotY;
+                    oldPointClicked = true;
+                    isAnimationCorrect = true;
+                    oldPoint.firePointEvent('click');
                 }
             }
         },
