@@ -171,8 +171,16 @@ class CSVParser extends DataParser<DataParser.EventObject> {
             // If the first row contain names, add them to the
             // headers array and skip the row.
             if (firstRowAsNames) {
-                parser.headers = lines[0]
+                const headers = lines[0]
                     .split(itemDelimiter || parser.guessedItemDelimiter || ',');
+
+                // Remove ""s from the headers
+                for (let i = 0; i < headers.length; i++) {
+                    headers[i] = headers[i].replace(/^["']|["']$/g, '');
+                }
+
+                parser.headers = headers;
+
                 startRow++;
             }
 

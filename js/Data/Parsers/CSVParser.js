@@ -132,8 +132,13 @@ var CSVParser = /** @class */ (function (_super) {
             // If the first row contain names, add them to the
             // headers array and skip the row.
             if (firstRowAsNames) {
-                parser.headers = lines[0]
+                var headers = lines[0]
                     .split(itemDelimiter || parser.guessedItemDelimiter || ',');
+                // Remove ""s from the headers
+                for (var i_1 = 0; i_1 < headers.length; i_1++) {
+                    headers[i_1] = headers[i_1].replace(/^["']|["']$/g, '');
+                }
+                parser.headers = headers;
                 startRow++;
             }
             var offset = 0;
@@ -152,11 +157,11 @@ var CSVParser = /** @class */ (function (_super) {
                 parser.converter.deduceDateFormat(parser.columns[0], null, true);
             }
             // Guess types.
-            for (var i_1 = 0, iEnd = parser.columns.length; i_1 < iEnd; ++i_1) {
-                column = parser.columns[i_1];
+            for (var i_2 = 0, iEnd = parser.columns.length; i_2 < iEnd; ++i_2) {
+                column = parser.columns[i_2];
                 for (var j = 0, jEnd = column.length; j < jEnd; ++j) {
                     if (column[j] && typeof column[j] === 'string') {
-                        parser.columns[i_1][j] = converter.asGuessedType(column[j]);
+                        parser.columns[i_2][j] = converter.asGuessedType(column[j]);
                     }
                 }
             }
