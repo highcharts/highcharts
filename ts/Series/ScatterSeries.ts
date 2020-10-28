@@ -10,11 +10,26 @@
 
 'use strict';
 
+/* *
+ *
+ *  Imports
+ *
+ * */
+
+import type LinePoint from './Line/LinePoint';
+import type LinePointOptions from './Line/LinePointOptions';
+import type LineSeriesOptions from './Line/LineSeriesOptions';
 import type { SeriesStatesOptions } from '../Core/Series/SeriesOptions';
 import BaseSeries from '../Core/Series/Series.js';
 import LineSeries from './Line/LineSeries.js';
 import U from '../Core/Utilities.js';
 const { addEvent } = U;
+
+/* *
+ *
+ *  Declarations
+ *
+ * */
 
 declare module '../Core/Series/SeriesLike' {
     interface SeriesLike {
@@ -34,18 +49,18 @@ declare module '../Core/Series/SeriesType' {
  */
 declare global {
     namespace Highcharts {
-        interface ScatterPointOptions extends LineSeries.PointOptions {
+        interface ScatterPointOptions extends LinePointOptions {
             // placeholder for inheritance
         }
         interface ScatterSeriesJitterOptions {
             x?: number;
             y?: number;
         }
-        interface ScatterSeriesOptions extends LineSeries.SeriesOptions {
+        interface ScatterSeriesOptions extends LineSeriesOptions {
             jitter?: ScatterSeriesJitterOptions;
             states?: SeriesStatesOptions<ScatterSeries>;
         }
-        class ScatterPoint extends LineSeries.Point {
+        class ScatterPoint extends LinePoint {
             public options: ScatterPointOptions;
             public series: ScatterSeries;
         }
@@ -59,6 +74,12 @@ declare global {
         }
     }
 }
+
+/* *
+ *
+ *  Class
+ *
+ * */
 
 /**
  * Scatter series type.

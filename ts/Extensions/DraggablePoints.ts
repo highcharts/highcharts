@@ -16,7 +16,7 @@ import type AnimationOptionsObject from '../Core/Animation/AnimationOptionsObjec
 import type BBoxObject from '../Core/Renderer/BBoxObject';
 import type ColorString from '../Core/Color/ColorString';
 import type ColorType from '../Core/Color/ColorType';
-import type ColumnSeries from '../Series/Column/ColumnSeries';
+import type ColumnPoint from '../Series/Column/ColumnPoint';
 import type PointerEvent from '../Core/PointerEvent';
 import type { PointOptions, PointShortOptions } from '../Core/Series/PointOptions';
 import type PositionObject from '../Core/Renderer/PositionObject';
@@ -514,7 +514,7 @@ const columnDragDropProps = seriesTypes.column.prototype.dragDropProps = {
         beforeResize: function (
             guideBox: SVGElement,
             pointVals: Record<string, number>,
-            point: ColumnSeries.Point
+            point: ColumnPoint
         ): void {
             // We need to ensure that guideBox always starts at threshold.
             // We flip whether or not we update the top or bottom of the guide
@@ -547,7 +547,7 @@ const columnDragDropProps = seriesTypes.column.prototype.dragDropProps = {
         // Make sure we remove the handle on the other side.
         resizeSide: function (
             pointVals: Record<string, number>,
-            point: ColumnSeries.Point
+            point: ColumnPoint
         ): string {
             var chart = point.series.chart,
                 dragHandles = chart.dragHandles,
@@ -563,7 +563,7 @@ const columnDragDropProps = seriesTypes.column.prototype.dragDropProps = {
             return side;
         },
         // Position handle at bottom if column is below threshold
-        handlePositioner: function (point: ColumnSeries.Point): PositionObject {
+        handlePositioner: function (point: ColumnPoint): PositionObject {
             var bBox: BBoxObject =
                 (point.shapeArgs as any) || (point.graphic as any).getBBox();
 
@@ -574,7 +574,7 @@ const columnDragDropProps = seriesTypes.column.prototype.dragDropProps = {
             };
         },
         // Horizontal handle
-        handleFormatter: function (point: ColumnSeries.Point): SVGPath {
+        handleFormatter: function (point: ColumnPoint): SVGPath {
             var shapeArgs = point.shapeArgs || {},
                 radius: number = shapeArgs.r || 0, // Rounding of bar corners
                 width: number = shapeArgs.width || 0,

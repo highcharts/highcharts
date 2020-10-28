@@ -17,7 +17,6 @@ var win = H.win;
 import LegendSymbolMixin from '../../Mixins/LegendSymbol.js';
 import O from '../../Core/Options.js';
 var defaultOptions = O.defaultOptions;
-import Point from '../../Core/Series/Point.js';
 import SVGElement from '../../Core/Renderer/SVG/SVGElement.js';
 import U from '../../Core/Utilities.js';
 var addEvent = U.addEvent, arrayMax = U.arrayMax, arrayMin = U.arrayMin, clamp = U.clamp, correctFloat = U.correctFloat, defined = U.defined, erase = U.erase, error = U.error, extend = U.extend, find = U.find, fireEvent = U.fireEvent, getNestedProperty = U.getNestedProperty, isArray = U.isArray, isFunction = U.isFunction, isNumber = U.isNumber, isString = U.isString, merge = U.merge, objectEach = U.objectEach, pick = U.pick, removeEvent = U.removeEvent, splat = U.splat, syncTimeout = U.syncTimeout;
@@ -4932,18 +4931,10 @@ extend(LineSeries.prototype, {
     kdAxisArray: ['clientX', 'plotY'],
     // each point's x and y values are stored in this.xData and this.yData
     parallelArrays: ['x', 'y'],
-    pointClass: Point,
     requireSorting: true,
     // requires the data to be sorted
     sorted: true
 });
-/* *
- *
- *  Class Namespace
- *
- * */
-(function (LineSeries) {
-})(LineSeries || (LineSeries = {}));
 BaseSeries.registerSeriesType('line', LineSeries);
 /* *
  *
@@ -4953,7 +4944,7 @@ BaseSeries.registerSeriesType('line', LineSeries);
 H.Series = LineSeries; // backwards compatibility
 /* *
  *
- *  Export
+ *  Default Export
  *
  * */
 export default LineSeries;

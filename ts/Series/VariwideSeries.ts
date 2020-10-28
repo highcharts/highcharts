@@ -12,7 +12,16 @@
 
 'use strict';
 
-import type ColumnSeries from '../Series/Column/ColumnSeries';
+/* *
+ *
+ *  Imports
+ *
+ * */
+
+import type ColumnPoint from './Column/ColumnPoint';
+import type ColumnPointOptions from './Column/ColumnPointOptions';
+import type ColumnSeries from './Column/ColumnSeries';
+import type ColumnSeriesOptions from './Column/ColumnSeriesOptions';
 import type DataLabelOptions from '../Core/Series/DataLabelOptions';
 import type PositionObject from '../Core/Renderer/PositionObject';
 import type { SeriesStatesOptions } from '../Core/Series/SeriesOptions';
@@ -20,10 +29,23 @@ import type StackingAxis from '../Core/Axis/StackingAxis';
 import type SVGElement from '../Core/Renderer/SVG/SVGElement';
 import Axis from '../Core/Axis/Axis.js';
 import BaseSeries from '../Core/Series/Series.js';
-const {
-    seriesTypes
-} = BaseSeries;
+const { seriesTypes } = BaseSeries;
 import H from '../Core/Globals.js';
+import U from '../Core/Utilities.js';
+const {
+    addEvent,
+    isNumber,
+    pick,
+    wrap
+} = U;
+
+import '../Series/AreaSeries.js';
+
+/* *
+ *
+ *  Declarations
+ *
+ * */
 
 declare module '../Core/Series/PointLike' {
     interface PointLike {
@@ -37,7 +59,7 @@ declare module '../Core/Series/PointLike' {
  */
 declare global {
     namespace Highcharts {
-        class VariwidePoint extends ColumnSeries.Point {
+        class VariwidePoint extends ColumnPoint {
             public crosshairWidth: number;
             public isValid: () => boolean;
             public options: VariwidePointOptions;
@@ -74,29 +96,26 @@ declare global {
                 index: number
             ): void;
         }
-        interface VariwidePointOptions extends ColumnSeries.PointOptions {
+        interface VariwidePointOptions extends ColumnPointOptions {
         }
-        interface VariwideSeriesOptions extends ColumnSeries.SeriesOptions {
+        interface VariwideSeriesOptions extends ColumnSeriesOptions {
             states?: SeriesStatesOptions<VariwideSeries>;
         }
     }
 }
 
-import U from '../Core/Utilities.js';
-const {
-    addEvent,
-    isNumber,
-    pick,
-    wrap
-} = U;
-
-import '../Series/AreaSeries.js';
 
 declare module '../Core/Series/SeriesType' {
     interface SeriesTypeRegistry {
         variwide: typeof Highcharts.VariwideSeries;
     }
 }
+
+/* *
+ *
+ *  Class
+ *
+ * */
 
 /**
  * @private

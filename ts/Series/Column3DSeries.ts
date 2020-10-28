@@ -14,6 +14,8 @@ import type Axis from '../Core/Axis/Axis';
 import type BBoxObject from '../Core/Renderer/BBoxObject';
 import type Chart from '../Core/Chart/Chart';
 import type ColorString from '../Core/Color/ColorString';
+import type ColumnPoint from './Column/ColumnPoint';
+import type ColumnSeriesOptions from './Column/ColumnSeriesOptions';
 import type DataLabelOptions from '../Core/Series/DataLabelOptions';
 import type Position3DObject from '../Core/Renderer/Position3DObject';
 import type SVGAttributes from '../Core/Renderer/SVG/SVGAttributes';
@@ -434,7 +436,7 @@ addEvent(LineSeries, 'afterInit', function (): void {
         (this as ColumnSeries).handle3dGrouping
     ) {
         var series = this as ColumnSeries,
-            seriesOptions: ColumnSeries.SeriesOptions = this.options,
+            seriesOptions: ColumnSeriesOptions = this.options,
             grouping = seriesOptions.grouping,
             stacking = seriesOptions.stacking,
             reversedStacks = pick(this.yAxis.options.reversedStacks, true),
@@ -517,8 +519,8 @@ function setState(
  * @private
  */
 function hasNewShapeType(
-    this: ColumnSeries.Point,
-    proceed: ColumnSeries.Point['hasNewShapeType'],
+    this: ColumnPoint,
+    proceed: ColumnPoint['hasNewShapeType'],
     ...args: []
 ): boolean|undefined {
     return this.series.chart.is3d() ?
@@ -549,7 +551,7 @@ if (BaseSeries.seriesTypes.columnRange) {
 wrap(LineSeries.prototype, 'alignDataLabel', function (
     this: LineSeries,
     proceed: Function,
-    point: ColumnSeries.Point,
+    point: ColumnPoint,
     dataLabel: SVGElement,
     options: DataLabelOptions,
     alignTo: BBoxObject
@@ -566,7 +568,7 @@ wrap(LineSeries.prototype, 'alignDataLabel', function (
         this.is('column')
     ) {
         const series = this as ColumnSeries,
-            seriesOptions: ColumnSeries.SeriesOptions = series.options,
+            seriesOptions: ColumnSeriesOptions = series.options,
             inside = pick(options.inside, !!series.options.stacking),
             options3d = (chart.options.chart as any).options3d,
             xOffset = point.pointWidth / 2 || 0;

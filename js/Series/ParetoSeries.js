@@ -14,6 +14,11 @@ import U from '../Core/Utilities.js';
 var correctFloat = U.correctFloat, merge = U.merge;
 import '../Core/Options.js';
 import '../Series/Line/LineSeries.js';
+/* *
+ *
+ *  Class
+ *
+ * */
 /**
  * The pareto series type.
  *

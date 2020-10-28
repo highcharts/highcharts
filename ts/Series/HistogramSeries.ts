@@ -11,7 +11,16 @@
 
 'use strict';
 
+/* *
+ *
+ *  Imports
+ *
+ * */
+
+import type ColumnPoint from './Column/ColumnPoint';
+import type ColumnPointOptions from './Column/ColumnPointOptions';
 import type ColumnSeries from './Column/ColumnSeries';
+import type ColumnSeriesOptions from './Column/ColumnSeriesOptions';
 import type LineSeries from './Line/LineSeries';
 import type { SeriesStatesOptions } from '../Core/Series/SeriesOptions';
 import BaseSeries from '../Core/Series/Series.js';
@@ -26,13 +35,21 @@ const {
     objectEach
 } = U;
 
+import './Column/ColumnSeries.js';
+
+/* *
+ *
+ *  Declarations
+ *
+ * */
+
 /**
  * Internal types
  * @private
  */
 declare global {
     namespace Highcharts {
-        class HistogramPoint extends ColumnSeries.Point {
+        class HistogramPoint extends ColumnPoint {
             public options: HistogramPointOptions;
             public series: HistogramSeries;
         }
@@ -58,10 +75,10 @@ declare global {
                 binWidth: number
             ): Array<HistogramPointOptions>;
         }
-        interface HistogramPointOptions extends ColumnSeries.PointOptions {
+        interface HistogramPointOptions extends ColumnPointOptions {
             x2?: number;
         }
-        interface HistogramSeriesOptions extends ColumnSeries.SeriesOptions {
+        interface HistogramSeriesOptions extends ColumnSeriesOptions {
             baseSeries?: (number|string);
             binsNumber?: string;
             binWidth?: number;
@@ -78,8 +95,6 @@ declare module '../Core/Series/SeriesType' {
         histogram: typeof Highcharts.HistogramSeries;
     }
 }
-
-import './Column/ColumnSeries.js';
 
 /* ************************************************************************** *
  *  HISTOGRAM

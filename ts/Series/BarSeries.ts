@@ -10,10 +10,25 @@
 
 'use strict';
 
+/* *
+ *
+ *  Imports
+ *
+ * */
+
+import type ColumnPoint from './Column/ColumnPoint';
+import type ColumnPointOptions from './Column/ColumnPointOptions';
 import type ColumnSeries from './Column/ColumnSeries';
+import type ColumnSeriesOptions from './Column/ColumnSeriesOptions';
 import Series from '../Core/Series/Series.js';
 
 import './Column/ColumnSeries.js';
+
+/* *
+ *
+ *  Declarations
+ *
+ * */
 
 /**
  * @private
@@ -30,13 +45,13 @@ declare module '../Core/Series/SeriesType' {
  */
 declare global {
     namespace Highcharts {
-        interface BarPointOptions extends ColumnSeries.PointOptions {
+        interface BarPointOptions extends ColumnPointOptions {
         }
-        interface BarSeriesOptions extends ColumnSeries.SeriesOptions {
+        interface BarSeriesOptions extends ColumnSeriesOptions {
         }
         interface SeriesTypesDictionary {
         }
-        class BarPoint extends ColumnSeries.Point {
+        class BarPoint extends ColumnPoint {
             public options: BarPointOptions;
             public series: BarSeries;
         }
@@ -49,6 +64,12 @@ declare global {
         }
     }
 }
+
+/* *
+ *
+ *  Class
+ *
+ * */
 
 /**
  * Bar series type.

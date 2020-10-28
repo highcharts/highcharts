@@ -58,6 +58,11 @@ var dragNodesMixin = H.dragNodesMixin;
 * @since 7.0.0
 */
 ''; // detach doclets above
+/* *
+ *
+ *  Class
+ *
+ * */
 /**
  * @private
  * @class

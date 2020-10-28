@@ -12,6 +12,12 @@
 
 'use strict';
 
+/* *
+ *
+ *  Imports
+ *
+ * */
+
 import type AnimationOptionsObject from '../../Core/Animation/AnimationOptionsObject';
 import type Chart from '../../Core/Chart/Chart';
 import type ColorType from '../../Core/Color/ColorType';
@@ -19,6 +25,9 @@ import type {
     DataLabelOptions,
     DataLabelTextPathOptions
 } from '../../Core/Series/DataLabelOptions';
+import type LinePoint from '../Line/LinePoint';
+import type LinePointOptions from '../Line/LinePointOptions';
+import type LineSeriesOptions from '../Line/LineSeriesOptions';
 import type { PointShortOptions } from '../../Core/Series/PointOptions';
 import type { SeriesStatesOptions } from '../../Core/Series/SeriesOptions';
 import type { StatesOptionsKey } from '../../Core/Series/StatesOptions';
@@ -38,6 +47,18 @@ const {
     defined,
     pick
 } = U;
+
+import '../../Core/Options.js';
+import './Layouts.js';
+import './DraggableNodes.js';
+
+var dragNodesMixin = H.dragNodesMixin;
+
+/* *
+ *
+ *  Declarations
+ *
+ * */
 
 declare module '../../Core/Series/PointOptions' {
     interface PointStateInactiveOptions
@@ -90,7 +111,7 @@ declare global {
             linkFormatter?: NetworkgraphDataLabelsFormatterCallbackFunction;
             linkTextPath?: DataLabelTextPathOptions;
         }
-        interface NetworkgraphPointOptions extends LineSeries.PointOptions, NodesPointOptions {
+        interface NetworkgraphPointOptions extends LinePointOptions, NodesPointOptions {
             color?: ColorType;
             colorIndex?: number;
             dashStyle?: string;
@@ -99,7 +120,7 @@ declare global {
             opacity?: number;
             width?: number;
         }
-        interface NetworkgraphSeriesOptions extends LineSeries.SeriesOptions, NodesSeriesOptions {
+        interface NetworkgraphSeriesOptions extends LineSeriesOptions, NodesSeriesOptions {
             dataLabels?: NetworkgraphDataLabelsOptionsObject;
             draggable?: boolean;
             inactiveOtherPoints?: boolean;
@@ -108,7 +129,7 @@ declare global {
             nodes?: Array<NetworkgraphPointOptions>;
             states?: SeriesStatesOptions<NetworkgraphSeries>;
         }
-        class NetworkgraphPoint extends LineSeries.Point implements DragNodesPoint, NodesPoint {
+        class NetworkgraphPoint extends LinePoint implements DragNodesPoint, NodesPoint {
             public className: NodesPoint['className'];
             public degree: number;
             public fixedPosition: DragNodesPoint['fixedPosition'];
@@ -200,12 +221,6 @@ declare module '../../Core/Series/SeriesType' {
     }
 }
 
-import '../../Core/Options.js';
-import './Layouts.js';
-import './DraggableNodes.js';
-
-var dragNodesMixin = H.dragNodesMixin;
-
 /**
  * Formatter callback function.
  *
@@ -244,6 +259,12 @@ var dragNodesMixin = H.dragNodesMixin;
  */
 
 ''; // detach doclets above
+
+/* *
+ *
+ *  Class
+ *
+ * */
 
 /**
  * @private

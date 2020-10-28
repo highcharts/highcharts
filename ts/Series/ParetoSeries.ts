@@ -10,7 +10,16 @@
 
 'use strict';
 
+/* *
+ *
+ *  Imports
+ *
+ * */
+
+import type LinePoint from './Line/LinePoint';
+import type LinePointOptions from './Line/LinePointOptions';
 import type LineSeries from './Line/LineSeries';
+import type LineSeriesOptions from './Line/LineSeriesOptions';
 import type { SeriesStatesOptions } from '../Core/Series/SeriesOptions';
 import BaseSeries from '../Core/Series/Series.js';
 import DerivedSeriesMixin from '../Mixins/DerivedSeries.js';
@@ -20,13 +29,22 @@ const {
     merge
 } = U;
 
+import '../Core/Options.js';
+import '../Series/Line/LineSeries.js';
+
+/* *
+ *
+ *  Declarations
+ *
+ * */
+
 /**
  * Internal types
  * @private
  */
 declare global {
     namespace Highcharts {
-        class ParetoPoint extends LineSeries.Point {
+        class ParetoPoint extends LinePoint {
             public options: ParetoPointOptions;
             public series: ParetoSeries;
         }
@@ -52,9 +70,9 @@ declare global {
                 isSum?: T
             ): (T extends true ? number : Array<Array<number>>);
         }
-        interface ParetoPointOptions extends LineSeries.PointOptions {
+        interface ParetoPointOptions extends LinePointOptions {
         }
-        interface ParetoSeriesOptions extends LineSeries.SeriesOptions {
+        interface ParetoSeriesOptions extends LineSeriesOptions {
             states?: SeriesStatesOptions<ParetoSeries>;
         }
     }
@@ -69,8 +87,11 @@ declare module '../Core/Series/SeriesType' {
     }
 }
 
-import '../Core/Options.js';
-import '../Series/Line/LineSeries.js';
+/* *
+ *
+ *  Class
+ *
+ * */
 
 /**
  * The pareto series type.

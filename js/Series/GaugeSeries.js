@@ -18,6 +18,11 @@ import '../Core/Options.js';
 import '../Core/Series/Point.js';
 import '../Core/Interaction.js';
 var TrackerMixin = H.TrackerMixin;
+/* *
+ *
+ *  Class
+ *
+ * */
 /**
  * Gauges are circular plots displaying one or more values with a dial pointing
  * to values along the perimeter.

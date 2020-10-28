@@ -15,6 +15,11 @@ import LegendSymbolMixin from '../Mixins/LegendSymbol.js';
 import LineSeries from './Line/LineSeries.js';
 import U from '../Core/Utilities.js';
 var objectEach = U.objectEach, pick = U.pick;
+/* *
+ *
+ *  Class
+ *
+ * */
 /**
  * Area series type.
  *

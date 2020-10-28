@@ -13,7 +13,10 @@
 'use strict';
 
 import type BBoxObject from '../Core/Renderer/BBoxObject';
-import type ColumnSeries from './Column/ColumnSeries.js';
+import type ColumnPoint from './Column/ColumnPoint';
+import type ColumnPointOptions from './Column/ColumnPointOptions';
+import type ColumnSeries from './Column/ColumnSeries';
+import type ColumnSeriesOptions from './Column/ColumnSeriesOptions';
 import type CSSObject from '../Core/Renderer/CSSObject';
 import type {
     PointOptions,
@@ -58,7 +61,7 @@ import './Column/ColumnSeries.js';
  */
 declare global {
     namespace Highcharts {
-        class WordcloudPoint extends ColumnSeries.Point {
+        class WordcloudPoint extends ColumnPoint {
             public dimensions: SizeObject;
             public draw: typeof drawPoint;
             public lastCollidedWith?: WordcloudPoint;
@@ -113,11 +116,11 @@ declare global {
             placed: Array<WordcloudPoint>;
             rotation: WordcloudSeriesRotationOptions;
         }
-        interface WordcloudPointOptions extends ColumnSeries.PointOptions {
+        interface WordcloudPointOptions extends ColumnPointOptions {
             name?: string;
             weight?: number;
         }
-        interface WordcloudSeriesOptions extends ColumnSeries.SeriesOptions {
+        interface WordcloudSeriesOptions extends ColumnSeriesOptions {
             allowExtendPlayingField?: boolean;
             data?: Array<(PointOptions|PointShortOptions|WordcloudPointOptions)>;
             maxFontSize?: number;

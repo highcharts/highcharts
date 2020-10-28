@@ -10,17 +10,30 @@
 
 'use strict';
 
+/* *
+ *
+ *  Imports
+ *
+ * */
+
+import type ColumnPoint from './Column/ColumnPoint';
+import type ColumnPointOptions from './Column/ColumnPointOptions';
+import type ColumnSeriesOptions from './Column/ColumnSeriesOptions';
 import type { SeriesStatesOptions } from '../Core/Series/SeriesOptions';
 import BaseSeries from '../Core/Series/Series.js';
 import ColumnSeries from './Column/ColumnSeries.js';
-const {
-    prototype: colProto
-} = ColumnSeries;
+const { prototype: colProto } = ColumnSeries;
 import U from '../Core/Utilities.js';
 const {
     clamp,
     pick
 } = U;
+
+/* *
+ *
+ *  Declarations
+ *
+ * */
 
 /**
  * Internal types
@@ -28,7 +41,7 @@ const {
  */
 declare global {
     namespace Highcharts {
-        class ColumnPyramidPoint extends ColumnSeries.Point {
+        class ColumnPyramidPoint extends ColumnPoint {
             public options: ColumnPyramidPointOptions;
             public series: ColumnPyramidSeries;
         }
@@ -39,9 +52,9 @@ declare global {
             public points: Array<ColumnPyramidPoint>;
             public translate(): void;
         }
-        interface ColumnPyramidPointOptions extends ColumnSeries.PointOptions {
+        interface ColumnPyramidPointOptions extends ColumnPointOptions {
         }
-        interface ColumnPyramidSeriesOptions extends ColumnSeries.SeriesOptions {
+        interface ColumnPyramidSeriesOptions extends ColumnSeriesOptions {
             states?: SeriesStatesOptions<ColumnPyramidSeries>;
         }
         interface SeriesTypesDictionary {

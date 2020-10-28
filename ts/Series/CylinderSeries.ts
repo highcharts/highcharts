@@ -14,8 +14,16 @@
 
 'use strict';
 
+/* *
+ *
+ *  Imports
+ *
+ * */
+
 import type ColorType from '../Core/Color/ColorType';
-import type ColumnSeries from '../Series/Column/ColumnSeries';
+import type ColumnPoint from './Column/ColumnPoint';
+import type ColumnPointOptions from './Column/ColumnPointOptions';
+import type ColumnSeriesOptions from './Column/ColumnSeriesOptions';
 import type Chart from '../Core/Chart/Chart';
 import type Position3DObject from '../Core/Renderer/Position3DObject';
 import type PositionObject from '../Core/Renderer/PositionObject';
@@ -25,6 +33,8 @@ import type SVGElement from '../Core/Renderer/SVG/SVGElement';
 import type SVGPath from '../Core/Renderer/SVG/SVGPath';
 import Color from '../Core/Color/Color.js';
 const { parse: color } = Color;
+import ColumnSeries from './Column/ColumnSeries.js';
+const { prototype: columnProto } = ColumnSeries;
 import H from '../Core/Globals.js';
 const {
     charts,
@@ -35,9 +45,7 @@ const {
     }
 } = H;
 import Math3D from '../Extensions/Math3D.js';
-const {
-    perspective
-} = Math3D;
+const { perspective } = Math3D;
 import Series from '../Core/Series/Series.js';
 import _SVGRenderer from '../Core/Renderer/SVG/SVGRenderer.js';
 import U from '../Core/Utilities.js';
@@ -46,7 +54,11 @@ const {
     pick
 } = U;
 
-import '../Series/Column/ColumnSeries.js';
+/* *
+ *
+ *  Declarations
+ *
+ * */
 
 declare module '../Core/Series/SeriesType' {
     interface SeriesTypeRegistry {
@@ -60,7 +72,7 @@ declare module '../Core/Series/SeriesType' {
  */
 declare global {
     namespace Highcharts {
-        class CylinderPoint extends ColumnSeries.Point {
+        class CylinderPoint extends ColumnPoint {
             public options: CylinderPointOptions;
             public series: CylinderSeries;
         }
@@ -82,10 +94,10 @@ declare global {
             top: SVGPath;
             zIndexes: Dictionary<number>;
         }
-        interface CylinderPointOptions extends ColumnSeries.PointOptions {
+        interface CylinderPointOptions extends ColumnPointOptions {
             shapeType?: string;
         }
-        interface CylinderSeriesOptions extends ColumnSeries.SeriesOptions {
+        interface CylinderSeriesOptions extends ColumnSeriesOptions {
             states?: SeriesStatesOptions<CylinderSeries>;
         }
         interface Elements3dObject {
@@ -154,10 +166,7 @@ Series.seriesType<typeof Highcharts.CylinderSeries>(
     /** @lends Highcharts.seriesTypes.cylinder#pointClass# */
     {
         shapeType: 'cylinder',
-        hasNewShapeType: H
-            .seriesTypes.column.prototype
-            .pointClass.prototype
-            .hasNewShapeType
+        hasNewShapeType: columnProto.pointClass.prototype.hasNewShapeType
     }
 );
 

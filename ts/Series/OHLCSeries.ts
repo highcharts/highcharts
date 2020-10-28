@@ -10,15 +10,30 @@
 
 'use strict';
 
+/* *
+ *
+ *  Imports
+ *
+ * */
+
 import type ColorType from '../Core/Color/ColorType';
-import type ColumnSeries from './Column/ColumnSeries';
+import type ColumnPoint from './Column/ColumnPoint';
+import type ColumnPointOptions from './Column/ColumnPointOptions';
+import type ColumnSeriesOptions from './Column/ColumnSeriesOptions';
 import type { SeriesStatesOptions } from '../Core/Series/SeriesOptions';
 import type { StatesOptionsKey } from '../Core/Series/StatesOptions';
 import type SVGAttributes from '../Core/Renderer/SVG/SVGAttributes';
 import type SVGPath from '../Core/Renderer/SVG/SVGPath';
 import BaseSeries from '../Core/Series/Series.js';
-const { seriesTypes } = BaseSeries;
+import ColumnSeries from './Column/ColumnSeries.js';
+const { prototype: columnProto } = ColumnSeries;
 import Point from '../Core/Series/Point.js';
+
+/* *
+ *
+ *  Declarations
+ *
+ * */
 
 /**
  * Internal types
@@ -27,14 +42,14 @@ import Point from '../Core/Series/Point.js';
 declare global {
     namespace Highcharts {
         type OHLCYData = [number, number, number, number];
-        interface OHLCPointOptions extends ColumnSeries.PointOptions {
+        interface OHLCPointOptions extends ColumnPointOptions {
             upColor?: ColorType;
         }
-        interface OHLCSeriesOptions extends ColumnSeries.SeriesOptions {
+        interface OHLCSeriesOptions extends ColumnSeriesOptions {
             upColor?: ColorType;
             states?: SeriesStatesOptions<OHLCSeries>;
         }
-        class OHLCPoint extends ColumnSeries.Point {
+        class OHLCPoint extends ColumnPoint {
             public close: number;
             public high: number;
             public low: number;
@@ -69,7 +84,11 @@ declare module '../Core/Series/SeriesType' {
     }
 }
 
-import './Column/ColumnSeries.js';
+/* *
+ *
+ *  Class
+ *
+ * */
 
 /**
  * The ohlc series type.
@@ -218,7 +237,7 @@ BaseSeries.seriesType<typeof Highcharts.OHLCSeries>(
          * @return {void}
          */
         init: function (this: Highcharts.OHLCSeries): void {
-            seriesTypes.column.prototype.init.apply(this, arguments as any);
+            columnProto.init.apply(this, arguments as any);
 
             this.options.stacking = void 0; // #8817
         },
@@ -237,7 +256,7 @@ BaseSeries.seriesType<typeof Highcharts.OHLCSeries>(
             point: Highcharts.OHLCPoint,
             state: StatesOptionsKey
         ): SVGAttributes {
-            var attribs = seriesTypes.column.prototype.pointAttribs.call(
+            var attribs = columnProto.pointAttribs.call(
                     this,
                     point,
                     state
@@ -276,7 +295,7 @@ BaseSeries.seriesType<typeof Highcharts.OHLCSeries>(
                     'yBottom'
                 ]; // translate OHLC for
 
-            seriesTypes.column.prototype.translate.apply(series);
+            columnProto.translate.apply(series);
 
             // Do the translation
             series.points.forEach(function (point): void {

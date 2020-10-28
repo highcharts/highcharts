@@ -22,6 +22,11 @@ import SVGRenderer from '../Core/Renderer/SVG/SVGRenderer.js';
 import U from '../Core/Utilities.js';
 var addEvent = U.addEvent, clamp = U.clamp, defined = U.defined, fireEvent = U.fireEvent, isNumber = U.isNumber, merge = U.merge, pick = U.pick, relativeLength = U.relativeLength;
 import '../Core/Options.js';
+/* *
+ *
+ *  Class
+ *
+ * */
 /**
  * Pie series type.
  *

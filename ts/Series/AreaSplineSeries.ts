@@ -10,13 +10,27 @@
 
 'use strict';
 
+/* *
+ *
+ *  Imports
+ *
+ * */
+
 import type { SeriesStatesOptions } from '../Core/Series/SeriesOptions';
 import BaseSeries from '../Core/Series/Series.js';
 import LegendSymbolMixin from '../Mixins/LegendSymbol.js';
 import O from '../Core/Options.js';
-const {
-    defaultOptions
-} = O;
+const { defaultOptions } = O;
+
+import './AreaSeries.js';
+import './SplineSeries.js';
+var areaProto = BaseSeries.seriesTypes.area.prototype;
+
+/* *
+ *
+ *  Declarations
+ *
+ * */
 
 /**
  * Internal types
@@ -53,10 +67,11 @@ declare module '../Core/Series/SeriesType' {
     }
 }
 
-import './AreaSeries.js';
-import './SplineSeries.js';
-
-var areaProto = BaseSeries.seriesTypes.area.prototype;
+/* *
+ *
+ *  Class
+ *
+ * */
 
 /**
  * AreaSpline series type.

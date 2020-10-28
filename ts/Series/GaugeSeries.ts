@@ -10,7 +10,16 @@
 
 'use strict';
 
+/* *
+ *
+ *  Imports
+ *
+ * */
+
 import type ColorType from '../Core/Color/ColorType';
+import type LinePoint from './Line/LinePoint';
+import type LinePointOptions from './Line/LinePointOptions';
+import type LineSeriesOptions from './Line/LineSeriesOptions';
 import type {
     PointOptions,
     PointShortOptions
@@ -33,6 +42,18 @@ const {
     pInt
 } = U;
 
+import '../Core/Options.js';
+import '../Core/Series/Point.js';
+import '../Core/Interaction.js';
+
+var TrackerMixin = H.TrackerMixin;
+
+/* *
+ *
+ *  Declarations
+ *
+ * */
+
 declare module '../Core/Chart/ChartLike'{
     interface ChartLike {
         angular?: boolean;
@@ -52,7 +73,7 @@ declare module '../Core/Series/SeriesLike' {
  */
 declare global {
     namespace Highcharts {
-        class GaugePoint extends LineSeries.Point {
+        class GaugePoint extends LinePoint {
             public dial?: SVGElement;
             public option: GaugePointOptions;
             public series: GaugeSeries;
@@ -80,7 +101,7 @@ declare global {
             ): void;
             public translate(): void;
         }
-        interface GaugePointOptions extends LineSeries.PointOptions {
+        interface GaugePointOptions extends LinePointOptions {
         }
         interface GaugeSeriesDialOptions {
             backgroundColor?: ColorType;
@@ -93,7 +114,7 @@ declare global {
             rearLength?: string;
             topWidth?: number;
         }
-        interface GaugeSeriesOptions extends LineSeries.SeriesOptions {
+        interface GaugeSeriesOptions extends LineSeriesOptions {
             dial?: GaugeSeriesDialOptions;
             overshoot?: number;
             pivot?: GaugeSeriesPivotOptions;
@@ -118,11 +139,11 @@ declare module '../Core/Series/SeriesType' {
     }
 }
 
-import '../Core/Options.js';
-import '../Core/Series/Point.js';
-import '../Core/Interaction.js';
-
-var TrackerMixin = H.TrackerMixin;
+/* *
+ *
+ *  Class
+ *
+ * */
 
 /**
  * Gauges are circular plots displaying one or more values with a dial pointing

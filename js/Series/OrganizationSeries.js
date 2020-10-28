@@ -24,6 +24,11 @@ var base = BaseSeries.seriesTypes.sankey.prototype;
  * @typedef {"normal"|"hanging"} Highcharts.SeriesOrganizationNodesLayoutValue
  */
 ''; // detach doclets above
+/* *
+ *
+ *  Class
+ *
+ * */
 /**
  * @private
  * @class

@@ -17,6 +17,12 @@
 
 'use strict';
 
+/* *
+ *
+ *  Imports
+ *
+ * */
+
 import type Chart from '../Core/Chart/Chart';
 import type DashStyleValue from '../Core/Renderer/DashStyleValue';
 import type PositionObject from '../Core/Renderer/PositionObject';
@@ -27,17 +33,11 @@ import type SVGPath from '../Core/Renderer/SVG/SVGPath';
 import A from '../Core/Animation/AnimationUtilities.js';
 const { animObject } = A;
 import BaseSeries from '../Core/Series/Series.js';
-const {
-    seriesTypes
-} = BaseSeries;
+const { seriesTypes } = BaseSeries;
 import Color from '../Core/Color/Color.js';
-const {
-    parse: color
-} = Color;
+const { parse: color } = Color;
 import DrawPointMixin from '../Mixins/DrawPoint.js';
-const {
-    draw
-} = DrawPointMixin;
+const { draw } = DrawPointMixin;
 import GeometryMixin from '../Mixins/Geometry.js';
 const {
     getCenterOfPoints,
@@ -55,11 +55,8 @@ const {
     isPointInsideCircle,
     isPointOutsideAllCircles
 } = GeometryCirclesModule;
-
 import NelderMeadMixin from '../Mixins/NelderMead.js';
-const {
-    nelderMead
-} = NelderMeadMixin;
+const { nelderMead } = NelderMeadMixin;
 import U from '../Core/Utilities.js';
 const {
     addEvent,
@@ -70,6 +67,14 @@ const {
     isString,
     merge
 } = U;
+
+import './ScatterSeries.js';
+
+/* *
+ *
+ *  Declarations
+ *
+ * *&
 
 /**
  * @private
@@ -184,7 +189,11 @@ declare global {
     }
 }
 
-import './ScatterSeries.js';
+/* *
+ *
+ *  Functions
+ *
+ * */
 
 var objectValues = function objectValues<T>(
     obj: Highcharts.Dictionary<T>

@@ -20,7 +20,16 @@
 
 'use strict';
 
+/* *
+ *
+ *  Imports
+ *
+ * */
+
+import type ColumnPoint from './Column/ColumnPoint';
+import type ColumnPointOptions from './Column/ColumnPointOptions';
 import type ColumnSeries from './Column/ColumnSeries';
+import type ColumnSeriesOptions from './Column/ColumnSeriesOptions';
 import type { SeriesStatesOptions } from '../Core/Series/SeriesOptions';
 import type SVGAttributes from '../Core/Renderer/SVG/SVGAttributes';
 import type SVGElement from '../Core/Renderer/SVG/SVGElement';
@@ -35,6 +44,12 @@ const {
 } = U;
 
 import './Column/ColumnSeries.js';
+
+/* *
+ *
+ *  Declarations
+ *
+ * */
 
 /**
  * @private
@@ -51,7 +66,7 @@ declare module '../Core/Series/SeriesType' {
  */
 declare global {
     namespace Highcharts {
-        class DotplotPoint extends ColumnSeries.Point {
+        class DotplotPoint extends ColumnPoint {
             public graphics?: Dictionary<SVGElement>;
             public options: DotplotPointOptions;
             public pointAttr?: SVGAttributes;
@@ -65,14 +80,20 @@ declare global {
             public points: Array<DotplotPoint>;
             public drawPoints(): void;
         }
-        interface DotplotPointOptions extends ColumnSeries.PointOptions {
+        interface DotplotPointOptions extends ColumnPointOptions {
         }
-        interface DotplotSeriesOptions extends ColumnSeries.SeriesOptions {
+        interface DotplotSeriesOptions extends ColumnSeriesOptions {
             itemPadding?: number;
             states?: SeriesStatesOptions<DotplotSeries>;
         }
     }
 }
+
+/* *
+ *
+ *  Class
+ *
+ * */
 
 /**
  * @private

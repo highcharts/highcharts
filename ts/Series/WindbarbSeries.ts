@@ -13,8 +13,12 @@
 'use strict';
 
 import type Chart from '../Core/Chart/Chart';
-import type ColumnSeries from './Column/ColumnSeries.js';
+import type ColumnPoint from './Column/ColumnPoint';
+import type ColumnPointOptions from './Column/ColumnPointOptions';
+import type ColumnSeries from './Column/ColumnSeries';
+import type ColumnSeriesOptions from './Column/ColumnSeriesOptions';
 import type { SeriesStatesOptions } from '../Core/Series/SeriesOptions';
+import type { StatesOptionsKey } from '../Core/Series/StatesOptions';
 import type SVGAttributes from '../Core/Renderer/SVG/SVGAttributes';
 import type SVGPath from '../Core/Renderer/SVG/SVGPath';
 import A from '../Core/Animation/AnimationUtilities.js';
@@ -29,6 +33,8 @@ const {
     isNumber,
     pick
 } = U;
+
+import './Column/ColumnSeries.js';
 
 /**
  * @private
@@ -45,7 +51,7 @@ declare module '../Core/Series/SeriesType' {
  */
 declare global {
     namespace Highcharts {
-        class WindbarbPoint extends ColumnSeries.Point implements OnSeriesPoint {
+        class WindbarbPoint extends ColumnPoint implements OnSeriesPoint {
             public beaufort: string;
             public beaufortLevel: number;
             public direction: number;
@@ -86,11 +92,11 @@ declare global {
                 directions: Array<number>
             ): Array<number>;
         }
-        interface WindbarbPointOptions extends ColumnSeries.PointOptions {
+        interface WindbarbPointOptions extends ColumnPointOptions {
             direction?: number;
             value?: number;
         }
-        interface WindbarbSeriesOptions extends ColumnSeries.SeriesOptions {
+        interface WindbarbSeriesOptions extends ColumnSeriesOptions {
             onSeries?: (string|null);
             states?: SeriesStatesOptions<WindbarbSeries>;
             vectorLength?: number;
@@ -99,9 +105,6 @@ declare global {
         }
     }
 }
-
-import './Column/ColumnSeries.js';
-import { StatesOptionsKey } from '../Core/Series/StatesOptions';
 
 // eslint-disable-next-line valid-jsdoc
 /**

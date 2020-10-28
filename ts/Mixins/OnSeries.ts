@@ -10,14 +10,29 @@
 
 'use strict';
 
+/* *
+ *
+ *  Imports
+ *
+ * */
+
+import type LineSeriesOptions from '../Series/Line/LineSeriesOptions';
 import type Point from '../Core/Series/Point';
-import H from '../Core/Globals.js';
+import ColumnSeries from '../Series/Column/ColumnSeries.js';
+const { prototype: columnProto } = ColumnSeries;
 import LineSeries from '../Series/Line/LineSeries.js';
+const { prototype: seriesProto } = LineSeries;
 import U from '../Core/Utilities.js';
 const {
     defined,
     stableSort
 } = U;
+
+/* *
+ *
+ *  Declarations
+ *
+ * */
 
 /**
  * Internal types
@@ -37,15 +52,11 @@ declare global {
             options: OnSeriesSeriesOptions;
             onSeries?: OnSeriesSeries;
         }
-        interface OnSeriesSeriesOptions extends LineSeries.SeriesOptions {
+        interface OnSeriesSeriesOptions extends LineSeriesOptions {
             onSeries?: (string|null);
         }
     }
 }
-
-import '../Series/Line/LineSeries.js';
-
-var seriesTypes = H.seriesTypes;
 
 /**
  * @private
@@ -66,7 +77,7 @@ const onSeriesMixin = {
     getPlotBox: function (
         this: Highcharts.OnSeriesSeries
     ): Highcharts.SeriesPlotBoxObject {
-        return LineSeries.prototype.getPlotBox.call(
+        return seriesProto.getPlotBox.call(
             (
                 this.options.onSeries &&
                 this.chart.get(this.options.onSeries)
@@ -83,7 +94,7 @@ const onSeriesMixin = {
      */
     translate: function (this: Highcharts.OnSeriesSeries): void {
 
-        seriesTypes.column.prototype.translate.apply(this);
+        columnProto.translate.apply(this);
 
         var series = this,
             options = series.options,

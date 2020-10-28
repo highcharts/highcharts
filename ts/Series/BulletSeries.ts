@@ -10,10 +10,20 @@
 
 'use strict';
 
+/* *
+ *
+ *  Imports
+ *
+ * */
+
 import type ColorString from '../Core/Color/ColorString';
 import type ColorType from '../Core/Color/ColorType';
-import type ColumnSeries from './Column/ColumnSeries';
+import type ColumnPoint from './Column/ColumnPoint';
+import type ColumnPointOptions from './Column/ColumnPointOptions';
+import type ColumnSeriesOptions from './Column/ColumnSeriesOptions';
 import BaseSeries from '../Core/Series/Series.js';
+import ColumnSeries from './Column/ColumnSeries.js';
+const { prototype: columnProto } = ColumnSeries;
 import U from '../Core/Utilities.js';
 const {
     isNumber,
@@ -22,13 +32,19 @@ const {
     relativeLength
 } = U;
 
+/* *
+ *
+ *  Declarations
+ *
+ * */
+
 /**
  * Internal types
  * @private
  */
 declare global {
     namespace Highcharts {
-        class BulletPoint extends ColumnSeries.Point {
+        class BulletPoint extends ColumnPoint {
             public borderColor: BulletPointOptions['borderColor'];
             public options: BulletPointOptions;
             public series: BulletSeries;
@@ -47,12 +63,12 @@ declare global {
             public drawPoints(): void;
             public getExtremes(yData?: Array<number>): DataExtremesObject;
         }
-        interface BulletPointOptions extends ColumnSeries.PointOptions {
+        interface BulletPointOptions extends ColumnPointOptions {
             borderColor?: ColorType;
             target?: number;
             targetOptions?: BulletSeriesTargetOptions;
         }
-        interface BulletSeriesOptions extends ColumnSeries.SeriesOptions {
+        interface BulletSeriesOptions extends ColumnSeriesOptions {
             targetOptions?: BulletSeriesTargetOptions;
         }
         interface BulletSeriesTargetOptions {
@@ -74,9 +90,11 @@ declare module '../Core/Series/SeriesType' {
     }
 }
 
-import './Column/ColumnSeries.js';
-
-var columnProto = BaseSeries.seriesTypes.column.prototype;
+/* *
+ *
+ *  Class
+ *
+ * */
 
 /**
  * The bullet series type.

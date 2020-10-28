@@ -18,13 +18,12 @@
 
 import type AnimationOptionsObject from '../../Core/Animation/AnimationOptionsObject';
 import type { AxisType } from '../../Core/Axis/Types';
-import type { CursorValue } from '../../Core/Renderer/CSSObject';
 import type Chart from '../../Core/Chart/Chart';
 import type ColorType from '../../Core/Color/ColorType';
-import type DashStyleValue from '../../Core/Renderer/DashStyleValue';
-import type DataLabelOptions from '../../Core/Series/DataLabelOptions';
 import type { EventCallback } from '../../Core/Callback';
-import type PointClass from '../../Core/Series/Point';
+import type LinePoint from './LinePoint';
+import type LineSeriesOptions from './LineSeriesOptions';
+import type Point from '../../Core/Series/Point.js';
 import type PointerEvent from '../../Core/PointerEvent';
 import type {
     PointOptions,
@@ -35,14 +34,12 @@ import type SeriesLike from '../../Core/Series/SeriesLike';
 import type {
     SeriesOptions,
     SeriesStateHoverOptions,
-    SeriesStatesOptions,
     SeriesZonesOptions
 } from '../../Core/Series/SeriesOptions';
 import type {
     SeriesTypeOptions,
     SeriesTypePlotOptions
 } from '../../Core/Series/SeriesType';
-import type ShadowOptionsObject from '../../Core/Renderer/ShadowOptionsObject';
 import type { StatesOptionsKey } from '../../Core/Series/StatesOptions';
 import type SVGAttributes from '../../Core/Renderer/SVG/SVGAttributes';
 import type SVGPath from '../../Core/Renderer/SVG/SVGPath';
@@ -55,7 +52,6 @@ const { win } = H;
 import LegendSymbolMixin from '../../Mixins/LegendSymbol.js';
 import O from '../../Core/Options.js';
 const { defaultOptions } = O;
-import Point from '../../Core/Series/Point.js';
 import SVGElement from '../../Core/Renderer/SVG/SVGElement.js';
 import U from '../../Core/Utilities.js';
 const {
@@ -95,61 +91,11 @@ declare module '../../Core/Chart/ChartLike'{
     }
 }
 
-type PointClassOptions = PointOptions;
-
-declare module '../../Core/Series/PointLike' {
-    interface PointLike {
-        category?: string;
-        clientX?: number;
-        dataGroup?: Highcharts.DataGroupingInfoObject;
-        dist?: number;
-        distX?: number;
-        hasImage?: boolean;
-        index?: number;
-        isInside?: boolean;
-        low?: number;
-        negative?: boolean;
-        options: PointOptions;
-        plotX?: number;
-        plotY?: number;
-        stackTotal?: number;
-        stackY?: (number|null);
-        yBottom?: number;
-        zone?: SeriesZonesOptions;
-    }
-}
-
-declare module '../../Core/Series/PointOptions' {
-    interface PointOptions {
-        keys?: Array<string>;
-    }
-    interface PointStateHoverOptions {
-        radius?: number;
-        radiusPlus?: number;
-    }
-}
-
-type SeriesClassOptions = SeriesOptions;
-
 declare module '../../Core/Series/SeriesLike' {
     interface SeriesLike {
         _hasPointMarkers?: boolean;
         pointArrayMap?: Array<string>;
         pointValKey?: string;
-    }
-}
-
-declare module '../../Core/Series/SeriesOptions' {
-    interface SeriesOptions {
-        allowPointSelect?: boolean;
-        dataSorting?: Highcharts.DataSortingOptionsObject; // cartasian series
-        getExtremesFromAll?: boolean;
-        pointValKey?: string;
-        selected?: boolean;
-    }
-    interface SeriesStateHoverOptions {
-        radius?: number;
-        radiusPlus?: number;
     }
 }
 
@@ -169,9 +115,9 @@ declare global {
             sortKey?: string;
         }
         interface KDNode {
-            [side: string]: (KDNode|Point|undefined);
+            [side: string]: (KDNode|LinePoint|undefined);
             left?: KDNode;
-            point: Point;
+            point: LinePoint;
             right?: KDNode;
         }
         interface KDPointSearchObject {
@@ -293,7 +239,7 @@ class LineSeries {
      *
      * @optionparent plotOptions.series
      */
-    public static defaultOptions: LineSeries.SeriesOptions = {
+    public static defaultOptions: LineSeriesOptions = {
         // base series options
 
         /**
@@ -2773,7 +2719,7 @@ class LineSeries {
 
     public init(
         chart: Chart,
-        options: DeepPartial<SeriesOptions>
+        options: DeepPartial<LineSeriesOptions>
     ): void {
 
         fireEvent(this, 'init', { options: options });
@@ -3073,7 +3019,7 @@ class LineSeries {
      * @function Highcharts.Series#updateParallelArrays
      */
     public updateParallelArrays(
-        point: Point,
+        point: LinePoint,
         i: (number|string)
     ): void {
         var series = point.series,
@@ -3425,7 +3371,7 @@ class LineSeries {
      * @function Highcharts.Series#getPointsCollection
      * @return {Array<Highcharts.Point>}
      */
-    public getPointsCollection(): Array<Point> {
+    public getPointsCollection(): Array<LinePoint> {
         return (this.hasGroupedData ? this.points : this.data) || [];
     }
 
@@ -3483,7 +3429,7 @@ class LineSeries {
                 'name' : 'index';
 
             matchingPoint = find(oldData, function (
-                oldPoint: Point
+                oldPoint: LinePoint
             ): boolean {
                 return !oldPoint.touched && (oldPoint as any)[matchKey] ===
                     (optionsObject as any)[matchKey];
@@ -3909,7 +3855,7 @@ class LineSeries {
             dataSorting = options.dataSorting as
                 Highcharts.DataSortingOptionsObject,
             sortKey = dataSorting.sortKey || 'y',
-            sortedData: Array<Point>,
+            sortedData: Array<LinePoint>,
             getPointOptionsObject = function (
                 series: LineSeries,
                 pointOptions: (PointOptions|PointShortOptions)
@@ -3930,7 +3876,7 @@ class LineSeries {
             const aValue = getNestedProperty(sortKey, a) as (boolean|number|string);
             const bValue = getNestedProperty(sortKey, b) as (boolean|number|string);
             return bValue < aValue ? -1 : bValue > aValue ? 1 : 0;
-        }) as Array<Point>;
+        }) as Array<LinePoint>;
         // Set x value depending on the position in the array
         sortedData.forEach(function (point, i): void {
             point.x = i;
@@ -4210,7 +4156,7 @@ class LineSeries {
             i;
 
         if (!data && !hasGroupedData) {
-            var arr = [] as Array<Point>;
+            var arr = [] as Array<LinePoint>;
 
             arr.length = (dataOptions as any).length;
             data = series.data = arr;
@@ -4755,15 +4701,15 @@ class LineSeries {
      * The valid points.
      */
     public getValidPoints(
-        points?: Array<Point>,
+        points?: Array<LinePoint>,
         insideOnly?: boolean,
         allowNull?: boolean
-    ): Array<Point> {
+    ): Array<LinePoint> {
         var chart = this.chart;
 
         // #3916, #5029, #5085
         return (points || this.points || []).filter(
-            function isValidPoint(point: Point): boolean {
+            function isValidPoint(point: LinePoint): boolean {
                 if (insideOnly && !chart.isInsidePlot(
                     point.plotX as any,
                     point.plotY as any,
@@ -5173,7 +5119,7 @@ class LineSeries {
      * A hash containing those attributes that are not settable from CSS.
      */
     public markerAttribs(
-        point: Point,
+        point: LinePoint,
         state?: StatesOptionsKey
     ): SVGAttributes {
         var seriesOptions = this.options,
@@ -5247,7 +5193,7 @@ class LineSeries {
      * The presentational attributes to be set on the point.
      */
     public pointAttribs(
-        point?: Point,
+        point?: LinePoint,
         state?: StatesOptionsKey
     ): SVGAttributes {
         var seriesMarkerOptions = this.options.marker,
@@ -5419,7 +5365,7 @@ class LineSeries {
      * @function Highcharts.Series#getGraphPath
      */
     public getGraphPath(
-        points?: Array<Point>,
+        points?: Array<LinePoint>,
         nullsAsZeroes?: boolean,
         connectCliffs?: boolean
     ): SVGPath {
@@ -6213,7 +6159,7 @@ class LineSeries {
     public searchPoint(
         e: PointerEvent,
         compareX?: boolean
-    ): (Point|undefined) {
+    ): (LinePoint|undefined) {
         var series = this,
             xAxis = series.xAxis,
             yAxis = series.yAxis,
@@ -6253,7 +6199,7 @@ class LineSeries {
          * @private
          */
         function _kdtree(
-            points: Array<Point>,
+            points: Array<LinePoint>,
             depth: number,
             dimensions: number
         ): (Highcharts.KDNode|undefined) {
@@ -6267,7 +6213,7 @@ class LineSeries {
                 axis = series.kdAxisArray[depth % dimensions];
 
                 // sort point array
-                points.sort(function (a: Point, b: Point): number {
+                points.sort(function (a, b): number {
                     return (a as any)[axis] - (b as any)[axis];
                 });
 
@@ -6324,7 +6270,7 @@ class LineSeries {
         point: Highcharts.KDPointSearchObject,
         compareX?: boolean,
         e?: PointerEvent
-    ): (Point|undefined) {
+    ): (LinePoint|undefined) {
         var series = this,
             kdX = this.kdAxisArray[0],
             kdY = this.kdAxisArray[1],
@@ -6338,7 +6284,7 @@ class LineSeries {
          */
         function setDistance(
             p1: Highcharts.KDPointSearchObject,
-            p2: Point
+            p2: LinePoint
         ): void {
             var x = (defined((p1 as any)[kdX]) &&
                     defined((p2 as any)[kdX])) ?
@@ -6362,7 +6308,7 @@ class LineSeries {
             tree: Highcharts.KDNode,
             depth: number,
             dimensions: number
-        ): Point {
+        ): LinePoint {
             var point = tree.point,
                 axis = series.kdAxisArray[depth % dimensions],
                 tdist,
@@ -6451,7 +6397,7 @@ class LineSeries {
      * @private
      * @function Highcharts.Series#isPointInside
      */
-    public isPointInside(point: (Record<string, number>|Point)): boolean {
+    public isPointInside(point: (Record<string, number>|LinePoint)): boolean {
         const isInside =
             typeof point.plotY !== 'undefined' &&
             typeof point.plotX !== 'undefined' &&
@@ -6480,7 +6426,7 @@ interface LineSeries extends SeriesLike {
     coll: 'series';
     colorCounter: number;
     cropShoulder: number;
-    data: Array<Point>;
+    data: Array<LinePoint>;
     directTouch: boolean;
     drawLegendSymbol: (
         Highcharts.LegendSymbolMixin['drawLineMarker']|
@@ -6495,10 +6441,10 @@ interface LineSeries extends SeriesLike {
     kdAxisArray: Array<string>;
     linkedSeries: Array<LineSeries>;
     name: string;
-    options: LineSeries.SeriesOptions;
+    options: LineSeriesOptions;
     parallelArrays: Array<string>;
-    pointClass: typeof Point;
-    points: Array<Point>;
+    pointClass: typeof LinePoint;
+    points: Array<LinePoint>;
     processedXData: Array<number>;
     processedYData: (Array<(number|null)>|Array<Array<(number|null)>>);
     requireSorting: boolean;
@@ -6536,79 +6482,12 @@ extend(
         // each point's x and y values are stored in this.xData and this.yData
         parallelArrays: ['x', 'y'],
 
-        pointClass: Point,
-
         requireSorting: true,
 
         // requires the data to be sorted
         sorted: true
     }
 );
-
-/* *
- *
- *  Class Namespace
- *
- * */
-
-namespace LineSeries {
-    export declare class Point extends PointClass {
-        options: PointOptions;
-        series: LineSeries;
-    }
-    export interface PointOptions extends PointClassOptions {
-    }
-    export interface SeriesOptions extends SeriesClassOptions {
-        allAreas?: boolean;
-        animation?: (boolean|DeepPartial<AnimationOptionsObject>);
-        animationLimit?: number;
-        boostThreshold?: number;
-        borderColor?: ColorType;
-        borderWidth?: number;
-        className?: string;
-        clip?: boolean;
-        colorAxis?: boolean;
-        colorByPoint?: boolean;
-        colors?: Array<ColorType>;
-        connectEnds?: boolean;
-        connectNulls?: boolean;
-        crisp?: boolean|number;
-        cursor?: (string|CursorValue);
-        dashStyle?: DashStyleValue;
-        dataLabels?: (DataLabelOptions|Array<DataLabelOptions>);
-        dataSorting?: Highcharts.DataSortingOptionsObject;
-        description?: string;
-        findNearestPointBy?: Highcharts.SeriesFindNearestPointByValue;
-        id?: string;
-        index?: number;
-        includeInDataExport?: boolean;
-        isInternal?: boolean;
-        joinBy?: (string|Array<string>);
-        kdNow?: boolean;
-        keys?: Array<string>;
-        legendIndex?: number;
-        linecap?: Highcharts.SeriesLinecapValue;
-        lineColor?: ColorType;
-        lineWidth?: number;
-        linkedTo?: string;
-        navigatorOptions?: SeriesOptions;
-        opacity?: number;
-        pointDescriptionFormatter?: Function;
-        pointPlacement?: (number|string);
-        pointStart?: number;
-        shadow?: (boolean|Partial<ShadowOptionsObject>);
-        showInNavigator?: boolean;
-        skipKeyboardNavigation?: boolean;
-        states?: SeriesStatesOptions<LineSeries>;
-        step?: Highcharts.SeriesStepValue;
-        supportingColor?: ColorType;
-        visible?: boolean;
-        xAxis?: (number|string);
-        yAxis?: (number|string);
-        zIndex?: number;
-        zoneAxis?: string;
-    }
-}
 
 /* *
  *
@@ -6633,7 +6512,7 @@ BaseSeries.registerSeriesType('line', LineSeries);
 
 /* *
  *
- *  Export
+ *  Default Export
  *
  * */
 

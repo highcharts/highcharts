@@ -100,6 +100,11 @@ var defined = U.defined, find = U.find, isObject = U.isObject, merge = U.merge, 
 * @type {Highcharts.SankeyNodeObject}
 */
 ''; // detach doclets above
+/* *
+ *
+ *  Functions
+ *
+ * */
 // eslint-disable-next-line valid-jsdoc
 /**
  * @private
@@ -114,6 +119,11 @@ var getDLOptions = function getDLOptions(params) {
     }, optionsLevel, optionsPoint);
     return options;
 };
+/* *
+ *
+ *  Class
+ *
+ * */
 /**
  * @private
  * @class

@@ -15,6 +15,11 @@ var defaultOptions = O.defaultOptions;
 import './AreaSeries.js';
 import './SplineSeries.js';
 var areaProto = BaseSeries.seriesTypes.area.prototype;
+/* *
+ *
+ *  Class
+ *
+ * */
 /**
  * AreaSpline series type.
  *

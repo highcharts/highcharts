@@ -9,9 +9,14 @@
  * */
 'use strict';
 import BaseSeries from '../Core/Series/Series.js';
-var seriesTypes = BaseSeries.seriesTypes;
+import ColumnSeries from './Column/ColumnSeries.js';
+var columnProto = ColumnSeries.prototype;
 import Point from '../Core/Series/Point.js';
-import './Column/ColumnSeries.js';
+/* *
+ *
+ *  Class
+ *
+ * */
 /**
  * The ohlc series type.
  *
@@ -137,7 +142,7 @@ BaseSeries.seriesType('ohlc', 'column'
      * @return {void}
      */
     init: function () {
-        seriesTypes.column.prototype.init.apply(this, arguments);
+        columnProto.init.apply(this, arguments);
         this.options.stacking = void 0; // #8817
     },
     /**
@@ -150,7 +155,7 @@ BaseSeries.seriesType('ohlc', 'column'
      * @return {Highcharts.SVGAttributes}
      */
     pointAttribs: function (point, state) {
-        var attribs = seriesTypes.column.prototype.pointAttribs.call(this, point, state), options = this.options;
+        var attribs = columnProto.pointAttribs.call(this, point, state), options = this.options;
         delete attribs.fill;
         if (!point.options.color &&
             options.upColor &&
@@ -174,7 +179,7 @@ BaseSeries.seriesType('ohlc', 'column'
             'plotClose',
             'yBottom'
         ]; // translate OHLC for
-        seriesTypes.column.prototype.translate.apply(series);
+        columnProto.translate.apply(series);
         // Do the translation
         series.points.forEach(function (point) {
             [point.open, point.high, point.low, point.close, point.low]

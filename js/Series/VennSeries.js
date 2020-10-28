@@ -32,6 +32,11 @@ var nelderMead = NelderMeadMixin.nelderMead;
 import U from '../Core/Utilities.js';
 var addEvent = U.addEvent, extend = U.extend, isArray = U.isArray, isNumber = U.isNumber, isObject = U.isObject, isString = U.isString, merge = U.merge;
 import './ScatterSeries.js';
+/* *
+ *
+ *  Functions
+ *
+ * */
 var objectValues = function objectValues(obj) {
     return Object.keys(obj).map(function (x) {
         return obj[x];

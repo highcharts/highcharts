@@ -11,7 +11,10 @@
 'use strict';
 
 import type ColorType from '../Core/Color/ColorType';
+import type ColumnPoint from './Column/ColumnPoint';
+import type ColumnPointOptions from './Column/ColumnPointOptions';
 import type ColumnSeries from './Column/ColumnSeries';
+import type ColumnSeriesOptions from './Column/ColumnSeriesOptions';
 import type { SeriesStatesOptions } from '../Core/Series/SeriesOptions';
 import type { StatesOptionsKey } from '../Core/Series/StatesOptions';
 import type SVGAttributes from '../Core/Renderer/SVG/SVGAttributes';
@@ -53,7 +56,7 @@ declare module '../Core/Series/SeriesType' {
  */
 declare global {
     namespace Highcharts {
-        class WaterfallPoint extends ColumnSeries.Point {
+        class WaterfallPoint extends ColumnPoint {
             public below?: boolean;
             public isIntermediateSum?: boolean;
             public isSum?: boolean;
@@ -95,11 +98,11 @@ declare global {
         interface WaterfallChart extends Chart {
             axes: Array<WaterfallAxis>;
         }
-        interface WaterfallPointOptions extends ColumnSeries.PointOptions {
+        interface WaterfallPointOptions extends ColumnPointOptions {
             isSum?: boolean;
             y?: any;
         }
-        interface WaterfallSeriesOptions extends ColumnSeries.SeriesOptions {
+        interface WaterfallSeriesOptions extends ColumnSeriesOptions {
             upColor?: ColorType;
             states?: SeriesStatesOptions<WaterfallSeries>;
         }

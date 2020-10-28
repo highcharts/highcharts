@@ -12,6 +12,11 @@ import BaseSeries from '../Core/Series/Series.js';
 import LineSeries from './Line/LineSeries.js';
 import U from '../Core/Utilities.js';
 var addEvent = U.addEvent;
+/* *
+ *
+ *  Class
+ *
+ * */
 /**
  * Scatter series type.
  *

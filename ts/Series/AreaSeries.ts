@@ -10,7 +10,16 @@
 
 'use strict';
 
+/* *
+ *
+ *  Imports
+ *
+ * */
+
 import type ColorType from '../Core/Color/ColorType';
+import type LinePoint from './Line/LinePoint';
+import type LinePointOptions from './Line/LinePointOptions';
+import type LineSeriesOptions from './Line/LineSeriesOptions';
 import type {
     SeriesStatesOptions,
     SeriesZonesOptions
@@ -28,6 +37,12 @@ const {
     objectEach,
     pick
 } = U;
+
+/* *
+ *
+ *  Declarations
+ *
+ * */
 
 declare module '../Core/Renderer/SVG/SVGPath' {
     interface SVGPath {
@@ -48,7 +63,7 @@ declare module '../Core/Series/SeriesType' {
  */
 declare global {
     namespace Highcharts {
-        class AreaPoint extends LineSeries.Point {
+        class AreaPoint extends LinePoint {
             public isCliff?: boolean;
             public leftNull?: boolean;
             public options: AreaPointOptions;
@@ -63,9 +78,9 @@ declare global {
             public points: Array<AreaPoint>;
             public getStackPoints(points: Array<AreaPoint>): Array<AreaPoint>;
         }
-        interface AreaPointOptions extends LineSeries.PointOptions {
+        interface AreaPointOptions extends LinePointOptions {
         }
-        interface AreaSeriesOptions extends LineSeries.SeriesOptions {
+        interface AreaSeriesOptions extends LineSeriesOptions {
             fillColor?: ColorType;
             fillOpacity?: number;
             negativeFillColor?: ColorType;
@@ -73,6 +88,12 @@ declare global {
         }
     }
 }
+
+/* *
+ *
+ *  Class
+ *
+ * */
 
 /**
  * Area series type.

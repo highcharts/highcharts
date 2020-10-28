@@ -9,10 +9,15 @@
  * */
 'use strict';
 import BaseSeries from '../Core/Series/Series.js';
+import ColumnSeries from './Column/ColumnSeries.js';
+var columnProto = ColumnSeries.prototype;
 import U from '../Core/Utilities.js';
 var isNumber = U.isNumber, merge = U.merge, pick = U.pick, relativeLength = U.relativeLength;
-import './Column/ColumnSeries.js';
-var columnProto = BaseSeries.seriesTypes.column.prototype;
+/* *
+ *
+ *  Class
+ *
+ * */
 /**
  * The bullet series type.
  *

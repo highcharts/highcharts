@@ -18,12 +18,11 @@
 
 import type BBoxObject from '../../Core/Renderer/BBoxObject';
 import type Chart from '../../Core/Chart/Chart';
-import type ColorType from '../../Core/Color/ColorType';
+import type ColumnMetricsObject from './ColumnMetricsObject';
+import type ColumnPoint from './ColumnPoint';
+import type ColumnSeriesOptions from './ColumnSeriesOptions';
 import type DashStyleValue from '../../Core/Renderer/DashStyleValue';
-import type {
-    SeriesStateHoverOptions,
-    SeriesStatesOptions
-} from '../../Core/Series/SeriesOptions';
+import type { SeriesStateHoverOptions } from '../../Core/Series/SeriesOptions';
 import type { StatesOptionsKey } from '../../Core/Series/StatesOptions';
 import type SVGAttributes from '../../Core/Renderer/SVG/SVGAttributes';
 import type SVGElement from '../../Core/Renderer/SVG/SVGElement';
@@ -54,51 +53,10 @@ const {
  *
  * */
 
-declare module '../../Core/Series/PointLike' {
-    interface PointLike {
-        allowShadow?: boolean;
-    }
-}
-
-declare module '../../Core/Series/PointOptions' {
-    interface PointOptions {
-        borderColor?: ColorType;
-    }
-}
-
 declare module '../../Core/Series/SeriesLike' {
     interface SeriesLike {
         barW?: number;
         pointXOffset?: number;
-    }
-}
-
-declare module '../../Core/Series/SeriesOptions' {
-    interface SeriesOptions {
-        borderColor?: ColorType;
-        borderDashStyle?: DashStyleValue;
-        borderRadius?: number;
-        borderWidth?: number;
-        centerInCategory?: boolean;
-        fillColor?: ColorType;
-        grouping?: boolean;
-        groupPadding?: number;
-        negativeFillColor?: ColorType;
-        pointRange?: (number|null);
-    }
-    interface SeriesStateHoverOptions {
-        borderColor?: ColorType;
-        borderDashStyle?: DashStyleValue;
-        borderRadius?: number;
-        borderWidth?: number;
-        brightness?: number;
-        color?: ColorType;
-        dashStyle?: DashStyleValue;
-    }
-    interface SeriesZonesOptions {
-        borderColor?: ColorType;
-        borderWidth?: number;
-        color?: ColorType;
     }
 }
 
@@ -133,7 +91,7 @@ class ColumnSeries extends LineSeries {
      * @product      highcharts highstock
      * @optionparent plotOptions.column
      */
-    public static defaultOptions: ColumnSeries.SeriesOptions = merge(LineSeries.defaultOptions, {
+    public static defaultOptions: ColumnSeriesOptions = merge(LineSeries.defaultOptions, {
 
         /**
          * The corner radius of the border surrounding each column or bar.
@@ -521,7 +479,7 @@ class ColumnSeries extends LineSeries {
 
     public columnIndex?: number;
 
-    public columnMetrics?: ColumnSeries.MetricsObject;
+    public columnMetrics?: ColumnMetricsObject;
 
     public cropShould?: number;
 
@@ -544,7 +502,7 @@ class ColumnSeries extends LineSeries {
      * @private
      * @function Highcharts.seriesTypes.column#init
      */
-    public init(chart: Chart, options: ColumnSeries.SeriesOptions): void {
+    public init(chart: Chart, options: ColumnSeriesOptions): void {
         super.init.apply(this, arguments as any);
 
         var series = this,
@@ -569,7 +527,7 @@ class ColumnSeries extends LineSeries {
      * @function Highcharts.seriesTypes.column#getColumnMetrics
      * @return {Highcharts.ColumnMetricsObject}
      */
-    public getColumnMetrics(): ColumnSeries.MetricsObject {
+    public getColumnMetrics(): ColumnMetricsObject {
         var series = this,
             options = series.options,
             xAxis = series.xAxis,
@@ -741,8 +699,8 @@ class ColumnSeries extends LineSeries {
     public adjustForMissingColumns(
         x: number,
         pointWidth: number,
-        point: ColumnSeries.Point,
-        metrics: ColumnSeries.MetricsObject
+        point: ColumnPoint,
+        metrics: ColumnMetricsObject
     ): number {
         const stacking = this.options.stacking;
         if (!point.isNull && metrics.columnCount > 1) {
@@ -756,7 +714,7 @@ class ColumnSeries extends LineSeries {
             // done in the `setGroupedPoints` function.
             objectEach(
                 this.yAxis.stacking && this.yAxis.stacking.stacks,
-                (stack: Highcharts.Dictionary<Highcharts.StackItem>): void => {
+                (stack: Record<string, Highcharts.StackItem>): void => {
                     if (typeof point.x === 'number') {
                         const stackItem = stack[point.x.toString()];
 
@@ -959,7 +917,7 @@ class ColumnSeries extends LineSeries {
      * @function Highcharts.seriesTypes.column#pointAttribs
      */
     public pointAttribs(
-        point?: ColumnSeries.Point,
+        point?: ColumnPoint,
         state?: StatesOptionsKey
     ): SVGAttributes {
         var options = this.options,
@@ -1229,11 +1187,11 @@ class ColumnSeries extends LineSeries {
 
 interface ColumnSeries extends LineSeries {
     borderWidth: number;
-    data: Array<ColumnSeries.Point>;
+    data: Array<ColumnPoint>;
     group: SVGElement;
-    options: ColumnSeries.SeriesOptions;
-    pointClass: typeof ColumnSeries.Point;
-    points: Array<ColumnSeries.Point>;
+    options: ColumnSeriesOptions;
+    pointClass: typeof ColumnPoint;
+    points: Array<ColumnPoint>;
     pointXOffset: number;
     translatedThreshold?: number;
 }
@@ -1269,42 +1227,6 @@ extend(
         trackerGroups: ['group', 'dataLabelsGroup']
     }
 );
-
-/* *
- *
- *  Class Namespace
- *
- * */
-
-namespace ColumnSeries {
-    export interface MetricsObject {
-        offset: number;
-        width: number;
-        paddedWidth: number;
-        columnCount: number;
-    }
-    export interface PointOptions extends LineSeries.PointOptions {
-        dashStyle?: DashStyleValue;
-        pointWidth?: number;
-    }
-    export interface SeriesOptions extends LineSeries.SeriesOptions {
-        maxPointWidth?: number;
-        minPointLength?: number;
-        pointPadding?: number;
-        pointWidth?: number;
-        states?: SeriesStatesOptions<ColumnSeries>;
-    }
-    export declare class Point extends LineSeries.Point {
-        public allowShadow?: boolean;
-        public barX: number;
-        public group?: SVGElement;
-        public opacity?: number;
-        public options: PointOptions;
-        public pointWidth: number;
-        public series: ColumnSeries;
-        public shapeType: string;
-    }
-}
 
 /* *
  *

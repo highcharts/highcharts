@@ -170,10 +170,6 @@ namespace Series {
             seriesClass.prototype.pointClass = Point;
         }
 
-        if (!seriesClass.Point) {
-            seriesClass.Point = Point;
-        }
-
         seriesClass.prototype.type = seriesType;
 
         if (seriesOptions) {

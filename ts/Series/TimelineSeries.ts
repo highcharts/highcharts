@@ -20,6 +20,9 @@ import type {
     DataLabelFormatterCallback,
     DataLabelOptions
 } from '../Core/Series/DataLabelOptions';
+import type LinePoint from './Line/LinePoint';
+import type LinePointOptions from './Line/LinePointOptions';
+import type LineSeriesOptions from './Line/LineSeriesOptions';
 import type {
     PointMarkerOptions,
     PointStatesOptions
@@ -55,7 +58,7 @@ const {
  */
 declare global {
     namespace Highcharts {
-        class TimelinePoint extends LineSeries.Point {
+        class TimelinePoint extends LinePoint {
             public isValid: () => boolean;
             public label?: string;
             public options: TimelinePointOptions;
@@ -128,13 +131,13 @@ declare global {
             formatter?: TimelineDataLabelsFormatterCallbackFunction;
             width?: number;
         }
-        interface TimelinePointOptions extends LineSeries.PointOptions {
+        interface TimelinePointOptions extends LinePointOptions {
             dataLabels?: TimelineDataLabelsOptionsObject;
             isNull?: boolean;
             radius?: number;
             visible?: boolean;
         }
-        interface TimelineSeriesOptions extends LineSeries.SeriesOptions {
+        interface TimelineSeriesOptions extends LineSeriesOptions {
             data?: Array<TimelinePointOptions>;
             dataLabels?: TimelineDataLabelsOptionsObject;
             ignoreHiddenPoint?: boolean;

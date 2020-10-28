@@ -917,13 +917,6 @@ extend(ColumnSeries.prototype, {
     negStacks: true,
     trackerGroups: ['group', 'dataLabelsGroup']
 });
-/* *
- *
- *  Class Namespace
- *
- * */
-(function (ColumnSeries) {
-})(ColumnSeries || (ColumnSeries = {}));
 BaseSeries.registerSeriesType('column', ColumnSeries);
 /* *
  *

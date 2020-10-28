@@ -10,7 +10,16 @@
 
 'use strict';
 
+/* *
+ *
+ *  Imports
+ *
+ * */
+
+import type LinePoint from './Line/LinePoint';
+import type LinePointOptions from './Line/LinePointOptions';
 import type LineSeries from './Line/LineSeries';
+import type LineSeriesOptions from './Line/LineSeriesOptions';
 import type { SeriesStatesOptions } from '../Core/Series/SeriesOptions';
 import type SVGPath from '../Core/Renderer/SVG/SVGPath';
 import BaseSeries from '../Core/Series/Series.js';
@@ -27,12 +36,12 @@ import '../Series/Line/LineSeries.js';
  */
 declare global {
     namespace Highcharts {
-        interface SplinePointOptions extends LineSeries.PointOptions {
+        interface SplinePointOptions extends LinePointOptions {
         }
-        interface SplineSeriesOptions extends LineSeries.SeriesOptions {
+        interface SplineSeriesOptions extends LineSeriesOptions {
             states?: SeriesStatesOptions<SplineSeries>;
         }
-        class SplinePoint extends LineSeries.Point {
+        class SplinePoint extends LinePoint {
             public doCurve?: boolean;
             public options: SplinePointOptions;
             public rightContX?: number;

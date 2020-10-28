@@ -24,6 +24,11 @@ var pick = U.pick;
  *
  * @augments Highcharts.Series
  */
+/* *
+ *
+ *  Class
+ *
+ * */
 /**
  * A box plot is a convenient way of depicting groups of data through their
  * five-number summaries: the smallest observation (sample minimum), lower

@@ -10,6 +10,11 @@
 'use strict';
 import Series from '../Core/Series/Series.js';
 import './Column/ColumnSeries.js';
+/* *
+ *
+ *  Class
+ *
+ * */
 /**
  * Bar series type.
  *

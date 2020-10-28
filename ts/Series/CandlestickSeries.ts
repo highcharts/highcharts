@@ -10,18 +10,32 @@
 
 'use strict';
 
+/* *
+ *
+ *  Imports
+ *
+ * */
+
 import type ColorType from '../Core/Color/ColorType';
 import type { SeriesStatesOptions } from '../Core/Series/SeriesOptions';
 import type { StatesOptionsKey } from '../Core/Series/StatesOptions';
 import type SVGAttributes from '../Core/Renderer/SVG/SVGAttributes';
 import type SVGPath from '../Core/Renderer/SVG/SVGPath';
 import BaseSeries from '../Core/Series/Series.js';
+import ColumnSeries from './Column/ColumnSeries.js';
+const { prototype: columnProto } = ColumnSeries;
 import O from '../Core/Options.js';
 const { defaultOptions } = O;
 import U from '../Core/Utilities.js';
-const {
-    merge
-} = U;
+const { merge } = U;
+
+import './OHLCSeries.js';
+
+/* *
+ *
+ *  Declarations
+ *
+ * */
 
 /**
  * Internal types
@@ -56,10 +70,11 @@ declare global {
     }
 }
 
-import './Column/ColumnSeries.js';
-import './OHLCSeries.js';
-
-const columnProto = BaseSeries.seriesTypes.column.prototype;
+/* *
+ *
+ *  Code
+ *
+ * */
 
 /**
  * A candlestick chart is a style of financial chart used to describe price

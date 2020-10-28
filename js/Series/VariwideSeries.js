@@ -17,6 +17,11 @@ import H from '../Core/Globals.js';
 import U from '../Core/Utilities.js';
 var addEvent = U.addEvent, isNumber = U.isNumber, pick = U.pick, wrap = U.wrap;
 import '../Series/AreaSeries.js';
+/* *
+ *
+ *  Class
+ *
+ * */
 /**
  * @private
  * @class

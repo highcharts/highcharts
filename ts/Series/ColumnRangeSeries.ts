@@ -10,7 +10,15 @@
 
 'use strict';
 
+/* *
+ *
+ *  Imports
+ *
+ * */
+
 import type BBoxObject from '../Core/Renderer/BBoxObject';
+import type ColumnMetricsObject from './Column/ColumnMetricsObject';
+import type ColumnPoint from './Column/ColumnPoint';
 import type { SeriesStatesOptions } from '../Core/Series/SeriesOptions';
 import type SVGAttributes from '../Core/Renderer/SVG/SVGAttributes';
 import BaseSeries from '../Core/Series/Series.js';
@@ -27,6 +35,12 @@ const {
     pick
 } = U;
 
+/* *
+ *
+ *  Declarations
+ *
+ * */
+
 /**
  * Internal types
  * @private
@@ -34,12 +48,12 @@ const {
 declare global {
     namespace Highcharts {
         class ColumnRangePoint extends AreaRangePoint {
-            public barX: ColumnSeries.Point['barX'];
+            public barX: ColumnPoint['barX'];
             public options: ColumnRangePointOptions;
-            public pointWidth: ColumnSeries.Point['pointWidth'];
+            public pointWidth: ColumnPoint['pointWidth'];
             public series: ColumnRangeSeries;
             public shapeArgs: SVGAttributes;
-            public shapeType: ColumnSeries.Point['shapeType'];
+            public shapeType: ColumnPoint['shapeType'];
         }
         class ColumnRangeSeries extends AreaRangeSeries {
             public animate: ColumnSeries['animate'];
@@ -248,7 +262,7 @@ BaseSeries.seriesType<typeof Highcharts.ColumnRangeSeries>('columnrange', 'arear
     },
     getColumnMetrics: function (
         this: Highcharts.ColumnRangeSeries
-    ): ColumnSeries.MetricsObject {
+    ): ColumnMetricsObject {
         return columnProto.getColumnMetrics.apply(this, arguments as any);
     },
     pointAttribs: function (

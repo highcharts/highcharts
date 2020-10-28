@@ -12,8 +12,17 @@
 
 'use strict';
 
+/* *
+ *
+ *  Imports
+ *
+ * */
+
 import type ColorString from '../Core/Color/ColorString';
 import type ColorType from '../Core/Color/ColorType';
+import type ColumnPoint from './Column/ColumnPoint';
+import type ColumnPointOptions from './Column/ColumnPointOptions';
+import type ColumnSeriesOptions from './Column/ColumnSeriesOptions';
 import type DataLabelOptions from '../Core/Series/DataLabelOptions';
 import type { SeriesStatesOptions } from '../Core/Series/SeriesOptions';
 import type { StatesOptionsKey } from '../Core/Series/StatesOptions';
@@ -26,9 +35,7 @@ import LineSeries from '../Series/Line/LineSeries.js';
 import NodesMixin from '../Mixins/Nodes.js';
 import Point from '../Core/Series/Point.js';
 import TreeSeriesMixin from '../Mixins/TreeSeries.js';
-const {
-    getLevelOptions
-} = TreeSeriesMixin;
+const { getLevelOptions } = TreeSeriesMixin;
 import U from '../Core/Utilities.js';
 const {
     defined,
@@ -39,6 +46,12 @@ const {
     relativeLength,
     stableSort
 } = U;
+
+/* *
+ *
+ *  Declarations
+ *
+ * */
 
 declare module '../Core/Series/SeriesLike' {
     interface SeriesLike {
@@ -58,7 +71,7 @@ declare module '../Core/Series/SeriesType' {
  */
 declare global {
     namespace Highcharts {
-        class SankeyPoint extends ColumnSeries.Point implements NodesPoint {
+        class SankeyPoint extends ColumnPoint implements NodesPoint {
             public className: NodesPoint['className'];
             public column?: number;
             public from: NodesPoint['from'];
@@ -150,7 +163,7 @@ declare global {
             nodeFormat?: string;
             nodeFormatter?: SankeyDataLabelsFormatterCallbackFunction;
         }
-        interface SankeyPointOptions extends ColumnSeries.PointOptions, NodesPointOptions {
+        interface SankeyPointOptions extends ColumnPointOptions, NodesPointOptions {
             column?: number;
             from?: string;
             height?: number;
@@ -177,7 +190,7 @@ declare global {
             name?: string;
             offset?: (number|string);
         }
-        interface SankeySeriesOptions extends ColumnSeries.SeriesOptions, NodesSeriesOptions {
+        interface SankeySeriesOptions extends ColumnSeriesOptions, NodesSeriesOptions {
             curveFactor?: number;
             dataLabels?: SankeyDataLabelsOptionsObject;
             height?: number;
@@ -283,6 +296,12 @@ declare global {
 
 ''; // detach doclets above
 
+/* *
+ *
+ *  Functions
+ *
+ * */
+
 // eslint-disable-next-line valid-jsdoc
 /**
  * @private
@@ -308,6 +327,12 @@ var getDLOptions = function getDLOptions(
         }, optionsLevel, optionsPoint);
     return options;
 };
+
+/* *
+ *
+ *  Class
+ *
+ * */
 
 /**
  * @private

@@ -10,8 +10,17 @@
 
 'use strict';
 
+/* *
+ *
+ *  Imports
+ *
+ * */
+
 import type ColorString from '../Core/Color/ColorString';
 import type ColorType from '../Core/Color/ColorType';
+import type ColumnPoint from './Column/ColumnPoint';
+import type ColumnPointOptions from './Column/ColumnPointOptions';
+import type ColumnSeriesOptions from './Column/ColumnSeriesOptions';
 import type DashStyleValue from '../Core/Renderer/DashStyleValue';
 import type GradientColor from '../Core/Color/GradientColor';
 import type { SeriesStatesOptions } from '../Core/Series/SeriesOptions';
@@ -19,17 +28,17 @@ import type SVGAttributes from '../Core/Renderer/SVG/SVGAttributes';
 import type SVGPath from '../Core/Renderer/SVG/SVGPath';
 import Series from '../Core/Series/Series.js';
 import ColumnSeries from './Column/ColumnSeries.js';
-const {
-    prototype: columnProto
-} = ColumnSeries;
+const { prototype: columnProto } = ColumnSeries;
 import H from '../Core/Globals.js';
-const {
-    noop
-} = H;
+const { noop } = H;
 import U from '../Core/Utilities.js';
-const {
-    pick
-} = U;
+const { pick } = U;
+
+/* *
+ *
+ *  Declarations
+ *
+ * */
 
 /**
  * @private
@@ -46,7 +55,7 @@ declare module '../Core/Series/SeriesType' {
  */
 declare global {
     namespace Highcharts {
-        class BoxPlotPoint extends ColumnSeries.Point {
+        class BoxPlotPoint extends ColumnPoint {
             public box: SVGElement;
             public boxDashStyle: DashStyleValue;
             public fillColor: ColorType;
@@ -89,14 +98,14 @@ declare global {
             public toYData(point: BoxPlotPoint): Array<number>;
             public translate(): void;
         }
-        interface BoxPlotPointOptions extends ColumnSeries.PointOptions {
+        interface BoxPlotPointOptions extends ColumnPointOptions {
             high?: BoxPlotPoint['high'];
             low?: BoxPlotPoint['low'];
             median?: BoxPlotPoint['median'];
             q1?: BoxPlotPoint['q1'];
             q3?: BoxPlotPoint['q3'];
         }
-        interface BoxPlotSeriesOptions extends ColumnSeries.SeriesOptions {
+        interface BoxPlotSeriesOptions extends ColumnSeriesOptions {
             boxDashStyle?: BoxPlotPoint['boxDashStyle'];
             fillColor?: BoxPlotPoint['fillColor'];
             medianColor?: BoxPlotPoint['medianColor'];
@@ -123,6 +132,12 @@ declare global {
  *
  * @augments Highcharts.Series
  */
+
+/* *
+ *
+ *  Class
+ *
+ * */
 
 /**
  * A box plot is a convenient way of depicting groups of data through their

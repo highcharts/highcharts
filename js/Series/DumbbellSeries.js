@@ -9,8 +9,11 @@
  * */
 'use strict';
 import BaseSeries from '../Core/Series/Series.js';
+var seriesTypes = BaseSeries.seriesTypes;
 import ColumnSeries from './Column/ColumnSeries.js';
+var colProto = ColumnSeries.prototype;
 import LineSeries from './Line/LineSeries.js';
+var seriesProto = LineSeries.prototype;
 import SVGRenderer from '../Core/Renderer/SVG/SVGRenderer.js';
 import H from '../Core/Globals.js';
 var noop = H.noop;
@@ -19,7 +22,12 @@ var extend = U.extend, pick = U.pick;
 import './AreaRangeSeries.js';
 import './ColumnRangeSeries.js';
 import '../Core/Interaction.js';
-var seriesProto = LineSeries.prototype, seriesTypes = BaseSeries.seriesTypes, areaRangeProto = seriesTypes.arearange.prototype, columnRangeProto = seriesTypes.columnrange.prototype, colProto = ColumnSeries.prototype, areaRangePointProto = areaRangeProto.pointClass.prototype, TrackerMixin = H.TrackerMixin; // Interaction
+var areaRangeProto = seriesTypes.arearange.prototype, columnRangeProto = seriesTypes.columnrange.prototype, areaRangePointProto = areaRangeProto.pointClass.prototype, TrackerMixin = H.TrackerMixin; // Interaction
+/* *
+ *
+ *  Class
+ *
+ * */
 /**
  * The dumbbell series is a cartesian series with higher and lower values for
  * each point along an X axis, connected with a line between the values.

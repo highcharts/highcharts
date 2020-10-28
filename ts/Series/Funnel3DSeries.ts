@@ -14,10 +14,18 @@
 
 'use strict';
 
+/* *
+ *
+ *  Imports
+ *
+ * */
+
 import type BBoxObject from '../Core/Renderer/BBoxObject';
 import type Chart from '../Core/Chart/Chart';
 import type ColorType from '../Core/Color/ColorType';
-import type ColumnSeries from './Column/ColumnSeries';
+import type ColumnPoint from './Column/ColumnPoint';
+import type ColumnPointOptions from './Column/ColumnPointOptions';
+import type ColumnSeriesOptions from './Column/ColumnSeriesOptions';
 import type DataLabelOptions from '../Core/Series/DataLabelOptions';
 import type GradientColor from '../Core/Color/GradientColor';
 import type {
@@ -30,9 +38,10 @@ import type SVGElement from '../Core/Renderer/SVG/SVGElement';
 import type SVGPath from '../Core/Renderer/SVG/SVGPath';
 import type SVGRenderer from '../Core/Renderer/SVG/SVGRenderer';
 import BaseSeries from '../Core/Series/Series.js';
-const { seriesTypes } = BaseSeries;
 import Color from '../Core/Color/Color.js';
 const { parse: color } = Color;
+import ColumnSeries from './Column/ColumnSeries.js';
+const { prototype: columnProto } = ColumnSeries;
 import H from '../Core/Globals.js';
 const {
     charts,
@@ -54,8 +63,6 @@ const {
     relativeLength
 } = U;
 
-import './Column/ColumnSeries.js';
-
 /**
  * @private
  */
@@ -71,7 +78,7 @@ declare module '../Core/Series/SeriesType' {
  */
 declare global {
     namespace Highcharts {
-        class Funnel3dPoint extends ColumnSeries.Point {
+        class Funnel3dPoint extends ColumnPoint {
             public dlBoxRaw: Dictionary<number>;
             public options: Funnel3dPointOptions;
             public series: Funnel3dSeries;
@@ -89,12 +96,12 @@ declare global {
             public getWidthAt(y: number): number;
             public translate3dShapes(): void;
         }
-        interface Funnel3dPointOptions extends ColumnSeries.PointOptions {
+        interface Funnel3dPointOptions extends ColumnPointOptions {
             gradientForSides?: boolean;
             dlBox?: BBoxObject;
             y?: number;
         }
-        interface Funnel3dSeriesOptions extends ColumnSeries.SeriesOptions {
+        interface Funnel3dSeriesOptions extends ColumnSeriesOptions {
             center?: Array<(number|string|null)>;
             data?: Array<(PointOptions|PointShortOptions|Funnel3dPointOptions)>;
             gradientForSides?: boolean;
@@ -143,6 +150,12 @@ declare global {
 
 var cuboidPath = RendererProto.cuboidPath,
     funnel3dMethods: Highcharts.Funnel3dMethodsObject;
+
+/* *
+ *
+ *  Class
+ *
+ * */
 
 /**
  * The funnel3d series type.
@@ -500,17 +513,14 @@ BaseSeries.seriesType<typeof Highcharts.Funnel3dSeries>('funnel3d', 'column',
             }
 
             point.dlBox = dlBox;
-            seriesTypes.column.prototype.alignDataLabel.apply(
+            columnProto.alignDataLabel.apply(
                 series,
                 arguments
             );
         }
     }, /** @lends seriesTypes.funnel3d.prototype.pointClass.prototype */ {
         shapeType: 'funnel3d',
-        hasNewShapeType: H
-            .seriesTypes.column.prototype
-            .pointClass.prototype
-            .hasNewShapeType
+        hasNewShapeType: columnProto.pointClass.prototype.hasNewShapeType
     }
 );
 

@@ -9,13 +9,18 @@
  * */
 'use strict';
 import BaseSeries from '../Core/Series/Series.js';
+import ColumnSeries from './Column/ColumnSeries.js';
+var columnProto = ColumnSeries.prototype;
 import O from '../Core/Options.js';
 var defaultOptions = O.defaultOptions;
 import U from '../Core/Utilities.js';
 var merge = U.merge;
-import './Column/ColumnSeries.js';
 import './OHLCSeries.js';
-var columnProto = BaseSeries.seriesTypes.column.prototype;
+/* *
+ *
+ *  Code
+ *
+ * */
 /**
  * A candlestick chart is a style of financial chart used to describe price
  * movements over time.

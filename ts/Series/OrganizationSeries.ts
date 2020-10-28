@@ -12,6 +12,12 @@
 
 'use strict';
 
+/* *
+ *
+ *  Imports
+ *
+ * */
+
 import type BBoxObject from '../Core/Renderer/BBoxObject';
 import type ColorString from '../Core/Color/ColorString';
 import type CSSObject from '../Core/Renderer/CSSObject';
@@ -29,6 +35,15 @@ const {
     pick,
     wrap
 } = U;
+
+import './SankeySeries.js';
+const base = BaseSeries.seriesTypes.sankey.prototype;
+
+/* *
+ *
+ *  Declarations
+ *
+ * */
 
 /**
  * Internal types
@@ -140,10 +155,6 @@ declare module '../Core/Series/SeriesType' {
     }
 }
 
-import './SankeySeries.js';
-
-const base = BaseSeries.seriesTypes.sankey.prototype;
-
 /**
  * Layout value for the child nodes in an organization chart. If `hanging`, this
  * node's children will hang below their parent, allowing a tighter packing of
@@ -153,6 +164,12 @@ const base = BaseSeries.seriesTypes.sankey.prototype;
  */
 
 ''; // detach doclets above
+
+/* *
+ *
+ *  Class
+ *
+ * */
 
 /**
  * @private

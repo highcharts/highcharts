@@ -10,6 +10,8 @@
 
 import type { AxisType } from '../../Core/Axis/Types';
 import type Chart from '../../Core/Chart/Chart';
+import type LinePoint from '../../Series/Line/LinePoint';
+import type LineSeriesOptions from '../../Series/Line/LineSeriesOptions';
 import type SeriesType from '../../Core/Series/SeriesType';
 import BaseSeries from '../../Core/Series/Series.js';
 const { seriesTypes } = BaseSeries;
@@ -70,7 +72,7 @@ declare global {
             public requireIndicators(): SMAIndicatorRequireIndicatorsObject;
         }
 
-        class SMAIndicatorPoint extends LineSeries.Point {
+        class SMAIndicatorPoint extends LinePoint {
             public series: SMAIndicator;
         }
 
@@ -83,7 +85,7 @@ declare global {
             yData: NonNullable<TLinkedSeries['yData']>;
         }
 
-        interface SMAIndicatorOptions extends LineSeries.SeriesOptions {
+        interface SMAIndicatorOptions extends LineSeriesOptions {
             compareToMain?: boolean;
             data?: Array<Array<number>>;
             params?: SMAIndicatorParamsOptions;
@@ -151,7 +153,7 @@ addEvent(LineSeries, 'init', function (
 });
 
 addEvent(LineSeries, 'afterSetOptions', function (
-    e: { options: LineSeries.SeriesOptions }
+    e: { options: LineSeriesOptions }
 ): void {
     var options = e.options,
         dataGrouping = options.dataGrouping;

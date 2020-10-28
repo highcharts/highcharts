@@ -15,6 +15,7 @@ import type {
     VerticalAlignValue
 } from '../Core/Renderer/AlignObject';
 import type BBoxObject from '../Core/Renderer/BBoxObject';
+import type ColumnPoint from '../Series/Column/ColumnPoint';
 import type ColumnSeries from '../Series/Column/ColumnSeries';
 import type DataLabelOptions from '../Core/Series/DataLabelOptions';
 import type Point from '../Core/Series/Point';
@@ -732,8 +733,8 @@ if (seriesTypes.column) {
             endAngleRad = xAxis.endAngleRad,
             visibleRange = endAngleRad - startAngleRad,
             thresholdAngleRad,
-            points: Array<ColumnSeries.Point>&Array<Highcharts.PolarPoint>,
-            point: ColumnSeries.Point,
+            points: Array<ColumnPoint>&Array<Highcharts.PolarPoint>,
+            point: ColumnPoint,
             i: number,
             yMin: any,
             yMax: any,
@@ -968,7 +969,7 @@ if (seriesTypes.column) {
     wrap(columnProto, 'alignDataLabel', function (
         this: (ColumnSeries|Highcharts.PolarSeries),
         proceed: Function,
-        point: (ColumnSeries.Point|Highcharts.PolarPoint),
+        point: (ColumnPoint|Highcharts.PolarPoint),
         dataLabel: SVGElement,
         options: DataLabelOptions,
         alignTo: BBoxObject,
@@ -1006,8 +1007,8 @@ if (seriesTypes.column) {
                             (this as Highcharts.PolarSeries)
                                 .xAxis.startAngleRad,
                             // radius
-                            (point as ColumnSeries.Point).barX +
-                            (point as ColumnSeries.Point).pointWidth / 2
+                            (point as ColumnPoint).barX +
+                            (point as ColumnPoint).pointWidth / 2
                         );
 
                     (alignTo as any) = {

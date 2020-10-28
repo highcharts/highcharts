@@ -13,9 +13,10 @@
  * */
 'use strict';
 import BaseSeries from '../Core/Series/Series.js';
-var seriesTypes = BaseSeries.seriesTypes;
 import Color from '../Core/Color/Color.js';
 var color = Color.parse;
+import ColumnSeries from './Column/ColumnSeries.js';
+var columnProto = ColumnSeries.prototype;
 import H from '../Core/Globals.js';
 var charts = H.charts, RendererProto = H.Renderer.prototype;
 import LineSeries from './Line/LineSeries.js';
@@ -23,8 +24,12 @@ import Math3D from '../Extensions/Math3D.js';
 var perspective = Math3D.perspective;
 import U from '../Core/Utilities.js';
 var error = U.error, extend = U.extend, merge = U.merge, pick = U.pick, relativeLength = U.relativeLength;
-import './Column/ColumnSeries.js';
 var cuboidPath = RendererProto.cuboidPath, funnel3dMethods;
+/* *
+ *
+ *  Class
+ *
+ * */
 /**
  * The funnel3d series type.
  *
@@ -302,14 +307,11 @@ BaseSeries.seriesType('funnel3d', 'column',
             }
         }
         point.dlBox = dlBox;
-        seriesTypes.column.prototype.alignDataLabel.apply(series, arguments);
+        columnProto.alignDataLabel.apply(series, arguments);
     }
 }, /** @lends seriesTypes.funnel3d.prototype.pointClass.prototype */ {
     shapeType: 'funnel3d',
-    hasNewShapeType: H
-        .seriesTypes.column.prototype
-        .pointClass.prototype
-        .hasNewShapeType
+    hasNewShapeType: columnProto.pointClass.prototype.hasNewShapeType
 });
 /**
  * A `funnel3d` series. If the [type](#series.funnel3d.type) option is

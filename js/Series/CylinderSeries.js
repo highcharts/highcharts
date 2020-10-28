@@ -14,6 +14,8 @@
 'use strict';
 import Color from '../Core/Color/Color.js';
 var color = Color.parse;
+import ColumnSeries from './Column/ColumnSeries.js';
+var columnProto = ColumnSeries.prototype;
 import H from '../Core/Globals.js';
 var charts = H.charts, deg2rad = H.deg2rad, RendererProto = H.Renderer.prototype;
 import Math3D from '../Extensions/Math3D.js';
@@ -21,7 +23,6 @@ var perspective = Math3D.perspective;
 import Series from '../Core/Series/Series.js';
 import U from '../Core/Utilities.js';
 var merge = U.merge, pick = U.pick;
-import '../Series/Column/ColumnSeries.js';
 var cuboidPath = RendererProto.cuboidPath;
 // Check if a path is simplified. The simplified path contains only lineTo
 // segments, whereas non-simplified contain curves.
@@ -60,10 +61,7 @@ Series.seriesType('cylinder', 'column',
 /** @lends Highcharts.seriesTypes.cylinder#pointClass# */
 {
     shapeType: 'cylinder',
-    hasNewShapeType: H
-        .seriesTypes.column.prototype
-        .pointClass.prototype
-        .hasNewShapeType
+    hasNewShapeType: columnProto.pointClass.prototype.hasNewShapeType
 });
 /**
  * A `cylinder` series. If the [type](#series.cylinder.type) option is not

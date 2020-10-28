@@ -45,6 +45,12 @@ declare module '../../Core/Chart/ChartLike'{
     }
 }
 
+declare module '../../Core/Series/PointLike' {
+    interface PointLike {
+        i?: number;
+    }
+}
+
 declare module '../../Core/Series/SeriesLike' {
     interface SeriesLike {
         alteredByBoost?: Array<Highcharts.BoostAlteredObject>;
@@ -180,8 +186,8 @@ LineSeries.prototype.getPoint = function (
     if (boostPoint && !(boostPoint instanceof this.pointClass)) {
         point = (new this.pointClass()).init( // eslint-disable-line new-cap
             this,
-            (this.options.data as any)[boostPoint.i],
-            xData ? xData[boostPoint.i] : void 0
+            (this.options.data as any)[boostPoint.i as any],
+            xData ? xData[boostPoint.i as any] : void 0
         );
 
         point.category = pick(

@@ -10,15 +10,25 @@
 
 'use strict';
 
+/* *
+ *
+ *  Imports
+ *
+ * */
+
 import type ColorString from '../Core/Color/ColorString';
 import type ColorType from '../Core/Color/ColorType';
+import type ColumnMetricsObject from './Column/ColumnMetricsObject';
 import type { SeriesStatesOptions } from '../Core/Series/SeriesOptions';
 import type { StatesOptionsKey } from '../Core/Series/StatesOptions';
 import type SVGAttributes from '../Core/Renderer/SVG/SVGAttributes';
 import type SVGPath from '../Core/Renderer/SVG/SVGPath';
 import BaseSeries from '../Core/Series/Series.js';
+const { seriesTypes } = BaseSeries;
 import ColumnSeries from './Column/ColumnSeries.js';
+const { prototype: colProto } = ColumnSeries;
 import LineSeries from './Line/LineSeries.js';
+const { prototype: seriesProto } = LineSeries;
 import SVGRenderer from '../Core/Renderer/SVG/SVGRenderer.js';
 import H from '../Core/Globals.js';
 const { noop } = H;
@@ -27,6 +37,21 @@ const {
     extend,
     pick
 } = U;
+
+import './AreaRangeSeries.js';
+import './ColumnRangeSeries.js';
+import '../Core/Interaction.js';
+
+var areaRangeProto = seriesTypes.arearange.prototype,
+    columnRangeProto = seriesTypes.columnrange.prototype,
+    areaRangePointProto = areaRangeProto.pointClass.prototype,
+    TrackerMixin = H.TrackerMixin; // Interaction
+
+/* *
+ *
+ *  Declarations
+ *
+ * */
 
 declare module '../Core/Series/SeriesOptions' {
     interface SeriesStateHoverOptions {
@@ -74,14 +99,14 @@ declare global {
             public seriesDrawPoints: AreaRangeSeries['drawPoints'];
             public drawTracker: TrackerMixin['drawTrackerPoint'];
             public drawGraph: any;
-            public columnMetrics: ColumnSeries.MetricsObject;
+            public columnMetrics: ColumnMetricsObject;
             public crispConnector(
                 points: SVGPath,
                 width: number
             ): SVGPath;
             public getConnectorAttribs(point: DumbbellPoint): SVGAttributes;
             public drawConnector(point: DumbbellPoint): void;
-            public getColumnMetrics(): ColumnSeries.MetricsObject;
+            public getColumnMetrics(): ColumnMetricsObject;
             public translate(): void;
             public drawPoints(): void;
             public markerAttribs(): SVGAttributes;
@@ -102,18 +127,11 @@ declare module '../Core/Series/SeriesType' {
     }
 }
 
-import './AreaRangeSeries.js';
-import './ColumnRangeSeries.js';
-import '../Core/Interaction.js';
-
-var seriesProto = LineSeries.prototype,
-    seriesTypes = BaseSeries.seriesTypes,
-    areaRangeProto = seriesTypes.arearange.prototype,
-    columnRangeProto = seriesTypes.columnrange.prototype,
-    colProto = ColumnSeries.prototype,
-    areaRangePointProto = areaRangeProto.pointClass.prototype,
-    TrackerMixin = H.TrackerMixin; // Interaction
-
+/* *
+ *
+ *  Class
+ *
+ * */
 
 /**
  * The dumbbell series is a cartesian series with higher and lower values for
@@ -352,7 +370,7 @@ BaseSeries.seriesType<typeof Highcharts.DumbbellSeries>('dumbbell', 'arearange',
      */
     getColumnMetrics: function (
         this: Highcharts.DumbbellSeries
-    ): ColumnSeries.MetricsObject {
+    ): ColumnMetricsObject {
         var metrics = colProto.getColumnMetrics.apply(this, arguments as any);
 
         metrics.offset += metrics.width / 2;

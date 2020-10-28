@@ -10,8 +10,17 @@
 
 'use strict';
 
+/* *
+ *
+ *  Imports
+ *
+ * */
+
 import type AnimationOptionsObject from '../Core/Animation/AnimationOptionsObject';
 import type { AlignValue } from '../Core/Renderer/AlignObject';
+import type LinePoint from './Line/LinePoint';
+import type LinePointOptions from './Line/LinePointOptions';
+import type LineSeriesOptions from './Line/LineSeriesOptions';
 import type DataLabelOptions from '../Core/Series/DataLabelOptions';
 import type PositionObject from '../Core/Renderer/PositionObject';
 import type { SeriesStatesOptions } from '../Core/Series/SeriesOptions';
@@ -41,6 +50,14 @@ const {
     relativeLength
 } = U;
 
+import '../Core/Options.js';
+
+/* *
+ *
+ *  Declarations
+ *
+ * */
+
 declare module '../Core/Series/SeriesLike' {
     interface SeriesLike {
         redrawPoints(): void;
@@ -65,7 +82,7 @@ declare module '../Core/Series/SeriesType' {
  */
 declare global {
     namespace Highcharts {
-        class PiePoint extends LineSeries.Point {
+        class PiePoint extends LinePoint {
             public angle?: number;
             public connectorShapes?: Dictionary<PiePointConnectorShapeFunction>;
             public delayedRendering?: boolean;
@@ -120,7 +137,7 @@ declare global {
             'final': Dictionary<undefined>;
             natural: PositionObject;
         }
-        interface PiePointOptions extends LineSeries.PointOptions {
+        interface PiePointOptions extends LinePointOptions {
             dataLabels?: PieSeriesDataLabelsOptionsObject;
             sliced?: boolean;
             visible?: boolean;
@@ -138,7 +155,7 @@ declare global {
             distance?: number;
             softConnector?: boolean;
         }
-        interface PieSeriesOptions extends LineSeries.SeriesOptions {
+        interface PieSeriesOptions extends LineSeriesOptions {
             endAngle?: number;
             center?: [(number|string|null), (number|string|null)];
             colorByPoint?: boolean;
@@ -159,7 +176,11 @@ declare global {
     }
 }
 
-import '../Core/Options.js';
+/* *
+ *
+ *  Class
+ *
+ * */
 
 /**
  * Pie series type.

@@ -13,7 +13,7 @@
 import type AlignObject from '../Renderer/AlignObject';
 import type BBoxObject from '../Renderer/BBoxObject';
 import type ColorString from '../Color/ColorString';
-import type ColumnSeries from '../../Series/Column/ColumnSeries';
+import type ColumnPoint from '../../Series/Column/ColumnPoint';
 import type DataLabelOptions from './DataLabelOptions';
 import type Point from './Point';
 import type SVGAttributes from '../Renderer/SVG/SVGAttributes';
@@ -94,7 +94,7 @@ declare module './SeriesLike' {
         ): (boolean|undefined);
         placeDataLabels?(): void;
         setDataLabelStartPos(
-            point: ColumnSeries.Point,
+            point: ColumnPoint,
             dataLabel: SVGElement,
             isNew: boolean|undefined,
             isInside: boolean,
@@ -805,7 +805,7 @@ LineSeries.prototype.alignDataLabel = function (
         setStartPos = function (alignOptions: AlignObject): void {
             if (enabledDataSorting && series.xAxis && !justify) {
                 series.setDataLabelStartPos(
-                    point as ColumnSeries.Point,
+                    point as ColumnPoint,
                     dataLabel,
                     isNew,
                     isInsidePlot,
@@ -946,7 +946,7 @@ LineSeries.prototype.alignDataLabel = function (
  * @return {void}
  */
 LineSeries.prototype.setDataLabelStartPos = function (
-    point: ColumnSeries.Point,
+    point: ColumnPoint,
     dataLabel: SVGElement,
     isNew: boolean,
     isInside: boolean,

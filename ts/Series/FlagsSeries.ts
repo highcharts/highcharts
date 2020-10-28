@@ -12,7 +12,10 @@
 
 import type { AlignValue } from '../Core/Renderer/AlignObject';
 import type ColorType from '../Core/Color/ColorType';
+import type ColumnPoint from './Column/ColumnPoint';
+import type ColumnPointOptions from './Column/ColumnPointOptions';
 import type ColumnSeries from './Column/ColumnSeries';
+import type ColumnSeriesOptions from './Column/ColumnSeriesOptions';
 import type CSSObject from '../Core/Renderer/CSSObject';
 import type { SeriesStatesOptions } from '../Core/Series/SeriesOptions';
 import type SVGAttributes from '../Core/Renderer/SVG/SVGAttributes';
@@ -59,7 +62,7 @@ declare global {
             anchorX?: number;
             plotX?: number;
         }
-        interface FlagsPointOptions extends ColumnSeries.PointOptions {
+        interface FlagsPointOptions extends ColumnPointOptions {
             fillColor?: ColorType;
             labelrank?: number;
             selected?: boolean;
@@ -68,7 +71,7 @@ declare global {
             title?: string;
             x?: number;
         }
-        interface FlagsSeriesOptions extends ColumnSeries.SeriesOptions {
+        interface FlagsSeriesOptions extends ColumnSeriesOptions {
             allowOverlapX?: boolean;
             fillColor?: ColorType;
             height?: number;
@@ -86,7 +89,7 @@ declare global {
             width?: number;
             y?: number;
         }
-        class FlagsPoint extends ColumnSeries.Point {
+        class FlagsPoint extends ColumnPoint {
             public _y?: number;
             public anchorX?: number;
             public fillColor?: ColorType;
