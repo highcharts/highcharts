@@ -687,8 +687,12 @@ var ColumnSeries = BaseSeries.seriesType('column', 'line',
                     xAxis.len + xAxis.pos - chart.plotTop - (plotX || 0) - seriesXOffset - barW / 2,
                     barH
                 ] :
-                [barX + barW / 2, clamp(plotY + yAxis.pos -
-                        chart.plotTop, yAxis.pos - chart.plotTop, yAxis.len + yAxis.pos - chart.plotTop), barH];
+                [
+                    barX + barW / 2,
+                    clamp(plotY + yAxis.pos -
+                        chart.plotTop, yAxis.pos - chart.plotTop, yAxis.len + yAxis.pos - chart.plotTop),
+                    barH
+                ];
             // Register shape type and arguments to be used in drawPoints
             // Allow shapeType defined on pointClass level
             point.shapeType =
