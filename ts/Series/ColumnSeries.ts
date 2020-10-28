@@ -966,12 +966,20 @@ const ColumnSeries = BaseSeries.seriesType<typeof Highcharts.ColumnSeries>(
                 // #3648)
                 point.tooltipPos = chart.inverted ?
                     [
-                        yAxis.len + yAxis.pos - chart.plotLeft - plotY,
+                        clamp(
+                            yAxis.len + yAxis.pos - chart.plotLeft - plotY,
+                            yAxis.pos - chart.plotLeft,
+                            yAxis.len + yAxis.pos - chart.plotLeft
+                        ),
                         xAxis.len + xAxis.pos - chart.plotTop - (plotX || 0) - seriesXOffset - barW / 2,
                         barH
                     ] :
-                    [barX + barW / 2, plotY + (yAxis.pos as any) -
-                    chart.plotTop, barH];
+                    [barX + barW / 2, clamp(
+                        plotY + (yAxis.pos as any) -
+                        chart.plotTop,
+                        yAxis.pos - chart.plotTop,
+                        yAxis.len + yAxis.pos - chart.plotTop
+                    ), barH];
 
                 // Register shape type and arguments to be used in drawPoints
                 // Allow shapeType defined on pointClass level
