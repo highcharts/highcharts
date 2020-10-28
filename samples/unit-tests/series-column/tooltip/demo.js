@@ -93,7 +93,7 @@ QUnit.test("Tooltip should stay inside plotArea even when columns are outside ax
     assert.strictEqual(
         point.tooltipPos[1] >= 0,
         true,
-        "Tooltip inside plotArea."
+        "Tooltip should be inside plotArea (#14138)."
     );
 
 });
