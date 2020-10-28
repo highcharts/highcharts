@@ -73,8 +73,8 @@ QUnit.test('#13277: Event listener memory leak', assert => {
                 data: []
             });
 
-            assert.ok(before === eventCount(chart.series[0]), `No leakage into series.hcEvents for ${type} series`);
-            assert.ok(beforeChart === eventCount(chart), `No leakage into chart.hcEvents for ${type} series`);
+            assert.strictEqual(eventCount(chart.series[0]), before, `${type} update() should not leak into series.hcEvents`);
+            assert.strictEqual(eventCount(chart), beforeChart, `${type} update() should not leak into chart.hcEvents`);
         }
     });
 });
