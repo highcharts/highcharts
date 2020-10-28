@@ -6929,10 +6929,12 @@ class Axis implements AxisComposition, AxisLike {
 
         // Create the axisGroup and gridGroup elements on first iteration
         if (!axis.axisGroup) {
+            const radialClassName = this.isRadial ? 'highcharts-radial-axis ' : '';
             axis.gridGroup = renderer.g('grid')
                 .attr({ zIndex: options.gridZIndex || 1 })
                 .addClass(
                     'highcharts-' + this.coll.toLowerCase() + '-grid ' +
+                    radialClassName +
                     (className || '')
                 )
                 .add(axisParent);
@@ -6940,6 +6942,7 @@ class Axis implements AxisComposition, AxisLike {
                 .attr({ zIndex: options.zIndex || 2 })
                 .addClass(
                     'highcharts-' + this.coll.toLowerCase() + ' ' +
+                    radialClassName +
                     (className || '')
                 )
                 .add(axisParent);
@@ -6947,6 +6950,7 @@ class Axis implements AxisComposition, AxisLike {
                 .attr({ zIndex: (labelOptions as any).zIndex || 7 })
                 .addClass(
                     'highcharts-' + axis.coll.toLowerCase() + '-labels ' +
+                    radialClassName +
                     (className || '')
                 )
                 .add(axisParent);

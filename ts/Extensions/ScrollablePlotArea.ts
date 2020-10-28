@@ -325,7 +325,12 @@ Chart.prototype.moveFixedElements = function (): void {
         axisClass = '.highcharts-yaxis';
     }
 
-    fixedSelectors.push(axisClass as any, axisClass + '-labels');
+    if (axisClass) {
+        fixedSelectors.push(
+            `${axisClass}:not(.highcharts-radial-axis)`,
+            `${axisClass}-labels:not(.highcharts-radial-axis)`
+        );
+    }
 
     fixedSelectors.forEach(function (className: string): void {
         [].forEach.call(

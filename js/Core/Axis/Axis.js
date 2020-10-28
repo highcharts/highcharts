@@ -2427,19 +2427,23 @@ var Axis = /** @class */ (function () {
         axis.staggerLines = axis.horiz && labelOptions.staggerLines;
         // Create the axisGroup and gridGroup elements on first iteration
         if (!axis.axisGroup) {
+            var radialClassName = this.isRadial ? 'highcharts-radial-axis ' : '';
             axis.gridGroup = renderer.g('grid')
                 .attr({ zIndex: options.gridZIndex || 1 })
                 .addClass('highcharts-' + this.coll.toLowerCase() + '-grid ' +
+                radialClassName +
                 (className || ''))
                 .add(axisParent);
             axis.axisGroup = renderer.g('axis')
                 .attr({ zIndex: options.zIndex || 2 })
                 .addClass('highcharts-' + this.coll.toLowerCase() + ' ' +
+                radialClassName +
                 (className || ''))
                 .add(axisParent);
             axis.labelGroup = renderer.g('axis-labels')
                 .attr({ zIndex: labelOptions.zIndex || 7 })
                 .addClass('highcharts-' + axis.coll.toLowerCase() + '-labels ' +
+                radialClassName +
                 (className || ''))
                 .add(axisParent);
         }

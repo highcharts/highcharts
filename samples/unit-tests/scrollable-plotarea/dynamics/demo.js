@@ -42,3 +42,47 @@ QUnit.test('Responsive scrollable plot area (#12991)', function (assert) {
         'The scrollbar should disasppear after increasing the height of the chart (#12991)'
     );
 });
+
+QUnit.test('The radial axes like in the gauge series should have the ability to scroll, #14379.', function (assert) {
+    const chart = Highcharts.chart('container', {
+        chart: {
+            type: 'gauge',
+            scrollablePlotArea: {
+                minWidth: 700
+            }
+        },
+        pane: [{
+            startAngle: -90,
+            size: "50.0%",
+            center: ["20.0%", "40%"],
+            endAngle: 90
+        }, {
+            startAngle: -90,
+            size: "50.0%",
+            center: ["60.0%", "40%"],
+            endAngle: 90
+        }],
+        yAxis: [{
+            min: 0,
+            max: 200,
+            tickPixelInterval: 50,
+            pane: 0
+        }, {
+            min: 0,
+            max: 200,
+            tickPixelInterval: 50,
+            pane: 1
+        }],
+        series: [{
+            data: [80]
+        }, {
+            data: [90],
+            yAxis: 1
+        }]
+    });
+
+    assert.notOk(
+        chart.yAxis[0].axisGroup.element.parentNode.parentNode.classList.contains('highcharts-fixed'),
+        'yAxis should not have that class.'
+    );
+});
