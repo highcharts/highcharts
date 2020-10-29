@@ -244,7 +244,7 @@ Chart.prototype.moveFixedElements = function () {
         axisClass = '.highcharts-yaxis';
     }
     if (axisClass) {
-        fixedSelectors.push(axisClass + ":not(.highcharts-radial-axis)", axisClass + "-labels:not(.highcharts-radial-axis)");
+        fixedSelectors.push(axisClass + ":not(.highcharts-radial-axis)", axisClass + "-labels:not(.highcharts-radial-axis-labels)");
     }
     fixedSelectors.forEach(function (className) {
         [].forEach.call(container.querySelectorAll(className), function (elem) {
