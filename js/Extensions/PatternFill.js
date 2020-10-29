@@ -482,6 +482,9 @@ addEvent(SVGRenderer, 'complexColor', function (args) {
     }
     // Set the fill/stroke prop on the element
     element.setAttribute(prop, value);
+    addEvent(Highcharts.Color, 'setPatternOpacity', function (e) {
+        element.setAttribute('opacity', e.alpha);
+    });
     // Allow the color to be concatenated into tooltips formatters etc.
     color.toString = function () {
         return value;

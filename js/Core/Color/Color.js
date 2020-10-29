@@ -9,7 +9,7 @@
  * */
 import H from '../Globals.js';
 import U from '../Utilities.js';
-var isNumber = U.isNumber, merge = U.merge, pInt = U.pInt;
+var fireEvent = U.fireEvent, isNumber = U.isNumber, merge = U.merge, pInt = U.pInt;
 /**
  * A valid color to be parsed and handled by Highcharts. Highcharts internally
  * supports hex colors like `#ffffff`, rgb colors like `rgb(255,255,255)` and
@@ -342,7 +342,14 @@ var Color = /** @class */ (function () {
      *         Color with modifications.
      */
     Color.prototype.setOpacity = function (alpha) {
-        this.rgba[3] = alpha;
+        if (this.rgba.length) {
+            this.rgba[3] = alpha;
+        }
+        else {
+            // The pattern doesn't have the rgba property, instead set the
+            // opacity directly to the SVG element via complexColor event.
+            fireEvent(this, 'setPatternOpacity', { alpha: alpha });
+        }
         return this;
     };
     /**

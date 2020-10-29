@@ -13,6 +13,7 @@ import type { ColorLike, ColorType } from './ColorType';
 import H from '../Globals.js';
 import U from '../Utilities.js';
 const {
+    fireEvent,
     isNumber,
     merge,
     pInt
@@ -424,7 +425,13 @@ class Color implements ColorLike {
      *         Color with modifications.
      */
     public setOpacity(alpha: number): this {
-        this.rgba[3] = alpha;
+        if (this.rgba.length) {
+            this.rgba[3] = alpha;
+        } else {
+            // The pattern doesn't have the rgba property, instead set the
+            // opacity directly to the SVG element via complexColor event.
+            fireEvent(this, 'setPatternOpacity', { alpha });
+        }
         return this;
     }
 
