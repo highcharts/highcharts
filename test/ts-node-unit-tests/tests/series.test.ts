@@ -1,9 +1,10 @@
-import { deepStrictEqual } from 'assert';
+import { deepStrictEqual, ok, strictEqual } from 'assert';
 import { describe } from '../test-utils';
 
 export function testMapSeries() {
-    const Highmaps = require('../../../code/highmaps.src.js')();
     describe('Testing maps series...');
+
+    const Highmaps = require('../../../code/highmaps.src.js')();
 
     // Check if the series are in seriesTypes
     const expected = [
@@ -33,8 +34,9 @@ export function testMapSeries() {
 }
 
 export function testStockSeries() {
-    const Highstock = require('../../../code/highstock.src.js')();
     describe('Testing stock series...');
+
+    const Highstock = require('../../../code/highstock.src.js')();
 
     // Check if the series are in seriesTypes
     const expected = [
@@ -61,8 +63,9 @@ export function testStockSeries() {
 }
 
 export function testGanttSeries() {
-    const Gantt = require('../../../code/highcharts-gantt.src.js')();
     describe('Testing Gantt series...');
+
+    const Gantt = require('../../../code/highcharts-gantt.src.js')();
 
     // Check if the series are in seriesTypes
     const expected = [
@@ -88,8 +91,9 @@ export function testGanttSeries() {
 }
 
 export function testHighchartsSeries() {
-    const Highcharts = require('../../../code/highcharts.src.js')();
     describe('Testing Highcharts Basic series...');
+
+    const Highcharts = require('../../../code/highcharts.src.js')();
 
     // Check if the series are in seriesTypes
     const expected = [
@@ -113,9 +117,10 @@ export function testHighchartsSeries() {
 }
 
 export function testHighchartsMoreSeries() {
+    describe('Testing Highcharts-more series...');
+
     const Highcharts = require('../../../code/highcharts.src.js')();
     require('../../../code/highcharts-more.src.js')(Highcharts);
-    describe('Testing Highcharts-more series...');
 
     // Check if the series are in seriesTypes
     const expected = [
@@ -146,5 +151,97 @@ export function testHighchartsMoreSeries() {
         seriesTypes,
         expected,
         'The Highcharts-more source file should contain these series'
+    );
+}
+
+export function test3dSeries() {
+    describe('Testing Highcharts-3d series...');
+
+    const Highcharts = require('../../../code/highcharts.src.js')();
+    require('../../../code/highcharts-3d.src.js')(Highcharts);
+
+    const seriesTypes = Object.keys(Highcharts.seriesTypes);
+
+    const added = [
+        'scatter3d'
+    ];
+
+    added.forEach(
+        series => ok(
+            seriesTypes.includes(series),
+            `Series "${series}" should be added with the 3d values`
+        )
+    );
+}
+
+export function testStockIndicators() {
+    describe('Testing stock indicators series...');
+
+    const Highcharts = require('../../../code/highstock.src.js')();
+    require('../../../code/indicators/indicators-all.src.js')(Highcharts);
+
+    const seriesTypes = Object.keys(Highcharts.seriesTypes);
+
+    const expected = [
+        'line',
+        'area',
+        'spline',
+        'areaspline',
+        'column',
+        'bar',
+        'scatter',
+        'pie',
+        'ohlc',
+        'candlestick',
+        'flags',
+        'sma',
+        'ad',
+        'ao',
+        'aroon',
+        'aroonoscillator',
+        'atr',
+        'bb',
+        'cci',
+        'cmf',
+        'dpo',
+        'ema',
+        'chaikin',
+        'dema',
+        'tema',
+        'trix',
+        'apo',
+        'ikh',
+        'keltnerchannels',
+        'macd',
+        'mfi',
+        'momentum',
+        'natr',
+        'pivotpoints',
+        'ppo',
+        'pc',
+        'priceenvelopes',
+        'psar',
+        'roc',
+        'rsi',
+        'stochastic',
+        'slowstochastic',
+        'supertrend',
+        'vbp',
+        'vwap',
+        'williamsr',
+        'wma',
+        'zigzag',
+        'linearRegression',
+        'linearRegressionSlope',
+        'linearRegressionIntercept',
+        'linearRegressionAngle',
+        'abands',
+        'trendline'
+    ];
+
+    deepStrictEqual(
+        seriesTypes,
+        expected,
+        'Highstock with the indicators-all module should add the indicators as series'
     );
 }
