@@ -6916,31 +6916,34 @@ class Axis implements AxisComposition, AxisLike {
 
         // Create the axisGroup and gridGroup elements on first iteration
         if (!axis.axisGroup) {
-            const radialClassName = this.isRadial ? 'highcharts-radial-axis ' : '';
-            axis.gridGroup = renderer.g('grid')
-                .attr({ zIndex: options.gridZIndex || 1 })
+            const createGroup = (
+                name: string,
+                suffix: string,
+                zIndex: number
+            ): SVGElement => renderer.g(name)
+                .attr({ zIndex })
                 .addClass(
-                    'highcharts-' + this.coll.toLowerCase() + '-grid ' +
-                    radialClassName +
+                    `highcharts-${this.coll.toLowerCase()}${suffix} ` +
+                    (this.isRadial ? `highcharts-radial-axis${suffix} ` : '') +
                     (className || '')
                 )
                 .add(axisParent);
-            axis.axisGroup = renderer.g('axis')
-                .attr({ zIndex: options.zIndex || 2 })
-                .addClass(
-                    'highcharts-' + this.coll.toLowerCase() + ' ' +
-                    radialClassName +
-                    (className || '')
-                )
-                .add(axisParent);
-            axis.labelGroup = renderer.g('axis-labels')
-                .attr({ zIndex: (labelOptions as any).zIndex || 7 })
-                .addClass(
-                    'highcharts-' + axis.coll.toLowerCase() + '-labels ' +
-                    radialClassName +
-                    (className || '')
-                )
-                .add(axisParent);
+
+            axis.gridGroup = createGroup(
+                'grid',
+                '-grid',
+                options.gridZIndex || 1
+            );
+            axis.axisGroup = createGroup(
+                'axis',
+                '',
+                options.zIndex || 2
+            );
+            axis.labelGroup = createGroup(
+                'axis-labels',
+                '-labels',
+                (labelOptions as any).zIndex || 7
+            );
         }
 
         if (hasData || axis.isLinked) {
