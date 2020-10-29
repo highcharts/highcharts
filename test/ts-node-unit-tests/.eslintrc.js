@@ -15,6 +15,8 @@ module.exports = {
     },
     rules: {
         'no-console': 0,
-        'require-jsdoc': 0
-    }
+        'require-jsdoc': 0,
+        quotes: [1, 'single']
+    },
+    root: true
 };
