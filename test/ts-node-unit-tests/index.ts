@@ -9,10 +9,10 @@ const CODE_PATH = join(__dirname, '../../code');
 const errors = [];
 let testCounter: number = 0;
 
-starting('Unit tests')
+starting('Unit tests');
 // require('./prepare-data');
 
-if(!existsSync(CODE_PATH)){
+if (!existsSync(CODE_PATH)) {
     warn('Code has not been compiled. Run npx gulp scripts first');
     process.exit();
 }
@@ -41,5 +41,5 @@ if (errors.length) {
     throw new Error(`Failed ${errors.length}/${testCounter} tests`);
 }
 
-success(`Ran ${ testCounter } successful tests`)
+success(`Ran ${testCounter} successful tests`);
 finished('Unit tests');
