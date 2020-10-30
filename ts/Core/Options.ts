@@ -1751,14 +1751,10 @@ H.defaultOptions = {
          *         String
          * @sample {highcharts} highcharts/chart/renderto-object/
          *         Object reference
-         * @sample {highcharts} highcharts/chart/renderto-jquery/
-         *         Object reference through jQuery
          * @sample {highstock} stock/chart/renderto-string/
          *         String
          * @sample {highstock} stock/chart/renderto-object/
          *         Object reference
-         * @sample {highstock} stock/chart/renderto-jquery/
-         *         Object reference through jQuery
          *
          * @type      {string|Highcharts.HTMLDOMElement}
          * @apioption chart.renderTo

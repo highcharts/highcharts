@@ -47,18 +47,7 @@
     });
 }(Highcharts));
 
-function getJSON(url, cb) {
-    const request = new XMLHttpRequest();
-    request.open('GET', url, true);
-
-    request.onload = function () {
-        cb(JSON.parse(this.response));
-    };
-
-    request.send();
-}
-
-getJSON('https://demo-live-data.highcharts.com/aapl-ohlcv.json', data => {
+Highcharts.getJSON('https://demo-live-data.highcharts.com/aapl-ohlcv.json', data => {
     // Split the data set into ohlc and volume
     const ohlc = [];
     const volume = [];
