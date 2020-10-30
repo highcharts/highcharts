@@ -271,12 +271,12 @@ QUnit[Highcharts.hasWebGLSupport() ? 'test' : 'skip'](
         });
 
         assert.strictEqual(
-            chart.boostClipRect.getBBox().height,
+            chart.boostClipRect.attr('height'),
             chart.plotHeight,
             'Height of the plot area and clip-path should be the same.'
         );
         assert.strictEqual(
-            chart.boostClipRect.getBBox().width,
+            chart.boostClipRect.attr('width'),
             chart.plotWidth,
             'Width of the plot area and clip-path should be the same.'
         );
