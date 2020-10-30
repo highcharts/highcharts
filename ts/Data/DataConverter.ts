@@ -84,13 +84,24 @@ class DataConverter {
      *  Properties
      *
      * */
+
+    /**
+     * Options for the DataConverter.
+     */
     private options: DataConverter.Options;
+
+    /**
+     * Custom parsing function used instead of build-in parseDate method.
+     */
     private parseDateFn: (DataConverter.ParseDateFunction|undefined);
+
+    /**
+     * Regular expression used in the trim method to change a decimal point.
+     */
     private decimalRegex: (RegExp|undefined);
 
     /**
-     * A collection of available date formats, extendable from the outside to
-     * support custom date formats.
+     * A collection of available date formats.
      *
      * @name Highcharts.Data#dateFormats
      * @type {Highcharts.Dictionary<Highcharts.DataDateFormatObject>}
@@ -205,6 +216,11 @@ class DataConverter {
         if (value instanceof DataTable) {
             return value;
         }
+
+        if (!this.asBoolean(value)) {
+            return new DataTable();
+        }
+
         if (typeof value === 'string') {
             try {
                 return DataTable.fromJSON(JSON.parse(value));
@@ -217,7 +233,7 @@ class DataConverter {
             $class: 'DataTable',
             rows: [{
                 $class: 'DataTableRow',
-                cells: [JSON.parse((value || '').toString())]
+                cells: [JSON.parse(JSON.stringify(value))]
             }]
         });
     }
@@ -236,6 +252,10 @@ class DataConverter {
 
         if (typeof value === 'string') {
             timestamp = this.parseDate(value);
+        } else if (typeof value === 'number') {
+            timestamp = value;
+        } else if (value instanceof Date) {
+            return value;
         } else {
             timestamp = this.parseDate(this.asString(value));
         }

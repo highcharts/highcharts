@@ -138,6 +138,12 @@ var GoogleSheetsStore = /** @class */ (function (_super) {
             this.fetchSheet(eventDetail);
         }
     };
+    /**
+     * Converts the store to a class JSON.
+     *
+     * @return {DataJSON.ClassJSON}
+     * Class JSON of this store.
+     */
     GoogleSheetsStore.prototype.toJSON = function () {
         return {
             $class: 'GoogleSheetsStore',

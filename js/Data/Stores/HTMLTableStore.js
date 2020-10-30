@@ -331,6 +331,12 @@ var HTMLTableStore = /** @class */ (function (_super) {
         // Merge in provided options
         return this.getHTMLTableForExport(merge(exportOptions, htmlExportOptions));
     };
+    /**
+     * Converts the store to a class JSON.
+     *
+     * @return {DataJSON.ClassJSON}
+     * Class JSON of this store.
+     */
     HTMLTableStore.prototype.toJSON = function () {
         var store = this, json = {
             $class: 'HTMLTableStore',

@@ -470,6 +470,12 @@ class HTMLTableStore extends DataStore<HTMLTableStore.EventObjects> implements D
         return this.getHTMLTableForExport(merge(exportOptions, htmlExportOptions));
     }
 
+    /**
+     * Converts the store to a class JSON.
+     *
+     * @return {DataJSON.ClassJSON}
+     * Class JSON of this store.
+     */
     public toJSON(): HTMLTableStore.ClassJSON {
         const store = this,
             json: HTMLTableStore.ClassJSON = {

@@ -196,6 +196,12 @@ class GoogleSheetsStore extends DataStore<GoogleSheetsStore.EventObject> impleme
         }
     }
 
+    /**
+     * Converts the store to a class JSON.
+     *
+     * @return {DataJSON.ClassJSON}
+     * Class JSON of this store.
+     */
     public toJSON(): GoogleSheetsStore.ClassJSON {
         return {
             $class: 'GoogleSheetsStore',

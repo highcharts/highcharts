@@ -43,8 +43,7 @@ var DataConverter = /** @class */ (function () {
      */
     function DataConverter(options, parseDate) {
         /**
-         * A collection of available date formats, extendable from the outside to
-         * support custom date formats.
+         * A collection of available date formats.
          *
          * @name Highcharts.Data#dateFormats
          * @type {Highcharts.Dictionary<Highcharts.DataDateFormatObject>}
@@ -155,6 +154,9 @@ var DataConverter = /** @class */ (function () {
         if (value instanceof DataTable) {
             return value;
         }
+        if (!this.asBoolean(value)) {
+            return new DataTable();
+        }
         if (typeof value === 'string') {
             try {
                 return DataTable.fromJSON(JSON.parse(value));
@@ -167,7 +169,7 @@ var DataConverter = /** @class */ (function () {
             $class: 'DataTable',
             rows: [{
                     $class: 'DataTableRow',
-                    cells: [JSON.parse((value || '').toString())]
+                    cells: [JSON.parse(JSON.stringify(value))]
                 }]
         });
     };
@@ -184,6 +186,12 @@ var DataConverter = /** @class */ (function () {
         var timestamp;
         if (typeof value === 'string') {
             timestamp = this.parseDate(value);
+        }
+        else if (typeof value === 'number') {
+            timestamp = value;
+        }
+        else if (value instanceof Date) {
+            return value;
         }
         else {
             timestamp = this.parseDate(this.asString(value));
