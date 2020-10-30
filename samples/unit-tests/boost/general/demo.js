@@ -237,3 +237,48 @@ QUnit[Highcharts.hasWebGLSupport() ? 'test' : 'skip'](
         });
     }
 );
+
+QUnit[Highcharts.hasWebGLSupport() ? 'test' : 'skip'](
+    'The boost clip-path should have the same size as the chart area, #14444.',
+    function (assert) {
+        function generataSeries() {
+            const series = Array.from(Array(100)).map(function () {
+                return {
+                    data: Array.from(Array(10)).map(() => Math.round(Math.random() * 10))
+                };
+            });
+            return series;
+        }
+
+        const chart = Highcharts.chart('container', {
+            chart: {
+                type: 'line',
+                zoomType: 'xy',
+                inverted: true
+            },
+            boost: {
+                enabled: true
+            },
+            legend: {
+                enabled: false
+            },
+            plotOptions: {
+                bar: {
+                    stacking: 'normal'
+                }
+            },
+            series: generataSeries()
+        });
+
+        assert.strictEqual(
+            chart.boostClipRect.getBBox().height,
+            chart.plotHeight,
+            'Height of the plot area and clip-path should be the same.'
+        );
+        assert.strictEqual(
+            chart.boostClipRect.getBBox().width,
+            chart.plotWidth,
+            'Width of the plot area and clip-path should be the same.'
+        );
+    }
+);
