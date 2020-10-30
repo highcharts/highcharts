@@ -262,7 +262,7 @@ QUnit.test('Auto IDs and no duplicate elements', function (assert) {
     var ids = [];
     Highcharts.each(patterns, function (pattern) {
         var id = pattern.getAttribute('id');
-        if (Highcharts.inArray(id, ids) > -1) {
+        if (ids.indexOf(id) > -1) {
             assert.ok(false, 'Expected unique ids for patterns. Duplicate: ' + id);
         }
         ids.push(id);
@@ -344,7 +344,7 @@ QUnit.test('Images (dummy images, not loaded)', function (assert) {
         if (id.indexOf('highcharts-pattern-') > -1) {
             customPattern = pattern;
         }
-        if (Highcharts.inArray(id, ids) > -1) {
+        if (ids.indexOf(id) > -1) {
             assert.ok(false,
                 'Expected unique ids for patterns. Duplicate: ' + id);
         }

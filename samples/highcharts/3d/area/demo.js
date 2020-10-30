@@ -1,6 +1,6 @@
 Highcharts.chart('container', {
     chart: {
-        type: 'area3d',
+        type: 'area',
         options3d: {
             enabled: true,
             alpha: 20,
@@ -21,7 +21,7 @@ Highcharts.chart('container', {
         }
     },
     title: {
-        text: 'a 3D Area Chart'
+        text: '3D Area Chart'
     },
     series: [{
         data: [10, 20, 24, 25, 28, 27, 20, 18, 15, 16]

@@ -994,3 +994,51 @@ QUnit.test('Navigator overlaps chart (#13392).', function (assert) {
         'Navigator should not overlap the chart (#13392).'
     );
 });
+
+QUnit.test('Navigator with adding series on chart load.', function (assert) {
+    Highcharts.stockChart('container', {
+        chart: {
+            events: {
+                load: function (event) {
+                    this.navigator.onMouseUp(event);
+                    const xStr = this.navigator.shades[1].element.getAttribute('x');
+                    assert.notEqual(
+                        /^[\-0-9\.]+$/.test(xStr) || xStr === null,
+                        false,
+                        "Navigator rects have correctly defined x attribute."
+                    );
+                }
+            }
+        },
+        series: [{
+            data: []
+        }]
+    });
+});
+
+QUnit.test('yAxis in navigator does not match the one in the chart, #14060.', function (assert) {
+    const chart = Highcharts.stockChart('container', {
+        yAxis: {
+            reversed: true
+        },
+        series: [{
+            data: [1, 2, 3]
+        }]
+    });
+
+    assert.ok(
+        chart.navigator.yAxis.reversed,
+        'Navigator should inherit the reversed property from the main axis.'
+    );
+    chart.update({
+        navigator: {
+            yAxis: {
+                reversed: false
+            }
+        }
+    });
+    assert.notOk(
+        chart.navigator.yAxis.reversed,
+        'Navigator options should have higher priority and the axis should not be reversed anymore.'
+    );
+});

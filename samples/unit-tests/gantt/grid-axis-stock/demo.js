@@ -558,7 +558,7 @@ QUnit.test('Horizontal axis ticks at start and end', function (assert) {
 
     for (type in types) {
         if (types.hasOwnProperty(type)) { // eslint-disable-line
-            ignore = Highcharts.inArray(type, ignoreTypes) > -1;
+            ignore = ignoreTypes.indexOf(type) > -1;
             if (!ignore) {
                 test(type);
             }

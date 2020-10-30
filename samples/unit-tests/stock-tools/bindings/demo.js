@@ -36,8 +36,7 @@ QUnit.test('Bindings general tests', function (assert) {
         plotTop = chart.plotTop,
         points = chart.series[0].points,
         controller = new TestController(chart),
-        annotationsCounter = 0,
-        i = 0;
+        annotationsCounter = 0;
 
     // CSS Styles are not loaded, so hide left bar. If we don't hide the bar,
     // chart will be rendered outside the visible page and events will not be
@@ -270,61 +269,6 @@ QUnit.test('Bindings general tests', function (assert) {
 
     localStorage.removeItem('highcharts-chart');
 
-    // Test yAxis resizers and adding indicators:
-    for (i = 0; i < 9; i++) {
-        chart.navigationBindings.selectedButtonElement = document
-            .getElementsByClassName('highcharts-indicators')[0];
-        chart.navigationBindings.utils.manageIndicators.call(
-            chart.navigationBindings,
-            {
-                actionType: 'add',
-                linkedTo: 'aapl',
-                fields: {
-                    'params.index': '0',
-                    'params.period': '5'
-                },
-                type: 'atr'
-            }
-        );
-        assert.close(
-            parseFloat(chart.yAxis[0].options.height),
-            i < 4 ?
-                (100 - (i + 1) * 20) :
-                100 / (i + 2),
-            0.0001, // up to 0.0001% is fine
-            'Correct height for MAIN yAxis (' + (i + 2) + ' panes - indicator.add).'
-        );
-        assert.close(
-            parseFloat(chart.yAxis[i + 2].options.height),
-            i < 4 ?
-                20 :
-                100 / (i + 2),
-            0.0001, // up to 0.0001% is fine
-            'Correct height for LAST yAxis (' + (i + 2) + ' panes - indicator.add).'
-        );
-    }
-
-    for (i = 9; i > 0; i--) {
-        chart.navigationBindings.selectedButtonElement = document
-            .getElementsByClassName('highcharts-indicators')[0];
-        chart.navigationBindings.utils.manageIndicators.call(
-            chart.navigationBindings,
-            {
-                actionType: 'remove',
-                seriesId: chart.series[chart.series.length - 2].options.id
-            }
-        );
-
-        assert.close(
-            parseFloat(chart.yAxis[0].options.height),
-            i < 6 ?
-                100 - (i - 1) * 20 :
-                100 / i,
-            0.005, // up to 0.5% is fine
-            'Correct height for main yAxis (' + (i + 1) + ' pane(s) - indicator.remove).'
-        );
-    }
-
     // Test annotation events:
     points = chart.series[0].points;
     chart.navigationBindings.popup.closePopup();
@@ -332,6 +276,36 @@ QUnit.test('Bindings general tests', function (assert) {
         points[2].plotX + plotLeft + 15,
         points[2].plotY + plotTop + 25
     );
+    // Styles in Karma are not loaded!
+    chart.navigationBindings.popup.container.style.position = 'absolute';
+
+    var button = document.querySelectorAll('.highcharts-popup .highcharts-annotation-edit-button')[0],
+        buttonOffset = Highcharts.offset(button);
+
+    controller.click(
+        buttonOffset.left + 5,
+        buttonOffset.top + 5
+    );
+
+    var popupEditor = document.querySelectorAll('.highcharts-popup-lhs-col');
+
+    assert.strictEqual(
+        popupEditor[0].children.length > 0,
+        true,
+        'The popup should includes the edit elements #13532'
+    );
+
+    // Point out the other point to close the editor popup
+    controller.click(
+        points[9].plotX + plotLeft,
+        points[9].plotY + plotTop
+    );
+
+    controller.click(
+        points[2].plotX + plotLeft + 15,
+        points[2].plotY + plotTop + 25
+    );
+
     assert.strictEqual(
         chart.navigationBindings.popup.container.classList
             .contains('highcharts-annotation-toolbar'),
@@ -348,10 +322,10 @@ QUnit.test('Bindings general tests', function (assert) {
     // Styles in Karma are not loaded!
     chart.navigationBindings.popup.container.style.position = 'absolute';
 
-    var button = document.querySelectorAll(
-            '.highcharts-popup .highcharts-annotation-remove-button'
-        )[0],
-        buttonOffset = Highcharts.offset(button);
+    button = document.querySelectorAll(
+        '.highcharts-popup .highcharts-annotation-remove-button'
+    )[0];
+    buttonOffset = Highcharts.offset(button);
 
     controller.click(
         buttonOffset.left + 5,

@@ -8,30 +8,15 @@ var chart = Highcharts.chart('container', {
     subtitle: {
         text: 'Earcon on highest point in series'
     },
-    series: [{
-        data: [1, 2, 4, 5, 7, 9, 11, 13]
-    }, {
-        data: [4, 5, 9, 5, 2, 1, 4, 6]
-    }, {
-        data: [2, 2, 2, 7, 9, 11, 13, 12]
-    }]
-});
-
-
-document.getElementById('sonify').onclick = function () {
-    chart.sonify({
+    sonification: {
         duration: 7000,
-        afterSeriesWait: 1000,
-        order: 'sequential',
-        pointPlayTime: 'x',
-        instruments: [{
-            instrument: 'sineMusical',
-            instrumentMapping: {
-                duration: 200,
-                frequency: 'y',
-                volume: 0.7
+        defaultInstrumentOptions: {
+            minFrequency: 220,
+            maxFrequency: 2200,
+            mapping: {
+                duration: 200
             }
-        }],
+        },
         earcons: [{
             // Define the earcon we want to play
             earcon: new Highcharts.sonification.Earcon({
@@ -57,5 +42,17 @@ document.getElementById('sonify').onclick = function () {
                 ));
             }
         }]
-    });
+    },
+    series: [{
+        data: [1, 2, 4, 5, 7, 9, 11, 13]
+    }, {
+        data: [4, 5, 9, 5, 2, 1, 4, 6]
+    }, {
+        data: [2, 2, 2, 7, 9, 11, 13, 12]
+    }]
+});
+
+
+document.getElementById('sonify').onclick = function () {
+    chart.sonify();
 };

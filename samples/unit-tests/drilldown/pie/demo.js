@@ -321,3 +321,151 @@ QUnit.test('Slice color after drilldown and select (#4359)', function (assert) {
     document.body.removeChild(container1);
     document.body.removeChild(container2);
 });
+
+QUnit.test('Pie animation duration should be possible to change (#13674)', function (assert) {
+
+    var clock = TestUtilities.lolexInstall();
+
+    try {
+        var chart = Highcharts.chart('container', {
+                chart: {
+                    type: 'pie',
+                    animation: {
+                        duration: 1000
+                    }
+                },
+                series: [{
+                    name: 'Things',
+                    data: [{
+                        name: 'Animals',
+                        y: 5,
+                        drilldown: 'animals'
+                    }, {
+                        name: 'Fruits',
+                        y: 2,
+                        drilldown: 'fruits'
+                    }]
+                }],
+                drilldown: {
+                    animation: {
+                        duration: 1000
+                    },
+                    series: [{
+                        id: 'animals',
+                        data: [
+                            ['Cats', 4],
+                            ['Dogs', 2],
+                            ['Cows', 1],
+                            ['Sheep', 2],
+                            ['Pigs', 1]
+                        ]
+                    }, {
+                        id: 'fruits',
+                        data: [
+                            ['Apples', 4],
+                            ['Oranges', 2]
+                        ]
+                    }]
+                }
+            }),
+            point = chart.series[0].points[0],
+            initialPos,
+            previousPos,
+            previousColor,
+            done = assert.async();
+
+        point.doDrilldown();
+        initialPos = chart.drilldownLevels[0].lowerSeries.data[4].graphic.attr('start');
+        previousColor = chart.options.colors[0];
+
+        assert.strictEqual(
+            chart.drilldownLevels[0].lowerSeries.data[0].color,
+            chart.options.colors[0],
+            'Color of the first slice is correct'
+        );
+
+        assert.strictEqual(
+            chart.drilldownLevels[0].lowerSeries.data[3].color,
+            chart.options.colors[3],
+            'Color of the fourth slice is correct'
+        );
+
+        const tweeningGraphic = chart.drilldownLevels[0].lowerSeries.data[3].graphic;
+
+        setTimeout(function () {
+            assert.ok(
+                chart.drilldownLevels[0].lowerSeries.data[4].graphic.attr('start') > initialPos,
+                'Time 400 - Point should start moving.'
+            );
+
+            assert.notEqual(
+                tweeningGraphic.attr('fill'),
+                previousColor,
+                'Time 400 - Fill color should be tweening'
+            );
+
+            previousPos = chart.drilldownLevels[0].lowerSeries.data[4].graphic.attr('start');
+            previousColor = tweeningGraphic.attr('fill');
+        }, 400);
+
+        setTimeout(function () {
+            assert.ok(
+                chart.drilldownLevels[0].lowerSeries.data[4].graphic.attr('start') > previousPos,
+                'Time 800 - Point should move.'
+            );
+
+            assert.notEqual(
+                tweeningGraphic.attr('fill'),
+                previousColor,
+                'Time 800 - Fill color should be tweening'
+            );
+
+            previousPos = chart.drilldownLevels[0].lowerSeries.data[4].graphic.attr('start');
+            previousColor = tweeningGraphic.attr('fill');
+        }, 800);
+
+        setTimeout(function () {
+            assert.ok(
+                chart.drilldownLevels[0].lowerSeries.data[4].graphic.attr('start') > previousPos,
+                'Time 1200- Point should move.'
+            );
+
+            assert.notEqual(
+                tweeningGraphic.attr('fill'),
+                previousColor,
+                'Time 1200 - Fill color should be tweening'
+            );
+
+            previousPos = chart.drilldownLevels[0].lowerSeries.data[4].graphic.attr('start');
+            previousColor = tweeningGraphic.attr('fill');
+        }, 1200);
+
+        setTimeout(function () {
+            assert.strictEqual(
+                chart.drilldownLevels[0].lowerSeries.data[4].graphic.attr('start'),
+                previousPos,
+                'Time 1500 - Point should stop.'
+            );
+
+            assert.strictEqual(
+                tweeningGraphic.attr('fill'),
+                previousColor,
+                'Time 1500 - Fill color should be finished tweening'
+            );
+
+            assert.strictEqual(
+                Highcharts.color(tweeningGraphic.attr('fill')).get(),
+                Highcharts.color(chart.options.colors[3]).get(),
+                'Time 1500 - Fill color should match options after finished tweening'
+            );
+            done();
+        }, 1500);
+
+        TestUtilities.lolexRunAndUninstall(clock);
+
+    } finally {
+
+        TestUtilities.lolexUninstall(clock);
+
+    }
+});

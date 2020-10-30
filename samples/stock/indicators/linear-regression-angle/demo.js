@@ -1,4 +1,4 @@
-Highcharts.getJSON('https://www.highcharts.com/samples/data/aapl-ohlc.json', function (data) {
+Highcharts.getJSON('https://demo-live-data.highcharts.com/aapl-ohlc.json', function (data) {
 
     Highcharts.setOptions({
         yAxis: {

@@ -230,4 +230,18 @@
             'Formatter is ignored when custom format is defined'
         );
     });
+
+    QUnit.test('#14166: Per-chart time options', function (assert) {
+        var chart = Highcharts.chart('container', defaultConfig);
+        var t0 = Date.parse(chart.xAxis[0].plotLinesAndBands[0].label.textStr);
+
+        chart = Highcharts.chart('container', Highcharts.merge(defaultConfig, {
+            time: {
+                timezoneOffset: -5
+            }
+        }));
+        var t1 = Date.parse(chart.xAxis[0].plotLinesAndBands[0].label.textStr);
+
+        assert.ok(t1 - t0 >= 300000, 'Per-chart time options work');
+    });
 }());

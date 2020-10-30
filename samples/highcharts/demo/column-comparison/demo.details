@@ -9,7 +9,8 @@ alt_text: >-
   the Summer Olympics. The columns behind the main column show
   the results from the previous edition for a particular country.
   Each columns group has a xAxis label rendered as a country flag.
-tags: []
+tags:
+  - Highcharts demo
 categories:
   - Column and bar charts
 ...

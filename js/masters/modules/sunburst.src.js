@@ -9,4 +9,4 @@
  * License: www.highcharts.com/license
  */
 'use strict';
-import '../../modules/sunburst.src.js';
+import '../../Series/SunburstSeries.js';

@@ -253,14 +253,13 @@ QUnit.test('X-Range', function (assert) {
 
     point = chart.series[0].points[0];
     point.showDragHandles();
-
-    var leftHandleBBox = chart.dragHandles.left.getBBox(),
-        rightHandleBBox = chart.dragHandles.right.getBBox(),
-        leftHandleX = chart.dragHandles.left.translateX,
-        leftHandleY = chart.dragHandles.left.translateY +
+    var leftHandleBBox = chart.dragHandles.draggableX1.getBBox(),
+        rightHandleBBox = chart.dragHandles.draggableX2.getBBox(),
+        leftHandleX = chart.dragHandles.draggableX1.translateX,
+        leftHandleY = chart.dragHandles.draggableX1.translateY +
             leftHandleBBox.y + leftHandleBBox.height / 2,
-        rightHandleX = chart.dragHandles.right.translateX,
-        rightHandleY = chart.dragHandles.right.translateY +
+        rightHandleX = chart.dragHandles.draggableX2.translateX,
+        rightHandleY = chart.dragHandles.draggableX2.translateY +
             rightHandleBBox.y + rightHandleBBox.height / 2,
         plotX = point.plotX,
         plotY = point.plotY + point.series.columnMetrics.offset +
@@ -477,4 +476,69 @@ QUnit.test('Stacking', assert => {
         'Stacking should be disabled.'
     );
 
+});
+
+QUnit.test('#13811: partialFill application order', function (assert) {
+    var chart = Highcharts.chart('container', {
+        chart: {
+            type: 'xrange'
+        },
+        xAxis: {
+            type: 'datetime'
+        },
+        yAxis: {
+            categories: ['Prototyping', 'Development', 'Testing'],
+            reversed: true
+        },
+        series: [{
+            name: 'Project 1',
+            borderColor: 'gray',
+            pointWidth: 20,
+            partialFill: {
+                fill: 'red'
+            },
+            data: [{
+                x: Date.UTC(2014, 10, 21),
+                x2: Date.UTC(2014, 11, 2),
+                y: 0,
+                partialFill: {
+                    fill: 'black',
+                    amount: 0.25
+                }
+            }, {
+                x: Date.UTC(2014, 11, 2),
+                x2: Date.UTC(2014, 11, 5),
+                y: 1
+            }, {
+                x: Date.UTC(2014, 11, 8),
+                x2: Date.UTC(2014, 11, 9),
+                y: 2,
+                partialFill: {
+                    amount: 0.50
+                }
+            }, {
+                x: Date.UTC(2014, 11, 9),
+                x2: Date.UTC(2014, 11, 19),
+                y: 1
+            }, {
+                x: Date.UTC(2014, 11, 10),
+                x2: Date.UTC(2014, 11, 23),
+                y: 2
+            }],
+            dataLabels: {
+                enabled: true
+            }
+        }]
+    });
+
+    assert.strictEqual(
+        chart.series[0].points[0].graphic.partRect.attr('fill'),
+        'black',
+        'Point.partialFill should take priority'
+    );
+    assert.strictEqual(
+        chart.series[0].points[2].graphic.partRect.attr('fill'),
+        'red',
+        'Series.partialFill should still work'
+    );
 });

@@ -24,16 +24,15 @@ types of tests:
 1. **Auto-visual tests**. Unless otherwise specified in the sample itself, two
 iframes are loaded, one with the current stable release and one with the test
 candidate of Highcharts. The SVG output is rendered on two canvases, these are
-compared pixel by pixel, and the difference is logged. Some auto-visual tests
-are extended by a test script, `test.js`, that does actions on the chart before
-the comparison runs. Auto-visual tests are less performant than unit tests, and
-unit tests should be favoured for regression tests.
+compared pixel by pixel, and the difference is logged. Auto-visual tests are
+less performant than unit tests, and unit tests should be favoured for
+regression tests.
 
 2. **Manual tests**. Some tests, like some dealing with animation or complicated
-user input, are still manual. They are marked with a hand next to the name. We
-are gradually replacing these with automatic tests. For each manual test, there
-should be a file, `test-notes.html` that instructs the tester on what to look
-for.
+user input, are still manual. In the utils, they are marked with a checkbox to
+the name. We are gradually replacing these with automatic tests. For each manual
+test, there should be a file, `test-notes.md` that instructs the tester on
+what to look for.
 
 3. **Unit tests**. These samples are designed to run both in our sample viewer
 and in karma. They load QUnit. Unit tests are recognized by a jigsaw puzzle
@@ -42,8 +41,9 @@ required HTML must be present in `demo.html`. The recommended way to add a new
 test is to copy and modify an existing one.
 
 The tests that are added to `/samples/unit-tests` are also part of the
-pre-commit tests that run via karma. Run `gulp test` on the root to pre-check.
-Read more at [highcharts/test](https://github.com/highcharts/highcharts/tree/master/test).
+pre-commit tests that run via karma, and in CircleCI tests in multiple browsers.
+Run `gulp test` on the root to pre-check. Read more at
+[highcharts/test](https://github.com/highcharts/highcharts/tree/master/test).
 
 
 
@@ -52,9 +52,7 @@ Useful Tips for Setting Up Tests
 
 **Mouse events** are emulated using the
 [TestController](https://github.com/highcharts/highcharts/blob/master/test/test-controller.js)
-that is available in the test environment (through compare-iframe.php). To
-emulate	a mouse event on a specific target, its position can be found using
-`getBBox()`.
+that is available in the test environment.
 
 ```js
 // Instanciate

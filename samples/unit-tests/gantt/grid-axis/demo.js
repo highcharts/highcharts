@@ -95,7 +95,7 @@ QUnit.test('dateFormats', function (assert) {
         );
 
         assert.equal(
-            Highcharts.dateFormats.E(date.valueOf()),
+            Highcharts.dateFormat('%E', date.valueOf()),
             expectedDay,
             `Single character week day format produces correct output`
         );
@@ -131,7 +131,7 @@ QUnit.test('dateFormats', function (assert) {
         );
 
         assert.equal(
-            Highcharts.dateFormats.E(date),
+            Highcharts.dateFormat('%E', date),
             expectedDay,
             `Single character week day format produces correct output when using UTC`
         );
@@ -1650,5 +1650,168 @@ QUnit.test('Zero-width slot', assert => {
         // disable the legend in general, without that being an error.
         !labels[0] || !labels[0].textStr,
         'The first label has a 0px slot and should not render (#13221)'
+    );
+});
+
+QUnit.test('Only one scrollbar should be visible for the vertical scrolling #13359', assert => {
+    const chart = Highcharts.ganttChart('container', {
+        yAxis: {
+            min: 0,
+            max: 1,
+            type: 'category',
+            scrollbar: {
+                enabled: true
+            },
+            grid: {
+                enabled: true,
+                columns: [{
+                    title: {
+                        text: 'Project'
+                    },
+                    labels: {
+                        format: '{point.name}'
+                    }
+                }, {
+                    title: {
+                        text: 'Assignee'
+                    },
+                    labels: {
+                        format: '{point.assignee}'
+                    }
+                }]
+            }
+        },
+        series: [{
+            name: 'Project 1',
+            data: [{
+                start: 1,
+                end: 2,
+                name: 'Task A',
+                assignee: 'Person 1',
+                y: 0
+            }, {
+                start: 3,
+                end: 4,
+                name: 'Task B',
+                assignee: 'Person 2',
+                y: 1
+            }, {
+                start: 5,
+                end: 6,
+                name: 'Task C',
+                assignee: 'Person 3',
+                y: 2
+            }, {
+                start: 6,
+                end: 9,
+                name: 'Task D',
+                assignee: 'Person 4',
+                y: 3
+            }, {
+                start: 4,
+                end: 10,
+                name: 'Task E',
+                assignee: 'Person 5',
+                y: 4
+            }]
+        }]
+    });
+
+    assert.notOk(
+        chart.yAxis[0].grid.columns[0].scrollbar,
+        'The scrollbar for the column grid axis should not exist.'
+    );
+    assert.ok(
+        chart.yAxis[0].scrollbar,
+        'Only one scrollbar should be visible.'
+    );
+});
+
+QUnit.test('yAxis label adjustment #10281', assert => {
+    const chart = Highcharts.ganttChart('container', {
+        series: [{
+            data: [{
+                name: 'Start prototype',
+                start: Date.UTC(2014, 10, 18),
+                end: Date.UTC(2014, 10, 25)
+            }, {
+                name: 'Really Long series name that is very long indeed. Really Long series name that is very long indeed.',
+                start: Date.UTC(2014, 10, 23),
+                end: Date.UTC(2014, 10, 26)
+            }]
+        }]
+    });
+
+    const yAxis = chart.yAxis[0],
+        label = yAxis.ticks[1].label;
+
+    assert.strictEqual(
+        yAxis.maxLabelDimensions.width,
+        Math.round(label.getBBox().width),
+        'The yAxis max label dimensions should be same as the width of the longest label (#10281)'
+    );
+});
+
+QUnit.test('yAxis max value #10779', assert => {
+    const chart = Highcharts.ganttChart('container', {
+
+        yAxis: {
+            max: 5
+        },
+
+        series: [{
+            data: [{
+                start: 1595548800000,
+                end: 1595808000000,
+                y: 0,
+                name: 'test'
+            }, {
+                start: 1595808000000,
+                end: 1596067200000,
+                y: 1,
+                name: 'test1'
+            }]
+        }]
+    });
+
+    const yAxis = chart.yAxis[0];
+
+    assert.strictEqual(
+        yAxis.tickPositions.length - 1,
+        yAxis.max,
+        'The tick amount should be same as the max value #10779'
+    );
+});
+
+QUnit.test('When the grid axis label has format "%E", time zone declared per chart should be respected., #13591.', assert => {
+    const chart = Highcharts.ganttChart('container', {
+        chart: {
+            width: 500
+        },
+        time: {
+            timezoneOffset: -4 * 60
+        },
+        xAxis: [{
+            min: Date.UTC(2020, 4, 29),
+            max: Date.UTC(2020, 5, 5)
+        }, {}],
+        series: [{
+            data: [{
+                name: "Task 1",
+                start: Date.UTC(2020, 5, 2),
+                end: Date.UTC(2020, 5, 3)
+            }]
+        }]
+    });
+
+    assert.strictEqual(
+        chart.xAxis[0].ticks[chart.xAxis[0].tickPositions[0]].label.textStr,
+        "F",
+        'The first tick should be "F" shortcut from Friday.'
+    );
+    assert.strictEqual(
+        chart.xAxis[0].ticks[chart.xAxis[0].tickPositions[1]].label.textStr,
+        "S",
+        'The second tick should be "S" shortcut from Saturday.'
     );
 });

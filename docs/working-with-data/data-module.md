@@ -6,7 +6,7 @@ The Data module provides options for loading data from external sources, like CS
 TABULAR STRUCTURE
 -----------------
 
-The sources for the data module (CSV file, HTML tables or Google spreadsheets), all share the tabular structure. When parsed by the data module, they are internally read into a virtual table of rows and columns. This basic model allows for a set of options that is shared between the sources. The region of the table is defined by the _startRow_, _endRow_, _startColumn_ and _endColumn_ options. The source data can be rotated or inverted by setting the _switchColumnsAndRows_ option. And for all sources, the _seriesMapping_ object allows custom assignment of the columns to specific point options.
+The sources for the data module (CSV file, HTML tables or Google spreadsheets), all share the tabular structure. When parsed by the data module, they are internally read into a virtual table of rows and columns. This basic model allows for a set of options that is shared between the sources. The region of the table is defined by the _startRow_, _endRow_, _startColumn_ and _endColumn_ options. The source data can be rotated or inverted by setting the _switchRowsAndColumns_ option. And for all sources, the _seriesMapping_ object allows custom assignment of the columns to specific point options.
 
 LOADING CSV
 -----------
@@ -72,4 +72,4 @@ View a live sample of [data fetched from a table](https://jsfiddle.net/gh/get/jq
 Loading from Google Spreadsheets
 --------------------------------
 
-Loading the chart data from Google Spreadsheets is a good idea if you want to set up a chart based on data that other team members should be allow to edit and keep updated. See the [API docs](https://api.highcharts.com/highcharts/data.googleSpreadsheetKey) for explanation and sample.
+Loading the chart data from Google Spreadsheets is a good idea if you want to set up a chart based on data that other team members should be allowed to edit and keep updated. See the [API docs](https://api.highcharts.com/highcharts/data.googleSpreadsheetKey) for explanation and sample.

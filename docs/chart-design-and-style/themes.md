@@ -1,7 +1,7 @@
 Themes
 ======
 
-A Highcharts theme is a set of pre-defined options that are applied as default Highcharts options before each chart is instanciated. The highcharts.zip package comes with some themes that can easily be applied to your chart by including the follow script tag:
+A Highcharts theme is a set of pre-defined options that are applied as default Highcharts options before each chart is instantiated. The highcharts.zip package comes with some themes that can easily be applied to your chart by including the following script tag:
 
     
     <script src="/js/themes/gray.js"></script>
@@ -11,9 +11,9 @@ The themes can also be found on the [Highcharts repository](https://github.com/h
 Creating your own theme
 -----------------------
 
-It can be useful to separate the styling of a chart from the data. Such a separation allows the look and feel of your charts to be shared easily between charts across your website. This can be done by creating a options object and apply it to the chart using the [Highcharts.setOptions](https://api.highcharts.com/class-reference/Highcharts#.setOptions) method (which is done in the theme JavaScript files)
+It can be useful to separate the styling of a chart from the data. Such a separation allows the look and feel of your charts to be shared easily between charts across your website. This can be done by creating an options object and applying it to the chart using the [Highcharts.setOptions](https://api.highcharts.com/class-reference/Highcharts#.setOptions) method (which is done in the theme JavaScript files).
 
-Here is simple example to show the process:
+Here's a simple example to show the process:
 
     
     Highcharts.theme = {

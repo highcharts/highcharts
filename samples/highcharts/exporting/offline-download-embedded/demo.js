@@ -4,9 +4,7 @@ var nav = Highcharts.win.navigator,
     isMSBrowser = /Edge\/|Trident\/|MSIE /.test(nav.userAgent),
     isEdgeBrowser = /Edge\/\d+/.test(nav.userAgent),
     containerEl = document.getElementById('container'),
-    parentEl = containerEl.parentNode,
-    oldDownloadURL = Highcharts.downloadURL,
-    nextPlease = true;
+    parentEl = containerEl.parentNode;
 
 function addText(text) {
     var heading = document.createElement('h2');
@@ -31,7 +29,6 @@ function addURLView(title, url) {
 }
 
 function fallbackHandler(options) {
-    nextPlease = true;
     if (isMSBrowser &&
         !(options.type === 'image/svg+xml' && isEdgeBrowser) ||
         options.type === 'application/pdf') {
@@ -52,7 +49,6 @@ Highcharts.downloadURL = function (dataURL, filename) {
     }
     // Show result in an iframe instead of downloading
     addURLView(filename, dataURL);
-    nextPlease = true;
 };
 
 Highcharts.Chart.prototype.exportTest = function (type) {
@@ -68,6 +64,8 @@ Highcharts.Chart.prototype.exportTest = function (type) {
     });
 };
 
+/* Does not work after downloadURL was removed from namespace
+   https://github.com/highcharts/highcharts/commit/3912f1ecbb79d098defa93e729d968bebd4222f8
 Highcharts.Chart.prototype.callbacks.push(function (chart) {
     if (!chart.options.chart.forExport) {
         var menu = chart.exportSVGElements && chart.exportSVGElements[0],
@@ -103,6 +101,7 @@ Highcharts.Chart.prototype.callbacks.push(function (chart) {
         }
     }
 });
+*/
 
 /* End of automation code */
 

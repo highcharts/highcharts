@@ -48,7 +48,7 @@
     });
 }(Highcharts));
 
-$.getJSON('https://www.highcharts.com/samples/data/aapl-ohlcv.json', function (data) {
+$.getJSON('https://demo-live-data.highcharts.com/aapl-ohlcv.json', function (data) {
 
     // Split the data set into ohlc and volume
     var ohlc = [],

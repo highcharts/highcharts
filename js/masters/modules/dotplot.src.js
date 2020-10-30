@@ -10,4 +10,4 @@
  * License: www.highcharts.com/license
  */
 'use strict';
-import '../../modules/dotplot.src.js';
+import '../../Series/DotplotSeries.js';

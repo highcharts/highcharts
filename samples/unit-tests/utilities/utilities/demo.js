@@ -284,6 +284,11 @@
                 numberFormat(6.26e-7, i)
             );
         }
+        assert.strictEqual(
+            '0',
+            Highcharts.numberFormat(4.9E-07, 0),
+            'For small numbers and when decimals argument declared as zero, the formatter should return zero, #14023.'
+        );
     });
 
 
@@ -877,5 +882,12 @@
             'initialValue = 1 - should iterate from first value in array.'
         );
 
+    });
+
+    QUnit.test('keys', assert => {
+        assert.deepEqual(
+            Highcharts.keys({ foo: 'bar' }),
+            Object.keys({ foo: 'bar' })
+        );
     });
 }());

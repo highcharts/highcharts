@@ -9,6 +9,7 @@
  *
  */
 
+require('colors');
 const path = require('path');
 const url = require('url');
 const fs = require('fs');
@@ -21,13 +22,13 @@ const defaultInput = path.join(__dirname, '/../', 'tree.json');
  * Flatten a tree to {'path.to.option'} style
  */
 const flatten = input => {
-    let res = {};
+    const res = {};
 
     /*
          * Visit a single node
          */
     const visit = (node, name, pname) => {
-        let index = (pname && pname.length ? pname + '.' : '') + name;
+        const index = (pname && pname.length ? pname + '.' : '') + name;
 
         if (res[index]) {
             console.log('WARN: found dupe node!'.red, index);
@@ -93,7 +94,7 @@ const compare = (comparePath, inputPath) => {
     compareTree = flatten(compareTree);
     inputTree = flatten(inputTree);
 
-    let report = {
+    const report = {
         inputCount: Object.keys(inputTree.nodes).length,
         compareCount: Object.keys(compareTree.nodes).length,
         warnings: 0,
@@ -125,7 +126,7 @@ const compare = (comparePath, inputPath) => {
         console.log(
             ['WARNING:'].concat(things).join(' ').yellow,
             ':',
-            id.bold.blue,
+            id.bold.cyan,
             '\n    ',
             'source: '.gray + getURL(tnode, inputTree).bold,
             '\n    ',
@@ -146,19 +147,19 @@ const compare = (comparePath, inputPath) => {
     };
 
     Object.keys(compareTree.nodes).forEach(id => {
-        let cnode = compareTree.nodes[id];
+        const cnode = compareTree.nodes[id];
 
         if (typeof inputTree.nodes[id] === 'undefined') {
             console.log(
                 'ERROR: missing option:'.red,
-                id.bold.blue,
+                id.bold.cyan,
                 '\n    last seen at',
                 getURL(cnode, compareTree).bold
             );
             ++report.errors;
         } else {
             // Do a proper compare
-            let tnode = inputTree.nodes[id];
+            const tnode = inputTree.nodes[id];
 
             cnode.doclet = cnode.doclet || {};
             tnode.doclet = tnode.doclet || {};
@@ -221,7 +222,7 @@ const compare = (comparePath, inputPath) => {
         }
     });
 
-    let missing = report.compareCount - report.inputCount;
+    const missing = report.compareCount - report.inputCount;
 
     if (report.augmented) {
         console.log(
@@ -276,8 +277,6 @@ const compare = (comparePath, inputPath) => {
 
 // /////////////////////////////////////////////////////////////////////////////
 
-require('colors');
-
 if (args.length < 2) {
     console.log(
         'Usage:'.bold,
@@ -286,10 +285,10 @@ if (args.length < 2) {
         '[tree.json]'
     );
 } else {
-    let comparePath = args[2];
-    let inputPath = args[3] || defaultInput;
+    const comparePath = args[2] || '.';
+    const inputPath = args[3] || defaultInput;
 
     if (!compare(comparePath, inputPath)) {
-        throw 'mismatches';
+        throw new Error('mismatches');
     }
 }

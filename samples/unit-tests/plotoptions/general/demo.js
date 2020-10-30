@@ -61,3 +61,154 @@ QUnit.test('Random properties in plot options', assert => {
 
     assert.ok('No error should occur on the above', true);
 });
+
+QUnit.test('Updates', assert => {
+
+    const chart = Highcharts.chart('container', {
+        series: [{
+            data: [1, 2, 3, 4]
+        }]
+    });
+
+    chart.update({
+        plotOptions: {
+            series: {
+                pointInterval: 10
+            }
+        }
+    });
+
+    assert.strictEqual(
+        chart.series[0].data[1].x,
+        10,
+        'It is possible to update the plotOptions.series.pointInterval.'
+    );
+
+    chart.update({
+        plotOptions: {
+            series: {
+                pointStart: 10
+            }
+        }
+    });
+
+    assert.strictEqual(
+        chart.series[0].data[0].x,
+        10,
+        'It is possible to update the plotOptions.series.pointStart.'
+    );
+
+    chart.series[0].update({
+        pointInterval: 20
+    });
+
+    assert.strictEqual(
+        chart.series[0].data[1].x,
+        30,
+        'It is possible to update the series.pointInterval.'
+    );
+
+    chart.series[0].update({
+        pointStart: 13
+    });
+
+    assert.strictEqual(
+        chart.series[0].data[0].x,
+        13,
+        'It is possible to update the plotOptions.series.pointStart.'
+    );
+});
+
+QUnit.test('hasOptionChanged() method', assert => {
+
+    let chart;
+
+    chart = Highcharts.chart('container', {
+        plotOptions: {
+            series: {
+                pointStart: 210
+            }
+        },
+        series: [{
+            data: [1, 2, 3, 4]
+        }]
+    });
+
+    assert.strictEqual(
+        chart.series[0].hasOptionChanged('dataGrouping'),
+        false,
+        'Property defined in plotOptions should not be detected as change.'
+    );
+
+    chart = Highcharts.chart('container', {
+        plotOptions: {
+            series: {
+                pointStart: 210
+            }
+        },
+        series: [{
+            pointStart: 200,
+            data: [1, 2, 3, 4]
+        }]
+    });
+
+    assert.strictEqual(
+        chart.series[0].hasOptionChanged('pointStart'),
+        false,
+        'Property defined in both series and plotOptions should not be detected as change.'
+    );
+
+
+    chart = Highcharts.chart('container', {
+        series: [{
+            pointStart: 200,
+            data: [1, 2, 3, 4]
+        }]
+    });
+
+    assert.strictEqual(
+        chart.series[0].hasOptionChanged('pointStart'),
+        false,
+        'Property defined in series should not be detected as change.'
+    );
+
+
+    chart = Highcharts.chart('container', {
+        series: [{
+            data: [1, 2, 3, 4]
+        }]
+    });
+
+    assert.strictEqual(
+        chart.series[0].hasOptionChanged('pointStart'),
+        false,
+        'Should return false when given property has not changed - primitives.'
+    );
+
+    // assert.strictEqual(
+    //     chart.series[0].hasOptionChanged('dataLabels'),
+    //     false,
+    //     'Should return false when given property has not changed - objects.'
+    // );
+
+    chart.options.plotOptions.line.pointStart = 11;
+
+    assert.strictEqual(
+        chart.series[0].hasOptionChanged('pointStart'),
+        true,
+        'Should return true when given property has changed - primitives.'
+    );
+
+    chart.options.plotOptions.line.dataLabels.padding = 7;
+
+    assert.strictEqual(
+        chart.series[0].hasOptionChanged('dataLabels'),
+        true,
+        'Should return true when given property has changed - objects.'
+    );
+
+    assert.ok(
+        true,
+        'Should not throw an error.'
+    );
+});

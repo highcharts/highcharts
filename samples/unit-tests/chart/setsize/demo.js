@@ -506,3 +506,87 @@ QUnit.test('Plot area update(#3098)', function (assert) {
         "The legend overlaps the plot"
     );
 });
+
+QUnit.test('Succession of setSize and other dynamics', assert => {
+    const done = assert.async();
+    const chart = Highcharts.chart('container', {
+        chart: {
+            width: 600,
+            animation: {
+                duration: 1
+            }
+        },
+        legend: {
+            enabled: false
+        },
+        series: []
+    });
+    setTimeout(function () {
+        assert.strictEqual(
+            chart.chartWidth,
+            600,
+            'Initial chart width'
+        );
+        chart.setSize(500, 300);
+        assert.strictEqual(
+            chart.chartWidth,
+            500,
+            'Size should be set without errors'
+        );
+
+        chart.addSeries({ type: 'column', data: [1, 2, 3, 4] });
+        assert.notEqual(
+            chart.series[0].points[0].graphic.getBBox().height,
+            0,
+            'A series should be added with valid column heights (#13680)'
+        );
+
+        done();
+    }, 2);
+});
+
+QUnit.test('Succession of setSize and adders', assert => {
+    var chart = Highcharts.chart('container', {
+
+    });
+    chart.setSize(undefined, undefined);
+
+    chart.addAxis({
+        id: 'xaxis1'
+    });
+
+
+    chart.addAxis({
+        id: 'yaxis1'
+    });
+
+    chart.addSeries({
+        type: 'column',
+        yAxis: 'yaxis1',
+        data: [1, 2, 3, 4]
+    }, false);
+
+
+    chart.addAxis({
+        id: 'yaxis2'
+    });
+
+    chart.addSeries({
+        type: 'column',
+        yAxis: 'yaxis2',
+        data: [1, 2, 3, 4]
+    }, false);
+
+    chart.redraw();
+
+    const colHeight = chart.series[0].points[0].graphic.getBBox().height;
+    assert.ok(
+        typeof colHeight === 'number' && colHeight > 0,
+        'The column height should be a positive number'
+    );
+    assert.strictEqual(
+        colHeight,
+        chart.series[1].points[0].graphic.getBBox().height,
+        'The two first columns should be equal height (#13995)'
+    );
+});
