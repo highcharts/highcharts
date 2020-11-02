@@ -284,7 +284,7 @@ BaseSeries.seriesType<typeof Highcharts.HistogramSeries>(
                 })
             );
 
-            baseData.forEach(function (y: number): void{
+            baseData.forEach(function (y: number): void {
                 var x = correctFloat(fitToBin(y));
 
                 bins[x]++;

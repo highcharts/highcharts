@@ -56,6 +56,7 @@ declare global {
             public shapeType: ColumnPoint['shapeType'];
         }
         class ColumnRangeSeries extends AreaRangeSeries {
+            public adjustForMissingColumns: ColumnSeries['adjustForMissingColumns'];
             public animate: ColumnSeries['animate'];
             public crispCol: ColumnSeries['crispCol'];
             public data: Array<ColumnRangePoint>;
@@ -269,6 +270,9 @@ BaseSeries.seriesType<typeof Highcharts.ColumnRangeSeries>('columnrange', 'arear
         this: Highcharts.ColumnRangeSeries
     ): SVGAttributes {
         return columnProto.pointAttribs.apply(this, arguments as any);
+    },
+    adjustForMissingColumns: function (this: Highcharts.ColumnRangeSeries): number {
+        return columnProto.adjustForMissingColumns.apply(this, arguments);
     },
     animate: function (this: Highcharts.ColumnRangeSeries): void {
         return columnProto.animate.apply(this, arguments as any);

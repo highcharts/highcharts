@@ -946,7 +946,7 @@ BaseSeries.seriesType<typeof Highcharts.PackedBubbleSeries>(
             LineSeries.prototype.init.apply(this, arguments as any);
 
             // When one series is modified, the others need to be recomputed
-            addEvent(this, 'updatedData', function (
+            this.eventsToUnbind.push(addEvent(this, 'updatedData', function (
                 this: Highcharts.PackedBubbleSeries
             ): void {
                 this.chart.series.forEach(function (s): void {
@@ -954,7 +954,7 @@ BaseSeries.seriesType<typeof Highcharts.PackedBubbleSeries>(
                         s.isDirty = true;
                     }
                 }, this);
-            });
+            }));
 
             return this;
         },

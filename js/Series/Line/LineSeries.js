@@ -2396,7 +2396,7 @@ var LineSeries = /** @class */ (function () {
             // remove all events
             removeEvent(series);
         }
-        else if (series.eventsToUnbind.length) {
+        if (series.eventsToUnbind.length) {
             // remove only internal events for proper update
             // #12355 - solves problem with multiple destroy events
             series.eventsToUnbind.forEach(function (unbind) {

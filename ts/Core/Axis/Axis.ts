@@ -6450,7 +6450,7 @@ class Axis {
             step,
             bestScore = Number.MAX_VALUE,
             autoRotation: any,
-            range = (this.max as any) - (this.min as any),
+            range = Math.max((this.max as any) - (this.min as any), 0),
             // Return the multiple of tickInterval that is needed to avoid
             // collision
             getStep = function (spaceNeeded: number): number {
