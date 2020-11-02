@@ -5,6 +5,7 @@
  *  !!!!!!! SOURCE GETS TRANSPILED BY TYPESCRIPT. EDIT TS FILE ONLY. !!!!!!!
  *
  * */
+'use strict';
 import BaseSeries from '../../Core/Series/Series.js';
 import MultipleLinesMixin from '../../Mixins/MultipleLines.js';
 import ReduceArrayMixin from '../../Mixins/ReduceArray.js';

@@ -13,6 +13,7 @@
 'use strict';
 
 import type Chart from '../../Core/Chart/Chart';
+import type SeriesOptions from '../../Core/Series/SeriesOptions';
 import H from '../../Core/Globals.js';
 
 /**
@@ -563,9 +564,7 @@ function buildTimelinePathFromSeries(
                 // Check for hidden series
                 if (
                     !eventObject.series.visible &&
-                    !eventObject.series.chart.series.some(function (
-                        series: Highcharts.Series
-                    ): boolean {
+                    !eventObject.series.chart.series.some(function (series): boolean {
                         return series.visible;
                     })
                 ) {

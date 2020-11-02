@@ -5,6 +5,7 @@
  *  !!!!!!! SOURCE GETS TRANSPILED BY TYPESCRIPT. EDIT TS FILE ONLY. !!!!!!!
  *
  * */
+'use strict';
 import BaseSeries from '../../Core/Globals.js';
 import RequiredIndicatorMixin from '../../Mixins/IndicatorRequired.js';
 import U from '../../Core/Utilities.js';

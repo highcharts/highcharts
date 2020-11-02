@@ -16,7 +16,13 @@
 
 'use strict';
 
+import type LineSeries from '../Series/Line/LineSeries.js';
 import type Point from '../Core/Series/Point';
+import type {
+    PointOptions,
+    PointShortOptions
+} from '../Core/Series/PointOptions';
+import type SeriesOptions from '../Core/Series/SeriesOptions';
 import Axis from '../Core/Axis/Axis.js';
 import Chart from '../Core/Chart/Chart.js';
 import H from '../Core/Globals.js';
@@ -66,6 +72,13 @@ declare module '../Core/Chart/ChartLike'{
     }
 }
 
+declare module '../Core/Series/SeriesLike' {
+    interface SeriesLike {
+        exportKey?: string;
+        keyToAxis?: Record<string, string>;
+    }
+}
+
 /**
  * Internal types
  * @private
@@ -101,7 +114,7 @@ declare global {
             x?: number;
         }
         interface ExportDataSeries {
-            autoIncrement: Series['autoIncrement'];
+            autoIncrement: LineSeries['autoIncrement'];
             chart: Chart;
             options: SeriesOptions;
             pointArrayMap?: Array<string>;
@@ -117,10 +130,6 @@ declare global {
             exportData?: ExportDataOptions;
             viewData?: string;
             hideData?: string;
-        }
-        interface Series {
-            exportKey?: string;
-            keyToAxis?: Dictionary<string>;
         }
     }
     interface MSBlobBuilder extends Blob {
@@ -516,7 +525,7 @@ Chart.prototype.getDataRows = function (
         dataRows,
         topLevelColumnTitles: Array<string> = [],
         columnTitles: Array<string> = [],
-        columnTitleObj: (string|Highcharts.Dictionary<string>),
+        columnTitleObj: (string|Record<string, string>),
         i: number,
         x,
         xTitle: string,
@@ -526,10 +535,10 @@ Chart.prototype.getDataRows = function (
         categoryDatetimeHeader = exportDataOptions.categoryDatetimeHeader,
         // Options
         columnHeaderFormatter = function (
-            item: (Highcharts.Axis|Highcharts.Series),
+            item: (Axis|LineSeries),
             key?: string,
             keyLength?: number
-        ): (string|Highcharts.Dictionary<string>) {
+        ): (string|Record<string, string>) {
             if (csvOptions.columnHeaderFormatter) {
                 var s = csvOptions.columnHeaderFormatter(item, key, keyLength);
 
@@ -560,7 +569,7 @@ Chart.prototype.getDataRows = function (
         },
         // Map the categories for value axes
         getCategoryAndDateTimeMap = function (
-            series: Highcharts.Series,
+            series: LineSeries,
             pointArrayMap: Array<string>,
             pIdx?: number
         ): Highcharts.ExportingCategoryDateTimeMap {
@@ -594,7 +603,7 @@ Chart.prototype.getDataRows = function (
         // Create point array depends if xAxis is category
         // or point.name is defined #13293
         getPointArray = function (
-            series: Highcharts.Series,
+            series: LineSeries,
             xAxis: Highcharts.Axis
         ): string[] {
             const namedPoints = series.data.filter((d): string | false =>
@@ -625,7 +634,7 @@ Chart.prototype.getDataRows = function (
 
     this.setUpKeyToAxis();
 
-    this.series.forEach(function (series: Highcharts.Series): void {
+    this.series.forEach(function (series: LineSeries): void {
         var keys = series.options.keys,
             xAxis = series.xAxis,
             pointArrayMap = keys || getPointArray(series, xAxis),
@@ -691,7 +700,7 @@ Chart.prototype.getDataRows = function (
             // Export directly from options.data because we need the uncropped
             // data (#7913), and we need to support Boost (#7026).
             (series.options.data as any).forEach(function eachData(
-                options: Highcharts.PointOptionsType,
+                options: (PointOptions|PointShortOptions),
                 pIdx: number
             ): void {
                 var key: (number|string),

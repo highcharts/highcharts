@@ -6,11 +6,11 @@
  *
  * */
 
+'use strict';
+
+import type LineSeries from '../../Series/Line/LineSeries';
 import BaseSeries from '../../Core/Series/Series.js';
-const {
-    seriesTypes
-} = BaseSeries;
-import H from '../../Core/Globals.js';
+const { seriesTypes } = BaseSeries;
 import RequiredIndicatorMixin from '../../Mixins/IndicatorRequired.js';
 
 /**
@@ -21,7 +21,7 @@ declare global {
     namespace Highcharts {
         class SlowStochasticIndicator extends StochasticIndicator {
             public nameBase: string;
-            public getValues<TLinkedSeries extends Series>(
+            public getValues<TLinkedSeries extends LineSeries>(
                 series: TLinkedSeries,
                 params: SlowStochasticIndicatorParamsOptions
             ): (IndicatorValuesObject<TLinkedSeries>|undefined);
@@ -43,7 +43,7 @@ declare global {
     }
 }
 
-declare module '../../Core/Series/Types' {
+declare module '../../Core/Series/SeriesType' {
     interface SeriesTypeRegistry {
         slowstochastic: typeof Highcharts.SlowStochasticIndicator;
     }
@@ -109,7 +109,7 @@ BaseSeries.seriesType<typeof Highcharts.SlowStochasticIndicator>(
                 }
             );
         },
-        getValues: function<TLinkedSeries extends Highcharts.Series> (
+        getValues: function<TLinkedSeries extends LineSeries> (
             this: Highcharts.SlowStochasticIndicator,
             series: TLinkedSeries,
             params: Highcharts.SlowStochasticIndicatorParamsOptions
@@ -137,7 +137,7 @@ BaseSeries.seriesType<typeof Highcharts.SlowStochasticIndicator>(
 
             // Get SMA(%D)
             const smoothedValues: (
-                undefined|Highcharts.IndicatorValuesObject<Highcharts.Series>
+                undefined|Highcharts.IndicatorValuesObject<LineSeries>
             ) = seriesTypes.sma.prototype.getValues.call(
                 this,
                 ({

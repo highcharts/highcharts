@@ -13,7 +13,7 @@
 import type NavigatorAxis from './NavigatorAxis';
 import Axis from './Axis.js';
 import H from '../Globals.js';
-import CartesianSeries from '../Series/CartesianSeries.js';
+import LineSeries from '../../Series/Line/LineSeries.js';
 import Point from '../Series/Point.js';
 import U from '../Utilities.js';
 const {
@@ -171,10 +171,7 @@ namespace OrdinalAxis {
             // Apply the ordinal logic
             if (isOrdinal || hasBreaks) { // #4167 YAxis is never ordinal ?
 
-                axis.series.forEach(function (
-                    series: Highcharts.Series,
-                    i: number
-                ): void {
+                axis.series.forEach(function (series, i): void {
                     uniqueOrdinalPositions = [];
 
                     if (
@@ -370,7 +367,7 @@ namespace OrdinalAxis {
                 overscroll = axis.options.overscroll,
                 extremes = axis.getExtremes(),
                 fakeAxis: OrdinalAxis,
-                fakeSeries: Highcharts.Series;
+                fakeSeries: LineSeries;
 
             // If this is the first time, or the ordinal index is deleted by
             // updatedData,
@@ -404,13 +401,13 @@ namespace OrdinalAxis {
 
                 // Add the fake series to hold the full data, then apply
                 // processData to it
-                axis.series.forEach(function (series: Highcharts.Series): void {
+                axis.series.forEach(function (series): void {
                     fakeSeries = {
                         xAxis: fakeAxis,
                         xData: (series.xData as any).slice(),
                         chart: chart,
                         destroyGroupedData: H.noop,
-                        getProcessedData: CartesianSeries.prototype.getProcessedData
+                        getProcessedData: LineSeries.prototype.getProcessedData
                     } as any;
 
                     fakeSeries.xData = (fakeSeries.xData as any).concat(
@@ -473,7 +470,7 @@ namespace OrdinalAxis {
         public getGroupIntervalFactor(
             xMin: number,
             xMax: number,
-            series: Highcharts.Series
+            series: LineSeries
         ): number {
             var ordinal = this,
                 axis = ordinal.axis,
@@ -603,7 +600,7 @@ namespace OrdinalAxis {
     export function compose(
         AxisClass: typeof Axis,
         ChartClass: typeof Chart,
-        SeriesClass: typeof CartesianSeries
+        SeriesClass: typeof LineSeries
     ): void {
 
         AxisClass.keepProps.push('ordinal');
@@ -1184,6 +1181,6 @@ namespace OrdinalAxis {
     }
 }
 
-OrdinalAxis.compose(Axis, Chart, CartesianSeries); // @todo move to StockChart, remove from master
+OrdinalAxis.compose(Axis, Chart, LineSeries); // @todo move to StockChart, remove from master
 
 export default OrdinalAxis;

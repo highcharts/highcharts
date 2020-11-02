@@ -12,6 +12,7 @@
 'use strict';
 
 import type AnimationOptionsObject from '../Core/Animation/AnimationOptionsObject';
+import type PositionObject from '../Core/Renderer/PositionObject';
 import type SVGAttributes from '../Core/Renderer/SVG/SVGAttributes';
 import type SVGElement from '../Core/Renderer/SVG/SVGElement';
 import type SVGPath from '../Core/Renderer/SVG/SVGPath';
@@ -673,7 +674,7 @@ class Connection {
             box,
             width,
             height,
-            pathVector: Highcharts.PositionObject,
+            pathVector: PositionObject,
             segment: SVGPath.Segment;
 
 
@@ -937,7 +938,7 @@ extend(Point.prototype, /** @lends Point.prototype */ {
     getPathfinderAnchorPoint: function (
         this: Point,
         markerOptions: Highcharts.ConnectorsMarkerOptions
-    ): Highcharts.PositionObject {
+    ): PositionObject {
         var bb = getPointBB(this),
             x,
             y;
@@ -981,8 +982,8 @@ extend(Point.prototype, /** @lends Point.prototype */ {
      */
     getRadiansToVector: function (
         this: Point,
-        v1: Highcharts.PositionObject,
-        v2: Highcharts.PositionObject
+        v1: PositionObject,
+        v2: PositionObject
     ): number {
         var box: (Highcharts.Dictionary<number>|null);
 
@@ -1024,8 +1025,8 @@ extend(Point.prototype, /** @lends Point.prototype */ {
         this: Point,
         radians: number,
         markerRadius: number,
-        anchor: Highcharts.PositionObject
-    ): Highcharts.PositionObject {
+        anchor: PositionObject
+    ): PositionObject {
         var twoPI = Math.PI * 2.0,
             theta = radians,
             bb = getPointBB(this),
@@ -1042,7 +1043,6 @@ extend(Point.prototype, /** @lends Point.prototype */ {
                 x: rectHorizontalCenter,
                 y: rectVerticalCenter
             },
-            markerPoint = {} as Highcharts.PositionObject,
             xFactor = 1,
             yFactor = 1;
 
@@ -1088,10 +1088,10 @@ extend(Point.prototype, /** @lends Point.prototype */ {
             edgePoint.y = anchor.y;
         }
 
-        markerPoint.x = edgePoint.x + (markerRadius * Math.cos(theta));
-        markerPoint.y = edgePoint.y - (markerRadius * Math.sin(theta));
-
-        return markerPoint;
+        return {
+            x: edgePoint.x + (markerRadius * Math.cos(theta)),
+            y: edgePoint.y - (markerRadius * Math.sin(theta))
+        };
     }
 });
 
@@ -1104,10 +1104,7 @@ extend(Point.prototype, /** @lends Point.prototype */ {
 function warnLegacy(chart: Chart): void {
     if (
         (chart.options as any).pathfinder ||
-        chart.series.reduce(function (
-            acc: boolean,
-            series: Highcharts.Series
-        ): boolean {
+        chart.series.reduce(function (acc, series): boolean {
             if (series.options) {
                 merge(
                     true,

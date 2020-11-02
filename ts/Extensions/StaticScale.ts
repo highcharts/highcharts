@@ -10,6 +10,8 @@
 
 'use strict';
 
+import type LineSeries from '../Series/Line/LineSeries';
+
 declare module '../Core/Chart/ChartLike'{
     interface ChartLike {
         redrawTrigger?: string;
@@ -108,7 +110,7 @@ Chart.prototype.adjustHeight = function (): void {
 
                 // Make sure clip rects have the right height before initial
                 // animation.
-                axis.series.forEach(function (series: Highcharts.Series): void {
+                axis.series.forEach(function (series: LineSeries): void {
                     var clipRect = series.sharedClipKey &&
                         (chart as any)[series.sharedClipKey];
 

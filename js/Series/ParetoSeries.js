@@ -7,12 +7,18 @@
  *  !!!!!!! SOURCE GETS TRANSPILED BY TYPESCRIPT. EDIT TS FILE ONLY. !!!!!!!
  *
  * */
+'use strict';
 import BaseSeries from '../Core/Series/Series.js';
 import DerivedSeriesMixin from '../Mixins/DerivedSeries.js';
 import U from '../Core/Utilities.js';
 var correctFloat = U.correctFloat, merge = U.merge;
 import '../Core/Options.js';
-import '../Series/LineSeries.js';
+import '../Series/Line/LineSeries.js';
+/* *
+ *
+ *  Class
+ *
+ * */
 /**
  * The pareto series type.
  *

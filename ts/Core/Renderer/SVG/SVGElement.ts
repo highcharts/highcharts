@@ -24,7 +24,6 @@ import type {
     SVGDOMElement
 } from '../DOMElementType';
 import type GradientColor from '../../Color/GradientColor';
-import type HTMLElement from '../HTML/HTMLElement';
 import type RectangleObject from '../RectangleObject';
 import type ShadowOptionsObject from '../ShadowOptionsObject';
 import type SVGAttributes from './SVGAttributes';
@@ -70,9 +69,6 @@ const {
     uniqueKey
 } = U;
 
-type ImportedBBoxObject = BBoxObject;
-type ImportedAlignObject = AlignObject;
-
 /**
  * @private
  */
@@ -97,7 +93,6 @@ declare global {
         cutHeight?: number;
     }
     namespace Highcharts {
-        type BBoxObject = ImportedBBoxObject;
         class SVGElement {
             public constructor();
             [key: string]: any;

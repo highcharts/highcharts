@@ -10,8 +10,18 @@
 
 'use strict';
 
-import type AnimationOptionsObject from '../Animation/AnimationOptionsObject';
 import type ColorType from '../Color/ColorType';
+import type { EventCallback } from '../Callback';
+import type LineSeries from '../../Series/Line/LineSeries';
+import type PointLike from './PointLike';
+import type {
+    PointMarkerOptions,
+    PointOptions,
+    PointShortOptions
+} from './PointOptions';
+import type { PointTypeOptions } from './PointType';
+import type { SeriesZonesOptions } from './SeriesOptions';
+import type { StatesOptionsKey } from './StatesOptions';
 import type SVGAttributes from '../Renderer/SVG/SVGAttributes';
 import type SVGElement from '../Renderer/SVG/SVGElement';
 import A from '../Animation/AnimationUtilities.js';
@@ -47,132 +57,14 @@ declare global {
         interface PlotSeriesPointOptions {
             events?: PointEventsOptionsObject;
         }
-        interface PointClickCallbackFunction {
-            (this: Point, event: PointClickEventObject): void;
-        }
-        interface PointClickEventObject extends PointerEventObject {
-            point: Point;
-        }
-        interface PointEventsOptionsObject {
-            click?: PointClickCallbackFunction;
-            mouseOut?: PointMouseOutCallbackFunction;
-            mouseOver?: PointMouseOverCallbackFunction;
-            remove?: PointRemoveCallbackFunction;
-            select?: PointSelectCallbackFunction;
-            unselect?: PointUnselectCallbackFunction;
-            update?: PointUpdateCallbackFunction;
-        }
-        interface PointLabelObject {
-            x?: string;
-            y?: (number|null);
-            color?: ColorType;
-            colorIndex?: number;
-            key?: string;
-            series: Series;
-            point: Point;
-            percentage?: number;
-            total?: number;
-        }
-        interface PointMarkerOptionsObject {
-            enabled?: boolean;
-            enabledThreshold?: number;
-            fillColor?: ColorType;
-            height?: number;
-            lineColor?: ColorType;
-            lineWidth?: number;
-            radius?: number;
-            radiusPlus?: number;
-            states?: PointStatesOptionsObject;
-            symbol?: string;
-            width?: number;
-        }
-        interface PointMouseOutCallbackFunction {
-            (this: Point, event: PointerEvent): void;
-        }
-        interface PointMouseOverCallbackFunction {
-            (this: Point, event: PointerEvent): void;
-        }
-        interface PointOptionsObject {
-            className?: string;
-            color?: ColorType;
-            colorIndex?: number;
-            custom?: Dictionary<any>;
-            drilldown?: string;
-            events?: PointEventsOptionsObject;
-            id?: string;
-            index?: number;
-            labelrank?: number;
-            legendIndex?: number;
-            marker?: PointMarkerOptionsObject;
-            name?: string;
-            selected?: boolean;
-            states?: PointStatesOptionsObject;
-            visible?: boolean;
-            x?: number;
-            y?: (null|number);
-        }
-        interface PointRemoveCallbackFunction {
-            (this: Point, event: Event): void;
-        }
-        interface PointStatesHoverOptionsObject {
-            animation?: (boolean|Partial<AnimationOptionsObject>);
-            enabled?: boolean;
-            fillColor?: ColorType;
-            lineColor?: ColorType;
-            lineWidth?: number;
-            lineWidthPlus?: number;
-            radius?: number;
-            radiusPlus?: number;
-        }
-        interface PointStatesInactiveOptionsObject {
-            opacity?: number;
-        }
-        interface PointStatesNormalOptionsObject {
-            animation?: (boolean|Partial<AnimationOptionsObject>);
-        }
-        interface PointStatesOptionsObject {
-            hover?: PointStatesHoverOptionsObject;
-            inactive?: PointStatesInactiveOptionsObject;
-            normal?: PointStatesNormalOptionsObject;
-            select?: PointStatesSelectOptionsObject;
-        }
-        interface PointStatesSelectOptionsObject {
-            enabled?: boolean;
-            fillColor?: ColorType;
-            lineColor?: ColorType;
-            lineWidth?: number;
-            radius?: number;
-        }
         interface PointUpdateCallbackFunction {
             (this: Point, event: PointUpdateEventObject): void;
         }
         interface PointUpdateEventObject {
-            options?: PointOptionsType;
+            options?: PointTypeOptions;
         }
-        interface Series {
-            _hasPointLabels?: boolean;
-            _hasPointMarkers?: boolean;
-        }
-        interface SeriesOptions {
-            data?: Array<PointOptionsType>;
-            marker?: PointMarkerOptionsObject;
-            point?: PlotSeriesPointOptions;
-        }
-        interface SeriesPointOptions {
-            events?: PointEventsOptionsObject;
-        }
-        type PointOptionsType = (
-            number|
-            string|
-            Array<(number|string|null)>|
-            PointOptionsObject|
-            null
-        );
-        type PointStateValue = keyof PointStatesOptionsObject;
-        let Point: PointClass;
     }
 }
-type PointClass = typeof Point;
 
 /**
  * Function callback when a series point is clicked. Return false to cancel the
@@ -384,7 +276,7 @@ class Point {
 
     public isValid?: () => boolean;
 
-    public marker?: Highcharts.PointMarkerOptionsObject;
+    public marker?: PointMarkerOptions;
 
     /**
      * The name of the point. The name can be given as the first position of the
@@ -429,7 +321,7 @@ class Point {
      * @name Highcharts.Point#options
      * @type {Highcharts.PointOptionsObject}
      */
-    public options: Highcharts.PointOptionsObject = void 0 as any;
+    public options: PointOptions = void 0 as any;
 
     /**
      * The percentage for points in a stacked series or pies.
@@ -447,7 +339,7 @@ class Point {
      * @name Highcharts.Point#series
      * @type {Highcharts.Series}
      */
-    public series: Highcharts.Series = void 0 as any;
+    public series: LineSeries = void 0 as any;
 
     public shapeArgs?: SVGAttributes;
 
@@ -455,7 +347,7 @@ class Point {
 
     public startXPos?: number;
 
-    public state?: string;
+    public state?: StatesOptionsKey;
 
     /**
      * The total of values in either a stack for stacked series, or a pie in a
@@ -542,7 +434,7 @@ class Point {
      *         The Point instance.
      */
     public applyOptions(
-        options: Highcharts.PointOptionsType,
+        options: (PointOptions|PointShortOptions),
         x?: number
     ): Point {
         var point = this,
@@ -682,7 +574,7 @@ class Point {
      * @function Highcharts.Point#destroyElements
      * @param {Highcharts.Dictionary<number>} [kinds]
      */
-    public destroyElements(kinds?: Highcharts.Dictionary<number>): void {
+    public destroyElements(kinds?: Record<string, number>): void {
         var point = this,
             props = point.getGraphicalProps(kinds);
 
@@ -718,11 +610,11 @@ class Point {
      *
      * @fires Highcharts.Point#event:*
      */
-    public firePointEvent(
+    public firePointEvent<T extends Record<string, any>|Event>(
         eventType: string,
-        eventArgs?: (Highcharts.Dictionary<any>|Event),
+        eventArgs?: T,
         defaultFunction?: (
-            Highcharts.EventCallbackFunction<Point>|Function
+            EventCallback<Point, T>|Function
         )
     ): void {
         var point = this,
@@ -831,7 +723,7 @@ class Point {
      * @return {Highcharts.PointLabelObject}
      *         Abstract object used in formatters and formats.
      */
-    public getLabelConfig(): Highcharts.PointLabelObject {
+    public getLabelConfig(): Point.PointLabelObject {
         return {
             x: this.category,
             y: this.y,
@@ -849,7 +741,7 @@ class Point {
      * Returns the value of the point property for a given value.
      * @private
      */
-    public getNestedProperty(key: string): unknown {
+    public getNestedProperty(key?: string): unknown {
         if (!key) {
             return;
         }
@@ -867,7 +759,7 @@ class Point {
      * @return {Highcharts.SeriesZonesOptionsObject}
      *         The zone item.
      */
-    public getZone(): Highcharts.SeriesZonesOptions {
+    public getZone(): SeriesZonesOptions {
         var series = this.series,
             zones = series.zones,
             zoneAxis = series.zoneAxis || 'y',
@@ -926,7 +818,11 @@ class Point {
      *
      * @fires Highcharts.Point#event:afterInit
      */
-    public init(series: Highcharts.Series, options: Highcharts.PointOptionsType, x?: number): Point {
+    public init(
+        series: LineSeries,
+        options: (PointOptions|PointShortOptions),
+        x?: number
+    ): Point {
 
         this.series = series;
 
@@ -959,8 +855,10 @@ class Point {
      * @return {Highcharts.Dictionary<*>}
      *         Transformed options.
      */
-    public optionsToObject(options: Highcharts.PointOptionsType): Highcharts.Dictionary<any> {
-        var ret = {} as Highcharts.Dictionary<any>,
+    public optionsToObject(
+        options: (PointOptions|PointShortOptions)
+    ): this['options'] {
+        var ret = {} as Record<string, any>,
             series = this.series,
             keys = series.options.keys,
             pointArrayMap = keys || series.pointArrayMap || ['y'],
@@ -1158,10 +1056,24 @@ class Point {
     }
 }
 
-interface Point extends Highcharts.PointLike {
+interface Point extends PointLike {
     // merge extensions with point class
 }
 
-H.Point = Point;
+namespace Point {
+    export interface PointLabelObject {
+        x?: string;
+        y?: (number|null);
+        color?: ColorType;
+        colorIndex?: number;
+        key?: string;
+        series: LineSeries;
+        point: Point;
+        percentage?: number;
+        total?: number;
+    }
+}
+
+(H as any).Point = Point;
 
 export default Point;

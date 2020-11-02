@@ -9,6 +9,20 @@
  *
  * */
 
+'use strict';
+
+/* *
+ *
+ *  Imports
+ *
+ * */
+
+import type ColumnPoint from './Column/ColumnPoint';
+import type ColumnPointOptions from './Column/ColumnPointOptions';
+import type ColumnSeries from './Column/ColumnSeries';
+import type ColumnSeriesOptions from './Column/ColumnSeriesOptions';
+import type LineSeries from './Line/LineSeries';
+import type { SeriesStatesOptions } from '../Core/Series/SeriesOptions';
 import BaseSeries from '../Core/Series/Series.js';
 import DerivedSeriesMixin from '../Mixins/DerivedSeries.js';
 import U from '../Core/Utilities.js';
@@ -21,6 +35,14 @@ const {
     objectEach
 } = U;
 
+import './Column/ColumnSeries.js';
+
+/* *
+ *
+ *  Declarations
+ *
+ * */
+
 /**
  * Internal types
  * @private
@@ -32,9 +54,7 @@ declare global {
             public series: HistogramSeries;
         }
         class HistogramSeries extends ColumnSeries implements DerivedSeries {
-            public addBaseSeriesEvents: DerivedSeriesMixin[
-                'addBaseSeriesEvents'
-            ];
+            public addBaseSeriesEvents: DerivedSeriesMixin['addBaseSeriesEvents'];
             public addEvents: DerivedSeriesMixin['addEvents'];
             public binWidth?: number;
             public data: Array<HistogramPoint>;
@@ -62,7 +82,7 @@ declare global {
             baseSeries?: (number|string);
             binsNumber?: string;
             binWidth?: number;
-            states?: SeriesStatesOptionsObject<HistogramSeries>;
+            states?: SeriesStatesOptions<HistogramSeries>;
         }
     }
 }
@@ -70,13 +90,11 @@ declare global {
 /**
  * @private
  */
-declare module '../Core/Series/Types' {
+declare module '../Core/Series/SeriesType' {
     interface SeriesTypeRegistry {
         histogram: typeof Highcharts.HistogramSeries;
     }
 }
-
-import './ColumnSeries.js';
 
 /* ************************************************************************** *
  *  HISTOGRAM
@@ -87,17 +105,17 @@ import './ColumnSeries.js';
  * base series
  **/
 var binsNumberFormulas: Highcharts.Dictionary<Function> = {
-    'square-root': function (baseSeries: Highcharts.Series): number {
+    'square-root': function (baseSeries: LineSeries): number {
         return Math.ceil(Math.sqrt((baseSeries.options.data as any).length));
     },
 
-    'sturges': function (baseSeries: Highcharts.Series): number {
+    'sturges': function (baseSeries: LineSeries): number {
         return Math.ceil(
             Math.log((baseSeries.options.data as any).length) * Math.LOG2E
         );
     },
 
-    'rice': function (baseSeries: Highcharts.Series): number {
+    'rice': function (baseSeries: LineSeries): number {
         return Math.ceil(
             2 * Math.pow((baseSeries.options.data as any).length, 1 / 3)
         );
@@ -280,10 +298,7 @@ BaseSeries.seriesType<typeof Highcharts.HistogramSeries>(
                 });
             });
 
-            data.sort(function (
-                a: Highcharts.PointOptionsObject,
-                b: Highcharts.PointOptionsObject
-            ): number {
+            data.sort(function (a, b): number {
                 return (a.x as any) - (b.x as any);
             });
 

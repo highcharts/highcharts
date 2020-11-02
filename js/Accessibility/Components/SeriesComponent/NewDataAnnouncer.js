@@ -11,7 +11,7 @@
  * */
 'use strict';
 import H from '../../../Core/Globals.js';
-import CartesianSeries from '../../../Core/Series/CartesianSeries.js';
+import LineSeries from '../../../Series/Line/LineSeries.js';
 import U from '../../../Core/Utilities.js';
 var extend = U.extend, defined = U.defined;
 import ChartUtilities from '../../Utils/ChartUtilities.js';
@@ -93,13 +93,13 @@ extend(NewDataAnnouncer.prototype, {
         e.addEvent(chart, 'afterDrilldown', function () {
             announcer.lastAnnouncementTime = 0;
         });
-        e.addEvent(CartesianSeries, 'updatedData', function () {
+        e.addEvent(LineSeries, 'updatedData', function () {
             announcer.onSeriesUpdatedData(this);
         });
         e.addEvent(chart, 'afterAddSeries', function (e) {
             announcer.onSeriesAdded(e.series);
         });
-        e.addEvent(CartesianSeries, 'addPoint', function (e) {
+        e.addEvent(LineSeries, 'addPoint', function (e) {
             announcer.onPointAdded(e.point);
         });
         e.addEvent(chart, 'redraw', function () {

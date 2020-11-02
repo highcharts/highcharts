@@ -6,6 +6,9 @@
  *
  * */
 
+'use strict';
+
+import type LineSeries from '../../Series/Line/LineSeries';
 import BaseSeries from '../../Core/Globals.js';
 import RequiredIndicatorMixin from '../../Mixins/IndicatorRequired.js';
 import U from '../../Core/Utilities.js';
@@ -23,7 +26,7 @@ declare global {
 
         class PPOIndicator extends EMAIndicator {
             public data: Array<PPOIndicatorPoint>;
-            public getValues<TLinkedSeries extends Series>(
+            public getValues<TLinkedSeries extends LineSeries>(
                 series: TLinkedSeries,
                 params: PPOIndicatorParamsOptions
             ): (IndicatorValuesObject<TLinkedSeries>|undefined);
@@ -49,7 +52,7 @@ declare global {
     }
 }
 
-declare module '../../Core/Series/Types' {
+declare module '../../Core/Series/SeriesType' {
     interface SeriesTypeRegistry {
         ppo: typeof Highcharts.PPOIndicator;
     }
@@ -127,7 +130,7 @@ BaseSeries.seriesType<typeof Highcharts.PPOIndicator>(
                 }
             );
         },
-        getValues: function<TLinkedSeries extends Highcharts.Series> (
+        getValues: function<TLinkedSeries extends LineSeries> (
             series: TLinkedSeries,
             params: Highcharts.PPOIndicatorParamsOptions
         ): (Highcharts.IndicatorValuesObject<TLinkedSeries>|undefined) {

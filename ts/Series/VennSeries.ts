@@ -15,24 +15,29 @@
  *
  * */
 
+'use strict';
+
+/* *
+ *
+ *  Imports
+ *
+ * */
+
 import type Chart from '../Core/Chart/Chart';
+import type DashStyleValue from '../Core/Renderer/DashStyleValue';
+import type PositionObject from '../Core/Renderer/PositionObject';
+import type { SeriesStatesOptions } from '../Core/Series/SeriesOptions';
 import type SVGAttributes from '../Core/Renderer/SVG/SVGAttributes';
 import type SVGElement from '../Core/Renderer/SVG/SVGElement';
 import type SVGPath from '../Core/Renderer/SVG/SVGPath';
 import A from '../Core/Animation/AnimationUtilities.js';
 const { animObject } = A;
 import BaseSeries from '../Core/Series/Series.js';
-const {
-    seriesTypes
-} = BaseSeries;
+const { seriesTypes } = BaseSeries;
 import Color from '../Core/Color/Color.js';
-const {
-    parse: color
-} = Color;
+const { parse: color } = Color;
 import DrawPointMixin from '../Mixins/DrawPoint.js';
-const {
-    draw
-} = DrawPointMixin;
+const { draw } = DrawPointMixin;
 import GeometryMixin from '../Mixins/Geometry.js';
 const {
     getCenterOfPoints,
@@ -50,11 +55,8 @@ const {
     isPointInsideCircle,
     isPointOutsideAllCircles
 } = GeometryCirclesModule;
-
 import NelderMeadMixin from '../Mixins/NelderMead.js';
-const {
-    nelderMead
-} = NelderMeadMixin;
+const { nelderMead } = NelderMeadMixin;
 import U from '../Core/Utilities.js';
 const {
     addEvent,
@@ -66,10 +68,18 @@ const {
     merge
 } = U;
 
+import './ScatterSeries.js';
+
+/* *
+ *
+ *  Declarations
+ *
+ * *&
+
 /**
  * @private
  */
-declare module '../Core/Series/Types' {
+declare module '../Core/Series/SeriesType' {
     interface SeriesTypeRegistry {
         venn: typeof Highcharts.VennSeries;
     }
@@ -137,7 +147,7 @@ declare global {
             brighten?: number;
             brightness?: number;
             data?: Array<Highcharts.VennPointOptions>;
-            states?: SeriesStatesOptionsObject<VennSeries>;
+            states?: SeriesStatesOptions<VennSeries>;
         }
         interface VennUtilsObject {
             geometry: GeometryMixin;
@@ -179,7 +189,11 @@ declare global {
     }
 }
 
-import './ScatterSeries.js';
+/* *
+ *
+ *  Functions
+ *
+ * */
 
 var objectValues = function objectValues<T>(
     obj: Highcharts.Dictionary<T>
@@ -395,7 +409,7 @@ var isSet = function (
  * Returns the margin.
  */
 var getMarginFromCircles = function getMarginFromCircles(
-    point: Highcharts.PositionObject,
+    point: PositionObject,
     internal: Array<Highcharts.CircleObject>,
     external: Array<Highcharts.CircleObject>
 ): number {
@@ -437,7 +451,7 @@ var getMarginFromCircles = function getMarginFromCircles(
 var getLabelPosition = function getLabelPosition(
     internal: Array<Highcharts.CircleObject>,
     external: Array<Highcharts.CircleObject>
-): Highcharts.PositionObject {
+): PositionObject {
     // Get the best label position within the internal circles.
     var best = internal.reduce(function (
         best: Highcharts.VennLabelPositionObject,
@@ -458,7 +472,7 @@ var getLabelPosition = function getLabelPosition(
             // margin.
             .reduce(function (
                 best: Highcharts.VennLabelPositionObject,
-                point: Highcharts.PositionObject
+                point: PositionObject
             ): Highcharts.VennLabelPositionObject {
                 var margin = getMarginFromCircles(point, internal, external);
 
@@ -528,7 +542,7 @@ var getLabelPosition = function getLabelPosition(
  * Returns available width for the label.
  */
 var getLabelWidth = function getLabelWidth(
-    pos: Highcharts.PositionObject,
+    pos: PositionObject,
     internal: Array<Highcharts.CircleObject>,
     external: Array<Highcharts.CircleObject>
 ): number {
@@ -737,7 +751,7 @@ var layoutGreedyVenn = function layoutGreedyVenn(
      */
     var positionSet = function positionSet(
         set: Highcharts.VennRelationObject,
-        coordinates: Highcharts.PositionObject
+        coordinates: PositionObject
     ): void {
         var circle = set.circle;
 
@@ -790,7 +804,7 @@ var layoutGreedyVenn = function layoutGreedyVenn(
 
                 // Create a list of possible coordinates calculated from
                 // distance.
-                var possibleCoordinates: Array<Highcharts.PositionObject> = [
+                var possibleCoordinates: Array<PositionObject> = [
                     { x: positionedCircle.x + distance, y: positionedCircle.y },
                     { x: positionedCircle.x - distance, y: positionedCircle.y },
                     { x: positionedCircle.x, y: positionedCircle.y + distance },
@@ -825,9 +839,7 @@ var layoutGreedyVenn = function layoutGreedyVenn(
                 });
 
                 // Iterate all suggested coordinates and find the best one.
-                possibleCoordinates.forEach(function (
-                    coordinates: Highcharts.PositionObject
-                ): void {
+                possibleCoordinates.forEach(function (coordinates): void {
                     circle.x = coordinates.x;
                     circle.y = coordinates.y;
 
@@ -1520,8 +1532,7 @@ addEvent(seriesTypes.venn, 'afterSetOptions', function (
     e: { options: Highcharts.VennSeriesOptions }
 ): void {
     var options = e.options,
-        states: Highcharts.SeriesStatesOptionsObject<Highcharts.VennSeries> =
-            options.states as any;
+        states: SeriesStatesOptions<Highcharts.VennSeries> = options.states as any;
 
     if (this.is('venn')) {
         // Explicitly disable all halo options.

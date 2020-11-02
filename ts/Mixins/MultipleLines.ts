@@ -11,7 +11,14 @@
 'use strict';
 
 import type Point from '../Core/Series/Point';
+import type LineSeries from '../Series/Line/LineSeries';
 import H from '../Core/Globals.js';
+
+declare module '../Core/Series/SeriesLike' {
+    interface SeriesLike {
+        toYData?(point: Point): Array<number>;
+    }
+}
 
 /**
  * Internal types
@@ -19,7 +26,7 @@ import H from '../Core/Globals.js';
  */
 declare global {
     namespace Highcharts {
-        interface MultipleLinesIndicator extends Series {
+        interface MultipleLinesIndicator extends LineSeries {
             drawGraph: MultipleLinesMixin['drawGraph'];
             getTranslatedLinesNames: MultipleLinesMixin[
                 'getTranslatedLinesNames'
@@ -29,7 +36,7 @@ declare global {
             pointArrayMap?: MultipleLinesMixin['pointArrayMap'];
             pointValKey?: MultipleLinesMixin['pointValKey'];
             translate: MultipleLinesMixin['translate'];
-            toYData: MultipleLinesMixin['toYData'];
+            toYData?(point: Point): Array<number>;
         }
         interface MultipleLinesIndicatorOptions {
             gapSize?: number;

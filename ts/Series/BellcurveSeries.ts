@@ -10,6 +10,13 @@
  *
  * */
 
+'use strict';
+
+import type {
+    PointOptions,
+    PointShortOptions
+} from '../Core/Series/PointOptions';
+import type { SeriesStatesOptions } from '../Core/Series/SeriesOptions';
 import BaseSeries from '../Core/Series/Series.js';
 import DerivedSeriesMixin from '../Mixins/DerivedSeries.js';
 import U from '../Core/Utilities.js';
@@ -22,7 +29,7 @@ const {
 /**
  * @private
  */
-declare module '../Core/Series/Types' {
+declare module '../Core/Series/SeriesType' {
     interface SeriesTypeRegistry {
         bellcurve: typeof Highcharts.BellcurveSeries;
     }
@@ -73,7 +80,7 @@ declare global {
             data?: undefined;
             intervals?: number;
             pointsInInterval?: number;
-            states?: SeriesStatesOptionsObject<BellcurveSeries>;
+            states?: SeriesStatesOptions<BellcurveSeries>;
         }
     }
 }
@@ -231,7 +238,7 @@ BaseSeries.seriesType<typeof Highcharts.BellcurveSeries>('bellcurve', 'areasplin
 
         setDerivedData: function (
             this: Highcharts.BellcurveSeries
-        ): Array<Highcharts.PointOptionsType> {
+        ): Array<(PointOptions|PointShortOptions)> {
             if ((this.baseSeries as any).yData.length > 1) {
                 this.setMean();
                 this.setStandardDeviation();

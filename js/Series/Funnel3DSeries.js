@@ -11,17 +11,25 @@
  *  !!!!!!! SOURCE GETS TRANSPILED BY TYPESCRIPT. EDIT TS FILE ONLY. !!!!!!!
  *
  * */
+'use strict';
+import BaseSeries from '../Core/Series/Series.js';
 import Color from '../Core/Color/Color.js';
 var color = Color.parse;
+import ColumnSeries from './Column/ColumnSeries.js';
+var columnProto = ColumnSeries.prototype;
 import H from '../Core/Globals.js';
 var charts = H.charts, RendererProto = H.Renderer.prototype;
+import LineSeries from './Line/LineSeries.js';
 import Math3D from '../Extensions/Math3D.js';
 var perspective = Math3D.perspective;
-import Series from '../Core/Series/Series.js';
-var seriesTypes = Series.seriesTypes;
 import U from '../Core/Utilities.js';
 var error = U.error, extend = U.extend, merge = U.merge, pick = U.pick, relativeLength = U.relativeLength;
 var cuboidPath = RendererProto.cuboidPath, funnel3dMethods;
+/* *
+ *
+ *  Class
+ *
+ * */
 /**
  * The funnel3d series type.
  *
@@ -31,7 +39,7 @@ var cuboidPath = RendererProto.cuboidPath, funnel3dMethods;
  * @requires modules/cylinder
  * @requires modules/funnel3d
  */
-Series.seriesType('funnel3d', 'column', 
+BaseSeries.seriesType('funnel3d', 'column', 
 /**
  * A funnel3d is a 3d version of funnel series type. Funnel charts are
  * a type of chart often used to visualize stages in a sales project,
@@ -122,7 +130,7 @@ Series.seriesType('funnel3d', 'column',
 }, {
     // Override default axis options with series required options for axes
     bindAxes: function () {
-        H.Series.prototype.bindAxes.apply(this, arguments);
+        LineSeries.prototype.bindAxes.apply(this, arguments);
         extend(this.xAxis.options, {
             gridLineWidth: 0,
             lineWidth: 0,
@@ -139,7 +147,7 @@ Series.seriesType('funnel3d', 'column',
     },
     translate3dShapes: H.noop,
     translate: function () {
-        H.Series.prototype.translate.apply(this, arguments);
+        LineSeries.prototype.translate.apply(this, arguments);
         var sum = 0, series = this, chart = series.chart, options = series.options, reversed = options.reversed, ignoreHiddenPoint = options.ignoreHiddenPoint, plotWidth = chart.plotWidth, plotHeight = chart.plotHeight, cumulative = 0, // start at top
         center = options.center, centerX = relativeLength(center[0], plotWidth), centerY = relativeLength(center[1], plotHeight), width = relativeLength(options.width, plotWidth), tempWidth, getWidthAt, height = relativeLength(options.height, plotHeight), neckWidth = relativeLength(options.neckWidth, plotWidth), neckHeight = relativeLength(options.neckHeight, plotHeight), neckY = (centerY - height / 2) + height - neckHeight, data = series.data, fraction, tooltipPos, 
         //
@@ -299,14 +307,11 @@ Series.seriesType('funnel3d', 'column',
             }
         }
         point.dlBox = dlBox;
-        seriesTypes.column.prototype.alignDataLabel.apply(series, arguments);
+        columnProto.alignDataLabel.apply(series, arguments);
     }
 }, /** @lends seriesTypes.funnel3d.prototype.pointClass.prototype */ {
     shapeType: 'funnel3d',
-    hasNewShapeType: H
-        .seriesTypes.column.prototype
-        .pointClass.prototype
-        .hasNewShapeType
+    hasNewShapeType: columnProto.pointClass.prototype.hasNewShapeType
 });
 /**
  * A `funnel3d` series. If the [type](#series.funnel3d.type) option is

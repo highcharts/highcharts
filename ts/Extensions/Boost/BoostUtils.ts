@@ -14,6 +14,7 @@
 
 'use strict';
 
+import type LineSeries from '../../Series/Line/LineSeries';
 import Chart from '../../Core/Chart/Chart.js';
 import H from '../../Core/Globals.js';
 const {
@@ -38,7 +39,7 @@ declare global {
     }
 }
 
-import '../../Series/LineSeries.js';
+import '../../Series/Line/LineSeries.js';
 import boostableMap from './BoostableMap.js';
 import createAndAttachRenderer from './BoostAttach.js';
 
@@ -191,7 +192,7 @@ function shouldForceChartSeriesBoosting(chart: Chart): boolean {
  */
 function renderIfNotSeriesBoosting(
     renderer: Highcharts.BoostGLRenderer,
-    series: Highcharts.Series,
+    series: LineSeries,
     chart?: Chart
 ): void {
     if (renderer &&
@@ -208,7 +209,7 @@ function renderIfNotSeriesBoosting(
  */
 function allocateIfNotSeriesBoosting(
     renderer: Highcharts.BoostGLRenderer,
-    series: Highcharts.Series
+    series: LineSeries
 ): void {
     if (renderer &&
         series.renderTarget &&
@@ -317,7 +318,7 @@ function hasWebGLSupport(): boolean {
  *
  * @return {*}
  */
-function pointDrawHandler(this: Highcharts.Series, proceed: Function): void {
+function pointDrawHandler(this: LineSeries, proceed: Function): void {
     var enabled = true,
         renderer: Highcharts.BoostGLRenderer;
 

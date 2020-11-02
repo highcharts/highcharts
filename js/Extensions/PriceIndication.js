@@ -8,7 +8,7 @@
  *  !!!!!!! SOURCE GETS TRANSPILED BY TYPESCRIPT. EDIT TS FILE ONLY. !!!!!!!
  */
 'use strict';
-import H from '../Core/Globals.js';
+import LineSeries from '../Series/Line/LineSeries.js';
 import U from '../Core/Utilities.js';
 var addEvent = U.addEvent, isArray = U.isArray, merge = U.merge;
 /**
@@ -72,7 +72,7 @@ var addEvent = U.addEvent, isArray = U.isArray, merge = U.merge;
  *
  */
 /* eslint-disable no-invalid-this */
-addEvent(H.Series, 'afterRender', function () {
+addEvent(LineSeries, 'afterRender', function () {
     var serie = this, seriesOptions = serie.options, pointRange = seriesOptions.pointRange, lastVisiblePrice = seriesOptions.lastVisiblePrice, lastPrice = seriesOptions.lastPrice;
     if ((lastVisiblePrice || lastPrice) &&
         seriesOptions.id !== 'highcharts-navigator-series') {

@@ -17,9 +17,15 @@ import type {
     HTMLDOMElement,
     SVGDOMElement
 } from './Renderer/DOMElementType';
-import type HTMLElement from './Renderer/HTML/HTMLElement';
+import type HTMLAttributes from './Renderer/HTML/HTMLAttributes';
 import type SVGAttributes from './Renderer/SVG/SVGAttributes';
 import H from './Globals.js';
+const {
+    charts,
+    doc,
+    win
+} = H;
+
 type NonArray<T> = T extends Array<unknown> ? never : T;
 type NonFunction<T> = T extends Function ? never : T;
 type NullType = (null|undefined);
@@ -39,14 +45,7 @@ declare global {
         easeInOutSine(pos: number): number;
     }
     namespace Highcharts {
-        type DashStyleValue = (
-            'Dash'|'DashDot'|'Dot'|'LongDash'|'LongDashDot'|'LongDashDotDot'|
-            'ShortDash'|'ShortDashDot'|'ShortDashDotDot'|'ShortDot'|'Solid'
-        );
         type ExtractArrayType<T> = T extends (infer U)[] ? U : never;
-        type HTMLAttributes = (
-            Dictionary<(boolean|number|string|Function|undefined)>
-        );
         type RelativeSize = (number|string);
         interface Class<T = any> extends Function {
             new(...args: Array<any>): T;
@@ -620,10 +619,6 @@ declare global {
 
 H.timers = [];
 
-var charts = H.charts,
-    doc = H.doc,
-    win = H.win;
-
 /**
  * Provide error messages for debugging, with links to online explanation. This
  * function can be overridden to provide custom error handling.
@@ -1011,7 +1006,7 @@ const defined = H.defined = function defined<T>(obj: T): obj is NonNullable<T> {
 
 function attr(
     elem: DOMElementType,
-    prop: (Highcharts.HTMLAttributes|SVGAttributes)
+    prop: (HTMLAttributes|SVGAttributes)
 ): undefined;
 function attr(
     elem: DOMElementType,
@@ -1044,7 +1039,7 @@ function attr(
  */
 function attr(
     elem: DOMElementType,
-    prop: (string|Highcharts.HTMLAttributes|SVGAttributes),
+    prop: (string|HTMLAttributes|SVGAttributes),
     value?: (number|string)
 ): (string|null|undefined) {
     let ret;
@@ -1263,7 +1258,7 @@ const css = H.css = function css(
  */
 const createElement = H.createElement = function createElement(
     tag: string,
-    attribs?: Highcharts.HTMLAttributes,
+    attribs?: HTMLAttributes,
     styles?: CSSObject,
     parent?: HTMLDOMElement,
     nopad?: boolean
@@ -2337,8 +2332,8 @@ const addEvent = H.addEvent = function<T> (
 
     // Allow click events added to points, otherwise they will be prevented by
     // the TouchPointer.pinch function after a pinch zoom operation (#7091).
-    if (H.Point &&
-        el instanceof H.Point &&
+    if ((H as any).Point && // without H a dependency loop occurs
+        el instanceof (H as any).Point &&
         (el as any).series &&
         (el as any).series.chart
     ) {

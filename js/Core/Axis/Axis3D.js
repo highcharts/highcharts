@@ -45,11 +45,11 @@ var Axis3DAdditions = /** @class */ (function () {
      * @private
      * @param {Highcharts.Axis} axis
      * Related axis.
-     * @param {Highcharts.Position3dObject} pos
+     * @param {Highcharts.Position3DObject} pos
      * Position to fix.
      * @param {boolean} [isTitle]
      * Whether this is a title position.
-     * @return {Highcharts.Position3dObject}
+     * @return {Highcharts.Position3DObject}
      * Fixed position.
      */
     Axis3DAdditions.prototype.fix3dPosition = function (pos, isTitle) {

@@ -19,10 +19,9 @@ import type {
 import type AnimationOptionsObject from '../Core/Animation/AnimationOptionsObject';
 import type ColorString from '../Core/Color/ColorString';
 import type CSSObject from '../Core/Renderer/CSSObject';
-import type {
-    HTMLDOMElement
-} from '../Core/Renderer/DOMElementType';
-import type { SeriesOptionsType } from '../Core/Series/Types';
+import type HTMLAttributes from '../Core/Renderer/HTML/HTMLAttributes';
+import type { HTMLDOMElement } from '../Core/Renderer/DOMElementType';
+import type { SeriesTypeOptions } from '../Core/Series/SeriesType';
 import type SVGAttributes from '../Core/Renderer/SVG/SVGAttributes';
 import type SVGElement from '../Core/Renderer/SVG/SVGElement';
 import type SVGPath from '../Core/Renderer/SVG/SVGPath';
@@ -1255,7 +1254,7 @@ defaultOptions.exporting = {
 H.post = function (
     url: string,
     data: object,
-    formAttributes?: Highcharts.HTMLAttributes
+    formAttributes?: HTMLAttributes
 ): void {
     // create the form
     var form: HTMLFormElement = createElement('form', merge({
@@ -1428,7 +1427,7 @@ extend(Chart.prototype, /** @lends Highcharts.Chart.prototype */ {
             chartCopy: Chart,
             sandbox,
             svg,
-            seriesOptions: DeepPartial<SeriesOptionsType>,
+            seriesOptions: DeepPartial<SeriesTypeOptions>,
             sourceWidth: number,
             sourceHeight: number,
             cssWidth: string,
@@ -1482,7 +1481,7 @@ extend(Chart.prototype, /** @lends Highcharts.Chart.prototype */ {
 
         // prepare for replicating the chart
         options.series = [];
-        chart.series.forEach(function (serie: Highcharts.Series): void {
+        chart.series.forEach(function (serie): void {
             seriesOptions = merge(serie.userOptions, { // #4912
                 animation: false, // turn off animation
                 enableMouseTracking: false,

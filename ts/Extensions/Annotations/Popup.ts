@@ -12,10 +12,9 @@
 
 import type Annotation from './Annotations';
 import type Chart from '../../Core/Chart/Chart';
-import type {
-    HTMLDOMElement
-} from '../../Core/Renderer/DOMElementType';
-import type { SeriesPlotOptionsType } from '../../Core/Series/Types';
+import type { HTMLDOMElement } from '../../Core/Renderer/DOMElementType';
+import type LineSeries from '../../Series/Line/LineSeries';
+import type { SeriesTypePlotOptions } from '../../Core/Series/SeriesType';
 import H from '../../Core/Globals.js';
 import NavigationBindings from './NavigationBindings.js';
 import Pointer from '../../Core/Pointer.js';
@@ -807,7 +806,7 @@ H.Popup.prototype = {
                 .querySelectorAll('.' + PREFIX + 'popup-rhs-col-wrapper')[0];
 
             objectEach(series, function (
-                serie: (SeriesPlotOptionsType|Highcharts.Series),
+                serie: (LineSeries|SeriesTypePlotOptions),
                 value: string
             ): void {
                 var seriesOptions = serie.options;
@@ -940,7 +939,7 @@ H.Popup.prototype = {
             selectBox.setAttribute('id', PREFIX + 'select-' + optionName);
 
             // list all series which have id - mandatory for creating indicator
-            chart.series.forEach(function (serie: Highcharts.Series): void {
+            chart.series.forEach(function (serie): void {
 
                 seriesOptions = serie.options;
 

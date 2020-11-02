@@ -7,12 +7,15 @@
  *  !!!!!!! SOURCE GETS TRANSPILED BY TYPESCRIPT. EDIT TS FILE ONLY. !!!!!!!
  *
  * */
+'use strict';
 import BaseSeries from '../Core/Series/Series.js';
+var seriesTypes = BaseSeries.seriesTypes;
 import ColorMapMixin from '../Mixins/ColorMapSeries.js';
 var colorMapPointMixin = ColorMapMixin.colorMapPointMixin, colorMapSeriesMixin = ColorMapMixin.colorMapSeriesMixin;
 import H from '../Core/Globals.js';
 var noop = H.noop;
 import LegendSymbolMixin from '../Mixins/LegendSymbol.js';
+import LineSeries from './Line/LineSeries.js';
 import mapModule from '../Maps/Map.js';
 var maps = mapModule.maps, splitPath = mapModule.splitPath;
 import Point from '../Core/Series/Point.js';
@@ -20,9 +23,7 @@ import SVGRenderer from '../Core/Renderer/SVG/SVGRenderer.js';
 import U from '../Core/Utilities.js';
 var extend = U.extend, fireEvent = U.fireEvent, getNestedProperty = U.getNestedProperty, isArray = U.isArray, isNumber = U.isNumber, merge = U.merge, objectEach = U.objectEach, pick = U.pick, splat = U.splat;
 import '../Core/Options.js';
-import '../Series/LineSeries.js';
 import './ScatterSeries.js';
-var Series = H.Series, seriesTypes = BaseSeries.seriesTypes;
 /**
  * @private
  * @class
@@ -178,6 +179,8 @@ BaseSeries.seriesType('map', 'scatter',
      * @default   hc-key
      * @product   highmaps
      * @apioption plotOptions.series.joinBy
+     *
+     * @private
      */
     joinBy: 'hc-key',
     /**
@@ -283,7 +286,7 @@ BaseSeries.seriesType('map', 'scatter',
     // Extend setOptions by picking up the joinBy option and applying it
     // to a series property
     setOptions: function (itemOptions) {
-        var options = Series.prototype.setOptions.call(this, itemOptions), joinBy = options.joinBy, joinByNull = joinBy === null;
+        var options = LineSeries.prototype.setOptions.call(this, itemOptions), joinBy = options.joinBy, joinByNull = joinBy === null;
         if (joinByNull) {
             joinBy = '_i';
         }
@@ -363,7 +366,7 @@ BaseSeries.seriesType('map', 'scatter',
     },
     getExtremes: function () {
         // Get the actual value extremes for colors
-        var _a = Series.prototype.getExtremes
+        var _a = LineSeries.prototype.getExtremes
             .call(this, this.valueData), dataMin = _a.dataMin, dataMax = _a.dataMax;
         // Recalculate box on updated data
         if (this.chart.hasRendered && this.isDirtyData) {
@@ -549,7 +552,7 @@ BaseSeries.seriesType('map', 'scatter',
                 this.getBox(dataUsed); // Issue #4784
             }
         }
-        Series.prototype.setData.call(this, data, redraw, animation, updatePoints);
+        LineSeries.prototype.setData.call(this, data, redraw, animation, updatePoints);
     },
     // No graph for the map series
     drawGraph: noop,
@@ -752,7 +755,7 @@ BaseSeries.seriesType('map', 'scatter',
     // labels are drawn (after points), and the clipping of the
     // dataLabelsGroup.
     drawMapDataLabels: function () {
-        Series.prototype.drawDataLabels.call(this);
+        LineSeries.prototype.drawDataLabels.call(this);
         if (this.dataLabelsGroup) {
             this.dataLabelsGroup.clip(this.chart.clipRect);
         }
@@ -760,7 +763,7 @@ BaseSeries.seriesType('map', 'scatter',
     // Override render to throw in an async call in IE8. Otherwise it chokes
     // on the US counties demo.
     render: function () {
-        var series = this, render = Series.prototype.render;
+        var series = this, render = LineSeries.prototype.render;
         // Give IE8 some time to breathe.
         if (series.chart.renderer.isVML && series.data.length > 3000) {
             setTimeout(function () {
@@ -834,14 +837,12 @@ BaseSeries.seriesType('map', 'scatter',
     // lower series and animate them into the origin point in the upper
     // series.
     animateDrillupFrom: function (level) {
-        seriesTypes.column.prototype
-            .animateDrillupFrom.call(this, level);
+        seriesTypes.column.prototype.animateDrillupFrom.call(this, level);
     },
     // When drilling up, keep the upper series invisible until the lower
     // series has moved into place
     animateDrillupTo: function (init) {
-        seriesTypes.column.prototype
-            .animateDrillupTo.call(this, init);
+        seriesTypes.column.prototype.animateDrillupTo.call(this, init);
     }
     // Point class
 }), extend({

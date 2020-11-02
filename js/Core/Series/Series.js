@@ -7,38 +7,34 @@
  *  !!!!!!! SOURCE GETS TRANSPILED BY TYPESCRIPT. EDIT TS FILE ONLY. !!!!!!!
  *
  * */
+'use strict';
 import H from '../Globals.js';
+import O from '../Options.js';
+var defaultOptions = O.defaultOptions;
 import Point from './Point.js';
 import U from '../Utilities.js';
-var error = U.error, extendClass = U.extendClass, fireEvent = U.fireEvent, getOptions = U.getOptions, isObject = U.isObject, merge = U.merge, objectEach = U.objectEach;
-import '../Options.js';
-/**
- * @class
- * @name Highcharts.Series
- */
-var BaseSeries = /** @class */ (function () {
+var error = U.error, extendClass = U.extendClass, isObject = U.isObject, merge = U.merge, objectEach = U.objectEach;
+/* *
+ *
+ *  Namespace
+ *
+ * */
+var Series;
+(function (Series) {
     /* *
      *
-     *  Constructor
+     *  Static Properties
      *
      * */
-    function BaseSeries(chart, options) {
-        var mergedOptions = merge(BaseSeries.defaultOptions, options);
-        this.chart = chart;
-        this._i = chart.series.length;
-        chart.series.push(this);
-        this.options = mergedOptions;
-        this.userOptions = merge(options);
-    }
+    Series.seriesTypes = {};
     /* *
      *
      *  Static Functions
      *
      * */
-    BaseSeries.addSeries = function (seriesName, seriesType) {
-        BaseSeries.seriesTypes[seriesName] = seriesType;
-    };
-    BaseSeries.cleanRecursively = function (toClean, reference) {
+    /* eslint-disable valid-jsdoc */
+    /** @private */
+    function cleanRecursively(toClean, reference) {
         var clean = {};
         objectEach(toClean, function (_val, key) {
             var ob;
@@ -46,7 +42,7 @@ var BaseSeries = /** @class */ (function () {
             if (isObject(toClean[key], true) &&
                 !toClean.nodeType && // #10044
                 reference[key]) {
-                ob = BaseSeries.cleanRecursively(toClean[key], reference[key]);
+                ob = cleanRecursively(toClean[key], reference[key]);
                 if (Object.keys(ob).length) {
                     clean[key] = ob;
                 }
@@ -58,27 +54,50 @@ var BaseSeries = /** @class */ (function () {
             }
         });
         return clean;
-    };
-    // eslint-disable-next-line valid-jsdoc
+    }
+    Series.cleanRecursively = cleanRecursively;
     /**
      * Internal function to initialize an individual series.
      * @private
      */
-    BaseSeries.getSeries = function (chart, options) {
+    function getSeries(chart, options) {
         if (options === void 0) { options = {}; }
         var optionsChart = chart.options.chart, type = (options.type ||
             optionsChart.type ||
             optionsChart.defaultSeriesType ||
-            ''), Series = BaseSeries.seriesTypes[type];
+            ''), SeriesClass = Series.seriesTypes[type];
         // No such series type
         if (!Series) {
             error(17, true, chart, { missingModuleFor: type });
         }
-        return new Series(chart, options);
-    };
+        var series = new SeriesClass();
+        if (typeof series.init === 'function') {
+            series.init(chart, options);
+        }
+        return series;
+    }
+    Series.getSeries = getSeries;
     /**
-     * Factory to create new series prototypes.
+     * Registers class pattern of a series.
      *
+     * @private
+     */
+    function registerSeriesType(seriesType, seriesClass) {
+        var defaultPlotOptions = defaultOptions.plotOptions || {}, seriesOptions = seriesClass.defaultOptions;
+        if (!seriesClass.prototype.pointClass) {
+            seriesClass.prototype.pointClass = Point;
+        }
+        seriesClass.prototype.type = seriesType;
+        if (seriesOptions) {
+            defaultPlotOptions[seriesType] = seriesOptions;
+        }
+        Series.seriesTypes[seriesType] = seriesClass;
+    }
+    Series.registerSeriesType = registerSeriesType;
+    /**
+     * Old factory to create new series prototypes.
+     *
+     * @deprecated
      * @function Highcharts.seriesType
      *
      * @param {string} type
@@ -102,57 +121,34 @@ var BaseSeries = /** @class */ (function () {
      * The newly created prototype as extended from {@link Series} or its
      * derivatives.
      */
-    // docs: add to API + extending Highcharts
-    BaseSeries.seriesType = function (type, parent, options, seriesProto, pointProto) {
-        var defaultOptions = getOptions().plotOptions || {}, seriesTypes = BaseSeries.seriesTypes;
+    function seriesType(type, parent, options, seriesProto, pointProto) {
+        var defaultPlotOptions = defaultOptions.plotOptions || {};
         parent = parent || '';
         // Merge the options
-        defaultOptions[type] = merge(defaultOptions[parent], options);
+        defaultPlotOptions[type] = merge(defaultPlotOptions[parent], options);
         // Create the class
-        BaseSeries.addSeries(type, extendClass(seriesTypes[parent] || function () { }, seriesProto));
-        seriesTypes[type].prototype.type = type;
+        registerSeriesType(type, extendClass(Series.seriesTypes[parent] || function () { }, seriesProto));
+        Series.seriesTypes[type].prototype.type = type;
         // Create the point class if needed
         if (pointProto) {
-            seriesTypes[type].prototype.pointClass =
+            Series.seriesTypes[type].prototype.pointClass =
                 extendClass(Point, pointProto);
         }
-        return seriesTypes[type];
-    };
-    BaseSeries.prototype.update = function (newOptions, redraw) {
-        if (redraw === void 0) { redraw = true; }
-        var series = this;
-        newOptions = BaseSeries.cleanRecursively(newOptions, this.userOptions);
-        var newType = newOptions.type;
-        if (typeof newType !== 'undefined' &&
-            newType !== series.type) {
-            series = BaseSeries.getSeries(series.chart, newOptions);
-        }
-        fireEvent(series, 'update', { newOptions: newOptions });
-        series.userOptions = merge(newOptions);
-        fireEvent(series, 'afterUpdate', { newOptions: newOptions });
-        if (redraw) {
-            series.chart.redraw();
-        }
-        return series;
-    };
-    /* *
-     *
-     *  Static Properties
-     *
-     * */
-    BaseSeries.defaultOptions = {
-        type: 'base'
-    };
-    BaseSeries.seriesTypes = {};
-    return BaseSeries;
-}());
-BaseSeries.prototype.pointClass = Point;
-// backwards compatibility
-H.seriesType = BaseSeries.seriesType;
-H.seriesTypes = BaseSeries.seriesTypes;
+        return Series.seriesTypes[type];
+    }
+    Series.seriesType = seriesType;
+    /* eslint-enable valid-jsdoc */
+})(Series || (Series = {}));
+/* *
+ *
+ *  Compatibility
+ *
+ * */
+H.seriesType = Series.seriesType;
+H.seriesTypes = Series.seriesTypes;
 /* *
  *
  *  Export
  *
  * */
-export default BaseSeries;
+export default Series;

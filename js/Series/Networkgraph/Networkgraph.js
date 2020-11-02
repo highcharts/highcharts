@@ -11,7 +11,9 @@
  * */
 'use strict';
 import BaseSeries from '../../Core/Series/Series.js';
+var seriesTypes = BaseSeries.seriesTypes;
 import H from '../../Core/Globals.js';
+import LineSeries from '../Line/LineSeries.js';
 import NodesMixin from '../../Mixins/Nodes.js';
 import Point from '../../Core/Series/Point.js';
 import U from '../../Core/Utilities.js';
@@ -19,8 +21,7 @@ var addEvent = U.addEvent, css = U.css, defined = U.defined, pick = U.pick;
 import '../../Core/Options.js';
 import './Layouts.js';
 import './DraggableNodes.js';
-import '../../Series/LineSeries.js';
-var Series = H.Series, seriesTypes = BaseSeries.seriesTypes, dragNodesMixin = H.dragNodesMixin;
+var dragNodesMixin = H.dragNodesMixin;
 /**
  * Formatter callback function.
  *
@@ -57,6 +58,11 @@ var Series = H.Series, seriesTypes = BaseSeries.seriesTypes, dragNodesMixin = H.
 * @since 7.0.0
 */
 ''; // detach doclets above
+/* *
+ *
+ *  Class
+ *
+ * */
 /**
  * @private
  * @class
@@ -470,7 +476,7 @@ BaseSeries.seriesType('networkgraph', 'line',
      * @private
      */
     init: function () {
-        Series.prototype.init.apply(this, arguments);
+        LineSeries.prototype.init.apply(this, arguments);
         addEvent(this, 'updatedData', function () {
             if (this.layout) {
                 this.layout.stop();
@@ -537,7 +543,7 @@ BaseSeries.seriesType('networkgraph', 'line',
      * @private
      */
     markerAttribs: function (point, state) {
-        var attribs = Series.prototype.markerAttribs.call(this, point, state);
+        var attribs = LineSeries.prototype.markerAttribs.call(this, point, state);
         // series.render() is called before initial positions are set:
         if (!defined(point.plotY)) {
             attribs.y = 0;
@@ -637,12 +643,12 @@ BaseSeries.seriesType('networkgraph', 'line',
     drawDataLabels: function () {
         var textPath = this.options.dataLabels.textPath;
         // Render node labels:
-        Series.prototype.drawDataLabels.apply(this, arguments);
+        LineSeries.prototype.drawDataLabels.apply(this, arguments);
         // Render link labels:
         this.points = this.data;
         this.options.dataLabels.textPath =
             this.options.dataLabels.linkTextPath;
-        Series.prototype.drawDataLabels.apply(this, arguments);
+        LineSeries.prototype.drawDataLabels.apply(this, arguments);
         // Restore nodes
         this.points = this.nodes;
         this.options.dataLabels.textPath = textPath;
@@ -650,7 +656,7 @@ BaseSeries.seriesType('networkgraph', 'line',
     // Return the presentational attributes.
     pointAttribs: function (point, state) {
         // By default, only `selected` state is passed on
-        var pointState = state || point && point.state || 'normal', attribs = Series.prototype.pointAttribs.call(this, point, pointState), stateOptions = this.options.states[pointState];
+        var pointState = state || point && point.state || 'normal', attribs = LineSeries.prototype.pointAttribs.call(this, point, pointState), stateOptions = this.options.states[pointState];
         if (point && !point.isNode) {
             attribs = point.getLinkAttributes();
             // For link, get prefixed names:
@@ -702,11 +708,11 @@ BaseSeries.seriesType('networkgraph', 'line',
     setState: function (state, inherit) {
         if (inherit) {
             this.points = this.nodes.concat(this.data);
-            Series.prototype.setState.apply(this, arguments);
+            LineSeries.prototype.setState.apply(this, arguments);
             this.points = this.data;
         }
         else {
-            Series.prototype.setState.apply(this, arguments);
+            LineSeries.prototype.setState.apply(this, arguments);
         }
         // If simulation is done, re-render points with new states:
         if (!this.layout.simulation && !state) {
@@ -901,7 +907,7 @@ BaseSeries.seriesType('networkgraph', 'line',
                     linkFromTo.toNode.linksTo.splice(index, 1);
                 }
                 // Remove link from data/points collections
-                Series.prototype.removePoint.call(series, series.data.indexOf(linkFromTo), false, false);
+                LineSeries.prototype.removePoint.call(series, series.data.indexOf(linkFromTo), false, false);
             });
             // Restore points array, after links are removed
             series.points = series.data.slice();

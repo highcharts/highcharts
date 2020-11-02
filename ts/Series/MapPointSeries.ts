@@ -8,8 +8,11 @@
  *
  * */
 
+'use strict';
+
+import type { SeriesStatesOptions } from '../Core/Series/SeriesOptions';
 import BaseSeries from '../Core/Series/Series.js';
-import H from '../Core/Globals.js';
+import LineSeries from './Line/LineSeries.js';
 import Point from '../Core/Series/Point.js';
 import U from '../Core/Utilities.js';
 const {
@@ -45,7 +48,7 @@ declare global {
             y?: (number|null);
         }
         interface MapPointSeriesOptions extends ScatterSeriesOptions {
-            states?: SeriesStatesOptionsObject<MapPointSeries>;
+            states?: SeriesStatesOptions<MapPointSeries>;
         }
     }
 }
@@ -53,7 +56,7 @@ declare global {
 /**
  * @private
  */
-declare module '../Core/Series/Types' {
+declare module '../Core/Series/SeriesType' {
     interface SeriesTypeRegistry {
         mappoint: typeof Highcharts.MapPointSeries;
     }
@@ -61,8 +64,6 @@ declare module '../Core/Series/Types' {
 
 import '../Core/Options.js';
 import '../Series/ScatterSeries.js';
-
-const Series = H.Series;
 
 /**
  * @private
@@ -91,7 +92,7 @@ BaseSeries.seriesType<typeof Highcharts.MapPointSeries>(
             defer: false,
             enabled: true,
             formatter: function (
-                this: Highcharts.PointLabelObject
+                this: Point.PointLabelObject
             ): (string|undefined) { // #2945
                 return this.point.name;
             },
@@ -106,7 +107,7 @@ BaseSeries.seriesType<typeof Highcharts.MapPointSeries>(
         type: 'mappoint',
         forceDL: true,
         drawDataLabels: function (this: Highcharts.MapPointSeries): void {
-            Series.prototype.drawDataLabels.call(this);
+            LineSeries.prototype.drawDataLabels.call(this);
             if (this.dataLabelsGroup) {
                 this.dataLabelsGroup.clip(this.chart.clipRect);
             }

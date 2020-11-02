@@ -22,95 +22,6 @@ import Pointer from '../Pointer.js';
 import Time from '../Time.js';
 import U from '../Utilities.js';
 var addEvent = U.addEvent, attr = U.attr, createElement = U.createElement, css = U.css, defined = U.defined, discardElement = U.discardElement, erase = U.erase, error = U.error, extend = U.extend, find = U.find, fireEvent = U.fireEvent, getStyle = U.getStyle, isArray = U.isArray, isFunction = U.isFunction, isNumber = U.isNumber, isObject = U.isObject, isString = U.isString, merge = U.merge, numberFormat = U.numberFormat, objectEach = U.objectEach, pick = U.pick, pInt = U.pInt, relativeLength = U.relativeLength, removeEvent = U.removeEvent, splat = U.splat, syncTimeout = U.syncTimeout, uniqueKey = U.uniqueKey;
-/**
- * Callback for chart constructors.
- *
- * @callback Highcharts.ChartCallbackFunction
- *
- * @param {Highcharts.Chart} chart
- *        Created chart.
- */
-/**
- * Format a number and return a string based on input settings.
- *
- * @callback Highcharts.NumberFormatterCallbackFunction
- *
- * @param {number} number
- *        The input number to format.
- *
- * @param {number} decimals
- *        The amount of decimals. A value of -1 preserves the amount in the
- *        input number.
- *
- * @param {string} [decimalPoint]
- *        The decimal point, defaults to the one given in the lang options, or
- *        a dot.
- *
- * @param {string} [thousandsSep]
- *        The thousands separator, defaults to the one given in the lang
- *        options, or a space character.
- *
- * @return {string} The formatted number.
- */
-/**
- * The chart title. The title has an `update` method that allows modifying the
- * options directly or indirectly via `chart.update`.
- *
- * @interface Highcharts.TitleObject
- * @extends Highcharts.SVGElement
- */ /**
-* Modify options for the title.
-*
-* @function Highcharts.TitleObject#update
-*
-* @param {Highcharts.TitleOptions} titleOptions
-*        Options to modify.
-*
-* @param {boolean} [redraw=true]
-*        Whether to redraw the chart after the title is altered. If doing more
-*        operations on the chart, it is a good idea to set redraw to false and
-*        call {@link Chart#redraw} after.
-*/
-/**
- * The chart subtitle. The subtitle has an `update` method that
- * allows modifying the options directly or indirectly via
- * `chart.update`.
- *
- * @interface Highcharts.SubtitleObject
- * @extends Highcharts.SVGElement
- */ /**
-* Modify options for the subtitle.
-*
-* @function Highcharts.SubtitleObject#update
-*
-* @param {Highcharts.SubtitleOptions} subtitleOptions
-*        Options to modify.
-*
-* @param {boolean} [redraw=true]
-*        Whether to redraw the chart after the subtitle is altered. If doing
-*        more operations on the chart, it is a good idea to set redraw to false
-*        and call {@link Chart#redraw} after.
-*/
-/**
- * The chart caption. The caption has an `update` method that
- * allows modifying the options directly or indirectly via
- * `chart.update`.
- *
- * @interface Highcharts.CaptionObject
- * @extends Highcharts.SVGElement
- */ /**
-* Modify options for the caption.
-*
-* @function Highcharts.CaptionObject#update
-*
-* @param {Highcharts.CaptionOptions} captionOptions
-*        Options to modify.
-*
-* @param {boolean} [redraw=true]
-*        Whether to redraw the chart after the caption is altered. If doing
-*        more operations on the chart, it is a good idea to set redraw to false
-*        and call {@link Chart#redraw} after.
-*/
 var marginNames = H.marginNames;
 /* eslint-disable no-invalid-this, valid-jsdoc */
 /**
@@ -377,14 +288,14 @@ var Chart = /** @class */ (function () {
     Chart.prototype.initSeries = function (options) {
         var chart = this, optionsChart = chart.options.chart, type = (options.type ||
             optionsChart.type ||
-            optionsChart.defaultSeriesType), series, Constr = BaseSeries.seriesTypes[type];
+            optionsChart.defaultSeriesType), series, SeriesClass = BaseSeries.seriesTypes[type];
         // No such series type
-        if (!Constr) {
+        if (!SeriesClass) {
             error(17, true, chart, { missingModuleFor: type });
         }
-        series = new Constr(chart, options);
+        series = new SeriesClass();
         if (typeof series.init === 'function') {
-            series.init(this, options);
+            series.init(chart, options);
         }
         return series;
     };
@@ -1995,8 +1906,10 @@ var Chart = /** @class */ (function () {
     };
     return Chart;
 }());
-// Hook for adding callbacks in modules
-Chart.prototype.callbacks = [];
+extend(Chart.prototype, {
+    // Hook for adding callbacks in modules
+    callbacks: []
+});
 /**
  * Factory function for basic charts.
  *
@@ -2033,4 +1946,104 @@ function chart(a, b, c) {
 }
 H.chart = chart;
 H.Chart = Chart;
+/* *
+ *
+ *  Export
+ *
+ * */
 export default Chart;
+/* *
+ *
+ *  API Declarations
+ *
+ * */
+/**
+ * Callback for chart constructors.
+ *
+ * @callback Highcharts.ChartCallbackFunction
+ *
+ * @param {Highcharts.Chart} chart
+ *        Created chart.
+ */
+/**
+ * Format a number and return a string based on input settings.
+ *
+ * @callback Highcharts.NumberFormatterCallbackFunction
+ *
+ * @param {number} number
+ *        The input number to format.
+ *
+ * @param {number} decimals
+ *        The amount of decimals. A value of -1 preserves the amount in the
+ *        input number.
+ *
+ * @param {string} [decimalPoint]
+ *        The decimal point, defaults to the one given in the lang options, or
+ *        a dot.
+ *
+ * @param {string} [thousandsSep]
+ *        The thousands separator, defaults to the one given in the lang
+ *        options, or a space character.
+ *
+ * @return {string} The formatted number.
+ */
+/**
+ * The chart title. The title has an `update` method that allows modifying the
+ * options directly or indirectly via `chart.update`.
+ *
+ * @interface Highcharts.TitleObject
+ * @extends Highcharts.SVGElement
+ */ /**
+* Modify options for the title.
+*
+* @function Highcharts.TitleObject#update
+*
+* @param {Highcharts.TitleOptions} titleOptions
+*        Options to modify.
+*
+* @param {boolean} [redraw=true]
+*        Whether to redraw the chart after the title is altered. If doing more
+*        operations on the chart, it is a good idea to set redraw to false and
+*        call {@link Chart#redraw} after.
+*/
+/**
+ * The chart subtitle. The subtitle has an `update` method that
+ * allows modifying the options directly or indirectly via
+ * `chart.update`.
+ *
+ * @interface Highcharts.SubtitleObject
+ * @extends Highcharts.SVGElement
+ */ /**
+* Modify options for the subtitle.
+*
+* @function Highcharts.SubtitleObject#update
+*
+* @param {Highcharts.SubtitleOptions} subtitleOptions
+*        Options to modify.
+*
+* @param {boolean} [redraw=true]
+*        Whether to redraw the chart after the subtitle is altered. If doing
+*        more operations on the chart, it is a good idea to set redraw to false
+*        and call {@link Chart#redraw} after.
+*/
+/**
+ * The chart caption. The caption has an `update` method that
+ * allows modifying the options directly or indirectly via
+ * `chart.update`.
+ *
+ * @interface Highcharts.CaptionObject
+ * @extends Highcharts.SVGElement
+ */ /**
+* Modify options for the caption.
+*
+* @function Highcharts.CaptionObject#update
+*
+* @param {Highcharts.CaptionOptions} captionOptions
+*        Options to modify.
+*
+* @param {boolean} [redraw=true]
+*        Whether to redraw the chart after the caption is altered. If doing
+*        more operations on the chart, it is a good idea to set redraw to false
+*        and call {@link Chart#redraw} after.
+*/
+''; // include doclets above in transpilat

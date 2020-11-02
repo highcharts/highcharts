@@ -10,6 +10,7 @@
  *  !!!!!!! SOURCE GETS TRANSPILED BY TYPESCRIPT. EDIT TS FILE ONLY. !!!!!!!
  *
  * */
+'use strict';
 import BaseSeries from '../Core/Series/Series.js';
 import ColorSeriesModule from '../Mixins/ColorSeries.js';
 var colorPointMixin = ColorSeriesModule.colorPointMixin;

@@ -8,12 +8,40 @@
  *
  * */
 
+'use strict';
+
+/* *
+ *
+ *  Imports
+ *
+ * */
+
+import type LinePoint from './Line/LinePoint';
+import type LinePointOptions from './Line/LinePointOptions';
+import type LineSeriesOptions from './Line/LineSeriesOptions';
+import type { SeriesStatesOptions } from '../Core/Series/SeriesOptions';
 import BaseSeries from '../Core/Series/Series.js';
-import H from '../Core/Globals.js';
+import LineSeries from './Line/LineSeries.js';
 import U from '../Core/Utilities.js';
-const {
-    addEvent
-} = U;
+const { addEvent } = U;
+
+/* *
+ *
+ *  Declarations
+ *
+ * */
+
+declare module '../Core/Series/SeriesLike' {
+    interface SeriesLike {
+        takeOrdinalPosition?: boolean;
+    }
+}
+
+declare module '../Core/Series/SeriesType' {
+    interface SeriesTypeRegistry {
+        scatter: typeof Highcharts.ScatterSeries;
+    }
+}
 
 /**
  * Internal types
@@ -30,10 +58,7 @@ declare global {
         }
         interface ScatterSeriesOptions extends LineSeriesOptions {
             jitter?: ScatterSeriesJitterOptions;
-            states?: SeriesStatesOptionsObject<ScatterSeries>;
-        }
-        interface Series {
-            takeOrdinalPosition?: boolean;
+            states?: SeriesStatesOptions<ScatterSeries>;
         }
         class ScatterPoint extends LinePoint {
             public options: ScatterPointOptions;
@@ -50,19 +75,11 @@ declare global {
     }
 }
 
-/**
- * @private
- */
-declare module '../Core/Series/Types' {
-    interface SeriesTypeRegistry {
-        scatter: typeof Highcharts.ScatterSeries;
-    }
-}
-
-import '../Core/Options.js';
-import '../Series/LineSeries.js';
-
-var Series = H.Series;
+/* *
+ *
+ *  Class
+ *
+ * */
 
 /**
  * Scatter series type.
@@ -206,7 +223,7 @@ BaseSeries.seriesType<typeof Highcharts.ScatterSeries>(
                     this.graph.strokeWidth()
                 )
             ) {
-                Series.prototype.drawGraph.call(this);
+                LineSeries.prototype.drawGraph.call(this);
             }
         },
 
@@ -278,7 +295,7 @@ BaseSeries.seriesType<typeof Highcharts.ScatterSeries>(
 
 /* eslint-disable no-invalid-this */
 
-addEvent(Series as any, 'afterTranslate', function (
+addEvent(LineSeries as any, 'afterTranslate', function (
     this: Highcharts.ScatterSeries
 ): void {
     if (this.applyJitter) {

@@ -17,12 +17,12 @@ import type ColorString from '../../Core/Color/ColorString';
 import type ColorType from '../../Core/Color/ColorType';
 import type CSSObject from '../../Core/Renderer/CSSObject';
 import type GradientColor from '../../Core/Color/GradientColor';
-import {
-    HTMLDOMElement
-} from '../../Core/Renderer/DOMElementType';
+import { HTMLDOMElement } from '../../Core/Renderer/DOMElementType';
 import type HTMLElement from '../../Core/Renderer/HTML/HTMLElement';
 import type HTMLRenderer from '../../Core/Renderer/HTML/HTMLRenderer';
+import type PointerEvent from '../../Core/PointerEvent';
 import type ShadowOptionsObject from '../../Core/Renderer/ShadowOptionsObject';
+import type SizeObject from '../../Core/Renderer/SizeObject';
 import type SVGPath from '../../Core/Renderer/SVG/SVGPath';
 import Chart from '../../Core/Chart/Chart.js';
 import Color from '../../Core/Color/Color.js';
@@ -449,7 +449,7 @@ if (!svg) {
      * @param {boolean} [chartPosition=false]
      * @return {Highcharts.PointerEventObject}
      */
-    Pointer.prototype.normalize = function<T extends Highcharts.PointerEventObject> (
+    Pointer.prototype.normalize = function<T extends PointerEvent> (
         e: (T|MouseEvent|PointerEvent|TouchEvent),
         chartPosition?: Highcharts.OffsetObject
     ): T {
@@ -1433,7 +1433,7 @@ if (!svg) {
          */
         clipRect: function (
             this: Highcharts.VMLRenderer,
-            x: (number|Highcharts.SizeObject),
+            x: (number|SizeObject),
             y: number,
             width: number,
             height: number
@@ -2086,7 +2086,8 @@ if (!svg) {
     ): void {
         this.init.apply(this, arguments as any);
     } as any;
-    VMLRenderer.prototype = merge(VMLRenderer.prototype, SVGRenderer.prototype, VMLRendererExtension);
+    extend(VMLRenderer.prototype, SVGRenderer.prototype);
+    extend(VMLRenderer.prototype, VMLRendererExtension);
 
     // general renderer
     H.Renderer = VMLRenderer as any;

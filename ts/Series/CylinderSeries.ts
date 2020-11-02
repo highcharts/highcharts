@@ -12,16 +12,29 @@
  *
  * */
 
+'use strict';
+
+/* *
+ *
+ *  Imports
+ *
+ * */
+
 import type ColorType from '../Core/Color/ColorType';
+import type ColumnPoint from './Column/ColumnPoint';
+import type ColumnPointOptions from './Column/ColumnPointOptions';
+import type ColumnSeriesOptions from './Column/ColumnSeriesOptions';
 import type Chart from '../Core/Chart/Chart';
+import type Position3DObject from '../Core/Renderer/Position3DObject';
+import type PositionObject from '../Core/Renderer/PositionObject';
+import type { SeriesStatesOptions } from '../Core/Series/SeriesOptions';
 import type SVGAttributes from '../Core/Renderer/SVG/SVGAttributes';
 import type SVGElement from '../Core/Renderer/SVG/SVGElement';
 import type SVGPath from '../Core/Renderer/SVG/SVGPath';
 import Color from '../Core/Color/Color.js';
-const {
-    parse: color
-} = Color;
-import _ColumnSeries from '../Series/ColumnSeries.js';
+const { parse: color } = Color;
+import ColumnSeries from './Column/ColumnSeries.js';
+const { prototype: columnProto } = ColumnSeries;
 import H from '../Core/Globals.js';
 const {
     charts,
@@ -32,9 +45,7 @@ const {
     }
 } = H;
 import Math3D from '../Extensions/Math3D.js';
-const {
-    perspective
-} = Math3D;
+const { perspective } = Math3D;
 import Series from '../Core/Series/Series.js';
 import _SVGRenderer from '../Core/Renderer/SVG/SVGRenderer.js';
 import U from '../Core/Utilities.js';
@@ -43,10 +54,13 @@ const {
     pick
 } = U;
 
-/**
- * @private
- */
-declare module '../Core/Series/Types' {
+/* *
+ *
+ *  Declarations
+ *
+ * */
+
+declare module '../Core/Series/SeriesType' {
     interface SeriesTypeRegistry {
         cylinder: typeof Highcharts.CylinderSeries;
     }
@@ -84,7 +98,7 @@ declare global {
             shapeType?: string;
         }
         interface CylinderSeriesOptions extends ColumnSeriesOptions {
-            states?: SeriesStatesOptionsObject<CylinderSeries>;
+            states?: SeriesStatesOptions<CylinderSeries>;
         }
         interface Elements3dObject {
             cylinder?: CylinderMethodsObject;
@@ -152,10 +166,7 @@ Series.seriesType<typeof Highcharts.CylinderSeries>(
     /** @lends Highcharts.seriesTypes.cylinder#pointClass# */
     {
         shapeType: 'cylinder',
-        hasNewShapeType: H
-            .seriesTypes.column.prototype
-            .pointClass.prototype
-            .hasNewShapeType
+        hasNewShapeType: columnProto.pointClass.prototype.hasNewShapeType
     }
 );
 
@@ -403,7 +414,7 @@ RendererProto.getCylinderEnd = function (
         centerZ = depth / 2 + shapeArgs.z,
 
         // points could be generated in a loop, but readability will plummet
-        points: Array<Highcharts.Position3dObject> = [{ // M - starting point
+        points: Array<Position3DObject> = [{ // M - starting point
             x: 0,
             y: y,
             z: radius
@@ -467,10 +478,7 @@ RendererProto.getCylinderEnd = function (
         x, z;
 
     // rotete to match chart's beta and translate to the shape center
-    points.forEach(function (
-        point: Highcharts.Position3dObject,
-        i: number
-    ): void {
+    points.forEach(function (point, i): void {
         x = point.x;
         z = point.z;
 
@@ -504,9 +512,7 @@ RendererProto.getCylinderEnd = function (
 // Returns curved path in format of:
 // [ M, x, y, ...[C, cp1x, cp2y, cp2x, cp2y, epx, epy]*n_times ]
 // (cp - control point, ep - end point)
-RendererProto.getCurvedPath = function (
-    points: Array<Highcharts.PositionObject>
-): SVGPath {
+RendererProto.getCurvedPath = function (points: Array<PositionObject>): SVGPath {
     var path: SVGPath = [['M', points[0].x, points[0].y]],
         limit = points.length - 2,
         i;

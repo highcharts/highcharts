@@ -7,6 +7,7 @@
  *  !!!!!!! SOURCE GETS TRANSPILED BY TYPESCRIPT. EDIT TS FILE ONLY. !!!!!!!
  *
  * */
+'use strict';
 import A from '../Animation/AnimationUtilities.js';
 var getDeferredAnimation = A.getDeferredAnimation;
 import U from '../Utilities.js';

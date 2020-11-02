@@ -13,6 +13,7 @@
 import type Chart from '../Chart/Chart';
 import type Pane from '../../Extensions/Pane';
 import type Point from '../Series/Point';
+import type PositionObject from '../Renderer/PositionObject';
 import type SVGElement from '../Renderer/SVG/SVGElement';
 import type SVGPath from '../Renderer/SVG/SVGPath';
 import Axis from './Axis.js';
@@ -427,7 +428,7 @@ class RadialAxis {
         axis.getPosition = function (
             value: number,
             length?: number
-        ): Highcharts.PositionObject {
+        ): PositionObject {
             var translatedVal = this.translate(value) as any;
 
             return this.postTranslate(
@@ -459,7 +460,7 @@ class RadialAxis {
         axis.postTranslate = function (
             angle: number,
             radius: number
-        ): Highcharts.PositionObject {
+        ): PositionObject {
 
             var chart = this.chart,
                 center = this.center;
@@ -694,7 +695,7 @@ class RadialAxis {
                 a,
                 b,
                 otherAxis: (RadialAxis|undefined),
-                xy: Highcharts.PositionObject,
+                xy: PositionObject,
                 tickPositions: number[],
                 crossPos,
                 path: SVGPath;
@@ -801,7 +802,7 @@ class RadialAxis {
         };
 
         // Find the position for the axis title, by default inside the gauge.
-        axis.getTitlePosition = function (): Highcharts.PositionObject {
+        axis.getTitlePosition = function (): PositionObject {
             var center = this.center,
                 chart = this.chart,
                 titleOptions = this.options.title;
@@ -1250,7 +1251,7 @@ class RadialAxis {
 }
 
 interface RadialAfterGetPositionEvent extends Event {
-    pos: Highcharts.PositionObject;
+    pos: PositionObject;
 }
 
 interface RadialAutoAlignEvent extends Event {
@@ -1296,12 +1297,12 @@ interface RadialAxis extends Axis {
     getPosition(
         value: number,
         length?: number
-    ): Highcharts.PositionObject;
-    getTitlePosition(): Highcharts.PositionObject;
+    ): PositionObject;
+    getTitlePosition(): PositionObject;
     postTranslate(
         angle: number,
         radius: number
-    ): Highcharts.PositionObject;
+    ): PositionObject;
     setAxisSize(): void;
     setAxisTranslation(): void;
     setOptions(userOptions: DeepPartial<RadialAxisOptions>): void;

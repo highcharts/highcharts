@@ -8,6 +8,9 @@
  *
  * */
 
+'use strict';
+
+import type { SeriesStatesOptions } from '../Core/Series/SeriesOptions';
 import BaseSeries from '../Core/Series/Series.js';
 import Point from '../Core/Series/Point.js';
 import U from '../Core/Utilities.js';
@@ -47,7 +50,7 @@ declare global {
             z?: (number|null);
         }
         interface MapBubbleSeriesOptions extends BubbleSeriesOptions {
-            states?: SeriesStatesOptionsObject<MapBubbleSeries>;
+            states?: SeriesStatesOptions<MapBubbleSeries>;
         }
     }
 }
@@ -55,7 +58,7 @@ declare global {
 /**
  * @private
  */
-declare module '../Core/Series/Types' {
+declare module '../Core/Series/SeriesType' {
     interface SeriesTypeRegistry {
         mapbubble: typeof Highcharts.MapBubbleSeries;
     }

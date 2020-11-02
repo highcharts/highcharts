@@ -10,7 +10,10 @@
  *
  * */
 
+'use strict';
+
 import type Chart from '../../Core/Chart/Chart';
+import type LineSeries from '../../Series/Line/LineSeries';
 import BaseSeries from '../../Core/Series/Series.js';
 import U from '../../Core/Utilities.js';
 const {
@@ -26,16 +29,16 @@ declare global {
     namespace Highcharts {
         class VWAPIndicator extends SMAIndicator {
             public data: Array<VWAPIndicatorPoint>;
-            public calculateVWAPValues<TLinkedSeries extends Series>(
+            public calculateVWAPValues<TLinkedSeries extends LineSeries>(
                 isOHLC: boolean,
                 xValues: Array<number>,
                 yValues: (
                     Array<number>|Array<[number, number, number, number]>
                 ),
-                volumeSeries: Series,
+                volumeSeries: LineSeries,
                 period: number
             ): IndicatorValuesObject<TLinkedSeries>;
-            public getValues<TLinkedSeries extends Series>(
+            public getValues<TLinkedSeries extends LineSeries>(
                 series: TLinkedSeries,
                 params: VWAPIndicatorParamsOptions,
             ): (IndicatorValuesObject<TLinkedSeries>|undefined);
@@ -58,7 +61,7 @@ declare global {
     }
 }
 
-declare module '../../Core/Series/Types' {
+declare module '../../Core/Series/SeriesType' {
     interface SeriesTypeRegistry {
         vwap: typeof Highcharts.VWAPIndicator;
     }
@@ -118,7 +121,7 @@ BaseSeries.seriesType<typeof Highcharts.VWAPIndicator>('vwap', 'sma',
          * @param {object} params - params
          * @return {object} - computed VWAP
          **/
-        getValues: function<TLinkedSeries extends Highcharts.Series> (
+        getValues: function<TLinkedSeries extends LineSeries> (
             this: Highcharts.VWAPIndicator,
             series: TLinkedSeries,
             params: Highcharts.VWAPIndicatorParamsOptions
@@ -131,7 +134,7 @@ BaseSeries.seriesType<typeof Highcharts.VWAPIndicator>('vwap', 'sma',
                 ) = (series.yData as any),
                 period: number = (params.period as any),
                 isOHLC = true,
-                volumeSeries: Highcharts.Series;
+                volumeSeries: LineSeries;
 
             // Checks if volume series exists
             if (!(volumeSeries = (
@@ -173,13 +176,11 @@ BaseSeries.seriesType<typeof Highcharts.VWAPIndicator>('vwap', 'sma',
          * @param {number} period - number of points to be calculated
          * @return {object} - Object contains computed VWAP
          **/
-        calculateVWAPValues: function <
-            TLinkedSeries extends Highcharts.Series
-        > (
+        calculateVWAPValues: function <TLinkedSeries extends LineSeries> (
             isOHLC: boolean,
             xValues: Array<number>,
             yValues: (Array<number>|Array<[number, number, number, number]>),
-            volumeSeries: Highcharts.Series,
+            volumeSeries: LineSeries,
             period: number
         ): Highcharts.IndicatorValuesObject<TLinkedSeries> {
             var volumeValues: Array<number> = (volumeSeries.yData as any),

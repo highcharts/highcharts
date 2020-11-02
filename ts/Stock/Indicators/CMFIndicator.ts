@@ -12,6 +12,9 @@
  *
  * */
 
+'use strict';
+
+import type LineSeries from '../../Series/Line/LineSeries';
 import BaseSeries from '../../Core/Series/Series.js';
 
 /**
@@ -25,10 +28,10 @@ declare global {
             public options: CMFIndicatorOptions;
             public pointClass: typeof CMFIndicatorPoint;
             public points: Array<CMFIndicatorPoint>;
-            public volumeSeries: Series;
-            public linkedParent: Series;
+            public volumeSeries: LineSeries;
+            public linkedParent: LineSeries;
             public yData: Array<Array<number>>;
-            public getMoneyFlow<TLinkedSeries extends Series>(
+            public getMoneyFlow<TLinkedSeries extends LineSeries>(
                 xData: (Array<number>|undefined),
                 seriesYData: (
                     Array<(number|null|undefined)>|
@@ -38,7 +41,7 @@ declare global {
                 volumeSeriesYData: Array<number>,
                 period: number
             ): IndicatorValuesObject<TLinkedSeries>;
-            public getValues<TLinkedSeries extends Series>(
+            public getValues<TLinkedSeries extends LineSeries>(
                 series: TLinkedSeries,
                 params: CMFIndicatorParamsOptions
             ): (IndicatorValuesObject<TLinkedSeries>|undefined);
@@ -59,7 +62,7 @@ declare global {
     }
 }
 
-declare module '../../Core/Series/Types' {
+declare module '../../Core/Series/SeriesType' {
     interface SeriesTypeRegistry {
         cmf: typeof Highcharts.CMFIndicator;
     }
@@ -118,7 +121,7 @@ BaseSeries.seriesType<typeof Highcharts.CMFIndicator>('cmf', 'sma',
             var chart = this.chart,
                 options: Highcharts.CMFIndicatorOptions = this.options,
                 series = this.linkedParent,
-                volumeSeries: Highcharts.Series = (
+                volumeSeries: LineSeries = (
                     this.volumeSeries ||
                     (
                         this.volumeSeries =
@@ -137,7 +140,7 @@ BaseSeries.seriesType<typeof Highcharts.CMFIndicator>('cmf', 'sma',
              * @return {boolean|undefined} true if length is valid.
              */
             function isLengthValid(
-                serie: Highcharts.Series
+                serie: LineSeries
             ): (boolean|undefined) {
                 return serie.xData &&
                     serie.xData.length >= (options.params as any).period;
@@ -161,7 +164,7 @@ BaseSeries.seriesType<typeof Highcharts.CMFIndicator>('cmf', 'sma',
          * indicator is not valid, otherwise returns Values object.
          */
         getValues: function<
-            TLinkedSeries extends Highcharts.Series
+            TLinkedSeries extends LineSeries
         > (
             this: Highcharts.CMFIndicator,
             series: TLinkedSeries,
@@ -188,7 +191,7 @@ BaseSeries.seriesType<typeof Highcharts.CMFIndicator>('cmf', 'sma',
          * @return {Highcharts.IndicatorNullableValuesObject} object containing computed money
          * flow data
          */
-        getMoneyFlow: function<TLinkedSeries extends Highcharts.Series> (
+        getMoneyFlow: function<TLinkedSeries extends LineSeries> (
             xData: Array<number>,
             seriesYData: TLinkedSeries['yData'],
             volumeSeriesYData: Array<number>,

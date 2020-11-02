@@ -11,6 +11,7 @@
  * */
 'use strict';
 import H from '../Core/Globals.js';
+import LineSeries from '../Series/Line/LineSeries.js';
 import NavigationBindings from '../Extensions/Annotations/NavigationBindings.js';
 import U from '../Core/Utilities.js';
 var correctFloat = U.correctFloat, defined = U.defined, extend = U.extend, fireEvent = U.fireEvent, getOptions = U.getOptions, isNumber = U.isNumber, merge = U.merge, pick = U.pick, setOptions = U.setOptions, uniqueKey = U.uniqueKey;
@@ -162,7 +163,7 @@ bindingsUtils.manageIndicators = function (data) {
         // Make sure that indicator uses the SUM approx if SUM approx is used
         // by parent series (#13950).
         if (typeof parentSeries !== 'undefined' &&
-            parentSeries instanceof Highcharts.Series &&
+            parentSeries instanceof LineSeries &&
             parentSeries.getDGApproximation() === 'sum' &&
             // If indicator has defined approx type, use it (e.g. "ranges")
             !defined(defaultOptions && defaultOptions[seriesConfig.type] && ((_a = defaultOptions.dataGrouping) === null || _a === void 0 ? void 0 : _a.approximation))) {

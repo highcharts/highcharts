@@ -6,7 +6,10 @@
  *
  * */
 
+'use strict';
+
 import type CSSObject from '../../Core/Renderer/CSSObject';
+import type LineSeries from '../../Series/Line/LineSeries';
 import BaseSeries from '../../Core/Series/Series.js';
 import MultipleLinesMixin from '../../Mixins/MultipleLines.js';
 import ReduceArrayMixin from '../../Mixins/ReduceArray.js';
@@ -27,7 +30,7 @@ declare global {
             public getTranslatedLinesNames: MultipleLinesMixin[
                 'getTranslatedLinesNames'
             ];
-            public getValues<TLinkedSeries extends Series>(
+            public getValues<TLinkedSeries extends LineSeries>(
                 series: TLinkedSeries,
                 params: PCIndicatorParamsOptions
             ): (IndicatorValuesObject<TLinkedSeries>|undefined);
@@ -58,7 +61,7 @@ declare global {
     }
 }
 
-declare module '../../Core/Series/Types' {
+declare module '../../Core/Series/SeriesType' {
     interface SeriesTypeRegistry {
         pc: typeof Highcharts.PCIndicator;
     }
@@ -149,7 +152,7 @@ BaseSeries.seriesType<typeof Highcharts.PCIndicator>(
         nameBase: 'Price Channel',
         nameComponents: ['period'],
         linesApiNames: ['topLine', 'bottomLine'],
-        getValues: function<TLinkedSeries extends Highcharts.Series> (
+        getValues: function<TLinkedSeries extends LineSeries> (
             series: TLinkedSeries,
             params: Highcharts.PCIndicatorParamsOptions
         ): (Highcharts.IndicatorValuesObject<TLinkedSeries>|undefined) {

@@ -12,10 +12,11 @@
 
 'use strict';
 
-import type {
-    DOMElementType
-} from '../../../Core/Renderer/DOMElementType';
+import type { DOMElementType } from '../../../Core/Renderer/DOMElementType';
+import type LineSeries from '../../../Series/Line/LineSeries';
 import type Point from '../../../Core/Series/Point';
+import type PositionObject from '../../../Core/Renderer/PositionObject';
+import type SVGElement from '../../../Core/Renderer/SVG/SVGElement';
 import AnnotationsA11y from '../AnnotationsA11y.js';
 const {
     getPointAnnotationTexts
@@ -44,17 +45,10 @@ const {
     defined
 } = U;
 
-
-/**
- * Internal types.
- * @private
- */
-declare global {
-    namespace Highcharts {
-        interface PointLike {
-            /** @requires modules/accessibility */
-            hasDummyGraphic?: boolean;
-        }
+declare module '../../../Core/Series/PointLike' {
+    interface PointLike {
+        /** @requires modules/accessibility */
+        hasDummyGraphic?: boolean;
     }
 }
 
@@ -117,8 +111,8 @@ function shouldAddDummyPoint(point: Point): boolean {
  */
 function makeDummyElement(
     point: Point,
-    pos: Highcharts.PositionObject
-): Highcharts.SVGElement {
+    pos: PositionObject
+): SVGElement {
     var renderer = point.series.chart.renderer,
         dummy = renderer.rect(pos.x, pos.y, 1, 1);
 
@@ -313,7 +307,7 @@ function getSeriesDescriptionText(
  * @return {string}
  */
 function getSeriesAxisDescriptionText(
-    series: Highcharts.Series,
+    series: LineSeries,
     axisCollection: string
 ): string {
     var axis: Highcharts.Axis = (series as any)[axisCollection];

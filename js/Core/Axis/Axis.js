@@ -12,6 +12,8 @@ import A from '../Animation/AnimationUtilities.js';
 var animObject = A.animObject;
 import Color from '../Color/Color.js';
 import H from '../Globals.js';
+import O from '../Options.js';
+var defaultOptions = O.defaultOptions;
 import Tick from './Tick.js';
 import U from '../Utilities.js';
 var addEvent = U.addEvent, arrayMax = U.arrayMax, arrayMin = U.arrayMin, clamp = U.clamp, correctFloat = U.correctFloat, defined = U.defined, destroyObjectProperties = U.destroyObjectProperties, error = U.error, extend = U.extend, fireEvent = U.fireEvent, format = U.format, getMagnitude = U.getMagnitude, isArray = U.isArray, isFunction = U.isFunction, isNumber = U.isNumber, isString = U.isString, merge = U.merge, normalizeTickInterval = U.normalizeTickInterval, objectEach = U.objectEach, pick = U.pick, relativeLength = U.relativeLength, removeEvent = U.removeEvent, splat = U.splat, syncTimeout = U.syncTimeout;
@@ -220,8 +222,7 @@ var addEvent = U.addEvent, arrayMax = U.arrayMax, arrayMin = U.arrayMin, clamp =
  *
  * @return {string}
  */
-import O from '../Options.js';
-var defaultOptions = O.defaultOptions;
+''; // detach doclets above
 var deg2rad = H.deg2rad;
 /**
  * Create a new axis object. Called internally when instanciating a new chart or

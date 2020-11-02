@@ -7,15 +7,17 @@
  *  !!!!!!! SOURCE GETS TRANSPILED BY TYPESCRIPT. EDIT TS FILE ONLY. !!!!!!!
  *
  * */
+'use strict';
 import BaseSeries from '../Core/Series/Series.js';
+import ColumnSeries from './Column/ColumnSeries.js';
+var columnProto = ColumnSeries.prototype;
 import H from '../Core/Globals.js';
 var noop = H.noop;
 import O from '../Core/Options.js';
 var defaultOptions = O.defaultOptions;
 import U from '../Core/Utilities.js';
 var clamp = U.clamp, merge = U.merge, pick = U.pick;
-import './ColumnSeries.js';
-var arearangeProto = BaseSeries.seriesTypes.arearange.prototype, columnProto = BaseSeries.seriesTypes.column.prototype;
+var arearangeProto = BaseSeries.seriesTypes.arearange.prototype;
 /**
  * The column range is a cartesian series type with higher and lower
  * Y values along an X axis. To display horizontal bars, set

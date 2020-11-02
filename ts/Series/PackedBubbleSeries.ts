@@ -8,13 +8,22 @@
  *
  * */
 
+'use strict';
+
+import type {
+    DataLabelOptions,
+    DataLabelTextPathOptions
+} from '../Core/Series/DataLabelOptions';
+import type PointerEvent from '../Core/PointerEvent';
+import type { SeriesStatesOptions } from '../Core/Series/SeriesOptions';
 import type SVGAttributes from '../Core/Renderer/SVG/SVGAttributes';
 import type SVGElement from '../Core/Renderer/SVG/SVGElement';
 import BaseSeries from '../Core/Series/Series.js';
 import Chart from '../Core/Chart/Chart.js';
 import Color from '../Core/Color/Color.js';
-const color = Color.parse;
+const { parse: color } = Color;
 import H from '../Core/Globals.js';
+import LineSeries from '../Series/Line/LineSeries.js';
 import Point from '../Core/Series/Point.js';
 import U from '../Core/Utilities.js';
 const {
@@ -30,9 +39,15 @@ const {
     pick
 } = U;
 
-declare module '../Core/Chart/ChartLike'{
+declare module '../Core/Chart/ChartLike' {
     interface ChartLike {
         getSelectedParentNodes(): Array<Highcharts.PackedBubblePoint>;
+    }
+}
+
+declare module '../Core/Series/PointLike' {
+    interface PointLike {
+        degree?: number;
     }
 }
 
@@ -61,8 +76,7 @@ declare global {
             public seriesIndex?: number;
             public value: (number|null);
         }
-        class PackedBubbleSeries extends BubbleSeries
-            implements DragNodesSeries {
+        class PackedBubbleSeries extends BubbleSeries implements DragNodesSeries {
             public chart: PackedBubbleChart;
             public data: Array<PackedBubblePoint>;
             public forces: Array<string>;
@@ -155,34 +169,30 @@ declare global {
         }
         interface PackedBubbleDataLabelsFormatterCallbackFunction {
             (this: (
-                PointLabelObject|
+                Point.PointLabelObject|
                 PackedBubbleDataLabelsFormatterContextObject
             )): (number|string|null|undefined);
         }
         interface PackedBubbleDataLabelsFormatterContextObject
-            extends PointLabelObject
+            extends Point.PointLabelObject
         {
             point: PackedBubblePoint;
         }
-        interface PackedBubbleDataLabelsOptionsObject
-            extends DataLabelsOptions
-        {
+        interface PackedBubbleDataLabelsOptionsObject extends DataLabelOptions {
             format?: string;
             formatter?: PackedBubbleDataLabelsFormatterCallbackFunction;
             parentNodeFormat?: string;
             parentNodeFormatter?: (
                 PackedBubbleDataLabelsFormatterCallbackFunction
             );
-            parentNodeTextPath?: DataLabelsTextPathOptionsObject;
-            textPath?: DataLabelsTextPathOptionsObject;
+            parentNodeTextPath?: DataLabelTextPathOptions;
+            textPath?: DataLabelTextPathOptions;
         }
         interface PackedBubbleLayout extends NetworkgraphLayout {
-            enableSimulation: (
-                PackedBubbleLayoutAlgorithmOptions['enableSimulation']
-            );
+            enableSimulation: boolean;
             nodes: Array<PackedBubblePoint>;
             options: PackedBubbleLayoutAlgorithmOptions;
-            series: Array<PackedBubbleSeries>;
+            series: Array<NetworkgraphSeries>;
         }
         interface PackedBubbleLayoutAlgorithmOptions
             extends NetworkgraphLayoutAlgorithmOptions
@@ -214,10 +224,8 @@ declare global {
             draggable?: boolean;
             layoutAlgorithm?: PackedBubbleLayoutAlgorithmOptions;
             minSize?: (number|string);
+            states?: SeriesStatesOptions<PackedBubbleSeries>;
             useSimulation?: boolean;
-        }
-        interface PointLike {
-            degree?: number;
         }
         type PackedBubbleData = [
             (number|null),
@@ -233,7 +241,7 @@ declare global {
 /**
  * @private
  */
-declare module '../Core/Series/Types' {
+declare module '../Core/Series/SeriesType' {
     interface SeriesTypeRegistry {
         packedbubble: typeof Highcharts.PackedBubbleSeries;
     }
@@ -243,8 +251,7 @@ import './Bubble/BubbleSeries.js';
 import '../Series/Networkgraph/DraggableNodes.js';
 import '../Series/Networkgraph/Layouts.js';
 
-var Series = H.Series,
-    Reingold = H.layouts['reingold-fruchterman'],
+var Reingold = H.layouts['reingold-fruchterman'],
     dragNodesMixin = H.dragNodesMixin;
 
 /**
@@ -373,11 +380,9 @@ H.layouts.packedbubble = extendClass(
     {
         beforeStep: function (this: Highcharts.PackedBubbleLayout): void {
             if (this.options.marker) {
-                this.series.forEach(function (
-                    series: Highcharts.PackedBubbleSeries
-                ): void {
+                this.series.forEach(function (series): void {
                     if (series) {
-                        series.calculateParentRadius();
+                        (series as any).calculateParentRadius();
                     }
                 });
             }
@@ -665,7 +670,7 @@ BaseSeries.seriesType<typeof Highcharts.PackedBubbleSeries>(
              */
             formatter: function (
                 this: (
-                    Highcharts.PointLabelObject|
+                    Point.PointLabelObject|
                     Highcharts.PackedBubbleDataLabelsFormatterContextObject
                 )
             ): (number|null) {
@@ -685,7 +690,7 @@ BaseSeries.seriesType<typeof Highcharts.PackedBubbleSeries>(
              */
             parentNodeFormatter: function (
                 this: (
-                    Highcharts.PointLabelObject|
+                    Point.PointLabelObject|
                     Highcharts.PackedBubbleDataLabelsFormatterContextObject
                 )
             ): string {
@@ -938,15 +943,13 @@ BaseSeries.seriesType<typeof Highcharts.PackedBubbleSeries>(
         init: function (
             this: Highcharts.PackedBubbleSeries
         ): Highcharts.PackedBubbleSeries {
-            Series.prototype.init.apply(this, arguments as any);
+            LineSeries.prototype.init.apply(this, arguments as any);
 
             // When one series is modified, the others need to be recomputed
             this.eventsToUnbind.push(addEvent(this, 'updatedData', function (
                 this: Highcharts.PackedBubbleSeries
             ): void {
-                this.chart.series.forEach(function (
-                    s: Highcharts.Series
-                ): void {
+                this.chart.series.forEach(function (s): void {
                     if (s.type === this.type) {
                         s.isDirty = true;
                     }
@@ -958,7 +961,7 @@ BaseSeries.seriesType<typeof Highcharts.PackedBubbleSeries>(
         render: function (this: Highcharts.PackedBubbleSeries): void {
             var series = this,
                 dataLabels = [] as Array<SVGElement>;
-            Series.prototype.render.apply(this, arguments as any);
+            LineSeries.prototype.render.apply(this, arguments as any);
             // #10823 - dataLabels should stay visible
             // when enabled allowOverlap.
             if (!(series.options.dataLabels as any).allowOverlap) {
@@ -985,7 +988,7 @@ BaseSeries.seriesType<typeof Highcharts.PackedBubbleSeries>(
         // Needed because of z-indexing issue if point is added in series.group
         setVisible: function (this: Highcharts.PackedBubbleSeries): void {
             var series = this;
-            Series.prototype.setVisible.apply(series, arguments as any);
+            LineSeries.prototype.setVisible.apply(series, arguments as any);
             if (series.parentNodeLayout && series.graph) {
                 if (series.visible) {
                     series.graph.show();
@@ -1025,7 +1028,7 @@ BaseSeries.seriesType<typeof Highcharts.PackedBubbleSeries>(
                 points = this.points;
 
             // Render node labels:
-            Series.prototype.drawDataLabels.apply(this, arguments as any);
+            LineSeries.prototype.drawDataLabels.apply(this, arguments as any);
 
             // Render parentNode labels:
             if (this.parentNode) {
@@ -1033,7 +1036,7 @@ BaseSeries.seriesType<typeof Highcharts.PackedBubbleSeries>(
                 this.points = [this.parentNode];
                 (this.options.dataLabels as any).textPath =
                     (this.options.dataLabels as any).parentNodeTextPath;
-                Series.prototype.drawDataLabels.apply(this, arguments as any);
+                LineSeries.prototype.drawDataLabels.apply(this, arguments as any);
 
                 // Restore nodes
                 this.points = points;
@@ -1173,9 +1176,7 @@ BaseSeries.seriesType<typeof Highcharts.PackedBubbleSeries>(
          * are rendered.
          * @private
          */
-        createParentNodes: function (
-            this: Highcharts.PackedBubbleSeries
-        ): void {
+        createParentNodes: function (this: Highcharts.PackedBubbleSeries): void {
             var series = this,
                 chart = series.chart,
                 parentNodeLayout = series.parentNodeLayout,
@@ -1228,18 +1229,18 @@ BaseSeries.seriesType<typeof Highcharts.PackedBubbleSeries>(
                 }
                 series.parentNode = parentNode;
                 parentNodeLayout.addElementsToCollection(
-                    [series], parentNodeLayout.series
+                    [series as any], parentNodeLayout.series
                 );
                 parentNodeLayout.addElementsToCollection(
                     [parentNode as any], parentNodeLayout.nodes
                 );
             }
         },
-        drawTracker: function (this: Highcharts.Series): void {
-            const series = this as Highcharts.PackedBubbleSeries,
+        drawTracker: function (this: Highcharts.PackedBubbleSeries): void {
+            const series = this,
                 chart = series.chart,
                 pointer = chart.pointer,
-                onMouseOver = function (e: Highcharts.PointerEventObject): void {
+                onMouseOver = function (e: PointerEvent): void {
                     const point = pointer.getPointFromEvent(e);
                     // undefined on graph in scatterchart
                     if (typeof point !== 'undefined') {
@@ -1760,7 +1761,7 @@ BaseSeries.seriesType<typeof Highcharts.PackedBubbleSeries>(
             }
             // it is needed to deal with null
             // and undefined values
-            chart.series.forEach(function (s: Highcharts.Series): void {
+            chart.series.forEach(function (s): void {
                 ((s as Highcharts.PackedBubbleSeries).yData as any).forEach(
                     function (p: number): void {
                         if (defined(p)) {
@@ -1917,7 +1918,7 @@ BaseSeries.seriesType<typeof Highcharts.PackedBubbleSeries>(
             // Remove the series from all layouts series collections #11469
             if (this.chart.graphLayoutsLookup) {
                 this.chart.graphLayoutsLookup.forEach(function (layout): void {
-                    layout.removeElementFromCollection(this, layout.series);
+                    layout.removeElementFromCollection(this, layout.series as any);
                 }, this);
             }
 
@@ -1930,9 +1931,9 @@ BaseSeries.seriesType<typeof Highcharts.PackedBubbleSeries>(
                         this.parentNode.dataLabel.destroy();
                 }
             }
-            H.Series.prototype.destroy.apply(this, arguments as any);
+            LineSeries.prototype.destroy.apply(this, arguments as any);
         },
-        alignDataLabel: H.Series.prototype.alignDataLabel
+        alignDataLabel: LineSeries.prototype.alignDataLabel
     }, {
         /**
          * Destroy point.

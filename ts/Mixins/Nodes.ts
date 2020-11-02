@@ -4,8 +4,13 @@
  *
  * */
 
+'use strict';
+
 import type AnimationOptionsObject from '../Core/Animation/AnimationOptionsObject';
+import type PointOptions from '../Core/Series/PointOptions';
+import type SeriesOptions from '../Core/Series/SeriesOptions';
 import H from '../Core/Globals.js';
+import LineSeries from '../Series/Line/LineSeries.js';
 import Point from '../Core/Series/Point.js';
 import U from '../Core/Utilities.js';
 const {
@@ -14,6 +19,18 @@ const {
     find,
     pick
 } = U;
+
+declare module '../Core/Series/PointLike' {
+    interface PointLike {
+        name?: string;
+    }
+}
+
+declare module '../Core/Series/SeriesLike' {
+    interface SeriesLike {
+        nodes?: Array<Highcharts.NodesPoint>;
+    }
+}
 
 /**
  * Internal types
@@ -34,13 +51,7 @@ declare global {
             ): void;
             setNodeState(this: NodesPoint, state: string): void;
         }
-        interface PointLike {
-            name?: string;
-        }
-        interface Series {
-            nodes?: Array<NodesPoint>;
-        }
-        interface NodesPointOptions extends PointOptionsObject {
+        interface NodesPointOptions extends PointOptions {
             id?: string;
             level?: number;
             mass?: number;
@@ -71,10 +82,10 @@ declare global {
             public y?: (number|null);
             public getSum(): number;
             public hasShape(): boolean;
-            public init(series: Series, options: NodesPointOptions): NodesPoint;
+            public init(series: LineSeries, options: NodesPointOptions): NodesPoint;
             public offset(point: NodesPoint, coll: string): (number|undefined);
         }
-        class NodesSeries extends Series {
+        class NodesSeries extends LineSeries {
             public createNode: NodesMixin['createNode'];
             public data: Array<NodesPoint>;
             public generatePoints: NodesMixin['generatePoints'];
@@ -89,7 +100,7 @@ declare global {
     }
 }
 
-import '../Series/LineSeries.js';
+import '../Series/Line/LineSeries.js';
 
 const NodesMixin = H.NodesMixin = {
 
@@ -213,7 +224,7 @@ const NodesMixin = H.NodesMixin = {
         var chart = this.chart,
             nodeLookup = {} as Highcharts.Dictionary<Highcharts.NodesPoint>;
 
-        H.Series.prototype.generatePoints.call(this);
+        LineSeries.prototype.generatePoints.call(this);
 
         if (!this.nodes) {
             this.nodes = []; // List of Point-like node items
@@ -271,7 +282,7 @@ const NodesMixin = H.NodesMixin = {
             });
             this.nodes.length = 0;
         }
-        H.Series.prototype.setData.apply(this, arguments as any);
+        LineSeries.prototype.setData.apply(this, arguments as any);
     },
 
     // Destroy alll nodes and links
@@ -280,7 +291,7 @@ const NodesMixin = H.NodesMixin = {
         this.data = ([] as Array<Highcharts.NodesPoint>)
             .concat(this.points || [], this.nodes);
 
-        return H.Series.prototype.destroy.apply(this, arguments as any);
+        return LineSeries.prototype.destroy.apply(this, arguments as any);
     },
 
     /**

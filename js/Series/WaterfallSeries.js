@@ -12,14 +12,12 @@ import Axis from '../Core/Axis/Axis.js';
 import BaseSeries from '../Core/Series/Series.js';
 var seriesTypes = BaseSeries.seriesTypes;
 import Chart from '../Core/Chart/Chart.js';
-import H from '../Core/Globals.js';
+import LineSeries from './Line/LineSeries.js';
 import Point from '../Core/Series/Point.js';
 import StackItem from '../Extensions/Stacking.js';
 import U from '../Core/Utilities.js';
 var addEvent = U.addEvent, arrayMax = U.arrayMax, arrayMin = U.arrayMin, correctFloat = U.correctFloat, isNumber = U.isNumber, objectEach = U.objectEach, pick = U.pick;
 import '../Core/Options.js';
-import './ColumnSeries.js';
-var Series = H.Series;
 /**
  * Returns true if the key is a direct property of the object.
  * @private
@@ -456,7 +454,7 @@ BaseSeries.seriesType('waterfall', 'column', {
             dataMin = Math.min(sum, dataMin);
             dataMax = Math.max(sum, dataMax);
         }
-        Series.prototype.processData.call(this, force);
+        LineSeries.prototype.processData.call(this, force);
         // Record extremes only if stacking was not set:
         if (!options.stacking) {
             series.dataMin = dataMin + threshold;
@@ -475,7 +473,7 @@ BaseSeries.seriesType('waterfall', 'column', {
         return pt.y;
     },
     updateParallelArrays: function (point, i) {
-        Series.prototype.updateParallelArrays.call(this, point, i);
+        LineSeries.prototype.updateParallelArrays.call(this, point, i);
         // Prevent initial sums from triggering an error (#3245, #7559)
         if (this.yData[0] === 'sum' || this.yData[0] === 'intermediateSum') {
             this.yData[0] = null;
@@ -551,7 +549,7 @@ BaseSeries.seriesType('waterfall', 'column', {
     // The graph is initially drawn with an empty definition, then updated with
     // crisp rendering.
     drawGraph: function () {
-        Series.prototype.drawGraph.call(this);
+        LineSeries.prototype.drawGraph.call(this);
         this.graph.attr({
             d: this.getCrispPath()
         });

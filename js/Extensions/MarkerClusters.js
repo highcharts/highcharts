@@ -15,8 +15,9 @@
 import A from '../Core/Animation/AnimationUtilities.js';
 var animObject = A.animObject;
 import BaseSeries from '../Core/Series/Series.js';
+var seriesTypes = BaseSeries.seriesTypes;
 import Chart from '../Core/Chart/Chart.js';
-import H from '../Core/Globals.js';
+import LineSeries from '../Series/Line/LineSeries.js';
 import O from '../Core/Options.js';
 var defaultOptions = O.defaultOptions;
 import Point from '../Core/Series/Point.js';
@@ -37,8 +38,8 @@ var addEvent = U.addEvent, defined = U.defined, error = U.error, isArray = U.isA
 ''; // detach doclets from following code
 /* eslint-disable no-invalid-this */
 import Axis from '../Core/Axis/Axis.js';
-import '../Series/LineSeries.js';
-var Series = H.Series, Scatter = BaseSeries.seriesTypes.scatter, baseGeneratePoints = Series.prototype.generatePoints, stateIdCounter = 0, 
+import '../Series/Line/LineSeries.js';
+var Scatter = seriesTypes.scatter, baseGeneratePoints = LineSeries.prototype.generatePoints, stateIdCounter = 0, 
 // Points that ids are included in the oldPointsStateId array
 // are hidden before animation. Other ones are destroyed.
 oldPointsStateId = [];
@@ -1463,9 +1464,9 @@ addEvent(Point, 'update', function () {
     }
 });
 // Destroy grouped data on series destroy.
-addEvent(Series, 'destroy', Scatter.prototype.destroyClusteredData);
+addEvent(LineSeries, 'destroy', Scatter.prototype.destroyClusteredData);
 // Add classes, change mouse cursor.
-addEvent(Series, 'afterRender', function () {
+addEvent(LineSeries, 'afterRender', function () {
     var series = this, clusterZoomEnabled = (series.options.cluster || {}).drillToCluster;
     if (series.markerClusterInfo && series.markerClusterInfo.clusters) {
         series.markerClusterInfo.clusters.forEach(function (cluster) {

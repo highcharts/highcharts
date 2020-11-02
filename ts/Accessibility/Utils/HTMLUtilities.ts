@@ -14,6 +14,7 @@ import type {
     DOMElementType,
     HTMLDOMElement
 } from '../../Core/Renderer/DOMElementType';
+import type HTMLAttributes from '../../Core/Renderer/HTML/HTMLAttributes';
 import type SVGAttributes from '../../Core/Renderer/SVG/SVGAttributes';
 import H from '../../Core/Globals.js';
 const {
@@ -152,7 +153,7 @@ function reverseChildNodes(node: DOMElementType): void {
  */
 function setElAttrs(
     el: DOMElementType,
-    attrs: (Highcharts.HTMLAttributes|SVGAttributes)
+    attrs: (HTMLAttributes|SVGAttributes)
 ): void {
     Object.keys(attrs).forEach(function (attr: string): void {
         var val = attrs[attr];

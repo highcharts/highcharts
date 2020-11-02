@@ -7,19 +7,20 @@
  *  !!!!!!! SOURCE GETS TRANSPILED BY TYPESCRIPT. EDIT TS FILE ONLY. !!!!!!!
  *
  * */
+'use strict';
 import Axis from '../../Core/Axis/Axis.js';
 import BaseSeries from '../../Core/Series/Series.js';
+var seriesTypes = BaseSeries.seriesTypes;
 import Color from '../../Core/Color/Color.js';
 var color = Color.parse;
 import H from '../../Core/Globals.js';
 var noop = H.noop;
+import LineSeries from '../Line/LineSeries.js';
 import Point from '../../Core/Series/Point.js';
 import U from '../../Core/Utilities.js';
 var arrayMax = U.arrayMax, arrayMin = U.arrayMin, clamp = U.clamp, extend = U.extend, isNumber = U.isNumber, pick = U.pick, pInt = U.pInt;
-import '../../Series/LineSeries.js';
-import '../../Series/ScatterSeries.js';
+import '../ScatterSeries.js';
 import './BubbleLegend.js';
-var Series = H.Series, seriesTypes = BaseSeries.seriesTypes;
 /**
  * @typedef {"area"|"width"} Highcharts.BubbleSizeByValue
  */
@@ -268,7 +269,7 @@ BaseSeries.seriesType('bubble', 'scatter', {
      * @private
      */
     pointAttribs: function (point, state) {
-        var markerOptions = this.options.marker, fillOpacity = markerOptions.fillOpacity, attr = Series.prototype.pointAttribs.call(this, point, state);
+        var markerOptions = this.options.marker, fillOpacity = markerOptions.fillOpacity, attr = LineSeries.prototype.pointAttribs.call(this, point, state);
         if (fillOpacity !== 1) {
             attr.fill = color(attr.fill)
                 .setOpacity(fillOpacity)

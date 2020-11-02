@@ -8,7 +8,10 @@
  *
  * */
 
-import type StackItem from '../../Extensions/Stacking.js';
+'use strict';
+
+import type LineSeries from '../../Series/Line/LineSeries';
+import type StackItem from '../../Extensions/Stacking';
 import type SVGElement from '../Renderer/SVG/SVGElement';
 import A from '../Animation/AnimationUtilities.js';
 const { getDeferredAnimation } = A;
@@ -83,7 +86,7 @@ class StackingAxisAdditions {
         const reversedStacks = pick(axis.options.reversedStacks, true);
         const len = axisSeries.length;
 
-        let actualSeries: Highcharts.Series,
+        let actualSeries: LineSeries,
             i: number;
 
         if (!axis.isXAxis) {
