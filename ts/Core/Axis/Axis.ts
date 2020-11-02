@@ -4758,7 +4758,7 @@ class Axis {
     }
 
     /**
-     * Internal function to et the tick positions of a linear axis to round
+     * Internal function to get the tick positions of a linear axis to round
      * values like whole tens or every five.
      *
      * @function Highcharts.Axis#getLinearTickPositions
