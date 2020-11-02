@@ -503,6 +503,7 @@ class Tooltip {
         if (this.renderer) {
             this.renderer = this.renderer.destroy() as any;
             discardElement(this.container as any);
+            this.container = void 0 as any;
         }
         U.clearTimeout(this.hideTimer as any);
         U.clearTimeout(this.tooltipTimeout as any);

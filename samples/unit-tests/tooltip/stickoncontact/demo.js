@@ -126,3 +126,32 @@ QUnit.test('Do not stick on hover tooltip following pointer (#12885)', function 
         );
     });
 });
+
+QUnit.test('#14434: stickOnContact and outside', assert => {
+    const chart = Highcharts.chart('container', {
+        tooltip: {
+            stickOnContact: true,
+            outside: true,
+            hideDelay: 0
+        },
+        series: [{
+            data: [1, 2, 3, 4, 5]
+        }, {
+            data: [3, 4, 5, 6, 7]
+        }]
+    });
+
+    const point = chart.series[0].points[0];
+    const pos = {
+        x: chart.plotLeft + point.plotX,
+        y: chart.plotTop + point.plotY
+    };
+
+    const controller = new TestController(chart);
+    controller.moveTo(pos.x, pos.y);
+
+    const rect = chart.tooltip.container.getBoundingClientRect();
+    chart.pointer.onContainerMouseLeave({ clientX: rect.x, clientY: rect.y });
+
+    assert.strictEqual(!chart.tooltip.isHidden, true, 'Tooltip should still be visible');
+});

@@ -270,6 +270,7 @@ var Tooltip = /** @class */ (function () {
         if (this.renderer) {
             this.renderer = this.renderer.destroy();
             discardElement(this.container);
+            this.container = void 0;
         }
         U.clearTimeout(this.hideTimer);
         U.clearTimeout(this.tooltipTimeout);

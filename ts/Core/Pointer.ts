@@ -1233,6 +1233,14 @@ class Pointer {
         const chart = charts[pick(H.hoverChartIndex, -1)];
         const tooltip = this.chart.tooltip;
 
+        if (tooltip && tooltip.container) { // #14434
+            const rect = tooltip.container.getBoundingClientRect();
+            if (e.clientX >= rect.left && e.clientX <= rect.right &&
+                e.clientY >= rect.top && e.clientY <= rect.bottom) {
+                return;
+            }
+        }
+
         e = this.normalize(e);
 
         // #4886, MS Touch end fires mouseleave but with no related target

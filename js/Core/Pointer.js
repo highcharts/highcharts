@@ -836,6 +836,13 @@ var Pointer = /** @class */ (function () {
     Pointer.prototype.onContainerMouseLeave = function (e) {
         var chart = charts[pick(H.hoverChartIndex, -1)];
         var tooltip = this.chart.tooltip;
+        if (tooltip && tooltip.container) { // #14434
+            var rect = tooltip.container.getBoundingClientRect();
+            if (e.clientX >= rect.left && e.clientX <= rect.right &&
+                e.clientY >= rect.top && e.clientY <= rect.bottom) {
+                return;
+            }
+        }
         e = this.normalize(e);
         // #4886, MS Touch end fires mouseleave but with no related target
         if (chart &&
