@@ -38,6 +38,7 @@ declare global {
             public shapeType: ColumnPoint['shapeType'];
         }
         class ColumnRangeSeries extends AreaRangeSeries {
+            public adjustForMissingColumns: ColumnSeries['adjustForMissingColumns'];
             public animate: ColumnSeries['animate'];
             public crispCol: ColumnSeries['crispCol'];
             public data: Array<ColumnRangePoint>;
@@ -71,7 +72,8 @@ declare module '../Core/Series/Types' {
 
 import './ColumnSeries.js';
 
-var columnProto = BaseSeries.seriesTypes.column.prototype;
+var arearangeProto = BaseSeries.seriesTypes.arearange.prototype,
+    columnProto = BaseSeries.seriesTypes.column.prototype;
 
 /**
  * The column range is a cartesian series type with higher and lower
@@ -130,6 +132,10 @@ BaseSeries.seriesType<typeof Highcharts.ColumnRangeSeries>('columnrange', 'arear
     (defaultOptions.plotOptions as any).arearange,
     columnRangeOptions
 ), {
+    setOptions: function (this: Highcharts.ColumnRangeSeries): Highcharts.ColumnRangeSeriesOptions {
+        merge(true, arguments[0], { stacking: void 0 }); // #14359 Prevent side-effect from stacking.
+        return arearangeProto.setOptions.apply(this, arguments);
+    },
 
     // eslint-disable-next-line valid-jsdoc
     /**
@@ -249,6 +255,9 @@ BaseSeries.seriesType<typeof Highcharts.ColumnRangeSeries>('columnrange', 'arear
         this: Highcharts.ColumnRangeSeries
     ): SVGAttributes {
         return columnProto.pointAttribs.apply(this, arguments as any);
+    },
+    adjustForMissingColumns: function (this: Highcharts.ColumnRangeSeries): number {
+        return columnProto.adjustForMissingColumns.apply(this, arguments);
     },
     animate: function (this: Highcharts.ColumnRangeSeries): void {
         return columnProto.animate.apply(this, arguments as any);

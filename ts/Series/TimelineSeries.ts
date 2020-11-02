@@ -374,7 +374,7 @@ BaseSeries.seriesType<typeof Highcharts.TimelineSeries>('timeline', 'line',
 
             Series.prototype.init.apply(series, arguments);
 
-            addEvent(series, 'afterTranslate', function (): void {
+            series.eventsToUnbind.push(addEvent(series, 'afterTranslate', function (): void {
                 var lastPlotX: (number|undefined),
                     closestPointRangePx = Number.MAX_VALUE;
 
@@ -399,17 +399,17 @@ BaseSeries.seriesType<typeof Highcharts.TimelineSeries>('timeline', 'line',
                     }
                 });
                 series.closestPointRangePx = closestPointRangePx;
-            });
+            }));
 
             // Distribute data labels before rendering them. Distribution is
             // based on the 'dataLabels.distance' and 'dataLabels.alternate'
             // property.
-            addEvent(series, 'drawDataLabels', function (): void {
+            series.eventsToUnbind.push(addEvent(series, 'drawDataLabels', function (): void {
                 // Distribute data labels basing on defined algorithm.
                 series.distributeDL(); // @todo use this scope for series
-            });
+            }));
 
-            addEvent(series, 'afterDrawDataLabels', function (): void {
+            series.eventsToUnbind.push(addEvent(series, 'afterDrawDataLabels', function (): void {
                 var dataLabel; // @todo use this scope for series
 
                 // Draw or align connector for each point.
@@ -448,8 +448,9 @@ BaseSeries.seriesType<typeof Highcharts.TimelineSeries>('timeline', 'line',
                         return point.drawConnector();
                     }
                 });
-            });
-            addEvent(
+            }));
+
+            series.eventsToUnbind.push(addEvent(
                 series.chart,
                 'afterHideOverlappingLabel',
                 function (): void {
@@ -465,7 +466,7 @@ BaseSeries.seriesType<typeof Highcharts.TimelineSeries>('timeline', 'line',
                         }
                     });
                 }
-            );
+            ));
         },
         alignDataLabel: function (
             this: Highcharts.TimelineSeries,

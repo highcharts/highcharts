@@ -208,3 +208,32 @@ QUnit[Highcharts.hasWebGLSupport() ? 'test' : 'skip'](
         });
     }
 );
+
+QUnit[Highcharts.hasWebGLSupport() ? 'test' : 'skip'](
+    'Error handler while the series is not declared as an array of numbers and turbo threshold enabled, #13957.',
+    function (assert) {
+        Highcharts.addEvent(Highcharts.Chart, 'displayError', function (e) {
+            assert.strictEqual(
+                e.code,
+                12,
+                'Error 12 should be invoked'
+            );
+        });
+        Highcharts.stockChart('container', {
+            series: [{
+                data: [
+                    [1, 2],
+                    {
+                        x: 2,
+                        y: 46.7407
+                    },
+                    [3, 46.6135],
+                    [4, 47.0005],
+                    [5, 48.1701],
+                    [6, 47.5816]
+                ],
+                turboThreshold: 2
+            }]
+        });
+    }
+);
