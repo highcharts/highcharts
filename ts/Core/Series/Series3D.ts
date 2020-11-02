@@ -34,6 +34,8 @@ declare module './PointLike' {
 declare module './SeriesLike' {
     interface SeriesLike {
         zAxis?: ZAxis;
+        zPadding?: number;
+        rawPointsX?: Array<number>;
         /** @requires Core/Series/Series3D */
         translate3dPoints(): void;
     }
@@ -51,6 +53,7 @@ addEvent(LineSeries, 'afterTranslate', function (): void {
 // Translate the plotX, plotY properties and add plotZ.
 LineSeries.prototype.translate3dPoints = function (): void {
     var series = this,
+        seriesOptions = series.options,
         chart = series.chart,
         zAxis: ZAxis = pick(series.zAxis, (chart.options.zAxis as any)[0]),
         rawPoints = [] as Array<Position3DObject>,
@@ -58,7 +61,14 @@ LineSeries.prototype.translate3dPoints = function (): void {
         projectedPoints: Array<Position3DObject>,
         projectedPoint: Position3DObject,
         zValue: (number|null|undefined),
-        i: number;
+        i: number,
+        stack = seriesOptions.stacking ?
+            (seriesOptions.stack || 0) :
+            series.index, // #4743
+        rawPointsX = [] as Array<number>;
+
+    series.zPadding = (stack as any) *
+        (seriesOptions.depth || 0 + (seriesOptions.groupZPadding || 1));
 
     for (i = 0; i < series.data.length; i++) {
         rawPoint = series.data[i];
@@ -73,18 +83,23 @@ LineSeries.prototype.translate3dPoints = function (): void {
                 (zValue as any) <= (zAxis.max as any)) :
                 false;
         } else {
-            rawPoint.plotZ = 0;
+            // add value of zPadding to final z position of calculated point.
+            rawPoint.plotZ = series.zPadding;
         }
 
         rawPoint.axisXpos = rawPoint.plotX;
         rawPoint.axisYpos = rawPoint.plotY;
         rawPoint.axisZpos = rawPoint.plotZ;
 
+        rawPointsX.push(rawPoint.plotX as any);
+
         rawPoints.push({
             x: rawPoint.plotX as any,
             y: rawPoint.plotY as any,
             z: rawPoint.plotZ as any
         });
+
+        series.rawPointsX = rawPointsX;
     }
 
     projectedPoints = perspective(rawPoints, chart, true);

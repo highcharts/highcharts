@@ -30,6 +30,9 @@ import type SVGPath from '../Core/Renderer/SVG/SVGPath';
 import BaseSeries from '../Core/Series/Series.js';
 import Color from '../Core/Color/Color.js';
 const { parse: color } = Color;
+
+import Math3D from '../Extensions/Math3D.js';
+const { perspective } = Math3D;
 import LegendSymbolMixin from '../Mixins/LegendSymbol.js';
 import LineSeries from './Line/LineSeries.js';
 import U from '../Core/Utilities.js';
@@ -421,18 +424,19 @@ BaseSeries.seriesType<typeof Highcharts.AreaSeries>(
         ): SVGPath {
             var getGraphPath = LineSeries.prototype.getGraphPath,
                 graphPath: SVGPath,
-                options = this.options,
+                series = this,
+                options = series.options,
                 stacking = options.stacking,
-                yAxis = this.yAxis as StackingAxis,
+                yAxis = series.yAxis as StackingAxis,
                 topPath: SVGPath,
                 bottomPath,
                 bottomPoints: Array<Highcharts.AreaPoint> = [],
                 graphPoints: Array<Highcharts.AreaPoint> = [],
-                seriesIndex = this.index,
+                seriesIndex = series.index,
                 i,
                 areaPath: SVGPath,
                 plotX: (number|undefined),
-                stacks = yAxis.stacking.stacks[this.stackKey as any],
+                stacks = yAxis.stacking.stacks[series.stackKey as any],
                 threshold = options.threshold,
                 translatedThreshold = Math.round( // #10909
                     yAxis.getThreshold(options.threshold as any) as any
@@ -443,6 +447,7 @@ BaseSeries.seriesType<typeof Highcharts.AreaSeries>(
                     options.connectNulls,
                     stacking === 'percent'
                 ),
+                rawPointsX = series.rawPointsX,
 
                 // To display null points in underlying stacked series, this
                 // series graph must be broken, and the area also fall down to
@@ -499,11 +504,11 @@ BaseSeries.seriesType<typeof Highcharts.AreaSeries>(
                 };
 
             // Find what points to use
-            points = points || this.points;
+            points = points || series.points;
 
             // Fill in missing points
             if (stacking) {
-                points = this.getStackPoints(points);
+                points = series.getStackPoints(points);
             }
 
             for (i = 0; i < points.length; i++) {
@@ -527,11 +532,19 @@ BaseSeries.seriesType<typeof Highcharts.AreaSeries>(
                     // true
                     if (!(isNull && !stacking && connectNulls)) {
                         graphPoints.push(points[i]);
-                        bottomPoints.push({ // @todo make real point object
-                            x: i,
-                            plotX: plotX,
-                            plotY: yBottom
-                        } as any);
+                        if (series.chart.is3d && series.chart.is3d() && rawPointsX) {
+                            bottomPoints.push({
+                                x: rawPointsX[i],
+                                y: yBottom,
+                                z: series.zPadding
+                            } as any);
+                        } else {
+                            bottomPoints.push({ // @todo make real point object
+                                x: i,
+                                plotX: plotX,
+                                plotY: yBottom
+                            } as any);
+                        }
                     }
 
                     if (!connectNulls) {
@@ -541,6 +554,23 @@ BaseSeries.seriesType<typeof Highcharts.AreaSeries>(
             }
 
             topPath = getGraphPath.call(this, graphPoints, true, true);
+
+            if (series.chart.is3d()) {
+                var options3d = (series as any).chart.options.chart.options3d;
+                bottomPoints = perspective(
+                    bottomPoints as any, this.chart, true
+                ).map(function (point): Highcharts.AreaPoint {
+                    return { plotX: point.x, plotY: point.y, plotZ: point.z } as any;
+                });
+                if (series.group && options3d) {
+                    series.group.attr({
+                        zIndex: Math.max(
+                            1,
+                            options3d.depth - Math.round(series.data[0].plotZ || 0)
+                        )
+                    });
+                }
+            }
 
             (bottomPoints as any).reversed = true;
             bottomPath = getGraphPath.call(this, bottomPoints, true, true);

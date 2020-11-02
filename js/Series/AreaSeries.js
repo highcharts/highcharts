@@ -11,6 +11,8 @@
 import BaseSeries from '../Core/Series/Series.js';
 import Color from '../Core/Color/Color.js';
 var color = Color.parse;
+import Math3D from '../Extensions/Math3D.js';
+var perspective = Math3D.perspective;
 import LegendSymbolMixin from '../Mixins/LegendSymbol.js';
 import LineSeries from './Line/LineSeries.js';
 import U from '../Core/Utilities.js';
@@ -283,9 +285,9 @@ BaseSeries.seriesType('area', 'line',
      * @private
      */
     getGraphPath: function (points) {
-        var getGraphPath = LineSeries.prototype.getGraphPath, graphPath, options = this.options, stacking = options.stacking, yAxis = this.yAxis, topPath, bottomPath, bottomPoints = [], graphPoints = [], seriesIndex = this.index, i, areaPath, plotX, stacks = yAxis.stacking.stacks[this.stackKey], threshold = options.threshold, translatedThreshold = Math.round(// #10909
+        var getGraphPath = LineSeries.prototype.getGraphPath, graphPath, series = this, options = series.options, stacking = options.stacking, yAxis = series.yAxis, topPath, bottomPath, bottomPoints = [], graphPoints = [], seriesIndex = series.index, i, areaPath, plotX, stacks = yAxis.stacking.stacks[series.stackKey], threshold = options.threshold, translatedThreshold = Math.round(// #10909
         yAxis.getThreshold(options.threshold)), isNull, yBottom, connectNulls = pick(// #10574
-        options.connectNulls, stacking === 'percent'), 
+        options.connectNulls, stacking === 'percent'), rawPointsX = series.rawPointsX, 
         // To display null points in underlying stacked series, this
         // series graph must be broken, and the area also fall down to
         // fill the gap left by the null point. #2069
@@ -324,10 +326,10 @@ BaseSeries.seriesType('area', 'line',
             }
         };
         // Find what points to use
-        points = points || this.points;
+        points = points || series.points;
         // Fill in missing points
         if (stacking) {
-            points = this.getStackPoints(points);
+            points = series.getStackPoints(points);
         }
         for (i = 0; i < points.length; i++) {
             // Reset after series.update of stacking property (#12033)
@@ -346,11 +348,20 @@ BaseSeries.seriesType('area', 'line',
                 // true
                 if (!(isNull && !stacking && connectNulls)) {
                     graphPoints.push(points[i]);
-                    bottomPoints.push({
-                        x: i,
-                        plotX: plotX,
-                        plotY: yBottom
-                    });
+                    if (series.chart.is3d && series.chart.is3d() && rawPointsX) {
+                        bottomPoints.push({
+                            x: rawPointsX[i],
+                            y: yBottom,
+                            z: series.zPadding
+                        });
+                    }
+                    else {
+                        bottomPoints.push({
+                            x: i,
+                            plotX: plotX,
+                            plotY: yBottom
+                        });
+                    }
                 }
                 if (!connectNulls) {
                     addDummyPoints(i, i + 1, 'right');
@@ -358,6 +369,17 @@ BaseSeries.seriesType('area', 'line',
             }
         }
         topPath = getGraphPath.call(this, graphPoints, true, true);
+        if (series.chart.is3d()) {
+            var options3d = series.chart.options.chart.options3d;
+            bottomPoints = perspective(bottomPoints, this.chart, true).map(function (point) {
+                return { plotX: point.x, plotY: point.y, plotZ: point.z };
+            });
+            if (series.group && options3d) {
+                series.group.attr({
+                    zIndex: Math.max(1, options3d.depth - Math.round(series.data[0].plotZ || 0))
+                });
+            }
+        }
         bottomPoints.reversed = true;
         bottomPath = getGraphPath.call(this, bottomPoints, true, true);
         var firstBottomPoint = bottomPath[0];
