@@ -2107,7 +2107,8 @@ Scatter.prototype.generatePoints = function (): void {
         clusterOptions.enabled &&
         series.xData &&
         series.yData &&
-        !chart.polar
+        !chart.polar &&
+        series.data.length
     ) {
         type = clusterOptions.layoutAlgorithm.type;
         layoutAlgOptions = clusterOptions.layoutAlgorithm;
