@@ -53,17 +53,20 @@ const {
     splat
 } = U;
 
+declare module './Chart/ChartLike'{
+    interface ChartLike {
+        navigator?: Navigator;
+        scrollbar?: Scrollbar;
+        scroller?: Navigator;
+    }
+}
+
 /**
  * Internal types
  * @private
  */
 declare global {
     namespace Highcharts {
-        interface ChartLike {
-            navigator?: Navigator;
-            scrollbar?: Scrollbar;
-            scroller?: Navigator;
-        }
         interface NavigatorHandlesOptions {
             backgroundColor?: ColorType;
             borderColor?: ColorType;
@@ -1905,6 +1908,9 @@ class Navigator {
                     offset: 0,
                     index: yAxisIndex,
                     isInternal: true,
+                    reversed: pick((navigatorOptions.yAxis && navigatorOptions.yAxis.reversed),
+                        (chart.yAxis[0] && chart.yAxis[0].reversed),
+                        false), // #14060
                     zoomEnabled: false
                 }, chart.inverted ? {
                     width: height

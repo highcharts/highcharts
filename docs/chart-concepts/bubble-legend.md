@@ -49,10 +49,10 @@ There are two ways to add the bubble legend to the chart:
         series: [{
             data: [
                 [9, 81, 63],
-    	[98, 5, 89],
-    	[51, 50, 73],
-    	[41, 22, 14],
-    	[58, 24, 20]
+                [98, 5, 89],
+                [51, 50, 73],
+                [41, 22, 14],
+                [58, 24, 20]
             ]
         }]
     }
@@ -81,10 +81,10 @@ There are two ways to add the bubble legend to the chart:
             maxSize: 60,
             data: [
                 [9, 81, 63],
-    	[98, 5, 89],
-    	[51, 50, 73],
-    	[41, 22, 14],
-    	[58, 24, 20]
+                [98, 5, 89],
+                [51, 50, 73],
+                [41, 22, 14],
+                [58, 24, 20]
             ]
         }]
     }

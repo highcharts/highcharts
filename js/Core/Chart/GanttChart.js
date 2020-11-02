@@ -96,7 +96,11 @@ H.ganttChart = function (renderTo, options, callback) {
             enabled: false
         },
         navigator: {
-            series: { type: 'gantt' }
+            series: { type: 'gantt' },
+            // Bars were clipped, #14060.
+            yAxis: {
+                type: 'category'
+            }
         }
     }, options, // user's options
     // forced options

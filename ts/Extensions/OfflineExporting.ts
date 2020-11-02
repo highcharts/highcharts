@@ -35,25 +35,28 @@ const {
     merge
 } = U;
 
+declare module '../Core/Chart/ChartLike' {
+    interface ChartLike {
+        unbindGetSVG?: Function;
+        exportChartLocal(
+            exportingOptions?: Highcharts.ExportingOptions,
+            chartOptions?: Highcharts.Options
+        ): void;
+        getSVGForLocalExport(
+            options: Highcharts.ExportingOptions,
+            chartOptions: Highcharts.Options,
+            failCallback: Function,
+            successCallback: Function
+        ): void;
+    }
+}
+
 /**
  * Internal types
  * @private
  */
 declare global {
     namespace Highcharts {
-        interface ChartLike {
-            unbindGetSVG?: Function;
-            exportChartLocal(
-                exportingOptions?: ExportingOptions,
-                chartOptions?: Options
-            ): void;
-            getSVGForLocalExport(
-                options: ExportingOptions,
-                chartOptions: Options,
-                failCallback: Function,
-                successCallback: Function
-            ): void;
-        }
         interface ScriptOnLoadCallbackFunction {
             (this: GlobalEventHandlers, ev: Event): void;
         }
@@ -870,3 +873,6 @@ merge(true, getOptions().exporting, {
 
     }
 });
+
+// Compatibility
+H.downloadSVGLocal = downloadSVGLocal;

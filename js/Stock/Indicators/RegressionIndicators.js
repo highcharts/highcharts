@@ -10,7 +10,7 @@
 import BaseSeries from '../../Core/Series/Series.js';
 import U from '../../Core/Utilities.js';
 var isArray = U.isArray;
-import './SMAIndicator.js';
+// im port './SMAIndicator.js';
 /**
  * Linear regression series type.
  *

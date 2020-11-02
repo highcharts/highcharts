@@ -24,6 +24,10 @@ const {
     error
 } = U;
 
+declare module '../../Core/Chart/ChartLike'{
+    interface ChartLike extends Highcharts.BoostTargetObject {}
+}
+
 /**
  * Internal types
  * @private
@@ -43,8 +47,6 @@ declare global {
             boostCopy(): void;
             /** @requires modules/boost */
             boostResizeTarget(): void;
-        }
-        interface ChartLike extends BoostTargetObject {
         }
         interface Series extends BoostTargetObject {
         }

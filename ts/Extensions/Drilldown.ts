@@ -55,6 +55,27 @@ const {
     syncTimeout
 } = U;
 
+declare module '../Core/Chart/ChartLike' {
+    interface ChartLike {
+        ddDupes?: Array<string>;
+        drilldown?: Highcharts.ChartDrilldownObject;
+        drilldownLevels?: Array<Highcharts.DrilldownLevelObject>;
+        drillUpButton?: SVGElement;
+        addSeriesAsDrilldown(
+            point: Point,
+            options: SeriesOptionsType
+        ): void;
+        addSingleSeriesAsDrilldown(
+            point: Point,
+            ddOptions: SeriesOptionsType
+        ): void;
+        applyDrilldown(): void;
+        drillUp(): void;
+        getDrilldownBackText(): (string|undefined);
+        showDrillUpButton(): void;
+    }
+}
+
 /**
  * Internal types
  * @private
@@ -62,28 +83,10 @@ const {
 declare global {
     namespace Highcharts {
         interface Axis {
-            ddPoints?: Dictionary<Array<(boolean|Point)>>;
+            ddPoints?: Dictionary<Array<(false|Point)>>;
             oldPos?: number;
             drilldownCategory(x: number, e: MouseEvent): void;
-            getDDPoints(x: number): (Array<(boolean|Point)>|undefined);
-        }
-        interface ChartLike {
-            ddDupes?: Array<string>;
-            drilldown?: ChartDrilldownObject;
-            drilldownLevels?: Array<DrilldownLevelObject>;
-            drillUpButton?: SVGElement;
-            addSeriesAsDrilldown(
-                point: Point,
-                options: SeriesOptionsType
-            ): void;
-            addSingleSeriesAsDrilldown(
-                point: Point,
-                ddOptions: SeriesOptionsType
-            ): void;
-            applyDrilldown(): void;
-            drillUp(): void;
-            getDrilldownBackText(): (string|undefined);
-            showDrillUpButton(): void;
+            getDDPoints(x: number): Array<(false|Point)>;
         }
         interface ChartDrilldownObject {
             update(options: DrilldownOptions, redraw?: boolean): void;
@@ -1390,7 +1393,7 @@ Point.prototype.doDrilldown = function (
         originalEvent: originalEvent,
         points: (
             typeof category !== 'undefined' &&
-            (this.series.xAxis.getDDPoints(category) as any).slice(0)
+            this.series.xAxis.getDDPoints(category).slice(0)
         )
     } as Highcharts.DrilldownEventObject, function (
         e: Highcharts.DrilldownEventObject
@@ -1423,7 +1426,7 @@ Axis.prototype.drilldownCategory = function (
     x: number,
     e: MouseEvent
 ): void {
-    objectEach(this.getDDPoints(x), function (point: Point): void {
+    this.getDDPoints(x).forEach(function (point): void {
         if (
             point &&
             point.series &&
@@ -1443,13 +1446,13 @@ Axis.prototype.drilldownCategory = function (
  * @function Highcharts.Axis#getDDPoints
  * @param {number} x
  *        Tick position
- * @return {Array<(boolean|Highcharts.Point)>|undefined}
+ * @return {Array<(false|Highcharts.Point)>}
  *         Drillable points
  */
 Axis.prototype.getDDPoints = function (
     x: number
-): (Array<(boolean|Point)>|undefined) {
-    return this.ddPoints && this.ddPoints[x];
+): Array<(false|Point)> {
+    return (this.ddPoints && this.ddPoints[x] || []);
 };
 
 

@@ -93,15 +93,15 @@ _See this demo for binding a button to the [`circleAnnotation`](https://api.high
 
 <iframe style="width: 100%; height: 469px; border: none;" src=https://www.highcharts.com/samples/embed/stock/stocktools/basic-gui allow="fullscreen"></iframe>
 
-### Dialogue windows
+### Dialog windows
 
-In applications with more advanced user interaction, additional dialogue windows are likely needed. Support for building custom dialogue windows is facilitated by hooking up functions to the [`navigation.bindings`](https://api.highcharts.com/highstock/navigation.bindings).
+In applications with more advanced user interaction, additional dialog windows are likely needed. Support for building custom dialog windows is facilitated by hooking up functions to the [`navigation.bindings`](https://api.highcharts.com/highstock/navigation.bindings).
 
-How to implement a custom dialogue window, is best explained with an example where we change the background color of a circle annotation.
+How to implement a custom dialog window, is best explained with an example where we change the background color of a circle annotation.
 
-1. First we define a dialogue window in HTML. Notice the classname `highcharts-popup-annotations` of the outer `div` element. We need this classname in the [`navigation.events.showPopup`](https://api.highcharts.com/highstock/navigation.events.showPopup) event later on.
+1. First we define a dialog window in HTML. Notice the classname `highcharts-popup-annotations` of the outer `div` element. We need this classname in the [`navigation.events.showPopup`](https://api.highcharts.com/highstock/navigation.events.showPopup) event later on.
 
-  _Example of an dialogue window with an color input field_
+  _Example of a dialog window with a color input field_
 
   ```html
   <div class="highcharts-popup highcharts-popup-annotations">
@@ -165,7 +165,7 @@ How to implement a custom dialogue window, is best explained with an example whe
   },
   ```
 
-3. Add an event listener to the "Save" button of the dialogue window for saving the color to the `fill` of the circle annotation.
+3. Add an event listener to the "Save" button of the dialog window for saving the color to the `fill` of the circle annotation.
 
   ```js
   Highcharts.stockChart('container', {

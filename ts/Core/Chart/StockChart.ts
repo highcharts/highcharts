@@ -37,6 +37,12 @@ const {
     splat
 } = U;
 
+declare module '../Chart/ChartLike'{
+    interface ChartLike {
+        _labelPanes?: Record<string, Axis>;
+    }
+}
+
 /**
  * Internal types
  * @private
@@ -47,9 +53,7 @@ declare global {
             crossLabel?: SVGElement;
             setCompare(compare?: string, redraw?: boolean): void;
         }
-        interface ChartLike {
-            _labelPanes?: Dictionary<Axis>;
-        }
+
         interface Options {
             isStock?: boolean;
         }

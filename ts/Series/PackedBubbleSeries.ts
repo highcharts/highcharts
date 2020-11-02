@@ -30,15 +30,18 @@ const {
     pick
 } = U;
 
+declare module '../Core/Chart/ChartLike'{
+    interface ChartLike {
+        getSelectedParentNodes(): Array<Highcharts.PackedBubblePoint>;
+    }
+}
+
 /**
  * Internal types
  * @private
  */
 declare global {
     namespace Highcharts {
-        interface ChartLike {
-            getSelectedParentNodes(): Array<PackedBubblePoint>;
-        }
         class PackedBubblePoint extends BubblePoint implements DragNodesPoint {
             public collisionNmb?: number;
             public dataLabelOnNull?: boolean;
@@ -938,7 +941,7 @@ BaseSeries.seriesType<typeof Highcharts.PackedBubbleSeries>(
             Series.prototype.init.apply(this, arguments as any);
 
             // When one series is modified, the others need to be recomputed
-            addEvent(this, 'updatedData', function (
+            this.eventsToUnbind.push(addEvent(this, 'updatedData', function (
                 this: Highcharts.PackedBubbleSeries
             ): void {
                 this.chart.series.forEach(function (
@@ -948,7 +951,7 @@ BaseSeries.seriesType<typeof Highcharts.PackedBubbleSeries>(
                         s.isDirty = true;
                     }
                 }, this);
-            });
+            }));
 
             return this;
         },

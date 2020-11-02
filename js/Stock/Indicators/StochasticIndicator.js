@@ -10,7 +10,7 @@ import MultipleLinesMixin from '../../Mixins/MultipleLines.js';
 import ReduceArrayMixin from '../../Mixins/ReduceArray.js';
 import U from '../../Core/Utilities.js';
 var isArray = U.isArray, merge = U.merge;
-import './SMAIndicator.js';
+// im port './SMAIndicator.js';
 var SMA = BaseSeries.seriesTypes.sma, getArrayExtremes = ReduceArrayMixin.getArrayExtremes;
 /**
  * The Stochastic series type.

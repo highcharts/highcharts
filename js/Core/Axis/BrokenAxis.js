@@ -203,8 +203,8 @@ var BrokenAxisAdditions = /** @class */ (function () {
                 }
                 Axis.prototype.setExtremes.call(this, newMin, newMax, redraw, animation, eventArguments);
             };
-            axis.setAxisTranslation = function (saveOld) {
-                Axis.prototype.setAxisTranslation.call(this, saveOld);
+            axis.setAxisTranslation = function () {
+                Axis.prototype.setAxisTranslation.call(this);
                 brokenAxis.unitLength = null;
                 if (brokenAxis.hasBreaks) {
                     var breaks = axis.options.breaks || [], 

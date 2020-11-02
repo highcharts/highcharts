@@ -44,10 +44,10 @@ function getAxisDescription(axis) {
  * The DOM element for the point.
  */
 function getSeriesFirstPointElement(series) {
-    if (series.points &&
-        series.points.length &&
-        series.points[0].graphic) {
-        return series.points[0].graphic.element;
+    var _a, _b;
+    if ((_a = series.points) === null || _a === void 0 ? void 0 : _a.length) {
+        var firstPointWithGraphic = find(series.points, function (p) { return !!p.graphic; });
+        return (_b = firstPointWithGraphic === null || firstPointWithGraphic === void 0 ? void 0 : firstPointWithGraphic.graphic) === null || _b === void 0 ? void 0 : _b.element;
     }
 }
 /**

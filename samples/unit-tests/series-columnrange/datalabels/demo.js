@@ -143,3 +143,48 @@ QUnit.test("Change of label alignment after add(#4605)", function (assert) {
 
 
 });
+
+QUnit.test('#14050: Empty dataLabels', function (assert) {
+    [
+        [],
+        [undefined, { enabled: false }],
+        [{ enabled: false }, undefined],
+        [undefined, undefined]
+    ].forEach(function (labels) {
+        Highcharts.chart('container', {
+            series: [{
+                data: [
+                    [1, 2],
+                    [4, 5],
+                    [3, 7],
+                    [5, 6]
+                ],
+                dataLabels: labels,
+                type: 'arearange'
+            }]
+        });
+    });
+
+    assert.ok(true, 'Does not throw when passed empty dataLabels');
+});
+
+QUnit.test('#14359: Correct datalabel alignment', function (assert) {
+    var chart = Highcharts.chart('container', {
+        chart: {
+            type: 'columnrange',
+            inverted: false
+        },
+        series: [{
+            data: [
+                [-9.0, 8.6]
+            ],
+            stacking: "normal",
+            dataLabels: {
+                enabled: true
+            }
+        }]
+    });
+    // getting options
+    var stacking = chart.series[0].stacking;
+    assert.strictEqual(typeof stacking, 'undefined', 'Stacking should be undefined');
+});

@@ -48,6 +48,12 @@ const {
     splat
 } = U;
 
+declare module '../Chart/ChartLike'{
+    interface ChartLike {
+        colorAxis?: Array<Highcharts.ColorAxis>;
+    }
+}
+
 /**
  * Internal types
  * @private
@@ -103,9 +109,6 @@ declare global {
         interface Axis {
             labelLeft?: number;
             labelRight?: number;
-        }
-        interface ChartLike {
-            colorAxis?: Array<ColorAxis>;
         }
         interface Series {
             axisTypes: Array<string>;

@@ -53,3 +53,47 @@ QUnit.test("Shared tooltip should compare point.distX, not point.dist to find ab
         "Proper hovered point."
     );
 });
+
+
+QUnit.test("Tooltip should stay inside plotArea even when columns are outside axis extremes.", function (assert) {
+    var chart = new Highcharts.chart('container', {
+        chart: {
+            type: 'column',
+            marginTop: 150
+        },
+        plotOptions: {
+            series: {
+                stacking: true
+            }
+        },
+        tooltip: {
+            outside: true
+        },
+        series: [{
+            data: [100]
+        }, {
+            data: [-100]
+        }],
+        yAxis: [{
+            min: -20,
+            max: 20,
+            startOnTick: false,
+            endOnTick: false
+        }]
+    });
+
+    var point = chart.series[0].data[0],
+        controller = new TestController(chart);
+
+    controller.mouseOver(
+        chart.plotLeft + point.plotX + 4,
+        chart.plotTop
+    );
+
+    assert.strictEqual(
+        point.tooltipPos[1] >= 0,
+        true,
+        "Tooltip should be inside plotArea (#14138)."
+    );
+
+});

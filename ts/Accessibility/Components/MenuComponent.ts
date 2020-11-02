@@ -32,7 +32,19 @@ import HTMLUtilities from '../Utils/HTMLUtilities.js';
 var removeElement = HTMLUtilities.removeElement,
     getFakeMouseEvent = HTMLUtilities.getFakeMouseEvent;
 
-
+declare module '../../Core/Chart/ChartLike' {
+    interface ChartLike {
+        highlightedExportItemIx?: number;
+        /** @requires modules/accessibility */
+        hideExportMenu(): void;
+        /** @requires modules/accessibility */
+        highlightExportItem(ix: number): (boolean|undefined);
+        /** @requires modules/accessibility */
+        highlightLastExportItem(): boolean;
+        /** @requires modules/accessibility */
+        showExportMenu(): void;
+    }
+}
 /**
  * Internal types.
  * @private
@@ -59,17 +71,6 @@ declare global {
             public onMenuShown(): void;
             public setExportButtonExpandedState(stateStr: string): void;
             isExportMenuShown: boolean;
-        }
-        interface ChartLike {
-            highlightedExportItemIx?: number;
-            /** @requires modules/accessibility */
-            hideExportMenu(): void;
-            /** @requires modules/accessibility */
-            highlightExportItem(ix: number): (boolean|undefined);
-            /** @requires modules/accessibility */
-            highlightLastExportItem(): boolean;
-            /** @requires modules/accessibility */
-            showExportMenu(): void;
         }
     }
 }

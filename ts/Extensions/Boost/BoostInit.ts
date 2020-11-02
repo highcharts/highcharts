@@ -21,16 +21,19 @@ const {
     wrap
 } = U;
 
+declare module '../../Core/Chart/ChartLike'{
+    interface ChartLike {
+        didBoost?: boolean;
+        markerGroup?: Highcharts.Series['markerGroup'];
+    }
+}
+
 /**
  * Internal types
  * @private
  */
 declare global {
     namespace Highcharts {
-        interface ChartLike {
-            didBoost?: boolean;
-            markerGroup?: Series['markerGroup'];
-        }
         interface Series {
             fill?: boolean;
             fillOpacity?: boolean;

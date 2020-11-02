@@ -1,4 +1,4 @@
-Areaspline Chart
+Areaspline chart
 ================
 
 The areaspline chart is the same as area, only the line is a spline instead of straight lines.

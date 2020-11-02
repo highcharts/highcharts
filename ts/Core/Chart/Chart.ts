@@ -16,6 +16,7 @@ import type {
     CSSObject,
     CursorValue
 } from '../Renderer/CSSObject';
+import type ChartLike from './ChartLike';
 import type Point from '../../Core/Series/Point';
 import type { SeriesOptionsType, SeriesPlotOptionsType } from '../Series/Types';
 import type {
@@ -832,13 +833,8 @@ class Chart {
         if (hasCartesianSeries) {
             // set axes scales
             axes.forEach(function (axis: Highcharts.Axis): void {
-                // Don't do setScale again if we're only resizing. Regression
-                // #13507. But we need it after chart.update (responsive), as
-                // axis is initialized again (#12137).
-                if (!chart.isResizing || !isNumber(axis.min)) {
-                    axis.updateNames();
-                    axis.setScale();
-                }
+                axis.updateNames();
+                axis.setScale();
             });
         }
 
@@ -2756,7 +2752,7 @@ class Chart {
 
 }
 
-interface Chart extends Highcharts.ChartLike {
+interface Chart extends ChartLike {
     callbacks: Array<Chart.CallbackFunction>;
 }
 
@@ -2827,6 +2823,11 @@ function chart(
 ): Chart {
     return new Chart(a as any, b as any, c);
 }
+
+interface Chart extends ChartLike {
+    // Nothing here yet
+}
+
 
 H.chart = chart;
 H.Chart = Chart;

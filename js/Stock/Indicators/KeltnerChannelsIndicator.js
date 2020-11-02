@@ -10,9 +10,9 @@ var seriesTypes = BaseSeries.seriesTypes;
 import MultipleLinesMixin from '../../Mixins/MultipleLines.js';
 import U from '../../Core/Utilities.js';
 var correctFloat = U.correctFloat, merge = U.merge;
-import './ATRIndicator.js';
-import './EMAIndicator.js';
-import './SMAIndicator.js';
+// im port './ATRIndicator.js';
+// im port './EMAIndicator.js';
+// im port './SMAIndicator.js';
 var SMA = seriesTypes.sma, EMA = seriesTypes.ema, ATR = seriesTypes.atr;
 /**
  * The Keltner Channels series type.

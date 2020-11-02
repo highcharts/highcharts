@@ -31,19 +31,22 @@ const {
     syncTimeout
 } = U;
 
+declare module '../Core/Chart/ChartLike'{
+    interface ChartLike {
+        boxesToAvoid?: Array<Highcharts.LabelIntersectBoxObject>;
+        labelSeries?: Array<Highcharts.Series>;
+        labelSeriesMaxSum?: number;
+        seriesLabelTimer?: number;
+        drawSeriesLabels(): void;
+    }
+}
+
 /**
  * Internal types
  * @private
  */
 declare global {
     namespace Highcharts {
-        interface ChartLike {
-            boxesToAvoid?: Array<LabelIntersectBoxObject>;
-            labelSeries?: Array<Series>;
-            labelSeriesMaxSum?: number;
-            seriesLabelTimer?: number;
-            drawSeriesLabels(): void;
-        }
         interface LabelClearPointObject extends PositionObject {
             connectorPoint?: Point;
             weight: number;

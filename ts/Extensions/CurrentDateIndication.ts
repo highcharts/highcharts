@@ -17,8 +17,6 @@ import type {
 import type ColorString from '../Core/Color/ColorString';
 import type CSSObject from '../Core/Renderer/CSSObject';
 import Axis from '../Core/Axis/Axis.js';
-import O from '../Core/Options.js';
-const { dateFormat } = O;
 
 /**
  * Internal types
@@ -109,7 +107,7 @@ const defaultConfig: (
          */
         format: '%a, %b %d %Y, %H:%M',
         formatter: function (value: number, format: string): string {
-            return dateFormat(format, value);
+            return (this as PlotLineOrBand).axis.chart.time.dateFormat(format, value);
         },
         rotation: 0,
         /**
@@ -127,6 +125,7 @@ const defaultConfig: (
 addEvent(Axis, 'afterSetOptions', function (): void {
     var options = this.options,
         cdiOptions = options.currentDateIndicator;
+
 
     if (cdiOptions) {
         cdiOptions = typeof cdiOptions === 'object' ?

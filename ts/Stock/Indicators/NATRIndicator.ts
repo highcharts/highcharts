@@ -46,7 +46,7 @@ declare module '../../Core/Series/Types' {
     }
 }
 
-import './ATRIndicator.js';
+// im port './ATRIndicator.js';
 
 var ATR = BaseSeries.seriesTypes.atr;
 

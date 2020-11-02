@@ -24,7 +24,7 @@ rangeSelector: {
 },
 ```    
 
-Use the x and y options to customise position. The x and y options offset the selector by pixels from the given alignment.
+Use the x and y options to customize position. The x and y options offset the selector by pixels from the given alignment.
 
 ![ROoULLX-uFGoOnxAlv8P7GRHrBrjyAMVVBXFLry5o5a1nLQAnUkR7uMEOOuclKI_VC5zr6_3D0B1hbbK9tSts58z5ayk-OVx8gLgIyxAau5oAXQIID8IgIdObQM1SD2qHSj12JaH](https://lh3.googleusercontent.com/ROoULLX-uFGoOnxAlv8P7GRHrBrjyAMVVBXFLry5o5a1nLQAnUkR7uMEOOuclKI_VC5zr6_3D0B1hbbK9tSts58z5ayk-OVx8gLgIyxAau5oAXQIID8IgIdObQM1SD2qHSj12JaH)
 

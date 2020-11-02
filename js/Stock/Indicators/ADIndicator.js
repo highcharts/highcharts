@@ -7,7 +7,7 @@
 import BaseSeries from '../../Core/Series/Series.js';
 import U from '../../Core/Utilities.js';
 var error = U.error;
-import './SMAIndicator.js';
+// im port './SMAIndicator.js';
 /* eslint-disable valid-jsdoc */
 // Utils:
 /**

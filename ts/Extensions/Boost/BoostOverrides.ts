@@ -12,6 +12,7 @@
 
 'use strict';
 
+import type BBoxObject from '../../Core/Renderer/BBoxObject';
 import type { SeriesPlotOptionsType } from '../../Core/Series/Types';
 import type SVGAttributes from '../../Core/Renderer/SVG/SVGAttributes';
 import type SVGPath from '../../Core/Renderer/SVG/SVGPath';
@@ -29,6 +30,15 @@ const {
     wrap
 } = U;
 
+declare module '../../Core/Chart/ChartLike'{
+    interface ChartLike {
+        /** @requires modules/boost */
+        getBoostClipRect(target: Highcharts.BoostTargetObject): BBoxObject;
+        /** @requires modules/boost */
+        isChartSeriesBoosting(): boolean;
+    }
+}
+
 /**
  * Internal types
  * @private
@@ -40,12 +50,6 @@ declare global {
             prop: string;
             val: unknown;
             value: unknown;
-        }
-        interface ChartLike {
-            /** @requires modules/boost */
-            getBoostClipRect(target: BoostTargetObject): BBoxObject;
-            /** @requires modules/boost */
-            isChartSeriesBoosting(): boolean;
         }
         interface Series {
             alteredByBoost?: Array<BoostAlteredObject>;

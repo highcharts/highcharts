@@ -9,7 +9,7 @@ import BaseSeries from '../../Core/Series/Series.js';
 import RequiredIndicatorMixin from '../../Mixins/IndicatorRequired.js';
 import U from '../../Core/Utilities.js';
 var correctFloat = U.correctFloat, isArray = U.isArray;
-import './EMAIndicator.js';
+// im port './EMAIndicator.js';
 var EMAindicator = BaseSeries.seriesTypes.ema;
 /**
  * The DEMA series Type

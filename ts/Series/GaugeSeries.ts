@@ -26,6 +26,12 @@ const {
     pInt
 } = U;
 
+declare module '../Core/Chart/ChartLike'{
+    interface ChartLike {
+        angular?: boolean;
+    }
+}
+
 /**
  * Internal types
  * @private
@@ -59,9 +65,6 @@ declare global {
                 redraw?: boolean
             ): void;
             public translate(): void;
-        }
-        interface ChartLike {
-            angular?: boolean;
         }
         interface GaugePointOptions extends LinePointOptions {
         }

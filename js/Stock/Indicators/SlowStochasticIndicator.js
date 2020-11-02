@@ -8,7 +8,7 @@
 import BaseSeries from '../../Core/Series/Series.js';
 var seriesTypes = BaseSeries.seriesTypes;
 import RequiredIndicatorMixin from '../../Mixins/IndicatorRequired.js';
-import './StochasticIndicator.js';
+// im port './StochasticIndicator.js';
 /**
  * The Slow Stochastic series type.
  *

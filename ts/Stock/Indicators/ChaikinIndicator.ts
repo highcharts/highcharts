@@ -60,7 +60,7 @@ declare module '../../Core/Series/Types' {
 }
 
 import './ADIndicator.js';
-import './EMAIndicator.js';
+// im port './EMAIndicator.js';
 
 var EMA = seriesTypes.ema,
     AD = seriesTypes.ad;

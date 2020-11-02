@@ -13,15 +13,18 @@
 import type SVGElement from '../Core/Renderer/SVG/SVGElement';
 import H from '../Core/Globals.js';
 
+declare module '../Core/Chart/ChartLike'{
+    interface ChartLike {
+        errorElements?: Array<SVGElement>;
+    }
+}
+
 /**
  * Internal types
  * @private
  */
 declare global {
     namespace Highcharts {
-        interface ChartLike {
-            errorElements?: Array<SVGElement>;
-        }
         interface ChartOptions {
             displayErrors?: boolean;
         }

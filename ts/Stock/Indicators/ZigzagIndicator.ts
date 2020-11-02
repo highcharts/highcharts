@@ -53,7 +53,7 @@ declare module '../../Core/Series/Types' {
     }
 }
 
-import './SMAIndicator.js';
+// im port './SMAIndicator.js';
 
 /**
  * The Zig Zag series type.
