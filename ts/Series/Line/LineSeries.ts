@@ -100,6 +100,24 @@ declare module '../../Core/Series/SeriesLike' {
 }
 
 /**
+ * @private
+ */
+interface KDNode {
+    [side: string]: (KDNode|LinePoint|undefined);
+    left?: KDNode;
+    point: LinePoint;
+    right?: KDNode;
+}
+
+/**
+ * @private
+ */
+interface KDPointSearchObject {
+    clientX: number;
+    plotY?: number;
+}
+
+/**
  * Internal types
  * @private
  */
@@ -113,16 +131,6 @@ declare global {
             enabled?: boolean;
             matchByName?: boolean;
             sortKey?: string;
-        }
-        interface KDNode {
-            [side: string]: (KDNode|LinePoint|undefined);
-            left?: KDNode;
-            point: LinePoint;
-            right?: KDNode;
-        }
-        interface KDPointSearchObject {
-            clientX: number;
-            plotY?: number;
         }
         interface SeriesCropDataObject {
             end: number;
@@ -2680,7 +2688,7 @@ class LineSeries {
 
     public isRadialSeries?: boolean;
 
-    public kdTree?: Highcharts.KDNode;
+    public kdTree?: KDNode;
 
     public linkedParent?: LineSeries;
 
@@ -6204,7 +6212,7 @@ class LineSeries {
             points: Array<LinePoint>,
             depth: number,
             dimensions: number
-        ): (Highcharts.KDNode|undefined) {
+        ): (KDNode|undefined) {
             var axis: string,
                 median,
                 length = points && points.length;
@@ -6269,7 +6277,7 @@ class LineSeries {
      * @function Highcharts.Series#searchKDTree
      */
     public searchKDTree(
-        point: Highcharts.KDPointSearchObject,
+        point: KDPointSearchObject,
         compareX?: boolean,
         e?: PointerEvent
     ): (LinePoint|undefined) {
@@ -6285,7 +6293,7 @@ class LineSeries {
          * @private
          */
         function setDistance(
-            p1: Highcharts.KDPointSearchObject,
+            p1: KDPointSearchObject,
             p2: LinePoint
         ): void {
             var x = (defined((p1 as any)[kdX]) &&
@@ -6306,8 +6314,8 @@ class LineSeries {
          * @private
          */
         function _search(
-            search: Highcharts.KDPointSearchObject,
-            tree: Highcharts.KDNode,
+            search: KDPointSearchObject,
+            tree: KDNode,
             depth: number,
             dimensions: number
         ): LinePoint {
