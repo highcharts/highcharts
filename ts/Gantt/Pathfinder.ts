@@ -23,6 +23,12 @@ import Connection from './Connection.js';
 import Chart from '../Core/Chart/Chart.js';
 import H from '../Core/Globals.js';
 
+declare module '../Core/Chart/ChartLike'{
+    interface ChartLike {
+        pathfinder?: Pathfinder;
+    }
+}
+
 /**
  * Internal types
  * @private
@@ -35,9 +41,6 @@ declare global {
             'simpleConnect'|
             string
         );
-        interface ChartLike {
-            pathfinder?: Pathfinder;
-        }
         interface ConnectorsEndMarkerOptions {
             align?: AlignValue;
             color?: ColorType;

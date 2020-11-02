@@ -18,6 +18,7 @@ module.exports = {
         { from: 'getting-started/compatibility', to: 'getting-started/system-requirements' },
         { from: 'chart-and-series-types/packed-bubble-charts', to: 'chart-and-series-types/packed-bubble' },
         { from: 'chart-concepts/navigator', to: 'stock/navigator' },
-        { from: 'chart-concepts/range-selector', to: 'stock/range-selector' }
+        { from: 'chart-concepts/range-selector', to: 'stock/range-selector' },
+        { from: 'chart-concepts/accessibility', to: 'accessibility/accessibility-module' }
     ]
 };

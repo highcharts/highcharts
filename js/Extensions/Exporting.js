@@ -1469,6 +1469,11 @@ extend(Chart.prototype, /** @lends Highcharts.Chart.prototype */ {
                         element = createElement('hr', null, null, innerMenu);
                     }
                     else {
+                        // When chart initialized with the table,
+                        // wrong button text displayed, #14352.
+                        if (item.textKey === 'viewData' && chart.isDataTableVisible) {
+                            item.textKey = 'hideData';
+                        }
                         element = createElement('li', {
                             className: 'highcharts-menu-item',
                             onclick: function (e) {
@@ -1919,8 +1924,6 @@ Chart.prototype.renderExporting = function () {
         });
         chart.isDirtyExporting = false;
     }
-    // Destroy the export elements at chart destroy
-    addEvent(chart, 'destroy', chart.destroyExport);
 };
 /* eslint-disable no-invalid-this */
 // Add update methods to handle chart.update and chart.exporting.update and
@@ -1962,6 +1965,8 @@ addEvent(Chart, 'init', function () {
 Chart.prototype.callbacks.push(function (chart) {
     chart.renderExporting();
     addEvent(chart, 'redraw', chart.renderExporting);
+    // Destroy the export elements at chart destroy
+    addEvent(chart, 'destroy', chart.destroyExport);
     // Uncomment this to see a button directly below the chart, for quick
     // testing of export
     /*

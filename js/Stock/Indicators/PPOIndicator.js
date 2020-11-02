@@ -9,7 +9,7 @@ import BaseSeries from '../../Core/Globals.js';
 import RequiredIndicatorMixin from '../../Mixins/IndicatorRequired.js';
 import U from '../../Core/Utilities.js';
 var correctFloat = U.correctFloat, error = U.error;
-import './EMAIndicator.js';
+// im port './EMAIndicator.js';
 var EMA = BaseSeries.seriesTypes.ema;
 /**
  * The PPO series type.

@@ -56,73 +56,76 @@ const {
     uniqueKey
 } = U;
 
+declare module '../Core/Chart/ChartLike' {
+    interface ChartLike {
+        btnCount?: number;
+        buttonOffset?: number;
+        exportContextMenu?: Highcharts.ExportingDivElement;
+        exportDivElements?: Array<Highcharts.ExportingDivElement>;
+        exportEvents?: Array<Function>;
+        exporting?: Highcharts.ChartExportingObject;
+        exportingGroup?: SVGElement;
+        exportMenuHeight?: number;
+        exportMenuWidth?: number;
+        exportSVGElements?: Array<SVGElement>;
+        forExport?: boolean;
+        isDirtyExporting?: boolean;
+        isPrinting?: boolean;
+        openMenu?: boolean;
+        printReverseInfo?: Highcharts.PrintReverseInfoObject;
+        /** @requires modules/exporting */
+        addButton(options: Highcharts.ExportingButtonOptions): void;
+        /** @requires modules/exporting */
+        afterPrint(): void;
+        /** @requires modules/exporting */
+        beforePrint(): void;
+        /** @requires modules/exporting */
+        contextMenu(
+            className: string,
+            items: Array<(string|Highcharts.ExportingMenuObject)>,
+            x: number,
+            y: number,
+            width: number,
+            height: number,
+            button: SVGElement
+        ): void;
+        /** @requires modules/exporting */
+        destroyExport(e?: Event): void;
+        /** @requires modules/exporting */
+        exportChart(
+            exportingOptions?: Highcharts.ExportingOptions,
+            chartOptions?: Highcharts.Options
+        ): void;
+        /** @requires modules/exporting */
+        getChartHTML(): string;
+        /** @requires modules/exporting */
+        getFilename(): string;
+        /** @requires modules/exporting */
+        getSVG(chartOptions?: Highcharts.Options): string;
+        /** @requires modules/exporting */
+        getSVGForExport(
+            options: Highcharts.ExportingOptions,
+            chartOptions: Highcharts.Options
+        ): string;
+        /** @requires modules/exporting */
+        inlineStyles(): void;
+        /** @requires modules/exporting */
+        moveContainers(moveTo: HTMLDOMElement): void;
+        /** @requires modules/exporting */
+        print(): void;
+        /** @requires modules/exporting */
+        renderExporting(): void;
+        /** @requires modules/exporting */
+        sanitizeSVG(svg: string, options: Highcharts.Options): string;
+    }
+}
+
 /**
  * Internal types
  * @private
  */
 declare global {
     namespace Highcharts {
-        interface ChartLike {
-            btnCount?: number;
-            buttonOffset?: number;
-            exportContextMenu?: ExportingDivElement;
-            exportDivElements?: Array<ExportingDivElement>;
-            exportEvents?: Array<Function>;
-            exporting?: ChartExportingObject;
-            exportingGroup?: SVGElement;
-            exportMenuHeight?: number;
-            exportMenuWidth?: number;
-            exportSVGElements?: Array<SVGElement>;
-            forExport?: boolean;
-            isDirtyExporting?: boolean;
-            isPrinting?: boolean;
-            openMenu?: boolean;
-            printReverseInfo?: PrintReverseInfoObject;
-            /** @requires modules/exporting */
-            addButton(options: ExportingButtonOptions): void;
-            /** @requires modules/exporting */
-            afterPrint(): void;
-            /** @requires modules/exporting */
-            beforePrint(): void;
-            /** @requires modules/exporting */
-            contextMenu(
-                className: string,
-                items: Array<(string|ExportingMenuObject)>,
-                x: number,
-                y: number,
-                width: number,
-                height: number,
-                button: SVGElement
-            ): void;
-            /** @requires modules/exporting */
-            destroyExport(e?: Event): void;
-            /** @requires modules/exporting */
-            exportChart(
-                exportingOptions?: ExportingOptions,
-                chartOptions?: Options
-            ): void;
-            /** @requires modules/exporting */
-            getChartHTML(): string;
-            /** @requires modules/exporting */
-            getFilename(): string;
-            /** @requires modules/exporting */
-            getSVG(chartOptions?: Options): string;
-            /** @requires modules/exporting */
-            getSVGForExport(
-                options: ExportingOptions,
-                chartOptions: Options
-            ): string;
-            /** @requires modules/exporting */
-            inlineStyles(): void;
-            /** @requires modules/exporting */
-            moveContainers(moveTo: HTMLDOMElement): void;
-            /** @requires modules/exporting */
-            print(): void;
-            /** @requires modules/exporting */
-            renderExporting(): void;
-            /** @requires modules/exporting */
-            sanitizeSVG(svg: string, options: Options): string;
-        }
         interface ChartEventsOptions {
             afterPrint?: ExportingAfterPrintCallbackFunction;
             beforePrint?: ExportingBeforePrintCallbackFunction;
@@ -1990,6 +1993,12 @@ extend(Chart.prototype, /** @lends Highcharts.Chart.prototype */ {
                         );
 
                     } else {
+                        // When chart initialized with the table,
+                        // wrong button text displayed, #14352.
+                        if (item.textKey === 'viewData' && chart.isDataTableVisible) {
+                            item.textKey = 'hideData';
+                        }
+
                         element = createElement('li', {
                             className: 'highcharts-menu-item',
                             onclick: function (e: PointerEvent): void {
@@ -2642,9 +2651,6 @@ Chart.prototype.renderExporting = function (): void {
 
         chart.isDirtyExporting = false;
     }
-
-    // Destroy the export elements at chart destroy
-    addEvent(chart, 'destroy', chart.destroyExport);
 };
 
 /* eslint-disable no-invalid-this */
@@ -2708,6 +2714,8 @@ Chart.prototype.callbacks.push(function (chart: Chart): void {
     chart.renderExporting();
 
     addEvent(chart, 'redraw', chart.renderExporting);
+    // Destroy the export elements at chart destroy
+    addEvent(chart, 'destroy', chart.destroyExport);
 
 
     // Uncomment this to see a button directly below the chart, for quick

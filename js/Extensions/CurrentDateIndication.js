@@ -10,8 +10,6 @@
  *
  * */
 import Axis from '../Core/Axis/Axis.js';
-import O from '../Core/Options.js';
-var dateFormat = O.dateFormat;
 import U from '../Core/Utilities.js';
 var addEvent = U.addEvent, merge = U.merge, wrap = U.wrap;
 import PlotLineOrBand from '../Core/Axis/PlotLineOrBand.js';
@@ -52,7 +50,7 @@ var defaultConfig = {
          */
         format: '%a, %b %d %Y, %H:%M',
         formatter: function (value, format) {
-            return dateFormat(format, value);
+            return this.axis.chart.time.dateFormat(format, value);
         },
         rotation: 0,
         /**

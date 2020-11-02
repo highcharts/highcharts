@@ -45,6 +45,14 @@ const {
     splat
 } = U;
 
+declare module '../Core/Chart/ChartLike'{
+    interface ChartLike {
+        data?: Highcharts.Data;
+        hasDataDef?: boolean;
+        liveDataURL?: string;
+    }
+}
+
 /**
  * Internal types
  * @private
@@ -52,11 +60,6 @@ const {
 declare global {
     namespace Highcharts {
         type DataValueType = (number|string|null);
-        interface ChartLike {
-            data?: Data;
-            hasDataDef?: boolean;
-            liveDataURL?: string;
-        }
         interface DataAfterCompleteCallbackFunction {
             (dataOptions?: Options): void;
         }

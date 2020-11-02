@@ -54,7 +54,7 @@ declare module '../../Core/Series/Types' {
     }
 }
 
-import './TEMAIndicator.js';
+// im port './TEMAIndicator.js';
 
 var TEMA = BaseSeries.seriesTypes.tema;
 

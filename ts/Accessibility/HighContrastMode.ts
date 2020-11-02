@@ -16,15 +16,18 @@ import type ColorType from '../Core/Color/ColorType';
 import type Point from '../Core/Series/Point';
 import H from '../Core/Globals.js';
 
+declare module '../Core/Chart/ChartLike'{
+    interface ChartLike {
+        highContrastModeActive?: boolean;
+    }
+}
 /**
  * Internal types.
  * @private
  */
 declare global {
     namespace Highcharts {
-        interface ChartLike {
-            highContrastModeActive?: boolean;
-        }
+
         interface PointOptionsObject {
             borderColor?: ColorType;
         }

@@ -37,6 +37,12 @@ const {
     wrap
 } = U;
 
+declare module '../Core/Chart/ChartLike' {
+    interface ChartLike {
+        activeResizer?: boolean;
+    }
+}
+
 /**
  * Internal types
  * @private
@@ -45,9 +51,6 @@ declare global {
     namespace Highcharts {
         interface Axis {
             resizer?: AxisResizer;
-        }
-        interface ChartLike {
-            activeResizer?: boolean;
         }
         interface XAxisOptions {
             maxLength?: (number|string);

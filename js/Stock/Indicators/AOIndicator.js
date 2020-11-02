@@ -10,7 +10,7 @@ import H from '../../Core/Globals.js';
 var noop = H.noop;
 import U from '../../Core/Utilities.js';
 var correctFloat = U.correctFloat, isArray = U.isArray;
-import './SMAIndicator.js';
+// im port './SMAIndicator.js';
 /**
  * The AO series type
  *

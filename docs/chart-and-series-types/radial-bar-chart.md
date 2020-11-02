@@ -1,4 +1,4 @@
-Radial (or Circular) Bar Chart
+Radial (or Circular) bar chart
 ===
 
 A radial (or circular) bar series visualizes columns on a polar coordinate system. Since the `xAxis` is vertical and `yAxis` is circular, as opposed to non-inverted variant, the shape of the columns is circular.

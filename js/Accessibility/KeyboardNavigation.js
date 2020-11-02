@@ -80,9 +80,13 @@ KeyboardNavigation.prototype = {
         this.update();
         ep.addEvent(this.tabindexContainer, 'keydown', function (e) { return _this.onKeydown(e); });
         ep.addEvent(this.tabindexContainer, 'focus', function (e) { return _this.onFocus(e); });
-        ep.addEvent(doc, 'mouseup', function () { return _this.onMouseUp(); });
-        ep.addEvent(chart.renderTo, 'mousedown', function () {
-            _this.isClickingChart = true;
+        ['mouseup', 'touchend'].forEach(function (eventName) {
+            return ep.addEvent(doc, eventName, function () { return _this.onMouseUp(); });
+        });
+        ['mousedown', 'touchstart'].forEach(function (eventName) {
+            return ep.addEvent(chart.renderTo, eventName, function () {
+                _this.isClickingChart = true;
+            });
         });
         ep.addEvent(chart.renderTo, 'mouseover', function () {
             _this.pointerIsOverChart = true;

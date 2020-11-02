@@ -72,4 +72,4 @@ View a live sample of [data fetched from a table](https://jsfiddle.net/gh/get/jq
 Loading from Google Spreadsheets
 --------------------------------
 
-Loading the chart data from Google Spreadsheets is a good idea if you want to set up a chart based on data that other team members should be allow to edit and keep updated. See the [API docs](https://api.highcharts.com/highcharts/data.googleSpreadsheetKey) for explanation and sample.
+Loading the chart data from Google Spreadsheets is a good idea if you want to set up a chart based on data that other team members should be allowed to edit and keep updated. See the [API docs](https://api.highcharts.com/highcharts/data.googleSpreadsheetKey) for explanation and sample.

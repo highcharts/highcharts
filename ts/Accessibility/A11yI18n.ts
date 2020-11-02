@@ -21,6 +21,17 @@ const {
     pick
 } = U;
 
+declare module '../Core/Chart/ChartLike' {
+    interface ChartLike {
+        /** @requires modules/accessibility */
+        langFormat(
+            langKey: string,
+            context: Record<string, any>,
+            time?: Highcharts.Time
+        ): string;
+    }
+}
+
 /**
  * Internal types.
  * @private
@@ -35,14 +46,6 @@ declare global {
         interface A11yFormatTokenObject {
             type: string;
             value: string;
-        }
-        interface ChartLike {
-            /** @requires modules/accessibility */
-            langFormat(
-                langKey: string,
-                context: Dictionary<any>,
-                time?: Time
-            ): string;
         }
         /** @requires modules/accessibility */
         function i18nFormat(

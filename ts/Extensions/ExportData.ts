@@ -38,6 +38,34 @@ const {
     setOptions
 } = U;
 
+declare module '../Core/Chart/ChartLike'{
+    interface ChartLike {
+        dataTableDiv?: HTMLDivElement;
+        /** @requires modules/export-data */
+        downloadCSV(): void;
+        /** @requires modules/export-data */
+        downloadXLS(): void;
+        /** @requires modules/export-data */
+        getCSV(useLocalDecimalPoint?: boolean): string;
+        /** @requires modules/export-data */
+        getDataRows(
+            multiLevelHeaders?: boolean
+        ): Array<Array<(number|string)>>;
+        /** @requires modules/export-data */
+        getTable(useLocalDecimalPoint?: boolean): string;
+        /** @requires modules/export-data */
+        setUpKeyToAxis(): void;
+        /** @requires modules/export-data */
+        viewData(): void;
+        /** @requires modules/export-data */
+        toggleDataTable(): void;
+        /** @requires modules/export-data */
+        hideData(): void;
+        /** @requires modules/export-data */
+        isDataTableVisible: boolean;
+    }
+}
+
 /**
  * Internal types
  * @private
@@ -50,31 +78,6 @@ declare global {
         interface ExportingCategoryDateTimeMap {
             categoryMap: ExportingCategoryMap;
             dateTimeValueAxisMap: ExportingDateTimeMap;
-        }
-        interface ChartLike {
-            dataTableDiv?: HTMLDivElement;
-            /** @requires modules/export-data */
-            downloadCSV(): void;
-            /** @requires modules/export-data */
-            downloadXLS(): void;
-            /** @requires modules/export-data */
-            getCSV(useLocalDecimalPoint?: boolean): string;
-            /** @requires modules/export-data */
-            getDataRows(
-                multiLevelHeaders?: boolean
-            ): Array<Array<(number|string)>>;
-            /** @requires modules/export-data */
-            getTable(useLocalDecimalPoint?: boolean): string;
-            /** @requires modules/export-data */
-            setUpKeyToAxis(): void;
-            /** @requires modules/export-data */
-            viewData(): void;
-            /** @requires modules/export-data */
-            toggleDataTable(): void;
-            /** @requires modules/export-data */
-            hideData(): void;
-            /** @requires modules/export-data */
-            isDataTableVisible: boolean;
         }
         interface AnnotationInDataTable {
             itemDelimiter?: string;
@@ -1259,7 +1262,8 @@ Chart.prototype.hideData = function (): void {
 
 Chart.prototype.toggleDataTable = function (): void {
     var exportDivElements = this.exportDivElements,
-        menuItems = exportingOptions?.buttons?.contextButton.menuItems,
+        options = this.options.exporting,
+        menuItems = options && options.buttons && options.buttons.contextButton.menuItems,
         lang = this.options.lang;
 
     if (this.isDataTableVisible) {

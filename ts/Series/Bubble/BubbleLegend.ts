@@ -39,6 +39,12 @@ const {
     wrap
 } = U;
 
+declare module '../../Core/Chart/ChartLike'{
+    interface ChartLike {
+        getVisibleBubbleSeriesIndex(): number;
+    }
+}
+
 /**
  * Internal types
  * @private
@@ -95,9 +101,6 @@ declare global {
             connectorStyle?: CSSObject;
             labelStyle?: CSSObject;
             value?: any;
-        }
-        interface ChartLike {
-            getVisibleBubbleSeriesIndex(): number;
         }
         interface Legend {
             bubbleLegend?: BubbleLegend;

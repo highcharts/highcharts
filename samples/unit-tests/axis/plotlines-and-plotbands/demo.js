@@ -519,3 +519,83 @@ QUnit.test('#13375: Click event on dynamically added plotBands.', function (asse
     );
 
 });
+
+QUnit.test('#14310: Visibility of dynamically added plotbands', function (assert) {
+    var chart = Highcharts.chart('container', {
+        chart: {
+            zoomType: 'xy'
+        },
+        xAxis: {
+            tickInterval: 24 * 3600 * 1000,
+            type: 'datetime',
+            visible: false
+        },
+        series: [{
+            data: [29.9, 71.5, 106.4, 129.2, 144.0, 176.0, 135.6, 148.5, 216.4, 100, 110, 120, 101, 115, 128, 99, 80, 132],
+            pointStart: Date.UTC(2010, 0, 1),
+            pointInterval: 24 * 3600 * 1000
+        }]
+    });
+
+    chart.xAxis[0].addPlotBand({
+        color: '#FCFFC5',
+        from: Date.UTC(2010, 0, 2),
+        to: Date.UTC(2010, 0, 4)
+    });
+
+    assert.ok(
+        !chart.xAxis[0].plotLinesAndBands[0].svgElem,
+        'plotBand should not render when axis is not visible'
+    );
+
+    chart.update({
+        xAxis: {
+            visible: true
+        }
+    });
+
+    assert.ok(
+        !!chart.xAxis[0].plotLinesAndBands[0].svgElem,
+        'plotBand should render when axis visibility gets dynamically updated'
+    );
+});
+
+QUnit.test('#14254: plotBands.acrossPanes', function (assert) {
+    var chart = Highcharts.stockChart('container', {
+        series: [{
+            data: [1, 2, 3, 4]
+        }, {
+            data: [1, 2, 3, 4],
+            yAxis: 1,
+            xAxis: 1
+        }],
+        yAxis: [{
+            height: '50%'
+        }, {
+            height: '50%',
+            top: '50%'
+        }],
+        xAxis: [{
+            plotBands: [{
+                from: 2,
+                to: 3,
+                acrossPanes: false
+            }, {
+                from: 2,
+                to: 3,
+                acrossPanes: true
+            }],
+            height: '50%'
+        }, {
+            top: '50%',
+            height: '50%'
+        }]
+    });
+
+    var bands = [
+        chart.xAxis[0].plotLinesAndBands[0].svgElem.getBBox(),
+        chart.xAxis[0].plotLinesAndBands[1].svgElem.getBBox()
+    ];
+
+    assert.ok(bands[1].height > bands[0].height, 'plotBand with acrossPanes = true has greater height');
+});

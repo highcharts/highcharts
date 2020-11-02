@@ -15,6 +15,7 @@
 import type AlignObject from '../Core/Renderer/AlignObject';
 import type CSSObject from '../Core/Renderer/CSSObject';
 import type SVGAttributes from '../Core/Renderer/SVG/SVGAttributes';
+import type SVGElement from '../Core/Renderer/SVG/SVGElement';
 import Chart from '../Core/Chart/Chart.js';
 import U from '../Core/Utilities.js';
 const {
@@ -23,6 +24,18 @@ const {
     getOptions,
     merge
 } = U;
+
+declare module '../Core/Chart/ChartLike' {
+    interface ChartLike {
+        noDataLabel?: SVGElement;
+        /** @requires modules/no-data-to-display */
+        showNoData(str?: string): void;
+        /** @requires modules/no-data-to-display */
+        hideNoData(): void;
+        /** @requires modules/no-data-to-display */
+        hasData(): (boolean|undefined);
+    }
+}
 
 /**
  * Internal types
@@ -41,15 +54,6 @@ declare global {
             useHTML?: boolean;
             position?: AlignObject;
             style?: CSSObject;
-        }
-        interface ChartLike {
-            noDataLabel?: SVGElement;
-            /** @requires modules/no-data-to-display */
-            showNoData(str?: string): void;
-            /** @requires modules/no-data-to-display */
-            hideNoData(): void;
-            /** @requires modules/no-data-to-display */
-            hasData(): (boolean|undefined);
         }
     }
 }

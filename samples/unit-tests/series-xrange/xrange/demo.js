@@ -477,3 +477,68 @@ QUnit.test('Stacking', assert => {
     );
 
 });
+
+QUnit.test('#13811: partialFill application order', function (assert) {
+    var chart = Highcharts.chart('container', {
+        chart: {
+            type: 'xrange'
+        },
+        xAxis: {
+            type: 'datetime'
+        },
+        yAxis: {
+            categories: ['Prototyping', 'Development', 'Testing'],
+            reversed: true
+        },
+        series: [{
+            name: 'Project 1',
+            borderColor: 'gray',
+            pointWidth: 20,
+            partialFill: {
+                fill: 'red'
+            },
+            data: [{
+                x: Date.UTC(2014, 10, 21),
+                x2: Date.UTC(2014, 11, 2),
+                y: 0,
+                partialFill: {
+                    fill: 'black',
+                    amount: 0.25
+                }
+            }, {
+                x: Date.UTC(2014, 11, 2),
+                x2: Date.UTC(2014, 11, 5),
+                y: 1
+            }, {
+                x: Date.UTC(2014, 11, 8),
+                x2: Date.UTC(2014, 11, 9),
+                y: 2,
+                partialFill: {
+                    amount: 0.50
+                }
+            }, {
+                x: Date.UTC(2014, 11, 9),
+                x2: Date.UTC(2014, 11, 19),
+                y: 1
+            }, {
+                x: Date.UTC(2014, 11, 10),
+                x2: Date.UTC(2014, 11, 23),
+                y: 2
+            }],
+            dataLabels: {
+                enabled: true
+            }
+        }]
+    });
+
+    assert.strictEqual(
+        chart.series[0].points[0].graphic.partRect.attr('fill'),
+        'black',
+        'Point.partialFill should take priority'
+    );
+    assert.strictEqual(
+        chart.series[0].points[2].graphic.partRect.attr('fill'),
+        'red',
+        'Series.partialFill should still work'
+    );
+});

@@ -10,6 +10,8 @@
  *
  * */
 
+'use strict';
+
 import type CSSObject from '../Core/Renderer/CSSObject';
 import type {
     DOMElementType
@@ -24,18 +26,21 @@ const {
     pick
 } = U;
 
+declare module '../Core/Chart/ChartLike'{
+    interface ChartLike {
+        focusElement?: SVGElement;
+        /** @requires modules/accessibility */
+        renderFocusBorder(): void;
+        /** @requires modules/accessibility */
+        setFocusToElement(
+            svgElement: SVGElement,
+            focusElement?: DOMElementType
+        ): void;
+    }
+}
+
 declare global {
     namespace Highcharts {
-        interface ChartLike {
-            focusElement?: SVGElement;
-            /** @requires modules/accessibility */
-            renderFocusBorder(): void;
-            /** @requires modules/accessibility */
-            setFocusToElement(
-                svgElement: SVGElement,
-                focusElement?: DOMElementType
-            ): void;
-        }
         interface SVGElement {
             focusBorder?: SVGElement;
             /** @requires modules/accessibility */

@@ -9,7 +9,7 @@ import BaseSeries from '../../Core/Series/Series.js';
 import RequiredIndicatorMixin from '../../Mixins/IndicatorRequired.js';
 import U from '../../Core/Utilities.js';
 var error = U.error;
-import './EMAIndicator.js';
+// im port './EMAIndicator.js';
 var EMA = BaseSeries.seriesTypes.ema;
 /**
  * The APO series type.

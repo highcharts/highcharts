@@ -9,7 +9,7 @@ import BaseSeries from '../../Core/Series/Series.js';
 import MultipleLinesMixin from '../../Mixins/MultipleLines.js';
 import U from '../../Core/Utilities.js';
 var merge = U.merge, pick = U.pick;
-import './SMAIndicator.js';
+// im port './SMAIndicator.js';
 /* eslint-disable valid-jsdoc */
 // Utils
 // Index of element with extreme value from array (min or max)

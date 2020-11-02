@@ -677,3 +677,33 @@ QUnit.test('Column zooming and Y axis extremes (#9944)', assert => {
         'The Y axis should adapt to the visible data (#9044)'
     );
 });
+
+QUnit.test('When data grouping disabled and the axis extremes set out of the data range, the chart shouldn\'t crash, #13934.', function (assert) {
+    const chart = Highcharts.stockChart('container', {
+        plotOptions: {
+            series: {
+                dataGrouping: {
+                    enabled: false
+                }
+            }
+        },
+        xAxis: {
+            minRange: 1,
+            min: 1533235200000,
+            max: 1533235200000
+        },
+        series: [{
+            data: [
+                [1563235200000, 0],
+                [1563321600000, 1],
+                [1563408000000, 2],
+                [1563494400000, 3],
+                [1563753600000, 4]
+            ]
+        }]
+    });
+    assert.ok(
+        chart,
+        'The chart exist '
+    );
+});

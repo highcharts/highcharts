@@ -9,7 +9,7 @@ import BaseSeries from '../../Core/Series/Series.js';
 import MultipleLinesMixin from '../../Mixins/MultipleLines.js';
 import U from '../../Core/Utilities.js';
 var isArray = U.isArray, merge = U.merge;
-import './SMAIndicator.js';
+// im port './SMAIndicator.js';
 var SMA = BaseSeries.seriesTypes.sma;
 /* eslint-disable valid-jsdoc */
 // Utils:

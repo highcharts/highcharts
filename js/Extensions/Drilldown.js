@@ -961,7 +961,7 @@ Point.prototype.doDrilldown = function (_holdRedraw, category, originalEvent) {
  *        Click event
  */
 Axis.prototype.drilldownCategory = function (x, e) {
-    objectEach(this.getDDPoints(x), function (point) {
+    this.getDDPoints(x).forEach(function (point) {
         if (point &&
             point.series &&
             point.series.visible &&
@@ -978,11 +978,11 @@ Axis.prototype.drilldownCategory = function (x, e) {
  * @function Highcharts.Axis#getDDPoints
  * @param {number} x
  *        Tick position
- * @return {Array<(boolean|Highcharts.Point)>|undefined}
+ * @return {Array<(false|Highcharts.Point)>}
  *         Drillable points
  */
 Axis.prototype.getDDPoints = function (x) {
-    return this.ddPoints && this.ddPoints[x];
+    return (this.ddPoints && this.ddPoints[x] || []);
 };
 /**
  * Make a tick label drillable, or remove drilling on update.

@@ -54,6 +54,48 @@ const {
     splat
 } = U;
 
+declare module './Chart/ChartLike'{
+    interface ChartLike {
+        collectionsWithUpdate: Array<string>;
+        collectionsWithInit: Record<string, [Function, Array<any>?]>;
+        loadingDiv?: HTMLDOMElement;
+        loadingShown?: boolean;
+        loadingSpan?: HTMLDOMElement;
+        propsRequireDirtyBox: Array<string>;
+        propsRequireReflow: Array<string>;
+        propsRequireUpdateSeries: Array<string>;
+        addAxis(
+            options: Highcharts.AxisOptions,
+            isX?: boolean,
+            redraw?: boolean,
+            animation?: boolean
+        ): Axis;
+        addColorAxis(
+            options: Highcharts.AxisOptions,
+            redraw?: boolean,
+            animation?: boolean
+        ): Axis;
+        createAxis(
+            type: string,
+            options: Highcharts.CreateAxisOptionsObject
+        ): Axis|ColorAxis;
+        addSeries(
+            options: SeriesOptionsType,
+            redraw?: boolean,
+            animation?: (boolean|Partial<AnimationOptionsObject>)
+        ): Highcharts.Series;
+        setSubtitle(options: Highcharts.SubtitleOptions): void;
+        hideLoading(): void;
+        showLoading(str?: string): void;
+        update(
+            options: Highcharts.Options,
+            redraw?: boolean,
+            oneToOne?: boolean,
+            animation?: (boolean|Partial<AnimationOptionsObject>)
+        ): void;
+    }
+}
+
 /**
  * Internal types
  * @private
@@ -66,45 +108,6 @@ declare global {
             setCategories(categories: Array<string>, redraw?: boolean): void;
             setTitle(titleOptions: AxisTitleOptions, redraw?: boolean): void;
             update(options: AxisOptions, redraw?: boolean): void;
-        }
-        interface ChartLike {
-            collectionsWithUpdate: Array<string>;
-            collectionsWithInit: Dictionary<[Function, Array<any>?]>;
-            loadingDiv?: HTMLDOMElement;
-            loadingShown?: boolean;
-            loadingSpan?: HTMLDOMElement;
-            propsRequireDirtyBox: Array<string>;
-            propsRequireReflow: Array<string>;
-            propsRequireUpdateSeries: Array<string>;
-            addAxis(
-                options: AxisOptions,
-                isX?: boolean,
-                redraw?: boolean,
-                animation?: boolean
-            ): Axis;
-            addColorAxis(
-                options: AxisOptions,
-                redraw?: boolean,
-                animation?: boolean
-            ): Axis;
-            createAxis(
-                type: string,
-                options: CreateAxisOptionsObject
-            ): Axis|ColorAxis;
-            addSeries(
-                options: SeriesOptionsType,
-                redraw?: boolean,
-                animation?: (boolean|Partial<AnimationOptionsObject>)
-            ): Series;
-            setSubtitle(options: SubtitleOptions): void;
-            hideLoading(): void;
-            showLoading(str?: string): void;
-            update(
-                options: Options,
-                redraw?: boolean,
-                oneToOne?: boolean,
-                animation?: (boolean|Partial<AnimationOptionsObject>)
-            ): void;
         }
         interface ChartAfterUpdateEventObject {
             animation: (boolean|Partial<AnimationOptionsObject>);
