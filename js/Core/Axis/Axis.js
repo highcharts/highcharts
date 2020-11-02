@@ -1622,6 +1622,19 @@ var Axis = /** @class */ (function () {
                     tickPositions.pop();
                 }
             }
+            // If min is bigger than highest,
+            // or if max less than lowest value,
+            // the chart should not render points. (#14417)
+            if (this.min && this.max) {
+                if (this.min > this.max) {
+                    if (typeof this.options.min !== 'undefined') {
+                        this.max = this.min;
+                    }
+                    else if (typeof this.options.max !== 'undefined') {
+                        this.min = this.max;
+                    }
+                }
+            }
             // If no tick are left, set one tick in the middle (#3195)
             if (tickPositions.length === 0 &&
                 defined(roundedMin) &&
