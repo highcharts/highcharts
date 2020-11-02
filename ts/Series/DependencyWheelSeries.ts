@@ -429,8 +429,10 @@ BaseSeries.seriesType<typeof Highcharts.DependencyWheelSeries>(
 
             if (!this.dataLabelPath) {
                 this.dataLabelPath = renderer
-                    .arc({ open: true })
-
+                    .arc({
+                        open: true,
+                        longArc: Math.abs(Math.abs(start) - Math.abs(end)) < Math.PI ? 0 : 1
+                    })
                     // Add it inside the data label group so it gets destroyed
                     // with the label
                     .add(label);
