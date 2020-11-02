@@ -447,6 +447,16 @@ var sunburstOptions = {
      * @apioption plotOptions.sunburst.levels.dataLabels
      */
     /**
+     * Decides which level takes effect from the options set in the levels
+     * object.
+     *
+     * @sample highcharts/demo/sunburst
+     *         Sunburst chart
+     *
+     * @type      {number}
+     * @apioption plotOptions.sunburst.levels.level
+     */
+    /**
      * Can set a `levelSize` on all points which lies on the same level.
      *
      * @type      {object}
