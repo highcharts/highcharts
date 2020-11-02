@@ -147,6 +147,9 @@ BaseSeries.seriesType('columnrange', 'arearange', merge(defaultOptions.plotOptio
     pointAttribs: function () {
         return columnProto.pointAttribs.apply(this, arguments);
     },
+    adjustForMissingColumns: function () {
+        return columnProto.adjustForMissingColumns.apply(this, arguments);
+    },
     animate: function () {
         return columnProto.animate.apply(this, arguments);
     },

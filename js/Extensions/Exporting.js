@@ -1924,8 +1924,6 @@ Chart.prototype.renderExporting = function () {
         });
         chart.isDirtyExporting = false;
     }
-    // Destroy the export elements at chart destroy
-    addEvent(chart, 'destroy', chart.destroyExport);
 };
 /* eslint-disable no-invalid-this */
 // Add update methods to handle chart.update and chart.exporting.update and
@@ -1967,6 +1965,8 @@ addEvent(Chart, 'init', function () {
 Chart.prototype.callbacks.push(function (chart) {
     chart.renderExporting();
     addEvent(chart, 'redraw', chart.renderExporting);
+    // Destroy the export elements at chart destroy
+    addEvent(chart, 'destroy', chart.destroyExport);
     // Uncomment this to see a button directly below the chart, for quick
     // testing of export
     /*
