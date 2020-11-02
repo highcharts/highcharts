@@ -1,5 +1,4 @@
-var chart = Highcharts.stockChart('container', {
-
+const chart = Highcharts.stockChart('container', {
     loading: {
         style: {
             backgroundColor: 'silver'
@@ -19,9 +18,10 @@ var chart = Highcharts.stockChart('container', {
     }]
 });
 
-$('#showloading').click(function () {
+document.getElementById('showloading').addEventListener('click', () => {
     chart.showLoading();
 });
-$('#hideloading').click(function () {
+
+document.getElementById('hideloading').addEventListener('click', () => {
     chart.hideLoading();
 });

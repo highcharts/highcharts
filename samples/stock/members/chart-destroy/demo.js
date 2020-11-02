@@ -1,5 +1,4 @@
 var chart = Highcharts.stockChart('container', {
-
     rangeSelector: {
         selected: 1
     },
@@ -8,10 +7,9 @@ var chart = Highcharts.stockChart('container', {
         name: 'USD to EUR',
         data: usdeur
     }]
-
 });
 
-$('#button').click(function () {
+document.getElementById('button').addEventListener('click', e => {
     chart.destroy();
-    $(this).attr('disabled', true);
+    e.target.disabled = true;
 });

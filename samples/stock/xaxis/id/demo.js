@@ -1,4 +1,4 @@
-var chart = Highcharts.stockChart('container', {
+const chart = Highcharts.stockChart('container', {
     xAxis: {
         id: 'x-axis'
     },
@@ -11,7 +11,6 @@ var chart = Highcharts.stockChart('container', {
     }]
 });
 
-// the button action
-$('#button').click(function () {
+document.getElementById('button').addEventListener('click', () => {
     alert('The axis object: ' + chart.get('x-axis'));
 });
