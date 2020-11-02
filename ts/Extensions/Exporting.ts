@@ -2651,9 +2651,6 @@ Chart.prototype.renderExporting = function (): void {
 
         chart.isDirtyExporting = false;
     }
-
-    // Destroy the export elements at chart destroy
-    addEvent(chart, 'destroy', chart.destroyExport);
 };
 
 /* eslint-disable no-invalid-this */
@@ -2717,6 +2714,8 @@ Chart.prototype.callbacks.push(function (chart: Chart): void {
     chart.renderExporting();
 
     addEvent(chart, 'redraw', chart.renderExporting);
+    // Destroy the export elements at chart destroy
+    addEvent(chart, 'destroy', chart.destroyExport);
 
 
     // Uncomment this to see a button directly below the chart, for quick
