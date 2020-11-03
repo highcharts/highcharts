@@ -35,28 +35,28 @@ QUnit.test('Item series negative values', assert => {
 
     );
 
-    assert.strictEqual(
-        series.data[0].percentage,
-        25,
-        'The point is displayed in the chart with an amount of 25 percent.'
+    var point0 = series.points[0].graphic.element.childNodes.length;
+    var point1 = series.points[1].graphic.element.childNodes.length;
+    var point2 = series.points[2].graphic.element.childNodes.length;
+    var point3 = series.points[3].graphic.element.childNodes.length;
+
+    assert.ok(
+        point0 > 0,
+        'The point should be displayed in the chart because it has child nodes.'
     );
 
-    assert.strictEqual(
-        series.data[1].percentage,
-        -25,
-        "The point is not displayed in the chart because the percentage is negative."
+    assert.ok(
+        point1 <= 0,
+        "The point should not be displayed in the chart because there are no child nodes."
     );
 
-    assert.strictEqual(
-        series.data[2].percentage,
-        0,
-        'The point is not displayed in the chart because it is zero.'
+    assert.ok(
+        point2 <= 0,
+        'The point should be displayed in the chart because there are no child nodes.'
     );
 
-    assert.strictEqual(
-        series.data[3].percentage,
-        75,
-        'The point is displayed in the chart with an amount of 75 percent.'
+    assert.ok(
+        point3 > 0,
+        'The point should be displayed in the chart because it has child nodes.'
     );
-
 });
