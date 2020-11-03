@@ -1550,7 +1550,7 @@ addEvent(Point, 'update', function (e: { options: Highcharts.Options }): void {
 
 const handlePointClick = function (
     this: Point,
-    e: Highcharts.PointerEventObject
+    e: MouseEvent
 ): void {
     const point = this,
         series = point.series;
