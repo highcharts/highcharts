@@ -810,5 +810,5 @@ QUnit.test('In trimTicks, Min and max must be checked when start/endOntick are f
         max: 22   // Now max is less than 29.9
     });
 
-    assert.strictEqual(chart.yAxis[0].max, 22, 'Min must be 22 to prevent showing parts of chart');
+    assert.strictEqual(chart.yAxis[0].min, 22, 'Min must be 22 to prevent showing parts of chart');
 });
