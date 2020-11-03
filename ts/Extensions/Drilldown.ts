@@ -193,6 +193,7 @@ declare global {
                 category: (number|undefined),
                 originalEvent: Event
             ): void;
+            unbindDrilldownClick?: Function;
         }
         interface Series {
             drilldownLevel?: DrilldownLevelObject;
@@ -1518,31 +1519,50 @@ Tick.prototype.drillable = function (): void {
 // On initialization of each point, identify its label and make it clickable.
 // Also, provide a list of points associated to that label.
 addEvent(Point, 'afterInit', function (): Point {
-    var point = this,
-        series = point.series;
+    const point = this;
 
-    if (point.drilldown) {
-
+    if (point.drilldown && !point.unbindDrilldownClick) {
         // Add the click event to the point
-        addEvent(point, 'click', function (
-            e: Highcharts.PointerEventObject
-        ): void {
-            if (
-                series.xAxis &&
-                (series.chart.options.drilldown as any).allowPointDrilldown ===
-                false
-            ) {
-                // #5822, x changed
-                series.xAxis.drilldownCategory(point.x as any, e);
-            } else {
-                point.doDrilldown(void 0, void 0, e);
-            }
-        });
-
+        point.unbindDrilldownClick = addEvent(point, 'click', handlePointClick);
     }
 
     return point;
 });
+
+addEvent(Point, 'update', function (e: { options: Highcharts.Options }): void {
+    const point = this,
+        options = e.options || {};
+
+    if (options.drilldown && !point.unbindDrilldownClick) {
+        // Add the click event to the point
+        point.unbindDrilldownClick = addEvent(point, 'click', handlePointClick);
+    } else if (
+        !options.drilldown &&
+        options.drilldown !== void 0 &&
+        point.unbindDrilldownClick
+    ) {
+        point.unbindDrilldownClick = point.unbindDrilldownClick();
+    }
+});
+
+const handlePointClick = function (
+    this: Point,
+    e: Highcharts.PointerEventObject
+): void {
+    const point = this,
+        series = point.series;
+
+    if (
+        series.xAxis &&
+        (series.chart.options.drilldown as any).allowPointDrilldown ===
+        false
+    ) {
+        // #5822, x changed
+        series.xAxis.drilldownCategory(point.x as any, e);
+    } else {
+        point.doDrilldown(void 0, void 0, e);
+    }
+};
 
 addEvent(H.Series, 'afterDrawDataLabels', function (): void {
     var css = (this.chart.options.drilldown as any).activeDataLabelStyle,
