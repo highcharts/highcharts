@@ -855,7 +855,9 @@ extend(Chart.prototype, /** @lends Chart.prototype */ {
                             isNumber(dataExtremes.dataMax)
                         ) {
                             panningState.startMin = Math.min(
-                                dataExtremes.dataMin, panningState.startMin
+                                pick(series.options.threshold, Infinity),
+                                dataExtremes.dataMin,
+                                panningState.startMin
                             );
                             panningState.startMax = Math.max(
                                 dataExtremes.dataMax, panningState.startMax
