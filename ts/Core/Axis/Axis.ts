@@ -5799,9 +5799,9 @@ class Axis implements AxisComposition, AxisLike {
             // the chart should not render points. (#14417)
             if (this.min && this.max) {
                 if (this.min > this.max) {
-                    if (typeof this.options.min !== 'undefined') {
+                    if (typeof this.options.min !== 'undefined' && this.options.min !== null) {
                         this.max = this.min;
-                    } else if (typeof this.options.max !== 'undefined') {
+                    } else if (typeof this.options.max !== 'undefined' && this.options.max !== null) {
                         this.min = this.max;
                     }
                 }
