@@ -10,27 +10,21 @@
 
 'use strict';
 
-import type {
-    AlignObject,
-    AlignValue,
-    VerticalAlignValue
-} from '../Renderer/AlignObject';
-import type AnimationOptionsObject from '../Animation/AnimationOptionsObject';
+import type AlignObject from '../Renderer/AlignObject';
+import type BBoxObject from '../Renderer/BBoxObject';
 import type ColorString from '../Color/ColorString';
-import type ColorType from '../Color/ColorType';
-import type CSSObject from '../Renderer/CSSObject';
+import type ColumnPoint from '../../Series/Column/ColumnPoint';
+import type DataLabelOptions from './DataLabelOptions';
 import type Point from './Point';
-import type ShadowOptionsObject from '../Renderer/ShadowOptionsObject';
 import type SVGAttributes from '../Renderer/SVG/SVGAttributes';
 import type SVGElement from '../Renderer/SVG/SVGElement';
 import A from '../Animation/AnimationUtilities.js';
 const { getDeferredAnimation } = A;
+import BaseSeries from './Series.js';
+const { seriesTypes } = BaseSeries;
 import H from '../Globals.js';
-const {
-    noop,
-    seriesTypes
-} = H;
-import CartesianSeries from './CartesianSeries.js';
+const { noop } = H;
+import LineSeries from '../../Series/Line/LineSeries.js';
 import U from '../Utilities.js';
 const {
     arrayMax,
@@ -48,14 +42,80 @@ const {
     stableSort
 } = U;
 
+declare module './PointLike' {
+    interface PointLike {
+        bottom?: number;
+        connector?: SVGElement;
+        connectors?: Array<SVGElement>;
+        contrastColor?: ColorString;
+        dataLabel?: SVGElement;
+        dataLabelOnNull?: boolean;
+        dataLabelPath?: SVGElement;
+        dataLabels?: Array<SVGElement>;
+        distributeBox?: Highcharts.DataLabelsBoxObject;
+        dlBox?: BBoxObject;
+        dlOptions?: DataLabelOptions;
+        graphic?: SVGElement;
+        /** @deprecated */
+        positionIndex?: unknown;
+        top?: number;
+        getDataLabelPath(dataLabel: SVGElement): SVGElement;
+    }
+}
+
+declare module './PointOptions' {
+    interface PointOptions {
+        dataLabels?: (DataLabelOptions|Array<DataLabelOptions>);
+        labelrank?: number;
+    }
+}
+
+declare module './SeriesLike' {
+    interface SeriesLike {
+        _hasPointLabels?: boolean;
+        /** @deprecated */
+        dataLabelsGroup?: SVGElement;
+        dataLabelPositioners?: Highcharts.SeriesDataLabelPositionersObject;
+        alignDataLabel(
+            point: Point,
+            dataLabel: SVGElement,
+            options: DataLabelOptions,
+            alignTo: BBoxObject,
+            isNew?: boolean
+        ): void;
+        drawDataLabels(): void;
+        justifyDataLabel(
+            dataLabel: SVGElement,
+            options: DataLabelOptions,
+            alignAttr: SVGAttributes,
+            bBox: BBoxObject,
+            alignTo?: BBoxObject,
+            isNew?: boolean
+        ): (boolean|undefined);
+        placeDataLabels?(): void;
+        setDataLabelStartPos(
+            point: ColumnPoint,
+            dataLabel: SVGElement,
+            isNew: boolean|undefined,
+            isInside: boolean,
+            alignOptions: AlignObject
+        ): void;
+        verifyDataLabelOverflow?(overflow: Array<number>): boolean;
+    }
+}
+
+declare module './SeriesOptions' {
+    interface SeriesOptions {
+        dataLabels?: (DataLabelOptions|Array<DataLabelOptions>);
+    }
+}
+
 /**
  * Internal types
  * @private
  */
 declare global {
     namespace Highcharts {
-        type DataLabelsFilterOperatorValue = ('>'|'<'|'>='|'<='|'=='|'===');
-        type DataLabelsOverflowValue = ('allow'|'justify');
         interface DataLabelsBoxArray extends Array<DataLabelsBoxObject> {
             reducedLen?: number;
         }
@@ -66,105 +126,6 @@ declare global {
             size: number;
             target: number;
             targets?: Array<number>;
-        }
-        interface DataLabelsFilterOptionsObject {
-            operator: DataLabelsFilterOperatorValue;
-            property: string;
-            value: (null|number);
-        }
-        interface DataLabelsFormatterCallbackFunction {
-            (this: PointLabelObject): (
-                number|string|null|undefined
-            );
-        }
-        interface DataLabelsOptions {
-            animation?: (boolean|Partial<AnimationOptionsObject>);
-            align?: AlignValue;
-            allowOverlap?: boolean;
-            backgroundColor?: ColorType;
-            borderColor?: ColorType;
-            borderRadius?: number;
-            borderWidth?: number;
-            className?: string;
-            color?: ColorType;
-            crop?: boolean;
-            defer?: boolean;
-            enabled?: boolean;
-            filter?: DataLabelsFilterOptionsObject;
-            format?: string;
-            formatter?: DataLabelsFormatterCallbackFunction;
-            inside?: boolean;
-            nullFormat?: (boolean|string);
-            overflow?: DataLabelsOverflowValue;
-            padding?: number;
-            rotation?: number;
-            shadow?: (boolean|Partial<ShadowOptionsObject>);
-            shape?: string;
-            style?: CSSObject;
-            textPath?: DataLabelsTextPathOptionsObject;
-            useHTML?: boolean;
-            verticalAlign?: VerticalAlignValue;
-            x?: number;
-            y?: number;
-            zIndex?: number;
-        }
-        interface DataLabelsTextPathOptionsObject {
-            attributes?: SVGAttributes;
-            enabled?: boolean;
-        }
-        interface PointLike {
-            bottom?: number;
-            connector?: SVGElement;
-            connectors?: Array<SVGElement>;
-            contrastColor?: ColorString;
-            dataLabel?: SVGElement;
-            dataLabelPath?: SVGElement;
-            dataLabels?: Array<SVGElement>;
-            distributeBox?: DataLabelsBoxObject;
-            dlBox?: BBoxObject;
-            dlOptions?: DataLabelsOptions;
-            graphic?: SVGElement;
-            /** @deprecated */
-            positionIndex?: unknown;
-            top?: number;
-            getDataLabelPath(dataLabel: SVGElement): SVGElement;
-        }
-        interface PointOptionsObject {
-            dataLabels?: (
-                DataLabelsOptions|
-                Array<DataLabelsOptions>
-            );
-            labelrank?: number;
-        }
-        interface Series {
-            /** @deprecated */
-            dataLabelsGroup?: SVGElement;
-            dataLabelPositioners?: SeriesDataLabelPositionersObject;
-            alignDataLabel(
-                point: Point,
-                dataLabel: SVGElement,
-                options: DataLabelsOptions,
-                alignTo: BBoxObject,
-                isNew?: boolean
-            ): void;
-            drawDataLabels(): void;
-            justifyDataLabel(
-                dataLabel: SVGElement,
-                options: DataLabelsOptions,
-                alignAttr: SVGAttributes,
-                bBox: BBoxObject,
-                alignTo?: BBoxObject,
-                isNew?: boolean
-            ): (boolean|undefined);
-            placeDataLabels?(): void;
-            setDataLabelStartPos(
-                point: ColumnPoint,
-                dataLabel: SVGElement,
-                isNew: boolean|undefined,
-                isInside: boolean,
-                alignOptions: AlignObject
-            ): void;
-            verifyDataLabelOverflow?(overflow: Array<number>): boolean;
         }
         interface SeriesDataLabelPositionersObject {
             alignToConnectors(
@@ -185,7 +146,7 @@ declare global {
                 seriesCenter: Array<number>
             ): number;
             radialDistributionX(
-                series: Series,
+                series: LineSeries,
                 point: Point,
                 y: number,
                 naturalY: number
@@ -412,7 +373,7 @@ H.distribute = function (
  * @return {void}
  * @fires Highcharts.Series#event:afterDrawDataLabels
  */
-CartesianSeries.prototype.drawDataLabels = function (this: Highcharts.Series): void {
+LineSeries.prototype.drawDataLabels = function (): void {
     var series = this,
         chart = series.chart,
         seriesOptions = series.options,
@@ -433,7 +394,7 @@ CartesianSeries.prototype.drawDataLabels = function (this: Highcharts.Series): v
      */
     function applyFilter(
         point: Point,
-        options: Highcharts.DataLabelsOptions
+        options: DataLabelOptions
     ): boolean {
         var filter = options.filter,
             op,
@@ -466,37 +427,21 @@ CartesianSeries.prototype.drawDataLabels = function (this: Highcharts.Series): v
      * @private
      */
     function mergeArrays(
-        one: (
-            Highcharts.DataLabelsOptions|
-            Array<Highcharts.DataLabelsOptions>
-        ),
-        two: (
-            Highcharts.DataLabelsOptions|
-            Array<Highcharts.DataLabelsOptions>
-        )
-    ): (
-        Highcharts.DataLabelsOptions|
-        Array<Highcharts.DataLabelsOptions>
-    ) { // eslint-disable-line @typescript-eslint/indent
-        var res = [] as (
-                Highcharts.DataLabelsOptions|
-                Array<Highcharts.DataLabelsOptions>
-            ),
-            i;
+        one: (DataLabelOptions|Array<DataLabelOptions>),
+        two: (DataLabelOptions|Array<DataLabelOptions>)
+    ): (DataLabelOptions|Array<DataLabelOptions>) {
+        var res: (DataLabelOptions|Array<DataLabelOptions>) = [],
+            i: number;
 
         if (isArray(one) && !isArray(two)) {
             res = (one as any).map(
-                function (
-                    el: Highcharts.DataLabelsOptions
-                ): Highcharts.DataLabelsOptions {
+                function (el: DataLabelOptions): DataLabelOptions {
                     return merge(el, two);
                 }
             );
         } else if (isArray(two) && !isArray(one)) {
             res = (two as any).map(
-                function (
-                    el: Highcharts.DataLabelsOptions
-                ): Highcharts.DataLabelsOptions {
+                function (el: DataLabelOptions): DataLabelOptions {
                     return merge(one, el);
                 }
             );
@@ -558,7 +503,7 @@ CartesianSeries.prototype.drawDataLabels = function (this: Highcharts.Series): v
         }
 
         // Make the labels for each point
-        points.forEach(function (point: Point): void {
+        points.forEach(function (point): void {
 
             // Merge in series options for the point.
             // @note dataLabelAttribs (like pointAttribs) would eradicate
@@ -573,7 +518,7 @@ CartesianSeries.prototype.drawDataLabels = function (this: Highcharts.Series): v
 
             // Handle each individual data label for this point
             pointOptions.forEach(function (
-                labelOptions: Highcharts.DataLabelsOptions,
+                labelOptions: DataLabelOptions,
                 i: number
             ): void {
                 // Options for one datalabel
@@ -805,12 +750,11 @@ CartesianSeries.prototype.drawDataLabels = function (this: Highcharts.Series): v
  * @param {boolean} [isNew]
  * @return {void}
  */
-CartesianSeries.prototype.alignDataLabel = function (
-    this: Highcharts.Series,
+LineSeries.prototype.alignDataLabel = function (
     point: Point,
     dataLabel: SVGElement,
-    options: Highcharts.DataLabelsOptions,
-    alignTo: Highcharts.BBoxObject,
+    options: DataLabelOptions,
+    alignTo: BBoxObject,
     isNew?: boolean
 ): void {
     var series = this,
@@ -861,7 +805,7 @@ CartesianSeries.prototype.alignDataLabel = function (
         setStartPos = function (alignOptions: AlignObject): void {
             if (enabledDataSorting && series.xAxis && !justify) {
                 series.setDataLabelStartPos(
-                    point as Highcharts.ColumnPoint,
+                    point as ColumnPoint,
                     dataLabel,
                     isNew,
                     isInsidePlot,
@@ -1001,9 +945,8 @@ CartesianSeries.prototype.alignDataLabel = function (
  *
  * @return {void}
  */
-CartesianSeries.prototype.setDataLabelStartPos = function (
-    this: Highcharts.Series,
-    point: Highcharts.ColumnPoint,
+LineSeries.prototype.setDataLabelStartPos = function (
+    point: ColumnPoint,
     dataLabel: SVGElement,
     isNew: boolean,
     isInside: boolean,
@@ -1077,13 +1020,12 @@ CartesianSeries.prototype.setDataLabelStartPos = function (
  * @param {boolean} [isNew]
  * @return {boolean|undefined}
  */
-CartesianSeries.prototype.justifyDataLabel = function (
-    this: Highcharts.Series,
+LineSeries.prototype.justifyDataLabel = function (
     dataLabel: SVGElement,
-    options: Highcharts.DataLabelsOptions,
+    options: DataLabelOptions,
     alignAttr: SVGAttributes,
-    bBox: Highcharts.BBoxObject,
-    alignTo?: Highcharts.BBoxObject,
+    bBox: BBoxObject,
+    alignTo?: BBoxObject,
     isNew?: boolean
 ): (boolean|undefined) {
     var chart = this.chart,
@@ -1237,9 +1179,7 @@ if (seriesTypes.pie) {
      * @function Highcharts.seriesTypes.pie#drawDataLabels
      * @return {void}
      */
-    seriesTypes.pie.prototype.drawDataLabels = function (
-        this: Highcharts.PieSeries
-    ): void {
+    seriesTypes.pie.prototype.drawDataLabels = function (): void {
         var series = this,
             data = series.data,
             point,
@@ -1297,7 +1237,7 @@ if (seriesTypes.pie) {
 
 
         // run parent method
-        CartesianSeries.prototype.drawDataLabels.apply(series);
+        LineSeries.prototype.drawDataLabels.apply(series);
 
         data.forEach(function (point: Highcharts.PiePoint): void {
             if (point.dataLabel) {
@@ -1670,9 +1610,7 @@ if (seriesTypes.pie) {
      * @function Highcharts.seriesTypes.pie#placeDataLabels
      * @return {void}
      */
-    seriesTypes.pie.prototype.placeDataLabels = function (
-        this: Highcharts.PieSeries
-    ): void {
+    seriesTypes.pie.prototype.placeDataLabels = function (): void {
         this.points.forEach(function (point: Point): void {
             var dataLabel = point.dataLabel,
                 _pos;
@@ -1724,7 +1662,6 @@ if (seriesTypes.pie) {
      * @return {boolean}
      */
     seriesTypes.pie.prototype.verifyDataLabelOverflow = function (
-        this: Highcharts.PieSeries,
         overflow: Array<number>
     ): boolean {
 
@@ -1810,11 +1747,10 @@ if (seriesTypes.column) {
      * @return {void}
      */
     seriesTypes.column.prototype.alignDataLabel = function (
-        this: Highcharts.ColumnSeries,
         point: Point,
         dataLabel: SVGElement,
-        options: Highcharts.DataLabelsOptions,
-        alignTo: Highcharts.BBoxObject,
+        options: DataLabelOptions,
+        alignTo: BBoxObject,
         isNew?: boolean
     ): void {
         var inverted = this.chart.inverted,
@@ -1879,7 +1815,7 @@ if (seriesTypes.column) {
         );
 
         // Call the parent method
-        CartesianSeries.prototype.alignDataLabel.call(
+        LineSeries.prototype.alignDataLabel.call(
             this,
             point,
             dataLabel,

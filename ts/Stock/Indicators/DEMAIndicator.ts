@@ -6,6 +6,9 @@
  *
  * */
 
+'use strict';
+
+import type LineSeries from '../../Series/Line/LineSeries';
 import BaseSeries from '../../Core/Series/Series.js';
 import RequiredIndicatorMixin from '../../Mixins/IndicatorRequired.js';
 import U from '../../Core/Utilities.js';
@@ -32,7 +35,7 @@ declare global {
                 i?: number,
                 xVal?: Array<number>
             ): [number, number];
-            public getValues<TLinkedSeries extends Series>(
+            public getValues<TLinkedSeries extends LineSeries>(
                 series: TLinkedSeries,
                 params: DEMAIndicatorParamsOptions
             ): (IndicatorValuesObject<TLinkedSeries>|undefined);
@@ -42,7 +45,7 @@ declare global {
             public points: Array<DEMAIndicatorPoint>;
         }
 
-        interface DEMAIndicatorLinkedParentSeries extends Series {
+        interface DEMAIndicatorLinkedParentSeries extends LineSeries {
             EMApercent?: number;
         }
 
@@ -60,7 +63,7 @@ declare global {
     }
 }
 
-declare module '../../Core/Series/Types' {
+declare module '../../Core/Series/SeriesType' {
     interface SeriesTypeRegistry {
         dema: typeof Highcharts.DEMAIndicator;
     }

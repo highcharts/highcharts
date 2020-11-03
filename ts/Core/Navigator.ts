@@ -12,7 +12,8 @@
 
 import type ColorType from './Color/ColorType';
 import type CSSObject from './Renderer/CSSObject';
-import type { SeriesOptionsType } from './Series/Types';
+import type PointerEvent from './PointerEvent';
+import type { SeriesTypeOptions } from './Series/SeriesType';
 import type SVGElement from './Renderer/SVG/SVGElement';
 import type SVGPath from './Renderer/SVG/SVGPath';
 import Axis from './Axis/Axis.js';
@@ -30,7 +31,7 @@ const {
     hasTouch,
     isTouchDevice
 } = H;
-import LineSeries from '../Series/LineSeries.js';
+import LineSeries from '../Series/Line/LineSeries.js';
 import NavigatorAxis from './Axis/NavigatorAxis.js';
 import O from './Options.js';
 const { defaultOptions } = O;
@@ -58,6 +59,13 @@ declare module './Chart/ChartLike'{
         navigator?: Navigator;
         scrollbar?: Scrollbar;
         scroller?: Navigator;
+    }
+}
+
+declare module './Series/SeriesLike' {
+    interface SeriesLike {
+        baseSeries?: LineSeries;
+        navigatorSeries?: LineSeries;
     }
 }
 
@@ -89,17 +97,13 @@ declare global {
             opposite?: boolean;
             outlineColor?: ColorType;
             outlineWidth?: number;
-            series?: SeriesOptionsType;
+            series?: SeriesTypeOptions;
             top?: number;
             xAxis?: XAxisOptions;
             yAxis?: YAxisOptions;
         }
         interface Options {
             navigator?: NavigatorOptions;
-        }
-        interface Series {
-            baseSeries?: Series;
-            navigatorSeries?: Series;
         }
         interface XAxisOptions {
             maxRange?: number;
@@ -112,7 +116,7 @@ declare global {
         }
         class Navigator {
             public constructor(chart: Chart);
-            public baseSeries: Array<Series>;
+            public baseSeries: Array<LineSeries>;
             public chart: Chart;
             public dragOffset?: number;
             public eventsToUnbind?: Array<Function>;
@@ -131,7 +135,7 @@ declare global {
             public navigatorEnabled: boolean;
             public navigatorGroup: SVGElement;
             public navigatorOptions: NavigatorOptions;
-            public navigatorSeries: Series;
+            public navigatorSeries: LineSeries;
             public navigatorSize: number;
             public opposite: boolean;
             public otherHandlePos?: number;
@@ -144,7 +148,7 @@ declare global {
             public scrollbarEnabled?: boolean;
             public scrollbarHeight?: number;
             public scrollbarOptions?: ScrollbarOptions;
-            public series?: Array<Series>;
+            public series?: Array<LineSeries>;
             public shades: Array<SVGElement>;
             public size: number;
             public stickToMax?: boolean;
@@ -182,12 +186,12 @@ declare global {
             public getUnionExtremes(
                 returnFalseOnNoBaseSeries?: boolean
             ): (Dictionary<(number|undefined)>|undefined);
-            public handlesMousedown(e: PointerEventObject, index: number): void;
+            public handlesMousedown(e: PointerEvent, index: number): void;
             public init(chart: Chart): void;
             public modifyBaseAxisExtremes(): void;
             public modifyNavigatorAxisExtremes(): void;
-            public onMouseMove(e: PointerEventObject): void;
-            public onMouseUp(e: PointerEventObject): void;
+            public onMouseMove(e: PointerEvent): void;
+            public onMouseUp(e: PointerEvent): void;
             public removeBaseSeriesEvents(): void;
             public removeEvents(): void;
             public render(
@@ -198,7 +202,7 @@ declare global {
             ): void;
             public renderElements(): void;
             public setBaseSeries(
-                baseSeriesOptions?: SeriesOptionsType,
+                baseSeriesOptions?: SeriesTypeOptions,
                 redraw?: boolean
             ): void;
             public update(options: NavigatorOptions): void;
@@ -794,7 +798,7 @@ class Navigator {
         this.init(chart);
     }
 
-    public baseSeries: Array<Highcharts.Series> = void 0 as any;
+    public baseSeries: Array<LineSeries> = void 0 as any;
     public chart: Chart = void 0 as any;
     public dragOffset?: number;
     public eventsToUnbind?: Array<Function>;
@@ -813,7 +817,7 @@ class Navigator {
     public navigatorEnabled: boolean = void 0 as any;
     public navigatorGroup: SVGElement = void 0 as any;
     public navigatorOptions: Highcharts.NavigatorOptions = void 0 as any;
-    public navigatorSeries: Highcharts.Series = void 0 as any;
+    public navigatorSeries: LineSeries = void 0 as any;
     public navigatorSize: number = void 0 as any;
     public opposite: boolean = void 0 as any;
     public otherHandlePos?: number;
@@ -826,7 +830,7 @@ class Navigator {
     public scrollbarEnabled?: boolean;
     public scrollbarHeight?: number;
     public scrollbarOptions?: Highcharts.ScrollbarOptions;
-    public series?: Array<Highcharts.Series>;
+    public series?: Array<LineSeries>;
     public shades: Array<SVGElement> = void 0 as any;
     public size: number = void 0 as any;
     public top: number = void 0 as any;
@@ -1140,7 +1144,7 @@ class Navigator {
      */
     public update(options: Highcharts.NavigatorOptions): void {
         // Remove references to old navigator series in base series
-        (this.series || []).forEach(function (series: Highcharts.Series): void {
+        (this.series || []).forEach(function (series): void {
             if (series.baseSeries) {
                 delete series.baseSeries.navigatorSeries;
             }
@@ -1368,12 +1372,12 @@ class Navigator {
          * Make them as separate functions to enable wrapping them:
          */
         navigator.mouseMoveHandler = mouseMoveHandler = function (
-            e: Highcharts.PointerEventObject
+            e: PointerEvent
         ): void {
             navigator.onMouseMove(e);
         };
         navigator.mouseUpHandler = mouseUpHandler = function (
-            e: Highcharts.PointerEventObject
+            e: PointerEvent
         ): void {
             navigator.onMouseUp(e);
         };
@@ -1441,7 +1445,7 @@ class Navigator {
                     addEvent(
                         navigatorItem.element,
                         eventName,
-                        function (e: Highcharts.PointerEventObject): void {
+                        function (e: PointerEvent): void {
                             (navigator as any)[name + 'Mousedown'](e, index);
                         }
                     )
@@ -1468,7 +1472,7 @@ class Navigator {
      *        Index of a mask in Navigator.shades array
      */
     public shadesMousedown(
-        e: Highcharts.PointerEventObject,
+        e: PointerEvent,
         index: number
     ): void {
         e = this.chart.pointer.normalize(e);
@@ -1548,7 +1552,7 @@ class Navigator {
      * @return {void}
      */
     public handlesMousedown(
-        e: Highcharts.PointerEventObject,
+        e: PointerEvent,
         index: number
     ): void {
         e = this.chart.pointer.normalize(e);
@@ -1583,7 +1587,7 @@ class Navigator {
      * @param {Highcharts.PointerEventObject} e
      *        Mouse event
      */
-    public onMouseMove(e: Highcharts.PointerEventObject): void {
+    public onMouseMove(e: PointerEvent): void {
         var navigator = this,
             chart = navigator.chart,
             left = navigator.left,
@@ -1673,7 +1677,7 @@ class Navigator {
      *        Mouse event
      * @return {void}
      */
-    public onMouseUp(e: Highcharts.PointerEventObject): void {
+    public onMouseUp(e: PointerEvent): void {
         var navigator = this,
             chart = navigator.chart,
             xAxis = navigator.xAxis,
@@ -1808,7 +1812,7 @@ class Navigator {
 
         if (this.navigatorEnabled && baseSeries[0]) {
             if (this.navigatorOptions.adaptToUpdatedData !== false) {
-                baseSeries.forEach(function (series: Highcharts.Series): void {
+                baseSeries.forEach(function (series): void {
                     removeEvent(series, 'updatedData', this.updatedDataHandler);
                 }, this);
             }
@@ -2011,7 +2015,7 @@ class Navigator {
             );
             addEvent(navigator.scrollbar, 'changed', function (
                 this: Highcharts.Scrollbar,
-                e: Highcharts.PointerEventObject
+                e: PointerEvent
             ): void {
                 var range = navigator.size,
                     to = range * (this.to as any),
@@ -2097,18 +2101,18 @@ class Navigator {
      * @return {void}
      */
     public setBaseSeries(
-        baseSeriesOptions?: SeriesOptionsType,
+        baseSeriesOptions?: SeriesTypeOptions,
         redraw?: boolean
     ): void {
         var chart = this.chart,
-            baseSeries = this.baseSeries = [] as Array<Highcharts.Series>;
+            baseSeries = this.baseSeries = [] as Array<LineSeries>;
 
         baseSeriesOptions = (
             baseSeriesOptions ||
             chart.options && (chart.options.navigator as any).baseSeries ||
             (chart.series.length ?
                 // Find the first non-navigator series (#8430)
-                (find(chart.series, function (s: Highcharts.Series): boolean {
+                (find(chart.series, function (s: LineSeries): boolean {
                     return !s.options.isInternal;
                 }) as any).index :
                 0
@@ -2117,10 +2121,7 @@ class Navigator {
 
         // Iterate through series and add the ones that should be shown in
         // navigator.
-        (chart.series || []).forEach(function (
-            series: Highcharts.Series,
-            i: number
-        ): void {
+        (chart.series || []).forEach(function (series, i): void {
             if (
                 // Don't include existing nav series
                 !series.options.isInternal &&
@@ -2161,7 +2162,7 @@ class Navigator {
             chart = navigator.chart,
             baseSeries = navigator.baseSeries,
             baseOptions,
-            mergedNavSeriesOptions: SeriesOptionsType,
+            mergedNavSeriesOptions: SeriesTypeOptions,
             chartNavigatorSeriesOptions = navigator.navigatorOptions.series,
             baseNavigatorOptions,
             navSeriesMixin = {
@@ -2183,9 +2184,7 @@ class Navigator {
             } as Highcharts.Dictionary<any>,
             // Remove navigator series that are no longer in the baseSeries
             navigatorSeries = navigator.series =
-                (navigator.series || []).filter(function (
-                    navSeries: Highcharts.Series
-                ): boolean {
+                (navigator.series || []).filter(function (navSeries): boolean {
                     var base = navSeries.baseSeries;
 
                     if (baseSeries.indexOf(base as any) < 0) { // Not in array
@@ -2212,16 +2211,14 @@ class Navigator {
         // Go through each base series and merge the options to create new
         // series
         if (baseSeries && baseSeries.length) {
-            baseSeries.forEach(function eachBaseSeries(
-                base: Highcharts.Series
-            ): void {
+            baseSeries.forEach(function eachBaseSeries(base): void {
                 var linkedNavSeries = base.navigatorSeries,
                     userNavOptions = extend(
                         // Grab color and visibility from base as default
                         {
                             color: base.color,
                             visible: base.visible
-                        } as Highcharts.Dictionary<any>,
+                        } as Record<string, any>,
                         !isArray(chartNavigatorSeriesOptions) ?
                             chartNavigatorSeriesOptions :
                             (defaultOptions.navigator as any).series
@@ -2294,7 +2291,7 @@ class Navigator {
             chartNavigatorSeriesOptions =
                 (splat(chartNavigatorSeriesOptions) as any);
             (chartNavigatorSeriesOptions as any).forEach(function (
-                userSeriesOptions: SeriesOptionsType,
+                userSeriesOptions: SeriesTypeOptions,
                 i: number
             ): void {
                 navSeriesMixin.name =
@@ -2356,14 +2353,14 @@ class Navigator {
             );
         }
 
-        baseSeries.forEach(function (base: Highcharts.Series): void {
+        baseSeries.forEach(function (base): void {
             // Link base series show/hide to navigator series visibility
-            addEvent(base, 'show', function (this: Highcharts.Series): void {
+            addEvent(base, 'show', function (): void {
                 if (this.navigatorSeries) {
                     this.navigatorSeries.setVisible(true, false);
                 }
             });
-            addEvent(base, 'hide', function (this: Highcharts.Series): void {
+            addEvent(base, 'hide', function (): void {
                 if (this.navigatorSeries) {
                     this.navigatorSeries.setVisible(false, false);
                 }
@@ -2378,7 +2375,7 @@ class Navigator {
             }
 
             // Handle series removal
-            addEvent(base, 'remove', function (this: Highcharts.Series): void {
+            addEvent(base, 'remove', function (): void {
                 if (this.navigatorSeries) {
                     erase(navigator.series as any, this.navigatorSeries);
                     if (defined(this.navigatorSeries.options)) {
@@ -2401,7 +2398,7 @@ class Navigator {
         currentSeriesMin: number
     ): number {
         return this.baseSeries.reduce(
-            function (min: number, series: Highcharts.Series): number {
+            function (min: number, series: LineSeries): number {
                 // (#10193)
                 return Math.min(min, series.xData ? series.xData[0] : min);
             },
@@ -2516,7 +2513,7 @@ class Navigator {
      * @private
      * @function Highcharts.Navigator#updateDataHandler
      */
-    public updatedDataHandler(this: Highcharts.Series): void {
+    public updatedDataHandler(this: LineSeries): void {
         var navigator = this.chart.navigator as Highcharts.Navigator,
             baseSeries = this,
             navigatorSeries = this.navigatorSeries,
@@ -2625,7 +2622,7 @@ class Navigator {
             erase(this.chart.axes, this.yAxis);
         }
         // Destroy series
-        (this.series || []).forEach(function (s: Highcharts.Series): void {
+        (this.series || []).forEach(function (s): void {
             if (s.destroy) {
                 s.destroy();
             }
@@ -2799,7 +2796,7 @@ if (!H.Navigator) {
     });
 
     // Handle updating series
-    addEvent(LineSeries, 'afterUpdate', function (this: Highcharts.Series): void {
+    addEvent(LineSeries, 'afterUpdate', function (): void {
         if (this.chart.navigator && !this.options.isInternal) {
             this.chart.navigator.setBaseSeries(null as any, false);
         }
@@ -2807,7 +2804,7 @@ if (!H.Navigator) {
 
     Chart.prototype.callbacks.push(function (chart: Chart): void {
         var extremes,
-            navigator = chart.navigator as Highcharts.Navigator;
+            navigator = chart.navigator;
 
         // Initialize the navigator
         if (navigator && chart.xAxis[0]) {

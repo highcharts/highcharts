@@ -10,14 +10,34 @@
  *
  * */
 
+'use strict';
+
+/* *
+ *
+ *  Imports
+ *
+ * */
+
 import type ColorType from '../Core/Color/ColorString';
+import type ColumnMetricsObject from './Column/ColumnMetricsObject';
+import type ColumnPoint from './Column/ColumnPoint';
+import type ColumnPointOptions from './Column/ColumnPointOptions';
+import type ColumnSeriesOptions from './Column/ColumnSeriesOptions';
+import type PositionObject from '../Core/Renderer/PositionObject';
+import type RectangleObject from '../Core/Renderer/RectangleObject';
+import type {
+    SeriesStateHoverOptions,
+    SeriesStatesOptions
+} from '../Core/Series/SeriesOptions';
+import type SizeObject from '../Core/Renderer/SizeObject';
 import Axis from '../Core/Axis/Axis.js';
 import BaseSeries from '../Core/Series/Series.js';
 import H from '../Core/Globals.js';
 import Color from '../Core/Color/Color.js';
-const {
-    parse: color
-} = Color;
+const { parse: color } = Color;
+import ColumnSeries from './Column/ColumnSeries.js';
+const { prototype: columnProto } = ColumnSeries;
+import LineSeries from './Line/LineSeries.js';
 import Point from '../Core/Series/Point.js';
 import U from '../Core/Utilities.js';
 const {
@@ -85,7 +105,7 @@ declare global {
         interface XRangePartialFillObject extends PositionObject, SizeObject {
             r?: number;
         }
-        interface XRangePointLabelObject extends PointLabelObject {
+        interface XRangePointLabelObject extends Point.PointLabelObject {
             x2?: XRangePoint['x2'];
             yCategory?: XRangePoint['yCategory'];
         }
@@ -104,7 +124,7 @@ declare global {
         }
         interface XRangeSeriesOptions extends ColumnSeriesOptions {
             partialFill?: XRangePointPartialFillOptions;
-            states?: SeriesStatesOptionsObject<XRangeSeries>;
+            states?: SeriesStatesOptions<XRangeSeries>;
         }
     }
 }
@@ -118,11 +138,7 @@ declare global {
  * @requires modules/xrange
  */
 
-import './ColumnSeries.js';
-
-const Series = H.Series,
-    seriesTypes = BaseSeries.seriesTypes,
-    columnType = seriesTypes.column;
+const seriesTypes = BaseSeries.seriesTypes;
 
 /**
  * Return color of a point based on its category.
@@ -140,7 +156,7 @@ const Series = H.Series,
  *         Returns an object containing the properties color and colorIndex.
  */
 function getColorByCategory(
-    series: Highcharts.Series,
+    series: LineSeries,
     point: Point
 ): Highcharts.Dictionary<any> {
     var colors = series.options.colors || series.chart.options.colors,
@@ -159,13 +175,13 @@ function getColorByCategory(
 /**
  * @private
  */
-declare module '../Core/Series/Types' {
+declare module '../Core/Series/SeriesType' {
     interface SeriesTypeRegistry {
         xrange: typeof Highcharts.XRangeSeries;
     }
 }
 
-import './ColumnSeries.js';
+import './Column/ColumnSeries.js';
 
 /**
  * @private
@@ -300,7 +316,7 @@ BaseSeries.seriesType<typeof Highcharts.XRangeSeries>('xrange', 'column'
          */
         getColumnMetrics: function (
             this: Highcharts.XRangeSeries
-        ): Highcharts.ColumnMetricsObject {
+        ): ColumnMetricsObject {
             var metrics,
                 chart = this.chart;
 
@@ -308,7 +324,7 @@ BaseSeries.seriesType<typeof Highcharts.XRangeSeries>('xrange', 'column'
              * @private
              */
             function swapAxes(): void {
-                chart.series.forEach(function (s: Highcharts.Series): void {
+                chart.series.forEach(function (s): void {
                     var xAxis = s.xAxis;
 
                     s.xAxis = s.yAxis;
@@ -318,7 +334,7 @@ BaseSeries.seriesType<typeof Highcharts.XRangeSeries>('xrange', 'column'
 
             swapAxes();
 
-            metrics = columnType.prototype.getColumnMetrics.call(this);
+            metrics = columnProto.getColumnMetrics.call(this);
 
             swapAxes();
 
@@ -353,7 +369,7 @@ BaseSeries.seriesType<typeof Highcharts.XRangeSeries>('xrange', 'column'
         ): Highcharts.SeriesCropDataObject {
 
             // Replace xData with x2Data to find the appropriate cropStart
-            var cropData = Series.prototype.cropData,
+            var cropData = LineSeries.prototype.cropData,
                 crop = cropData.call(this, this.x2Data as any, yData, min, max);
 
             // Re-insert the cropped xData
@@ -426,7 +442,7 @@ BaseSeries.seriesType<typeof Highcharts.XRangeSeries>('xrange', 'column'
             var series = this,
                 xAxis = series.xAxis,
                 yAxis = series.yAxis,
-                metrics: Highcharts.ColumnMetricsObject =
+                metrics: ColumnMetricsObject =
                     series.columnMetrics as any,
                 options = series.options,
                 minPointLength = options.minPointLength || 0,
@@ -586,7 +602,7 @@ BaseSeries.seriesType<typeof Highcharts.XRangeSeries>('xrange', 'column'
          * @function Highcharts.Series#translate
          */
         translate: function (this: Highcharts.XRangeSeries): void {
-            columnType.prototype.translate.apply(this, arguments as any);
+            columnProto.translate.apply(this, arguments as any);
             this.points.forEach(function (point: Highcharts.XRangePoint): void {
                 this.translatePoint(point);
             }, this);
@@ -623,7 +639,7 @@ BaseSeries.seriesType<typeof Highcharts.XRangeSeries>('xrange', 'column'
                 pfOptions = point.partialFill,
                 cutOff = seriesOpts.stacking && !seriesOpts.borderRadius,
                 pointState = point.state,
-                stateOpts: Highcharts.SeriesStatesHoverOptionsObject = (
+                stateOpts: SeriesStateHoverOptions = (
                     (seriesOpts.states as any)[pointState || 'normal'] ||
                     {}
                 ),
@@ -889,7 +905,7 @@ addEvent(Axis, 'afterGetSeriesExtremes', function (): void {
 
     if (axis.isXAxis) {
         dataMax = pick(axis.dataMax, -Number.MAX_VALUE);
-        axisSeries.forEach(function (series: Highcharts.Series): void {
+        axisSeries.forEach(function (series): void {
             if ((series as Highcharts.XRangeSeries).x2Data) {
                 (series as Highcharts.XRangeSeries).x2Data
                     .forEach(function (val: (number|undefined)): void {

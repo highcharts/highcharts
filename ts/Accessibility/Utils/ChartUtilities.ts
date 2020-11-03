@@ -14,9 +14,8 @@
 
 import type Axis from '../../Core/Axis/Axis';
 import type Chart from '../../Core/Chart/Chart';
-import type {
-    DOMElementType
-} from '../../Core/Renderer/DOMElementType';
+import type { DOMElementType } from '../../Core/Renderer/DOMElementType';
+import type LineSeries from '../../Series/Line/LineSeries';
 import type Point from '../../Core/Series/Point';
 import HTMLUtilities from './HTMLUtilities.js';
 const {
@@ -40,22 +39,22 @@ declare global {
             getChartTitle(chart: Chart): string;
             getAxisDescription(axis: Axis): string;
             getPointFromXY(
-                series: Array<Series>,
+                series: Array<LineSeries>,
                 x: number,
                 y: number
             ): (Point|undefined);
             getSeriesFirstPointElement(
-                series: Series
+                series: LineSeries
             ): (DOMElementType|undefined);
-            getSeriesFromName(chart: Chart, name: string): Array<Series>;
+            getSeriesFromName(chart: Chart, name: string): Array<LineSeries>;
             getSeriesA11yElement(
-                series: Series
+                series: LineSeries
             ): (DOMElementType|undefined);
             unhideChartElementFromAT(
                 chart: Chart,
                 element: DOMElementType
             ): void;
-            hideSeriesFromAT(series: Series): void;
+            hideSeriesFromAT(series: LineSeries): void;
             scrollToPoint(point: Point): void;
         }
     }
@@ -104,7 +103,7 @@ function getAxisDescription(axis: Highcharts.Axis): string {
  * The DOM element for the point.
  */
 function getSeriesFirstPointElement(
-    series: Highcharts.Series
+    series: LineSeries
 ): (DOMElementType|undefined) {
     if (series.points?.length) {
         const firstPointWithGraphic = find(series.points, (p: Point): boolean => !!p.graphic);
@@ -122,7 +121,7 @@ function getSeriesFirstPointElement(
  * The DOM element for the series
  */
 function getSeriesA11yElement(
-    series: Highcharts.Series
+    series: LineSeries
 ): (DOMElementType|undefined) {
     var firstPointEl = getSeriesFirstPointElement(series);
     return (
@@ -168,7 +167,7 @@ function unhideChartElementFromAT(chart: Chart, element: DOMElementType): void {
  * The series to hide
  * @return {void}
  */
-function hideSeriesFromAT(series: Highcharts.Series): void {
+function hideSeriesFromAT(series: LineSeries): void {
     var seriesEl = getSeriesA11yElement(series);
 
     if (seriesEl) {
@@ -187,14 +186,12 @@ function hideSeriesFromAT(series: Highcharts.Series): void {
 function getSeriesFromName(
     chart: Chart,
     name: string
-): Array<Highcharts.Series> {
+): Array<LineSeries> {
     if (!name) {
         return chart.series;
     }
 
-    return (chart.series || []).filter(function (
-        s: Highcharts.Series
-    ): boolean {
+    return (chart.series || []).filter(function (s): boolean {
         return s.name === name;
     });
 }
@@ -209,7 +206,7 @@ function getSeriesFromName(
  * @return {Highcharts.Point|undefined}
  */
 function getPointFromXY(
-    series: Array<Highcharts.Series>,
+    series: Array<LineSeries>,
     x: number,
     y: number
 ): (Point|undefined) {

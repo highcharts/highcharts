@@ -8,26 +8,34 @@
  *
  * */
 
+'use strict';
+
+/* *
+ *
+ *  Imports
+ *
+ * */
+
 import type AnimationOptionsObject from '../Core/Animation/AnimationOptionsObject';
 import type { AlignValue } from '../Core/Renderer/AlignObject';
+import type LinePoint from './Line/LinePoint';
+import type LinePointOptions from './Line/LinePointOptions';
+import type LineSeriesOptions from './Line/LineSeriesOptions';
+import type DataLabelOptions from '../Core/Series/DataLabelOptions';
+import type PositionObject from '../Core/Renderer/PositionObject';
+import type { SeriesStatesOptions } from '../Core/Series/SeriesOptions';
 import type SVGAttributes from '../Core/Renderer/SVG/SVGAttributes';
 import type SVGPath from '../Core/Renderer/SVG/SVGPath';
 import A from '../Core/Animation/AnimationUtilities.js';
-const {
-    setAnimation
-} = A;
+const { setAnimation } = A;
 import BaseSeries from '../Core/Series/Series.js';
 import CenteredSeriesMixin from '../Mixins/CenteredSeries.js';
-const {
-    getStartAndEndRadians
-} = CenteredSeriesMixin;
+const { getStartAndEndRadians } = CenteredSeriesMixin;
 import ColorType from '../Core/Color/ColorType';
 import H from '../Core/Globals.js';
-const {
-    noop
-} = H;
+const { noop } = H;
 import LegendSymbolMixin from '../Mixins/LegendSymbol.js';
-import LineSeries from '../Series/LineSeries.js';
+import LineSeries from '../Series/Line/LineSeries.js';
 import Point from '../Core/Series/Point.js';
 import SVGRenderer from '../Core/Renderer/SVG/SVGRenderer.js';
 import U from '../Core/Utilities.js';
@@ -42,10 +50,27 @@ const {
     relativeLength
 } = U;
 
-/**
- * @private
- */
-declare module '../Core/Series/Types' {
+import '../Core/Options.js';
+
+/* *
+ *
+ *  Declarations
+ *
+ * */
+
+declare module '../Core/Series/SeriesLike' {
+    interface SeriesLike {
+        redrawPoints(): void;
+    }
+}
+
+declare module '../Core/Series/SeriesOptions' {
+    interface SeriesStateHoverOptions {
+        brightness?: number;
+    }
+}
+
+declare module '../Core/Series/SeriesType' {
     interface SeriesTypeRegistry {
         pie: typeof Highcharts.PieSeries;
     }
@@ -120,9 +145,7 @@ declare global {
         interface PiePositionObject extends PositionObject {
             alignment: AlignValue;
         }
-        interface PieSeriesDataLabelsOptionsObject
-            extends DataLabelsOptions
-        {
+        interface PieSeriesDataLabelsOptionsObject extends DataLabelOptions {
             alignTo?: string;
             connectorColor?: ColorType;
             connectorPadding?: number;
@@ -145,18 +168,19 @@ declare global {
             size?: (number|string|null);
             slicedOffset?: number;
             startAngle?: number;
-            states?: SeriesStatesOptionsObject<PieSeries>;
+            states?: SeriesStatesOptions<PieSeries>;
         }
         interface PieSeriesPositionObject extends PositionObject {
             alignment: AlignValue;
         }
-        interface SeriesStatesHoverOptionsObject {
-            brightness?: number;
-        }
     }
 }
 
-import '../Core/Options.js';
+/* *
+ *
+ *  Class
+ *
+ * */
 
 /**
  * Pie series type.
@@ -468,7 +492,7 @@ BaseSeries.seriesType<typeof Highcharts.PieSeries>(
              * @default function () { return this.point.isNull ? void 0 : this.point.name; }
              */
             formatter: function (
-                this: Highcharts.PointLabelObject
+                this: Point.PointLabelObject
             ): (string|undefined) { // #2945
                 return this.point.isNull ? void 0 : this.point.name;
             },

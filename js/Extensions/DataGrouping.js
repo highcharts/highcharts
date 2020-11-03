@@ -11,6 +11,13 @@
 import Axis from '../Core/Axis/Axis.js';
 import DateTimeAxis from '../Core/Axis/DateTimeAxis.js';
 import H from '../Core/Globals.js';
+import LineSeries from '../Series/Line/LineSeries.js';
+var seriesProto = LineSeries.prototype;
+import O from '../Core/Options.js';
+import Point from '../Core/Series/Point.js';
+import Tooltip from '../Core/Tooltip.js';
+import U from '../Core/Utilities.js';
+var addEvent = U.addEvent, arrayMax = U.arrayMax, arrayMin = U.arrayMin, correctFloat = U.correctFloat, defined = U.defined, error = U.error, extend = U.extend, format = U.format, isNumber = U.isNumber, merge = U.merge, pick = U.pick;
 /**
  * @typedef {"average"|"averages"|"open"|"high"|"low"|"close"|"sum"} Highcharts.DataGroupingApproximationValue
  */
@@ -27,15 +34,7 @@ import H from '../Core/Globals.js';
 * @type {number}
 */
 ''; // detach doclets above
-import O from '../Core/Options.js';
-var defaultOptions = O.defaultOptions;
-import Point from '../Core/Series/Point.js';
-import Tooltip from '../Core/Tooltip.js';
-import U from '../Core/Utilities.js';
-var addEvent = U.addEvent, arrayMax = U.arrayMax, arrayMin = U.arrayMin, correctFloat = U.correctFloat, defined = U.defined, error = U.error, extend = U.extend, format = U.format, isNumber = U.isNumber, merge = U.merge, pick = U.pick;
 import '../Core/Axis/Axis.js';
-import '../Series/LineSeries.js';
-var Series = H.Series;
 /* ************************************************************************** *
  *  Start data grouping module                                                *
  * ************************************************************************** */
@@ -261,7 +260,7 @@ var dataGrouping = {
 };
 // -----------------------------------------------------------------------------
 // The following code applies to implementation of data grouping on a Series
-var seriesProto = Series.prototype, baseProcessData = seriesProto.processData, baseGeneratePoints = seriesProto.generatePoints, 
+var baseProcessData = seriesProto.processData, baseGeneratePoints = seriesProto.generatePoints, 
 /** @ignore */
 commonOptions = {
     // enabled: null, // (true for stock charts, false for basic),
@@ -584,10 +583,10 @@ addEvent(Tooltip, 'headerFormatter', function (e) {
     }
 });
 // Destroy grouped data on series destroy
-addEvent(Series, 'destroy', seriesProto.destroyGroupedData);
+addEvent(LineSeries, 'destroy', seriesProto.destroyGroupedData);
 // Handle default options for data grouping. This must be set at runtime because
 // some series types are defined after this.
-addEvent(Series, 'afterSetOptions', function (e) {
+addEvent(LineSeries, 'afterSetOptions', function (e) {
     var options = e.options, type = this.type, plotOptions = this.chart.options.plotOptions, defaultOptions = O.defaultOptions.plotOptions[type].dataGrouping, 
     // External series, for example technical indicators should also
     // inherit commonOptions which are not available outside this module

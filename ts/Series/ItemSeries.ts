@@ -10,6 +10,10 @@
  *
  * */
 
+'use strict';
+
+import type { PointMarkerOptions } from '../Core/Series/PointOptions';
+import type { SeriesStatesOptions } from '../Core/Series/SeriesOptions';
 import type SVGAttributes from '../Core/Renderer/SVG/SVGAttributes';
 import type SVGElement from '../Core/Renderer/SVG/SVGElement';
 import BaseSeries from '../Core/Series/Series.js';
@@ -61,7 +65,7 @@ declare global {
         }
         interface ItemPointOptions extends PiePointOptions {
         }
-        interface ItemPointMarkerOptions extends PointMarkerOptionsObject {
+        interface ItemPointMarkerOptions extends PointMarkerOptions {
             radius: undefined;
         }
         interface ItemRowObject {
@@ -81,17 +85,8 @@ declare global {
             layout?: string;
             marker?: ItemPointMarkerOptions;
             rows?: number;
-            states?: SeriesStatesOptionsObject<ItemSeries>;
+            states?: SeriesStatesOptions<ItemSeries>;
         }
-    }
-}
-
-/**
- * @private
- */
-declare module '../Core/Series/Types' {
-    interface SeriesTypeRegistry {
-        item: typeof Highcharts.ItemSeries;
     }
 }
 
@@ -598,6 +593,23 @@ BaseSeries.seriesType<typeof Highcharts.ItemSeries>(
     }
 );
 
+/* *
+ *
+ *  Registry
+ *
+ * */
+
+declare module '../Core/Series/SeriesType' {
+    interface SeriesTypeRegistry {
+        item: typeof Highcharts.ItemSeries;
+    }
+}
+
+/* *
+ *
+ *  API Options
+ *
+ * */
 
 /**
  * An `item` series. If the [type](#series.item.type) option is not specified,

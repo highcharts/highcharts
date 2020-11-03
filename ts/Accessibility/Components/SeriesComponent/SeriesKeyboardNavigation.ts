@@ -16,8 +16,8 @@ import Series from '../../../Core/Series/Series.js';
 const {
     seriesTypes
 } = Series;
-import CartesianSeries from '../../../Core/Series/CartesianSeries.js';
 import Chart from '../../../Core/Chart/Chart.js';
+import LineSeries from '../../../Series/Line/LineSeries.js';
 import Point from '../../../Core/Series/Point.js';
 import U from '../../../Core/Utilities.js';
 const {
@@ -34,6 +34,22 @@ declare module '../../../Core/Chart/ChartLike'{
         highlightAdjacentPointVertical(down: boolean): (boolean|Point);
         /** @requires modules/accessibility */
         highlightAdjacentSeries(down: boolean): (boolean|Point);
+    }
+}
+
+declare module '../../../Core/Series/PointLike' {
+    interface PointLike {
+        /** @requires modules/accessibility */
+        highlight(): Point;
+    }
+}
+
+declare module '../../../Core/Series/SeriesLike' {
+    interface SeriesLike {
+        /** @requires modules/accessibility */
+        keyboardMoveVertical: boolean;
+        /** @requires modules/accessibility */
+        highlightFirstValidPoint(): (boolean|Point);
     }
 }
 
@@ -75,17 +91,7 @@ declare global {
                 handler: KeyboardNavigationHandler,
                 keyCode: number
             ): number;
-            public onSeriesDestroy(series: Highcharts.Series): void;
-        }
-        interface PointLike {
-            /** @requires modules/accessibility */
-            highlight(): Point;
-        }
-        interface Series {
-            /** @requires modules/accessibility */
-            keyboardMoveVertical: boolean;
-            /** @requires modules/accessibility */
-            highlightFirstValidPoint(): (boolean|Point);
+            public onSeriesDestroy(series: LineSeries): void;
         }
         interface SeriesKeyboardNavigationDrilldownObject {
             x: (number|null);
@@ -102,7 +108,7 @@ var getPointFromXY = ChartUtilities.getPointFromXY,
     getSeriesFromName = ChartUtilities.getSeriesFromName,
     scrollToPoint = ChartUtilities.scrollToPoint;
 
-import '../../../Series/ColumnSeries.js';
+import '../../../Series/Column/ColumnSeries.js';
 import '../../../Series/PieSeries.js';
 
 /* eslint-disable no-invalid-this, valid-jsdoc */
@@ -111,7 +117,7 @@ import '../../../Series/PieSeries.js';
  * Set for which series types it makes sense to move to the closest point with
  * up/down arrows, and which series types should just move to next series.
  */
-CartesianSeries.prototype.keyboardMoveVertical = true;
+LineSeries.prototype.keyboardMoveVertical = true;
 (['column', 'pie'] as Array<('column'|'pie')>).forEach(function (type): void {
     if (seriesTypes[type]) {
         seriesTypes[type].prototype.keyboardMoveVertical = false;
@@ -380,7 +386,7 @@ Chart.prototype.highlightAdjacentPoint = function (
  *
  * @return {boolean|Highcharts.Point}
  */
-CartesianSeries.prototype.highlightFirstValidPoint = function (
+LineSeries.prototype.highlightFirstValidPoint = function (
     this: Highcharts.AccessibilitySeries
 ): (boolean|Point) {
     var curPoint = this.chart.highlightedPoint,
@@ -552,7 +558,7 @@ function highlightFirstValidPointInChart(
 
     res = chart.series.reduce(function (
         acc: (boolean|Point),
-        cur: Highcharts.Series
+        cur: LineSeries
     ): (boolean|Point) {
         return acc || cur.highlightFirstValidPoint();
     }, false);
@@ -626,7 +632,7 @@ extend(SeriesKeyboardNavigation.prototype, /** @lends Highcharts.SeriesKeyboardN
             chart = this.chart,
             e = this.eventProvider = new EventProvider();
 
-        e.addEvent(CartesianSeries, 'destroy', function (): void {
+        e.addEvent(LineSeries, 'destroy', function (): void {
             return keyboardNavigation.onSeriesDestroy(this);
         });
 
@@ -871,7 +877,7 @@ extend(SeriesKeyboardNavigation.prototype, /** @lends Highcharts.SeriesKeyboardN
      */
     onSeriesDestroy: function (
         this: Highcharts.SeriesKeyboardNavigation,
-        series: Highcharts.Series
+        series: LineSeries
     ): void {
         var chart = this.chart,
             currentHighlightedPointDestroyed = chart.highlightedPoint &&

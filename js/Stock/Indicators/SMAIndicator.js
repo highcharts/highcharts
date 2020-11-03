@@ -5,15 +5,15 @@
  *  !!!!!!! SOURCE GETS TRANSPILED BY TYPESCRIPT. EDIT TS FILE ONLY. !!!!!!!
  *
  * */
+'use strict';
 import BaseSeries from '../../Core/Series/Series.js';
 var seriesTypes = BaseSeries.seriesTypes;
-import H from '../../Core/Globals.js';
-import requiredIndicator from '../../Mixins/IndicatorRequired.js';
+import LineSeries from '../../Series/Line/LineSeries.js';
+import RequiredIndicatorMixin from '../../Mixins/IndicatorRequired.js';
 import U from '../../Core/Utilities.js';
 var addEvent = U.addEvent, error = U.error, extend = U.extend, isArray = U.isArray, pick = U.pick, splat = U.splat;
-import '../../Series/LineSeries.js';
 import '../../Series/OHLCSeries.js';
-var Series = H.Series, ohlcProto = seriesTypes.ohlc.prototype, generateMessage = requiredIndicator.generateMessage;
+var ohlcProto = seriesTypes.ohlc.prototype, generateMessage = RequiredIndicatorMixin.generateMessage;
 /**
  * The parameter allows setting line series type and use OHLC indicators. Data
  * in OHLC format is required.
@@ -26,7 +26,7 @@ var Series = H.Series, ohlcProto = seriesTypes.ohlc.prototype, generateMessage =
  * @apioption plotOptions.line.useOhlcData
  */
 /* eslint-disable no-invalid-this */
-addEvent(H.Series, 'init', function (eventOptions) {
+addEvent(LineSeries, 'init', function (eventOptions) {
     var series = this, options = eventOptions.options;
     if (options.useOhlcData &&
         options.id !== 'highcharts-navigator-series') {
@@ -38,7 +38,7 @@ addEvent(H.Series, 'init', function (eventOptions) {
         });
     }
 });
-addEvent(Series, 'afterSetOptions', function (e) {
+addEvent(LineSeries, 'afterSetOptions', function (e) {
     var options = e.options, dataGrouping = options.dataGrouping;
     if (dataGrouping &&
         options.useOhlcData &&
@@ -131,7 +131,7 @@ BaseSeries.seriesType('sma', 'line',
 {
     processData: function () {
         var series = this, compareToMain = series.options.compareToMain, linkedParent = series.linkedParent;
-        Series.prototype.processData.apply(series, arguments);
+        LineSeries.prototype.processData.apply(series, arguments);
         if (linkedParent && linkedParent.compareValue && compareToMain) {
             series.compareValue = linkedParent.compareValue;
         }
@@ -171,7 +171,7 @@ BaseSeries.seriesType('sma', 'line',
         if (!requiredIndicators.allLoaded) {
             return error(generateMessage(indicator.type, requiredIndicators.needed));
         }
-        Series.prototype.init.call(indicator, chart, options);
+        LineSeries.prototype.init.call(indicator, chart, options);
         // Make sure we find series which is a base for an indicator
         chart.linkSeries();
         indicator.dataEventsToUnbind = [];
@@ -180,11 +180,11 @@ BaseSeries.seriesType('sma', 'line',
          * @return {void}
          */
         function recalculateValues() {
-            var oldData = indicator.points || [], oldDataLength = (indicator.xData || []).length, processedData = indicator.getValues(indicator.linkedParent, indicator.options.params) || {
+            var oldData = indicator.points || [], oldDataLength = (indicator.xData || []).length, processedData = (indicator.getValues(indicator.linkedParent, indicator.options.params) || {
                 values: [],
                 xData: [],
                 yData: []
-            }, croppedDataValues = [], overwriteData = true, oldFirstPointIndex, oldLastPointIndex, croppedData, min, max, i;
+            }), croppedDataValues = [], overwriteData = true, oldFirstPointIndex, oldLastPointIndex, croppedData, min, max, i;
             // We need to update points to reflect changes in all,
             // x and y's, values. However, do it only for non-grouped
             // data - grouping does it for us (#8572)
@@ -304,7 +304,7 @@ BaseSeries.seriesType('sma', 'line',
         this.dataEventsToUnbind.forEach(function (unbinder) {
             unbinder();
         });
-        Series.prototype.destroy.apply(this, arguments);
+        LineSeries.prototype.destroy.apply(this, arguments);
     }
 });
 /**

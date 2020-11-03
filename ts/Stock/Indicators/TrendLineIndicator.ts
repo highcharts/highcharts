@@ -6,6 +6,9 @@
  *
  * */
 
+'use strict';
+
+import type LineSeries from '../../Series/Line/LineSeries';
 import BaseSeries from '../../Core/Series/Series.js';
 import U from '../../Core/Utilities.js';
 const {
@@ -20,7 +23,7 @@ declare global {
     namespace Highcharts {
         class TrendLineIndicator extends SMAIndicator {
             public data: Array<TrendLineIndicatorPoint>;
-            public getValues<TLinkedSeries extends Series>(
+            public getValues<TLinkedSeries extends LineSeries>(
                 series: TLinkedSeries,
                 params: TrendLineIndicatorParamsOptions
             ): IndicatorValuesObject<TLinkedSeries>;
@@ -45,7 +48,7 @@ declare global {
     }
 }
 
-declare module '../../Core/Series/Types' {
+declare module '../../Core/Series/SeriesType' {
     interface SeriesTypeRegistry {
         trendline: typeof Highcharts.TrendLineIndicator;
     }
@@ -101,7 +104,7 @@ BaseSeries.seriesType<typeof Highcharts.TrendLineIndicator>(
     {
         nameBase: 'Trendline',
         nameComponents: (false as any),
-        getValues: function<TLinkedSeries extends Highcharts.Series> (
+        getValues: function<TLinkedSeries extends LineSeries> (
             series: TLinkedSeries,
             params: Highcharts.TrendLineIndicatorParamsOptions
         ): Highcharts.IndicatorValuesObject<TLinkedSeries> {

@@ -11,6 +11,7 @@
 'use strict';
 
 import type CSSObject from '../Renderer/CSSObject';
+import type PositionObject from '../Renderer/PositionObject';
 import type SVGAttributes from '../Renderer/SVG/SVGAttributes';
 import type SVGElement from '../Renderer/SVG/SVGElement';
 import type SVGPath from '../Renderer/SVG/SVGPath';
@@ -253,7 +254,7 @@ class Tick {
 
     public label?: SVGElement;
 
-    public labelPos?: Highcharts.PositionObject;
+    public labelPos?: PositionObject;
 
     public mark?: SVGElement;
 
@@ -437,7 +438,7 @@ class Tick {
      * @return {Highcharts.SVGElement|undefined}
      */
     public createLabel(
-        xy: Highcharts.PositionObject,
+        xy: PositionObject,
         str: string,
         labelOptions: Highcharts.XAxisLabelsOptions
     ): (SVGElement|undefined) {
@@ -506,7 +507,7 @@ class Tick {
         tickPos: number,
         tickmarkOffset: number,
         old?: boolean
-    ): Highcharts.PositionObject {
+    ): PositionObject {
         var axis = this.axis,
             chart = axis.chart,
             cHeight = (old && chart.oldChartHeight) || chart.chartHeight,
@@ -573,11 +574,11 @@ class Tick {
         y: number,
         label: SVGElement,
         horiz: boolean,
-        labelOptions: Highcharts.PositionObject,
+        labelOptions: PositionObject,
         tickmarkOffset: number,
         index: number,
         step: number
-    ): Highcharts.PositionObject {
+    ): PositionObject {
 
         var axis = this.axis,
             transA = axis.transA,
@@ -599,7 +600,7 @@ class Tick {
                     0
             ),
             line: number,
-            pos = {} as Highcharts.PositionObject;
+            pos = {} as PositionObject;
 
         if (!defined(yOffset)) {
             if (axis.side === 0) {
@@ -693,7 +694,7 @@ class Tick {
      * @param {Highcharts.PositionObject} xy
      * @return {void}
      */
-    public handleOverflow(xy: Highcharts.PositionObject): void {
+    public handleOverflow(xy: PositionObject): void {
         var tick = this,
             axis = this.axis,
             labelOptions = axis.options.labels,
@@ -997,7 +998,7 @@ class Tick {
      * @return {void}
      */
     public renderMark(
-        xy: Highcharts.PositionObject,
+        xy: PositionObject,
         opacity: number,
         reverseCrisp: number
     ): void {

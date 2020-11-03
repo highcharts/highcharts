@@ -243,7 +243,9 @@ Chart.prototype.moveFixedElements = function () {
     else if (this.scrollablePixelsY && this.inverted) {
         axisClass = '.highcharts-yaxis';
     }
-    fixedSelectors.push(axisClass, axisClass + '-labels');
+    if (axisClass) {
+        fixedSelectors.push(axisClass + ":not(.highcharts-radial-axis)", axisClass + "-labels:not(.highcharts-radial-axis-labels)");
+    }
     fixedSelectors.forEach(function (className) {
         [].forEach.call(container.querySelectorAll(className), function (elem) {
             (elem.namespaceURI === fixedRenderer.SVG_NS ?

@@ -1,5 +1,4 @@
-var chart = Highcharts.stockChart('container', {
-
+const chart = Highcharts.stockChart('container', {
     chart: {
         events: {
             redraw: function () {
@@ -18,13 +17,12 @@ var chart = Highcharts.stockChart('container', {
     }]
 });
 
-
 // activate the button
-$('#button').click(function () {
+document.getElementById('button').addEventListener('click', e => {
     chart.addSeries({
         name: 'ADBE',
         data: ADBE
     });
 
-    $(this).attr('disabled', true);
+    e.target.disabled = true;
 });

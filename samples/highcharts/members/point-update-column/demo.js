@@ -1,4 +1,4 @@
-var chart = Highcharts.chart('container', {
+const chart = Highcharts.chart('container', {
     chart: {
         type: 'column'
     },
@@ -12,8 +12,8 @@ var chart = Highcharts.chart('container', {
 });
 
 // button handler
-var y = 30;
-$('#button').click(function () {
+let y = 30;
+document.getElementById('button').addEventListener('click', () => {
     y += 10;
     chart.series[0].data[0].update(y);
 });

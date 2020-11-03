@@ -8,9 +8,31 @@
  *
  * */
 
+'use strict';
+
+import type ColorAxis from '../Core/Axis/ColorAxis';
+import type LineSeries from '../Series/Line/LineSeries';
 import type Point from '../Core/Series/Point';
 import type SVGAttributes from '../Core/Renderer/SVG/SVGAttributes';
 import H from '../Core/Globals.js';
+
+declare module '../Core/Axis/Types' {
+    interface AxisLike extends Highcharts.LegendItemObject {
+        // nothing more
+    }
+}
+
+declare module '../Core/Series/PointLike' {
+    interface PointLike extends Highcharts.LegendItemObject {
+        // nothing more
+    }
+}
+
+declare module '../Core/Series/SeriesLike' {
+    interface SeriesLike extends Highcharts.LegendItemObject {
+        // nothing more
+    }
+}
 
 /**
  * @private
@@ -26,8 +48,8 @@ declare global {
             itemHeight?: number;
             itemWidth?: number;
             legendGroup?: SVGElement;
-            legendItem?: SVGElement;
-            legendItems?: Array<SVGElement>;
+            legendItem?: (ColorAxis.LegendItemObject|SVGElement);
+            legendItems?: Array<(ColorAxis.LegendItemObject|SVGElement)>;
             legendItemHeight?: number;
             legendItemWidth?: number;
             legendLine?: SVGElement;
@@ -36,11 +58,7 @@ declare global {
         }
         interface LegendSymbolMixin {
             drawLineMarker(legend: Legend): void;
-            drawRectangle(legend: Legend, item: (Point|Series)): void;
-        }
-        interface PointLike extends LegendItemObject {
-        }
-        interface Series extends LegendItemObject {
+            drawRectangle(legend: Legend, item: (LineSeries|Point)): void;
         }
         let LegendSymbolMixin: LegendSymbolMixin;
     }
@@ -75,9 +93,9 @@ const LegendSymbolMixin = H.LegendSymbolMixin = {
      * The series (this) or point
      */
     drawRectangle: function (
-        this: Highcharts.Series,
+        this: LineSeries,
         legend: Highcharts.Legend,
-        item: (Point|Highcharts.Series)
+        item: (LineSeries|Point)
     ): void {
         var options = legend.options,
             symbolHeight = legend.symbolHeight,
@@ -110,7 +128,7 @@ const LegendSymbolMixin = H.LegendSymbolMixin = {
      * The legend object.
      */
     drawLineMarker: function (
-        this: Highcharts.Series,
+        this: LineSeries,
         legend: Highcharts.Legend
     ): void {
 

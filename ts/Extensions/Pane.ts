@@ -11,6 +11,7 @@
 'use strict';
 
 import type ColorType from '../Core/Color/ColorType';
+import type LineSeries from '../Series/Line/LineSeries';
 import type RadialAxis from '../Core/Axis/RadialAxis';
 import type SVGElement from '../Core/Renderer/SVG/SVGElement';
 import Chart from '../Core/Chart/Chart.js';
@@ -581,7 +582,7 @@ addEvent(Pointer, 'beforeGetHoverData', function (
         chart.hoverPane = chart.getHoverPane(eventArgs);
 
         // Edit filter method to handle polar
-        eventArgs.filter = function (s: Highcharts.Series): boolean {
+        eventArgs.filter = function (s: LineSeries): boolean {
             return (
                 s.visible &&
                 !(!eventArgs.shared && s.directTouch) && // #3821

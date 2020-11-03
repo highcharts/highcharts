@@ -8,9 +8,22 @@
  *
  * */
 
+'use strict';
+
+/* *
+ *
+ *  Imports
+ *
+ * */
+
 import type ColorString from '../Core/Color/ColorString';
 import type ColorType from '../Core/Color/ColorType';
+import type ColumnPoint from './Column/ColumnPoint';
+import type ColumnPointOptions from './Column/ColumnPointOptions';
+import type ColumnSeriesOptions from './Column/ColumnSeriesOptions';
 import BaseSeries from '../Core/Series/Series.js';
+import ColumnSeries from './Column/ColumnSeries.js';
+const { prototype: columnProto } = ColumnSeries;
 import U from '../Core/Utilities.js';
 const {
     isNumber,
@@ -18,6 +31,12 @@ const {
     pick,
     relativeLength
 } = U;
+
+/* *
+ *
+ *  Declarations
+ *
+ * */
 
 /**
  * Internal types
@@ -65,15 +84,17 @@ declare global {
 /**
  * @private
  */
-declare module '../Core/Series/Types' {
+declare module '../Core/Series/SeriesType' {
     interface SeriesTypeRegistry {
         bullet: typeof Highcharts.BulletSeries;
     }
 }
 
-import './ColumnSeries.js';
-
-var columnProto = BaseSeries.seriesTypes.column.prototype;
+/* *
+ *
+ *  Class
+ *
+ * */
 
 /**
  * The bullet series type.

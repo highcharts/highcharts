@@ -12,7 +12,9 @@ import type {
     AlignValue,
     VerticalAlignValue
 } from '../Core/Renderer/AlignObject';
+import type BBoxObject from '../Core/Renderer/BBoxObject';
 import type CSSObject from '../Core/Renderer/CSSObject';
+import type PointerEvent from '../Core/PointerEvent';
 import type SVGAttributes from '../Core/Renderer/SVG/SVGAttributes';
 import type SVGElement from '../Core/Renderer/SVG/SVGElement';
 import Chart from '../Core/Chart/Chart.js';
@@ -292,7 +294,7 @@ MapNavigation.prototype.updateEvents = function (
         this.unbindDblClick = this.unbindDblClick || addEvent(
             chart.container,
             'dblclick',
-            function (e: Highcharts.PointerEventObject): void {
+            function (e: PointerEvent): void {
                 chart.pointer.onContainerDblClick(e);
             }
         );
@@ -307,7 +309,7 @@ MapNavigation.prototype.updateEvents = function (
             chart.container,
             typeof doc.onmousewheel === 'undefined' ?
                 'DOMMouseScroll' : 'mousewheel',
-            function (e: Highcharts.PointerEventObject): boolean {
+            function (e: PointerEvent): boolean {
                 chart.pointer.onContainerMouseWheel(e);
                 // Issue #5011, returning false from non-jQuery event does
                 // not prevent default
@@ -343,9 +345,9 @@ extend(Chart.prototype, /** @lends Chart.prototype */ {
      */
     fitToBox: function (
         this: Highcharts.MapNavigationChart,
-        inner: Highcharts.BBoxObject,
-        outer: Highcharts.BBoxObject
-    ): Highcharts.BBoxObject {
+        inner: BBoxObject,
+        outer: BBoxObject
+    ): BBoxObject {
         [['x', 'width'], ['y', 'height']].forEach(function (
             dim: Array<string>
         ): void {

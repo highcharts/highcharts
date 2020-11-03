@@ -2,8 +2,21 @@
 // call downloads the XML format data, basing on specific capital
 // city latitude and longitude values.
 
+function getXML(url, cb) {
+    const request = new XMLHttpRequest();
+    request.open('GET', url, true);
+
+    request.onload = function () {
+        if (this.status < 400) {
+            return cb(new DOMParser().parseFromString(this.response, 'application/xml'));
+        }
+    };
+
+    request.send();
+}
+
 // Data structure: [country_code, latitude, longitude, capital_city]
-var newData = [
+const newData = [
     ['dk', 55.66, 12.58, 'Copenhagen'],
     ['fo', 62, -6.79, 'Torshavn'],
     ['hr', 45.8, 16, 'Zagreb'],
@@ -59,31 +72,33 @@ var newData = [
 // 'mappoint' series type, and it should be defined before in the
 // series array.
 function getTemp(point, countries, capitals) {
-    $.ajax({
-        url: 'https://api.met.no/weatherapi/locationforecast/1.9/?lat=' +
-            point[1] + '&lon=' + point[2],
-        complete: function (data) {
-            var colorAxis = countries.chart.colorAxis[0];
 
-            // Parse received data
-            var xml = $.parseXML(data.responseText, "text/xml");
-            var temp = $(xml).find('#TTT').attr('value');
-            var country = {
-                'hc-key': point[0],
-                value: parseInt(temp, 10) || null
-            };
-            var capital = {
-                name: point[3],
-                lat: point[1],
-                lon: point[2],
-                color: colorAxis.toColor(temp),
-                temp: parseInt(temp, 10) || 'No data'
-            };
+    const url = 'https://api.met.no/weatherapi/locationforecast/1.9/?lat=' +
+    point[1] + '&lon=' + point[2];
 
-            countries.addPoint(country);
-            capitals.addPoint(capital);
-        }
-    });
+    const callBack = xml => {
+
+        const temp = xml.getElementsByTagName('temperature')[0].getAttribute('value');
+        const colorAxis = countries.chart.colorAxis[0];
+
+        const country = {
+            'hc-key': point[0],
+            value: parseInt(temp, 10) || null
+        };
+        const capital = {
+            name: point[3],
+            lat: point[1],
+            lon: point[2],
+            color: colorAxis.toColor(temp),
+            temp: parseInt(temp, 10) || 'No data'
+        };
+
+        countries.addPoint(country);
+        capitals.addPoint(capital);
+        return temp;
+    };
+
+    getXML(url, callBack);
 }
 
 // Create the chart

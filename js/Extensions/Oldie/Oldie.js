@@ -1216,7 +1216,8 @@ if (!svg) {
     H.VMLRenderer = VMLRenderer = function () {
         this.init.apply(this, arguments);
     };
-    VMLRenderer.prototype = merge(VMLRenderer.prototype, SVGRenderer.prototype, VMLRendererExtension);
+    extend(VMLRenderer.prototype, SVGRenderer.prototype);
+    extend(VMLRenderer.prototype, VMLRendererExtension);
     // general renderer
     H.Renderer = VMLRenderer;
     // 3D additions

@@ -11,8 +11,6 @@
 'use strict';
 import Axis from './Axis.js';
 import H from '../Globals.js';
-import O from '../Options.js';
-var dateFormat = O.dateFormat;
 import Tick from './Tick.js';
 import U from '../Utilities.js';
 var addEvent = U.addEvent, defined = U.defined, erase = U.erase, find = U.find, isArray = U.isArray, isNumber = U.isNumber, merge = U.merge, pick = U.pick, timeUnits = U.timeUnits, wrap = U.wrap;

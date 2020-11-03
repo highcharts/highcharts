@@ -6,6 +6,9 @@
  *
  * */
 
+'use strict';
+
+import type LineSeries from '../../Series/Line/LineSeries';
 import BaseSeries from '../../Core/Series/Series.js';
 import U from '../../Core/Utilities.js';
 const {
@@ -20,7 +23,7 @@ declare global {
     namespace Highcharts {
         class RSIIndicator extends SMAIndicator {
             public data: Array<RSIIndicatorPoint>;
-            public getValues<TLinkedSeries extends Series>(
+            public getValues<TLinkedSeries extends LineSeries>(
                 series: TLinkedSeries,
                 params: RSIIndicatorParamsOptions
             ): (IndicatorValuesObject<TLinkedSeries>|undefined);
@@ -43,7 +46,7 @@ declare global {
     }
 }
 
-declare module '../../Core/Series/Types' {
+declare module '../../Core/Series/SeriesType' {
     interface SeriesTypeRegistry {
         rsi: typeof Highcharts.RSIIndicator;
     }
@@ -102,7 +105,7 @@ BaseSeries.seriesType<typeof Highcharts.RSIIndicator>(
      * @lends Highcharts.Series#
      */
     {
-        getValues: function<TLinkedSeries extends Highcharts.Series> (
+        getValues: function<TLinkedSeries extends LineSeries> (
             series: TLinkedSeries,
             params: Highcharts.RSIIndicatorParamsOptions
         ): (Highcharts.IndicatorValuesObject<TLinkedSeries>|undefined) {

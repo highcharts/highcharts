@@ -10,6 +10,7 @@
 
 'use strict';
 
+import type PointerEvent from '../Core/PointerEvent';
 import Pointer from '../Core/Pointer.js';
 import U from '../Core/Utilities.js';
 const {
@@ -17,6 +18,13 @@ const {
     pick,
     wrap
 } = U;
+
+declare module '../Core/PointerEvent' {
+    interface PointerEvent {
+        /** @deprecated */
+        wheelDelta: number;
+    }
+}
 
 /**
  * Internal types
@@ -27,16 +35,12 @@ declare global {
         interface MapPointer extends Pointer {
             chart: MapPointerChart;
             mapNavigation: MapNavigation;
-            onContainerDblClick(e: PointerEventObject): void;
-            onContainerMouseWheel(e: PointerEventObject): void;
+            onContainerDblClick(e: PointerEvent): void;
+            onContainerMouseWheel(e: PointerEvent): void;
         }
         interface MapPointerChart extends MapChart {
             hoverPoint: MapPoint;
             mapZoom: MapNavigationChart['mapZoom'];
-        }
-        interface PointerEventObject {
-            /** @deprecated */
-            wheelDelta: number;
         }
     }
 }
@@ -49,7 +53,7 @@ extend(Pointer.prototype, {
     // The event handler for the doubleclick event
     onContainerDblClick: function (
         this: Highcharts.MapPointer,
-        e: Highcharts.PointerEventObject
+        e: PointerEvent
     ): void {
         var chart = this.chart;
 
@@ -81,7 +85,7 @@ extend(Pointer.prototype, {
     // The event handler for the mouse scroll event
     onContainerMouseWheel: function (
         this: Highcharts.MapPointer,
-        e: Highcharts.PointerEventObject
+        e: PointerEvent
     ): void {
         var chart = this.chart,
             delta;

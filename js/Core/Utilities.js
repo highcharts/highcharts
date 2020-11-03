@@ -9,6 +9,7 @@
  * */
 'use strict';
 import H from './Globals.js';
+var charts = H.charts, doc = H.doc, win = H.win;
 /**
  * An animation configuration. Animation configurations can also be defined as
  * booleans, where `false` turns off animation and `true` defaults to a duration
@@ -324,7 +325,6 @@ import H from './Globals.js';
  * @namespace Highcharts
  */
 H.timers = [];
-var charts = H.charts, doc = H.doc, win = H.win;
 /**
  * Provide error messages for debugging, with links to online explanation. This
  * function can be overridden to provide custom error handling.
@@ -1717,7 +1717,7 @@ var addEvent = H.addEvent = function (el, type, fn, options) {
     }
     // Allow click events added to points, otherwise they will be prevented by
     // the TouchPointer.pinch function after a pinch zoom operation (#7091).
-    if (H.Point &&
+    if (H.Point && // without H a dependency loop occurs
         el instanceof H.Point &&
         el.series &&
         el.series.chart) {

@@ -9,6 +9,7 @@
  *  !!!!!!! SOURCE GETS TRANSPILED BY TYPESCRIPT. EDIT TS FILE ONLY. !!!!!!!
  *
  * */
+'use strict';
 import BaseSeries from '../Core/Series/Series.js';
 import H from '../Core/Globals.js';
 import U from '../Core/Utilities.js';
@@ -23,6 +24,11 @@ var base = BaseSeries.seriesTypes.sankey.prototype;
  * @typedef {"normal"|"hanging"} Highcharts.SeriesOrganizationNodesLayoutValue
  */
 ''; // detach doclets above
+/* *
+ *
+ *  Class
+ *
+ * */
 /**
  * @private
  * @class

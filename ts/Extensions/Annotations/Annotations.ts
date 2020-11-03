@@ -16,9 +16,12 @@ import type {
 } from '../../Core/Renderer/AlignObject';
 import type AnimationOptionsObject from '../../Core/Animation/AnimationOptionsObject';
 import type { AxisType } from '../../Core/Axis/Types';
+import type BBoxObject from '../../Core/Renderer/BBoxObject';
 import type ColorString from '../../Core/Color/ColorString';
 import type ColorType from '../../Core/Color/ColorType';
 import type CSSObject from '../../Core/Renderer/CSSObject';
+import type { DataLabelOverflowValue } from '../../Core/Series/DataLabelOptions';
+import type LineSeries from '../../Series/Line/LineSeries';
 import type Point from '../../Core/Series/Point';
 import type ShadowOptionsObject from '../../Core/Renderer/ShadowOptionsObject';
 import type SVGElement from '../../Core/Renderer/SVG/SVGElement';
@@ -103,7 +106,7 @@ declare global {
         interface AnnotationPoint extends Point {
             series: AnnotationSeries;
         }
-        interface AnnotationSeries extends Series {
+        interface AnnotationSeries extends LineSeries {
             chart: AnnotationChart;
             points: Array<AnnotationPoint>;
         }
@@ -126,7 +129,7 @@ declare global {
             format?: string;
             formatter: FormatterCallbackFunction<Point>;
             includeInDataExport: boolean;
-            overflow: DataLabelsOverflowValue;
+            overflow: DataLabelOverflowValue;
             padding: number;
             shadow: (boolean|Partial<ShadowOptionsObject>);
             shape: SymbolKeyValue;
@@ -544,7 +547,7 @@ class Annotation implements EventEmitterMixin.Type, ControllableMixin.Type {
         this.clipYAxis = linkedAxes[1];
     }
 
-    public getClipBox(): (Highcharts.BBoxObject|void) {
+    public getClipBox(): (BBoxObject|void) {
         if (this.clipXAxis && this.clipYAxis) {
             return {
                 x: this.clipXAxis.left,

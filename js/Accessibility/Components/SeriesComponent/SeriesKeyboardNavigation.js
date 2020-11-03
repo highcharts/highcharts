@@ -12,8 +12,8 @@
 'use strict';
 import Series from '../../../Core/Series/Series.js';
 var seriesTypes = Series.seriesTypes;
-import CartesianSeries from '../../../Core/Series/CartesianSeries.js';
 import Chart from '../../../Core/Chart/Chart.js';
+import LineSeries from '../../../Series/Line/LineSeries.js';
 import Point from '../../../Core/Series/Point.js';
 import U from '../../../Core/Utilities.js';
 var defined = U.defined, extend = U.extend;
@@ -21,14 +21,14 @@ import KeyboardNavigationHandler from '../../KeyboardNavigationHandler.js';
 import EventProvider from '../../Utils/EventProvider.js';
 import ChartUtilities from '../../Utils/ChartUtilities.js';
 var getPointFromXY = ChartUtilities.getPointFromXY, getSeriesFromName = ChartUtilities.getSeriesFromName, scrollToPoint = ChartUtilities.scrollToPoint;
-import '../../../Series/ColumnSeries.js';
+import '../../../Series/Column/ColumnSeries.js';
 import '../../../Series/PieSeries.js';
 /* eslint-disable no-invalid-this, valid-jsdoc */
 /*
  * Set for which series types it makes sense to move to the closest point with
  * up/down arrows, and which series types should just move to next series.
  */
-CartesianSeries.prototype.keyboardMoveVertical = true;
+LineSeries.prototype.keyboardMoveVertical = true;
 ['column', 'pie'].forEach(function (type) {
     if (seriesTypes[type]) {
         seriesTypes[type].prototype.keyboardMoveVertical = false;
@@ -236,7 +236,7 @@ Chart.prototype.highlightAdjacentPoint = function (next) {
  *
  * @return {boolean|Highcharts.Point}
  */
-CartesianSeries.prototype.highlightFirstValidPoint = function () {
+LineSeries.prototype.highlightFirstValidPoint = function () {
     var curPoint = this.chart.highlightedPoint, start = (curPoint && curPoint.series) === this ?
         getPointIndex(curPoint) :
         0, points = this.points, len = points.length;
@@ -402,7 +402,7 @@ extend(SeriesKeyboardNavigation.prototype, /** @lends Highcharts.SeriesKeyboardN
      */
     init: function () {
         var keyboardNavigation = this, chart = this.chart, e = this.eventProvider = new EventProvider();
-        e.addEvent(CartesianSeries, 'destroy', function () {
+        e.addEvent(LineSeries, 'destroy', function () {
             return keyboardNavigation.onSeriesDestroy(this);
         });
         e.addEvent(chart, 'afterDrilldown', function () {

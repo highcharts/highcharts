@@ -869,9 +869,7 @@ class RangeSelector {
                 if (typeof dataMax === 'undefined') {
                     dataMin = Number.MAX_VALUE;
                     dataMax = Number.MIN_VALUE;
-                    chart.series.forEach(function (
-                        series: Highcharts.Series
-                    ): void {
+                    chart.series.forEach(function (series): void {
                         // reassign it to the last item
                         var xData = series.xData;
 

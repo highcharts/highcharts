@@ -1,5 +1,4 @@
-var chart = Highcharts.stockChart('container', {
-
+const chart = Highcharts.stockChart('container', {
     rangeSelector: {
         selected: 1
     },
@@ -10,7 +9,7 @@ var chart = Highcharts.stockChart('container', {
     }]
 });
 
-$('#button').click(function () {
+document.getElementById('button').addEventListener('click', () => {
     var series = chart.series[0];
     if (series.visible) {
         series.hide();

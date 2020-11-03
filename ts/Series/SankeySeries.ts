@@ -10,20 +10,32 @@
  *
  * */
 
+'use strict';
+
+/* *
+ *
+ *  Imports
+ *
+ * */
+
 import type ColorString from '../Core/Color/ColorString';
 import type ColorType from '../Core/Color/ColorType';
+import type ColumnPoint from './Column/ColumnPoint';
+import type ColumnPointOptions from './Column/ColumnPointOptions';
+import type ColumnSeriesOptions from './Column/ColumnSeriesOptions';
+import type DataLabelOptions from '../Core/Series/DataLabelOptions';
+import type { SeriesStatesOptions } from '../Core/Series/SeriesOptions';
+import type { StatesOptionsKey } from '../Core/Series/StatesOptions';
 import type SVGAttributes from '../Core/Renderer/SVG/SVGAttributes';
-import Series from '../Core/Series/Series.js';
-import CartesianSeries from '../Core/Series/CartesianSeries.js';
+import BaseSeries from '../Core/Series/Series.js';
 import Color from '../Core/Color/Color.js';
-import ColumnSeries from './ColumnSeries.js';
+import ColumnSeries from './Column/ColumnSeries.js';
 import H from '../Core/Globals.js';
+import LineSeries from '../Series/Line/LineSeries.js';
 import NodesMixin from '../Mixins/Nodes.js';
 import Point from '../Core/Series/Point.js';
 import TreeSeriesMixin from '../Mixins/TreeSeries.js';
-const {
-    getLevelOptions
-} = TreeSeriesMixin;
+const { getLevelOptions } = TreeSeriesMixin;
 import U from '../Core/Utilities.js';
 const {
     defined,
@@ -35,10 +47,19 @@ const {
     stableSort
 } = U;
 
-/**
- * @private
- */
-declare module '../Core/Series/Types' {
+/* *
+ *
+ *  Declarations
+ *
+ * */
+
+declare module '../Core/Series/SeriesLike' {
+    interface SeriesLike {
+        invertable?: boolean;
+    }
+}
+
+declare module '../Core/Series/SeriesType' {
     interface SeriesTypeRegistry {
         sankey: typeof Highcharts.SankeySeries;
     }
@@ -84,7 +105,6 @@ declare global {
             public isValid: () => boolean;
         }
         class SankeySeries extends ColumnSeries implements NodesSeries {
-            public animate: Series['animate'];
             public colDistance: number;
             public createNode: NodesMixin['createNode'];
             public data: Array<SankeyPoint>;
@@ -113,7 +133,7 @@ declare global {
             public getNodePadding(): number;
             public pointAttribs(
                 point: SankeyPoint,
-                state: string
+                state?: StatesOptionsKey
             ): SVGAttributes;
             public render(): void;
             public translate(): void;
@@ -132,20 +152,18 @@ declare global {
             (
                 this: (
                     SankeyDataLabelsFormatterContextObject|
-                    PointLabelObject
+                    Point.PointLabelObject
                 )
             ): (string|undefined);
         }
         interface SankeyDataLabelsFormatterContextObject {
             point: SankeyPoint;
         }
-        interface SankeyDataLabelsOptionsObject
-            extends DataLabelsOptions {
+        interface SankeyDataLabelsOptionsObject extends DataLabelOptions {
             nodeFormat?: string;
             nodeFormatter?: SankeyDataLabelsFormatterCallbackFunction;
         }
-        interface SankeyPointOptions
-            extends ColumnPointOptions, NodesPointOptions {
+        interface SankeyPointOptions extends ColumnPointOptions, NodesPointOptions {
             column?: number;
             from?: string;
             height?: number;
@@ -161,7 +179,7 @@ declare global {
             dataLabels?: SankeyDataLabelsOptionsObject;
             level?: number;
             linkOpacity?: number;
-            states?: Dictionary<SankeySeriesOptions>;
+            states?: SeriesStatesOptions<SankeySeries>;
         }
         interface SankeySeriesNodesOptions {
             color?: ColorType;
@@ -172,8 +190,7 @@ declare global {
             name?: string;
             offset?: (number|string);
         }
-        interface SankeySeriesOptions
-            extends ColumnSeriesOptions, NodesSeriesOptions {
+        interface SankeySeriesOptions extends ColumnSeriesOptions, NodesSeriesOptions {
             curveFactor?: number;
             dataLabels?: SankeyDataLabelsOptionsObject;
             height?: number;
@@ -185,16 +202,13 @@ declare global {
             nodePadding?: number;
             nodes?: Array<SankeySeriesNodesOptions>;
             nodeWidth?: number;
-            states?: SeriesStatesOptionsObject<SankeySeries>;
+            states?: SeriesStatesOptions<SankeySeries>;
             tooltip?: SankeySeriesTooltipOptions;
             width?: number;
         }
         interface SankeySeriesTooltipOptions extends TooltipOptions {
             nodeFormat?: string;
             nodeFormatter?: FormatterCallbackFunction<SankeyPoint>;
-        }
-        interface Series {
-            invertable?: boolean;
         }
     }
 }
@@ -282,6 +296,12 @@ declare global {
 
 ''; // detach doclets above
 
+/* *
+ *
+ *  Functions
+ *
+ * */
+
 // eslint-disable-next-line valid-jsdoc
 /**
  * @private
@@ -308,6 +328,12 @@ var getDLOptions = function getDLOptions(
     return options;
 };
 
+/* *
+ *
+ *  Class
+ *
+ * */
+
 /**
  * @private
  * @class
@@ -315,7 +341,7 @@ var getDLOptions = function getDLOptions(
  *
  * @augments Highcharts.Series
  */
-Series.seriesType<typeof Highcharts.SankeySeries>(
+BaseSeries.seriesType<typeof Highcharts.SankeySeries>(
     'sankey',
     'column',
     /**
@@ -398,7 +424,7 @@ Series.seriesType<typeof Highcharts.SankeySeries>(
             nodeFormatter: function (
                 this: (
                     Highcharts.SankeyDataLabelsFormatterContextObject|
-                    Highcharts.PointLabelObject
+                    Point.PointLabelObject
                 )
             ): (string|undefined) {
                 return this.point.name;
@@ -1322,7 +1348,7 @@ Series.seriesType<typeof Highcharts.SankeySeries>(
 
         /* eslint-enable valid-jsdoc */
 
-        animate: CartesianSeries.prototype.animate
+        animate: LineSeries.prototype.animate
     }, {
         applyOptions: function (
             this: Highcharts.SankeyPoint,

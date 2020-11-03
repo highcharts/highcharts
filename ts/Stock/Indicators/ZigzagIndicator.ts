@@ -8,6 +8,9 @@
  *
  * */
 
+'use strict';
+
+import type LineSeries from '../../Series/Line/LineSeries';
 import BaseSeries from '../../Core/Series/Series.js';
 
 /**
@@ -24,7 +27,7 @@ declare global {
             public options: ZigzagIndicatorOptions;
             public pointClass: typeof ZigzagIndicatorPoint;
             public points: Array<ZigzagIndicatorPoint>;
-            public getValues<TLinkedSeries extends Series>(
+            public getValues<TLinkedSeries extends LineSeries>(
                 series: TLinkedSeries,
                 params: ZigzagIndicatorParamsOptions
             ): (IndicatorValuesObject<TLinkedSeries>|undefined);
@@ -47,7 +50,7 @@ declare global {
     }
 }
 
-declare module '../../Core/Series/Types' {
+declare module '../../Core/Series/SeriesType' {
     interface SeriesTypeRegistry {
         zigzag: typeof Highcharts.ZigzagIndicator;
     }
@@ -119,7 +122,7 @@ BaseSeries.seriesType<typeof Highcharts.ZigzagIndicator>(
         nameComponents: ['deviation'],
         nameSuffixes: ['%'],
         nameBase: 'Zig Zag',
-        getValues: function<TLinkedSeries extends Highcharts.Series> (
+        getValues: function<TLinkedSeries extends LineSeries> (
             this: Highcharts.ZigzagIndicator,
             series: TLinkedSeries,
             params: Highcharts.ZigzagIndicatorParamsOptions

@@ -12,6 +12,7 @@
 
 import type Chart from './Chart/Chart';
 import type ColorType from './Color/ColorType';
+import type PointerEvent from './PointerEvent';
 import type SVGElement from './Renderer/SVG/SVGElement';
 import type SVGPath from './Renderer/SVG/SVGPath';
 import Axis from './Axis/Axis.js';
@@ -87,7 +88,7 @@ declare global {
             public _events: Array<[
                 any,
                 string,
-                (e: PointerEventObject) => void
+                (e: PointerEvent) => void
             ]>;
             public barWidth?: number;
             public calculatedWidth?: number;
@@ -118,7 +119,7 @@ declare global {
             public yOffset?: number;
             public addEvents(): void;
             public cursorToScrollbarPosition(
-                normalizedEvent: PointerEventObject
+                normalizedEvent: PointerEvent
             ): Dictionary<number>;
             public destroy(): void;
             public drawScrollbarButton(index: number): void;
@@ -144,7 +145,7 @@ declare global {
 }
 
 interface ScrollbarEventCallbackFunction {
-    (e: Highcharts.PointerEventObject): void;
+    (e: PointerEvent): void;
 }
 
 import O from './Options.js';
@@ -543,7 +544,7 @@ class Scrollbar {
             _events: Array<[
                 any,
                 string,
-                (e: Highcharts.PointerEventObject) => void
+                (e: PointerEvent) => void
             ]>;
 
         // Mouse events
@@ -572,7 +573,7 @@ class Scrollbar {
         this._events = _events;
     }
 
-    private buttonToMaxClick(e: Highcharts.PointerEventObject): void {
+    private buttonToMaxClick(e: PointerEvent): void {
         const scroller = this;
         var range = (scroller.to - scroller.from) * pick(scroller.options.step, 0.2);
 
@@ -585,7 +586,7 @@ class Scrollbar {
         });
     }
 
-    private buttonToMinClick(e: Highcharts.PointerEventObject): void {
+    private buttonToMinClick(e: PointerEvent): void {
         const scroller = this;
         var range = correctFloat(scroller.to - scroller.from) *
             pick(scroller.options.step, 0.2);
@@ -614,7 +615,7 @@ class Scrollbar {
      * @return {Highcharts.Dictionary<number>}
      *         Local position {chartX, chartY}
      */
-    public cursorToScrollbarPosition(normalizedEvent: Highcharts.PointerEventObject): Highcharts.Dictionary<number> {
+    public cursorToScrollbarPosition(normalizedEvent: PointerEvent): Highcharts.Dictionary<number> {
         var scroller = this,
             options = scroller.options,
             minWidthDifference =
@@ -774,7 +775,7 @@ class Scrollbar {
         }
     }
 
-    private mouseDownHandler(e: Highcharts.PointerEventObject): void {
+    private mouseDownHandler(e: PointerEvent): void {
         const scroller = this;
         var normalizedEvent = scroller.chart.pointer.normalize(e),
             mousePosition = scroller.cursorToScrollbarPosition(
@@ -792,7 +793,7 @@ class Scrollbar {
      * Event handler for the mouse move event.
      * @private
      */
-    private mouseMoveHandler(e: Highcharts.PointerEventObject): void {
+    private mouseMoveHandler(e: PointerEvent): void {
         const scroller = this;
         var normalizedEvent = scroller.chart.pointer.normalize(e),
             options = scroller.options,
@@ -839,7 +840,7 @@ class Scrollbar {
      * Event handler for the mouse up event.
      * @private
      */
-    private mouseUpHandler(e: Highcharts.PointerEventObject): void {
+    private mouseUpHandler(e: PointerEvent): void {
         const scroller = this;
         if (scroller.hasDragged) {
             fireEvent(scroller, 'changed', {
@@ -1118,7 +1119,7 @@ class Scrollbar {
         scroller.rendered = true;
     }
 
-    public trackClick(e: Highcharts.PointerEventObject): void {
+    public trackClick(e: PointerEvent): void {
         const scroller = this;
         var normalizedEvent = scroller.chart.pointer.normalize(e),
             range = scroller.to - scroller.from,

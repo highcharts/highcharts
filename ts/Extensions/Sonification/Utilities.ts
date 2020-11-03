@@ -13,6 +13,7 @@
 'use strict';
 
 import type Chart from '../../Core/Chart/Chart';
+import type LineSeries from '../../Series/Line/LineSeries';
 import type Point from '../../Core/Series/Point';
 import musicalFrequencies from './MusicalFrequencies.js';
 import U from '../../Core/Utilities.js';
@@ -212,7 +213,7 @@ var utilities: Highcharts.SonificationUtilitiesObject = {
     ): Highcharts.RangeObject {
         return chart.series.reduce(function (
             extremes: Highcharts.RangeObject,
-            series: Highcharts.Series
+            series: LineSeries
         ): Highcharts.RangeObject {
             // We use cropped points rather than series.data here, to allow
             // users to zoom in for better fidelity.

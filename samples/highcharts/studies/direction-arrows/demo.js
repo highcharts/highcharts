@@ -1,5 +1,5 @@
 // Prepare demo data
-var data = [
+const data = [
     {
         "hc-key": "au-nt",
         value: 0
@@ -43,27 +43,22 @@ var data = [
 ];
 
 // Initiate the chart
-$('#map-container').highcharts('Map', {
-
+Highcharts.mapChart('map-container', {
     title: {
         text: 'Highmaps basic demo'
     },
-
     subtitle: {
         text: 'Source map: <a href="https://code.highcharts.com/mapdata/countries/au/au-all.js">Australia</a>'
     },
-
     mapNavigation: {
         enabled: true,
         buttonOptions: {
             verticalAlign: 'bottom'
         }
     },
-
     colorAxis: {
         min: 0
     },
-
     series: [{
         data: data,
         mapData: Highcharts.maps['countries/au/au-all'],
@@ -116,12 +111,10 @@ $('#map-container').highcharts('Map', {
 });
 
 // Add line chart
-$('#line-container').highcharts({
-
+Highcharts.chart('line-container', {
     xAxis: {
         categories: ['Jan', 'Feb', 'Mar', 'Apr', 'May', 'Jun', 'Jul', 'Aug', 'Sep', 'Oct', 'Nov', 'Dec']
     },
-
     series: [{
         id: 'Series1',
         data: [29.9, 71.5, 106.4, 129.2, 144.0, 176.0, 135.6, 148.5, 216.4, 194.1, 95.6, 54.4],
@@ -129,7 +122,6 @@ $('#line-container').highcharts({
             enabled: false
         }
     }]
-
-}, function (chart) {
+}, chart => {
     chart.get('Series1').graph.addClass('highcharts-arrows');
 });

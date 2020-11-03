@@ -6,6 +6,9 @@
  *
  * */
 
+'use strict';
+
+import type LineSeries from '../../Series/Line/LineSeries';
 import BaseSeries from '../../Core/Series/Series.js';
 
 /**
@@ -16,7 +19,7 @@ declare global {
     namespace Highcharts {
         class NATRIndicator extends SMAIndicator {
             public data: Array<NATRIndicatorPoint>;
-            public getValues<TLinkedSeries extends Series>(
+            public getValues<TLinkedSeries extends LineSeries>(
                 series: TLinkedSeries,
                 params: NATRIndicatorParamsOptions
             ): (IndicatorValuesObject<TLinkedSeries>|undefined);
@@ -40,7 +43,7 @@ declare global {
     }
 }
 
-declare module '../../Core/Series/Types' {
+declare module '../../Core/Series/SeriesType' {
     interface SeriesTypeRegistry {
         natr: typeof Highcharts.NATRIndicator;
     }
@@ -85,12 +88,12 @@ BaseSeries.seriesType<typeof Highcharts.NATRIndicator>('natr', 'sma',
      */
     {
         requiredIndicators: ['atr'],
-        getValues: function<TLinkedSeries extends Highcharts.Series> (
+        getValues: function<TLinkedSeries extends LineSeries> (
             series: TLinkedSeries,
             params: Highcharts.NATRIndicatorParamsOptions
         ): (Highcharts.IndicatorValuesObject<TLinkedSeries>|undefined) {
             var atrData: (
-                    Highcharts.IndicatorValuesObject<Highcharts.Series>|
+                    Highcharts.IndicatorValuesObject<LineSeries>|
                     undefined
                 ) = (
                     ATR.prototype.getValues.apply(this, arguments)

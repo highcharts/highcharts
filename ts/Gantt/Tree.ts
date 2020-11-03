@@ -14,6 +14,7 @@
 
 'use strict';
 
+import type PointOptions from '../Core/Series/PointOptions';
 import U from '../Core/Utilities.js';
 const {
     extend,
@@ -41,7 +42,7 @@ declare global {
             level: number;
             parent: string;
         }
-        interface TreePointOptionsObject extends PointOptionsObject {
+        interface TreePointOptionsObject {
             end?: number;
             id?: string;
             milestone?: boolean;

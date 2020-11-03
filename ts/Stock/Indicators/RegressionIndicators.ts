@@ -8,6 +8,9 @@
  *
  * */
 
+'use strict';
+
+import type LineSeries from '../../Series/Line/LineSeries';
 import BaseSeries from '../../Core/Series/Series.js';
 import U from '../../Core/Utilities.js';
 const {
@@ -33,7 +36,7 @@ declare global {
                 xData: Array<number>,
                 yData: Array<number>
             ): RegressionLineParametersObject;
-            public getValues<TLinkedSeries extends Series>(
+            public getValues<TLinkedSeries extends LineSeries>(
                 series: TLinkedSeries,
                 params: LinearRegressionIndicatorParamsOptions
             ): IndicatorValuesObject<TLinkedSeries>;
@@ -135,7 +138,7 @@ declare global {
     }
 }
 
-declare module '../../Core/Series/Types' {
+declare module '../../Core/Series/SeriesType' {
     interface SeriesTypeRegistry {
         linearRegression: typeof Highcharts.LinearRegressionIndicator;
         linearRegressionAngle: typeof Highcharts.LinearRegressionAngleIndicator;
@@ -355,7 +358,7 @@ BaseSeries.seriesType<typeof Highcharts.LinearRegressionIndicator>(
         },
 
         // Required to be implemented - starting point for indicator's logic
-        getValues: function<TLinkedSeries extends Highcharts.Series> (
+        getValues: function<TLinkedSeries extends LineSeries> (
             this: Highcharts.LinearRegressionIndicator,
             baseSeries: TLinkedSeries,
             regressionSeriesParams:

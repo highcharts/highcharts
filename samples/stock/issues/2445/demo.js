@@ -1,7 +1,7 @@
-var seriesOptions = [],
-    names = ['Serie 1', 'Serie 2'];
+const seriesOptions = [];
+const names = ['Serie 1', 'Serie 2'];
 
-$.each(names, function (i, name) {
+names.forEach((name, i) => {
     seriesOptions[i] = {
         name: name,
         data: [

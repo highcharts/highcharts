@@ -6,7 +6,10 @@
  *
  * */
 
+'use strict';
+
 import type CSSObject from '../../Core/Renderer/CSSObject';
+import type LineSeries from '../../Series/Line/LineSeries';
 import BaseSeries from '../../Core/Series/Series.js';
 import MultipleLinesMixin from '../../Mixins/MultipleLines.js';
 import U from '../../Core/Utilities.js';
@@ -28,7 +31,7 @@ declare global {
             public getTranslatedLinesNames: MultipleLinesMixin[
                 'getTranslatedLinesNames'
             ];
-            public getValues<TLinkedSeries extends Series>(
+            public getValues<TLinkedSeries extends LineSeries>(
                 series: TLinkedSeries,
                 params: BBIndicatorParamsOptions
             ): (IndicatorValuesObject<TLinkedSeries>|undefined);
@@ -54,7 +57,7 @@ declare global {
     }
 }
 
-declare module '../../Core/Series/Types' {
+declare module '../../Core/Series/SeriesType' {
     interface SeriesTypeRegistry {
         bb: typeof Highcharts.BBIndicator;
     }
@@ -199,7 +202,7 @@ BaseSeries.seriesType<typeof Highcharts.BBIndicator>(
                 }
             }, this.options);
         },
-        getValues: function<TLinkedSeries extends Highcharts.Series> (
+        getValues: function<TLinkedSeries extends LineSeries> (
             this: Highcharts.BBIndicator,
             series: TLinkedSeries,
             params: Highcharts.BBIndicatorParamsOptions

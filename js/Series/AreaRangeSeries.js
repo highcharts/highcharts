@@ -7,17 +7,21 @@
  *  !!!!!!! SOURCE GETS TRANSPILED BY TYPESCRIPT. EDIT TS FILE ONLY. !!!!!!!
  *
  * */
+'use strict';
 import BaseSeries from '../Core/Series/Series.js';
+var seriesTypes = BaseSeries.seriesTypes;
+import ColumnSeries from './Column/ColumnSeries.js';
+var columnProto = ColumnSeries.prototype;
 import H from '../Core/Globals.js';
 var noop = H.noop;
+import LineSeries from '../Series/Line/LineSeries.js';
+var seriesProto = LineSeries.prototype;
 import Point from '../Core/Series/Point.js';
+var pointProto = Point.prototype;
 import U from '../Core/Utilities.js';
 var defined = U.defined, extend = U.extend, isArray = U.isArray, isNumber = U.isNumber, pick = U.pick;
 import './AreaSeries.js';
-import './ColumnSeries.js';
-import '../Core/Options.js';
-import '../Series/LineSeries.js';
-var Series = H.Series, areaProto = BaseSeries.seriesTypes.area.prototype, columnProto = BaseSeries.seriesTypes.column.prototype, pointProto = Point.prototype, seriesProto = Series.prototype;
+var areaProto = seriesTypes.area.prototype;
 /**
  * The area range series is a carteseian series with higher and lower values for
  * each point along an X axis, where the area between the values is shaded.

@@ -12,6 +12,8 @@ import A from '../Animation/AnimationUtilities.js';
 var animObject = A.animObject;
 import Color from '../Color/Color.js';
 import H from '../Globals.js';
+import O from '../Options.js';
+var defaultOptions = O.defaultOptions;
 import Tick from './Tick.js';
 import U from '../Utilities.js';
 var addEvent = U.addEvent, arrayMax = U.arrayMax, arrayMin = U.arrayMin, clamp = U.clamp, correctFloat = U.correctFloat, defined = U.defined, destroyObjectProperties = U.destroyObjectProperties, error = U.error, extend = U.extend, fireEvent = U.fireEvent, format = U.format, getMagnitude = U.getMagnitude, isArray = U.isArray, isFunction = U.isFunction, isNumber = U.isNumber, isString = U.isString, merge = U.merge, normalizeTickInterval = U.normalizeTickInterval, objectEach = U.objectEach, pick = U.pick, relativeLength = U.relativeLength, removeEvent = U.removeEvent, splat = U.splat, syncTimeout = U.syncTimeout;
@@ -220,8 +222,7 @@ var addEvent = U.addEvent, arrayMax = U.arrayMax, arrayMin = U.arrayMin, clamp =
  *
  * @return {string}
  */
-import O from '../Options.js';
-var defaultOptions = O.defaultOptions;
+''; // detach doclets above
 var deg2rad = H.deg2rad;
 /**
  * Create a new axis object. Called internally when instanciating a new chart or
@@ -882,7 +883,7 @@ var Axis = /** @class */ (function () {
         return evt.path;
     };
     /**
-     * Internal function to et the tick positions of a linear axis to round
+     * Internal function to get the tick positions of a linear axis to round
      * values like whole tens or every five.
      *
      * @function Highcharts.Axis#getLinearTickPositions
@@ -2405,6 +2406,7 @@ var Axis = /** @class */ (function () {
      * @fires Highcharts.Axis#event:afterGetOffset
      */
     Axis.prototype.getOffset = function () {
+        var _this = this;
         var axis = this, chart = axis.chart, renderer = chart.renderer, options = axis.options, tickPositions = axis.tickPositions, ticks = axis.ticks, horiz = axis.horiz, side = axis.side, invertedSide = chart.inverted &&
             !axis.isZAxis ? [1, 0, 3, 2][side] : side, hasData, showAxis, titleOffset = 0, titleOffsetOption, titleMargin = 0, axisTitleOptions = options.title, labelOptions = options.labels, labelOffset = 0, // reset
         labelOffsetPadded, axisOffset = chart.axisOffset, clipOffset = chart.clipOffset, clip, directionFactor = [-1, 1, 1, -1][side], className = options.className, axisParent = axis.axisParent, // Used in color axis
@@ -2416,21 +2418,15 @@ var Axis = /** @class */ (function () {
         axis.staggerLines = axis.horiz && labelOptions.staggerLines;
         // Create the axisGroup and gridGroup elements on first iteration
         if (!axis.axisGroup) {
-            axis.gridGroup = renderer.g('grid')
-                .attr({ zIndex: options.gridZIndex || 1 })
-                .addClass('highcharts-' + this.coll.toLowerCase() + '-grid ' +
+            var createGroup = function (name, suffix, zIndex) { return renderer.g(name)
+                .attr({ zIndex: zIndex })
+                .addClass("highcharts-" + _this.coll.toLowerCase() + suffix + " " +
+                (_this.isRadial ? "highcharts-radial-axis" + suffix + " " : '') +
                 (className || ''))
-                .add(axisParent);
-            axis.axisGroup = renderer.g('axis')
-                .attr({ zIndex: options.zIndex || 2 })
-                .addClass('highcharts-' + this.coll.toLowerCase() + ' ' +
-                (className || ''))
-                .add(axisParent);
-            axis.labelGroup = renderer.g('axis-labels')
-                .attr({ zIndex: labelOptions.zIndex || 7 })
-                .addClass('highcharts-' + axis.coll.toLowerCase() + '-labels ' +
-                (className || ''))
-                .add(axisParent);
+                .add(axisParent); };
+            axis.gridGroup = createGroup('grid', '-grid', options.gridZIndex || 1);
+            axis.axisGroup = createGroup('axis', '', options.zIndex || 2);
+            axis.labelGroup = createGroup('axis-labels', '-labels', labelOptions.zIndex || 7);
         }
         if (hasData || axis.isLinked) {
             // Generate ticks

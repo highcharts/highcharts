@@ -1,4 +1,4 @@
-var usdeur = [
+const usdeur = [
     [Date.UTC(2009, 8, 14), 0.6832],
     [Date.UTC(2009, 8, 15), 0.6817],
     [Date.UTC(2009, 8, 16), 0.6799],
@@ -430,17 +430,14 @@ var usdeur = [
     [Date.UTC(2011, 4, 5), 0.687],
     [Date.UTC(2011, 4, 6), 0.6983],
     [Date.UTC(2011, 4, 8), 0.696]
-
 ];
 
-var usdrand = [];
-$.each(usdeur, function (i, point) {
+const usdrand = [];
+usdeur.forEach((point, i) => {
     usdrand[i] = [point[0], point[1] + 0.01];
 });
 
-
 Highcharts.stockChart('container', {
-
     chart: {
         animation: false
     },

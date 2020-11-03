@@ -14,7 +14,7 @@
  *
  * */
 
-import type Series from './Series';
+import type LineSeries from '../../Series/Line/LineSeries';
 
 /* *
  *
@@ -22,25 +22,36 @@ import type Series from './Series';
  *
  * */
 
+export type NonPlotOptions = (
+    'data'|'id'|'index'|'legendIndex'|'mapData'|'name'|'stack'|'treemap'|'type'|
+    'xAxis'|'yAxis'|'zIndex'
+);
+
+/**
+ * All possible series options.
+ */
+export type SeriesTypeOptions = SeriesType['options'];
+
+/**
+ * All possible series plotOptions.
+ */
+export type SeriesTypePlotOptions = {
+    [K in keyof SeriesTypeRegistry]?: Omit<SeriesTypeRegistry[K]['prototype']['options'], NonPlotOptions>;
+};
+
 /**
  * All possible series types.
  */
 export type SeriesType = SeriesTypeRegistry[keyof SeriesTypeRegistry]['prototype'];
 
 /**
- * Helper interface to add series types to `SeriesType`.
+ * Helper interface to add series types to `SeriesOptionsType` and `SeriesType`.
  *
- * Use the `declare module './SeriesType'` pattern to overload the interface in
- * this definition file.
+ * Use the `declare module 'Types'` pattern to overload the interface in this
+ * definition file.
  */
 export interface SeriesTypeRegistry {
-    [key: string]: typeof Series;
+    [key: string]: typeof LineSeries;
 }
-
-/* *
- *
- *  Export
- *
- * */
 
 export default SeriesType;

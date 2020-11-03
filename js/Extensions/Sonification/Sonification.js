@@ -12,6 +12,7 @@
 'use strict';
 import Chart from '../../Core/Chart/Chart.js';
 import H from '../../Core/Globals.js';
+import LineSeries from '../../Series/Line/LineSeries.js';
 import O from '../../Core/Options.js';
 var defaultOptions = O.defaultOptions;
 import Point from '../../Core/Series/Point.js';
@@ -25,7 +26,7 @@ import chartSonifyFunctions from './ChartSonify.js';
 import utilities from './Utilities.js';
 import TimelineClasses from './Timeline.js';
 import sonificationOptions from './Options.js';
-import '../../Series/LineSeries.js';
+import '../../Series/Line/LineSeries.js';
 // Expose on the Highcharts object
 /**
  * Global classes and objects related to sonification.
@@ -97,7 +98,7 @@ merge(true, defaultOptions, sonificationOptions);
 // Chart specific
 Point.prototype.sonify = pointSonifyFunctions.pointSonify;
 Point.prototype.cancelSonify = pointSonifyFunctions.pointCancelSonify;
-H.Series.prototype.sonify = chartSonifyFunctions.seriesSonify;
+LineSeries.prototype.sonify = chartSonifyFunctions.seriesSonify;
 extend(Chart.prototype, {
     sonify: chartSonifyFunctions.chartSonify,
     pauseSonify: chartSonifyFunctions.pause,

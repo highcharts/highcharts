@@ -12,6 +12,7 @@
 'use strict';
 import Chart from '../Core/Chart/Chart.js';
 import H from '../Core/Globals.js';
+import LineSeries from '../Series/Line/LineSeries.js';
 import Point from '../Core/Series/Point.js';
 import U from '../Core/Utilities.js';
 var addEvent = U.addEvent, clamp = U.clamp, merge = U.merge, objectEach = U.objectEach, pick = U.pick;
@@ -172,7 +173,7 @@ var addEvent = U.addEvent, clamp = U.clamp, merge = U.merge, objectEach = U.obje
 * @type {"drop"}
 */
 ''; // detaches doclets above
-import '../Series/LineSeries.js';
+import '../Series/Line/LineSeries.js';
 var seriesTypes = H.seriesTypes;
 /**
  * Flip a side property, used with resizeRect. If input side is "left", return
@@ -1780,7 +1781,7 @@ Point.prototype.getDropValues = function (origin, newPos, updateProps) {
  * @return {Highcharts.SVGElement}
  *         An SVG element for the guide box, not added to DOM.
  */
-H.Series.prototype.getGuideBox = function (points) {
+LineSeries.prototype.getGuideBox = function (points) {
     var chart = this.chart, minX = Infinity, maxX = -Infinity, minY = Infinity, maxY = -Infinity, changed;
     // Find bounding box of all points
     points.forEach(function (point) {

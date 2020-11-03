@@ -20,11 +20,10 @@ import type ColorString from './Color/ColorString';
 import type ColorType from './Color/ColorType';
 import type Chart from './Chart/Chart';
 import type CSSObject from './Renderer/CSSObject';
-import type {
-    HTMLDOMElement
-} from './Renderer/DOMElementType';
+import type { HTMLDOMElement } from './Renderer/DOMElementType';
+import type LineSeries from '../Series/Line/LineSeries';
 import type Point from './Series/Point';
-import type { SeriesOptionsType, SeriesPlotOptionsType } from './Series/Types';
+import type { SeriesTypeOptions, SeriesTypePlotOptions } from './Series/SeriesType';
 import type ShadowOptionsObject from './Renderer/ShadowOptionsObject';
 import type SVGAttributes from './Renderer/SVG/SVGAttributes';
 import H from './Globals.js';
@@ -66,13 +65,13 @@ declare global {
             (this: Chart, event: ChartAddSeriesEventObject): void;
         }
         interface ChartAddSeriesEventObject {
-            options: SeriesOptionsType;
+            options: SeriesTypeOptions;
             preventDefault: Function;
             target: Chart;
             type: 'addSeries';
         }
         interface ChartClickCallbackFunction {
-            (this: Chart, event: PointerEventObject): void;
+            (this: Chart, event: PointerEvent): void;
         }
         interface ChartClickEventAxisObject {
             axis: Axis;
@@ -255,7 +254,7 @@ declare global {
             itemWidth?: number;
             layout?: ('horizontal'|'vertical'|'proximate');
             labelFormat?: string;
-            labelFormatter?: FormatterCallbackFunction<Point|Series>;
+            labelFormatter?: FormatterCallbackFunction<LineSeries|Point>;
             /** @deprecated */
             lineHeight?: number;
             margin?: number;
@@ -308,7 +307,7 @@ declare global {
             lang?: LangOptions;
             legend?: LegendOptions;
             loading?: LoadingOptions;
-            plotOptions?: SeriesPlotOptionsType;
+            plotOptions?: SeriesTypePlotOptions;
             subtitle?: SubtitleOptions;
             symbols?: Array<SymbolKeyValue>;
             time?: TimeOptions;
@@ -1751,14 +1750,10 @@ H.defaultOptions = {
          *         String
          * @sample {highcharts} highcharts/chart/renderto-object/
          *         Object reference
-         * @sample {highcharts} highcharts/chart/renderto-jquery/
-         *         Object reference through jQuery
          * @sample {highstock} stock/chart/renderto-string/
          *         String
          * @sample {highstock} stock/chart/renderto-object/
          *         Object reference
-         * @sample {highstock} stock/chart/renderto-jquery/
-         *         Object reference through jQuery
          *
          * @type      {string|Highcharts.HTMLDOMElement}
          * @apioption chart.renderTo
@@ -2817,7 +2812,7 @@ H.defaultOptions = {
          * @type {Highcharts.FormatterCallbackFunction<Point|Series>}
          */
         labelFormatter: function (
-            this: (Highcharts.Series|Point)
+            this: (LineSeries|Point)
         ): string {
             /** eslint-enable valid-jsdoc */
             return this.name as any;

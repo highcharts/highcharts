@@ -9,7 +9,7 @@
  * */
 'use strict';
 import Axis from './Axis.js';
-import LineSeries from '../../Series/LineSeries.js';
+import LineSeries from '../../Series/Line/LineSeries.js';
 import StackItem from '../../Extensions/Stacking.js';
 import U from '../Utilities.js';
 var addEvent = U.addEvent, find = U.find, fireEvent = U.fireEvent, isArray = U.isArray, isNumber = U.isNumber, pick = U.pick;

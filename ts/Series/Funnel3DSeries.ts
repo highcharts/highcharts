@@ -12,18 +12,36 @@
  *
  * */
 
+'use strict';
+
+/* *
+ *
+ *  Imports
+ *
+ * */
+
+import type BBoxObject from '../Core/Renderer/BBoxObject';
 import type Chart from '../Core/Chart/Chart';
 import type ColorType from '../Core/Color/ColorType';
+import type ColumnPoint from './Column/ColumnPoint';
+import type ColumnPointOptions from './Column/ColumnPointOptions';
+import type ColumnSeriesOptions from './Column/ColumnSeriesOptions';
+import type DataLabelOptions from '../Core/Series/DataLabelOptions';
 import type GradientColor from '../Core/Color/GradientColor';
+import type {
+    PointOptions,
+    PointShortOptions
+} from '../Core/Series/PointOptions';
+import type { SeriesStatesOptions } from '../Core/Series/SeriesOptions';
 import type SVGAttributes from '../Core/Renderer/SVG/SVGAttributes';
 import type SVGElement from '../Core/Renderer/SVG/SVGElement';
 import type SVGPath from '../Core/Renderer/SVG/SVGPath';
 import type SVGRenderer from '../Core/Renderer/SVG/SVGRenderer';
+import BaseSeries from '../Core/Series/Series.js';
 import Color from '../Core/Color/Color.js';
-const {
-    parse: color
-} = Color;
-import _ColumnSeries from './ColumnSeries.js';
+const { parse: color } = Color;
+import ColumnSeries from './Column/ColumnSeries.js';
+const { prototype: columnProto } = ColumnSeries;
 import H from '../Core/Globals.js';
 const {
     charts,
@@ -32,14 +50,9 @@ const {
         prototype: RendererProto
     }
 } = H;
+import LineSeries from './Line/LineSeries.js';
 import Math3D from '../Extensions/Math3D.js';
-const {
-    perspective
-} = Math3D;
-import Series from '../Core/Series/Series.js';
-const {
-    seriesTypes
-} = Series;
+const { perspective } = Math3D;
 import _SVGRenderer from '../Core/Renderer/SVG/SVGRenderer.js';
 import U from '../Core/Utilities.js';
 const {
@@ -53,7 +66,7 @@ const {
 /**
  * @private
  */
-declare module '../Core/Series/Types' {
+declare module '../Core/Series/SeriesType' {
     interface SeriesTypeRegistry {
         funnel3d: typeof Highcharts.Funnel3dSeries;
     }
@@ -90,14 +103,14 @@ declare global {
         }
         interface Funnel3dSeriesOptions extends ColumnSeriesOptions {
             center?: Array<(number|string|null)>;
-            data?: Array<(Funnel3dPointOptions|PointOptionsType)>;
+            data?: Array<(PointOptions|PointShortOptions|Funnel3dPointOptions)>;
             gradientForSides?: boolean;
             height?: (number|string);
             ignoreHiddenPoint?: boolean;
             neckHeight?: (number|string);
             neckWidth?: (number|string);
             reversed?: boolean;
-            states?: SeriesStatesOptionsObject<Funnel3dSeries>;
+            states?: SeriesStatesOptions<Funnel3dSeries>;
             width?: (number|string);
         }
         interface SVGElement {
@@ -138,6 +151,12 @@ declare global {
 var cuboidPath = RendererProto.cuboidPath,
     funnel3dMethods: Highcharts.Funnel3dMethodsObject;
 
+/* *
+ *
+ *  Class
+ *
+ * */
+
 /**
  * The funnel3d series type.
  *
@@ -147,7 +166,7 @@ var cuboidPath = RendererProto.cuboidPath,
  * @requires modules/cylinder
  * @requires modules/funnel3d
  */
-Series.seriesType<typeof Highcharts.Funnel3dSeries>('funnel3d', 'column',
+BaseSeries.seriesType<typeof Highcharts.Funnel3dSeries>('funnel3d', 'column',
     /**
      * A funnel3d is a 3d version of funnel series type. Funnel charts are
      * a type of chart often used to visualize stages in a sales project,
@@ -245,7 +264,7 @@ Series.seriesType<typeof Highcharts.Funnel3dSeries>('funnel3d', 'column',
     }, {
         // Override default axis options with series required options for axes
         bindAxes: function (this: Highcharts.Funnel3dSeries): void {
-            H.Series.prototype.bindAxes.apply(this, arguments);
+            LineSeries.prototype.bindAxes.apply(this, arguments);
 
             extend(this.xAxis.options, {
                 gridLineWidth: 0,
@@ -265,7 +284,7 @@ Series.seriesType<typeof Highcharts.Funnel3dSeries>('funnel3d', 'column',
         translate3dShapes: H.noop as any,
 
         translate: function (this: Highcharts.Funnel3dSeries): void {
-            H.Series.prototype.translate.apply(this, arguments);
+            LineSeries.prototype.translate.apply(this, arguments);
 
             var sum = 0,
                 series = this,
@@ -442,7 +461,7 @@ Series.seriesType<typeof Highcharts.Funnel3dSeries>('funnel3d', 'column',
             this: Highcharts.Funnel3dSeries,
             point: Highcharts.Funnel3dPoint,
             dataLabel: SVGElement,
-            options: Highcharts.DataLabelsOptions
+            options: DataLabelOptions
         ): void {
             var series = this,
                 dlBoxRaw = point.dlBoxRaw,
@@ -452,7 +471,7 @@ Series.seriesType<typeof Highcharts.Funnel3dSeries>('funnel3d', 'column',
                     series.yAxis.len
                 ),
                 inside = pick(options.inside, !!series.options.stacking),
-                dlBox: Highcharts.BBoxObject = {
+                dlBox: BBoxObject = {
                     x: dlBoxRaw.x,
                     y: dlBoxRaw.y,
                     height: 0
@@ -494,17 +513,14 @@ Series.seriesType<typeof Highcharts.Funnel3dSeries>('funnel3d', 'column',
             }
 
             point.dlBox = dlBox;
-            seriesTypes.column.prototype.alignDataLabel.apply(
+            columnProto.alignDataLabel.apply(
                 series,
                 arguments
             );
         }
     }, /** @lends seriesTypes.funnel3d.prototype.pointClass.prototype */ {
         shapeType: 'funnel3d',
-        hasNewShapeType: H
-            .seriesTypes.column.prototype
-            .pointClass.prototype
-            .hasNewShapeType
+        hasNewShapeType: columnProto.pointClass.prototype.hasNewShapeType
     }
 );
 
@@ -783,7 +799,7 @@ funnel3dMethods = merge(RendererProto.elements3d.cuboid, {
 
     adjustForGradient: function (this: SVGElement): void {
         var funnel3d = this,
-            bbox: Highcharts.BBoxObject;
+            bbox: BBoxObject;
 
         funnel3d.sideGroups.forEach(function (sideGroupName: string): void {
             // use common extremes for groups for matching gradients

@@ -1,17 +1,13 @@
-var chart = Highcharts.chart('container', {
-
+const chart = Highcharts.chart('container', {
     chart: {
         type: 'bubble'
     },
-
     title: {
         text: 'Size by absolute value'
     },
-
     subtitle: {
         text: 'Size is computed by absolute value on negative bubbles'
     },
-
     series: [{
         data: [
             [-5, 0, -5],
@@ -29,13 +25,10 @@ var chart = Highcharts.chart('container', {
         sizeByAbsoluteValue: true,
         negativeColor: '#FF0000'
     }]
-
 });
 
-
-// Add the slider to view changes
-$('input#zthreshold').on('input', function () {
+document.getElementById('zthreshold').addEventListener('input', e => {
     chart.series[0].update({
-        zThreshold: parseInt(this.value, 10)
+        zThreshold: parseInt(e.target.value, 10)
     });
 });

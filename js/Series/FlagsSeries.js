@@ -7,18 +7,20 @@
  *  !!!!!!! SOURCE GETS TRANSPILED BY TYPESCRIPT. EDIT TS FILE ONLY. !!!!!!!
  *
  * */
+'use strict';
 import BaseSeries from '../Core/Series/Series.js';
 import H from '../Core/Globals.js';
 var noop = H.noop;
+import LineSeries from './Line/LineSeries.js';
 import OnSeriesMixin from '../Mixins/OnSeries.js';
 import SVGElement from '../Core/Renderer/SVG/SVGElement.js';
 import SVGRenderer from '../Core/Renderer/SVG/SVGRenderer.js';
 import U from '../Core/Utilities.js';
 var addEvent = U.addEvent, defined = U.defined, isNumber = U.isNumber, merge = U.merge, objectEach = U.objectEach, wrap = U.wrap;
-import './ColumnSeries.js';
+import './Column/ColumnSeries.js';
 import '../Core/Interaction.js';
 import '../Core/Renderer/SVG/SVGRenderer.js';
-var Renderer = H.Renderer, Series = H.Series, TrackerMixin = H.TrackerMixin, // Interaction
+var Renderer = H.Renderer, TrackerMixin = H.TrackerMixin, // Interaction
 VMLRenderer = H.VMLRenderer, symbols = SVGRenderer.prototype.symbols;
 /**
  * @typedef {"circlepin"|"flag"|"squarepin"} Highcharts.FlagsShapeValue
@@ -260,7 +262,7 @@ BaseSeries.seriesType('flags', 'column'
      * @private
      * @borrows Highcharts.Series#init as Highcharts.seriesTypes.flags#init
      */
-    init: Series.prototype.init,
+    init: LineSeries.prototype.init,
     /**
      * Get presentational attributes
      *
@@ -489,7 +491,7 @@ BaseSeries.seriesType('flags', 'column'
      * @return {void}
      */
     setClip: function () {
-        Series.prototype.setClip.apply(this, arguments);
+        LineSeries.prototype.setClip.apply(this, arguments);
         if (this.options.clip !== false && this.sharedClipKey) {
             this.markerGroup
                 .clip(this.chart[this.sharedClipKey]);

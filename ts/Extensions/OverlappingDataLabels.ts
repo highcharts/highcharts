@@ -14,7 +14,10 @@
 'use strict';
 
 import type { AlignValue } from '../Core/Renderer/AlignObject';
+import type BBoxObject from '../Core/Renderer/BBoxObject';
+import type DataLabelOptions from '../Core/Series/DataLabelOptions';
 import type Point from '../Core/Series/Point';
+import type PositionObject from '../Core/Renderer/PositionObject';
 import type SVGElement from '../Core/Renderer/SVG/SVGElement';
 import Chart from '../Core/Chart/Chart.js';
 import U from '../Core/Utilities.js';
@@ -71,16 +74,18 @@ addEvent(Chart, 'render', function collectAndHide(): void {
         }
     });
 
-    (this.series || []).forEach(function (series: Highcharts.Series): void {
-        var dlOptions: Highcharts.DataLabelsOptions = (
+    (this.series || []).forEach(function (series): void {
+        var dlOptions: DataLabelOptions = (
             series.options.dataLabels as any
         );
 
         if (
             series.visible &&
-            !(dlOptions.enabled === false && !series._hasPointLabels)
+            !((dlOptions as any).enabled === false && !series._hasPointLabels)
         ) { // #3866
-            (series.nodes || series.points).forEach(function (point: Point): void {
+            ((series.nodes || series.points) as any).forEach(function (
+                point: (Highcharts.NodesPoint|Point)
+            ): void {
                 if (point.visible) {
                     var dataLabels = (
                         isArray(point.dataLabels) ?
@@ -137,8 +142,8 @@ Chart.prototype.hideOverlappingLabels = function (
         box2,
         isLabelAffected = false,
         isIntersectRect = function (
-            box1: Highcharts.BBoxObject,
-            box2: Highcharts.BBoxObject
+            box1: BBoxObject,
+            box2: BBoxObject
         ): boolean {
             return !(
                 box2.x >= box1.x + box1.width ||
@@ -152,10 +157,10 @@ Chart.prototype.hideOverlappingLabels = function (
         // that only reports the position relative to the parent.
         getAbsoluteBox = function (
             label: SVGElement
-        ): (Highcharts.BBoxObject|undefined) {
-            var pos: Highcharts.PositionObject,
+        ): (BBoxObject|undefined) {
+            var pos: PositionObject,
                 parent: SVGElement,
-                bBox: Highcharts.BBoxObject,
+                bBox: BBoxObject,
                 // Substract the padding if no background or border (#4333)
                 padding = label.box ? 0 : (label.padding || 0),
                 lineHeightCorrection = 0,

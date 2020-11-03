@@ -7,8 +7,9 @@
  *  !!!!!!! SOURCE GETS TRANSPILED BY TYPESCRIPT. EDIT TS FILE ONLY. !!!!!!!
  *
  * */
+'use strict';
 import BaseSeries from '../Core/Series/Series.js';
-import ColumnSeries from './ColumnSeries.js';
+import ColumnSeries from './Column/ColumnSeries.js';
 var colProto = ColumnSeries.prototype;
 import U from '../Core/Utilities.js';
 var clamp = U.clamp, pick = U.pick;

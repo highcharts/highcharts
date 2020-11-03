@@ -8,29 +8,42 @@
  *
  * */
 
+'use strict';
+
+/* *
+ *
+ *  Imports
+ *
+ * */
+
 import type ColorString from '../Core/Color/ColorString';
 import type ColorType from '../Core/Color/ColorType';
+import type ColumnPoint from './Column/ColumnPoint';
+import type ColumnPointOptions from './Column/ColumnPointOptions';
+import type ColumnSeriesOptions from './Column/ColumnSeriesOptions';
+import type DashStyleValue from '../Core/Renderer/DashStyleValue';
 import type GradientColor from '../Core/Color/GradientColor';
+import type { SeriesStatesOptions } from '../Core/Series/SeriesOptions';
 import type SVGAttributes from '../Core/Renderer/SVG/SVGAttributes';
 import type SVGPath from '../Core/Renderer/SVG/SVGPath';
 import Series from '../Core/Series/Series.js';
-import ColumnSeries from './ColumnSeries.js';
-const {
-    prototype: columnProto
-} = ColumnSeries;
+import ColumnSeries from './Column/ColumnSeries.js';
+const { prototype: columnProto } = ColumnSeries;
 import H from '../Core/Globals.js';
-const {
-    noop
-} = H;
+const { noop } = H;
 import U from '../Core/Utilities.js';
-const {
-    pick
-} = U;
+const { pick } = U;
+
+/* *
+ *
+ *  Declarations
+ *
+ * */
 
 /**
  * @private
  */
-declare module '../Core/Series/Types' {
+declare module '../Core/Series/SeriesType' {
     interface SeriesTypeRegistry {
         boxplot: typeof Highcharts.BoxPlotSeries;
     }
@@ -98,7 +111,7 @@ declare global {
             medianColor?: BoxPlotPoint['medianColor'];
             medianDashStyle?: BoxPlotPoint['medianDashStyle'];
             medianWidth?: BoxPlotPoint['medianWidth'];
-            states?: SeriesStatesOptionsObject<BoxPlotSeries>;
+            states?: SeriesStatesOptions<BoxPlotSeries>;
             stemColor?: BoxPlotPoint['stemColor'];
             stemDashStyle?: BoxPlotPoint['stemDashStyle'];
             stemWidth?: BoxPlotPoint['stemWidth'];
@@ -119,6 +132,12 @@ declare global {
  *
  * @augments Highcharts.Series
  */
+
+/* *
+ *
+ *  Class
+ *
+ * */
 
 /**
  * A box plot is a convenient way of depicting groups of data through their

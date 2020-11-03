@@ -8,15 +8,17 @@
  *
  * */
 
-import type {
-    HTMLDOMElement
-} from '../Renderer/DOMElementType';
-import type { SeriesPlotOptionsType } from '../Series/Types';
+'use strict';
+
+import type BBoxObject from '../Renderer/BBoxObject';
+import type { HTMLDOMElement } from '../Renderer/DOMElementType';
+import type PointerEvent from '../PointerEvent';
+import type { SeriesTypePlotOptions } from '../Series/SeriesType';
 import type SVGPath from '../Renderer/SVG/SVGPath';
 import Axis from '../Axis/Axis.js';
 import Chart from '../Chart/Chart.js';
 import H from '../Globals.js';
-import LineSeries from '../../Series/LineSeries.js';
+import LineSeries from '../../Series/Line/LineSeries.js';
 import Point from '../Series/Point.js';
 import SVGRenderer from '../Renderer/SVG/SVGRenderer.js';
 import U from '../Utilities.js';
@@ -37,9 +39,32 @@ const {
     splat
 } = U;
 
-declare module '../Chart/ChartLike'{
+declare module './ChartLike' {
     interface ChartLike {
         _labelPanes?: Record<string, Axis>;
+    }
+}
+
+declare module '../Series/PointLike' {
+    interface PointLike {
+        change?: number;
+    }
+}
+
+declare module '../Series/SeriesLike' {
+    interface SeriesLike {
+        clipBox?: BBoxObject;
+        compareValue?: number;
+        modifyValue?(value?: number, point?: Point): (number|undefined);
+        setCompare(compare?: string): void;
+    }
+}
+
+declare module '../Series/SeriesOptions' {
+    interface SeriesOptions {
+        compare?: string;
+        compareBase?: (0|100);
+        compareStart?: boolean;
     }
 }
 
@@ -56,20 +81,6 @@ declare global {
 
         interface Options {
             isStock?: boolean;
-        }
-        interface PointLike {
-            change?: number;
-        }
-        interface Series {
-            clipBox?: BBoxObject;
-            compareValue?: number;
-            modifyValue?(value?: number, point?: Point): (number|undefined);
-            setCompare(compare?: string): void;
-        }
-        interface SeriesOptions {
-            compare?: string;
-            compareBase?: (0|100);
-            compareStart?: boolean;
         }
         interface SVGRenderer {
             crispPolyLine(points: SVGPath, width: number): SVGPath;
@@ -336,8 +347,7 @@ H.StockChart = H.stockChart = function (
 // Handle som Stock-specific series defaults, override the plotOptions before
 // series options are handled.
 addEvent(LineSeries, 'setOptions', function (
-    this: Highcharts.Series,
-    e: { plotOptions: SeriesPlotOptionsType }
+    e: { plotOptions: SeriesTypePlotOptions }
 ): void {
     var overrides;
 
@@ -454,7 +464,7 @@ addEvent(Axis, 'getPlotLinePath', function (
         }
 
         // Auto detect based on existing series
-        return series.map(function (s: Highcharts.Series): Highcharts.Axis {
+        return series.map(function (s: LineSeries): Highcharts.Axis {
             return (s as any)[otherColl];
         });
     }
@@ -625,7 +635,7 @@ addEvent(Axis, 'afterHideCrosshair', function (this: Highcharts.Axis): void {
 // Extend crosshairs to also draw the label
 addEvent(Axis, 'afterDrawCrosshair', function (
     this: Highcharts.Axis,
-    event: { e: Highcharts.PointerEventObject; point: Point }
+    event: { e: PointerEvent; point: Point }
 ): void {
 
     // Check if the label has to be drawn
@@ -811,7 +821,7 @@ addEvent(Axis, 'afterDrawCrosshair', function (
  * @ignore
  * @function Highcharts.Series#init
  */
-seriesProto.init = function (this: Highcharts.Series): void {
+seriesProto.init = function (): void {
 
     // Call base method
     seriesInit.apply(this, arguments as any);
@@ -831,15 +841,12 @@ seriesProto.init = function (this: Highcharts.Series): void {
  * @param {string} [compare]
  *        Can be one of `null` (default), `"percent"` or `"value"`.
  */
-seriesProto.setCompare = function (
-    this: Highcharts.Series,
-    compare?: string
-): void {
+seriesProto.setCompare = function (compare?: string): void {
 
     // Set or unset the modifyValue method
     this.modifyValue = (compare === 'value' || compare === 'percent') ?
         function (
-            this: Highcharts.Series,
+            this: LineSeries,
             value?: number,
             point?: Point
         ): (number|undefined) {
@@ -888,10 +895,7 @@ seriesProto.setCompare = function (
  * @ignore
  * @function Highcharts.Series#processData
  */
-seriesProto.processData = function (
-    this: Highcharts.Series,
-    force?: boolean
-): (boolean|undefined) {
+seriesProto.processData = function (force?: boolean): (boolean|undefined) {
     var series = this,
         i,
         keyIndex = -1,
@@ -943,7 +947,7 @@ seriesProto.processData = function (
 addEvent(
     LineSeries,
     'afterGetExtremes',
-    function (this: Highcharts.Series, e): void {
+    function (e): void {
         const dataExtremes: Highcharts.DataExtremesObject = (e as any).dataExtremes;
         if (this.modifyValue && dataExtremes) {
             var extremes = [
@@ -977,12 +981,11 @@ addEvent(
  *        {@link Chart#redraw}.
  */
 Axis.prototype.setCompare = function (
-    this: Highcharts.Axis,
     compare?: string,
     redraw?: boolean
 ): void {
     if (!this.isXAxis) {
-        this.series.forEach(function (series: Highcharts.Series): void {
+        this.series.forEach(function (series): void {
             series.setCompare(compare);
         });
         if (pick(redraw, true)) {
@@ -1000,10 +1003,7 @@ Axis.prototype.setCompare = function (
  *
  * @param {string} pointFormat
  */
-Point.prototype.tooltipFormatter = function (
-    this: Point,
-    pointFormat: string
-): string {
+Point.prototype.tooltipFormatter = function (pointFormat: string): string {
     var point = this;
     const { numberFormatter } = point.series.chart;
 
@@ -1026,7 +1026,7 @@ Point.prototype.tooltipFormatter = function (
 // Extend the Series prototype to create a separate series clip box. This is
 // related to using multiple panes, and a future pane logic should incorporate
 // this feature (#2754).
-addEvent(LineSeries, 'render', function (this: Highcharts.Series): void {
+addEvent(LineSeries, 'render', function (): void {
     var chart = this.chart,
         clipHeight;
 

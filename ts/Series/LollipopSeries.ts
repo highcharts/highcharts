@@ -8,9 +8,20 @@
  *
  * */
 
-import Point from '../Core/Series/Point.js';
+'use strict';
+
+import type { SeriesStatesOptions } from '../Core/Series/SeriesOptions';
 import BaseSeries from '../Core/Series/Series.js';
+const { seriesTypes } = BaseSeries;
+import ColumnSeries from './Column/ColumnSeries.js';
+const { prototype: colProto } = ColumnSeries;
 import H from '../Core/Globals.js';
+import Point from '../Core/Series/Point.js';
+import U from '../Core/Utilities.js';
+const {
+    isObject,
+    pick
+} = U;
 
 /**
  * Internal types
@@ -22,7 +33,7 @@ declare global {
         }
         interface LollipopSeriesOptions extends DumbbellSeriesOptions {
             lowColor?: undefined;
-            states?: SeriesStatesOptionsObject<LollipopSeries>;
+            states?: SeriesStatesOptions<LollipopSeries>;
         }
         class LollipopPoint extends DumbbellPoint {
             public series: LollipopSeries;
@@ -44,24 +55,16 @@ declare global {
 /**
  * @private
  */
-declare module '../Core/Series/Types' {
+declare module '../Core/Series/SeriesType' {
     interface SeriesTypeRegistry {
         lollipop: typeof Highcharts.LollipopSeries;
     }
 }
 
 import './AreaSeries.js';
-import './ColumnSeries.js';
 import './DumbbellSeries.js';
-import U from '../Core/Utilities.js';
-const {
-    isObject,
-    pick
-} = U;
 
-const seriesTypes = BaseSeries.seriesTypes,
-    areaProto = seriesTypes.area.prototype,
-    colProto = seriesTypes.column.prototype;
+const areaProto = seriesTypes.area.prototype;
 
 /**
  * The lollipop series is a carteseian series with a line anchored from

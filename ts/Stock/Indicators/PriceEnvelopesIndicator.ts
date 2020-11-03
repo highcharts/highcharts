@@ -6,7 +6,10 @@
  *
  * */
 
+'use strict';
+
 import type CSSObject from '../../Core/Renderer/CSSObject';
+import type LineSeries from '../../Series/Line/LineSeries';
 import type SVGElement from '../../Core/Renderer/SVG/SVGElement';
 import BaseSeries from '../../Core/Series/Series.js';
 import U from '../../Core/Utilities.js';
@@ -26,7 +29,7 @@ declare global {
             public data: Array<PriceEnvelopesIndicatorPoint>;
             public drawGraph(): void;
             public init(): void;
-            public getValues<TLinkedSeries extends Series>(
+            public getValues<TLinkedSeries extends LineSeries>(
                 series: TLinkedSeries,
                 params: PriceEnvelopesIndicatorParamsOptions
             ): (IndicatorValuesObject<TLinkedSeries>|undefined);
@@ -74,7 +77,7 @@ declare global {
     }
 }
 
-declare module '../../Core/Series/Types' {
+declare module '../../Core/Series/SeriesType' {
     interface SeriesTypeRegistry {
         priceenvelopes: typeof Highcharts.PriceEnvelopesIndicator;
     }
@@ -276,7 +279,7 @@ BaseSeries.seriesType<typeof Highcharts.PriceEnvelopesIndicator>(
             indicator.graph = middleLinePath;
             SMA.prototype.drawGraph.call(indicator);
         },
-        getValues: function<TLinkedSeries extends Highcharts.Series> (
+        getValues: function<TLinkedSeries extends LineSeries> (
             series: TLinkedSeries,
             params: Highcharts.PriceEnvelopesIndicatorParamsOptions
         ): (Highcharts.IndicatorValuesObject<TLinkedSeries>|undefined) {

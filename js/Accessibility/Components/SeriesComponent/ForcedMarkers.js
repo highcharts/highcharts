@@ -10,7 +10,7 @@
  *
  * */
 'use strict';
-import CartesianSeries from '../../../Core/Series/CartesianSeries.js';
+import LineSeries from '../../../Series/Line/LineSeries.js';
 import U from '../../../Core/Utilities.js';
 var addEvent = U.addEvent, merge = U.merge;
 /* eslint-disable no-invalid-this, valid-jsdoc */
@@ -121,7 +121,7 @@ function addForceMarkersEvents() {
      * Keep track of forcing markers.
      * @private
      */
-    addEvent(CartesianSeries, 'render', function () {
+    addEvent(LineSeries, 'render', function () {
         var series = this, options = series.options;
         if (shouldForceMarkers(series)) {
             if (options.marker && options.marker.enabled === false) {
@@ -141,14 +141,14 @@ function addForceMarkersEvents() {
      * Keep track of options to reset markers to if no longer forced.
      * @private
      */
-    addEvent(CartesianSeries, 'afterSetOptions', function (e) {
+    addEvent(LineSeries, 'afterSetOptions', function (e) {
         this.resetA11yMarkerOptions = merge(e.options.marker || {}, this.userOptions.marker || {});
     });
     /**
      * Process marker graphics after render
      * @private
      */
-    addEvent(CartesianSeries, 'afterRender', function () {
+    addEvent(LineSeries, 'afterRender', function () {
         var series = this;
         // For styled mode the rendered graphic does not reflect the style
         // options, and we need to add/remove classes to achieve the same.

@@ -12,10 +12,12 @@
 
 import type Chart from './Chart/Chart';
 import type ColorType from './Color/ColorType';
-import type {
-    HTMLDOMElement
-} from './Renderer/DOMElementType';
+import type { HTMLDOMElement } from './Renderer/DOMElementType';
+import type LineSeries from '../Series/Line/LineSeries';
 import type Point from './Series/Point';
+import type PointerEvent from './PointerEvent';
+import type PositionObject from './Renderer/PositionObject';
+import type RectangleObject from './Renderer/RectangleObject';
 import type SVGAttributes from './Renderer/SVG/SVGAttributes';
 import type SVGElement from './Renderer/SVG/SVGElement';
 import H from './Globals.js';
@@ -39,6 +41,25 @@ const {
     syncTimeout,
     timeUnits
 } = U;
+
+declare module './Series/PointLike' {
+    interface PointLike {
+        tooltipPos?: Array<number>;
+    }
+}
+
+declare module './Series/SeriesLike' {
+    interface SeriesLike {
+        noSharedTooltip?: boolean;
+        tt?: SVGElement;
+    }
+}
+
+declare module './Series/SeriesOptions' {
+    interface SeriesOptions {
+        tooltip?: Highcharts.TooltipOptions;
+    }
+}
 
 /**
  * Internal types
@@ -68,7 +89,7 @@ declare global {
             public tracker?: SVGElement;
             public tt?: SVGElement;
             public applyFilter(): void;
-            public bodyFormatter(items: Array<(Point|Series)>): Array<string>;
+            public bodyFormatter(items: Array<(LineSeries|Point)>): Array<string>;
             public cleanSplit(force?: boolean): void;
             public defaultFormatter(
                 this: TooltipFormatterContextObject,
@@ -77,7 +98,7 @@ declare global {
             public destroy(): void;
             public getAnchor(
                 points: (Point|Array<Point>),
-                mouseEvent?: PointerEventObject
+                mouseEvent?: PointerEvent
             ): Array<number>;
             public getDateFormat(
                 range: number,
@@ -107,7 +128,7 @@ declare global {
             ): void;
             public refresh(
                 pointOrPoints: (Point|Array<Point>),
-                mouseEvent?: PointerEventObject
+                mouseEvent?: PointerEvent
             ): void;
             public renderSplit(
                 labels: (string|Array<(boolean|string)>),
@@ -115,21 +136,11 @@ declare global {
             ): void;
             public styledModeFormat(formatString: string): string;
             public tooltipFooterHeaderFormatter(
-                labelConfig: PointLabelObject,
+                labelConfig: Point.PointLabelObject,
                 isFooter?: boolean
             ): string;
             public update(options: TooltipOptions): void;
             public updatePosition(point: Point): void;
-        }
-        interface PointLike {
-            tooltipPos?: Array<number>;
-        }
-        interface Series {
-            noSharedTooltip?: boolean;
-            tt?: SVGElement;
-        }
-        interface SeriesOptions {
-            tooltip?: TooltipOptions;
         }
         interface TooltipFormatterCallbackFunction {
             (
@@ -144,7 +155,7 @@ declare global {
             percentage?: number;
             point: Point;
             points?: Array<Highcharts.TooltipFormatterContextObject>;
-            series: Series;
+            series: LineSeries;
             total?: number;
             x: number;
             y: number;
@@ -416,7 +427,7 @@ class Tooltip {
      * @return {Array<string>}
      */
     public bodyFormatter(items: Array<Point>): Array<string> {
-        return items.map(function (item: (Point|Highcharts.Series)): string {
+        return items.map(function (item): string {
             var tooltipOptions = (item as any).series.tooltipOptions;
 
             return (
@@ -444,7 +455,7 @@ class Tooltip {
      *        Force destroy all tooltips.
      */
     public cleanSplit(force?: boolean): void {
-        this.chart.series.forEach(function (series: Highcharts.Series): void {
+        this.chart.series.forEach(function (series): void {
             var tt = series && series.tt;
 
             if (tt) {
@@ -523,7 +534,7 @@ class Tooltip {
      */
     public getAnchor(
         points: (Point|Array<Point>),
-        mouseEvent?: Highcharts.PointerEventObject
+        mouseEvent?: PointerEvent
     ): Array<number> {
         var ret,
             chart = this.chart,
@@ -555,7 +566,7 @@ class Tooltip {
 
         // When shared, use the average position
         } else {
-            points.forEach(function (point: Point): void {
+            points.forEach(function (point): void {
                 yAxis = point.series.yAxis;
                 xAxis = point.series.xAxis;
                 plotX += (point.plotX as any) +
@@ -834,11 +845,11 @@ class Tooltip {
      *
      * @return {Highcharts.PositionObject}
      */
-    public getPosition(boxWidth: number, boxHeight: number, point: Point): Highcharts.PositionObject {
+    public getPosition(boxWidth: number, boxHeight: number, point: Point): PositionObject {
 
         var chart = this.chart,
             distance = this.distance,
-            ret = {} as Highcharts.PositionObject,
+            ret = {} as PositionObject,
             // Don't use h if chart isn't inverted (#7242) ???
             h = (chart.inverted && (point as any).h) || 0, // #4117 ???
             swapped: (boolean|undefined),
@@ -1261,7 +1272,7 @@ class Tooltip {
      */
     public refresh(
         pointOrPoints: (Point|Array<Point>),
-        mouseEvent?: Highcharts.PointerEventObject
+        mouseEvent?: PointerEvent
     ): void {
         var tooltip = this,
             chart = this.chart,
@@ -1272,7 +1283,7 @@ class Tooltip {
             anchor,
             textConfig = {} as Highcharts.TooltipFormatterContextObject,
             text: (boolean|string),
-            pointConfig = [] as Array<Highcharts.PointLabelObject>,
+            pointConfig = [] as Array<Point.PointLabelObject>,
             formatter = options.formatter || tooltip.defaultFormatter,
             shared = tooltip.shared,
             currentSeries,
@@ -1501,7 +1512,7 @@ class Tooltip {
             isHeader: boolean,
             boxWidth: number,
             alignedLeft = true
-        ): Highcharts.PositionObject {
+        ): PositionObject {
             let y;
             let x;
             if (isHeader) {
@@ -1604,10 +1615,10 @@ class Tooltip {
         }
         // Create the individual labels for header and points, ignore footer
         let boxes = labels.slice(0, points.length + 1).reduce(function (
-            boxes: Array<Highcharts.Dictionary<any>>,
+            boxes: Array<Record<string, any>>,
             str: (boolean|string),
             i: number
-        ): Array<Highcharts.Dictionary<any>> {
+        ): Array<Record<string, any>> {
             if (str !== false && str !== '') {
                 const point: (Point|Highcharts.TooltipPositionerPointObject) = (
                     points[i - 1] ||
@@ -1773,7 +1784,7 @@ class Tooltip {
             return;
         }
 
-        const box: Highcharts.RectangleObject = {
+        const box: RectangleObject = {
             x: 0,
             y: 0,
             width: 0,
@@ -1843,7 +1854,7 @@ class Tooltip {
      * @param {boolean} [isFooter]
      * @return {string}
      */
-    public tooltipFooterHeaderFormatter(labelConfig: Highcharts.PointLabelObject, isFooter?: boolean): string {
+    public tooltipFooterHeaderFormatter(labelConfig: Point.PointLabelObject, isFooter?: boolean): string {
         var footOrHead = isFooter ? 'footer' : 'header',
             series = labelConfig.series,
             tooltipOptions = series.tooltipOptions,

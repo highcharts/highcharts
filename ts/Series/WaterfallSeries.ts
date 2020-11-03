@@ -11,16 +11,20 @@
 'use strict';
 
 import type ColorType from '../Core/Color/ColorType';
+import type ColumnPoint from './Column/ColumnPoint';
+import type ColumnPointOptions from './Column/ColumnPointOptions';
+import type ColumnSeries from './Column/ColumnSeries';
+import type ColumnSeriesOptions from './Column/ColumnSeriesOptions';
+import type { SeriesStatesOptions } from '../Core/Series/SeriesOptions';
+import type { StatesOptionsKey } from '../Core/Series/StatesOptions';
 import type SVGAttributes from '../Core/Renderer/SVG/SVGAttributes';
 import type SVGElement from '../Core/Renderer/SVG/SVGElement';
 import type SVGPath from '../Core/Renderer/SVG/SVGPath';
 import Axis from '../Core/Axis/Axis.js';
 import BaseSeries from '../Core/Series/Series.js';
-const {
-    seriesTypes
-} = BaseSeries;
+const { seriesTypes } = BaseSeries;
 import Chart from '../Core/Chart/Chart.js';
-import H from '../Core/Globals.js';
+import LineSeries from './Line/LineSeries.js';
 import Point from '../Core/Series/Point.js';
 import StackItem from '../Extensions/Stacking.js';
 import U from '../Core/Utilities.js';
@@ -34,10 +38,13 @@ const {
     pick
 } = U;
 
-/**
- * @private
- */
-declare module '../Core/Series/Types' {
+declare module '../Core/Series/SeriesLike' {
+    interface SeriesLike {
+        showLine?: Highcharts.WaterfallSeries['showLine'];
+    }
+}
+
+declare module '../Core/Series/SeriesType' {
     interface SeriesTypeRegistry {
         waterfall: typeof Highcharts.WaterfallSeries;
     }
@@ -81,17 +88,14 @@ declare global {
             public getGraphPath(): SVGPath;
             public pointAttribs(
                 point: WaterfallPoint,
-                state: string
+                state?: StatesOptionsKey
             ): SVGAttributes;
             public processData(force?: boolean): undefined;
             public setStackedPoints(): void;
             public toYData(pt: WaterfallPoint): any;
             public translate(): void;
         }
-        interface Series {
-            showLine?: WaterfallSeries['showLine'];
-        }
-        interface WaterfallChart extends ColumnChart {
+        interface WaterfallChart extends Chart {
             axes: Array<WaterfallAxis>;
         }
         interface WaterfallPointOptions extends ColumnPointOptions {
@@ -100,15 +104,12 @@ declare global {
         }
         interface WaterfallSeriesOptions extends ColumnSeriesOptions {
             upColor?: ColorType;
-            states?: SeriesStatesOptionsObject<WaterfallSeries>;
+            states?: SeriesStatesOptions<WaterfallSeries>;
         }
     }
 }
 
 import '../Core/Options.js';
-import './ColumnSeries.js';
-
-var Series = H.Series;
 
 /**
  * Returns true if the key is a direct property of the object.
@@ -783,7 +784,7 @@ BaseSeries.seriesType<typeof Highcharts.WaterfallSeries>('waterfall', 'column', 
             dataMax = Math.max(sum, dataMax);
         }
 
-        Series.prototype.processData.call(this, force);
+        LineSeries.prototype.processData.call(this, force);
 
         // Record extremes only if stacking was not set:
         if (!options.stacking) {
@@ -813,7 +814,7 @@ BaseSeries.seriesType<typeof Highcharts.WaterfallSeries>('waterfall', 'column', 
         point: Point,
         i: (number|string)
     ): void {
-        Series.prototype.updateParallelArrays.call(
+        LineSeries.prototype.updateParallelArrays.call(
             this,
             point,
             i
@@ -828,7 +829,7 @@ BaseSeries.seriesType<typeof Highcharts.WaterfallSeries>('waterfall', 'column', 
     pointAttribs: function (
         this: Highcharts.WaterfallSeries,
         point: Highcharts.WaterfallPoint,
-        state: string
+        state: StatesOptionsKey
     ): SVGAttributes {
 
         var upColor = this.options.upColor,
@@ -954,7 +955,7 @@ BaseSeries.seriesType<typeof Highcharts.WaterfallSeries>('waterfall', 'column', 
     // The graph is initially drawn with an empty definition, then updated with
     // crisp rendering.
     drawGraph: function (this: Highcharts.WaterfallSeries): void {
-        Series.prototype.drawGraph.call(this);
+        LineSeries.prototype.drawGraph.call(this);
         (this.graph as any).attr({
             d: this.getCrispPath()
         });
