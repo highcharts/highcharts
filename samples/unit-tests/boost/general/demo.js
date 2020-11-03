@@ -280,5 +280,28 @@ QUnit[Highcharts.hasWebGLSupport() ? 'test' : 'skip'](
             chart.plotWidth,
             'Width of the plot area and clip-path should be the same.'
         );
+        chart.update({
+            xAxis: [{
+                max: 10,
+                height: '50%'
+            }, {
+                height: '50%',
+                max: 10,
+                linkedTo: 0
+            }],
+            yAxis: [{
+                max: 10,
+                height: '50%'
+            }, {
+                max: 10,
+                height: '50%',
+                linkedTo: 0
+            }]
+        });
+        assert.strictEqual(
+            chart.boostClipRect.attr('height'),
+            chart.yAxis[0].height,
+            'After setting the axis position manually, the boost clip-path shouldn\'t be bigger than the axis size.'
+        );
     }
 );

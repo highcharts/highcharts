@@ -151,19 +151,14 @@ Chart.prototype.getBoostClipRect = function (target: Chart): BBoxObject {
     };
 
     if (target === this) {
-        if (!this.inverted) {
-            this.yAxis.forEach(function (yAxis: Highcharts.Axis): void {
-                clipBox.y = Math.min(yAxis.pos, clipBox.y);
-                clipBox.height = Math.max(
-                    yAxis.pos - this.plotTop + yAxis.len,
-                    clipBox.height
-                );
-            }, this);
-        } else { // #14444
-            clipBox.height = this.plotHeight;
-            clipBox.y = this.plotTop;
-        }
-
+        const verticalAxes = this.inverted ? this.xAxis : this.yAxis; // #14444
+        verticalAxes.forEach(function (axis): void {
+            clipBox.y = Math.min(axis.pos, clipBox.y);
+            clipBox.height = Math.min(
+                axis.pos - this.plotTop + axis.len,
+                clipBox.height
+            );
+        }, this);
     }
 
     return clipBox;
