@@ -8,11 +8,12 @@
  *
  * */
 'use strict';
-import H from '../Core/Globals.js';
+import ColumnSeries from '../Series/Column/ColumnSeries.js';
+var columnProto = ColumnSeries.prototype;
+import LineSeries from '../Series/Line/LineSeries.js';
+var seriesProto = LineSeries.prototype;
 import U from '../Core/Utilities.js';
 var defined = U.defined, stableSort = U.stableSort;
-import '../Series/LineSeries.js';
-var seriesTypes = H.seriesTypes;
 /**
  * @private
  * @mixin onSeriesMixin
@@ -28,7 +29,7 @@ var onSeriesMixin = {
      * @return {Highcharts.SeriesPlotBoxObject}
      */
     getPlotBox: function () {
-        return H.Series.prototype.getPlotBox.call((this.options.onSeries &&
+        return seriesProto.getPlotBox.call((this.options.onSeries &&
             this.chart.get(this.options.onSeries)) || this);
     },
     /**
@@ -39,7 +40,7 @@ var onSeriesMixin = {
      * @return {void}
      */
     translate: function () {
-        seriesTypes.column.prototype.translate.apply(this);
+        columnProto.translate.apply(this);
         var series = this, options = series.options, chart = series.chart, points = series.points, cursor = points.length - 1, point, lastPoint, optionsOnSeries = options.onSeries, onSeries = (optionsOnSeries &&
             chart.get(optionsOnSeries)), onKey = options.onKey || 'y', step = onSeries && onSeries.options.step, onData = (onSeries && onSeries.points), i = onData && onData.length, inverted = chart.inverted, xAxis = series.xAxis, yAxis = series.yAxis, xOffset = 0, leftPoint, lastX, rightPoint, currentDataGrouping, distanceRatio;
         // relate to a master series

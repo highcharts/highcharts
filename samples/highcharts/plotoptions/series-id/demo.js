@@ -1,9 +1,7 @@
-var chart = Highcharts.chart('container', {
-
+const chart = Highcharts.chart('container', {
     xAxis: {
         categories: ['Jan', 'Feb', 'Mar', 'Apr', 'May', 'Jun', 'Jul', 'Aug', 'Sep', 'Oct', 'Nov', 'Dec']
     },
-
     series: [{
         id: 'series-1',
         name: 'First series',
@@ -15,11 +13,10 @@ var chart = Highcharts.chart('container', {
     }]
 });
 
+document.getElementById('button').addEventListener('click', () => {
+    const series = chart.get('series-1');
+    const text = 'The first series\' name is ' + series.name;
 
-// The button action
-$('#button').click(function () {
-    var series = chart.get('series-1'),
-        text = 'The first series\' name is ' + series.name;
     if (!chart.lbl) {
         chart.lbl = chart.renderer.label(text, 100, 70)
             .attr({

@@ -15,7 +15,8 @@
  * */
 
 import type PointLike from './PointLike';
-import type PointType from './PointType';
+import type SeriesOptions from './SeriesOptions';
+import type SVGElement from '../Renderer/SVG/SVGElement';
 
 /* *
  *
@@ -40,24 +41,13 @@ export interface SeriesLike {
     linkedSeries: Array<SeriesLike>;
     markerGroup?: SVGElement;
     opacity?: number;
-    options: SeriesLikeOptions;
+    options: SeriesOptions;
     points: Array<PointLike>;
-    userOptions: DeepPartial<SeriesLikeOptions>;
+    userOptions: DeepPartial<SeriesOptions>;
     drawGraph(): void;
     render(): void;
     translate(): void;
-    update(options: DeepPartial<SeriesLikeOptions>): void;
-}
-
-/**
- * Helper interface for series types to add options to all series options.
- *
- * Use the `declare module 'Types'` pattern to overload the interface in this
- * definition file.
- */
-export interface SeriesLikeOptions /* @todo */ extends Highcharts.SeriesOptions {
-    data?: Array<PointType['options']>;
-    type?: string;
+    update(options: DeepPartial<SeriesOptions>): void;
 }
 
 /* *

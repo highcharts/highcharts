@@ -10,8 +10,20 @@
  *
  * */
 
+'use strict';
+
+/* *
+ *
+ *  Imports
+ *
+ * */
+
+import type BBoxObject from '../Core/Renderer/BBoxObject';
 import type ColorString from '../Core/Color/ColorString';
 import type CSSObject from '../Core/Renderer/CSSObject';
+import type Point from '../Core/Series/Point';
+import type { SeriesStatesOptions } from '../Core/Series/SeriesOptions';
+import type { StatesOptionsKey } from '../Core/Series/StatesOptions';
 import type SVGAttributes from '../Core/Renderer/SVG/SVGAttributes';
 import type SVGElement from '../Core/Renderer/SVG/SVGElement';
 import type SVGPath from '../Core/Renderer/SVG/SVGPath';
@@ -23,6 +35,15 @@ const {
     pick,
     wrap
 } = U;
+
+import './SankeySeries.js';
+const base = BaseSeries.seriesTypes.sankey.prototype;
+
+/* *
+ *
+ *  Declarations
+ *
+ * */
 
 /**
  * Internal types
@@ -58,7 +79,7 @@ declare global {
             ): SVGPath;
             public pointAttribs(
                 point: OrganizationPoint,
-                state: string
+                state?: StatesOptionsKey
             ): SVGAttributes;
             public translateLink(point: OrganizationPoint): void;
             public translateNode(
@@ -81,7 +102,7 @@ declare global {
                 this: (
                     OrganizationDataLabelsFormatterContextObject|
                     SankeyDataLabelsFormatterContextObject|
-                    PointLabelObject
+                    Point.PointLabelObject
                 )
             ): (string|undefined);
         }
@@ -101,7 +122,7 @@ declare global {
         interface OrganizationSeriesLevelsOptions
             extends SankeySeriesLevelsOptions
         {
-            states: Dictionary<OrganizationSeriesOptions>;
+            states: SeriesStatesOptions<OrganizationSeries>;
         }
         interface OrganizationSeriesNodeOptions
             extends SankeySeriesNodesOptions
@@ -119,7 +140,7 @@ declare global {
             linkLineWidth?: number;
             linkRadius?: number;
             nodes?: Array<OrganizationSeriesNodeOptions>;
-            states?: SeriesStatesOptionsObject<OrganizationSeries>;
+            states?: SeriesStatesOptions<OrganizationSeries>;
         }
         type OrganizationNodesLayoutValue = ('normal'|'hanging');
     }
@@ -128,15 +149,11 @@ declare global {
 /**
  * @private
  */
-declare module '../Core/Series/Types' {
+declare module '../Core/Series/SeriesType' {
     interface SeriesTypeRegistry {
         organization: typeof Highcharts.OrganizationSeries;
     }
 }
-
-import './SankeySeries.js';
-
-const base = BaseSeries.seriesTypes.sankey.prototype;
 
 /**
  * Layout value for the child nodes in an organization chart. If `hanging`, this
@@ -147,6 +164,12 @@ const base = BaseSeries.seriesTypes.sankey.prototype;
  */
 
 ''; // detach doclets above
+
+/* *
+ *
+ *  Class
+ *
+ * */
 
 /**
  * @private
@@ -230,7 +253,7 @@ BaseSeries.seriesType<typeof Highcharts.OrganizationSeries>(
              */
             nodeFormatter: function (
                 this: (
-                    Highcharts.PointLabelObject|
+                    Point.PointLabelObject|
                     Highcharts.OrganizationDataLabelsFormatterContextObject|
                     Highcharts.SankeyDataLabelsFormatterContextObject
                 )
@@ -371,7 +394,7 @@ BaseSeries.seriesType<typeof Highcharts.OrganizationSeries>(
         pointAttribs: function (
             this: Highcharts.OrganizationSeries,
             point: Highcharts.OrganizationPoint,
-            state: string
+            state?: StatesOptionsKey
         ): SVGAttributes {
             var series = this,
                 attribs = base.pointAttribs.call(series, point, state),
@@ -380,7 +403,7 @@ BaseSeries.seriesType<typeof Highcharts.OrganizationSeries>(
                     (series.mapOptionsToLevel as any)[level || 0] || {},
                 options = point.options,
                 stateOptions: Highcharts.OrganizationSeriesOptions = (
-                    levelOptions.states && levelOptions.states[state]
+                    levelOptions.states && (levelOptions.states as any)[state as any]
                 ) || {},
                 values: (
                     Highcharts.OrganizationPointOptions &
@@ -676,7 +699,7 @@ BaseSeries.seriesType<typeof Highcharts.OrganizationSeries>(
 
                 // The getBBox function is used in `alignDataLabel` to align
                 // inside the box
-                dataLabel.getBBox = function (): Highcharts.BBoxObject {
+                dataLabel.getBBox = function (): BBoxObject {
                     return {
                         width: width,
                         height: height

@@ -12,15 +12,18 @@
 'use strict';
 
 import type ColorType from '../Color/ColorType';
+import type LineSeries from '../../Series/Line/LineSeries';
 import type Point from '../Series/Point';
+import type {
+    PointOptions,
+    PointShortOptions
+} from '../Series/PointOptions';
+import type PositionObject from '../Renderer/PositionObject';
+import type SizeObject from '../Renderer/SizeObject';
 import type SVGElement from '../Renderer/SVG/SVGElement';
 import type SVGPath from '../Renderer/SVG/SVGPath';
 import Axis from './Axis.js';
 import H from '../Globals.js';
-import O from '../Options.js';
-const {
-    dateFormat
-} = O;
 import Tick from './Tick.js';
 import U from '../Utilities.js';
 const {
@@ -211,8 +214,8 @@ var applyGridOptions = function applyGridOptions(axis: Highcharts.Axis): void {
 Axis.prototype.getMaxLabelDimensions = function (
     ticks: Highcharts.Dictionary<Highcharts.Tick>,
     tickPositions: Array<(number|string)>
-): Highcharts.SizeObject {
-    var dimensions: Highcharts.SizeObject = {
+): SizeObject {
+    var dimensions: SizeObject = {
         width: 0,
         height: 0
     };
@@ -296,7 +299,7 @@ addEvent(
     function (
         this: Tick,
         e: {
-            pos: Highcharts.PositionObject;
+            pos: PositionObject;
             tickmarkOffset: number;
             index: number;
         }
@@ -591,7 +594,7 @@ class GridAxis {
      */
     public static onAfterGetTitlePosition(
         this: Axis,
-        e: { titlePosition: Highcharts.PositionObject }
+        e: { titlePosition: PositionObject }
     ): void {
         const axis = this;
         const options = axis.options;
@@ -677,7 +680,7 @@ class GridAxis {
                     value
                 } = this;
                 const tickPos = axis.tickPositions;
-                const series: Highcharts.Series = (
+                const series: LineSeries = (
                     axis.isLinked ?
                         (axis.linkedParent as any) :
                         axis
@@ -686,7 +689,7 @@ class GridAxis {
                 const isLast = value === tickPos[tickPos.length - 1];
                 const point: (Point|undefined) =
                     series && find(series.options.data as any, function (
-                        p: Highcharts.PointOptionsType
+                        p: (PointOptions|PointShortOptions)
                     ): boolean {
                         return (p as any)[axis.isXAxis ? 'x' : 'y'] === value;
                     });
@@ -909,7 +912,7 @@ class GridAxis {
 
         if (axis.horiz) {
             if (gridOptions.enabled === true) {
-                axis.series.forEach(function (series: Highcharts.Series): void {
+                axis.series.forEach(function (series): void {
                     series.options.pointRange = 0;
                 });
             }

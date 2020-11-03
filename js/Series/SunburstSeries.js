@@ -11,6 +11,7 @@
  *  !!!!!!! SOURCE GETS TRANSPILED BY TYPESCRIPT. EDIT TS FILE ONLY. !!!!!!!
  *
  * */
+'use strict';
 import BaseSeries from '../Core/Series/Series.js';
 var seriesTypes = BaseSeries.seriesTypes;
 import CenteredSeriesMixin from '../Mixins/CenteredSeries.js';
@@ -19,13 +20,13 @@ import DrawPointMixin from '../Mixins/DrawPoint.js';
 var drawPoint = DrawPointMixin.drawPoint;
 import H from '../Core/Globals.js';
 var noop = H.noop;
+import LineSeries from './Line/LineSeries.js';
 import TreeSeriesMixin from '../Mixins/TreeSeries.js';
 var getColor = TreeSeriesMixin.getColor, getLevelOptions = TreeSeriesMixin.getLevelOptions, setTreeValues = TreeSeriesMixin.setTreeValues, updateRootId = TreeSeriesMixin.updateRootId;
 import U from '../Core/Utilities.js';
 var correctFloat = U.correctFloat, error = U.error, extend = U.extend, isNumber = U.isNumber, isObject = U.isObject, isString = U.isString, merge = U.merge, splat = U.splat;
-import '../Series/LineSeries.js';
 import './TreemapSeries.js';
-var Series = H.Series, isBoolean = function (x) {
+var isBoolean = function (x) {
     return typeof x === 'boolean';
 }, rad2deg = 180 / Math.PI;
 // TODO introduce step, which should default to 1.
@@ -447,6 +448,16 @@ var sunburstOptions = {
      * @apioption plotOptions.sunburst.levels.dataLabels
      */
     /**
+     * Decides which level takes effect from the options set in the levels
+     * object.
+     *
+     * @sample highcharts/demo/sunburst
+     *         Sunburst chart
+     *
+     * @type      {number}
+     * @apioption plotOptions.sunburst.levels.level
+     */
+    /**
      * Can set a `levelSize` on all points which lies on the same level.
      *
      * @type      {object}
@@ -685,7 +696,7 @@ var sunburstSeries = {
         if (hackDataLabelAnimation && addedHack) {
             series.hasRendered = false;
             series.options.dataLabels.defer = true;
-            Series.prototype.drawDataLabels.call(series);
+            LineSeries.prototype.drawDataLabels.call(series);
             series.hasRendered = true;
             // If animateLabels is called before labels were hidden, then call
             // it again.
@@ -694,7 +705,7 @@ var sunburstSeries = {
             }
         }
         else {
-            Series.prototype.drawDataLabels.call(series);
+            LineSeries.prototype.drawDataLabels.call(series);
         }
     },
     pointAttribs: seriesTypes.column.prototype.pointAttribs,
@@ -740,7 +751,7 @@ var sunburstSeries = {
         rootId = updateRootId(series), mapIdToNode = series.nodeMap, mapOptionsToLevel, idTop, nodeRoot = mapIdToNode && mapIdToNode[rootId], nodeTop, tree, values, nodeIds = {};
         series.shapeRoot = nodeRoot && nodeRoot.shapeArgs;
         // Call prototype function
-        Series.prototype.translate.call(series);
+        LineSeries.prototype.translate.call(series);
         // @todo Only if series.isDirtyData is true
         tree = series.tree = series.getTree();
         // Render traverseUpButton, after series.nodeMap i calculated.

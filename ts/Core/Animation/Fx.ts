@@ -11,19 +11,17 @@
 'use strict';
 
 import type AnimationOptionsObject from './AnimationOptionsObject';
-import type BaseSeries from '../Series/Series';
 import type Chart from '../Chart/Chart';
 import type CSSObject from '../Renderer/CSSObject';
 import type FxLike from './FxLike';
 import type { HTMLDOMElement } from '../Renderer/DOMElementType';
 import type HTMLElement from '../Renderer/HTML/HTMLElement';
+import type LineSeries from '../../Series/Line/LineSeries';
 import type SVGAttributes from '../Renderer/SVG/SVGAttributes';
 import type SVGElement from '../Renderer/SVG/SVGElement';
 import type SVGPath from '../Renderer/SVG/SVGPath';
 import H from '../Globals.js';
-const {
-    win
-} = H;
+const { win } = H;
 import U from '../Utilities.js';
 const {
     isNumber,
@@ -49,7 +47,7 @@ declare global {
         function getDeferredAnimation(
             chart: Chart,
             animation: Partial<AnimationOptionsObject>,
-            series?: BaseSeries
+            series?: LineSeries
         ): Partial<AnimationOptionsObject>;
         function setAnimation(
             animation: (boolean|Partial<AnimationOptionsObject>|undefined),

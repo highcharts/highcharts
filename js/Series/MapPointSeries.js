@@ -7,14 +7,14 @@
  *  !!!!!!! SOURCE GETS TRANSPILED BY TYPESCRIPT. EDIT TS FILE ONLY. !!!!!!!
  *
  * */
+'use strict';
 import BaseSeries from '../Core/Series/Series.js';
-import H from '../Core/Globals.js';
+import LineSeries from './Line/LineSeries.js';
 import Point from '../Core/Series/Point.js';
 import U from '../Core/Utilities.js';
 var merge = U.merge;
 import '../Core/Options.js';
 import '../Series/ScatterSeries.js';
-var Series = H.Series;
 /**
  * @private
  * @class
@@ -53,7 +53,7 @@ BaseSeries.seriesType('mappoint', 'scatter',
     type: 'mappoint',
     forceDL: true,
     drawDataLabels: function () {
-        Series.prototype.drawDataLabels.call(this);
+        LineSeries.prototype.drawDataLabels.call(this);
         if (this.dataLabelsGroup) {
             this.dataLabelsGroup.clip(this.chart.clipRect);
         }

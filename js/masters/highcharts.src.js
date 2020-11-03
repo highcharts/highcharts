@@ -26,7 +26,7 @@ import '../Core/Dynamics.js';
 import '../Series/AreaSeries.js';
 import '../Series/SplineSeries.js';
 import '../Series/AreaSplineSeries.js';
-import '../Series/ColumnSeries.js';
+import '../Series/Column/ColumnSeries.js';
 import '../Series/BarSeries.js';
 import '../Series/ScatterSeries.js';
 import '../Series/PieSeries.js';

@@ -9,10 +9,11 @@
  *  !!!!!!! SOURCE GETS TRANSPILED BY TYPESCRIPT. EDIT TS FILE ONLY. !!!!!!!
  *
  * */
+'use strict';
 import BaseSeries from '../Core/Series/Series.js';
+var seriesTypes = BaseSeries.seriesTypes;
 import H from '../Core/Globals.js';
-import O from '../Core/Options.js';
-var dateFormat = O.dateFormat;
+import LineSeries from './Line/LineSeries.js';
 import '../Core/Axis/TreeGridAxis.js';
 import U from '../Core/Utilities.js';
 var isNumber = U.isNumber, merge = U.merge, pick = U.pick, splat = U.splat;
@@ -20,7 +21,7 @@ import '../Extensions/CurrentDateIndication.js';
 import '../Extensions/StaticScale.js';
 import '../Gantt/Pathfinder.js';
 import './XRangeSeries.js';
-var Series = H.Series, seriesTypes = BaseSeries.seriesTypes, parent = seriesTypes.xrange;
+var parent = seriesTypes.xrange;
 /**
  * @private
  * @class
@@ -160,7 +161,7 @@ BaseSeries.seriesType('gantt', 'xrange'
             parent.prototype.drawPoint.call(series, point, verb);
         }
     },
-    setData: Series.prototype.setData,
+    setData: LineSeries.prototype.setData,
     /**
      * @private
      */

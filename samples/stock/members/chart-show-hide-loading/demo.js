@@ -1,5 +1,4 @@
-var chart = Highcharts.stockChart('container', {
-
+const chart = Highcharts.stockChart('container', {
     rangeSelector: {
         selected: 1
     },
@@ -8,19 +7,17 @@ var chart = Highcharts.stockChart('container', {
         name: 'USD to EUR',
         data: usdeur
     }]
-
 });
 
-// the button handler
-var isLoading = false,
-    $button = $('#button');
-$button.click(function () {
+let isLoading = false;
+
+document.getElementById('button').addEventListener('click', e => {
     if (!isLoading) {
         chart.showLoading();
-        $button.html('Hide loading');
+        e.target.innerHTML = 'Hide loading';
     } else {
         chart.hideLoading();
-        $button.html('Show loading');
+        e.target.innerHTML = 'Show loading';
     }
     isLoading = !isLoading;
 });

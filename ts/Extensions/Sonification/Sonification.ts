@@ -14,6 +14,7 @@
 
 import Chart from '../../Core/Chart/Chart.js';
 import H from '../../Core/Globals.js';
+import LineSeries from '../../Series/Line/LineSeries.js';
 import O from '../../Core/Options.js';
 const { defaultOptions } = O;
 import Point from '../../Core/Series/Point.js';
@@ -31,6 +32,19 @@ declare module '../../Core/Chart/ChartLike'{
     }
 }
 
+declare module '../../Core/Series/PointLike' {
+    interface PointLike {
+        cancelSonify?: Highcharts.SonifyablePoint['cancelSonify'];
+        sonify?: Highcharts.SonifyablePoint['sonify'];
+    }
+}
+
+declare module '../../Core/Series/SeriesLike' {
+    interface SeriesLike {
+        sonify?: Highcharts.SonifyableSeries['sonify'];
+    }
+}
+
 /**
  * Internal types.
  * @private
@@ -42,17 +56,10 @@ declare global {
             timeline?: Timeline;
             duration?: number;
         }
-        interface PointLike {
-            cancelSonify?: SonifyablePoint['cancelSonify'];
-            sonify?: SonifyablePoint['sonify'];
-        }
         interface PointSonificationStateObject {
             currentlyPlayingPoint?: SonifyablePoint;
             instrumentsPlaying?: Dictionary<Instrument>;
             signalHandler?: SignalHandler;
-        }
-        interface Series {
-            sonify?: SonifyableSeries['sonify'];
         }
         interface SonificationObject {
             Earcon: typeof Earcon;
@@ -85,7 +92,7 @@ declare global {
             sonification: PointSonificationStateObject;
             sonify: PointSonifyFunctions['pointSonify'];
         }
-        interface SonifyableSeries extends Series {
+        interface SonifyableSeries extends LineSeries {
             chart: SonifyableChart;
             points: Array<SonifyablePoint>;
             sonify: SonifyChartFunctionsObject['seriesSonify'];
@@ -103,7 +110,7 @@ import utilities from './Utilities.js';
 import TimelineClasses from './Timeline.js';
 import sonificationOptions from './Options.js';
 
-import '../../Series/LineSeries.js';
+import '../../Series/Line/LineSeries.js';
 
 // Expose on the Highcharts object
 
@@ -185,7 +192,7 @@ merge(
 // Chart specific
 Point.prototype.sonify = pointSonifyFunctions.pointSonify;
 Point.prototype.cancelSonify = pointSonifyFunctions.pointCancelSonify;
-H.Series.prototype.sonify = chartSonifyFunctions.seriesSonify;
+LineSeries.prototype.sonify = chartSonifyFunctions.seriesSonify;
 extend(Chart.prototype, {
     sonify: chartSonifyFunctions.chartSonify,
     pauseSonify: chartSonifyFunctions.pause,

@@ -57,8 +57,11 @@ Highcharts.getJSON('https://cdn.jsdelivr.net/gh/highcharts/highcharts@v7.0.0/sam
     });
 
     // Activate the button
-    $('#addpoint').click(function () {
+    const button = document.getElementById('addpoint');
+    button.disabled = false;
+
+    button.onclick = () => {
         chart.series[0].addPoint(greenland);
-        $(this).attr('disabled', true);
-    });
+        button.disabled = true;
+    };
 });

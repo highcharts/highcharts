@@ -8,15 +8,31 @@
  *
  * */
 
+'use strict';
+
+/* *
+ *
+ *  Imports
+ *
+ * */
+
 import type ColorType from '../Core/Color/ColorType';
+import type LinePoint from './Line/LinePoint';
+import type LinePointOptions from './Line/LinePointOptions';
+import type LineSeriesOptions from './Line/LineSeriesOptions';
+import type {
+    PointOptions,
+    PointShortOptions
+} from '../Core/Series/PointOptions';
 import type RadialAxis from '../Core/Axis/RadialAxis';
+import type { SeriesStatesOptions } from '../Core/Series/SeriesOptions';
+import type { StatesOptionsKey } from '../Core/Series/StatesOptions';
 import type SVGAttributes from '../Core/Renderer/SVG/SVGAttributes';
 import type SVGPath from '../Core/Renderer/SVG/SVGPath';
 import BaseSeries from '../Core/Series/Series.js';
 import H from '../Core/Globals.js';
-const {
-    noop
-} = H;
+const { noop } = H;
+import LineSeries from '../Series/Line/LineSeries.js';
 import U from '../Core/Utilities.js';
 const {
     clamp,
@@ -26,9 +42,28 @@ const {
     pInt
 } = U;
 
+import '../Core/Options.js';
+import '../Core/Series/Point.js';
+import '../Core/Interaction.js';
+
+var TrackerMixin = H.TrackerMixin;
+
+/* *
+ *
+ *  Declarations
+ *
+ * */
+
 declare module '../Core/Chart/ChartLike'{
     interface ChartLike {
         angular?: boolean;
+    }
+}
+
+declare module '../Core/Series/SeriesLike' {
+    interface SeriesLike {
+        fixedBox?: boolean;
+        forceDL?: boolean;
     }
 }
 
@@ -61,7 +96,7 @@ declare global {
             public hasData(): boolean;
             public render(): void;
             public setData(
-                data: Array<PointOptionsType>,
+                data: Array<(PointOptions|PointShortOptions)>,
                 redraw?: boolean
             ): void;
             public translate(): void;
@@ -83,7 +118,7 @@ declare global {
             dial?: GaugeSeriesDialOptions;
             overshoot?: number;
             pivot?: GaugeSeriesPivotOptions;
-            states?: SeriesStatesOptionsObject<GaugeSeries>;
+            states?: SeriesStatesOptions<GaugeSeries>;
             wrap?: boolean;
         }
         interface GaugeSeriesPivotOptions {
@@ -92,29 +127,23 @@ declare global {
             borderWidth?: number;
             radius?: number;
         }
-        interface Series {
-            fixedBox?: boolean;
-            forceDL?: boolean;
-        }
     }
 }
 
 /**
  * @private
  */
-declare module '../Core/Series/Types' {
+declare module '../Core/Series/SeriesType' {
     interface SeriesTypeRegistry {
         gauge: typeof Highcharts.GaugeSeries;
     }
 }
 
-import '../Core/Options.js';
-import '../Core/Series/Point.js';
-import '../Series/LineSeries.js';
-import '../Core/Interaction.js';
-
-var Series = H.Series,
-    TrackerMixin = H.TrackerMixin;
+/* *
+ *
+ *  Class
+ *
+ * */
 
 /**
  * Gauges are circular plots displaying one or more values with a dial pointing
@@ -595,7 +624,7 @@ BaseSeries.seriesType<typeof Highcharts.GaugeSeries>('gauge', 'line', {
             this.options.zIndex,
             this.chart.seriesGroup
         );
-        Series.prototype.render.call(this);
+        LineSeries.prototype.render.call(this);
         this.group.clip(this.chart.clipRect);
     },
 
@@ -606,10 +635,10 @@ BaseSeries.seriesType<typeof Highcharts.GaugeSeries>('gauge', 'line', {
      */
     setData: function (
         this: Highcharts.GaugeSeries,
-        data: Array<Highcharts.PointOptionsType>,
+        data: Array<(PointOptions|PointShortOptions)>,
         redraw?: boolean
     ): void {
-        Series.prototype.setData.call(this, data, false);
+        LineSeries.prototype.setData.call(this, data, false);
         this.processData();
         this.generatePoints();
         if (pick(redraw, true)) {
@@ -640,7 +669,7 @@ BaseSeries.seriesType<typeof Highcharts.GaugeSeries>('gauge', 'line', {
      * Don't do any hover colors or anything
      * @private
      */
-    setState: function (this: Highcharts.GaugePoint, state?: string): void {
+    setState: function (this: Highcharts.GaugePoint, state?: StatesOptionsKey): void {
         this.state = state;
     }
 

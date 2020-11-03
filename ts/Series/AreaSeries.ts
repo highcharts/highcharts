@@ -8,22 +8,54 @@
  *
  * */
 
+'use strict';
+
+/* *
+ *
+ *  Imports
+ *
+ * */
+
 import type ColorType from '../Core/Color/ColorType';
+import type LinePoint from './Line/LinePoint';
+import type LinePointOptions from './Line/LinePointOptions';
+import type LineSeriesOptions from './Line/LineSeriesOptions';
+import type {
+    SeriesStatesOptions,
+    SeriesZonesOptions
+} from '../Core/Series/SeriesOptions';
 import type StackingAxis from '../Core/Axis/StackingAxis';
 import type SVGAttributes from '../Core/Renderer/SVG/SVGAttributes';
 import type SVGPath from '../Core/Renderer/SVG/SVGPath';
 import BaseSeries from '../Core/Series/Series.js';
 import Color from '../Core/Color/Color.js';
-const {
-    parse: color
-} = Color;
-import H from '../Core/Globals.js';
+const { parse: color } = Color;
 import LegendSymbolMixin from '../Mixins/LegendSymbol.js';
+import LineSeries from './Line/LineSeries.js';
 import U from '../Core/Utilities.js';
 const {
     objectEach,
     pick
 } = U;
+
+/* *
+ *
+ *  Declarations
+ *
+ * */
+
+declare module '../Core/Renderer/SVG/SVGPath' {
+    interface SVGPath {
+        xMap?: number;
+        isArea?: boolean;
+    }
+}
+
+declare module '../Core/Series/SeriesType' {
+    interface SeriesTypeRegistry {
+        area: typeof Highcharts.AreaSeries;
+    }
+}
 
 /**
  * Internal types
@@ -39,15 +71,12 @@ declare global {
             public series: AreaSeries;
         }
         class AreaSeries extends LineSeries {
-            public areaPath?: AreaPathObject;
+            public areaPath?: SVGPath;
             public data: Array<AreaPoint>;
             public options: AreaSeriesOptions;
             public pointClass: typeof AreaPoint;
             public points: Array<AreaPoint>;
             public getStackPoints(points: Array<AreaPoint>): Array<AreaPoint>;
-        }
-        interface AreaPathObject extends SVGPath {
-            xMap?: number;
         }
         interface AreaPointOptions extends LinePointOptions {
         }
@@ -55,24 +84,16 @@ declare global {
             fillColor?: ColorType;
             fillOpacity?: number;
             negativeFillColor?: ColorType;
-            states?: SeriesStatesOptionsObject<AreaSeries>;
+            states?: SeriesStatesOptions<AreaSeries>;
         }
     }
 }
 
-/**
- * @private
- */
-declare module '../Core/Series/Types' {
-    interface SeriesTypeRegistry {
-        area: typeof Highcharts.AreaSeries;
-    }
-}
-
-import '../Series/LineSeries.js';
-import '../Core/Options.js';
-
-var Series = H.Series;
+/* *
+ *
+ *  Class
+ *
+ * */
 
 /**
  * Area series type.
@@ -285,9 +306,7 @@ BaseSeries.seriesType<typeof Highcharts.AreaSeries>(
                     return (a as any) - (b as any);
                 });
 
-                visibleSeries = yAxisSeries.map(function (
-                    s: Highcharts.Series
-                ): boolean {
+                visibleSeries = yAxisSeries.map(function (s): boolean {
                     return s.visible;
                 });
 
@@ -400,19 +419,19 @@ BaseSeries.seriesType<typeof Highcharts.AreaSeries>(
             this: Highcharts.AreaSeries,
             points: Array<Highcharts.AreaPoint>
         ): SVGPath {
-            var getGraphPath = Series.prototype.getGraphPath,
+            var getGraphPath = LineSeries.prototype.getGraphPath,
                 graphPath: SVGPath,
                 options = this.options,
                 stacking = options.stacking,
                 yAxis = this.yAxis as StackingAxis,
-                topPath: Highcharts.AreaPathObject,
+                topPath: SVGPath,
                 bottomPath,
                 bottomPoints: Array<Highcharts.AreaPoint> = [],
                 graphPoints: Array<Highcharts.AreaPoint> = [],
                 seriesIndex = this.index,
                 i,
-                areaPath: Highcharts.AreaPathObject,
-                plotX: number|undefined,
+                areaPath: SVGPath,
+                plotX: (number|undefined),
                 stacks = yAxis.stacking.stacks[this.stackKey as any],
                 threshold = options.threshold,
                 translatedThreshold = Math.round( // #10909
@@ -552,7 +571,7 @@ BaseSeries.seriesType<typeof Highcharts.AreaSeries>(
             this.areaPath = [];
 
             // Call the base method
-            Series.prototype.drawGraph.apply(this);
+            LineSeries.prototype.drawGraph.apply(this);
 
             // Define local variables
             var series = this,
@@ -567,7 +586,7 @@ BaseSeries.seriesType<typeof Highcharts.AreaSeries>(
                 ]]; // area name, main color, fill color
 
             zones.forEach(function (
-                zone: Highcharts.SeriesZonesOptions,
+                zone: SeriesZonesOptions,
                 i: number
             ): void {
                 props.push([

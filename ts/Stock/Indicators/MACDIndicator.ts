@@ -6,19 +6,32 @@
  *
  * */
 
+'use strict';
+
+import type ColumnSeries from '../../Series/Column/ColumnSeries';
 import type CSSObject from '../../Core/Renderer/CSSObject';
 import type Point from '../../Core/Series/Point';
+import type {
+    SeriesStatesOptions,
+    SeriesZonesOptions
+} from '../../Core/Series/SeriesOptions';
 import BaseSeries from '../../Core/Series/Series.js';
+const { seriesTypes } = BaseSeries;
 import H from '../../Core/Globals.js';
-const {
-    noop
-} = H;
+const { noop } = H;
+import LineSeries from '../../Series/Line/LineSeries.js';
 import U from '../../Core/Utilities.js';
 const {
     correctFloat,
     defined,
     merge
 } = U;
+
+declare module '../../Core/Series/SeriesLike' {
+    interface SeriesLike {
+        resetZones?: boolean;
+    }
+}
 
 /**
  * Internal types
@@ -35,7 +48,7 @@ declare global {
             public drawGraph(): void;
             public drawPoints: ColumnSeries['drawPoints'];
             public getColumnMetrics: ColumnSeries['getColumnMetrics'];
-            public getValues<TLinkedSeries extends Series>(
+            public getValues<TLinkedSeries extends LineSeries>(
                 series: TLinkedSeries,
                 params: MACDIndicatorParamsOptions
             ): (IndicatorValuesObject<TLinkedSeries>|undefined);
@@ -85,7 +98,7 @@ declare global {
 
         interface MACDIndicatorOptions extends SMAIndicatorOptions {
             params?: MACDIndicatorParamsOptions;
-            states?: SeriesStatesOptionsObject<MACDIndicator>;
+            states?: SeriesStatesOptions<MACDIndicator>;
             threshold?: number;
             groupPadding?: number;
             pointPadding?: number;
@@ -107,7 +120,7 @@ declare global {
     }
 }
 
-declare module '../../Core/Series/Types' {
+declare module '../../Core/Series/SeriesType' {
     interface SeriesTypeRegistry {
         macd: typeof Highcharts.MACDIndicator;
     }
@@ -116,8 +129,8 @@ declare module '../../Core/Series/Types' {
 // im port './EMAIndicator.js';
 // im port './SMAIndicator.js';
 
-var SMA = H.seriesTypes.sma,
-    EMA = H.seriesTypes.ema;
+var SMA = seriesTypes.sma,
+    EMA = seriesTypes.ema;
 
 /**
  * The MACD series type.
@@ -329,9 +342,7 @@ BaseSeries.seriesType<typeof Highcharts.MACDIndicator>(
                 pointsLength: number = mainLinePoints.length,
                 mainLineOptions: Highcharts.MACDIndicatorOptions =
                 indicator.options,
-                histogramZones: Array<(
-                    Highcharts.SeriesZonesOptions
-                )> = indicator.zones,
+                histogramZones: Array<(SeriesZonesOptions)> = indicator.zones,
                 gappedExtend: Highcharts.MACDIndicatorGappedExtensionObject = {
                     options: {
                         gapSize: mainLineOptions.gapSize
@@ -430,7 +441,7 @@ BaseSeries.seriesType<typeof Highcharts.MACDIndicator>(
 
             this.zones = histogramZones;
         },
-        getValues: function<TLinkedSeries extends Highcharts.Series> (
+        getValues: function<TLinkedSeries extends LineSeries> (
             series: TLinkedSeries,
             params: Highcharts.MACDIndicatorParamsOptions
         ): (Highcharts.IndicatorValuesObject<TLinkedSeries>|undefined) {

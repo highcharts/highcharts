@@ -12,26 +12,27 @@
  *
  * */
 
+'use strict';
+
 import type ColorString from '../Core/Color/ColorString';
 import type ColorType from '../Core/Color/ColorType';
+import type DashStyleValue from '../Core/Renderer/DashStyleValue';
+import type DataLabelOptions from '../Core/Series/DataLabelOptions';
+import type PositionObject from '../Core/Renderer/PositionObject';
+import type { SeriesStatesOptions } from '../Core/Series/SeriesOptions';
 import type SVGElement from '../Core/Renderer/SVG/SVGElement';
 import BaseSeries from '../Core/Series/Series.js';
-const {
-    seriesTypes
-} = BaseSeries;
+const { seriesTypes } = BaseSeries;
 import CenteredSeriesMixin from '../Mixins/CenteredSeries.js';
 const {
     getCenter,
     getStartAndEndRadians
 } = CenteredSeriesMixin;
 import DrawPointMixin from '../Mixins/DrawPoint.js';
-const {
-    drawPoint
-} = DrawPointMixin;
+const { drawPoint } = DrawPointMixin;
 import H from '../Core/Globals.js';
-const {
-    noop
-} = H;
+const { noop } = H;
+import LineSeries from './Line/LineSeries.js';
 import TreeSeriesMixin from '../Mixins/TreeSeries.js';
 const {
     getColor,
@@ -74,7 +75,7 @@ declare global {
             public mapOptionsToLevel: Dictionary<SunburstSeriesOptions>;
             public nodeMap: Dictionary<SunburstNodeObject>;
             public options: SunburstSeriesOptions;
-            public pointAttribs: ColumnSeries['pointAttribs'];
+            public pointAttribs: LineSeries['pointAttribs'];
             public pointClass: typeof SunburstPoint;
             public points: Array<SunburstPoint>;
             public shapeRoot?: SunburstNodeValuesObject;
@@ -96,7 +97,7 @@ declare global {
             public alignDataLabel(
                 point: SunburstPoint,
                 dataLabel: SVGElement,
-                labelOptions: DataLabelsOptions
+                labelOptions: DataLabelOptions
             ): void;
         }
         interface SunburstAnimationParams {
@@ -111,8 +112,7 @@ declare global {
             shapeRoot?: SunburstNodeValuesObject;
             visible: boolean;
         }
-        interface SunburstDataLabelsOptionsObject
-            extends DataLabelsOptions {
+        interface SunburstDataLabelsOptionsObject extends DataLabelOptions {
             allowOverlap?: boolean;
             rotationMode?: SunburstDataLabelsRotationValue;
         }
@@ -188,7 +188,7 @@ declare global {
             rootId?: string;
             slicedOffset?: number;
             startAngle?: number;
-            states?: SeriesStatesOptionsObject<SunburstSeries>;
+            states?: SeriesStatesOptions<SunburstSeries>;
         }
         interface SunburstSeriesUtilsObject extends TreemapSeriesUtilsObject {
             calculateLevelSizes(
@@ -203,17 +203,15 @@ declare global {
     }
 }
 
-declare module '../Core/Series/Types' {
+declare module '../Core/Series/SeriesType' {
     interface SeriesTypeRegistry {
         sunburst: typeof Highcharts.SunburstSeries;
     }
 }
 
-import '../Series/LineSeries.js';
 import './TreemapSeries.js';
 
-var Series = H.Series,
-    isBoolean = function (x: unknown): x is boolean {
+var isBoolean = function (x: unknown): x is boolean {
         return typeof x === 'boolean';
     },
     rad2deg = 180 / Math.PI;
@@ -346,7 +344,7 @@ var getEndPoint = function getEndPoint(
     y: number,
     angle: number,
     distance: number
-): Highcharts.PositionObject {
+): PositionObject {
     return {
         x: x + (Math.cos(angle) * distance),
         y: y + (Math.sin(angle) * distance)
@@ -781,6 +779,17 @@ var sunburstOptions: Highcharts.SunburstSeriesOptions = {
      */
 
     /**
+     * Decides which level takes effect from the options set in the levels
+     * object.
+     *
+     * @sample highcharts/demo/sunburst
+     *         Sunburst chart
+     *
+     * @type      {number}
+     * @apioption plotOptions.sunburst.levels.level
+     */
+
+    /**
      * Can set a `levelSize` on all points which lies on the same level.
      *
      * @type      {object}
@@ -1076,7 +1085,7 @@ var sunburstSeries = {
         if (hackDataLabelAnimation && addedHack) {
             series.hasRendered = false;
             (series.options.dataLabels as any).defer = true;
-            Series.prototype.drawDataLabels.call(series);
+            LineSeries.prototype.drawDataLabels.call(series);
             series.hasRendered = true;
             // If animateLabels is called before labels were hidden, then call
             // it again.
@@ -1084,7 +1093,7 @@ var sunburstSeries = {
                 (animateLabels as any)();
             }
         } else {
-            Series.prototype.drawDataLabels.call(series);
+            LineSeries.prototype.drawDataLabels.call(series);
         }
     },
 
@@ -1189,7 +1198,7 @@ var sunburstSeries = {
 
         series.shapeRoot = nodeRoot && nodeRoot.shapeArgs;
         // Call prototype function
-        Series.prototype.translate.call(series);
+        LineSeries.prototype.translate.call(series);
         // @todo Only if series.isDirtyData is true
         tree = series.tree = series.getTree();
 
@@ -1259,7 +1268,8 @@ var sunburstSeries = {
         this: Highcharts.SunburstSeries,
         point: Highcharts.SunburstPoint,
         dataLabel: SVGElement,
-        labelOptions: Highcharts.DataLabelsOptions): void {
+        labelOptions: DataLabelOptions
+    ): void {
 
         if (labelOptions.textPath && labelOptions.textPath.enabled) {
             return;

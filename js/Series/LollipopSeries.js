@@ -7,15 +7,18 @@
  *  !!!!!!! SOURCE GETS TRANSPILED BY TYPESCRIPT. EDIT TS FILE ONLY. !!!!!!!
  *
  * */
-import Point from '../Core/Series/Point.js';
+'use strict';
 import BaseSeries from '../Core/Series/Series.js';
+var seriesTypes = BaseSeries.seriesTypes;
+import ColumnSeries from './Column/ColumnSeries.js';
+var colProto = ColumnSeries.prototype;
 import H from '../Core/Globals.js';
-import './AreaSeries.js';
-import './ColumnSeries.js';
-import './DumbbellSeries.js';
+import Point from '../Core/Series/Point.js';
 import U from '../Core/Utilities.js';
 var isObject = U.isObject, pick = U.pick;
-var seriesTypes = BaseSeries.seriesTypes, areaProto = seriesTypes.area.prototype, colProto = seriesTypes.column.prototype;
+import './AreaSeries.js';
+import './DumbbellSeries.js';
+var areaProto = seriesTypes.area.prototype;
 /**
  * The lollipop series is a carteseian series with a line anchored from
  * the x axis and a dot at the end to mark the value.

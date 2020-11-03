@@ -11,13 +11,22 @@
 'use strict';
 
 import type Chart from './Chart/Chart';
+import type SizeObject from './Renderer/SizeObject';
 
-declare module './Chart/ChartLike'{
+declare module './Chart/ChartLike' {
     interface ChartLike {
         frameShapes?: any; // @todo highcharts 3d
         isBoosting?: any; // @todo boost module
     }
 }
+
+declare module './Series/PointLike' {
+    interface PointLike {
+        startR?: any; // @todo solid-gauge
+        tooltipDateKeys?: any; // @todo xrange
+    }
+}
+
 /**
  * Internal types
  * @private
@@ -39,18 +48,6 @@ declare global {
         }
         interface Options {
             toolbar?: any; // @todo stock-tools
-        }
-        interface PointLike {
-            startR?: any; // @todo solid-gauge
-            tooltipDateKeys?: any; // @todo xrange
-        }
-        interface Series {
-            fillGraph?: any; // @todo ichimoku indicator
-            gappedPath?: any; // @todo broken axis module
-            isSeriesBoosting?: any; // @todo boost module
-            resetZones?: any; // @todo macd indicator
-            useCommonDataGrouping?: any; // @todo indicators
-            getPoint: Function; // @todo boost module
         }
         const SVG_NS: string;
         const charts: Array<Chart|undefined>;

@@ -15,7 +15,7 @@ import BaseSeries from './Series/Series.js';
 var seriesTypes = BaseSeries.seriesTypes;
 import Chart from './Chart/Chart.js';
 import H from './Globals.js';
-import LineSeries from '../Series/LineSeries.js';
+import LineSeries from '../Series/Line/LineSeries.js';
 import O from './Options.js';
 var time = O.time;
 import Point from '../Core/Series/Point.js';

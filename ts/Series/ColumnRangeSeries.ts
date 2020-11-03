@@ -8,12 +8,24 @@
  *
  * */
 
+'use strict';
+
+/* *
+ *
+ *  Imports
+ *
+ * */
+
+import type BBoxObject from '../Core/Renderer/BBoxObject';
+import type ColumnMetricsObject from './Column/ColumnMetricsObject';
+import type ColumnPoint from './Column/ColumnPoint';
+import type { SeriesStatesOptions } from '../Core/Series/SeriesOptions';
 import type SVGAttributes from '../Core/Renderer/SVG/SVGAttributes';
 import BaseSeries from '../Core/Series/Series.js';
+import ColumnSeries from './Column/ColumnSeries.js';
+const { prototype: columnProto } = ColumnSeries;
 import H from '../Core/Globals.js';
-const {
-    noop
-} = H;
+const { noop } = H;
 import O from '../Core/Options.js';
 const { defaultOptions } = O;
 import U from '../Core/Utilities.js';
@@ -22,6 +34,12 @@ const {
     merge,
     pick
 } = U;
+
+/* *
+ *
+ *  Declarations
+ *
+ * */
 
 /**
  * Internal types
@@ -49,14 +67,14 @@ declare global {
             public pointAttribs: ColumnSeries['pointAttribs'];
             public pointClass: typeof ColumnRangePoint;
             public points: Array<ColumnRangePoint>;
-            public polarArc: Function;
+            public polarArc: AreaRangeSeries['polarArc'];
             public translate(): void;
         }
         interface ColumnRangePointOptions extends AreaRangePointOptions {
         }
         interface ColumnRangeSeriesOptions extends AreaRangeSeriesOptions {
             minPointLength?: number;
-            states?: SeriesStatesOptionsObject<ColumnRangeSeries>;
+            states?: SeriesStatesOptions<ColumnRangeSeries>;
         }
     }
 }
@@ -64,16 +82,13 @@ declare global {
 /**
  * @private
  */
-declare module '../Core/Series/Types' {
+declare module '../Core/Series/SeriesType' {
     interface SeriesTypeRegistry {
         columnrange: typeof Highcharts.ColumnRangeSeries;
     }
 }
 
-import './ColumnSeries.js';
-
-var arearangeProto = BaseSeries.seriesTypes.arearange.prototype,
-    columnProto = BaseSeries.seriesTypes.column.prototype;
+var arearangeProto = BaseSeries.seriesTypes.arearange.prototype;
 
 /**
  * The column range is a cartesian series type with higher and lower
@@ -237,7 +252,7 @@ BaseSeries.seriesType<typeof Highcharts.ColumnRangeSeries>('columnrange', 'arear
     // Overrides from modules that may be loaded after this module
     crispCol: function (
         this: Highcharts.ColumnRangeSeries
-    ): Highcharts.BBoxObject {
+    ): BBoxObject {
         return columnProto.crispCol.apply(this, arguments as any);
     },
     drawPoints: function (this: Highcharts.ColumnRangeSeries): void {
@@ -248,7 +263,7 @@ BaseSeries.seriesType<typeof Highcharts.ColumnRangeSeries>('columnrange', 'arear
     },
     getColumnMetrics: function (
         this: Highcharts.ColumnRangeSeries
-    ): Highcharts.ColumnMetricsObject {
+    ): ColumnMetricsObject {
         return columnProto.getColumnMetrics.apply(this, arguments as any);
     },
     pointAttribs: function (

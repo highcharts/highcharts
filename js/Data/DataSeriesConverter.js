@@ -11,7 +11,7 @@
  * */
 import DataTable from './DataTable.js';
 import DataTableRow from './DataTableRow.js';
-import U from './../Core/Utilities.js';
+import U from '../Core/Utilities.js';
 var defined = U.defined, uniqueKey = U.uniqueKey;
 /* *
  *

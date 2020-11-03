@@ -5,10 +5,10 @@
  * */
 
 import type Annotation from '../Annotations';
-import type {
-    CursorValue
-} from '../../../Core/Renderer/CSSObject';
+import type { CursorValue } from '../../../Core/Renderer/CSSObject';
 import type DOMElementType from '../../../Core/Renderer/DOMElementType';
+import type PointerEvent from '../../../Core/PointerEvent';
+import type PositionObject from '../../../Core/Renderer/PositionObject';
 import type SVGElement from '../../../Core/Renderer/SVG/SVGElement';
 import H from '../../../Core/Globals.js';
 
@@ -50,7 +50,7 @@ declare global {
             onMouseUp(this: AnnotationEventEmitter, e: AnnotationEventObject): void;
             removeDocEvents(this: AnnotationEventEmitter): void;
         }
-        interface AnnotationEventObject extends PointerEventObject {
+        interface AnnotationEventObject extends PointerEvent {
             prevChartX: number;
             prevChartY: number;
         }
@@ -108,7 +108,7 @@ const eventEmitterMixin: Highcharts.AnnotationEventEmitterMixin = {
             event: Highcharts.EventCallbackFunction<Annotation>,
             type: string
         ): void {
-            var eventHandler = function (e: Highcharts.PointerEventObject): void {
+            var eventHandler = function (e: PointerEvent): void {
                 if (type !== 'click' || !emitter.cancelClick) {
                     (event as any).call(
                         emitter,
@@ -310,7 +310,7 @@ const eventEmitterMixin: Highcharts.AnnotationEventEmitterMixin = {
     mouseMoveToTranslation: function (
         this: Highcharts.AnnotationEventEmitter,
         e: Highcharts.AnnotationEventObject
-    ): Highcharts.PositionObject {
+    ): PositionObject {
         var dx = e.chartX - e.prevChartX,
             dy = e.chartY - e.prevChartY,
             temp;
@@ -339,7 +339,7 @@ const eventEmitterMixin: Highcharts.AnnotationEventEmitterMixin = {
         e: Highcharts.AnnotationEventObject,
         cx: number,
         cy: number
-    ): Highcharts.PositionObject {
+    ): PositionObject {
         var prevDx = e.prevChartX - cx,
             prevDy = e.prevChartY - cy,
             dx = e.chartX - cx,

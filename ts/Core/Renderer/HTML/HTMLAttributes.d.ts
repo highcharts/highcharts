@@ -7,3 +7,15 @@
  *  !!!!!!! SOURCE GETS TRANSPILED BY TYPESCRIPT. EDIT TS FILE ONLY. !!!!!!!
  *
  * */
+
+/* *
+ *
+ *  Declarations
+ *
+ * */
+
+export interface HTMLAttributes {
+    [key: string]: (boolean|number|string|Function|undefined);
+}
+
+export default HTMLAttributes;

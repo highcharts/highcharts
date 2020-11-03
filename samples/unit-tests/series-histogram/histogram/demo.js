@@ -290,3 +290,26 @@ QUnit.test('#12077 - Histogram long digits.', function (assert) {
         `Histogram should be draw when long digits.`
     );
 });
+
+QUnit.test('#14289: Infinite loop', assert => {
+    [
+        [0.508304338907063],
+        [0.50830433890706, 0.508304338907063],
+        [0.508304338907063, 0.50830433890706]
+    ].forEach(data =>
+        Highcharts.chart('container', {
+            series: [{
+                type: 'histogram',
+                baseSeries: 's1'
+            }, {
+                type: 'scatter',
+                data: data.map(value => ({
+                    y: value
+                })),
+                id: 's1'
+            }]
+        })
+    );
+
+    assert.ok(true, 'Histogram should not enter infinite loop');
+});

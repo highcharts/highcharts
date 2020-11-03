@@ -8,23 +8,32 @@
  *
  * */
 
+'use strict';
+
 import type AnimationOptionsObject from '../Core/Animation/AnimationOptionsObject';
+import type ColorAxis from '../Core/Axis/ColorAxis';
 import type ColorType from '../Core/Color/ColorType';
-import type Point from '../Core/Series/Point';
-import type { SeriesOptionsType } from '../Core/Series/Types';
+import type ColumnSeries from './Column/ColumnSeries';
+import type { PointStateHoverOptions } from '../Core/Series/PointOptions';
+import type {
+    SeriesOptions,
+    SeriesStatesOptions
+} from '../Core/Series/SeriesOptions';
+import type { StatesOptionsKey } from '../Core/Series/StatesOptions';
 import type SVGAttributes from '../Core/Renderer/SVG/SVGAttributes';
 import type SVGPath from '../Core/Renderer/SVG/SVGPath';
 import BaseSeries from '../Core/Series/Series.js';
+const { seriesTypes } = BaseSeries;
 import ColorMapMixin from '../Mixins/ColorMapSeries.js';
 const {
     colorMapPointMixin,
     colorMapSeriesMixin
 } = ColorMapMixin;
 import H from '../Core/Globals.js';
-const {
-    noop
-} = H;
+const { noop } = H;
+import Point from '../Core/Series/Point.js';
 import LegendSymbolMixin from '../Mixins/LegendSymbol.js';
+import LineSeries from '../Series/Line/LineSeries.js';
 import SVGRenderer from '../Core/Renderer/SVG/SVGRenderer.js';
 import U from '../Core/Utilities.js';
 const {
@@ -35,6 +44,19 @@ const {
     merge,
     pick
 } = U;
+
+declare module '../Core/Series/SeriesLike' {
+    interface SeriesLike {
+        valueMax?: number;
+        valueMin?: number;
+    }
+}
+
+declare module '../Core/Series/SeriesOptions' {
+    interface SeriesStateHoverOptions {
+        brightness?: number;
+    }
+}
 
 /**
  * Internal types
@@ -54,9 +76,7 @@ declare global {
             public getCellAttributes(): HeatmapPointCellAttributes;
             public hasNullValue(): boolean;
         }
-        class HeatmapSeries
-            extends ScatterSeries
-            implements ColorMapSeriesMixin {
+        class HeatmapSeries extends ScatterSeries implements ColorMapSeriesMixin {
             public alignDataLabel: ColumnSeries['alignDataLabel'];
             public colorAttribs: ColorMapSeriesMixin['colorAttribs'];
             public colorAxis: ColorAxis;
@@ -83,12 +103,12 @@ declare global {
                 point: Highcharts.HeatmapPoint
             ): SVGAttributes;
             public pointAttribs(
-                point: Highcharts.HeatmapPoint,
-                state?: string
+                point: (Highcharts.HeatmapPoint|undefined),
+                state?: StatesOptionsKey
             ): SVGAttributes;
             public setClip(): void;
             public setOptions(
-                itemOptions: SeriesOptionsType
+                itemOptions: SeriesOptions
             ): this['options'];
             public translate(): void;
         }
@@ -107,14 +127,7 @@ declare global {
             nullColor?: ColorType;
             pointPadding?: HeatmapPoint['pointPadding'];
             rowsize?: number;
-            states?: SeriesStatesOptionsObject<HeatmapSeries>;
-        }
-        interface SeriesStatesHoverOptions {
-            brightness?: number;
-        }
-        interface Series {
-            valueMax?: number;
-            valueMin?: number;
+            states?: SeriesStatesOptions<HeatmapSeries>;
         }
     }
 }
@@ -122,18 +135,15 @@ declare global {
 /**
  * @private
  */
-declare module '../Core/Series/Types' {
+declare module '../Core/Series/SeriesType' {
     interface SeriesTypeRegistry {
         heatmap: typeof Highcharts.HeatmapSeries;
     }
 }
 
 import '../Core/Options.js';
-import '../Series/LineSeries.js';
 
-var Series = H.Series,
-    seriesTypes = BaseSeries.seriesTypes,
-    symbols = SVGRenderer.prototype.symbols;
+var symbols = SVGRenderer.prototype.symbols;
 
 /* *
  * @interface Highcharts.PointOptionsObject in parts/Point.ts
@@ -468,7 +478,7 @@ BaseSeries.seriesType<typeof Highcharts.HeatmapSeries>(
         init: function (this: Highcharts.HeatmapSeries): void {
             var options;
 
-            Series.prototype.init.apply(this, arguments as any);
+            LineSeries.prototype.init.apply(this, arguments as any);
 
             options = this.options;
             // #3758, prevent resetting in setData
@@ -482,7 +492,7 @@ BaseSeries.seriesType<typeof Highcharts.HeatmapSeries>(
                 rect: symbols.square
             });
         },
-        getSymbol: Series.prototype.getSymbol,
+        getSymbol: LineSeries.prototype.getSymbol,
 
         /**
          * @private
@@ -496,7 +506,7 @@ BaseSeries.seriesType<typeof Highcharts.HeatmapSeries>(
             var series = this,
                 chart = series.chart;
 
-            Series.prototype.setClip.apply(series, arguments);
+            LineSeries.prototype.setClip.apply(series, arguments);
             if (series.options.clip !== false || animation) {
                 (series.markerGroup as any)
                     .clip(
@@ -588,11 +598,10 @@ BaseSeries.seriesType<typeof Highcharts.HeatmapSeries>(
         pointAttribs: function (
             this: Highcharts.HeatmapSeries,
             point: Highcharts.HeatmapPoint,
-            state?: string
+            state?: StatesOptionsKey
         ): SVGAttributes {
             var series = this,
-                attr = Series.prototype.pointAttribs
-                    .call(series, point, state),
+                attr = LineSeries.prototype.pointAttribs.call(series, point, state),
                 seriesOptions = series.options || {},
                 plotOptions = series.chart.options.plotOptions || {},
                 seriesPlotOptions = plotOptions.series || {},
@@ -653,8 +662,8 @@ BaseSeries.seriesType<typeof Highcharts.HeatmapSeries>(
         ): SVGAttributes {
             var pointMarkerOptions = point.marker || {},
                 seriesMarkerOptions = this.options.marker || {},
-                seriesStateOptions: Highcharts.PointStatesHoverOptionsObject,
-                pointStateOptions: Highcharts.PointStatesHoverOptionsObject,
+                seriesStateOptions: PointStateHoverOptions,
+                pointStateOptions: PointStateHoverOptions,
                 shapeArgs = point.shapeArgs || {},
                 hasImage = point.hasImage,
                 attribs: SVGAttributes = {};
@@ -707,10 +716,8 @@ BaseSeries.seriesType<typeof Highcharts.HeatmapSeries>(
             var seriesMarkerOptions = this.options.marker || {};
 
             if (seriesMarkerOptions.enabled || this._hasPointMarkers) {
-                Series.prototype.drawPoints.call(this);
-                this.points.forEach((
-                    point: Highcharts.HeatmapPoint
-                ): void => {
+                LineSeries.prototype.drawPoints.call(this);
+                this.points.forEach((point): void => {
                     point.graphic &&
                     (point.graphic as any)[
                         this.chart.styledMode ? 'css' : 'animate'
@@ -732,7 +739,7 @@ BaseSeries.seriesType<typeof Highcharts.HeatmapSeries>(
             points?: Array<Highcharts.HeatmapPoint>,
             insideOnly?: boolean
         ): Array<Point> {
-            return Series.prototype.getValidPoints.call(
+            return LineSeries.prototype.getValidPoints.call(
                 this,
                 points,
                 insideOnly,
@@ -768,7 +775,7 @@ BaseSeries.seriesType<typeof Highcharts.HeatmapSeries>(
             this: Highcharts.HeatmapSeries
         ): Highcharts.DataExtremesObject {
             // Get the extremes from the value data
-            const { dataMin, dataMax } = Series.prototype.getExtremes
+            const { dataMin, dataMax } = LineSeries.prototype.getExtremes
                 .call(this, this.valueData);
 
             if (isNumber(dataMin)) {
@@ -779,7 +786,7 @@ BaseSeries.seriesType<typeof Highcharts.HeatmapSeries>(
             }
 
             // Get the extremes from the y data
-            return Series.prototype.getExtremes.call(this);
+            return LineSeries.prototype.getExtremes.call(this);
         }
 
         /* eslint-enable valid-jsdoc */
@@ -813,7 +820,7 @@ BaseSeries.seriesType<typeof Highcharts.HeatmapSeries>(
             options: Highcharts.HeatmapPointOptions,
             x?: number
         ): Highcharts.HeatmapPoint {
-            var point = H.Point.prototype
+            var point = Point.prototype
                 .applyOptions.call(this, options, x) as any;
 
             point.formatPrefix =

@@ -19,6 +19,13 @@ const {
     timeUnits
 } = U;
 
+declare module '../Series/SeriesOptions' {
+    interface SeriesOptions {
+        pointInterval?: number;
+        pointIntervalUnit?: Highcharts.SeriesPointIntervalUnitValue;
+    }
+}
+
 /**
  * Internal types
  * @private

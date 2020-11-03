@@ -12,6 +12,7 @@
 
 'use strict';
 
+import type LineSeries from '../Line/LineSeries';
 import type Point from '../../Core/Series/Point';
 import Chart from '../../Core/Chart/Chart.js';
 import A from '../../Core/Animation/AnimationUtilities.js';
@@ -26,6 +27,26 @@ const {
     isFunction,
     pick
 } = U;
+
+declare module '../../Core/Series/PointLike' {
+    interface PointLike {
+        dispX?: number;
+        dispY?: number;
+        fromNode?: Point;
+        linksFrom?: Array<Point>;
+        linksTo?: Array<Point>;
+        mass?: number;
+        prevX?: number;
+        prevY?: number;
+        toNode?: Point;
+    }
+}
+
+declare module '../../Core/Series/SeriesLike' {
+    interface SeriesLike {
+        forces?: Array<string>;
+    }
+}
 
 /**
  * Internal types
@@ -58,20 +79,6 @@ declare global {
         interface NetworkgraphSeriesOptions {
             layoutAlgorithm?: NetworkgraphLayoutAlgorithmOptions;
         }
-        interface PointLike {
-            dispX?: number;
-            dispY?: number;
-            fromNode?: Point;
-            linksFrom?: Array<Point>;
-            linksTo?: Array<Point>;
-            mass?: number;
-            prevX?: number;
-            prevY?: number;
-            toNode?: Point;
-        }
-        interface Series {
-            forces?: Array<string>;
-        }
         class NetworkgraphLayout {
             public constructor();
             public approximation?: string;
@@ -95,7 +102,7 @@ declare global {
             public prototype: NetworkgraphLayout;
             public quadTree: QuadTree;
             public repulsiveForce: Function;
-            public series: Array<Series>;
+            public series: Array<NetworkgraphSeries>;
             public simulation: (boolean|number);
             public startTemperature?: number;
             public systemTemperature?: number;
@@ -230,7 +237,7 @@ extend(
                 layout.initPositions();
 
                 // Render elements in initial positions:
-                series.forEach(function (s: Highcharts.Series): void {
+                series.forEach(function (s): void {
                     s.finishedAnimating = true; // #13169
                     s.render();
                 });
@@ -273,7 +280,7 @@ extend(
             layout.prevSystemTemperature = layout.systemTemperature;
             layout.systemTemperature = layout.getSystemTemperature();
             if (layout.enableSimulation) {
-                series.forEach(function (s: Highcharts.Series): void {
+                series.forEach(function (s): void {
                     // Chart could be destroyed during the simulation
                     if (s.chart) {
                         s.render();
@@ -931,7 +938,7 @@ addEvent(Chart as any, 'render', function (
         }
 
         if (afterRender) {
-            this.series.forEach(function (s: Highcharts.Series): void {
+            this.series.forEach(function (s): void {
                 if (s && s.layout) {
                     s.render();
                 }

@@ -8,7 +8,9 @@
  *
  * */
 
-export type SVGPath = globalThis.Array<SVGPath.Segment>;
+export interface SVGPath extends globalThis.Array<SVGPath.Segment> {
+    // nothing here yet
+}
 
 export namespace SVGPath {
 

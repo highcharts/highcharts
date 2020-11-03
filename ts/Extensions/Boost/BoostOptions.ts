@@ -11,7 +11,15 @@
  * */
 
 'use strict';
+
 import '../../Core/Globals.js';
+
+declare module '../../Core/Series/SeriesOptions' {
+    interface SeriesOptions {
+        boostBlending?: Highcharts.BoostBlendingValue;
+        boostThreshold?: number;
+    }
+}
 
 /**
  * Internal types
@@ -37,10 +45,6 @@ declare global {
         }
         interface Options {
             boost?: BoostOptions;
-        }
-        interface SeriesOptions {
-            boostBlending?: BoostBlendingValue;
-            boostThreshold?: number;
         }
         type BoostBlendingValue = ('add'|'darken'|'multiply');
     }

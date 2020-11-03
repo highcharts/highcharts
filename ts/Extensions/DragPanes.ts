@@ -86,9 +86,9 @@ declare global {
             public addMouseEvents(): void;
             public destroy(): void;
             public init(axis: Axis, update?: boolean): void;
-            public onMouseDown(e: PointerEventObject): void;
-            public onMouseMove(e: PointerEventObject): void;
-            public onMouseUp(e: PointerEventObject): void;
+            public onMouseDown(e: PointerEvent): void;
+            public onMouseMove(e: PointerEvent): void;
+            public onMouseUp(e: PointerEvent): void;
             public render(): void;
             public updateAxes(chartY: number): void;
         }
@@ -387,17 +387,17 @@ class AxisResizer {
         // Make them as separate functions to enable wrapping them:
 
         resizer.mouseMoveHandler = mouseMoveHandler = function (
-            e: Highcharts.PointerEventObject
+            e: PointerEvent
         ): void {
             resizer.onMouseMove(e);
         };
         resizer.mouseUpHandler = mouseUpHandler = function (
-            e: Highcharts.PointerEventObject
+            e: PointerEvent
         ): void {
             resizer.onMouseUp(e);
         };
         resizer.mouseDownHandler = mouseDownHandler = function (
-            e: Highcharts.PointerEventObject
+            e: PointerEvent
         ): void {
             resizer.onMouseDown(e);
         };
@@ -430,7 +430,7 @@ class AxisResizer {
      * @param {Highcharts.PointerEventObject} e
      *        Mouse event.
      */
-    public onMouseMove(e: Highcharts.PointerEventObject): void {
+    public onMouseMove(e: PointerEvent): void {
         /*
          * In iOS, a mousemove event with e.pageX === 0 is fired when holding
          * the finger down in the center of the scrollbar. This should
@@ -456,7 +456,7 @@ class AxisResizer {
      * @param {Highcharts.PointerEventObject} e
      *        Mouse event.
      */
-    public onMouseUp(e: Highcharts.PointerEventObject): void {
+    public onMouseUp(e: PointerEvent): void {
         if (this.hasDragged) {
             this.updateAxes(
                 this.axis.chart.pointer.normalize(e).chartY -
@@ -475,7 +475,7 @@ class AxisResizer {
      *
      * @function Highcharts.AxisResizer#onMouseDown
      */
-    public onMouseDown(e: Highcharts.PointerEventObject): void {
+    public onMouseDown(e: PointerEvent): void {
         // Clear all hover effects.
         this.axis.chart.pointer.reset(false, 0);
 

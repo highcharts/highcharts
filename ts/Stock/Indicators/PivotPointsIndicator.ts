@@ -6,7 +6,10 @@
  *
  * */
 
+'use strict';
+
 import type Point from '../../Core/Series/Point';
+import type LineSeries from '../../Series/Line/LineSeries';
 import type SVGElement from '../../Core/Renderer/SVG/SVGElement';
 import type SVGPath from '../../Core/Renderer/SVG/SVGPath';
 import BaseSeries from '../../Core/Series/Series.js';
@@ -34,7 +37,7 @@ declare global {
             public getPivotAndHLC(
                 values: Array<Array<number>>
             ): [number, number, number, number];
-            public getValues<TLinkedSeries extends Series>(
+            public getValues<TLinkedSeries extends LineSeries>(
                 series: TLinkedSeries,
                 params: PivotPointsIndicatorParamsOptions
             ): (IndicatorValuesObject<TLinkedSeries>|undefined);
@@ -71,7 +74,7 @@ declare global {
     }
 }
 
-declare module '../../Core/Series/Types' {
+declare module '../../Core/Series/SeriesType' {
     interface SeriesTypeRegistry {
         pivotpoints: typeof Highcharts.PivotPointsIndicator;
     }
@@ -317,7 +320,7 @@ BaseSeries.seriesType<typeof Highcharts.PivotPointsIndicator>(
                 );
             }
         },
-        getValues: function<TLinkedSeries extends Highcharts.Series> (
+        getValues: function<TLinkedSeries extends LineSeries> (
             this: Highcharts.PivotPointsIndicator,
             series: TLinkedSeries,
             params: Highcharts.PivotPointsIndicatorParamsOptions

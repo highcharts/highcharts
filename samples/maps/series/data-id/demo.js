@@ -1,5 +1,5 @@
 // Initiate the chart
-var chart = Highcharts.mapChart('container', {
+const chart = Highcharts.mapChart('container', {
 
     title: {
         text: 'Select point by id'
@@ -70,6 +70,6 @@ var chart = Highcharts.mapChart('container', {
     }]
 });
 
-$('#select').click(function () {
+document.getElementById('select').onclick = () => {
     chart.get('nt').select();
-});
+};

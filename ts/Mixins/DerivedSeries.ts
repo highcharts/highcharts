@@ -6,7 +6,28 @@
 
 'use strict';
 
+import type {
+    PointOptions,
+    PointShortOptions
+} from '../Core/Series/PointOptions';
+import type SeriesOptions from '../Core/Series/SeriesOptions';
 import H from '../Core/Globals.js';
+const { noop } = H;
+import LineSeries from '../Series/Line/LineSeries.js';
+import U from '../Core/Utilities.js';
+const {
+    addEvent,
+    defined
+} = U;
+
+declare module '../Core/Series/SeriesLike' {
+    interface SeriesLike {
+        baseSeries?: LineSeries;
+        eventRemovers?: Array<Function>;
+        hasDerivedData?: Highcharts.DerivedSeriesMixin['hasDerivedData'];
+        initialised?: boolean;
+    }
+}
 
 /**
  * Internal types
@@ -19,25 +40,19 @@ declare global {
             addBaseSeriesEvents(): void;
             addEvents(): void;
             destroy(): void;
-            init(this: Series): void;
+            init(this: LineSeries): void;
             setBaseSeries(): void;
-            setDerivedData(): Array<PointOptionsType>;
+            setDerivedData(): Array<(PointOptions|PointShortOptions)>;
         }
         interface DerivedSeriesOptions extends SeriesOptions {
             baseSeries?: (number|string);
         }
-        interface Series {
-            baseSeries?: Series;
-            eventRemovers?: Array<Function>;
-            hasDerivedData?: DerivedSeriesMixin['hasDerivedData'];
-            initialised?: boolean;
-        }
-        class DerivedSeries extends Series implements DerivedSeriesMixin {
+        class DerivedSeries extends LineSeries implements DerivedSeriesMixin {
             public addBaseSeriesEvents: DerivedSeriesMixin[
                 'addBaseSeriesEvents'
             ];
             public addEvents: DerivedSeriesMixin['addEvents'];
-            public baseSeries?: Series;
+            public baseSeries?: LineSeries;
             public destroy: DerivedSeriesMixin['destroy'];
             public eventRemovers: Array<Function>;
             public hasDerivedData: boolean;
@@ -49,18 +64,6 @@ declare global {
         }
     }
 }
-
-import U from '../Core/Utilities.js';
-const {
-    addEvent,
-    defined
-} = U;
-
-import '../Series/LineSeries.js';
-
-var Series = H.Series,
-    noop = H.noop;
-
 
 /* ************************************************************************** *
  *
@@ -89,7 +92,7 @@ const derivedSeriesMixin: Highcharts.DerivedSeriesMixin = {
      * @return {void}
      */
     init: function (this: Highcharts.DerivedSeries): void {
-        Series.prototype.init.apply(this, arguments as any);
+        LineSeries.prototype.init.apply(this, arguments as any);
 
         this.initialised = false;
         this.baseSeries = null as any;
@@ -209,7 +212,7 @@ const derivedSeriesMixin: Highcharts.DerivedSeriesMixin = {
             remover();
         });
 
-        Series.prototype.destroy.apply(this, arguments as any);
+        LineSeries.prototype.destroy.apply(this, arguments as any);
     }
 
     /* eslint-disable valid-jsdoc */

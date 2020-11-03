@@ -10,12 +10,25 @@
  *
  * */
 
+'use strict';
+
 import type Chart from '../../Core/Chart/Chart';
 import type CSSObject from '../../Core/Renderer/CSSObject';
-import type {
-    HTMLDOMElement
-} from '../../Core/Renderer/DOMElementType';
+import type { HTMLDOMElement } from '../../Core/Renderer/DOMElementType';
+import type LineSeries from '../../Series/Line/LineSeries';
 import type Point from '../../Core/Series/Point';
+
+declare module '../../Core/Series/PointOptions' {
+    interface PointOptions {
+        accessibility?: Highcharts.PointAccessibilityOptionsObject;
+    }
+}
+
+declare module '../../Core/Series/SeriesOptions' {
+    interface SeriesOptions {
+        accessibility?: Highcharts.SeriesAccessibilityOptions;
+    }
+}
 
 /**
  * Internal types.
@@ -31,8 +44,8 @@ declare global {
         }
         interface AccessibilityAnnouncementFormatter {
             (
-                updatedSeries: Array<Series>,
-                addedSeries?: Series,
+                updatedSeries: Array<LineSeries>,
+                addedSeries?: LineSeries,
                 addedPoint?: Point,
             ): false|string;
         }
@@ -96,7 +109,7 @@ declare global {
         }
         interface AccessibilitySeriesOptions {
             descriptionFormatter?: (
-                ScreenReaderFormatterCallbackFunction<Series>
+                ScreenReaderFormatterCallbackFunction<LineSeries>
             );
             describeSingleSeries: boolean;
             pointDescriptionEnabledThreshold: (boolean|number);
@@ -123,9 +136,6 @@ declare global {
         interface PointAccessibilityOptionsObject {
             description?: string;
         }
-        interface PointOptionsObject {
-            accessibility?: PointAccessibilityOptionsObject;
-        }
         interface ScreenReaderClickCallbackFunction {
             (evt: MouseEvent, chart?: AccessibilityChart): void;
         }
@@ -143,9 +153,6 @@ declare global {
                 SeriesAccessibilityKeyboardNavigationOptions
             );
             pointDescriptionFormatter?: Function;
-        }
-        interface SeriesOptions {
-            accessibility?: SeriesAccessibilityOptions;
         }
         interface XAxisAccessibilityOptions {
             description?: string;

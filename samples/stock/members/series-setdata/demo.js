@@ -1,5 +1,4 @@
-var chart = Highcharts.stockChart('container', {
-
+const chart = Highcharts.stockChart('container', {
     rangeSelector: {
         selected: 1
     },
@@ -10,7 +9,7 @@ var chart = Highcharts.stockChart('container', {
     }]
 });
 
-$('#button').click(function () {
+document.getElementById('button').addEventListener('click', e => {
     chart.series[0].setData(ADBE);
-    this.disabled = true;
+    e.target.disabled = true;
 });

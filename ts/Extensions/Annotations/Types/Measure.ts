@@ -4,8 +4,12 @@
  *
  * */
 
+'use strict';
+
 import type CSSObject from '../../../Core/Renderer/CSSObject';
+import type DashStyleValue from '../../../Core/Renderer/DashStyleValue';
 import type Point from '../../../Core/Series/Point';
+import type PositionObject from '../../../Core/Renderer/PositionObject';
 import type SVGPath from '../../../Core/Renderer/SVG/SVGPath';
 import Annotation from '../Annotations.js';
 import ControlPoint from '../ControlPoint.js';
@@ -261,7 +265,7 @@ class Measure extends Annotation {
                 ),
                 isCalculated = false; // to avoid Infinity in formatter
 
-            series.forEach(function (serie: Highcharts.Series): void {
+            series.forEach(function (serie): void {
                 if (
                     serie.visible &&
                     serie.options.id !== 'highcharts-navigator-series'
@@ -299,7 +303,7 @@ class Measure extends Annotation {
                 ),
                 isCalculated = false; // to avoid Infinity in formatter
 
-            series.forEach(function (serie: Highcharts.Series): void {
+            series.forEach(function (serie): void {
                 if (
                     serie.visible &&
                     serie.options.id !== 'highcharts-navigator-series'
@@ -346,7 +350,7 @@ class Measure extends Annotation {
                 ),
                 isCalculated = false; // to avoid Infinity in formatter
 
-            series.forEach(function (serie: Highcharts.Series): void {
+            series.forEach(function (serie): void {
                 if (
                     serie.visible &&
                     serie.options.id !== 'highcharts-navigator-series'
@@ -529,7 +533,7 @@ class Measure extends Annotation {
                 align: 'left',
                 vertical: 'top',
                 crop: true,
-                point: function (target: any): Highcharts.PositionObject {
+                point: function (target: any): PositionObject {
                     var annotation: Measure = target.annotation,
                         chart = annotation.chart,
                         inverted = chart.inverted,
@@ -986,7 +990,7 @@ Measure.prototype.defaultOptions = merge(
             positioner: function (
                 this: Highcharts.AnnotationControllable,
                 target: Measure
-            ): Highcharts.PositionObject {
+            ): PositionObject {
                 var cpIndex = this.index,
                     chart = target.chart,
                     options = target.options,

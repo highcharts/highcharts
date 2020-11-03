@@ -5,11 +5,12 @@
  *  !!!!!!! SOURCE GETS TRANSPILED BY TYPESCRIPT. EDIT TS FILE ONLY. !!!!!!!
  * */
 
+'use strict';
+
+import type LineSeries from '../../Series/Line/LineSeries';
 import BaseSeries from '../../Core/Series/Series.js';
 import U from '../../Core/Utilities.js';
-const {
-    error
-} = U;
+const { error } = U;
 
 /**
  * Internal types
@@ -24,7 +25,7 @@ declare global {
             public options: ADIndicatorOptions;
             public pointClass: typeof ADIndicatorPoint;
             public points: Array<ADIndicatorPoint>;
-            public getValues<TLinkedSeries extends Series>(
+            public getValues<TLinkedSeries extends LineSeries>(
                 series: TLinkedSeries,
                 params: ADIndicatorParamsOptions
             ): (IndicatorValuesObject<TLinkedSeries>|undefined);
@@ -44,7 +45,7 @@ declare global {
     }
 }
 
-declare module '../../Core/Series/Types' {
+declare module '../../Core/Series/SeriesType' {
     interface SeriesTypeRegistry {
         ad: typeof Highcharts.ADIndicator;
     }
@@ -119,7 +120,7 @@ BaseSeries.seriesType<typeof Highcharts.ADIndicator>('ad', 'sma',
     {
         nameComponents: (false as any),
         nameBase: 'Accumulation/Distribution',
-        getValues: function<TLinkedSeries extends Highcharts.Series> (
+        getValues: function<TLinkedSeries extends LineSeries> (
             series: TLinkedSeries,
             params: Highcharts.ADIndicatorParamsOptions
         ): (Highcharts.IndicatorValuesObject<TLinkedSeries>|undefined) {
@@ -127,8 +128,7 @@ BaseSeries.seriesType<typeof Highcharts.ADIndicator>('ad', 'sma',
                 xVal: Array<number> = (series.xData as any),
                 yVal: Array<(number|null|undefined)> = (series.yData as any),
                 volumeSeriesID: string = (params.volumeSeriesID as any),
-                volumeSeries: Highcharts.Series =
-                    (series.chart.get(volumeSeriesID) as any),
+                volumeSeries: LineSeries = (series.chart.get(volumeSeriesID) as any),
                 yValVolume = volumeSeries && volumeSeries.yData,
                 yValLen = yVal ? yVal.length : 0,
                 AD: Array<Array<number>> = [],

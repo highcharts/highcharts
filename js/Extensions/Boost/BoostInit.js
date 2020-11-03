@@ -10,14 +10,18 @@
  *
  * */
 'use strict';
+import BaseSeries from '../../Core/Series/Series.js';
+var seriesTypes = BaseSeries.seriesTypes;
 import Chart from '../../Core/Chart/Chart.js';
 import H from '../../Core/Globals.js';
+var noop = H.noop;
+import LineSeries from '../../Series/Line/LineSeries.js';
 import U from '../../Core/Utilities.js';
 var addEvent = U.addEvent, extend = U.extend, fireEvent = U.fireEvent, wrap = U.wrap;
-import '../../Series/LineSeries.js';
+import '../../Series/Line/LineSeries.js';
 import butils from './BoostUtils.js';
 import createAndAttachRenderer from './BoostAttach.js';
-var Series = H.Series, seriesTypes = H.seriesTypes, noop = function () { }, eachAsync = butils.eachAsync, pointDrawHandler = butils.pointDrawHandler, allocateIfNotSeriesBoosting = butils.allocateIfNotSeriesBoosting, renderIfNotSeriesBoosting = butils.renderIfNotSeriesBoosting, shouldForceChartSeriesBoosting = butils.shouldForceChartSeriesBoosting, index;
+var eachAsync = butils.eachAsync, pointDrawHandler = butils.pointDrawHandler, allocateIfNotSeriesBoosting = butils.allocateIfNotSeriesBoosting, renderIfNotSeriesBoosting = butils.renderIfNotSeriesBoosting, shouldForceChartSeriesBoosting = butils.shouldForceChartSeriesBoosting, index;
 /* eslint-disable valid-jsdoc */
 /**
  * Initialize the boot module.
@@ -26,7 +30,7 @@ var Series = H.Series, seriesTypes = H.seriesTypes, noop = function () { }, each
  * @return {void}
  */
 function init() {
-    extend(Series.prototype, {
+    extend(LineSeries.prototype, {
         /**
          * @private
          * @function Highcharts.Series#renderCanvas

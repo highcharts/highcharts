@@ -11,16 +11,17 @@
  *  !!!!!!! SOURCE GETS TRANSPILED BY TYPESCRIPT. EDIT TS FILE ONLY. !!!!!!!
  *
  * */
+'use strict';
 import BaseSeries from '../Core/Series/Series.js';
 var seriesTypes = BaseSeries.seriesTypes;
 import H from '../Core/Globals.js';
 import LegendSymbolMixin from '../Mixins/LegendSymbol.js';
+import LineSeries from '../Series/Line/LineSeries.js';
 import Point from '../Core/Series/Point.js';
 import SVGElement from '../Core/Renderer/SVG/SVGElement.js';
 import U from '../Core/Utilities.js';
 var addEvent = U.addEvent, arrayMax = U.arrayMax, arrayMin = U.arrayMin, defined = U.defined, isNumber = U.isNumber, merge = U.merge, objectEach = U.objectEach, pick = U.pick;
-import '../Series/LineSeries.js';
-var TrackerMixin = H.TrackerMixin, Series = H.Series;
+var TrackerMixin = H.TrackerMixin;
 /**
  * Callback JavaScript function to format the data label as a string. Note that
  * if a `format` is defined, the format takes precedence and the formatter is
@@ -220,7 +221,7 @@ BaseSeries.seriesType('timeline', 'line',
     drawTracker: TrackerMixin.drawTrackerPoint,
     init: function () {
         var series = this;
-        Series.prototype.init.apply(series, arguments);
+        LineSeries.prototype.init.apply(series, arguments);
         series.eventsToUnbind.push(addEvent(series, 'afterTranslate', function () {
             var lastPlotX, closestPointRangePx = Number.MAX_VALUE;
             series.points.forEach(function (point) {
@@ -321,7 +322,7 @@ BaseSeries.seriesType('timeline', 'line',
                 dataLabel.shadow(dataLabelsOptions.shadow);
             }
         }
-        Series.prototype.alignDataLabel.apply(series, arguments);
+        LineSeries.prototype.alignDataLabel.apply(series, arguments);
     },
     processData: function () {
         var series = this, visiblePoints = 0, i;
@@ -336,7 +337,7 @@ BaseSeries.seriesType('timeline', 'line',
         for (i = 0; i < series.xData.length; i++) {
             series.yData[i] = 1;
         }
-        Series.prototype.processData.call(this, arguments);
+        LineSeries.prototype.processData.call(this, arguments);
         return;
     },
     getXExtremes: function (xData) {
@@ -351,7 +352,7 @@ BaseSeries.seriesType('timeline', 'line',
     },
     generatePoints: function () {
         var series = this;
-        Series.prototype.generatePoints.apply(series);
+        LineSeries.prototype.generatePoints.apply(series);
         series.points.forEach(function (point, i) {
             point.applyOptions({
                 x: series.xData[i]
@@ -412,7 +413,7 @@ BaseSeries.seriesType('timeline', 'line',
     },
     bindAxes: function () {
         var series = this;
-        Series.prototype.bindAxes.call(series);
+        LineSeries.prototype.bindAxes.call(series);
         ['xAxis', 'yAxis'].forEach(function (axis) {
             // Initially set the linked xAxis type to category.
             if (axis === 'xAxis' && !series[axis].userOptions.type) {
@@ -446,7 +447,7 @@ BaseSeries.seriesType('timeline', 'line',
         }
     },
     setState: function () {
-        var proceed = Series.prototype.pointClass.prototype.setState;
+        var proceed = LineSeries.prototype.pointClass.prototype.setState;
         // Prevent triggering the setState method on null points.
         if (!this.isNull) {
             proceed.apply(this, arguments);

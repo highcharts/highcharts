@@ -17,9 +17,12 @@
  * */
 
 import type DataEventEmitter from './DataEventEmitter';
+import type LineSeries from '../Series/Line/LineSeries';
+import type PointOptions from '../Core/Series/PointOptions';
+import type SeriesOptions from '../Core/Series/SeriesOptions';
 import DataTable from './DataTable.js';
 import DataTableRow from './DataTableRow.js';
-import U from './../Core/Utilities.js';
+import U from '../Core/Utilities.js';
 const {
     defined,
     uniqueKey
@@ -60,7 +63,7 @@ class DataSeriesConverter {
      *
      * */
 
-    getSeriesData(columnIndex: number): Array<Highcharts.PointOptionsObject> {
+    getSeriesData(columnIndex: number): Array<PointOptions> {
         const table = this.table,
             options = this.options || {},
             dataOptions = [],
@@ -108,25 +111,25 @@ class DataSeriesConverter {
         return fcName;
     }
 
-    getLinePoint(column: number): Highcharts.PointOptionsObject {
+    getLinePoint(column: number): PointOptions {
         return {
             y: column
         };
     }
 
-    getPiePoint(column: number): Highcharts.PointOptionsObject {
+    getPiePoint(column: number): PointOptions {
         return {
             y: column
         };
     }
 
-    getRangePoint(column: number): Highcharts.PointOptionsObject {
+    getRangePoint(column: number): PointOptions {
         return {
             y: column
         };
     }
 
-    getAllSeriesData(): Array<Highcharts.SeriesOptions> {
+    getAllSeriesData(): Array<SeriesOptions> {
         const table = this.table,
             seriesOptions = [],
             row = table.getRow(0);
@@ -150,7 +153,7 @@ class DataSeriesConverter {
     }
 
     setDataTable(
-        allSeries: Array<Highcharts.Series>,
+        allSeries: Array<LineSeries>,
         eventDetail?: DataEventEmitter.EventDetail
     ): DataTable {
         const table = this.table,

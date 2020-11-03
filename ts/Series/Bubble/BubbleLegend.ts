@@ -13,6 +13,7 @@
 'use strict';
 
 import type { AlignValue } from '../../Core/Renderer/AlignObject';
+import type BBoxObject from '../../Core/Renderer/BBoxObject';
 import type ColorType from '../../Core/Color/ColorType';
 import type CSSObject from '../../Core/Renderer/CSSObject';
 import type Point from '../../Core/Series/Point';
@@ -20,11 +21,11 @@ import type SVGAttributes from '../../Core/Renderer/SVG/SVGAttributes';
 import type SVGElement from '../../Core/Renderer/SVG/SVGElement';
 import Chart from '../../Core/Chart/Chart.js';
 import Color from '../../Core/Color/Color.js';
-const {
-    parse: color
-} = Color;
+const { parse: color } = Color;
 import H from '../../Core/Globals.js';
+const { noop } = H;
 import Legend from '../../Core/Legend.js';
+import LineSeries from '../Line/LineSeries.js';
 import U from '../../Core/Utilities.js';
 const {
     addEvent,
@@ -39,9 +40,22 @@ const {
     wrap
 } = U;
 
-declare module '../../Core/Chart/ChartLike'{
+declare module '../../Core/Chart/ChartLike' {
     interface ChartLike {
         getVisibleBubbleSeriesIndex(): number;
+    }
+}
+
+declare module '../../Core/Series/PointLike' {
+    interface PointLike {
+        isBubble?: boolean;
+    }
+}
+
+declare module '../../Core/Series/SeriesLike' {
+    interface SeriesLike {
+        ignoreSeries?: boolean;
+        isBubble?: boolean;
     }
 }
 
@@ -113,13 +127,7 @@ declare global {
         interface LegendOptions {
             bubbleLegend?: BubbleLegendOptions;
         }
-        interface PointLike {
-            isBubble?: boolean;
-        }
-        interface Series {
-            isBubble?: boolean;
-        }
-        class BubbleLegend {
+        class BubbleLegend implements LegendItemObject {
             public constructor(options: BubbleLegendOptions, legend: Legend);
             public chart: Chart;
             public fontMetrics: FontMetricsObject;
@@ -136,7 +144,7 @@ declare global {
             public symbols: Dictionary<Array<SVGElement>>;
             public options: BubbleLegendOptions;
             public visible: boolean;
-            public addToLegend(items: Array<(Point|Series)>): void;
+            public addToLegend(items: Array<(LineSeries|Point)>): void;
             public correctSizes(): void;
             public drawLegendSymbol(legend: Legend): void;
             public formatLabel(range: BubbleLegendRangesOptions): string;
@@ -174,9 +182,6 @@ declare global {
 ''; // detach doclets above
 
 import './BubbleSeries.js';
-
-var Series = H.Series,
-    noop = H.noop;
 
 setOptions({ // Set default bubble legend options
     legend: {
@@ -455,7 +460,7 @@ class BubbleLegend {
     public legendItemHeight: number = void 0 as any;
     public legendItemWidth: number = void 0 as any;
     public legendSymbol: SVGElement = void 0 as any;
-    public maxLabel: Highcharts.BBoxObject = void 0 as any;
+    public maxLabel: BBoxObject = void 0 as any;
     public movementX: number = void 0 as any;
     public ranges: Array<Highcharts.BubbleLegendRangesOptions> = void 0 as any;
     public visible: boolean = void 0 as any;
@@ -495,7 +500,7 @@ class BubbleLegend {
      *        All legend items
      * @return {void}
      */
-    public addToLegend(items: Array<(Point|Highcharts.Series)>): void {
+    public addToLegend(items: Array<(LineSeries|Point)>): void {
         // Insert bubbleLegend into legend items
         items.splice(this.options.legendIndex as any, 0, this as any);
     }
@@ -882,10 +887,10 @@ class BubbleLegend {
      * @function Highcharts.BubbleLegend#getMaxLabelSize
      * @return {Highcharts.BBoxObject}
      */
-    public getMaxLabelSize(): Highcharts.BBoxObject {
+    public getMaxLabelSize(): BBoxObject {
         var labels = this.symbols.labels,
-            maxLabel: (Highcharts.BBoxObject|undefined),
-            labelSize: Highcharts.BBoxObject;
+            maxLabel: (BBoxObject|undefined),
+            labelSize: BBoxObject;
 
         labels.forEach(function (label: SVGElement): void {
             labelSize = label.getBBox(true);
@@ -1123,7 +1128,7 @@ class BubbleLegend {
 // Start the bubble legend creation process.
 addEvent(Legend, 'afterGetAllItems', function (
     this: Highcharts.Legend,
-    e: { allItems: Array<(Point|Highcharts.Series)> }
+    e: { allItems: Array<(LineSeries|Point)> }
 ): void {
     var legend = this,
         bubbleLegend = legend.bubbleLegend,
@@ -1232,7 +1237,7 @@ Legend.prototype.getLinesHeights = function (
  */
 Legend.prototype.retranslateItems = function (
     this: Highcharts.Legend,
-    lines: Array<Highcharts.Dictionary<number>>
+    lines: Array<Record<string, number>>
 ): void {
     var items = this.allItems,
         orgTranslateX,
@@ -1242,7 +1247,7 @@ Legend.prototype.retranslateItems = function (
         actualLine = 0;
 
     items.forEach(function (
-        item: (Highcharts.BubbleLegend|Point|Highcharts.Series),
+        item: (Highcharts.BubbleLegend|LineSeries|Point),
         index: number
     ): void {
         orgTranslateX = (item.legendGroup as any).translateX;
@@ -1272,7 +1277,7 @@ Legend.prototype.retranslateItems = function (
 };
 
 // Toggle bubble legend depending on the visible status of bubble series.
-addEvent(Series, 'legendItemClick', function (this: Highcharts.Series): void {
+addEvent(LineSeries, 'legendItemClick', function (): void {
     var series = this,
         chart = series.chart,
         visible = series.visible,
@@ -1326,11 +1331,7 @@ wrap(Chart.prototype, 'drawChartBox', function (
         if (!bubbleLegendOptions.placed) {
             legend.group.placed = false;
 
-            legend.allItems.forEach(function (
-                item: (
-                    Highcharts.BubbleLegend|Point|Highcharts.Series
-                )
-            ): void {
+            legend.allItems.forEach(function (item): void {
                 (item.legendGroup as any).translateY = null;
             });
         }
@@ -1340,7 +1341,7 @@ wrap(Chart.prototype, 'drawChartBox', function (
 
         chart.getMargins();
 
-        chart.axes.forEach(function (axis: Highcharts.Axis): void {
+        chart.axes.forEach(function (axis): void {
             if (axis.visible) { // #11448
                 axis.render();
             }
@@ -1349,7 +1350,7 @@ wrap(Chart.prototype, 'drawChartBox', function (
                 axis.setScale();
                 axis.updateNames();
                 // Disable axis animation on init
-                objectEach(axis.ticks, function (tick: Highcharts.Tick): void {
+                objectEach(axis.ticks, function (tick): void {
                     tick.isNew = true;
                     tick.isNewLabel = true;
                 });

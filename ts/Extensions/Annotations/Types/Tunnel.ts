@@ -6,14 +6,13 @@
 
 'use strict';
 
+import type PositionObject from '../../../Core/Renderer/PositionObject';
 import Annotation from '../Annotations.js';
 import ControlPoint from '../ControlPoint.js';
 import CrookedLine from './CrookedLine.js';
 import MockPoint from '../MockPoint.js';
 import U from '../../../Core/Utilities.js';
-const {
-    merge
-} = U;
+const { merge } = U;
 
 /**
  * Internal types.
@@ -40,8 +39,8 @@ declare global {
  * @private
  */
 function getSecondCoordinate(
-    p1: Highcharts.PositionObject,
-    p2: Highcharts.PositionObject,
+    p1: PositionObject,
+    p2: PositionObject,
     x: number
 ): number {
     return (p2.y - p1.y) / (p2.x - p1.x) * (x - p1.x) + p1.y;
@@ -233,7 +232,7 @@ Tunnel.prototype.defaultOptions = merge(
                 positioner: function (
                     this: Highcharts.AnnotationControlPoint,
                     target: Highcharts.AnnotationControllable
-                ): Highcharts.PositionObject {
+                ): PositionObject {
                     var startXY = MockPoint.pointToPixels(target.points[2]),
                         endXY = MockPoint.pointToPixels(target.points[3]),
                         x = (startXY.x + endXY.x) / 2;

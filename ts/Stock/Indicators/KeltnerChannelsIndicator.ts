@@ -6,7 +6,11 @@
  *
  * */
 
+'use strict';
+
 import type CSSObject from '../../Core/Renderer/CSSObject';
+import type LineSeries from '../../Series/Line/LineSeries';
+import type { PointMarkerOptions } from '../../Core/Series/PointOptions';
 import BaseSeries from '../../Core/Series/Series.js';
 const {
     seriesTypes
@@ -24,8 +28,7 @@ const {
  */
 declare global {
     namespace Highcharts {
-        class KeltnerChannelsIndicator
-            extends SMAIndicator implements MultipleLinesIndicator {
+        class KeltnerChannelsIndicator extends SMAIndicator implements MultipleLinesIndicator {
             public data: Array<KeltnerChannelsIndicatorPoint>;
             public linesApiNames: MultipleLinesMixin['linesApiNames'];
             public nameBase: string;
@@ -39,7 +42,7 @@ declare global {
             public getTranslatedLinesNames: MultipleLinesMixin[
                 'getTranslatedLinesNames'
             ];
-            public getValues<TLinkedSeries extends Series>(
+            public getValues<TLinkedSeries extends LineSeries>(
                 series: TLinkedSeries,
                 params: KeltnerChannelsIndicatorParamsOptions
             ): (IndicatorValuesObject<TLinkedSeries>|undefined)
@@ -48,7 +51,7 @@ declare global {
         interface KeltnerChannelsIndicatorOptions
             extends SMAIndicatorOptions, MultipleLinesIndicatorOptions {
             bottomLine?: Record<string, CSSObject>;
-            marker?: PointMarkerOptionsObject;
+            marker?: PointMarkerOptions;
             params?: KeltnerChannelsIndicatorParamsOptions;
             tooltip?: TooltipOptions;
             topLine?: Record<string, CSSObject>;
@@ -60,7 +63,7 @@ declare global {
             multiplierATR?: number;
         }
 
-        interface KeltnerChannelsLinkedParentSeries extends Series {
+        interface KeltnerChannelsLinkedParentSeries extends LineSeries {
             yData: Array<Array<number>>;
         }
 
@@ -70,7 +73,7 @@ declare global {
     }
 }
 
-declare module '../../Core/Series/Types' {
+declare module '../../Core/Series/SeriesType' {
     interface SeriesTypeRegistry {
         keltnerchannels: typeof Highcharts.KeltnerChannelsIndicator;
     }
@@ -196,7 +199,7 @@ BaseSeries.seriesType<typeof Highcharts.KeltnerChannelsIndicator>(
                 }
             }, this.options);
         },
-        getValues: function<TLinkedSeries extends Highcharts.Series> (
+        getValues: function<TLinkedSeries extends LineSeries> (
             series: TLinkedSeries,
             params: Highcharts.KeltnerChannelsIndicatorParamsOptions
         ): (Highcharts.IndicatorValuesObject<TLinkedSeries>|undefined) {

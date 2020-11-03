@@ -13,13 +13,14 @@
 'use strict';
 
 import type Chart from '../Core/Chart/Chart';
+import type SeriesOptions from '../Core/Series/SeriesOptions';
 import ChartUtilities from './Utils/ChartUtilities.js';
 import H from '../Core/Globals.js';
 const {
     doc
 } = H;
 import KeyboardNavigationHandler from './KeyboardNavigationHandler.js';
-import CartesianSeries from '../Core/Series/CartesianSeries.js';
+import LineSeries from '../Series/Line/LineSeries.js';
 import O from '../Core/Options.js';
 const {
     defaultOptions
@@ -78,7 +79,7 @@ declare global {
         interface AccessibilityPoint extends Point {
             series: AccessibilitySeries;
         }
-        interface AccessibilitySeries extends Series {
+        interface AccessibilitySeries extends LineSeries {
             chart: AccessibilityChart;
             options: Required<SeriesOptions>;
             points: Array<AccessibilityPoint>;
@@ -305,9 +306,9 @@ Accessibility.prototype = {
      * Return a list of the types of series we have in the chart.
      * @private
      */
-    getChartTypes: function (): Array<string> {
+    getChartTypes: function (this: Highcharts.Accessibility): Array<string> {
         var types: Highcharts.Dictionary<number> = {};
-        this.chart.series.forEach(function (series: Highcharts.Series): void {
+        this.chart.series.forEach(function (series): void {
             types[series.type] = 1;
         });
         return Object.keys(types);
@@ -395,7 +396,7 @@ addEvent(Point, 'update', function (): void {
     });
 });
 ['update', 'updatedData', 'remove'].forEach(function (event: string): void {
-    addEvent(CartesianSeries, event, function (): void {
+    addEvent(LineSeries, event, function (): void {
         if (this.chart.accessibility) {
             this.chart.a11yDirty = true;
         }

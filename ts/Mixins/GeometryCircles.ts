@@ -4,6 +4,9 @@
  *
  * */
 
+'use strict';
+
+import type PositionObject from '../Core/Renderer/PositionObject';
 import type SVGPath from '../Core/Renderer/SVG/SVGPath';
 import Geometry from './Geometry.js';
 const {
@@ -136,11 +139,11 @@ function getOverlapBetweenCircles(r1: number, r2: number, d: number): number {
 function getCircleCircleIntersection(
     c1: Highcharts.CircleObject,
     c2: Highcharts.CircleObject
-): Array<Highcharts.PositionObject> {
+): Array<PositionObject> {
     const d = getDistanceBetweenPoints(c1, c2),
         r1 = c1.r,
         r2 = c2.r;
-    let points = [] as Array<Highcharts.PositionObject>;
+    let points: Array<PositionObject> = [];
 
     if (d < r1 + r2 && d > Math.abs(r1 - r2)) {
         // If the circles are overlapping, but not completely overlapping, then
@@ -236,7 +239,7 @@ function isCircle1CompletelyOverlappingCircle2(
  *         Returns true if the point is inside, false if outside.
  */
 function isPointInsideCircle(
-    point: Highcharts.PositionObject,
+    point: PositionObject,
     circle: Highcharts.CircleObject
 ): boolean {
     return getDistanceBetweenPoints(point, circle) <= circle.r + 1e-10;
@@ -253,7 +256,7 @@ function isPointInsideCircle(
  *         Returns true if the point is inside all the circles, false if not.
  */
 function isPointInsideAllCircles(
-    point: Highcharts.PositionObject,
+    point: PositionObject,
     circles: Array<Highcharts.CircleObject>
 ): boolean {
     return !circles.some(function (circle: Highcharts.CircleObject): boolean {
@@ -274,7 +277,7 @@ function isPointInsideAllCircles(
  *         Returns true if the point is outside all the circles, false if not.
  */
 function isPointOutsideAllCircles(
-    point: Highcharts.PositionObject,
+    point: PositionObject,
     circles: Array<Highcharts.CircleObject>
 ): boolean {
     return !circles.some(function (circle: Highcharts.CircleObject): boolean {
@@ -296,7 +299,7 @@ function getCirclesIntersectionPolygon(
     circles: Array<Highcharts.CircleObject>
 ): Array<Highcharts.GeometryObject> {
     return getCirclesIntersectionPoints(circles)
-        .filter(function (p: Highcharts.PositionObject): boolean {
+        .filter(function (p: PositionObject): boolean {
             return isPointInsideAllCircles(p, circles);
         });
 }

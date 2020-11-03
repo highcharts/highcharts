@@ -8,6 +8,19 @@
  *
  * */
 
+'use strict';
+
+/* *
+ *
+ *  Imports
+ *
+ * */
+
+import type LinePoint from './Line/LinePoint';
+import type LinePointOptions from './Line/LinePointOptions';
+import type LineSeries from './Line/LineSeries';
+import type LineSeriesOptions from './Line/LineSeriesOptions';
+import type { SeriesStatesOptions } from '../Core/Series/SeriesOptions';
 import BaseSeries from '../Core/Series/Series.js';
 import DerivedSeriesMixin from '../Mixins/DerivedSeries.js';
 import U from '../Core/Utilities.js';
@@ -15,6 +28,15 @@ const {
     correctFloat,
     merge
 } = U;
+
+import '../Core/Options.js';
+import '../Series/Line/LineSeries.js';
+
+/* *
+ *
+ *  Declarations
+ *
+ * */
 
 /**
  * Internal types
@@ -51,7 +73,7 @@ declare global {
         interface ParetoPointOptions extends LinePointOptions {
         }
         interface ParetoSeriesOptions extends LineSeriesOptions {
-            states?: SeriesStatesOptionsObject<ParetoSeries>;
+            states?: SeriesStatesOptions<ParetoSeries>;
         }
     }
 }
@@ -59,14 +81,17 @@ declare global {
 /**
  * @private
  */
-declare module '../Core/Series/Types' {
+declare module '../Core/Series/SeriesType' {
     interface SeriesTypeRegistry {
         pareto: typeof Highcharts.ParetoSeries;
     }
 }
 
-import '../Core/Options.js';
-import '../Series/LineSeries.js';
+/* *
+ *
+ *  Class
+ *
+ * */
 
 /**
  * The pareto series type.

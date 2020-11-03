@@ -7,16 +7,18 @@
  *  !!!!!!! SOURCE GETS TRANSPILED BY TYPESCRIPT. EDIT TS FILE ONLY. !!!!!!!
  *
  * */
+'use strict';
 import BaseSeries from '../Core/Series/Series.js';
+import ColumnSeries from './Column/ColumnSeries.js';
+var columnProto = ColumnSeries.prototype;
 import H from '../Core/Globals.js';
+var svg = H.svg;
+import LineSeries from '../Series/Line/LineSeries.js';
 import Math3D from '../Extensions/Math3D.js';
 var perspective = Math3D.perspective;
 import StackItem from '../Extensions/Stacking.js';
 import U from '../Core/Utilities.js';
 var addEvent = U.addEvent, pick = U.pick, wrap = U.wrap;
-import './ColumnSeries.js';
-import '../Series/LineSeries.js';
-var Series = H.Series, columnProto = BaseSeries.seriesTypes.column.prototype, svg = H.svg;
 /**
  * Depth of the columns in a 3D column chart.
  *
@@ -62,7 +64,7 @@ var Series = H.Series, columnProto = BaseSeries.seriesTypes.column.prototype, sv
  * Chart with stacks
  * @param {string} stacking
  * Stacking option
- * @return {Highcharts.Stack3dDictionary}
+ * @return {Highcharts.Stack3DDictionary}
  */
 function retrieveStacks(chart, stacking) {
     var series = chart.series, stacks = {};
@@ -88,7 +90,7 @@ wrap(columnProto, 'translate', function (proceed) {
     }
 });
 // Don't use justifyDataLabel when point is outsidePlot
-wrap(Series.prototype, 'justifyDataLabel', function (proceed) {
+wrap(LineSeries.prototype, 'justifyDataLabel', function (proceed) {
     return !(arguments[2].outside3dPlot) ?
         proceed.apply(this, [].slice.call(arguments, 1)) :
         false;
@@ -233,7 +235,7 @@ wrap(columnProto, 'animate', function (proceed) {
 // In case of 3d columns there is no sense to add this columns to a specific
 // series group - if series is added to a group all columns will have the same
 // zIndex in comparison with different series.
-wrap(columnProto, 'plotGroup', function (proceed, prop, name, visibility, zIndex, parent) {
+wrap(columnProto, 'plotGroup', function (proceed, prop, _name, _visibility, _zIndex, parent) {
     if (prop !== 'dataLabelsGroup') {
         if (this.chart.is3d()) {
             if (this[prop]) {
@@ -278,7 +280,7 @@ wrap(columnProto, 'setVisible', function (proceed, vis) {
     proceed.apply(this, Array.prototype.slice.call(arguments, 1));
 });
 columnProto.handle3dGrouping = true;
-addEvent(Series, 'afterInit', function () {
+addEvent(LineSeries, 'afterInit', function () {
     if (this.chart.is3d() &&
         this.handle3dGrouping) {
         var series = this, seriesOptions = this.options, grouping = seriesOptions.grouping, stacking = seriesOptions.stacking, reversedStacks = pick(this.yAxis.options.reversedStacks, true), z = 0;
@@ -358,7 +360,7 @@ if (BaseSeries.seriesTypes.columnRange) {
     columnRangeProto.plotGroup = columnProto.plotGroup;
     columnRangeProto.setVisible = columnProto.setVisible;
 }
-wrap(Series.prototype, 'alignDataLabel', function (proceed, point, dataLabel, options, alignTo) {
+wrap(LineSeries.prototype, 'alignDataLabel', function (proceed, point, dataLabel, options, alignTo) {
     var chart = this.chart;
     // In 3D we need to pass point.outsidePlot option to the justifyDataLabel
     // method for disabling justifying dataLabels in columns outside plot
@@ -432,58 +434,3 @@ wrap(StackItem.prototype, 'getStackBox', function (proceed, chart, stackItem, x,
     }
     return stackBox;
 });
-/*
-    @merge v6.2
-    @todo
-    EXTENSION FOR 3D CYLINDRICAL COLUMNS
-    Not supported
-*/
-/*
-var defaultOptions = H.getOptions();
-defaultOptions.plotOptions.cylinder =
-    merge(defaultOptions.plotOptions.column);
-var CylinderSeries = extendClass(seriesTypes.column, {
-    type: 'cylinder'
-});
-seriesTypes.cylinder = CylinderSeries;
-
-wrap(seriesTypes.cylinder.prototype, 'translate', function (proceed) {
-    proceed.apply(this, [].slice.call(arguments, 1));
-
-    // Do not do this if the chart is not 3D
-    if (!this.chart.is3d()) {
-        return;
-    }
-
-    var series = this,
-        chart = series.chart,
-        options = chart.options,
-        cylOptions = options.plotOptions.cylinder,
-        options3d = options.chart.options3d,
-        depth = cylOptions.depth || 0,
-        alpha = chart.alpha3d;
-
-    var z = cylOptions.stacking ?
-        (this.options.stack || 0) * depth :
-        series._i * depth;
-    z += depth / 2;
-
-    if (cylOptions.grouping !== false) { z = 0; }
-
-    each(series.data, function (point) {
-        var shapeArgs = point.shapeArgs,
-            deg2rad = H.deg2rad;
-        point.shapeType = 'arc3d';
-        shapeArgs.x += depth / 2;
-        shapeArgs.z = z;
-        shapeArgs.start = 0;
-        shapeArgs.end = 2 * PI;
-        shapeArgs.r = depth * 0.95;
-        shapeArgs.innerR = 0;
-        shapeArgs.depth =
-            shapeArgs.height * (1 / sin((90 - alpha) * deg2rad)) - z;
-        shapeArgs.alpha = 90 - alpha;
-        shapeArgs.beta = 0;
-    });
-});
-*/

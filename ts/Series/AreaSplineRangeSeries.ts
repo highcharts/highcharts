@@ -8,6 +8,9 @@
  *
  * */
 
+'use strict';
+
+import type { SeriesStatesOptions } from '../Core/Series/SeriesOptions';
 import BaseSeries from '../Core/Series/Series.js';
 
 /**
@@ -30,7 +33,7 @@ declare global {
         interface AreaSplineRangePointOptions extends AreaRangePointOptions {
         }
         interface AreaSplineRangeSeriesOptions extends AreaRangeSeriesOptions {
-            states?: SeriesStatesOptionsObject<AreaSplineSeries>;
+            states?: SeriesStatesOptions<AreaSplineSeries>;
         }
     }
 }
@@ -38,7 +41,7 @@ declare global {
 /**
  * @private
  */
-declare module '../Core/Series/Types' {
+declare module '../Core/Series/SeriesType' {
     interface SeriesTypeRegistry {
         areasplinerange: typeof Highcharts.AreaSplineRangeSeries;
     }

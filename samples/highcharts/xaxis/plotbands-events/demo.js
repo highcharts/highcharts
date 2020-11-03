@@ -1,4 +1,4 @@
-var $report = $('#report');
+const report = document.getElementById('report');
 
 Highcharts.chart('container', {
     xAxis: {
@@ -7,14 +7,14 @@ Highcharts.chart('container', {
             from: Date.UTC(2010, 0, 2),
             to: Date.UTC(2010, 0, 4),
             events: {
-                click: function (e) {
-                    $report.html(e.type);
+                click: e => {
+                    report.innerHTML = e.type;
                 },
-                mouseover: function (e) {
-                    $report.html(e.type);
+                mouseover: e => {
+                    report.innerHTML = e.type;
                 },
-                mouseout: function (e) {
-                    $report.html(e.type);
+                mouseout: e => {
+                    report.innerHTML = e.type;
                 }
             }
         }],
@@ -22,7 +22,6 @@ Highcharts.chart('container', {
         // one day
         type: 'datetime'
     },
-
     series: [{
         data: [29.9, 71.5, 106.4, 129.2, 144.0, 176.0, 135.6, 148.5, 216.4],
         pointStart: Date.UTC(2010, 0, 1),

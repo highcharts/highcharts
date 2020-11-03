@@ -11,8 +11,11 @@
  *  !!!!!!! SOURCE GETS TRANSPILED BY TYPESCRIPT. EDIT TS FILE ONLY. !!!!!!!
  *
  * */
+'use strict';
 import Color from '../Core/Color/Color.js';
 var color = Color.parse;
+import ColumnSeries from './Column/ColumnSeries.js';
+var columnProto = ColumnSeries.prototype;
 import H from '../Core/Globals.js';
 var charts = H.charts, deg2rad = H.deg2rad, RendererProto = H.Renderer.prototype;
 import Math3D from '../Extensions/Math3D.js';
@@ -58,10 +61,7 @@ Series.seriesType('cylinder', 'column',
 /** @lends Highcharts.seriesTypes.cylinder#pointClass# */
 {
     shapeType: 'cylinder',
-    hasNewShapeType: H
-        .seriesTypes.column.prototype
-        .pointClass.prototype
-        .hasNewShapeType
+    hasNewShapeType: columnProto.pointClass.prototype.hasNewShapeType
 });
 /**
  * A `cylinder` series. If the [type](#series.cylinder.type) option is not

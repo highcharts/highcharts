@@ -4,7 +4,10 @@
  *
  * */
 
-import H from '../../Core/Globals.js';
+'use strict';
+
+import type PositionObject from '../../Core/Renderer/PositionObject';
+import LineSeries from '../../Series/Line/LineSeries.js';
 
 /**
  * Internal types.
@@ -56,7 +59,7 @@ declare global {
         }
         interface AnnotationMockSeries {
             chart: AnnotationChart;
-            getPlotBox: Series['getPlotBox'];
+            getPlotBox: LineSeries['getPlotBox'];
             xAxis?: (Axis|null);
             yAxis?: (Axis|null);
             visible: boolean;
@@ -115,7 +118,7 @@ var defined = U.defined,
     fireEvent = U.fireEvent;
 
 import Axis from '../../Core/Axis/Axis.js';
-import '../../Series/LineSeries.js';
+import '../../Series/Line/LineSeries.js';
 
 /* eslint-disable no-invalid-this, valid-jsdoc */
 
@@ -179,7 +182,7 @@ class MockPoint {
     public static pointToPixels(
         point: Highcharts.AnnotationPointType,
         paneCoordinates?: boolean
-    ): Highcharts.PositionObject {
+    ): PositionObject {
         var series = point.series,
             chart = series.chart,
             x: number = point.plotX as any,
@@ -244,7 +247,7 @@ class MockPoint {
         this.series = {
             visible: true,
             chart: chart,
-            getPlotBox: H.Series.prototype.getPlotBox
+            getPlotBox: LineSeries.prototype.getPlotBox
         };
 
         /**

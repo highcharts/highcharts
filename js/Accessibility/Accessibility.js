@@ -14,7 +14,7 @@ import ChartUtilities from './Utils/ChartUtilities.js';
 import H from '../Core/Globals.js';
 var doc = H.doc;
 import KeyboardNavigationHandler from './KeyboardNavigationHandler.js';
-import CartesianSeries from '../Core/Series/CartesianSeries.js';
+import LineSeries from '../Series/Line/LineSeries.js';
 import O from '../Core/Options.js';
 var defaultOptions = O.defaultOptions;
 import Point from '../Core/Series/Point.js';
@@ -259,7 +259,7 @@ addEvent(Point, 'update', function () {
     });
 });
 ['update', 'updatedData', 'remove'].forEach(function (event) {
-    addEvent(CartesianSeries, event, function () {
+    addEvent(LineSeries, event, function () {
         if (this.chart.accessibility) {
             this.chart.a11yDirty = true;
         }

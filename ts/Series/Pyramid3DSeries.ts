@@ -11,6 +11,9 @@
  *
  * */
 
+'use strict';
+
+import type { SeriesStatesOptions } from '../Core/Series/SeriesOptions';
 import BaseSeries from '../Core/Series/Series.js';
 
 /**
@@ -32,7 +35,7 @@ declare global {
         interface Pyramid3dPointOptions extends Funnel3dPointOptions {
         }
         interface Pyramid3dSeriesOptions extends Funnel3dSeriesOptions {
-            states?: SeriesStatesOptionsObject<Pyramid3dSeries>;
+            states?: SeriesStatesOptions<Pyramid3dSeries>;
         }
     }
 }
@@ -40,7 +43,7 @@ declare global {
 /**
  * @private
  */
-declare module '../Core/Series/Types' {
+declare module '../Core/Series/SeriesType' {
     interface SeriesTypeRegistry {
         pyramid3d: typeof Highcharts.Pyramid3dSeries;
     }

@@ -9,11 +9,15 @@
  *  !!!!!!! SOURCE GETS TRANSPILED BY TYPESCRIPT. EDIT TS FILE ONLY. !!!!!!!
  *
  * */
+'use strict';
 import Axis from '../Core/Axis/Axis.js';
 import BaseSeries from '../Core/Series/Series.js';
 import H from '../Core/Globals.js';
 import Color from '../Core/Color/Color.js';
 var color = Color.parse;
+import ColumnSeries from './Column/ColumnSeries.js';
+var columnProto = ColumnSeries.prototype;
+import LineSeries from './Line/LineSeries.js';
 import Point from '../Core/Series/Point.js';
 import U from '../Core/Utilities.js';
 var addEvent = U.addEvent, clamp = U.clamp, correctFloat = U.correctFloat, defined = U.defined, find = U.find, isNumber = U.isNumber, isObject = U.isObject, merge = U.merge, pick = U.pick;
@@ -25,8 +29,7 @@ var addEvent = U.addEvent, clamp = U.clamp, correctFloat = U.correctFloat, defin
 * @type {number|undefined}
 * @requires modules/xrange
 */
-import './ColumnSeries.js';
-var Series = H.Series, seriesTypes = BaseSeries.seriesTypes, columnType = seriesTypes.column;
+var seriesTypes = BaseSeries.seriesTypes;
 /**
  * Return color of a point based on its category.
  *
@@ -51,7 +54,7 @@ function getColorByCategory(series, point) {
         color: color
     };
 }
-import './ColumnSeries.js';
+import './Column/ColumnSeries.js';
 /**
  * @private
  * @class
@@ -177,7 +180,7 @@ BaseSeries.seriesType('xrange', 'column'
             });
         }
         swapAxes();
-        metrics = columnType.prototype.getColumnMetrics.call(this);
+        metrics = columnProto.getColumnMetrics.call(this);
         swapAxes();
         return metrics;
     },
@@ -202,7 +205,7 @@ BaseSeries.seriesType('xrange', 'column'
      */
     cropData: function (xData, yData, min, max) {
         // Replace xData with x2Data to find the appropriate cropStart
-        var cropData = Series.prototype.cropData, crop = cropData.call(this, this.x2Data, yData, min, max);
+        var cropData = LineSeries.prototype.cropData, crop = cropData.call(this, this.x2Data, yData, min, max);
         // Re-insert the cropped xData
         crop.xData = xData.slice(crop.start, crop.end);
         return crop;
@@ -342,7 +345,7 @@ BaseSeries.seriesType('xrange', 'column'
      * @function Highcharts.Series#translate
      */
     translate: function () {
-        columnType.prototype.translate.apply(this, arguments);
+        columnProto.translate.apply(this, arguments);
         this.points.forEach(function (point) {
             this.translatePoint(point);
         }, this);

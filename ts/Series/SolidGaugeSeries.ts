@@ -10,10 +10,13 @@
  *
  * */
 
+'use strict';
+
 import type ColorAxis from '../Core/Axis/ColorAxis';
 import type ColorType from '../Core/Color/ColorType';
 import type GradientColor from '../Core/Color/GradientColor';
 import type RadialAxis from '../Core/Axis/RadialAxis';
+import type { SeriesStatesOptions } from '../Core/Series/SeriesOptions';
 import type SVGAttributes from '../Core/Renderer/SVG/SVGAttributes';
 import type SVGPath from '../Core/Renderer/SVG/SVGPath';
 import BaseSeries from '../Core/Series/Series.js';
@@ -70,7 +73,7 @@ declare global {
             overshoot?: number;
             radius?: (number|string);
             rounded?: boolean;
-            states?: SeriesStatesOptionsObject<SolidGaugeSeries>;
+            states?: SeriesStatesOptions<SolidGaugeSeries>;
             threshold?: number;
         }
         interface SymbolOptionsObject {
@@ -82,7 +85,7 @@ declare global {
 /**
  * @private
  */
-declare module '../Core/Series/Types' {
+declare module '../Core/Series/SeriesType' {
     interface SeriesTypeRegistry {
         solidgauge: typeof Highcharts.SolidGaugeSeries;
     }

@@ -9,10 +9,12 @@
  *  !!!!!!! SOURCE GETS TRANSPILED BY TYPESCRIPT. EDIT TS FILE ONLY. !!!!!!!
  *
  * */
+'use strict';
 import A from '../Core/Animation/AnimationUtilities.js';
 var animObject = A.animObject;
 import BaseSeries from '../Core/Series/Series.js';
 import H from '../Core/Globals.js';
+import LineSeries from './Line/LineSeries.js';
 import U from '../Core/Utilities.js';
 var arrayMax = U.arrayMax, pick = U.pick;
 import './ScatterSeries.js';
@@ -159,7 +161,7 @@ BaseSeries.seriesType('vector', 'scatter'
      * @function Highcharts.seriesTypes.vector#translate
      */
     translate: function () {
-        H.Series.prototype.translate.call(this);
+        LineSeries.prototype.translate.call(this);
         this.lengthMax = arrayMax(this.lengthData);
     },
     /**
