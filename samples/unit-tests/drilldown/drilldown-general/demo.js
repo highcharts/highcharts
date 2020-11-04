@@ -7120,3 +7120,26 @@ QUnit.test('Wrong points after click on label (#12656)', function (assert) {
         'Points from Firefox should be visible (#12656).'
     );
 });
+
+QUnit.test('#14428: Update point.drilldown', assert => {
+    const chart = Highcharts.chart('container', {
+        series: [{
+            type: 'column',
+            data: [1, 2, 3]
+        }],
+        drilldown: {
+            series: [{
+                id: 'drill',
+                data: [3, 2, 1]
+            }]
+        }
+    });
+
+    const point = chart.series[0].points[0];
+    point.update({
+        drilldown: 'drill'
+    });
+    Highcharts.fireEvent(point, 'click');
+
+    assert.strictEqual(chart.series[0].points[0].y, 3, 'The chart should be drilled down');
+});
