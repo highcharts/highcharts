@@ -150,6 +150,7 @@ function GLRenderer(
     var shader: Highcharts.BoostGLShader = false as any,
         // Vertex buffers - keyed on shader attribute name
         vbuffer: Highcharts.BoostGLVertexBuffer = false as any,
+        vlen = 0,
         // Opengl context
         gl: WebGLRenderingContext = false as any,
         // Width of our viewport in pixels
@@ -463,6 +464,7 @@ function GLRenderer(
             pushColor(color);
             if (settings.usePreallocated) {
                 vbuffer.push(x, y, checkTreshold ? 1 : 0, pointSize || 1);
+                vlen += 4;
             } else {
                 data.push(x);
                 data.push(y);
@@ -476,7 +478,7 @@ function GLRenderer(
          */
         function closeSegment(): void {
             if (inst.segments.length) {
-                inst.segments[inst.segments.length - 1].to = data.length;
+                inst.segments[inst.segments.length - 1].to = data.length || vlen;
             }
         }
 
@@ -491,7 +493,7 @@ function GLRenderer(
             // set the previous segment's end
 
             if (inst.segments.length &&
-                inst.segments[inst.segments.length - 1].from === data.length
+                inst.segments[inst.segments.length - 1].from === (data.length || vlen)
             ) {
                 return;
             }
@@ -499,7 +501,7 @@ function GLRenderer(
             closeSegment();
 
             inst.segments.push({
-                from: data.length
+                from: data.length || vlen
             });
 
         }
