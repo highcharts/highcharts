@@ -10,7 +10,7 @@
  * License: www.highcharts.com/license
  */
 'use strict';
-import '../../Core/Axis/MapAxis.js';
+// import '../../Core/Axis/MapAxis.js';
 import '../../Core/Axis/ColorAxis.js';
 import '../../Mixins/ColorMapSeries.js';
 import '../../Maps/MapNavigation.js';

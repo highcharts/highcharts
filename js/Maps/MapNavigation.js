@@ -166,6 +166,22 @@ MapNavigation.prototype.updateEvents = function (options) {
 };
 // Add events to the Chart object itself
 extend(Chart.prototype, /** @lends Chart.prototype */ {
+    setMapView: function (center, zoom) {
+        if (this.mapView) {
+            if (center) {
+                this.mapView.center = center;
+            }
+            if (typeof zoom === 'number') {
+                this.mapView.zoom = zoom;
+            }
+            this.series.forEach(function (s) {
+                if (s.useMapGeometry) {
+                    s.isDirty = true;
+                }
+            });
+            this.redraw();
+        }
+    },
     /**
      * Fit an inner box to an outer. If the inner box overflows left or right,
      * align it to the sides of the outer. If it overflows both sides, fit it
@@ -214,59 +230,106 @@ extend(Chart.prototype, /** @lends Chart.prototype */ {
      * @function Highcharts.Chart#mapZoom
      *
      * @param {number} [howMuch]
-     *        How much to zoom the map. Values less than 1 zooms in. 0.5 zooms
-     *        in to half the current view. 2 zooms to twice the current view. If
-     *        omitted, the zoom is reset.
+     *        How much to zoom the map. +1 zooms in to half the current view,
+     *        -1 zooms out to twice the current view.
      *
-     * @param {number} [centerX]
-     *        The X axis position to center around if available space.
+     * @param {number} [lat]
+     *        The latitude to keep stationary when zooming if available space.
      *
-     * @param {number} [centerY]
-     *        The Y axis position to center around if available space.
+     * @param {number} [lng]
+     *        The longitude to keep stationary when zooming if available space.
      *
-     * @param {number} [mouseX]
-     *        Fix the zoom to this position if possible. This is used for
+     * @param {number} [chartX]
+     *        Keep this chart position stationary if possible. This is used for
      *        example in mousewheel events, where the area under the mouse
      *        should be fixed as we zoom in.
      *
-     * @param {number} [mouseY]
-     *        Fix the zoom to this position if possible.
+     * @param {number} [chartY]
+     *        Keep this chart position stationary if possible.
      *
+     * @todo
+     *        - Stick to bounds
+     *        - Reset zoom
      * @return {void}
      */
-    mapZoom: function (howMuch, centerXArg, centerYArg, mouseX, mouseY) {
-        var chart = this, xAxis = chart.xAxis[0], xRange = xAxis.max - xAxis.min, centerX = pick(centerXArg, xAxis.min + xRange / 2), newXRange = xRange * howMuch, yAxis = chart.yAxis[0], yRange = yAxis.max - yAxis.min, centerY = pick(centerYArg, yAxis.min + yRange / 2), newYRange = yRange * howMuch, fixToX = mouseX ? ((mouseX - xAxis.pos) / xAxis.len) : 0.5, fixToY = mouseY ? ((mouseY - yAxis.pos) / yAxis.len) : 0.5, newXMin = centerX - newXRange * fixToX, newYMin = centerY - newYRange * fixToY, newExt = chart.fitToBox({
-            x: newXMin,
-            y: newYMin,
-            width: newXRange,
-            height: newYRange
-        }, {
-            x: xAxis.dataMin,
-            y: yAxis.dataMin,
-            width: xAxis.dataMax - xAxis.dataMin,
-            height: yAxis.dataMax - yAxis.dataMin
-        }), zoomOut = (newExt.x <= xAxis.dataMin &&
-            newExt.width >=
-                xAxis.dataMax - xAxis.dataMin &&
-            newExt.y <= yAxis.dataMin &&
-            newExt.height >= yAxis.dataMax - yAxis.dataMin);
+    mapZoom: function (howMuch, lat, lng, chartX, chartY) {
+        var mapView = this.mapView;
+        if (mapView && typeof howMuch === 'number') {
+            var zoom = mapView.zoom + howMuch;
+            var center = void 0;
+            // Keep chartX and chartY stationary - convert to lat and lng
+            if (typeof chartX === 'number' && typeof chartY === 'number') {
+                var transA = (256 / 360) * Math.pow(2, mapView.zoom);
+                var offsetX = chartX - this.plotLeft - this.plotWidth / 2;
+                var offsetY = chartY - this.plotTop - this.plotHeight / 2;
+                lat = mapView.center[0] + offsetY / transA;
+                lng = mapView.center[1] + offsetX / transA;
+            }
+            // Keep lat and lng stationary by adjusting the center
+            if (typeof lat === 'number' && typeof lng === 'number') {
+                var scale = 1 - Math.pow(2, mapView.zoom) / Math.pow(2, zoom);
+                center = mapView.center;
+                var offsetLat = center[0] - lat;
+                var offsetLng = center[1] - lng;
+                center[0] -= offsetLat * scale;
+                center[1] -= offsetLng * scale;
+            }
+            this.setMapView(center, zoom);
+        }
+        /*
+        var chart = this,
+            xAxis = chart.xAxis[0],
+            xRange = (xAxis.max as any) - (xAxis.min as any),
+            centerX = pick(centerXArg, (xAxis.min as any) + xRange / 2),
+            newXRange = xRange * (howMuch as any),
+            yAxis = chart.yAxis[0],
+            yRange = (yAxis.max as any) - (yAxis.min as any),
+            centerY = pick(centerYArg, (yAxis.min as any) + yRange / 2),
+            newYRange = yRange * (howMuch as any),
+            fixToX = mouseX ? ((mouseX - (xAxis.pos as any)) / xAxis.len) : 0.5,
+            fixToY = mouseY ? ((mouseY - (yAxis.pos as any)) / yAxis.len) : 0.5,
+            newXMin = centerX - newXRange * fixToX,
+            newYMin = centerY - newYRange * fixToY,
+            newExt = chart.fitToBox({
+                x: newXMin,
+                y: newYMin,
+                width: newXRange,
+                height: newYRange
+            }, {
+                x: xAxis.dataMin,
+                y: yAxis.dataMin,
+                width: (xAxis.dataMax as any) - (xAxis.dataMin as any),
+                height: (yAxis.dataMax as any) - (yAxis.dataMin as any)
+            } as any),
+            zoomOut = (
+                newExt.x <= (xAxis.dataMin as any) &&
+                newExt.width >=
+                    (xAxis.dataMax as any) - (xAxis.dataMin as any) &&
+                newExt.y <= (yAxis.dataMin as any) &&
+                newExt.height >= (yAxis.dataMax as any) - (yAxis.dataMin as any)
+            );
+
         // When mousewheel zooming, fix the point under the mouse
         if (mouseX && xAxis.mapAxis) {
-            xAxis.mapAxis.fixTo = [mouseX - xAxis.pos, centerXArg];
+            xAxis.mapAxis.fixTo = [mouseX - (xAxis.pos as any),
+                (centerXArg as any)];
         }
         if (mouseY && yAxis.mapAxis) {
-            yAxis.mapAxis.fixTo = [mouseY - yAxis.pos, centerYArg];
+            yAxis.mapAxis.fixTo = [mouseY - (yAxis.pos as any),
+                (centerYArg as any)];
         }
+
         // Zoom
         if (typeof howMuch !== 'undefined' && !zoomOut) {
             xAxis.setExtremes(newExt.x, newExt.x + newExt.width, false);
             yAxis.setExtremes(newExt.y, newExt.y + newExt.height, false);
-            // Reset zoom
-        }
-        else {
+
+        // Reset zoom
+        } else {
             xAxis.setExtremes(void 0, void 0, false);
             yAxis.setExtremes(void 0, void 0, false);
         }
+
         // Prevent zooming until this one is finished animating
         /*
         chart.holdMapZoom = true;
@@ -286,8 +349,9 @@ extend(Chart.prototype, /** @lends Chart.prototype */ {
                 chart.mapZoomQueue = null;
             }, delay);
         }
-        */
+
         chart.redraw();
+        */
     }
 });
 // Extend the Chart.render method to add zooming and panning

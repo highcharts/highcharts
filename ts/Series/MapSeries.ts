@@ -23,6 +23,7 @@ import type SVGAttributes from '../Core/Renderer/SVG/SVGAttributes';
 import type SVGElement from '../Core/Renderer/SVG/SVGElement';
 import type SVGPath from '../Core/Renderer/SVG/SVGPath';
 import BaseSeries from '../Core/Series/Series.js';
+import CenteredSeriesMixin from '../Mixins/CenteredSeries.js';
 const { seriesTypes } = BaseSeries;
 import ColorMapMixin from '../Mixins/ColorMapSeries.js';
 const {
@@ -91,7 +92,8 @@ declare global {
             public zoomTo(): void;
         }
         class MapSeries extends ScatterSeries implements ColorMapSeries {
-            public baseTrans: MapBaseTransObject;
+            // public baseTrans: MapBaseTransObject;
+            public baseView?: MapView;
             public chart: MapChart;
             public colorAttribs: ColorMapSeriesMixin['colorAttribs'];
             public data: Array<MapPoint>;
@@ -143,12 +145,14 @@ declare global {
             public translate(): void;
             public translatePath(path: SVGPath): SVGPath;
         }
+        /*
         interface MapBaseTransObject {
             originX: number;
             originY: number;
             transAX: number;
             transAY: number;
         }
+        */
         interface MapPointCacheObject {
             _foundBox?: boolean;
             _i?: number;
@@ -174,6 +178,7 @@ declare global {
         interface MapSeriesOptions
             extends ColorSeriesOptions, ScatterSeriesOptions
         {
+            center?: [(number|string|null), (number|string|null)];
             data?: Array<(PointOptions|PointShortOptions|MapPointOptions)>;
             nullColor?: ColorType;
             nullInteraction?: boolean;
@@ -219,7 +224,7 @@ BaseSeries.seriesType<typeof Highcharts.MapSeries>(
     {
 
         animation: false, // makes the complex shapes slow
-
+        center: [null, null],
         dataLabels: {
             crop: false,
             formatter: function (): (number|null) { // #2945
@@ -472,6 +477,8 @@ BaseSeries.seriesType<typeof Highcharts.MapSeries>(
     // Prototype members
     }, merge(colorMapSeriesMixin, {
         type: 'map',
+        axisTypes: ['colorAxis'],
+        isCartesian: false,
         getExtremesFromAll: true,
         useMapGeometry: true, // get axis extremes from paths, not values
         forceDL: true,
@@ -505,6 +512,7 @@ BaseSeries.seriesType<typeof Highcharts.MapSeries>(
         },
 
         // Get the bounding box of all paths in the map combined.
+        // @todo rename to getBounds, create a generic Bounds interface
         getBox: function (
             this: Highcharts.MapSeries,
             paths: Array<Highcharts.MapPointOptions>
@@ -628,7 +636,7 @@ BaseSeries.seriesType<typeof Highcharts.MapSeries>(
         hasData: function (this: Highcharts.MapSeries): boolean {
             return !!this.processedXData.length; // != 0
         },
-
+        /*
         getExtremes: function (
             this: Highcharts.MapSeries
         ): Highcharts.DataExtremesObject {
@@ -651,13 +659,13 @@ BaseSeries.seriesType<typeof Highcharts.MapSeries>(
             // Extremes for the mock Y axis
             return { dataMin: this.minY, dataMax: this.maxY };
         },
-
+        */
         // Translate the path, so it automatically fits into the plot area box
         translatePath: function (
             this: Highcharts.MapSeries,
             path: SVGPath
         ): SVGPath {
-
+            /*
             var series = this,
                 xAxis = series.xAxis,
                 yAxis = series.yAxis,
@@ -667,40 +675,50 @@ BaseSeries.seriesType<typeof Highcharts.MapSeries>(
                 yMin = yAxis.min,
                 yTransA = yAxis.transA,
                 yMinPixelPadding = yAxis.minPixelPadding,
-                ret: SVGPath = []; // Preserve the original
+                ret: SVGPath = [];
+            */
+
+            const ret: SVGPath = []; // Preserve the original
+            const mapView = this.chart.mapView;
 
             // Do the translation
-            if (path) {
+            if (path && mapView) {
+                // A zoom of 0 means the world (360x360 degrees) fits in a
+                // 256x256 px tile
+                const transA = (256 / 360) * Math.pow(2, mapView.zoom);
+                const [lat, lng] = mapView.center;
+                const xOffset = this.chart.plotWidth / 2;
+                const yOffset = this.chart.plotHeight / 2;
                 path.forEach((seg): void => {
                     if (seg[0] === 'M') {
                         ret.push([
                             'M',
-                            (seg[1] - (xMin || 0)) * xTransA + xMinPixelPadding,
-                            (seg[2] - (yMin || 0)) * yTransA + yMinPixelPadding
+                            (seg[1] - lng) * transA + xOffset,
+                            (seg[2] - lat) * transA + yOffset
                         ]);
                     } else if (seg[0] === 'L') {
                         ret.push([
                             'L',
-                            (seg[1] - (xMin || 0)) * xTransA + xMinPixelPadding,
-                            (seg[2] - (yMin || 0)) * yTransA + yMinPixelPadding
+                            (seg[1] - lng) * transA + xOffset,
+                            (seg[2] - lat) * transA + yOffset
                         ]);
                     } else if (seg[0] === 'C') {
                         ret.push([
                             'C',
-                            (seg[1] - (xMin || 0)) * xTransA + xMinPixelPadding,
-                            (seg[2] - (yMin || 0)) * yTransA + yMinPixelPadding,
-                            (seg[3] - (xMin || 0)) * xTransA + xMinPixelPadding,
-                            (seg[4] - (yMin || 0)) * yTransA + yMinPixelPadding,
-                            (seg[5] - (xMin || 0)) * xTransA + xMinPixelPadding,
-                            (seg[6] - (yMin || 0)) * yTransA + yMinPixelPadding
+                            (seg[1] - lng) * transA + xOffset,
+                            (seg[2] - lat) * transA + yOffset,
+                            (seg[3] - lng) * transA + xOffset,
+                            (seg[4] - lat) * transA + yOffset,
+                            (seg[5] - lng) * transA + xOffset,
+                            (seg[6] - lat) * transA + yOffset
                         ]);
                     } else if (seg[0] === 'Q') {
                         ret.push([
                             'Q',
-                            (seg[1] - (xMin || 0)) * xTransA + xMinPixelPadding,
-                            (seg[2] - (yMin || 0)) * yTransA + yMinPixelPadding,
-                            (seg[3] - (xMin || 0)) * xTransA + xMinPixelPadding,
-                            (seg[4] - (yMin || 0)) * yTransA + yMinPixelPadding
+                            (seg[1] - lng) * transA + xOffset,
+                            (seg[2] - lat) * transA + yOffset,
+                            (seg[3] - lng) * transA + xOffset,
+                            (seg[4] - lat) * transA + yOffset
                         ]);
                     } else if (seg[0] === 'Z') {
                         ret.push(['Z']);
@@ -908,18 +926,21 @@ BaseSeries.seriesType<typeof Highcharts.MapSeries>(
                 this.isDirtyData ||
                 (this.chart.isResizing as any) ||
                 this.chart.renderer.isVML ||
-                !this.baseTrans
+                !this.baseView
             );
         },
+
+        getCenter: CenteredSeriesMixin.getCenter,
 
         // Add the path option for data points. Find the max value for color
         // calculation.
         translate: function (this: Highcharts.MapSeries): void {
             var series = this,
-                xAxis = series.xAxis,
-                yAxis = series.yAxis,
+                // xAxis = series.xAxis,
+                // yAxis = series.yAxis,
                 doFullTranslate = series.doFullTranslate();
 
+            series.processData();
             series.generatePoints();
 
             series.data.forEach(function (
@@ -929,8 +950,11 @@ BaseSeries.seriesType<typeof Highcharts.MapSeries>(
                 // Record the middle point (loosely based on centroid),
                 // determined by the middleX and middleY options.
                 if (isNumber(point._midX) && isNumber(point._midY)) {
-                    point.plotX = xAxis.toPixels(point._midX, true);
-                    point.plotY = yAxis.toPixels(point._midY, true);
+                    const midPoint = series.translatePath([
+                        ['M', point._midX, point._midY]
+                    ]);
+                    point.plotX = midPoint[0][1];
+                    point.plotY = midPoint[0][2];
                 }
 
                 if (doFullTranslate) {
@@ -979,21 +1003,21 @@ BaseSeries.seriesType<typeof Highcharts.MapSeries>(
         // shapeArgs. Extend it by assigning the tooltip position.
         drawPoints: function (this: Highcharts.MapSeries): void {
             var series = this,
-                xAxis = series.xAxis,
-                yAxis = series.yAxis,
+                // xAxis = series.xAxis,
+                // yAxis = series.yAxis,
                 group = series.group,
                 chart = series.chart,
                 renderer = chart.renderer,
-                scaleX: (number|undefined),
-                scaleY: number,
+                scale = 1,
                 translateX: number,
                 translateY: number,
-                baseTrans = this.baseTrans,
+                // baseTrans = this.baseTrans,
+                mapView = chart.mapView,
+                baseView = this.baseView,
                 transformGroup: SVGElement,
                 startTranslateX: number,
                 startTranslateY: number,
-                startScaleX: number,
-                startScaleY: number;
+                startScale: number;
 
             // Set a group that handles transform during zooming and panning in
             // order to preserve clipping on series.group
@@ -1070,19 +1094,10 @@ BaseSeries.seriesType<typeof Highcharts.MapSeries>(
                 // Set the base for later scale-zooming. The originX and originY
                 // properties are the axis values in the plot area's upper left
                 // corner.
-                this.baseTrans = {
-                    originX: (
-                        (xAxis.min as any) -
-                        xAxis.minPixelPadding / xAxis.transA
-                    ),
-                    originY: (
-                        (yAxis.min as any) -
-                        yAxis.minPixelPadding / yAxis.transA +
-                        (yAxis.reversed ? 0 : yAxis.len / yAxis.transA)
-                    ),
-                    transAX: xAxis.transA,
-                    transAY: yAxis.transA
-                };
+                if (mapView) {
+                    this.baseView = merge(mapView);
+                    this.baseView.center = [mapView.center[0], mapView.center[1]];
+                }
 
                 // Reset transformation in case we're doing a full translate
                 // (#3789)
@@ -1094,21 +1109,27 @@ BaseSeries.seriesType<typeof Highcharts.MapSeries>(
                 });
 
             // Just update the scale and transform for better performance
-            } else {
-                scaleX = xAxis.transA / baseTrans.transAX;
-                scaleY = yAxis.transA / baseTrans.transAY;
-                translateX = xAxis.toPixels(baseTrans.originX, true);
-                translateY = yAxis.toPixels(baseTrans.originY, true);
+            } else if (mapView && baseView) {
+                scale = Math.pow(2, mapView.zoom) / Math.pow(2, baseView.zoom);
+
+                const oldTransA = (256 / 360) * Math.pow(2, baseView.zoom);
+                const newTransA = (256 / 360) * Math.pow(2, mapView.zoom);
+
+                const oldLeftLat = baseView.center[1] - (chart.plotWidth / 2) /
+                    oldTransA;
+                const newLeftLat = mapView.center[1] - (chart.plotWidth / 2) /
+                    newTransA;
+                translateX = (oldLeftLat - newLeftLat) * newTransA;
+
+                const oldTopLng = baseView.center[0] - (chart.plotHeight / 2) /
+                    oldTransA;
+                const newTopLng = mapView.center[0] - (chart.plotHeight / 2) /
+                    newTransA;
+                translateY = (oldTopLng - newTopLng) * newTransA;
 
                 // Handle rounding errors in normal view (#3789)
-                if (
-                    scaleX > 0.99 &&
-                    scaleX < 1.01 &&
-                    scaleY > 0.99 &&
-                    scaleY < 1.01
-                ) {
-                    scaleX = 1;
-                    scaleY = 1;
+                if (scale > 0.99 && scale < 1.01) {
+                    scale = 1;
                     translateX = Math.round(translateX);
                     translateY = Math.round(translateY);
                 }
@@ -1128,14 +1149,15 @@ BaseSeries.seriesType<typeof Highcharts.MapSeries>(
                 if (chart.renderer.globalAnimation) {
                     startTranslateX = transformGroup.attr('translateX') as any;
                     startTranslateY = transformGroup.attr('translateY') as any;
-                    startScaleX = transformGroup.attr('scaleX') as any;
-                    startScaleY = transformGroup.attr('scaleY') as any;
+                    startScale = transformGroup.attr('scaleX') as any;
                     transformGroup
                         .attr({ animator: 0 })
                         .animate({
                             animator: 1
                         }, {
                             step: function (now: any, fx: any): void {
+                                const scaleStep = startScale +
+                                    (scale - startScale) * fx.pos;
                                 transformGroup.attr({
                                     translateX: (
                                         startTranslateX +
@@ -1145,15 +1167,8 @@ BaseSeries.seriesType<typeof Highcharts.MapSeries>(
                                         startTranslateY +
                                         (translateY - startTranslateY) * fx.pos
                                     ),
-                                    scaleX: (
-                                        startScaleX +
-                                        ((scaleX as any) - startScaleX) *
-                                        fx.pos
-                                    ),
-                                    scaleY: (
-                                        startScaleY +
-                                        (scaleY - startScaleY) * fx.pos
-                                    )
+                                    scaleX: scaleStep,
+                                    scaleY: scaleStep
                                 });
 
                             }
@@ -1162,10 +1177,10 @@ BaseSeries.seriesType<typeof Highcharts.MapSeries>(
                 // When dragging, animation is off.
                 } else {
                     transformGroup.attr({
-                        translateX: translateX,
-                        translateY: translateY,
-                        scaleX: scaleX,
-                        scaleY: scaleY
+                        translateX,
+                        translateY,
+                        scaleX: scale,
+                        scaleY: scale
                     });
                 }
 
@@ -1184,7 +1199,7 @@ BaseSeries.seriesType<typeof Highcharts.MapSeries>(
                             (series.pointAttrToOptions as any)['stroke-width']
                         ) || 'borderWidth'],
                         1 // Styled mode
-                    ) / (scaleX || 1)) as any
+                    ) / scale) as any
                 );
             }
 
@@ -1225,11 +1240,11 @@ BaseSeries.seriesType<typeof Highcharts.MapSeries>(
         animate: function (this: Highcharts.MapSeries, init?: boolean): void {
             var chart = this.chart,
                 animation = this.options.animation,
-                group = this.group,
-                xAxis = this.xAxis,
-                yAxis = this.yAxis,
-                left = xAxis.pos,
-                top = yAxis.pos;
+                group = this.group;
+                // xAxis = this.xAxis,
+                // yAxis = this.yAxis,
+                // left = xAxis.pos,
+                // top = yAxis.pos;
 
             if (chart.renderer.isSVG) {
 
@@ -1244,8 +1259,8 @@ BaseSeries.seriesType<typeof Highcharts.MapSeries>(
 
                     // Scale down the group and place it in the center
                     group.attr({
-                        translateX: (left as any) + xAxis.len / 2,
-                        translateY: (top as any) + yAxis.len / 2,
+                        translateX: chart.plotLeft + chart.plotWidth / 2,
+                        translateY: chart.plotTop + chart.plotHeight / 2,
                         scaleX: 0.001, // #1499
                         scaleY: 0.001
                     });
@@ -1253,8 +1268,8 @@ BaseSeries.seriesType<typeof Highcharts.MapSeries>(
                 // Run the animation
                 } else {
                     group.animate({
-                        translateX: left,
-                        translateY: top,
+                        translateX: chart.plotLeft,
+                        translateY: chart.plotTop,
                         scaleX: 1,
                         scaleY: 1
                     }, animation);

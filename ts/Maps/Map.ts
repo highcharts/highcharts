@@ -7,7 +7,7 @@
  *  !!!!!!! SOURCE GETS TRANSPILED BY TYPESCRIPT. EDIT TS FILE ONLY. !!!!!!!
  *
  * */
-
+/* eslint-disable no-invalid-this */
 'use strict';
 
 import type {
@@ -21,6 +21,7 @@ const { defaultOptions } = O;
 import SVGRenderer from '../Core/Renderer/SVG/SVGRenderer.js';
 import U from '../Core/Utilities.js';
 const {
+    addEvent,
     extend,
     getOptions,
     merge,
@@ -31,12 +32,20 @@ const {
  * Internal types
  * @private
  */
+declare module '../Core/Chart/ChartLike'{
+    interface ChartLike {
+        mapView?: Highcharts.MapView;
+    }
+}
+
 declare global {
     namespace Highcharts {
         class Map {
             // fake class for jQuery
             // @todo remove
         }
+        type LatLng = [number, number];
+        type MapView = { center: LatLng; zoom: number };
         let maps: Record<string, any>;
         function mapChart(): Chart;
         function splitPath(path: string): SVGPath;
@@ -210,10 +219,10 @@ defaultOptions.mapNavigation = {
              * Click handler for the button.
              *
              * @type    {Function}
-             * @default function () { this.mapZoom(2); }
+             * @default function () { this.mapZoom(-0.5); }
              */
             onclick: function (this: Highcharts.MapNavigationChart): void {
-                this.mapZoom(2);
+                this.mapZoom(-0.5);
             },
 
             /**
@@ -427,6 +436,44 @@ if ((Renderer as any) === VMLRenderer) {
     });
 }
 
+addEvent(Chart, 'afterSetChartSize', function (): void {
+    interface Bounds { n: number; e: number; s: number; w: number }
+    const bounds: Bounds = {
+        n: Number.MAX_VALUE,
+        e: -Number.MAX_VALUE,
+        s: -Number.MAX_VALUE,
+        w: Number.MAX_VALUE
+    };
+    let hasBounds = false;
+    this.series.forEach((s): void => {
+        if ((s as any).useMapGeometry) {
+            bounds.n = Math.min(bounds.n, (s as any).minY);
+            bounds.e = Math.max(bounds.e, (s as any).maxX);
+            bounds.s = Math.max(bounds.s, (s as any).maxY);
+            bounds.w = Math.min(bounds.w, (s as any).minX);
+            hasBounds = true;
+        }
+    });
+
+    if (!this.mapView && hasBounds) {
+        // Compute the map view inferred from the maps
+
+        // 256 is the magic number where a world tile is rendered to a 256/256
+        // px square.
+        const scaleToPlotArea = Math.max(
+            (bounds.e - bounds.w) / (this.plotWidth / 256),
+            (bounds.s - bounds.n) / (this.plotHeight / 256)
+        );
+
+        const zoom = (Math.log(360 / scaleToPlotArea) / Math.log(2));
+
+        this.mapView = {
+            center: [(bounds.s + bounds.n) / 2, (bounds.e + bounds.w) / 2],
+            zoom
+        };
+    }
+
+});
 
 /**
  * The factory function for creating new map charts. Creates a new {@link

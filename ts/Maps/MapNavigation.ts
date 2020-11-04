@@ -67,10 +67,14 @@ declare global {
             fitToBox(inner: BBoxObject, outer: BBoxObject): BBoxObject;
             mapZoom(
                 howMuch?: number,
-                centerXArg?: number,
-                centerYArg?: number,
-                mouseX?: number,
-                mouseY?: number
+                lat?: number,
+                lng?: number,
+                chartX?: number,
+                chartY?: number
+            ): void;
+            setMapView(
+                center?: Highcharts.LatLng,
+                zoom?: number
             ): void;
         }
         interface MapNavigationOptions {
@@ -327,6 +331,28 @@ MapNavigation.prototype.updateEvents = function (
 // Add events to the Chart object itself
 extend(Chart.prototype, /** @lends Chart.prototype */ {
 
+    setMapView: function (
+        this: Highcharts.MapNavigationChart,
+        center?: Highcharts.LatLng,
+        zoom?: number
+    ): void {
+        if (this.mapView) {
+            if (center) {
+                this.mapView.center = center;
+            }
+            if (typeof zoom === 'number') {
+                this.mapView.zoom = zoom;
+            }
+            this.series.forEach((s): void => {
+                if ((s as any).useMapGeometry) {
+                    s.isDirty = true;
+                }
+            });
+
+            this.redraw();
+        }
+    },
+
     /**
      * Fit an inner box to an outer. If the inner box overflows left or right,
      * align it to the sides of the outer. If it overflows both sides, fit it
@@ -385,34 +411,67 @@ extend(Chart.prototype, /** @lends Chart.prototype */ {
      * @function Highcharts.Chart#mapZoom
      *
      * @param {number} [howMuch]
-     *        How much to zoom the map. Values less than 1 zooms in. 0.5 zooms
-     *        in to half the current view. 2 zooms to twice the current view. If
-     *        omitted, the zoom is reset.
+     *        How much to zoom the map. +1 zooms in to half the current view,
+     *        -1 zooms out to twice the current view.
      *
-     * @param {number} [centerX]
-     *        The X axis position to center around if available space.
+     * @param {number} [lat]
+     *        The latitude to keep stationary when zooming if available space.
      *
-     * @param {number} [centerY]
-     *        The Y axis position to center around if available space.
+     * @param {number} [lng]
+     *        The longitude to keep stationary when zooming if available space.
      *
-     * @param {number} [mouseX]
-     *        Fix the zoom to this position if possible. This is used for
+     * @param {number} [chartX]
+     *        Keep this chart position stationary if possible. This is used for
      *        example in mousewheel events, where the area under the mouse
      *        should be fixed as we zoom in.
      *
-     * @param {number} [mouseY]
-     *        Fix the zoom to this position if possible.
+     * @param {number} [chartY]
+     *        Keep this chart position stationary if possible.
      *
+     * @todo
+     *        - Stick to bounds
+     *        - Reset zoom
      * @return {void}
      */
     mapZoom: function (
         this: Highcharts.MapNavigationChart,
         howMuch?: number,
-        centerXArg?: number,
-        centerYArg?: number,
-        mouseX?: number,
-        mouseY?: number
+        lat?: number,
+        lng?: number,
+        chartX?: number,
+        chartY?: number
     ): void {
+        const mapView = this.mapView;
+        if (mapView && typeof howMuch === 'number') {
+            const zoom = mapView.zoom + howMuch;
+
+            let center: Highcharts.LatLng|undefined;
+
+            // Keep chartX and chartY stationary - convert to lat and lng
+            if (typeof chartX === 'number' && typeof chartY === 'number') {
+                const transA = (256 / 360) * Math.pow(2, mapView.zoom);
+
+                const offsetX = chartX - this.plotLeft - this.plotWidth / 2;
+                const offsetY = chartY - this.plotTop - this.plotHeight / 2;
+                lat = mapView.center[0] + offsetY / transA;
+                lng = mapView.center[1] + offsetX / transA;
+            }
+
+            // Keep lat and lng stationary by adjusting the center
+            if (typeof lat === 'number' && typeof lng === 'number') {
+                const scale = 1 - Math.pow(2, mapView.zoom) / Math.pow(2, zoom);
+
+                center = mapView.center;
+                const offsetLat = center[0] - lat;
+                const offsetLng = center[1] - lng;
+
+                center[0] -= offsetLat * scale;
+                center[1] -= offsetLng * scale;
+            }
+
+            this.setMapView(center, zoom);
+        }
+        /*
         var chart = this,
             xAxis = chart.xAxis[0],
             xRange = (xAxis.max as any) - (xAxis.min as any),
@@ -447,10 +506,12 @@ extend(Chart.prototype, /** @lends Chart.prototype */ {
 
         // When mousewheel zooming, fix the point under the mouse
         if (mouseX && xAxis.mapAxis) {
-            xAxis.mapAxis.fixTo = [mouseX - (xAxis.pos as any), (centerXArg as any)];
+            xAxis.mapAxis.fixTo = [mouseX - (xAxis.pos as any),
+                (centerXArg as any)];
         }
         if (mouseY && yAxis.mapAxis) {
-            yAxis.mapAxis.fixTo = [mouseY - (yAxis.pos as any), (centerYArg as any)];
+            yAxis.mapAxis.fixTo = [mouseY - (yAxis.pos as any),
+                (centerYArg as any)];
         }
 
         // Zoom
@@ -483,9 +544,9 @@ extend(Chart.prototype, /** @lends Chart.prototype */ {
                 chart.mapZoomQueue = null;
             }, delay);
         }
-        */
 
         chart.redraw();
+        */
     }
 });
 

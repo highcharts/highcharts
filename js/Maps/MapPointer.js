@@ -25,7 +25,7 @@ extend(Pointer.prototype, {
             }
         }
         else if (chart.isInsidePlot(e.chartX - chart.plotLeft, e.chartY - chart.plotTop)) {
-            chart.mapZoom(0.5, chart.xAxis[0].toValue(e.chartX), chart.yAxis[0].toValue(e.chartY), e.chartX, e.chartY);
+            chart.mapZoom(0.5, void 0, void 0, e.chartX, e.chartY);
         }
     },
     // The event handler for the mouse scroll event
@@ -35,7 +35,7 @@ extend(Pointer.prototype, {
         // Firefox uses e.detail, WebKit and IE uses wheelDelta
         delta = e.detail || -(e.wheelDelta / 120);
         if (chart.isInsidePlot(e.chartX - chart.plotLeft, e.chartY - chart.plotTop)) {
-            chart.mapZoom(Math.pow(chart.options.mapNavigation.mouseWheelSensitivity, delta), chart.xAxis[0].toValue(e.chartX), chart.yAxis[0].toValue(e.chartY), e.chartX, e.chartY);
+            chart.mapZoom((chart.options.mapNavigation.mouseWheelSensitivity - 1) * -delta, void 0, void 0, e.chartX, e.chartY);
         }
     }
 });

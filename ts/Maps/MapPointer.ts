@@ -74,8 +74,8 @@ extend(Pointer.prototype, {
         ) {
             chart.mapZoom(
                 0.5,
-                chart.xAxis[0].toValue(e.chartX),
-                chart.yAxis[0].toValue(e.chartY),
+                void 0,
+                void 0,
                 e.chartX,
                 e.chartY
             );
@@ -99,12 +99,9 @@ extend(Pointer.prototype, {
             e.chartY - chart.plotTop
         )) {
             chart.mapZoom(
-                Math.pow(
-                    (chart.options.mapNavigation as any).mouseWheelSensitivity,
-                    delta
-                ),
-                chart.xAxis[0].toValue(e.chartX),
-                chart.yAxis[0].toValue(e.chartY),
+                ((chart.options.mapNavigation as any).mouseWheelSensitivity - 1) * -delta,
+                void 0,
+                void 0,
                 e.chartX,
                 e.chartY
             );

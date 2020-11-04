@@ -9,6 +9,7 @@
  * */
 'use strict';
 import BaseSeries from '../Core/Series/Series.js';
+import CenteredSeriesMixin from '../Mixins/CenteredSeries.js';
 var seriesTypes = BaseSeries.seriesTypes;
 import ColorMapMixin from '../Mixins/ColorMapSeries.js';
 var colorMapPointMixin = ColorMapMixin.colorMapPointMixin, colorMapSeriesMixin = ColorMapMixin.colorMapSeriesMixin;
@@ -46,6 +47,7 @@ BaseSeries.seriesType('map', 'scatter',
  */
 {
     animation: false,
+    center: [null, null],
     dataLabels: {
         crop: false,
         formatter: function () {
@@ -273,6 +275,8 @@ BaseSeries.seriesType('map', 'scatter',
     // Prototype members
 }, merge(colorMapSeriesMixin, {
     type: 'map',
+    axisTypes: ['colorAxis'],
+    isCartesian: false,
     getExtremesFromAll: true,
     useMapGeometry: true,
     forceDL: true,
@@ -297,6 +301,7 @@ BaseSeries.seriesType('map', 'scatter',
         return options;
     },
     // Get the bounding box of all paths in the map combined.
+    // @todo rename to getBounds, create a generic Bounds interface
     getBox: function (paths) {
         var MAX_VALUE = Number.MAX_VALUE, maxX = -MAX_VALUE, minX = MAX_VALUE, maxY = -MAX_VALUE, minY = MAX_VALUE, minRange = MAX_VALUE, xAxis = this.xAxis, yAxis = this.yAxis, hasBox;
         // Find the bounding box
@@ -364,61 +369,87 @@ BaseSeries.seriesType('map', 'scatter',
     hasData: function () {
         return !!this.processedXData.length; // != 0
     },
-    getExtremes: function () {
+    /*
+    getExtremes: function (
+        this: Highcharts.MapSeries
+    ): Highcharts.DataExtremesObject {
         // Get the actual value extremes for colors
-        var _a = LineSeries.prototype.getExtremes
-            .call(this, this.valueData), dataMin = _a.dataMin, dataMax = _a.dataMax;
+        const { dataMin, dataMax } = LineSeries.prototype.getExtremes
+            .call(this, this.valueData);
+
         // Recalculate box on updated data
         if (this.chart.hasRendered && this.isDirtyData) {
-            this.getBox(this.options.data);
+            this.getBox(this.options.data as any);
         }
+
         if (isNumber(dataMin)) {
             this.valueMin = dataMin;
         }
         if (isNumber(dataMax)) {
             this.valueMax = dataMax;
         }
+
         // Extremes for the mock Y axis
         return { dataMin: this.minY, dataMax: this.maxY };
     },
+    */
     // Translate the path, so it automatically fits into the plot area box
     translatePath: function (path) {
-        var series = this, xAxis = series.xAxis, yAxis = series.yAxis, xMin = xAxis.min, xTransA = xAxis.transA, xMinPixelPadding = xAxis.minPixelPadding, yMin = yAxis.min, yTransA = yAxis.transA, yMinPixelPadding = yAxis.minPixelPadding, ret = []; // Preserve the original
+        /*
+        var series = this,
+            xAxis = series.xAxis,
+            yAxis = series.yAxis,
+            xMin = xAxis.min,
+            xTransA = xAxis.transA,
+            xMinPixelPadding = xAxis.minPixelPadding,
+            yMin = yAxis.min,
+            yTransA = yAxis.transA,
+            yMinPixelPadding = yAxis.minPixelPadding,
+            ret: SVGPath = [];
+        */
+        var ret = []; // Preserve the original
+        var mapView = this.chart.mapView;
         // Do the translation
-        if (path) {
+        if (path && mapView) {
+            // A zoom of 0 means the world (360x360 degrees) fits in a
+            // 256x256 px tile
+            var transA_1 = (256 / 360) * Math.pow(2, mapView.zoom);
+            var _a = mapView.center, lat_1 = _a[0], lng_1 = _a[1];
+            var xOffset_1 = this.chart.plotWidth / 2;
+            var yOffset_1 = this.chart.plotHeight / 2;
             path.forEach(function (seg) {
                 if (seg[0] === 'M') {
                     ret.push([
                         'M',
-                        (seg[1] - (xMin || 0)) * xTransA + xMinPixelPadding,
-                        (seg[2] - (yMin || 0)) * yTransA + yMinPixelPadding
+                        (seg[1] - lng_1) * transA_1 + xOffset_1,
+                        (seg[2] - lat_1) * transA_1 + yOffset_1
                     ]);
                 }
                 else if (seg[0] === 'L') {
                     ret.push([
                         'L',
-                        (seg[1] - (xMin || 0)) * xTransA + xMinPixelPadding,
-                        (seg[2] - (yMin || 0)) * yTransA + yMinPixelPadding
+                        (seg[1] - lng_1) * transA_1 + xOffset_1,
+                        (seg[2] - lat_1) * transA_1 + yOffset_1
                     ]);
                 }
                 else if (seg[0] === 'C') {
                     ret.push([
                         'C',
-                        (seg[1] - (xMin || 0)) * xTransA + xMinPixelPadding,
-                        (seg[2] - (yMin || 0)) * yTransA + yMinPixelPadding,
-                        (seg[3] - (xMin || 0)) * xTransA + xMinPixelPadding,
-                        (seg[4] - (yMin || 0)) * yTransA + yMinPixelPadding,
-                        (seg[5] - (xMin || 0)) * xTransA + xMinPixelPadding,
-                        (seg[6] - (yMin || 0)) * yTransA + yMinPixelPadding
+                        (seg[1] - lng_1) * transA_1 + xOffset_1,
+                        (seg[2] - lat_1) * transA_1 + yOffset_1,
+                        (seg[3] - lng_1) * transA_1 + xOffset_1,
+                        (seg[4] - lat_1) * transA_1 + yOffset_1,
+                        (seg[5] - lng_1) * transA_1 + xOffset_1,
+                        (seg[6] - lat_1) * transA_1 + yOffset_1
                     ]);
                 }
                 else if (seg[0] === 'Q') {
                     ret.push([
                         'Q',
-                        (seg[1] - (xMin || 0)) * xTransA + xMinPixelPadding,
-                        (seg[2] - (yMin || 0)) * yTransA + yMinPixelPadding,
-                        (seg[3] - (xMin || 0)) * xTransA + xMinPixelPadding,
-                        (seg[4] - (yMin || 0)) * yTransA + yMinPixelPadding
+                        (seg[1] - lng_1) * transA_1 + xOffset_1,
+                        (seg[2] - lat_1) * transA_1 + yOffset_1,
+                        (seg[3] - lng_1) * transA_1 + xOffset_1,
+                        (seg[4] - lat_1) * transA_1 + yOffset_1
                     ]);
                 }
                 else if (seg[0] === 'Z') {
@@ -565,19 +596,27 @@ BaseSeries.seriesType('map', 'scatter',
         return (this.isDirtyData ||
             this.chart.isResizing ||
             this.chart.renderer.isVML ||
-            !this.baseTrans);
+            !this.baseView);
     },
+    getCenter: CenteredSeriesMixin.getCenter,
     // Add the path option for data points. Find the max value for color
     // calculation.
     translate: function () {
-        var series = this, xAxis = series.xAxis, yAxis = series.yAxis, doFullTranslate = series.doFullTranslate();
+        var series = this, 
+        // xAxis = series.xAxis,
+        // yAxis = series.yAxis,
+        doFullTranslate = series.doFullTranslate();
+        series.processData();
         series.generatePoints();
         series.data.forEach(function (point) {
             // Record the middle point (loosely based on centroid),
             // determined by the middleX and middleY options.
             if (isNumber(point._midX) && isNumber(point._midY)) {
-                point.plotX = xAxis.toPixels(point._midX, true);
-                point.plotY = yAxis.toPixels(point._midY, true);
+                var midPoint = series.translatePath([
+                    ['M', point._midX, point._midY]
+                ]);
+                point.plotX = midPoint[0][1];
+                point.plotY = midPoint[0][2];
             }
             if (doFullTranslate) {
                 point.shapeType = 'path';
@@ -605,7 +644,12 @@ BaseSeries.seriesType('map', 'scatter',
     // Use the drawPoints method of column, that is able to handle simple
     // shapeArgs. Extend it by assigning the tooltip position.
     drawPoints: function () {
-        var series = this, xAxis = series.xAxis, yAxis = series.yAxis, group = series.group, chart = series.chart, renderer = chart.renderer, scaleX, scaleY, translateX, translateY, baseTrans = this.baseTrans, transformGroup, startTranslateX, startTranslateY, startScaleX, startScaleY;
+        var series = this, 
+        // xAxis = series.xAxis,
+        // yAxis = series.yAxis,
+        group = series.group, chart = series.chart, renderer = chart.renderer, scale = 1, translateX, translateY, 
+        // baseTrans = this.baseTrans,
+        mapView = chart.mapView, baseView = this.baseView, transformGroup, startTranslateX, startTranslateY, startScale;
         // Set a group that handles transform during zooming and panning in
         // order to preserve clipping on series.group
         if (!series.transformGroup) {
@@ -659,15 +703,10 @@ BaseSeries.seriesType('map', 'scatter',
             // Set the base for later scale-zooming. The originX and originY
             // properties are the axis values in the plot area's upper left
             // corner.
-            this.baseTrans = {
-                originX: (xAxis.min -
-                    xAxis.minPixelPadding / xAxis.transA),
-                originY: (yAxis.min -
-                    yAxis.minPixelPadding / yAxis.transA +
-                    (yAxis.reversed ? 0 : yAxis.len / yAxis.transA)),
-                transAX: xAxis.transA,
-                transAY: yAxis.transA
-            };
+            if (mapView) {
+                this.baseView = merge(mapView);
+                this.baseView.center = [mapView.center[0], mapView.center[1]];
+            }
             // Reset transformation in case we're doing a full translate
             // (#3789)
             this.transformGroup.animate({
@@ -678,18 +717,23 @@ BaseSeries.seriesType('map', 'scatter',
             });
             // Just update the scale and transform for better performance
         }
-        else {
-            scaleX = xAxis.transA / baseTrans.transAX;
-            scaleY = yAxis.transA / baseTrans.transAY;
-            translateX = xAxis.toPixels(baseTrans.originX, true);
-            translateY = yAxis.toPixels(baseTrans.originY, true);
+        else if (mapView && baseView) {
+            scale = Math.pow(2, mapView.zoom) / Math.pow(2, baseView.zoom);
+            var oldTransA = (256 / 360) * Math.pow(2, baseView.zoom);
+            var newTransA = (256 / 360) * Math.pow(2, mapView.zoom);
+            var oldLeftLat = baseView.center[1] - (chart.plotWidth / 2) /
+                oldTransA;
+            var newLeftLat = mapView.center[1] - (chart.plotWidth / 2) /
+                newTransA;
+            translateX = (oldLeftLat - newLeftLat) * newTransA;
+            var oldTopLng = baseView.center[0] - (chart.plotHeight / 2) /
+                oldTransA;
+            var newTopLng = mapView.center[0] - (chart.plotHeight / 2) /
+                newTransA;
+            translateY = (oldTopLng - newTopLng) * newTransA;
             // Handle rounding errors in normal view (#3789)
-            if (scaleX > 0.99 &&
-                scaleX < 1.01 &&
-                scaleY > 0.99 &&
-                scaleY < 1.01) {
-                scaleX = 1;
-                scaleY = 1;
+            if (scale > 0.99 && scale < 1.01) {
+                scale = 1;
                 translateX = Math.round(translateX);
                 translateY = Math.round(translateY);
             }
@@ -708,24 +752,22 @@ BaseSeries.seriesType('map', 'scatter',
             if (chart.renderer.globalAnimation) {
                 startTranslateX = transformGroup.attr('translateX');
                 startTranslateY = transformGroup.attr('translateY');
-                startScaleX = transformGroup.attr('scaleX');
-                startScaleY = transformGroup.attr('scaleY');
+                startScale = transformGroup.attr('scaleX');
                 transformGroup
                     .attr({ animator: 0 })
                     .animate({
                     animator: 1
                 }, {
                     step: function (now, fx) {
+                        var scaleStep = startScale +
+                            (scale - startScale) * fx.pos;
                         transformGroup.attr({
                             translateX: (startTranslateX +
                                 (translateX - startTranslateX) * fx.pos),
                             translateY: (startTranslateY +
                                 (translateY - startTranslateY) * fx.pos),
-                            scaleX: (startScaleX +
-                                (scaleX - startScaleX) *
-                                    fx.pos),
-                            scaleY: (startScaleY +
-                                (scaleY - startScaleY) * fx.pos)
+                            scaleX: scaleStep,
+                            scaleY: scaleStep
                         });
                     }
                 });
@@ -735,8 +777,8 @@ BaseSeries.seriesType('map', 'scatter',
                 transformGroup.attr({
                     translateX: translateX,
                     translateY: translateY,
-                    scaleX: scaleX,
-                    scaleY: scaleY
+                    scaleX: scale,
+                    scaleY: scale
                 });
             }
         }
@@ -747,7 +789,7 @@ BaseSeries.seriesType('map', 'scatter',
         if (!chart.styledMode) {
             group.element.setAttribute('stroke-width', (pick(series.options[(series.pointAttrToOptions &&
                 series.pointAttrToOptions['stroke-width']) || 'borderWidth'], 1 // Styled mode
-            ) / (scaleX || 1)));
+            ) / scale));
         }
         this.drawMapDataLabels();
     },
@@ -778,7 +820,11 @@ BaseSeries.seriesType('map', 'scatter',
     // disabled. Animation of map shapes is not at all supported in VML
     // browsers.
     animate: function (init) {
-        var chart = this.chart, animation = this.options.animation, group = this.group, xAxis = this.xAxis, yAxis = this.yAxis, left = xAxis.pos, top = yAxis.pos;
+        var chart = this.chart, animation = this.options.animation, group = this.group;
+        // xAxis = this.xAxis,
+        // yAxis = this.yAxis,
+        // left = xAxis.pos,
+        // top = yAxis.pos;
         if (chart.renderer.isSVG) {
             if (animation === true) {
                 animation = {
@@ -789,8 +835,8 @@ BaseSeries.seriesType('map', 'scatter',
             if (init) {
                 // Scale down the group and place it in the center
                 group.attr({
-                    translateX: left + xAxis.len / 2,
-                    translateY: top + yAxis.len / 2,
+                    translateX: chart.plotLeft + chart.plotWidth / 2,
+                    translateY: chart.plotTop + chart.plotHeight / 2,
                     scaleX: 0.001,
                     scaleY: 0.001
                 });
@@ -798,8 +844,8 @@ BaseSeries.seriesType('map', 'scatter',
             }
             else {
                 group.animate({
-                    translateX: left,
-                    translateY: top,
+                    translateX: chart.plotLeft,
+                    translateY: chart.plotTop,
                     scaleX: 1,
                     scaleY: 1
                 }, animation);

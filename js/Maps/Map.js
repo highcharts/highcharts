@@ -7,6 +7,7 @@
  *  !!!!!!! SOURCE GETS TRANSPILED BY TYPESCRIPT. EDIT TS FILE ONLY. !!!!!!!
  *
  * */
+/* eslint-disable no-invalid-this */
 'use strict';
 import Chart from '../Core/Chart/Chart.js';
 import H from '../Core/Globals.js';
@@ -14,7 +15,7 @@ import O from '../Core/Options.js';
 var defaultOptions = O.defaultOptions;
 import SVGRenderer from '../Core/Renderer/SVG/SVGRenderer.js';
 import U from '../Core/Utilities.js';
-var extend = U.extend, getOptions = U.getOptions, merge = U.merge, pick = U.pick;
+var addEvent = U.addEvent, extend = U.extend, getOptions = U.getOptions, merge = U.merge, pick = U.pick;
 var Renderer = H.Renderer, VMLRenderer = H.VMLRenderer;
 // Add language
 extend(defaultOptions.lang, {
@@ -160,10 +161,10 @@ defaultOptions.mapNavigation = {
              * Click handler for the button.
              *
              * @type    {Function}
-             * @default function () { this.mapZoom(2); }
+             * @default function () { this.mapZoom(-0.5); }
              */
             onclick: function () {
-                this.mapZoom(2);
+                this.mapZoom(-0.5);
             },
             /**
              * The text for the button. The tooltip (title) is a language option
@@ -335,6 +336,35 @@ if (Renderer === VMLRenderer) {
             SVGRenderer.prototype.symbols[shape];
     });
 }
+addEvent(Chart, 'afterSetChartSize', function () {
+    var bounds = {
+        n: Number.MAX_VALUE,
+        e: -Number.MAX_VALUE,
+        s: -Number.MAX_VALUE,
+        w: Number.MAX_VALUE
+    };
+    var hasBounds = false;
+    this.series.forEach(function (s) {
+        if (s.useMapGeometry) {
+            bounds.n = Math.min(bounds.n, s.minY);
+            bounds.e = Math.max(bounds.e, s.maxX);
+            bounds.s = Math.max(bounds.s, s.maxY);
+            bounds.w = Math.min(bounds.w, s.minX);
+            hasBounds = true;
+        }
+    });
+    if (!this.mapView && hasBounds) {
+        // Compute the map view inferred from the maps
+        // 256 is the magic number where a world tile is rendered to a 256/256
+        // px square.
+        var scaleToPlotArea = Math.max((bounds.e - bounds.w) / (this.plotWidth / 256), (bounds.s - bounds.n) / (this.plotHeight / 256));
+        var zoom = (Math.log(360 / scaleToPlotArea) / Math.log(2));
+        this.mapView = {
+            center: [(bounds.s + bounds.n) / 2, (bounds.e + bounds.w) / 2],
+            zoom: zoom
+        };
+    }
+});
 /**
  * The factory function for creating new map charts. Creates a new {@link
  * Highcharts.Chart|Chart} object with different default options than the basic
