@@ -5501,7 +5501,7 @@ class Axis {
         // If min is bigger than highest,
         // or if max less than lowest value,
         // the chart should not render points. (#14417)
-        if (axis.min !== null && axis.max !== null) {
+        if (isNumber(axis.min) && isNumber(axis.max)) {
             if (axis.min > axis.max) {
                 if (defined(axis.options.min)) {
                     axis.max = axis.min;
