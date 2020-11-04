@@ -90,7 +90,7 @@ declare global {
     }
 }
 
-import './PieSeries.js';
+import './Pie/PieSeries.js';
 
 var piePoint = BaseSeries.seriesTypes.pie.prototype.pointClass.prototype;
 

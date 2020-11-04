@@ -21,21 +21,21 @@ var __extends = (this && this.__extends) || (function () {
         d.prototype = b === null ? Object.create(b) : (__.prototype = b.prototype, new __());
     };
 })();
-import A from '../Core/Animation/AnimationUtilities.js';
+import A from '../../Core/Animation/AnimationUtilities.js';
 var setAnimation = A.setAnimation;
-import BaseSeries from '../Core/Series/Series.js';
-import CenteredSeriesMixin from '../Mixins/CenteredSeries.js';
+import BaseSeries from '../../Core/Series/Series.js';
+import CenteredSeriesMixin from '../../Mixins/CenteredSeries.js';
 var getStartAndEndRadians = CenteredSeriesMixin.getStartAndEndRadians;
-import ColumnSeries from './Column/ColumnSeries.js';
-import H from '../Core/Globals.js';
+import ColumnSeries from '../Column/ColumnSeries.js';
+import H from '../../Core/Globals.js';
 var noop = H.noop;
-import LegendSymbolMixin from '../Mixins/LegendSymbol.js';
-import LineSeries from '../Series/Line/LineSeries.js';
-import Point from '../Core/Series/Point.js';
-import SVGRenderer from '../Core/Renderer/SVG/SVGRenderer.js';
-import U from '../Core/Utilities.js';
+import LegendSymbolMixin from '../../Mixins/LegendSymbol.js';
+import LineSeries from '../../Series/Line/LineSeries.js';
+import Point from '../../Core/Series/Point.js';
+import SVGRenderer from '../../Core/Renderer/SVG/SVGRenderer.js';
+import U from '../../Core/Utilities.js';
 var addEvent = U.addEvent, clamp = U.clamp, defined = U.defined, extend = U.extend, extendClass = U.extendClass, fireEvent = U.fireEvent, isNumber = U.isNumber, merge = U.merge, pick = U.pick, relativeLength = U.relativeLength;
-import '../Core/Options.js';
+import '../../Core/Options.js';
 /* *
  *
  *  Class

@@ -16,31 +16,31 @@
  *
  * */
 
-import type AnimationOptionsObject from '../Core/Animation/AnimationOptionsObject';
-import type { AlignValue } from '../Core/Renderer/AlignObject';
-import type ColorType from '../Core/Color/ColorType';
-import type DataLabelOptions from '../Core/Series/DataLabelOptions';
-import type LinePoint from './Line/LinePoint';
-import type LinePointOptions from './Line/LinePointOptions';
-import type LineSeriesOptions from './Line/LineSeriesOptions';
-import type PositionObject from '../Core/Renderer/PositionObject';
-import type { SeriesStatesOptions } from '../Core/Series/SeriesOptions';
-import type SVGAttributes from '../Core/Renderer/SVG/SVGAttributes';
-import type SVGElement from '../Core/Renderer/SVG/SVGElement';
-import type SVGPath from '../Core/Renderer/SVG/SVGPath';
-import A from '../Core/Animation/AnimationUtilities.js';
+import type AnimationOptionsObject from '../../Core/Animation/AnimationOptionsObject';
+import type { AlignValue } from '../../Core/Renderer/AlignObject';
+import type ColorType from '../../Core/Color/ColorType';
+import type DataLabelOptions from '../../Core/Series/DataLabelOptions';
+import type LinePoint from '../Line/LinePoint';
+import type LinePointOptions from '../Line/LinePointOptions';
+import type LineSeriesOptions from '../Line/LineSeriesOptions';
+import type PositionObject from '../../Core/Renderer/PositionObject';
+import type { SeriesStatesOptions } from '../../Core/Series/SeriesOptions';
+import type SVGAttributes from '../../Core/Renderer/SVG/SVGAttributes';
+import type SVGElement from '../../Core/Renderer/SVG/SVGElement';
+import type SVGPath from '../../Core/Renderer/SVG/SVGPath';
+import A from '../../Core/Animation/AnimationUtilities.js';
 const { setAnimation } = A;
-import BaseSeries from '../Core/Series/Series.js';
-import CenteredSeriesMixin from '../Mixins/CenteredSeries.js';
+import BaseSeries from '../../Core/Series/Series.js';
+import CenteredSeriesMixin from '../../Mixins/CenteredSeries.js';
 const { getStartAndEndRadians } = CenteredSeriesMixin;
-import ColumnSeries from './Column/ColumnSeries.js';
-import H from '../Core/Globals.js';
+import ColumnSeries from '../Column/ColumnSeries.js';
+import H from '../../Core/Globals.js';
 const { noop } = H;
-import LegendSymbolMixin from '../Mixins/LegendSymbol.js';
-import LineSeries from '../Series/Line/LineSeries.js';
-import Point from '../Core/Series/Point.js';
-import SVGRenderer from '../Core/Renderer/SVG/SVGRenderer.js';
-import U from '../Core/Utilities.js';
+import LegendSymbolMixin from '../../Mixins/LegendSymbol.js';
+import LineSeries from '../../Series/Line/LineSeries.js';
+import Point from '../../Core/Series/Point.js';
+import SVGRenderer from '../../Core/Renderer/SVG/SVGRenderer.js';
+import U from '../../Core/Utilities.js';
 const {
     addEvent,
     clamp,
@@ -54,7 +54,7 @@ const {
     relativeLength
 } = U;
 
-import '../Core/Options.js';
+import '../../Core/Options.js';
 
 /* *
  *
@@ -62,19 +62,19 @@ import '../Core/Options.js';
  *
  * */
 
-declare module '../Core/Series/SeriesLike' {
+declare module '../../Core/Series/SeriesLike' {
     interface SeriesLike {
         redrawPoints(): void;
     }
 }
 
-declare module '../Core/Series/SeriesOptions' {
+declare module '../../Core/Series/SeriesOptions' {
     interface SeriesStateHoverOptions {
         brightness?: number;
     }
 }
 
-declare module '../Core/Series/SeriesType' {
+declare module '../../Core/Series/SeriesType' {
     interface SeriesTypeRegistry {
         pie: typeof Highcharts.PieSeries;
     }

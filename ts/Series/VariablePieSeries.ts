@@ -77,7 +77,7 @@ declare module '../Core/Series/SeriesType' {
 }
 
 import '../Core/Options.js';
-import './PieSeries.js';
+import './Pie/PieSeries.js';
 
 var pieProto = seriesTypes.pie.prototype;
 
