@@ -94,7 +94,7 @@ declare global {
             height?: (number|string);
             neckHeight?: (number|string);
             reversed?: boolean;
-            size?: null;
+            size?: undefined;
             dataLabels?: FunnelSeriesDataLabelsOptionsObject;
             states?: SeriesStatesOptions<FunnelSeries>;
         }

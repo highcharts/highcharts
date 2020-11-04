@@ -18,20 +18,22 @@
 
 import type AnimationOptionsObject from '../Core/Animation/AnimationOptionsObject';
 import type { AlignValue } from '../Core/Renderer/AlignObject';
+import type ColorType from '../Core/Color/ColorType';
+import type DataLabelOptions from '../Core/Series/DataLabelOptions';
 import type LinePoint from './Line/LinePoint';
 import type LinePointOptions from './Line/LinePointOptions';
 import type LineSeriesOptions from './Line/LineSeriesOptions';
-import type DataLabelOptions from '../Core/Series/DataLabelOptions';
 import type PositionObject from '../Core/Renderer/PositionObject';
 import type { SeriesStatesOptions } from '../Core/Series/SeriesOptions';
 import type SVGAttributes from '../Core/Renderer/SVG/SVGAttributes';
+import type SVGElement from '../Core/Renderer/SVG/SVGElement';
 import type SVGPath from '../Core/Renderer/SVG/SVGPath';
 import A from '../Core/Animation/AnimationUtilities.js';
 const { setAnimation } = A;
 import BaseSeries from '../Core/Series/Series.js';
 import CenteredSeriesMixin from '../Mixins/CenteredSeries.js';
 const { getStartAndEndRadians } = CenteredSeriesMixin;
-import ColorType from '../Core/Color/ColorType';
+import ColumnSeries from './Column/ColumnSeries.js';
 import H from '../Core/Globals.js';
 const { noop } = H;
 import LegendSymbolMixin from '../Mixins/LegendSymbol.js';
@@ -86,7 +88,7 @@ declare global {
     namespace Highcharts {
         class PiePoint extends LinePoint {
             public angle?: number;
-            public connectorShapes?: Dictionary<PiePointConnectorShapeFunction>;
+            public connectorShapes?: Record<string, Highcharts.PiePointConnectorShapeFunction>;
             public delayedRendering?: boolean;
             public half?: number;
             public isValid: () => boolean;
@@ -167,7 +169,7 @@ declare global {
             inactiveOtherPoints?: boolean;
             innerSize?: (number|string);
             minSize?: (number|string);
-            size?: (number|string|null);
+            size?: (number|string);
             slicedOffset?: number;
             startAngle?: number;
             states?: SeriesStatesOptions<PieSeries>;
@@ -194,6 +196,12 @@ declare global {
  * @augments Highcharts.Series
  */
 class PieSeries extends LineSeries {
+
+    /* *
+     *
+     *  Static Properties
+     *
+     * */
 
     /**
      * A pie chart is a circular graphic which is divided into slices to
@@ -779,20 +787,525 @@ class PieSeries extends LineSeries {
         }
     });
 
+    /* *
+     *
+     *  Properties
+     *
+     * */
+
+    public endAngleRad?: number;
+
+    public shadowGroup?: SVGElement;
+
+    public startAngleRad?: number;
+
+    public total?: number;
+
+    /* *
+     *
+     *  Functions
+     *
+     * */
+
+    /* eslint-disable valid-jsdoc */
+
+    /**
+     * Animates the pies in.
+     * @private
+     */
+    public animate(init?: boolean): void {
+        var series = this,
+            points = series.points,
+            startAngleRad = series.startAngleRad;
+
+        if (!init) {
+            points.forEach(function (point): void {
+                var graphic = point.graphic,
+                    args = point.shapeArgs;
+
+                if (graphic && args) {
+                // start values
+                    graphic.attr({
+                    // animate from inner radius (#779)
+                        r: pick(point.startR,
+                            (series.center && series.center[3] / 2)),
+                        start: startAngleRad,
+                        end: startAngleRad
+                    });
+
+                    // animate
+                    graphic.animate({
+                        r: args.r,
+                        start: args.start,
+                        end: args.end
+                    }, series.options.animation);
+                }
+            });
+        }
+    }
+
+    /**
+     * Called internally to draw auxiliary graph in pie-like series in
+     * situtation when the default graph is not sufficient enough to present
+     * the data well. Auxiliary graph is saved in the same object as
+     * regular graph.
+     * @private
+     */
+    public drawEmpty(): void {
+        var centerX,
+            centerY,
+            start = this.startAngleRad,
+            end = this.endAngleRad,
+            options = this.options;
+
+        // Draw auxiliary graph if there're no visible points.
+        if (this.total === 0 && this.center) {
+            centerX = this.center[0];
+            centerY = this.center[1];
+
+            if (!this.graph) {
+                this.graph = this.chart.renderer
+                    .arc(centerX, centerY, this.center[1] / 2, 0, start, end)
+                    .addClass('highcharts-empty-series')
+                    .add(this.group);
+            }
+
+            this.graph.attr({
+                d: SVGRenderer.prototype.symbols.arc(
+                    centerX,
+                    centerY,
+                    this.center[2] / 2,
+                    0, {
+                        start,
+                        end,
+                        innerR: this.center[3] / 2
+                    }
+                )
+            });
+
+            if (!this.chart.styledMode) {
+                this.graph.attr({
+                    'stroke-width': options.borderWidth,
+                    fill: options.fillColor || 'none',
+                    stroke: (options.color as any) ||
+                    '${palette.neutralColor20}'
+                });
+            }
+
+        } else if (this.graph) { // Destroy the graph object.
+            this.graph = this.graph.destroy();
+        }
+    }
+
+    /**
+     * Slices in pie chart are initialized in DOM, but it's shapes and
+     * animations are normally run in `drawPoints()`.
+     * @private
+     */
+    public drawPoints(): void {
+        var renderer = this.chart.renderer;
+
+        this.points.forEach(function (point): void {
+            // When updating a series between 2d and 3d or cartesian and
+            // polar, the shape type changes.
+            if (point.graphic && point.hasNewShapeType()) {
+                point.graphic = point.graphic.destroy();
+            }
+
+            if (!point.graphic) {
+                point.graphic = (renderer as any)[point.shapeType as any](
+                    point.shapeArgs
+                )
+                    .add(point.series.group);
+                point.delayedRendering = true;
+            }
+        });
+    }
+
+    /**
+     * Extend the generatePoints method by adding total and percentage
+     * properties to each point
+     * @private
+     */
+    public generatePoints(): void {
+        super.generatePoints();
+        this.updateTotals();
+    }
+
+    /**
+     * Utility for getting the x value from a given y, used for
+     * anticollision logic in data labels. Added point for using specific
+     * points' label distance.
+     * @private
+     */
+    public getX(
+        y: number,
+        left: boolean,
+        point: Highcharts.PiePoint
+    ): number {
+        var center = this.center,
+            // Variable pie has individual radius
+            radius = (this as unknown as Highcharts.VariablePieSeries).radii ?
+                (this as unknown as Highcharts.VariablePieSeries).radii[
+                    point.index as any
+                ] :
+                center[2] / 2,
+            angle,
+            x;
+
+        angle = Math.asin(
+            clamp((y - center[1]) / (radius + point.labelDistance), -1, 1)
+        );
+        x = center[0] +
+        (left ? -1 : 1) *
+        (Math.cos(angle) * (radius + point.labelDistance)) +
+        (
+            (point.labelDistance as any) > 0 ?
+                (left ? -1 : 1) * (this.options.dataLabels as any).padding :
+                0
+        );
+
+        return x;
+    }
+
+    /**
+     * Define hasData function for non-cartesian series. Returns true if the
+     * series has points at all.
+     * @private
+     */
+    public hasData(): boolean {
+        return !!this.processedXData.length; // != 0
+    }
+
+    /**
+     * Draw the data points
+     * @private
+     */
+    public redrawPoints(): void {
+        var series = this,
+            chart = series.chart,
+            renderer = chart.renderer,
+            groupTranslation,
+            graphic,
+            pointAttr: SVGAttributes,
+            shapeArgs: (SVGAttributes|undefined),
+            shadow = series.options.shadow;
+
+        this.drawEmpty();
+
+        if (shadow && !series.shadowGroup && !chart.styledMode) {
+            series.shadowGroup = renderer
+                .g('shadow')
+                .attr({ zIndex: -1 })
+                .add(series.group);
+        }
+
+        // draw the slices
+        series.points.forEach(function (point): void {
+            var animateTo = {};
+            graphic = point.graphic;
+            if (!point.isNull && graphic) {
+                shapeArgs = point.shapeArgs;
+
+
+                // If the point is sliced, use special translation, else use
+                // plot area translation
+                groupTranslation = point.getTranslate();
+
+                if (!chart.styledMode) {
+                // Put the shadow behind all points
+                    var shadowGroup = point.shadowGroup;
+
+                    if (shadow && !shadowGroup) {
+                        shadowGroup = point.shadowGroup = renderer
+                            .g('shadow')
+                            .add(series.shadowGroup);
+                    }
+
+                    if (shadowGroup) {
+                        shadowGroup.attr(groupTranslation);
+                    }
+                    pointAttr = series.pointAttribs(
+                        point,
+                        (point.selected && 'select') as any
+                    );
+                }
+
+                // Draw the slice
+                if (!point.delayedRendering) {
+                    graphic
+                        .setRadialReference(series.center);
+
+                    if (!chart.styledMode) {
+                        merge(true, animateTo, pointAttr);
+                    }
+                    merge(true, animateTo, shapeArgs, groupTranslation);
+                    graphic.animate(animateTo);
+                } else {
+
+                    graphic
+                        .setRadialReference(series.center)
+                        .attr(shapeArgs)
+                        .attr(groupTranslation);
+
+                    if (!chart.styledMode) {
+                        graphic
+                            .attr(pointAttr)
+                            .attr({ 'stroke-linejoin': 'round' })
+                            .shadow(shadow, shadowGroup);
+                    }
+
+                    point.delayedRendering = false;
+                }
+
+                graphic.attr({
+                    visibility: point.visible ? 'inherit' : 'hidden'
+                });
+
+                graphic.addClass(point.getClassName());
+
+            } else if (graphic) {
+                point.graphic = graphic.destroy();
+            }
+        });
+
+    }
+
+    /**
+     * Utility for sorting data labels.
+     * @private
+     */
+    public sortByAngle(
+        points: Array<Highcharts.PiePoint>,
+        sign: number
+    ): void {
+        points.sort(function (
+            a: Highcharts.PiePoint,
+            b: Highcharts.PiePoint
+        ): number {
+            return (
+                ((typeof a.angle !== 'undefined') as any) &&
+                ((b.angle as any) - (a.angle as any)) * sign
+            );
+        });
+    }
+
+    /**
+     * Do translation for pie slices
+     * @private
+     */
+    public translate(positions?: Array<number>): void {
+        this.generatePoints();
+
+        var series = this,
+            cumulative = 0,
+            precision = 1000, // issue #172
+            options = series.options,
+            slicedOffset = options.slicedOffset,
+            connectorOffset =
+                (slicedOffset as any) + (options.borderWidth || 0),
+            finalConnectorOffset,
+            start,
+            end,
+            angle,
+            radians = getStartAndEndRadians(
+                options.startAngle,
+                options.endAngle
+            ),
+            startAngleRad = series.startAngleRad = radians.start,
+            endAngleRad = series.endAngleRad = radians.end,
+            circ = endAngleRad - startAngleRad, // 2 * Math.PI,
+            points = series.points,
+            // the x component of the radius vector for a given point
+            radiusX,
+            radiusY,
+            labelDistance = (options.dataLabels as any).distance,
+            ignoreHiddenPoint = options.ignoreHiddenPoint,
+            i,
+            len = points.length,
+            point;
+
+        // Get positions - either an integer or a percentage string must be
+        // given. If positions are passed as a parameter, we're in a
+        // recursive loop for adjusting space for data labels.
+        if (!positions) {
+            series.center = positions = series.getCenter();
+        }
+
+        // Calculate the geometry for each point
+        for (i = 0; i < len; i++) {
+
+            point = points[i];
+
+            // set start and end angle
+            start = startAngleRad + (cumulative * circ);
+            if (!ignoreHiddenPoint || point.visible) {
+                cumulative += (point.percentage as any) / 100;
+            }
+            end = startAngleRad + (cumulative * circ);
+
+            // set the shape
+            point.shapeType = 'arc';
+            point.shapeArgs = {
+                x: positions[0],
+                y: positions[1],
+                r: positions[2] / 2,
+                innerR: positions[3] / 2,
+                start: Math.round(start * precision) / precision,
+                end: Math.round(end * precision) / precision
+            };
+
+            // Used for distance calculation for specific point.
+            point.labelDistance = pick(
+                (
+                    point.options.dataLabels &&
+                    point.options.dataLabels.distance
+                ),
+                labelDistance
+            );
+
+            // Compute point.labelDistance if it's defined as percentage
+            // of slice radius (#8854)
+            point.labelDistance = relativeLength(
+                point.labelDistance as any,
+                point.shapeArgs.r
+            );
+
+            // Saved for later dataLabels distance calculation.
+            series.maxLabelDistance = Math.max(
+                series.maxLabelDistance || 0,
+                point.labelDistance
+            );
+
+            // The angle must stay within -90 and 270 (#2645)
+            angle = (end + start) / 2;
+            if (angle > 1.5 * Math.PI) {
+                angle -= 2 * Math.PI;
+            } else if (angle < -Math.PI / 2) {
+                angle += 2 * Math.PI;
+            }
+
+            // Center for the sliced out slice
+            point.slicedTranslation = {
+                translateX: Math.round(
+                    Math.cos(angle) * (slicedOffset as any)
+                ),
+                translateY: Math.round(
+                    Math.sin(angle) * (slicedOffset as any)
+                )
+            };
+
+            // set the anchor point for tooltips
+            radiusX = Math.cos(angle) * positions[2] / 2;
+            radiusY = Math.sin(angle) * positions[2] / 2;
+            point.tooltipPos = [
+                positions[0] + radiusX * 0.7,
+                positions[1] + radiusY * 0.7
+            ];
+
+            point.half = angle < -Math.PI / 2 || angle > Math.PI / 2 ?
+                1 :
+                0;
+            point.angle = angle;
+
+            // Set the anchor point for data labels. Use point.labelDistance
+            // instead of labelDistance // #1174
+            // finalConnectorOffset - not override connectorOffset value.
+
+            finalConnectorOffset = Math.min(
+                connectorOffset,
+                point.labelDistance / 5
+            ); // #1678
+
+            point.labelPosition = {
+                natural: {
+                // initial position of the data label - it's utilized for
+                // finding the final position for the label
+                    x: positions[0] + radiusX + Math.cos(angle) *
+                    point.labelDistance,
+                    y: positions[1] + radiusY + Math.sin(angle) *
+                    point.labelDistance
+                },
+                'final': {
+                // used for generating connector path -
+                // initialized later in drawDataLabels function
+                // x: undefined,
+                // y: undefined
+                },
+                // left - pie on the left side of the data label
+                // right - pie on the right side of the data label
+                // center - data label overlaps the pie
+                alignment: point.labelDistance < 0 ?
+                    'center' : point.half ? 'right' : 'left',
+                connectorPosition: {
+                    breakAt: { // used in connectorShapes.fixedOffset
+                        x: positions[0] + radiusX + Math.cos(angle) *
+                        finalConnectorOffset,
+                        y: positions[1] + radiusY + Math.sin(angle) *
+                        finalConnectorOffset
+                    },
+                    touchingSliceAt: { // middle of the arc
+                        x: positions[0] + radiusX,
+                        y: positions[1] + radiusY
+                    }
+                }
+            };
+        }
+        fireEvent(series, 'afterTranslate');
+    }
+
+    /**
+     * Recompute total chart sum and update percentages of points.
+     * @private
+     */
+    public updateTotals(): void {
+        var i,
+            total = 0,
+            points = this.points,
+            len = points.length,
+            point,
+            ignoreHiddenPoint = this.options.ignoreHiddenPoint;
+
+        // Get the total sum
+        for (i = 0; i < len; i++) {
+            point = points[i];
+            total += (ignoreHiddenPoint && !point.visible) ?
+                0 :
+                point.isNull ?
+                    0 :
+                    (point.y as any);
+        }
+        this.total = total;
+
+        // Set each point's properties
+        for (i = 0; i < len; i++) {
+            point = points[i];
+            point.percentage =
+                (total > 0 && (point.visible || !ignoreHiddenPoint)) ?
+                    (point.y as any) / total * 100 :
+                    0;
+            point.total = total;
+        }
+    }
+
+    /* eslint-enable valid-jsdoc */
+
 }
 
-interface PieSeries extends LineSeries {
+/* *
+ *
+ *  Prototype Properties
+ *
+ * */
+
+interface PieSeries {
     center: Array<number>;
-    endAngleRad?: number;
     data: Array<Highcharts.PiePoint>;
     getCenter: typeof CenteredSeriesMixin['getCenter'];
     maxLabelDistance: number;
     options: Highcharts.PieSeriesOptions;
     pointClass: typeof Highcharts.PiePoint;
     points: Array<Highcharts.PiePoint>;
-    shadowGroup?: SVGElement;
-    startAngleRad?: number;
-    total?: number;
     drawEmpty(): void;
     getX(y: number, left: boolean, point: Highcharts.PiePoint): number;
     redrawPoints(): void;
@@ -803,569 +1316,101 @@ interface PieSeries extends LineSeries {
 extend(
     PieSeries.prototype,
     {
-        isCartesian: false,
-        requireSorting: false,
-        directTouch: true,
-        noSharedTooltip: true,
-        trackerGroups: ['group', 'dataLabelsGroup'],
         axisTypes: [],
-        pointAttribs: BaseSeries.seriesTypes.column.prototype.pointAttribs,
-
-        /* eslint-disable valid-jsdoc */
-
-        /**
-         * Animate the pies in
-         *
-         * @private
-         * @function Highcharts.seriesTypes.pie#animate
-         *
-         * @param {boolean} [init=false]
-         */
-        animate: function (this: Highcharts.PieSeries, init?: boolean): void {
-            var series = this,
-                points = series.points,
-                startAngleRad = series.startAngleRad;
-
-            if (!init) {
-                points.forEach(function (point: Highcharts.PiePoint): void {
-                    var graphic = point.graphic,
-                        args = point.shapeArgs;
-
-                    if (graphic && args) {
-                    // start values
-                        graphic.attr({
-                        // animate from inner radius (#779)
-                            r: pick(point.startR,
-                                (series.center && series.center[3] / 2)),
-                            start: startAngleRad,
-                            end: startAngleRad
-                        });
-
-                        // animate
-                        graphic.animate({
-                            r: args.r,
-                            start: args.start,
-                            end: args.end
-                        }, series.options.animation);
-                    }
-                });
-            }
-        },
-
-        // Define hasData function for non-cartesian series.
-        // Returns true if the series has points at all.
-        hasData: function (this: Highcharts.PieSeries): boolean {
-            return !!(this.processedXData as any).length; // != 0
-        },
-
-        /**
-         * Recompute total chart sum and update percentages of points.
-         *
-         * @private
-         * @function Highcharts.seriesTypes.pie#updateTotals
-         * @return {void}
-         */
-        updateTotals: function (this: Highcharts.PieSeries): void {
-            var i,
-                total = 0,
-                points = this.points,
-                len = points.length,
-                point,
-                ignoreHiddenPoint = this.options.ignoreHiddenPoint;
-
-            // Get the total sum
-            for (i = 0; i < len; i++) {
-                point = points[i];
-                total += (ignoreHiddenPoint && !point.visible) ?
-                    0 :
-                    point.isNull ?
-                        0 :
-                        (point.y as any);
-            }
-            this.total = total;
-
-            // Set each point's properties
-            for (i = 0; i < len; i++) {
-                point = points[i];
-                point.percentage =
-                    (total > 0 && (point.visible || !ignoreHiddenPoint)) ?
-                        (point.y as any) / total * 100 :
-                        0;
-                point.total = total;
-            }
-        },
-
-        /**
-         * Extend the generatePoints method by adding total and percentage
-         * properties to each point
-         *
-         * @private
-         * @function Highcharts.seriesTypes.pie#generatePoints
-         * @return {void}
-         */
-        generatePoints: function (this: Highcharts.PieSeries): void {
-            LineSeries.prototype.generatePoints.call(this);
-            this.updateTotals();
-        },
-
-        /**
-         * Utility for getting the x value from a given y, used for
-         * anticollision logic in data labels. Added point for using specific
-         * points' label distance.
-         * @private
-         */
-        getX: function (
-            this: Highcharts.PieSeries,
-            y: number,
-            left: boolean,
-            point: Highcharts.PiePoint
-        ): number {
-            var center = this.center,
-                // Variable pie has individual radius
-                radius = (this as Highcharts.VariablePieSeries).radii ?
-                    (this as Highcharts.VariablePieSeries).radii[
-                        point.index as any
-                    ] :
-                    center[2] / 2,
-                angle,
-                x;
-
-            angle = Math.asin(
-                clamp((y - center[1]) / (radius + point.labelDistance), -1, 1)
-            );
-            x = center[0] +
-            (left ? -1 : 1) *
-            (Math.cos(angle) * (radius + point.labelDistance)) +
-            (
-                (point.labelDistance as any) > 0 ?
-                    (left ? -1 : 1) * (this.options.dataLabels as any).padding :
-                    0
-            );
-
-            return x;
-        },
-
-        /**
-         * Do translation for pie slices
-         *
-         * @private
-         * @function Highcharts.seriesTypes.pie#translate
-         * @param {Array<number>} [positions]
-         * @return {void}
-         */
-        translate: function (
-            this: Highcharts.PieSeries,
-            positions?: Array<number>
-        ): void {
-            this.generatePoints();
-
-            var series = this,
-                cumulative = 0,
-                precision = 1000, // issue #172
-                options = series.options,
-                slicedOffset = options.slicedOffset,
-                connectorOffset =
-                    (slicedOffset as any) + (options.borderWidth || 0),
-                finalConnectorOffset,
-                start,
-                end,
-                angle,
-                radians = getStartAndEndRadians(
-                    options.startAngle,
-                    options.endAngle
-                ),
-                startAngleRad = series.startAngleRad = radians.start,
-                endAngleRad = series.endAngleRad = radians.end,
-                circ = endAngleRad - startAngleRad, // 2 * Math.PI,
-                points = series.points,
-                // the x component of the radius vector for a given point
-                radiusX,
-                radiusY,
-                labelDistance = (options.dataLabels as any).distance,
-                ignoreHiddenPoint = options.ignoreHiddenPoint,
-                i,
-                len = points.length,
-                point;
-
-            // Get positions - either an integer or a percentage string must be
-            // given. If positions are passed as a parameter, we're in a
-            // recursive loop for adjusting space for data labels.
-            if (!positions) {
-                series.center = positions = series.getCenter();
-            }
-
-            // Calculate the geometry for each point
-            for (i = 0; i < len; i++) {
-
-                point = points[i];
-
-                // set start and end angle
-                start = startAngleRad + (cumulative * circ);
-                if (!ignoreHiddenPoint || point.visible) {
-                    cumulative += (point.percentage as any) / 100;
-                }
-                end = startAngleRad + (cumulative * circ);
-
-                // set the shape
-                point.shapeType = 'arc';
-                point.shapeArgs = {
-                    x: positions[0],
-                    y: positions[1],
-                    r: positions[2] / 2,
-                    innerR: positions[3] / 2,
-                    start: Math.round(start * precision) / precision,
-                    end: Math.round(end * precision) / precision
-                };
-
-                // Used for distance calculation for specific point.
-                point.labelDistance = pick(
-                    (
-                        point.options.dataLabels &&
-                        point.options.dataLabels.distance
-                    ),
-                    labelDistance
-                );
-
-                // Compute point.labelDistance if it's defined as percentage
-                // of slice radius (#8854)
-                point.labelDistance = relativeLength(
-                    point.labelDistance as any,
-                    point.shapeArgs.r
-                );
-
-                // Saved for later dataLabels distance calculation.
-                series.maxLabelDistance = Math.max(
-                    series.maxLabelDistance || 0,
-                    point.labelDistance
-                );
-
-                // The angle must stay within -90 and 270 (#2645)
-                angle = (end + start) / 2;
-                if (angle > 1.5 * Math.PI) {
-                    angle -= 2 * Math.PI;
-                } else if (angle < -Math.PI / 2) {
-                    angle += 2 * Math.PI;
-                }
-
-                // Center for the sliced out slice
-                point.slicedTranslation = {
-                    translateX: Math.round(
-                        Math.cos(angle) * (slicedOffset as any)
-                    ),
-                    translateY: Math.round(
-                        Math.sin(angle) * (slicedOffset as any)
-                    )
-                };
-
-                // set the anchor point for tooltips
-                radiusX = Math.cos(angle) * positions[2] / 2;
-                radiusY = Math.sin(angle) * positions[2] / 2;
-                point.tooltipPos = [
-                    positions[0] + radiusX * 0.7,
-                    positions[1] + radiusY * 0.7
-                ];
-
-                point.half = angle < -Math.PI / 2 || angle > Math.PI / 2 ?
-                    1 :
-                    0;
-                point.angle = angle;
-
-                // Set the anchor point for data labels. Use point.labelDistance
-                // instead of labelDistance // #1174
-                // finalConnectorOffset - not override connectorOffset value.
-
-                finalConnectorOffset = Math.min(
-                    connectorOffset,
-                    point.labelDistance / 5
-                ); // #1678
-
-                point.labelPosition = {
-                    natural: {
-                    // initial position of the data label - it's utilized for
-                    // finding the final position for the label
-                        x: positions[0] + radiusX + Math.cos(angle) *
-                      point.labelDistance,
-                        y: positions[1] + radiusY + Math.sin(angle) *
-                      point.labelDistance
-                    },
-                    'final': {
-                    // used for generating connector path -
-                    // initialized later in drawDataLabels function
-                    // x: undefined,
-                    // y: undefined
-                    },
-                    // left - pie on the left side of the data label
-                    // right - pie on the right side of the data label
-                    // center - data label overlaps the pie
-                    alignment: point.labelDistance < 0 ?
-                        'center' : point.half ? 'right' : 'left',
-                    connectorPosition: {
-                        breakAt: { // used in connectorShapes.fixedOffset
-                            x: positions[0] + radiusX + Math.cos(angle) *
-                            finalConnectorOffset,
-                            y: positions[1] + radiusY + Math.sin(angle) *
-                            finalConnectorOffset
-                        },
-                        touchingSliceAt: { // middle of the arc
-                            x: positions[0] + radiusX,
-                            y: positions[1] + radiusY
-                        }
-                    }
-                };
-            }
-            fireEvent(series, 'afterTranslate');
-        },
-
-        /**
-         * Called internally to draw auxiliary graph in pie-like series in
-         * situtation when the default graph is not sufficient enough to present
-         * the data well. Auxiliary graph is saved in the same object as
-         * regular graph.
-         *
-         * @private
-         * @function Highcharts.seriesTypes.pie#drawEmpty
-         */
-        drawEmpty: function (this: Highcharts.PieSeries): void {
-            var centerX,
-                centerY,
-                start = this.startAngleRad,
-                end = this.endAngleRad,
-                options = this.options;
-
-            // Draw auxiliary graph if there're no visible points.
-            if (this.total === 0 && this.center) {
-                centerX = this.center[0];
-                centerY = this.center[1];
-
-                if (!this.graph) {
-                    this.graph = this.chart.renderer
-                        .arc(centerX, centerY, this.center[1] / 2, 0, start, end)
-                        .addClass('highcharts-empty-series')
-                        .add(this.group);
-                }
-
-                this.graph.attr({
-                    d: SVGRenderer.prototype.symbols.arc(
-                        centerX,
-                        centerY,
-                        this.center[2] / 2,
-                        0, {
-                            start,
-                            end,
-                            innerR: this.center[3] / 2
-                        }
-                    )
-                });
-
-                if (!this.chart.styledMode) {
-                    this.graph.attr({
-                        'stroke-width': options.borderWidth,
-                        fill: options.fillColor || 'none',
-                        stroke: (options.color as any) ||
-                        '${palette.neutralColor20}'
-                    });
-                }
-
-            } else if (this.graph) { // Destroy the graph object.
-                this.graph = this.graph.destroy();
-            }
-        },
-
-        /**
-         * Draw the data points
-         *
-         * @private
-         * @function Highcharts.seriesTypes.pie#drawPoints
-         * @return {void}
-         */
-        redrawPoints: function (this: Highcharts.PieSeries): void {
-            var series = this,
-                chart = series.chart,
-                renderer = chart.renderer,
-                groupTranslation,
-                graphic,
-                pointAttr: SVGAttributes,
-                shapeArgs: (SVGAttributes|undefined),
-                shadow = series.options.shadow;
-
-            this.drawEmpty();
-
-            if (shadow && !series.shadowGroup && !chart.styledMode) {
-                series.shadowGroup = renderer.g('shadow')
-                    .attr({ zIndex: -1 })
-                    .add(series.group);
-            }
-
-            // draw the slices
-            series.points.forEach(function (point: Highcharts.PiePoint): void {
-                var animateTo = {};
-                graphic = point.graphic;
-                if (!point.isNull && graphic) {
-                    shapeArgs = point.shapeArgs;
-
-
-                    // If the point is sliced, use special translation, else use
-                    // plot area translation
-                    groupTranslation = point.getTranslate();
-
-                    if (!chart.styledMode) {
-                    // Put the shadow behind all points
-                        var shadowGroup = point.shadowGroup;
-
-                        if (shadow && !shadowGroup) {
-                            shadowGroup = point.shadowGroup = renderer
-                                .g('shadow')
-                                .add(series.shadowGroup);
-                        }
-
-                        if (shadowGroup) {
-                            shadowGroup.attr(groupTranslation);
-                        }
-                        pointAttr = series.pointAttribs(
-                            point,
-                            (point.selected && 'select') as any
-                        );
-                    }
-
-                    // Draw the slice
-                    if (!point.delayedRendering) {
-                        graphic
-                            .setRadialReference(series.center);
-
-                        if (!chart.styledMode) {
-                            merge(true, animateTo, pointAttr);
-                        }
-                        merge(true, animateTo, shapeArgs, groupTranslation);
-                        graphic.animate(animateTo);
-                    } else {
-
-                        graphic
-                            .setRadialReference(series.center)
-                            .attr(shapeArgs)
-                            .attr(groupTranslation);
-
-                        if (!chart.styledMode) {
-                            graphic
-                                .attr(pointAttr)
-                                .attr({ 'stroke-linejoin': 'round' })
-                                .shadow(shadow, shadowGroup);
-                        }
-
-                        point.delayedRendering = false;
-                    }
-
-                    graphic.attr({
-                        visibility: point.visible ? 'inherit' : 'hidden'
-                    });
-
-                    graphic.addClass(point.getClassName());
-
-                } else if (graphic) {
-                    point.graphic = graphic.destroy();
-                }
-            });
-
-        },
-
-        /**
-         * Slices in pie chart are initialized in DOM, but it's shapes and
-         * animations are normally run in `drawPoints()`.
-         * @private
-         */
-        drawPoints: function (this: Highcharts.PieSeries): void {
-            var renderer = this.chart.renderer;
-
-            this.points.forEach(function (point: Highcharts.PiePoint): void {
-                // When updating a series between 2d and 3d or cartesian and
-                // polar, the shape type changes.
-                if (point.graphic && point.hasNewShapeType()) {
-                    point.graphic = point.graphic.destroy();
-                }
-
-                if (!point.graphic) {
-                    point.graphic = (renderer as any)[point.shapeType as any](
-                        point.shapeArgs
-                    )
-                        .add(point.series.group);
-                    point.delayedRendering = true;
-                }
-            });
-        },
-        /**
-         * @private
-         * @deprecated
-         * @function Highcharts.seriesTypes.pie#searchPoint
-         */
-        searchPoint: noop as any,
-
-        /**
-         * Utility for sorting data labels
-         *
-         * @private
-         * @function Highcharts.seriesTypes.pie#sortByAngle
-         * @param {Array<Highcharts.Point>} points
-         * @param {number} sign
-         * @return {void}
-         */
-        sortByAngle: function (
-            this: Highcharts.PieSeries,
-            points: Array<Highcharts.PiePoint>,
-            sign: number
-        ): void {
-            points.sort(function (
-                a: Highcharts.PiePoint,
-                b: Highcharts.PiePoint
-            ): number {
-                return (
-                    ((typeof a.angle !== 'undefined') as any) &&
-                    ((b.angle as any) - (a.angle as any)) * sign
-                );
-            });
-        },
-
-        /**
-         * Use a simple symbol from LegendSymbolMixin.
-         *
-         * @private
-         * @borrows Highcharts.LegendSymbolMixin.drawRectangle as Highcharts.seriesTypes.pie#drawLegendSymbol
-         */
+        directTouch: true,
+        drawGraph: null as any,
         drawLegendSymbol: LegendSymbolMixin.drawRectangle,
-
-        /**
-         * Use the getCenter method from drawLegendSymbol.
-         *
-         * @private
-         * @borrows Highcharts.CenteredSeriesMixin.getCenter as Highcharts.seriesTypes.pie#getCenter
-         */
         getCenter: CenteredSeriesMixin.getCenter,
-
-        /**
-         * Pies don't have point marker symbols.
-         *
-         * @deprecated
-         * @private
-         * @function Highcharts.seriesTypes.pie#getSymbol
-         */
         getSymbol: noop as any,
-
-        /**
-         * @private
-         * @type {null}
-         */
-        drawGraph: null as any
-
+        isCartesian: false,
+        noSharedTooltip: true,
+        pointAttribs: ColumnSeries.prototype.pointAttribs,
+        requireSorting: false,
+        searchPoint: noop as any,
+        trackerGroups: ['group', 'dataLabelsGroup']
     }
 );
 
-PieSeries.prototype.pointClass = extendClass(Point, {
-    /**
-     * Initialize the pie slice
+/* *
+ *
+ *  Class
+ *
+ * */
+
+class PiePoint extends Point {
+
+    /* *
      *
+     *  Functions
+     *
+     * */
+
+    /* eslint-disable valid-jsdoc */
+
+    /**
+     * Extendable method for getting the path of the connector between the
+     * data label and the pie slice.
      * @private
-     * @function Highcharts.seriesTypes.pie#pointClass#init
-     * @return {Highcharts.Point}
      */
-    init: function (this: Highcharts.PiePoint): Highcharts.PiePoint {
+    public getConnectorPath(this: Highcharts.PiePoint): void {
+        var labelPosition = this.labelPosition,
+            options = this.series.options.dataLabels,
+            connectorShape = (options as any).connectorShape,
+            predefinedShapes = this.connectorShapes;
+
+        // find out whether to use the predefined shape
+        if ((predefinedShapes as any)[connectorShape]) {
+            connectorShape = (predefinedShapes as any)[connectorShape];
+        }
+
+        return connectorShape.call(this, {
+            // pass simplified label position object for user's convenience
+            x: (labelPosition as any).final.x,
+            y: (labelPosition as any).final.y,
+            alignment: (labelPosition as any).alignment
+        }, (labelPosition as any).connectorPosition, options);
+    }
+
+    /**
+     * @private
+     */
+    public getTranslate(this: Highcharts.PiePoint): Highcharts.TranslationAttributes {
+        return this.sliced ? (this.slicedTranslation as any) : {
+            translateX: 0,
+            translateY: 0
+        };
+    }
+
+    /**
+     * @private
+     */
+    public haloPath(
+        this: Highcharts.PiePoint,
+        size: number
+    ): SVGPath {
+        var shapeArgs = this.shapeArgs;
+
+        return this.sliced || !this.visible ?
+            [] :
+            this.series.chart.renderer.symbols.arc(
+                (shapeArgs as any).x,
+                (shapeArgs as any).y,
+                (shapeArgs as any).r + size,
+                (shapeArgs as any).r + size, {
+                // Substract 1px to ensure the background is not bleeding
+                // through between the halo and the slice (#7495).
+                    innerR: (shapeArgs as any).r - 1,
+                    start: (shapeArgs as any).start,
+                    end: (shapeArgs as any).end
+                }
+            );
+    }
+
+    /**
+     * Initialize the pie slice.
+     * @private
+     */
+    public init(this: Highcharts.PiePoint): Highcharts.PiePoint {
 
         Point.prototype.init.apply(this, arguments as any);
 
@@ -1376,7 +1421,7 @@ PieSeries.prototype.pointClass = extendClass(Point, {
 
         // add event listener for select
         toggleSlice = function (
-            e: (Highcharts.Dictionary<any>|Event)
+            e: (Record<string, any>|Event)
         ): void {
             point.slice(e.type === 'select');
         };
@@ -1384,31 +1429,25 @@ PieSeries.prototype.pointClass = extendClass(Point, {
         addEvent(point, 'unselect', toggleSlice);
 
         return point;
-    },
+    }
 
     /**
      * Negative points are not valid (#1530, #3623, #5322)
-     *
      * @private
-     * @function Highcharts.seriesTypes.pie#pointClass#isValid
-     * @return {boolean}
      */
-    isValid: function (this: Highcharts.PiePoint): boolean {
+    public isValid(this: Highcharts.PiePoint): boolean {
         return isNumber(this.y) && this.y >= 0;
-    },
+    }
 
     /**
-     * Toggle the visibility of the pie slice
-     *
+     * Toggle the visibility of the pie slice.
      * @private
-     * @function Highcharts.seriesTypes.pie#pointClass#setVisible
+     *
      * @param {boolean} vis
-     *        Whether to show the slice or not. If undefined, the visibility
-     *        is toggled.
-     * @param {boolean} [redraw=false]
-     * @return {void}
+     * Whether to show the slice or not. If undefined, the visibility is
+     * toggled.
      */
-    setVisible: function (
+    public setVisible(
         this: Highcharts.PiePoint,
         vis: boolean,
         redraw?: boolean
@@ -1458,22 +1497,22 @@ PieSeries.prototype.pointClass = extendClass(Point, {
                 chart.redraw();
             }
         }
-    },
+    }
 
     /**
-     * Set or toggle whether the slice is cut out from the pie
-     *
+     * Set or toggle whether the slice is cut out from the pie.
      * @private
-     * @function Highcharts.seriesTypes.pie#pointClass#slice
+     *
      * @param {boolean} sliced
-     *        When undefined, the slice state is toggled.
+     * When undefined, the slice state is toggled.
+     *
      * @param {boolean} redraw
-     *        Whether to redraw the chart. True by default.
+     * Whether to redraw the chart. True by default.
+     *
      * @param {boolean|Partial<Highcharts.AnimationOptionsObject>}
-     *        Animation options.
-     * @return {void}
+     * Animation options.
      */
-    slice: function (
+    public slice(
         this: Highcharts.PiePoint,
         sliced: boolean,
         redraw?: boolean,
@@ -1508,52 +1547,22 @@ PieSeries.prototype.pointClass = extendClass(Point, {
         if (point.shadowGroup) {
             point.shadowGroup.animate(this.getTranslate());
         }
-    },
+    }
+}
+PieSeries.prototype.pointClass = PiePoint as any;
 
-    /**
-     * @private
-     * @function Highcharts.seriesTypes.pie#pointClass#getTranslate
-     * @return {Highcharts.TranslationAttributes}
-     */
-    getTranslate: function (
-        this: Highcharts.PiePoint
-    ): Highcharts.TranslationAttributes {
-        return this.sliced ? (this.slicedTranslation as any) : {
-            translateX: 0,
-            translateY: 0
-        };
-    },
+/* *
+ *
+ *  Prototype Properties
+ *
+ * */
 
-    /**
-     * @private
-     * @function Highcharts.seriesTypes.pie#pointClass#haloPath
-     * @param {number} size
-     * @return {Highcharts.SVGPathArray}
-     */
-    haloPath: function (
-        this: Highcharts.PiePoint,
-        size: number
-    ): SVGPath {
-        var shapeArgs = this.shapeArgs;
-
-        return this.sliced || !this.visible ?
-            [] :
-            this.series.chart.renderer.symbols.arc(
-                (shapeArgs as any).x,
-                (shapeArgs as any).y,
-                (shapeArgs as any).r + size,
-                (shapeArgs as any).r + size, {
-                // Substract 1px to ensure the background is not bleeding
-                // through between the halo and the slice (#7495).
-                    innerR: (shapeArgs as any).r - 1,
-                    start: (shapeArgs as any).start,
-                    end: (shapeArgs as any).end
-                }
-            );
-    },
-
+interface PiePoint {
+    connectorShapes?: Record<string, Highcharts.PiePointConnectorShapeFunction>;
+}
+extend(PiePoint.prototype, {
     connectorShapes: {
-    // only one available before v7.0.0
+        // only one available before v7.0.0
         fixedOffset: function (
             labelPosition: Highcharts.PieSeriesPositionObject,
             connectorPosition: (
@@ -1651,29 +1660,6 @@ PieSeries.prototype.pointClass = extendClass(Point, {
             path.push(['L', touchingSliceAt.x, touchingSliceAt.y]);
             return path;
         }
-    },
-
-    /**
-     * Extendable method for getting the path of the connector between the
-     * data label and the pie slice.
-     */
-    getConnectorPath: function (this: Highcharts.PiePoint): void {
-        var labelPosition = this.labelPosition,
-            options = this.series.options.dataLabels,
-            connectorShape = (options as any).connectorShape,
-            predefinedShapes = this.connectorShapes;
-
-        // find out whether to use the predefined shape
-        if ((predefinedShapes as any)[connectorShape]) {
-            connectorShape = (predefinedShapes as any)[connectorShape];
-        }
-
-        return connectorShape.call(this, {
-            // pass simplified label position object for user's convenience
-            x: (labelPosition as any).final.x,
-            y: (labelPosition as any).final.y,
-            alignment: (labelPosition as any).alignment
-        }, (labelPosition as any).connectorPosition, options);
     }
 });
 
