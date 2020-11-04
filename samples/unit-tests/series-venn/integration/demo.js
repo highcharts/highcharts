@@ -98,3 +98,53 @@ QUnit.module('Options', () => {
         });
     });
 });
+
+QUnit.test('The inactive state should be set to the patterns the same as for colors, #14372.', function (assert) {
+    const chart =  Highcharts.chart('container', {
+        series: [{
+            type: 'venn',
+            data: [{
+                sets: ['A'],
+                value: 2
+            }, {
+                sets: ['B'],
+                value: 2
+            }, {
+                sets: ['A', 'B'],
+                value: 1,
+                name: 'A&B',
+                color: {
+                    pattern: {
+                        path: {
+                            d: 'M 0 0 L 10 10 M 9 -1 L 11 1 M -1 9 L 1 11',
+                            strokeWidth: 3
+                        },
+                        width: 10,
+                        height: 10
+                    }
+                }
+            }]
+        }]
+    });
+
+    assert.strictEqual(
+        chart.series[0].points[2].graphic.opacity,
+        0.75,
+        'In normal state the pattern opacity should be equal to 0.75.'
+    );
+    chart.series[0].points[2].setState('inactive');
+
+    assert.strictEqual(
+        chart.series[0].points[2].graphic.opacity,
+        0.075,
+        'In inactive state the pattern opacity should be equal to 0.075.'
+    );
+    chart.series[0].points[2].setState('hover');
+
+    assert.strictEqual(
+        chart.series[0].points[2].graphic.opacity,
+        1,
+        'In hover state the pattern opacity should be equal to 1.'
+    );
+
+});
