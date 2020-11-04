@@ -342,11 +342,6 @@ var Chart = /** @class */ (function () {
                     if (isFunction(event)) {
                         addEvent(chart, eventType, event);
                     }
-                    else if (isObject(event)) {
-                        if (isFunction(event.listener)) {
-                            addEvent(chart, eventType, event.listener, event.options);
-                        }
-                    }
                 });
             }
             /**

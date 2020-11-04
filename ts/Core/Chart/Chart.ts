@@ -543,10 +543,6 @@ class Chart {
                 objectEach(chartEvents, function (event, eventType): void {
                     if (isFunction(event)) {
                         addEvent(chart, eventType, event);
-                    } else if (isObject(event)) {
-                        if (isFunction(event.listener)) {
-                            addEvent(chart, eventType, event.listener, event.options);
-                        }
                     }
                 });
             }
