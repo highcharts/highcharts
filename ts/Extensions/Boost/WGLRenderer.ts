@@ -1254,7 +1254,11 @@ function GLRenderer(
 
             } else {
                 fillColor =
-                    (s.series.pointAttribs && s.series.pointAttribs().fill) ||
+                    (
+                        s.drawMode === 'points' && // #14260
+                        s.series.pointAttribs &&
+                        s.series.pointAttribs().fill
+                    ) ||
                     s.series.color;
 
                 if (options.colorByPoint) {
