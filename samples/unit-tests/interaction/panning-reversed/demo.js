@@ -33,23 +33,10 @@ QUnit.test('Panning reversed axis', function (assert) {
         'Initial max'
     );
 
+    const controller = new TestController(chart);
+
     // Pan
-    chart.pointer.onContainerMouseDown({
-        type: 'mousedown',
-        pageX: 200,
-        pageY: 100,
-        target: chart.container,
-        shiftKey: true
-    });
-    chart.pointer.onContainerMouseMove({
-        type: 'mousemove',
-        pageX: 250,
-        pageY: 100,
-        target: chart.container,
-        shiftKey: true
-    });
-    chart.pointer.onDocumentMouseUp({
-    });
+    controller.pan([200, 100], [250, 100], { shiftKey: true });
 
     assert.strictEqual(
         chart.xAxis[0].min,
@@ -63,19 +50,7 @@ QUnit.test('Panning reversed axis', function (assert) {
     );
 
     // Zoom
-    chart.pointer.onContainerMouseDown({
-        type: 'mousedown',
-        pageX: 200,
-        pageY: 150,
-        target: chart.container
-    });
-    chart.pointer.onContainerMouseMove({
-        type: 'mousemove',
-        pageX: 200,
-        pageY: 200,
-        target: chart.container
-    });
-    chart.pointer.onDocumentMouseUp({});
+    controller.pan([200, 150], [200, 200]);
 
     assert.strictEqual(
         chart.xAxis[0].min > 0,
@@ -91,22 +66,7 @@ QUnit.test('Panning reversed axis', function (assert) {
     firstZoom = chart.xAxis[0].getExtremes();
 
     // Pan
-    chart.pointer.onContainerMouseDown({
-        type: 'mousedown',
-        pageX: 200,
-        pageY: 100,
-        target: chart.container,
-        shiftKey: true
-    });
-    chart.pointer.onContainerMouseMove({
-        type: 'mousemove',
-        pageX: 250,
-        pageY: 100,
-        target: chart.container,
-        shiftKey: true
-    });
-    chart.pointer.onDocumentMouseUp({
-    });
+    controller.pan([200, 100], [250, 100], { shiftKey: true });
 
     assert.strictEqual(
         chart.xAxis[0].min > firstZoom.min,
