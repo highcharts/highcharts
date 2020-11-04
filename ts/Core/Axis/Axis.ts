@@ -5498,16 +5498,18 @@ class Axis {
             }
         }
 
-        // If min is bigger than highest,
-        // or if max less than lowest value,
-        // the chart should not render points. (#14417)
-        if (isNumber(axis.min) && isNumber(axis.max)) {
-            if (axis.min > axis.max) {
-                if (defined(axis.options.min)) {
-                    axis.max = axis.min;
-                } else if (defined(axis.options.max)) {
-                    axis.min = axis.max;
-                }
+        // If min is bigger than highest, or if max less than lowest value, the
+        // chart should not render points. (#14417)
+        if (
+            isNumber(axis.min) &&
+            isNumber(axis.max) &&
+            !this.chart.polar &&
+            (axis.min > axis.max)
+        ) {
+            if (defined(axis.options.min)) {
+                axis.max = axis.min;
+            } else if (defined(axis.options.max)) {
+                axis.min = axis.max;
             }
         }
 
