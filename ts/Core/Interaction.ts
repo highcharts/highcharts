@@ -1118,8 +1118,8 @@ extend(Point.prototype, /** @lends Highcharts.Point.prototype */ {
             point.events = events;
 
             objectEach(events, function (
-                event,
-                eventType
+                event: Function,
+                eventType: string
             ): void {
                 if (isFunction(event)) {
                     addEvent(point, eventType, event);
