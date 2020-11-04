@@ -5498,6 +5498,18 @@ class Axis {
             }
         }
 
+        // If min is bigger than highest,
+        // or if max less than lowest value,
+        // the chart should not render points. (#14417)
+        if (axis.min !== null && axis.max !== null) {
+            if (axis.min > axis.max) {
+                if (defined(axis.options.min)) {
+                    axis.max = axis.min;
+                } else if (defined(axis.options.max)) {
+                    axis.min = axis.max;
+                }
+            }
+        }
 
         // get tickInterval
         if (
@@ -5804,19 +5816,6 @@ class Axis {
                 while ((this.max as any) + minPointOffset <
                         tickPositions[tickPositions.length - 1]) {
                     tickPositions.pop();
-                }
-            }
-
-            // If min is bigger than highest,
-            // or if max less than lowest value,
-            // the chart should not render points. (#14417)
-            if (this.min && this.max) {
-                if (this.min > this.max) {
-                    if (typeof this.options.min !== 'undefined' && this.options.min !== null) {
-                        this.max = this.min;
-                    } else if (typeof this.options.max !== 'undefined' && this.options.max !== null) {
-                        this.min = this.max;
-                    }
                 }
             }
 
