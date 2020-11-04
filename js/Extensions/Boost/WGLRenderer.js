@@ -831,7 +831,9 @@ function GLRenderer(postRenderCallback) {
             }
             else {
                 fillColor =
-                    (s.series.pointAttribs && s.series.pointAttribs().fill) ||
+                    (s.drawMode === 'points' && // #14260
+                        s.series.pointAttribs &&
+                        s.series.pointAttribs().fill) ||
                         s.series.color;
                 if (options.colorByPoint) {
                     fillColor = s.series.chart.options.colors[si];
