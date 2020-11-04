@@ -12,6 +12,10 @@
 
 'use strict';
 
+import type PiePoint from './Pie/PiePoint';
+import type PiePointOptions from './Pie/PiePointOptions';
+import type PieSeries from './Pie/PieSeries';
+import type PieSeriesOptions from './Pie/PieSeriesOptions';
 import type { SeriesStatesOptions } from '../Core/Series/SeriesOptions';
 import BaseSeries from '../Core/Series/Series.js';
 const { seriesTypes } = BaseSeries;

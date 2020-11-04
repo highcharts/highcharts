@@ -24,6 +24,7 @@ import type ColorType from '../Core/Color/ColorType';
 import type CSSObject from '../Core/Renderer/CSSObject';
 import type DashStyleValue from '../Core/Renderer/DashStyleValue';
 import type DataLabelOptions from '../Core/Series/DataLabelOptions';
+import type PiePoint from './Pie/PiePoint';
 import type PositionObject from '../Core/Renderer/PositionObject';
 import type {
     SeriesOptions,

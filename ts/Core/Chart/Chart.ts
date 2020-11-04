@@ -705,8 +705,8 @@ class Chart {
         series.forEach(function (serie): void {
             if (serie.isDirty) {
                 if (serie.options.legendType === 'point') {
-                    if (typeof (serie as Highcharts.PieSeries).updateTotals === 'function') {
-                        (serie as Highcharts.PieSeries).updateTotals();
+                    if (typeof serie.updateTotals === 'function') {
+                        serie.updateTotals();
                     }
                     redrawLegend = true;
                 } else if (

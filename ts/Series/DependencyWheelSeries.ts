@@ -12,6 +12,7 @@
 
 'use strict';
 
+import type PieSeries from './Pie/PieSeries';
 import type { SeriesStatesOptions } from '../Core/Series/SeriesOptions';
 import type SVGAttributes from '../Core/Renderer/SVG/SVGAttributes';
 import type SVGElement from '../Core/Renderer/SVG/SVGElement';

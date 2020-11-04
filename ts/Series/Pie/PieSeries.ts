@@ -16,20 +16,10 @@
  *
  * */
 
-import type AnimationOptionsObject from '../../Core/Animation/AnimationOptionsObject';
-import type { AlignValue } from '../../Core/Renderer/AlignObject';
-import type ColorType from '../../Core/Color/ColorType';
-import type DataLabelOptions from '../../Core/Series/DataLabelOptions';
-import type LinePoint from '../Line/LinePoint';
-import type LinePointOptions from '../Line/LinePointOptions';
-import type LineSeriesOptions from '../Line/LineSeriesOptions';
-import type PositionObject from '../../Core/Renderer/PositionObject';
-import type { SeriesStatesOptions } from '../../Core/Series/SeriesOptions';
+import type PieSeriesOptions from './PieSeriesOptions';
+import type Point from '../../Core/Series/Point';
 import type SVGAttributes from '../../Core/Renderer/SVG/SVGAttributes';
 import type SVGElement from '../../Core/Renderer/SVG/SVGElement';
-import type SVGPath from '../../Core/Renderer/SVG/SVGPath';
-import A from '../../Core/Animation/AnimationUtilities.js';
-const { setAnimation } = A;
 import BaseSeries from '../../Core/Series/Series.js';
 import CenteredSeriesMixin from '../../Mixins/CenteredSeries.js';
 const { getStartAndEndRadians } = CenteredSeriesMixin;
@@ -38,17 +28,13 @@ import H from '../../Core/Globals.js';
 const { noop } = H;
 import LegendSymbolMixin from '../../Mixins/LegendSymbol.js';
 import LineSeries from '../../Series/Line/LineSeries.js';
-import Point from '../../Core/Series/Point.js';
+import PiePoint from './PiePoint.js';
 import SVGRenderer from '../../Core/Renderer/SVG/SVGRenderer.js';
 import U from '../../Core/Utilities.js';
 const {
-    addEvent,
     clamp,
-    defined,
     extend,
-    extendClass,
     fireEvent,
-    isNumber,
     merge,
     pick,
     relativeLength
@@ -64,119 +50,14 @@ import '../../Core/Options.js';
 
 declare module '../../Core/Series/SeriesLike' {
     interface SeriesLike {
-        redrawPoints(): void;
+        redrawPoints?(): void;
+        updateTotals?(): void;
     }
 }
 
 declare module '../../Core/Series/SeriesOptions' {
     interface SeriesStateHoverOptions {
         brightness?: number;
-    }
-}
-
-declare module '../../Core/Series/SeriesType' {
-    interface SeriesTypeRegistry {
-        pie: typeof Highcharts.PieSeries;
-    }
-}
-
-/**
- * Internal types
- * @private
- */
-declare global {
-    namespace Highcharts {
-        class PiePoint extends LinePoint {
-            public angle?: number;
-            public connectorShapes?: Record<string, Highcharts.PiePointConnectorShapeFunction>;
-            public delayedRendering?: boolean;
-            public half?: number;
-            public isValid: () => boolean;
-            public labelDistance: number;
-            public labelPosition?: PiePointLabelPositionObject;
-            public name: string;
-            public options: PiePointOptions;
-            public series: PieSeries;
-            public shadowGroup?: SVGElement;
-            public sliced?: boolean;
-            public slicedTranslation?: TranslationAttributes;
-            public getConnectorPath(): void;
-            public getTranslate(): TranslationAttributes;
-            public setVisible(vis: boolean, redraw?: boolean): void;
-            public slice(
-                sliced: boolean,
-                redraw?: boolean,
-                animation?: (boolean|Partial<AnimationOptionsObject>)
-            ): void;
-        }
-        class PieSeries extends LineSeries {
-            public center: Array<number>;
-            public endAngleRad?: number;
-            public data: Array<PiePoint>;
-            public getCenter: CenteredSeriesMixin['getCenter'];
-            public maxLabelDistance: number;
-            public options: PieSeriesOptions;
-            public pointClass: typeof PiePoint;
-            public points: Array<PiePoint>;
-            public shadowGroup?: SVGElement;
-            public startAngleRad?: number;
-            public total?: number;
-            public drawEmpty(): void;
-            public getX(y: number, left: boolean, point: PiePoint): number;
-            public redrawPoints(): void;
-            public sortByAngle(points: Array<PiePoint>, sign: number): void;
-            public translate(positions?: Array<number>): void;
-            public updateTotals(): void;
-        }
-        interface PiePointConnectorShapeFunction {
-            (...args: Array<any>): SVGPath;
-        }
-        interface PiePointLabelConnectorPositionObject {
-            breakAt: PositionObject;
-            touchingSliceAt: PositionObject;
-        }
-        interface PiePointLabelPositionObject {
-            alignment: AlignValue;
-            connectorPosition: PiePointLabelConnectorPositionObject;
-            'final': Dictionary<undefined>;
-            natural: PositionObject;
-        }
-        interface PiePointOptions extends LinePointOptions {
-            dataLabels?: PieSeriesDataLabelsOptionsObject;
-            sliced?: boolean;
-            visible?: boolean;
-        }
-        interface PiePositionObject extends PositionObject {
-            alignment: AlignValue;
-        }
-        interface PieSeriesDataLabelsOptionsObject extends DataLabelOptions {
-            alignTo?: string;
-            connectorColor?: ColorType;
-            connectorPadding?: number;
-            connectorShape?: (string|Function);
-            connectorWidth?: number;
-            crookDistance?: string;
-            distance?: number;
-            softConnector?: boolean;
-        }
-        interface PieSeriesOptions extends LineSeriesOptions {
-            endAngle?: number;
-            center?: [(number|string|null), (number|string|null)];
-            colorByPoint?: boolean;
-            dataLabels?: PieSeriesDataLabelsOptionsObject;
-            fillColor?: ColorType;
-            ignoreHiddenPoint?: boolean;
-            inactiveOtherPoints?: boolean;
-            innerSize?: (number|string);
-            minSize?: (number|string);
-            size?: (number|string);
-            slicedOffset?: number;
-            startAngle?: number;
-            states?: SeriesStatesOptions<PieSeries>;
-        }
-        interface PieSeriesPositionObject extends PositionObject {
-            alignment: AlignValue;
-        }
     }
 }
 
@@ -941,14 +822,12 @@ class PieSeries extends LineSeries {
     public getX(
         y: number,
         left: boolean,
-        point: Highcharts.PiePoint
+        point: PiePoint
     ): number {
         var center = this.center,
             // Variable pie has individual radius
-            radius = (this as unknown as Highcharts.VariablePieSeries).radii ?
-                (this as unknown as Highcharts.VariablePieSeries).radii[
-                    point.index as any
-                ] :
+            radius = this.radii ?
+                this.radii[point.index as any] || 0 :
                 center[2] / 2,
             angle,
             x;
@@ -1076,13 +955,10 @@ class PieSeries extends LineSeries {
      * @private
      */
     public sortByAngle(
-        points: Array<Highcharts.PiePoint>,
+        points: Array<PiePoint>,
         sign: number
     ): void {
-        points.sort(function (
-            a: Highcharts.PiePoint,
-            b: Highcharts.PiePoint
-        ): number {
+        points.sort(function (a, b): number {
             return (
                 ((typeof a.angle !== 'undefined') as any) &&
                 ((b.angle as any) - (a.angle as any)) * sign
@@ -1300,16 +1176,16 @@ class PieSeries extends LineSeries {
 
 interface PieSeries {
     center: Array<number>;
-    data: Array<Highcharts.PiePoint>;
+    data: Array<PiePoint>;
     getCenter: typeof CenteredSeriesMixin['getCenter'];
     maxLabelDistance: number;
-    options: Highcharts.PieSeriesOptions;
-    pointClass: typeof Highcharts.PiePoint;
-    points: Array<Highcharts.PiePoint>;
+    options: PieSeriesOptions;
+    pointClass: typeof PiePoint;
+    points: Array<PiePoint>;
     drawEmpty(): void;
-    getX(y: number, left: boolean, point: Highcharts.PiePoint): number;
+    getX(y: number, left: boolean, point: PiePoint): number;
     redrawPoints(): void;
-    sortByAngle(points: Array<Highcharts.PiePoint>, sign: number): void;
+    sortByAngle(points: Array<PiePoint>, sign: number): void;
     translate(positions?: Array<number>): void;
     updateTotals(): void;
 }
@@ -1325,6 +1201,7 @@ extend(
         isCartesian: false,
         noSharedTooltip: true,
         pointAttribs: ColumnSeries.prototype.pointAttribs,
+        pointClass: PiePoint,
         requireSorting: false,
         searchPoint: noop as any,
         trackerGroups: ['group', 'dataLabelsGroup']
@@ -1333,337 +1210,30 @@ extend(
 
 /* *
  *
- *  Class
+ *  Registry
  *
  * */
 
-class PiePoint extends Point {
-
-    /* *
-     *
-     *  Functions
-     *
-     * */
-
-    /* eslint-disable valid-jsdoc */
-
-    /**
-     * Extendable method for getting the path of the connector between the
-     * data label and the pie slice.
-     * @private
-     */
-    public getConnectorPath(this: Highcharts.PiePoint): void {
-        var labelPosition = this.labelPosition,
-            options = this.series.options.dataLabels,
-            connectorShape = (options as any).connectorShape,
-            predefinedShapes = this.connectorShapes;
-
-        // find out whether to use the predefined shape
-        if ((predefinedShapes as any)[connectorShape]) {
-            connectorShape = (predefinedShapes as any)[connectorShape];
-        }
-
-        return connectorShape.call(this, {
-            // pass simplified label position object for user's convenience
-            x: (labelPosition as any).final.x,
-            y: (labelPosition as any).final.y,
-            alignment: (labelPosition as any).alignment
-        }, (labelPosition as any).connectorPosition, options);
-    }
-
-    /**
-     * @private
-     */
-    public getTranslate(this: Highcharts.PiePoint): Highcharts.TranslationAttributes {
-        return this.sliced ? (this.slicedTranslation as any) : {
-            translateX: 0,
-            translateY: 0
-        };
-    }
-
-    /**
-     * @private
-     */
-    public haloPath(
-        this: Highcharts.PiePoint,
-        size: number
-    ): SVGPath {
-        var shapeArgs = this.shapeArgs;
-
-        return this.sliced || !this.visible ?
-            [] :
-            this.series.chart.renderer.symbols.arc(
-                (shapeArgs as any).x,
-                (shapeArgs as any).y,
-                (shapeArgs as any).r + size,
-                (shapeArgs as any).r + size, {
-                // Substract 1px to ensure the background is not bleeding
-                // through between the halo and the slice (#7495).
-                    innerR: (shapeArgs as any).r - 1,
-                    start: (shapeArgs as any).start,
-                    end: (shapeArgs as any).end
-                }
-            );
-    }
-
-    /**
-     * Initialize the pie slice.
-     * @private
-     */
-    public init(this: Highcharts.PiePoint): Highcharts.PiePoint {
-
-        Point.prototype.init.apply(this, arguments as any);
-
-        var point = this,
-            toggleSlice;
-
-        point.name = pick(point.name, 'Slice');
-
-        // add event listener for select
-        toggleSlice = function (
-            e: (Record<string, any>|Event)
-        ): void {
-            point.slice(e.type === 'select');
-        };
-        addEvent(point, 'select', toggleSlice);
-        addEvent(point, 'unselect', toggleSlice);
-
-        return point;
-    }
-
-    /**
-     * Negative points are not valid (#1530, #3623, #5322)
-     * @private
-     */
-    public isValid(this: Highcharts.PiePoint): boolean {
-        return isNumber(this.y) && this.y >= 0;
-    }
-
-    /**
-     * Toggle the visibility of the pie slice.
-     * @private
-     *
-     * @param {boolean} vis
-     * Whether to show the slice or not. If undefined, the visibility is
-     * toggled.
-     */
-    public setVisible(
-        this: Highcharts.PiePoint,
-        vis: boolean,
-        redraw?: boolean
-    ): void {
-        var point = this,
-            series = point.series,
-            chart = series.chart,
-            ignoreHiddenPoint = series.options.ignoreHiddenPoint;
-
-        redraw = pick(redraw, ignoreHiddenPoint);
-
-        if (vis !== point.visible) {
-
-            // If called without an argument, toggle visibility
-            point.visible = point.options.visible = vis =
-                typeof vis === 'undefined' ? !point.visible : vis;
-            // update userOptions.data
-            (series.options.data as any)[series.data.indexOf(point)] =
-                point.options;
-
-            // Show and hide associated elements. This is performed
-            // regardless of redraw or not, because chart.redraw only
-            // handles full series.
-            ['graphic', 'dataLabel', 'connector', 'shadowGroup'].forEach(
-                function (key: string): void {
-                    if ((point as any)[key]) {
-                        (point as any)[key][vis ? 'show' : 'hide'](true);
-                    }
-                }
-            );
-
-            if (point.legendItem) {
-                chart.legend.colorizeItem(point, vis);
-            }
-
-            // #4170, hide halo after hiding point
-            if (!vis && point.state === 'hover') {
-                point.setState('');
-            }
-
-            // Handle ignore hidden slices
-            if (ignoreHiddenPoint) {
-                series.isDirty = true;
-            }
-
-            if (redraw) {
-                chart.redraw();
-            }
-        }
-    }
-
-    /**
-     * Set or toggle whether the slice is cut out from the pie.
-     * @private
-     *
-     * @param {boolean} sliced
-     * When undefined, the slice state is toggled.
-     *
-     * @param {boolean} redraw
-     * Whether to redraw the chart. True by default.
-     *
-     * @param {boolean|Partial<Highcharts.AnimationOptionsObject>}
-     * Animation options.
-     */
-    public slice(
-        this: Highcharts.PiePoint,
-        sliced: boolean,
-        redraw?: boolean,
-        animation?: (boolean|Partial<AnimationOptionsObject>)
-    ): void {
-        var point = this,
-            series = point.series,
-            chart = series.chart;
-
-        setAnimation(animation, chart);
-
-        // redraw is true by default
-        redraw = pick(redraw, true);
-
-        /**
-         * Pie series only. Whether to display a slice offset from the
-         * center.
-         * @name Highcharts.Point#sliced
-         * @type {boolean|undefined}
-         */
-        // if called without an argument, toggle
-        point.sliced = point.options.sliced = sliced =
-            defined(sliced) ? sliced : !point.sliced;
-        // update userOptions.data
-        (series.options.data as any)[series.data.indexOf(point)] =
-            point.options;
-
-        if (point.graphic) {
-            point.graphic.animate(this.getTranslate());
-        }
-
-        if (point.shadowGroup) {
-            point.shadowGroup.animate(this.getTranslate());
-        }
+declare module '../../Core/Series/SeriesType' {
+    interface SeriesTypeRegistry {
+        pie: typeof PieSeries;
     }
 }
-PieSeries.prototype.pointClass = PiePoint as any;
+BaseSeries.registerSeriesType('pie', PieSeries);
 
 /* *
  *
- *  Prototype Properties
+ *  Default Export
  *
  * */
 
-interface PiePoint {
-    connectorShapes?: Record<string, Highcharts.PiePointConnectorShapeFunction>;
-}
-extend(PiePoint.prototype, {
-    connectorShapes: {
-        // only one available before v7.0.0
-        fixedOffset: function (
-            labelPosition: Highcharts.PieSeriesPositionObject,
-            connectorPosition: (
-                Highcharts.PiePointLabelConnectorPositionObject
-            ),
-            options: Highcharts.PieSeriesDataLabelsOptionsObject
-        ): SVGPath {
-            var breakAt = connectorPosition.breakAt,
-                touchingSliceAt = connectorPosition.touchingSliceAt,
-                lineSegment = options.softConnector ? [
-                    'C', // soft break
-                    // 1st control point (of the curve)
-                    labelPosition.x +
-                    // 5 gives the connector a little horizontal bend
-                    (labelPosition.alignment === 'left' ? -5 : 5),
-                    labelPosition.y, //
-                    2 * breakAt.x - touchingSliceAt.x, // 2nd control point
-                    2 * breakAt.y - touchingSliceAt.y, //
-                    breakAt.x, // end of the curve
-                    breakAt.y //
-                ] as SVGPath.CurveTo : [
-                    'L', // pointy break
-                    breakAt.x,
-                    breakAt.y
-                ] as SVGPath.LineTo;
+export default PieSeries;
 
-            // assemble the path
-            return ([
-                ['M', labelPosition.x, labelPosition.y],
-                lineSegment,
-                ['L', touchingSliceAt.x, touchingSliceAt.y]
-            ]);
-        },
-
-        straight: function (
-            labelPosition: Highcharts.PieSeriesPositionObject,
-            connectorPosition: (
-                Highcharts.PiePointLabelConnectorPositionObject
-            )
-        ): SVGPath {
-            var touchingSliceAt = connectorPosition.touchingSliceAt;
-
-            // direct line to the slice
-            return [
-                ['M', labelPosition.x, labelPosition.y],
-                ['L', touchingSliceAt.x, touchingSliceAt.y]
-            ];
-        },
-
-        crookedLine: function (
-            this: Highcharts.PiePoint,
-            labelPosition: Highcharts.PieSeriesPositionObject,
-            connectorPosition: (
-                Highcharts.PiePointLabelConnectorPositionObject
-            ),
-            options: Highcharts.PieSeriesDataLabelsOptionsObject
-        ): SVGPath {
-
-            var touchingSliceAt = connectorPosition.touchingSliceAt,
-                series = this.series,
-                pieCenterX = series.center[0],
-                plotWidth = series.chart.plotWidth,
-                plotLeft = series.chart.plotLeft,
-                alignment = labelPosition.alignment,
-                radius = (this.shapeArgs as any).r,
-                crookDistance = relativeLength( // % to fraction
-                    options.crookDistance as any, 1
-                ),
-                crookX = alignment === 'left' ?
-                    pieCenterX + radius + (plotWidth + plotLeft -
-                    pieCenterX - radius) * (1 - crookDistance) :
-                    plotLeft + (pieCenterX - radius) * crookDistance,
-                segmentWithCrook: SVGPath.LineTo = [
-                    'L',
-                    crookX,
-                    labelPosition.y
-                ],
-                useCrook = true;
-
-            // crookedLine formula doesn't make sense if the path overlaps
-            // the label - use straight line instead in that case
-            if (alignment === 'left' ?
-                (crookX > labelPosition.x || crookX < touchingSliceAt.x) :
-                (crookX < labelPosition.x || crookX > touchingSliceAt.x)) {
-                useCrook = false;
-            }
-
-            // assemble the path
-            const path = [
-                ['M', labelPosition.x, labelPosition.y]
-            ] as SVGPath;
-            if (useCrook) {
-                path.push(segmentWithCrook);
-            }
-            path.push(['L', touchingSliceAt.x, touchingSliceAt.y]);
-            return path;
-        }
-    }
-});
-
-BaseSeries.registerSeriesType('pie', PieSeries);
+/* *
+ *
+ *  API Options
+ *
+ * */
 
 /**
  * A `pie` series. If the [type](#series.pie.type) option is not specified,
