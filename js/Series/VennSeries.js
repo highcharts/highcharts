@@ -868,9 +868,10 @@ var vennSeries = {
         // Return resulting values for the attributes.
         return {
             'fill': color(options.color)
-                .setOpacity(options.opacity)
                 .brighten(options.brightness)
                 .get(),
+            // Set opacity directly to the SVG element, not to pattern #14372.
+            opacity: options.opacity,
             'stroke': options.borderColor,
             'stroke-width': options.borderWidth,
             'dashstyle': options.borderDashStyle
