@@ -860,7 +860,9 @@ extend(Chart.prototype, /** @lends Chart.prototype */ {
                                 panningState.startMin
                             );
                             panningState.startMax = Math.max(
-                                dataExtremes.dataMax, panningState.startMax
+                                pick(series.options.threshold, Infinity),
+                                dataExtremes.dataMax,
+                                panningState.startMax
                             );
                         }
                     }
