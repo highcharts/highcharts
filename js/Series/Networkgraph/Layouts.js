@@ -101,9 +101,11 @@ H.layouts['reingold-fruchterman'].prototype, {
                 if (layout.simulation) {
                     H.win.cancelAnimationFrame(layout.simulation);
                 }
-                layout.simulation = H.win.requestAnimationFrame(function () {
-                    layout.step();
-                });
+                if (H.win.requestAnimationFrame) {
+                    layout.simulation = H.win.requestAnimationFrame(function () {
+                        layout.step();
+                    });
+                }
             }
             else {
                 layout.simulation = false;

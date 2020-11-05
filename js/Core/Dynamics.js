@@ -1084,6 +1084,8 @@ extend(LineSeries.prototype, /** @lends Series.prototype */ {
         animation = series.finishedAnimating && { animation: false }, kinds = {};
         if (keepPoints) {
             preserve.push('data', 'isDirtyData', 'points', 'processedXData', 'processedYData', 'xIncrement', 'cropped', '_hasPointMarkers', '_hasPointLabels', 
+            // Networkgraph (#14397)
+            'nodes', 'layout', 
             // Map specific, consider moving it to series-specific preserve-
             // properties (#10617)
             'mapMap', 'mapData', 'minY', 'maxY', 'minX', 'maxX');

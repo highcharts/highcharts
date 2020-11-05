@@ -294,12 +294,13 @@ extend(
                     if (layout.simulation) {
                         H.win.cancelAnimationFrame(layout.simulation as any);
                     }
-
-                    layout.simulation = H.win.requestAnimationFrame(
-                        function (): void {
-                            layout.step();
-                        }
-                    );
+                    if (H.win.requestAnimationFrame) {
+                        layout.simulation = H.win.requestAnimationFrame(
+                            function (): void {
+                                layout.step();
+                            }
+                        );
+                    }
                 } else {
                     layout.simulation = false;
                 }
