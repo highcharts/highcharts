@@ -9,8 +9,8 @@
  * */
 
 'use strict';
-
 import type AnimationOptionsObject from '../Core/Animation/AnimationOptionsObject';
+import type Chart from '../Core/Chart/Chart';
 import type ColorType from '../Core/Color/ColorType';
 import type DataLabelOptions from '../Core/Series/DataLabelOptions';
 import type {
@@ -93,8 +93,8 @@ declare global {
         }
         class MapSeries extends ScatterSeries implements ColorMapSeries {
             // public baseTrans: MapBaseTransObject;
-            public baseView?: MapView;
-            public chart: MapChart;
+            public baseView?: { center: Highcharts.LatLng, zoom: number };
+            public chart: Chart;
             public colorAttribs: ColorMapSeriesMixin['colorAttribs'];
             public data: Array<MapPoint>;
             public dataMax: number;
@@ -1095,8 +1095,10 @@ BaseSeries.seriesType<typeof Highcharts.MapSeries>(
                 // properties are the axis values in the plot area's upper left
                 // corner.
                 if (mapView) {
-                    this.baseView = merge(mapView);
-                    this.baseView.center = [mapView.center[0], mapView.center[1]];
+                    this.baseView = {
+                        center: [mapView.center[0], mapView.center[1]],
+                        zoom: mapView.zoom
+                    };
                 }
 
                 // Reset transformation in case we're doing a full translate

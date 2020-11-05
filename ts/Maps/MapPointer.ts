@@ -10,6 +10,7 @@
 
 'use strict';
 
+import type Chart from '../Core/Chart/Chart';
 import type PointerEvent from '../Core/PointerEvent';
 import Pointer from '../Core/Pointer.js';
 import U from '../Core/Utilities.js';
@@ -38,7 +39,7 @@ declare global {
             onContainerDblClick(e: PointerEvent): void;
             onContainerMouseWheel(e: PointerEvent): void;
         }
-        interface MapPointerChart extends MapChart {
+        interface MapPointerChart extends Chart {
             hoverPoint: MapPoint;
             mapZoom: MapNavigationChart['mapZoom'];
         }

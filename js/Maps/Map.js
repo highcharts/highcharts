@@ -13,6 +13,7 @@ import Chart from '../Core/Chart/Chart.js';
 import H from '../Core/Globals.js';
 import O from '../Core/Options.js';
 var defaultOptions = O.defaultOptions;
+import MapView from 'MapView.js';
 import SVGRenderer from '../Core/Renderer/SVG/SVGRenderer.js';
 import U from '../Core/Utilities.js';
 var addEvent = U.addEvent, extend = U.extend, getOptions = U.getOptions, merge = U.merge, pick = U.pick;
@@ -353,16 +354,12 @@ addEvent(Chart, 'afterSetChartSize', function () {
             hasBounds = true;
         }
     });
-    if (!this.mapView && hasBounds) {
+    if (hasBounds) {
+        if (!this.mapView) {
+            this.mapView = new MapView(this);
+        }
         // Compute the map view inferred from the maps
-        // 256 is the magic number where a world tile is rendered to a 256/256
-        // px square.
-        var scaleToPlotArea = Math.max((bounds.e - bounds.w) / (this.plotWidth / 256), (bounds.s - bounds.n) / (this.plotHeight / 256));
-        var zoom = (Math.log(360 / scaleToPlotArea) / Math.log(2));
-        this.mapView = {
-            center: [(bounds.s + bounds.n) / 2, (bounds.e + bounds.w) / 2],
-            zoom: zoom
-        };
+        this.mapView.fitToBounds(bounds);
     }
 });
 /**
@@ -396,18 +393,7 @@ addEvent(Chart, 'afterSetChartSize', function () {
  *         The chart object.
  */
 var mapChart = H.Map /* fake class for jQuery */ = H.mapChart = function (a, b, c) {
-    var hasRenderToArg = typeof a === 'string' || a.nodeName, options = arguments[hasRenderToArg ? 1 : 0], userOptions = options, hiddenAxis = {
-        endOnTick: false,
-        visible: false,
-        minPadding: 0,
-        maxPadding: 0,
-        startOnTick: false
-    }, seriesOptions, defaultCreditsOptions = getOptions().credits;
-    /* For visual testing
-    hiddenAxis.gridLineWidth = 1;
-    hiddenAxis.gridZIndex = 10;
-    hiddenAxis.tickPositions = undefined;
-    // */
+    var hasRenderToArg = typeof a === 'string' || a.nodeName, options = arguments[hasRenderToArg ? 1 : 0], userOptions = options, seriesOptions, defaultCreditsOptions = getOptions().credits;
     // Don't merge the data
     seriesOptions = options.series;
     options.series = null;
@@ -426,16 +412,9 @@ var mapChart = H.Map /* fake class for jQuery */ = H.mapChart = function (a, b, 
         },
         tooltip: {
             followTouchMove: false
-        },
-        xAxis: hiddenAxis,
-        yAxis: merge(hiddenAxis, { reversed: true })
-    }, options, // user's options
-    {
-        chart: {
-            inverted: false,
-            alignTicks: false
         }
-    });
+    }, options // user's options
+    );
     options.series = userOptions.series = seriesOptions;
     return hasRenderToArg ?
         new Chart(a, options, c) :

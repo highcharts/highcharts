@@ -18,6 +18,7 @@ import Chart from '../Core/Chart/Chart.js';
 import H from '../Core/Globals.js';
 import O from '../Core/Options.js';
 const { defaultOptions } = O;
+import MapView from 'MapView.js';
 import SVGRenderer from '../Core/Renderer/SVG/SVGRenderer.js';
 import U from '../Core/Utilities.js';
 const {
@@ -34,7 +35,7 @@ const {
  */
 declare module '../Core/Chart/ChartLike'{
     interface ChartLike {
-        mapView?: Highcharts.MapView;
+        mapView?: MapView;
     }
 }
 
@@ -44,8 +45,6 @@ declare global {
             // fake class for jQuery
             // @todo remove
         }
-        type LatLng = [number, number];
-        type MapView = { center: LatLng; zoom: number };
         let maps: Record<string, any>;
         function mapChart(): Chart;
         function splitPath(path: string): SVGPath;
@@ -437,8 +436,7 @@ if ((Renderer as any) === VMLRenderer) {
 }
 
 addEvent(Chart, 'afterSetChartSize', function (): void {
-    interface Bounds { n: number; e: number; s: number; w: number }
-    const bounds: Bounds = {
+    const bounds: Highcharts.MapBounds = {
         n: Number.MAX_VALUE,
         e: -Number.MAX_VALUE,
         s: -Number.MAX_VALUE,
@@ -455,22 +453,12 @@ addEvent(Chart, 'afterSetChartSize', function (): void {
         }
     });
 
-    if (!this.mapView && hasBounds) {
+    if (hasBounds) {
+        if (!this.mapView) {
+            this.mapView = new MapView(this);
+        }
         // Compute the map view inferred from the maps
-
-        // 256 is the magic number where a world tile is rendered to a 256/256
-        // px square.
-        const scaleToPlotArea = Math.max(
-            (bounds.e - bounds.w) / (this.plotWidth / 256),
-            (bounds.s - bounds.n) / (this.plotHeight / 256)
-        );
-
-        const zoom = (Math.log(360 / scaleToPlotArea) / Math.log(2));
-
-        this.mapView = {
-            center: [(bounds.s + bounds.n) / 2, (bounds.e + bounds.w) / 2],
-            zoom
-        };
+        this.mapView.fitToBounds(bounds);
     }
 
 });
@@ -514,21 +502,8 @@ const mapChart = H.Map /* fake class for jQuery */ = H.mapChart = function (
     var hasRenderToArg = typeof a === 'string' || (a as any).nodeName,
         options = arguments[hasRenderToArg ? 1 : 0],
         userOptions = options,
-        hiddenAxis = {
-            endOnTick: false,
-            visible: false,
-            minPadding: 0,
-            maxPadding: 0,
-            startOnTick: false
-        },
         seriesOptions,
         defaultCreditsOptions = getOptions().credits;
-
-    /* For visual testing
-    hiddenAxis.gridLineWidth = 1;
-    hiddenAxis.gridZIndex = 10;
-    hiddenAxis.tickPositions = undefined;
-    // */
 
     // Don't merge the data
     seriesOptions = options.series;
@@ -556,18 +531,9 @@ const mapChart = H.Map /* fake class for jQuery */ = H.mapChart = function (
             },
             tooltip: {
                 followTouchMove: false
-            },
-            xAxis: hiddenAxis,
-            yAxis: merge(hiddenAxis, { reversed: true })
-        },
-        options, // user's options
-
-        { // forced options
-            chart: {
-                inverted: false,
-                alignTicks: false
             }
-        }
+        },
+        options // user's options
     );
 
     options.series = userOptions.series = seriesOptions;

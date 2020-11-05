@@ -704,8 +704,10 @@ BaseSeries.seriesType('map', 'scatter',
             // properties are the axis values in the plot area's upper left
             // corner.
             if (mapView) {
-                this.baseView = merge(mapView);
-                this.baseView.center = [mapView.center[0], mapView.center[1]];
+                this.baseView = {
+                    center: [mapView.center[0], mapView.center[1]],
+                    zoom: mapView.zoom
+                };
             }
             // Reset transformation in case we're doing a full translate
             // (#3789)
