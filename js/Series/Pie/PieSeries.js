@@ -283,7 +283,8 @@ var PieSeries = /** @class */ (function (_super) {
             point = points[i];
             // set start and end angle
             start = startAngleRad + (cumulative * circ);
-            if (!ignoreHiddenPoint || point.visible) {
+            if (point.isValid() &&
+                (!ignoreHiddenPoint || point.visible)) {
                 cumulative += point.percentage / 100;
             }
             end = startAngleRad + (cumulative * circ);
@@ -378,11 +379,10 @@ var PieSeries = /** @class */ (function (_super) {
         // Get the total sum
         for (i = 0; i < len; i++) {
             point = points[i];
-            total += (ignoreHiddenPoint && !point.visible) ?
-                0 :
-                point.isNull ?
-                    0 :
-                    point.y;
+            if (point.isValid() &&
+                (!ignoreHiddenPoint || point.visible)) {
+                total += point.y;
+            }
         }
         this.total = total;
         // Set each point's properties

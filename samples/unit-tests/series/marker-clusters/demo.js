@@ -360,6 +360,22 @@ QUnit.test('General marker-clusters', function (assert) {
         'Parent point should be hidden before animation.'
     );
 
+    // (#13981)
+    chart = Highcharts.chart('container', {
+        series: [{
+            cluster: {
+                enabled: true
+            },
+            type: 'scatter',
+            data: []
+        }]
+    });
+
+    assert.ok(
+        !chart.series[0].markerClusterInfo,
+        'Marker clusters should not be generated when a series has empty data (#13981).'
+    );
+
     // (#13302)
     var done = assert.async(),
         url = location.host.substr(0, 12) === 'localhost:98' ?

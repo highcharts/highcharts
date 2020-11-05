@@ -1015,7 +1015,10 @@ class PieSeries extends LineSeries {
 
             // set start and end angle
             start = startAngleRad + (cumulative * circ);
-            if (!ignoreHiddenPoint || point.visible) {
+            if (
+                point.isValid() &&
+                (!ignoreHiddenPoint || point.visible)
+            ) {
                 cumulative += (point.percentage as any) / 100;
             }
             end = startAngleRad + (cumulative * circ);
@@ -1145,11 +1148,12 @@ class PieSeries extends LineSeries {
         // Get the total sum
         for (i = 0; i < len; i++) {
             point = points[i];
-            total += (ignoreHiddenPoint && !point.visible) ?
-                0 :
-                point.isNull ?
-                    0 :
-                    (point.y as any);
+            if (
+                point.isValid() &&
+                (!ignoreHiddenPoint || point.visible)
+            ) {
+                total += point.y as any;
+            }
         }
         this.total = total;
 
