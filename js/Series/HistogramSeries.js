@@ -161,6 +161,7 @@ BaseSeries.seriesType('histogram', 'column',
         data.sort(function (a, b) {
             return a.x - b.x;
         });
+        data[data.length - 1].x2 = max;
         return data;
     },
     binsNumber: function () {

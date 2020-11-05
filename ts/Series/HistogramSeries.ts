@@ -302,6 +302,8 @@ BaseSeries.seriesType<typeof Highcharts.HistogramSeries>(
                 return (a.x as any) - (b.x as any);
             });
 
+            data[data.length - 1].x2 = max;
+
             return data;
         },
 

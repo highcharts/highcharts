@@ -313,3 +313,23 @@ QUnit.test('#14289: Infinite loop', assert => {
 
     assert.ok(true, 'Histogram should not enter infinite loop');
 });
+
+QUnit.test('#14425: Last bin x2 inaccuracy', assert => {
+    const chart = Highcharts.chart('container', {
+        xAxis: [{}, {}],
+        yAxis: [{}, {}],
+        series: [{
+            type: 'histogram',
+            xAxis: 1,
+            yAxis: 1,
+            baseSeries: 's1'
+        }, {
+            type: 'scatter',
+            data: [20, 20, 20, 20, 20, 20, 20, 20, 20, 20, 20, 20, 20, 20, 20, 20, 20, 20, 20, 20, 20, 20, 20, 20, 20, 20, 20, 20, 20, 20, 20, 20, 20, 20, 21, 21, 21, 21],
+            id: 's1'
+        }]
+    });
+
+    const points = chart.series[0].points;
+    assert.strictEqual(points[points.length - 1].x2, 21, 'Last bin x2 should equal data max');
+});
