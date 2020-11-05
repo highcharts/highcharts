@@ -7143,3 +7143,40 @@ QUnit.test('#14428: Update point.drilldown', assert => {
 
     assert.strictEqual(chart.series[0].points[0].y, 3, 'The chart should be drilled down');
 });
+
+QUnit.test('#14458: Drilling down 3d chart points with the same name threw', assert => {
+    const chart = Highcharts.chart('container', {
+        chart: {
+            type: 'column',
+            options3d: {
+                enabled: true,
+                alpha: 5,
+                beta: 5,
+                depth: 100
+            }
+        },
+        xAxis: {
+            type: 'category'
+        },
+        series: [{
+            data: [{
+                y: 0,
+                name: '1'
+            }, {
+                y: 1,
+                name: '2',
+                drilldown: 'x'
+            }]
+        }],
+        drilldown: {
+            series: [{
+                id: 'x',
+                data: [{ y: 0, name: '2' }]
+            }]
+        }
+    });
+
+    Highcharts.fireEvent(chart.series[0].points[1], 'click');
+
+    assert.ok(true, 'Drilling down should not throw');
+});
