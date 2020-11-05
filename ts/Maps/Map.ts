@@ -436,31 +436,18 @@ if ((Renderer as any) === VMLRenderer) {
 }
 
 addEvent(Chart, 'afterSetChartSize', function (): void {
-    const bounds: Highcharts.MapBounds = {
-        n: Number.MAX_VALUE,
-        e: -Number.MAX_VALUE,
-        s: -Number.MAX_VALUE,
-        w: Number.MAX_VALUE
-    };
-    let hasBounds = false;
-    this.series.forEach((s): void => {
-        if ((s as any).useMapGeometry) {
-            bounds.n = Math.min(bounds.n, (s as any).minY);
-            bounds.e = Math.max(bounds.e, (s as any).maxX);
-            bounds.s = Math.max(bounds.s, (s as any).maxY);
-            bounds.w = Math.min(bounds.w, (s as any).minX);
-            hasBounds = true;
-        }
-    });
 
-    if (hasBounds) {
-        if (!this.mapView) {
-            this.mapView = new MapView(this);
+    if (!this.mapView) {
+        const mapView = new MapView(this);
+
+        // Apply the bounds inferred from the maps
+        const bounds = mapView.getDataBounds();
+
+        if (bounds) {
+            mapView.fitToBounds(bounds);
+            this.mapView = mapView;
         }
-        // Compute the map view inferred from the maps
-        this.mapView.fitToBounds(bounds);
     }
-
 });
 
 /**

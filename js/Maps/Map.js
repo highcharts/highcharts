@@ -338,28 +338,14 @@ if (Renderer === VMLRenderer) {
     });
 }
 addEvent(Chart, 'afterSetChartSize', function () {
-    var bounds = {
-        n: Number.MAX_VALUE,
-        e: -Number.MAX_VALUE,
-        s: -Number.MAX_VALUE,
-        w: Number.MAX_VALUE
-    };
-    var hasBounds = false;
-    this.series.forEach(function (s) {
-        if (s.useMapGeometry) {
-            bounds.n = Math.min(bounds.n, s.minY);
-            bounds.e = Math.max(bounds.e, s.maxX);
-            bounds.s = Math.max(bounds.s, s.maxY);
-            bounds.w = Math.min(bounds.w, s.minX);
-            hasBounds = true;
+    if (!this.mapView) {
+        var mapView = new MapView(this);
+        // Apply the bounds inferred from the maps
+        var bounds = mapView.getDataBounds();
+        if (bounds) {
+            mapView.fitToBounds(bounds);
+            this.mapView = mapView;
         }
-    });
-    if (hasBounds) {
-        if (!this.mapView) {
-            this.mapView = new MapView(this);
-        }
-        // Compute the map view inferred from the maps
-        this.mapView.fitToBounds(bounds);
     }
 });
 /**

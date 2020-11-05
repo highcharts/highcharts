@@ -1411,23 +1411,23 @@ BaseSeries.seriesType<typeof Highcharts.MapSeries>(
          * @function Highcharts.Point#zoomTo
          */
         zoomTo: function (this: Highcharts.MapPoint): void {
-            var point = this as (
-                    Highcharts.MapPoint&
-                    Highcharts.MapPointCacheObject
-                ),
-                series = point.series;
+            const point = this as (
+                Highcharts.MapPoint&
+                Highcharts.MapPointCacheObject
+            );
+            const chart = point.series.chart;
 
-            series.xAxis.setExtremes(
-                point._minX,
-                point._maxX,
-                false
-            );
-            series.yAxis.setExtremes(
-                point._minY,
-                point._maxY,
-                false
-            );
-            series.chart.redraw();
+            if (chart.mapView) {
+                chart.mapView.fitToBounds({
+                    n: point._minY || 0,
+                    e: point._maxX || 0,
+                    s: point._maxY || 0,
+                    w: point._minX || 0
+                });
+
+                (point.series as any).isDirty = true;
+                chart.redraw();
+            }
         }
     }, colorMapPointMixin)
 );

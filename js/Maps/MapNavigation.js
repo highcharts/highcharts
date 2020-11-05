@@ -166,22 +166,6 @@ MapNavigation.prototype.updateEvents = function (options) {
 };
 // Add events to the Chart object itself
 extend(Chart.prototype, /** @lends Chart.prototype */ {
-    setMapView: function (center, zoom) {
-        if (this.mapView) {
-            if (center) {
-                this.mapView.center = center;
-            }
-            if (typeof zoom === 'number') {
-                this.mapView.zoom = zoom;
-            }
-            this.series.forEach(function (s) {
-                if (s.useMapGeometry) {
-                    s.isDirty = true;
-                }
-            });
-            this.redraw();
-        }
-    },
     /**
      * Fit an inner box to an outer. If the inner box overflows left or right,
      * align it to the sides of the outer. If it overflows both sides, fit it
@@ -247,35 +231,16 @@ extend(Chart.prototype, /** @lends Chart.prototype */ {
      * @param {number} [chartY]
      *        Keep this chart position stationary if possible.
      *
-     * @todo
-     *        - Stick to bounds
-     *        - Reset zoom
+     * @deprecated
      * @return {void}
      */
     mapZoom: function (howMuch, lat, lng, chartX, chartY) {
-        var mapView = this.mapView;
-        if (mapView && typeof howMuch === 'number') {
-            var zoom = mapView.zoom + howMuch;
-            var center = void 0;
-            // Keep chartX and chartY stationary - convert to lat and lng
-            if (typeof chartX === 'number' && typeof chartY === 'number') {
-                var transA = (256 / 360) * Math.pow(2, mapView.zoom);
-                var offsetX = chartX - this.plotLeft - this.plotWidth / 2;
-                var offsetY = chartY - this.plotTop - this.plotHeight / 2;
-                lat = mapView.center[0] + offsetY / transA;
-                lng = mapView.center[1] + offsetX / transA;
-            }
-            // Keep lat and lng stationary by adjusting the center
-            if (typeof lat === 'number' && typeof lng === 'number') {
-                var scale = 1 - Math.pow(2, mapView.zoom) / Math.pow(2, zoom);
-                center = mapView.center;
-                var offsetLat = center[0] - lat;
-                var offsetLng = center[1] - lng;
-                center[0] -= offsetLat * scale;
-                center[1] -= offsetLng * scale;
-            }
-            this.setMapView(center, zoom);
-        }
+        var _a;
+        (_a = this.mapView) === null || _a === void 0 ? void 0 : _a.zoomBy(howMuch, typeof lat === 'number' && typeof lng === 'number' ?
+            [lat, lng] :
+            void 0, typeof chartX === 'number' && typeof chartY === 'number' ?
+            [chartX, chartY] :
+            void 0);
         /*
         var chart = this,
             xAxis = chart.xAxis[0],

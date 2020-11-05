@@ -72,10 +72,6 @@ declare global {
                 chartX?: number,
                 chartY?: number
             ): void;
-            setMapView(
-                center?: Highcharts.LatLng,
-                zoom?: number
-            ): void;
         }
         interface MapNavigationOptions {
             buttonOptions?: MapNavigationButtonOptions;
@@ -331,28 +327,6 @@ MapNavigation.prototype.updateEvents = function (
 // Add events to the Chart object itself
 extend(Chart.prototype, /** @lends Chart.prototype */ {
 
-    setMapView: function (
-        this: Highcharts.MapNavigationChart,
-        center?: Highcharts.LatLng,
-        zoom?: number
-    ): void {
-        if (this.mapView) {
-            if (center) {
-                this.mapView.center = center;
-            }
-            if (typeof zoom === 'number') {
-                this.mapView.zoom = zoom;
-            }
-            this.series.forEach((s): void => {
-                if ((s as any).useMapGeometry) {
-                    s.isDirty = true;
-                }
-            });
-
-            this.redraw();
-        }
-    },
-
     /**
      * Fit an inner box to an outer. If the inner box overflows left or right,
      * align it to the sides of the outer. If it overflows both sides, fit it
@@ -428,9 +402,7 @@ extend(Chart.prototype, /** @lends Chart.prototype */ {
      * @param {number} [chartY]
      *        Keep this chart position stationary if possible.
      *
-     * @todo
-     *        - Stick to bounds
-     *        - Reset zoom
+     * @deprecated
      * @return {void}
      */
     mapZoom: function (
@@ -441,36 +413,15 @@ extend(Chart.prototype, /** @lends Chart.prototype */ {
         chartX?: number,
         chartY?: number
     ): void {
-        const mapView = this.mapView;
-        if (mapView && typeof howMuch === 'number') {
-            const zoom = mapView.zoom + howMuch;
-
-            let center: Highcharts.LatLng|undefined;
-
-            // Keep chartX and chartY stationary - convert to lat and lng
-            if (typeof chartX === 'number' && typeof chartY === 'number') {
-                const transA = (256 / 360) * Math.pow(2, mapView.zoom);
-
-                const offsetX = chartX - this.plotLeft - this.plotWidth / 2;
-                const offsetY = chartY - this.plotTop - this.plotHeight / 2;
-                lat = mapView.center[0] + offsetY / transA;
-                lng = mapView.center[1] + offsetX / transA;
-            }
-
-            // Keep lat and lng stationary by adjusting the center
-            if (typeof lat === 'number' && typeof lng === 'number') {
-                const scale = 1 - Math.pow(2, mapView.zoom) / Math.pow(2, zoom);
-
-                center = mapView.center;
-                const offsetLat = center[0] - lat;
-                const offsetLng = center[1] - lng;
-
-                center[0] -= offsetLat * scale;
-                center[1] -= offsetLng * scale;
-            }
-
-            this.setMapView(center, zoom);
-        }
+        this.mapView?.zoomBy(
+            howMuch,
+            typeof lat === 'number' && typeof lng === 'number' ?
+                [lat, lng] :
+                void 0,
+            typeof chartX === 'number' && typeof chartY === 'number' ?
+                [chartX, chartY] :
+                void 0
+        );
         /*
         var chart = this,
             xAxis = chart.xAxis[0],
