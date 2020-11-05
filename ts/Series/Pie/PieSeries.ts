@@ -674,7 +674,17 @@ class PieSeries extends LineSeries {
      *
      * */
 
+    public center: Array<number> = void 0 as any;
+
+    public data: Array<PiePoint> = void 0 as any;
+
     public endAngleRad?: number;
+
+    public maxLabelDistance: number = void 0 as any;
+
+    public options: PieSeriesOptions = void 0 as any;
+
+    public points: Array<PiePoint> = void 0 as any;
 
     public shadowGroup?: SVGElement;
 
@@ -1179,35 +1189,36 @@ class PieSeries extends LineSeries {
  * */
 
 interface PieSeries {
-    center: Array<number>;
-    data: Array<PiePoint>;
     getCenter: typeof CenteredSeriesMixin['getCenter'];
-    maxLabelDistance: number;
-    options: PieSeriesOptions;
     pointClass: typeof PiePoint;
-    points: Array<PiePoint>;
-    drawEmpty(): void;
-    getX(y: number, left: boolean, point: PiePoint): number;
-    redrawPoints(): void;
-    sortByAngle(points: Array<PiePoint>, sign: number): void;
-    translate(positions?: Array<number>): void;
-    updateTotals(): void;
 }
 extend(
     PieSeries.prototype,
     {
         axisTypes: [],
+
         directTouch: true,
+
         drawGraph: null as any,
+
         drawLegendSymbol: LegendSymbolMixin.drawRectangle,
+
         getCenter: CenteredSeriesMixin.getCenter,
+
         getSymbol: noop as any,
+
         isCartesian: false,
+
         noSharedTooltip: true,
+
         pointAttribs: ColumnSeries.prototype.pointAttribs,
+
         pointClass: PiePoint,
+
         requireSorting: false,
+
         searchPoint: noop as any,
+
         trackerGroups: ['group', 'dataLabelsGroup']
     }
 );

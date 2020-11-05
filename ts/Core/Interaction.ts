@@ -85,6 +85,7 @@ declare module './Series/SeriesLike' {
     interface SeriesLike {
         _hasTracking?: boolean;
         halo?: SVGElement;
+        selected?: boolean;
         stateMarkerGraphic?: SVGElement;
         tracker?: SVGElement;
         trackerGroups?: Array<string>;

@@ -71,7 +71,13 @@ class PiePoint extends Point {
 
     public half?: number;
 
+    public labelDistance: number = void 0 as any;
+
     public labelPosition?: PiePoint.LabelPositionObject;
+
+    public options: PiePointOptions = void 0 as any;
+
+    public series: PieSeries = void 0 as any;
 
     public shadowGroup?: SVGElement;
 
@@ -293,10 +299,6 @@ class PiePoint extends Point {
 
 interface PiePoint {
     connectorShapes: Record<string, PiePoint.ConnectorShapeFunction>;
-    labelDistance: number;
-    name: string;
-    options: PiePointOptions;
-    series: PieSeries;
 }
 extend(PiePoint.prototype, {
     connectorShapes: {

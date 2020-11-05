@@ -960,7 +960,7 @@ class Chart {
      *         The currently selected series.
      */
     public getSelectedSeries(): Array<LineSeries> {
-        return this.series.filter(function (serie): boolean {
+        return this.series.filter(function (serie): (boolean|undefined) {
             return serie.selected;
         });
     }

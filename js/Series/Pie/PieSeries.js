@@ -51,7 +51,24 @@ import '../../Core/Options.js';
 var PieSeries = /** @class */ (function (_super) {
     __extends(PieSeries, _super);
     function PieSeries() {
-        return _super !== null && _super.apply(this, arguments) || this;
+        /* *
+         *
+         *  Static Properties
+         *
+         * */
+        var _this = _super !== null && _super.apply(this, arguments) || this;
+        /* *
+         *
+         *  Properties
+         *
+         * */
+        _this.center = void 0;
+        _this.data = void 0;
+        _this.maxLabelDistance = void 0;
+        _this.options = void 0;
+        _this.points = void 0;
+        return _this;
+        /* eslint-enable valid-jsdoc */
     }
     /* *
      *
@@ -395,11 +412,6 @@ var PieSeries = /** @class */ (function (_super) {
             point.total = total;
         }
     };
-    /* *
-     *
-     *  Static Properties
-     *
-     * */
     /**
      * A pie chart is a circular graphic which is divided into slices to
      * illustrate numerical proportion.

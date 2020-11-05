@@ -34,7 +34,16 @@ var addEvent = U.addEvent, defined = U.defined, extend = U.extend, isNumber = U.
 var PiePoint = /** @class */ (function (_super) {
     __extends(PiePoint, _super);
     function PiePoint() {
-        return _super !== null && _super.apply(this, arguments) || this;
+        /* *
+         *
+         *  Properties
+         *
+         * */
+        var _this = _super !== null && _super.apply(this, arguments) || this;
+        _this.labelDistance = void 0;
+        _this.options = void 0;
+        _this.series = void 0;
+        return _this;
     }
     /* *
      *
