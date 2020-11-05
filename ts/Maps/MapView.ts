@@ -8,6 +8,7 @@
  *
  * */
 
+import AnimationOptionsObject from '../Core/Animation/AnimationOptionsObject.js';
 import Chart from '../Core/Chart/Chart.js';
 import H from '../Core/Globals.js';
 
@@ -71,19 +72,20 @@ class MapView {
         return hasBounds ? bounds : void 0;
     }
 
-    public redraw(): void {
+    public redraw(animation?: boolean|Partial<AnimationOptionsObject>): void {
         this.chart.series.forEach((s): void => {
             if ((s as any).useMapGeometry) {
                 s.isDirty = true;
             }
         });
 
-        this.chart.redraw();
+        this.chart.redraw(animation);
     }
 
     public setView(
         center?: Highcharts.LatLng,
-        zoom?: number
+        zoom?: number,
+        animation?: boolean|Partial<AnimationOptionsObject>
     ): void {
         if (center) {
             this.center = center;
@@ -126,7 +128,7 @@ class MapView {
             }
         }
 
-        this.redraw();
+        this.redraw(animation);
     }
 
     public toPixels(pos: Highcharts.LatLng): { x: number; y: number } {

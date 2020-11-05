@@ -10,46 +10,46 @@
 
 'use strict';
 
+import type LineSeries from '../../Series/Line/LineSeries';
 import type AnimationOptionsObject from '../Animation/AnimationOptionsObject';
+import A from '../Animation/AnimationUtilities.js';
+import Axis from '../Axis/Axis.js';
 import type { AxisType } from '../Axis/Types';
+import H from '../Globals.js';
+import Legend from '../Legend.js';
+import MSPointer from '../MSPointer.js';
+import O from '../Options.js';
+import Pointer from '../Pointer.js';
 import type BBoxObject from '../Renderer/BBoxObject';
 import type {
     CSSObject,
     CursorValue
 } from '../Renderer/CSSObject';
-import type ChartLike from './ChartLike';
-import type LineSeries from '../../Series/Line/LineSeries';
+import type { HTMLDOMElement } from '../Renderer/DOMElementType';
+import type SVGAttributes from '../Renderer/SVG/SVGAttributes';
+import type SVGElement from '../Renderer/SVG/SVGElement';
+import SVGRenderer from '../Renderer/SVG/SVGRenderer.js';
 import type Point from '../Series/Point';
+import BaseSeries from '../Series/Series.js';
 import type SeriesOptions from '../Series/SeriesOptions';
 import type {
     SeriesTypeOptions,
     SeriesTypePlotOptions
 } from '../Series/SeriesType';
-import type { HTMLDOMElement } from '../Renderer/DOMElementType';
-import type SVGAttributes from '../Renderer/SVG/SVGAttributes';
-import type SVGElement from '../Renderer/SVG/SVGElement';
-import A from '../Animation/AnimationUtilities.js';
+import Time from '../Time.js';
+import U from '../Utilities.js';
+import type ChartLike from './ChartLike';
 const {
     animate,
     animObject,
     setAnimation
 } = A;
-import Axis from '../Axis/Axis.js';
-import BaseSeries from '../Series/Series.js';
-import H from '../Globals.js';
 const {
     charts,
     doc,
     win
 } = H;
-import Legend from '../Legend.js';
-import MSPointer from '../MSPointer.js';
-import O from '../Options.js';
 const { defaultOptions } = O;
-import Pointer from '../Pointer.js';
-import SVGRenderer from '../Renderer/SVG/SVGRenderer.js';
-import Time from '../Time.js';
-import U from '../Utilities.js';
 const {
     addEvent,
     attr,

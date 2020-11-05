@@ -40,15 +40,15 @@ var MapView = /** @class */ (function () {
         });
         return hasBounds ? bounds : void 0;
     };
-    MapView.prototype.redraw = function () {
+    MapView.prototype.redraw = function (animation) {
         this.chart.series.forEach(function (s) {
             if (s.useMapGeometry) {
                 s.isDirty = true;
             }
         });
-        this.chart.redraw();
+        this.chart.redraw(animation);
     };
-    MapView.prototype.setView = function (center, zoom) {
+    MapView.prototype.setView = function (center, zoom, animation) {
         if (center) {
             this.center = center;
         }
@@ -87,7 +87,7 @@ var MapView = /** @class */ (function () {
                 cntr[0] += Math.min(se.y - plotHeight, nw.y) / scale;
             }
         }
-        this.redraw();
+        this.redraw(animation);
     };
     MapView.prototype.toPixels = function (pos) {
         var lat = pos[0], lng = pos[1];

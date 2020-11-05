@@ -9,6 +9,13 @@
  * */
 /* eslint-disable no-invalid-this */
 'use strict';
+var __spreadArrays = (this && this.__spreadArrays) || function () {
+    for (var s = 0, i = 0, il = arguments.length; i < il; i++) s += arguments[i].length;
+    for (var r = Array(s), k = 0, i = 0; i < il; i++)
+        for (var a = arguments[i], j = 0, jl = a.length; j < jl; j++, k++)
+            r[k] = a[j];
+    return r;
+};
 import Chart from '../Core/Chart/Chart.js';
 import H from '../Core/Globals.js';
 import O from '../Core/Options.js';
@@ -347,6 +354,29 @@ addEvent(Chart, 'afterSetChartSize', function () {
             mapView.minZoom = mapView.zoom;
             this.mapView = mapView;
         }
+    }
+});
+var mouseDownCenter;
+var mouseDownKey;
+addEvent(Chart, 'pan', function (e) {
+    var _a = this, mapView = _a.mapView, mouseDownX = _a.mouseDownX, mouseDownY = _a.mouseDownY;
+    if (mapView &&
+        typeof mouseDownX === 'number' &&
+        typeof mouseDownY === 'number') {
+        var key = mouseDownX + "," + mouseDownY;
+        var _b = e.originalEvent, chartX = _b.chartX, chartY = _b.chartY;
+        var scale = (256 / 360) * Math.pow(2, mapView.zoom);
+        // Reset starting position
+        if (key !== mouseDownKey) {
+            mouseDownCenter = __spreadArrays(mapView.center);
+            mouseDownKey = key;
+        }
+        var center = [
+            mouseDownCenter[0] + (mouseDownY - chartY) / scale,
+            mouseDownCenter[1] + (mouseDownX - chartX) / scale
+        ];
+        mapView.setView(center, void 0, false);
+        e.preventDefault();
     }
 });
 /**

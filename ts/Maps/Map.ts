@@ -436,7 +436,6 @@ if ((Renderer as any) === VMLRenderer) {
 }
 
 addEvent(Chart, 'afterSetChartSize', function (): void {
-
     if (!this.mapView) {
         const mapView = new MapView(this);
 
@@ -448,6 +447,40 @@ addEvent(Chart, 'afterSetChartSize', function (): void {
             mapView.minZoom = mapView.zoom;
             this.mapView = mapView;
         }
+    }
+});
+
+let mouseDownCenter: Highcharts.LatLng;
+let mouseDownKey: string;
+addEvent(Chart, 'pan', function (e: PointerEvent): void {
+    const {
+        mapView,
+        mouseDownX,
+        mouseDownY
+    } = this;
+    if (
+        mapView &&
+        typeof mouseDownX === 'number' &&
+        typeof mouseDownY === 'number'
+    ) {
+        const key = `${mouseDownX},${mouseDownY}`;
+        const { chartX, chartY } = (e as any).originalEvent;
+        const scale = (256 / 360) * Math.pow(2, mapView.zoom);
+
+        // Reset starting position
+        if (key !== mouseDownKey) {
+            mouseDownCenter = [...mapView.center];
+            mouseDownKey = key;
+        }
+
+        const center: Highcharts.LatLng = [
+            mouseDownCenter[0] + (mouseDownY - chartY) / scale,
+            mouseDownCenter[1] + (mouseDownX - chartX) / scale
+        ];
+
+        mapView.setView(center, void 0, false);
+
+        e.preventDefault();
     }
 });
 
