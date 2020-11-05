@@ -344,6 +344,7 @@ addEvent(Chart, 'afterSetChartSize', function () {
         var bounds = mapView.getDataBounds();
         if (bounds) {
             mapView.fitToBounds(bounds);
+            mapView.minZoom = mapView.zoom;
             this.mapView = mapView;
         }
     }

@@ -32,6 +32,7 @@ class MapView {
         this.zoom = 0;
     }
     public center: Highcharts.LatLng;
+    public minZoom?: number;
     public zoom: number;
 
     private chart: Chart;
@@ -88,9 +89,54 @@ class MapView {
             this.center = center;
         }
         if (typeof zoom === 'number') {
+            if (typeof this.minZoom === 'number') {
+                zoom = Math.max(zoom, this.minZoom);
+            }
             this.zoom = zoom;
         }
+
+        // Stay within the data bounds
+        const bounds = this.getDataBounds();
+        if (bounds) {
+            const cntr = this.center;
+            const { plotWidth, plotHeight } = this.chart;
+            const scale = (256 / 360) * Math.pow(2, this.zoom);
+            const nw = this.toPixels([bounds.n, bounds.w]);
+            const se = this.toPixels([bounds.s, bounds.e]);
+
+            // Off west
+            if (nw.x < 0 && se.x < plotWidth) {
+                // Adjust eastwards
+                cntr[1] += Math.max(nw.x, se.x - plotWidth) / scale;
+            }
+            // Off east
+            if (se.x > plotWidth && nw.x > 0) {
+                // Adjust westwards
+                cntr[1] += Math.min(se.x - plotWidth, nw.x) / scale;
+            }
+            // Off north
+            if (nw.y < 0 && se.y < plotHeight) {
+                // Adjust southwards
+                cntr[0] += Math.max(nw.y, se.y - plotHeight) / scale;
+            }
+            // Off south
+            if (se.y > plotHeight && nw.y > 0) {
+                // Adjust northwards
+                cntr[0] += Math.min(se.y - plotHeight, nw.y) / scale;
+            }
+        }
+
         this.redraw();
+    }
+
+    public toPixels(pos: Highcharts.LatLng): { x: number; y: number } {
+        const [lat, lng] = pos;
+        const scale = (256 / 360) * Math.pow(2, this.zoom);
+        const centerPxX = this.chart.plotWidth / 2;
+        const centerPxY = this.chart.plotHeight / 2;
+        const x = centerPxX - scale * (this.center[1] - lng);
+        const y = centerPxY - scale * (this.center[0] - lat);
+        return { x, y };
     }
 
     public zoomBy(

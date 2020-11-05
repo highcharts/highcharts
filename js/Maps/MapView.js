@@ -53,9 +53,50 @@ var MapView = /** @class */ (function () {
             this.center = center;
         }
         if (typeof zoom === 'number') {
+            if (typeof this.minZoom === 'number') {
+                zoom = Math.max(zoom, this.minZoom);
+            }
             this.zoom = zoom;
         }
+        // Stay within the data bounds
+        var bounds = this.getDataBounds();
+        if (bounds) {
+            var cntr = this.center;
+            var _a = this.chart, plotWidth = _a.plotWidth, plotHeight = _a.plotHeight;
+            var scale = (256 / 360) * Math.pow(2, this.zoom);
+            var nw = this.toPixels([bounds.n, bounds.w]);
+            var se = this.toPixels([bounds.s, bounds.e]);
+            // Off west
+            if (nw.x < 0 && se.x < plotWidth) {
+                // Adjust eastwards
+                cntr[1] += Math.max(nw.x, se.x - plotWidth) / scale;
+            }
+            // Off east
+            if (se.x > plotWidth && nw.x > 0) {
+                // Adjust westwards
+                cntr[1] += Math.min(se.x - plotWidth, nw.x) / scale;
+            }
+            // Off north
+            if (nw.y < 0 && se.y < plotHeight) {
+                // Adjust southwards
+                cntr[0] += Math.max(nw.y, se.y - plotHeight) / scale;
+            }
+            // Off south
+            if (se.y > plotHeight && nw.y > 0) {
+                // Adjust northwards
+                cntr[0] += Math.min(se.y - plotHeight, nw.y) / scale;
+            }
+        }
         this.redraw();
+    };
+    MapView.prototype.toPixels = function (pos) {
+        var lat = pos[0], lng = pos[1];
+        var scale = (256 / 360) * Math.pow(2, this.zoom);
+        var centerPxX = this.chart.plotWidth / 2;
+        var centerPxY = this.chart.plotHeight / 2;
+        var x = centerPxX - scale * (this.center[1] - lng);
+        var y = centerPxY - scale * (this.center[0] - lat);
+        return { x: x, y: y };
     };
     MapView.prototype.zoomBy = function (howMuch, coords, chartCoords) {
         var chart = this.chart;
