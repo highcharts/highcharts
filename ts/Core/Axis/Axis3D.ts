@@ -766,7 +766,7 @@ class Axis3D {
 
             // Check whether the tick is not the first one and previous tick
             // exists, then calculate position of previous label.
-            if (tickId !== 0 && prevTick && (prevTick.label as any).xy) {
+            if (tickId !== 0 && prevTick && prevTick.label && (prevTick.label as any).xy) {
                 prevLabelPos = perspective3D({ // #8621
                     x: (prevTick.label as any).xy.x,
                     y: (prevTick.label as any).xy.y,
@@ -775,7 +775,7 @@ class Axis3D {
             }
             // If next label position is defined, then recalculate its position
             // basing on the perspective.
-            if (nextTick && (nextTick.label as any).xy) {
+            if (nextTick && nextTick.label && (nextTick.label as any).xy) {
                 nextLabelPos = perspective3D({
                     x: (nextTick.label as any).xy.x,
                     y: (nextTick.label as any).xy.y,
