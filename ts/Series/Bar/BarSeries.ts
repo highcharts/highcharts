@@ -56,9 +56,9 @@ class BarSeries extends ColumnSeries {
      * @sample highcharts/demo/bar-basic/
      *         Bar chart
      *
-     * @extends       plotOptions.column
-     * @product       highcharts
-     * @optionsparent plotOptions.bar
+     * @extends      plotOptions.column
+     * @product      highcharts
+     * @optionparent plotOptions.bar
      */
     public static defaultOptions: BarSeriesOptions = merge(ColumnSeries.defaultOptions, {
         // nothing here yet
