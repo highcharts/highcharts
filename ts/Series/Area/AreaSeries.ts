@@ -16,23 +16,23 @@
  *
  * */
 
-import type ColorType from '../Core/Color/ColorType';
-import type LinePoint from './Line/LinePoint';
-import type LinePointOptions from './Line/LinePointOptions';
-import type LineSeriesOptions from './Line/LineSeriesOptions';
+import type ColorType from '../../Core/Color/ColorType';
+import type LinePoint from '../Line/LinePoint';
+import type LinePointOptions from '../Line/LinePointOptions';
+import type LineSeriesOptions from '../Line/LineSeriesOptions';
 import type {
     SeriesStatesOptions,
     SeriesZonesOptions
-} from '../Core/Series/SeriesOptions';
-import type StackingAxis from '../Core/Axis/StackingAxis';
-import type SVGAttributes from '../Core/Renderer/SVG/SVGAttributes';
-import type SVGPath from '../Core/Renderer/SVG/SVGPath';
-import BaseSeries from '../Core/Series/Series.js';
-import Color from '../Core/Color/Color.js';
+} from '../../Core/Series/SeriesOptions';
+import type StackingAxis from '../../Core/Axis/StackingAxis';
+import type SVGAttributes from '../../Core/Renderer/SVG/SVGAttributes';
+import type SVGPath from '../../Core/Renderer/SVG/SVGPath';
+import BaseSeries from '../../Core/Series/Series.js';
+import Color from '../../Core/Color/Color.js';
 const { parse: color } = Color;
-import LegendSymbolMixin from '../Mixins/LegendSymbol.js';
-import LineSeries from './Line/LineSeries.js';
-import U from '../Core/Utilities.js';
+import LegendSymbolMixin from '../../Mixins/LegendSymbol.js';
+import LineSeries from '../Line/LineSeries.js';
+import U from '../../Core/Utilities.js';
 const {
     extend,
     merge,
@@ -46,7 +46,7 @@ const {
  *
  * */
 
-declare module '../Core/Renderer/SVG/SVGPath' {
+declare module '../../Core/Renderer/SVG/SVGPath' {
     interface SVGPath {
         xMap?: number;
         isArea?: boolean;
@@ -674,7 +674,7 @@ extend(AreaSeries.prototype, {
  *
  * */
 
-declare module '../Core/Series/SeriesType' {
+declare module '../../Core/Series/SeriesType' {
     interface SeriesTypeRegistry {
         area: typeof Highcharts.AreaSeries;
     }
