@@ -1192,36 +1192,34 @@ interface PieSeries {
     getCenter: typeof CenteredSeriesMixin['getCenter'];
     pointClass: typeof PiePoint;
 }
-extend(
-    PieSeries.prototype,
-    {
-        axisTypes: [],
+extend(PieSeries.prototype, {
 
-        directTouch: true,
+    axisTypes: [],
 
-        drawGraph: null as any,
+    directTouch: true,
 
-        drawLegendSymbol: LegendSymbolMixin.drawRectangle,
+    drawGraph: null as any,
 
-        getCenter: CenteredSeriesMixin.getCenter,
+    drawLegendSymbol: LegendSymbolMixin.drawRectangle,
 
-        getSymbol: noop as any,
+    getCenter: CenteredSeriesMixin.getCenter,
 
-        isCartesian: false,
+    getSymbol: noop as any,
 
-        noSharedTooltip: true,
+    isCartesian: false,
 
-        pointAttribs: ColumnSeries.prototype.pointAttribs,
+    noSharedTooltip: true,
 
-        pointClass: PiePoint,
+    pointAttribs: ColumnSeries.prototype.pointAttribs,
 
-        requireSorting: false,
+    pointClass: PiePoint,
 
-        searchPoint: noop as any,
+    requireSorting: false,
 
-        trackerGroups: ['group', 'dataLabelsGroup']
-    }
-);
+    searchPoint: noop as any,
+
+    trackerGroups: ['group', 'dataLabelsGroup']
+});
 
 /* *
  *
