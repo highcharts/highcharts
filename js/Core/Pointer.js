@@ -242,7 +242,7 @@ var Pointer = /** @class */ (function () {
         if (this.hasDragged > 10) {
             clickedInside = chart.isInsidePlot(mouseDownX - plotLeft, mouseDownY - plotTop);
             // make a selection
-            if (chart.hasCartesianSeries &&
+            if ((chart.hasCartesianSeries || chart.mapView) &&
                 (this.zoomX || this.zoomY) &&
                 clickedInside &&
                 !panKey) {
@@ -312,19 +312,22 @@ var Pointer = /** @class */ (function () {
     Pointer.prototype.drop = function (e) {
         var pointer = this, chart = this.chart, hasPinched = this.hasPinched;
         if (this.selectionMarker) {
-            var selectionData = {
+            var selectionBox = this.selectionMarker, x = selectionBox.attr ? selectionBox.attr('x') : selectionBox.x, y = selectionBox.attr ? selectionBox.attr('y') : selectionBox.y, width = selectionBox.attr ?
+                selectionBox.attr('width') :
+                selectionBox.width, height = selectionBox.attr ?
+                selectionBox.attr('height') :
+                selectionBox.height, selectionData = {
                 originalEvent: e,
                 xAxis: [],
-                yAxis: []
-            }, selectionBox = this.selectionMarker, selectionLeft = selectionBox.attr ?
-                selectionBox.attr('x') :
-                selectionBox.x, selectionTop = selectionBox.attr ?
-                selectionBox.attr('y') :
-                selectionBox.y, selectionWidth = selectionBox.attr ?
-                selectionBox.attr('width') :
-                selectionBox.width, selectionHeight = selectionBox.attr ?
-                selectionBox.attr('height') :
-                selectionBox.height, runZoom;
+                yAxis: [],
+                x: x,
+                y: y,
+                width: width,
+                height: height
+            }, 
+            // Start by false runZoom, unless when we have a mapView, in
+            // which case the zoom will be handled in the selection event.
+            runZoom = Boolean(chart.mapView);
             // a selection has been made
             if (this.hasDragged || hasPinched) {
                 // record each axis' min and max
@@ -336,15 +339,13 @@ var Pointer = /** @class */ (function () {
                                 xAxis: 'zoomX',
                                 yAxis: 'zoomY'
                             }[axis.coll]]) &&
-                        isNumber(selectionLeft) &&
-                        isNumber(selectionTop)) { // #859, #3569
+                        isNumber(x) &&
+                        isNumber(y)) { // #859, #3569
                         var horiz = axis.horiz, minPixelPadding = e.type === 'touchend' ?
                             axis.minPixelPadding :
                             0, // #1207, #3075
-                        selectionMin = axis.toValue((horiz ? selectionLeft : selectionTop) +
-                            minPixelPadding), selectionMax = axis.toValue((horiz ?
-                            selectionLeft + selectionWidth :
-                            selectionTop + selectionHeight) - minPixelPadding);
+                        selectionMin = axis.toValue((horiz ? x : y) + minPixelPadding), selectionMax = axis.toValue((horiz ? x + width : y + height) -
+                            minPixelPadding);
                         selectionData[axis.coll].push({
                             axis: axis,
                             // Min/max for reversed axes

@@ -1,12 +1,3 @@
-/* *
- *
- *  (c) 2010-2020 Torstein Honsi
- *
- *  License: www.highcharts.com/license
- *
- *  !!!!!!! SOURCE GETS TRANSPILED BY TYPESCRIPT. EDIT TS FILE ONLY. !!!!!!!
- *
- * */
 var MapView = /** @class */ (function () {
     function MapView(chart) {
         this.chart = chart;
@@ -97,6 +88,15 @@ var MapView = /** @class */ (function () {
         var x = centerPxX - scale * (this.center[1] - lng);
         var y = centerPxY - scale * (this.center[0] - lat);
         return { x: x, y: y };
+    };
+    MapView.prototype.toValues = function (pos) {
+        var x = pos.x, y = pos.y;
+        var scale = (256 / 360) * Math.pow(2, this.zoom);
+        var centerPxX = this.chart.plotWidth / 2;
+        var centerPxY = this.chart.plotHeight / 2;
+        var lng = this.center[1] - ((centerPxX - x) / scale);
+        var lat = this.center[0] - ((centerPxY - y) / scale);
+        return [lat, lng];
     };
     MapView.prototype.zoomBy = function (howMuch, coords, chartCoords) {
         var chart = this.chart;

@@ -7,6 +7,7 @@
  *  !!!!!!! SOURCE GETS TRANSPILED BY TYPESCRIPT. EDIT TS FILE ONLY. !!!!!!!
  *
  * */
+import type PositionObject from '../Core/Renderer/PositionObject';
 
 import AnimationOptionsObject from '../Core/Animation/AnimationOptionsObject.js';
 import Chart from '../Core/Chart/Chart.js';
@@ -131,7 +132,7 @@ class MapView {
         this.redraw(animation);
     }
 
-    public toPixels(pos: Highcharts.LatLng): { x: number; y: number } {
+    public toPixels(pos: Highcharts.LatLng): PositionObject {
         const [lat, lng] = pos;
         const scale = (256 / 360) * Math.pow(2, this.zoom);
         const centerPxX = this.chart.plotWidth / 2;
@@ -139,6 +140,17 @@ class MapView {
         const x = centerPxX - scale * (this.center[1] - lng);
         const y = centerPxY - scale * (this.center[0] - lat);
         return { x, y };
+    }
+
+    public toValues(pos: PositionObject): Highcharts.LatLng {
+        const { x, y } = pos;
+        const scale = (256 / 360) * Math.pow(2, this.zoom);
+        const centerPxX = this.chart.plotWidth / 2;
+        const centerPxY = this.chart.plotHeight / 2;
+
+        const lng = this.center[1] - ((centerPxX - x) / scale);
+        const lat = this.center[0] - ((centerPxY - y) / scale);
+        return [lat, lng];
     }
 
     public zoomBy(

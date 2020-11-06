@@ -93,7 +93,7 @@ declare global {
         }
         class MapSeries extends ScatterSeries implements ColorMapSeries {
             // public baseTrans: MapBaseTransObject;
-            public baseView?: { center: Highcharts.LatLng, zoom: number };
+            public baseView?: { center: Highcharts.LatLng; zoom: number };
             public chart: Chart;
             public colorAttribs: ColorMapSeriesMixin['colorAttribs'];
             public data: Array<MapPoint>;

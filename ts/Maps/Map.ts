@@ -484,6 +484,22 @@ addEvent(Chart, 'pan', function (e: PointerEvent): void {
     }
 });
 
+// Perform the map zoom by selection
+addEvent(Chart, 'selection', function (evt: PointerEvent): void {
+    const mapView = this.mapView;
+    if (mapView) {
+        const x = evt.x - this.plotLeft;
+        const y = evt.y - this.plotTop;
+        const [n, w] = mapView.toValues({ x, y });
+        const [s, e] = mapView.toValues(
+            { x: x + evt.width, y: y + evt.height }
+        );
+        mapView.fitToBounds({ n, e, s, w });
+        mapView.redraw();
+        evt.preventDefault();
+    }
+});
+
 /**
  * The factory function for creating new map charts. Creates a new {@link
  * Highcharts.Chart|Chart} object with different default options than the basic
