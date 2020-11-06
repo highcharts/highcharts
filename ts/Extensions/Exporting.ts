@@ -321,12 +321,6 @@ declare global {
  * @typedef {"image/png"|"image/jpeg"|"application/pdf"|"image/svg+xml"} Highcharts.ExportingMimeTypeValue
  */
 
-// create shortcuts
-var userAgent = win.navigator.userAgent,
-    symbols = H.Renderer.prototype.symbols,
-    isMSBrowser = /Edge\/|Trident\/|MSIE /.test(userAgent),
-    isFirefoxBrowser = /firefox/i.test(userAgent);
-
 // Add language
 extend(defaultOptions.lang
     /**
@@ -2531,7 +2525,7 @@ Chart.prototype.inlineStyles = function (): void {
             }
 
             // Loop through all styles and add them inline if they are ok
-            if (isFirefoxBrowser || isMSBrowser) {
+            if (H.isFirefox || H.isMS) {
                 // Some browsers put lots of styles on the prototype
                 for (var p in styles) { // eslint-disable-line guard-for-in
                     filterStyles(styles[p] as any, p);
@@ -2580,7 +2574,7 @@ Chart.prototype.inlineStyles = function (): void {
 };
 
 
-symbols.menu = function (
+H.Renderer.prototype.symbols.menu = function (
     x: number,
     y: number,
     width: number,
@@ -2598,7 +2592,7 @@ symbols.menu = function (
     return arr;
 };
 
-symbols.menuball = function (
+H.Renderer.prototype.symbols.menuball = function (
     x: number,
     y: number,
     width: number,

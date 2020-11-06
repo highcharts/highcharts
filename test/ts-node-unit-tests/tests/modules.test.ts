@@ -1,5 +1,4 @@
 import { deepStrictEqual, ok, strictEqual } from 'assert';
-import { JSDOM } from 'jsdom';
 import { describe } from '../test-utils';
 
 export function testMapSeries() {
@@ -274,10 +273,7 @@ export function testStockIndicators() {
 export function testHighchartsWithModules() {
     describe('Testing Highcharts in use with modules');
 
-    // Window object needed for some modules (annotations, boost, export)
-    const { window } = new JSDOM();
-
-    const Highcharts = require('../../../code/highcharts.src.js')(window);
+    const Highcharts = require('../../../code/highcharts.src.js')();
     // Annotations
     require('../../../code/modules/annotations.src.js')(Highcharts);
     strictEqual(
