@@ -66,7 +66,7 @@ declare global {
         const marginNames: Array<string>;
         const noop: () => void;
         const product: string;
-        const isPassiveEvent: boolean;
+        const supportsPassiveEvents: boolean;
         const symbolSizes: Dictionary<SizeObject>;
         const win: GlobalWindow;
         const svg: boolean;
@@ -203,7 +203,7 @@ var H: typeof Highcharts = {
     SVG_NS: SVG_NS,
     chartCount: 0,
     seriesTypes: {} as Highcharts.SeriesTypesDictionary,
-    isPassiveEvent: checkPassiveEvents(),
+    supportsPassiveEvents: checkPassiveEvents(),
     symbolSizes: {},
     svg: svg,
     win: glob,

@@ -61,7 +61,7 @@ var H = {
     SVG_NS: SVG_NS,
     chartCount: 0,
     seriesTypes: {},
-    isPassiveEvent: checkPassiveEvents(),
+    supportsPassiveEvents: checkPassiveEvents(),
     symbolSizes: {},
     svg: svg,
     win: glob,

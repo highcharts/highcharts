@@ -1728,7 +1728,7 @@ var addEvent = H.addEvent = function (el, type, fn, options) {
     // If the browser supports passive events, add it to improve performance
     // on touch events (#11353).
     if (addEventListener) {
-        addEventListener.call(el, type, fn, H.isPassiveEvent ? {
+        addEventListener.call(el, type, fn, H.supportsPassiveEvents ? {
             passive: options.passive === void 0 ?
                 type.indexOf('touch') !== -1 : options.passive,
             capture: false

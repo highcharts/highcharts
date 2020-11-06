@@ -2355,7 +2355,7 @@ const addEvent = H.addEvent = function<T> (
             el,
             type,
             fn,
-            H.isPassiveEvent ? {
+            H.supportsPassiveEvents ? {
                 passive: options.passive === void 0 ?
                     type.indexOf('touch') !== -1 : options.passive,
                 capture: false
