@@ -12,7 +12,7 @@ import BaseSeries from '../Core/Series/Series.js';
 import LegendSymbolMixin from '../Mixins/LegendSymbol.js';
 import O from '../Core/Options.js';
 var defaultOptions = O.defaultOptions;
-import './AreaSeries.js';
+import './Area/AreaSeries.js';
 import './SplineSeries.js';
 var areaProto = BaseSeries.seriesTypes.area.prototype;
 /* *

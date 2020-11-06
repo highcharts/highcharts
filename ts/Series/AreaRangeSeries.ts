@@ -114,7 +114,7 @@ declare global {
     }
 }
 
-import './AreaSeries.js';
+import './Area/AreaSeries.js';
 
 var areaProto = seriesTypes.area.prototype;
 
