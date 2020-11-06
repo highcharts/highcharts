@@ -85,8 +85,6 @@ var addEvent = U.addEvent, css = U.css, createElement = U.createElement, discard
  *
  * @typedef {"image/png"|"image/jpeg"|"application/pdf"|"image/svg+xml"} Highcharts.ExportingMimeTypeValue
  */
-// create shortcuts
-var userAgent = win.navigator.userAgent, symbols = H.Renderer.prototype.symbols, isMSBrowser = /Edge\/|Trident\/|MSIE /.test(userAgent), isFirefoxBrowser = /firefox/i.test(userAgent);
 // Add language
 extend(defaultOptions.lang
 /**
@@ -1846,7 +1844,7 @@ Chart.prototype.inlineStyles = function () {
                 dummySVG.removeChild(dummy);
             }
             // Loop through all styles and add them inline if they are ok
-            if (isFirefoxBrowser || isMSBrowser) {
+            if (H.isFirefox || H.isMS) {
                 // Some browsers put lots of styles on the prototype
                 for (var p in styles) { // eslint-disable-line guard-for-in
                     filterStyles(styles[p], p);
@@ -1884,7 +1882,7 @@ Chart.prototype.inlineStyles = function () {
     recurse(this.container.querySelector('svg'));
     tearDown();
 };
-symbols.menu = function (x, y, width, height) {
+H.Renderer.prototype.symbols.menu = function (x, y, width, height) {
     var arr = [
         ['M', x, y + 2.5],
         ['L', x + width, y + 2.5],
@@ -1895,7 +1893,7 @@ symbols.menu = function (x, y, width, height) {
     ];
     return arr;
 };
-symbols.menuball = function (x, y, width, height) {
+H.Renderer.prototype.symbols.menuball = function (x, y, width, height) {
     var path = [], h = (height / 3) - 2;
     path = path.concat(this.circle(width - h, y, h, h), this.circle(width - h, y + h + 4, h, h), this.circle(width - h, y + 2 * (h + 4), h, h));
     return path;
