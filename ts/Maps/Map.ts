@@ -488,15 +488,27 @@ addEvent(Chart, 'pan', function (e: PointerEvent): void {
 addEvent(Chart, 'selection', function (evt: PointerEvent): void {
     const mapView = this.mapView;
     if (mapView) {
-        const x = evt.x - this.plotLeft;
-        const y = evt.y - this.plotTop;
-        const [n, w] = mapView.toValues({ x, y });
-        const [s, e] = mapView.toValues(
-            { x: x + evt.width, y: y + evt.height }
-        );
-        mapView.fitToBounds({ n, e, s, w });
-        mapView.redraw();
-        evt.preventDefault();
+
+        // Zoom in
+        if (!(evt as any).resetSelection) {
+            const x = evt.x - this.plotLeft;
+            const y = evt.y - this.plotTop;
+            const [n, w] = mapView.toValues({ x, y });
+            const [s, e] = mapView.toValues(
+                { x: x + evt.width, y: y + evt.height }
+            );
+            mapView.fitToBounds({ n, e, s, w });
+            mapView.redraw();
+
+            this.showResetZoom();
+
+            evt.preventDefault();
+
+        // Reset zoom
+        } else {
+            mapView.zoomBy();
+        }
+
     }
 });
 
