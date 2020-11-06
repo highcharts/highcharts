@@ -62,7 +62,7 @@ declare module '../Core/Series/SeriesType' {
     }
 }
 
-import './AreaSeries.js';
+import './Area/AreaSeries.js';
 import './DumbbellSeries.js';
 
 const areaProto = seriesTypes.area.prototype;

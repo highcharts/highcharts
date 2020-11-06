@@ -20,7 +20,7 @@ import Point from '../Core/Series/Point.js';
 var pointProto = Point.prototype;
 import U from '../Core/Utilities.js';
 var defined = U.defined, extend = U.extend, isArray = U.isArray, isNumber = U.isNumber, pick = U.pick;
-import './AreaSeries.js';
+import './Area/AreaSeries.js';
 var areaProto = seriesTypes.area.prototype;
 /**
  * The area range series is a carteseian series with higher and lower values for

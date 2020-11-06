@@ -39,7 +39,7 @@ const {
     wrap
 } = U;
 
-import '../Series/AreaSeries.js';
+import './Area/AreaSeries.js';
 
 /* *
  *
