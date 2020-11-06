@@ -16,14 +16,9 @@
  *
  * */
 
-import type ColorType from '../../Core/Color/ColorType';
-import type LinePoint from '../Line/LinePoint';
-import type LinePointOptions from '../Line/LinePointOptions';
-import type LineSeriesOptions from '../Line/LineSeriesOptions';
-import type {
-    SeriesStatesOptions,
-    SeriesZonesOptions
-} from '../../Core/Series/SeriesOptions';
+import type AreaPoint from './AreaPoint';
+import type AreaSeriesOptions from './AreaSeriesOptions';
+import type { SeriesZonesOptions } from '../../Core/Series/SeriesOptions';
 import type StackingAxis from '../../Core/Axis/StackingAxis';
 import type SVGAttributes from '../../Core/Renderer/SVG/SVGAttributes';
 import type SVGPath from '../../Core/Renderer/SVG/SVGPath';
@@ -50,38 +45,6 @@ declare module '../../Core/Renderer/SVG/SVGPath' {
     interface SVGPath {
         xMap?: number;
         isArea?: boolean;
-    }
-}
-
-/**
- * Internal types
- * @private
- */
-declare global {
-    namespace Highcharts {
-        class AreaPoint extends LinePoint {
-            public isCliff?: boolean;
-            public leftNull?: boolean;
-            public options: AreaPointOptions;
-            public rightNull?: boolean;
-            public series: AreaSeries;
-        }
-        class AreaSeries extends LineSeries {
-            public areaPath?: SVGPath;
-            public data: Array<AreaPoint>;
-            public options: AreaSeriesOptions;
-            public pointClass: typeof AreaPoint;
-            public points: Array<AreaPoint>;
-            public getStackPoints(points: Array<AreaPoint>): Array<AreaPoint>;
-        }
-        interface AreaPointOptions extends LinePointOptions {
-        }
-        interface AreaSeriesOptions extends LineSeriesOptions {
-            fillColor?: ColorType;
-            fillOpacity?: number;
-            negativeFillColor?: ColorType;
-            states?: SeriesStatesOptions<AreaSeries>;
-        }
     }
 }
 
@@ -121,7 +84,7 @@ class AreaSeries extends LineSeries {
      * @product      highcharts highstock
      * @optionparent plotOptions.area
      */
-    public static defaultOptions: Highcharts.AreaSeriesOptions = merge(LineSeries.defaultOptions, {
+    public static defaultOptions: AreaSeriesOptions = merge(LineSeries.defaultOptions, {
         /**
          * @see [fillColor](#plotOptions.area.fillColor)
          * @see [fillOpacity](#plotOptions.area.fillOpacity)
@@ -250,11 +213,11 @@ class AreaSeries extends LineSeries {
 
     public areaPath?: SVGPath;
 
-    public data: Array<Highcharts.AreaPoint> = void 0 as any;
+    public data: Array<AreaPoint> = void 0 as any;
 
-    public options: Highcharts.AreaSeriesOptions = void 0 as any;
+    public options: AreaSeriesOptions = void 0 as any;
 
-    public points: Array<Highcharts.AreaPoint> = void 0 as any;
+    public points: Array<AreaPoint> = void 0 as any;
 
     /* *
      *
@@ -271,15 +234,15 @@ class AreaSeries extends LineSeries {
      * @private
      */
     public getStackPoints(
-        points: Array<Highcharts.AreaPoint>
-    ): Array<Highcharts.AreaPoint> {
+        points: Array<AreaPoint>
+    ): Array<AreaPoint> {
         var series = this,
-            segment = [] as Array<Highcharts.AreaPoint>,
-            keys = [] as Array<string>,
+            segment: Array<AreaPoint> = [],
+            keys: Array<string> = [],
             xAxis = this.xAxis,
-            yAxis = this.yAxis as StackingAxis,
+            yAxis: StackingAxis = this.yAxis as any,
             stack = yAxis.stacking.stacks[this.stackKey as any],
-            pointMap = {} as Highcharts.Dictionary<Highcharts.AreaPoint>,
+            pointMap: Record<string, AreaPoint> = {},
             seriesIndex = series.index,
             yAxisSeries = yAxis.series,
             seriesLength = yAxisSeries.length,
@@ -431,7 +394,7 @@ class AreaSeries extends LineSeries {
  * */
 
 interface AreaSeries {
-    pointClass: typeof Highcharts.AreaPoint;
+    pointClass: typeof AreaPoint;
 }
 extend(AreaSeries.prototype, {
 
@@ -442,7 +405,7 @@ extend(AreaSeries.prototype, {
      */
     getGraphPath: function (
         this: AreaSeries,
-        points: Array<Highcharts.AreaPoint>
+        points: Array<AreaPoint>
     ): SVGPath {
         var getGraphPath = LineSeries.prototype.getGraphPath,
             graphPath: SVGPath,
@@ -451,8 +414,8 @@ extend(AreaSeries.prototype, {
             yAxis = this.yAxis as StackingAxis,
             topPath: SVGPath,
             bottomPath,
-            bottomPoints: Array<Highcharts.AreaPoint> = [],
-            graphPoints: Array<Highcharts.AreaPoint> = [],
+            bottomPoints: Array<AreaPoint> = [],
+            graphPoints: Array<AreaPoint> = [],
             seriesIndex = this.index,
             i,
             areaPath: SVGPath,
@@ -676,7 +639,7 @@ extend(AreaSeries.prototype, {
 
 declare module '../../Core/Series/SeriesType' {
     interface SeriesTypeRegistry {
-        area: typeof Highcharts.AreaSeries;
+        area: typeof AreaSeries;
     }
 }
 BaseSeries.registerSeriesType('area', AreaSeries);

@@ -10,6 +10,10 @@
 
 'use strict';
 
+import type AreaPoint from './Area/AreaPoint';
+import type AreaPointOptions from './Area/AreaPointOptions';
+import type AreaSeries from './Area/AreaSeries';
+import type AreaSeriesOptions from './Area/AreaSeriesOptions';
 import type DataLabelOptions from '../Core/Series/DataLabelOptions';
 import type RadialAxis from '../Core/Axis/RadialAxis';
 import type { SeriesStatesOptions } from '../Core/Series/SeriesOptions';
@@ -351,13 +355,13 @@ BaseSeries.seriesType<typeof Highcharts.AreaRangeSeries>('arearange', 'area', {
     ): SVGPath {
 
         var highPoints = [],
-            highAreaPoints: Array<Highcharts.AreaPoint> = [],
+            highAreaPoints: Array<AreaPoint> = [],
             i,
             getGraphPath = areaProto.getGraphPath,
             point: any,
             pointShim: any,
-            linePath: SVGPath & Highcharts.Dictionary<any>,
-            lowerPath: SVGPath & Highcharts.Dictionary<any>,
+            linePath: SVGPath & Record<string, any>,
+            lowerPath: SVGPath & Record<string, any>,
             options = this.options,
             polar = this.chart.polar,
             connectEnds = polar && options.connectEnds !== false,

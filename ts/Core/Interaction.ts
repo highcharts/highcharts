@@ -11,6 +11,7 @@
 'use strict';
 
 import type AnimationOptionsObject from './Animation/AnimationOptionsObject';
+import type AreaSeries from '../Series/Area/AreaSeries';
 import type PointerEvent from './PointerEvent';
 import type {
     PointEventsOptions,
@@ -314,7 +315,7 @@ const TrackerMixin = H.TrackerMixin = {
                 (options as Highcharts.AreaRangeSeriesOptions).trackByArea,
             trackerPath = ([] as SVGPath).concat(
                 trackByArea ?
-                    ((series as Highcharts.AreaSeries).areaPath as any) :
+                    ((series as AreaSeries).areaPath as any) :
                     (series.graphPath as any)
             ),
             // trackerPathLength = trackerPath.length,
