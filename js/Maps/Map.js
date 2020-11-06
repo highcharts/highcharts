@@ -350,7 +350,7 @@ addEvent(Chart, 'afterSetChartSize', function () {
         // Apply the bounds inferred from the maps
         var bounds = mapView.getDataBounds();
         if (bounds) {
-            mapView.fitToBounds(bounds);
+            mapView.fitToBounds(bounds, false);
             mapView.minZoom = mapView.zoom;
             this.mapView = mapView;
         }
@@ -375,7 +375,7 @@ addEvent(Chart, 'pan', function (e) {
             mouseDownCenter[0] + (mouseDownY - chartY) / scale,
             mouseDownCenter[1] + (mouseDownX - chartX) / scale
         ];
-        mapView.setView(center, void 0, false);
+        mapView.setView(center, void 0, true, false);
         e.preventDefault();
     }
 });
@@ -389,8 +389,12 @@ addEvent(Chart, 'selection', function (evt) {
             var y = evt.y - this.plotTop;
             var _a = mapView.toValues({ x: x, y: y }), n = _a[0], w = _a[1];
             var _b = mapView.toValues({ x: x + evt.width, y: y + evt.height }), s = _b[0], e = _b[1];
-            mapView.fitToBounds({ n: n, e: e, s: s, w: w });
-            mapView.redraw();
+            mapView.fitToBounds({ n: n, e: e, s: s, w: w }, true, evt.originalEvent.touches ?
+                // On touch zoom, don't animate, since we're already in
+                // transformed zoom preview
+                false :
+                // On mouse zoom, obey the chart-level animation
+                void 0);
             this.showResetZoom();
             evt.preventDefault();
             // Reset zoom

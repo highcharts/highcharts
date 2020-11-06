@@ -4,13 +4,13 @@ var MapView = /** @class */ (function () {
         this.center = [0, 0];
         this.zoom = 0;
     }
-    MapView.prototype.fitToBounds = function (bounds) {
+    MapView.prototype.fitToBounds = function (bounds, redraw, animation) {
+        if (redraw === void 0) { redraw = true; }
         var _a = this.chart, plotWidth = _a.plotWidth, plotHeight = _a.plotHeight;
         // 256 is the magic number where a world tile is rendered to a 256/256
         // px square.
         var scaleToPlotArea = Math.max((bounds.e - bounds.w) / (plotWidth / 256), (bounds.s - bounds.n) / (plotHeight / 256));
-        this.center = [(bounds.s + bounds.n) / 2, (bounds.e + bounds.w) / 2];
-        this.zoom = (Math.log(360 / scaleToPlotArea) / Math.log(2));
+        this.setView([(bounds.s + bounds.n) / 2, (bounds.e + bounds.w) / 2], (Math.log(360 / scaleToPlotArea) / Math.log(2)), redraw, animation);
     };
     MapView.prototype.getDataBounds = function () {
         var bounds = {
@@ -39,7 +39,8 @@ var MapView = /** @class */ (function () {
         });
         this.chart.redraw(animation);
     };
-    MapView.prototype.setView = function (center, zoom, animation) {
+    MapView.prototype.setView = function (center, zoom, redraw, animation) {
+        if (redraw === void 0) { redraw = true; }
         if (center) {
             this.center = center;
         }
@@ -78,7 +79,9 @@ var MapView = /** @class */ (function () {
                 cntr[0] += Math.min(se.y - plotHeight, nw.y) / scale;
             }
         }
-        this.redraw(animation);
+        if (redraw) {
+            this.redraw(animation);
+        }
     };
     MapView.prototype.toPixels = function (pos) {
         var lat = pos[0], lng = pos[1];
@@ -129,7 +132,6 @@ var MapView = /** @class */ (function () {
             var bounds = this.getDataBounds();
             if (bounds) {
                 this.fitToBounds(bounds);
-                this.redraw();
             }
         }
     };

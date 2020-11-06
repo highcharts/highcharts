@@ -443,7 +443,7 @@ addEvent(Chart, 'afterSetChartSize', function (): void {
         const bounds = mapView.getDataBounds();
 
         if (bounds) {
-            mapView.fitToBounds(bounds);
+            mapView.fitToBounds(bounds, false);
             mapView.minZoom = mapView.zoom;
             this.mapView = mapView;
         }
@@ -478,7 +478,7 @@ addEvent(Chart, 'pan', function (e: PointerEvent): void {
             mouseDownCenter[1] + (mouseDownX - chartX) / scale
         ];
 
-        mapView.setView(center, void 0, false);
+        mapView.setView(center, void 0, true, false);
 
         e.preventDefault();
     }
@@ -497,8 +497,16 @@ addEvent(Chart, 'selection', function (evt: PointerEvent): void {
             const [s, e] = mapView.toValues(
                 { x: x + evt.width, y: y + evt.height }
             );
-            mapView.fitToBounds({ n, e, s, w });
-            mapView.redraw();
+            mapView.fitToBounds(
+                { n, e, s, w },
+                true,
+                (evt as any).originalEvent.touches ?
+                    // On touch zoom, don't animate, since we're already in
+                    // transformed zoom preview
+                    false :
+                    // On mouse zoom, obey the chart-level animation
+                    void 0
+            );
 
             this.showResetZoom();
 

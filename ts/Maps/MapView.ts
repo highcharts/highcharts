@@ -39,7 +39,11 @@ class MapView {
 
     private chart: Chart;
 
-    public fitToBounds(bounds: Highcharts.MapBounds): void {
+    public fitToBounds(
+        bounds: Highcharts.MapBounds,
+        redraw = true,
+        animation?: boolean|Partial<AnimationOptionsObject>
+    ): void {
 
         const { plotWidth, plotHeight } = this.chart;
         // 256 is the magic number where a world tile is rendered to a 256/256
@@ -49,8 +53,12 @@ class MapView {
             (bounds.s - bounds.n) / (plotHeight / 256)
         );
 
-        this.center = [(bounds.s + bounds.n) / 2, (bounds.e + bounds.w) / 2];
-        this.zoom = (Math.log(360 / scaleToPlotArea) / Math.log(2));
+        this.setView(
+            [(bounds.s + bounds.n) / 2, (bounds.e + bounds.w) / 2],
+            (Math.log(360 / scaleToPlotArea) / Math.log(2)),
+            redraw,
+            animation
+        );
     }
 
     public getDataBounds(): Highcharts.MapBounds|undefined {
@@ -86,6 +94,7 @@ class MapView {
     public setView(
         center?: Highcharts.LatLng,
         zoom?: number,
+        redraw = true,
         animation?: boolean|Partial<AnimationOptionsObject>
     ): void {
         if (center) {
@@ -129,7 +138,9 @@ class MapView {
             }
         }
 
-        this.redraw(animation);
+        if (redraw) {
+            this.redraw(animation);
+        }
     }
 
     public toPixels(pos: Highcharts.LatLng): PositionObject {
@@ -196,7 +207,6 @@ class MapView {
             const bounds = this.getDataBounds();
             if (bounds) {
                 this.fitToBounds(bounds);
-                this.redraw();
             }
         }
 

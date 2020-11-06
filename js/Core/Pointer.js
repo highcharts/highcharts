@@ -1357,7 +1357,9 @@ var Pointer = /** @class */ (function () {
         // Scale each series
         chart.series.forEach(function (series) {
             seriesAttribs = attribs || series.getPlotBox(); // #1701
-            if (series.xAxis && series.xAxis.zoomEnabled && series.group) {
+            if (series.group &&
+                ((series.xAxis && series.xAxis.zoomEnabled) ||
+                    chart.mapView)) {
                 series.group.attr(seriesAttribs);
                 if (series.markerGroup) {
                     series.markerGroup.attr(seriesAttribs);
