@@ -7,62 +7,29 @@
  *  !!!!!!! SOURCE GETS TRANSPILED BY TYPESCRIPT. EDIT TS FILE ONLY. !!!!!!!
  *
  * */
-
 'use strict';
-
-/* *
- *
- *  Imports
- *
- * */
-
-import type ColumnPoint from './Column/ColumnPoint';
-import type ColumnPointOptions from './Column/ColumnPointOptions';
-import type ColumnSeriesOptions from './Column/ColumnSeriesOptions';
-import ColumnSeries from './Column/ColumnSeries.js';
-import BaseSeries from '../Core/Series/Series.js';
-import U from '../Core/Utilities.js';
-const {
-    extend,
-    merge
-} = U;
-
-/* *
- *
- *  Declarations
- *
- * */
-
-/**
- * Internal types
- * @private
- */
-declare global {
-    namespace Highcharts {
-        interface BarPointOptions extends ColumnPointOptions {
-        }
-        interface BarSeriesOptions extends ColumnSeriesOptions {
-        }
-        class BarPoint extends ColumnPoint {
-            public options: BarPointOptions;
-            public series: BarSeries;
-        }
-        class BarSeries extends ColumnSeries {
-            public data: Array<BarPoint>;
-            public inverted?: boolean;
-            public options: BarSeriesOptions;
-            public pointClass: typeof BarPoint;
-            public points: Array<BarPoint>;
-        }
-    }
-}
-
+var __extends = (this && this.__extends) || (function () {
+    var extendStatics = function (d, b) {
+        extendStatics = Object.setPrototypeOf ||
+            ({ __proto__: [] } instanceof Array && function (d, b) { d.__proto__ = b; }) ||
+            function (d, b) { for (var p in b) if (b.hasOwnProperty(p)) d[p] = b[p]; };
+        return extendStatics(d, b);
+    };
+    return function (d, b) {
+        extendStatics(d, b);
+        function __() { this.constructor = d; }
+        d.prototype = b === null ? Object.create(b) : (__.prototype = b.prototype, new __());
+    };
+})();
+import ColumnSeries from '../Column/ColumnSeries.js';
+import BaseSeries from '../../Core/Series/Series.js';
+import U from '../../Core/Utilities.js';
+var extend = U.extend, merge = U.merge;
 /* *
  *
  *  Class
  *
  * */
-
 /**
  * Bar series type.
  *
@@ -72,14 +39,16 @@ declare global {
  *
  * @augments Highcharts.Series
  */
-class BarSeries extends ColumnSeries {
-
+var BarSeries = /** @class */ (function (_super) {
+    __extends(BarSeries, _super);
+    function BarSeries() {
+        return _super !== null && _super.apply(this, arguments) || this;
+    }
     /* *
      *
      *  Static Properties
      *
      * */
-
     /**
      * A bar series is a special type of column series where the columns are
      * horizontal.
@@ -91,44 +60,20 @@ class BarSeries extends ColumnSeries {
      * @product       highcharts
      * @optionsparent plotOptions.bar
      */
-    public static defaultOptions: Highcharts.BarSeriesOptions = merge(ColumnSeries.defaultOptions, {
-        // nothing here yet
+    BarSeries.defaultOptions = merge(ColumnSeries.defaultOptions, {
+    // nothing here yet
     });
-
-}
-
-/* *
- *
- *  Prototype Properties
- *
- * */
-
-interface BarSeries {
-    pointClass: typeof Highcharts.BarPoint;
-}
+    return BarSeries;
+}(ColumnSeries));
 extend(BarSeries.prototype, {
     inverted: true
 });
-
-/* *
- *
- *  Registry
- *
- * */
-
-declare module '../Core/Series/SeriesType' {
-    interface SeriesTypeRegistry {
-        bar: typeof Highcharts.BarSeries;
-    }
-}
 BaseSeries.registerSeriesType('bar', BarSeries);
-
 /* *
  *
  *  API Options
  *
  * */
-
 /**
  * A `bar` series. If the [type](#series.bar.type) option is not specified,
  * it is inherited from [chart.type](#chart.type).
@@ -139,7 +84,6 @@ BaseSeries.registerSeriesType('bar', BarSeries);
  * @product   highcharts
  * @apioption series.bar
  */
-
 /**
  * An array of data points for the series. For the `bar` series type,
  * points can be given in the following ways:
@@ -199,17 +143,14 @@ BaseSeries.registerSeriesType('bar', BarSeries);
  * @product   highcharts
  * @apioption series.bar.data
  */
-
 /**
  * @excluding halo,lineWidth,lineWidthPlus,marker
  * @product   highcharts highstock
  * @apioption series.bar.states.hover
  */
-
 /**
  * @excluding halo,lineWidth,lineWidthPlus,marker
  * @product   highcharts highstock
  * @apioption series.bar.states.select
  */
-
 ''; // gets doclets above into transpilat
