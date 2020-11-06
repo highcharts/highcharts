@@ -68,7 +68,7 @@ const {
     merge
 } = U;
 
-import './ScatterSeries.js';
+import './Scatter/ScatterSeries.js';
 
 /* *
  *

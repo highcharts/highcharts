@@ -14,7 +14,7 @@ var seriesTypes = BaseSeries.seriesTypes;
 import Math3D from '../Extensions/Math3D.js';
 var pointCameraDistance = Math3D.pointCameraDistance;
 import Point from '../Core/Series/Point.js';
-import './ScatterSeries.js';
+import './Scatter/ScatterSeries.js';
 /**
  * @private
  * @class

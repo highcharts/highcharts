@@ -14,7 +14,7 @@ import Point from '../Core/Series/Point.js';
 import U from '../Core/Utilities.js';
 var merge = U.merge;
 import '../Core/Options.js';
-import '../Series/ScatterSeries.js';
+import '../Series/Scatter/ScatterSeries.js';
 /**
  * @private
  * @class

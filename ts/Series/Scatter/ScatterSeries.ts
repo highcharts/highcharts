@@ -16,13 +16,13 @@
  *
  * */
 
-import type LinePoint from './Line/LinePoint';
-import type LinePointOptions from './Line/LinePointOptions';
-import type LineSeriesOptions from './Line/LineSeriesOptions';
-import type { SeriesStatesOptions } from '../Core/Series/SeriesOptions';
-import BaseSeries from '../Core/Series/Series.js';
-import LineSeries from './Line/LineSeries.js';
-import U from '../Core/Utilities.js';
+import type LinePoint from '../Line/LinePoint';
+import type LinePointOptions from '../Line/LinePointOptions';
+import type LineSeriesOptions from '../Line/LineSeriesOptions';
+import type { SeriesStatesOptions } from '../../Core/Series/SeriesOptions';
+import BaseSeries from '../../Core/Series/Series.js';
+import LineSeries from '../Line/LineSeries.js';
+import U from '../../Core/Utilities.js';
 const {
     addEvent,
     extend,
@@ -35,7 +35,7 @@ const {
  *
  * */
 
-declare module '../Core/Series/SeriesLike' {
+declare module '../../Core/Series/SeriesLike' {
     interface SeriesLike {
         takeOrdinalPosition?: boolean;
     }
@@ -340,7 +340,7 @@ addEvent(LineSeries, 'afterTranslate', function (
  *
  * */
 
-declare module '../Core/Series/SeriesType' {
+declare module '../../Core/Series/SeriesType' {
     interface SeriesTypeRegistry {
         scatter: typeof Highcharts.ScatterSeries;
     }

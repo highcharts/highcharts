@@ -63,7 +63,7 @@ declare module '../Core/Series/SeriesType' {
 }
 
 import '../Core/Options.js';
-import '../Series/ScatterSeries.js';
+import '../Series/Scatter/ScatterSeries.js';
 
 /**
  * @private

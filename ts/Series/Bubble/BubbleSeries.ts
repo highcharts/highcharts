@@ -128,7 +128,7 @@ declare module '../../Core/Series/SeriesType' {
     }
 }
 
-import '../ScatterSeries.js';
+import '../Scatter/ScatterSeries.js';
 import './BubbleLegend.js';
 
 /**

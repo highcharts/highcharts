@@ -21,9 +21,9 @@ var __extends = (this && this.__extends) || (function () {
         d.prototype = b === null ? Object.create(b) : (__.prototype = b.prototype, new __());
     };
 })();
-import BaseSeries from '../Core/Series/Series.js';
-import LineSeries from './Line/LineSeries.js';
-import U from '../Core/Utilities.js';
+import BaseSeries from '../../Core/Series/Series.js';
+import LineSeries from '../Line/LineSeries.js';
+import U from '../../Core/Utilities.js';
 var addEvent = U.addEvent, extend = U.extend, merge = U.merge;
 /* *
  *
@@ -208,7 +208,6 @@ var ScatterSeries = /** @class */ (function (_super) {
                 '<span style="font-size: 10px"> {series.name}</span><br/>',
             pointFormat: 'x: <b>{point.x}</b><br/>y: <b>{point.y}</b><br/>'
         }
-        // Prototype members
     });
     return ScatterSeries;
 }(LineSeries));

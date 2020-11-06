@@ -17,7 +17,7 @@ import H from '../Core/Globals.js';
 import LineSeries from './Line/LineSeries.js';
 import U from '../Core/Utilities.js';
 var arrayMax = U.arrayMax, pick = U.pick;
-import './ScatterSeries.js';
+import './Scatter/ScatterSeries.js';
 /**
  * The vector series class.
  *
