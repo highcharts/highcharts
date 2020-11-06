@@ -6005,7 +6005,7 @@ class Axis {
     public setScale(): void {
         var axis: Highcharts.Axis = this as any,
             isDirtyAxisLength,
-            isDirtyData = false,
+            isDirtyData: (boolean|undefined) = false,
             isXAxisDirty = false;
 
         axis.series.forEach(function (series): void {

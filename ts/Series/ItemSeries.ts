@@ -12,6 +12,10 @@
 
 'use strict';
 
+import type PiePoint from './Pie/PiePoint';
+import type PiePointOptions from './Pie/PiePointOptions';
+import type PieSeries from './Pie/PieSeries';
+import type PieSeriesOptions from './Pie/PieSeriesOptions';
 import type { PointMarkerOptions } from '../Core/Series/PointOptions';
 import type { SeriesStatesOptions } from '../Core/Series/SeriesOptions';
 import type SVGAttributes from '../Core/Renderer/SVG/SVGAttributes';
@@ -90,7 +94,7 @@ declare global {
     }
 }
 
-import './PieSeries.js';
+import './Pie/PieSeries.js';
 
 var piePoint = BaseSeries.seriesTypes.pie.prototype.pointClass.prototype;
 

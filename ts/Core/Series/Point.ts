@@ -274,8 +274,6 @@ class Point {
 
     public isNull: boolean = false;
 
-    public isValid?: () => boolean;
-
     public marker?: PointMarkerOptions;
 
     /**
@@ -839,6 +837,11 @@ class Point {
 
         return this;
     }
+
+    /**
+     * @private
+     */
+    public isValid?(): boolean;
 
     /**
      * Transform number or array configs into objects. Also called for object

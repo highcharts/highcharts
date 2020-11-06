@@ -40,6 +40,7 @@ declare module '../../Core/Series/SeriesLike' {
         bubblePadding?: Highcharts.BubbleSeries['bubblePadding'];
         maxPxSize?: Highcharts.BubbleSeries['maxPxSize'];
         minPxSize?: Highcharts.BubbleSeries['minPxSize'];
+        radii?: Highcharts.BubbleSeries['radii'];
         specialGroup?: Highcharts.BubbleSeries['specialGroup'];
         zData?: Highcharts.BubbleSeries['zData'];
     }
@@ -92,8 +93,8 @@ declare global {
             ): (number|null);
             public hasData(): boolean;
             public pointAttribs(
-                point: BubblePoint,
-                state?: string
+                point?: BubblePoint,
+                state?: StatesOptionsKey
             ): SVGAttributes;
             public translate(): void;
         }
@@ -411,7 +412,7 @@ BaseSeries.seriesType<typeof Highcharts.BubbleSeries>('bubble', 'scatter', {
      */
     pointAttribs: function (
         this: Highcharts.BubbleSeries,
-        point: Highcharts.BubblePoint,
+        point?: Highcharts.BubblePoint,
         state?: StatesOptionsKey
     ): SVGAttributes {
         var markerOptions = this.options.marker,

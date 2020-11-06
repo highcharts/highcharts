@@ -15,6 +15,8 @@ import type BBoxObject from '../Renderer/BBoxObject';
 import type ColorString from '../Color/ColorString';
 import type ColumnPoint from '../../Series/Column/ColumnPoint';
 import type DataLabelOptions from './DataLabelOptions';
+import type PiePoint from '../../Series/Pie/PiePoint';
+import type PieSeries from '../../Series/Pie/PieSeries';
 import type Point from './Point';
 import type SVGAttributes from '../Renderer/SVG/SVGAttributes';
 import type SVGElement from '../Renderer/SVG/SVGElement';
@@ -540,7 +542,7 @@ LineSeries.prototype.drawDataLabels = function (): void {
                         point.connector,
                     labelDistance = pick(
                         (labelOptions as any).distance,
-                        (point as Highcharts.PiePoint).labelDistance
+                        point.labelDistance
                     ),
                     isNew = !dataLabel;
 
@@ -1099,7 +1101,7 @@ if (seriesTypes.pie) {
     seriesTypes.pie.prototype.dataLabelPositioners = {
 
         // Based on the value computed in Highcharts' distribute algorithm.
-        radialDistributionY: function (point: Highcharts.PiePoint): number {
+        radialDistributionY: function (point: PiePoint): number {
             return point.top + (point.distributeBox as any).pos;
         },
         // get the x - use the natural x position for labels near the
@@ -1108,8 +1110,8 @@ if (seriesTypes.pie) {
 
         // Based on the value computed in Highcharts' distribute algorithm.
         radialDistributionX: function (
-            series: Highcharts.PieSeries,
-            point: Highcharts.PiePoint,
+            series: PieSeries,
+            point: PiePoint,
             y: number,
             naturalY: number
         ): number {
@@ -1124,7 +1126,7 @@ if (seriesTypes.pie) {
 
         // dataLabels.distance determines the x position of the label
         justify: function (
-            point: Highcharts.PiePoint,
+            point: PiePoint,
             radius: number,
             seriesCenter: Array<number>
         ): number {
@@ -1152,7 +1154,7 @@ if (seriesTypes.pie) {
         // left edge of the plot area. Right edge of the widest right-half label
         // touches the right edge of the plot area.
         alignToConnectors: function (
-            points: Array<Highcharts.PiePoint>,
+            points: Array<PiePoint>,
             half: boolean,
             plotWidth: number,
             plotLeft: number
@@ -1161,7 +1163,7 @@ if (seriesTypes.pie) {
                 dataLabelWidth;
 
             // find widest data label
-            points.forEach(function (point: Highcharts.PiePoint): void {
+            points.forEach(function (point): void {
                 dataLabelWidth = (point.dataLabel as any).getBBox().width;
                 if (dataLabelWidth > maxDataLabelWidth) {
                     maxDataLabelWidth = dataLabelWidth;
@@ -1204,7 +1206,7 @@ if (seriesTypes.pie) {
             halves = [
                 [], // right
                 [] // left
-            ] as [Array<Highcharts.PiePoint>, Array<Highcharts.PiePoint>],
+            ] as [Array<PiePoint>, Array<PiePoint>],
             x,
             y,
             visibility,
@@ -1222,7 +1224,7 @@ if (seriesTypes.pie) {
         }
 
         // Reset all labels that have been shortened
-        data.forEach(function (point: Highcharts.PiePoint): void {
+        data.forEach(function (point): void {
             if (point.dataLabel && point.visible && point.dataLabel.shortened) {
                 point.dataLabel
                     .attr({
@@ -1239,7 +1241,7 @@ if (seriesTypes.pie) {
         // run parent method
         LineSeries.prototype.drawDataLabels.apply(series);
 
-        data.forEach(function (point: Highcharts.PiePoint): void {
+        data.forEach(function (point): void {
             if (point.dataLabel) {
 
                 if (point.visible) { // #407, #2510
@@ -1282,10 +1284,7 @@ if (seriesTypes.pie) {
         /* Loop over the points in each half, starting from the top and bottom
          * of the pie to detect overlapping labels.
          */
-        halves.forEach(function (
-            points: Array<Highcharts.PiePoint>,
-            i: number
-        ): void {
+        halves.forEach(function (points, i): void {
 
             var top,
                 bottom,
@@ -1314,7 +1313,7 @@ if (seriesTypes.pie) {
                     centerY + radius + series.maxLabelDistance,
                     chart.plotHeight
                 );
-                points.forEach(function (point: Highcharts.PiePoint): void {
+                points.forEach(function (point): void {
                     // check if specific points' label is outside the pie
                     if ((point.labelDistance as any) > 0 && point.dataLabel) {
                         // point.top depends on point.labelDistance value
@@ -1499,7 +1498,7 @@ if (seriesTypes.pie) {
             (this.placeDataLabels as any)();
 
 
-            this.points.forEach(function (point: Highcharts.PiePoint): void {
+            this.points.forEach(function (point): void {
                 // #8864: every connector can have individual options
                 pointDataLabelsOptions =
                     merge(options, point.options.dataLabels);

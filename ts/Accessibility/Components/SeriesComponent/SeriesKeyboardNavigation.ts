@@ -109,7 +109,7 @@ var getPointFromXY = ChartUtilities.getPointFromXY,
     scrollToPoint = ChartUtilities.scrollToPoint;
 
 import '../../../Series/Column/ColumnSeries.js';
-import '../../../Series/PieSeries.js';
+import '../../../Series/Pie/PieSeries.js';
 
 /* eslint-disable no-invalid-this, valid-jsdoc */
 

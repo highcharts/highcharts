@@ -93,10 +93,6 @@ declare global {
             start?: number;
             width?: number;
         }
-        interface TranslationAttributes extends SVGAttributes {
-            translateX: number;
-            translateY: number;
-        }
         class SVGRenderer {
             public constructor(
                 container: HTMLDOMElement,

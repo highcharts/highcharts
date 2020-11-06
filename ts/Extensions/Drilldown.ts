@@ -217,11 +217,6 @@ declare global {
         interface Options {
             drilldown?: DrilldownOptions;
         }
-        interface PieSeries {
-            animateDrillupFrom: ColumnSeries['animateDrillupFrom'];
-            animateDrillupTo: ColumnSeries['animateDrillupTo'];
-            animateDrilldown(init?: boolean): void;
-        }
         interface SVGElement {
             fadeIn(animation?: (boolean|Partial<AnimationOptionsObject>)): void;
         }
@@ -1310,7 +1305,7 @@ if (PieSeries) {
         animateDrillupFrom: ColumnSeries.prototype.animateDrillupFrom,
 
         animateDrilldown: function (
-            this: Highcharts.PieSeries,
+            this: typeof PieSeries.prototype,
             init?: boolean
         ): void {
             var level: Highcharts.DrilldownLevelObject =
@@ -1332,10 +1327,7 @@ if (PieSeries) {
                     styledMode = this.chart.styledMode;
 
                 if (!init) {
-                    this.points.forEach(function (
-                        point: Highcharts.PiePoint,
-                        i: number
-                    ): void {
+                    this.points.forEach(function (point, i): void {
                         var animateTo = point.shapeArgs;
 
                         if (!styledMode) {

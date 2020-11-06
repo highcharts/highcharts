@@ -23,7 +23,7 @@ import type ColorType from '../../Core/Color/ColorType';
 import type { EventCallback } from '../../Core/Callback';
 import type LinePoint from './LinePoint';
 import type LineSeriesOptions from './LineSeriesOptions';
-import type Point from '../../Core/Series/Point.js';
+import type Point from '../../Core/Series/Point';
 import type PointerEvent from '../../Core/PointerEvent';
 import type {
     PointOptions,
@@ -32,7 +32,6 @@ import type {
 } from '../../Core/Series/PointOptions';
 import type SeriesLike from '../../Core/Series/SeriesLike';
 import type {
-    SeriesOptions,
     SeriesStateHoverOptions,
     SeriesZonesOptions
 } from '../../Core/Series/SeriesOptions';
@@ -2642,6 +2641,8 @@ class LineSeries {
      *
      * */
 
+    public _i: number = void 0 as any;
+
     public animationTimeout?: number;
 
     public area?: SVGElement;
@@ -2649,6 +2650,8 @@ class LineSeries {
     public basePointRange?: number;
 
     public buildingKdTree?: boolean;
+
+    public chart: Chart = void 0 as any;
 
     public clips?: Array<SVGElement>;
 
@@ -2661,6 +2664,8 @@ class LineSeries {
     public colorIndex?: number;
 
     public cropped?: boolean;
+
+    public data: Array<LinePoint> = void 0 as any;
 
     public dataMax?: number;
 
@@ -2680,17 +2685,29 @@ class LineSeries {
 
     public group?: SVGElement;
 
+    public eventOptions: Record<string, EventCallback<LineSeries, Event>> = void 0 as any;
+
+    public eventsToUnbind: Array<Function> = void 0 as any;
+
     public hasCartesianSeries?: Chart['hasCartesianSeries'];
 
     public hasRendered?: boolean;
 
     public id?: string;
 
+    public isDirty?: boolean;
+
+    public isDirtyData?: boolean;
+
     public isRadialSeries?: boolean;
 
     public kdTree?: KDNode;
 
     public linkedParent?: LineSeries;
+
+    public linkedSeries: Array<LineSeries> = void 0 as any;
+
+    public options: LineSeriesOptions = void 0 as any;
 
     public markerGroup?: SVGElement;
 
@@ -2700,15 +2717,29 @@ class LineSeries {
 
     public pointInterval?: number;
 
+    public points: Array<LinePoint> = void 0 as any;
+
     public pointValKey?: string;
+
+    public processedXData: Array<number> = void 0 as any;
+
+    public processedYData: (Array<(number|null)>|Array<Array<(number|null)>>) = void 0 as any;
 
     public sharedClipKey?: string;
 
+    public stickyTracking?: boolean;
+
     public symbol?: string;
+
+    public tooltipOptions: Highcharts.TooltipOptions = void 0 as any;
+
+    public xAxis: AxisType = void 0 as any;
 
     public xData?: Array<number>;
 
     public xIncrement?: (number|null);
+
+    public yAxis: AxisType = void 0 as any;
 
     public yData?: (
         Array<(number|null)>|
@@ -2716,6 +2747,8 @@ class LineSeries {
     );
 
     public zoneAxis?: string;
+
+    public zones: Array<SeriesZonesOptions> = void 0 as any;
 
     /* *
      *
@@ -6425,50 +6458,27 @@ class LineSeries {
 
 /* *
  *
- *  Class Prototype
+ *  Prototype Properties
  *
  * */
 
 interface LineSeries extends SeriesLike {
-    _i: number;
     axisTypes: Array<string>;
-    chart: Chart;
     coll: 'series';
     colorCounter: number;
     cropShoulder: number;
-    data: Array<LinePoint>;
     directTouch: boolean;
     drawLegendSymbol: (
         Highcharts.LegendSymbolMixin['drawLineMarker']|
         Highcharts.LegendSymbolMixin['drawRectangle']
     );
-    eventOptions: Record<string, EventCallback<LineSeries, Event>>;
-    eventsToUnbind: Array<Function>;
     hcEvents: Record<string, Array<Highcharts.EventWrapperObject<LineSeries>>>;
     isCartesian: boolean;
-    isDirty: boolean;
-    isDirtyData: boolean;
     kdAxisArray: Array<string>;
-    linkedSeries: Array<LineSeries>;
-    name: string;
-    options: LineSeriesOptions;
     parallelArrays: Array<string>;
     pointClass: typeof LinePoint;
-    points: Array<LinePoint>;
-    processedXData: Array<number>;
-    processedYData: (Array<(number|null)>|Array<Array<(number|null)>>);
     requireSorting: boolean;
-    selected: boolean;
     sorted: boolean;
-    state: string;
-    stickyTracking: boolean;
-    tooltipOptions: Highcharts.TooltipOptions;
-    type: string;
-    userOptions: DeepPartial<SeriesOptions>;
-    visible: boolean;
-    xAxis: AxisType;
-    yAxis: AxisType;
-    zones: Array<SeriesZonesOptions>;
 }
 extend(
     LineSeries.prototype,

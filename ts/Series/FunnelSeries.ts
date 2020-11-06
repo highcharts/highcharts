@@ -14,6 +14,11 @@
 
 import type BBoxObject from '../Core/Renderer/BBoxObject';
 import type ColorType from '../Core/Color/ColorType';
+import type PieDataLabelOptions from './Pie/PieDataLabelOptions';
+import type PiePoint from './Pie/PiePoint';
+import type PiePointOptions from './Pie/PiePointOptions';
+import type PieSeries from './Pie/PieSeries';
+import type PieSeriesOptions from './Pie/PieSeriesOptions';
 import type Point from '../Core/Series/Point';
 import type { SeriesStatesOptions } from '../Core/Series/SeriesOptions';
 import type SVGElement from '../Core/Renderer/SVG/SVGElement';
@@ -85,7 +90,7 @@ declare global {
             dataLabels?: FunnelSeriesDataLabelsOptionsObject;
         }
         interface FunnelSeriesDataLabelsOptionsObject
-            extends PieSeriesDataLabelsOptionsObject {
+            extends PieDataLabelOptions {
             position?: string;
         }
         interface FunnelSeriesOptions extends PieSeriesOptions {
@@ -94,7 +99,7 @@ declare global {
             height?: (number|string);
             neckHeight?: (number|string);
             reversed?: boolean;
-            size?: null;
+            size?: undefined;
             dataLabels?: FunnelSeriesDataLabelsOptionsObject;
             states?: SeriesStatesOptions<FunnelSeries>;
         }

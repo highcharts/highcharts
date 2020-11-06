@@ -91,6 +91,31 @@ var addEvent = U.addEvent, arrayMax = U.arrayMax, arrayMin = U.arrayMin, clamp =
 */
 var LineSeries = /** @class */ (function () {
     function LineSeries() {
+        /* *
+         *
+         *  Static Functions
+         *
+         * */
+        /* *
+         *
+         *  Properties
+         *
+         * */
+        this._i = void 0;
+        this.chart = void 0;
+        this.data = void 0;
+        this.eventOptions = void 0;
+        this.eventsToUnbind = void 0;
+        this.linkedSeries = void 0;
+        this.options = void 0;
+        this.points = void 0;
+        this.processedXData = void 0;
+        this.processedYData = void 0;
+        this.tooltipOptions = void 0;
+        this.xAxis = void 0;
+        this.yAxis = void 0;
+        this.zones = void 0;
+        /** eslint-enable valid-jsdoc */
     }
     /* *
      *
@@ -2682,11 +2707,6 @@ var LineSeries = /** @class */ (function () {
             point.plotX <= this.xAxis.len;
         return isInside;
     };
-    /* *
-     *
-     *  Static Functions
-     *
-     * */
     /**
      * General options for all series types.
      *

@@ -431,7 +431,9 @@ namespace TreeGridAxis {
                 // Also check if mapOfPosToGridNode exists. #10887
                 isDirty = (
                     !axis.treeGrid.mapOfPosToGridNode ||
-                    axis.series.some(function (series: Highcharts.GanttSeries): boolean {
+                    axis.series.some(function (
+                        series: Highcharts.GanttSeries
+                    ): (boolean|undefined) {
                         return !series.hasRendered ||
                             series.isDirtyData ||
                             series.isDirty;

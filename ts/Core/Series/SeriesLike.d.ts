@@ -16,6 +16,7 @@
 
 import type PointLike from './PointLike';
 import type SeriesOptions from './SeriesOptions';
+import type { StatesOptionsKey } from './StatesOptions';
 import type SVGElement from '../Renderer/SVG/SVGElement';
 
 /* *
@@ -40,10 +41,14 @@ export interface SeriesLike {
     linkedParent?: SeriesLike;
     linkedSeries: Array<SeriesLike>;
     markerGroup?: SVGElement;
+    name: string;
     opacity?: number;
     options: SeriesOptions;
     points: Array<PointLike>;
+    state?: StatesOptionsKey;
+    type: string;
     userOptions: DeepPartial<SeriesOptions>;
+    visible: boolean;
     drawGraph(): void;
     render(): void;
     translate(): void;

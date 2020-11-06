@@ -13,6 +13,8 @@
 'use strict';
 
 import type ColorString from '../Core/Color/ColorString';
+import type PiePoint from './Pie/PiePoint';
+import type PieSeries from './Pie/PieSeries';
 import type PositionObject from '../Core/Renderer/PositionObject';
 import type SVGAttributes from '../Core/Renderer/SVG/SVGAttributes';
 import type SVGPath from '../Core/Renderer/SVG/SVGPath';
@@ -34,13 +36,11 @@ const {
  * Internal types
  * @private
  */
-declare global {
-    namespace Highcharts {
-        interface PieSeriesOptions {
-            depth?: number;
-            edgeColor?: ColorString;
-            edgeWidth?: number;
-        }
+declare module './Pie/PieSeriesOptions' {
+    interface PieSeriesOptions {
+        depth?: number;
+        edgeColor?: ColorString;
+        edgeWidth?: number;
     }
 }
 
@@ -59,7 +59,7 @@ declare global {
 /* eslint-disable no-invalid-this */
 
 wrap(seriesTypes.pie.prototype, 'translate', function (
-    this: Highcharts.PieSeries,
+    this: PieSeries,
     proceed: Function
 ): void {
     proceed.apply(this, [].slice.call(arguments, 1));
@@ -85,7 +85,7 @@ wrap(seriesTypes.pie.prototype, 'translate', function (
         z = 0;
     }
 
-    series.data.forEach(function (point: Highcharts.PiePoint): void {
+    series.data.forEach(function (point): void {
 
         var shapeArgs = point.shapeArgs,
             angle: number;
@@ -119,7 +119,7 @@ wrap(
     seriesTypes.pie.prototype.pointClass.prototype,
     'haloPath',
     function (
-        this: Highcharts.PiePoint,
+        this: PiePoint,
         proceed: Function
     ): SVGPath {
         var args = arguments;
@@ -132,9 +132,9 @@ wrap(
     seriesTypes.pie.prototype,
     'pointAttribs',
     function (
-        this: Highcharts.PieSeries,
+        this: PieSeries,
         proceed: Function,
-        point: Highcharts.PiePoint,
+        point: PiePoint,
         state: string
     ): SVGAttributes {
         var attr = proceed.call(this, point, state),
@@ -150,7 +150,7 @@ wrap(
 );
 
 wrap(seriesTypes.pie.prototype, 'drawDataLabels', function (
-    this: Highcharts.PieSeries,
+    this: PieSeries,
     proceed: Function
 ): void {
     if (this.chart.is3d()) {
@@ -158,7 +158,7 @@ wrap(seriesTypes.pie.prototype, 'drawDataLabels', function (
             chart = series.chart,
             options3d = (chart.options.chart as any).options3d;
 
-        series.data.forEach(function (point: Highcharts.PiePoint): void {
+        series.data.forEach(function (point): void {
             var shapeArgs = point.shapeArgs,
                 r = (shapeArgs as any).r,
                 // #3240 issue with datalabels for 0 and null values
@@ -186,7 +186,7 @@ wrap(seriesTypes.pie.prototype, 'drawDataLabels', function (
 });
 
 wrap(seriesTypes.pie.prototype, 'addPoint', function (
-    this: Highcharts.PieSeries,
+    this: PieSeries,
     proceed: Function
 ): void {
     proceed.apply(this, [].slice.call(arguments, 1));
@@ -197,7 +197,7 @@ wrap(seriesTypes.pie.prototype, 'addPoint', function (
 });
 
 wrap(seriesTypes.pie.prototype, 'animate', function (
-    this: Highcharts.PieSeries,
+    this: PieSeries,
     proceed: Function
 ): void {
     if (!this.chart.is3d()) {
