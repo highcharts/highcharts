@@ -228,6 +228,228 @@ class AreaSeries extends LineSeries {
     /* eslint-disable valid-jsdoc */
 
     /**
+     * Draw the graph and the underlying area. This method calls the Series
+     * base function and adds the area. The areaPath is calculated in the
+     * getSegmentPath method called from Series.prototype.drawGraph.
+     * @private
+     */
+    public drawGraph(): void {
+
+        // Define or reset areaPath
+        this.areaPath = [];
+
+        // Call the base method
+        LineSeries.prototype.drawGraph.apply(this);
+
+        // Define local variables
+        var series = this,
+            areaPath = this.areaPath,
+            options = this.options,
+            zones = this.zones,
+            props = [[
+                'area',
+                'highcharts-area',
+                this.color as any,
+                options.fillColor as any
+            ]]; // area name, main color, fill color
+
+        zones.forEach(function (
+            zone: SeriesZonesOptions,
+            i: number
+        ): void {
+            props.push([
+                'zone-area-' + i,
+                'highcharts-area highcharts-zone-area-' + i + ' ' +
+                zone.className,
+                zone.color || series.color,
+                zone.fillColor || options.fillColor
+            ]);
+        });
+
+        props.forEach(function (prop: Array<string>): void {
+            var areaKey = prop[0],
+                area = (series as any)[areaKey],
+                verb = area ? 'animate' : 'attr',
+                attribs: SVGAttributes = {};
+
+            // Create or update the area
+            if (area) { // update
+                area.endX = series.preventGraphAnimation ?
+                    null :
+                    areaPath.xMap;
+                area.animate({ d: areaPath });
+
+            } else { // create
+
+                attribs.zIndex = 0; // #1069
+
+                area = (series as any)[areaKey] = series.chart.renderer
+                    .path(areaPath)
+                    .addClass(prop[1])
+                    .add(series.group);
+                area.isArea = true;
+            }
+
+            if (!series.chart.styledMode) {
+                attribs.fill = pick(
+                    prop[3],
+                    color(prop[2])
+                        .setOpacity(pick(options.fillOpacity, 0.75))
+                        .get()
+                );
+            }
+            area[verb](attribs);
+
+            area.startX = areaPath.xMap;
+            area.shiftUnit = options.step ? 2 : 1;
+        });
+    }
+
+    /**
+     * @private
+     */
+    public getGraphPath(points: Array<AreaPoint>): SVGPath {
+        var getGraphPath = LineSeries.prototype.getGraphPath,
+            graphPath: SVGPath,
+            options = this.options,
+            stacking = options.stacking,
+            yAxis = this.yAxis as StackingAxis,
+            topPath: SVGPath,
+            bottomPath,
+            bottomPoints: Array<AreaPoint> = [],
+            graphPoints: Array<AreaPoint> = [],
+            seriesIndex = this.index,
+            i,
+            areaPath: SVGPath,
+            plotX: (number|undefined),
+            stacks = yAxis.stacking.stacks[this.stackKey as any],
+            threshold = options.threshold,
+            translatedThreshold = Math.round( // #10909
+                yAxis.getThreshold(options.threshold as any) as any
+            ),
+            isNull,
+            yBottom,
+            connectNulls = pick( // #10574
+                options.connectNulls,
+                stacking === 'percent'
+            ),
+
+            // To display null points in underlying stacked series, this
+            // series graph must be broken, and the area also fall down to
+            // fill the gap left by the null point. #2069
+            addDummyPoints = function (
+                i: number,
+                otherI: number,
+                side: string
+            ): void {
+                var point = points[i],
+                    stackedValues = stacking &&
+                        stacks[point.x as any].points[seriesIndex as any],
+                    nullVal = (point as any)[side + 'Null'] || 0,
+                    cliffVal = (point as any)[side + 'Cliff'] || 0,
+                    top,
+                    bottom,
+                    isNull = true;
+
+                if (cliffVal || nullVal) {
+
+                    top = (nullVal ?
+                        (stackedValues as any)[0] :
+                        (stackedValues as any)[1]
+                    ) + cliffVal;
+                    bottom = (stackedValues as any)[0] + cliffVal;
+                    isNull = !!nullVal;
+
+                } else if (
+                    !stacking &&
+                points[otherI] &&
+                points[otherI].isNull
+                ) {
+                    top = bottom = threshold;
+                }
+
+                // Add to the top and bottom line of the area
+                if (typeof top !== 'undefined') {
+                    graphPoints.push({
+                        plotX: plotX,
+                        plotY: top === null ?
+                            translatedThreshold :
+                            yAxis.getThreshold(top),
+                        isNull: isNull,
+                        isCliff: true
+                    } as any);
+                    bottomPoints.push({ // @todo create real point object
+                        plotX: plotX,
+                        plotY: bottom === null ?
+                            translatedThreshold :
+                            yAxis.getThreshold(bottom),
+                        doCurve: false // #1041, gaps in areaspline areas
+                    } as any);
+                }
+            };
+
+        // Find what points to use
+        points = points || this.points;
+
+        // Fill in missing points
+        if (stacking) {
+            points = this.getStackPoints(points);
+        }
+
+        for (i = 0; i < points.length; i++) {
+
+            // Reset after series.update of stacking property (#12033)
+            if (!stacking) {
+                points[i].leftCliff = points[i].rightCliff =
+                    points[i].leftNull = points[i].rightNull = void 0;
+            }
+
+            isNull = points[i].isNull;
+            plotX = pick(points[i].rectPlotX, points[i].plotX);
+            yBottom = stacking ? points[i].yBottom : translatedThreshold;
+
+            if (!isNull || connectNulls) {
+
+                if (!connectNulls) {
+                    addDummyPoints(i, i - 1, 'left');
+                }
+                // Skip null point when stacking is false and connectNulls
+                // true
+                if (!(isNull && !stacking && connectNulls)) {
+                    graphPoints.push(points[i]);
+                    bottomPoints.push({ // @todo make real point object
+                        x: i,
+                        plotX: plotX,
+                        plotY: yBottom
+                    } as any);
+                }
+
+                if (!connectNulls) {
+                    addDummyPoints(i, i + 1, 'right');
+                }
+            }
+        }
+
+        topPath = getGraphPath.call(this, graphPoints, true, true);
+
+        (bottomPoints as any).reversed = true;
+        bottomPath = getGraphPath.call(this, bottomPoints, true, true);
+        const firstBottomPoint = bottomPath[0];
+        if (firstBottomPoint && firstBottomPoint[0] === 'M') {
+            bottomPath[0] = ['L', firstBottomPoint[1], firstBottomPoint[2]];
+        }
+
+        areaPath = topPath.concat(bottomPath);
+        // TODO: don't set leftCliff and rightCliff when connectNulls?
+        graphPath = getGraphPath
+            .call(this, graphPoints, false, connectNulls);
+        areaPath.xMap = topPath.xMap;
+        this.areaPath = areaPath;
+
+        return graphPath;
+    }
+
+    /**
      * Return an array of stacked points, where null and missing points are
      * replaced by dummy points in order for gaps to be drawn correctly in
      * stacks.
@@ -385,6 +607,8 @@ class AreaSeries extends LineSeries {
         return segment;
     }
 
+    /* eslint-enable valid-jsdoc */
+
 }
 
 /* *
@@ -400,234 +624,7 @@ extend(AreaSeries.prototype, {
 
     singleStacks: false,
 
-    /**
-     * @private
-     */
-    getGraphPath: function (
-        this: AreaSeries,
-        points: Array<AreaPoint>
-    ): SVGPath {
-        var getGraphPath = LineSeries.prototype.getGraphPath,
-            graphPath: SVGPath,
-            options = this.options,
-            stacking = options.stacking,
-            yAxis = this.yAxis as StackingAxis,
-            topPath: SVGPath,
-            bottomPath,
-            bottomPoints: Array<AreaPoint> = [],
-            graphPoints: Array<AreaPoint> = [],
-            seriesIndex = this.index,
-            i,
-            areaPath: SVGPath,
-            plotX: (number|undefined),
-            stacks = yAxis.stacking.stacks[this.stackKey as any],
-            threshold = options.threshold,
-            translatedThreshold = Math.round( // #10909
-                yAxis.getThreshold(options.threshold as any) as any
-            ),
-            isNull,
-            yBottom,
-            connectNulls = pick( // #10574
-                options.connectNulls,
-                stacking === 'percent'
-            ),
-
-            // To display null points in underlying stacked series, this
-            // series graph must be broken, and the area also fall down to
-            // fill the gap left by the null point. #2069
-            addDummyPoints = function (
-                i: number,
-                otherI: number,
-                side: string
-            ): void {
-                var point = points[i],
-                    stackedValues = stacking &&
-                        stacks[point.x as any].points[seriesIndex as any],
-                    nullVal = (point as any)[side + 'Null'] || 0,
-                    cliffVal = (point as any)[side + 'Cliff'] || 0,
-                    top,
-                    bottom,
-                    isNull = true;
-
-                if (cliffVal || nullVal) {
-
-                    top = (nullVal ?
-                        (stackedValues as any)[0] :
-                        (stackedValues as any)[1]
-                    ) + cliffVal;
-                    bottom = (stackedValues as any)[0] + cliffVal;
-                    isNull = !!nullVal;
-
-                } else if (
-                    !stacking &&
-                points[otherI] &&
-                points[otherI].isNull
-                ) {
-                    top = bottom = threshold;
-                }
-
-                // Add to the top and bottom line of the area
-                if (typeof top !== 'undefined') {
-                    graphPoints.push({
-                        plotX: plotX,
-                        plotY: top === null ?
-                            translatedThreshold :
-                            yAxis.getThreshold(top),
-                        isNull: isNull,
-                        isCliff: true
-                    } as any);
-                    bottomPoints.push({ // @todo create real point object
-                        plotX: plotX,
-                        plotY: bottom === null ?
-                            translatedThreshold :
-                            yAxis.getThreshold(bottom),
-                        doCurve: false // #1041, gaps in areaspline areas
-                    } as any);
-                }
-            };
-
-        // Find what points to use
-        points = points || this.points;
-
-        // Fill in missing points
-        if (stacking) {
-            points = this.getStackPoints(points);
-        }
-
-        for (i = 0; i < points.length; i++) {
-
-            // Reset after series.update of stacking property (#12033)
-            if (!stacking) {
-                points[i].leftCliff = points[i].rightCliff =
-                    points[i].leftNull = points[i].rightNull = void 0;
-            }
-
-            isNull = points[i].isNull;
-            plotX = pick(points[i].rectPlotX, points[i].plotX);
-            yBottom = stacking ? points[i].yBottom : translatedThreshold;
-
-            if (!isNull || connectNulls) {
-
-                if (!connectNulls) {
-                    addDummyPoints(i, i - 1, 'left');
-                }
-                // Skip null point when stacking is false and connectNulls
-                // true
-                if (!(isNull && !stacking && connectNulls)) {
-                    graphPoints.push(points[i]);
-                    bottomPoints.push({ // @todo make real point object
-                        x: i,
-                        plotX: plotX,
-                        plotY: yBottom
-                    } as any);
-                }
-
-                if (!connectNulls) {
-                    addDummyPoints(i, i + 1, 'right');
-                }
-            }
-        }
-
-        topPath = getGraphPath.call(this, graphPoints, true, true);
-
-        (bottomPoints as any).reversed = true;
-        bottomPath = getGraphPath.call(this, bottomPoints, true, true);
-        const firstBottomPoint = bottomPath[0];
-        if (firstBottomPoint && firstBottomPoint[0] === 'M') {
-            bottomPath[0] = ['L', firstBottomPoint[1], firstBottomPoint[2]];
-        }
-
-        areaPath = topPath.concat(bottomPath);
-        // TODO: don't set leftCliff and rightCliff when connectNulls?
-        graphPath = getGraphPath
-            .call(this, graphPoints, false, connectNulls);
-        areaPath.xMap = topPath.xMap;
-        this.areaPath = areaPath;
-
-        return graphPath;
-    },
-
-    /**
-     * Draw the graph and the underlying area. This method calls the Series
-     * base function and adds the area. The areaPath is calculated in the
-     * getSegmentPath method called from Series.prototype.drawGraph.
-     * @private
-     */
-    drawGraph: function (this: AreaSeries): void {
-
-        // Define or reset areaPath
-        this.areaPath = [];
-
-        // Call the base method
-        LineSeries.prototype.drawGraph.apply(this);
-
-        // Define local variables
-        var series = this,
-            areaPath = this.areaPath,
-            options = this.options,
-            zones = this.zones,
-            props = [[
-                'area',
-                'highcharts-area',
-                this.color as any,
-                options.fillColor as any
-            ]]; // area name, main color, fill color
-
-        zones.forEach(function (
-            zone: SeriesZonesOptions,
-            i: number
-        ): void {
-            props.push([
-                'zone-area-' + i,
-                'highcharts-area highcharts-zone-area-' + i + ' ' +
-                zone.className,
-                zone.color || series.color,
-                zone.fillColor || options.fillColor
-            ]);
-        });
-
-        props.forEach(function (prop: Array<string>): void {
-            var areaKey = prop[0],
-                area = (series as any)[areaKey],
-                verb = area ? 'animate' : 'attr',
-                attribs: SVGAttributes = {};
-
-            // Create or update the area
-            if (area) { // update
-                area.endX = series.preventGraphAnimation ?
-                    null :
-                    areaPath.xMap;
-                area.animate({ d: areaPath });
-
-            } else { // create
-
-                attribs.zIndex = 0; // #1069
-
-                area = (series as any)[areaKey] = series.chart.renderer
-                    .path(areaPath)
-                    .addClass(prop[1])
-                    .add(series.group);
-                area.isArea = true;
-            }
-
-            if (!series.chart.styledMode) {
-                attribs.fill = pick(
-                    prop[3],
-                    color(prop[2])
-                        .setOpacity(pick(options.fillOpacity, 0.75))
-                        .get()
-                );
-            }
-            area[verb](attribs);
-
-            area.startX = areaPath.xMap;
-            area.shiftUnit = options.step ? 2 : 1;
-        });
-    },
-
     drawLegendSymbol: LegendSymbolMixin.drawRectangle
-
-    /* eslint-enable valid-jsdoc */
 
 });
 
