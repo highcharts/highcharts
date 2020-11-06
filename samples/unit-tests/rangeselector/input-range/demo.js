@@ -348,3 +348,24 @@ QUnit.test('Range selector value on change should change properly (#13205)', fun
         'Independently from use UTC being enabled or disabled, the function should return the same values.'
     );
 });
+
+QUnit.test('#14416: Range selector ignored chart.time.timezoneOffset', assert => {
+    const chart = Highcharts.stockChart('container', {
+        time: {
+            timezoneOffset: 420
+        },
+        xAxis: {
+            minRange: 3600 * 1000 // one hour
+        },
+        series: [
+            {
+                pointInterval: 24 * 3600 * 1000,
+                data: [1, 3, 2, 4, 3, 5, 4, 6, 3, 4, 2, 3, 1, 2, 1]
+            }
+        ]
+    });
+
+    chart.rangeSelector.minInput.value = '1970-01-10';
+    chart.rangeSelector.minInput.onchange();
+    assert.strictEqual(chart.rangeSelector.minInput.value, '1970-01-10', 'The input value should not change');
+});

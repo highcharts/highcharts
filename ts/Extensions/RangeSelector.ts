@@ -1318,6 +1318,7 @@ class RangeSelector {
                 dataMax = dataAxis.dataMax;
 
             value = (options.inputDateParser || defaultInputDateParser)(inputValue, chart.time.useUTC);
+            value += (chart.time.timezoneOffset || 0) * 60 * 1000; // #14416
 
             if (value !== input.previousValue) {
                 input.previousValue = value;
