@@ -12,7 +12,7 @@ import BaseSeries from '../Core/Series/Series.js';
 import LineSeries from './Line/LineSeries.js';
 import Point from '../Core/Series/Point.js';
 import U from '../Core/Utilities.js';
-var merge = U.merge;
+var arrayMax = U.arrayMax, arrayMin = U.arrayMin, isNumber = U.isNumber, merge = U.merge;
 import '../Core/Options.js';
 import '../Series/ScatterSeries.js';
 /**
@@ -51,7 +51,25 @@ BaseSeries.seriesType('mappoint', 'scatter',
     // Prototype members
 }, {
     type: 'mappoint',
+    isCartesian: false,
+    useMapGeometry: true,
     forceDL: true,
+    translate: function () {
+        var mapView = this.chart.mapView;
+        if (!this.processedXData) {
+            this.processData();
+        }
+        this.generatePoints();
+        if (mapView) {
+            this.points.forEach(function (p) {
+                if (p && isNumber(p.x) && isNumber(p.y)) {
+                    var _a = mapView.toPixels([p.y, p.x]), x = _a.x, y = _a.y;
+                    p.plotX = x;
+                    p.plotY = y;
+                }
+            });
+        }
+    },
     drawDataLabels: function () {
         LineSeries.prototype.drawDataLabels.call(this);
         if (this.dataLabelsGroup) {

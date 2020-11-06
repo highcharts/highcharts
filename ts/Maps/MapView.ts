@@ -12,6 +12,11 @@ import type PositionObject from '../Core/Renderer/PositionObject';
 import AnimationOptionsObject from '../Core/Animation/AnimationOptionsObject.js';
 import Chart from '../Core/Chart/Chart.js';
 import H from '../Core/Globals.js';
+import U from '../Core/Utilities.js';
+const {
+    isNumber
+} = U;
+
 
 /**
  * Internal types
@@ -70,7 +75,13 @@ class MapView {
         };
         let hasBounds = false;
         this.chart.series.forEach((s): void => {
-            if ((s as any).useMapGeometry) {
+            if (
+                (s as any).useMapGeometry &&
+                isNumber((s as any).minY) &&
+                isNumber((s as any).maxX) &&
+                isNumber((s as any).maxY) &&
+                isNumber((s as any).minX)
+            ) {
                 bounds.n = Math.min(bounds.n, (s as any).minY);
                 bounds.e = Math.max(bounds.e, (s as any).maxX);
                 bounds.s = Math.max(bounds.s, (s as any).maxY);

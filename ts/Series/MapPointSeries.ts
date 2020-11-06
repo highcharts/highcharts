@@ -13,9 +13,16 @@
 import type { SeriesStatesOptions } from '../Core/Series/SeriesOptions';
 import BaseSeries from '../Core/Series/Series.js';
 import LineSeries from './Line/LineSeries.js';
+import type {
+    PointOptions,
+    PointShortOptions
+} from '../Core/Series/PointOptions';
 import Point from '../Core/Series/Point.js';
 import U from '../Core/Utilities.js';
 const {
+    arrayMax,
+    arrayMin,
+    isNumber,
     merge
 } = U;
 
@@ -32,10 +39,15 @@ declare global {
         class MapPointSeries extends ScatterSeries {
             public data: Array<MapPointPoint>;
             public forceDL: boolean;
+            public maxX?: number;
+            public maxY: number;
+            public minX?: number;
+            public minY: number;
             public options: MapPointSeriesOptions;
             public pointClass: typeof MapPointPoint;
             public points: Array<MapPointPoint>;
             public type: string;
+            public useMapGeometry: boolean;
             public applyOptions(
                 options: (MapLatLonObject&MapPointPointOptions),
                 x?: number
@@ -105,7 +117,30 @@ BaseSeries.seriesType<typeof Highcharts.MapPointSeries>(
     // Prototype members
     }, {
         type: 'mappoint',
+        isCartesian: false,
+        useMapGeometry: true,
         forceDL: true,
+
+        translate: function (
+            this: Highcharts.MapPointSeries
+        ): void {
+            const mapView = this.chart.mapView;
+
+            if (!this.processedXData) {
+                this.processData();
+            }
+            this.generatePoints();
+
+            if (mapView) {
+                this.points.forEach((p): void => {
+                    if (p && isNumber(p.x) && isNumber(p.y)) {
+                        const { x, y } = mapView.toPixels([p.y, p.x]);
+                        p.plotX = x;
+                        p.plotY = y;
+                    }
+                });
+            }
+        },
         drawDataLabels: function (this: Highcharts.MapPointSeries): void {
             LineSeries.prototype.drawDataLabels.call(this);
             if (this.dataLabelsGroup) {

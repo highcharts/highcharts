@@ -1,3 +1,5 @@
+import U from '../Core/Utilities.js';
+var isNumber = U.isNumber;
 var MapView = /** @class */ (function () {
     function MapView(chart) {
         this.chart = chart;
@@ -21,7 +23,11 @@ var MapView = /** @class */ (function () {
         };
         var hasBounds = false;
         this.chart.series.forEach(function (s) {
-            if (s.useMapGeometry) {
+            if (s.useMapGeometry &&
+                isNumber(s.minY) &&
+                isNumber(s.maxX) &&
+                isNumber(s.maxY) &&
+                isNumber(s.minX)) {
                 bounds.n = Math.min(bounds.n, s.minY);
                 bounds.e = Math.max(bounds.e, s.maxX);
                 bounds.s = Math.max(bounds.s, s.maxY);
