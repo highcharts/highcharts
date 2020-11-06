@@ -16,6 +16,8 @@
  *
  * */
 
+import type AreaPoint from './Area/AreaPoint';
+import type AreaSeries from './Area/AreaSeries';
 import type { SeriesStatesOptions } from '../Core/Series/SeriesOptions';
 import BaseSeries from '../Core/Series/Series.js';
 import LegendSymbolMixin from '../Mixins/LegendSymbol.js';
