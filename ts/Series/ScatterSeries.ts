@@ -63,12 +63,6 @@ declare global {
             public series: ScatterSeries;
         }
         class ScatterSeries extends LineSeries {
-            public data: Array<ScatterPoint>;
-            public options: ScatterSeriesOptions;
-            public pointClass: typeof ScatterPoint;
-            public points: Array<ScatterPoint>;
-            public takeOrdinalPosition: boolean;
-            public applyJitter(): void;
         }
     }
 }
@@ -193,45 +187,33 @@ class ScatterSeries extends LineSeries {
             pointFormat: 'x: <b>{point.x}</b><br/>y: <b>{point.y}</b><br/>'
         }
 
-        // Prototype members
     });
 
-}
+    /* *
+     *
+     *  Properties
+     *
+     * */
 
-interface ScatterSeries {
-    pointClass: typeof Highcharts.ScatterPoint;
-}
-extend(ScatterSeries.prototype, {
+    public data: Array<Highcharts.ScatterPoint> = void 0 as any;
 
-    sorted: false,
-    requireSorting: false,
-    noSharedTooltip: true,
-    trackerGroups: ['group', 'markerGroup', 'dataLabelsGroup'],
-    takeOrdinalPosition: false, // #2342
+    public options: Highcharts.ScatterSeriesOptions = void 0 as any;
+
+    public points: Array<Highcharts.ScatterPoint> = void 0 as any;
+
+    /* *
+     *
+     *  Functions
+     *
+     * */
 
     /* eslint-disable valid-jsdoc */
 
     /**
+     * Optionally add the jitter effect.
      * @private
-     * @function Highcharts.seriesTypes.scatter#drawGraph
      */
-    drawGraph: function (this: Highcharts.ScatterSeries): void {
-        if (
-            this.options.lineWidth ||
-            // In case we have a graph from before and we update the line
-            // width to 0 (#13816)
-            (
-                this.options.lineWidth === 0 &&
-                this.graph &&
-                this.graph.strokeWidth()
-            )
-        ) {
-            LineSeries.prototype.drawGraph.call(this);
-        }
-    },
-
-    // Optionally add the jitter effect
-    applyJitter: function (this: Highcharts.ScatterSeries): void {
+    public applyJitter(): void {
         var series = this,
             jitter = this.options.jitter,
             len = this.points.length;
@@ -291,16 +273,61 @@ extend(ScatterSeries.prototype, {
         }
     }
 
+    /**
+     * @private
+     * @function Highcharts.seriesTypes.scatter#drawGraph
+     */
+    public drawGraph(): void {
+        if (
+            this.options.lineWidth ||
+            // In case we have a graph from before and we update the line
+            // width to 0 (#13816)
+            (
+                this.options.lineWidth === 0 &&
+                this.graph &&
+                this.graph.strokeWidth()
+            )
+        ) {
+            LineSeries.prototype.drawGraph.call(this);
+        }
+    }
+
     /* eslint-enable valid-jsdoc */
+
+}
+
+/* *
+ *
+ *  Prototype Properties
+ *
+ * */
+
+interface ScatterSeries {
+    pointClass: typeof Highcharts.ScatterPoint;
+    takeOrdinalPosition: boolean;
+}
+extend(ScatterSeries.prototype, {
+
+    sorted: false,
+    requireSorting: false,
+    noSharedTooltip: true,
+    trackerGroups: ['group', 'markerGroup', 'dataLabelsGroup'],
+    takeOrdinalPosition: false // #2342
 
 });
 
+/* *
+ *
+ *  Events
+ *
+ * */
+
 /* eslint-disable no-invalid-this */
 
-addEvent(LineSeries as any, 'afterTranslate', function (
-    this: Highcharts.ScatterSeries
+addEvent(LineSeries, 'afterTranslate', function (
+    this: LineSeries
 ): void {
-    if (this.applyJitter) {
+    if (this instanceof ScatterSeries) {
         this.applyJitter();
     }
 });

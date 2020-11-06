@@ -42,8 +42,78 @@ var addEvent = U.addEvent, extend = U.extend, merge = U.merge;
 var ScatterSeries = /** @class */ (function (_super) {
     __extends(ScatterSeries, _super);
     function ScatterSeries() {
-        return _super !== null && _super.apply(this, arguments) || this;
+        var _this = _super !== null && _super.apply(this, arguments) || this;
+        /* *
+         *
+         *  Properties
+         *
+         * */
+        _this.data = void 0;
+        _this.options = void 0;
+        _this.points = void 0;
+        return _this;
+        /* eslint-enable valid-jsdoc */
     }
+    /* *
+     *
+     *  Functions
+     *
+     * */
+    /* eslint-disable valid-jsdoc */
+    /**
+     * Optionally add the jitter effect.
+     * @private
+     */
+    ScatterSeries.prototype.applyJitter = function () {
+        var series = this, jitter = this.options.jitter, len = this.points.length;
+        /**
+         * Return a repeatable, pseudo-random number based on an integer
+         * seed.
+         * @private
+         */
+        function unrandom(seed) {
+            var rand = Math.sin(seed) * 10000;
+            return rand - Math.floor(rand);
+        }
+        if (jitter) {
+            this.points.forEach(function (point, i) {
+                ['x', 'y'].forEach(function (dim, j) {
+                    var axis, plotProp = 'plot' + dim.toUpperCase(), min, max, translatedJitter;
+                    if (jitter[dim] && !point.isNull) {
+                        axis = series[dim + 'Axis'];
+                        translatedJitter =
+                            jitter[dim] * axis.transA;
+                        if (axis && !axis.isLog) {
+                            // Identify the outer bounds of the jitter range
+                            min = Math.max(0, point[plotProp] - translatedJitter);
+                            max = Math.min(axis.len, point[plotProp] + translatedJitter);
+                            // Find a random position within this range
+                            point[plotProp] = min +
+                                (max - min) * unrandom(i + j * len);
+                            // Update clientX for the tooltip k-d-tree
+                            if (dim === 'x') {
+                                point.clientX = point.plotX;
+                            }
+                        }
+                    }
+                });
+            });
+        }
+    };
+    /**
+     * @private
+     * @function Highcharts.seriesTypes.scatter#drawGraph
+     */
+    ScatterSeries.prototype.drawGraph = function () {
+        if (this.options.lineWidth ||
+            // In case we have a graph from before and we update the line
+            // width to 0 (#13816)
+            (this.options.lineWidth === 0 &&
+                this.graph &&
+                this.graph.strokeWidth())) {
+            LineSeries.prototype.drawGraph.call(this);
+        }
+    };
     /**
      * A scatter plot uses cartesian coordinates to display values for two
      * variables for a set of data.
@@ -147,64 +217,16 @@ extend(ScatterSeries.prototype, {
     requireSorting: false,
     noSharedTooltip: true,
     trackerGroups: ['group', 'markerGroup', 'dataLabelsGroup'],
-    takeOrdinalPosition: false,
-    /* eslint-disable valid-jsdoc */
-    /**
-     * @private
-     * @function Highcharts.seriesTypes.scatter#drawGraph
-     */
-    drawGraph: function () {
-        if (this.options.lineWidth ||
-            // In case we have a graph from before and we update the line
-            // width to 0 (#13816)
-            (this.options.lineWidth === 0 &&
-                this.graph &&
-                this.graph.strokeWidth())) {
-            LineSeries.prototype.drawGraph.call(this);
-        }
-    },
-    // Optionally add the jitter effect
-    applyJitter: function () {
-        var series = this, jitter = this.options.jitter, len = this.points.length;
-        /**
-         * Return a repeatable, pseudo-random number based on an integer
-         * seed.
-         * @private
-         */
-        function unrandom(seed) {
-            var rand = Math.sin(seed) * 10000;
-            return rand - Math.floor(rand);
-        }
-        if (jitter) {
-            this.points.forEach(function (point, i) {
-                ['x', 'y'].forEach(function (dim, j) {
-                    var axis, plotProp = 'plot' + dim.toUpperCase(), min, max, translatedJitter;
-                    if (jitter[dim] && !point.isNull) {
-                        axis = series[dim + 'Axis'];
-                        translatedJitter =
-                            jitter[dim] * axis.transA;
-                        if (axis && !axis.isLog) {
-                            // Identify the outer bounds of the jitter range
-                            min = Math.max(0, point[plotProp] - translatedJitter);
-                            max = Math.min(axis.len, point[plotProp] + translatedJitter);
-                            // Find a random position within this range
-                            point[plotProp] = min +
-                                (max - min) * unrandom(i + j * len);
-                            // Update clientX for the tooltip k-d-tree
-                            if (dim === 'x') {
-                                point.clientX = point.plotX;
-                            }
-                        }
-                    }
-                });
-            });
-        }
-    }
-    /* eslint-enable valid-jsdoc */
+    takeOrdinalPosition: false // #2342
 });
+/* *
+ *
+ *  Events
+ *
+ * */
 /* eslint-disable no-invalid-this */
 addEvent(LineSeries, 'afterTranslate', function () {
-    if (this.applyJitter) {
+    if (this instanceof ScatterSeries) {
         this.applyJitter();
     }
 });
