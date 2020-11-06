@@ -357,11 +357,7 @@ QUnit.test('#14397: Updating networkgraph series', assert => {
         },
         plotOptions: {
             networkgraph: {
-                keys: ['from', 'to'],
-                layoutAlgorithm: {
-                    enableSimulation: true,
-                    friction: -0.9
-                }
+                keys: ['from', 'to']
             }
         },
         series: [{
