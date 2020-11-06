@@ -21,12 +21,12 @@ var __extends = (this && this.__extends) || (function () {
         d.prototype = b === null ? Object.create(b) : (__.prototype = b.prototype, new __());
     };
 })();
-import BaseSeries from '../Core/Series/Series.js';
-import Color from '../Core/Color/Color.js';
+import BaseSeries from '../../Core/Series/Series.js';
+import Color from '../../Core/Color/Color.js';
 var color = Color.parse;
-import LegendSymbolMixin from '../Mixins/LegendSymbol.js';
-import LineSeries from './Line/LineSeries.js';
-import U from '../Core/Utilities.js';
+import LegendSymbolMixin from '../../Mixins/LegendSymbol.js';
+import LineSeries from '../Line/LineSeries.js';
+import U from '../../Core/Utilities.js';
 var extend = U.extend, merge = U.merge, objectEach = U.objectEach, pick = U.pick;
 /* *
  *
