@@ -8,10 +8,23 @@
  *
  * */
 'use strict';
+var __extends = (this && this.__extends) || (function () {
+    var extendStatics = function (d, b) {
+        extendStatics = Object.setPrototypeOf ||
+            ({ __proto__: [] } instanceof Array && function (d, b) { d.__proto__ = b; }) ||
+            function (d, b) { for (var p in b) if (b.hasOwnProperty(p)) d[p] = b[p]; };
+        return extendStatics(d, b);
+    };
+    return function (d, b) {
+        extendStatics(d, b);
+        function __() { this.constructor = d; }
+        d.prototype = b === null ? Object.create(b) : (__.prototype = b.prototype, new __());
+    };
+})();
 import BaseSeries from '../Core/Series/Series.js';
 import LineSeries from './Line/LineSeries.js';
 import U from '../Core/Utilities.js';
-var addEvent = U.addEvent;
+var addEvent = U.addEvent, extend = U.extend, merge = U.merge;
 /* *
  *
  *  Class
@@ -26,103 +39,110 @@ var addEvent = U.addEvent;
  *
  * @augments Highcharts.Series
  */
-BaseSeries.seriesType('scatter', 'line', 
-/**
- * A scatter plot uses cartesian coordinates to display values for two
- * variables for a set of data.
- *
- * @sample {highcharts} highcharts/demo/scatter/
- *         Scatter plot
- *
- * @extends      plotOptions.line
- * @excluding    cropThreshold, pointPlacement, shadow, useOhlcData
- * @product      highcharts highstock
- * @optionparent plotOptions.scatter
- */
-{
-    /**
-     * The width of the line connecting the data points.
-     *
-     * @sample {highcharts} highcharts/plotoptions/scatter-linewidth-none/
-     *         0 by default
-     * @sample {highcharts} highcharts/plotoptions/scatter-linewidth-1/
-     *         1px
-     *
-     * @product highcharts highstock
-     */
-    lineWidth: 0,
-    findNearestPointBy: 'xy',
-    /**
-     * Apply a jitter effect for the rendered markers. When plotting
-     * discrete values, a little random noise may help telling the points
-     * apart. The jitter setting applies a random displacement of up to `n`
-     * axis units in either direction. So for example on a horizontal X
-     * axis, setting the `jitter.x` to 0.24 will render the point in a
-     * random position between 0.24 units to the left and 0.24 units to the
-     * right of the true axis position. On a category axis, setting it to
-     * 0.5 will fill up the bin and make the data appear continuous.
-     *
-     * When rendered on top of a box plot or a column series, a jitter value
-     * of 0.24 will correspond to the underlying series' default
-     * [groupPadding](
-     * https://api.highcharts.com/highcharts/plotOptions.column.groupPadding)
-     * and [pointPadding](
-     * https://api.highcharts.com/highcharts/plotOptions.column.pointPadding)
-     * settings.
-     *
-     * @sample {highcharts} highcharts/series-scatter/jitter
-     *         Jitter on a scatter plot
-     *
-     * @sample {highcharts} highcharts/series-scatter/jitter-boxplot
-     *         Jittered scatter plot on top of a box plot
-     *
-     * @product highcharts highstock
-     * @since 7.0.2
-     */
-    jitter: {
-        /**
-         * The maximal X offset for the random jitter effect.
-         */
-        x: 0,
-        /**
-         * The maximal Y offset for the random jitter effect.
-         */
-        y: 0
-    },
-    marker: {
-        enabled: true // Overrides auto-enabling in line series (#3647)
-    },
-    /**
-     * Sticky tracking of mouse events. When true, the `mouseOut` event
-     * on a series isn't triggered until the mouse moves over another
-     * series, or out of the plot area. When false, the `mouseOut` event on
-     * a series is triggered when the mouse leaves the area around the
-     * series' graph or markers. This also implies the tooltip. When
-     * `stickyTracking` is false and `tooltip.shared` is false, the tooltip
-     * will be hidden when moving the mouse between series.
-     *
-     * @type      {boolean}
-     * @default   false
-     * @product   highcharts highstock
-     * @apioption plotOptions.scatter.stickyTracking
-     */
-    /**
-     * A configuration object for the tooltip rendering of each single
-     * series. Properties are inherited from [tooltip](#tooltip).
-     * Overridable properties are `headerFormat`, `pointFormat`,
-     * `yDecimals`, `xDateFormat`, `yPrefix` and `ySuffix`. Unlike other
-     * series, in a scatter plot the series.name by default shows in the
-     * headerFormat and point.x and point.y in the pointFormat.
-     *
-     * @product highcharts highstock
-     */
-    tooltip: {
-        headerFormat: '<span style="color:{point.color}">\u25CF</span> ' +
-            '<span style="font-size: 10px"> {series.name}</span><br/>',
-        pointFormat: 'x: <b>{point.x}</b><br/>y: <b>{point.y}</b><br/>'
+var ScatterSeries = /** @class */ (function (_super) {
+    __extends(ScatterSeries, _super);
+    function ScatterSeries() {
+        return _super !== null && _super.apply(this, arguments) || this;
     }
-    // Prototype members
-}, {
+    /**
+     * A scatter plot uses cartesian coordinates to display values for two
+     * variables for a set of data.
+     *
+     * @sample {highcharts} highcharts/demo/scatter/
+     *         Scatter plot
+     *
+     * @extends      plotOptions.line
+     * @excluding    cropThreshold, pointPlacement, shadow, useOhlcData
+     * @product      highcharts highstock
+     * @optionparent plotOptions.scatter
+     */
+    ScatterSeries.defaultOptions = merge(LineSeries.defaultOptions, {
+        /**
+         * The width of the line connecting the data points.
+         *
+         * @sample {highcharts} highcharts/plotoptions/scatter-linewidth-none/
+         *         0 by default
+         * @sample {highcharts} highcharts/plotoptions/scatter-linewidth-1/
+         *         1px
+         *
+         * @product highcharts highstock
+         */
+        lineWidth: 0,
+        findNearestPointBy: 'xy',
+        /**
+         * Apply a jitter effect for the rendered markers. When plotting
+         * discrete values, a little random noise may help telling the points
+         * apart. The jitter setting applies a random displacement of up to `n`
+         * axis units in either direction. So for example on a horizontal X
+         * axis, setting the `jitter.x` to 0.24 will render the point in a
+         * random position between 0.24 units to the left and 0.24 units to the
+         * right of the true axis position. On a category axis, setting it to
+         * 0.5 will fill up the bin and make the data appear continuous.
+         *
+         * When rendered on top of a box plot or a column series, a jitter value
+         * of 0.24 will correspond to the underlying series' default
+         * [groupPadding](
+         * https://api.highcharts.com/highcharts/plotOptions.column.groupPadding)
+         * and [pointPadding](
+         * https://api.highcharts.com/highcharts/plotOptions.column.pointPadding)
+         * settings.
+         *
+         * @sample {highcharts} highcharts/series-scatter/jitter
+         *         Jitter on a scatter plot
+         *
+         * @sample {highcharts} highcharts/series-scatter/jitter-boxplot
+         *         Jittered scatter plot on top of a box plot
+         *
+         * @product highcharts highstock
+         * @since 7.0.2
+         */
+        jitter: {
+            /**
+             * The maximal X offset for the random jitter effect.
+             */
+            x: 0,
+            /**
+             * The maximal Y offset for the random jitter effect.
+             */
+            y: 0
+        },
+        marker: {
+            enabled: true // Overrides auto-enabling in line series (#3647)
+        },
+        /**
+         * Sticky tracking of mouse events. When true, the `mouseOut` event
+         * on a series isn't triggered until the mouse moves over another
+         * series, or out of the plot area. When false, the `mouseOut` event on
+         * a series is triggered when the mouse leaves the area around the
+         * series' graph or markers. This also implies the tooltip. When
+         * `stickyTracking` is false and `tooltip.shared` is false, the tooltip
+         * will be hidden when moving the mouse between series.
+         *
+         * @type      {boolean}
+         * @default   false
+         * @product   highcharts highstock
+         * @apioption plotOptions.scatter.stickyTracking
+         */
+        /**
+         * A configuration object for the tooltip rendering of each single
+         * series. Properties are inherited from [tooltip](#tooltip).
+         * Overridable properties are `headerFormat`, `pointFormat`,
+         * `yDecimals`, `xDateFormat`, `yPrefix` and `ySuffix`. Unlike other
+         * series, in a scatter plot the series.name by default shows in the
+         * headerFormat and point.x and point.y in the pointFormat.
+         *
+         * @product highcharts highstock
+         */
+        tooltip: {
+            headerFormat: '<span style="color:{point.color}">\u25CF</span> ' +
+                '<span style="font-size: 10px"> {series.name}</span><br/>',
+            pointFormat: 'x: <b>{point.x}</b><br/>y: <b>{point.y}</b><br/>'
+        }
+        // Prototype members
+    });
+    return ScatterSeries;
+}(LineSeries));
+extend(ScatterSeries.prototype, {
     sorted: false,
     requireSorting: false,
     noSharedTooltip: true,
@@ -188,7 +208,12 @@ addEvent(LineSeries, 'afterTranslate', function () {
         this.applyJitter();
     }
 });
-/* eslint-enable no-invalid-this */
+BaseSeries.registerSeriesType('scatter', ScatterSeries);
+/* *
+ *
+ *  API Options
+ *
+ * */
 /**
  * A `scatter` series. If the [type](#series.scatter.type) option is
  * not specified, it is inherited from [chart.type](#chart.type).

@@ -23,7 +23,11 @@ import type { SeriesStatesOptions } from '../Core/Series/SeriesOptions';
 import BaseSeries from '../Core/Series/Series.js';
 import LineSeries from './Line/LineSeries.js';
 import U from '../Core/Utilities.js';
-const { addEvent } = U;
+const {
+    addEvent,
+    extend,
+    merge
+} = U;
 
 /* *
  *
@@ -34,12 +38,6 @@ const { addEvent } = U;
 declare module '../Core/Series/SeriesLike' {
     interface SeriesLike {
         takeOrdinalPosition?: boolean;
-    }
-}
-
-declare module '../Core/Series/SeriesType' {
-    interface SeriesTypeRegistry {
-        scatter: typeof Highcharts.ScatterSeries;
     }
 }
 
@@ -90,9 +88,7 @@ declare global {
  *
  * @augments Highcharts.Series
  */
-BaseSeries.seriesType<typeof Highcharts.ScatterSeries>(
-    'scatter',
-    'line',
+class ScatterSeries extends LineSeries {
 
     /**
      * A scatter plot uses cartesian coordinates to display values for two
@@ -106,7 +102,7 @@ BaseSeries.seriesType<typeof Highcharts.ScatterSeries>(
      * @product      highcharts highstock
      * @optionparent plotOptions.scatter
      */
-    {
+    public static defaultOptions: Highcharts.ScatterSeriesOptions = merge(LineSeries.defaultOptions, {
 
         /**
          * The width of the line connecting the data points.
@@ -198,100 +194,106 @@ BaseSeries.seriesType<typeof Highcharts.ScatterSeries>(
         }
 
         // Prototype members
-    }, {
+    });
 
-        sorted: false,
-        requireSorting: false,
-        noSharedTooltip: true,
-        trackerGroups: ['group', 'markerGroup', 'dataLabelsGroup'],
-        takeOrdinalPosition: false, // #2342
+}
 
-        /* eslint-disable valid-jsdoc */
+interface ScatterSeries {
+    pointClass: typeof Highcharts.ScatterPoint;
+}
+extend(ScatterSeries.prototype, {
+
+    sorted: false,
+    requireSorting: false,
+    noSharedTooltip: true,
+    trackerGroups: ['group', 'markerGroup', 'dataLabelsGroup'],
+    takeOrdinalPosition: false, // #2342
+
+    /* eslint-disable valid-jsdoc */
+
+    /**
+     * @private
+     * @function Highcharts.seriesTypes.scatter#drawGraph
+     */
+    drawGraph: function (this: Highcharts.ScatterSeries): void {
+        if (
+            this.options.lineWidth ||
+            // In case we have a graph from before and we update the line
+            // width to 0 (#13816)
+            (
+                this.options.lineWidth === 0 &&
+                this.graph &&
+                this.graph.strokeWidth()
+            )
+        ) {
+            LineSeries.prototype.drawGraph.call(this);
+        }
+    },
+
+    // Optionally add the jitter effect
+    applyJitter: function (this: Highcharts.ScatterSeries): void {
+        var series = this,
+            jitter = this.options.jitter,
+            len = this.points.length;
 
         /**
+         * Return a repeatable, pseudo-random number based on an integer
+         * seed.
          * @private
-         * @function Highcharts.seriesTypes.scatter#drawGraph
          */
-        drawGraph: function (this: Highcharts.ScatterSeries): void {
-            if (
-                this.options.lineWidth ||
-                // In case we have a graph from before and we update the line
-                // width to 0 (#13816)
-                (
-                    this.options.lineWidth === 0 &&
-                    this.graph &&
-                    this.graph.strokeWidth()
-                )
-            ) {
-                LineSeries.prototype.drawGraph.call(this);
-            }
-        },
-
-        // Optionally add the jitter effect
-        applyJitter: function (this: Highcharts.ScatterSeries): void {
-            var series = this,
-                jitter = this.options.jitter,
-                len = this.points.length;
-
-            /**
-             * Return a repeatable, pseudo-random number based on an integer
-             * seed.
-             * @private
-             */
-            function unrandom(seed: number): number {
-                var rand = Math.sin(seed) * 10000;
-                return rand - Math.floor(rand);
-            }
-
-            if (jitter) {
-                this.points.forEach(function (
-                    point: Highcharts.ScatterPoint,
-                    i: number
-                ): void {
-                    ['x', 'y'].forEach(function (
-                        dim: string,
-                        j: number
-                    ): void {
-                        var axis,
-                            plotProp = 'plot' + dim.toUpperCase(),
-                            min,
-                            max,
-                            translatedJitter;
-                        if ((jitter as any)[dim] && !point.isNull) {
-                            axis = (series as any)[dim + 'Axis'];
-                            translatedJitter =
-                                (jitter as any)[dim] * axis.transA;
-                            if (axis && !axis.isLog) {
-
-                                // Identify the outer bounds of the jitter range
-                                min = Math.max(
-                                    0,
-                                    (point as any)[plotProp] - translatedJitter
-                                );
-                                max = Math.min(
-                                    axis.len,
-                                    (point as any)[plotProp] + translatedJitter
-                                );
-
-                                // Find a random position within this range
-                                (point as any)[plotProp] = min +
-                                    (max - min) * unrandom(i + j * len);
-
-                                // Update clientX for the tooltip k-d-tree
-                                if (dim === 'x') {
-                                    point.clientX = point.plotX;
-                                }
-                            }
-                        }
-                    });
-                });
-            }
+        function unrandom(seed: number): number {
+            var rand = Math.sin(seed) * 10000;
+            return rand - Math.floor(rand);
         }
 
-        /* eslint-enable valid-jsdoc */
+        if (jitter) {
+            this.points.forEach(function (
+                point: Highcharts.ScatterPoint,
+                i: number
+            ): void {
+                ['x', 'y'].forEach(function (
+                    dim: string,
+                    j: number
+                ): void {
+                    var axis,
+                        plotProp = 'plot' + dim.toUpperCase(),
+                        min,
+                        max,
+                        translatedJitter;
+                    if ((jitter as any)[dim] && !point.isNull) {
+                        axis = (series as any)[dim + 'Axis'];
+                        translatedJitter =
+                            (jitter as any)[dim] * axis.transA;
+                        if (axis && !axis.isLog) {
 
+                            // Identify the outer bounds of the jitter range
+                            min = Math.max(
+                                0,
+                                (point as any)[plotProp] - translatedJitter
+                            );
+                            max = Math.min(
+                                axis.len,
+                                (point as any)[plotProp] + translatedJitter
+                            );
+
+                            // Find a random position within this range
+                            (point as any)[plotProp] = min +
+                                (max - min) * unrandom(i + j * len);
+
+                            // Update clientX for the tooltip k-d-tree
+                            if (dim === 'x') {
+                                point.clientX = point.plotX;
+                            }
+                        }
+                    }
+                });
+            });
+        }
     }
-);
+
+    /* eslint-enable valid-jsdoc */
+
+});
 
 /* eslint-disable no-invalid-this */
 
@@ -304,6 +306,25 @@ addEvent(LineSeries as any, 'afterTranslate', function (
 });
 
 /* eslint-enable no-invalid-this */
+
+/* *
+ *
+ *  Registry
+ *
+ * */
+
+declare module '../Core/Series/SeriesType' {
+    interface SeriesTypeRegistry {
+        scatter: typeof Highcharts.ScatterSeries;
+    }
+}
+BaseSeries.registerSeriesType('scatter', ScatterSeries);
+
+/* *
+ *
+ *  API Options
+ *
+ * */
 
 /**
  * A `scatter` series. If the [type](#series.scatter.type) option is
