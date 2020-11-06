@@ -1,4 +1,5 @@
 import { deepStrictEqual, ok, strictEqual } from 'assert';
+import { JSDOM } from 'jsdom';
 import { describe } from '../test-utils';
 
 export function testMapSeries() {
@@ -31,6 +32,12 @@ export function testMapSeries() {
         expected,
         'The Maps source file should contain these series'
     );
+
+    strictEqual(
+        Highmaps.product,
+        'Highmaps',
+        'The loaded module has the correct product name'
+    )
 }
 
 export function testStockSeries() {
@@ -60,6 +67,12 @@ export function testStockSeries() {
         expected,
         'The Stock source file should contain these series'
     );
+
+    strictEqual(
+        Highstock.product,
+        'Highstock',
+        'The loaded module has the correct product name'
+    )
 }
 
 export function testGanttSeries() {
@@ -88,6 +101,12 @@ export function testGanttSeries() {
         expected,
         'The Gantt source file should contain these series'
     );
+
+    strictEqual(
+        Gantt.product,
+        'Highcharts Gantt',
+        'The loaded module has the correct product name'
+    )
 }
 
 export function testHighchartsSeries() {
@@ -114,6 +133,12 @@ export function testHighchartsSeries() {
         expected,
         'The Highcharts source file should contain these series'
     );
+
+    strictEqual(
+        Highcharts.product,
+        'Highcharts',
+        'The loaded module has the correct product name'
+    )
 }
 
 export function testHighchartsMoreSeries() {
@@ -243,5 +268,117 @@ export function testStockIndicators() {
         seriesTypes,
         expected,
         'Highstock with the indicators-all module should add the indicators as series'
+    );
+}
+
+export function testHighchartsWithModules() {
+    describe('Testing Highcharts in use with modules');
+
+    // Window object needed for some modules (annotations, boost, export)
+    const { window } = new JSDOM();
+
+    const Highcharts = require('../../../code/highcharts.src.js')(window);
+    // Annotations
+    require('../../../code/modules/annotations.src.js')(Highcharts);
+    strictEqual(
+        typeof Highcharts.Annotation,
+        'function',
+        'Annotations is loaded.'
+    );
+
+    // Boost
+    require('../../../code/modules/boost.src')(Highcharts);
+    strictEqual(
+        typeof Highcharts.Series.prototype.renderCanvas,
+        'function',
+        'Boost is loaded.'
+    );
+
+    // Broken Axis
+    require('../../../code/modules/broken-axis.src')(Highcharts);
+    strictEqual(
+        typeof Highcharts.Series.prototype.drawBreaks,
+        'function',
+        'Broken Axis is loaded.'
+    );
+
+    // Data
+    require('../../../code/modules/data.src')(Highcharts);
+    strictEqual(
+        !!Highcharts.Data,
+        true,
+        'Data is loaded.'
+    );
+
+    // Drilldown
+    require('../../../code/modules/drilldown.src')(Highcharts);
+    strictEqual(
+        typeof Highcharts.Point.prototype.doDrilldown,
+        'function',
+        'Drilldown is loaded.'
+    );
+
+    // Exporting
+    require('../../../code/modules/exporting.src')(Highcharts);
+    strictEqual(
+        !!Highcharts.getOptions().exporting,
+        true,
+        'Exporting is loaded.'
+    );
+
+    // Funnel
+    require('../../../code/modules/funnel.src')(Highcharts);
+    strictEqual(
+        !!Highcharts.seriesTypes.funnel,
+        true,
+        'Funnel is loaded.'
+    );
+
+    // Heatmap
+    require('../../../code/modules/heatmap.src')(Highcharts);
+    strictEqual(
+        !!Highcharts.seriesTypes.heatmap,
+        true,
+        'Heatmap is loaded.'
+    );
+
+    // Map
+    require('../../../code/modules/map.src')(Highcharts);
+    strictEqual(
+        !!Highcharts.seriesTypes.map,
+        true,
+        'Map is loaded.'
+    );
+
+    // No Data To Display
+    require('../../../code/modules/no-data-to-display.src')(Highcharts);
+    strictEqual(
+        typeof Highcharts.Chart.prototype.showNoData,
+        'function',
+        'No Data To Display is loaded.'
+    );
+
+    // Offline Exporting
+    require('../../../code/modules/offline-exporting.src')(Highcharts);
+    strictEqual(
+        typeof Highcharts.Chart.prototype.exportChartLocal,
+        'function',
+        'Offline Exporting is loaded.'
+    );
+
+    // Series Label
+    require('../../../code/modules/series-label.src')(Highcharts);
+    strictEqual(
+        typeof Highcharts.Series.prototype.checkClearPoint,
+        'function',
+        'Series Label is loaded.'
+    );
+
+    // Treemap
+    require('../../../code/modules/treemap.src')(Highcharts);
+    strictEqual(
+        !!Highcharts.seriesTypes.treemap,
+        true,
+        'Treemap is loaded.'
     );
 }
