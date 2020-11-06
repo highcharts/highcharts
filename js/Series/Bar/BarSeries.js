@@ -42,13 +42,22 @@ var extend = U.extend, merge = U.merge;
 var BarSeries = /** @class */ (function (_super) {
     __extends(BarSeries, _super);
     function BarSeries() {
-        return _super !== null && _super.apply(this, arguments) || this;
+        /* *
+         *
+         *  Static Properties
+         *
+         * */
+        var _this = _super !== null && _super.apply(this, arguments) || this;
+        /* *
+         *
+         *  Properties
+         *
+         * */
+        _this.data = void 0;
+        _this.options = void 0;
+        _this.points = void 0;
+        return _this;
     }
-    /* *
-     *
-     *  Static Properties
-     *
-     * */
     /**
      * A bar series is a special type of column series where the columns are
      * horizontal.
@@ -69,6 +78,12 @@ extend(BarSeries.prototype, {
     inverted: true
 });
 BaseSeries.registerSeriesType('bar', BarSeries);
+/* *
+ *
+ *  Default Export
+ *
+ * */
+export default BarSeries;
 /* *
  *
  *  API Options
