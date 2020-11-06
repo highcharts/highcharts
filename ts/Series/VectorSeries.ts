@@ -77,7 +77,7 @@ declare global {
     }
 }
 
-import './ScatterSeries.js';
+import './Scatter/ScatterSeries.js';
 
 /**
  * The vector series class.

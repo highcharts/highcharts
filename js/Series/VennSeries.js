@@ -31,7 +31,7 @@ import NelderMeadMixin from '../Mixins/NelderMead.js';
 var nelderMead = NelderMeadMixin.nelderMead;
 import U from '../Core/Utilities.js';
 var addEvent = U.addEvent, extend = U.extend, isArray = U.isArray, isNumber = U.isNumber, isObject = U.isObject, isString = U.isString, merge = U.merge;
-import './ScatterSeries.js';
+import './Scatter/ScatterSeries.js';
 /* *
  *
  *  Functions

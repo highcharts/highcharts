@@ -192,7 +192,7 @@ declare module '../Core/Series/SeriesType' {
 }
 
 import '../Core/Options.js';
-import './ScatterSeries.js';
+import './Scatter/ScatterSeries.js';
 
 /**
  * @private

@@ -59,7 +59,7 @@ declare module '../Core/Series/SeriesType' {
 
 import '../Core/Options.js';
 import '../Core/Legend.js';
-import './ScatterSeries.js';
+import './Scatter/ScatterSeries.js';
 
 /**
  * A polygon series can be used to draw any freeform shape in the cartesian

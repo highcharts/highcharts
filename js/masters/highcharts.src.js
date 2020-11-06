@@ -28,7 +28,7 @@ import '../Series/SplineSeries.js';
 import '../Series/AreaSplineSeries.js';
 import '../Series/Column/ColumnSeries.js';
 import '../Series/BarSeries.js';
-import '../Series/ScatterSeries.js';
+import '../Series/Scatter/ScatterSeries.js';
 import '../Series/Pie/PieSeries.js';
 import '../Core/Series/DataLabels.js';
 import '../Extensions/OverlappingDataLabels.js';
