@@ -26,6 +26,10 @@ import type DashStyleValue from '../Core/Renderer/DashStyleValue';
 import type DataLabelOptions from '../Core/Series/DataLabelOptions';
 import type PiePoint from './Pie/PiePoint';
 import type PositionObject from '../Core/Renderer/PositionObject';
+import type ScatterPoint from './Scatter/ScatterPoint';
+import type ScatterPointOptions from './Scatter/ScatterPointOptions';
+import type ScatterSeries from './Scatter/ScatterSeries';
+import type ScatterSeriesOptions from './Scatter/ScatterSeriesOptions';
 import type {
     SeriesOptions,
     SeriesStateHoverOptions,

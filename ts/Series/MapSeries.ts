@@ -17,6 +17,10 @@ import type {
     PointOptions,
     PointShortOptions
 } from '../Core/Series/PointOptions';
+import type ScatterPoint from './Scatter/ScatterPoint';
+import type ScatterPointOptions from './Scatter/ScatterPointOptions';
+import type ScatterSeries from './Scatter/ScatterSeries';
+import type ScatterSeriesOptions from './Scatter/ScatterSeriesOptions';
 import type { SeriesStatesOptions } from '../Core/Series/SeriesOptions';
 import type { StatesOptionsKey } from '../Core/Series/StatesOptions';
 import type SVGAttributes from '../Core/Renderer/SVG/SVGAttributes';

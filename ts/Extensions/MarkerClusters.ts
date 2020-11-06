@@ -29,6 +29,7 @@ import type {
     PointShortOptions,
     PointStatesOptions
 } from '../Core/Series/PointOptions';
+import type ScatterSeries from '../Series/Scatter/ScatterSeries';
 import type PositionObject from '../Core/Renderer/PositionObject';
 import type SeriesOptions from '../Core/Series/SeriesOptions';
 import type SVGElement from '../Core/Renderer/SVG/SVGElement';
@@ -1350,7 +1351,7 @@ Scatter.prototype.getPointsState = function (
 
 Scatter.prototype.markerClusterAlgorithms = {
     grid: function (
-        this: Highcharts.ScatterSeries,
+        this: ScatterSeries,
         dataX: Array<number>,
         dataY: Array<number>,
         dataIndexes: Array<number>,
@@ -1388,7 +1389,7 @@ Scatter.prototype.markerClusterAlgorithms = {
         return grid;
     },
     kmeans: function (
-        this: Highcharts.ScatterSeries,
+        this: ScatterSeries,
         dataX: Array<number>,
         dataY: Array<number>,
         dataIndexes: Array<number>,
@@ -1539,7 +1540,7 @@ Scatter.prototype.markerClusterAlgorithms = {
         return group;
     },
     optimizedKmeans: function (
-        this: Highcharts.ScatterSeries,
+        this: ScatterSeries,
         processedXData: Array<number>,
         processedYData: Array<number>,
         dataIndexes: Array<number>,

@@ -16,10 +16,8 @@
  *
  * */
 
-import type LinePoint from '../Line/LinePoint';
-import type LinePointOptions from '../Line/LinePointOptions';
-import type LineSeriesOptions from '../Line/LineSeriesOptions';
-import type { SeriesStatesOptions } from '../../Core/Series/SeriesOptions';
+import type ScatterPoint from './ScatterPoint';
+import type ScatterSeriesOptions from './ScatterSeriesOptions';
 import BaseSeries from '../../Core/Series/Series.js';
 import LineSeries from '../Line/LineSeries.js';
 import U from '../../Core/Utilities.js';
@@ -47,23 +45,6 @@ declare module '../../Core/Series/SeriesLike' {
  */
 declare global {
     namespace Highcharts {
-        interface ScatterPointOptions extends LinePointOptions {
-            // placeholder for inheritance
-        }
-        interface ScatterSeriesJitterOptions {
-            x?: number;
-            y?: number;
-        }
-        interface ScatterSeriesOptions extends LineSeriesOptions {
-            jitter?: ScatterSeriesJitterOptions;
-            states?: SeriesStatesOptions<ScatterSeries>;
-        }
-        class ScatterPoint extends LinePoint {
-            public options: ScatterPointOptions;
-            public series: ScatterSeries;
-        }
-        class ScatterSeries extends LineSeries {
-        }
     }
 }
 
@@ -96,7 +77,7 @@ class ScatterSeries extends LineSeries {
      * @product      highcharts highstock
      * @optionparent plotOptions.scatter
      */
-    public static defaultOptions: Highcharts.ScatterSeriesOptions = merge(LineSeries.defaultOptions, {
+    public static defaultOptions: ScatterSeriesOptions = merge(LineSeries.defaultOptions, {
 
         /**
          * The width of the line connecting the data points.
@@ -195,11 +176,11 @@ class ScatterSeries extends LineSeries {
      *
      * */
 
-    public data: Array<Highcharts.ScatterPoint> = void 0 as any;
+    public data: Array<ScatterPoint> = void 0 as any;
 
-    public options: Highcharts.ScatterSeriesOptions = void 0 as any;
+    public options: ScatterSeriesOptions = void 0 as any;
 
-    public points: Array<Highcharts.ScatterPoint> = void 0 as any;
+    public points: Array<ScatterPoint> = void 0 as any;
 
     /* *
      *
@@ -229,14 +210,8 @@ class ScatterSeries extends LineSeries {
         }
 
         if (jitter) {
-            this.points.forEach(function (
-                point: Highcharts.ScatterPoint,
-                i: number
-            ): void {
-                ['x', 'y'].forEach(function (
-                    dim: string,
-                    j: number
-                ): void {
+            this.points.forEach(function (point, i): void {
+                ['x', 'y'].forEach(function (dim, j): void {
                     var axis,
                         plotProp = 'plot' + dim.toUpperCase(),
                         min,
@@ -303,7 +278,7 @@ class ScatterSeries extends LineSeries {
  * */
 
 interface ScatterSeries {
-    pointClass: typeof Highcharts.ScatterPoint;
+    pointClass: typeof ScatterPoint;
     takeOrdinalPosition: boolean;
 }
 extend(ScatterSeries.prototype, {
@@ -342,10 +317,18 @@ addEvent(LineSeries, 'afterTranslate', function (
 
 declare module '../../Core/Series/SeriesType' {
     interface SeriesTypeRegistry {
-        scatter: typeof Highcharts.ScatterSeries;
+        scatter: typeof ScatterSeries;
     }
 }
 BaseSeries.registerSeriesType('scatter', ScatterSeries);
+
+/* *
+ *
+ *  Default Export
+ *
+ * */
+
+export default ScatterSeries;
 
 /* *
  *

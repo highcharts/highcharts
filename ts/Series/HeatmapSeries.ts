@@ -15,6 +15,10 @@ import type ColorAxis from '../Core/Axis/ColorAxis';
 import type ColorType from '../Core/Color/ColorType';
 import type ColumnSeries from './Column/ColumnSeries';
 import type { PointStateHoverOptions } from '../Core/Series/PointOptions';
+import type ScatterPoint from './Scatter/ScatterPoint';
+import type ScatterPointOptions from './Scatter/ScatterPointOptions';
+import type ScatterSeries from './Scatter/ScatterSeries';
+import type ScatterSeriesOptions from './Scatter/ScatterSeriesOptions';
 import type {
     SeriesOptions,
     SeriesStatesOptions
