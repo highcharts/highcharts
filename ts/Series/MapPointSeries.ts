@@ -10,6 +10,10 @@
 
 'use strict';
 
+import type ScatterPoint from './Scatter/ScatterPoint';
+import type ScatterPointOptions from './Scatter/ScatterPointOptions';
+import type ScatterSeries from './Scatter/ScatterSeries';
+import type ScatterSeriesOptions from './Scatter/ScatterSeriesOptions';
 import type { SeriesStatesOptions } from '../Core/Series/SeriesOptions';
 import BaseSeries from '../Core/Series/Series.js';
 import LineSeries from './Line/LineSeries.js';

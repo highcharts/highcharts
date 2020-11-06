@@ -232,6 +232,12 @@ addEvent(LineSeries, 'afterTranslate', function () {
 BaseSeries.registerSeriesType('scatter', ScatterSeries);
 /* *
  *
+ *  Default Export
+ *
+ * */
+export default ScatterSeries;
+/* *
+ *
  *  API Options
  *
  * */
