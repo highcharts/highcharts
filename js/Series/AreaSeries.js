@@ -8,13 +8,26 @@
  *
  * */
 'use strict';
+var __extends = (this && this.__extends) || (function () {
+    var extendStatics = function (d, b) {
+        extendStatics = Object.setPrototypeOf ||
+            ({ __proto__: [] } instanceof Array && function (d, b) { d.__proto__ = b; }) ||
+            function (d, b) { for (var p in b) if (b.hasOwnProperty(p)) d[p] = b[p]; };
+        return extendStatics(d, b);
+    };
+    return function (d, b) {
+        extendStatics(d, b);
+        function __() { this.constructor = d; }
+        d.prototype = b === null ? Object.create(b) : (__.prototype = b.prototype, new __());
+    };
+})();
 import BaseSeries from '../Core/Series/Series.js';
 import Color from '../Core/Color/Color.js';
 var color = Color.parse;
 import LegendSymbolMixin from '../Mixins/LegendSymbol.js';
 import LineSeries from './Line/LineSeries.js';
 import U from '../Core/Utilities.js';
-var objectEach = U.objectEach, pick = U.pick;
+var extend = U.extend, merge = U.merge, objectEach = U.objectEach, pick = U.pick;
 /* *
  *
  *  Class
@@ -29,147 +42,33 @@ var objectEach = U.objectEach, pick = U.pick;
  *
  * @augments Highcharts.Series
  */
-BaseSeries.seriesType('area', 'line', 
-/**
- * The area series type.
- *
- * @sample {highcharts} highcharts/demo/area-basic/
- *         Area chart
- * @sample {highstock} stock/demo/area/
- *         Area chart
- *
- * @extends      plotOptions.line
- * @excluding    useOhlcData
- * @product      highcharts highstock
- * @optionparent plotOptions.area
- */
-{
-    /**
-     * @see [fillColor](#plotOptions.area.fillColor)
-     * @see [fillOpacity](#plotOptions.area.fillOpacity)
+var AreaSeries = /** @class */ (function (_super) {
+    __extends(AreaSeries, _super);
+    function AreaSeries() {
+        /* *
+         *
+         *  Static Properties
+         *
+         * */
+        var _this = _super !== null && _super.apply(this, arguments) || this;
+        _this.data = void 0;
+        _this.options = void 0;
+        _this.points = void 0;
+        return _this;
+    }
+    /* *
      *
-     * @apioption plotOptions.area.color
-     */
-    /**
-     * Fill color or gradient for the area. When `null`, the series' `color`
-     * is used with the series' `fillOpacity`.
+     *  Functions
      *
-     * In styled mode, the fill color can be set with the `.highcharts-area`
-     * class name.
-     *
-     * @see [color](#plotOptions.area.color)
-     * @see [fillOpacity](#plotOptions.area.fillOpacity)
-     *
-     * @sample {highcharts} highcharts/plotoptions/area-fillcolor-default/
-     *         Null by default
-     * @sample {highcharts} highcharts/plotoptions/area-fillcolor-gradient/
-     *         Gradient
-     *
-     * @type      {Highcharts.ColorString|Highcharts.GradientColorObject|Highcharts.PatternObject}
-     * @product   highcharts highstock
-     * @apioption plotOptions.area.fillColor
-     */
-    /**
-     * Fill opacity for the area. When you set an explicit `fillColor`,
-     * the `fillOpacity` is not applied. Instead, you should define the
-     * opacity in the `fillColor` with an rgba color definition. The
-     * `fillOpacity` setting, also the default setting, overrides the alpha
-     * component of the `color` setting.
-     *
-     * In styled mode, the fill opacity can be set with the
-     * `.highcharts-area` class name.
-     *
-     * @see [color](#plotOptions.area.color)
-     * @see [fillColor](#plotOptions.area.fillColor)
-     *
-     * @sample {highcharts} highcharts/plotoptions/area-fillopacity/
-     *         Automatic fill color and fill opacity of 0.1
-     *
-     * @type      {number}
-     * @default   {highcharts} 0.75
-     * @default   {highstock} 0.75
-     * @product   highcharts highstock
-     * @apioption plotOptions.area.fillOpacity
-     */
-    /**
-     * A separate color for the graph line. By default the line takes the
-     * `color` of the series, but the lineColor setting allows setting a
-     * separate color for the line without altering the `fillColor`.
-     *
-     * In styled mode, the line stroke can be set with the
-     * `.highcharts-graph` class name.
-     *
-     * @sample {highcharts} highcharts/plotoptions/area-linecolor/
-     *         Dark gray line
-     *
-     * @type      {Highcharts.ColorString|Highcharts.GradientColorObject|Highcharts.PatternObject}
-     * @product   highcharts highstock
-     * @apioption plotOptions.area.lineColor
-     */
-    /**
-     * A separate color for the negative part of the area.
-     *
-     * In styled mode, a negative color is set with the
-     * `.highcharts-negative` class name.
-     *
-     * @see [negativeColor](#plotOptions.area.negativeColor)
-     *
-     * @sample {highcharts} highcharts/css/series-negative-color/
-     *         Negative color in styled mode
-     *
-     * @type      {Highcharts.ColorString|Highcharts.GradientColorObject|Highcharts.PatternObject}
-     * @since     3.0
-     * @product   highcharts
-     * @apioption plotOptions.area.negativeFillColor
-     */
-    /**
-     * Whether the whole area or just the line should respond to mouseover
-     * tooltips and other mouse or touch events.
-     *
-     * @sample {highcharts|highstock} highcharts/plotoptions/area-trackbyarea/
-     *         Display the tooltip when the area is hovered
-     *
-     * @type      {boolean}
-     * @default   false
-     * @since     1.1.6
-     * @product   highcharts highstock
-     * @apioption plotOptions.area.trackByArea
-     */
-    /**
-     * The Y axis value to serve as the base for the area, for
-     * distinguishing between values above and below a threshold. The area
-     * between the graph and the threshold is filled.
-     *
-     * * If a number is given, the Y axis will scale to the threshold.
-     * * If `null`, the scaling behaves like a line series with fill between
-     *   the graph and the Y axis minimum.
-     * * If `Infinity` or `-Infinity`, the area between the graph and the
-     *   corresponding Y axis extreme is filled (since v6.1.0).
-     *
-     * @sample {highcharts} highcharts/plotoptions/area-threshold/
-     *         A threshold of 100
-     * @sample {highcharts} highcharts/plotoptions/area-threshold-infinity/
-     *         A threshold of Infinity
-     *
-     * @type    {number|null}
-     * @since   2.0
-     * @product highcharts highstock
-     */
-    threshold: 0
-}, 
-/* eslint-disable valid-jsdoc */
-/**
- * @lends seriesTypes.area.prototype
- */
-{
-    singleStacks: false,
+     * */
+    /* eslint-disable valid-jsdoc */
     /**
      * Return an array of stacked points, where null and missing points are
      * replaced by dummy points in order for gaps to be drawn correctly in
      * stacks.
      * @private
      */
-    getStackPoints: function (points) {
+    AreaSeries.prototype.getStackPoints = function (points) {
         var series = this, segment = [], keys = [], xAxis = this.xAxis, yAxis = this.yAxis, stack = yAxis.stacking.stacks[this.stackKey], pointMap = {}, seriesIndex = series.index, yAxisSeries = yAxis.series, seriesLength = yAxisSeries.length, visibleSeries, upOrDown = pick(yAxis.options.reversedStacks, true) ? 1 : -1, i;
         points = points || this.points;
         if (this.options.stacking) {
@@ -278,7 +177,138 @@ BaseSeries.seriesType('area', 'line',
             });
         }
         return segment;
-    },
+    };
+    /**
+     * The area series type.
+     *
+     * @sample {highcharts} highcharts/demo/area-basic/
+     *         Area chart
+     * @sample {highstock} stock/demo/area/
+     *         Area chart
+     *
+     * @extends      plotOptions.line
+     * @excluding    useOhlcData
+     * @product      highcharts highstock
+     * @optionparent plotOptions.area
+     */
+    AreaSeries.defaultOptions = merge(LineSeries.defaultOptions, {
+        /**
+         * @see [fillColor](#plotOptions.area.fillColor)
+         * @see [fillOpacity](#plotOptions.area.fillOpacity)
+         *
+         * @apioption plotOptions.area.color
+         */
+        /**
+         * Fill color or gradient for the area. When `null`, the series' `color`
+         * is used with the series' `fillOpacity`.
+         *
+         * In styled mode, the fill color can be set with the `.highcharts-area`
+         * class name.
+         *
+         * @see [color](#plotOptions.area.color)
+         * @see [fillOpacity](#plotOptions.area.fillOpacity)
+         *
+         * @sample {highcharts} highcharts/plotoptions/area-fillcolor-default/
+         *         Null by default
+         * @sample {highcharts} highcharts/plotoptions/area-fillcolor-gradient/
+         *         Gradient
+         *
+         * @type      {Highcharts.ColorString|Highcharts.GradientColorObject|Highcharts.PatternObject}
+         * @product   highcharts highstock
+         * @apioption plotOptions.area.fillColor
+         */
+        /**
+         * Fill opacity for the area. When you set an explicit `fillColor`,
+         * the `fillOpacity` is not applied. Instead, you should define the
+         * opacity in the `fillColor` with an rgba color definition. The
+         * `fillOpacity` setting, also the default setting, overrides the alpha
+         * component of the `color` setting.
+         *
+         * In styled mode, the fill opacity can be set with the
+         * `.highcharts-area` class name.
+         *
+         * @see [color](#plotOptions.area.color)
+         * @see [fillColor](#plotOptions.area.fillColor)
+         *
+         * @sample {highcharts} highcharts/plotoptions/area-fillopacity/
+         *         Automatic fill color and fill opacity of 0.1
+         *
+         * @type      {number}
+         * @default   {highcharts} 0.75
+         * @default   {highstock} 0.75
+         * @product   highcharts highstock
+         * @apioption plotOptions.area.fillOpacity
+         */
+        /**
+         * A separate color for the graph line. By default the line takes the
+         * `color` of the series, but the lineColor setting allows setting a
+         * separate color for the line without altering the `fillColor`.
+         *
+         * In styled mode, the line stroke can be set with the
+         * `.highcharts-graph` class name.
+         *
+         * @sample {highcharts} highcharts/plotoptions/area-linecolor/
+         *         Dark gray line
+         *
+         * @type      {Highcharts.ColorString|Highcharts.GradientColorObject|Highcharts.PatternObject}
+         * @product   highcharts highstock
+         * @apioption plotOptions.area.lineColor
+         */
+        /**
+         * A separate color for the negative part of the area.
+         *
+         * In styled mode, a negative color is set with the
+         * `.highcharts-negative` class name.
+         *
+         * @see [negativeColor](#plotOptions.area.negativeColor)
+         *
+         * @sample {highcharts} highcharts/css/series-negative-color/
+         *         Negative color in styled mode
+         *
+         * @type      {Highcharts.ColorString|Highcharts.GradientColorObject|Highcharts.PatternObject}
+         * @since     3.0
+         * @product   highcharts
+         * @apioption plotOptions.area.negativeFillColor
+         */
+        /**
+         * Whether the whole area or just the line should respond to mouseover
+         * tooltips and other mouse or touch events.
+         *
+         * @sample {highcharts|highstock} highcharts/plotoptions/area-trackbyarea/
+         *         Display the tooltip when the area is hovered
+         *
+         * @type      {boolean}
+         * @default   false
+         * @since     1.1.6
+         * @product   highcharts highstock
+         * @apioption plotOptions.area.trackByArea
+         */
+        /**
+         * The Y axis value to serve as the base for the area, for
+         * distinguishing between values above and below a threshold. The area
+         * between the graph and the threshold is filled.
+         *
+         * * If a number is given, the Y axis will scale to the threshold.
+         * * If `null`, the scaling behaves like a line series with fill between
+         *   the graph and the Y axis minimum.
+         * * If `Infinity` or `-Infinity`, the area between the graph and the
+         *   corresponding Y axis extreme is filled (since v6.1.0).
+         *
+         * @sample {highcharts} highcharts/plotoptions/area-threshold/
+         *         A threshold of 100
+         * @sample {highcharts} highcharts/plotoptions/area-threshold-infinity/
+         *         A threshold of Infinity
+         *
+         * @type    {number|null}
+         * @since   2.0
+         * @product highcharts highstock
+         */
+        threshold: 0
+    });
+    return AreaSeries;
+}(LineSeries));
+extend(AreaSeries.prototype, {
+    singleStacks: false,
     /**
      * @private
      */
@@ -427,8 +457,20 @@ BaseSeries.seriesType('area', 'line',
         });
     },
     drawLegendSymbol: LegendSymbolMixin.drawRectangle
+    /* eslint-enable valid-jsdoc */
 });
-/* eslint-enable valid-jsdoc */
+BaseSeries.registerSeriesType('area', AreaSeries);
+/* *
+ *
+ *  Default Export
+ *
+ * */
+export default AreaSeries;
+/* *
+ *
+ *  API Options
+ *
+ * */
 /**
  * A `area` series. If the [type](#series.area.type) option is not
  * specified, it is inherited from [chart.type](#chart.type).
