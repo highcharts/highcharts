@@ -21,6 +21,7 @@ import type ColorType from '../Core/Color/ColorType';
 import type ColumnPoint from './Column/ColumnPoint';
 import type ColumnPointOptions from './Column/ColumnPointOptions';
 import type ColumnSeriesOptions from './Column/ColumnSeriesOptions';
+import type DataExtremesObject from '../Core/Series/DataExtremesObject';
 import BaseSeries from '../Core/Series/Series.js';
 import ColumnSeries from './Column/ColumnSeries.js';
 const { prototype: columnProto } = ColumnSeries;
@@ -331,7 +332,7 @@ BaseSeries.seriesType<typeof Highcharts.BulletSeries>('bullet', 'column'
         getExtremes: function (
             this: Highcharts.BulletSeries,
             yData?: Array<number>
-        ): Highcharts.DataExtremesObject {
+        ): DataExtremesObject {
             var series = this,
                 targetData = series.targetData,
                 yMax,

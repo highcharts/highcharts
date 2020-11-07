@@ -11,6 +11,7 @@
 'use strict';
 
 import type Chart from '../Chart/Chart';
+import type MapSeries from '../../Series/MapSeries';
 import Axis from './Axis.js';
 import U from '../Utilities.js';
 const {
@@ -108,10 +109,7 @@ class MapAxis {
             // Remove the xData array and cache it locally so that the proceed
             // method doesn't use it
             if (axis.isXAxis) {
-                axis.series.forEach(function (
-                    series: Highcharts.MapSeries,
-                    i: number
-                ): void {
+                axis.series.forEach(function (series, i): void {
                     if (series.useMapGeometry) {
                         xData[i] = series.xData;
                         series.xData = [];
@@ -139,10 +137,7 @@ class MapAxis {
             if (axis.isXAxis) {
                 dataMin = pick(axis.dataMin, Number.MAX_VALUE);
                 dataMax = pick(axis.dataMax, -Number.MAX_VALUE);
-                axis.series.forEach(function (
-                    series: Highcharts.MapSeries,
-                    i: number
-                ): void {
+                axis.series.forEach(function (series, i): void {
                     if (series.useMapGeometry) {
                         dataMin = Math.min(dataMin, pick(series.minX, dataMin));
                         dataMax = Math.max(dataMax, pick(series.maxX, dataMax));
@@ -182,7 +177,7 @@ class MapAxis {
 
             // Check for map-like series
             if (axis.coll === 'yAxis' && typeof xAxis.transA !== 'undefined') {
-                axis.series.forEach(function (series: Highcharts.MapSeries): void {
+                axis.series.forEach(function (series): void {
                     if (series.preserveAspectRatio) {
                         preserveAspectRatio = true;
                     }
@@ -245,7 +240,7 @@ class MapAxis {
 interface MapAxis extends Axis {
     chart: Highcharts.MapChart;
     mapAxis: MapAxisAdditions;
-    series: Array<Highcharts.MapSeries>;
+    series: Array<MapSeries>;
 }
 
 MapAxis.compose(Axis); // @todo move to factory functions

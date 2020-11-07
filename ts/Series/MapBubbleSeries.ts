@@ -10,6 +10,7 @@
 
 'use strict';
 
+import type MapSeries from './MapSeries';
 import type { SeriesStatesOptions } from '../Core/Series/SeriesOptions';
 import BaseSeries from '../Core/Series/Series.js';
 import Point from '../Core/Series/Point.js';

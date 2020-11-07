@@ -23,6 +23,7 @@ import type ColorString from '../Core/Color/ColorString';
 import type ColorType from '../Core/Color/ColorType';
 import type CSSObject from '../Core/Renderer/CSSObject';
 import type DashStyleValue from '../Core/Renderer/DashStyleValue';
+import type DataExtremesObject from '../Core/Series/DataExtremesObject';
 import type DataLabelOptions from '../Core/Series/DataLabelOptions';
 import type PiePoint from './Pie/PiePoint';
 import type PositionObject from '../Core/Renderer/PositionObject';
@@ -2186,7 +2187,7 @@ BaseSeries.seriesType<typeof Highcharts.TreemapSeries>(
         drawLegendSymbol: LegendSymbolMixin.drawRectangle,
         getExtremes: function (
             this: Highcharts.TreemapSeries
-        ): Highcharts.DataExtremesObject {
+        ): DataExtremesObject {
             // Get the extremes from the value data
             const { dataMin, dataMax } = LineSeries.prototype.getExtremes
                 .call(this, this.colorValueData);

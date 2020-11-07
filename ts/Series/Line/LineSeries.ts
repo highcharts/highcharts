@@ -20,6 +20,7 @@ import type AnimationOptionsObject from '../../Core/Animation/AnimationOptionsOb
 import type { AxisType } from '../../Core/Axis/Types';
 import type Chart from '../../Core/Chart/Chart';
 import type ColorType from '../../Core/Color/ColorType';
+import type DataExtremesObject from '../../Core/Series/DataExtremesObject';
 import type { EventCallback } from '../../Core/Callback';
 import type LinePoint from './LinePoint';
 import type LineSeriesOptions from './LineSeriesOptions';
@@ -122,10 +123,6 @@ interface KDPointSearchObject {
  */
 declare global {
     namespace Highcharts {
-        interface DataExtremesObject {
-            dataMin?: number;
-            dataMax?: number;
-        }
         interface DataSortingOptionsObject {
             enabled?: boolean;
             matchByName?: boolean;
@@ -4367,7 +4364,7 @@ class LineSeries {
     public getExtremes(
         yData?: (Array<(number|null)>|Array<Array<(number|null)>>),
         forceExtremesFromAll?: boolean
-    ): Highcharts.DataExtremesObject {
+    ): DataExtremesObject {
         var xAxis = this.xAxis,
             yAxis = this.yAxis,
             xData = this.processedXData || this.xData,
@@ -4454,7 +4451,7 @@ class LineSeries {
      * @private
      * @function Highcharts.Series#applyExtremes
      */
-    public applyExtremes(): Highcharts.DataExtremesObject {
+    public applyExtremes(): DataExtremesObject {
         const dataExtremes = this.getExtremes();
 
         /**
