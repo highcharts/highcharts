@@ -15,7 +15,7 @@ import '../../Core/Axis/ColorAxis.js';
 import '../../Mixins/ColorMapSeries.js';
 import '../../Maps/MapNavigation.js';
 import '../../Maps/MapPointer.js';
-import '../../Series/MapSeries.js';
+import '../../Series/Map/MapSeries.js';
 import '../../Series/MapLineSeries.js';
 import '../../Series/MapPointSeries.js';
 import '../../Series/MapBubbleSeries.js';
