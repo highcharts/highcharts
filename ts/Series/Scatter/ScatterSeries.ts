@@ -168,7 +168,7 @@ class ScatterSeries extends LineSeries {
             pointFormat: 'x: <b>{point.x}</b><br/>y: <b>{point.y}</b><br/>'
         }
 
-    });
+    } as ScatterSeriesOptions);
 
     /* *
      *
