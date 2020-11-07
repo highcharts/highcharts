@@ -11,6 +11,7 @@
 'use strict';
 
 import type BBoxObject from '../Renderer/BBoxObject';
+import type DataExtremesObject from '../Series/DataExtremesObject';
 import type { HTMLDOMElement } from '../Renderer/DOMElementType';
 import type PointerEvent from '../PointerEvent';
 import type { SeriesTypePlotOptions } from '../Series/SeriesType';
@@ -948,7 +949,7 @@ addEvent(
     LineSeries,
     'afterGetExtremes',
     function (e): void {
-        const dataExtremes: Highcharts.DataExtremesObject = (e as any).dataExtremes;
+        const dataExtremes: DataExtremesObject = (e as any).dataExtremes;
         if (this.modifyValue && dataExtremes) {
             var extremes = [
                 this.modifyValue(dataExtremes.dataMin),
