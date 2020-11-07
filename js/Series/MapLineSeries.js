@@ -9,8 +9,7 @@
  * */
 'use strict';
 import BaseSeries from '../Core/Series/Series.js';
-import '../Core/Options.js';
-import './MapSeries.js';
+import './Map/MapSeries.js';
 var seriesTypes = BaseSeries.seriesTypes;
 /**
  * @private

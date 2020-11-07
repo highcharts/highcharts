@@ -16,42 +16,47 @@
  *
  * */
 
-import type AnimationOptionsObject from '../Core/Animation/AnimationOptionsObject';
-import type ColorType from '../Core/Color/ColorType';
-import type DataExtremesObject from '../Core/Series/DataExtremesObject';
-import type DataLabelOptions from '../Core/Series/DataLabelOptions';
+import type AnimationOptionsObject from '../../Core/Animation/AnimationOptionsObject';
+import type ColorType from '../../Core/Color/ColorType';
+import type DataExtremesObject from '../../Core/Series/DataExtremesObject';
+import type DataLabelOptions from '../../Core/Series/DataLabelOptions';
 import type {
     PointOptions,
     PointShortOptions
-} from '../Core/Series/PointOptions';
-import type ScatterPoint from './Scatter/ScatterPoint';
-import type ScatterPointOptions from './Scatter/ScatterPointOptions';
-import type ScatterSeriesOptions from './Scatter/ScatterSeriesOptions';
-import type { SeriesStatesOptions } from '../Core/Series/SeriesOptions';
-import type { StatesOptionsKey } from '../Core/Series/StatesOptions';
-import type SVGAttributes from '../Core/Renderer/SVG/SVGAttributes';
-import type SVGElement from '../Core/Renderer/SVG/SVGElement';
-import type SVGPath from '../Core/Renderer/SVG/SVGPath';
-import BaseSeries from '../Core/Series/Series.js';
-import ColorMapMixin from '../Mixins/ColorMapSeries.js';
+} from '../../Core/Series/PointOptions';
+import type ScatterPoint from '../Scatter/ScatterPoint';
+import type ScatterPointOptions from '../Scatter/ScatterPointOptions';
+import type ScatterSeriesOptions from '../Scatter/ScatterSeriesOptions';
+import type { SeriesStatesOptions } from '../../Core/Series/SeriesOptions';
+import type { StatesOptionsKey } from '../../Core/Series/StatesOptions';
+import type SVGAttributes from '../../Core/Renderer/SVG/SVGAttributes';
+import type SVGElement from '../../Core/Renderer/SVG/SVGElement';
+import type SVGPath from '../../Core/Renderer/SVG/SVGPath';
+import BaseSeries from '../../Core/Series/Series.js';
+const {
+    // indirect dependency to keep product size low
+    seriesTypes: {
+        column: ColumnSeries,
+        scatter: ScatterSeries
+    }
+} = BaseSeries;
+import ColorMapMixin from '../../Mixins/ColorMapSeries.js';
 const {
     colorMapPointMixin,
     colorMapSeriesMixin
 } = ColorMapMixin;
-import ColumnSeries from './Column/ColumnSeries.js';
-import H from '../Core/Globals.js';
+import H from '../../Core/Globals.js';
 const { noop } = H;
-import LegendSymbolMixin from '../Mixins/LegendSymbol.js';
-import LineSeries from './Line/LineSeries.js';
-import mapModule from '../Maps/Map.js';
+import LegendSymbolMixin from '../../Mixins/LegendSymbol.js';
+import LineSeries from '../Line/LineSeries.js';
+import mapModule from '../../Maps/Map.js';
 const {
     maps,
     splitPath
 } = mapModule;
-import Point from '../Core/Series/Point.js';
-import ScatterSeries from './Scatter/ScatterSeries.js';
-import SVGRenderer from '../Core/Renderer/SVG/SVGRenderer.js';
-import U from '../Core/Utilities.js';
+import Point from '../../Core/Series/Point.js';
+import SVGRenderer from '../../Core/Renderer/SVG/SVGRenderer.js';
+import U from '../../Core/Utilities.js';
 const {
     extend,
     fireEvent,
@@ -70,7 +75,7 @@ const {
  *
  * */
 
-declare module '../Core/Series/SeriesLike' {
+declare module '../../Core/Series/SeriesLike' {
     interface SeriesLike {
         mapTitle?: string;
         valueMax?: number;
@@ -78,7 +83,7 @@ declare module '../Core/Series/SeriesLike' {
     }
 }
 
-declare module '../Core/Series/SeriesOptions' {
+declare module '../../Core/Series/SeriesOptions' {
     interface SeriesOptions {
         /** @requires modules/map */
         mapData?: (Array<Highcharts.MapPointOptions>|any);
@@ -1456,7 +1461,7 @@ extend(MapSeries.prototype, {
  *
  * */
 
-class MapPoint extends Point {
+class MapPoint extends ScatterSeries.prototype.pointClass {
 
     /* *
      *
@@ -1607,7 +1612,7 @@ namespace MapPoint {
  *
  * */
 
-declare module '../Core/Series/SeriesType' {
+declare module '../../Core/Series/SeriesType' {
     interface SeriesTypeRegistry {
         map: typeof MapSeries;
     }

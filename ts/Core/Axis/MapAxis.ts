@@ -11,7 +11,7 @@
 'use strict';
 
 import type Chart from '../Chart/Chart';
-import type MapSeries from '../../Series/MapSeries';
+import type MapSeries from '../../Series/Map/MapSeries';
 import Axis from './Axis.js';
 import U from '../Utilities.js';
 const {
