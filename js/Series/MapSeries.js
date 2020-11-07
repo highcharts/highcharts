@@ -8,10 +8,23 @@
  *
  * */
 'use strict';
+var __extends = (this && this.__extends) || (function () {
+    var extendStatics = function (d, b) {
+        extendStatics = Object.setPrototypeOf ||
+            ({ __proto__: [] } instanceof Array && function (d, b) { d.__proto__ = b; }) ||
+            function (d, b) { for (var p in b) if (b.hasOwnProperty(p)) d[p] = b[p]; };
+        return extendStatics(d, b);
+    };
+    return function (d, b) {
+        extendStatics(d, b);
+        function __() { this.constructor = d; }
+        d.prototype = b === null ? Object.create(b) : (__.prototype = b.prototype, new __());
+    };
+})();
 import BaseSeries from '../Core/Series/Series.js';
-var seriesTypes = BaseSeries.seriesTypes;
 import ColorMapMixin from '../Mixins/ColorMapSeries.js';
 var colorMapPointMixin = ColorMapMixin.colorMapPointMixin, colorMapSeriesMixin = ColorMapMixin.colorMapSeriesMixin;
+import ColumnSeries from './Column/ColumnSeries.js';
 import H from '../Core/Globals.js';
 var noop = H.noop;
 import LegendSymbolMixin from '../Mixins/LegendSymbol.js';
@@ -19,11 +32,15 @@ import LineSeries from './Line/LineSeries.js';
 import mapModule from '../Maps/Map.js';
 var maps = mapModule.maps, splitPath = mapModule.splitPath;
 import Point from '../Core/Series/Point.js';
+import ScatterSeries from './Scatter/ScatterSeries.js';
 import SVGRenderer from '../Core/Renderer/SVG/SVGRenderer.js';
 import U from '../Core/Utilities.js';
 var extend = U.extend, fireEvent = U.fireEvent, getNestedProperty = U.getNestedProperty, isArray = U.isArray, isNumber = U.isNumber, merge = U.merge, objectEach = U.objectEach, pick = U.pick, splat = U.splat;
-import '../Core/Options.js';
-import './Scatter/ScatterSeries.js';
+/* *
+ *
+ *  Class
+ *
+ * */
 /**
  * @private
  * @class
@@ -31,247 +48,269 @@ import './Scatter/ScatterSeries.js';
  *
  * @augments Highcharts.Series
  */
-BaseSeries.seriesType('map', 'scatter', 
-/**
- * The map series is used for basic choropleth maps, where each map area has
- * a color based on its value.
- *
- * @sample maps/demo/all-maps/
- *         Choropleth map
- *
- * @extends      plotOptions.scatter
- * @excluding    marker, cluster
- * @product      highmaps
- * @optionparent plotOptions.map
- */
-{
-    animation: false,
-    dataLabels: {
-        crop: false,
-        formatter: function () {
-            return this.point.value;
-        },
-        inside: true,
-        overflow: false,
-        padding: 0,
-        verticalAlign: 'middle'
-    },
-    /**
-     * @ignore-option
-     *
-     * @private
-     */
-    marker: null,
-    /**
-     * The color to apply to null points.
-     *
-     * In styled mode, the null point fill is set in the
-     * `.highcharts-null-point` class.
-     *
-     * @sample maps/demo/all-areas-as-null/
-     *         Null color
-     *
-     * @type {Highcharts.ColorString|Highcharts.GradientColorObject|Highcharts.PatternObject}
-     *
-     * @private
-     */
-    nullColor: '${palette.neutralColor3}',
-    /**
-     * Whether to allow pointer interaction like tooltips and mouse events
-     * on null points.
-     *
-     * @type      {boolean}
-     * @since     4.2.7
-     * @apioption plotOptions.map.nullInteraction
-     *
-     * @private
-     */
-    stickyTracking: false,
-    tooltip: {
-        followPointer: true,
-        pointFormat: '{point.name}: {point.value}<br/>'
-    },
-    /**
-     * @ignore-option
-     *
-     * @private
-     */
-    turboThreshold: 0,
-    /**
-     * Whether all areas of the map defined in `mapData` should be rendered.
-     * If `true`, areas which don't correspond to a data point, are rendered
-     * as `null` points. If `false`, those areas are skipped.
-     *
-     * @sample maps/plotoptions/series-allareas-false/
-     *         All areas set to false
-     *
-     * @type      {boolean}
-     * @default   true
-     * @product   highmaps
-     * @apioption plotOptions.series.allAreas
-     *
-     * @private
-     */
-    allAreas: true,
-    /**
-     * The border color of the map areas.
-     *
-     * In styled mode, the border stroke is given in the `.highcharts-point`
-     * class.
-     *
-     * @sample {highmaps} maps/plotoptions/series-border/
-     *         Borders demo
-     *
-     * @type      {Highcharts.ColorString|Highcharts.GradientColorObject|Highcharts.PatternObject}
-     * @default   #cccccc
-     * @product   highmaps
-     * @apioption plotOptions.series.borderColor
-     *
-     * @private
-     */
-    borderColor: '${palette.neutralColor20}',
-    /**
-     * The border width of each map area.
-     *
-     * In styled mode, the border stroke width is given in the
-     * `.highcharts-point` class.
-     *
-     * @sample maps/plotoptions/series-border/
-     *         Borders demo
-     *
-     * @type      {number}
-     * @default   1
-     * @product   highmaps
-     * @apioption plotOptions.series.borderWidth
-     *
-     * @private
-     */
-    borderWidth: 1,
-    /**
-     * @type      {string}
-     * @default   value
-     * @apioption plotOptions.map.colorKey
-     */
-    /**
-     * What property to join the `mapData` to the value data. For example,
-     * if joinBy is "code", the mapData items with a specific code is merged
-     * into the data with the same code. For maps loaded from GeoJSON, the
-     * keys may be held in each point's `properties` object.
-     *
-     * The joinBy option can also be an array of two values, where the first
-     * points to a key in the `mapData`, and the second points to another
-     * key in the `data`.
-     *
-     * When joinBy is `null`, the map items are joined by their position in
-     * the array, which performs much better in maps with many data points.
-     * This is the recommended option if you are printing more than a
-     * thousand data points and have a backend that can preprocess the data
-     * into a parallel array of the mapData.
-     *
-     * @sample maps/plotoptions/series-border/
-     *         Joined by "code"
-     * @sample maps/demo/geojson/
-     *         GeoJSON joined by an array
-     * @sample maps/series/joinby-null/
-     *         Simple data joined by null
-     *
-     * @type      {string|Array<string>}
-     * @default   hc-key
-     * @product   highmaps
-     * @apioption plotOptions.series.joinBy
-     *
-     * @private
-     */
-    joinBy: 'hc-key',
-    /**
-     * Define the z index of the series.
-     *
-     * @type      {number}
-     * @product   highmaps
-     * @apioption plotOptions.series.zIndex
-     */
-    /**
-     * @apioption plotOptions.series.states
-     *
-     * @private
-     */
-    states: {
-        /**
-         * @apioption plotOptions.series.states.hover
-         */
-        hover: {
-            /** @ignore-option */
-            halo: null,
-            /**
-             * The color of the shape in this state.
-             *
-             * @sample maps/plotoptions/series-states-hover/
-             *         Hover options
-             *
-             * @type      {Highcharts.ColorString|Highcharts.GradientColorObject|Highcharts.PatternObject}
-             * @product   highmaps
-             * @apioption plotOptions.series.states.hover.color
-             */
-            /**
-             * The border color of the point in this state.
-             *
-             * @type      {Highcharts.ColorString|Highcharts.GradientColorObject|Highcharts.PatternObject}
-             * @product   highmaps
-             * @apioption plotOptions.series.states.hover.borderColor
-             */
-            /**
-             * The border width of the point in this state
-             *
-             * @type      {number}
-             * @product   highmaps
-             * @apioption plotOptions.series.states.hover.borderWidth
-             */
-            /**
-             * The relative brightness of the point when hovered, relative
-             * to the normal point color.
-             *
-             * @type      {number}
-             * @product   highmaps
-             * @default   0.2
-             * @apioption plotOptions.series.states.hover.brightness
-             */
-            brightness: 0.2
-        },
-        /**
-         * @apioption plotOptions.series.states.normal
-         */
-        normal: {
-            /**
-             * @productdesc {highmaps}
-             * The animation adds some latency in order to reduce the effect
-             * of flickering when hovering in and out of for example an
-             * uneven coastline.
-             *
-             * @sample {highmaps} maps/plotoptions/series-states-animation-false/
-             *         No animation of fill color
-             *
-             * @apioption plotOptions.series.states.normal.animation
-             */
-            animation: true
-        },
-        /**
-         * @apioption plotOptions.series.states.select
-         */
-        select: {
-            /**
-             * @type      {Highcharts.ColorString|Highcharts.GradientColorObject|Highcharts.PatternObject}
-             * @default   ${palette.neutralColor20}
-             * @product   highmaps
-             * @apioption plotOptions.series.states.select.color
-             */
-            color: '${palette.neutralColor20}'
-        },
-        inactive: {
-            opacity: 1
-        }
+var MapSeries = /** @class */ (function (_super) {
+    __extends(MapSeries, _super);
+    function MapSeries() {
+        /* *
+         *
+         *  Static Properties
+         *
+         * */
+        var _this = _super !== null && _super.apply(this, arguments) || this;
+        /* *
+         *
+         *  Properties
+         *
+         * */
+        _this.chart = void 0;
+        _this.data = void 0;
+        _this.options = void 0;
+        _this.points = void 0;
+        return _this;
     }
-    // Prototype members
-}, merge(colorMapSeriesMixin, {
+    /**
+     * The map series is used for basic choropleth maps, where each map area has
+     * a color based on its value.
+     *
+     * @sample maps/demo/all-maps/
+     *         Choropleth map
+     *
+     * @extends      plotOptions.scatter
+     * @excluding    marker, cluster
+     * @product      highmaps
+     * @optionparent plotOptions.map
+     */
+    MapSeries.defaultOptions = merge(ScatterSeries.defaultOptions, {
+        animation: false,
+        dataLabels: {
+            crop: false,
+            formatter: function () {
+                return this.point.value;
+            },
+            inside: true,
+            overflow: false,
+            padding: 0,
+            verticalAlign: 'middle'
+        },
+        /**
+         * @ignore-option
+         *
+         * @private
+         */
+        marker: null,
+        /**
+         * The color to apply to null points.
+         *
+         * In styled mode, the null point fill is set in the
+         * `.highcharts-null-point` class.
+         *
+         * @sample maps/demo/all-areas-as-null/
+         *         Null color
+         *
+         * @type {Highcharts.ColorString|Highcharts.GradientColorObject|Highcharts.PatternObject}
+         *
+         * @private
+         */
+        nullColor: '${palette.neutralColor3}',
+        /**
+         * Whether to allow pointer interaction like tooltips and mouse events
+         * on null points.
+         *
+         * @type      {boolean}
+         * @since     4.2.7
+         * @apioption plotOptions.map.nullInteraction
+         *
+         * @private
+         */
+        stickyTracking: false,
+        tooltip: {
+            followPointer: true,
+            pointFormat: '{point.name}: {point.value}<br/>'
+        },
+        /**
+         * @ignore-option
+         *
+         * @private
+         */
+        turboThreshold: 0,
+        /**
+         * Whether all areas of the map defined in `mapData` should be rendered.
+         * If `true`, areas which don't correspond to a data point, are rendered
+         * as `null` points. If `false`, those areas are skipped.
+         *
+         * @sample maps/plotoptions/series-allareas-false/
+         *         All areas set to false
+         *
+         * @type      {boolean}
+         * @default   true
+         * @product   highmaps
+         * @apioption plotOptions.series.allAreas
+         *
+         * @private
+         */
+        allAreas: true,
+        /**
+         * The border color of the map areas.
+         *
+         * In styled mode, the border stroke is given in the `.highcharts-point`
+         * class.
+         *
+         * @sample {highmaps} maps/plotoptions/series-border/
+         *         Borders demo
+         *
+         * @type      {Highcharts.ColorString|Highcharts.GradientColorObject|Highcharts.PatternObject}
+         * @default   #cccccc
+         * @product   highmaps
+         * @apioption plotOptions.series.borderColor
+         *
+         * @private
+         */
+        borderColor: '${palette.neutralColor20}',
+        /**
+         * The border width of each map area.
+         *
+         * In styled mode, the border stroke width is given in the
+         * `.highcharts-point` class.
+         *
+         * @sample maps/plotoptions/series-border/
+         *         Borders demo
+         *
+         * @type      {number}
+         * @default   1
+         * @product   highmaps
+         * @apioption plotOptions.series.borderWidth
+         *
+         * @private
+         */
+        borderWidth: 1,
+        /**
+         * @type      {string}
+         * @default   value
+         * @apioption plotOptions.map.colorKey
+         */
+        /**
+         * What property to join the `mapData` to the value data. For example,
+         * if joinBy is "code", the mapData items with a specific code is merged
+         * into the data with the same code. For maps loaded from GeoJSON, the
+         * keys may be held in each point's `properties` object.
+         *
+         * The joinBy option can also be an array of two values, where the first
+         * points to a key in the `mapData`, and the second points to another
+         * key in the `data`.
+         *
+         * When joinBy is `null`, the map items are joined by their position in
+         * the array, which performs much better in maps with many data points.
+         * This is the recommended option if you are printing more than a
+         * thousand data points and have a backend that can preprocess the data
+         * into a parallel array of the mapData.
+         *
+         * @sample maps/plotoptions/series-border/
+         *         Joined by "code"
+         * @sample maps/demo/geojson/
+         *         GeoJSON joined by an array
+         * @sample maps/series/joinby-null/
+         *         Simple data joined by null
+         *
+         * @type      {string|Array<string>}
+         * @default   hc-key
+         * @product   highmaps
+         * @apioption plotOptions.series.joinBy
+         *
+         * @private
+         */
+        joinBy: 'hc-key',
+        /**
+         * Define the z index of the series.
+         *
+         * @type      {number}
+         * @product   highmaps
+         * @apioption plotOptions.series.zIndex
+         */
+        /**
+         * @apioption plotOptions.series.states
+         *
+         * @private
+         */
+        states: {
+            /**
+             * @apioption plotOptions.series.states.hover
+             */
+            hover: {
+                /** @ignore-option */
+                halo: null,
+                /**
+                 * The color of the shape in this state.
+                 *
+                 * @sample maps/plotoptions/series-states-hover/
+                 *         Hover options
+                 *
+                 * @type      {Highcharts.ColorString|Highcharts.GradientColorObject|Highcharts.PatternObject}
+                 * @product   highmaps
+                 * @apioption plotOptions.series.states.hover.color
+                 */
+                /**
+                 * The border color of the point in this state.
+                 *
+                 * @type      {Highcharts.ColorString|Highcharts.GradientColorObject|Highcharts.PatternObject}
+                 * @product   highmaps
+                 * @apioption plotOptions.series.states.hover.borderColor
+                 */
+                /**
+                 * The border width of the point in this state
+                 *
+                 * @type      {number}
+                 * @product   highmaps
+                 * @apioption plotOptions.series.states.hover.borderWidth
+                 */
+                /**
+                 * The relative brightness of the point when hovered, relative
+                 * to the normal point color.
+                 *
+                 * @type      {number}
+                 * @product   highmaps
+                 * @default   0.2
+                 * @apioption plotOptions.series.states.hover.brightness
+                 */
+                brightness: 0.2
+            },
+            /**
+             * @apioption plotOptions.series.states.normal
+             */
+            normal: {
+                /**
+                 * @productdesc {highmaps}
+                 * The animation adds some latency in order to reduce the effect
+                 * of flickering when hovering in and out of for example an
+                 * uneven coastline.
+                 *
+                 * @sample {highmaps} maps/plotoptions/series-states-animation-false/
+                 *         No animation of fill color
+                 *
+                 * @apioption plotOptions.series.states.normal.animation
+                 */
+                animation: true
+            },
+            /**
+             * @apioption plotOptions.series.states.select
+             */
+            select: {
+                /**
+                 * @type      {Highcharts.ColorString|Highcharts.GradientColorObject|Highcharts.PatternObject}
+                 * @default   ${palette.neutralColor20}
+                 * @product   highmaps
+                 * @apioption plotOptions.series.states.select.color
+                 */
+                color: '${palette.neutralColor20}'
+            },
+            inactive: {
+                opacity: 1
+            }
+        }
+    });
+    return MapSeries;
+}(ScatterSeries));
+extend(MapSeries.prototype, colorMapSeriesMixin);
+extend(MapSeries.prototype, {
     type: 'map',
     getExtremesFromAll: true,
     useMapGeometry: true,
@@ -594,7 +633,7 @@ BaseSeries.seriesType('map', 'scatter',
     pointAttribs: function (point, state) {
         var attr = point.series.chart.styledMode ?
             this.colorAttribs(point) :
-            seriesTypes.column.prototype.pointAttribs.call(this, point, state);
+            ColumnSeries.prototype.pointAttribs.call(this, point, state);
         // Set the stroke-width on the group element and let all point
         // graphics inherit. That way we don't have to iterate over all
         // points to update the stroke-width on zooming.
@@ -630,7 +669,7 @@ BaseSeries.seriesType('map', 'scatter',
             }
             // Draw them in transformGroup
             series.group = series.transformGroup;
-            seriesTypes.column.prototype.drawPoints.apply(series);
+            ColumnSeries.prototype.drawPoints.apply(series);
             series.group = group; // Reset
             // Add class names
             series.points.forEach(function (point) {
@@ -694,16 +733,16 @@ BaseSeries.seriesType('map', 'scatter',
                 translateY = Math.round(translateY);
             }
             /* Animate or move to the new zoom level. In order to prevent
-               flickering as the different transform components are set out
-               of sync (#5991), we run a fake animator attribute and set
-               scale and translation synchronously in the same step.
+                flickering as the different transform components are set out
+                of sync (#5991), we run a fake animator attribute and set
+                scale and translation synchronously in the same step.
 
-               A possible improvement to the API would be to handle this in
-               the renderer or animation engine itself, to ensure that when
-               we are animating multiple properties, we make sure that each
-               step for each property is performed in the same step. Also,
-               for symbols and for transform properties, it should induce a
-               single updateTransform and symbolAttr call. */
+                A possible improvement to the API would be to handle this in
+                the renderer or animation engine itself, to ensure that when
+                we are animating multiple properties, we make sure that each
+                step for each property is performed in the same step. Also,
+                for symbols and for transform properties, it should induce a
+                single updateTransform and symbolAttr call. */
             transformGroup = this.transformGroup;
             if (chart.renderer.globalAnimation) {
                 startTranslateX = transformGroup.attr('translateX');
@@ -741,9 +780,9 @@ BaseSeries.seriesType('map', 'scatter',
             }
         }
         /* Set the stroke-width directly on the group element so the
-           children inherit it. We need to use setAttribute directly,
-           because the stroke-widthSetter method expects a stroke color also
-           to be set. */
+            children inherit it. We need to use setAttribute directly,
+            because the stroke-widthSetter method expects a stroke color also
+            to be set. */
         if (!chart.styledMode) {
             group.element.setAttribute('stroke-width', (pick(series.options[(series.pointAttrToOptions &&
                 series.pointAttrToOptions['stroke-width']) || 'borderWidth'], 1 // Styled mode
@@ -837,15 +876,40 @@ BaseSeries.seriesType('map', 'scatter',
     // lower series and animate them into the origin point in the upper
     // series.
     animateDrillupFrom: function (level) {
-        seriesTypes.column.prototype.animateDrillupFrom.call(this, level);
+        ColumnSeries.prototype.animateDrillupFrom.call(this, level);
     },
     // When drilling up, keep the upper series invisible until the lower
     // series has moved into place
     animateDrillupTo: function (init) {
-        seriesTypes.column.prototype.animateDrillupTo.call(this, init);
+        ColumnSeries.prototype.animateDrillupTo.call(this, init);
     }
-    // Point class
-}), extend({
+});
+/* *
+ *
+ *  Class
+ *
+ * */
+var MapPoint = /** @class */ (function (_super) {
+    __extends(MapPoint, _super);
+    function MapPoint() {
+        /* *
+         *
+         *  Properties
+         *
+         * */
+        var _this = _super !== null && _super.apply(this, arguments) || this;
+        // public middleX: number;
+        // public middleY: number;
+        _this.options = void 0;
+        _this.series = void 0;
+        return _this;
+        // public value: (number|null);
+    }
+    return MapPoint;
+}(Point));
+MapSeries.prototype.pointClass = MapPoint;
+extend(MapPoint.prototype, colorMapPointMixin);
+extend(MapPoint.prototype, {
     // Extend the Point object to split paths
     applyOptions: function (options, x) {
         var series = this.series, point = Point.prototype.applyOptions.call(this, options, x), joinBy = series.joinBy, mapPoint;
@@ -896,7 +960,19 @@ BaseSeries.seriesType('map', 'scatter',
         series.yAxis.setExtremes(point._minY, point._maxY, false);
         series.chart.redraw();
     }
-}, colorMapPointMixin));
+});
+BaseSeries.registerSeriesType('map', MapSeries);
+/* *
+ *
+ *  Default Export
+ *
+ * */
+export default MapSeries;
+/* *
+ *
+ *  API Options
+ *
+ * */
 /**
  * A map data object containing a `path` definition and optionally additional
  * properties to join in the data as per the `joinBy` option.

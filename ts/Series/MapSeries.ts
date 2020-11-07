@@ -10,6 +10,12 @@
 
 'use strict';
 
+/* *
+ *
+ *  Imports
+ *
+ * */
+
 import type AnimationOptionsObject from '../Core/Animation/AnimationOptionsObject';
 import type ColorType from '../Core/Color/ColorType';
 import type DataLabelOptions from '../Core/Series/DataLabelOptions';
@@ -19,7 +25,6 @@ import type {
 } from '../Core/Series/PointOptions';
 import type ScatterPoint from './Scatter/ScatterPoint';
 import type ScatterPointOptions from './Scatter/ScatterPointOptions';
-import type ScatterSeries from './Scatter/ScatterSeries';
 import type ScatterSeriesOptions from './Scatter/ScatterSeriesOptions';
 import type { SeriesStatesOptions } from '../Core/Series/SeriesOptions';
 import type { StatesOptionsKey } from '../Core/Series/StatesOptions';
@@ -27,12 +32,12 @@ import type SVGAttributes from '../Core/Renderer/SVG/SVGAttributes';
 import type SVGElement from '../Core/Renderer/SVG/SVGElement';
 import type SVGPath from '../Core/Renderer/SVG/SVGPath';
 import BaseSeries from '../Core/Series/Series.js';
-const { seriesTypes } = BaseSeries;
 import ColorMapMixin from '../Mixins/ColorMapSeries.js';
 const {
     colorMapPointMixin,
     colorMapSeriesMixin
 } = ColorMapMixin;
+import ColumnSeries from './Column/ColumnSeries.js';
 import H from '../Core/Globals.js';
 const { noop } = H;
 import LegendSymbolMixin from '../Mixins/LegendSymbol.js';
@@ -43,6 +48,7 @@ const {
     splitPath
 } = mapModule;
 import Point from '../Core/Series/Point.js';
+import ScatterSeries from './Scatter/ScatterSeries.js';
 import SVGRenderer from '../Core/Renderer/SVG/SVGRenderer.js';
 import U from '../Core/Utilities.js';
 const {
@@ -56,6 +62,12 @@ const {
     pick,
     splat
 } = U;
+
+/* *
+ *
+ *  Declarations
+ *
+ * */
 
 declare module '../Core/Series/SeriesLike' {
     interface SeriesLike {
@@ -186,17 +198,11 @@ declare global {
     }
 }
 
-/**
- * @private
- */
-declare module '../Core/Series/SeriesType' {
-    interface SeriesTypeRegistry {
-        map: typeof Highcharts.MapSeries;
-    }
-}
-
-import '../Core/Options.js';
-import './Scatter/ScatterSeries.js';
+/* *
+ *
+ *  Class
+ *
+ * */
 
 /**
  * @private
@@ -205,9 +211,14 @@ import './Scatter/ScatterSeries.js';
  *
  * @augments Highcharts.Series
  */
-BaseSeries.seriesType<typeof Highcharts.MapSeries>(
-    'map',
-    'scatter',
+class MapSeries extends ScatterSeries {
+
+    /* *
+     *
+     *  Static Properties
+     *
+     * */
+
     /**
      * The map series is used for basic choropleth maps, where each map area has
      * a color based on its value.
@@ -220,7 +231,7 @@ BaseSeries.seriesType<typeof Highcharts.MapSeries>(
      * @product      highmaps
      * @optionparent plotOptions.map
      */
-    {
+    public static defaultOptions: Highcharts.MapSeriesOptions = merge(ScatterSeries.defaultOptions, {
 
         animation: false, // makes the complex shapes slow
 
@@ -472,952 +483,1104 @@ BaseSeries.seriesType<typeof Highcharts.MapSeries>(
                 opacity: 1
             }
         }
+    } as Highcharts.MapSeriesOptions);
 
-    // Prototype members
-    }, merge(colorMapSeriesMixin, {
-        type: 'map',
-        getExtremesFromAll: true,
-        useMapGeometry: true, // get axis extremes from paths, not values
-        forceDL: true,
-        searchPoint: noop as any,
-        // When tooltip is not shared, this series (and derivatives) requires
-        // direct touch/hover. KD-tree does not apply.
-        directTouch: true,
-        // X axis and Y axis must have same translation slope
-        preserveAspectRatio: true,
-        pointArrayMap: ['value'],
+    /* *
+     *
+     *  Properties
+     *
+     * */
 
-        // Extend setOptions by picking up the joinBy option and applying it
-        // to a series property
-        setOptions: function (
-            this: Highcharts.MapSeries,
-            itemOptions: Highcharts.MapSeriesOptions
-        ): Highcharts.MapSeriesOptions {
-            var options = LineSeries.prototype.setOptions.call(this, itemOptions),
-                joinBy = options.joinBy,
-                joinByNull = joinBy === null;
+    public chart: Highcharts.MapChart = void 0 as any;
 
-            if (joinByNull) {
-                joinBy = '_i';
-            }
-            joinBy = this.joinBy = splat(joinBy);
-            if (!joinBy[1]) {
-                joinBy[1] = joinBy[0];
-            }
+    public data: Array<MapPoint> = void 0 as any;
 
-            return options;
-        },
+    public mapData?: unknown;
 
-        // Get the bounding box of all paths in the map combined.
-        getBox: function (
-            this: Highcharts.MapSeries,
-            paths: Array<Highcharts.MapPointOptions>
+    public mapMap?: Record<string, any>;
+
+    public mapTitle?: string;
+
+    public maxX?: number;
+
+    public minX?: number;
+
+    public options: Highcharts.MapSeriesOptions = void 0 as any;
+
+    public points: Array<MapPoint> = void 0 as any;
+
+    public valueData?: Array<number>;
+}
+
+/* *
+ *
+ *  Prototype Properties
+ *
+ * */
+
+interface MapSeries extends Highcharts.ColorMapSeries {
+    baseTrans: Highcharts.MapBaseTransObject;
+    colorAttribs: typeof colorMapSeriesMixin['colorAttribs'];
+    dataMax: number;
+    dataMin: number;
+    drawLegendSymbol: Highcharts.LegendSymbolMixin['drawRectangle'];
+    group: SVGElement;
+    joinBy: Array<string>;
+    maxY: number;
+    minY: number;
+    pointArrayMap: Array<string>;
+    pointAttrToOptions: unknown;
+    pointClass: typeof MapPoint;
+    preserveAspectRatio: boolean;
+    trackerGroups: typeof colorMapSeriesMixin['trackerGroups'];
+    transformGroup: SVGElement;
+    useMapGeometry: boolean;
+    valueMax: number;
+    valueMin: number;
+    animate(init?: boolean): void;
+    animateDrilldown(init?: boolean): void;
+    animateDrillupTo(init?: boolean): void;
+    doFullTranslate(): boolean;
+    drawMapDataLabels(): void;
+    drawPoints(): void;
+    getBox(paths: Array<Highcharts.MapPointOptions>): void;
+    getExtremes(): Highcharts.DataExtremesObject;
+    hasData(): boolean;
+    pointAttribs(
+        point?: MapPoint,
+        state?: StatesOptionsKey
+    ): SVGAttributes;
+    render(): void;
+    setData(
+        data: Array<(PointOptions|PointShortOptions|Highcharts.MapPointOptions)>,
+        redraw?: boolean,
+        animation?: (boolean|Partial<AnimationOptionsObject>),
+        updatePoints?: boolean
+    ): void;
+    setOptions(itemOptions: Highcharts.MapSeriesOptions): Highcharts.MapSeriesOptions;
+    translate(): void;
+    translatePath(path: SVGPath): SVGPath;
+}
+extend(MapSeries.prototype, colorMapSeriesMixin);
+extend(MapSeries.prototype, {
+    type: 'map',
+    getExtremesFromAll: true,
+    useMapGeometry: true, // get axis extremes from paths, not values
+    forceDL: true,
+    searchPoint: noop as any,
+    // When tooltip is not shared, this series (and derivatives) requires
+    // direct touch/hover. KD-tree does not apply.
+    directTouch: true,
+    // X axis and Y axis must have same translation slope
+    preserveAspectRatio: true,
+    pointArrayMap: ['value'],
+
+    // Extend setOptions by picking up the joinBy option and applying it
+    // to a series property
+    setOptions: function (
+        this: Highcharts.MapSeries,
+        itemOptions: Highcharts.MapSeriesOptions
+    ): Highcharts.MapSeriesOptions {
+        var options = LineSeries.prototype.setOptions.call(this, itemOptions),
+            joinBy = options.joinBy,
+            joinByNull = joinBy === null;
+
+        if (joinByNull) {
+            joinBy = '_i';
+        }
+        joinBy = this.joinBy = splat(joinBy);
+        if (!joinBy[1]) {
+            joinBy[1] = joinBy[0];
+        }
+
+        return options;
+    },
+
+    // Get the bounding box of all paths in the map combined.
+    getBox: function (
+        this: Highcharts.MapSeries,
+        paths: Array<Highcharts.MapPointOptions>
+    ): void {
+        var MAX_VALUE = Number.MAX_VALUE,
+            maxX = -MAX_VALUE,
+            minX = MAX_VALUE,
+            maxY = -MAX_VALUE,
+            minY = MAX_VALUE,
+            minRange = MAX_VALUE,
+            xAxis = this.xAxis,
+            yAxis = this.yAxis,
+            hasBox;
+
+        // Find the bounding box
+        (paths || []).forEach(function (
+            point: (
+                Highcharts.MapPointOptions&Highcharts.MapPointCacheObject
+            )
         ): void {
-            var MAX_VALUE = Number.MAX_VALUE,
-                maxX = -MAX_VALUE,
-                minX = MAX_VALUE,
-                maxY = -MAX_VALUE,
-                minY = MAX_VALUE,
-                minRange = MAX_VALUE,
-                xAxis = this.xAxis,
-                yAxis = this.yAxis,
-                hasBox;
 
-            // Find the bounding box
-            (paths || []).forEach(function (
-                point: (
-                    Highcharts.MapPointOptions&Highcharts.MapPointCacheObject
-                )
-            ): void {
+            if (point.path) {
+                if (typeof point.path === 'string') {
+                    point.path = splitPath(point.path);
 
-                if (point.path) {
-                    if (typeof point.path === 'string') {
-                        point.path = splitPath(point.path);
-
-                    // Legacy one-dimensional array
-                    } else if (point.path[0] as any === 'M') {
-                        point.path = SVGRenderer.prototype.pathToSegments(
-                            point.path as any
-                        );
-                    }
-
-                    var path: SVGPath = point.path || [],
-                        pointMaxX = -MAX_VALUE,
-                        pointMinX = MAX_VALUE,
-                        pointMaxY = -MAX_VALUE,
-                        pointMinY = MAX_VALUE,
-                        properties = (point as any).properties;
-
-                    // The first time a map point is used, analyze its box
-                    if (!point._foundBox) {
-                        path.forEach((seg): void => {
-                            const x = seg[seg.length - 2];
-                            const y = seg[seg.length - 1];
-                            if (typeof x === 'number' && typeof y === 'number') {
-                                pointMinX = Math.min(pointMinX, x);
-                                pointMaxX = Math.max(pointMaxX, x);
-                                pointMinY = Math.min(pointMinY, y);
-                                pointMaxY = Math.max(pointMaxY, y);
-                            }
-                        });
-                        // Cache point bounding box for use to position data
-                        // labels, bubbles etc
-                        point._midX = (
-                            pointMinX + (pointMaxX - pointMinX) * pick(
-                                point.middleX,
-                                properties &&
-                                (properties as any)['hc-middle-x'],
-                                0.5
-                            )
-                        );
-                        point._midY = (
-                            pointMinY + (pointMaxY - pointMinY) * pick(
-                                point.middleY,
-                                properties &&
-                                (properties as any)['hc-middle-y'],
-                                0.5
-                            )
-                        );
-                        point._maxX = pointMaxX;
-                        point._minX = pointMinX;
-                        point._maxY = pointMaxY;
-                        point._minY = pointMinY;
-                        point.labelrank = pick(
-                            point.labelrank,
-                            (pointMaxX - pointMinX) * (pointMaxY - pointMinY)
-                        );
-                        point._foundBox = true;
-                    }
-
-                    maxX = Math.max(maxX, point._maxX as any);
-                    minX = Math.min(minX, point._minX as any);
-                    maxY = Math.max(maxY, point._maxY as any);
-                    minY = Math.min(minY, point._minY as any);
-                    minRange = Math.min(
-                        (point._maxX as any) - (point._minX as any),
-                        (point._maxY as any) - (point._minY as any), minRange
+                // Legacy one-dimensional array
+                } else if (point.path[0] as any === 'M') {
+                    point.path = SVGRenderer.prototype.pathToSegments(
+                        point.path as any
                     );
-                    hasBox = true;
+                }
+
+                var path: SVGPath = point.path || [],
+                    pointMaxX = -MAX_VALUE,
+                    pointMinX = MAX_VALUE,
+                    pointMaxY = -MAX_VALUE,
+                    pointMinY = MAX_VALUE,
+                    properties = (point as any).properties;
+
+                // The first time a map point is used, analyze its box
+                if (!point._foundBox) {
+                    path.forEach((seg): void => {
+                        const x = seg[seg.length - 2];
+                        const y = seg[seg.length - 1];
+                        if (typeof x === 'number' && typeof y === 'number') {
+                            pointMinX = Math.min(pointMinX, x);
+                            pointMaxX = Math.max(pointMaxX, x);
+                            pointMinY = Math.min(pointMinY, y);
+                            pointMaxY = Math.max(pointMaxY, y);
+                        }
+                    });
+                    // Cache point bounding box for use to position data
+                    // labels, bubbles etc
+                    point._midX = (
+                        pointMinX + (pointMaxX - pointMinX) * pick(
+                            point.middleX,
+                            properties &&
+                            (properties as any)['hc-middle-x'],
+                            0.5
+                        )
+                    );
+                    point._midY = (
+                        pointMinY + (pointMaxY - pointMinY) * pick(
+                            point.middleY,
+                            properties &&
+                            (properties as any)['hc-middle-y'],
+                            0.5
+                        )
+                    );
+                    point._maxX = pointMaxX;
+                    point._minX = pointMinX;
+                    point._maxY = pointMaxY;
+                    point._minY = pointMinY;
+                    point.labelrank = pick(
+                        point.labelrank,
+                        (pointMaxX - pointMinX) * (pointMaxY - pointMinY)
+                    );
+                    point._foundBox = true;
+                }
+
+                maxX = Math.max(maxX, point._maxX as any);
+                minX = Math.min(minX, point._minX as any);
+                maxY = Math.max(maxY, point._maxY as any);
+                minY = Math.min(minY, point._minY as any);
+                minRange = Math.min(
+                    (point._maxX as any) - (point._minX as any),
+                    (point._maxY as any) - (point._minY as any), minRange
+                );
+                hasBox = true;
+            }
+        });
+
+        // Set the box for the whole series
+        if (hasBox) {
+            this.minY = Math.min(minY, pick(this.minY, MAX_VALUE));
+            this.maxY = Math.max(maxY, pick(this.maxY, -MAX_VALUE));
+            this.minX = Math.min(minX, pick(this.minX, MAX_VALUE));
+            this.maxX = Math.max(maxX, pick(this.maxX, -MAX_VALUE));
+
+            // If no minRange option is set, set the default minimum zooming
+            // range to 5 times the size of the smallest element
+            if (xAxis && typeof xAxis.options.minRange === 'undefined') {
+                xAxis.minRange = Math.min(
+                    5 * minRange,
+                    (this.maxX - this.minX) / 5,
+                    xAxis.minRange || MAX_VALUE
+                );
+            }
+            if (yAxis && typeof yAxis.options.minRange === 'undefined') {
+                yAxis.minRange = Math.min(
+                    5 * minRange,
+                    (this.maxY - this.minY) / 5,
+                    yAxis.minRange || MAX_VALUE
+                );
+            }
+        }
+    },
+
+    // Define hasData function for non-cartesian series.
+    // Returns true if the series has points at all.
+    hasData: function (this: Highcharts.MapSeries): boolean {
+        return !!this.processedXData.length; // != 0
+    },
+
+    getExtremes: function (
+        this: Highcharts.MapSeries
+    ): Highcharts.DataExtremesObject {
+        // Get the actual value extremes for colors
+        const { dataMin, dataMax } = LineSeries.prototype.getExtremes
+            .call(this, this.valueData);
+
+        // Recalculate box on updated data
+        if (this.chart.hasRendered && this.isDirtyData) {
+            this.getBox(this.options.data as any);
+        }
+
+        if (isNumber(dataMin)) {
+            this.valueMin = dataMin;
+        }
+        if (isNumber(dataMax)) {
+            this.valueMax = dataMax;
+        }
+
+        // Extremes for the mock Y axis
+        return { dataMin: this.minY, dataMax: this.maxY };
+    },
+
+    // Translate the path, so it automatically fits into the plot area box
+    translatePath: function (
+        this: Highcharts.MapSeries,
+        path: SVGPath
+    ): SVGPath {
+
+        var series = this,
+            xAxis = series.xAxis,
+            yAxis = series.yAxis,
+            xMin = xAxis.min,
+            xTransA = xAxis.transA,
+            xMinPixelPadding = xAxis.minPixelPadding,
+            yMin = yAxis.min,
+            yTransA = yAxis.transA,
+            yMinPixelPadding = yAxis.minPixelPadding,
+            ret: SVGPath = []; // Preserve the original
+
+        // Do the translation
+        if (path) {
+            path.forEach((seg): void => {
+                if (seg[0] === 'M') {
+                    ret.push([
+                        'M',
+                        (seg[1] - (xMin || 0)) * xTransA + xMinPixelPadding,
+                        (seg[2] - (yMin || 0)) * yTransA + yMinPixelPadding
+                    ]);
+                } else if (seg[0] === 'L') {
+                    ret.push([
+                        'L',
+                        (seg[1] - (xMin || 0)) * xTransA + xMinPixelPadding,
+                        (seg[2] - (yMin || 0)) * yTransA + yMinPixelPadding
+                    ]);
+                } else if (seg[0] === 'C') {
+                    ret.push([
+                        'C',
+                        (seg[1] - (xMin || 0)) * xTransA + xMinPixelPadding,
+                        (seg[2] - (yMin || 0)) * yTransA + yMinPixelPadding,
+                        (seg[3] - (xMin || 0)) * xTransA + xMinPixelPadding,
+                        (seg[4] - (yMin || 0)) * yTransA + yMinPixelPadding,
+                        (seg[5] - (xMin || 0)) * xTransA + xMinPixelPadding,
+                        (seg[6] - (yMin || 0)) * yTransA + yMinPixelPadding
+                    ]);
+                } else if (seg[0] === 'Q') {
+                    ret.push([
+                        'Q',
+                        (seg[1] - (xMin || 0)) * xTransA + xMinPixelPadding,
+                        (seg[2] - (yMin || 0)) * yTransA + yMinPixelPadding,
+                        (seg[3] - (xMin || 0)) * xTransA + xMinPixelPadding,
+                        (seg[4] - (yMin || 0)) * yTransA + yMinPixelPadding
+                    ]);
+                } else if (seg[0] === 'Z') {
+                    ret.push(['Z']);
                 }
             });
+        }
 
-            // Set the box for the whole series
-            if (hasBox) {
-                this.minY = Math.min(minY, pick(this.minY, MAX_VALUE));
-                this.maxY = Math.max(maxY, pick(this.maxY, -MAX_VALUE));
-                this.minX = Math.min(minX, pick(this.minX, MAX_VALUE));
-                this.maxX = Math.max(maxX, pick(this.maxX, -MAX_VALUE));
+        return ret;
+    },
 
-                // If no minRange option is set, set the default minimum zooming
-                // range to 5 times the size of the smallest element
-                if (xAxis && typeof xAxis.options.minRange === 'undefined') {
-                    xAxis.minRange = Math.min(
-                        5 * minRange,
-                        (this.maxX - this.minX) / 5,
-                        xAxis.minRange || MAX_VALUE
-                    );
-                }
-                if (yAxis && typeof yAxis.options.minRange === 'undefined') {
-                    yAxis.minRange = Math.min(
-                        5 * minRange,
-                        (this.maxY - this.minY) / 5,
-                        yAxis.minRange || MAX_VALUE
-                    );
-                }
-            }
-        },
+    // Extend setData to join in mapData. If the allAreas option is true,
+    // all areas from the mapData are used, and those that don't correspond
+    // to a data value are given null values.
+    setData: function (
+        this: Highcharts.MapSeries,
+        data: (
+            Array<(PointOptions|PointShortOptions|Highcharts.MapPointOptions)>
+        ),
+        redraw?: boolean,
+        animation?: (boolean|Partial<AnimationOptionsObject>),
+        updatePoints?: boolean
+    ): void {
+        var options = this.options,
+            chartOptions = this.chart.options.chart,
+            globalMapData = chartOptions && chartOptions.map,
+            mapData = options.mapData,
+            joinBy = this.joinBy,
+            pointArrayMap = options.keys || this.pointArrayMap,
+            dataUsed = [] as Array<Highcharts.MapPointOptions>,
+            mapMap = {} as Highcharts.Dictionary<any>,
+            mapPoint,
+            mapTransforms = this.chart.mapTransforms,
+            props,
+            i;
 
-        // Define hasData function for non-cartesian series.
-        // Returns true if the series has points at all.
-        hasData: function (this: Highcharts.MapSeries): boolean {
-            return !!this.processedXData.length; // != 0
-        },
+        // Collect mapData from chart options if not defined on series
+        if (!mapData && globalMapData) {
+            mapData = typeof globalMapData === 'string' ?
+                maps[globalMapData] :
+                globalMapData;
+        }
 
-        getExtremes: function (
-            this: Highcharts.MapSeries
-        ): Highcharts.DataExtremesObject {
-            // Get the actual value extremes for colors
-            const { dataMin, dataMax } = LineSeries.prototype.getExtremes
-                .call(this, this.valueData);
+        // Pick up numeric values, add index
+        // Convert Array point definitions to objects using pointArrayMap
+        if (data) {
+            data.forEach(function (
+                val: (PointOptions|PointShortOptions|Highcharts.MapPointOptions),
+                i: number
+            ): void {
+                var ix = 0;
 
-            // Recalculate box on updated data
-            if (this.chart.hasRendered && this.isDirtyData) {
-                this.getBox(this.options.data as any);
-            }
-
-            if (isNumber(dataMin)) {
-                this.valueMin = dataMin;
-            }
-            if (isNumber(dataMax)) {
-                this.valueMax = dataMax;
-            }
-
-            // Extremes for the mock Y axis
-            return { dataMin: this.minY, dataMax: this.maxY };
-        },
-
-        // Translate the path, so it automatically fits into the plot area box
-        translatePath: function (
-            this: Highcharts.MapSeries,
-            path: SVGPath
-        ): SVGPath {
-
-            var series = this,
-                xAxis = series.xAxis,
-                yAxis = series.yAxis,
-                xMin = xAxis.min,
-                xTransA = xAxis.transA,
-                xMinPixelPadding = xAxis.minPixelPadding,
-                yMin = yAxis.min,
-                yTransA = yAxis.transA,
-                yMinPixelPadding = yAxis.minPixelPadding,
-                ret: SVGPath = []; // Preserve the original
-
-            // Do the translation
-            if (path) {
-                path.forEach((seg): void => {
-                    if (seg[0] === 'M') {
-                        ret.push([
-                            'M',
-                            (seg[1] - (xMin || 0)) * xTransA + xMinPixelPadding,
-                            (seg[2] - (yMin || 0)) * yTransA + yMinPixelPadding
-                        ]);
-                    } else if (seg[0] === 'L') {
-                        ret.push([
-                            'L',
-                            (seg[1] - (xMin || 0)) * xTransA + xMinPixelPadding,
-                            (seg[2] - (yMin || 0)) * yTransA + yMinPixelPadding
-                        ]);
-                    } else if (seg[0] === 'C') {
-                        ret.push([
-                            'C',
-                            (seg[1] - (xMin || 0)) * xTransA + xMinPixelPadding,
-                            (seg[2] - (yMin || 0)) * yTransA + yMinPixelPadding,
-                            (seg[3] - (xMin || 0)) * xTransA + xMinPixelPadding,
-                            (seg[4] - (yMin || 0)) * yTransA + yMinPixelPadding,
-                            (seg[5] - (xMin || 0)) * xTransA + xMinPixelPadding,
-                            (seg[6] - (yMin || 0)) * yTransA + yMinPixelPadding
-                        ]);
-                    } else if (seg[0] === 'Q') {
-                        ret.push([
-                            'Q',
-                            (seg[1] - (xMin || 0)) * xTransA + xMinPixelPadding,
-                            (seg[2] - (yMin || 0)) * yTransA + yMinPixelPadding,
-                            (seg[3] - (xMin || 0)) * xTransA + xMinPixelPadding,
-                            (seg[4] - (yMin || 0)) * yTransA + yMinPixelPadding
-                        ]);
-                    } else if (seg[0] === 'Z') {
-                        ret.push(['Z']);
+                if (isNumber(val)) {
+                    data[i] = {
+                        value: val
+                    };
+                } else if (isArray(val)) {
+                    data[i] = {};
+                    // Automatically copy first item to hc-key if there is
+                    // an extra leading string
+                    if (
+                        !options.keys &&
+                        val.length > pointArrayMap.length &&
+                        typeof val[0] === 'string'
+                    ) {
+                        (data[i] as any)['hc-key'] = val[0];
+                        ++ix;
                     }
-                });
-            }
-
-            return ret;
-        },
-
-        // Extend setData to join in mapData. If the allAreas option is true,
-        // all areas from the mapData are used, and those that don't correspond
-        // to a data value are given null values.
-        setData: function (
-            this: Highcharts.MapSeries,
-            data: (
-                Array<(PointOptions|PointShortOptions|Highcharts.MapPointOptions)>
-            ),
-            redraw?: boolean,
-            animation?: (boolean|Partial<AnimationOptionsObject>),
-            updatePoints?: boolean
-        ): void {
-            var options = this.options,
-                chartOptions = this.chart.options.chart,
-                globalMapData = chartOptions && chartOptions.map,
-                mapData = options.mapData,
-                joinBy = this.joinBy,
-                pointArrayMap = options.keys || this.pointArrayMap,
-                dataUsed = [] as Array<Highcharts.MapPointOptions>,
-                mapMap = {} as Highcharts.Dictionary<any>,
-                mapPoint,
-                mapTransforms = this.chart.mapTransforms,
-                props,
-                i;
-
-            // Collect mapData from chart options if not defined on series
-            if (!mapData && globalMapData) {
-                mapData = typeof globalMapData === 'string' ?
-                    maps[globalMapData] :
-                    globalMapData;
-            }
-
-            // Pick up numeric values, add index
-            // Convert Array point definitions to objects using pointArrayMap
-            if (data) {
-                data.forEach(function (
-                    val: (PointOptions|PointShortOptions|Highcharts.MapPointOptions),
-                    i: number
-                ): void {
-                    var ix = 0;
-
-                    if (isNumber(val)) {
-                        data[i] = {
-                            value: val
-                        };
-                    } else if (isArray(val)) {
-                        data[i] = {};
-                        // Automatically copy first item to hc-key if there is
-                        // an extra leading string
+                    // Run through pointArrayMap and what's left of the
+                    // point data array in parallel, copying over the values
+                    for (var j = 0; j < pointArrayMap.length; ++j, ++ix) {
                         if (
-                            !options.keys &&
-                            val.length > pointArrayMap.length &&
-                            typeof val[0] === 'string'
+                            pointArrayMap[j] &&
+                            typeof val[ix] !== 'undefined'
                         ) {
-                            (data[i] as any)['hc-key'] = val[0];
-                            ++ix;
-                        }
-                        // Run through pointArrayMap and what's left of the
-                        // point data array in parallel, copying over the values
-                        for (var j = 0; j < pointArrayMap.length; ++j, ++ix) {
-                            if (
-                                pointArrayMap[j] &&
-                                typeof val[ix] !== 'undefined'
-                            ) {
-                                if (pointArrayMap[j].indexOf('.') > 0) {
-                                    Point.prototype.setNestedProperty(
-                                        data[i], val[ix], pointArrayMap[j]
-                                    );
-                                } else {
-                                    (data[i] as any)[pointArrayMap[j]] =
-                                        val[ix];
-                                }
+                            if (pointArrayMap[j].indexOf('.') > 0) {
+                                Point.prototype.setNestedProperty(
+                                    data[i], val[ix], pointArrayMap[j]
+                                );
+                            } else {
+                                (data[i] as any)[pointArrayMap[j]] =
+                                    val[ix];
                             }
                         }
                     }
-                    if (joinBy && joinBy[0] === '_i') {
-                        (data[i] as any)._i = i;
-                    }
-                });
+                }
+                if (joinBy && joinBy[0] === '_i') {
+                    (data[i] as any)._i = i;
+                }
+            });
+        }
+
+        this.getBox(data as any);
+
+        // Pick up transform definitions for chart
+        this.chart.mapTransforms = mapTransforms =
+            chartOptions && chartOptions.mapTransforms ||
+            mapData && mapData['hc-transform'] ||
+            mapTransforms;
+
+        // Cache cos/sin of transform rotation angle
+        if (mapTransforms) {
+            objectEach(mapTransforms, function (transform: any): void {
+                if (transform.rotation) {
+                    transform.cosAngle = Math.cos(transform.rotation);
+                    transform.sinAngle = Math.sin(transform.rotation);
+                }
+            });
+        }
+
+        if (mapData) {
+            if (mapData.type === 'FeatureCollection') {
+                this.mapTitle = mapData.title;
+                mapData = H.geojson(mapData, this.type, this);
             }
 
-            this.getBox(data as any);
+            this.mapData = mapData;
+            this.mapMap = {};
 
-            // Pick up transform definitions for chart
-            this.chart.mapTransforms = mapTransforms =
-                chartOptions && chartOptions.mapTransforms ||
-                mapData && mapData['hc-transform'] ||
-                mapTransforms;
+            for (i = 0; i < mapData.length; i++) {
+                mapPoint = mapData[i];
+                props = mapPoint.properties;
 
-            // Cache cos/sin of transform rotation angle
-            if (mapTransforms) {
-                objectEach(mapTransforms, function (transform: any): void {
-                    if (transform.rotation) {
-                        transform.cosAngle = Math.cos(transform.rotation);
-                        transform.sinAngle = Math.sin(transform.rotation);
+                mapPoint._i = i;
+                // Copy the property over to root for faster access
+                if (joinBy[0] && props && props[joinBy[0]]) {
+                    mapPoint[joinBy[0]] = props[joinBy[0]];
+                }
+                mapMap[mapPoint[joinBy[0]]] = mapPoint;
+            }
+            this.mapMap = mapMap;
+
+            // Registered the point codes that actually hold data
+            if (data && joinBy[1]) {
+                const joinKey = joinBy[1];
+                data.forEach(function (
+                    pointOptions: Highcharts.MapPointOptions
+                ): void {
+                    const mapKey = getNestedProperty(joinKey, pointOptions) as string;
+                    if (mapMap[mapKey]) {
+                        dataUsed.push(mapMap[mapKey]);
                     }
-                });
+                } as any);
             }
 
-            if (mapData) {
-                if (mapData.type === 'FeatureCollection') {
-                    this.mapTitle = mapData.title;
-                    mapData = H.geojson(mapData, this.type, this);
-                }
-
-                this.mapData = mapData;
-                this.mapMap = {};
-
-                for (i = 0; i < mapData.length; i++) {
-                    mapPoint = mapData[i];
-                    props = mapPoint.properties;
-
-                    mapPoint._i = i;
-                    // Copy the property over to root for faster access
-                    if (joinBy[0] && props && props[joinBy[0]]) {
-                        mapPoint[joinBy[0]] = props[joinBy[0]];
-                    }
-                    mapMap[mapPoint[joinBy[0]]] = mapPoint;
-                }
-                this.mapMap = mapMap;
+            if (options.allAreas) {
+                this.getBox(mapData);
+                data = data || [];
 
                 // Registered the point codes that actually hold data
-                if (data && joinBy[1]) {
+                if (joinBy[1]) {
                     const joinKey = joinBy[1];
                     data.forEach(function (
                         pointOptions: Highcharts.MapPointOptions
                     ): void {
-                        const mapKey = getNestedProperty(joinKey, pointOptions) as string;
-                        if (mapMap[mapKey]) {
-                            dataUsed.push(mapMap[mapKey]);
-                        }
+                        dataUsed.push(getNestedProperty(joinKey, pointOptions) as Highcharts.MapPointOptions);
                     } as any);
                 }
 
-                if (options.allAreas) {
-                    this.getBox(mapData);
-                    data = data || [];
+                // Add those map points that don't correspond to data, which
+                // will be drawn as null points
+                dataUsed = ('|' + dataUsed.map(function (
+                    point: Highcharts.MapPointOptions
+                ): void {
+                    return point && (point as any)[joinBy[0]];
+                }).join('|') + '|') as any; // Faster than array.indexOf
 
-                    // Registered the point codes that actually hold data
-                    if (joinBy[1]) {
-                        const joinKey = joinBy[1];
-                        data.forEach(function (
-                            pointOptions: Highcharts.MapPointOptions
-                        ): void {
-                            dataUsed.push(getNestedProperty(joinKey, pointOptions) as Highcharts.MapPointOptions);
-                        } as any);
+                mapData.forEach(function (mapPoint: any): void {
+                    if (
+                        !joinBy[0] ||
+                        (dataUsed as any).indexOf(
+                            '|' + mapPoint[joinBy[0]] + '|'
+                        ) === -1
+                    ) {
+                        data.push(merge(mapPoint, { value: null }));
+                        // #5050 - adding all areas causes the update
+                        // optimization of setData to kick in, even though
+                        // the point order has changed
+                        updatePoints = false;
                     }
-
-                    // Add those map points that don't correspond to data, which
-                    // will be drawn as null points
-                    dataUsed = ('|' + dataUsed.map(function (
-                        point: Highcharts.MapPointOptions
-                    ): void {
-                        return point && (point as any)[joinBy[0]];
-                    }).join('|') + '|') as any; // Faster than array.indexOf
-
-                    mapData.forEach(function (mapPoint: any): void {
-                        if (
-                            !joinBy[0] ||
-                            (dataUsed as any).indexOf(
-                                '|' + mapPoint[joinBy[0]] + '|'
-                            ) === -1
-                        ) {
-                            data.push(merge(mapPoint, { value: null }));
-                            // #5050 - adding all areas causes the update
-                            // optimization of setData to kick in, even though
-                            // the point order has changed
-                            updatePoints = false;
-                        }
-                    });
-                } else {
-                    this.getBox(dataUsed); // Issue #4784
-                }
+                });
+            } else {
+                this.getBox(dataUsed); // Issue #4784
             }
-            LineSeries.prototype.setData.call(
-                this,
-                data,
-                redraw,
-                animation,
-                updatePoints
-            );
-        },
+        }
+        LineSeries.prototype.setData.call(
+            this,
+            data,
+            redraw,
+            animation,
+            updatePoints
+        );
+    },
 
-        // No graph for the map series
-        drawGraph: noop as any,
+    // No graph for the map series
+    drawGraph: noop as any,
 
-        // We need the points' bounding boxes in order to draw the data labels,
-        // so we skip it now and call it from drawPoints instead.
-        drawDataLabels: noop as any,
+    // We need the points' bounding boxes in order to draw the data labels,
+    // so we skip it now and call it from drawPoints instead.
+    drawDataLabels: noop as any,
 
-        // Allow a quick redraw by just translating the area group. Used for
-        // zooming and panning in capable browsers.
-        doFullTranslate: function (this: Highcharts.MapSeries): boolean {
-            return (
-                this.isDirtyData ||
-                (this.chart.isResizing as any) ||
-                this.chart.renderer.isVML ||
-                !this.baseTrans
-            );
-        },
+    // Allow a quick redraw by just translating the area group. Used for
+    // zooming and panning in capable browsers.
+    doFullTranslate: function (this: Highcharts.MapSeries): boolean {
+        return (
+            this.isDirtyData ||
+            (this.chart.isResizing as any) ||
+            this.chart.renderer.isVML ||
+            !this.baseTrans
+        );
+    },
 
-        // Add the path option for data points. Find the max value for color
-        // calculation.
-        translate: function (this: Highcharts.MapSeries): void {
-            var series = this,
-                xAxis = series.xAxis,
-                yAxis = series.yAxis,
-                doFullTranslate = series.doFullTranslate();
+    // Add the path option for data points. Find the max value for color
+    // calculation.
+    translate: function (this: Highcharts.MapSeries): void {
+        var series = this,
+            xAxis = series.xAxis,
+            yAxis = series.yAxis,
+            doFullTranslate = series.doFullTranslate();
 
-            series.generatePoints();
+        series.generatePoints();
 
-            series.data.forEach(function (
-                point: (Highcharts.MapPoint&Highcharts.MapPointCacheObject)
-            ): void {
+        series.data.forEach(function (
+            point: (Highcharts.MapPoint&Highcharts.MapPointCacheObject)
+        ): void {
 
-                // Record the middle point (loosely based on centroid),
-                // determined by the middleX and middleY options.
-                if (isNumber(point._midX) && isNumber(point._midY)) {
-                    point.plotX = xAxis.toPixels(point._midX, true);
-                    point.plotY = yAxis.toPixels(point._midY, true);
-                }
-
-                if (doFullTranslate) {
-
-                    point.shapeType = 'path';
-                    point.shapeArgs = {
-                        d: series.translatePath(point.path)
-                    };
-                }
-            });
-
-            fireEvent(series, 'afterTranslate');
-        },
-
-        // Get presentational attributes. In the maps series this runs in both
-        // styled and non-styled mode, because colors hold data when a colorAxis
-        // is used.
-        pointAttribs: function (
-            this: Highcharts.MapSeries,
-            point: Highcharts.MapPoint,
-            state?: StatesOptionsKey
-        ): SVGAttributes {
-            var attr = point.series.chart.styledMode ?
-                this.colorAttribs(point) :
-                seriesTypes.column.prototype.pointAttribs.call(
-                    this, point as any, state
-                );
-
-            // Set the stroke-width on the group element and let all point
-            // graphics inherit. That way we don't have to iterate over all
-            // points to update the stroke-width on zooming.
-            attr['stroke-width'] = pick(
-                (point.options as any)[
-                    (
-                        this.pointAttrToOptions &&
-                        (this.pointAttrToOptions as any)['stroke-width']
-                    ) || 'borderWidth'
-                ],
-                'inherit'
-            );
-
-            return attr;
-        },
-
-        // Use the drawPoints method of column, that is able to handle simple
-        // shapeArgs. Extend it by assigning the tooltip position.
-        drawPoints: function (this: Highcharts.MapSeries): void {
-            var series = this,
-                xAxis = series.xAxis,
-                yAxis = series.yAxis,
-                group = series.group,
-                chart = series.chart,
-                renderer = chart.renderer,
-                scaleX: (number|undefined),
-                scaleY: number,
-                translateX: number,
-                translateY: number,
-                baseTrans = this.baseTrans,
-                transformGroup: SVGElement,
-                startTranslateX: number,
-                startTranslateY: number,
-                startScaleX: number,
-                startScaleY: number;
-
-            // Set a group that handles transform during zooming and panning in
-            // order to preserve clipping on series.group
-            if (!series.transformGroup) {
-                series.transformGroup = renderer.g()
-                    .attr({
-                        scaleX: 1,
-                        scaleY: 1
-                    })
-                    .add(group);
-                series.transformGroup.survive = true;
+            // Record the middle point (loosely based on centroid),
+            // determined by the middleX and middleY options.
+            if (isNumber(point._midX) && isNumber(point._midY)) {
+                point.plotX = xAxis.toPixels(point._midX, true);
+                point.plotY = yAxis.toPixels(point._midY, true);
             }
 
-            // Draw the shapes again
-            if (series.doFullTranslate()) {
+            if (doFullTranslate) {
 
-                // Individual point actions.
-                if (chart.hasRendered && !chart.styledMode) {
-                    series.points.forEach(function (
-                        point: Highcharts.MapPoint
-                    ): void {
+                point.shapeType = 'path';
+                point.shapeArgs = {
+                    d: series.translatePath(point.path)
+                };
+            }
+        });
 
-                        // Restore state color on update/redraw (#3529)
-                        if (point.shapeArgs) {
-                            point.shapeArgs.fill = series.pointAttribs(
-                                point,
-                                point.state as any
-                            ).fill;
-                        }
-                    });
-                }
+        fireEvent(series, 'afterTranslate');
+    },
 
-                // Draw them in transformGroup
-                series.group = series.transformGroup;
-                seriesTypes.column.prototype.drawPoints.apply(series);
-                series.group = group; // Reset
+    // Get presentational attributes. In the maps series this runs in both
+    // styled and non-styled mode, because colors hold data when a colorAxis
+    // is used.
+    pointAttribs: function (
+        this: Highcharts.MapSeries,
+        point: Highcharts.MapPoint,
+        state?: StatesOptionsKey
+    ): SVGAttributes {
+        var attr = point.series.chart.styledMode ?
+            this.colorAttribs(point) :
+            ColumnSeries.prototype.pointAttribs.call(
+                this, point as any, state
+            );
 
-                // Add class names
+        // Set the stroke-width on the group element and let all point
+        // graphics inherit. That way we don't have to iterate over all
+        // points to update the stroke-width on zooming.
+        attr['stroke-width'] = pick(
+            (point.options as any)[
+                (
+                    this.pointAttrToOptions &&
+                    (this.pointAttrToOptions as any)['stroke-width']
+                ) || 'borderWidth'
+            ],
+            'inherit'
+        );
+
+        return attr;
+    },
+
+    // Use the drawPoints method of column, that is able to handle simple
+    // shapeArgs. Extend it by assigning the tooltip position.
+    drawPoints: function (this: Highcharts.MapSeries): void {
+        var series = this,
+            xAxis = series.xAxis,
+            yAxis = series.yAxis,
+            group = series.group,
+            chart = series.chart,
+            renderer = chart.renderer,
+            scaleX: (number|undefined),
+            scaleY: number,
+            translateX: number,
+            translateY: number,
+            baseTrans = this.baseTrans,
+            transformGroup: SVGElement,
+            startTranslateX: number,
+            startTranslateY: number,
+            startScaleX: number,
+            startScaleY: number;
+
+        // Set a group that handles transform during zooming and panning in
+        // order to preserve clipping on series.group
+        if (!series.transformGroup) {
+            series.transformGroup = renderer.g()
+                .attr({
+                    scaleX: 1,
+                    scaleY: 1
+                })
+                .add(group);
+            series.transformGroup.survive = true;
+        }
+
+        // Draw the shapes again
+        if (series.doFullTranslate()) {
+
+            // Individual point actions.
+            if (chart.hasRendered && !chart.styledMode) {
                 series.points.forEach(function (
                     point: Highcharts.MapPoint
                 ): void {
-                    if (point.graphic) {
-                        var className = '';
-                        if (point.name) {
-                            className +=
-                                'highcharts-name-' +
-                                point.name.replace(/ /g, '-').toLowerCase();
-                        }
-                        if (point.properties &&
-                            (point.properties as any)['hc-key']
-                        ) {
-                            className +=
-                                ' highcharts-key-' +
-                                (point.properties as any)[
-                                    'hc-key'
-                                ].toLowerCase();
-                        }
-                        if (className) {
-                            point.graphic.addClass(className);
-                        }
 
-                        // In styled mode, apply point colors by CSS
-                        if (chart.styledMode) {
-                            point.graphic.css(
-                                series.pointAttribs(
-                                    point,
-                                    point.selected && 'select' || void 0
-                                ) as any
-                            );
-                        }
+                    // Restore state color on update/redraw (#3529)
+                    if (point.shapeArgs) {
+                        point.shapeArgs.fill = series.pointAttribs(
+                            point,
+                            point.state as any
+                        ).fill;
                     }
                 });
+            }
 
-                // Set the base for later scale-zooming. The originX and originY
-                // properties are the axis values in the plot area's upper left
-                // corner.
-                this.baseTrans = {
-                    originX: (
-                        (xAxis.min as any) -
-                        xAxis.minPixelPadding / xAxis.transA
-                    ),
-                    originY: (
-                        (yAxis.min as any) -
-                        yAxis.minPixelPadding / yAxis.transA +
-                        (yAxis.reversed ? 0 : yAxis.len / yAxis.transA)
-                    ),
-                    transAX: xAxis.transA,
-                    transAY: yAxis.transA
+            // Draw them in transformGroup
+            series.group = series.transformGroup;
+            ColumnSeries.prototype.drawPoints.apply(series);
+            series.group = group; // Reset
+
+            // Add class names
+            series.points.forEach(function (
+                point: Highcharts.MapPoint
+            ): void {
+                if (point.graphic) {
+                    var className = '';
+                    if (point.name) {
+                        className +=
+                            'highcharts-name-' +
+                            point.name.replace(/ /g, '-').toLowerCase();
+                    }
+                    if (point.properties &&
+                        (point.properties as any)['hc-key']
+                    ) {
+                        className +=
+                            ' highcharts-key-' +
+                            (point.properties as any)[
+                                'hc-key'
+                            ].toLowerCase();
+                    }
+                    if (className) {
+                        point.graphic.addClass(className);
+                    }
+
+                    // In styled mode, apply point colors by CSS
+                    if (chart.styledMode) {
+                        point.graphic.css(
+                            series.pointAttribs(
+                                point,
+                                point.selected && 'select' || void 0
+                            ) as any
+                        );
+                    }
+                }
+            });
+
+            // Set the base for later scale-zooming. The originX and originY
+            // properties are the axis values in the plot area's upper left
+            // corner.
+            this.baseTrans = {
+                originX: (
+                    (xAxis.min as any) -
+                    xAxis.minPixelPadding / xAxis.transA
+                ),
+                originY: (
+                    (yAxis.min as any) -
+                    yAxis.minPixelPadding / yAxis.transA +
+                    (yAxis.reversed ? 0 : yAxis.len / yAxis.transA)
+                ),
+                transAX: xAxis.transA,
+                transAY: yAxis.transA
+            };
+
+            // Reset transformation in case we're doing a full translate
+            // (#3789)
+            this.transformGroup.animate({
+                translateX: 0,
+                translateY: 0,
+                scaleX: 1,
+                scaleY: 1
+            });
+
+        // Just update the scale and transform for better performance
+        } else {
+            scaleX = xAxis.transA / baseTrans.transAX;
+            scaleY = yAxis.transA / baseTrans.transAY;
+            translateX = xAxis.toPixels(baseTrans.originX, true);
+            translateY = yAxis.toPixels(baseTrans.originY, true);
+
+            // Handle rounding errors in normal view (#3789)
+            if (
+                scaleX > 0.99 &&
+                scaleX < 1.01 &&
+                scaleY > 0.99 &&
+                scaleY < 1.01
+            ) {
+                scaleX = 1;
+                scaleY = 1;
+                translateX = Math.round(translateX);
+                translateY = Math.round(translateY);
+            }
+
+            /* Animate or move to the new zoom level. In order to prevent
+                flickering as the different transform components are set out
+                of sync (#5991), we run a fake animator attribute and set
+                scale and translation synchronously in the same step.
+
+                A possible improvement to the API would be to handle this in
+                the renderer or animation engine itself, to ensure that when
+                we are animating multiple properties, we make sure that each
+                step for each property is performed in the same step. Also,
+                for symbols and for transform properties, it should induce a
+                single updateTransform and symbolAttr call. */
+            transformGroup = this.transformGroup;
+            if (chart.renderer.globalAnimation) {
+                startTranslateX = transformGroup.attr('translateX') as any;
+                startTranslateY = transformGroup.attr('translateY') as any;
+                startScaleX = transformGroup.attr('scaleX') as any;
+                startScaleY = transformGroup.attr('scaleY') as any;
+                transformGroup
+                    .attr({ animator: 0 })
+                    .animate({
+                        animator: 1
+                    }, {
+                        step: function (now: any, fx: any): void {
+                            transformGroup.attr({
+                                translateX: (
+                                    startTranslateX +
+                                    (translateX - startTranslateX) * fx.pos
+                                ),
+                                translateY: (
+                                    startTranslateY +
+                                    (translateY - startTranslateY) * fx.pos
+                                ),
+                                scaleX: (
+                                    startScaleX +
+                                    ((scaleX as any) - startScaleX) *
+                                    fx.pos
+                                ),
+                                scaleY: (
+                                    startScaleY +
+                                    (scaleY - startScaleY) * fx.pos
+                                )
+                            });
+
+                        }
+                    });
+
+            // When dragging, animation is off.
+            } else {
+                transformGroup.attr({
+                    translateX: translateX,
+                    translateY: translateY,
+                    scaleX: scaleX,
+                    scaleY: scaleY
+                });
+            }
+
+        }
+
+        /* Set the stroke-width directly on the group element so the
+            children inherit it. We need to use setAttribute directly,
+            because the stroke-widthSetter method expects a stroke color also
+            to be set. */
+        if (!chart.styledMode) {
+            group.element.setAttribute(
+                'stroke-width',
+                (pick(
+                    (series.options as any)[(
+                        series.pointAttrToOptions &&
+                        (series.pointAttrToOptions as any)['stroke-width']
+                    ) || 'borderWidth'],
+                    1 // Styled mode
+                ) / (scaleX || 1)) as any
+            );
+        }
+
+        this.drawMapDataLabels();
+
+    },
+
+    // Draw the data labels. Special for maps is the time that the data
+    // labels are drawn (after points), and the clipping of the
+    // dataLabelsGroup.
+    drawMapDataLabels: function (this: Highcharts.MapSeries): void {
+
+        LineSeries.prototype.drawDataLabels.call(this);
+        if (this.dataLabelsGroup) {
+            this.dataLabelsGroup.clip(this.chart.clipRect);
+        }
+    },
+
+    // Override render to throw in an async call in IE8. Otherwise it chokes
+    // on the US counties demo.
+    render: function (this: Highcharts.MapSeries): void {
+        var series = this,
+            render = LineSeries.prototype.render;
+
+        // Give IE8 some time to breathe.
+        if (series.chart.renderer.isVML && series.data.length > 3000) {
+            setTimeout(function (): void {
+                render.call(series);
+            });
+        } else {
+            render.call(series);
+        }
+    },
+
+    // The initial animation for the map series. By default, animation is
+    // disabled. Animation of map shapes is not at all supported in VML
+    // browsers.
+    animate: function (this: Highcharts.MapSeries, init?: boolean): void {
+        var chart = this.chart,
+            animation = this.options.animation,
+            group = this.group,
+            xAxis = this.xAxis,
+            yAxis = this.yAxis,
+            left = xAxis.pos,
+            top = yAxis.pos;
+
+        if (chart.renderer.isSVG) {
+
+            if (animation === true) {
+                animation = {
+                    duration: 1000
                 };
+            }
 
-                // Reset transformation in case we're doing a full translate
-                // (#3789)
-                this.transformGroup.animate({
-                    translateX: 0,
-                    translateY: 0,
+            // Initialize the animation
+            if (init) {
+
+                // Scale down the group and place it in the center
+                group.attr({
+                    translateX: (left as any) + xAxis.len / 2,
+                    translateY: (top as any) + yAxis.len / 2,
+                    scaleX: 0.001, // #1499
+                    scaleY: 0.001
+                });
+
+            // Run the animation
+            } else {
+                group.animate({
+                    translateX: left,
+                    translateY: top,
                     scaleX: 1,
                     scaleY: 1
-                });
+                }, animation);
+            }
+        }
+    },
 
-            // Just update the scale and transform for better performance
-            } else {
-                scaleX = xAxis.transA / baseTrans.transAX;
-                scaleY = yAxis.transA / baseTrans.transAY;
-                translateX = xAxis.toPixels(baseTrans.originX, true);
-                translateY = yAxis.toPixels(baseTrans.originY, true);
+    // Animate in the new series from the clicked point in the old series.
+    // Depends on the drilldown.js module
+    animateDrilldown: function (
+        this: Highcharts.MapSeries,
+        init?: boolean
+    ): void {
+        var toBox = this.chart.plotBox,
+            level: Highcharts.DrilldownLevelObject =
+                (this.chart.drilldownLevels as any)[
+                    (this.chart.drilldownLevels as any).length - 1
+                ],
+            fromBox = level.bBox,
+            animationOptions: (boolean|Partial<AnimationOptionsObject>) =
+                (this.chart.options.drilldown as any).animation,
+            scale;
 
-                // Handle rounding errors in normal view (#3789)
-                if (
-                    scaleX > 0.99 &&
-                    scaleX < 1.01 &&
-                    scaleY > 0.99 &&
-                    scaleY < 1.01
-                ) {
-                    scaleX = 1;
-                    scaleY = 1;
-                    translateX = Math.round(translateX);
-                    translateY = Math.round(translateY);
-                }
+        if (!init) {
 
-                /* Animate or move to the new zoom level. In order to prevent
-                   flickering as the different transform components are set out
-                   of sync (#5991), we run a fake animator attribute and set
-                   scale and translation synchronously in the same step.
+            scale = Math.min(
+                (fromBox.width as any) / toBox.width,
+                (fromBox.height as any) / toBox.height
+            );
+            level.shapeArgs = {
+                scaleX: scale,
+                scaleY: scale,
+                translateX: fromBox.x,
+                translateY: fromBox.y
+            };
 
-                   A possible improvement to the API would be to handle this in
-                   the renderer or animation engine itself, to ensure that when
-                   we are animating multiple properties, we make sure that each
-                   step for each property is performed in the same step. Also,
-                   for symbols and for transform properties, it should induce a
-                   single updateTransform and symbolAttr call. */
-                transformGroup = this.transformGroup;
-                if (chart.renderer.globalAnimation) {
-                    startTranslateX = transformGroup.attr('translateX') as any;
-                    startTranslateY = transformGroup.attr('translateY') as any;
-                    startScaleX = transformGroup.attr('scaleX') as any;
-                    startScaleY = transformGroup.attr('scaleY') as any;
-                    transformGroup
-                        .attr({ animator: 0 })
+            this.points.forEach(function (
+                point: Highcharts.MapPoint
+            ): void {
+                if (point.graphic) {
+                    (point.graphic
+                        .attr(level.shapeArgs) as any)
                         .animate({
-                            animator: 1
-                        }, {
-                            step: function (now: any, fx: any): void {
-                                transformGroup.attr({
-                                    translateX: (
-                                        startTranslateX +
-                                        (translateX - startTranslateX) * fx.pos
-                                    ),
-                                    translateY: (
-                                        startTranslateY +
-                                        (translateY - startTranslateY) * fx.pos
-                                    ),
-                                    scaleX: (
-                                        startScaleX +
-                                        ((scaleX as any) - startScaleX) *
-                                        fx.pos
-                                    ),
-                                    scaleY: (
-                                        startScaleY +
-                                        (scaleY - startScaleY) * fx.pos
-                                    )
-                                });
-
-                            }
-                        });
-
-                // When dragging, animation is off.
-                } else {
-                    transformGroup.attr({
-                        translateX: translateX,
-                        translateY: translateY,
-                        scaleX: scaleX,
-                        scaleY: scaleY
-                    });
+                            scaleX: 1,
+                            scaleY: 1,
+                            translateX: 0,
+                            translateY: 0
+                        }, animationOptions);
                 }
-
-            }
-
-            /* Set the stroke-width directly on the group element so the
-               children inherit it. We need to use setAttribute directly,
-               because the stroke-widthSetter method expects a stroke color also
-               to be set. */
-            if (!chart.styledMode) {
-                group.element.setAttribute(
-                    'stroke-width',
-                    (pick(
-                        (series.options as any)[(
-                            series.pointAttrToOptions &&
-                            (series.pointAttrToOptions as any)['stroke-width']
-                        ) || 'borderWidth'],
-                        1 // Styled mode
-                    ) / (scaleX || 1)) as any
-                );
-            }
-
-            this.drawMapDataLabels();
-
-        },
-
-        // Draw the data labels. Special for maps is the time that the data
-        // labels are drawn (after points), and the clipping of the
-        // dataLabelsGroup.
-        drawMapDataLabels: function (this: Highcharts.MapSeries): void {
-
-            LineSeries.prototype.drawDataLabels.call(this);
-            if (this.dataLabelsGroup) {
-                this.dataLabelsGroup.clip(this.chart.clipRect);
-            }
-        },
-
-        // Override render to throw in an async call in IE8. Otherwise it chokes
-        // on the US counties demo.
-        render: function (this: Highcharts.MapSeries): void {
-            var series = this,
-                render = LineSeries.prototype.render;
-
-            // Give IE8 some time to breathe.
-            if (series.chart.renderer.isVML && series.data.length > 3000) {
-                setTimeout(function (): void {
-                    render.call(series);
-                });
-            } else {
-                render.call(series);
-            }
-        },
-
-        // The initial animation for the map series. By default, animation is
-        // disabled. Animation of map shapes is not at all supported in VML
-        // browsers.
-        animate: function (this: Highcharts.MapSeries, init?: boolean): void {
-            var chart = this.chart,
-                animation = this.options.animation,
-                group = this.group,
-                xAxis = this.xAxis,
-                yAxis = this.yAxis,
-                left = xAxis.pos,
-                top = yAxis.pos;
-
-            if (chart.renderer.isSVG) {
-
-                if (animation === true) {
-                    animation = {
-                        duration: 1000
-                    };
-                }
-
-                // Initialize the animation
-                if (init) {
-
-                    // Scale down the group and place it in the center
-                    group.attr({
-                        translateX: (left as any) + xAxis.len / 2,
-                        translateY: (top as any) + yAxis.len / 2,
-                        scaleX: 0.001, // #1499
-                        scaleY: 0.001
-                    });
-
-                // Run the animation
-                } else {
-                    group.animate({
-                        translateX: left,
-                        translateY: top,
-                        scaleX: 1,
-                        scaleY: 1
-                    }, animation);
-                }
-            }
-        },
-
-        // Animate in the new series from the clicked point in the old series.
-        // Depends on the drilldown.js module
-        animateDrilldown: function (
-            this: Highcharts.MapSeries,
-            init?: boolean
-        ): void {
-            var toBox = this.chart.plotBox,
-                level: Highcharts.DrilldownLevelObject =
-                    (this.chart.drilldownLevels as any)[
-                        (this.chart.drilldownLevels as any).length - 1
-                    ],
-                fromBox = level.bBox,
-                animationOptions: (boolean|Partial<AnimationOptionsObject>) =
-                    (this.chart.options.drilldown as any).animation,
-                scale;
-
-            if (!init) {
-
-                scale = Math.min(
-                    (fromBox.width as any) / toBox.width,
-                    (fromBox.height as any) / toBox.height
-                );
-                level.shapeArgs = {
-                    scaleX: scale,
-                    scaleY: scale,
-                    translateX: fromBox.x,
-                    translateY: fromBox.y
-                };
-
-                this.points.forEach(function (
-                    point: Highcharts.MapPoint
-                ): void {
-                    if (point.graphic) {
-                        (point.graphic
-                            .attr(level.shapeArgs) as any)
-                            .animate({
-                                scaleX: 1,
-                                scaleY: 1,
-                                translateX: 0,
-                                translateY: 0
-                            }, animationOptions);
-                    }
-                });
-            }
-
-        },
-
-        drawLegendSymbol: LegendSymbolMixin.drawRectangle,
-
-        // When drilling up, pull out the individual point graphics from the
-        // lower series and animate them into the origin point in the upper
-        // series.
-        animateDrillupFrom: function (
-            this: Highcharts.MapSeries,
-            level: Highcharts.DrilldownLevelObject
-        ): void {
-            seriesTypes.column.prototype.animateDrillupFrom.call(this, level);
-        },
-
-
-        // When drilling up, keep the upper series invisible until the lower
-        // series has moved into place
-        animateDrillupTo: function (
-            this: Highcharts.MapSeries,
-            init?: boolean
-        ): void {
-            seriesTypes.column.prototype.animateDrillupTo.call(this, init);
+            });
         }
 
-    // Point class
-    }), extend({
+    },
 
-        // Extend the Point object to split paths
-        applyOptions: function (
-            this: Highcharts.MapPoint,
-            options: (Highcharts.MapPointOptions|PointShortOptions),
-            x?: number
-        ): Highcharts.MapPoint {
+    drawLegendSymbol: LegendSymbolMixin.drawRectangle,
 
-            var series = this.series,
-                point: Highcharts.MapPoint = (
-                    Point.prototype.applyOptions.call(this, options, x) as any
-                ),
-                joinBy = series.joinBy,
-                mapPoint;
+    // When drilling up, pull out the individual point graphics from the
+    // lower series and animate them into the origin point in the upper
+    // series.
+    animateDrillupFrom: function (
+        this: Highcharts.MapSeries,
+        level: Highcharts.DrilldownLevelObject
+    ): void {
+        ColumnSeries.prototype.animateDrillupFrom.call(this, level);
+    },
 
-            if (series.mapData && series.mapMap) {
-                const joinKey = joinBy[1];
-                const mapKey = Point.prototype.getNestedProperty.call(point, joinKey) as string;
-                mapPoint = typeof mapKey !== 'undefined' &&
-                    series.mapMap[mapKey];
-                if (mapPoint) {
-                    // This applies only to bubbles
-                    if ((series as any).xyFromShape) {
-                        point.x = mapPoint._midX;
-                        point.y = mapPoint._midY;
-                    }
-                    extend(point, mapPoint); // copy over properties
-                } else {
-                    point.value = point.value || null;
+
+    // When drilling up, keep the upper series invisible until the lower
+    // series has moved into place
+    animateDrillupTo: function (
+        this: Highcharts.MapSeries,
+        init?: boolean
+    ): void {
+        ColumnSeries.prototype.animateDrillupTo.call(this, init);
+    }
+
+});
+
+/* *
+ *
+ *  Class
+ *
+ * */
+
+class MapPoint extends Point {
+
+    /* *
+     *
+     *  Properties
+     *
+     * */
+
+    public colorInterval?: unknown;
+
+    // public middleX: number;
+    // public middleY: number;
+
+    public options: Highcharts.MapPointOptions = void 0 as any;
+
+    // public path: SVGPath;
+
+    public properties?: object;
+
+    public series: MapSeries = void 0 as any;
+
+    // public value: (number|null);
+
+}
+MapSeries.prototype.pointClass = MapPoint;
+
+/* *
+ *
+ *  Prototype Properties
+ *
+ * */
+
+interface MapPoint extends Highcharts.ColorMapPoint, ScatterPoint {
+    applyOptions(options: (Highcharts.MapPointOptions|PointShortOptions), x?: number): MapPoint;
+    dataLabelOnNull: typeof colorMapPointMixin['dataLabelOnNull'];
+    isValid: typeof colorMapPointMixin['isValid'];
+    onMouseOver(e?: PointerEvent): void;
+    setState: typeof colorMapPointMixin['setState'];
+    zoomTo(): void;
+}
+extend(MapPoint.prototype, colorMapPointMixin);
+extend(MapPoint.prototype, {
+
+    // Extend the Point object to split paths
+    applyOptions: function (
+        this: Highcharts.MapPoint,
+        options: (Highcharts.MapPointOptions|PointShortOptions),
+        x?: number
+    ): Highcharts.MapPoint {
+
+        var series = this.series,
+            point: Highcharts.MapPoint = (
+                Point.prototype.applyOptions.call(this, options, x) as any
+            ),
+            joinBy = series.joinBy,
+            mapPoint;
+
+        if (series.mapData && series.mapMap) {
+            const joinKey = joinBy[1];
+            const mapKey = Point.prototype.getNestedProperty.call(point, joinKey) as string;
+            mapPoint = typeof mapKey !== 'undefined' &&
+                series.mapMap[mapKey];
+            if (mapPoint) {
+                // This applies only to bubbles
+                if ((series as any).xyFromShape) {
+                    point.x = mapPoint._midX;
+                    point.y = mapPoint._midY;
                 }
-            }
-
-            return point;
-        },
-
-        // Stop the fade-out
-        onMouseOver: function (
-            this: Highcharts.MapPoint,
-            e?: PointerEvent
-        ): void {
-            U.clearTimeout(this.colorInterval as any);
-            if (this.value !== null || this.series.options.nullInteraction) {
-                (Point.prototype.onMouseOver as any).call(this, e);
+                extend(point, mapPoint); // copy over properties
             } else {
-                // #3401 Tooltip doesn't hide when hovering over null points
-                (this.series.onMouseOut as any)(e);
+                point.value = point.value || null;
             }
-        },
-
-        // eslint-disable-next-line valid-jsdoc
-        /**
-         * Highmaps only. Zoom in on the point using the global animation.
-         *
-         * @sample maps/members/point-zoomto/
-         *         Zoom to points from butons
-         *
-         * @requires modules/map
-         *
-         * @function Highcharts.Point#zoomTo
-         */
-        zoomTo: function (this: Highcharts.MapPoint): void {
-            var point = this as (
-                    Highcharts.MapPoint&
-                    Highcharts.MapPointCacheObject
-                ),
-                series = point.series;
-
-            series.xAxis.setExtremes(
-                point._minX,
-                point._maxX,
-                false
-            );
-            series.yAxis.setExtremes(
-                point._minY,
-                point._maxY,
-                false
-            );
-            series.chart.redraw();
         }
-    }, colorMapPointMixin)
-);
+
+        return point;
+    },
+
+    // Stop the fade-out
+    onMouseOver: function (
+        this: Highcharts.MapPoint,
+        e?: PointerEvent
+    ): void {
+        U.clearTimeout(this.colorInterval as any);
+        if (this.value !== null || this.series.options.nullInteraction) {
+            (Point.prototype.onMouseOver as any).call(this, e);
+        } else {
+            // #3401 Tooltip doesn't hide when hovering over null points
+            (this.series.onMouseOut as any)(e);
+        }
+    },
+
+    // eslint-disable-next-line valid-jsdoc
+    /**
+     * Highmaps only. Zoom in on the point using the global animation.
+     *
+     * @sample maps/members/point-zoomto/
+     *         Zoom to points from butons
+     *
+     * @requires modules/map
+     *
+     * @function Highcharts.Point#zoomTo
+     */
+    zoomTo: function (this: Highcharts.MapPoint): void {
+        var point = this as (
+                Highcharts.MapPoint&
+                Highcharts.MapPointCacheObject
+            ),
+            series = point.series;
+
+        series.xAxis.setExtremes(
+            point._minX,
+            point._maxX,
+            false
+        );
+        series.yAxis.setExtremes(
+            point._minY,
+            point._maxY,
+            false
+        );
+        series.chart.redraw();
+    }
+
+});
+
+/* *
+ *
+ *  Registry
+ *
+ * */
+
+declare module '../Core/Series/SeriesType' {
+    interface SeriesTypeRegistry {
+        map: typeof Highcharts.MapSeries;
+    }
+}
+BaseSeries.registerSeriesType('map', MapSeries);
+
+/* *
+ *
+ *  Default Export
+ *
+ * */
+
+export default MapSeries;
+
+/* *
+ *
+ *  API Options
+ *
+ * */
 
 /**
  * A map data object containing a `path` definition and optionally additional
