@@ -919,9 +919,11 @@ var MapSeries = /** @class */ (function (_super) {
     });
     return MapSeries;
 }(ScatterSeries));
-extend(MapSeries.prototype, colorMapSeriesMixin);
 extend(MapSeries.prototype, {
     type: 'map',
+    axisTypes: colorMapSeriesMixin.axisTypes,
+    colorAttribs: colorMapSeriesMixin.colorAttribs,
+    colorKey: colorMapSeriesMixin.colorKey,
     // When tooltip is not shared, this series (and derivatives) requires
     // direct touch/hover. KD-tree does not apply.
     directTouch: true,
@@ -933,10 +935,13 @@ extend(MapSeries.prototype, {
     drawLegendSymbol: LegendSymbolMixin.drawRectangle,
     forceDL: true,
     getExtremesFromAll: true,
+    getSymbol: colorMapSeriesMixin.getSymbol,
+    parallelArrays: colorMapSeriesMixin.parallelArrays,
+    pointArrayMap: colorMapSeriesMixin.pointArrayMap,
     // X axis and Y axis must have same translation slope
     preserveAspectRatio: true,
-    pointArrayMap: ['value'],
     searchPoint: noop,
+    trackerGroups: colorMapSeriesMixin.trackerGroups,
     // Get axis extremes from paths, not values
     useMapGeometry: true
 });
@@ -954,15 +959,12 @@ var MapPoint = /** @class */ (function (_super) {
          *
          * */
         var _this = _super !== null && _super.apply(this, arguments) || this;
-        // public middleX: number;
-        // public middleY: number;
         _this.options = void 0;
         _this.path = void 0;
         _this.series = void 0;
         return _this;
         /* eslint-enable valid-jsdoc */
     }
-    // public value: (number|null);
     /* *
      *
      *  Functions
@@ -1027,7 +1029,11 @@ var MapPoint = /** @class */ (function (_super) {
     return MapPoint;
 }(ScatterSeries.prototype.pointClass));
 MapSeries.prototype.pointClass = MapPoint;
-extend(MapPoint.prototype, colorMapPointMixin);
+extend(MapPoint.prototype, {
+    dataLabelOnNull: colorMapPointMixin.dataLabelOnNull,
+    isValid: colorMapPointMixin.isValid,
+    setState: colorMapPointMixin.setState
+});
 BaseSeries.registerSeriesType('map', MapSeries);
 /* *
  *

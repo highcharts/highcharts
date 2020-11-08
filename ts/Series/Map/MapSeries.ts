@@ -112,61 +112,6 @@ declare global {
             public onMouseOver(e?: PointerEvent): void;
             public zoomTo(): void;
         }
-        /*
-        class MapSeries extends ScatterSeries implements ColorMapSeries {
-            public baseTrans: MapBaseTransObject;
-            public chart: MapChart;
-            public colorAttribs: ColorMapSeriesMixin['colorAttribs'];
-            public data: Array<MapPoint>;
-            public dataMax: number;
-            public dataMin: number;
-            public drawLegendSymbol: LegendSymbolMixin['drawRectangle'];
-            public group: SVGElement;
-            public joinBy: Array<string>;
-            public mapData?: unknown;
-            public mapMap?: Dictionary<any>;
-            public mapTitle?: string;
-            public maxX?: number;
-            public maxY: number;
-            public minX?: number;
-            public minY: number;
-            public options: MapSeriesOptions;
-            public pointArrayMap: Array<string>;
-            public pointAttrToOptions: unknown;
-            public pointClass: typeof MapPoint;
-            public points: Array<MapPoint>;
-            public preserveAspectRatio: boolean;
-            public trackerGroups: ColorMapSeriesMixin['trackerGroups'];
-            public transformGroup: SVGElement;
-            public useMapGeometry: boolean;
-            public valueData?: Array<number>;
-            public valueMax: number;
-            public valueMin: number;
-            public animate(init?: boolean): void;
-            public animateDrilldown(init?: boolean): void;
-            public animateDrillupTo(init?: boolean): void;
-            public doFullTranslate(): boolean;
-            public drawMapDataLabels(): void;
-            public drawPoints(): void;
-            public getBox(paths: Array<MapPointOptions>): void;
-            public getExtremes(): DataExtremesObject;
-            public hasData(): boolean;
-            public pointAttribs(
-                point?: MapPoint,
-                state?: StatesOptionsKey
-            ): SVGAttributes;
-            public render(): void;
-            public setData(
-                data: Array<(PointOptions|PointShortOptions|MapPointOptions)>,
-                redraw?: boolean,
-                animation?: (boolean|Partial<AnimationOptionsObject>),
-                updatePoints?: boolean
-            ): void;
-            public setOptions(itemOptions: MapSeriesOptions): MapSeriesOptions;
-            public translate(): void;
-            public translatePath(path: SVGPath): SVGPath;
-        }
-        */
         interface MapBaseTransObject {
             originX: number;
             originY: number;
@@ -1402,8 +1347,9 @@ class MapSeries extends ScatterSeries {
  * */
 
 interface MapSeries extends Highcharts.ColorMapSeries {
+    colorAttribs: typeof colorMapSeriesMixin['colorAttribs'];
     drawLegendSymbol: Highcharts.LegendSymbolMixin['drawRectangle'];
-    pointArrayMap: Array<string>;
+    pointArrayMap: typeof colorMapSeriesMixin['pointArrayMap'];
     pointClass: typeof MapPoint;
     preserveAspectRatio: boolean;
     trackerGroups: typeof colorMapSeriesMixin['trackerGroups'];
@@ -1422,9 +1368,14 @@ interface MapSeries extends Highcharts.ColorMapSeries {
     render(): void;
     translatePath(path: SVGPath): SVGPath;
 }
-extend(MapSeries.prototype, colorMapSeriesMixin);
 extend(MapSeries.prototype, {
     type: 'map',
+
+    axisTypes: colorMapSeriesMixin.axisTypes,
+
+    colorAttribs: colorMapSeriesMixin.colorAttribs,
+
+    colorKey: colorMapSeriesMixin.colorKey,
 
     // When tooltip is not shared, this series (and derivatives) requires
     // direct touch/hover. KD-tree does not apply.
@@ -1443,12 +1394,18 @@ extend(MapSeries.prototype, {
 
     getExtremesFromAll: true,
 
+    getSymbol: colorMapSeriesMixin.getSymbol,
+
+    parallelArrays: colorMapSeriesMixin.parallelArrays,
+
+    pointArrayMap: colorMapSeriesMixin.pointArrayMap,
+
     // X axis and Y axis must have same translation slope
     preserveAspectRatio: true,
 
-    pointArrayMap: ['value'],
-
     searchPoint: noop as any,
+
+    trackerGroups: colorMapSeriesMixin.trackerGroups,
 
     // Get axis extremes from paths, not values
     useMapGeometry: true
@@ -1471,9 +1428,6 @@ class MapPoint extends ScatterSeries.prototype.pointClass {
 
     public colorInterval?: unknown;
 
-    // public middleX: number;
-    // public middleY: number;
-
     public options: Highcharts.MapPointOptions = void 0 as any;
 
     public path: SVGPath = void 0 as any;
@@ -1481,8 +1435,6 @@ class MapPoint extends ScatterSeries.prototype.pointClass {
     public properties?: object;
 
     public series: MapSeries = void 0 as any;
-
-    // public value: (number|null);
 
     /* *
      *
@@ -1580,12 +1532,16 @@ MapSeries.prototype.pointClass = MapPoint;
  *
  * */
 
-interface MapPoint extends Highcharts.ColorMapPoint, ScatterPoint {
-    dataLabelOnNull: typeof colorMapPointMixin['dataLabelOnNull'];
-    isValid: typeof colorMapPointMixin['isValid'];
-    setState: typeof colorMapPointMixin['setState'];
+interface MapPoint extends ScatterPoint, Highcharts.ColorMapPoint {
+    dataLabelOnNull: typeof colorMapPointMixin.dataLabelOnNull;
+    isValid: typeof colorMapPointMixin.isValid;
+    setState: typeof colorMapPointMixin.setState;
 }
-extend(MapPoint.prototype, colorMapPointMixin);
+extend(MapPoint.prototype, {
+    dataLabelOnNull: colorMapPointMixin.dataLabelOnNull,
+    isValid: colorMapPointMixin.isValid,
+    setState: colorMapPointMixin.setState
+});
 
 /* *
  *
