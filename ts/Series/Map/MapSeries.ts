@@ -19,15 +19,11 @@
 import type AnimationOptionsObject from '../../Core/Animation/AnimationOptionsObject';
 import type ColorType from '../../Core/Color/ColorType';
 import type DataExtremesObject from '../../Core/Series/DataExtremesObject';
-import type DataLabelOptions from '../../Core/Series/DataLabelOptions';
-import type {
-    PointOptions,
-    PointShortOptions
-} from '../../Core/Series/PointOptions';
+import type MapPointOptions from './MapPointOptions';
+import type MapSeriesOptions from './MapSeriesOptions';
+import type PointerEvent from '../../Core/PointerEvent';
+import type { PointShortOptions } from '../../Core/Series/PointOptions';
 import type ScatterPoint from '../Scatter/ScatterPoint';
-import type ScatterPointOptions from '../Scatter/ScatterPointOptions';
-import type ScatterSeriesOptions from '../Scatter/ScatterSeriesOptions';
-import type { SeriesStatesOptions } from '../../Core/Series/SeriesOptions';
 import type { StatesOptionsKey } from '../../Core/Series/StatesOptions';
 import type SVGAttributes from '../../Core/Renderer/SVG/SVGAttributes';
 import type SVGElement from '../../Core/Renderer/SVG/SVGElement';
@@ -41,10 +37,7 @@ const {
     }
 } = BaseSeries;
 import ColorMapMixin from '../../Mixins/ColorMapSeries.js';
-const {
-    colorMapPointMixin,
-    colorMapSeriesMixin
-} = ColorMapMixin;
+const { colorMapSeriesMixin } = ColorMapMixin;
 import H from '../../Core/Globals.js';
 const { noop } = H;
 import LegendSymbolMixin from '../../Mixins/LegendSymbol.js';
@@ -54,7 +47,7 @@ const {
     maps,
     splitPath
 } = mapModule;
-import Point from '../../Core/Series/Point.js';
+import MapPoint from './MapPoint.js';
 import SVGRenderer from '../../Core/Renderer/SVG/SVGRenderer.js';
 import U from '../../Core/Utilities.js';
 const {
@@ -86,7 +79,7 @@ declare module '../../Core/Series/SeriesLike' {
 declare module '../../Core/Series/SeriesOptions' {
     interface SeriesOptions {
         /** @requires modules/map */
-        mapData?: (Array<Highcharts.MapPointOptions>|any);
+        mapData?: (Array<MapPointOptions>|any);
     }
     interface SeriesStateHoverOptions
     {
@@ -117,26 +110,6 @@ declare global {
             originY: number;
             transAX: number;
             transAY: number;
-        }
-        interface MapPointOptions extends ScatterPointOptions {
-            color?: ColorType;
-            dataLabels?: DataLabelOptions;
-            drilldown?: string;
-            id?: string;
-            labelrank?: number;
-            middleX?: number;
-            middleY?: number;
-            name?: string;
-            path?: (string|MapPoint['path']);
-            value?: MapPoint['value'];
-        }
-        interface MapSeriesOptions
-            extends ColorSeriesOptions, ScatterSeriesOptions
-        {
-            data?: Array<(PointOptions|PointShortOptions|MapPointOptions)>;
-            nullColor?: ColorType;
-            nullInteraction?: boolean;
-            states?: SeriesStatesOptions<MapSeries>;
         }
     }
 }
@@ -174,7 +147,7 @@ class MapSeries extends ScatterSeries {
      * @product      highmaps
      * @optionparent plotOptions.map
      */
-    public static defaultOptions: Highcharts.MapSeriesOptions = merge(ScatterSeries.defaultOptions, {
+    public static defaultOptions: MapSeriesOptions = merge(ScatterSeries.defaultOptions, {
 
         animation: false, // makes the complex shapes slow
 
@@ -426,7 +399,7 @@ class MapSeries extends ScatterSeries {
                 opacity: 1
             }
         }
-    } as Highcharts.MapSeriesOptions);
+    } as MapSeriesOptions);
 
     /* *
      *
@@ -458,7 +431,7 @@ class MapSeries extends ScatterSeries {
 
     public minY?: number;
 
-    public options: Highcharts.MapSeriesOptions = void 0 as any;
+    public options: MapSeriesOptions = void 0 as any;
 
     public pointAttrToOptions: unknown;
 
@@ -842,7 +815,7 @@ class MapSeries extends ScatterSeries {
      * Get the bounding box of all paths in the map combined.
      * @private
      */
-    public getBox(paths: Array<Highcharts.MapPointOptions>): void {
+    public getBox(paths: Array<MapPointOptions>): void {
         var MAX_VALUE = Number.MAX_VALUE,
             maxX = -MAX_VALUE,
             minX = MAX_VALUE,
@@ -855,7 +828,7 @@ class MapSeries extends ScatterSeries {
 
         // Find the bounding box
         (paths || []).forEach(function (
-            point: (Highcharts.MapPointOptions&MapPoint.CacheObject)
+            point: (MapPointOptions&MapPoint.CacheObject)
         ): void {
 
             if (point.path) {
@@ -1043,7 +1016,7 @@ class MapSeries extends ScatterSeries {
      * @private
      */
     public setData(
-        data: Array<(PointOptions|PointShortOptions|Highcharts.MapPointOptions)>,
+        data: Array<(MapPointOptions|PointShortOptions)>,
         redraw?: boolean,
         animation?: (boolean|Partial<AnimationOptionsObject>),
         updatePoints?: boolean
@@ -1054,8 +1027,8 @@ class MapSeries extends ScatterSeries {
             mapData = options.mapData,
             joinBy = this.joinBy,
             pointArrayMap = options.keys || this.pointArrayMap,
-            dataUsed = [] as Array<Highcharts.MapPointOptions>,
-            mapMap = {} as Highcharts.Dictionary<any>,
+            dataUsed: Array<MapPointOptions> = [],
+            mapMap: Record<string, any> = {},
             mapPoint,
             mapTransforms = this.chart.mapTransforms,
             props,
@@ -1071,10 +1044,7 @@ class MapSeries extends ScatterSeries {
         // Pick up numeric values, add index
         // Convert Array point definitions to objects using pointArrayMap
         if (data) {
-            data.forEach(function (
-                val: (PointOptions|PointShortOptions|Highcharts.MapPointOptions),
-                i: number
-            ): void {
+            data.forEach(function (val, i): void {
                 var ix = 0;
 
                 if (isNumber(val)) {
@@ -1101,7 +1071,7 @@ class MapSeries extends ScatterSeries {
                             typeof val[ix] !== 'undefined'
                         ) {
                             if (pointArrayMap[j].indexOf('.') > 0) {
-                                Point.prototype.setNestedProperty(
+                                MapPoint.prototype.setNestedProperty(
                                     data[i], val[ix], pointArrayMap[j]
                                 );
                             } else {
@@ -1160,9 +1130,7 @@ class MapSeries extends ScatterSeries {
             // Registered the point codes that actually hold data
             if (data && joinBy[1]) {
                 const joinKey = joinBy[1];
-                data.forEach(function (
-                    pointOptions: Highcharts.MapPointOptions
-                ): void {
+                data.forEach(function (pointOptions: MapPointOptions): void {
                     const mapKey = getNestedProperty(joinKey, pointOptions) as string;
                     if (mapMap[mapKey]) {
                         dataUsed.push(mapMap[mapKey]);
@@ -1177,18 +1145,14 @@ class MapSeries extends ScatterSeries {
                 // Registered the point codes that actually hold data
                 if (joinBy[1]) {
                     const joinKey = joinBy[1];
-                    data.forEach(function (
-                        pointOptions: Highcharts.MapPointOptions
-                    ): void {
-                        dataUsed.push(getNestedProperty(joinKey, pointOptions) as Highcharts.MapPointOptions);
+                    data.forEach(function (pointOptions: MapPointOptions): void {
+                        dataUsed.push(getNestedProperty(joinKey, pointOptions) as MapPointOptions);
                     } as any);
                 }
 
                 // Add those map points that don't correspond to data, which
                 // will be drawn as null points
-                dataUsed = ('|' + dataUsed.map(function (
-                    point: Highcharts.MapPointOptions
-                ): void {
+                dataUsed = ('|' + dataUsed.map(function (point): void {
                     return point && (point as any)[joinBy[0]];
                 }).join('|') + '|') as any; // Faster than array.indexOf
 
@@ -1224,9 +1188,7 @@ class MapSeries extends ScatterSeries {
      * series property.
      * @private
      */
-    public setOptions(
-        itemOptions: Highcharts.MapSeriesOptions
-    ): Highcharts.MapSeriesOptions {
+    public setOptions(itemOptions: MapSeriesOptions): MapSeriesOptions {
         var options = LineSeries.prototype.setOptions.call(this, itemOptions),
             joinBy = options.joinBy,
             joinByNull = joinBy === null;
@@ -1400,6 +1362,8 @@ extend(MapSeries.prototype, {
 
     pointArrayMap: colorMapSeriesMixin.pointArrayMap,
 
+    pointClass: MapPoint,
+
     // X axis and Y axis must have same translation slope
     preserveAspectRatio: true,
 
@@ -1411,156 +1375,6 @@ extend(MapSeries.prototype, {
     useMapGeometry: true
 
 });
-
-/* *
- *
- *  Class
- *
- * */
-
-class MapPoint extends ScatterSeries.prototype.pointClass {
-
-    /* *
-     *
-     *  Properties
-     *
-     * */
-
-    public colorInterval?: unknown;
-
-    public options: Highcharts.MapPointOptions = void 0 as any;
-
-    public path: SVGPath = void 0 as any;
-
-    public properties?: object;
-
-    public series: MapSeries = void 0 as any;
-
-    /* *
-     *
-     *  Functions
-     *
-     * */
-
-    /* eslint-disable valid-jsdoc */
-
-    /**
-     * Extend the Point object to split paths.
-     * @private
-     */
-    public applyOptions(
-        options: (Highcharts.MapPointOptions|PointShortOptions),
-        x?: number
-    ): MapPoint {
-
-        var series = this.series,
-            point: MapPoint = (
-                Point.prototype.applyOptions.call(this, options, x) as any
-            ),
-            joinBy = series.joinBy,
-            mapPoint;
-
-        if (series.mapData && series.mapMap) {
-            const joinKey = joinBy[1];
-            const mapKey = Point.prototype.getNestedProperty.call(point, joinKey) as string;
-            mapPoint = typeof mapKey !== 'undefined' &&
-                series.mapMap[mapKey];
-            if (mapPoint) {
-                // This applies only to bubbles
-                if ((series as any).xyFromShape) {
-                    point.x = mapPoint._midX;
-                    point.y = mapPoint._midY;
-                }
-                extend(point, mapPoint); // copy over properties
-            } else {
-                point.value = point.value || null;
-            }
-        }
-
-        return point;
-    }
-
-    /**
-     * Stop the fade-out
-     * @private
-     */
-    public onMouseOver(e?: PointerEvent): void {
-        U.clearTimeout(this.colorInterval as any);
-        if (this.value !== null || this.series.options.nullInteraction) {
-            (Point.prototype.onMouseOver as any).call(this, e);
-        } else {
-            // #3401 Tooltip doesn't hide when hovering over null points
-            (this.series.onMouseOut as any)(e);
-        }
-    }
-
-    /**
-     * Highmaps only. Zoom in on the point using the global animation.
-     *
-     * @sample maps/members/point-zoomto/
-     *         Zoom to points from butons
-     *
-     * @requires modules/map
-     *
-     * @function Highcharts.Point#zoomTo
-     */
-    public zoomTo(): void {
-        const point: (MapPoint&MapPoint.CacheObject) = this,
-            series = point.series;
-
-        series.xAxis.setExtremes(
-            point._minX,
-            point._maxX,
-            false
-        );
-        series.yAxis.setExtremes(
-            point._minY,
-            point._maxY,
-            false
-        );
-        series.chart.redraw();
-    }
-
-    /* eslint-enable valid-jsdoc */
-
-}
-MapSeries.prototype.pointClass = MapPoint;
-
-/* *
- *
- *  Prototype Properties
- *
- * */
-
-interface MapPoint extends ScatterPoint, Highcharts.ColorMapPoint {
-    dataLabelOnNull: typeof colorMapPointMixin.dataLabelOnNull;
-    isValid: typeof colorMapPointMixin.isValid;
-    setState: typeof colorMapPointMixin.setState;
-}
-extend(MapPoint.prototype, {
-    dataLabelOnNull: colorMapPointMixin.dataLabelOnNull,
-    isValid: colorMapPointMixin.isValid,
-    setState: colorMapPointMixin.setState
-});
-
-/* *
- *
- *  Class Namespace
- *
- * */
-
-namespace MapPoint {
-    export interface CacheObject {
-        _foundBox?: boolean;
-        _i?: number;
-        _maxX?: number;
-        _maxY?: number;
-        _midX?: number;
-        _midY?: number;
-        _minX?: number;
-        _minY?: number;
-    }
-}
 
 /* *
  *

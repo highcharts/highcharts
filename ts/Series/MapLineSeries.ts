@@ -12,7 +12,9 @@
 
 import type ColorType from '../Core/Color/ColorType';
 import type LineSeries from './Line/LineSeries';
+import type MapPointOptions from './Map/MapPointOptions';
 import type MapSeries from './Map/MapSeries';
+import type MapSeriesOptions from './Map/MapSeriesOptions';
 import type { SeriesStatesOptions } from '../Core/Series/SeriesOptions';
 import type { StatesOptionsKey } from '../Core/Series/StatesOptions';
 import type SVGAttributes from '../Core/Renderer/SVG/SVGAttributes';
