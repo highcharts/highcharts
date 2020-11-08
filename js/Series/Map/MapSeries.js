@@ -26,14 +26,14 @@ var
 // indirect dependency to keep product size low
 _a = BaseSeries.seriesTypes, ColumnSeries = _a.column, ScatterSeries = _a.scatter;
 import ColorMapMixin from '../../Mixins/ColorMapSeries.js';
-var colorMapPointMixin = ColorMapMixin.colorMapPointMixin, colorMapSeriesMixin = ColorMapMixin.colorMapSeriesMixin;
+var colorMapSeriesMixin = ColorMapMixin.colorMapSeriesMixin;
 import H from '../../Core/Globals.js';
 var noop = H.noop;
 import LegendSymbolMixin from '../../Mixins/LegendSymbol.js';
 import LineSeries from '../Line/LineSeries.js';
 import mapModule from '../../Maps/Map.js';
 var maps = mapModule.maps, splitPath = mapModule.splitPath;
-import Point from '../../Core/Series/Point.js';
+import MapPoint from './MapPoint.js';
 import SVGRenderer from '../../Core/Renderer/SVG/SVGRenderer.js';
 import U from '../../Core/Utilities.js';
 var extend = U.extend, fireEvent = U.fireEvent, getNestedProperty = U.getNestedProperty, isArray = U.isArray, isNumber = U.isNumber, merge = U.merge, objectEach = U.objectEach, pick = U.pick, splat = U.splat;
@@ -499,7 +499,7 @@ var MapSeries = /** @class */ (function (_super) {
                         if (pointArrayMap[j] &&
                             typeof val[ix] !== 'undefined') {
                             if (pointArrayMap[j].indexOf('.') > 0) {
-                                Point.prototype.setNestedProperty(data[i], val[ix], pointArrayMap[j]);
+                                MapPoint.prototype.setNestedProperty(data[i], val[ix], pointArrayMap[j]);
                             }
                             else {
                                 data[i][pointArrayMap[j]] =
@@ -938,101 +938,13 @@ extend(MapSeries.prototype, {
     getSymbol: colorMapSeriesMixin.getSymbol,
     parallelArrays: colorMapSeriesMixin.parallelArrays,
     pointArrayMap: colorMapSeriesMixin.pointArrayMap,
+    pointClass: MapPoint,
     // X axis and Y axis must have same translation slope
     preserveAspectRatio: true,
     searchPoint: noop,
     trackerGroups: colorMapSeriesMixin.trackerGroups,
     // Get axis extremes from paths, not values
     useMapGeometry: true
-});
-/* *
- *
- *  Class
- *
- * */
-var MapPoint = /** @class */ (function (_super) {
-    __extends(MapPoint, _super);
-    function MapPoint() {
-        /* *
-         *
-         *  Properties
-         *
-         * */
-        var _this = _super !== null && _super.apply(this, arguments) || this;
-        _this.options = void 0;
-        _this.path = void 0;
-        _this.series = void 0;
-        return _this;
-        /* eslint-enable valid-jsdoc */
-    }
-    /* *
-     *
-     *  Functions
-     *
-     * */
-    /* eslint-disable valid-jsdoc */
-    /**
-     * Extend the Point object to split paths.
-     * @private
-     */
-    MapPoint.prototype.applyOptions = function (options, x) {
-        var series = this.series, point = Point.prototype.applyOptions.call(this, options, x), joinBy = series.joinBy, mapPoint;
-        if (series.mapData && series.mapMap) {
-            var joinKey = joinBy[1];
-            var mapKey = Point.prototype.getNestedProperty.call(point, joinKey);
-            mapPoint = typeof mapKey !== 'undefined' &&
-                series.mapMap[mapKey];
-            if (mapPoint) {
-                // This applies only to bubbles
-                if (series.xyFromShape) {
-                    point.x = mapPoint._midX;
-                    point.y = mapPoint._midY;
-                }
-                extend(point, mapPoint); // copy over properties
-            }
-            else {
-                point.value = point.value || null;
-            }
-        }
-        return point;
-    };
-    /**
-     * Stop the fade-out
-     * @private
-     */
-    MapPoint.prototype.onMouseOver = function (e) {
-        U.clearTimeout(this.colorInterval);
-        if (this.value !== null || this.series.options.nullInteraction) {
-            Point.prototype.onMouseOver.call(this, e);
-        }
-        else {
-            // #3401 Tooltip doesn't hide when hovering over null points
-            this.series.onMouseOut(e);
-        }
-    };
-    /**
-     * Highmaps only. Zoom in on the point using the global animation.
-     *
-     * @sample maps/members/point-zoomto/
-     *         Zoom to points from butons
-     *
-     * @requires modules/map
-     *
-     * @function Highcharts.Point#zoomTo
-     */
-    MapPoint.prototype.zoomTo = function () {
-        var point = this, series = point.series;
-        series.xAxis.setExtremes(point._minX, point._maxX, false);
-        series.yAxis.setExtremes(point._minY, point._maxY, false);
-        series.chart.redraw();
-    };
-    return MapPoint;
-}(ScatterSeries.prototype.pointClass));
-MapSeries.prototype.pointClass = MapPoint;
-extend(MapPoint.prototype, {
-    dataLabelOnNull: colorMapPointMixin.dataLabelOnNull,
-    isValid: colorMapPointMixin.isValid,
-    setState: colorMapPointMixin.setState
 });
 BaseSeries.registerSeriesType('map', MapSeries);
 /* *
