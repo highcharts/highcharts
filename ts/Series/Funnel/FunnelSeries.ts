@@ -20,11 +20,9 @@
 
 import type BBoxObject from '../../Core/Renderer/BBoxObject';
 import type ColorType from '../../Core/Color/ColorType';
-import type PieDataLabelOptions from '../Pie/PieDataLabelOptions';
-import type PiePoint from '../Pie/PiePoint';
-import type PiePointOptions from '../Pie/PiePointOptions';
-import type PieSeriesOptions from '../Pie/PieSeriesOptions';
-import type { SeriesStatesOptions } from '../../Core/Series/SeriesOptions';
+import type FunnelDataLabelOptions from './FunnelDataLabelOptions';
+import type FunnelPoint from './FunnelPoint';
+import type FunnelSeriesOptions from './FunnelSeriesOptions';
 import type SVGElement from '../../Core/Renderer/SVG/SVGElement';
 import type SVGPath from '../../Core/Renderer/SVG/SVGPath';
 import BaseSeries from '../../Core/Series/Series.js';
@@ -61,41 +59,6 @@ declare module '../../Core/Series/SeriesOptions' {
 }
 
 /**
- * Internal types
- * @private
- */
-declare global {
-    namespace Highcharts {
-        class FunnelPoint extends PiePoint {
-            public dlBox: BFunnelObject;
-            public options: FunnelPointOptions;
-            public series: FunnelSeries;
-        }
-        interface BFunnelObject extends BBoxObject {
-            bottomWidth: number;
-            topWidth: number;
-        }
-        interface FunnelPointOptions extends PiePointOptions {
-            dataLabels?: FunnelSeriesDataLabelsOptionsObject;
-        }
-        interface FunnelSeriesDataLabelsOptionsObject
-            extends PieDataLabelOptions {
-            position?: string;
-        }
-        interface FunnelSeriesOptions extends PieSeriesOptions {
-            width?: (number|string);
-            neckWidth?: (number|string);
-            height?: (number|string);
-            neckHeight?: (number|string);
-            reversed?: boolean;
-            size?: undefined;
-            dataLabels?: FunnelSeriesDataLabelsOptionsObject;
-            states?: SeriesStatesOptions<FunnelSeries>;
-        }
-    }
-}
-
-/**
  * @private
  * @class
  * @name Highcharts.seriesTypes.funnel
@@ -124,7 +87,7 @@ class FunnelSeries extends PieSeries {
      * @requires     modules/funnel
      * @optionparent plotOptions.funnel
      */
-    public static defaultOptions: Highcharts.FunnelSeriesOptions = merge(PieSeries.defaultOptions, {
+    public static defaultOptions: FunnelSeriesOptions = merge(PieSeries.defaultOptions, {
 
         /**
          * Initial animation is by default disabled for the funnel chart.
@@ -234,7 +197,7 @@ class FunnelSeries extends PieSeries {
                 borderColor: '${palette.neutralColor100}'
             }
         }
-    } as Highcharts.FunnelSeriesOptions);
+    } as FunnelSeriesOptions);
 
     /* *
      *
@@ -244,11 +207,11 @@ class FunnelSeries extends PieSeries {
 
     public centerX?: number;
 
-    public data: Array<Highcharts.FunnelPoint> = void 0 as any;
+    public data: Array<FunnelPoint> = void 0 as any;
 
-    public options: Highcharts.FunnelSeriesOptions = void 0 as any;
+    public options: FunnelSeriesOptions = void 0 as any;
 
-    public points: Array<Highcharts.FunnelPoint> = void 0 as any;
+    public points: Array<FunnelPoint> = void 0 as any;
 
     /* *
      *
@@ -262,9 +225,9 @@ class FunnelSeries extends PieSeries {
      * @private
      */
     public alignDataLabel(
-        point: Highcharts.FunnelPoint,
+        point: FunnelPoint,
         dataLabel: SVGElement,
-        options: Highcharts.FunnelSeriesDataLabelsOptionsObject,
+        options: FunnelDataLabelOptions,
         alignTo: BBoxObject,
         isNew?: boolean
     ): void {
@@ -497,7 +460,7 @@ class FunnelSeries extends PieSeries {
             this: FunnelSeries,
             y: number,
             half: boolean,
-            point: Highcharts.FunnelPoint
+            point: FunnelPoint
         ): number {
             return centerX + (half ? -1 : 1) *
                 ((series.getWidthAt(reversed ? 2 * centerY - y : y) / 2) +
@@ -529,13 +492,13 @@ class FunnelSeries extends PieSeries {
         */
 
         // get the total sum
-        data.forEach(function (point: Highcharts.FunnelPoint): void {
+        data.forEach(function (point): void {
             if (!ignoreHiddenPoint || point.visible !== false) {
                 sum += point.y as any;
             }
         });
 
-        data.forEach(function (point: Highcharts.FunnelPoint): void {
+        data.forEach(function (point): void {
             // set start and end positions
             y5 = null;
             fraction = sum ? (point.y as any) / sum : 0;
@@ -626,11 +589,8 @@ class FunnelSeries extends PieSeries {
      * Funnel items don't have angles (#2289).
      * @private
      */
-    public sortByAngle(points: Array<Highcharts.FunnelPoint>): void {
-        points.sort(function (
-            a: Highcharts.FunnelPoint,
-            b: Highcharts.FunnelPoint
-        ): number {
+    public sortByAngle(points: Array<FunnelPoint>): void {
+        points.sort(function (a, b): number {
             return (a.plotY as any) - (b.plotY as any);
         });
     }
@@ -646,9 +606,9 @@ class FunnelSeries extends PieSeries {
  * */
 
 interface FunnelSeries {
-    pointClass: typeof Highcharts.FunnelPoint;
+    pointClass: typeof FunnelPoint;
     getWidthAt(y: number): number; // added during translate
-    getX(y: number, half: boolean, point: Highcharts.FunnelPoint): number; // added during translate
+    getX(y: number, half: boolean, point: FunnelPoint): number; // added during translate
 }
 extend(FunnelSeries.prototype, {
     animate: noop as any
@@ -677,6 +637,18 @@ addEvent(Chart, 'afterHideAllOverlappingLabels', function (): void {
         }
     });
 });
+
+/* *
+ *
+ *  Class Namespace
+ *
+ * */
+
+type BBoxObjectImport = BBoxObject;
+namespace FunnelSeries {
+
+
+}
 
 /* *
  *
@@ -764,184 +736,3 @@ export default FunnelSeries;
  */
 
 ''; // keeps doclets above in transpiled file
-
-/* *
- *
- *  Declarations
- *
- * */
-
-/**
- * Internal types
- * @private
- */
-declare global {
-    namespace Highcharts {
-        class PyramidPoint extends FunnelPoint {
-            public options: PyramidPointOptions;
-            public series: PyramidSeries;
-        }
-        interface PyramidPointOptions extends FunnelPointOptions {
-        }
-        interface PyramidSeriesOptions extends FunnelSeriesOptions {
-            states?: SeriesStatesOptions<PyramidSeries>;
-        }
-    }
-}
-
-/* *
- *
- *  Class
- *
- * */
-
-/**
- * Pyramid series type.
- *
- * @private
- * @class
- * @name Highcharts.seriesTypes.pyramid
- *
- * @augments Highcharts.Series
- */
-class PyramidSeries extends FunnelSeries {
-
-    /* *
-     *
-     *  Static Properties
-     *
-     * */
-
-    /**
-     * A pyramid series is a special type of funnel, without neck and reversed
-     * by default.
-     *
-     * @sample highcharts/demo/pyramid/
-     *         Pyramid chart
-     *
-     * @extends      plotOptions.funnel
-     * @product      highcharts
-     * @requires     modules/funnel
-     * @optionparent plotOptions.pyramid
-     */
-    public static defaultOptions: Highcharts.PyramidSeriesOptions = merge(FunnelSeries.defaultOptions, {
-        /**
-         * The pyramid neck width is zero by default, as opposed to the funnel,
-         * which shares the same layout logic.
-         *
-         * @since 3.0.10
-         */
-        neckWidth: '0%',
-
-        /**
-         * The pyramid neck width is zero by default, as opposed to the funnel,
-         * which shares the same layout logic.
-         *
-         * @since 3.0.10
-         */
-        neckHeight: '0%',
-
-        /**
-         * The pyramid is reversed by default, as opposed to the funnel, which
-         * shares the layout engine, and is not reversed.
-         *
-         * @since 3.0.10
-         */
-        reversed: true
-    } as Highcharts.PyramidSeriesOptions);
-
-    /* *
-     *
-     *  Properties
-     *
-     * */
-
-    public data: Array<Highcharts.PyramidPoint> = void 0 as any;
-
-    public options: Highcharts.PyramidSeriesOptions = void 0 as any;
-
-    public points: Array<Highcharts.PyramidPoint> = void 0 as any;
-
-}
-
-/* *
- *
- *  Prototype Properties
- *
- * */
-
-interface PyramidSeries {
-    pointClass: typeof Highcharts.PyramidPoint;
-}
-
-/* *
- *
- *  Registry
- *
- * */
-
-declare module '../../Core/Series/SeriesType' {
-    interface SeriesTypeRegistry {
-        pyramid: typeof PyramidSeries;
-    }
-}
-BaseSeries.registerSeriesType('pyramid', PyramidSeries);
-
-/* *
- *
- *  API Options
- *
- * */
-
-/**
- * A `pyramid` series. If the [type](#series.pyramid.type) option is
- * not specified, it is inherited from [chart.type](#chart.type).
- *
- * @extends   series,plotOptions.pyramid
- * @excluding dataParser, dataURL, stack, xAxis, yAxis, dataSorting,
- *            boostThreshold, boostBlending
- * @product   highcharts
- * @requires  modules/funnel
- * @apioption series.pyramid
- */
-
-/**
- * An array of data points for the series. For the `pyramid` series
- * type, points can be given in the following ways:
- *
- * 1. An array of numerical values. In this case, the numerical values will be
- *    interpreted as `y` options. Example:
- *    ```js
- *    data: [0, 5, 3, 5]
- *    ```
- *
- * 2. An array of objects with named values. The following snippet shows only a
- *    few settings, see the complete options set below. If the total number of
- *    data points exceeds the series'
- *    [turboThreshold](#series.pyramid.turboThreshold), this option is not
- *    available.
- *    ```js
- *    data: [{
- *        y: 9,
- *        name: "Point2",
- *        color: "#00FF00"
- *    }, {
- *        y: 6,
- *        name: "Point1",
- *        color: "#FF00FF"
- *    }]
- *    ```
- *
- * @sample {highcharts} highcharts/chart/reflow-true/
- *         Numerical values
- * @sample {highcharts} highcharts/series/data-array-of-objects/
- *         Config objects
- *
- * @type      {Array<number|null|*>}
- * @extends   series.pie.data
- * @excluding sliced
- * @product   highcharts
- * @apioption series.pyramid.data
- */
-
-''; // adds doclets above into transpiled file

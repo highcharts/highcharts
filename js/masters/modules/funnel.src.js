@@ -11,3 +11,4 @@
  */
 'use strict';
 import '../../Series/Funnel/FunnelSeries.js';
+import '../../Series/Pyramid/PyramidSeries.js';
