@@ -10,14 +10,27 @@
  *
  * */
 'use strict';
+var __extends = (this && this.__extends) || (function () {
+    var extendStatics = function (d, b) {
+        extendStatics = Object.setPrototypeOf ||
+            ({ __proto__: [] } instanceof Array && function (d, b) { d.__proto__ = b; }) ||
+            function (d, b) { for (var p in b) if (b.hasOwnProperty(p)) d[p] = b[p]; };
+        return extendStatics(d, b);
+    };
+    return function (d, b) {
+        extendStatics(d, b);
+        function __() { this.constructor = d; }
+        d.prototype = b === null ? Object.create(b) : (__.prototype = b.prototype, new __());
+    };
+})();
 import BaseSeries from '../Core/Series/Series.js';
-var seriesTypes = BaseSeries.seriesTypes;
+var PieSeries = BaseSeries.seriesTypes.pie;
 import Chart from '../Core/Chart/Chart.js';
 import H from '../Core/Globals.js';
 var noop = H.noop;
 import LineSeries from './Line/LineSeries.js';
 import U from '../Core/Utilities.js';
-var addEvent = U.addEvent, fireEvent = U.fireEvent, isArray = U.isArray, pick = U.pick;
+var addEvent = U.addEvent, extend = U.extend, fireEvent = U.fireEvent, isArray = U.isArray, merge = U.merge, pick = U.pick;
 /**
  * @private
  * @class
@@ -25,122 +38,141 @@ var addEvent = U.addEvent, fireEvent = U.fireEvent, isArray = U.isArray, pick = 
  *
  * @augments Highcharts.Series
  */
-BaseSeries.seriesType('funnel', 'pie', 
-/**
- * Funnel charts are a type of chart often used to visualize stages in a
- * sales project, where the top are the initial stages with the most
- * clients. It requires that the modules/funnel.js file is loaded.
- *
- * @sample highcharts/demo/funnel/
- *         Funnel demo
- *
- * @extends      plotOptions.pie
- * @excluding    innerSize,size,dataSorting
- * @product      highcharts
- * @requires     modules/funnel
- * @optionparent plotOptions.funnel
- */
-{
-    /**
-     * Initial animation is by default disabled for the funnel chart.
-     */
-    animation: false,
-    /**
-     * The center of the series. By default, it is centered in the middle
-     * of the plot area, so it fills the plot area height.
-     *
-     * @type    {Array<number|string>}
-     * @default ["50%", "50%"]
-     * @since   3.0
-     */
-    center: ['50%', '50%'],
-    /**
-     * The width of the funnel compared to the width of the plot area,
-     * or the pixel width if it is a number.
-     *
-     * @type  {number|string}
-     * @since 3.0
-     */
-    width: '90%',
-    /**
-     * The width of the neck, the lower part of the funnel. A number defines
-     * pixel width, a percentage string defines a percentage of the plot
-     * area width.
-     *
-     * @sample {highcharts} highcharts/demo/funnel/
-     *         Funnel demo
-     *
-     * @type  {number|string}
-     * @since 3.0
-     */
-    neckWidth: '30%',
-    /**
-     * The height of the funnel or pyramid. If it is a number it defines
-     * the pixel height, if it is a percentage string it is the percentage
-     * of the plot area height.
-     *
-     * @sample {highcharts} highcharts/demo/funnel/
-     *         Funnel demo
-     *
-     * @type  {number|string}
-     * @since 3.0
-     */
-    height: '100%',
-    /**
-     * The height of the neck, the lower part of the funnel. A number
-     * defines pixel width, a percentage string defines a percentage of the
-     * plot area height.
-     *
-     * @type {number|string}
-     */
-    neckHeight: '25%',
-    /**
-     * A reversed funnel has the widest area down. A reversed funnel with
-     * no neck width and neck height is a pyramid.
-     *
-     * @since 3.0.10
-     */
-    reversed: false,
-    /**
-     * To avoid adapting the data label size in Pie.drawDataLabels.
-     * @ignore-option
-     */
-    size: true,
-    dataLabels: {
-        connectorWidth: 1,
-        verticalAlign: 'middle'
-    },
-    /**
-     * Options for the series states.
-     */
-    states: {
-        /**
-         * @excluding halo, marker, lineWidth, lineWidthPlus
-         * @apioption plotOptions.funnel.states.hover
-         */
-        /**
-         * Options for a selected funnel item.
+var FunnelSeries = /** @class */ (function (_super) {
+    __extends(FunnelSeries, _super);
+    function FunnelSeries() {
+        /* *
          *
-         * @excluding halo, marker, lineWidth, lineWidthPlus
-         */
-        select: {
-            /**
-             * A specific color for the selected point.
-             *
-             * @type {Highcharts.ColorString|Highcharts.GradientColorObject|Highcharts.PatternObject}
-             */
-            color: '${palette.neutralColor20}',
-            /**
-             * A specific border color for the selected point.
-             *
-             * @type {Highcharts.ColorString}
-             */
-            borderColor: '${palette.neutralColor100}'
-        }
+         *  Static Properties
+         *
+         * */
+        var _this = _super !== null && _super.apply(this, arguments) || this;
+        /* *
+         *
+         *  Properties
+         *
+         * */
+        _this.data = void 0;
+        _this.options = void 0;
+        _this.points = void 0;
+        return _this;
     }
-}, 
-// Properties
-{
+    /**
+     * Funnel charts are a type of chart often used to visualize stages in a
+     * sales project, where the top are the initial stages with the most
+     * clients. It requires that the modules/funnel.js file is loaded.
+     *
+     * @sample highcharts/demo/funnel/
+     *         Funnel demo
+     *
+     * @extends      plotOptions.pie
+     * @excluding    innerSize,size,dataSorting
+     * @product      highcharts
+     * @requires     modules/funnel
+     * @optionparent plotOptions.funnel
+     */
+    FunnelSeries.defaultOptions = merge(PieSeries.defaultOptions, {
+        /**
+         * Initial animation is by default disabled for the funnel chart.
+         */
+        animation: false,
+        /**
+         * The center of the series. By default, it is centered in the middle
+         * of the plot area, so it fills the plot area height.
+         *
+         * @type    {Array<number|string>}
+         * @default ["50%", "50%"]
+         * @since   3.0
+         */
+        center: ['50%', '50%'],
+        /**
+         * The width of the funnel compared to the width of the plot area,
+         * or the pixel width if it is a number.
+         *
+         * @type  {number|string}
+         * @since 3.0
+         */
+        width: '90%',
+        /**
+         * The width of the neck, the lower part of the funnel. A number defines
+         * pixel width, a percentage string defines a percentage of the plot
+         * area width.
+         *
+         * @sample {highcharts} highcharts/demo/funnel/
+         *         Funnel demo
+         *
+         * @type  {number|string}
+         * @since 3.0
+         */
+        neckWidth: '30%',
+        /**
+         * The height of the funnel or pyramid. If it is a number it defines
+         * the pixel height, if it is a percentage string it is the percentage
+         * of the plot area height.
+         *
+         * @sample {highcharts} highcharts/demo/funnel/
+         *         Funnel demo
+         *
+         * @type  {number|string}
+         * @since 3.0
+         */
+        height: '100%',
+        /**
+         * The height of the neck, the lower part of the funnel. A number
+         * defines pixel width, a percentage string defines a percentage of the
+         * plot area height.
+         *
+         * @type {number|string}
+         */
+        neckHeight: '25%',
+        /**
+         * A reversed funnel has the widest area down. A reversed funnel with
+         * no neck width and neck height is a pyramid.
+         *
+         * @since 3.0.10
+         */
+        reversed: false,
+        /**
+         * To avoid adapting the data label size in Pie.drawDataLabels.
+         * @ignore-option
+         */
+        size: true,
+        dataLabels: {
+            connectorWidth: 1,
+            verticalAlign: 'middle'
+        },
+        /**
+         * Options for the series states.
+         */
+        states: {
+            /**
+             * @excluding halo, marker, lineWidth, lineWidthPlus
+             * @apioption plotOptions.funnel.states.hover
+             */
+            /**
+             * Options for a selected funnel item.
+             *
+             * @excluding halo, marker, lineWidth, lineWidthPlus
+             */
+            select: {
+                /**
+                 * A specific color for the selected point.
+                 *
+                 * @type {Highcharts.ColorString|Highcharts.GradientColorObject|Highcharts.PatternObject}
+                 */
+                color: '${palette.neutralColor20}',
+                /**
+                 * A specific border color for the selected point.
+                 *
+                 * @type {Highcharts.ColorString}
+                 */
+                borderColor: '${palette.neutralColor100}'
+            }
+        }
+    });
+    return FunnelSeries;
+}(PieSeries));
+extend(FunnelSeries.prototype, {
     animate: noop,
     // Overrides the pie translate method
     translate: function () {
@@ -328,7 +360,7 @@ BaseSeries.seriesType('funnel', 'pie',
                 }
             };
         }
-        seriesTypes[series.options.dataLabels.inside ? 'column' : 'pie'].prototype.drawDataLabels.call(this);
+        BaseSeries.seriesTypes[series.options.dataLabels.inside ? 'column' : 'pie'].prototype.drawDataLabels.call(this);
     },
     alignDataLabel: function (point, dataLabel, options, alignTo, isNew) {
         var series = point.series, reversed = series.options.reversed, dlBox = point.dlBox || point.shapeArgs, align = options.align, verticalAlign = options.verticalAlign, inside = ((series.options || {}).dataLabels || {}).inside, centerY = series.center[1], pointPlotY = (reversed ?
@@ -379,6 +411,11 @@ BaseSeries.seriesType('funnel', 'pie',
         }
     }
 });
+/* *
+ *
+ *  Hack
+ *
+ * */
 /* eslint-disable no-invalid-this */
 addEvent(Chart, 'afterHideAllOverlappingLabels', function () {
     this.series.forEach(function (series) {
@@ -394,6 +431,18 @@ addEvent(Chart, 'afterHideAllOverlappingLabels', function () {
         }
     });
 });
+BaseSeries.registerSeriesType('funnel', FunnelSeries);
+/* *
+ *
+ *  Default Export
+ *
+ * */
+export default FunnelSeries;
+/* *
+ *
+ *  API Options
+ *
+ * */
 /**
  * A `funnel` series. If the [type](#series.funnel.type) option is
  * not specified, it is inherited from [chart.type](#chart.type).
@@ -450,6 +499,12 @@ addEvent(Chart, 'afterHideAllOverlappingLabels', function () {
  * @product   highcharts
  * @apioption series.funnel.data
  */
+''; // keeps doclets above in transpiled file
+/* *
+ *
+ *  Class
+ *
+ * */
 /**
  * Pyramid series type.
  *
@@ -459,42 +514,68 @@ addEvent(Chart, 'afterHideAllOverlappingLabels', function () {
  *
  * @augments Highcharts.Series
  */
-BaseSeries.seriesType('pyramid', 'funnel', 
-/**
- * A pyramid series is a special type of funnel, without neck and reversed
- * by default.
+var PyramidSeries = /** @class */ (function (_super) {
+    __extends(PyramidSeries, _super);
+    function PyramidSeries() {
+        /* *
+         *
+         *  Static Properties
+         *
+         * */
+        var _this = _super !== null && _super.apply(this, arguments) || this;
+        /* *
+         *
+         *  Properties
+         *
+         * */
+        _this.data = void 0;
+        _this.options = void 0;
+        _this.points = void 0;
+        return _this;
+    }
+    /**
+     * A pyramid series is a special type of funnel, without neck and reversed
+     * by default.
+     *
+     * @sample highcharts/demo/pyramid/
+     *         Pyramid chart
+     *
+     * @extends      plotOptions.funnel
+     * @product      highcharts
+     * @requires     modules/funnel
+     * @optionparent plotOptions.pyramid
+     */
+    PyramidSeries.defaultOptions = merge(FunnelSeries.defaultOptions, {
+        /**
+         * The pyramid neck width is zero by default, as opposed to the funnel,
+         * which shares the same layout logic.
+         *
+         * @since 3.0.10
+         */
+        neckWidth: '0%',
+        /**
+         * The pyramid neck width is zero by default, as opposed to the funnel,
+         * which shares the same layout logic.
+         *
+         * @since 3.0.10
+         */
+        neckHeight: '0%',
+        /**
+         * The pyramid is reversed by default, as opposed to the funnel, which
+         * shares the layout engine, and is not reversed.
+         *
+         * @since 3.0.10
+         */
+        reversed: true
+    });
+    return PyramidSeries;
+}(FunnelSeries));
+BaseSeries.registerSeriesType('pyramid', PyramidSeries);
+/* *
  *
- * @sample highcharts/demo/pyramid/
- *         Pyramid chart
+ *  API Options
  *
- * @extends      plotOptions.funnel
- * @product      highcharts
- * @requires     modules/funnel
- * @optionparent plotOptions.pyramid
- */
-{
-    /**
-     * The pyramid neck width is zero by default, as opposed to the funnel,
-     * which shares the same layout logic.
-     *
-     * @since 3.0.10
-     */
-    neckWidth: '0%',
-    /**
-     * The pyramid neck width is zero by default, as opposed to the funnel,
-     * which shares the same layout logic.
-     *
-     * @since 3.0.10
-     */
-    neckHeight: '0%',
-    /**
-     * The pyramid is reversed by default, as opposed to the funnel, which
-     * shares the layout engine, and is not reversed.
-     *
-     * @since 3.0.10
-     */
-    reversed: true
-});
+ * */
 /**
  * A `pyramid` series. If the [type](#series.pyramid.type) option is
  * not specified, it is inherited from [chart.type](#chart.type).
