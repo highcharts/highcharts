@@ -49,6 +49,12 @@ declare global {
     }
 }
 
+/* *
+ *
+ *  Class
+ *
+ * */
+
 /**
  * @private
  * @class
@@ -102,6 +108,42 @@ class MapLineSeries extends MapSeries {
 
     public points: Array<Highcharts.MapLinePoint> = void 0 as any;
 
+    /* *
+     *
+     *  Functions
+     *
+     * */
+
+    /* eslint-disable valid-jsdoc */
+
+    /**
+     * Get presentational attributes
+     *
+     * @private
+     * @function Highcharts.seriesTypes.mapline#pointAttribs
+     * @param {Highcharts.Point} point
+     * @param {string} state
+     * @return {Highcharts.SVGAttributes}
+     */
+    public pointAttribs(
+        point: Highcharts.MapLinePoint,
+        state: StatesOptionsKey
+    ): SVGAttributes {
+        var attr = MapSeries.prototype.pointAttribs.call(
+            this,
+            point,
+            state
+        );
+
+        // The difference from a map series is that the stroke takes the
+        // point color
+        attr.fill = this.options.fillColor;
+
+        return attr;
+    }
+
+    /* eslint-enable valid-jsdoc */
+
 }
 
 /* *
@@ -124,38 +166,7 @@ extend(MapLineSeries.prototype, {
     pointAttrToOptions: {
         'stroke': 'color',
         'stroke-width': 'lineWidth'
-    },
-
-    /* eslint-disable valid-jsdoc */
-
-    /**
-     * Get presentational attributes
-     *
-     * @private
-     * @function Highcharts.seriesTypes.mapline#pointAttribs
-     * @param {Highcharts.Point} point
-     * @param {string} state
-     * @return {Highcharts.SVGAttributes}
-     */
-    pointAttribs: function (
-        this: MapLineSeries,
-        point: Highcharts.MapLinePoint,
-        state: StatesOptionsKey
-    ): SVGAttributes {
-        var attr = MapSeries.prototype.pointAttribs.call(
-            this,
-            point,
-            state
-        );
-
-        // The difference from a map series is that the stroke takes the
-        // point color
-        attr.fill = this.options.fillColor;
-
-        return attr;
     }
-
-    /* eslint-enable valid-jsdoc */
 
 });
 
