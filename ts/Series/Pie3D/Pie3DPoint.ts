@@ -20,7 +20,12 @@
 
 import type Pie3DSeries from './Pie3DSeries';
 import type SVGPath from '../../Core/Renderer/SVG/SVGPath';
-import PiePoint from '../Pie/PiePoint.js';
+import BaseSeries from '../../Core/Series/Series.js';
+const {
+    seriesTypes: {
+        pie: PieSeries
+    }
+} = BaseSeries;
 
 /* *
  *
@@ -28,7 +33,7 @@ import PiePoint from '../Pie/PiePoint.js';
  *
  * */
 
-class Pie3DPoint extends PiePoint {
+class Pie3DPoint extends PieSeries.prototype.pointClass {
 
     /* *
      *

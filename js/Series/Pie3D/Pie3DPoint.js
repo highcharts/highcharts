@@ -23,7 +23,8 @@ var __extends = (this && this.__extends) || (function () {
         d.prototype = b === null ? Object.create(b) : (__.prototype = b.prototype, new __());
     };
 })();
-import PiePoint from '../Pie/PiePoint.js';
+import BaseSeries from '../../Core/Series/Series.js';
+var PieSeries = BaseSeries.seriesTypes.pie;
 /* *
  *
  *  Class
@@ -55,7 +56,7 @@ var Pie3DPoint = /** @class */ (function (_super) {
         return this.series.chart.is3d() ? [] : _super.prototype.haloPath.call(this, size);
     };
     return Pie3DPoint;
-}(PiePoint));
+}(PieSeries.prototype.pointClass));
 /* *
  *
  *  Default Export
