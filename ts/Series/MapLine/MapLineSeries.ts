@@ -16,15 +16,15 @@
  *
  * */
 
-import type ColorType from '../Core/Color/ColorType';
-import type MapPointOptions from './Map/MapPointOptions';
-import type MapSeriesOptions from './Map/MapSeriesOptions';
-import type { SeriesStatesOptions } from '../Core/Series/SeriesOptions';
-import type { StatesOptionsKey } from '../Core/Series/StatesOptions';
-import type SVGAttributes from '../Core/Renderer/SVG/SVGAttributes';
-import BaseSeries from '../Core/Series/Series.js';
-import MapSeries from './Map/MapSeries.js';
-import U from '../Core/Utilities.js';
+import type ColorType from '../../Core/Color/ColorType';
+import type MapPointOptions from '../Map/MapPointOptions';
+import type MapSeriesOptions from '../Map/MapSeriesOptions';
+import type { SeriesStatesOptions } from '../../Core/Series/SeriesOptions';
+import type { StatesOptionsKey } from '../../Core/Series/StatesOptions';
+import type SVGAttributes from '../../Core/Renderer/SVG/SVGAttributes';
+import BaseSeries from '../../Core/Series/Series.js';
+import MapSeries from '../Map/MapSeries.js';
+import U from '../../Core/Utilities.js';
 const {
     extend,
     merge
@@ -176,7 +176,7 @@ extend(MapLineSeries.prototype, {
  *
  * */
 
-declare module '../Core/Series/SeriesType' {
+declare module '../../Core/Series/SeriesType' {
     interface SeriesTypeRegistry {
         mapline: typeof MapLineSeries;
     }
