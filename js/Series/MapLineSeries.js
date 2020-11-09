@@ -25,6 +25,11 @@ import BaseSeries from '../Core/Series/Series.js';
 import MapSeries from './Map/MapSeries.js';
 import U from '../Core/Utilities.js';
 var extend = U.extend, merge = U.merge;
+/* *
+ *
+ *  Class
+ *
+ * */
 /**
  * @private
  * @class
@@ -50,7 +55,30 @@ var MapLineSeries = /** @class */ (function (_super) {
         _this.options = void 0;
         _this.points = void 0;
         return _this;
+        /* eslint-enable valid-jsdoc */
     }
+    /* *
+     *
+     *  Functions
+     *
+     * */
+    /* eslint-disable valid-jsdoc */
+    /**
+     * Get presentational attributes
+     *
+     * @private
+     * @function Highcharts.seriesTypes.mapline#pointAttribs
+     * @param {Highcharts.Point} point
+     * @param {string} state
+     * @return {Highcharts.SVGAttributes}
+     */
+    MapLineSeries.prototype.pointAttribs = function (point, state) {
+        var attr = MapSeries.prototype.pointAttribs.call(this, point, state);
+        // The difference from a map series is that the stroke takes the
+        // point color
+        attr.fill = this.options.fillColor;
+        return attr;
+    };
     /**
      * A mapline series is a special case of the map series where the value
      * colors are applied to the strokes rather than the fills. It can also be
@@ -83,25 +111,7 @@ extend(MapLineSeries.prototype, {
     pointAttrToOptions: {
         'stroke': 'color',
         'stroke-width': 'lineWidth'
-    },
-    /* eslint-disable valid-jsdoc */
-    /**
-     * Get presentational attributes
-     *
-     * @private
-     * @function Highcharts.seriesTypes.mapline#pointAttribs
-     * @param {Highcharts.Point} point
-     * @param {string} state
-     * @return {Highcharts.SVGAttributes}
-     */
-    pointAttribs: function (point, state) {
-        var attr = MapSeries.prototype.pointAttribs.call(this, point, state);
-        // The difference from a map series is that the stroke takes the
-        // point color
-        attr.fill = this.options.fillColor;
-        return attr;
     }
-    /* eslint-enable valid-jsdoc */
 });
 BaseSeries.registerSeriesType('mapline', MapLineSeries);
 /* *
