@@ -284,12 +284,13 @@ BaseSeries.seriesType('bubble', 'scatter', {
      * @private
      */
     getRadii: function (zMin, zMax, series) {
-        var len, i, zData = this.zData, yData = this.yData, minSize = series.minPxSize, maxSize = series.maxPxSize, radii = [], value;
+        var len, i, zData = this.zData, yData = this.yData, radii = [], value;
+        var _a = this.getPxExtremes(), minPxSize = _a.minPxSize, maxPxSize = _a.maxPxSize;
         // Set the shape type and arguments to be picked up in drawPoints
         for (i = 0, len = zData.length; i < len; i++) {
             value = zData[i];
             // Separate method to get individual radius for bubbleLegend
-            radii.push(this.getRadius(zMin, zMax, minSize, maxSize, value, yData[i]));
+            radii.push(this.getRadius(zMin, zMax, minPxSize, maxPxSize, value, yData[i]));
         }
         this.radii = radii;
     },
@@ -365,15 +366,19 @@ BaseSeries.seriesType('bubble', 'scatter', {
      * @private
      */
     translate: function () {
-        var i, data = this.data, point, radius, radii = this.radii;
         // Run the parent method
         seriesTypes.scatter.prototype.translate.call(this);
+        this.translateBubble();
+    },
+    translateBubble: function () {
+        var i, data = this.data, point, radius, radii = this.radii;
+        var minPxSize = this.getPxExtremes().minPxSize;
         // Set the shape type and arguments to be picked up in drawPoints
         i = data.length;
         while (i--) {
             point = data[i];
             radius = radii ? radii[i] : 0; // #1737
-            if (isNumber(radius) && radius >= this.minPxSize / 2) {
+            if (isNumber(radius) && radius >= minPxSize / 2) {
                 // Shape arguments
                 point.marker = extend(point.marker, {
                     radius: radius,
@@ -391,6 +396,34 @@ BaseSeries.seriesType('bubble', 'scatter', {
             else { // below zThreshold
                 // #1691
                 point.shapeArgs = point.plotY = point.dlBox = void 0;
+            }
+        }
+    },
+    getPxExtremes: function () {
+        var smallestSize = Math.min(this.chart.plotWidth, this.chart.plotHeight);
+        var getPxSize = function (length) {
+            var isPercent;
+            if (typeof length === 'string') {
+                isPercent = /%$/.test(length);
+                length = parseInt(length, 10);
+            }
+            return isPercent ? smallestSize * length / 100 : length;
+        };
+        var minPxSize = getPxSize(pick(this.options.minSize, 8));
+        // Prioritize min size if conflict to make sure bubbles are
+        // always visible. #5873
+        var maxPxSize = Math.max(getPxSize(pick(this.options.maxSize, '20%')), minPxSize);
+        return { minPxSize: minPxSize, maxPxSize: maxPxSize };
+    },
+    getZExtremes: function () {
+        var zData = (this.zData || []).filter(isNumber);
+        if (zData.length) {
+            var zMin = pick(this.options.zMin, Math.min(arrayMin(zData), this.options.displayNegative === false ?
+                (this.options.zThreshold || 0) :
+                Number.MAX_VALUE));
+            var zMax = pick(this.options.zMax, arrayMax(zData));
+            if (isNumber(zMin) && isNumber(zMax)) {
+                return { zMin: zMin, zMax: zMax };
             }
         }
     },
@@ -423,25 +456,44 @@ Axis.prototype.beforePadding = function () {
             // Cache it
             activeSeries.push(series);
             if (isXAxis) { // because X axis is evaluated first
+                /*
                 // For each series, translate the size extremes to pixel values
-                ['minSize', 'maxSize'].forEach(function (prop) {
-                    var length = seriesOptions[prop], isPercent = /%$/.test(length);
+                ['minSize', 'maxSize'].forEach(function (prop: string): void {
+                    var length = (seriesOptions as any)[prop],
+                        isPercent = /%$/.test(length);
+
                     length = pInt(length);
                     extremes[prop] = isPercent ?
                         smallestSize * length / 100 :
                         length;
+
                 });
                 series.minPxSize = extremes.minSize;
                 // Prioritize min size if conflict to make sure bubbles are
                 // always visible. #5873
                 series.maxPxSize = Math.max(extremes.maxSize, extremes.minSize);
+                */
                 // Find the min and max Z
-                zData = series.zData.filter(isNumber);
+                /*
+                zData = (series.zData as any).filter(isNumber);
                 if (zData.length) { // #1735
-                    zMin = pick(seriesOptions.zMin, clamp(arrayMin(zData), seriesOptions.displayNegative === false ?
-                        seriesOptions.zThreshold :
-                        -Number.MAX_VALUE, zMin));
-                    zMax = pick(seriesOptions.zMax, Math.max(zMax, arrayMax(zData)));
+                    zMin = pick(seriesOptions.zMin, clamp(
+                        arrayMin(zData),
+                        seriesOptions.displayNegative === false ?
+                            (seriesOptions.zThreshold as any) :
+                            -Number.MAX_VALUE,
+                        zMin
+                    ));
+                    zMax = pick(
+                        seriesOptions.zMax,
+                        Math.max(zMax, arrayMax(zData))
+                    );
+                }
+                */
+                var zExtremes = series.getZExtremes();
+                if (zExtremes) {
+                    zMin = Math.min(zMin || zExtremes.zMin, zExtremes.zMin);
+                    zMax = Math.max(zMax || zExtremes.zMax, zExtremes.zMax);
                 }
             }
         }

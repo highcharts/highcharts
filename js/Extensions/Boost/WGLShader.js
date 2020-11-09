@@ -371,7 +371,8 @@ function GLShader(gl) {
      */
     function setBubbleUniforms(series, zCalcMin, zCalcMax) {
         var seriesOptions = series.options, zMin = Number.MAX_VALUE, zMax = -Number.MAX_VALUE;
-        if (gl && shaderProgram && series.type === 'bubble') {
+        if (gl && shaderProgram && series.is('bubble')) {
+            var pxSizes = series.getPxExtremes();
             zMin = pick(seriesOptions.zMin, clamp(zCalcMin, seriesOptions.displayNegative === false ?
                 seriesOptions.zThreshold : -Number.MAX_VALUE, zMin));
             zMax = pick(seriesOptions.zMax, Math.max(zMax, zCalcMax));
@@ -383,8 +384,8 @@ function GLShader(gl) {
             setUniform('bubbleZMin', zMin);
             setUniform('bubbleZMax', zMax);
             setUniform('bubbleZThreshold', series.options.zThreshold);
-            setUniform('bubbleMinSize', series.minPxSize);
-            setUniform('bubbleMaxSize', series.maxPxSize);
+            setUniform('bubbleMinSize', pxSizes.minPxSize);
+            setUniform('bubbleMaxSize', pxSizes.maxPxSize);
         }
     }
     /**

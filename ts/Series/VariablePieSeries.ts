@@ -37,6 +37,8 @@ declare global {
         }
         class VariablePieSeries extends PieSeries {
             public data: Array<VariablePiePoint>;
+            public maxPxSize: number;
+            public minPxSize: number;
             public options: VariablePieSeriesOptions;
             public parallelArrays: Array<string>;
             public pointArrayMap: Array<string>;

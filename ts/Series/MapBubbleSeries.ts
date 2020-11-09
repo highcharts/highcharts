@@ -44,6 +44,7 @@ declare global {
             public setData: MapSeries['setData'];
             public setOptions: MapSeries['setOptions'];
             public type: string;
+            public useMapGeometry: boolean;
             public xyFromShape: boolean;
         }
         interface MapBubblePointOptions extends BubblePointOptions {
@@ -222,13 +223,26 @@ if (seriesTypes.bubble) {
         }, {
             xyFromShape: true,
             type: 'mapbubble',
+            axisTypes: ['colorAxis'],
             // If one single value is passed, it is interpreted as z
             pointArrayMap: ['z'],
             // Return the map area identified by the dataJoinBy option
             getMapData: (seriesTypes.map.prototype as any).getMapData, // @todo
             getBox: seriesTypes.map.prototype.getBox,
             setData: seriesTypes.map.prototype.setData,
-            setOptions: seriesTypes.map.prototype.setOptions
+            setOptions: seriesTypes.map.prototype.setOptions,
+            useMapGeometry: true,
+            translate: function (
+                this: Highcharts.MapBubbleSeries
+            ): void {
+                seriesTypes.mappoint.prototype.translate.call(this);
+
+                const zExtremes = this.getZExtremes();
+                if (zExtremes) {
+                    this.getRadii(zExtremes.zMin, zExtremes.zMax, this);
+                    this.translateBubble();
+                }
+            }
 
             // Point class
         }, {

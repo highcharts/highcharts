@@ -153,13 +153,23 @@ if (seriesTypes.bubble) {
     }, {
         xyFromShape: true,
         type: 'mapbubble',
+        axisTypes: ['colorAxis'],
         // If one single value is passed, it is interpreted as z
         pointArrayMap: ['z'],
         // Return the map area identified by the dataJoinBy option
         getMapData: seriesTypes.map.prototype.getMapData,
         getBox: seriesTypes.map.prototype.getBox,
         setData: seriesTypes.map.prototype.setData,
-        setOptions: seriesTypes.map.prototype.setOptions
+        setOptions: seriesTypes.map.prototype.setOptions,
+        useMapGeometry: true,
+        translate: function () {
+            seriesTypes.mappoint.prototype.translate.call(this);
+            var zExtremes = this.getZExtremes();
+            if (zExtremes) {
+                this.getRadii(zExtremes.zMin, zExtremes.zMax, this);
+                this.translateBubble();
+            }
+        }
         // Point class
     }, {
         applyOptions: function (options, x) {

@@ -670,7 +670,7 @@ var BubbleLegend = /** @class */ (function () {
      *         Calculated min and max bubble sizes
      */
     BubbleLegend.prototype.predictBubbleSizes = function () {
-        var chart = this.chart, fontMetrics = this.fontMetrics, legendOptions = chart.legend.options, floating = legendOptions.floating, horizontal = legendOptions.layout === 'horizontal', lastLineHeight = horizontal ? chart.legend.lastLineHeight : 0, plotSizeX = chart.plotSizeX, plotSizeY = chart.plotSizeY, bubbleSeries = chart.series[this.options.seriesIndex], minSize = Math.ceil(bubbleSeries.minPxSize), maxPxSize = Math.ceil(bubbleSeries.maxPxSize), maxSize = bubbleSeries.options.maxSize, plotSize = Math.min(plotSizeY, plotSizeX), calculatedSize;
+        var chart = this.chart, fontMetrics = this.fontMetrics, legendOptions = chart.legend.options, floating = legendOptions.floating, horizontal = legendOptions.layout === 'horizontal', lastLineHeight = horizontal ? chart.legend.lastLineHeight : 0, plotSizeX = chart.plotSizeX, plotSizeY = chart.plotSizeY, bubbleSeries = chart.series[this.options.seriesIndex], pxSizes = bubbleSeries.getPxExtremes(), minSize = Math.ceil(pxSizes.minPxSize), maxPxSize = Math.ceil(pxSizes.maxPxSize), maxSize = bubbleSeries.options.maxSize, plotSize = Math.min(plotSizeY, plotSizeX), calculatedSize;
         // Calculate prediceted max size of bubble
         if (floating || !(/%$/.test(maxSize))) {
             calculatedSize = maxPxSize;
@@ -714,10 +714,10 @@ var BubbleLegend = /** @class */ (function () {
      * @return {void}
      */
     BubbleLegend.prototype.correctSizes = function () {
-        var legend = this.legend, chart = this.chart, bubbleSeries = chart.series[this.options.seriesIndex], bubbleSeriesSize = bubbleSeries.maxPxSize, bubbleLegendSize = this.options.maxSize;
+        var legend = this.legend, chart = this.chart, bubbleSeries = chart.series[this.options.seriesIndex], pxSizes = bubbleSeries.getPxExtremes(), bubbleSeriesSize = pxSizes.maxPxSize, bubbleLegendSize = this.options.maxSize;
         if (Math.abs(Math.ceil(bubbleSeriesSize) - bubbleLegendSize) >
             1) {
-            this.updateRanges(this.options.minSize, bubbleSeries.maxPxSize);
+            this.updateRanges(this.options.minSize, pxSizes.maxPxSize);
             legend.render();
         }
     };

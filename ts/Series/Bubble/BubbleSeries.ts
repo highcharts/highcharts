@@ -38,8 +38,6 @@ const {
 declare module '../../Core/Series/SeriesLike' {
     interface SeriesLike {
         bubblePadding?: Highcharts.BubbleSeries['bubblePadding'];
-        maxPxSize?: Highcharts.BubbleSeries['maxPxSize'];
-        minPxSize?: Highcharts.BubbleSeries['minPxSize'];
         specialGroup?: Highcharts.BubbleSeries['specialGroup'];
         zData?: Highcharts.BubbleSeries['zData'];
     }
@@ -64,8 +62,8 @@ declare global {
             public data: Array<BubblePoint>;
             public displayNegative: BubbleSeriesOptions['displayNegative'];
             public isBubble: true;
-            public maxPxSize: number;
-            public minPxSize: number;
+            // public maxPxSize: number;
+            // public minPxSize: number;
             public options: BubbleSeriesOptions;
             public pointClass: typeof BubblePoint;
             public points: Array<BubblePoint>;
@@ -90,12 +88,15 @@ declare global {
                 value: (number|null|undefined),
                 yValue?: (number|null|undefined)
             ): (number|null);
+            public getPxExtremes(): Highcharts.BubblePxExtremes
+            public getZExtremes(): Highcharts.BubbleZExtremes|undefined
             public hasData(): boolean;
             public pointAttribs(
                 point: BubblePoint,
                 state?: string
             ): SVGAttributes;
             public translate(): void;
+            public translateBubble(): void;
         }
         interface BubblePointMarkerOptions extends PointMarkerOptions {
             fillOpacity?: number;
@@ -114,7 +115,9 @@ declare global {
             zMin?: number;
             zThreshold?: number;
         }
+        type BubblePxExtremes = { minPxSize: number; maxPxSize: number };
         type BubbleSizeByValue = ('area'|'width');
+        type BubbleZExtremes = { zMin: number; zMax: number };
     }
 }
 
@@ -443,10 +446,10 @@ BaseSeries.seriesType<typeof Highcharts.BubbleSeries>('bubble', 'scatter', {
             i: number,
             zData = this.zData,
             yData = this.yData,
-            minSize = series.minPxSize,
-            maxSize = series.maxPxSize,
             radii = [] as Array<(number|null)>,
             value;
+
+        const { minPxSize, maxPxSize } = this.getPxExtremes();
 
         // Set the shape type and arguments to be picked up in drawPoints
         for (i = 0, len = zData.length; i < len; i++) {
@@ -455,8 +458,8 @@ BaseSeries.seriesType<typeof Highcharts.BubbleSeries>('bubble', 'scatter', {
             radii.push(this.getRadius(
                 zMin,
                 zMax,
-                minSize as any,
-                maxSize as any,
+                minPxSize,
+                maxPxSize,
                 value,
                 yData[i]
             ));
@@ -567,14 +570,20 @@ BaseSeries.seriesType<typeof Highcharts.BubbleSeries>('bubble', 'scatter', {
      */
     translate: function (this: Highcharts.BubbleSeries): void {
 
+        // Run the parent method
+        seriesTypes.scatter.prototype.translate.call(this);
+
+        this.translateBubble();
+    },
+
+    translateBubble: function (this: Highcharts.BubbleSeries): void {
         var i,
             data = this.data,
             point,
             radius,
             radii = this.radii;
 
-        // Run the parent method
-        seriesTypes.scatter.prototype.translate.call(this);
+        const { minPxSize } = this.getPxExtremes();
 
         // Set the shape type and arguments to be picked up in drawPoints
         i = data.length;
@@ -583,7 +592,7 @@ BaseSeries.seriesType<typeof Highcharts.BubbleSeries>('bubble', 'scatter', {
             point = data[i];
             radius = radii ? radii[i] : 0; // #1737
 
-            if (isNumber(radius) && radius >= this.minPxSize / 2) {
+            if (isNumber(radius) && radius >= minPxSize / 2) {
                 // Shape arguments
                 point.marker = extend(point.marker, {
                     radius: radius,
@@ -601,6 +610,61 @@ BaseSeries.seriesType<typeof Highcharts.BubbleSeries>('bubble', 'scatter', {
             } else { // below zThreshold
                 // #1691
                 point.shapeArgs = point.plotY = point.dlBox = void 0;
+            }
+        }
+
+    },
+
+    getPxExtremes: function (
+        this: Highcharts.BubbleSeries
+    ): Highcharts.BubblePxExtremes {
+        const smallestSize = Math.min(
+            this.chart.plotWidth,
+            this.chart.plotHeight
+        );
+
+        const getPxSize = (length: number|string): number => {
+            let isPercent;
+
+            if (typeof length === 'string') {
+                isPercent = /%$/.test(length);
+                length = parseInt(length, 10);
+            }
+            return isPercent ? smallestSize * length / 100 : length;
+        };
+
+        const minPxSize = getPxSize(pick(this.options.minSize, 8));
+        // Prioritize min size if conflict to make sure bubbles are
+        // always visible. #5873
+        const maxPxSize = Math.max(
+            getPxSize(pick(this.options.maxSize, '20%')),
+            minPxSize
+        );
+
+        return { minPxSize, maxPxSize };
+    },
+
+    getZExtremes: function (
+        this: Highcharts.BubbleSeries
+    ): Highcharts.BubbleZExtremes|undefined {
+
+        const zData = (this.zData || []).filter(isNumber);
+        if (zData.length) {
+            const zMin = pick(
+                this.options.zMin, Math.min(
+                    arrayMin(zData),
+                    this.options.displayNegative === false ?
+                        (this.options.zThreshold || 0) :
+                        Number.MAX_VALUE
+                )
+            );
+            const zMax = pick(
+                this.options.zMax,
+                arrayMax(zData)
+            );
+
+            if (isNumber(zMin) && isNumber(zMax)) {
+                return { zMin, zMax };
             }
         }
     },
@@ -663,6 +727,7 @@ Axis.prototype.beforePadding = function (this: Highcharts.Axis): void {
 
             if (isXAxis) { // because X axis is evaluated first
 
+                /*
                 // For each series, translate the size extremes to pixel values
                 ['minSize', 'maxSize'].forEach(function (prop: string): void {
                     var length = (seriesOptions as any)[prop],
@@ -678,8 +743,10 @@ Axis.prototype.beforePadding = function (this: Highcharts.Axis): void {
                 // Prioritize min size if conflict to make sure bubbles are
                 // always visible. #5873
                 series.maxPxSize = Math.max(extremes.maxSize, extremes.minSize);
+                */
 
                 // Find the min and max Z
+                /*
                 zData = (series.zData as any).filter(isNumber);
                 if (zData.length) { // #1735
                     zMin = pick(seriesOptions.zMin, clamp(
@@ -693,6 +760,12 @@ Axis.prototype.beforePadding = function (this: Highcharts.Axis): void {
                         seriesOptions.zMax,
                         Math.max(zMax, arrayMax(zData))
                     );
+                }
+                */
+                const zExtremes = (series as any).getZExtremes();
+                if (zExtremes) {
+                    zMin = Math.min(zMin || zExtremes.zMin, zExtremes.zMin);
+                    zMax = Math.max(zMax || zExtremes.zMax, zExtremes.zMax);
                 }
             }
         }
