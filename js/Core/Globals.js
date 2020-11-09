@@ -40,8 +40,10 @@ checkPassiveEvents = function () {
                 supportsPassive = true;
             }
         });
-        glob.addEventListener('testPassive', noop, opts);
-        glob.removeEventListener('testPassive', noop, opts);
+        if (glob.addEventListener && glob.removeEventListener) {
+            glob.addEventListener('testPassive', noop, opts);
+            glob.removeEventListener('testPassive', noop, opts);
+        }
     }
     return supportsPassive;
 };
