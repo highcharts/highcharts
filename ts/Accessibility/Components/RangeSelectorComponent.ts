@@ -66,7 +66,7 @@ declare global {
             ): number;
             public onInputNavInit(direction: number): void;
             public onInputNavTerminate(): void;
-            public setRangeButtonAttrs(button: SVGElement): void;
+            public setRangeButtonAttrs(button: SVGElement, buttonOptions: RangeSelectorButtonsOptions): void;
             public setRangeInputAttrs(
                 input: HTMLDOMElement,
                 langKey: string
@@ -162,20 +162,18 @@ extend(RangeSelectorComponent.prototype, /** @lends Highcharts.RangeSelectorComp
      * Called on first render/updates to the chart, including options changes.
      */
     onChartUpdate: function (this: Highcharts.RangeSelectorComponent): void {
-        var chart = this.chart,
+        const chart = this.chart,
             component = this,
             rangeSelector = chart.rangeSelector;
 
         if (!rangeSelector) {
             return;
         }
-
-        if (rangeSelector.buttons && rangeSelector.buttons.length) {
-            rangeSelector.buttons.forEach(function (
-                button: Highcharts.SVGElement
-            ): void {
+        if (rangeSelector.buttons?.length) {
+            rangeSelector.buttons.forEach((button, ix): void => {
+                const btnOptions = rangeSelector.buttonOptions[ix];
                 unhideChartElementFromAT(chart, button.element);
-                component.setRangeButtonAttrs(button);
+                component.setRangeButtonAttrs(button, btnOptions);
             });
         }
 
@@ -205,14 +203,15 @@ extend(RangeSelectorComponent.prototype, /** @lends Highcharts.RangeSelectorComp
      */
     setRangeButtonAttrs: function (
         this: Highcharts.RangeSelectorComponent,
-        button: Highcharts.SVGElement
+        button: Highcharts.SVGElement,
+        buttonOptions: Highcharts.RangeSelectorButtonsOptions
     ): void {
         var chart = this.chart,
             label = chart.langFormat(
                 'accessibility.rangeSelector.buttonText',
                 {
                     chart: chart,
-                    buttonText: button.text && button.text.textStr
+                    buttonText: buttonOptions.description || buttonOptions.text
                 }
             );
 

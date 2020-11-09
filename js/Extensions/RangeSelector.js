@@ -80,22 +80,27 @@ extend(defaultOptions, {
          * buttons: [{
          *     type: 'month',
          *     count: 1,
-         *     text: '1m'
+         *     text: '1m',
+         *     description: '1 month'
          * }, {
          *     type: 'month',
          *     count: 3,
-         *     text: '3m'
+         *     text: '3m',
+         *     description: '3 months'
          * }, {
          *     type: 'month',
          *     count: 6,
-         *     text: '6m'
+         *     text: '6m',
+         *     description: '6 months'
          * }, {
          *     type: 'ytd',
-         *     text: 'YTD'
+         *     text: 'YTD',
+         *     description: 'Year to Date'
          * }, {
          *     type: 'year',
          *     count: 1,
-         *     text: '1y'
+         *     text: '1y',
+         *     description: '1 year'
          * }, {
          *     type: 'all',
          *     text: 'All'
@@ -189,6 +194,13 @@ extend(defaultOptions, {
          *
          * @type      {string}
          * @apioption rangeSelector.buttons.text
+         */
+        /**
+         * Non-abbreviated version of the button range, used by assistive
+         * technology such as screen readers.
+         *
+         * @type      {string}
+         * @apioption rangeSelector.buttons.description
          */
         /**
          * Defined the time span for the button. Can be one of `millisecond`,
@@ -1421,22 +1433,27 @@ var RangeSelector = /** @class */ (function () {
 RangeSelector.prototype.defaultButtons = [{
         type: 'month',
         count: 1,
-        text: '1m'
+        text: '1m',
+        description: '1 month'
     }, {
         type: 'month',
         count: 3,
-        text: '3m'
+        text: '3m',
+        description: '3 months'
     }, {
         type: 'month',
         count: 6,
-        text: '6m'
+        text: '6m',
+        description: '6 months'
     }, {
         type: 'ytd',
-        text: 'YTD'
+        text: 'YTD',
+        description: 'Year to Date'
     }, {
         type: 'year',
         count: 1,
-        text: '1y'
+        text: '1y',
+        description: '1 year'
     }, {
         type: 'all',
         text: 'All'
