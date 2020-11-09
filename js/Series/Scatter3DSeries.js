@@ -9,12 +9,13 @@
  *  !!!!!!! SOURCE GETS TRANSPILED BY TYPESCRIPT. EDIT TS FILE ONLY. !!!!!!!
  *
  * */
+'use strict';
 import BaseSeries from '../Core/Series/Series.js';
 var seriesTypes = BaseSeries.seriesTypes;
 import Math3D from '../Extensions/Math3D.js';
 var pointCameraDistance = Math3D.pointCameraDistance;
 import Point from '../Core/Series/Point.js';
-import './ScatterSeries.js';
+import './Scatter/ScatterSeries.js';
 /**
  * @private
  * @class

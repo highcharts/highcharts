@@ -54,7 +54,7 @@ declare global {
     }
 }
 
-const mainCanvas = doc.createElement('canvas');
+let mainCanvas: HTMLCanvasElement|undefined;
 
 /**
  * Create a canvas + context and attach it to the target
@@ -97,6 +97,10 @@ function createAndAttachRenderer(
     // As such, we force the Image fallback for now, but leaving the
     // actual Canvas path in-place in case this changes in the future.
     foSupported = false;
+
+    if (!mainCanvas) {
+        mainCanvas = doc.createElement('canvas');
+    }
 
     if (!target.renderTarget) {
         target.canvas = mainCanvas;

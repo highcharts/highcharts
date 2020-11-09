@@ -22,9 +22,6 @@ Gulp.registry(new GulpForwardReference());
         gulpTask => require('./tools/gulptasks/' + gulpTask)
     );
 }([
-    'common',
-    'common-browserify',
-    'common-webpack',
     'dist',
     'dist-ant',
     'dist-api',

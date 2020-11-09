@@ -11,6 +11,10 @@
 'use strict';
 
 import type ColorType from '../Core/Color/ColorType';
+import type ScatterPoint from './Scatter/ScatterPoint';
+import type ScatterPointOptions from './Scatter/ScatterPointOptions';
+import type ScatterSeries from './Scatter/ScatterSeries';
+import type ScatterSeriesOptions from './Scatter/ScatterSeriesOptions';
 import type { SeriesStatesOptions } from '../Core/Series/SeriesOptions';
 import type SVGPath from '../Core/Renderer/SVG/SVGPath';
 import BaseSeries from '../Core/Series/Series.js';
@@ -59,7 +63,7 @@ declare module '../Core/Series/SeriesType' {
 
 import '../Core/Options.js';
 import '../Core/Legend.js';
-import './ScatterSeries.js';
+import './Scatter/ScatterSeries.js';
 
 /**
  * A polygon series can be used to draw any freeform shape in the cartesian

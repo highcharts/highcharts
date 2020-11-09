@@ -14,7 +14,12 @@ import type AnimationOptionsObject from '../Core/Animation/AnimationOptionsObjec
 import type ColorAxis from '../Core/Axis/ColorAxis';
 import type ColorType from '../Core/Color/ColorType';
 import type ColumnSeries from './Column/ColumnSeries';
+import type DataExtremesObject from '../Core/Series/DataExtremesObject';
 import type { PointStateHoverOptions } from '../Core/Series/PointOptions';
+import type ScatterPoint from './Scatter/ScatterPoint';
+import type ScatterPointOptions from './Scatter/ScatterPointOptions';
+import type ScatterSeries from './Scatter/ScatterSeries';
+import type ScatterSeriesOptions from './Scatter/ScatterSeriesOptions';
 import type {
     SeriesOptions,
     SeriesStatesOptions
@@ -773,7 +778,7 @@ BaseSeries.seriesType<typeof Highcharts.HeatmapSeries>(
          */
         getExtremes: function (
             this: Highcharts.HeatmapSeries
-        ): Highcharts.DataExtremesObject {
+        ): DataExtremesObject {
             // Get the extremes from the value data
             const { dataMin, dataMax } = LineSeries.prototype.getExtremes
                 .call(this, this.valueData);

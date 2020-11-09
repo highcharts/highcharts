@@ -26,6 +26,10 @@
 import type Chart from '../Core/Chart/Chart';
 import type DashStyleValue from '../Core/Renderer/DashStyleValue';
 import type PositionObject from '../Core/Renderer/PositionObject';
+import type ScatterPoint from './Scatter/ScatterPoint';
+import type ScatterPointOptions from './Scatter/ScatterPointOptions';
+import type ScatterSeries from './Scatter/ScatterSeries';
+import type ScatterSeriesOptions from './Scatter/ScatterSeriesOptions';
 import type { SeriesStatesOptions } from '../Core/Series/SeriesOptions';
 import type SVGAttributes from '../Core/Renderer/SVG/SVGAttributes';
 import type SVGElement from '../Core/Renderer/SVG/SVGElement';
@@ -68,7 +72,7 @@ const {
     merge
 } = U;
 
-import './ScatterSeries.js';
+import './Scatter/ScatterSeries.js';
 
 /* *
  *

@@ -17,6 +17,7 @@ import type ColumnPoint from './Column/ColumnPoint';
 import type ColumnPointOptions from './Column/ColumnPointOptions';
 import type ColumnSeries from './Column/ColumnSeries';
 import type ColumnSeriesOptions from './Column/ColumnSeriesOptions';
+import type DataExtremesObject from '../Core/Series/DataExtremesObject';
 import type { SeriesStatesOptions } from '../Core/Series/SeriesOptions';
 import type { StatesOptionsKey } from '../Core/Series/StatesOptions';
 import type SVGAttributes from '../Core/Renderer/SVG/SVGAttributes';
@@ -493,7 +494,7 @@ BaseSeries.seriesType<typeof Highcharts.WindbarbSeries>('windbarb', 'column'
         invertGroups: noop as any,
 
         // No data extremes for the Y axis
-        getExtremes: (): Highcharts.DataExtremesObject => ({})
+        getExtremes: (): DataExtremesObject => ({})
     }, {
         isValid: function (this: Highcharts.WindbarbPoint): boolean {
             return isNumber(this.value) && this.value >= 0;

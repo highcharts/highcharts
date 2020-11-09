@@ -15,6 +15,7 @@ import type ColumnPoint from './Column/ColumnPoint';
 import type ColumnPointOptions from './Column/ColumnPointOptions';
 import type ColumnSeries from './Column/ColumnSeries';
 import type ColumnSeriesOptions from './Column/ColumnSeriesOptions';
+import type DataExtremesObject from '../Core/Series/DataExtremesObject';
 import type { SeriesStatesOptions } from '../Core/Series/SeriesOptions';
 import type { StatesOptionsKey } from '../Core/Series/StatesOptions';
 import type SVGAttributes from '../Core/Renderer/SVG/SVGAttributes';
@@ -1122,7 +1123,7 @@ BaseSeries.seriesType<typeof Highcharts.WaterfallSeries>('waterfall', 'column', 
     // In case of stacking, use Series.stackedYData to calculate extremes.
     getExtremes: function (
         this: Highcharts.WaterfallSeries
-    ): Highcharts.DataExtremesObject {
+    ): DataExtremesObject {
         var stacking = this.options.stacking,
             yAxis,
             waterfallStacks,

@@ -16,7 +16,7 @@ import H from '../../Core/Globals.js';
 var doc = H.doc;
 import U from '../../Core/Utilities.js';
 var error = U.error;
-var mainCanvas = doc.createElement('canvas');
+var mainCanvas;
 /**
  * Create a canvas + context and attach it to the target
  *
@@ -46,6 +46,9 @@ function createAndAttachRenderer(chart, series) {
     // As such, we force the Image fallback for now, but leaving the
     // actual Canvas path in-place in case this changes in the future.
     foSupported = false;
+    if (!mainCanvas) {
+        mainCanvas = doc.createElement('canvas');
+    }
     if (!target.renderTarget) {
         target.canvas = mainCanvas;
         // Fall back to image tag if foreignObject isn't supported,

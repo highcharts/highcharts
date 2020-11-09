@@ -10,6 +10,18 @@
  *
  * */
 
+'use strict';
+
+/* *
+ *
+ *  Imports
+ *
+ * */
+
+import type ScatterPoint from './Scatter/ScatterPoint';
+import type ScatterPointOptions from './Scatter/ScatterPointOptions';
+import type ScatterSeries from './Scatter/ScatterSeries';
+import type ScatterSeriesOptions from './Scatter/ScatterSeriesOptions';
 import type SVGAttributes from '../Core/Renderer/SVG/SVGAttributes';
 import BaseSeries from '../Core/Series/Series.js';
 const { seriesTypes } = BaseSeries;
@@ -51,7 +63,7 @@ declare module '../Core/Series/SeriesType' {
     }
 }
 
-import './ScatterSeries.js';
+import './Scatter/ScatterSeries.js';
 
 /**
  * @private

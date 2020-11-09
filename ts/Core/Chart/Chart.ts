@@ -449,7 +449,7 @@ class Chart {
              */
             chart.index = charts.length; // Add the chart to the global lookup
 
-            charts.push(chart as any);
+            charts.push(chart);
             H.chartCount++;
 
             // Chart event handlers

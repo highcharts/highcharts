@@ -1390,10 +1390,10 @@ var Pointer = /** @class */ (function () {
             H.unbindDocumentMouseUp = addEvent(ownerDoc, 'mouseup', this.onDocumentMouseUp.bind(this));
         }
         if (H.hasTouch) {
-            addEvent(container, 'touchstart', this.onContainerTouchStart.bind(this));
-            addEvent(container, 'touchmove', this.onContainerTouchMove.bind(this));
+            addEvent(container, 'touchstart', this.onContainerTouchStart.bind(this), { passive: false });
+            addEvent(container, 'touchmove', this.onContainerTouchMove.bind(this), { passive: false });
             if (!H.unbindDocumentTouchEnd) {
-                H.unbindDocumentTouchEnd = addEvent(ownerDoc, 'touchend', this.onDocumentTouchEnd.bind(this));
+                H.unbindDocumentTouchEnd = addEvent(ownerDoc, 'touchend', this.onDocumentTouchEnd.bind(this), { passive: false });
             }
         }
     };

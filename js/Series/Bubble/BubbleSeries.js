@@ -19,7 +19,7 @@ import LineSeries from '../Line/LineSeries.js';
 import Point from '../../Core/Series/Point.js';
 import U from '../../Core/Utilities.js';
 var arrayMax = U.arrayMax, arrayMin = U.arrayMin, clamp = U.clamp, extend = U.extend, isNumber = U.isNumber, pick = U.pick, pInt = U.pInt;
-import '../ScatterSeries.js';
+import '../Scatter/ScatterSeries.js';
 import './BubbleLegend.js';
 /**
  * @typedef {"area"|"width"} Highcharts.BubbleSizeByValue

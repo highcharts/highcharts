@@ -25,11 +25,9 @@ declare global {
     }
 }
 
-var win = Highcharts.win,
-    nav = win.navigator,
+const win = Highcharts.win,
     doc = win.document,
-    domurl = win.URL || win.webkitURL || win,
-    isEdgeBrowser = /Edge\/\d+/.test(nav.userAgent);
+    domurl = win.URL || win.webkitURL || win;
 
 /**
  * Convert base64 dataURL to Blob if supported, otherwise returns undefined.
@@ -85,6 +83,7 @@ const downloadURL = Highcharts.downloadURL = function (
     dataURL: (string|URL),
     filename: string
 ): void {
+    const nav = win.navigator;
     var a = doc.createElement('a'),
         windowRef;
 
@@ -102,6 +101,7 @@ const downloadURL = Highcharts.downloadURL = function (
 
     // Some browsers have limitations for data URL lengths. Try to convert to
     // Blob or fall back. Edge always needs that blob.
+    const isEdgeBrowser = /Edge\/\d+/.test(nav.userAgent);
     if (isEdgeBrowser || dataURL.length > 2000000) {
         dataURL = dataURLtoBlob(dataURL) || '';
         if (!dataURL) {

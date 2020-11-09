@@ -399,7 +399,8 @@ class NavigationBindings {
                     addEvent(
                         navigation,
                         eventName,
-                        callback
+                        callback,
+                        { passive: false }
                     )
                 );
             }
@@ -426,7 +427,7 @@ class NavigationBindings {
                 e: PointerEvent
             ): void {
                 navigation.bindingsContainerMouseMove(this, e);
-            })
+            }, H.isTouchDevice ? { passive: false } : void 0)
         );
     }
 

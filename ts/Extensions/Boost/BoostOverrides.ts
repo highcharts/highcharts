@@ -13,6 +13,7 @@
 'use strict';
 
 import type BBoxObject from '../../Core/Renderer/BBoxObject';
+import type DataExtremesObject from '../../Core/Series/DataExtremesObject';
 import type {
     PointOptions,
     PointShortOptions
@@ -309,7 +310,7 @@ addEvent(LineSeries, 'destroy', function (): void {
 wrap(LineSeries.prototype, 'getExtremes', function (
     this: LineSeries,
     proceed: Function
-): Highcharts.DataExtremesObject {
+): DataExtremesObject {
     if (!this.isSeriesBoosting || (!this.hasExtremes || !this.hasExtremes())) {
         return proceed.apply(this, Array.prototype.slice.call(arguments, 1));
     }

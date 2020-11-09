@@ -12,6 +12,10 @@
 
 import type ColumnSeries from '../Column/ColumnSeries';
 import type { PointMarkerOptions } from '../../Core/Series/PointOptions';
+import type ScatterPoint from '../Scatter/ScatterPoint';
+import type ScatterPointOptions from '../Scatter/ScatterPointOptions';
+import type ScatterSeries from '../Scatter/ScatterSeries';
+import type ScatterSeriesOptions from '../Scatter/ScatterSeriesOptions';
 import type { StatesOptionsKey } from '../../Core/Series/StatesOptions';
 import type SVGAttributes from '../../Core/Renderer/SVG/SVGAttributes';
 import type SVGPath from '../../Core/Renderer/SVG/SVGPath';
@@ -128,7 +132,7 @@ declare module '../../Core/Series/SeriesType' {
     }
 }
 
-import '../ScatterSeries.js';
+import '../Scatter/ScatterSeries.js';
 import './BubbleLegend.js';
 
 /**

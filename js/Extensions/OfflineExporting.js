@@ -18,9 +18,9 @@ import U from '../Core/Utilities.js';
 var addEvent = U.addEvent, error = U.error, extend = U.extend, getOptions = U.getOptions, merge = U.merge;
 import DownloadURL from '../Extensions/DownloadURL.js';
 var downloadURL = DownloadURL.downloadURL;
-var domurl = win.URL || win.webkitURL || win, nav = win.navigator, isMSBrowser = /Edge\/|Trident\/|MSIE /.test(nav.userAgent), 
+var domurl = win.URL || win.webkitURL || win, 
 // Milliseconds to defer image load event handlers to offset IE bug
-loadEventDeferDelay = isMSBrowser ? 150 : 0;
+loadEventDeferDelay = H.isMS ? 150 : 0;
 // Dummy object so we can reuse our canvas-tools.js without errors
 H.CanVGRenderer = {};
 /* eslint-disable valid-jsdoc */
@@ -53,13 +53,14 @@ function getScript(scriptLocation, callback) {
  */
 function svgToDataUrl(svg) {
     // Webkit and not chrome
-    var webKit = (nav.userAgent.indexOf('WebKit') > -1 &&
-        nav.userAgent.indexOf('Chrome') < 0);
+    var userAgent = win.navigator.userAgent;
+    var webKit = (userAgent.indexOf('WebKit') > -1 &&
+        userAgent.indexOf('Chrome') < 0);
     try {
         // Safari requires data URI since it doesn't allow navigation to blob
         // URLs. Firefox has an issue with Blobs and internal references,
         // leading to gradients not working using Blobs (#4550)
-        if (!webKit && nav.userAgent.toLowerCase().indexOf('firefox') < 0) {
+        if (!webKit && !H.isFirefox) {
             return domurl.createObjectURL(new win.Blob([svg], {
                 type: 'image/svg+xml;charset-utf-16'
             }));
@@ -267,7 +268,7 @@ function downloadSVGLocal(svg, options, failCallback, successCallback) {
         // SVG download. In this case, we want to use Microsoft specific Blob if
         // available
         try {
-            if (typeof nav.msSaveOrOpenBlob !== 'undefined') {
+            if (typeof win.navigator.msSaveOrOpenBlob !== 'undefined') {
                 blob = new MSBlobBuilder();
                 blob.append(svg);
                 svgurl = blob.getBlob('image/svg+xml');
@@ -329,7 +330,7 @@ function downloadSVGLocal(svg, options, failCallback, successCallback) {
             var canvas = doc.createElement('canvas'), ctx = canvas.getContext('2d'), imageWidth = svg.match(/^<svg[^>]*width\s*=\s*\"?(\d+)\"?[^>]*>/)[1] * scale, imageHeight = svg.match(/^<svg[^>]*height\s*=\s*\"?(\d+)\"?[^>]*>/)[1] * scale, downloadWithCanVG = function () {
                 ctx.drawSvg(svg, 0, 0, imageWidth, imageHeight);
                 try {
-                    downloadURL(nav.msSaveOrOpenBlob ?
+                    downloadURL(win.navigator.msSaveOrOpenBlob ?
                         canvas.msToBlob() :
                         canvas.toDataURL(imageType), filename);
                     if (successCallback) {
@@ -508,7 +509,7 @@ Chart.prototype.exportChartLocal = function (exportingOptions, chartOptions) {
     // If we are on IE and in styled mode, add a whitelist to the renderer for
     // inline styles that we want to pass through. There are so many styles by
     // default in IE that we don't want to blacklist them all.
-    if (isMSBrowser && chart.styledMode) {
+    if (H.isMS && chart.styledMode) {
         SVGRenderer.prototype.inlineWhitelist = [
             /^blockSize/,
             /^border/,
@@ -543,7 +544,7 @@ Chart.prototype.exportChartLocal = function (exportingOptions, chartOptions) {
     // Always fall back on:
     // - MS browsers: Embedded images JPEG/PNG, or any PDF
     // - Embedded images and PDF
-    if ((isMSBrowser &&
+    if ((H.isMS &&
         (options.type === 'application/pdf' ||
             chart.container.getElementsByTagName('image').length &&
                 options.type !== 'image/svg+xml')) || (options.type === 'application/pdf' &&
