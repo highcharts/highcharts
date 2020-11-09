@@ -919,6 +919,7 @@ var RangeSelector = /** @class */ (function () {
                 if (!isNumber(value)) {
                     value = inputValue.split('-');
                     value = Date.UTC(pInt(value[0]), pInt(value[1]) - 1, pInt(value[2]));
+                    value += (chart.time.timezoneOffset || 0) * 60 * 1000;
                 }
                 if (isNumber(value)) {
                     // Correct for timezone offset (#433)

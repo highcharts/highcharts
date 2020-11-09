@@ -1332,6 +1332,7 @@ class RangeSelector {
                         pInt((value as any)[1]) - 1,
                         pInt((value as any)[2])
                     );
+                    value += (chart.time.timezoneOffset || 0) * 60 * 1000;
                 }
 
                 if (isNumber(value)) {
