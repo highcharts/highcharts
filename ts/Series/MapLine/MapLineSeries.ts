@@ -16,38 +16,17 @@
  *
  * */
 
-import type ColorType from '../../Core/Color/ColorType';
-import type MapPointOptions from '../Map/MapPointOptions';
-import type MapSeriesOptions from '../Map/MapSeriesOptions';
-import type { SeriesStatesOptions } from '../../Core/Series/SeriesOptions';
+import type MapLineSeriesOptions from './MapLineSeriesOptions';
 import type { StatesOptionsKey } from '../../Core/Series/StatesOptions';
 import type SVGAttributes from '../../Core/Renderer/SVG/SVGAttributes';
 import BaseSeries from '../../Core/Series/Series.js';
+import MapLinePoint from './MapLinePoint.js';
 import MapSeries from '../Map/MapSeries.js';
 import U from '../../Core/Utilities.js';
 const {
     extend,
     merge
 } = U;
-
-/**
- * Internal types
- * @private
- */
-declare global {
-    namespace Highcharts {
-        class MapLinePoint extends MapPoint {
-            public options: MapLinePointOptions;
-            public series: MapLineSeries;
-        }
-        interface MapLinePointOptions extends MapPointOptions {
-        }
-        interface MapLineSeriesOptions extends MapSeriesOptions {
-            fillColor?: ColorType;
-            states?: SeriesStatesOptions<MapLineSeries>;
-        }
-    }
-}
 
 /* *
  *
@@ -82,7 +61,7 @@ class MapLineSeries extends MapSeries {
      * @product      highmaps
      * @optionparent plotOptions.mapline
      */
-    public static defaultOptions: Highcharts.MapLineSeriesOptions = merge(MapSeries.defaultOptions, {
+    public static defaultOptions: MapLineSeriesOptions = merge(MapSeries.defaultOptions, {
         /**
          * The width of the map line.
          */
@@ -94,7 +73,7 @@ class MapLineSeries extends MapSeries {
          * @type {Highcharts.ColorString|Highcharts.GradientColorObject|Highcharts.PatternObject}
          */
         fillColor: 'none'
-    } as Highcharts.MapLineSeriesOptions);
+    } as MapLineSeriesOptions);
 
     /* *
      *
@@ -102,11 +81,11 @@ class MapLineSeries extends MapSeries {
      *
      * */
 
-    public data: Array<Highcharts.MapLinePoint> = void 0 as any;
+    public data: Array<MapLinePoint> = void 0 as any;
 
-    public options: Highcharts.MapLineSeriesOptions = void 0 as any;
+    public options: MapLineSeriesOptions = void 0 as any;
 
-    public points: Array<Highcharts.MapLinePoint> = void 0 as any;
+    public points: Array<MapLinePoint> = void 0 as any;
 
     /* *
      *
@@ -126,7 +105,7 @@ class MapLineSeries extends MapSeries {
      * @return {Highcharts.SVGAttributes}
      */
     public pointAttribs(
-        point: Highcharts.MapLinePoint,
+        point: MapLinePoint,
         state: StatesOptionsKey
     ): SVGAttributes {
         var attr = MapSeries.prototype.pointAttribs.call(
@@ -155,7 +134,7 @@ class MapLineSeries extends MapSeries {
 interface MapLineSeries {
     colorProp: string;
     pointAttrToOptions: Record<string, string>;
-    pointClass: typeof Highcharts.MapLinePoint;
+    pointClass: typeof MapLinePoint;
 }
 extend(MapLineSeries.prototype, {
 
