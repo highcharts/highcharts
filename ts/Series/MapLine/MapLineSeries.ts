@@ -16,11 +16,16 @@
  *
  * */
 
+import type MapLinePoint from './MapLinePoint.js';
 import type MapLineSeriesOptions from './MapLineSeriesOptions';
 import type { StatesOptionsKey } from '../../Core/Series/StatesOptions';
 import type SVGAttributes from '../../Core/Renderer/SVG/SVGAttributes';
 import BaseSeries from '../../Core/Series/Series.js';
-import MapLinePoint from './MapLinePoint.js';
+const {
+    seriesTypes: {
+        line: LineSeries
+    }
+} = BaseSeries;
 import MapSeries from '../Map/MapSeries.js';
 import U from '../../Core/Utilities.js';
 const {
@@ -141,6 +146,8 @@ extend(MapLineSeries.prototype, {
     type: 'mapline',
 
     colorProp: 'stroke',
+
+    drawLegendSymbol: LineSeries.prototype.drawLegendSymbol,
 
     pointAttrToOptions: {
         'stroke': 'color',

@@ -22,6 +22,7 @@ var __extends = (this && this.__extends) || (function () {
     };
 })();
 import BaseSeries from '../../Core/Series/Series.js';
+var LineSeries = BaseSeries.seriesTypes.line;
 import MapSeries from '../Map/MapSeries.js';
 import U from '../../Core/Utilities.js';
 var extend = U.extend, merge = U.merge;
@@ -108,6 +109,7 @@ var MapLineSeries = /** @class */ (function (_super) {
 extend(MapLineSeries.prototype, {
     type: 'mapline',
     colorProp: 'stroke',
+    drawLegendSymbol: LineSeries.prototype.drawLegendSymbol,
     pointAttrToOptions: {
         'stroke': 'color',
         'stroke-width': 'lineWidth'
