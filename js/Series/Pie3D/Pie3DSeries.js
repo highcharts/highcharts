@@ -24,10 +24,10 @@ var __extends = (this && this.__extends) || (function () {
     };
 })();
 import BaseSeries from '../../Core/Series/Series.js';
+var PieSeries = BaseSeries.seriesTypes.pie;
 import H from '../../Core/Globals.js';
 var deg2rad = H.deg2rad, svg = H.svg;
 import Pie3DPoint from './Pie3DPoint.js';
-import PieSeries from '../Pie/PieSeries.js';
 import U from '../../Core/Utilities.js';
 var extend = U.extend, pick = U.pick;
 /* *

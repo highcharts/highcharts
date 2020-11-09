@@ -28,13 +28,17 @@ import type PositionObject from '../../Core/Renderer/PositionObject';
 import type { StatesOptionsKey } from '../../Core/Series/StatesOptions';
 import type SVGAttributes from '../../Core/Renderer/SVG/SVGAttributes';
 import BaseSeries from '../../Core/Series/Series.js';
+const {
+    seriesTypes: {
+        pie: PieSeries
+    }
+} = BaseSeries;
 import H from '../../Core/Globals.js';
 const {
     deg2rad,
     svg
 } = H;
 import Pie3DPoint from './Pie3DPoint.js';
-import PieSeries from '../Pie/PieSeries.js';
 import U from '../../Core/Utilities.js';
 const {
     extend,
