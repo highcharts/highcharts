@@ -10,64 +10,35 @@
 
 'use strict';
 
-import type ScatterPoint from './Scatter/ScatterPoint';
-import type ScatterPointOptions from './Scatter/ScatterPointOptions';
-import type ScatterSeries from './Scatter/ScatterSeries';
-import type ScatterSeriesOptions from './Scatter/ScatterSeriesOptions';
-import type { SeriesStatesOptions } from '../Core/Series/SeriesOptions';
-import BaseSeries from '../Core/Series/Series.js';
-import LineSeries from './Line/LineSeries.js';
-import Point from '../Core/Series/Point.js';
-import U from '../Core/Utilities.js';
+/* *
+ *
+ *  Imports
+ *
+ * */
+
+import type MapPointSeriesOptions from './MapPointSeriesOptions';
+import BaseSeries from '../../Core/Series/Series.js';
 const {
+    seriesTypes: {
+        scatter: ScatterSeries
+    }
+} = BaseSeries;
+import MapPointPoint from './MapPointPoint.js';
+import Point from '../../Core/Series/Point.js';
+import U from '../../Core/Utilities.js';
+const {
+    extend,
     merge
 } = U;
 
-/**
- * Internal types
- * @private
- */
-declare global {
-    namespace Highcharts {
-        class MapPointPoint extends ScatterPoint {
-            public options: MapPointPointOptions;
-            public series: MapPointSeries;
-        }
-        class MapPointSeries extends ScatterSeries {
-            public data: Array<MapPointPoint>;
-            public forceDL: boolean;
-            public options: MapPointSeriesOptions;
-            public pointClass: typeof MapPointPoint;
-            public points: Array<MapPointPoint>;
-            public type: string;
-            public applyOptions(
-                options: (MapLatLonObject&MapPointPointOptions),
-                x?: number
-            ): MapPointPoint
-        }
-        interface MapPointPointOptions extends ScatterPointOptions {
-            lat?: number;
-            lon?: number;
-            x?: number;
-            y?: (number|null);
-        }
-        interface MapPointSeriesOptions extends ScatterSeriesOptions {
-            states?: SeriesStatesOptions<MapPointSeries>;
-        }
-    }
-}
+import '../../Core/Options.js';
+import '../Scatter/ScatterSeries.js';
 
-/**
- * @private
- */
-declare module '../Core/Series/SeriesType' {
-    interface SeriesTypeRegistry {
-        mappoint: typeof Highcharts.MapPointSeries;
-    }
-}
-
-import '../Core/Options.js';
-import '../Series/Scatter/ScatterSeries.js';
+/* *
+ *
+ *  Class
+ *
+ * */
 
 /**
  * @private
@@ -76,9 +47,14 @@ import '../Series/Scatter/ScatterSeries.js';
  *
  * @augments Highcharts.Series
  */
-BaseSeries.seriesType<typeof Highcharts.MapPointSeries>(
-    'mappoint',
-    'scatter',
+class MapPointSeries extends ScatterSeries {
+
+    /* *
+     *
+     *  Static Properties
+     *
+     * */
+
     /**
      * A mappoint series is a special form of scatter series where the points
      * can be laid out in map coordinates on top of a map.
@@ -90,7 +66,7 @@ BaseSeries.seriesType<typeof Highcharts.MapPointSeries>(
      * @product      highmaps
      * @optionparent plotOptions.mappoint
      */
-    {
+    public static defaultOptions: MapPointSeriesOptions = merge(ScatterSeries.defaultOptions, {
         dataLabels: {
             crop: false,
             defer: false,
@@ -106,41 +82,80 @@ BaseSeries.seriesType<typeof Highcharts.MapPointSeries>(
                 color: '${palette.neutralColor100}'
             }
         }
-    // Prototype members
-    }, {
-        type: 'mappoint',
-        forceDL: true,
-        drawDataLabels: function (this: Highcharts.MapPointSeries): void {
-            LineSeries.prototype.drawDataLabels.call(this);
-            if (this.dataLabelsGroup) {
-                this.dataLabelsGroup.clip(this.chart.clipRect);
-            }
-        }
-    // Point class
-    }, {
-        applyOptions: function (
-            this: Highcharts.MapPointPoint,
-            options: (
-                Highcharts.MapLatLonObject&Highcharts.MapPointPointOptions
-            ),
-            x?: number
-        ): Highcharts.MapPointPoint {
-            var mergedOptions = (
-                typeof options.lat !== 'undefined' &&
-                typeof options.lon !== 'undefined' ?
-                    merge(
-                        options, this.series.chart.fromLatLonToPoint(options)
-                    ) :
-                    options
-            );
+    } as MapPointSeriesOptions);
 
-            return (
-                Point.prototype
-                    .applyOptions.call(this, mergedOptions, x) as any
-            );
+    /* *
+     *
+     *  Properties
+     *
+     * */
+
+    public data: Array<MapPointPoint> = void 0 as any;
+
+    public options: MapPointSeriesOptions = void 0 as any;
+
+    public points: Array<MapPointPoint> = void 0 as any;
+
+    /* *
+     *
+     *  Functions
+     *
+     * */
+
+    /* eslint-disable valid-jsdoc */
+
+    public drawDataLabels(): void {
+        super.drawDataLabels();
+        if (this.dataLabelsGroup) {
+            this.dataLabelsGroup.clip(this.chart.clipRect);
         }
     }
-);
+
+    /* eslint-enable valid-jsdoc */
+
+}
+
+/* *
+ *
+ *  Prototype Properties
+ *
+ * */
+
+interface MapPointSeries {
+    pointClass: typeof MapPointPoint;
+}
+extend(MapPointSeries.prototype, {
+    type: 'mappoint',
+    forceDL: true,
+    pointClass: MapPointPoint
+});
+
+/* *
+ *
+ *  Registry
+ *
+ * */
+
+declare module '../../Core/Series/SeriesType' {
+    interface SeriesTypeRegistry {
+        mappoint: typeof MapPointSeries;
+    }
+}
+BaseSeries.registerSeriesType('mappoint', MapPointSeries);
+
+/* *
+ *
+ *  Default Export
+ *
+ * */
+
+export default MapPointSeries;
+
+/* *
+ *
+ *  API Options
+ *
+ * */
 
 /**
  * A `mappoint` series. If the [type](#series.mappoint.type) option
