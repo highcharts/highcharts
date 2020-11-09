@@ -115,21 +115,31 @@ function shouldRunInputNavigation(chart: Chart): boolean {
 H.Chart.prototype.highlightRangeSelectorButton = function (
     ix: number
 ): boolean {
-    var buttons: Array<Highcharts.SVGElement> = (this.rangeSelector as any).buttons,
-        curSelectedIx = this.highlightedRangeSelectorItemIx;
+    const buttons: Array<Highcharts.SVGElement> = this.rangeSelector?.buttons || [];
+    const curHighlightedIx = this.highlightedRangeSelectorItemIx;
+    const curSelectedIx = this.rangeSelector?.selected;
 
     // Deselect old
-    if (typeof curSelectedIx !== 'undefined' && buttons[curSelectedIx]) {
-        buttons[curSelectedIx].setState(
+    if (
+        typeof curHighlightedIx !== 'undefined' &&
+        buttons[curHighlightedIx] &&
+        curHighlightedIx !== curSelectedIx
+    ) {
+        buttons[curHighlightedIx].setState(
             this.oldRangeSelectorItemState || 0
         );
     }
+
     // Select new
     this.highlightedRangeSelectorItemIx = ix;
     if (buttons[ix]) {
         this.setFocusToElement(buttons[ix].box, buttons[ix].element);
-        this.oldRangeSelectorItemState = buttons[ix].state;
-        buttons[ix].setState(2);
+
+        if (ix !== curSelectedIx) {
+            this.oldRangeSelectorItemState = buttons[ix].state;
+            buttons[ix].setState(1);
+        }
+
         return true;
     }
     return false;
