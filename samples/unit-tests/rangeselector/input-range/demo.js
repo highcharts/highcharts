@@ -334,19 +334,68 @@ QUnit.test('Set extremes on inputs blur (#4710)', function (assert) {
     );
 });
 
-QUnit.test('Range selector value on change should change properly (#13205)', function (assert) {
-    const now = new Date(),
-        year = now.getFullYear(),
-        month = (now.getMonth() < 9 ? '0' : '') + (now.getMonth() + 1),
-        day = (now.getDate() < 10 ? '0' : '') + now.getDate(),
-        date = `${year}-${month}-${day}T00:00:00.000`,
-        defaultInputDateParser = Highcharts.RangeSelector.prototype.defaultInputDateParser;
+QUnit.test('#13205: Timezone issues', assert => {
+    const chart = Highcharts.stockChart('container', {
+        rangeSelector: {
+            inputDateFormat: '%Y/%m/%d %H:%M:%S.%L',
+            inputBoxWidth: 170,
+            inputEditDateFormat: '%Y/%m/%d %H:%M:%S.%L'
+        },
+        xAxis: {
+            tickPixelInterval: 120
+        },
+        series: [{
+            name: 0,
+            data: [{
+                y: 50000000,
+                x: 1576886400000
+            }, {
+                y: 50000000,
+                x: 1577491200000
+            }, {
+                y: 50000000,
+                x: 1578096000000
+            }, {
+                y: 50000000,
+                x: 1578700800000
+            }, {
+                y: 26452797.5,
+                x: 1579305600000
+            }, {
+                y: 26477800,
+                x: 1579910400000
+            }, {
+                y: 50000000,
+                x: 1580515200000
+            }, {
+                y: 50000000,
+                x: 1581120000000
+            }, {
+                y: 50000000,
+                x: 1581724800000
+            }, {
+                y: 50000000,
+                x: 1582329600000
+            }, {
+                y: 50000000,
+                x: 1582934400000
+            }, {
+                y: 50000000,
+                x: 1583539200000
+            }, {
+                y: 50000000,
+                x: 1584144000000
+            }]
+        }]
+    });
 
-    assert.strictEqual(
-        0,
-        defaultInputDateParser(date, false) - defaultInputDateParser(date, true),
-        'Independently from use UTC being enabled or disabled, the function should return the same values.'
-    );
+    const min = chart.xAxis[0].min;
+
+    chart.rangeSelector.minInput.value = '2019/12/23 00:00:00.000';
+    chart.rangeSelector.minInput.onchange();
+    assert.strictEqual(chart.rangeSelector.minInput.value, '2019/12/23 00:00:00.000', 'The input value should not change');
+
+    assert.ok(chart.xAxis[0].min > min, 'Extremes should have been updated');
 });
 
 QUnit.test('#14416: Range selector ignored chart.time.timezoneOffset', assert => {
@@ -363,6 +412,16 @@ QUnit.test('#14416: Range selector ignored chart.time.timezoneOffset', assert =>
                 data: [1, 3, 2, 4, 3, 5, 4, 6, 3, 4, 2, 3, 1, 2, 1]
             }
         ]
+    });
+
+    chart.rangeSelector.minInput.value = '1970-01-10';
+    chart.rangeSelector.minInput.onchange();
+    assert.strictEqual(chart.rangeSelector.minInput.value, '1970-01-10', 'The input value should not change');
+
+    chart.update({
+        time: {
+            useUTC: false
+        }
     });
 
     chart.rangeSelector.minInput.value = '1970-01-10';

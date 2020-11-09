@@ -75,7 +75,7 @@ declare global {
             (e: Event): (boolean|undefined);
         }
         interface RangeSelectorParseCallbackFunction {
-            (value: string, useUTC: boolean): number;
+            (value: string, useUTC: boolean, time?: Time): number;
         }
         interface RangeSelectorButtonPositionOptions {
             align?: AlignValue;
@@ -1269,15 +1269,22 @@ class RangeSelector {
      * @private
      * @function Highcharts.RangeSelector#defaultInputDateParser
      */
-    public defaultInputDateParser(inputDate: string, useUTC: boolean): number {
-        var date = new Date();
+    public defaultInputDateParser(inputDate: string, useUTC: boolean, time?: Highcharts.Time): number {
+        let date;
+
         if (H.isSafari) {
-            return Date.parse(inputDate.split(' ').join('T'));
+            date = Date.parse(inputDate.split(' ').join('T'));
+        } else if (useUTC) {
+            date = Date.parse(inputDate + 'Z');
+        } else {
+            date = Date.parse(inputDate);
         }
-        if (useUTC) {
-            return Date.parse(inputDate + 'Z');
+
+        if (time && useUTC) {
+            date += time.getTimezoneOffset(date) * 60 * 1000;
         }
-        return Date.parse(inputDate) - date.getTimezoneOffset() * 60 * 1000;
+
+        return date;
     }
 
     /**
@@ -1317,8 +1324,7 @@ class RangeSelector {
                 dataMin = dataAxis.dataMin,
                 dataMax = dataAxis.dataMax;
 
-            value = (options.inputDateParser || defaultInputDateParser)(inputValue, chart.time.useUTC);
-            value += (chart.time.timezoneOffset || 0) * 60 * 1000; // #14416
+            value = (options.inputDateParser || defaultInputDateParser)(inputValue, chart.time.useUTC, chart.time);
 
             if (value !== input.previousValue) {
                 input.previousValue = value;
@@ -1332,17 +1338,10 @@ class RangeSelector {
                         pInt((value as any)[1]) - 1,
                         pInt((value as any)[2])
                     );
-                    value += (chart.time.timezoneOffset || 0) * 60 * 1000;
+                    value += chart.time.getTimezoneOffset(value) * 60 * 1000;
                 }
 
                 if (isNumber(value)) {
-
-                    // Correct for timezone offset (#433)
-                    if (!chart.time.useUTC) {
-                        value =
-                            value + new Date().getTimezoneOffset() * 60 * 1000;
-                    }
-
                     // Validate the extremes. If it goes beyound the data min or
                     // max, use the actual data extreme (#2438).
                     if (isMin) {
