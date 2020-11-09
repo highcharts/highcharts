@@ -49,8 +49,8 @@ var Pie3DSeries = /** @class */ (function (_super) {
     /**
      * @private
      */
-    Pie3DSeries.prototype.addPoint = function (options, redraw, shift, animation, withEvent) {
-        _super.prototype.addPoint.call(this, options, redraw, shift, animation, withEvent);
+    Pie3DSeries.prototype.addPoint = function () {
+        _super.prototype.addPoint.apply(this, arguments);
         if (this.chart.is3d()) {
             // destroy (and rebuild) everything!!!
             this.update(this.userOptions, true); // #3845 pass the old options
@@ -61,7 +61,7 @@ var Pie3DSeries = /** @class */ (function (_super) {
      */
     Pie3DSeries.prototype.animate = function (init) {
         if (!this.chart.is3d()) {
-            _super.prototype.animate.call(this, init);
+            _super.prototype.animate.apply(this, arguments);
         }
         else {
             var animation = this.options.animation, attribs, center = this.center, group = this.group, markerGroup = this.markerGroup;
@@ -123,13 +123,13 @@ var Pie3DSeries = /** @class */ (function (_super) {
                 });
             });
         }
-        _super.prototype.drawDataLabels.call(this);
+        _super.prototype.drawDataLabels.apply(this, arguments);
     };
     /**
      * @private
      */
     Pie3DSeries.prototype.pointAttribs = function (point, state) {
-        var attr = _super.prototype.pointAttribs.call(this, point, state), options = this.options;
+        var attr = _super.prototype.pointAttribs.apply(this, arguments), options = this.options;
         if (this.chart.is3d() && !this.chart.styledMode) {
             attr.stroke = options.edgeColor || point.color || this.color;
             attr['stroke-width'] = pick(options.edgeWidth, 1);
@@ -139,8 +139,8 @@ var Pie3DSeries = /** @class */ (function (_super) {
     /**
      * @private
      */
-    Pie3DSeries.prototype.translate = function (positions) {
-        _super.prototype.translate.call(this, positions);
+    Pie3DSeries.prototype.translate = function () {
+        _super.prototype.translate.apply(this, arguments);
         // Do not do this if the chart is not 3D
         if (!this.chart.is3d()) {
             return;

@@ -82,14 +82,8 @@ class Pie3DSeries extends PieSeries {
     /**
      * @private
      */
-    public addPoint(
-        options: (PointOptions|PointShortOptions),
-        redraw?: boolean,
-        shift?: boolean,
-        animation?: (boolean|Partial<AnimationOptionsObject>),
-        withEvent?: boolean
-    ): void {
-        super.addPoint(options, redraw, shift, animation, withEvent);
+    public addPoint(): void {
+        super.addPoint.apply(this, arguments);
         if (this.chart.is3d()) {
             // destroy (and rebuild) everything!!!
             this.update(this.userOptions, true); // #3845 pass the old options
@@ -101,7 +95,7 @@ class Pie3DSeries extends PieSeries {
      */
     public animate(init?: boolean): void {
         if (!this.chart.is3d()) {
-            super.animate(init);
+            super.animate.apply(this, arguments);
         } else {
             var animation = this.options.animation,
                 attribs: SVGAttributes,
@@ -189,7 +183,7 @@ class Pie3DSeries extends PieSeries {
             });
         }
 
-        super.drawDataLabels();
+        super.drawDataLabels.apply(this, arguments);
     }
 
     /**
@@ -199,7 +193,7 @@ class Pie3DSeries extends PieSeries {
         point: Pie3DPoint,
         state: StatesOptionsKey
     ): SVGAttributes {
-        var attr = super.pointAttribs(point, state),
+        var attr = super.pointAttribs.apply(this, arguments),
             options = this.options;
 
         if (this.chart.is3d() && !this.chart.styledMode) {
@@ -213,8 +207,8 @@ class Pie3DSeries extends PieSeries {
     /**
      * @private
      */
-    public translate(positions?: Array<number>): void {
-        super.translate(positions);
+    public translate(): void {
+        super.translate.apply(this, arguments);
 
         // Do not do this if the chart is not 3D
         if (!this.chart.is3d()) {
