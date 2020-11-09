@@ -8,9 +8,23 @@
  *
  * */
 'use strict';
+var __extends = (this && this.__extends) || (function () {
+    var extendStatics = function (d, b) {
+        extendStatics = Object.setPrototypeOf ||
+            ({ __proto__: [] } instanceof Array && function (d, b) { d.__proto__ = b; }) ||
+            function (d, b) { for (var p in b) if (b.hasOwnProperty(p)) d[p] = b[p]; };
+        return extendStatics(d, b);
+    };
+    return function (d, b) {
+        extendStatics(d, b);
+        function __() { this.constructor = d; }
+        d.prototype = b === null ? Object.create(b) : (__.prototype = b.prototype, new __());
+    };
+})();
 import BaseSeries from '../Core/Series/Series.js';
-import './Map/MapSeries.js';
-var seriesTypes = BaseSeries.seriesTypes;
+import MapSeries from './Map/MapSeries.js';
+import U from '../Core/Utilities.js';
+var extend = U.extend, merge = U.merge;
 /**
  * @private
  * @class
@@ -18,31 +32,52 @@ var seriesTypes = BaseSeries.seriesTypes;
  *
  * @augments Highcharts.Series
  */
-BaseSeries.seriesType('mapline', 'map', 
-/**
- * A mapline series is a special case of the map series where the value
- * colors are applied to the strokes rather than the fills. It can also be
- * used for freeform drawing, like dividers, in the map.
- *
- * @sample maps/demo/mapline-mappoint/
- *         Mapline and map-point chart
- *
- * @extends      plotOptions.map
- * @product      highmaps
- * @optionparent plotOptions.mapline
- */
-{
+var MapLineSeries = /** @class */ (function (_super) {
+    __extends(MapLineSeries, _super);
+    function MapLineSeries() {
+        /* *
+         *
+         *  Static Properties
+         *
+         * */
+        var _this = _super !== null && _super.apply(this, arguments) || this;
+        /* *
+         *
+         *  Properties
+         *
+         * */
+        _this.data = void 0;
+        _this.options = void 0;
+        _this.points = void 0;
+        return _this;
+    }
     /**
-     * The width of the map line.
-     */
-    lineWidth: 1,
-    /**
-     * Fill color for the map line shapes
+     * A mapline series is a special case of the map series where the value
+     * colors are applied to the strokes rather than the fills. It can also be
+     * used for freeform drawing, like dividers, in the map.
      *
-     * @type {Highcharts.ColorString|Highcharts.GradientColorObject|Highcharts.PatternObject}
+     * @sample maps/demo/mapline-mappoint/
+     *         Mapline and map-point chart
+     *
+     * @extends      plotOptions.map
+     * @product      highmaps
+     * @optionparent plotOptions.mapline
      */
-    fillColor: 'none'
-}, {
+    MapLineSeries.defaultOptions = merge(MapSeries.defaultOptions, {
+        /**
+         * The width of the map line.
+         */
+        lineWidth: 1,
+        /**
+         * Fill color for the map line shapes
+         *
+         * @type {Highcharts.ColorString|Highcharts.GradientColorObject|Highcharts.PatternObject}
+         */
+        fillColor: 'none'
+    });
+    return MapLineSeries;
+}(MapSeries));
+extend(MapLineSeries.prototype, {
     type: 'mapline',
     colorProp: 'stroke',
     pointAttrToOptions: {
@@ -60,15 +95,26 @@ BaseSeries.seriesType('mapline', 'map',
      * @return {Highcharts.SVGAttributes}
      */
     pointAttribs: function (point, state) {
-        var attr = seriesTypes.map.prototype.pointAttribs.call(this, point, state);
+        var attr = MapSeries.prototype.pointAttribs.call(this, point, state);
         // The difference from a map series is that the stroke takes the
         // point color
         attr.fill = this.options.fillColor;
         return attr;
-    },
-    drawLegendSymbol: seriesTypes.line.prototype.drawLegendSymbol
+    }
     /* eslint-enable valid-jsdoc */
 });
+BaseSeries.registerSeriesType('mapline', MapLineSeries);
+/* *
+ *
+ *  Default Export
+ *
+ * */
+export default MapLineSeries;
+/* *
+ *
+ *  API Options
+ *
+ * */
 /**
  * A `mapline` series. If the [type](#series.mapline.type) option is
  * not specified, it is inherited from [chart.type](#chart.type).
