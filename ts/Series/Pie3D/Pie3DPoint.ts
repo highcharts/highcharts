@@ -54,8 +54,8 @@ class Pie3DPoint extends PieSeries.prototype.pointClass {
     /**
      * @private
      */
-    public haloPath(size: number): SVGPath {
-        return this.series.chart.is3d() ? [] : super.haloPath(size);
+    public haloPath(): SVGPath {
+        return this.series.chart.is3d() ? [] : super.haloPath.apply(this, arguments);
     }
 
     /* eslint-enable valid-jsdoc */

@@ -52,8 +52,8 @@ var Pie3DPoint = /** @class */ (function (_super) {
     /**
      * @private
      */
-    Pie3DPoint.prototype.haloPath = function (size) {
-        return this.series.chart.is3d() ? [] : _super.prototype.haloPath.call(this, size);
+    Pie3DPoint.prototype.haloPath = function () {
+        return this.series.chart.is3d() ? [] : _super.prototype.haloPath.apply(this, arguments);
     };
     return Pie3DPoint;
 }(PieSeries.prototype.pointClass));
