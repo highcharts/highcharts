@@ -18,27 +18,26 @@
  *
  * */
 
-import type BBoxObject from '../Core/Renderer/BBoxObject';
-import type ColorType from '../Core/Color/ColorType';
-import type PieDataLabelOptions from './Pie/PieDataLabelOptions';
-import type PiePoint from './Pie/PiePoint';
-import type PiePointOptions from './Pie/PiePointOptions';
-import type PieSeriesOptions from './Pie/PieSeriesOptions';
-import type Point from '../Core/Series/Point';
-import type { SeriesStatesOptions } from '../Core/Series/SeriesOptions';
-import type SVGElement from '../Core/Renderer/SVG/SVGElement';
-import type SVGPath from '../Core/Renderer/SVG/SVGPath';
-import BaseSeries from '../Core/Series/Series.js';
+import type BBoxObject from '../../Core/Renderer/BBoxObject';
+import type ColorType from '../../Core/Color/ColorType';
+import type PieDataLabelOptions from '../Pie/PieDataLabelOptions';
+import type PiePoint from '../Pie/PiePoint';
+import type PiePointOptions from '../Pie/PiePointOptions';
+import type PieSeriesOptions from '../Pie/PieSeriesOptions';
+import type { SeriesStatesOptions } from '../../Core/Series/SeriesOptions';
+import type SVGElement from '../../Core/Renderer/SVG/SVGElement';
+import type SVGPath from '../../Core/Renderer/SVG/SVGPath';
+import BaseSeries from '../../Core/Series/Series.js';
 const {
     seriesTypes: {
+        line: LineSeries,
         pie: PieSeries
     }
 } = BaseSeries;
-import Chart from '../Core/Chart/Chart.js';
-import H from '../Core/Globals.js';
+import Chart from '../../Core/Chart/Chart.js';
+import H from '../../Core/Globals.js';
 const { noop } = H;
-import LineSeries from './Line/LineSeries.js';
-import U from '../Core/Utilities.js';
+import U from '../../Core/Utilities.js';
 const {
     addEvent,
     extend,
@@ -54,7 +53,7 @@ const {
  *
  * */
 
-declare module '../Core/Series/SeriesOptions' {
+declare module '../../Core/Series/SeriesOptions' {
     interface SeriesStateHoverOptions {
         borderColor?: ColorType;
         color?: ColorType;
@@ -685,7 +684,7 @@ addEvent(Chart, 'afterHideAllOverlappingLabels', function (): void {
  *
  * */
 
-declare module '../Core/Series/SeriesType' {
+declare module '../../Core/Series/SeriesType' {
     interface SeriesTypeRegistry {
         funnel: typeof FunnelSeries;
     }
@@ -881,7 +880,7 @@ interface PyramidSeries {
  *
  * */
 
-declare module '../Core/Series/SeriesType' {
+declare module '../../Core/Series/SeriesType' {
     interface SeriesTypeRegistry {
         pyramid: typeof PyramidSeries;
     }
