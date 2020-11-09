@@ -62,7 +62,16 @@ import './BubbleLegend.js';
 var BubbleSeries = /** @class */ (function (_super) {
     __extends(BubbleSeries, _super);
     function BubbleSeries() {
-        return _super !== null && _super.apply(this, arguments) || this;
+        var _this = _super !== null && _super.apply(this, arguments) || this;
+        /* *
+         *
+         *  Properties
+         *
+         * */
+        _this.data = void 0;
+        _this.options = void 0;
+        _this.points = void 0;
+        return _this;
     }
     BubbleSeries.defaultOptions = merge(ScatterSeries.defaultOptions, {
         dataLabels: {
@@ -284,11 +293,6 @@ var BubbleSeries = /** @class */ (function (_super) {
     });
     return BubbleSeries;
 }(ScatterSeries));
-/* *
- *
- *  Prototype Properties
- *
- * */
 extend(BubbleSeries.prototype, {
     pointArrayMap: ['y', 'z'],
     parallelArrays: ['x', 'y', 'z'],
@@ -445,11 +449,6 @@ var BubblePoint = /** @class */ (function (_super) {
     return BubblePoint;
 }(ScatterSeries.prototype.pointClass));
 BubbleSeries.prototype.pointClass = BubblePoint;
-/* *
- *
- *  Prototype Properties
- *
- * */
 extend(BubblePoint.prototype, {
     /**
      * @private
@@ -461,6 +460,11 @@ extend(BubblePoint.prototype, {
     },
     ttBelow: false
 });
+/* *
+ *
+ *  Axis ?
+ *
+ * */
 // Add logic to pad each axis with the amount of pixels necessary to avoid the
 // bubbles to overflow.
 Axis.prototype.beforePadding = function () {

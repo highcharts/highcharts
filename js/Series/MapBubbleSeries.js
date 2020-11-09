@@ -44,13 +44,22 @@ import './Map/MapSeries.js';
 var MapBubbleSeries = /** @class */ (function (_super) {
     __extends(MapBubbleSeries, _super);
     function MapBubbleSeries() {
-        return _super !== null && _super.apply(this, arguments) || this;
+        /* *
+         *
+         *  Static Properties
+         *
+         * */
+        var _this = _super !== null && _super.apply(this, arguments) || this;
+        /* *
+         *
+         *  Properties
+         *
+         * */
+        _this.data = void 0;
+        _this.options = void 0;
+        _this.points = void 0;
+        return _this;
     }
-    /* *
-     *
-     *  Static Properties
-     *
-     * */
     /**
      * A map bubble series is a bubble series laid out on top of a map
      * series, where each bubble is tied to a specific map area.
@@ -199,15 +208,16 @@ var MapBubblePoint = /** @class */ (function (_super) {
     function MapBubblePoint() {
         return _super !== null && _super.apply(this, arguments) || this;
     }
-    return MapBubblePoint;
-}(BubbleSeries.prototype.pointClass));
-/* *
- *
- *  Prototype Properties
- *
- * */
-extend(MapBubblePoint.prototype, {
-    applyOptions: function (options, x) {
+    /* *
+     *
+     *  Functions
+     *
+     * */
+    /* eslint-disable valid-jsdoc */
+    /**
+     * @private
+     */
+    MapBubblePoint.prototype.applyOptions = function (options, x) {
         var point;
         if (options &&
             typeof options.lat !== 'undefined' &&
@@ -219,10 +229,16 @@ extend(MapBubblePoint.prototype, {
                 .applyOptions.call(this, options, x);
         }
         return point;
-    },
-    isValid: function () {
+    };
+    /**
+     * @private
+     */
+    MapBubblePoint.prototype.isValid = function () {
         return typeof this.z === 'number';
-    },
+    };
+    return MapBubblePoint;
+}(BubbleSeries.prototype.pointClass));
+extend(MapBubblePoint.prototype, {
     ttBelow: false
 });
 MapBubbleSeries.prototype.pointClass = MapBubblePoint;

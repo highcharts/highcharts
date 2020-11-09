@@ -406,6 +406,19 @@ class BubbleSeries extends ScatterSeries {
         zoneAxis: 'z'
 
     });
+
+    /* *
+     *
+     *  Properties
+     *
+     * */
+
+    public data: Array<BubblePoint> = void 0 as any;
+
+    public options: Highcharts.BubbleSeriesOptions = void 0 as any;
+
+    public points: Array<BubblePoint> = void 0 as any;
+
 }
 
 /* *
@@ -414,6 +427,42 @@ class BubbleSeries extends ScatterSeries {
  *
  * */
 
+interface BubbleSeries {
+    alignDataLabel: typeof ColumnSeries.prototype['alignDataLabel'];
+    bubblePadding: boolean;
+    displayNegative: Highcharts.BubbleSeriesOptions['displayNegative'];
+    isBubble: true;
+    maxPxSize: number;
+    minPxSize: number;
+    pointClass: typeof BubblePoint;
+    radii: Array<(number|null)>;
+    specialGroup: string;
+    zData: Array<(number|null)>;
+    yData: Array<(number|null)>;
+    zMax: Highcharts.BubbleSeriesOptions['zMax'];
+    zMin: Highcharts.BubbleSeriesOptions['zMin'];
+    zoneAxis: string;
+    animate(init?: boolean): void;
+    getRadii(
+        zMin: number,
+        zMax: number,
+        series: BubbleSeries
+    ): void;
+    getRadius(
+        zMin: number,
+        zMax: number,
+        minSize: number,
+        maxSize: number,
+        value: (number|null|undefined),
+        yValue?: (number|null|undefined)
+    ): (number|null);
+    hasData(): boolean;
+    pointAttribs(
+        point?: BubblePoint,
+        state?: StatesOptionsKey
+    ): SVGAttributes;
+    translate(): void;
+}
 extend(BubbleSeries.prototype, {
     pointArrayMap: ['y', 'z'],
     parallelArrays: ['x', 'y', 'z'],
@@ -648,6 +697,13 @@ BubbleSeries.prototype.pointClass = BubblePoint;
  *
  * */
 
+interface BubblePoint {
+    options: Highcharts.BubblePointOptions;
+    series: BubbleSeries;
+    haloPath(
+        size: number
+    ): SVGPath;
+}
 extend(BubblePoint.prototype, {
     /**
      * @private
@@ -664,6 +720,12 @@ extend(BubblePoint.prototype, {
     },
     ttBelow: false
 });
+
+/* *
+ *
+ *  Axis ?
+ *
+ * */
 
 // Add logic to pad each axis with the amount of pixels necessary to avoid the
 // bubbles to overflow.

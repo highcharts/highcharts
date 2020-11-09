@@ -50,19 +50,6 @@ declare global {
             ): MapBubblePoint;
             public isValid: () => boolean;
         }
-        class MapBubbleSeries extends BubbleSeries {
-            public data: Array<MapBubblePoint>;
-            public getBox: typeof MapSeries.prototype['getBox'];
-            public getMapData: unknown; // @todo
-            public options: MapBubbleSeriesOptions;
-            public pointArrayMap: Array<string>;
-            public pointClass: typeof MapBubblePoint;
-            public points: Array<MapBubblePoint>;
-            public setData: typeof MapSeries.prototype['setData'];
-            public setOptions: typeof MapSeries.prototype['setOptions'];
-            public type: string;
-            public xyFromShape: boolean;
-        }
         interface MapBubblePointOptions extends BubblePointOptions {
             z?: (number|null);
         }
@@ -231,6 +218,19 @@ class MapBubbleSeries extends BubbleSeries {
             pointFormat: '{point.name}: {point.z}'
         }
     } as Highcharts.MapBubbleSeriesOptions);
+
+    /* *
+     *
+     *  Properties
+     *
+     * */
+
+    public data: Array<MapBubblePoint> = void 0 as any;
+
+    public options: Highcharts.MapBubbleSeriesOptions = void 0 as any;
+
+    public points: Array<MapBubblePoint> = void 0 as any;
+
 }
 
 /* *
@@ -240,8 +240,10 @@ class MapBubbleSeries extends BubbleSeries {
  * */
 
 interface MapBubbleSeries {
+    type: string;
     getBox: typeof MapSeries.prototype['getBox'];
     getMapData: unknown; // @todo
+    pointArrayMap: Array<string>;
     pointClass: typeof MapBubblePoint;
     setData: typeof MapSeries.prototype['setData'];
     setOptions: typeof MapSeries.prototype['setOptions'];
@@ -272,17 +274,19 @@ extend(MapBubbleSeries.prototype, {
  * */
 
 class MapBubblePoint extends BubbleSeries.prototype.pointClass {
-}
 
-/* *
- *
- *  Prototype Properties
- *
- * */
+    /* *
+     *
+     *  Functions
+     *
+     * */
 
-extend(MapBubblePoint.prototype, {
-    applyOptions: function (
-        this: Highcharts.MapBubblePoint,
+    /* eslint-disable valid-jsdoc */
+
+    /**
+     * @private
+     */
+    public applyOptions(
         options: Highcharts.MapBubblePointOptions,
         x?: number
     ): Highcharts.MapBubblePoint {
@@ -308,10 +312,29 @@ extend(MapBubblePoint.prototype, {
                 ) as any;
         }
         return point;
-    },
-    isValid: function (this: Highcharts.MapBubblePoint): boolean {
+    }
+
+    /**
+     * @private
+     */
+    public isValid(): boolean {
         return typeof this.z === 'number';
-    },
+    }
+
+    /* eslint-enable valid-jsdoc */
+
+}
+
+/* *
+ *
+ *  Prototype Properties
+ *
+ * */
+
+interface MapBubblePoint {
+    ttBelow: boolean;
+}
+extend(MapBubblePoint.prototype, {
     ttBelow: false
 });
 MapBubbleSeries.prototype.pointClass = MapBubblePoint;
@@ -324,7 +347,7 @@ MapBubbleSeries.prototype.pointClass = MapBubblePoint;
 
 declare module '../Core/Series/SeriesType' {
     interface SeriesTypeRegistry {
-        mapbubble: typeof Highcharts.MapBubbleSeries;
+        mapbubble: typeof MapBubbleSeries;
     }
 }
 BaseSeries.registerSeriesType('mapbubble', MapBubbleSeries);
