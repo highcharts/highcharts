@@ -1686,24 +1686,22 @@ var LineSeries = /** @class */ (function () {
     LineSeries.prototype.animate = function (init) {
         var series = this, chart = series.chart, animation = animObject(series.options.animation), clipRect, sharedClipKey, finalBox;
         // Initialize the animation. Set up the clipping rectangle.
-        if (!chart.hasRendered) {
-            if (init) {
-                series.setClip(animation);
-                // Run the animation
+        if (init) {
+            series.setClip(animation);
+            // Run the animation
+        }
+        else {
+            sharedClipKey = this.sharedClipKey;
+            clipRect = chart[sharedClipKey];
+            finalBox = series.getClipBox(animation, true);
+            if (clipRect) {
+                clipRect.animate(finalBox, animation);
             }
-            else {
-                sharedClipKey = this.sharedClipKey;
-                clipRect = chart[sharedClipKey];
-                finalBox = series.getClipBox(animation, true);
-                if (clipRect) {
-                    clipRect.animate(finalBox, animation);
-                }
-                if (chart[sharedClipKey + 'm']) {
-                    chart[sharedClipKey + 'm'].animate({
-                        width: finalBox.width + 99,
-                        x: finalBox.x - (chart.inverted ? 0 : 99)
-                    }, animation);
-                }
+            if (chart[sharedClipKey + 'm']) {
+                chart[sharedClipKey + 'm'].animate({
+                    width: finalBox.width + 99,
+                    x: finalBox.x - (chart.inverted ? 0 : 99)
+                }, animation);
             }
         }
     };
