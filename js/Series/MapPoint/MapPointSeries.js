@@ -43,6 +43,11 @@ import '../Scatter/ScatterSeries.js';
 var MapPointSeries = /** @class */ (function (_super) {
     __extends(MapPointSeries, _super);
     function MapPointSeries() {
+        /* *
+         *
+         *  Static Properties
+         *
+         * */
         var _this = _super !== null && _super.apply(this, arguments) || this;
         /* *
          *
@@ -100,7 +105,6 @@ extend(MapPointSeries.prototype, {
     forceDL: true,
     pointClass: MapPointPoint
 });
-MapPointSeries.prototype.pointClass = MapPointPoint;
 BaseSeries.registerSeriesType('mappoint', MapPointSeries);
 /* *
  *

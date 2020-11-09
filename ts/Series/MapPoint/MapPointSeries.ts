@@ -36,21 +36,6 @@ import '../Scatter/ScatterSeries.js';
 
 /* *
  *
- *  Declarations
- *
- * */
-
-/**
- * Internal types
- * @private
- */
-declare global {
-    namespace Highcharts {
-    }
-}
-
-/* *
- *
  *  Class
  *
  * */
@@ -63,6 +48,12 @@ declare global {
  * @augments Highcharts.Series
  */
 class MapPointSeries extends ScatterSeries {
+
+    /* *
+     *
+     *  Static Properties
+     *
+     * */
 
     /**
      * A mappoint series is a special form of scatter series where the points
@@ -138,9 +129,6 @@ extend(MapPointSeries.prototype, {
     forceDL: true,
     pointClass: MapPointPoint
 });
-
-
-MapPointSeries.prototype.pointClass = MapPointPoint;
 
 /* *
  *
