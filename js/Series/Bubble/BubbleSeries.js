@@ -44,24 +44,14 @@ import './BubbleLegend.js';
  *  Class
  *
  * */
-/**
- * A bubble series is a three dimensional series type where each point renders
- * an X, Y and Z value. Each points is drawn as a bubble where the position
- * along the X and Y axes mark the X and Y values, and the size of the bubble
- * relates to the Z value.
- *
- * @sample {highcharts} highcharts/demo/bubble/
- *         Bubble chart
- *
- * @extends      plotOptions.scatter
- * @excluding    cluster
- * @product      highcharts highstock
- * @requires     highcharts-more
- * @optionparent plotOptions.bubble
- */
 var BubbleSeries = /** @class */ (function (_super) {
     __extends(BubbleSeries, _super);
     function BubbleSeries() {
+        /* *
+         *
+         *  Static Properties
+         *
+         * */
         var _this = _super !== null && _super.apply(this, arguments) || this;
         /* *
          *
@@ -73,6 +63,21 @@ var BubbleSeries = /** @class */ (function (_super) {
         _this.points = void 0;
         return _this;
     }
+    /**
+     * A bubble series is a three dimensional series type where each point
+     * renders an X, Y and Z value. Each points is drawn as a bubble where the
+     * position along the X and Y axes mark the X and Y values, and the size of
+     * the bubble relates to the Z value.
+     *
+     * @sample {highcharts} highcharts/demo/bubble/
+     *         Bubble chart
+     *
+     * @extends      plotOptions.scatter
+     * @excluding    cluster
+     * @product      highcharts highstock
+     * @requires     highcharts-more
+     * @optionparent plotOptions.bubble
+     */
     BubbleSeries.defaultOptions = merge(ScatterSeries.defaultOptions, {
         dataLabels: {
             formatter: function () {
