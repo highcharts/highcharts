@@ -8,13 +8,31 @@
  *
  * */
 'use strict';
+var __extends = (this && this.__extends) || (function () {
+    var extendStatics = function (d, b) {
+        extendStatics = Object.setPrototypeOf ||
+            ({ __proto__: [] } instanceof Array && function (d, b) { d.__proto__ = b; }) ||
+            function (d, b) { for (var p in b) if (b.hasOwnProperty(p)) d[p] = b[p]; };
+        return extendStatics(d, b);
+    };
+    return function (d, b) {
+        extendStatics(d, b);
+        function __() { this.constructor = d; }
+        d.prototype = b === null ? Object.create(b) : (__.prototype = b.prototype, new __());
+    };
+})();
 import BaseSeries from '../Core/Series/Series.js';
-import LineSeries from './Line/LineSeries.js';
+var _a = BaseSeries.seriesTypes, LineSeries = _a.line, ScatterSeries = _a.scatter;
 import Point from '../Core/Series/Point.js';
 import U from '../Core/Utilities.js';
-var merge = U.merge;
+var extend = U.extend, merge = U.merge;
 import '../Core/Options.js';
 import '../Series/Scatter/ScatterSeries.js';
+/* *
+ *
+ *  Class
+ *
+ * */
 /**
  * @private
  * @class
@@ -22,53 +40,118 @@ import '../Series/Scatter/ScatterSeries.js';
  *
  * @augments Highcharts.Series
  */
-BaseSeries.seriesType('mappoint', 'scatter', 
-/**
- * A mappoint series is a special form of scatter series where the points
- * can be laid out in map coordinates on top of a map.
- *
- * @sample maps/demo/mapline-mappoint/
- *         Map-line and map-point series.
- *
- * @extends      plotOptions.scatter
- * @product      highmaps
- * @optionparent plotOptions.mappoint
- */
-{
-    dataLabels: {
-        crop: false,
-        defer: false,
-        enabled: true,
-        formatter: function () {
-            return this.point.name;
-        },
-        overflow: false,
-        style: {
-            /** @internal */
-            color: '${palette.neutralColor100}'
-        }
+var MapPointSeries = /** @class */ (function (_super) {
+    __extends(MapPointSeries, _super);
+    function MapPointSeries() {
+        var _this = _super !== null && _super.apply(this, arguments) || this;
+        /* *
+         *
+         *  Properties
+         *
+         * */
+        _this.data = void 0;
+        _this.options = void 0;
+        _this.points = void 0;
+        return _this;
+        /* eslint-enable valid-jsdoc */
     }
-    // Prototype members
-}, {
-    type: 'mappoint',
-    forceDL: true,
-    drawDataLabels: function () {
-        LineSeries.prototype.drawDataLabels.call(this);
+    /* *
+     *
+     *  Functions
+     *
+     * */
+    /* eslint-disable valid-jsdoc */
+    MapPointSeries.prototype.drawDataLabels = function () {
+        _super.prototype.drawDataLabels.call(this);
         if (this.dataLabelsGroup) {
             this.dataLabelsGroup.clip(this.chart.clipRect);
         }
+    };
+    /**
+     * A mappoint series is a special form of scatter series where the points
+     * can be laid out in map coordinates on top of a map.
+     *
+     * @sample maps/demo/mapline-mappoint/
+     *         Map-line and map-point series.
+     *
+     * @extends      plotOptions.scatter
+     * @product      highmaps
+     * @optionparent plotOptions.mappoint
+     */
+    MapPointSeries.defaultOptions = merge(ScatterSeries.defaultOptions, {
+        dataLabels: {
+            crop: false,
+            defer: false,
+            enabled: true,
+            formatter: function () {
+                return this.point.name;
+            },
+            overflow: false,
+            style: {
+                /** @internal */
+                color: '${palette.neutralColor100}'
+            }
+        }
+    });
+    return MapPointSeries;
+}(ScatterSeries));
+/* *
+ *
+ *  Prototype Properties
+ *
+ * */
+extend(MapPointSeries.prototype, {
+    type: 'mappoint',
+    forceDL: true
+});
+/* *
+ *
+ *  Class
+ *
+ * */
+var MapPointPoint = /** @class */ (function (_super) {
+    __extends(MapPointPoint, _super);
+    function MapPointPoint() {
+        /* *
+         *
+         *  Properties
+         *
+         * */
+        var _this = _super !== null && _super.apply(this, arguments) || this;
+        _this.options = void 0;
+        _this.series = void 0;
+        return _this;
+        /* eslint-enable valid-jsdoc */
     }
-    // Point class
-}, {
-    applyOptions: function (options, x) {
+    /* *
+     *
+     *  Functions
+     *
+     * */
+    /* eslint-disable valid-jsdoc */
+    MapPointPoint.prototype.applyOptions = function (options, x) {
         var mergedOptions = (typeof options.lat !== 'undefined' &&
             typeof options.lon !== 'undefined' ?
             merge(options, this.series.chart.fromLatLonToPoint(options)) :
             options);
         return Point.prototype
             .applyOptions.call(this, mergedOptions, x);
-    }
-});
+    };
+    return MapPointPoint;
+}(ScatterSeries.prototype.pointClass));
+MapPointSeries.prototype.pointClass = MapPointPoint;
+BaseSeries.registerSeriesType('mappoint', MapPointSeries);
+/* *
+ *
+ *  Default Export
+ *
+ * */
+export default MapPointSeries;
+/* *
+ *
+ *  API Options
+ *
+ * */
 /**
  * A `mappoint` series. If the [type](#series.mappoint.type) option
  * is not specified, it is inherited from [chart.type](#chart.type).
