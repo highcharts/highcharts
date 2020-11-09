@@ -10,15 +10,25 @@
 
 'use strict';
 
+/* *
+ *
+ *  Imports
+ *
+ * */
+
 import type ColorType from '../Core/Color/ColorType';
-import type LineSeries from './Line/LineSeries';
 import type MapPointOptions from './Map/MapPointOptions';
-import type MapSeries from './Map/MapSeries';
 import type MapSeriesOptions from './Map/MapSeriesOptions';
 import type { SeriesStatesOptions } from '../Core/Series/SeriesOptions';
 import type { StatesOptionsKey } from '../Core/Series/StatesOptions';
 import type SVGAttributes from '../Core/Renderer/SVG/SVGAttributes';
 import BaseSeries from '../Core/Series/Series.js';
+import MapSeries from './Map/MapSeries.js';
+import U from '../Core/Utilities.js';
+const {
+    extend,
+    merge
+} = U;
 
 /**
  * Internal types
@@ -29,20 +39,6 @@ declare global {
         class MapLinePoint extends MapPoint {
             public options: MapLinePointOptions;
             public series: MapLineSeries;
-        }
-        class MapLineSeries extends MapSeries {
-            public colorProp: string;
-            public data: Array<MapLinePoint>;
-            public drawLegendSymbol: LineSeries['drawLegendSymbol'];
-            public options: MapLineSeriesOptions;
-            public pointAttrToOptions: Dictionary<string>;
-            public pointClass: typeof MapLinePoint;
-            public points: Array<MapLinePoint>;
-            public type: string;
-            public pointAttribs(
-                point: MapLinePoint,
-                state: StatesOptionsKey
-            ): SVGAttributes;
         }
         interface MapLinePointOptions extends MapPointOptions {
         }
@@ -55,27 +51,18 @@ declare global {
 
 /**
  * @private
- */
-declare module '../Core/Series/SeriesType' {
-    interface SeriesTypeRegistry {
-        mapline: typeof Highcharts.MapLineSeries;
-    }
-}
-
-import './Map/MapSeries.js';
-
-var seriesTypes = BaseSeries.seriesTypes;
-
-/**
- * @private
  * @class
  * @name Highcharts.seriesTypes.mapline
  *
  * @augments Highcharts.Series
  */
-BaseSeries.seriesType<typeof Highcharts.MapLineSeries>(
-    'mapline',
-    'map',
+class MapLineSeries extends MapSeries {
+
+    /* *
+     *
+     *  Static Properties
+     *
+     * */
 
     /**
      * A mapline series is a special case of the map series where the value
@@ -89,7 +76,7 @@ BaseSeries.seriesType<typeof Highcharts.MapLineSeries>(
      * @product      highmaps
      * @optionparent plotOptions.mapline
      */
-    {
+    public static defaultOptions: Highcharts.MapLineSeriesOptions = merge(MapSeries.defaultOptions, {
         /**
          * The width of the map line.
          */
@@ -101,53 +88,103 @@ BaseSeries.seriesType<typeof Highcharts.MapLineSeries>(
          * @type {Highcharts.ColorString|Highcharts.GradientColorObject|Highcharts.PatternObject}
          */
         fillColor: 'none'
+    } as Highcharts.MapLineSeriesOptions);
+
+    /* *
+     *
+     *  Properties
+     *
+     * */
+
+    public data: Array<Highcharts.MapLinePoint> = void 0 as any;
+
+    public options: Highcharts.MapLineSeriesOptions = void 0 as any;
+
+    public points: Array<Highcharts.MapLinePoint> = void 0 as any;
+
+}
+
+/* *
+ *
+ *  Prototype Properties
+ *
+ * */
+
+interface MapLineSeries {
+    colorProp: string;
+    pointAttrToOptions: Record<string, string>;
+    pointClass: typeof Highcharts.MapLinePoint;
+}
+extend(MapLineSeries.prototype, {
+
+    type: 'mapline',
+
+    colorProp: 'stroke',
+
+    pointAttrToOptions: {
+        'stroke': 'color',
+        'stroke-width': 'lineWidth'
     },
-    {
 
-        type: 'mapline',
+    /* eslint-disable valid-jsdoc */
 
-        colorProp: 'stroke',
+    /**
+     * Get presentational attributes
+     *
+     * @private
+     * @function Highcharts.seriesTypes.mapline#pointAttribs
+     * @param {Highcharts.Point} point
+     * @param {string} state
+     * @return {Highcharts.SVGAttributes}
+     */
+    pointAttribs: function (
+        this: MapLineSeries,
+        point: Highcharts.MapLinePoint,
+        state: StatesOptionsKey
+    ): SVGAttributes {
+        var attr = MapSeries.prototype.pointAttribs.call(
+            this,
+            point,
+            state
+        );
 
-        pointAttrToOptions: {
-            'stroke': 'color',
-            'stroke-width': 'lineWidth'
-        },
+        // The difference from a map series is that the stroke takes the
+        // point color
+        attr.fill = this.options.fillColor;
 
-        /* eslint-disable valid-jsdoc */
-
-        /**
-         * Get presentational attributes
-         *
-         * @private
-         * @function Highcharts.seriesTypes.mapline#pointAttribs
-         * @param {Highcharts.Point} point
-         * @param {string} state
-         * @return {Highcharts.SVGAttributes}
-         */
-        pointAttribs: function (
-            this: Highcharts.MapLineSeries,
-            point: Highcharts.MapLinePoint,
-            state: StatesOptionsKey
-        ): SVGAttributes {
-            var attr = seriesTypes.map.prototype.pointAttribs.call(
-                this,
-                point,
-                state
-            );
-
-            // The difference from a map series is that the stroke takes the
-            // point color
-            attr.fill = this.options.fillColor;
-
-            return attr;
-        },
-
-        drawLegendSymbol: seriesTypes.line.prototype.drawLegendSymbol
-
-        /* eslint-enable valid-jsdoc */
-
+        return attr;
     }
-);
+
+    /* eslint-enable valid-jsdoc */
+
+});
+
+/* *
+ *
+ *  Registry
+ *
+ * */
+
+declare module '../Core/Series/SeriesType' {
+    interface SeriesTypeRegistry {
+        mapline: typeof MapLineSeries;
+    }
+}
+BaseSeries.registerSeriesType('mapline', MapLineSeries);
+
+/* *
+ *
+ *  Default Export
+ *
+ * */
+
+export default MapLineSeries;
+
+/* *
+ *
+ *  API Options
+ *
+ * */
 
 /**
  * A `mapline` series. If the [type](#series.mapline.type) option is
