@@ -10,18 +10,21 @@
 
 'use strict';
 
-import type ColumnSeries from '../Column/ColumnSeries';
 import type { PointMarkerOptions } from '../../Core/Series/PointOptions';
 import type ScatterPoint from '../Scatter/ScatterPoint';
 import type ScatterPointOptions from '../Scatter/ScatterPointOptions';
-import type ScatterSeries from '../Scatter/ScatterSeries';
 import type ScatterSeriesOptions from '../Scatter/ScatterSeriesOptions';
 import type { StatesOptionsKey } from '../../Core/Series/StatesOptions';
 import type SVGAttributes from '../../Core/Renderer/SVG/SVGAttributes';
 import type SVGPath from '../../Core/Renderer/SVG/SVGPath';
 import Axis from '../../Core/Axis/Axis.js';
 import BaseSeries from '../../Core/Series/Series.js';
-const { seriesTypes } = BaseSeries;
+const {
+    seriesTypes: {
+        column: ColumnSeries,
+        scatter: ScatterSeries
+    }
+} = BaseSeries;
 import Color from '../../Core/Color/Color.js';
 const { parse: color } = Color;
 import H from '../../Core/Globals.js';
@@ -35,6 +38,7 @@ const {
     clamp,
     extend,
     isNumber,
+    merge,
     pick,
     pInt
 } = U;
@@ -64,7 +68,7 @@ declare global {
             ): SVGPath;
         }
         class BubbleSeries extends ScatterSeries {
-            public alignDataLabel: ColumnSeries['alignDataLabel'];
+            public alignDataLabel: typeof ColumnSeries.prototype['alignDataLabel'];
             public bubblePadding: boolean;
             public data: Array<BubblePoint>;
             public displayNegative: BubbleSeriesOptions['displayNegative'];
@@ -123,15 +127,8 @@ declare global {
     }
 }
 
-/**
- * @private
- */
-declare module '../../Core/Series/SeriesType' {
-    interface SeriesTypeRegistry {
-        bubble: typeof Highcharts.BubbleSeries;
-    }
-}
 
+import '../Column/ColumnSeries.js';
 import '../Scatter/ScatterSeries.js';
 import './BubbleLegend.js';
 
@@ -140,6 +137,12 @@ import './BubbleLegend.js';
  */
 
 ''; // detach doclets above
+
+/* *
+ *
+ *  Class
+ *
+ * */
 
 /**
  * A bubble series is a three dimensional series type where each point renders
@@ -156,250 +159,262 @@ import './BubbleLegend.js';
  * @requires     highcharts-more
  * @optionparent plotOptions.bubble
  */
-BaseSeries.seriesType<typeof Highcharts.BubbleSeries>('bubble', 'scatter', {
+class BubbleSeries extends ScatterSeries {
+    public static defaultOptions: Highcharts.BubbleSeriesOptions = merge(ScatterSeries.defaultOptions, {
 
-    dataLabels: {
-        formatter: function (
-            this: Point.PointLabelObject
-        ): (number|null|undefined) { // #2945
-            return (this.point as Highcharts.BubblePoint).z;
+        dataLabels: {
+            formatter: function (
+                this: Point.PointLabelObject
+            ): (number|null|undefined) { // #2945
+                return (this.point as Highcharts.BubblePoint).z;
+            },
+            inside: true,
+            verticalAlign: 'middle'
         },
-        inside: true,
-        verticalAlign: 'middle'
-    },
-
-    /**
-     * If there are more points in the series than the `animationLimit`, the
-     * animation won't run. Animation affects overall performance and doesn't
-     * work well with heavy data series.
-     *
-     * @since 6.1.0
-     */
-    animationLimit: 250,
-
-    /**
-     * Whether to display negative sized bubbles. The threshold is given
-     * by the [zThreshold](#plotOptions.bubble.zThreshold) option, and negative
-     * bubbles can be visualized by setting
-     * [negativeColor](#plotOptions.bubble.negativeColor).
-     *
-     * @sample {highcharts} highcharts/plotoptions/bubble-negative/
-     *         Negative bubbles
-     *
-     * @type      {boolean}
-     * @default   true
-     * @since     3.0
-     * @apioption plotOptions.bubble.displayNegative
-     */
-
-    /**
-     * @extends   plotOptions.series.marker
-     * @excluding enabled, enabledThreshold, height, radius, width
-     */
-    marker: {
-
-        lineColor: null as any, // inherit from series.color
-
-        lineWidth: 1,
 
         /**
-         * The fill opacity of the bubble markers.
-         */
-        fillOpacity: 0.5,
-
-        /**
-         * In bubble charts, the radius is overridden and determined based on
-         * the point's data value.
+         * If there are more points in the series than the `animationLimit`, the
+         * animation won't run. Animation affects overall performance and
+         * doesn't work well with heavy data series.
          *
-         * @ignore-option
+         * @since 6.1.0
          */
-        radius: null as any,
+        animationLimit: 250,
+
+        /**
+         * Whether to display negative sized bubbles. The threshold is given
+         * by the [zThreshold](#plotOptions.bubble.zThreshold) option, and negative
+         * bubbles can be visualized by setting
+         * [negativeColor](#plotOptions.bubble.negativeColor).
+         *
+         * @sample {highcharts} highcharts/plotoptions/bubble-negative/
+         *         Negative bubbles
+         *
+         * @type      {boolean}
+         * @default   true
+         * @since     3.0
+         * @apioption plotOptions.bubble.displayNegative
+         */
+
+        /**
+         * @extends   plotOptions.series.marker
+         * @excluding enabled, enabledThreshold, height, radius, width
+         */
+        marker: {
+
+            lineColor: null as any, // inherit from series.color
+
+            lineWidth: 1,
+
+            /**
+             * The fill opacity of the bubble markers.
+             */
+            fillOpacity: 0.5,
+
+            /**
+             * In bubble charts, the radius is overridden and determined based
+             * on the point's data value.
+             *
+             * @ignore-option
+             */
+            radius: null as any,
+
+            states: {
+                hover: {
+                    radiusPlus: 0
+                }
+            },
+
+            /**
+             * A predefined shape or symbol for the marker. Possible values are
+             * "circle", "square", "diamond", "triangle" and "triangle-down".
+             *
+             * Additionally, the URL to a graphic can be given on the form
+             * `url(graphic.png)`. Note that for the image to be applied to
+             * exported charts, its URL needs to be accessible by the export
+             * server.
+             *
+             * Custom callbacks for symbol path generation can also be added to
+             * `Highcharts.SVGRenderer.prototype.symbols`. The callback is then
+             * used by its method name, as shown in the demo.
+             *
+             * @sample {highcharts} highcharts/plotoptions/bubble-symbol/
+             *         Bubble chart with various symbols
+             * @sample {highcharts} highcharts/plotoptions/series-marker-symbol/
+             *         General chart with predefined, graphic and custom markers
+             *
+             * @type  {Highcharts.SymbolKeyValue|string}
+             * @since 5.0.11
+             */
+            symbol: 'circle'
+
+        },
+
+        /**
+         * Minimum bubble size. Bubbles will automatically size between the
+         * `minSize` and `maxSize` to reflect the `z` value of each bubble.
+         * Can be either pixels (when no unit is given), or a percentage of
+         * the smallest one of the plot width and height.
+         *
+         * @sample {highcharts} highcharts/plotoptions/bubble-size/
+         *         Bubble size
+         *
+         * @type    {number|string}
+         * @since   3.0
+         * @product highcharts highstock
+         */
+        minSize: 8,
+
+        /**
+         * Maximum bubble size. Bubbles will automatically size between the
+         * `minSize` and `maxSize` to reflect the `z` value of each bubble.
+         * Can be either pixels (when no unit is given), or a percentage of
+         * the smallest one of the plot width and height.
+         *
+         * @sample {highcharts} highcharts/plotoptions/bubble-size/
+         *         Bubble size
+         *
+         * @type    {number|string}
+         * @since   3.0
+         * @product highcharts highstock
+         */
+        maxSize: '20%',
+
+        /**
+         * When a point's Z value is below the
+         * [zThreshold](#plotOptions.bubble.zThreshold)
+         * setting, this color is used.
+         *
+         * @sample {highcharts} highcharts/plotoptions/bubble-negative/
+         *         Negative bubbles
+         *
+         * @type      {Highcharts.ColorString|Highcharts.GradientColorObject|Highcharts.PatternObject}
+         * @since     3.0
+         * @product   highcharts
+         * @apioption plotOptions.bubble.negativeColor
+         */
+
+        /**
+         * Whether the bubble's value should be represented by the area or the
+         * width of the bubble. The default, `area`, corresponds best to the
+         * human perception of the size of each bubble.
+         *
+         * @sample {highcharts} highcharts/plotoptions/bubble-sizeby/
+         *         Comparison of area and size
+         *
+         * @type       {Highcharts.BubbleSizeByValue}
+         * @default    area
+         * @since      3.0.7
+         * @apioption  plotOptions.bubble.sizeBy
+         */
+
+        /**
+         * When this is true, the absolute value of z determines the size of
+         * the bubble. This means that with the default `zThreshold` of 0, a
+         * bubble of value -1 will have the same size as a bubble of value 1,
+         * while a bubble of value 0 will have a smaller size according to
+         * `minSize`.
+         *
+         * @sample    {highcharts} highcharts/plotoptions/bubble-sizebyabsolutevalue/
+         *            Size by absolute value, various thresholds
+         *
+         * @type      {boolean}
+         * @default   false
+         * @since     4.1.9
+         * @product   highcharts
+         * @apioption plotOptions.bubble.sizeByAbsoluteValue
+         */
+
+        /**
+         * When this is true, the series will not cause the Y axis to cross
+         * the zero plane (or [threshold](#plotOptions.series.threshold) option)
+         * unless the data actually crosses the plane.
+         *
+         * For example, if `softThreshold` is `false`, a series of 0, 1, 2,
+         * 3 will make the Y axis show negative values according to the
+         * `minPadding` option. If `softThreshold` is `true`, the Y axis starts
+         * at 0.
+         *
+         * @since   4.1.9
+         * @product highcharts
+         */
+        softThreshold: false,
 
         states: {
             hover: {
-                radiusPlus: 0
+                halo: {
+                    size: 5
+                }
             }
         },
 
+        tooltip: {
+            pointFormat: '({point.x}, {point.y}), Size: {point.z}'
+        },
+
+        turboThreshold: 0,
+
         /**
-         * A predefined shape or symbol for the marker. Possible values are
-         * "circle", "square", "diamond", "triangle" and "triangle-down".
+         * The minimum for the Z value range. Defaults to the highest Z value
+         * in the data.
          *
-         * Additionally, the URL to a graphic can be given on the form
-         * `url(graphic.png)`. Note that for the image to be applied to exported
-         * charts, its URL needs to be accessible by the export server.
+         * @see [zMin](#plotOptions.bubble.zMin)
          *
-         * Custom callbacks for symbol path generation can also be added to
-         * `Highcharts.SVGRenderer.prototype.symbols`. The callback is then
-         * used by its method name, as shown in the demo.
+         * @sample {highcharts} highcharts/plotoptions/bubble-zmin-zmax/
+         *         Z has a possible range of 0-100
          *
-         * @sample     {highcharts} highcharts/plotoptions/bubble-symbol/
-         *             Bubble chart with various symbols
-         * @sample     {highcharts} highcharts/plotoptions/series-marker-symbol/
-         *             General chart with predefined, graphic and custom markers
-         *
-         * @type  {Highcharts.SymbolKeyValue|string}
-         * @since 5.0.11
+         * @type      {number}
+         * @since     4.0.3
+         * @product   highcharts
+         * @apioption plotOptions.bubble.zMax
          */
-        symbol: 'circle'
 
-    },
+        /**
+         * @default   z
+         * @apioption plotOptions.bubble.colorKey
+         */
 
-    /**
-     * Minimum bubble size. Bubbles will automatically size between the
-     * `minSize` and `maxSize` to reflect the `z` value of each bubble.
-     * Can be either pixels (when no unit is given), or a percentage of
-     * the smallest one of the plot width and height.
-     *
-     * @sample {highcharts} highcharts/plotoptions/bubble-size/
-     *         Bubble size
-     *
-     * @type    {number|string}
-     * @since   3.0
-     * @product highcharts highstock
-     */
-    minSize: 8,
+        /**
+         * The minimum for the Z value range. Defaults to the lowest Z value
+         * in the data.
+         *
+         * @see [zMax](#plotOptions.bubble.zMax)
+         *
+         * @sample {highcharts} highcharts/plotoptions/bubble-zmin-zmax/
+         *         Z has a possible range of 0-100
+         *
+         * @type      {number}
+         * @since     4.0.3
+         * @product   highcharts
+         * @apioption plotOptions.bubble.zMin
+         */
 
-    /**
-     * Maximum bubble size. Bubbles will automatically size between the
-     * `minSize` and `maxSize` to reflect the `z` value of each bubble.
-     * Can be either pixels (when no unit is given), or a percentage of
-     * the smallest one of the plot width and height.
-     *
-     * @sample {highcharts} highcharts/plotoptions/bubble-size/
-     *         Bubble size
-     *
-     * @type    {number|string}
-     * @since   3.0
-     * @product highcharts highstock
-     */
-    maxSize: '20%',
+        /**
+         * When [displayNegative](#plotOptions.bubble.displayNegative) is `false`,
+         * bubbles with lower Z values are skipped. When `displayNegative`
+         * is `true` and a [negativeColor](#plotOptions.bubble.negativeColor)
+         * is given, points with lower Z is colored.
+         *
+         * @sample {highcharts} highcharts/plotoptions/bubble-negative/
+         *         Negative bubbles
+         *
+         * @since   3.0
+         * @product highcharts
+         */
+        zThreshold: 0,
 
-    /**
-     * When a point's Z value is below the
-     * [zThreshold](#plotOptions.bubble.zThreshold) setting, this color is used.
-     *
-     * @sample {highcharts} highcharts/plotoptions/bubble-negative/
-     *         Negative bubbles
-     *
-     * @type      {Highcharts.ColorString|Highcharts.GradientColorObject|Highcharts.PatternObject}
-     * @since     3.0
-     * @product   highcharts
-     * @apioption plotOptions.bubble.negativeColor
-     */
+        zoneAxis: 'z'
 
-    /**
-     * Whether the bubble's value should be represented by the area or the
-     * width of the bubble. The default, `area`, corresponds best to the
-     * human perception of the size of each bubble.
-     *
-     * @sample {highcharts} highcharts/plotoptions/bubble-sizeby/
-     *         Comparison of area and size
-     *
-     * @type       {Highcharts.BubbleSizeByValue}
-     * @default    area
-     * @since      3.0.7
-     * @apioption  plotOptions.bubble.sizeBy
-     */
+    });
+}
 
-    /**
-     * When this is true, the absolute value of z determines the size of
-     * the bubble. This means that with the default `zThreshold` of 0, a
-     * bubble of value -1 will have the same size as a bubble of value 1,
-     * while a bubble of value 0 will have a smaller size according to
-     * `minSize`.
-     *
-     * @sample    {highcharts} highcharts/plotoptions/bubble-sizebyabsolutevalue/
-     *            Size by absolute value, various thresholds
-     *
-     * @type      {boolean}
-     * @default   false
-     * @since     4.1.9
-     * @product   highcharts
-     * @apioption plotOptions.bubble.sizeByAbsoluteValue
-     */
+/* *
+ *
+ *  Prototype Properties
+ *
+ * */
 
-    /**
-     * When this is true, the series will not cause the Y axis to cross
-     * the zero plane (or [threshold](#plotOptions.series.threshold) option)
-     * unless the data actually crosses the plane.
-     *
-     * For example, if `softThreshold` is `false`, a series of 0, 1, 2,
-     * 3 will make the Y axis show negative values according to the `minPadding`
-     * option. If `softThreshold` is `true`, the Y axis starts at 0.
-     *
-     * @since   4.1.9
-     * @product highcharts
-     */
-    softThreshold: false,
-
-    states: {
-        hover: {
-            halo: {
-                size: 5
-            }
-        }
-    },
-
-    tooltip: {
-        pointFormat: '({point.x}, {point.y}), Size: {point.z}'
-    },
-
-    turboThreshold: 0,
-
-    /**
-     * The minimum for the Z value range. Defaults to the highest Z value
-     * in the data.
-     *
-     * @see [zMin](#plotOptions.bubble.zMin)
-     *
-     * @sample {highcharts} highcharts/plotoptions/bubble-zmin-zmax/
-     *         Z has a possible range of 0-100
-     *
-     * @type      {number}
-     * @since     4.0.3
-     * @product   highcharts
-     * @apioption plotOptions.bubble.zMax
-     */
-
-    /**
-     * @default   z
-     * @apioption plotOptions.bubble.colorKey
-     */
-
-    /**
-     * The minimum for the Z value range. Defaults to the lowest Z value
-     * in the data.
-     *
-     * @see [zMax](#plotOptions.bubble.zMax)
-     *
-     * @sample {highcharts} highcharts/plotoptions/bubble-zmin-zmax/
-     *         Z has a possible range of 0-100
-     *
-     * @type      {number}
-     * @since     4.0.3
-     * @product   highcharts
-     * @apioption plotOptions.bubble.zMin
-     */
-
-    /**
-     * When [displayNegative](#plotOptions.bubble.displayNegative) is `false`,
-     * bubbles with lower Z values are skipped. When `displayNegative`
-     * is `true` and a [negativeColor](#plotOptions.bubble.negativeColor)
-     * is given, points with lower Z is colored.
-     *
-     * @sample {highcharts} highcharts/plotoptions/bubble-negative/
-     *         Negative bubbles
-     *
-     * @since   3.0
-     * @product highcharts
-     */
-    zThreshold: 0,
-
-    zoneAxis: 'z'
-
-// Prototype members
-}, {
+extend(BubbleSeries.prototype, {
     pointArrayMap: ['y', 'z'],
     parallelArrays: ['x', 'y', 'z'],
     trackerGroups: ['group', 'dataLabelsGroup'],
@@ -579,7 +594,7 @@ BaseSeries.seriesType<typeof Highcharts.BubbleSeries>('bubble', 'scatter', {
             radii = this.radii;
 
         // Run the parent method
-        seriesTypes.scatter.prototype.translate.call(this);
+        ScatterSeries.prototype.translate.call(this);
 
         // Set the shape type and arguments to be picked up in drawPoints
         i = data.length;
@@ -610,12 +625,30 @@ BaseSeries.seriesType<typeof Highcharts.BubbleSeries>('bubble', 'scatter', {
         }
     },
 
-    alignDataLabel: seriesTypes.column.prototype.alignDataLabel,
+    alignDataLabel: ColumnSeries.prototype.alignDataLabel,
     buildKDTree: noop as any,
     applyZones: noop as any
 
-// Point class
-}, {
+});
+
+/* *
+ *
+ *  Class
+ *
+ * */
+
+class BubblePoint extends ScatterSeries.prototype.pointClass {
+
+}
+BubbleSeries.prototype.pointClass = BubblePoint;
+
+/* *
+ *
+ *  Prototype Properties
+ *
+ * */
+
+extend(BubblePoint.prototype, {
     /**
      * @private
      */
@@ -765,6 +798,26 @@ Axis.prototype.beforePadding = function (this: Highcharts.Axis): void {
 
 };
 
+/* *
+ *
+ *  Registry
+ *
+ * */
+
+declare module '../../Core/Series/SeriesType' {
+    interface SeriesTypeRegistry {
+        bubble: typeof BubbleSeries;
+    }
+}
+BaseSeries.registerSeriesType('bubble', BubbleSeries);
+
+/* *
+ *
+ *  Default Export
+ *
+ * */
+
+export default BubbleSeries;
 
 /**
  * A `bubble` series. If the [type](#series.bubble.type) option is
