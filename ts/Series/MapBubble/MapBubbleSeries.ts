@@ -16,7 +16,7 @@
  *
  * */
 
-import type { SeriesStatesOptions } from '../../Core/Series/SeriesOptions';
+import type MapBubbleSeriesOptions from './MapBubbleSeriesOptions';
 import BaseSeries from '../../Core/Series/Series.js';
 const {
     seriesTypes: {
@@ -24,7 +24,7 @@ const {
         map: MapSeries
     }
 } = BaseSeries;
-import Point from '../../Core/Series/Point.js';
+import MapBubblePoint from './MapBubblePoint';
 import U from '../../Core/Utilities.js';
 const {
     extend,
@@ -34,30 +34,6 @@ const {
 import '../../Core/Options.js';
 import '../Bubble/BubbleSeries.js';
 import '../Map/MapSeries.js';
-
-/**
- * Internal types
- * @private
- */
-declare global {
-    namespace Highcharts {
-        class MapBubblePoint extends BubblePoint {
-            public options: MapBubblePointOptions;
-            public series: MapBubbleSeries;
-            public applyOptions(
-                options: MapBubblePointOptions,
-                x?: number
-            ): MapBubblePoint;
-            public isValid: () => boolean;
-        }
-        interface MapBubblePointOptions extends BubblePointOptions {
-            z?: (number|null);
-        }
-        interface MapBubbleSeriesOptions extends BubbleSeriesOptions {
-            states?: SeriesStatesOptions<MapBubbleSeries>;
-        }
-    }
-}
 
 /* *
  *
@@ -91,8 +67,7 @@ class MapBubbleSeries extends BubbleSeries {
      * @product      highmaps
      * @optionparent plotOptions.mapbubble
      */
-    public static defaultOptions: Highcharts.MapBubbleSeriesOptions = merge((
-        BubbleSeries.defaultOptions), {
+    public static defaultOptions: MapBubbleSeriesOptions = merge(BubbleSeries.defaultOptions, {
 
         /**
          * The main color of the series. This color affects both the fill
@@ -217,7 +192,7 @@ class MapBubbleSeries extends BubbleSeries {
         tooltip: {
             pointFormat: '{point.name}: {point.z}'
         }
-    } as Highcharts.MapBubbleSeriesOptions);
+    } as MapBubbleSeriesOptions);
 
     /* *
      *
@@ -227,7 +202,7 @@ class MapBubbleSeries extends BubbleSeries {
 
     public data: Array<MapBubblePoint> = void 0 as any;
 
-    public options: Highcharts.MapBubbleSeriesOptions = void 0 as any;
+    public options: MapBubbleSeriesOptions = void 0 as any;
 
     public points: Array<MapBubblePoint> = void 0 as any;
 
@@ -260,84 +235,14 @@ extend(MapBubbleSeries.prototype, {
     // If one single value is passed, it is interpreted as z
     pointArrayMap: ['z'],
 
+    pointClass: MapBubblePoint,
+
     setData: MapSeries.prototype.setData,
 
     setOptions: MapSeries.prototype.setOptions,
 
     xyFromShape: true
 });
-
-/* *
- *
- *  Class
- *
- * */
-
-class MapBubblePoint extends BubbleSeries.prototype.pointClass {
-
-    /* *
-     *
-     *  Functions
-     *
-     * */
-
-    /* eslint-disable valid-jsdoc */
-
-    /**
-     * @private
-     */
-    public applyOptions(
-        options: Highcharts.MapBubblePointOptions,
-        x?: number
-    ): Highcharts.MapBubblePoint {
-        var point: Highcharts.MapBubblePoint;
-
-        if (
-            options &&
-            typeof (options as any).lat !== 'undefined' &&
-            typeof (options as any).lon !== 'undefined'
-        ) {
-            point = Point.prototype.applyOptions.call(
-                this,
-                merge(
-                    options,
-                    this.series.chart.fromLatLonToPoint(options as any)
-                ),
-                x
-            ) as Highcharts.MapBubblePoint;
-        } else {
-            point = MapSeries.prototype.pointClass.prototype
-                .applyOptions.call(
-                    this, options as any, x as any
-                ) as any;
-        }
-        return point;
-    }
-
-    /**
-     * @private
-     */
-    public isValid(): boolean {
-        return typeof this.z === 'number';
-    }
-
-    /* eslint-enable valid-jsdoc */
-
-}
-
-/* *
- *
- *  Prototype Properties
- *
- * */
-
-interface MapBubblePoint {
-    ttBelow: boolean;
-}
-extend(MapBubblePoint.prototype, {
-    ttBelow: false
-});
-MapBubbleSeries.prototype.pointClass = MapBubblePoint;
 
 /* *
  *

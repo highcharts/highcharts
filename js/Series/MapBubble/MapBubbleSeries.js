@@ -23,7 +23,7 @@ var __extends = (this && this.__extends) || (function () {
 })();
 import BaseSeries from '../../Core/Series/Series.js';
 var _a = BaseSeries.seriesTypes, BubbleSeries = _a.bubble, MapSeries = _a.map;
-import Point from '../../Core/Series/Point.js';
+import MapBubblePoint from './MapBubblePoint';
 import U from '../../Core/Utilities.js';
 var extend = U.extend, merge = U.merge;
 import '../../Core/Options.js';
@@ -71,7 +71,7 @@ var MapBubbleSeries = /** @class */ (function (_super) {
      * @product      highmaps
      * @optionparent plotOptions.mapbubble
      */
-    MapBubbleSeries.defaultOptions = merge((BubbleSeries.defaultOptions), {
+    MapBubbleSeries.defaultOptions = merge(BubbleSeries.defaultOptions, {
         /**
          * The main color of the series. This color affects both the fill
          * and the stroke of the bubble. For enhanced control, use `marker`
@@ -194,54 +194,11 @@ extend(MapBubbleSeries.prototype, {
     getMapData: MapSeries.prototype.getMapData,
     // If one single value is passed, it is interpreted as z
     pointArrayMap: ['z'],
+    pointClass: MapBubblePoint,
     setData: MapSeries.prototype.setData,
     setOptions: MapSeries.prototype.setOptions,
     xyFromShape: true
 });
-/* *
- *
- *  Class
- *
- * */
-var MapBubblePoint = /** @class */ (function (_super) {
-    __extends(MapBubblePoint, _super);
-    function MapBubblePoint() {
-        return _super !== null && _super.apply(this, arguments) || this;
-    }
-    /* *
-     *
-     *  Functions
-     *
-     * */
-    /* eslint-disable valid-jsdoc */
-    /**
-     * @private
-     */
-    MapBubblePoint.prototype.applyOptions = function (options, x) {
-        var point;
-        if (options &&
-            typeof options.lat !== 'undefined' &&
-            typeof options.lon !== 'undefined') {
-            point = Point.prototype.applyOptions.call(this, merge(options, this.series.chart.fromLatLonToPoint(options)), x);
-        }
-        else {
-            point = MapSeries.prototype.pointClass.prototype
-                .applyOptions.call(this, options, x);
-        }
-        return point;
-    };
-    /**
-     * @private
-     */
-    MapBubblePoint.prototype.isValid = function () {
-        return typeof this.z === 'number';
-    };
-    return MapBubblePoint;
-}(BubbleSeries.prototype.pointClass));
-extend(MapBubblePoint.prototype, {
-    ttBelow: false
-});
-MapBubbleSeries.prototype.pointClass = MapBubblePoint;
 BaseSeries.registerSeriesType('mapbubble', MapBubbleSeries);
 /* *
  *
