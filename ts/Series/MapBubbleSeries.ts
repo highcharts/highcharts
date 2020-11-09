@@ -229,6 +229,7 @@ if (seriesTypes.bubble) {
             // Return the map area identified by the dataJoinBy option
             getMapData: (seriesTypes.map.prototype as any).getMapData, // @todo
             getBox: seriesTypes.map.prototype.getBox,
+            isCartesian: false,
             setData: seriesTypes.map.prototype.setData,
             setOptions: seriesTypes.map.prototype.setOptions,
             useMapGeometry: true,
