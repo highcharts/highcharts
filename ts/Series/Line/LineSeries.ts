@@ -4917,27 +4917,25 @@ class LineSeries {
             finalBox;
 
         // Initialize the animation. Set up the clipping rectangle.
-        if (!chart.hasRendered) {
-            if (init) {
+        if (init) {
 
-                series.setClip(animation);
+            series.setClip(animation);
 
-            // Run the animation
-            } else {
-                sharedClipKey = this.sharedClipKey;
-                clipRect = (chart as any)[sharedClipKey as any];
+        // Run the animation
+        } else {
+            sharedClipKey = this.sharedClipKey;
+            clipRect = (chart as any)[sharedClipKey as any];
 
-                finalBox = series.getClipBox(animation, true);
+            finalBox = series.getClipBox(animation, true);
 
-                if (clipRect) {
-                    clipRect.animate(finalBox, animation);
-                }
-                if ((chart as any)[sharedClipKey + 'm']) {
-                    (chart as any)[sharedClipKey + 'm'].animate({
-                        width: finalBox.width + 99,
-                        x: finalBox.x - (chart.inverted ? 0 : 99)
-                    }, animation);
-                }
+            if (clipRect) {
+                clipRect.animate(finalBox, animation);
+            }
+            if ((chart as any)[sharedClipKey + 'm']) {
+                (chart as any)[sharedClipKey + 'm'].animate({
+                    width: finalBox.width + 99,
+                    x: finalBox.x - (chart.inverted ? 0 : 99)
+                }, animation);
             }
         }
     }
