@@ -179,8 +179,10 @@ var glob = ( // @todo UMD variable named `window`, and glob named `win`
                 }
             });
 
-            glob.addEventListener('testPassive', noop, opts);
-            glob.removeEventListener('testPassive', noop, opts);
+            if (glob.addEventListener && glob.removeEventListener) {
+                glob.addEventListener('testPassive', noop, opts);
+                glob.removeEventListener('testPassive', noop, opts);
+            }
         }
 
         return supportsPassive;
@@ -190,24 +192,24 @@ var H: typeof Highcharts = {
     product: 'Highcharts',
     version: '@product.version@',
     deg2rad: Math.PI * 2 / 360,
-    doc: doc,
+    doc,
     hasBidiBug: hasBidiBug,
     hasTouch: !!glob.TouchEvent,
-    isMS: isMS,
+    isMS,
     isWebKit: userAgent.indexOf('AppleWebKit') !== -1,
-    isFirefox: isFirefox,
-    isChrome: isChrome,
+    isFirefox,
+    isChrome,
     isSafari: !isChrome && userAgent.indexOf('Safari') !== -1,
     isTouchDevice: /(Mobile|Android|Windows Phone)/.test(userAgent),
-    SVG_NS: SVG_NS,
+    SVG_NS,
     chartCount: 0,
     seriesTypes: {} as Highcharts.SeriesTypesDictionary,
     supportsPassiveEvents: checkPassiveEvents(),
     symbolSizes: {},
-    svg: svg,
+    svg,
     win: glob,
     marginNames: ['plotTop', 'marginRight', 'marginBottom', 'plotLeft'],
-    noop: noop,
+    noop,
 
     /**
      * Theme options that should get applied to the chart. In module mode it
