@@ -16,24 +16,24 @@
  *
  * */
 
-import type { SeriesStatesOptions } from '../Core/Series/SeriesOptions';
-import BaseSeries from '../Core/Series/Series.js';
+import type { SeriesStatesOptions } from '../../Core/Series/SeriesOptions';
+import BaseSeries from '../../Core/Series/Series.js';
 const {
     seriesTypes: {
         bubble: BubbleSeries,
         map: MapSeries
     }
 } = BaseSeries;
-import Point from '../Core/Series/Point.js';
-import U from '../Core/Utilities.js';
+import Point from '../../Core/Series/Point.js';
+import U from '../../Core/Utilities.js';
 const {
     extend,
     merge
 } = U;
 
-import '../Core/Options.js';
-import './Bubble/BubbleSeries.js';
-import './Map/MapSeries.js';
+import '../../Core/Options.js';
+import '../Bubble/BubbleSeries.js';
+import '../Map/MapSeries.js';
 
 /**
  * Internal types
@@ -345,7 +345,7 @@ MapBubbleSeries.prototype.pointClass = MapBubblePoint;
  *
  * */
 
-declare module '../Core/Series/SeriesType' {
+declare module '../../Core/Series/SeriesType' {
     interface SeriesTypeRegistry {
         mapbubble: typeof MapBubbleSeries;
     }
