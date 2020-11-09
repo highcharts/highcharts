@@ -243,33 +243,190 @@ class FunnelSeries extends PieSeries {
      *
      * */
 
+    public centerX?: number;
+
     public data: Array<Highcharts.FunnelPoint> = void 0 as any;
 
     public options: Highcharts.FunnelSeriesOptions = void 0 as any;
 
     public points: Array<Highcharts.FunnelPoint> = void 0 as any;
 
-}
+    /* *
+     *
+     *  Functions
+     *
+     * */
 
-interface FunnelSeries {
-    centerX: number;
-    pointClass: typeof Highcharts.FunnelPoint;
-    alignDataLabel(
-        point: Point,
+    /* eslint-disable valid-jsdoc */
+
+    /**
+     * @private
+     */
+    public alignDataLabel(
+        point: Highcharts.FunnelPoint,
         dataLabel: SVGElement,
         options: Highcharts.FunnelSeriesDataLabelsOptionsObject,
         alignTo: BBoxObject,
         isNew?: boolean
-    ): void;
-    getWidthAt(y: number): number;
-    getX(y: number, half: boolean, point: Highcharts.FunnelPoint): number;
-    sortByAngle(points: Array<Highcharts.FunnelPoint>): void;
-}
-extend(FunnelSeries.prototype, {
-    animate: noop as any,
+    ): void {
+        var series = point.series,
+            reversed = series.options.reversed,
+            dlBox = point.dlBox || point.shapeArgs,
+            align = options.align,
+            verticalAlign = options.verticalAlign,
+            inside =
+                ((series.options || {}).dataLabels || {}).inside,
+            centerY = series.center[1],
+            pointPlotY = (
+                reversed ?
+                    2 * centerY - (point.plotY as any) :
+                    point.plotY
+            ),
+            widthAtLabel = series.getWidthAt(
+                (pointPlotY as any) - dlBox.height / 2 +
+                (dataLabel as any).height
+            ),
+            offset = verticalAlign === 'middle' ?
+                (dlBox.topWidth - dlBox.bottomWidth) / 4 :
+                (widthAtLabel - dlBox.bottomWidth) / 2,
+            y = dlBox.y,
+            x = dlBox.x;
 
-    // Overrides the pie translate method
-    translate: function (this: FunnelSeries): void {
+        if (verticalAlign === 'middle') {
+            y = dlBox.y - dlBox.height / 2 + dataLabel.height / 2;
+        } else if (verticalAlign === 'top') {
+            y = dlBox.y - dlBox.height + dataLabel.height +
+                options.padding;
+        }
+
+        if (
+            verticalAlign === 'top' && !reversed ||
+            verticalAlign === 'bottom' && reversed ||
+            verticalAlign === 'middle'
+        ) {
+            if (align === 'right') {
+                x = dlBox.x - (options.padding as any) + offset;
+            } else if (align === 'left') {
+                x = dlBox.x + (options.padding as any) - offset;
+            }
+        }
+
+        alignTo = {
+            x: x,
+            y: reversed ? y - dlBox.height : y,
+            width: dlBox.bottomWidth,
+            height: dlBox.height
+        };
+
+        options.verticalAlign = 'bottom';
+
+        // Call the parent method
+        if (!inside || point.visible) {
+            LineSeries.prototype.alignDataLabel.call(
+                this,
+                point,
+                dataLabel,
+                options,
+                alignTo,
+                isNew
+            );
+        }
+
+        if (inside) {
+            if (!point.visible && point.dataLabel) {
+                // Avoid animation from top
+                point.dataLabel.placed = false;
+            }
+
+            // If label is inside and we have contrast, set it:
+            if (point.contrastColor) {
+                dataLabel.css({
+                    color: point.contrastColor
+                });
+            }
+        }
+    }
+
+
+    /**
+     * Extend the pie data label method.
+     * @private
+     */
+    public drawDataLabels(): void {
+        var series = this,
+            data = series.data,
+            labelDistance: number =
+                (series.options.dataLabels as any).distance,
+            leftSide,
+            sign,
+            point,
+            i = data.length,
+            x,
+            y;
+
+        // In the original pie label anticollision logic, the slots are
+        // distributed from one labelDistance above to one labelDistance
+        // below the pie. In funnels we don't want this.
+        series.center[2] -= 2 * labelDistance;
+
+        // Set the label position array for each point.
+        while (i--) {
+            point = data[i];
+            leftSide = point.half;
+            sign = leftSide ? 1 : -1;
+            y = point.plotY;
+            point.labelDistance = pick(
+                point.options.dataLabels &&
+                point.options.dataLabels.distance,
+                labelDistance
+            );
+
+            series.maxLabelDistance = Math.max(
+                point.labelDistance,
+                series.maxLabelDistance || 0
+            );
+            x = series.getX(y as any, leftSide as any, point);
+
+            // set the anchor point for data labels
+            point.labelPosition = {
+                // initial position of the data label - it's utilized for
+                // finding the final position for the label
+                natural: {
+                    x: 0,
+                    y: y as any
+                },
+                'final': {
+                    // used for generating connector path -
+                    // initialized later in drawDataLabels function
+                    // x: undefined,
+                    // y: undefined
+                },
+                // left - funnel on the left side of the data label
+                // right - funnel on the right side of the data label
+                alignment: leftSide ? 'right' : 'left',
+                connectorPosition: {
+                    breakAt: { // used in connectorShapes.fixedOffset
+                        x: x + (point.labelDistance - 5) * sign,
+                        y: y as any
+                    },
+                    touchingSliceAt: {
+                        x: x + point.labelDistance * sign,
+                        y: y as any
+                    }
+                }
+            };
+        }
+
+        BaseSeries.seriesTypes[
+            (series.options.dataLabels as any).inside ? 'column' : 'pie'
+        ].prototype.drawDataLabels.call(this);
+    }
+
+    /**
+     * Overrides the pie translate method.
+     * @private
+     */
+    public translate(): void {
 
         var sum = 0,
             series = this,
@@ -464,178 +621,38 @@ extend(FunnelSeries.prototype, {
         });
 
         fireEvent(series, 'afterTranslate');
-    },
+    }
 
-    // Funnel items don't have angles (#2289)
-    sortByAngle: function (
-        this: FunnelSeries,
-        points: Array<Highcharts.FunnelPoint>
-    ): void {
+    /**
+     * Funnel items don't have angles (#2289).
+     * @private
+     */
+    public sortByAngle(points: Array<Highcharts.FunnelPoint>): void {
         points.sort(function (
             a: Highcharts.FunnelPoint,
             b: Highcharts.FunnelPoint
         ): number {
             return (a.plotY as any) - (b.plotY as any);
         });
-    },
-
-    // Extend the pie data label method
-    drawDataLabels: function (
-        this: FunnelSeries
-    ): void {
-        var series = this,
-            data = series.data,
-            labelDistance: number =
-                (series.options.dataLabels as any).distance,
-            leftSide,
-            sign,
-            point,
-            i = data.length,
-            x,
-            y;
-
-        // In the original pie label anticollision logic, the slots are
-        // distributed from one labelDistance above to one labelDistance
-        // below the pie. In funnels we don't want this.
-        series.center[2] -= 2 * labelDistance;
-
-        // Set the label position array for each point.
-        while (i--) {
-            point = data[i];
-            leftSide = point.half;
-            sign = leftSide ? 1 : -1;
-            y = point.plotY;
-            point.labelDistance = pick(
-                point.options.dataLabels &&
-                point.options.dataLabels.distance,
-                labelDistance
-            );
-
-            series.maxLabelDistance = Math.max(
-                point.labelDistance,
-                series.maxLabelDistance || 0
-            );
-            x = series.getX(y as any, leftSide as any, point);
-
-            // set the anchor point for data labels
-            point.labelPosition = {
-                // initial position of the data label - it's utilized for
-                // finding the final position for the label
-                natural: {
-                    x: 0,
-                    y: y as any
-                },
-                'final': {
-                    // used for generating connector path -
-                    // initialized later in drawDataLabels function
-                    // x: undefined,
-                    // y: undefined
-                },
-                // left - funnel on the left side of the data label
-                // right - funnel on the right side of the data label
-                alignment: leftSide ? 'right' : 'left',
-                connectorPosition: {
-                    breakAt: { // used in connectorShapes.fixedOffset
-                        x: x + (point.labelDistance - 5) * sign,
-                        y: y as any
-                    },
-                    touchingSliceAt: {
-                        x: x + point.labelDistance * sign,
-                        y: y as any
-                    }
-                }
-            };
-        }
-
-        BaseSeries.seriesTypes[
-            (series.options.dataLabels as any).inside ? 'column' : 'pie'
-        ].prototype.drawDataLabels.call(this);
-    },
-
-    alignDataLabel: function (
-        point: Highcharts.FunnelPoint,
-        dataLabel: SVGElement,
-        options: Highcharts.FunnelSeriesDataLabelsOptionsObject,
-        alignTo: BBoxObject,
-        isNew?: boolean
-    ): void {
-        var series = point.series,
-            reversed = series.options.reversed,
-            dlBox = point.dlBox || point.shapeArgs,
-            align = options.align,
-            verticalAlign = options.verticalAlign,
-            inside =
-                ((series.options || {}).dataLabels || {}).inside,
-            centerY = series.center[1],
-            pointPlotY = (
-                reversed ?
-                    2 * centerY - (point.plotY as any) :
-                    point.plotY
-            ),
-            widthAtLabel = series.getWidthAt(
-                (pointPlotY as any) - dlBox.height / 2 +
-                (dataLabel as any).height
-            ),
-            offset = verticalAlign === 'middle' ?
-                (dlBox.topWidth - dlBox.bottomWidth) / 4 :
-                (widthAtLabel - dlBox.bottomWidth) / 2,
-            y = dlBox.y,
-            x = dlBox.x;
-
-        if (verticalAlign === 'middle') {
-            y = dlBox.y - dlBox.height / 2 + dataLabel.height / 2;
-        } else if (verticalAlign === 'top') {
-            y = dlBox.y - dlBox.height + dataLabel.height +
-                options.padding;
-        }
-
-        if (
-            verticalAlign === 'top' && !reversed ||
-            verticalAlign === 'bottom' && reversed ||
-            verticalAlign === 'middle'
-        ) {
-            if (align === 'right') {
-                x = dlBox.x - (options.padding as any) + offset;
-            } else if (align === 'left') {
-                x = dlBox.x + (options.padding as any) - offset;
-            }
-        }
-
-        alignTo = {
-            x: x,
-            y: reversed ? y - dlBox.height : y,
-            width: dlBox.bottomWidth,
-            height: dlBox.height
-        };
-
-        options.verticalAlign = 'bottom';
-
-        // Call the parent method
-        if (!inside || point.visible) {
-            LineSeries.prototype.alignDataLabel.call(
-                this,
-                point,
-                dataLabel,
-                options,
-                alignTo,
-                isNew
-            );
-        }
-
-        if (inside) {
-            if (!point.visible && point.dataLabel) {
-                // Avoid animation from top
-                point.dataLabel.placed = false;
-            }
-
-            // If label is inside and we have contrast, set it:
-            if (point.contrastColor) {
-                dataLabel.css({
-                    color: point.contrastColor
-                });
-            }
-        }
     }
+
+    /* eslint-enable valid-jsdoc */
+
+}
+
+/* *
+ *
+ *  Prototype Properties
+ *
+ * */
+
+interface FunnelSeries {
+    pointClass: typeof Highcharts.FunnelPoint;
+    getWidthAt(y: number): number; // added during translate
+    getX(y: number, half: boolean, point: Highcharts.FunnelPoint): number; // added during translate
+}
+extend(FunnelSeries.prototype, {
+    animate: noop as any
 });
 
 /* *

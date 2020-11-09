@@ -47,135 +47,125 @@ var FunnelSeries = /** @class */ (function (_super) {
          *
          * */
         var _this = _super !== null && _super.apply(this, arguments) || this;
-        /* *
-         *
-         *  Properties
-         *
-         * */
         _this.data = void 0;
         _this.options = void 0;
         _this.points = void 0;
         return _this;
+        /* eslint-enable valid-jsdoc */
     }
+    /* *
+     *
+     *  Functions
+     *
+     * */
+    /* eslint-disable valid-jsdoc */
     /**
-     * Funnel charts are a type of chart often used to visualize stages in a
-     * sales project, where the top are the initial stages with the most
-     * clients. It requires that the modules/funnel.js file is loaded.
-     *
-     * @sample highcharts/demo/funnel/
-     *         Funnel demo
-     *
-     * @extends      plotOptions.pie
-     * @excluding    innerSize,size,dataSorting
-     * @product      highcharts
-     * @requires     modules/funnel
-     * @optionparent plotOptions.funnel
+     * @private
      */
-    FunnelSeries.defaultOptions = merge(PieSeries.defaultOptions, {
-        /**
-         * Initial animation is by default disabled for the funnel chart.
-         */
-        animation: false,
-        /**
-         * The center of the series. By default, it is centered in the middle
-         * of the plot area, so it fills the plot area height.
-         *
-         * @type    {Array<number|string>}
-         * @default ["50%", "50%"]
-         * @since   3.0
-         */
-        center: ['50%', '50%'],
-        /**
-         * The width of the funnel compared to the width of the plot area,
-         * or the pixel width if it is a number.
-         *
-         * @type  {number|string}
-         * @since 3.0
-         */
-        width: '90%',
-        /**
-         * The width of the neck, the lower part of the funnel. A number defines
-         * pixel width, a percentage string defines a percentage of the plot
-         * area width.
-         *
-         * @sample {highcharts} highcharts/demo/funnel/
-         *         Funnel demo
-         *
-         * @type  {number|string}
-         * @since 3.0
-         */
-        neckWidth: '30%',
-        /**
-         * The height of the funnel or pyramid. If it is a number it defines
-         * the pixel height, if it is a percentage string it is the percentage
-         * of the plot area height.
-         *
-         * @sample {highcharts} highcharts/demo/funnel/
-         *         Funnel demo
-         *
-         * @type  {number|string}
-         * @since 3.0
-         */
-        height: '100%',
-        /**
-         * The height of the neck, the lower part of the funnel. A number
-         * defines pixel width, a percentage string defines a percentage of the
-         * plot area height.
-         *
-         * @type {number|string}
-         */
-        neckHeight: '25%',
-        /**
-         * A reversed funnel has the widest area down. A reversed funnel with
-         * no neck width and neck height is a pyramid.
-         *
-         * @since 3.0.10
-         */
-        reversed: false,
-        /**
-         * To avoid adapting the data label size in Pie.drawDataLabels.
-         * @ignore-option
-         */
-        size: true,
-        dataLabels: {
-            connectorWidth: 1,
-            verticalAlign: 'middle'
-        },
-        /**
-         * Options for the series states.
-         */
-        states: {
-            /**
-             * @excluding halo, marker, lineWidth, lineWidthPlus
-             * @apioption plotOptions.funnel.states.hover
-             */
-            /**
-             * Options for a selected funnel item.
-             *
-             * @excluding halo, marker, lineWidth, lineWidthPlus
-             */
-            select: {
-                /**
-                 * A specific color for the selected point.
-                 *
-                 * @type {Highcharts.ColorString|Highcharts.GradientColorObject|Highcharts.PatternObject}
-                 */
-                color: '${palette.neutralColor20}',
-                /**
-                 * A specific border color for the selected point.
-                 *
-                 * @type {Highcharts.ColorString}
-                 */
-                borderColor: '${palette.neutralColor100}'
+    FunnelSeries.prototype.alignDataLabel = function (point, dataLabel, options, alignTo, isNew) {
+        var series = point.series, reversed = series.options.reversed, dlBox = point.dlBox || point.shapeArgs, align = options.align, verticalAlign = options.verticalAlign, inside = ((series.options || {}).dataLabels || {}).inside, centerY = series.center[1], pointPlotY = (reversed ?
+            2 * centerY - point.plotY :
+            point.plotY), widthAtLabel = series.getWidthAt(pointPlotY - dlBox.height / 2 +
+            dataLabel.height), offset = verticalAlign === 'middle' ?
+            (dlBox.topWidth - dlBox.bottomWidth) / 4 :
+            (widthAtLabel - dlBox.bottomWidth) / 2, y = dlBox.y, x = dlBox.x;
+        if (verticalAlign === 'middle') {
+            y = dlBox.y - dlBox.height / 2 + dataLabel.height / 2;
+        }
+        else if (verticalAlign === 'top') {
+            y = dlBox.y - dlBox.height + dataLabel.height +
+                options.padding;
+        }
+        if (verticalAlign === 'top' && !reversed ||
+            verticalAlign === 'bottom' && reversed ||
+            verticalAlign === 'middle') {
+            if (align === 'right') {
+                x = dlBox.x - options.padding + offset;
+            }
+            else if (align === 'left') {
+                x = dlBox.x + options.padding - offset;
             }
         }
-    });
-    return FunnelSeries;
-}(PieSeries));
-extend(FunnelSeries.prototype, {
-    animate: noop,
-    // Overrides the pie translate method
-    translate: function () {
+        alignTo = {
+            x: x,
+            y: reversed ? y - dlBox.height : y,
+            width: dlBox.bottomWidth,
+            height: dlBox.height
+        };
+        options.verticalAlign = 'bottom';
+        // Call the parent method
+        if (!inside || point.visible) {
+            LineSeries.prototype.alignDataLabel.call(this, point, dataLabel, options, alignTo, isNew);
+        }
+        if (inside) {
+            if (!point.visible && point.dataLabel) {
+                // Avoid animation from top
+                point.dataLabel.placed = false;
+            }
+            // If label is inside and we have contrast, set it:
+            if (point.contrastColor) {
+                dataLabel.css({
+                    color: point.contrastColor
+                });
+            }
+        }
+    };
+    /**
+     * Extend the pie data label method.
+     * @private
+     */
+    FunnelSeries.prototype.drawDataLabels = function () {
+        var series = this, data = series.data, labelDistance = series.options.dataLabels.distance, leftSide, sign, point, i = data.length, x, y;
+        // In the original pie label anticollision logic, the slots are
+        // distributed from one labelDistance above to one labelDistance
+        // below the pie. In funnels we don't want this.
+        series.center[2] -= 2 * labelDistance;
+        // Set the label position array for each point.
+        while (i--) {
+            point = data[i];
+            leftSide = point.half;
+            sign = leftSide ? 1 : -1;
+            y = point.plotY;
+            point.labelDistance = pick(point.options.dataLabels &&
+                point.options.dataLabels.distance, labelDistance);
+            series.maxLabelDistance = Math.max(point.labelDistance, series.maxLabelDistance || 0);
+            x = series.getX(y, leftSide, point);
+            // set the anchor point for data labels
+            point.labelPosition = {
+                // initial position of the data label - it's utilized for
+                // finding the final position for the label
+                natural: {
+                    x: 0,
+                    y: y
+                },
+                'final': {
+                // used for generating connector path -
+                // initialized later in drawDataLabels function
+                // x: undefined,
+                // y: undefined
+                },
+                // left - funnel on the left side of the data label
+                // right - funnel on the right side of the data label
+                alignment: leftSide ? 'right' : 'left',
+                connectorPosition: {
+                    breakAt: {
+                        x: x + (point.labelDistance - 5) * sign,
+                        y: y
+                    },
+                    touchingSliceAt: {
+                        x: x + point.labelDistance * sign,
+                        y: y
+                    }
+                }
+            };
+        }
+        BaseSeries.seriesTypes[series.options.dataLabels.inside ? 'column' : 'pie'].prototype.drawDataLabels.call(this);
+    };
+    /**
+     * Overrides the pie translate method.
+     * @private
+     */
+    FunnelSeries.prototype.translate = function () {
         var sum = 0, series = this, chart = series.chart, options = series.options, reversed = options.reversed, ignoreHiddenPoint = options.ignoreHiddenPoint, plotWidth = chart.plotWidth, plotHeight = chart.plotHeight, cumulative = 0, // start at top
         center = options.center, centerX = getLength(center[0], plotWidth), centerY = getLength(center[1], plotHeight), width = getLength(options.width, plotWidth), tempWidth, height = getLength(options.height, plotHeight), neckWidth = getLength(options.neckWidth, plotWidth), neckHeight = getLength(options.neckHeight, plotHeight), neckY = (centerY - height / 2) + height - neckHeight, data = series.data, path, fraction, half = (options.dataLabels.position === 'left' ?
             1 :
@@ -307,109 +297,133 @@ extend(FunnelSeries.prototype, {
             }
         });
         fireEvent(series, 'afterTranslate');
-    },
-    // Funnel items don't have angles (#2289)
-    sortByAngle: function (points) {
+    };
+    /**
+     * Funnel items don't have angles (#2289).
+     * @private
+     */
+    FunnelSeries.prototype.sortByAngle = function (points) {
         points.sort(function (a, b) {
             return a.plotY - b.plotY;
         });
-    },
-    // Extend the pie data label method
-    drawDataLabels: function () {
-        var series = this, data = series.data, labelDistance = series.options.dataLabels.distance, leftSide, sign, point, i = data.length, x, y;
-        // In the original pie label anticollision logic, the slots are
-        // distributed from one labelDistance above to one labelDistance
-        // below the pie. In funnels we don't want this.
-        series.center[2] -= 2 * labelDistance;
-        // Set the label position array for each point.
-        while (i--) {
-            point = data[i];
-            leftSide = point.half;
-            sign = leftSide ? 1 : -1;
-            y = point.plotY;
-            point.labelDistance = pick(point.options.dataLabels &&
-                point.options.dataLabels.distance, labelDistance);
-            series.maxLabelDistance = Math.max(point.labelDistance, series.maxLabelDistance || 0);
-            x = series.getX(y, leftSide, point);
-            // set the anchor point for data labels
-            point.labelPosition = {
-                // initial position of the data label - it's utilized for
-                // finding the final position for the label
-                natural: {
-                    x: 0,
-                    y: y
-                },
-                'final': {
-                // used for generating connector path -
-                // initialized later in drawDataLabels function
-                // x: undefined,
-                // y: undefined
-                },
-                // left - funnel on the left side of the data label
-                // right - funnel on the right side of the data label
-                alignment: leftSide ? 'right' : 'left',
-                connectorPosition: {
-                    breakAt: {
-                        x: x + (point.labelDistance - 5) * sign,
-                        y: y
-                    },
-                    touchingSliceAt: {
-                        x: x + point.labelDistance * sign,
-                        y: y
-                    }
-                }
-            };
-        }
-        BaseSeries.seriesTypes[series.options.dataLabels.inside ? 'column' : 'pie'].prototype.drawDataLabels.call(this);
-    },
-    alignDataLabel: function (point, dataLabel, options, alignTo, isNew) {
-        var series = point.series, reversed = series.options.reversed, dlBox = point.dlBox || point.shapeArgs, align = options.align, verticalAlign = options.verticalAlign, inside = ((series.options || {}).dataLabels || {}).inside, centerY = series.center[1], pointPlotY = (reversed ?
-            2 * centerY - point.plotY :
-            point.plotY), widthAtLabel = series.getWidthAt(pointPlotY - dlBox.height / 2 +
-            dataLabel.height), offset = verticalAlign === 'middle' ?
-            (dlBox.topWidth - dlBox.bottomWidth) / 4 :
-            (widthAtLabel - dlBox.bottomWidth) / 2, y = dlBox.y, x = dlBox.x;
-        if (verticalAlign === 'middle') {
-            y = dlBox.y - dlBox.height / 2 + dataLabel.height / 2;
-        }
-        else if (verticalAlign === 'top') {
-            y = dlBox.y - dlBox.height + dataLabel.height +
-                options.padding;
-        }
-        if (verticalAlign === 'top' && !reversed ||
-            verticalAlign === 'bottom' && reversed ||
-            verticalAlign === 'middle') {
-            if (align === 'right') {
-                x = dlBox.x - options.padding + offset;
+    };
+    /**
+     * Funnel charts are a type of chart often used to visualize stages in a
+     * sales project, where the top are the initial stages with the most
+     * clients. It requires that the modules/funnel.js file is loaded.
+     *
+     * @sample highcharts/demo/funnel/
+     *         Funnel demo
+     *
+     * @extends      plotOptions.pie
+     * @excluding    innerSize,size,dataSorting
+     * @product      highcharts
+     * @requires     modules/funnel
+     * @optionparent plotOptions.funnel
+     */
+    FunnelSeries.defaultOptions = merge(PieSeries.defaultOptions, {
+        /**
+         * Initial animation is by default disabled for the funnel chart.
+         */
+        animation: false,
+        /**
+         * The center of the series. By default, it is centered in the middle
+         * of the plot area, so it fills the plot area height.
+         *
+         * @type    {Array<number|string>}
+         * @default ["50%", "50%"]
+         * @since   3.0
+         */
+        center: ['50%', '50%'],
+        /**
+         * The width of the funnel compared to the width of the plot area,
+         * or the pixel width if it is a number.
+         *
+         * @type  {number|string}
+         * @since 3.0
+         */
+        width: '90%',
+        /**
+         * The width of the neck, the lower part of the funnel. A number defines
+         * pixel width, a percentage string defines a percentage of the plot
+         * area width.
+         *
+         * @sample {highcharts} highcharts/demo/funnel/
+         *         Funnel demo
+         *
+         * @type  {number|string}
+         * @since 3.0
+         */
+        neckWidth: '30%',
+        /**
+         * The height of the funnel or pyramid. If it is a number it defines
+         * the pixel height, if it is a percentage string it is the percentage
+         * of the plot area height.
+         *
+         * @sample {highcharts} highcharts/demo/funnel/
+         *         Funnel demo
+         *
+         * @type  {number|string}
+         * @since 3.0
+         */
+        height: '100%',
+        /**
+         * The height of the neck, the lower part of the funnel. A number
+         * defines pixel width, a percentage string defines a percentage of the
+         * plot area height.
+         *
+         * @type {number|string}
+         */
+        neckHeight: '25%',
+        /**
+         * A reversed funnel has the widest area down. A reversed funnel with
+         * no neck width and neck height is a pyramid.
+         *
+         * @since 3.0.10
+         */
+        reversed: false,
+        /**
+         * To avoid adapting the data label size in Pie.drawDataLabels.
+         * @ignore-option
+         */
+        size: true,
+        dataLabels: {
+            connectorWidth: 1,
+            verticalAlign: 'middle'
+        },
+        /**
+         * Options for the series states.
+         */
+        states: {
+            /**
+             * @excluding halo, marker, lineWidth, lineWidthPlus
+             * @apioption plotOptions.funnel.states.hover
+             */
+            /**
+             * Options for a selected funnel item.
+             *
+             * @excluding halo, marker, lineWidth, lineWidthPlus
+             */
+            select: {
+                /**
+                 * A specific color for the selected point.
+                 *
+                 * @type {Highcharts.ColorString|Highcharts.GradientColorObject|Highcharts.PatternObject}
+                 */
+                color: '${palette.neutralColor20}',
+                /**
+                 * A specific border color for the selected point.
+                 *
+                 * @type {Highcharts.ColorString}
+                 */
+                borderColor: '${palette.neutralColor100}'
             }
-            else if (align === 'left') {
-                x = dlBox.x + options.padding - offset;
-            }
         }
-        alignTo = {
-            x: x,
-            y: reversed ? y - dlBox.height : y,
-            width: dlBox.bottomWidth,
-            height: dlBox.height
-        };
-        options.verticalAlign = 'bottom';
-        // Call the parent method
-        if (!inside || point.visible) {
-            LineSeries.prototype.alignDataLabel.call(this, point, dataLabel, options, alignTo, isNew);
-        }
-        if (inside) {
-            if (!point.visible && point.dataLabel) {
-                // Avoid animation from top
-                point.dataLabel.placed = false;
-            }
-            // If label is inside and we have contrast, set it:
-            if (point.contrastColor) {
-                dataLabel.css({
-                    color: point.contrastColor
-                });
-            }
-        }
-    }
+    });
+    return FunnelSeries;
+}(PieSeries));
+extend(FunnelSeries.prototype, {
+    animate: noop
 });
 /* *
  *
