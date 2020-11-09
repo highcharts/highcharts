@@ -73,14 +73,16 @@ extend(RangeSelectorComponent.prototype, /** @lends Highcharts.RangeSelectorComp
      * Called on first render/updates to the chart, including options changes.
      */
     onChartUpdate: function () {
+        var _a;
         var chart = this.chart, component = this, rangeSelector = chart.rangeSelector;
         if (!rangeSelector) {
             return;
         }
-        if (rangeSelector.buttons && rangeSelector.buttons.length) {
-            rangeSelector.buttons.forEach(function (button) {
+        if ((_a = rangeSelector.buttons) === null || _a === void 0 ? void 0 : _a.length) {
+            rangeSelector.buttons.forEach(function (button, ix) {
+                var btnOptions = rangeSelector.buttonOptions[ix];
                 unhideChartElementFromAT(chart, button.element);
-                component.setRangeButtonAttrs(button);
+                component.setRangeButtonAttrs(button, btnOptions);
             });
         }
         // Make sure input boxes are accessible and focusable
@@ -99,10 +101,10 @@ extend(RangeSelectorComponent.prototype, /** @lends Highcharts.RangeSelectorComp
      * @private
      * @param {Highcharts.SVGElement} button
      */
-    setRangeButtonAttrs: function (button) {
+    setRangeButtonAttrs: function (button, buttonOptions) {
         var chart = this.chart, label = chart.langFormat('accessibility.rangeSelector.buttonText', {
             chart: chart,
-            buttonText: button.text && button.text.textStr
+            buttonText: buttonOptions.description || buttonOptions.text
         });
         setElAttrs(button.element, {
             tabindex: -1,
