@@ -15,7 +15,7 @@ import './broken-axis.src.js';
 import '../../Extensions/DataGrouping.js';
 import '../../Series/OHLCSeries.js';
 import '../../Series/CandlestickSeries.js';
-import '../../Series/FlagsSeries.js';
+import '../../Series/Flags/FlagsSeries.js';
 import '../../Core/Scrollbar.js';
 import '../../Core/Navigator.js';
 import '../../Extensions/RangeSelector.js';

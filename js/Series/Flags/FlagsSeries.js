@@ -21,19 +21,19 @@ var __extends = (this && this.__extends) || (function () {
         d.prototype = b === null ? Object.create(b) : (__.prototype = b.prototype, new __());
     };
 })();
-import BaseSeries from '../Core/Series/Series.js';
+import BaseSeries from '../../Core/Series/Series.js';
 var _a = BaseSeries.seriesTypes, ColumnSeries = _a.column, LineSeries = _a.line;
-import H from '../Core/Globals.js';
+import H from '../../Core/Globals.js';
 var noop = H.noop;
-import OnSeriesMixin from '../Mixins/OnSeries.js';
-import SVGElement from '../Core/Renderer/SVG/SVGElement.js';
-import SVGRenderer from '../Core/Renderer/SVG/SVGRenderer.js';
+import OnSeriesMixin from '../../Mixins/OnSeries.js';
+import SVGElement from '../../Core/Renderer/SVG/SVGElement.js';
+import SVGRenderer from '../../Core/Renderer/SVG/SVGRenderer.js';
 var symbols = SVGRenderer.prototype.symbols;
-import U from '../Core/Utilities.js';
+import U from '../../Core/Utilities.js';
 var addEvent = U.addEvent, defined = U.defined, extend = U.extend, isNumber = U.isNumber, merge = U.merge, objectEach = U.objectEach, wrap = U.wrap;
-import './Column/ColumnSeries.js';
-import '../Core/Interaction.js';
-import '../Core/Renderer/SVG/SVGRenderer.js';
+import '../Column/ColumnSeries.js';
+import '../../Core/Interaction.js';
+import '../../Core/Renderer/SVG/SVGRenderer.js';
 var Renderer = H.Renderer, TrackerMixin = H.TrackerMixin, // Interaction
 VMLRenderer = H.VMLRenderer;
 /**
