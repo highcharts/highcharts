@@ -18,14 +18,8 @@
  *
  * */
 
-import type AnimationOptionsObject from '../../Core/Animation/AnimationOptionsObject';
 import type ColorString from '../../Core/Color/ColorString';
-import type {
-    PointOptions,
-    PointShortOptions
-} from '../../Core/Series/PointOptions';
 import type PositionObject from '../../Core/Renderer/PositionObject';
-import type { StatesOptionsKey } from '../../Core/Series/StatesOptions';
 import type SVGAttributes from '../../Core/Renderer/SVG/SVGAttributes';
 import BaseSeries from '../../Core/Series/Series.js';
 const {
@@ -189,10 +183,7 @@ class Pie3DSeries extends PieSeries {
     /**
      * @private
      */
-    public pointAttribs(
-        point: Pie3DPoint,
-        state: StatesOptionsKey
-    ): SVGAttributes {
+    public pointAttribs(point: Pie3DPoint): SVGAttributes {
         var attr = super.pointAttribs.apply(this, arguments),
             options = this.options;
 

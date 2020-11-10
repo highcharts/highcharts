@@ -24,7 +24,13 @@ var __extends = (this && this.__extends) || (function () {
     };
 })();
 import BaseSeries from '../../Core/Series/Series.js';
-var PieSeries = BaseSeries.seriesTypes.pie;
+var PiePoint = BaseSeries.seriesTypes.pie.prototype.pointClass;
+/* *
+ *
+ *  Constants
+ *
+ * */
+var superHaloPath = PiePoint.prototype.haloPath;
 /* *
  *
  *  Class
@@ -53,10 +59,16 @@ var Pie3DPoint = /** @class */ (function (_super) {
      * @private
      */
     Pie3DPoint.prototype.haloPath = function () {
-        return this.series.chart.is3d() ? [] : _super.prototype.haloPath.apply(this, arguments);
+        return this.series.chart.is3d() ? [] : superHaloPath.apply(this, arguments);
     };
     return Pie3DPoint;
-}(PieSeries.prototype.pointClass));
+}(PiePoint));
+/* *
+ *
+ *  Hack
+ *
+ * */
+PiePoint.prototype.haloPath = Pie3DPoint.prototype.haloPath;
 /* *
  *
  *  Default Export
