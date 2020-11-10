@@ -65,12 +65,6 @@ var Pie3DPoint = /** @class */ (function (_super) {
 }(PiePoint));
 /* *
  *
- *  Hack
- *
- * */
-PiePoint.prototype.haloPath = Pie3DPoint.prototype.haloPath;
-/* *
- *
  *  Default Export
  *
  * */

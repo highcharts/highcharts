@@ -76,14 +76,6 @@ class Pie3DPoint extends PiePoint {
 
 /* *
  *
- *  Hack
- *
- * */
-
-PiePoint.prototype.haloPath = Pie3DPoint.prototype.haloPath;
-
-/* *
- *
  *  Default Export
  *
  * */
