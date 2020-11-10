@@ -23,8 +23,12 @@ import type ColumnPointOptions from './Column/ColumnPointOptions';
 import type ColumnSeriesOptions from './Column/ColumnSeriesOptions';
 import type DataExtremesObject from '../Core/Series/DataExtremesObject';
 import BaseSeries from '../Core/Series/Series.js';
-import ColumnSeries from './Column/ColumnSeries.js';
-const { prototype: columnProto } = ColumnSeries;
+const {
+    seriesTypes: {
+        column: ColumnSeries
+    }
+} = BaseSeries;
+import SVGElement from '../Core/Renderer/SVG/SVGElement.js';
 import U from '../Core/Utilities.js';
 const {
     extend,
@@ -33,6 +37,8 @@ const {
     pick,
     relativeLength
 } = U;
+
+import './Column/ColumnSeries.js';
 
 /* *
  *
@@ -113,7 +119,7 @@ class BulletSeries extends ColumnSeries {
      * @optionparent plotOptions.bullet
      */
 
-    public static defaultOptions = merge(ColumnSeries.defaultOptions, {
+    public static defaultOptions: Highcharts.BulletSeriesOptions = merge(ColumnSeries.defaultOptions, {
         /**
          * All options related with look and positiong of targets.
          *
@@ -179,28 +185,27 @@ class BulletSeries extends ColumnSeries {
             ' {series.name}: <b>{point.y}</b>. Target: <b>{point.target}' +
             '</b><br/>'
         }
-    });
-}
+    } as Highcharts.BulletSeriesOptions);
 
-/* *
- *
- *  Prototype Properties
- *
- * */
+    /* *
+     *
+     * Properties
+     *
+     * */
 
-interface BulletSeries extends ColumnSeries {
-    data: Array<Highcharts.BulletPoint>;
-    options: Highcharts.BulletSeriesOptions;
-    parallelArrays: Array<string>;
-    pointArrayMap: Array<string>;
-    pointClass: typeof BulletPoint;
-    points: Array<Highcharts.BulletPoint>;
-    targetData: Array<number>;
-}
-extend(BulletSeries.prototype, {
+    public data: Array<BulletPoint> = void 0 as any;
 
-    pointArrayMap: ['y', 'target'],
-    parallelArrays: ['x', 'y', 'target'],
+    public options: Highcharts.BulletSeriesOptions = void 0 as any;
+
+    public points: Array<BulletPoint> = void 0 as any;
+
+    public targetData: Array<number> = void 0 as any;
+
+    /* *
+     *
+     * Functions
+     *
+     * */
 
     /* eslint-disable valid-jsdoc */
 
@@ -212,16 +217,16 @@ extend(BulletSeries.prototype, {
      * @ignore
      * @function Highcharts.Series#drawPoints
      */
-    drawPoints: function (this: BulletSeries): void {
+    public drawPoints(): void {
         var series = this,
             chart = series.chart,
             options = series.options,
             animationLimit = options.animationLimit || 250;
 
-        columnProto.drawPoints.apply(this);
+        super.drawPoints.apply(this, arguments);
 
         series.points.forEach(function (
-            point: Highcharts.BulletPoint
+            point: BulletPoint
         ): void {
             var pointOptions = point.options,
                 shapeArgs,
@@ -272,7 +277,7 @@ extend(BulletSeries.prototype, {
                 ]);
 
                 if (targetGraphic) {
-                // Update
+                    // Update
                     targetGraphic[
                         chart.pointCount < animationLimit ?
                             'animate' :
@@ -328,7 +333,7 @@ extend(BulletSeries.prototype, {
                 point.targetGraphic = targetGraphic.destroy() as any;
             }
         });
-    },
+    }
 
     /**
      * Includes target values to extend extremes from y values.
@@ -336,21 +341,18 @@ extend(BulletSeries.prototype, {
      * @ignore
      * @function Highcharts.Series#getExtremes
      */
-    getExtremes: function (
-        this: BulletSeries,
-        yData?: Array<number>
-    ): DataExtremesObject {
+    public getExtremes(yData?: Array<number>): DataExtremesObject {
         var series = this,
             targetData = series.targetData,
             yMax,
             yMin;
 
-        const dataExtremes = columnProto.getExtremes.call(this, yData);
+        const dataExtremes = super.getExtremes.apply(this, arguments);
 
         if (targetData && targetData.length) {
-            const targetExtremes = columnProto.getExtremes.call(
+            const targetExtremes = super.getExtremes.apply(
                 this,
-                targetData
+                arguments
             );
             if (isNumber(targetExtremes.dataMin)) {
                 dataExtremes.dataMin = Math.min(
@@ -370,6 +372,22 @@ extend(BulletSeries.prototype, {
 
     /* eslint-enable valid-jsdoc */
 
+}
+
+/* *
+ *
+ *  Prototype Properties
+ *
+ * */
+
+interface BulletSeries {
+    parallelArrays: Array<string>;
+    pointArrayMap: Array<string>;
+    pointClass: typeof BulletPoint;
+}
+extend(BulletSeries.prototype, {
+    parallelArrays: ['x', 'y', 'target'],
+    pointArrayMap: ['y', 'target']
 });
 
 /* *
@@ -380,33 +398,40 @@ extend(BulletSeries.prototype, {
 
 class BulletPoint extends ColumnSeries.prototype.pointClass {
 
-}
+    /* *
+     *
+     * Properties
+     *
+     * */
+    public borderColor: Highcharts.BulletPointOptions['borderColor'];
+    public options: Highcharts.BulletPointOptions = void 0 as any;
+    public series: BulletSeries = void 0 as any;
+    public target?: number;
+    public targetGraphic?: SVGElement;
 
-/* *
- *
- *  Prototype Properties
- *
- * */
+    /* *
+     *
+     *  Functions
+     *
+     * */
 
-extend(BulletPoint.prototype, {
-    /** @lends Highcharts.seriesTypes.ohlc.prototype.pointClass.prototype */
+    /* eslint-disable valid-jsdoc */
 
-    // eslint-disable-next-line valid-jsdoc
     /**
      * Destroys target graphic.
-     *
      * @private
-     * @function
      */
-    destroy: function (this: Highcharts.BulletPoint): undefined {
+    public destroy(): undefined {
         if (this.targetGraphic) {
             this.targetGraphic = this.targetGraphic.destroy() as any;
         }
-        columnProto.pointClass.prototype.destroy
-            .apply(this, arguments as any);
+        super.destroy.apply(this, arguments);
         return;
     }
-});
+
+    /* eslint-enable valid-jsdoc */
+
+}
 BulletSeries.prototype.pointClass = BulletPoint;
 
 /* *
