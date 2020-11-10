@@ -14,23 +14,31 @@ import type { AlignValue } from '../Core/Renderer/AlignObject';
 import type ColorType from '../Core/Color/ColorType';
 import type ColumnPoint from './Column/ColumnPoint';
 import type ColumnPointOptions from './Column/ColumnPointOptions';
-import type ColumnSeries from './Column/ColumnSeries';
 import type ColumnSeriesOptions from './Column/ColumnSeriesOptions';
 import type CSSObject from '../Core/Renderer/CSSObject';
 import type { SeriesStatesOptions } from '../Core/Series/SeriesOptions';
 import type SVGAttributes from '../Core/Renderer/SVG/SVGAttributes';
 import type SVGPath from '../Core/Renderer/SVG/SVGPath';
 import BaseSeries from '../Core/Series/Series.js';
+const {
+    seriesTypes: {
+        column: ColumnSeries
+    }
+} = BaseSeries;
 import H from '../Core/Globals.js';
 const { noop } = H;
 import LineSeries from './Line/LineSeries.js';
 import OnSeriesMixin from '../Mixins/OnSeries.js';
 import SVGElement from '../Core/Renderer/SVG/SVGElement.js';
 import SVGRenderer from '../Core/Renderer/SVG/SVGRenderer.js';
+const {
+    symbols
+} = SVGRenderer.prototype;
 import U from '../Core/Utilities.js';
 const {
     addEvent,
     defined,
+    extend,
     isNumber,
     merge,
     objectEach,
@@ -89,40 +97,9 @@ declare global {
             width?: number;
             y?: number;
         }
-        class FlagsPoint extends ColumnPoint {
-            public _y?: number;
-            public anchorX?: number;
-            public fillColor?: ColorType;
-            public lineWidth?: number;
-            public options: FlagsPointOptions;
-            public raised?: boolean;
-            public series: FlagsSeries;
-            public stackIndex?: number;
-            public style?: CSSObject;
-            public isValid: () => boolean;
-        }
-        class FlagsSeries extends ColumnSeries {
-            public allowDG: boolean;
-            public data: Array<FlagsPoint>;
-            public getPlotBox: OnSeriesMixin['getPlotBox'];
-            public onSeries?: LineSeries;
-            public options: FlagsSeriesOptions;
-            public pointClass: typeof FlagsPoint;
-            public points: Array<FlagsPoint>;
-            public takeOrdinalPosition: boolean;
-            public translate: OnSeriesMixin['translate'];
-            public setClip(): void;
-        }
+        type FlagsPoint = FlagsPointClass;
     }
-}
-
-/**
- * @private
- */
-declare module '../Core/Series/SeriesType' {
-    interface SeriesTypeRegistry {
-        flags: typeof Highcharts.FlagsSeries;
-    }
+    type FlagsPointClass = FlagsPoint;
 }
 
 import './Column/ColumnSeries.js';
@@ -131,20 +108,7 @@ import '../Core/Renderer/SVG/SVGRenderer.js';
 
 var Renderer = H.Renderer,
     TrackerMixin = H.TrackerMixin, // Interaction
-    VMLRenderer = H.VMLRenderer,
-    symbols = SVGRenderer.prototype.symbols;
-
-declare module '../Core/Series/SeriesType' {
-    interface SeriesTypesDictionary {
-        flags: typeof Highcharts.FlagsSeries;
-    }
-}
-
-/**
- * @typedef {"circlepin"|"flag"|"squarepin"} Highcharts.FlagsShapeValue
- */
-
-''; // detach doclets above
+    VMLRenderer = H.VMLRenderer;
 
 /**
  * The Flags series.
@@ -155,9 +119,13 @@ declare module '../Core/Series/SeriesType' {
  *
  * @augments Highcharts.Series
  */
-BaseSeries.seriesType<typeof Highcharts.FlagsSeries>(
-    'flags',
-    'column'
+class FlagsSeries extends ColumnSeries {
+
+    /* *
+     *
+     *  Static Properties
+     *
+     * */
 
     /**
      * Flags are used to mark events in stock charts. They can be added on the
@@ -173,7 +141,7 @@ BaseSeries.seriesType<typeof Highcharts.FlagsSeries>(
      * @product      highstock
      * @optionparent plotOptions.flags
      */
-    , {
+    public static defaultOptions: Highcharts.FlagsSeriesOptions = merge(ColumnSeries.defaultOptions, {
 
         /**
          * In case the flag is placed on a series, on what point key to place
@@ -390,380 +358,466 @@ BaseSeries.seriesType<typeof Highcharts.FlagsSeries>(
             fontWeight: 'bold'
         }
 
-    },
+    } as Highcharts.FlagsSeriesOptions);
+
+    /* *
+     *
+     *  Properties
+     *
+     * */
+
+    public data: Array<FlagsPoint> = void 0 as any;
+
+    public onSeries?: LineSeries;
+
+    public options: Highcharts.FlagsSeriesOptions = void 0 as any;
+
+    public points: Array<FlagsPoint> = void 0 as any;
+
+    /* *
+     *
+     *  Functions
+     *
+     * */
+
+}
+
+/* *
+ *
+ *  Prototype Properties
+ *
+ * */
+
+interface FlagsSeries {
+    allowDG: boolean;
+    getPlotBox: typeof OnSeriesMixin['getPlotBox'];
+    init: LineSeries['init'];
+    pointClass: typeof FlagsPoint;
+    setClip(): void;
+    takeOrdinalPosition: boolean;
+    translate: typeof OnSeriesMixin['translate'];
+}
+extend(FlagsSeries.prototype, {
+
+    allowDG: false,
+
     /**
-     * @lends seriesTypes.flags.prototype
+     * @private
+     * @function Highcharts.seriesTypes.flags#buildKDTree
      */
-    {
-        sorted: false,
-        noSharedTooltip: true,
-        allowDG: false,
-        takeOrdinalPosition: false, // #1074
-        trackerGroups: ['markerGroup'],
-        forceCrop: true,
+    buildKDTree: noop as any,
 
-        /* eslint-disable no-invalid-this, valid-jsdoc */
+    forceCrop: true,
 
-        /**
-         * Inherit the initialization from base Series.
-         *
-         * @private
-         * @borrows Highcharts.Series#init as Highcharts.seriesTypes.flags#init
-         */
-        init: LineSeries.prototype.init,
+    getPlotBox: OnSeriesMixin.getPlotBox,
 
-        /**
-         * Get presentational attributes
-         *
-         * @private
-         * @function Highcharts.seriesTypes.flags#pointAttribs
-         *
-         * @param {Highcharts.Point} point
-         *
-         * @param {string} [state]
-         *
-         * @return {Highcharts.SVGAttributes}
-         */
-        pointAttribs: function (
-            this: Highcharts.FlagsSeries,
-            point: Highcharts.FlagsPoint,
-            state?: string
-        ): SVGAttributes {
-            var options = this.options,
-                color = (point && point.color) || this.color,
-                lineColor = options.lineColor,
-                lineWidth = (point && point.lineWidth),
-                fill = (point && point.fillColor) || options.fillColor;
+    /**
+     * Inherit the initialization from base Series.
+     *
+     * @private
+     * @borrows Highcharts.Series#init as Highcharts.seriesTypes.flags#init
+     */
+    init: LineSeries.prototype.init,
 
-            if (state) {
-                fill = (options.states as any)[state].fillColor;
-                lineColor = (options.states as any)[state].lineColor;
-                lineWidth = (options.states as any)[state].lineWidth;
+    /**
+     * Don't invert the flag marker group (#4960).
+     *
+     * @private
+     * @function Highcharts.seriesTypes.flags#invertGroups
+     */
+    invertGroups: noop as any,
+
+    noSharedTooltip: true,
+
+    sorted: false,
+
+    takeOrdinalPosition: false, // #1074
+
+    trackerGroups: ['markerGroup'],
+
+    translate: OnSeriesMixin.translate,
+
+    /* eslint-disable no-invalid-this, valid-jsdoc */
+
+    /**
+     * Get presentational attributes
+     *
+     * @private
+     * @function Highcharts.seriesTypes.flags#pointAttribs
+     *
+     * @param {Highcharts.Point} point
+     *
+     * @param {string} [state]
+     *
+     * @return {Highcharts.SVGAttributes}
+     */
+    pointAttribs: function (
+        this: FlagsSeries,
+        point: FlagsPoint,
+        state?: string
+    ): SVGAttributes {
+        var options = this.options,
+            color = (point && point.color) || this.color,
+            lineColor = options.lineColor,
+            lineWidth = (point && point.lineWidth),
+            fill = (point && point.fillColor) || options.fillColor;
+
+        if (state) {
+            fill = (options.states as any)[state].fillColor;
+            lineColor = (options.states as any)[state].lineColor;
+            lineWidth = (options.states as any)[state].lineWidth;
+        }
+
+        return {
+            fill: fill || color,
+            stroke: lineColor || color,
+            'stroke-width': lineWidth || options.lineWidth || 0
+        };
+    },
+
+    /**
+     * Draw the markers.
+     *
+     * @private
+     * @function Highcharts.seriesTypes.flags#drawPoints
+     * @return {void}
+     */
+    drawPoints: function (this: FlagsSeries): void {
+        var series = this,
+            points = series.points,
+            chart = series.chart,
+            renderer = chart.renderer,
+            plotX: (number|undefined),
+            plotY: (number|undefined),
+            inverted = chart.inverted,
+            options = series.options,
+            optionsY = options.y,
+            shape,
+            i,
+            point,
+            graphic,
+            stackIndex,
+            anchorY,
+            attribs: SVGAttributes,
+            outsideRight,
+            yAxis = series.yAxis,
+            boxesMap: Record<string, Highcharts.DataLabelsBoxObject> = {},
+            boxes: Highcharts.DataLabelsBoxArray = [],
+            centered;
+
+        i = points.length;
+        while (i--) {
+            point = points[i];
+            outsideRight =
+                (inverted ? point.plotY : point.plotX) as any >
+                series.xAxis.len;
+            plotX = point.plotX;
+            stackIndex = point.stackIndex;
+            shape = point.options.shape || options.shape;
+            plotY = point.plotY;
+
+            if (typeof plotY !== 'undefined') {
+                plotY = (point.plotY as any) + (optionsY as any) -
+                (
+                    typeof stackIndex !== 'undefined' &&
+                    (stackIndex * (options.stackDistance as any)) as any
+                );
             }
+            // skip connectors for higher level stacked points
+            point.anchorX = stackIndex ? void 0 : point.plotX;
+            anchorY = stackIndex ? void 0 : point.plotY;
+            centered = shape !== 'flag';
 
-            return {
-                fill: fill || color,
-                stroke: lineColor || color,
-                'stroke-width': lineWidth || options.lineWidth || 0
-            };
-        },
+            graphic = point.graphic;
 
-        translate: OnSeriesMixin.translate,
-        getPlotBox: OnSeriesMixin.getPlotBox,
+            // Only draw the point if y is defined and the flag is within
+            // the visible area
+            if (
+                typeof plotY !== 'undefined' &&
+                (plotX as any) >= 0 &&
+                !outsideRight
+            ) {
 
-        /**
-         * Draw the markers.
-         *
-         * @private
-         * @function Highcharts.seriesTypes.flags#drawPoints
-         * @return {void}
-         */
-        drawPoints: function (this: Highcharts.FlagsSeries): void {
-            var series = this,
-                points = series.points,
-                chart = series.chart,
-                renderer = chart.renderer,
-                plotX: (number|undefined),
-                plotY: (number|undefined),
-                inverted = chart.inverted,
-                options = series.options,
-                optionsY = options.y,
-                shape,
-                i,
-                point,
-                graphic,
-                stackIndex,
-                anchorY,
-                attribs: SVGAttributes,
-                outsideRight,
-                yAxis = series.yAxis,
-                boxesMap: Record<string, Highcharts.DataLabelsBoxObject> = {},
-                boxes: Highcharts.DataLabelsBoxArray = [],
-                centered;
-
-            i = points.length;
-            while (i--) {
-                point = points[i];
-                outsideRight =
-                    (inverted ? point.plotY : point.plotX) as any >
-                    series.xAxis.len;
-                plotX = point.plotX;
-                stackIndex = point.stackIndex;
-                shape = point.options.shape || options.shape;
-                plotY = point.plotY;
-
-                if (typeof plotY !== 'undefined') {
-                    plotY = (point.plotY as any) + (optionsY as any) -
-                    (
-                        typeof stackIndex !== 'undefined' &&
-                        (stackIndex * (options.stackDistance as any)) as any
+                // Create the flag
+                if (!graphic) {
+                    graphic = point.graphic = renderer.label(
+                        '',
+                        null as any,
+                        null as any,
+                        shape as any,
+                        null as any,
+                        null as any,
+                        options.useHTML
                     );
-                }
-                // skip connectors for higher level stacked points
-                point.anchorX = stackIndex ? void 0 : point.plotX;
-                anchorY = stackIndex ? void 0 : point.plotY;
-                centered = shape !== 'flag';
 
-                graphic = point.graphic;
-
-                // Only draw the point if y is defined and the flag is within
-                // the visible area
-                if (
-                    typeof plotY !== 'undefined' &&
-                    (plotX as any) >= 0 &&
-                    !outsideRight
-                ) {
-
-                    // Create the flag
-                    if (!graphic) {
-                        graphic = point.graphic = renderer.label(
-                            '',
-                            null as any,
-                            null as any,
-                            shape as any,
-                            null as any,
-                            null as any,
-                            options.useHTML
-                        );
-
-                        if (!chart.styledMode) {
-                            graphic
-                                .attr(series.pointAttribs(point))
-                                .css(merge(options.style as any, point.style));
-                        }
-
-                        graphic.attr({
-                            align: centered ? 'center' : 'left',
-                            width: options.width,
-                            height: options.height,
-                            'text-align': options.textAlign
-                        })
-                            .addClass('highcharts-point')
-                            .add(series.markerGroup);
-
-                        // Add reference to the point for tracker (#6303)
-                        if (point.graphic.div) {
-                            point.graphic.div.point = point;
-                        }
-
-                        if (!chart.styledMode) {
-                            graphic.shadow(options.shadow);
-                        }
-
-                        graphic.isNew = true;
+                    if (!chart.styledMode) {
+                        graphic
+                            .attr(series.pointAttribs(point))
+                            .css(merge(options.style as any, point.style));
                     }
 
-                    if ((plotX as any) > 0) { // #3119
-                        (plotX as any) -= graphic.strokeWidth() % 2; // #4285
-                    }
-
-                    // Plant the flag
-                    attribs = {
-                        y: plotY,
-                        anchorY: anchorY
-                    };
-                    if (options.allowOverlapX) {
-                        attribs.x = plotX;
-                        attribs.anchorX = point.anchorX;
-                    }
                     graphic.attr({
-                        text: point.options.title || options.title || 'A'
-                    })[graphic.isNew ? 'attr' : 'animate'](attribs);
+                        align: centered ? 'center' : 'left',
+                        width: options.width,
+                        height: options.height,
+                        'text-align': options.textAlign
+                    })
+                        .addClass('highcharts-point')
+                        .add(series.markerGroup);
 
-                    // Rig for the distribute function
-                    if (!options.allowOverlapX) {
-                        if (!boxesMap[point.plotX as any]) {
-                            boxesMap[point.plotX as any] = {
-                                align: centered ? 0.5 : 0,
-                                size: graphic.width,
-                                target: plotX as any,
-                                anchorX: plotX as any
-                            };
-                        } else {
-                            boxesMap[point.plotX as any].size = Math.max(
-                                boxesMap[point.plotX as any].size,
-                                graphic.width
-                            );
-                        }
+                    // Add reference to the point for tracker (#6303)
+                    if (point.graphic.div) {
+                        point.graphic.div.point = point;
                     }
 
-                    // Set the tooltip anchor position
-                    point.tooltipPos = [
-                        plotX as any,
-                        plotY + (yAxis.pos as any) - chart.plotTop
-                    ]; // #6327
+                    if (!chart.styledMode) {
+                        graphic.shadow(options.shadow);
+                    }
 
-                } else if (graphic) {
-                    point.graphic = graphic.destroy();
+                    graphic.isNew = true;
                 }
 
-            }
+                if ((plotX as any) > 0) { // #3119
+                    (plotX as any) -= graphic.strokeWidth() % 2; // #4285
+                }
 
-            // Handle X-dimension overlapping
-            if (!options.allowOverlapX) {
-                objectEach(boxesMap, function (
-                    box: Highcharts.DataLabelsBoxObject
-                ): void {
-                    box.plotX = box.anchorX;
-                    boxes.push(box);
-                });
+                // Plant the flag
+                attribs = {
+                    y: plotY,
+                    anchorY: anchorY
+                };
+                if (options.allowOverlapX) {
+                    attribs.x = plotX;
+                    attribs.anchorX = point.anchorX;
+                }
+                graphic.attr({
+                    text: point.options.title || options.title || 'A'
+                })[graphic.isNew ? 'attr' : 'animate'](attribs);
 
-                H.distribute(boxes, inverted ? yAxis.len : this.xAxis.len, 100);
-
-                points.forEach(function (point: Highcharts.FlagsPoint): void {
-                    var box = point.graphic && boxesMap[point.plotX as any];
-
-                    if (box) {
-                        (point.graphic as any)[
-                            (point.graphic as any).isNew ? 'attr' : 'animate'
-                        ]({
-                            x: (box.pos as any) + (box.align as any) * box.size,
-                            anchorX: point.anchorX
-                        });
-                        // Hide flag when its box position is not specified
-                        // (#8573, #9299)
-                        if (!defined(box.pos)) {
-                            (point.graphic as any).attr({
-                                x: -9999,
-                                anchorX: -9999
-                            });
-                            (point.graphic as any).isNew = true;
-                        } else {
-                            (point.graphic as any).isNew = false;
-                        }
+                // Rig for the distribute function
+                if (!options.allowOverlapX) {
+                    if (!boxesMap[point.plotX as any]) {
+                        boxesMap[point.plotX as any] = {
+                            align: centered ? 0.5 : 0,
+                            size: graphic.width,
+                            target: plotX as any,
+                            anchorX: plotX as any
+                        };
+                    } else {
+                        boxesMap[point.plotX as any].size = Math.max(
+                            boxesMap[point.plotX as any].size,
+                            graphic.width
+                        );
                     }
-                });
+                }
+
+                // Set the tooltip anchor position
+                point.tooltipPos = [
+                    plotX as any,
+                    plotY + (yAxis.pos as any) - chart.plotTop
+                ]; // #6327
+
+            } else if (graphic) {
+                point.graphic = graphic.destroy();
             }
 
-            // Can be a mix of SVG and HTML and we need events for both (#6303)
-            if (options.useHTML) {
-                wrap(series.markerGroup, 'on', function (
-                    this: Highcharts.FlagsSeries,
-                    proceed
-                ): SVGElement {
-                    return SVGElement.prototype.on.apply(
-                        // for HTML
-                        proceed.apply(this, [].slice.call(arguments, 1)),
-                        // and for SVG
-                        [].slice.call(arguments, 1) as any
-                    );
-                });
-            }
+        }
 
-        },
+        // Handle X-dimension overlapping
+        if (!options.allowOverlapX) {
+            objectEach(boxesMap, function (
+                box: Highcharts.DataLabelsBoxObject
+            ): void {
+                box.plotX = box.anchorX;
+                boxes.push(box);
+            });
 
-        /**
-         * Extend the column trackers with listeners to expand and contract
-         * stacks.
-         *
-         * @private
-         * @function Highcharts.seriesTypes.flags#drawTracker
-         * @return {void}
-         */
-        drawTracker: function (this: Highcharts.FlagsSeries): void {
-            var series = this,
-                points = series.points;
+            H.distribute(boxes, inverted ? yAxis.len : this.xAxis.len, 100);
 
-            TrackerMixin.drawTrackerPoint.apply(this);
+            points.forEach(function (point): void {
+                var box = point.graphic && boxesMap[point.plotX as any];
 
-            /* *
-            * Bring each stacked flag up on mouse over, this allows readability
-            * of vertically stacked elements as well as tight points on the x
-            * axis. #1924.
-            */
-            points.forEach(function (point: Highcharts.FlagsPoint): void {
-                var graphic = point.graphic;
-
-                if (graphic) {
-                    addEvent(graphic.element, 'mouseover', function (): void {
-
-                        // Raise this point
-                        if ((point.stackIndex as any) > 0 &&
-                            !point.raised
-                        ) {
-                            point._y = (graphic as any).y;
-                            (graphic as any).attr({
-                                y: (point._y as any) - 8
-                            });
-                            point.raised = true;
-                        }
-
-                        // Revert other raised points
-                        points.forEach(function (
-                            otherPoint: Highcharts.FlagsPoint
-                        ): void {
-                            if (
-                                otherPoint !== point &&
-                            otherPoint.raised &&
-                            otherPoint.graphic
-                            ) {
-                                otherPoint.graphic.attr({
-                                    y: otherPoint._y
-                                });
-                                otherPoint.raised = false;
-                            }
-                        });
+                if (box) {
+                    (point.graphic as any)[
+                        (point.graphic as any).isNew ? 'attr' : 'animate'
+                    ]({
+                        x: (box.pos as any) + (box.align as any) * box.size,
+                        anchorX: point.anchorX
                     });
+                    // Hide flag when its box position is not specified
+                    // (#8573, #9299)
+                    if (!defined(box.pos)) {
+                        (point.graphic as any).attr({
+                            x: -9999,
+                            anchorX: -9999
+                        });
+                        (point.graphic as any).isNew = true;
+                    } else {
+                        (point.graphic as any).isNew = false;
+                    }
                 }
             });
-        },
+        }
 
-        /**
-         * Disable animation, but keep clipping (#8546).
-         *
-         * @private
-         * @function Highcharts.seriesTypes.flags#animate
-         * @param {boolean} [init]
-         * @return {void}
-         */
-        animate: function (this: Highcharts.FlagsSeries, init?: boolean): void {
-            if (init) {
-                this.setClip();
-            }
-        },
-
-        /**
-         * @private
-         * @function Highcharts.seriesTypes.flags#setClip
-         * @return {void}
-         */
-        setClip: function (this: Highcharts.FlagsSeries): void {
-            LineSeries.prototype.setClip.apply(this, arguments as any);
-            if (this.options.clip !== false && this.sharedClipKey) {
-                (this.markerGroup as any)
-                    .clip((this.chart as any)[this.sharedClipKey]);
-            }
-        },
-
-        /**
-         * @private
-         * @function Highcharts.seriesTypes.flags#buildKDTree
-         */
-        buildKDTree: noop as any,
-
-        /**
-         * Don't invert the flag marker group (#4960).
-         *
-         * @private
-         * @function Highcharts.seriesTypes.flags#invertGroups
-         */
-        invertGroups: noop as any
-
-        /* eslint-enable no-invalid-this, valid-jsdoc */
+        // Can be a mix of SVG and HTML and we need events for both (#6303)
+        if (options.useHTML) {
+            wrap(series.markerGroup, 'on', function (
+                this: FlagsSeries,
+                proceed
+            ): SVGElement {
+                return SVGElement.prototype.on.apply(
+                    // for HTML
+                    proceed.apply(this, [].slice.call(arguments, 1)),
+                    // and for SVG
+                    [].slice.call(arguments, 1) as any
+                );
+            });
+        }
 
     },
+
     /**
-     * @lends Highcharts.seriesTypes.flag.prototype.pointClass.prototype
+     * Extend the column trackers with listeners to expand and contract
+     * stacks.
+     *
+     * @private
+     * @function Highcharts.seriesTypes.flags#drawTracker
+     * @return {void}
      */
-    {
-        isValid: function (this: Highcharts.FlagsPoint): boolean {
-            // #9233 - Prevent from treating flags as null points (even if
-            // they have no y values defined).
-            return isNumber(this.y) || typeof this.y === 'undefined';
+    drawTracker: function (this: FlagsSeries): void {
+        var series = this,
+            points = series.points;
+
+        TrackerMixin.drawTrackerPoint.apply(this);
+
+        /* *
+        * Bring each stacked flag up on mouse over, this allows readability
+        * of vertically stacked elements as well as tight points on the x
+        * axis. #1924.
+        */
+        points.forEach(function (point): void {
+            var graphic = point.graphic;
+
+            if (graphic) {
+                addEvent(graphic.element, 'mouseover', function (): void {
+
+                    // Raise this point
+                    if ((point.stackIndex as any) > 0 &&
+                        !point.raised
+                    ) {
+                        point._y = (graphic as any).y;
+                        (graphic as any).attr({
+                            y: (point._y as any) - 8
+                        });
+                        point.raised = true;
+                    }
+
+                    // Revert other raised points
+                    points.forEach(function (otherPoint): void {
+                        if (
+                            otherPoint !== point &&
+                        otherPoint.raised &&
+                        otherPoint.graphic
+                        ) {
+                            otherPoint.graphic.attr({
+                                y: otherPoint._y
+                            });
+                            otherPoint.raised = false;
+                        }
+                    });
+                });
+            }
+        });
+    },
+
+    /**
+     * Disable animation, but keep clipping (#8546).
+     *
+     * @private
+     * @function Highcharts.seriesTypes.flags#animate
+     * @param {boolean} [init]
+     * @return {void}
+     */
+    animate: function (this: FlagsSeries, init?: boolean): void {
+        if (init) {
+            this.setClip();
+        }
+    },
+
+    /**
+     * @private
+     * @function Highcharts.seriesTypes.flags#setClip
+     * @return {void}
+     */
+    setClip: function (this: FlagsSeries): void {
+        LineSeries.prototype.setClip.apply(this, arguments as any);
+        if (this.options.clip !== false && this.sharedClipKey) {
+            (this.markerGroup as any)
+                .clip((this.chart as any)[this.sharedClipKey]);
         }
     }
 
-);
+    /* eslint-enable no-invalid-this, valid-jsdoc */
+
+});
+
+/* *
+ *
+ *  Class
+ *
+ * */
+
+class FlagsPoint extends ColumnSeries.prototype.pointClass {
+
+    /* *
+     *
+     *  Properties
+     *
+     * */
+
+    public _y?: number;
+
+    public anchorX?: number;
+
+    public options: Highcharts.FlagsPointOptions = void 0 as any;
+
+    public series: FlagsSeries = void 0 as any;
+
+    public fillColor?: ColorType;
+
+    public lineWidth?: number;
+
+    public raised?: boolean;
+
+    public stackIndex?: number;
+
+    public style?: CSSObject;
+
+}
+FlagsSeries.prototype.pointClass = FlagsPoint;
+
+/* *
+ *
+ *  Prototype Properties
+ *
+ * */
+
+interface FlagsPoint {
+    isValid: () => boolean;
+}
+extend(FlagsPoint.prototype, {
+    isValid: function (this: FlagsPoint): boolean {
+        // #9233 - Prevent from treating flags as null points (even if
+        // they have no y values defined).
+        return isNumber(this.y) || typeof this.y === 'undefined';
+    }
+});
+
+/* *
+ *
+ *  Registry
+ *
+ * */
 
 // create the flag icon with anchor
 symbols.flag = function (
@@ -867,6 +921,39 @@ if ((Renderer as unknown) === VMLRenderer) {
         VMLRenderer.prototype.symbols[shape] = symbols[shape];
     });
 }
+
+declare module '../Core/Series/SeriesType' {
+    interface SeriesTypesDictionary {
+        flags: typeof FlagsSeries;
+    }
+}
+BaseSeries.registerSeriesType('flags', FlagsSeries);
+
+/* *
+ *
+ *  Default Export
+ *
+ * */
+
+export default FlagsSeries;
+
+/* *
+ *
+ *  API Declarations
+ *
+ * */
+
+/**
+ * @typedef {"circlepin"|"flag"|"squarepin"} Highcharts.FlagsShapeValue
+ */
+
+''; // detach doclets above
+
+/* *
+ *
+ *  API Option
+ *
+ * */
 
 /**
  * A `flags` series. If the [type](#series.flags.type) option is not
