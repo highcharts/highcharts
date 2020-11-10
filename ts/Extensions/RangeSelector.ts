@@ -1279,6 +1279,18 @@ class RangeSelector {
         }
         let date = Date.parse(input);
 
+        // If the value isn't parsed directly to a value by the
+        // browser's Date.parse method, like YYYY-MM-DD in IE8, try
+        // parsing it a different way
+        if (!isNumber(date)) {
+            const parts = inputDate.split('-');
+            date = Date.UTC(
+                pInt(parts[0]),
+                pInt(parts[1]) - 1,
+                pInt(parts[2])
+            );
+        }
+
         if (time && useUTC) {
             date += time.getTimezoneOffset(date) * 60 * 1000;
         }
@@ -1325,50 +1337,34 @@ class RangeSelector {
 
             value = (options.inputDateParser || defaultInputDateParser)(inputValue, chart.time.useUTC, chart.time);
 
-            if (value !== input.previousValue) {
+            if (value !== input.previousValue && isNumber(value)) {
                 input.previousValue = value;
-                // If the value isn't parsed directly to a value by the
-                // browser's Date.parse method, like YYYY-MM-DD in IE8, try
-                // parsing it a different way
-                if (!isNumber(value)) {
-                    value = (inputValue as any).split('-');
-                    value = Date.UTC(
-                        pInt((value as any)[0]),
-                        pInt((value as any)[1]) - 1,
-                        pInt((value as any)[2])
-                    );
-                    if (chart.time.useUTC) {
-                        value += chart.time.getTimezoneOffset(value) * 60 * 1000;
+
+                // Validate the extremes. If it goes beyound the data min or
+                // max, use the actual data extreme (#2438).
+                if (isMin) {
+                    if (value > (rangeSelector as any).maxInput.HCTime) {
+                        value = void 0;
+                    } else if (value < (dataMin as any)) {
+                        value = dataMin as any;
+                    }
+                } else {
+                    if (value < (rangeSelector as any).minInput.HCTime) {
+                        value = void 0;
+                    } else if (value > (dataMax as any)) {
+                        value = dataMax as any;
                     }
                 }
 
-                if (isNumber(value)) {
-                    // Validate the extremes. If it goes beyound the data min or
-                    // max, use the actual data extreme (#2438).
-                    if (isMin) {
-                        if (value > (rangeSelector as any).maxInput.HCTime) {
-                            value = void 0;
-                        } else if (value < (dataMin as any)) {
-                            value = dataMin as any;
-                        }
-                    } else {
-                        if (value < (rangeSelector as any).minInput.HCTime) {
-                            value = void 0;
-                        } else if (value > (dataMax as any)) {
-                            value = dataMax as any;
-                        }
-                    }
-
-                    // Set the extremes
-                    if (typeof value !== 'undefined') { // @todo typof undefined
-                        chartAxis.setExtremes(
-                            isMin ? value : (chartAxis.min as any),
-                            isMin ? (chartAxis.max as any) : value,
-                            void 0,
-                            void 0,
-                            { trigger: 'rangeSelectorInput' }
-                        );
-                    }
+                // Set the extremes
+                if (typeof value !== 'undefined') { // @todo typof undefined
+                    chartAxis.setExtremes(
+                        isMin ? value : (chartAxis.min as any),
+                        isMin ? (chartAxis.max as any) : value,
+                        void 0,
+                        void 0,
+                        { trigger: 'rangeSelectorInput' }
+                    );
                 }
             }
         }

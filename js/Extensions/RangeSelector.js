@@ -891,6 +891,13 @@ var RangeSelector = /** @class */ (function () {
             input += 'Z';
         }
         var date = Date.parse(input);
+        // If the value isn't parsed directly to a value by the
+        // browser's Date.parse method, like YYYY-MM-DD in IE8, try
+        // parsing it a different way
+        if (!isNumber(date)) {
+            var parts = inputDate.split('-');
+            date = Date.UTC(pInt(parts[0]), pInt(parts[1]) - 1, pInt(parts[2]));
+        }
         if (time && useUTC) {
             date += time.getTimezoneOffset(date) * 60 * 1000;
         }
@@ -914,41 +921,29 @@ var RangeSelector = /** @class */ (function () {
                 chart.scroller.xAxis :
                 chartAxis, dataMin = dataAxis.dataMin, dataMax = dataAxis.dataMax;
             value = (options.inputDateParser || defaultInputDateParser)(inputValue, chart.time.useUTC, chart.time);
-            if (value !== input.previousValue) {
+            if (value !== input.previousValue && isNumber(value)) {
                 input.previousValue = value;
-                // If the value isn't parsed directly to a value by the
-                // browser's Date.parse method, like YYYY-MM-DD in IE8, try
-                // parsing it a different way
-                if (!isNumber(value)) {
-                    value = inputValue.split('-');
-                    value = Date.UTC(pInt(value[0]), pInt(value[1]) - 1, pInt(value[2]));
-                    if (chart.time.useUTC) {
-                        value += chart.time.getTimezoneOffset(value) * 60 * 1000;
+                // Validate the extremes. If it goes beyound the data min or
+                // max, use the actual data extreme (#2438).
+                if (isMin) {
+                    if (value > rangeSelector.maxInput.HCTime) {
+                        value = void 0;
+                    }
+                    else if (value < dataMin) {
+                        value = dataMin;
                     }
                 }
-                if (isNumber(value)) {
-                    // Validate the extremes. If it goes beyound the data min or
-                    // max, use the actual data extreme (#2438).
-                    if (isMin) {
-                        if (value > rangeSelector.maxInput.HCTime) {
-                            value = void 0;
-                        }
-                        else if (value < dataMin) {
-                            value = dataMin;
-                        }
+                else {
+                    if (value < rangeSelector.minInput.HCTime) {
+                        value = void 0;
                     }
-                    else {
-                        if (value < rangeSelector.minInput.HCTime) {
-                            value = void 0;
-                        }
-                        else if (value > dataMax) {
-                            value = dataMax;
-                        }
+                    else if (value > dataMax) {
+                        value = dataMax;
                     }
-                    // Set the extremes
-                    if (typeof value !== 'undefined') { // @todo typof undefined
-                        chartAxis.setExtremes(isMin ? value : chartAxis.min, isMin ? chartAxis.max : value, void 0, void 0, { trigger: 'rangeSelectorInput' });
-                    }
+                }
+                // Set the extremes
+                if (typeof value !== 'undefined') { // @todo typof undefined
+                    chartAxis.setExtremes(isMin ? value : chartAxis.min, isMin ? chartAxis.max : value, void 0, void 0, { trigger: 'rangeSelectorInput' });
                 }
             }
         }
