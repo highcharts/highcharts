@@ -73,7 +73,6 @@ var addEvent = U.addEvent, isArray = U.isArray, merge = U.merge;
  */
 /* eslint-disable no-invalid-this */
 addEvent(LineSeries, 'afterRender', function () {
-    var _a, _b;
     var serie = this, seriesOptions = serie.options, pointRange = seriesOptions.pointRange, lastVisiblePrice = seriesOptions.lastVisiblePrice, lastPrice = seriesOptions.lastPrice;
     if ((lastVisiblePrice || lastPrice) &&
         seriesOptions.id !== 'highcharts-navigator-series') {
@@ -98,8 +97,6 @@ addEvent(LineSeries, 'afterRender', function () {
             lastVisiblePrice.enabled &&
             pLength > 0) {
             crop = (points[pLength - 1].x === x) || pointRange === null ? 1 : 2;
-            // #14495 To reset color for labels without lastVisiblePrice.
-            var crossHairColor = (_b = (_a = yAxis.crosshair) === null || _a === void 0 ? void 0 : _a.label) === null || _b === void 0 ? void 0 : _b.backgroundColor;
             yAxis.crosshair = yAxis.options.crosshair = merge({
                 color: 'transparent'
             }, seriesOptions.lastVisiblePrice);
@@ -120,13 +117,9 @@ addEvent(LineSeries, 'afterRender', function () {
                 }
             }
             serie.crossLabel = yAxis.crossLabel;
-            // #14495 Reset backgroundColor for labels without lastVisiblePrice.
-            if (yAxis.options.crosshair.label) {
-                yAxis.options.crosshair.label.backgroundColor = crossHairColor;
-            }
         }
         // Restore crosshair:
-        yAxis.crosshair = origOptions;
+        yAxis.crosshair = yAxis.options.crosshair = origOptions;
         yAxis.cross = origGraphic;
         yAxis.crossLabel = origLabel;
     }
