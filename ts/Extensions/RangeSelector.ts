@@ -1270,15 +1270,14 @@ class RangeSelector {
      * @function Highcharts.RangeSelector#defaultInputDateParser
      */
     public defaultInputDateParser(inputDate: string, useUTC: boolean, time?: Highcharts.Time): number {
-        let date;
-
-        if (H.isSafari) {
-            date = Date.parse(inputDate.split(' ').join('T'));
-        } else if (useUTC) {
-            date = Date.parse(inputDate + 'Z');
-        } else {
-            date = Date.parse(inputDate);
+        let input = inputDate.split(' ').join('T');
+        if (input.indexOf('T') === -1) {
+            input += ' 00:00';
         }
+        if (useUTC) {
+            input += 'Z';
+        }
+        let date = Date.parse(input);
 
         if (time && useUTC) {
             date += time.getTimezoneOffset(date) * 60 * 1000;
@@ -1329,7 +1328,7 @@ class RangeSelector {
             if (value !== input.previousValue) {
                 input.previousValue = value;
                 // If the value isn't parsed directly to a value by the
-                // browser's Date.parse method, like YYYY-MM-DD in IE, try
+                // browser's Date.parse method, like YYYY-MM-DD in IE8, try
                 // parsing it a different way
                 if (!isNumber(value)) {
                     value = (inputValue as any).split('-');
@@ -1338,7 +1337,9 @@ class RangeSelector {
                         pInt((value as any)[1]) - 1,
                         pInt((value as any)[2])
                     );
-                    value += chart.time.getTimezoneOffset(value) * 60 * 1000;
+                    if (chart.time.useUTC) {
+                        value += chart.time.getTimezoneOffset(value) * 60 * 1000;
+                    }
                 }
 
                 if (isNumber(value)) {

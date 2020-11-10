@@ -337,9 +337,9 @@ QUnit.test('Set extremes on inputs blur (#4710)', function (assert) {
 QUnit.test('#13205: Timezone issues', assert => {
     const chart = Highcharts.stockChart('container', {
         rangeSelector: {
-            inputDateFormat: '%Y/%m/%d %H:%M:%S.%L',
+            inputDateFormat: '%Y-%m-%d %H:%M:%S.%L',
             inputBoxWidth: 170,
-            inputEditDateFormat: '%Y/%m/%d %H:%M:%S.%L'
+            inputEditDateFormat: '%Y-%m-%d %H:%M:%S.%L'
         },
         xAxis: {
             tickPixelInterval: 120
@@ -391,9 +391,9 @@ QUnit.test('#13205: Timezone issues', assert => {
 
     const min = chart.xAxis[0].min;
 
-    chart.rangeSelector.minInput.value = '2019/12/23 00:00:00.000';
+    chart.rangeSelector.minInput.value = '2019-12-23 00:00:00.000';
     chart.rangeSelector.minInput.onchange();
-    assert.strictEqual(chart.rangeSelector.minInput.value, '2019/12/23 00:00:00.000', 'The input value should not change');
+    assert.strictEqual(chart.rangeSelector.minInput.value, '2019-12-23 00:00:00.000', 'The input value should not change');
 
     assert.ok(chart.xAxis[0].min > min, 'Extremes should have been updated');
 });
