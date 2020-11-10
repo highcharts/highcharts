@@ -15,7 +15,7 @@
  *  Imports
  *
  * */
-import type BulletPointOptions from './BulletPointOptions';
+
 import type BulletSeriesOptions from './BulletSeriesOptions';
 import type DataExtremesObject from '../../Core/Series/DataExtremesObject';
 import BaseSeries from '../../Core/Series/Series.js';
@@ -24,7 +24,7 @@ const {
         column: ColumnSeries
     }
 } = BaseSeries;
-import SVGElement from '../../Core/Renderer/SVG/SVGElement.js';
+import BulletPoint from './BulletPoint.js';
 import U from '../../Core/Utilities.js';
 const {
     extend,
@@ -348,48 +348,6 @@ extend(BulletSeries.prototype, {
     pointArrayMap: ['y', 'target']
 });
 
-/* *
- *
- *  Class
- *
- * */
-
-class BulletPoint extends ColumnSeries.prototype.pointClass {
-
-    /* *
-     *
-     * Properties
-     *
-     * */
-    public borderColor: BulletPointOptions['borderColor'];
-    public options: BulletPointOptions = void 0 as any;
-    public series: BulletSeries = void 0 as any;
-    public target?: number;
-    public targetGraphic?: SVGElement;
-
-    /* *
-     *
-     *  Functions
-     *
-     * */
-
-    /* eslint-disable valid-jsdoc */
-
-    /**
-     * Destroys target graphic.
-     * @private
-     */
-    public destroy(): undefined {
-        if (this.targetGraphic) {
-            this.targetGraphic = this.targetGraphic.destroy() as any;
-        }
-        super.destroy.apply(this, arguments);
-        return;
-    }
-
-    /* eslint-enable valid-jsdoc */
-
-}
 BulletSeries.prototype.pointClass = BulletPoint;
 
 /* *
