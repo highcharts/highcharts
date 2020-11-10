@@ -16,20 +16,20 @@
  *
  * */
 
-import type ColorString from '../Core/Color/ColorString';
-import type ColorType from '../Core/Color/ColorType';
-import type ColumnPoint from './Column/ColumnPoint';
-import type ColumnPointOptions from './Column/ColumnPointOptions';
-import type ColumnSeriesOptions from './Column/ColumnSeriesOptions';
-import type DataExtremesObject from '../Core/Series/DataExtremesObject';
-import BaseSeries from '../Core/Series/Series.js';
+import type ColorString from '../../Core/Color/ColorString';
+import type ColorType from '../../Core/Color/ColorType';
+import type ColumnPoint from '../Column/ColumnPoint';
+import type ColumnPointOptions from '../Column/ColumnPointOptions';
+import type ColumnSeriesOptions from '../Column/ColumnSeriesOptions';
+import type DataExtremesObject from '../../Core/Series/DataExtremesObject';
+import BaseSeries from '../../Core/Series/Series.js';
 const {
     seriesTypes: {
         column: ColumnSeries
     }
 } = BaseSeries;
-import SVGElement from '../Core/Renderer/SVG/SVGElement.js';
-import U from '../Core/Utilities.js';
+import SVGElement from '../../Core/Renderer/SVG/SVGElement.js';
+import U from '../../Core/Utilities.js';
 const {
     extend,
     isNumber,
@@ -38,7 +38,7 @@ const {
     relativeLength
 } = U;
 
-import './Column/ColumnSeries.js';
+import '../Column/ColumnSeries.js';
 
 /* *
  *
@@ -440,7 +440,7 @@ BulletSeries.prototype.pointClass = BulletPoint;
  *
  * */
 
-declare module '../Core/Series/SeriesType' {
+declare module '../../Core/Series/SeriesType' {
     interface SeriesTypeRegistry {
         bullet: typeof BulletSeries;
     }
