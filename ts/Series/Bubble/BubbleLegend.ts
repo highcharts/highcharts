@@ -14,6 +14,8 @@
 
 import type { AlignValue } from '../../Core/Renderer/AlignObject';
 import type BBoxObject from '../../Core/Renderer/BBoxObject';
+import type BubbleSeries from './BubbleSeries';
+import type { BubbleSizeByValue } from './BubbleSeriesOptions';
 import type ColorType from '../../Core/Color/ColorType';
 import type CSSObject from '../../Core/Renderer/CSSObject';
 import type Point from '../../Core/Series/Point';
@@ -692,9 +694,7 @@ class BubbleLegend {
     public getRangeRadius(value: number): (number|null) {
         var options = this.options,
             seriesIndex = this.options.seriesIndex,
-            bubbleSeries: Highcharts.BubbleSeries = (
-                this.chart.series[seriesIndex as any] as any
-            ),
+            bubbleSeries: BubbleSeries = this.chart.series[seriesIndex as any] as any,
             zMax = (options.ranges as any)[0].value,
             zMin = (options.ranges as any)[
                 (options.ranges as any).length - 1
@@ -974,7 +974,7 @@ class BubbleLegend {
             minZ = Number.MAX_VALUE,
             maxZ = -Number.MAX_VALUE;
 
-        series.forEach(function (s: Highcharts.BubbleSeries): void {
+        series.forEach(function (s: BubbleSeries): void {
             // Find the min and max Z, like in bubble series
             if (s.isBubble && !s.ignoreSeries) {
                 zData = s.zData.filter(isNumber);
@@ -1043,9 +1043,7 @@ class BubbleLegend {
             lastLineHeight = horizontal ? chart.legend.lastLineHeight : 0,
             plotSizeX = chart.plotSizeX,
             plotSizeY = chart.plotSizeY,
-            bubbleSeries = chart.series[this.options.seriesIndex as any] as (
-                Highcharts.BubbleSeries
-            ),
+            bubbleSeries: BubbleSeries = chart.series[this.options.seriesIndex as any] as any,
             minSize = Math.ceil(bubbleSeries.minPxSize),
             maxPxSize = Math.ceil(bubbleSeries.maxPxSize),
             maxSize = bubbleSeries.options.maxSize,
@@ -1105,11 +1103,7 @@ class BubbleLegend {
     public correctSizes(): void {
         var legend = this.legend,
             chart = this.chart,
-            bubbleSeries = (
-                chart.series[
-                    this.options.seriesIndex as any
-                ] as Highcharts.BubbleSeries
-            ),
+            bubbleSeries: BubbleSeries = chart.series[this.options.seriesIndex as any] as any,
             bubbleSeriesSize = bubbleSeries.maxPxSize,
             bubbleLegendSize = this.options.maxSize;
 
