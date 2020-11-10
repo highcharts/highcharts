@@ -23,6 +23,7 @@ var __extends = (this && this.__extends) || (function () {
 })();
 import BaseSeries from '../../Core/Series/Series.js';
 var ColumnSeries = BaseSeries.seriesTypes.column;
+import BulletPoint from './BulletPoint.js';
 import U from '../../Core/Utilities.js';
 var extend = U.extend, isNumber = U.isNumber, merge = U.merge, pick = U.pick, relativeLength = U.relativeLength;
 import '../Column/ColumnSeries.js';
@@ -250,39 +251,6 @@ extend(BulletSeries.prototype, {
     parallelArrays: ['x', 'y', 'target'],
     pointArrayMap: ['y', 'target']
 });
-/* *
- *
- *  Class
- *
- * */
-var BulletPoint = /** @class */ (function (_super) {
-    __extends(BulletPoint, _super);
-    function BulletPoint() {
-        var _this = _super !== null && _super.apply(this, arguments) || this;
-        _this.options = void 0;
-        _this.series = void 0;
-        return _this;
-        /* eslint-enable valid-jsdoc */
-    }
-    /* *
-     *
-     *  Functions
-     *
-     * */
-    /* eslint-disable valid-jsdoc */
-    /**
-     * Destroys target graphic.
-     * @private
-     */
-    BulletPoint.prototype.destroy = function () {
-        if (this.targetGraphic) {
-            this.targetGraphic = this.targetGraphic.destroy();
-        }
-        _super.prototype.destroy.apply(this, arguments);
-        return;
-    };
-    return BulletPoint;
-}(ColumnSeries.prototype.pointClass));
 BulletSeries.prototype.pointClass = BulletPoint;
 BaseSeries.registerSeriesType('bullet', BulletSeries);
 /* *
