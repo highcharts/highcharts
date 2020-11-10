@@ -128,7 +128,7 @@ var Pie3DSeries = /** @class */ (function (_super) {
     /**
      * @private
      */
-    Pie3DSeries.prototype.pointAttribs = function (point, state) {
+    Pie3DSeries.prototype.pointAttribs = function (point) {
         var attr = _super.prototype.pointAttribs.apply(this, arguments), options = this.options;
         if (this.chart.is3d() && !this.chart.styledMode) {
             attr.stroke = options.edgeColor || point.color || this.color;
