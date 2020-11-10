@@ -1019,11 +1019,13 @@ var Axis = /** @class */ (function () {
                 axis.series.forEach(function (series) {
                     xData = series.xData;
                     loopLength = series.xIncrement ? 1 : xData.length - 1;
-                    for (i = loopLength; i > 0; i--) {
-                        distance = xData[i] - xData[i - 1];
-                        if (typeof closestDataRange === 'undefined' ||
-                            distance < closestDataRange) {
-                            closestDataRange = distance;
+                    if (xData.length > 1) {
+                        for (i = loopLength; i > 0; i--) {
+                            distance = xData[i] - xData[i - 1];
+                            if (typeof closestDataRange === 'undefined' ||
+                                distance < closestDataRange) {
+                                closestDataRange = distance;
+                            }
                         }
                     }
                 });
