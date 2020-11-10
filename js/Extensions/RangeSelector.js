@@ -885,7 +885,7 @@ var RangeSelector = /** @class */ (function () {
     RangeSelector.prototype.defaultInputDateParser = function (inputDate, useUTC, time) {
         var input = inputDate.split(' ').join('T');
         if (input.indexOf('T') === -1) {
-            input += ' 00:00';
+            input += 'T00:00';
         }
         if (useUTC) {
             input += 'Z';
