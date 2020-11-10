@@ -21,9 +21,9 @@ var __extends = (this && this.__extends) || (function () {
         d.prototype = b === null ? Object.create(b) : (__.prototype = b.prototype, new __());
     };
 })();
-import ColumnSeries from './Column/ColumnSeries.js';
-import BaseSeries from '../Core/Series/Series.js';
-import U from '../Core/Utilities.js';
+import ColumnSeries from '../Column/ColumnSeries.js';
+import BaseSeries from '../../Core/Series/Series.js';
+import U from '../../Core/Utilities.js';
 var extend = U.extend, merge = U.merge;
 /* *
  *
@@ -42,13 +42,22 @@ var extend = U.extend, merge = U.merge;
 var BarSeries = /** @class */ (function (_super) {
     __extends(BarSeries, _super);
     function BarSeries() {
-        return _super !== null && _super.apply(this, arguments) || this;
+        /* *
+         *
+         *  Static Properties
+         *
+         * */
+        var _this = _super !== null && _super.apply(this, arguments) || this;
+        /* *
+         *
+         *  Properties
+         *
+         * */
+        _this.data = void 0;
+        _this.options = void 0;
+        _this.points = void 0;
+        return _this;
     }
-    /* *
-     *
-     *  Static Properties
-     *
-     * */
     /**
      * A bar series is a special type of column series where the columns are
      * horizontal.
@@ -56,9 +65,9 @@ var BarSeries = /** @class */ (function (_super) {
      * @sample highcharts/demo/bar-basic/
      *         Bar chart
      *
-     * @extends       plotOptions.column
-     * @product       highcharts
-     * @optionsparent plotOptions.bar
+     * @extends      plotOptions.column
+     * @product      highcharts
+     * @optionparent plotOptions.bar
      */
     BarSeries.defaultOptions = merge(ColumnSeries.defaultOptions, {
     // nothing here yet
@@ -69,6 +78,12 @@ extend(BarSeries.prototype, {
     inverted: true
 });
 BaseSeries.registerSeriesType('bar', BarSeries);
+/* *
+ *
+ *  Default Export
+ *
+ * */
+export default BarSeries;
 /* *
  *
  *  API Options
