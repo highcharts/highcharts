@@ -23,7 +23,6 @@
 import type BBoxObject from '../Core/Renderer/BBoxObject';
 import type Chart from '../Core/Chart/Chart';
 import type ColorType from '../Core/Color/ColorType';
-import type ColumnPoint from './Column/ColumnPoint';
 import type ColumnPointOptions from './Column/ColumnPointOptions';
 import type ColumnSeriesOptions from './Column/ColumnSeriesOptions';
 import type DataLabelOptions from '../Core/Series/DataLabelOptions';
@@ -38,10 +37,14 @@ import type SVGElement from '../Core/Renderer/SVG/SVGElement';
 import type SVGPath from '../Core/Renderer/SVG/SVGPath';
 import type SVGRenderer from '../Core/Renderer/SVG/SVGRenderer';
 import BaseSeries from '../Core/Series/Series.js';
+const {
+    seriesTypes: {
+        column: ColumnSeries,
+        line: LineSeries
+    }
+} = BaseSeries;
 import Color from '../Core/Color/Color.js';
 const { parse: color } = Color;
-import ColumnSeries from './Column/ColumnSeries.js';
-const { prototype: columnProto } = ColumnSeries;
 import H from '../Core/Globals.js';
 const {
     charts,
@@ -53,7 +56,6 @@ const {
         }
     }
 } = H;
-import LineSeries from './Line/LineSeries.js';
 import Math3D from '../Extensions/Math3D.js';
 const { perspective } = Math3D;
 import U from '../Core/Utilities.js';
@@ -244,31 +246,93 @@ class Funnel3DSeries extends ColumnSeries {
      *
      * */
 
+    public center: Array<number> = void 0 as any;
+
+    public centerX?: number;
+
     public data: Array<Funnel3DPoint> = void 0 as any;
 
     public options: Highcharts.Funnel3dSeriesOptions = void 0 as any;
 
     public points: Array<Funnel3DPoint> = void 0 as any;
 
-}
+    /* *
+     *
+     *  Functions
+     *
+     * */
 
-/* *
- *
- *  Prototype Properties
- *
- * */
+    /* eslint-disable valid-jsdoc */
 
-interface Funnel3DSeries {
-    center: Array<number>;
-    centerX: number;
-    pointClass: typeof Funnel3DPoint;
-    bindAxes(): void;
-    getWidthAt(y: number): number;
-    translate3dShapes(): void;
-}
-extend(Funnel3DSeries.prototype, {
-    // Override default axis options with series required options for axes
-    bindAxes: function (this: Funnel3DSeries): void {
+    /**
+     * @private
+     */
+    public alignDataLabel(
+        point: Funnel3DPoint,
+        _dataLabel: SVGElement,
+        options: DataLabelOptions
+    ): void {
+        var series = this,
+            dlBoxRaw = point.dlBoxRaw,
+            inverted = series.chart.inverted,
+            below = (point.plotY as any) > pick(
+                series.translatedThreshold,
+                series.yAxis.len
+            ),
+            inside = pick(options.inside, !!series.options.stacking),
+            dlBox: BBoxObject = {
+                x: dlBoxRaw.x,
+                y: dlBoxRaw.y,
+                height: 0
+            } as any;
+
+        options.align = pick(
+            options.align,
+            !inverted || inside ? 'center' : below ? 'right' : 'left'
+        );
+        options.verticalAlign = pick(
+            options.verticalAlign,
+            inverted || inside ? 'middle' : below ? 'top' : 'bottom'
+        );
+
+        if (options.verticalAlign !== 'top') {
+            dlBox.y += dlBoxRaw.bottom /
+                (options.verticalAlign === 'bottom' ? 1 : 2);
+        }
+
+        dlBox.width = series.getWidthAt(dlBox.y);
+
+        if (series.options.reversed) {
+            dlBox.width = dlBoxRaw.fullWidth - dlBox.width;
+        }
+
+        if (inside) {
+            dlBox.x -= dlBox.width / 2;
+        } else {
+            // swap for inside
+            if (options.align === 'left') {
+                options.align = 'right';
+                dlBox.x -= dlBox.width * 1.5;
+            } else if (options.align === 'right') {
+                options.align = 'left';
+                dlBox.x += dlBox.width / 2;
+            } else {
+                dlBox.x -= dlBox.width / 2;
+            }
+        }
+
+        point.dlBox = dlBox;
+        ColumnSeries.prototype.alignDataLabel.apply(
+            series,
+            arguments
+        );
+    }
+
+    /**
+     * Override default axis options with series required options for axes.
+     * @private
+     */
+    public bindAxes(): void {
         LineSeries.prototype.bindAxes.apply(this, arguments);
 
         extend(this.xAxis.options, {
@@ -284,11 +348,12 @@ extend(Funnel3DSeries.prototype, {
                 enabled: false
             }
         });
-    },
+    }
 
-    translate3dShapes: H.noop as any,
-
-    translate: function (this: Funnel3DSeries): void {
+    /**
+     * @private
+     */
+    public translate(): void {
         LineSeries.prototype.translate.apply(this, arguments);
 
         var sum = 0,
@@ -460,69 +525,25 @@ extend(Funnel3DSeries.prototype, {
                 cumulative += fraction;
             }
         });
-    },
-
-    alignDataLabel: function (
-        this: Funnel3DSeries,
-        point: Funnel3DPoint,
-        _dataLabel: SVGElement,
-        options: DataLabelOptions
-    ): void {
-        var series = this,
-            dlBoxRaw = point.dlBoxRaw,
-            inverted = series.chart.inverted,
-            below = (point.plotY as any) > pick(
-                series.translatedThreshold,
-                series.yAxis.len
-            ),
-            inside = pick(options.inside, !!series.options.stacking),
-            dlBox: BBoxObject = {
-                x: dlBoxRaw.x,
-                y: dlBoxRaw.y,
-                height: 0
-            } as any;
-
-        options.align = pick(
-            options.align,
-            !inverted || inside ? 'center' : below ? 'right' : 'left'
-        );
-        options.verticalAlign = pick(
-            options.verticalAlign,
-            inverted || inside ? 'middle' : below ? 'top' : 'bottom'
-        );
-
-        if (options.verticalAlign !== 'top') {
-            dlBox.y += dlBoxRaw.bottom /
-                (options.verticalAlign === 'bottom' ? 1 : 2);
-        }
-
-        dlBox.width = series.getWidthAt(dlBox.y);
-
-        if (series.options.reversed) {
-            dlBox.width = dlBoxRaw.fullWidth - dlBox.width;
-        }
-
-        if (inside) {
-            dlBox.x -= dlBox.width / 2;
-        } else {
-            // swap for inside
-            if (options.align === 'left') {
-                options.align = 'right';
-                dlBox.x -= dlBox.width * 1.5;
-            } else if (options.align === 'right') {
-                options.align = 'left';
-                dlBox.x += dlBox.width / 2;
-            } else {
-                dlBox.x -= dlBox.width / 2;
-            }
-        }
-
-        point.dlBox = dlBox;
-        columnProto.alignDataLabel.apply(
-            series,
-            arguments
-        );
     }
+
+    /* eslint-enable valid-jsdoc */
+
+}
+
+/* *
+ *
+ *  Prototype Properties
+ *
+ * */
+
+interface Funnel3DSeries {
+    pointClass: typeof Funnel3DPoint;
+    getWidthAt(y: number): number; // added during translate
+    translate3dShapes(): void;
+}
+extend(Funnel3DSeries.prototype, {
+    translate3dShapes: H.noop as any
 });
 
 /* *
@@ -554,8 +575,7 @@ interface Funnel3DPoint {
     shapeType: string;
 }
 extend(Funnel3DPoint.prototype, {
-    shapeType: 'funnel3d',
-    hasNewShapeType: columnProto.pointClass.prototype.hasNewShapeType
+    shapeType: 'funnel3d'
 });
 
 /* *
