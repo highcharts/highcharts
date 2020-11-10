@@ -35,10 +35,6 @@ var arrayMax = U.arrayMax, arrayMin = U.arrayMin, clamp = U.clamp, extend = U.ex
 import '../Column/ColumnSeries.js';
 import '../Scatter/ScatterSeries.js';
 import './BubbleLegend.js';
-/**
- * @typedef {"area"|"width"} Highcharts.BubbleSizeByValue
- */
-''; // detach doclets above
 /* *
  *
  *  Class
@@ -59,10 +55,151 @@ var BubbleSeries = /** @class */ (function (_super) {
          *
          * */
         _this.data = void 0;
+        _this.maxPxSize = void 0;
+        _this.minPxSize = void 0;
         _this.options = void 0;
         _this.points = void 0;
+        _this.radii = void 0;
+        _this.yData = void 0;
+        _this.zData = void 0;
         return _this;
+        /* eslint-enable valid-jsdoc */
     }
+    /* *
+     *
+     *  Functions
+     *
+     * */
+    /* eslint-disable valid-jsdoc */
+    /**
+     * Perform animation on the bubbles
+     * @private
+     */
+    BubbleSeries.prototype.animate = function (init) {
+        if (!init &&
+            this.points.length < this.options.animationLimit // #8099
+        ) {
+            this.points.forEach(function (point) {
+                var graphic = point.graphic;
+                if (graphic && graphic.width) { // URL symbols don't have width
+                    // Start values
+                    if (!this.hasRendered) {
+                        graphic.attr({
+                            x: point.plotX,
+                            y: point.plotY,
+                            width: 1,
+                            height: 1
+                        });
+                    }
+                    // Run animation
+                    graphic.animate(this.markerAttribs(point), this.options.animation);
+                }
+            }, this);
+        }
+    };
+    /**
+     * Get the radius for each point based on the minSize, maxSize and each
+     * point's Z value. This must be done prior to Series.translate because
+     * the axis needs to add padding in accordance with the point sizes.
+     * @private
+     */
+    BubbleSeries.prototype.getRadii = function (zMin, zMax, series) {
+        var len, i, zData = this.zData, yData = this.yData, minSize = series.minPxSize, maxSize = series.maxPxSize, radii = [], value;
+        // Set the shape type and arguments to be picked up in drawPoints
+        for (i = 0, len = zData.length; i < len; i++) {
+            value = zData[i];
+            // Separate method to get individual radius for bubbleLegend
+            radii.push(this.getRadius(zMin, zMax, minSize, maxSize, value, yData[i]));
+        }
+        this.radii = radii;
+    };
+    /**
+     * Get the individual radius for one point.
+     * @private
+     */
+    BubbleSeries.prototype.getRadius = function (zMin, zMax, minSize, maxSize, value, yValue) {
+        var options = this.options, sizeByArea = options.sizeBy !== 'width', zThreshold = options.zThreshold, zRange = zMax - zMin, pos = 0.5;
+        // #8608 - bubble should be visible when z is undefined
+        if (yValue === null || value === null) {
+            return null;
+        }
+        if (isNumber(value)) {
+            // When sizing by threshold, the absolute value of z determines
+            // the size of the bubble.
+            if (options.sizeByAbsoluteValue) {
+                value = Math.abs(value - zThreshold);
+                zMax = zRange = Math.max(zMax - zThreshold, Math.abs(zMin - zThreshold));
+                zMin = 0;
+            }
+            // Issue #4419 - if value is less than zMin, push a radius that's
+            // always smaller than the minimum size
+            if (value < zMin) {
+                return minSize / 2 - 1;
+            }
+            // Relative size, a number between 0 and 1
+            if (zRange > 0) {
+                pos = (value - zMin) / zRange;
+            }
+        }
+        if (sizeByArea && pos >= 0) {
+            pos = Math.sqrt(pos);
+        }
+        return Math.ceil(minSize + pos * (maxSize - minSize)) / 2;
+    };
+    /**
+     * Define hasData function for non-cartesian series.
+     * Returns true if the series has points at all.
+     * @private
+     */
+    BubbleSeries.prototype.hasData = function () {
+        return !!this.processedXData.length; // != 0
+    };
+    /**
+     * @private
+     */
+    BubbleSeries.prototype.pointAttribs = function (point, state) {
+        var markerOptions = this.options.marker, fillOpacity = markerOptions.fillOpacity, attr = LineSeries.prototype.pointAttribs.call(this, point, state);
+        if (fillOpacity !== 1) {
+            attr.fill = color(attr.fill)
+                .setOpacity(fillOpacity)
+                .get('rgba');
+        }
+        return attr;
+    };
+    /**
+     * Extend the base translate method to handle bubble size
+     * @private
+     */
+    BubbleSeries.prototype.translate = function () {
+        var i, data = this.data, point, radius, radii = this.radii;
+        // Run the parent method
+        _super.prototype.translate.call(this);
+        // Set the shape type and arguments to be picked up in drawPoints
+        i = data.length;
+        while (i--) {
+            point = data[i];
+            radius = radii ? radii[i] : 0; // #1737
+            if (isNumber(radius) && radius >= this.minPxSize / 2) {
+                // Shape arguments
+                point.marker = extend(point.marker, {
+                    radius: radius,
+                    width: 2 * radius,
+                    height: 2 * radius
+                });
+                // Alignment box for the data label
+                point.dlBox = {
+                    x: point.plotX - radius,
+                    y: point.plotY - radius,
+                    width: 2 * radius,
+                    height: 2 * radius
+                };
+            }
+            else { // below zThreshold
+                // #1691
+                point.shapeArgs = point.plotY = point.dlBox = void 0;
+            }
+        }
+    };
     /**
      * A bubble series is a three dimensional series type where each point
      * renders an X, Y and Z value. Each points is drawn as a bubble where the
@@ -299,147 +436,17 @@ var BubbleSeries = /** @class */ (function (_super) {
     return BubbleSeries;
 }(ScatterSeries));
 extend(BubbleSeries.prototype, {
+    alignDataLabel: ColumnSeries.prototype.alignDataLabel,
+    applyZones: noop,
+    bubblePadding: true,
+    buildKDTree: noop,
+    directTouch: true,
+    isBubble: true,
     pointArrayMap: ['y', 'z'],
     parallelArrays: ['x', 'y', 'z'],
     trackerGroups: ['group', 'dataLabelsGroup'],
     specialGroup: 'group',
-    bubblePadding: true,
-    zoneAxis: 'z',
-    directTouch: true,
-    isBubble: true,
-    /* eslint-disable valid-jsdoc */
-    /**
-     * @private
-     */
-    pointAttribs: function (point, state) {
-        var markerOptions = this.options.marker, fillOpacity = markerOptions.fillOpacity, attr = LineSeries.prototype.pointAttribs.call(this, point, state);
-        if (fillOpacity !== 1) {
-            attr.fill = color(attr.fill)
-                .setOpacity(fillOpacity)
-                .get('rgba');
-        }
-        return attr;
-    },
-    /**
-     * Get the radius for each point based on the minSize, maxSize and each
-     * point's Z value. This must be done prior to Series.translate because
-     * the axis needs to add padding in accordance with the point sizes.
-     * @private
-     */
-    getRadii: function (zMin, zMax, series) {
-        var len, i, zData = this.zData, yData = this.yData, minSize = series.minPxSize, maxSize = series.maxPxSize, radii = [], value;
-        // Set the shape type and arguments to be picked up in drawPoints
-        for (i = 0, len = zData.length; i < len; i++) {
-            value = zData[i];
-            // Separate method to get individual radius for bubbleLegend
-            radii.push(this.getRadius(zMin, zMax, minSize, maxSize, value, yData[i]));
-        }
-        this.radii = radii;
-    },
-    /**
-     * Get the individual radius for one point.
-     * @private
-     */
-    getRadius: function (zMin, zMax, minSize, maxSize, value, yValue) {
-        var options = this.options, sizeByArea = options.sizeBy !== 'width', zThreshold = options.zThreshold, zRange = zMax - zMin, pos = 0.5;
-        // #8608 - bubble should be visible when z is undefined
-        if (yValue === null || value === null) {
-            return null;
-        }
-        if (isNumber(value)) {
-            // When sizing by threshold, the absolute value of z determines
-            // the size of the bubble.
-            if (options.sizeByAbsoluteValue) {
-                value = Math.abs(value - zThreshold);
-                zMax = zRange = Math.max(zMax - zThreshold, Math.abs(zMin - zThreshold));
-                zMin = 0;
-            }
-            // Issue #4419 - if value is less than zMin, push a radius that's
-            // always smaller than the minimum size
-            if (value < zMin) {
-                return minSize / 2 - 1;
-            }
-            // Relative size, a number between 0 and 1
-            if (zRange > 0) {
-                pos = (value - zMin) / zRange;
-            }
-        }
-        if (sizeByArea && pos >= 0) {
-            pos = Math.sqrt(pos);
-        }
-        return Math.ceil(minSize + pos * (maxSize - minSize)) / 2;
-    },
-    /**
-     * Perform animation on the bubbles
-     * @private
-     */
-    animate: function (init) {
-        if (!init &&
-            this.points.length < this.options.animationLimit // #8099
-        ) {
-            this.points.forEach(function (point) {
-                var graphic = point.graphic;
-                if (graphic && graphic.width) { // URL symbols don't have width
-                    // Start values
-                    if (!this.hasRendered) {
-                        graphic.attr({
-                            x: point.plotX,
-                            y: point.plotY,
-                            width: 1,
-                            height: 1
-                        });
-                    }
-                    // Run animation
-                    graphic.animate(this.markerAttribs(point), this.options.animation);
-                }
-            }, this);
-        }
-    },
-    /**
-     * Define hasData function for non-cartesian series.
-     * Returns true if the series has points at all.
-     * @private
-     */
-    hasData: function () {
-        return !!this.processedXData.length; // != 0
-    },
-    /**
-     * Extend the base translate method to handle bubble size
-     * @private
-     */
-    translate: function () {
-        var i, data = this.data, point, radius, radii = this.radii;
-        // Run the parent method
-        ScatterSeries.prototype.translate.call(this);
-        // Set the shape type and arguments to be picked up in drawPoints
-        i = data.length;
-        while (i--) {
-            point = data[i];
-            radius = radii ? radii[i] : 0; // #1737
-            if (isNumber(radius) && radius >= this.minPxSize / 2) {
-                // Shape arguments
-                point.marker = extend(point.marker, {
-                    radius: radius,
-                    width: 2 * radius,
-                    height: 2 * radius
-                });
-                // Alignment box for the data label
-                point.dlBox = {
-                    x: point.plotX - radius,
-                    y: point.plotY - radius,
-                    width: 2 * radius,
-                    height: 2 * radius
-                };
-            }
-            else { // below zThreshold
-                // #1691
-                point.shapeArgs = point.plotY = point.dlBox = void 0;
-            }
-        }
-    },
-    alignDataLabel: ColumnSeries.prototype.alignDataLabel,
-    buildKDTree: noop,
-    applyZones: noop
+    zoneAxis: 'z'
 });
 /* *
  *
@@ -449,20 +456,35 @@ extend(BubbleSeries.prototype, {
 var BubblePoint = /** @class */ (function (_super) {
     __extends(BubblePoint, _super);
     function BubblePoint() {
-        return _super !== null && _super.apply(this, arguments) || this;
+        /* *
+         *
+         *  Properties
+         *
+         * */
+        var _this = _super !== null && _super.apply(this, arguments) || this;
+        _this.options = void 0;
+        _this.series = void 0;
+        return _this;
+        /* eslint-enable valid-jsdoc */
     }
+    /* *
+     *
+     *  Functions
+     *
+     * */
+    /* eslint-disable valid-jsdoc */
+    /**
+     * @private
+     */
+    BubblePoint.prototype.haloPath = function (size) {
+        return Point.prototype.haloPath.call(this, 
+        // #6067
+        size === 0 ? 0 : (this.marker ? this.marker.radius || 0 : 0) + size);
+    };
     return BubblePoint;
 }(ScatterSeries.prototype.pointClass));
 BubbleSeries.prototype.pointClass = BubblePoint;
 extend(BubblePoint.prototype, {
-    /**
-     * @private
-     */
-    haloPath: function (size) {
-        return Point.prototype.haloPath.call(this, 
-        // #6067
-        size === 0 ? 0 : (this.marker ? this.marker.radius || 0 : 0) + size);
-    },
     ttBelow: false
 });
 /* *
@@ -548,6 +570,20 @@ BaseSeries.registerSeriesType('bubble', BubbleSeries);
  *
  * */
 export default BubbleSeries;
+/* *
+ *
+ *  API Declarations
+ *
+ * */
+/**
+ * @typedef {"area"|"width"} Highcharts.BubbleSizeByValue
+ */
+''; // detach doclets above
+/* *
+ *
+ *  API Options
+ *
+ * */
 /**
  * A `bubble` series. If the [type](#series.bubble.type) option is
  * not specified, it is inherited from [chart.type](#chart.type).
