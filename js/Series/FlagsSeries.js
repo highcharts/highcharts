@@ -22,10 +22,9 @@ var __extends = (this && this.__extends) || (function () {
     };
 })();
 import BaseSeries from '../Core/Series/Series.js';
-var ColumnSeries = BaseSeries.seriesTypes.column;
+var _a = BaseSeries.seriesTypes, ColumnSeries = _a.column, LineSeries = _a.line;
 import H from '../Core/Globals.js';
 var noop = H.noop;
-import LineSeries from './Line/LineSeries.js';
 import OnSeriesMixin from '../Mixins/OnSeries.js';
 import SVGElement from '../Core/Renderer/SVG/SVGElement.js';
 import SVGRenderer from '../Core/Renderer/SVG/SVGRenderer.js';
@@ -64,12 +63,186 @@ var FlagsSeries = /** @class */ (function (_super) {
         _this.options = void 0;
         _this.points = void 0;
         return _this;
-        /* *
-         *
-         *  Functions
-         *
-         * */
+        /* eslint-enable valid-jsdoc */
     }
+    /* *
+     *
+     *  Functions
+     *
+     * */
+    /* eslint-disable valid-jsdoc */
+    /**
+     * Disable animation, but keep clipping (#8546).
+     * @private
+     */
+    FlagsSeries.prototype.animate = function (init) {
+        if (init) {
+            this.setClip();
+        }
+    };
+    /**
+     * Draw the markers.
+     * @private
+     */
+    FlagsSeries.prototype.drawPoints = function () {
+        var series = this, points = series.points, chart = series.chart, renderer = chart.renderer, plotX, plotY, inverted = chart.inverted, options = series.options, optionsY = options.y, shape, i, point, graphic, stackIndex, anchorY, attribs, outsideRight, yAxis = series.yAxis, boxesMap = {}, boxes = [], centered;
+        i = points.length;
+        while (i--) {
+            point = points[i];
+            outsideRight =
+                (inverted ? point.plotY : point.plotX) >
+                    series.xAxis.len;
+            plotX = point.plotX;
+            stackIndex = point.stackIndex;
+            shape = point.options.shape || options.shape;
+            plotY = point.plotY;
+            if (typeof plotY !== 'undefined') {
+                plotY = point.plotY + optionsY -
+                    (typeof stackIndex !== 'undefined' &&
+                        (stackIndex * options.stackDistance));
+            }
+            // skip connectors for higher level stacked points
+            point.anchorX = stackIndex ? void 0 : point.plotX;
+            anchorY = stackIndex ? void 0 : point.plotY;
+            centered = shape !== 'flag';
+            graphic = point.graphic;
+            // Only draw the point if y is defined and the flag is within
+            // the visible area
+            if (typeof plotY !== 'undefined' &&
+                plotX >= 0 &&
+                !outsideRight) {
+                // Create the flag
+                if (!graphic) {
+                    graphic = point.graphic = renderer.label('', null, null, shape, null, null, options.useHTML);
+                    if (!chart.styledMode) {
+                        graphic
+                            .attr(series.pointAttribs(point))
+                            .css(merge(options.style, point.style));
+                    }
+                    graphic.attr({
+                        align: centered ? 'center' : 'left',
+                        width: options.width,
+                        height: options.height,
+                        'text-align': options.textAlign
+                    })
+                        .addClass('highcharts-point')
+                        .add(series.markerGroup);
+                    // Add reference to the point for tracker (#6303)
+                    if (point.graphic.div) {
+                        point.graphic.div.point = point;
+                    }
+                    if (!chart.styledMode) {
+                        graphic.shadow(options.shadow);
+                    }
+                    graphic.isNew = true;
+                }
+                if (plotX > 0) { // #3119
+                    plotX -= graphic.strokeWidth() % 2; // #4285
+                }
+                // Plant the flag
+                attribs = {
+                    y: plotY,
+                    anchorY: anchorY
+                };
+                if (options.allowOverlapX) {
+                    attribs.x = plotX;
+                    attribs.anchorX = point.anchorX;
+                }
+                graphic.attr({
+                    text: point.options.title || options.title || 'A'
+                })[graphic.isNew ? 'attr' : 'animate'](attribs);
+                // Rig for the distribute function
+                if (!options.allowOverlapX) {
+                    if (!boxesMap[point.plotX]) {
+                        boxesMap[point.plotX] = {
+                            align: centered ? 0.5 : 0,
+                            size: graphic.width,
+                            target: plotX,
+                            anchorX: plotX
+                        };
+                    }
+                    else {
+                        boxesMap[point.plotX].size = Math.max(boxesMap[point.plotX].size, graphic.width);
+                    }
+                }
+                // Set the tooltip anchor position
+                point.tooltipPos = [
+                    plotX,
+                    plotY + yAxis.pos - chart.plotTop
+                ]; // #6327
+            }
+            else if (graphic) {
+                point.graphic = graphic.destroy();
+            }
+        }
+        // Handle X-dimension overlapping
+        if (!options.allowOverlapX) {
+            objectEach(boxesMap, function (box) {
+                box.plotX = box.anchorX;
+                boxes.push(box);
+            });
+            H.distribute(boxes, inverted ? yAxis.len : this.xAxis.len, 100);
+            points.forEach(function (point) {
+                var box = point.graphic && boxesMap[point.plotX];
+                if (box) {
+                    point.graphic[point.graphic.isNew ? 'attr' : 'animate']({
+                        x: box.pos + box.align * box.size,
+                        anchorX: point.anchorX
+                    });
+                    // Hide flag when its box position is not specified
+                    // (#8573, #9299)
+                    if (!defined(box.pos)) {
+                        point.graphic.attr({
+                            x: -9999,
+                            anchorX: -9999
+                        });
+                        point.graphic.isNew = true;
+                    }
+                    else {
+                        point.graphic.isNew = false;
+                    }
+                }
+            });
+        }
+        // Can be a mix of SVG and HTML and we need events for both (#6303)
+        if (options.useHTML) {
+            wrap(series.markerGroup, 'on', function (proceed) {
+                return SVGElement.prototype.on.apply(
+                // for HTML
+                // eslint-disable-next-line no-invalid-this
+                proceed.apply(this, [].slice.call(arguments, 1)), 
+                // and for SVG
+                [].slice.call(arguments, 1));
+            });
+        }
+    };
+    /**
+     * Get presentational attributes
+     * @private
+     */
+    FlagsSeries.prototype.pointAttribs = function (point, state) {
+        var options = this.options, color = (point && point.color) || this.color, lineColor = options.lineColor, lineWidth = (point && point.lineWidth), fill = (point && point.fillColor) || options.fillColor;
+        if (state) {
+            fill = options.states[state].fillColor;
+            lineColor = options.states[state].lineColor;
+            lineWidth = options.states[state].lineWidth;
+        }
+        return {
+            fill: fill || color,
+            stroke: lineColor || color,
+            'stroke-width': lineWidth || options.lineWidth || 0
+        };
+    };
+    /**
+     * @private
+     */
+    FlagsSeries.prototype.setClip = function () {
+        LineSeries.prototype.setClip.apply(this, arguments);
+        if (this.options.clip !== false && this.sharedClipKey) {
+            this.markerGroup
+                .clip(this.chart[this.sharedClipKey]);
+        }
+    };
     /**
      * Flags are used to mark events in stock charts. They can be added on the
      * timeline, or attached to a specific series.
@@ -311,175 +484,9 @@ extend(FlagsSeries.prototype, {
     translate: OnSeriesMixin.translate,
     /* eslint-disable no-invalid-this, valid-jsdoc */
     /**
-     * Get presentational attributes
-     *
-     * @private
-     * @function Highcharts.seriesTypes.flags#pointAttribs
-     *
-     * @param {Highcharts.Point} point
-     *
-     * @param {string} [state]
-     *
-     * @return {Highcharts.SVGAttributes}
-     */
-    pointAttribs: function (point, state) {
-        var options = this.options, color = (point && point.color) || this.color, lineColor = options.lineColor, lineWidth = (point && point.lineWidth), fill = (point && point.fillColor) || options.fillColor;
-        if (state) {
-            fill = options.states[state].fillColor;
-            lineColor = options.states[state].lineColor;
-            lineWidth = options.states[state].lineWidth;
-        }
-        return {
-            fill: fill || color,
-            stroke: lineColor || color,
-            'stroke-width': lineWidth || options.lineWidth || 0
-        };
-    },
-    /**
-     * Draw the markers.
-     *
-     * @private
-     * @function Highcharts.seriesTypes.flags#drawPoints
-     * @return {void}
-     */
-    drawPoints: function () {
-        var series = this, points = series.points, chart = series.chart, renderer = chart.renderer, plotX, plotY, inverted = chart.inverted, options = series.options, optionsY = options.y, shape, i, point, graphic, stackIndex, anchorY, attribs, outsideRight, yAxis = series.yAxis, boxesMap = {}, boxes = [], centered;
-        i = points.length;
-        while (i--) {
-            point = points[i];
-            outsideRight =
-                (inverted ? point.plotY : point.plotX) >
-                    series.xAxis.len;
-            plotX = point.plotX;
-            stackIndex = point.stackIndex;
-            shape = point.options.shape || options.shape;
-            plotY = point.plotY;
-            if (typeof plotY !== 'undefined') {
-                plotY = point.plotY + optionsY -
-                    (typeof stackIndex !== 'undefined' &&
-                        (stackIndex * options.stackDistance));
-            }
-            // skip connectors for higher level stacked points
-            point.anchorX = stackIndex ? void 0 : point.plotX;
-            anchorY = stackIndex ? void 0 : point.plotY;
-            centered = shape !== 'flag';
-            graphic = point.graphic;
-            // Only draw the point if y is defined and the flag is within
-            // the visible area
-            if (typeof plotY !== 'undefined' &&
-                plotX >= 0 &&
-                !outsideRight) {
-                // Create the flag
-                if (!graphic) {
-                    graphic = point.graphic = renderer.label('', null, null, shape, null, null, options.useHTML);
-                    if (!chart.styledMode) {
-                        graphic
-                            .attr(series.pointAttribs(point))
-                            .css(merge(options.style, point.style));
-                    }
-                    graphic.attr({
-                        align: centered ? 'center' : 'left',
-                        width: options.width,
-                        height: options.height,
-                        'text-align': options.textAlign
-                    })
-                        .addClass('highcharts-point')
-                        .add(series.markerGroup);
-                    // Add reference to the point for tracker (#6303)
-                    if (point.graphic.div) {
-                        point.graphic.div.point = point;
-                    }
-                    if (!chart.styledMode) {
-                        graphic.shadow(options.shadow);
-                    }
-                    graphic.isNew = true;
-                }
-                if (plotX > 0) { // #3119
-                    plotX -= graphic.strokeWidth() % 2; // #4285
-                }
-                // Plant the flag
-                attribs = {
-                    y: plotY,
-                    anchorY: anchorY
-                };
-                if (options.allowOverlapX) {
-                    attribs.x = plotX;
-                    attribs.anchorX = point.anchorX;
-                }
-                graphic.attr({
-                    text: point.options.title || options.title || 'A'
-                })[graphic.isNew ? 'attr' : 'animate'](attribs);
-                // Rig for the distribute function
-                if (!options.allowOverlapX) {
-                    if (!boxesMap[point.plotX]) {
-                        boxesMap[point.plotX] = {
-                            align: centered ? 0.5 : 0,
-                            size: graphic.width,
-                            target: plotX,
-                            anchorX: plotX
-                        };
-                    }
-                    else {
-                        boxesMap[point.plotX].size = Math.max(boxesMap[point.plotX].size, graphic.width);
-                    }
-                }
-                // Set the tooltip anchor position
-                point.tooltipPos = [
-                    plotX,
-                    plotY + yAxis.pos - chart.plotTop
-                ]; // #6327
-            }
-            else if (graphic) {
-                point.graphic = graphic.destroy();
-            }
-        }
-        // Handle X-dimension overlapping
-        if (!options.allowOverlapX) {
-            objectEach(boxesMap, function (box) {
-                box.plotX = box.anchorX;
-                boxes.push(box);
-            });
-            H.distribute(boxes, inverted ? yAxis.len : this.xAxis.len, 100);
-            points.forEach(function (point) {
-                var box = point.graphic && boxesMap[point.plotX];
-                if (box) {
-                    point.graphic[point.graphic.isNew ? 'attr' : 'animate']({
-                        x: box.pos + box.align * box.size,
-                        anchorX: point.anchorX
-                    });
-                    // Hide flag when its box position is not specified
-                    // (#8573, #9299)
-                    if (!defined(box.pos)) {
-                        point.graphic.attr({
-                            x: -9999,
-                            anchorX: -9999
-                        });
-                        point.graphic.isNew = true;
-                    }
-                    else {
-                        point.graphic.isNew = false;
-                    }
-                }
-            });
-        }
-        // Can be a mix of SVG and HTML and we need events for both (#6303)
-        if (options.useHTML) {
-            wrap(series.markerGroup, 'on', function (proceed) {
-                return SVGElement.prototype.on.apply(
-                // for HTML
-                proceed.apply(this, [].slice.call(arguments, 1)), 
-                // and for SVG
-                [].slice.call(arguments, 1));
-            });
-        }
-    },
-    /**
      * Extend the column trackers with listeners to expand and contract
      * stacks.
-     *
      * @private
-     * @function Highcharts.seriesTypes.flags#drawTracker
-     * @return {void}
      */
     drawTracker: function () {
         var series = this, points = series.points;
@@ -516,31 +523,6 @@ extend(FlagsSeries.prototype, {
                 });
             }
         });
-    },
-    /**
-     * Disable animation, but keep clipping (#8546).
-     *
-     * @private
-     * @function Highcharts.seriesTypes.flags#animate
-     * @param {boolean} [init]
-     * @return {void}
-     */
-    animate: function (init) {
-        if (init) {
-            this.setClip();
-        }
-    },
-    /**
-     * @private
-     * @function Highcharts.seriesTypes.flags#setClip
-     * @return {void}
-     */
-    setClip: function () {
-        LineSeries.prototype.setClip.apply(this, arguments);
-        if (this.options.clip !== false && this.sharedClipKey) {
-            this.markerGroup
-                .clip(this.chart[this.sharedClipKey]);
-        }
     }
     /* eslint-enable no-invalid-this, valid-jsdoc */
 });
@@ -562,16 +544,23 @@ var FlagsPoint = /** @class */ (function (_super) {
         _this.series = void 0;
         return _this;
     }
-    return FlagsPoint;
-}(ColumnSeries.prototype.pointClass));
-FlagsSeries.prototype.pointClass = FlagsPoint;
-extend(FlagsPoint.prototype, {
-    isValid: function () {
+    /* *
+     *
+     *  Functions
+     *
+     * */
+    /* eslint-disable valid-jsdoc */
+    /**
+     * @private
+     */
+    FlagsPoint.prototype.isValid = function () {
         // #9233 - Prevent from treating flags as null points (even if
         // they have no y values defined).
         return isNumber(this.y) || typeof this.y === 'undefined';
-    }
-});
+    };
+    return FlagsPoint;
+}(ColumnSeries.prototype.pointClass));
+FlagsSeries.prototype.pointClass = FlagsPoint;
 /* *
  *
  *  Registry

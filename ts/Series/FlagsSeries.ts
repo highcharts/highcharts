@@ -22,12 +22,12 @@ import type SVGPath from '../Core/Renderer/SVG/SVGPath';
 import BaseSeries from '../Core/Series/Series.js';
 const {
     seriesTypes: {
-        column: ColumnSeries
+        column: ColumnSeries,
+        line: LineSeries
     }
 } = BaseSeries;
 import H from '../Core/Globals.js';
 const { noop } = H;
-import LineSeries from './Line/LineSeries.js';
 import OnSeriesMixin from '../Mixins/OnSeries.js';
 import SVGElement from '../Core/Renderer/SVG/SVGElement.js';
 import SVGRenderer from '../Core/Renderer/SVG/SVGRenderer.js';
@@ -368,7 +368,7 @@ class FlagsSeries extends ColumnSeries {
 
     public data: Array<FlagsPoint> = void 0 as any;
 
-    public onSeries?: LineSeries;
+    public onSeries?: typeof LineSeries.prototype;
 
     public options: Highcharts.FlagsSeriesOptions = void 0 as any;
 
@@ -380,109 +380,23 @@ class FlagsSeries extends ColumnSeries {
      *
      * */
 
-}
-
-/* *
- *
- *  Prototype Properties
- *
- * */
-
-interface FlagsSeries {
-    allowDG: boolean;
-    getPlotBox: typeof OnSeriesMixin['getPlotBox'];
-    init: LineSeries['init'];
-    pointClass: typeof FlagsPoint;
-    setClip(): void;
-    takeOrdinalPosition: boolean;
-    translate: typeof OnSeriesMixin['translate'];
-}
-extend(FlagsSeries.prototype, {
-
-    allowDG: false,
+    /* eslint-disable valid-jsdoc */
 
     /**
+     * Disable animation, but keep clipping (#8546).
      * @private
-     * @function Highcharts.seriesTypes.flags#buildKDTree
      */
-    buildKDTree: noop as any,
-
-    forceCrop: true,
-
-    getPlotBox: OnSeriesMixin.getPlotBox,
-
-    /**
-     * Inherit the initialization from base Series.
-     *
-     * @private
-     * @borrows Highcharts.Series#init as Highcharts.seriesTypes.flags#init
-     */
-    init: LineSeries.prototype.init,
-
-    /**
-     * Don't invert the flag marker group (#4960).
-     *
-     * @private
-     * @function Highcharts.seriesTypes.flags#invertGroups
-     */
-    invertGroups: noop as any,
-
-    noSharedTooltip: true,
-
-    sorted: false,
-
-    takeOrdinalPosition: false, // #1074
-
-    trackerGroups: ['markerGroup'],
-
-    translate: OnSeriesMixin.translate,
-
-    /* eslint-disable no-invalid-this, valid-jsdoc */
-
-    /**
-     * Get presentational attributes
-     *
-     * @private
-     * @function Highcharts.seriesTypes.flags#pointAttribs
-     *
-     * @param {Highcharts.Point} point
-     *
-     * @param {string} [state]
-     *
-     * @return {Highcharts.SVGAttributes}
-     */
-    pointAttribs: function (
-        this: FlagsSeries,
-        point: FlagsPoint,
-        state?: string
-    ): SVGAttributes {
-        var options = this.options,
-            color = (point && point.color) || this.color,
-            lineColor = options.lineColor,
-            lineWidth = (point && point.lineWidth),
-            fill = (point && point.fillColor) || options.fillColor;
-
-        if (state) {
-            fill = (options.states as any)[state].fillColor;
-            lineColor = (options.states as any)[state].lineColor;
-            lineWidth = (options.states as any)[state].lineWidth;
+    public animate(init?: boolean): void {
+        if (init) {
+            this.setClip();
         }
-
-        return {
-            fill: fill || color,
-            stroke: lineColor || color,
-            'stroke-width': lineWidth || options.lineWidth || 0
-        };
-    },
+    }
 
     /**
      * Draw the markers.
-     *
      * @private
-     * @function Highcharts.seriesTypes.flags#drawPoints
-     * @return {void}
      */
-    drawPoints: function (this: FlagsSeries): void {
+    public drawPoints(): void {
         var series = this,
             points = series.points,
             chart = series.chart,
@@ -667,6 +581,7 @@ extend(FlagsSeries.prototype, {
             ): SVGElement {
                 return SVGElement.prototype.on.apply(
                     // for HTML
+                    // eslint-disable-next-line no-invalid-this
                     proceed.apply(this, [].slice.call(arguments, 1)),
                     // and for SVG
                     [].slice.call(arguments, 1) as any
@@ -674,15 +589,110 @@ extend(FlagsSeries.prototype, {
             });
         }
 
-    },
+    }
+
+    /**
+     * Get presentational attributes
+     * @private
+     */
+    public pointAttribs(
+        point: FlagsPoint,
+        state?: string
+    ): SVGAttributes {
+        var options = this.options,
+            color = (point && point.color) || this.color,
+            lineColor = options.lineColor,
+            lineWidth = (point && point.lineWidth),
+            fill = (point && point.fillColor) || options.fillColor;
+
+        if (state) {
+            fill = (options.states as any)[state].fillColor;
+            lineColor = (options.states as any)[state].lineColor;
+            lineWidth = (options.states as any)[state].lineWidth;
+        }
+
+        return {
+            fill: fill || color,
+            stroke: lineColor || color,
+            'stroke-width': lineWidth || options.lineWidth || 0
+        };
+    }
+
+    /**
+     * @private
+     */
+    public setClip(): void {
+        LineSeries.prototype.setClip.apply(this, arguments as any);
+        if (this.options.clip !== false && this.sharedClipKey) {
+            (this.markerGroup as any)
+                .clip((this.chart as any)[this.sharedClipKey]);
+        }
+    }
+
+    /* eslint-enable valid-jsdoc */
+
+}
+
+/* *
+ *
+ *  Prototype Properties
+ *
+ * */
+
+interface FlagsSeries {
+    allowDG: boolean;
+    getPlotBox: typeof OnSeriesMixin['getPlotBox'];
+    init: typeof LineSeries.prototype['init'];
+    pointClass: typeof FlagsPoint;
+    takeOrdinalPosition: boolean;
+    translate: typeof OnSeriesMixin['translate'];
+}
+extend(FlagsSeries.prototype, {
+
+    allowDG: false,
+
+    /**
+     * @private
+     * @function Highcharts.seriesTypes.flags#buildKDTree
+     */
+    buildKDTree: noop as any,
+
+    forceCrop: true,
+
+    getPlotBox: OnSeriesMixin.getPlotBox,
+
+    /**
+     * Inherit the initialization from base Series.
+     *
+     * @private
+     * @borrows Highcharts.Series#init as Highcharts.seriesTypes.flags#init
+     */
+    init: LineSeries.prototype.init,
+
+    /**
+     * Don't invert the flag marker group (#4960).
+     *
+     * @private
+     * @function Highcharts.seriesTypes.flags#invertGroups
+     */
+    invertGroups: noop as any,
+
+    noSharedTooltip: true,
+
+    sorted: false,
+
+    takeOrdinalPosition: false, // #1074
+
+    trackerGroups: ['markerGroup'],
+
+    translate: OnSeriesMixin.translate,
+
+    /* eslint-disable no-invalid-this, valid-jsdoc */
 
     /**
      * Extend the column trackers with listeners to expand and contract
      * stacks.
-     *
      * @private
-     * @function Highcharts.seriesTypes.flags#drawTracker
-     * @return {void}
      */
     drawTracker: function (this: FlagsSeries): void {
         var series = this,
@@ -728,33 +738,6 @@ extend(FlagsSeries.prototype, {
                 });
             }
         });
-    },
-
-    /**
-     * Disable animation, but keep clipping (#8546).
-     *
-     * @private
-     * @function Highcharts.seriesTypes.flags#animate
-     * @param {boolean} [init]
-     * @return {void}
-     */
-    animate: function (this: FlagsSeries, init?: boolean): void {
-        if (init) {
-            this.setClip();
-        }
-    },
-
-    /**
-     * @private
-     * @function Highcharts.seriesTypes.flags#setClip
-     * @return {void}
-     */
-    setClip: function (this: FlagsSeries): void {
-        LineSeries.prototype.setClip.apply(this, arguments as any);
-        if (this.options.clip !== false && this.sharedClipKey) {
-            (this.markerGroup as any)
-                .clip((this.chart as any)[this.sharedClipKey]);
-        }
     }
 
     /* eslint-enable no-invalid-this, valid-jsdoc */
@@ -793,25 +776,25 @@ class FlagsPoint extends ColumnSeries.prototype.pointClass {
 
     public style?: CSSObject;
 
-}
-FlagsSeries.prototype.pointClass = FlagsPoint;
+    /* *
+     *
+     *  Functions
+     *
+     * */
 
-/* *
- *
- *  Prototype Properties
- *
- * */
+    /* eslint-disable valid-jsdoc */
 
-interface FlagsPoint {
-    isValid: () => boolean;
-}
-extend(FlagsPoint.prototype, {
-    isValid: function (this: FlagsPoint): boolean {
+    /**
+     * @private
+     */
+    public isValid(): boolean {
         // #9233 - Prevent from treating flags as null points (even if
         // they have no y values defined).
         return isNumber(this.y) || typeof this.y === 'undefined';
     }
-});
+
+}
+FlagsSeries.prototype.pointClass = FlagsPoint;
 
 /* *
  *
