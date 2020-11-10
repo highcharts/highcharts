@@ -86,7 +86,7 @@ declare global {
 
             public alignGroup(): void;
             public createList(): void;
-            public destroy(numb: number): void;
+            public destroy(this: Breadcrumbs, lastVisibleLevel: number|undefined): void;
             public draw(): void;
             public multipleDrillUp(numb: number): void;
             public init(chart: Chart, userOptions: Highcharts.Options): void;
@@ -260,6 +260,18 @@ extend(
     }
 );
 
+/**
+ * The Breadcrumbs class
+ *
+ * @private
+ * @class
+ * @name Highcharts.Breadcrumbs
+ *
+ * @param {Highcharts.Chart} chart
+ *        Chart object
+ * @param {Highcharts.Options} userOptions
+ *        User options
+ */
 class Breadcrumbs {
     public chart: Chart = void 0 as any;
     public breadcrumbsGroup: Highcharts.SVGElement = void 0 as any;
@@ -283,7 +295,7 @@ class Breadcrumbs {
      *
      * @requires  modules/drilldown
      *
-     * @function Highcharts.Chart#alingGroup
+     * @function Highcharts.Breadcrumbs#alingGroup
      * @param {Highcharts.Breadcrumbs} this
      *        Breadcrumbs class.
      */
@@ -350,7 +362,7 @@ class Breadcrumbs {
      *
      * @requires  modules/drilldown
      *
-     * @function Highcharts.Chart#createList
+     * @function Highcharts.Breadcrumbs#createList
      * @param {Highcharts.Breadcrumbs} this
      *        Breadcrumbs class.
      */
@@ -387,7 +399,7 @@ class Breadcrumbs {
      *
      * @requires  modules/drilldown
      *
-     * @function Highcharts.Chart#destroy
+     * @function Highcharts.Breadcrumbs#destroy
      * @param {Highcharts.Breadcrumbs} this
      *        Breadcrumbs class.
      * @param {Highcharts.Breadcrumbs} lastVisibleLevel
@@ -442,7 +454,7 @@ class Breadcrumbs {
      *
      * @requires  modules/drilldown
      *
-     * @function Highcharts.Chart#draw
+     * @function Highcharts.Breadcrumbs#draw
      * @param {Highcharts.Breadcrumbs} this
      *        Breadcrumbs class.
      */
@@ -504,7 +516,7 @@ class Breadcrumbs {
      *
      * @requires  modules/drilldown
      *
-     * @function Highcharts.Chart#multipleDrillUp
+     * @function Highcharts.Breadcrumbs#multipleDrillUp
      * @param {Highcharts.Breadcrumbs} this
      *        Breadcrumbs class.
      * @param {Highcharts.Breadcrumbs} drillAmount
@@ -527,7 +539,7 @@ class Breadcrumbs {
     *
     * @requires  modules/drilldown
     *
-    * @function Highcharts.Chart#redraw
+    * @function Highcharts.Breadcrumbs#redraw
     * @param {Highcharts.Breadcrumbs} this
     *        Breadcrumbs class.
     */
@@ -547,7 +559,7 @@ class Breadcrumbs {
     *
     * @requires  modules/drilldown
     *
-    * @function Highcharts.Chart#renderButton
+    * @function Highcharts.Breadcrumbs#renderButton
     * @param {Highcharts.Breadcrumbs} this
     *        Breadcrumbs class.
     * @param {Highcharts.Breadcrumbs} breadcrumb
@@ -596,7 +608,7 @@ class Breadcrumbs {
     *
     * @requires  modules/drilldown
     *
-    * @function Highcharts.Chart#renderSeparator
+    * @function Highcharts.Breadcrumbs#renderSeparator
     * @param {Highcharts.Breadcrumbs} this
     *        Breadcrumbs class.
     * @param {Highcharts.Breadcrumbs} posX
@@ -637,7 +649,7 @@ class Breadcrumbs {
     *
     * @requires  modules/drilldown
     *
-    * @function Highcharts.Chart#update
+    * @function Highcharts.Breadcrumbs#update
     * @param {Highcharts.Breadcrumbs} this
     *        Breadcrumbs class.
     * @param {Highcharts.BreadcrumbsOptions} userOptions

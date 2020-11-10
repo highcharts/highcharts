@@ -158,6 +158,18 @@ extend(defaultOptions.drilldown, {
         zIndex: 7
     }
 });
+/**
+ * The Breadcrumbs class
+ *
+ * @private
+ * @class
+ * @name Highcharts.Breadcrumbs
+ *
+ * @param {Highcharts.Chart} chart
+ *        Chart object
+ * @param {Highcharts.Options} userOptions
+ *        User options
+ */
 var Breadcrumbs = /** @class */ (function () {
     function Breadcrumbs(chart, userOptions) {
         this.chart = void 0;
@@ -176,7 +188,7 @@ var Breadcrumbs = /** @class */ (function () {
      *
      * @requires  modules/drilldown
      *
-     * @function Highcharts.Chart#alingGroup
+     * @function Highcharts.Breadcrumbs#alingGroup
      * @param {Highcharts.Breadcrumbs} this
      *        Breadcrumbs class.
      */
@@ -231,7 +243,7 @@ var Breadcrumbs = /** @class */ (function () {
      *
      * @requires  modules/drilldown
      *
-     * @function Highcharts.Chart#createList
+     * @function Highcharts.Breadcrumbs#createList
      * @param {Highcharts.Breadcrumbs} this
      *        Breadcrumbs class.
      */
@@ -264,7 +276,7 @@ var Breadcrumbs = /** @class */ (function () {
      *
      * @requires  modules/drilldown
      *
-     * @function Highcharts.Chart#destroy
+     * @function Highcharts.Breadcrumbs#destroy
      * @param {Highcharts.Breadcrumbs} this
      *        Breadcrumbs class.
      * @param {Highcharts.Breadcrumbs} lastVisibleLevel
@@ -306,7 +318,7 @@ var Breadcrumbs = /** @class */ (function () {
      *
      * @requires  modules/drilldown
      *
-     * @function Highcharts.Chart#draw
+     * @function Highcharts.Breadcrumbs#draw
      * @param {Highcharts.Breadcrumbs} this
      *        Breadcrumbs class.
      */
@@ -354,7 +366,7 @@ var Breadcrumbs = /** @class */ (function () {
      *
      * @requires  modules/drilldown
      *
-     * @function Highcharts.Chart#multipleDrillUp
+     * @function Highcharts.Breadcrumbs#multipleDrillUp
      * @param {Highcharts.Breadcrumbs} this
      *        Breadcrumbs class.
      * @param {Highcharts.Breadcrumbs} drillAmount
@@ -374,7 +386,7 @@ var Breadcrumbs = /** @class */ (function () {
     *
     * @requires  modules/drilldown
     *
-    * @function Highcharts.Chart#redraw
+    * @function Highcharts.Breadcrumbs#redraw
     * @param {Highcharts.Breadcrumbs} this
     *        Breadcrumbs class.
     */
@@ -391,7 +403,7 @@ var Breadcrumbs = /** @class */ (function () {
     *
     * @requires  modules/drilldown
     *
-    * @function Highcharts.Chart#renderButton
+    * @function Highcharts.Breadcrumbs#renderButton
     * @param {Highcharts.Breadcrumbs} this
     *        Breadcrumbs class.
     * @param {Highcharts.Breadcrumbs} breadcrumb
@@ -430,7 +442,7 @@ var Breadcrumbs = /** @class */ (function () {
     *
     * @requires  modules/drilldown
     *
-    * @function Highcharts.Chart#renderSeparator
+    * @function Highcharts.Breadcrumbs#renderSeparator
     * @param {Highcharts.Breadcrumbs} this
     *        Breadcrumbs class.
     * @param {Highcharts.Breadcrumbs} posX
@@ -461,7 +473,7 @@ var Breadcrumbs = /** @class */ (function () {
     *
     * @requires  modules/drilldown
     *
-    * @function Highcharts.Chart#update
+    * @function Highcharts.Breadcrumbs#update
     * @param {Highcharts.Breadcrumbs} this
     *        Breadcrumbs class.
     * @param {Highcharts.BreadcrumbsOptions} userOptions
