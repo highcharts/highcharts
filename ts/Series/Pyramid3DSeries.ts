@@ -13,7 +13,7 @@
 
 'use strict';
 
-import type Funnel3DSeries from './Funnel3DSeries';
+import type Funnel3DSeries from './Funnel3D/Funnel3DSeries';
 import type { SeriesStatesOptions } from '../Core/Series/SeriesOptions';
 import BaseSeries from '../Core/Series/Series.js';
 
