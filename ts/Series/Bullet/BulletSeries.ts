@@ -15,12 +15,8 @@
  *  Imports
  *
  * */
-
-import type ColorString from '../../Core/Color/ColorString';
-import type ColorType from '../../Core/Color/ColorType';
-import type ColumnPoint from '../Column/ColumnPoint';
-import type ColumnPointOptions from '../Column/ColumnPointOptions';
-import type ColumnSeriesOptions from '../Column/ColumnSeriesOptions';
+import type BulletPointOptions from './BulletPointOptions';
+import type BulletSeriesOptions from './BulletSeriesOptions';
 import type DataExtremesObject from '../../Core/Series/DataExtremesObject';
 import BaseSeries from '../../Core/Series/Series.js';
 const {
@@ -39,44 +35,6 @@ const {
 } = U;
 
 import '../Column/ColumnSeries.js';
-
-/* *
- *
- *  Declarations
- *
- * */
-
-/**
- * Internal types
- * @private
- */
-declare global {
-    namespace Highcharts {
-        class BulletPoint extends ColumnPoint {
-            public borderColor: BulletPointOptions['borderColor'];
-            public options: BulletPointOptions;
-            public series: BulletSeries;
-            public target?: number;
-            public targetGraphic?: SVGElement;
-            public destroy(): undefined;
-        }
-        interface BulletPointOptions extends ColumnPointOptions {
-            borderColor?: ColorType;
-            target?: number;
-            targetOptions?: BulletSeriesTargetOptions;
-        }
-        interface BulletSeriesOptions extends ColumnSeriesOptions {
-            targetOptions?: BulletSeriesTargetOptions;
-        }
-        interface BulletSeriesTargetOptions {
-            borderColor?: ColorString;
-            borderWidth?: number;
-            color?: ColorType;
-            height?: number;
-            width?: (number|string);
-        }
-    }
-}
 
 /* *
  *
@@ -119,7 +77,7 @@ class BulletSeries extends ColumnSeries {
      * @optionparent plotOptions.bullet
      */
 
-    public static defaultOptions: Highcharts.BulletSeriesOptions = merge(ColumnSeries.defaultOptions, {
+    public static defaultOptions: BulletSeriesOptions = merge(ColumnSeries.defaultOptions, {
         /**
          * All options related with look and positiong of targets.
          *
@@ -185,7 +143,7 @@ class BulletSeries extends ColumnSeries {
             ' {series.name}: <b>{point.y}</b>. Target: <b>{point.target}' +
             '</b><br/>'
         }
-    } as Highcharts.BulletSeriesOptions);
+    } as BulletSeriesOptions);
 
     /* *
      *
@@ -195,7 +153,7 @@ class BulletSeries extends ColumnSeries {
 
     public data: Array<BulletPoint> = void 0 as any;
 
-    public options: Highcharts.BulletSeriesOptions = void 0 as any;
+    public options: BulletSeriesOptions = void 0 as any;
 
     public points: Array<BulletPoint> = void 0 as any;
 
@@ -403,8 +361,8 @@ class BulletPoint extends ColumnSeries.prototype.pointClass {
      * Properties
      *
      * */
-    public borderColor: Highcharts.BulletPointOptions['borderColor'];
-    public options: Highcharts.BulletPointOptions = void 0 as any;
+    public borderColor: BulletPointOptions['borderColor'];
+    public options: BulletPointOptions = void 0 as any;
     public series: BulletSeries = void 0 as any;
     public target?: number;
     public targetGraphic?: SVGElement;
