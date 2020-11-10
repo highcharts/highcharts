@@ -13,6 +13,7 @@
 
 'use strict';
 
+import type Funnel3DSeries from './Funnel3DSeries';
 import type { SeriesStatesOptions } from '../Core/Series/SeriesOptions';
 import BaseSeries from '../Core/Series/Series.js';
 
@@ -22,11 +23,11 @@ import BaseSeries from '../Core/Series/Series.js';
  */
 declare global {
     namespace Highcharts {
-        class Pyramid3dPoint extends Funnel3dPoint {
+        class Pyramid3dPoint extends Funnel3DSeries.prototype.pointClass {
             options: Pyramid3dPointOptions;
             series: Pyramid3dSeries;
         }
-        class Pyramid3dSeries extends Funnel3dSeries {
+        class Pyramid3dSeries extends Funnel3DSeries {
             data: Array<Pyramid3dPoint>;
             options: Pyramid3dSeriesOptions;
             pointClass: typeof Pyramid3dPoint;
