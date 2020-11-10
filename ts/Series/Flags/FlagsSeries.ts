@@ -10,31 +10,36 @@
 
 'use strict';
 
-import type { AlignValue } from '../Core/Renderer/AlignObject';
-import type ColorType from '../Core/Color/ColorType';
-import type ColumnPoint from './Column/ColumnPoint';
-import type ColumnPointOptions from './Column/ColumnPointOptions';
-import type ColumnSeriesOptions from './Column/ColumnSeriesOptions';
-import type CSSObject from '../Core/Renderer/CSSObject';
-import type { SeriesStatesOptions } from '../Core/Series/SeriesOptions';
-import type SVGAttributes from '../Core/Renderer/SVG/SVGAttributes';
-import type SVGPath from '../Core/Renderer/SVG/SVGPath';
-import BaseSeries from '../Core/Series/Series.js';
+/* *
+ *
+ *  Imports
+ *
+ * */
+
+import type { AlignValue } from '../../Core/Renderer/AlignObject';
+import type ColorType from '../../Core/Color/ColorType';
+import type ColumnPointOptions from '../Column/ColumnPointOptions';
+import type ColumnSeriesOptions from '../Column/ColumnSeriesOptions';
+import type CSSObject from '../../Core/Renderer/CSSObject';
+import type { SeriesStatesOptions } from '../../Core/Series/SeriesOptions';
+import type SVGAttributes from '../../Core/Renderer/SVG/SVGAttributes';
+import type SVGPath from '../../Core/Renderer/SVG/SVGPath';
+import BaseSeries from '../../Core/Series/Series.js';
 const {
     seriesTypes: {
         column: ColumnSeries,
         line: LineSeries
     }
 } = BaseSeries;
-import H from '../Core/Globals.js';
+import H from '../../Core/Globals.js';
 const { noop } = H;
-import OnSeriesMixin from '../Mixins/OnSeries.js';
-import SVGElement from '../Core/Renderer/SVG/SVGElement.js';
-import SVGRenderer from '../Core/Renderer/SVG/SVGRenderer.js';
+import OnSeriesMixin from '../../Mixins/OnSeries.js';
+import SVGElement from '../../Core/Renderer/SVG/SVGElement.js';
+import SVGRenderer from '../../Core/Renderer/SVG/SVGRenderer.js';
 const {
     symbols
 } = SVGRenderer.prototype;
-import U from '../Core/Utilities.js';
+import U from '../../Core/Utilities.js';
 const {
     addEvent,
     defined,
@@ -45,13 +50,23 @@ const {
     wrap
 } = U;
 
-declare module '../Core/Series/SeriesLike' {
+import '../Column/ColumnSeries.js';
+import '../../Core/Interaction.js';
+import '../../Core/Renderer/SVG/SVGRenderer.js';
+
+/* *
+ *
+ *  Declarations
+ *
+ * */
+
+declare module '../../Core/Series/SeriesLike' {
     interface SeriesLike {
         allowDG?: boolean;
     }
 }
 
-declare module '../Core/Series/SeriesOptions' {
+declare module '../../Core/Series/SeriesOptions' {
     interface SeriesStateHoverOptions {
         fillColor?: ColorType;
         lineColor?: ColorType;
@@ -101,10 +116,6 @@ declare global {
     }
     type FlagsPointClass = FlagsPoint;
 }
-
-import './Column/ColumnSeries.js';
-import '../Core/Interaction.js';
-import '../Core/Renderer/SVG/SVGRenderer.js';
 
 var Renderer = H.Renderer,
     TrackerMixin = H.TrackerMixin, // Interaction
@@ -905,7 +916,7 @@ if ((Renderer as unknown) === VMLRenderer) {
     });
 }
 
-declare module '../Core/Series/SeriesType' {
+declare module '../../Core/Series/SeriesType' {
     interface SeriesTypesDictionary {
         flags: typeof FlagsSeries;
     }
