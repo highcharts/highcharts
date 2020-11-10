@@ -203,7 +203,6 @@ declare global {
         }
         interface PointEventsOptionsObject {
             drag?: PointDragCallbackFunction;
-            dragDrop?: DragDropOptionsObject;
             dragStart?: PointDragStartCallbackFunction;
             drop?: PointDropCallbackFunction;
         }
@@ -2639,7 +2638,8 @@ Point.prototype.showDragHandles = function (): void {
                         point,
                         key
                     );
-                }
+                },
+                { passive: false }
             );
             addEvent(
                 (chart.dragHandles as any).group.element,
@@ -3041,7 +3041,8 @@ function addDragDropEvents(chart: Chart): void {
             ['mousemove', 'touchmove'],
             function (e: PointerEvent): void {
                 mouseMove(getNormalizedEvent(e, chart), chart);
-            }
+            },
+            { passive: false }
         );
         addEvent(
             container,
@@ -3055,7 +3056,8 @@ function addDragDropEvents(chart: Chart): void {
             ['mouseup', 'touchend'],
             function (e: PointerEvent): void {
                 mouseUp(getNormalizedEvent(e, chart), chart);
-            }
+            },
+            { passive: false }
         );
 
         // Add flag to avoid doing this again

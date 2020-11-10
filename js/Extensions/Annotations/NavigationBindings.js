@@ -174,7 +174,7 @@ var NavigationBindings = /** @class */ (function () {
         });
         objectEach(options.events || {}, function (callback, eventName) {
             if (isFunction(callback)) {
-                navigation.eventsToUnbind.push(addEvent(navigation, eventName, callback));
+                navigation.eventsToUnbind.push(addEvent(navigation, eventName, callback, { passive: false }));
             }
         });
         navigation.eventsToUnbind.push(addEvent(chart.container, 'click', function (e) {
@@ -185,7 +185,7 @@ var NavigationBindings = /** @class */ (function () {
         }));
         navigation.eventsToUnbind.push(addEvent(chart.container, H.isTouchDevice ? 'touchmove' : 'mousemove', function (e) {
             navigation.bindingsContainerMouseMove(this, e);
-        }));
+        }, H.isTouchDevice ? { passive: false } : void 0));
     };
     /**
      * Common chart.update() delegation, shared between bindings and exporting.

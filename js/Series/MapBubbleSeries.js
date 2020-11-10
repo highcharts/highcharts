@@ -8,23 +8,58 @@
  *
  * */
 'use strict';
+var __extends = (this && this.__extends) || (function () {
+    var extendStatics = function (d, b) {
+        extendStatics = Object.setPrototypeOf ||
+            ({ __proto__: [] } instanceof Array && function (d, b) { d.__proto__ = b; }) ||
+            function (d, b) { for (var p in b) if (b.hasOwnProperty(p)) d[p] = b[p]; };
+        return extendStatics(d, b);
+    };
+    return function (d, b) {
+        extendStatics(d, b);
+        function __() { this.constructor = d; }
+        d.prototype = b === null ? Object.create(b) : (__.prototype = b.prototype, new __());
+    };
+})();
 import BaseSeries from '../Core/Series/Series.js';
+var _a = BaseSeries.seriesTypes, BubbleSeries = _a.bubble, MapSeries = _a.map;
 import Point from '../Core/Series/Point.js';
 import U from '../Core/Utilities.js';
-var merge = U.merge;
+var extend = U.extend, merge = U.merge;
 import '../Core/Options.js';
-import '../Series/Bubble/BubbleSeries.js';
-var seriesTypes = BaseSeries.seriesTypes;
-// The mapbubble series type
-if (seriesTypes.bubble) {
-    /**
-     * @private
-     * @class
-     * @name Highcharts.seriesTypes.mapbubble
-     *
-     * @augments Highcharts.Series
-     */
-    BaseSeries.seriesType('mapbubble', 'bubble'
+import './Bubble/BubbleSeries.js';
+import './Map/MapSeries.js';
+/* *
+ *
+ *  Class
+ *
+ * */
+/**
+ * @private
+ * @class
+ * @name Highcharts.seriesTypes.mapbubble
+ *
+ * @augments Highcharts.Series
+ */
+var MapBubbleSeries = /** @class */ (function (_super) {
+    __extends(MapBubbleSeries, _super);
+    function MapBubbleSeries() {
+        /* *
+         *
+         *  Static Properties
+         *
+         * */
+        var _this = _super !== null && _super.apply(this, arguments) || this;
+        /* *
+         *
+         *  Properties
+         *
+         * */
+        _this.data = void 0;
+        _this.options = void 0;
+        _this.points = void 0;
+        return _this;
+    }
     /**
      * A map bubble series is a bubble series laid out on top of a map
      * series, where each bubble is tied to a specific map area.
@@ -36,7 +71,7 @@ if (seriesTypes.bubble) {
      * @product      highmaps
      * @optionparent plotOptions.mapbubble
      */
-    , {
+    MapBubbleSeries.defaultOptions = merge((BubbleSeries.defaultOptions), {
         /**
          * The main color of the series. This color affects both the fill
          * and the stroke of the bubble. For enhanced control, use `marker`
@@ -149,38 +184,76 @@ if (seriesTypes.bubble) {
         tooltip: {
             pointFormat: '{point.name}: {point.z}'
         }
-        // Prototype members
-    }, {
-        xyFromShape: true,
-        type: 'mapbubble',
-        // If one single value is passed, it is interpreted as z
-        pointArrayMap: ['z'],
-        // Return the map area identified by the dataJoinBy option
-        getMapData: seriesTypes.map.prototype.getMapData,
-        getBox: seriesTypes.map.prototype.getBox,
-        setData: seriesTypes.map.prototype.setData,
-        setOptions: seriesTypes.map.prototype.setOptions
-        // Point class
-    }, {
-        applyOptions: function (options, x) {
-            var point;
-            if (options &&
-                typeof options.lat !== 'undefined' &&
-                typeof options.lon !== 'undefined') {
-                point = Point.prototype.applyOptions.call(this, merge(options, this.series.chart.fromLatLonToPoint(options)), x);
-            }
-            else {
-                point = seriesTypes.map.prototype.pointClass.prototype
-                    .applyOptions.call(this, options, x);
-            }
-            return point;
-        },
-        isValid: function () {
-            return typeof this.z === 'number';
-        },
-        ttBelow: false
     });
-}
+    return MapBubbleSeries;
+}(BubbleSeries));
+extend(MapBubbleSeries.prototype, {
+    type: 'mapbubble',
+    getBox: MapSeries.prototype.getBox,
+    // Return the map area identified by the dataJoinBy option
+    getMapData: MapSeries.prototype.getMapData,
+    // If one single value is passed, it is interpreted as z
+    pointArrayMap: ['z'],
+    setData: MapSeries.prototype.setData,
+    setOptions: MapSeries.prototype.setOptions,
+    xyFromShape: true
+});
+/* *
+ *
+ *  Class
+ *
+ * */
+var MapBubblePoint = /** @class */ (function (_super) {
+    __extends(MapBubblePoint, _super);
+    function MapBubblePoint() {
+        return _super !== null && _super.apply(this, arguments) || this;
+    }
+    /* *
+     *
+     *  Functions
+     *
+     * */
+    /* eslint-disable valid-jsdoc */
+    /**
+     * @private
+     */
+    MapBubblePoint.prototype.applyOptions = function (options, x) {
+        var point;
+        if (options &&
+            typeof options.lat !== 'undefined' &&
+            typeof options.lon !== 'undefined') {
+            point = Point.prototype.applyOptions.call(this, merge(options, this.series.chart.fromLatLonToPoint(options)), x);
+        }
+        else {
+            point = MapSeries.prototype.pointClass.prototype
+                .applyOptions.call(this, options, x);
+        }
+        return point;
+    };
+    /**
+     * @private
+     */
+    MapBubblePoint.prototype.isValid = function () {
+        return typeof this.z === 'number';
+    };
+    return MapBubblePoint;
+}(BubbleSeries.prototype.pointClass));
+extend(MapBubblePoint.prototype, {
+    ttBelow: false
+});
+MapBubbleSeries.prototype.pointClass = MapBubblePoint;
+BaseSeries.registerSeriesType('mapbubble', MapBubbleSeries);
+/* *
+ *
+ *  Default Export
+ *
+ * */
+export default MapBubbleSeries;
+/* *
+ *
+ *  API Options
+ *
+ * */
 /**
  * A `mapbubble` series. If the [type](#series.mapbubble.type) option
  * is not specified, it is inherited from [chart.type](#chart.type).

@@ -44,17 +44,24 @@ function shouldRunInputNavigation(chart) {
  * @return {boolean}
  */
 H.Chart.prototype.highlightRangeSelectorButton = function (ix) {
-    var buttons = this.rangeSelector.buttons, curSelectedIx = this.highlightedRangeSelectorItemIx;
+    var _a, _b;
+    var buttons = ((_a = this.rangeSelector) === null || _a === void 0 ? void 0 : _a.buttons) || [];
+    var curHighlightedIx = this.highlightedRangeSelectorItemIx;
+    var curSelectedIx = (_b = this.rangeSelector) === null || _b === void 0 ? void 0 : _b.selected;
     // Deselect old
-    if (typeof curSelectedIx !== 'undefined' && buttons[curSelectedIx]) {
-        buttons[curSelectedIx].setState(this.oldRangeSelectorItemState || 0);
+    if (typeof curHighlightedIx !== 'undefined' &&
+        buttons[curHighlightedIx] &&
+        curHighlightedIx !== curSelectedIx) {
+        buttons[curHighlightedIx].setState(this.oldRangeSelectorItemState || 0);
     }
     // Select new
     this.highlightedRangeSelectorItemIx = ix;
     if (buttons[ix]) {
         this.setFocusToElement(buttons[ix].box, buttons[ix].element);
-        this.oldRangeSelectorItemState = buttons[ix].state;
-        buttons[ix].setState(2);
+        if (ix !== curSelectedIx) {
+            this.oldRangeSelectorItemState = buttons[ix].state;
+            buttons[ix].setState(1);
+        }
         return true;
     }
     return false;

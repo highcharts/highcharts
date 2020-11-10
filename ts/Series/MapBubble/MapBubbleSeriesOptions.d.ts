@@ -1,0 +1,30 @@
+/* *
+ *
+ *  (c) 2010-2020 Torstein Honsi
+ *
+ *  License: www.highcharts.com/license
+ *
+ *  !!!!!!! SOURCE GETS TRANSPILED BY TYPESCRIPT. EDIT TS FILE ONLY. !!!!!!!
+ *
+ * */
+
+/* *
+ *
+ *  Imports
+ *
+ * */
+
+import type MapBubbleSeries from './MapBubbleSeries';
+import type { SeriesStatesOptions } from '../../Core/Series/SeriesOptions';
+
+/* *
+ *
+ *  Declarations
+ *
+ * */
+
+export interface MapBubbleSeriesOptions extends Highcharts.BubbleSeriesOptions {
+    states?: SeriesStatesOptions<MapBubbleSeries>;
+}
+
+export default MapBubbleSeriesOptions;

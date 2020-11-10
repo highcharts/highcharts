@@ -16,54 +16,15 @@
  *
  * */
 
-import type ColumnPoint from './Column/ColumnPoint';
-import type ColumnPointOptions from './Column/ColumnPointOptions';
-import type ColumnSeries from './Column/ColumnSeries';
-import type ColumnSeriesOptions from './Column/ColumnSeriesOptions';
-import Series from '../Core/Series/Series.js';
-
-import './Column/ColumnSeries.js';
-
-/* *
- *
- *  Declarations
- *
- * */
-
-/**
- * @private
- */
-declare module '../Core/Series/SeriesType' {
-    interface SeriesTypeRegistry {
-        bar: typeof Highcharts.BarSeries;
-    }
-}
-
-/**
- * Internal types
- * @private
- */
-declare global {
-    namespace Highcharts {
-        interface BarPointOptions extends ColumnPointOptions {
-        }
-        interface BarSeriesOptions extends ColumnSeriesOptions {
-        }
-        interface SeriesTypesDictionary {
-        }
-        class BarPoint extends ColumnPoint {
-            public options: BarPointOptions;
-            public series: BarSeries;
-        }
-        class BarSeries extends ColumnSeries {
-            public data: Array<BarPoint>;
-            public inverted?: boolean;
-            public options: BarSeriesOptions;
-            public pointClass: typeof BarPoint;
-            public points: Array<BarPoint>;
-        }
-    }
-}
+import type BarPoint from './BarPoint';
+import type BarSeriesOptions from './BarSeriesOptions';
+import ColumnSeries from '../Column/ColumnSeries.js';
+import BaseSeries from '../../Core/Series/Series.js';
+import U from '../../Core/Utilities.js';
+const {
+    extend,
+    merge
+} = U;
 
 /* *
  *
@@ -80,9 +41,13 @@ declare global {
  *
  * @augments Highcharts.Series
  */
-Series.seriesType<typeof Highcharts.BarSeries>(
-    'bar',
-    'column',
+class BarSeries extends ColumnSeries {
+
+    /* *
+     *
+     *  Static Properties
+     *
+     * */
 
     /**
      * A bar series is a special type of column series where the columns are
@@ -91,19 +56,66 @@ Series.seriesType<typeof Highcharts.BarSeries>(
      * @sample highcharts/demo/bar-basic/
      *         Bar chart
      *
-     * @extends   plotOptions.column
-     * @product   highcharts
-     * @apioption plotOptions.bar
+     * @extends      plotOptions.column
+     * @product      highcharts
+     * @optionparent plotOptions.bar
      */
+    public static defaultOptions: BarSeriesOptions = merge(ColumnSeries.defaultOptions, {
+        // nothing here yet
+    });
 
-    /**
-     * @ignore
-     */
-    null as any,
-    {
-        inverted: true
+    /* *
+     *
+     *  Properties
+     *
+     * */
+
+    public data: Array<BarPoint> = void 0 as any;
+    public options: BarSeriesOptions = void 0 as any;
+    public points: Array<BarPoint> = void 0 as any;
+
+}
+
+/* *
+ *
+ *  Prototype Properties
+ *
+ * */
+
+interface BarSeries {
+    inverted?: boolean;
+    pointClass: typeof BarPoint;
+}
+extend(BarSeries.prototype, {
+    inverted: true
+});
+
+/* *
+ *
+ *  Registry
+ *
+ * */
+
+declare module '../../Core/Series/SeriesType' {
+    interface SeriesTypeRegistry {
+        bar: typeof BarSeries;
     }
-);
+}
+BaseSeries.registerSeriesType('bar', BarSeries);
+
+/* *
+ *
+ *  Default Export
+ *
+ * */
+
+export default BarSeries;
+
+/* *
+ *
+ *  API Options
+ *
+ * */
 
 /**
  * A `bar` series. If the [type](#series.bar.type) option is not specified,

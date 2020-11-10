@@ -102,7 +102,7 @@ class PieSeries extends LineSeries {
      * @product      highcharts
      * @optionparent plotOptions.pie
      */
-    public static defaultOptions = merge(LineSeries.defaultOptions, {
+    public static defaultOptions: PieSeriesOptions = merge(LineSeries.defaultOptions, {
         /**
          * @excluding legendItemClick
          * @apioption plotOptions.pie.events
@@ -534,7 +534,7 @@ class PieSeries extends LineSeries {
          *
          * @private
          */
-        size: null,
+        size: null as any,
 
         /**
          * Whether to display this particular series or series type in the
@@ -666,7 +666,7 @@ class PieSeries extends LineSeries {
                 brightness: 0.1
             }
         }
-    });
+    } as PieSeriesOptions);
 
     /* *
      *
