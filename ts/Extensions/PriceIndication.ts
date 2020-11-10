@@ -171,9 +171,6 @@ addEvent(LineSeries, 'afterRender', function (): void {
 
             crop = (points[pLength - 1].x === x) || pointRange === null ? 1 : 2;
 
-            // #14495 To reset color for labels without lastVisiblePrice.
-            var crossHairColor = yAxis.crosshair?.label?.backgroundColor;
-
             yAxis.crosshair = yAxis.options.crosshair = merge({
                 color: 'transparent'
             }, seriesOptions.lastVisiblePrice);
@@ -199,15 +196,10 @@ addEvent(LineSeries, 'afterRender', function (): void {
             }
 
             serie.crossLabel = yAxis.crossLabel;
-
-            // #14495 Reset backgroundColor for labels without lastVisiblePrice.
-            if (yAxis.options.crosshair.label) {
-                yAxis.options.crosshair.label.backgroundColor = crossHairColor;
-            }
         }
 
         // Restore crosshair:
-        yAxis.crosshair = origOptions;
+        yAxis.crosshair = yAxis.options.crosshair = origOptions;
         yAxis.cross = origGraphic;
         yAxis.crossLabel = origLabel;
 
