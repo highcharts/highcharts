@@ -24,7 +24,8 @@ const {
 import H from '../../Core/Globals.js';
 import HTMLUtilities from '../Utils/HTMLUtilities.js';
 const {
-    setElAttrs
+    setElAttrs,
+    setSVGElementTitle
 } = HTMLUtilities;
 import KeyboardNavigationHandler from '../KeyboardNavigationHandler.js';
 import U from '../../Core/Utilities.js';
@@ -206,20 +207,11 @@ extend(RangeSelectorComponent.prototype, /** @lends Highcharts.RangeSelectorComp
         button: Highcharts.SVGElement,
         buttonOptions: Highcharts.RangeSelectorButtonsOptions
     ): void {
-        var chart = this.chart,
-            label = chart.langFormat(
-                'accessibility.rangeSelector.buttonText',
-                {
-                    chart: chart,
-                    buttonText: buttonOptions.description || buttonOptions.text
-                }
-            );
-
         setElAttrs(button.element, {
             tabindex: -1,
-            role: 'button',
-            'aria-label': label
+            role: 'button'
         });
+        setSVGElementTitle(button.element, buttonOptions.title || null);
     },
 
 

@@ -168,6 +168,31 @@ function setElAttrs(
 
 
 /**
+ * Set title element of an SVG element. Adds a <title> child element
+ * with the content specified. If a <title> element exists, it is
+ * updated. Removes the <title> element if `null` is passed.
+ * @private
+ * @param {Highcharts.HTMLDOMElement|Highcharts.SVGDOMElement} el
+ * @param {string|null} content
+ * @return {void}
+ */
+function setSVGElementTitle(
+    el: DOMElementType,
+    content: (string|null)
+): void {
+    const firstTitle = el.getElementsByTagNameNS('http://www.w3.org/2000/svg', 'title')?.[0];
+
+    if (content !== null) {
+        const titleElement = firstTitle || document.createElementNS('http://www.w3.org/2000/svg', 'title');
+        titleElement.textContent = content;
+        el.insertBefore(titleElement, el.firstChild);
+    } else if (firstTitle) {
+        el.removeChild(firstTitle);
+    }
+}
+
+
+/**
  * Used for aria-label attributes, painting on a canvas will fail if the
  * text contains tags.
  * @private
@@ -205,15 +230,16 @@ function visuallyHideElement(element: HTMLDOMElement): void {
 
 
 var HTMLUtilities = {
-    addClass: addClass,
-    escapeStringForHTML: escapeStringForHTML,
-    getElement: getElement,
-    getFakeMouseEvent: getFakeMouseEvent,
-    removeElement: removeElement,
-    reverseChildNodes: reverseChildNodes,
-    setElAttrs: setElAttrs,
-    stripHTMLTagsFromString: stripHTMLTagsFromString,
-    visuallyHideElement: visuallyHideElement
+    addClass,
+    escapeStringForHTML,
+    getElement,
+    getFakeMouseEvent,
+    removeElement,
+    reverseChildNodes,
+    setElAttrs,
+    setSVGElementTitle,
+    stripHTMLTagsFromString,
+    visuallyHideElement
 };
 
 export default HTMLUtilities;
