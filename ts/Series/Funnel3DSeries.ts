@@ -47,13 +47,15 @@ const {
     charts,
     // Use H.Renderer instead of SVGRenderer for VML support.
     Renderer: {
-        prototype: RendererProto
+        prototype: {
+            cuboidPath,
+            elements3d
+        }
     }
 } = H;
 import LineSeries from './Line/LineSeries.js';
 import Math3D from '../Extensions/Math3D.js';
 const { perspective } = Math3D;
-import _SVGRenderer from '../Core/Renderer/SVG/SVGRenderer.js';
 import U from '../Core/Utilities.js';
 const {
     error,
@@ -63,14 +65,7 @@ const {
     relativeLength
 } = U;
 
-/**
- * @private
- */
-declare module '../Core/Series/SeriesType' {
-    interface SeriesTypeRegistry {
-        funnel3d: typeof Highcharts.Funnel3dSeries;
-    }
-}
+import '../Core/Renderer/SVG/SVGRenderer.js';
 
 /**
  * Internal types
@@ -78,24 +73,6 @@ declare module '../Core/Series/SeriesType' {
  */
 declare global {
     namespace Highcharts {
-        class Funnel3dPoint extends ColumnPoint {
-            public dlBoxRaw: Dictionary<number>;
-            public options: Funnel3dPointOptions;
-            public series: Funnel3dSeries;
-            public shapeType: string;
-            public y: number;
-        }
-        class Funnel3dSeries extends ColumnSeries {
-            public center: Array<number>;
-            public centerX: number;
-            public data: Array<Funnel3dPoint>;
-            public options: Funnel3dSeriesOptions;
-            public pointsClass: typeof Funnel3dPoint;
-            public points: Array<Funnel3dPoint>;
-            public bindAxes(): void;
-            public getWidthAt(y: number): number;
-            public translate3dShapes(): void;
-        }
         interface Funnel3dPointOptions extends ColumnPointOptions {
             gradientForSides?: boolean;
             dlBox?: BBoxObject;
@@ -110,7 +87,7 @@ declare global {
             neckHeight?: (number|string);
             neckWidth?: (number|string);
             reversed?: boolean;
-            states?: SeriesStatesOptions<Funnel3dSeries>;
+            states?: SeriesStatesOptions<Funnel3DSeries>;
             width?: (number|string);
         }
         interface SVGElement {
@@ -148,9 +125,6 @@ declare global {
     }
 }
 
-var cuboidPath = RendererProto.cuboidPath,
-    funnel3dMethods: Highcharts.Funnel3dMethodsObject;
-
 /* *
  *
  *  Class
@@ -166,7 +140,8 @@ var cuboidPath = RendererProto.cuboidPath,
  * @requires modules/cylinder
  * @requires modules/funnel3d
  */
-BaseSeries.seriesType<typeof Highcharts.Funnel3dSeries>('funnel3d', 'column',
+class Funnel3DSeries extends ColumnSeries {
+
     /**
      * A funnel3d is a 3d version of funnel series type. Funnel charts are
      * a type of chart often used to visualize stages in a sales project,
@@ -188,7 +163,7 @@ BaseSeries.seriesType<typeof Highcharts.Funnel3dSeries>('funnel3d', 'column',
      * @requires     modules/funnel3d
      * @optionparent plotOptions.funnel3d
      */
-    {
+    public static defaultOptions: Highcharts.Funnel3dSeriesOptions = merge(ColumnSeries.defaultOptions, {
         /** @ignore-option */
         center: ['50%', '50%'],
 
@@ -261,345 +236,337 @@ BaseSeries.seriesType<typeof Highcharts.Funnel3dSeries>('funnel3d', 'column',
             inside: false,
             overflow: 'allow'
         }
-    }, {
-        // Override default axis options with series required options for axes
-        bindAxes: function (this: Highcharts.Funnel3dSeries): void {
-            LineSeries.prototype.bindAxes.apply(this, arguments);
+    });
 
-            extend(this.xAxis.options, {
-                gridLineWidth: 0,
-                lineWidth: 0,
-                title: null,
-                tickPositions: []
-            });
-            extend(this.yAxis.options, {
-                gridLineWidth: 0,
-                title: null,
-                labels: {
-                    enabled: false
-                }
-            });
-        },
+    /* *
+     *
+     *  Properties
+     *
+     * */
 
-        translate3dShapes: H.noop as any,
+    public data: Array<Funnel3DPoint> = void 0 as any;
 
-        translate: function (this: Highcharts.Funnel3dSeries): void {
-            LineSeries.prototype.translate.apply(this, arguments);
+    public options: Highcharts.Funnel3dSeriesOptions = void 0 as any;
 
-            var sum = 0,
-                series = this,
-                chart = series.chart,
-                options = series.options,
-                reversed = options.reversed,
-                ignoreHiddenPoint = options.ignoreHiddenPoint,
-                plotWidth = chart.plotWidth,
-                plotHeight = chart.plotHeight,
-                cumulative = 0, // start at top
-                center: Array<(number|string)> = options.center as any,
-                centerX = relativeLength(center[0], plotWidth),
-                centerY = relativeLength(center[1], plotHeight),
-                width = relativeLength(options.width as any, plotWidth),
-                tempWidth,
-                getWidthAt: (y: number) => number,
-                height = relativeLength(options.height as any, plotHeight),
-                neckWidth = relativeLength(options.neckWidth as any, plotWidth),
-                neckHeight = relativeLength(
-                    options.neckHeight as any,
-                    plotHeight
+    public points: Array<Funnel3DPoint> = void 0 as any;
+
+}
+
+/* *
+ *
+ *  Prototype Properties
+ *
+ * */
+
+interface Funnel3DSeries {
+    center: Array<number>;
+    centerX: number;
+    pointClass: typeof Funnel3DPoint;
+    bindAxes(): void;
+    getWidthAt(y: number): number;
+    translate3dShapes(): void;
+}
+extend(Funnel3DSeries.prototype, {
+    // Override default axis options with series required options for axes
+    bindAxes: function (this: Funnel3DSeries): void {
+        LineSeries.prototype.bindAxes.apply(this, arguments);
+
+        extend(this.xAxis.options, {
+            gridLineWidth: 0,
+            lineWidth: 0,
+            title: null,
+            tickPositions: []
+        });
+        extend(this.yAxis.options, {
+            gridLineWidth: 0,
+            title: null,
+            labels: {
+                enabled: false
+            }
+        });
+    },
+
+    translate3dShapes: H.noop as any,
+
+    translate: function (this: Funnel3DSeries): void {
+        LineSeries.prototype.translate.apply(this, arguments);
+
+        var sum = 0,
+            series = this,
+            chart = series.chart,
+            options = series.options,
+            reversed = options.reversed,
+            ignoreHiddenPoint = options.ignoreHiddenPoint,
+            plotWidth = chart.plotWidth,
+            plotHeight = chart.plotHeight,
+            cumulative = 0, // start at top
+            center: Array<(number|string)> = options.center as any,
+            centerX = relativeLength(center[0], plotWidth),
+            centerY = relativeLength(center[1], plotHeight),
+            width = relativeLength(options.width as any, plotWidth),
+            tempWidth,
+            getWidthAt: (y: number) => number,
+            height = relativeLength(options.height as any, plotHeight),
+            neckWidth = relativeLength(options.neckWidth as any, plotWidth),
+            neckHeight = relativeLength(
+                options.neckHeight as any,
+                plotHeight
+            ),
+            neckY = (centerY - height / 2) + height - neckHeight,
+            data = series.data,
+            fraction,
+            tooltipPos,
+            //
+            y1: number,
+            y3: number,
+            y5: (number|null),
+            //
+            h: number,
+            shapeArgs: SVGAttributes;
+
+        // Return the width at a specific y coordinate
+        series.getWidthAt = getWidthAt = function (y: number): number {
+            var top = (centerY - height / 2);
+
+            return (y > neckY || height === neckHeight) ?
+                neckWidth :
+                neckWidth + (width - neckWidth) *
+                    (1 - (y - top) / (height - neckHeight));
+        };
+
+        // Expose
+        series.center = [centerX, centerY, height];
+        series.centerX = centerX;
+
+        /*
+            * Individual point coordinate naming:
+            *
+            *  _________centerX,y1________
+            *  \                         /
+            *   \                       /
+            *    \                     /
+            *     \                   /
+            *      \                 /
+            *        ___centerX,y3___
+            *
+            * Additional for the base of the neck:
+            *
+            *       |               |
+            *       |               |
+            *       |               |
+            *        ___centerX,y5___
+            */
+
+        // get the total sum
+        data.forEach(function (point): void {
+            if (!ignoreHiddenPoint || point.visible !== false) {
+                sum += point.y;
+            }
+        });
+
+        data.forEach(function (point): void {
+            // set start and end positions
+            y5 = null;
+            fraction = sum ? point.y / sum : 0;
+            y1 = centerY - height / 2 + cumulative * height;
+            y3 = y1 + fraction * height;
+            tempWidth = getWidthAt(y1);
+            h = y3 - y1;
+            shapeArgs = {
+                // for fill setter
+                gradientForSides: pick(
+                    point.options.gradientForSides,
+                    options.gradientForSides
                 ),
-                neckY = (centerY - height / 2) + height - neckHeight,
-                data = series.data,
-                fraction,
-                tooltipPos,
-                //
-                y1: number,
-                y3: number,
-                y5: (number|null),
-                //
-                h: number,
-                shapeArgs: SVGAttributes;
 
-            // Return the width at a specific y coordinate
-            series.getWidthAt = getWidthAt = function (y: number): number {
-                var top = (centerY - height / 2);
-
-                return (y > neckY || height === neckHeight) ?
-                    neckWidth :
-                    neckWidth + (width - neckWidth) *
-                        (1 - (y - top) / (height - neckHeight));
+                x: centerX,
+                y: y1,
+                height: h,
+                width: tempWidth,
+                z: 1,
+                top: {
+                    width: tempWidth
+                }
+            };
+            tempWidth = getWidthAt(y3);
+            shapeArgs.bottom = {
+                fraction: fraction,
+                width: tempWidth
             };
 
-            // Expose
-            series.center = [centerX, centerY, height];
-            series.centerX = centerX;
+            // the entire point is within the neck
+            if (y1 >= neckY) {
+                shapeArgs.isCylinder = true;
+            } else if (y3 > neckY) {
+                // the base of the neck
+                y5 = y3;
+                tempWidth = getWidthAt(neckY);
+                y3 = neckY;
 
-            /*
-             * Individual point coordinate naming:
-             *
-             *  _________centerX,y1________
-             *  \                         /
-             *   \                       /
-             *    \                     /
-             *     \                   /
-             *      \                 /
-             *        ___centerX,y3___
-             *
-             * Additional for the base of the neck:
-             *
-             *       |               |
-             *       |               |
-             *       |               |
-             *        ___centerX,y5___
-             */
-
-            // get the total sum
-            data.forEach(function (point: Highcharts.Funnel3dPoint): void {
-                if (!ignoreHiddenPoint || point.visible !== false) {
-                    sum += point.y;
-                }
-            });
-
-            data.forEach(function (point: Highcharts.Funnel3dPoint): void {
-                // set start and end positions
-                y5 = null;
-                fraction = sum ? point.y / sum : 0;
-                y1 = centerY - height / 2 + cumulative * height;
-                y3 = y1 + fraction * height;
-                tempWidth = getWidthAt(y1);
-                h = y3 - y1;
-                shapeArgs = {
-                    // for fill setter
-                    gradientForSides: pick(
-                        point.options.gradientForSides,
-                        options.gradientForSides
-                    ),
-
-                    x: centerX,
-                    y: y1,
-                    height: h,
-                    width: tempWidth,
-                    z: 1,
-                    top: {
-                        width: tempWidth
-                    }
-                };
-                tempWidth = getWidthAt(y3);
-                shapeArgs.bottom = {
-                    fraction: fraction,
+                shapeArgs.bottom.width = tempWidth;
+                shapeArgs.middle = {
+                    fraction: h ? (neckY - y1) / h : 0,
                     width: tempWidth
                 };
-
-                // the entire point is within the neck
-                if (y1 >= neckY) {
-                    shapeArgs.isCylinder = true;
-                } else if (y3 > neckY) {
-                    // the base of the neck
-                    y5 = y3;
-                    tempWidth = getWidthAt(neckY);
-                    y3 = neckY;
-
-                    shapeArgs.bottom.width = tempWidth;
-                    shapeArgs.middle = {
-                        fraction: h ? (neckY - y1) / h : 0,
-                        width: tempWidth
-                    };
-                }
-
-                if (reversed) {
-                    shapeArgs.y = y1 = centerY + height / 2 -
-                        (cumulative + fraction) * height;
-
-                    if (shapeArgs.middle) {
-                        shapeArgs.middle.fraction = 1 -
-                            (h ? shapeArgs.middle.fraction : 0);
-                    }
-                    tempWidth = shapeArgs.width;
-                    shapeArgs.width = shapeArgs.bottom.width;
-                    shapeArgs.bottom.width = tempWidth;
-                }
-                point.shapeArgs = extend(point.shapeArgs, shapeArgs);
-
-                // for tooltips and data labels context
-                point.percentage = fraction * 100;
-                point.plotX = centerX;
-
-                if (reversed) {
-                    point.plotY = centerY + height / 2 -
-                        (cumulative + fraction / 2) * height;
-                } else {
-                    point.plotY = (y1 + (y5 || y3)) / 2;
-                }
-
-                // Placement of tooltips and data labels in 3D
-                tooltipPos = perspective([{
-                    x: centerX,
-                    y: point.plotY,
-                    z: reversed ?
-                        -(width - getWidthAt(point.plotY)) / 2 :
-                        -(getWidthAt(point.plotY)) / 2
-                }], chart, true)[0];
-                point.tooltipPos = [tooltipPos.x, tooltipPos.y];
-
-                // base to be used when alignment options are known
-                point.dlBoxRaw = {
-                    x: centerX,
-                    width: getWidthAt(point.plotY),
-
-                    y: y1,
-                    bottom: shapeArgs.height,
-
-                    fullWidth: width
-                };
-
-                if (!ignoreHiddenPoint || point.visible !== false) {
-                    cumulative += fraction;
-                }
-            });
-        },
-
-        alignDataLabel: function (
-            this: Highcharts.Funnel3dSeries,
-            point: Highcharts.Funnel3dPoint,
-            dataLabel: SVGElement,
-            options: DataLabelOptions
-        ): void {
-            var series = this,
-                dlBoxRaw = point.dlBoxRaw,
-                inverted = series.chart.inverted,
-                below = (point.plotY as any) > pick(
-                    series.translatedThreshold,
-                    series.yAxis.len
-                ),
-                inside = pick(options.inside, !!series.options.stacking),
-                dlBox: BBoxObject = {
-                    x: dlBoxRaw.x,
-                    y: dlBoxRaw.y,
-                    height: 0
-                } as any;
-
-            options.align = pick(
-                options.align,
-                !inverted || inside ? 'center' : below ? 'right' : 'left'
-            );
-            options.verticalAlign = pick(
-                options.verticalAlign,
-                inverted || inside ? 'middle' : below ? 'top' : 'bottom'
-            );
-
-            if (options.verticalAlign !== 'top') {
-                dlBox.y += dlBoxRaw.bottom /
-                    (options.verticalAlign === 'bottom' ? 1 : 2);
             }
 
-            dlBox.width = series.getWidthAt(dlBox.y);
+            if (reversed) {
+                shapeArgs.y = y1 = centerY + height / 2 -
+                    (cumulative + fraction) * height;
 
-            if (series.options.reversed) {
-                dlBox.width = dlBoxRaw.fullWidth - dlBox.width;
+                if (shapeArgs.middle) {
+                    shapeArgs.middle.fraction = 1 -
+                        (h ? shapeArgs.middle.fraction : 0);
+                }
+                tempWidth = shapeArgs.width;
+                shapeArgs.width = shapeArgs.bottom.width;
+                shapeArgs.bottom.width = tempWidth;
             }
+            point.shapeArgs = extend(point.shapeArgs, shapeArgs);
 
-            if (inside) {
-                dlBox.x -= dlBox.width / 2;
+            // for tooltips and data labels context
+            point.percentage = fraction * 100;
+            point.plotX = centerX;
+
+            if (reversed) {
+                point.plotY = centerY + height / 2 -
+                    (cumulative + fraction / 2) * height;
             } else {
-                // swap for inside
-                if (options.align === 'left') {
-                    options.align = 'right';
-                    dlBox.x -= dlBox.width * 1.5;
-                } else if (options.align === 'right') {
-                    options.align = 'left';
-                    dlBox.x += dlBox.width / 2;
-                } else {
-                    dlBox.x -= dlBox.width / 2;
-                }
+                point.plotY = (y1 + (y5 || y3)) / 2;
             }
 
-            point.dlBox = dlBox;
-            columnProto.alignDataLabel.apply(
-                series,
-                arguments
-            );
+            // Placement of tooltips and data labels in 3D
+            tooltipPos = perspective([{
+                x: centerX,
+                y: point.plotY,
+                z: reversed ?
+                    -(width - getWidthAt(point.plotY)) / 2 :
+                    -(getWidthAt(point.plotY)) / 2
+            }], chart, true)[0];
+            point.tooltipPos = [tooltipPos.x, tooltipPos.y];
+
+            // base to be used when alignment options are known
+            point.dlBoxRaw = {
+                x: centerX,
+                width: getWidthAt(point.plotY),
+
+                y: y1,
+                bottom: shapeArgs.height,
+
+                fullWidth: width
+            };
+
+            if (!ignoreHiddenPoint || point.visible !== false) {
+                cumulative += fraction;
+            }
+        });
+    },
+
+    alignDataLabel: function (
+        this: Funnel3DSeries,
+        point: Funnel3DPoint,
+        _dataLabel: SVGElement,
+        options: DataLabelOptions
+    ): void {
+        var series = this,
+            dlBoxRaw = point.dlBoxRaw,
+            inverted = series.chart.inverted,
+            below = (point.plotY as any) > pick(
+                series.translatedThreshold,
+                series.yAxis.len
+            ),
+            inside = pick(options.inside, !!series.options.stacking),
+            dlBox: BBoxObject = {
+                x: dlBoxRaw.x,
+                y: dlBoxRaw.y,
+                height: 0
+            } as any;
+
+        options.align = pick(
+            options.align,
+            !inverted || inside ? 'center' : below ? 'right' : 'left'
+        );
+        options.verticalAlign = pick(
+            options.verticalAlign,
+            inverted || inside ? 'middle' : below ? 'top' : 'bottom'
+        );
+
+        if (options.verticalAlign !== 'top') {
+            dlBox.y += dlBoxRaw.bottom /
+                (options.verticalAlign === 'bottom' ? 1 : 2);
         }
-    }, /** @lends seriesTypes.funnel3d.prototype.pointClass.prototype */ {
-        shapeType: 'funnel3d',
-        hasNewShapeType: columnProto.pointClass.prototype.hasNewShapeType
+
+        dlBox.width = series.getWidthAt(dlBox.y);
+
+        if (series.options.reversed) {
+            dlBox.width = dlBoxRaw.fullWidth - dlBox.width;
+        }
+
+        if (inside) {
+            dlBox.x -= dlBox.width / 2;
+        } else {
+            // swap for inside
+            if (options.align === 'left') {
+                options.align = 'right';
+                dlBox.x -= dlBox.width * 1.5;
+            } else if (options.align === 'right') {
+                options.align = 'left';
+                dlBox.x += dlBox.width / 2;
+            } else {
+                dlBox.x -= dlBox.width / 2;
+            }
+        }
+
+        point.dlBox = dlBox;
+        columnProto.alignDataLabel.apply(
+            series,
+            arguments
+        );
     }
-);
+});
 
-/**
- * A `funnel3d` series. If the [type](#series.funnel3d.type) option is
- * not specified, it is inherited from [chart.type](#chart.type).
+/* *
  *
- * @sample {highcharts} highcharts/demo/funnel3d/
- *         Funnel3d demo
+ *  Class
  *
- * @since     7.1.0
- * @extends   series.funnel,plotOptions.funnel3d
- * @excluding allAreas,boostThreshold,colorAxis,compare,compareBase
- * @product   highcharts
- * @requires  highcharts-3d
- * @requires  modules/cylinder
- * @requires  modules/funnel3d
- * @apioption series.funnel3d
- */
+ * */
 
-/**
- * An array of data points for the series. For the `funnel3d` series
- * type, points can be given in the following ways:
- *
- * 1.  An array of numerical values. In this case, the numerical values
- * will be interpreted as `y` options. The `x` values will be automatically
- * calculated, either starting at 0 and incremented by 1, or from `pointStart`
- * and `pointInterval` given in the series options. If the axis has
- * categories, these will be used. Example:
- *
- *  ```js
- *  data: [0, 5, 3, 5]
- *  ```
- *
- * 2.  An array of objects with named values. The following snippet shows only a
- * few settings, see the complete options set below. If the total number of data
- * points exceeds the series' [turboThreshold](#series.funnel3d.turboThreshold),
- * this option is not available.
- *
- *  ```js
- *     data: [{
- *         y: 2,
- *         name: "Point2",
- *         color: "#00FF00"
- *     }, {
- *         y: 4,
- *         name: "Point1",
- *         color: "#FF00FF"
- *     }]
- *  ```
- *
- * @sample {highcharts} highcharts/chart/reflow-true/
- *         Numerical values
- * @sample {highcharts} highcharts/series/data-array-of-arrays/
- *         Arrays of numeric x and y
- * @sample {highcharts} highcharts/series/data-array-of-arrays-datetime/
- *         Arrays of datetime x and y
- * @sample {highcharts} highcharts/series/data-array-of-name-value/
- *         Arrays of point.name and y
- * @sample {highcharts} highcharts/series/data-array-of-objects/
- *         Config objects
- *
- * @type      {Array<number|Array<number>|*>}
- * @extends   series.column.data
- * @product   highcharts
- * @apioption series.funnel3d.data
- */
+class Funnel3DPoint extends ColumnSeries.prototype.pointClass {
 
+    /* *
+     *
+     *  Properties
+     *
+     * */
 
-/**
- * By deafult sides fill is set to a gradient through this option being
- * set to `true`. Set to `false` to get solid color for the sides.
+    public dlBoxRaw: Record<string, number> = void 0 as any;
+
+    public options: Highcharts.Funnel3dPointOptions = void 0 as any;
+
+    public series: Funnel3DSeries = void 0 as any;
+
+    public y: number = void 0 as any;
+
+}
+Funnel3DSeries.prototype.pointClass = Funnel3DPoint;
+
+interface Funnel3DPoint {
+    shapeType: string;
+}
+extend(Funnel3DPoint.prototype, {
+    shapeType: 'funnel3d',
+    hasNewShapeType: columnProto.pointClass.prototype.hasNewShapeType
+});
+
+/* *
  *
- * @type      {boolean}
- * @product   highcharts
- * @apioption series.funnel3d.data.gradientForSides
- */
+ *  Composition
+ *
+ * */
 
-funnel3dMethods = merge(RendererProto.elements3d.cuboid, {
+/* eslint-disable valid-jsdoc */
+
+elements3d.funnel3d = merge(elements3d.cuboid, {
     parts: [
         'top', 'bottom',
         'frontUpper', 'backUpper',
@@ -858,9 +825,7 @@ funnel3dMethods = merge(RendererProto.elements3d.cuboid, {
     }
 });
 
-RendererProto.elements3d.funnel3d = funnel3dMethods;
-
-RendererProto.funnel3d = function (
+H.Renderer.prototype.funnel3d = function (
     this: SVGRenderer,
     shapeArgs: SVGAttributes
 ): SVGElement {
@@ -911,12 +876,11 @@ RendererProto.funnel3d = function (
     return funnel3d;
 };
 
-// eslint-disable-next-line valid-jsdoc
 /**
  * Generates paths and zIndexes.
  * @private
  */
-RendererProto.funnel3dPath = function (
+H.Renderer.prototype.funnel3dPath = function (
     this: SVGRenderer,
     shapeArgs: SVGAttributes
 ): Highcharts.Funnel3dPathsObject {
@@ -1061,3 +1025,109 @@ RendererProto.funnel3dPath = function (
 
     return ret;
 };
+
+/* eslint-enable valid-jsdoc */
+
+/* *
+ *
+ *  Registration
+ *
+ * */
+
+declare module '../Core/Series/SeriesType' {
+    interface SeriesTypeRegistry {
+        funnel3d: typeof Funnel3DSeries;
+    }
+}
+BaseSeries.registerSeriesType('funnel3d', Funnel3DSeries);
+
+/* *
+ *
+ *  Default Export
+ *
+ * */
+
+export default Funnel3DSeries;
+
+/* *
+ *
+ *  API Options
+ *
+ * */
+
+/**
+ * A `funnel3d` series. If the [type](#series.funnel3d.type) option is
+ * not specified, it is inherited from [chart.type](#chart.type).
+ *
+ * @sample {highcharts} highcharts/demo/funnel3d/
+ *         Funnel3d demo
+ *
+ * @since     7.1.0
+ * @extends   series.funnel,plotOptions.funnel3d
+ * @excluding allAreas,boostThreshold,colorAxis,compare,compareBase
+ * @product   highcharts
+ * @requires  highcharts-3d
+ * @requires  modules/cylinder
+ * @requires  modules/funnel3d
+ * @apioption series.funnel3d
+ */
+
+/**
+ * An array of data points for the series. For the `funnel3d` series
+ * type, points can be given in the following ways:
+ *
+ * 1.  An array of numerical values. In this case, the numerical values
+ * will be interpreted as `y` options. The `x` values will be automatically
+ * calculated, either starting at 0 and incremented by 1, or from `pointStart`
+ * and `pointInterval` given in the series options. If the axis has
+ * categories, these will be used. Example:
+ *
+ *  ```js
+ *  data: [0, 5, 3, 5]
+ *  ```
+ *
+ * 2.  An array of objects with named values. The following snippet shows only a
+ * few settings, see the complete options set below. If the total number of data
+ * points exceeds the series' [turboThreshold](#series.funnel3d.turboThreshold),
+ * this option is not available.
+ *
+ *  ```js
+ *     data: [{
+ *         y: 2,
+ *         name: "Point2",
+ *         color: "#00FF00"
+ *     }, {
+ *         y: 4,
+ *         name: "Point1",
+ *         color: "#FF00FF"
+ *     }]
+ *  ```
+ *
+ * @sample {highcharts} highcharts/chart/reflow-true/
+ *         Numerical values
+ * @sample {highcharts} highcharts/series/data-array-of-arrays/
+ *         Arrays of numeric x and y
+ * @sample {highcharts} highcharts/series/data-array-of-arrays-datetime/
+ *         Arrays of datetime x and y
+ * @sample {highcharts} highcharts/series/data-array-of-name-value/
+ *         Arrays of point.name and y
+ * @sample {highcharts} highcharts/series/data-array-of-objects/
+ *         Config objects
+ *
+ * @type      {Array<number|Array<number>|*>}
+ * @extends   series.column.data
+ * @product   highcharts
+ * @apioption series.funnel3d.data
+ */
+
+
+/**
+ * By deafult sides fill is set to a gradient through this option being
+ * set to `true`. Set to `false` to get solid color for the sides.
+ *
+ * @type      {boolean}
+ * @product   highcharts
+ * @apioption series.funnel3d.data.gradientForSides
+ */
+
+''; // keeps doclets above in transpiled file
