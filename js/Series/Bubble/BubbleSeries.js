@@ -24,12 +24,12 @@ var __extends = (this && this.__extends) || (function () {
 import Axis from '../../Core/Axis/Axis.js';
 import BaseSeries from '../../Core/Series/Series.js';
 var _a = BaseSeries.seriesTypes, ColumnSeries = _a.column, ScatterSeries = _a.scatter;
+import BubblePoint from './BubblePoint.js';
 import Color from '../../Core/Color/Color.js';
 var color = Color.parse;
 import H from '../../Core/Globals.js';
 var noop = H.noop;
 import LineSeries from '../Line/LineSeries.js';
-import Point from '../../Core/Series/Point.js';
 import U from '../../Core/Utilities.js';
 var arrayMax = U.arrayMax, arrayMin = U.arrayMin, clamp = U.clamp, extend = U.extend, isNumber = U.isNumber, merge = U.merge, pick = U.pick, pInt = U.pInt;
 import '../Column/ColumnSeries.js';
@@ -443,49 +443,11 @@ extend(BubbleSeries.prototype, {
     directTouch: true,
     isBubble: true,
     pointArrayMap: ['y', 'z'],
+    pointClass: BubblePoint,
     parallelArrays: ['x', 'y', 'z'],
     trackerGroups: ['group', 'dataLabelsGroup'],
     specialGroup: 'group',
     zoneAxis: 'z'
-});
-/* *
- *
- *  Class
- *
- * */
-var BubblePoint = /** @class */ (function (_super) {
-    __extends(BubblePoint, _super);
-    function BubblePoint() {
-        /* *
-         *
-         *  Properties
-         *
-         * */
-        var _this = _super !== null && _super.apply(this, arguments) || this;
-        _this.options = void 0;
-        _this.series = void 0;
-        return _this;
-        /* eslint-enable valid-jsdoc */
-    }
-    /* *
-     *
-     *  Functions
-     *
-     * */
-    /* eslint-disable valid-jsdoc */
-    /**
-     * @private
-     */
-    BubblePoint.prototype.haloPath = function (size) {
-        return Point.prototype.haloPath.call(this, 
-        // #6067
-        size === 0 ? 0 : (this.marker ? this.marker.radius || 0 : 0) + size);
-    };
-    return BubblePoint;
-}(ScatterSeries.prototype.pointClass));
-BubbleSeries.prototype.pointClass = BubblePoint;
-extend(BubblePoint.prototype, {
-    ttBelow: false
 });
 /* *
  *

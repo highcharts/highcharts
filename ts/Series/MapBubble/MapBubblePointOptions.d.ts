@@ -10,11 +10,19 @@
 
 /* *
  *
+ *  Imports
+ *
+ * */
+
+import type BubblePointOptions from '../Bubble/BubblePointOptions';
+
+/* *
+ *
  *  Declarations
  *
  * */
 
-export interface MapBubblePointOptions extends Highcharts.BubblePointOptions {
+export interface MapBubblePointOptions extends BubblePointOptions {
     z?: (number|null);
 }
 

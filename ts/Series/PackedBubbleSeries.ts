@@ -14,6 +14,13 @@ import type {
     DataLabelOptions,
     DataLabelTextPathOptions
 } from '../Core/Series/DataLabelOptions';
+import type BubblePoint from './Bubble/BubblePoint';
+import type {
+    BubblePointMarkerOptions,
+    BubblePointOptions
+} from './Bubble/BubblePointOptions';
+import type BubbleSeries from './Bubble/BubbleSeries';
+import type BubbleSeriesOptions from './Bubble/BubbleSeriesOptions';
 import type PointerEvent from '../Core/PointerEvent';
 import type { SeriesStatesOptions } from '../Core/Series/SeriesOptions';
 import type SVGAttributes from '../Core/Renderer/SVG/SVGAttributes';
@@ -1131,7 +1138,7 @@ BaseSeries.seriesType<typeof Highcharts.PackedBubbleSeries>(
             var series = this,
                 chart = series.chart,
                 parentAttribs: SVGAttributes = {},
-                nodeMarker: Highcharts.BubblePointMarkerOptions =
+                nodeMarker: BubblePointMarkerOptions =
                     (this.layout.options.parentNodeOptions as any).marker,
                 parentOptions: SVGAttributes = {
                     fill: nodeMarker.fillColor || color(series.color).brighten(0.4).get(),
