@@ -20,32 +20,32 @@
  *
  * */
 
-import type BBoxObject from '../Core/Renderer/BBoxObject';
-import type Chart from '../Core/Chart/Chart';
-import type ColorType from '../Core/Color/ColorType';
-import type ColumnPointOptions from './Column/ColumnPointOptions';
-import type ColumnSeriesOptions from './Column/ColumnSeriesOptions';
-import type DataLabelOptions from '../Core/Series/DataLabelOptions';
-import type GradientColor from '../Core/Color/GradientColor';
+import type BBoxObject from '../../Core/Renderer/BBoxObject';
+import type Chart from '../../Core/Chart/Chart';
+import type ColorType from '../../Core/Color/ColorType';
+import type ColumnPointOptions from '../Column/ColumnPointOptions';
+import type ColumnSeriesOptions from '../Column/ColumnSeriesOptions';
+import type DataLabelOptions from '../../Core/Series/DataLabelOptions';
+import type GradientColor from '../../Core/Color/GradientColor';
 import type {
     PointOptions,
     PointShortOptions
-} from '../Core/Series/PointOptions';
-import type { SeriesStatesOptions } from '../Core/Series/SeriesOptions';
-import type SVGAttributes from '../Core/Renderer/SVG/SVGAttributes';
-import type SVGElement from '../Core/Renderer/SVG/SVGElement';
-import type SVGPath from '../Core/Renderer/SVG/SVGPath';
-import type SVGRenderer from '../Core/Renderer/SVG/SVGRenderer';
-import BaseSeries from '../Core/Series/Series.js';
+} from '../../Core/Series/PointOptions';
+import type { SeriesStatesOptions } from '../../Core/Series/SeriesOptions';
+import type SVGAttributes from '../../Core/Renderer/SVG/SVGAttributes';
+import type SVGElement from '../../Core/Renderer/SVG/SVGElement';
+import type SVGPath from '../../Core/Renderer/SVG/SVGPath';
+import type SVGRenderer from '../../Core/Renderer/SVG/SVGRenderer';
+import BaseSeries from '../../Core/Series/Series.js';
 const {
     seriesTypes: {
         column: ColumnSeries,
         line: LineSeries
     }
 } = BaseSeries;
-import Color from '../Core/Color/Color.js';
+import Color from '../../Core/Color/Color.js';
 const { parse: color } = Color;
-import H from '../Core/Globals.js';
+import H from '../../Core/Globals.js';
 const {
     charts,
     // Use H.Renderer instead of SVGRenderer for VML support.
@@ -56,9 +56,9 @@ const {
         }
     }
 } = H;
-import Math3D from '../Extensions/Math3D.js';
+import Math3D from '../../Extensions/Math3D.js';
 const { perspective } = Math3D;
-import U from '../Core/Utilities.js';
+import U from '../../Core/Utilities.js';
 const {
     error,
     extend,
@@ -1054,7 +1054,7 @@ H.Renderer.prototype.funnel3dPath = function (
  *
  * */
 
-declare module '../Core/Series/SeriesType' {
+declare module '../../Core/Series/SeriesType' {
     interface SeriesTypeRegistry {
         funnel3d: typeof Funnel3DSeries;
     }
