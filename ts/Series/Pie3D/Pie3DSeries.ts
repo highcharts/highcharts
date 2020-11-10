@@ -271,14 +271,6 @@ extend(Pie3DSeries, {
 
 /* *
  *
- *  Compatibility
- *
- * */
-
-BaseSeries.seriesTypes.pie = Pie3DSeries;
-
-/* *
- *
  *  Default Export
  *
  * */
