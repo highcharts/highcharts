@@ -126,6 +126,27 @@ function setElAttrs(el, attrs) {
     });
 }
 /**
+ * Set title element of an SVG element. Adds a <title> child element
+ * with the content specified. If a <title> element exists, it is
+ * updated. Removes the <title> element if `null` is passed.
+ * @private
+ * @param {Highcharts.HTMLDOMElement|Highcharts.SVGDOMElement} el
+ * @param {string|null} content
+ * @return {void}
+ */
+function setSVGElementTitle(el, content) {
+    var _a;
+    var firstTitle = (_a = el.getElementsByTagNameNS('http://www.w3.org/2000/svg', 'title')) === null || _a === void 0 ? void 0 : _a[0];
+    if (content !== null) {
+        var titleElement = firstTitle || document.createElementNS('http://www.w3.org/2000/svg', 'title');
+        titleElement.textContent = content;
+        el.insertBefore(titleElement, el.firstChild);
+    }
+    else if (firstTitle) {
+        el.removeChild(firstTitle);
+    }
+}
+/**
  * Used for aria-label attributes, painting on a canvas will fail if the
  * text contains tags.
  * @private
@@ -166,6 +187,7 @@ var HTMLUtilities = {
     removeElement: removeElement,
     reverseChildNodes: reverseChildNodes,
     setElAttrs: setElAttrs,
+    setSVGElementTitle: setSVGElementTitle,
     stripHTMLTagsFromString: stripHTMLTagsFromString,
     visuallyHideElement: visuallyHideElement
 };

@@ -15,7 +15,7 @@ import ChartUtilities from '../Utils/ChartUtilities.js';
 var unhideChartElementFromAT = ChartUtilities.unhideChartElementFromAT;
 import H from '../../Core/Globals.js';
 import HTMLUtilities from '../Utils/HTMLUtilities.js';
-var setElAttrs = HTMLUtilities.setElAttrs;
+var setElAttrs = HTMLUtilities.setElAttrs, setSVGElementTitle = HTMLUtilities.setSVGElementTitle;
 import KeyboardNavigationHandler from '../KeyboardNavigationHandler.js';
 import U from '../../Core/Utilities.js';
 var extend = U.extend;
@@ -102,15 +102,11 @@ extend(RangeSelectorComponent.prototype, /** @lends Highcharts.RangeSelectorComp
      * @param {Highcharts.SVGElement} button
      */
     setRangeButtonAttrs: function (button, buttonOptions) {
-        var chart = this.chart, label = chart.langFormat('accessibility.rangeSelector.buttonText', {
-            chart: chart,
-            buttonText: buttonOptions.description || buttonOptions.text
-        });
         setElAttrs(button.element, {
             tabindex: -1,
-            role: 'button',
-            'aria-label': label
+            role: 'button'
         });
+        setSVGElementTitle(button.element, buttonOptions.title || null);
     },
     /**
      * @private

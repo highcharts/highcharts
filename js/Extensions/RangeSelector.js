@@ -81,29 +81,30 @@ extend(defaultOptions, {
          *     type: 'month',
          *     count: 1,
          *     text: '1m',
-         *     description: '1 month'
+         *     title: 'View 1 month'
          * }, {
          *     type: 'month',
          *     count: 3,
          *     text: '3m',
-         *     description: '3 months'
+         *     title: 'View 3 months'
          * }, {
          *     type: 'month',
          *     count: 6,
          *     text: '6m',
-         *     description: '6 months'
+         *     title: 'View 6 months'
          * }, {
          *     type: 'ytd',
          *     text: 'YTD',
-         *     description: 'Year to Date'
+         *     title: 'View year to date'
          * }, {
          *     type: 'year',
          *     count: 1,
          *     text: '1y',
-         *     description: '1 year'
+         *     title: 'View 1 year'
          * }, {
          *     type: 'all',
-         *     text: 'All'
+         *     text: 'All',
+         *     title: 'View all'
          * }]
          * ```
          *
@@ -196,11 +197,11 @@ extend(defaultOptions, {
          * @apioption rangeSelector.buttons.text
          */
         /**
-         * Non-abbreviated version of the button range, used by assistive
-         * technology such as screen readers.
+         * Explanation for the button, shown as a tooltip on hover, and used by
+         * assistive technology.
          *
          * @type      {string}
-         * @apioption rangeSelector.buttons.description
+         * @apioption rangeSelector.buttons.title
          */
         /**
          * Defined the time span for the button. Can be one of `millisecond`,
@@ -1437,29 +1438,30 @@ RangeSelector.prototype.defaultButtons = [{
         type: 'month',
         count: 1,
         text: '1m',
-        description: '1 month'
+        title: 'View 1 month'
     }, {
         type: 'month',
         count: 3,
         text: '3m',
-        description: '3 months'
+        title: 'View 3 months'
     }, {
         type: 'month',
         count: 6,
         text: '6m',
-        description: '6 months'
+        title: 'View 6 months'
     }, {
         type: 'ytd',
         text: 'YTD',
-        description: 'Year to Date'
+        title: 'View year to date'
     }, {
         type: 'year',
         count: 1,
         text: '1y',
-        description: '1 year'
+        title: 'View 1 year'
     }, {
         type: 'all',
-        text: 'All'
+        text: 'All',
+        title: 'View all'
     }];
 /**
  * Get the axis min value based on the range option and the current max. For
