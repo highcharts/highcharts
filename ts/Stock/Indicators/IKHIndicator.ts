@@ -10,9 +10,11 @@
 
 import type ColorType from '../../Core/Color/ColorType';
 import type CSSObject from '../../Core/Renderer/CSSObject';
+import type IndicatorValuesObject from './IndicatorValuesObject';
 import type LineSeries from '../../Series/Line/LineSeries';
 import type Point from '../../Core/Series/Point';
 import type { PointMarkerOptions } from '../../Core/Series/PointOptions';
+import type SMAIndicator from './SMAIndicator';
 import type SVGElement from '../../Core/Renderer/SVG/SVGElement';
 import type SVGPath from '../../Core/Renderer/SVG/SVGPath';
 import BaseSeries from '../../Core/Series/Series.js';
@@ -90,7 +92,7 @@ declare global {
         }
 
         interface IKHIndicatorOptions
-            extends SMAIndicatorOptions {
+            extends SMAIndicator.Options {
             chikouLine?: Record<string, CSSObject>;
             gapSize?: number;
             kijunLine?: Record<string, CSSObject>;
@@ -104,12 +106,12 @@ declare global {
         }
 
         interface IKHIndicatorParamsOptions
-            extends SMAIndicatorParamsOptions {
+            extends SMAIndicator.ParamsOptions {
             periodTenkan?: number;
             periodSenkouSpanB?: number;
         }
 
-        class IKHIndicatorPoint extends SMAIndicatorPoint {
+        class IKHIndicatorPoint extends SMAIndicator.Point {
             public series: IKHIndicator;
             public tenkanSen: number;
             public kijunSen: number;
@@ -902,7 +904,7 @@ BaseSeries.seriesType<typeof Highcharts.IKHIndicator>(
         getValues: function<TLinkedSeries extends LineSeries> (
             series: TLinkedSeries,
             params: Highcharts.IKHIndicatorParamsOptions
-        ): (Highcharts.IndicatorValuesObject<TLinkedSeries>|undefined) {
+        ): (IndicatorValuesObject<TLinkedSeries>|undefined) {
 
             var period: number = (params.period as any),
                 periodTenkan: number = (params.periodTenkan as any),
@@ -1023,7 +1025,7 @@ BaseSeries.seriesType<typeof Highcharts.IKHIndicator>(
                 values: IKH,
                 xData: xData,
                 yData: IKH
-            } as Highcharts.IndicatorValuesObject<TLinkedSeries>;
+            } as IndicatorValuesObject<TLinkedSeries>;
         }
     }
 );

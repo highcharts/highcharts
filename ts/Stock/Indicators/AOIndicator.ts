@@ -10,8 +10,10 @@
 
 import type ColorString from '../../Core/Color/ColorString';
 import type ColumnSeries from '../../Series/Column/ColumnSeries';
+import type IndicatorValuesObject from './IndicatorValuesObject';
 import type LineSeries from '../../Series/Line/LineSeries';
 import type { SeriesStatesOptions } from '../../Core/Series/SeriesOptions';
+import type SMAIndicator from './SMAIndicator';
 import BaseSeries from '../../Core/Series/Series.js';
 import H from '../../Core/Globals.js';
 const { noop } = H;
@@ -44,7 +46,7 @@ declare global {
             public translate: ColumnSeries['translate'];
         }
 
-        interface AOIndicatorOptions extends SMAIndicatorOptions {
+        interface AOIndicatorOptions extends SMAIndicator.Options {
             greaterBarColor?: ColorString;
             groupPadding?: number;
             lowerBarColor?: ColorString;
@@ -53,7 +55,7 @@ declare global {
             threshold?: number;
         }
 
-        class AOIndicatorPoint extends SMAIndicatorPoint {
+        class AOIndicatorPoint extends SMAIndicator.Point {
             public series: AOIndicator;
         }
     }
@@ -176,7 +178,7 @@ BaseSeries.seriesType<typeof Highcharts.AOIndicator>(
 
         getValues: function<TLinkedSeries extends LineSeries> (
             series: TLinkedSeries
-        ): (Highcharts.IndicatorValuesObject<TLinkedSeries>|undefined) {
+        ): (IndicatorValuesObject<TLinkedSeries>|undefined) {
             var shortPeriod = 5,
                 longPeriod = 34,
                 xVal: Array<number> = series.xData || [],
@@ -255,7 +257,7 @@ BaseSeries.seriesType<typeof Highcharts.AOIndicator>(
                 values: AO,
                 xData: xData,
                 yData: yData
-            } as Highcharts.IndicatorValuesObject<TLinkedSeries>;
+            } as IndicatorValuesObject<TLinkedSeries>;
         }
     }
 );

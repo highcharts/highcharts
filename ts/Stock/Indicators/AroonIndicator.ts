@@ -9,8 +9,10 @@
 'use strict';
 
 import type CSSObject from '../../Core/Renderer/CSSObject';
+import type IndicatorValuesObject from './IndicatorValuesObject';
 import type LineSeries from '../../Series/Line/LineSeries';
 import type { PointMarkerOptions } from '../../Core/Series/PointOptions';
+import type SMAIndicator from './SMAIndicator';
 import BaseSeries from '../../Core/Series/Series.js';
 import MultipleLinesMixin from '../../Mixins/MultipleLines.js';
 import U from '../../Core/Utilities.js';
@@ -44,17 +46,17 @@ declare global {
             ];
         }
         interface AroonIndicatorOptions
-            extends SMAIndicatorOptions, MultipleLinesIndicatorOptions {
+            extends SMAIndicator.Options, MultipleLinesIndicatorOptions {
             aroonDown?: Record<string, CSSObject>;
             marker?: PointMarkerOptions;
             params?: AroonIndicatorParamsOptions;
             tooltip?: TooltipOptions;
         }
         interface AroonIndicatorParamsOptions
-            extends SMAIndicatorParamsOptions {
+            extends SMAIndicator.ParamsOptions {
             period?: number;
         }
-        class AroonIndicatorPoint extends SMAIndicatorPoint {
+        class AroonIndicatorPoint extends SMAIndicator.Point {
             public series: AroonIndicator;
         }
     }
@@ -179,7 +181,7 @@ BaseSeries.seriesType<typeof Highcharts.AroonIndicator>(
         getValues: function<TLinkedSeries extends LineSeries> (
             series: TLinkedSeries,
             params: Highcharts.AroonIndicatorParamsOptions
-        ): Highcharts.IndicatorValuesObject<TLinkedSeries> {
+        ): IndicatorValuesObject<TLinkedSeries> {
             var period = (params.period as any),
                 xVal: Array<number> = (series.xData as any),
                 yVal: Array<Array<number>> = (series.yData as any),
@@ -227,7 +229,7 @@ BaseSeries.seriesType<typeof Highcharts.AroonIndicator>(
                 values: AR,
                 xData: xData,
                 yData: yData
-            } as Highcharts.IndicatorValuesObject<TLinkedSeries>;
+            } as IndicatorValuesObject<TLinkedSeries>;
         }
     })
 );

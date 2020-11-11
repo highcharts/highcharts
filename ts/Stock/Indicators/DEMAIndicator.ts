@@ -8,6 +8,7 @@
 
 'use strict';
 
+import type IndicatorValuesObject from './IndicatorValuesObject';
 import type LineSeries from '../../Series/Line/LineSeries';
 import BaseSeries from '../../Core/Series/Series.js';
 import RequiredIndicatorMixin from '../../Mixins/IndicatorRequired.js';
@@ -151,7 +152,7 @@ BaseSeries.seriesType<typeof Highcharts.DEMAIndicator>(
             this: Highcharts.DEMAIndicator,
             series: TLinkedSeries,
             params: Highcharts.DEMAIndicatorParamsOptions
-        ): (Highcharts.IndicatorValuesObject<TLinkedSeries>|undefined) {
+        ): (IndicatorValuesObject<TLinkedSeries>|undefined) {
             var period: number = (params.period as any),
                 doubledPeriod: number = 2 * period,
                 xVal: Array<number> = (series.xData as any),
@@ -242,7 +243,7 @@ BaseSeries.seriesType<typeof Highcharts.DEMAIndicator>(
                 values: DEMA,
                 xData: xDataDema,
                 yData: yDataDema
-            } as Highcharts.IndicatorValuesObject<TLinkedSeries>;
+            } as IndicatorValuesObject<TLinkedSeries>;
         }
     }
 );
