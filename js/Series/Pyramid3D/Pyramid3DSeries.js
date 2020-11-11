@@ -10,49 +10,24 @@
  *  !!!!!!! SOURCE GETS TRANSPILED BY TYPESCRIPT. EDIT TS FILE ONLY. !!!!!!!
  *
  * */
-
 'use strict';
-
-/* *
- *
- *  Imports
- *
- * */
-
-import type Funnel3DPoint from './Funnel3D/Funnel3DPoint';
-import type Funnel3DPointOptions from './Funnel3D/Funnel3DPointOptions';
-import type Funnel3DSeriesOptions from './Funnel3D/Funnel3DSeriesOptions';
-import type { SeriesStatesOptions } from '../Core/Series/SeriesOptions';
-import BaseSeries from '../Core/Series/Series.js';
-const {
-    seriesTypes: {
-        funnel3d: Funnel3DSeries
-    }
-} = BaseSeries;
-import U from '../Core/Utilities.js';
-const { merge } = U;
-
-/**
- * Internal types
- * @private
- */
-declare global {
-    namespace Highcharts {
-        class Pyramid3dPoint extends Funnel3DPoint {
-            options: Pyramid3dPointOptions;
-            series: Pyramid3DSeries;
-        }
-        interface Pyramid3dPointOptions extends Funnel3DPointOptions {
-        }
-        interface Pyramid3dSeriesOptions extends Funnel3DSeriesOptions {
-            states?: SeriesStatesOptions<Pyramid3DSeries>;
-        }
-    }
-}
-
-import '../Core/Renderer/SVG/SVGRenderer.js';
-import './Funnel3DSeries.js';
-
+var __extends = (this && this.__extends) || (function () {
+    var extendStatics = function (d, b) {
+        extendStatics = Object.setPrototypeOf ||
+            ({ __proto__: [] } instanceof Array && function (d, b) { d.__proto__ = b; }) ||
+            function (d, b) { for (var p in b) if (b.hasOwnProperty(p)) d[p] = b[p]; };
+        return extendStatics(d, b);
+    };
+    return function (d, b) {
+        extendStatics(d, b);
+        function __() { this.constructor = d; }
+        d.prototype = b === null ? Object.create(b) : (__.prototype = b.prototype, new __());
+    };
+})();
+import BaseSeries from '../../Core/Series/Series.js';
+var Funnel3DSeries = BaseSeries.seriesTypes.funnel3d;
+import U from '../../Core/Utilities.js';
+var merge = U.merge;
 /**
  * The pyramid3d series type.
  *
@@ -63,14 +38,25 @@ import './Funnel3DSeries.js';
  * @requires modules/funnel3d
  * @requires modules/pyramid3d
  */
-class Pyramid3DSeries extends Funnel3DSeries {
-
-    /* *
-     *
-     *  Static Properties
-     *
-     * */
-
+var Pyramid3DSeries = /** @class */ (function (_super) {
+    __extends(Pyramid3DSeries, _super);
+    function Pyramid3DSeries() {
+        /* *
+         *
+         *  Static Properties
+         *
+         * */
+        var _this = _super !== null && _super.apply(this, arguments) || this;
+        /* *
+         *
+         *  Properties
+         *
+         * */
+        _this.data = void 0;
+        _this.options = void 0;
+        _this.points = void 0;
+        return _this;
+    }
     /**
      * A pyramid3d is a 3d version of pyramid series type. Pyramid charts are
      * a type of chart often used to visualize stages in a sales project,
@@ -89,7 +75,7 @@ class Pyramid3DSeries extends Funnel3DSeries {
      * @requires     modules/pyramid3d
      * @optionparent plotOptions.pyramid3d
      */
-    public static defaultOptions: Highcharts.Pyramid3dSeriesOptions = merge(Funnel3DSeries.defaultOptions, {
+    Pyramid3DSeries.defaultOptions = merge(Funnel3DSeries.defaultOptions, {
         /**
          * A reversed pyramid3d is funnel3d, but the latter supports neck
          * related options: neckHeight and neckWidth
@@ -97,64 +83,26 @@ class Pyramid3DSeries extends Funnel3DSeries {
          * @product highcharts
          */
         reversed: true,
-
         neckHeight: 0,
         neckWidth: 0,
         dataLabels: {
             verticalAlign: 'top'
         }
-    } as Highcharts.Pyramid3dSeriesOptions);
-
-    /* *
-     *
-     *  Properties
-     *
-     * */
-
-    public data: Array<Highcharts.Pyramid3dPoint> = void 0 as any;
-
-    public options: Highcharts.Pyramid3dSeriesOptions = void 0 as any;
-
-    public points: Array<Highcharts.Pyramid3dPoint> = void 0 as any;
-}
-
-/* *
- *
- *  Prototype Properties
- *
- * */
-
-interface Pyramid3DSeries {
-    pointClass: typeof Highcharts.Pyramid3dPoint;
-}
-
-/* *
- *
- *  Registry
- *
- * */
-
-declare module '../Core/Series/SeriesType' {
-    interface SeriesTypeRegistry {
-        pyramid3d: typeof Pyramid3DSeries;
-    }
-}
+    });
+    return Pyramid3DSeries;
+}(Funnel3DSeries));
 BaseSeries.registerSeriesType('pyramid3d', Pyramid3DSeries);
-
 /* *
  *
  *  Default Export
  *
  * */
-
 export default Pyramid3DSeries;
-
 /* *
  *
  *  API Options
  *
  * */
-
 /**
  * A `pyramid3d` series. If the [type](#series.pyramid3d.type) option is
  * not specified, it is inherited from [chart.type](#chart.type).
@@ -167,7 +115,6 @@ export default Pyramid3DSeries;
  * @requires  modules/pyramid3d
  * @apioption series.pyramid3d
  */
-
 /**
  * An array of data points for the series. For the `pyramid3d` series
  * type, points can be given in the following ways:
@@ -216,5 +163,4 @@ export default Pyramid3DSeries;
  * @product   highcharts
  * @apioption series.pyramid3d.data
  */
-
 ''; // adds doclets above to the transpiled file
