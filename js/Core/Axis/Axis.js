@@ -1004,7 +1004,7 @@ var Axis = /** @class */ (function () {
      * @function Highcharts.Axis#adjustForMinRange
      */
     Axis.prototype.adjustForMinRange = function () {
-        var axis = this, options = axis.options, min = axis.min, max = axis.max, log = axis.logarithmic, zoomOffset, spaceAvailable, closestDataRange, i, distance, xData, loopLength, minArgs, maxArgs, minRange;
+        var axis = this, options = axis.options, min = axis.min, max = axis.max, log = axis.logarithmic, zoomOffset, spaceAvailable, closestDataRange = 0, i, distance, xData, loopLength, minArgs, maxArgs, minRange;
         // Set the automatic minimum range based on the closest point distance
         if (axis.isXAxis &&
             typeof axis.minRange === 'undefined' &&
@@ -1022,8 +1022,7 @@ var Axis = /** @class */ (function () {
                     if (xData.length > 1) {
                         for (i = loopLength; i > 0; i--) {
                             distance = xData[i] - xData[i - 1];
-                            if (typeof closestDataRange === 'undefined' ||
-                                distance < closestDataRange) {
+                            if (!closestDataRange || distance < closestDataRange) {
                                 closestDataRange = distance;
                             }
                         }
