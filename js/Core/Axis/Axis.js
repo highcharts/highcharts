@@ -2118,6 +2118,8 @@ var Axis = /** @class */ (function () {
         };
         if (horiz) {
             autoRotation = !labelOptions.staggerLines &&
+                // #14262
+                !labelOptions.rotation &&
                 !labelOptions.step &&
                 ( // #3971
                 defined(rotationOption) ?

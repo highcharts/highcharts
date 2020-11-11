@@ -6487,6 +6487,8 @@ class Axis {
 
         if (horiz) {
             autoRotation = !(labelOptions as any).staggerLines &&
+                // #14262
+                !(labelOptions as any).rotation &&
                 !(labelOptions as any).step &&
                 ( // #3971
                     defined(rotationOption) ?
