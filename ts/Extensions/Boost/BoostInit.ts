@@ -12,6 +12,7 @@
 
 'use strict';
 
+import type BubbleSeries from '../../Series/Bubble/BubbleSeries';
 import BaseSeries from '../../Core/Series/Series.js';
 const { seriesTypes } = BaseSeries;
 import Chart from '../../Core/Chart/Chart.js';
@@ -368,7 +369,7 @@ function init(): void {
             seriesTypes.bubble.prototype,
             'markerAttribs',
             function (
-                this: Highcharts.BubbleSeries,
+                this: BubbleSeries,
                 proceed: Function
             ): boolean {
                 if (this.isSeriesBoosting) {

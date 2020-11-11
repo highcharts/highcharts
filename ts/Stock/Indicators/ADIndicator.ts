@@ -7,7 +7,9 @@
 
 'use strict';
 
+import type IndicatorValuesObject from './IndicatorValuesObject';
 import type LineSeries from '../../Series/Line/LineSeries';
+import type SMAIndicator from './SMAIndicator';
 import BaseSeries from '../../Core/Series/Series.js';
 import U from '../../Core/Utilities.js';
 const { error } = U;
@@ -31,15 +33,15 @@ declare global {
             ): (IndicatorValuesObject<TLinkedSeries>|undefined);
         }
 
-        class ADIndicatorPoint extends SMAIndicatorPoint {
+        class ADIndicatorPoint extends SMAIndicator.Point {
             public series: ADIndicator
         }
 
-        interface ADIndicatorOptions extends SMAIndicatorOptions {
+        interface ADIndicatorOptions extends SMAIndicator.Options {
             params?: ADIndicatorParamsOptions;
         }
 
-        interface ADIndicatorParamsOptions extends SMAIndicatorParamsOptions {
+        interface ADIndicatorParamsOptions extends SMAIndicator.ParamsOptions {
             volumeSeriesID?: string;
         }
     }
@@ -123,7 +125,7 @@ BaseSeries.seriesType<typeof Highcharts.ADIndicator>('ad', 'sma',
         getValues: function<TLinkedSeries extends LineSeries> (
             series: TLinkedSeries,
             params: Highcharts.ADIndicatorParamsOptions
-        ): (Highcharts.IndicatorValuesObject<TLinkedSeries>|undefined) {
+        ): (IndicatorValuesObject<TLinkedSeries>|undefined) {
             var period: number = (params.period as any),
                 xVal: Array<number> = (series.xData as any),
                 yVal: Array<(number|null|undefined)> = (series.yData as any),
@@ -180,7 +182,7 @@ BaseSeries.seriesType<typeof Highcharts.ADIndicator>('ad', 'sma',
                 values: AD,
                 xData: xData,
                 yData: yData
-            } as Highcharts.IndicatorValuesObject<TLinkedSeries>;
+            } as IndicatorValuesObject<TLinkedSeries>;
         }
     });
 

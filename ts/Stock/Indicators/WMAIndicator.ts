@@ -10,8 +10,10 @@
 
 'use strict';
 
+import type IndicatorValuesObject from './IndicatorValuesObject';
 import type LineSeries from '../../Series/Line/LineSeries';
 import type { SeriesStatesOptions } from '../../Core/Series/SeriesOptions';
+import type SMAIndicator from './SMAIndicator';
 import BaseSeries from '../../Core/Series/Series.js';
 import U from '../../Core/Utilities.js';
 const {
@@ -36,17 +38,17 @@ declare global {
             ): (IndicatorValuesObject<TLinkedSeries>|undefined);
         }
 
-        interface WMAIndicatorOptions extends SMAIndicatorOptions {
+        interface WMAIndicatorOptions extends SMAIndicator.Options {
             params?: WMAIndicatorParamsOptions;
             states?: SeriesStatesOptions<WMAIndicator>;
         }
 
         interface WMAIndicatorParamsOptions
-            extends SMAIndicatorParamsOptions {
+            extends SMAIndicator.ParamsOptions {
             // for inheritance
         }
 
-        class WMAIndicatorPoint extends SMAIndicatorPoint {
+        class WMAIndicatorPoint extends SMAIndicator.Point {
             public series: WMAIndicator;
         }
     }
@@ -159,7 +161,7 @@ BaseSeries.seriesType<typeof Highcharts.WMAIndicator>(
         getValues: function<TLinkedSeries extends LineSeries> (
             series: TLinkedSeries,
             params: Highcharts.WMAIndicatorParamsOptions
-        ): (Highcharts.IndicatorValuesObject<TLinkedSeries>|undefined) {
+        ): (IndicatorValuesObject<TLinkedSeries>|undefined) {
             var period: number = params.period as any,
                 xVal: Array<number> = (series.xData as any),
                 yVal: Array<Array<number>> = (series.yData as any),
@@ -212,7 +214,7 @@ BaseSeries.seriesType<typeof Highcharts.WMAIndicator>(
                 values: WMA,
                 xData: xData,
                 yData: yData
-            } as Highcharts.IndicatorValuesObject<TLinkedSeries>;
+            } as IndicatorValuesObject<TLinkedSeries>;
         }
     }
 );

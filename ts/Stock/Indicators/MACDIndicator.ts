@@ -10,11 +10,13 @@
 
 import type ColumnSeries from '../../Series/Column/ColumnSeries';
 import type CSSObject from '../../Core/Renderer/CSSObject';
+import type IndicatorValuesObject from './IndicatorValuesObject';
 import type Point from '../../Core/Series/Point';
 import type {
     SeriesStatesOptions,
     SeriesZonesOptions
 } from '../../Core/Series/SeriesOptions';
+import type SMAIndicator from './SMAIndicator';
 import BaseSeries from '../../Core/Series/Series.js';
 const { seriesTypes } = BaseSeries;
 import H from '../../Core/Globals.js';
@@ -80,14 +82,14 @@ declare global {
             gapSize?: number;
         }
 
-        interface MACDIndicatorParamsOptions extends SMAIndicatorParamsOptions {
+        interface MACDIndicatorParamsOptions extends SMAIndicator.ParamsOptions {
             period?: number;
             shortPeriod?: number;
             longPeriod?: number;
             signalPeriod?: number;
         }
 
-        class MACDIndicatorPoint extends SMAIndicatorPoint {
+        class MACDIndicatorPoint extends SMAIndicator.Point {
             public series: MACDIndicator;
             public signal: number;
             public MACD: number;
@@ -96,7 +98,7 @@ declare global {
             public plotSignal?: number;
         }
 
-        interface MACDIndicatorOptions extends SMAIndicatorOptions {
+        interface MACDIndicatorOptions extends SMAIndicator.Options {
             params?: MACDIndicatorParamsOptions;
             states?: SeriesStatesOptions<MACDIndicator>;
             threshold?: number;
@@ -444,7 +446,7 @@ BaseSeries.seriesType<typeof Highcharts.MACDIndicator>(
         getValues: function<TLinkedSeries extends LineSeries> (
             series: TLinkedSeries,
             params: Highcharts.MACDIndicatorParamsOptions
-        ): (Highcharts.IndicatorValuesObject<TLinkedSeries>|undefined) {
+        ): (IndicatorValuesObject<TLinkedSeries>|undefined) {
             var j = 0,
                 MACD: Array<Array<(number|null)>> = [],
                 xMACD: Array<(number|null)> = [],
@@ -546,7 +548,7 @@ BaseSeries.seriesType<typeof Highcharts.MACDIndicator>(
                 values: MACD,
                 xData: xMACD,
                 yData: yMACD
-            } as Highcharts.IndicatorValuesObject<TLinkedSeries>;
+            } as IndicatorValuesObject<TLinkedSeries>;
         }
     }
 );

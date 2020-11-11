@@ -10,7 +10,9 @@
 
 'use strict';
 
+import type IndicatorValuesObject from './IndicatorValuesObject';
 import type LineSeries from '../../Series/Line/LineSeries';
+import type SMAIndicator from './SMAIndicator';
 import BaseSeries from '../../Core/Series/Series.js';
 import U from '../../Core/Utilities.js';
 const {
@@ -51,15 +53,15 @@ declare global {
         }
 
         interface LinearRegressionIndicatorParamsOptions
-            extends SMAIndicatorParamsOptions {
+            extends SMAIndicator.ParamsOptions {
             xAxisUnit?: number;
         }
 
-        class LinearRegressionIndicatorPoint extends SMAIndicatorPoint {
+        class LinearRegressionIndicatorPoint extends SMAIndicator.Point {
             public series: LinearRegressionIndicator;
         }
 
-        interface LinearRegressionIndicatorOptions extends SMAIndicatorOptions {
+        interface LinearRegressionIndicatorOptions extends SMAIndicator.Options {
             params?: LinearRegressionIndicatorParamsOptions;
             tooltip?: TooltipOptions;
         }
@@ -363,7 +365,7 @@ BaseSeries.seriesType<typeof Highcharts.LinearRegressionIndicator>(
             baseSeries: TLinkedSeries,
             regressionSeriesParams:
             Highcharts.LinearRegressionIndicatorParamsOptions
-        ): Highcharts.IndicatorValuesObject<TLinkedSeries> {
+        ): IndicatorValuesObject<TLinkedSeries> {
             var xData: Array<number> = (baseSeries.xData as any),
                 yData: Array<number> = (baseSeries.yData as any),
                 period: number = (regressionSeriesParams.period as any),
@@ -372,7 +374,7 @@ BaseSeries.seriesType<typeof Highcharts.LinearRegressionIndicator>(
                 periodStart: number,
                 periodEnd: number,
                 // format required to be returned
-                indicatorData: Highcharts.IndicatorValuesObject<
+                indicatorData: IndicatorValuesObject<
                 TLinkedSeries
                 > = {
                     xData: [], // by getValues() method

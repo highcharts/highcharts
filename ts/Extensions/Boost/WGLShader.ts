@@ -12,6 +12,7 @@
 
 'use strict';
 
+import type BubbleSeries from '../../Series/Bubble/BubbleSeries';
 import U from '../../Core/Utilities.js';
 const {
     clamp,
@@ -477,7 +478,7 @@ function GLShader(gl: WebGLRenderingContext): (false|Highcharts.BoostGLShader) {
      * @param series {Highcharts.Series} - the series to use
      */
     function setBubbleUniforms(
-        series: Highcharts.BubbleSeries,
+        series: BubbleSeries,
         zCalcMin: number,
         zCalcMax: number
     ): void {
@@ -503,7 +504,7 @@ function GLShader(gl: WebGLRenderingContext): (false|Highcharts.BoostGLShader) {
             );
             gl.uniform1i(
                 bubbleSizeAbsUniform as any,
-                (series as Highcharts.BubbleSeries).options
+                (series as BubbleSeries).options
                     .sizeByAbsoluteValue as any
             );
 

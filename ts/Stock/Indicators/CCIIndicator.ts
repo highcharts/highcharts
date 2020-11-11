@@ -7,7 +7,9 @@
 
 'use strict';
 
+import type IndicatorValuesObject from './IndicatorValuesObject';
 import type LineSeries from '../../Series/Line/LineSeries';
+import type SMAIndicator from './SMAIndicator';
 import BaseSeries from '../../Core/Series/Series.js';
 import U from '../../Core/Utilities.js';
 const { isArray } = U;
@@ -29,15 +31,15 @@ declare global {
             public options: CCIIndicatorOptions;
         }
 
-        interface CCIIndicatorOptions extends SMAIndicatorOptions {
+        interface CCIIndicatorOptions extends SMAIndicator.Options {
             params?: CCIIndicatorParamsOptions;
         }
 
-        interface CCIIndicatorParamsOptions extends SMAIndicatorParamsOptions {
+        interface CCIIndicatorParamsOptions extends SMAIndicator.ParamsOptions {
             // declared for inheritance
         }
 
-        class CCIIndicatorPoint extends SMAIndicatorPoint {
+        class CCIIndicatorPoint extends SMAIndicator.Point {
             public series: CCIIndicator;
         }
     }
@@ -117,7 +119,7 @@ BaseSeries.seriesType<typeof Highcharts.CCIIndicator>(
         getValues: function<TLinkedSeries extends LineSeries> (
             series: TLinkedSeries,
             params: Highcharts.CCIIndicatorParamsOptions
-        ): (Highcharts.IndicatorValuesObject<TLinkedSeries>|undefined) {
+        ): (IndicatorValuesObject<TLinkedSeries>|undefined) {
             var period: number = (params.period as any),
                 xVal: Array<number> = (series.xData as any),
                 yVal: Array<Array<number>> = (series.yData as any),
@@ -173,7 +175,7 @@ BaseSeries.seriesType<typeof Highcharts.CCIIndicator>(
                 values: CCI,
                 xData: xData,
                 yData: yData
-            } as Highcharts.IndicatorValuesObject<TLinkedSeries>;
+            } as IndicatorValuesObject<TLinkedSeries>;
         }
     }
 );

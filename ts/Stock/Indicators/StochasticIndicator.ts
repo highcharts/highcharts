@@ -9,8 +9,10 @@
 'use strict';
 
 import type CSSObject from '../../Core/Renderer/CSSObject';
+import type IndicatorValuesObject from './IndicatorValuesObject';
 import type LineSeries from '../../Series/Line/LineSeries';
 import type { PointMarkerOptions } from '../../Core/Series/PointOptions';
+import type SMAIndicator from './SMAIndicator';
 import BaseSeries from '../../Core/Series/Series.js';
 import MultipleLinesMixin from '../../Mixins/MultipleLines.js';
 import ReduceArrayMixin from '../../Mixins/ReduceArray.js';
@@ -48,16 +50,16 @@ declare global {
         }
 
         interface StochasticIndicatorParamsOptions
-            extends SMAIndicatorParamsOptions {
+            extends SMAIndicator.ParamsOptions {
             periods?: Array<number>;
         }
 
-        class StochasticIndicatorPoint extends SMAIndicatorPoint {
+        class StochasticIndicatorPoint extends SMAIndicator.Point {
             public series: StochasticIndicator;
         }
 
         interface StochasticIndicatorOptions
-            extends SMAIndicatorOptions, MultipleLinesIndicatorOptions {
+            extends SMAIndicator.Options, MultipleLinesIndicatorOptions {
             dataGrouping?: DataGroupingOptionsObject;
             marker?: PointMarkerOptions;
             params?: StochasticIndicatorParamsOptions;
@@ -178,7 +180,7 @@ BaseSeries.seriesType<typeof Highcharts.StochasticIndicator>(
             this: Highcharts.StochasticIndicator,
             series: TLinkedSeries,
             params: Highcharts.StochasticIndicatorParamsOptions
-        ): (Highcharts.IndicatorValuesObject<TLinkedSeries>|undefined) {
+        ): (IndicatorValuesObject<TLinkedSeries>|undefined) {
             var periodK: number = (params.periods as any)[0],
                 periodD: number = (params.periods as any)[1],
                 xVal: Array<number> = (series.xData as any),
@@ -198,7 +200,7 @@ BaseSeries.seriesType<typeof Highcharts.StochasticIndicator>(
                 K: number,
                 D: number|null = null,
                 points: (
-                    Highcharts.IndicatorValuesObject<LineSeries>|
+                    IndicatorValuesObject<LineSeries>|
                     undefined
                 ),
                 extremes: [number, number],
@@ -249,7 +251,7 @@ BaseSeries.seriesType<typeof Highcharts.StochasticIndicator>(
                 values: SO,
                 xData: xData,
                 yData: yData
-            } as Highcharts.IndicatorValuesObject<TLinkedSeries>;
+            } as IndicatorValuesObject<TLinkedSeries>;
         }
     })
 );

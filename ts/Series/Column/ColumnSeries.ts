@@ -899,7 +899,7 @@ class ColumnSeries extends LineSeries {
                     barH
                 ] :
                 [
-                    barX + barW / 2,
+                    xAxis.left - chart.plotLeft + barX + barW / 2,
                     clamp(
                         plotY + (yAxis.pos as any) -
                         chart.plotTop,
