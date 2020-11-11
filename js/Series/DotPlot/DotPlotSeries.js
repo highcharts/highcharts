@@ -30,9 +30,9 @@ var __extends = (this && this.__extends) || (function () {
         d.prototype = b === null ? Object.create(b) : (__.prototype = b.prototype, new __());
     };
 })();
-import ColumnSeries from '../Column/ColumnSeries.js';
 import BaseSeries from '../../Core/Series/Series.js';
-import SVGRenderer from '../../Core/Renderer/SVG/SVGRenderer.js';
+import ColumnSeries from '../Column/ColumnSeries.js';
+import './DotPlotSymbols.js';
 import U from '../../Core/Utilities.js';
 var extend = U.extend, merge = U.merge, objectEach = U.objectEach, pick = U.pick;
 import '../Column/ColumnSeries.js';
@@ -150,9 +150,6 @@ var DotPlotSeries = /** @class */ (function (_super) {
 extend(DotPlotSeries.prototype, {
     markerAttribs: void 0
 });
-SVGRenderer.prototype.symbols.rect = function (x, y, w, h, options) {
-    return SVGRenderer.prototype.symbols.callout(x, y, w, h, options);
-};
 BaseSeries.registerSeriesType('dotplot', DotPlotSeries);
 /* *
  *
