@@ -15,6 +15,9 @@
 import type Annotation from '../Extensions/Annotations/Annotations';
 import type { AxisType } from '../Core/Axis/Types';
 import type Chart from '../Core/Chart/Chart';
+import type FlagsPoint from '../Series/Flags/FlagsPoint';
+import type { FlagsShapeValue } from '../Series/Flags/FlagsPointOptions';
+import type FlagsSeriesOptions from '../Series/Flags/FlagsSeriesOptions';
 import type { HTMLDOMElement } from '../Core/Renderer/DOMElementType';
 import type Point from '../Core/Series/Point';
 import type PointerEvent from '../Core/PointerEvent';
@@ -119,7 +122,7 @@ var bindingsUtils: Highcharts.StockToolsNavigationBindingsUtilsObject = Navigati
  */
 bindingsUtils.addFlagFromForm = function (
     this: Highcharts.StockToolsNavigationBindings,
-    type: Highcharts.FlagsShapeValue
+    type: FlagsShapeValue
 ): Function {
     return function (this: Highcharts.StockToolsNavigationBindings, e: Event): void {
         var navigation = this,
@@ -131,14 +134,14 @@ bindingsUtils.addFlagFromForm = function (
                 x: point.x,
                 y: point.y
             },
-            seriesOptions: Highcharts.FlagsSeriesOptions = {
+            seriesOptions: FlagsSeriesOptions = {
                 type: 'flags',
                 onSeries: point.series.id,
                 shape: type,
                 data: [pointConfig],
                 point: {
                     events: {
-                        click: function (this: Highcharts.FlagsPoint): void {
+                        click: function (this: FlagsPoint): void {
                             var point = this,
                                 options = point.options;
 

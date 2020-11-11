@@ -16,12 +16,9 @@
  *
  * */
 
-import type { AlignValue } from '../../Core/Renderer/AlignObject';
 import type ColorType from '../../Core/Color/ColorType';
-import type ColumnPointOptions from '../Column/ColumnPointOptions';
-import type ColumnSeriesOptions from '../Column/ColumnSeriesOptions';
-import type CSSObject from '../../Core/Renderer/CSSObject';
-import type { SeriesStatesOptions } from '../../Core/Series/SeriesOptions';
+import type { FlagsShapeValue } from './FlagsPointOptions';
+import type FlagsSeriesOptions from './FlagsSeriesOptions';
 import type SVGAttributes from '../../Core/Renderer/SVG/SVGAttributes';
 import type SVGPath from '../../Core/Renderer/SVG/SVGPath';
 import BaseSeries from '../../Core/Series/Series.js';
@@ -31,20 +28,18 @@ const {
         line: LineSeries
     }
 } = BaseSeries;
+import FlagsPoint from './FlagsPoint.js';
 import H from '../../Core/Globals.js';
 const { noop } = H;
 import OnSeriesMixin from '../../Mixins/OnSeries.js';
 import SVGElement from '../../Core/Renderer/SVG/SVGElement.js';
 import SVGRenderer from '../../Core/Renderer/SVG/SVGRenderer.js';
-const {
-    symbols
-} = SVGRenderer.prototype;
+const { symbols } = SVGRenderer.prototype;
 import U from '../../Core/Utilities.js';
 const {
     addEvent,
     defined,
     extend,
-    isNumber,
     merge,
     objectEach,
     wrap
@@ -70,7 +65,7 @@ declare module '../../Core/Series/SeriesOptions' {
     interface SeriesStateHoverOptions {
         fillColor?: ColorType;
         lineColor?: ColorType;
-        shape?: Highcharts.FlagsShapeValue;
+        shape?: FlagsShapeValue;
     }
 }
 
@@ -80,41 +75,11 @@ declare module '../../Core/Series/SeriesOptions' {
  */
 declare global {
     namespace Highcharts {
-        type FlagsShapeValue = ('circlepin'|'flag'|'squarepin');
         interface DataLabelsBoxObject {
             anchorX?: number;
             plotX?: number;
         }
-        interface FlagsPointOptions extends ColumnPointOptions {
-            fillColor?: ColorType;
-            labelrank?: number;
-            selected?: boolean;
-            shape?: FlagsShapeValue;
-            text?: string;
-            title?: string;
-            x?: number;
-        }
-        interface FlagsSeriesOptions extends ColumnSeriesOptions {
-            allowOverlapX?: boolean;
-            fillColor?: ColorType;
-            height?: number;
-            lineColor?: ColorType;
-            lineWidth?: number;
-            onKey?: string;
-            onSeries?: string;
-            shape?: FlagsShapeValue;
-            stackDistance?: number;
-            states?: SeriesStatesOptions<FlagsSeries>;
-            style?: CSSObject;
-            textAlign?: AlignValue;
-            title?: string;
-            useHTML?: boolean;
-            width?: number;
-            y?: number;
-        }
-        type FlagsPoint = FlagsPointClass;
     }
-    type FlagsPointClass = FlagsPoint;
 }
 
 var Renderer = H.Renderer,
@@ -152,7 +117,7 @@ class FlagsSeries extends ColumnSeries {
      * @product      highstock
      * @optionparent plotOptions.flags
      */
-    public static defaultOptions: Highcharts.FlagsSeriesOptions = merge(ColumnSeries.defaultOptions, {
+    public static defaultOptions: FlagsSeriesOptions = merge(ColumnSeries.defaultOptions, {
 
         /**
          * In case the flag is placed on a series, on what point key to place
@@ -369,7 +334,7 @@ class FlagsSeries extends ColumnSeries {
             fontWeight: 'bold'
         }
 
-    } as Highcharts.FlagsSeriesOptions);
+    } as FlagsSeriesOptions);
 
     /* *
      *
@@ -381,7 +346,7 @@ class FlagsSeries extends ColumnSeries {
 
     public onSeries?: typeof LineSeries.prototype;
 
-    public options: Highcharts.FlagsSeriesOptions = void 0 as any;
+    public options: FlagsSeriesOptions = void 0 as any;
 
     public points: Array<FlagsPoint> = void 0 as any;
 
@@ -690,6 +655,8 @@ extend(FlagsSeries.prototype, {
 
     noSharedTooltip: true,
 
+    pointClass: FlagsPoint,
+
     sorted: false,
 
     takeOrdinalPosition: false, // #1074
@@ -754,58 +721,6 @@ extend(FlagsSeries.prototype, {
     /* eslint-enable no-invalid-this, valid-jsdoc */
 
 });
-
-/* *
- *
- *  Class
- *
- * */
-
-class FlagsPoint extends ColumnSeries.prototype.pointClass {
-
-    /* *
-     *
-     *  Properties
-     *
-     * */
-
-    public _y?: number;
-
-    public anchorX?: number;
-
-    public options: Highcharts.FlagsPointOptions = void 0 as any;
-
-    public series: FlagsSeries = void 0 as any;
-
-    public fillColor?: ColorType;
-
-    public lineWidth?: number;
-
-    public raised?: boolean;
-
-    public stackIndex?: number;
-
-    public style?: CSSObject;
-
-    /* *
-     *
-     *  Functions
-     *
-     * */
-
-    /* eslint-disable valid-jsdoc */
-
-    /**
-     * @private
-     */
-    public isValid(): boolean {
-        // #9233 - Prevent from treating flags as null points (even if
-        // they have no y values defined).
-        return isNumber(this.y) || typeof this.y === 'undefined';
-    }
-
-}
-FlagsSeries.prototype.pointClass = FlagsPoint;
 
 /* *
  *

@@ -23,6 +23,7 @@ var __extends = (this && this.__extends) || (function () {
 })();
 import BaseSeries from '../../Core/Series/Series.js';
 var _a = BaseSeries.seriesTypes, ColumnSeries = _a.column, LineSeries = _a.line;
+import FlagsPoint from './FlagsPoint.js';
 import H from '../../Core/Globals.js';
 var noop = H.noop;
 import OnSeriesMixin from '../../Mixins/OnSeries.js';
@@ -30,7 +31,7 @@ import SVGElement from '../../Core/Renderer/SVG/SVGElement.js';
 import SVGRenderer from '../../Core/Renderer/SVG/SVGRenderer.js';
 var symbols = SVGRenderer.prototype.symbols;
 import U from '../../Core/Utilities.js';
-var addEvent = U.addEvent, defined = U.defined, extend = U.extend, isNumber = U.isNumber, merge = U.merge, objectEach = U.objectEach, wrap = U.wrap;
+var addEvent = U.addEvent, defined = U.defined, extend = U.extend, merge = U.merge, objectEach = U.objectEach, wrap = U.wrap;
 import '../Column/ColumnSeries.js';
 import '../../Core/Interaction.js';
 import '../../Core/Renderer/SVG/SVGRenderer.js';
@@ -478,6 +479,7 @@ extend(FlagsSeries.prototype, {
      */
     invertGroups: noop,
     noSharedTooltip: true,
+    pointClass: FlagsPoint,
     sorted: false,
     takeOrdinalPosition: false,
     trackerGroups: ['markerGroup'],
@@ -526,41 +528,6 @@ extend(FlagsSeries.prototype, {
     }
     /* eslint-enable no-invalid-this, valid-jsdoc */
 });
-/* *
- *
- *  Class
- *
- * */
-var FlagsPoint = /** @class */ (function (_super) {
-    __extends(FlagsPoint, _super);
-    function FlagsPoint() {
-        /* *
-         *
-         *  Properties
-         *
-         * */
-        var _this = _super !== null && _super.apply(this, arguments) || this;
-        _this.options = void 0;
-        _this.series = void 0;
-        return _this;
-    }
-    /* *
-     *
-     *  Functions
-     *
-     * */
-    /* eslint-disable valid-jsdoc */
-    /**
-     * @private
-     */
-    FlagsPoint.prototype.isValid = function () {
-        // #9233 - Prevent from treating flags as null points (even if
-        // they have no y values defined).
-        return isNumber(this.y) || typeof this.y === 'undefined';
-    };
-    return FlagsPoint;
-}(ColumnSeries.prototype.pointClass));
-FlagsSeries.prototype.pointClass = FlagsPoint;
 /* *
  *
  *  Registry
