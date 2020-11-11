@@ -118,18 +118,13 @@ class DotplotSeries extends ColumnSeries {
 
     public points: Array<Highcharts.DotplotPoint> = void 0 as any;
 
-}
+    /* *
+     *
+     * Functions
+     *
+     * */
 
-interface DotplotSeries extends ColumnSeries {
-    pointAttr?: SVGAttributes;
-    pointClass: typeof Highcharts.DotplotPoint;
-}
-
-extend(DotplotSeries.prototype, {
-
-    markerAttribs: void 0,
-
-    drawPoints: function (this: DotplotSeries): void {
+    public drawPoints(): void {
         var series = this,
             renderer = series.chart.renderer,
             seriesMarkerOptions = this.options.marker,
@@ -231,6 +226,15 @@ extend(DotplotSeries.prototype, {
             });
         });
     }
+}
+
+interface DotplotSeries extends ColumnSeries {
+    pointAttr?: SVGAttributes;
+    pointClass: typeof Highcharts.DotplotPoint;
+}
+
+extend(DotplotSeries.prototype, {
+    markerAttribs: void 0
 });
 
 SVGRenderer.prototype.symbols.rect = function (

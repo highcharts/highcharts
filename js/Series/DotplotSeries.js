@@ -67,21 +67,12 @@ var DotplotSeries = /** @class */ (function (_super) {
         _this.points = void 0;
         return _this;
     }
-    DotplotSeries.defaultOptions = merge(ColumnSeries.defaultOptions, {
-        itemPadding: 0.2,
-        marker: {
-            symbol: 'circle',
-            states: {
-                hover: {},
-                select: {}
-            }
-        }
-    });
-    return DotplotSeries;
-}(ColumnSeries));
-extend(DotplotSeries.prototype, {
-    markerAttribs: void 0,
-    drawPoints: function () {
+    /* *
+     *
+     * Functions
+     *
+     * */
+    DotplotSeries.prototype.drawPoints = function () {
         var series = this, renderer = series.chart.renderer, seriesMarkerOptions = this.options.marker, itemPaddingTranslated = this.yAxis.transA *
             series.options.itemPadding, borderWidth = this.borderWidth, crisp = borderWidth % 2 ? 0.5 : 1;
         this.points.forEach(function (point) {
@@ -143,7 +134,21 @@ extend(DotplotSeries.prototype, {
                 }
             });
         });
-    }
+    };
+    DotplotSeries.defaultOptions = merge(ColumnSeries.defaultOptions, {
+        itemPadding: 0.2,
+        marker: {
+            symbol: 'circle',
+            states: {
+                hover: {},
+                select: {}
+            }
+        }
+    });
+    return DotplotSeries;
+}(ColumnSeries));
+extend(DotplotSeries.prototype, {
+    markerAttribs: void 0
 });
 SVGRenderer.prototype.symbols.rect = function (x, y, w, h, options) {
     return SVGRenderer.prototype.symbols.callout(x, y, w, h, options);
