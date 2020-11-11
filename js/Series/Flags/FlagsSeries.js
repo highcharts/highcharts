@@ -30,6 +30,7 @@ import OnSeriesMixin from '../../Mixins/OnSeries.js';
 import SVGElement from '../../Core/Renderer/SVG/SVGElement.js';
 import U from '../../Core/Utilities.js';
 var addEvent = U.addEvent, defined = U.defined, extend = U.extend, merge = U.merge, objectEach = U.objectEach, wrap = U.wrap;
+import './FlagsSymbols.js';
 var TrackerMixin = H.TrackerMixin; // Interaction
 /**
  * The Flags series.
