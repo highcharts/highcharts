@@ -11,6 +11,7 @@ import type GradientColor from '../../Core/Color/GradientColor';
 import type SVGAttributes from '../../Core/Renderer/SVG/SVGAttributes';
 import type SVGElement from '../../Core/Renderer/SVG/SVGElement';
 import type SVGPath from '../../Core/Renderer/SVG/SVGPath';
+import type SVGPath3D from '../../Core/Renderer/SVG/SVGPath3D';
 import type SVGRenderer from '../../Core/Renderer/SVG/SVGRenderer';
 import Color from '../../Core/Color/Color.js';
 const { parse: color } = Color;
@@ -61,7 +62,7 @@ declare global {
             funnel3d(shapeArgs: SVGAttributes): SVGElement;
             funnel3dPath(shapeArgs: SVGAttributes): Funnel3dPathsObject;
         }
-        interface Funnel3dPathsObject extends SVGPath3dObject {
+        interface Funnel3dPathsObject extends SVGPath3D {
             frontUpper: SVGPath;
             backUpper: SVGPath;
             rightUpper: SVGPath;

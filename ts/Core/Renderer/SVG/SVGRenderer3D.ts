@@ -10,8 +10,18 @@
  *
  * */
 
+'use strict';
+
+/* *
+ *
+ *  Imports
+ *
+ * */
+
 import type AnimationOptionsObject from '../../Animation/AnimationOptionsObject';
+import type Arc3D from './Arc3D';
 import type ColorType from '../../Color/ColorType';
+import type Cuboid from './Cuboid';
 import type Position3DObject from '../../Renderer/Position3DObject';
 import type PositionObject from '../../Renderer/PositionObject';
 import type SVGAttributes from './SVGAttributes';
@@ -44,18 +54,6 @@ const {
  */
 declare global {
     namespace Highcharts {
-        interface Arc3dPaths {
-            out: SVGPath;
-            inn: SVGPath;
-            side1: SVGPath;
-            side2: SVGPath;
-            top: SVGPath;
-            zInn: number;
-            zOut: number;
-            zSide1: number;
-            zSide2: number;
-            zTop: number;
-        }
         interface CuboidMethodsObject extends Element3dMethodsObject {
             parts: Array<string>;
             pathType: string;
@@ -74,15 +72,6 @@ declare global {
             ): SVGElement;
             fillSetter(this: SVGElement, fill: ColorType): SVGElement;
         }
-        interface CuboidPathsObject extends SVGPath3dObject {
-            front: SVGPath;
-            isFront: number;
-            isTop: number;
-            side: SVGPath;
-            top: SVGPath;
-            zIndexes: Dictionary<number>;
-            forcedSides?: Array<string>;
-        }
         interface Element3dMethodsObject {
             processParts: Function;
             singleSetterForParts: Function;
@@ -92,14 +81,6 @@ declare global {
         interface Elements3dObject {
             base: Element3dMethodsObject;
             cuboid: CuboidMethodsObject;
-        }
-        interface SVGPath3dObject {
-            back?: SVGPath;
-            bottom?: SVGPath;
-            front?: SVGPath;
-            side?: SVGPath;
-            top?: SVGPath;
-            zIndexes?: Dictionary<number>;
         }
         interface SVGElement {
             attribs?: SVGAttributes;
@@ -112,9 +93,9 @@ declare global {
         interface SVGRenderer {
             elements3d: Elements3dObject;
             arc3d(attribs: SVGAttributes): SVGElement;
-            arc3dPath(shapeArgs: SVGAttributes): Arc3dPaths;
+            arc3dPath(shapeArgs: SVGAttributes): Arc3D;
             cuboid(shapeArgs: SVGAttributes): SVGElement;
-            cuboidPath(shapeArgs: SVGAttributes): CuboidPathsObject;
+            cuboidPath(shapeArgs: SVGAttributes): Cuboid;
             element3d(type: string, shapeArgs: SVGAttributes): SVGElement;
             face3d(args?: SVGAttributes): SVGElement;
             polyhedron(args?: SVGAttributes): SVGElement;
@@ -418,7 +399,7 @@ element3dMethods = {
     ): void {
         var elem3d = this,
             renderer = elem3d.renderer,
-            paths: (Highcharts.Arc3dPaths|Highcharts.CuboidPathsObject) =
+            paths: (Arc3D|Cuboid) =
                 (renderer as any)[elem3d.pathType + 'Path'](args),
             zIndexes = (paths as any).zIndexes;
 
@@ -651,7 +632,7 @@ SVGRenderer.prototype.cuboid = function (
 SVGRenderer.prototype.cuboidPath = function (
     this: Highcharts.SVGRenderer,
     shapeArgs: SVGAttributes
-): Highcharts.CuboidPathsObject {
+): Cuboid {
     var x = shapeArgs.x,
         y = shapeArgs.y,
         z = shapeArgs.z || 0,
@@ -1155,7 +1136,7 @@ SVGRenderer.prototype.arc3d = function (attribs: SVGAttributes): SVGElement {
 // Generate the paths required to draw a 3D arc
 SVGRenderer.prototype.arc3dPath = function (
     shapeArgs: SVGAttributes
-): Highcharts.Arc3dPaths {
+): Arc3D {
     var cx: number = shapeArgs.x, // x coordinate of the center
         cy: number = shapeArgs.y, // y coordinate of the center
         start = shapeArgs.start, // start angle

@@ -9,6 +9,7 @@
  *  !!!!!!! SOURCE GETS TRANSPILED BY TYPESCRIPT. EDIT TS FILE ONLY. !!!!!!!
  *
  * */
+'use strict';
 import A from '../../Animation/AnimationUtilities.js';
 var animObject = A.animObject;
 import Color from '../../Color/Color.js';
