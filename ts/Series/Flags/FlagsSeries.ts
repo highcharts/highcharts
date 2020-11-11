@@ -32,7 +32,6 @@ import H from '../../Core/Globals.js';
 const { noop } = H;
 import OnSeriesMixin from '../../Mixins/OnSeries.js';
 import SVGElement from '../../Core/Renderer/SVG/SVGElement.js';
-import _FlagsSymbols from './FlagsSymbols.js';
 import U from '../../Core/Utilities.js';
 const {
     addEvent,
@@ -42,6 +41,8 @@ const {
     objectEach,
     wrap
 } = U;
+
+import './FlagsSymbols.js';
 
 /* *
  *
