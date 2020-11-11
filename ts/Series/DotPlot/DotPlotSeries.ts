@@ -26,17 +26,17 @@
  *
  * */
 
-import type ColumnPoint from './Column/ColumnPoint';
-import type ColumnPointOptions from './Column/ColumnPointOptions';
-import type ColumnSeriesOptions from './Column/ColumnSeriesOptions';
-import type { SeriesStatesOptions } from '../Core/Series/SeriesOptions';
-import type SVGAttributes from '../Core/Renderer/SVG/SVGAttributes';
-import type SVGElement from '../Core/Renderer/SVG/SVGElement';
-import type SVGPath from '../Core/Renderer/SVG/SVGPath';
-import ColumnSeries from './Column/ColumnSeries.js';
-import BaseSeries from '../Core/Series/Series.js';
-import SVGRenderer from '../Core/Renderer/SVG/SVGRenderer.js';
-import U from '../Core/Utilities.js';
+import type ColumnPoint from '../Column/ColumnPoint';
+import type ColumnPointOptions from '../Column/ColumnPointOptions';
+import type ColumnSeriesOptions from '../Column/ColumnSeriesOptions';
+import type { SeriesStatesOptions } from '../../Core/Series/SeriesOptions';
+import type SVGAttributes from '../../Core/Renderer/SVG/SVGAttributes';
+import type SVGElement from '../../Core/Renderer/SVG/SVGElement';
+import type SVGPath from '../../Core/Renderer/SVG/SVGPath';
+import ColumnSeries from '../Column/ColumnSeries.js';
+import BaseSeries from '../../Core/Series/Series.js';
+import SVGRenderer from '../../Core/Renderer/SVG/SVGRenderer.js';
+import U from '../../Core/Utilities.js';
 const {
     extend,
     merge,
@@ -44,7 +44,7 @@ const {
     pick
 } = U;
 
-import './Column/ColumnSeries.js';
+import '../Column/ColumnSeries.js';
 
 /* *
  *
@@ -62,13 +62,13 @@ declare global {
             public graphics?: Dictionary<SVGElement>;
             public options: DotplotPointOptions;
             public pointAttr?: SVGAttributes;
-            public series: DotplotSeries;
+            public series: DotPlotSeries;
         }
         interface DotplotPointOptions extends ColumnPointOptions {
         }
         interface DotplotSeriesOptions extends ColumnSeriesOptions {
             itemPadding?: number;
-            states?: SeriesStatesOptions<DotplotSeries>;
+            states?: SeriesStatesOptions<DotPlotSeries>;
         }
     }
 }
@@ -87,7 +87,7 @@ declare global {
  * @augments Highcharts.Series
  */
 
-class DotplotSeries extends ColumnSeries {
+class DotPlotSeries extends ColumnSeries {
 
     /* *
      *
@@ -228,12 +228,12 @@ class DotplotSeries extends ColumnSeries {
     }
 }
 
-interface DotplotSeries extends ColumnSeries {
+interface DotPlotSeries extends ColumnSeries {
     pointAttr?: SVGAttributes;
     pointClass: typeof Highcharts.DotplotPoint;
 }
 
-extend(DotplotSeries.prototype, {
+extend(DotPlotSeries.prototype, {
     markerAttribs: void 0
 });
 
@@ -253,13 +253,13 @@ SVGRenderer.prototype.symbols.rect = function (
  *
  * */
 
-declare module '../Core/Series/SeriesType' {
+declare module '../../Core/Series/SeriesType' {
     interface SeriesTypeRegistry {
-        dotplot: typeof DotplotSeries;
+        dotplot: typeof DotPlotSeries;
     }
 }
 
-BaseSeries.registerSeriesType('dotplot', DotplotSeries);
+BaseSeries.registerSeriesType('dotplot', DotPlotSeries);
 
 /* *
  *
@@ -267,4 +267,4 @@ BaseSeries.registerSeriesType('dotplot', DotplotSeries);
  *
  * */
 
-export default DotplotSeries;
+export default DotPlotSeries;
