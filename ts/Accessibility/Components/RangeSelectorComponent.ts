@@ -24,8 +24,7 @@ const {
 import H from '../../Core/Globals.js';
 import HTMLUtilities from '../Utils/HTMLUtilities.js';
 const {
-    setElAttrs,
-    setSVGElementTitle
+    setElAttrs
 } = HTMLUtilities;
 import KeyboardNavigationHandler from '../KeyboardNavigationHandler.js';
 import U from '../../Core/Utilities.js';
@@ -67,7 +66,7 @@ declare global {
             ): number;
             public onInputNavInit(direction: number): void;
             public onInputNavTerminate(): void;
-            public setRangeButtonAttrs(button: SVGElement, buttonOptions: RangeSelectorButtonsOptions): void;
+            public setRangeButtonAttrs(button: SVGElement): void;
             public setRangeInputAttrs(
                 input: HTMLDOMElement,
                 langKey: string
@@ -161,10 +160,9 @@ extend(RangeSelectorComponent.prototype, /** @lends Highcharts.RangeSelectorComp
             return;
         }
         if (rangeSelector.buttons?.length) {
-            rangeSelector.buttons.forEach((button, ix): void => {
-                const btnOptions = rangeSelector.buttonOptions[ix];
+            rangeSelector.buttons.forEach((button): void => {
                 unhideChartElementFromAT(chart, button.element);
-                component.setRangeButtonAttrs(button, btnOptions);
+                component.setRangeButtonAttrs(button);
             });
         }
 
@@ -194,14 +192,12 @@ extend(RangeSelectorComponent.prototype, /** @lends Highcharts.RangeSelectorComp
      */
     setRangeButtonAttrs: function (
         this: Highcharts.RangeSelectorComponent,
-        button: Highcharts.SVGElement,
-        buttonOptions: Highcharts.RangeSelectorButtonsOptions
+        button: Highcharts.SVGElement
     ): void {
         setElAttrs(button.element, {
             tabindex: -1,
             role: 'button'
         });
-        setSVGElementTitle(button.element, buttonOptions.title || null);
     },
 
 

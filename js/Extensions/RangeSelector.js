@@ -1153,6 +1153,9 @@ var RangeSelector = /** @class */ (function () {
                     'text-align': 'center'
                 })
                     .add(buttonGroup);
+                if (rangeOptions.title) {
+                    buttons[i].attr('title', rangeOptions.title);
+                }
             });
             // first create a wrapper outside the container in order to make
             // the inputs work and make export correct

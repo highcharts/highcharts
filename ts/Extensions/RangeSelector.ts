@@ -1685,6 +1685,10 @@ class RangeSelector {
                         'text-align': 'center'
                     })
                     .add(buttonGroup);
+
+                if (rangeOptions.title) {
+                    buttons[i].attr('title', rangeOptions.title);
+                }
             });
 
             // first create a wrapper outside the container in order to make
