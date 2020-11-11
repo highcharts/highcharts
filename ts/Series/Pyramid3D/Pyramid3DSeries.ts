@@ -19,10 +19,8 @@
  *
  * */
 
-import type Funnel3DPoint from '../Funnel3D/Funnel3DPoint';
-import type Funnel3DPointOptions from '../Funnel3D/Funnel3DPointOptions';
-import type Funnel3DSeriesOptions from '../Funnel3D/Funnel3DSeriesOptions';
-import type { SeriesStatesOptions } from '../../Core/Series/SeriesOptions';
+import type Pyramid3DPoint from './Pyramid3DPoint';
+import type Pyramid3DSeriesOptions from './Pyramid3DSeriesOptions';
 import BaseSeries from '../../Core/Series/Series.js';
 const {
     seriesTypes: {
@@ -32,23 +30,11 @@ const {
 import U from '../../Core/Utilities.js';
 const { merge } = U;
 
-/**
- * Internal types
- * @private
- */
-declare global {
-    namespace Highcharts {
-        class Pyramid3dPoint extends Funnel3DPoint {
-            options: Pyramid3dPointOptions;
-            series: Pyramid3DSeries;
-        }
-        interface Pyramid3dPointOptions extends Funnel3DPointOptions {
-        }
-        interface Pyramid3dSeriesOptions extends Funnel3DSeriesOptions {
-            states?: SeriesStatesOptions<Pyramid3DSeries>;
-        }
-    }
-}
+/* *
+ *
+ *  Class
+ *
+ * */
 
 /**
  * The pyramid3d series type.
@@ -86,7 +72,7 @@ class Pyramid3DSeries extends Funnel3DSeries {
      * @requires     modules/pyramid3d
      * @optionparent plotOptions.pyramid3d
      */
-    public static defaultOptions: Highcharts.Pyramid3dSeriesOptions = merge(Funnel3DSeries.defaultOptions, {
+    public static defaultOptions: Pyramid3DSeriesOptions = merge(Funnel3DSeries.defaultOptions, {
         /**
          * A reversed pyramid3d is funnel3d, but the latter supports neck
          * related options: neckHeight and neckWidth
@@ -100,7 +86,7 @@ class Pyramid3DSeries extends Funnel3DSeries {
         dataLabels: {
             verticalAlign: 'top'
         }
-    } as Highcharts.Pyramid3dSeriesOptions);
+    } as Pyramid3DSeriesOptions);
 
     /* *
      *
@@ -108,11 +94,11 @@ class Pyramid3DSeries extends Funnel3DSeries {
      *
      * */
 
-    public data: Array<Highcharts.Pyramid3dPoint> = void 0 as any;
+    public data: Array<Pyramid3DPoint> = void 0 as any;
 
-    public options: Highcharts.Pyramid3dSeriesOptions = void 0 as any;
+    public options: Pyramid3DSeriesOptions = void 0 as any;
 
-    public points: Array<Highcharts.Pyramid3dPoint> = void 0 as any;
+    public points: Array<Pyramid3DPoint> = void 0 as any;
 }
 
 /* *
@@ -122,7 +108,7 @@ class Pyramid3DSeries extends Funnel3DSeries {
  * */
 
 interface Pyramid3DSeries {
-    pointClass: typeof Highcharts.Pyramid3dPoint;
+    pointClass: typeof Pyramid3DPoint;
 }
 
 /* *

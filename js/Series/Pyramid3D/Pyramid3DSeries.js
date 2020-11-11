@@ -28,6 +28,11 @@ import BaseSeries from '../../Core/Series/Series.js';
 var Funnel3DSeries = BaseSeries.seriesTypes.funnel3d;
 import U from '../../Core/Utilities.js';
 var merge = U.merge;
+/* *
+ *
+ *  Class
+ *
+ * */
 /**
  * The pyramid3d series type.
  *
