@@ -4945,7 +4945,7 @@ class Axis {
             log = axis.logarithmic,
             zoomOffset,
             spaceAvailable: boolean,
-            closestDataRange: (number|undefined),
+            closestDataRange = 0,
             i,
             distance,
             xData,
@@ -4976,17 +4976,14 @@ class Axis {
                     if (xData.length > 1) {
                         for (i = loopLength; i > 0; i--) {
                             distance = xData[i] - xData[i - 1];
-                            if (
-                                typeof closestDataRange === 'undefined' ||
-                                distance < closestDataRange
-                            ) {
+                            if (!closestDataRange || distance < closestDataRange) {
                                 closestDataRange = distance;
                             }
                         }
                     }
                 });
                 axis.minRange = Math.min(
-                    (closestDataRange as any) * 5,
+                    closestDataRange * 5,
                     (axis.dataMax as any) - (axis.dataMin as any)
                 );
             }

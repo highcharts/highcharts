@@ -33,6 +33,8 @@ QUnit.test('#14505: minRange NaN with single point series', assert => {
             data: [4, 8, 5, 8, 5, 7, 6, 4, 5, 3, 3, 2]
         }, {
             data: [1]
+        }], [{
+            data: [1]
         }]
     ].forEach(series => {
         const chart = Highcharts.chart('container', { series });
