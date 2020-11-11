@@ -100,10 +100,6 @@ declare global {
             text?: string;
             type?: RangeSelectorButtonTypeValue;
         }
-        interface RangeSelectorInputElement extends HTMLDOMElement {
-            previousValue?: number|RangeSelectorParseCallbackFunction|undefined;
-            value?: string;
-        }
         interface RangeSelectorInputPositionOptions {
             align?: AlignValue;
             x?: number;
@@ -148,6 +144,8 @@ declare global {
             public group?: SVGElement;
             public inputGroup?: SVGElement;
             public isActive?: boolean;
+            public maxInput?: HTMLInputElement;
+            public minInput?: HTMLInputElement;
             public options: RangeSelectorOptions;
             public rendered?: boolean;
             public selected?: number;
@@ -159,7 +157,7 @@ declare global {
                 rangeOptions: RangeSelectorButtonsOptions
             ): void;
             public destroy(): void;
-            public drawInput(name: string): void;
+            public drawInput(name: ('min'|'max')): void;
             public getHeight(): number;
             public getPosition(): Dictionary<number>;
             public getYTDExtremes(
@@ -780,6 +778,8 @@ class RangeSelector {
     public group?: SVGElement;
     public inputGroup?: SVGElement;
     public isActive?: boolean;
+    public maxInput?: HTMLInputElement;
+    public minInput?: HTMLInputElement;
     public options: Highcharts.RangeSelectorOptions = void 0 as any;
     public rendered?: boolean;
     public selected?: number;
@@ -986,8 +986,8 @@ class RangeSelector {
             buttonOptions = options.buttons || rangeSelector.defaultButtons.slice(),
             selectedOption = options.selected,
             blurInputs = function (): void {
-                var minInput = (rangeSelector as any).minInput,
-                    maxInput = (rangeSelector as any).maxInput;
+                var minInput = rangeSelector.minInput,
+                    maxInput = rangeSelector.maxInput;
 
                 // #3274 in some case blur is not defined
                 if (minInput && minInput.blur) {
@@ -1228,23 +1228,32 @@ class RangeSelector {
         var options =
             this.chart.options.rangeSelector as Highcharts.RangeSelectorOptions,
             time = this.chart.time,
-            input = (this as any)[name + 'Input'];
+            input = name === 'min' ? this.minInput : this.maxInput;
 
-        if (defined(inputTime)) {
-            input.previousValue = input.HCTime;
-            input.HCTime = inputTime;
+        if (input) {
+
+            let updatedTime = Number(input.getAttribute('data-hc-time'));
+
+            if (defined(inputTime)) {
+                const previousTime = updatedTime;
+                if (previousTime) {
+                    input.setAttribute('data-hc-time-previous', previousTime);
+                }
+                input.setAttribute('data-hc-time', inputTime);
+                updatedTime = inputTime;
+            }
+
+            input.value = time.dateFormat(
+                options.inputEditDateFormat || '%Y-%m-%d',
+                updatedTime
+            );
+            (this as any)[name + 'DateBox'].attr({
+                text: time.dateFormat(
+                    options.inputDateFormat || '%b %e, %Y',
+                    updatedTime
+                )
+            });
         }
-
-        input.value = time.dateFormat(
-            options.inputEditDateFormat || '%Y-%m-%d',
-            input.HCTime
-        );
-        (this as any)[name + 'DateBox'].attr({
-            text: time.dateFormat(
-                options.inputDateFormat || '%b %e, %Y',
-                input.HCTime
-            )
-        });
     }
 
     /**
@@ -1330,21 +1339,24 @@ class RangeSelector {
      * @param {string} name
      * @return {void}
      */
-    public drawInput(name: string): void {
+    public drawInput(name: ('min'|'max')): void {
+        const {
+            chart,
+            defaultInputDateParser,
+            div,
+            inputGroup
+        } = this;
+
         var rangeSelector = this,
-            chart = rangeSelector.chart,
             chartStyle = chart.renderer.style || {},
             renderer = chart.renderer,
             options =
                chart.options.rangeSelector as Highcharts.RangeSelectorOptions,
             lang = defaultOptions.lang,
-            div = rangeSelector.div,
             isMin = name === 'min',
-            input: Highcharts.RangeSelectorInputElement,
+            input: HTMLInputElement,
             label,
-            dateBox,
-            inputGroup = this.inputGroup,
-            defaultInputDateParser = this.defaultInputDateParser;
+            dateBox;
 
         /**
          * @private
@@ -1359,24 +1371,33 @@ class RangeSelector {
                 dataMin = dataAxis.dataMin,
                 dataMax = dataAxis.dataMax;
 
-            value = (options.inputDateParser || defaultInputDateParser)(inputValue, chart.time.useUTC, chart.time);
+            const { maxInput, minInput } = rangeSelector;
 
-            if (value !== input.previousValue && isNumber(value)) {
-                input.previousValue = value;
+            value = (options.inputDateParser || defaultInputDateParser)(
+                inputValue,
+                chart.time.useUTC,
+                chart.time
+            );
+
+            if (
+                value !== Number(input.getAttribute('data-hc-time-previous')) &&
+                isNumber(value)
+            ) {
+                input.setAttribute('data-hc-time-previous', value);
 
                 // Validate the extremes. If it goes beyound the data min or
                 // max, use the actual data extreme (#2438).
-                if (isMin) {
-                    if (value > (rangeSelector as any).maxInput.HCTime) {
+                if (isMin && maxInput && isNumber(dataMin)) {
+                    if (value > Number(maxInput.getAttribute('data-hc-time'))) {
                         value = void 0;
-                    } else if (value < (dataMin as any)) {
-                        value = dataMin as any;
+                    } else if (value < dataMin) {
+                        value = dataMin;
                     }
-                } else {
-                    if (value < (rangeSelector as any).minInput.HCTime) {
+                } else if (minInput && isNumber(dataMax)) {
+                    if (value < Number(minInput.getAttribute('data-hc-time'))) {
                         value = void 0;
-                    } else if (value > (dataMax as any)) {
-                        value = dataMax as any;
+                    } else if (value > dataMax) {
+                        value = dataMax;
                     }
                 }
 
@@ -1445,7 +1466,7 @@ class RangeSelector {
             type: 'text'
         }, {
             top: chart.plotTop + 'px' // prevent jump on focus in Firefox
-        }, div);
+        }, div) as any;
 
         if (!chart.styledMode) {
             // Styles
@@ -1927,10 +1948,11 @@ class RangeSelector {
         );
 
         // translate HTML inputs
-        if (inputEnabled !== false) {
-            (rangeSelector as any).minInput.style.marginTop =
+        const { minInput, maxInput } = rangeSelector;
+        if (inputEnabled !== false && minInput && maxInput) {
+            minInput.style.marginTop =
                 (rangeSelector.group as any).translateY + 'px';
-            (rangeSelector as any).maxInput.style.marginTop =
+            maxInput.style.marginTop =
                 (rangeSelector.group as any).translateY + 'px';
         }
 
@@ -2027,8 +2049,8 @@ class RangeSelector {
      */
     public destroy(): void {
         var rSelector: RangeSelector = this,
-            minInput = (rSelector as any).minInput,
-            maxInput = (rSelector as any).maxInput;
+            minInput = rSelector.minInput,
+            maxInput = rSelector.maxInput;
 
         (rSelector.unMouseDown as any)();
         (rSelector.unResize as any)();
