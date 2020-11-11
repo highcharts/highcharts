@@ -28,6 +28,8 @@ const {
     merge
 } = U;
 
+import '../../Core/Renderer/SVG/SVGRenderer.js';
+
 /**
  * Internal types
  * @private
