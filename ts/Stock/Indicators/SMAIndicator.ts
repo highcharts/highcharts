@@ -206,89 +206,127 @@ class SMAIndicator extends LineSeries {
 
     public data: Array<SMAIndicator.Point> = void 0 as any;
 
+    public dataEventsToUnbind: Array<Function> = void 0 as any;
+
+    public linkedParent: typeof LineSeries.prototype = void 0 as any;
+
+    public nameBase?: string;
+
     public options: SMAIndicator.Options = void 0 as any;
 
     public points: Array<SMAIndicator.Point> = void 0 as any;
-}
 
-/* *
- *
- *  Prototype Properties
- *
- * */
+    /* *
+     *
+     *  Functions
+     *
+     * */
 
-interface SMAIndicator extends IndicatorLike {
-    bindTo: SMAIndicator.BindToObject;
-    calculateOn: string;
-    dataEventsToUnbind: Array<Function>;
-    hasDerivedData: boolean;
-    linkedParent: typeof LineSeries.prototype;
-    nameBase?: string;
-    nameComponents: Array<string>;
-    nameSuffixes: Array<string>;
-    pointClass: typeof SMAIndicator.Point;
-    processData: typeof LineSeries.prototype['processData'];
-    requiredIndicators: Array<string>;
-    useCommonDataGrouping: boolean;
-    init(chart: Chart, options: SMAIndicator.Options): void;
-    getName(): string;
-    getValues<TLinkedSeries extends typeof LineSeries.prototype>(
-        series: TLinkedSeries,
-        params: SMAIndicator.ParamsOptions
-    ): (IndicatorValuesObject<TLinkedSeries>|undefined);
-    requireIndicators(): RequireIndicatorsResultObject;
-}
-extend(SMAIndicator.prototype, {
-    processData: function (
-        this: SMAIndicator
-    ): (boolean|undefined) {
-        var series = this,
-            compareToMain = series.options.compareToMain,
-            linkedParent = series.linkedParent;
+    /* eslint-disable valid-jsdoc */
 
-        LineSeries.prototype.processData.apply(series, arguments);
+    /**
+     * @private
+     */
+    public destroy(): void {
+        this.dataEventsToUnbind.forEach(function (
+            unbinder: Function
+        ): void {
+            unbinder();
+        });
+        super.destroy.apply(this, arguments);
+    }
 
-        if (linkedParent && linkedParent.compareValue && compareToMain) {
-            series.compareValue = linkedParent.compareValue;
+    /**
+     * @private
+     */
+    public getName(): string {
+        var name = this.name,
+            params: Array<string> = [];
+
+        if (!name) {
+
+            (this.nameComponents || []).forEach(
+                function (component: string, index: number): void {
+                    params.push(
+                        (this.options.params as any)[component] +
+                        pick(this.nameSuffixes[index], '')
+                    );
+                },
+                this
+            );
+
+            name = (this.nameBase || this.type.toUpperCase()) +
+                (this.nameComponents ? ' (' + params.join(', ') + ')' : '');
         }
 
-        return;
-    },
-    bindTo: {
-        series: true,
-        eventName: 'updatedData'
-    },
-    hasDerivedData: true,
-    useCommonDataGrouping: true,
-    nameComponents: ['period'],
-    nameSuffixes: [], // e.g. Zig Zag uses extra '%'' in the legend name
-    calculateOn: 'init',
-    // Defines on which other indicators is this indicator based on.
-    requiredIndicators: [],
-    requireIndicators: function (
-        this: SMAIndicator
-    ): RequireIndicatorsResultObject {
-        var obj: RequireIndicatorsResultObject = {
-            allLoaded: true
-        };
+        return name;
+    }
 
-        // Check whether all required indicators are loaded, else return
-        // the object with missing indicator's name.
-        this.requiredIndicators.forEach(function (indicator: string): void {
-            if (BaseSeries.seriesTypes[indicator]) {
-                (BaseSeries.seriesTypes[indicator].prototype as SMAIndicator).requireIndicators();
-            } else {
-                obj.allLoaded = false;
-                obj.needed = indicator;
-            }
-        });
-        return obj;
-    },
-    init: function (
-        this: SMAIndicator,
+    /**
+     * @private
+     */
+    public getValues<TLinkedSeries extends typeof LineSeries.prototype>(
+        series: TLinkedSeries,
+        params: SMAIndicator.ParamsOptions
+    ): (IndicatorValuesObject<TLinkedSeries>|undefined) {
+        var period: number = params.period as any,
+            xVal: Array<number> = series.xData as any,
+            yVal: Array<(number|Array<(number|null)>|null)> = series.yData as any,
+            yValLen = yVal.length,
+            range = 0,
+            sum = 0,
+            SMA: Array<Array<number>> = [],
+            xData: Array<number> = [],
+            yData: Array<number> = [],
+            index = -1,
+            i: (number|undefined),
+            SMAPoint: (Array<number>|undefined);
+
+        if (xVal.length < period) {
+            return;
+        }
+
+        // Switch index for OHLC / Candlestick / Arearange
+        if (isArray(yVal[0])) {
+            index = params.index ? params.index : 0;
+        }
+
+        // Accumulate first N-points
+        while (range < period - 1) {
+            sum += index < 0 ? yVal[range] : (yVal as any)[range][index];
+            range++;
+        }
+
+        // Calculate value one-by-one for each period in visible data
+        for (i = range; i < yValLen; i++) {
+            sum += index < 0 ? yVal[i] : (yVal as any)[i][index];
+
+            SMAPoint = [xVal[i], sum / period];
+            SMA.push(SMAPoint);
+            xData.push(SMAPoint[0]);
+            yData.push(SMAPoint[1]);
+
+            sum -= (
+                index < 0 ?
+                    yVal[i - range] :
+                    (yVal as any)[i - range][index]
+            );
+        }
+
+        return {
+            values: SMA,
+            xData: xData,
+            yData: yData
+        } as IndicatorValuesObject<TLinkedSeries>;
+    }
+
+    /**
+     * @private
+     */
+    public init(
         chart: Chart,
         options: SMAIndicator.Options
-    ): (SMAIndicator) {
+    ): void {
         var indicator = this,
             requiredIndicators = indicator.requireIndicators();
 
@@ -300,7 +338,7 @@ extend(SMAIndicator.prototype, {
             )) as any;
         }
 
-        LineSeries.prototype.init.call(
+        super.init.call(
             indicator,
             chart,
             options
@@ -450,94 +488,79 @@ extend(SMAIndicator.prototype, {
             );
         }
 
-        return indicator;
-    },
-    getName: function (
-        this: SMAIndicator
-    ): string {
-        var name = this.name,
-            params: Array<string> = [];
-
-        if (!name) {
-
-            (this.nameComponents || []).forEach(
-                function (component: string, index: number): void {
-                    params.push(
-                        (this.options.params as any)[component] +
-                        pick(this.nameSuffixes[index], '')
-                    );
-                },
-                this
-            );
-
-            name = (this.nameBase || this.type.toUpperCase()) +
-                (this.nameComponents ? ' (' + params.join(', ') + ')' : '');
-        }
-
-        return name;
-    },
-    getValues: function<TLinkedSeries extends typeof LineSeries.prototype> (
-        series: TLinkedSeries,
-        params: SMAIndicator.ParamsOptions
-    ): (IndicatorValuesObject<TLinkedSeries>|undefined) {
-        var period: number = params.period as any,
-            xVal: Array<number> = series.xData as any,
-            yVal: Array<(number|Array<(number|null)>|null)> = series.yData as any,
-            yValLen = yVal.length,
-            range = 0,
-            sum = 0,
-            SMA: Array<Array<number>> = [],
-            xData: Array<number> = [],
-            yData: Array<number> = [],
-            index = -1,
-            i: (number|undefined),
-            SMAPoint: (Array<number>|undefined);
-
-        if (xVal.length < period) {
-            return;
-        }
-
-        // Switch index for OHLC / Candlestick / Arearange
-        if (isArray(yVal[0])) {
-            index = params.index ? params.index : 0;
-        }
-
-        // Accumulate first N-points
-        while (range < period - 1) {
-            sum += index < 0 ? yVal[range] : (yVal as any)[range][index];
-            range++;
-        }
-
-        // Calculate value one-by-one for each period in visible data
-        for (i = range; i < yValLen; i++) {
-            sum += index < 0 ? yVal[i] : (yVal as any)[i][index];
-
-            SMAPoint = [xVal[i], sum / period];
-            SMA.push(SMAPoint);
-            xData.push(SMAPoint[0]);
-            yData.push(SMAPoint[1]);
-
-            sum -= (
-                index < 0 ?
-                    yVal[i - range] :
-                    (yVal as any)[i - range][index]
-            );
-        }
-
-        return {
-            values: SMA,
-            xData: xData,
-            yData: yData
-        } as IndicatorValuesObject<TLinkedSeries>;
-    },
-    destroy: function (this: SMAIndicator): void {
-        this.dataEventsToUnbind.forEach(function (
-            unbinder: Function
-        ): void {
-            unbinder();
-        });
-        LineSeries.prototype.destroy.apply(this, arguments);
+        // return indicator;
     }
+
+    /**
+     * @private
+     */
+    public processData(): (boolean|undefined) {
+        var series = this,
+            compareToMain = series.options.compareToMain,
+            linkedParent = series.linkedParent;
+
+        super.processData.apply(series, arguments);
+
+        if (linkedParent && linkedParent.compareValue && compareToMain) {
+            series.compareValue = linkedParent.compareValue;
+        }
+
+        return;
+    }
+
+    /**
+     * @private
+     */
+    public requireIndicators(): RequireIndicatorsResultObject {
+        var obj: RequireIndicatorsResultObject = {
+            allLoaded: true
+        };
+
+        // Check whether all required indicators are loaded, else return
+        // the object with missing indicator's name.
+        this.requiredIndicators.forEach(function (indicator: string): void {
+            if (BaseSeries.seriesTypes[indicator]) {
+                (BaseSeries.seriesTypes[indicator].prototype as SMAIndicator).requireIndicators();
+            } else {
+                obj.allLoaded = false;
+                obj.needed = indicator;
+            }
+        });
+        return obj;
+    }
+
+    /* eslint-enable valid-jsdoc */
+
+}
+
+/* *
+ *
+ *  Prototype Properties
+ *
+ * */
+
+interface SMAIndicator extends IndicatorLike {
+    bindTo: SMAIndicator.BindToObject;
+    calculateOn: string;
+    hasDerivedData: boolean;
+    nameComponents: Array<string>;
+    nameSuffixes: Array<string>;
+    pointClass: typeof SMAIndicator.Point;
+    requiredIndicators: Array<string>;
+    useCommonDataGrouping: boolean;
+}
+extend(SMAIndicator.prototype, {
+    bindTo: {
+        series: true,
+        eventName: 'updatedData'
+    },
+    calculateOn: 'init',
+    hasDerivedData: true,
+    nameComponents: ['period'],
+    nameSuffixes: [], // e.g. Zig Zag uses extra '%'' in the legend name
+    // Defines on which other indicators is this indicator based on.
+    requiredIndicators: [],
+    useCommonDataGrouping: true
 });
 
 /* *
