@@ -13,7 +13,9 @@
 'use strict';
 
 import type Chart from '../../Core/Chart/Chart';
+import type IndicatorValuesObject from './IndicatorValuesObject';
 import type LineSeries from '../../Series/Line/LineSeries';
+import type SMAIndicator from './SMAIndicator';
 import BaseSeries from '../../Core/Series/Series.js';
 import U from '../../Core/Utilities.js';
 const {
@@ -47,15 +49,15 @@ declare global {
             public points: Array<VWAPIndicatorPoint>;
         }
 
-        interface VWAPIndicatorParamsOptions extends SMAIndicatorParamsOptions {
+        interface VWAPIndicatorParamsOptions extends SMAIndicator.ParamsOptions {
             volumeSeriesID?: string;
         }
 
-        class VWAPIndicatorPoint extends SMAIndicatorPoint {
+        class VWAPIndicatorPoint extends SMAIndicator.Point {
             public series: VWAPIndicator;
         }
 
-        interface VWAPIndicatorOptions extends SMAIndicatorOptions {
+        interface VWAPIndicatorOptions extends SMAIndicator.Options {
             params?: VWAPIndicatorParamsOptions;
         }
     }
@@ -125,7 +127,7 @@ BaseSeries.seriesType<typeof Highcharts.VWAPIndicator>('vwap', 'sma',
             this: Highcharts.VWAPIndicator,
             series: TLinkedSeries,
             params: Highcharts.VWAPIndicatorParamsOptions
-        ): (Highcharts.IndicatorValuesObject<TLinkedSeries>|undefined) {
+        ): (IndicatorValuesObject<TLinkedSeries>|undefined) {
             var indicator = this,
                 chart: Chart = series.chart,
                 xValues: Array<number> = (series.xData as any),
@@ -182,7 +184,7 @@ BaseSeries.seriesType<typeof Highcharts.VWAPIndicator>('vwap', 'sma',
             yValues: (Array<number>|Array<[number, number, number, number]>),
             volumeSeries: LineSeries,
             period: number
-        ): Highcharts.IndicatorValuesObject<TLinkedSeries> {
+        ): IndicatorValuesObject<TLinkedSeries> {
             var volumeValues: Array<number> = (volumeSeries.yData as any),
                 volumeLength: number = (volumeSeries.xData as any).length,
                 pointsLength: number = xValues.length,
@@ -238,7 +240,7 @@ BaseSeries.seriesType<typeof Highcharts.VWAPIndicator>('vwap', 'sma',
                 values: VWAP,
                 xData: xData,
                 yData: yData
-            } as Highcharts.IndicatorValuesObject<TLinkedSeries>;
+            } as IndicatorValuesObject<TLinkedSeries>;
         }
     });
 

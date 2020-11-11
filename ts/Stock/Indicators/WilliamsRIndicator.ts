@@ -8,7 +8,9 @@
 
 'use strict';
 
+import type IndicatorValuesObject from './IndicatorValuesObject';
 import type LineSeries from '../../Series/Line/LineSeries';
+import type SMAIndicator from './SMAIndicator';
 import BaseSeries from '../../Core/Series/Series.js';
 import ReduceArrayMixin from '../../Mixins/ReduceArray.js';
 const {
@@ -35,14 +37,14 @@ declare global {
             public pointClass: typeof WilliamsRIndicatorPoint;
             public points: Array<WilliamsRIndicatorPoint>;
         }
-        class WilliamsRIndicatorPoint extends SMAIndicatorPoint {
+        class WilliamsRIndicatorPoint extends SMAIndicator.Point {
             series: WilliamsRIndicator;
         }
-        interface WilliamsRIndicatorOptions extends SMAIndicatorOptions {
+        interface WilliamsRIndicatorOptions extends SMAIndicator.Options {
             params?: WilliamsRIndicatorParamsOptions;
         }
         interface WilliamsRIndicatorParamsOptions
-            extends SMAIndicatorParamsOptions {
+            extends SMAIndicator.ParamsOptions {
             // for inheritance
         }
     }
@@ -106,7 +108,7 @@ BaseSeries.seriesType<typeof Highcharts.WilliamsRIndicator>(
             this: Highcharts.WilliamsRIndicator,
             series: TLinkedSeries,
             params: Highcharts.WilliamsRIndicatorParamsOptions
-        ): (Highcharts.IndicatorValuesObject<TLinkedSeries>|undefined) {
+        ): (IndicatorValuesObject<TLinkedSeries>|undefined) {
             var period: number = params.period as any,
                 xVal: Array<number> = series.xData as any,
                 yVal: Array<Array<number>> = series.yData as any,
@@ -158,7 +160,7 @@ BaseSeries.seriesType<typeof Highcharts.WilliamsRIndicator>(
                 values: WR,
                 xData: xData,
                 yData: yData
-            } as Highcharts.IndicatorValuesObject<TLinkedSeries>;
+            } as IndicatorValuesObject<TLinkedSeries>;
         }
     }
 );

@@ -14,7 +14,9 @@
 
 'use strict';
 
+import type IndicatorValuesObject from './IndicatorValuesObject';
 import type LineSeries from '../../Series/Line/LineSeries';
+import type SMAIndicator from './SMAIndicator';
 import BaseSeries from '../../Core/Series/Series.js';
 
 /**
@@ -48,15 +50,15 @@ declare global {
             public isValid(): boolean;
         }
 
-        interface CMFIndicatorOptions extends SMAIndicatorOptions {
+        interface CMFIndicatorOptions extends SMAIndicator.Options {
             params?: CMFIndicatorParamsOptions;
         }
 
-        interface CMFIndicatorParamsOptions extends SMAIndicatorParamsOptions {
+        interface CMFIndicatorParamsOptions extends SMAIndicator.ParamsOptions {
             volumeSeriesID?: string;
         }
 
-        class CMFIndicatorPoint extends SMAIndicatorPoint {
+        class CMFIndicatorPoint extends SMAIndicator.Point {
             public series: CMFIndicator;
         }
     }
@@ -169,7 +171,7 @@ BaseSeries.seriesType<typeof Highcharts.CMFIndicator>('cmf', 'sma',
             this: Highcharts.CMFIndicator,
             series: TLinkedSeries,
             params: Highcharts.CMFIndicatorParamsOptions
-        ): (Highcharts.IndicatorValuesObject<TLinkedSeries>|undefined) {
+        ): (IndicatorValuesObject<TLinkedSeries>|undefined) {
             if (!this.isValid()) {
                 return;
             }
@@ -196,7 +198,7 @@ BaseSeries.seriesType<typeof Highcharts.CMFIndicator>('cmf', 'sma',
             seriesYData: TLinkedSeries['yData'],
             volumeSeriesYData: Array<number>,
             period: number
-        ): Highcharts.IndicatorValuesObject<TLinkedSeries> {
+        ): IndicatorValuesObject<TLinkedSeries> {
             var len: number = (seriesYData as any).length,
                 moneyFlowVolume: Array<(number|null)> = [],
                 sumVolume = 0,
@@ -300,7 +302,7 @@ BaseSeries.seriesType<typeof Highcharts.CMFIndicator>('cmf', 'sma',
                 values: values,
                 xData: moneyFlowXData,
                 yData: moneyFlowYData
-            } as Highcharts.IndicatorValuesObject<TLinkedSeries>;
+            } as IndicatorValuesObject<TLinkedSeries>;
         }
     });
 

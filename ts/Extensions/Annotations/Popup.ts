@@ -15,6 +15,7 @@ import type Chart from '../../Core/Chart/Chart';
 import type { HTMLDOMElement } from '../../Core/Renderer/DOMElementType';
 import type LineSeries from '../../Series/Line/LineSeries';
 import type { SeriesTypePlotOptions } from '../../Core/Series/SeriesType';
+import type SMAIndicator from '../../Stock/Indicators/SMAIndicator';
 import H from '../../Core/Globals.js';
 import NavigationBindings from './NavigationBindings.js';
 import Pointer from '../../Core/Pointer.js';
@@ -867,7 +868,7 @@ H.Popup.prototype = {
          * @return {Object} - series name and type like: sma, ema, etc.
          */
         getNameType: function (
-            series: Highcharts.SMAIndicator,
+            series: SMAIndicator,
             type: string
         ): Highcharts.Dictionary<string> {
             var options = series.options,
@@ -983,7 +984,7 @@ H.Popup.prototype = {
         addFormFields: function (
             this: Highcharts.Popup,
             chart: Highcharts.AnnotationChart,
-            series: Highcharts.SMAIndicator,
+            series: SMAIndicator,
             seriesType: string,
             rhsColWrapper: HTMLDOMElement
         ): void {

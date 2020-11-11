@@ -8,7 +8,9 @@
 
 'use strict';
 
+import type IndicatorValuesObject from './IndicatorValuesObject';
 import type LineSeries from '../../Series/Line/LineSeries';
+import type SMAIndicator from './SMAIndicator';
 import BaseSeries from '../../Core/Series/Series.js';
 import U from '../../Core/Utilities.js';
 const { isArray } = U;
@@ -32,15 +34,15 @@ declare global {
         }
 
         interface MomentumIndicatorParamsOptions
-            extends SMAIndicatorParamsOptions {
+            extends SMAIndicator.ParamsOptions {
             // for inheritance
         }
 
-        class MomentumIndicatorPoint extends SMAIndicatorPoint {
+        class MomentumIndicatorPoint extends SMAIndicator.Point {
             public series: MomentumIndicator;
         }
 
-        interface MomentumIndicatorOptions extends SMAIndicatorOptions {
+        interface MomentumIndicatorOptions extends SMAIndicator.Options {
             params?: MomentumIndicatorParamsOptions;
         }
     }
@@ -111,7 +113,7 @@ BaseSeries.seriesType<typeof Highcharts.MomentumIndicator>(
         getValues: function<TLinkedSeries extends LineSeries> (
             series: TLinkedSeries,
             params: Highcharts.MomentumIndicatorParamsOptions
-        ): (Highcharts.IndicatorValuesObject<TLinkedSeries>|undefined) {
+        ): (IndicatorValuesObject<TLinkedSeries>|undefined) {
             var period: number = (params.period as any),
                 xVal: Array<number> = (series.xData as any),
                 yVal: Array<Array<number>> = (series.yData as any),
@@ -163,7 +165,7 @@ BaseSeries.seriesType<typeof Highcharts.MomentumIndicator>(
                 values: MM,
                 xData: xData,
                 yData: yData
-            } as Highcharts.IndicatorValuesObject<TLinkedSeries>;
+            } as IndicatorValuesObject<TLinkedSeries>;
         }
     }
 );

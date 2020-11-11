@@ -9,8 +9,10 @@
 'use strict';
 
 import type CSSObject from '../../Core/Renderer/CSSObject';
+import type IndicatorValuesObject from './IndicatorValuesObject';
 import type LineSeries from '../../Series/Line/LineSeries';
 import type { PointMarkerOptions } from '../../Core/Series/PointOptions';
+import type SMAIndicator from './SMAIndicator';
 import BaseSeries from '../../Core/Series/Series.js';
 const {
     seriesTypes
@@ -49,7 +51,7 @@ declare global {
         }
 
         interface KeltnerChannelsIndicatorOptions
-            extends SMAIndicatorOptions, MultipleLinesIndicatorOptions {
+            extends SMAIndicator.Options, MultipleLinesIndicatorOptions {
             bottomLine?: Record<string, CSSObject>;
             marker?: PointMarkerOptions;
             params?: KeltnerChannelsIndicatorParamsOptions;
@@ -58,7 +60,7 @@ declare global {
         }
 
         interface KeltnerChannelsIndicatorParamsOptions
-            extends SMAIndicatorParamsOptions {
+            extends SMAIndicator.ParamsOptions {
             periodATR?: number;
             multiplierATR?: number;
         }
@@ -67,7 +69,7 @@ declare global {
             yData: Array<Array<number>>;
         }
 
-        class KeltnerChannelsIndicatorPoint extends SMAIndicatorPoint {
+        class KeltnerChannelsIndicatorPoint extends SMAIndicator.Point {
             public series: KeltnerChannelsIndicator;
         }
     }
@@ -202,7 +204,7 @@ BaseSeries.seriesType<typeof Highcharts.KeltnerChannelsIndicator>(
         getValues: function<TLinkedSeries extends LineSeries> (
             series: TLinkedSeries,
             params: Highcharts.KeltnerChannelsIndicatorParamsOptions
-        ): (Highcharts.IndicatorValuesObject<TLinkedSeries>|undefined) {
+        ): (IndicatorValuesObject<TLinkedSeries>|undefined) {
             var period = (params.period as any),
                 periodATR: number = (params.periodATR as any),
                 multiplierATR: number = (params.multiplierATR as any),
@@ -218,7 +220,7 @@ BaseSeries.seriesType<typeof Highcharts.KeltnerChannelsIndicator>(
                 BL: number,
                 date: number,
                 seriesEMA: (
-                    Highcharts.IndicatorValuesObject<TLinkedSeries>|
+                    IndicatorValuesObject<TLinkedSeries>|
                     undefined
                 ) = EMA.prototype.getValues(series,
                     {
@@ -226,7 +228,7 @@ BaseSeries.seriesType<typeof Highcharts.KeltnerChannelsIndicator>(
                         index: index
                     }),
                 seriesATR: (
-                    Highcharts.IndicatorValuesObject<TLinkedSeries>|undefined
+                    IndicatorValuesObject<TLinkedSeries>|undefined
                 ) =
                     ATR.prototype.getValues(series,
                         {
@@ -258,7 +260,7 @@ BaseSeries.seriesType<typeof Highcharts.KeltnerChannelsIndicator>(
                 values: KC,
                 xData: xData,
                 yData: yData
-            } as Highcharts.IndicatorValuesObject<TLinkedSeries>;
+            } as IndicatorValuesObject<TLinkedSeries>;
         }
     })
 );

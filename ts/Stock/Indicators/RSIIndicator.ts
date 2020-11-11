@@ -8,7 +8,9 @@
 
 'use strict';
 
+import type IndicatorValuesObject from './IndicatorValuesObject';
 import type LineSeries from '../../Series/Line/LineSeries';
+import type SMAIndicator from './SMAIndicator';
 import BaseSeries from '../../Core/Series/Series.js';
 import U from '../../Core/Utilities.js';
 const {
@@ -32,15 +34,15 @@ declare global {
             public points: Array<RSIIndicatorPoint>;
         }
 
-        interface RSIIndicatorParamsOptions extends SMAIndicatorParamsOptions {
+        interface RSIIndicatorParamsOptions extends SMAIndicator.ParamsOptions {
             decimals?: number;
         }
 
-        class RSIIndicatorPoint extends SMAIndicatorPoint {
+        class RSIIndicatorPoint extends SMAIndicator.Point {
             public series: RSIIndicator;
         }
 
-        interface RSIIndicatorOptions extends SMAIndicatorOptions {
+        interface RSIIndicatorOptions extends SMAIndicator.Options {
             params?: RSIIndicatorParamsOptions;
         }
     }
@@ -108,7 +110,7 @@ BaseSeries.seriesType<typeof Highcharts.RSIIndicator>(
         getValues: function<TLinkedSeries extends LineSeries> (
             series: TLinkedSeries,
             params: Highcharts.RSIIndicatorParamsOptions
-        ): (Highcharts.IndicatorValuesObject<TLinkedSeries>|undefined) {
+        ): (IndicatorValuesObject<TLinkedSeries>|undefined) {
             var period = (params.period as any),
                 xVal: Array<number> = (series.xData as any),
                 yVal: Array<Array<number>> = (series.yData as any),
@@ -201,7 +203,7 @@ BaseSeries.seriesType<typeof Highcharts.RSIIndicator>(
                 values: RSI,
                 xData: xData,
                 yData: yData
-            } as Highcharts.IndicatorValuesObject<TLinkedSeries>;
+            } as IndicatorValuesObject<TLinkedSeries>;
         }
     }
 );

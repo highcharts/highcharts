@@ -9,7 +9,9 @@
 'use strict';
 
 import type CSSObject from '../../Core/Renderer/CSSObject';
+import type IndicatorValuesObject from './IndicatorValuesObject';
 import type LineSeries from '../../Series/Line/LineSeries';
+import type SMAIndicator from './SMAIndicator';
 import BaseSeries from '../../Core/Series/Series.js';
 import MultipleLinesMixin from '../../Mixins/MultipleLines.js';
 import U from '../../Core/Utilities.js';
@@ -24,8 +26,7 @@ const {
  */
 declare global {
     namespace Highcharts {
-        class ABandsIndicator
-            extends SMAIndicator implements MultipleLinesIndicator {
+        class ABandsIndicator extends SMAIndicator implements MultipleLinesIndicator {
             public data: Array<ABandsIndicatorPoint>;
             public getTranslatedLinesNames: MultipleLinesMixin[
                 'getTranslatedLinesNames'
@@ -40,7 +41,7 @@ declare global {
             ): (IndicatorValuesObject<TLinkedSeries>|undefined);
         }
 
-        interface ABandsIndicatorOptions extends SMAIndicatorOptions,
+        interface ABandsIndicatorOptions extends SMAIndicator.Options,
             MultipleLinesIndicatorOptions {
             bottomLine?: Record<string, CSSObject>;
             lineWidth?: number;
@@ -49,11 +50,11 @@ declare global {
         }
 
         interface ABandsIndicatorParamsOptions
-            extends SMAIndicatorParamsOptions {
+            extends SMAIndicator.ParamsOptions {
             factor?: number;
         }
 
-        class ABandsIndicatorPoint extends SMAIndicatorPoint {
+        class ABandsIndicatorPoint extends SMAIndicator.Point {
             public series: ABandsIndicator;
         }
     }
@@ -173,7 +174,7 @@ BaseSeries.seriesType<typeof Highcharts.ABandsIndicator>(
             this: Highcharts.ABandsIndicator,
             series: TLinkedSeries,
             params: Highcharts.ABandsIndicatorParamsOptions
-        ): (Highcharts.IndicatorValuesObject<TLinkedSeries>|undefined) {
+        ): (IndicatorValuesObject<TLinkedSeries>|undefined) {
             var period: number = (params.period as any),
                 factor: number = (params.factor as any),
                 index: number = (params.index as any),
@@ -193,9 +194,9 @@ BaseSeries.seriesType<typeof Highcharts.ABandsIndicator>(
                 BL: number,
                 date: number,
                 bandBase: (number|undefined),
-                pointSMA: Highcharts.IndicatorValuesObject<TLinkedSeries>,
-                ubSMA: Highcharts.IndicatorValuesObject<TLinkedSeries>,
-                lbSMA: Highcharts.IndicatorValuesObject<TLinkedSeries>,
+                pointSMA: IndicatorValuesObject<TLinkedSeries>,
+                ubSMA: IndicatorValuesObject<TLinkedSeries>,
+                lbSMA: IndicatorValuesObject<TLinkedSeries>,
                 low = 2,
                 high = 1,
                 xData: Array<number> = [],
@@ -230,20 +231,20 @@ BaseSeries.seriesType<typeof Highcharts.ABandsIndicator>(
                         yData: UB.slice(i - period, i)
                     } as any), {
                         period: period
-                    }) as Highcharts.IndicatorValuesObject<TLinkedSeries>;
+                    }) as IndicatorValuesObject<TLinkedSeries>;
                     lbSMA = SMA.prototype.getValues.call(this, ({
                         xData: slicedX,
                         yData: LB.slice(i - period, i)
                     } as any), {
                         period: period
-                    }) as Highcharts.IndicatorValuesObject<TLinkedSeries>;
+                    }) as IndicatorValuesObject<TLinkedSeries>;
                     pointSMA = (SMA.prototype.getValues.call(this, ({
                         xData: slicedX,
                         yData: slicedY
                     } as any), {
                         period: period,
                         index: index
-                    }) as Highcharts.IndicatorValuesObject<TLinkedSeries>);
+                    }) as IndicatorValuesObject<TLinkedSeries>);
                     date = pointSMA.xData[0];
                     TL = (ubSMA.yData[0] as any);
                     BL = (lbSMA.yData[0] as any);
@@ -258,7 +259,7 @@ BaseSeries.seriesType<typeof Highcharts.ABandsIndicator>(
                 values: ABANDS,
                 xData: xData,
                 yData: yData
-            } as Highcharts.IndicatorValuesObject<TLinkedSeries>;
+            } as IndicatorValuesObject<TLinkedSeries>;
         }
     })
 );

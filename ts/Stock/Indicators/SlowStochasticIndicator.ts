@@ -8,6 +8,7 @@
 
 'use strict';
 
+import type IndicatorValuesObject from './IndicatorValuesObject';
 import type LineSeries from '../../Series/Line/LineSeries';
 import BaseSeries from '../../Core/Series/Series.js';
 const { seriesTypes } = BaseSeries;
@@ -113,7 +114,7 @@ BaseSeries.seriesType<typeof Highcharts.SlowStochasticIndicator>(
             this: Highcharts.SlowStochasticIndicator,
             series: TLinkedSeries,
             params: Highcharts.SlowStochasticIndicatorParamsOptions
-        ): (Highcharts.IndicatorValuesObject<TLinkedSeries>|undefined) {
+        ): (IndicatorValuesObject<TLinkedSeries>|undefined) {
             const periods: Array<number> = (params.periods as any),
                 fastValues = seriesTypes.stochastic.prototype.getValues.call(
                     this,
@@ -137,7 +138,7 @@ BaseSeries.seriesType<typeof Highcharts.SlowStochasticIndicator>(
 
             // Get SMA(%D)
             const smoothedValues: (
-                undefined|Highcharts.IndicatorValuesObject<LineSeries>
+                undefined|IndicatorValuesObject<LineSeries>
             ) = seriesTypes.sma.prototype.getValues.call(
                 this,
                 ({
@@ -172,7 +173,7 @@ BaseSeries.seriesType<typeof Highcharts.SlowStochasticIndicator>(
             }
 
             return slowValues as
-                Highcharts.IndicatorValuesObject<TLinkedSeries>;
+                IndicatorValuesObject<TLinkedSeries>;
         }
     }
 );

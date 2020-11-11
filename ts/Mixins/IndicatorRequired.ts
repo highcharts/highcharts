@@ -10,6 +10,14 @@
 
 'use strict';
 
+/* *
+ *
+ *  Imports
+ *
+ * */
+
+import type SMAIndicator from '../Stock/Indicators/SMAIndicator';
+
 /**
  * Internal types
  * @private

@@ -8,7 +8,9 @@
 
 'use strict';
 
+import type IndicatorValuesObject from './IndicatorValuesObject';
 import type LineSeries from '../../Series/Line/LineSeries';
+import type SMAIndicator from './SMAIndicator';
 import BaseSeries from '../../Core/Series/Series.js';
 import U from '../../Core/Utilities.js';
 const {
@@ -34,15 +36,15 @@ declare global {
             ): (IndicatorValuesObject<TLinkedSeries>|undefined);
         }
 
-        interface DPOIndicatorOptions extends SMAIndicatorOptions {
+        interface DPOIndicatorOptions extends SMAIndicator.Options {
             params?: DPOIndicatorParamsOptions;
         }
 
-        interface DPOIndicatorParamsOptions extends SMAIndicatorParamsOptions {
+        interface DPOIndicatorParamsOptions extends SMAIndicator.ParamsOptions {
             // for inheritance
         }
 
-        class DPOIndicatorPoint extends SMAIndicatorPoint {
+        class DPOIndicatorPoint extends SMAIndicator.Point {
             public series: DPOIndicator;
         }
     }
@@ -130,7 +132,7 @@ BaseSeries.seriesType<typeof Highcharts.DPOIndicator>(
         getValues: function<TLinkedSeries extends LineSeries> (
             series: TLinkedSeries,
             params: Highcharts.DPOIndicatorParamsOptions
-        ): (Highcharts.IndicatorValuesObject<TLinkedSeries>|undefined) {
+        ): (IndicatorValuesObject<TLinkedSeries>|undefined) {
             var period: number = (params.period as any),
                 index: number = (params.index as any),
                 offset: number = Math.floor(period / 2 + 1),
@@ -187,7 +189,7 @@ BaseSeries.seriesType<typeof Highcharts.DPOIndicator>(
                 values: DPO,
                 xData: xData,
                 yData: yData
-            } as Highcharts.IndicatorValuesObject<TLinkedSeries>;
+            } as IndicatorValuesObject<TLinkedSeries>;
         }
     }
 );

@@ -9,7 +9,9 @@
 'use strict';
 
 import type Point from '../../Core/Series/Point';
+import type IndicatorValuesObject from './IndicatorValuesObject';
 import type LineSeries from '../../Series/Line/LineSeries';
+import type SMAIndicator from './SMAIndicator';
 import type SVGElement from '../../Core/Renderer/SVG/SVGElement';
 import type SVGPath from '../../Core/Renderer/SVG/SVGPath';
 import BaseSeries from '../../Core/Series/Series.js';
@@ -56,11 +58,11 @@ declare global {
         }
 
         interface PivotPointsIndicatorParamsOptions
-            extends SMAIndicatorParamsOptions {
+            extends SMAIndicator.ParamsOptions {
             algorithm?: string;
         }
 
-        class PivotPointsIndicatorPoint extends SMAIndicatorPoint {
+        class PivotPointsIndicatorPoint extends SMAIndicator.Point {
             public destroy(): void;
             public destroyElements(): void;
             public P: number;
@@ -68,7 +70,7 @@ declare global {
             public series: PivotPointsIndicator;
         }
 
-        interface PivotPointsIndicatorOptions extends SMAIndicatorOptions {
+        interface PivotPointsIndicatorOptions extends SMAIndicator.Options {
             params?: PivotPointsIndicatorParamsOptions;
         }
     }
@@ -324,7 +326,7 @@ BaseSeries.seriesType<typeof Highcharts.PivotPointsIndicator>(
             this: Highcharts.PivotPointsIndicator,
             series: TLinkedSeries,
             params: Highcharts.PivotPointsIndicatorParamsOptions
-        ): (Highcharts.IndicatorValuesObject<TLinkedSeries>|undefined) {
+        ): (IndicatorValuesObject<TLinkedSeries>|undefined) {
             var period: number = (params.period as any),
                 xVal: Array<number> = (series.xData as any),
                 yVal: Array<Array<number>> = (series.yData as any),
@@ -387,7 +389,7 @@ BaseSeries.seriesType<typeof Highcharts.PivotPointsIndicator>(
                 values: PP,
                 xData: xData,
                 yData: yData
-            } as Highcharts.IndicatorValuesObject<TLinkedSeries>;
+            } as IndicatorValuesObject<TLinkedSeries>;
         },
         getPivotAndHLC: function (
             values: Array<Array<number>>
