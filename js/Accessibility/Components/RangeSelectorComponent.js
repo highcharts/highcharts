@@ -15,7 +15,7 @@ import ChartUtilities from '../Utils/ChartUtilities.js';
 var unhideChartElementFromAT = ChartUtilities.unhideChartElementFromAT;
 import H from '../../Core/Globals.js';
 import HTMLUtilities from '../Utils/HTMLUtilities.js';
-var setElAttrs = HTMLUtilities.setElAttrs, setSVGElementTitle = HTMLUtilities.setSVGElementTitle;
+var setElAttrs = HTMLUtilities.setElAttrs;
 import KeyboardNavigationHandler from '../KeyboardNavigationHandler.js';
 import U from '../../Core/Utilities.js';
 var extend = U.extend;
@@ -86,10 +86,9 @@ extend(RangeSelectorComponent.prototype, /** @lends Highcharts.RangeSelectorComp
             return;
         }
         if ((_a = rangeSelector.buttons) === null || _a === void 0 ? void 0 : _a.length) {
-            rangeSelector.buttons.forEach(function (button, ix) {
-                var btnOptions = rangeSelector.buttonOptions[ix];
+            rangeSelector.buttons.forEach(function (button) {
                 unhideChartElementFromAT(chart, button.element);
-                component.setRangeButtonAttrs(button, btnOptions);
+                component.setRangeButtonAttrs(button);
             });
         }
         // Make sure input boxes are accessible and focusable
@@ -108,12 +107,11 @@ extend(RangeSelectorComponent.prototype, /** @lends Highcharts.RangeSelectorComp
      * @private
      * @param {Highcharts.SVGElement} button
      */
-    setRangeButtonAttrs: function (button, buttonOptions) {
+    setRangeButtonAttrs: function (button) {
         setElAttrs(button.element, {
             tabindex: -1,
             role: 'button'
         });
-        setSVGElementTitle(button.element, buttonOptions.title || null);
     },
     /**
      * @private

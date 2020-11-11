@@ -321,7 +321,9 @@ QUnit.test('textOverflow: ellipsis.', function (assert) {
             width: width + 'px'
         },
         text1 = ren.text('01234567', 0, 100).css(style).add(),
-        text2 = ren.text('012345678', 0, 120).css(style).add();
+        text2 = ren.text('012345678', 0, 120).css(style).add(),
+        getTextContent = text => text.element.getElementsByTagName('tspan')[0].textContent,
+        text1Content = getTextContent(text1);
 
     assert.strictEqual(
         text1.getBBox().width < width + 2,
@@ -330,13 +332,13 @@ QUnit.test('textOverflow: ellipsis.', function (assert) {
     );
 
     assert.strictEqual(
-        text1.element.childNodes[0].textContent.slice(-1),
+        text1Content.slice(-1),
         '\u2026',
         'Ellipsis was added to text node.'
     );
     assert.strictEqual(
-        text1.element.childNodes[0].textContent,
-        text2.element.childNodes[0].textContent,
+        text1Content,
+        getTextContent(text2),
         'Consistent result between different strings. #6258'
     );
     // TODO 0px does not work, because ellipsis and breaks are not applied
@@ -345,7 +347,7 @@ QUnit.test('textOverflow: ellipsis.', function (assert) {
     text1.destroy();
     text1 = ren.text('01234567', 0, 100).css(style).add();
     assert.strictEqual(
-        text1.element.childNodes[0].textContent,
+        getTextContent(text1),
         '',
         'Width was too small for ellipsis.'
     );
@@ -360,7 +362,7 @@ QUnit.test('textOverflow: ellipsis.', function (assert) {
         rotation: 90
     }).css(style).add();
     assert.strictEqual(
-        text1.element.childNodes[0].textContent.slice(-1),
+        getTextContent(text1).slice(-1),
         '\u2026',
         'Ellipsis was added to text node which has rotation.'
     );
