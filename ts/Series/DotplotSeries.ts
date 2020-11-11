@@ -28,17 +28,18 @@
 
 import type ColumnPoint from './Column/ColumnPoint';
 import type ColumnPointOptions from './Column/ColumnPointOptions';
-import type ColumnSeries from './Column/ColumnSeries';
 import type ColumnSeriesOptions from './Column/ColumnSeriesOptions';
 import type { SeriesStatesOptions } from '../Core/Series/SeriesOptions';
 import type SVGAttributes from '../Core/Renderer/SVG/SVGAttributes';
 import type SVGElement from '../Core/Renderer/SVG/SVGElement';
 import type SVGPath from '../Core/Renderer/SVG/SVGPath';
+import ColumnSeries from './Column/ColumnSeries.js';
 import BaseSeries from '../Core/Series/Series.js';
 import SVGRenderer from '../Core/Renderer/SVG/SVGRenderer.js';
 import U from '../Core/Utilities.js';
 const {
     extend,
+    merge,
     objectEach,
     pick
 } = U;
@@ -52,15 +53,6 @@ import './Column/ColumnSeries.js';
  * */
 
 /**
- * @private
- */
-declare module '../Core/Series/SeriesType' {
-    interface SeriesTypeRegistry {
-        dotplot: typeof Highcharts.DotplotSeries;
-    }
-}
-
-/**
  * Internal types.
  * @private
  */
@@ -71,14 +63,6 @@ declare global {
             public options: DotplotPointOptions;
             public pointAttr?: SVGAttributes;
             public series: DotplotSeries;
-        }
-        class DotplotSeries extends ColumnSeries {
-            public data: Array<DotplotPoint>;
-            public options: DotplotSeriesOptions;
-            public pointAttr?: SVGAttributes;
-            public pointClass: typeof DotplotPoint;
-            public points: Array<DotplotPoint>;
-            public drawPoints(): void;
         }
         interface DotplotPointOptions extends ColumnPointOptions {
         }
@@ -102,18 +86,50 @@ declare global {
  *
  * @augments Highcharts.Series
  */
-BaseSeries.seriesType<typeof Highcharts.DotplotSeries>('dotplot', 'column', {
-    itemPadding: 0.2,
-    marker: {
-        symbol: 'circle',
-        states: {
-            hover: {},
-            select: {}
+
+class DotplotSeries extends ColumnSeries {
+
+    /* *
+     *
+     * Static Properties
+     *
+     * */
+
+    public static defaultOptions: Highcharts.DotplotSeriesOptions = merge(ColumnSeries.defaultOptions, {
+        itemPadding: 0.2,
+        marker: {
+            symbol: 'circle',
+            states: {
+                hover: {},
+                select: {}
+            }
         }
-    }
-}, {
+    } as Highcharts.DotplotSeriesOptions);
+
+    /* *
+     *
+     * Properties
+     *
+     * */
+
+    public data: Array<Highcharts.DotplotPoint> = void 0 as any;
+
+    public options: Highcharts.DotplotSeriesOptions = void 0 as any;
+
+    public points: Array<Highcharts.DotplotPoint> = void 0 as any;
+
+}
+
+interface DotplotSeries extends ColumnSeries {
+    pointAttr?: SVGAttributes;
+    pointClass: typeof Highcharts.DotplotPoint;
+}
+
+extend(DotplotSeries.prototype, {
+
     markerAttribs: void 0,
-    drawPoints: function (this: Highcharts.DotplotSeries): void {
+
+    drawPoints: function (this: DotplotSeries): void {
         var series = this,
             renderer = series.chart.renderer,
             seriesMarkerOptions = this.options.marker,
@@ -214,7 +230,6 @@ BaseSeries.seriesType<typeof Highcharts.DotplotSeries>('dotplot', 'column', {
                 }
             });
         });
-
     }
 });
 
@@ -227,3 +242,25 @@ SVGRenderer.prototype.symbols.rect = function (
 ): SVGPath {
     return SVGRenderer.prototype.symbols.callout(x, y, w, h, options);
 };
+
+/* *
+ *
+ *  Registry
+ *
+ * */
+
+declare module '../Core/Series/SeriesType' {
+    interface SeriesTypeRegistry {
+        dotplot: typeof DotplotSeries;
+    }
+}
+
+BaseSeries.registerSeriesType('dotplot', DotplotSeries);
+
+/* *
+ *
+ * Default Export
+ *
+ * */
+
+export default DotplotSeries;
