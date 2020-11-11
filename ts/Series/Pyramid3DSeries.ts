@@ -13,12 +13,24 @@
 
 'use strict';
 
+/* *
+ *
+ *  Imports
+ *
+ * */
+
 import type Funnel3DPoint from './Funnel3D/Funnel3DPoint';
 import type Funnel3DPointOptions from './Funnel3D/Funnel3DPointOptions';
-import type Funnel3DSeries from './Funnel3D/Funnel3DSeries';
 import type Funnel3DSeriesOptions from './Funnel3D/Funnel3DSeriesOptions';
 import type { SeriesStatesOptions } from '../Core/Series/SeriesOptions';
 import BaseSeries from '../Core/Series/Series.js';
+const {
+    seriesTypes: {
+        funnel3d: Funnel3DSeries
+    }
+} = BaseSeries;
+import U from '../Core/Utilities.js';
+const { merge } = U;
 
 /**
  * Internal types
@@ -28,28 +40,13 @@ declare global {
     namespace Highcharts {
         class Pyramid3dPoint extends Funnel3DPoint {
             options: Pyramid3dPointOptions;
-            series: Pyramid3dSeries;
-        }
-        class Pyramid3dSeries extends Funnel3DSeries {
-            data: Array<Pyramid3dPoint>;
-            options: Pyramid3dSeriesOptions;
-            pointClass: typeof Pyramid3dPoint;
-            points: Array<Pyramid3dPoint>;
+            series: Pyramid3DSeries;
         }
         interface Pyramid3dPointOptions extends Funnel3DPointOptions {
         }
         interface Pyramid3dSeriesOptions extends Funnel3DSeriesOptions {
-            states?: SeriesStatesOptions<Pyramid3dSeries>;
+            states?: SeriesStatesOptions<Pyramid3DSeries>;
         }
-    }
-}
-
-/**
- * @private
- */
-declare module '../Core/Series/SeriesType' {
-    interface SeriesTypeRegistry {
-        pyramid3d: typeof Highcharts.Pyramid3dSeries;
     }
 }
 
@@ -66,7 +63,14 @@ import './Funnel3DSeries.js';
  * @requires modules/funnel3d
  * @requires modules/pyramid3d
  */
-BaseSeries.seriesType<typeof Highcharts.Pyramid3dSeries>('pyramid3d', 'funnel3d',
+class Pyramid3DSeries extends Funnel3DSeries {
+
+    /* *
+     *
+     *  Static Properties
+     *
+     * */
+
     /**
      * A pyramid3d is a 3d version of pyramid series type. Pyramid charts are
      * a type of chart often used to visualize stages in a sales project,
@@ -85,7 +89,7 @@ BaseSeries.seriesType<typeof Highcharts.Pyramid3dSeries>('pyramid3d', 'funnel3d'
      * @requires     modules/pyramid3d
      * @optionparent plotOptions.pyramid3d
      */
-    {
+    public static defaultOptions: Highcharts.Pyramid3dSeriesOptions = merge(Funnel3DSeries.defaultOptions, {
         /**
          * A reversed pyramid3d is funnel3d, but the latter supports neck
          * related options: neckHeight and neckWidth
@@ -99,8 +103,57 @@ BaseSeries.seriesType<typeof Highcharts.Pyramid3dSeries>('pyramid3d', 'funnel3d'
         dataLabels: {
             verticalAlign: 'top'
         }
+    } as Highcharts.Pyramid3dSeriesOptions);
+
+    /* *
+     *
+     *  Properties
+     *
+     * */
+
+    public data: Array<Highcharts.Pyramid3dPoint> = void 0 as any;
+
+    public options: Highcharts.Pyramid3dSeriesOptions = void 0 as any;
+
+    public points: Array<Highcharts.Pyramid3dPoint> = void 0 as any;
+}
+
+/* *
+ *
+ *  Prototype Properties
+ *
+ * */
+
+interface Pyramid3DSeries {
+    pointClass: typeof Highcharts.Pyramid3dPoint;
+}
+
+/* *
+ *
+ *  Registry
+ *
+ * */
+
+declare module '../Core/Series/SeriesType' {
+    interface SeriesTypeRegistry {
+        pyramid3d: typeof Pyramid3DSeries;
     }
-);
+}
+BaseSeries.registerSeriesType('pyramid3d', Pyramid3DSeries);
+
+/* *
+ *
+ *  Default Export
+ *
+ * */
+
+export default Pyramid3DSeries;
+
+/* *
+ *
+ *  API Options
+ *
+ * */
 
 /**
  * A `pyramid3d` series. If the [type](#series.pyramid3d.type) option is
