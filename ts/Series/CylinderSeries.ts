@@ -31,6 +31,7 @@ import type { SeriesStatesOptions } from '../Core/Series/SeriesOptions';
 import type SVGAttributes from '../Core/Renderer/SVG/SVGAttributes';
 import type SVGElement from '../Core/Renderer/SVG/SVGElement';
 import type SVGPath from '../Core/Renderer/SVG/SVGPath';
+import type SVGPath3D from '../Core/Renderer/SVG/SVGPath3D';
 import Color from '../Core/Color/Color.js';
 const { parse: color } = Color;
 import ColumnSeries from './Column/ColumnSeries.js';
@@ -87,7 +88,7 @@ declare global {
             pathType: string;
             fillSetter(fill: ColorType): SVGElement;
         }
-        interface CylinderPathsObject extends SVGPath3dObject {
+        interface CylinderPathsObject extends SVGPath3D {
             back: SVGPath;
             bottom: SVGPath;
             front: SVGPath;
