@@ -21,11 +21,11 @@ var __extends = (this && this.__extends) || (function () {
         d.prototype = b === null ? Object.create(b) : (__.prototype = b.prototype, new __());
     };
 })();
-import BaseSeries from '../Core/Series/Series.js';
-import ColumnSeries from './Column/ColumnSeries.js';
-import H from '../Core/Globals.js';
+import BaseSeries from '../../Core/Series/Series.js';
+import ColumnSeries from '../Column/ColumnSeries.js';
+import H from '../../Core/Globals.js';
 var noop = H.noop;
-import U from '../Core/Utilities.js';
+import U from '../../Core/Utilities.js';
 var extend = U.extend, merge = U.merge, pick = U.pick;
 /**
  * The boxplot series type.

@@ -13,7 +13,7 @@
 import type ColumnMetricsObject from '../Series/Column/ColumnMetricsObject';
 import type { SeriesStatesOptions } from '../Core/Series/SeriesOptions';
 import BaseSeries from '../Core/Series/Series.js';
-import BoxPlotSeries from '../Series/BoxPlotSeries.js';
+import BoxPlotSeries from './BoxPlot/BoxPlotSeries.js';
 import H from '../Core/Globals.js';
 
 /**
@@ -50,7 +50,7 @@ declare global {
 }
 
 import '../Core/Options.js';
-import './BoxPlotSeries.js';
+import './BoxPlot/BoxPlotSeries.js';
 
 var noop = H.noop,
     seriesTypes = BaseSeries.seriesTypes;
