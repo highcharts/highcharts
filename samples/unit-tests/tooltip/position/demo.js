@@ -178,3 +178,46 @@ QUnit.test('Wrong tooltip pos for column (#424)', function (assert) {
         'Tooltip position should be correct when bar chart xAxis has top and height set with numeric values (#12589).'
     );
 });
+
+QUnit.test('#14244: Tooltip position with multiple xAxis', assert => {
+    const chart = Highcharts.chart('container', {
+        xAxis: [{
+            width: '50%'
+        }, {
+            left: '50%',
+            width: '50%',
+            offset: 0
+        }],
+        plotOptions: {
+            series: {
+                grouping: false
+            }
+        },
+        series: [{
+            type: 'column',
+            xAxis: 0,
+            data: [{
+                y: 120000
+            }, {
+                y: 569000
+            }, {
+                y: 231000
+            }]
+        }, {
+            type: 'column',
+            xAxis: 1,
+            data: [{
+                y: 10000
+            }, {
+                y: 500000
+            }, {
+                y: 201000
+            }]
+        }]
+    });
+
+    const point = chart.series[1].points[0];
+    const axis = point.series.xAxis;
+
+    assert.ok(axis.left - chart.plotLeft < point.tooltipPos[0], 'Tooltip x position should be within correct xAxis');
+});

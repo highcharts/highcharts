@@ -338,7 +338,7 @@ var ColumnSeries = /** @class */ (function (_super) {
                     barH
                 ] :
                 [
-                    barX + barW / 2,
+                    xAxis.left - chart.plotLeft + barX + barW / 2,
                     clamp(plotY + yAxis.pos -
                         chart.plotTop, yAxis.pos - chart.plotTop, yAxis.len + yAxis.pos - chart.plotTop),
                     barH
