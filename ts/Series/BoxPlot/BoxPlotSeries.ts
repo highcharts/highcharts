@@ -16,14 +16,8 @@
  *
  * */
 
-import type ColorString from '../../Core/Color/ColorString';
-import type ColorType from '../../Core/Color/ColorType';
-import type ColumnPoint from '../Column/ColumnPoint';
-import type ColumnPointOptions from '../Column/ColumnPointOptions';
-import type ColumnSeriesOptions from '../Column/ColumnSeriesOptions';
-import type DashStyleValue from '../../Core/Renderer/DashStyleValue';
-import type GradientColor from '../../Core/Color/GradientColor';
-import type { SeriesStatesOptions } from '../../Core/Series/SeriesOptions';
+import type BoxPlotPoint from './BoxPlotPoint';
+import type BoxPlotSeriesOptions from './BoxPlotSeriesOptions';
 import type SVGAttributes from '../../Core/Renderer/SVG/SVGAttributes';
 import type SVGPath from '../../Core/Renderer/SVG/SVGPath';
 import BaseSeries from '../../Core/Series/Series.js';
@@ -36,74 +30,6 @@ const {
     merge,
     pick
 } = U;
-
-/* *
- *
- *  Declarations
- *
- * */
-
-/**
- * Internal types
- * @private
- */
-declare global {
-    namespace Highcharts {
-        class BoxPlotPoint extends ColumnPoint {
-            public box: SVGElement;
-            public boxDashStyle: DashStyleValue;
-            public fillColor: ColorType;
-            public high: number;
-            public highPlot: number;
-            public low: number;
-            public lowPlot: number;
-            public median: number;
-            public medianColor: (ColorString|GradientColor);
-            public medianDashStyle: DashStyleValue;
-            public medianPlot: number;
-            public medianShape: SVGElement;
-            public medianWidth: number;
-            public options: BoxPlotPointOptions;
-            public q1: number;
-            public q1Plot: number;
-            public q3: number;
-            public q3Plot: number;
-            public series: BoxPlotSeries;
-            public shapeArgs: SVGAttributes;
-            public stem: SVGElement;
-            public stemColor: ColorType;
-            public stemDashStyle: DashStyleValue;
-            public stemWidth: number;
-            public whiskerColor: ColorType;
-            public whiskerDashStyle: DashStyleValue;
-            public whiskers: SVGElement;
-            public whiskerLength: (number|string);
-            public whiskerWidth: number;
-        }
-        interface BoxPlotPointOptions extends ColumnPointOptions {
-            high?: BoxPlotPoint['high'];
-            low?: BoxPlotPoint['low'];
-            median?: BoxPlotPoint['median'];
-            q1?: BoxPlotPoint['q1'];
-            q3?: BoxPlotPoint['q3'];
-        }
-        interface BoxPlotSeriesOptions extends ColumnSeriesOptions {
-            boxDashStyle?: BoxPlotPoint['boxDashStyle'];
-            fillColor?: BoxPlotPoint['fillColor'];
-            medianColor?: BoxPlotPoint['medianColor'];
-            medianDashStyle?: BoxPlotPoint['medianDashStyle'];
-            medianWidth?: BoxPlotPoint['medianWidth'];
-            states?: SeriesStatesOptions<BoxPlotSeries>;
-            stemColor?: BoxPlotPoint['stemColor'];
-            stemDashStyle?: BoxPlotPoint['stemDashStyle'];
-            stemWidth?: BoxPlotPoint['stemWidth'];
-            whiskerColor?: BoxPlotPoint['whiskerColor'];
-            whiskerDashStyle?: BoxPlotPoint['whiskerDashStyle'];
-            whiskerLength?: BoxPlotPoint['whiskerLength'];
-            whiskerWidth?: BoxPlotPoint['whiskerWidth'];
-        }
-    }
-}
 
 /**
  * The boxplot series type.
@@ -146,7 +72,7 @@ class BoxPlotSeries extends ColumnSeries {
      * @optionparent plotOptions.boxplot
      */
 
-    public static defaultOptions: Highcharts.BoxPlotSeriesOptions = merge(ColumnSeries.defaultOptions, {
+    public static defaultOptions: BoxPlotSeriesOptions = merge(ColumnSeries.defaultOptions, {
 
         threshold: null as any,
 
@@ -407,11 +333,11 @@ class BoxPlotSeries extends ColumnSeries {
      * Properties
      *
      * */
-    public data: Array<Highcharts.BoxPlotPoint> = void 0 as any;
+    public data: Array<BoxPlotPoint> = void 0 as any;
 
-    public options: Highcharts.BoxPlotSeriesOptions = void 0 as any;
+    public options: BoxPlotSeriesOptions = void 0 as any;
 
-    public points: Array<Highcharts.BoxPlotPoint> = void 0 as any;
+    public points: Array<BoxPlotPoint> = void 0 as any;
 
 
     /* *
@@ -435,7 +361,7 @@ class BoxPlotSeries extends ColumnSeries {
         super.translate.apply(series);
 
         // do the translation on each point dimension
-        series.points.forEach(function (point: Highcharts.BoxPlotPoint): void {
+        series.points.forEach(function (point: BoxPlotPoint): void {
             pointArrayMap.forEach(function (key: string): void {
                 if ((point as any)[key] !== null) {
                     (point as any)[key + 'Plot'] = yAxis.translate(
@@ -480,7 +406,7 @@ class BoxPlotSeries extends ColumnSeries {
             pointWiskerLength,
             whiskerLength = series.options.whiskerLength;
 
-        points.forEach(function (point: Highcharts.BoxPlotPoint): void {
+        points.forEach(function (point: BoxPlotPoint): void {
 
             var graphic = point.graphic,
                 verb = graphic ? 'animate' : 'attr',
@@ -668,7 +594,7 @@ class BoxPlotSeries extends ColumnSeries {
     }
 
     // return a plain array for speedy calculation
-    public toYData(point: Highcharts.BoxPlotPoint): Array<number> {
+    public toYData(point: BoxPlotPoint): Array<number> {
         return [point.low, point.q1, point.median, point.q3, point.high];
     }
 
@@ -682,7 +608,7 @@ class BoxPlotSeries extends ColumnSeries {
 interface BoxPlotSeries extends ColumnSeries {
     doQuartiles?: boolean;
     pointArrayMap: Array<string>;
-    pointClass: typeof Highcharts.BoxPlotPoint;
+    pointClass: typeof BoxPlotPoint;
     pointValKey: string;
 }
 
