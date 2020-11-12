@@ -17,11 +17,25 @@
  *   Highcharts symbols.
  */
 'use strict';
-import BaseSeries from '../Core/Series/Series.js';
-import SVGRenderer from '../Core/Renderer/SVG/SVGRenderer.js';
-import U from '../Core/Utilities.js';
-var extend = U.extend, objectEach = U.objectEach, pick = U.pick;
-import './Column/ColumnSeries.js';
+var __extends = (this && this.__extends) || (function () {
+    var extendStatics = function (d, b) {
+        extendStatics = Object.setPrototypeOf ||
+            ({ __proto__: [] } instanceof Array && function (d, b) { d.__proto__ = b; }) ||
+            function (d, b) { for (var p in b) if (b.hasOwnProperty(p)) d[p] = b[p]; };
+        return extendStatics(d, b);
+    };
+    return function (d, b) {
+        extendStatics(d, b);
+        function __() { this.constructor = d; }
+        d.prototype = b === null ? Object.create(b) : (__.prototype = b.prototype, new __());
+    };
+})();
+import BaseSeries from '../../Core/Series/Series.js';
+import ColumnSeries from '../Column/ColumnSeries.js';
+import './DotPlotSymbols.js';
+import U from '../../Core/Utilities.js';
+var extend = U.extend, merge = U.merge, objectEach = U.objectEach, pick = U.pick;
+import '../Column/ColumnSeries.js';
 /* *
  *
  *  Class
@@ -34,18 +48,31 @@ import './Column/ColumnSeries.js';
  *
  * @augments Highcharts.Series
  */
-BaseSeries.seriesType('dotplot', 'column', {
-    itemPadding: 0.2,
-    marker: {
-        symbol: 'circle',
-        states: {
-            hover: {},
-            select: {}
-        }
+var DotPlotSeries = /** @class */ (function (_super) {
+    __extends(DotPlotSeries, _super);
+    function DotPlotSeries() {
+        /* *
+         *
+         * Static Properties
+         *
+         * */
+        var _this = _super !== null && _super.apply(this, arguments) || this;
+        /* *
+         *
+         * Properties
+         *
+         * */
+        _this.data = void 0;
+        _this.options = void 0;
+        _this.points = void 0;
+        return _this;
     }
-}, {
-    markerAttribs: void 0,
-    drawPoints: function () {
+    /* *
+     *
+     * Functions
+     *
+     * */
+    DotPlotSeries.prototype.drawPoints = function () {
         var series = this, renderer = series.chart.renderer, seriesMarkerOptions = this.options.marker, itemPaddingTranslated = this.yAxis.transA *
             series.options.itemPadding, borderWidth = this.borderWidth, crisp = borderWidth % 2 ? 0.5 : 1;
         this.points.forEach(function (point) {
@@ -107,8 +134,26 @@ BaseSeries.seriesType('dotplot', 'column', {
                 }
             });
         });
-    }
+    };
+    DotPlotSeries.defaultOptions = merge(ColumnSeries.defaultOptions, {
+        itemPadding: 0.2,
+        marker: {
+            symbol: 'circle',
+            states: {
+                hover: {},
+                select: {}
+            }
+        }
+    });
+    return DotPlotSeries;
+}(ColumnSeries));
+extend(DotPlotSeries.prototype, {
+    markerAttribs: void 0
 });
-SVGRenderer.prototype.symbols.rect = function (x, y, w, h, options) {
-    return SVGRenderer.prototype.symbols.callout(x, y, w, h, options);
-};
+BaseSeries.registerSeriesType('dotplot', DotPlotSeries);
+/* *
+ *
+ * Default Export
+ *
+ * */
+export default DotPlotSeries;

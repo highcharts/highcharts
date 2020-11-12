@@ -9,27 +9,32 @@
  *  !!!!!!! SOURCE GETS TRANSPILED BY TYPESCRIPT. EDIT TS FILE ONLY. !!!!!!!
  *
  * */
+'use strict';
 import A from '../../Animation/AnimationUtilities.js';
 var animObject = A.animObject;
 import Color from '../../Color/Color.js';
 var color = Color.parse;
 import H from '../../Globals.js';
+var charts = H.charts, deg2rad = H.deg2rad;
 import Math3D from '../../../Extensions/Math3D.js';
 var perspective = Math3D.perspective, shapeArea = Math3D.shapeArea;
 import SVGElement from './SVGElement.js';
+import SVGElement3D from './SVGElement3D.js';
 import SVGRenderer from './SVGRenderer.js';
 import U from '../../Utilities.js';
-var defined = U.defined, extend = U.extend, merge = U.merge, objectEach = U.objectEach, pick = U.pick;
-var cos = Math.cos, PI = Math.PI, sin = Math.sin;
-var charts = H.charts, deg2rad = H.deg2rad, 
-// internal:
-dFactor, element3dMethods, cuboidMethods;
-/*
-    EXTENSION TO THE SVG-RENDERER TO ENABLE 3D SHAPES
-*/
-// HELPER METHODS
-dFactor = (4 * (Math.sqrt(2) - 1) / 3) / (PI / 2);
-/* eslint-disable no-invalid-this, valid-jsdoc */
+var defined = U.defined, extend = U.extend, merge = U.merge, pick = U.pick;
+/* *
+ *
+ *  Constants
+ *
+ * */
+var cos = Math.cos, sin = Math.sin, PI = Math.PI, dFactor = (4 * (Math.sqrt(2) - 1) / 3) / (PI / 2);
+/* *
+ *
+ *  Functions
+ *
+ * */
+/* eslint-disable valid-jsdoc */
 /**
  * Method to construct a curved path. Can 'wrap' around more then 180 degrees.
  * @private
@@ -60,6 +65,12 @@ function curveTo(cx, cy, rx, ry, start, end, dx, dy) {
             cy + (ry * Math.sin(end)) + dy
         ]];
 }
+/* *
+ *
+ *  Composition
+ *
+ * */
+SVGRenderer.prototype.elements3d = SVGElement3D;
 SVGRenderer.prototype.toLinePath = function (points, closed) {
     var result = [];
     // Put "L x y" for each point
@@ -92,6 +103,7 @@ SVGRenderer.prototype.face3d = function (args) {
     ret.vertexes = [];
     ret.insidePlotArea = false;
     ret.enabled = true;
+    /* eslint-disable no-invalid-this */
     ret.attr = function (hash) {
         if (typeof hash === 'object' &&
             (defined(hash.enabled) ||
@@ -126,6 +138,7 @@ SVGRenderer.prototype.face3d = function (args) {
         }
         return SVGElement.prototype.animate.apply(this, arguments);
     };
+    /* eslint-enable no-invalid-this */
     return ret.attr(args);
 };
 // A Polyhedron is a handy way of defining a group of 3-D faces. It's only
@@ -139,6 +152,7 @@ SVGRenderer.prototype.polyhedron = function (args) {
         });
     }
     result.faces = [];
+    /* eslint-disable no-invalid-this */
     // destroy all children
     result.destroy = function () {
         for (var i = 0; i < result.faces.length; i++) {
@@ -179,142 +193,8 @@ SVGRenderer.prototype.polyhedron = function (args) {
         }
         return SVGElement.prototype.animate.apply(this, arguments);
     };
+    /* eslint-enable no-invalid-this */
     return result.attr(args);
-};
-// Base, abstract prototype member for 3D elements
-element3dMethods = {
-    /**
-     * The init is used by base - renderer.Element
-     * @private
-     */
-    initArgs: function (args) {
-        var elem3d = this, renderer = elem3d.renderer, paths = renderer[elem3d.pathType + 'Path'](args), zIndexes = paths.zIndexes;
-        // build parts
-        elem3d.parts.forEach(function (part) {
-            elem3d[part] = renderer.path(paths[part]).attr({
-                'class': 'highcharts-3d-' + part,
-                zIndex: zIndexes[part] || 0
-            }).add(elem3d);
-        });
-        elem3d.attr({
-            'stroke-linejoin': 'round',
-            zIndex: zIndexes.group
-        });
-        // store original destroy
-        elem3d.originalDestroy = elem3d.destroy;
-        elem3d.destroy = elem3d.destroyParts;
-        // Store information if any side of element was rendered by force.
-        elem3d.forcedSides = paths.forcedSides;
-    },
-    /**
-     * Single property setter that applies options to each part
-     * @private
-     */
-    singleSetterForParts: function (prop, val, values, verb, duration, complete) {
-        var elem3d = this, newAttr = {}, optionsToApply = [null, null, (verb || 'attr'), duration, complete], hasZIndexes = values && values.zIndexes;
-        if (!values) {
-            newAttr[prop] = val;
-            optionsToApply[0] = newAttr;
-        }
-        else {
-            // It is needed to deal with the whole group zIndexing
-            // in case of graph rotation
-            if (hasZIndexes && hasZIndexes.group) {
-                this.attr({
-                    zIndex: hasZIndexes.group
-                });
-            }
-            objectEach(values, function (partVal, part) {
-                newAttr[part] = {};
-                newAttr[part][prop] = partVal;
-                // include zIndexes if provided
-                if (hasZIndexes) {
-                    newAttr[part].zIndex = values.zIndexes[part] || 0;
-                }
-            });
-            optionsToApply[1] = newAttr;
-        }
-        return elem3d.processParts.apply(elem3d, optionsToApply);
-    },
-    /**
-     * Calls function for each part. Used for attr, animate and destroy.
-     * @private
-     */
-    processParts: function (props, partsProps, verb, duration, complete) {
-        var elem3d = this;
-        elem3d.parts.forEach(function (part) {
-            // if different props for different parts
-            if (partsProps) {
-                props = pick(partsProps[part], false);
-            }
-            // only if something to set, but allow undefined
-            if (props !== false) {
-                elem3d[part][verb](props, duration, complete);
-            }
-        });
-        return elem3d;
-    },
-    /**
-     * Destroy all parts
-     * @private
-     */
-    destroyParts: function () {
-        this.processParts(null, null, 'destroy');
-        return this.originalDestroy();
-    }
-};
-// CUBOID
-cuboidMethods = merge(element3dMethods, {
-    parts: ['front', 'top', 'side'],
-    pathType: 'cuboid',
-    attr: function (args, val, complete, continueAnimation) {
-        // Resolve setting attributes by string name
-        if (typeof args === 'string' && typeof val !== 'undefined') {
-            var key = args;
-            args = {};
-            args[key] = val;
-        }
-        if (args.shapeArgs || defined(args.x)) {
-            return this.singleSetterForParts('d', null, this.renderer[this.pathType + 'Path'](args.shapeArgs || args));
-        }
-        return SVGElement.prototype.attr.call(this, args, void 0, complete, continueAnimation);
-    },
-    animate: function (args, duration, complete) {
-        if (defined(args.x) && defined(args.y)) {
-            var paths = this.renderer[this.pathType + 'Path'](args), forcedSides = paths.forcedSides;
-            this.singleSetterForParts('d', null, paths, 'animate', duration, complete);
-            this.attr({
-                zIndex: paths.zIndexes.group
-            });
-            // If sides that are forced to render changed, recalculate colors.
-            if (forcedSides !== this.forcedSides) {
-                this.forcedSides = forcedSides;
-                cuboidMethods.fillSetter.call(this, this.fill);
-            }
-        }
-        else {
-            SVGElement.prototype.animate.call(this, args, duration, complete);
-        }
-        return this;
-    },
-    fillSetter: function (fill) {
-        var elem3d = this;
-        elem3d.forcedSides = elem3d.forcedSides || [];
-        elem3d.singleSetterForParts('fill', null, {
-            front: fill,
-            // Do not change color if side was forced to render.
-            top: color(fill).brighten(elem3d.forcedSides.indexOf('top') >= 0 ? 0 : 0.1).get(),
-            side: color(fill).brighten(elem3d.forcedSides.indexOf('side') >= 0 ? 0 : -0.1).get()
-        });
-        // fill for animation getter (#6776)
-        elem3d.color = elem3d.fill = fill;
-        return elem3d;
-    }
-});
-// set them up
-SVGRenderer.prototype.elements3d = {
-    base: element3dMethods,
-    cuboid: cuboidMethods
 };
 /**
  * return result, generalization
@@ -558,6 +438,7 @@ SVGRenderer.prototype.arc3d = function (attribs) {
     wrapper.side2 = renderer.path();
     wrapper.inn = renderer.path();
     wrapper.out = renderer.path();
+    /* eslint-disable no-invalid-this */
     // Add all faces
     wrapper.onAdd = function () {
         var parent = wrapper.parentGroup, className = wrapper.attr('class');
@@ -710,6 +591,7 @@ SVGRenderer.prototype.arc3d = function (attribs) {
         this.side1.show(inherit);
         this.side2.show(inherit);
     };
+    /* eslint-enable no-invalid-this */
     return wrapper;
 };
 // Generate the paths required to draw a 3D arc
@@ -881,4 +763,9 @@ SVGRenderer.prototype.arc3dPath = function (shapeArgs) {
         zSide2: a2 * 0.99
     };
 };
+/* *
+ *
+ *  Default Export
+ *
+ * */
 export default SVGRenderer;

@@ -21,11 +21,12 @@ var __extends = (this && this.__extends) || (function () {
         d.prototype = b === null ? Object.create(b) : (__.prototype = b.prototype, new __());
     };
 })();
-import BaseSeries from '../Core/Series/Series.js';
+import BaseSeries from '../../Core/Series/Series.js';
 var ColumnSeries = BaseSeries.seriesTypes.column;
-import U from '../Core/Utilities.js';
+import BulletPoint from './BulletPoint.js';
+import U from '../../Core/Utilities.js';
 var extend = U.extend, isNumber = U.isNumber, merge = U.merge, pick = U.pick, relativeLength = U.relativeLength;
-import './Column/ColumnSeries.js';
+import '../Column/ColumnSeries.js';
 /* *
  *
  *  Class
@@ -153,9 +154,9 @@ var BulletSeries = /** @class */ (function (_super) {
      */
     BulletSeries.prototype.getExtremes = function (yData) {
         var series = this, targetData = series.targetData, yMax, yMin;
-        var dataExtremes = _super.prototype.getExtremes.apply(this, arguments);
+        var dataExtremes = _super.prototype.getExtremes.call(this, yData);
         if (targetData && targetData.length) {
-            var targetExtremes = _super.prototype.getExtremes.apply(this, arguments);
+            var targetExtremes = _super.prototype.getExtremes.call(this, targetData);
             if (isNumber(targetExtremes.dataMin)) {
                 dataExtremes.dataMin = Math.min(pick(dataExtremes.dataMin, Infinity), targetExtremes.dataMin);
             }
@@ -250,39 +251,6 @@ extend(BulletSeries.prototype, {
     parallelArrays: ['x', 'y', 'target'],
     pointArrayMap: ['y', 'target']
 });
-/* *
- *
- *  Class
- *
- * */
-var BulletPoint = /** @class */ (function (_super) {
-    __extends(BulletPoint, _super);
-    function BulletPoint() {
-        var _this = _super !== null && _super.apply(this, arguments) || this;
-        _this.options = void 0;
-        _this.series = void 0;
-        return _this;
-        /* eslint-enable valid-jsdoc */
-    }
-    /* *
-     *
-     *  Functions
-     *
-     * */
-    /* eslint-disable valid-jsdoc */
-    /**
-     * Destroys target graphic.
-     * @private
-     */
-    BulletPoint.prototype.destroy = function () {
-        if (this.targetGraphic) {
-            this.targetGraphic = this.targetGraphic.destroy();
-        }
-        _super.prototype.destroy.apply(this, arguments);
-        return;
-    };
-    return BulletPoint;
-}(ColumnSeries.prototype.pointClass));
 BulletSeries.prototype.pointClass = BulletPoint;
 BaseSeries.registerSeriesType('bullet', BulletSeries);
 /* *

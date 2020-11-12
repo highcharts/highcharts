@@ -8,7 +8,14 @@
  *
  * */
 
-import type AlignObject from '../AlignObject';
+'use strict';
+
+/* *
+ *
+ *  Imports
+ *
+ * */
+
 import type AnimationOptionsObject from '../../Animation/AnimationOptionsObject';
 import type BBoxObject from '../BBoxObject';
 import type ColorString from '../../Color/ColorString';
@@ -69,6 +76,9 @@ declare global {
             children?: Array<SVGDefinitionObject>;
             tagName?: string;
             textContent?: string;
+        }
+        interface SVGRenderer extends SVGRendererLike {
+            // nothing here yet
         }
         interface SymbolFunction {
             (

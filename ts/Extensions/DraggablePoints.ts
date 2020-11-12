@@ -15,6 +15,7 @@
 import type AnimationOptionsObject from '../Core/Animation/AnimationOptionsObject';
 import type BBoxObject from '../Core/Renderer/BBoxObject';
 import type BoxPlotPoint from '../Series/BoxPlot/BoxPlotPoint';
+import type BulletPoint from '../Series/Bullet/BulletPoint';
 import type ColorString from '../Core/Color/ColorString';
 import type ColorType from '../Core/Color/ColorType';
 import type ColumnPoint from '../Series/Column/ColumnPoint';
@@ -615,7 +616,7 @@ if (seriesTypes.bullet) {
             resize: true,
             resizeSide: 'top',
             handlePositioner: function (
-                point: Highcharts.BulletPoint
+                point: BulletPoint
             ): PositionObject {
                 var bBox: BBoxObject =
                     (point.targetGraphic as any).getBBox();
