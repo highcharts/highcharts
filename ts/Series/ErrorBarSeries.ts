@@ -13,6 +13,7 @@
 import type ColumnMetricsObject from '../Series/Column/ColumnMetricsObject';
 import type { SeriesStatesOptions } from '../Core/Series/SeriesOptions';
 import BaseSeries from '../Core/Series/Series.js';
+import BoxPlotSeries from '../Series/BoxPlotSeries.js';
 import H from '../Core/Globals.js';
 
 /**

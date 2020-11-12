@@ -28,7 +28,6 @@ import type SVGAttributes from '../Core/Renderer/SVG/SVGAttributes';
 import type SVGPath from '../Core/Renderer/SVG/SVGPath';
 import BaseSeries from '../Core/Series/Series.js';
 import ColumnSeries from './Column/ColumnSeries.js';
-const { prototype: columnProto } = ColumnSeries;
 import H from '../Core/Globals.js';
 const { noop } = H;
 import U from '../Core/Utilities.js';
@@ -80,18 +79,6 @@ declare global {
             public whiskers: SVGElement;
             public whiskerLength: (number|string);
             public whiskerWidth: number;
-        }
-        class BoxPlotSeries extends ColumnSeries {
-            public data: Array<BoxPlotPoint>;
-            public doQuartiles?: boolean;
-            public options: BoxPlotSeriesOptions;
-            public pointArrayMap: Array<string>;
-            public pointClass: typeof BoxPlotPoint;
-            public points: Array<BoxPlotPoint>;
-            public pointValKey: string;
-            public drawPoints(): void;
-            public toYData(point: BoxPlotPoint): Array<number>;
-            public translate(): void;
         }
         interface BoxPlotPointOptions extends ColumnPointOptions {
             high?: BoxPlotPoint['high'];
@@ -421,52 +408,31 @@ class BoxPlotSeries extends ColumnSeries {
      *
      * */
     public data: Array<Highcharts.BoxPlotPoint> = void 0 as any;
+
     public options: Highcharts.BoxPlotSeriesOptions = void 0 as any;
+
     public points: Array<Highcharts.BoxPlotPoint> = void 0 as any;
 
-}
 
-/* *
- *
- * Prototype Properties
- *
- * */
-interface BoxPlotSeries extends ColumnSeries {
-    doQuartiles?: boolean;
-    pointArrayMap: Array<string>;
-    pointClass: typeof Highcharts.BoxPlotPoint;
-    pointValKey: string;
-}
-
-extend(BoxPlotSeries.prototype, {
-    // array point configs are mapped to this
-    pointArrayMap: ['low', 'q1', 'median', 'q3', 'high'],
-    // return a plain array for speedy calculation
-    toYData: function (point: Highcharts.BoxPlotPoint): Array<number> {
-        return [point.low, point.q1, point.median, point.q3, point.high];
-    },
-
-    // defines the top of the tracker
-    pointValKey: 'high',
+    /* *
+     *
+     * Functions
+     *
+     * */
 
     // Get presentational attributes
-    pointAttribs: function (
-        this: Highcharts.BoxPlotSeries
-    ): SVGAttributes {
+    public pointAttribs(): SVGAttributes {
         // No attributes should be set on point.graphic which is the group
         return {};
-    },
-
-    // Disable data labels for box plot
-    drawDataLabels: noop as any,
+    }
 
     // Translate data points from raw values x and y to plotX and plotY
-    translate: function (this: Highcharts.BoxPlotSeries): void {
+    public translate(): void {
         var series = this,
             yAxis = series.yAxis,
             pointArrayMap = series.pointArrayMap;
 
-        columnProto.translate.apply(series);
+        super.translate.apply(series);
 
         // do the translation on each point dimension
         series.points.forEach(function (point: Highcharts.BoxPlotPoint): void {
@@ -483,14 +449,14 @@ extend(BoxPlotSeries.prototype, {
             });
             point.plotHigh = point.highPlot; // For data label validation
         });
-    },
+    }
 
     // eslint-disable-next-line valid-jsdoc
     /**
      * Draw the data points
      * @private
      */
-    drawPoints: function (this: Highcharts.BoxPlotSeries): void {
+    public drawPoints(): void {
         var series = this,
             points = series.points,
             options = series.options,
@@ -699,7 +665,34 @@ extend(BoxPlotSeries.prototype, {
             }
         });
 
-    },
+    }
+
+    // return a plain array for speedy calculation
+    public toYData(point: Highcharts.BoxPlotPoint): Array<number> {
+        return [point.low, point.q1, point.median, point.q3, point.high];
+    }
+
+}
+
+/* *
+ *
+ * Prototype Properties
+ *
+ * */
+interface BoxPlotSeries extends ColumnSeries {
+    doQuartiles?: boolean;
+    pointArrayMap: Array<string>;
+    pointClass: typeof Highcharts.BoxPlotPoint;
+    pointValKey: string;
+}
+
+extend(BoxPlotSeries.prototype, {
+    // array point configs are mapped to this
+    pointArrayMap: ['low', 'q1', 'median', 'q3', 'high'],
+    // defines the top of the tracker
+    pointValKey: 'high',
+    // Disable data labels for box plot
+    drawDataLabels: noop as any,
     setStackedPoints: noop as any // #3890
 });
 
@@ -716,9 +709,16 @@ BaseSeries.registerSeriesType('boxplot', BoxPlotSeries);
  */
 declare module '../Core/Series/SeriesType' {
     interface SeriesTypeRegistry {
-        boxplot: typeof Highcharts.BoxPlotSeries;
+        boxplot: typeof BoxPlotSeries;
     }
 }
+
+/* *
+ *
+ * Default Export
+ *
+ * */
+export default BoxPlotSeries;
 
 /* *
  *

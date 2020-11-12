@@ -9,6 +9,7 @@
  * */
 'use strict';
 import BaseSeries from '../Core/Series/Series.js';
+import BoxPlotSeries from '../Series/BoxPlotSeries.js';
 import H from '../Core/Globals.js';
 import '../Core/Options.js';
 import './BoxPlotSeries.js';
