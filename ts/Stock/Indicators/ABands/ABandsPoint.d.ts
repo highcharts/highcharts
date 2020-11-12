@@ -12,7 +12,7 @@
  *
  * */
 
-import type ABandsIndicator from './ABIndicator';
+import type ABandsIndicator from './ABandsIndicator';
 import type SMAPoint from '../SMA/SMAPoint';
 
 /* *
