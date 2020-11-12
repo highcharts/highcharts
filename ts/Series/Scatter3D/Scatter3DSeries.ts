@@ -9,33 +9,44 @@
  *  !!!!!!! SOURCE GETS TRANSPILED BY TYPESCRIPT. EDIT TS FILE ONLY. !!!!!!!
  *
  * */
+
 'use strict';
-var __extends = (this && this.__extends) || (function () {
-    var extendStatics = function (d, b) {
-        extendStatics = Object.setPrototypeOf ||
-            ({ __proto__: [] } instanceof Array && function (d, b) { d.__proto__ = b; }) ||
-            function (d, b) { for (var p in b) if (b.hasOwnProperty(p)) d[p] = b[p]; };
-        return extendStatics(d, b);
-    };
-    return function (d, b) {
-        extendStatics(d, b);
-        function __() { this.constructor = d; }
-        d.prototype = b === null ? Object.create(b) : (__.prototype = b.prototype, new __());
-    };
-})();
-import BaseSeries from '../Core/Series/Series.js';
-import ScatterSeries from './Scatter/ScatterSeries.js';
-import Math3D from '../Extensions/Math3D.js';
-var pointCameraDistance = Math3D.pointCameraDistance;
-import Point from '../Core/Series/Point.js';
-import U from '../Core/Utilities.js';
-var extend = U.extend, merge = U.merge;
-import './Scatter/ScatterSeries.js';
+
+/* *
+ *
+ *  Imports
+ *
+ * */
+
+import type Scatter3DSeriesOptions from './Scatter3DSeriesOptions';
+import type SVGAttributes from '../../Core/Renderer/SVG/SVGAttributes';
+import BaseSeries from '../../Core/Series/Series.js';
+import Scatter3DPoint from './Scatter3DPoint.js';
+import ScatterSeries from '../Scatter/ScatterSeries.js';
+import Math3D from '../../Extensions/Math3D.js';
+const { pointCameraDistance } = Math3D;
+import Point from '../../Core/Series/Point.js';
+import U from '../../Core/Utilities.js';
+const {
+    extend,
+    merge
+} = U;
+
+/**
+ * Internal types
+ * @private
+ */
+declare global {
+    namespace Highcharts {
+    }
+}
+
 /* *
  *
  *  Class
  *
  * */
+
 /**
  * @private
  * @class
@@ -43,38 +54,14 @@ import './Scatter/ScatterSeries.js';
  *
  * @augments Highcharts.Series
  */
-var Scatter3DSeries = /** @class */ (function (_super) {
-    __extends(Scatter3DSeries, _super);
-    function Scatter3DSeries() {
-        /* *
-         *
-         *  Static Properties
-         *
-         * */
-        var _this = _super !== null && _super.apply(this, arguments) || this;
-        /* *
-         *
-         *  Properties
-         *
-         * */
-        _this.data = void 0;
-        _this.options = void 0;
-        _this.points = void 0;
-        return _this;
-    }
+class Scatter3DSeries extends ScatterSeries {
+
     /* *
      *
-     *  Functions
+     *  Static Properties
      *
      * */
-    Scatter3DSeries.prototype.pointAttribs = function (point) {
-        var attribs = _super.prototype.pointAttribs.apply(this, arguments);
-        if (this.chart.is3d() && point) {
-            attribs.zIndex =
-                pointCameraDistance(point, this.chart);
-        }
-        return attribs;
-    };
+
     /**
      * A 3D scatter plot uses x, y and z coordinates to display values for three
      * variables for a set of data.
@@ -90,67 +77,94 @@ var Scatter3DSeries = /** @class */ (function (_super) {
      * @requires     highcharts-3d
      * @optionparent plotOptions.scatter3d
      */
-    Scatter3DSeries.defaultOptions = merge(ScatterSeries.defaultOptions, {
+    public static defaultOptions: Scatter3DSeriesOptions = merge(ScatterSeries.defaultOptions, {
         tooltip: {
             pointFormat: 'x: <b>{point.x}</b><br/>y: <b>{point.y}</b><br/>z: <b>{point.z}</b><br/>'
         }
-    });
-    return Scatter3DSeries;
-}(ScatterSeries));
-extend(Scatter3DSeries.prototype, {
-    axisTypes: ['xAxis', 'yAxis', 'zAxis'],
-    // Require direct touch rather than using the k-d-tree, because the
-    // k-d-tree currently doesn't take the xyz coordinate system into
-    // account (#4552)
-    directTouch: true,
-    parallelArrays: ['x', 'y', 'z'],
-    pointArrayMap: ['x', 'y', 'z']
-});
-/* *
- *
- *  Class
- *
- * */
-var Scatter3DPoint = /** @class */ (function (_super) {
-    __extends(Scatter3DPoint, _super);
-    function Scatter3DPoint() {
-        /* *
-         *
-         *  Properties
-         *
-         * */
-        var _this = _super !== null && _super.apply(this, arguments) || this;
-        _this.options = void 0;
-        _this.series = void 0;
-        return _this;
-    }
+    } as Scatter3DSeriesOptions);
+
+    /* *
+     *
+     *  Properties
+     *
+     * */
+
+    public data: Array<Scatter3DPoint> = void 0 as any;
+
+    public options: Scatter3DSeriesOptions = void 0 as any;
+
+    public points: Array<Scatter3DPoint> = void 0 as any;
+
     /* *
      *
      *  Functions
      *
      * */
-    Scatter3DPoint.prototype.applyOptions = function () {
-        Point.prototype.applyOptions.apply(this, arguments);
-        if (typeof this.z === 'undefined') {
-            this.z = 0;
+
+    public pointAttribs(point: Scatter3DPoint): SVGAttributes {
+        var attribs = super.pointAttribs.apply(this, arguments);
+
+        if (this.chart.is3d() && point) {
+            attribs.zIndex =
+                pointCameraDistance(point as any, this.chart);
         }
-        return this;
-    };
-    return Scatter3DPoint;
-}(ScatterSeries.prototype.pointClass));
-Scatter3DSeries.prototype.pointClass = Scatter3DPoint;
+
+        return attribs;
+    }
+}
+
+/* *
+ *
+ *  Prototype Properties
+ *
+ * */
+
+interface Scatter3DSeries {
+    pointClass: typeof Scatter3DPoint;
+}
+extend(Scatter3DSeries.prototype, {
+    axisTypes: ['xAxis', 'yAxis', 'zAxis'],
+
+    // Require direct touch rather than using the k-d-tree, because the
+    // k-d-tree currently doesn't take the xyz coordinate system into
+    // account (#4552)
+    directTouch: true,
+
+    parallelArrays: ['x', 'y', 'z'],
+
+    pointArrayMap: ['x', 'y', 'z'],
+
+    pointClass: Scatter3DPoint
+
+});
+
+/* *
+ *
+ *  Registry
+ *
+ * */
+
+declare module '../../Core/Series/SeriesType' {
+    interface SeriesTypeRegistry {
+        scatter3d: typeof Scatter3DSeries;
+    }
+}
 BaseSeries.registerSeriesType('scatter3d', Scatter3DSeries);
+
 /* *
  *
  *  Default Export
  *
  * */
+
 export default Scatter3DSeries;
+
 /* *
  *
  *  API Options
  *
  * */
+
 /**
  * A `scatter3d` series. If the [type](#series.scatter3d.type) option is
  * not specified, it is inherited from [chart.type](#chart.type).
@@ -163,6 +177,7 @@ export default Scatter3DSeries;
  * @requires  highcharts-3d
  * @apioption series.scatter3d
  */
+
 /**
  * An array of data points for the series. For the `scatter3d` series
  * type, points can be given in the following ways:
@@ -217,6 +232,7 @@ export default Scatter3DSeries;
  * @product   highcharts
  * @apioption series.scatter3d.data
  */
+
 /**
  * The z value for each data point.
  *
@@ -224,4 +240,5 @@ export default Scatter3DSeries;
  * @product   highcharts
  * @apioption series.scatter3d.data.z
  */
+
 ''; // adds doclets above to transpiled file
