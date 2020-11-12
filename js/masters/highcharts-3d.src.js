@@ -15,6 +15,6 @@ import '../Core/Axis/ZAxis.js';
 import '../Core/Axis/Axis3D.js';
 import '../Core/Axis/Tick3D.js';
 import '../Core/Series/Series3D.js';
-import '../Series/Column3DSeries.js';
+import '../Series/Column3D/Column3DComposition.js';
 import '../Series/Pie3D/Pie3DComposition.js';
 import '../Series/Scatter3DSeries.js';
