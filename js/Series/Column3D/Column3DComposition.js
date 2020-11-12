@@ -8,55 +8,22 @@
  *
  * */
 'use strict';
-import BaseSeries from '../Core/Series/Series.js';
-import ColumnSeries from './Column/ColumnSeries.js';
+import BaseSeries from '../../Core/Series/Series.js';
+import ColumnSeries from '../Column/ColumnSeries.js';
 var columnProto = ColumnSeries.prototype;
-import H from '../Core/Globals.js';
+import H from '../../Core/Globals.js';
 var svg = H.svg;
-import LineSeries from '../Series/Line/LineSeries.js';
-import Math3D from '../Extensions/Math3D.js';
+import LineSeries from '../../Series/Line/LineSeries.js';
+import Math3D from '../../Extensions/Math3D.js';
 var perspective = Math3D.perspective;
-import StackItem from '../Extensions/Stacking.js';
-import U from '../Core/Utilities.js';
+import StackItem from '../../Extensions/Stacking.js';
+import U from '../../Core/Utilities.js';
 var addEvent = U.addEvent, pick = U.pick, wrap = U.wrap;
-/**
- * Depth of the columns in a 3D column chart.
+/* *
  *
- * @type      {number}
- * @default   25
- * @since     4.0
- * @product   highcharts
- * @requires  highcharts-3d
- * @apioption plotOptions.column.depth
- */
-/**
- * 3D columns only. The color of the edges. Similar to `borderColor`, except it
- * defaults to the same color as the column.
+ *  Functions
  *
- * @type      {Highcharts.ColorString}
- * @product   highcharts
- * @requires  highcharts-3d
- * @apioption plotOptions.column.edgeColor
- */
-/**
- * 3D columns only. The width of the colored edges.
- *
- * @type      {number}
- * @default   1
- * @product   highcharts
- * @requires  highcharts-3d
- * @apioption plotOptions.column.edgeWidth
- */
-/**
- * The spacing between columns on the Z Axis in a 3D chart.
- *
- * @type      {number}
- * @default   1
- * @since     4.0
- * @product   highcharts
- * @requires  highcharts-3d
- * @apioption plotOptions.column.groupZPadding
- */
+ * */
 /* eslint-disable no-invalid-this */
 /**
  * @private
@@ -434,3 +401,108 @@ wrap(StackItem.prototype, 'getStackBox', function (proceed, chart, stackItem, x,
     }
     return stackBox;
 });
+/*
+    @merge v6.2
+    @todo
+    EXTENSION FOR 3D CYLINDRICAL COLUMNS
+    Not supported
+*/
+/*
+var defaultOptions = H.getOptions();
+defaultOptions.plotOptions.cylinder =
+    merge(defaultOptions.plotOptions.column);
+var CylinderSeries = extendClass(seriesTypes.column, {
+    type: 'cylinder'
+});
+seriesTypes.cylinder = CylinderSeries;
+
+wrap(seriesTypes.cylinder.prototype, 'translate', function (proceed) {
+    proceed.apply(this, [].slice.call(arguments, 1));
+
+    // Do not do this if the chart is not 3D
+    if (!this.chart.is3d()) {
+        return;
+    }
+
+    var series = this,
+        chart = series.chart,
+        options = chart.options,
+        cylOptions = options.plotOptions.cylinder,
+        options3d = options.chart.options3d,
+        depth = cylOptions.depth || 0,
+        alpha = chart.alpha3d;
+
+    var z = cylOptions.stacking ?
+        (this.options.stack || 0) * depth :
+        series._i * depth;
+    z += depth / 2;
+
+    if (cylOptions.grouping !== false) { z = 0; }
+
+    each(series.data, function (point) {
+        var shapeArgs = point.shapeArgs,
+            deg2rad = H.deg2rad;
+        point.shapeType = 'arc3d';
+        shapeArgs.x += depth / 2;
+        shapeArgs.z = z;
+        shapeArgs.start = 0;
+        shapeArgs.end = 2 * PI;
+        shapeArgs.r = depth * 0.95;
+        shapeArgs.innerR = 0;
+        shapeArgs.depth =
+            shapeArgs.height * (1 / sin((90 - alpha) * deg2rad)) - z;
+        shapeArgs.alpha = 90 - alpha;
+        shapeArgs.beta = 0;
+    });
+});
+*/
+/* *
+ *
+ *  Default Export
+ *
+ * */
+export default ColumnSeries;
+/* *
+ *
+ *  API Options
+ *
+ * */
+/**
+ * Depth of the columns in a 3D column chart.
+ *
+ * @type      {number}
+ * @default   25
+ * @since     4.0
+ * @product   highcharts
+ * @requires  highcharts-3d
+ * @apioption plotOptions.column.depth
+ */
+/**
+ * 3D columns only. The color of the edges. Similar to `borderColor`, except it
+ * defaults to the same color as the column.
+ *
+ * @type      {Highcharts.ColorString}
+ * @product   highcharts
+ * @requires  highcharts-3d
+ * @apioption plotOptions.column.edgeColor
+ */
+/**
+ * 3D columns only. The width of the colored edges.
+ *
+ * @type      {number}
+ * @default   1
+ * @product   highcharts
+ * @requires  highcharts-3d
+ * @apioption plotOptions.column.edgeWidth
+ */
+/**
+ * The spacing between columns on the Z Axis in a 3D chart.
+ *
+ * @type      {number}
+ * @default   1
+ * @since     4.0
+ * @product   highcharts
+ * @requires  highcharts-3d
+ * @apioption plotOptions.column.groupZPadding
+ */
+''; // keeps doclets above in transpiled file
