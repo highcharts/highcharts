@@ -305,12 +305,12 @@ class BulletSeries extends ColumnSeries {
             yMax,
             yMin;
 
-        const dataExtremes = super.getExtremes.apply(this, arguments);
+        const dataExtremes = super.getExtremes.call(this, yData);
 
         if (targetData && targetData.length) {
-            const targetExtremes = super.getExtremes.apply(
+            const targetExtremes = super.getExtremes.call(
                 this,
-                arguments
+                targetData
             );
             if (isNumber(targetExtremes.dataMin)) {
                 dataExtremes.dataMin = Math.min(
