@@ -9,51 +9,32 @@
  *  !!!!!!! SOURCE GETS TRANSPILED BY TYPESCRIPT. EDIT TS FILE ONLY. !!!!!!!
  *
  * */
-
 'use strict';
-
-/* *
- *
- *  Imports
- *
- * */
-
-import type ScatterPointOptions from './Scatter/ScatterPointOptions';
-import type ScatterSeriesOptions from './Scatter/ScatterSeriesOptions';
-import type SVGAttributes from '../Core/Renderer/SVG/SVGAttributes';
-import BaseSeries from '../Core/Series/Series.js';
-import ScatterSeries from './Scatter/ScatterSeries.js';
-import Math3D from '../Extensions/Math3D.js';
-const { pointCameraDistance } = Math3D;
-import Point from '../Core/Series/Point.js';
-import U from '../Core/Utilities.js';
-const {
-    extend,
-    merge
-} = U;
-
-import './Scatter/ScatterSeries.js';
-
-/**
- * Internal types
- * @private
- */
-declare global {
-    namespace Highcharts {
-        interface Scatter3dPointOptions extends ScatterPointOptions {
-            z?: number;
-        }
-        interface Scatter3dSeriesOptions extends ScatterSeriesOptions {
-        }
-    }
-}
-
+var __extends = (this && this.__extends) || (function () {
+    var extendStatics = function (d, b) {
+        extendStatics = Object.setPrototypeOf ||
+            ({ __proto__: [] } instanceof Array && function (d, b) { d.__proto__ = b; }) ||
+            function (d, b) { for (var p in b) if (b.hasOwnProperty(p)) d[p] = b[p]; };
+        return extendStatics(d, b);
+    };
+    return function (d, b) {
+        extendStatics(d, b);
+        function __() { this.constructor = d; }
+        d.prototype = b === null ? Object.create(b) : (__.prototype = b.prototype, new __());
+    };
+})();
+import BaseSeries from '../../Core/Series/Series.js';
+import Scatter3DPoint from './Scatter3DPoint.js';
+import ScatterSeries from '../Scatter/ScatterSeries.js';
+import Math3D from '../../Extensions/Math3D.js';
+var pointCameraDistance = Math3D.pointCameraDistance;
+import U from '../../Core/Utilities.js';
+var extend = U.extend, merge = U.merge;
 /* *
  *
  *  Class
  *
  * */
-
 /**
  * @private
  * @class
@@ -61,14 +42,38 @@ declare global {
  *
  * @augments Highcharts.Series
  */
-class Scatter3DSeries extends ScatterSeries {
-
+var Scatter3DSeries = /** @class */ (function (_super) {
+    __extends(Scatter3DSeries, _super);
+    function Scatter3DSeries() {
+        /* *
+         *
+         *  Static Properties
+         *
+         * */
+        var _this = _super !== null && _super.apply(this, arguments) || this;
+        /* *
+         *
+         *  Properties
+         *
+         * */
+        _this.data = void 0;
+        _this.options = void 0;
+        _this.points = void 0;
+        return _this;
+    }
     /* *
      *
-     *  Static Properties
+     *  Functions
      *
      * */
-
+    Scatter3DSeries.prototype.pointAttribs = function (point) {
+        var attribs = _super.prototype.pointAttribs.apply(this, arguments);
+        if (this.chart.is3d() && point) {
+            attribs.zIndex =
+                pointCameraDistance(point, this.chart);
+        }
+        return attribs;
+    };
     /**
      * A 3D scatter plot uses x, y and z coordinates to display values for three
      * variables for a set of data.
@@ -84,128 +89,35 @@ class Scatter3DSeries extends ScatterSeries {
      * @requires     highcharts-3d
      * @optionparent plotOptions.scatter3d
      */
-    public static defaultOptions: Highcharts.Scatter3dSeriesOptions = merge(ScatterSeries.defaultOptions, {
+    Scatter3DSeries.defaultOptions = merge(ScatterSeries.defaultOptions, {
         tooltip: {
             pointFormat: 'x: <b>{point.x}</b><br/>y: <b>{point.y}</b><br/>z: <b>{point.z}</b><br/>'
         }
     });
-
-    /* *
-     *
-     *  Properties
-     *
-     * */
-
-    public data: Array<Scatter3DPoint> = void 0 as any;
-
-    public options: Highcharts.Scatter3dSeriesOptions = void 0 as any;
-
-    public points: Array<Scatter3DPoint> = void 0 as any;
-
-    /* *
-     *
-     *  Functions
-     *
-     * */
-
-    public pointAttribs(point: Scatter3DPoint): SVGAttributes {
-        var attribs = super.pointAttribs.apply(this, arguments);
-
-        if (this.chart.is3d() && point) {
-            attribs.zIndex =
-                pointCameraDistance(point as any, this.chart);
-        }
-
-        return attribs;
-    }
-}
-
-/* *
- *
- *  Prototype Properties
- *
- * */
-
-interface Scatter3DSeries {
-    pointClass: typeof Scatter3DPoint;
-}
+    return Scatter3DSeries;
+}(ScatterSeries));
 extend(Scatter3DSeries.prototype, {
     axisTypes: ['xAxis', 'yAxis', 'zAxis'],
-
     // Require direct touch rather than using the k-d-tree, because the
     // k-d-tree currently doesn't take the xyz coordinate system into
     // account (#4552)
     directTouch: true,
-
     parallelArrays: ['x', 'y', 'z'],
-
-    pointArrayMap: ['x', 'y', 'z']
-
+    pointArrayMap: ['x', 'y', 'z'],
+    pointClass: Scatter3DPoint
 });
-
-/* *
- *
- *  Class
- *
- * */
-
-class Scatter3DPoint extends ScatterSeries.prototype.pointClass {
-
-    /* *
-     *
-     *  Properties
-     *
-     * */
-
-    public options: Highcharts.Scatter3dPointOptions = void 0 as any;
-
-    public series: Scatter3DSeries = void 0 as any;
-
-    /* *
-     *
-     *  Functions
-     *
-     * */
-
-    public applyOptions(): this {
-        Point.prototype.applyOptions.apply(this, arguments as any);
-        if (typeof this.z === 'undefined') {
-            this.z = 0;
-        }
-
-        return this;
-    }
-
-}
-Scatter3DSeries.prototype.pointClass = Scatter3DPoint;
-
-/* *
- *
- *  Registry
- *
- * */
-
-declare module '../Core/Series/SeriesType' {
-    interface SeriesTypeRegistry {
-        scatter3d: typeof Scatter3DSeries;
-    }
-}
 BaseSeries.registerSeriesType('scatter3d', Scatter3DSeries);
-
 /* *
  *
  *  Default Export
  *
  * */
-
 export default Scatter3DSeries;
-
 /* *
  *
  *  API Options
  *
  * */
-
 /**
  * A `scatter3d` series. If the [type](#series.scatter3d.type) option is
  * not specified, it is inherited from [chart.type](#chart.type).
@@ -218,7 +130,6 @@ export default Scatter3DSeries;
  * @requires  highcharts-3d
  * @apioption series.scatter3d
  */
-
 /**
  * An array of data points for the series. For the `scatter3d` series
  * type, points can be given in the following ways:
@@ -273,7 +184,6 @@ export default Scatter3DSeries;
  * @product   highcharts
  * @apioption series.scatter3d.data
  */
-
 /**
  * The z value for each data point.
  *
@@ -281,5 +191,4 @@ export default Scatter3DSeries;
  * @product   highcharts
  * @apioption series.scatter3d.data.z
  */
-
 ''; // adds doclets above to transpiled file
