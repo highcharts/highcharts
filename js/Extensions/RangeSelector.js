@@ -883,7 +883,7 @@ var RangeSelector = /** @class */ (function () {
      * @function Highcharts.RangeSelector#defaultInputDateParser
      */
     RangeSelector.prototype.defaultInputDateParser = function (inputDate, useUTC, time) {
-        var input = inputDate.split(' ').join('T');
+        var input = inputDate.split('/').join('-').split(' ').join('T');
         if (input.indexOf('T') === -1) {
             input += 'T00:00';
         }
