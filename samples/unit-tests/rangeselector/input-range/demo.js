@@ -1,4 +1,4 @@
-QUnit.test('RangeSelector inputs setting not affecting each other.', function (assert) {
+QUnit.test('RangeSelector inputs setting not affecting each other.', assert => {
     var data = [],
         dayFactor = 1000 * 3600 * 24,
         startDate = Date.UTC(2000, 0, 1);
@@ -19,43 +19,63 @@ QUnit.test('RangeSelector inputs setting not affecting each other.', function (a
     chart.rangeSelector.maxInput.value = '2000-02-16';
     chart.rangeSelector.maxInput.onkeypress({ keyCode: 13 });
 
-    assert.strictEqual(chart.xAxis[0].min, Date.UTC(2000, 0, 16), 'xAxis minumum remains correct');
+    assert.strictEqual(
+        chart.xAxis[0].min,
+        Date.UTC(2000, 0, 16),
+        'xAxis minumum remains correct'
+    );
 });
 
-QUnit.test('RangeSelector input: Re-setting same date after setting extremes in other fashion.', function (assert) {
-    var data = [],
-        dayFactor = 1000 * 3600 * 24,
-        startDate = Date.UTC(2000, 0, 1);
+QUnit.test(
+    'RangeSelector input: Re-setting same ' +
+    'date after setting extremes in other fashion.',
+    assert => {
+        var data = [],
+            dayFactor = 1000 * 3600 * 24,
+            startDate = Date.UTC(2000, 0, 1);
 
-    for (var i = 0; i < 60; ++i) {
-        data.push([startDate + i * dayFactor, i]);
+        for (var i = 0; i < 60; ++i) {
+            data.push([startDate + i * dayFactor, i]);
+        }
+
+        var chart = Highcharts.stockChart('container', {
+            series: [{
+                data: data
+            }]
+        });
+
+        chart.rangeSelector.minInput.value = '2000-01-16';
+        chart.rangeSelector.minInput.onkeypress({ keyCode: 13 });
+
+        chart.rangeSelector.maxInput.value = '2000-02-16';
+        chart.rangeSelector.maxInput.onkeypress({ keyCode: 13 });
+
+        assert.strictEqual(
+            chart.xAxis[0].max,
+            Date.UTC(2000, 1, 16),
+            'xAxis maximum correct'
+        );
+
+        chart.xAxis[0].setExtremes(startDate, startDate + dayFactor * 5);
+
+        assert.strictEqual(
+            chart.xAxis[0].min,
+            Date.UTC(2000, 0, 1),
+            'xAxis minimum correct'
+        );
+
+        chart.rangeSelector.maxInput.value = '2000-02-16';
+        chart.rangeSelector.maxInput.onkeypress({ keyCode: 13 });
+
+        assert.strictEqual(
+            chart.xAxis[0].max,
+            Date.UTC(2000, 1, 16),
+            'xAxis maximum correct'
+        );
     }
+);
 
-    var chart = Highcharts.stockChart('container', {
-        series: [{
-            data: data
-        }]
-    });
-
-    chart.rangeSelector.minInput.value = '2000-01-16';
-    chart.rangeSelector.minInput.onkeypress({ keyCode: 13 });
-
-    chart.rangeSelector.maxInput.value = '2000-02-16';
-    chart.rangeSelector.maxInput.onkeypress({ keyCode: 13 });
-
-    assert.strictEqual(chart.xAxis[0].max, Date.UTC(2000, 1, 16), 'xAxis maximum correct');
-
-    chart.xAxis[0].setExtremes(startDate, startDate + dayFactor * 5);
-
-    assert.strictEqual(chart.xAxis[0].min, Date.UTC(2000, 0, 1), 'xAxis minimum correct');
-
-    chart.rangeSelector.maxInput.value = '2000-02-16';
-    chart.rangeSelector.maxInput.onkeypress({ keyCode: 13 });
-
-    assert.strictEqual(chart.xAxis[0].max, Date.UTC(2000, 1, 16), 'xAxis maximum correct');
-});
-
-QUnit.test('#6537 - 1M button should select range 28.02-31.03', function (assert) {
+QUnit.test('#6537 - 1M button should select range 28.02-31.03', assert => {
 
     var chart = Highcharts.stockChart('container', {
         rangeSelector: {
@@ -166,12 +186,13 @@ QUnit.test('Input focus of previously hidden chart (#5231)', function (assert) {
     });
     $('#container').show();
     assert.strictEqual(
-        !!$('#container').highcharts().renderTo.getElementsByTagName('input').length,
+        !!$('#container').highcharts()
+            .renderTo.getElementsByTagName('input').length,
         true,
         'Chart has input fields'
     );
 });
-QUnit.test('Focusable inputs after setting chart\'s zIndex (#8899)', function (assert) {
+QUnit.test('Focusable inputs after setting chart\'s zIndex (#8899)', assert => {
     var chart = Highcharts.StockChart({
             chart: {
                 renderTo: 'container'
@@ -199,7 +220,10 @@ QUnit.test('Focusable inputs after setting chart\'s zIndex (#8899)', function (a
         );
 
     } else {
-        assert.ok(true, 'Focused correct elements only runs on select browsers');
+        assert.ok(
+            true,
+            'Focused correct elements only runs on select browsers'
+        );
     }
 });
 
@@ -241,7 +265,10 @@ QUnit.test('Check input format', function (assert) {
             tickPixelInterval: 120
         },
         series: [{
-            data: [1, 4, 2, 5, 3, 6, 4, 4, 6, 6, 5, 5, 5, 6, 6, 5, 5, 4, 3, 3, 3, 4, 5, 5, 6, 6],
+            data: [
+                1, 4, 2, 5, 3, 6, 4, 4, 6, 6, 5, 5, 5,
+                6, 6, 5, 5, 4, 3, 3, 3, 4, 5, 5, 6, 6
+            ],
             tooltip: {
                 valueDecimals: 2
             }
@@ -334,12 +361,12 @@ QUnit.test('Set extremes on inputs blur (#4710)', function (assert) {
     );
 });
 
-QUnit.test('#13205: Timezone issues', assert => {
+QUnit.test('#13205, #14544: Timezone issues', assert => {
     const chart = Highcharts.stockChart('container', {
         rangeSelector: {
-            inputDateFormat: '%Y-%m-%d %H:%M:%S.%L',
+            inputDateFormat: '%Y/%m/%d %H:%M:%S.%L',
             inputBoxWidth: 170,
-            inputEditDateFormat: '%Y-%m-%d %H:%M:%S.%L'
+            inputEditDateFormat: '%Y/%m/%d %H:%M:%S.%L'
         },
         xAxis: {
             tickPixelInterval: 120
@@ -391,40 +418,54 @@ QUnit.test('#13205: Timezone issues', assert => {
 
     const min = chart.xAxis[0].min;
 
-    chart.rangeSelector.minInput.value = '2019-12-23 00:00:00.000';
+    chart.rangeSelector.minInput.value = '2019/12/23 00:00:00.000';
     chart.rangeSelector.minInput.onchange();
-    assert.strictEqual(chart.rangeSelector.minInput.value, '2019-12-23 00:00:00.000', 'The input value should not change');
+    assert.strictEqual(
+        chart.rangeSelector.minInput.value,
+        '2019/12/23 00:00:00.000',
+        'The input value should not change'
+    );
 
     assert.ok(chart.xAxis[0].min > min, 'Extremes should have been updated');
 });
 
-QUnit.test('#14416: Range selector ignored chart.time.timezoneOffset', assert => {
-    const chart = Highcharts.stockChart('container', {
-        time: {
-            timezoneOffset: 420
-        },
-        xAxis: {
-            minRange: 3600 * 1000 // one hour
-        },
-        series: [
-            {
-                pointInterval: 24 * 3600 * 1000,
-                data: [1, 3, 2, 4, 3, 5, 4, 6, 3, 4, 2, 3, 1, 2, 1]
+QUnit.test('#14416: Range selector ignored chart.time.timezoneOffset',
+    assert => {
+        const chart = Highcharts.stockChart('container', {
+            time: {
+                timezoneOffset: 420
+            },
+            xAxis: {
+                minRange: 3600 * 1000 // one hour
+            },
+            series: [
+                {
+                    pointInterval: 24 * 3600 * 1000,
+                    data: [1, 3, 2, 4, 3, 5, 4, 6, 3, 4, 2, 3, 1, 2, 1]
+                }
+            ]
+        });
+
+        chart.rangeSelector.minInput.value = '1970-01-10';
+        chart.rangeSelector.minInput.onchange();
+        assert.strictEqual(
+            chart.rangeSelector.minInput.value,
+            '1970-01-10',
+            'The input value should not change'
+        );
+
+        chart.update({
+            time: {
+                useUTC: false
             }
-        ]
-    });
+        });
 
-    chart.rangeSelector.minInput.value = '1970-01-10';
-    chart.rangeSelector.minInput.onchange();
-    assert.strictEqual(chart.rangeSelector.minInput.value, '1970-01-10', 'The input value should not change');
-
-    chart.update({
-        time: {
-            useUTC: false
-        }
-    });
-
-    chart.rangeSelector.minInput.value = '1970-01-10';
-    chart.rangeSelector.minInput.onchange();
-    assert.strictEqual(chart.rangeSelector.minInput.value, '1970-01-10', 'The input value should not change');
-});
+        chart.rangeSelector.minInput.value = '1970-01-10';
+        chart.rangeSelector.minInput.onchange();
+        assert.strictEqual(
+            chart.rangeSelector.minInput.value,
+            '1970-01-10',
+            'The input value should not change'
+        );
+    }
+);

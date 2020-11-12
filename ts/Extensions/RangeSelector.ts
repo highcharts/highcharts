@@ -1270,7 +1270,7 @@ class RangeSelector {
      * @function Highcharts.RangeSelector#defaultInputDateParser
      */
     public defaultInputDateParser(inputDate: string, useUTC: boolean, time?: Highcharts.Time): number {
-        let input = inputDate.split(' ').join('T');
+        let input = inputDate.split('/').join('-').split(' ').join('T');
         if (input.indexOf('T') === -1) {
             input += 'T00:00';
         }
