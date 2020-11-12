@@ -18,13 +18,9 @@
 
 import type MapBubbleSeriesOptions from './MapBubbleSeriesOptions';
 import BaseSeries from '../../Core/Series/Series.js';
-const {
-    seriesTypes: {
-        bubble: BubbleSeries,
-        map: MapSeries
-    }
-} = BaseSeries;
-import MapBubblePoint from './MapBubblePoint';
+import BubbleSeries from '../Bubble/BubbleSeries.js';
+import MapBubblePoint from './MapBubblePoint.js';
+import MapSeries from '../Map/MapSeries.js';
 import U from '../../Core/Utilities.js';
 const {
     extend,
@@ -217,7 +213,6 @@ class MapBubbleSeries extends BubbleSeries {
 interface MapBubbleSeries {
     type: string;
     getBox: typeof MapSeries.prototype['getBox'];
-    getMapData: unknown; // @todo
     pointArrayMap: Array<string>;
     pointClass: typeof MapBubblePoint;
     setData: typeof MapSeries.prototype['setData'];
@@ -228,9 +223,6 @@ extend(MapBubbleSeries.prototype, {
     type: 'mapbubble',
 
     getBox: MapSeries.prototype.getBox,
-
-    // Return the map area identified by the dataJoinBy option
-    getMapData: (MapSeries.prototype as any).getMapData, // @todo
 
     // If one single value is passed, it is interpreted as z
     pointArrayMap: ['z'],
