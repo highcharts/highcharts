@@ -2732,7 +2732,7 @@ class SVGElement {
      */
     public titleSetter(value: string): void {
         const el = this.element;
-        const titleNode = el.getElementsByTagNameNS(this.SVG_NS, 'title')[0] ||
+        const titleNode = el.getElementsByTagName('title')[0] ||
             doc.createElementNS(this.SVG_NS, 'title');
 
         // Move to first child

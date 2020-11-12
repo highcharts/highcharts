@@ -1953,7 +1953,7 @@ var SVGElement = /** @class */ (function () {
      */
     SVGElement.prototype.titleSetter = function (value) {
         var el = this.element;
-        var titleNode = el.getElementsByTagNameNS(this.SVG_NS, 'title')[0] ||
+        var titleNode = el.getElementsByTagName('title')[0] ||
             doc.createElementNS(this.SVG_NS, 'title');
         // Move to first child
         if (el.insertBefore) {
