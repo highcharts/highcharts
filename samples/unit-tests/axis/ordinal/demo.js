@@ -29,7 +29,8 @@ QUnit.test('Ordinal general tests.', function (assert) {
 
     assert.ok(
         tickPositions[0] >= chart.xAxis[0].min,
-        'First tick should be greater than axis min when ordinal is enabled (#12716).'
+        'First tick should be greater than axis min when ' +
+        'ordinal is enabled (#12716).'
     );
 
     chart.update({
@@ -47,42 +48,47 @@ QUnit.test('Ordinal general tests.', function (assert) {
 
     assert.ok(
         tickPositions[tickPositions.length - 1] <= chart.xAxis[0].max,
-        'Last tick should be smaller than axis max when ordinal is enabled (#12716).'
+        'Last tick should be smaller than axis max when ' +
+        'ordinal is enabled (#12716).'
     );
 });
 
-QUnit.test('#1011 - Artifacts in top left corner when usign ordinal axis and ignoreHiddenSeries.', function (assert) {
-    var chart = new Highcharts.StockChart({
-            chart: {
-                renderTo: 'container',
-                ignoreHiddenSeries: false
-            },
-            rangeSelector: {
-                selected: 1
-            },
-            legend: {
-                enabled: true
-            },
-            series: [{
-                data: usdeur
-            }, {
-                data: usdeur
-            }]
-        }),
-        initialTicks = chart.xAxis[0].tickPositions.slice(),
-        hiddenTicks;
+QUnit.test(
+    '#1011 - Artifacts in top left corner when usign ' +
+    'ordinal axis and ignoreHiddenSeries.',
+    function (assert) {
+        var chart = new Highcharts.StockChart({
+                chart: {
+                    renderTo: 'container',
+                    ignoreHiddenSeries: false
+                },
+                rangeSelector: {
+                    selected: 1
+                },
+                legend: {
+                    enabled: true
+                },
+                series: [{
+                    data: usdeur
+                }, {
+                    data: usdeur
+                }]
+            }),
+            initialTicks = chart.xAxis[0].tickPositions.slice(),
+            hiddenTicks;
 
-    chart.series[0].hide();
-    chart.series[1].hide();
+        chart.series[0].hide();
+        chart.series[1].hide();
 
-    hiddenTicks = chart.xAxis[0].tickPositions;
+        hiddenTicks = chart.xAxis[0].tickPositions;
 
-    assert.deepEqual(
-        initialTicks,
-        hiddenTicks,
-        'The same tick positions.'
-    );
-});
+        assert.deepEqual(
+            initialTicks,
+            hiddenTicks,
+            'The same tick positions.'
+        );
+    }
+);
 
 
 QUnit.test(
