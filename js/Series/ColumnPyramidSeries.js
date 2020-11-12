@@ -8,11 +8,24 @@
  *
  * */
 'use strict';
+var __extends = (this && this.__extends) || (function () {
+    var extendStatics = function (d, b) {
+        extendStatics = Object.setPrototypeOf ||
+            ({ __proto__: [] } instanceof Array && function (d, b) { d.__proto__ = b; }) ||
+            function (d, b) { for (var p in b) if (b.hasOwnProperty(p)) d[p] = b[p]; };
+        return extendStatics(d, b);
+    };
+    return function (d, b) {
+        extendStatics(d, b);
+        function __() { this.constructor = d; }
+        d.prototype = b === null ? Object.create(b) : (__.prototype = b.prototype, new __());
+    };
+})();
 import BaseSeries from '../Core/Series/Series.js';
 import ColumnSeries from './Column/ColumnSeries.js';
 var colProto = ColumnSeries.prototype;
 import U from '../Core/Utilities.js';
-var clamp = U.clamp, pick = U.pick;
+var clamp = U.clamp, extend = U.extend, merge = U.merge, pick = U.pick;
 /**
  * The ColumnPyramidSeries class
  *
@@ -22,31 +35,52 @@ var clamp = U.clamp, pick = U.pick;
  *
  * @augments Highcharts.Series
  */
-BaseSeries.seriesType('columnpyramid', 'column', 
-/**
- * Column pyramid series display one pyramid per value along an X axis.
- * To display horizontal pyramids, set [chart.inverted](#chart.inverted) to
- * `true`.
- *
- * @sample {highcharts|highstock} highcharts/demo/column-pyramid/
- *         Column pyramid
- * @sample {highcharts|highstock} highcharts/plotoptions/columnpyramid-stacked/
- *         Column pyramid stacked
- * @sample {highcharts|highstock} highcharts/plotoptions/columnpyramid-inverted/
- *         Column pyramid inverted
- *
- * @extends      plotOptions.column
- * @since        7.0.0
- * @product      highcharts highstock
- * @excluding    boostThreshold, borderRadius, crisp, depth, edgeColor,
- *               edgeWidth, groupZPadding, negativeColor, softThreshold,
- *               threshold, zoneAxis, zones, boostBlending
- * @requires     highcharts-more
- * @optionparent plotOptions.columnpyramid
- */
-{
-// no additions
-}, {
+var ColumnPyramidSeries = /** @class */ (function (_super) {
+    __extends(ColumnPyramidSeries, _super);
+    function ColumnPyramidSeries() {
+        /* *
+         *
+         * Static properties
+         *
+         * */
+        var _this = _super !== null && _super.apply(this, arguments) || this;
+        /* *
+         *
+         * Properties
+         *
+         * */
+        _this.data = void 0;
+        _this.options = void 0;
+        _this.points = void 0;
+        return _this;
+    }
+    /**
+     * Column pyramid series display one pyramid per value along an X axis.
+     * To display horizontal pyramids, set [chart.inverted](#chart.inverted) to
+     * `true`.
+     *
+     * @sample {highcharts|highstock} highcharts/demo/column-pyramid/
+     *         Column pyramid
+     * @sample {highcharts|highstock} highcharts/plotoptions/columnpyramid-stacked/
+     *         Column pyramid stacked
+     * @sample {highcharts|highstock} highcharts/plotoptions/columnpyramid-inverted/
+     *         Column pyramid inverted
+     *
+     * @extends      plotOptions.column
+     * @since        7.0.0
+     * @product      highcharts highstock
+     * @excluding    boostThreshold, borderRadius, crisp, depth, edgeColor,
+     *               edgeWidth, groupZPadding, negativeColor, softThreshold,
+     *               threshold, zoneAxis, zones, boostBlending
+     * @requires     highcharts-more
+     * @optionparent plotOptions.columnpyramid
+     */
+    ColumnPyramidSeries.defaultOptions = merge(ColumnSeries.defaultOptions, {
+    // Nothing here
+    });
+    return ColumnPyramidSeries;
+}(ColumnSeries));
+extend(ColumnPyramidSeries.prototype, {
     /* eslint-disable-next-line valid-jsdoc */
     /**
      * Overrides the column translate method
@@ -116,9 +150,9 @@ BaseSeries.seriesType('columnpyramid', 'column',
             bottomXwidth = stackHeight ? (barW * (barY + barH - topPointY)) / stackHeight : 0;
             /*
                     /\
-                   /  \
+                    /  \
             x1,y1,------ x2,y1
-                 /      \
+                    /      \
                 ----------
             x4,y2        x3,y2
             */
@@ -172,6 +206,23 @@ BaseSeries.seriesType('columnpyramid', 'column',
         });
     }
 });
+/* *
+ *
+ * Registry
+ *
+ * */
+BaseSeries.registerSeriesType('columnpyramid', ColumnPyramidSeries);
+/* *
+ *
+ * Default export
+ *
+ * */
+export default ColumnPyramidSeries;
+/* *
+ *
+ * API Options
+ *
+ * */
 /**
  * A `columnpyramid` series. If the [type](#series.columnpyramid.type) option is
  * not specified, it is inherited from [chart.type](#chart.type).
