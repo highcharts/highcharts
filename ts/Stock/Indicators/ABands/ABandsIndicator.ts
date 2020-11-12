@@ -15,10 +15,10 @@
  * */
 
 import type {
-    ABOptions,
-    ABParamsOptions
-} from './ABOptions';
-import type ABPoint from './ABPoint';
+    ABandsOptions,
+    ABandsParamsOptions
+} from './ABandsOptions';
+import type ABandsPoint from './ABandsPoint';
 import type IndicatorValuesObject from '../IndicatorValuesObject';
 import type LineSeries from '../../../Series/Line/LineSeries';
 import BaseSeries from '../../../Core/Series/Series.js';
@@ -99,7 +99,7 @@ class ABandsIndicator extends SMAIndicator {
      * @requires     stock/indicators/acceleration-bands
      * @optionparent plotOptions.abands
      */
-    public static defaultOptions: ABOptions = merge(SMAIndicator.defaultOptions, {
+    public static defaultOptions: ABandsOptions = merge(SMAIndicator.defaultOptions, {
         params: {
             period: 20,
             /**
@@ -130,7 +130,7 @@ class ABandsIndicator extends SMAIndicator {
         dataGrouping: {
             approximation: 'averages'
         }
-    } as ABOptions);
+    } as ABandsOptions);
 
     /* *
      *
@@ -138,11 +138,11 @@ class ABandsIndicator extends SMAIndicator {
      *
      * */
 
-    public data: Array<ABPoint> = void 0 as any;
+    public data: Array<ABandsPoint> = void 0 as any;
 
-    public options: ABOptions = void 0 as any;
+    public options: ABandsOptions = void 0 as any;
 
-    public points: Array<ABPoint> = void 0 as any;
+    public points: Array<ABandsPoint> = void 0 as any;
 
     /* *
      *
@@ -153,7 +153,7 @@ class ABandsIndicator extends SMAIndicator {
     public getValues<TLinkedSeries extends LineSeries>(
         this: ABandsIndicator,
         series: TLinkedSeries,
-        params: ABParamsOptions
+        params: ABandsParamsOptions
     ): (IndicatorValuesObject<TLinkedSeries>|undefined) {
         var period: number = (params.period as any),
             factor: number = (params.factor as any),
@@ -253,7 +253,7 @@ class ABandsIndicator extends SMAIndicator {
 interface ABandsIndicator {
     getTranslatedLinesNames: typeof MultipleLinesMixin['getTranslatedLinesNames'];
     linesApiNames: typeof MultipleLinesMixin['linesApiNames'];
-    pointClass: typeof ABPoint;
+    pointClass: typeof ABandsPoint;
 }
 
 extend(ABandsIndicator.prototype, merge(MultipleLinesMixin, {

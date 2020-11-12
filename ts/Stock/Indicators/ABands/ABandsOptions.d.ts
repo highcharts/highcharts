@@ -24,15 +24,15 @@ import type {
  *
  * */
 
-export interface ABOptions extends SMAOptions, Highcharts.MultipleLinesIndicatorOptions {
+export interface ABandsOptions extends SMAOptions, Highcharts.MultipleLinesIndicatorOptions {
     bottomLine?: Record<string, CSSObject>;
     lineWidth?: number;
-    params?: ABParamsOptions;
+    params?: ABandsParamsOptions;
     topLine?: Record<string, CSSObject>;
 }
 
-export interface ABParamsOptions extends SMAParamsOptions {
+export interface ABandsParamsOptions extends SMAParamsOptions {
     factor?: number;
 }
 
-export default ABOptions;
+export default ABandsOptions;
