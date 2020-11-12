@@ -8,78 +8,134 @@
  *
  * */
 'use strict';
+var __extends = (this && this.__extends) || (function () {
+    var extendStatics = function (d, b) {
+        extendStatics = Object.setPrototypeOf ||
+            ({ __proto__: [] } instanceof Array && function (d, b) { d.__proto__ = b; }) ||
+            function (d, b) { for (var p in b) if (b.hasOwnProperty(p)) d[p] = b[p]; };
+        return extendStatics(d, b);
+    };
+    return function (d, b) {
+        extendStatics(d, b);
+        function __() { this.constructor = d; }
+        d.prototype = b === null ? Object.create(b) : (__.prototype = b.prototype, new __());
+    };
+})();
 import BaseSeries from '../Core/Series/Series.js';
+var AreaRangeSeries = BaseSeries.seriesTypes.arearange;
 import BoxPlotSeries from './BoxPlot/BoxPlotSeries.js';
+import './AreaRangeSeries.js';
 import H from '../Core/Globals.js';
-import '../Core/Options.js';
-import './BoxPlot/BoxPlotSeries.js';
-var noop = H.noop, seriesTypes = BaseSeries.seriesTypes;
-/**
- * Error bars are a graphical representation of the variability of data and are
- * used on graphs to indicate the error, or uncertainty in a reported
- * measurement.
- *
- * @sample highcharts/demo/error-bar/
- *         Error bars on a column series
- * @sample highcharts/series-errorbar/on-scatter/
- *         Error bars on a scatter series
- *
- * @extends      plotOptions.boxplot
- * @excluding    boostBlending, boostThreshold
- * @product      highcharts highstock
- * @requires     highcharts-more
- * @optionparent plotOptions.errorbar
- */
-BaseSeries.seriesType('errorbar', 'boxplot', {
+var noop = H.noop;
+import U from '../Core/Utilities.js';
+var merge = U.merge, extend = U.extend;
+var ErrorBarSeries = /** @class */ (function (_super) {
+    __extends(ErrorBarSeries, _super);
+    function ErrorBarSeries() {
+        var _this = _super !== null && _super.apply(this, arguments) || this;
+        /* *
+        *
+        * Properties
+        *
+        * */
+        _this.data = void 0;
+        _this.options = void 0;
+        _this.points = void 0;
+        // array point configs are mapped to this
+        // public pointArrayMap: Array<string> = void 0 as any;
+        // return a plain array for speedy calculation
+        _this.pointValKey = 'high'; // defines the top of the tracker
+        // public doQuartiles = false;
+        _this.linkedParent = void 0;
+        return _this;
+    }
     /**
-     * The main color of the bars. This can be overridden by
-     * [stemColor](#plotOptions.errorbar.stemColor) and
-     * [whiskerColor](#plotOptions.errorbar.whiskerColor) individually.
      *
-     * @sample {highcharts} highcharts/plotoptions/error-bar-styling/
-     *         Error bar styling
+     * Methods
      *
-     * @type    {Highcharts.ColorString|Highcharts.GradientColorObject|Highcharts.PatternObject}
-     * @default #000000
-     * @since   3.0
-     * @product highcharts
      */
-    color: '${palette.neutralColor100}',
-    grouping: false,
-    /**
-     * The parent series of the error bar. The default value links it to
-     * the previous series. Otherwise, use the id of the parent series.
-     *
-     * @since   3.0
-     * @product highcharts
-     */
-    linkedTo: ':previous',
-    tooltip: {
-        pointFormat: '<span style="color:{point.color}">\u25CF</span> {series.name}: <b>{point.low}</b> - <b>{point.high}</b><br/>'
-    },
-    /**
-     * The line width of the whiskers, the horizontal lines marking low
-     * and high values. When `null`, the general
-     * [lineWidth](#plotOptions.errorbar.lineWidth) applies.
-     *
-     * @sample {highcharts} highcharts/plotoptions/error-bar-styling/
-     *         Error bar styling
-     *
-     * @type    {number}
-     * @since   3.0
-     * @product highcharts
-     */
-    whiskerWidth: null
-    // Prototype members
-}, {
+    // // Get the width and X offset, either on top of the linked series
+    // // column or standalone
+    // public getColumnMetrics(
+    //     this: ErrorBarSeries
+    // ): ColumnMetricsObject {
+    //     return (
+    //         (this.linkedParent && this.linkedParent.columnMetrics) ||
+    //         ColumnSeries.prototype.getColumnMetrics.call(this)
+    //     );
+    // }
+    // public drawDataLabels(this: ErrorBarSeries): void {
+    //         debugger
+    //         var valKey = this.pointValKey;
+    //
+    //         AreaRangeSeries.prototype.drawDataLabels.call(this);
+    //         // Arearange drawDataLabels does not reset point.y to high,
+    //         // but to low after drawing (#4133)
+    //         this.data.forEach(function
+    //                (point: Highcharts.ErrorBarPoint): void {
+    //             point.y = (point as any)[valKey];
+    //         });
+    //     }
+    //
+    // public toYData(point: Highcharts.ErrorBarPoint): Array<number> {
+    //     return [point.low, point.high];
+    // };
+    ErrorBarSeries.prototype.init = function () {
+        _super.prototype.init.apply(this, arguments);
+    };
+    ErrorBarSeries.defaultOptions = merge(BoxPlotSeries.defaultOptions, {
+        /**
+         * The main color of the bars. This can be overridden by
+         * [stemColor](#plotOptions.errorbar.stemColor) and
+         * [whiskerColor](#plotOptions.errorbar.whiskerColor) individually.
+         *
+         * @sample {highcharts} highcharts/plotoptions/error-bar-styling/
+         *         Error bar styling
+         *
+         * @type    {Highcharts.ColorString|Highcharts.GradientColorObject|Highcharts.PatternObject}
+         * @default #000000
+         * @since   3.0
+         * @product highcharts
+         */
+        color: '${palette.neutralColor100}',
+        grouping: false,
+        /**
+         * The parent series of the error bar. The default value links it to
+         * the previous series. Otherwise, use the id of the parent series.
+         *
+         * @since   3.0
+         * @product highcharts
+         */
+        linkedTo: ':previous',
+        tooltip: {
+            pointFormat: '<span style="color:{point.color}">\u25CF</span> {series.name}: <b>{point.low}</b> - <b>{point.high}</b><br/>'
+        },
+        /**
+         * The line width of the whiskers, the horizontal lines marking
+         * low and high values. When `null`, the general
+         * [lineWidth](#plotOptions.errorbar.lineWidth) applies.
+         *
+         * @sample {highcharts} highcharts/plotoptions/error-bar-styling/
+         *         Error bar styling
+         *
+         * @type    {number}
+         * @since   3.0
+         * @product highcharts
+         */
+        whiskerWidth: null
+    });
+    return ErrorBarSeries;
+}(BoxPlotSeries));
+var seriesTypes = BaseSeries.seriesTypes;
+extend(ErrorBarSeries.prototype, {
     type: 'errorbar',
+    pointClass: Highcharts.ErrorBarPoint,
     // array point configs are mapped to this
     pointArrayMap: ['low', 'high'],
     // return a plain array for speedy calculation
     toYData: function (point) {
         return [point.low, point.high];
     },
-    pointValKey: 'high',
     doQuartiles: false,
     drawDataLabels: seriesTypes.arearange ?
         function () {
@@ -99,6 +155,24 @@ BaseSeries.seriesType('errorbar', 'boxplot', {
             seriesTypes.column.prototype.getColumnMetrics.call(this));
     }
 });
+BaseSeries.registerSeriesType('errorbar', ErrorBarSeries);
+/**
+ * Error bars are a graphical representation of the variability of data and are
+ * used on graphs to indicate the error, or uncertainty in a reported
+ * measurement.
+ *
+ * @sample highcharts/demo/error-bar/
+ *         Error bars on a column series
+ * @sample highcharts/series-errorbar/on-scatter/
+ *         Error bars on a scatter series
+ *
+ * @extends      plotOptions.boxplot
+ * @excluding    boostBlending, boostThreshold
+ * @product      highcharts highstock
+ * @requires     highcharts-more
+ * @optionparent plotOptions.errorbar
+ */
+export default ErrorBarSeries;
 /**
  * A `errorbar` series. If the [type](#series.errorbar.type) option
  * is not specified, it is inherited from [chart.type](#chart.type).
