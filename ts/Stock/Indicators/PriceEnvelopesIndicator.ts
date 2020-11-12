@@ -11,7 +11,12 @@
 import type CSSObject from '../../Core/Renderer/CSSObject';
 import type IndicatorValuesObject from './IndicatorValuesObject';
 import type LineSeries from '../../Series/Line/LineSeries';
-import type SMAIndicator from './SMAIndicator';
+import type SMAIndicator from './SMA/SMAIndicator';
+import type {
+    SMAOptions,
+    SMAParamsOptions
+} from './SMA/SMAOptions';
+import type SMAPoint from './SMA/SMAPoint';
 import type SVGElement from '../../Core/Renderer/SVG/SVGElement';
 import BaseSeries from '../../Core/Series/Series.js';
 import U from '../../Core/Utilities.js';
@@ -57,12 +62,12 @@ declare global {
         }
 
         interface PriceEnvelopesIndicatorParamsOptions
-            extends SMAIndicator.ParamsOptions {
+            extends SMAParamsOptions {
             topBand?: number;
             bottomBand?: number;
         }
 
-        class PriceEnvelopesIndicatorPoint extends SMAIndicator.Point {
+        class PriceEnvelopesIndicatorPoint extends SMAPoint {
             public bottom: number;
             public middle: number;
             public series: PriceEnvelopesIndicator;
@@ -71,7 +76,7 @@ declare global {
             public top: number;
         }
 
-        interface PriceEnvelopesIndicatorOptions extends SMAIndicator.Options {
+        interface PriceEnvelopesIndicatorOptions extends SMAOptions {
             params?: PriceEnvelopesIndicatorParamsOptions;
             bottomLine?: Record<string, CSSObject>;
             topLine?: Record<string, CSSObject>;

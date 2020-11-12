@@ -9,7 +9,12 @@
 
 import type IndicatorValuesObject from './IndicatorValuesObject';
 import type LineSeries from '../../Series/Line/LineSeries';
-import type SMAIndicator from './SMAIndicator';
+import type SMAIndicator from './SMA/SMAIndicator';
+import type {
+    SMAOptions,
+    SMAParamsOptions
+} from './SMA/SMAOptions';
+import type SMAPoint from './SMA/SMAPoint';
 import BaseSeries from '../../Core/Series/Series.js';
 import U from '../../Core/Utilities.js';
 const { isArray } = U;
@@ -31,15 +36,15 @@ declare global {
             public options: CCIIndicatorOptions;
         }
 
-        interface CCIIndicatorOptions extends SMAIndicator.Options {
+        interface CCIIndicatorOptions extends SMAOptions {
             params?: CCIIndicatorParamsOptions;
         }
 
-        interface CCIIndicatorParamsOptions extends SMAIndicator.ParamsOptions {
+        interface CCIIndicatorParamsOptions extends SMAParamsOptions {
             // declared for inheritance
         }
 
-        class CCIIndicatorPoint extends SMAIndicator.Point {
+        class CCIIndicatorPoint extends SMAPoint {
             public series: CCIIndicator;
         }
     }

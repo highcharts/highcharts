@@ -12,7 +12,12 @@ import type CSSObject from '../../Core/Renderer/CSSObject';
 import type IndicatorValuesObject from './IndicatorValuesObject';
 import type LineSeries from '../../Series/Line/LineSeries';
 import type { PointMarkerOptions } from '../../Core/Series/PointOptions';
-import type SMAIndicator from './SMAIndicator';
+import type SMAIndicator from './SMA/SMAIndicator';
+import type {
+    SMAOptions,
+    SMAParamsOptions
+} from './SMA/SMAOptions';
+import type SMAPoint from './SMA/SMAPoint';
 import BaseSeries from '../../Core/Series/Series.js';
 import MultipleLinesMixin from '../../Mixins/MultipleLines.js';
 import ReduceArrayMixin from '../../Mixins/ReduceArray.js';
@@ -50,16 +55,16 @@ declare global {
         }
 
         interface StochasticIndicatorParamsOptions
-            extends SMAIndicator.ParamsOptions {
+            extends SMAParamsOptions {
             periods?: Array<number>;
         }
 
-        class StochasticIndicatorPoint extends SMAIndicator.Point {
+        class StochasticIndicatorPoint extends SMAPoint {
             public series: StochasticIndicator;
         }
 
         interface StochasticIndicatorOptions
-            extends SMAIndicator.Options, MultipleLinesIndicatorOptions {
+            extends SMAOptions, MultipleLinesIndicatorOptions {
             dataGrouping?: DataGroupingOptionsObject;
             marker?: PointMarkerOptions;
             params?: StochasticIndicatorParamsOptions;

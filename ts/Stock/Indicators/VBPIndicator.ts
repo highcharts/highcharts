@@ -19,7 +19,12 @@ import type CSSObject from '../../Core/Renderer/CSSObject';
 import type DataLabelOptions from '../../Core/Series/DataLabelOptions';
 import type IndicatorValuesObject from './IndicatorValuesObject';
 import type LineSeries from '../../Series/Line/LineSeries';
-import type SMAIndicator from './SMAIndicator';
+import type SMAIndicator from './SMA/SMAIndicator';
+import type {
+    SMAOptions,
+    SMAParamsOptions
+} from './SMA/SMAOptions';
+import type SMAPoint from './SMA/SMAPoint';
 import type SVGAttributes from '../../Core/Renderer/SVG/SVGAttributes';
 import type SVGElement from '../../Core/Renderer/SVG/SVGElement';
 import type SVGPath from '../../Core/Renderer/SVG/SVGPath';
@@ -98,7 +103,7 @@ declare global {
             public zoneLinesSVG: SVGElement;
         }
 
-        interface VBPIndicatorParamsOptions extends SMAIndicator.ParamsOptions {
+        interface VBPIndicatorParamsOptions extends SMAParamsOptions {
             ranges?: number;
             volumeSeriesID?: string;
         }
@@ -118,7 +123,7 @@ declare global {
             styles?: CSSObject;
         }
 
-        class VBPIndicatorPoint extends SMAIndicator.Point {
+        class VBPIndicatorPoint extends SMAPoint {
             public barX: number;
             public destroy(): void;
             public negativeGraphic: unknown;
@@ -129,7 +134,7 @@ declare global {
             public volumePos: number;
         }
 
-        interface VBPIndicatorOptions extends SMAIndicator.Options {
+        interface VBPIndicatorOptions extends SMAOptions {
             animationLimit?: number;
             crisp?: boolean;
             dataGrouping?: DataGroupingOptionsObject;

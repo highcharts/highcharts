@@ -10,7 +10,12 @@
 
 import type IndicatorValuesObject from './IndicatorValuesObject';
 import type LineSeries from '../../Series/Line/LineSeries';
-import type SMAIndicator from './SMAIndicator';
+import type SMAIndicator from './SMA/SMAIndicator';
+import type {
+    SMAOptions,
+    SMAParamsOptions
+} from './SMA/SMAOptions';
+import type SMAPoint from './SMA/SMAPoint';
 import BaseSeries from '../../Core/Series/Series.js';
 import ReduceArrayMixin from '../../Mixins/ReduceArray.js';
 const {
@@ -37,14 +42,14 @@ declare global {
             public pointClass: typeof WilliamsRIndicatorPoint;
             public points: Array<WilliamsRIndicatorPoint>;
         }
-        class WilliamsRIndicatorPoint extends SMAIndicator.Point {
+        class WilliamsRIndicatorPoint extends SMAPoint {
             series: WilliamsRIndicator;
         }
-        interface WilliamsRIndicatorOptions extends SMAIndicator.Options {
+        interface WilliamsRIndicatorOptions extends SMAOptions {
             params?: WilliamsRIndicatorParamsOptions;
         }
         interface WilliamsRIndicatorParamsOptions
-            extends SMAIndicator.ParamsOptions {
+            extends SMAParamsOptions {
             // for inheritance
         }
     }
