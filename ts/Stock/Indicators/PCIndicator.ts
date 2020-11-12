@@ -11,7 +11,12 @@
 import type CSSObject from '../../Core/Renderer/CSSObject';
 import type IndicatorValuesObject from './IndicatorValuesObject';
 import type LineSeries from '../../Series/Line/LineSeries';
-import type SMAIndicator from './SMAIndicator';
+import type SMAIndicator from './SMA/SMAIndicator';
+import type {
+    SMAOptions,
+    SMAParamsOptions
+} from './SMA/SMAOptions';
+import type SMAPoint from './SMA/SMAPoint';
 import BaseSeries from '../../Core/Series/Series.js';
 import MultipleLinesMixin from '../../Mixins/MultipleLines.js';
 import ReduceArrayMixin from '../../Mixins/ReduceArray.js';
@@ -46,15 +51,15 @@ declare global {
             public pointValKey: string;
         }
 
-        interface PCIndicatorParamsOptions extends SMAIndicator.ParamsOptions {
+        interface PCIndicatorParamsOptions extends SMAParamsOptions {
             // for inheritance
         }
 
-        class PCIndicatorPoint extends SMAIndicator.Point {
+        class PCIndicatorPoint extends SMAPoint {
             public series: PCIndicator;
         }
 
-        interface PCIndicatorOptions extends SMAIndicator.Options,
+        interface PCIndicatorOptions extends SMAOptions,
             MultipleLinesIndicatorOptions {
             params?: PCIndicatorParamsOptions;
             bottomLine: Record<string, CSSObject>;

@@ -12,7 +12,12 @@ import type CSSObject from '../../Core/Renderer/CSSObject';
 import type IndicatorValuesObject from './IndicatorValuesObject';
 import type LineSeries from '../../Series/Line/LineSeries';
 import type { PointMarkerOptions } from '../../Core/Series/PointOptions';
-import type SMAIndicator from './SMAIndicator';
+import type SMAIndicator from './SMA/SMAIndicator';
+import type {
+    SMAOptions,
+    SMAParamsOptions
+} from './SMA/SMAOptions';
+import type SMAPoint from './SMA/SMAPoint';
 import BaseSeries from '../../Core/Series/Series.js';
 const {
     seriesTypes
@@ -51,7 +56,7 @@ declare global {
         }
 
         interface KeltnerChannelsIndicatorOptions
-            extends SMAIndicator.Options, MultipleLinesIndicatorOptions {
+            extends SMAOptions, MultipleLinesIndicatorOptions {
             bottomLine?: Record<string, CSSObject>;
             marker?: PointMarkerOptions;
             params?: KeltnerChannelsIndicatorParamsOptions;
@@ -60,7 +65,7 @@ declare global {
         }
 
         interface KeltnerChannelsIndicatorParamsOptions
-            extends SMAIndicator.ParamsOptions {
+            extends SMAParamsOptions {
             periodATR?: number;
             multiplierATR?: number;
         }
@@ -69,7 +74,7 @@ declare global {
             yData: Array<Array<number>>;
         }
 
-        class KeltnerChannelsIndicatorPoint extends SMAIndicator.Point {
+        class KeltnerChannelsIndicatorPoint extends SMAPoint {
             public series: KeltnerChannelsIndicator;
         }
     }

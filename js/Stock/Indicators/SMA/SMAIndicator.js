@@ -19,45 +19,18 @@ var __extends = (this && this.__extends) || (function () {
         d.prototype = b === null ? Object.create(b) : (__.prototype = b.prototype, new __());
     };
 })();
-import BaseSeries from '../../Core/Series/Series.js';
+import BaseSeries from '../../../Core/Series/Series.js';
 var _a = BaseSeries.seriesTypes, LineSeries = _a.line, ohlcProto = _a.ohlc.prototype;
-import RequiredIndicatorMixin from '../../Mixins/IndicatorRequired.js';
-import U from '../../Core/Utilities.js';
+import RequiredIndicatorMixin from '../../../Mixins/IndicatorRequired.js';
+import U from '../../../Core/Utilities.js';
 var addEvent = U.addEvent, error = U.error, extend = U.extend, isArray = U.isArray, merge = U.merge, pick = U.pick, splat = U.splat;
+import './SMAComposition.js';
 var generateMessage = RequiredIndicatorMixin.generateMessage;
-/**
- * The parameter allows setting line series type and use OHLC indicators. Data
- * in OHLC format is required.
+/* *
  *
- * @sample {highstock} stock/indicators/use-ohlc-data
- *         Plot line on Y axis
+ *  Class
  *
- * @type      {boolean}
- * @product   highstock
- * @apioption plotOptions.line.useOhlcData
- */
-/* eslint-disable no-invalid-this */
-addEvent(LineSeries, 'init', function (eventOptions) {
-    var series = this, options = eventOptions.options;
-    if (options.useOhlcData &&
-        options.id !== 'highcharts-navigator-series') {
-        extend(series, {
-            pointValKey: ohlcProto.pointValKey,
-            keys: ohlcProto.keys,
-            pointArrayMap: ohlcProto.pointArrayMap,
-            toYData: ohlcProto.toYData
-        });
-    }
-});
-addEvent(LineSeries, 'afterSetOptions', function (e) {
-    var options = e.options, dataGrouping = options.dataGrouping;
-    if (dataGrouping &&
-        options.useOhlcData &&
-        options.id !== 'highcharts-navigator-series') {
-        dataGrouping.approximation = 'ohlc';
-    }
-});
-/* eslint-enable no-invalid-this */
+ * */
 /**
  * The SMA series type.
  *
@@ -280,6 +253,17 @@ var SMAIndicator = /** @class */ (function (_super) {
         return obj;
     };
     /**
+     * The parameter allows setting line series type and use OHLC indicators.
+     * Data in OHLC format is required.
+     *
+     * @sample {highstock} stock/indicators/use-ohlc-data
+     *         Plot line on Y axis
+     *
+     * @type      {boolean}
+     * @product   highstock
+     * @apioption plotOptions.line.useOhlcData
+     */
+    /**
      * Simple moving average indicator (SMA). This series requires `linkedTo`
      * option to be set.
      *
@@ -362,13 +346,6 @@ extend(SMAIndicator.prototype, {
     requiredIndicators: [],
     useCommonDataGrouping: true
 });
-/* *
- *
- *  Class Namespace
- *
- * */
-(function (SMAIndicator) {
-})(SMAIndicator || (SMAIndicator = {}));
 BaseSeries.registerSeriesType('sma', SMAIndicator);
 /* *
  *
