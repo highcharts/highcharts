@@ -18,7 +18,7 @@ import '../../Maps/MapPointer.js';
 import '../../Series/Map/MapSeries.js';
 import '../../Series/MapLine/MapLineSeries.js';
 import '../../Series/MapPoint/MapPointSeries.js';
-import '../../Series/MapBubbleSeries.js';
+import '../../Series/MapBubble/MapBubbleSeries.js';
 import '../../Series/HeatmapSeries.js';
 import '../../Extensions/GeoJSON.js';
 import '../../Maps/Map.js';

@@ -22,8 +22,9 @@ var __extends = (this && this.__extends) || (function () {
     };
 })();
 import BaseSeries from '../../Core/Series/Series.js';
-var _a = BaseSeries.seriesTypes, BubbleSeries = _a.bubble, MapSeries = _a.map;
-import MapBubblePoint from './MapBubblePoint';
+import BubbleSeries from '../Bubble/BubbleSeries.js';
+import MapBubblePoint from './MapBubblePoint.js';
+import MapSeries from '../Map/MapSeries.js';
 import U from '../../Core/Utilities.js';
 var extend = U.extend, merge = U.merge;
 import '../../Core/Options.js';
@@ -190,8 +191,6 @@ var MapBubbleSeries = /** @class */ (function (_super) {
 extend(MapBubbleSeries.prototype, {
     type: 'mapbubble',
     getBox: MapSeries.prototype.getBox,
-    // Return the map area identified by the dataJoinBy option
-    getMapData: MapSeries.prototype.getMapData,
     // If one single value is passed, it is interpreted as z
     pointArrayMap: ['z'],
     pointClass: MapBubblePoint,
