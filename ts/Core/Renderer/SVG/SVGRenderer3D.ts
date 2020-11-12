@@ -32,6 +32,10 @@ import Color from '../../Color/Color.js';
 const color = Color.parse;
 import type Fx from '../../Animation/Fx';
 import H from '../../Globals.js';
+const {
+    charts,
+    deg2rad
+} = H;
 import Math3D from '../../../Extensions/Math3D.js';
 const {
     perspective,
@@ -45,7 +49,6 @@ const {
     defined,
     extend,
     merge,
-    objectEach,
     pick
 } = U;
 
@@ -66,46 +69,42 @@ declare module './SVGElementLike' {
     }
 }
 
-/**
- * Internal types
- * @private
- */
-declare global {
-    namespace Highcharts {
-        interface SVGRenderer {
-            elements3d: SVGElement3D;
-            arc3d(attribs: SVGAttributes): SVGElement;
-            arc3dPath(shapeArgs: SVGAttributes): SVGArc3D;
-            cuboid(shapeArgs: SVGAttributes): SVGElement;
-            cuboidPath(shapeArgs: SVGAttributes): SVGCuboid;
-            element3d(type: string, shapeArgs: SVGAttributes): SVGElement;
-            face3d(args?: SVGAttributes): SVGElement;
-            polyhedron(args?: SVGAttributes): SVGElement;
-            toLinePath(
-                points: Array<PositionObject>,
-                closed?: boolean
-            ): SVGPath;
-            toLineSegments(points: Array<PositionObject>): SVGPath;
-        }
+declare module './SVGRendererLike' {
+    interface SVGRendererLike {
+        elements3d: SVGElement3D;
+        arc3d(attribs: SVGAttributes): SVGElement;
+        arc3dPath(shapeArgs: SVGAttributes): SVGArc3D;
+        cuboid(shapeArgs: SVGAttributes): SVGElement;
+        cuboidPath(shapeArgs: SVGAttributes): SVGCuboid;
+        element3d(type: string, shapeArgs: SVGAttributes): SVGElement;
+        face3d(args?: SVGAttributes): SVGElement;
+        polyhedron(args?: SVGAttributes): SVGElement;
+        toLinePath(
+            points: Array<PositionObject>,
+            closed?: boolean
+        ): SVGPath;
+        toLineSegments(points: Array<PositionObject>): SVGPath;
     }
 }
 
-var cos = Math.cos,
+/* *
+ *
+ *  Constants
+ *
+ * */
+
+const cos = Math.cos,
+    sin = Math.sin,
     PI = Math.PI,
-    sin = Math.sin;
+    dFactor = (4 * (Math.sqrt(2) - 1) / 3) / (PI / 2);
 
-var charts = H.charts,
-    deg2rad = H.deg2rad,
-    // internal:
-    dFactor: number;
+/* *
+ *
+ *  Functions
+ *
+ * */
 
-/*
-    EXTENSION TO THE SVG-RENDERER TO ENABLE 3D SHAPES
-*/
-// HELPER METHODS
-dFactor = (4 * (Math.sqrt(2) - 1) / 3) / (PI / 2);
-
-/* eslint-disable no-invalid-this, valid-jsdoc */
+/* eslint-disable valid-jsdoc */
 
 /**
  * Method to construct a curved path. Can 'wrap' around more then 180 degrees.
@@ -158,6 +157,12 @@ function curveTo(
     ]];
 }
 
+/* *
+ *
+ *  Composition
+ *
+ * */
+
 SVGRenderer.prototype.elements3d = SVGElement3D;
 
 SVGRenderer.prototype.toLinePath = function (
@@ -208,6 +213,8 @@ SVGRenderer.prototype.face3d = function (args?: SVGAttributes): SVGElement {
     ret.vertexes = [];
     ret.insidePlotArea = false;
     ret.enabled = true;
+
+    /* eslint-disable no-invalid-this */
 
     ret.attr = function (
         this: SVGElement,
@@ -287,6 +294,8 @@ SVGRenderer.prototype.face3d = function (args?: SVGAttributes): SVGElement {
         return SVGElement.prototype.animate.apply(this, arguments as any);
     };
 
+    /* eslint-enable no-invalid-this */
+
     return ret.attr(args);
 };
 
@@ -306,6 +315,7 @@ SVGRenderer.prototype.polyhedron = function (args?: SVGAttributes): SVGElement {
 
     result.faces = [];
 
+    /* eslint-disable no-invalid-this */
 
     // destroy all children
     result.destroy = function (): undefined {
@@ -365,6 +375,8 @@ SVGRenderer.prototype.polyhedron = function (args?: SVGAttributes): SVGElement {
         }
         return SVGElement.prototype.animate.apply(this, arguments as any);
     };
+
+    /* eslint-enable no-invalid-this */
 
     return result.attr(args);
 };
@@ -687,6 +699,8 @@ SVGRenderer.prototype.arc3d = function (attribs: SVGAttributes): SVGElement {
     wrapper.inn = renderer.path();
     wrapper.out = renderer.path();
 
+    /* eslint-disable no-invalid-this */
+
     // Add all faces
     wrapper.onAdd = function (): void {
         var parent = wrapper.parentGroup,
@@ -884,6 +898,7 @@ SVGRenderer.prototype.arc3d = function (attribs: SVGAttributes): SVGElement {
 
         return SVGElement.prototype.destroy.call(this);
     };
+
     // hide all children
     wrapper.hide = function (this: SVGElement): void {
         this.top.hide();
@@ -892,6 +907,7 @@ SVGRenderer.prototype.arc3d = function (attribs: SVGAttributes): SVGElement {
         this.side1.hide();
         this.side2.hide();
     } as any;
+
     wrapper.show = function (
         this: SVGElement,
         inherit?: boolean
@@ -902,6 +918,9 @@ SVGRenderer.prototype.arc3d = function (attribs: SVGAttributes): SVGElement {
         this.side1.show(inherit);
         this.side2.show(inherit);
     } as any;
+
+    /* eslint-enable no-invalid-this */
+
     return wrapper;
 };
 
@@ -1102,5 +1121,11 @@ SVGRenderer.prototype.arc3dPath = function (
         zSide2: a2 * 0.99
     };
 };
+
+/* *
+ *
+ *  Default Export
+ *
+ * */
 
 export default SVGRenderer;
