@@ -23,7 +23,7 @@ import type SVGPath3D from './SVGPath3D';
  *
  * */
 
-export interface Cuboid extends SVGPath3D {
+export interface SVGCuboid extends SVGPath3D {
     front: SVGPath;
     isFront: number;
     isTop: number;
@@ -33,4 +33,4 @@ export interface Cuboid extends SVGPath3D {
     forcedSides?: Array<string>;
 }
 
-export default Cuboid;
+export default SVGCuboid;

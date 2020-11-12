@@ -10,6 +10,7 @@ import type ColorType from '../../Core/Color/ColorType';
 import type GradientColor from '../../Core/Color/GradientColor';
 import type SVGAttributes from '../../Core/Renderer/SVG/SVGAttributes';
 import type SVGElement from '../../Core/Renderer/SVG/SVGElement';
+import type { SVGElement3DLikeCuboid } from '../../Core/Renderer/SVG/SVGElement3DLike';
 import type SVGPath from '../../Core/Renderer/SVG/SVGPath';
 import type SVGPath3D from '../../Core/Renderer/SVG/SVGPath3D';
 import type SVGRenderer from '../../Core/Renderer/SVG/SVGRenderer';
@@ -29,6 +30,18 @@ const {
     merge
 } = U;
 
+/* *
+ *
+ *  Declarations
+ *
+ * */
+
+declare module '../../Core/Renderer/SVG/SVGElement3DLike' {
+    interface SVGElement3DLike {
+        funnel3d?: Highcharts.Funnel3dMethodsObject;
+    }
+}
+
 /**
  * Internal types
  * @private
@@ -43,7 +56,7 @@ declare global {
             backLower?: SVGElement;
             rightLower?: SVGElement;
         }
-        interface Funnel3dMethodsObject extends CuboidMethodsObject {
+        interface Funnel3dMethodsObject extends SVGElement3DLikeCuboid {
             parts: Array<string>;
             mainParts: Array<string>;
             sideGroups: Array<string>;
@@ -54,9 +67,6 @@ declare global {
             adjustForGradient(this: SVGElement): void;
             zIndexSetter(this: SVGElement): boolean;
             onAdd(this: SVGElement): void;
-        }
-        interface Elements3dObject {
-            funnel3d?: Funnel3dMethodsObject;
         }
         interface SVGRenderer {
             funnel3d(shapeArgs: SVGAttributes): SVGElement;

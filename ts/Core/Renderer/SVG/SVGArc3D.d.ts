@@ -22,7 +22,7 @@ import type SVGPath from './SVGPath';
  *
  * */
 
-export interface Arc3D {
+export interface SVGArc3D {
     out: SVGPath;
     inn: SVGPath;
     side1: SVGPath;
@@ -35,4 +35,4 @@ export interface Arc3D {
     zTop: number;
 }
 
-export default Arc3D;
+export default SVGArc3D;
