@@ -30,6 +30,7 @@ import type PositionObject from '../Core/Renderer/PositionObject';
 import type { SeriesStatesOptions } from '../Core/Series/SeriesOptions';
 import type SVGAttributes from '../Core/Renderer/SVG/SVGAttributes';
 import type SVGElement from '../Core/Renderer/SVG/SVGElement';
+import type { SVGElement3DLikeCuboid } from '../Core/Renderer/SVG/SVGElement3DLike';
 import type SVGPath from '../Core/Renderer/SVG/SVGPath';
 import type SVGPath3D from '../Core/Renderer/SVG/SVGPath3D';
 import Color from '../Core/Color/Color.js';
@@ -61,6 +62,12 @@ const {
  *
  * */
 
+declare module '../Core/Renderer/SVG/SVGElement3DLike' {
+    interface SVGElement3DLike {
+        cylinder?: Highcharts.CylinderMethodsObject;
+    }
+}
+
 declare module '../Core/Series/SeriesType' {
     interface SeriesTypeRegistry {
         cylinder: typeof Highcharts.CylinderSeries;
@@ -83,7 +90,7 @@ declare global {
             public pointClass: typeof CylinderPoint;
             public points: Array<CylinderPoint>;
         }
-        interface CylinderMethodsObject extends CuboidMethodsObject {
+        interface CylinderMethodsObject extends SVGElement3DLikeCuboid {
             parts: Array<string>;
             pathType: string;
             fillSetter(fill: ColorType): SVGElement;
@@ -100,9 +107,6 @@ declare global {
         }
         interface CylinderSeriesOptions extends ColumnSeriesOptions {
             states?: SeriesStatesOptions<CylinderSeries>;
-        }
-        interface Elements3dObject {
-            cylinder?: CylinderMethodsObject;
         }
         interface SVGRenderer {
             cylinder(shapeArgs: SVGAttributes): SVGElement;
