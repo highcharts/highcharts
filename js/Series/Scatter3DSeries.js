@@ -10,12 +10,32 @@
  *
  * */
 'use strict';
+var __extends = (this && this.__extends) || (function () {
+    var extendStatics = function (d, b) {
+        extendStatics = Object.setPrototypeOf ||
+            ({ __proto__: [] } instanceof Array && function (d, b) { d.__proto__ = b; }) ||
+            function (d, b) { for (var p in b) if (b.hasOwnProperty(p)) d[p] = b[p]; };
+        return extendStatics(d, b);
+    };
+    return function (d, b) {
+        extendStatics(d, b);
+        function __() { this.constructor = d; }
+        d.prototype = b === null ? Object.create(b) : (__.prototype = b.prototype, new __());
+    };
+})();
 import BaseSeries from '../Core/Series/Series.js';
-var seriesTypes = BaseSeries.seriesTypes;
+import ScatterSeries from './Scatter/ScatterSeries.js';
 import Math3D from '../Extensions/Math3D.js';
 var pointCameraDistance = Math3D.pointCameraDistance;
 import Point from '../Core/Series/Point.js';
+import U from '../Core/Utilities.js';
+var extend = U.extend, merge = U.merge;
 import './Scatter/ScatterSeries.js';
+/* *
+ *
+ *  Class
+ *
+ * */
 /**
  * @private
  * @class
@@ -23,54 +43,114 @@ import './Scatter/ScatterSeries.js';
  *
  * @augments Highcharts.Series
  */
-BaseSeries.seriesType('scatter3d', 'scatter', 
-/**
- * A 3D scatter plot uses x, y and z coordinates to display values for three
- * variables for a set of data.
- *
- * @sample {highcharts} highcharts/3d/scatter/
- *         Simple 3D scatter
- * @sample {highcharts} highcharts/demo/3d-scatter-draggable
- *         Draggable 3d scatter
- *
- * @extends      plotOptions.scatter
- * @excluding    dragDrop, cluster, boostThreshold, boostBlending
- * @product      highcharts
- * @requires     highcharts-3d
- * @optionparent plotOptions.scatter3d
- */
-{
-    tooltip: {
-        pointFormat: 'x: <b>{point.x}</b><br/>y: <b>{point.y}</b><br/>z: <b>{point.z}</b><br/>'
+var Scatter3DSeries = /** @class */ (function (_super) {
+    __extends(Scatter3DSeries, _super);
+    function Scatter3DSeries() {
+        /* *
+         *
+         *  Static Properties
+         *
+         * */
+        var _this = _super !== null && _super.apply(this, arguments) || this;
+        /* *
+         *
+         *  Properties
+         *
+         * */
+        _this.data = void 0;
+        _this.options = void 0;
+        _this.points = void 0;
+        return _this;
     }
-    // Series class
-}, {
-    pointAttribs: function (point) {
-        var attribs = seriesTypes.scatter.prototype.pointAttribs
-            .apply(this, arguments);
+    /* *
+     *
+     *  Functions
+     *
+     * */
+    Scatter3DSeries.prototype.pointAttribs = function (point) {
+        var attribs = _super.prototype.pointAttribs.apply(this, arguments);
         if (this.chart.is3d() && point) {
             attribs.zIndex =
                 pointCameraDistance(point, this.chart);
         }
         return attribs;
-    },
+    };
+    /**
+     * A 3D scatter plot uses x, y and z coordinates to display values for three
+     * variables for a set of data.
+     *
+     * @sample {highcharts} highcharts/3d/scatter/
+     *         Simple 3D scatter
+     * @sample {highcharts} highcharts/demo/3d-scatter-draggable
+     *         Draggable 3d scatter
+     *
+     * @extends      plotOptions.scatter
+     * @excluding    dragDrop, cluster, boostThreshold, boostBlending
+     * @product      highcharts
+     * @requires     highcharts-3d
+     * @optionparent plotOptions.scatter3d
+     */
+    Scatter3DSeries.defaultOptions = merge(ScatterSeries.defaultOptions, {
+        tooltip: {
+            pointFormat: 'x: <b>{point.x}</b><br/>y: <b>{point.y}</b><br/>z: <b>{point.z}</b><br/>'
+        }
+    });
+    return Scatter3DSeries;
+}(ScatterSeries));
+extend(Scatter3DSeries.prototype, {
     axisTypes: ['xAxis', 'yAxis', 'zAxis'],
-    pointArrayMap: ['x', 'y', 'z'],
-    parallelArrays: ['x', 'y', 'z'],
     // Require direct touch rather than using the k-d-tree, because the
     // k-d-tree currently doesn't take the xyz coordinate system into
     // account (#4552)
-    directTouch: true
-    // Point class
-}, {
-    applyOptions: function () {
+    directTouch: true,
+    parallelArrays: ['x', 'y', 'z'],
+    pointArrayMap: ['x', 'y', 'z']
+});
+/* *
+ *
+ *  Class
+ *
+ * */
+var Scatter3DPoint = /** @class */ (function (_super) {
+    __extends(Scatter3DPoint, _super);
+    function Scatter3DPoint() {
+        /* *
+         *
+         *  Properties
+         *
+         * */
+        var _this = _super !== null && _super.apply(this, arguments) || this;
+        _this.options = void 0;
+        _this.series = void 0;
+        return _this;
+    }
+    /* *
+     *
+     *  Functions
+     *
+     * */
+    Scatter3DPoint.prototype.applyOptions = function () {
         Point.prototype.applyOptions.apply(this, arguments);
         if (typeof this.z === 'undefined') {
             this.z = 0;
         }
         return this;
-    }
-});
+    };
+    return Scatter3DPoint;
+}(ScatterSeries.prototype.pointClass));
+Scatter3DSeries.prototype.pointClass = Scatter3DPoint;
+BaseSeries.registerSeriesType('scatter3d', Scatter3DSeries);
+/* *
+ *
+ *  Default Export
+ *
+ * */
+export default Scatter3DSeries;
+/* *
+ *
+ *  API Options
+ *
+ * */
 /**
  * A `scatter3d` series. If the [type](#series.scatter3d.type) option is
  * not specified, it is inherited from [chart.type](#chart.type).
