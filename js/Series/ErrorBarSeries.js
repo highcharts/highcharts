@@ -9,9 +9,10 @@
  * */
 'use strict';
 import BaseSeries from '../Core/Series/Series.js';
+import BoxPlotSeries from './BoxPlot/BoxPlotSeries.js';
 import H from '../Core/Globals.js';
 import '../Core/Options.js';
-import './BoxPlotSeries.js';
+import './BoxPlot/BoxPlotSeries.js';
 var noop = H.noop, seriesTypes = BaseSeries.seriesTypes;
 /**
  * Error bars are a graphical representation of the variability of data and are
