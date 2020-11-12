@@ -12,7 +12,7 @@
  */
 'use strict';
 
-import '../../Stock/Indicators/SMAIndicator.js';
+import '../../Stock/Indicators/SMA/SMAIndicator.js';
 import '../../Stock/Indicators/ADIndicator.js';
 import '../../Stock/Indicators/AOIndicator.js';
 import '../../Stock/Indicators/AroonIndicator.js';
@@ -50,5 +50,5 @@ import '../../Stock/Indicators/WilliamsRIndicator.js';
 import '../../Stock/Indicators/WMAIndicator.js';
 import '../../Stock/Indicators/ZigzagIndicator.js';
 import '../../Stock/Indicators/RegressionIndicators.js';
-import '../../Stock/Indicators/ABIndicator.js';
+import '../../Stock/Indicators/AB/ABIndicator.js';
 import '../../Stock/Indicators/TrendLineIndicator.js';
