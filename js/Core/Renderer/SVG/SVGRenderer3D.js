@@ -15,23 +15,26 @@ var animObject = A.animObject;
 import Color from '../../Color/Color.js';
 var color = Color.parse;
 import H from '../../Globals.js';
+var charts = H.charts, deg2rad = H.deg2rad;
 import Math3D from '../../../Extensions/Math3D.js';
 var perspective = Math3D.perspective, shapeArea = Math3D.shapeArea;
 import SVGElement from './SVGElement.js';
 import SVGElement3D from './SVGElement3D.js';
 import SVGRenderer from './SVGRenderer.js';
 import U from '../../Utilities.js';
-var defined = U.defined, extend = U.extend, merge = U.merge, objectEach = U.objectEach, pick = U.pick;
-var cos = Math.cos, PI = Math.PI, sin = Math.sin;
-var charts = H.charts, deg2rad = H.deg2rad, 
-// internal:
-dFactor;
-/*
-    EXTENSION TO THE SVG-RENDERER TO ENABLE 3D SHAPES
-*/
-// HELPER METHODS
-dFactor = (4 * (Math.sqrt(2) - 1) / 3) / (PI / 2);
-/* eslint-disable no-invalid-this, valid-jsdoc */
+var defined = U.defined, extend = U.extend, merge = U.merge, pick = U.pick;
+/* *
+ *
+ *  Constants
+ *
+ * */
+var cos = Math.cos, sin = Math.sin, PI = Math.PI, dFactor = (4 * (Math.sqrt(2) - 1) / 3) / (PI / 2);
+/* *
+ *
+ *  Functions
+ *
+ * */
+/* eslint-disable valid-jsdoc */
 /**
  * Method to construct a curved path. Can 'wrap' around more then 180 degrees.
  * @private
@@ -62,6 +65,11 @@ function curveTo(cx, cy, rx, ry, start, end, dx, dy) {
             cy + (ry * Math.sin(end)) + dy
         ]];
 }
+/* *
+ *
+ *  Composition
+ *
+ * */
 SVGRenderer.prototype.elements3d = SVGElement3D;
 SVGRenderer.prototype.toLinePath = function (points, closed) {
     var result = [];
@@ -95,6 +103,7 @@ SVGRenderer.prototype.face3d = function (args) {
     ret.vertexes = [];
     ret.insidePlotArea = false;
     ret.enabled = true;
+    /* eslint-disable no-invalid-this */
     ret.attr = function (hash) {
         if (typeof hash === 'object' &&
             (defined(hash.enabled) ||
@@ -129,6 +138,7 @@ SVGRenderer.prototype.face3d = function (args) {
         }
         return SVGElement.prototype.animate.apply(this, arguments);
     };
+    /* eslint-enable no-invalid-this */
     return ret.attr(args);
 };
 // A Polyhedron is a handy way of defining a group of 3-D faces. It's only
@@ -142,6 +152,7 @@ SVGRenderer.prototype.polyhedron = function (args) {
         });
     }
     result.faces = [];
+    /* eslint-disable no-invalid-this */
     // destroy all children
     result.destroy = function () {
         for (var i = 0; i < result.faces.length; i++) {
@@ -182,6 +193,7 @@ SVGRenderer.prototype.polyhedron = function (args) {
         }
         return SVGElement.prototype.animate.apply(this, arguments);
     };
+    /* eslint-enable no-invalid-this */
     return result.attr(args);
 };
 /**
@@ -426,6 +438,7 @@ SVGRenderer.prototype.arc3d = function (attribs) {
     wrapper.side2 = renderer.path();
     wrapper.inn = renderer.path();
     wrapper.out = renderer.path();
+    /* eslint-disable no-invalid-this */
     // Add all faces
     wrapper.onAdd = function () {
         var parent = wrapper.parentGroup, className = wrapper.attr('class');
@@ -578,6 +591,7 @@ SVGRenderer.prototype.arc3d = function (attribs) {
         this.side1.show(inherit);
         this.side2.show(inherit);
     };
+    /* eslint-enable no-invalid-this */
     return wrapper;
 };
 // Generate the paths required to draw a 3D arc
@@ -749,4 +763,9 @@ SVGRenderer.prototype.arc3dPath = function (shapeArgs) {
         zSide2: a2 * 0.99
     };
 };
+/* *
+ *
+ *  Default Export
+ *
+ * */
 export default SVGRenderer;

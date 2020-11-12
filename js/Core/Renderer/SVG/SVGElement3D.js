@@ -1,8 +1,15 @@
 /* *
  *
- *  Imports
+ *  (c) 2010-2020 Torstein Honsi
+ *
+ *  Extensions to the SVGRenderer class to enable 3D shapes
+ *
+ *  License: www.highcharts.com/license
+ *
+ *  !!!!!!! SOURCE GETS TRANSPILED BY TYPESCRIPT. EDIT TS FILE ONLY. !!!!!!!
  *
  * */
+'use strict';
 import Color from '../../Color/Color.js';
 var color = Color.parse;
 import SVGElement from './SVGElement.js';
