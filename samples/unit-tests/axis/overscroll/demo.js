@@ -36,111 +36,131 @@ Highcharts.each([true, false], function (ordinal) {
     }
 
 
-    QUnit.test('Ordinal: ' + ordinal + ' - Extremes from rangeSelector buttons', function (assert) {
-        var options = getOptions(),
-            xAxis;
+    QUnit.test(
+        'Ordinal: ' + ordinal + ' - Extremes from rangeSelector buttons',
+        function (assert) {
+            var options = getOptions(),
+                xAxis;
 
-        xAxis = Highcharts.stockChart('container', options).xAxis[0];
+            xAxis = Highcharts.stockChart('container', options).xAxis[0];
 
-        assert.strictEqual(
-            xAxis.max - xAxis.min,
-            options.rangeSelector.buttons[0].count,
-            'Correct range with preselected button (1s)'
-        );
-
-        options = getOptions();
-        options.rangeSelector.selected = null;
-
-        xAxis = Highcharts.stockChart('container', options).xAxis[0];
-
-        assert.strictEqual(
-            xAxis.max - xAxis.min,
-            xAxis.series[0].options.data.length - 1 + options.xAxis[0].overscroll,
-            'Correct range with ALL'
-        );
-    });
-
-    QUnit.test('Ordinal: ' + ordinal + ' - Extremes after addPoint()', function (assert) {
-        var options = getOptions(),
-            chart;
-
-        chart = Highcharts.stockChart('container', options);
-
-        chart.series[0].addPoint(15, false, false);
-        chart.series[0].addPoint(15, false, false);
-        chart.series[0].addPoint(12);
-
-
-        assert.strictEqual(
-            chart.xAxis[0].max,
-            chart.xAxis[0].dataMax + chart.xAxis[0].options.overscroll,
-            'Correct max'
-        );
-
-        assert.strictEqual(
-            chart.xAxis[0].min,
-            chart.xAxis[0].dataMax + chart.xAxis[0].options.overscroll - 10,
-            'Correct min'
-        );
-    });
-
-    QUnit.test('Ordinal: ' + ordinal + ' - Extremes after scrollbar button click', function (assert) {
-        var done = assert.async(),
-            options = getOptions(),
-            event = {
-                trigger: 'scrollbar'
-            },
-            chart;
-
-        chart = Highcharts.stockChart('container', options);
-
-        chart.scrollbar.buttonToMinClick(event);
-        chart.scrollbar.buttonToMinClick(event);
-        chart.scrollbar.buttonToMinClick(event);
-
-        // No lolex should be needed here
-        setTimeout(function () {
-            // Scrollbar button calls setExtremes with timeout(0):
             assert.strictEqual(
-                chart.xAxis[0].max !== chart.xAxis[0].dataMax + chart.xAxis[0].options.overscroll,
-                true,
-                'Button click does not go backto the max'
+                xAxis.max - xAxis.min,
+                options.rangeSelector.buttons[0].count,
+                'Correct range with preselected button (1s)'
             );
-            done();
-        });
-    });
 
-    QUnit.test('Ordinal: ' + ordinal + ' - Extremes for uneven data', function (assert) {
-        var options = getOptions(),
-            xAxis;
+            options = getOptions();
+            options.rangeSelector.selected = null;
 
-        options.rangeSelector.selected = null;
-        options.series[0].data = [
-            [0, 5], [10, 5], [20, 5], [400, 5], [401, 5], [402, 5], [404, 5]
-        ];
+            xAxis = Highcharts.stockChart('container', options).xAxis[0];
 
-        xAxis = Highcharts.stockChart('container', options).xAxis[0];
+            assert.strictEqual(
+                xAxis.max - xAxis.min,
+                xAxis.series[0].options.data.length - 1 +
+                options.xAxis[0].overscroll,
+                'Correct range with ALL'
+            );
+        }
+    );
 
-        assert.strictEqual(
-            xAxis.max - xAxis.min,
-            xAxis.dataMax + options.xAxis[0].overscroll,
-            'Correct range with ALL'
-        );
-    });
+    QUnit.test(
+        'Ordinal: ' + ordinal + ' - Extremes after addPoint()',
+        function (assert) {
+            var options = getOptions(),
+                chart;
 
-    QUnit.test('Ordinal: ' + ordinal + ' - Extremes for even data', function (assert) {
-        var options = getOptions(),
-            xAxis;
+            chart = Highcharts.stockChart('container', options);
 
-        options.rangeSelector.selected = null;
-        options.xAxis.overscroll = options.navigator.xAxis.overscroll = 100;
+            chart.series[0].addPoint(15, false, false);
+            chart.series[0].addPoint(15, false, false);
+            chart.series[0].addPoint(12);
 
-        xAxis = Highcharts.stockChart('container', options).xAxis[0];
 
-        assert.strictEqual(
-            xAxis.tickPositions[1] - xAxis.tickPositions[0],
-            20,
-            'Correct ticks (#9160)'
-        );
-    });
+            assert.strictEqual(
+                chart.xAxis[0].max,
+                chart.xAxis[0].dataMax + chart.xAxis[0].options.overscroll,
+                'Correct max'
+            );
+
+            assert.strictEqual(
+                chart.xAxis[0].min,
+                chart.xAxis[0].dataMax +
+                chart.xAxis[0].options.overscroll - 10,
+                'Correct min'
+            );
+        }
+    );
+
+    QUnit.test(
+        'Ordinal: ' + ordinal + ' - Extremes after scrollbar button click',
+        function (assert) {
+            var done = assert.async(),
+                options = getOptions(),
+                event = {
+                    trigger: 'scrollbar'
+                },
+                chart;
+
+            chart = Highcharts.stockChart('container', options);
+
+            chart.scrollbar.buttonToMinClick(event);
+            chart.scrollbar.buttonToMinClick(event);
+            chart.scrollbar.buttonToMinClick(event);
+
+            // No lolex should be needed here
+            setTimeout(function () {
+                // Scrollbar button calls setExtremes with timeout(0):
+                assert.strictEqual(
+                    chart.xAxis[0].max !== chart.xAxis[0].dataMax +
+                    chart.xAxis[0].options.overscroll,
+                    true,
+                    'Button click does not go backto the max'
+                );
+                done();
+            });
+        }
+    );
+
+    QUnit.test(
+        'Ordinal: ' + ordinal + ' - Extremes for uneven data',
+        function (assert) {
+            var options = getOptions(),
+                xAxis;
+
+            options.rangeSelector.selected = null;
+            options.series[0].data = [
+                [0, 5], [10, 5], [20, 5], [400, 5],
+                [401, 5], [402, 5], [404, 5]
+            ];
+
+            xAxis = Highcharts.stockChart('container', options).xAxis[0];
+
+            assert.strictEqual(
+                xAxis.max - xAxis.min,
+                xAxis.dataMax + options.xAxis[0].overscroll,
+                'Correct range with ALL'
+            );
+        }
+    );
+
+    QUnit.test(
+        'Ordinal: ' + ordinal + ' - Extremes for even data',
+        function (assert) {
+            var options = getOptions(),
+                xAxis;
+
+            options.rangeSelector.selected = null;
+            options.xAxis.overscroll =
+                options.navigator.xAxis.overscroll = 100;
+
+            xAxis = Highcharts.stockChart('container', options).xAxis[0];
+
+            assert.strictEqual(
+                xAxis.tickPositions[1] - xAxis.tickPositions[0],
+                20,
+                'Correct ticks (#9160)'
+            );
+        }
+    );
 });
