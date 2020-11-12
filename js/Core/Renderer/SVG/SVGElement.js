@@ -1956,7 +1956,12 @@ var SVGElement = /** @class */ (function () {
         var titleNode = el.getElementsByTagNameNS(this.SVG_NS, 'title')[0] ||
             doc.createElementNS(this.SVG_NS, 'title');
         // Move to first child
-        el.insertBefore(titleNode, el.firstChild);
+        if (el.insertBefore) {
+            el.insertBefore(titleNode, el.firstChild);
+        }
+        else {
+            el.appendChild(titleNode);
+        }
         // Replace text content and escape markup
         titleNode.textContent =
             // #3276, #3895
