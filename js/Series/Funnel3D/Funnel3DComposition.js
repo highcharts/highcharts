@@ -9,7 +9,6 @@ import H from '../../Core/Globals.js';
 var charts = H.charts, RendererProto = H.Renderer.prototype;
 import U from '../../Core/Utilities.js';
 var error = U.error, merge = U.merge;
-import '../../Core/Renderer/SVG/SVGRenderer.js';
 /* *
  *
  *  Composition
