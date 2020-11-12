@@ -154,9 +154,9 @@ var BulletSeries = /** @class */ (function (_super) {
      */
     BulletSeries.prototype.getExtremes = function (yData) {
         var series = this, targetData = series.targetData, yMax, yMin;
-        var dataExtremes = _super.prototype.getExtremes.apply(this, arguments);
+        var dataExtremes = _super.prototype.getExtremes.call(this, yData);
         if (targetData && targetData.length) {
-            var targetExtremes = _super.prototype.getExtremes.apply(this, arguments);
+            var targetExtremes = _super.prototype.getExtremes.call(this, targetData);
             if (isNumber(targetExtremes.dataMin)) {
                 dataExtremes.dataMin = Math.min(pick(dataExtremes.dataMin, Infinity), targetExtremes.dataMin);
             }
