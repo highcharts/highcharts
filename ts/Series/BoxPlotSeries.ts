@@ -26,28 +26,23 @@ import type GradientColor from '../Core/Color/GradientColor';
 import type { SeriesStatesOptions } from '../Core/Series/SeriesOptions';
 import type SVGAttributes from '../Core/Renderer/SVG/SVGAttributes';
 import type SVGPath from '../Core/Renderer/SVG/SVGPath';
-import Series from '../Core/Series/Series.js';
+import BaseSeries from '../Core/Series/Series.js';
 import ColumnSeries from './Column/ColumnSeries.js';
 const { prototype: columnProto } = ColumnSeries;
 import H from '../Core/Globals.js';
 const { noop } = H;
 import U from '../Core/Utilities.js';
-const { pick } = U;
+const {
+    extend,
+    merge,
+    pick
+} = U;
 
 /* *
  *
  *  Declarations
  *
  * */
-
-/**
- * @private
- */
-declare module '../Core/Series/SeriesType' {
-    interface SeriesTypeRegistry {
-        boxplot: typeof Highcharts.BoxPlotSeries;
-    }
-}
 
 /**
  * Internal types
@@ -139,26 +134,32 @@ declare global {
  *
  * */
 
-/**
- * A box plot is a convenient way of depicting groups of data through their
- * five-number summaries: the smallest observation (sample minimum), lower
- * quartile (Q1), median (Q2), upper quartile (Q3), and largest observation
- * (sample maximum).
- *
- * @sample highcharts/demo/box-plot/
- *         Box plot
- *
- * @extends      plotOptions.column
- * @excluding    borderColor, borderRadius, borderWidth, groupZPadding, states,
- *               boostThreshold, boostBlending
- * @product      highcharts
- * @requires     highcharts-more
- * @optionparent plotOptions.boxplot
- */
-Series.seriesType<typeof Highcharts.BoxPlotSeries>(
-    'boxplot',
-    'column',
-    {
+class BoxPlotSeries extends ColumnSeries {
+
+    /* *
+     *
+     * Static Properties
+     *
+     * */
+
+    /**
+     * A box plot is a convenient way of depicting groups of data through their
+     * five-number summaries: the smallest observation (sample minimum), lower
+     * quartile (Q1), median (Q2), upper quartile (Q3), and largest observation
+     * (sample maximum).
+     *
+     * @sample highcharts/demo/box-plot/
+     *         Box plot
+     *
+     * @extends      plotOptions.column
+     * @excluding    borderColor, borderRadius, borderWidth, groupZPadding,
+     *               states, boostThreshold, boostBlending
+     * @product      highcharts
+     * @requires     highcharts-more
+     * @optionparent plotOptions.boxplot
+     */
+
+    public static defaultOptions: Highcharts.BoxPlotSeriesOptions = merge(ColumnSeries.defaultOptions, {
 
         threshold: null as any,
 
@@ -412,275 +413,318 @@ Series.seriesType<typeof Highcharts.BoxPlotSeries>(
          */
         whiskerWidth: 2
 
+    });
+
+    /* *
+     *
+     * Properties
+     *
+     * */
+    public data: Array<Highcharts.BoxPlotPoint> = void 0 as any;
+    public options: Highcharts.BoxPlotSeriesOptions = void 0 as any;
+    public points: Array<Highcharts.BoxPlotPoint> = void 0 as any;
+
+}
+
+/* *
+ *
+ * Prototype Properties
+ *
+ * */
+interface BoxPlotSeries extends ColumnSeries {
+    doQuartiles?: boolean;
+    pointArrayMap: Array<string>;
+    pointClass: typeof Highcharts.BoxPlotPoint;
+    pointValKey: string;
+}
+
+extend(BoxPlotSeries.prototype, {
+    // array point configs are mapped to this
+    pointArrayMap: ['low', 'q1', 'median', 'q3', 'high'],
+    // return a plain array for speedy calculation
+    toYData: function (point: Highcharts.BoxPlotPoint): Array<number> {
+        return [point.low, point.q1, point.median, point.q3, point.high];
     },
-    /** @lends Highcharts.seriesTypes.boxplot */
-    {
 
-        // array point configs are mapped to this
-        pointArrayMap: ['low', 'q1', 'median', 'q3', 'high'],
-        // return a plain array for speedy calculation
-        toYData: function (point: Highcharts.BoxPlotPoint): Array<number> {
-            return [point.low, point.q1, point.median, point.q3, point.high];
-        },
+    // defines the top of the tracker
+    pointValKey: 'high',
 
-        // defines the top of the tracker
-        pointValKey: 'high',
+    // Get presentational attributes
+    pointAttribs: function (
+        this: Highcharts.BoxPlotSeries
+    ): SVGAttributes {
+        // No attributes should be set on point.graphic which is the group
+        return {};
+    },
 
-        // Get presentational attributes
-        pointAttribs: function (
-            this: Highcharts.BoxPlotSeries
-        ): SVGAttributes {
-            // No attributes should be set on point.graphic which is the group
-            return {};
-        },
+    // Disable data labels for box plot
+    drawDataLabels: noop as any,
 
-        // Disable data labels for box plot
-        drawDataLabels: noop as any,
+    // Translate data points from raw values x and y to plotX and plotY
+    translate: function (this: Highcharts.BoxPlotSeries): void {
+        var series = this,
+            yAxis = series.yAxis,
+            pointArrayMap = series.pointArrayMap;
 
-        // Translate data points from raw values x and y to plotX and plotY
-        translate: function (this: Highcharts.BoxPlotSeries): void {
-            var series = this,
-                yAxis = series.yAxis,
-                pointArrayMap = series.pointArrayMap;
+        columnProto.translate.apply(series);
 
-            columnProto.translate.apply(series);
-
-            // do the translation on each point dimension
-            series.points.forEach(function (point: Highcharts.BoxPlotPoint): void {
-                pointArrayMap.forEach(function (key: string): void {
-                    if ((point as any)[key] !== null) {
-                        (point as any)[key + 'Plot'] = yAxis.translate(
-                            (point as any)[key],
-                            0 as any,
-                            1 as any,
-                            0 as any,
-                            1 as any
-                        );
-                    }
-                });
-                point.plotHigh = point.highPlot; // For data label validation
-            });
-        },
-
-        // eslint-disable-next-line valid-jsdoc
-        /**
-         * Draw the data points
-         * @private
-         */
-        drawPoints: function (this: Highcharts.BoxPlotSeries): void {
-            var series = this,
-                points = series.points,
-                options = series.options,
-                chart = series.chart,
-                renderer = chart.renderer,
-                q1Plot,
-                q3Plot,
-                highPlot,
-                lowPlot,
-                medianPlot,
-                medianPath: SVGPath,
-                crispCorr,
-                crispX = 0,
-                boxPath: SVGPath,
-                width,
-                left,
-                right,
-                halfWidth,
-                // error bar inherits this series type but doesn't do quartiles
-                doQuartiles = series.doQuartiles !== false,
-                pointWiskerLength,
-                whiskerLength = series.options.whiskerLength;
-
-            points.forEach(function (point: Highcharts.BoxPlotPoint): void {
-
-                var graphic = point.graphic,
-                    verb = graphic ? 'animate' : 'attr',
-                    shapeArgs = point.shapeArgs,
-                    boxAttr: SVGAttributes = {},
-                    stemAttr: SVGAttributes = {},
-                    whiskersAttr: SVGAttributes = {},
-                    medianAttr: SVGAttributes = {},
-                    color = point.color || series.color;
-
-                if (typeof point.plotY !== 'undefined') {
-
-                    // crisp vector coordinates
-                    width = Math.round(shapeArgs.width);
-                    left = Math.floor(shapeArgs.x);
-                    right = left + width;
-                    halfWidth = Math.round(width / 2);
-                    q1Plot = Math.floor(doQuartiles ? point.q1Plot : point.lowPlot);
-                    q3Plot = Math.floor(doQuartiles ? point.q3Plot : point.lowPlot);
-                    highPlot = Math.floor(point.highPlot);
-                    lowPlot = Math.floor(point.lowPlot);
-
-                    if (!graphic) {
-                        point.graphic = graphic = renderer.g('point')
-                            .add(series.group);
-
-                        point.stem = renderer.path()
-                            .addClass('highcharts-boxplot-stem')
-                            .add(graphic);
-
-                        if (whiskerLength) {
-                            point.whiskers = renderer.path()
-                                .addClass('highcharts-boxplot-whisker')
-                                .add(graphic);
-                        }
-                        if (doQuartiles) {
-                            point.box = renderer.path(boxPath)
-                                .addClass('highcharts-boxplot-box')
-                                .add(graphic);
-                        }
-                        point.medianShape = renderer.path(medianPath)
-                            .addClass('highcharts-boxplot-median')
-                            .add(graphic);
-                    }
-
-                    if (!chart.styledMode) {
-
-                        // Stem attributes
-                        stemAttr.stroke =
-                            point.stemColor || options.stemColor || color;
-                        stemAttr['stroke-width'] = pick(
-                            point.stemWidth,
-                            options.stemWidth,
-                            options.lineWidth
-                        );
-                        stemAttr.dashstyle = (
-                            point.stemDashStyle ||
-                            options.stemDashStyle ||
-                            options.dashStyle
-                        );
-                        point.stem.attr(stemAttr);
-
-                        // Whiskers attributes
-                        if (whiskerLength) {
-                            whiskersAttr.stroke = (
-                                point.whiskerColor ||
-                                options.whiskerColor ||
-                                color
-                            );
-                            whiskersAttr['stroke-width'] = pick(
-                                point.whiskerWidth,
-                                options.whiskerWidth,
-                                options.lineWidth
-                            );
-                            whiskersAttr.dashstyle = (
-                                point.whiskerDashStyle ||
-                                options.whiskerDashStyle ||
-                                options.dashStyle
-                            );
-                            point.whiskers.attr(whiskersAttr);
-                        }
-
-                        if (doQuartiles) {
-                            boxAttr.fill = (
-                                point.fillColor ||
-                                options.fillColor ||
-                                color
-                            );
-                            boxAttr.stroke = options.lineColor || color;
-                            boxAttr['stroke-width'] = options.lineWidth || 0;
-                            boxAttr.dashstyle = (
-                                point.boxDashStyle ||
-                                options.boxDashStyle ||
-                                options.dashStyle
-                            );
-                            point.box.attr(boxAttr);
-                        }
-
-                        // Median attributes
-                        medianAttr.stroke = (
-                            point.medianColor ||
-                            options.medianColor ||
-                            color
-                        );
-                        medianAttr['stroke-width'] = pick(
-                            point.medianWidth,
-                            options.medianWidth,
-                            options.lineWidth
-                        );
-                        medianAttr.dashstyle = (
-                            point.medianDashStyle ||
-                            options.medianDashStyle ||
-                            options.dashStyle
-                        );
-                        point.medianShape.attr(medianAttr);
-                    }
-
-                    let d: SVGPath;
-
-                    // The stem
-                    crispCorr = (point.stem.strokeWidth() % 2) / 2;
-                    crispX = left + halfWidth + crispCorr;
-                    d = [
-                        // stem up
-                        ['M', crispX, q3Plot],
-                        ['L', crispX, highPlot],
-
-                        // stem down
-                        ['M', crispX, q1Plot],
-                        ['L', crispX, lowPlot]
-                    ];
-                    point.stem[verb]({ d });
-
-                    // The box
-                    if (doQuartiles) {
-                        crispCorr = (point.box.strokeWidth() % 2) / 2;
-                        q1Plot = Math.floor(q1Plot) + crispCorr;
-                        q3Plot = Math.floor(q3Plot) + crispCorr;
-                        left += crispCorr;
-                        right += crispCorr;
-                        d = [
-                            ['M', left, q3Plot],
-                            ['L', left, q1Plot],
-                            ['L', right, q1Plot],
-                            ['L', right, q3Plot],
-                            ['L', left, q3Plot],
-                            ['Z']
-                        ];
-                        point.box[verb]({ d });
-                    }
-
-                    // The whiskers
-                    if (whiskerLength) {
-                        crispCorr = (point.whiskers.strokeWidth() % 2) / 2;
-                        highPlot = highPlot + crispCorr;
-                        lowPlot = lowPlot + crispCorr;
-                        pointWiskerLength = (/%$/).test(whiskerLength as any) ?
-                            halfWidth * parseFloat(whiskerLength as any) / 100 :
-                            (whiskerLength as any) / 2;
-                        d = [
-                            // High whisker
-                            ['M', crispX - pointWiskerLength, highPlot],
-                            ['L', crispX + pointWiskerLength, highPlot],
-
-                            // Low whisker
-                            ['M', crispX - pointWiskerLength, lowPlot],
-                            ['L', crispX + pointWiskerLength, lowPlot]
-                        ];
-                        point.whiskers[verb]({ d });
-                    }
-
-                    // The median
-                    medianPlot = Math.round(point.medianPlot);
-                    crispCorr = (point.medianShape.strokeWidth() % 2) / 2;
-                    medianPlot = medianPlot + crispCorr;
-
-                    d = [
-                        ['M', left, medianPlot],
-                        ['L', right, medianPlot]
-                    ];
-                    point.medianShape[verb]({ d });
+        // do the translation on each point dimension
+        series.points.forEach(function (point: Highcharts.BoxPlotPoint): void {
+            pointArrayMap.forEach(function (key: string): void {
+                if ((point as any)[key] !== null) {
+                    (point as any)[key + 'Plot'] = yAxis.translate(
+                        (point as any)[key],
+                        0 as any,
+                        1 as any,
+                        0 as any,
+                        1 as any
+                    );
                 }
             });
+            point.plotHigh = point.highPlot; // For data label validation
+        });
+    },
 
-        },
-        setStackedPoints: noop as any // #3890
+    // eslint-disable-next-line valid-jsdoc
+    /**
+     * Draw the data points
+     * @private
+     */
+    drawPoints: function (this: Highcharts.BoxPlotSeries): void {
+        var series = this,
+            points = series.points,
+            options = series.options,
+            chart = series.chart,
+            renderer = chart.renderer,
+            q1Plot,
+            q3Plot,
+            highPlot,
+            lowPlot,
+            medianPlot,
+            medianPath: SVGPath,
+            crispCorr,
+            crispX = 0,
+            boxPath: SVGPath,
+            width,
+            left,
+            right,
+            halfWidth,
+            // error bar inherits this series type but doesn't do quartiles
+            doQuartiles = series.doQuartiles !== false,
+            pointWiskerLength,
+            whiskerLength = series.options.whiskerLength;
 
+        points.forEach(function (point: Highcharts.BoxPlotPoint): void {
+
+            var graphic = point.graphic,
+                verb = graphic ? 'animate' : 'attr',
+                shapeArgs = point.shapeArgs,
+                boxAttr: SVGAttributes = {},
+                stemAttr: SVGAttributes = {},
+                whiskersAttr: SVGAttributes = {},
+                medianAttr: SVGAttributes = {},
+                color = point.color || series.color;
+
+            if (typeof point.plotY !== 'undefined') {
+
+                // crisp vector coordinates
+                width = Math.round(shapeArgs.width);
+                left = Math.floor(shapeArgs.x);
+                right = left + width;
+                halfWidth = Math.round(width / 2);
+                q1Plot = Math.floor(doQuartiles ? point.q1Plot : point.lowPlot);
+                q3Plot = Math.floor(doQuartiles ? point.q3Plot : point.lowPlot);
+                highPlot = Math.floor(point.highPlot);
+                lowPlot = Math.floor(point.lowPlot);
+
+                if (!graphic) {
+                    point.graphic = graphic = renderer.g('point')
+                        .add(series.group);
+
+                    point.stem = renderer.path()
+                        .addClass('highcharts-boxplot-stem')
+                        .add(graphic);
+
+                    if (whiskerLength) {
+                        point.whiskers = renderer.path()
+                            .addClass('highcharts-boxplot-whisker')
+                            .add(graphic);
+                    }
+                    if (doQuartiles) {
+                        point.box = renderer.path(boxPath)
+                            .addClass('highcharts-boxplot-box')
+                            .add(graphic);
+                    }
+                    point.medianShape = renderer.path(medianPath)
+                        .addClass('highcharts-boxplot-median')
+                        .add(graphic);
+                }
+
+                if (!chart.styledMode) {
+
+                    // Stem attributes
+                    stemAttr.stroke =
+                        point.stemColor || options.stemColor || color;
+                    stemAttr['stroke-width'] = pick(
+                        point.stemWidth,
+                        options.stemWidth,
+                        options.lineWidth
+                    );
+                    stemAttr.dashstyle = (
+                        point.stemDashStyle ||
+                        options.stemDashStyle ||
+                        options.dashStyle
+                    );
+                    point.stem.attr(stemAttr);
+
+                    // Whiskers attributes
+                    if (whiskerLength) {
+                        whiskersAttr.stroke = (
+                            point.whiskerColor ||
+                            options.whiskerColor ||
+                            color
+                        );
+                        whiskersAttr['stroke-width'] = pick(
+                            point.whiskerWidth,
+                            options.whiskerWidth,
+                            options.lineWidth
+                        );
+                        whiskersAttr.dashstyle = (
+                            point.whiskerDashStyle ||
+                            options.whiskerDashStyle ||
+                            options.dashStyle
+                        );
+                        point.whiskers.attr(whiskersAttr);
+                    }
+
+                    if (doQuartiles) {
+                        boxAttr.fill = (
+                            point.fillColor ||
+                            options.fillColor ||
+                            color
+                        );
+                        boxAttr.stroke = options.lineColor || color;
+                        boxAttr['stroke-width'] = options.lineWidth || 0;
+                        boxAttr.dashstyle = (
+                            point.boxDashStyle ||
+                            options.boxDashStyle ||
+                            options.dashStyle
+                        );
+                        point.box.attr(boxAttr);
+                    }
+
+                    // Median attributes
+                    medianAttr.stroke = (
+                        point.medianColor ||
+                        options.medianColor ||
+                        color
+                    );
+                    medianAttr['stroke-width'] = pick(
+                        point.medianWidth,
+                        options.medianWidth,
+                        options.lineWidth
+                    );
+                    medianAttr.dashstyle = (
+                        point.medianDashStyle ||
+                        options.medianDashStyle ||
+                        options.dashStyle
+                    );
+                    point.medianShape.attr(medianAttr);
+                }
+
+                let d: SVGPath;
+
+                // The stem
+                crispCorr = (point.stem.strokeWidth() % 2) / 2;
+                crispX = left + halfWidth + crispCorr;
+                d = [
+                    // stem up
+                    ['M', crispX, q3Plot],
+                    ['L', crispX, highPlot],
+
+                    // stem down
+                    ['M', crispX, q1Plot],
+                    ['L', crispX, lowPlot]
+                ];
+                point.stem[verb]({ d });
+
+                // The box
+                if (doQuartiles) {
+                    crispCorr = (point.box.strokeWidth() % 2) / 2;
+                    q1Plot = Math.floor(q1Plot) + crispCorr;
+                    q3Plot = Math.floor(q3Plot) + crispCorr;
+                    left += crispCorr;
+                    right += crispCorr;
+                    d = [
+                        ['M', left, q3Plot],
+                        ['L', left, q1Plot],
+                        ['L', right, q1Plot],
+                        ['L', right, q3Plot],
+                        ['L', left, q3Plot],
+                        ['Z']
+                    ];
+                    point.box[verb]({ d });
+                }
+
+                // The whiskers
+                if (whiskerLength) {
+                    crispCorr = (point.whiskers.strokeWidth() % 2) / 2;
+                    highPlot = highPlot + crispCorr;
+                    lowPlot = lowPlot + crispCorr;
+                    pointWiskerLength = (/%$/).test(whiskerLength as any) ?
+                        halfWidth * parseFloat(whiskerLength as any) / 100 :
+                        (whiskerLength as any) / 2;
+                    d = [
+                        // High whisker
+                        ['M', crispX - pointWiskerLength, highPlot],
+                        ['L', crispX + pointWiskerLength, highPlot],
+
+                        // Low whisker
+                        ['M', crispX - pointWiskerLength, lowPlot],
+                        ['L', crispX + pointWiskerLength, lowPlot]
+                    ];
+                    point.whiskers[verb]({ d });
+                }
+
+                // The median
+                medianPlot = Math.round(point.medianPlot);
+                crispCorr = (point.medianShape.strokeWidth() % 2) / 2;
+                medianPlot = medianPlot + crispCorr;
+
+                d = [
+                    ['M', left, medianPlot],
+                    ['L', right, medianPlot]
+                ];
+                point.medianShape[verb]({ d });
+            }
+        });
+
+    },
+    setStackedPoints: noop as any // #3890
+});
+
+/* *
+ *
+ * Registry
+ *
+ * */
+
+BaseSeries.registerSeriesType('boxplot', BoxPlotSeries);
+
+/**
+ * @private
+ */
+declare module '../Core/Series/SeriesType' {
+    interface SeriesTypeRegistry {
+        boxplot: typeof Highcharts.BoxPlotSeries;
     }
-);
+}
+
+/* *
+ *
+ * API Options
+ *
+ * */
 
 /**
  * A `boxplot` series. If the [type](#series.boxplot.type) option is
