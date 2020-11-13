@@ -24,64 +24,64 @@ var __extends = (this && this.__extends) || (function () {
 import BaseSeries from '../Core/Series/Series.js';
 var AreaRangeSeries = BaseSeries.seriesTypes.arearange;
 import BoxPlotSeries from './BoxPlot/BoxPlotSeries.js';
+import ColumnSeries from '../Series/Column/ColumnSeries.js';
 import './AreaRangeSeries.js';
 import H from '../Core/Globals.js';
 var noop = H.noop;
 import U from '../Core/Utilities.js';
 var merge = U.merge, extend = U.extend;
+/**
+ * Errorbar series type
+ *
+ * @private
+ * @class
+ * @name Highcharts.seriesTypes.errorbar
+ *
+ * @augments Highcharts.Series
+ *
+ */
 var ErrorBarSeries = /** @class */ (function (_super) {
     __extends(ErrorBarSeries, _super);
     function ErrorBarSeries() {
+        /* *
+         *
+         * Static properties
+         *
+         * */
         var _this = _super !== null && _super.apply(this, arguments) || this;
         /* *
-        *
-        * Properties
-        *
-        * */
+         *
+         * Properties
+         *
+         * */
         _this.data = void 0;
         _this.options = void 0;
         _this.points = void 0;
-        // array point configs are mapped to this
-        // public pointArrayMap: Array<string> = void 0 as any;
-        // return a plain array for speedy calculation
-        _this.pointValKey = 'high'; // defines the top of the tracker
-        // public doQuartiles = false;
-        _this.linkedParent = void 0;
         return _this;
     }
-    /**
+    /* *
      *
-     * Methods
+     * Functions
      *
-     */
-    // // Get the width and X offset, either on top of the linked series
-    // // column or standalone
-    // public getColumnMetrics(
-    //     this: ErrorBarSeries
-    // ): ColumnMetricsObject {
-    //     return (
-    //         (this.linkedParent && this.linkedParent.columnMetrics) ||
-    //         ColumnSeries.prototype.getColumnMetrics.call(this)
-    //     );
-    // }
-    // public drawDataLabels(this: ErrorBarSeries): void {
-    //         debugger
-    //         var valKey = this.pointValKey;
-    //
-    //         AreaRangeSeries.prototype.drawDataLabels.call(this);
-    //         // Arearange drawDataLabels does not reset point.y to high,
-    //         // but to low after drawing (#4133)
-    //         this.data.forEach(function
-    //                (point: Highcharts.ErrorBarPoint): void {
-    //             point.y = (point as any)[valKey];
-    //         });
-    //     }
-    //
-    // public toYData(point: Highcharts.ErrorBarPoint): Array<number> {
-    //     return [point.low, point.high];
-    // };
-    ErrorBarSeries.prototype.init = function () {
-        _super.prototype.init.apply(this, arguments);
+     * */
+    // Get the width and X offset, either on top of the linked series
+    // column or standalone
+    ErrorBarSeries.prototype.getColumnMetrics = function () {
+        return ((this.linkedParent && this.linkedParent.columnMetrics) ||
+            ColumnSeries.prototype.getColumnMetrics.call(this));
+    };
+    ErrorBarSeries.prototype.drawDataLabels = function () {
+        var valKey = this.pointValKey;
+        AreaRangeSeries.prototype.drawDataLabels.call(this);
+        // Arearange drawDataLabels does not reset point.y to high,
+        // but to low after drawing (#4133)
+        this.data.forEach(function (point) {
+            point.y = point[valKey];
+        });
+    };
+    // return a plain array for speedy calculation
+    ErrorBarSeries.prototype.toYData = function (point) {
+        return [point.low, point.high];
     };
     ErrorBarSeries.defaultOptions = merge(BoxPlotSeries.defaultOptions, {
         /**
@@ -126,36 +126,29 @@ var ErrorBarSeries = /** @class */ (function (_super) {
     });
     return ErrorBarSeries;
 }(BoxPlotSeries));
-var seriesTypes = BaseSeries.seriesTypes;
+/* *
+ *
+ * Prototype properties
+ *
+ * */
 extend(ErrorBarSeries.prototype, {
-    type: 'errorbar',
-    pointClass: Highcharts.ErrorBarPoint,
     // array point configs are mapped to this
     pointArrayMap: ['low', 'high'],
-    // return a plain array for speedy calculation
-    toYData: function (point) {
-        return [point.low, point.high];
-    },
-    doQuartiles: false,
-    drawDataLabels: seriesTypes.arearange ?
-        function () {
-            var valKey = this.pointValKey;
-            seriesTypes.arearange.prototype.drawDataLabels.call(this);
-            // Arearange drawDataLabels does not reset point.y to high,
-            // but to low after drawing (#4133)
-            this.data.forEach(function (point) {
-                point.y = point[valKey];
-            });
-        } :
-        noop,
-    // Get the width and X offset, either on top of the linked series column or
-    // standalone
-    getColumnMetrics: function () {
-        return ((this.linkedParent && this.linkedParent.columnMetrics) ||
-            seriesTypes.column.prototype.getColumnMetrics.call(this));
-    }
+    pointValKey: 'high',
+    doQuartiles: false
 });
 BaseSeries.registerSeriesType('errorbar', ErrorBarSeries);
+/* *
+ *
+ * Default export
+ *
+ * */
+export default ErrorBarSeries;
+/* *
+ *
+ * API options
+ *
+ * */
 /**
  * Error bars are a graphical representation of the variability of data and are
  * used on graphs to indicate the error, or uncertainty in a reported
@@ -172,7 +165,6 @@ BaseSeries.registerSeriesType('errorbar', ErrorBarSeries);
  * @requires     highcharts-more
  * @optionparent plotOptions.errorbar
  */
-export default ErrorBarSeries;
 /**
  * A `errorbar` series. If the [type](#series.errorbar.type) option
  * is not specified, it is inherited from [chart.type](#chart.type).
