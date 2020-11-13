@@ -29,7 +29,6 @@ const {
 } = BaseSeries;
 import U from '../Core/Utilities.js';
 const {
-    extend,
     merge,
     pick
 } = U;
@@ -84,7 +83,7 @@ class SplineSeries extends LineSeries {
      * @product      highcharts highstock
      * @optionparent plotOptions.spline
      */
-    defaultOptions: Highcharts.SplineSeriesOptions = merge(LineSeries.defaultOptions);
+    public static defaultOptions: Highcharts.SplineSeriesOptions = merge(LineSeries.defaultOptions);
 
     /* *
      *
@@ -98,24 +97,11 @@ class SplineSeries extends LineSeries {
 
     public points: Array<Highcharts.SplinePoint> = void 0 as any;
 
-
-}
-
-/* *
- *
- *  Prototype Properties
- *
- * */
-
-interface SplineSeries {
-    pointClass: typeof Highcharts.SplinePoint;
-    getPointSpline(
-        points: Array<Highcharts.SplinePoint>,
-        point: Highcharts.SplinePoint,
-        i: number
-    ): SVGPath.CurveTo;
-}
-extend(SplineSeries.prototype, {
+    /* *
+     *
+     *  Functions
+     *
+     * */
 
     /* eslint-disable valid-jsdoc */
 
@@ -134,8 +120,7 @@ extend(SplineSeries.prototype, {
      *
      * @return {Highcharts.SVGPathArray}
      */
-    getPointSpline: function (
-        this: SplineSeries,
+    public getPointSpline(
         points: Array<Highcharts.SplinePoint>,
         point: Highcharts.SplinePoint,
         i: number
@@ -222,52 +207,52 @@ extend(SplineSeries.prototype, {
 
         // Visualize control points for debugging
         /*
-    if (leftContX) {
-        this.chart.renderer.circle(
-                leftContX + this.chart.plotLeft,
+        if (leftContX) {
+            this.chart.renderer.circle(
+                    leftContX + this.chart.plotLeft,
+                    leftContY + this.chart.plotTop,
+                    2
+                )
+                .attr({
+                    stroke: 'red',
+                    'stroke-width': 2,
+                    fill: 'none',
+                    zIndex: 9
+                })
+                .add();
+            this.chart.renderer.path(['M', leftContX + this.chart.plotLeft,
                 leftContY + this.chart.plotTop,
-                2
-            )
-            .attr({
-                stroke: 'red',
-                'stroke-width': 2,
-                fill: 'none',
-                zIndex: 9
-            })
-            .add();
-        this.chart.renderer.path(['M', leftContX + this.chart.plotLeft,
-            leftContY + this.chart.plotTop,
-            'L', plotX + this.chart.plotLeft, plotY + this.chart.plotTop])
-            .attr({
-                stroke: 'red',
-                'stroke-width': 2,
-                zIndex: 9
-            })
-            .add();
-    }
-    if (rightContX) {
-        this.chart.renderer.circle(
-                rightContX + this.chart.plotLeft,
+                'L', plotX + this.chart.plotLeft, plotY + this.chart.plotTop])
+                .attr({
+                    stroke: 'red',
+                    'stroke-width': 2,
+                    zIndex: 9
+                })
+                .add();
+        }
+        if (rightContX) {
+            this.chart.renderer.circle(
+                    rightContX + this.chart.plotLeft,
+                    rightContY + this.chart.plotTop,
+                    2
+                )
+                .attr({
+                    stroke: 'green',
+                    'stroke-width': 2,
+                    fill: 'none',
+                    zIndex: 9
+                })
+                .add();
+            this.chart.renderer.path(['M', rightContX + this.chart.plotLeft,
                 rightContY + this.chart.plotTop,
-                2
-            )
-            .attr({
-                stroke: 'green',
-                'stroke-width': 2,
-                fill: 'none',
-                zIndex: 9
-            })
-            .add();
-        this.chart.renderer.path(['M', rightContX + this.chart.plotLeft,
-            rightContY + this.chart.plotTop,
-            'L', plotX + this.chart.plotLeft, plotY + this.chart.plotTop])
-            .attr({
-                stroke: 'green',
-                'stroke-width': 2,
-                zIndex: 9
-            })
-            .add();
-    }
+                'L', plotX + this.chart.plotLeft, plotY + this.chart.plotTop])
+                .attr({
+                    stroke: 'green',
+                    'stroke-width': 2,
+                    zIndex: 9
+                })
+                .add();
+        }
         // */
         ret = [
             'C',
@@ -286,7 +271,17 @@ extend(SplineSeries.prototype, {
 
     /* eslint-enable valid-jsdoc */
 
-});
+}
+
+/* *
+ *
+ *  Prototype Properties
+ *
+ * */
+
+interface SplineSeries {
+    pointClass: typeof Highcharts.SplinePoint;
+}
 
 /* *
  *
