@@ -16,24 +16,22 @@
  *
  * */
 
-import type LinePoint from './Line/LinePoint';
-import type LinePointOptions from './Line/LinePointOptions';
-import type LineSeriesOptions from './Line/LineSeriesOptions';
-import type { SeriesStatesOptions } from '../Core/Series/SeriesOptions';
-import type SVGPath from '../Core/Renderer/SVG/SVGPath';
-import BaseSeries from '../Core/Series/Series.js';
+import type LinePoint from '../Line/LinePoint';
+import type LinePointOptions from '../Line/LinePointOptions';
+import type LineSeriesOptions from '../Line/LineSeriesOptions';
+import type { SeriesStatesOptions } from '../../Core/Series/SeriesOptions';
+import type SVGPath from '../../Core/Renderer/SVG/SVGPath';
+import BaseSeries from '../../Core/Series/Series.js';
 const {
     seriesTypes: {
         line: LineSeries
     }
 } = BaseSeries;
-import U from '../Core/Utilities.js';
+import U from '../../Core/Utilities.js';
 const {
     merge,
     pick
 } = U;
-import '../Core/Options.js';
-import '../Series/Line/LineSeries.js';
 
 declare global {
     namespace Highcharts {
@@ -289,7 +287,7 @@ interface SplineSeries {
  *
  * */
 
-declare module '../Core/Series/SeriesType' {
+declare module '../../Core/Series/SeriesType' {
     interface SeriesTypeRegistry {
         spline: typeof SplineSeries;
     }
