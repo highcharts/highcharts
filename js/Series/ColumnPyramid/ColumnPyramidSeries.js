@@ -209,11 +209,6 @@ var ColumnPyramidSeries = /** @class */ (function (_super) {
     });
     return ColumnPyramidSeries;
 }(ColumnSeries));
-/* *
- *
- * Registry
- *
- * */
 BaseSeries.registerSeriesType('columnpyramid', ColumnPyramidSeries);
 /* *
  *

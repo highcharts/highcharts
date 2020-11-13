@@ -16,10 +16,8 @@
  *
  * */
 
-import type ColumnPoint from '../Column/ColumnPoint';
-import type ColumnPointOptions from '../Column/ColumnPointOptions';
-import type ColumnSeriesOptions from '../Column/ColumnSeriesOptions';
-import type { SeriesStatesOptions } from '../../Core/Series/SeriesOptions';
+import type ColumnPyramidPoint from './ColumnPyramidPoint';
+import type ColumnPyramidSeriesOptions from './ColumnPyramidSeriesOptions';
 import BaseSeries from '../../Core/Series/Series.js';
 import ColumnSeries from '../Column/ColumnSeries.js';
 const { prototype: colProto } = ColumnSeries;
@@ -30,33 +28,6 @@ const {
     merge,
     pick
 } = U;
-
-/* *
- *
- *  Declarations
- *
- * */
-
-/**
- * Internal types
- * @private
- */
-declare global {
-    namespace Highcharts {
-        class ColumnPyramidPoint extends ColumnPoint {
-            public options: ColumnPyramidPointOptions;
-            public series: ColumnPyramidSeries;
-        }
-        interface ColumnPyramidPointOptions extends ColumnPointOptions {
-        }
-        interface ColumnPyramidSeriesOptions extends ColumnSeriesOptions {
-            states?: SeriesStatesOptions<ColumnPyramidSeries>;
-        }
-        interface SeriesTypesDictionary {
-            columnpyramid: typeof ColumnPyramidSeries;
-        }
-    }
-}
 
 /**
  * The ColumnPyramidSeries class
@@ -98,7 +69,7 @@ class ColumnPyramidSeries extends ColumnSeries {
      * @optionparent plotOptions.columnpyramid
      */
 
-    public static defaultOptions: Highcharts.ColumnPyramidSeriesOptions = merge(ColumnSeries.defaultOptions, {
+    public static defaultOptions: ColumnPyramidSeriesOptions = merge(ColumnSeries.defaultOptions, {
         // Nothing here
     });
 
@@ -107,18 +78,20 @@ class ColumnPyramidSeries extends ColumnSeries {
      * Properties
      *
      * */
-    public data: Array<Highcharts.ColumnPyramidPoint> = void 0 as any;
+    public data: Array<ColumnPyramidPoint> = void 0 as any;
 
-    public options: Highcharts.ColumnPyramidSeriesOptions = void 0 as any;
+    public options: ColumnPyramidSeriesOptions = void 0 as any;
 
-    public points: Array<Highcharts.ColumnPyramidPoint> = void 0 as any;
+    public points: Array<ColumnPyramidPoint> = void 0 as any;
 
     /* *
      *
      * Functions
      *
      * */
+
     /* eslint-disable-next-line valid-jsdoc */
+
     /**
      * Overrides the column translate method
      * @private
@@ -162,7 +135,7 @@ class ColumnPyramidSeries extends ColumnSeries {
 
         // Record the new values
         series.points.forEach(function (
-            point: Highcharts.ColumnPyramidPoint
+            point: ColumnPyramidPoint
         ): void {
             var yBottom = pick<number|undefined, number>(
                     point.yBottom, translatedThreshold as any
@@ -305,7 +278,7 @@ class ColumnPyramidSeries extends ColumnSeries {
  *
  * */
 interface ColumnPyramidSeries extends ColumnSeries {
-    pointClass: typeof Highcharts.ColumnPyramidPoint;
+    pointClass: typeof ColumnPyramidPoint;
 }
 
 /* *
@@ -313,6 +286,13 @@ interface ColumnPyramidSeries extends ColumnSeries {
  * Registry
  *
  * */
+
+declare module '../../Core/Series/SeriesType' {
+    interface SeriesTypeRegistry {
+        columnpyramid: typeof ColumnPyramidSeries;
+    }
+}
+
 BaseSeries.registerSeriesType('columnpyramid', ColumnPyramidSeries);
 
 /* *
