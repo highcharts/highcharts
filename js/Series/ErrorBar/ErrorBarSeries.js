@@ -147,11 +147,6 @@ extend(ErrorBarSeries.prototype, {
     pointValKey: 'high',
     doQuartiles: false
 });
-/* *
- *
- *  Registry
- *
- * */
 BaseSeries.registerSeriesType('errorbar', ErrorBarSeries);
 /* *
  *

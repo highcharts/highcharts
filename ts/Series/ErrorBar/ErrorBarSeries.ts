@@ -63,7 +63,7 @@ class ErrorBarSeries extends BoxPlotSeries {
      * @requires     highcharts-more
      * @optionparent plotOptions.errorbar
      */
-    public static defaultOptions = merge(BoxPlotSeries.defaultOptions, {
+    public static defaultOptions: ErrorBarSeriesOptions = merge(BoxPlotSeries.defaultOptions, {
         /**
          * The main color of the bars. This can be overridden by
          * [stemColor](#plotOptions.errorbar.stemColor) and
@@ -108,7 +108,7 @@ class ErrorBarSeries extends BoxPlotSeries {
          */
         whiskerWidth: null as any
 
-    });
+    }) as ErrorBarSeriesOptions;
 
     /* *
      *
@@ -183,13 +183,13 @@ extend(ErrorBarSeries.prototype, {
  *
  * */
 
-BaseSeries.registerSeriesType('errorbar', ErrorBarSeries);
-
 declare module '../../Core/Series/SeriesType' {
     interface SeriesTypeRegistry {
         errorbar: typeof ErrorBarSeries;
     }
 }
+
+BaseSeries.registerSeriesType('errorbar', ErrorBarSeries);
 
 /* *
  *

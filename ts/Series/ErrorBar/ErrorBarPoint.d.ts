@@ -14,10 +14,9 @@
  *
  * */
 
-import type BoxPlotPoint from '../BoxPlot/BoxPlotPoint';
-import type BoxPlotPointOptions from '../BoxPlot/BoxPlotPointOptions';
+import type ErrorBarPointOptions from './ErrorBarPointOptions';
 import type ErrorBarSeries from '../ErrorBar/ErrorBarSeries';
-
+import type BoxPlotPoint from '../BoxPlot/BoxPlotPoint';
 
 /* *
  *
@@ -30,8 +29,6 @@ declare class ErrorBarPoint extends BoxPlotPoint {
     public series: ErrorBarSeries;
 }
 
-export interface ErrorBarPointOptions extends BoxPlotPointOptions {
-}
 
 /* *
  *
