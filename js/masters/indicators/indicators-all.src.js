@@ -13,7 +13,7 @@
 'use strict';
 
 import '../../Stock/Indicators/SMA/SMAIndicator.js';
-import '../../Stock/Indicators/ADIndicator.js';
+import '../../Stock/Indicators/AD/ADIndicator.js';
 import '../../Stock/Indicators/AOIndicator.js';
 import '../../Stock/Indicators/AroonIndicator.js';
 import '../../Stock/Indicators/AroonOscillatorIndicator.js';
