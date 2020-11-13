@@ -47,13 +47,6 @@ declare global {
             public options: ColumnPyramidPointOptions;
             public series: ColumnPyramidSeries;
         }
-        class ColumnPyramidSeries extends ColumnSeries {
-            public data: Array<ColumnPyramidPoint>;
-            public options: ColumnPyramidSeriesOptions;
-            public pointClass: typeof ColumnPyramidPoint;
-            public points: Array<ColumnPyramidPoint>;
-            public translate(): void;
-        }
         interface ColumnPyramidPointOptions extends ColumnPointOptions {
         }
         interface ColumnPyramidSeriesOptions extends ColumnSeriesOptions {
@@ -119,24 +112,18 @@ class ColumnPyramidSeries extends ColumnSeries {
     public options: Highcharts.ColumnPyramidSeriesOptions = void 0 as any;
 
     public points: Array<Highcharts.ColumnPyramidPoint> = void 0 as any;
-}
 
-/* *
- *
- * Prototype properties
- *
- * */
-interface ColumnPyramidSeries extends ColumnSeries {
-    pointClass: typeof Highcharts.ColumnPyramidPoint;
-}
-
-extend(ColumnPyramidSeries.prototype, {
+    /* *
+     *
+     * Functions
+     *
+     * */
     /* eslint-disable-next-line valid-jsdoc */
     /**
      * Overrides the column translate method
      * @private
      */
-    translate: function (this: Highcharts.ColumnPyramidSeries): void {
+    public translate(): void {
         var series = this,
             chart = series.chart,
             options = series.options,
@@ -310,7 +297,16 @@ extend(ColumnPyramidSeries.prototype, {
             };
         });
     }
-});
+}
+
+/* *
+ *
+ * Prototype properties
+ *
+ * */
+interface ColumnPyramidSeries extends ColumnSeries {
+    pointClass: typeof Highcharts.ColumnPyramidPoint;
+}
 
 /* *
  *
