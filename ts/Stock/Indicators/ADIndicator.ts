@@ -33,37 +33,16 @@ const {
     merge
 } = U;
 
-/**
- * Internal types
- * @private
- */
-declare global {
-    namespace Highcharts {
-        class ADIndicator extends SMAIndicator {
-            public data: Array<ADIndicatorPoint>;
-            public nameBase: string;
-            public nameComponents: Array<string>;
-            public options: ADIndicatorOptions;
-            public pointClass: typeof ADIndicatorPoint;
-            public points: Array<ADIndicatorPoint>;
-            public getValues<TLinkedSeries extends LineSeries>(
-                series: TLinkedSeries,
-                params: ADIndicatorParamsOptions
-            ): (IndicatorValuesObject<TLinkedSeries>|undefined);
-        }
+declare class ADIndicatorPoint extends SMAPoint {
+    public series: ADIndicator
+}
 
-        class ADIndicatorPoint extends SMAPoint {
-            public series: ADIndicator
-        }
+interface ADIndicatorOptions extends SMAOptions {
+    params?: ADIndicatorParamsOptions;
+}
 
-        interface ADIndicatorOptions extends SMAOptions {
-            params?: ADIndicatorParamsOptions;
-        }
-
-        interface ADIndicatorParamsOptions extends SMAParamsOptions {
-            volumeSeriesID?: string;
-        }
-    }
+interface ADIndicatorParamsOptions extends SMAParamsOptions {
+    volumeSeriesID?: string;
 }
 
 /**
@@ -97,7 +76,7 @@ class ADIndicator extends SMAIndicator {
      * @requires     stock/indicators/accumulation-distribution
      * @optionparent plotOptions.ad
      */
-    public static defaultOptions: Highcharts.ADIndicatorOptions = merge(SMAIndicator.defaultOptions, {
+    public static defaultOptions: ADIndicatorOptions = merge(SMAIndicator.defaultOptions, {
         params: {
             /**
              * The id of volume series which is mandatory.
@@ -108,7 +87,7 @@ class ADIndicator extends SMAIndicator {
              */
             volumeSeriesID: 'volume'
         }
-    } as Highcharts.ADIndicatorOptions);
+    } as ADIndicatorOptions);
 
     /* *
      *
@@ -116,7 +95,7 @@ class ADIndicator extends SMAIndicator {
      *
      * */
 
-    public static populateAverage(
+    protected static populateAverage(
         xVal: Array<number>,
         yVal: Array<Array<number>>,
         yValVolume: Array<number>,
@@ -137,20 +116,23 @@ class ADIndicator extends SMAIndicator {
 
     /* *
      *
+     *  Properties
+     *
+     * */
+
+    public data: Array<ADIndicatorPoint> = void 0 as any;
+    public options: ADIndicatorOptions = void 0 as any;
+    public points: Array<ADIndicatorPoint> = void 0 as any;
+
+    /* *
+     *
      *  Functions
      *
      * */
-}
 
-interface ADIndicator {
-    pointClass: typeof Highcharts.ADIndicatorPoint;
-}
-extend(ADIndicator.prototype, {
-    nameComponents: (false as any),
-    nameBase: 'Accumulation/Distribution',
-    getValues: function<TLinkedSeries extends LineSeries> (
+    public getValues<TLinkedSeries extends LineSeries>(
         series: TLinkedSeries,
-        params: Highcharts.ADIndicatorParamsOptions
+        params: ADIndicatorParamsOptions
     ): (IndicatorValuesObject<TLinkedSeries>|undefined) {
         var period: number = (params.period as any),
             xVal: Array<number> = (series.xData as any),
@@ -210,6 +192,15 @@ extend(ADIndicator.prototype, {
             yData: yData
         } as IndicatorValuesObject<TLinkedSeries>;
     }
+
+}
+
+interface ADIndicator {
+    pointClass: typeof ADIndicatorPoint;
+}
+extend(ADIndicator.prototype, {
+    nameComponents: (false as any),
+    nameBase: 'Accumulation/Distribution'
 });
 
 /* *
@@ -220,7 +211,7 @@ extend(ADIndicator.prototype, {
 
 declare module '../../Core/Series/SeriesType' {
     interface SeriesTypeRegistry {
-        ad: typeof Highcharts.ADIndicator;
+        ad: typeof ADIndicator;
     }
 }
 BaseSeries.registerSeriesType('ad', ADIndicator);

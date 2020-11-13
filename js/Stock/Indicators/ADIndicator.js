@@ -34,7 +34,21 @@ var error = U.error, extend = U.extend, merge = U.merge;
 var ADIndicator = /** @class */ (function (_super) {
     __extends(ADIndicator, _super);
     function ADIndicator() {
-        return _super !== null && _super.apply(this, arguments) || this;
+        /* *
+         *
+         *  Static Properties
+         *
+         * */
+        var _this = _super !== null && _super.apply(this, arguments) || this;
+        /* *
+         *
+         *  Properties
+         *
+         * */
+        _this.data = void 0;
+        _this.options = void 0;
+        _this.points = void 0;
+        return _this;
     }
     /* *
      *
@@ -49,9 +63,40 @@ var ADIndicator = /** @class */ (function (_super) {
     };
     /* *
      *
-     *  Static Properties
+     *  Functions
      *
      * */
+    ADIndicator.prototype.getValues = function (series, params) {
+        var period = params.period, xVal = series.xData, yVal = series.yData, volumeSeriesID = params.volumeSeriesID, volumeSeries = series.chart.get(volumeSeriesID), yValVolume = volumeSeries && volumeSeries.yData, yValLen = yVal ? yVal.length : 0, AD = [], xData = [], yData = [], len, i, ADPoint;
+        if (xVal.length <= period &&
+            yValLen &&
+            yVal[0].length !== 4) {
+            return;
+        }
+        if (!volumeSeries) {
+            error('Series ' +
+                volumeSeriesID +
+                ' not found! Check `volumeSeriesID`.', true, series.chart);
+            return;
+        }
+        // i = period <-- skip first N-points
+        // Calculate value one-by-one for each period in visible data
+        for (i = period; i < yValLen; i++) {
+            len = AD.length;
+            ADPoint = ADIndicator.populateAverage(xVal, yVal, yValVolume, i, period);
+            if (len > 0) {
+                ADPoint[1] += AD[len - 1][1];
+            }
+            AD.push(ADPoint);
+            xData.push(ADPoint[0]);
+            yData.push(ADPoint[1]);
+        }
+        return {
+            values: AD,
+            xData: xData,
+            yData: yData
+        };
+    };
     /**
      * Accumulation Distribution (AD). This series requires `linkedTo` option to
      * be set.
@@ -82,38 +127,7 @@ var ADIndicator = /** @class */ (function (_super) {
 }(SMAIndicator));
 extend(ADIndicator.prototype, {
     nameComponents: false,
-    nameBase: 'Accumulation/Distribution',
-    getValues: function (series, params) {
-        var period = params.period, xVal = series.xData, yVal = series.yData, volumeSeriesID = params.volumeSeriesID, volumeSeries = series.chart.get(volumeSeriesID), yValVolume = volumeSeries && volumeSeries.yData, yValLen = yVal ? yVal.length : 0, AD = [], xData = [], yData = [], len, i, ADPoint;
-        if (xVal.length <= period &&
-            yValLen &&
-            yVal[0].length !== 4) {
-            return;
-        }
-        if (!volumeSeries) {
-            error('Series ' +
-                volumeSeriesID +
-                ' not found! Check `volumeSeriesID`.', true, series.chart);
-            return;
-        }
-        // i = period <-- skip first N-points
-        // Calculate value one-by-one for each period in visible data
-        for (i = period; i < yValLen; i++) {
-            len = AD.length;
-            ADPoint = ADIndicator.populateAverage(xVal, yVal, yValVolume, i, period);
-            if (len > 0) {
-                ADPoint[1] += AD[len - 1][1];
-            }
-            AD.push(ADPoint);
-            xData.push(ADPoint[0]);
-            yData.push(ADPoint[1]);
-        }
-        return {
-            values: AD,
-            xData: xData,
-            yData: yData
-        };
-    }
+    nameBase: 'Accumulation/Distribution'
 });
 BaseSeries.registerSeriesType('ad', ADIndicator);
 /* *
