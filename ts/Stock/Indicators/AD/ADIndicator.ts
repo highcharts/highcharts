@@ -13,20 +13,20 @@
  *
  * */
 
-import type IndicatorValuesObject from './IndicatorValuesObject';
-import type LineSeries from '../../Series/Line/LineSeries';
+import type IndicatorValuesObject from '../IndicatorValuesObject';
+import type LineSeries from '../../../Series/Line/LineSeries';
 import type {
     SMAOptions,
     SMAParamsOptions
-} from './SMA/SMAOptions';
-import type SMAPoint from './SMA/SMAPoint';
-import BaseSeries from '../../Core/Series/Series.js';
+} from '../SMA/SMAOptions';
+import type SMAPoint from '../SMA/SMAPoint';
+import BaseSeries from '../../../Core/Series/Series.js';
 const {
     seriesTypes: {
         sma: SMAIndicator
     }
 } = BaseSeries;
-import U from '../../Core/Utilities.js';
+import U from '../../../Core/Utilities.js';
 const {
     error,
     extend,
@@ -209,7 +209,7 @@ extend(ADIndicator.prototype, {
  *
  * */
 
-declare module '../../Core/Series/SeriesType' {
+declare module '../../../Core/Series/SeriesType' {
     interface SeriesTypeRegistry {
         ad: typeof ADIndicator;
     }
