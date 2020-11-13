@@ -177,8 +177,7 @@ if (seriesTypes.spline) {
     // #6430 Areasplinerange series use unwrapped getPointSpline method, so
     // we need to set this method again.
     if (seriesTypes.areasplinerange) {
-        seriesTypes.areasplinerange.prototype.getPointSpline =
-            seriesTypes.spline.prototype.getPointSpline;
+        seriesTypes.areasplinerange.prototype.getPointSpline = seriesTypes.spline.prototype.getPointSpline;
     }
 }
 /**

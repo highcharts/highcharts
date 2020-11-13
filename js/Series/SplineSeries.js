@@ -8,11 +8,24 @@
  *
  * */
 'use strict';
+var __extends = (this && this.__extends) || (function () {
+    var extendStatics = function (d, b) {
+        extendStatics = Object.setPrototypeOf ||
+            ({ __proto__: [] } instanceof Array && function (d, b) { d.__proto__ = b; }) ||
+            function (d, b) { for (var p in b) if (b.hasOwnProperty(p)) d[p] = b[p]; };
+        return extendStatics(d, b);
+    };
+    return function (d, b) {
+        extendStatics(d, b);
+        function __() { this.constructor = d; }
+        d.prototype = b === null ? Object.create(b) : (__.prototype = b.prototype, new __());
+    };
+})();
 import BaseSeries from '../Core/Series/Series.js';
+var LineSeries = BaseSeries.seriesTypes.line;
 import U from '../Core/Utilities.js';
-var pick = U.pick;
+var extend = U.extend, merge = U.merge, pick = U.pick;
 import '../Core/Options.js';
-import '../Series/Line/LineSeries.js';
 import '../Series/Line/LineSeries.js';
 /**
  * Spline series type.
@@ -23,26 +36,43 @@ import '../Series/Line/LineSeries.js';
  *
  * @augments Highcarts.Series
  */
-BaseSeries.seriesType('spline', 'line', 
-/**
- * A spline series is a special type of line series, where the segments
- * between the data points are smoothed.
- *
- * @sample {highcharts} highcharts/demo/spline-irregular-time/
- *         Spline chart
- * @sample {highstock} stock/demo/spline/
- *         Spline chart
- *
- * @extends      plotOptions.series
- * @excluding    step, boostThreshold, boostBlending
- * @product      highcharts highstock
- * @optionparent plotOptions.spline
- */
-{}, 
-/**
- * @lends seriesTypes.spline.prototype
- */
-{
+var SplineSeries = /** @class */ (function (_super) {
+    __extends(SplineSeries, _super);
+    function SplineSeries() {
+        /* *
+         *
+         *  Static Properties
+         *
+         * */
+        var _this = _super !== null && _super.apply(this, arguments) || this;
+        /**
+         * A spline series is a special type of line series, where the segments
+         * between the data points are smoothed.
+         *
+         * @sample {highcharts} highcharts/demo/spline-irregular-time/
+         *         Spline chart
+         * @sample {highstock} stock/demo/spline/
+         *         Spline chart
+         *
+         * @extends      plotOptions.series
+         * @excluding    step, boostThreshold, boostBlending
+         * @product      highcharts highstock
+         * @optionparent plotOptions.spline
+         */
+        _this.defaultOptions = merge(LineSeries.defaultOptions);
+        /* *
+         *
+         *  Properties
+         *
+         * */
+        _this.data = void 0;
+        _this.options = void 0;
+        _this.points = void 0;
+        return _this;
+    }
+    return SplineSeries;
+}(LineSeries));
+extend(SplineSeries.prototype, {
     /* eslint-disable valid-jsdoc */
     /**
      * Get the spline segment from a given point's previous neighbour to the
@@ -177,6 +207,18 @@ BaseSeries.seriesType('spline', 'line',
     }
     /* eslint-enable valid-jsdoc */
 });
+BaseSeries.registerSeriesType('spline', SplineSeries);
+/* *
+ *
+ *  Default Export
+ *
+ * */
+export default SplineSeries;
+/* *
+ *
+ *  API Options
+ *
+ * */
 /**
  * A `spline` series. If the [type](#series.spline.type) option is
  * not specified, it is inherited from [chart.type](#chart.type).

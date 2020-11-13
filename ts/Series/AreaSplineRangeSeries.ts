@@ -11,6 +11,7 @@
 'use strict';
 
 import type { SeriesStatesOptions } from '../Core/Series/SeriesOptions';
+import type SplineSeries from './SplineSeries';
 import BaseSeries from '../Core/Series/Series.js';
 
 /**
@@ -92,9 +93,7 @@ BaseSeries.seriesType<typeof Highcharts.AreaSplineSeries>(
 
     null as any,
     {
-        getPointSpline: (
-            BaseSeries.seriesTypes.spline as typeof Highcharts.SplineSeries
-        ).prototype.getPointSpline
+        getPointSpline: BaseSeries.seriesTypes.spline.prototype.getPointSpline
     }
 );
 
