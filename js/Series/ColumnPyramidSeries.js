@@ -54,39 +54,17 @@ var ColumnPyramidSeries = /** @class */ (function (_super) {
         _this.points = void 0;
         return _this;
     }
-    /**
-     * Column pyramid series display one pyramid per value along an X axis.
-     * To display horizontal pyramids, set [chart.inverted](#chart.inverted) to
-     * `true`.
+    /* *
      *
-     * @sample {highcharts|highstock} highcharts/demo/column-pyramid/
-     *         Column pyramid
-     * @sample {highcharts|highstock} highcharts/plotoptions/columnpyramid-stacked/
-     *         Column pyramid stacked
-     * @sample {highcharts|highstock} highcharts/plotoptions/columnpyramid-inverted/
-     *         Column pyramid inverted
+     * Functions
      *
-     * @extends      plotOptions.column
-     * @since        7.0.0
-     * @product      highcharts highstock
-     * @excluding    boostThreshold, borderRadius, crisp, depth, edgeColor,
-     *               edgeWidth, groupZPadding, negativeColor, softThreshold,
-     *               threshold, zoneAxis, zones, boostBlending
-     * @requires     highcharts-more
-     * @optionparent plotOptions.columnpyramid
-     */
-    ColumnPyramidSeries.defaultOptions = merge(ColumnSeries.defaultOptions, {
-    // Nothing here
-    });
-    return ColumnPyramidSeries;
-}(ColumnSeries));
-extend(ColumnPyramidSeries.prototype, {
+     * */
     /* eslint-disable-next-line valid-jsdoc */
     /**
      * Overrides the column translate method
      * @private
      */
-    translate: function () {
+    ColumnPyramidSeries.prototype.translate = function () {
         var series = this, chart = series.chart, options = series.options, dense = series.dense =
             series.closestPointRange * series.xAxis.transA < 2, borderWidth = series.borderWidth = pick(options.borderWidth, dense ? 0 : 1 // #3635
         ), yAxis = series.yAxis, threshold = options.threshold, translatedThreshold = series.translatedThreshold =
@@ -204,8 +182,33 @@ extend(ColumnPyramidSeries.prototype, {
                 ]
             };
         });
-    }
-});
+    };
+    /**
+     * Column pyramid series display one pyramid per value along an X axis.
+     * To display horizontal pyramids, set [chart.inverted](#chart.inverted) to
+     * `true`.
+     *
+     * @sample {highcharts|highstock} highcharts/demo/column-pyramid/
+     *         Column pyramid
+     * @sample {highcharts|highstock} highcharts/plotoptions/columnpyramid-stacked/
+     *         Column pyramid stacked
+     * @sample {highcharts|highstock} highcharts/plotoptions/columnpyramid-inverted/
+     *         Column pyramid inverted
+     *
+     * @extends      plotOptions.column
+     * @since        7.0.0
+     * @product      highcharts highstock
+     * @excluding    boostThreshold, borderRadius, crisp, depth, edgeColor,
+     *               edgeWidth, groupZPadding, negativeColor, softThreshold,
+     *               threshold, zoneAxis, zones, boostBlending
+     * @requires     highcharts-more
+     * @optionparent plotOptions.columnpyramid
+     */
+    ColumnPyramidSeries.defaultOptions = merge(ColumnSeries.defaultOptions, {
+    // Nothing here
+    });
+    return ColumnPyramidSeries;
+}(ColumnSeries));
 /* *
  *
  * Registry
