@@ -4809,10 +4809,10 @@ class Axis {
             tickPositions.push(pos);
 
             // Always add the raw tickInterval, not the corrected one.
-            pos = correctFloat(
+            pos = Math.min(correctFloat(
                 pos + tickInterval,
                 precision
-            );
+            ), Number.MAX_VALUE);
 
             // If the interval is not big enough in the current min - max range
             // to actually increase the loop variable, we need to break out to
@@ -5542,9 +5542,10 @@ class Axis {
                 categories ?
                     1 :
                     // don't let it be more than the data range
-                    ((axis.max as any) - (axis.min as any)) *
-                    (tickPixelIntervalOption as any) /
-                    Math.max(axis.len, tickPixelIntervalOption as any)
+                    Math.min(
+                        ((axis.max as any) - (axis.min as any)) * (tickPixelIntervalOption as any),
+                        Number.MAX_VALUE
+                    ) / Math.max(axis.len, tickPixelIntervalOption as any)
             );
         }
 

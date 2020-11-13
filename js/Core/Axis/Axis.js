@@ -918,7 +918,7 @@ var Axis = /** @class */ (function () {
             // Place the tick on the rounded value
             tickPositions.push(pos);
             // Always add the raw tickInterval, not the corrected one.
-            pos = correctFloat(pos + tickInterval, precision);
+            pos = Math.min(correctFloat(pos + tickInterval, precision), Number.MAX_VALUE);
             // If the interval is not big enough in the current min - max range
             // to actually increase the loop variable, we need to break out to
             // prevent endless loop. Issue #619
@@ -1441,9 +1441,7 @@ var Axis = /** @class */ (function () {
             categories ?
                 1 :
                 // don't let it be more than the data range
-                (axis.max - axis.min) *
-                    tickPixelIntervalOption /
-                    Math.max(axis.len, tickPixelIntervalOption));
+                Math.min((axis.max - axis.min) * tickPixelIntervalOption, Number.MAX_VALUE) / Math.max(axis.len, tickPixelIntervalOption));
         }
         // Now we're finished detecting min and max, crop and group series data.
         // This is in turn needed in order to find tick positions in ordinal
