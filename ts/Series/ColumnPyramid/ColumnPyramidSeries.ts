@@ -16,14 +16,14 @@
  *
  * */
 
-import type ColumnPoint from './Column/ColumnPoint';
-import type ColumnPointOptions from './Column/ColumnPointOptions';
-import type ColumnSeriesOptions from './Column/ColumnSeriesOptions';
-import type { SeriesStatesOptions } from '../Core/Series/SeriesOptions';
-import BaseSeries from '../Core/Series/Series.js';
-import ColumnSeries from './Column/ColumnSeries.js';
+import type ColumnPoint from '../Column/ColumnPoint';
+import type ColumnPointOptions from '../Column/ColumnPointOptions';
+import type ColumnSeriesOptions from '../Column/ColumnSeriesOptions';
+import type { SeriesStatesOptions } from '../../Core/Series/SeriesOptions';
+import BaseSeries from '../../Core/Series/Series.js';
+import ColumnSeries from '../Column/ColumnSeries.js';
 const { prototype: colProto } = ColumnSeries;
-import U from '../Core/Utilities.js';
+import U from '../../Core/Utilities.js';
 const {
     clamp,
     extend,

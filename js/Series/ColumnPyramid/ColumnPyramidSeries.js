@@ -21,10 +21,10 @@ var __extends = (this && this.__extends) || (function () {
         d.prototype = b === null ? Object.create(b) : (__.prototype = b.prototype, new __());
     };
 })();
-import BaseSeries from '../Core/Series/Series.js';
-import ColumnSeries from './Column/ColumnSeries.js';
+import BaseSeries from '../../Core/Series/Series.js';
+import ColumnSeries from '../Column/ColumnSeries.js';
 var colProto = ColumnSeries.prototype;
-import U from '../Core/Utilities.js';
+import U from '../../Core/Utilities.js';
 var clamp = U.clamp, extend = U.extend, merge = U.merge, pick = U.pick;
 /**
  * The ColumnPyramidSeries class
