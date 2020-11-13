@@ -10,11 +10,9 @@
 
 'use strict';
 
-import type BoxPlotPoint from '../BoxPlot/BoxPlotPoint';
-import type BoxPlotPointOptions from '../BoxPlot/BoxPlotPointOptions';
-import type BoxPlotSeriesOptions from '../BoxPlot/BoxPlotSeriesOptions';
+import type ErrorBarPoint from './ErrorBarPoint';
+import type ErrorBarSeriesOptions from './ErrorBarSeriesOptions';
 import type ColumnMetricsObject from '../Column/ColumnMetricsObject';
-import type { SeriesStatesOptions } from '../../Core/Series/SeriesOptions';
 import BaseSeries from '../../Core/Series/Series.js';
 const {
     seriesTypes: {
@@ -24,49 +22,11 @@ const {
 
 import BoxPlotSeries from '../BoxPlot/BoxPlotSeries.js';
 import ColumnSeries from '../Column/ColumnSeries.js';
-import '../AreaRangeSeries.js';
-
-import H from '../../Core/Globals.js';
-const { noop } = H;
 import U from '../../Core/Utilities.js';
 const {
     merge,
     extend
 } = U;
-
-/**
- * Internal types
- * @private
- */
-declare global {
-    namespace Highcharts {
-        class ErrorBarPoint extends BoxPlotPoint {
-            public options: ErrorBarPointOptions;
-            public series: ErrorBarSeries;
-        }
-        interface ErrorBarPointOptions extends BoxPlotPointOptions {
-        }
-    }
-}
-
-interface ErrorBarSeriesOptions extends BoxPlotSeriesOptions {
-    states?: SeriesStatesOptions<ErrorBarSeries>;
-    whiskerWidth?: number;
-}
-interface ErrorBarSeries extends BoxPlotSeries {
-    data: Array<Highcharts.ErrorBarPoint>;
-    doQuartiles: boolean;
-    linkedParent: ErrorBarSeries;
-    options: ErrorBarSeriesOptions;
-    pointArrayMap: Array<string>;
-    pointClass: typeof Highcharts.ErrorBarPoint;
-    points: Array<Highcharts.ErrorBarPoint>;
-    pointValKey: string;
-    type: string;
-    getColumnMetrics(): ColumnMetricsObject;
-    drawDataLabels(): void;
-    toYData(point: Highcharts.ErrorBarPoint): Array<number>;
-}
 
 /**
  * Errorbar series type
@@ -82,7 +42,7 @@ class ErrorBarSeries extends BoxPlotSeries {
 
     /* *
      *
-     * Static properties
+     *  Static properties
      *
      * */
 
@@ -135,17 +95,17 @@ class ErrorBarSeries extends BoxPlotSeries {
 
     /* *
      *
-     * Properties
+     *  Properties
      *
      * */
 
-    public data: Array<Highcharts.ErrorBarPoint> = void 0 as any;
+    public data: Array<ErrorBarPoint> = void 0 as any;
     public options: ErrorBarSeriesOptions = void 0 as any;
-    public points: Array<Highcharts.ErrorBarPoint> = void 0 as any;
+    public points: Array<ErrorBarPoint> = void 0 as any;
 
     /* *
      *
-     * Functions
+     *  Functions
      *
      * */
 
@@ -161,16 +121,18 @@ class ErrorBarSeries extends BoxPlotSeries {
     public drawDataLabels(): void {
         var valKey = this.pointValKey;
 
-        AreaRangeSeries.prototype.drawDataLabels.call(this);
-        // Arearange drawDataLabels does not reset point.y to high,
-        // but to low after drawing (#4133)
-        this.data.forEach(function (point: Highcharts.ErrorBarPoint): void {
-            point.y = (point as any)[valKey];
-        });
+        if (AreaRangeSeries) {
+            AreaRangeSeries.prototype.drawDataLabels.call(this);
+            // Arearange drawDataLabels does not reset point.y to high,
+            // but to low after drawing (#4133)
+            this.data.forEach(function (point: ErrorBarPoint): void {
+                point.y = (point as any)[valKey];
+            });
+        }
     }
 
     // return a plain array for speedy calculation
-    public toYData(point: Highcharts.ErrorBarPoint): Array<number> {
+    public toYData(point: ErrorBarPoint): Array<number> {
         return [point.low, point.high];
     }
 }
@@ -178,9 +140,16 @@ class ErrorBarSeries extends BoxPlotSeries {
 
 /* *
  *
- * Prototype properties
+ *  Prototype properties
  *
  * */
+
+interface ErrorBarSeries extends BoxPlotSeries {
+    doQuartiles: boolean;
+    linkedParent: ErrorBarSeries;
+    pointArrayMap: Array<string>;
+    pointValKey: string;
+}
 
 extend(ErrorBarSeries.prototype, {
     // array point configs are mapped to this
@@ -192,7 +161,7 @@ extend(ErrorBarSeries.prototype, {
 
 /* *
  *
- * Registry
+ *  Registry
  *
  * */
 
@@ -206,7 +175,7 @@ BaseSeries.registerSeriesType('errorbar', ErrorBarSeries);
 
 /* *
  *
- * Default export
+ *  Default export
  *
  * */
 
@@ -214,7 +183,7 @@ export default ErrorBarSeries;
 
 /* *
  *
- * API options
+ *  API options
  *
  * */
 
