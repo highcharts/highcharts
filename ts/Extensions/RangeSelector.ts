@@ -1287,8 +1287,8 @@ class RangeSelector {
     public defaultInputDateParser(inputDate: string, useUTC: boolean, time?: Highcharts.Time): number {
         const hasTimezone = (str: string): boolean =>
             str.length > 6 &&
-            (str.indexOf('-') === str.length - 6 ||
-            str.indexOf('+') === str.length - 6);
+            (str.lastIndexOf('-') === str.length - 6 ||
+            str.lastIndexOf('+') === str.length - 6);
 
         let input = inputDate.split('/').join('-').split(' ').join('T');
         if (input.indexOf('T') === -1) {

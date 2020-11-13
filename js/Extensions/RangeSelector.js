@@ -898,8 +898,8 @@ var RangeSelector = /** @class */ (function () {
     RangeSelector.prototype.defaultInputDateParser = function (inputDate, useUTC, time) {
         var hasTimezone = function (str) {
             return str.length > 6 &&
-                (str.indexOf('-') === str.length - 6 ||
-                    str.indexOf('+') === str.length - 6);
+                (str.lastIndexOf('-') === str.length - 6 ||
+                    str.lastIndexOf('+') === str.length - 6);
         };
         var input = inputDate.split('/').join('-').split(' ').join('T');
         if (input.indexOf('T') === -1) {
