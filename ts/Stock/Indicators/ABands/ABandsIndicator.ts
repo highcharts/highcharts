@@ -257,12 +257,15 @@ interface ABandsIndicator {
 }
 
 extend(ABandsIndicator.prototype, {
+    drawGraph: MultipleLinesMixin.drawGraph,
     getTranslatedLinesNames: MultipleLinesMixin.getTranslatedLinesNames,
     linesApiNames: ['topLine', 'bottomLine'],
     nameBase: 'Acceleration Bands',
     nameComponents: ['period', 'factor'],
     pointArrayMap: ['top', 'middle', 'bottom'],
-    pointValKey: 'middle'
+    pointValKey: 'middle',
+    toYData: MultipleLinesMixin.toYData,
+    translate: MultipleLinesMixin.translate
 });
 
 /* *

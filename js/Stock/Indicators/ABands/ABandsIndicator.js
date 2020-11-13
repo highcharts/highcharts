@@ -193,13 +193,17 @@ var ABandsIndicator = /** @class */ (function (_super) {
     });
     return ABandsIndicator;
 }(SMAIndicator));
-extend(ABandsIndicator.prototype, merge(MultipleLinesMixin, {
-    pointArrayMap: ['top', 'middle', 'bottom'],
-    pointValKey: 'middle',
+extend(ABandsIndicator.prototype, {
+    drawGraph: MultipleLinesMixin.drawGraph,
+    getTranslatedLinesNames: MultipleLinesMixin.getTranslatedLinesNames,
+    linesApiNames: ['topLine', 'bottomLine'],
     nameBase: 'Acceleration Bands',
     nameComponents: ['period', 'factor'],
-    linesApiNames: ['topLine', 'bottomLine']
-}));
+    pointArrayMap: ['top', 'middle', 'bottom'],
+    pointValKey: 'middle',
+    toYData: MultipleLinesMixin.toYData,
+    translate: MultipleLinesMixin.translate
+});
 BaseSeries.registerSeriesType('abands', ABandsIndicator);
 /* *
  *

@@ -118,7 +118,7 @@ extend(ADIndicator.prototype, {
 BaseSeries.registerSeriesType('ad', ADIndicator);
 /* *
  *
- *  Export
+ *  Default Export
  *
  * */
 export default ADIndicator;
