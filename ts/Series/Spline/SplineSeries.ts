@@ -16,10 +16,8 @@
  *
  * */
 
-import type LinePoint from '../Line/LinePoint';
-import type LinePointOptions from '../Line/LinePointOptions';
-import type LineSeriesOptions from '../Line/LineSeriesOptions';
-import type { SeriesStatesOptions } from '../../Core/Series/SeriesOptions';
+import type SplinePoint from './SplinePoint';
+import type SplineSeriesOptions from './SplineSeriesOptions';
 import type SVGPath from '../../Core/Renderer/SVG/SVGPath';
 import BaseSeries from '../../Core/Series/Series.js';
 const {
@@ -32,23 +30,6 @@ const {
     merge,
     pick
 } = U;
-
-declare global {
-    namespace Highcharts {
-        interface SplinePointOptions extends LinePointOptions {
-        }
-        interface SplineSeriesOptions extends LineSeriesOptions {
-            states?: SeriesStatesOptions<SplineSeries>;
-        }
-        class SplinePoint extends LinePoint {
-            public doCurve?: boolean;
-            public options: SplinePointOptions;
-            public rightContX?: number;
-            public rightContY?: number;
-            public series: SplineSeries;
-        }
-    }
-}
 
 /**
  * Spline series type.
@@ -81,7 +62,7 @@ class SplineSeries extends LineSeries {
      * @product      highcharts highstock
      * @optionparent plotOptions.spline
      */
-    public static defaultOptions: Highcharts.SplineSeriesOptions = merge(LineSeries.defaultOptions);
+    public static defaultOptions: SplineSeriesOptions = merge(LineSeries.defaultOptions);
 
     /* *
      *
@@ -89,11 +70,11 @@ class SplineSeries extends LineSeries {
      *
      * */
 
-    public data: Array<Highcharts.SplinePoint> = void 0 as any;
+    public data: Array<SplinePoint> = void 0 as any;
 
-    public options: Highcharts.SplineSeriesOptions = void 0 as any;
+    public options: SplineSeriesOptions = void 0 as any;
 
-    public points: Array<Highcharts.SplinePoint> = void 0 as any;
+    public points: Array<SplinePoint> = void 0 as any;
 
     /* *
      *
@@ -119,8 +100,8 @@ class SplineSeries extends LineSeries {
      * @return {Highcharts.SVGPathArray}
      */
     public getPointSpline(
-        points: Array<Highcharts.SplinePoint>,
-        point: Highcharts.SplinePoint,
+        points: Array<SplinePoint>,
+        point: SplinePoint,
         i: number
     ): SVGPath.CurveTo {
         var
@@ -141,7 +122,7 @@ class SplineSeries extends LineSeries {
         /**
          * @private
          */
-        function doCurve(otherPoint: Highcharts.SplinePoint): boolean {
+        function doCurve(otherPoint: SplinePoint): boolean {
             return otherPoint &&
                 !otherPoint.isNull &&
                 otherPoint.doCurve !== false &&
@@ -278,7 +259,7 @@ class SplineSeries extends LineSeries {
  * */
 
 interface SplineSeries {
-    pointClass: typeof Highcharts.SplinePoint;
+    pointClass: typeof SplinePoint;
 }
 
 /* *
