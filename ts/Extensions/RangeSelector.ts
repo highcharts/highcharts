@@ -919,6 +919,8 @@ class RangeSelector {
                 }
             );
         }
+
+        fireEvent(chart, 'afterRangeSelectorBtnClick');
     }
 
     /**
