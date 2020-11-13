@@ -13,13 +13,13 @@
  *
  * */
 
+import type {
+    ADOptions,
+    ADParamsOptions
+} from './ADOptions';
+import type ADPoint from './ADPoint';
 import type IndicatorValuesObject from '../IndicatorValuesObject';
 import type LineSeries from '../../../Series/Line/LineSeries';
-import type {
-    SMAOptions,
-    SMAParamsOptions
-} from '../SMA/SMAOptions';
-import type SMAPoint from '../SMA/SMAPoint';
 import BaseSeries from '../../../Core/Series/Series.js';
 const {
     seriesTypes: {
@@ -32,18 +32,6 @@ const {
     extend,
     merge
 } = U;
-
-declare class ADIndicatorPoint extends SMAPoint {
-    public series: ADIndicator
-}
-
-interface ADIndicatorOptions extends SMAOptions {
-    params?: ADIndicatorParamsOptions;
-}
-
-interface ADIndicatorParamsOptions extends SMAParamsOptions {
-    volumeSeriesID?: string;
-}
 
 /**
  * The AD series type.
@@ -76,7 +64,7 @@ class ADIndicator extends SMAIndicator {
      * @requires     stock/indicators/accumulation-distribution
      * @optionparent plotOptions.ad
      */
-    public static defaultOptions: ADIndicatorOptions = merge(SMAIndicator.defaultOptions, {
+    public static defaultOptions: ADOptions = merge(SMAIndicator.defaultOptions, {
         params: {
             /**
              * The id of volume series which is mandatory.
@@ -87,7 +75,7 @@ class ADIndicator extends SMAIndicator {
              */
             volumeSeriesID: 'volume'
         }
-    } as ADIndicatorOptions);
+    } as ADOptions);
 
     /* *
      *
@@ -120,9 +108,9 @@ class ADIndicator extends SMAIndicator {
      *
      * */
 
-    public data: Array<ADIndicatorPoint> = void 0 as any;
-    public options: ADIndicatorOptions = void 0 as any;
-    public points: Array<ADIndicatorPoint> = void 0 as any;
+    public data: Array<ADPoint> = void 0 as any;
+    public options: ADOptions = void 0 as any;
+    public points: Array<ADPoint> = void 0 as any;
 
     /* *
      *
@@ -132,7 +120,7 @@ class ADIndicator extends SMAIndicator {
 
     public getValues<TLinkedSeries extends LineSeries>(
         series: TLinkedSeries,
-        params: ADIndicatorParamsOptions
+        params: ADParamsOptions
     ): (IndicatorValuesObject<TLinkedSeries>|undefined) {
         var period: number = (params.period as any),
             xVal: Array<number> = (series.xData as any),
@@ -196,7 +184,7 @@ class ADIndicator extends SMAIndicator {
 }
 
 interface ADIndicator {
-    pointClass: typeof ADIndicatorPoint;
+    pointClass: typeof ADPoint;
 }
 extend(ADIndicator.prototype, {
     nameComponents: (false as any),
