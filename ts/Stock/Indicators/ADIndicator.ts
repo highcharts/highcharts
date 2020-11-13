@@ -227,7 +227,7 @@ BaseSeries.registerSeriesType('ad', ADIndicator);
 
 /* *
  *
- *  Export
+ *  Default Export
  *
  * */
 

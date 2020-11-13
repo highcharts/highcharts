@@ -256,13 +256,14 @@ interface ABandsIndicator {
     pointClass: typeof ABandsPoint;
 }
 
-extend(ABandsIndicator.prototype, merge(MultipleLinesMixin, {
-    pointArrayMap: ['top', 'middle', 'bottom'],
-    pointValKey: 'middle',
+extend(ABandsIndicator.prototype, {
+    getTranslatedLinesNames: MultipleLinesMixin.getTranslatedLinesNames,
+    linesApiNames: ['topLine', 'bottomLine'],
     nameBase: 'Acceleration Bands',
     nameComponents: ['period', 'factor'],
-    linesApiNames: ['topLine', 'bottomLine']
-}));
+    pointArrayMap: ['top', 'middle', 'bottom'],
+    pointValKey: 'middle'
+});
 
 /* *
  *
