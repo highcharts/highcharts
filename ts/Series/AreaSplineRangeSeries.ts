@@ -11,7 +11,7 @@
 'use strict';
 
 import type { SeriesStatesOptions } from '../Core/Series/SeriesOptions';
-import type SplineSeries from './SplineSeries';
+import type SplineSeries from './Spline/SplineSeries';
 import BaseSeries from '../Core/Series/Series.js';
 
 /**
