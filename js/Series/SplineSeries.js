@@ -24,7 +24,7 @@ var __extends = (this && this.__extends) || (function () {
 import BaseSeries from '../Core/Series/Series.js';
 var LineSeries = BaseSeries.seriesTypes.line;
 import U from '../Core/Utilities.js';
-var extend = U.extend, merge = U.merge, pick = U.pick;
+var merge = U.merge, pick = U.pick;
 import '../Core/Options.js';
 import '../Series/Line/LineSeries.js';
 /**
@@ -45,21 +45,6 @@ var SplineSeries = /** @class */ (function (_super) {
          *
          * */
         var _this = _super !== null && _super.apply(this, arguments) || this;
-        /**
-         * A spline series is a special type of line series, where the segments
-         * between the data points are smoothed.
-         *
-         * @sample {highcharts} highcharts/demo/spline-irregular-time/
-         *         Spline chart
-         * @sample {highstock} stock/demo/spline/
-         *         Spline chart
-         *
-         * @extends      plotOptions.series
-         * @excluding    step, boostThreshold, boostBlending
-         * @product      highcharts highstock
-         * @optionparent plotOptions.spline
-         */
-        _this.defaultOptions = merge(LineSeries.defaultOptions);
         /* *
          *
          *  Properties
@@ -69,10 +54,13 @@ var SplineSeries = /** @class */ (function (_super) {
         _this.options = void 0;
         _this.points = void 0;
         return _this;
+        /* eslint-enable valid-jsdoc */
     }
-    return SplineSeries;
-}(LineSeries));
-extend(SplineSeries.prototype, {
+    /* *
+     *
+     *  Functions
+     *
+     * */
     /* eslint-disable valid-jsdoc */
     /**
      * Get the spline segment from a given point's previous neighbour to the
@@ -89,7 +77,7 @@ extend(SplineSeries.prototype, {
      *
      * @return {Highcharts.SVGPathArray}
      */
-    getPointSpline: function (points, point, i) {
+    SplineSeries.prototype.getPointSpline = function (points, point, i) {
         var 
         // 1 means control points midway between points, 2 means 1/3
         // from the point, 3 is 1/4 etc
@@ -145,52 +133,52 @@ extend(SplineSeries.prototype, {
         }
         // Visualize control points for debugging
         /*
-    if (leftContX) {
-        this.chart.renderer.circle(
-                leftContX + this.chart.plotLeft,
+        if (leftContX) {
+            this.chart.renderer.circle(
+                    leftContX + this.chart.plotLeft,
+                    leftContY + this.chart.plotTop,
+                    2
+                )
+                .attr({
+                    stroke: 'red',
+                    'stroke-width': 2,
+                    fill: 'none',
+                    zIndex: 9
+                })
+                .add();
+            this.chart.renderer.path(['M', leftContX + this.chart.plotLeft,
                 leftContY + this.chart.plotTop,
-                2
-            )
-            .attr({
-                stroke: 'red',
-                'stroke-width': 2,
-                fill: 'none',
-                zIndex: 9
-            })
-            .add();
-        this.chart.renderer.path(['M', leftContX + this.chart.plotLeft,
-            leftContY + this.chart.plotTop,
-            'L', plotX + this.chart.plotLeft, plotY + this.chart.plotTop])
-            .attr({
-                stroke: 'red',
-                'stroke-width': 2,
-                zIndex: 9
-            })
-            .add();
-    }
-    if (rightContX) {
-        this.chart.renderer.circle(
-                rightContX + this.chart.plotLeft,
+                'L', plotX + this.chart.plotLeft, plotY + this.chart.plotTop])
+                .attr({
+                    stroke: 'red',
+                    'stroke-width': 2,
+                    zIndex: 9
+                })
+                .add();
+        }
+        if (rightContX) {
+            this.chart.renderer.circle(
+                    rightContX + this.chart.plotLeft,
+                    rightContY + this.chart.plotTop,
+                    2
+                )
+                .attr({
+                    stroke: 'green',
+                    'stroke-width': 2,
+                    fill: 'none',
+                    zIndex: 9
+                })
+                .add();
+            this.chart.renderer.path(['M', rightContX + this.chart.plotLeft,
                 rightContY + this.chart.plotTop,
-                2
-            )
-            .attr({
-                stroke: 'green',
-                'stroke-width': 2,
-                fill: 'none',
-                zIndex: 9
-            })
-            .add();
-        this.chart.renderer.path(['M', rightContX + this.chart.plotLeft,
-            rightContY + this.chart.plotTop,
-            'L', plotX + this.chart.plotLeft, plotY + this.chart.plotTop])
-            .attr({
-                stroke: 'green',
-                'stroke-width': 2,
-                zIndex: 9
-            })
-            .add();
-    }
+                'L', plotX + this.chart.plotLeft, plotY + this.chart.plotTop])
+                .attr({
+                    stroke: 'green',
+                    'stroke-width': 2,
+                    zIndex: 9
+                })
+                .add();
+        }
         // */
         ret = [
             'C',
@@ -204,9 +192,24 @@ extend(SplineSeries.prototype, {
         // reset for updating series later
         lastPoint.rightContX = lastPoint.rightContY = void 0;
         return ret;
-    }
-    /* eslint-enable valid-jsdoc */
-});
+    };
+    /**
+     * A spline series is a special type of line series, where the segments
+     * between the data points are smoothed.
+     *
+     * @sample {highcharts} highcharts/demo/spline-irregular-time/
+     *         Spline chart
+     * @sample {highstock} stock/demo/spline/
+     *         Spline chart
+     *
+     * @extends      plotOptions.series
+     * @excluding    step, boostThreshold, boostBlending
+     * @product      highcharts highstock
+     * @optionparent plotOptions.spline
+     */
+    SplineSeries.defaultOptions = merge(LineSeries.defaultOptions);
+    return SplineSeries;
+}(LineSeries));
 BaseSeries.registerSeriesType('spline', SplineSeries);
 /* *
  *
