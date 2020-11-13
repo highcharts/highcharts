@@ -45,8 +45,6 @@ const {
     relativeLength
 } = U;
 
-import '../Core/Renderer/SVG/SVGRenderer.js';
-
 /* *
  *
  *  Class
