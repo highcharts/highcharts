@@ -5,22 +5,23 @@
  *  !!!!!!! SOURCE GETS TRANSPILED BY TYPESCRIPT. EDIT TS FILE ONLY. !!!!!!!
  * */
 'use strict';
+var __extends = (this && this.__extends) || (function () {
+    var extendStatics = function (d, b) {
+        extendStatics = Object.setPrototypeOf ||
+            ({ __proto__: [] } instanceof Array && function (d, b) { d.__proto__ = b; }) ||
+            function (d, b) { for (var p in b) if (b.hasOwnProperty(p)) d[p] = b[p]; };
+        return extendStatics(d, b);
+    };
+    return function (d, b) {
+        extendStatics(d, b);
+        function __() { this.constructor = d; }
+        d.prototype = b === null ? Object.create(b) : (__.prototype = b.prototype, new __());
+    };
+})();
 import BaseSeries from '../../Core/Series/Series.js';
+var SMAIndicator = BaseSeries.seriesTypes.sma;
 import U from '../../Core/Utilities.js';
-var error = U.error;
-// im port './SMAIndicator.js';
-/* eslint-disable valid-jsdoc */
-// Utils:
-/**
- * @private
- */
-function populateAverage(xVal, yVal, yValVolume, i) {
-    var high = yVal[i][1], low = yVal[i][2], close = yVal[i][3], volume = yValVolume[i], adY = close === high && close === low || high === low ?
-        0 :
-        ((2 * close - low - high) / (high - low)) * volume, adX = xVal[i];
-    return [adX, adY];
-}
-/* eslint-enable valid-jsdoc */
+var error = U.error, extend = U.extend, merge = U.merge;
 /**
  * The AD series type.
  *
@@ -30,37 +31,56 @@ function populateAverage(xVal, yVal, yValVolume, i) {
  *
  * @augments Highcharts.Series
  */
-BaseSeries.seriesType('ad', 'sma', 
-/**
- * Accumulation Distribution (AD). This series requires `linkedTo` option to
- * be set.
- *
- * @sample stock/indicators/accumulation-distribution
- *         Accumulation/Distribution indicator
- *
- * @extends      plotOptions.sma
- * @since        6.0.0
- * @product      highstock
- * @requires     stock/indicators/indicators
- * @requires     stock/indicators/accumulation-distribution
- * @optionparent plotOptions.ad
- */
-{
-    params: {
-        /**
-         * The id of volume series which is mandatory.
-         * For example using OHLC data, volumeSeriesID='volume' means
-         * the indicator will be calculated using OHLC and volume values.
-         *
-         * @since 6.0.0
-         */
-        volumeSeriesID: 'volume'
+var ADIndicator = /** @class */ (function (_super) {
+    __extends(ADIndicator, _super);
+    function ADIndicator() {
+        return _super !== null && _super.apply(this, arguments) || this;
     }
-}, 
-/**
- * @lends Highcharts.Series#
- */
-{
+    /* *
+     *
+     *  Static Functions
+     *
+     * */
+    ADIndicator.populateAverage = function (xVal, yVal, yValVolume, i, _period) {
+        var high = yVal[i][1], low = yVal[i][2], close = yVal[i][3], volume = yValVolume[i], adY = close === high && close === low || high === low ?
+            0 :
+            ((2 * close - low - high) / (high - low)) * volume, adX = xVal[i];
+        return [adX, adY];
+    };
+    /* *
+     *
+     *  Static Properties
+     *
+     * */
+    /**
+     * Accumulation Distribution (AD). This series requires `linkedTo` option to
+     * be set.
+     *
+     * @sample stock/indicators/accumulation-distribution
+     *         Accumulation/Distribution indicator
+     *
+     * @extends      plotOptions.sma
+     * @since        6.0.0
+     * @product      highstock
+     * @requires     stock/indicators/indicators
+     * @requires     stock/indicators/accumulation-distribution
+     * @optionparent plotOptions.ad
+     */
+    ADIndicator.defaultOptions = merge(SMAIndicator.defaultOptions, {
+        params: {
+            /**
+             * The id of volume series which is mandatory.
+             * For example using OHLC data, volumeSeriesID='volume' means
+             * the indicator will be calculated using OHLC and volume values.
+             *
+             * @since 6.0.0
+             */
+            volumeSeriesID: 'volume'
+        }
+    });
+    return ADIndicator;
+}(SMAIndicator));
+extend(ADIndicator.prototype, {
     nameComponents: false,
     nameBase: 'Accumulation/Distribution',
     getValues: function (series, params) {
@@ -80,7 +100,7 @@ BaseSeries.seriesType('ad', 'sma',
         // Calculate value one-by-one for each period in visible data
         for (i = period; i < yValLen; i++) {
             len = AD.length;
-            ADPoint = populateAverage(xVal, yVal, yValVolume, i, period);
+            ADPoint = ADIndicator.populateAverage(xVal, yVal, yValVolume, i, period);
             if (len > 0) {
                 ADPoint[1] += AD[len - 1][1];
             }
@@ -95,6 +115,18 @@ BaseSeries.seriesType('ad', 'sma',
         };
     }
 });
+BaseSeries.registerSeriesType('ad', ADIndicator);
+/* *
+ *
+ *  Export
+ *
+ * */
+export default ADIndicator;
+/* *
+ *
+ *  API Options
+ *
+ * */
 /**
  * A `AD` series. If the [type](#series.ad.type) option is not
  * specified, it is inherited from [chart.type](#chart.type).
