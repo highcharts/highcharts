@@ -10,25 +10,25 @@
 
 'use strict';
 
-import type BoxPlotPoint from '../Series/BoxPlot/BoxPlotPoint';
-import type BoxPlotPointOptions from '../Series/BoxPlot/BoxPlotPointOptions';
-import type BoxPlotSeriesOptions from '../Series/BoxPlot/BoxPlotSeriesOptions';
-import type ColumnMetricsObject from '../Series/Column/ColumnMetricsObject';
-import type { SeriesStatesOptions } from '../Core/Series/SeriesOptions';
-import BaseSeries from '../Core/Series/Series.js';
+import type BoxPlotPoint from '../BoxPlot/BoxPlotPoint';
+import type BoxPlotPointOptions from '../BoxPlot/BoxPlotPointOptions';
+import type BoxPlotSeriesOptions from '../BoxPlot/BoxPlotSeriesOptions';
+import type ColumnMetricsObject from '../Column/ColumnMetricsObject';
+import type { SeriesStatesOptions } from '../../Core/Series/SeriesOptions';
+import BaseSeries from '../../Core/Series/Series.js';
 const {
     seriesTypes: {
         arearange: AreaRangeSeries
     }
 } = BaseSeries;
 
-import BoxPlotSeries from './BoxPlot/BoxPlotSeries.js';
-import ColumnSeries from '../Series/Column/ColumnSeries.js';
-import './AreaRangeSeries.js';
+import BoxPlotSeries from '../BoxPlot/BoxPlotSeries.js';
+import ColumnSeries from '../Column/ColumnSeries.js';
+import '../AreaRangeSeries.js';
 
-import H from '../Core/Globals.js';
+import H from '../../Core/Globals.js';
 const { noop } = H;
-import U from '../Core/Utilities.js';
+import U from '../../Core/Utilities.js';
 const {
     merge,
     extend
@@ -196,7 +196,7 @@ extend(ErrorBarSeries.prototype, {
  *
  * */
 
-declare module '../Core/Series/SeriesType' {
+declare module '../../Core/Series/SeriesType' {
     interface SeriesTypeRegistry {
         errorbar: typeof ErrorBarSeries;
     }
