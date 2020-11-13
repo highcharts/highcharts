@@ -152,13 +152,12 @@ Chart.prototype.getBoostClipRect = function (target: Chart): BBoxObject {
 
     if (target === this) {
         const verticalAxes = this.inverted ? this.xAxis : this.yAxis; // #14444
-        verticalAxes.forEach(function (axis): void {
-            clipBox.y = Math.min(axis.pos, clipBox.y);
-            clipBox.height = Math.min(
-                axis.pos - this.plotTop + axis.len,
-                clipBox.height
-            );
-        }, this);
+        if (verticalAxes.length <= 1) {
+            clipBox.y = Math.min(verticalAxes[0].pos, clipBox.y);
+            clipBox.height = verticalAxes[0].pos - this.plotTop + verticalAxes[0].len;
+        } else {
+            clipBox.height = this.plotHeight;
+        }
     }
 
     return clipBox;
