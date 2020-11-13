@@ -429,7 +429,7 @@ QUnit.test('#13205, #14544: Timezone issues', assert => {
     assert.ok(chart.xAxis[0].min > min, 'Extremes should have been updated');
 });
 
-QUnit.test('#14416: Range selector ignored chart.time.timezoneOffset',
+QUnit.skip('#14416: Range selector ignored chart.time.timezoneOffset',
     assert => {
         const chart = Highcharts.stockChart('container', {
             time: {
