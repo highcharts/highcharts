@@ -40,6 +40,7 @@ import type {
     SeriesTypeOptions,
     SeriesTypePlotOptions
 } from '../../Core/Series/SeriesType';
+import type SplineSeries from '../SplineSeries';
 import type { StatesOptionsKey } from '../../Core/Series/StatesOptions';
 import type SVGAttributes from '../../Core/Renderer/SVG/SVGAttributes';
 import type SVGPath from '../../Core/Renderer/SVG/SVGPath';
@@ -5471,11 +5472,11 @@ class LineSeries {
 
                 // Generate the spline as defined in the SplineSeries object
                 } else if (
-                    (series as unknown as Partial<Highcharts.SplineSeries>).getPointSpline
+                    (series as unknown as Partial<SplineSeries>).getPointSpline
                 ) {
 
                     pathToPoint = [(
-                        series as unknown as Highcharts.SplineSeries
+                        series as unknown as SplineSeries
                     ).getPointSpline(
                         points as Array<Highcharts.SplinePoint>,
                         point as Highcharts.SplinePoint,

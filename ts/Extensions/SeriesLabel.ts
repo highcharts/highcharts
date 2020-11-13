@@ -15,6 +15,7 @@ import type BBoxObject from '../Core/Renderer/BBoxObject';
 import type CSSObject from '../Core/Renderer/CSSObject';
 import type Point from '../Core/Series/Point';
 import type PositionObject from '../Core/Renderer/PositionObject';
+import type SplineSeries from '../Series/SplineSeries';
 import type SVGAttributes from '../Core/Renderer/SVG/SVGAttributes';
 import type SVGElement from '../Core/Renderer/SVG/SVGElement';
 import type SVGPath from '../Core/Renderer/SVG/SVGPath';
@@ -447,7 +448,7 @@ LineSeries.prototype.getPointsOnGraph = function (): (Array<Point>|undefined) {
     // For splines, get the point at length (possible caveat: peaks are not
     // correctly detected)
     if (
-        (this as Highcharts.SplineSeries).getPointSpline &&
+        (this as SplineSeries).getPointSpline &&
         node.getPointAtLength &&
         !onArea &&
         // Not performing well on complex series, node.getPointAtLength is too

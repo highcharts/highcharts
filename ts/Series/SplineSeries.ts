@@ -18,22 +18,24 @@
 
 import type LinePoint from './Line/LinePoint';
 import type LinePointOptions from './Line/LinePointOptions';
-import type LineSeries from './Line/LineSeries';
 import type LineSeriesOptions from './Line/LineSeriesOptions';
 import type { SeriesStatesOptions } from '../Core/Series/SeriesOptions';
 import type SVGPath from '../Core/Renderer/SVG/SVGPath';
 import BaseSeries from '../Core/Series/Series.js';
+const {
+    seriesTypes: {
+        line: LineSeries
+    }
+} = BaseSeries;
 import U from '../Core/Utilities.js';
 const {
+    extend,
+    merge,
     pick
 } = U;
 import '../Core/Options.js';
 import '../Series/Line/LineSeries.js';
 
-/**
- * Internal types
- * @private
- */
 declare global {
     namespace Highcharts {
         interface SplinePointOptions extends LinePointOptions {
@@ -48,30 +50,8 @@ declare global {
             public rightContY?: number;
             public series: SplineSeries;
         }
-        class SplineSeries extends LineSeries {
-            public data: Array<SplinePoint>;
-            public options: SplineSeriesOptions;
-            public pointClass: typeof SplinePoint;
-            public points: Array<SplinePoint>;
-            public getPointSpline(
-                points: Array<SplinePoint>,
-                point: SplinePoint,
-                i: number
-            ): SVGPath.CurveTo;
-        }
     }
 }
-
-/**
- * @private
- */
-declare module '../Core/Series/SeriesType' {
-    interface SeriesTypeRegistry {
-        spline: typeof Highcharts.SplineSeries;
-    }
-}
-
-import '../Series/Line/LineSeries.js';
 
 /**
  * Spline series type.
@@ -82,9 +62,14 @@ import '../Series/Line/LineSeries.js';
  *
  * @augments Highcarts.Series
  */
-BaseSeries.seriesType<typeof Highcharts.SplineSeries>(
-    'spline',
-    'line',
+class SplineSeries extends LineSeries {
+
+    /* *
+     *
+     *  Static Properties
+     *
+     * */
+
     /**
      * A spline series is a special type of line series, where the segments
      * between the data points are smoothed.
@@ -99,185 +84,236 @@ BaseSeries.seriesType<typeof Highcharts.SplineSeries>(
      * @product      highcharts highstock
      * @optionparent plotOptions.spline
      */
-    {
-    },
+    defaultOptions: Highcharts.SplineSeriesOptions = merge(LineSeries.defaultOptions);
+
+    /* *
+     *
+     *  Properties
+     *
+     * */
+
+    public data: Array<Highcharts.SplinePoint> = void 0 as any;
+
+    public options: Highcharts.SplineSeriesOptions = void 0 as any;
+
+    public points: Array<Highcharts.SplinePoint> = void 0 as any;
+
+
+}
+
+/* *
+ *
+ *  Prototype Properties
+ *
+ * */
+
+interface SplineSeries {
+    pointClass: typeof Highcharts.SplinePoint;
+    getPointSpline(
+        points: Array<Highcharts.SplinePoint>,
+        point: Highcharts.SplinePoint,
+        i: number
+    ): SVGPath.CurveTo;
+}
+extend(SplineSeries.prototype, {
+
+    /* eslint-disable valid-jsdoc */
 
     /**
-     * @lends seriesTypes.spline.prototype
+     * Get the spline segment from a given point's previous neighbour to the
+     * given point.
+     *
+     * @private
+     * @function Highcharts.seriesTypes.spline#getPointSpline
+     *
+     * @param {Array<Highcharts.Point>}
+     *
+     * @param {Highcharts.Point} point
+     *
+     * @param {number} i
+     *
+     * @return {Highcharts.SVGPathArray}
      */
-    {
-
-        /* eslint-disable valid-jsdoc */
+    getPointSpline: function (
+        this: SplineSeries,
+        points: Array<Highcharts.SplinePoint>,
+        point: Highcharts.SplinePoint,
+        i: number
+    ): SVGPath.CurveTo {
+        var
+            // 1 means control points midway between points, 2 means 1/3
+            // from the point, 3 is 1/4 etc
+            smoothing = 1.5,
+            denom = smoothing + 1,
+            plotX = point.plotX || 0,
+            plotY = point.plotY || 0,
+            lastPoint = points[i - 1],
+            nextPoint = points[i + 1],
+            leftContX: number | undefined,
+            leftContY: number | undefined,
+            rightContX: number,
+            rightContY: number,
+            ret: SVGPath.CurveTo;
 
         /**
-         * Get the spline segment from a given point's previous neighbour to the
-         * given point.
-         *
          * @private
-         * @function Highcharts.seriesTypes.spline#getPointSpline
-         *
-         * @param {Array<Highcharts.Point>}
-         *
-         * @param {Highcharts.Point} point
-         *
-         * @param {number} i
-         *
-         * @return {Highcharts.SVGPathArray}
          */
-        getPointSpline: function (
-            this: Highcharts.SplineSeries,
-            points: Array<Highcharts.SplinePoint>,
-            point: Highcharts.SplinePoint,
-            i: number
-        ): SVGPath.CurveTo {
-            var
-                // 1 means control points midway between points, 2 means 1/3
-                // from the point, 3 is 1/4 etc
-                smoothing = 1.5,
-                denom = smoothing + 1,
-                plotX = point.plotX || 0,
-                plotY = point.plotY || 0,
-                lastPoint = points[i - 1],
-                nextPoint = points[i + 1],
-                leftContX: number | undefined,
-                leftContY: number | undefined,
-                rightContX: number,
-                rightContY: number,
-                ret: SVGPath.CurveTo;
+        function doCurve(otherPoint: Highcharts.SplinePoint): boolean {
+            return otherPoint &&
+                !otherPoint.isNull &&
+                otherPoint.doCurve !== false &&
+                // #6387, area splines next to null:
+                !point.isCliff;
+        }
 
-            /**
-             * @private
-             */
-            function doCurve(otherPoint: Highcharts.SplinePoint): boolean {
-                return otherPoint &&
-                    !otherPoint.isNull &&
-                    otherPoint.doCurve !== false &&
-                    // #6387, area splines next to null:
-                    !(point as Highcharts.AreaSplinePoint).isCliff;
+        // Find control points
+        if (doCurve(lastPoint) && doCurve(nextPoint)) {
+            var lastX = lastPoint.plotX || 0,
+                lastY = lastPoint.plotY || 0,
+                nextX = nextPoint.plotX || 0,
+                nextY = nextPoint.plotY || 0,
+                correction = 0;
+
+            leftContX = (smoothing * plotX + lastX) / denom;
+            leftContY = (smoothing * plotY + lastY) / denom;
+            rightContX = (smoothing * plotX + nextX) / denom;
+            rightContY = (smoothing * plotY + nextY) / denom;
+
+            // Have the two control points make a straight line through main
+            // point
+            if (rightContX !== leftContX) { // #5016, division by zero
+                correction = (
+                    ((rightContY - leftContY) *
+                    (rightContX - plotX)) /
+                    (rightContX - leftContX) + plotY - rightContY
+                );
             }
 
-            // Find control points
-            if (doCurve(lastPoint) && doCurve(nextPoint)) {
-                var lastX = lastPoint.plotX || 0,
-                    lastY = lastPoint.plotY || 0,
-                    nextX = nextPoint.plotX || 0,
-                    nextY = nextPoint.plotY || 0,
-                    correction = 0;
+            leftContY += correction;
+            rightContY += correction;
 
-                leftContX = (smoothing * plotX + lastX) / denom;
-                leftContY = (smoothing * plotY + lastY) / denom;
-                rightContX = (smoothing * plotX + nextX) / denom;
-                rightContY = (smoothing * plotY + nextY) / denom;
+            // to prevent false extremes, check that control points are
+            // between neighbouring points' y values
+            if (leftContY > lastY && leftContY > plotY) {
+                leftContY = Math.max(lastY, plotY);
+                // mirror of left control point
+                rightContY = 2 * plotY - leftContY;
 
-                // Have the two control points make a straight line through main
-                // point
-                if (rightContX !== leftContX) { // #5016, division by zero
-                    correction = (
-                        ((rightContY - leftContY) *
-                        (rightContX - plotX)) /
-                        (rightContX - leftContX) + plotY - rightContY
-                    );
-                }
-
-                leftContY += correction;
-                rightContY += correction;
-
-                // to prevent false extremes, check that control points are
-                // between neighbouring points' y values
-                if (leftContY > lastY && leftContY > plotY) {
-                    leftContY = Math.max(lastY, plotY);
-                    // mirror of left control point
-                    rightContY = 2 * plotY - leftContY;
-
-                } else if (leftContY < lastY && leftContY < plotY) {
-                    leftContY = Math.min(lastY, plotY);
-                    rightContY = 2 * plotY - leftContY;
-                }
-
-                if (rightContY > nextY && rightContY > plotY) {
-                    rightContY = Math.max(nextY, plotY);
-                    leftContY = 2 * plotY - rightContY;
-
-                } else if (rightContY < nextY && rightContY < plotY) {
-                    rightContY = Math.min(nextY, plotY);
-                    leftContY = 2 * plotY - rightContY;
-                }
-
-                // record for drawing in next point
-                point.rightContX = rightContX;
-                point.rightContY = rightContY;
-
-
+            } else if (leftContY < lastY && leftContY < plotY) {
+                leftContY = Math.min(lastY, plotY);
+                rightContY = 2 * plotY - leftContY;
             }
 
-            // Visualize control points for debugging
-            /*
-        if (leftContX) {
-            this.chart.renderer.circle(
-                    leftContX + this.chart.plotLeft,
-                    leftContY + this.chart.plotTop,
-                    2
-                )
-                .attr({
-                    stroke: 'red',
-                    'stroke-width': 2,
-                    fill: 'none',
-                    zIndex: 9
-                })
-                .add();
-            this.chart.renderer.path(['M', leftContX + this.chart.plotLeft,
+            if (rightContY > nextY && rightContY > plotY) {
+                rightContY = Math.max(nextY, plotY);
+                leftContY = 2 * plotY - rightContY;
+
+            } else if (rightContY < nextY && rightContY < plotY) {
+                rightContY = Math.min(nextY, plotY);
+                leftContY = 2 * plotY - rightContY;
+            }
+
+            // record for drawing in next point
+            point.rightContX = rightContX;
+            point.rightContY = rightContY;
+
+
+        }
+
+        // Visualize control points for debugging
+        /*
+    if (leftContX) {
+        this.chart.renderer.circle(
+                leftContX + this.chart.plotLeft,
                 leftContY + this.chart.plotTop,
-                'L', plotX + this.chart.plotLeft, plotY + this.chart.plotTop])
-                .attr({
-                    stroke: 'red',
-                    'stroke-width': 2,
-                    zIndex: 9
-                })
-                .add();
-        }
-        if (rightContX) {
-            this.chart.renderer.circle(
-                    rightContX + this.chart.plotLeft,
-                    rightContY + this.chart.plotTop,
-                    2
-                )
-                .attr({
-                    stroke: 'green',
-                    'stroke-width': 2,
-                    fill: 'none',
-                    zIndex: 9
-                })
-                .add();
-            this.chart.renderer.path(['M', rightContX + this.chart.plotLeft,
-                rightContY + this.chart.plotTop,
-                'L', plotX + this.chart.plotLeft, plotY + this.chart.plotTop])
-                .attr({
-                    stroke: 'green',
-                    'stroke-width': 2,
-                    zIndex: 9
-                })
-                .add();
-        }
-            // */
-            ret = [
-                'C',
-                pick(lastPoint.rightContX, lastPoint.plotX, 0),
-                pick(lastPoint.rightContY, lastPoint.plotY, 0),
-                pick(leftContX, plotX, 0),
-                pick(leftContY, plotY, 0),
-                plotX,
-                plotY
-            ];
-
-            // reset for updating series later
-            lastPoint.rightContX = lastPoint.rightContY = void 0;
-            return ret;
-        }
-
-        /* eslint-enable valid-jsdoc */
-
+                2
+            )
+            .attr({
+                stroke: 'red',
+                'stroke-width': 2,
+                fill: 'none',
+                zIndex: 9
+            })
+            .add();
+        this.chart.renderer.path(['M', leftContX + this.chart.plotLeft,
+            leftContY + this.chart.plotTop,
+            'L', plotX + this.chart.plotLeft, plotY + this.chart.plotTop])
+            .attr({
+                stroke: 'red',
+                'stroke-width': 2,
+                zIndex: 9
+            })
+            .add();
     }
-);
+    if (rightContX) {
+        this.chart.renderer.circle(
+                rightContX + this.chart.plotLeft,
+                rightContY + this.chart.plotTop,
+                2
+            )
+            .attr({
+                stroke: 'green',
+                'stroke-width': 2,
+                fill: 'none',
+                zIndex: 9
+            })
+            .add();
+        this.chart.renderer.path(['M', rightContX + this.chart.plotLeft,
+            rightContY + this.chart.plotTop,
+            'L', plotX + this.chart.plotLeft, plotY + this.chart.plotTop])
+            .attr({
+                stroke: 'green',
+                'stroke-width': 2,
+                zIndex: 9
+            })
+            .add();
+    }
+        // */
+        ret = [
+            'C',
+            pick(lastPoint.rightContX, lastPoint.plotX, 0),
+            pick(lastPoint.rightContY, lastPoint.plotY, 0),
+            pick(leftContX, plotX, 0),
+            pick(leftContY, plotY, 0),
+            plotX,
+            plotY
+        ];
+
+        // reset for updating series later
+        lastPoint.rightContX = lastPoint.rightContY = void 0;
+        return ret;
+    }
+
+    /* eslint-enable valid-jsdoc */
+
+});
+
+/* *
+ *
+ *  Registry
+ *
+ * */
+
+declare module '../Core/Series/SeriesType' {
+    interface SeriesTypeRegistry {
+        spline: typeof SplineSeries;
+    }
+}
+BaseSeries.registerSeriesType('spline', SplineSeries);
+
+/* *
+ *
+ *  Default Export
+ *
+ * */
+
+export default SplineSeries;
+
+/* *
+ *
+ *  API Options
+ *
+ * */
 
 /**
  * A `spline` series. If the [type](#series.spline.type) option is

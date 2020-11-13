@@ -20,6 +20,18 @@ import type LinePoint from '../Line/LinePoint';
 
 /* *
  *
+ *  Declarations
+ *
+ * */
+
+declare module '../../Core/Series/PointLike' {
+    interface PointLike {
+        isCliff?: AreaPoint['isCliff'];
+    }
+}
+
+/* *
+ *
  *  Class
  *
  * */
