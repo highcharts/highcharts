@@ -19,8 +19,10 @@ import type {
 import AccessibilityComponent from '../AccessibilityComponent.js';
 import ChartUtilities from '../Utils/ChartUtilities.js';
 const {
-    unhideChartElementFromAT
+    unhideChartElementFromAT,
+    getAxisRangeDescription
 } = ChartUtilities;
+import Announcer from '../Utils/Announcer.js';
 import H from '../../Core/Globals.js';
 import HTMLUtilities from '../Utils/HTMLUtilities.js';
 const {
@@ -50,6 +52,7 @@ declare global {
     namespace Highcharts {
         class RangeSelectorComponent extends AccessibilityComponent {
             public constructor ();
+            public announcer: Announcer;
             public getKeyboardNavigation(): Array<KeyboardNavigationHandler>;
             public getRangeSelectorButtonNavigation(
             ): KeyboardNavigationHandler;
@@ -157,6 +160,30 @@ var RangeSelectorComponent: typeof Highcharts.RangeSelectorComponent =
     function (): void {} as any;
 RangeSelectorComponent.prototype = new (AccessibilityComponent as any)();
 extend(RangeSelectorComponent.prototype, /** @lends Highcharts.RangeSelectorComponent */ { // eslint-disable-line
+
+    /**
+     * Init the component
+     * @private
+     */
+    init: function (this: Highcharts.RangeSelectorComponent): void {
+        const chart = this.chart;
+        this.announcer = new Announcer(chart, 'polite');
+
+        if (chart.rangeSelector) {
+            this.addEvent(chart, 'afterRangeSelectorBtnClick', (): void => {
+                const axisRangeDescription = getAxisRangeDescription(chart.xAxis[0]);
+                const announcement = chart.langFormat(
+                    'accessibility.rangeSelector.clickButtonAnnouncement',
+                    { chart, axisRangeDescription }
+                );
+
+                if (announcement) {
+                    this.announcer.announce(announcement);
+                }
+            });
+        }
+    },
+
 
     /**
      * Called on first render/updates to the chart, including options changes.
@@ -462,8 +489,15 @@ extend(RangeSelectorComponent.prototype, /** @lends Highcharts.RangeSelectorComp
             this.getRangeSelectorButtonNavigation(),
             this.getRangeSelectorInputNavigation()
         ];
-    }
+    },
 
+
+    /**
+     * Remove component traces
+     */
+    destroy: function (this: Highcharts.RangeSelectorComponent): void {
+        this.announcer?.destroy();
+    }
 });
 
 export default RangeSelectorComponent;

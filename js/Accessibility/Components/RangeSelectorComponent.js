@@ -12,7 +12,8 @@
 'use strict';
 import AccessibilityComponent from '../AccessibilityComponent.js';
 import ChartUtilities from '../Utils/ChartUtilities.js';
-var unhideChartElementFromAT = ChartUtilities.unhideChartElementFromAT;
+var unhideChartElementFromAT = ChartUtilities.unhideChartElementFromAT, getAxisRangeDescription = ChartUtilities.getAxisRangeDescription;
+import Announcer from '../Utils/Announcer.js';
 import H from '../../Core/Globals.js';
 import HTMLUtilities from '../Utils/HTMLUtilities.js';
 var setElAttrs = HTMLUtilities.setElAttrs;
@@ -76,6 +77,24 @@ H.Chart.prototype.highlightRangeSelectorButton = function (ix) {
 var RangeSelectorComponent = function () { };
 RangeSelectorComponent.prototype = new AccessibilityComponent();
 extend(RangeSelectorComponent.prototype, /** @lends Highcharts.RangeSelectorComponent */ {
+    /**
+     * Init the component
+     * @private
+     */
+    init: function () {
+        var _this = this;
+        var chart = this.chart;
+        this.announcer = new Announcer(chart, 'polite');
+        if (chart.rangeSelector) {
+            this.addEvent(chart, 'afterRangeSelectorBtnClick', function () {
+                var axisRangeDescription = getAxisRangeDescription(chart.xAxis[0]);
+                var announcement = chart.langFormat('accessibility.rangeSelector.clickButtonAnnouncement', { chart: chart, axisRangeDescription: axisRangeDescription });
+                if (announcement) {
+                    _this.announcer.announce(announcement);
+                }
+            });
+        }
+    },
     /**
      * Called on first render/updates to the chart, including options changes.
      */
@@ -264,6 +283,13 @@ extend(RangeSelectorComponent.prototype, /** @lends Highcharts.RangeSelectorComp
             this.getRangeSelectorButtonNavigation(),
             this.getRangeSelectorInputNavigation()
         ];
+    },
+    /**
+     * Remove component traces
+     */
+    destroy: function () {
+        var _a;
+        (_a = this.announcer) === null || _a === void 0 ? void 0 : _a.destroy();
     }
 });
 export default RangeSelectorComponent;
