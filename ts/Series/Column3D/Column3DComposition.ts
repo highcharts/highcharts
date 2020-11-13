@@ -10,45 +10,57 @@
 
 'use strict';
 
-import type Axis from '../Core/Axis/Axis';
-import type BBoxObject from '../Core/Renderer/BBoxObject';
-import type Chart from '../Core/Chart/Chart';
-import type ColorString from '../Core/Color/ColorString';
-import type ColumnPoint from './Column/ColumnPoint';
-import type ColumnSeriesOptions from './Column/ColumnSeriesOptions';
-import type DataLabelOptions from '../Core/Series/DataLabelOptions';
-import type Position3DObject from '../Core/Renderer/Position3DObject';
-import type SVGAttributes from '../Core/Renderer/SVG/SVGAttributes';
-import type SVGElement from '../Core/Renderer/SVG/SVGElement';
-import BaseSeries from '../Core/Series/Series.js';
-import ColumnSeries from './Column/ColumnSeries.js';
+/* *
+ *
+ *  Imports
+ *
+ * */
+
+import type Axis from '../../Core/Axis/Axis';
+import type BBoxObject from '../../Core/Renderer/BBoxObject';
+import type Chart from '../../Core/Chart/Chart';
+import type ColorString from '../../Core/Color/ColorString';
+import type ColumnPoint from '../Column/ColumnPoint';
+import type ColumnSeriesOptions from '../Column/ColumnSeriesOptions';
+import type DataLabelOptions from '../../Core/Series/DataLabelOptions';
+import type Position3DObject from '../../Core/Renderer/Position3DObject';
+import type SVGAttributes from '../../Core/Renderer/SVG/SVGAttributes';
+import type SVGElement from '../../Core/Renderer/SVG/SVGElement';
+import BaseSeries from '../../Core/Series/Series.js';
+import ColumnSeries from '../Column/ColumnSeries.js';
 const { prototype: columnProto } = ColumnSeries;
-import H from '../Core/Globals.js';
+import H from '../../Core/Globals.js';
 const { svg } = H;
-import LineSeries from '../Series/Line/LineSeries.js';
-import Math3D from '../Extensions/Math3D.js';
+import LineSeries from '../../Series/Line/LineSeries.js';
+import Math3D from '../../Extensions/Math3D.js';
 const { perspective } = Math3D;
-import StackItem from '../Extensions/Stacking.js';
-import U from '../Core/Utilities.js';
+import StackItem from '../../Extensions/Stacking.js';
+import U from '../../Core/Utilities.js';
 const {
     addEvent,
     pick,
     wrap
 } = U;
 
-declare module '../Core/Chart/ChartLike' {
+/* *
+ *
+ *  Declarations
+ *
+ * */
+
+declare module '../../Core/Chart/ChartLike' {
     interface ChartLike {
         columnGroup: SVGElement;
     }
 }
 
-declare module '../Core/Series/DataLabelOptions' {
+declare module '../../Core/Series/DataLabelOptions' {
     interface DataLabelOptions {
         outside3dPlot?: (boolean|null);
     }
 }
 
-declare module '../Core/Series/PointLike' {
+declare module '../../Core/Series/PointLike' {
     interface PointLike {
         height?: number;
         outside3dPlot?: (boolean|null);
@@ -57,7 +69,7 @@ declare module '../Core/Series/PointLike' {
     }
 }
 
-declare module '../Core/Series/SeriesLike' {
+declare module '../../Core/Series/SeriesLike' {
     interface SeriesLike {
         handle3dGrouping: boolean;
         z: number;
@@ -66,7 +78,7 @@ declare module '../Core/Series/SeriesLike' {
     }
 }
 
-declare module '../Core/Series/SeriesOptions' {
+declare module '../../Core/Series/SeriesOptions' {
     interface SeriesOptions {
         depth?: number;
         edgeColor?: ColorString;
@@ -76,47 +88,11 @@ declare module '../Core/Series/SeriesOptions' {
     }
 }
 
-/**
- * Depth of the columns in a 3D column chart.
+/* *
  *
- * @type      {number}
- * @default   25
- * @since     4.0
- * @product   highcharts
- * @requires  highcharts-3d
- * @apioption plotOptions.column.depth
- */
-
-/**
- * 3D columns only. The color of the edges. Similar to `borderColor`, except it
- * defaults to the same color as the column.
+ *  Functions
  *
- * @type      {Highcharts.ColorString}
- * @product   highcharts
- * @requires  highcharts-3d
- * @apioption plotOptions.column.edgeColor
- */
-
-/**
- * 3D columns only. The width of the colored edges.
- *
- * @type      {number}
- * @default   1
- * @product   highcharts
- * @requires  highcharts-3d
- * @apioption plotOptions.column.edgeWidth
- */
-
-/**
- * The spacing between columns on the Z Axis in a 3D chart.
- *
- * @type      {number}
- * @default   1
- * @since     4.0
- * @product   highcharts
- * @requires  highcharts-3d
- * @apioption plotOptions.column.groupZPadding
- */
+ * */
 
 /* eslint-disable no-invalid-this */
 
@@ -714,3 +690,61 @@ wrap(seriesTypes.cylinder.prototype, 'translate', function (proceed) {
     });
 });
 */
+
+/* *
+ *
+ *  Default Export
+ *
+ * */
+
+export default ColumnSeries;
+
+/* *
+ *
+ *  API Options
+ *
+ * */
+
+/**
+ * Depth of the columns in a 3D column chart.
+ *
+ * @type      {number}
+ * @default   25
+ * @since     4.0
+ * @product   highcharts
+ * @requires  highcharts-3d
+ * @apioption plotOptions.column.depth
+ */
+
+/**
+ * 3D columns only. The color of the edges. Similar to `borderColor`, except it
+ * defaults to the same color as the column.
+ *
+ * @type      {Highcharts.ColorString}
+ * @product   highcharts
+ * @requires  highcharts-3d
+ * @apioption plotOptions.column.edgeColor
+ */
+
+/**
+ * 3D columns only. The width of the colored edges.
+ *
+ * @type      {number}
+ * @default   1
+ * @product   highcharts
+ * @requires  highcharts-3d
+ * @apioption plotOptions.column.edgeWidth
+ */
+
+/**
+ * The spacing between columns on the Z Axis in a 3D chart.
+ *
+ * @type      {number}
+ * @default   1
+ * @since     4.0
+ * @product   highcharts
+ * @requires  highcharts-3d
+ * @apioption plotOptions.column.groupZPadding
+ */
+
+''; // keeps doclets above in transpiled file
