@@ -380,6 +380,8 @@ Available arguments for 'gulp test':
             new KarmaServer(
                 {
                     configFile: KARMA_CONFIG_FILE,
+                    reporters: argv.dots ? ['dots'] : void 0,
+                    browserDisconnectTimeout: typeof argv.timeout === 'number' ? argv.timeout : void 0,
                     singleRun: true,
                     client: {
                         cliArgs: argv
