@@ -46,32 +46,18 @@ declare global {
         }
         interface ErrorBarPointOptions extends BoxPlotPointOptions {
         }
-        interface ErrorBarSeriesOptions extends BoxPlotSeriesOptions {
-            states?: SeriesStatesOptions<ErrorBarSeries>;
-            whiskerWidth?: number;
-        }
-        class ErrorBarSeries extends BoxPlotSeries {
-            public data: Array<ErrorBarPoint>;
-            public doQuartiles: boolean;
-            public linkedParent: ErrorBarSeries;
-            public options: ErrorBarSeriesOptions;
-            public pointArrayMap: Array<string>;
-            public pointClass: typeof ErrorBarPoint;
-            public points: Array<ErrorBarPoint>;
-            public pointValKey: string;
-            public type: string;
-            public getColumnMetrics(): ColumnMetricsObject;
-            public drawDataLabels(): void;
-            public toYData(point: ErrorBarPoint): Array<number>;
-        }
     }
 }
 
+interface ErrorBarSeriesOptions extends BoxPlotSeriesOptions {
+    states?: SeriesStatesOptions<ErrorBarSeries>;
+    whiskerWidth?: number;
+}
 interface ErrorBarSeries extends BoxPlotSeries {
     data: Array<Highcharts.ErrorBarPoint>;
     doQuartiles: boolean;
     linkedParent: ErrorBarSeries;
-    options: Highcharts.ErrorBarSeriesOptions;
+    options: ErrorBarSeriesOptions;
     pointArrayMap: Array<string>;
     pointClass: typeof Highcharts.ErrorBarPoint;
     points: Array<Highcharts.ErrorBarPoint>;
@@ -82,7 +68,24 @@ interface ErrorBarSeries extends BoxPlotSeries {
     toYData(point: Highcharts.ErrorBarPoint): Array<number>;
 }
 
+/**
+ * Errorbar series type
+ *
+ * @private
+ * @class
+ * @name Highcharts.seriesTypes.errorbar
+ *
+ * @augments Highcharts.Series
+ *
+ */
 class ErrorBarSeries extends BoxPlotSeries {
+
+    /* *
+     *
+     * Static properties
+     *
+     * */
+
     public static defaultOptions = merge(BoxPlotSeries.defaultOptions, {
         /**
          * The main color of the bars. This can be overridden by
@@ -131,105 +134,89 @@ class ErrorBarSeries extends BoxPlotSeries {
     });
 
     /* *
-    *
-    * Properties
-    *
-    * */
+     *
+     * Properties
+     *
+     * */
 
     public data: Array<Highcharts.ErrorBarPoint> = void 0 as any;
-    public options: Highcharts.ErrorBarSeriesOptions = void 0 as any;
+    public options: ErrorBarSeriesOptions = void 0 as any;
     public points: Array<Highcharts.ErrorBarPoint> = void 0 as any;
-    // array point configs are mapped to this
-    // public pointArrayMap: Array<string> = void 0 as any;
-    // return a plain array for speedy calculation
-    public pointValKey: string = 'high'; // defines the top of the tracker
-    // public doQuartiles = false;
-    public linkedParent: ErrorBarSeries = void 0 as any;
 
-    /**
+    /* *
      *
-     * Methods
+     * Functions
      *
-     */
+     * */
 
-    // // Get the width and X offset, either on top of the linked series
-    // // column or standalone
-    // public getColumnMetrics(
-    //     this: ErrorBarSeries
-    // ): ColumnMetricsObject {
-    //     return (
-    //         (this.linkedParent && this.linkedParent.columnMetrics) ||
-    //         ColumnSeries.prototype.getColumnMetrics.call(this)
-    //     );
-    // }
-
-    // public drawDataLabels(this: ErrorBarSeries): void {
-    //         debugger
-    //         var valKey = this.pointValKey;
-    //
-    //         AreaRangeSeries.prototype.drawDataLabels.call(this);
-    //         // Arearange drawDataLabels does not reset point.y to high,
-    //         // but to low after drawing (#4133)
-    //         this.data.forEach(function
-    //                (point: Highcharts.ErrorBarPoint): void {
-    //             point.y = (point as any)[valKey];
-    //         });
-    //     }
-    //
-    // public toYData(point: Highcharts.ErrorBarPoint): Array<number> {
-    //     return [point.low, point.high];
-    // };
-
-    public init(): void {
-        super.init.apply(this, arguments as any);
-    }
-
-}
-
-const seriesTypes = BaseSeries.seriesTypes;
-extend(ErrorBarSeries.prototype, {
-    type: 'errorbar',
-    pointClass: Highcharts.ErrorBarPoint,
-    // array point configs are mapped to this
-    pointArrayMap: ['low', 'high'],
-    // return a plain array for speedy calculation
-    toYData: function (point: Highcharts.ErrorBarPoint): Array<number> {
-        return [point.low, point.high];
-    },
-    doQuartiles: false,
-    drawDataLabels: seriesTypes.arearange ?
-        function (this: ErrorBarSeries): void {
-            var valKey = this.pointValKey;
-
-            seriesTypes.arearange.prototype.drawDataLabels.call(this);
-            // Arearange drawDataLabels does not reset point.y to high,
-            // but to low after drawing (#4133)
-            this.data.forEach(function (point: Highcharts.ErrorBarPoint): void {
-                point.y = (point as any)[valKey];
-            });
-        } :
-        noop as any,
-
-    // Get the width and X offset, either on top of the linked series column or
-    // standalone
-    getColumnMetrics: function (
-        this: ErrorBarSeries
-    ): ColumnMetricsObject {
+    // Get the width and X offset, either on top of the linked series
+    // column or standalone
+    public getColumnMetrics(): ColumnMetricsObject {
         return (
             (this.linkedParent && this.linkedParent.columnMetrics) ||
-            seriesTypes.column.prototype.getColumnMetrics.call(this)
+            ColumnSeries.prototype.getColumnMetrics.call(this)
         );
     }
 
+    public drawDataLabels(): void {
+        var valKey = this.pointValKey;
+
+        AreaRangeSeries.prototype.drawDataLabels.call(this);
+        // Arearange drawDataLabels does not reset point.y to high,
+        // but to low after drawing (#4133)
+        this.data.forEach(function (point: Highcharts.ErrorBarPoint): void {
+            point.y = (point as any)[valKey];
+        });
+    }
+
+    // return a plain array for speedy calculation
+    public toYData(point: Highcharts.ErrorBarPoint): Array<number> {
+        return [point.low, point.high];
+    }
+}
+
+
+/* *
+ *
+ * Prototype properties
+ *
+ * */
+
+extend(ErrorBarSeries.prototype, {
+    // array point configs are mapped to this
+    pointArrayMap: ['low', 'high'],
+    pointValKey: 'high', // defines the top of the tracker
+    doQuartiles: false
 });
+
+
+/* *
+ *
+ * Registry
+ *
+ * */
 
 declare module '../Core/Series/SeriesType' {
     interface SeriesTypeRegistry {
-        errorbar: typeof Highcharts.ErrorBarSeries;
+        errorbar: typeof ErrorBarSeries;
     }
 }
 
 BaseSeries.registerSeriesType('errorbar', ErrorBarSeries);
+
+/* *
+ *
+ * Default export
+ *
+ * */
+
+export default ErrorBarSeries;
+
+/* *
+ *
+ * API options
+ *
+ * */
 
 /**
  * Error bars are a graphical representation of the variability of data and are
@@ -248,7 +235,6 @@ BaseSeries.registerSeriesType('errorbar', ErrorBarSeries);
  * @optionparent plotOptions.errorbar
  */
 
-export default ErrorBarSeries;
 /**
  * A `errorbar` series. If the [type](#series.errorbar.type) option
  * is not specified, it is inherited from [chart.type](#chart.type).
