@@ -80,25 +80,31 @@ extend(defaultOptions, {
          * buttons: [{
          *     type: 'month',
          *     count: 1,
-         *     text: '1m'
+         *     text: '1m',
+         *     title: 'View 1 month'
          * }, {
          *     type: 'month',
          *     count: 3,
-         *     text: '3m'
+         *     text: '3m',
+         *     title: 'View 3 months'
          * }, {
          *     type: 'month',
          *     count: 6,
-         *     text: '6m'
+         *     text: '6m',
+         *     title: 'View 6 months'
          * }, {
          *     type: 'ytd',
-         *     text: 'YTD'
+         *     text: 'YTD',
+         *     title: 'View year to date'
          * }, {
          *     type: 'year',
          *     count: 1,
-         *     text: '1y'
+         *     text: '1y',
+         *     title: 'View 1 year'
          * }, {
          *     type: 'all',
-         *     text: 'All'
+         *     text: 'All',
+         *     title: 'View all'
          * }]
          * ```
          *
@@ -189,6 +195,13 @@ extend(defaultOptions, {
          *
          * @type      {string}
          * @apioption rangeSelector.buttons.text
+         */
+        /**
+         * Explanation for the button, shown as a tooltip on hover, and used by
+         * assistive technology.
+         *
+         * @type      {string}
+         * @apioption rangeSelector.buttons.title
          */
         /**
          * Defined the time span for the button. Can be one of `millisecond`,
@@ -888,7 +901,7 @@ var RangeSelector = /** @class */ (function () {
                 (str.indexOf('-') === str.length - 6 ||
                     str.indexOf('+') === str.length - 6);
         };
-        var input = inputDate.split(' ').join('T');
+        var input = inputDate.split('/').join('-').split(' ').join('T');
         if (input.indexOf('T') === -1) {
             input += 'T00:00';
         }
@@ -1146,6 +1159,9 @@ var RangeSelector = /** @class */ (function () {
                     'text-align': 'center'
                 })
                     .add(buttonGroup);
+                if (rangeOptions.title) {
+                    buttons[i].attr('title', rangeOptions.title);
+                }
             });
             // first create a wrapper outside the container in order to make
             // the inputs work and make export correct
@@ -1430,25 +1446,31 @@ var RangeSelector = /** @class */ (function () {
 RangeSelector.prototype.defaultButtons = [{
         type: 'month',
         count: 1,
-        text: '1m'
+        text: '1m',
+        title: 'View 1 month'
     }, {
         type: 'month',
         count: 3,
-        text: '3m'
+        text: '3m',
+        title: 'View 3 months'
     }, {
         type: 'month',
         count: 6,
-        text: '6m'
+        text: '6m',
+        title: 'View 6 months'
     }, {
         type: 'ytd',
-        text: 'YTD'
+        text: 'YTD',
+        title: 'View year to date'
     }, {
         type: 'year',
         count: 1,
-        text: '1y'
+        text: '1y',
+        title: 'View 1 year'
     }, {
         type: 'all',
-        text: 'All'
+        text: 'All',
+        title: 'View all'
     }];
 /**
  * Get the axis min value based on the range option and the current max. For

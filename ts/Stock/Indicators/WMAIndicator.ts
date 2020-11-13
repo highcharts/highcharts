@@ -13,7 +13,12 @@
 import type IndicatorValuesObject from './IndicatorValuesObject';
 import type LineSeries from '../../Series/Line/LineSeries';
 import type { SeriesStatesOptions } from '../../Core/Series/SeriesOptions';
-import type SMAIndicator from './SMAIndicator';
+import type SMAIndicator from './SMA/SMAIndicator';
+import type {
+    SMAOptions,
+    SMAParamsOptions
+} from './SMA/SMAOptions';
+import type SMAPoint from './SMA/SMAPoint';
 import BaseSeries from '../../Core/Series/Series.js';
 import U from '../../Core/Utilities.js';
 const {
@@ -38,17 +43,17 @@ declare global {
             ): (IndicatorValuesObject<TLinkedSeries>|undefined);
         }
 
-        interface WMAIndicatorOptions extends SMAIndicator.Options {
+        interface WMAIndicatorOptions extends SMAOptions {
             params?: WMAIndicatorParamsOptions;
             states?: SeriesStatesOptions<WMAIndicator>;
         }
 
         interface WMAIndicatorParamsOptions
-            extends SMAIndicator.ParamsOptions {
+            extends SMAParamsOptions {
             // for inheritance
         }
 
-        class WMAIndicatorPoint extends SMAIndicator.Point {
+        class WMAIndicatorPoint extends SMAPoint {
             public series: WMAIndicator;
         }
     }

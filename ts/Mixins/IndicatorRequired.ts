@@ -16,7 +16,7 @@
  *
  * */
 
-import type SMAIndicator from '../Stock/Indicators/SMAIndicator';
+import type SMAIndicator from '../Stock/Indicators/SMA/SMAIndicator';
 
 /**
  * Internal types

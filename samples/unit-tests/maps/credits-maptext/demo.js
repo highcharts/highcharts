@@ -15,7 +15,7 @@ QUnit.test('Credits', function (assert) {
 
     assert.strictEqual(
         chart.credits.element.textContent,
-        Highcharts.getOptions().credits.text + 'Test map creditsTest full map credits',
+        'Test full map credits' + Highcharts.getOptions().credits.text + 'Test map credits',
         'Setting map credits inline'
     );
 
@@ -64,7 +64,7 @@ QUnit.test('Credits', function (assert) {
 
     assert.strictEqual(
         chart.credits.element.textContent,
-        Highcharts.getOptions().credits.text + 'Map credits testMap credits full test',
+        'Map credits full test' + Highcharts.getOptions().credits.text + 'Map credits test',
         'Setting map credits default options'
     );
 
@@ -85,7 +85,7 @@ QUnit.test('Credits', function (assert) {
 
     assert.strictEqual(
         chart.credits.element.textContent,
-        'TestMap credits testMap credits full test',
+        'Map credits full testTestMap credits test',
         'Setting map credits default options as well as inline'
     );
 
@@ -108,7 +108,7 @@ QUnit.test('Credits', function (assert) {
 
     assert.strictEqual(
         chart.credits.element.textContent,
-        'PrecedenceTestPrecedenceMapTextPrecedenceMapTextFull',
+        'PrecedenceMapTextFullPrecedenceTestPrecedenceMapText',
         'Setting map credits default options as well as inline, inline takes precedence'
     );
 

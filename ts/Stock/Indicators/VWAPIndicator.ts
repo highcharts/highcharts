@@ -15,7 +15,12 @@
 import type Chart from '../../Core/Chart/Chart';
 import type IndicatorValuesObject from './IndicatorValuesObject';
 import type LineSeries from '../../Series/Line/LineSeries';
-import type SMAIndicator from './SMAIndicator';
+import type SMAIndicator from './SMA/SMAIndicator';
+import type {
+    SMAOptions,
+    SMAParamsOptions
+} from './SMA/SMAOptions';
+import type SMAPoint from './SMA/SMAPoint';
 import BaseSeries from '../../Core/Series/Series.js';
 import U from '../../Core/Utilities.js';
 const {
@@ -49,15 +54,15 @@ declare global {
             public points: Array<VWAPIndicatorPoint>;
         }
 
-        interface VWAPIndicatorParamsOptions extends SMAIndicator.ParamsOptions {
+        interface VWAPIndicatorParamsOptions extends SMAParamsOptions {
             volumeSeriesID?: string;
         }
 
-        class VWAPIndicatorPoint extends SMAIndicator.Point {
+        class VWAPIndicatorPoint extends SMAPoint {
             public series: VWAPIndicator;
         }
 
-        interface VWAPIndicatorOptions extends SMAIndicator.Options {
+        interface VWAPIndicatorOptions extends SMAOptions {
             params?: VWAPIndicatorParamsOptions;
         }
     }

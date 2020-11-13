@@ -11,7 +11,12 @@
 import type CSSObject from '../../Core/Renderer/CSSObject';
 import type IndicatorValuesObject from './IndicatorValuesObject';
 import type LineSeries from '../../Series/Line/LineSeries';
-import type SMAIndicator from './SMAIndicator';
+import type SMAIndicator from './SMA/SMAIndicator';
+import type {
+    SMAOptions,
+    SMAParamsOptions
+} from './SMA/SMAOptions';
+import type SMAPoint from './SMA/SMAPoint';
 import BaseSeries from '../../Core/Series/Series.js';
 import MultipleLinesMixin from '../../Mixins/MultipleLines.js';
 import U from '../../Core/Utilities.js';
@@ -42,15 +47,15 @@ declare global {
             public points: Array<BBIndicatorPoint>;
         }
 
-        interface BBIndicatorParamsOptions extends SMAIndicator.ParamsOptions {
+        interface BBIndicatorParamsOptions extends SMAParamsOptions {
             standardDeviation?: number;
         }
 
-        class BBIndicatorPoint extends SMAIndicator.Point {
+        class BBIndicatorPoint extends SMAPoint {
             public series: BBIndicator;
         }
 
-        interface BBIndicatorOptions extends SMAIndicator.Options,
+        interface BBIndicatorOptions extends SMAOptions,
             MultipleLinesIndicatorOptions {
             bottomLine?: Record<string, CSSObject>;
             params?: BBIndicatorParamsOptions;

@@ -14,7 +14,12 @@ import type IndicatorValuesObject from './IndicatorValuesObject';
 import type LineSeries from '../../Series/Line/LineSeries';
 import type Point from '../../Core/Series/Point';
 import type { SeriesOptions } from '../../Core/Series/SeriesOptions';
-import type SMAIndicator from './SMAIndicator';
+import type SMAIndicator from './SMA/SMAIndicator';
+import type {
+    SMAOptions,
+    SMAParamsOptions
+} from './SMA/SMAOptions';
+import type SMAPoint from './SMA/SMAPoint';
 import type SVGAttributes from '../../Core/Renderer/SVG/SVGAttributes';
 import type SVGElement from '../../Core/Renderer/SVG/SVGElement';
 import BaseSeries from '../../Core/Series/Series.js';
@@ -84,16 +89,16 @@ declare global {
         }
 
         interface SupertrendIndicatorParamsOptions
-            extends SMAIndicator.ParamsOptions {
+            extends SMAParamsOptions {
             multiplier?: number;
         }
 
-        class SupertrendIndicatorPoint extends SMAIndicator.Point {
+        class SupertrendIndicatorPoint extends SMAPoint {
             public series: SupertrendIndicator;
             public y: number;
         }
 
-        interface SupertrendIndicatorOptions extends SMAIndicator.Options {
+        interface SupertrendIndicatorOptions extends SMAOptions {
             changeTrendLine?: Record<string, CSSObject>;
             fallingTrendColor?: ColorType;
             params?: SupertrendIndicatorParamsOptions;

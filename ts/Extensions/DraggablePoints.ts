@@ -14,6 +14,8 @@
 
 import type AnimationOptionsObject from '../Core/Animation/AnimationOptionsObject';
 import type BBoxObject from '../Core/Renderer/BBoxObject';
+import type BoxPlotPoint from '../Series/BoxPlot/BoxPlotPoint';
+import type BulletPoint from '../Series/Bullet/BulletPoint';
 import type ColorString from '../Core/Color/ColorString';
 import type ColorType from '../Core/Color/ColorType';
 import type ColumnPoint from '../Series/Column/ColumnPoint';
@@ -614,7 +616,7 @@ if (seriesTypes.bullet) {
             resize: true,
             resizeSide: 'top',
             handlePositioner: function (
-                point: Highcharts.BulletPoint
+                point: BulletPoint
             ): PositionObject {
                 var bBox: BBoxObject =
                     (point.targetGraphic as any).getBBox();
@@ -722,7 +724,7 @@ if (seriesTypes.boxplot) {
             resize: true,
             resizeSide: 'bottom',
             handlePositioner: function (
-                point: Highcharts.BoxPlotPoint
+                point: BoxPlotPoint
             ): PositionObject {
                 return {
                     x: point.shapeArgs.x,
@@ -732,7 +734,7 @@ if (seriesTypes.boxplot) {
             handleFormatter: columnDragDropProps.y.handleFormatter,
             propValidate: function (
                 val: number,
-                point: Highcharts.BoxPlotPoint
+                point: BoxPlotPoint
             ): boolean {
                 return val <= point.q1;
             }
@@ -752,7 +754,7 @@ if (seriesTypes.boxplot) {
             resize: true,
             resizeSide: 'bottom',
             handlePositioner: function (
-                point: Highcharts.BoxPlotPoint
+                point: BoxPlotPoint
             ): PositionObject {
                 return {
                     x: point.shapeArgs.x,
@@ -762,7 +764,7 @@ if (seriesTypes.boxplot) {
             handleFormatter: columnDragDropProps.y.handleFormatter,
             propValidate: function (
                 val: number,
-                point: Highcharts.BoxPlotPoint
+                point: BoxPlotPoint
             ): boolean {
                 return val <= point.median && val >= point.low;
             }
@@ -788,7 +790,7 @@ if (seriesTypes.boxplot) {
             resize: true,
             resizeSide: 'top',
             handlePositioner: function (
-                point: Highcharts.BoxPlotPoint
+                point: BoxPlotPoint
             ): PositionObject {
                 return {
                     x: point.shapeArgs.x,
@@ -798,7 +800,7 @@ if (seriesTypes.boxplot) {
             handleFormatter: columnDragDropProps.y.handleFormatter,
             propValidate: function (
                 val: number,
-                point: Highcharts.BoxPlotPoint
+                point: BoxPlotPoint
             ): boolean {
                 return val <= point.high && val >= point.median;
             }
@@ -818,7 +820,7 @@ if (seriesTypes.boxplot) {
             resize: true,
             resizeSide: 'top',
             handlePositioner: function (
-                point: Highcharts.BoxPlotPoint
+                point: BoxPlotPoint
             ): PositionObject {
                 return {
                     x: point.shapeArgs.x,
@@ -828,7 +830,7 @@ if (seriesTypes.boxplot) {
             handleFormatter: columnDragDropProps.y.handleFormatter,
             propValidate: function (
                 val: number,
-                point: Highcharts.BoxPlotPoint
+                point: BoxPlotPoint
             ): boolean {
                 return val >= point.q3;
             }
