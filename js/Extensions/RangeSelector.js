@@ -908,7 +908,7 @@ var RangeSelector = /** @class */ (function () {
         if (useUTC) {
             input += 'Z';
         }
-        else if (!hasTimezone(input)) {
+        else if (H.isSafari && !hasTimezone(input)) {
             var offset = new Date().getTimezoneOffset() / 60;
             input += offset <= 0 ? "+" + H.pad(-offset) + ":00" : "-" + H.pad(offset) + ":00";
         }
