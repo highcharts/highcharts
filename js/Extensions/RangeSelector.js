@@ -883,12 +883,21 @@ var RangeSelector = /** @class */ (function () {
      * @function Highcharts.RangeSelector#defaultInputDateParser
      */
     RangeSelector.prototype.defaultInputDateParser = function (inputDate, useUTC, time) {
+        var hasTimezone = function (str) {
+            return str.length > 6 &&
+                (str.indexOf('-') === str.length - 6 ||
+                    str.indexOf('+') === str.length - 6);
+        };
         var input = inputDate.split(' ').join('T');
         if (input.indexOf('T') === -1) {
             input += 'T00:00';
         }
         if (useUTC) {
             input += 'Z';
+        }
+        else if (!hasTimezone(input)) {
+            var offset = new Date().getTimezoneOffset() / 60;
+            input += offset <= 0 ? "+" + H.pad(-offset) + ":00" : "-" + H.pad(offset) + ":00";
         }
         var date = Date.parse(input);
         // If the value isn't parsed directly to a value by the

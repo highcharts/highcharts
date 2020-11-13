@@ -323,16 +323,8 @@ QUnit.test('useUTC = false (variableTimezone)', assert => {
     });
     time.getTimezoneOffset = () => 60;
 
-    console.log(
-        JSON.stringify(time),
-        new Date(),
-        new Date('1970-01-10T00:00'),
-        new Date(1970, 0, 10, 0, 0),
-        new Date('1970-01-10T00:00').getHours()
-    );
-
     assert.strictEqual(
-        time.get('Hours', new Date('1970-01-10T00:00')),
+        time.get('Hours', new Date(1970, 0, 10, 0, 0)),
         0,
         'Time should be intact when useUTC = false'
     );

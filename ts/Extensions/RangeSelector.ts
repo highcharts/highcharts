@@ -1270,12 +1270,20 @@ class RangeSelector {
      * @function Highcharts.RangeSelector#defaultInputDateParser
      */
     public defaultInputDateParser(inputDate: string, useUTC: boolean, time?: Highcharts.Time): number {
+        const hasTimezone = (str: string): boolean =>
+            str.length > 6 &&
+            (str.indexOf('-') === str.length - 6 ||
+            str.indexOf('+') === str.length - 6);
+
         let input = inputDate.split(' ').join('T');
         if (input.indexOf('T') === -1) {
             input += 'T00:00';
         }
         if (useUTC) {
             input += 'Z';
+        } else if (!hasTimezone(input)) {
+            const offset = new Date().getTimezoneOffset() / 60;
+            input += offset <= 0 ? `+${H.pad(-offset)}:00` : `-${H.pad(offset)}:00`;
         }
         let date = Date.parse(input);
 
