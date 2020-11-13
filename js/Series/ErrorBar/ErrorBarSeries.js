@@ -25,9 +25,6 @@ import BaseSeries from '../../Core/Series/Series.js';
 var AreaRangeSeries = BaseSeries.seriesTypes.arearange;
 import BoxPlotSeries from '../BoxPlot/BoxPlotSeries.js';
 import ColumnSeries from '../Column/ColumnSeries.js';
-import '../AreaRangeSeries.js';
-import H from '../../Core/Globals.js';
-var noop = H.noop;
 import U from '../../Core/Utilities.js';
 var merge = U.merge, extend = U.extend;
 /**
@@ -45,13 +42,13 @@ var ErrorBarSeries = /** @class */ (function (_super) {
     function ErrorBarSeries() {
         /* *
          *
-         * Static properties
+         *  Static properties
          *
          * */
         var _this = _super !== null && _super.apply(this, arguments) || this;
         /* *
          *
-         * Properties
+         *  Properties
          *
          * */
         _this.data = void 0;
@@ -61,7 +58,7 @@ var ErrorBarSeries = /** @class */ (function (_super) {
     }
     /* *
      *
-     * Functions
+     *  Functions
      *
      * */
     // Get the width and X offset, either on top of the linked series
@@ -72,12 +69,14 @@ var ErrorBarSeries = /** @class */ (function (_super) {
     };
     ErrorBarSeries.prototype.drawDataLabels = function () {
         var valKey = this.pointValKey;
-        AreaRangeSeries.prototype.drawDataLabels.call(this);
-        // Arearange drawDataLabels does not reset point.y to high,
-        // but to low after drawing (#4133)
-        this.data.forEach(function (point) {
-            point.y = point[valKey];
-        });
+        if (AreaRangeSeries) {
+            AreaRangeSeries.prototype.drawDataLabels.call(this);
+            // Arearange drawDataLabels does not reset point.y to high,
+            // but to low after drawing (#4133)
+            this.data.forEach(function (point) {
+                point.y = point[valKey];
+            });
+        }
     };
     // return a plain array for speedy calculation
     ErrorBarSeries.prototype.toYData = function (point) {
@@ -126,11 +125,6 @@ var ErrorBarSeries = /** @class */ (function (_super) {
     });
     return ErrorBarSeries;
 }(BoxPlotSeries));
-/* *
- *
- * Prototype properties
- *
- * */
 extend(ErrorBarSeries.prototype, {
     // array point configs are mapped to this
     pointArrayMap: ['low', 'high'],
@@ -140,13 +134,13 @@ extend(ErrorBarSeries.prototype, {
 BaseSeries.registerSeriesType('errorbar', ErrorBarSeries);
 /* *
  *
- * Default export
+ *  Default export
  *
  * */
 export default ErrorBarSeries;
 /* *
  *
- * API options
+ *  API options
  *
  * */
 /**
