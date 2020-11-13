@@ -82,6 +82,22 @@ var ErrorBarSeries = /** @class */ (function (_super) {
     ErrorBarSeries.prototype.toYData = function (point) {
         return [point.low, point.high];
     };
+    /**
+     * Error bars are a graphical representation of the variability of data and
+     * are used on graphs to indicate the error, or uncertainty in a reported
+     * measurement.
+     *
+     * @sample highcharts/demo/error-bar/
+     *         Error bars on a column series
+     * @sample highcharts/series-errorbar/on-scatter/
+     *         Error bars on a scatter series
+     *
+     * @extends      plotOptions.boxplot
+     * @excluding    boostBlending, boostThreshold
+     * @product      highcharts highstock
+     * @requires     highcharts-more
+     * @optionparent plotOptions.errorbar
+     */
     ErrorBarSeries.defaultOptions = merge(BoxPlotSeries.defaultOptions, {
         /**
          * The main color of the bars. This can be overridden by
@@ -131,6 +147,11 @@ extend(ErrorBarSeries.prototype, {
     pointValKey: 'high',
     doQuartiles: false
 });
+/* *
+ *
+ *  Registry
+ *
+ * */
 BaseSeries.registerSeriesType('errorbar', ErrorBarSeries);
 /* *
  *
@@ -143,22 +164,6 @@ export default ErrorBarSeries;
  *  API options
  *
  * */
-/**
- * Error bars are a graphical representation of the variability of data and are
- * used on graphs to indicate the error, or uncertainty in a reported
- * measurement.
- *
- * @sample highcharts/demo/error-bar/
- *         Error bars on a column series
- * @sample highcharts/series-errorbar/on-scatter/
- *         Error bars on a scatter series
- *
- * @extends      plotOptions.boxplot
- * @excluding    boostBlending, boostThreshold
- * @product      highcharts highstock
- * @requires     highcharts-more
- * @optionparent plotOptions.errorbar
- */
 /**
  * A `errorbar` series. If the [type](#series.errorbar.type) option
  * is not specified, it is inherited from [chart.type](#chart.type).
