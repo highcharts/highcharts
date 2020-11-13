@@ -40,12 +40,29 @@ const {
  */
 class ErrorBarSeries extends BoxPlotSeries {
 
+
     /* *
      *
      *  Static properties
      *
      * */
 
+    /**
+     * Error bars are a graphical representation of the variability of data and
+     * are used on graphs to indicate the error, or uncertainty in a reported
+     * measurement.
+     *
+     * @sample highcharts/demo/error-bar/
+     *         Error bars on a column series
+     * @sample highcharts/series-errorbar/on-scatter/
+     *         Error bars on a scatter series
+     *
+     * @extends      plotOptions.boxplot
+     * @excluding    boostBlending, boostThreshold
+     * @product      highcharts highstock
+     * @requires     highcharts-more
+     * @optionparent plotOptions.errorbar
+     */
     public static defaultOptions = merge(BoxPlotSeries.defaultOptions, {
         /**
          * The main color of the bars. This can be overridden by
@@ -148,6 +165,7 @@ interface ErrorBarSeries extends BoxPlotSeries {
     doQuartiles: boolean;
     linkedParent: ErrorBarSeries;
     pointArrayMap: Array<string>;
+    pointClass: typeof ErrorBarPoint;
     pointValKey: string;
 }
 
@@ -165,13 +183,13 @@ extend(ErrorBarSeries.prototype, {
  *
  * */
 
+BaseSeries.registerSeriesType('errorbar', ErrorBarSeries);
+
 declare module '../../Core/Series/SeriesType' {
     interface SeriesTypeRegistry {
         errorbar: typeof ErrorBarSeries;
     }
 }
-
-BaseSeries.registerSeriesType('errorbar', ErrorBarSeries);
 
 /* *
  *
@@ -186,23 +204,6 @@ export default ErrorBarSeries;
  *  API options
  *
  * */
-
-/**
- * Error bars are a graphical representation of the variability of data and are
- * used on graphs to indicate the error, or uncertainty in a reported
- * measurement.
- *
- * @sample highcharts/demo/error-bar/
- *         Error bars on a column series
- * @sample highcharts/series-errorbar/on-scatter/
- *         Error bars on a scatter series
- *
- * @extends      plotOptions.boxplot
- * @excluding    boostBlending, boostThreshold
- * @product      highcharts highstock
- * @requires     highcharts-more
- * @optionparent plotOptions.errorbar
- */
 
 /**
  * A `errorbar` series. If the [type](#series.errorbar.type) option
