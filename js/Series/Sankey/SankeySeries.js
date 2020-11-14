@@ -23,15 +23,15 @@ var __extends = (this && this.__extends) || (function () {
         d.prototype = b === null ? Object.create(b) : (__.prototype = b.prototype, new __());
     };
 })();
-import BaseSeries from '../Core/Series/Series.js';
+import BaseSeries from '../../Core/Series/Series.js';
 var _a = BaseSeries.seriesTypes, ColumnSeries = _a.column, LineSeries = _a.line;
-import Color from '../Core/Color/Color.js';
-import H from '../Core/Globals.js';
-import NodesMixin from '../Mixins/Nodes.js';
-import Point from '../Core/Series/Point.js';
-import TreeSeriesMixin from '../Mixins/TreeSeries.js';
+import Color from '../../Core/Color/Color.js';
+import H from '../../Core/Globals.js';
+import NodesMixin from '../../Mixins/Nodes.js';
+import Point from '../../Core/Series/Point.js';
+import TreeSeriesMixin from '../../Mixins/TreeSeries.js';
 var getLevelOptions = TreeSeriesMixin.getLevelOptions;
-import U from '../Core/Utilities.js';
+import U from '../../Core/Utilities.js';
 var defined = U.defined, extend = U.extend, find = U.find, isObject = U.isObject, merge = U.merge, pick = U.pick, relativeLength = U.relativeLength, stableSort = U.stableSort;
 /* *
  *
