@@ -18,29 +18,29 @@
  *
  * */
 
-import type ColorString from '../Core/Color/ColorString';
-import type ColorType from '../Core/Color/ColorType';
-import type ColumnPointOptions from './Column/ColumnPointOptions';
-import type ColumnSeriesOptions from './Column/ColumnSeriesOptions';
-import type DataLabelOptions from '../Core/Series/DataLabelOptions';
-import type { SeriesStatesOptions } from '../Core/Series/SeriesOptions';
-import type { StatesOptionsKey } from '../Core/Series/StatesOptions';
-import type SVGAttributes from '../Core/Renderer/SVG/SVGAttributes';
-import type SVGElement from '../Core/Renderer/SVG/SVGElement';
-import BaseSeries from '../Core/Series/Series.js';
+import type ColorString from '../../Core/Color/ColorString';
+import type ColorType from '../../Core/Color/ColorType';
+import type ColumnPointOptions from '../Column/ColumnPointOptions';
+import type ColumnSeriesOptions from '../Column/ColumnSeriesOptions';
+import type DataLabelOptions from '../../Core/Series/DataLabelOptions';
+import type { SeriesStatesOptions } from '../../Core/Series/SeriesOptions';
+import type { StatesOptionsKey } from '../../Core/Series/StatesOptions';
+import type SVGAttributes from '../../Core/Renderer/SVG/SVGAttributes';
+import type SVGElement from '../../Core/Renderer/SVG/SVGElement';
+import BaseSeries from '../../Core/Series/Series.js';
 const {
     seriesTypes: {
         column: ColumnSeries,
         line: LineSeries
     }
 } = BaseSeries;
-import Color from '../Core/Color/Color.js';
-import H from '../Core/Globals.js';
-import NodesMixin from '../Mixins/Nodes.js';
-import Point from '../Core/Series/Point.js';
-import TreeSeriesMixin from '../Mixins/TreeSeries.js';
+import Color from '../../Core/Color/Color.js';
+import H from '../../Core/Globals.js';
+import NodesMixin from '../../Mixins/Nodes.js';
+import Point from '../../Core/Series/Point.js';
+import TreeSeriesMixin from '../../Mixins/TreeSeries.js';
 const { getLevelOptions } = TreeSeriesMixin;
-import U from '../Core/Utilities.js';
+import U from '../../Core/Utilities.js';
 const {
     defined,
     extend,
@@ -58,7 +58,7 @@ const {
  *
  * */
 
-declare module '../Core/Series/SeriesLike' {
+declare module '../../Core/Series/SeriesLike' {
     interface SeriesLike {
         invertable?: boolean;
     }
@@ -1369,7 +1369,7 @@ extend(SankeyPoint.prototype, {
 
 SankeySeries.prototype.pointClass = SankeyPoint;
 
-declare module '../Core/Series/SeriesType' {
+declare module '../../Core/Series/SeriesType' {
     interface SeriesTypeRegistry {
         sankey: typeof SankeySeries;
     }
