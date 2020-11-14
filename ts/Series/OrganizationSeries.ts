@@ -39,6 +39,13 @@ import type SVGAttributes from '../Core/Renderer/SVG/SVGAttributes';
 import type SVGElement from '../Core/Renderer/SVG/SVGElement';
 import type SVGPath from '../Core/Renderer/SVG/SVGPath';
 import BaseSeries from '../Core/Series/Series.js';
+const {
+    seriesTypes: {
+        sankey: {
+            prototype: base
+        }
+    }
+} = BaseSeries;
 import H from '../Core/Globals.js';
 import U from '../Core/Utilities.js';
 const {
@@ -46,9 +53,6 @@ const {
     pick,
     wrap
 } = U;
-
-import './SankeySeries.js';
-const base = BaseSeries.seriesTypes.sankey.prototype;
 
 /* *
  *
