@@ -70,78 +70,6 @@ declare module '../Core/Series/SeriesLike' {
  */
 declare global {
     namespace Highcharts {
-        class SankeyPoint extends ColumnPoint implements NodesPoint {
-            public className: NodesPoint['className'];
-            public column?: number;
-            public from: NodesPoint['from'];
-            public fromNode: SankeyPoint;
-            public getSum: NodesPoint['getSum'];
-            public hangsFrom?: SankeyPoint;
-            public hasShape: NodesPoint['hasShape'];
-            public init: NodesPoint['init'];
-            public isNode: NodesPoint['isNode'];
-            public level: number;
-            public mass: NodesPoint['mass'];
-            public nodeX: number;
-            public nodeY: number;
-            public linkBase: Array<number>;
-            public linksFrom: Array<SankeyPoint>;
-            public linksTo: Array<SankeyPoint>;
-            public offset: NodesPoint['offset'];
-            public options: (SankeyPointOptions&SankeySeriesNodesOptions);
-            public outgoing: boolean;
-            public series: SankeySeries;
-            public setNodeState: NodesMixin['setNodeState'];
-            public sum?: number;
-            public to: NodesPoint['to'];
-            public toNode: SankeyPoint;
-            public weight?: number;
-            public applyOptions(
-                options: SankeyPointOptions,
-                x?: number
-            ): SankeyPoint;
-            public getClassName(): string;
-            public isValid: () => boolean;
-        }
-        class SankeySeries extends ColumnSeries implements NodesSeries {
-            public colDistance: number;
-            public createNode: NodesMixin['createNode'];
-            public data: Array<SankeyPoint>;
-            public destroy: NodesMixin['destroy'];
-            public forceDL: boolean;
-            public invertable: boolean;
-            public isCartesian: boolean;
-            public options: SankeySeriesOptions;
-            public orderNodes: boolean;
-            public mapOptionsToLevel: (
-                Dictionary<SankeySeriesLevelsOptions>|null
-            );
-            public nodeColumns: Array<SankeyColumnArray>;
-            public nodeLookup: NodesSeries['nodeLookup'];
-            public nodePadding: number;
-            public nodes: Array<SankeyPoint>;
-            public nodeWidth: number;
-            public pointArrayMap: Array<string>;
-            public pointClass: typeof SankeyPoint;
-            public points: Array<SankeyPoint>;
-            public setData: NodesMixin['setData'];
-            public translationFactor: number;
-            public createNodeColumn(): SankeyColumnArray;
-            public createNodeColumns(): Array<SankeyColumnArray>;
-            public generatePoints(): void;
-            public getNodePadding(): number;
-            public pointAttribs(
-                point: SankeyPoint,
-                state?: StatesOptionsKey
-            ): SVGAttributes;
-            public render(): void;
-            public translate(): void;
-            public translateLink(point: SankeyPoint): void;
-            public translateNode(
-                node: SankeyPoint,
-                column: SankeyColumnArray
-            ): void;
-        }
         interface SankeyColumnArray<T = SankeyPoint> extends Array<T> {
             offset(node: T, factor: number): (Dictionary<number>|undefined);
             sum(): number;
@@ -167,6 +95,7 @@ declare global {
             from?: string;
             height?: number;
             level?: number;
+            offset?: (number|string);
             to?: string;
             width?: number;
         }
@@ -563,13 +492,13 @@ class SankeySeries extends ColumnSeries {
      *
      * */
 
-    public data: Array<Highcharts.SankeyPoint> = void 0 as any;
+    public data: Array<SankeyPoint> = void 0 as any;
 
     public options: Highcharts.SankeySeriesOptions = void 0 as any;
 
-    public nodes: Array<Highcharts.SankeyPoint> = void 0 as any;
+    public nodes: Array<SankeyPoint> = void 0 as any;
 
-    public points: Array<Highcharts.SankeyPoint> = void 0 as any;
+    public points: Array<SankeyPoint> = void 0 as any;
 
 }
 
@@ -579,11 +508,14 @@ class SankeySeries extends ColumnSeries {
  *
  * */
 
-interface SankeySeries {
+interface SankeySeries extends Highcharts.NodesSeries {
+    animate: typeof ColumnSeries.prototype.animate;
     colDistance: number;
     createNode: Highcharts.NodesMixin['createNode'];
     destroy: Highcharts.NodesMixin['destroy'];
     forceDL: boolean;
+    group: typeof ColumnSeries.prototype.group;
+    init: typeof ColumnSeries.prototype.init;
     invertable: boolean;
     isCartesian: boolean;
     orderNodes: boolean;
@@ -594,6 +526,7 @@ interface SankeySeries {
     nodeWidth: number;
     pointArrayMap: Array<string>;
     pointClass: typeof SankeyPoint;
+    remove: typeof ColumnSeries.prototype.remove;
     setData: Highcharts.NodesMixin['setData'];
     translationFactor: number;
     createNodeColumn(): Highcharts.SankeyColumnArray;
@@ -632,7 +565,7 @@ extend(SankeySeries.prototype, {
      * wheel series type.
      * @private
      */
-    getNodePadding: function (this: Highcharts.SankeySeries): number {
+    getNodePadding: function (this: SankeySeries): number {
         let nodePadding = this.options.nodePadding || 0;
 
         // If the number of columns is so great that they will overflow with
@@ -656,7 +589,7 @@ extend(SankeySeries.prototype, {
      * @private
      */
     createNodeColumn: function (
-        this: Highcharts.SankeySeries
+        this: SankeySeries
     ): Highcharts.SankeyColumnArray {
         var series = this,
             chart = this.chart,
@@ -665,7 +598,7 @@ extend(SankeySeries.prototype, {
         column.sum = function (this: Highcharts.SankeyColumnArray): number {
             return this.reduce(function (
                 sum: number,
-                node: Highcharts.SankeyPoint
+                node: SankeyPoint
             ): number {
                 return sum + node.getSum();
             }, 0);
@@ -673,7 +606,7 @@ extend(SankeySeries.prototype, {
         // Get the offset in pixels of a node inside the column.
         column.offset = function (
             this: Highcharts.SankeyColumnArray,
-            node: Highcharts.SankeyPoint,
+            node: SankeyPoint,
             factor: number
         ): (Highcharts.Dictionary<number>|undefined) {
             var offset = 0,
@@ -713,7 +646,7 @@ extend(SankeySeries.prototype, {
             var nodePadding = series.nodePadding;
             var height = this.reduce(function (
                 height: number,
-                node: Highcharts.SankeyPoint
+                node: SankeyPoint
             ): number {
                 if (height > 0) {
                     height += nodePadding;
@@ -737,11 +670,11 @@ extend(SankeySeries.prototype, {
      * @private
      */
     createNodeColumns: function (
-        this: Highcharts.SankeySeries
+        this: SankeySeries
     ): Array<Highcharts.SankeyColumnArray> {
         var columns: Array<Highcharts.SankeyColumnArray> = [];
 
-        this.nodes.forEach(function (node: Highcharts.SankeyPoint): void {
+        this.nodes.forEach(function (node: SankeyPoint): void {
             var fromColumn = -1,
                 fromNode,
                 i,
@@ -774,7 +707,7 @@ extend(SankeySeries.prototype, {
                         find(
                             fromNode.linksFrom,
                             function (
-                                link: Highcharts.SankeyPoint,
+                                link: SankeyPoint,
                                 index: number
                             ): boolean {
                                 var found = link.toNode === node;
@@ -813,7 +746,7 @@ extend(SankeySeries.prototype, {
      * @return {boolean}
      *         Returns true if the series has points at all.
      */
-    hasData: function (this: Highcharts.SankeySeries): boolean {
+    hasData: function (this: SankeySeries): boolean {
         return !!this.processedXData.length; // != 0
     },
 
@@ -822,8 +755,8 @@ extend(SankeySeries.prototype, {
      * @private
      */
     pointAttribs: function (
-        this: Highcharts.SankeySeries,
-        point?: Highcharts.SankeyPoint,
+        this: SankeySeries,
+        point?: SankeyPoint,
         state?: StatesOptionsKey
     ): SVGAttributes {
         if (!point) {
@@ -878,19 +811,19 @@ extend(SankeySeries.prototype, {
      * but pushed to the this.nodes array.
      * @private
      */
-    generatePoints: function (this: Highcharts.SankeySeries): void {
+    generatePoints: function (this: SankeySeries): void {
         NodesMixin.generatePoints.apply(this, arguments as any);
 
         /**
          * Order the nodes, starting with the root node(s). (#9818)
          * @private
          */
-        function order(node: Highcharts.SankeyPoint, level: number): void {
+        function order(node: SankeyPoint, level: number): void {
             // Prevents circular recursion:
             if (typeof node.level === 'undefined') {
                 node.level = level;
                 node.linksFrom.forEach(function (
-                    link: Highcharts.SankeyPoint
+                    link: SankeyPoint
                 ): void {
                     if (link.toNode) {
                         order(link.toNode, level + 1);
@@ -902,17 +835,17 @@ extend(SankeySeries.prototype, {
         if (this.orderNodes) {
             this.nodes
                 // Identify the root node(s)
-                .filter(function (node: Highcharts.SankeyPoint): boolean {
+                .filter(function (node: SankeyPoint): boolean {
                     return node.linksTo.length === 0;
                 })
                 // Start by the root node(s) and recursively set the level
                 // on all following nodes.
-                .forEach(function (node: Highcharts.SankeyPoint): void {
+                .forEach(function (node: SankeyPoint): void {
                     order(node, 0);
                 });
             stableSort(this.nodes, function (
-                a: Highcharts.SankeyPoint,
-                b: Highcharts.SankeyPoint
+                a: SankeyPoint,
+                b: SankeyPoint
             ): number {
                 return a.level - b.level;
             });
@@ -924,8 +857,8 @@ extend(SankeySeries.prototype, {
      * @private
      */
     translateNode: function (
-        this: Highcharts.SankeySeries,
-        node: Highcharts.SankeyPoint,
+        this: SankeySeries,
+        node: SankeyPoint,
         column: Highcharts.SankeyColumnArray
     ): void {
         var translationFactor = this.translationFactor,
@@ -1009,12 +942,12 @@ extend(SankeySeries.prototype, {
      * @private
      */
     translateLink: function (
-        this: Highcharts.SankeySeries,
-        point: Highcharts.SankeyPoint
+        this: SankeySeries,
+        point: SankeyPoint
     ): void {
 
         const getY = (
-            node: Highcharts.SankeyPoint,
+            node: SankeyPoint,
             fromOrTo: string
         ): number => {
             const linkTop = (
@@ -1180,7 +1113,7 @@ extend(SankeySeries.prototype, {
      * Run pre-translation by generating the nodeColumns.
      * @private
      */
-    translate: function (this: Highcharts.SankeySeries): void {
+    translate: function (this: SankeySeries): void {
 
         // Get the translation factor needed for each column to fill up the
         // plot height
@@ -1288,21 +1221,21 @@ extend(SankeySeries.prototype, {
 
         // First translate all nodes so we can use them when drawing links
         nodeColumns.forEach(function (
-            this: Highcharts.SankeySeries,
+            this: SankeySeries,
             column: Highcharts.SankeyColumnArray
         ): void {
 
-            column.forEach(function (node: Highcharts.SankeyPoint): void {
+            column.forEach(function (node: SankeyPoint): void {
                 series.translateNode(node, column);
             });
 
         }, this);
 
         // Then translate links
-        this.nodes.forEach(function (node: Highcharts.SankeyPoint): void {
+        this.nodes.forEach(function (node: SankeyPoint): void {
             // Translate the links from this node
             node.linksFrom.forEach(function (
-                linkPoint: Highcharts.SankeyPoint
+                linkPoint: SankeyPoint
             ): void {
                 // If weight is 0 - don't render the link path #12453,
                 // render null points (for organization chart)
@@ -1318,7 +1251,7 @@ extend(SankeySeries.prototype, {
      * the points.
      * @private
      */
-    render: function (this: Highcharts.SankeySeries): void {
+    render: function (this: SankeySeries): void {
         var points = this.points;
 
         this.points = this.points.concat(this.nodes || []);
@@ -1357,7 +1290,7 @@ class SankeyPoint extends ColumnSeries.prototype.pointClass {
  *
  * */
 
-interface SankeyPoint {/*
+interface SankeyPoint extends Highcharts.NodesPoint {
     className: Highcharts.NodesPoint['className'];
     column?: number;
     from: Highcharts.NodesPoint['from'];
@@ -1388,14 +1321,14 @@ interface SankeyPoint {/*
         x?: number
     ): SankeyPoint;
     getClassName(): string;
-    isValid: () => boolean;*/
+    isValid: () => boolean;
 }
 extend(SankeyPoint.prototype, {
     applyOptions: function (
-        this: Highcharts.SankeyPoint,
+        this: SankeyPoint,
         options: Highcharts.SankeyPointOptions,
         x?: number
-    ): Highcharts.SankeyPoint {
+    ): SankeyPoint {
         Point.prototype.applyOptions.call(this, options, x);
 
         // Treat point.level as a synonym of point.column
@@ -1405,11 +1338,11 @@ extend(SankeyPoint.prototype, {
         return this;
     },
     setState: NodesMixin.setNodeState,
-    getClassName: function (this: Highcharts.SankeyPoint): string {
+    getClassName: function (this: SankeyPoint): string {
         return (this.isNode ? 'highcharts-node ' : 'highcharts-link ') +
         Point.prototype.getClassName.call(this);
     },
-    isValid: function (this: Highcharts.SankeyPoint): boolean {
+    isValid: function (this: SankeyPoint): boolean {
         return this.isNode || typeof this.weight === 'number';
     }
 });
@@ -1424,7 +1357,7 @@ SankeySeries.prototype.pointClass = SankeyPoint;
 
 declare module '../Core/Series/SeriesType' {
     interface SeriesTypeRegistry {
-        sankey: typeof Highcharts.SankeySeries;
+        sankey: typeof SankeySeries;
     }
 }
 BaseSeries.registerSeriesType('sankey', SankeySeries);
