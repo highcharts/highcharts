@@ -20,13 +20,13 @@
 
 import type ColorString from '../Core/Color/ColorString';
 import type ColorType from '../Core/Color/ColorType';
-import type ColumnPoint from './Column/ColumnPoint';
 import type ColumnPointOptions from './Column/ColumnPointOptions';
 import type ColumnSeriesOptions from './Column/ColumnSeriesOptions';
 import type DataLabelOptions from '../Core/Series/DataLabelOptions';
 import type { SeriesStatesOptions } from '../Core/Series/SeriesOptions';
 import type { StatesOptionsKey } from '../Core/Series/StatesOptions';
 import type SVGAttributes from '../Core/Renderer/SVG/SVGAttributes';
+import type SVGElement from '../Core/Renderer/SVG/SVGElement';
 import BaseSeries from '../Core/Series/Series.js';
 const {
     seriesTypes: {
@@ -140,38 +140,6 @@ declare global {
         }
     }
 }
-
-/* *
- *
- *  Functions
- *
- * */
-
-// eslint-disable-next-line valid-jsdoc
-/**
- * @private
- */
-var getDLOptions = function getDLOptions(
-    params: {
-        optionsPoint: Highcharts.SankeyPointOptions;
-        level: Highcharts.SankeySeriesLevelsOptions;
-    }
-): Highcharts.SankeyDataLabelsOptionsObject {
-    var optionsPoint = (
-            isObject(params.optionsPoint) ?
-                params.optionsPoint.dataLabels :
-                {}
-        ),
-        optionsLevel = (
-            isObject(params.level) ?
-                params.level.dataLabels :
-                {}
-        ),
-        options = merge({
-            style: {}
-        }, optionsLevel, optionsPoint);
-    return options;
-};
 
 /* *
  *
@@ -488,109 +456,80 @@ class SankeySeries extends ColumnSeries {
 
     /* *
      *
+     *  Static Functions
+     *
+     * */
+
+    // eslint-disable-next-line valid-jsdoc
+    /**
+     * @private
+     */
+    protected static getDLOptions(
+        params: {
+            optionsPoint: Highcharts.SankeyPointOptions;
+            level: Highcharts.SankeySeriesLevelsOptions;
+        }
+    ): Highcharts.SankeyDataLabelsOptionsObject {
+        var optionsPoint = (
+                isObject(params.optionsPoint) ?
+                    params.optionsPoint.dataLabels :
+                    {}
+            ),
+            optionsLevel = (
+                isObject(params.level) ?
+                    params.level.dataLabels :
+                    {}
+            ),
+            options = merge({
+                style: {}
+            }, optionsLevel, optionsPoint);
+        return options;
+    }
+
+    /* *
+     *
      *  Properties
      *
      * */
 
+    public colDistance: number = void 0 as any;
+
     public data: Array<SankeyPoint> = void 0 as any;
 
-    public options: Highcharts.SankeySeriesOptions = void 0 as any;
+    public group: SVGElement = void 0 as any;
+
+    public mapOptionsToLevel?: (Record<string, Highcharts.SankeySeriesLevelsOptions>|null);
+
+    public nodeColumns?: Array<Highcharts.SankeyColumnArray>;
+
+    public nodeLookup: Record<string, SankeyPoint> = void 0 as any;
+
+    public nodePadding: number = void 0 as any;
 
     public nodes: Array<SankeyPoint> = void 0 as any;
 
+    public nodeWidth: number = void 0 as any;
+
+    public options: Highcharts.SankeySeriesOptions = void 0 as any;
+
     public points: Array<SankeyPoint> = void 0 as any;
 
-}
+    public translationFactor: number = void 0 as any;
 
-/* *
- *
- *  Prototype Properties
- *
- * */
-
-interface SankeySeries extends Highcharts.NodesSeries {
-    animate: typeof ColumnSeries.prototype.animate;
-    colDistance: number;
-    createNode: Highcharts.NodesMixin['createNode'];
-    destroy: Highcharts.NodesMixin['destroy'];
-    forceDL: boolean;
-    group: typeof ColumnSeries.prototype.group;
-    init: typeof ColumnSeries.prototype.init;
-    invertable: boolean;
-    isCartesian: boolean;
-    orderNodes: boolean;
-    mapOptionsToLevel: (Record<string, Highcharts.SankeySeriesLevelsOptions>|null);
-    nodeColumns: Array<Highcharts.SankeyColumnArray>;
-    nodeLookup: Highcharts.NodesSeries['nodeLookup'];
-    nodePadding: number;
-    nodeWidth: number;
-    pointArrayMap: Array<string>;
-    pointClass: typeof SankeyPoint;
-    remove: typeof ColumnSeries.prototype.remove;
-    setData: Highcharts.NodesMixin['setData'];
-    translationFactor: number;
-    createNodeColumn(): Highcharts.SankeyColumnArray;
-    createNodeColumns(): Array<Highcharts.SankeyColumnArray>;
-    generatePoints(): void;
-    getNodePadding(): number;
-    pointAttribs(
-        point?: SankeyPoint,
-        state?: StatesOptionsKey
-    ): SVGAttributes;
-    render(): void;
-    translate(): void;
-    translateLink(point: SankeyPoint): void;
-    translateNode(
-        node: SankeyPoint,
-        column: Highcharts.SankeyColumnArray
-    ): void;
-}
-extend(SankeySeries.prototype, {
-    isCartesian: false,
-    invertable: true,
-    forceDL: true,
-    orderNodes: true,
-    pointArrayMap: ['from', 'to'],
-    // Create a single node that holds information on incoming and outgoing
-    // links.
-    createNode: NodesMixin.createNode,
-    searchPoint: H.noop as any,
-    setData: NodesMixin.setData,
-    destroy: NodesMixin.destroy,
+    /* *
+     *
+     *  Functions
+     *
+     * */
 
     /* eslint-disable valid-jsdoc */
 
-    /**
-     * Overridable function to get node padding, overridden in dependency
-     * wheel series type.
-     * @private
-     */
-    getNodePadding: function (this: SankeySeries): number {
-        let nodePadding = this.options.nodePadding || 0;
-
-        // If the number of columns is so great that they will overflow with
-        // the given nodePadding, we sacrifice the padding in order to
-        // render all nodes within the plot area (#11917).
-        if (this.nodeColumns) {
-            const maxLength = this.nodeColumns.reduce(
-                (acc, col): number => Math.max(acc, col.length),
-                0
-            );
-            if (maxLength * nodePadding > (this.chart.plotSizeY as any)) {
-                nodePadding = (this.chart.plotSizeY as any) / maxLength;
-            }
-        }
-
-        return nodePadding;
-    },
 
     /**
      * Create a node column.
      * @private
      */
-    createNodeColumn: function (
-        this: SankeySeries
-    ): Highcharts.SankeyColumnArray {
+    public createNodeColumn(): Highcharts.SankeyColumnArray {
         var series = this,
             chart = this.chart,
             column: Highcharts.SankeyColumnArray = [] as any;
@@ -662,16 +601,14 @@ extend(SankeySeries.prototype, {
         };
 
         return column;
-    },
+    }
 
     /**
      * Create node columns by analyzing the nodes and the relations between
      * incoming and outgoing links.
      * @private
      */
-    createNodeColumns: function (
-        this: SankeySeries
-    ): Array<Highcharts.SankeyColumnArray> {
+    public createNodeColumns(): Array<Highcharts.SankeyColumnArray> {
         var columns: Array<Highcharts.SankeyColumnArray> = [];
 
         this.nodes.forEach(function (node: SankeyPoint): void {
@@ -738,7 +675,78 @@ extend(SankeySeries.prototype, {
         }
 
         return columns;
-    },
+    }
+
+
+    /**
+     * Extend generatePoints by adding the nodes, which are Point objects
+     * but pushed to the this.nodes array.
+     * @private
+     */
+    public generatePoints(): void {
+        NodesMixin.generatePoints.apply(this, arguments as any);
+
+        /**
+         * Order the nodes, starting with the root node(s). (#9818)
+         * @private
+         */
+        function order(node: SankeyPoint, level: number): void {
+            // Prevents circular recursion:
+            if (typeof node.level === 'undefined') {
+                node.level = level;
+                node.linksFrom.forEach(function (
+                    link: SankeyPoint
+                ): void {
+                    if (link.toNode) {
+                        order(link.toNode, level + 1);
+                    }
+                });
+            }
+        }
+
+        if (this.orderNodes) {
+            this.nodes
+                // Identify the root node(s)
+                .filter(function (node: SankeyPoint): boolean {
+                    return node.linksTo.length === 0;
+                })
+                // Start by the root node(s) and recursively set the level
+                // on all following nodes.
+                .forEach(function (node: SankeyPoint): void {
+                    order(node, 0);
+                });
+            stableSort(this.nodes, function (
+                a: SankeyPoint,
+                b: SankeyPoint
+            ): number {
+                return a.level - b.level;
+            });
+        }
+    }
+
+    /**
+     * Overridable function to get node padding, overridden in dependency
+     * wheel series type.
+     * @private
+     */
+    public getNodePadding(): number {
+        let nodePadding = this.options.nodePadding || 0;
+
+        // If the number of columns is so great that they will overflow with
+        // the given nodePadding, we sacrifice the padding in order to
+        // render all nodes within the plot area (#11917).
+        if (this.nodeColumns) {
+            const maxLength = this.nodeColumns.reduce(
+                (acc, col): number => Math.max(acc, col.length),
+                0
+            );
+            if (maxLength * nodePadding > (this.chart.plotSizeY as any)) {
+                nodePadding = (this.chart.plotSizeY as any) / maxLength;
+            }
+        }
+
+        return nodePadding;
+    }
 
     /**
      * Define hasData function for non-cartesian series.
@@ -746,16 +754,15 @@ extend(SankeySeries.prototype, {
      * @return {boolean}
      *         Returns true if the series has points at all.
      */
-    hasData: function (this: SankeySeries): boolean {
+    public hasData(): boolean {
         return !!this.processedXData.length; // != 0
-    },
+    }
 
     /**
      * Return the presentational attributes.
      * @private
      */
-    pointAttribs: function (
-        this: SankeySeries,
+    public pointAttribs(
         point?: SankeyPoint,
         state?: StatesOptionsKey
     ): SVGAttributes {
@@ -804,147 +811,164 @@ extend(SankeySeries.prototype, {
             fill: Color.parse(color).setOpacity(values.linkOpacity).get()
         };
 
-    },
+    }
 
     /**
-     * Extend generatePoints by adding the nodes, which are Point objects
-     * but pushed to the this.nodes array.
+     * Extend the render function to also render this.nodes together with
+     * the points.
      * @private
      */
-    generatePoints: function (this: SankeySeries): void {
-        NodesMixin.generatePoints.apply(this, arguments as any);
+    public render(): void {
+        var points = this.points;
 
-        /**
-         * Order the nodes, starting with the root node(s). (#9818)
-         * @private
-         */
-        function order(node: SankeyPoint, level: number): void {
-            // Prevents circular recursion:
-            if (typeof node.level === 'undefined') {
-                node.level = level;
-                node.linksFrom.forEach(function (
-                    link: SankeyPoint
-                ): void {
-                    if (link.toNode) {
-                        order(link.toNode, level + 1);
+        this.points = this.points.concat(this.nodes || []);
+        ColumnSeries.prototype.render.call(this);
+        this.points = points;
+    }
+
+    /**
+     * Run pre-translation by generating the nodeColumns.
+     * @private
+     */
+    public translate(): void {
+
+        // Get the translation factor needed for each column to fill up the
+        // plot height
+        const getColumnTranslationFactor = (column: Highcharts.SankeyColumnArray): number => {
+            const nodes = column.slice();
+            const minLinkWidth = this.options.minLinkWidth || 0;
+            let exceedsMinLinkWidth: boolean;
+            let factor = 0;
+            let i: number;
+
+            let remainingHeight = (chart.plotSizeY as any) -
+                (options.borderWidth as any) - (column.length - 1) * series.nodePadding;
+
+            // Because the minLinkWidth option doesn't obey the direct
+            // translation, we need to run translation iteratively, check
+            // node heights, remove those nodes affected by minLinkWidth,
+            // check again, etc.
+            while (column.length) {
+                factor = remainingHeight / column.sum();
+                exceedsMinLinkWidth = false;
+                i = column.length;
+                while (i--) {
+                    if (column[i].getSum() * factor < minLinkWidth) {
+                        column.splice(i, 1);
+                        remainingHeight -= minLinkWidth;
+                        exceedsMinLinkWidth = true;
                     }
-                });
+                }
+                if (!exceedsMinLinkWidth) {
+                    break;
+                }
             }
-        }
 
-        if (this.orderNodes) {
-            this.nodes
-                // Identify the root node(s)
-                .filter(function (node: SankeyPoint): boolean {
-                    return node.linksTo.length === 0;
-                })
-                // Start by the root node(s) and recursively set the level
-                // on all following nodes.
-                .forEach(function (node: SankeyPoint): void {
-                    order(node, 0);
-                });
-            stableSort(this.nodes, function (
-                a: SankeyPoint,
-                b: SankeyPoint
-            ): number {
-                return a.level - b.level;
-            });
-        }
-    },
+            // Re-insert original nodes
+            column.length = 0;
+            nodes.forEach((node): number => column.push(node));
+            return factor;
+        };
 
-    /**
-     * Run translation operations for one node.
-     * @private
-     */
-    translateNode: function (
-        this: SankeySeries,
-        node: SankeyPoint,
-        column: Highcharts.SankeyColumnArray
-    ): void {
-        var translationFactor = this.translationFactor,
+        if (!this.processedXData) {
+            this.processData();
+        }
+        this.generatePoints();
+
+        this.nodeColumns = this.createNodeColumns();
+        this.nodeWidth = relativeLength(
+            this.options.nodeWidth as any,
+            this.chart.plotSizeX as any
+        );
+
+        var series = this,
             chart = this.chart,
             options = this.options,
-            sum = node.getSum(),
-            height = Math.max(
-                Math.round(sum * translationFactor),
-                this.options.minLinkWidth as any
+            nodeWidth = this.nodeWidth,
+            nodeColumns = this.nodeColumns;
+
+        this.nodePadding = this.getNodePadding();
+
+        // Find out how much space is needed. Base it on the translation
+        // factor of the most spaceous column.
+        this.translationFactor = nodeColumns.reduce(
+            (
+                translationFactor: number,
+                column: Highcharts.SankeyColumnArray
+            ): number => Math.min(
+                translationFactor,
+                getColumnTranslationFactor(column)
             ),
-            crisp = Math.round(options.borderWidth as any) % 2 / 2,
-            nodeOffset = column.offset(node, translationFactor),
-            fromNodeTop = Math.floor(pick(
-                (nodeOffset as any).absoluteTop,
-                (
-                    column.top(translationFactor) +
-                    (nodeOffset as any).relativeTop
-                )
-            )) + crisp,
-            left = Math.floor(
-                this.colDistance * (node.column as any) +
-                (options.borderWidth as any) / 2
-            ) + crisp,
-            nodeLeft = chart.inverted ?
-                (chart.plotSizeX as any) - left :
-                left,
-            nodeWidth = Math.round(this.nodeWidth);
+            Infinity
+        );
 
-        node.sum = sum;
-        // If node sum is 0, don't render the rect #12453
-        if (sum) {
-        // Draw the node
-            node.shapeType = 'rect';
 
-            node.nodeX = nodeLeft;
-            node.nodeY = fromNodeTop;
-            if (!chart.inverted) {
-                node.shapeArgs = {
-                    x: nodeLeft,
-                    y: fromNodeTop,
-                    width: node.options.width || options.width || nodeWidth,
-                    height: node.options.height || options.height || height
-                };
-            } else {
-                node.shapeArgs = {
-                    x: nodeLeft - nodeWidth,
-                    y: (chart.plotSizeY as any) - fromNodeTop - height,
-                    width: node.options.height || options.height || nodeWidth,
-                    height: node.options.width || options.width || height
-                };
+        this.colDistance =
+            (
+                (chart.plotSizeX as any) - nodeWidth -
+                (options.borderWidth as any)
+            ) / Math.max(1, nodeColumns.length - 1);
+
+        // Calculate level options used in sankey and organization
+        series.mapOptionsToLevel = getLevelOptions({
+            // NOTE: if support for allowTraversingTree is added, then from
+            // should be the level of the root node.
+            from: 1,
+            levels: options.levels,
+            to: nodeColumns.length - 1, // Height of the tree
+            defaults: {
+                borderColor: options.borderColor,
+                borderRadius: options.borderRadius, // organization series
+                borderWidth: options.borderWidth,
+                color: series.color,
+                colorByPoint: options.colorByPoint,
+                // NOTE: if support for allowTraversingTree is added, then
+                // levelIsConstant should be optional.
+                levelIsConstant: true,
+                linkColor: (
+                    options as Highcharts.OrganizationSeriesOptions
+                ).linkColor, // organization series
+                linkLineWidth: (
+                    options as Highcharts.OrganizationSeriesOptions
+                ).linkLineWidth, // organization series
+                linkOpacity: options.linkOpacity,
+                states: options.states
             }
+        });
 
-            node.shapeArgs.display = node.hasShape() ? '' : 'none';
+        // First translate all nodes so we can use them when drawing links
+        nodeColumns.forEach(function (
+            this: SankeySeries,
+            column: Highcharts.SankeyColumnArray
+        ): void {
 
-            // Calculate data label options for the point
-            node.dlOptions = getDLOptions({
-                level: (this.mapOptionsToLevel as any)[node.level],
-                optionsPoint: node.options
+            column.forEach(function (node: SankeyPoint): void {
+                series.translateNode(node, column);
             });
 
-            // Pass test in drawPoints
-            node.plotY = 1;
+        }, this);
 
-            // Set the anchor position for tooltips
-            node.tooltipPos = chart.inverted ? [
-                (chart.plotSizeY as any) - node.shapeArgs.y - node.shapeArgs.height / 2,
-                (chart.plotSizeX as any) - node.shapeArgs.x - node.shapeArgs.width / 2
-            ] : [
-                node.shapeArgs.x + node.shapeArgs.width / 2,
-                node.shapeArgs.y + node.shapeArgs.height / 2
-            ];
-        } else {
-            node.dlOptions = {
-                enabled: false
-            };
-        }
-    },
+        // Then translate links
+        this.nodes.forEach(function (node: SankeyPoint): void {
+            // Translate the links from this node
+            node.linksFrom.forEach(function (
+                linkPoint: SankeyPoint
+            ): void {
+                // If weight is 0 - don't render the link path #12453,
+                // render null points (for organization chart)
+                if ((linkPoint.weight || linkPoint.isNull) && linkPoint.to) {
+                    series.translateLink(linkPoint);
+                    linkPoint.allowShadow = false;
+                }
+            });
+        });
+    }
 
     /**
      * Run translation operations for one link.
      * @private
      */
-    translateLink: function (
-        this: SankeySeries,
-        point: SankeyPoint
-    ): void {
+    public translateLink(point: SankeyPoint): void {
 
         const getY = (
             node: SankeyPoint,
@@ -1107,161 +1131,129 @@ extend(SankeySeries.prototype, {
             point.color = fromNode.color;
         }
 
-    },
+    }
 
     /**
-     * Run pre-translation by generating the nodeColumns.
+     * Run translation operations for one node.
      * @private
      */
-    translate: function (this: SankeySeries): void {
-
-        // Get the translation factor needed for each column to fill up the
-        // plot height
-        const getColumnTranslationFactor = (column: Highcharts.SankeyColumnArray): number => {
-            const nodes = column.slice();
-            const minLinkWidth = this.options.minLinkWidth || 0;
-            let exceedsMinLinkWidth: boolean;
-            let factor = 0;
-            let i: number;
-
-            let remainingHeight = (chart.plotSizeY as any) -
-                (options.borderWidth as any) - (column.length - 1) * series.nodePadding;
-
-            // Because the minLinkWidth option doesn't obey the direct
-            // translation, we need to run translation iteratively, check
-            // node heights, remove those nodes affected by minLinkWidth,
-            // check again, etc.
-            while (column.length) {
-                factor = remainingHeight / column.sum();
-                exceedsMinLinkWidth = false;
-                i = column.length;
-                while (i--) {
-                    if (column[i].getSum() * factor < minLinkWidth) {
-                        column.splice(i, 1);
-                        remainingHeight -= minLinkWidth;
-                        exceedsMinLinkWidth = true;
-                    }
-                }
-                if (!exceedsMinLinkWidth) {
-                    break;
-                }
-            }
-
-            // Re-insert original nodes
-            column.length = 0;
-            nodes.forEach((node): number => column.push(node));
-            return factor;
-        };
-
-        if (!this.processedXData) {
-            this.processData();
-        }
-        this.generatePoints();
-
-        this.nodeColumns = this.createNodeColumns();
-        this.nodeWidth = relativeLength(
-            this.options.nodeWidth as any,
-            this.chart.plotSizeX as any
-        );
-
-        var series = this,
+    public translateNode(
+        node: SankeyPoint,
+        column: Highcharts.SankeyColumnArray
+    ): void {
+        var translationFactor = this.translationFactor,
             chart = this.chart,
             options = this.options,
-            nodeWidth = this.nodeWidth,
-            nodeColumns = this.nodeColumns;
-
-        this.nodePadding = this.getNodePadding();
-
-        // Find out how much space is needed. Base it on the translation
-        // factor of the most spaceous column.
-        this.translationFactor = nodeColumns.reduce(
-            (
-                translationFactor: number,
-                column: Highcharts.SankeyColumnArray
-            ): number => Math.min(
-                translationFactor,
-                getColumnTranslationFactor(column)
+            sum = node.getSum(),
+            height = Math.max(
+                Math.round(sum * translationFactor),
+                this.options.minLinkWidth as any
             ),
-            Infinity
-        );
+            crisp = Math.round(options.borderWidth as any) % 2 / 2,
+            nodeOffset = column.offset(node, translationFactor),
+            fromNodeTop = Math.floor(pick(
+                (nodeOffset as any).absoluteTop,
+                (
+                    column.top(translationFactor) +
+                    (nodeOffset as any).relativeTop
+                )
+            )) + crisp,
+            left = Math.floor(
+                this.colDistance * (node.column as any) +
+                (options.borderWidth as any) / 2
+            ) + crisp,
+            nodeLeft = chart.inverted ?
+                (chart.plotSizeX as any) - left :
+                left,
+            nodeWidth = Math.round(this.nodeWidth);
 
+        node.sum = sum;
+        // If node sum is 0, don't render the rect #12453
+        if (sum) {
+        // Draw the node
+            node.shapeType = 'rect';
 
-        this.colDistance =
-            (
-                (chart.plotSizeX as any) - nodeWidth -
-                (options.borderWidth as any)
-            ) / Math.max(1, nodeColumns.length - 1);
-
-        // Calculate level options used in sankey and organization
-        series.mapOptionsToLevel = getLevelOptions({
-            // NOTE: if support for allowTraversingTree is added, then from
-            // should be the level of the root node.
-            from: 1,
-            levels: options.levels,
-            to: nodeColumns.length - 1, // Height of the tree
-            defaults: {
-                borderColor: options.borderColor,
-                borderRadius: options.borderRadius, // organization series
-                borderWidth: options.borderWidth,
-                color: series.color,
-                colorByPoint: options.colorByPoint,
-                // NOTE: if support for allowTraversingTree is added, then
-                // levelIsConstant should be optional.
-                levelIsConstant: true,
-                linkColor: (
-                    options as Highcharts.OrganizationSeriesOptions
-                ).linkColor, // organization series
-                linkLineWidth: (
-                    options as Highcharts.OrganizationSeriesOptions
-                ).linkLineWidth, // organization series
-                linkOpacity: options.linkOpacity,
-                states: options.states
+            node.nodeX = nodeLeft;
+            node.nodeY = fromNodeTop;
+            if (!chart.inverted) {
+                node.shapeArgs = {
+                    x: nodeLeft,
+                    y: fromNodeTop,
+                    width: node.options.width || options.width || nodeWidth,
+                    height: node.options.height || options.height || height
+                };
+            } else {
+                node.shapeArgs = {
+                    x: nodeLeft - nodeWidth,
+                    y: (chart.plotSizeY as any) - fromNodeTop - height,
+                    width: node.options.height || options.height || nodeWidth,
+                    height: node.options.width || options.width || height
+                };
             }
-        });
 
-        // First translate all nodes so we can use them when drawing links
-        nodeColumns.forEach(function (
-            this: SankeySeries,
-            column: Highcharts.SankeyColumnArray
-        ): void {
+            node.shapeArgs.display = node.hasShape() ? '' : 'none';
 
-            column.forEach(function (node: SankeyPoint): void {
-                series.translateNode(node, column);
+            // Calculate data label options for the point
+            node.dlOptions = SankeySeries.getDLOptions({
+                level: (this.mapOptionsToLevel as any)[node.level],
+                optionsPoint: node.options
             });
 
-        }, this);
+            // Pass test in drawPoints
+            node.plotY = 1;
 
-        // Then translate links
-        this.nodes.forEach(function (node: SankeyPoint): void {
-            // Translate the links from this node
-            node.linksFrom.forEach(function (
-                linkPoint: SankeyPoint
-            ): void {
-                // If weight is 0 - don't render the link path #12453,
-                // render null points (for organization chart)
-                if ((linkPoint.weight || linkPoint.isNull) && linkPoint.to) {
-                    series.translateLink(linkPoint);
-                    linkPoint.allowShadow = false;
-                }
-            });
-        });
-    },
-    /**
-     * Extend the render function to also render this.nodes together with
-     * the points.
-     * @private
-     */
-    render: function (this: SankeySeries): void {
-        var points = this.points;
-
-        this.points = this.points.concat(this.nodes || []);
-        ColumnSeries.prototype.render.call(this);
-        this.points = points;
-    },
+            // Set the anchor position for tooltips
+            node.tooltipPos = chart.inverted ? [
+                (chart.plotSizeY as any) - node.shapeArgs.y - node.shapeArgs.height / 2,
+                (chart.plotSizeX as any) - node.shapeArgs.x - node.shapeArgs.width / 2
+            ] : [
+                node.shapeArgs.x + node.shapeArgs.width / 2,
+                node.shapeArgs.y + node.shapeArgs.height / 2
+            ];
+        } else {
+            node.dlOptions = {
+                enabled: false
+            };
+        }
+    }
 
     /* eslint-enable valid-jsdoc */
 
-    animate: LineSeries.prototype.animate
+}
+
+/* *
+ *
+ *  Prototype Properties
+ *
+ * */
+
+interface SankeySeries extends Highcharts.NodesSeries {
+    animate: typeof LineSeries.prototype.animate;
+    createNode: Highcharts.NodesMixin['createNode'];
+    destroy: Highcharts.NodesMixin['destroy'];
+    forceDL: boolean;
+    init: typeof ColumnSeries.prototype.init;
+    invertable: boolean;
+    isCartesian: boolean;
+    orderNodes: boolean;
+    pointArrayMap: Array<string>;
+    pointClass: typeof SankeyPoint;
+    remove: typeof ColumnSeries.prototype.remove;
+    setData: Highcharts.NodesMixin['setData'];
+}
+extend(SankeySeries.prototype, {
+    animate: LineSeries.prototype.animate,
+    // Create a single node that holds information on incoming and outgoing
+    // links.
+    createNode: NodesMixin.createNode,
+    destroy: NodesMixin.destroy,
+    forceDL: true,
+    invertable: true,
+    isCartesian: false,
+    orderNodes: true,
+    pointArrayMap: ['from', 'to'],
+    searchPoint: H.noop as any,
+    setData: NodesMixin.setData
 });
 
 /* *
@@ -1278,54 +1270,52 @@ class SankeyPoint extends ColumnSeries.prototype.pointClass {
      *
      * */
 
+    public className: string = void 0 as any;
+
+    public column?: number;
+
+    public fromNode: SankeyPoint = void 0 as any;
+
+    public hangsFrom?: SankeyPoint;
+
+    public level: number = void 0 as any;
+
+    public linkBase: Array<number> = void 0 as any;
+
+    public linksFrom: Array<SankeyPoint> = void 0 as any;
+
+    public linksTo: Array<SankeyPoint> = void 0 as any;
+
+    public mass: number = void 0 as any;
+
+    public nodeX: number = void 0 as any;
+
+    public nodeY: number = void 0 as any;
+
     public options: Highcharts.SankeyPointOptions = void 0 as any;
+
+    public outgoing?: boolean;
 
     public series: SankeySeries = void 0 as any;
 
-}
+    public sum?: number;
 
-/* *
- *
- *  Prototype Properties
- *
- * */
+    public toNode: SankeyPoint = void 0 as any;
 
-interface SankeyPoint extends Highcharts.NodesPoint {
-    className: Highcharts.NodesPoint['className'];
-    column?: number;
-    from: Highcharts.NodesPoint['from'];
-    fromNode: SankeyPoint;
-    getSum: Highcharts.NodesPoint['getSum'];
-    hangsFrom?: SankeyPoint;
-    hasShape: Highcharts.NodesPoint['hasShape'];
-    init: Highcharts.NodesPoint['init'];
-    isNode: Highcharts.NodesPoint['isNode'];
-    level: number;
-    mass: Highcharts.NodesPoint['mass'];
-    nodeX: number;
-    nodeY: number;
-    linkBase: Array<number>;
-    linksFrom: Array<SankeyPoint>;
-    linksTo: Array<SankeyPoint>;
-    offset: Highcharts.NodesPoint['offset'];
-    outgoing: boolean;
-    shapeType: Highcharts.NodesPoint['shapeType'];
-    series: SankeySeries;
-    setNodeState: Highcharts.NodesMixin['setNodeState'];
-    sum?: number;
-    to: Highcharts.NodesPoint['to'];
-    toNode: SankeyPoint;
-    weight?: number;
-    applyOptions(
-        options: Highcharts.SankeyPointOptions,
-        x?: number
-    ): SankeyPoint;
-    getClassName(): string;
-    isValid: () => boolean;
-}
-extend(SankeyPoint.prototype, {
-    applyOptions: function (
-        this: SankeyPoint,
+    public weight?: number;
+
+    /* *
+     *
+     *  Functions
+     *
+     * */
+
+    /* eslint-disable valid-jsdoc */
+
+    /**
+     * @private
+     */
+    public applyOptions(
         options: Highcharts.SankeyPointOptions,
         x?: number
     ): SankeyPoint {
@@ -1336,15 +1326,39 @@ extend(SankeyPoint.prototype, {
             this.options.column = this.column = this.options.level;
         }
         return this;
-    },
-    setState: NodesMixin.setNodeState,
-    getClassName: function (this: SankeyPoint): string {
+    }
+
+    /**
+     * @private
+     */
+    public getClassName(): string {
         return (this.isNode ? 'highcharts-node ' : 'highcharts-link ') +
         Point.prototype.getClassName.call(this);
-    },
-    isValid: function (this: SankeyPoint): boolean {
+    }
+
+    /**
+     * @private
+     */
+    public isValid(): boolean {
         return this.isNode || typeof this.weight === 'number';
     }
+
+    /* eslint-enable valid-jsdoc */
+
+}
+
+/* *
+ *
+ *  Prototype Properties
+ *
+ * */
+
+interface SankeyPoint extends Highcharts.NodesPoint {
+    init(series: SankeySeries, options: Highcharts.SankeyPointOptions): SankeyPoint;
+    setState: Highcharts.NodesMixin['setNodeState'];
+}
+extend(SankeyPoint.prototype, {
+    setState: NodesMixin.setNodeState
 });
 
 /* *
