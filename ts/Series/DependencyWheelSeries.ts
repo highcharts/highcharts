@@ -22,6 +22,13 @@ import type SVGElement from '../Core/Renderer/SVG/SVGElement';
 import A from '../Core/Animation/AnimationUtilities.js';
 const { animObject } = A;
 import BaseSeries from '../Core/Series/Series.js';
+const {
+    seriesTypes: {
+        sankey: {
+            prototype: base
+        }
+    }
+} = BaseSeries;
 import H from '../Core/Globals.js';
 import NodesMixin from '../Mixins/Nodes.js';
 
@@ -83,11 +90,6 @@ declare module '../Core/Series/SeriesType' {
         dependencywheel: typeof Highcharts.DependencyWheelSeries;
     }
 }
-
-import './SankeySeries.js';
-import '../Core/Options.js';
-
-const base = BaseSeries.seriesTypes.sankey.prototype;
 
 /**
  * @private
