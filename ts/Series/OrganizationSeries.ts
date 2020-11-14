@@ -22,6 +22,7 @@ import type BBoxObject from '../Core/Renderer/BBoxObject';
 import type ColorString from '../Core/Color/ColorString';
 import type CSSObject from '../Core/Renderer/CSSObject';
 import type Point from '../Core/Series/Point';
+import type SankeySeries from './SankeySeries';
 import type { SeriesStatesOptions } from '../Core/Series/SeriesOptions';
 import type { StatesOptionsKey } from '../Core/Series/StatesOptions';
 import type SVGAttributes from '../Core/Renderer/SVG/SVGAttributes';
@@ -51,7 +52,7 @@ const base = BaseSeries.seriesTypes.sankey.prototype;
  */
 declare global {
     namespace Highcharts {
-        class OrganizationPoint extends SankeyPoint implements NodesPoint {
+        class OrganizationPoint extends SankeySeries.prototype.pointClass implements NodesPoint {
             public fromNode: OrganizationPoint;
             public image?: OrganizationSeriesNodeOptions['image'];
             public linksFrom: Array<OrganizationPoint>;

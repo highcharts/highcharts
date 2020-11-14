@@ -13,6 +13,7 @@
 'use strict';
 
 import type PieSeries from './Pie/PieSeries';
+import type SankeySeries from './SankeySeries';
 import type { SeriesStatesOptions } from '../Core/Series/SeriesOptions';
 import type SVGAttributes from '../Core/Renderer/SVG/SVGAttributes';
 import type SVGElement from '../Core/Renderer/SVG/SVGElement';
@@ -38,7 +39,7 @@ declare global {
             startAngle?: number;
             states?: SeriesStatesOptions<DependencyWheelSeries>;
         }
-        class DependencyWheelPoint extends SankeyPoint {
+        class DependencyWheelPoint extends SankeySeries.prototype.pointClass {
             public angle: number;
             public dataLabelPath?: SVGElement;
             public fromNode: DependencyWheelPoint;
