@@ -13,7 +13,9 @@
 'use strict';
 
 import type PieSeries from './Pie/PieSeries';
+import type SankeyPointOptions from './Sankey/SankeyPointOptions';
 import type SankeySeries from './Sankey/SankeySeries';
+import type SankeySeriesOptions from './Sankey/SankeySeriesOptions';
 import type { SeriesStatesOptions } from '../Core/Series/SeriesOptions';
 import type SVGAttributes from '../Core/Renderer/SVG/SVGAttributes';
 import type SVGElement from '../Core/Renderer/SVG/SVGElement';
@@ -29,8 +31,7 @@ import NodesMixin from '../Mixins/Nodes.js';
  */
 declare global {
     namespace Highcharts {
-        interface DependencyWheelColumnArray<T = DependencyWheelPoint>
-            extends SankeyColumnArray<T> {
+        interface DependencyWheelColumnArray<T = DependencyWheelPoint> extends SankeySeries.ColumnArray<T> {
         }
         interface DependencyWheelPointOptions extends SankeyPointOptions {
         }
@@ -67,7 +68,7 @@ declare global {
             public nodes: Array<DependencyWheelPoint>;
             public pointClass: typeof DependencyWheelPoint;
             public points: Array<DependencyWheelPoint>;
-            public createNodeColumns(): Array<SankeyColumnArray>;
+            public createNodeColumns(): Array<SankeySeries.ColumnArray>;
             public getNodePadding(): number;
             public translate(): void;
         }
@@ -141,7 +142,7 @@ BaseSeries.seriesType<typeof Highcharts.DependencyWheelSeries>(
          */
         createNodeColumns: function (
             this: Highcharts.DependencyWheelSeries
-        ): Array<Highcharts.SankeyColumnArray> {
+        ): Array<SankeySeries.ColumnArray> {
             var columns = [this.createNodeColumn()];
             this.nodes.forEach(function (
                 node: Highcharts.DependencyWheelPoint

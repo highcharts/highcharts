@@ -22,7 +22,17 @@ import type BBoxObject from '../Core/Renderer/BBoxObject';
 import type ColorString from '../Core/Color/ColorString';
 import type CSSObject from '../Core/Renderer/CSSObject';
 import type Point from '../Core/Series/Point';
+import type {
+    SankeyDataLabelFormatterContext,
+    SankeyDataLabelOptions
+} from './Sankey/SankeyDataLabelOptions';
+import type SankeyPointOptions from './Sankey/SankeyPointOptions';
 import type SankeySeries from './Sankey/SankeySeries';
+import type {
+    SankeySeriesLevelOptions,
+    SankeySeriesNodeOptions,
+    SankeySeriesOptions
+} from './Sankey/SankeySeriesOptions';
 import type { SeriesStatesOptions } from '../Core/Series/SeriesOptions';
 import type { StatesOptionsKey } from '../Core/Series/StatesOptions';
 import type SVGAttributes from '../Core/Renderer/SVG/SVGAttributes';
@@ -88,13 +98,11 @@ declare global {
                 column: OrganizationColumnArray
             ): void;
         }
-        interface OrganizationColumnArray<T = Highcharts.OrganizationPoint>
-            extends SankeyColumnArray<T>
+        interface OrganizationColumnArray<T = Highcharts.OrganizationPoint> extends SankeySeries.ColumnArray<T>
         {
             offset(node: T, factor: number): (Dictionary<number>|undefined);
         }
-        interface OrganizationDataLabelsOptionsObject
-            extends SankeyDataLabelsOptionsObject
+        interface OrganizationDataLabelsOptionsObject extends SankeyDataLabelOptions
         {
             nodeFormatter?: OrganizationDataLabelsFormatterCallbackFunction;
         }
@@ -102,13 +110,12 @@ declare global {
             (
                 this: (
                     OrganizationDataLabelsFormatterContextObject|
-                    SankeyDataLabelsFormatterContextObject|
+                    SankeyDataLabelFormatterContext|
                     Point.PointLabelObject
                 )
             ): (string|undefined);
         }
-        interface OrganizationDataLabelsFormatterContextObject
-            extends SankeyDataLabelsFormatterContextObject
+        interface OrganizationDataLabelsFormatterContextObject extends SankeyDataLabelFormatterContext
         {
             point: OrganizationPoint;
             series: OrganizationSeries;
@@ -120,13 +127,11 @@ declare global {
             );
             offset?: (number|string);
         }
-        interface OrganizationSeriesLevelsOptions
-            extends SankeySeriesLevelsOptions
+        interface OrganizationSeriesLevelsOptions extends SankeySeriesLevelOptions
         {
             states: SeriesStatesOptions<OrganizationSeries>;
         }
-        interface OrganizationSeriesNodeOptions
-            extends SankeySeriesNodesOptions
+        interface OrganizationSeriesNodeOptions extends SankeySeriesNodeOptions
         {
             description?: string;
             image?: string;
@@ -256,7 +261,7 @@ BaseSeries.seriesType<typeof Highcharts.OrganizationSeries>(
                 this: (
                     Point.PointLabelObject|
                     Highcharts.OrganizationDataLabelsFormatterContextObject|
-                    Highcharts.SankeyDataLabelsFormatterContextObject
+                    SankeyDataLabelFormatterContext
                 )
             ): string {
 
@@ -461,7 +466,7 @@ BaseSeries.seriesType<typeof Highcharts.OrganizationSeries>(
             // aligned to their parent
             wrap(column, 'offset', function (
                 this: Highcharts.OrganizationPoint,
-                proceed: Highcharts.SankeyColumnArray['offset'],
+                proceed: SankeySeries.ColumnArray['offset'],
                 node: Highcharts.OrganizationPoint,
                 factor: number
             ): (Highcharts.Dictionary<number>|undefined) {

@@ -28,7 +28,7 @@ var _a = BaseSeries.seriesTypes, ColumnSeries = _a.column, LineSeries = _a.line;
 import Color from '../../Core/Color/Color.js';
 import H from '../../Core/Globals.js';
 import NodesMixin from '../../Mixins/Nodes.js';
-import Point from '../../Core/Series/Point.js';
+import SankeyPoint from './SankeyPoint.js';
 import TreeSeriesMixin from '../../Mixins/TreeSeries.js';
 var getLevelOptions = TreeSeriesMixin.getLevelOptions;
 import U from '../../Core/Utilities.js';
@@ -832,79 +832,10 @@ extend(SankeySeries.prototype, {
     isCartesian: false,
     orderNodes: true,
     pointArrayMap: ['from', 'to'],
+    pointClass: SankeyPoint,
     searchPoint: H.noop,
     setData: NodesMixin.setData
 });
-/* *
- *
- *  Class
- *
- * */
-var SankeyPoint = /** @class */ (function (_super) {
-    __extends(SankeyPoint, _super);
-    function SankeyPoint() {
-        /* *
-         *
-         *  Properties
-         *
-         * */
-        var _this = _super !== null && _super.apply(this, arguments) || this;
-        _this.className = void 0;
-        _this.fromNode = void 0;
-        _this.level = void 0;
-        _this.linkBase = void 0;
-        _this.linksFrom = void 0;
-        _this.linksTo = void 0;
-        _this.mass = void 0;
-        _this.nodeX = void 0;
-        _this.nodeY = void 0;
-        _this.options = void 0;
-        _this.series = void 0;
-        _this.toNode = void 0;
-        return _this;
-        /* eslint-enable valid-jsdoc */
-    }
-    /* *
-     *
-     *  Functions
-     *
-     * */
-    /* eslint-disable valid-jsdoc */
-    /**
-     * @private
-     */
-    SankeyPoint.prototype.applyOptions = function (options, x) {
-        Point.prototype.applyOptions.call(this, options, x);
-        // Treat point.level as a synonym of point.column
-        if (defined(this.options.level)) {
-            this.options.column = this.column = this.options.level;
-        }
-        return this;
-    };
-    /**
-     * @private
-     */
-    SankeyPoint.prototype.getClassName = function () {
-        return (this.isNode ? 'highcharts-node ' : 'highcharts-link ') +
-            Point.prototype.getClassName.call(this);
-    };
-    /**
-     * @private
-     */
-    SankeyPoint.prototype.isValid = function () {
-        return this.isNode || typeof this.weight === 'number';
-    };
-    return SankeyPoint;
-}(ColumnSeries.prototype.pointClass));
-extend(SankeyPoint.prototype, {
-    setState: NodesMixin.setNodeState
-});
-/* *
- *
- *  Registry
- *
- * */
-SankeySeries.prototype.pointClass = SankeyPoint;
 BaseSeries.registerSeriesType('sankey', SankeySeries);
 /* *
  *
