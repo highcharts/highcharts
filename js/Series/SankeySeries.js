@@ -10,96 +10,29 @@
  *
  * */
 'use strict';
+var __extends = (this && this.__extends) || (function () {
+    var extendStatics = function (d, b) {
+        extendStatics = Object.setPrototypeOf ||
+            ({ __proto__: [] } instanceof Array && function (d, b) { d.__proto__ = b; }) ||
+            function (d, b) { for (var p in b) if (b.hasOwnProperty(p)) d[p] = b[p]; };
+        return extendStatics(d, b);
+    };
+    return function (d, b) {
+        extendStatics(d, b);
+        function __() { this.constructor = d; }
+        d.prototype = b === null ? Object.create(b) : (__.prototype = b.prototype, new __());
+    };
+})();
 import BaseSeries from '../Core/Series/Series.js';
+var _a = BaseSeries.seriesTypes, ColumnSeries = _a.column, LineSeries = _a.line;
 import Color from '../Core/Color/Color.js';
-import ColumnSeries from './Column/ColumnSeries.js';
 import H from '../Core/Globals.js';
-import LineSeries from '../Series/Line/LineSeries.js';
 import NodesMixin from '../Mixins/Nodes.js';
 import Point from '../Core/Series/Point.js';
 import TreeSeriesMixin from '../Mixins/TreeSeries.js';
 var getLevelOptions = TreeSeriesMixin.getLevelOptions;
 import U from '../Core/Utilities.js';
-var defined = U.defined, find = U.find, isObject = U.isObject, merge = U.merge, pick = U.pick, relativeLength = U.relativeLength, stableSort = U.stableSort;
-/**
- * A node in a sankey diagram.
- *
- * @interface Highcharts.SankeyNodeObject
- * @extends Highcharts.Point
- * @product highcharts
- */ /**
-* The color of the auto generated node.
-*
-* @name Highcharts.SankeyNodeObject#color
-* @type {Highcharts.ColorString|Highcharts.GradientColorObject|Highcharts.PatternObject}
-*/ /**
-* The color index of the auto generated node, especially for use in styled
-* mode.
-*
-* @name Highcharts.SankeyNodeObject#colorIndex
-* @type {number}
-*/ /**
-* An optional column index of where to place the node. The default behaviour is
-* to place it next to the preceding node.
-*
-* @see {@link https://jsfiddle.net/gh/get/library/pure/highcharts/highcharts/tree/master/samples/highcharts/plotoptions/sankey-node-column/|Highcharts-Demo:}
-*      Specified node column
-*
-* @name Highcharts.SankeyNodeObject#column
-* @type {number}
-* @since 6.0.5
-*/ /**
-* The id of the auto-generated node, refering to the `from` or `to` setting of
-* the link.
-*
-* @name Highcharts.SankeyNodeObject#id
-* @type {string}
-*/ /**
-* The name to display for the node in data labels and tooltips. Use this when
-* the name is different from the `id`. Where the id must be unique for each
-* node, this is not necessary for the name.
-*
-* @see {@link https://jsfiddle.net/gh/get/library/pure/highcharts/highcharts/tree/master/samples/highcharts/css/sankey/|Highcharts-Demo:}
-*         Sankey diagram with node options
-*
-* @name Highcharts.SankeyNodeObject#name
-* @type {string}
-* @product highcharts
-*/ /**
-* The vertical offset of a node in terms of weight. Positive values shift the
-* node downwards, negative shift it upwards.
-*
-* @see {@link https://jsfiddle.net/gh/get/library/pure/highcharts/highcharts/tree/master/samples/highcharts/plotoptions/sankey-node-column/|Highcharts-Demo:}
-*         Specified node offset
-*
-* @name Highcharts.SankeyNodeObject#offset
-* @type {number}
-* @default 0
-* @since 6.0.5
-*/
-/**
- * Formatter callback function.
- *
- * @callback Highcharts.SeriesSankeyDataLabelsFormatterCallbackFunction
- *
- * @param {Highcharts.SeriesSankeyDataLabelsFormatterContextObject|Highcharts.PointLabelObject} this
- *        Data label context to format
- *
- * @return {string|undefined}
- *         Formatted data label text
- */
-/**
- * Context for the node formatter function.
- *
- * @interface Highcharts.SeriesSankeyDataLabelsFormatterContextObject
- * @extends Highcharts.PointLabelObject
- */ /**
-* The node object. The node name, if defined, is available through
-* `this.point.name`.
-* @name Highcharts.SeriesSankeyDataLabelsFormatterContextObject#point
-* @type {Highcharts.SankeyNodeObject}
-*/
-''; // detach doclets above
+var defined = U.defined, extend = U.extend, find = U.find, isObject = U.isObject, merge = U.merge, pick = U.pick, relativeLength = U.relativeLength, stableSort = U.stableSort;
 /* *
  *
  *  Functions
@@ -131,263 +64,285 @@ var getDLOptions = function getDLOptions(params) {
  *
  * @augments Highcharts.Series
  */
-BaseSeries.seriesType('sankey', 'column', 
-/**
- * A sankey diagram is a type of flow diagram, in which the width of the
- * link between two nodes is shown proportionally to the flow quantity.
- *
- * @sample highcharts/demo/sankey-diagram/
- *         Sankey diagram
- * @sample highcharts/plotoptions/sankey-inverted/
- *         Inverted sankey diagram
- * @sample highcharts/plotoptions/sankey-outgoing
- *         Sankey diagram with outgoing links
- *
- * @extends      plotOptions.column
- * @since        6.0.0
- * @product      highcharts
- * @excluding    animationLimit, boostThreshold, borderRadius,
- *               crisp, cropThreshold, colorAxis, colorKey, depth, dragDrop,
- *               edgeColor, edgeWidth, findNearestPointBy, grouping,
- *               groupPadding, groupZPadding, maxPointWidth, negativeColor,
- *               pointInterval, pointIntervalUnit, pointPadding,
- *               pointPlacement, pointRange, pointStart, pointWidth,
- *               shadow, softThreshold, stacking, threshold, zoneAxis,
- *               zones, minPointLength, dataSorting, boostBlending
- * @requires     modules/sankey
- * @optionparent plotOptions.sankey
- */
-{
-    borderWidth: 0,
-    colorByPoint: true,
-    /**
-     * Higher numbers makes the links in a sankey diagram or dependency
-     * wheelrender more curved. A `curveFactor` of 0 makes the lines
-     * straight.
-     *
-     * @private
-     */
-    curveFactor: 0.33,
-    /**
-     * Options for the data labels appearing on top of the nodes and links.
-     * For sankey charts, data labels are visible for the nodes by default,
-     * but hidden for links. This is controlled by modifying the
-     * `nodeFormat`, and the `format` that applies to links and is an empty
-     * string by default.
-     *
-     * @declare Highcharts.SeriesSankeyDataLabelsOptionsObject
-     *
-     * @private
-     */
-    dataLabels: {
-        enabled: true,
-        backgroundColor: 'none',
-        crop: false,
-        /**
-         * The
-         * [format string](https://www.highcharts.com/docs/chart-concepts/labels-and-string-formatting)
-         * specifying what to show for _nodes_ in the sankey diagram. By
-         * default the `nodeFormatter` returns `{point.name}`.
+var SankeySeries = /** @class */ (function (_super) {
+    __extends(SankeySeries, _super);
+    function SankeySeries() {
+        /* *
          *
-         * @sample highcharts/plotoptions/sankey-link-datalabels/
-         *         Node and link data labels
+         *  Static Properties
          *
-         * @type {string}
-         */
-        nodeFormat: void 0,
-        // eslint-disable-next-line valid-jsdoc
-        /**
-         * Callback to format data labels for _nodes_ in the sankey diagram.
-         * The `nodeFormat` option takes precedence over the
-         * `nodeFormatter`.
+         * */
+        var _this = _super !== null && _super.apply(this, arguments) || this;
+        /* *
          *
-         * @type  {Highcharts.SeriesSankeyDataLabelsFormatterCallbackFunction}
-         * @since 6.0.2
-         */
-        nodeFormatter: function () {
-            return this.point.name;
-        },
-        format: void 0,
-        // eslint-disable-next-line valid-jsdoc
-        /**
-         * @type {Highcharts.SeriesSankeyDataLabelsFormatterCallbackFunction}
-         */
-        formatter: function () {
-            return;
-        },
-        inside: true
-    },
-    /**
-     * @ignore-option
-     *
-     * @private
-     */
-    inactiveOtherPoints: true,
-    /**
-     * Set options on specific levels. Takes precedence over series options,
-     * but not node and link options.
-     *
-     * @sample highcharts/demo/sunburst
-     *         Sunburst chart
-     *
-     * @type      {Array<*>}
-     * @since     7.1.0
-     * @apioption plotOptions.sankey.levels
-     */
-    /**
-     * Can set `borderColor` on all nodes which lay on the same level.
-     *
-     * @type      {Highcharts.ColorString}
-     * @apioption plotOptions.sankey.levels.borderColor
-     */
-    /**
-     * Can set `borderWidth` on all nodes which lay on the same level.
-     *
-     * @type      {number}
-     * @apioption plotOptions.sankey.levels.borderWidth
-     */
-    /**
-     * Can set `color` on all nodes which lay on the same level.
-     *
-     * @type      {Highcharts.ColorString|Highcharts.GradientColorObject|Highcharts.PatternObject}
-     * @apioption plotOptions.sankey.levels.color
-     */
-    /**
-     * Can set `colorByPoint` on all nodes which lay on the same level.
-     *
-     * @type      {boolean}
-     * @default   true
-     * @apioption plotOptions.sankey.levels.colorByPoint
-     */
-    /**
-     * Can set `dataLabels` on all points which lay on the same level.
-     *
-     * @extends   plotOptions.sankey.dataLabels
-     * @apioption plotOptions.sankey.levels.dataLabels
-     */
-    /**
-     * Decides which level takes effect from the options set in the levels
-     * object.
-     *
-     * @type      {number}
-     * @apioption plotOptions.sankey.levels.level
-     */
-    /**
-     * Can set `linkOpacity` on all points which lay on the same level.
-     *
-     * @type      {number}
-     * @default   0.5
-     * @apioption plotOptions.sankey.levels.linkOpacity
-     */
-    /**
-     * Can set `states` on all nodes and points which lay on the same level.
-     *
-     * @extends   plotOptions.sankey.states
-     * @apioption plotOptions.sankey.levels.states
-     */
-    /**
-     * Opacity for the links between nodes in the sankey diagram.
-     *
-     * @private
-     */
-    linkOpacity: 0.5,
-    /**
-     * The minimal width for a line of a sankey. By default,
-     * 0 values are not shown.
-     *
-     * @sample highcharts/plotoptions/sankey-minlinkwidth
-     *         Sankey diagram with minimal link height
-     *
-     * @type      {number}
-     * @since     7.1.3
-     * @default   0
-     * @apioption plotOptions.sankey.minLinkWidth
-     *
-     * @private
-     */
-    minLinkWidth: 0,
-    /**
-     * The pixel width of each node in a sankey diagram or dependency wheel,
-     * or the height in case the chart is inverted.
-     *
-     * @private
-     */
-    nodeWidth: 20,
-    /**
-     * The padding between nodes in a sankey diagram or dependency wheel, in
-     * pixels.
-     *
-     * If the number of nodes is so great that it is possible to lay them
-     * out within the plot area with the given `nodePadding`, they will be
-     * rendered with a smaller padding as a strategy to avoid overflow.
-     *
-     * @private
-     */
-    nodePadding: 10,
-    showInLegend: false,
-    states: {
-        hover: {
-            /**
-             * Opacity for the links between nodes in the sankey diagram in
-             * hover mode.
-             */
-            linkOpacity: 1
-        },
-        /**
-         * The opposite state of a hover for a single point node/link.
+         *  Properties
          *
-         * @declare Highcharts.SeriesStatesInactiveOptionsObject
-         */
-        inactive: {
-            /**
-             * Opacity for the links between nodes in the sankey diagram in
-             * inactive mode.
-             */
-            linkOpacity: 0.1,
-            /**
-             * Opacity of inactive markers.
-             *
-             * @type      {number}
-             * @apioption plotOptions.series.states.inactive.opacity
-             */
-            opacity: 0.1,
-            /**
-             * Animation when not hovering over the marker.
-             *
-             * @type      {boolean|Partial<Highcharts.AnimationOptionsObject>}
-             * @apioption plotOptions.series.states.inactive.animation
-             */
-            animation: {
-                /** @internal */
-                duration: 50
-            }
-        }
-    },
-    tooltip: {
-        /**
-         * A callback for defining the format for _nodes_ in the chart's
-         * tooltip, as opposed to links.
-         *
-         * @type      {Highcharts.FormatterCallbackFunction<Highcharts.SankeyNodeObject>}
-         * @since     6.0.2
-         * @apioption plotOptions.sankey.tooltip.nodeFormatter
-         */
-        /**
-         * Whether the tooltip should follow the pointer or stay fixed on
-         * the item.
-         */
-        followPointer: true,
-        headerFormat: '<span style="font-size: 10px">{series.name}</span><br/>',
-        pointFormat: '{point.fromNode.name} \u2192 {point.toNode.name}: <b>{point.weight}</b><br/>',
-        /**
-         * The
-         * [format string](https://www.highcharts.com/docs/chart-concepts/labels-and-string-formatting)
-         * specifying what to show for _nodes_ in tooltip of a diagram
-         * series, as opposed to links.
-         */
-        nodeFormat: '{point.name}: <b>{point.sum}</b><br/>'
+         * */
+        _this.data = void 0;
+        _this.options = void 0;
+        _this.nodes = void 0;
+        _this.points = void 0;
+        return _this;
     }
-}, {
+    /**
+     * A sankey diagram is a type of flow diagram, in which the width of the
+     * link between two nodes is shown proportionally to the flow quantity.
+     *
+     * @sample highcharts/demo/sankey-diagram/
+     *         Sankey diagram
+     * @sample highcharts/plotoptions/sankey-inverted/
+     *         Inverted sankey diagram
+     * @sample highcharts/plotoptions/sankey-outgoing
+     *         Sankey diagram with outgoing links
+     *
+     * @extends      plotOptions.column
+     * @since        6.0.0
+     * @product      highcharts
+     * @excluding    animationLimit, boostThreshold, borderRadius,
+     *               crisp, cropThreshold, colorAxis, colorKey, depth, dragDrop,
+     *               edgeColor, edgeWidth, findNearestPointBy, grouping,
+     *               groupPadding, groupZPadding, maxPointWidth, negativeColor,
+     *               pointInterval, pointIntervalUnit, pointPadding,
+     *               pointPlacement, pointRange, pointStart, pointWidth,
+     *               shadow, softThreshold, stacking, threshold, zoneAxis,
+     *               zones, minPointLength, dataSorting, boostBlending
+     * @requires     modules/sankey
+     * @optionparent plotOptions.sankey
+     */
+    SankeySeries.defaultOptions = merge(ColumnSeries.defaultOptions, {
+        borderWidth: 0,
+        colorByPoint: true,
+        /**
+         * Higher numbers makes the links in a sankey diagram or dependency
+         * wheelrender more curved. A `curveFactor` of 0 makes the lines
+         * straight.
+         *
+         * @private
+         */
+        curveFactor: 0.33,
+        /**
+         * Options for the data labels appearing on top of the nodes and links.
+         * For sankey charts, data labels are visible for the nodes by default,
+         * but hidden for links. This is controlled by modifying the
+         * `nodeFormat`, and the `format` that applies to links and is an empty
+         * string by default.
+         *
+         * @declare Highcharts.SeriesSankeyDataLabelsOptionsObject
+         *
+         * @private
+         */
+        dataLabels: {
+            enabled: true,
+            backgroundColor: 'none',
+            crop: false,
+            /**
+             * The
+             * [format string](https://www.highcharts.com/docs/chart-concepts/labels-and-string-formatting)
+             * specifying what to show for _nodes_ in the sankey diagram. By
+             * default the `nodeFormatter` returns `{point.name}`.
+             *
+             * @sample highcharts/plotoptions/sankey-link-datalabels/
+             *         Node and link data labels
+             *
+             * @type {string}
+             */
+            nodeFormat: void 0,
+            // eslint-disable-next-line valid-jsdoc
+            /**
+             * Callback to format data labels for _nodes_ in the sankey diagram.
+             * The `nodeFormat` option takes precedence over the
+             * `nodeFormatter`.
+             *
+             * @type  {Highcharts.SeriesSankeyDataLabelsFormatterCallbackFunction}
+             * @since 6.0.2
+             */
+            nodeFormatter: function () {
+                return this.point.name;
+            },
+            format: void 0,
+            // eslint-disable-next-line valid-jsdoc
+            /**
+             * @type {Highcharts.SeriesSankeyDataLabelsFormatterCallbackFunction}
+             */
+            formatter: function () {
+                return;
+            },
+            inside: true
+        },
+        /**
+         * @ignore-option
+         *
+         * @private
+         */
+        inactiveOtherPoints: true,
+        /**
+         * Set options on specific levels. Takes precedence over series options,
+         * but not node and link options.
+         *
+         * @sample highcharts/demo/sunburst
+         *         Sunburst chart
+         *
+         * @type      {Array<*>}
+         * @since     7.1.0
+         * @apioption plotOptions.sankey.levels
+         */
+        /**
+         * Can set `borderColor` on all nodes which lay on the same level.
+         *
+         * @type      {Highcharts.ColorString}
+         * @apioption plotOptions.sankey.levels.borderColor
+         */
+        /**
+         * Can set `borderWidth` on all nodes which lay on the same level.
+         *
+         * @type      {number}
+         * @apioption plotOptions.sankey.levels.borderWidth
+         */
+        /**
+         * Can set `color` on all nodes which lay on the same level.
+         *
+         * @type      {Highcharts.ColorString|Highcharts.GradientColorObject|Highcharts.PatternObject}
+         * @apioption plotOptions.sankey.levels.color
+         */
+        /**
+         * Can set `colorByPoint` on all nodes which lay on the same level.
+         *
+         * @type      {boolean}
+         * @default   true
+         * @apioption plotOptions.sankey.levels.colorByPoint
+         */
+        /**
+         * Can set `dataLabels` on all points which lay on the same level.
+         *
+         * @extends   plotOptions.sankey.dataLabels
+         * @apioption plotOptions.sankey.levels.dataLabels
+         */
+        /**
+         * Decides which level takes effect from the options set in the levels
+         * object.
+         *
+         * @type      {number}
+         * @apioption plotOptions.sankey.levels.level
+         */
+        /**
+         * Can set `linkOpacity` on all points which lay on the same level.
+         *
+         * @type      {number}
+         * @default   0.5
+         * @apioption plotOptions.sankey.levels.linkOpacity
+         */
+        /**
+         * Can set `states` on all nodes and points which lay on the same level.
+         *
+         * @extends   plotOptions.sankey.states
+         * @apioption plotOptions.sankey.levels.states
+         */
+        /**
+         * Opacity for the links between nodes in the sankey diagram.
+         *
+         * @private
+         */
+        linkOpacity: 0.5,
+        /**
+         * The minimal width for a line of a sankey. By default,
+         * 0 values are not shown.
+         *
+         * @sample highcharts/plotoptions/sankey-minlinkwidth
+         *         Sankey diagram with minimal link height
+         *
+         * @type      {number}
+         * @since     7.1.3
+         * @default   0
+         * @apioption plotOptions.sankey.minLinkWidth
+         *
+         * @private
+         */
+        minLinkWidth: 0,
+        /**
+         * The pixel width of each node in a sankey diagram or dependency wheel,
+         * or the height in case the chart is inverted.
+         *
+         * @private
+         */
+        nodeWidth: 20,
+        /**
+         * The padding between nodes in a sankey diagram or dependency wheel, in
+         * pixels.
+         *
+         * If the number of nodes is so great that it is possible to lay them
+         * out within the plot area with the given `nodePadding`, they will be
+         * rendered with a smaller padding as a strategy to avoid overflow.
+         *
+         * @private
+         */
+        nodePadding: 10,
+        showInLegend: false,
+        states: {
+            hover: {
+                /**
+                 * Opacity for the links between nodes in the sankey diagram in
+                 * hover mode.
+                 */
+                linkOpacity: 1
+            },
+            /**
+             * The opposite state of a hover for a single point node/link.
+             *
+             * @declare Highcharts.SeriesStatesInactiveOptionsObject
+             */
+            inactive: {
+                /**
+                 * Opacity for the links between nodes in the sankey diagram in
+                 * inactive mode.
+                 */
+                linkOpacity: 0.1,
+                /**
+                 * Opacity of inactive markers.
+                 *
+                 * @type      {number}
+                 * @apioption plotOptions.series.states.inactive.opacity
+                 */
+                opacity: 0.1,
+                /**
+                 * Animation when not hovering over the marker.
+                 *
+                 * @type      {boolean|Partial<Highcharts.AnimationOptionsObject>}
+                 * @apioption plotOptions.series.states.inactive.animation
+                 */
+                animation: {
+                    /** @internal */
+                    duration: 50
+                }
+            }
+        },
+        tooltip: {
+            /**
+             * A callback for defining the format for _nodes_ in the chart's
+             * tooltip, as opposed to links.
+             *
+             * @type      {Highcharts.FormatterCallbackFunction<Highcharts.SankeyNodeObject>}
+             * @since     6.0.2
+             * @apioption plotOptions.sankey.tooltip.nodeFormatter
+             */
+            /**
+             * Whether the tooltip should follow the pointer or stay fixed on
+             * the item.
+             */
+            followPointer: true,
+            headerFormat: '<span style="font-size: 10px">{series.name}</span><br/>',
+            pointFormat: '{point.fromNode.name} \u2192 {point.toNode.name}: <b>{point.weight}</b><br/>',
+            /**
+             * The
+             * [format string](https://www.highcharts.com/docs/chart-concepts/labels-and-string-formatting)
+             * specifying what to show for _nodes_ in tooltip of a diagram
+             * series, as opposed to links.
+             */
+            nodeFormat: '{point.name}: <b>{point.sum}</b><br/>'
+        }
+    });
+    return SankeySeries;
+}(ColumnSeries));
+extend(SankeySeries.prototype, {
     isCartesian: false,
     invertable: true,
     forceDL: true,
@@ -533,7 +488,10 @@ BaseSeries.seriesType('sankey', 'column',
      * @private
      */
     pointAttribs: function (point, state) {
-        var series = this, level = point.isNode ? point.level : point.fromNode.level, levelOptions = series.mapOptionsToLevel[level || 0] || {}, options = point.options, stateOptions = (levelOptions.states && levelOptions.states[state]) || {}, values = [
+        if (!point) {
+            return {};
+        }
+        var series = this, level = point.isNode ? point.level : point.fromNode.level, levelOptions = series.mapOptionsToLevel[level || 0] || {}, options = point.options, stateOptions = (levelOptions.states && levelOptions.states[state || '']) || {}, values = [
             'colorByPoint', 'borderColor', 'borderWidth', 'linkOpacity'
         ].reduce(function (obj, key) {
             obj[key] = pick(stateOptions[key], options[key], levelOptions[key], series.options[key]);
@@ -865,7 +823,28 @@ BaseSeries.seriesType('sankey', 'column',
     },
     /* eslint-enable valid-jsdoc */
     animate: LineSeries.prototype.animate
-}, {
+});
+/* *
+ *
+ *  Class
+ *
+ * */
+var SankeyPoint = /** @class */ (function (_super) {
+    __extends(SankeyPoint, _super);
+    function SankeyPoint() {
+        /* *
+         *
+         *  Properties
+         *
+         * */
+        var _this = _super !== null && _super.apply(this, arguments) || this;
+        _this.options = void 0;
+        _this.series = void 0;
+        return _this;
+    }
+    return SankeyPoint;
+}(ColumnSeries.prototype.pointClass));
+extend(SankeyPoint.prototype, {
     applyOptions: function (options, x) {
         Point.prototype.applyOptions.call(this, options, x);
         // Treat point.level as a synonym of point.column
@@ -883,6 +862,108 @@ BaseSeries.seriesType('sankey', 'column',
         return this.isNode || typeof this.weight === 'number';
     }
 });
+/* *
+ *
+ *  Registry
+ *
+ * */
+SankeySeries.prototype.pointClass = SankeyPoint;
+BaseSeries.registerSeriesType('sankey', SankeySeries);
+/* *
+ *
+ *  Default Export
+ *
+ * */
+export default SankeySeries;
+/* *
+ *
+ *  API Declarations
+ *
+ * */
+/**
+ * A node in a sankey diagram.
+ *
+ * @interface Highcharts.SankeyNodeObject
+ * @extends Highcharts.Point
+ * @product highcharts
+ */ /**
+* The color of the auto generated node.
+*
+* @name Highcharts.SankeyNodeObject#color
+* @type {Highcharts.ColorString|Highcharts.GradientColorObject|Highcharts.PatternObject}
+*/ /**
+* The color index of the auto generated node, especially for use in styled
+* mode.
+*
+* @name Highcharts.SankeyNodeObject#colorIndex
+* @type {number}
+*/ /**
+* An optional column index of where to place the node. The default behaviour is
+* to place it next to the preceding node.
+*
+* @see {@link https://jsfiddle.net/gh/get/library/pure/highcharts/highcharts/tree/master/samples/highcharts/plotoptions/sankey-node-column/|Highcharts-Demo:}
+*      Specified node column
+*
+* @name Highcharts.SankeyNodeObject#column
+* @type {number}
+* @since 6.0.5
+*/ /**
+* The id of the auto-generated node, refering to the `from` or `to` setting of
+* the link.
+*
+* @name Highcharts.SankeyNodeObject#id
+* @type {string}
+*/ /**
+* The name to display for the node in data labels and tooltips. Use this when
+* the name is different from the `id`. Where the id must be unique for each
+* node, this is not necessary for the name.
+*
+* @see {@link https://jsfiddle.net/gh/get/library/pure/highcharts/highcharts/tree/master/samples/highcharts/css/sankey/|Highcharts-Demo:}
+*         Sankey diagram with node options
+*
+* @name Highcharts.SankeyNodeObject#name
+* @type {string}
+* @product highcharts
+*/ /**
+* The vertical offset of a node in terms of weight. Positive values shift the
+* node downwards, negative shift it upwards.
+*
+* @see {@link https://jsfiddle.net/gh/get/library/pure/highcharts/highcharts/tree/master/samples/highcharts/plotoptions/sankey-node-column/|Highcharts-Demo:}
+*         Specified node offset
+*
+* @name Highcharts.SankeyNodeObject#offset
+* @type {number}
+* @default 0
+* @since 6.0.5
+*/
+/**
+ * Formatter callback function.
+ *
+ * @callback Highcharts.SeriesSankeyDataLabelsFormatterCallbackFunction
+ *
+ * @param {Highcharts.SeriesSankeyDataLabelsFormatterContextObject|Highcharts.PointLabelObject} this
+ *        Data label context to format
+ *
+ * @return {string|undefined}
+ *         Formatted data label text
+ */
+/**
+ * Context for the node formatter function.
+ *
+ * @interface Highcharts.SeriesSankeyDataLabelsFormatterContextObject
+ * @extends Highcharts.PointLabelObject
+ */ /**
+* The node object. The node name, if defined, is available through
+* `this.point.name`.
+* @name Highcharts.SeriesSankeyDataLabelsFormatterContextObject#point
+* @type {Highcharts.SankeyNodeObject}
+*/
+''; // detach doclets above
+/* *
+ *
+ *  API Options
+ *
+ * */
 /**
  * A `sankey` series. If the [type](#series.sankey.type) option is not
  * specified, it is inherited from [chart.type](#chart.type).
