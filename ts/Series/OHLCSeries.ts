@@ -67,16 +67,6 @@ declare global {
             public series: OHLCSeries;
             public yBottom?: number;
         }
-        class OHLCSeries extends ColumnSeries {
-            public data: Array<OHLCPoint>;
-            public options: OHLCSeriesOptions;
-            public pointAttrToOptions: Dictionary<string>;
-            public pointClass: typeof OHLCPoint;
-            public points: Array<OHLCPoint>;
-            public yData: Array<Array<number>>;
-            public init(): void;
-            public toYData(point: OHLCPoint): OHLCYData;
-        }
     }
 }
 
@@ -215,136 +205,27 @@ class OHLCSeries extends ColumnSeries {
      *
      * */
 
-    public data: Array<Highcharts.OHLCPoint> = void 0 as any;
+    public data: Array<OHLCPoint> = void 0 as any;
 
     public options: Highcharts.OHLCSeriesOptions = void 0 as any;
 
-    public points: Array<Highcharts.OHLCPoint> = void 0 as any;
+    public points: Array<OHLCPoint> = void 0 as any;
 
-}
+    public yData: Array<Array<number>> = void 0 as any;
 
-/* *
- *
- *  Prototype Properties
- *
- * */
-
-extend(OHLCSeries.prototype, {
+    /* *
+     *
+     *  Functions
+     *
+     * */
 
     /* eslint-disable valid-jsdoc */
 
-    directTouch: false,
-    pointArrayMap: ['open', 'high', 'low', 'close'],
-    toYData: function (
-        this: Highcharts.OHLCSeries,
-        point: Highcharts.OHLCPoint
-    ): Highcharts.OHLCYData {
-        // return a plain array for speedy calculation
-        return [point.open, point.high, point.low, point.close];
-    },
-    pointValKey: 'close',
-
-    pointAttrToOptions: {
-        stroke: 'color',
-        'stroke-width': 'lineWidth'
-    },
-
-    /**
-     * @private
-     * @function Highcarts.seriesTypes.ohlc#init
-     * @return {void}
-     */
-    init: function (this: Highcharts.OHLCSeries): void {
-        columnProto.init.apply(this, arguments as any);
-
-        this.options.stacking = void 0; // #8817
-    },
-
-    /**
-     * Postprocess mapping between options and SVG attributes
-     *
-     * @private
-     * @function Highcharts.seriesTypes.ohlc#pointAttribs
-     * @param {Highcharts.OHLCPoint} point
-     * @param {string} state
-     * @return {Highcharts.SVGAttributes}
-     */
-    pointAttribs: function (
-        this: Highcharts.OHLCSeries,
-        point: Highcharts.OHLCPoint,
-        state: StatesOptionsKey
-    ): SVGAttributes {
-        var attribs = columnProto.pointAttribs.call(
-                this,
-                point,
-                state
-            ),
-            options = this.options;
-
-        delete attribs.fill;
-
-        if (
-            !point.options.color &&
-        options.upColor &&
-        point.open < point.close
-        ) {
-            attribs.stroke = options.upColor;
-        }
-
-        return attribs;
-    },
-
-    /**
-     * Translate data points from raw values x and y to plotX and plotY
-     *
-     * @private
-     * @function Highcharts.seriesTypes.ohlc#translate
-     * @return {void}
-     */
-    translate: function (this: Highcharts.OHLCSeries): void {
-        var series = this,
-            yAxis = series.yAxis,
-            hasModifyValue = !!series.modifyValue,
-            translated = [
-                'plotOpen',
-                'plotHigh',
-                'plotLow',
-                'plotClose',
-                'yBottom'
-            ]; // translate OHLC for
-
-        columnProto.translate.apply(series);
-
-        // Do the translation
-        series.points.forEach(function (point): void {
-            [point.open, point.high, point.low, point.close, point.low]
-                .forEach(
-                    function (value: number, i: number): void {
-                        if (value !== null) {
-                            if (hasModifyValue) {
-                                value = (series.modifyValue as any)(value);
-                            }
-                            (point as any)[translated[i]] =
-                                yAxis.toPixels(value, true);
-                        }
-                    }
-                );
-
-            // Align the tooltip to the high value to avoid covering the
-            // point
-            (point.tooltipPos as any)[1] =
-                (point.plotHigh as any) + yAxis.pos - series.chart.plotTop;
-        });
-    },
-
     /**
      * Draw the data points
-     *
      * @private
-     * @function Highcharts.seriesTypes.ohlc#drawPoints
-     * @return {void}
      */
-    drawPoints: function (this: Highcharts.OHLCSeries): void {
+    public drawPoints(): void {
         var series = this,
             points = series.points,
             chart = series.chart,
@@ -376,7 +257,7 @@ extend(OHLCSeries.prototype, {
             };
 
 
-        points.forEach(function (point: Highcharts.OHLCPoint): void {
+        points.forEach(function (point): void {
             var plotOpen,
                 plotClose,
                 crispCorr,
@@ -447,12 +328,120 @@ extend(OHLCSeries.prototype, {
 
         });
 
-    },
+    }
 
-    animate: null as any // Disable animation
+    /**
+     * @private
+     * @function Highcarts.seriesTypes.ohlc#init
+     * @return {void}
+     */
+    public init(): void {
+        columnProto.init.apply(this, arguments as any);
+
+        this.options.stacking = void 0; // #8817
+    }
+
+    /**
+     * Postprocess mapping between options and SVG attributes
+     * @private
+     */
+    public pointAttribs(
+        point: OHLCPoint,
+        state: StatesOptionsKey
+    ): SVGAttributes {
+        var attribs = columnProto.pointAttribs.call(
+                this,
+                point,
+                state
+            ),
+            options = this.options;
+
+        delete attribs.fill;
+
+        if (
+            !point.options.color &&
+        options.upColor &&
+        point.open < point.close
+        ) {
+            attribs.stroke = options.upColor;
+        }
+
+        return attribs;
+    }
+
+    public toYData(point: OHLCPoint): Highcharts.OHLCYData {
+        // return a plain array for speedy calculation
+        return [point.open, point.high, point.low, point.close];
+    }
+
+    /**
+     * Translate data points from raw values x and y to plotX and plotY
+     *
+     * @private
+     * @function Highcharts.seriesTypes.ohlc#translate
+     * @return {void}
+     */
+    public translate(): void {
+        var series = this,
+            yAxis = series.yAxis,
+            hasModifyValue = !!series.modifyValue,
+            translated = [
+                'plotOpen',
+                'plotHigh',
+                'plotLow',
+                'plotClose',
+                'yBottom'
+            ]; // translate OHLC for
+
+        columnProto.translate.apply(series);
+
+        // Do the translation
+        series.points.forEach(function (point): void {
+            [point.open, point.high, point.low, point.close, point.low]
+                .forEach(
+                    function (value, i): void {
+                        if (value !== null) {
+                            if (hasModifyValue) {
+                                value = (series.modifyValue as any)(value);
+                            }
+                            (point as any)[translated[i]] =
+                                yAxis.toPixels(value, true);
+                        }
+                    }
+                );
+
+            // Align the tooltip to the high value to avoid covering the
+            // point
+            (point.tooltipPos as any)[1] =
+                (point.plotHigh as any) + yAxis.pos - series.chart.plotTop;
+        });
+    }
 
     /* eslint-enable valid-jsdoc */
 
+}
+
+/* *
+ *
+ *  Prototype Properties
+ *
+ * */
+
+interface OHLCSeries {
+    pointAttrToOptions: Record<string, string>;
+    pointClass: typeof OHLCPoint;
+    init(): void;
+    toYData(point: OHLCPoint): Highcharts.OHLCYData;
+}
+extend(OHLCSeries.prototype, {
+    animate: null as any, // Disable animation
+    directTouch: false,
+    pointArrayMap: ['open', 'high', 'low', 'close'],
+    pointAttrToOptions: {
+        stroke: 'color',
+        'stroke-width': 'lineWidth'
+    },
+    pointValKey: 'close'
 });
 
 /* *
@@ -462,16 +451,40 @@ extend(OHLCSeries.prototype, {
  * */
 
 class OHLCPoint extends ColumnSeries.prototype.pointClass {
-}
-OHLCSeries.prototype.pointClass = OHLCPoint;
 
-/* *
- *
- *  Prototype Properties
- *
- * */
+    /* *
+     *
+     *  Properties
+     *
+     * */
 
-extend(OHLCPoint.prototype, {
+    public close: number = void 0 as any;
+
+    public high: number = void 0 as any;
+
+    public low: number = void 0 as any;
+
+    public open: number = void 0 as any;
+
+    public options: Highcharts.OHLCPointOptions = void 0 as any;
+
+    public plotClose: number = void 0 as any;
+
+    public plotHigh?: number;
+
+    public plotLow?: number;
+
+    public plotOpen: number = void 0 as any;
+
+    public series: OHLCSeries = void 0 as any;
+
+    public yBottom?: number;
+
+    /* *
+     *
+     *  Functions
+     *
+     * */
 
     /* eslint-disable valid-jsdoc */
 
@@ -481,7 +494,7 @@ extend(OHLCPoint.prototype, {
      * @function Highcharts.seriesTypes.ohlc#getClassName
      * @return {string}
      */
-    getClassName: function (this: Highcharts.OHLCPoint): string {
+    public getClassName(): string {
         return Point.prototype.getClassName.call(this) +
         (
             this.open < this.close ?
@@ -492,7 +505,8 @@ extend(OHLCPoint.prototype, {
 
     /* eslint-enable valid-jsdoc */
 
-});
+}
+OHLCSeries.prototype.pointClass = OHLCPoint;
 
 /* *
  *
@@ -502,10 +516,18 @@ extend(OHLCPoint.prototype, {
 
 declare module '../Core/Series/SeriesType' {
     interface SeriesTypeRegistry {
-        ohlc: typeof Highcharts.OHLCSeries;
+        ohlc: typeof OHLCSeries;
     }
 }
 BaseSeries.registerSeriesType('ohlc', OHLCSeries);
+
+/* *
+ *
+ *  Default Export
+ *
+ * */
+
+export default OHLCSeries;
 
 /* *
  *
