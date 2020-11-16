@@ -25,8 +25,8 @@ addEvent(LineSeries, 'afterTranslate', function () {
 // Translate the plotX, plotY properties and add plotZ.
 LineSeries.prototype.translate3dPoints = function () {
     var series = this, seriesOptions = series.options, chart = series.chart, zAxis = pick(series.zAxis, chart.options.zAxis[0]), rawPoints = [], rawPoint, projectedPoints, projectedPoint, zValue, i, stack = seriesOptions.stacking ?
-        (seriesOptions.stack || 0) :
-        series.index, // #4743
+        (Highcharts.isNumber(seriesOptions.stack) ? seriesOptions.stack : 0) :
+        series.index || 0, // #4743
     rawPointsX = [];
     series.zPadding = stack *
         (seriesOptions.depth || 0 + (seriesOptions.groupZPadding || 1));
@@ -49,7 +49,7 @@ LineSeries.prototype.translate3dPoints = function () {
         rawPoint.axisXpos = rawPoint.plotX;
         rawPoint.axisYpos = rawPoint.plotY;
         rawPoint.axisZpos = rawPoint.plotZ;
-        rawPointsX.push(rawPoint.plotX);
+        rawPointsX.push(rawPoint.plotX || 0);
         rawPoints.push({
             x: rawPoint.plotX,
             y: rawPoint.plotY,

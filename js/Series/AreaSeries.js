@@ -369,23 +369,13 @@ BaseSeries.seriesType('area', 'line',
             }
         }
         topPath = getGraphPath.call(this, graphPoints, true, true);
-        if (series.chart.is3d()) {
-            var options3d = series.chart.options.chart.options3d;
-            bottomPoints = perspective(bottomPoints, this.chart, true).map(function (point) {
-                return { plotX: point.x, plotY: point.y, plotZ: point.z };
-            });
-            if (series.group && options3d) {
-                series.group.attr({
-                    zIndex: Math.max(1, options3d.depth - Math.round(series.data[0].plotZ || 0))
-                });
-            }
-        }
         bottomPoints.reversed = true;
         bottomPath = getGraphPath.call(this, bottomPoints, true, true);
         var firstBottomPoint = bottomPath[0];
         if (firstBottomPoint && firstBottomPoint[0] === 'M') {
             bottomPath[0] = ['L', firstBottomPoint[1], firstBottomPoint[2]];
         }
+        series.bottomPoints = bottomPoints;
         areaPath = topPath.concat(bottomPath);
         // TODO: don't set leftCliff and rightCliff when connectNulls?
         graphPath = getGraphPath
@@ -450,6 +440,7 @@ BaseSeries.seriesType('area', 'line',
     },
     drawLegendSymbol: LegendSymbolMixin.drawRectangle
 });
+export default BaseSeries.seriesTypes['area'];
 /* eslint-enable valid-jsdoc */
 /**
  * A `area` series. If the [type](#series.area.type) option is not

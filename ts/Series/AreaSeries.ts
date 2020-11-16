@@ -555,29 +555,13 @@ BaseSeries.seriesType<typeof Highcharts.AreaSeries>(
 
             topPath = getGraphPath.call(this, graphPoints, true, true);
 
-            if (series.chart.is3d()) {
-                var options3d = (series as any).chart.options.chart.options3d;
-                bottomPoints = perspective(
-                    bottomPoints as any, this.chart, true
-                ).map(function (point): Highcharts.AreaPoint {
-                    return { plotX: point.x, plotY: point.y, plotZ: point.z } as any;
-                });
-                if (series.group && options3d) {
-                    series.group.attr({
-                        zIndex: Math.max(
-                            1,
-                            options3d.depth - Math.round(series.data[0].plotZ || 0)
-                        )
-                    });
-                }
-            }
-
             (bottomPoints as any).reversed = true;
             bottomPath = getGraphPath.call(this, bottomPoints, true, true);
             const firstBottomPoint = bottomPath[0];
             if (firstBottomPoint && firstBottomPoint[0] === 'M') {
                 bottomPath[0] = ['L', firstBottomPoint[1], firstBottomPoint[2]];
             }
+            (series as any).bottomPoints = bottomPoints;
 
             areaPath = topPath.concat(bottomPath);
             // TODO: don't set leftCliff and rightCliff when connectNulls?
@@ -670,6 +654,8 @@ BaseSeries.seriesType<typeof Highcharts.AreaSeries>(
         drawLegendSymbol: LegendSymbolMixin.drawRectangle
     }
 );
+
+export default BaseSeries.seriesTypes.area;
 
 /* eslint-enable valid-jsdoc */
 

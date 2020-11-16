@@ -21,7 +21,8 @@ const { perspective } = Math3D;
 import U from '../Utilities.js';
 const {
     addEvent,
-    pick
+    pick,
+    isNumber
 } = U;
 
 declare module './PointLike' {
@@ -63,11 +64,11 @@ LineSeries.prototype.translate3dPoints = function (): void {
         zValue: (number|null|undefined),
         i: number,
         stack = seriesOptions.stacking ?
-            (seriesOptions.stack || 0) :
-            series.index, // #4743
+            (isNumber(seriesOptions.stack) ? seriesOptions.stack : 0) :
+            series.index || 0, // #4743
         rawPointsX = [] as Array<number>;
 
-    series.zPadding = (stack as any) *
+    series.zPadding = stack *
         (seriesOptions.depth || 0 + (seriesOptions.groupZPadding || 1));
 
     for (i = 0; i < series.data.length; i++) {
@@ -91,7 +92,7 @@ LineSeries.prototype.translate3dPoints = function (): void {
         rawPoint.axisYpos = rawPoint.plotY;
         rawPoint.axisZpos = rawPoint.plotZ;
 
-        rawPointsX.push(rawPoint.plotX as any);
+        rawPointsX.push(rawPoint.plotX || 0);
 
         rawPoints.push({
             x: rawPoint.plotX as any,
