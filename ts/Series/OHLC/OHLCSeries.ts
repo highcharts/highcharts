@@ -16,59 +16,22 @@
  *
  * */
 
-import type ColorType from '../../Core/Color/ColorType';
-import type ColumnPoint from '../Column/ColumnPoint';
-import type ColumnPointOptions from '../Column/ColumnPointOptions';
-import type ColumnSeriesOptions from '../Column/ColumnSeriesOptions';
-import type { SeriesStatesOptions } from '../../Core/Series/SeriesOptions';
+import type OHLCSeriesOptions from './OHLCSeriesOptions';
 import type { StatesOptionsKey } from '../../Core/Series/StatesOptions';
 import type SVGAttributes from '../../Core/Renderer/SVG/SVGAttributes';
 import type SVGPath from '../../Core/Renderer/SVG/SVGPath';
 import BaseSeries from '../../Core/Series/Series.js';
-import ColumnSeries from '../Column/ColumnSeries.js';
-const { prototype: columnProto } = ColumnSeries;
-import Point from '../../Core/Series/Point.js';
+const {
+    seriesTypes: {
+        column: ColumnSeries
+    }
+} = BaseSeries;
+import OHLCPoint from './OHLCPoint.js';
 import U from '../../Core/Utilities.js';
 const {
     extend,
     merge
 } = U;
-
-/* *
- *
- *  Declarations
- *
- * */
-
-/**
- * Internal types
- * @private
- */
-declare global {
-    namespace Highcharts {
-        type OHLCYData = [number, number, number, number];
-        interface OHLCPointOptions extends ColumnPointOptions {
-            upColor?: ColorType;
-        }
-        interface OHLCSeriesOptions extends ColumnSeriesOptions {
-            upColor?: ColorType;
-            states?: SeriesStatesOptions<OHLCSeries>;
-        }
-        class OHLCPoint extends ColumnPoint {
-            public close: number;
-            public high: number;
-            public low: number;
-            public open: number;
-            public options: OHLCPointOptions;
-            public plotClose: number;
-            public plotHigh?: number;
-            public plotLow?: number;
-            public plotOpen: number;
-            public series: OHLCSeries;
-            public yBottom?: number;
-        }
-    }
-}
 
 /* *
  *
@@ -107,7 +70,7 @@ class OHLCSeries extends ColumnSeries {
      * @product      highstock
      * @optionparent plotOptions.ohlc
      */
-    public static defaultOptions: Highcharts.OHLCSeriesOptions = merge(ColumnSeries.defaultOptions, {
+    public static defaultOptions: OHLCSeriesOptions = merge(ColumnSeries.defaultOptions, {
 
         /**
          * The approximate pixel width of each group. If for example a series
@@ -197,7 +160,7 @@ class OHLCSeries extends ColumnSeries {
 
         stickyTracking: true
 
-    } as Highcharts.OHLCSeriesOptions);
+    } as OHLCSeriesOptions);
 
     /* *
      *
@@ -207,7 +170,7 @@ class OHLCSeries extends ColumnSeries {
 
     public data: Array<OHLCPoint> = void 0 as any;
 
-    public options: Highcharts.OHLCSeriesOptions = void 0 as any;
+    public options: OHLCSeriesOptions = void 0 as any;
 
     public points: Array<OHLCPoint> = void 0 as any;
 
@@ -336,7 +299,7 @@ class OHLCSeries extends ColumnSeries {
      * @return {void}
      */
     public init(): void {
-        columnProto.init.apply(this, arguments as any);
+        super.init.apply(this, arguments as any);
 
         this.options.stacking = void 0; // #8817
     }
@@ -349,7 +312,7 @@ class OHLCSeries extends ColumnSeries {
         point: OHLCPoint,
         state: StatesOptionsKey
     ): SVGAttributes {
-        var attribs = columnProto.pointAttribs.call(
+        var attribs = super.pointAttribs.call(
                 this,
                 point,
                 state
@@ -369,7 +332,7 @@ class OHLCSeries extends ColumnSeries {
         return attribs;
     }
 
-    public toYData(point: OHLCPoint): Highcharts.OHLCYData {
+    public toYData(point: OHLCPoint): OHLCPoint.PointShortOptions {
         // return a plain array for speedy calculation
         return [point.open, point.high, point.low, point.close];
     }
@@ -393,7 +356,7 @@ class OHLCSeries extends ColumnSeries {
                 'yBottom'
             ]; // translate OHLC for
 
-        columnProto.translate.apply(series);
+        super.translate.apply(series);
 
         // Do the translation
         series.points.forEach(function (point): void {
@@ -431,7 +394,7 @@ interface OHLCSeries {
     pointAttrToOptions: Record<string, string>;
     pointClass: typeof OHLCPoint;
     init(): void;
-    toYData(point: OHLCPoint): Highcharts.OHLCYData;
+    toYData(point: OHLCPoint): OHLCPoint.PointShortOptions;
 }
 extend(OHLCSeries.prototype, {
     animate: null as any, // Disable animation
@@ -444,68 +407,6 @@ extend(OHLCSeries.prototype, {
     pointValKey: 'close'
 });
 
-/* *
- *
- *  Class
- *
- * */
-
-class OHLCPoint extends ColumnSeries.prototype.pointClass {
-
-    /* *
-     *
-     *  Properties
-     *
-     * */
-
-    public close: number = void 0 as any;
-
-    public high: number = void 0 as any;
-
-    public low: number = void 0 as any;
-
-    public open: number = void 0 as any;
-
-    public options: Highcharts.OHLCPointOptions = void 0 as any;
-
-    public plotClose: number = void 0 as any;
-
-    public plotHigh?: number;
-
-    public plotLow?: number;
-
-    public plotOpen: number = void 0 as any;
-
-    public series: OHLCSeries = void 0 as any;
-
-    public yBottom?: number;
-
-    /* *
-     *
-     *  Functions
-     *
-     * */
-
-    /* eslint-disable valid-jsdoc */
-
-    /**
-     * Extend the parent method by adding up or down to the class name.
-     * @private
-     * @function Highcharts.seriesTypes.ohlc#getClassName
-     * @return {string}
-     */
-    public getClassName(): string {
-        return Point.prototype.getClassName.call(this) +
-        (
-            this.open < this.close ?
-                ' highcharts-point-up' :
-                ' highcharts-point-down'
-        );
-    }
-
-    /* eslint-enable valid-jsdoc */
-
-}
 OHLCSeries.prototype.pointClass = OHLCPoint;
 
 /* *
