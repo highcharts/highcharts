@@ -866,20 +866,23 @@ QUnit.test('In trimTicks, Min and max must be checked when ' +
 });
 
 QUnit.test('#14555: Big values', assert => {
-    const chart = Highcharts.chart('container', {
-        series: [{
-            data: [0, 1.7e+308]
-        }]
+    [
+        [0, 1.7e+308],
+        [0, -1.7e+308]
+    ].forEach(data => {
+        const chart = Highcharts.chart('container', {
+            series: [{ data }]
+        });
+
+        const axis = chart.yAxis[0];
+
+        assert.ok(
+            axis.tickInterval < Infinity,
+            'tickInterval should be finite'
+        );
+        assert.ok(
+            axis.tickPositions.length > 0,
+            'There should be more than 0 ticks'
+        );
     });
-
-    const axis = chart.yAxis[0];
-
-    assert.ok(
-        axis.tickInterval < Infinity,
-        'tickInterval should be finite'
-    );
-    assert.ok(
-        axis.tickPositions.length > 0,
-        'There should be more than 0 ticks'
-    );
 });

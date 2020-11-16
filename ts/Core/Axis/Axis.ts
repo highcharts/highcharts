@@ -4783,7 +4783,7 @@ class Axis {
         var pos,
             lastPos,
             roundedMin =
-                correctFloat(Math.floor(min / tickInterval) * tickInterval),
+                Math.max(correctFloat(Math.floor(min / tickInterval) * tickInterval), -Number.MAX_VALUE),
             roundedMax =
                 correctFloat(Math.ceil(max / tickInterval) * tickInterval),
             tickPositions = [],
@@ -4809,10 +4809,10 @@ class Axis {
             tickPositions.push(pos);
 
             // Always add the raw tickInterval, not the corrected one.
-            pos = Math.min(correctFloat(
+            pos = clamp(correctFloat(
                 pos + tickInterval,
                 precision
-            ), Number.MAX_VALUE);
+            ), -Number.MAX_VALUE, Number.MAX_VALUE);
 
             // If the interval is not big enough in the current min - max range
             // to actually increase the loop variable, we need to break out to
@@ -4824,6 +4824,11 @@ class Axis {
             // Record the last value
             lastPos = pos;
         }
+
+        if (pos > roundedMax && tickPositions[tickPositions.length - 1] < roundedMax) {
+            tickPositions.push(roundedMax);
+        }
+
         return tickPositions;
     }
 
