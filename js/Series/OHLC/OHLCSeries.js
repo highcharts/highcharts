@@ -22,9 +22,8 @@ var __extends = (this && this.__extends) || (function () {
     };
 })();
 import BaseSeries from '../../Core/Series/Series.js';
-import ColumnSeries from '../Column/ColumnSeries.js';
-var columnProto = ColumnSeries.prototype;
-import Point from '../../Core/Series/Point.js';
+var ColumnSeries = BaseSeries.seriesTypes.column;
+import OHLCPoint from './OHLCPoint.js';
 import U from '../../Core/Utilities.js';
 var extend = U.extend, merge = U.merge;
 /* *
@@ -134,7 +133,7 @@ var OHLCSeries = /** @class */ (function (_super) {
      * @return {void}
      */
     OHLCSeries.prototype.init = function () {
-        columnProto.init.apply(this, arguments);
+        _super.prototype.init.apply(this, arguments);
         this.options.stacking = void 0; // #8817
     };
     /**
@@ -142,7 +141,7 @@ var OHLCSeries = /** @class */ (function (_super) {
      * @private
      */
     OHLCSeries.prototype.pointAttribs = function (point, state) {
-        var attribs = columnProto.pointAttribs.call(this, point, state), options = this.options;
+        var attribs = _super.prototype.pointAttribs.call(this, point, state), options = this.options;
         delete attribs.fill;
         if (!point.options.color &&
             options.upColor &&
@@ -170,7 +169,7 @@ var OHLCSeries = /** @class */ (function (_super) {
             'plotClose',
             'yBottom'
         ]; // translate OHLC for
-        columnProto.translate.apply(series);
+        _super.prototype.translate.apply(series);
         // Do the translation
         series.points.forEach(function (point) {
             [point.open, point.high, point.low, point.close, point.low]
@@ -294,51 +293,6 @@ extend(OHLCSeries.prototype, {
     },
     pointValKey: 'close'
 });
-/* *
- *
- *  Class
- *
- * */
-var OHLCPoint = /** @class */ (function (_super) {
-    __extends(OHLCPoint, _super);
-    function OHLCPoint() {
-        /* *
-         *
-         *  Properties
-         *
-         * */
-        var _this = _super !== null && _super.apply(this, arguments) || this;
-        _this.close = void 0;
-        _this.high = void 0;
-        _this.low = void 0;
-        _this.open = void 0;
-        _this.options = void 0;
-        _this.plotClose = void 0;
-        _this.plotOpen = void 0;
-        _this.series = void 0;
-        return _this;
-        /* eslint-enable valid-jsdoc */
-    }
-    /* *
-     *
-     *  Functions
-     *
-     * */
-    /* eslint-disable valid-jsdoc */
-    /**
-     * Extend the parent method by adding up or down to the class name.
-     * @private
-     * @function Highcharts.seriesTypes.ohlc#getClassName
-     * @return {string}
-     */
-    OHLCPoint.prototype.getClassName = function () {
-        return Point.prototype.getClassName.call(this) +
-            (this.open < this.close ?
-                ' highcharts-point-up' :
-                ' highcharts-point-down');
-    };
-    return OHLCPoint;
-}(ColumnSeries.prototype.pointClass));
 OHLCSeries.prototype.pointClass = OHLCPoint;
 BaseSeries.registerSeriesType('ohlc', OHLCSeries);
 /* *
