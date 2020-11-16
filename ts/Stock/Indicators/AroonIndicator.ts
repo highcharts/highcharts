@@ -12,7 +12,12 @@ import type CSSObject from '../../Core/Renderer/CSSObject';
 import type IndicatorValuesObject from './IndicatorValuesObject';
 import type LineSeries from '../../Series/Line/LineSeries';
 import type { PointMarkerOptions } from '../../Core/Series/PointOptions';
-import type SMAIndicator from './SMAIndicator';
+import type SMAIndicator from './SMA/SMAIndicator';
+import type {
+    SMAOptions,
+    SMAParamsOptions
+} from './SMA/SMAOptions';
+import type SMAPoint from './SMA/SMAPoint';
 import BaseSeries from '../../Core/Series/Series.js';
 import MultipleLinesMixin from '../../Mixins/MultipleLines.js';
 import U from '../../Core/Utilities.js';
@@ -46,17 +51,17 @@ declare global {
             ];
         }
         interface AroonIndicatorOptions
-            extends SMAIndicator.Options, MultipleLinesIndicatorOptions {
+            extends SMAOptions, MultipleLinesIndicatorOptions {
             aroonDown?: Record<string, CSSObject>;
             marker?: PointMarkerOptions;
             params?: AroonIndicatorParamsOptions;
             tooltip?: TooltipOptions;
         }
         interface AroonIndicatorParamsOptions
-            extends SMAIndicator.ParamsOptions {
+            extends SMAParamsOptions {
             period?: number;
         }
-        class AroonIndicatorPoint extends SMAIndicator.Point {
+        class AroonIndicatorPoint extends SMAPoint {
             public series: AroonIndicator;
         }
     }

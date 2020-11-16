@@ -91,6 +91,7 @@ declare global {
             _range?: number;
             count?: number;
             dataGrouping?: DataGroupingOptionsObject;
+            title?: string;
             events?: RangeSelectorButtonsEventsOptions;
             offsetMax?: number;
             offsetMin?: number;
@@ -248,25 +249,31 @@ extend(defaultOptions, {
          * buttons: [{
          *     type: 'month',
          *     count: 1,
-         *     text: '1m'
+         *     text: '1m',
+         *     title: 'View 1 month'
          * }, {
          *     type: 'month',
          *     count: 3,
-         *     text: '3m'
+         *     text: '3m',
+         *     title: 'View 3 months'
          * }, {
          *     type: 'month',
          *     count: 6,
-         *     text: '6m'
+         *     text: '6m',
+         *     title: 'View 6 months'
          * }, {
          *     type: 'ytd',
-         *     text: 'YTD'
+         *     text: 'YTD',
+         *     title: 'View year to date'
          * }, {
          *     type: 'year',
          *     count: 1,
-         *     text: '1y'
+         *     text: '1y',
+         *     title: 'View 1 year'
          * }, {
          *     type: 'all',
-         *     text: 'All'
+         *     text: 'All',
+         *     title: 'View all'
          * }]
          * ```
          *
@@ -364,6 +371,14 @@ extend(defaultOptions, {
          *
          * @type      {string}
          * @apioption rangeSelector.buttons.text
+         */
+
+        /**
+         * Explanation for the button, shown as a tooltip on hover, and used by
+         * assistive technology.
+         *
+         * @type      {string}
+         * @apioption rangeSelector.buttons.title
          */
 
         /**
@@ -1270,12 +1285,20 @@ class RangeSelector {
      * @function Highcharts.RangeSelector#defaultInputDateParser
      */
     public defaultInputDateParser(inputDate: string, useUTC: boolean, time?: Highcharts.Time): number {
+        const hasTimezone = (str: string): boolean =>
+            str.length > 6 &&
+            (str.lastIndexOf('-') === str.length - 6 ||
+            str.lastIndexOf('+') === str.length - 6);
+
         let input = inputDate.split('/').join('-').split(' ').join('T');
         if (input.indexOf('T') === -1) {
             input += 'T00:00';
         }
         if (useUTC) {
             input += 'Z';
+        } else if (H.isSafari && !hasTimezone(input)) {
+            const offset = new Date(input).getTimezoneOffset() / 60;
+            input += offset <= 0 ? `+${H.pad(-offset)}:00` : `-${H.pad(offset)}:00`;
         }
         let date = Date.parse(input);
 
@@ -1668,6 +1691,10 @@ class RangeSelector {
                         'text-align': 'center'
                     })
                     .add(buttonGroup);
+
+                if (rangeOptions.title) {
+                    buttons[i].attr('title', rangeOptions.title);
+                }
             });
 
             // first create a wrapper outside the container in order to make
@@ -2049,25 +2076,31 @@ interface RangeSelector {
 RangeSelector.prototype.defaultButtons = [{
     type: 'month',
     count: 1,
-    text: '1m'
+    text: '1m',
+    title: 'View 1 month'
 }, {
     type: 'month',
     count: 3,
-    text: '3m'
+    text: '3m',
+    title: 'View 3 months'
 }, {
     type: 'month',
     count: 6,
-    text: '6m'
+    text: '6m',
+    title: 'View 6 months'
 }, {
     type: 'ytd',
-    text: 'YTD'
+    text: 'YTD',
+    title: 'View year to date'
 }, {
     type: 'year',
     count: 1,
-    text: '1y'
+    text: '1y',
+    title: 'View 1 year'
 }, {
     type: 'all',
-    text: 'All'
+    text: 'All',
+    title: 'View all'
 }];
 
 /**

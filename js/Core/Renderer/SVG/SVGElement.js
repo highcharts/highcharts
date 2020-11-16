@@ -1952,21 +1952,23 @@ var SVGElement = /** @class */ (function () {
      * @param {string} value
      */
     SVGElement.prototype.titleSetter = function (value) {
-        var titleNode = this.element.getElementsByTagName('title')[0];
-        if (!titleNode) {
-            titleNode = doc.createElementNS(this.SVG_NS, 'title');
-            this.element.appendChild(titleNode);
+        var el = this.element;
+        var titleNode = el.getElementsByTagName('title')[0] ||
+            doc.createElementNS(this.SVG_NS, 'title');
+        // Move to first child
+        if (el.insertBefore) {
+            el.insertBefore(titleNode, el.firstChild);
         }
-        // Remove text content if it exists
-        if (titleNode.firstChild) {
-            titleNode.removeChild(titleNode.firstChild);
+        else {
+            el.appendChild(titleNode);
         }
-        titleNode.appendChild(doc.createTextNode(
-        // #3276, #3895
-        String(pick(value, ''))
-            .replace(/<[^>]*>/g, '')
-            .replace(/&lt;/g, '<')
-            .replace(/&gt;/g, '>')));
+        // Replace text content and escape markup
+        titleNode.textContent =
+            // #3276, #3895
+            String(pick(value, ''))
+                .replace(/<[^>]*>/g, '')
+                .replace(/&lt;/g, '<')
+                .replace(/&gt;/g, '>');
     };
     /**
      * Bring the element to the front. Alternatively, a new zIndex can be set.

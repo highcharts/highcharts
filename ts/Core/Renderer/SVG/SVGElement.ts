@@ -2731,29 +2731,24 @@ class SVGElement {
      * @param {string} value
      */
     public titleSetter(value: string): void {
-        var titleNode: SVGDOMElement = (
-            this.element.getElementsByTagName('title')[0] as any
-        );
+        const el = this.element;
+        const titleNode = el.getElementsByTagName('title')[0] ||
+            doc.createElementNS(this.SVG_NS, 'title');
 
-        if (!titleNode) {
-            titleNode = doc.createElementNS(this.SVG_NS, 'title') as any;
-            this.element.appendChild(titleNode);
+        // Move to first child
+        if (el.insertBefore) {
+            el.insertBefore(titleNode, el.firstChild);
+        } else {
+            el.appendChild(titleNode);
         }
 
-        // Remove text content if it exists
-        if (titleNode.firstChild) {
-            titleNode.removeChild(titleNode.firstChild);
-        }
-
-        titleNode.appendChild(
-            doc.createTextNode(
+        // Replace text content and escape markup
+        titleNode.textContent =
                 // #3276, #3895
                 String(pick(value, ''))
                     .replace(/<[^>]*>/g, '')
                     .replace(/&lt;/g, '<')
-                    .replace(/&gt;/g, '>')
-            )
-        );
+                    .replace(/&gt;/g, '>');
     }
 
     /**

@@ -18,17 +18,19 @@
  *
  * */
 
-import type ScatterPoint from './Scatter/ScatterPoint';
-import type ScatterPointOptions from './Scatter/ScatterPointOptions';
-import type ScatterSeries from './Scatter/ScatterSeries';
-import type ScatterSeriesOptions from './Scatter/ScatterSeriesOptions';
-import type SVGAttributes from '../Core/Renderer/SVG/SVGAttributes';
-import BaseSeries from '../Core/Series/Series.js';
-const { seriesTypes } = BaseSeries;
-import H from '../Core/Globals.js';
-import Math3D from '../Extensions/Math3D.js';
+import type Scatter3DSeriesOptions from './Scatter3DSeriesOptions';
+import type SVGAttributes from '../../Core/Renderer/SVG/SVGAttributes';
+import BaseSeries from '../../Core/Series/Series.js';
+import Scatter3DPoint from './Scatter3DPoint.js';
+import ScatterSeries from '../Scatter/ScatterSeries.js';
+import Math3D from '../../Extensions/Math3D.js';
 const { pointCameraDistance } = Math3D;
-import Point from '../Core/Series/Point.js';
+import Point from '../../Core/Series/Point.js';
+import U from '../../Core/Utilities.js';
+const {
+    extend,
+    merge
+} = U;
 
 /**
  * Internal types
@@ -36,34 +38,14 @@ import Point from '../Core/Series/Point.js';
  */
 declare global {
     namespace Highcharts {
-        interface Scatter3dPointOptions extends ScatterPointOptions {
-            z?: number;
-        }
-        interface Scatter3dSeriesOptions extends ScatterSeriesOptions {
-        }
-        class Scatter3dPoint extends ScatterPoint {
-            public options: Scatter3dPointOptions;
-            public series: Scatter3dSeries;
-        }
-        class Scatter3dSeries extends ScatterSeries {
-            public data: Array<Scatter3dPoint>;
-            public options: Scatter3dSeriesOptions;
-            public pointClass: typeof Scatter3dPoint;
-            public points: Array<Scatter3dPoint>;
-        }
     }
 }
 
-/**
- * @private
- */
-declare module '../Core/Series/SeriesType' {
-    interface SeriesTypeRegistry {
-        scatter3d: typeof Highcharts.Scatter3dSeries;
-    }
-}
-
-import './Scatter/ScatterSeries.js';
+/* *
+ *
+ *  Class
+ *
+ * */
 
 /**
  * @private
@@ -72,9 +54,14 @@ import './Scatter/ScatterSeries.js';
  *
  * @augments Highcharts.Series
  */
-BaseSeries.seriesType<typeof Highcharts.Scatter3dSeries>(
-    'scatter3d',
-    'scatter',
+class Scatter3DSeries extends ScatterSeries {
+
+    /* *
+     *
+     *  Static Properties
+     *
+     * */
+
     /**
      * A 3D scatter plot uses x, y and z coordinates to display values for three
      * variables for a set of data.
@@ -90,52 +77,93 @@ BaseSeries.seriesType<typeof Highcharts.Scatter3dSeries>(
      * @requires     highcharts-3d
      * @optionparent plotOptions.scatter3d
      */
-    {
+    public static defaultOptions: Scatter3DSeriesOptions = merge(ScatterSeries.defaultOptions, {
         tooltip: {
             pointFormat: 'x: <b>{point.x}</b><br/>y: <b>{point.y}</b><br/>z: <b>{point.z}</b><br/>'
         }
+    } as Scatter3DSeriesOptions);
 
-    // Series class
-    }, {
-        pointAttribs: function (
-            this: Highcharts.Scatter3dSeries,
-            point: Highcharts.Scatter3dPoint
-        ): SVGAttributes {
-            var attribs = seriesTypes.scatter.prototype.pointAttribs
-                .apply(this, arguments as any);
+    /* *
+     *
+     *  Properties
+     *
+     * */
 
-            if (this.chart.is3d() && point) {
-                attribs.zIndex =
-                    pointCameraDistance(point as any, this.chart);
-            }
+    public data: Array<Scatter3DPoint> = void 0 as any;
 
-            return attribs;
-        },
-        axisTypes: ['xAxis', 'yAxis', 'zAxis'],
-        pointArrayMap: ['x', 'y', 'z'],
-        parallelArrays: ['x', 'y', 'z'],
+    public options: Scatter3DSeriesOptions = void 0 as any;
 
-        // Require direct touch rather than using the k-d-tree, because the
-        // k-d-tree currently doesn't take the xyz coordinate system into
-        // account (#4552)
-        directTouch: true
+    public points: Array<Scatter3DPoint> = void 0 as any;
 
-    // Point class
-    }, {
-        applyOptions: function (
-            this: Highcharts.Scatter3dPoint
-        ): Highcharts.Scatter3dPoint {
-            Point.prototype.applyOptions.apply(this, arguments as any);
-            if (typeof this.z === 'undefined') {
-                this.z = 0;
-            }
+    /* *
+     *
+     *  Functions
+     *
+     * */
 
-            return this;
+    public pointAttribs(point: Scatter3DPoint): SVGAttributes {
+        var attribs = super.pointAttribs.apply(this, arguments);
+
+        if (this.chart.is3d() && point) {
+            attribs.zIndex =
+                pointCameraDistance(point as any, this.chart);
         }
 
+        return attribs;
     }
-);
+}
 
+/* *
+ *
+ *  Prototype Properties
+ *
+ * */
+
+interface Scatter3DSeries {
+    pointClass: typeof Scatter3DPoint;
+}
+extend(Scatter3DSeries.prototype, {
+    axisTypes: ['xAxis', 'yAxis', 'zAxis'],
+
+    // Require direct touch rather than using the k-d-tree, because the
+    // k-d-tree currently doesn't take the xyz coordinate system into
+    // account (#4552)
+    directTouch: true,
+
+    parallelArrays: ['x', 'y', 'z'],
+
+    pointArrayMap: ['x', 'y', 'z'],
+
+    pointClass: Scatter3DPoint
+
+});
+
+/* *
+ *
+ *  Registry
+ *
+ * */
+
+declare module '../../Core/Series/SeriesType' {
+    interface SeriesTypeRegistry {
+        scatter3d: typeof Scatter3DSeries;
+    }
+}
+BaseSeries.registerSeriesType('scatter3d', Scatter3DSeries);
+
+/* *
+ *
+ *  Default Export
+ *
+ * */
+
+export default Scatter3DSeries;
+
+/* *
+ *
+ *  API Options
+ *
+ * */
 
 /**
  * A `scatter3d` series. If the [type](#series.scatter3d.type) option is

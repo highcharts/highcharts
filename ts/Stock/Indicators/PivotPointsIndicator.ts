@@ -11,7 +11,12 @@
 import type Point from '../../Core/Series/Point';
 import type IndicatorValuesObject from './IndicatorValuesObject';
 import type LineSeries from '../../Series/Line/LineSeries';
-import type SMAIndicator from './SMAIndicator';
+import type SMAIndicator from './SMA/SMAIndicator';
+import type {
+    SMAOptions,
+    SMAParamsOptions
+} from './SMA/SMAOptions';
+import type SMAPoint from './SMA/SMAPoint';
 import type SVGElement from '../../Core/Renderer/SVG/SVGElement';
 import type SVGPath from '../../Core/Renderer/SVG/SVGPath';
 import BaseSeries from '../../Core/Series/Series.js';
@@ -58,11 +63,11 @@ declare global {
         }
 
         interface PivotPointsIndicatorParamsOptions
-            extends SMAIndicator.ParamsOptions {
+            extends SMAParamsOptions {
             algorithm?: string;
         }
 
-        class PivotPointsIndicatorPoint extends SMAIndicator.Point {
+        class PivotPointsIndicatorPoint extends SMAPoint {
             public destroy(): void;
             public destroyElements(): void;
             public P: number;
@@ -70,7 +75,7 @@ declare global {
             public series: PivotPointsIndicator;
         }
 
-        interface PivotPointsIndicatorOptions extends SMAIndicator.Options {
+        interface PivotPointsIndicatorOptions extends SMAOptions {
             params?: PivotPointsIndicatorParamsOptions;
         }
     }

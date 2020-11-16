@@ -15,7 +15,7 @@ import type Chart from '../../Core/Chart/Chart';
 import type { HTMLDOMElement } from '../../Core/Renderer/DOMElementType';
 import type LineSeries from '../../Series/Line/LineSeries';
 import type { SeriesTypePlotOptions } from '../../Core/Series/SeriesType';
-import type SMAIndicator from '../../Stock/Indicators/SMAIndicator';
+import type SMAIndicator from '../../Stock/Indicators/SMA/SMAIndicator';
 import H from '../../Core/Globals.js';
 import NavigationBindings from './NavigationBindings.js';
 import Pointer from '../../Core/Pointer.js';
