@@ -909,7 +909,7 @@ var RangeSelector = /** @class */ (function () {
             input += 'Z';
         }
         else if (H.isSafari && !hasTimezone(input)) {
-            var offset = new Date().getTimezoneOffset() / 60;
+            var offset = new Date(input).getTimezoneOffset() / 60;
             input += offset <= 0 ? "+" + H.pad(-offset) + ":00" : "-" + H.pad(offset) + ":00";
         }
         var date = Date.parse(input);

@@ -1297,7 +1297,7 @@ class RangeSelector {
         if (useUTC) {
             input += 'Z';
         } else if (H.isSafari && !hasTimezone(input)) {
-            const offset = new Date().getTimezoneOffset() / 60;
+            const offset = new Date(input).getTimezoneOffset() / 60;
             input += offset <= 0 ? `+${H.pad(-offset)}:00` : `-${H.pad(offset)}:00`;
         }
         let date = Date.parse(input);
