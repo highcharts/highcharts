@@ -8,10 +8,25 @@
  *
  * */
 'use strict';
+var __extends = (this && this.__extends) || (function () {
+    var extendStatics = function (d, b) {
+        extendStatics = Object.setPrototypeOf ||
+            ({ __proto__: [] } instanceof Array && function (d, b) { d.__proto__ = b; }) ||
+            function (d, b) { for (var p in b) if (b.hasOwnProperty(p)) d[p] = b[p]; };
+        return extendStatics(d, b);
+    };
+    return function (d, b) {
+        extendStatics(d, b);
+        function __() { this.constructor = d; }
+        d.prototype = b === null ? Object.create(b) : (__.prototype = b.prototype, new __());
+    };
+})();
 import BaseSeries from '../Core/Series/Series.js';
 import ColumnSeries from './Column/ColumnSeries.js';
 var columnProto = ColumnSeries.prototype;
 import Point from '../Core/Series/Point.js';
+import U from '../Core/Utilities.js';
+var extend = U.extend, merge = U.merge;
 /* *
  *
  *  Class
@@ -26,104 +41,126 @@ import Point from '../Core/Series/Point.js';
  *
  * @augments Highcharts.Series
  */
-BaseSeries.seriesType('ohlc', 'column'
-/**
- * An OHLC chart is a style of financial chart used to describe price
- * movements over time. It displays open, high, low and close values per
- * data point.
- *
- * @sample stock/demo/ohlc/
- *         OHLC chart
- *
- * @extends      plotOptions.column
- * @excluding    borderColor, borderRadius, borderWidth, crisp, stacking,
- *               stack
- * @product      highstock
- * @optionparent plotOptions.ohlc
- */
-, {
+var OHLCSeries = /** @class */ (function (_super) {
+    __extends(OHLCSeries, _super);
+    function OHLCSeries() {
+        /* *
+         *
+         *  Static Properties
+         *
+         * */
+        var _this = _super !== null && _super.apply(this, arguments) || this;
+        /* *
+         *
+         *  Properties
+         *
+         * */
+        _this.data = void 0;
+        _this.options = void 0;
+        _this.points = void 0;
+        return _this;
+    }
     /**
-     * The approximate pixel width of each group. If for example a series
-     * with 30 points is displayed over a 600 pixel wide plot area, no
-     * grouping is performed. If however the series contains so many points
-     * that the spacing is less than the groupPixelWidth, Highcharts will
-     * try to group it into appropriate groups so that each is more or less
-     * two pixels wide. Defaults to `5`.
+     * An OHLC chart is a style of financial chart used to describe price
+     * movements over time. It displays open, high, low and close values per
+     * data point.
      *
-     * @type      {number}
-     * @default   5
-     * @product   highstock
-     * @apioption plotOptions.ohlc.dataGrouping.groupPixelWidth
+     * @sample stock/demo/ohlc/
+     *         OHLC chart
+     *
+     * @extends      plotOptions.column
+     * @excluding    borderColor, borderRadius, borderWidth, crisp, stacking,
+     *               stack
+     * @product      highstock
+     * @optionparent plotOptions.ohlc
      */
-    /**
-     * The pixel width of the line/border. Defaults to `1`.
-     *
-     * @sample {highstock} stock/plotoptions/ohlc-linewidth/
-     *         A greater line width
-     *
-     * @type    {number}
-     * @default 1
-     * @product highstock
-     *
-     * @private
-     */
-    lineWidth: 1,
-    tooltip: {
-        pointFormat: '<span style="color:{point.color}">\u25CF</span> ' +
-            '<b> {series.name}</b><br/>' +
-            'Open: {point.open}<br/>' +
-            'High: {point.high}<br/>' +
-            'Low: {point.low}<br/>' +
-            'Close: {point.close}<br/>'
-    },
-    threshold: null,
-    states: {
+    OHLCSeries.defaultOptions = merge(ColumnSeries.defaultOptions, {
         /**
-         * @extends plotOptions.column.states.hover
-         * @product highstock
+         * The approximate pixel width of each group. If for example a series
+         * with 30 points is displayed over a 600 pixel wide plot area, no
+         * grouping is performed. If however the series contains so many points
+         * that the spacing is less than the groupPixelWidth, Highcharts will
+         * try to group it into appropriate groups so that each is more or less
+         * two pixels wide. Defaults to `5`.
+         *
+         * @type      {number}
+         * @default   5
+         * @product   highstock
+         * @apioption plotOptions.ohlc.dataGrouping.groupPixelWidth
          */
-        hover: {
+        /**
+         * The pixel width of the line/border. Defaults to `1`.
+         *
+         * @sample {highstock} stock/plotoptions/ohlc-linewidth/
+         *         A greater line width
+         *
+         * @type    {number}
+         * @default 1
+         * @product highstock
+         *
+         * @private
+         */
+        lineWidth: 1,
+        tooltip: {
+            pointFormat: '<span style="color:{point.color}">\u25CF</span> ' +
+                '<b> {series.name}</b><br/>' +
+                'Open: {point.open}<br/>' +
+                'High: {point.high}<br/>' +
+                'Low: {point.low}<br/>' +
+                'Close: {point.close}<br/>'
+        },
+        threshold: null,
+        states: {
             /**
-             * The pixel width of the line representing the OHLC point.
-             *
-             * @type    {number}
-             * @default 3
+             * @extends plotOptions.column.states.hover
              * @product highstock
              */
-            lineWidth: 3
-        }
-    },
-    /**
-     * Determines which one of `open`, `high`, `low`, `close` values should
-     * be represented as `point.y`, which is later used to set dataLabel
-     * position and [compare](#plotOptions.series.compare).
-     *
-     * @sample {highstock} stock/plotoptions/ohlc-pointvalkey/
-     *         Possible values
-     *
-     * @type       {string}
-     * @default    close
-     * @validvalue ["open", "high", "low", "close"]
-     * @product    highstock
-     * @apioption  plotOptions.ohlc.pointValKey
-     */
-    /**
-     * @default   close
-     * @apioption plotOptions.ohlc.colorKey
-     */
-    /**
-     * Line color for up points.
-     *
-     * @type      {Highcharts.ColorString|Highcharts.GradientColorObject|Highcharts.PatternObject}
-     * @product   highstock
-     * @apioption plotOptions.ohlc.upColor
-     */
-    stickyTracking: true
-}, 
-/**
- * @lends Highcharts.seriesTypes.ohlc
- */
-{
+            hover: {
+                /**
+                 * The pixel width of the line representing the OHLC point.
+                 *
+                 * @type    {number}
+                 * @default 3
+                 * @product highstock
+                 */
+                lineWidth: 3
+            }
+        },
+        /**
+         * Determines which one of `open`, `high`, `low`, `close` values should
+         * be represented as `point.y`, which is later used to set dataLabel
+         * position and [compare](#plotOptions.series.compare).
+         *
+         * @sample {highstock} stock/plotoptions/ohlc-pointvalkey/
+         *         Possible values
+         *
+         * @type       {string}
+         * @default    close
+         * @validvalue ["open", "high", "low", "close"]
+         * @product    highstock
+         * @apioption  plotOptions.ohlc.pointValKey
+         */
+        /**
+         * @default   close
+         * @apioption plotOptions.ohlc.colorKey
+         */
+        /**
+         * Line color for up points.
+         *
+         * @type      {Highcharts.ColorString|Highcharts.GradientColorObject|Highcharts.PatternObject}
+         * @product   highstock
+         * @apioption plotOptions.ohlc.upColor
+         */
+        stickyTracking: true
+    });
+    return OHLCSeries;
+}(ColumnSeries));
+/* *
+ *
+ *  Prototype Properties
+ *
+ * */
+extend(OHLCSeries.prototype, {
     /* eslint-disable valid-jsdoc */
     directTouch: false,
     pointArrayMap: ['open', 'high', 'low', 'close'],
@@ -263,11 +300,26 @@ BaseSeries.seriesType('ohlc', 'column'
     },
     animate: null // Disable animation
     /* eslint-enable valid-jsdoc */
-}, 
-/**
- * @lends Highcharts.seriesTypes.ohlc.prototype.pointClass.prototype
- */
-{
+});
+/* *
+ *
+ *  Class
+ *
+ * */
+var OHLCPoint = /** @class */ (function (_super) {
+    __extends(OHLCPoint, _super);
+    function OHLCPoint() {
+        return _super !== null && _super.apply(this, arguments) || this;
+    }
+    return OHLCPoint;
+}(ColumnSeries.prototype.pointClass));
+OHLCSeries.prototype.pointClass = OHLCPoint;
+/* *
+ *
+ *  Prototype Properties
+ *
+ * */
+extend(OHLCPoint.prototype, {
     /* eslint-disable valid-jsdoc */
     /**
      * Extend the parent method by adding up or down to the class name.
@@ -283,6 +335,12 @@ BaseSeries.seriesType('ohlc', 'column'
     }
     /* eslint-enable valid-jsdoc */
 });
+BaseSeries.registerSeriesType('ohlc', OHLCSeries);
+/* *
+ *
+ *  API Options
+ *
+ * */
 /**
  * A `ohlc` series. If the [type](#series.ohlc.type) option is not
  * specified, it is inherited from [chart.type](#chart.type).

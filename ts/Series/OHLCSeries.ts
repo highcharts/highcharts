@@ -28,6 +28,11 @@ import BaseSeries from '../Core/Series/Series.js';
 import ColumnSeries from './Column/ColumnSeries.js';
 const { prototype: columnProto } = ColumnSeries;
 import Point from '../Core/Series/Point.js';
+import U from '../Core/Utilities.js';
+const {
+    extend,
+    merge
+} = U;
 
 /* *
  *
@@ -75,15 +80,6 @@ declare global {
     }
 }
 
-/**
- * @private
- */
-declare module '../Core/Series/SeriesType' {
-    interface SeriesTypeRegistry {
-        ohlc: typeof Highcharts.OHLCSeries;
-    }
-}
-
 /* *
  *
  *  Class
@@ -99,9 +95,13 @@ declare module '../Core/Series/SeriesType' {
  *
  * @augments Highcharts.Series
  */
-BaseSeries.seriesType<typeof Highcharts.OHLCSeries>(
-    'ohlc',
-    'column'
+class OHLCSeries extends ColumnSeries {
+
+    /* *
+     *
+     *  Static Properties
+     *
+     * */
 
     /**
      * An OHLC chart is a style of financial chart used to describe price
@@ -117,7 +117,7 @@ BaseSeries.seriesType<typeof Highcharts.OHLCSeries>(
      * @product      highstock
      * @optionparent plotOptions.ohlc
      */
-    , {
+    public static defaultOptions: Highcharts.OHLCSeriesOptions = merge(ColumnSeries.defaultOptions, {
 
         /**
          * The approximate pixel width of each group. If for example a series
@@ -207,261 +207,311 @@ BaseSeries.seriesType<typeof Highcharts.OHLCSeries>(
 
         stickyTracking: true
 
+    } as Highcharts.OHLCSeriesOptions);
+
+    /* *
+     *
+     *  Properties
+     *
+     * */
+
+    public data: Array<Highcharts.OHLCPoint> = void 0 as any;
+
+    public options: Highcharts.OHLCSeriesOptions = void 0 as any;
+
+    public points: Array<Highcharts.OHLCPoint> = void 0 as any;
+
+}
+
+/* *
+ *
+ *  Prototype Properties
+ *
+ * */
+
+extend(OHLCSeries.prototype, {
+
+    /* eslint-disable valid-jsdoc */
+
+    directTouch: false,
+    pointArrayMap: ['open', 'high', 'low', 'close'],
+    toYData: function (
+        this: Highcharts.OHLCSeries,
+        point: Highcharts.OHLCPoint
+    ): Highcharts.OHLCYData {
+        // return a plain array for speedy calculation
+        return [point.open, point.high, point.low, point.close];
     },
-    /**
-     * @lends Highcharts.seriesTypes.ohlc
-     */
-    {
+    pointValKey: 'close',
 
-        /* eslint-disable valid-jsdoc */
-
-        directTouch: false,
-        pointArrayMap: ['open', 'high', 'low', 'close'],
-        toYData: function (
-            this: Highcharts.OHLCSeries,
-            point: Highcharts.OHLCPoint
-        ): Highcharts.OHLCYData {
-            // return a plain array for speedy calculation
-            return [point.open, point.high, point.low, point.close];
-        },
-        pointValKey: 'close',
-
-        pointAttrToOptions: {
-            stroke: 'color',
-            'stroke-width': 'lineWidth'
-        },
-
-        /**
-         * @private
-         * @function Highcarts.seriesTypes.ohlc#init
-         * @return {void}
-         */
-        init: function (this: Highcharts.OHLCSeries): void {
-            columnProto.init.apply(this, arguments as any);
-
-            this.options.stacking = void 0; // #8817
-        },
-
-        /**
-         * Postprocess mapping between options and SVG attributes
-         *
-         * @private
-         * @function Highcharts.seriesTypes.ohlc#pointAttribs
-         * @param {Highcharts.OHLCPoint} point
-         * @param {string} state
-         * @return {Highcharts.SVGAttributes}
-         */
-        pointAttribs: function (
-            this: Highcharts.OHLCSeries,
-            point: Highcharts.OHLCPoint,
-            state: StatesOptionsKey
-        ): SVGAttributes {
-            var attribs = columnProto.pointAttribs.call(
-                    this,
-                    point,
-                    state
-                ),
-                options = this.options;
-
-            delete attribs.fill;
-
-            if (
-                !point.options.color &&
-            options.upColor &&
-            point.open < point.close
-            ) {
-                attribs.stroke = options.upColor;
-            }
-
-            return attribs;
-        },
-
-        /**
-         * Translate data points from raw values x and y to plotX and plotY
-         *
-         * @private
-         * @function Highcharts.seriesTypes.ohlc#translate
-         * @return {void}
-         */
-        translate: function (this: Highcharts.OHLCSeries): void {
-            var series = this,
-                yAxis = series.yAxis,
-                hasModifyValue = !!series.modifyValue,
-                translated = [
-                    'plotOpen',
-                    'plotHigh',
-                    'plotLow',
-                    'plotClose',
-                    'yBottom'
-                ]; // translate OHLC for
-
-            columnProto.translate.apply(series);
-
-            // Do the translation
-            series.points.forEach(function (point): void {
-                [point.open, point.high, point.low, point.close, point.low]
-                    .forEach(
-                        function (value: number, i: number): void {
-                            if (value !== null) {
-                                if (hasModifyValue) {
-                                    value = (series.modifyValue as any)(value);
-                                }
-                                (point as any)[translated[i]] =
-                                    yAxis.toPixels(value, true);
-                            }
-                        }
-                    );
-
-                // Align the tooltip to the high value to avoid covering the
-                // point
-                (point.tooltipPos as any)[1] =
-                    (point.plotHigh as any) + yAxis.pos - series.chart.plotTop;
-            });
-        },
-
-        /**
-         * Draw the data points
-         *
-         * @private
-         * @function Highcharts.seriesTypes.ohlc#drawPoints
-         * @return {void}
-         */
-        drawPoints: function (this: Highcharts.OHLCSeries): void {
-            var series = this,
-                points = series.points,
-                chart = series.chart,
-                /**
-                 * Extend vertical stem to open and close values.
-                 */
-                extendStem = function (
-                    path: SVGPath,
-                    halfStrokeWidth: number,
-                    openOrClose: number
-                ): void {
-                    const start = path[0];
-                    const end = path[1];
-
-                    // We don't need to worry about crisp - openOrClose value
-                    // is already crisped and halfStrokeWidth should remove it.
-                    if (typeof start[2] === 'number') {
-                        start[2] = Math.max(
-                            openOrClose + halfStrokeWidth,
-                            start[2]
-                        );
-                    }
-                    if (typeof end[2] === 'number') {
-                        end[2] = Math.min(
-                            openOrClose - halfStrokeWidth,
-                            end[2]
-                        );
-                    }
-                };
-
-
-            points.forEach(function (point: Highcharts.OHLCPoint): void {
-                var plotOpen,
-                    plotClose,
-                    crispCorr,
-                    halfWidth,
-                    path: SVGPath,
-                    graphic = point.graphic,
-                    crispX,
-                    isNew = !graphic,
-                    strokeWidth;
-
-                if (typeof point.plotY !== 'undefined') {
-
-                    // Create and/or update the graphic
-                    if (!graphic) {
-                        point.graphic = graphic = chart.renderer.path()
-                            .add(series.group);
-                    }
-
-                    if (!chart.styledMode) {
-                        graphic.attr(
-                            series.pointAttribs(
-                                point,
-                                (point.selected && 'select') as any
-                            )
-                        ); // #3897
-                    }
-
-                    // crisp vector coordinates
-                    strokeWidth = graphic.strokeWidth();
-                    crispCorr = (strokeWidth % 2) / 2;
-                    // #2596:
-                    crispX = Math.round(point.plotX as any) - crispCorr;
-                    halfWidth = Math.round((point.shapeArgs as any).width / 2);
-
-                    // the vertical stem
-                    path = [
-                        ['M', crispX, Math.round(point.yBottom as any)],
-                        ['L', crispX, Math.round(point.plotHigh as any)]
-                    ];
-
-                    // open
-                    if (point.open !== null) {
-                        plotOpen = Math.round(point.plotOpen) + crispCorr;
-                        path.push(
-                            ['M', crispX, plotOpen],
-                            ['L', crispX - halfWidth, plotOpen]
-                        );
-
-                        extendStem(path, strokeWidth / 2, plotOpen);
-                    }
-
-                    // close
-                    if (point.close !== null) {
-                        plotClose = Math.round(point.plotClose) + crispCorr;
-                        path.push(
-                            ['M', crispX, plotClose],
-                            ['L', crispX + halfWidth, plotClose]
-                        );
-
-                        extendStem(path, strokeWidth / 2, plotClose);
-                    }
-
-                    graphic[isNew ? 'attr' : 'animate']({ d: path })
-                        .addClass(point.getClassName(), true);
-
-                }
-
-
-            });
-
-        },
-
-        animate: null as any // Disable animation
-
-        /* eslint-enable valid-jsdoc */
-
+    pointAttrToOptions: {
+        stroke: 'color',
+        'stroke-width': 'lineWidth'
     },
+
     /**
-     * @lends Highcharts.seriesTypes.ohlc.prototype.pointClass.prototype
+     * @private
+     * @function Highcarts.seriesTypes.ohlc#init
+     * @return {void}
      */
-    {
+    init: function (this: Highcharts.OHLCSeries): void {
+        columnProto.init.apply(this, arguments as any);
 
-        /* eslint-disable valid-jsdoc */
+        this.options.stacking = void 0; // #8817
+    },
 
-        /**
-         * Extend the parent method by adding up or down to the class name.
-         * @private
-         * @function Highcharts.seriesTypes.ohlc#getClassName
-         * @return {string}
-         */
-        getClassName: function (this: Highcharts.OHLCPoint): string {
-            return Point.prototype.getClassName.call(this) +
-            (
-                this.open < this.close ?
-                    ' highcharts-point-up' :
-                    ' highcharts-point-down'
-            );
+    /**
+     * Postprocess mapping between options and SVG attributes
+     *
+     * @private
+     * @function Highcharts.seriesTypes.ohlc#pointAttribs
+     * @param {Highcharts.OHLCPoint} point
+     * @param {string} state
+     * @return {Highcharts.SVGAttributes}
+     */
+    pointAttribs: function (
+        this: Highcharts.OHLCSeries,
+        point: Highcharts.OHLCPoint,
+        state: StatesOptionsKey
+    ): SVGAttributes {
+        var attribs = columnProto.pointAttribs.call(
+                this,
+                point,
+                state
+            ),
+            options = this.options;
+
+        delete attribs.fill;
+
+        if (
+            !point.options.color &&
+        options.upColor &&
+        point.open < point.close
+        ) {
+            attribs.stroke = options.upColor;
         }
 
-        /* eslint-enable valid-jsdoc */
+        return attribs;
+    },
 
+    /**
+     * Translate data points from raw values x and y to plotX and plotY
+     *
+     * @private
+     * @function Highcharts.seriesTypes.ohlc#translate
+     * @return {void}
+     */
+    translate: function (this: Highcharts.OHLCSeries): void {
+        var series = this,
+            yAxis = series.yAxis,
+            hasModifyValue = !!series.modifyValue,
+            translated = [
+                'plotOpen',
+                'plotHigh',
+                'plotLow',
+                'plotClose',
+                'yBottom'
+            ]; // translate OHLC for
+
+        columnProto.translate.apply(series);
+
+        // Do the translation
+        series.points.forEach(function (point): void {
+            [point.open, point.high, point.low, point.close, point.low]
+                .forEach(
+                    function (value: number, i: number): void {
+                        if (value !== null) {
+                            if (hasModifyValue) {
+                                value = (series.modifyValue as any)(value);
+                            }
+                            (point as any)[translated[i]] =
+                                yAxis.toPixels(value, true);
+                        }
+                    }
+                );
+
+            // Align the tooltip to the high value to avoid covering the
+            // point
+            (point.tooltipPos as any)[1] =
+                (point.plotHigh as any) + yAxis.pos - series.chart.plotTop;
+        });
+    },
+
+    /**
+     * Draw the data points
+     *
+     * @private
+     * @function Highcharts.seriesTypes.ohlc#drawPoints
+     * @return {void}
+     */
+    drawPoints: function (this: Highcharts.OHLCSeries): void {
+        var series = this,
+            points = series.points,
+            chart = series.chart,
+            /**
+             * Extend vertical stem to open and close values.
+             */
+            extendStem = function (
+                path: SVGPath,
+                halfStrokeWidth: number,
+                openOrClose: number
+            ): void {
+                const start = path[0];
+                const end = path[1];
+
+                // We don't need to worry about crisp - openOrClose value
+                // is already crisped and halfStrokeWidth should remove it.
+                if (typeof start[2] === 'number') {
+                    start[2] = Math.max(
+                        openOrClose + halfStrokeWidth,
+                        start[2]
+                    );
+                }
+                if (typeof end[2] === 'number') {
+                    end[2] = Math.min(
+                        openOrClose - halfStrokeWidth,
+                        end[2]
+                    );
+                }
+            };
+
+
+        points.forEach(function (point: Highcharts.OHLCPoint): void {
+            var plotOpen,
+                plotClose,
+                crispCorr,
+                halfWidth,
+                path: SVGPath,
+                graphic = point.graphic,
+                crispX,
+                isNew = !graphic,
+                strokeWidth;
+
+            if (typeof point.plotY !== 'undefined') {
+
+                // Create and/or update the graphic
+                if (!graphic) {
+                    point.graphic = graphic = chart.renderer.path()
+                        .add(series.group);
+                }
+
+                if (!chart.styledMode) {
+                    graphic.attr(
+                        series.pointAttribs(
+                            point,
+                            (point.selected && 'select') as any
+                        )
+                    ); // #3897
+                }
+
+                // crisp vector coordinates
+                strokeWidth = graphic.strokeWidth();
+                crispCorr = (strokeWidth % 2) / 2;
+                // #2596:
+                crispX = Math.round(point.plotX as any) - crispCorr;
+                halfWidth = Math.round((point.shapeArgs as any).width / 2);
+
+                // the vertical stem
+                path = [
+                    ['M', crispX, Math.round(point.yBottom as any)],
+                    ['L', crispX, Math.round(point.plotHigh as any)]
+                ];
+
+                // open
+                if (point.open !== null) {
+                    plotOpen = Math.round(point.plotOpen) + crispCorr;
+                    path.push(
+                        ['M', crispX, plotOpen],
+                        ['L', crispX - halfWidth, plotOpen]
+                    );
+
+                    extendStem(path, strokeWidth / 2, plotOpen);
+                }
+
+                // close
+                if (point.close !== null) {
+                    plotClose = Math.round(point.plotClose) + crispCorr;
+                    path.push(
+                        ['M', crispX, plotClose],
+                        ['L', crispX + halfWidth, plotClose]
+                    );
+
+                    extendStem(path, strokeWidth / 2, plotClose);
+                }
+
+                graphic[isNew ? 'attr' : 'animate']({ d: path })
+                    .addClass(point.getClassName(), true);
+
+            }
+
+
+        });
+
+    },
+
+    animate: null as any // Disable animation
+
+    /* eslint-enable valid-jsdoc */
+
+});
+
+/* *
+ *
+ *  Class
+ *
+ * */
+
+class OHLCPoint extends ColumnSeries.prototype.pointClass {
+}
+OHLCSeries.prototype.pointClass = OHLCPoint;
+
+/* *
+ *
+ *  Prototype Properties
+ *
+ * */
+
+extend(OHLCPoint.prototype, {
+
+    /* eslint-disable valid-jsdoc */
+
+    /**
+     * Extend the parent method by adding up or down to the class name.
+     * @private
+     * @function Highcharts.seriesTypes.ohlc#getClassName
+     * @return {string}
+     */
+    getClassName: function (this: Highcharts.OHLCPoint): string {
+        return Point.prototype.getClassName.call(this) +
+        (
+            this.open < this.close ?
+                ' highcharts-point-up' :
+                ' highcharts-point-down'
+        );
     }
-);
+
+    /* eslint-enable valid-jsdoc */
+
+});
+
+/* *
+ *
+ *  Registry
+ *
+ * */
+
+declare module '../Core/Series/SeriesType' {
+    interface SeriesTypeRegistry {
+        ohlc: typeof Highcharts.OHLCSeries;
+    }
+}
+BaseSeries.registerSeriesType('ohlc', OHLCSeries);
+
+/* *
+ *
+ *  API Options
+ *
+ * */
 
 /**
  * A `ohlc` series. If the [type](#series.ohlc.type) option is not
