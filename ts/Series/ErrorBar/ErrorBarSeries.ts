@@ -108,7 +108,7 @@ class ErrorBarSeries extends BoxPlotSeries {
          */
         whiskerWidth: null as any
 
-    }) as ErrorBarSeriesOptions;
+    } as ErrorBarSeriesOptions);
 
     /* *
      *
