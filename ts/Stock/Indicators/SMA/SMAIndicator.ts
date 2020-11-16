@@ -14,15 +14,18 @@
  *
  * */
 
-import type { AxisType } from '../../Core/Axis/Types';
-import type Chart from '../../Core/Chart/Chart';
-import type IndicatorLike from './IndicatorLike';
-import type IndicatorValuesObject from './IndicatorValuesObject';
-import type LinePoint from '../../Series/Line/LinePoint';
-import type LineSeriesOptions from '../../Series/Line/LineSeriesOptions';
-import type RequireIndicatorsResultObject from './RequireIndicatorsResultObject';
-import type SeriesType from '../../Core/Series/SeriesType';
-import BaseSeries from '../../Core/Series/Series.js';
+import type { AxisType } from '../../../Core/Axis/Types';
+import type Chart from '../../../Core/Chart/Chart';
+import type IndicatorLike from '../IndicatorLike';
+import type IndicatorValuesObject from '../IndicatorValuesObject';
+import type RequireIndicatorsResultObject from '../RequireIndicatorsResultObject';
+import type SeriesType from '../../../Core/Series/SeriesType';
+import type {
+    SMAOptions,
+    SMAParamsOptions
+} from './SMAOptions';
+import type SMAPoint from './SMAPoint';
+import BaseSeries from '../../../Core/Series/Series.js';
 const {
     seriesTypes: {
         line: LineSeries,
@@ -31,8 +34,8 @@ const {
         }
     }
 } = BaseSeries;
-import RequiredIndicatorMixin from '../../Mixins/IndicatorRequired.js';
-import U from '../../Core/Utilities.js';
+import RequiredIndicatorMixin from '../../../Mixins/IndicatorRequired.js';
+import U from '../../../Core/Utilities.js';
 const {
     addEvent,
     error,
@@ -43,18 +46,25 @@ const {
     splat
 } = U;
 
+import './SMAComposition.js';
+
 /* *
  *
  *  Declarations
  *
  * */
 
-declare module '../../Core/Series/SeriesLike' {
+interface BindToObject {
+    eventName: string;
+    series: boolean;
+}
+
+declare module '../../../Core/Series/SeriesLike' {
     interface SeriesLike {
     }
 }
 
-declare module '../../Core/Series/SeriesOptions' {
+declare module '../../../Core/Series/SeriesOptions' {
     interface SeriesOptions {
         useOhlcData?: boolean;
     }
@@ -62,55 +72,11 @@ declare module '../../Core/Series/SeriesOptions' {
 
 const generateMessage = RequiredIndicatorMixin.generateMessage;
 
-/**
- * The parameter allows setting line series type and use OHLC indicators. Data
- * in OHLC format is required.
+/* *
  *
- * @sample {highstock} stock/indicators/use-ohlc-data
- *         Plot line on Y axis
+ *  Class
  *
- * @type      {boolean}
- * @product   highstock
- * @apioption plotOptions.line.useOhlcData
- */
-
-/* eslint-disable no-invalid-this */
-
-addEvent(LineSeries, 'init', function (
-    eventOptions: { options: SMAIndicator.Options }
-): void {
-    var series = this,
-        options = eventOptions.options;
-
-    if (
-        options.useOhlcData &&
-        options.id !== 'highcharts-navigator-series'
-    ) {
-        extend(series, {
-            pointValKey: ohlcProto.pointValKey,
-            keys: (ohlcProto as any).keys, // @todo potentially nonsense
-            pointArrayMap: ohlcProto.pointArrayMap,
-            toYData: ohlcProto.toYData
-        });
-    }
-});
-
-addEvent(LineSeries, 'afterSetOptions', function (
-    e: { options: LineSeriesOptions }
-): void {
-    var options = e.options,
-        dataGrouping = options.dataGrouping;
-
-    if (
-        dataGrouping &&
-        options.useOhlcData &&
-        options.id !== 'highcharts-navigator-series'
-    ) {
-        dataGrouping.approximation = 'ohlc';
-    }
-});
-
-/* eslint-enable no-invalid-this */
+ * */
 
 /**
  * The SMA series type.
@@ -130,6 +96,18 @@ class SMAIndicator extends LineSeries {
      * */
 
     /**
+     * The parameter allows setting line series type and use OHLC indicators.
+     * Data in OHLC format is required.
+     *
+     * @sample {highstock} stock/indicators/use-ohlc-data
+     *         Plot line on Y axis
+     *
+     * @type      {boolean}
+     * @product   highstock
+     * @apioption plotOptions.line.useOhlcData
+     */
+
+    /**
      * Simple moving average indicator (SMA). This series requires `linkedTo`
      * option to be set.
      *
@@ -146,7 +124,7 @@ class SMAIndicator extends LineSeries {
      * @requires     stock/indicators/indicators
      * @optionparent plotOptions.sma
      */
-    public static defaultOptions: SMAIndicator.Options = merge(LineSeries.defaultOptions, {
+    public static defaultOptions: SMAOptions = merge(LineSeries.defaultOptions, {
         /**
          * The name of the series as shown in the legend, tooltip etc. If not
          * set, it will be based on a technical indicator type and default
@@ -196,7 +174,7 @@ class SMAIndicator extends LineSeries {
              */
             period: 14
         }
-    } as SMAIndicator.Options);
+    } as SMAOptions);
 
     /* *
      *
@@ -204,7 +182,7 @@ class SMAIndicator extends LineSeries {
      *
      * */
 
-    public data: Array<SMAIndicator.Point> = void 0 as any;
+    public data: Array<SMAPoint> = void 0 as any;
 
     public dataEventsToUnbind: Array<Function> = void 0 as any;
 
@@ -212,9 +190,9 @@ class SMAIndicator extends LineSeries {
 
     public nameBase?: string;
 
-    public options: SMAIndicator.Options = void 0 as any;
+    public options: SMAOptions = void 0 as any;
 
-    public points: Array<SMAIndicator.Point> = void 0 as any;
+    public points: Array<SMAPoint> = void 0 as any;
 
     /* *
      *
@@ -267,7 +245,7 @@ class SMAIndicator extends LineSeries {
      */
     public getValues<TLinkedSeries extends typeof LineSeries.prototype>(
         series: TLinkedSeries,
-        params: SMAIndicator.ParamsOptions
+        params: SMAParamsOptions
     ): (IndicatorValuesObject<TLinkedSeries>|undefined) {
         var period: number = params.period as any,
             xVal: Array<number> = series.xData as any,
@@ -325,7 +303,7 @@ class SMAIndicator extends LineSeries {
      */
     public init(
         chart: Chart,
-        options: SMAIndicator.Options
+        options: SMAOptions
     ): void {
         var indicator = this,
             requiredIndicators = indicator.requireIndicators();
@@ -540,12 +518,12 @@ class SMAIndicator extends LineSeries {
  * */
 
 interface SMAIndicator extends IndicatorLike {
-    bindTo: SMAIndicator.BindToObject;
+    bindTo: BindToObject;
     calculateOn: string;
     hasDerivedData: boolean;
     nameComponents: Array<string>;
     nameSuffixes: Array<string>;
-    pointClass: typeof SMAIndicator.Point;
+    pointClass: typeof SMAPoint;
     requiredIndicators: Array<string>;
     useCommonDataGrouping: boolean;
 }
@@ -565,36 +543,11 @@ extend(SMAIndicator.prototype, {
 
 /* *
  *
- *  Class Namespace
- *
- * */
-
-namespace SMAIndicator {
-    export declare class Point extends LinePoint {
-        public series: SMAIndicator;
-    }
-    export interface Options extends LineSeriesOptions {
-        compareToMain?: boolean;
-        data?: Array<Array<number>>;
-        params?: ParamsOptions;
-    }
-    export interface ParamsOptions {
-        index?: number;
-        period?: number;
-    }
-    export interface BindToObject {
-        eventName: string;
-        series: boolean;
-    }
-}
-
-/* *
- *
  *  Registry
  *
  * */
 
-declare module '../../Core/Series/SeriesType' {
+declare module '../../../Core/Series/SeriesType' {
     interface SeriesTypeRegistry {
         sma: typeof SMAIndicator;
     }

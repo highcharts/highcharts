@@ -10,7 +10,12 @@
 
 import type IndicatorValuesObject from './IndicatorValuesObject';
 import type LineSeries from '../../Series/Line/LineSeries';
-import type SMAIndicator from './SMAIndicator';
+import type SMAIndicator from './SMA/SMAIndicator';
+import type {
+    SMAOptions,
+    SMAParamsOptions
+} from './SMA/SMAOptions';
+import type SMAPoint from './SMA/SMAPoint';
 import BaseSeries from '../../Core/Series/Series.js';
 import U from '../../Core/Utilities.js';
 const { isArray } = U;
@@ -34,15 +39,15 @@ declare global {
         }
 
         interface MomentumIndicatorParamsOptions
-            extends SMAIndicator.ParamsOptions {
+            extends SMAParamsOptions {
             // for inheritance
         }
 
-        class MomentumIndicatorPoint extends SMAIndicator.Point {
+        class MomentumIndicatorPoint extends SMAPoint {
             public series: MomentumIndicator;
         }
 
-        interface MomentumIndicatorOptions extends SMAIndicator.Options {
+        interface MomentumIndicatorOptions extends SMAOptions {
             params?: MomentumIndicatorParamsOptions;
         }
     }

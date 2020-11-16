@@ -12,7 +12,12 @@
 
 import type IndicatorValuesObject from './IndicatorValuesObject';
 import type LineSeries from '../../Series/Line/LineSeries';
-import type SMAIndicator from './SMAIndicator';
+import type SMAIndicator from './SMA/SMAIndicator';
+import type {
+    SMAOptions,
+    SMAParamsOptions
+} from './SMA/SMAOptions';
+import type SMAPoint from './SMA/SMAPoint';
 import BaseSeries from '../../Core/Series/Series.js';
 import U from '../../Core/Utilities.js';
 const {
@@ -38,15 +43,15 @@ declare global {
             public points: Array<ROCIndicatorPoint>;
         }
 
-        interface ROCIndicatorParamsOptions extends SMAIndicator.ParamsOptions {
+        interface ROCIndicatorParamsOptions extends SMAParamsOptions {
             // for inheritance
         }
 
-        class ROCIndicatorPoint extends SMAIndicator.Point {
+        class ROCIndicatorPoint extends SMAPoint {
             public series: ROCIndicator;
         }
 
-        interface ROCIndicatorOptions extends SMAIndicator.Options {
+        interface ROCIndicatorOptions extends SMAOptions {
             params?: ROCIndicatorParamsOptions;
         }
     }

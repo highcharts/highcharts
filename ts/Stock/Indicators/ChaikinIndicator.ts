@@ -11,7 +11,12 @@
 import type IndicatorValuesObject from './IndicatorValuesObject';
 import type LineSeries from '../../Series/Line/LineSeries';
 import BaseSeries from '../../Core/Series/Series.js';
-const { seriesTypes } = BaseSeries;
+const {
+    seriesTypes: {
+        ad: AD,
+        ema: EMA
+    }
+} = BaseSeries;
 import RequiredIndicatorMixin from '../../Mixins/IndicatorRequired.js';
 import U from '../../Core/Utilities.js';
 const {
@@ -60,12 +65,6 @@ declare module '../../Core/Series/SeriesType' {
         chaikin: typeof Highcharts.ChaikinIndicator;
     }
 }
-
-import './ADIndicator.js';
-// im port './EMAIndicator.js';
-
-var EMA = seriesTypes.ema,
-    AD = seriesTypes.ad;
 
 /**
  * The Chaikin series type.

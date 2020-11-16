@@ -162,18 +162,15 @@ extend(RangeSelectorComponent.prototype, /** @lends Highcharts.RangeSelectorComp
      * Called on first render/updates to the chart, including options changes.
      */
     onChartUpdate: function (this: Highcharts.RangeSelectorComponent): void {
-        var chart = this.chart,
+        const chart = this.chart,
             component = this,
             rangeSelector = chart.rangeSelector;
 
         if (!rangeSelector) {
             return;
         }
-
-        if (rangeSelector.buttons && rangeSelector.buttons.length) {
-            rangeSelector.buttons.forEach(function (
-                button: Highcharts.SVGElement
-            ): void {
+        if (rangeSelector.buttons?.length) {
+            rangeSelector.buttons.forEach((button): void => {
                 unhideChartElementFromAT(chart, button.element);
                 component.setRangeButtonAttrs(button);
             });
@@ -207,19 +204,9 @@ extend(RangeSelectorComponent.prototype, /** @lends Highcharts.RangeSelectorComp
         this: Highcharts.RangeSelectorComponent,
         button: Highcharts.SVGElement
     ): void {
-        var chart = this.chart,
-            label = chart.langFormat(
-                'accessibility.rangeSelector.buttonText',
-                {
-                    chart: chart,
-                    buttonText: button.text && button.text.textStr
-                }
-            );
-
         setElAttrs(button.element, {
             tabindex: -1,
-            role: 'button',
-            'aria-label': label
+            role: 'button'
         });
     },
 
