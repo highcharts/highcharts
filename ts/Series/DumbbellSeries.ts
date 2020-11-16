@@ -131,7 +131,6 @@ declare global {
     }
     type DumbbellPointClass = typeof DumbbellPoint
 }
-
 class DumbbellSeries extends AreaRangeSeries {
     public static defaultOptions: Highcharts.DumbbellSeriesOptions = merge(
         AreaRangeSeries.defaultOptions, {
@@ -193,28 +192,16 @@ class DumbbellSeries extends AreaRangeSeries {
     public options: Highcharts.DumbbellSeriesOptions = void 0 as any;
     public points: Array<DumbbellPoint> = void 0 as any;
 
-}
-
-extend(DumbbellSeries.prototype, {
-    trackerGroups: ['group', 'markerGroup', 'dataLabelsGroup'],
-    drawTracker: TrackerMixin.drawTrackerPoint,
-    drawGraph: noop,
-
-    crispCol: colProto.crispCol,
     /**
      * Get connector line path and styles that connects dumbbell point's low and
      * high values.
      * @private
      *
-     * @param {Highcharts.Series} this The series of points.
      * @param {Highcharts.Point} point The point to inspect.
      *
      * @return {Highcharts.SVGAttributes} attribs The path and styles.
      */
-    getConnectorAttribs: function (
-        this: DumbbellSeries,
-        point: DumbbellPoint
-    ): SVGAttributes {
+    public getConnectorAttribs(point: DumbbellPoint): SVGAttributes {
         var series = this,
             chart = series.chart,
             pointOptions = point.options,
@@ -318,20 +305,17 @@ extend(DumbbellSeries.prototype, {
         }
 
         return attribs;
-    },
+    }
+
     /**
      * Draw connector line that connects dumbbell point's low and high values.
      * @private
      *
-     * @param {Highcharts.Series} this The series of points.
      * @param {Highcharts.Point} point The point to inspect.
      *
      * @return {void}
      */
-    drawConnector: function (
-        this: DumbbellSeries,
-        point: DumbbellPoint
-    ): void {
+    public drawConnector(point: DumbbellPoint): void {
         var series = this,
             animationLimit = pick(series.options.animationLimit, 250),
             verb = point.connector && series.chart.pointCount < animationLimit ?
@@ -347,7 +331,7 @@ extend(DumbbellSeries.prototype, {
         }
 
         point.connector[verb](this.getConnectorAttribs(point));
-    },
+    }
     /**
      * Return the width and x offset of the dumbbell adjusted for grouping,
      * groupPadding, pointPadding, pointWidth etc.
@@ -361,17 +345,14 @@ extend(DumbbellSeries.prototype, {
      * @return {Highcharts.ColumnMetricsObject} metrics shapeArgs
      *
      */
-    getColumnMetrics: function (
-        this: DumbbellSeries
-    ): ColumnMetricsObject {
+    getColumnMetrics(): ColumnMetricsObject {
         var metrics = colProto.getColumnMetrics.apply(this, arguments as any);
 
         metrics.offset += metrics.width / 2;
 
         return metrics;
-    },
-    translatePoint: areaRangeProto.translate,
-    setShapeArgs: columnRangeProto.translate,
+    }
+
     /**
      * Translate each point to the plot area coordinate system and find
      * shape positions
@@ -384,9 +365,7 @@ extend(DumbbellSeries.prototype, {
      *
      * @return {void}
      */
-    translate: function (
-        this: DumbbellSeries
-    ): void {
+    translate(): void {
         // Calculate shapeargs
         this.setShapeArgs.apply(this);
 
@@ -404,8 +383,8 @@ extend(DumbbellSeries.prototype, {
         });
 
         this.columnMetrics.offset -= this.columnMetrics.width / 2;
-    },
-    seriesDrawPoints: areaRangeProto.drawPoints,
+    }
+
     /**
      * Extend the arearange series' drawPoints method by applying a connector
      * and coloring markers.
@@ -417,9 +396,7 @@ extend(DumbbellSeries.prototype, {
      *
      * @return {void}
      */
-    drawPoints: function (
-        this: DumbbellSeries
-    ): void {
+    drawPoints(): void {
         var series = this,
             chart = series.chart,
             pointLength = series.points.length,
@@ -462,7 +439,8 @@ extend(DumbbellSeries.prototype, {
             }
             i++;
         }
-    },
+    }
+
     /**
      * Get non-presentational attributes for a point. Used internally for
      * both styled mode and classic. Set correct position in link with connector
@@ -478,32 +456,29 @@ extend(DumbbellSeries.prototype, {
      *         A hash containing those attributes that are not settable from
      *         CSS.
      */
-    markerAttribs: function (
-        this: DumbbellSeries
-    ): SVGAttributes {
+    markerAttribs(): SVGAttributes {
         var ret = areaRangeProto.markerAttribs.apply(this, arguments as any);
 
         ret.x = Math.floor(ret.x);
         ret.y = Math.floor(ret.y);
 
         return ret;
-    },
+    }
+
     /**
      * Get presentational attributes
      *
      * @private
      * @function Highcharts.seriesTypes.column#pointAttribs
      *
-     * @param {Highcharts.Series} this The series of points.
      * @param {Highcharts.Point} point The point to inspect.
      * @param {string} state current state of point (normal, hover, select)
      *
      * @return {Highcharts.SVGAttributes} pointAttribs SVGAttributes
      */
-    pointAttribs: function (
-        this: DumbbellSeries,
+    public pointAttribs(
         point: DumbbellPoint,
-        state: string
+        state?: string
     ): SVGAttributes {
         var pointAttribs;
 
@@ -514,44 +489,45 @@ extend(DumbbellSeries.prototype, {
 
         return pointAttribs;
     }
+    public trackerGroups = ['group', 'markerGroup', 'dataLabelsGroup']
+    public drawTracker = TrackerMixin.drawTrackerPoint;
+
+    public drawGraph: typeof areaRangeProto.drawGraph = noop;
+    public columnMetrics: ColumnMetricsObject = void 0 as any;
+    public lowColor?: ColorType;
+}
+
+
+interface DumbbellSeries extends Highcharts.AreaRangeSeries {
+    pointClass: typeof DumbbellPoint;
+    translatePoint: typeof AreaRangeSeries.prototype['translate'];
+    setShapeArgs: typeof columnRangeProto['translate'];
+    seriesDrawPoints: typeof AreaRangeSeries.prototype['drawPoints'];
+}
+extend(DumbbellSeries.prototype, {
+    crispCol: colProto.crispCol,
+    translatePoint: areaRangeProto.translate,
+    setShapeArgs: columnRangeProto.translate,
+    seriesDrawPoints: areaRangeProto.drawPoints
 });
 
-interface DumbbellPoint extends AreaRangePoint {
-    series: DumbbellSeries;
-    options: Highcharts.DumbbellPointOptions;
-    connector: Highcharts.SVGElement;
-    pointWidth: number;
-    pointSetState: typeof AreaRangeSeries.prototype.pointClass.prototype['setState'];
-}
 class DumbbellPoint extends AreaRangeSeries.prototype.pointClass {
     public series: DumbbellSeries = void 0 as any;
     public options: Highcharts.DumbbellPointOptions = void 0 as any;
     public connector: Highcharts.SVGElement = void 0 as any;
     public pointWidth: number = void 0 as any;
-    public pointSetState = noop;
+    public pointSetState: typeof areaRangeProto.pointClass.prototype.setState = noop;
 
-
-}
-
-DumbbellSeries.prototype.pointClass = DumbbellPoint;
-
-extend(DumbbellPoint.prototype, {
-    // seriesTypes doesn't inherit from arearange point proto so put below
-    // methods rigidly.
-    destroyElements: AreaRangeSeries.prototype.pointClass.prototype.destroyElements,
-    isValid: AreaRangeSeries.prototype.pointClass.prototype.isValid,
     /**
-* Set the point's state extended by have influence on the connector
-* (between low and high value).
-*
-* @private
-* @param {Highcharts.Point} this The point to inspect.
-*
-* @return {void}
-*/
-    setState: function (
-        this: DumbbellPoint
-    ): void {
+     * Set the point's state extended by have influence on the connector
+     * (between low and high value).
+     *
+     * @private
+     * @param {Highcharts.Point} this The point to inspect.
+     *
+     * @return {void}
+     */
+    setState(): void {
         var point = this,
             series = point.series,
             chart = series.chart,
@@ -604,36 +580,22 @@ extend(DumbbellPoint.prototype, {
 
         point.connector[verb](series.getConnectorAttribs(point));
     }
-});
-interface DumbbellSeries extends Highcharts.AreaRangeSeries {
-    lowColor?: ColorType;
-    data: Array<DumbbellPoint>;
-    options: Highcharts.DumbbellSeriesOptions;
-    pointClass: typeof DumbbellPoint;
-    points: Array<DumbbellPoint>;
-    trackerGroups: Array<string>;
-    crispCol: ColumnSeries['crispCol'];
-    translatePoint: typeof AreaRangeSeries.prototype['translate'];
-    setShapeArgs: typeof columnRangeProto['translate'];
-    seriesDrawPoints: typeof AreaRangeSeries.prototype['drawPoints'];
-    drawTracker: typeof TrackerMixin['drawTrackerPoint'];
-    drawGraph: any;
-    columnMetrics: ColumnMetricsObject;
-    crispConnector(
-        points: SVGPath,
-        width: number
-    ): SVGPath;
-    getConnectorAttribs(point: DumbbellPoint): SVGAttributes;
-    drawConnector(point: DumbbellPoint): void;
-    getColumnMetrics(): ColumnMetricsObject;
-    translate(): void;
-    drawPoints(): void;
-    markerAttribs(): SVGAttributes;
-    pointAttribs(
-        point: DumbbellPoint,
-        state?: StatesOptionsKey
-    ): SVGAttributes;
 }
+
+DumbbellSeries.prototype.pointClass = DumbbellPoint;
+
+const { isValid, destroyElements } = areaRangeProto.pointClass.prototype;
+interface DumbbellPoint extends AreaRangePoint {
+    destroyElements: typeof destroyElements;
+    isValid: typeof isValid;
+}
+
+extend(DumbbellPoint.prototype, {
+    // seriesTypes doesn't inherit from arearange point proto so put below
+    // methods rigidly.
+    destroyElements,
+    isValid
+});
 
 /**
  * @private
