@@ -17,7 +17,7 @@
  * */
 
 import type ColorType from '../Core/Color/ColorType';
-import type OHLCSeries from './OHLCSeries';
+import type OHLCSeries from './OHLC/OHLCSeries';
 import type { SeriesStatesOptions } from '../Core/Series/SeriesOptions';
 import type { StatesOptionsKey } from '../Core/Series/StatesOptions';
 import type SVGAttributes from '../Core/Renderer/SVG/SVGAttributes';
@@ -44,7 +44,7 @@ import './OHLCSeries.js';
  */
 declare global {
     namespace Highcharts {
-        class CandlestickPoint extends OHLCSeries.prototype.pointClass {
+        class CandlestickPoint extends OHLCPoint {
             public close: number;
             public open: number;
             public options: CandlestickPointOptions;
