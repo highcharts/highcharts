@@ -12,7 +12,23 @@
  *
  * */
 'use strict';
+var __extends = (this && this.__extends) || (function () {
+    var extendStatics = function (d, b) {
+        extendStatics = Object.setPrototypeOf ||
+            ({ __proto__: [] } instanceof Array && function (d, b) { d.__proto__ = b; }) ||
+            function (d, b) { for (var p in b) if (b.hasOwnProperty(p)) d[p] = b[p]; };
+        return extendStatics(d, b);
+    };
+    return function (d, b) {
+        extendStatics(d, b);
+        function __() { this.constructor = d; }
+        d.prototype = b === null ? Object.create(b) : (__.prototype = b.prototype, new __());
+    };
+})();
 import BaseSeries from '../../Core/Series/Series.js';
+var SMAIndicator = BaseSeries.seriesTypes.sma;
+import U from '../../Core/Utilities.js';
+var extend = U.extend, merge = U.merge;
 // im port './SMAIndicator.js';
 /**
  * The CMF series type.
@@ -23,35 +39,38 @@ import BaseSeries from '../../Core/Series/Series.js';
  *
  * @augments Highcharts.Series
  */
-BaseSeries.seriesType('cmf', 'sma', 
-/**
- * Chaikin Money Flow indicator (cmf).
- *
- * @sample stock/indicators/cmf/
- *         Chaikin Money Flow indicator
- *
- * @extends      plotOptions.sma
- * @since        6.0.0
- * @excluding    animationLimit
- * @product      highstock
- * @requires     stock/indicators/indicators
- * @requires     stock/indicators/cmf
- * @optionparent plotOptions.cmf
- */
-{
-    params: {
-        period: 14,
-        /**
-         * The id of another series to use its data as volume data for the
-         * indiator calculation.
-         */
-        volumeSeriesID: 'volume'
+var CMFIndicator = /** @class */ (function (_super) {
+    __extends(CMFIndicator, _super);
+    function CMFIndicator() {
+        return _super !== null && _super.apply(this, arguments) || this;
     }
-}, 
-/**
- * @lends Highcharts.Series#
- */
-{
+    /**
+     * Chaikin Money Flow indicator (cmf).
+     *
+     * @sample stock/indicators/cmf/
+     *         Chaikin Money Flow indicator
+     *
+     * @extends      plotOptions.sma
+     * @since        6.0.0
+     * @excluding    animationLimit
+     * @product      highstock
+     * @requires     stock/indicators/indicators
+     * @requires     stock/indicators/cmf
+     * @optionparent plotOptions.cmf
+     */
+    CMFIndicator.defaultOptions = merge(SMAIndicator.defaultOptions, {
+        params: {
+            period: 14,
+            /**
+             * The id of another series to use its data as volume data for the
+             * indiator calculation.
+             */
+            volumeSeriesID: 'volume'
+        }
+    });
+    return CMFIndicator;
+}(SMAIndicator));
+extend(CMFIndicator.prototype, {
     nameBase: 'Chaikin Money Flow',
     /**
      * Checks if the series and volumeSeries are accessible, number of
@@ -170,6 +189,13 @@ BaseSeries.seriesType('cmf', 'sma',
         };
     }
 });
+BaseSeries.registerSeriesType('cmf', CMFIndicator);
+/* *
+ *
+ *  Default Export
+ *
+ * */
+export default CMFIndicator;
 /**
  * A `CMF` series. If the [type](#series.cmf.type) option is not
  * specified, it is inherited from [chart.type](#chart.type).
