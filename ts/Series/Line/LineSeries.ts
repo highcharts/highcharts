@@ -2694,6 +2694,8 @@ class LineSeries {
 
     public id?: string;
 
+    public index: number = void 0 as any;
+
     public isDirty?: boolean;
 
     public isDirtyData?: boolean;
