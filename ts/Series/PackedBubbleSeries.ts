@@ -1842,9 +1842,39 @@ class PackedBubblePoint extends BubblePoint implements Highcharts.DragNodesPoint
      *
      * */
 
+    public collisionNmb?: number;
+
+    public dataLabelOnNull?: boolean;
+
+    public degree: number = NaN;
+
+    public dispX?: number;
+
+    public dispY?: number;
+
+    public fixedPosition: Highcharts.DragNodesPoint['fixedPosition'];
+
+    public isParentNode?: boolean;
+
+    public mass: number = NaN;
+
+    public neighbours?: number;
+
+    public prevX?: number;
+
+    public prevY?: number;
+
+    public radius: number = NaN;
+
+    public removed?: boolean;
+
     public options: Highcharts.PackedBubblePointOptions = void 0 as any;
 
     public series: PackedBubbleSeries = void 0 as any;
+
+    public seriesIndex?: number;
+
+    public value: (number|null) = null;
 
     /* *
      *
@@ -1903,30 +1933,6 @@ PackedBubbleSeries.prototype.pointClass = PackedBubblePoint;
 
 /* *
  *
- *  Prototype Properties
- *
- * */
-
-interface PackedBubblePoint {
-    collisionNmb?: number;
-    dataLabelOnNull?: boolean;
-    degree: number;
-    dispX?: number;
-    dispY?: number;
-    fixedPosition: Highcharts.DragNodesPoint['fixedPosition'];
-    isParentNode?: boolean;
-    mass: number;
-    neighbours?: number;
-    prevX?: number;
-    prevY?: number;
-    radius: number;
-    removed?: any; // @todo
-    seriesIndex?: number;
-    value: (number|null);
-}
-
-/* *
- *
  *  Registry
  *
  * */
@@ -1958,7 +1964,7 @@ declare global {
             public prevX?: number;
             public prevY?: number;
             public radius: number;
-            public removed?: any; // @todo
+            public removed?: boolean;
             public series: PackedBubbleSeries;
             public seriesIndex?: number;
             public value: (number|null);
