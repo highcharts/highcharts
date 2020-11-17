@@ -67,6 +67,12 @@ declare global {
     }
 }
 
+/* *
+ *
+ *  Class
+ *
+ * */
+
 /**
  * The vector series class.
  *
@@ -178,82 +184,28 @@ class VectorSeries extends ScatterSeries {
 
     /* eslint-disable valid-jsdoc */
 
-    /* eslint-enable valid-jsdoc */
-
-}
-
-/* *
- *
- *  Prototype Properties
- *
- * */
-
-interface VectorSeries {
-    parallelArrays: Array<string>;
-    pointArrayMap: Array<string>;
-    pointClass: typeof Highcharts.VectorPoint;
-    arrow(point: Highcharts.VectorPoint): SVGPath;
-    drawPoints(): void;
-    pointAttribs(
-        point: Highcharts.VectorPoint,
-        state?: string
-    ): SVGAttributes;
-    translate(): void;
-}
-extend(VectorSeries.prototype, {
-
-    pointArrayMap: ['y', 'length', 'direction'],
-    parallelArrays: ['x', 'y', 'length', 'direction'],
-
-    /* eslint-disable valid-jsdoc */
-
     /**
-     * Get presentational attributes.
+     * Fade in the arrows on initializing series.
      * @private
      */
-    pointAttribs: function (
-        this: VectorSeries,
-        point: Highcharts.VectorPoint,
-        state?: string
-    ): SVGAttributes {
-        var options = this.options,
-            stroke = point.color || this.color,
-            strokeWidth = this.options.lineWidth;
-
-        if (state) {
-            stroke = (options.states as any)[state].color || stroke;
-            strokeWidth =
-            ((options.states as any)[state].lineWidth || strokeWidth) +
-            ((options.states as any)[state].lineWidthPlus || 0);
+    public animate(init?: boolean): void {
+        if (init) {
+            (this.markerGroup as any).attr({
+                opacity: 0.01
+            });
+        } else {
+            (this.markerGroup as any).animate({
+                opacity: 1
+            }, animObject(this.options.animation));
         }
-
-        return {
-            'stroke': stroke,
-            'stroke-width': strokeWidth
-        };
-    },
-
-    /**
-     * @ignore
-     * @deprecated
-     */
-    markerAttribs: H.noop as any,
-
-    /**
-     * @ignore
-     * @deprecated
-     */
-    getSymbol: H.noop as any,
+    }
 
     /**
      * Create a single arrow. It is later rotated around the zero
      * centerpoint.
      * @private
      */
-    arrow: function (
-        this: VectorSeries,
-        point: Highcharts.VectorPoint
-    ): SVGPath {
+    public arrow(point: Highcharts.VectorPoint): SVGPath {
         var path: SVGPath,
             fraction: number = (point.length as any) / this.lengthMax,
             u: number = fraction * (this.options.vectorLength as any) / 20,
@@ -277,25 +229,16 @@ extend(VectorSeries.prototype, {
         ];
 
         return path;
-    },
+    }
 
     /**
      * @private
      */
-    translate: function (this: VectorSeries): void {
-        LineSeries.prototype.translate.call(this);
-
-        this.lengthMax = arrayMax(this.lengthData as any);
-    },
-
-    /**
-     * @private
-     */
-    drawPoints: function (this: VectorSeries): void {
+    public drawPoints(): void {
 
         var chart = this.chart;
 
-        this.points.forEach(function (point: Highcharts.VectorPoint): void {
+        this.points.forEach(function (point): void {
             var plotX = point.plotX,
                 plotY = point.plotY;
 
@@ -336,7 +279,58 @@ extend(VectorSeries.prototype, {
             }
 
         }, this);
-    },
+    }
+
+    /**
+     * Get presentational attributes.
+     * @private
+     */
+    public pointAttribs(
+        point: Highcharts.VectorPoint,
+        state?: string
+    ): SVGAttributes {
+        var options = this.options,
+            stroke = point.color || this.color,
+            strokeWidth = this.options.lineWidth;
+
+        if (state) {
+            stroke = (options.states as any)[state].color || stroke;
+            strokeWidth =
+            ((options.states as any)[state].lineWidth || strokeWidth) +
+            ((options.states as any)[state].lineWidthPlus || 0);
+        }
+
+        return {
+            'stroke': stroke,
+            'stroke-width': strokeWidth
+        };
+    }
+
+    /**
+     * @private
+     */
+    public translate(): void {
+        LineSeries.prototype.translate.call(this);
+
+        this.lengthMax = arrayMax(this.lengthData as any);
+    }
+
+    /* eslint-enable valid-jsdoc */
+
+}
+
+/* *
+ *
+ *  Prototype Properties
+ *
+ * */
+
+interface VectorSeries {
+    parallelArrays: Array<string>;
+    pointArrayMap: Array<string>;
+    pointClass: typeof Highcharts.VectorPoint;
+}
+extend(VectorSeries.prototype, {
 
     /**
      * @ignore
@@ -344,54 +338,21 @@ extend(VectorSeries.prototype, {
      */
     drawGraph: H.noop as any,
 
-    /*
-    drawLegendSymbol: function (legend, item) {
-        var options = legend.options,
-            symbolHeight = legend.symbolHeight,
-            square = options.squareSymbol,
-            symbolWidth = square ? symbolHeight : legend.symbolWidth,
-            path = this.arrow.call({
-                lengthMax: 1,
-                options: {
-                    vectorLength: symbolWidth
-                }
-            }, {
-                length: 1
-            });
-
-        item.legendLine = this.chart.renderer.path(path)
-        .addClass('highcharts-point')
-        .attr({
-            zIndex: 3,
-            translateY: symbolWidth / 2,
-            rotation: 270,
-            'stroke-width': 1,
-            'stroke': 'black'
-        }).add(item.legendGroup);
-
-    },
-    */
+    /**
+     * @ignore
+     * @deprecated
+     */
+    getSymbol: H.noop as any,
 
     /**
-     * Fade in the arrows on initializing series.
-     * @private
+     * @ignore
+     * @deprecated
      */
-    animate: function (
-        this: VectorSeries,
-        init?: boolean
-    ): void {
-        if (init) {
-            (this.markerGroup as any).attr({
-                opacity: 0.01
-            });
-        } else {
-            (this.markerGroup as any).animate({
-                opacity: 1
-            }, animObject(this.options.animation));
-        }
-    }
+    markerAttribs: H.noop as any,
 
-    /* eslint-enable valid-jsdoc */
+    parallelArrays: ['x', 'y', 'length', 'direction'],
+
+    pointArrayMap: ['y', 'length', 'direction']
 
 });
 

@@ -31,6 +31,11 @@ import H from '../Core/Globals.js';
 import LineSeries from './Line/LineSeries.js';
 import U from '../Core/Utilities.js';
 var arrayMax = U.arrayMax, extend = U.extend, merge = U.merge, pick = U.pick;
+/* *
+ *
+ *  Class
+ *
+ * */
 /**
  * The vector series class.
  *
@@ -59,14 +64,111 @@ var VectorSeries = /** @class */ (function (_super) {
         _this.options = void 0;
         _this.points = void 0;
         return _this;
-        /* *
-         *
-         *  Functions
-         *
-         * */
-        /* eslint-disable valid-jsdoc */
         /* eslint-enable valid-jsdoc */
     }
+    /* *
+     *
+     *  Functions
+     *
+     * */
+    /* eslint-disable valid-jsdoc */
+    /**
+     * Fade in the arrows on initializing series.
+     * @private
+     */
+    VectorSeries.prototype.animate = function (init) {
+        if (init) {
+            this.markerGroup.attr({
+                opacity: 0.01
+            });
+        }
+        else {
+            this.markerGroup.animate({
+                opacity: 1
+            }, animObject(this.options.animation));
+        }
+    };
+    /**
+     * Create a single arrow. It is later rotated around the zero
+     * centerpoint.
+     * @private
+     */
+    VectorSeries.prototype.arrow = function (point) {
+        var path, fraction = point.length / this.lengthMax, u = fraction * this.options.vectorLength / 20, o = {
+            start: 10 * u,
+            center: 0,
+            end: -10 * u
+        }[this.options.rotationOrigin] || 0;
+        // The stem and the arrow head. Draw the arrow first with rotation
+        // 0, which is the arrow pointing down (vector from north to south).
+        path = [
+            ['M', 0, 7 * u + o],
+            ['L', -1.5 * u, 7 * u + o],
+            ['L', 0, 10 * u + o],
+            ['L', 1.5 * u, 7 * u + o],
+            ['L', 0, 7 * u + o],
+            ['L', 0, -10 * u + o] // top
+        ];
+        return path;
+    };
+    /**
+     * @private
+     */
+    VectorSeries.prototype.drawPoints = function () {
+        var chart = this.chart;
+        this.points.forEach(function (point) {
+            var plotX = point.plotX, plotY = point.plotY;
+            if (this.options.clip === false ||
+                chart.isInsidePlot(plotX, plotY, chart.inverted)) {
+                if (!point.graphic) {
+                    point.graphic = this.chart.renderer
+                        .path()
+                        .add(this.markerGroup)
+                        .addClass('highcharts-point ' +
+                        'highcharts-color-' +
+                        pick(point.colorIndex, point.series.colorIndex));
+                }
+                point.graphic
+                    .attr({
+                    d: this.arrow(point),
+                    translateX: plotX,
+                    translateY: plotY,
+                    rotation: point.direction
+                });
+                if (!this.chart.styledMode) {
+                    point.graphic
+                        .attr(this.pointAttribs(point));
+                }
+            }
+            else if (point.graphic) {
+                point.graphic = point.graphic.destroy();
+            }
+        }, this);
+    };
+    /**
+     * Get presentational attributes.
+     * @private
+     */
+    VectorSeries.prototype.pointAttribs = function (point, state) {
+        var options = this.options, stroke = point.color || this.color, strokeWidth = this.options.lineWidth;
+        if (state) {
+            stroke = options.states[state].color || stroke;
+            strokeWidth =
+                (options.states[state].lineWidth || strokeWidth) +
+                    (options.states[state].lineWidthPlus || 0);
+        }
+        return {
+            'stroke': stroke,
+            'stroke-width': strokeWidth
+        };
+    };
+    /**
+     * @private
+     */
+    VectorSeries.prototype.translate = function () {
+        LineSeries.prototype.translate.call(this);
+        this.lengthMax = arrayMax(this.lengthData);
+    };
     /**
      * A vector plot is a type of cartesian chart where each point has an X and
      * Y position, a length and a direction. Vectors are drawn as arrows.
@@ -129,149 +231,23 @@ var VectorSeries = /** @class */ (function (_super) {
     return VectorSeries;
 }(ScatterSeries));
 extend(VectorSeries.prototype, {
-    pointArrayMap: ['y', 'length', 'direction'],
-    parallelArrays: ['x', 'y', 'length', 'direction'],
-    /* eslint-disable valid-jsdoc */
-    /**
-     * Get presentational attributes.
-     * @private
-     */
-    pointAttribs: function (point, state) {
-        var options = this.options, stroke = point.color || this.color, strokeWidth = this.options.lineWidth;
-        if (state) {
-            stroke = options.states[state].color || stroke;
-            strokeWidth =
-                (options.states[state].lineWidth || strokeWidth) +
-                    (options.states[state].lineWidthPlus || 0);
-        }
-        return {
-            'stroke': stroke,
-            'stroke-width': strokeWidth
-        };
-    },
     /**
      * @ignore
      * @deprecated
      */
-    markerAttribs: H.noop,
+    drawGraph: H.noop,
     /**
      * @ignore
      * @deprecated
      */
     getSymbol: H.noop,
     /**
-     * Create a single arrow. It is later rotated around the zero
-     * centerpoint.
-     * @private
-     */
-    arrow: function (point) {
-        var path, fraction = point.length / this.lengthMax, u = fraction * this.options.vectorLength / 20, o = {
-            start: 10 * u,
-            center: 0,
-            end: -10 * u
-        }[this.options.rotationOrigin] || 0;
-        // The stem and the arrow head. Draw the arrow first with rotation
-        // 0, which is the arrow pointing down (vector from north to south).
-        path = [
-            ['M', 0, 7 * u + o],
-            ['L', -1.5 * u, 7 * u + o],
-            ['L', 0, 10 * u + o],
-            ['L', 1.5 * u, 7 * u + o],
-            ['L', 0, 7 * u + o],
-            ['L', 0, -10 * u + o] // top
-        ];
-        return path;
-    },
-    /**
-     * @private
-     */
-    translate: function () {
-        LineSeries.prototype.translate.call(this);
-        this.lengthMax = arrayMax(this.lengthData);
-    },
-    /**
-     * @private
-     */
-    drawPoints: function () {
-        var chart = this.chart;
-        this.points.forEach(function (point) {
-            var plotX = point.plotX, plotY = point.plotY;
-            if (this.options.clip === false ||
-                chart.isInsidePlot(plotX, plotY, chart.inverted)) {
-                if (!point.graphic) {
-                    point.graphic = this.chart.renderer
-                        .path()
-                        .add(this.markerGroup)
-                        .addClass('highcharts-point ' +
-                        'highcharts-color-' +
-                        pick(point.colorIndex, point.series.colorIndex));
-                }
-                point.graphic
-                    .attr({
-                    d: this.arrow(point),
-                    translateX: plotX,
-                    translateY: plotY,
-                    rotation: point.direction
-                });
-                if (!this.chart.styledMode) {
-                    point.graphic
-                        .attr(this.pointAttribs(point));
-                }
-            }
-            else if (point.graphic) {
-                point.graphic = point.graphic.destroy();
-            }
-        }, this);
-    },
-    /**
      * @ignore
      * @deprecated
      */
-    drawGraph: H.noop,
-    /*
-    drawLegendSymbol: function (legend, item) {
-        var options = legend.options,
-            symbolHeight = legend.symbolHeight,
-            square = options.squareSymbol,
-            symbolWidth = square ? symbolHeight : legend.symbolWidth,
-            path = this.arrow.call({
-                lengthMax: 1,
-                options: {
-                    vectorLength: symbolWidth
-                }
-            }, {
-                length: 1
-            });
-
-        item.legendLine = this.chart.renderer.path(path)
-        .addClass('highcharts-point')
-        .attr({
-            zIndex: 3,
-            translateY: symbolWidth / 2,
-            rotation: 270,
-            'stroke-width': 1,
-            'stroke': 'black'
-        }).add(item.legendGroup);
-
-    },
-    */
-    /**
-     * Fade in the arrows on initializing series.
-     * @private
-     */
-    animate: function (init) {
-        if (init) {
-            this.markerGroup.attr({
-                opacity: 0.01
-            });
-        }
-        else {
-            this.markerGroup.animate({
-                opacity: 1
-            }, animObject(this.options.animation));
-        }
-    }
-    /* eslint-enable valid-jsdoc */
+    markerAttribs: H.noop,
+    parallelArrays: ['x', 'y', 'length', 'direction'],
+    pointArrayMap: ['y', 'length', 'direction']
 });
 BaseSeries.registerSeriesType('vector', VectorSeries);
 /* *
