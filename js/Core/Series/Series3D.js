@@ -94,7 +94,7 @@ var Series3D = /** @class */ (function (_super) {
      *  Static Properties
      *
      * */
-    Series3D.defaultOptions = merge(LineSeries.defaultOptions);
+    Series3D.defaultOptions = merge(LineSeries.defaultOptions, {});
     return Series3D;
 }(LineSeries));
 /* *
