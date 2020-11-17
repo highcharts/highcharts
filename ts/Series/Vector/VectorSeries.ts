@@ -18,10 +18,8 @@
  *
  * */
 
-import type ScatterPoint from '../Scatter/ScatterPoint';
-import type ScatterPointOptions from '../Scatter/ScatterPointOptions';
-import type ScatterSeriesOptions from '../Scatter/ScatterSeriesOptions';
-import type { SeriesStatesOptions } from '../../Core/Series/SeriesOptions';
+import type VectorPoint from './VectorPoint';
+import type VectorSeriesOptions from './VectorSeriesOptions';
 import type SVGAttributes from '../../Core/Renderer/SVG/SVGAttributes';
 import type SVGPath from '../../Core/Renderer/SVG/SVGPath';
 import A from '../../Core/Animation/AnimationUtilities.js';
@@ -41,31 +39,6 @@ const {
     merge,
     pick
 } = U;
-
-/**
- * Internal types
- * @private
- */
-declare global {
-    namespace Highcharts {
-        class VectorPoint extends ScatterPoint {
-            public direction: VectorPointOptions['direction'];
-            public length: VectorPointOptions['length'];
-            public options: VectorPointOptions;
-            public series: VectorSeries;
-        }
-        interface VectorPointOptions extends ScatterPointOptions {
-            direction?: number;
-            length?: number;
-        }
-        interface VectorSeriesOptions extends ScatterSeriesOptions {
-            rotationOrigin?: VectorRotationOriginValue;
-            states?: SeriesStatesOptions<VectorSeries>;
-            vectorLength?: number;
-        }
-        type VectorRotationOriginValue = ('start'|'center'|'end');
-    }
-}
 
 /* *
  *
@@ -107,7 +80,7 @@ class VectorSeries extends ScatterSeries {
      * @requires     modules/vector
      * @optionparent plotOptions.vector
      */
-    public static defaultOptions: Highcharts.VectorSeriesOptions = merge(ScatterSeries.defaultOptions, {
+    public static defaultOptions: VectorSeriesOptions = merge(ScatterSeries.defaultOptions, {
 
         /**
          * The line width for each vector arrow.
@@ -158,7 +131,7 @@ class VectorSeries extends ScatterSeries {
          */
         vectorLength: 20
 
-    } as Highcharts.VectorSeriesOptions);
+    } as VectorSeriesOptions);
 
     /* *
      *
@@ -166,15 +139,15 @@ class VectorSeries extends ScatterSeries {
      *
      * */
 
-    public data: Array<Highcharts.VectorPoint> = void 0 as any;
+    public data: Array<VectorPoint> = void 0 as any;
 
     public lengthData?: Array<number>;
 
     public lengthMax: number = void 0 as any;
 
-    public options: Highcharts.VectorSeriesOptions = void 0 as any;
+    public options: VectorSeriesOptions = void 0 as any;
 
-    public points: Array<Highcharts.VectorPoint> = void 0 as any;
+    public points: Array<VectorPoint> = void 0 as any;
 
     /* *
      *
@@ -205,7 +178,7 @@ class VectorSeries extends ScatterSeries {
      * centerpoint.
      * @private
      */
-    public arrow(point: Highcharts.VectorPoint): SVGPath {
+    public arrow(point: VectorPoint): SVGPath {
         var path: SVGPath,
             fraction: number = (point.length as any) / this.lengthMax,
             u: number = fraction * (this.options.vectorLength as any) / 20,
@@ -230,6 +203,32 @@ class VectorSeries extends ScatterSeries {
 
         return path;
     }
+
+    /*
+    drawLegendSymbol: function (legend, item) {
+        var options = legend.options,
+            symbolHeight = legend.symbolHeight,
+            square = options.squareSymbol,
+            symbolWidth = square ? symbolHeight : legend.symbolWidth,
+            path = this.arrow.call({
+                lengthMax: 1,
+                options: {
+                    vectorLength: symbolWidth
+                }
+            }, {
+                length: 1
+            });
+        item.legendLine = this.chart.renderer.path(path)
+        .addClass('highcharts-point')
+        .attr({
+            zIndex: 3,
+            translateY: symbolWidth / 2,
+            rotation: 270,
+            'stroke-width': 1,
+            'stroke': 'black'
+        }).add(item.legendGroup);
+    },
+    */
 
     /**
      * @private
@@ -286,7 +285,7 @@ class VectorSeries extends ScatterSeries {
      * @private
      */
     public pointAttribs(
-        point: Highcharts.VectorPoint,
+        point: VectorPoint,
         state?: string
     ): SVGAttributes {
         var options = this.options,
@@ -328,7 +327,7 @@ class VectorSeries extends ScatterSeries {
 interface VectorSeries {
     parallelArrays: Array<string>;
     pointArrayMap: Array<string>;
-    pointClass: typeof Highcharts.VectorPoint;
+    pointClass: typeof VectorPoint;
 }
 extend(VectorSeries.prototype, {
 
