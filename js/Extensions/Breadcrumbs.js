@@ -246,18 +246,46 @@ var Breadcrumbs = /** @class */ (function () {
      * @function Highcharts.Breadcrumbs#createList
      * @param {Highcharts.Breadcrumbs} this
      *        Breadcrumbs class.
+     * @param {Highcharts.Breadcrumbs} e
+     *        Event in case of the treemap series.
      */
-    Breadcrumbs.prototype.createList = function () {
+    Breadcrumbs.prototype.createList = function (e) {
         var breadcrumbsList = this.breadcrumbsList || [];
         var chart = this.chart, drilldownLevels = chart.drilldownLevels, 
         // First created drilldown level has number 0,
         // that is why the initial series is treated as -1 level.
-        initialSeriesLevel = -1, 
+        initialSeriesLevel = -1;
         // If the list doesn't exist treat the initial series
         // as the current level- first iteration.
-        currentLevelNumber = breadcrumbsList.length ?
+        var currentLevelNumber = breadcrumbsList.length ?
             breadcrumbsList[breadcrumbsList.length - 1][0] : initialSeriesLevel;
-        if (drilldownLevels && drilldownLevels.length) {
+        if (chart.series[0].is('treemap')) {
+            if (e) {
+                if (!breadcrumbsList[0]) {
+                    // As a first element add the series.
+                    breadcrumbsList.push([initialSeriesLevel, chart.series[0]]);
+                }
+                if (e.trigger === 'click') {
+                    // When a user clicks add element one by one.
+                    breadcrumbsList.push([currentLevelNumber + 1, chart.get(e.newRootId)]);
+                }
+                else {
+                    var node = e.target.nodeMap[e.newRootId];
+                    var extraNodes = [];
+                    // When the root node is set and has parent,
+                    // recreate the path from the node tree.
+                    while (node.parent || node.parent === '') {
+                        extraNodes.push(node);
+                        node = e.target.nodeMap[node.parent];
+                    }
+                    extraNodes.reverse().forEach(function (node) {
+                        currentLevelNumber++;
+                        breadcrumbsList.push([currentLevelNumber, node]);
+                    });
+                }
+            }
+        }
+        else if (drilldownLevels && drilldownLevels.length) {
             // Add the initial series as the first element.
             breadcrumbsList = !breadcrumbsList.length ?
                 [[initialSeriesLevel, drilldownLevels[0].seriesOptions]] : breadcrumbsList;
@@ -323,7 +351,8 @@ var Breadcrumbs = /** @class */ (function () {
      *        Breadcrumbs class.
      */
     Breadcrumbs.prototype.draw = function () {
-        var breadcrumbs = this, chart = breadcrumbs.chart, breadcrumbsList = breadcrumbs.breadcrumbsList, breadcrumbsOptions = chart.options.drilldown && chart.options.drilldown.breadcrumbs, lastBreadcrumbs = breadcrumbsList[breadcrumbsList.length - 2][2], buttonPadding = breadcrumbsOptions && breadcrumbsOptions.buttonPadding;
+        var breadcrumbs = this, chart = breadcrumbs.chart, breadcrumbsList = breadcrumbs.breadcrumbsList, breadcrumbsOptions = chart.options.drilldown && chart.options.drilldown.breadcrumbs, lastBreadcrumbs = breadcrumbsList[breadcrumbsList.length - 2] &&
+            breadcrumbsList[breadcrumbsList.length - 2][2], buttonPadding = breadcrumbsOptions && breadcrumbsOptions.buttonPadding;
         // A main group for the breadcrumbs.
         if (!this.breadcrumbsGroup && breadcrumbsOptions) {
             this.breadcrumbsGroup = chart.renderer
@@ -376,7 +405,12 @@ var Breadcrumbs = /** @class */ (function () {
         var chart = this.chart, breadcrumbsList = this.breadcrumbsList;
         if (breadcrumbsList && breadcrumbsList.length) {
             for (var i = 0; i < breadcrumbsList[breadcrumbsList.length - 1][0] - drillAmount; i++) {
-                chart.drillUp();
+                if (chart.series[0].is('treemap')) {
+                    chart.series[0].drillUp();
+                }
+                else {
+                    chart.drillUp();
+                }
             }
         }
         this.destroy(drillAmount);
@@ -417,7 +451,7 @@ var Breadcrumbs = /** @class */ (function () {
     */
     Breadcrumbs.prototype.renderButton = function (breadcrumb, posX, posY) {
         var breadcrumbs = this, chart = this.chart, breadcrumbsList = breadcrumbs.breadcrumbsList, breadcrumbsOptions = chart.options.drilldown && chart.options.drilldown.breadcrumbs, lang = chart.options.lang;
-        if (breadcrumbsOptions) {
+        if (breadcrumbsOptions && breadcrumb) {
             var button_1 = chart.renderer.button(breadcrumbsOptions.formatter ? breadcrumbsOptions.formatter(breadcrumbs) : void 0 ||
                 format(breadcrumbsOptions.format, { value: breadcrumb[1].name || (lang && lang.mainBreadCrumb) }, chart), posX, posY, function () {
                 if (breadcrumbsOptions.events && breadcrumbsOptions.events.click) {
@@ -518,6 +552,20 @@ if (!H.Breadcrumbs) {
                 chart.drilldown.breadcrumbs = new Breadcrumbs(chart, chart.options);
             }
             chart.drilldown.breadcrumbs.redraw();
+        }
+    });
+    addEvent(H.Series, 'setRootNode', function (e) {
+        var _a, _b;
+        var chart = this.chart, drilldown = chart.drilldown;
+        if (chart.drilldown) {
+            if (!drilldown.breadcrumbs) {
+                chart.drilldown.breadcrumbs = new Breadcrumbs(chart, chart.options);
+            }
+            // Create a list using the event after drilldown.
+            if (e.trigger === 'click' || !e.trigger) {
+                (_a = chart.drilldown.breadcrumbs) === null || _a === void 0 ? void 0 : _a.createList(e);
+                (_b = chart.drilldown.breadcrumbs) === null || _b === void 0 ? void 0 : _b.draw();
+            }
         }
     });
 }
