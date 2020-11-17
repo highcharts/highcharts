@@ -18,23 +18,23 @@
  *
  * */
 
-import type ScatterPoint from './Scatter/ScatterPoint';
-import type ScatterPointOptions from './Scatter/ScatterPointOptions';
-import type ScatterSeriesOptions from './Scatter/ScatterSeriesOptions';
-import type { SeriesStatesOptions } from '../Core/Series/SeriesOptions';
-import type SVGAttributes from '../Core/Renderer/SVG/SVGAttributes';
-import type SVGPath from '../Core/Renderer/SVG/SVGPath';
-import A from '../Core/Animation/AnimationUtilities.js';
+import type ScatterPoint from '../Scatter/ScatterPoint';
+import type ScatterPointOptions from '../Scatter/ScatterPointOptions';
+import type ScatterSeriesOptions from '../Scatter/ScatterSeriesOptions';
+import type { SeriesStatesOptions } from '../../Core/Series/SeriesOptions';
+import type SVGAttributes from '../../Core/Renderer/SVG/SVGAttributes';
+import type SVGPath from '../../Core/Renderer/SVG/SVGPath';
+import A from '../../Core/Animation/AnimationUtilities.js';
 const { animObject } = A;
-import BaseSeries from '../Core/Series/Series.js';
+import BaseSeries from '../../Core/Series/Series.js';
 const {
     seriesTypes: {
+        line: LineSeries,
         scatter: ScatterSeries
     }
 } = BaseSeries;
-import H from '../Core/Globals.js';
-import LineSeries from './Line/LineSeries.js';
-import U from '../Core/Utilities.js';
+import H from '../../Core/Globals.js';
+import U from '../../Core/Utilities.js';
 const {
     arrayMax,
     extend,
@@ -213,7 +213,7 @@ class VectorSeries extends ScatterSeries {
                 start: 10 * u,
                 center: 0,
                 end: -10 * u
-            } as Highcharts.Dictionary<number>)[
+            } as Record<string, number>)[
                 this.options.rotationOrigin as any
             ] || 0;
 
@@ -363,7 +363,7 @@ extend(VectorSeries.prototype, {
  *
  * */
 
-declare module '../Core/Series/SeriesType' {
+declare module '../../Core/Series/SeriesType' {
     interface SeriesTypeRegistry {
         vector: typeof VectorSeries;
     }
