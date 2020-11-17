@@ -110,6 +110,31 @@ var VectorSeries = /** @class */ (function (_super) {
         ];
         return path;
     };
+    /*
+    drawLegendSymbol: function (legend, item) {
+        var options = legend.options,
+            symbolHeight = legend.symbolHeight,
+            square = options.squareSymbol,
+            symbolWidth = square ? symbolHeight : legend.symbolWidth,
+            path = this.arrow.call({
+                lengthMax: 1,
+                options: {
+                    vectorLength: symbolWidth
+                }
+            }, {
+                length: 1
+            });
+        item.legendLine = this.chart.renderer.path(path)
+        .addClass('highcharts-point')
+        .attr({
+            zIndex: 3,
+            translateY: symbolWidth / 2,
+            rotation: 270,
+            'stroke-width': 1,
+            'stroke': 'black'
+        }).add(item.legendGroup);
+    },
+    */
     /**
      * @private
      */
