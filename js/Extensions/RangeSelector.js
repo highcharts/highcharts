@@ -1288,8 +1288,8 @@ var RangeSelector = /** @class */ (function () {
                     unionExtremes.dataMax &&
                     format) {
                     minInput.min = time.dateFormat(format, unionExtremes.dataMin);
-                    minInput.max = time.dateFormat(format, Math.min(unionExtremes.dataMax, maxInput.value));
-                    maxInput.min = time.dateFormat(format, Math.max(unionExtremes.dataMin, minInput.value));
+                    minInput.max = time.dateFormat(format, Math.min(unionExtremes.dataMax, this.defaultInputDateParser(maxInput.value, time.useUTC, time)));
+                    maxInput.min = time.dateFormat(format, Math.max(unionExtremes.dataMin, this.defaultInputDateParser(minInput.value, time.useUTC, time)));
                     maxInput.max = time.dateFormat(format, unionExtremes.dataMax);
                 }
             }

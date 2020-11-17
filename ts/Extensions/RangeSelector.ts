@@ -1865,12 +1865,12 @@ class RangeSelector {
                     minInput.min = time.dateFormat(format, unionExtremes.dataMin);
                     minInput.max = time.dateFormat(
                         format,
-                        Math.min(unionExtremes.dataMax, maxInput.value)
+                        Math.min(unionExtremes.dataMax, this.defaultInputDateParser(maxInput.value, time.useUTC, time))
                     );
 
                     maxInput.min = time.dateFormat(
                         format,
-                        Math.max(unionExtremes.dataMin, minInput.value)
+                        Math.max(unionExtremes.dataMin, this.defaultInputDateParser(minInput.value, time.useUTC, time))
                     );
                     maxInput.max = time.dateFormat(format, unionExtremes.dataMax);
                 }
