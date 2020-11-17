@@ -11,54 +11,44 @@
 'use strict';
 
 /* *
- *
+
  *  Imports
  *
  * */
 
-import type AreaRangePoint from './AreaRange/AreaRangePoint';
-import type AreaRangePointOptions from './AreaRange/AreaRangePointOptions';
-import type AreaRangeSeriesOptions from './AreaRange/AreaRangeSeriesOptions';
-import type ColorString from '../Core/Color/ColorString';
-import type ColorType from '../Core/Color/ColorType';
-import type ColumnMetricsObject from './Column/ColumnMetricsObject';
-import type { SeriesStatesOptions } from '../Core/Series/SeriesOptions';
-import type { StatesOptionsKey } from '../Core/Series/StatesOptions';
-import type SVGAttributes from '../Core/Renderer/SVG/SVGAttributes';
-import type SVGPath from '../Core/Renderer/SVG/SVGPath';
-import AreaRangeSeries from './AreaRange/AreaRangeSeries.js';
-import BaseSeries from '../Core/Series/Series.js';
+import type DumbbellSeriesOptions from './DumbbellSeriesOptions';
+import type ColorString from '../../Core/Color/ColorString';
+import type ColorType from '../../Core/Color/ColorType';
+import type ColumnMetricsObject from '../Column/ColumnMetricsObject';
+import type SVGAttributes from '../../Core/Renderer/SVG/SVGAttributes';
+
+import DumbbellPoint from './DumbbellPoint.js';
+import ColumnSeries from '../Column/ColumnSeries.js';
+const { prototype: colProto } = ColumnSeries;
+import LineSeries from '../Line/LineSeries.js';
+const { prototype: seriesProto } = LineSeries;
+import BaseSeries from '../../Core/Series/Series.js';
 const {
     seriesTypes: {
-        arearange: {
-            prototype: areaRangeProto
-        },
+        arearange: AreaRangeSeries,
         columnrange: {
             prototype: columnRangeProto
         }
     }
 } = BaseSeries;
-import ColumnSeries from './Column/ColumnSeries.js';
-const { prototype: colProto } = ColumnSeries;
-import LineSeries from './Line/LineSeries.js';
-const { prototype: seriesProto } = LineSeries;
-import palette from '../Core/Palette.js';
-import SVGRenderer from '../Core/Renderer/SVG/SVGRenderer.js';
+const { prototype: areaRangeProto } = AreaRangeSeries;
+import SVGRenderer from '../../Core/Renderer/SVG/SVGRenderer.js';
 
-import H from '../Core/Globals.js';
-const { noop } = H;
-import U from '../Core/Utilities.js';
+import H from '../../Core/Globals.js';
+const { noop, TrackerMixin } = H;
+import U from '../../Core/Utilities.js';
 const {
     extend,
     merge,
     pick
 } = U;
 
-import './ColumnRangeSeries.js';
-import '../Core/Interaction.js';
-
-var areaRangePointProto = areaRangeProto.pointClass.prototype,
-    TrackerMixin = H.TrackerMixin; // Interaction
+import '../../Core/Interaction.js';
 
 /* *
  *
@@ -66,74 +56,51 @@ var areaRangePointProto = areaRangeProto.pointClass.prototype,
  *
  * */
 
-declare module '../Core/Series/SeriesOptions' {
+declare module '../../Core/Series/SeriesOptions' {
     interface SeriesStateHoverOptions {
         connectorWidthPlus?: number;
     }
 }
 
 /**
- * Internal types
+ * The dumbbell series type
+ *
  * @private
+ * @class
+ * @name Highcharts.seriesTypes.dumbbell
+ *
+ * @augments Highcharts.Series
  */
-declare global {
-    namespace Highcharts {
-        interface DumbbellPointOptions extends AreaRangePointOptions {
-            connectorColor?: ColorType;
-            connectorWidth?: number;
-            dashStyle?: string;
-            lowColor?: ColorType;
-        }
-        interface DumbbellSeriesOptions extends AreaRangeSeriesOptions {
-            states?: SeriesStatesOptions<DumbbellSeries>;
-            connectorColor?: ColorString;
-            connectorWidth?: number;
-            groupPadding?: number;
-            pointPadding?: number;
-            lowColor?: ColorType;
-        }
-        class DumbbellPoint extends AreaRangePoint {
-            public series: DumbbellSeries;
-            public options: DumbbellPointOptions;
-            public connector: SVGElement;
-            public pointWidth: number;
-            public pointSetState: AreaRangePoint['setState'];
-        }
-        class DumbbellSeries extends AreaRangeSeries {
-            public lowColor?: ColorType;
-            public data: Array<DumbbellPoint>;
-            public options: DumbbellSeriesOptions;
-            public pointClass: typeof DumbbellPoint;
-            public points: Array<DumbbellPoint>;
-            public trackerGroups: Array<string>;
-            public crispCol: ColumnSeries['crispCol'];
-            public translatePoint: typeof areaRangeProto['translate'];
-            public setShapeArgs: ColumnRangeSeries['translate'];
-            public seriesDrawPoints: typeof areaRangeProto['drawPoints'];
-            public drawTracker: TrackerMixin['drawTrackerPoint'];
-            public drawGraph: any;
-            public columnMetrics: ColumnMetricsObject;
-            public crispConnector(
-                points: SVGPath,
-                width: number
-            ): SVGPath;
-            public getConnectorAttribs(point: DumbbellPoint): SVGAttributes;
-            public drawConnector(point: DumbbellPoint): void;
-            public getColumnMetrics(): ColumnMetricsObject;
-            public translate(): void;
-            public drawPoints(): void;
-            public markerAttribs(): SVGAttributes;
-            public pointAttribs(
-                point: DumbbellPoint,
-                state?: StatesOptionsKey
-            ): SVGAttributes;
-        }
-    }
-    type DumbbellPointClass = typeof DumbbellPoint
-}
 class DumbbellSeries extends AreaRangeSeries {
-    public static defaultOptions: Highcharts.DumbbellSeriesOptions = merge(
-        AreaRangeSeries.defaultOptions, {
+
+    /* *
+     *
+     * Static properties
+     *
+     * */
+
+    /**
+     * The dumbbell series is a cartesian series with higher and lower values
+     * for each point along an X axis, connected with a line between the
+     * values.
+     *
+     * Requires `highcharts-more.js` and `modules/dumbbell.js`.
+     *
+     * @sample {highcharts} highcharts/demo/dumbbell/
+     *         Dumbbell chart
+     * @sample {highcharts} highcharts/series-dumbbell/styled-mode-dumbbell/
+     *         Styled mode
+     *
+     * @extends      plotOptions.arearange
+     * @product      highcharts highstock
+     * @excluding    fillColor, fillOpacity, lineWidth, stack, stacking,
+     *               stickyTracking, trackByArea, boostThreshold, boostBlending
+     * @since 8.0.0
+     * @optionparent plotOptions.dumbbell
+     */
+    public static defaultOptions: DumbbellSeriesOptions = merge(
+        AreaRangeSeries.defaultOptions,
+        {
             /** @ignore-option */
             trackByArea: false,
             /** @ignore-option */
@@ -186,11 +153,29 @@ class DumbbellSeries extends AreaRangeSeries {
                     halo: false
                 }
             }
-        } as Highcharts.DumbbellSeriesOptions);
+        } as DumbbellSeriesOptions);
+
+    /* *
+     *
+     * Properties
+     *
+     * */
 
     public data: Array<DumbbellPoint> = void 0 as any;
-    public options: Highcharts.DumbbellSeriesOptions = void 0 as any;
+    public options: DumbbellSeriesOptions = void 0 as any;
     public points: Array<DumbbellPoint> = void 0 as any;
+    public trackerGroups: Array<string> = ['group', 'markerGroup', 'dataLabelsGroup'];
+    public drawTracker = TrackerMixin.drawTrackerPoint;
+    public drawGraph: typeof areaRangeProto.drawGraph = noop;
+    public columnMetrics: ColumnMetricsObject = void 0 as any;
+    public lowColor?: ColorType;
+
+
+    /**
+     *
+     *  Functions
+     *
+     */
 
     /**
      * Get connector line path and styles that connects dumbbell point's low and
@@ -345,7 +330,7 @@ class DumbbellSeries extends AreaRangeSeries {
      * @return {Highcharts.ColumnMetricsObject} metrics shapeArgs
      *
      */
-    getColumnMetrics(): ColumnMetricsObject {
+    public getColumnMetrics(): ColumnMetricsObject {
         var metrics = colProto.getColumnMetrics.apply(this, arguments as any);
 
         metrics.offset += metrics.width / 2;
@@ -365,7 +350,7 @@ class DumbbellSeries extends AreaRangeSeries {
      *
      * @return {void}
      */
-    translate(): void {
+    public translate(): void {
         // Calculate shapeargs
         this.setShapeArgs.apply(this);
 
@@ -396,7 +381,7 @@ class DumbbellSeries extends AreaRangeSeries {
      *
      * @return {void}
      */
-    drawPoints(): void {
+    public drawPoints(): void {
         var series = this,
             chart = series.chart,
             pointLength = series.points.length,
@@ -456,7 +441,7 @@ class DumbbellSeries extends AreaRangeSeries {
      *         A hash containing those attributes that are not settable from
      *         CSS.
      */
-    markerAttribs(): SVGAttributes {
+    public markerAttribs(): SVGAttributes {
         var ret = areaRangeProto.markerAttribs.apply(this, arguments as any);
 
         ret.x = Math.floor(ret.x);
@@ -489,151 +474,55 @@ class DumbbellSeries extends AreaRangeSeries {
 
         return pointAttribs;
     }
-    public trackerGroups = ['group', 'markerGroup', 'dataLabelsGroup']
-    public drawTracker = TrackerMixin.drawTrackerPoint;
-
-    public drawGraph: typeof areaRangeProto.drawGraph = noop;
-    public columnMetrics: ColumnMetricsObject = void 0 as any;
-    public lowColor?: ColorType;
 }
 
+/* *
+ *
+ *  Prototype properties
+ *
+ * */
 
-interface DumbbellSeries extends Highcharts.AreaRangeSeries {
+interface DumbbellSeries {
     pointClass: typeof DumbbellPoint;
+    crispCol: typeof colProto.crispCol;
     translatePoint: typeof AreaRangeSeries.prototype['translate'];
     setShapeArgs: typeof columnRangeProto['translate'];
     seriesDrawPoints: typeof AreaRangeSeries.prototype['drawPoints'];
 }
 extend(DumbbellSeries.prototype, {
+    pointClass: DumbbellPoint,
     crispCol: colProto.crispCol,
     translatePoint: areaRangeProto.translate,
     setShapeArgs: columnRangeProto.translate,
     seriesDrawPoints: areaRangeProto.drawPoints
 });
 
-class DumbbellPoint extends AreaRangeSeries.prototype.pointClass {
-    public series: DumbbellSeries = void 0 as any;
-    public options: Highcharts.DumbbellPointOptions = void 0 as any;
-    public connector: Highcharts.SVGElement = void 0 as any;
-    public pointWidth: number = void 0 as any;
-    public pointSetState: typeof areaRangeProto.pointClass.prototype.setState = noop;
-
-    /**
-     * Set the point's state extended by have influence on the connector
-     * (between low and high value).
-     *
-     * @private
-     * @param {Highcharts.Point} this The point to inspect.
-     *
-     * @return {void}
-     */
-    setState(): void {
-        var point = this,
-            series = point.series,
-            chart = series.chart,
-            seriesLowColor = series.options.lowColor,
-            seriesMarker = series.options.marker,
-            pointOptions = point.options,
-            pointLowColor = pointOptions.lowColor,
-            zoneColor = point.zone && point.zone.color,
-            lowerGraphicColor = pick(
-                pointLowColor,
-                seriesLowColor,
-                pointOptions.color,
-                zoneColor,
-                point.color,
-                series.color
-            ),
-            verb = 'attr',
-            upperGraphicColor,
-            origProps;
-
-        this.pointSetState.apply(this, arguments);
-
-        if (!point.state) {
-            verb = 'animate';
-            if (point.lowerGraphic && !chart.styledMode) {
-                point.lowerGraphic.attr({
-                    fill: lowerGraphicColor
-                });
-                if (point.upperGraphic) {
-                    origProps = {
-                        y: point.y,
-                        zone: point.zone
-                    };
-                    point.y = point.high;
-                    point.zone = point.zone ? point.getZone() : void 0;
-                    upperGraphicColor = pick(
-                        point.marker ? point.marker.fillColor : void 0,
-                        seriesMarker ? seriesMarker.fillColor : void 0,
-                        pointOptions.color,
-                        point.zone ? point.zone.color : void 0,
-                        point.color
-                    );
-                    point.upperGraphic.attr({
-                        fill: upperGraphicColor
-                    });
-                    extend(point, origProps);
-                }
-            }
-        }
-
-        point.connector[verb](series.getConnectorAttribs(point));
-    }
-}
-
-DumbbellSeries.prototype.pointClass = DumbbellPoint;
-
-const { isValid, destroyElements } = areaRangeProto.pointClass.prototype;
-interface DumbbellPoint extends AreaRangePoint {
-    destroyElements: typeof destroyElements;
-    isValid: typeof isValid;
-}
-
-extend(DumbbellPoint.prototype, {
-    // seriesTypes doesn't inherit from arearange point proto so put below
-    // methods rigidly.
-    destroyElements,
-    isValid
-});
-
-/**
- * @private
- */
-declare module '../Core/Series/SeriesType' {
+/* *
+ *
+ *  Registry
+ *
+ * */
+declare module '../../Core/Series/SeriesType' {
     interface SeriesTypeRegistry {
         dumbbell: typeof DumbbellSeries;
     }
 }
 
+BaseSeries.registerSeriesType('dumbbell', DumbbellSeries);
+
 /* *
  *
- *  Class
+ *  Default export
  *
  * */
 
-/**
- * The dumbbell series is a cartesian series with higher and lower values for
- * each point along an X axis, connected with a line between the values.
- * Requires `highcharts-more.js` and `modules/dumbbell.js`.
- *
- * @sample {highcharts} highcharts/demo/dumbbell/
- *         Dumbbell chart
- * @sample {highcharts} highcharts/series-dumbbell/styled-mode-dumbbell/
- *         Styled mode
- *
- * @extends      plotOptions.arearange
- * @product      highcharts highstock
- * @excluding    fillColor, fillOpacity, lineWidth, stack, stacking,
- *               stickyTracking, trackByArea, boostThreshold, boostBlending
- * @since 8.0.0
- * @optionparent plotOptions.dumbbell
- */
-
-BaseSeries.registerSeriesType('dumbbell', DumbbellSeries);
-
 export default DumbbellSeries;
 
+/* *
+ *
+ *  API options
+ *
+ * */
 
 /**
  * The `dumbbell` series. If the [type](#series.dumbbell.type) option is

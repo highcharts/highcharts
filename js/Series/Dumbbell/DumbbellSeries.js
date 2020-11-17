@@ -21,25 +21,43 @@ var __extends = (this && this.__extends) || (function () {
         d.prototype = b === null ? Object.create(b) : (__.prototype = b.prototype, new __());
     };
 })();
-import AreaRangeSeries from './AreaRange/AreaRangeSeries.js';
-import BaseSeries from '../Core/Series/Series.js';
-var _a = BaseSeries.seriesTypes, areaRangeProto = _a.arearange.prototype, columnRangeProto = _a.columnrange.prototype;
-import ColumnSeries from './Column/ColumnSeries.js';
+import DumbbellPoint from './DumbbellPoint.js';
+import ColumnSeries from '../Column/ColumnSeries.js';
 var colProto = ColumnSeries.prototype;
-import LineSeries from './Line/LineSeries.js';
+import LineSeries from '../Line/LineSeries.js';
 var seriesProto = LineSeries.prototype;
-import SVGRenderer from '../Core/Renderer/SVG/SVGRenderer.js';
-import H from '../Core/Globals.js';
-var noop = H.noop;
-import U from '../Core/Utilities.js';
+import BaseSeries from '../../Core/Series/Series.js';
+var _a = BaseSeries.seriesTypes, AreaRangeSeries = _a.arearange, columnRangeProto = _a.columnrange.prototype;
+var areaRangeProto = AreaRangeSeries.prototype;
+import SVGRenderer from '../../Core/Renderer/SVG/SVGRenderer.js';
+import H from '../../Core/Globals.js';
+var noop = H.noop, TrackerMixin = H.TrackerMixin;
+import U from '../../Core/Utilities.js';
 var extend = U.extend, merge = U.merge, pick = U.pick;
-import './ColumnRangeSeries.js';
-import '../Core/Interaction.js';
-var areaRangePointProto = areaRangeProto.pointClass.prototype, TrackerMixin = H.TrackerMixin; // Interaction
+import '../../Core/Interaction.js';
+/**
+ * The dumbbell series type
+ *
+ * @private
+ * @class
+ * @name Highcharts.seriesTypes.dumbbell
+ *
+ * @augments Highcharts.Series
+ */
 var DumbbellSeries = /** @class */ (function (_super) {
     __extends(DumbbellSeries, _super);
     function DumbbellSeries() {
+        /* *
+         *
+         * Static properties
+         *
+         * */
         var _this = _super !== null && _super.apply(this, arguments) || this;
+        /* *
+         *
+         * Properties
+         *
+         * */
         _this.data = void 0;
         _this.options = void 0;
         _this.points = void 0;
@@ -49,6 +67,11 @@ var DumbbellSeries = /** @class */ (function (_super) {
         _this.columnMetrics = void 0;
         return _this;
     }
+    /**
+     *
+     *  Functions
+     *
+     */
     /**
      * Get connector line path and styles that connects dumbbell point's low and
      * high values.
@@ -253,6 +276,25 @@ var DumbbellSeries = /** @class */ (function (_super) {
         }
         return pointAttribs;
     };
+    /**
+     * The dumbbell series is a cartesian series with higher and lower values
+     * for each point along an X axis, connected with a line between the
+     * values.
+     *
+     * Requires `highcharts-more.js` and `modules/dumbbell.js`.
+     *
+     * @sample {highcharts} highcharts/demo/dumbbell/
+     *         Dumbbell chart
+     * @sample {highcharts} highcharts/series-dumbbell/styled-mode-dumbbell/
+     *         Styled mode
+     *
+     * @extends      plotOptions.arearange
+     * @product      highcharts highstock
+     * @excluding    fillColor, fillOpacity, lineWidth, stack, stacking,
+     *               stickyTracking, trackByArea, boostThreshold, boostBlending
+     * @since 8.0.0
+     * @optionparent plotOptions.dumbbell
+     */
     DumbbellSeries.defaultOptions = merge(AreaRangeSeries.defaultOptions, {
         /** @ignore-option */
         trackByArea: false,
@@ -310,91 +352,24 @@ var DumbbellSeries = /** @class */ (function (_super) {
     return DumbbellSeries;
 }(AreaRangeSeries));
 extend(DumbbellSeries.prototype, {
+    pointClass: DumbbellPoint,
     crispCol: colProto.crispCol,
     translatePoint: areaRangeProto.translate,
     setShapeArgs: columnRangeProto.translate,
     seriesDrawPoints: areaRangeProto.drawPoints
 });
-var DumbbellPoint = /** @class */ (function (_super) {
-    __extends(DumbbellPoint, _super);
-    function DumbbellPoint() {
-        var _this = _super !== null && _super.apply(this, arguments) || this;
-        _this.series = void 0;
-        _this.options = void 0;
-        _this.connector = void 0;
-        _this.pointWidth = void 0;
-        _this.pointSetState = noop;
-        return _this;
-    }
-    /**
-     * Set the point's state extended by have influence on the connector
-     * (between low and high value).
-     *
-     * @private
-     * @param {Highcharts.Point} this The point to inspect.
-     *
-     * @return {void}
-     */
-    DumbbellPoint.prototype.setState = function () {
-        var point = this, series = point.series, chart = series.chart, seriesLowColor = series.options.lowColor, seriesMarker = series.options.marker, pointOptions = point.options, pointLowColor = pointOptions.lowColor, zoneColor = point.zone && point.zone.color, lowerGraphicColor = pick(pointLowColor, seriesLowColor, pointOptions.color, zoneColor, point.color, series.color), verb = 'attr', upperGraphicColor, origProps;
-        this.pointSetState.apply(this, arguments);
-        if (!point.state) {
-            verb = 'animate';
-            if (point.lowerGraphic && !chart.styledMode) {
-                point.lowerGraphic.attr({
-                    fill: lowerGraphicColor
-                });
-                if (point.upperGraphic) {
-                    origProps = {
-                        y: point.y,
-                        zone: point.zone
-                    };
-                    point.y = point.high;
-                    point.zone = point.zone ? point.getZone() : void 0;
-                    upperGraphicColor = pick(point.marker ? point.marker.fillColor : void 0, seriesMarker ? seriesMarker.fillColor : void 0, pointOptions.color, point.zone ? point.zone.color : void 0, point.color);
-                    point.upperGraphic.attr({
-                        fill: upperGraphicColor
-                    });
-                    extend(point, origProps);
-                }
-            }
-        }
-        point.connector[verb](series.getConnectorAttribs(point));
-    };
-    return DumbbellPoint;
-}(AreaRangeSeries.prototype.pointClass));
-DumbbellSeries.prototype.pointClass = DumbbellPoint;
-var _b = areaRangeProto.pointClass.prototype, isValid = _b.isValid, destroyElements = _b.destroyElements;
-extend(DumbbellPoint.prototype, {
-    // seriesTypes doesn't inherit from arearange point proto so put below
-    // methods rigidly.
-    destroyElements: destroyElements,
-    isValid: isValid
-});
+BaseSeries.registerSeriesType('dumbbell', DumbbellSeries);
 /* *
  *
- *  Class
+ *  Default export
  *
  * */
-/**
- * The dumbbell series is a cartesian series with higher and lower values for
- * each point along an X axis, connected with a line between the values.
- * Requires `highcharts-more.js` and `modules/dumbbell.js`.
- *
- * @sample {highcharts} highcharts/demo/dumbbell/
- *         Dumbbell chart
- * @sample {highcharts} highcharts/series-dumbbell/styled-mode-dumbbell/
- *         Styled mode
- *
- * @extends      plotOptions.arearange
- * @product      highcharts highstock
- * @excluding    fillColor, fillOpacity, lineWidth, stack, stacking,
- *               stickyTracking, trackByArea, boostThreshold, boostBlending
- * @since 8.0.0
- * @optionparent plotOptions.dumbbell
- */
-BaseSeries.registerSeriesType('dumbbell', DumbbellSeries);
 export default DumbbellSeries;
+/* *
+ *
+ *  API options
+ *
+ * */
 /**
  * The `dumbbell` series. If the [type](#series.dumbbell.type) option is
  * not specified, it is inherited from [chart.type](#chart.type).

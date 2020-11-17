@@ -11,7 +11,9 @@
 'use strict';
 
 import type AreaSeries from './Area/AreaSeries';
-import type DumbbellSeries from './DumbbellSeries';
+import type DumbbellSeries from './Dumbbell/DumbbellSeries';
+import type DumbbellSeriesOptions from './Dumbbell/DumbbellSeriesOptions';
+import type DumbbellPointOptions from './Dumbbell/DumbbellPointOptions';
 import type { SeriesStatesOptions } from '../Core/Series/SeriesOptions';
 import BaseSeries from '../Core/Series/Series.js';
 const { seriesTypes } = BaseSeries;
@@ -64,7 +66,7 @@ declare module '../Core/Series/SeriesType' {
 }
 
 import './Area/AreaSeries.js';
-import './DumbbellSeries.js';
+import './Dumbbell/DumbbellSeries.js';
 
 const areaProto = seriesTypes.area.prototype;
 
