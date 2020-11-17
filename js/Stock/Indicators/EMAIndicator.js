@@ -40,8 +40,68 @@ var correctFloat = U.correctFloat, extend = U.extend, isArray = U.isArray, merge
 var EMAIndicator = /** @class */ (function (_super) {
     __extends(EMAIndicator, _super);
     function EMAIndicator() {
-        return _super !== null && _super.apply(this, arguments) || this;
+        var _this = _super !== null && _super.apply(this, arguments) || this;
+        /* *
+         *
+         *  Properties
+         *
+         * */
+        _this.data = void 0;
+        _this.options = void 0;
+        _this.points = void 0;
+        return _this;
     }
+    /* *
+     *
+     *  Functions
+     *
+     * */
+    EMAIndicator.prototype.accumulatePeriodPoints = function (period, index, yVal) {
+        var sum = 0, i = 0, y = 0;
+        while (i < period) {
+            y = index < 0 ? yVal[i] : yVal[i][index];
+            sum = sum + y;
+            i++;
+        }
+        return sum;
+    };
+    EMAIndicator.prototype.calculateEma = function (xVal, yVal, i, EMApercent, calEMA, index, SMA) {
+        var x = xVal[i - 1], yValue = index < 0 ?
+            yVal[i - 1] :
+            yVal[i - 1][index], y;
+        y = typeof calEMA === 'undefined' ?
+            SMA : correctFloat((yValue * EMApercent) +
+            (calEMA * (1 - EMApercent)));
+        return [x, y];
+    };
+    EMAIndicator.prototype.getValues = function (series, params) {
+        var period = params.period, xVal = series.xData, yVal = series.yData, yValLen = yVal ? yVal.length : 0, EMApercent = 2 / (period + 1), sum = 0, EMA = [], xData = [], yData = [], index = -1, SMA = 0, calEMA, EMAPoint, i;
+        // Check period, if bigger than points length, skip
+        if (yValLen < period) {
+            return;
+        }
+        // Switch index for OHLC / Candlestick / Arearange
+        if (isArray(yVal[0])) {
+            index = params.index ? params.index : 0;
+        }
+        // Accumulate first N-points
+        sum = this.accumulatePeriodPoints(period, index, yVal);
+        // first point
+        SMA = sum / period;
+        // Calculate value one-by-one for each period in visible data
+        for (i = period; i < yValLen + 1; i++) {
+            EMAPoint = this.calculateEma(xVal, yVal, i, EMApercent, calEMA, index, SMA);
+            EMA.push(EMAPoint);
+            xData.push(EMAPoint[0]);
+            yData.push(EMAPoint[1]);
+            calEMA = EMAPoint[1];
+        }
+        return {
+            values: EMA,
+            xData: xData,
+            yData: yData
+        };
+    };
     /**
      * Exponential moving average indicator (EMA). This series requires the
      * `linkedTo` option to be set.
@@ -73,54 +133,6 @@ var EMAIndicator = /** @class */ (function (_super) {
     });
     return EMAIndicator;
 }(SMAIndicator));
-extend(EMAIndicator.prototype, {
-    accumulatePeriodPoints: function (period, index, yVal) {
-        var sum = 0, i = 0, y = 0;
-        while (i < period) {
-            y = index < 0 ? yVal[i] : yVal[i][index];
-            sum = sum + y;
-            i++;
-        }
-        return sum;
-    },
-    calculateEma: function (xVal, yVal, i, EMApercent, calEMA, index, SMA) {
-        var x = xVal[i - 1], yValue = index < 0 ?
-            yVal[i - 1] :
-            yVal[i - 1][index], y;
-        y = typeof calEMA === 'undefined' ?
-            SMA : correctFloat((yValue * EMApercent) +
-            (calEMA * (1 - EMApercent)));
-        return [x, y];
-    },
-    getValues: function (series, params) {
-        var period = params.period, xVal = series.xData, yVal = series.yData, yValLen = yVal ? yVal.length : 0, EMApercent = 2 / (period + 1), sum = 0, EMA = [], xData = [], yData = [], index = -1, SMA = 0, calEMA, EMAPoint, i;
-        // Check period, if bigger than points length, skip
-        if (yValLen < period) {
-            return;
-        }
-        // Switch index for OHLC / Candlestick / Arearange
-        if (isArray(yVal[0])) {
-            index = params.index ? params.index : 0;
-        }
-        // Accumulate first N-points
-        sum = this.accumulatePeriodPoints(period, index, yVal);
-        // first point
-        SMA = sum / period;
-        // Calculate value one-by-one for each period in visible data
-        for (i = period; i < yValLen + 1; i++) {
-            EMAPoint = this.calculateEma(xVal, yVal, i, EMApercent, calEMA, index, SMA);
-            EMA.push(EMAPoint);
-            xData.push(EMAPoint[0]);
-            yData.push(EMAPoint[1]);
-            calEMA = EMAPoint[1];
-        }
-        return {
-            values: EMA,
-            xData: xData,
-            yData: yData
-        };
-    }
-});
 BaseSeries.registerSeriesType('ema', EMAIndicator);
 /* *
  *

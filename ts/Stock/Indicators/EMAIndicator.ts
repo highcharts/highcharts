@@ -98,41 +98,25 @@ class EMAIndicator extends SMAIndicator {
         }
     } as Highcharts.EMAIndicatorOptions);
 
+    /* *
+     *
+     *  Properties
+     *
+     * */
 
-}
+    public data: Array<Highcharts.EMAIndicatorPoint> = void 0 as any;
 
-/* *
- *
- *  Prototype Properties
- *
- * */
+    public options: Highcharts.EMAIndicatorOptions = void 0 as any;
 
-interface EMAIndicator {
-    data: Array<Highcharts.EMAIndicatorPoint>;
-    options: Highcharts.EMAIndicatorOptions;
-    pointClass: typeof Highcharts.EMAIndicatorPoint;
-    points: Array<Highcharts.EMAIndicatorPoint>;
-    accumulatePeriodPoints(
-        period: number,
-        index: number,
-        yVal: Array<Array<number>>
-    ): number;
-    calculateEma(
-        xVal: (Array<number>|undefined),
-        yVal: (Array<number>|Array<Array<number>>),
-        i: number,
-        EMApercent: number,
-        calEMA: (number|undefined),
-        index: number,
-        SMA: number
-    ): [number, number];
-    getValues<TLinkedSeries extends LineSeries>(
-        series: TLinkedSeries,
-        params: Highcharts.EMAIndicatorParamsOptions
-    ): (IndicatorValuesObject<TLinkedSeries>|undefined);
-}
-extend(EMAIndicator.prototype, {
-    accumulatePeriodPoints: function (
+    public points: Array<Highcharts.EMAIndicatorPoint> = void 0 as any;
+
+    /* *
+     *
+     *  Functions
+     *
+     * */
+
+    public accumulatePeriodPoints(
         period: number,
         index: number,
         yVal: Array<Array<number>>
@@ -148,8 +132,9 @@ extend(EMAIndicator.prototype, {
         }
 
         return sum;
-    },
-    calculateEma: function (
+    }
+
+    public calculateEma(
         xVal: Array<number>,
         yVal: (Array<number>|Array<Array<number>>),
         i: number,
@@ -169,9 +154,9 @@ extend(EMAIndicator.prototype, {
             (calEMA * (1 - EMApercent)));
 
         return [x, y];
-    },
-    getValues: function<TLinkedSeries extends LineSeries> (
-        this: EMAIndicator,
+    }
+
+    public getValues<TLinkedSeries extends LineSeries>(
         series: TLinkedSeries,
         params: Highcharts.EMAIndicatorParamsOptions
     ): (IndicatorValuesObject<TLinkedSeries>|undefined) {
@@ -233,7 +218,18 @@ extend(EMAIndicator.prototype, {
             yData: yData
         } as IndicatorValuesObject<TLinkedSeries>;
     }
-});
+
+}
+
+/* *
+ *
+ *  Prototype Properties
+ *
+ * */
+
+interface EMAIndicator {
+    pointClass: typeof Highcharts.EMAIndicatorPoint;
+}
 
 /* *
  *
