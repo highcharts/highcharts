@@ -22,7 +22,7 @@ import '../../Stock/Indicators/BBIndicator.js';
 import '../../Stock/Indicators/CCIIndicator.js';
 import '../../Stock/Indicators/CMFIndicator.js';
 import '../../Stock/Indicators/DPOIndicator.js';
-import '../../Stock/Indicators/EMAIndicator.js';
+import '../../Stock/Indicators/EMA/EMAIndicator.js';
 import '../../Stock/Indicators/ChaikinIndicator.js';
 import '../../Stock/Indicators/DEMAIndicator.js';
 import '../../Stock/Indicators/TEMAIndicator.js';

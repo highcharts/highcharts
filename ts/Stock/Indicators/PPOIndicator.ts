@@ -8,7 +8,12 @@
 
 'use strict';
 
-import type EMAIndicator from './EMAIndicator';
+import type EMAIndicator from './EMA/EMAIndicator';
+import type {
+    EMAOptions,
+    EMAParamsOptions
+} from './EMA/EMAOptions';
+import type EMAPoint from './EMA/EMAPoint';
 import type IndicatorValuesObject from './IndicatorValuesObject';
 import type LineSeries from '../../Series/Line/LineSeries';
 import BaseSeries from '../../Core/Globals.js';
@@ -40,15 +45,15 @@ declare global {
             public points: Array<PPOIndicatorPoint>;
         }
 
-        interface PPOIndicatorParamsOptions extends EMAIndicatorParamsOptions {
+        interface PPOIndicatorParamsOptions extends EMAParamsOptions {
             periods?: Array<number>;
         }
 
-        class PPOIndicatorPoint extends EMAIndicatorPoint {
+        class PPOIndicatorPoint extends EMAPoint {
             public series: PPOIndicator;
         }
 
-        interface PPOIndicatorOptions extends EMAIndicatorOptions {
+        interface PPOIndicatorOptions extends EMAOptions {
             params?: PPOIndicatorParamsOptions;
         }
     }
