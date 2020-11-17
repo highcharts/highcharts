@@ -266,8 +266,7 @@ var Time = /** @class */ (function () {
          * The time object has options allowing for variable time zones, meaning
          * the axis ticks or series data needs to consider this.
          */
-        this.variableTimezone = !!(!useUTC ||
-            options.getTimezoneOffset ||
+        this.variableTimezone = useUTC && !!(options.getTimezoneOffset ||
             options.timezone);
     };
     /**
@@ -578,7 +577,7 @@ var Time = /** @class */ (function () {
             // Redefine min to the floored/rounded minimum time (#7432)
             min = minDate.getTime();
             // Handle local timezone offset
-            if (time.variableTimezone) {
+            if (time.variableTimezone || !time.useUTC) {
                 // Detect whether we need to take the DST crossover into
                 // consideration. If we're crossing over DST, the day length may
                 // be 23h or 25h and we need to compute the exact clock time for

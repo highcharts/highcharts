@@ -17,9 +17,13 @@ import type {
     HTMLDOMElement
 } from '../../Core/Renderer/DOMElementType';
 import H from '../../Core/Globals.js';
+const {
+    doc
+} = H;
 import DOMElementProvider from './DOMElementProvider.js';
 import HTMLUtilities from './HTMLUtilities.js';
 const {
+    setElAttrs,
     visuallyHideElement
 } = HTMLUtilities;
 
@@ -28,6 +32,11 @@ const {
  * Internal types.
  * @private
  */
+declare module '../../Core/Chart/ChartLike'{
+    interface ChartLike {
+        announcerContainer?: HTMLDOMElement;
+    }
+}
 declare global {
     namespace Highcharts {
         type AnnouncerType = ('assertive'|'polite');
@@ -75,16 +84,33 @@ class Announcer {
 
 
     private addAnnounceRegion(type: Highcharts.AnnouncerType): HTMLDOMElement {
-        const chartContainer = this.chart.renderTo;
+        const chartContainer = this.chart.announcerContainer || this.createAnnouncerContainer();
         const div = this.domElementProvider.createElement('div');
 
-        div.setAttribute('aria-hidden', false);
-        div.setAttribute('aria-live', type);
+        setElAttrs(div, {
+            'aria-hidden': false,
+            'aria-live': type
+        });
 
         visuallyHideElement(div);
-        chartContainer.insertBefore(div, chartContainer.firstChild);
-
+        chartContainer.appendChild(div);
         return div;
+    }
+
+
+    private createAnnouncerContainer(): HTMLDOMElement {
+        const chart = this.chart;
+        const container = doc.createElement('div');
+
+        setElAttrs(container, {
+            'aria-hidden': false,
+            style: 'position:relative',
+            'class': 'highcharts-announcer-container'
+        });
+
+        chart.renderTo.insertBefore(container, chart.renderTo.firstChild);
+        chart.announcerContainer = container;
+        return container;
     }
 }
 

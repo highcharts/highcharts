@@ -1,65 +1,68 @@
-QUnit.test('Default alignment of opposite axis titles(#4691)', function (assert) {
-    var chart = $('#container').highcharts({
-        yAxis: [{
-            lineWidth: 1,
+QUnit.test(
+    'Default alignment of opposite axis titles(#4691)',
+    function (assert) {
+        var chart = $('#container').highcharts({
+            yAxis: [{
+                lineWidth: 1,
+                title: {
+                    text: 'Primary Axis',
+                    align: 'high'
+                }
+            }, {
+                lineWidth: 1,
+                opposite: true,
+                title: {
+                    text: 'Secondary Axis',
+                    align: 'high'
+                }
+            }],
+
+            series: [{
+                data: [1, 2, 3],
+                yAxis: 0
+            }, {
+                data: [4, 2, 3],
+                yAxis: 1
+            }]
+        }).highcharts();
+
+        assert.strictEqual(
+            chart.yAxis[0].axisTitle.element.getAttribute('text-anchor'),
+            'end',
+            'Left text anchored at end'
+        );
+
+        assert.strictEqual(
+            chart.yAxis[1].axisTitle.element.getAttribute('text-anchor'),
+            'start',
+            'Right text anchored at end'
+        );
+
+        // Try low align
+        chart.yAxis[0].update({
             title: {
-                text: 'Primary Axis',
-                align: 'high'
+                align: 'low'
             }
-        }, {
-            lineWidth: 1,
-            opposite: true,
+        });
+        chart.yAxis[1].update({
             title: {
-                text: 'Secondary Axis',
-                align: 'high'
+                align: 'low'
             }
-        }],
+        });
 
-        series: [{
-            data: [1, 2, 3],
-            yAxis: 0
-        }, {
-            data: [4, 2, 3],
-            yAxis: 1
-        }]
-    }).highcharts();
+        assert.strictEqual(
+            chart.yAxis[0].axisTitle.element.getAttribute('text-anchor'),
+            'start',
+            'Left text anchored at end'
+        );
 
-    assert.strictEqual(
-        chart.yAxis[0].axisTitle.element.getAttribute('text-anchor'),
-        'end',
-        'Left text anchored at end'
-    );
-
-    assert.strictEqual(
-        chart.yAxis[1].axisTitle.element.getAttribute('text-anchor'),
-        'start',
-        'Right text anchored at end'
-    );
-
-    // Try low align
-    chart.yAxis[0].update({
-        title: {
-            align: 'low'
-        }
-    });
-    chart.yAxis[1].update({
-        title: {
-            align: 'low'
-        }
-    });
-
-    assert.strictEqual(
-        chart.yAxis[0].axisTitle.element.getAttribute('text-anchor'),
-        'start',
-        'Left text anchored at end'
-    );
-
-    assert.strictEqual(
-        chart.yAxis[1].axisTitle.element.getAttribute('text-anchor'),
-        'end',
-        'Right text anchored at end'
-    );
-});
+        assert.strictEqual(
+            chart.yAxis[1].axisTitle.element.getAttribute('text-anchor'),
+            'end',
+            'Right text anchored at end'
+        );
+    }
+);
 
 QUnit.test('textAlign', function (assert) {
     var chart = Highcharts.chart('container', {
@@ -83,7 +86,8 @@ QUnit.test('textAlign', function (assert) {
 
     function getTitleTextAlign(axis) {
         var align = { start: 'left', middle: 'center', end: 'right' };
-        // Ideally there should the renderer should have an alignGetter. Alternative syntax axis.axisTitle.attr('align');
+        // Ideally there should the renderer should have an alignGetter.
+        // Alternative syntax axis.axisTitle.attr('align');
         return align[axis.axisTitle.element.getAttribute('text-anchor')];
     }
 
@@ -241,7 +245,10 @@ QUnit.test('title.reserveSpace', function (assert) {
     Highcharts.each(axes, function (axis) {
         var axisName = axis.options.title.text,
             dir = axis.horiz ? 'y' : 'x',
-            lessThan = axis.opposite && !axis.horiz || !axis.opposite && axis.horiz;
+            lessThan = axis.opposite &&
+                !axis.horiz ||
+                !axis.opposite &&
+                axis.horiz;
 
         // Check that reserveSpace is true by default
         assert.strictEqual(
@@ -290,12 +297,14 @@ QUnit.test('Axis title multiline', function (assert) {
         },
         yAxis: [{
             title: {
-                text: 'A really long y axis title for this example. It is wrapped but shouldnt overlap axis labels'
+                text: 'A really long y axis title for this example. It ' +
+                'is wrapped but shouldnt overlap axis labels'
             },
             lineWidth: 3
         }, {
             title: {
-                text: 'A really long y axis title for this example. It is wrapped but shouldnt overlap axis labels'
+                text: 'A really long y axis title for this example. It ' +
+                'is wrapped but shouldnt overlap axis labels'
             },
             opposite: true,
             lineWidth: 3,
@@ -307,12 +316,14 @@ QUnit.test('Axis title multiline', function (assert) {
     });
 
     assert.ok(
-        chart.yAxis[0].axisTitle.element.getElementsByTagName('tspan').length > 1,
+        chart.yAxis[0].axisTitle.element.getElementsByTagName('tspan').length >
+            1,
         'Title is multiline'
     );
 
     assert.ok(
-        chart.yAxis[1].axisTitle.element.getElementsByTagName('tspan').length > 1,
+        chart.yAxis[1].axisTitle.element.getElementsByTagName('tspan').length >
+            1,
         'Title is multiline'
     );
 
@@ -337,7 +348,12 @@ QUnit.test('Axis title multiline', function (assert) {
     });
 
     assert.ok(
-        chart.yAxis[0].axisTitle.element.getElementsByTagName('tspan').length === 1,
+        chart
+            .yAxis[0]
+            .axisTitle
+            .element
+            .getElementsByTagName('tspan')
+            .length === 1,
         'Title is single line'
     );
     assert.ok(

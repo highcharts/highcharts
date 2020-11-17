@@ -14,7 +14,12 @@ import type IndicatorValuesObject from './IndicatorValuesObject';
 import type LineSeries from '../../Series/Line/LineSeries';
 import type Point from '../../Core/Series/Point';
 import type { PointMarkerOptions } from '../../Core/Series/PointOptions';
-import type SMAIndicator from './SMAIndicator';
+import type SMAIndicator from './SMA/SMAIndicator';
+import type {
+    SMAOptions,
+    SMAParamsOptions
+} from './SMA/SMAOptions';
+import type SMAPoint from './SMA/SMAPoint';
 import type SVGElement from '../../Core/Renderer/SVG/SVGElement';
 import type SVGPath from '../../Core/Renderer/SVG/SVGPath';
 import BaseSeries from '../../Core/Series/Series.js';
@@ -92,7 +97,7 @@ declare global {
         }
 
         interface IKHIndicatorOptions
-            extends SMAIndicator.Options {
+            extends SMAOptions {
             chikouLine?: Record<string, CSSObject>;
             gapSize?: number;
             kijunLine?: Record<string, CSSObject>;
@@ -106,12 +111,12 @@ declare global {
         }
 
         interface IKHIndicatorParamsOptions
-            extends SMAIndicator.ParamsOptions {
+            extends SMAParamsOptions {
             periodTenkan?: number;
             periodSenkouSpanB?: number;
         }
 
-        class IKHIndicatorPoint extends SMAIndicator.Point {
+        class IKHIndicatorPoint extends SMAPoint {
             public series: IKHIndicator;
             public tenkanSen: number;
             public kijunSen: number;

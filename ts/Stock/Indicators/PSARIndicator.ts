@@ -14,7 +14,12 @@
 
 import type IndicatorValuesObject from './IndicatorValuesObject';
 import type LineSeries from '../../Series/Line/LineSeries';
-import type SMAIndicator from './SMAIndicator';
+import type SMAIndicator from './SMA/SMAIndicator';
+import type {
+    SMAOptions,
+    SMAParamsOptions
+} from './SMA/SMAOptions';
+import type SMAPoint from './SMA/SMAPoint';
 import BaseSeries from '../../Core/Series/Series.js';
 
 /**
@@ -34,18 +39,18 @@ declare global {
             public points: Array<PSARIndicatorPoint>;
         }
 
-        interface PSARIndicatorParamsOptions extends SMAIndicator.ParamsOptions {
+        interface PSARIndicatorParamsOptions extends SMAParamsOptions {
             decimals?: number;
             increment?: number;
             initialAccelerationFactor?: number;
             maxAccelerationFactor?: number;
         }
 
-        class PSARIndicatorPoint extends SMAIndicator.Point {
+        class PSARIndicatorPoint extends SMAPoint {
             public series: PSARIndicator;
         }
 
-        interface PSARIndicatorOptions extends SMAIndicator.Options {
+        interface PSARIndicatorOptions extends SMAOptions {
             params?: PSARIndicatorParamsOptions;
         }
     }

@@ -10,7 +10,12 @@
 
 import type IndicatorValuesObject from './IndicatorValuesObject';
 import type LineSeries from '../../Series/Line/LineSeries';
-import type SMAIndicator from './SMAIndicator';
+import type SMAIndicator from './SMA/SMAIndicator';
+import type {
+    SMAOptions,
+    SMAParamsOptions
+} from './SMA/SMAOptions';
+import type SMAPoint from './SMA/SMAPoint';
 import BaseSeries from '../../Core/Series/Series.js';
 
 /**
@@ -30,15 +35,15 @@ declare global {
             public points: Array<NATRIndicatorPoint>;
         }
 
-        interface NATRIndicatorParamsOptions extends SMAIndicator.ParamsOptions {
+        interface NATRIndicatorParamsOptions extends SMAParamsOptions {
             // for inheritance
         }
 
-        class NATRIndicatorPoint extends SMAIndicator.Point {
+        class NATRIndicatorPoint extends SMAPoint {
             public series: NATRIndicator;
         }
 
-        interface NATRIndicatorOptions extends SMAIndicator.Options {
+        interface NATRIndicatorOptions extends SMAOptions {
             params?: NATRIndicatorParamsOptions;
             tooltip?: TooltipOptions;
         }

@@ -12,7 +12,12 @@
 
 import type IndicatorValuesObject from './IndicatorValuesObject';
 import type LineSeries from '../../Series/Line/LineSeries';
-import type SMAIndicator from './SMAIndicator';
+import type SMAIndicator from './SMA/SMAIndicator';
+import type {
+    SMAOptions,
+    SMAParamsOptions
+} from './SMA/SMAOptions';
+import type SMAPoint from './SMA/SMAPoint';
 import BaseSeries from '../../Core/Series/Series.js';
 
 /**
@@ -34,15 +39,15 @@ declare global {
                 params: ZigzagIndicatorParamsOptions
             ): (IndicatorValuesObject<TLinkedSeries>|undefined);
         }
-        class ZigzagIndicatorPoint extends SMAIndicator.Point {
+        class ZigzagIndicatorPoint extends SMAPoint {
             series: ZigzagIndicator;
         }
 
-        interface ZigzagIndicatorOptions extends SMAIndicator.Options {
+        interface ZigzagIndicatorOptions extends SMAOptions {
             params?: ZigzagIndicatorParamsOptions;
         }
         interface ZigzagIndicatorParamsOptions
-            extends SMAIndicator.ParamsOptions {
+            extends SMAParamsOptions {
             deviation?: number;
             highIndex?: number;
             index?: undefined;

@@ -13,7 +13,9 @@ import type ColumnSeries from '../../Series/Column/ColumnSeries';
 import type IndicatorValuesObject from './IndicatorValuesObject';
 import type LineSeries from '../../Series/Line/LineSeries';
 import type { SeriesStatesOptions } from '../../Core/Series/SeriesOptions';
-import type SMAIndicator from './SMAIndicator';
+import type SMAIndicator from './SMA/SMAIndicator';
+import type SMAOptions from './SMA/SMAOptions';
+import type SMAPoint from './SMA/SMAPoint';
 import BaseSeries from '../../Core/Series/Series.js';
 import H from '../../Core/Globals.js';
 const { noop } = H;
@@ -46,7 +48,7 @@ declare global {
             public translate: ColumnSeries['translate'];
         }
 
-        interface AOIndicatorOptions extends SMAIndicator.Options {
+        interface AOIndicatorOptions extends SMAOptions {
             greaterBarColor?: ColorString;
             groupPadding?: number;
             lowerBarColor?: ColorString;
@@ -55,7 +57,7 @@ declare global {
             threshold?: number;
         }
 
-        class AOIndicatorPoint extends SMAIndicator.Point {
+        class AOIndicatorPoint extends SMAPoint {
             public series: AOIndicator;
         }
     }

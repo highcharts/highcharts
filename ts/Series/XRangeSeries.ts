@@ -67,6 +67,7 @@ declare global {
             public partShapeArgs?: XRangePartialFillObject;
             public series: XRangeSeries;
             public setState: Point['setState'];
+            public shapeType: string;
             public tooltipDateKeys: Array<string>;
             public x2?: number;
             public yCategory?: string;

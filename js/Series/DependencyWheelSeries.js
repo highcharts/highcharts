@@ -13,11 +13,9 @@
 import A from '../Core/Animation/AnimationUtilities.js';
 var animObject = A.animObject;
 import BaseSeries from '../Core/Series/Series.js';
+var base = BaseSeries.seriesTypes.sankey.prototype;
 import H from '../Core/Globals.js';
 import NodesMixin from '../Mixins/Nodes.js';
-import './SankeySeries.js';
-import '../Core/Options.js';
-var base = BaseSeries.seriesTypes.sankey.prototype;
 /**
  * @private
  * @class

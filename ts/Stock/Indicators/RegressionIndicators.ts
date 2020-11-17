@@ -12,7 +12,12 @@
 
 import type IndicatorValuesObject from './IndicatorValuesObject';
 import type LineSeries from '../../Series/Line/LineSeries';
-import type SMAIndicator from './SMAIndicator';
+import type SMAIndicator from './SMA/SMAIndicator';
+import type {
+    SMAOptions,
+    SMAParamsOptions
+} from './SMA/SMAOptions';
+import type SMAPoint from './SMA/SMAPoint';
 import BaseSeries from '../../Core/Series/Series.js';
 import U from '../../Core/Utilities.js';
 const {
@@ -53,15 +58,15 @@ declare global {
         }
 
         interface LinearRegressionIndicatorParamsOptions
-            extends SMAIndicator.ParamsOptions {
+            extends SMAParamsOptions {
             xAxisUnit?: number;
         }
 
-        class LinearRegressionIndicatorPoint extends SMAIndicator.Point {
+        class LinearRegressionIndicatorPoint extends SMAPoint {
             public series: LinearRegressionIndicator;
         }
 
-        interface LinearRegressionIndicatorOptions extends SMAIndicator.Options {
+        interface LinearRegressionIndicatorOptions extends SMAOptions {
             params?: LinearRegressionIndicatorParamsOptions;
             tooltip?: TooltipOptions;
         }

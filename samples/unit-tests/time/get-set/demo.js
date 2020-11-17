@@ -309,9 +309,23 @@ QUnit[TestUtilities.isCET ? 'test' : 'skip'](
                 assert.strictEqual(
                     tz,
                     local,
-                    'UTC ' + hours + ':' + minutes + ' - CET time should be same as local'
+                    'UTC ' + hours + ':' + minutes +
+                    ' - CET time should be same as local'
                 );
             }
         }
     }
 );
+
+QUnit.test('useUTC = false (variableTimezone)', assert => {
+    const time = new Highcharts.Time({
+        useUTC: false
+    });
+    time.getTimezoneOffset = () => 60;
+
+    assert.strictEqual(
+        time.get('Hours', new Date(1970, 0, 10, 0, 0)),
+        0,
+        'Time should be intact when useUTC = false'
+    );
+});
