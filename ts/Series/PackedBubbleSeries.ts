@@ -76,134 +76,6 @@ declare module '../Core/Series/PointLike' {
     }
 }
 
-/**
- * Internal types
- * @private
- */
-declare global {
-    namespace Highcharts {
-        class PackedBubblePoint extends BubblePoint implements DragNodesPoint {
-            public collisionNmb?: number;
-            public dataLabelOnNull?: boolean;
-            public degree: number;
-            public dispX?: number;
-            public dispY?: number;
-            public fixedPosition: DragNodesPoint['fixedPosition'];
-            public isParentNode?: boolean;
-            public mass: number;
-            public neighbours?: number;
-            public options: PackedBubblePointOptions;
-            public prevX?: number;
-            public prevY?: number;
-            public radius: number;
-            public removed?: any; // @todo
-            public series: PackedBubbleSeries;
-            public seriesIndex?: number;
-            public value: (number|null);
-        }
-        interface NetworkgraphLayout {
-            beforeStep?(): void;
-        }
-        interface NetworkgraphPackedBubbleIntegrationObject
-            extends NetworkgraphIntegrationObject
-        {
-            barycenter(): void;
-            getK: Function;
-            integrate: NetworkgraphVerletIntegrationObject['integrate'];
-            repulsive(
-                node: PackedBubblePoint,
-                force: number,
-                distanceXY: Dictionary<number>,
-                repNode: PackedBubblePoint
-            ): void;
-            repulsiveForceFunction(
-                d: number,
-                k: number,
-                node: PackedBubblePoint,
-                repNode: PackedBubblePoint
-            ): number;
-        }
-        interface PackedBubbleChart extends NetworkgraphChart {
-            allDataPoints: Array<PackedBubbleData>;
-            diffX: number;
-            diffY: number;
-            hoverPoint: PackedBubblePoint;
-            maxRadius: number;
-            minRadius: number;
-            rawPositions: Array<Array<number>>;
-            stages: Array<Array<(number|object|null)>>;
-        }
-        interface PackedBubbleDataLabelsFormatterCallbackFunction {
-            (this: (
-                Point.PointLabelObject|
-                PackedBubbleDataLabelsFormatterContextObject
-            )): (number|string|null|undefined);
-        }
-        interface PackedBubbleDataLabelsFormatterContextObject
-            extends Point.PointLabelObject
-        {
-            point: PackedBubblePoint;
-        }
-        interface PackedBubbleDataLabelsOptionsObject extends DataLabelOptions {
-            format?: string;
-            formatter?: PackedBubbleDataLabelsFormatterCallbackFunction;
-            parentNodeFormat?: string;
-            parentNodeFormatter?: (
-                PackedBubbleDataLabelsFormatterCallbackFunction
-            );
-            parentNodeTextPath?: DataLabelTextPathOptions;
-            textPath?: DataLabelTextPathOptions;
-        }
-        interface PackedBubbleLayout extends NetworkgraphLayout {
-            enableSimulation: boolean;
-            nodes: Array<PackedBubblePoint>;
-            options: PackedBubbleLayoutAlgorithmOptions;
-            series: Array<NetworkgraphSeries>;
-        }
-        interface PackedBubbleLayoutAlgorithmOptions
-            extends NetworkgraphLayoutAlgorithmOptions
-        {
-            bubblePadding?: number;
-            dragBetweenSeries?: boolean;
-            enableSimulation?: boolean;
-            friction?: number;
-            gravitationalConstant?: number;
-            initialPositionRadius?: number;
-            marker?: PackedBubbleSeriesOptions['marker'];
-            maxIterations?: number;
-            maxSpeed?: number;
-            parentNodeLimit?: boolean;
-            parentNodeOptions?: PackedBubbleLayoutAlgorithmOptions;
-            seriesInteraction?: boolean;
-            splitSeries?: boolean;
-        }
-
-        interface PackedBubbleParentNodeOptionsObject {
-            allowPointSelect?: boolean;
-        }
-        interface PackedBubblePointOptions extends BubblePointOptions {
-            mass?: number;
-        }
-        interface PackedBubbleSeriesOptions extends BubbleSeriesOptions {
-            parentNode?: PackedBubbleParentNodeOptionsObject;
-            dataLabels?: PackedBubbleDataLabelsOptionsObject;
-            draggable?: boolean;
-            layoutAlgorithm?: PackedBubbleLayoutAlgorithmOptions;
-            minSize?: (number|string);
-            states?: SeriesStatesOptions<PackedBubbleSeries>;
-            useSimulation?: boolean;
-        }
-        type PackedBubbleData = [
-            (number|null),
-            (number|null),
-            (number|null),
-            number,
-            number,
-            PackedBubblePointOptions
-        ];
-    }
-}
-
 Chart.prototype.getSelectedParentNodes = function (): Array<Highcharts.PackedBubblePoint> {
     const chart = this,
         series = chart.series as Array<PackedBubbleSeries>,
@@ -813,11 +685,29 @@ class PackedBubbleSeries extends BubbleSeries {
      *
      * */
 
+    public chart: Highcharts.PackedBubbleChart = void 0 as any;
+
     public data: Array<PackedBubblePoint> = void 0 as any;
+
+    public hoverPoint?: PackedBubblePoint;
+
+    public layout: Highcharts.PackedBubbleLayout = void 0 as any;
 
     public options: Highcharts.PackedBubbleSeriesOptions = void 0 as any;
 
+    public parentNode?: PackedBubblePoint;
+
+    public parentNodeLayout?: Highcharts.PackedBubbleLayout;
+
+    public parentNodesGroup?: SVGElement;
+
+    public parentNodeMass?: number;
+
+    public parentNodeRadius?: number;
+
     public points: Array<PackedBubblePoint> = void 0 as any;
+
+    public xData: Array<number> = void 0 as any;
 
     /* *
      *
@@ -825,105 +715,13 @@ class PackedBubbleSeries extends BubbleSeries {
      *
      * */
 
-}
-
-/* *
- *
- *  Prototype Properties
- *
- * */
-
-interface PackedBubbleSeries {
-    chart: Highcharts.PackedBubbleChart;
-    forces: Array<string>;
-    hasDraggableNodes: boolean;
-    hoverPoint: PackedBubblePoint;
-    index: number;
-    isCartesian: boolean;
-    layout: Highcharts.PackedBubbleLayout;
-    noSharedTooltip: boolean;
-    onMouseDown: Highcharts.DragNodesMixin['onMouseDown'];
-    onMouseMove: Highcharts.DragNodesMixin['onMouseMove'];
-    parentNode?: Highcharts.PackedBubblePoint;
-    parentNodesGroup?: SVGElement;
-    parentNodeLayout: Highcharts.PackedBubbleLayout;
-    parentNodeMass?: number;
-    parentNodeRadius?: number;
-    pointArrayMap: Array<string>;
-    pointClass: typeof PackedBubblePoint;
-    pointValKey: string;
-    redrawHalo: Highcharts.DragNodesMixin['redrawHalo'];
-    xData: Array<number>;
-    trackerGroups: Array<string>;
-    drawTracker: Highcharts.TrackerMixin['drawTrackerPoint'];
-    checkOverlap(
-        bubble1: Array<number>,
-        bubble2: Array<number>
-    ): boolean;
-    accumulateAllPoints(
-        series: PackedBubbleSeries
-    ): Array<Highcharts.PackedBubbleData>;
-    addLayout(): void;
-    addSeriesLayout(): void;
-    calculateParentRadius(): void;
-    calculateZExtremes(): Array<number>;
-    createParentNodes(): void;
-    deferLayout(): void;
-    destroy(): void;
-    drawDataLabels(): void;
-    drawGraph(): void;
-    getPointRadius(): void;
-    init(): PackedBubbleSeries;
-    onMouseUp(point: Highcharts.DragNodesPoint): void;
-    placeBubbles(
-        allDataPoints: Array<Highcharts.PackedBubbleData>
-    ): Array<Highcharts.PackedBubbleData>;
-    positionBubble(
-        lastBubble: Array<number>,
-        newOrigin: Array<number>,
-        nextBubble: Array<number>
-    ): Array<number>;
-    render(): void;
-    resizeRadius(): void;
-    seriesBox(): (Array<number>|null);
-    setVisible(): void;
-    translate(): void;
-}
-extend(PackedBubbleSeries.prototype, {
-    /**
-     * An internal option used for allowing nodes dragging.
-     * @private
-     */
-    hasDraggableNodes: true,
-    /**
-     * Array of internal forces. Each force should be later defined in
-     * integrations.js.
-     * @private
-     */
-    forces: ['barycenter', 'repulsive'],
-    pointArrayMap: ['value'],
-    trackerGroups: ['group', 'dataLabelsGroup', 'parentNodesGroup'],
-    pointValKey: 'value',
-    isCartesian: false,
-    requireSorting: false,
-    directTouch: true,
-    axisTypes: [],
-    noSharedTooltip: true,
-    // solving #12287
-    searchPoint: H.noop as any,
-
-    /* eslint-disable no-invalid-this, valid-jsdoc */
+    /* eslint-disable valid-jsdoc */
 
     /**
      * Create a single array of all points from all series
      * @private
-     * @param {Highcharts.Series} series Array of all series objects
-     * @return {Array<Highcharts.PackedBubbleData>} Returns the array of all points.
      */
-    accumulateAllPoints: function (
-        this: PackedBubbleSeries,
-        series: PackedBubbleSeries
-    ): Array<Highcharts.PackedBubbleData> {
+    public accumulateAllPoints(series: PackedBubbleSeries): Array<Highcharts.PackedBubbleData> {
 
         var chart = series.chart,
             allDataPoints = [] as Array<Highcharts.PackedBubbleData>,
@@ -958,154 +756,100 @@ extend(PackedBubbleSeries.prototype, {
         }
 
         return allDataPoints;
-    },
-    init: function (
-        this: PackedBubbleSeries
-    ): PackedBubbleSeries {
-        LineSeries.prototype.init.apply(this, arguments as any);
+    }
 
-        // When one series is modified, the others need to be recomputed
-        this.eventsToUnbind.push(addEvent(this, 'updatedData', function (
-            this: PackedBubbleSeries
-        ): void {
-            this.chart.series.forEach(function (s): void {
-                if (s.type === this.type) {
-                    s.isDirty = true;
-                }
-            }, this);
-        }));
-
-        return this;
-    },
-    render: function (this: PackedBubbleSeries): void {
-        var series = this,
-            dataLabels = [] as Array<SVGElement>;
-        LineSeries.prototype.render.apply(this, arguments as any);
-        // #10823 - dataLabels should stay visible
-        // when enabled allowOverlap.
-        if (!(series.options.dataLabels as any).allowOverlap) {
-            series.data.forEach(function (point): void {
-                if (isArray(point.dataLabels)) {
-                    point.dataLabels.forEach(function (
-                        dataLabel: SVGElement
-                    ): void {
-                        dataLabels.push(dataLabel);
-                    });
-                }
-            });
-
-            // Only hide overlapping dataLabels for layouts that
-            // use simulation. Spiral packedbubble don't need
-            // additional dataLabel hiding on every simulation step
-            if (series.options.useSimulation) {
-                series.chart.hideOverlappingLabels(dataLabels);
-            }
-        }
-    },
-    // Needed because of z-indexing issue if point is added in series.group
-    setVisible: function (this: PackedBubbleSeries): void {
-        var series = this;
-        LineSeries.prototype.setVisible.apply(series, arguments as any);
-        if (series.parentNodeLayout && series.graph) {
-            if (series.visible) {
-                series.graph.show();
-                if ((series.parentNode as any).dataLabel) {
-                    (series.parentNode as any).dataLabel.show();
-                }
-            } else {
-                series.graph.hide();
-                series.parentNodeLayout
-                    .removeElementFromCollection(
-                        series.parentNode, series.parentNodeLayout.nodes
-                    );
-                if ((series.parentNode as any).dataLabel) {
-                    (series.parentNode as any).dataLabel.hide();
-                }
-            }
-        } else if (series.layout) {
-            if (series.visible) {
-                series.layout.addElementsToCollection(
-                    series.points, series.layout.nodes
-                );
-            } else {
-                series.points.forEach(function (node): void {
-                    series.layout.removeElementFromCollection(
-                        node, series.layout.nodes
-                    );
-                });
-            }
-        }
-    },
-    // Packedbubble has two separate collecions of nodes if split, render
-    // dataLabels for both sets:
-    drawDataLabels: function (this: PackedBubbleSeries): void {
-        var textPath = (this.options.dataLabels as any).textPath,
-            points = this.points;
-
-        // Render node labels:
-        LineSeries.prototype.drawDataLabels.apply(this, arguments as any);
-
-        // Render parentNode labels:
-        if (this.parentNode) {
-            this.parentNode.formatPrefix = 'parentNode';
-            this.points = [this.parentNode];
-            (this.options.dataLabels as any).textPath =
-                (this.options.dataLabels as any).parentNodeTextPath;
-            LineSeries.prototype.drawDataLabels.apply(this, arguments as any);
-
-            // Restore nodes
-            this.points = points;
-            (this.options.dataLabels as any).textPath = textPath;
-        }
-    },
     /**
-     * The function responsible for calculating series bubble' s bBox.
-     * Needed because of exporting failure when useSimulation
-     * is set to false
+     * Adding the basic layout to series points.
      * @private
      */
-    seriesBox: function (
-        this: PackedBubbleSeries
-    ): (Array<number>|null) {
+    public addLayout(): void {
         var series = this,
-            chart = series.chart,
-            data = series.data,
-            max = Math.max,
-            min = Math.min,
-            radius,
-            // bBox = [xMin, xMax, yMin, yMax]
-            bBox = [
-                chart.plotLeft,
-                chart.plotLeft + chart.plotWidth,
-                chart.plotTop,
-                chart.plotTop + chart.plotHeight
-            ];
+            layoutOptions = series.options.layoutAlgorithm,
+            graphLayoutsStorage = series.chart.graphLayoutsStorage,
+            graphLayoutsLookup = series.chart.graphLayoutsLookup,
+            chartOptions = series.chart.options.chart,
+            layout;
 
-        data.forEach(function (p): void {
-            if (
-                defined(p.plotX) &&
-                defined(p.plotY) &&
-                (p.marker as any).radius
-            ) {
-                radius = (p.marker as any).radius;
-                bBox[0] = min(bBox[0], p.plotX - radius);
-                bBox[1] = max(bBox[1], p.plotX + radius);
-                bBox[2] = min(bBox[2], p.plotY - radius);
-                bBox[3] = max(bBox[3], p.plotY + radius);
-            }
+        if (!graphLayoutsStorage) {
+            series.chart.graphLayoutsStorage = graphLayoutsStorage = {};
+            series.chart.graphLayoutsLookup = graphLayoutsLookup = [];
+        }
+
+        layout = graphLayoutsStorage[(layoutOptions as any).type];
+
+        if (!layout) {
+            (layoutOptions as any).enableSimulation =
+                !defined((chartOptions as any).forExport) ?
+                    (layoutOptions as any).enableSimulation :
+                    !(chartOptions as any).forExport;
+
+            graphLayoutsStorage[(layoutOptions as any).type] = layout =
+                new (H.layouts[(layoutOptions as any).type] as any)();
+
+            layout.init(layoutOptions);
+            graphLayoutsLookup.splice(layout.index, 0, layout);
+
+        }
+
+        series.layout = layout;
+
+        series.points.forEach(function (node): void {
+            node.mass = 2;
+            node.degree = 1;
+            node.collisionNmb = 1;
         });
-        return isNumber((bBox as any).width / (bBox as any).height) ?
-            bBox :
-            null;
-    },
+
+        layout.setArea(
+            0, 0, series.chart.plotWidth, series.chart.plotHeight
+        );
+        layout.addElementsToCollection([series], layout.series);
+        layout.addElementsToCollection(series.points, layout.nodes);
+    }
+
+    /**
+     * Function responsible for adding series layout, used for parent nodes.
+     * @private
+     */
+    public addSeriesLayout(): void {
+        var series = this,
+            layoutOptions = series.options.layoutAlgorithm,
+            graphLayoutsStorage = series.chart.graphLayoutsStorage,
+            graphLayoutsLookup = series.chart.graphLayoutsLookup,
+            parentNodeOptions = merge(
+                layoutOptions,
+                (layoutOptions as any).parentNodeOptions,
+                {
+                    enableSimulation: series.layout.options.enableSimulation
+                }
+            ),
+            parentNodeLayout;
+
+        parentNodeLayout = graphLayoutsStorage[
+            (layoutOptions as any).type + '-series'
+        ];
+
+        if (!parentNodeLayout) {
+
+            graphLayoutsStorage[(layoutOptions as any).type + '-series'] =
+            parentNodeLayout =
+                new (H.layouts[(layoutOptions as any).type] as any)();
+
+            parentNodeLayout.init(parentNodeOptions);
+
+            graphLayoutsLookup.splice(
+                parentNodeLayout.index, 0, parentNodeLayout
+            );
+        }
+        series.parentNodeLayout = parentNodeLayout;
+        this.createParentNodes();
+    }
+
     /**
      * The function responsible for calculating the parent node radius
      * based on the total surface of iniside-bubbles and the group BBox
      * @private
      */
-    calculateParentRadius: function (
-        this: PackedBubbleSeries
-    ): void {
+    public calculateParentRadius(): void {
         var series = this,
             bBox: (Array<number>|null),
             parentPadding = 20,
@@ -1134,9 +878,201 @@ extend(PackedBubbleSeries.prototype, {
             (series.parentNode as any).marker.radius =
                 series.parentNode.radius = series.parentNodeRadius;
         }
-    },
-    // Create Background/Parent Nodes for split series.
-    drawGraph: function (this: PackedBubbleSeries): void {
+    }
+
+    /**
+     * Calculate min and max bubble value for radius calculation.
+     * @private
+     */
+    public calculateZExtremes(): Array<number> {
+        var chart = this.chart,
+            zMin = this.options.zMin,
+            zMax = this.options.zMax,
+            valMin = Infinity,
+            valMax = -Infinity;
+
+        if (zMin && zMax) {
+            return [zMin, zMax];
+        }
+        // it is needed to deal with null
+        // and undefined values
+        chart.series.forEach(function (s): void {
+            ((s as PackedBubbleSeries).yData as any).forEach(
+                function (p: number): void {
+                    if (defined(p)) {
+                        if (p > valMax) {
+                            valMax = p;
+                        }
+                        if (p < valMin) {
+                            valMin = p;
+                        }
+                    }
+                }
+            );
+        });
+
+        zMin = pick(zMin, valMin);
+        zMax = pick(zMax, valMax);
+
+        return [zMin, zMax];
+    }
+
+    /**
+     * Check if two bubbles overlaps.
+     * @private
+     * @param {Array} first bubble
+     * @param {Array} second bubble
+     * @return {Boolean} overlap or not
+     */
+    public checkOverlap(
+        bubble1: Array<number>,
+        bubble2: Array<number>
+    ): boolean {
+        var diffX = bubble1[0] - bubble2[0], // diff of X center values
+            diffY = bubble1[1] - bubble2[1], // diff of Y center values
+            sumRad = bubble1[2] + bubble2[2]; // sum of bubble radius
+
+        return (
+            Math.sqrt(diffX * diffX + diffY * diffY) -
+            Math.abs(sumRad)
+        ) < -0.001;
+    }
+
+    /**
+     * Creating parent nodes for split series, in which all the bubbles
+     * are rendered.
+     * @private
+     */
+    public createParentNodes(): void {
+        var series = this,
+            chart = series.chart,
+            parentNodeLayout: Highcharts.PackedBubbleLayout = series.parentNodeLayout as any,
+            nodeAdded,
+            parentNode = series.parentNode,
+            PackedBubblePoint = series.pointClass;
+
+        series.parentNodeMass = 0;
+
+        series.points.forEach(function (p): void {
+            (series.parentNodeMass as any) +=
+                Math.PI * Math.pow((p.marker as any).radius, 2);
+        });
+
+        series.calculateParentRadius();
+        parentNodeLayout.nodes.forEach(function (node): void {
+            if (node.seriesIndex === series.index) {
+                nodeAdded = true;
+            }
+        });
+        parentNodeLayout.setArea(0, 0, chart.plotWidth, chart.plotHeight);
+        if (!nodeAdded) {
+            if (!parentNode) {
+                parentNode = (
+                    new PackedBubblePoint()
+                ).init(
+                    this,
+                    {
+                        mass: (series.parentNodeRadius as any) / 2,
+                        marker: {
+                            radius: series.parentNodeRadius
+                        },
+                        dataLabels: {
+                            inside: false
+                        },
+                        dataLabelOnNull: true,
+                        degree: series.parentNodeRadius,
+                        isParentNode: true,
+                        seriesIndex: series.index
+                    } as any
+                ) as any;
+            }
+            if (series.parentNode) {
+                (parentNode as any).plotX = series.parentNode.plotX;
+                (parentNode as any).plotY = series.parentNode.plotY;
+            }
+            series.parentNode = parentNode;
+            parentNodeLayout.addElementsToCollection(
+                [series as any], parentNodeLayout.series
+            );
+            parentNodeLayout.addElementsToCollection(
+                [parentNode as any], parentNodeLayout.nodes
+            );
+        }
+    }
+
+    /**
+     * Function responsible for adding all the layouts to the chart.
+     * @private
+     */
+    public deferLayout(): void {
+        // TODO split layouts to independent methods
+        var series = this,
+            layoutOptions = series.options.layoutAlgorithm;
+        if (!series.visible) {
+            return;
+        }
+        // layout is using nodes for position calculation
+        series.addLayout();
+
+        if ((layoutOptions as any).splitSeries) {
+            series.addSeriesLayout();
+        }
+    }
+
+    public destroy(): void {
+        // Remove the series from all layouts series collections #11469
+        if (this.chart.graphLayoutsLookup) {
+            this.chart.graphLayoutsLookup.forEach(function (layout): void {
+                layout.removeElementFromCollection(this, layout.series as any);
+            }, this);
+        }
+
+        if (
+            this.parentNode &&
+            this.parentNodeLayout
+        ) {
+            this.parentNodeLayout.removeElementFromCollection(
+                this.parentNode, this.parentNodeLayout.nodes
+            );
+            if (this.parentNode.dataLabel) {
+                this.parentNode.dataLabel =
+                    this.parentNode.dataLabel.destroy();
+            }
+        }
+        LineSeries.prototype.destroy.apply(this, arguments as any);
+    }
+
+    /**
+     * Packedbubble has two separate collecions of nodes if split, render
+     * dataLabels for both sets:
+     * @private
+     */
+    public drawDataLabels(): void {
+        var textPath = (this.options.dataLabels as any).textPath,
+            points = this.points;
+
+        // Render node labels:
+        LineSeries.prototype.drawDataLabels.apply(this, arguments as any);
+
+        // Render parentNode labels:
+        if (this.parentNode) {
+            this.parentNode.formatPrefix = 'parentNode';
+            this.points = [this.parentNode];
+            (this.options.dataLabels as any).textPath =
+                (this.options.dataLabels as any).parentNodeTextPath;
+            LineSeries.prototype.drawDataLabels.apply(this, arguments as any);
+
+            // Restore nodes
+            this.points = points;
+            (this.options.dataLabels as any).textPath = textPath;
+        }
+    }
+
+    /**
+     * Create Background/Parent Nodes for split series.
+     * @private
+     */
+    public drawGraph(): void {
 
         // if the series is not using layout, don't add parent nodes
         if (!this.layout || !this.layout.options.splitSeries) {
@@ -1185,73 +1121,11 @@ extend(PackedBubbleSeries.prototype, {
         }
         (series.parentNode as any).graphic.attr(parentAttribs);
 
-    },
-    /**
-     * Creating parent nodes for split series, in which all the bubbles
-     * are rendered.
-     * @private
-     */
-    createParentNodes: function (this: PackedBubbleSeries): void {
-        var series = this,
-            chart = series.chart,
-            parentNodeLayout = series.parentNodeLayout,
-            nodeAdded,
-            parentNode = series.parentNode,
-            PackedBubblePoint = series.pointClass;
+    }
 
-        series.parentNodeMass = 0;
-
-        series.points.forEach(function (p): void {
-            (series.parentNodeMass as any) +=
-                Math.PI * Math.pow((p.marker as any).radius, 2);
-        });
-
-        series.calculateParentRadius();
-        parentNodeLayout.nodes.forEach(function (
-            node: Highcharts.PackedBubblePoint
-        ): void {
-            if (node.seriesIndex === series.index) {
-                nodeAdded = true;
-            }
-        });
-        parentNodeLayout.setArea(0, 0, chart.plotWidth, chart.plotHeight);
-        if (!nodeAdded) {
-            if (!parentNode) {
-                parentNode = (
-                    new PackedBubblePoint()
-                ).init(
-                    this,
-                    {
-                        mass: (series.parentNodeRadius as any) / 2,
-                        marker: {
-                            radius: series.parentNodeRadius
-                        },
-                        dataLabels: {
-                            inside: false
-                        },
-                        dataLabelOnNull: true,
-                        degree: series.parentNodeRadius,
-                        isParentNode: true,
-                        seriesIndex: series.index
-                    } as any
-                ) as any;
-            }
-            if (series.parentNode) {
-                (parentNode as any).plotX = series.parentNode.plotX;
-                (parentNode as any).plotY = series.parentNode.plotY;
-            }
-            series.parentNode = parentNode;
-            parentNodeLayout.addElementsToCollection(
-                [series as any], parentNodeLayout.series
-            );
-            parentNodeLayout.addElementsToCollection(
-                [parentNode as any], parentNodeLayout.nodes
-            );
-        }
-    },
-    drawTracker: function (this: PackedBubbleSeries): void {
+    public drawTracker(): void {
         const series = this,
-            chart = series.chart,
+            /* chart = series.chart,
             pointer = chart.pointer,
             onMouseOver = function (e: PointerEvent): void {
                 const point = pointer.getPointFromEvent(e);
@@ -1260,7 +1134,7 @@ extend(PackedBubbleSeries.prototype, {
                     pointer.isDirectTouch = true;
                     point.onMouseOver(e);
                 }
-            },
+            }, */
             parentNode = series.parentNode;
         let dataLabels;
 
@@ -1287,265 +1161,142 @@ extend(PackedBubbleSeries.prototype, {
                 }
             });
         }
-    },
+    }
+
     /**
-     * Function responsible for adding series layout, used for parent nodes.
+     * Calculate radius of bubbles in series.
      * @private
      */
-    addSeriesLayout: function (this: PackedBubbleSeries): void {
-        var series = this,
-            layoutOptions = series.options.layoutAlgorithm,
-            graphLayoutsStorage = series.chart.graphLayoutsStorage,
-            graphLayoutsLookup = series.chart.graphLayoutsLookup,
-            parentNodeOptions = merge(
-                layoutOptions,
-                (layoutOptions as any).parentNodeOptions,
-                {
-                    enableSimulation: series.layout.options.enableSimulation
-                }
-            ),
-            parentNodeLayout;
-
-        parentNodeLayout = graphLayoutsStorage[
-            (layoutOptions as any).type + '-series'
-        ];
-
-        if (!parentNodeLayout) {
-
-            graphLayoutsStorage[(layoutOptions as any).type + '-series'] =
-            parentNodeLayout =
-                new (H.layouts[(layoutOptions as any).type] as any)();
-
-            parentNodeLayout.init(parentNodeOptions);
-
-            graphLayoutsLookup.splice(
-                parentNodeLayout.index, 0, parentNodeLayout
-            );
-        }
-        series.parentNodeLayout = parentNodeLayout;
-        this.createParentNodes();
-    },
-    /**
-     * Adding the basic layout to series points.
-     * @private
-     */
-    addLayout: function (this: PackedBubbleSeries): void {
-        var series = this,
-            layoutOptions = series.options.layoutAlgorithm,
-            graphLayoutsStorage = series.chart.graphLayoutsStorage,
-            graphLayoutsLookup = series.chart.graphLayoutsLookup,
-            chartOptions = series.chart.options.chart,
-            layout;
-
-        if (!graphLayoutsStorage) {
-            series.chart.graphLayoutsStorage = graphLayoutsStorage = {};
-            series.chart.graphLayoutsLookup = graphLayoutsLookup = [];
-        }
-
-        layout = graphLayoutsStorage[(layoutOptions as any).type];
-
-        if (!layout) {
-            (layoutOptions as any).enableSimulation =
-                !defined((chartOptions as any).forExport) ?
-                    (layoutOptions as any).enableSimulation :
-                    !(chartOptions as any).forExport;
-
-            graphLayoutsStorage[(layoutOptions as any).type] = layout =
-                new (H.layouts[(layoutOptions as any).type] as any)();
-
-            layout.init(layoutOptions);
-            graphLayoutsLookup.splice(layout.index, 0, layout);
-
-        }
-
-        series.layout = layout;
-
-        series.points.forEach(function (node): void {
-            node.mass = 2;
-            node.degree = 1;
-            node.collisionNmb = 1;
-        });
-
-        layout.setArea(
-            0, 0, series.chart.plotWidth, series.chart.plotHeight
-        );
-        layout.addElementsToCollection([series], layout.series);
-        layout.addElementsToCollection(series.points, layout.nodes);
-    },
-    /**
-     * Function responsible for adding all the layouts to the chart.
-     * @private
-     */
-    deferLayout: function (this: PackedBubbleSeries): void {
-        // TODO split layouts to independent methods
-        var series = this,
-            layoutOptions = series.options.layoutAlgorithm;
-        if (!series.visible) {
-            return;
-        }
-        // layout is using nodes for position calculation
-        series.addLayout();
-
-        if ((layoutOptions as any).splitSeries) {
-            series.addSeriesLayout();
-        }
-    },
-    /**
-     * Extend the base translate method to handle bubble size,
-     * and correct positioning them.
-     * @private
-     */
-    translate: function (this: PackedBubbleSeries): void {
-
+    public getPointRadius(): void {
         var series = this,
             chart = series.chart,
-            data = series.data,
-            index = series.index,
-            point,
-            radius,
-            positions,
-            i,
-            useSimulation = series.options.useSimulation;
+            plotWidth = chart.plotWidth,
+            plotHeight = chart.plotHeight,
+            seriesOptions = series.options,
+            useSimulation = seriesOptions.useSimulation,
+            smallestSize = Math.min(plotWidth, plotHeight),
+            extremes = {} as Highcharts.Dictionary<number>,
+            radii = [] as Array<(number|null)>,
+            allDataPoints = chart.allDataPoints,
+            minSize: number,
+            maxSize: number,
+            value: (number|null),
+            radius: (number|null),
+            zExtremes: Array<number>;
+        ['minSize', 'maxSize'].forEach(function (prop: string): void {
+            var length = parseInt((seriesOptions as any)[prop], 10),
+                isPercent = /%$/.test((seriesOptions as any)[prop]);
 
-        series.processedXData = series.xData;
-        series.generatePoints();
+            extremes[prop] = isPercent ?
+                smallestSize * length / 100 :
+                length * Math.sqrt(allDataPoints.length);
+        });
 
-        // merged data is an array with all of the data from all series
-        if (!defined(chart.allDataPoints)) {
-            chart.allDataPoints = series.accumulateAllPoints(series);
-            // calculate radius for all added data
-            series.getPointRadius();
-        }
+        chart.minRadius = minSize = extremes.minSize /
+            Math.sqrt(allDataPoints.length);
+        chart.maxRadius = maxSize = extremes.maxSize /
+            Math.sqrt(allDataPoints.length);
 
-        // after getting initial radius, calculate bubble positions
+        zExtremes = useSimulation ?
+            series.calculateZExtremes() :
+            [minSize, maxSize];
 
-        if (useSimulation) {
-            positions = chart.allDataPoints;
-        } else {
-            positions = series.placeBubbles(chart.allDataPoints);
-            series.options.draggable = false;
-        }
+        (allDataPoints || []).forEach(function (
+            point: Highcharts.PackedBubbleData,
+            i: number
+        ): void {
 
-        // Set the shape and arguments to be picked up in drawPoints
-        for (i = 0; i < positions.length; i++) {
+            value = useSimulation ?
+                clamp(
+                    point[2] as any,
+                    zExtremes[0],
+                    zExtremes[1]
+                ) :
+                (point[2] as any);
 
-            if (positions[i][3] === index) {
-
-                // update the series points with the val from positions
-                // array
-                point = data[positions[i][4] as any];
-                radius = positions[i][2];
-
-                if (!useSimulation) {
-                    point.plotX = (
-                        (positions[i][0] as any) - chart.plotLeft +
-                        chart.diffX
-                    );
-                    point.plotY = (
-                        (positions[i][1] as any) - chart.plotTop +
-                        chart.diffY
-                    );
-                }
-                point.marker = extend(point.marker, {
-                    radius: radius,
-                    width: 2 * (radius as any),
-                    height: 2 * (radius as any)
-                });
-                point.radius = radius as any;
+            radius = series.getRadius(
+                zExtremes[0],
+                zExtremes[1],
+                minSize,
+                maxSize,
+                value
+            );
+            if (radius === 0) {
+                radius = null;
             }
-        }
+            allDataPoints[i][2] = radius;
+            radii.push(radius);
+        });
 
-        if (useSimulation) {
-            series.deferLayout();
-        }
+        series.radii = radii;
+    }
 
-        fireEvent(series, 'afterTranslate');
-    },
+    public init(): PackedBubbleSeries {
+        LineSeries.prototype.init.apply(this, arguments);
+
+        /* eslint-disable no-invalid-this */
+
+        // When one series is modified, the others need to be recomputed
+        this.eventsToUnbind.push(addEvent(this, 'updatedData', function (
+            this: PackedBubbleSeries
+        ): void {
+            this.chart.series.forEach(function (s): void {
+                if (s.type === this.type) {
+                    s.isDirty = true;
+                }
+            }, this);
+        }));
+
+        /* eslint-enable no-invalid-this */
+
+        return this;
+    }
+
     /**
-     * Check if two bubbles overlaps.
+     * Mouse up action, finalizing drag&drop.
      * @private
-     * @param {Array} first bubble
-     * @param {Array} second bubble
-     * @return {Boolean} overlap or not
+     * @param {Highcharts.Point} point The point that event occured.
      */
-    checkOverlap: function (
-        this: PackedBubbleSeries,
-        bubble1: Array<number>,
-        bubble2: Array<number>
-    ): boolean {
-        var diffX = bubble1[0] - bubble2[0], // diff of X center values
-            diffY = bubble1[1] - bubble2[1], // diff of Y center values
-            sumRad = bubble1[2] + bubble2[2]; // sum of bubble radius
+    public onMouseUp(
+        point: Highcharts.PackedBubblePoint
+    ): void {
+        if (point.fixedPosition && !point.removed) {
+            var distanceXY,
+                distanceR,
+                layout = this.layout,
+                parentNodeLayout = this.parentNodeLayout;
 
-        return (
-            Math.sqrt(diffX * diffX + diffY * diffY) -
-            Math.abs(sumRad)
-        ) < -0.001;
-    },
-    /**
-     * Function that is adding one bubble based on positions and sizes of
-     * two other bubbles, lastBubble is the last added bubble, newOrigin is
-     * the bubble for positioning new bubbles. nextBubble is the curently
-     * added bubble for which we are calculating positions
-     * @private
-     * @param {Array<number>} lastBubble The closest last bubble
-     * @param {Array<number>} newOrigin New bubble
-     * @param {Array<number>} nextBubble The closest next bubble
-     * @return {Array<number>} Bubble with correct positions
-     */
-    positionBubble: function (
-        this: PackedBubbleSeries,
-        lastBubble: Array<number>,
-        newOrigin: Array<number>,
-        nextBubble: Array<number>
-    ): Array<number> {
-        var sqrt = Math.sqrt,
-            asin = Math.asin,
-            acos = Math.acos,
-            pow = Math.pow,
-            abs = Math.abs,
-            distance = sqrt( // dist between lastBubble and newOrigin
-                pow((lastBubble[0] - newOrigin[0]), 2) +
-                pow((lastBubble[1] - newOrigin[1]), 2)
-            ),
-            alfa = acos(
-                // from cosinus theorem: alfa is an angle used for
-                // calculating correct position
-                (
-                    pow(distance, 2) +
-                    pow(nextBubble[2] + newOrigin[2], 2) -
-                    pow(nextBubble[2] + lastBubble[2], 2)
-                ) / (2 * (nextBubble[2] + newOrigin[2]) * distance)
-            ),
+            if (parentNodeLayout && layout.options.dragBetweenSeries) {
+                parentNodeLayout.nodes.forEach(function (
+                    node: Highcharts.PackedBubblePoint
+                ): void {
+                    if (
+                        point && point.marker &&
+                        node !== point.series.parentNode
+                    ) {
+                        distanceXY = layout.getDistXY(point, node);
+                        distanceR = (
+                            layout.vectorLength(distanceXY) -
+                            (node.marker as any).radius -
+                            (point.marker as any).radius
+                        );
+                        if (distanceR < 0) {
+                            node.series.addPoint(merge(point.options, {
+                                plotX: point.plotX,
+                                plotY: point.plotY
+                            }), false);
+                            layout.removeElementFromCollection(
+                                point, layout.nodes
+                            );
+                            point.remove();
+                        }
+                    }
+                });
+            }
+            dragNodesMixin.onMouseUp.apply(this, arguments as any);
+        }
+    }
 
-            beta = asin( // from sinus theorem.
-                abs(lastBubble[0] - newOrigin[0]) /
-                distance
-            ),
-            // providing helping variables, related to angle between
-            // lastBubble and newOrigin
-            gamma = (lastBubble[1] - newOrigin[1]) < 0 ? 0 : Math.PI,
-            // if new origin y is smaller than last bubble y value
-            // (2 and 3 quarter),
-            // add Math.PI to final angle
-
-            delta = (lastBubble[0] - newOrigin[0]) *
-            (lastBubble[1] - newOrigin[1]) < 0 ?
-                1 : -1, // (1st and 3rd quarter)
-            finalAngle = gamma + alfa + beta * delta,
-            cosA = Math.cos(finalAngle),
-            sinA = Math.sin(finalAngle),
-            posX = newOrigin[0] + (newOrigin[2] + nextBubble[2]) * sinA,
-            // center of new origin + (radius1 + radius2) * sinus A
-            posY = newOrigin[1] - (newOrigin[2] + nextBubble[2]) * cosA;
-        return [
-            posX,
-            posY,
-            nextBubble[2],
-            nextBubble[3],
-            nextBubble[4]
-        ]; // the same as described before
-    },
     /**
      * This is the main function responsible
      * for positioning all of the bubbles
@@ -1556,8 +1307,7 @@ extend(PackedBubbleSeries.prototype, {
      * @param {Array<Highcharts.PackedBubbleData>} allDataPoints All points from all series
      * @return {Array<Highcharts.PackedBubbleData>} Positions of all bubbles
      */
-    placeBubbles: function (
-        this: PackedBubbleSeries,
+    public placeBubbles(
         allDataPoints: Array<Highcharts.PackedBubbleData>
     ): Array<Highcharts.PackedBubbleData> {
 
@@ -1687,7 +1437,98 @@ extend(PackedBubbleSeries.prototype, {
             arr = series.chart.rawPositions as any;
         }
         return arr;
-    },
+    }
+
+    /**
+     * Function that is adding one bubble based on positions and sizes of
+     * two other bubbles, lastBubble is the last added bubble, newOrigin is
+     * the bubble for positioning new bubbles. nextBubble is the curently
+     * added bubble for which we are calculating positions
+     * @private
+     * @param {Array<number>} lastBubble The closest last bubble
+     * @param {Array<number>} newOrigin New bubble
+     * @param {Array<number>} nextBubble The closest next bubble
+     * @return {Array<number>} Bubble with correct positions
+     */
+    public positionBubble(
+        lastBubble: Array<number>,
+        newOrigin: Array<number>,
+        nextBubble: Array<number>
+    ): Array<number> {
+        var sqrt = Math.sqrt,
+            asin = Math.asin,
+            acos = Math.acos,
+            pow = Math.pow,
+            abs = Math.abs,
+            distance = sqrt( // dist between lastBubble and newOrigin
+                pow((lastBubble[0] - newOrigin[0]), 2) +
+                pow((lastBubble[1] - newOrigin[1]), 2)
+            ),
+            alfa = acos(
+                // from cosinus theorem: alfa is an angle used for
+                // calculating correct position
+                (
+                    pow(distance, 2) +
+                    pow(nextBubble[2] + newOrigin[2], 2) -
+                    pow(nextBubble[2] + lastBubble[2], 2)
+                ) / (2 * (nextBubble[2] + newOrigin[2]) * distance)
+            ),
+
+            beta = asin( // from sinus theorem.
+                abs(lastBubble[0] - newOrigin[0]) /
+                distance
+            ),
+            // providing helping variables, related to angle between
+            // lastBubble and newOrigin
+            gamma = (lastBubble[1] - newOrigin[1]) < 0 ? 0 : Math.PI,
+            // if new origin y is smaller than last bubble y value
+            // (2 and 3 quarter),
+            // add Math.PI to final angle
+
+            delta = (lastBubble[0] - newOrigin[0]) *
+            (lastBubble[1] - newOrigin[1]) < 0 ?
+                1 : -1, // (1st and 3rd quarter)
+            finalAngle = gamma + alfa + beta * delta,
+            cosA = Math.cos(finalAngle),
+            sinA = Math.sin(finalAngle),
+            posX = newOrigin[0] + (newOrigin[2] + nextBubble[2]) * sinA,
+            // center of new origin + (radius1 + radius2) * sinus A
+            posY = newOrigin[1] - (newOrigin[2] + nextBubble[2]) * cosA;
+        return [
+            posX,
+            posY,
+            nextBubble[2],
+            nextBubble[3],
+            nextBubble[4]
+        ]; // the same as described before
+    }
+
+    public render(): void {
+        var series = this,
+            dataLabels = [] as Array<SVGElement>;
+        LineSeries.prototype.render.apply(this, arguments);
+        // #10823 - dataLabels should stay visible
+        // when enabled allowOverlap.
+        if (!(series.options.dataLabels as any).allowOverlap) {
+            series.data.forEach(function (point): void {
+                if (isArray(point.dataLabels)) {
+                    point.dataLabels.forEach(function (
+                        dataLabel: SVGElement
+                    ): void {
+                        dataLabels.push(dataLabel);
+                    });
+                }
+            });
+
+            // Only hide overlapping dataLabels for layouts that
+            // use simulation. Spiral packedbubble don't need
+            // additional dataLabel hiding on every simulation step
+            if (series.options.useSimulation) {
+                series.chart.hideOverlappingLabels(dataLabels);
+            }
+        }
+    }
+
     /**
      * The function responsible for resizing the bubble radius.
      * In shortcut: it is taking the initially
@@ -1698,7 +1539,7 @@ extend(PackedBubbleSeries.prototype, {
      * value how to recalculate the radius so it will match the size
      * @private
      */
-    resizeRadius: function (this: PackedBubbleSeries): void {
+    public resizeRadius(): void {
 
         var chart = this.chart,
             positions = chart.rawPositions,
@@ -1753,119 +1594,205 @@ extend(PackedBubbleSeries.prototype, {
             chart.diffX = chartWidth / 2 +
                 plotLeft - minX - (maxX - minX) / 2;
         }
-    },
+    }
+
     /**
-     * Calculate min and max bubble value for radius calculation.
+     * The function responsible for calculating series bubble' s bBox.
+     * Needed because of exporting failure when useSimulation
+     * is set to false
      * @private
      */
-    calculateZExtremes: function (
-        this: PackedBubbleSeries
-    ): Array<number> {
-        var chart = this.chart,
-            zMin = this.options.zMin,
-            zMax = this.options.zMax,
-            valMin = Infinity,
-            valMax = -Infinity;
-
-        if (zMin && zMax) {
-            return [zMin, zMax];
-        }
-        // it is needed to deal with null
-        // and undefined values
-        chart.series.forEach(function (s): void {
-            ((s as PackedBubbleSeries).yData as any).forEach(
-                function (p: number): void {
-                    if (defined(p)) {
-                        if (p > valMax) {
-                            valMax = p;
-                        }
-                        if (p < valMin) {
-                            valMin = p;
-                        }
-                    }
-                }
-            );
-        });
-
-        zMin = pick(zMin, valMin);
-        zMax = pick(zMax, valMax);
-
-        return [zMin, zMax];
-    },
-    /**
-     * Calculate radius of bubbles in series.
-     * @private
-     */
-    getPointRadius: function (this: PackedBubbleSeries): void {
+    public seriesBox(): (Array<number>|null) {
         var series = this,
             chart = series.chart,
-            plotWidth = chart.plotWidth,
-            plotHeight = chart.plotHeight,
-            seriesOptions = series.options,
-            useSimulation = seriesOptions.useSimulation,
-            smallestSize = Math.min(plotWidth, plotHeight),
-            extremes = {} as Highcharts.Dictionary<number>,
-            radii = [] as Array<(number|null)>,
-            allDataPoints = chart.allDataPoints,
-            minSize: number,
-            maxSize: number,
-            value: (number|null),
-            radius: (number|null),
-            zExtremes: Array<number>;
-        ['minSize', 'maxSize'].forEach(function (prop: string): void {
-            var length = parseInt((seriesOptions as any)[prop], 10),
-                isPercent = /%$/.test((seriesOptions as any)[prop]);
+            data = series.data,
+            max = Math.max,
+            min = Math.min,
+            radius,
+            // bBox = [xMin, xMax, yMin, yMax]
+            bBox = [
+                chart.plotLeft,
+                chart.plotLeft + chart.plotWidth,
+                chart.plotTop,
+                chart.plotTop + chart.plotHeight
+            ];
 
-            extremes[prop] = isPercent ?
-                smallestSize * length / 100 :
-                length * Math.sqrt(allDataPoints.length);
-        });
-
-        chart.minRadius = minSize = extremes.minSize /
-            Math.sqrt(allDataPoints.length);
-        chart.maxRadius = maxSize = extremes.maxSize /
-            Math.sqrt(allDataPoints.length);
-
-        zExtremes = useSimulation ?
-            series.calculateZExtremes() :
-            [minSize, maxSize];
-
-        (allDataPoints || []).forEach(function (
-            point: Highcharts.PackedBubbleData,
-            i: number
-        ): void {
-
-            value = useSimulation ?
-                clamp(
-                    point[2] as any,
-                    zExtremes[0],
-                    zExtremes[1]
-                ) :
-                (point[2] as any);
-
-            radius = series.getRadius(
-                zExtremes[0],
-                zExtremes[1],
-                minSize,
-                maxSize,
-                value
-            );
-            if (radius === 0) {
-                radius = null;
+        data.forEach(function (p): void {
+            if (
+                defined(p.plotX) &&
+                defined(p.plotY) &&
+                (p.marker as any).radius
+            ) {
+                radius = (p.marker as any).radius;
+                bBox[0] = min(bBox[0], p.plotX - radius);
+                bBox[1] = max(bBox[1], p.plotX + radius);
+                bBox[2] = min(bBox[2], p.plotY - radius);
+                bBox[3] = max(bBox[3], p.plotY + radius);
             }
-            allDataPoints[i][2] = radius;
-            radii.push(radius);
         });
+        return isNumber((bBox as any).width / (bBox as any).height) ?
+            bBox :
+            null;
+    }
 
-        series.radii = radii;
-    },
-    // Draggable mode:
     /**
-     * Redraw halo on mousemove during the drag&drop action.
+     * Needed because of z-indexing issue if point is added in series.group
      * @private
-     * @param {Highcharts.Point} point The point that should show halo.
      */
-    redrawHalo: dragNodesMixin.redrawHalo,
+    public setVisible(): void {
+        var series = this;
+        LineSeries.prototype.setVisible.apply(series, arguments as any);
+        if (series.parentNodeLayout && series.graph) {
+            if (series.visible) {
+                series.graph.show();
+                if ((series.parentNode as any).dataLabel) {
+                    (series.parentNode as any).dataLabel.show();
+                }
+            } else {
+                series.graph.hide();
+                series.parentNodeLayout
+                    .removeElementFromCollection(
+                        series.parentNode, series.parentNodeLayout.nodes
+                    );
+                if ((series.parentNode as any).dataLabel) {
+                    (series.parentNode as any).dataLabel.hide();
+                }
+            }
+        } else if (series.layout) {
+            if (series.visible) {
+                series.layout.addElementsToCollection(
+                    series.points, series.layout.nodes
+                );
+            } else {
+                series.points.forEach(function (node): void {
+                    series.layout.removeElementFromCollection(
+                        node, series.layout.nodes
+                    );
+                });
+            }
+        }
+    }
+
+    /**
+     * Extend the base translate method to handle bubble size,
+     * and correct positioning them.
+     * @private
+     */
+    public translate(): void {
+
+        var series = this,
+            chart = series.chart,
+            data = series.data,
+            index = series.index,
+            point,
+            radius,
+            positions,
+            i,
+            useSimulation = series.options.useSimulation;
+
+        series.processedXData = series.xData;
+        series.generatePoints();
+
+        // merged data is an array with all of the data from all series
+        if (!defined(chart.allDataPoints)) {
+            chart.allDataPoints = series.accumulateAllPoints(series);
+            // calculate radius for all added data
+            series.getPointRadius();
+        }
+
+        // after getting initial radius, calculate bubble positions
+
+        if (useSimulation) {
+            positions = chart.allDataPoints;
+        } else {
+            positions = series.placeBubbles(chart.allDataPoints);
+            series.options.draggable = false;
+        }
+
+        // Set the shape and arguments to be picked up in drawPoints
+        for (i = 0; i < positions.length; i++) {
+
+            if (positions[i][3] === index) {
+
+                // update the series points with the val from positions
+                // array
+                point = data[positions[i][4] as any];
+                radius = positions[i][2];
+
+                if (!useSimulation) {
+                    point.plotX = (
+                        (positions[i][0] as any) - chart.plotLeft +
+                        chart.diffX
+                    );
+                    point.plotY = (
+                        (positions[i][1] as any) - chart.plotTop +
+                        chart.diffY
+                    );
+                }
+                point.marker = extend(point.marker, {
+                    radius: radius,
+                    width: 2 * (radius as any),
+                    height: 2 * (radius as any)
+                });
+                point.radius = radius as any;
+            }
+        }
+
+        if (useSimulation) {
+            series.deferLayout();
+        }
+
+        fireEvent(series, 'afterTranslate');
+    }
+
+    /* eslint-enable valid-jsdoc */
+
+}
+
+/* *
+ *
+ *  Prototype Properties
+ *
+ * */
+
+interface PackedBubbleSeries {
+    forces: Array<string>;
+    hasDraggableNodes: boolean;
+    isCartesian: boolean;
+    noSharedTooltip: boolean;
+    onMouseDown: Highcharts.DragNodesMixin['onMouseDown'];
+    onMouseMove: Highcharts.DragNodesMixin['onMouseMove'];
+    pointArrayMap: Array<string>;
+    pointClass: typeof PackedBubblePoint;
+    pointValKey: string;
+    redrawHalo: Highcharts.DragNodesMixin['redrawHalo'];
+    trackerGroups: Array<string>;
+}
+extend(PackedBubbleSeries.prototype, {
+
+    alignDataLabel: LineSeries.prototype.alignDataLabel,
+
+    axisTypes: [],
+
+    directTouch: true,
+
+    /**
+     * Array of internal forces. Each force should be later defined in
+     * integrations.js.
+     * @private
+     */
+    forces: ['barycenter', 'repulsive'],
+
+    /**
+     * An internal option used for allowing nodes dragging.
+     * @private
+     */
+    hasDraggableNodes: true,
+
+    isCartesian: false,
+
+    noSharedTooltip: true,
+
     /**
      * Mouse down action, initializing drag&drop mode.
      * @private
@@ -1873,6 +1800,7 @@ extend(PackedBubbleSeries.prototype, {
      * @param {Highcharts.Point} point The point that event occured.
      */
     onMouseDown: dragNodesMixin.onMouseDown,
+
     /**
      * Mouse move action during drag&drop.
      * @private
@@ -1880,71 +1808,25 @@ extend(PackedBubbleSeries.prototype, {
      * @param {Highcharts.Point} point The point that event occured.
      */
     onMouseMove: dragNodesMixin.onMouseMove,
+
+    pointArrayMap: ['value'],
+
+    pointValKey: 'value',
+
     /**
-     * Mouse up action, finalizing drag&drop.
+     * Redraw halo on mousemove during the drag&drop action.
      * @private
-     * @param {Highcharts.Point} point The point that event occured.
+     * @param {Highcharts.Point} point The point that should show halo.
      */
-    onMouseUp: function (
-        this: PackedBubbleSeries,
-        point: Highcharts.PackedBubblePoint
-    ): void {
-        if (point.fixedPosition && !point.removed) {
-            var distanceXY,
-                distanceR,
-                layout = this.layout,
-                parentNodeLayout = this.parentNodeLayout;
+    redrawHalo: dragNodesMixin.redrawHalo,
 
-            if (parentNodeLayout && layout.options.dragBetweenSeries) {
-                parentNodeLayout.nodes.forEach(function (
-                    node: Highcharts.PackedBubblePoint
-                ): void {
-                    if (
-                        point && point.marker &&
-                        node !== point.series.parentNode
-                    ) {
-                        distanceXY = layout.getDistXY(point, node);
-                        distanceR = (
-                            layout.vectorLength(distanceXY) -
-                            (node.marker as any).radius -
-                            (point.marker as any).radius
-                        );
-                        if (distanceR < 0) {
-                            node.series.addPoint(merge(point.options, {
-                                plotX: point.plotX,
-                                plotY: point.plotY
-                            }), false);
-                            layout.removeElementFromCollection(
-                                point, layout.nodes
-                            );
-                            point.remove();
-                        }
-                    }
-                });
-            }
-            dragNodesMixin.onMouseUp.apply(this, arguments as any);
-        }
-    },
-    destroy: function (this: PackedBubbleSeries): void {
-        // Remove the series from all layouts series collections #11469
-        if (this.chart.graphLayoutsLookup) {
-            this.chart.graphLayoutsLookup.forEach(function (layout): void {
-                layout.removeElementFromCollection(this, layout.series as any);
-            }, this);
-        }
+    requireSorting: false,
 
-        if (this.parentNode) {
-            this.parentNodeLayout.removeElementFromCollection(
-                this.parentNode, this.parentNodeLayout.nodes
-            );
-            if (this.parentNode.dataLabel) {
-                this.parentNode.dataLabel =
-                    this.parentNode.dataLabel.destroy();
-            }
-        }
-        LineSeries.prototype.destroy.apply(this, arguments as any);
-    },
-    alignDataLabel: LineSeries.prototype.alignDataLabel
+    // solving #12287
+    searchPoint: H.noop as any,
+
+    trackerGroups: ['group', 'dataLabelsGroup', 'parentNodesGroup']
+
 });
 
 /* *
@@ -1953,7 +1835,7 @@ extend(PackedBubbleSeries.prototype, {
  *
  * */
 
-class PackedBubblePoint extends BubblePoint {
+class PackedBubblePoint extends BubblePoint implements Highcharts.DragNodesPoint {
 
     /* *
      *
@@ -1964,6 +1846,58 @@ class PackedBubblePoint extends BubblePoint {
     public options: Highcharts.PackedBubblePointOptions = void 0 as any;
 
     public series: PackedBubbleSeries = void 0 as any;
+
+    /* *
+     *
+     *  Functions
+     *
+     * */
+
+    /* eslint-disable valid-jsdoc */
+
+    /**
+     * Destroy point.
+     * Then remove point from the layout.
+     * @private
+     */
+    public destroy(): void {
+        if (this.series.layout) {
+            this.series.layout.removeElementFromCollection(
+                this, this.series.layout.nodes
+            );
+        }
+        return Point.prototype.destroy.apply(this, arguments as any);
+    }
+
+    public firePointEvent(): void {
+        const point = this,
+            series = this.series,
+            seriesOptions = series.options;
+
+        if (this.isParentNode && seriesOptions.parentNode) {
+            const temp = seriesOptions.allowPointSelect;
+            seriesOptions.allowPointSelect = seriesOptions.parentNode.allowPointSelect;
+            Point.prototype.firePointEvent.apply(this, arguments);
+            seriesOptions.allowPointSelect = temp;
+        } else {
+            Point.prototype.firePointEvent.apply(this, arguments);
+        }
+    }
+
+    public select(): void {
+        const point = this,
+            series = this.series,
+            chart = series.chart;
+        if (point.isParentNode) {
+            chart.getSelectedPoints = chart.getSelectedParentNodes;
+            Point.prototype.select.apply(this, arguments);
+            chart.getSelectedPoints = Chart.prototype.getSelectedPoints;
+        } else {
+            Point.prototype.select.apply(this, arguments);
+        }
+    }
+
+    /* eslint-enable valid-jsdoc */
 
 }
 PackedBubbleSeries.prototype.pointClass = PackedBubblePoint;
@@ -1984,68 +1918,13 @@ interface PackedBubblePoint {
     isParentNode?: boolean;
     mass: number;
     neighbours?: number;
-    options: Highcharts.PackedBubblePointOptions;
     prevX?: number;
     prevY?: number;
     radius: number;
     removed?: any; // @todo
-    series: PackedBubbleSeries;
     seriesIndex?: number;
     value: (number|null);
 }
-extend(PackedBubblePoint.prototype, {
-    /**
-     * Destroy point.
-     * Then remove point from the layout.
-     * @private
-     * @return {undefined}
-     */
-    destroy: function (this: Highcharts.PackedBubblePoint): void {
-        if (this.series.layout) {
-            this.series.layout.removeElementFromCollection(
-                this, this.series.layout.nodes
-            );
-        }
-        return Point.prototype.destroy.apply(this, arguments as any);
-    },
-    firePointEvent: function (
-        this: Highcharts.PackedBubblePoint,
-        eventType: string,
-        eventArgs?: (Highcharts.Dictionary<any>|Event),
-        defaultFunction?: (
-            Highcharts.EventCallbackFunction<Point>|Function
-        )
-    ): void {
-        const point = this,
-            series = this.series,
-            seriesOptions = series.options;
-
-        if (this.isParentNode && seriesOptions.parentNode) {
-            const temp = seriesOptions.allowPointSelect;
-            seriesOptions.allowPointSelect = seriesOptions.parentNode.allowPointSelect;
-            Point.prototype.firePointEvent.apply(this, arguments);
-            seriesOptions.allowPointSelect = temp;
-        } else {
-            Point.prototype.firePointEvent.apply(this, arguments);
-        }
-    },
-    select: function (
-        this: Highcharts.PackedBubblePoint,
-        selected?: boolean,
-        accumulate?: boolean
-    ): void {
-        const point = this,
-            series = this.series,
-            chart = series.chart;
-        if (point.isParentNode) {
-            chart.getSelectedPoints = chart.getSelectedParentNodes;
-            Point.prototype.select.apply(this, arguments);
-            chart.getSelectedPoints = Chart.prototype.getSelectedPoints;
-        } else {
-            Point.prototype.select.apply(this, arguments);
-        }
-    }
-});
 
 /* *
  *
@@ -2059,6 +1938,134 @@ declare module '../Core/Series/SeriesType' {
     }
 }
 BaseSeries.registerSeriesType('packedbubble', PackedBubbleSeries);
+
+/**
+ * Internal types
+ * @private
+ */
+declare global {
+    namespace Highcharts {
+        class PackedBubblePoint extends PackedBubbleSeries.prototype.pointClass implements DragNodesPoint {
+            public collisionNmb?: number;
+            public dataLabelOnNull?: boolean;
+            public degree: number;
+            public dispX?: number;
+            public dispY?: number;
+            public fixedPosition: DragNodesPoint['fixedPosition'];
+            public isParentNode?: boolean;
+            public mass: number;
+            public neighbours?: number;
+            public options: PackedBubblePointOptions;
+            public prevX?: number;
+            public prevY?: number;
+            public radius: number;
+            public removed?: any; // @todo
+            public series: PackedBubbleSeries;
+            public seriesIndex?: number;
+            public value: (number|null);
+        }
+        interface NetworkgraphLayout {
+            beforeStep?(): void;
+        }
+        interface NetworkgraphPackedBubbleIntegrationObject
+            extends NetworkgraphIntegrationObject
+        {
+            barycenter(): void;
+            getK: Function;
+            integrate: NetworkgraphVerletIntegrationObject['integrate'];
+            repulsive(
+                node: PackedBubblePoint,
+                force: number,
+                distanceXY: Dictionary<number>,
+                repNode: PackedBubblePoint
+            ): void;
+            repulsiveForceFunction(
+                d: number,
+                k: number,
+                node: PackedBubblePoint,
+                repNode: PackedBubblePoint
+            ): number;
+        }
+        interface PackedBubbleChart extends NetworkgraphChart {
+            allDataPoints: Array<PackedBubbleData>;
+            diffX: number;
+            diffY: number;
+            hoverPoint: PackedBubblePoint;
+            maxRadius: number;
+            minRadius: number;
+            rawPositions: Array<Array<number>>;
+            stages: Array<Array<(number|object|null)>>;
+        }
+        interface PackedBubbleDataLabelsFormatterCallbackFunction {
+            (this: (
+                Point.PointLabelObject|
+                PackedBubbleDataLabelsFormatterContextObject
+            )): (number|string|null|undefined);
+        }
+        interface PackedBubbleDataLabelsFormatterContextObject
+            extends Point.PointLabelObject
+        {
+            point: PackedBubblePoint;
+        }
+        interface PackedBubbleDataLabelsOptionsObject extends DataLabelOptions {
+            format?: string;
+            formatter?: PackedBubbleDataLabelsFormatterCallbackFunction;
+            parentNodeFormat?: string;
+            parentNodeFormatter?: (
+                PackedBubbleDataLabelsFormatterCallbackFunction
+            );
+            parentNodeTextPath?: DataLabelTextPathOptions;
+            textPath?: DataLabelTextPathOptions;
+        }
+        interface PackedBubbleLayout extends NetworkgraphLayout {
+            enableSimulation: boolean;
+            nodes: Array<PackedBubblePoint>;
+            options: PackedBubbleLayoutAlgorithmOptions;
+            series: Array<NetworkgraphSeries>;
+        }
+        interface PackedBubbleLayoutAlgorithmOptions
+            extends NetworkgraphLayoutAlgorithmOptions
+        {
+            bubblePadding?: number;
+            dragBetweenSeries?: boolean;
+            enableSimulation?: boolean;
+            friction?: number;
+            gravitationalConstant?: number;
+            initialPositionRadius?: number;
+            marker?: PackedBubbleSeriesOptions['marker'];
+            maxIterations?: number;
+            maxSpeed?: number;
+            parentNodeLimit?: boolean;
+            parentNodeOptions?: PackedBubbleLayoutAlgorithmOptions;
+            seriesInteraction?: boolean;
+            splitSeries?: boolean;
+        }
+
+        interface PackedBubbleParentNodeOptionsObject {
+            allowPointSelect?: boolean;
+        }
+        interface PackedBubblePointOptions extends BubblePointOptions {
+            mass?: number;
+        }
+        interface PackedBubbleSeriesOptions extends BubbleSeriesOptions {
+            parentNode?: PackedBubbleParentNodeOptionsObject;
+            dataLabels?: PackedBubbleDataLabelsOptionsObject;
+            draggable?: boolean;
+            layoutAlgorithm?: PackedBubbleLayoutAlgorithmOptions;
+            minSize?: (number|string);
+            states?: SeriesStatesOptions<PackedBubbleSeries>;
+            useSimulation?: boolean;
+        }
+        type PackedBubbleData = [
+            (number|null),
+            (number|null),
+            (number|null),
+            number,
+            number,
+            PackedBubblePointOptions
+        ];
+    }
+}
 
 /* *
  *

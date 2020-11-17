@@ -107,6 +107,7 @@ var LineSeries = /** @class */ (function () {
         this.data = void 0;
         this.eventOptions = void 0;
         this.eventsToUnbind = void 0;
+        this.index = void 0;
         this.linkedSeries = void 0;
         this.options = void 0;
         this.points = void 0;
