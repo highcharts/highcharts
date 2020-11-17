@@ -89,35 +89,20 @@ class CMFIndicator extends SMAIndicator {
             volumeSeriesID: 'volume'
         }
     } as Highcharts.CMFIndicatorOptions);
-}
-interface CMFIndicator {
-    data: Array<Highcharts.CMFIndicatorPoint>;
-    nameBase: string;
-    options: Highcharts.CMFIndicatorOptions;
-    pointClass: typeof Highcharts.CMFIndicatorPoint;
-    points: Array<Highcharts.CMFIndicatorPoint>;
-    volumeSeries: LineSeries;
-    linkedParent: LineSeries;
-    yData: Array<Array<number>>;
-    getMoneyFlow<TLinkedSeries extends LineSeries>(
-        xData: (Array<number>|undefined),
-        seriesYData: (
-            Array<(number|null|undefined)>|
-            Array<Array<(number | null | undefined)>>|
-            undefined
-        ),
-        volumeSeriesYData: Array<number>,
-        period: number
-    ): IndicatorValuesObject<TLinkedSeries>;
-    getValues<TLinkedSeries extends LineSeries>(
-        series: TLinkedSeries,
-        params: Highcharts.CMFIndicatorParamsOptions
-    ): (IndicatorValuesObject<TLinkedSeries>|undefined);
-    isValid(): boolean;
-}
 
-extend(CMFIndicator.prototype, {
-    nameBase: 'Chaikin Money Flow',
+    /* *
+     *
+     *  Properties
+     *
+     * */
+    public data: Array<Highcharts.CMFIndicatorPoint> = void 0 as any;
+    public options: Highcharts.CMFIndicatorOptions = void 0 as any;
+    public points: Array<Highcharts.CMFIndicatorPoint> = void 0 as any;
+    public volumeSeries: LineSeries = void 0 as any;
+    public linkedParent: LineSeries = void 0 as any;
+    public yData: Array<Array<number>> = void 0 as any;
+    public nameBase: string = 'Chaikin Money Flow';
+
     /**
      * Checks if the series and volumeSeries are accessible, number of
      * points.x is longer than period, is series has OHLC data
@@ -126,7 +111,7 @@ extend(CMFIndicator.prototype, {
      * @return {boolean} True if series is valid and can be computed,
      * otherwise false.
      */
-    isValid: function (this: CMFIndicator): boolean {
+    public isValid(this: CMFIndicator): boolean {
         var chart = this.chart,
             options: Highcharts.CMFIndicatorOptions = this.options,
             series = this.linkedParent,
@@ -161,7 +146,7 @@ extend(CMFIndicator.prototype, {
                 isLengthValid(series) &&
                 isLengthValid(volumeSeries) && isSeriesOHLC
         );
-    },
+    }
 
     /**
      * Returns indicator's data.
@@ -172,7 +157,7 @@ extend(CMFIndicator.prototype, {
      * @return {boolean|Highcharts.IndicatorNullableValuesObject} Returns false if the
      * indicator is not valid, otherwise returns Values object.
      */
-    getValues: function<TLinkedSeries extends LineSeries> (
+    public getValues<TLinkedSeries extends LineSeries>(
         this: CMFIndicator,
         series: TLinkedSeries,
         params: Highcharts.CMFIndicatorParamsOptions
@@ -182,12 +167,12 @@ extend(CMFIndicator.prototype, {
         }
 
         return this.getMoneyFlow<TLinkedSeries>(
-            series.xData,
+            series.xData as number[],
             series.yData,
             (this.volumeSeries.yData as any),
             (params.period as any)
         );
-    },
+    }
 
     /**
      * @private
@@ -198,7 +183,7 @@ extend(CMFIndicator.prototype, {
      * @return {Highcharts.IndicatorNullableValuesObject} object containing computed money
      * flow data
      */
-    getMoneyFlow: function<TLinkedSeries extends LineSeries> (
+    public getMoneyFlow<TLinkedSeries extends LineSeries>(
         xData: Array<number>,
         seriesYData: TLinkedSeries['yData'],
         volumeSeriesYData: Array<number>,
@@ -308,7 +293,23 @@ extend(CMFIndicator.prototype, {
             yData: moneyFlowYData
         } as IndicatorValuesObject<TLinkedSeries>;
     }
-});
+}
+
+/* *
+ *
+ *  Prototype Properties
+ *
+ * */
+
+interface CMFIndicator {
+    pointClass: typeof Highcharts.CMFIndicatorPoint;
+}
+
+/* *
+ *
+ *  Registry
+ *
+ * */
 
 declare module '../../Core/Series/SeriesType' {
     interface SeriesTypeRegistry {

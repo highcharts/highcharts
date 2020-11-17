@@ -42,36 +42,21 @@ var extend = U.extend, merge = U.merge;
 var CMFIndicator = /** @class */ (function (_super) {
     __extends(CMFIndicator, _super);
     function CMFIndicator() {
-        return _super !== null && _super.apply(this, arguments) || this;
+        var _this = _super !== null && _super.apply(this, arguments) || this;
+        /* *
+         *
+         *  Properties
+         *
+         * */
+        _this.data = void 0;
+        _this.options = void 0;
+        _this.points = void 0;
+        _this.volumeSeries = void 0;
+        _this.linkedParent = void 0;
+        _this.yData = void 0;
+        _this.nameBase = 'Chaikin Money Flow';
+        return _this;
     }
-    /**
-     * Chaikin Money Flow indicator (cmf).
-     *
-     * @sample stock/indicators/cmf/
-     *         Chaikin Money Flow indicator
-     *
-     * @extends      plotOptions.sma
-     * @since        6.0.0
-     * @excluding    animationLimit
-     * @product      highstock
-     * @requires     stock/indicators/indicators
-     * @requires     stock/indicators/cmf
-     * @optionparent plotOptions.cmf
-     */
-    CMFIndicator.defaultOptions = merge(SMAIndicator.defaultOptions, {
-        params: {
-            period: 14,
-            /**
-             * The id of another series to use its data as volume data for the
-             * indiator calculation.
-             */
-            volumeSeriesID: 'volume'
-        }
-    });
-    return CMFIndicator;
-}(SMAIndicator));
-extend(CMFIndicator.prototype, {
-    nameBase: 'Chaikin Money Flow',
     /**
      * Checks if the series and volumeSeries are accessible, number of
      * points.x is longer than period, is series has OHLC data
@@ -80,7 +65,7 @@ extend(CMFIndicator.prototype, {
      * @return {boolean} True if series is valid and can be computed,
      * otherwise false.
      */
-    isValid: function () {
+    CMFIndicator.prototype.isValid = function () {
         var chart = this.chart, options = this.options, series = this.linkedParent, volumeSeries = (this.volumeSeries ||
             (this.volumeSeries =
                 chart.get(options.params.volumeSeriesID))), isSeriesOHLC = (series &&
@@ -99,7 +84,7 @@ extend(CMFIndicator.prototype, {
             volumeSeries &&
             isLengthValid(series) &&
             isLengthValid(volumeSeries) && isSeriesOHLC);
-    },
+    };
     /**
      * Returns indicator's data.
      * @private
@@ -109,12 +94,12 @@ extend(CMFIndicator.prototype, {
      * @return {boolean|Highcharts.IndicatorNullableValuesObject} Returns false if the
      * indicator is not valid, otherwise returns Values object.
      */
-    getValues: function (series, params) {
+    CMFIndicator.prototype.getValues = function (series, params) {
         if (!this.isValid()) {
             return;
         }
         return this.getMoneyFlow(series.xData, series.yData, this.volumeSeries.yData, params.period);
-    },
+    };
     /**
      * @private
      * @param {Array<number>} xData - x timestamp values
@@ -124,7 +109,7 @@ extend(CMFIndicator.prototype, {
      * @return {Highcharts.IndicatorNullableValuesObject} object containing computed money
      * flow data
      */
-    getMoneyFlow: function (xData, seriesYData, volumeSeriesYData, period) {
+    CMFIndicator.prototype.getMoneyFlow = function (xData, seriesYData, volumeSeriesYData, period) {
         var len = seriesYData.length, moneyFlowVolume = [], sumVolume = 0, sumMoneyFlowVolume = 0, moneyFlowXData = [], moneyFlowYData = [], values = [], i, point, nullIndex = -1;
         /**
          * Calculates money flow volume, changes i, nullIndex vars from
@@ -187,8 +172,33 @@ extend(CMFIndicator.prototype, {
             xData: moneyFlowXData,
             yData: moneyFlowYData
         };
-    }
-});
+    };
+    /**
+     * Chaikin Money Flow indicator (cmf).
+     *
+     * @sample stock/indicators/cmf/
+     *         Chaikin Money Flow indicator
+     *
+     * @extends      plotOptions.sma
+     * @since        6.0.0
+     * @excluding    animationLimit
+     * @product      highstock
+     * @requires     stock/indicators/indicators
+     * @requires     stock/indicators/cmf
+     * @optionparent plotOptions.cmf
+     */
+    CMFIndicator.defaultOptions = merge(SMAIndicator.defaultOptions, {
+        params: {
+            period: 14,
+            /**
+             * The id of another series to use its data as volume data for the
+             * indiator calculation.
+             */
+            volumeSeriesID: 'volume'
+        }
+    });
+    return CMFIndicator;
+}(SMAIndicator));
 BaseSeries.registerSeriesType('cmf', CMFIndicator);
 /* *
  *
