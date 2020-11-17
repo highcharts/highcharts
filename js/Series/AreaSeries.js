@@ -287,7 +287,7 @@ BaseSeries.seriesType('area', 'line',
     getGraphPath: function (points) {
         var getGraphPath = LineSeries.prototype.getGraphPath, graphPath, series = this, options = series.options, stacking = options.stacking, yAxis = series.yAxis, topPath, bottomPath, bottomPoints = [], graphPoints = [], seriesIndex = series.index, i, areaPath, plotX, stacks = yAxis.stacking.stacks[series.stackKey], threshold = options.threshold, translatedThreshold = Math.round(// #10909
         yAxis.getThreshold(options.threshold)), isNull, yBottom, connectNulls = pick(// #10574
-        options.connectNulls, stacking === 'percent'), rawPointsX = series.rawPointsX, 
+        options.connectNulls, stacking === 'percent'), 
         // To display null points in underlying stacked series, this
         // series graph must be broken, and the area also fall down to
         // fill the gap left by the null point. #2069
@@ -348,20 +348,11 @@ BaseSeries.seriesType('area', 'line',
                 // true
                 if (!(isNull && !stacking && connectNulls)) {
                     graphPoints.push(points[i]);
-                    if (series.chart.is3d && series.chart.is3d() && rawPointsX) {
-                        bottomPoints.push({
-                            x: rawPointsX[i],
-                            y: yBottom,
-                            z: series.zPadding
-                        });
-                    }
-                    else {
-                        bottomPoints.push({
-                            x: i,
-                            plotX: plotX,
-                            plotY: yBottom
-                        });
-                    }
+                    bottomPoints.push({
+                        x: i,
+                        plotX: plotX,
+                        plotY: yBottom
+                    });
                 }
                 if (!connectNulls) {
                     addDummyPoints(i, i + 1, 'right');
@@ -440,7 +431,6 @@ BaseSeries.seriesType('area', 'line',
     },
     drawLegendSymbol: LegendSymbolMixin.drawRectangle
 });
-export default BaseSeries.seriesTypes['area'];
 /* eslint-enable valid-jsdoc */
 /**
  * A `area` series. If the [type](#series.area.type) option is not

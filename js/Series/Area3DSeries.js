@@ -1,6 +1,6 @@
 /* *
  *
- *  (c) 2010-2020 Torstein Honsi
+ *  (c) 2010-2020 Grzegorz Blachliński
  *
  *  License: www.highcharts.com/license
  *
@@ -15,6 +15,7 @@ import Math3D from '../Extensions/Math3D.js';
 var perspective = Math3D.perspective;
 import U from '../Core/Utilities.js';
 var pick = U.pick, wrap = U.wrap;
+/* eslint-disable no-invalid-this */
 wrap(seriesTypes.area.prototype, 'getGraphPath', function (proceed) {
     var series = this, svgPath = proceed.apply(series, [].slice.call(arguments, 1));
     // Do not do this if the chart is not 3D
@@ -51,8 +52,7 @@ wrap(seriesTypes.area.prototype, 'getGraphPath', function (proceed) {
         areaPath = series.areaPath.concat(bottomPath);
         areaPath.xMap = series.areaPath.xMap;
         series.areaPath = areaPath;
-        graphPath = getGraphPath
-            .call(series, graphPoints, false, connectNulls);
+        graphPath = getGraphPath.call(series, graphPoints, false, connectNulls);
     }
     return graphPath;
 });

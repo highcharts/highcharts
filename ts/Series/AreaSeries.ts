@@ -75,6 +75,7 @@ declare global {
         }
         class AreaSeries extends LineSeries {
             public areaPath?: SVGPath;
+            public bottomPoints?: Array<AreaPoint>;
             public data: Array<AreaPoint>;
             public options: AreaSeriesOptions;
             public pointClass: typeof AreaPoint;
@@ -447,7 +448,6 @@ BaseSeries.seriesType<typeof Highcharts.AreaSeries>(
                     options.connectNulls,
                     stacking === 'percent'
                 ),
-                rawPointsX = series.rawPointsX,
 
                 // To display null points in underlying stacked series, this
                 // series graph must be broken, and the area also fall down to
@@ -532,19 +532,11 @@ BaseSeries.seriesType<typeof Highcharts.AreaSeries>(
                     // true
                     if (!(isNull && !stacking && connectNulls)) {
                         graphPoints.push(points[i]);
-                        if (series.chart.is3d && series.chart.is3d() && rawPointsX) {
-                            bottomPoints.push({
-                                x: rawPointsX[i],
-                                y: yBottom,
-                                z: series.zPadding
-                            } as any);
-                        } else {
-                            bottomPoints.push({ // @todo make real point object
-                                x: i,
-                                plotX: plotX,
-                                plotY: yBottom
-                            } as any);
-                        }
+                        bottomPoints.push({ // @todo make real point object
+                            x: i,
+                            plotX: plotX,
+                            plotY: yBottom
+                        } as any);
                     }
 
                     if (!connectNulls) {
@@ -561,7 +553,7 @@ BaseSeries.seriesType<typeof Highcharts.AreaSeries>(
             if (firstBottomPoint && firstBottomPoint[0] === 'M') {
                 bottomPath[0] = ['L', firstBottomPoint[1], firstBottomPoint[2]];
             }
-            (series as any).bottomPoints = bottomPoints;
+            series.bottomPoints = bottomPoints;
 
             areaPath = topPath.concat(bottomPath);
             // TODO: don't set leftCliff and rightCliff when connectNulls?
@@ -654,8 +646,6 @@ BaseSeries.seriesType<typeof Highcharts.AreaSeries>(
         drawLegendSymbol: LegendSymbolMixin.drawRectangle
     }
 );
-
-export default BaseSeries.seriesTypes.area;
 
 /* eslint-enable valid-jsdoc */
 

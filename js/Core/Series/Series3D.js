@@ -14,7 +14,7 @@ import LineSeries from '../../Series/Line/LineSeries.js';
 import Math3D from '../../Extensions/Math3D.js';
 var perspective = Math3D.perspective;
 import U from '../Utilities.js';
-var addEvent = U.addEvent, pick = U.pick;
+var addEvent = U.addEvent, pick = U.pick, isNumber = U.isNumber;
 /* eslint-disable no-invalid-this */
 // Wrap the translate method to post-translate points into 3D perspective
 addEvent(LineSeries, 'afterTranslate', function () {
@@ -25,7 +25,7 @@ addEvent(LineSeries, 'afterTranslate', function () {
 // Translate the plotX, plotY properties and add plotZ.
 LineSeries.prototype.translate3dPoints = function () {
     var series = this, seriesOptions = series.options, chart = series.chart, zAxis = pick(series.zAxis, chart.options.zAxis[0]), rawPoints = [], rawPoint, projectedPoints, projectedPoint, zValue, i, stack = seriesOptions.stacking ?
-        (Highcharts.isNumber(seriesOptions.stack) ? seriesOptions.stack : 0) :
+        (isNumber(seriesOptions.stack) ? seriesOptions.stack : 0) :
         series.index || 0, // #4743
     rawPointsX = [];
     series.zPadding = stack *
