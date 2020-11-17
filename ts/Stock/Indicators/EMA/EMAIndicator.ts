@@ -8,48 +8,31 @@
 
 'use strict';
 
-import type IndicatorValuesObject from './IndicatorValuesObject';
-import type LineSeries from '../../Series/Line/LineSeries';
+/* *
+ *
+ *  Imports
+ *
+ * */
+
+import type IndicatorValuesObject from '../IndicatorValuesObject';
+import type LineSeries from '../../../Series/Line/LineSeries';
 import type {
-    SMAOptions,
-    SMAParamsOptions
-} from './SMA/SMAOptions';
-import type SMAPoint from './SMA/SMAPoint';
-import BaseSeries from '../../Core/Series/Series.js';
+    EMAOptions,
+    EMAParamsOptions
+} from './EMAOptions';
+import type EMAPoint from './EMAPoint';
+import BaseSeries from '../../../Core/Series/Series.js';
 const {
     seriesTypes: {
         sma: SMAIndicator
     }
 } = BaseSeries;
-import U from '../../Core/Utilities.js';
+import U from '../../../Core/Utilities.js';
 const {
     correctFloat,
-    extend,
     isArray,
     merge
 } = U;
-
-
-/**
- * Internal types
- * @private
- */
-declare global {
-    namespace Highcharts {
-
-        interface EMAIndicatorOptions extends SMAOptions {
-            params?: EMAIndicatorParamsOptions;
-        }
-
-        interface EMAIndicatorParamsOptions extends SMAParamsOptions {
-            // for inheritance
-        }
-
-        class EMAIndicatorPoint extends SMAPoint {
-            public series: EMAIndicator;
-        }
-    }
-}
 
 /* *
  *
@@ -82,7 +65,7 @@ class EMAIndicator extends SMAIndicator {
      * @requires     stock/indicators/ema
      * @optionparent plotOptions.ema
      */
-    public static defaultOptions: Highcharts.EMAIndicatorOptions = merge(SMAIndicator.defaultOptions, {
+    public static defaultOptions: EMAOptions = merge(SMAIndicator.defaultOptions, {
         params: {
             /**
              * The point index which indicator calculations will base. For
@@ -96,7 +79,7 @@ class EMAIndicator extends SMAIndicator {
             index: 3,
             period: 9 // @merge 14 in v6.2
         }
-    } as Highcharts.EMAIndicatorOptions);
+    } as EMAOptions);
 
     /* *
      *
@@ -104,11 +87,11 @@ class EMAIndicator extends SMAIndicator {
      *
      * */
 
-    public data: Array<Highcharts.EMAIndicatorPoint> = void 0 as any;
+    public data: Array<EMAPoint> = void 0 as any;
 
-    public options: Highcharts.EMAIndicatorOptions = void 0 as any;
+    public options: EMAOptions = void 0 as any;
 
-    public points: Array<Highcharts.EMAIndicatorPoint> = void 0 as any;
+    public points: Array<EMAPoint> = void 0 as any;
 
     /* *
      *
@@ -158,7 +141,7 @@ class EMAIndicator extends SMAIndicator {
 
     public getValues<TLinkedSeries extends LineSeries>(
         series: TLinkedSeries,
-        params: Highcharts.EMAIndicatorParamsOptions
+        params: EMAParamsOptions
     ): (IndicatorValuesObject<TLinkedSeries>|undefined) {
         var period: number = (params.period as any),
             xVal: Array<number> = (series.xData as any),
@@ -228,7 +211,7 @@ class EMAIndicator extends SMAIndicator {
  * */
 
 interface EMAIndicator {
-    pointClass: typeof Highcharts.EMAIndicatorPoint;
+    pointClass: typeof EMAPoint;
 }
 
 /* *
@@ -237,7 +220,7 @@ interface EMAIndicator {
  *
  * */
 
-declare module '../../Core/Series/SeriesType' {
+declare module '../../../Core/Series/SeriesType' {
     interface SeriesTypeRegistry {
         ema: typeof EMAIndicator;
     }
