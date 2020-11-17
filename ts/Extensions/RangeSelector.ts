@@ -1235,9 +1235,10 @@ class RangeSelector {
         }
 
         input.value = time.dateFormat(
-            options.inputEditDateFormat || '%Y-%m-%d',
+            inputTypeFormats[input.type] || options.inputEditDateFormat || '%Y-%m-%d',
             input.HCTime
         );
+
         (this as any)[name + 'DateBox'].attr({
             text: time.dateFormat(
                 options.inputDateFormat || '%b %e, %Y',
@@ -1254,12 +1255,15 @@ class RangeSelector {
      */
     public showInput(name: string): void {
         var inputGroup = this.inputGroup,
-            dateBox = (this as any)[name + 'DateBox'];
+            dateBox = (this as any)[name + 'DateBox'],
+            input = (this as any)[name + 'Input'];
 
-        css((this as any)[name + 'Input'], {
-            left: ((inputGroup as any).translateX + dateBox.x) + 'px',
+        const tempOffset = input.type === 'text' ? 0 : 40;
+
+        css(input, {
+            left: ((inputGroup as any).translateX + dateBox.x - tempOffset) + 'px',
             top: (inputGroup as any).translateY + 'px',
-            width: (dateBox.width - 2) + 'px',
+            width: (dateBox.width - 2) + tempOffset + 'px',
             height: (dateBox.height - 2) + 'px',
             border: '2px solid silver'
         });
@@ -1441,7 +1445,7 @@ class RangeSelector {
         (this as any)[name + 'Input'] = input = createElement('input', {
             name: name,
             className: 'highcharts-range-selector',
-            type: 'text'
+            type: preferredInputType(options.inputDateFormat || '%b %e, %Y')
         }, {
             top: chart.plotTop + 'px' // prevent jump on focus in Firefox
         }, div);
@@ -1575,6 +1579,7 @@ class RangeSelector {
             chart = rangeSelector.chart,
             renderer = chart.renderer,
             container = chart.container,
+            time = chart.time,
             chartOptions = chart.options,
             navButtonOptions = (
                 chartOptions.exporting &&
@@ -1847,6 +1852,30 @@ class RangeSelector {
 
             }
 
+            if (chart.scroller) {
+                const unionExtremes = chart.scroller.getUnionExtremes();
+                const minInput = (this as any).minInput;
+                const maxInput = (this as any).maxInput;
+                const format = inputTypeFormats[minInput.type];
+
+                if (unionExtremes &&
+                    unionExtremes.dataMin &&
+                    unionExtremes.dataMax &&
+                    format) {
+                    minInput.min = time.dateFormat(format, unionExtremes.dataMin);
+                    minInput.max = time.dateFormat(
+                        format,
+                        Math.min(unionExtremes.dataMax, maxInput.value)
+                    );
+
+                    maxInput.min = time.dateFormat(
+                        format,
+                        Math.max(unionExtremes.dataMin, minInput.value)
+                    );
+                    maxInput.max = time.dateFormat(format, unionExtremes.dataMax);
+                }
+            }
+
             // Set or reset the input values
             rangeSelector.setInputValue('min', min);
             rangeSelector.setInputValue('max', max);
@@ -2102,6 +2131,49 @@ RangeSelector.prototype.defaultButtons = [{
     text: 'All',
     title: 'View all'
 }];
+
+/**
+ * The date formats to use when setting min, max and value on date inputs
+ */
+const inputTypeFormats: Record<string, string> = {
+    'datetime-local': '%Y-%m-%dT%H%M%S',
+    'date': '%Y-%m-%d',
+    'time': '%H%M%S'
+};
+
+/**
+ * Get the preferred input type based on a date format string.
+ *
+ * @private
+ * @function preferredInputType
+ * @param {string} format
+ * @return {string}
+ */
+function preferredInputType(format: string): string {
+    const ms = format.indexOf('%L') !== -1;
+
+    if (ms) {
+        return 'text';
+    }
+
+    const date = ['a', 'A', 'd', 'e', 'w', 'b', 'B', 'm', 'o', 'y', 'Y'].some((char: string): boolean =>
+        format.indexOf('%' + char) !== -1
+    );
+    const time = ['H', 'k', 'I', 'l', 'M', 'S'].some((char: string): boolean =>
+        format.indexOf('%' + char) !== -1
+    );
+
+    if (date && time) {
+        return 'datetime-local';
+    }
+    if (date) {
+        return 'date';
+    }
+    if (time) {
+        return 'time';
+    }
+    return 'text';
+}
 
 /**
  * Get the axis min value based on the range option and the current max. For
