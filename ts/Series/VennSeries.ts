@@ -28,7 +28,6 @@ import type DashStyleValue from '../Core/Renderer/DashStyleValue';
 import type PositionObject from '../Core/Renderer/PositionObject';
 import type ScatterPoint from './Scatter/ScatterPoint';
 import type ScatterPointOptions from './Scatter/ScatterPointOptions';
-import type ScatterSeries from './Scatter/ScatterSeries';
 import type ScatterSeriesOptions from './Scatter/ScatterSeriesOptions';
 import type { SeriesStatesOptions } from '../Core/Series/SeriesOptions';
 import type SVGAttributes from '../Core/Renderer/SVG/SVGAttributes';
@@ -37,11 +36,14 @@ import type SVGPath from '../Core/Renderer/SVG/SVGPath';
 import A from '../Core/Animation/AnimationUtilities.js';
 const { animObject } = A;
 import BaseSeries from '../Core/Series/Series.js';
-const { seriesTypes } = BaseSeries;
+const {
+    seriesTypes: {
+        scatter: ScatterSeries
+    }
+} = BaseSeries;
 import Color from '../Core/Color/Color.js';
 const { parse: color } = Color;
 import DrawPointMixin from '../Mixins/DrawPoint.js';
-const { draw } = DrawPointMixin;
 import GeometryMixin from '../Mixins/Geometry.js';
 const {
     getCenterOfPoints,
@@ -74,21 +76,6 @@ const {
 
 import './Scatter/ScatterSeries.js';
 
-/* *
- *
- *  Declarations
- *
- * *&
-
-/**
- * @private
- */
-declare module '../Core/Series/SeriesType' {
-    interface SeriesTypeRegistry {
-        venn: typeof Highcharts.VennSeries;
-    }
-}
-
 /**
  * Internal types
  * @private
@@ -96,29 +83,13 @@ declare module '../Core/Series/SeriesType' {
 declare global {
     namespace Highcharts {
         class VennPoint extends ScatterPoint implements DrawPoint {
-            public draw: typeof draw;
+            public draw: typeof DrawPointMixin.draw;
             public isValid: () => boolean;
             public options: VennPointOptions;
             public series: VennSeries;
             public sets: Array<string>;
             public value: number;
             public shouldDraw(): boolean;
-        }
-        class VennSeries extends ScatterSeries {
-            public axisTypes: Array<string>;
-            public data: Array<VennPoint>;
-            public directTouch: boolean;
-            public isCartesian: boolean;
-            public mapOfIdToRelation: Dictionary<VennRelationObject>;
-            public options: VennSeriesOptions;
-            public pointArrayMap: Array<string>;
-            public pointClass: typeof VennPoint;
-            public points: Array<VennPoint>;
-            public utils: VennUtilsObject;
-            public init(chart: Chart, options: VennSeriesOptions): void;
-            public animate(init?: boolean): void;
-            public drawPoints(): void;
-            public translate(): void;
         }
         interface VennLabelPositionObject {
             point: PositionObject;
@@ -198,14 +169,6 @@ declare global {
  *  Functions
  *
  * */
-
-var objectValues = function objectValues<T>(
-    obj: Highcharts.Dictionary<T>
-): Array<T> {
-    return Object.keys(obj).map(function (x: string): T {
-        return obj[x];
-    });
-};
 
 /**
  * Calculates the area of overlap between a list of circles.
@@ -1027,7 +990,11 @@ var processVennData = function processVennData(
     });
 
     // Transform map into array.
-    return objectValues(mapOfIdToRelation);
+    return Object
+        .keys(mapOfIdToRelation)
+        .map(function (id): Highcharts.VennRelationObject {
+            return mapOfIdToRelation[id];
+        });
 };
 
 /**
@@ -1102,88 +1069,133 @@ var updateFieldBoundaries = function updateFieldBoundaries(
     return field;
 };
 
-/**
- * A Venn diagram displays all possible logical relations between a collection
- * of different sets. The sets are represented by circles, and the relation
- * between the sets are displayed by the overlap or lack of overlap between
- * them. The venn diagram is a special case of Euler diagrams, which can also
- * be displayed by this series type.
+/* *
  *
- * @sample {highcharts} highcharts/demo/venn-diagram/
- *         Venn diagram
- * @sample {highcharts} highcharts/demo/euler-diagram/
- *         Euler diagram
+ *  Class
  *
- * @extends      plotOptions.scatter
- * @excluding    connectEnds, connectNulls, cropThreshold, dragDrop,
- *               findNearestPointBy, getExtremesFromAll, jitter, label, linecap,
- *               lineWidth, linkedTo, marker, negativeColor, pointInterval,
- *               pointIntervalUnit, pointPlacement, pointStart, softThreshold,
- *               stacking, steps, threshold, xAxis, yAxis, zoneAxis, zones,
- *               dataSorting, boostThreshold, boostBlending
- * @product      highcharts
- * @requires     modules/venn
- * @optionparent plotOptions.venn
- */
-var vennOptions: Highcharts.VennSeriesOptions = {
-    borderColor: '${palette.neutralColor20}',
-    borderDashStyle: 'solid' as any,
-    borderWidth: 1,
-    brighten: 0,
-    clip: false,
-    colorByPoint: true,
-    dataLabels: {
-        enabled: true,
-        verticalAlign: 'middle',
-        formatter: function (): (string|undefined) {
-            return this.point.name;
-        }
-    },
-    /**
-     * @ignore-option
-     * @private
-     */
-    inactiveOtherPoints: true,
-    marker: false as any,
-    opacity: 0.75,
-    showInLegend: false,
-    states: {
-        /**
-         * @excluding halo
-         */
-        hover: {
-            opacity: 1,
-            borderColor: '${palette.neutralColor80}'
-        },
-        /**
-         * @excluding halo
-         */
-        select: {
-            color: '${palette.neutralColor20}',
-            borderColor: '${palette.neutralColor100}',
-            animation: false
-        },
-        inactive: {
-            opacity: 0.075
-        }
-    },
-    tooltip: {
-        pointFormat: '{point.name}: {point.value}'
-    }
-};
+ * */
 
-var vennSeries = {
+/**
+ * @private
+ * @class
+ * @name Highcharts.seriesTypes.venn
+ *
+ * @augments Highcharts.Series
+ */
+class VennSeries extends ScatterSeries {
+
+    /* *
+     *
+     *  Static Properties
+     *
+     * */
+
+    /**
+     * A Venn diagram displays all possible logical relations between a
+     * collection of different sets. The sets are represented by circles, and
+     * the relation between the sets are displayed by the overlap or lack of
+     * overlap between them. The venn diagram is a special case of Euler
+     * diagrams, which can also be displayed by this series type.
+     *
+     * @sample {highcharts} highcharts/demo/venn-diagram/
+     *         Venn diagram
+     * @sample {highcharts} highcharts/demo/euler-diagram/
+     *         Euler diagram
+     *
+     * @extends      plotOptions.scatter
+     * @excluding    connectEnds, connectNulls, cropThreshold, dragDrop,
+     *               findNearestPointBy, getExtremesFromAll, jitter, label,
+     *               linecap, lineWidth, linkedTo, marker, negativeColor,
+     *               pointInterval, pointIntervalUnit, pointPlacement,
+     *               pointStart, softThreshold, stacking, steps, threshold,
+     *               xAxis, yAxis, zoneAxis, zones, dataSorting, boostThreshold,
+     *               boostBlending
+     * @product      highcharts
+     * @requires     modules/venn
+     * @optionparent plotOptions.venn
+     */
+    public static defaultOptions: Highcharts.VennSeriesOptions = {
+        borderColor: '${palette.neutralColor20}',
+        borderDashStyle: 'solid' as any,
+        borderWidth: 1,
+        brighten: 0,
+        clip: false,
+        colorByPoint: true,
+        dataLabels: {
+            enabled: true,
+            verticalAlign: 'middle',
+            formatter: function (): (string|undefined) {
+                return this.point.name;
+            }
+        },
+        /**
+         * @ignore-option
+         * @private
+         */
+        inactiveOtherPoints: true,
+        marker: false as any,
+        opacity: 0.75,
+        showInLegend: false,
+        states: {
+            /**
+             * @excluding halo
+             */
+            hover: {
+                opacity: 1,
+                borderColor: '${palette.neutralColor80}'
+            },
+            /**
+             * @excluding halo
+             */
+            select: {
+                color: '${palette.neutralColor20}',
+                borderColor: '${palette.neutralColor100}',
+                animation: false
+            },
+            inactive: {
+                opacity: 0.075
+            }
+        },
+        tooltip: {
+            pointFormat: '{point.name}: {point.value}'
+        }
+    };
+
+    /* *
+     *
+     *  Properties
+     *
+     * */
+}
+
+interface VennSeries {
+    axisTypes: Array<string>;
+    data: Array<Highcharts.VennPoint>;
+    directTouch: boolean;
+    isCartesian: boolean;
+    mapOfIdToRelation: Record<string, Highcharts.VennRelationObject>;
+    options: Highcharts.VennSeriesOptions;
+    pointArrayMap: Array<string>;
+    pointClass: typeof VennPoint;
+    points: Array<Highcharts.VennPoint>;
+    utils: Highcharts.VennUtilsObject;
+    init(chart: Chart, options: Highcharts.VennSeriesOptions): void;
+    animate(init?: boolean): void;
+    drawPoints(): void;
+    translate(): void;
+}
+extend(VennSeries.prototype, {
     isCartesian: false,
     axisTypes: [],
     directTouch: true,
     pointArrayMap: ['value'],
-    init: function (this: Highcharts.VennSeries): void {
-        seriesTypes.scatter.prototype.init.apply(this, arguments);
+    init: function (this: VennSeries): void {
+        ScatterSeries.prototype.init.apply(this, arguments);
 
         // Venn's opacity is a different option from other series
         delete this.opacity;
     },
-    translate: function (this: Highcharts.VennSeries): void {
+    translate: function (this: VennSeries): void {
 
         var chart = this.chart;
 
@@ -1295,7 +1307,7 @@ var vennSeries = {
      * Draw the graphics for each point.
      * @private
      */
-    drawPoints: function (this: Highcharts.VennSeries): void {
+    drawPoints: function (this: VennSeries): void {
         var series = this,
             // Series properties
             chart = series.chart,
@@ -1339,9 +1351,9 @@ var vennSeries = {
      * Returns the calculated attributes.
      */
     pointAttribs: function (
-        this: Highcharts.VennSeries,
+        this: VennSeries,
         point: Highcharts.VennPoint,
-        state?: keyof Highcharts.VennSeries['options']['states']
+        state?: keyof VennSeries['options']['states']
     ): SVGAttributes {
         var series = this,
             seriesOptions = series.options || {},
@@ -1368,7 +1380,7 @@ var vennSeries = {
         };
     },
     /* eslint-enable valid-jsdoc */
-    animate: function (this: Highcharts.VennSeries, init?: boolean): void {
+    animate: function (this: VennSeries, init?: boolean): void {
         if (!init) {
             var series = this,
                 animOptions = animObject(series.options.animation);
@@ -1421,10 +1433,32 @@ var vennSeries = {
         processVennData: processVennData,
         sortByTotalOverlap: sortByTotalOverlap
     }
-};
+});
 
-var vennPoint = {
-    draw: draw,
+
+class VennPoint extends ScatterSeries.prototype.pointClass implements Highcharts.DrawPoint {
+
+    /* *
+     *
+     *  Properties
+     *
+     * */
+
+    public options: Highcharts.VennPointOptions = void 0 as any;
+
+    public series: VennSeries = void 0 as any;
+
+    public sets?: Array<string>;
+
+    public value?: number;
+}
+interface VennPoint {
+    draw: typeof DrawPointMixin.draw;
+    isValid: () => boolean;
+    shouldDraw(): boolean;
+}
+extend(VennPoint.prototype, {
+    draw: DrawPointMixin.draw,
     shouldDraw: function (this: Highcharts.VennPoint): boolean {
         var point = this;
 
@@ -1434,7 +1468,35 @@ var vennPoint = {
     isValid: function (this: Highcharts.VennPoint): boolean {
         return isNumber(this.value);
     }
-};
+});
+
+/* *
+ *
+ *  Registry
+ *
+ * */
+
+declare module '../Core/Series/SeriesType' {
+    interface SeriesTypeRegistry {
+        venn: typeof VennSeries;
+    }
+}
+VennSeries.prototype.pointClass = VennPoint;
+BaseSeries.registerSeriesType('venn', VennSeries);
+
+/* *
+ *
+ *  Default Export
+ *
+ * */
+
+export default VennSeries;
+
+/* *
+ *
+ *  API Options
+ *
+ * */
 
 /**
  * A `venn` series. If the [type](#series.venn.type) option is
@@ -1519,25 +1581,14 @@ var vennPoint = {
 
 ''; // detach doclets above
 
-/**
- * @private
- * @class
- * @name Highcharts.seriesTypes.venn
- *
- * @augments Highcharts.Series
- */
-BaseSeries.seriesType<typeof Highcharts.VennSeries>(
-    'venn', 'scatter', vennOptions, vennSeries, vennPoint
-);
-
 /* eslint-disable no-invalid-this */
 
 // Modify final series options.
-addEvent(seriesTypes.venn, 'afterSetOptions', function (
+addEvent(VennSeries, 'afterSetOptions', function (
     e: { options: Highcharts.VennSeriesOptions }
 ): void {
     var options = e.options,
-        states: SeriesStatesOptions<Highcharts.VennSeries> = options.states as any;
+        states: SeriesStatesOptions<VennSeries> = options.states as any;
 
     if (this.is('venn')) {
         // Explicitly disable all halo options.

@@ -15,14 +15,26 @@
  *
  * */
 'use strict';
+var __extends = (this && this.__extends) || (function () {
+    var extendStatics = function (d, b) {
+        extendStatics = Object.setPrototypeOf ||
+            ({ __proto__: [] } instanceof Array && function (d, b) { d.__proto__ = b; }) ||
+            function (d, b) { for (var p in b) if (b.hasOwnProperty(p)) d[p] = b[p]; };
+        return extendStatics(d, b);
+    };
+    return function (d, b) {
+        extendStatics(d, b);
+        function __() { this.constructor = d; }
+        d.prototype = b === null ? Object.create(b) : (__.prototype = b.prototype, new __());
+    };
+})();
 import A from '../Core/Animation/AnimationUtilities.js';
 var animObject = A.animObject;
 import BaseSeries from '../Core/Series/Series.js';
-var seriesTypes = BaseSeries.seriesTypes;
+var ScatterSeries = BaseSeries.seriesTypes.scatter;
 import Color from '../Core/Color/Color.js';
 var color = Color.parse;
 import DrawPointMixin from '../Mixins/DrawPoint.js';
-var draw = DrawPointMixin.draw;
 import GeometryMixin from '../Mixins/Geometry.js';
 var getCenterOfPoints = GeometryMixin.getCenterOfPoints, getDistanceBetweenPoints = GeometryMixin.getDistanceBetweenPoints;
 import GeometryCirclesModule from '../Mixins/GeometryCircles.js';
@@ -37,11 +49,6 @@ import './Scatter/ScatterSeries.js';
  *  Functions
  *
  * */
-var objectValues = function objectValues(obj) {
-    return Object.keys(obj).map(function (x) {
-        return obj[x];
-    });
-};
 /**
  * Calculates the area of overlap between a list of circles.
  * @private
@@ -619,7 +626,11 @@ var processVennData = function processVennData(data) {
         }
     });
     // Transform map into array.
-    return objectValues(mapOfIdToRelation);
+    return Object
+        .keys(mapOfIdToRelation)
+        .map(function (id) {
+        return mapOfIdToRelation[id];
+    });
 };
 /**
  * Calculates the proper scale to fit the cloud inside the plotting area.
@@ -674,82 +685,107 @@ var updateFieldBoundaries = function updateFieldBoundaries(field, circle) {
     }
     return field;
 };
+/* *
+ *
+ *  Class
+ *
+ * */
 /**
- * A Venn diagram displays all possible logical relations between a collection
- * of different sets. The sets are represented by circles, and the relation
- * between the sets are displayed by the overlap or lack of overlap between
- * them. The venn diagram is a special case of Euler diagrams, which can also
- * be displayed by this series type.
+ * @private
+ * @class
+ * @name Highcharts.seriesTypes.venn
  *
- * @sample {highcharts} highcharts/demo/venn-diagram/
- *         Venn diagram
- * @sample {highcharts} highcharts/demo/euler-diagram/
- *         Euler diagram
- *
- * @extends      plotOptions.scatter
- * @excluding    connectEnds, connectNulls, cropThreshold, dragDrop,
- *               findNearestPointBy, getExtremesFromAll, jitter, label, linecap,
- *               lineWidth, linkedTo, marker, negativeColor, pointInterval,
- *               pointIntervalUnit, pointPlacement, pointStart, softThreshold,
- *               stacking, steps, threshold, xAxis, yAxis, zoneAxis, zones,
- *               dataSorting, boostThreshold, boostBlending
- * @product      highcharts
- * @requires     modules/venn
- * @optionparent plotOptions.venn
+ * @augments Highcharts.Series
  */
-var vennOptions = {
-    borderColor: '${palette.neutralColor20}',
-    borderDashStyle: 'solid',
-    borderWidth: 1,
-    brighten: 0,
-    clip: false,
-    colorByPoint: true,
-    dataLabels: {
-        enabled: true,
-        verticalAlign: 'middle',
-        formatter: function () {
-            return this.point.name;
-        }
-    },
-    /**
-     * @ignore-option
-     * @private
-     */
-    inactiveOtherPoints: true,
-    marker: false,
-    opacity: 0.75,
-    showInLegend: false,
-    states: {
-        /**
-         * @excluding halo
-         */
-        hover: {
-            opacity: 1,
-            borderColor: '${palette.neutralColor80}'
-        },
-        /**
-         * @excluding halo
-         */
-        select: {
-            color: '${palette.neutralColor20}',
-            borderColor: '${palette.neutralColor100}',
-            animation: false
-        },
-        inactive: {
-            opacity: 0.075
-        }
-    },
-    tooltip: {
-        pointFormat: '{point.name}: {point.value}'
+var VennSeries = /** @class */ (function (_super) {
+    __extends(VennSeries, _super);
+    function VennSeries() {
+        return _super !== null && _super.apply(this, arguments) || this;
     }
-};
-var vennSeries = {
+    /* *
+     *
+     *  Static Properties
+     *
+     * */
+    /**
+     * A Venn diagram displays all possible logical relations between a
+     * collection of different sets. The sets are represented by circles, and
+     * the relation between the sets are displayed by the overlap or lack of
+     * overlap between them. The venn diagram is a special case of Euler
+     * diagrams, which can also be displayed by this series type.
+     *
+     * @sample {highcharts} highcharts/demo/venn-diagram/
+     *         Venn diagram
+     * @sample {highcharts} highcharts/demo/euler-diagram/
+     *         Euler diagram
+     *
+     * @extends      plotOptions.scatter
+     * @excluding    connectEnds, connectNulls, cropThreshold, dragDrop,
+     *               findNearestPointBy, getExtremesFromAll, jitter, label,
+     *               linecap, lineWidth, linkedTo, marker, negativeColor,
+     *               pointInterval, pointIntervalUnit, pointPlacement,
+     *               pointStart, softThreshold, stacking, steps, threshold,
+     *               xAxis, yAxis, zoneAxis, zones, dataSorting, boostThreshold,
+     *               boostBlending
+     * @product      highcharts
+     * @requires     modules/venn
+     * @optionparent plotOptions.venn
+     */
+    VennSeries.defaultOptions = {
+        borderColor: '${palette.neutralColor20}',
+        borderDashStyle: 'solid',
+        borderWidth: 1,
+        brighten: 0,
+        clip: false,
+        colorByPoint: true,
+        dataLabels: {
+            enabled: true,
+            verticalAlign: 'middle',
+            formatter: function () {
+                return this.point.name;
+            }
+        },
+        /**
+         * @ignore-option
+         * @private
+         */
+        inactiveOtherPoints: true,
+        marker: false,
+        opacity: 0.75,
+        showInLegend: false,
+        states: {
+            /**
+             * @excluding halo
+             */
+            hover: {
+                opacity: 1,
+                borderColor: '${palette.neutralColor80}'
+            },
+            /**
+             * @excluding halo
+             */
+            select: {
+                color: '${palette.neutralColor20}',
+                borderColor: '${palette.neutralColor100}',
+                animation: false
+            },
+            inactive: {
+                opacity: 0.075
+            }
+        },
+        tooltip: {
+            pointFormat: '{point.name}: {point.value}'
+        }
+    };
+    return VennSeries;
+}(ScatterSeries));
+extend(VennSeries.prototype, {
     isCartesian: false,
     axisTypes: [],
     directTouch: true,
     pointArrayMap: ['value'],
     init: function () {
-        seriesTypes.scatter.prototype.init.apply(this, arguments);
+        ScatterSeries.prototype.init.apply(this, arguments);
         // Venn's opacity is a different option from other series
         delete this.opacity;
     },
@@ -931,9 +967,24 @@ var vennSeries = {
         processVennData: processVennData,
         sortByTotalOverlap: sortByTotalOverlap
     }
-};
-var vennPoint = {
-    draw: draw,
+});
+var VennPoint = /** @class */ (function (_super) {
+    __extends(VennPoint, _super);
+    function VennPoint() {
+        /* *
+         *
+         *  Properties
+         *
+         * */
+        var _this = _super !== null && _super.apply(this, arguments) || this;
+        _this.options = void 0;
+        _this.series = void 0;
+        return _this;
+    }
+    return VennPoint;
+}(ScatterSeries.prototype.pointClass));
+extend(VennPoint.prototype, {
+    draw: DrawPointMixin.draw,
     shouldDraw: function () {
         var point = this;
         // Only draw points with single sets.
@@ -942,7 +993,20 @@ var vennPoint = {
     isValid: function () {
         return isNumber(this.value);
     }
-};
+});
+VennSeries.prototype.pointClass = VennPoint;
+BaseSeries.registerSeriesType('venn', VennSeries);
+/* *
+ *
+ *  Default Export
+ *
+ * */
+export default VennSeries;
+/* *
+ *
+ *  API Options
+ *
+ * */
 /**
  * A `venn` series. If the [type](#series.venn.type) option is
  * not specified, it is inherited from [chart.type](#chart.type).
@@ -1018,17 +1082,9 @@ var vennPoint = {
  * @apioption series.venn.states.select
  */
 ''; // detach doclets above
-/**
- * @private
- * @class
- * @name Highcharts.seriesTypes.venn
- *
- * @augments Highcharts.Series
- */
-BaseSeries.seriesType('venn', 'scatter', vennOptions, vennSeries, vennPoint);
 /* eslint-disable no-invalid-this */
 // Modify final series options.
-addEvent(seriesTypes.venn, 'afterSetOptions', function (e) {
+addEvent(VennSeries, 'afterSetOptions', function (e) {
     var options = e.options, states = options.states;
     if (this.is('venn')) {
         // Explicitly disable all halo options.
