@@ -205,7 +205,7 @@ var SplineSeries = /** @class */ (function (_super) {
      * @product      highcharts highstock
      * @optionparent plotOptions.spline
      */
-    SplineSeries.defaultOptions = merge(LineSeries.defaultOptions);
+    SplineSeries.defaultOptions = merge(LineSeries.defaultOptions, {});
     return SplineSeries;
 }(LineSeries));
 BaseSeries.registerSeriesType('spline', SplineSeries);

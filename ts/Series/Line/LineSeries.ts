@@ -982,7 +982,7 @@ class LineSeries {
          *
          * @see [softThreshold](#plotOptions.series.softThreshold).
          *
-         * @type      {number}
+         * @type      {number|null}
          * @default   0
          * @since     3.0
          * @product   highcharts highstock
