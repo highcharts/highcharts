@@ -451,7 +451,7 @@ var Breadcrumbs = /** @class */ (function () {
     */
     Breadcrumbs.prototype.renderButton = function (breadcrumb, posX, posY) {
         var breadcrumbs = this, chart = this.chart, breadcrumbsList = breadcrumbs.breadcrumbsList, breadcrumbsOptions = chart.options.drilldown && chart.options.drilldown.breadcrumbs, lang = chart.options.lang;
-        if (breadcrumbsOptions && breadcrumb) {
+        if (breadcrumbsOptions && breadcrumb[1]) {
             var button_1 = chart.renderer.button(breadcrumbsOptions.formatter ? breadcrumbsOptions.formatter(breadcrumbs) : void 0 ||
                 format(breadcrumbsOptions.format, { value: breadcrumb[1].name || (lang && lang.mainBreadCrumb) }, chart), posX, posY, function () {
                 if (breadcrumbsOptions.events && breadcrumbsOptions.events.click) {
