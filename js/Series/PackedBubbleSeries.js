@@ -1286,8 +1286,12 @@ var PackedBubblePoint = /** @class */ (function (_super) {
          *
          * */
         var _this = _super !== null && _super.apply(this, arguments) || this;
+        _this.degree = NaN;
+        _this.mass = NaN;
+        _this.radius = NaN;
         _this.options = void 0;
         _this.series = void 0;
+        _this.value = null;
         return _this;
         /* eslint-enable valid-jsdoc */
     }
