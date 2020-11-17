@@ -24,7 +24,7 @@ import '../Extensions/ScrollablePlotArea.js';
 import '../Extensions/Stacking.js';
 import '../Core/Dynamics.js';
 import '../Series/Area/AreaSeries.js';
-import '../Series/SplineSeries.js';
+import '../Series/Spline/SplineSeries.js';
 import '../Series/AreaSplineSeries.js';
 import '../Series/Column/ColumnSeries.js';
 import '../Series/Bar/BarSeries.js';

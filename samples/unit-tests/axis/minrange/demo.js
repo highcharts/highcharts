@@ -8,7 +8,10 @@ QUnit.test('minRange with log axis', function (assert) {
             minRange: 1000
         },
         series: [{
-            data: [7937, 9689, 9204, 9087, 12400, 11520, 8781, 11637, 10918, 8198, 10695, 11251]
+            data: [
+                7937, 9689, 9204, 9087, 12400,
+                11520, 8781, 11637, 10918, 8198, 10695, 11251
+            ]
         }]
     });
 
@@ -39,6 +42,9 @@ QUnit.test('#14505: minRange NaN with single point series', assert => {
     ].forEach(series => {
         const chart = Highcharts.chart('container', { series });
 
-        assert.ok(Highcharts.isNumber(chart.xAxis[0].minRange), 'minRange should be a finite number');
+        assert.ok(
+            Highcharts.isNumber(chart.xAxis[0].minRange),
+            'minRange should be a finite number'
+        );
     });
 });

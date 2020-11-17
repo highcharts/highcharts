@@ -13,12 +13,22 @@
 'use strict';
 
 import type PieSeries from './Pie/PieSeries';
+import type SankeyPointOptions from './Sankey/SankeyPointOptions';
+import type SankeySeries from './Sankey/SankeySeries';
+import type SankeySeriesOptions from './Sankey/SankeySeriesOptions';
 import type { SeriesStatesOptions } from '../Core/Series/SeriesOptions';
 import type SVGAttributes from '../Core/Renderer/SVG/SVGAttributes';
 import type SVGElement from '../Core/Renderer/SVG/SVGElement';
 import A from '../Core/Animation/AnimationUtilities.js';
 const { animObject } = A;
 import BaseSeries from '../Core/Series/Series.js';
+const {
+    seriesTypes: {
+        sankey: {
+            prototype: base
+        }
+    }
+} = BaseSeries;
 import H from '../Core/Globals.js';
 import NodesMixin from '../Mixins/Nodes.js';
 
@@ -28,8 +38,7 @@ import NodesMixin from '../Mixins/Nodes.js';
  */
 declare global {
     namespace Highcharts {
-        interface DependencyWheelColumnArray<T = DependencyWheelPoint>
-            extends SankeyColumnArray<T> {
+        interface DependencyWheelColumnArray<T = DependencyWheelPoint> extends SankeySeries.ColumnArray<T> {
         }
         interface DependencyWheelPointOptions extends SankeyPointOptions {
         }
@@ -38,7 +47,7 @@ declare global {
             startAngle?: number;
             states?: SeriesStatesOptions<DependencyWheelSeries>;
         }
-        class DependencyWheelPoint extends SankeyPoint {
+        class DependencyWheelPoint extends SankeySeries.prototype.pointClass {
             public angle: number;
             public dataLabelPath?: SVGElement;
             public fromNode: DependencyWheelPoint;
@@ -66,7 +75,7 @@ declare global {
             public nodes: Array<DependencyWheelPoint>;
             public pointClass: typeof DependencyWheelPoint;
             public points: Array<DependencyWheelPoint>;
-            public createNodeColumns(): Array<SankeyColumnArray>;
+            public createNodeColumns(): Array<SankeySeries.ColumnArray>;
             public getNodePadding(): number;
             public translate(): void;
         }
@@ -81,11 +90,6 @@ declare module '../Core/Series/SeriesType' {
         dependencywheel: typeof Highcharts.DependencyWheelSeries;
     }
 }
-
-import './SankeySeries.js';
-import '../Core/Options.js';
-
-const base = BaseSeries.seriesTypes.sankey.prototype;
 
 /**
  * @private
@@ -140,7 +144,7 @@ BaseSeries.seriesType<typeof Highcharts.DependencyWheelSeries>(
          */
         createNodeColumns: function (
             this: Highcharts.DependencyWheelSeries
-        ): Array<Highcharts.SankeyColumnArray> {
+        ): Array<SankeySeries.ColumnArray> {
             var columns = [this.createNodeColumn()];
             this.nodes.forEach(function (
                 node: Highcharts.DependencyWheelPoint

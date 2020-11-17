@@ -1,35 +1,39 @@
-QUnit.test('StaggerLines on opposite xAxis should be placed between title and axis line. (#4694)', function (assert) {
-    var chart = $('#container').highcharts({
-            chart: {
-                marginTop: null
-            },
-            xAxis: {
-                categories: [],
-                opposite: true,
-                labels: {
-                    staggerLines: 3
-                }
-            },
-            series: [{
-                data: [1, 2, 3, 1, 2, 3]
-            }]
-        }).highcharts(),
-        labelsBox = chart.xAxis[0].labelGroup.getBBox(),
-        titleBox = chart.title.getBBox();
+QUnit.test(
+    'StaggerLines on opposite xAxis should be placed ' +
+    'between title and axis line. (#4694)',
+    function (assert) {
+        var chart = $('#container').highcharts({
+                chart: {
+                    marginTop: null
+                },
+                xAxis: {
+                    categories: [],
+                    opposite: true,
+                    labels: {
+                        staggerLines: 3
+                    }
+                },
+                series: [{
+                    data: [1, 2, 3, 1, 2, 3]
+                }]
+            }).highcharts(),
+            labelsBox = chart.xAxis[0].labelGroup.getBBox(),
+            titleBox = chart.title.getBBox();
 
 
-    assert.strictEqual(
-        labelsBox.y > titleBox.y + titleBox.height,
-        true,
-        'All labels below the title.'
-    );
+        assert.strictEqual(
+            labelsBox.y > titleBox.y + titleBox.height,
+            true,
+            'All labels below the title.'
+        );
 
-    assert.strictEqual(
-        labelsBox.y + labelsBox.height < chart.plotTop,
-        true,
-        'All labels above the axis line.'
-    );
-});
+        assert.strictEqual(
+            labelsBox.y + labelsBox.height < chart.plotTop,
+            true,
+            'All labels above the axis line.'
+        );
+    }
+);
 
 QUnit.test('Ellipsis (#3941)', function (assert) {
     var chart = $('#container').highcharts({
@@ -168,45 +172,47 @@ QUnit.test('Respect reversed-flag of linked axis (#7911)', function (assert) {
 
 });
 
-QUnit.test('Show last label hiding interrupted by animation (#5332)', function (assert) {
+QUnit.test(
+    'Show last label hiding interrupted by animation (#5332)',
+    function (assert) {
+        var done = assert.async();
 
-    var done = assert.async();
-
-    var chart = Highcharts.chart('container', {
-        chart: {
-            animation: {
-                duration: 1
+        var chart = Highcharts.chart('container', {
+            chart: {
+                animation: {
+                    duration: 1
+                },
+                width: 300,
+                height: 300
             },
-            width: 300,
-            height: 300
-        },
-        series: [{
-            data: [25, 125]
-        }],
-        yAxis: {
-            showLastLabel: false
-        }
-    });
+            series: [{
+                data: [25, 125]
+            }],
+            yAxis: {
+                showLastLabel: false
+            }
+        });
 
-    assert.ok(
-        chart.yAxis[0].ticks[50].label.attr('y') > 0,
-        '50 label is placed'
-    );
-
-    chart.xAxis[0].update({
-        minTickInterval: 1
-    });
-    chart.series[0].setData([14, 40]);
-
-    setTimeout(function () {
         assert.ok(
-            chart.yAxis[0].ticks[50].label.attr('y') < 0,
-            '50 label is hidden'
+            chart.yAxis[0].ticks[50].label.attr('y') > 0,
+            '50 label is placed'
         );
 
-        done();
-    }, 50);
-});
+        chart.xAxis[0].update({
+            minTickInterval: 1
+        });
+        chart.series[0].setData([14, 40]);
+
+        setTimeout(function () {
+            assert.ok(
+                chart.yAxis[0].ticks[50].label.attr('y') < 0,
+                '50 label is hidden'
+            );
+
+            done();
+        }, 50);
+    }
+);
 
 QUnit.test('Check that tick labels do not move (#4929)', function (assert) {
     var chart = Highcharts.chart('container', {
@@ -218,7 +224,12 @@ QUnit.test('Check that tick labels do not move (#4929)', function (assert) {
 
         xAxis: {
             tickmarkPlacement: 'on',
-            categories: ['Category Alpha', 'Category Beta', 'Category Gamma', 'Category Delta']
+            categories: [
+                'Category Alpha',
+                'Category Beta',
+                'Category Gamma',
+                'Category Delta'
+            ]
         },
 
         yAxis: {
@@ -266,7 +277,17 @@ QUnit.test('Labels should be wrapped(#4415)', function (assert) {
         },
 
         xAxis: {
-            categories: ['Large Apples', 'Long Oranges', 'Posh Pears', 'Ransid Grapes', 'Clever Bananas', 'Bording Tomatos', 'Jolly Cabbage', 'Small Plumps', 'Wierd Apricots'],
+            categories: [
+                'Large Apples',
+                'Long Oranges',
+                'Posh Pears',
+                'Ransid Grapes',
+                'Clever Bananas',
+                'Bording Tomatos',
+                'Jolly Cabbage',
+                'Small Plumps',
+                'Wierd Apricots'
+            ],
             labels: {
                 step: 1
             }
@@ -282,7 +303,8 @@ QUnit.test('Labels should be wrapped(#4415)', function (assert) {
 
         tooltip: {
             headerFormat: '<b>{point.key}</b><br>',
-            pointFormat: '<span style="color:{series.color}">\u25CF</span> {series.name}: {point.y} / {point.stackTotal}'
+            pointFormat: '<span style="color:{series.color}">\u25CF</span> ' +
+                '{series.name}: {point.y} / {point.stackTotal}'
         },
 
         plotOptions: {
@@ -322,7 +344,68 @@ QUnit.test("X axis label rotation ignored step(#3971)", function (assert) {
     var chart = $('#container').highcharts({
 
         xAxis: {
-            categories: ['January', 'February', 'March', 'April', 'May', 'June', 'July', 'August', 'September', 'October', 'November', 'December', 'January', 'February', 'March', 'April', 'May', 'June', 'July', 'August', 'September', 'October', 'November', 'December', 'January', 'February', 'March', 'April', 'May', 'June', 'July', 'August', 'September', 'October', 'November', 'December', 'January', 'February', 'March', 'April', 'May', 'June', 'July', 'August', 'September', 'October', 'November', 'December', 'January', 'February', 'March', 'April', 'May', 'June', 'July', 'August', 'September', 'October', 'November', 'December'],
+            categories: [
+                'January',
+                'February',
+                'March',
+                'April',
+                'May',
+                'June',
+                'July',
+                'August',
+                'September',
+                'October',
+                'November',
+                'December',
+                'January',
+                'February',
+                'March',
+                'April',
+                'May',
+                'June',
+                'July',
+                'August',
+                'September',
+                'October',
+                'November',
+                'December',
+                'January',
+                'February',
+                'March',
+                'April',
+                'May',
+                'June',
+                'July',
+                'August',
+                'September',
+                'October',
+                'November',
+                'December',
+                'January',
+                'February',
+                'March',
+                'April',
+                'May',
+                'June',
+                'July',
+                'August',
+                'September',
+                'October',
+                'November',
+                'December',
+                'January',
+                'February',
+                'March',
+                'April',
+                'May',
+                'June',
+                'July',
+                'August',
+                'September',
+                'October',
+                'November',
+                'December'
+            ],
             labels: {
                 step: 1,
                 rotation: 1, // try to set to '0'
@@ -331,7 +414,15 @@ QUnit.test("X axis label rotation ignored step(#3971)", function (assert) {
         },
 
         series: [{
-            data: [29.9, 71.5, 106.4, 129.2, 144.0, 176.0, 135.6, 148.5, 216.4, 194.1, 95.6, 54.4, 29.9, 71.5, 106.4, 129.2, 144.0, 176.0, 135.6, 148.5, 216.4, 194.1, 95.6, 54.4, 29.9, 71.5, 106.4, 129.2, 144.0, 176.0, 135.6, 148.5, 216.4, 194.1, 95.6, 54.4, 29.9, 71.5, 106.4, 129.2, 144.0, 176.0, 135.6, 148.5, 216.4, 194.1, 95.6, 54.4, 29.9, 71.5, 106.4, 129.2, 144.0, 176.0, 135.6, 148.5, 216.4, 194.1, 95.6, 54.4]
+            data: [
+                29.9, 71.5, 106.4, 129.2, 144.0, 176.0, 135.6, 148.5, 216.4,
+                194.1, 95.6, 54.4, 29.9, 71.5, 106.4, 129.2, 144.0, 176.0,
+                135.6, 148.5, 216.4, 194.1, 95.6, 54.4, 29.9, 71.5, 106.4,
+                129.2, 144.0, 176.0, 135.6, 148.5, 216.4, 194.1, 95.6, 54.4,
+                29.9, 71.5, 106.4, 129.2, 144.0, 176.0, 135.6, 148.5, 216.4,
+                194.1, 95.6, 54.4, 29.9, 71.5, 106.4, 129.2, 144.0, 176.0,
+                135.6, 148.5, 216.4, 194.1, 95.6, 54.4
+            ]
         }]
     }).highcharts();
 
@@ -344,31 +435,39 @@ QUnit.test("X axis label rotation ignored step(#3971)", function (assert) {
 });
 
 
-QUnit.test("Auto label alignment is still working when step is set", function (assert) {
-    var chart = $('#container').highcharts({
-        chart: {
-            marginBottom: 80
-        },
-        xAxis: {
-            categories: ['Loooooong', 'Feb', 'Mar', 'Apr', 'May', 'Jun', 'Jul', 'Aug', 'Sep', 'Oct', 'Nov', 'Dec'],
-            labels: {
-                step: 1,
-                rotation: -90
-            }
-        },
+QUnit.test(
+    'Auto label alignment is still working when step is set',
+    function (assert) {
+        var chart = $('#container').highcharts({
+            chart: {
+                marginBottom: 80
+            },
+            xAxis: {
+                categories: [
+                    'Loooooong', 'Feb', 'Mar', 'Apr', 'May', 'Jun',
+                    'Jul', 'Aug', 'Sep', 'Oct', 'Nov', 'Dec'
+                ],
+                labels: {
+                    step: 1,
+                    rotation: -90
+                }
+            },
 
-        series: [{
-            data: [29.9, 71.5, 106.4, 129.2, 144.0, 176.0, 135.6, 148.5, 216.4, 194.1, 95.6, 54.4]
-        }]
-    }).highcharts();
+            series: [{
+                data: [
+                    29.9, 71.5, 106.4, 129.2, 144.0, 176.0,
+                    135.6, 148.5, 216.4, 194.1, 95.6, 54.4
+                ]
+            }]
+        }).highcharts();
 
-    assert.strictEqual(
-        chart.xAxis[0].labelAlign,
-        'right',
-        'Rigth aligned'
-    );
-
-});
+        assert.strictEqual(
+            chart.xAxis[0].labelAlign,
+            'right',
+            'Rigth aligned'
+        );
+    }
+);
 
 QUnit.test('Label formatting(#4291)', function (assert) {
     var chart = $('#container').highcharts({
@@ -389,7 +488,8 @@ QUnit.test('Label formatting(#4291)', function (assert) {
 });
 
 QUnit.test('Label height and ellipsis on update(#4070)', function (assert) {
-    // series dataLabels can start on or off -- the problem seems to be in the update redraw
+    // series dataLabels can start on or off -- the problem seems to be in the
+    // update redraw
     var labelsOn = true;
 
     function toggle(chart) {
@@ -398,7 +498,9 @@ QUnit.test('Label height and ellipsis on update(#4070)', function (assert) {
             dataLabels: {
                 enabled: labelsOn
             }
-        }, false); // false b/c could be a loop across all series... use the whole hc.redraw()
+            // false b/c could be a loop across all series... use the whole
+            // hc.redraw()
+        }, false);
         chart.redraw();
     }
 
@@ -411,24 +513,31 @@ QUnit.test('Label height and ellipsis on update(#4070)', function (assert) {
                 enabled: false
             },
             categories: [
-                "Not enough to choose from",
-                "Can't edit colors",
-                "I like it so far",
-                "Can't edit icons",
-                "Don't like the content/text",
-                "Don't like the colors",
-                "It worked nicely.",
-                "Don't like the icons",
-                "If I had to make a suggestion. For the most part they seem OK",
-                "For the text frames with images",
-                "the tag with Happy Easter on it would be much more useful if you could take the bunny off of it.",
-                "it would be a great improvement if you could actually delete the image and replace it with another. For example",
-                "this seems like a great feature and would like to see more choices",
-                "Many businesses using this tool have company colors that they need to use",
-                "there needs to be a paint brush option or some way to edit the colors of the icons within the text frames.  Other than that",
-                "much more powerful than powerpoint.",
-                "I think it is great - so easy to use",
-                "I can't find these. Where are they?"]
+                'Not enough to choose from',
+                'Can\'t edit colors',
+                'I like it so far',
+                'Can\'t edit icons',
+                'Don\'t like the content/text',
+                'Don\'t like the colors',
+                'It worked nicely.',
+                'Don\'t like the icons',
+                'If I had to make a suggestion. ' +
+                'For the most part they seem OK',
+                'For the text frames with images',
+                'the tag with Happy Easter on it would be much more useful ' +
+                'if you could take the bunny off of it.',
+                'it would be a great improvement if you could actually ' +
+                'delete the image and replace it with another. For example',
+                'this seems like a great feature and would like ' +
+                'to see more choices',
+                'Many businesses using this tool have company colors ' +
+                'that they need to use',
+                'there needs to be a paint brush option or some way to ' +
+                'edit the colors of the icons within the text frames.  ' +
+                'Other than that',
+                'much more powerful than powerpoint.',
+                'I think it is great - so easy to use',
+                'I can\'t find these. Where are they?']
         },
         yAxis: [{
             type: "linear",
@@ -444,58 +553,66 @@ QUnit.test('Label height and ellipsis on update(#4070)', function (assert) {
             },
             data: [
                 [
-                    "Not enough to choose from",
+                    'Not enough to choose from',
                     21],
                 [
-                    "Can't edit colors",
+                    'Can\'t edit colors',
                     19],
                 [
-                    "I like it so far",
+                    'I like it so far',
                     14],
                 [
-                    "Can't edit icons",
+                    'Can\'t edit icons',
                     10],
                 [
-                    "Don't like the content/text",
+                    'Don\'t like the content/text',
                     2],
                 [
-                    "Don't like the colors",
+                    'Don\'t like the colors',
                     2],
                 [
-                    "It worked nicely.",
+                    'It worked nicely.',
                     1],
                 [
-                    "Don't like the icons",
+                    'Don\'t like the icons',
                     1],
                 [
-                    "If I had to make a suggestion. For the most part they seem OK",
+                    'If I had to make a suggestion. ' +
+                    'For the most part they seem OK',
                     1],
                 [
-                    "For the text frames with images",
+                    'For the text frames with images',
                     1],
                 [
-                    "the tag with Happy Easter on it would be much more useful if you could take the bunny off of it.",
+                    'the tag with Happy Easter on it would be much more ' +
+                    'useful if you could take the bunny off of it.',
                     1],
                 [
-                    "it would be a great improvement if you could actually delete the image and replace it with another. For example",
+                    'it would be a great improvement if you could actually ' +
+                    'delete the image and replace it with another. ' +
+                    'For example',
                     1],
                 [
-                    "this seems like a great feature and would like to see more choices",
+                    'this seems like a great feature and would like to see ' +
+                    'more choices',
                     1],
                 [
-                    "Many businesses using this tool have company colors that they need to use",
+                    'Many businesses using this tool have company colors ' +
+                    'that they need to use',
                     1],
                 [
-                    "there needs to be a paint brush option or some way to edit the colors of the icons within the text frames.  Other than that",
+                    'there needs to be a paint brush option or some way to ' +
+                    'edit the colors of the icons within the text frames. ' +
+                    ' Other than that',
                     1],
                 [
-                    "much more powerful than powerpoint.",
+                    'much more powerful than powerpoint.',
                     1],
                 [
-                    "I think it is great - so easy to use",
+                    'I think it is great - so easy to use',
                     1],
                 [
-                    "I can't find these. Where are they?",
+                    'I can\'t find these. Where are they?',
                     1]
             ]
         }]
@@ -504,7 +621,8 @@ QUnit.test('Label height and ellipsis on update(#4070)', function (assert) {
     var chart = $('#container').highcharts();
     toggle(chart);
 
-    // After update, long labels should have the same height as short ones because they should have ellipsis
+    // After update, long labels should have the same height as short ones
+    // because they should have ellipsis
     assert.equal(
         chart.xAxis[0].ticks[10].label.getBBox().height,
         chart.xAxis[0].ticks[0].label.getBBox().height,
@@ -609,7 +727,8 @@ QUnit.test('Label reserve space', function (assert) {
     bBox = xAxis.ticks[0].label.element.getBBox();
     assert.ok(
         bBox.x > 0 && bBox.x + bBox.width < chart.plotLeft,
-        'reserveSpace: true, align: left. - Labels should not overlap plot area'
+        'reserveSpace: true, align: left. - ' +
+        'Labels should not overlap plot area'
     );
 
     xAxis.update({
@@ -620,7 +739,8 @@ QUnit.test('Label reserve space', function (assert) {
     bBox = xAxis.ticks[0].label.element.getBBox();
     assert.ok(
         bBox.x > 0 && bBox.x + bBox.width < chart.plotLeft,
-        'reserveSpace: true, align: center. - Labels should not overlap plot area'
+        'reserveSpace: true, align: center. - ' +
+        'Labels should not overlap plot area'
     );
 
 
@@ -647,7 +767,8 @@ QUnit.test('Label reserve space', function (assert) {
     assert.notOk(
         bBox.x > chart.plotLeft + chart.plotWidth &&
             bBox.x + bBox.width < chart.chartWidth,
-        'opposite: true, reserveSpace: null, align: right. - Labels should overlap plot area'
+        'opposite: true, reserveSpace: null, align: right. - ' +
+        'Labels should overlap plot area'
     );
 
     xAxis.update({
@@ -659,7 +780,8 @@ QUnit.test('Label reserve space', function (assert) {
     assert.notOk(
         bBox.x > chart.plotLeft + chart.plotWidth &&
             bBox.x + bBox.width < chart.chartWidth,
-        'opposite: true, reserveSpace: false, align: right. - Labels should overlap plot area'
+        'opposite: true, reserveSpace: false, align: right. - ' +
+        'Labels should overlap plot area'
     );
 
     xAxis.update({
@@ -671,7 +793,8 @@ QUnit.test('Label reserve space', function (assert) {
     assert.ok(
         bBox.x > chart.plotLeft + chart.plotWidth &&
             bBox.x + bBox.width < chart.chartWidth,
-        'opposite: true, reserveSpace: true, align: right. - Labels should not overlap plot area'
+        'opposite: true, reserveSpace: true, align: right. - ' +
+        'Labels should not overlap plot area'
     );
 
     xAxis.update({
@@ -683,7 +806,8 @@ QUnit.test('Label reserve space', function (assert) {
     assert.ok(
         bBox.x > chart.plotLeft + chart.plotWidth &&
             bBox.x + bBox.width < chart.chartWidth,
-        'opposite: true, reserveSpace: true, align: center. - Labels should not overlap plot area'
+        'opposite: true, reserveSpace: true, align: center. - ' +
+        'Labels should not overlap plot area'
     );
 
 
@@ -709,7 +833,10 @@ QUnit.test('Label ellipsis', function (assert) {
         },
 
         series: [{
-            data: [29.9, 71.5, 106.4, 129.2, 144.0, 176.0, 135.6, 148.5, 216.4, 194.1, 95.6, 54.4],
+            data: [
+                29.9, 71.5, 106.4, 129.2, 144.0, 176.0,
+                135.6, 148.5, 216.4, 194.1, 95.6, 54.4
+            ],
             type: 'column'
         }]
 
@@ -724,12 +851,24 @@ QUnit.test('Label ellipsis', function (assert) {
 
 
     assert.strictEqual(
-        chart.xAxis[0].ticks[0].label.element.querySelector('title').textContent,
+        chart
+            .xAxis[0]
+            .ticks[0]
+            .label
+            .element
+            .querySelector('title')
+            .textContent,
         'January & Entities',
         'HTML entities should be unescaped in title elements (#7179)'
     );
     assert.strictEqual(
-        chart.xAxis[0].ticks[1].label.element.querySelector('title').textContent,
+        chart
+            .xAxis[0]
+            .ticks[1]
+            .label
+            .element
+            .querySelector('title')
+            .textContent,
         'January <Not a tag>',
         'HTML entities should be unescaped in title elements (#7179)'
     );
@@ -908,7 +1047,81 @@ QUnit.test('Long labels and ellipsis', function (assert) {
             name: "Requests"
         }],
         xAxis: {
-            categories: ["cgi-bin/php?%2D%64+%61%6C%6C%6F%77%5F%75%72%6C%5F%69%6E%63%6C%75%64%65%3D%6F%6E+%2D%64+%73%61%66%65%5F%6D%6F%64%65%3D%6F%66%66+%2D%64+%73%75%68%6F%73%69%6E%2E%73%69%6D%75%6C%61%74%69%6F%6E%3D%6F%6E+%2D%64+%64%69%73%61%62%6C%65%5F%66%75%6E%63%74%69%6F%6E%73%3D%22%22+%2D%64+%6F%70%65%6E%5F%62%61%73%65%64%69%72%3D%6E%6F%6E%65+%2D%64+%61%75%74%6F%5F%70%72%65%70%65%6E%64%5F%66%69%6C%65%3D%70%68%70%3A%2F%2F%69%6E%70%75%74+%2D%64+%63%67%69%2E%66%6F%72%63%65%5F%72%65%64%69%72%65%63%74%3D%30+%2D%64+%63%67%69%2E%72%65%64%69%72%65%63%74%5F%73%74%61%74%75%73%5F%65%6E%76%3D%30+%2D%6E", "phpadmin/scripts/setup.php", "w00tw00t.at.blackhats.romanian.anti-sec:)", "cgi-bin/env.cgi", "cgi-bin/forum.cgi", "cgi-bin/login.cgi", "cgi-bin/sat-ir-web.pl", "cgi-bin/test-cgi.pl", "cgi-sys/php5", "SQLiteManager-1.2.4/main.php", "sqlitemanager/main.php", "SQlite/main.php", "SQLiteManager/main.php", "cgi-bin/php5?%2D%64+%61%6C%6C%6F%77%5F%75%72%6C%5F%69%6E%63%6C%75%64%65%3D%6F%6E+%2D%64+%73%61%66%65%5F%6D%6F%64%65%3D%6F%66%66+%2D%64+%73%75%68%6F%73%69%6E%2E%73%69%6D%75%6C%61%74%69%6F%6E%3D%6F%6E+%2D%64+%64%69%73%61%62%6C%65%5F%66%75%6E%63%74%69%6F%6E%73%3D%22%22+%2D%64+%6F%70%65%6E%5F%62%61%73%65%64%69%72%3D%6E%6F%6E%65+%2D%64+%61%75%74%6F%5F%70%72%65%70%65%6E%64%5F%66%69%6C%65%3D%70%68%70%3A%2F%2F%69%6E%70%75%74+%2D%64+%63%67%69%2E%66%6F%72%63%65%5F%72%65%64%69%72%65%63%74%3D%30+%2D%64+%63%67%69%2E%72%65%64%69%72%65%63%74%5F%73%74%61%74%75%73%5F%65%6E%76%3D%30+%2D%6E", "cgi-bin/bash", "cgi-bin/contact.cgi", "cgi-bin/defaultwebpage.cgi", "cgi-bin/hello.cgi", "cgi-bin/index.cgi", "cgi-bin/recent.cgi", "cgi-bin/tools/tools.pl", "cgi-bin/php-cgi?%2D%64+%61%6C%6C%6F%77%5F%75%72%6C%5F%69%6E%63%6C%75%64%65%3D%6F%6E+%2D%64+%73%61%66%65%5F%6D%6F%64%65%3D%6F%66%66+%2D%64+%73%75%68%6F%73%69%6E%2E%73%69%6D%75%6C%61%74%69%6F%6E%3D%6F%6E+%2D%64+%64%69%73%61%62%6C%65%5F%66%75%6E%63%74%69%6F%6E%73%3D%22%22+%2D%64+%6F%70%65%6E%5F%62%61%73%65%64%69%72%3D%6E%6F%6E%65+%2D%64+%61%75%74%6F%5F%70%72%65%70%65%6E%64%5F%66%69%6C%65%3D%70%68%70%3A%2F%2F%69%6E%70%75%74+%2D%64+%63%67%69%2E%66%6F%72%63%65%5F%72%65%64%69%72%65%63%74%3D%30+%2D%64+%63%67%69%2E%72%65%64%69%72%65%63%74%5F%73%74%61%74%75%73%5F%65%6E%76%3D%30+%2D%6E", "cgi-bin/php.cgi?%2D%64+%61%6C%6C%6F%77%5F%75%72%6C%5F%69%6E%63%6C%75%64%65%3D%6F%6E+%2D%64+%73%61%66%65%5F%6D%6F%64%65%3D%6F%66%66+%2D%64+%73%75%68%6F%73%69%6E%2E%73%69%6D%75%6C%61%74%69%6F%6E%3D%6F%6E+%2D%64+%64%69%73%61%62%6C%65%5F%66%75%6E%63%74%69%6F%6E%73%3D%22%22+%2D%64+%6F%70%65%6E%5F%62%61%73%65%64%69%72%3D%6E%6F%6E%65+%2D%64+%61%75%74%6F%5F%70%72%65%70%65%6E%64%5F%66%69%6C%65%3D%70%68%70%3A%2F%2F%69%6E%70%75%74+%2D%64+%63%67%69%2E%66%6F%72%63%65%5F%72%65%64%69%72%65%63%74%3D%30+%2D%64+%63%67%69%2E%72%65%64%69%72%65%63%74%5F%73%74%61%74%75%73%5F%65%6E%76%3D%30+%2D%6E", "cgi-bin/php4?%2D%64+%61%6C%6C%6F%77%5F%75%72%6C%5F%69%6E%63%6C%75%64%65%3D%6F%6E+%2D%64+%73%61%66%65%5F%6D%6F%64%65%3D%6F%66%66+%2D%64+%73%75%68%6F%73%69%6E%2E%73%69%6D%75%6C%61%74%69%6F%6E%3D%6F%6E+%2D%64+%64%69%73%61%62%6C%65%5F%66%75%6E%63%74%69%6F%6E%73%3D%22%22+%2D%64+%6F%70%65%6E%5F%62%61%73%65%64%69%72%3D%6E%6F%6E%65+%2D%64+%61%75%74%6F%5F%70%72%65%70%65%6E%64%5F%66%69%6C%65%3D%70%68%70%3A%2F%2F%69%6E%70%75%74+%2D%64+%63%67%69%2E%66%6F%72%63%65%5F%72%65%64%69%72%65%63%74%3D%30+%2D%64+%63%67%69%2E%72%65%64%69%72%65%63%74%5F%73%74%61%74%75%73%5F%65%6E%76%3D%30+%2D%6E", "scripts/setup.php"],
+            categories: [
+                'cgi-bin/php?%2D%64+%61%6C%6C%6F%77%5F%75%72%6C%5F%69%6E%63' +
+                '%6C%75%64%65%3D%6F%6E+%2D%64+%73%61%66%65%5F%6D%6F%64%65%3' +
+                'D%6F%66%66+%2D%64+%73%75%68%6F%73%69%6E%2E%73%69%6D%75%6C%' +
+                '61%74%69%6F%6E%3D%6F%6E+%2D%64+%64%69%73%61%62%6C%65%5F%66' +
+                '%75%6E%63%74%69%6F%6E%73%3D%22%22+%2D%64+%6F%70%65%6E%5F%6' +
+                '2%61%73%65%64%69%72%3D%6E%6F%6E%65+%2D%64+%61%75%74%6F%5F%' +
+                '70%72%65%70%65%6E%64%5F%66%69%6C%65%3D%70%68%70%3A%2F%2F%6' +
+                '9%6E%70%75%74+%2D%64+%63%67%69%2E%66%6F%72%63%65%5F%72%65%' +
+                '64%69%72%65%63%74%3D%30+%2D%64+%63%67%69%2E%72%65%64%69%72' +
+                '%65%63%74%5F%73%74%61%74%75%73%5F%65%6E%76%3D%30+%2D%6E',
+                'phpadmin/scripts/setup.php',
+                'w00tw00t.at.blackhats.romanian.anti-sec:)',
+                'cgi-bin/env.cgi',
+                'cgi-bin/forum.cgi',
+                'cgi-bin/login.cgi',
+                'cgi-bin/sat-ir-web.pl',
+                'cgi-bin/test-cgi.pl',
+                'cgi-sys/php5',
+                'SQLiteManager-1.2.4/main.php',
+                'sqlitemanager/main.php',
+                'SQlite/main.php',
+                'SQLiteManager/main.php',
+                'cgi-bin/php5?%2D%64+%61%6C%6C%6F%77%5F%75%72%6C%5F%69%6E%' +
+                '63%6C%75%64%65%3D%6F%6E+%2D%64+%73%61%66%65%5F%6D%6F%64%6' +
+                '5%3D%6F%66%66+%2D%64+%73%75%68%6F%73%69%6E%2E%73%69%6D%75' +
+                '%6C%61%74%69%6F%6E%3D%6F%6E+%2D%64+%64%69%73%61%62%6C%65%' +
+                '5F%66%75%6E%63%74%69%6F%6E%73%3D%22%22+%2D%64+%6F%70%65%6' +
+                'E%5F%62%61%73%65%64%69%72%3D%6E%6F%6E%65+%2D%64+%61%75%74' +
+                '%6F%5F%70%72%65%70%65%6E%64%5F%66%69%6C%65%3D%70%68%70%3A' +
+                '%2F%2F%69%6E%70%75%74+%2D%64+%63%67%69%2E%66%6F%72%63%65%' +
+                '5F%72%65%64%69%72%65%63%74%3D%30+%2D%64+%63%67%69%2E%72%6' +
+                '5%64%69%72%65%63%74%5F%73%74%61%74%75%73%5F%65%6E%76%3D%3' +
+                '0+%2D%6E',
+                'cgi-bin/bash',
+                'cgi-bin/contact.cgi',
+                'cgi-bin/defaultwebpage.cgi',
+                'cgi-bin/hello.cgi',
+                'cgi-bin/index.cgi',
+                'cgi-bin/recent.cgi',
+                'cgi-bin/tools/tools.pl',
+                'cgi-bin/php-cgi?%2D%64+%61%6C%6C%6F%77%5F%75%72%6C%5F%69%' +
+                '6E%63%6C%75%64%65%3D%6F%6E+%2D%64+%73%61%66%65%5F%6D%6F%6' +
+                '4%65%3D%6F%66%66+%2D%64+%73%75%68%6F%73%69%6E%2E%73%69%6D' +
+                '%75%6C%61%74%69%6F%6E%3D%6F%6E+%2D%64+%64%69%73%61%62%6C%' +
+                '65%5F%66%75%6E%63%74%69%6F%6E%73%3D%22%22+%2D%64+%6F%70%6' +
+                '5%6E%5F%62%61%73%65%64%69%72%3D%6E%6F%6E%65+%2D%64+%61%75' +
+                '%74%6F%5F%70%72%65%70%65%6E%64%5F%66%69%6C%65%3D%70%68%70' +
+                '%3A%2F%2F%69%6E%70%75%74+%2D%64+%63%67%69%2E%66%6F%72%63%' +
+                '65%5F%72%65%64%69%72%65%63%74%3D%30+%2D%64+%63%67%69%2E%7' +
+                '2%65%64%69%72%65%63%74%5F%73%74%61%74%75%73%5F%65%6E%76%3' +
+                'D%30+%2D%6E', 'cgi-bin/php.cgi?%2D%64+%61%6C%6C%6F%77%5F%' +
+                '75%72%6C%5F%69%6E%63%6C%75%64%65%3D%6F%6E+%2D%64+%73%61%6' +
+                '6%65%5F%6D%6F%64%65%3D%6F%66%66+%2D%64+%73%75%68%6F%73%69' +
+                '%6E%2E%73%69%6D%75%6C%61%74%69%6F%6E%3D%6F%6E+%2D%64+%64%' +
+                '69%73%61%62%6C%65%5F%66%75%6E%63%74%69%6F%6E%73%3D%22%22+' +
+                '%2D%64+%6F%70%65%6E%5F%62%61%73%65%64%69%72%3D%6E%6F%6E%6' +
+                '5+%2D%64+%61%75%74%6F%5F%70%72%65%70%65%6E%64%5F%66%69%6C' +
+                '%65%3D%70%68%70%3A%2F%2F%69%6E%70%75%74+%2D%64+%63%67%69%' +
+                '2E%66%6F%72%63%65%5F%72%65%64%69%72%65%63%74%3D%30+%2D%64' +
+                '+%63%67%69%2E%72%65%64%69%72%65%63%74%5F%73%74%61%74%75%7' +
+                '3%5F%65%6E%76%3D%30+%2D%6E',
+                'cgi-bin/php4?%2D%64+%61%6C%6C%6F%77%5F%75%72%6C%5F%69%6E%' +
+                '63%6C%75%64%65%3D%6F%6E+%2D%64+%73%61%66%65%5F%6D%6F%64%6' +
+                '5%3D%6F%66%66+%2D%64+%73%75%68%6F%73%69%6E%2E%73%69%6D%75' +
+                '%6C%61%74%69%6F%6E%3D%6F%6E+%2D%64+%64%69%73%61%62%6C%65%' +
+                '5F%66%75%6E%63%74%69%6F%6E%73%3D%22%22+%2D%64+%6F%70%65%6' +
+                'E%5F%62%61%73%65%64%69%72%3D%6E%6F%6E%65+%2D%64+%61%75%74' +
+                '%6F%5F%70%72%65%70%65%6E%64%5F%66%69%6C%65%3D%70%68%70%3A' +
+                '%2F%2F%69%6E%70%75%74+%2D%64+%63%67%69%2E%66%6F%72%63%65%' +
+                '5F%72%65%64%69%72%65%63%74%3D%30+%2D%64+%63%67%69%2E%72%6' +
+                '5%64%69%72%65%63%74%5F%73%74%61%74%75%73%5F%65%6E%76%3D%3' +
+                '0+%2D%6E',
+                'scripts/setup.php'
+            ],
             title: {
                 text: null
             }
@@ -1224,7 +1437,8 @@ QUnit.test('Column pointrange (#2806)', function (assert) {
             type: 'column'
         },
         title: {
-            text: 'Category axis was wrong when the second series had greater point distance than the first series'
+            text: 'Category axis was wrong when the second series had ' +
+            'greater point distance than the first series'
         },
         xAxis: {
             categories: ['Cat0', 'Cat1', 'Cat2', 'Cat3']
@@ -1334,7 +1548,8 @@ QUnit.test('Correction for X axis labels (#9238)', function (assert) {
     assert.strictEqual(
         chart.yAxis[0].labelGroup.element.childNodes.length,
         2,
-        'There should be 2 labels on the yAxis when additional axis does not have series linked to it.'
+        'There should be 2 labels on the yAxis when additional axis ' +
+        'does not have series linked to it.'
     );
 
     chart.update({
@@ -1351,310 +1566,356 @@ QUnit.test('Correction for X axis labels (#9238)', function (assert) {
 });
 
 // Highcharts 7.1.0, Issue #10635
-QUnit.test('Solidgauge two data labels auto alignment (#10635)', function (assert) {
-
-    var chart = Highcharts.chart('container', {
-            chart: {
-                type: 'solidgauge'
-            },
-            title: {
-                text: ''
-            },
-            pane: {
-                startAngle: 0,
-                endAngle: 90,
-                background: {
-                    innerRadius: '50%',
-                    outerRadius: '100%',
-                    shape: 'arc'
-                }
-            },
-            yAxis: {
-                min: 0,
-                max: 100,
-                lineWidth: 2,
-                minorTicks: false,
-                tickWidth: 2,
-                tickAmount: 2,
-                labels: {
-                    distance: '75%',
-                    align: 'auto',
-                    style: {
-                        fontSize: "20px"
-                    }
-                }
-            },
-            series: [{
-                name: 'Product',
-                innerRadius: '50%',
-                radius: '100%',
-                dataLabels: {
-                    enabled: false
+QUnit.test(
+    'Solidgauge two data labels auto alignment (#10635)',
+    function (assert) {
+        var chart = Highcharts.chart('container', {
+                chart: {
+                    type: 'solidgauge'
                 },
-                data: [55]
-            }]
-        }),
-        startLabel = chart.yAxis[0].ticks[chart.yAxis[0].tickPositions[0]].label,
-        endLabel = chart.yAxis[0].ticks[chart.yAxis[0].tickPositions[1]].label;
+                title: {
+                    text: ''
+                },
+                pane: {
+                    startAngle: 0,
+                    endAngle: 90,
+                    background: {
+                        innerRadius: '50%',
+                        outerRadius: '100%',
+                        shape: 'arc'
+                    }
+                },
+                yAxis: {
+                    min: 0,
+                    max: 100,
+                    lineWidth: 2,
+                    minorTicks: false,
+                    tickWidth: 2,
+                    tickAmount: 2,
+                    labels: {
+                        distance: '75%',
+                        align: 'auto',
+                        style: {
+                            fontSize: "20px"
+                        }
+                    }
+                },
+                series: [{
+                    name: 'Product',
+                    innerRadius: '50%',
+                    radius: '100%',
+                    dataLabels: {
+                        enabled: false
+                    },
+                    data: [55]
+                }]
+            }),
+            startLabel = chart.yAxis[0].ticks[
+                chart.yAxis[0].tickPositions[0]
+            ].label,
+            endLabel = chart.yAxis[0].ticks[
+                chart.yAxis[0].tickPositions[1]
+            ].label;
 
-    assert.deepEqual(
-        [
-            'end',
-            -startLabel.getBBox().height * 0.15,
-            0,
-            'middle',
-            0,
-            startLabel.getBBox().height - startLabel.getBBox().height * 0.3
-        ],
-        [
-            startLabel.element.getAttribute("text-anchor"),
-            startLabel.translateX,
-            startLabel.translateY,
-            endLabel.element.getAttribute("text-anchor"),
-            endLabel.translateX,
-            endLabel.translateY
-        ],
-        'Labels are aligned correctly.'
-    );
+        assert.deepEqual(
+            [
+                'end',
+                -startLabel.getBBox().height * 0.15,
+                0,
+                'middle',
+                0,
+                startLabel.getBBox().height - startLabel.getBBox().height * 0.3
+            ],
+            [
+                startLabel.element.getAttribute("text-anchor"),
+                startLabel.translateX,
+                startLabel.translateY,
+                endLabel.element.getAttribute("text-anchor"),
+                endLabel.translateX,
+                endLabel.translateY
+            ],
+            'Labels are aligned correctly.'
+        );
 
-    chart.update({
-        pane: {
-            startAngle: 90,
-            endAngle: 180
-        }
-    });
+        chart.update({
+            pane: {
+                startAngle: 90,
+                endAngle: 180
+            }
+        });
 
-    startLabel = chart.yAxis[0].ticks[chart.yAxis[0].tickPositions[0]].label;
-    endLabel = chart.yAxis[0].ticks[chart.yAxis[0].tickPositions[1]].label;
+        startLabel = chart.yAxis[0].ticks[
+            chart.yAxis[0].tickPositions[0]
+        ].label;
 
-    assert.deepEqual(
-        [
-            'middle',
-            0,
-            -startLabel.getBBox().height * 0.25 - startLabel.getBBox().height * 0.3,
-            'end',
-            -startLabel.getBBox().height * 0.15,
-            0
-        ],
-        [
-            startLabel.element.getAttribute("text-anchor"),
-            startLabel.translateX,
-            startLabel.translateY,
-            endLabel.element.getAttribute("text-anchor"),
-            endLabel.translateX,
-            endLabel.translateY
-        ],
-        'Labels are aligned correctly.'
-    );
+        endLabel = chart.yAxis[0].ticks[
+            chart.yAxis[0].tickPositions[1]
+        ].label;
 
-    chart.update({
-        pane: {
-            startAngle: 180,
-            endAngle: 270
-        }
-    });
+        assert.deepEqual(
+            [
+                'middle',
+                0,
+                -startLabel.getBBox().height * 0.25 -
+                startLabel.getBBox().height * 0.3,
+                'end',
+                -startLabel.getBBox().height * 0.15,
+                0
+            ],
+            [
+                startLabel.element.getAttribute("text-anchor"),
+                startLabel.translateX,
+                startLabel.translateY,
+                endLabel.element.getAttribute("text-anchor"),
+                endLabel.translateX,
+                endLabel.translateY
+            ],
+            'Labels are aligned correctly.'
+        );
 
-    startLabel = chart.yAxis[0].ticks[chart.yAxis[0].tickPositions[0]].label;
-    endLabel = chart.yAxis[0].ticks[chart.yAxis[0].tickPositions[1]].label;
+        chart.update({
+            pane: {
+                startAngle: 180,
+                endAngle: 270
+            }
+        });
 
-    assert.deepEqual(
-        [
-            'start',
-            startLabel.getBBox().height * 0.15,
-            0,
-            'middle',
-            0,
-            -startLabel.getBBox().height * 0.25 - startLabel.getBBox().height * 0.3
-        ],
-        [
-            startLabel.element.getAttribute("text-anchor"),
-            startLabel.translateX,
-            startLabel.translateY,
-            endLabel.element.getAttribute("text-anchor"),
-            endLabel.translateX,
-            endLabel.translateY
-        ],
-        'Labels are aligned correctly.'
-    );
+        startLabel = chart.yAxis[0].ticks[
+            chart.yAxis[0].tickPositions[0]
+        ].label;
 
-    chart.update({
-        pane: {
-            startAngle: 270,
-            endAngle: 360
-        }
-    });
+        endLabel = chart.yAxis[0].ticks[
+            chart.yAxis[0].tickPositions[1]
+        ].label;
 
-    startLabel = chart.yAxis[0].ticks[chart.yAxis[0].tickPositions[0]].label;
-    endLabel = chart.yAxis[0].ticks[chart.yAxis[0].tickPositions[1]].label;
+        assert.deepEqual(
+            [
+                'start',
+                startLabel.getBBox().height * 0.15,
+                0,
+                'middle',
+                0,
+                -startLabel.getBBox().height * 0.25 -
+                startLabel.getBBox().height * 0.3
+            ],
+            [
+                startLabel.element.getAttribute("text-anchor"),
+                startLabel.translateX,
+                startLabel.translateY,
+                endLabel.element.getAttribute("text-anchor"),
+                endLabel.translateX,
+                endLabel.translateY
+            ],
+            'Labels are aligned correctly.'
+        );
 
-    assert.deepEqual(
-        [
-            'middle',
-            0,
-            startLabel.getBBox().height - startLabel.getBBox().height * 0.3,
-            'start',
-            startLabel.getBBox().height * 0.15,
-            0
-        ],
-        [
-            startLabel.element.getAttribute("text-anchor"),
-            startLabel.translateX,
-            startLabel.translateY,
-            endLabel.element.getAttribute("text-anchor"),
-            endLabel.translateX,
-            endLabel.translateY
-        ],
-        'Labels are aligned correctly.'
-    );
+        chart.update({
+            pane: {
+                startAngle: 270,
+                endAngle: 360
+            }
+        });
 
-    chart.update({
-        pane: {
-            startAngle: -130,
-            endAngle: 130
-        }
-    });
+        startLabel = chart.yAxis[0].ticks[
+            chart.yAxis[0].tickPositions[0]
+        ].label;
 
-    startLabel = chart.yAxis[0].ticks[chart.yAxis[0].tickPositions[0]].label;
-    endLabel = chart.yAxis[0].ticks[chart.yAxis[0].tickPositions[1]].label;
+        endLabel = chart.yAxis[0].ticks[
+            chart.yAxis[0].tickPositions[1]
+        ].label;
 
-    assert.deepEqual(
-        [
-            'start',
-            0,
-            startLabel.getBBox().height - startLabel.getBBox().height * 0.3,
-            'end',
-            0,
-            startLabel.getBBox().height - startLabel.getBBox().height * 0.3
-        ],
-        [
-            startLabel.element.getAttribute("text-anchor"),
-            startLabel.translateX,
-            startLabel.translateY,
-            endLabel.element.getAttribute("text-anchor"),
-            endLabel.translateX,
-            endLabel.translateY
-        ],
-        'Labels are aligned correctly.'
-    );
+        assert.deepEqual(
+            [
+                'middle',
+                0,
+                startLabel.getBBox().height -
+                startLabel.getBBox().height * 0.3,
+                'start',
+                startLabel.getBBox().height * 0.15,
+                0
+            ],
+            [
+                startLabel.element.getAttribute("text-anchor"),
+                startLabel.translateX,
+                startLabel.translateY,
+                endLabel.element.getAttribute("text-anchor"),
+                endLabel.translateX,
+                endLabel.translateY
+            ],
+            'Labels are aligned correctly.'
+        );
 
-    chart.update({
-        pane: {
-            startAngle: -30,
-            endAngle: 30
-        }
-    });
+        chart.update({
+            pane: {
+                startAngle: -130,
+                endAngle: 130
+            }
+        });
 
-    startLabel = chart.yAxis[0].ticks[chart.yAxis[0].tickPositions[0]].label;
-    endLabel = chart.yAxis[0].ticks[chart.yAxis[0].tickPositions[1]].label;
+        startLabel = chart.yAxis[0].ticks[
+            chart.yAxis[0].tickPositions[0]
+        ].label;
 
-    assert.deepEqual(
-        [
-            'end',
-            0,
-            startLabel.getBBox().height * 0.75 - startLabel.getBBox().height * 0.3,
-            'start',
-            0,
-            startLabel.getBBox().height * 0.75 - startLabel.getBBox().height * 0.3
-        ],
-        [
-            startLabel.element.getAttribute("text-anchor"),
-            startLabel.translateX,
-            startLabel.translateY,
-            endLabel.element.getAttribute("text-anchor"),
-            endLabel.translateX,
-            endLabel.translateY
-        ],
-        'Labels are aligned correctly.'
-    );
+        endLabel = chart.yAxis[0].ticks[
+            chart.yAxis[0].tickPositions[1]
+        ].label;
 
-    chart.update({
-        pane: {
-            startAngle: -10,
-            endAngle: 10
-        }
-    });
+        assert.deepEqual(
+            [
+                'start',
+                0,
+                startLabel.getBBox().height -
+                startLabel.getBBox().height * 0.3,
+                'end',
+                0,
+                startLabel.getBBox().height -
+                startLabel.getBBox().height * 0.3
+            ],
+            [
+                startLabel.element.getAttribute("text-anchor"),
+                startLabel.translateX,
+                startLabel.translateY,
+                endLabel.element.getAttribute("text-anchor"),
+                endLabel.translateX,
+                endLabel.translateY
+            ],
+            'Labels are aligned correctly.'
+        );
 
-    startLabel = chart.yAxis[0].ticks[chart.yAxis[0].tickPositions[0]].label;
-    endLabel = chart.yAxis[0].ticks[chart.yAxis[0].tickPositions[1]].label;
+        chart.update({
+            pane: {
+                startAngle: -30,
+                endAngle: 30
+            }
+        });
 
-    assert.deepEqual(
-        [
-            'end',
-            -startLabel.getBBox().height * 0.15,
-            0,
-            'start',
-            startLabel.getBBox().height * 0.15,
-            0
-        ],
-        [
-            startLabel.element.getAttribute("text-anchor"),
-            startLabel.translateX,
-            startLabel.translateY,
-            endLabel.element.getAttribute("text-anchor"),
-            endLabel.translateX,
-            endLabel.translateY
-        ],
-        'Labels are aligned correctly.'
-    );
-});
+        startLabel = chart.yAxis[0].ticks[
+            chart.yAxis[0].tickPositions[0]
+        ].label;
+
+        endLabel = chart.yAxis[0].ticks[
+            chart.yAxis[0].tickPositions[1]
+        ].label;
+
+        assert.deepEqual(
+            [
+                'end',
+                0,
+                startLabel.getBBox().height * 0.75 -
+                startLabel.getBBox().height * 0.3,
+                'start',
+                0,
+                startLabel.getBBox().height * 0.75 -
+                startLabel.getBBox().height * 0.3
+            ],
+            [
+                startLabel.element.getAttribute("text-anchor"),
+                startLabel.translateX,
+                startLabel.translateY,
+                endLabel.element.getAttribute("text-anchor"),
+                endLabel.translateX,
+                endLabel.translateY
+            ],
+            'Labels are aligned correctly.'
+        );
+
+        chart.update({
+            pane: {
+                startAngle: -10,
+                endAngle: 10
+            }
+        });
+
+        startLabel = chart.yAxis[0].ticks[
+            chart.yAxis[0].tickPositions[0]
+        ].label;
+
+        endLabel = chart.yAxis[0].ticks[
+            chart.yAxis[0].tickPositions[1]
+        ].label;
+
+        assert.deepEqual(
+            [
+                'end',
+                -startLabel.getBBox().height * 0.15,
+                0,
+                'start',
+                startLabel.getBBox().height * 0.15,
+                0
+            ],
+            [
+                startLabel.element.getAttribute("text-anchor"),
+                startLabel.translateX,
+                startLabel.translateY,
+                endLabel.element.getAttribute("text-anchor"),
+                endLabel.translateX,
+                endLabel.translateY
+            ],
+            'Labels are aligned correctly.'
+        );
+    }
+);
 
 // Highcharts 8.0.4, Issue #12894
-QUnit.test('Overlapping of xAxis labels in polar chart (#12894)', function (assert) {
-    var chart = Highcharts.chart('container', {
-            chart: {
-                polar: true,
-                width: 600,
-                height: 400
-            },
-            xAxis: {
-                tickmarkPlacement: 'on',
-                categories: [
-                    'CATEGORY11',
-                    'CATEGORY2',
-                    'CATEGORY 333333 33333',
-                    'CATEGORY4',
-                    'CATEGORY5',
-                    'CATEGORY6',
-                    'CATEGORY7777',
-                    'CATEGORY888888888',
-                    'CATEGORY9',
-                    'CATEGORY10',
-                    'CATEGORY11',
-                    'CATEGORY12'
-                ]
-            },
-            series: [{
-                pointPlacement: 'on',
-                data: (numberOfPoints => {
-                    var data = [];
-                    while (numberOfPoints) {
-                        data.push(100);
-                        numberOfPoints--;
-                    }
-                    return data;
-                })(12)
-            }]
-        }),
-        ticks = chart.xAxis[0].ticks,
-        secondLabel = ticks[1].label,
-        thirdLabel = ticks[2].label,
-        seventhLabel = ticks[6].label;
+QUnit.test(
+    'Overlapping of xAxis labels in polar chart (#12894)',
+    function (assert) {
+        var chart = Highcharts.chart('container', {
+                chart: {
+                    polar: true,
+                    width: 600,
+                    height: 400
+                },
+                xAxis: {
+                    tickmarkPlacement: 'on',
+                    categories: [
+                        'CATEGORY11',
+                        'CATEGORY2',
+                        'CATEGORY 333333 33333',
+                        'CATEGORY4',
+                        'CATEGORY5',
+                        'CATEGORY6',
+                        'CATEGORY7777',
+                        'CATEGORY888888888',
+                        'CATEGORY9',
+                        'CATEGORY10',
+                        'CATEGORY11',
+                        'CATEGORY12'
+                    ]
+                },
+                series: [{
+                    pointPlacement: 'on',
+                    data: (numberOfPoints => {
+                        var data = [];
+                        while (numberOfPoints) {
+                            data.push(100);
+                            numberOfPoints--;
+                        }
+                        return data;
+                    })(12)
+                }]
+            }),
+            ticks = chart.xAxis[0].ticks,
+            secondLabel = ticks[1].label,
+            thirdLabel = ticks[2].label,
+            seventhLabel = ticks[6].label;
 
-    assert.strictEqual(
-        secondLabel.newOpacity,
-        1,
-        'The second category should be visible'
-    );
+        assert.strictEqual(
+            secondLabel.newOpacity,
+            1,
+            'The second category should be visible'
+        );
 
-    assert.strictEqual(
-        secondLabel.newOpacity,
-        secondLabel.oldOpacity,
-        'The visiblility of the second category should not change'
-    );
+        assert.strictEqual(
+            secondLabel.newOpacity,
+            secondLabel.oldOpacity,
+            'The visiblility of the second category should not change'
+        );
 
-    assert.strictEqual(
-        thirdLabel.newOpacity === 0,
-        seventhLabel.newOpacity === 0,
-        'The third and seventh categories should both be hidden'
-    );
-});
+        assert.strictEqual(
+            thirdLabel.newOpacity === 0,
+            seventhLabel.newOpacity === 0,
+            'The third and seventh categories should both be hidden'
+        );
+    }
+);

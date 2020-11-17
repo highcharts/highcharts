@@ -80,7 +80,9 @@ QUnit.test('#10962 - Stack labels in variwide series', function (assert) {
     });
 
     assert.strictEqual(
-        chart.container.querySelector('.highcharts-label.highcharts-stack-labels')
+        chart
+            .container
+            .querySelector('.highcharts-label.highcharts-stack-labels')
             .getAttribute('visibility'),
         'hidden',
         'Stack label is hidden.'
