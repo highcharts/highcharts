@@ -6,9 +6,28 @@
  *
  * */
 'use strict';
+var __extends = (this && this.__extends) || (function () {
+    var extendStatics = function (d, b) {
+        extendStatics = Object.setPrototypeOf ||
+            ({ __proto__: [] } instanceof Array && function (d, b) { d.__proto__ = b; }) ||
+            function (d, b) { for (var p in b) if (b.hasOwnProperty(p)) d[p] = b[p]; };
+        return extendStatics(d, b);
+    };
+    return function (d, b) {
+        extendStatics(d, b);
+        function __() { this.constructor = d; }
+        d.prototype = b === null ? Object.create(b) : (__.prototype = b.prototype, new __());
+    };
+})();
 import BaseSeries from '../../Core/Series/Series.js';
+var SMAIndicator = BaseSeries.seriesTypes.sma;
 import U from '../../Core/Utilities.js';
-var correctFloat = U.correctFloat, isArray = U.isArray;
+var correctFloat = U.correctFloat, extend = U.extend, isArray = U.isArray, merge = U.merge;
+/* *
+ *
+ *  Class
+ *
+ * */
 /**
  * The EMA series type.
  *
@@ -18,40 +37,43 @@ var correctFloat = U.correctFloat, isArray = U.isArray;
  *
  * @augments Highcharts.Series
  */
-BaseSeries.seriesType('ema', 'sma', 
-/**
- * Exponential moving average indicator (EMA). This series requires the
- * `linkedTo` option to be set.
- *
- * @sample stock/indicators/ema
- *         Exponential moving average indicator
- *
- * @extends      plotOptions.sma
- * @since        6.0.0
- * @product      highstock
- * @requires     stock/indicators/indicators
- * @requires     stock/indicators/ema
- * @optionparent plotOptions.ema
- */
-{
-    params: {
-        /**
-         * The point index which indicator calculations will base. For
-         * example using OHLC data, index=2 means the indicator will be
-         * calculated using Low values.
-         *
-         * By default index value used to be set to 0. Since Highstock 7
-         * by default index is set to 3 which means that the ema
-         * indicator will be calculated using Close values.
-         */
-        index: 3,
-        period: 9 // @merge 14 in v6.2
+var EMAIndicator = /** @class */ (function (_super) {
+    __extends(EMAIndicator, _super);
+    function EMAIndicator() {
+        return _super !== null && _super.apply(this, arguments) || this;
     }
-}, 
-/**
- * @lends Highcharts.Series#
- */
-{
+    /**
+     * Exponential moving average indicator (EMA). This series requires the
+     * `linkedTo` option to be set.
+     *
+     * @sample stock/indicators/ema
+     *         Exponential moving average indicator
+     *
+     * @extends      plotOptions.sma
+     * @since        6.0.0
+     * @product      highstock
+     * @requires     stock/indicators/indicators
+     * @requires     stock/indicators/ema
+     * @optionparent plotOptions.ema
+     */
+    EMAIndicator.defaultOptions = merge(SMAIndicator.defaultOptions, {
+        params: {
+            /**
+             * The point index which indicator calculations will base. For
+             * example using OHLC data, index=2 means the indicator will be
+             * calculated using Low values.
+             *
+             * By default index value used to be set to 0. Since Highstock 7
+             * by default index is set to 3 which means that the ema
+             * indicator will be calculated using Close values.
+             */
+            index: 3,
+            period: 9 // @merge 14 in v6.2
+        }
+    });
+    return EMAIndicator;
+}(SMAIndicator));
+extend(EMAIndicator.prototype, {
     accumulatePeriodPoints: function (period, index, yVal) {
         var sum = 0, i = 0, y = 0;
         while (i < period) {
@@ -99,6 +121,13 @@ BaseSeries.seriesType('ema', 'sma',
         };
     }
 });
+BaseSeries.registerSeriesType('ema', EMAIndicator);
+/* *
+ *
+ *  Default Export
+ *
+ * */
+export default EMAIndicator;
 /**
  * A `EMA` series. If the [type](#series.ema.type) option is not
  * specified, it is inherited from [chart.type](#chart.type).

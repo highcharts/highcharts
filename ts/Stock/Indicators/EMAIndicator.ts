@@ -10,18 +10,25 @@
 
 import type IndicatorValuesObject from './IndicatorValuesObject';
 import type LineSeries from '../../Series/Line/LineSeries';
-import type SMAIndicator from './SMA/SMAIndicator';
 import type {
     SMAOptions,
     SMAParamsOptions
 } from './SMA/SMAOptions';
 import type SMAPoint from './SMA/SMAPoint';
 import BaseSeries from '../../Core/Series/Series.js';
+const {
+    seriesTypes: {
+        sma: SMAIndicator
+    }
+} = BaseSeries;
 import U from '../../Core/Utilities.js';
 const {
     correctFloat,
-    isArray
+    extend,
+    isArray,
+    merge
 } = U;
+
 
 /**
  * Internal types
@@ -29,31 +36,6 @@ const {
  */
 declare global {
     namespace Highcharts {
-
-        class EMAIndicator extends SMAIndicator {
-            public data: Array<EMAIndicatorPoint>;
-            public options: EMAIndicatorOptions;
-            public pointClass: typeof EMAIndicatorPoint;
-            public points: Array<EMAIndicatorPoint>;
-            public accumulatePeriodPoints(
-                period: number,
-                index: number,
-                yVal: Array<Array<number>>
-            ): number;
-            public calculateEma(
-                xVal: (Array<number>|undefined),
-                yVal: (Array<number>|Array<Array<number>>),
-                i: number,
-                EMApercent: number,
-                calEMA: (number|undefined),
-                index: number,
-                SMA: number
-            ): [number, number];
-            public getValues<TLinkedSeries extends LineSeries>(
-                series: TLinkedSeries,
-                params: EMAIndicatorParamsOptions
-            ): (IndicatorValuesObject<TLinkedSeries>|undefined);
-        }
 
         interface EMAIndicatorOptions extends SMAOptions {
             params?: EMAIndicatorParamsOptions;
@@ -69,11 +51,11 @@ declare global {
     }
 }
 
-declare module '../../Core/Series/SeriesType' {
-    interface SeriesTypeRegistry {
-        ema: typeof Highcharts.EMAIndicator;
-    }
-}
+/* *
+ *
+ *  Class
+ *
+ * */
 
 /**
  * The EMA series type.
@@ -84,9 +66,8 @@ declare module '../../Core/Series/SeriesType' {
  *
  * @augments Highcharts.Series
  */
-BaseSeries.seriesType<typeof Highcharts.EMAIndicator>(
-    'ema',
-    'sma',
+class EMAIndicator extends SMAIndicator {
+
     /**
      * Exponential moving average indicator (EMA). This series requires the
      * `linkedTo` option to be set.
@@ -101,7 +82,7 @@ BaseSeries.seriesType<typeof Highcharts.EMAIndicator>(
      * @requires     stock/indicators/ema
      * @optionparent plotOptions.ema
      */
-    {
+    public static defaultOptions: Highcharts.EMAIndicatorOptions = merge(SMAIndicator.defaultOptions, {
         params: {
             /**
              * The point index which indicator calculations will base. For
@@ -115,114 +96,165 @@ BaseSeries.seriesType<typeof Highcharts.EMAIndicator>(
             index: 3,
             period: 9 // @merge 14 in v6.2
         }
-    },
-    /**
-     * @lends Highcharts.Series#
-     */
-    {
-        accumulatePeriodPoints: function (
-            period: number,
-            index: number,
-            yVal: Array<Array<number>>
-        ): number {
-            var sum = 0,
-                i = 0,
-                y: (number|Array<number>) = 0;
+    } as Highcharts.EMAIndicatorOptions);
 
-            while (i < period) {
-                y = index < 0 ? yVal[i] : yVal[i][index];
-                sum = sum + (y as any);
-                i++;
-            }
 
-            return sum;
-        },
-        calculateEma: function (
-            xVal: Array<number>,
-            yVal: (Array<number>|Array<Array<number>>),
-            i: number,
-            EMApercent: number,
-            calEMA: (number|undefined),
-            index: number,
-            SMA: number
-        ): [number, number] {
-            var x: number = xVal[i - 1],
-                yValue: number = index < 0 ?
-                    yVal[i - 1] :
-                    (yVal as any)[i - 1][index],
-                y: number;
+}
 
-            y = typeof calEMA === 'undefined' ?
-                SMA : correctFloat((yValue * EMApercent) +
-                (calEMA * (1 - EMApercent)));
+/* *
+ *
+ *  Prototype Properties
+ *
+ * */
 
-            return [x, y];
-        },
-        getValues: function<TLinkedSeries extends LineSeries> (
-            this: Highcharts.EMAIndicator,
-            series: TLinkedSeries,
-            params: Highcharts.EMAIndicatorParamsOptions
-        ): (IndicatorValuesObject<TLinkedSeries>|undefined) {
-            var period: number = (params.period as any),
-                xVal: Array<number> = (series.xData as any),
-                yVal: Array<Array<number>> = (series.yData as any),
-                yValLen = yVal ? yVal.length : 0,
-                EMApercent = 2 / (period + 1),
-                sum = 0,
-                EMA: Array<Array<number>> = [],
-                xData: Array<number> = [],
-                yData: Array<number> = [],
-                index = -1,
-                SMA = 0,
-                calEMA: (number|undefined),
-                EMAPoint: [number, number],
-                i: number;
+interface EMAIndicator {
+    data: Array<Highcharts.EMAIndicatorPoint>;
+    options: Highcharts.EMAIndicatorOptions;
+    pointClass: typeof Highcharts.EMAIndicatorPoint;
+    points: Array<Highcharts.EMAIndicatorPoint>;
+    accumulatePeriodPoints(
+        period: number,
+        index: number,
+        yVal: Array<Array<number>>
+    ): number;
+    calculateEma(
+        xVal: (Array<number>|undefined),
+        yVal: (Array<number>|Array<Array<number>>),
+        i: number,
+        EMApercent: number,
+        calEMA: (number|undefined),
+        index: number,
+        SMA: number
+    ): [number, number];
+    getValues<TLinkedSeries extends LineSeries>(
+        series: TLinkedSeries,
+        params: Highcharts.EMAIndicatorParamsOptions
+    ): (IndicatorValuesObject<TLinkedSeries>|undefined);
+}
+extend(EMAIndicator.prototype, {
+    accumulatePeriodPoints: function (
+        period: number,
+        index: number,
+        yVal: Array<Array<number>>
+    ): number {
+        var sum = 0,
+            i = 0,
+            y: (number|Array<number>) = 0;
 
-            // Check period, if bigger than points length, skip
-            if (yValLen < period) {
-                return;
-            }
-
-            // Switch index for OHLC / Candlestick / Arearange
-            if (isArray(yVal[0])) {
-                index = params.index ? params.index : 0;
-            }
-
-            // Accumulate first N-points
-            sum = this.accumulatePeriodPoints(
-                period,
-                index,
-                yVal
-            );
-
-            // first point
-            SMA = sum / period;
-
-            // Calculate value one-by-one for each period in visible data
-            for (i = period; i < yValLen + 1; i++) {
-                EMAPoint = this.calculateEma(
-                    xVal,
-                    yVal,
-                    i,
-                    EMApercent,
-                    calEMA,
-                    index,
-                    SMA
-                );
-                EMA.push(EMAPoint);
-                xData.push(EMAPoint[0]);
-                yData.push(EMAPoint[1]);
-                calEMA = EMAPoint[1];
-            }
-
-            return {
-                values: EMA,
-                xData: xData,
-                yData: yData
-            } as IndicatorValuesObject<TLinkedSeries>;
+        while (i < period) {
+            y = index < 0 ? yVal[i] : yVal[i][index];
+            sum = sum + (y as any);
+            i++;
         }
+
+        return sum;
+    },
+    calculateEma: function (
+        xVal: Array<number>,
+        yVal: (Array<number>|Array<Array<number>>),
+        i: number,
+        EMApercent: number,
+        calEMA: (number|undefined),
+        index: number,
+        SMA: number
+    ): [number, number] {
+        var x: number = xVal[i - 1],
+            yValue: number = index < 0 ?
+                yVal[i - 1] :
+                (yVal as any)[i - 1][index],
+            y: number;
+
+        y = typeof calEMA === 'undefined' ?
+            SMA : correctFloat((yValue * EMApercent) +
+            (calEMA * (1 - EMApercent)));
+
+        return [x, y];
+    },
+    getValues: function<TLinkedSeries extends LineSeries> (
+        this: EMAIndicator,
+        series: TLinkedSeries,
+        params: Highcharts.EMAIndicatorParamsOptions
+    ): (IndicatorValuesObject<TLinkedSeries>|undefined) {
+        var period: number = (params.period as any),
+            xVal: Array<number> = (series.xData as any),
+            yVal: Array<Array<number>> = (series.yData as any),
+            yValLen = yVal ? yVal.length : 0,
+            EMApercent = 2 / (period + 1),
+            sum = 0,
+            EMA: Array<Array<number>> = [],
+            xData: Array<number> = [],
+            yData: Array<number> = [],
+            index = -1,
+            SMA = 0,
+            calEMA: (number|undefined),
+            EMAPoint: [number, number],
+            i: number;
+
+        // Check period, if bigger than points length, skip
+        if (yValLen < period) {
+            return;
+        }
+
+        // Switch index for OHLC / Candlestick / Arearange
+        if (isArray(yVal[0])) {
+            index = params.index ? params.index : 0;
+        }
+
+        // Accumulate first N-points
+        sum = this.accumulatePeriodPoints(
+            period,
+            index,
+            yVal
+        );
+
+        // first point
+        SMA = sum / period;
+
+        // Calculate value one-by-one for each period in visible data
+        for (i = period; i < yValLen + 1; i++) {
+            EMAPoint = this.calculateEma(
+                xVal,
+                yVal,
+                i,
+                EMApercent,
+                calEMA,
+                index,
+                SMA
+            );
+            EMA.push(EMAPoint);
+            xData.push(EMAPoint[0]);
+            yData.push(EMAPoint[1]);
+            calEMA = EMAPoint[1];
+        }
+
+        return {
+            values: EMA,
+            xData: xData,
+            yData: yData
+        } as IndicatorValuesObject<TLinkedSeries>;
     }
-);
+});
+
+/* *
+ *
+ *  Registry
+ *
+ * */
+
+declare module '../../Core/Series/SeriesType' {
+    interface SeriesTypeRegistry {
+        ema: typeof EMAIndicator;
+    }
+}
+BaseSeries.registerSeriesType('ema', EMAIndicator);
+
+/* *
+ *
+ *  Default Export
+ *
+ * */
+
+export default EMAIndicator;
 
 /**
  * A `EMA` series. If the [type](#series.ema.type) option is not

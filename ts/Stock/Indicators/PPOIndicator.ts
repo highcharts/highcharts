@@ -8,6 +8,7 @@
 
 'use strict';
 
+import type EMAIndicator from './EMAIndicator';
 import type IndicatorValuesObject from './IndicatorValuesObject';
 import type LineSeries from '../../Series/Line/LineSeries';
 import BaseSeries from '../../Core/Globals.js';
