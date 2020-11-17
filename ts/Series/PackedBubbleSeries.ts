@@ -25,7 +25,6 @@ import type {
     BubblePointOptions
 } from './Bubble/BubblePointOptions';
 import type BubbleSeriesOptions from './Bubble/BubbleSeriesOptions';
-import type PointerEvent from '../Core/PointerEvent';
 import type { SeriesStatesOptions } from '../Core/Series/SeriesOptions';
 import type SVGAttributes from '../Core/Renderer/SVG/SVGAttributes';
 import type SVGElement from '../Core/Renderer/SVG/SVGElement';
@@ -51,9 +50,9 @@ const {
     merge,
     pick
 } = U;
-import './Bubble/BubbleSeries.js';
 import '../Series/Networkgraph/DraggableNodes.js';
 import '../Series/Networkgraph/Layouts.js';
+
 const Reingold = H.layouts['reingold-fruchterman'],
     dragNodesMixin = H.dragNodesMixin;
 
@@ -338,7 +337,7 @@ addEvent(Chart as any, 'beforeRedraw', function (
  *
  * @extends Highcharts.Series
  */
-class PackedBubbleSeries extends BubbleSeries {
+class PackedBubbleSeries extends BubbleSeries implements Highcharts.DragNodesSeries {
 
     /* *
      *
