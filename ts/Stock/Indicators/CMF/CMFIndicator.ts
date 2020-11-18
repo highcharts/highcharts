@@ -14,46 +14,23 @@
 
 'use strict';
 
-import type IndicatorValuesObject from './IndicatorValuesObject';
-import type LineSeries from '../../Series/Line/LineSeries';
+import type IndicatorValuesObject from '../IndicatorValuesObject';
+import type LineSeries from '../../../Series/Line/LineSeries';
 import type {
-    SMAOptions,
-    SMAParamsOptions
-} from './SMA/SMAOptions';
-import type SMAPoint from './SMA/SMAPoint';
-import BaseSeries from '../../Core/Series/Series.js';
+    CMFOptions,
+    CMFParamsOptions
+} from './CMFOptions';
+import type CMFPoint from './CMFPoint';
+import BaseSeries from '../../../Core/Series/Series.js';
 const {
     seriesTypes: {
         sma: SMAIndicator
     }
 } = BaseSeries;
-import U from '../../Core/Utilities.js';
+import U from '../../../Core/Utilities.js';
 const {
-    extend,
     merge
 } = U;
-
-/**
- * @private
- */
-declare global {
-    namespace Highcharts {
-        interface CMFIndicatorOptions extends SMAOptions {
-            params?: CMFIndicatorParamsOptions;
-        }
-
-        interface CMFIndicatorParamsOptions extends SMAParamsOptions {
-            volumeSeriesID?: string;
-        }
-
-        class CMFIndicatorPoint extends SMAPoint {
-            public series: CMFIndicator;
-        }
-    }
-}
-
-
-// im port './SMAIndicator.js';
 
 /**
  * The CMF series type.
@@ -79,7 +56,7 @@ class CMFIndicator extends SMAIndicator {
      * @requires     stock/indicators/cmf
      * @optionparent plotOptions.cmf
      */
-    public static defaultOptions: Highcharts.CMFIndicatorOptions = merge(SMAIndicator.defaultOptions, {
+    public static defaultOptions: CMFOptions = merge(SMAIndicator.defaultOptions, {
         params: {
             period: 14,
             /**
@@ -88,16 +65,16 @@ class CMFIndicator extends SMAIndicator {
              */
             volumeSeriesID: 'volume'
         }
-    } as Highcharts.CMFIndicatorOptions);
+    } as CMFOptions);
 
     /* *
      *
      *  Properties
      *
      * */
-    public data: Array<Highcharts.CMFIndicatorPoint> = void 0 as any;
-    public options: Highcharts.CMFIndicatorOptions = void 0 as any;
-    public points: Array<Highcharts.CMFIndicatorPoint> = void 0 as any;
+    public data: Array<CMFPoint> = void 0 as any;
+    public options: CMFOptions = void 0 as any;
+    public points: Array<CMFPoint> = void 0 as any;
     public volumeSeries: LineSeries = void 0 as any;
     public linkedParent: LineSeries = void 0 as any;
     public yData: Array<Array<number>> = void 0 as any;
@@ -113,7 +90,7 @@ class CMFIndicator extends SMAIndicator {
      */
     public isValid(this: CMFIndicator): boolean {
         var chart = this.chart,
-            options: Highcharts.CMFIndicatorOptions = this.options,
+            options: CMFOptions = this.options,
             series = this.linkedParent,
             volumeSeries: LineSeries = (
                 this.volumeSeries ||
@@ -160,7 +137,7 @@ class CMFIndicator extends SMAIndicator {
     public getValues<TLinkedSeries extends LineSeries>(
         this: CMFIndicator,
         series: TLinkedSeries,
-        params: Highcharts.CMFIndicatorParamsOptions
+        params: CMFParamsOptions
     ): (IndicatorValuesObject<TLinkedSeries>|undefined) {
         if (!this.isValid()) {
             return;
@@ -302,7 +279,7 @@ class CMFIndicator extends SMAIndicator {
  * */
 
 interface CMFIndicator {
-    pointClass: typeof Highcharts.CMFIndicatorPoint;
+    pointClass: typeof CMFPoint;
 }
 
 /* *
@@ -311,7 +288,7 @@ interface CMFIndicator {
  *
  * */
 
-declare module '../../Core/Series/SeriesType' {
+declare module '../../../Core/Series/SeriesType' {
     interface SeriesTypeRegistry {
         cmf: typeof CMFIndicator;
     }

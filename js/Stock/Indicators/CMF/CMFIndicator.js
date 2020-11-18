@@ -25,11 +25,10 @@ var __extends = (this && this.__extends) || (function () {
         d.prototype = b === null ? Object.create(b) : (__.prototype = b.prototype, new __());
     };
 })();
-import BaseSeries from '../../Core/Series/Series.js';
+import BaseSeries from '../../../Core/Series/Series.js';
 var SMAIndicator = BaseSeries.seriesTypes.sma;
-import U from '../../Core/Utilities.js';
-var extend = U.extend, merge = U.merge;
-// im port './SMAIndicator.js';
+import U from '../../../Core/Utilities.js';
+var merge = U.merge;
 /**
  * The CMF series type.
  *
