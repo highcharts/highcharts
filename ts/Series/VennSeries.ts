@@ -30,6 +30,7 @@ import type ScatterPoint from './Scatter/ScatterPoint';
 import type ScatterPointOptions from './Scatter/ScatterPointOptions';
 import type ScatterSeriesOptions from './Scatter/ScatterSeriesOptions';
 import type { SeriesStatesOptions } from '../Core/Series/SeriesOptions';
+import type { StatesOptionsKey } from '../Core/Series/StatesOptions';
 import type SVGAttributes from '../Core/Renderer/SVG/SVGAttributes';
 import type SVGElement from '../Core/Renderer/SVG/SVGElement';
 import type SVGPath from '../Core/Renderer/SVG/SVGPath';
@@ -1166,36 +1167,149 @@ class VennSeries extends ScatterSeries {
      *  Properties
      *
      * */
-}
 
-interface VennSeries {
-    axisTypes: Array<string>;
-    data: Array<Highcharts.VennPoint>;
-    directTouch: boolean;
-    isCartesian: boolean;
-    mapOfIdToRelation: Record<string, Highcharts.VennRelationObject>;
-    options: Highcharts.VennSeriesOptions;
-    pointArrayMap: Array<string>;
-    pointClass: typeof VennPoint;
-    points: Array<Highcharts.VennPoint>;
-    utils: Highcharts.VennUtilsObject;
-    init(chart: Chart, options: Highcharts.VennSeriesOptions): void;
-    animate(init?: boolean): void;
-    drawPoints(): void;
-    translate(): void;
-}
-extend(VennSeries.prototype, {
-    isCartesian: false,
-    axisTypes: [],
-    directTouch: true,
-    pointArrayMap: ['value'],
-    init: function (this: VennSeries): void {
+    public data: Array<Highcharts.VennPoint> = void 0 as any;
+
+    public mapOfIdToRelation: Record<string, Highcharts.VennRelationObject> = void 0 as any;
+
+    public options: Highcharts.VennSeriesOptions = void 0 as any;
+
+    public points: Array<Highcharts.VennPoint> = void 0 as any;
+
+    /* *
+     *
+     *  Functions
+     *
+     * */
+
+    /* eslint-disable valid-jsdoc */
+
+    public animate(init?: boolean): void {
+        if (!init) {
+            var series = this,
+                animOptions = animObject(series.options.animation);
+
+            series.points.forEach(function (point: Highcharts.VennPoint): void {
+                var args = point.shapeArgs;
+
+                if (point.graphic && args) {
+                    var attr: SVGAttributes = {},
+                        animate: SVGAttributes = {};
+
+                    if (args.d) {
+                        // If shape is a path, then animate opacity.
+                        attr.opacity = 0.001;
+                    } else {
+                        // If shape is a circle, then animate radius.
+                        attr.r = 0;
+                        animate.r = args.r;
+                    }
+
+                    point.graphic
+                        .attr(attr)
+                        .animate(animate, animOptions);
+
+                    // If shape is path, then fade it in after the circles
+                    // animation
+                    if (args.d) {
+                        setTimeout(function (): void {
+                            if (point && point.graphic) {
+                                point.graphic.animate({
+                                    opacity: 1
+                                });
+                            }
+                        }, animOptions.duration);
+                    }
+                }
+            }, series);
+        }
+    }
+
+    /**
+     * Draw the graphics for each point.
+     * @private
+     */
+    public drawPoints(): void {
+        var series = this,
+            // Series properties
+            chart = series.chart,
+            group: SVGElement = series.group as any,
+            points = series.points || [],
+            // Chart properties
+            renderer = chart.renderer;
+
+        // Iterate all points and calculate and draw their graphics.
+        points.forEach(function (point: Highcharts.VennPoint): void {
+            var attribs = {
+                    zIndex: isArray(point.sets) ? point.sets.length : 0
+                },
+                shapeArgs: SVGAttributes = point.shapeArgs as any;
+
+            // Add point attribs
+            if (!chart.styledMode) {
+                extend(attribs, series.pointAttribs(point, point.state));
+            }
+            // Draw the point graphic.
+            point.draw({
+                isNew: !point.graphic,
+                animatableAttribs: shapeArgs,
+                attribs: attribs,
+                group: group,
+                renderer: renderer,
+                shapeType: shapeArgs && shapeArgs.d ? 'path' : 'circle'
+            });
+        });
+
+    }
+
+    public init(): void {
         ScatterSeries.prototype.init.apply(this, arguments);
 
         // Venn's opacity is a different option from other series
         delete this.opacity;
-    },
-    translate: function (this: VennSeries): void {
+    }
+
+    /**
+     * Calculates the style attributes for a point. The attributes can vary
+     * depending on the state of the point.
+     * @private
+     * @param {Highcharts.Point} point
+     * The point which will get the resulting attributes.
+     * @param {string} [state]
+     * The state of the point.
+     * @return {Highcharts.SVGAttributes}
+     * Returns the calculated attributes.
+     */
+    public pointAttribs(
+        point: Highcharts.VennPoint,
+        state?: StatesOptionsKey
+    ): SVGAttributes {
+        var series = this,
+            seriesOptions = series.options || {},
+            pointOptions = point && point.options || {},
+            stateOptions =
+                (state && (seriesOptions.states as any)[state as any]) || {},
+            options = merge(
+                seriesOptions,
+                { color: point && point.color },
+                pointOptions,
+                stateOptions
+            );
+
+        // Return resulting values for the attributes.
+        return {
+            'fill': color(options.color)
+                .brighten(options.brightness as any)
+                .get(),
+            // Set opacity directly to the SVG element, not to pattern #14372.
+            opacity: options.opacity,
+            'stroke': options.borderColor,
+            'stroke-width': options.borderWidth,
+            'dashstyle': options.borderDashStyle
+        };
+    }
+
+    public translate(): void {
 
         var chart = this.chart;
 
@@ -1301,125 +1415,30 @@ extend(VennSeries.prototype, {
             // Set name for usage in tooltip and in data label.
             point.name = point.options.name || sets.join('∩');
         });
-    },
-    /* eslint-disable valid-jsdoc */
-    /**
-     * Draw the graphics for each point.
-     * @private
-     */
-    drawPoints: function (this: VennSeries): void {
-        var series = this,
-            // Series properties
-            chart = series.chart,
-            group: SVGElement = series.group as any,
-            points = series.points || [],
-            // Chart properties
-            renderer = chart.renderer;
+    }
 
-        // Iterate all points and calculate and draw their graphics.
-        points.forEach(function (point: Highcharts.VennPoint): void {
-            var attribs = {
-                    zIndex: isArray(point.sets) ? point.sets.length : 0
-                },
-                shapeArgs: SVGAttributes = point.shapeArgs as any;
-
-            // Add point attribs
-            if (!chart.styledMode) {
-                extend(attribs, series.pointAttribs(point, point.state));
-            }
-            // Draw the point graphic.
-            point.draw({
-                isNew: !point.graphic,
-                animatableAttribs: shapeArgs,
-                attribs: attribs,
-                group: group,
-                renderer: renderer,
-                shapeType: shapeArgs && shapeArgs.d ? 'path' : 'circle'
-            });
-        });
-
-    },
-    /**
-     * Calculates the style attributes for a point. The attributes can vary
-     * depending on the state of the point.
-     * @private
-     * @param {Highcharts.Point} point
-     * The point which will get the resulting attributes.
-     * @param {string} [state]
-     * The state of the point.
-     * @return {Highcharts.SVGAttributes}
-     * Returns the calculated attributes.
-     */
-    pointAttribs: function (
-        this: VennSeries,
-        point: Highcharts.VennPoint,
-        state?: keyof VennSeries['options']['states']
-    ): SVGAttributes {
-        var series = this,
-            seriesOptions = series.options || {},
-            pointOptions = point && point.options || {},
-            stateOptions =
-                (state && (seriesOptions.states as any)[state as any]) || {},
-            options = merge(
-                seriesOptions,
-                { color: point && point.color },
-                pointOptions,
-                stateOptions
-            );
-
-        // Return resulting values for the attributes.
-        return {
-            'fill': color(options.color)
-                .brighten(options.brightness as any)
-                .get(),
-            // Set opacity directly to the SVG element, not to pattern #14372.
-            opacity: options.opacity,
-            'stroke': options.borderColor,
-            'stroke-width': options.borderWidth,
-            'dashstyle': options.borderDashStyle
-        };
-    },
     /* eslint-enable valid-jsdoc */
-    animate: function (this: VennSeries, init?: boolean): void {
-        if (!init) {
-            var series = this,
-                animOptions = animObject(series.options.animation);
+}
 
-            series.points.forEach(function (point: Highcharts.VennPoint): void {
-                var args = point.shapeArgs;
+/* *
+ *
+ *  Prototype Properties
+ *
+ * */
 
-                if (point.graphic && args) {
-                    var attr: SVGAttributes = {},
-                        animate: SVGAttributes = {};
-
-                    if (args.d) {
-                        // If shape is a path, then animate opacity.
-                        attr.opacity = 0.001;
-                    } else {
-                        // If shape is a circle, then animate radius.
-                        attr.r = 0;
-                        animate.r = args.r;
-                    }
-
-                    point.graphic
-                        .attr(attr)
-                        .animate(animate, animOptions);
-
-                    // If shape is path, then fade it in after the circles
-                    // animation
-                    if (args.d) {
-                        setTimeout(function (): void {
-                            if (point && point.graphic) {
-                                point.graphic.animate({
-                                    opacity: 1
-                                });
-                            }
-                        }, animOptions.duration);
-                    }
-                }
-            }, series);
-        }
-    },
+interface VennSeries {
+    axisTypes: Array<string>;
+    directTouch: boolean;
+    isCartesian: boolean;
+    pointArrayMap: Array<string>;
+    pointClass: typeof VennPoint;
+    utils: Highcharts.VennUtilsObject;
+}
+extend(VennSeries.prototype, {
+    axisTypes: [],
+    directTouch: true,
+    isCartesian: false,
+    pointArrayMap: ['value'],
     utils: {
         addOverlapToSets: addOverlapToSets,
         geometry: GeometryMixin,
@@ -1435,6 +1454,11 @@ extend(VennSeries.prototype, {
     }
 });
 
+/* *
+ *
+ *  Class
+ *
+ * */
 
 class VennPoint extends ScatterSeries.prototype.pointClass implements Highcharts.DrawPoint {
 
@@ -1451,23 +1475,41 @@ class VennPoint extends ScatterSeries.prototype.pointClass implements Highcharts
     public sets?: Array<string>;
 
     public value?: number;
-}
-interface VennPoint {
-    draw: typeof DrawPointMixin.draw;
-    isValid: () => boolean;
-    shouldDraw(): boolean;
-}
-extend(VennPoint.prototype, {
-    draw: DrawPointMixin.draw,
-    shouldDraw: function (this: Highcharts.VennPoint): boolean {
+
+    /* *
+     *
+     *  Functions
+     *
+     * */
+
+    /* eslint-disable valid-jsdoc */
+
+    public isValid(): boolean {
+        return isNumber(this.value);
+    }
+
+    public shouldDraw(): boolean {
         var point = this;
 
         // Only draw points with single sets.
         return !!point.shapeArgs;
-    },
-    isValid: function (this: Highcharts.VennPoint): boolean {
-        return isNumber(this.value);
     }
+
+    /* eslint-enable valid-jsdoc */
+
+}
+
+/* *
+ *
+ *  Prototype Properties
+ *
+ * */
+
+interface VennPoint {
+    draw: typeof DrawPointMixin.draw;
+}
+extend(VennPoint.prototype, {
+    draw: DrawPointMixin.draw
 });
 
 /* *
