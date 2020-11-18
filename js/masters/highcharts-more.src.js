@@ -10,7 +10,7 @@
 'use strict';
 import '../Extensions/Pane.js';
 import '../Core/Axis/RadialAxis.js';
-import '../Series/AreaRangeSeries.js';
+import '../Series/AreaRange/AreaRangeSeries.js';
 import '../Series/AreaSplineRangeSeries.js';
 import '../Series/ColumnRangeSeries.js';
 import '../Series/ColumnPyramid/ColumnPyramidSeries.js';
