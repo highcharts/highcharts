@@ -28,6 +28,7 @@ import Math3D from '../../Extensions/Math3D.js';
 var perspective = Math3D.perspective;
 import U from '../Utilities.js';
 var addEvent = U.addEvent, extend = U.extend, merge = U.merge, pick = U.pick, isNumber = U.isNumber;
+
 /* *
  *
  *  Class
@@ -61,6 +62,7 @@ var Series3D = /** @class */ (function (_super) {
         rawPointsX = [];
         series.zPadding = stack *
             (seriesOptions.depth || 0 + (seriesOptions.groupZPadding || 1));
+
         for (i = 0; i < series.data.length; i++) {
             rawPoint = series.data[i];
             if (zAxis && zAxis.translate) {
@@ -79,7 +81,9 @@ var Series3D = /** @class */ (function (_super) {
             rawPoint.axisXpos = rawPoint.plotX;
             rawPoint.axisYpos = rawPoint.plotY;
             rawPoint.axisZpos = rawPoint.plotZ;
-            rawPointsX.push(rawPoint.plotX || 0);
+
+          rawPointsX.push(rawPoint.plotX || 0);
+
             rawPoints.push({
                 x: rawPoint.plotX,
                 y: rawPoint.plotY,
@@ -94,7 +98,9 @@ var Series3D = /** @class */ (function (_super) {
             rawPoint.plotY = projectedPoint.y;
             rawPoint.plotZ = projectedPoint.z;
         }
-        series.rawPointsX = rawPointsX;
+
+      series.rawPointsX = rawPointsX;
+
     };
     /* *
      *

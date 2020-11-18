@@ -106,9 +106,10 @@ class Series3D extends LineSeries {
                 (isNumber(seriesOptions.stack) ? seriesOptions.stack : 0) :
                 series.index || 0, // #4743
             rawPointsX = [] as Array<number>;
-    
+
         series.zPadding = stack *
             (seriesOptions.depth || 0 + (seriesOptions.groupZPadding || 1));
+
 
         for (i = 0; i < series.data.length; i++) {
             rawPoint = series.data[i];
@@ -151,6 +152,7 @@ class Series3D extends LineSeries {
 
         }
         series.rawPointsX = rawPointsX;
+
     }
 
     /* eslint-enable valid-jsdoc */
@@ -161,6 +163,7 @@ class Series3D extends LineSeries {
  *  Compatibility
  *
  * */
+
 
 /* eslint-disable no-invalid-this */
 
