@@ -161,39 +161,24 @@ class AroonIndicator extends SMAIndicator implements Highcharts.MultipleLinesInd
             approximation: 'averages'
         }
     } as Highcharts.AroonIndicatorOptions);
-}
 
-/* *
-*
-*   Prototype Properties
-*
-* */
+    /* *
+     *
+     *  Properties
+     *
+     * */
+    public data: Array<Highcharts.AroonIndicatorPoint> = void 0 as any;
 
-interface AroonIndicator {
-    data: Array<Highcharts.AroonIndicatorPoint>;
-    getValues<TLinkedSeries extends LineSeries>(
-        series: TLinkedSeries,
-        params: Highcharts.AroonIndicatorParamsOptions
-    ): IndicatorValuesObject<TLinkedSeries>;
-    linesApiNames: Highcharts.MultipleLinesMixin['linesApiNames'];
-    nameBase: string;
-    options: Highcharts.AroonIndicatorOptions;
-    pointArrayMap: Highcharts.MultipleLinesMixin['pointArrayMap'];
-    pointClass: typeof Highcharts.AroonIndicatorPoint;
-    points: Array<Highcharts.AroonIndicatorPoint>;
-    pointValKey: Highcharts.MultipleLinesMixin['pointValKey'];
-    drawGraph: Highcharts.MultipleLinesMixin['drawGraph'];
-    getTranslatedLinesNames: Highcharts.MultipleLinesMixin[
-        'getTranslatedLinesNames'
-    ];
-}
+    public options: Highcharts.AroonIndicatorOptions = void 0 as any;
 
-extend(AroonIndicator.prototype, merge(MultipleLinesMixin, {
-    nameBase: 'Aroon',
-    pointArrayMap: ['y', 'aroonDown'],
-    pointValKey: 'y',
-    linesApiNames: ['aroonDown'],
-    getValues: function<TLinkedSeries extends LineSeries> (
+    public points: Array<Highcharts.AroonIndicatorPoint> = void 0 as any;
+
+    /* *
+     *
+     *  Functions
+     *
+     * */
+    public getValues<TLinkedSeries extends LineSeries>(
         series: TLinkedSeries,
         params: Highcharts.AroonIndicatorParamsOptions
     ): IndicatorValuesObject<TLinkedSeries> {
@@ -246,6 +231,39 @@ extend(AroonIndicator.prototype, merge(MultipleLinesMixin, {
             yData: yData
         } as IndicatorValuesObject<TLinkedSeries>;
     }
+}
+
+/* *
+*
+*   Prototype Properties
+*
+* */
+
+interface AroonIndicator {
+    // data: Array<Highcharts.AroonIndicatorPoint>;
+    // getValues<TLinkedSeries extends LineSeries>(
+    //     series: TLinkedSeries,
+    //     params: Highcharts.AroonIndicatorParamsOptions
+    // ): IndicatorValuesObject<TLinkedSeries>;
+
+    linesApiNames: Highcharts.MultipleLinesMixin['linesApiNames'];
+    pointClass: typeof Highcharts.AroonIndicatorPoint;
+    getTranslatedLinesNames: Highcharts.MultipleLinesMixin[
+        'getTranslatedLinesNames'
+    ];
+    // nameBase: string;
+    // options: Highcharts.AroonIndicatorOptions;
+    // pointArrayMap: Highcharts.MultipleLinesMixin['pointArrayMap'];
+    // points: Array<Highcharts.AroonIndicatorPoint>;
+    // pointValKey: Highcharts.MultipleLinesMixin['pointValKey'];
+    // drawGraph: Highcharts.MultipleLinesMixin['drawGraph'];
+}
+
+extend(AroonIndicator.prototype, merge(MultipleLinesMixin, {
+    nameBase: 'Aroon',
+    pointArrayMap: ['y', 'aroonDown'],
+    pointValKey: 'y',
+    linesApiNames: ['aroonDown']
 }));
 
 /* *

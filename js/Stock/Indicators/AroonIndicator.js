@@ -59,8 +59,51 @@ function getExtremeIndexInArray(arr, extreme) {
 var AroonIndicator = /** @class */ (function (_super) {
     __extends(AroonIndicator, _super);
     function AroonIndicator() {
-        return _super !== null && _super.apply(this, arguments) || this;
+        var _this = _super !== null && _super.apply(this, arguments) || this;
+        /* *
+         *
+         *  Properties
+         *
+         * */
+        _this.data = void 0;
+        _this.options = void 0;
+        _this.points = void 0;
+        return _this;
     }
+    /* *
+     *
+     *  Functions
+     *
+     * */
+    AroonIndicator.prototype.getValues = function (series, params) {
+        var period = params.period, xVal = series.xData, yVal = series.yData, yValLen = yVal ? yVal.length : 0, 
+        // 0- date, 1- Aroon Up, 2- Aroon Down
+        AR = [], xData = [], yData = [], slicedY, low = 2, high = 1, aroonUp, aroonDown, xLow, xHigh, i;
+        // For a N-period, we start from N-1 point, to calculate Nth point
+        // That is why we later need to comprehend slice() elements list
+        // with (+1)
+        for (i = period - 1; i < yValLen; i++) {
+            slicedY = yVal.slice(i - period + 1, i + 2);
+            xLow = getExtremeIndexInArray(slicedY.map(function (elem) {
+                return pick(elem[low], elem);
+            }), 'min');
+            xHigh = getExtremeIndexInArray(slicedY.map(function (elem) {
+                return pick(elem[high], elem);
+            }), 'max');
+            aroonUp = (xHigh / period) * 100;
+            aroonDown = (xLow / period) * 100;
+            if (xVal[i + 1]) {
+                AR.push([xVal[i + 1], aroonUp, aroonDown]);
+                xData.push(xVal[i + 1]);
+                yData.push([aroonUp, aroonDown]);
+            }
+        }
+        return {
+            values: AR,
+            xData: xData,
+            yData: yData
+        };
+    };
     /**
      * Aroon. This series requires the `linkedTo` option to be
      * set and should be loaded after the `stock/indicators/indicators.js`.
@@ -128,36 +171,7 @@ extend(AroonIndicator.prototype, merge(MultipleLinesMixin, {
     nameBase: 'Aroon',
     pointArrayMap: ['y', 'aroonDown'],
     pointValKey: 'y',
-    linesApiNames: ['aroonDown'],
-    getValues: function (series, params) {
-        var period = params.period, xVal = series.xData, yVal = series.yData, yValLen = yVal ? yVal.length : 0, 
-        // 0- date, 1- Aroon Up, 2- Aroon Down
-        AR = [], xData = [], yData = [], slicedY, low = 2, high = 1, aroonUp, aroonDown, xLow, xHigh, i;
-        // For a N-period, we start from N-1 point, to calculate Nth point
-        // That is why we later need to comprehend slice() elements list
-        // with (+1)
-        for (i = period - 1; i < yValLen; i++) {
-            slicedY = yVal.slice(i - period + 1, i + 2);
-            xLow = getExtremeIndexInArray(slicedY.map(function (elem) {
-                return pick(elem[low], elem);
-            }), 'min');
-            xHigh = getExtremeIndexInArray(slicedY.map(function (elem) {
-                return pick(elem[high], elem);
-            }), 'max');
-            aroonUp = (xHigh / period) * 100;
-            aroonDown = (xLow / period) * 100;
-            if (xVal[i + 1]) {
-                AR.push([xVal[i + 1], aroonUp, aroonDown]);
-                xData.push(xVal[i + 1]);
-                yData.push([aroonUp, aroonDown]);
-            }
-        }
-        return {
-            values: AR,
-            xData: xData,
-            yData: yData
-        };
-    }
+    linesApiNames: ['aroonDown']
 }));
 BaseSeries.registerSeriesType('aroon', AroonIndicator);
 /* *
