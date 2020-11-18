@@ -19,25 +19,28 @@
 import type {
     DataLabelOptions,
     DataLabelTextPathOptions
-} from '../Core/Series/DataLabelOptions';
+} from '../../Core/Series/DataLabelOptions';
 import type {
     BubblePointMarkerOptions,
     BubblePointOptions
-} from './Bubble/BubblePointOptions';
-import type BubbleSeriesOptions from './Bubble/BubbleSeriesOptions';
-import type { SeriesStatesOptions } from '../Core/Series/SeriesOptions';
-import type SVGAttributes from '../Core/Renderer/SVG/SVGAttributes';
-import type SVGElement from '../Core/Renderer/SVG/SVGElement';
-import BaseSeries from '../Core/Series/Series.js';
-import BubblePoint from './Bubble/BubblePoint.js';
-import BubbleSeries from './Bubble/BubbleSeries.js';
-import Chart from '../Core/Chart/Chart.js';
-import Color from '../Core/Color/Color.js';
+} from '../Bubble/BubblePointOptions';
+import type BubbleSeriesOptions from '../Bubble/BubbleSeriesOptions';
+import type { SeriesStatesOptions } from '../../Core/Series/SeriesOptions';
+import type SVGAttributes from '../../Core/Renderer/SVG/SVGAttributes';
+import type SVGElement from '../../Core/Renderer/SVG/SVGElement';
+import BaseSeries from '../../Core/Series/Series.js';
+const {
+    seriesTypes: {
+        bubble: BubbleSeries
+    }
+} = BaseSeries;
+import Chart from '../../Core/Chart/Chart.js';
+import Color from '../../Core/Color/Color.js';
 const { parse: color } = Color;
-import H from '../Core/Globals.js';
-import LineSeries from '../Series/Line/LineSeries.js';
-import Point from '../Core/Series/Point.js';
-import U from '../Core/Utilities.js';
+import H from '../../Core/Globals.js';
+import LineSeries from '../../Series/Line/LineSeries.js';
+import Point from '../../Core/Series/Point.js';
+import U from '../../Core/Utilities.js';
 const {
     addEvent,
     clamp,
@@ -50,8 +53,8 @@ const {
     merge,
     pick
 } = U;
-import '../Series/Networkgraph/DraggableNodes.js';
-import '../Series/Networkgraph/Layouts.js';
+import '../../Series/Networkgraph/DraggableNodes.js';
+import '../../Series/Networkgraph/Layouts.js';
 
 const Reingold = H.layouts['reingold-fruchterman'],
     dragNodesMixin = H.dragNodesMixin;
@@ -63,13 +66,13 @@ const Reingold = H.layouts['reingold-fruchterman'],
  *
  * */
 
-declare module '../Core/Chart/ChartLike' {
+declare module '../../Core/Chart/ChartLike' {
     interface ChartLike {
         getSelectedParentNodes(): Array<Highcharts.PackedBubblePoint>;
     }
 }
 
-declare module '../Core/Series/PointLike' {
+declare module '../../Core/Series/PointLike' {
     interface PointLike {
         degree?: number;
     }
@@ -1834,7 +1837,7 @@ extend(PackedBubbleSeries.prototype, {
  *
  * */
 
-class PackedBubblePoint extends BubblePoint implements Highcharts.DragNodesPoint {
+class PackedBubblePoint extends BubbleSeries.prototype.pointClass implements Highcharts.DragNodesPoint {
 
     /* *
      *
@@ -1937,7 +1940,7 @@ PackedBubbleSeries.prototype.pointClass = PackedBubblePoint;
  *
  * */
 
-declare module '../Core/Series/SeriesType' {
+declare module '../../Core/Series/SeriesType' {
     interface SeriesTypeRegistry {
         packedbubble: typeof PackedBubbleSeries;
     }
