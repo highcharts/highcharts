@@ -28,22 +28,21 @@ var __extends = (this && this.__extends) || (function () {
         d.prototype = b === null ? Object.create(b) : (__.prototype = b.prototype, new __());
     };
 })();
-import A from '../Core/Animation/AnimationUtilities.js';
+import A from '../../Core/Animation/AnimationUtilities.js';
 var animObject = A.animObject;
-import BaseSeries from '../Core/Series/Series.js';
+import BaseSeries from '../../Core/Series/Series.js';
 var ScatterSeries = BaseSeries.seriesTypes.scatter;
-import Color from '../Core/Color/Color.js';
+import Color from '../../Core/Color/Color.js';
 var color = Color.parse;
-import DrawPointMixin from '../Mixins/DrawPoint.js';
-import GeometryMixin from '../Mixins/Geometry.js';
+import DrawPointMixin from '../../Mixins/DrawPoint.js';
+import GeometryMixin from '../../Mixins/Geometry.js';
 var getCenterOfPoints = GeometryMixin.getCenterOfPoints, getDistanceBetweenPoints = GeometryMixin.getDistanceBetweenPoints;
-import GeometryCirclesModule from '../Mixins/GeometryCircles.js';
+import GeometryCirclesModule from '../../Mixins/GeometryCircles.js';
 var getAreaOfCircle = GeometryCirclesModule.getAreaOfCircle, getAreaOfIntersectionBetweenCircles = GeometryCirclesModule.getAreaOfIntersectionBetweenCircles, getCircleCircleIntersection = GeometryCirclesModule.getCircleCircleIntersection, getCirclesIntersectionPolygon = GeometryCirclesModule.getCirclesIntersectionPolygon, getOverlapBetweenCirclesByDistance = GeometryCirclesModule.getOverlapBetweenCircles, isCircle1CompletelyOverlappingCircle2 = GeometryCirclesModule.isCircle1CompletelyOverlappingCircle2, isPointInsideAllCircles = GeometryCirclesModule.isPointInsideAllCircles, isPointInsideCircle = GeometryCirclesModule.isPointInsideCircle, isPointOutsideAllCircles = GeometryCirclesModule.isPointOutsideAllCircles;
-import NelderMeadMixin from '../Mixins/NelderMead.js';
+import NelderMeadMixin from '../../Mixins/NelderMead.js';
 var nelderMead = NelderMeadMixin.nelderMead;
-import U from '../Core/Utilities.js';
+import U from '../../Core/Utilities.js';
 var addEvent = U.addEvent, extend = U.extend, isArray = U.isArray, isNumber = U.isNumber, isObject = U.isObject, isString = U.isString, merge = U.merge;
-import './Scatter/ScatterSeries.js';
 /* *
  *
  *  Functions
