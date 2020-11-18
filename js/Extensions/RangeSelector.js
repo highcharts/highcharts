@@ -842,6 +842,21 @@ var RangeSelector = /** @class */ (function () {
             rangeOptions._offsetMax - rangeOptions._offsetMin;
     };
     /**
+     * Get the unix timestamp of a HTML input for the dates
+     *
+     * @private
+     * @function Highcharts.RangeSelector#getInputValue
+     * @param {string} name
+     * @return {number}
+     */
+    RangeSelector.prototype.getInputValue = function (name) {
+        var input = this[name + 'Input'];
+        var options = this.chart.options.rangeSelector;
+        var time = this.chart.time;
+        return ((input.type === 'text' && options.inputDateParser) ||
+            this.defaultInputDateParser)(input.value, time.useUTC, time);
+    };
+    /**
      * Set the internal and displayed value of a HTML input for the dates
      *
      * @private
@@ -860,6 +875,25 @@ var RangeSelector = /** @class */ (function () {
         this[name + 'DateBox'].attr({
             text: time.dateFormat(options.inputDateFormat || '%b %e, %Y', input.HCTime)
         });
+    };
+    /**
+     * Set the min and max value of a HTML input for the dates
+     *
+     * @private
+     * @function Highcharts.RangeSelector#setInputExtremes
+     * @param {string} name
+     * @param {number} min
+     * @param {number} max
+     * @return {void}
+     */
+    RangeSelector.prototype.setInputExtremes = function (name, min, max) {
+        var input = this[name + 'Input'];
+        var format = this.inputTypeFormats[input.type];
+        var time = this.chart.time;
+        if (format) {
+            input.min = time.dateFormat(format, min);
+            input.max = time.dateFormat(format, max);
+        }
     };
     /**
      * @private
@@ -935,15 +969,14 @@ var RangeSelector = /** @class */ (function () {
      * @return {void}
      */
     RangeSelector.prototype.drawInput = function (name) {
-        var rangeSelector = this, chart = rangeSelector.chart, chartStyle = chart.renderer.style || {}, renderer = chart.renderer, options = chart.options.rangeSelector, lang = defaultOptions.lang, div = rangeSelector.div, isMin = name === 'min', input, label, dateBox, inputGroup = this.inputGroup, defaultInputDateParser = this.defaultInputDateParser;
+        var rangeSelector = this, chart = rangeSelector.chart, chartStyle = chart.renderer.style || {}, renderer = chart.renderer, options = chart.options.rangeSelector, lang = defaultOptions.lang, div = rangeSelector.div, isMin = name === 'min', input, label, dateBox, inputGroup = this.inputGroup;
         /**
          * @private
          */
         function updateExtremes() {
-            var inputValue = input.value, value, chartAxis = chart.xAxis[0], dataAxis = chart.scroller && chart.scroller.xAxis ?
+            var value = rangeSelector.getInputValue(name), chartAxis = chart.xAxis[0], dataAxis = chart.scroller && chart.scroller.xAxis ?
                 chart.scroller.xAxis :
                 chartAxis, dataMin = dataAxis.dataMin, dataMax = dataAxis.dataMax;
-            value = (options.inputDateParser || defaultInputDateParser)(inputValue, chart.time.useUTC, chart.time);
             if (value !== input.previousValue && isNumber(value)) {
                 input.previousValue = value;
                 // Validate the extremes. If it goes beyound the data min or
@@ -1114,7 +1147,7 @@ var RangeSelector = /** @class */ (function () {
      * @return {void}
      */
     RangeSelector.prototype.render = function (min, max) {
-        var rangeSelector = this, chart = rangeSelector.chart, renderer = chart.renderer, container = chart.container, time = chart.time, chartOptions = chart.options, navButtonOptions = (chartOptions.exporting &&
+        var rangeSelector = this, chart = rangeSelector.chart, renderer = chart.renderer, container = chart.container, chartOptions = chart.options, navButtonOptions = (chartOptions.exporting &&
             chartOptions.exporting.enabled !== false &&
             chartOptions.navigation &&
             chartOptions.navigation.buttonOptions), lang = defaultOptions.lang, div = rangeSelector.div, options = chartOptions.rangeSelector, 
@@ -1278,20 +1311,10 @@ var RangeSelector = /** @class */ (function () {
                         buttonGroup.getBBox().height + 10
                 });
             }
-            if (chart.scroller) {
-                var unionExtremes = chart.scroller.getUnionExtremes();
-                var minInput = this.minInput;
-                var maxInput = this.maxInput;
-                var format = this.inputTypeFormats[minInput.type];
-                if (unionExtremes &&
-                    unionExtremes.dataMin &&
-                    unionExtremes.dataMax &&
-                    format) {
-                    minInput.min = time.dateFormat(format, unionExtremes.dataMin);
-                    minInput.max = time.dateFormat(format, Math.min(unionExtremes.dataMax, this.defaultInputDateParser(maxInput.value, time.useUTC, time)));
-                    maxInput.min = time.dateFormat(format, Math.max(unionExtremes.dataMin, this.defaultInputDateParser(minInput.value, time.useUTC, time)));
-                    maxInput.max = time.dateFormat(format, unionExtremes.dataMax);
-                }
+            var unionExtremes = (chart.scroller && chart.scroller.getUnionExtremes()) || chart.xAxis[0] || {};
+            if (defined(unionExtremes.dataMin) && defined(unionExtremes.dataMax)) {
+                rangeSelector.setInputExtremes('min', unionExtremes.dataMin, Math.min(unionExtremes.dataMax, rangeSelector.getInputValue('max')));
+                rangeSelector.setInputExtremes('max', Math.max(unionExtremes.dataMin, rangeSelector.getInputValue('min')), unionExtremes.dataMax);
             }
             // Set or reset the input values
             rangeSelector.setInputValue('min', min);

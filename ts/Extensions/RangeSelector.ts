@@ -160,6 +160,7 @@ declare global {
             public destroy(): void;
             public drawInput(name: string): void;
             public getHeight(): number;
+            public getInputValue(name: string): number;
             public getPosition(): Dictionary<number>;
             public getYTDExtremes(
                 dataMax: number,
@@ -169,6 +170,7 @@ declare global {
             public hideInput(name: string): void;
             public init(chart: Chart): void;
             public render(min?: number, max?: number): void;
+            public setInputExtremes(name: string, min: number, max: number): void;
             public setInputValue(name: string, inputTime?: number): void;
             public setSelected(selected: number): void;
             public showInput(name: string): void;
@@ -1212,6 +1214,25 @@ class RangeSelector {
     }
 
     /**
+     * Get the unix timestamp of a HTML input for the dates
+     *
+     * @private
+     * @function Highcharts.RangeSelector#getInputValue
+     * @param {string} name
+     * @return {number}
+     */
+    public getInputValue(name: string): number {
+        const input = (this as any)[name + 'Input'];
+        const options = this.chart.options.rangeSelector as Highcharts.RangeSelectorOptions;
+        const time = this.chart.time;
+
+        return (
+            (input.type === 'text' && options.inputDateParser) ||
+            this.defaultInputDateParser
+        )(input.value, time.useUTC, time);
+    }
+
+    /**
      * Set the internal and displayed value of a HTML input for the dates
      *
      * @private
@@ -1245,6 +1266,31 @@ class RangeSelector {
                 input.HCTime
             )
         });
+    }
+
+    /**
+     * Set the min and max value of a HTML input for the dates
+     *
+     * @private
+     * @function Highcharts.RangeSelector#setInputExtremes
+     * @param {string} name
+     * @param {number} min
+     * @param {number} max
+     * @return {void}
+     */
+    public setInputExtremes(
+        name: string,
+        min: number,
+        max: number
+    ): void {
+        const input = (this as any)[name + 'Input'];
+        const format = this.inputTypeFormats[input.type];
+        const time = this.chart.time;
+
+        if (format) {
+            input.min = time.dateFormat(format, min);
+            input.max = time.dateFormat(format, max);
+        }
     }
 
     /**
@@ -1346,23 +1392,19 @@ class RangeSelector {
             input: Highcharts.RangeSelectorInputElement,
             label,
             dateBox,
-            inputGroup = this.inputGroup,
-            defaultInputDateParser = this.defaultInputDateParser;
+            inputGroup = this.inputGroup;
 
         /**
          * @private
          */
         function updateExtremes(): void {
-            var inputValue = input.value as any,
-                value: (number|Highcharts.RangeSelectorParseCallbackFunction|undefined),
+            var value: number | undefined = rangeSelector.getInputValue(name),
                 chartAxis = chart.xAxis[0],
                 dataAxis = chart.scroller && chart.scroller.xAxis ?
                     chart.scroller.xAxis :
                     chartAxis,
                 dataMin = dataAxis.dataMin,
                 dataMax = dataAxis.dataMax;
-
-            value = (options.inputDateParser || defaultInputDateParser)(inputValue, chart.time.useUTC, chart.time);
 
             if (value !== input.previousValue && isNumber(value)) {
                 input.previousValue = value;
@@ -1579,7 +1621,6 @@ class RangeSelector {
             chart = rangeSelector.chart,
             renderer = chart.renderer,
             container = chart.container,
-            time = chart.time,
             chartOptions = chart.options,
             navButtonOptions = (
                 chartOptions.exporting &&
@@ -1852,28 +1893,21 @@ class RangeSelector {
 
             }
 
-            if (chart.scroller) {
-                const unionExtremes = chart.scroller.getUnionExtremes();
-                const minInput = (this as any).minInput;
-                const maxInput = (this as any).maxInput;
-                const format = this.inputTypeFormats[minInput.type];
+            const unionExtremes = (
+                chart.scroller && chart.scroller.getUnionExtremes()
+            ) || chart.xAxis[0] || {};
 
-                if (unionExtremes &&
-                    unionExtremes.dataMin &&
-                    unionExtremes.dataMax &&
-                    format) {
-                    minInput.min = time.dateFormat(format, unionExtremes.dataMin);
-                    minInput.max = time.dateFormat(
-                        format,
-                        Math.min(unionExtremes.dataMax, this.defaultInputDateParser(maxInput.value, time.useUTC, time))
-                    );
-
-                    maxInput.min = time.dateFormat(
-                        format,
-                        Math.max(unionExtremes.dataMin, this.defaultInputDateParser(minInput.value, time.useUTC, time))
-                    );
-                    maxInput.max = time.dateFormat(format, unionExtremes.dataMax);
-                }
+            if (defined(unionExtremes.dataMin) && defined(unionExtremes.dataMax)) {
+                rangeSelector.setInputExtremes(
+                    'min',
+                    unionExtremes.dataMin,
+                    Math.min(unionExtremes.dataMax, rangeSelector.getInputValue('max'))
+                );
+                rangeSelector.setInputExtremes(
+                    'max',
+                    Math.max(unionExtremes.dataMin, rangeSelector.getInputValue('min')),
+                    unionExtremes.dataMax
+                );
             }
 
             // Set or reset the input values
