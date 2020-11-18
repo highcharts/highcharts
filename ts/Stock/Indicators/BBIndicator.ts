@@ -93,7 +93,7 @@ function getStandardDeviation(
  *
  * @augments Highcharts.Series
  */
-class BBIndicator extends SMAIndicator {
+class BBIndicator extends SMAIndicator implements Highcharts.MultipleLinesIndicator {
     /**
      * Bollinger bands (BB). This series requires the `linkedTo` option to be
      * set and should be loaded after the `stock/indicators/indicators.js` file.
@@ -162,40 +162,20 @@ class BBIndicator extends SMAIndicator {
             approximation: 'averages'
         }
     } as Highcharts.BBIndicatorOptions)
-}
 
-/* *
- *
- *  Prototype Properties
- *
- * */
+    /* *
+    *
+    *  Prototype Properties
+    *
+    * */
 
-interface BBIndicator{
-    data: Array<Highcharts.BBIndicatorPoint>;
-    linesApiNames: Highcharts.MultipleLinesMixin['linesApiNames'];
-    getTranslatedLinesNames: Highcharts.MultipleLinesMixin[
-        'getTranslatedLinesNames'
-    ];
-    getValues<TLinkedSeries extends LineSeries>(
-        series: TLinkedSeries,
-        params: Highcharts.BBIndicatorParamsOptions
-    ): (IndicatorValuesObject<TLinkedSeries>|undefined);
-    options: Highcharts.BBIndicatorOptions;
-    pointClass: typeof Highcharts.BBIndicatorPoint;
-    points: Array<Highcharts.BBIndicatorPoint>;
-}
+    public data: Array<Highcharts.BBIndicatorPoint> = void 0 as any;
 
-extend(BBIndicator.prototype, {
-    drawGraph: MultipleLinesMixin.drawGraph,
-    getTranslatedLinesNames: MultipleLinesMixin.getTranslatedLinesNames,
-    translate: MultipleLinesMixin.translate,
-    toYData: MultipleLinesMixin.toYData,
+    public options: Highcharts.BBIndicatorOptions = void 0 as any;
 
-    pointArrayMap: ['top', 'middle', 'bottom'],
-    pointValKey: 'middle',
-    nameComponents: ['period', 'standardDeviation'],
-    linesApiNames: ['topLine', 'bottomLine'],
-    init: function (this: BBIndicator): void {
+    public points: Array<Highcharts.BBIndicatorPoint> = void 0 as any;
+
+    public init(this: BBIndicator): void {
         BaseSeries.seriesTypes.sma.prototype.init.apply(this, arguments);
 
         // Set default color for lines:
@@ -211,9 +191,9 @@ extend(BBIndicator.prototype, {
                 }
             }
         }, this.options);
-    },
-    getValues: function<TLinkedSeries extends LineSeries> (
-        this: BBIndicator,
+    }
+
+    public getValues<TLinkedSeries extends LineSeries>(
         series: TLinkedSeries,
         params: Highcharts.BBIndicatorParamsOptions
     ): (IndicatorValuesObject<TLinkedSeries>|undefined) {
@@ -282,6 +262,34 @@ extend(BBIndicator.prototype, {
             yData: yData
         } as IndicatorValuesObject<TLinkedSeries>;
     }
+}
+
+/* *
+ *
+ *  Prototype Properties
+ *
+ * */
+
+interface BBIndicator {
+    pointArrayMap: Array<string>;
+    pointValKey: string;
+    nameComponents: Array<string>;
+    linesApiNames: Array<string>;
+    drawGraph: typeof MultipleLinesMixin.drawGraph;
+    getTranslatedLinesNames: typeof MultipleLinesMixin.getTranslatedLinesNames;
+    translate: typeof MultipleLinesMixin.translate;
+    toYData: typeof MultipleLinesMixin.toYData;
+    pointClass: typeof Highcharts.BBIndicatorPoint;
+}
+extend(BBIndicator.prototype, {
+    pointArrayMap: ['top', 'middle', 'bottom'],
+    pointValKey: 'middle',
+    nameComponents: ['period', 'standardDeviation'],
+    linesApiNames: ['topLine', 'bottomLine'],
+    drawGraph: MultipleLinesMixin.drawGraph,
+    getTranslatedLinesNames: MultipleLinesMixin.getTranslatedLinesNames,
+    translate: MultipleLinesMixin.translate,
+    toYData: MultipleLinesMixin.toYData
 });
 
 /* *

@@ -52,8 +52,65 @@ function getStandardDeviation(arr, index, isOHLC, mean) {
 var BBIndicator = /** @class */ (function (_super) {
     __extends(BBIndicator, _super);
     function BBIndicator() {
-        return _super !== null && _super.apply(this, arguments) || this;
+        var _this = _super !== null && _super.apply(this, arguments) || this;
+        /* *
+        *
+        *  Prototype Properties
+        *
+        * */
+        _this.data = void 0;
+        _this.options = void 0;
+        _this.points = void 0;
+        return _this;
     }
+    BBIndicator.prototype.init = function () {
+        BaseSeries.seriesTypes.sma.prototype.init.apply(this, arguments);
+        // Set default color for lines:
+        this.options = merge({
+            topLine: {
+                styles: {
+                    lineColor: this.color
+                }
+            },
+            bottomLine: {
+                styles: {
+                    lineColor: this.color
+                }
+            }
+        }, this.options);
+    };
+    BBIndicator.prototype.getValues = function (series, params) {
+        var period = params.period, standardDeviation = params.standardDeviation, xVal = series.xData, yVal = series.yData, yValLen = yVal ? yVal.length : 0, 
+        // 0- date, 1-middle line, 2-top line, 3-bottom line
+        BB = [], 
+        // middle line, top line and bottom line
+        ML, TL, BL, date, xData = [], yData = [], slicedX, slicedY, stdDev, isOHLC, point, i;
+        if (xVal.length < period) {
+            return;
+        }
+        isOHLC = isArray(yVal[0]);
+        for (i = period; i <= yValLen; i++) {
+            slicedX = xVal.slice(i - period, i);
+            slicedY = yVal.slice(i - period, i);
+            point = BaseSeries.seriesTypes.sma.prototype.getValues.call(this, {
+                xData: slicedX,
+                yData: slicedY
+            }, params);
+            date = point.xData[0];
+            ML = point.yData[0];
+            stdDev = getStandardDeviation(slicedY, params.index, isOHLC, ML);
+            TL = ML + standardDeviation * stdDev;
+            BL = ML - standardDeviation * stdDev;
+            BB.push([date, TL, ML, BL]);
+            xData.push(date);
+            yData.push([TL, ML, BL]);
+        }
+        return {
+            values: BB,
+            xData: xData,
+            yData: yData
+        };
+    };
     /**
      * Bollinger bands (BB). This series requires the `linkedTo` option to be
      * set and should be loaded after the `stock/indicators/indicators.js` file.
@@ -125,62 +182,14 @@ var BBIndicator = /** @class */ (function (_super) {
     return BBIndicator;
 }(SMAIndicator));
 extend(BBIndicator.prototype, {
-    drawGraph: MultipleLinesMixin.drawGraph,
-    getTranslatedLinesNames: MultipleLinesMixin.getTranslatedLinesNames,
-    translate: MultipleLinesMixin.translate,
-    toYData: MultipleLinesMixin.toYData,
     pointArrayMap: ['top', 'middle', 'bottom'],
     pointValKey: 'middle',
     nameComponents: ['period', 'standardDeviation'],
     linesApiNames: ['topLine', 'bottomLine'],
-    init: function () {
-        BaseSeries.seriesTypes.sma.prototype.init.apply(this, arguments);
-        // Set default color for lines:
-        this.options = merge({
-            topLine: {
-                styles: {
-                    lineColor: this.color
-                }
-            },
-            bottomLine: {
-                styles: {
-                    lineColor: this.color
-                }
-            }
-        }, this.options);
-    },
-    getValues: function (series, params) {
-        var period = params.period, standardDeviation = params.standardDeviation, xVal = series.xData, yVal = series.yData, yValLen = yVal ? yVal.length : 0, 
-        // 0- date, 1-middle line, 2-top line, 3-bottom line
-        BB = [], 
-        // middle line, top line and bottom line
-        ML, TL, BL, date, xData = [], yData = [], slicedX, slicedY, stdDev, isOHLC, point, i;
-        if (xVal.length < period) {
-            return;
-        }
-        isOHLC = isArray(yVal[0]);
-        for (i = period; i <= yValLen; i++) {
-            slicedX = xVal.slice(i - period, i);
-            slicedY = yVal.slice(i - period, i);
-            point = BaseSeries.seriesTypes.sma.prototype.getValues.call(this, {
-                xData: slicedX,
-                yData: slicedY
-            }, params);
-            date = point.xData[0];
-            ML = point.yData[0];
-            stdDev = getStandardDeviation(slicedY, params.index, isOHLC, ML);
-            TL = ML + standardDeviation * stdDev;
-            BL = ML - standardDeviation * stdDev;
-            BB.push([date, TL, ML, BL]);
-            xData.push(date);
-            yData.push([TL, ML, BL]);
-        }
-        return {
-            values: BB,
-            xData: xData,
-            yData: yData
-        };
-    }
+    drawGraph: MultipleLinesMixin.drawGraph,
+    getTranslatedLinesNames: MultipleLinesMixin.getTranslatedLinesNames,
+    translate: MultipleLinesMixin.translate,
+    toYData: MultipleLinesMixin.toYData,
 });
 BaseSeries.registerSeriesType('bb', BBIndicator);
 /* *
