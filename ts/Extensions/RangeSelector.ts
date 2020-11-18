@@ -2171,9 +2171,9 @@ RangeSelector.prototype.defaultButtons = [{
  * The date formats to use when setting min, max and value on date inputs
  */
 RangeSelector.prototype.inputTypeFormats = {
-    'datetime-local': '%Y-%m-%dT%H%M%S',
+    'datetime-local': '%Y-%m-%dT%H:%M:%S',
     'date': '%Y-%m-%d',
-    'time': '%H%M%S'
+    'time': '%H:%M:%S'
 };
 
 /**
