@@ -11,16 +11,21 @@
 import type CSSObject from '../../Core/Renderer/CSSObject';
 import type IndicatorValuesObject from './IndicatorValuesObject';
 import type LineSeries from '../../Series/Line/LineSeries';
-import type SMAIndicator from './SMA/SMAIndicator';
 import type {
     SMAOptions,
     SMAParamsOptions
 } from './SMA/SMAOptions';
 import type SMAPoint from './SMA/SMAPoint';
 import BaseSeries from '../../Core/Series/Series.js';
+const {
+    seriesTypes: {
+        sma: SMAIndicator
+    }
+} = BaseSeries;
 import MultipleLinesMixin from '../../Mixins/MultipleLines.js';
 import U from '../../Core/Utilities.js';
 const {
+    extend,
     isArray,
     merge
 } = U;
@@ -31,22 +36,6 @@ const {
  */
 declare global {
     namespace Highcharts {
-        class BBIndicator extends SMAIndicator
-            implements MultipleLinesIndicator {
-            public data: Array<BBIndicatorPoint>;
-            public linesApiNames: MultipleLinesMixin['linesApiNames'];
-            public getTranslatedLinesNames: MultipleLinesMixin[
-                'getTranslatedLinesNames'
-            ];
-            public getValues<TLinkedSeries extends LineSeries>(
-                series: TLinkedSeries,
-                params: BBIndicatorParamsOptions
-            ): (IndicatorValuesObject<TLinkedSeries>|undefined);
-            public options: BBIndicatorOptions;
-            public pointClass: typeof BBIndicatorPoint;
-            public points: Array<BBIndicatorPoint>;
-        }
-
         interface BBIndicatorParamsOptions extends SMAParamsOptions {
             standardDeviation?: number;
         }
@@ -64,15 +53,6 @@ declare global {
     }
 }
 
-declare module '../../Core/Series/SeriesType' {
-    interface SeriesTypeRegistry {
-        bb: typeof Highcharts.BBIndicator;
-    }
-}
-
-// im port './SMAIndicator.js';
-
-var SMA = BaseSeries.seriesTypes.sma;
 
 /* eslint-disable valid-jsdoc */
 
@@ -113,9 +93,7 @@ function getStandardDeviation(
  *
  * @augments Highcharts.Series
  */
-BaseSeries.seriesType<typeof Highcharts.BBIndicator>(
-    'bb',
-    'sma',
+class BBIndicator extends SMAIndicator {
     /**
      * Bollinger bands (BB). This series requires the `linkedTo` option to be
      * set and should be loaded after the `stock/indicators/indicators.js` file.
@@ -130,7 +108,7 @@ BaseSeries.seriesType<typeof Highcharts.BBIndicator>(
      * @requires     stock/indicators/bollinger-bands
      * @optionparent plotOptions.bb
      */
-    {
+    public static defaultOptions: Highcharts.BBIndicatorOptions = merge(SMAIndicator.defaultOptions, {
         params: {
             period: 20,
             /**
@@ -183,104 +161,149 @@ BaseSeries.seriesType<typeof Highcharts.BBIndicator>(
         dataGrouping: {
             approximation: 'averages'
         }
-    },
-    /**
-     * @lends Highcharts.Series#
-     */
-    merge(MultipleLinesMixin, {
-        pointArrayMap: ['top', 'middle', 'bottom'],
-        pointValKey: 'middle',
-        nameComponents: ['period', 'standardDeviation'],
-        linesApiNames: ['topLine', 'bottomLine'],
-        init: function (this: Highcharts.BBIndicator): void {
-            SMA.prototype.init.apply(this, arguments);
+    } as Highcharts.BBIndicatorOptions)
+}
 
-            // Set default color for lines:
-            this.options = merge({
-                topLine: {
-                    styles: {
-                        lineColor: this.color
-                    }
-                },
-                bottomLine: {
-                    styles: {
-                        lineColor: this.color
-                    }
+/* *
+ *
+ *  Prototype Properties
+ *
+ * */
+
+interface BBIndicator{
+    data: Array<Highcharts.BBIndicatorPoint>;
+    linesApiNames: Highcharts.MultipleLinesMixin['linesApiNames'];
+    getTranslatedLinesNames: Highcharts.MultipleLinesMixin[
+        'getTranslatedLinesNames'
+    ];
+    getValues<TLinkedSeries extends LineSeries>(
+        series: TLinkedSeries,
+        params: Highcharts.BBIndicatorParamsOptions
+    ): (IndicatorValuesObject<TLinkedSeries>|undefined);
+    options: Highcharts.BBIndicatorOptions;
+    pointClass: typeof Highcharts.BBIndicatorPoint;
+    points: Array<Highcharts.BBIndicatorPoint>;
+}
+
+extend(BBIndicator.prototype, {
+    drawGraph: MultipleLinesMixin.drawGraph,
+    getTranslatedLinesNames: MultipleLinesMixin.getTranslatedLinesNames,
+    translate: MultipleLinesMixin.translate,
+    toYData: MultipleLinesMixin.toYData,
+
+    pointArrayMap: ['top', 'middle', 'bottom'],
+    pointValKey: 'middle',
+    nameComponents: ['period', 'standardDeviation'],
+    linesApiNames: ['topLine', 'bottomLine'],
+    init: function (this: BBIndicator): void {
+        BaseSeries.seriesTypes.sma.prototype.init.apply(this, arguments);
+
+        // Set default color for lines:
+        this.options = merge({
+            topLine: {
+                styles: {
+                    lineColor: this.color
                 }
-            }, this.options);
-        },
-        getValues: function<TLinkedSeries extends LineSeries> (
-            this: Highcharts.BBIndicator,
-            series: TLinkedSeries,
-            params: Highcharts.BBIndicatorParamsOptions
-        ): (IndicatorValuesObject<TLinkedSeries>|undefined) {
-            var period: number = (params.period as any),
-                standardDeviation: number = (params.standardDeviation as any),
-                xVal: Array<number> = (series.xData as any),
-                yVal: Array<Array<number>> = (series.yData as any),
-                yValLen: number = yVal ? yVal.length : 0,
-                // 0- date, 1-middle line, 2-top line, 3-bottom line
-                BB: Array<Array<number>> = [],
-                // middle line, top line and bottom line
-                ML: number,
-                TL: number,
-                BL: number,
-                date: number,
-                xData: Array<number> = [],
-                yData: Array<Array<number>> = [],
-                slicedX: (Array<number>|undefined),
-                slicedY: Array<Array<number>>,
-                stdDev: number,
-                isOHLC: boolean,
-                point: (
-                    IndicatorValuesObject<TLinkedSeries>|
-                    undefined
-                ),
-                i: number;
-
-            if (xVal.length < period) {
-                return;
+            },
+            bottomLine: {
+                styles: {
+                    lineColor: this.color
+                }
             }
+        }, this.options);
+    },
+    getValues: function<TLinkedSeries extends LineSeries> (
+        this: BBIndicator,
+        series: TLinkedSeries,
+        params: Highcharts.BBIndicatorParamsOptions
+    ): (IndicatorValuesObject<TLinkedSeries>|undefined) {
+        var period: number = (params.period as any),
+            standardDeviation: number = (params.standardDeviation as any),
+            xVal: Array<number> = (series.xData as any),
+            yVal: Array<Array<number>> = (series.yData as any),
+            yValLen: number = yVal ? yVal.length : 0,
+            // 0- date, 1-middle line, 2-top line, 3-bottom line
+            BB: Array<Array<number>> = [],
+            // middle line, top line and bottom line
+            ML: number,
+            TL: number,
+            BL: number,
+            date: number,
+            xData: Array<number> = [],
+            yData: Array<Array<number>> = [],
+            slicedX: (Array<number>|undefined),
+            slicedY: Array<Array<number>>,
+            stdDev: number,
+            isOHLC: boolean,
+            point: (
+                IndicatorValuesObject<TLinkedSeries>|
+                undefined
+            ),
+            i: number;
 
-            isOHLC = isArray(yVal[0]);
-
-            for (i = period; i <= yValLen; i++) {
-                slicedX = xVal.slice(i - period, i);
-                slicedY = yVal.slice(i - period, i);
-
-                point = SMA.prototype.getValues.call(
-                    this,
-                    ({
-                        xData: slicedX,
-                        yData: slicedY
-                    } as any),
-                    params
-                ) as IndicatorValuesObject<TLinkedSeries>;
-
-                date = (point as any).xData[0];
-                ML = (point as any).yData[0];
-                stdDev = getStandardDeviation(
-                    slicedY,
-                    (params.index as any),
-                    isOHLC,
-                    ML
-                );
-                TL = ML + standardDeviation * stdDev;
-                BL = ML - standardDeviation * stdDev;
-
-                BB.push([date, TL, ML, BL]);
-                xData.push(date);
-                yData.push([TL, ML, BL]);
-            }
-
-            return {
-                values: BB,
-                xData: xData,
-                yData: yData
-            } as IndicatorValuesObject<TLinkedSeries>;
+        if (xVal.length < period) {
+            return;
         }
-    })
-);
+
+        isOHLC = isArray(yVal[0]);
+
+        for (i = period; i <= yValLen; i++) {
+            slicedX = xVal.slice(i - period, i);
+            slicedY = yVal.slice(i - period, i);
+
+            point = BaseSeries.seriesTypes.sma.prototype.getValues.call(
+                this,
+                ({
+                    xData: slicedX,
+                    yData: slicedY
+                } as any),
+                params
+            ) as IndicatorValuesObject<TLinkedSeries>;
+
+            date = (point as any).xData[0];
+            ML = (point as any).yData[0];
+            stdDev = getStandardDeviation(
+                slicedY,
+                (params.index as any),
+                isOHLC,
+                ML
+            );
+            TL = ML + standardDeviation * stdDev;
+            BL = ML - standardDeviation * stdDev;
+
+            BB.push([date, TL, ML, BL]);
+            xData.push(date);
+            yData.push([TL, ML, BL]);
+        }
+
+        return {
+            values: BB,
+            xData: xData,
+            yData: yData
+        } as IndicatorValuesObject<TLinkedSeries>;
+    }
+});
+
+/* *
+ *
+ *  Registry
+ *
+ * */
+
+declare module '../../Core/Series/SeriesType' {
+    interface SeriesTypeRegistry {
+        bb: typeof BBIndicator;
+    }
+}
+BaseSeries.registerSeriesType('bb', BBIndicator);
+
+/* *
+ *
+ *  Default Export
+ *
+ * */
+
+export default BBIndicator;
 
 /**
  * A bollinger bands indicator. If the [type](#series.bb.type) option is not

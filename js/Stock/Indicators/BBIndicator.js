@@ -6,12 +6,24 @@
  *
  * */
 'use strict';
+var __extends = (this && this.__extends) || (function () {
+    var extendStatics = function (d, b) {
+        extendStatics = Object.setPrototypeOf ||
+            ({ __proto__: [] } instanceof Array && function (d, b) { d.__proto__ = b; }) ||
+            function (d, b) { for (var p in b) if (b.hasOwnProperty(p)) d[p] = b[p]; };
+        return extendStatics(d, b);
+    };
+    return function (d, b) {
+        extendStatics(d, b);
+        function __() { this.constructor = d; }
+        d.prototype = b === null ? Object.create(b) : (__.prototype = b.prototype, new __());
+    };
+})();
 import BaseSeries from '../../Core/Series/Series.js';
+var SMAIndicator = BaseSeries.seriesTypes.sma;
 import MultipleLinesMixin from '../../Mixins/MultipleLines.js';
 import U from '../../Core/Utilities.js';
-var isArray = U.isArray, merge = U.merge;
-// im port './SMAIndicator.js';
-var SMA = BaseSeries.seriesTypes.sma;
+var extend = U.extend, isArray = U.isArray, merge = U.merge;
 /* eslint-disable valid-jsdoc */
 // Utils:
 /**
@@ -37,85 +49,92 @@ function getStandardDeviation(arr, index, isOHLC, mean) {
  *
  * @augments Highcharts.Series
  */
-BaseSeries.seriesType('bb', 'sma', 
-/**
- * Bollinger bands (BB). This series requires the `linkedTo` option to be
- * set and should be loaded after the `stock/indicators/indicators.js` file.
- *
- * @sample stock/indicators/bollinger-bands
- *         Bollinger bands
- *
- * @extends      plotOptions.sma
- * @since        6.0.0
- * @product      highstock
- * @requires     stock/indicators/indicators
- * @requires     stock/indicators/bollinger-bands
- * @optionparent plotOptions.bb
- */
-{
-    params: {
-        period: 20,
-        /**
-         * Standard deviation for top and bottom bands.
-         */
-        standardDeviation: 2,
-        index: 3
-    },
-    /**
-     * Bottom line options.
-     */
-    bottomLine: {
-        /**
-         * Styles for a bottom line.
-         */
-        styles: {
-            /**
-             * Pixel width of the line.
-             */
-            lineWidth: 1,
-            /**
-             * Color of the line. If not set, it's inherited from
-             * [plotOptions.bb.color](#plotOptions.bb.color).
-             *
-             * @type  {Highcharts.ColorString}
-             */
-            lineColor: void 0
-        }
-    },
-    /**
-     * Top line options.
-     *
-     * @extends plotOptions.bb.bottomLine
-     */
-    topLine: {
-        styles: {
-            lineWidth: 1,
-            /**
-             * @type {Highcharts.ColorString}
-             */
-            lineColor: void 0
-        }
-    },
-    tooltip: {
-        pointFormat: '<span style="color:{point.color}">\u25CF</span><b> {series.name}</b><br/>Top: {point.top}<br/>Middle: {point.middle}<br/>Bottom: {point.bottom}<br/>'
-    },
-    marker: {
-        enabled: false
-    },
-    dataGrouping: {
-        approximation: 'averages'
+var BBIndicator = /** @class */ (function (_super) {
+    __extends(BBIndicator, _super);
+    function BBIndicator() {
+        return _super !== null && _super.apply(this, arguments) || this;
     }
-}, 
-/**
- * @lends Highcharts.Series#
- */
-merge(MultipleLinesMixin, {
+    /**
+     * Bollinger bands (BB). This series requires the `linkedTo` option to be
+     * set and should be loaded after the `stock/indicators/indicators.js` file.
+     *
+     * @sample stock/indicators/bollinger-bands
+     *         Bollinger bands
+     *
+     * @extends      plotOptions.sma
+     * @since        6.0.0
+     * @product      highstock
+     * @requires     stock/indicators/indicators
+     * @requires     stock/indicators/bollinger-bands
+     * @optionparent plotOptions.bb
+     */
+    BBIndicator.defaultOptions = merge(SMAIndicator.defaultOptions, {
+        params: {
+            period: 20,
+            /**
+             * Standard deviation for top and bottom bands.
+             */
+            standardDeviation: 2,
+            index: 3
+        },
+        /**
+         * Bottom line options.
+         */
+        bottomLine: {
+            /**
+             * Styles for a bottom line.
+             */
+            styles: {
+                /**
+                 * Pixel width of the line.
+                 */
+                lineWidth: 1,
+                /**
+                 * Color of the line. If not set, it's inherited from
+                 * [plotOptions.bb.color](#plotOptions.bb.color).
+                 *
+                 * @type  {Highcharts.ColorString}
+                 */
+                lineColor: void 0
+            }
+        },
+        /**
+         * Top line options.
+         *
+         * @extends plotOptions.bb.bottomLine
+         */
+        topLine: {
+            styles: {
+                lineWidth: 1,
+                /**
+                 * @type {Highcharts.ColorString}
+                 */
+                lineColor: void 0
+            }
+        },
+        tooltip: {
+            pointFormat: '<span style="color:{point.color}">\u25CF</span><b> {series.name}</b><br/>Top: {point.top}<br/>Middle: {point.middle}<br/>Bottom: {point.bottom}<br/>'
+        },
+        marker: {
+            enabled: false
+        },
+        dataGrouping: {
+            approximation: 'averages'
+        }
+    });
+    return BBIndicator;
+}(SMAIndicator));
+extend(BBIndicator.prototype, {
+    drawGraph: MultipleLinesMixin.drawGraph,
+    getTranslatedLinesNames: MultipleLinesMixin.getTranslatedLinesNames,
+    translate: MultipleLinesMixin.translate,
+    toYData: MultipleLinesMixin.toYData,
     pointArrayMap: ['top', 'middle', 'bottom'],
     pointValKey: 'middle',
     nameComponents: ['period', 'standardDeviation'],
     linesApiNames: ['topLine', 'bottomLine'],
     init: function () {
-        SMA.prototype.init.apply(this, arguments);
+        BaseSeries.seriesTypes.sma.prototype.init.apply(this, arguments);
         // Set default color for lines:
         this.options = merge({
             topLine: {
@@ -143,7 +162,7 @@ merge(MultipleLinesMixin, {
         for (i = period; i <= yValLen; i++) {
             slicedX = xVal.slice(i - period, i);
             slicedY = yVal.slice(i - period, i);
-            point = SMA.prototype.getValues.call(this, {
+            point = BaseSeries.seriesTypes.sma.prototype.getValues.call(this, {
                 xData: slicedX,
                 yData: slicedY
             }, params);
@@ -162,7 +181,14 @@ merge(MultipleLinesMixin, {
             yData: yData
         };
     }
-}));
+});
+BaseSeries.registerSeriesType('bb', BBIndicator);
+/* *
+ *
+ *  Default Export
+ *
+ * */
+export default BBIndicator;
 /**
  * A bollinger bands indicator. If the [type](#series.bb.type) option is not
  * specified, it is inherited from [chart.type](#chart.type).
