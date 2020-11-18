@@ -700,13 +700,198 @@ var updateFieldBoundaries = function updateFieldBoundaries(field, circle) {
 var VennSeries = /** @class */ (function (_super) {
     __extends(VennSeries, _super);
     function VennSeries() {
-        return _super !== null && _super.apply(this, arguments) || this;
+        /* *
+         *
+         *  Static Properties
+         *
+         * */
+        var _this = _super !== null && _super.apply(this, arguments) || this;
+        /* *
+         *
+         *  Properties
+         *
+         * */
+        _this.data = void 0;
+        _this.mapOfIdToRelation = void 0;
+        _this.options = void 0;
+        _this.points = void 0;
+        return _this;
+        /* eslint-enable valid-jsdoc */
     }
     /* *
      *
-     *  Static Properties
+     *  Functions
      *
      * */
+    /* eslint-disable valid-jsdoc */
+    VennSeries.prototype.animate = function (init) {
+        if (!init) {
+            var series = this, animOptions = animObject(series.options.animation);
+            series.points.forEach(function (point) {
+                var args = point.shapeArgs;
+                if (point.graphic && args) {
+                    var attr = {}, animate = {};
+                    if (args.d) {
+                        // If shape is a path, then animate opacity.
+                        attr.opacity = 0.001;
+                    }
+                    else {
+                        // If shape is a circle, then animate radius.
+                        attr.r = 0;
+                        animate.r = args.r;
+                    }
+                    point.graphic
+                        .attr(attr)
+                        .animate(animate, animOptions);
+                    // If shape is path, then fade it in after the circles
+                    // animation
+                    if (args.d) {
+                        setTimeout(function () {
+                            if (point && point.graphic) {
+                                point.graphic.animate({
+                                    opacity: 1
+                                });
+                            }
+                        }, animOptions.duration);
+                    }
+                }
+            }, series);
+        }
+    };
+    /**
+     * Draw the graphics for each point.
+     * @private
+     */
+    VennSeries.prototype.drawPoints = function () {
+        var series = this, 
+        // Series properties
+        chart = series.chart, group = series.group, points = series.points || [], 
+        // Chart properties
+        renderer = chart.renderer;
+        // Iterate all points and calculate and draw their graphics.
+        points.forEach(function (point) {
+            var attribs = {
+                zIndex: isArray(point.sets) ? point.sets.length : 0
+            }, shapeArgs = point.shapeArgs;
+            // Add point attribs
+            if (!chart.styledMode) {
+                extend(attribs, series.pointAttribs(point, point.state));
+            }
+            // Draw the point graphic.
+            point.draw({
+                isNew: !point.graphic,
+                animatableAttribs: shapeArgs,
+                attribs: attribs,
+                group: group,
+                renderer: renderer,
+                shapeType: shapeArgs && shapeArgs.d ? 'path' : 'circle'
+            });
+        });
+    };
+    VennSeries.prototype.init = function () {
+        ScatterSeries.prototype.init.apply(this, arguments);
+        // Venn's opacity is a different option from other series
+        delete this.opacity;
+    };
+    /**
+     * Calculates the style attributes for a point. The attributes can vary
+     * depending on the state of the point.
+     * @private
+     * @param {Highcharts.Point} point
+     * The point which will get the resulting attributes.
+     * @param {string} [state]
+     * The state of the point.
+     * @return {Highcharts.SVGAttributes}
+     * Returns the calculated attributes.
+     */
+    VennSeries.prototype.pointAttribs = function (point, state) {
+        var series = this, seriesOptions = series.options || {}, pointOptions = point && point.options || {}, stateOptions = (state && seriesOptions.states[state]) || {}, options = merge(seriesOptions, { color: point && point.color }, pointOptions, stateOptions);
+        // Return resulting values for the attributes.
+        return {
+            'fill': color(options.color)
+                .brighten(options.brightness)
+                .get(),
+            // Set opacity directly to the SVG element, not to pattern #14372.
+            opacity: options.opacity,
+            'stroke': options.borderColor,
+            'stroke-width': options.borderWidth,
+            'dashstyle': options.borderDashStyle
+        };
+    };
+    VennSeries.prototype.translate = function () {
+        var chart = this.chart;
+        this.processedXData = this.xData;
+        this.generatePoints();
+        // Process the data before passing it into the layout function.
+        var relations = processVennData(this.options.data);
+        // Calculate the positions of each circle.
+        var _a = layout(relations), mapOfIdToShape = _a.mapOfIdToShape, mapOfIdToLabelValues = _a.mapOfIdToLabelValues;
+        // Calculate the scale, and center of the plot area.
+        var field = Object.keys(mapOfIdToShape)
+            .filter(function (key) {
+            var shape = mapOfIdToShape[key];
+            return shape && isNumber(shape.r);
+        })
+            .reduce(function (field, key) {
+            return updateFieldBoundaries(field, mapOfIdToShape[key]);
+        }, { top: 0, bottom: 0, left: 0, right: 0 }), scaling = getScale(chart.plotWidth, chart.plotHeight, field), scale = scaling.scale, centerX = scaling.centerX, centerY = scaling.centerY;
+        // Iterate all points and calculate and draw their graphics.
+        this.points.forEach(function (point) {
+            var sets = isArray(point.sets) ? point.sets : [], id = sets.join(), shape = mapOfIdToShape[id], shapeArgs, dataLabelValues = mapOfIdToLabelValues[id] || {}, dataLabelWidth = dataLabelValues.width, dataLabelPosition = dataLabelValues.position, dlOptions = point.options && point.options.dataLabels;
+            if (shape) {
+                if (shape.r) {
+                    shapeArgs = {
+                        x: centerX + shape.x * scale,
+                        y: centerY + shape.y * scale,
+                        r: shape.r * scale
+                    };
+                }
+                else if (shape.d) {
+                    var d = shape.d;
+                    d.forEach(function (seg) {
+                        if (seg[0] === 'M') {
+                            seg[1] = centerX + seg[1] * scale;
+                            seg[2] = centerY + seg[2] * scale;
+                        }
+                        else if (seg[0] === 'A') {
+                            seg[1] = seg[1] * scale;
+                            seg[2] = seg[2] * scale;
+                            seg[6] = centerX + seg[6] * scale;
+                            seg[7] = centerY + seg[7] * scale;
+                        }
+                    });
+                    shapeArgs = { d: d };
+                }
+                // Scale the position for the data label.
+                if (dataLabelPosition) {
+                    dataLabelPosition.x = centerX + dataLabelPosition.x * scale;
+                    dataLabelPosition.y = centerY + dataLabelPosition.y * scale;
+                }
+                else {
+                    dataLabelPosition = {};
+                }
+                if (isNumber(dataLabelWidth)) {
+                    dataLabelWidth = Math.round(dataLabelWidth * scale);
+                }
+            }
+            point.shapeArgs = shapeArgs;
+            // Placement for the data labels
+            if (dataLabelPosition && shapeArgs) {
+                point.plotX = dataLabelPosition.x;
+                point.plotY = dataLabelPosition.y;
+            }
+            // Add width for the data label
+            if (dataLabelWidth && shapeArgs) {
+                point.dlOptions = merge(true, {
+                    style: {
+                        width: dataLabelWidth
+                    }
+                }, isObject(dlOptions) && dlOptions);
+            }
+            // Set name for usage in tooltip and in data label.
+            point.name = point.options.name || sets.join('∩');
+        });
+    };
     /**
      * A Venn diagram displays all possible logical relations between a
      * collection of different sets. The sets are represented by circles, and
@@ -780,180 +965,10 @@ var VennSeries = /** @class */ (function (_super) {
     return VennSeries;
 }(ScatterSeries));
 extend(VennSeries.prototype, {
-    isCartesian: false,
     axisTypes: [],
     directTouch: true,
+    isCartesian: false,
     pointArrayMap: ['value'],
-    init: function () {
-        ScatterSeries.prototype.init.apply(this, arguments);
-        // Venn's opacity is a different option from other series
-        delete this.opacity;
-    },
-    translate: function () {
-        var chart = this.chart;
-        this.processedXData = this.xData;
-        this.generatePoints();
-        // Process the data before passing it into the layout function.
-        var relations = processVennData(this.options.data);
-        // Calculate the positions of each circle.
-        var _a = layout(relations), mapOfIdToShape = _a.mapOfIdToShape, mapOfIdToLabelValues = _a.mapOfIdToLabelValues;
-        // Calculate the scale, and center of the plot area.
-        var field = Object.keys(mapOfIdToShape)
-            .filter(function (key) {
-            var shape = mapOfIdToShape[key];
-            return shape && isNumber(shape.r);
-        })
-            .reduce(function (field, key) {
-            return updateFieldBoundaries(field, mapOfIdToShape[key]);
-        }, { top: 0, bottom: 0, left: 0, right: 0 }), scaling = getScale(chart.plotWidth, chart.plotHeight, field), scale = scaling.scale, centerX = scaling.centerX, centerY = scaling.centerY;
-        // Iterate all points and calculate and draw their graphics.
-        this.points.forEach(function (point) {
-            var sets = isArray(point.sets) ? point.sets : [], id = sets.join(), shape = mapOfIdToShape[id], shapeArgs, dataLabelValues = mapOfIdToLabelValues[id] || {}, dataLabelWidth = dataLabelValues.width, dataLabelPosition = dataLabelValues.position, dlOptions = point.options && point.options.dataLabels;
-            if (shape) {
-                if (shape.r) {
-                    shapeArgs = {
-                        x: centerX + shape.x * scale,
-                        y: centerY + shape.y * scale,
-                        r: shape.r * scale
-                    };
-                }
-                else if (shape.d) {
-                    var d = shape.d;
-                    d.forEach(function (seg) {
-                        if (seg[0] === 'M') {
-                            seg[1] = centerX + seg[1] * scale;
-                            seg[2] = centerY + seg[2] * scale;
-                        }
-                        else if (seg[0] === 'A') {
-                            seg[1] = seg[1] * scale;
-                            seg[2] = seg[2] * scale;
-                            seg[6] = centerX + seg[6] * scale;
-                            seg[7] = centerY + seg[7] * scale;
-                        }
-                    });
-                    shapeArgs = { d: d };
-                }
-                // Scale the position for the data label.
-                if (dataLabelPosition) {
-                    dataLabelPosition.x = centerX + dataLabelPosition.x * scale;
-                    dataLabelPosition.y = centerY + dataLabelPosition.y * scale;
-                }
-                else {
-                    dataLabelPosition = {};
-                }
-                if (isNumber(dataLabelWidth)) {
-                    dataLabelWidth = Math.round(dataLabelWidth * scale);
-                }
-            }
-            point.shapeArgs = shapeArgs;
-            // Placement for the data labels
-            if (dataLabelPosition && shapeArgs) {
-                point.plotX = dataLabelPosition.x;
-                point.plotY = dataLabelPosition.y;
-            }
-            // Add width for the data label
-            if (dataLabelWidth && shapeArgs) {
-                point.dlOptions = merge(true, {
-                    style: {
-                        width: dataLabelWidth
-                    }
-                }, isObject(dlOptions) && dlOptions);
-            }
-            // Set name for usage in tooltip and in data label.
-            point.name = point.options.name || sets.join('∩');
-        });
-    },
-    /* eslint-disable valid-jsdoc */
-    /**
-     * Draw the graphics for each point.
-     * @private
-     */
-    drawPoints: function () {
-        var series = this, 
-        // Series properties
-        chart = series.chart, group = series.group, points = series.points || [], 
-        // Chart properties
-        renderer = chart.renderer;
-        // Iterate all points and calculate and draw their graphics.
-        points.forEach(function (point) {
-            var attribs = {
-                zIndex: isArray(point.sets) ? point.sets.length : 0
-            }, shapeArgs = point.shapeArgs;
-            // Add point attribs
-            if (!chart.styledMode) {
-                extend(attribs, series.pointAttribs(point, point.state));
-            }
-            // Draw the point graphic.
-            point.draw({
-                isNew: !point.graphic,
-                animatableAttribs: shapeArgs,
-                attribs: attribs,
-                group: group,
-                renderer: renderer,
-                shapeType: shapeArgs && shapeArgs.d ? 'path' : 'circle'
-            });
-        });
-    },
-    /**
-     * Calculates the style attributes for a point. The attributes can vary
-     * depending on the state of the point.
-     * @private
-     * @param {Highcharts.Point} point
-     * The point which will get the resulting attributes.
-     * @param {string} [state]
-     * The state of the point.
-     * @return {Highcharts.SVGAttributes}
-     * Returns the calculated attributes.
-     */
-    pointAttribs: function (point, state) {
-        var series = this, seriesOptions = series.options || {}, pointOptions = point && point.options || {}, stateOptions = (state && seriesOptions.states[state]) || {}, options = merge(seriesOptions, { color: point && point.color }, pointOptions, stateOptions);
-        // Return resulting values for the attributes.
-        return {
-            'fill': color(options.color)
-                .brighten(options.brightness)
-                .get(),
-            // Set opacity directly to the SVG element, not to pattern #14372.
-            opacity: options.opacity,
-            'stroke': options.borderColor,
-            'stroke-width': options.borderWidth,
-            'dashstyle': options.borderDashStyle
-        };
-    },
-    /* eslint-enable valid-jsdoc */
-    animate: function (init) {
-        if (!init) {
-            var series = this, animOptions = animObject(series.options.animation);
-            series.points.forEach(function (point) {
-                var args = point.shapeArgs;
-                if (point.graphic && args) {
-                    var attr = {}, animate = {};
-                    if (args.d) {
-                        // If shape is a path, then animate opacity.
-                        attr.opacity = 0.001;
-                    }
-                    else {
-                        // If shape is a circle, then animate radius.
-                        attr.r = 0;
-                        animate.r = args.r;
-                    }
-                    point.graphic
-                        .attr(attr)
-                        .animate(animate, animOptions);
-                    // If shape is path, then fade it in after the circles
-                    // animation
-                    if (args.d) {
-                        setTimeout(function () {
-                            if (point && point.graphic) {
-                                point.graphic.animate({
-                                    opacity: 1
-                                });
-                            }
-                        }, animOptions.duration);
-                    }
-                }
-            }, series);
-        }
-    },
     utils: {
         addOverlapToSets: addOverlapToSets,
         geometry: GeometryMixin,
@@ -968,6 +983,11 @@ extend(VennSeries.prototype, {
         sortByTotalOverlap: sortByTotalOverlap
     }
 });
+/* *
+ *
+ *  Class
+ *
+ * */
 var VennPoint = /** @class */ (function (_super) {
     __extends(VennPoint, _super);
     function VennPoint() {
@@ -980,19 +1000,26 @@ var VennPoint = /** @class */ (function (_super) {
         _this.options = void 0;
         _this.series = void 0;
         return _this;
+        /* eslint-enable valid-jsdoc */
     }
-    return VennPoint;
-}(ScatterSeries.prototype.pointClass));
-extend(VennPoint.prototype, {
-    draw: DrawPointMixin.draw,
-    shouldDraw: function () {
+    /* *
+     *
+     *  Functions
+     *
+     * */
+    /* eslint-disable valid-jsdoc */
+    VennPoint.prototype.isValid = function () {
+        return isNumber(this.value);
+    };
+    VennPoint.prototype.shouldDraw = function () {
         var point = this;
         // Only draw points with single sets.
         return !!point.shapeArgs;
-    },
-    isValid: function () {
-        return isNumber(this.value);
-    }
+    };
+    return VennPoint;
+}(ScatterSeries.prototype.pointClass));
+extend(VennPoint.prototype, {
+    draw: DrawPointMixin.draw
 });
 VennSeries.prototype.pointClass = VennPoint;
 BaseSeries.registerSeriesType('venn', VennSeries);
