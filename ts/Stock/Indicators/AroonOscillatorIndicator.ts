@@ -10,6 +10,7 @@
 
 import type IndicatorValuesObject from './IndicatorValuesObject';
 import type LineSeries from '../../Series/Line/LineSeries';
+import type AroonIndicator from './AroonIndicator';
 import BaseSeries from '../../Core/Series/Series.js';
 import multipleLinesMixin from '../../Mixins/MultipleLines.js';
 import requiredIndicator from '../../Mixins/IndicatorRequired.js';
