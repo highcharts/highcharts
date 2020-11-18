@@ -13,24 +13,17 @@
 'use strict';
 
 import type BBoxObject from '../../Core/Renderer/BBoxObject';
-import type ColumnPoint from '../Column/ColumnPoint';
-import type ColumnPointOptions from '../Column/ColumnPointOptions';
-
-import type ColumnSeriesOptions from '../Column/ColumnSeriesOptions';
-import type CSSObject from '../../Core/Renderer/CSSObject';
-import type {
-    PointOptions,
-    PointShortOptions
-} from '../../Core/Series/PointOptions';
 import type PositionObject from '../../Core/Renderer/PositionObject';
-import type { SeriesStatesOptions } from '../../Core/Series/SeriesOptions';
 import type SizeObject from '../../Core/Renderer/SizeObject';
 import type { StatesOptionsKey } from '../../Core/Series/StatesOptions';
 import type SVGAttributes from '../../Core/Renderer/SVG/SVGAttributes';
 import type SVGElement from '../../Core/Renderer/SVG/SVGElement';
+import type {
+    WordcloudSeriesOptions,
+    WordcloudSeriesRotationOptions
+} from './WordcloudSeriesOptions';
 import BaseSeries from '../../Core/Series/Series.js';
 import ColumnSeries from '../Column/ColumnSeries.js';
-import DrawPointMixin from '../../Mixins/DrawPoint.js';
 import H from '../../Core/Globals.js';
 const { noop } = H;
 import LineSeries from '../Line/LineSeries.js';
@@ -39,7 +32,6 @@ const {
     getBoundingBoxFromPolygon,
     getPolygon,
     isPolygonsColliding,
-    movePolygon,
     rotate2DToOrigin,
     rotate2DToPoint
 } = PolygonMixin;
@@ -52,6 +44,8 @@ const {
     isObject,
     merge
 } = U;
+import WordcloudPoint from './WordcloudPoint.js';
+import WordcloudUtils from './WordcloudUtils.js';
 
 import '../Column/ColumnSeries.js';
 
@@ -80,26 +74,6 @@ declare global {
             placed: Array<WordcloudPoint>;
             rotation: WordcloudSeriesRotationOptions;
         }
-        interface WordcloudPointOptions extends ColumnPointOptions {
-            name?: string;
-            weight?: number;
-        }
-        interface WordcloudSeriesOptions extends ColumnSeriesOptions {
-            allowExtendPlayingField?: boolean;
-            data?: Array<(PointOptions|PointShortOptions|WordcloudPointOptions)>;
-            maxFontSize?: number;
-            minFontSize?: number;
-            placementStrategy?: string;
-            rotation?: WordcloudSeriesRotationOptions;
-            spiral?: string;
-            states?: SeriesStatesOptions<WordcloudSeries>;
-            style?: CSSObject;
-        }
-        interface WordcloudSeriesRotationOptions {
-            from?: number;
-            orientations?: number;
-            to?: number;
-        }
         interface WordcloudSpiralFunction {
             (
                 attempt: number,
@@ -117,643 +91,8 @@ declare global {
             rotation: (boolean|number);
             spiral: WordcloudSpiralFunction;
         }
-        interface WordcloudUtilsObject {
-            isPolygonsColliding: PolygonCollisionMixins['isPolygonsColliding'];
-            rotate2DToOrigin: PolygonCollisionMixins['rotate2DToOrigin'];
-            rotate2DToPoint: PolygonCollisionMixins['rotate2DToPoint'];
-            extendPlayingField(field: unknown, rectangle: unknown): unknown;
-            getRotation(
-                orientations: number,
-                index: number,
-                from: number,
-                to: number
-            ): (boolean|number);
-        }
     }
 }
-
-/**
- * Detects if there is a collision between two rectangles.
- *
- * @private
- * @function isRectanglesIntersecting
- *
- * @param {Highcharts.PolygonBoxObject} r1
- * First rectangle.
- *
- * @param {Highcharts.PolygonBoxObject} r2
- * Second rectangle.
- *
- * @return {boolean}
- * Returns true if the rectangles overlap.
- */
-function isRectanglesIntersecting(
-    r1: Highcharts.PolygonBoxObject,
-    r2: Highcharts.PolygonBoxObject
-): boolean {
-    return !(
-        r2.left > r1.right ||
-        r2.right < r1.left ||
-        r2.top > r1.bottom ||
-        r2.bottom < r1.top
-    );
-}
-
-/**
- * Detects if a word collides with any previously placed words.
- *
- * @private
- * @function intersectsAnyWord
- *
- * @param {Highcharts.Point} point
- * Point which the word is connected to.
- *
- * @param {Array<Highcharts.Point>} points
- * Previously placed points to check against.
- *
- * @return {boolean}
- * Returns true if there is collision.
- */
-function intersectsAnyWord(
-    point: WordcloudPoint,
-    points: Array<WordcloudPoint>
-): boolean {
-    var intersects = false,
-        rect: Highcharts.PolygonBoxObject = point.rect as any,
-        polygon: Highcharts.PolygonObject = point.polygon as any,
-        lastCollidedWith = point.lastCollidedWith,
-        isIntersecting = function (p: WordcloudPoint): boolean {
-            var result = isRectanglesIntersecting(rect, p.rect as any);
-
-            if (result &&
-                ((point.rotation as any) % 90 || (p.rotation as any) % 90)
-            ) {
-                result = isPolygonsColliding(
-                    polygon,
-                    p.polygon as any
-                );
-            }
-            return result;
-        };
-
-    // If the point has already intersected a different point, chances are they
-    // are still intersecting. So as an enhancement we check this first.
-    if (lastCollidedWith) {
-        intersects = isIntersecting(lastCollidedWith);
-        // If they no longer intersects, remove the cache from the point.
-        if (!intersects) {
-            delete point.lastCollidedWith;
-        }
-    }
-
-    // If not already found, then check if we can find a point that is
-    // intersecting.
-    if (!intersects) {
-        intersects = !!find(points, function (
-            p: WordcloudPoint
-        ): boolean {
-            var result = isIntersecting(p);
-
-            if (result) {
-                point.lastCollidedWith = p;
-            }
-            return result;
-        });
-    }
-    return intersects;
-}
-
-/**
- * Gives a set of cordinates for an Archimedian Spiral.
- *
- * @private
- * @function archimedeanSpiral
- *
- * @param {number} attempt
- * How far along the spiral we have traversed.
- *
- * @param {Highcharts.WordcloudSpiralParamsObject} [params]
- * Additional parameters.
- *
- * @return {boolean|Highcharts.PositionObject}
- * Resulting coordinates, x and y. False if the word should be dropped from the
- * visualization.
- */
-function archimedeanSpiral(
-    attempt: number,
-    params?: Highcharts.WordcloudSpiralParamsObject
-): (boolean|PositionObject) {
-    var field: Highcharts.WordcloudFieldObject = (params as any).field,
-        result: (boolean|PositionObject) = false,
-        maxDelta = (field.width * field.width) + (field.height * field.height),
-        t = attempt * 0.8; // 0.2 * 4 = 0.8. Enlarging the spiral.
-
-    // Emergency brake. TODO make spiralling logic more foolproof.
-    if (attempt <= 10000) {
-        result = {
-            x: t * Math.cos(t),
-            y: t * Math.sin(t)
-        };
-        if (!(Math.min(Math.abs(result.x), Math.abs(result.y)) < maxDelta)) {
-            result = false;
-        }
-    }
-    return result;
-}
-
-/**
- * Gives a set of cordinates for an rectangular spiral.
- *
- * @private
- * @function squareSpiral
- *
- * @param {number} attempt
- * How far along the spiral we have traversed.
- *
- * @param {Highcharts.WordcloudSpiralParamsObject} [params]
- * Additional parameters.
- *
- * @return {boolean|Highcharts.PositionObject}
- * Resulting coordinates, x and y. False if the word should be dropped from the
- * visualization.
- */
-function squareSpiral(
-    attempt: number,
-    params?: Highcharts.WordcloudSpiralParamsObject
-): (boolean|PositionObject) {
-    var a = attempt * 4,
-        k = Math.ceil((Math.sqrt(a) - 1) / 2),
-        t = 2 * k + 1,
-        m = Math.pow(t, 2),
-        isBoolean = function (x: unknown): x is boolean {
-            return typeof x === 'boolean';
-        },
-        result: (boolean|PositionObject) = false;
-
-    t -= 1;
-    if (attempt <= 10000) {
-        if (isBoolean(result) && a >= m - t) {
-            result = {
-                x: k - (m - a),
-                y: -k
-            };
-        }
-        m -= t;
-        if (isBoolean(result) && a >= m - t) {
-            result = {
-                x: -k,
-                y: -k + (m - a)
-            };
-        }
-
-        m -= t;
-        if (isBoolean(result)) {
-            if (a >= m - t) {
-                result = {
-                    x: -k + (m - a),
-                    y: k
-                };
-            } else {
-                result = {
-                    x: k,
-                    y: k - (m - a - t)
-                };
-            }
-        }
-        result.x *= 5;
-        result.y *= 5;
-    }
-    return result;
-}
-
-/**
- * Gives a set of cordinates for an rectangular spiral.
- *
- * @private
- * @function rectangularSpiral
- *
- * @param {number} attempt
- * How far along the spiral we have traversed.
- *
- * @param {Highcharts.WordcloudSpiralParamsObject} [params]
- * Additional parameters.
- *
- * @return {boolean|Higcharts.PositionObject}
- * Resulting coordinates, x and y. False if the word should be dropped from the
- * visualization.
- */
-function rectangularSpiral(
-    attempt: number,
-    params?: Highcharts.WordcloudSpiralParamsObject
-): (boolean|PositionObject) {
-    var result: PositionObject = squareSpiral(attempt, params) as any,
-        field: Highcharts.WordcloudFieldObject = (params as any).field;
-
-    if (result) {
-        result.x *= field.ratioX;
-        result.y *= field.ratioY;
-    }
-    return result;
-}
-
-/**
- * @private
- * @function getRandomPosition
- *
- * @param {number} size
- * Random factor.
- *
- * @return {number}
- * Random position.
- */
-function getRandomPosition(size: number): number {
-    return Math.round((size * (Math.random() + 0.5)) / 2);
-}
-
-/**
- * Calculates the proper scale to fit the cloud inside the plotting area.
- *
- * @private
- * @function getScale
- *
- * @param {number} targetWidth
- * Width of target area.
- *
- * @param {number} targetHeight
- * Height of target area.
- *
- * @param {object} field
- * The playing field.
- *
- * @param {Highcharts.Series} series
- * Series object.
- *
- * @return {number}
- * Returns the value to scale the playing field up to the size of the target
- * area.
- */
-function getScale(
-    targetWidth: number,
-    targetHeight: number,
-    field: Highcharts.PolygonBoxObject
-): number {
-    var height = Math.max(Math.abs(field.top), Math.abs(field.bottom)) * 2,
-        width = Math.max(Math.abs(field.left), Math.abs(field.right)) * 2,
-        scaleX = width > 0 ? 1 / width * targetWidth : 1,
-        scaleY = height > 0 ? 1 / height * targetHeight : 1;
-
-    return Math.min(scaleX, scaleY);
-}
-
-/**
- * Calculates what is called the playing field. The field is the area which all
- * the words are allowed to be positioned within. The area is proportioned to
- * match the target aspect ratio.
- *
- * @private
- * @function getPlayingField
- *
- * @param {number} targetWidth
- * Width of the target area.
- *
- * @param {number} targetHeight
- * Height of the target area.
- *
- * @param {Array<Highcharts.Point>} data
- * Array of points.
- *
- * @param {object} data.dimensions
- * The height and width of the word.
- *
- * @return {object}
- * The width and height of the playing field.
- */
-function getPlayingField(
-    targetWidth: number,
-    targetHeight: number,
-    data: Array<WordcloudPoint>
-): Highcharts.WordcloudFieldObject {
-    var info: Highcharts.Dictionary<number> = data.reduce(function (
-            obj: Highcharts.Dictionary<number>,
-            point: WordcloudPoint
-        ): Highcharts.Dictionary<number> {
-            var dimensions = point.dimensions,
-                x = Math.max(dimensions.width, dimensions.height);
-
-            // Find largest height.
-            obj.maxHeight = Math.max(obj.maxHeight, dimensions.height);
-            // Find largest width.
-            obj.maxWidth = Math.max(obj.maxWidth, dimensions.width);
-            // Sum up the total maximum area of all the words.
-            obj.area += x * x;
-            return obj;
-        }, {
-            maxHeight: 0,
-            maxWidth: 0,
-            area: 0
-        }),
-        /**
-         * Use largest width, largest height, or root of total area to give size
-         * to the playing field.
-         */
-        x = Math.max(
-            info.maxHeight, // Have enough space for the tallest word
-            info.maxWidth, // Have enough space for the broadest word
-            // Adjust 15% to account for close packing of words
-            Math.sqrt(info.area) * 0.85
-        ),
-        ratioX = targetWidth > targetHeight ? targetWidth / targetHeight : 1,
-        ratioY = targetHeight > targetWidth ? targetHeight / targetWidth : 1;
-
-    return {
-        width: x * ratioX,
-        height: x * ratioY,
-        ratioX: ratioX,
-        ratioY: ratioY
-    } as any;
-}
-
-
-/**
- * Calculates a number of degrees to rotate, based upon a number of orientations
- * within a range from-to.
- *
- * @private
- * @function getRotation
- *
- * @param {number} [orientations]
- * Number of orientations.
- *
- * @param {number} [index]
- * Index of point, used to decide orientation.
- *
- * @param {number} [from]
- * The smallest degree of rotation.
- *
- * @param {number} [to]
- * The largest degree of rotation.
- *
- * @return {boolean|number}
- * Returns the resulting rotation for the word. Returns false if invalid input
- * parameters.
- */
-function getRotation(
-    orientations?: number,
-    index?: number,
-    from?: number,
-    to?: number
-): (boolean|number) {
-    var result: (boolean|number) = false, // Default to false
-        range: number,
-        intervals: number,
-        orientation: number;
-
-    // Check if we have valid input parameters.
-    if (
-        isNumber(orientations) &&
-        isNumber(index) &&
-        isNumber(from) &&
-        isNumber(to) &&
-        orientations > 0 &&
-        index > -1 &&
-        to > from
-    ) {
-        range = to - from;
-        intervals = range / (orientations - 1 || 1);
-        orientation = index % orientations;
-        result = from + (orientation * intervals);
-    }
-    return result;
-}
-
-/**
- * Calculates the spiral positions and store them in scope for quick access.
- *
- * @private
- * @function getSpiral
- *
- * @param {Function} fn
- * The spiral function.
- *
- * @param {object} params
- * Additional parameters for the spiral.
- *
- * @return {Function}
- * Function with access to spiral positions.
- */
-function getSpiral(
-    fn: Highcharts.WordcloudSpiralFunction,
-    params: Highcharts.WordcloudSpiralParamsObject
-): Highcharts.WordcloudSpiralFunction {
-    var length = 10000,
-        i: number,
-        arr: Array<ReturnType<Highcharts.WordcloudSpiralFunction>> = [];
-
-    for (i = 1; i < length; i++) {
-        arr.push(fn(i, params)); // @todo unnecessary amount of precaclulation
-    }
-
-    return function (
-        attempt: number
-    ): ReturnType<Highcharts.WordcloudSpiralFunction> {
-        return attempt <= length ? arr[attempt - 1] : false;
-    };
-}
-
-/**
- * Detects if a word is placed outside the playing field.
- *
- * @private
- * @function outsidePlayingField
- *
- * @param {Highcharts.PolygonBoxObject} rect
- * The word box.
- *
- * @param {Highcharts.WordcloudFieldObject} field
- * The width and height of the playing field.
- *
- * @return {boolean}
- * Returns true if the word is placed outside the field.
- */
-function outsidePlayingField(
-    rect: Highcharts.PolygonBoxObject,
-    field: Highcharts.WordcloudFieldObject
-): boolean {
-    var playingField = {
-        left: -(field.width / 2),
-        right: field.width / 2,
-        top: -(field.height / 2),
-        bottom: field.height / 2
-    };
-
-    return !(
-        playingField.left < rect.left &&
-        playingField.right > rect.right &&
-        playingField.top < rect.top &&
-        playingField.bottom > rect.bottom
-    );
-}
-
-/**
- * Check if a point intersects with previously placed words, or if it goes
- * outside the field boundaries. If a collision, then try to adjusts the
- * position.
- *
- * @private
- * @function intersectionTesting
- *
- * @param {Highcharts.Point} point
- * Point to test for intersections.
- *
- * @param {Highcharts.WordcloudTestOptionsObject} options
- * Options object.
- *
- * @return {boolean|Highcharts.PositionObject}
- * Returns an object with how much to correct the positions. Returns false if
- * the word should not be placed at all.
- */
-function intersectionTesting(
-    point: WordcloudPoint,
-    options: Highcharts.WordcloudTestOptionsObject
-): (boolean|PositionObject) {
-    var placed = options.placed,
-        field = options.field,
-        rectangle = options.rectangle,
-        polygon = options.polygon,
-        spiral = options.spiral,
-        attempt = 1,
-        delta: PositionObject = {
-            x: 0,
-            y: 0
-        },
-        // Make a copy to update values during intersection testing.
-        rect = point.rect = extend<Highcharts.PolygonBoxObject>(
-            {} as any,
-            rectangle
-        );
-
-    point.polygon = polygon;
-    point.rotation = options.rotation;
-
-    /* while w intersects any previously placed words:
-         do {
-           move w a little bit along a spiral path
-         } while any part of w is outside the playing field and
-                 the spiral radius is still smallish */
-    while (
-        (delta as any) !== false &&
-        (
-            intersectsAnyWord(point, placed) ||
-            outsidePlayingField(rect, field)
-        )
-    ) {
-        delta = spiral(attempt) as any;
-        if (isObject(delta)) {
-            // Update the DOMRect with new positions.
-            rect.left = rectangle.left + delta.x;
-            rect.right = rectangle.right + delta.x;
-            rect.top = rectangle.top + delta.y;
-            rect.bottom = rectangle.bottom + delta.y;
-            point.polygon = movePolygon(delta.x, delta.y, polygon);
-        }
-        attempt++;
-    }
-    return delta;
-}
-
-/**
- * Extends the playing field to have enough space to fit a given word.
- *
- * @private
- * @function extendPlayingField
- *
- * @param {Highcharts.WordcloudFieldObject} field
- * The width, height and ratios of a playing field.
- *
- * @param {Highcharts.PolygonBoxObject} rectangle
- * The bounding box of the word to add space for.
- *
- * @return {Highcharts.WordcloudFieldObject}
- * Returns the extended playing field with updated height and width.
- */
-function extendPlayingField(
-    field: Highcharts.WordcloudFieldObject,
-    rectangle: Highcharts.PolygonBoxObject
-): Highcharts.WordcloudFieldObject {
-    var height: number,
-        width: number,
-        ratioX: number,
-        ratioY: number,
-        x: number,
-        extendWidth: number,
-        extendHeight: number,
-        result: Highcharts.WordcloudFieldObject;
-
-    if (isObject(field) && isObject(rectangle)) {
-        height = (rectangle.bottom - rectangle.top);
-        width = (rectangle.right - rectangle.left);
-        ratioX = field.ratioX;
-        ratioY = field.ratioY;
-
-        // Use the same variable to extend both the height and width.
-        x = ((width * ratioX) > (height * ratioY)) ? width : height;
-
-        // Multiply variable with ratios to preserve aspect ratio.
-        extendWidth = x * ratioX;
-        extendHeight = x * ratioY;
-
-        // Calculate the size of the new field after adding space for the word.
-        result = merge(field, {
-            // Add space on the left and right.
-            width: field.width + (extendWidth * 2),
-            // Add space on the top and bottom.
-            height: field.height + (extendHeight * 2)
-        });
-    } else {
-        result = field;
-    }
-
-    // Return the new extended field.
-    return result;
-}
-
-/**
- * If a rectangle is outside a give field, then the boundaries of the field is
- * adjusted accordingly. Modifies the field object which is passed as the first
- * parameter.
- *
- * @private
- * @function updateFieldBoundaries
- *
- * @param {Highcharts.WordcloudFieldObject} field
- * The bounding box of a playing field.
- *
- * @param {Highcharts.PolygonBoxObject} rectangle
- * The bounding box for a placed point.
- *
- * @return {Highcharts.WordcloudFieldObject}
- * Returns a modified field object.
- */
-function updateFieldBoundaries(
-    field: Highcharts.WordcloudFieldObject,
-    rectangle: Highcharts.PolygonBoxObject
-): Highcharts.WordcloudFieldObject {
-    // @todo improve type checking.
-    if (!isNumber(field.left) || field.left > rectangle.left) {
-        field.left = rectangle.left;
-    }
-    if (!isNumber(field.right) || field.right < rectangle.right) {
-        field.right = rectangle.right;
-    }
-    if (!isNumber(field.top) || field.top > rectangle.top) {
-        field.top = rectangle.top;
-    }
-    if (!isNumber(field.bottom) || field.bottom < rectangle.bottom) {
-        field.bottom = rectangle.bottom;
-    }
-    return field;
-}
-
 
 /**
  * @private
@@ -794,7 +133,7 @@ class WordcloudSeries extends ColumnSeries {
      * @optionparent plotOptions.wordcloud
      */
 
-    public static defaultOptions: Highcharts.WordcloudSeriesOptions =
+    public static defaultOptions: WordcloudSeriesOptions =
     merge(ColumnSeries.defaultOptions, {
         /**
          * If there is no space for a word on the playing field, then this
@@ -888,7 +227,7 @@ class WordcloudSeries extends ColumnSeries {
             followPointer: true,
             pointFormat: '<span style="color:{point.color}">\u25CF</span>{series.name}: <b>{point.weight}</b><br/>'
         }
-    } as Highcharts.WordcloudSeriesOptions);
+    } as WordcloudSeriesOptions);
 
     /* *
      *
@@ -896,7 +235,7 @@ class WordcloudSeries extends ColumnSeries {
      *
      * */
     public data: Array<WordcloudPoint> = void 0 as any;
-    public options: Highcharts.WordcloudSeriesOptions = void 0 as any;
+    public options: WordcloudSeriesOptions = void 0 as any;
     public points: Array<WordcloudPoint> = void 0 as any;
 
     /**
@@ -981,7 +320,7 @@ class WordcloudSeries extends ColumnSeries {
                 options.placementStrategy as any
             ],
             spiral: Highcharts.WordcloudSpiralFunction,
-            rotation: Highcharts.WordcloudSeriesRotationOptions =
+            rotation: WordcloudSeriesRotationOptions =
                 options.rotation as any,
             scale,
             weights = series.points.map(function (
@@ -1036,8 +375,8 @@ class WordcloudSeries extends ColumnSeries {
         });
 
         // Calculate the playing field.
-        field = getPlayingField(xAxis.len, yAxis.len, data);
-        spiral = getSpiral(series.spirals[options.spiral as any], {
+        field = WordcloudUtils.getPlayingField(xAxis.len, yAxis.len, data);
+        spiral = WordcloudUtils.getSpiral(series.spirals[options.spiral as any], {
             field: field
         });
         // Draw all the points.
@@ -1079,7 +418,7 @@ class WordcloudSeries extends ColumnSeries {
                     placement.rotation as any
                 ),
                 rectangle = getBoundingBoxFromPolygon(polygon),
-                delta: PositionObject = intersectionTesting(point, {
+                delta: PositionObject = WordcloudUtils.intersectionTesting(point, {
                     rectangle: rectangle,
                     polygon: polygon,
                     field: field,
@@ -1092,10 +431,10 @@ class WordcloudSeries extends ColumnSeries {
             // If there is no space for the word, extend the playing field.
             if (!delta && allowExtendPlayingField) {
                 // Extend the playing field to fit the word.
-                field = extendPlayingField(field, rectangle);
+                field = WordcloudUtils.extendPlayingField(field, rectangle);
 
                 // Run intersection testing one more time to place the word.
-                delta = intersectionTesting(point, {
+                delta = WordcloudUtils.intersectionTesting(point, {
                     rectangle: rectangle,
                     polygon: polygon,
                     field: field,
@@ -1113,7 +452,7 @@ class WordcloudSeries extends ColumnSeries {
                 rectangle.right += delta.x;
                 rectangle.top += delta.y;
                 rectangle.bottom += delta.y;
-                field = updateFieldBoundaries(field, rectangle);
+                field = WordcloudUtils.updateFieldBoundaries(field, rectangle);
                 placed.push(point);
                 point.isNull = false;
             } else {
@@ -1152,7 +491,7 @@ class WordcloudSeries extends ColumnSeries {
         testElement = testElement.destroy() as any;
 
         // Scale the series group to fit within the plotArea.
-        scale = getScale(xAxis.len, yAxis.len, field);
+        scale = WordcloudUtils.getScale(xAxis.len, yAxis.len, field);
         series.group.attr({
             scaleX: scale,
             scaleY: scale
@@ -1201,13 +540,14 @@ interface WordcloudSeries extends ColumnSeries {
     pointArrayMap: Array<string>;
     pointClass: typeof WordcloudPoint;
     spirals: Record<string, Highcharts.WordcloudSpiralFunction>;
-    utils: Highcharts.WordcloudUtilsObject;
+    utils: typeof WordcloudUtils;
 }
 
 extend(WordcloudSeries.prototype, {
     animate: LineSeries.prototype.animate,
     animateDrilldown: noop as any,
     animateDrillupFrom: noop as any,
+    pointClass: WordcloudPoint,
     setClip: noop as any,
 
     // Strategies used for deciding rotation and initial position of a word. To
@@ -1222,9 +562,9 @@ extend(WordcloudSeries.prototype, {
                 r = options.rotation;
 
             return {
-                x: getRandomPosition(field.width) - (field.width / 2),
-                y: getRandomPosition(field.height) - (field.height / 2),
-                rotation: getRotation(r.orientations, point.index, r.from, r.to)
+                x: WordcloudUtils.getRandomPosition(field.width) - (field.width / 2),
+                y: WordcloudUtils.getRandomPosition(field.height) - (field.height / 2),
+                rotation: WordcloudUtils.getRotation(r.orientations, point.index, r.from, r.to)
             };
         },
         center: function (
@@ -1236,7 +576,7 @@ extend(WordcloudSeries.prototype, {
             return {
                 x: 0,
                 y: 0,
-                rotation: getRotation(r.orientations, point.index, r.from, r.to)
+                rotation: WordcloudUtils.getRotation(r.orientations, point.index, r.from, r.to)
             };
         }
     },
@@ -1245,58 +585,18 @@ extend(WordcloudSeries.prototype, {
     // collision with either another word or the borders. To implement a custom
     // spiral, look at the function archimedeanSpiral for example.
     spirals: {
-        'archimedean': archimedeanSpiral,
-        'rectangular': rectangularSpiral,
-        'square': squareSpiral
+        'archimedean': WordcloudUtils.archimedeanSpiral,
+        'rectangular': WordcloudUtils.rectangularSpiral,
+        'square': WordcloudUtils.squareSpiral
     },
     utils: {
-        extendPlayingField: extendPlayingField,
-        getRotation: getRotation,
+        extendPlayingField: WordcloudUtils.extendPlayingField,
+        getRotation: WordcloudUtils.getRotation,
         isPolygonsColliding: isPolygonsColliding,
         rotate2DToOrigin: rotate2DToOrigin,
         rotate2DToPoint: rotate2DToPoint
     }
 });
-
-class WordcloudPoint extends ColumnSeries.prototype.pointClass implements Highcharts.DrawPoint {
-
-    /* *
-     *
-     * Properties
-     *
-     * */
-    public dimensions: SizeObject = void 0 as any;
-    public lastCollidedWith?: WordcloudPoint;
-    public options: Highcharts.WordcloudPointOptions = void 0 as any;
-    public polygon?: Highcharts.PolygonObject = void 0 as any;
-    public rect?: Highcharts.PolygonBoxObject = void 0 as any;
-    public rotation?: (boolean|number);
-    public series: WordcloudSeries = void 0 as any;
-
-    /* *
-     *
-     * Functions
-     *
-     * */
-    public shouldDraw(): boolean {
-        var point = this;
-        return !point.isNull;
-    }
-    public isValid(): boolean {
-        return true;
-    }
-}
-
-interface WordcloudPoint {
-    draw: typeof DrawPointMixin.drawPoint;
-    weight: number;
-}
-
-extend(WordcloudPoint.prototype, {
-    draw: DrawPointMixin.drawPoint,
-    weight: 1
-});
-WordcloudSeries.prototype.pointClass = WordcloudPoint;
 
 /* *
  *
