@@ -12,16 +12,23 @@ import type CSSObject from '../../Core/Renderer/CSSObject';
 import type IndicatorValuesObject from './IndicatorValuesObject';
 import type LineSeries from '../../Series/Line/LineSeries';
 import type { PointMarkerOptions } from '../../Core/Series/PointOptions';
-import type SMAIndicator from './SMA/SMAIndicator';
 import type {
     SMAOptions,
     SMAParamsOptions
 } from './SMA/SMAOptions';
 import type SMAPoint from './SMA/SMAPoint';
+
+const {
+    seriesTypes: {
+        sma: SMAIndicator
+    }
+} = BaseSeries;
+
 import BaseSeries from '../../Core/Series/Series.js';
 import MultipleLinesMixin from '../../Mixins/MultipleLines.js';
 import U from '../../Core/Utilities.js';
 const {
+    extend,
     merge,
     pick
 } = U;
@@ -32,24 +39,6 @@ const {
  */
 declare global {
     namespace Highcharts {
-        class AroonIndicator extends SMAIndicator implements MultipleLinesIndicator {
-            public data: Array<AroonIndicatorPoint>;
-            public getValues<TLinkedSeries extends LineSeries>(
-                series: TLinkedSeries,
-                params: AroonIndicatorParamsOptions
-            ): IndicatorValuesObject<TLinkedSeries>;
-            public linesApiNames: MultipleLinesMixin['linesApiNames'];
-            public nameBase: string;
-            public options: AroonIndicatorOptions;
-            public pointArrayMap: MultipleLinesMixin['pointArrayMap'];
-            public pointClass: typeof AroonIndicatorPoint;
-            public points: Array<AroonIndicatorPoint>;
-            public pointValKey: MultipleLinesMixin['pointValKey'];
-            public drawGraph: MultipleLinesMixin['drawGraph'];
-            public getTranslatedLinesNames: MultipleLinesMixin[
-                'getTranslatedLinesNames'
-            ];
-        }
         interface AroonIndicatorOptions
             extends SMAOptions, MultipleLinesIndicatorOptions {
             aroonDown?: Record<string, CSSObject>;
@@ -66,14 +55,6 @@ declare global {
         }
     }
 }
-
-declare module '../../Core/Series/SeriesType' {
-    interface SeriesTypeRegistry {
-        aroon: typeof Highcharts.AroonIndicator;
-    }
-}
-
-// im port './SMAIndicator.js';
 
 /* eslint-disable valid-jsdoc */
 // Utils
@@ -102,6 +83,12 @@ function getExtremeIndexInArray(arr: Array<number>, extreme: string): number {
 
 /* eslint-enable valid-jsdoc */
 
+/* *
+ *
+ *  Class
+ *
+ * */
+
 /**
  * The Aroon series type.
  *
@@ -111,9 +98,8 @@ function getExtremeIndexInArray(arr: Array<number>, extreme: string): number {
  *
  * @augments Highcharts.Series
  */
-BaseSeries.seriesType<typeof Highcharts.AroonIndicator>(
-    'aroon',
-    'sma',
+
+class AroonIndicator extends SMAIndicator implements Highcharts.MultipleLinesIndicator {
     /**
      * Aroon. This series requires the `linkedTo` option to be
      * set and should be loaded after the `stock/indicators/indicators.js`.
@@ -132,7 +118,7 @@ BaseSeries.seriesType<typeof Highcharts.AroonIndicator>(
      * @requires     stock/indicators/aroon
      * @optionparent plotOptions.aroon
      */
-    {
+    public static defaultOptions: Highcharts.AroonIndicatorOptions = merge(SMAIndicator.defaultOptions, {
         /**
          * Paramters used in calculation of aroon series points.
          *
@@ -174,70 +160,114 @@ BaseSeries.seriesType<typeof Highcharts.AroonIndicator>(
         dataGrouping: {
             approximation: 'averages'
         }
-    },
-    /**
-     * @lends Highcharts.Series#
-     */
-    merge(MultipleLinesMixin, {
-        nameBase: 'Aroon',
-        pointArrayMap: ['y', 'aroonDown'],
-        pointValKey: 'y',
-        linesApiNames: ['aroonDown'],
-        getValues: function<TLinkedSeries extends LineSeries> (
-            series: TLinkedSeries,
-            params: Highcharts.AroonIndicatorParamsOptions
-        ): IndicatorValuesObject<TLinkedSeries> {
-            var period = (params.period as any),
-                xVal: Array<number> = (series.xData as any),
-                yVal: Array<Array<number>> = (series.yData as any),
-                yValLen = yVal ? yVal.length : 0,
-                // 0- date, 1- Aroon Up, 2- Aroon Down
-                AR: Array<Array<number>> = [],
-                xData: Array<number> = [],
-                yData: Array<Array<number>> = [],
-                slicedY: Array<Array<number>>,
-                low = 2,
-                high = 1,
-                aroonUp: number,
-                aroonDown: number,
-                xLow: number,
-                xHigh: number,
-                i: number;
+    } as Highcharts.AroonIndicatorOptions);
+}
 
-            // For a N-period, we start from N-1 point, to calculate Nth point
-            // That is why we later need to comprehend slice() elements list
-            // with (+1)
-            for (i = period - 1; i < yValLen; i++) {
-                slicedY = yVal.slice(i - period + 1, i + 2);
+/* *
+*
+*   Prototype Properties
+*
+* */
 
-                xLow = getExtremeIndexInArray(slicedY.map(
-                    function (elem): number {
-                        return pick(elem[low], (elem as any));
-                    }), 'min');
+interface AroonIndicator {
+    data: Array<Highcharts.AroonIndicatorPoint>;
+    getValues<TLinkedSeries extends LineSeries>(
+        series: TLinkedSeries,
+        params: Highcharts.AroonIndicatorParamsOptions
+    ): IndicatorValuesObject<TLinkedSeries>;
+    linesApiNames: Highcharts.MultipleLinesMixin['linesApiNames'];
+    nameBase: string;
+    options: Highcharts.AroonIndicatorOptions;
+    pointArrayMap: Highcharts.MultipleLinesMixin['pointArrayMap'];
+    pointClass: typeof Highcharts.AroonIndicatorPoint;
+    points: Array<Highcharts.AroonIndicatorPoint>;
+    pointValKey: Highcharts.MultipleLinesMixin['pointValKey'];
+    drawGraph: Highcharts.MultipleLinesMixin['drawGraph'];
+    getTranslatedLinesNames: Highcharts.MultipleLinesMixin[
+        'getTranslatedLinesNames'
+    ];
+}
 
-                xHigh = getExtremeIndexInArray(slicedY.map(
-                    function (elem): number {
-                        return pick(elem[high], (elem as any));
-                    }), 'max');
+extend(AroonIndicator.prototype, merge(MultipleLinesMixin, {
+    nameBase: 'Aroon',
+    pointArrayMap: ['y', 'aroonDown'],
+    pointValKey: 'y',
+    linesApiNames: ['aroonDown'],
+    getValues: function<TLinkedSeries extends LineSeries> (
+        series: TLinkedSeries,
+        params: Highcharts.AroonIndicatorParamsOptions
+    ): IndicatorValuesObject<TLinkedSeries> {
+        var period = (params.period as any),
+            xVal: Array<number> = (series.xData as any),
+            yVal: Array<Array<number>> = (series.yData as any),
+            yValLen = yVal ? yVal.length : 0,
+            // 0- date, 1- Aroon Up, 2- Aroon Down
+            AR: Array<Array<number>> = [],
+            xData: Array<number> = [],
+            yData: Array<Array<number>> = [],
+            slicedY: Array<Array<number>>,
+            low = 2,
+            high = 1,
+            aroonUp: number,
+            aroonDown: number,
+            xLow: number,
+            xHigh: number,
+            i: number;
 
-                aroonUp = (xHigh / period) * 100;
-                aroonDown = (xLow / period) * 100;
+        // For a N-period, we start from N-1 point, to calculate Nth point
+        // That is why we later need to comprehend slice() elements list
+        // with (+1)
+        for (i = period - 1; i < yValLen; i++) {
+            slicedY = yVal.slice(i - period + 1, i + 2);
 
-                if (xVal[i + 1]) {
-                    AR.push([xVal[i + 1], aroonUp, aroonDown]);
-                    xData.push(xVal[i + 1]);
-                    yData.push([aroonUp, aroonDown]);
-                }
+            xLow = getExtremeIndexInArray(slicedY.map(
+                function (elem): number {
+                    return pick(elem[low], (elem as any));
+                }), 'min');
+
+            xHigh = getExtremeIndexInArray(slicedY.map(
+                function (elem): number {
+                    return pick(elem[high], (elem as any));
+                }), 'max');
+
+            aroonUp = (xHigh / period) * 100;
+            aroonDown = (xLow / period) * 100;
+
+            if (xVal[i + 1]) {
+                AR.push([xVal[i + 1], aroonUp, aroonDown]);
+                xData.push(xVal[i + 1]);
+                yData.push([aroonUp, aroonDown]);
             }
-
-            return {
-                values: AR,
-                xData: xData,
-                yData: yData
-            } as IndicatorValuesObject<TLinkedSeries>;
         }
-    })
-);
+
+        return {
+            values: AR,
+            xData: xData,
+            yData: yData
+        } as IndicatorValuesObject<TLinkedSeries>;
+    }
+}));
+
+/* *
+ *
+ *  Registry
+ *
+ * */
+declare module '../../Core/Series/SeriesType' {
+    interface SeriesTypeRegistry {
+        aroon: typeof AroonIndicator;
+    }
+}
+
+BaseSeries.registerSeriesType('aroon', AroonIndicator);
+
+/* *
+ *
+ *  Default Export
+ *
+ * */
+
+export default AroonIndicator;
 
 /**
  * A Aroon indicator. If the [type](#series.aroon.type) option is not

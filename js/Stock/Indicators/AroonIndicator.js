@@ -6,11 +6,24 @@
  *
  * */
 'use strict';
+var __extends = (this && this.__extends) || (function () {
+    var extendStatics = function (d, b) {
+        extendStatics = Object.setPrototypeOf ||
+            ({ __proto__: [] } instanceof Array && function (d, b) { d.__proto__ = b; }) ||
+            function (d, b) { for (var p in b) if (b.hasOwnProperty(p)) d[p] = b[p]; };
+        return extendStatics(d, b);
+    };
+    return function (d, b) {
+        extendStatics(d, b);
+        function __() { this.constructor = d; }
+        d.prototype = b === null ? Object.create(b) : (__.prototype = b.prototype, new __());
+    };
+})();
+var SMAIndicator = BaseSeries.seriesTypes.sma;
 import BaseSeries from '../../Core/Series/Series.js';
 import MultipleLinesMixin from '../../Mixins/MultipleLines.js';
 import U from '../../Core/Utilities.js';
-var merge = U.merge, pick = U.pick;
-// im port './SMAIndicator.js';
+var extend = U.extend, merge = U.merge, pick = U.pick;
 /* eslint-disable valid-jsdoc */
 // Utils
 // Index of element with extreme value from array (min or max)
@@ -29,6 +42,11 @@ function getExtremeIndexInArray(arr, extreme) {
     return valueIndex;
 }
 /* eslint-enable valid-jsdoc */
+/* *
+ *
+ *  Class
+ *
+ * */
 /**
  * The Aroon series type.
  *
@@ -38,72 +56,75 @@ function getExtremeIndexInArray(arr, extreme) {
  *
  * @augments Highcharts.Series
  */
-BaseSeries.seriesType('aroon', 'sma', 
-/**
- * Aroon. This series requires the `linkedTo` option to be
- * set and should be loaded after the `stock/indicators/indicators.js`.
- *
- * @sample {highstock} stock/indicators/aroon
- *         Aroon
- *
- * @extends      plotOptions.sma
- * @since        7.0.0
- * @product      highstock
- * @excluding    allAreas, colorAxis, compare, compareBase, joinBy, keys,
- *               navigatorOptions, pointInterval, pointIntervalUnit,
- *               pointPlacement, pointRange, pointStart, showInNavigator,
- *               stacking
- * @requires     stock/indicators/indicators
- * @requires     stock/indicators/aroon
- * @optionparent plotOptions.aroon
- */
-{
-    /**
-     * Paramters used in calculation of aroon series points.
-     *
-     * @excluding periods, index
-     */
-    params: {
-        /**
-         * Period for Aroon indicator
-         */
-        period: 25
-    },
-    marker: {
-        enabled: false
-    },
-    tooltip: {
-        pointFormat: '<span style="color:{point.color}">\u25CF</span><b> {series.name}</b><br/>Aroon Up: {point.y}<br/>Aroon Down: {point.aroonDown}<br/>'
-    },
-    /**
-     * aroonDown line options.
-     */
-    aroonDown: {
-        /**
-         * Styles for an aroonDown line.
-         */
-        styles: {
-            /**
-             * Pixel width of the line.
-             */
-            lineWidth: 1,
-            /**
-             * Color of the line. If not set, it's inherited from
-             * [plotOptions.aroon.color](#plotOptions.aroon.color).
-             *
-             * @type {Highcharts.ColorString}
-             */
-            lineColor: void 0
-        }
-    },
-    dataGrouping: {
-        approximation: 'averages'
+var AroonIndicator = /** @class */ (function (_super) {
+    __extends(AroonIndicator, _super);
+    function AroonIndicator() {
+        return _super !== null && _super.apply(this, arguments) || this;
     }
-}, 
-/**
- * @lends Highcharts.Series#
- */
-merge(MultipleLinesMixin, {
+    /**
+     * Aroon. This series requires the `linkedTo` option to be
+     * set and should be loaded after the `stock/indicators/indicators.js`.
+     *
+     * @sample {highstock} stock/indicators/aroon
+     *         Aroon
+     *
+     * @extends      plotOptions.sma
+     * @since        7.0.0
+     * @product      highstock
+     * @excluding    allAreas, colorAxis, compare, compareBase, joinBy, keys,
+     *               navigatorOptions, pointInterval, pointIntervalUnit,
+     *               pointPlacement, pointRange, pointStart, showInNavigator,
+     *               stacking
+     * @requires     stock/indicators/indicators
+     * @requires     stock/indicators/aroon
+     * @optionparent plotOptions.aroon
+     */
+    AroonIndicator.defaultOptions = merge(SMAIndicator.defaultOptions, {
+        /**
+         * Paramters used in calculation of aroon series points.
+         *
+         * @excluding periods, index
+         */
+        params: {
+            /**
+             * Period for Aroon indicator
+             */
+            period: 25
+        },
+        marker: {
+            enabled: false
+        },
+        tooltip: {
+            pointFormat: '<span style="color:{point.color}">\u25CF</span><b> {series.name}</b><br/>Aroon Up: {point.y}<br/>Aroon Down: {point.aroonDown}<br/>'
+        },
+        /**
+         * aroonDown line options.
+         */
+        aroonDown: {
+            /**
+             * Styles for an aroonDown line.
+             */
+            styles: {
+                /**
+                 * Pixel width of the line.
+                 */
+                lineWidth: 1,
+                /**
+                 * Color of the line. If not set, it's inherited from
+                 * [plotOptions.aroon.color](#plotOptions.aroon.color).
+                 *
+                 * @type {Highcharts.ColorString}
+                 */
+                lineColor: void 0
+            }
+        },
+        dataGrouping: {
+            approximation: 'averages'
+        }
+    });
+    return AroonIndicator;
+}(SMAIndicator));
+extend(AroonIndicator.prototype, merge(MultipleLinesMixin, {
     nameBase: 'Aroon',
     pointArrayMap: ['y', 'aroonDown'],
     pointValKey: 'y',
@@ -138,6 +159,13 @@ merge(MultipleLinesMixin, {
         };
     }
 }));
+BaseSeries.registerSeriesType('aroon', AroonIndicator);
+/* *
+ *
+ *  Default Export
+ *
+ * */
+export default AroonIndicator;
 /**
  * A Aroon indicator. If the [type](#series.aroon.type) option is not
  * specified, it is inherited from [chart.type](#chart.type).
