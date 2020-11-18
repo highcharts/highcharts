@@ -38,7 +38,7 @@ const {
     pick
 } = U;
 
-import './AreaRangeSeries.js';
+import './AreaRange/AreaRangeSeries.js';
 import './ColumnRangeSeries.js';
 import '../Core/Interaction.js';
 

@@ -19,7 +19,7 @@ import H from '../Core/Globals.js';
 var noop = H.noop;
 import U from '../Core/Utilities.js';
 var extend = U.extend, pick = U.pick;
-import './AreaRangeSeries.js';
+import './AreaRange/AreaRangeSeries.js';
 import './ColumnRangeSeries.js';
 import '../Core/Interaction.js';
 var areaRangeProto = seriesTypes.arearange.prototype, columnRangeProto = seriesTypes.columnrange.prototype, areaRangePointProto = areaRangeProto.pointClass.prototype, TrackerMixin = H.TrackerMixin; // Interaction
