@@ -12,29 +12,29 @@
 
 'use strict';
 
-import type BBoxObject from '../Core/Renderer/BBoxObject';
-import type ColumnPoint from './Column/ColumnPoint';
-import type ColumnPointOptions from './Column/ColumnPointOptions';
+import type BBoxObject from '../../Core/Renderer/BBoxObject';
+import type ColumnPoint from '../Column/ColumnPoint';
+import type ColumnPointOptions from '../Column/ColumnPointOptions';
 
-import type ColumnSeriesOptions from './Column/ColumnSeriesOptions';
-import type CSSObject from '../Core/Renderer/CSSObject';
+import type ColumnSeriesOptions from '../Column/ColumnSeriesOptions';
+import type CSSObject from '../../Core/Renderer/CSSObject';
 import type {
     PointOptions,
     PointShortOptions
-} from '../Core/Series/PointOptions';
-import type PositionObject from '../Core/Renderer/PositionObject';
-import type { SeriesStatesOptions } from '../Core/Series/SeriesOptions';
-import type SizeObject from '../Core/Renderer/SizeObject';
-import type { StatesOptionsKey } from '../Core/Series/StatesOptions';
-import type SVGAttributes from '../Core/Renderer/SVG/SVGAttributes';
-import type SVGElement from '../Core/Renderer/SVG/SVGElement';
-import BaseSeries from '../Core/Series/Series.js';
-import ColumnSeries from './Column/ColumnSeries.js';
-import DrawPointMixin from '../Mixins/DrawPoint.js';
-import H from '../Core/Globals.js';
+} from '../../Core/Series/PointOptions';
+import type PositionObject from '../../Core/Renderer/PositionObject';
+import type { SeriesStatesOptions } from '../../Core/Series/SeriesOptions';
+import type SizeObject from '../../Core/Renderer/SizeObject';
+import type { StatesOptionsKey } from '../../Core/Series/StatesOptions';
+import type SVGAttributes from '../../Core/Renderer/SVG/SVGAttributes';
+import type SVGElement from '../../Core/Renderer/SVG/SVGElement';
+import BaseSeries from '../../Core/Series/Series.js';
+import ColumnSeries from '../Column/ColumnSeries.js';
+import DrawPointMixin from '../../Mixins/DrawPoint.js';
+import H from '../../Core/Globals.js';
 const { noop } = H;
-import LineSeries from './Line/LineSeries.js';
-import PolygonMixin from '../Mixins/Polygon.js';
+import LineSeries from '../Line/LineSeries.js';
+import PolygonMixin from '../../Mixins/Polygon.js';
 const {
     getBoundingBoxFromPolygon,
     getPolygon,
@@ -43,7 +43,7 @@ const {
     rotate2DToOrigin,
     rotate2DToPoint
 } = PolygonMixin;
-import U from '../Core/Utilities.js';
+import U from '../../Core/Utilities.js';
 const {
     extend,
     find,
@@ -53,7 +53,7 @@ const {
     merge
 } = U;
 
-import './Column/ColumnSeries.js';
+import '../Column/ColumnSeries.js';
 
 /**
  * Internal types
@@ -1303,7 +1303,7 @@ WordcloudSeries.prototype.pointClass = WordcloudPoint;
  * Registry
  *
  * */
-declare module '../Core/Series/SeriesType' {
+declare module '../../Core/Series/SeriesType' {
     interface SeriesTypeRegistry {
         wordcloud: typeof WordcloudSeries;
     }
