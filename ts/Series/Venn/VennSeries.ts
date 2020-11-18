@@ -23,17 +23,15 @@
  *
  * */
 
-import type Chart from '../../Core/Chart/Chart';
-import type DashStyleValue from '../../Core/Renderer/DashStyleValue';
 import type PositionObject from '../../Core/Renderer/PositionObject';
 import type ScatterPoint from '../Scatter/ScatterPoint';
-import type ScatterPointOptions from '../Scatter/ScatterPointOptions';
-import type ScatterSeriesOptions from '../Scatter/ScatterSeriesOptions';
 import type { SeriesStatesOptions } from '../../Core/Series/SeriesOptions';
 import type { StatesOptionsKey } from '../../Core/Series/StatesOptions';
 import type SVGAttributes from '../../Core/Renderer/SVG/SVGAttributes';
 import type SVGElement from '../../Core/Renderer/SVG/SVGElement';
 import type SVGPath from '../../Core/Renderer/SVG/SVGPath';
+import type VennPointOptions from './VennPointOptions';
+import type VennSeriesOptions from './VennSeriesOptions';
 import A from '../../Core/Animation/AnimationUtilities.js';
 const { animObject } = A;
 import BaseSeries from '../../Core/Series/Series.js';
@@ -64,6 +62,8 @@ const {
 } = GeometryCirclesModule;
 import NelderMeadMixin from '../../Mixins/NelderMead.js';
 const { nelderMead } = NelderMeadMixin;
+import VennPoint from './VennPoint.js';
+import VennUtils from './VennUtils.js';
 import U from '../../Core/Utilities.js';
 const {
     addEvent,
@@ -102,11 +102,6 @@ declare global {
             coordinates: PositionObject;
             loss: number;
         }
-        interface VennPointOptions extends ScatterPointOptions {
-            name?: string;
-            sets?: Array<string>;
-            value?: number;
-        }
         interface VennPropsObject {
             overlapping: Dictionary<number>;
             totalOverlap: number;
@@ -115,13 +110,6 @@ declare global {
             circle: CircleObject;
             sets: Array<string>;
             value: number;
-        }
-        interface VennSeriesOptions extends ScatterSeriesOptions {
-            borderDashStyle?: DashStyleValue;
-            brighten?: number;
-            brightness?: number;
-            data?: Array<Highcharts.VennPointOptions>;
-            states?: SeriesStatesOptions<VennSeries>;
         }
         interface VennUtilsObject {
             geometry: GeometryMixin;
@@ -162,911 +150,6 @@ declare global {
         }
     }
 }
-
-/* *
- *
- *  Functions
- *
- * */
-
-/**
- * Calculates the area of overlap between a list of circles.
- * @private
- * @todo add support for calculating overlap between more than 2 circles.
- * @param {Array<Highcharts.CircleObject>} circles
- * List of circles with their given positions.
- * @return {number}
- * Returns the area of overlap between all the circles.
- */
-var getOverlapBetweenCircles = function getOverlapBetweenCircles(
-    circles: Array<Highcharts.CircleObject>
-): number {
-    var overlap = 0;
-
-    // When there is only two circles we can find the overlap by using their
-    // radiuses and the distance between them.
-    if (circles.length === 2) {
-        var circle1 = circles[0];
-        var circle2 = circles[1];
-
-        overlap = getOverlapBetweenCirclesByDistance(
-            circle1.r,
-            circle2.r,
-            getDistanceBetweenPoints(circle1, circle2)
-        );
-    }
-
-    return overlap;
-};
-
-/**
- * Calculates the difference between the desired overlap and the actual overlap
- * between two circles.
- * @private
- * @param {Dictionary<Highcharts.CircleObject>} mapOfIdToCircle
- * Map from id to circle.
- * @param {Array<Highcharts.VennRelationObject>} relations
- * List of relations to calculate the loss of.
- * @return {number}
- * Returns the loss between positions of the circles for the given relations.
- */
-var loss = function loss(
-    mapOfIdToCircle: Highcharts.Dictionary<Highcharts.CircleObject>,
-    relations: Array<Highcharts.VennRelationObject>
-): number {
-    var precision = 10e10;
-
-    // Iterate all the relations and calculate their individual loss.
-    return relations.reduce(function (
-        totalLoss: number,
-        relation: Highcharts.VennRelationObject
-    ): number {
-        var loss = 0;
-
-        if (relation.sets.length > 1) {
-            var wantedOverlap = relation.value;
-            // Calculate the actual overlap between the sets.
-            var actualOverlap = getOverlapBetweenCircles(
-                // Get the circles for the given sets.
-                relation.sets.map(function (
-                    set: string
-                ): Highcharts.CircleObject {
-                    return mapOfIdToCircle[set];
-                })
-            );
-
-            var diff = wantedOverlap - actualOverlap;
-
-            loss = Math.round((diff * diff) * precision) / precision;
-        }
-
-        // Add calculated loss to the sum.
-        return totalLoss + loss;
-    }, 0);
-};
-
-/**
- * Finds the root of a given function. The root is the input value needed for
- * a function to return 0.
- *
- * See https://en.wikipedia.org/wiki/Bisection_method#Algorithm
- *
- * TODO: Add unit tests.
- *
- * @param {Function} f
- * The function to find the root of.
- * @param {number} a
- * The lowest number in the search range.
- * @param {number} b
- * The highest number in the search range.
- * @param {number} [tolerance=1e-10]
- * The allowed difference between the returned value and root.
- * @param {number} [maxIterations=100]
- * The maximum iterations allowed.
- * @return {number}
- * Root number.
- */
-var bisect = function bisect(
-    f: Function,
-    a: number,
-    b: number,
-    tolerance?: number,
-    maxIterations?: number
-): number {
-    var fA = f(a),
-        fB = f(b),
-        nMax = maxIterations || 100,
-        tol = tolerance || 1e-10,
-        delta = b - a,
-        n = 1,
-        x: (number|undefined),
-        fX: (number|undefined);
-
-    if (a >= b) {
-        throw new Error('a must be smaller than b.');
-    } else if (fA * fB > 0) {
-        throw new Error('f(a) and f(b) must have opposite signs.');
-    }
-
-    if (fA === 0) {
-        x = a;
-    } else if (fB === 0) {
-        x = b;
-    } else {
-        while (n++ <= nMax && fX !== 0 && delta > tol) {
-            delta = (b - a) / 2;
-            x = a + delta;
-            fX = f(x);
-
-            // Update low and high for next search interval.
-            if (fA * (fX as any) > 0) {
-                a = x;
-            } else {
-                b = x;
-            }
-        }
-    }
-
-    return x as any;
-};
-
-/**
- * Uses the bisection method to make a best guess of the ideal distance between
- * two circles too get the desired overlap.
- * Currently there is no known formula to calculate the distance from the area
- * of overlap, which makes the bisection method preferred.
- * @private
- * @param {number} r1
- * Radius of the first circle.
- * @param {number} r2
- * Radiues of the second circle.
- * @param {number} overlap
- * The wanted overlap between the two circles.
- * @return {number}
- * Returns the distance needed to get the wanted overlap between the two
- * circles.
- */
-var getDistanceBetweenCirclesByOverlap =
-function getDistanceBetweenCirclesByOverlap(
-    r1: number,
-    r2: number,
-    overlap: number
-): number {
-    var maxDistance = r1 + r2,
-        distance;
-
-    if (overlap <= 0) {
-        // If overlap is below or equal to zero, then there is no overlap.
-        distance = maxDistance;
-    } else if (getAreaOfCircle(r1 < r2 ? r1 : r2) <= overlap) {
-        // When area of overlap is larger than the area of the smallest circle,
-        // then it is completely overlapping.
-        distance = 0;
-    } else {
-        distance = bisect(function (x: number): number {
-            var actualOverlap = getOverlapBetweenCirclesByDistance(r1, r2, x);
-
-            // Return the differance between wanted and actual overlap.
-            return overlap - actualOverlap;
-        }, 0, maxDistance);
-    }
-    return distance;
-};
-
-var isSet = function (
-    x: (Highcharts.VennPointOptions|Highcharts.VennRelationObject)
-): boolean {
-    return isArray(x.sets) && x.sets.length === 1;
-};
-
-/**
- * Calculates a margin for a point based on the iternal and external circles.
- * The margin describes if the point is well placed within the internal circles,
- * and away from the external
- * @private
- * @todo add unit tests.
- * @param {Highcharts.PositionObject} point
- * The point to evaluate.
- * @param {Array<Highcharts.CircleObject>} internal
- * The internal circles.
- * @param {Array<Highcharts.CircleObject>} external
- * The external circles.
- * @return {number}
- * Returns the margin.
- */
-var getMarginFromCircles = function getMarginFromCircles(
-    point: PositionObject,
-    internal: Array<Highcharts.CircleObject>,
-    external: Array<Highcharts.CircleObject>
-): number {
-    var margin = internal.reduce(function (
-        margin: number,
-        circle: Highcharts.CircleObject
-    ): number {
-        var m = circle.r - getDistanceBetweenPoints(point, circle);
-
-        return (m <= margin) ? m : margin;
-    }, Number.MAX_VALUE);
-
-    margin = external.reduce(function (
-        margin: number,
-        circle: Highcharts.CircleObject
-    ): number {
-        var m = getDistanceBetweenPoints(point, circle) - circle.r;
-
-        return (m <= margin) ? m : margin;
-    }, margin);
-
-    return margin;
-};
-
-/**
- * Finds the optimal label position by looking for a position that has a low
- * distance from the internal circles, and as large possible distane to the
- * external circles.
- * @private
- * @todo Optimize the intial position.
- * @todo Add unit tests.
- * @param {Array<Highcharts.CircleObject>} internal
- * Internal circles.
- * @param {Array<Highcharts.CircleObject>} external
- * External circles.
- * @return {Highcharts.PositionObject}
- * Returns the found position.
- */
-var getLabelPosition = function getLabelPosition(
-    internal: Array<Highcharts.CircleObject>,
-    external: Array<Highcharts.CircleObject>
-): PositionObject {
-    // Get the best label position within the internal circles.
-    var best = internal.reduce(function (
-        best: Highcharts.VennLabelPositionObject,
-        circle: Highcharts.CircleObject
-    ): Highcharts.VennLabelPositionObject {
-        var d = circle.r / 2;
-
-        // Give a set of points with the circle to evaluate as the best label
-        // position.
-        return [
-            { x: circle.x, y: circle.y },
-            { x: circle.x + d, y: circle.y },
-            { x: circle.x - d, y: circle.y },
-            { x: circle.x, y: circle.y + d },
-            { x: circle.x, y: circle.y - d }
-        ]
-            // Iterate the given points and return the one with the largest
-            // margin.
-            .reduce(function (
-                best: Highcharts.VennLabelPositionObject,
-                point: PositionObject
-            ): Highcharts.VennLabelPositionObject {
-                var margin = getMarginFromCircles(point, internal, external);
-
-                // If the margin better than the current best, then update best.
-                if (best.margin < margin) {
-                    best.point = point;
-                    best.margin = margin;
-                }
-                return best;
-            }, best);
-    }, {
-        point: void 0 as any,
-        margin: -Number.MAX_VALUE
-    }).point;
-
-    // Use nelder mead to optimize the initial label position.
-    var optimal = nelderMead(
-        function (p: Array<number>): number {
-            return -(
-                getMarginFromCircles({ x: p[0], y: p[1] }, internal, external)
-            );
-        },
-        [best.x, best.y] as any
-    );
-
-    // Update best to be the point which was found to have the best margin.
-    best = {
-        x: optimal[0],
-        y: optimal[1]
-    };
-
-    if (!(
-        isPointInsideAllCircles(best, internal) &&
-        isPointOutsideAllCircles(best, external)
-    )) {
-        // If point was either outside one of the internal, or inside one of the
-        // external, then it was invalid and should use a fallback.
-        if (internal.length > 1) {
-            best = getCenterOfPoints(
-                getCirclesIntersectionPolygon(internal)
-            );
-        } else {
-            best = {
-                x: internal[0].x,
-                y: internal[0].y
-            };
-        }
-    }
-
-    // Return the best point.
-    return best;
-};
-
-/**
- * Finds the available width for a label, by taking the label position and
- * finding the largest distance, which is inside all internal circles, and
- * outside all external circles.
- *
- * @private
- * @param {Highcharts.PositionObject} pos
- * The x and y coordinate of the label.
- * @param {Array<Highcharts.CircleObject>} internal
- * Internal circles.
- * @param {Array<Highcharts.CircleObject>} external
- * External circles.
- * @return {number}
- * Returns available width for the label.
- */
-var getLabelWidth = function getLabelWidth(
-    pos: PositionObject,
-    internal: Array<Highcharts.CircleObject>,
-    external: Array<Highcharts.CircleObject>
-): number {
-    var radius = internal.reduce(function (
-            min: number,
-            circle: Highcharts.CircleObject
-        ): number {
-            return Math.min(circle.r, min);
-        }, Infinity),
-        // Filter out external circles that are completely overlapping.
-        filteredExternals = external.filter(
-            function (circle: Highcharts.CircleObject): boolean {
-                return !isPointInsideCircle(pos, circle);
-            }
-        );
-
-    var findDistance = function (
-        maxDistance: number,
-        direction: number
-    ): number {
-        return bisect(function (x: number): number {
-            var testPos = {
-                    x: pos.x + (direction * x),
-                    y: pos.y
-                },
-                isValid = (
-                    isPointInsideAllCircles(testPos, internal) &&
-                    isPointOutsideAllCircles(testPos, filteredExternals)
-                );
-
-            // If the position is valid, then we want to move towards the max
-            // distance. If not, then we want to  away from the max distance.
-            return -(maxDistance - x) + (isValid ? 0 : Number.MAX_VALUE);
-        }, 0, maxDistance);
-    };
-
-    // Find the smallest distance of left and right.
-    return Math.min(findDistance(radius, -1), findDistance(radius, 1)) * 2;
-};
-
-/**
- * Calulates data label values for a given relations object.
- *
- * @private
- * @todo add unit tests
- * @param {Highcharts.VennRelationObject} relation A relations object.
- * @param {Array<Highcharts.VennRelationObject>} setRelations The list of
- * relations that is a set.
- * @return {Highcharts.VennLabelValuesObject}
- * Returns an object containing position and width of the label.
- */
-function getLabelValues(
-    relation: Highcharts.VennRelationObject,
-    setRelations: Array<Highcharts.VennRelationObject>
-): Highcharts.VennLabelValuesObject {
-    const sets = relation.sets;
-    // Create a list of internal and external circles.
-    const data = setRelations.reduce(function (
-        data: Highcharts.Dictionary<(Array<Highcharts.CircleObject>)>,
-        set: Highcharts.VennRelationObject
-    ): Highcharts.Dictionary<Array<Highcharts.CircleObject>> {
-        // If the set exists in this relation, then it is internal,
-        // otherwise it will be external.
-        const isInternal = sets.indexOf(set.sets[0]) > -1;
-        const property = isInternal ? 'internal' : 'external';
-
-        // Add the circle to the list.
-        data[property].push(set.circle);
-        return data;
-    }, {
-        internal: [],
-        external: []
-    });
-
-    // Filter out external circles that are completely overlapping all internal
-    data.external = data.external.filter((externalCircle): boolean =>
-        data.internal.some((internalCircle): boolean =>
-            !isCircle1CompletelyOverlappingCircle2(
-                externalCircle, internalCircle
-            )
-        )
-    );
-
-    // Calulate the label position.
-    const position = getLabelPosition(data.internal, data.external);
-    // Calculate the label width
-    const width = getLabelWidth(position, data.internal, data.external);
-
-    return {
-        position,
-        width
-    };
-}
-
-/**
- * Takes an array of relations and adds the properties `totalOverlap` and
- * `overlapping` to each set. The property `totalOverlap` is the sum of value
- * for each relation where this set is included. The property `overlapping` is
- * a map of how much this set is overlapping another set.
- * NOTE: This algorithm ignores relations consisting of more than 2 sets.
- * @private
- * @param {Array<Highcharts.VennRelationObject>} relations
- * The list of relations that should be sorted.
- * @return {Array<Highcharts.VennRelationObject>}
- * Returns the modified input relations with added properties `totalOverlap` and
- * `overlapping`.
- */
-var addOverlapToSets = function addOverlapToSets(
-    relations: Array<Highcharts.VennRelationObject>
-): Array<Highcharts.VennRelationObject> {
-    // Calculate the amount of overlap per set.
-    var mapOfIdToProps = relations
-        // Filter out relations consisting of 2 sets.
-        .filter(function (relation: Highcharts.VennRelationObject): boolean {
-            return relation.sets.length === 2;
-        })
-        // Sum up the amount of overlap for each set.
-        .reduce(function (
-            map: Highcharts.Dictionary<Highcharts.VennPropsObject>,
-            relation: Highcharts.VennRelationObject
-        ): Highcharts.Dictionary<Highcharts.VennPropsObject> {
-            var sets = relation.sets;
-
-            sets.forEach(function (
-                set: string,
-                i: number,
-                arr: Array<string>
-            ): void {
-                if (!isObject(map[set])) {
-                    map[set] = {
-                        overlapping: {},
-                        totalOverlap: 0
-                    };
-                }
-                map[set].totalOverlap += relation.value;
-                map[set].overlapping[arr[1 - i]] = relation.value;
-            });
-            return map;
-        }, {});
-
-    relations
-        // Filter out single sets
-        .filter(isSet)
-        // Extend the set with the calculated properties.
-        .forEach(function (set: Highcharts.VennRelationObject): void {
-            var properties = mapOfIdToProps[set.sets[0]];
-
-            extend(set, properties);
-        });
-
-    // Returns the modified relations.
-    return relations;
-};
-
-/**
- * Takes two sets and finds the one with the largest total overlap.
- * @private
- * @param {object} a The first set to compare.
- * @param {object} b The second set to compare.
- * @return {number} Returns 0 if a and b are equal, <0 if a is greater, >0 if b
- * is greater.
- */
-var sortByTotalOverlap = function sortByTotalOverlap(
-    a: Highcharts.VennRelationObject,
-    b: Highcharts.VennRelationObject
-): number {
-    return b.totalOverlap - a.totalOverlap;
-};
-
-/**
- * Uses a greedy approach to position all the sets. Works well with a small
- * number of sets, and are in these cases a good choice aesthetically.
- * @private
- * @param {Array<object>} relations List of the overlap between two or more
- * sets, or the size of a single set.
- * @return {Array<object>} List of circles and their calculated positions.
- */
-var layoutGreedyVenn = function layoutGreedyVenn(
-    relations: Array<Highcharts.VennRelationObject>
-): Highcharts.Dictionary<Highcharts.CircleObject> {
-    var positionedSets: Array<Highcharts.VennRelationObject> = [],
-        mapOfIdToCircles: Highcharts.Dictionary<Highcharts.CircleObject> =
-            {};
-
-    // Define a circle for each set.
-    relations
-        .filter(function (relation: Highcharts.VennRelationObject): boolean {
-            return relation.sets.length === 1;
-        }).forEach(function (relation: Highcharts.VennRelationObject): void {
-            mapOfIdToCircles[relation.sets[0]] = relation.circle = {
-                x: Number.MAX_VALUE,
-                y: Number.MAX_VALUE,
-                r: Math.sqrt(relation.value / Math.PI)
-            };
-        });
-
-    /**
-     * Takes a set and updates the position, and add the set to the list of
-     * positioned sets.
-     * @private
-     * @param {object} set
-     * The set to add to its final position.
-     * @param {object} coordinates
-     * The coordinates to position the set at.
-     * @return {void}
-     */
-    var positionSet = function positionSet(
-        set: Highcharts.VennRelationObject,
-        coordinates: PositionObject
-    ): void {
-        var circle = set.circle;
-
-        circle.x = coordinates.x;
-        circle.y = coordinates.y;
-        positionedSets.push(set);
-    };
-
-    // Find overlap between sets. Ignore relations with more then 2 sets.
-    addOverlapToSets(relations);
-
-    // Sort sets by the sum of their size from large to small.
-    var sortedByOverlap = relations
-        .filter(isSet)
-        .sort(sortByTotalOverlap);
-
-    // Position the most overlapped set at 0,0.
-    positionSet(sortedByOverlap.shift() as any, { x: 0, y: 0 });
-
-    var relationsWithTwoSets = relations.filter(
-        function (x: Highcharts.VennRelationObject): boolean {
-            return x.sets.length === 2;
-        }
-    );
-
-    // Iterate and position the remaining sets.
-    sortedByOverlap.forEach(function (
-        set: Highcharts.VennRelationObject
-    ): void {
-        var circle = set.circle,
-            radius = circle.r,
-            overlapping = set.overlapping;
-
-        var bestPosition = positionedSets
-            .reduce(function (
-                best: Highcharts.VennLabelOverlapObject,
-                positionedSet: Highcharts.VennRelationObject,
-                i: number
-            ): Highcharts.VennLabelOverlapObject {
-                var positionedCircle = positionedSet.circle,
-                    overlap = overlapping[positionedSet.sets[0]];
-
-                // Calculate the distance between the sets to get the correct
-                // overlap
-                var distance = getDistanceBetweenCirclesByOverlap(
-                    radius,
-                    positionedCircle.r,
-                    overlap
-                );
-
-                // Create a list of possible coordinates calculated from
-                // distance.
-                var possibleCoordinates: Array<PositionObject> = [
-                    { x: positionedCircle.x + distance, y: positionedCircle.y },
-                    { x: positionedCircle.x - distance, y: positionedCircle.y },
-                    { x: positionedCircle.x, y: positionedCircle.y + distance },
-                    { x: positionedCircle.x, y: positionedCircle.y - distance }
-                ];
-
-                // If there are more circles overlapping, then add the
-                // intersection points as possible positions.
-                positionedSets.slice(i + 1).forEach(function (
-                    positionedSet2: Highcharts.VennRelationObject
-                ): void {
-                    var positionedCircle2 = positionedSet2.circle,
-                        overlap2 = overlapping[positionedSet2.sets[0]],
-                        distance2 = getDistanceBetweenCirclesByOverlap(
-                            radius,
-                            positionedCircle2.r,
-                            overlap2
-                        );
-
-                    // Add intersections to list of coordinates.
-                    possibleCoordinates = possibleCoordinates.concat(
-                        getCircleCircleIntersection({
-                            x: positionedCircle.x,
-                            y: positionedCircle.y,
-                            r: distance
-                        }, {
-                            x: positionedCircle2.x,
-                            y: positionedCircle2.y,
-                            r: distance2
-                        })
-                    );
-                });
-
-                // Iterate all suggested coordinates and find the best one.
-                possibleCoordinates.forEach(function (coordinates): void {
-                    circle.x = coordinates.x;
-                    circle.y = coordinates.y;
-
-                    // Calculate loss for the suggested coordinates.
-                    var currentLoss = loss(
-                        mapOfIdToCircles, relationsWithTwoSets
-                    );
-
-                    // If the loss is better, then use these new coordinates.
-                    if (currentLoss < best.loss) {
-                        best.loss = currentLoss;
-                        best.coordinates = coordinates;
-                    }
-                });
-
-                // Return resulting coordinates.
-                return best;
-            }, {
-                loss: Number.MAX_VALUE,
-                coordinates: void 0 as any
-            });
-
-        // Add the set to its final position.
-        positionSet(set, bestPosition.coordinates);
-    });
-
-    // Return the positions of each set.
-    return mapOfIdToCircles;
-};
-
-/**
- * Calculates the positions, and the label values of all the sets in the venn
- * diagram.
- *
- * @private
- * @todo Add support for constrained MDS.
- * @param {Array<Highchats.VennRelationObject>} relations
- * List of the overlap between two or more sets, or the size of a single set.
- * @return {Highcharts.Dictionary<*>}
- * List of circles and their calculated positions.
- */
-function layout(
-    relations: Array<Highcharts.VennRelationObject>
-): ({
-        mapOfIdToShape: Highcharts.Dictionary<(
-            Highcharts.CircleObject|Highcharts.GeometryIntersectionObject
-        )>;
-        mapOfIdToLabelValues: Highcharts.Dictionary<(
-            Highcharts.VennLabelValuesObject
-        )>;
-    }) {
-    const mapOfIdToShape: Highcharts.Dictionary<(
-        Highcharts.CircleObject|Highcharts.GeometryIntersectionObject
-    )> = {};
-    const mapOfIdToLabelValues: Highcharts.Dictionary<(
-        Highcharts.VennLabelValuesObject
-    )> = {};
-
-    // Calculate best initial positions by using greedy layout.
-    if (relations.length > 0) {
-        const mapOfIdToCircles = layoutGreedyVenn(relations);
-        const setRelations = relations.filter(isSet);
-
-        relations
-            .forEach(function (relation: Highcharts.VennRelationObject): void {
-                const sets = relation.sets;
-                const id = sets.join();
-
-                // Get shape from map of circles, or calculate intersection.
-                const shape = isSet(relation) ?
-                    mapOfIdToCircles[id] :
-                    getAreaOfIntersectionBetweenCircles(
-                        sets.map((set): Highcharts.CircleObject =>
-                            mapOfIdToCircles[set])
-                    );
-
-                // Calculate label values if the set has a shape
-                if (shape) {
-                    mapOfIdToShape[id] = shape;
-                    mapOfIdToLabelValues[id] = getLabelValues(
-                        relation, setRelations
-                    );
-                }
-            });
-    }
-    return { mapOfIdToShape, mapOfIdToLabelValues };
-}
-
-var isValidRelation = function (
-    x: (Highcharts.VennPointOptions|Highcharts.VennRelationObject)
-): boolean {
-    var map: Highcharts.Dictionary<boolean> = {};
-
-    return (
-        isObject(x) &&
-        (isNumber(x.value) && x.value > -1) &&
-        (isArray(x.sets) && x.sets.length > 0) &&
-        !x.sets.some(function (set: string): boolean {
-            var invalid = false;
-
-            if (!map[set] && isString(set)) {
-                map[set] = true;
-            } else {
-                invalid = true;
-            }
-            return invalid;
-        })
-    );
-};
-
-var isValidSet = function (
-    x: (Highcharts.VennPointOptions|Highcharts.VennRelationObject)
-): boolean {
-    return (isValidRelation(x) && isSet(x) && (x.value as any) > 0);
-};
-
-/**
- * Prepares the venn data so that it is usable for the layout function. Filter
- * out sets, or intersections that includes sets, that are missing in the data
- * or has (value < 1). Adds missing relations between sets in the data as
- * value = 0.
- * @private
- * @param {Array<object>} data The raw input data.
- * @return {Array<object>} Returns an array of valid venn data.
- */
-var processVennData = function processVennData(
-    data: Array<Highcharts.VennPointOptions>
-): Array<Highcharts.VennRelationObject> {
-    var d = isArray(data) ? data : [];
-
-    var validSets = d
-        .reduce(function (
-            arr: Array<string>,
-            x: Highcharts.VennPointOptions
-        ): Array<string> {
-            // Check if x is a valid set, and that it is not an duplicate.
-            if (isValidSet(x) && arr.indexOf((x.sets as any)[0]) === -1) {
-                arr.push((x.sets as any)[0]);
-            }
-            return arr;
-        }, [])
-        .sort();
-
-    var mapOfIdToRelation = d.reduce(function (
-        mapOfIdToRelation: Highcharts.Dictionary<Highcharts.VennRelationObject>,
-        relation: Highcharts.VennPointOptions
-    ): Highcharts.Dictionary<Highcharts.VennRelationObject> {
-        if (
-            isValidRelation(relation) &&
-            !(relation.sets as any).some(function (set: string): boolean {
-                return validSets.indexOf(set) === -1;
-            })
-        ) {
-            mapOfIdToRelation[(relation.sets as any).sort().join()] =
-                relation as any;
-        }
-        return mapOfIdToRelation;
-    }, {});
-
-    validSets.reduce(function (
-        combinations: Array<string>,
-        set: string,
-        i: number,
-        arr: Array<string>
-    ): Array<string> {
-        var remaining = arr.slice(i + 1);
-
-        remaining.forEach(function (set2: string): void {
-            combinations.push(set + ',' + set2);
-        });
-        return combinations;
-    }, []).forEach(function (combination: string): void {
-        if (!mapOfIdToRelation[combination]) {
-            var obj: Highcharts.VennRelationObject = {
-                sets: combination.split(','),
-                value: 0
-            } as any;
-
-            mapOfIdToRelation[combination] = obj;
-        }
-    });
-
-    // Transform map into array.
-    return Object
-        .keys(mapOfIdToRelation)
-        .map(function (id): Highcharts.VennRelationObject {
-            return mapOfIdToRelation[id];
-        });
-};
-
-/**
- * Calculates the proper scale to fit the cloud inside the plotting area.
- * @private
- * @todo add unit test
- * @param {number} targetWidth
- * Width of target area.
- * @param {number} targetHeight
- * Height of target area.
- * @param {Highcharts.PolygonBoxObject} field
- * The playing field.
- * @return {Highcharts.Dictionary<number>}
- * Returns the value to scale the playing field up to the size of the target
- * area, and center of x and y.
- */
-var getScale = function getScale(
-    targetWidth: number,
-    targetHeight: number,
-    field: Highcharts.PolygonBoxObject
-): Highcharts.Dictionary<number> {
-    var height = field.bottom - field.top, // top is smaller than bottom
-        width = field.right - field.left,
-        scaleX = width > 0 ? 1 / width * targetWidth : 1,
-        scaleY = height > 0 ? 1 / height * targetHeight : 1,
-        adjustX = (field.right + field.left) / 2,
-        adjustY = (field.top + field.bottom) / 2,
-        scale = Math.min(scaleX, scaleY);
-
-    return {
-        scale: scale,
-        centerX: targetWidth / 2 - adjustX * scale,
-        centerY: targetHeight / 2 - adjustY * scale
-    };
-};
-
-/**
- * If a circle is outside a give field, then the boundaries of the field is
- * adjusted accordingly. Modifies the field object which is passed as the first
- * parameter.
- * @private
- * @todo NOTE: Copied from wordcloud, can probably be unified.
- * @param {Highcharts.PolygonBoxObject} field
- * The bounding box of a playing field.
- * @param {Highcharts.CircleObject} circle
- * The bounding box for a placed point.
- * @return {Highcharts.PolygonBoxObject}
- * Returns a modified field object.
- */
-var updateFieldBoundaries = function updateFieldBoundaries(
-    field: Highcharts.PolygonBoxObject,
-    circle: Highcharts.CircleObject
-): Highcharts.PolygonBoxObject {
-    var left = circle.x - circle.r,
-        right = circle.x + circle.r,
-        bottom = circle.y + circle.r,
-        top = circle.y - circle.r;
-
-    // TODO improve type checking.
-    if (!isNumber(field.left) || field.left > left) {
-        field.left = left;
-    }
-    if (!isNumber(field.right) || field.right < right) {
-        field.right = right;
-    }
-    if (!isNumber(field.top) || field.top > top) {
-        field.top = top;
-    }
-    if (!isNumber(field.bottom) || field.bottom < bottom) {
-        field.bottom = bottom;
-    }
-    return field;
-};
 
 /* *
  *
@@ -1113,7 +196,7 @@ class VennSeries extends ScatterSeries {
      * @requires     modules/venn
      * @optionparent plotOptions.venn
      */
-    public static defaultOptions: Highcharts.VennSeriesOptions = merge(ScatterSeries.defaultOptions, {
+    public static defaultOptions: VennSeriesOptions = merge(ScatterSeries.defaultOptions, {
         borderColor: '${palette.neutralColor20}',
         borderDashStyle: 'solid' as any,
         borderWidth: 1,
@@ -1158,7 +241,293 @@ class VennSeries extends ScatterSeries {
         tooltip: {
             pointFormat: '{point.name}: {point.value}'
         }
-    } as Highcharts.VennSeriesOptions);
+    } as VennSeriesOptions);
+
+    /* *
+     *
+     *  Static Functions
+     *
+     * */
+
+    /**
+     * Finds the optimal label position by looking for a position that has a low
+     * distance from the internal circles, and as large possible distane to the
+     * external circles.
+     * @private
+     * @todo Optimize the intial position.
+     * @todo Add unit tests.
+     * @param {Array<Highcharts.CircleObject>} internal
+     * Internal circles.
+     * @param {Array<Highcharts.CircleObject>} external
+     * External circles.
+     * @return {Highcharts.PositionObject}
+     * Returns the found position.
+     */
+    public static getLabelPosition(
+        internal: Array<Highcharts.CircleObject>,
+        external: Array<Highcharts.CircleObject>
+    ): PositionObject {
+        // Get the best label position within the internal circles.
+        var best = internal.reduce(function (
+            best: Highcharts.VennLabelPositionObject,
+            circle: Highcharts.CircleObject
+        ): Highcharts.VennLabelPositionObject {
+            var d = circle.r / 2;
+
+            // Give a set of points with the circle to evaluate as the best
+            // label position.
+            return [
+                { x: circle.x, y: circle.y },
+                { x: circle.x + d, y: circle.y },
+                { x: circle.x - d, y: circle.y },
+                { x: circle.x, y: circle.y + d },
+                { x: circle.x, y: circle.y - d }
+            ]
+                // Iterate the given points and return the one with the largest
+                // margin.
+                .reduce(function (
+                    best: Highcharts.VennLabelPositionObject,
+                    point: PositionObject
+                ): Highcharts.VennLabelPositionObject {
+                    var margin = VennUtils.getMarginFromCircles(point, internal, external);
+
+                    // If the margin better than the current best, then update
+                    // sbest.
+                    if (best.margin < margin) {
+                        best.point = point;
+                        best.margin = margin;
+                    }
+                    return best;
+                }, best);
+        }, {
+            point: void 0 as any,
+            margin: -Number.MAX_VALUE
+        }).point;
+
+        // Use nelder mead to optimize the initial label position.
+        var optimal = nelderMead(
+            function (p: Array<number>): number {
+                return -(
+                    VennUtils.getMarginFromCircles({ x: p[0], y: p[1] }, internal, external)
+                );
+            },
+            [best.x, best.y] as any
+        );
+
+        // Update best to be the point which was found to have the best margin.
+        best = {
+            x: optimal[0],
+            y: optimal[1]
+        };
+
+        if (!(
+            isPointInsideAllCircles(best, internal) &&
+            isPointOutsideAllCircles(best, external)
+        )) {
+            // If point was either outside one of the internal, or inside one of
+            // the external, then it was invalid and should use a fallback.
+            if (internal.length > 1) {
+                best = getCenterOfPoints(
+                    getCirclesIntersectionPolygon(internal)
+                );
+            } else {
+                best = {
+                    x: internal[0].x,
+                    y: internal[0].y
+                };
+            }
+        }
+
+        // Return the best point.
+        return best;
+    }
+
+    /**
+     * Calulates data label values for a given relations object.
+     *
+     * @private
+     * @todo add unit tests
+     * @param {Highcharts.VennRelationObject} relation A relations object.
+     * @param {Array<Highcharts.VennRelationObject>} setRelations The list of
+     * relations that is a set.
+     * @return {Highcharts.VennLabelValuesObject}
+     * Returns an object containing position and width of the label.
+     */
+    public static getLabelValues(
+        relation: Highcharts.VennRelationObject,
+        setRelations: Array<Highcharts.VennRelationObject>
+    ): Highcharts.VennLabelValuesObject {
+        const sets = relation.sets;
+        // Create a list of internal and external circles.
+        const data = setRelations.reduce(function (
+            data: Highcharts.Dictionary<(Array<Highcharts.CircleObject>)>,
+            set: Highcharts.VennRelationObject
+        ): Highcharts.Dictionary<Array<Highcharts.CircleObject>> {
+            // If the set exists in this relation, then it is internal,
+            // otherwise it will be external.
+            const isInternal = sets.indexOf(set.sets[0]) > -1;
+            const property = isInternal ? 'internal' : 'external';
+
+            // Add the circle to the list.
+            data[property].push(set.circle);
+            return data;
+        }, {
+            internal: [],
+            external: []
+        });
+
+        // Filter out external circles that are completely overlapping all
+        // internal
+        data.external = data.external.filter((externalCircle): boolean =>
+            data.internal.some((internalCircle): boolean =>
+                !isCircle1CompletelyOverlappingCircle2(
+                    externalCircle, internalCircle
+                )
+            )
+        );
+
+        // Calulate the label position.
+        const position = VennSeries.getLabelPosition(data.internal, data.external);
+        // Calculate the label width
+        const width = VennUtils.getLabelWidth(position, data.internal, data.external);
+
+        return {
+            position,
+            width
+        };
+    }
+
+    /**
+     * Calculates the positions, and the label values of all the sets in the
+     * venn diagram.
+     *
+     * @private
+     * @todo Add support for constrained MDS.
+     * @param {Array<Highchats.VennRelationObject>} relations
+     * List of the overlap between two or more sets, or the size of a single
+     * sset.
+     * @return {Highcharts.Dictionary<*>}
+     * List of circles and their calculated positions.
+     */
+    public static layout(
+        relations: Array<Highcharts.VennRelationObject>
+    ): ({
+            mapOfIdToShape: Highcharts.Dictionary<(
+                Highcharts.CircleObject|Highcharts.GeometryIntersectionObject
+            )>;
+            mapOfIdToLabelValues: Highcharts.Dictionary<(
+                Highcharts.VennLabelValuesObject
+            )>;
+        }) {
+        const mapOfIdToShape: Highcharts.Dictionary<(
+            Highcharts.CircleObject|Highcharts.GeometryIntersectionObject
+        )> = {};
+        const mapOfIdToLabelValues: Highcharts.Dictionary<(
+            Highcharts.VennLabelValuesObject
+        )> = {};
+
+        // Calculate best initial positions by using greedy layout.
+        if (relations.length > 0) {
+            const mapOfIdToCircles = VennUtils.layoutGreedyVenn(relations);
+            const setRelations = relations.filter(VennUtils.isSet);
+
+            relations
+                .forEach(function (relation: Highcharts.VennRelationObject): void {
+                    const sets = relation.sets;
+                    const id = sets.join();
+
+                    // Get shape from map of circles, or calculate intersection.
+                    const shape = VennUtils.isSet(relation) ?
+                        mapOfIdToCircles[id] :
+                        getAreaOfIntersectionBetweenCircles(
+                            sets.map((set): Highcharts.CircleObject =>
+                                mapOfIdToCircles[set])
+                        );
+
+                    // Calculate label values if the set has a shape
+                    if (shape) {
+                        mapOfIdToShape[id] = shape;
+                        mapOfIdToLabelValues[id] = VennSeries.getLabelValues(
+                            relation, setRelations
+                        );
+                    }
+                });
+        }
+        return { mapOfIdToShape, mapOfIdToLabelValues };
+    }
+
+
+    /**
+     * Calculates the proper scale to fit the cloud inside the plotting area.
+     * @private
+     * @todo add unit test
+     * @param {number} targetWidth
+     * Width of target area.
+     * @param {number} targetHeight
+     * Height of target area.
+     * @param {Highcharts.PolygonBoxObject} field
+     * The playing field.
+     * @return {Highcharts.Dictionary<number>}
+     * Returns the value to scale the playing field up to the size of the target
+     * area, and center of x and y.
+     */
+    public static getScale(
+        targetWidth: number,
+        targetHeight: number,
+        field: Highcharts.PolygonBoxObject
+    ): Highcharts.Dictionary<number> {
+        var height = field.bottom - field.top, // top is smaller than bottom
+            width = field.right - field.left,
+            scaleX = width > 0 ? 1 / width * targetWidth : 1,
+            scaleY = height > 0 ? 1 / height * targetHeight : 1,
+            adjustX = (field.right + field.left) / 2,
+            adjustY = (field.top + field.bottom) / 2,
+            scale = Math.min(scaleX, scaleY);
+
+        return {
+            scale: scale,
+            centerX: targetWidth / 2 - adjustX * scale,
+            centerY: targetHeight / 2 - adjustY * scale
+        };
+    }
+
+    /**
+     * If a circle is outside a give field, then the boundaries of the field is
+     * adjusted accordingly. Modifies the field object which is passed as the
+     * first parameter.
+     * @private
+     * @todo NOTE: Copied from wordcloud, can probably be unified.
+     * @param {Highcharts.PolygonBoxObject} field
+     * The bounding box of a playing field.
+     * @param {Highcharts.CircleObject} circle
+     * The bounding box for a placed point.
+     * @return {Highcharts.PolygonBoxObject}
+     * Returns a modified field object.
+     */
+    public static updateFieldBoundaries(
+        field: Highcharts.PolygonBoxObject,
+        circle: Highcharts.CircleObject
+    ): Highcharts.PolygonBoxObject {
+        var left = circle.x - circle.r,
+            right = circle.x + circle.r,
+            bottom = circle.y + circle.r,
+            top = circle.y - circle.r;
+
+        // TODO improve type checking.
+        if (!isNumber(field.left) || field.left > left) {
+            field.left = left;
+        }
+        if (!isNumber(field.right) || field.right < right) {
+            field.right = right;
+        }
+        if (!isNumber(field.top) || field.top > top) {
+            field.top = top;
+        }
+        if (!isNumber(field.bottom) || field.bottom < bottom) {
+            field.bottom = bottom;
+        }
+        return field;
+    }
 
     /* *
      *
@@ -1166,11 +535,11 @@ class VennSeries extends ScatterSeries {
      *
      * */
 
-    public data: Array<Highcharts.VennPoint> = void 0 as any;
+    public data: Array<VennPoint> = void 0 as any;
 
     public mapOfIdToRelation: Record<string, Highcharts.VennRelationObject> = void 0 as any;
 
-    public options: Highcharts.VennSeriesOptions = void 0 as any;
+    public options: VennSeriesOptions = void 0 as any;
 
     public points: Array<Highcharts.VennPoint> = void 0 as any;
 
@@ -1187,7 +556,7 @@ class VennSeries extends ScatterSeries {
             var series = this,
                 animOptions = animObject(series.options.animation);
 
-            series.points.forEach(function (point: Highcharts.VennPoint): void {
+            series.points.forEach(function (point): void {
                 var args = point.shapeArgs;
 
                 if (point.graphic && args) {
@@ -1315,10 +684,10 @@ class VennSeries extends ScatterSeries {
         this.generatePoints();
 
         // Process the data before passing it into the layout function.
-        var relations = processVennData(this.options.data as any);
+        var relations = VennUtils.processVennData(this.options.data as any);
 
         // Calculate the positions of each circle.
-        const { mapOfIdToShape, mapOfIdToLabelValues } = layout(relations);
+        const { mapOfIdToShape, mapOfIdToLabelValues } = VennSeries.layout(relations);
 
         // Calculate the scale, and center of the plot area.
         var field = Object.keys(mapOfIdToShape)
@@ -1331,12 +700,12 @@ class VennSeries extends ScatterSeries {
                     field: Highcharts.PolygonBoxObject,
                     key: string
                 ): Highcharts.PolygonBoxObject {
-                    return updateFieldBoundaries(
+                    return VennSeries.updateFieldBoundaries(
                         field,
                         mapOfIdToShape[key] as any
                     );
                 }, { top: 0, bottom: 0, left: 0, right: 0 }),
-            scaling = getScale(chart.plotWidth, chart.plotHeight, field),
+            scaling = VennSeries.getScale(chart.plotWidth, chart.plotHeight, field),
             scale = scaling.scale,
             centerX = scaling.centerX,
             centerY = scaling.centerY;
@@ -1430,84 +799,15 @@ interface VennSeries {
     isCartesian: boolean;
     pointArrayMap: Array<string>;
     pointClass: typeof VennPoint;
-    utils: Highcharts.VennUtilsObject;
+    utils: typeof VennUtils;
 }
 extend(VennSeries.prototype, {
     axisTypes: [],
     directTouch: true,
     isCartesian: false,
     pointArrayMap: ['value'],
-    utils: {
-        addOverlapToSets: addOverlapToSets,
-        geometry: GeometryMixin,
-        geometryCircles: GeometryCirclesModule,
-        getLabelWidth: getLabelWidth,
-        getMarginFromCircles: getMarginFromCircles,
-        getDistanceBetweenCirclesByOverlap: getDistanceBetweenCirclesByOverlap,
-        layoutGreedyVenn: layoutGreedyVenn,
-        loss: loss,
-        nelderMead: NelderMeadMixin,
-        processVennData: processVennData,
-        sortByTotalOverlap: sortByTotalOverlap
-    }
-});
-
-/* *
- *
- *  Class
- *
- * */
-
-class VennPoint extends ScatterSeries.prototype.pointClass implements Highcharts.DrawPoint {
-
-    /* *
-     *
-     *  Properties
-     *
-     * */
-
-    public options: Highcharts.VennPointOptions = void 0 as any;
-
-    public series: VennSeries = void 0 as any;
-
-    public sets?: Array<string>;
-
-    public value?: number;
-
-    /* *
-     *
-     *  Functions
-     *
-     * */
-
-    /* eslint-disable valid-jsdoc */
-
-    public isValid(): boolean {
-        return isNumber(this.value);
-    }
-
-    public shouldDraw(): boolean {
-        var point = this;
-
-        // Only draw points with single sets.
-        return !!point.shapeArgs;
-    }
-
-    /* eslint-enable valid-jsdoc */
-
-}
-
-/* *
- *
- *  Prototype Properties
- *
- * */
-
-interface VennPoint {
-    draw: typeof DrawPointMixin.draw;
-}
-extend(VennPoint.prototype, {
-    draw: DrawPointMixin.draw
+    pointClass: VennPoint,
+    utils: VennUtils
 });
 
 /* *
@@ -1521,7 +821,6 @@ declare module '../../Core/Series/SeriesType' {
         venn: typeof VennSeries;
     }
 }
-VennSeries.prototype.pointClass = VennPoint;
 BaseSeries.registerSeriesType('venn', VennSeries);
 
 /* *
@@ -1625,7 +924,7 @@ export default VennSeries;
 
 // Modify final series options.
 addEvent(VennSeries, 'afterSetOptions', function (
-    e: { options: Highcharts.VennSeriesOptions }
+    e: { options: VennSeriesOptions }
 ): void {
     var options = e.options,
         states: SeriesStatesOptions<VennSeries> = options.states as any;
