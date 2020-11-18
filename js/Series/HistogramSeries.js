@@ -106,6 +106,7 @@ BaseSeries.seriesType('histogram', 'column',
     setDerivedData: function () {
         var yData = this.baseSeries.yData;
         if (!yData.length) {
+            this.setData([], true);
             return;
         }
         var data = this.derivedData(yData, this.binsNumber(), this.options.binWidth);

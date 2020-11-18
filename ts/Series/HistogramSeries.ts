@@ -206,6 +206,7 @@ BaseSeries.seriesType<typeof Highcharts.HistogramSeries>(
             var yData = (this.baseSeries as any).yData;
 
             if (!yData.length) {
+                this.setData([], true);
                 return;
             }
 
