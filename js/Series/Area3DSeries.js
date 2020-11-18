@@ -22,14 +22,16 @@ wrap(seriesTypes.area.prototype, 'getGraphPath', function (proceed) {
     if (!series.chart.is3d()) {
         return svgPath;
     }
-    var getGraphPath = LineSeries.prototype.getGraphPath, graphPath = [], options = series.options, stacking = options.stacking, bottomPath, bottomPoints = series.bottomPoints, graphPoints = [], i, areaPath, connectNulls = pick(// #10574
-    options.connectNulls, stacking === 'percent'), options3d;
-    if (series.areaPath) {
-        for (var i = 0; i < series.areaPath.length; i++) {
-            if (!series.areaPath[i][1] || !series.areaPath[i][2]) {
-                series.areaPath.splice(i, 1);
-                i--;
-            }
+    var getGraphPath = LineSeries.prototype.getGraphPath, graphPath = [], options = series.options, stacking = options.stacking, bottomPath, bottomPoints = [], graphPoints = [], i, areaPath, connectNulls = pick(// #10574
+    options.connectNulls, stacking === 'percent'), translatedThreshold = Math.round(// #10909
+    series.yAxis.getThreshold(options.threshold)), options3d;
+    if (series.rawPointsX) {
+        for (var i = 0; i < series.points.length; i++) {
+            bottomPoints.push({
+                x: series.rawPointsX[i],
+                y: options.stacking ? series.points[i].yBottom : translatedThreshold,
+                z: series.zPadding
+            });
         }
     }
     if (series.chart.is3d() && series.chart.options && series.chart.options.chart) {
@@ -43,14 +45,15 @@ wrap(seriesTypes.area.prototype, 'getGraphPath', function (proceed) {
             });
         }
     }
-    bottomPoints.reversed = false;
+    bottomPoints.reversed = true;
     bottomPath = getGraphPath.call(series, bottomPoints, true, true);
     if (bottomPath[0] && bottomPath[0][0] === 'M') {
         bottomPath[0] = ['L', bottomPath[0][1], bottomPath[0][2]];
     }
     if (series.areaPath) {
-        areaPath = series.areaPath.concat(bottomPath);
-        areaPath.xMap = series.areaPath.xMap;
+        // Remove previously used bottomPath and add the new one.
+        areaPath = series.areaPath.splice(0, series.areaPath.length / 2).concat(bottomPath);
+        areaPath.xMap = series.areaPath.xMap; // Use old xMap in the new areaPath
         series.areaPath = areaPath;
         graphPath = getGraphPath.call(series, graphPoints, false, connectNulls);
     }

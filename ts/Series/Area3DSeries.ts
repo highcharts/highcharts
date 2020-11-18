@@ -44,7 +44,7 @@ wrap(seriesTypes.area.prototype, 'getGraphPath', function (
         options = series.options,
         stacking = options.stacking,
         bottomPath,
-        bottomPoints: Array<Highcharts.AreaPoint> = (series as any).bottomPoints,
+        bottomPoints: Array<Highcharts.AreaPoint> = [],
         graphPoints: Array<Highcharts.AreaPoint> = [],
         i: number,
         areaPath: SVGPath,
@@ -52,14 +52,18 @@ wrap(seriesTypes.area.prototype, 'getGraphPath', function (
             options.connectNulls,
             stacking === 'percent'
         ),
+        translatedThreshold = Math.round( // #10909
+            series.yAxis.getThreshold(options.threshold as any) as any
+        ),
         options3d;
 
-    if (series.areaPath) {
-        for (var i = 0; i < series.areaPath.length; i++) {
-            if (!series.areaPath[i][1] || !series.areaPath[i][2]) {
-                series.areaPath.splice(i, 1);
-                i--;
-            }
+    if (series.rawPointsX) {
+        for (var i = 0; i < series.points.length; i++) {
+            bottomPoints.push({
+                x: series.rawPointsX[i],
+                y: options.stacking ? series.points[i].yBottom : translatedThreshold,
+                z: series.zPadding
+            } as any);
         }
     }
 
@@ -80,7 +84,7 @@ wrap(seriesTypes.area.prototype, 'getGraphPath', function (
         }
     }
 
-    (bottomPoints as any).reversed = false;
+    (bottomPoints as any).reversed = true;
     bottomPath = getGraphPath.call(series, bottomPoints, true, true);
 
     if (bottomPath[0] && bottomPath[0][0] === 'M') {
@@ -88,8 +92,9 @@ wrap(seriesTypes.area.prototype, 'getGraphPath', function (
     }
 
     if (series.areaPath) {
-        areaPath = series.areaPath.concat(bottomPath);
-        areaPath.xMap = series.areaPath.xMap;
+        // Remove previously used bottomPath and add the new one.
+        areaPath = series.areaPath.splice(0, series.areaPath.length / 2).concat(bottomPath);
+        areaPath.xMap = series.areaPath.xMap; // Use old xMap in the new areaPath
         series.areaPath = areaPath;
         graphPath = getGraphPath.call(series, graphPoints, false, connectNulls);
     }
