@@ -14,22 +14,17 @@ var isPolygonsColliding = PolygonMixin.isPolygonsColliding, movePolygon = Polygo
 import U from '../../Core/Utilities.js';
 var extend = U.extend, find = U.find, isNumber = U.isNumber, isObject = U.isObject, merge = U.merge;
 /* *
- *
- * Namespace
- *
- * */
+  *
+  * Namespace
+  *
+  * */
 var WordcloudUtils;
 (function (WordcloudUtils) {
     /* *
-    *
-    * Properties
-    *
-    * */
-    /**
      *
      * Functions
      *
-     */
+     * */
     /**
      * Detects if there is a collision between two rectangles.
      *
@@ -76,8 +71,9 @@ var WordcloudUtils;
             }
             return result;
         };
-        // If the point has already intersected a different point, chances are they
-        // are still intersecting. So as an enhancement we check this first.
+        // If the point has already intersected a different point, chances are
+        // they are still intersecting. So as an enhancement we check this
+        // first.
         if (lastCollidedWith) {
             intersects = isIntersecting(lastCollidedWith);
             // If they no longer intersects, remove the cache from the point.
@@ -112,8 +108,8 @@ var WordcloudUtils;
      * Additional parameters.
      *
      * @return {boolean|Highcharts.PositionObject}
-     * Resulting coordinates, x and y. False if the word should be dropped from the
-     * visualization.
+     * Resulting coordinates, x and y. False if the word should be dropped from
+     * the visualization.
      */
     function archimedeanSpiral(attempt, params) {
         var field = params.field, result = false, maxDelta = (field.width * field.width) + (field.height * field.height), t = attempt * 0.8; // 0.2 * 4 = 0.8. Enlarging the spiral.
@@ -143,8 +139,8 @@ var WordcloudUtils;
      * Additional parameters.
      *
      * @return {boolean|Highcharts.PositionObject}
-     * Resulting coordinates, x and y. False if the word should be dropped from the
-     * visualization.
+     * Resulting coordinates, x and y. False if the word should be dropped from
+     * the visualization.
      */
     function squareSpiral(attempt, params) {
         var a = attempt * 4, k = Math.ceil((Math.sqrt(a) - 1) / 2), t = 2 * k + 1, m = Math.pow(t, 2), isBoolean = function (x) {
@@ -199,8 +195,8 @@ var WordcloudUtils;
      * Additional parameters.
      *
      * @return {boolean|Higcharts.PositionObject}
-     * Resulting coordinates, x and y. False if the word should be dropped from the
-     * visualization.
+     * Resulting coordinates, x and y. False if the word should be dropped from
+     * the visualization.
      */
     function rectangularSpiral(attempt, params) {
         var result = squareSpiral(attempt, params), field = params.field;
@@ -253,9 +249,9 @@ var WordcloudUtils;
     }
     WordcloudUtils.getScale = getScale;
     /**
-     * Calculates what is called the playing field. The field is the area which all
-     * the words are allowed to be positioned within. The area is proportioned to
-     * match the target aspect ratio.
+     * Calculates what is called the playing field. The field is the area which
+     * all the words are allowed to be positioned within. The area is
+     * proportioned to match the target aspect ratio.
      *
      * @private
      * @function getPlayingField
@@ -291,8 +287,8 @@ var WordcloudUtils;
             area: 0
         }), 
         /**
-         * Use largest width, largest height, or root of total area to give size
-         * to the playing field.
+         * Use largest width, largest height, or root of total area to give
+         * size to the playing field.
          */
         x = Math.max(info.maxHeight, // Have enough space for the tallest word
         info.maxWidth, // Have enough space for the broadest word
@@ -307,8 +303,8 @@ var WordcloudUtils;
     }
     WordcloudUtils.getPlayingField = getPlayingField;
     /**
-     * Calculates a number of degrees to rotate, based upon a number of orientations
-     * within a range from-to.
+     * Calculates a number of degrees to rotate, based upon a number of
+     * orientations within a range from-to.
      *
      * @private
      * @function getRotation
@@ -326,8 +322,8 @@ var WordcloudUtils;
      * The largest degree of rotation.
      *
      * @return {boolean|number}
-     * Returns the resulting rotation for the word. Returns false if invalid input
-     * parameters.
+     * Returns the resulting rotation for the word. Returns false if invalid
+     * input parameters.
      */
     function getRotation(orientations, index, from, to) {
         var result = false, // Default to false
@@ -366,7 +362,8 @@ var WordcloudUtils;
     function getSpiral(fn, params) {
         var length = 10000, i, arr = [];
         for (i = 1; i < length; i++) {
-            arr.push(fn(i, params)); // @todo unnecessary amount of precaclulation
+            // @todo unnecessary amount of precaclulation
+            arr.push(fn(i, params));
         }
         return function (attempt) {
             return attempt <= length ? arr[attempt - 1] : false;
@@ -416,8 +413,8 @@ var WordcloudUtils;
      * Options object.
      *
      * @return {boolean|Highcharts.PositionObject}
-     * Returns an object with how much to correct the positions. Returns false if
-     * the word should not be placed at all.
+     * Returns an object with how much to correct the positions. Returns false
+     * if the word should not be placed at all.
      */
     function intersectionTesting(point, options) {
         var placed = options.placed, field = options.field, rectangle = options.rectangle, polygon = options.polygon, spiral = options.spiral, attempt = 1, delta = {
@@ -477,7 +474,8 @@ var WordcloudUtils;
             // Multiply variable with ratios to preserve aspect ratio.
             extendWidth = x * ratioX;
             extendHeight = x * ratioY;
-            // Calculate the size of the new field after adding space for the word.
+            // Calculate the size of the new field after adding
+            // space for the word.
             result = merge(field, {
                 // Add space on the left and right.
                 width: field.width + (extendWidth * 2),
@@ -493,9 +491,9 @@ var WordcloudUtils;
     }
     WordcloudUtils.extendPlayingField = extendPlayingField;
     /**
-     * If a rectangle is outside a give field, then the boundaries of the field is
-     * adjusted accordingly. Modifies the field object which is passed as the first
-     * parameter.
+     * If a rectangle is outside a give field, then the boundaries of the field
+     * is adjusted accordingly. Modifies the field object which is passed as the
+     * first parameter.
      *
      * @private
      * @function updateFieldBoundaries
