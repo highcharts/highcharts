@@ -21,19 +21,18 @@ var __extends = (this && this.__extends) || (function () {
         d.prototype = b === null ? Object.create(b) : (__.prototype = b.prototype, new __());
     };
 })();
-import BaseSeries from '../Core/Series/Series.js';
-import BubblePoint from './Bubble/BubblePoint.js';
-import BubbleSeries from './Bubble/BubbleSeries.js';
-import Chart from '../Core/Chart/Chart.js';
-import Color from '../Core/Color/Color.js';
+import BaseSeries from '../../Core/Series/Series.js';
+var BubbleSeries = BaseSeries.seriesTypes.bubble;
+import Chart from '../../Core/Chart/Chart.js';
+import Color from '../../Core/Color/Color.js';
 var color = Color.parse;
-import H from '../Core/Globals.js';
-import LineSeries from '../Series/Line/LineSeries.js';
-import Point from '../Core/Series/Point.js';
-import U from '../Core/Utilities.js';
+import H from '../../Core/Globals.js';
+import LineSeries from '../../Series/Line/LineSeries.js';
+import Point from '../../Core/Series/Point.js';
+import U from '../../Core/Utilities.js';
 var addEvent = U.addEvent, clamp = U.clamp, defined = U.defined, extend = U.extend, extendClass = U.extendClass, fireEvent = U.fireEvent, isArray = U.isArray, isNumber = U.isNumber, merge = U.merge, pick = U.pick;
-import '../Series/Networkgraph/DraggableNodes.js';
-import '../Series/Networkgraph/Layouts.js';
+import '../../Series/Networkgraph/DraggableNodes.js';
+import '../../Series/Networkgraph/Layouts.js';
 var Reingold = H.layouts['reingold-fruchterman'], dragNodesMixin = H.dragNodesMixin;
 Chart.prototype.getSelectedParentNodes = function () {
     var chart = this, series = chart.series, selectedParentsNodes = [];
@@ -1336,7 +1335,7 @@ var PackedBubblePoint = /** @class */ (function (_super) {
         }
     };
     return PackedBubblePoint;
-}(BubblePoint));
+}(BubbleSeries.prototype.pointClass));
 PackedBubbleSeries.prototype.pointClass = PackedBubblePoint;
 BaseSeries.registerSeriesType('packedbubble', PackedBubbleSeries);
 /* *

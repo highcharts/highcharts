@@ -20,5 +20,5 @@ import '../Series/ErrorBar/ErrorBarSeries.js';
 import '../Series/WaterfallSeries.js';
 import '../Series/PolygonSeries.js';
 import '../Series/Bubble/BubbleSeries.js';
-import '../Series/PackedBubbleSeries.js';
+import '../Series/PackedBubble/PackedBubbleSeries.js';
 import '../Extensions/Polar.js';
