@@ -189,7 +189,7 @@ extend(BBIndicator.prototype, {
     drawGraph: MultipleLinesMixin.drawGraph,
     getTranslatedLinesNames: MultipleLinesMixin.getTranslatedLinesNames,
     translate: MultipleLinesMixin.translate,
-    toYData: MultipleLinesMixin.toYData,
+    toYData: MultipleLinesMixin.toYData
 });
 BaseSeries.registerSeriesType('bb', BBIndicator);
 /* *
