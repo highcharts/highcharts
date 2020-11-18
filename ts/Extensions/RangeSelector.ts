@@ -1235,7 +1235,7 @@ class RangeSelector {
         }
 
         input.value = time.dateFormat(
-            inputTypeFormats[input.type] || options.inputEditDateFormat || '%Y-%m-%d',
+            this.inputTypeFormats[input.type] || options.inputEditDateFormat || '%Y-%m-%d',
             input.HCTime
         );
 
@@ -1856,7 +1856,7 @@ class RangeSelector {
                 const unionExtremes = chart.scroller.getUnionExtremes();
                 const minInput = (this as any).minInput;
                 const maxInput = (this as any).maxInput;
-                const format = inputTypeFormats[minInput.type];
+                const format = this.inputTypeFormats[minInput.type];
 
                 if (unionExtremes &&
                     unionExtremes.dataMin &&
@@ -2097,6 +2097,7 @@ class RangeSelector {
  */
 interface RangeSelector {
     defaultButtons: Array<Highcharts.RangeSelectorButtonsOptions>;
+    inputTypeFormats: Record<string, string>;
 }
 
 /**
@@ -2135,7 +2136,7 @@ RangeSelector.prototype.defaultButtons = [{
 /**
  * The date formats to use when setting min, max and value on date inputs
  */
-const inputTypeFormats: Record<string, string> = {
+RangeSelector.prototype.inputTypeFormats = {
     'datetime-local': '%Y-%m-%dT%H%M%S',
     'date': '%Y-%m-%d',
     'time': '%H%M%S'

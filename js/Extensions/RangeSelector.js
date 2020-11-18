@@ -856,7 +856,7 @@ var RangeSelector = /** @class */ (function () {
             input.previousValue = input.HCTime;
             input.HCTime = inputTime;
         }
-        input.value = time.dateFormat(inputTypeFormats[input.type] || options.inputEditDateFormat || '%Y-%m-%d', input.HCTime);
+        input.value = time.dateFormat(this.inputTypeFormats[input.type] || options.inputEditDateFormat || '%Y-%m-%d', input.HCTime);
         this[name + 'DateBox'].attr({
             text: time.dateFormat(options.inputDateFormat || '%b %e, %Y', input.HCTime)
         });
@@ -1282,7 +1282,7 @@ var RangeSelector = /** @class */ (function () {
                 var unionExtremes = chart.scroller.getUnionExtremes();
                 var minInput = this.minInput;
                 var maxInput = this.maxInput;
-                var format = inputTypeFormats[minInput.type];
+                var format = this.inputTypeFormats[minInput.type];
                 if (unionExtremes &&
                     unionExtremes.dataMin &&
                     unionExtremes.dataMax &&
@@ -1491,7 +1491,7 @@ RangeSelector.prototype.defaultButtons = [{
 /**
  * The date formats to use when setting min, max and value on date inputs
  */
-var inputTypeFormats = {
+RangeSelector.prototype.inputTypeFormats = {
     'datetime-local': '%Y-%m-%dT%H%M%S',
     'date': '%Y-%m-%d',
     'time': '%H%M%S'
