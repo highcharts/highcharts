@@ -16,6 +16,7 @@ import type DataLabelOptions from '../Core/Series/DataLabelOptions';
 import type RadialAxis from '../Core/Axis/RadialAxis';
 import type { SeriesStatesOptions } from '../Core/Series/SeriesOptions';
 import type SVGPath from '../Core/Renderer/SVG/SVGPath';
+import type SVGElement from '../core/Renderer/SVG/SVGElement';
 import AreaSeries from './Area/AreaSeries.js';
 import type AreaPoint from './Area/AreaPoint';
 import BaseSeries from '../Core/Series/Series.js';
@@ -182,29 +183,32 @@ class AreaRangeSeries extends AreaSeries {
             yHigh: 0
 
         }
-    } as Highcharts.AreaRangeSeriesOptions)
+    } as Highcharts.AreaRangeSeriesOptions);
 
-}
 
-/**
- *
- *  Prototype props
- *
- */
+    /* *
+     *
+     *  Properties
+     *
+     * */
 
-extend(AreaRangeSeries.prototype, {
-    pointArrayMap: ['low', 'high'],
-    pointValKey: 'low',
-    deferTranslatePolar: true,
-
-    /* eslint-disable valid-jsdoc */
+    public data: Array<AreaRangePoint> = void 0 as any;
+    public options: Highcharts.AreaRangeSeriesOptions = void 0 as any;
+    public points: Array<AreaRangePoint> = void 0 as any;
+    public lowerStateMarkerGraphic?: SVGElement = void 0 as any;
+    public upperStateMarkerGraphic?: SVGElement;
+    public xAxis: RadialAxis = void 0 as any;
 
     /**
-     * @private
+     *
+     *  Functions
+     *
      */
-    toYData: function (point: Highcharts.AreaRangePoint): [number, number] {
+    /* eslint-disable valid-jsdoc */
+
+    public toYData(point: AreaRangePoint): [number, number] {
         return [point.low, point.high];
-    },
+    }
 
     /**
      * Translate a point's plotHigh from the internal angle and radius measures
@@ -213,10 +217,7 @@ extend(AreaRangeSeries.prototype, {
      * considered (#3419).
      * @private
      */
-    highToXY: function (
-        this: Highcharts.AreaRangeSeries,
-        point: Highcharts.AreaRangePoint
-    ): void {
+    public highToXY(point: AreaRangePoint): void {
         // Find the polar plotX and plotY
         var chart = this.chart,
             xy = this.xAxis.postTranslate(
@@ -227,13 +228,13 @@ extend(AreaRangeSeries.prototype, {
         point.plotHighX = xy.x - chart.plotLeft;
         point.plotHigh = xy.y - chart.plotTop;
         point.plotLowX = point.plotX;
-    },
+    }
 
     /**
      * Translate data points from raw values x and y to plotX and plotY.
      * @private
      */
-    translate: function (this: Highcharts.AreaRangeSeries): void {
+    public translate(): void {
         var series = this,
             yAxis = series.yAxis,
             hasModifyValue = !!series.modifyValue;
@@ -242,7 +243,7 @@ extend(AreaRangeSeries.prototype, {
 
         // Set plotLow and plotHigh
         series.points.forEach(function (
-            point: Highcharts.AreaRangePoint
+            point: AreaRangePoint
         ): void {
 
             var high = point.high,
@@ -270,7 +271,7 @@ extend(AreaRangeSeries.prototype, {
         // Postprocess plotHigh
         if (this.chart.polar) {
             (this as any).points.forEach(function (
-                point: (Highcharts.AreaRangePoint & Highcharts.PolarPoint)
+                point: (AreaRangePoint & Highcharts.PolarPoint)
             ): void {
                 series.highToXY(point);
                 point.tooltipPos = [
@@ -279,17 +280,14 @@ extend(AreaRangeSeries.prototype, {
                 ];
             });
         }
-    },
+    }
 
     /**
      * Extend the line series' getSegmentPath method by applying the segment
      * path to both lower and higher values of the range.
      * @private
      */
-    getGraphPath: function (
-        this: Highcharts.AreaRangeSeries,
-        points: Array<Highcharts.AreaRangePoint>
-    ): SVGPath {
+    public getGraphPath(points: Array<AreaRangePoint>): SVGPath {
 
         var highPoints = [],
             highAreaPoints: Array<AreaPoint> = [],
@@ -396,14 +394,14 @@ extend(AreaRangeSeries.prototype, {
         this.areaPath.xMap = lowerPath.xMap;
 
         return linePath;
-    },
+    }
 
     /**
      * Extend the basic drawDataLabels method by running it for both lower and
      * higher values.
      * @private
      */
-    drawDataLabels: function (this: Highcharts.AreaRangeSeries): void {
+    public drawDataLabels(): void {
 
         var data = this.points,
             length = data.length,
@@ -551,13 +549,13 @@ extend(AreaRangeSeries.prototype, {
 
         // Reset options
         this.options.dataLabels = dataLabelOptions;
-    },
+    }
 
-    alignDataLabel: function (this: Highcharts.AreaRangeSeries): void {
+    public alignDataLabel(): void {
         columnProto.alignDataLabel.apply(this, arguments as any);
-    },
+    }
 
-    drawPoints: function (this: Highcharts.AreaRangeSeries): void {
+    public drawPoints(): void {
         var series = this,
             pointLength = series.points.length,
             point,
@@ -618,38 +616,46 @@ extend(AreaRangeSeries.prototype, {
             delete point.origProps;
             i++;
         }
-    },
+    }
+
+    public setStackedPoints = noop;
 
     /* eslint-enable valid-jsdoc */
-
-    setStackedPoints: noop as any
-});
-
-class AreaRangePoint extends AreaSeries.prototype.pointClass {
-
 }
 
-AreaRangeSeries.prototype.pointClass = AreaRangePoint;
+/**
+ *
+ *  Prototype props
+ *
+ */
+interface AreaRangeSeries extends AreaSeries {
+    pointClass: typeof AreaRangePoint;
+    pointArrayMap: Array<string>;
+    pointValKey: string;
+    deferTranslatePolar: boolean;
+}
+extend(AreaRangeSeries.prototype, {
+    pointArrayMap: ['low', 'high'],
+    pointValKey: 'low',
+    deferTranslatePolar: true
+});
 
-extend(AreaRangeSeries.prototype.pointClass.prototype, {
+
+interface AreaRangePoint{
+    series: AreaRangeSeries;
+}
+class AreaRangePoint extends AreaSeries.prototype.pointClass {
+
     /**
-     * Range series only. The high or maximum value for each data point.
-     * @name Highcharts.Point#high
-     * @type {number|undefined}
+     *
+     *  Functions
+     *
      */
-
-    /**
-     * Range series only. The low or minimum value for each data point.
-     * @name Highcharts.Point#low
-     * @type {number|undefined}
-     */
-
-    /* eslint-disable valid-jsdoc */
 
     /**
      * @private
      */
-    setState: function (this: Highcharts.AreaRangePoint): void {
+    public setState(): void {
         var prevState = this.state,
             series = this.series,
             isPolar = series.chart.polar;
@@ -701,10 +707,9 @@ extend(AreaRangeSeries.prototype.pointClass.prototype, {
 
         pointProto.setState.apply(this, arguments as any);
 
-    },
-    haloPath: function (
-        this: Highcharts.AreaRangePoint
-    ): SVGPath {
+    }
+
+    public haloPath(): SVGPath {
         var isPolar = this.series.chart.polar,
             path: SVGPath = [];
 
@@ -730,8 +735,9 @@ extend(AreaRangeSeries.prototype.pointClass.prototype, {
         }
 
         return path;
-    },
-    destroyElements: function (this: Highcharts.AreaRangePoint): void {
+    }
+
+    public destroyElements(): void {
         var graphics = ['lowerGraphic', 'upperGraphic'];
 
         graphics.forEach(function (graphicName): void {
@@ -745,12 +751,51 @@ extend(AreaRangeSeries.prototype.pointClass.prototype, {
         this.graphic = null as any;
 
         return pointProto.destroyElements.apply(this, arguments as any);
-    },
-    isValid: function (this: Highcharts.AreaRangePoint): boolean {
+    }
+
+    public isValid(): boolean {
         return isNumber(this.low) && isNumber(this.high);
     }
 
-    /* eslint-enable valid-jsdoc */
+    /**
+     *
+     *  Properties
+     *
+     */
+
+    public _plotY?: number;
+    public below?: boolean;
+    public dataLabelUpper?: SVGElement;
+    public high: number = void 0 as any;
+    public isInside?: boolean;
+    public isTopInside?: boolean;
+    public low: number = void 0 as any;
+    public lowerGraphic?: SVGElement;
+    public options: Highcharts.AreaRangePointOptions = void 0 as any;
+    public origProps?: object;
+    public plotHigh: number = void 0 as any;
+    public plotLow: number = void 0 as any;
+    public plotHighX: number = void 0 as any;
+    public plotLowX: number = void 0 as any;
+    public plotX: number = void 0 as any;
+    public series: AreaRangeSeries = void 0 as any;
+    public upperGraphic?: SVGElement;
+}
+
+AreaRangeSeries.prototype.pointClass = AreaRangePoint;
+
+extend(AreaRangeSeries.prototype.pointClass.prototype, {
+    /**
+     * Range series only. The high or maximum value for each data point.
+     * @name Highcharts.Point#high
+     * @type {number|undefined}
+     */
+
+    /**
+     * Range series only. The low or minimum value for each data point.
+     * @name Highcharts.Point#low
+     * @type {number|undefined}
+     */
 
 });
 
