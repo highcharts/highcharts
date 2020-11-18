@@ -916,7 +916,7 @@ var VennSeries = /** @class */ (function (_super) {
      * @requires     modules/venn
      * @optionparent plotOptions.venn
      */
-    VennSeries.defaultOptions = {
+    VennSeries.defaultOptions = merge(ScatterSeries.defaultOptions, {
         borderColor: '${palette.neutralColor20}',
         borderDashStyle: 'solid',
         borderWidth: 1,
@@ -961,7 +961,7 @@ var VennSeries = /** @class */ (function (_super) {
         tooltip: {
             pointFormat: '{point.name}: {point.value}'
         }
-    };
+    });
     return VennSeries;
 }(ScatterSeries));
 extend(VennSeries.prototype, {
