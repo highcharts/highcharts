@@ -10,16 +10,22 @@
 
 import type IndicatorValuesObject from './IndicatorValuesObject';
 import type LineSeries from '../../Series/Line/LineSeries';
-import type SMAIndicator from './SMA/SMAIndicator';
 import type {
     SMAOptions,
     SMAParamsOptions
 } from './SMA/SMAOptions';
 import type SMAPoint from './SMA/SMAPoint';
 import BaseSeries from '../../Core/Series/Series.js';
+const {
+    seriesTypes: {
+        sma: SMAIndicator
+    }
+} = BaseSeries;
 import U from '../../Core/Utilities.js';
 const {
-    isArray
+    isArray,
+    merge,
+    extend
 } = U;
 
 /**
@@ -28,16 +34,6 @@ const {
  */
 declare global {
     namespace Highcharts {
-        class ATRIndicator extends SMAIndicator {
-            public data: Array<ATRIndicatorPoint>
-            public pointClass: typeof ATRIndicatorPoint;
-            public points: Array<ATRIndicatorPoint>;
-            public getValues<TLinkedSeries extends LineSeries>(
-                series: TLinkedSeries,
-                params: ATRIndicatorParamsOptions
-            ): (IndicatorValuesObject<TLinkedSeries>|undefined);
-        }
-
         interface ATRIndicatorOptions extends SMAOptions {
             params?: ATRIndicatorParamsOptions;
         }
@@ -49,12 +45,6 @@ declare global {
         class ATRIndicatorPoint extends SMAPoint {
             public series: ATRIndicator
         }
-    }
-}
-
-declare module '../../Core/Series/SeriesType' {
-    interface SeriesTypeRegistry {
-        atr: typeof Highcharts.ATRIndicator;
     }
 }
 
@@ -122,9 +112,7 @@ function populateAverage(
  *
  * @augments Highcharts.Series
  */
-BaseSeries.seriesType<typeof Highcharts.ATRIndicator>(
-    'atr',
-    'sma',
+class ATRIndicator extends SMAIndicator {
     /**
      * Average true range indicator (ATR). This series requires `linkedTo`
      * option to be set.
@@ -139,84 +127,118 @@ BaseSeries.seriesType<typeof Highcharts.ATRIndicator>(
      * @requires     stock/indicators/atr
      * @optionparent plotOptions.atr
      */
-    {
+    public static defaultOptions: Highcharts.ATRIndicatorOptions = merge(SMAIndicator.defaultOptions, {
         params: {
             period: 14
         }
-    },
-    /**
-     * @lends Highcharts.Series#
-     */
-    {
-        getValues: function<TLinkedSeries extends LineSeries> (
-            series: TLinkedSeries,
-            params: Highcharts.ATRIndicatorParamsOptions
-        ): (IndicatorValuesObject<TLinkedSeries>|undefined) {
-            var period: number = (params.period as any),
-                xVal: Array<number> = (series.xData as any),
-                yVal: Array<Array<number>> = (series.yData as any),
-                yValLen: number = yVal ? yVal.length : 0,
-                xValue: number = (xVal as any)[0],
-                yValue: Array<number> = yVal[0],
-                range = 1,
-                prevATR = 0,
-                TR = 0,
-                ATR: Array<Array<number>> = [],
-                xData: Array<number> = [],
-                yData: Array<number> = [],
-                point: (Array<number>|undefined),
-                i: (number|undefined),
-                points: Array<[number, Array<number>]>;
+    } as Highcharts.ATRIndicatorOptions);
+}
 
-            points = [[xValue, yValue]];
+/* *
+ *
+ *  Prototype Properties
+ *
+ * */
 
-            if (
-                (xVal.length <= period) ||
-                !isArray(yVal[0]) ||
-                yVal[0].length !== 4
-            ) {
-                return;
-            }
+interface ATRIndicator {
+    data: Array<Highcharts.ATRIndicatorPoint>;
+    pointClass: typeof Highcharts.ATRIndicatorPoint;
+    points: Array<Highcharts.ATRIndicatorPoint>;
+    getValues<TLinkedSeries extends LineSeries>(
+        series: TLinkedSeries,
+        params: Highcharts.ATRIndicatorParamsOptions
+    ): (IndicatorValuesObject<TLinkedSeries>|undefined);
+}
 
-            for (i = 1; i <= yValLen; i++) {
+extend(ATRIndicator.prototype, {
+    getValues: function<TLinkedSeries extends LineSeries> (
+        series: TLinkedSeries,
+        params: Highcharts.ATRIndicatorParamsOptions
+    ): (IndicatorValuesObject<TLinkedSeries>|undefined) {
+        var period: number = (params.period as any),
+            xVal: Array<number> = (series.xData as any),
+            yVal: Array<Array<number>> = (series.yData as any),
+            yValLen: number = yVal ? yVal.length : 0,
+            xValue: number = (xVal as any)[0],
+            yValue: Array<number> = yVal[0],
+            range = 1,
+            prevATR = 0,
+            TR = 0,
+            ATR: Array<Array<number>> = [],
+            xData: Array<number> = [],
+            yData: Array<number> = [],
+            point: (Array<number>|undefined),
+            i: (number|undefined),
+            points: Array<[number, Array<number>]>;
 
-                accumulateAverage(points, xVal, yVal, i);
+        points = [[xValue, yValue]];
 
-                if (period < range) {
-                    point = populateAverage(
-                        points,
-                        xVal,
-                        yVal,
-                        i,
-                        period,
-                        prevATR
-                    );
-                    prevATR = point[1];
-                    ATR.push(point);
-                    xData.push(point[0]);
-                    yData.push(point[1]);
-
-                } else if (period === range) {
-                    prevATR = TR / (i - 1);
-                    ATR.push([xVal[i - 1], prevATR]);
-                    xData.push(xVal[i - 1]);
-                    yData.push(prevATR);
-                    range++;
-                } else {
-                    TR += getTR(yVal[i - 1], yVal[i - 2]);
-                    range++;
-                }
-            }
-
-            return {
-                values: ATR,
-                xData: xData,
-                yData: yData
-            } as IndicatorValuesObject<TLinkedSeries>;
+        if (
+            (xVal.length <= period) ||
+            !isArray(yVal[0]) ||
+            yVal[0].length !== 4
+        ) {
+            return;
         }
 
+        for (i = 1; i <= yValLen; i++) {
+
+            accumulateAverage(points, xVal, yVal, i);
+
+            if (period < range) {
+                point = populateAverage(
+                    points,
+                    xVal,
+                    yVal,
+                    i,
+                    period,
+                    prevATR
+                );
+                prevATR = point[1];
+                ATR.push(point);
+                xData.push(point[0]);
+                yData.push(point[1]);
+
+            } else if (period === range) {
+                prevATR = TR / (i - 1);
+                ATR.push([xVal[i - 1], prevATR]);
+                xData.push(xVal[i - 1]);
+                yData.push(prevATR);
+                range++;
+            } else {
+                TR += getTR(yVal[i - 1], yVal[i - 2]);
+                range++;
+            }
+        }
+
+        return {
+            values: ATR,
+            xData: xData,
+            yData: yData
+        } as IndicatorValuesObject<TLinkedSeries>;
     }
-);
+});
+
+/* *
+ *
+ *  Registry
+ *
+ * */
+declare module '../../Core/Series/SeriesType' {
+    interface SeriesTypeRegistry {
+        atr: typeof ATRIndicator;
+    }
+}
+
+BaseSeries.registerSeriesType('atr', ATRIndicator);
+
+/* *
+ *
+ *  Default Export
+ *
+ * */
+
+export default ATRIndicator;
 
 /**
  * A `ATR` series. If the [type](#series.atr.type) option is not specified, it
