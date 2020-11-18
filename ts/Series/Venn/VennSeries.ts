@@ -23,34 +23,34 @@
  *
  * */
 
-import type Chart from '../Core/Chart/Chart';
-import type DashStyleValue from '../Core/Renderer/DashStyleValue';
-import type PositionObject from '../Core/Renderer/PositionObject';
-import type ScatterPoint from './Scatter/ScatterPoint';
-import type ScatterPointOptions from './Scatter/ScatterPointOptions';
-import type ScatterSeriesOptions from './Scatter/ScatterSeriesOptions';
-import type { SeriesStatesOptions } from '../Core/Series/SeriesOptions';
-import type { StatesOptionsKey } from '../Core/Series/StatesOptions';
-import type SVGAttributes from '../Core/Renderer/SVG/SVGAttributes';
-import type SVGElement from '../Core/Renderer/SVG/SVGElement';
-import type SVGPath from '../Core/Renderer/SVG/SVGPath';
-import A from '../Core/Animation/AnimationUtilities.js';
+import type Chart from '../../Core/Chart/Chart';
+import type DashStyleValue from '../../Core/Renderer/DashStyleValue';
+import type PositionObject from '../../Core/Renderer/PositionObject';
+import type ScatterPoint from '../Scatter/ScatterPoint';
+import type ScatterPointOptions from '../Scatter/ScatterPointOptions';
+import type ScatterSeriesOptions from '../Scatter/ScatterSeriesOptions';
+import type { SeriesStatesOptions } from '../../Core/Series/SeriesOptions';
+import type { StatesOptionsKey } from '../../Core/Series/StatesOptions';
+import type SVGAttributes from '../../Core/Renderer/SVG/SVGAttributes';
+import type SVGElement from '../../Core/Renderer/SVG/SVGElement';
+import type SVGPath from '../../Core/Renderer/SVG/SVGPath';
+import A from '../../Core/Animation/AnimationUtilities.js';
 const { animObject } = A;
-import BaseSeries from '../Core/Series/Series.js';
+import BaseSeries from '../../Core/Series/Series.js';
 const {
     seriesTypes: {
         scatter: ScatterSeries
     }
 } = BaseSeries;
-import Color from '../Core/Color/Color.js';
+import Color from '../../Core/Color/Color.js';
 const { parse: color } = Color;
-import DrawPointMixin from '../Mixins/DrawPoint.js';
-import GeometryMixin from '../Mixins/Geometry.js';
+import DrawPointMixin from '../../Mixins/DrawPoint.js';
+import GeometryMixin from '../../Mixins/Geometry.js';
 const {
     getCenterOfPoints,
     getDistanceBetweenPoints
 } = GeometryMixin;
-import GeometryCirclesModule from '../Mixins/GeometryCircles.js';
+import GeometryCirclesModule from '../../Mixins/GeometryCircles.js';
 const {
     getAreaOfCircle,
     getAreaOfIntersectionBetweenCircles,
@@ -62,9 +62,9 @@ const {
     isPointInsideCircle,
     isPointOutsideAllCircles
 } = GeometryCirclesModule;
-import NelderMeadMixin from '../Mixins/NelderMead.js';
+import NelderMeadMixin from '../../Mixins/NelderMead.js';
 const { nelderMead } = NelderMeadMixin;
-import U from '../Core/Utilities.js';
+import U from '../../Core/Utilities.js';
 const {
     addEvent,
     extend,
@@ -74,8 +74,6 @@ const {
     isString,
     merge
 } = U;
-
-import './Scatter/ScatterSeries.js';
 
 /**
  * Internal types
@@ -1518,7 +1516,7 @@ extend(VennPoint.prototype, {
  *
  * */
 
-declare module '../Core/Series/SeriesType' {
+declare module '../../Core/Series/SeriesType' {
     interface SeriesTypeRegistry {
         venn: typeof VennSeries;
     }
