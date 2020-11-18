@@ -23,17 +23,17 @@ var __extends = (this && this.__extends) || (function () {
         d.prototype = b === null ? Object.create(b) : (__.prototype = b.prototype, new __());
     };
 })();
-import BaseSeries from '../Core/Series/Series.js';
-import ColumnSeries from './Column/ColumnSeries.js';
-import DrawPointMixin from '../Mixins/DrawPoint.js';
-import H from '../Core/Globals.js';
+import BaseSeries from '../../Core/Series/Series.js';
+import ColumnSeries from '../Column/ColumnSeries.js';
+import DrawPointMixin from '../../Mixins/DrawPoint.js';
+import H from '../../Core/Globals.js';
 var noop = H.noop;
-import LineSeries from './Line/LineSeries.js';
-import PolygonMixin from '../Mixins/Polygon.js';
+import LineSeries from '../Line/LineSeries.js';
+import PolygonMixin from '../../Mixins/Polygon.js';
 var getBoundingBoxFromPolygon = PolygonMixin.getBoundingBoxFromPolygon, getPolygon = PolygonMixin.getPolygon, isPolygonsColliding = PolygonMixin.isPolygonsColliding, movePolygon = PolygonMixin.movePolygon, rotate2DToOrigin = PolygonMixin.rotate2DToOrigin, rotate2DToPoint = PolygonMixin.rotate2DToPoint;
-import U from '../Core/Utilities.js';
+import U from '../../Core/Utilities.js';
 var extend = U.extend, find = U.find, isArray = U.isArray, isNumber = U.isNumber, isObject = U.isObject, merge = U.merge;
-import './Column/ColumnSeries.js';
+import '../Column/ColumnSeries.js';
 /**
  * Detects if there is a collision between two rectangles.
  *
@@ -898,7 +898,7 @@ extend(WordcloudSeries.prototype, {
         isPolygonsColliding: isPolygonsColliding,
         rotate2DToOrigin: rotate2DToOrigin,
         rotate2DToPoint: rotate2DToPoint
-    },
+    }
 });
 var WordcloudPoint = /** @class */ (function (_super) {
     __extends(WordcloudPoint, _super);
