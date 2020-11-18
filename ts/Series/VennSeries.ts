@@ -1115,7 +1115,7 @@ class VennSeries extends ScatterSeries {
      * @requires     modules/venn
      * @optionparent plotOptions.venn
      */
-    public static defaultOptions: Highcharts.VennSeriesOptions = {
+    public static defaultOptions: Highcharts.VennSeriesOptions = merge(ScatterSeries.defaultOptions, {
         borderColor: '${palette.neutralColor20}',
         borderDashStyle: 'solid' as any,
         borderWidth: 1,
@@ -1160,7 +1160,7 @@ class VennSeries extends ScatterSeries {
         tooltip: {
             pointFormat: '{point.name}: {point.value}'
         }
-    };
+    } as Highcharts.VennSeriesOptions);
 
     /* *
      *
