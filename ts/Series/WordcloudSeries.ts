@@ -31,7 +31,6 @@ import type SVGElement from '../Core/Renderer/SVG/SVGElement';
 import BaseSeries from '../Core/Series/Series.js';
 import ColumnSeries from './Column/ColumnSeries.js';
 import DrawPointMixin from '../Mixins/DrawPoint.js';
-const { drawPoint } = DrawPointMixin;
 import H from '../Core/Globals.js';
 const { noop } = H;
 import LineSeries from './Line/LineSeries.js';
@@ -62,42 +61,6 @@ import './Column/ColumnSeries.js';
  */
 declare global {
     namespace Highcharts {
-        class WordcloudPoint extends ColumnPoint {
-            public dimensions: SizeObject;
-            public draw: typeof drawPoint;
-            public lastCollidedWith?: WordcloudPoint;
-            public options: WordcloudPointOptions;
-            public polygon?: PolygonObject;
-            public rect?: PolygonBoxObject;
-            public rotation?: (boolean|number);
-            public series: WordcloudSeries;
-            public weight: number;
-            public isValid: () => boolean;
-            public shouldDraw(): boolean;
-        }
-        class WordcloudSeries extends ColumnSeries {
-            public data: Array<WordcloudPoint>;
-            public options: WordcloudSeriesOptions;
-            public placementStrategy: Dictionary<WordcloudPlacementFunction>;
-            public pointArrayMap: Array<string>;
-            public pointClass: typeof WordcloudPoint;
-            public points: Array<WordcloudPoint>;
-            public spirals: Dictionary<WordcloudSpiralFunction>;
-            public utils: WordcloudUtilsObject;
-            public bindAxes(): void;
-            public deriveFontSize(
-                relativeWeight?: number,
-                maxFontSize?: number,
-                minFontSize?: number
-            ): number;
-            public drawPoints(): void;
-            public getPlotBox(): SeriesPlotBoxObject;
-            public hasData(): boolean;
-            public pointAttribs(
-                point: WordcloudPoint,
-                state?: StatesOptionsKey
-            ): SVGAttributes;
-        }
         interface WordcloudFieldObject extends PolygonBoxObject, SizeObject {
             ratioX: number;
             ratioY: number;
@@ -212,14 +175,14 @@ function isRectanglesIntersecting(
  * Returns true if there is collision.
  */
 function intersectsAnyWord(
-    point: Highcharts.WordcloudPoint,
-    points: Array<Highcharts.WordcloudPoint>
+    point: WordcloudPoint,
+    points: Array<WordcloudPoint>
 ): boolean {
     var intersects = false,
         rect: Highcharts.PolygonBoxObject = point.rect as any,
         polygon: Highcharts.PolygonObject = point.polygon as any,
         lastCollidedWith = point.lastCollidedWith,
-        isIntersecting = function (p: Highcharts.WordcloudPoint): boolean {
+        isIntersecting = function (p: WordcloudPoint): boolean {
             var result = isRectanglesIntersecting(rect, p.rect as any);
 
             if (result &&
@@ -247,7 +210,7 @@ function intersectsAnyWord(
     // intersecting.
     if (!intersects) {
         intersects = !!find(points, function (
-            p: Highcharts.WordcloudPoint
+            p: WordcloudPoint
         ): boolean {
             var result = isIntersecting(p);
 
@@ -468,11 +431,11 @@ function getScale(
 function getPlayingField(
     targetWidth: number,
     targetHeight: number,
-    data: Array<Highcharts.WordcloudPoint>
+    data: Array<WordcloudPoint>
 ): Highcharts.WordcloudFieldObject {
     var info: Highcharts.Dictionary<number> = data.reduce(function (
             obj: Highcharts.Dictionary<number>,
-            point: Highcharts.WordcloudPoint
+            point: WordcloudPoint
         ): Highcharts.Dictionary<number> {
             var dimensions = point.dimensions,
                 x = Math.max(dimensions.width, dimensions.height);
@@ -650,7 +613,7 @@ function outsidePlayingField(
  * the word should not be placed at all.
  */
 function intersectionTesting(
-    point: Highcharts.WordcloudPoint,
+    point: WordcloudPoint,
     options: Highcharts.WordcloudTestOptionsObject
 ): (boolean|PositionObject) {
     var placed = options.placed,
@@ -925,7 +888,7 @@ class WordcloudSeries extends ColumnSeries {
             followPointer: true,
             pointFormat: '<span style="color:{point.color}">\u25CF</span>{series.name}: <b>{point.weight}</b><br/>'
         }
-    });
+    } as Highcharts.WordcloudSeriesOptions);
 
     /* *
      *
@@ -935,28 +898,13 @@ class WordcloudSeries extends ColumnSeries {
     public data: Array<WordcloudPoint> = void 0 as any;
     public options: Highcharts.WordcloudSeriesOptions = void 0 as any;
     public points: Array<WordcloudPoint> = void 0 as any;
-}
 
-/* *
- *
- * Prototype properties
- *
- * */
-interface WordcloudSeries extends ColumnSeries {
-    placementStrategy: Record<string, Highcharts.WordcloudPlacementFunction>;
-    pointArrayMap: Array<string>;
-    pointClass: typeof WordcloudPoint;
-    spirals: Record<string, Highcharts.WordcloudSpiralFunction>;
-    utils: Highcharts.WordcloudUtilsObject;
-
-}
-
-extend(WordcloudSeries.prototype, {
-    animate: LineSeries.prototype.animate,
-    animateDrilldown: noop as any,
-    animateDrillupFrom: noop as any,
-    setClip: noop as any,
-    bindAxes: function (this: Highcharts.WordcloudSeries): void {
+    /**
+     *
+     * Functions
+     *
+     */
+    public bindAxes(): void {
         var wordcloudAxis = {
             endOnTick: false,
             gridLineWidth: 0,
@@ -970,11 +918,10 @@ extend(WordcloudSeries.prototype, {
         LineSeries.prototype.bindAxes.call(this);
         extend(this.yAxis.options, wordcloudAxis);
         extend(this.xAxis.options, wordcloudAxis);
-    },
+    }
 
-    pointAttribs: function (
-        this: Highcharts.WordcloudSeries,
-        point: Highcharts.WordcloudPoint,
+    public pointAttribs(
+        point: WordcloudPoint,
         state?: StatesOptionsKey
     ): SVGAttributes {
         var attribs = H.seriesTypes.column.prototype
@@ -984,7 +931,7 @@ extend(WordcloudSeries.prototype, {
         delete attribs['stroke-width'];
 
         return attribs;
-    },
+    }
 
     /**
      * Calculates the fontSize of a word based on its weight.
@@ -1005,7 +952,7 @@ extend(WordcloudSeries.prototype, {
      * Returns the resulting fontSize of a word. If minFontSize is larger then
      * maxFontSize the result will equal minFontSize.
      */
-    deriveFontSize: function deriveFontSize(
+    public deriveFontSize(
         relativeWeight?: number,
         maxFontSize?: number,
         minFontSize?: number
@@ -1015,8 +962,9 @@ extend(WordcloudSeries.prototype, {
             min = isNumber(minFontSize) ? minFontSize : 1;
 
         return Math.floor(Math.max(min, weight * max));
-    },
-    drawPoints: function (this: Highcharts.WordcloudSeries): void {
+    }
+
+    public drawPoints(): void {
         var series = this,
             hasRendered = series.hasRendered,
             xAxis = series.xAxis,
@@ -1028,7 +976,7 @@ extend(WordcloudSeries.prototype, {
             allowExtendPlayingField = options.allowExtendPlayingField,
             renderer = chart.renderer,
             testElement: SVGElement = renderer.text().add(group),
-            placed: Array<Highcharts.WordcloudPoint> = [],
+            placed: Array<WordcloudPoint> = [],
             placementStrategy = series.placementStrategy[
                 options.placementStrategy as any
             ],
@@ -1037,15 +985,15 @@ extend(WordcloudSeries.prototype, {
                 options.rotation as any,
             scale,
             weights = series.points.map(function (
-                p: Highcharts.WordcloudPoint
+                p: WordcloudPoint
             ): number {
                 return p.weight;
             }),
             maxWeight = Math.max.apply(null, weights),
             // concat() prevents from sorting the original array.
             data = series.points.concat().sort(function (
-                a: Highcharts.WordcloudPoint,
-                b: Highcharts.WordcloudPoint
+                a: WordcloudPoint,
+                b: WordcloudPoint
             ): number {
                 return b.weight - a.weight; // Sort descending
             }),
@@ -1063,7 +1011,7 @@ extend(WordcloudSeries.prototype, {
 
         // Get the dimensions for each word.
         // Used in calculating the playing field.
-        data.forEach(function (point: Highcharts.WordcloudPoint): void {
+        data.forEach(function (point: WordcloudPoint): void {
             var relativeWeight = 1 / maxWeight * point.weight,
                 fontSize = series.deriveFontSize(
                     relativeWeight,
@@ -1093,7 +1041,7 @@ extend(WordcloudSeries.prototype, {
             field: field
         });
         // Draw all the points.
-        data.forEach(function (point: Highcharts.WordcloudPoint): void {
+        data.forEach(function (point: WordcloudPoint): void {
             var relativeWeight = 1 / maxWeight * point.weight,
                 fontSize = series.deriveFontSize(
                     relativeWeight,
@@ -1209,8 +1157,9 @@ extend(WordcloudSeries.prototype, {
             scaleX: scale,
             scaleY: scale
         });
-    },
-    hasData: function (this: Highcharts.WordcloudSeries): boolean {
+    }
+
+    public hasData(): boolean {
         var series = this;
 
         return (
@@ -1219,13 +1168,54 @@ extend(WordcloudSeries.prototype, {
             isArray(series.points) &&
             series.points.length > 0
         );
-    },
+    }
+
+    public getPlotBox(): Highcharts.SeriesPlotBoxObject {
+        var series = this,
+            chart = series.chart,
+            inverted = chart.inverted,
+            // Swap axes for inverted (#2339)
+            xAxis = series[(inverted ? 'yAxis' : 'xAxis')],
+            yAxis = series[(inverted ? 'xAxis' : 'yAxis')],
+            width = xAxis ? xAxis.len : chart.plotWidth,
+            height = yAxis ? yAxis.len : chart.plotHeight,
+            x = xAxis ? xAxis.left : chart.plotLeft,
+            y = yAxis ? yAxis.top : chart.plotTop;
+
+        return {
+            translateX: x + (width / 2),
+            translateY: y + (height / 2),
+            scaleX: 1, // #1623
+            scaleY: 1
+        };
+    }
+}
+
+/* *
+ *
+ * Prototype properties
+ *
+ * */
+interface WordcloudSeries extends ColumnSeries {
+    placementStrategy: Record<string, Highcharts.WordcloudPlacementFunction>;
+    pointArrayMap: Array<string>;
+    pointClass: typeof WordcloudPoint;
+    spirals: Record<string, Highcharts.WordcloudSpiralFunction>;
+    utils: Highcharts.WordcloudUtilsObject;
+}
+
+extend(WordcloudSeries.prototype, {
+    animate: LineSeries.prototype.animate,
+    animateDrilldown: noop as any,
+    animateDrillupFrom: noop as any,
+    setClip: noop as any,
+
     // Strategies used for deciding rotation and initial position of a word. To
     // implement a custom strategy, have a look at the function random for
     // example.
     placementStrategy: {
         random: function (
-            point: Highcharts.WordcloudPoint,
+            point: WordcloudPoint,
             options: Highcharts.WordcloudPlacementOptionsObject
         ): Highcharts.WordcloudPlacementObject {
             var field = options.field,
@@ -1238,7 +1228,7 @@ extend(WordcloudSeries.prototype, {
             };
         },
         center: function (
-            point: Highcharts.WordcloudPoint,
+            point: WordcloudPoint,
             options: Highcharts.WordcloudPlacementOptionsObject
         ): Highcharts.WordcloudPlacementObject {
             var r = options.rotation;
@@ -1265,45 +1255,45 @@ extend(WordcloudSeries.prototype, {
         isPolygonsColliding: isPolygonsColliding,
         rotate2DToOrigin: rotate2DToOrigin,
         rotate2DToPoint: rotate2DToPoint
-    },
-    getPlotBox: function (
-        this: Highcharts.WordcloudSeries
-    ): Highcharts.SeriesPlotBoxObject {
-        var series = this,
-            chart = series.chart,
-            inverted = chart.inverted,
-            // Swap axes for inverted (#2339)
-            xAxis = series[(inverted ? 'yAxis' : 'xAxis')],
-            yAxis = series[(inverted ? 'xAxis' : 'yAxis')],
-            width = xAxis ? xAxis.len : chart.plotWidth,
-            height = yAxis ? yAxis.len : chart.plotHeight,
-            x = xAxis ? xAxis.left : chart.plotLeft,
-            y = yAxis ? yAxis.top : chart.plotTop;
-
-        return {
-            translateX: x + (width / 2),
-            translateY: y + (height / 2),
-            scaleX: 1, // #1623
-            scaleY: 1
-        };
     }
 });
 
-class WordcloudPoint extends ColumnSeries.prototype.pointClass {
+class WordcloudPoint extends ColumnSeries.prototype.pointClass implements Highcharts.DrawPoint {
 
+    /* *
+     *
+     * Properties
+     *
+     * */
+    public dimensions: SizeObject = void 0 as any;
+    public lastCollidedWith?: WordcloudPoint;
+    public options: Highcharts.WordcloudPointOptions = void 0 as any;
+    public polygon?: Highcharts.PolygonObject = void 0 as any;
+    public rect?: Highcharts.PolygonBoxObject = void 0 as any;
+    public rotation?: (boolean|number);
+    public series: WordcloudSeries = void 0 as any;
+
+    /* *
+     *
+     * Functions
+     *
+     * */
+    public shouldDraw(): boolean {
+        var point = this;
+        return !point.isNull;
+    }
+    public isValid(): boolean {
+        return true;
+    }
 }
 
+interface WordcloudPoint {
+    draw: typeof DrawPointMixin.drawPoint;
+    weight: number;
+}
 
 extend(WordcloudPoint.prototype, {
-    draw: drawPoint,
-    shouldDraw: function shouldDraw(this: Highcharts.WordcloudPoint): boolean {
-        var point = this;
-
-        return !point.isNull;
-    },
-    isValid: function isValid(): boolean {
-        return true;
-    },
+    draw: DrawPointMixin.drawPoint,
     weight: 1
 });
 WordcloudSeries.prototype.pointClass = WordcloudPoint;
@@ -1315,7 +1305,7 @@ WordcloudSeries.prototype.pointClass = WordcloudPoint;
  * */
 declare module '../Core/Series/SeriesType' {
     interface SeriesTypeRegistry {
-        wordcloud: typeof Highcharts.WordcloudSeries;
+        wordcloud: typeof WordcloudSeries;
     }
 }
 
