@@ -235,7 +235,7 @@ H.Chart.prototype.getTypeDescription = function (types: Array<string>): string {
             numSeries: this.series.length,
             numPoints: firstSeries.points && firstSeries.points.length,
             chart: this,
-            mapTitle: (firstSeries as Highcharts.MapSeries).mapTitle
+            mapTitle: firstSeries.mapTitle
         };
 
     if (!firstType) {

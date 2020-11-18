@@ -1546,6 +1546,10 @@ extend(LineSeries.prototype, /** @lends Series.prototype */ {
                 '_hasPointMarkers',
                 '_hasPointLabels',
 
+                // Networkgraph (#14397)
+                'nodes',
+                'layout',
+
                 // Map specific, consider moving it to series-specific preserve-
                 // properties (#10617)
                 'mapMap',

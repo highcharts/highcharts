@@ -349,3 +349,29 @@ QUnit.test(
         assert.ok(true, 'No errors when updating series and chart at the same time (#13570).');
     }
 );
+
+QUnit.test('#14397: Updating networkgraph series', assert => {
+    const chart = Highcharts.chart('container', {
+        chart: {
+            type: 'networkgraph'
+        },
+        plotOptions: {
+            networkgraph: {
+                keys: ['from', 'to']
+            }
+        },
+        series: [{
+            data: [
+                ['Proto Indo-European', 'Balto-Slavic']
+            ]
+        }]
+    });
+
+    const nodes = chart.series[0].nodes;
+    const layout = chart.series[0].layout;
+
+    chart.series[0].update({ dataLabels: { enabled: true } });
+
+    assert.strictEqual(chart.series[0].nodes, nodes, 'series.nodes should be preserved through update()');
+    assert.strictEqual(chart.series[0].layout, layout, 'series.layout should be preserved through update()');
+});

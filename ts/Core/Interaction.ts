@@ -11,6 +11,7 @@
 'use strict';
 
 import type AnimationOptionsObject from './Animation/AnimationOptionsObject';
+import type AreaSeries from '../Series/Area/AreaSeries';
 import type PointerEvent from './PointerEvent';
 import type {
     PointEventsOptions,
@@ -85,6 +86,7 @@ declare module './Series/SeriesLike' {
     interface SeriesLike {
         _hasTracking?: boolean;
         halo?: SVGElement;
+        selected?: boolean;
         stateMarkerGraphic?: SVGElement;
         tracker?: SVGElement;
         trackerGroups?: Array<string>;
@@ -314,7 +316,7 @@ const TrackerMixin = H.TrackerMixin = {
                 (options as Highcharts.AreaRangeSeriesOptions).trackByArea,
             trackerPath = ([] as SVGPath).concat(
                 trackByArea ?
-                    ((series as Highcharts.AreaSeries).areaPath as any) :
+                    ((series as AreaSeries).areaPath as any) :
                     (series.graphPath as any)
             ),
             // trackerPathLength = trackerPath.length,
@@ -853,10 +855,14 @@ extend(Chart.prototype, /** @lends Chart.prototype */ {
                             isNumber(dataExtremes.dataMax)
                         ) {
                             panningState.startMin = Math.min(
-                                dataExtremes.dataMin, panningState.startMin
+                                pick(series.options.threshold, Infinity),
+                                dataExtremes.dataMin,
+                                panningState.startMin
                             );
                             panningState.startMax = Math.max(
-                                dataExtremes.dataMax, panningState.startMax
+                                pick(series.options.threshold, -Infinity),
+                                dataExtremes.dataMax,
+                                panningState.startMax
                             );
                         }
                     }

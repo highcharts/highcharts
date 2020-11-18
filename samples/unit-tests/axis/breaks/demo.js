@@ -1,32 +1,35 @@
-QUnit.test('Columnrange series should work with broken-axis. (#4868)', function (assert) {
-    var iter = 0;
+QUnit.test(
+    'Columnrange series should work with broken-axis. (#4868)',
+    function (assert) {
+        var iter = 0;
 
-    $('#container').highcharts({
-        chart: {
-            type: 'columnrange'
-        },
-        yAxis: {
-            breaks: [{
-                from: 10,
-                to: 20
-            }],
-            events: {
-                pointBreak: function () {
-                    iter++;
+        $('#container').highcharts({
+            chart: {
+                type: 'columnrange'
+            },
+            yAxis: {
+                breaks: [{
+                    from: 10,
+                    to: 20
+                }],
+                events: {
+                    pointBreak: function () {
+                        iter++;
+                    }
                 }
-            }
-        },
-        series: [{
-            data: [[0, 5, 15], [1, 0, 30]]
-        }]
-    }).highcharts();
+            },
+            series: [{
+                data: [[0, 5, 15], [1, 0, 30]]
+            }]
+        }).highcharts();
 
-    assert.strictEqual(
-        iter,
-        1,
-        'pointBreak called'
-    );
-});
+        assert.strictEqual(
+            iter,
+            1,
+            'pointBreak called'
+        );
+    }
+);
 
 QUnit.test('Sub-millisecond tooltip (#4247)', function (assert) {
     var chart;
@@ -169,70 +172,73 @@ QUnit.test('Null inside break (#4275)', function (assert) {
 
 });
 
-QUnit.test("pointBreak callback wasn't called for xAxis and different series than column.(#4533)", function (assert) {
+QUnit.test(
+    'pointBreak callback wasn\'t called for xAxis and different ' +
+    'series than column.(#4533)',
+    function (assert) {
+        var iteratorPB = 0,
+            iteratorAB = 0;
 
-    var iteratorPB = 0,
-        iteratorAB = 0;
-
-    $('#container').highcharts({
-        chart: {
-            width: 500,
-            height: 400
-        },
-        yAxis: {
-            breaks: [{
-                from: 5,
-                to: 15,
-                breakSize: 1
-            }],
-            events: {
-                pointBreak: function () {
-                    iteratorPB++;
-                },
-                afterBreaks: function () {
-                    iteratorAB++;
+        $('#container').highcharts({
+            chart: {
+                width: 500,
+                height: 400
+            },
+            yAxis: {
+                breaks: [{
+                    from: 5,
+                    to: 15,
+                    breakSize: 1
+                }],
+                events: {
+                    pointBreak: function () {
+                        iteratorPB++;
+                    },
+                    afterBreaks: function () {
+                        iteratorAB++;
+                    }
                 }
-            }
-        },
-        xAxis: {
-            breaks: [{
-                from: 5,
-                to: 15,
-                breakSize: 1
-            }],
-            events: {
-                pointBreak: function () {
-                    iteratorPB++;
-                },
-                afterBreaks: function () {
-                    iteratorAB++;
+            },
+            xAxis: {
+                breaks: [{
+                    from: 5,
+                    to: 15,
+                    breakSize: 1
+                }],
+                events: {
+                    pointBreak: function () {
+                        iteratorPB++;
+                    },
+                    afterBreaks: function () {
+                        iteratorAB++;
 
+                    }
                 }
-            }
-        },
-        series: [{
-            data: (function () {
-                var data = [],
-                    i;
-                for (i = 0; i < 20; i = i + 1) {
-                    data.push(i);
-                }
-                return data;
-            }())
-        }]
-    });
+            },
+            series: [{
+                data: (function () {
+                    var data = [],
+                        i;
+                    for (i = 0; i < 20; i = i + 1) {
+                        data.push(i);
+                    }
+                    return data;
+                }())
+            }]
+        });
 
-    assert.strictEqual(
-        iteratorAB,
-        9,
-        "All after breaks called"
-    );
-    assert.strictEqual(
-        iteratorPB,
-        8,
-        "All point breaks called"
-    );
-});
+        assert.strictEqual(
+            iteratorAB,
+            9,
+            'All after breaks called'
+        );
+        assert.strictEqual(
+            iteratorPB,
+            8,
+            'All point breaks called'
+        );
+    }
+);
 
 
 QUnit.test('PointBreak with different thresholds(#4356)', function (assert) {
@@ -249,7 +255,8 @@ QUnit.test('PointBreak with different thresholds(#4356)', function (assert) {
             type: 'column'
         },
         title: {
-            text: 'Point break for positives and negatives, respecting treshold'
+            text: 'Point break for positives and negatives, ' +
+                'respecting treshold'
         },
         yAxis: {
             tickInterval: 5000,
@@ -263,7 +270,10 @@ QUnit.test('PointBreak with different thresholds(#4356)', function (assert) {
                         y = this.toPixels(brk.from, true),
                         w = shapeArgs.width,
                         key = ['brk', brk.from, brk.to],
-                        path = ['M', x, y, 'L', x + w * 0.25, y + 4, 'L', x + w * 0.75, y - 4, 'L', x + w, y];
+                        path = [
+                            'M', x, y, 'L', x + w * 0.25, y + 4,
+                            'L', x + w * 0.75, y - 4, 'L', x + w, y
+                        ];
 
                     if (!point[key]) {
                         point[key] = this.chart.renderer.path(path)
@@ -302,119 +312,215 @@ QUnit.test('PointBreak with different thresholds(#4356)', function (assert) {
     var series = chart.series;
     // Zero breaks:
     assert.strictEqual(
-        !(series[0].points[0][['brk', breaks[0].from, breaks[0].to]] instanceof Highcharts.SVGElement) &&
-        !(series[0].points[0][['brk', breaks[1].from, breaks[1].to]] instanceof
-            Highcharts.SVGElement),
+        !(
+            series[0].points[0][
+                ['brk', breaks[0].from, breaks[0].to]
+            ] instanceof Highcharts.SVGElement
+        ) && !(
+            series[0].points[0][
+                ['brk', breaks[1].from, breaks[1].to]
+            ] instanceof Highcharts.SVGElement
+        ),
         true,
-        "Has zero breaks"
+        'Has zero breaks'
     );
     assert.strictEqual(
-        !(series[0].points[2][['brk', breaks[0].from, breaks[0].to]] instanceof Highcharts.SVGElement) &&
-        !(series[0].points[2][['brk', breaks[1].from, breaks[1].to]] instanceof
-            Highcharts.SVGElement),
+        !(
+            series[0].points[2][
+                ['brk', breaks[0].from, breaks[0].to]
+            ] instanceof Highcharts.SVGElement
+        ) && !(
+            series[0].points[2][
+                ['brk', breaks[1].from, breaks[1].to]
+            ] instanceof Highcharts.SVGElement
+        ),
         true,
-        "Has zero breaks"
+        'Has zero breaks'
     );
     assert.strictEqual(
-        !(series[1].points[1][['brk', breaks[0].from, breaks[0].to]] instanceof Highcharts.SVGElement) &&
-        !(series[1].points[1][['brk', breaks[1].from, breaks[1].to]] instanceof
-            Highcharts.SVGElement),
+        !(
+            series[1].points[1][
+                ['brk', breaks[0].from, breaks[0].to]
+            ] instanceof Highcharts.SVGElement
+        ) && !(
+            series[1].points[1][
+                ['brk', breaks[1].from, breaks[1].to]
+            ] instanceof Highcharts.SVGElement
+        ),
         true,
-        "Has zero breaks"
+        'Has zero breaks'
     );
     assert.strictEqual(
-        !(series[2].points[3][['brk', breaks[0].from, breaks[0].to]] instanceof Highcharts.SVGElement) &&
-        !(series[2].points[3][['brk', breaks[1].from, breaks[1].to]] instanceof
-            Highcharts.SVGElement),
+        !(
+            series[2].points[3][[
+                'brk', breaks[0].from, breaks[0].to]
+            ] instanceof Highcharts.SVGElement
+        ) && !(
+            series[2].points[3][[
+                'brk', breaks[1].from, breaks[1].to]
+            ] instanceof Highcharts.SVGElement
+        ),
         true,
-        "Has zero breaks"
+        'Has zero breaks'
     );
     assert.strictEqual(
-        !(series[3].points[3][['brk', breaks[0].from, breaks[0].to]] instanceof Highcharts.SVGElement) &&
-        !(series[3].points[3][['brk', breaks[1].from, breaks[1].to]] instanceof
-            Highcharts.SVGElement),
+        !(
+            series[3].points[3][
+                ['brk', breaks[0].from, breaks[0].to]
+            ] instanceof Highcharts.SVGElement
+        ) && !(
+            series[3].points[3][
+                ['brk', breaks[1].from, breaks[1].to]
+            ] instanceof Highcharts.SVGElement
+        ),
         true,
-        "Has zero breaks"
+        'Has zero breaks'
     );
 
     // Exactly one break:
     assert.strictEqual(
-        !(series[0].points[1][['brk', breaks[0].from, breaks[0].to]] instanceof Highcharts.SVGElement) &&
-        (series[0].points[1][['brk', breaks[1].from, breaks[1].to]] instanceof
-            Highcharts.SVGElement),
+        !(
+            series[0].points[1][
+                ['brk', breaks[0].from, breaks[0].to]
+            ] instanceof Highcharts.SVGElement
+        ) && (
+            series[0].points[1][
+                ['brk', breaks[1].from, breaks[1].to]
+            ] instanceof Highcharts.SVGElement
+        ),
         true,
-        "Has exactly one (top) break"
+        'Has exactly one (top) break'
     );
     assert.strictEqual(
-        (series[0].points[3][['brk', breaks[0].from, breaks[0].to]] instanceof Highcharts.SVGElement) &&
-        !(series[0].points[3][['brk', breaks[1].from, breaks[1].to]] instanceof
-            Highcharts.SVGElement),
+        (
+            series[0].points[3][
+                ['brk', breaks[0].from, breaks[0].to]
+            ] instanceof Highcharts.SVGElement
+        ) && !(
+            series[0].points[3][
+                ['brk', breaks[1].from, breaks[1].to]
+            ] instanceof Highcharts.SVGElement
+        ),
         true,
-        "Has exactly one (bottom) break"
+        'Has exactly one (bottom) break'
     );
     assert.strictEqual(
-        !(series[1].points[0][['brk', breaks[0].from, breaks[0].to]] instanceof Highcharts.SVGElement) &&
-        (series[1].points[0][['brk', breaks[1].from, breaks[1].to]] instanceof
-            Highcharts.SVGElement),
+        !(
+            series[1].points[0][
+                ['brk', breaks[0].from, breaks[0].to]
+            ] instanceof Highcharts.SVGElement
+        ) && (
+            series[1].points[0][
+                ['brk', breaks[1].from, breaks[1].to]
+            ] instanceof Highcharts.SVGElement
+        ),
         true,
-        "Has exactly one (top) break"
+        'Has exactly one (top) break'
     );
     assert.strictEqual(
-        !(series[1].points[2][['brk', breaks[0].from, breaks[0].to]] instanceof Highcharts.SVGElement) &&
-        (series[1].points[2][['brk', breaks[1].from, breaks[1].to]] instanceof
-            Highcharts.SVGElement),
+        !(
+            series[1].points[2][
+                ['brk', breaks[0].from, breaks[0].to]
+            ] instanceof Highcharts.SVGElement
+        ) && (
+            series[1].points[2][
+                ['brk', breaks[1].from, breaks[1].to]
+            ] instanceof Highcharts.SVGElement
+        ),
         true,
-        "Has exactly one (top) break"
+        'Has exactly one (top) break'
     );
     assert.strictEqual(
-        (series[2].points[0][['brk', breaks[0].from, breaks[0].to]] instanceof Highcharts.SVGElement) &&
-        !(series[2].points[0][['brk', breaks[1].from, breaks[1].to]] instanceof
-            Highcharts.SVGElement),
+        (
+            series[2].points[0][
+                ['brk', breaks[0].from, breaks[0].to]
+            ] instanceof Highcharts.SVGElement
+        ) && !(
+            series[2].points[0][
+                ['brk', breaks[1].from, breaks[1].to]
+            ] instanceof Highcharts.SVGElement
+        ),
         true,
-        "Has exactly one (bottom) break"
+        'Has exactly one (bottom) break'
     );
     assert.strictEqual(
-        (series[2].points[2][['brk', breaks[0].from, breaks[0].to]] instanceof Highcharts.SVGElement) &&
-        !(series[2].points[2][['brk', breaks[1].from, breaks[1].to]] instanceof
-            Highcharts.SVGElement),
+        (
+            series[2].points[2][
+                ['brk', breaks[0].from, breaks[0].to]
+            ] instanceof Highcharts.SVGElement
+        ) && !(
+            series[2].points[2][
+                ['brk', breaks[1].from, breaks[1].to]
+            ] instanceof Highcharts.SVGElement
+        ),
         true,
-        "Has exactly one (bottom) break"
+        'Has exactly one (bottom) break'
     );
     assert.strictEqual(
-        (series[3].points[0][['brk', breaks[0].from, breaks[0].to]] instanceof Highcharts.SVGElement) &&
-        !(series[3].points[0][['brk', breaks[1].from, breaks[1].to]] instanceof
-            Highcharts.SVGElement),
+        (
+            series[3].points[0][
+                ['brk', breaks[0].from, breaks[0].to]
+            ] instanceof Highcharts.SVGElement
+        ) && !(
+            series[3].points[0][
+                ['brk', breaks[1].from, breaks[1].to]
+            ] instanceof Highcharts.SVGElement
+        ),
         true,
-        "Has exactly one (bottom) break"
+        'Has exactly one (bottom) break'
     );
     assert.strictEqual(
-        (series[3].points[2][['brk', breaks[0].from, breaks[0].to]] instanceof Highcharts.SVGElement) &&
-        !(series[3].points[2][['brk', breaks[1].from, breaks[1].to]] instanceof
-            Highcharts.SVGElement),
+        (
+            series[3].points[2][
+                ['brk', breaks[0].from, breaks[0].to]
+            ] instanceof Highcharts.SVGElement
+        ) && !(
+            series[3].points[2][
+                ['brk', breaks[1].from, breaks[1].to]
+            ] instanceof Highcharts.SVGElement
+        ),
         true,
-        "Has exactly one (bottom) break"
+        'Has exactly one (bottom) break'
     );
     // Two or more breaks:
     assert.strictEqual(
-        (series[1].points[3][['brk', breaks[0].from, breaks[0].to]] instanceof Highcharts.SVGElement) &&
-        (series[1].points[3][['brk', breaks[1].from, breaks[1].to]] instanceof
-            Highcharts.SVGElement),
+        (
+            series[1].points[3][
+                ['brk', breaks[0].from, breaks[0].to]
+            ] instanceof Highcharts.SVGElement
+        ) && (
+            series[1].points[3][
+                ['brk', breaks[1].from, breaks[1].to]
+            ] instanceof Highcharts.SVGElement
+        ),
         true,
-        "Has two breaks"
+        'Has two breaks'
     );
     assert.strictEqual(
-        (series[2].points[1][['brk', breaks[0].from, breaks[0].to]] instanceof Highcharts.SVGElement) &&
-        (series[2].points[1][['brk', breaks[1].from, breaks[1].to]] instanceof
-            Highcharts.SVGElement),
+        (
+            series[2].points[1][
+                ['brk', breaks[0].from, breaks[0].to]
+            ] instanceof Highcharts.SVGElement
+        ) && (
+            series[2].points[1][
+                ['brk', breaks[1].from, breaks[1].to]
+            ] instanceof Highcharts.SVGElement
+        ),
         true,
-        "Has two breaks"
+        'Has two breaks'
     );
     assert.strictEqual(
-        (series[3].points[1][['brk', breaks[0].from, breaks[0].to]] instanceof Highcharts.SVGElement) &&
-        (series[3].points[1][['brk', breaks[1].from, breaks[1].to]] instanceof
-            Highcharts.SVGElement),
+        (
+            series[3].points[1][
+                ['brk', breaks[0].from, breaks[0].to]
+            ] instanceof Highcharts.SVGElement
+        ) && (
+            series[3].points[1][
+                ['brk', breaks[1].from, breaks[1].to]
+            ] instanceof Highcharts.SVGElement
+        ),
         true,
-        "Has two breaks"
+        'Has two breaks'
     );
 
 });
@@ -493,7 +599,10 @@ QUnit.test('Axis breaks with categories', function (assert) {
     var chart = Highcharts.chart('container', {
 
         xAxis: {
-            categories: ['zero', 'one', 'two', 'three', 'four', 'five', 'six', 'seven', 'eight', 'nine'],
+            categories: [
+                'zero', 'one', 'two', 'three', 'four',
+                'five', 'six', 'seven', 'eight', 'nine'
+            ],
 
             breaks: [{
                 from: 2.5,
@@ -502,7 +611,10 @@ QUnit.test('Axis breaks with categories', function (assert) {
         },
 
         series: [{
-            data: [29.9, 71.5, 106.4, 129.2, 144.0, 176.0, 135.6, 148.5, 216.4, 194.1]
+            data: [
+                29.9, 71.5, 106.4, 129.2, 144.0,
+                176.0, 135.6, 148.5, 216.4, 194.1
+            ]
         }]
 
     });

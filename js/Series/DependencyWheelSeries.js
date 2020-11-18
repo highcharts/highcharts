@@ -13,11 +13,9 @@
 import A from '../Core/Animation/AnimationUtilities.js';
 var animObject = A.animObject;
 import BaseSeries from '../Core/Series/Series.js';
+var base = BaseSeries.seriesTypes.sankey.prototype;
 import H from '../Core/Globals.js';
 import NodesMixin from '../Mixins/Nodes.js';
-import './SankeySeries.js';
-import '../Core/Options.js';
-var base = BaseSeries.seriesTypes.sankey.prototype;
 /**
  * @private
  * @class
@@ -260,7 +258,10 @@ BaseSeries.seriesType('dependencywheel', 'sankey',
         var renderer = this.series.chart.renderer, shapeArgs = this.shapeArgs, upperHalf = this.angle < 0 || this.angle > Math.PI, start = shapeArgs.start, end = shapeArgs.end;
         if (!this.dataLabelPath) {
             this.dataLabelPath = renderer
-                .arc({ open: true })
+                .arc({
+                open: true,
+                longArc: Math.abs(Math.abs(start) - Math.abs(end)) < Math.PI ? 0 : 1
+            })
                 // Add it inside the data label group so it gets destroyed
                 // with the label
                 .add(label);

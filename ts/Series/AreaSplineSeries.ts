@@ -16,15 +16,24 @@
  *
  * */
 
+import type AreaPoint from './Area/AreaPoint';
+import type AreaSeries from './Area/AreaSeries';
 import type { SeriesStatesOptions } from '../Core/Series/SeriesOptions';
+import type SplinePoint from './Spline/SplinePoint';
+import type SplinePointOptions from './Spline/SplinePointOptions';
+import type SplineSeries from './Spline/SplineSeries';
+import type SplineSeriesOptions from './Spline/SplineSeriesOptions';
 import BaseSeries from '../Core/Series/Series.js';
+const {
+    seriesTypes: {
+        area: {
+            prototype: areaProto
+        }
+    }
+} = BaseSeries;
 import LegendSymbolMixin from '../Mixins/LegendSymbol.js';
 import O from '../Core/Options.js';
 const { defaultOptions } = O;
-
-import './AreaSeries.js';
-import './SplineSeries.js';
-var areaProto = BaseSeries.seriesTypes.area.prototype;
 
 /* *
  *

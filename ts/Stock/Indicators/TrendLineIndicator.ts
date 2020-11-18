@@ -8,7 +8,14 @@
 
 'use strict';
 
+import type IndicatorValuesObject from './IndicatorValuesObject';
 import type LineSeries from '../../Series/Line/LineSeries';
+import type SMAIndicator from './SMA/SMAIndicator';
+import type {
+    SMAOptions,
+    SMAParamsOptions
+} from './SMA/SMAOptions';
+import type SMAPoint from './SMA/SMAPoint';
 import BaseSeries from '../../Core/Series/Series.js';
 import U from '../../Core/Utilities.js';
 const {
@@ -34,15 +41,15 @@ declare global {
         }
 
         interface TrendLineIndicatorParamsOptions
-            extends SMAIndicatorParamsOptions {
+            extends SMAParamsOptions {
             // for inheritance
         }
 
-        class TrendLineIndicatorPoint extends SMAIndicatorPoint {
+        class TrendLineIndicatorPoint extends SMAPoint {
             public series: TrendLineIndicator;
         }
 
-        interface TrendLineIndicatorOptions extends SMAIndicatorOptions {
+        interface TrendLineIndicatorOptions extends SMAOptions {
             params?: TrendLineIndicatorParamsOptions;
         }
     }
@@ -107,7 +114,7 @@ BaseSeries.seriesType<typeof Highcharts.TrendLineIndicator>(
         getValues: function<TLinkedSeries extends LineSeries> (
             series: TLinkedSeries,
             params: Highcharts.TrendLineIndicatorParamsOptions
-        ): Highcharts.IndicatorValuesObject<TLinkedSeries> {
+        ): IndicatorValuesObject<TLinkedSeries> {
             var xVal: Array<number> = (series.xData as any),
                 yVal: Array<Array<number>> = (series.yData as any),
                 LR: Array<Array<number>> = [],
@@ -160,7 +167,7 @@ BaseSeries.seriesType<typeof Highcharts.TrendLineIndicator>(
                 xData: xData,
                 yData: yData,
                 values: LR
-            } as Highcharts.IndicatorValuesObject<TLinkedSeries>;
+            } as IndicatorValuesObject<TLinkedSeries>;
         }
     }
 );

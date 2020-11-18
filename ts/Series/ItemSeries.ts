@@ -12,6 +12,10 @@
 
 'use strict';
 
+import type PiePoint from './Pie/PiePoint';
+import type PiePointOptions from './Pie/PiePointOptions';
+import type PieSeries from './Pie/PieSeries';
+import type PieSeriesOptions from './Pie/PieSeriesOptions';
 import type { PointMarkerOptions } from '../Core/Series/PointOptions';
 import type { SeriesStatesOptions } from '../Core/Series/SeriesOptions';
 import type SVGAttributes from '../Core/Renderer/SVG/SVGAttributes';
@@ -90,7 +94,7 @@ declare global {
     }
 }
 
-import './PieSeries.js';
+import './Pie/PieSeries.js';
 
 var piePoint = BaseSeries.seriesTypes.pie.prototype.pointClass.prototype;
 
@@ -436,7 +440,7 @@ BaseSeries.seriesType<typeof Highcharts.ItemSeries>(
                 cellHeight = this.chart.plotHeight / rows,
                 itemSize = this.itemSize || Math.min(cellWidth, cellHeight);
 
-            /*
+            /* @todo: remove if not needed
             this.slots.forEach(slot => {
                 this.chart.renderer.circle(slot.x, slot.y, 6)
                     .attr({
@@ -589,7 +593,8 @@ BaseSeries.seriesType<typeof Highcharts.ItemSeries>(
         connectorShapes: piePoint.connectorShapes,
         getConnectorPath: piePoint.getConnectorPath,
         setVisible: piePoint.setVisible,
-        getTranslate: piePoint.getTranslate
+        getTranslate: piePoint.getTranslate,
+        isValid: piePoint.isValid
     }
 );
 

@@ -80,25 +80,31 @@ extend(defaultOptions, {
          * buttons: [{
          *     type: 'month',
          *     count: 1,
-         *     text: '1m'
+         *     text: '1m',
+         *     title: 'View 1 month'
          * }, {
          *     type: 'month',
          *     count: 3,
-         *     text: '3m'
+         *     text: '3m',
+         *     title: 'View 3 months'
          * }, {
          *     type: 'month',
          *     count: 6,
-         *     text: '6m'
+         *     text: '6m',
+         *     title: 'View 6 months'
          * }, {
          *     type: 'ytd',
-         *     text: 'YTD'
+         *     text: 'YTD',
+         *     title: 'View year to date'
          * }, {
          *     type: 'year',
          *     count: 1,
-         *     text: '1y'
+         *     text: '1y',
+         *     title: 'View 1 year'
          * }, {
          *     type: 'all',
-         *     text: 'All'
+         *     text: 'All',
+         *     title: 'View all'
          * }]
          * ```
          *
@@ -189,6 +195,13 @@ extend(defaultOptions, {
          *
          * @type      {string}
          * @apioption rangeSelector.buttons.text
+         */
+        /**
+         * Explanation for the button, shown as a tooltip on hover, and used by
+         * assistive technology.
+         *
+         * @type      {string}
+         * @apioption rangeSelector.buttons.title
          */
         /**
          * Defined the time span for the button. Can be one of `millisecond`,
@@ -882,15 +895,35 @@ var RangeSelector = /** @class */ (function () {
      * @private
      * @function Highcharts.RangeSelector#defaultInputDateParser
      */
-    RangeSelector.prototype.defaultInputDateParser = function (inputDate, useUTC) {
-        var date = new Date();
-        if (H.isSafari) {
-            return Date.parse(inputDate.split(' ').join('T'));
+    RangeSelector.prototype.defaultInputDateParser = function (inputDate, useUTC, time) {
+        var hasTimezone = function (str) {
+            return str.length > 6 &&
+                (str.lastIndexOf('-') === str.length - 6 ||
+                    str.lastIndexOf('+') === str.length - 6);
+        };
+        var input = inputDate.split('/').join('-').split(' ').join('T');
+        if (input.indexOf('T') === -1) {
+            input += 'T00:00';
         }
         if (useUTC) {
-            return Date.parse(inputDate + 'Z');
+            input += 'Z';
         }
-        return Date.parse(inputDate) - date.getTimezoneOffset() * 60 * 1000;
+        else if (H.isSafari && !hasTimezone(input)) {
+            var offset = new Date(input).getTimezoneOffset() / 60;
+            input += offset <= 0 ? "+" + H.pad(-offset) + ":00" : "-" + H.pad(offset) + ":00";
+        }
+        var date = Date.parse(input);
+        // If the value isn't parsed directly to a value by the
+        // browser's Date.parse method, like YYYY-MM-DD in IE8, try
+        // parsing it a different way
+        if (!isNumber(date)) {
+            var parts = inputDate.split('-');
+            date = Date.UTC(pInt(parts[0]), pInt(parts[1]) - 1, pInt(parts[2]));
+        }
+        if (time && useUTC) {
+            date += time.getTimezoneOffset(date) * 60 * 1000;
+        }
+        return date;
     };
     /**
      * Draw either the 'from' or the 'to' HTML input box of the range selector
@@ -909,44 +942,30 @@ var RangeSelector = /** @class */ (function () {
             var inputValue = input.value, value, chartAxis = chart.xAxis[0], dataAxis = chart.scroller && chart.scroller.xAxis ?
                 chart.scroller.xAxis :
                 chartAxis, dataMin = dataAxis.dataMin, dataMax = dataAxis.dataMax;
-            value = (options.inputDateParser || defaultInputDateParser)(inputValue, chart.time.useUTC);
-            if (value !== input.previousValue) {
+            value = (options.inputDateParser || defaultInputDateParser)(inputValue, chart.time.useUTC, chart.time);
+            if (value !== input.previousValue && isNumber(value)) {
                 input.previousValue = value;
-                // If the value isn't parsed directly to a value by the
-                // browser's Date.parse method, like YYYY-MM-DD in IE, try
-                // parsing it a different way
-                if (!isNumber(value)) {
-                    value = inputValue.split('-');
-                    value = Date.UTC(pInt(value[0]), pInt(value[1]) - 1, pInt(value[2]));
+                // Validate the extremes. If it goes beyound the data min or
+                // max, use the actual data extreme (#2438).
+                if (isMin) {
+                    if (value > rangeSelector.maxInput.HCTime) {
+                        value = void 0;
+                    }
+                    else if (value < dataMin) {
+                        value = dataMin;
+                    }
                 }
-                if (isNumber(value)) {
-                    // Correct for timezone offset (#433)
-                    if (!chart.time.useUTC) {
-                        value =
-                            value + new Date().getTimezoneOffset() * 60 * 1000;
+                else {
+                    if (value < rangeSelector.minInput.HCTime) {
+                        value = void 0;
                     }
-                    // Validate the extremes. If it goes beyound the data min or
-                    // max, use the actual data extreme (#2438).
-                    if (isMin) {
-                        if (value > rangeSelector.maxInput.HCTime) {
-                            value = void 0;
-                        }
-                        else if (value < dataMin) {
-                            value = dataMin;
-                        }
+                    else if (value > dataMax) {
+                        value = dataMax;
                     }
-                    else {
-                        if (value < rangeSelector.minInput.HCTime) {
-                            value = void 0;
-                        }
-                        else if (value > dataMax) {
-                            value = dataMax;
-                        }
-                    }
-                    // Set the extremes
-                    if (typeof value !== 'undefined') { // @todo typof undefined
-                        chartAxis.setExtremes(isMin ? value : chartAxis.min, isMin ? chartAxis.max : value, void 0, void 0, { trigger: 'rangeSelectorInput' });
-                    }
+                }
+                // Set the extremes
+                if (typeof value !== 'undefined') { // @todo typof undefined
+                    chartAxis.setExtremes(isMin ? value : chartAxis.min, isMin ? chartAxis.max : value, void 0, void 0, { trigger: 'rangeSelectorInput' });
                 }
             }
         }
@@ -1140,6 +1159,9 @@ var RangeSelector = /** @class */ (function () {
                     'text-align': 'center'
                 })
                     .add(buttonGroup);
+                if (rangeOptions.title) {
+                    buttons[i].attr('title', rangeOptions.title);
+                }
             });
             // first create a wrapper outside the container in order to make
             // the inputs work and make export correct
@@ -1424,25 +1446,31 @@ var RangeSelector = /** @class */ (function () {
 RangeSelector.prototype.defaultButtons = [{
         type: 'month',
         count: 1,
-        text: '1m'
+        text: '1m',
+        title: 'View 1 month'
     }, {
         type: 'month',
         count: 3,
-        text: '3m'
+        text: '3m',
+        title: 'View 3 months'
     }, {
         type: 'month',
         count: 6,
-        text: '6m'
+        text: '6m',
+        title: 'View 6 months'
     }, {
         type: 'ytd',
-        text: 'YTD'
+        text: 'YTD',
+        title: 'View year to date'
     }, {
         type: 'year',
         count: 1,
-        text: '1y'
+        text: '1y',
+        title: 'View 1 year'
     }, {
         type: 'all',
-        text: 'All'
+        text: 'All',
+        title: 'View all'
     }];
 /**
  * Get the axis min value based on the range option and the current max. For

@@ -16,7 +16,7 @@ import O from '../Core/Options.js';
 var defaultOptions = O.defaultOptions;
 import U from '../Core/Utilities.js';
 var defined = U.defined, extend = U.extend, fireEvent = U.fireEvent, isNumber = U.isNumber, merge = U.merge, objectEach = U.objectEach, pick = U.pick;
-import './PieSeries.js';
+import './Pie/PieSeries.js';
 var piePoint = BaseSeries.seriesTypes.pie.prototype.pointClass.prototype;
 /**
  * The item series type.
@@ -279,7 +279,7 @@ BaseSeries.seriesType('item',
     },
     drawPoints: function () {
         var series = this, options = this.options, renderer = series.chart.renderer, seriesMarkerOptions = options.marker, borderWidth = this.borderWidth, crisp = borderWidth % 2 ? 0.5 : 1, i = 0, rows = this.getRows(), cols = Math.ceil(this.total / rows), cellWidth = this.chart.plotWidth / cols, cellHeight = this.chart.plotHeight / rows, itemSize = this.itemSize || Math.min(cellWidth, cellHeight);
-        /*
+        /* @todo: remove if not needed
         this.slots.forEach(slot => {
             this.chart.renderer.circle(slot.x, slot.y, 6)
                 .attr({
@@ -390,7 +390,8 @@ BaseSeries.seriesType('item',
     connectorShapes: piePoint.connectorShapes,
     getConnectorPath: piePoint.getConnectorPath,
     setVisible: piePoint.setVisible,
-    getTranslate: piePoint.getTranslate
+    getTranslate: piePoint.getTranslate,
+    isValid: piePoint.isValid
 });
 /* *
  *

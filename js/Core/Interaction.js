@@ -513,8 +513,8 @@ extend(Chart.prototype, /** @lends Chart.prototype */ {
                         }
                         if (isNumber(dataExtremes.dataMin) &&
                             isNumber(dataExtremes.dataMax)) {
-                            panningState.startMin = Math.min(dataExtremes.dataMin, panningState.startMin);
-                            panningState.startMax = Math.max(dataExtremes.dataMax, panningState.startMax);
+                            panningState.startMin = Math.min(pick(series.options.threshold, Infinity), dataExtremes.dataMin, panningState.startMin);
+                            panningState.startMax = Math.max(pick(series.options.threshold, -Infinity), dataExtremes.dataMax, panningState.startMax);
                         }
                     }
                 });

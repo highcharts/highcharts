@@ -13,6 +13,7 @@
 'use strict';
 
 import type BBoxObject from '../../Core/Renderer/BBoxObject';
+import type DataExtremesObject from '../../Core/Series/DataExtremesObject';
 import type {
     PointOptions,
     PointShortOptions
@@ -150,13 +151,13 @@ Chart.prototype.getBoostClipRect = function (target: Chart): BBoxObject {
     };
 
     if (target === this) {
-        this.yAxis.forEach(function (yAxis: Highcharts.Axis): void {
-            clipBox.y = Math.min(yAxis.pos, clipBox.y);
-            clipBox.height = Math.max(
-                yAxis.pos - this.plotTop + yAxis.len,
-                clipBox.height
-            );
-        }, this);
+        const verticalAxes = this.inverted ? this.xAxis : this.yAxis; // #14444
+        if (verticalAxes.length <= 1) {
+            clipBox.y = Math.min(verticalAxes[0].pos, clipBox.y);
+            clipBox.height = verticalAxes[0].pos - this.plotTop + verticalAxes[0].len;
+        } else {
+            clipBox.height = this.plotHeight;
+        }
     }
 
     return clipBox;
@@ -309,7 +310,7 @@ addEvent(LineSeries, 'destroy', function (): void {
 wrap(LineSeries.prototype, 'getExtremes', function (
     this: LineSeries,
     proceed: Function
-): Highcharts.DataExtremesObject {
+): DataExtremesObject {
     if (!this.isSeriesBoosting || (!this.hasExtremes || !this.hasExtremes())) {
         return proceed.apply(this, Array.prototype.slice.call(arguments, 1));
     }

@@ -12,6 +12,12 @@
 
 'use strict';
 
+/* *
+ *
+ *  Imports
+ *
+ * */
+
 import type Point from './Point';
 import type Position3DObject from '../Renderer/Position3DObject';
 import type ZAxis from '../Axis/ZAxis';
@@ -21,9 +27,17 @@ const { perspective } = Math3D;
 import U from '../Utilities.js';
 const {
     addEvent,
+    extend,
+    merge,
     pick,
     isNumber
 } = U;
+
+/* *
+ *
+ *  Declarations
+ *
+ * */
 
 declare module './PointLike' {
     interface PointLike {
@@ -42,75 +56,130 @@ declare module './SeriesLike' {
     }
 }
 
+/* *
+ *
+ *  Class
+ *
+ * */
+
+class Series3D extends LineSeries {
+
+    /* *
+     *
+     *  Static Properties
+     *
+     * */
+
+    public static defaultOptions = merge(LineSeries.defaultOptions);
+
+    /* *
+     *
+     *  Functions
+     *
+     * */
+
+    /* eslint-disable valid-jsdoc */
+
+    public translate(): void {
+        super.translate.apply(this, arguments);
+        if (this.chart.is3d()) {
+            this.translate3dPoints();
+        }
+    }
+
+    /**
+     * Translate the plotX, plotY properties and add plotZ.
+     * @private
+     */
+    public translate3dPoints(): void {
+        var series = this,
+            seriesOptions = series.options,
+            chart = series.chart,
+            zAxis: ZAxis = pick(series.zAxis, (chart.options.zAxis as any)[0]),
+            rawPoints = [] as Array<Position3DObject>,
+            rawPoint: Point,
+            projectedPoints: Array<Position3DObject>,
+            projectedPoint: Position3DObject,
+            zValue: (number|null|undefined),
+            i: number,
+            stack = seriesOptions.stacking ?
+                (isNumber(seriesOptions.stack) ? seriesOptions.stack : 0) :
+                series.index || 0, // #4743
+            rawPointsX = [] as Array<number>;
+    
+        series.zPadding = stack *
+            (seriesOptions.depth || 0 + (seriesOptions.groupZPadding || 1));
+
+        for (i = 0; i < series.data.length; i++) {
+            rawPoint = series.data[i];
+
+            if (zAxis && zAxis.translate) {
+                zValue = zAxis.logarithmic && zAxis.val2lin ?
+                    zAxis.val2lin(rawPoint.z as any) :
+                    rawPoint.z; // #4562
+                rawPoint.plotZ = zAxis.translate(zValue as any);
+                rawPoint.isInside = rawPoint.isInside ?
+                    ((zValue as any) >= (zAxis.min as any) &&
+                    (zValue as any) <= (zAxis.max as any)) :
+                    false;
+            } else {
+                rawPoint.plotZ = series.zPadding;
+            }
+
+            rawPoint.axisXpos = rawPoint.plotX;
+            rawPoint.axisYpos = rawPoint.plotY;
+            rawPoint.axisZpos = rawPoint.plotZ;
+
+            rawPointsX.push(rawPoint.plotX || 0);
+
+            rawPoints.push({
+                x: rawPoint.plotX as any,
+                y: rawPoint.plotY as any,
+                z: rawPoint.plotZ as any
+            });
+        }
+
+        projectedPoints = perspective(rawPoints, chart, true);
+
+        for (i = 0; i < series.data.length; i++) {
+            rawPoint = series.data[i];
+            projectedPoint = projectedPoints[i];
+
+            rawPoint.plotX = projectedPoint.x;
+            rawPoint.plotY = projectedPoint.y;
+            rawPoint.plotZ = projectedPoint.z;
+
+        }
+        series.rawPointsX = rawPointsX;
+    }
+
+    /* eslint-enable valid-jsdoc */
+}
+
+/* *
+ *
+ *  Compatibility
+ *
+ * */
+
 /* eslint-disable no-invalid-this */
 
-// Wrap the translate method to post-translate points into 3D perspective
 addEvent(LineSeries, 'afterTranslate', function (): void {
     if (this.chart.is3d()) {
         this.translate3dPoints();
     }
 });
 
-// Translate the plotX, plotY properties and add plotZ.
-LineSeries.prototype.translate3dPoints = function (): void {
-    var series = this,
-        seriesOptions = series.options,
-        chart = series.chart,
-        zAxis: ZAxis = pick(series.zAxis, (chart.options.zAxis as any)[0]),
-        rawPoints = [] as Array<Position3DObject>,
-        rawPoint: Point,
-        projectedPoints: Array<Position3DObject>,
-        projectedPoint: Position3DObject,
-        zValue: (number|null|undefined),
-        i: number,
-        stack = seriesOptions.stacking ?
-            (isNumber(seriesOptions.stack) ? seriesOptions.stack : 0) :
-            series.index || 0, // #4743
-        rawPointsX = [] as Array<number>;
+/* eslint-enable no-invalid-this */
 
-    series.zPadding = stack *
-        (seriesOptions.depth || 0 + (seriesOptions.groupZPadding || 1));
+extend(LineSeries.prototype, {
+    translate3dPoints: Series3D.prototype.translate3dPoints
+});
 
-    for (i = 0; i < series.data.length; i++) {
-        rawPoint = series.data[i];
+/* *
+ *
+ *  Default Export
+ *
+ * */
 
-        if (zAxis && zAxis.translate) {
-            zValue = zAxis.logarithmic && zAxis.val2lin ?
-                zAxis.val2lin(rawPoint.z as any) :
-                rawPoint.z; // #4562
-            rawPoint.plotZ = zAxis.translate(zValue as any);
-            rawPoint.isInside = rawPoint.isInside ?
-                ((zValue as any) >= (zAxis.min as any) &&
-                (zValue as any) <= (zAxis.max as any)) :
-                false;
-        } else {
-            // add value of zPadding to final z position of calculated point.
-            rawPoint.plotZ = series.zPadding;
-        }
-
-        rawPoint.axisXpos = rawPoint.plotX;
-        rawPoint.axisYpos = rawPoint.plotY;
-        rawPoint.axisZpos = rawPoint.plotZ;
-
-        rawPointsX.push(rawPoint.plotX || 0);
-
-        rawPoints.push({
-            x: rawPoint.plotX as any,
-            y: rawPoint.plotY as any,
-            z: rawPoint.plotZ as any
-        });
-
-        series.rawPointsX = rawPointsX;
-    }
-
-    projectedPoints = perspective(rawPoints, chart, true);
-
-    for (i = 0; i < series.data.length; i++) {
-        rawPoint = series.data[i];
-        projectedPoint = projectedPoints[i];
-
-        rawPoint.plotX = projectedPoint.x;
-        rawPoint.plotY = projectedPoint.y;
-        rawPoint.plotZ = projectedPoint.z;
-    }
-};
+export default Series3D;

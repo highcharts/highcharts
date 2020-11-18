@@ -4945,7 +4945,7 @@ class Axis {
             log = axis.logarithmic,
             zoomOffset,
             spaceAvailable: boolean,
-            closestDataRange: (number|undefined),
+            closestDataRange = 0,
             i,
             distance,
             xData,
@@ -4972,18 +4972,18 @@ class Axis {
                 axis.series.forEach(function (series): void {
                     xData = series.xData as any;
                     loopLength = series.xIncrement ? 1 : xData.length - 1;
-                    for (i = loopLength; i > 0; i--) {
-                        distance = xData[i] - xData[i - 1];
-                        if (
-                            typeof closestDataRange === 'undefined' ||
-                            distance < closestDataRange
-                        ) {
-                            closestDataRange = distance;
+
+                    if (xData.length > 1) {
+                        for (i = loopLength; i > 0; i--) {
+                            distance = xData[i] - xData[i - 1];
+                            if (!closestDataRange || distance < closestDataRange) {
+                                closestDataRange = distance;
+                            }
                         }
                     }
                 });
                 axis.minRange = Math.min(
-                    (closestDataRange as any) * 5,
+                    closestDataRange * 5,
                     (axis.dataMax as any) - (axis.dataMin as any)
                 );
             }
@@ -5498,6 +5498,20 @@ class Axis {
             }
         }
 
+        // If min is bigger than highest, or if max less than lowest value, the
+        // chart should not render points. (#14417)
+        if (
+            isNumber(axis.min) &&
+            isNumber(axis.max) &&
+            !this.chart.polar &&
+            (axis.min > axis.max)
+        ) {
+            if (defined(axis.options.min)) {
+                axis.max = axis.min;
+            } else if (defined(axis.options.max)) {
+                axis.min = axis.max;
+            }
+        }
 
         // get tickInterval
         if (
@@ -6005,7 +6019,7 @@ class Axis {
     public setScale(): void {
         var axis: Highcharts.Axis = this as any,
             isDirtyAxisLength,
-            isDirtyData = false,
+            isDirtyData: (boolean|undefined) = false,
             isXAxisDirty = false;
 
         axis.series.forEach(function (series): void {

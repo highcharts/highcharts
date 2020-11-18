@@ -8,7 +8,14 @@
 
 'use strict';
 
+import type IndicatorValuesObject from './IndicatorValuesObject';
 import type LineSeries from '../../Series/Line/LineSeries';
+import type SMAIndicator from './SMA/SMAIndicator';
+import type {
+    SMAOptions,
+    SMAParamsOptions
+} from './SMA/SMAOptions';
+import type SMAPoint from './SMA/SMAPoint';
 import BaseSeries from '../../Core/Series/Series.js';
 
 /**
@@ -28,15 +35,15 @@ declare global {
             public points: Array<NATRIndicatorPoint>;
         }
 
-        interface NATRIndicatorParamsOptions extends SMAIndicatorParamsOptions {
+        interface NATRIndicatorParamsOptions extends SMAParamsOptions {
             // for inheritance
         }
 
-        class NATRIndicatorPoint extends SMAIndicatorPoint {
+        class NATRIndicatorPoint extends SMAPoint {
             public series: NATRIndicator;
         }
 
-        interface NATRIndicatorOptions extends SMAIndicatorOptions {
+        interface NATRIndicatorOptions extends SMAOptions {
             params?: NATRIndicatorParamsOptions;
             tooltip?: TooltipOptions;
         }
@@ -91,9 +98,9 @@ BaseSeries.seriesType<typeof Highcharts.NATRIndicator>('natr', 'sma',
         getValues: function<TLinkedSeries extends LineSeries> (
             series: TLinkedSeries,
             params: Highcharts.NATRIndicatorParamsOptions
-        ): (Highcharts.IndicatorValuesObject<TLinkedSeries>|undefined) {
+        ): (IndicatorValuesObject<TLinkedSeries>|undefined) {
             var atrData: (
-                    Highcharts.IndicatorValuesObject<LineSeries>|
+                    IndicatorValuesObject<LineSeries>|
                     undefined
                 ) = (
                     ATR.prototype.getValues.apply(this, arguments)
@@ -115,7 +122,7 @@ BaseSeries.seriesType<typeof Highcharts.NATRIndicator>('natr', 'sma',
                 period++;
             }
 
-            return atrData as Highcharts.IndicatorValuesObject<TLinkedSeries>;
+            return atrData as IndicatorValuesObject<TLinkedSeries>;
         }
 
     });

@@ -1,5 +1,44 @@
 /* eslint func-style:0 */
 
+QUnit.test('General aniamtion tests.', function (assert) {
+    var clock = null;
+
+    try {
+        clock = TestUtilities.lolexInstall();
+
+        var chart = Highcharts.chart('container', {
+                series: [{
+                    data: [29.9, 71.5, 106.4, 129.2]
+                }]
+            }),
+            newSeries,
+            done = assert.async(),
+            width;
+
+        setTimeout(function () {
+            newSeries = chart.addSeries({
+                animation: {
+                    duration: 500
+                },
+                data: [194.1, 95.6, 54.4, 29.9]
+            });
+            width = newSeries.sharedClipKey &&
+                chart[newSeries.sharedClipKey].element.width.baseVal.value;
+
+            assert.ok(
+                width === 0,
+                'Animation should run when duration is set and series is added dynamically (#14362).'
+            );
+
+            done();
+        }, 100);
+
+        TestUtilities.lolexRunAndUninstall(clock);
+    } finally {
+        TestUtilities.lolexUninstall(clock);
+    }
+});
+
 QUnit.test('Initial animation - series.clip set to false', function (assert) {
 
     var clock = null;

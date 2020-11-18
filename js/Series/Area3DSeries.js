@@ -57,5 +57,5 @@ wrap(seriesTypes.area.prototype, 'getGraphPath', function (proceed) {
         series.areaPath = areaPath;
         graphPath = getGraphPath.call(series, graphPoints, false, connectNulls);
     }
-    return graphPath;
+    return svgPath;
 });

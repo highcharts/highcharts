@@ -33,7 +33,6 @@ export class ColumnPoint extends LinePoint {
     options: ColumnPointOptions;
     pointWidth: number;
     series: ColumnSeries;
-    shapeType: string;
 }
 
 declare module '../../Core/Series/PointLike' {

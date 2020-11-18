@@ -25,12 +25,14 @@ QUnit.test('setAxisTranslation', assert => {
     assert.strictEqual(
         axis.pointRange,
         1,
-        'should have pointRange equal 1 when min and max is 0 but axis has categories'
+        'should have pointRange equal 1 when min and ' +
+        'max is 0 but axis has categories'
     );
     assert.strictEqual(
         axis.minPixelPadding,
         25,
-        'should have minPixelPadding equal 25 when staticScale is 50 and minPointOffset is 0.5.'
+        'should have minPixelPadding equal 25 when staticScale ' +
+        'is 50 and minPointOffset is 0.5.'
     );
 });
 
@@ -46,12 +48,14 @@ QUnit.test('setTickPositions', assert => {
     assert.strictEqual(
         axis.max,
         0.5,
-        'should have max equal 0.5 when only 1 point and tickPositions.length < 2.'
+        'should have max equal 0.5 when only 1 point and ' +
+        'tickPositions.length < 2.'
     );
     assert.strictEqual(
         axis.min,
         -0.5,
-        'should have min equal -0.5 when only 1 point and tickPositions.length < 2.'
+        'should have min equal -0.5 when only 1 point and ' +
+        'tickPositions.length < 2.'
     );
 
     /**
@@ -66,11 +70,13 @@ QUnit.test('setTickPositions', assert => {
     assert.strictEqual(
         axis.max,
         0,
-        'should have min equal 0 when only 1 point, tickPositions.length < 2, and hasNames is true.'
+        'should have min equal 0 when only 1 point, tickPositions.length ' +
+        '< 2, and hasNames is true.'
     );
     assert.strictEqual(
         axis.min,
         0,
-        'should have max equal 0 when only 1 point, tickPositions.length < 2, and hasNames is true..'
+        'should have max equal 0 when only 1 point, tickPositions.length ' +
+        '< 2, and hasNames is true..'
     );
 });

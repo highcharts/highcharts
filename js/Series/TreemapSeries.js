@@ -28,7 +28,7 @@ var getColor = TreeSeriesMixin.getColor, getLevelOptions = TreeSeriesMixin.getLe
 import U from '../Core/Utilities.js';
 var addEvent = U.addEvent, correctFloat = U.correctFloat, defined = U.defined, error = U.error, extend = U.extend, fireEvent = U.fireEvent, isArray = U.isArray, isNumber = U.isNumber, isObject = U.isObject, isString = U.isString, merge = U.merge, objectEach = U.objectEach, pick = U.pick, stableSort = U.stableSort;
 import '../Core/Options.js';
-import './ScatterSeries.js';
+import './Scatter/ScatterSeries.js';
 /* eslint-disable no-invalid-this */
 var AXIS_MAX = 100;
 // @todo Similar to eachObject, this function is likely redundant

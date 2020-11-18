@@ -15,6 +15,7 @@
 
 'use strict';
 
+import type AreaSeries from '../Series/Area/AreaSeries';
 import type ColumnSeries from '../Series/Column/ColumnSeries';
 import type HTMLElement from '../Core/Renderer/HTML/HTMLElement';
 import type {
@@ -817,7 +818,7 @@ const initCanvasBoost = function (): void {
 
     extend(seriesTypes.area.prototype, {
         cvsDrawPoint: function (
-            this: Highcharts.AreaSeries,
+            this: AreaSeries,
             ctx: CanvasRenderingContext2D,
             clientX: number,
             plotY: number,

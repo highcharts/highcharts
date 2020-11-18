@@ -449,7 +449,7 @@ class Chart {
              */
             chart.index = charts.length; // Add the chart to the global lookup
 
-            charts.push(chart as any);
+            charts.push(chart);
             H.chartCount++;
 
             // Chart event handlers
@@ -705,8 +705,8 @@ class Chart {
         series.forEach(function (serie): void {
             if (serie.isDirty) {
                 if (serie.options.legendType === 'point') {
-                    if (typeof (serie as Highcharts.PieSeries).updateTotals === 'function') {
-                        (serie as Highcharts.PieSeries).updateTotals();
+                    if (typeof serie.updateTotals === 'function') {
+                        serie.updateTotals();
                     }
                     redrawLegend = true;
                 } else if (
@@ -960,7 +960,7 @@ class Chart {
      *         The currently selected series.
      */
     public getSelectedSeries(): Array<LineSeries> {
-        return this.series.filter(function (serie): boolean {
+        return this.series.filter(function (serie): (boolean|undefined) {
             return serie.selected;
         });
     }

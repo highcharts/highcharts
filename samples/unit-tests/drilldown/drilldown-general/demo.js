@@ -7120,3 +7120,63 @@ QUnit.test('Wrong points after click on label (#12656)', function (assert) {
         'Points from Firefox should be visible (#12656).'
     );
 });
+
+QUnit.test('#14428: Update point.drilldown', assert => {
+    const chart = Highcharts.chart('container', {
+        series: [{
+            type: 'column',
+            data: [1, 2, 3]
+        }],
+        drilldown: {
+            series: [{
+                id: 'drill',
+                data: [3, 2, 1]
+            }]
+        }
+    });
+
+    const point = chart.series[0].points[0];
+    point.update({
+        drilldown: 'drill'
+    });
+    Highcharts.fireEvent(point, 'click');
+
+    assert.strictEqual(chart.series[0].points[0].y, 3, 'The chart should be drilled down');
+});
+
+QUnit.test('#14458: Drilling down 3d chart points with the same name threw', assert => {
+    const chart = Highcharts.chart('container', {
+        chart: {
+            type: 'column',
+            options3d: {
+                enabled: true,
+                alpha: 5,
+                beta: 5,
+                depth: 100
+            }
+        },
+        xAxis: {
+            type: 'category'
+        },
+        series: [{
+            data: [{
+                y: 0,
+                name: '1'
+            }, {
+                y: 1,
+                name: '2',
+                drilldown: 'x'
+            }]
+        }],
+        drilldown: {
+            series: [{
+                id: 'x',
+                data: [{ y: 0, name: '2' }]
+            }]
+        }
+    });
+
+    Highcharts.fireEvent(chart.series[0].points[1], 'click');
+
+    assert.ok(true, 'Drilling down should not throw');
+});

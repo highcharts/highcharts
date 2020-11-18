@@ -15,7 +15,7 @@ var seriesTypes = BaseSeries.seriesTypes;
 import U from '../Core/Utilities.js';
 var arrayMax = U.arrayMax, arrayMin = U.arrayMin, clamp = U.clamp, fireEvent = U.fireEvent, pick = U.pick;
 import '../Core/Options.js';
-import './PieSeries.js';
+import './Pie/PieSeries.js';
 var pieProto = seriesTypes.pie.prototype;
 /**
  * @typedef {"area"|"radius"} Highcharts.VariablePieSizeByValue

@@ -10,7 +10,14 @@
 
 'use strict';
 
+import type IndicatorValuesObject from './IndicatorValuesObject';
 import type LineSeries from '../../Series/Line/LineSeries';
+import type SMAIndicator from './SMA/SMAIndicator';
+import type {
+    SMAOptions,
+    SMAParamsOptions
+} from './SMA/SMAOptions';
+import type SMAPoint from './SMA/SMAPoint';
 import BaseSeries from '../../Core/Series/Series.js';
 import U from '../../Core/Utilities.js';
 const {
@@ -51,15 +58,15 @@ declare global {
         }
 
         interface LinearRegressionIndicatorParamsOptions
-            extends SMAIndicatorParamsOptions {
+            extends SMAParamsOptions {
             xAxisUnit?: number;
         }
 
-        class LinearRegressionIndicatorPoint extends SMAIndicatorPoint {
+        class LinearRegressionIndicatorPoint extends SMAPoint {
             public series: LinearRegressionIndicator;
         }
 
-        interface LinearRegressionIndicatorOptions extends SMAIndicatorOptions {
+        interface LinearRegressionIndicatorOptions extends SMAOptions {
             params?: LinearRegressionIndicatorParamsOptions;
             tooltip?: TooltipOptions;
         }
@@ -363,7 +370,7 @@ BaseSeries.seriesType<typeof Highcharts.LinearRegressionIndicator>(
             baseSeries: TLinkedSeries,
             regressionSeriesParams:
             Highcharts.LinearRegressionIndicatorParamsOptions
-        ): Highcharts.IndicatorValuesObject<TLinkedSeries> {
+        ): IndicatorValuesObject<TLinkedSeries> {
             var xData: Array<number> = (baseSeries.xData as any),
                 yData: Array<number> = (baseSeries.yData as any),
                 period: number = (regressionSeriesParams.period as any),
@@ -372,7 +379,7 @@ BaseSeries.seriesType<typeof Highcharts.LinearRegressionIndicator>(
                 periodStart: number,
                 periodEnd: number,
                 // format required to be returned
-                indicatorData: Highcharts.IndicatorValuesObject<
+                indicatorData: IndicatorValuesObject<
                 TLinkedSeries
                 > = {
                     xData: [], // by getValues() method

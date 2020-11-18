@@ -10,9 +10,16 @@
 
 import type ColorType from '../../Core/Color/ColorType';
 import type CSSObject from '../../Core/Renderer/CSSObject';
+import type IndicatorValuesObject from './IndicatorValuesObject';
 import type LineSeries from '../../Series/Line/LineSeries';
 import type Point from '../../Core/Series/Point';
 import type { SeriesOptions } from '../../Core/Series/SeriesOptions';
+import type SMAIndicator from './SMA/SMAIndicator';
+import type {
+    SMAOptions,
+    SMAParamsOptions
+} from './SMA/SMAOptions';
+import type SMAPoint from './SMA/SMAPoint';
 import type SVGAttributes from '../../Core/Renderer/SVG/SVGAttributes';
 import type SVGElement from '../../Core/Renderer/SVG/SVGElement';
 import BaseSeries from '../../Core/Series/Series.js';
@@ -82,16 +89,16 @@ declare global {
         }
 
         interface SupertrendIndicatorParamsOptions
-            extends SMAIndicatorParamsOptions {
+            extends SMAParamsOptions {
             multiplier?: number;
         }
 
-        class SupertrendIndicatorPoint extends SMAIndicatorPoint {
+        class SupertrendIndicatorPoint extends SMAPoint {
             public series: SupertrendIndicator;
             public y: number;
         }
 
-        interface SupertrendIndicatorOptions extends SMAIndicatorOptions {
+        interface SupertrendIndicatorOptions extends SMAOptions {
             changeTrendLine?: Record<string, CSSObject>;
             fallingTrendColor?: ColorType;
             params?: SupertrendIndicatorParamsOptions;
@@ -573,7 +580,7 @@ BaseSeries.seriesType<typeof Highcharts.SupertrendIndicator>(
         getValues: function<TLinkedSeries extends LineSeries> (
             series: TLinkedSeries,
             params: Highcharts.SupertrendIndicatorParamsOptions
-        ): (Highcharts.IndicatorValuesObject<TLinkedSeries>|undefined) {
+        ): (IndicatorValuesObject<TLinkedSeries>|undefined) {
             var period: number = (params.period as any),
                 multiplier: number = (params.multiplier as any),
                 xVal: Array<number> = (series.xData as any),
@@ -666,7 +673,7 @@ BaseSeries.seriesType<typeof Highcharts.SupertrendIndicator>(
                 values: ST,
                 xData: xData,
                 yData: yData
-            } as Highcharts.IndicatorValuesObject<TLinkedSeries>;
+            } as IndicatorValuesObject<TLinkedSeries>;
         }
     }
 );

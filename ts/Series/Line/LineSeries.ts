@@ -20,10 +20,11 @@ import type AnimationOptionsObject from '../../Core/Animation/AnimationOptionsOb
 import type { AxisType } from '../../Core/Axis/Types';
 import type Chart from '../../Core/Chart/Chart';
 import type ColorType from '../../Core/Color/ColorType';
+import type DataExtremesObject from '../../Core/Series/DataExtremesObject';
 import type { EventCallback } from '../../Core/Callback';
 import type LinePoint from './LinePoint';
 import type LineSeriesOptions from './LineSeriesOptions';
-import type Point from '../../Core/Series/Point.js';
+import type Point from '../../Core/Series/Point';
 import type PointerEvent from '../../Core/PointerEvent';
 import type {
     PointOptions,
@@ -32,7 +33,6 @@ import type {
 } from '../../Core/Series/PointOptions';
 import type SeriesLike from '../../Core/Series/SeriesLike';
 import type {
-    SeriesOptions,
     SeriesStateHoverOptions,
     SeriesZonesOptions
 } from '../../Core/Series/SeriesOptions';
@@ -40,6 +40,8 @@ import type {
     SeriesTypeOptions,
     SeriesTypePlotOptions
 } from '../../Core/Series/SeriesType';
+import type SplinePoint from '../Spline/SplinePoint';
+import type SplineSeries from '../Spline/SplineSeries';
 import type { StatesOptionsKey } from '../../Core/Series/StatesOptions';
 import type SVGAttributes from '../../Core/Renderer/SVG/SVGAttributes';
 import type SVGPath from '../../Core/Renderer/SVG/SVGPath';
@@ -123,10 +125,6 @@ interface KDPointSearchObject {
  */
 declare global {
     namespace Highcharts {
-        interface DataExtremesObject {
-            dataMin?: number;
-            dataMax?: number;
-        }
         interface DataSortingOptionsObject {
             enabled?: boolean;
             matchByName?: boolean;
@@ -2642,6 +2640,8 @@ class LineSeries {
      *
      * */
 
+    public _i: number = void 0 as any;
+
     public animationTimeout?: number;
 
     public area?: SVGElement;
@@ -2649,6 +2649,8 @@ class LineSeries {
     public basePointRange?: number;
 
     public buildingKdTree?: boolean;
+
+    public chart: Chart = void 0 as any;
 
     public clips?: Array<SVGElement>;
 
@@ -2661,6 +2663,8 @@ class LineSeries {
     public colorIndex?: number;
 
     public cropped?: boolean;
+
+    public data: Array<LinePoint> = void 0 as any;
 
     public dataMax?: number;
 
@@ -2680,17 +2684,29 @@ class LineSeries {
 
     public group?: SVGElement;
 
+    public eventOptions: Record<string, EventCallback<LineSeries, Event>> = void 0 as any;
+
+    public eventsToUnbind: Array<Function> = void 0 as any;
+
     public hasCartesianSeries?: Chart['hasCartesianSeries'];
 
     public hasRendered?: boolean;
 
     public id?: string;
 
+    public isDirty?: boolean;
+
+    public isDirtyData?: boolean;
+
     public isRadialSeries?: boolean;
 
     public kdTree?: KDNode;
 
     public linkedParent?: LineSeries;
+
+    public linkedSeries: Array<LineSeries> = void 0 as any;
+
+    public options: LineSeriesOptions = void 0 as any;
 
     public markerGroup?: SVGElement;
 
@@ -2700,15 +2716,29 @@ class LineSeries {
 
     public pointInterval?: number;
 
+    public points: Array<LinePoint> = void 0 as any;
+
     public pointValKey?: string;
+
+    public processedXData: Array<number> = void 0 as any;
+
+    public processedYData: (Array<(number|null)>|Array<Array<(number|null)>>) = void 0 as any;
 
     public sharedClipKey?: string;
 
+    public stickyTracking?: boolean;
+
     public symbol?: string;
+
+    public tooltipOptions: Highcharts.TooltipOptions = void 0 as any;
+
+    public xAxis: AxisType = void 0 as any;
 
     public xData?: Array<number>;
 
     public xIncrement?: (number|null);
+
+    public yAxis: AxisType = void 0 as any;
 
     public yData?: (
         Array<(number|null)>|
@@ -2716,6 +2746,8 @@ class LineSeries {
     );
 
     public zoneAxis?: string;
+
+    public zones: Array<SeriesZonesOptions> = void 0 as any;
 
     /* *
      *
@@ -4334,7 +4366,7 @@ class LineSeries {
     public getExtremes(
         yData?: (Array<(number|null)>|Array<Array<(number|null)>>),
         forceExtremesFromAll?: boolean
-    ): Highcharts.DataExtremesObject {
+    ): DataExtremesObject {
         var xAxis = this.xAxis,
             yAxis = this.yAxis,
             xData = this.processedXData || this.xData,
@@ -4421,7 +4453,7 @@ class LineSeries {
      * @private
      * @function Highcharts.Series#applyExtremes
      */
-    public applyExtremes(): Highcharts.DataExtremesObject {
+    public applyExtremes(): DataExtremesObject {
         const dataExtremes = this.getExtremes();
 
         /**
@@ -4917,27 +4949,25 @@ class LineSeries {
             finalBox;
 
         // Initialize the animation. Set up the clipping rectangle.
-        if (!chart.hasRendered) {
-            if (init) {
+        if (init) {
 
-                series.setClip(animation);
+            series.setClip(animation);
 
-            // Run the animation
-            } else {
-                sharedClipKey = this.sharedClipKey;
-                clipRect = (chart as any)[sharedClipKey as any];
+        // Run the animation
+        } else {
+            sharedClipKey = this.sharedClipKey;
+            clipRect = (chart as any)[sharedClipKey as any];
 
-                finalBox = series.getClipBox(animation, true);
+            finalBox = series.getClipBox(animation, true);
 
-                if (clipRect) {
-                    clipRect.animate(finalBox, animation);
-                }
-                if ((chart as any)[sharedClipKey + 'm']) {
-                    (chart as any)[sharedClipKey + 'm'].animate({
-                        width: finalBox.width + 99,
-                        x: finalBox.x - (chart.inverted ? 0 : 99)
-                    }, animation);
-                }
+            if (clipRect) {
+                clipRect.animate(finalBox, animation);
+            }
+            if ((chart as any)[sharedClipKey + 'm']) {
+                (chart as any)[sharedClipKey + 'm'].animate({
+                    width: finalBox.width + 99,
+                    x: finalBox.x - (chart.inverted ? 0 : 99)
+                }, animation);
             }
         }
     }
@@ -5443,14 +5473,14 @@ class LineSeries {
 
                 // Generate the spline as defined in the SplineSeries object
                 } else if (
-                    (series as unknown as Partial<Highcharts.SplineSeries>).getPointSpline
+                    (series as unknown as Partial<SplineSeries>).getPointSpline
                 ) {
 
                     pathToPoint = [(
-                        series as unknown as Highcharts.SplineSeries
+                        series as unknown as SplineSeries
                     ).getPointSpline(
-                        points as Array<Highcharts.SplinePoint>,
-                        point as Highcharts.SplinePoint,
+                        points as Array<SplinePoint>,
+                        point as SplinePoint,
                         i
                     )];
 
@@ -6425,50 +6455,27 @@ class LineSeries {
 
 /* *
  *
- *  Class Prototype
+ *  Prototype Properties
  *
  * */
 
 interface LineSeries extends SeriesLike {
-    _i: number;
     axisTypes: Array<string>;
-    chart: Chart;
     coll: 'series';
     colorCounter: number;
     cropShoulder: number;
-    data: Array<LinePoint>;
     directTouch: boolean;
     drawLegendSymbol: (
         Highcharts.LegendSymbolMixin['drawLineMarker']|
         Highcharts.LegendSymbolMixin['drawRectangle']
     );
-    eventOptions: Record<string, EventCallback<LineSeries, Event>>;
-    eventsToUnbind: Array<Function>;
     hcEvents: Record<string, Array<Highcharts.EventWrapperObject<LineSeries>>>;
     isCartesian: boolean;
-    isDirty: boolean;
-    isDirtyData: boolean;
     kdAxisArray: Array<string>;
-    linkedSeries: Array<LineSeries>;
-    name: string;
-    options: LineSeriesOptions;
     parallelArrays: Array<string>;
     pointClass: typeof LinePoint;
-    points: Array<LinePoint>;
-    processedXData: Array<number>;
-    processedYData: (Array<(number|null)>|Array<Array<(number|null)>>);
     requireSorting: boolean;
-    selected: boolean;
     sorted: boolean;
-    state: string;
-    stickyTracking: boolean;
-    tooltipOptions: Highcharts.TooltipOptions;
-    type: string;
-    userOptions: DeepPartial<SeriesOptions>;
-    visible: boolean;
-    xAxis: AxisType;
-    yAxis: AxisType;
-    zones: Array<SeriesZonesOptions>;
 }
 extend(
     LineSeries.prototype,

@@ -8,7 +8,14 @@
 
 'use strict';
 
+import type IndicatorValuesObject from './IndicatorValuesObject';
 import type LineSeries from '../../Series/Line/LineSeries';
+import type SMAIndicator from './SMA/SMAIndicator';
+import type {
+    SMAOptions,
+    SMAParamsOptions
+} from './SMA/SMAOptions';
+import type SMAPoint from './SMA/SMAPoint';
 import BaseSeries from '../../Core/Series/Series.js';
 import U from '../../Core/Utilities.js';
 const {
@@ -48,15 +55,15 @@ declare global {
             ): (IndicatorValuesObject<TLinkedSeries>|undefined);
         }
 
-        interface EMAIndicatorOptions extends SMAIndicatorOptions {
+        interface EMAIndicatorOptions extends SMAOptions {
             params?: EMAIndicatorParamsOptions;
         }
 
-        interface EMAIndicatorParamsOptions extends SMAIndicatorParamsOptions {
+        interface EMAIndicatorParamsOptions extends SMAParamsOptions {
             // for inheritance
         }
 
-        class EMAIndicatorPoint extends SMAIndicatorPoint {
+        class EMAIndicatorPoint extends SMAPoint {
             public series: EMAIndicator;
         }
     }
@@ -155,7 +162,7 @@ BaseSeries.seriesType<typeof Highcharts.EMAIndicator>(
             this: Highcharts.EMAIndicator,
             series: TLinkedSeries,
             params: Highcharts.EMAIndicatorParamsOptions
-        ): (Highcharts.IndicatorValuesObject<TLinkedSeries>|undefined) {
+        ): (IndicatorValuesObject<TLinkedSeries>|undefined) {
             var period: number = (params.period as any),
                 xVal: Array<number> = (series.xData as any),
                 yVal: Array<Array<number>> = (series.yData as any),
@@ -212,7 +219,7 @@ BaseSeries.seriesType<typeof Highcharts.EMAIndicator>(
                 values: EMA,
                 xData: xData,
                 yData: yData
-            } as Highcharts.IndicatorValuesObject<TLinkedSeries>;
+            } as IndicatorValuesObject<TLinkedSeries>;
         }
     }
 );

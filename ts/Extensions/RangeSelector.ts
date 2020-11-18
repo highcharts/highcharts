@@ -75,7 +75,7 @@ declare global {
             (e: Event): (boolean|undefined);
         }
         interface RangeSelectorParseCallbackFunction {
-            (value: string, useUTC: boolean): number;
+            (value: string, useUTC: boolean, time?: Time): number;
         }
         interface RangeSelectorButtonPositionOptions {
             align?: AlignValue;
@@ -91,6 +91,7 @@ declare global {
             _range?: number;
             count?: number;
             dataGrouping?: DataGroupingOptionsObject;
+            title?: string;
             events?: RangeSelectorButtonsEventsOptions;
             offsetMax?: number;
             offsetMin?: number;
@@ -248,25 +249,31 @@ extend(defaultOptions, {
          * buttons: [{
          *     type: 'month',
          *     count: 1,
-         *     text: '1m'
+         *     text: '1m',
+         *     title: 'View 1 month'
          * }, {
          *     type: 'month',
          *     count: 3,
-         *     text: '3m'
+         *     text: '3m',
+         *     title: 'View 3 months'
          * }, {
          *     type: 'month',
          *     count: 6,
-         *     text: '6m'
+         *     text: '6m',
+         *     title: 'View 6 months'
          * }, {
          *     type: 'ytd',
-         *     text: 'YTD'
+         *     text: 'YTD',
+         *     title: 'View year to date'
          * }, {
          *     type: 'year',
          *     count: 1,
-         *     text: '1y'
+         *     text: '1y',
+         *     title: 'View 1 year'
          * }, {
          *     type: 'all',
-         *     text: 'All'
+         *     text: 'All',
+         *     title: 'View all'
          * }]
          * ```
          *
@@ -364,6 +371,14 @@ extend(defaultOptions, {
          *
          * @type      {string}
          * @apioption rangeSelector.buttons.text
+         */
+
+        /**
+         * Explanation for the button, shown as a tooltip on hover, and used by
+         * assistive technology.
+         *
+         * @type      {string}
+         * @apioption rangeSelector.buttons.title
          */
 
         /**
@@ -1269,15 +1284,41 @@ class RangeSelector {
      * @private
      * @function Highcharts.RangeSelector#defaultInputDateParser
      */
-    public defaultInputDateParser(inputDate: string, useUTC: boolean): number {
-        var date = new Date();
-        if (H.isSafari) {
-            return Date.parse(inputDate.split(' ').join('T'));
+    public defaultInputDateParser(inputDate: string, useUTC: boolean, time?: Highcharts.Time): number {
+        const hasTimezone = (str: string): boolean =>
+            str.length > 6 &&
+            (str.lastIndexOf('-') === str.length - 6 ||
+            str.lastIndexOf('+') === str.length - 6);
+
+        let input = inputDate.split('/').join('-').split(' ').join('T');
+        if (input.indexOf('T') === -1) {
+            input += 'T00:00';
         }
         if (useUTC) {
-            return Date.parse(inputDate + 'Z');
+            input += 'Z';
+        } else if (H.isSafari && !hasTimezone(input)) {
+            const offset = new Date(input).getTimezoneOffset() / 60;
+            input += offset <= 0 ? `+${H.pad(-offset)}:00` : `-${H.pad(offset)}:00`;
         }
-        return Date.parse(inputDate) - date.getTimezoneOffset() * 60 * 1000;
+        let date = Date.parse(input);
+
+        // If the value isn't parsed directly to a value by the
+        // browser's Date.parse method, like YYYY-MM-DD in IE8, try
+        // parsing it a different way
+        if (!isNumber(date)) {
+            const parts = inputDate.split('-');
+            date = Date.UTC(
+                pInt(parts[0]),
+                pInt(parts[1]) - 1,
+                pInt(parts[2])
+            );
+        }
+
+        if (time && useUTC) {
+            date += time.getTimezoneOffset(date) * 60 * 1000;
+        }
+
+        return date;
     }
 
     /**
@@ -1317,56 +1358,36 @@ class RangeSelector {
                 dataMin = dataAxis.dataMin,
                 dataMax = dataAxis.dataMax;
 
-            value = (options.inputDateParser || defaultInputDateParser)(inputValue, chart.time.useUTC);
+            value = (options.inputDateParser || defaultInputDateParser)(inputValue, chart.time.useUTC, chart.time);
 
-            if (value !== input.previousValue) {
+            if (value !== input.previousValue && isNumber(value)) {
                 input.previousValue = value;
-                // If the value isn't parsed directly to a value by the
-                // browser's Date.parse method, like YYYY-MM-DD in IE, try
-                // parsing it a different way
-                if (!isNumber(value)) {
-                    value = (inputValue as any).split('-');
-                    value = Date.UTC(
-                        pInt((value as any)[0]),
-                        pInt((value as any)[1]) - 1,
-                        pInt((value as any)[2])
-                    );
+
+                // Validate the extremes. If it goes beyound the data min or
+                // max, use the actual data extreme (#2438).
+                if (isMin) {
+                    if (value > (rangeSelector as any).maxInput.HCTime) {
+                        value = void 0;
+                    } else if (value < (dataMin as any)) {
+                        value = dataMin as any;
+                    }
+                } else {
+                    if (value < (rangeSelector as any).minInput.HCTime) {
+                        value = void 0;
+                    } else if (value > (dataMax as any)) {
+                        value = dataMax as any;
+                    }
                 }
 
-                if (isNumber(value)) {
-
-                    // Correct for timezone offset (#433)
-                    if (!chart.time.useUTC) {
-                        value =
-                            value + new Date().getTimezoneOffset() * 60 * 1000;
-                    }
-
-                    // Validate the extremes. If it goes beyound the data min or
-                    // max, use the actual data extreme (#2438).
-                    if (isMin) {
-                        if (value > (rangeSelector as any).maxInput.HCTime) {
-                            value = void 0;
-                        } else if (value < (dataMin as any)) {
-                            value = dataMin as any;
-                        }
-                    } else {
-                        if (value < (rangeSelector as any).minInput.HCTime) {
-                            value = void 0;
-                        } else if (value > (dataMax as any)) {
-                            value = dataMax as any;
-                        }
-                    }
-
-                    // Set the extremes
-                    if (typeof value !== 'undefined') { // @todo typof undefined
-                        chartAxis.setExtremes(
-                            isMin ? value : (chartAxis.min as any),
-                            isMin ? (chartAxis.max as any) : value,
-                            void 0,
-                            void 0,
-                            { trigger: 'rangeSelectorInput' }
-                        );
-                    }
+                // Set the extremes
+                if (typeof value !== 'undefined') { // @todo typof undefined
+                    chartAxis.setExtremes(
+                        isMin ? value : (chartAxis.min as any),
+                        isMin ? (chartAxis.max as any) : value,
+                        void 0,
+                        void 0,
+                        { trigger: 'rangeSelectorInput' }
+                    );
                 }
             }
         }
@@ -1670,6 +1691,10 @@ class RangeSelector {
                         'text-align': 'center'
                     })
                     .add(buttonGroup);
+
+                if (rangeOptions.title) {
+                    buttons[i].attr('title', rangeOptions.title);
+                }
             });
 
             // first create a wrapper outside the container in order to make
@@ -2051,25 +2076,31 @@ interface RangeSelector {
 RangeSelector.prototype.defaultButtons = [{
     type: 'month',
     count: 1,
-    text: '1m'
+    text: '1m',
+    title: 'View 1 month'
 }, {
     type: 'month',
     count: 3,
-    text: '3m'
+    text: '3m',
+    title: 'View 3 months'
 }, {
     type: 'month',
     count: 6,
-    text: '6m'
+    text: '6m',
+    title: 'View 6 months'
 }, {
     type: 'ytd',
-    text: 'YTD'
+    text: 'YTD',
+    title: 'View year to date'
 }, {
     type: 'year',
     count: 1,
-    text: '1y'
+    text: '1y',
+    title: 'View 1 year'
 }, {
     type: 'all',
-    text: 'All'
+    text: 'All',
+    title: 'View all'
 }];
 
 /**

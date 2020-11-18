@@ -9,7 +9,14 @@
 'use strict';
 
 import type CSSObject from '../../Core/Renderer/CSSObject';
+import type IndicatorValuesObject from './IndicatorValuesObject';
 import type LineSeries from '../../Series/Line/LineSeries';
+import type SMAIndicator from './SMA/SMAIndicator';
+import type {
+    SMAOptions,
+    SMAParamsOptions
+} from './SMA/SMAOptions';
+import type SMAPoint from './SMA/SMAPoint';
 import BaseSeries from '../../Core/Series/Series.js';
 import MultipleLinesMixin from '../../Mixins/MultipleLines.js';
 import U from '../../Core/Utilities.js';
@@ -40,15 +47,15 @@ declare global {
             public points: Array<BBIndicatorPoint>;
         }
 
-        interface BBIndicatorParamsOptions extends SMAIndicatorParamsOptions {
+        interface BBIndicatorParamsOptions extends SMAParamsOptions {
             standardDeviation?: number;
         }
 
-        class BBIndicatorPoint extends SMAIndicatorPoint {
+        class BBIndicatorPoint extends SMAPoint {
             public series: BBIndicator;
         }
 
-        interface BBIndicatorOptions extends SMAIndicatorOptions,
+        interface BBIndicatorOptions extends SMAOptions,
             MultipleLinesIndicatorOptions {
             bottomLine?: Record<string, CSSObject>;
             params?: BBIndicatorParamsOptions;
@@ -206,7 +213,7 @@ BaseSeries.seriesType<typeof Highcharts.BBIndicator>(
             this: Highcharts.BBIndicator,
             series: TLinkedSeries,
             params: Highcharts.BBIndicatorParamsOptions
-        ): (Highcharts.IndicatorValuesObject<TLinkedSeries>|undefined) {
+        ): (IndicatorValuesObject<TLinkedSeries>|undefined) {
             var period: number = (params.period as any),
                 standardDeviation: number = (params.standardDeviation as any),
                 xVal: Array<number> = (series.xData as any),
@@ -226,7 +233,7 @@ BaseSeries.seriesType<typeof Highcharts.BBIndicator>(
                 stdDev: number,
                 isOHLC: boolean,
                 point: (
-                    Highcharts.IndicatorValuesObject<TLinkedSeries>|
+                    IndicatorValuesObject<TLinkedSeries>|
                     undefined
                 ),
                 i: number;
@@ -248,7 +255,7 @@ BaseSeries.seriesType<typeof Highcharts.BBIndicator>(
                         yData: slicedY
                     } as any),
                     params
-                ) as Highcharts.IndicatorValuesObject<TLinkedSeries>;
+                ) as IndicatorValuesObject<TLinkedSeries>;
 
                 date = (point as any).xData[0];
                 ML = (point as any).yData[0];
@@ -270,7 +277,7 @@ BaseSeries.seriesType<typeof Highcharts.BBIndicator>(
                 values: BB,
                 xData: xData,
                 yData: yData
-            } as Highcharts.IndicatorValuesObject<TLinkedSeries>;
+            } as IndicatorValuesObject<TLinkedSeries>;
         }
     })
 );

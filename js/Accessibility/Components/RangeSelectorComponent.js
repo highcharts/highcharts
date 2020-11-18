@@ -44,17 +44,24 @@ function shouldRunInputNavigation(chart) {
  * @return {boolean}
  */
 H.Chart.prototype.highlightRangeSelectorButton = function (ix) {
-    var buttons = this.rangeSelector.buttons, curSelectedIx = this.highlightedRangeSelectorItemIx;
+    var _a, _b;
+    var buttons = ((_a = this.rangeSelector) === null || _a === void 0 ? void 0 : _a.buttons) || [];
+    var curHighlightedIx = this.highlightedRangeSelectorItemIx;
+    var curSelectedIx = (_b = this.rangeSelector) === null || _b === void 0 ? void 0 : _b.selected;
     // Deselect old
-    if (typeof curSelectedIx !== 'undefined' && buttons[curSelectedIx]) {
-        buttons[curSelectedIx].setState(this.oldRangeSelectorItemState || 0);
+    if (typeof curHighlightedIx !== 'undefined' &&
+        buttons[curHighlightedIx] &&
+        curHighlightedIx !== curSelectedIx) {
+        buttons[curHighlightedIx].setState(this.oldRangeSelectorItemState || 0);
     }
     // Select new
     this.highlightedRangeSelectorItemIx = ix;
     if (buttons[ix]) {
         this.setFocusToElement(buttons[ix].box, buttons[ix].element);
-        this.oldRangeSelectorItemState = buttons[ix].state;
-        buttons[ix].setState(2);
+        if (ix !== curSelectedIx) {
+            this.oldRangeSelectorItemState = buttons[ix].state;
+            buttons[ix].setState(1);
+        }
         return true;
     }
     return false;
@@ -73,11 +80,12 @@ extend(RangeSelectorComponent.prototype, /** @lends Highcharts.RangeSelectorComp
      * Called on first render/updates to the chart, including options changes.
      */
     onChartUpdate: function () {
+        var _a;
         var chart = this.chart, component = this, rangeSelector = chart.rangeSelector;
         if (!rangeSelector) {
             return;
         }
-        if (rangeSelector.buttons && rangeSelector.buttons.length) {
+        if ((_a = rangeSelector.buttons) === null || _a === void 0 ? void 0 : _a.length) {
             rangeSelector.buttons.forEach(function (button) {
                 unhideChartElementFromAT(chart, button.element);
                 component.setRangeButtonAttrs(button);
@@ -100,14 +108,9 @@ extend(RangeSelectorComponent.prototype, /** @lends Highcharts.RangeSelectorComp
      * @param {Highcharts.SVGElement} button
      */
     setRangeButtonAttrs: function (button) {
-        var chart = this.chart, label = chart.langFormat('accessibility.rangeSelector.buttonText', {
-            chart: chart,
-            buttonText: button.text && button.text.textStr
-        });
         setElAttrs(button.element, {
             tabindex: -1,
-            role: 'button',
-            'aria-label': label
+            role: 'button'
         });
     },
     /**

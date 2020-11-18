@@ -783,3 +783,32 @@ QUnit.test('The tick interval after updating series visibility should stay the s
         "After adding columns series the tick interval should change to make a place for columns."
     );
 });
+
+QUnit.test('In trimTicks, Min and max must be checked when start/endOntick are false (#14417).', function (assert) {
+    var chart = Highcharts.chart('container', {
+        xAxis: {
+            categories: ['Jan', 'Feb']
+        },
+
+        yAxis: {
+            startOnTick: false,
+            endOnTick: false,
+            min: 220  // Exceeds 216.4
+        },
+
+        series: [{
+            data: [29.9, 216.4]
+        }]
+    });
+
+    assert.ok(chart.yAxis[0].max >= 220, 'Max must be 220 to prevent showing parts of chart');
+
+    chart.yAxis[0].update({
+        startOnTick: false,
+        endOnTick: false,
+        min: null,
+        max: 22   // Now max is less than 29.9
+    });
+
+    assert.ok(chart.yAxis[0].min <= 22, 'Min must be 22 to prevent showing parts of chart');
+});

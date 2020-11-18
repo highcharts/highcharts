@@ -196,11 +196,10 @@ addEvent(LineSeries, 'afterRender', function (): void {
             }
 
             serie.crossLabel = yAxis.crossLabel;
-
         }
 
         // Restore crosshair:
-        yAxis.crosshair = origOptions;
+        yAxis.crosshair = yAxis.options.crosshair = origOptions;
         yAxis.cross = origGraphic;
         yAxis.crossLabel = origLabel;
 

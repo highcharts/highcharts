@@ -3,9 +3,9 @@ Pie chart
 
 A pie chart is a circular chart divided into sectors which is proportional to the quantity it represents.
 
-![pie.png](pie.png)
+<iframe style="width: 100%; height: 480px; border: none;" src="https://www.highcharts.com/samples/embed/highcharts/demo/pie-basic" allow="fullscreen"></iframe>
 
-The pie chart have the same options as a [series](https://highcharts.com/docs/chart-concepts/series). For an overview of the area chart options see the [API reference](https://api.highcharts.com/highcharts/plotOptions.pie).
+The pie chart have the same options as a [series](https://highcharts.com/docs/chart-concepts/series). For an overview of the pie chart options see the [API reference](https://api.highcharts.com/highcharts/plotOptions.pie).
 
 Pie chart features
 ==================

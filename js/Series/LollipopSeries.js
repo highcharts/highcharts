@@ -16,7 +16,7 @@ import H from '../Core/Globals.js';
 import Point from '../Core/Series/Point.js';
 import U from '../Core/Utilities.js';
 var isObject = U.isObject, pick = U.pick;
-import './AreaSeries.js';
+import './Area/AreaSeries.js';
 import './DumbbellSeries.js';
 var areaProto = seriesTypes.area.prototype;
 /**

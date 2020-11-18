@@ -9,7 +9,14 @@
 'use strict';
 
 import type CSSObject from '../../Core/Renderer/CSSObject';
+import type IndicatorValuesObject from './IndicatorValuesObject';
 import type LineSeries from '../../Series/Line/LineSeries';
+import type SMAIndicator from './SMA/SMAIndicator';
+import type {
+    SMAOptions,
+    SMAParamsOptions
+} from './SMA/SMAOptions';
+import type SMAPoint from './SMA/SMAPoint';
 import type SVGElement from '../../Core/Renderer/SVG/SVGElement';
 import BaseSeries from '../../Core/Series/Series.js';
 import U from '../../Core/Utilities.js';
@@ -55,12 +62,12 @@ declare global {
         }
 
         interface PriceEnvelopesIndicatorParamsOptions
-            extends SMAIndicatorParamsOptions {
+            extends SMAParamsOptions {
             topBand?: number;
             bottomBand?: number;
         }
 
-        class PriceEnvelopesIndicatorPoint extends SMAIndicatorPoint {
+        class PriceEnvelopesIndicatorPoint extends SMAPoint {
             public bottom: number;
             public middle: number;
             public series: PriceEnvelopesIndicator;
@@ -69,7 +76,7 @@ declare global {
             public top: number;
         }
 
-        interface PriceEnvelopesIndicatorOptions extends SMAIndicatorOptions {
+        interface PriceEnvelopesIndicatorOptions extends SMAOptions {
             params?: PriceEnvelopesIndicatorParamsOptions;
             bottomLine?: Record<string, CSSObject>;
             topLine?: Record<string, CSSObject>;
@@ -282,7 +289,7 @@ BaseSeries.seriesType<typeof Highcharts.PriceEnvelopesIndicator>(
         getValues: function<TLinkedSeries extends LineSeries> (
             series: TLinkedSeries,
             params: Highcharts.PriceEnvelopesIndicatorParamsOptions
-        ): (Highcharts.IndicatorValuesObject<TLinkedSeries>|undefined) {
+        ): (IndicatorValuesObject<TLinkedSeries>|undefined) {
             var period: number = (params.period as any),
                 topPercent: number = (params.topBand as any),
                 botPercent: number = (params.bottomBand as any),
@@ -300,7 +307,7 @@ BaseSeries.seriesType<typeof Highcharts.PriceEnvelopesIndicator>(
                 yData: Array<Array<number>> = [],
                 slicedX: Array<number>,
                 slicedY: Array<Array<number>>,
-                point: Highcharts.IndicatorValuesObject<TLinkedSeries>,
+                point: IndicatorValuesObject<TLinkedSeries>,
                 i: number;
 
             // Price envelopes requires close value
@@ -334,7 +341,7 @@ BaseSeries.seriesType<typeof Highcharts.PriceEnvelopesIndicator>(
                 values: PE,
                 xData: xData,
                 yData: yData
-            } as Highcharts.IndicatorValuesObject<TLinkedSeries>;
+            } as IndicatorValuesObject<TLinkedSeries>;
         }
     }
 );

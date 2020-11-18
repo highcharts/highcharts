@@ -477,6 +477,8 @@ class ColumnSeries extends LineSeries {
      *
      * */
 
+    public borderWidth: number = void 0 as any;
+
     public columnIndex?: number;
 
     public columnMetrics?: ColumnMetricsObject;
@@ -485,7 +487,19 @@ class ColumnSeries extends LineSeries {
 
     public dashStyle?: DashStyleValue;
 
+    public data: Array<ColumnPoint> = void 0 as any;
+
     public dense?: boolean;
+
+    public group: SVGElement = void 0 as any;
+
+    public options: ColumnSeriesOptions = void 0 as any;
+
+    public points: Array<ColumnPoint> = void 0 as any;
+
+    public pointXOffset?: number;
+
+    public translatedThreshold?: number;
 
     /* *
      *
@@ -885,7 +899,7 @@ class ColumnSeries extends LineSeries {
                     barH
                 ] :
                 [
-                    barX + barW / 2,
+                    xAxis.left - chart.plotLeft + barX + barW / 2,
                     clamp(
                         plotY + (yAxis.pos as any) -
                         chart.plotTop,
@@ -1198,14 +1212,7 @@ class ColumnSeries extends LineSeries {
  * */
 
 interface ColumnSeries extends LineSeries {
-    borderWidth: number;
-    data: Array<ColumnPoint>;
-    group: SVGElement;
-    options: ColumnSeriesOptions;
     pointClass: typeof ColumnPoint;
-    points: Array<ColumnPoint>;
-    pointXOffset: number;
-    translatedThreshold?: number;
 }
 extend(
     ColumnSeries.prototype,

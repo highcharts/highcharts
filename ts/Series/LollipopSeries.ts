@@ -10,6 +10,7 @@
 
 'use strict';
 
+import type AreaSeries from './Area/AreaSeries';
 import type { SeriesStatesOptions } from '../Core/Series/SeriesOptions';
 import BaseSeries from '../Core/Series/Series.js';
 const { seriesTypes } = BaseSeries;
@@ -61,7 +62,7 @@ declare module '../Core/Series/SeriesType' {
     }
 }
 
-import './AreaSeries.js';
+import './Area/AreaSeries.js';
 import './DumbbellSeries.js';
 
 const areaProto = seriesTypes.area.prototype;

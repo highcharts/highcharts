@@ -9,10 +9,14 @@
  * */
 
 'use strict';
+import type AreaSeries from '../Series/Area/AreaSeries';
+import type AreaPoint from './Area/AreaPoint';
+
+import type SVGPath from '../Core/Renderer/SVG/SVGPath';
 
 import LineSeries from './Line/LineSeries.js';
-import type SVGPath from '../Core/Renderer/SVG/SVGPath';
 import BaseSeries from '../Core/Series/Series.js';
+
 const { seriesTypes } = BaseSeries;
 
 import Math3D from '../Extensions/Math3D.js';
@@ -27,7 +31,7 @@ const {
 /* eslint-disable no-invalid-this */
 
 wrap(seriesTypes.area.prototype, 'getGraphPath', function (
-    this: Highcharts.AreaSeries,
+    this: AreaSeries,
     proceed: Function
 ): SVGPath {
 
@@ -44,8 +48,8 @@ wrap(seriesTypes.area.prototype, 'getGraphPath', function (
         options = series.options,
         stacking = options.stacking,
         bottomPath,
-        bottomPoints: Array<Highcharts.AreaPoint> = [],
-        graphPoints: Array<Highcharts.AreaPoint> = [],
+        bottomPoints: Array<AreaPoint> = [],
+        graphPoints: Array<AreaPoint> = [],
         i: number,
         areaPath: SVGPath,
         connectNulls = pick( // #10574
@@ -71,7 +75,7 @@ wrap(seriesTypes.area.prototype, 'getGraphPath', function (
         options3d = series.chart.options.chart.options3d;
         bottomPoints = perspective(
             bottomPoints as any, series.chart, true
-        ).map(function (point): Highcharts.AreaPoint {
+        ).map(function (point): AreaPoint {
             return { plotX: point.x, plotY: point.y, plotZ: point.z } as any;
         });
         if (series.group && options3d && options3d.depth) {
@@ -99,5 +103,5 @@ wrap(seriesTypes.area.prototype, 'getGraphPath', function (
         graphPath = getGraphPath.call(series, graphPoints, false, connectNulls);
     }
 
-    return graphPath;
+    return svgPath;
 });

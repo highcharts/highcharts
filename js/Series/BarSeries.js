@@ -8,8 +8,23 @@
  *
  * */
 'use strict';
-import Series from '../Core/Series/Series.js';
-import './Column/ColumnSeries.js';
+var __extends = (this && this.__extends) || (function () {
+    var extendStatics = function (d, b) {
+        extendStatics = Object.setPrototypeOf ||
+            ({ __proto__: [] } instanceof Array && function (d, b) { d.__proto__ = b; }) ||
+            function (d, b) { for (var p in b) if (b.hasOwnProperty(p)) d[p] = b[p]; };
+        return extendStatics(d, b);
+    };
+    return function (d, b) {
+        extendStatics(d, b);
+        function __() { this.constructor = d; }
+        d.prototype = b === null ? Object.create(b) : (__.prototype = b.prototype, new __());
+    };
+})();
+import ColumnSeries from './Column/ColumnSeries.js';
+import BaseSeries from '../Core/Series/Series.js';
+import U from '../Core/Utilities.js';
+var extend = U.extend, merge = U.merge;
 /* *
  *
  *  Class
@@ -24,24 +39,41 @@ import './Column/ColumnSeries.js';
  *
  * @augments Highcharts.Series
  */
-Series.seriesType('bar', 'column', 
-/**
- * A bar series is a special type of column series where the columns are
- * horizontal.
- *
- * @sample highcharts/demo/bar-basic/
- *         Bar chart
- *
- * @extends   plotOptions.column
- * @product   highcharts
- * @apioption plotOptions.bar
- */
-/**
- * @ignore
- */
-null, {
+var BarSeries = /** @class */ (function (_super) {
+    __extends(BarSeries, _super);
+    function BarSeries() {
+        return _super !== null && _super.apply(this, arguments) || this;
+    }
+    /* *
+     *
+     *  Static Properties
+     *
+     * */
+    /**
+     * A bar series is a special type of column series where the columns are
+     * horizontal.
+     *
+     * @sample highcharts/demo/bar-basic/
+     *         Bar chart
+     *
+     * @extends       plotOptions.column
+     * @product       highcharts
+     * @optionsparent plotOptions.bar
+     */
+    BarSeries.defaultOptions = merge(ColumnSeries.defaultOptions, {
+    // nothing here yet
+    });
+    return BarSeries;
+}(ColumnSeries));
+extend(BarSeries.prototype, {
     inverted: true
 });
+BaseSeries.registerSeriesType('bar', BarSeries);
+/* *
+ *
+ *  API Options
+ *
+ * */
 /**
  * A `bar` series. If the [type](#series.bar.type) option is not specified,
  * it is inherited from [chart.type](#chart.type).
