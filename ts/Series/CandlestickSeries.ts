@@ -26,6 +26,7 @@ import ColumnSeries from './Column/ColumnSeries.js';
 const { prototype: columnProto } = ColumnSeries;
 import O from '../Core/Options.js';
 const { defaultOptions } = O;
+import palette from '../Core/Palette.js';
 import U from '../Core/Utilities.js';
 const { merge } = U;
 
@@ -153,7 +154,7 @@ var candlestickOptions = {
      * @default #000000
      * @product highstock
      */
-    lineColor: '${palette.neutralColor100}',
+    lineColor: palette.neutralColor100,
 
     /**
      * The pixel width of the candlestick line/border. Defaults to `1`.
@@ -181,7 +182,7 @@ var candlestickOptions = {
      * @default #ffffff
      * @product highstock
      */
-    upColor: '${palette.backgroundColor}',
+    upColor: palette.backgroundColor,
 
     /**
      * @product highstock

@@ -26,6 +26,7 @@ import Chart from '../Core/Chart/Chart.js';
 import H from '../Core/Globals.js';
 import O from '../Core/Options.js';
 const { defaultOptions } = O;
+import palette from '../Core/Palette.js';
 import SVGElement from '../Core/Renderer/SVG/SVGElement.js';
 import U from '../Core/Utilities.js';
 const {
@@ -686,7 +687,7 @@ extend(defaultOptions, {
          */
         labelStyle: {
             /** @ignore */
-            color: '${palette.neutralColor60}'
+            color: palette.neutralColor60
         }
     }
 });
@@ -1426,7 +1427,7 @@ class RangeSelector {
         if (!chart.styledMode) {
             dateBox.attr({
                 stroke:
-                    options.inputBoxBorderColor || '${palette.neutralColor20}',
+                    options.inputBoxBorderColor || palette.neutralColor20,
                 'stroke-width': 1
             });
         }
@@ -1451,7 +1452,7 @@ class RangeSelector {
             label.css(merge(chartStyle, options.labelStyle));
 
             dateBox.css(merge({
-                color: '${palette.neutralColor80}'
+                color: palette.neutralColor80
             }, chartStyle, options.inputStyle));
 
             css(input, extend<CSSObject>({

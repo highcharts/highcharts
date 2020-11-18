@@ -11,6 +11,7 @@
 import BaseSeries from '../Core/Series/Series.js';
 import BoxPlotSeries from './BoxPlot/BoxPlotSeries.js';
 import H from '../Core/Globals.js';
+import palette from '../Core/Palette.js';
 import '../Core/Options.js';
 import './BoxPlot/BoxPlotSeries.js';
 var noop = H.noop, seriesTypes = BaseSeries.seriesTypes;
@@ -44,7 +45,7 @@ BaseSeries.seriesType('errorbar', 'boxplot', {
      * @since   3.0
      * @product highcharts
      */
-    color: '${palette.neutralColor100}',
+    color: palette.neutralColor100,
     grouping: false,
     /**
      * The parent series of the error bar. The default value links it to

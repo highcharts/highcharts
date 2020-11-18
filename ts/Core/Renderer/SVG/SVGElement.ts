@@ -48,6 +48,7 @@ const {
     SVG_NS,
     win
 } = H;
+import palette from '../../Palette.js';
 import U from '../../Utilities.js';
 const {
     attr,
@@ -2474,7 +2475,7 @@ class SVGElement {
             transform;
 
         const defaultShadowOptions: ShadowOptionsObject = {
-            color: '${palette.neutralColor100}',
+            color: palette.neutralColor100,
             offsetX: 1,
             offsetY: 1,
             opacity: 0.15,
@@ -2519,7 +2520,7 @@ class SVGElement {
                 attr(shadow, {
                     stroke: (
                         (shadowOptions as any).color ||
-                        '${palette.neutralColor100}'
+                        palette.neutralColor100
                     ),
                     'stroke-opacity': shadowElementOpacity * i,
                     'stroke-width': strokeWidth,

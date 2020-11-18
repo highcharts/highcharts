@@ -18,6 +18,7 @@ import type { SeriesStatesOptions } from '../Core/Series/SeriesOptions';
 import BaseSeries from '../Core/Series/Series.js';
 import BoxPlotSeries from './BoxPlot/BoxPlotSeries.js';
 import H from '../Core/Globals.js';
+import palette from '../Core/Palette.js';
 
 /**
  * Internal types
@@ -95,7 +96,7 @@ BaseSeries.seriesType<typeof Highcharts.ErrorBarSeries>('errorbar', 'boxplot', {
      * @since   3.0
      * @product highcharts
      */
-    color: '${palette.neutralColor100}',
+    color: palette.neutralColor100,
 
     grouping: false,
 

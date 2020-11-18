@@ -61,6 +61,7 @@ const {
 } = GeometryCirclesModule;
 import NelderMeadMixin from '../Mixins/NelderMead.js';
 const { nelderMead } = NelderMeadMixin;
+import palette from '../Core/Palette.js';
 import U from '../Core/Utilities.js';
 const {
     addEvent,
@@ -1126,7 +1127,7 @@ var updateFieldBoundaries = function updateFieldBoundaries(
  * @optionparent plotOptions.venn
  */
 var vennOptions: Highcharts.VennSeriesOptions = {
-    borderColor: '${palette.neutralColor20}',
+    borderColor: palette.neutralColor20,
     borderDashStyle: 'solid' as any,
     borderWidth: 1,
     brighten: 0,
@@ -1153,14 +1154,14 @@ var vennOptions: Highcharts.VennSeriesOptions = {
          */
         hover: {
             opacity: 1,
-            borderColor: '${palette.neutralColor80}'
+            borderColor: palette.neutralColor80
         },
         /**
          * @excluding halo
          */
         select: {
-            color: '${palette.neutralColor20}',
-            borderColor: '${palette.neutralColor100}',
+            color: palette.neutralColor20,
+            borderColor: palette.neutralColor100,
             animation: false
         },
         inactive: {

@@ -29,6 +29,7 @@ import GeometryCirclesModule from '../Mixins/GeometryCircles.js';
 var getAreaOfCircle = GeometryCirclesModule.getAreaOfCircle, getAreaOfIntersectionBetweenCircles = GeometryCirclesModule.getAreaOfIntersectionBetweenCircles, getCircleCircleIntersection = GeometryCirclesModule.getCircleCircleIntersection, getCirclesIntersectionPolygon = GeometryCirclesModule.getCirclesIntersectionPolygon, getOverlapBetweenCirclesByDistance = GeometryCirclesModule.getOverlapBetweenCircles, isCircle1CompletelyOverlappingCircle2 = GeometryCirclesModule.isCircle1CompletelyOverlappingCircle2, isPointInsideAllCircles = GeometryCirclesModule.isPointInsideAllCircles, isPointInsideCircle = GeometryCirclesModule.isPointInsideCircle, isPointOutsideAllCircles = GeometryCirclesModule.isPointOutsideAllCircles;
 import NelderMeadMixin from '../Mixins/NelderMead.js';
 var nelderMead = NelderMeadMixin.nelderMead;
+import palette from '../Core/Palette.js';
 import U from '../Core/Utilities.js';
 var addEvent = U.addEvent, extend = U.extend, isArray = U.isArray, isNumber = U.isNumber, isObject = U.isObject, isString = U.isString, merge = U.merge;
 import './Scatter/ScatterSeries.js';
@@ -698,7 +699,7 @@ var updateFieldBoundaries = function updateFieldBoundaries(field, circle) {
  * @optionparent plotOptions.venn
  */
 var vennOptions = {
-    borderColor: '${palette.neutralColor20}',
+    borderColor: palette.neutralColor20,
     borderDashStyle: 'solid',
     borderWidth: 1,
     brighten: 0,
@@ -725,14 +726,14 @@ var vennOptions = {
          */
         hover: {
             opacity: 1,
-            borderColor: '${palette.neutralColor80}'
+            borderColor: palette.neutralColor80
         },
         /**
          * @excluding halo
          */
         select: {
-            color: '${palette.neutralColor20}',
-            borderColor: '${palette.neutralColor100}',
+            color: palette.neutralColor20,
+            borderColor: palette.neutralColor100,
             animation: false
         },
         inactive: {

@@ -2877,7 +2877,7 @@ H.defaultOptions = {
          *
          * @type {Highcharts.ColorString|Highcharts.GradientColorObject|Highcharts.PatternObject}
          */
-        borderColor: '${palette.neutralColor40}',
+        borderColor: palette.neutralColor40,
 
         /**
          * The border corner radius of the legend.
@@ -2978,7 +2978,7 @@ H.defaultOptions = {
              * @type  {Highcharts.ColorString|Highcharts.GradientColorObject|Highcharts.PatternObject}
              * @since 2.2.4
              */
-            activeColor: '${palette.highlightColor100}',
+            activeColor: palette.highlightColor100,
 
             /**
              * The color of the inactive up or down arrow in the legend page
@@ -2995,7 +2995,7 @@ H.defaultOptions = {
              * @type  {Highcharts.ColorString|Highcharts.GradientColorObject|Highcharts.PatternObject}
              * @since 2.2.4
              */
-            inactiveColor: '${palette.neutralColor20}'
+            inactiveColor: palette.neutralColor20
         },
 
         /**
@@ -3076,7 +3076,7 @@ H.defaultOptions = {
             /**
              * @ignore
              */
-            color: '${palette.neutralColor80}',
+            color: palette.neutralColor80,
             /**
              * @ignore
              */
@@ -3115,7 +3115,7 @@ H.defaultOptions = {
             /**
              * @ignore
              */
-            color: '${palette.neutralColor100}'
+            color: palette.neutralColor100
         },
 
         /**
@@ -3137,7 +3137,7 @@ H.defaultOptions = {
             /**
              * @ignore
              */
-            color: '${palette.neutralColor20}'
+            color: palette.neutralColor20
         },
 
         /**
@@ -3462,7 +3462,7 @@ H.defaultOptions = {
             /**
              * @ignore
              */
-            backgroundColor: '${palette.backgroundColor}',
+            backgroundColor: palette.backgroundColor,
             /**
              * @ignore
              */
@@ -4092,7 +4092,7 @@ H.defaultOptions = {
          *
          * @type {Highcharts.ColorString|Highcharts.GradientColorObject|Highcharts.PatternObject}
          */
-        backgroundColor: color('${palette.neutralColor3}')
+        backgroundColor: color(palette.neutralColor3)
             .setOpacity(0.85).get(),
 
         /**
@@ -4147,7 +4147,7 @@ H.defaultOptions = {
          */
         style: {
             /** @internal */
-            color: '${palette.neutralColor80}',
+            color: palette.neutralColor80,
             /** @internal */
             cursor: 'default',
             /** @internal */
@@ -4254,7 +4254,7 @@ H.defaultOptions = {
             /** @internal */
             cursor: 'pointer',
             /** @internal */
-            color: '${palette.neutralColor40}',
+            color: palette.neutralColor40,
             /** @internal */
             fontSize: '9px'
         },

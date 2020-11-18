@@ -28,6 +28,7 @@ import H from '../../Core/Globals.js';
 const { noop } = H;
 import LegendSymbolMixin from '../../Mixins/LegendSymbol.js';
 import LineSeries from '../../Series/Line/LineSeries.js';
+import palette from '../../Core/Palette.js';
 import PiePoint from './PiePoint.js';
 import SVGRenderer from '../../Core/Renderer/SVG/SVGRenderer.js';
 import U from '../../Core/Utilities.js';
@@ -613,7 +614,7 @@ class PieSeries extends LineSeries {
          *
          * @private
          */
-        borderColor: '${palette.backgroundColor}',
+        borderColor: palette.backgroundColor,
 
         /**
          * The width of the border surrounding each slice.
@@ -779,7 +780,7 @@ class PieSeries extends LineSeries {
                     'stroke-width': options.borderWidth,
                     fill: options.fillColor || 'none',
                     stroke: (options.color as any) ||
-                    '${palette.neutralColor20}'
+                    palette.neutralColor20
                 });
             }
 

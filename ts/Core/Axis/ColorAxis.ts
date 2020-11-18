@@ -37,6 +37,7 @@ const {
 import Legend from '../Legend.js';
 import LegendSymbolMixin from '../../Mixins/LegendSymbol.js';
 import LineSeries from '../../Series/Line/LineSeries.js';
+import palette from '../../Core/Palette.js';
 import Point from '../Series/Point.js';
 import U from '../Utilities.js';
 const {
@@ -441,7 +442,7 @@ class ColorAxis extends Axis implements AxisLike {
              * @type    {Highcharts.ColorString|Highcharts.GradientColorObject|Highcharts.PatternObject}
              * @product highcharts highstock highmaps
              */
-            color: '${palette.neutralColor40}'
+            color: palette.neutralColor40
         },
 
         /**
@@ -488,7 +489,7 @@ class ColorAxis extends Axis implements AxisLike {
          * @type    {Highcharts.ColorString|Highcharts.GradientColorObject|Highcharts.PatternObject}
          * @product highcharts highstock highmaps
          */
-        minColor: '${palette.highlightColor10}',
+        minColor: palette.highlightColor10,
 
         /**
          * The color to represent the maximum of the color axis. Unless
@@ -508,7 +509,7 @@ class ColorAxis extends Axis implements AxisLike {
          * @type    {Highcharts.ColorString|Highcharts.GradientColorObject|Highcharts.PatternObject}
          * @product highcharts highstock highmaps
          */
-        maxColor: '${palette.highlightColor100}',
+        maxColor: palette.highlightColor100,
 
         /**
          * Color stops for the gradient of a scalar color axis. Use this in

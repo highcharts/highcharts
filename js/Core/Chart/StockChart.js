@@ -13,6 +13,7 @@ import Chart from '../Chart/Chart.js';
 import H from '../Globals.js';
 import LineSeries from '../../Series/Line/LineSeries.js';
 var _a = LineSeries.prototype, seriesInit = _a.init, seriesProcessData = _a.processData;
+import palette from '../../Core/Palette.js';
 import Point from '../Series/Point.js';
 var pointTooltipFormatter = Point.prototype.tooltipFormatter;
 import SVGRenderer from '../Renderer/SVG/SVGRenderer.js';
@@ -414,12 +415,12 @@ addEvent(Axis, 'afterDrawCrosshair', function (event) {
                 .attr({
                 fill: options.backgroundColor ||
                     (this.series[0] && this.series[0].color) ||
-                    '${palette.neutralColor60}',
+                    palette.neutralColor60,
                 stroke: options.borderColor || '',
                 'stroke-width': options.borderWidth || 0
             })
                 .css(extend({
-                color: '${palette.backgroundColor}',
+                color: palette.backgroundColor,
                 fontWeight: 'normal',
                 fontSize: '11px',
                 textAlign: 'center'

@@ -9,6 +9,7 @@
  *
  * */
 'use strict';
+import palette from '../../Core/Palette.js';
 import U from '../Utilities.js';
 var addEvent = U.addEvent, defined = U.defined, isObject = U.isObject, isNumber = U.isNumber, pick = U.pick, wrap = U.wrap;
 /**
@@ -108,7 +109,7 @@ var TreeGridTick;
             icon
                 .attr({
                 'stroke-width': 1,
-                'fill': pick(params.color, '${palette.neutralColor60}')
+                'fill': pick(params.color, palette.neutralColor60)
             })
                 .css({
                 cursor: 'pointer',
