@@ -12,6 +12,7 @@ import H from './Globals.js';
 var isTouchDevice = H.isTouchDevice, svg = H.svg;
 import Color from './Color/Color.js';
 var color = Color.parse;
+import palette from './Palette.js';
 import Time from './Time.js';
 import U from './Utilities.js';
 var merge = U.merge;
@@ -228,7 +229,7 @@ H.defaultOptions = {
      * @default ["#7cb5ec", "#434348", "#90ed7d", "#f7a35c", "#8085e9",
      *          "#f15c80", "#e4d354", "#2b908f", "#f45b5b", "#91e8e1"]
      */
-    colors: '${palette.colors}'.split(' '),
+    colors: palette.colors,
     /**
      * Styled mode only. Configuration object for adding SVG definitions for
      * reusable elements. See [gradients, shadows and
@@ -1536,7 +1537,7 @@ H.defaultOptions = {
          *
          * @type {Highcharts.ColorString|Highcharts.GradientColorObject|Highcharts.PatternObject}
          */
-        borderColor: '${palette.highlightColor80}',
+        borderColor: palette.highlightColor80,
         /**
          * The pixel width of the outer chart border.
          *
@@ -1575,7 +1576,7 @@ H.defaultOptions = {
          *
          * @type {Highcharts.ColorString|Highcharts.GradientColorObject|Highcharts.PatternObject}
          */
-        backgroundColor: '${palette.backgroundColor}',
+        backgroundColor: palette.backgroundColor,
         /**
          * The background color or gradient for the plot area.
          *
@@ -1632,7 +1633,7 @@ H.defaultOptions = {
          *
          * @type {Highcharts.ColorString|Highcharts.GradientColorObject|Highcharts.PatternObject}
          */
-        plotBorderColor: '${palette.neutralColor20}'
+        plotBorderColor: palette.neutralColor20
     },
     /**
      * The chart's main title.
@@ -2061,7 +2062,7 @@ H.defaultOptions = {
             /**
              * @ignore-option
              */
-            color: '${palette.neutralColor80}'
+            color: palette.neutralColor80
         }
     },
     /**
@@ -3653,6 +3654,8 @@ H.defaultOptions = {
 /*= if (!build.classic) { =*/
 // Legacy build for styled mode, set the styledMode option to true by default.
 H.defaultOptions.chart.styledMode = true;
+/*= } else { =*/
+H.defaultOptions.chart.styledMode = false;
 /*= } =*/
 '';
 /**
