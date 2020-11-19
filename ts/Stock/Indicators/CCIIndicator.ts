@@ -110,23 +110,18 @@ class CCIIndicator extends SMAIndicator {
             period: 14
         }
     } as Highcharts.CCIIndicatorOptions);
-}
 
-interface CCIIndicator {
-    data: Array<Highcharts.CCIIndicatorPoint>;
-    getValues<TLinkedSeries extends LineSeries>(
-        series: TLinkedSeries,
-        params: Highcharts.CCIIndicatorParamsOptions
-    ): (IndicatorValuesObject<TLinkedSeries>|undefined);
-    pointClass: typeof Highcharts.CCIIndicatorPoint;
-    points: Array<Highcharts.CCIIndicatorPoint>;
-    options: Highcharts.CCIIndicatorOptions;
-}
-/**
- * @lends Highcharts.Series#
- */
-extend(CCIIndicator.prototype, {
-    getValues: function<TLinkedSeries extends LineSeries> (
+    /* *
+     *
+     *  Properties
+     *
+     * */
+
+    public data: Array<Highcharts.CCIIndicatorPoint> = void 0 as any;
+    public points: Array<Highcharts.CCIIndicatorPoint> = void 0 as any;
+    public options: Highcharts.CCIIndicatorOptions = void 0 as any;
+
+    public getValues<TLinkedSeries extends LineSeries>(
         series: TLinkedSeries,
         params: Highcharts.CCIIndicatorParamsOptions
     ): (IndicatorValuesObject<TLinkedSeries>|undefined) {
@@ -187,7 +182,17 @@ extend(CCIIndicator.prototype, {
             yData: yData
         } as IndicatorValuesObject<TLinkedSeries>;
     }
-});
+}
+
+/* *
+ *
+ *  Prototype Properties
+ *
+ * */
+
+interface CCIIndicator {
+    pointClass: typeof Highcharts.CCIIndicatorPoint;
+}
 
 declare module '../../Core/Series/SeriesType' {
     interface SeriesTypeRegistry {

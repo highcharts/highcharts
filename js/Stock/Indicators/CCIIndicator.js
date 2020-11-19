@@ -60,34 +60,18 @@ function meanDeviation(arr, sma) {
 var CCIIndicator = /** @class */ (function (_super) {
     __extends(CCIIndicator, _super);
     function CCIIndicator() {
-        return _super !== null && _super.apply(this, arguments) || this;
+        var _this = _super !== null && _super.apply(this, arguments) || this;
+        /* *
+         *
+         *  Properties
+         *
+         * */
+        _this.data = void 0;
+        _this.points = void 0;
+        _this.options = void 0;
+        return _this;
     }
-    /**
-     * Commodity Channel Index (CCI). This series requires `linkedTo` option to
-     * be set.
-     *
-     * @sample stock/indicators/cci
-     *         CCI indicator
-     *
-     * @extends      plotOptions.sma
-     * @since        6.0.0
-     * @product      highstock
-     * @requires     stock/indicators/indicators
-     * @requires     stock/indicators/cci
-     * @optionparent plotOptions.cci
-     */
-    CCIIndicator.defaultOptions = merge(SMAIndicator.defaultOptions, {
-        params: {
-            period: 14
-        }
-    });
-    return CCIIndicator;
-}(SMAIndicator));
-/**
- * @lends Highcharts.Series#
- */
-extend(CCIIndicator.prototype, {
-    getValues: function (series, params) {
+    CCIIndicator.prototype.getValues = function (series, params) {
         var period = params.period, xVal = series.xData, yVal = series.yData, yValLen = yVal ? yVal.length : 0, TP = [], periodTP = [], range = 1, CCI = [], xData = [], yData = [], CCIPoint, p, len, smaTP, TPtemp, meanDev, i;
         // CCI requires close value
         if (xVal.length <= period ||
@@ -118,8 +102,28 @@ extend(CCIIndicator.prototype, {
             xData: xData,
             yData: yData
         };
-    }
-});
+    };
+    /**
+     * Commodity Channel Index (CCI). This series requires `linkedTo` option to
+     * be set.
+     *
+     * @sample stock/indicators/cci
+     *         CCI indicator
+     *
+     * @extends      plotOptions.sma
+     * @since        6.0.0
+     * @product      highstock
+     * @requires     stock/indicators/indicators
+     * @requires     stock/indicators/cci
+     * @optionparent plotOptions.cci
+     */
+    CCIIndicator.defaultOptions = merge(SMAIndicator.defaultOptions, {
+        params: {
+            period: 14
+        }
+    });
+    return CCIIndicator;
+}(SMAIndicator));
 /* *
  *
  *  Registry
