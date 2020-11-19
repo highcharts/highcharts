@@ -8,47 +8,24 @@
 
 'use strict';
 
-import type IndicatorValuesObject from './IndicatorValuesObject';
-import type LineSeries from '../../Series/Line/LineSeries';
+import type IndicatorValuesObject from '../IndicatorValuesObject';
+import type LineSeries from '../../../Series/Line/LineSeries';
 import type {
-    SMAOptions,
-    SMAParamsOptions
-} from './SMA/SMAOptions';
-import type SMAPoint from './SMA/SMAPoint';
-import BaseSeries from '../../Core/Series/Series.js';
+    MomentumOptions,
+    MomentumParamsOptions
+} from './MomentumOptions';
+import type MomentumPoint from './MomentumPoint';
+import BaseSeries from '../../../Core/Series/Series.js';
 const {
     seriesTypes: {
         sma: SMAIndicator
     }
 } = BaseSeries;
-import U from '../../Core/Utilities.js';
+import U from '../../../Core/Utilities.js';
 const {
-    extend,
     isArray,
     merge
 } = U;
-
-/**
- * Internal types
- * @private
- */
-declare global {
-    namespace Highcharts {
-
-        interface MomentumIndicatorParamsOptions
-            extends SMAParamsOptions {
-            // for inheritance
-        }
-
-        class MomentumIndicatorPoint extends SMAPoint {
-            public series: MomentumIndicator;
-        }
-
-        interface MomentumIndicatorOptions extends SMAOptions {
-            params?: MomentumIndicatorParamsOptions;
-        }
-    }
-}
 
 /* eslint-disable require-jsdoc */
 
@@ -92,28 +69,22 @@ class MomentumIndicator extends SMAIndicator {
      * @requires     stock/indicators/momentum
      * @optionparent plotOptions.momentum
      */
-    public static defaultOptions: Highcharts.MomentumIndicatorOptions = merge(SMAIndicator.defaultOptions, {
+    public static defaultOptions: MomentumOptions = merge(SMAIndicator.defaultOptions, {
         params: {
             period: 14
         }
-    } as Highcharts.MomentumIndicatorOptions);
+    } as MomentumOptions);
 
-    /* *
-    *
-    *  Prototype Properties
-    *
-    * */
-
-    public data: Array<Highcharts.MomentumIndicatorPoint> = void 0 as any;
-    nameBase: string = void 0 as any;
-    options: Highcharts.MomentumIndicatorOptions = void 0 as any;
-    points: Array<Highcharts.MomentumIndicatorPoint> = void 0 as any;
+    public data: Array<MomentumPoint> = void 0 as any;
+    public nameBase: string = void 0 as any;
+    public options: MomentumOptions = void 0 as any;
+    public points: Array<MomentumPoint> = void 0 as any;
 
     getValues<TLinkedSeries extends LineSeries>(
         series: TLinkedSeries,
-        params: Highcharts.MomentumIndicatorParamsOptions
+        params: MomentumOptions
     ): (IndicatorValuesObject<TLinkedSeries>|undefined) {
-        var period: number = (params.period as any),
+        var period: number = params.period,
             xVal: Array<number> = (series.xData as any),
             yVal: Array<Array<number>> = (series.yData as any),
             yValLen: number = yVal ? yVal.length : 0,
@@ -175,7 +146,7 @@ class MomentumIndicator extends SMAIndicator {
  * */
 
 interface MomentumIndicator {
-    pointClass: typeof Highcharts.MomentumIndicatorPoint;
+    pointClass: typeof MomentumPoint;
 }
 
 /* *
@@ -183,7 +154,7 @@ interface MomentumIndicator {
  *  Registry
  *
  * */
-declare module '../../Core/Series/SeriesType' {
+declare module '../../../Core/Series/SeriesType' {
     interface SeriesTypeRegistry {
         momentum: typeof MomentumIndicator;
     }
