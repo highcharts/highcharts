@@ -371,7 +371,7 @@ var WordcloudSeries = /** @class */ (function (_super) {
         },
         tooltip: {
             followPointer: true,
-            pointFormat: '<span style="color:{point.color}">\u25CF</span>{series.name}: <b>{point.weight}</b><br/>'
+            pointFormat: '<span style="color:{point.color}">\u25CF</span> {series.name}: <b>{point.weight}</b><br/>'
         }
     });
     return WordcloudSeries;

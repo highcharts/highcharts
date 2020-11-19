@@ -225,7 +225,7 @@ class WordcloudSeries extends ColumnSeries {
         },
         tooltip: {
             followPointer: true,
-            pointFormat: '<span style="color:{point.color}">\u25CF</span>{series.name}: <b>{point.weight}</b><br/>'
+            pointFormat: '<span style="color:{point.color}">\u25CF</span> {series.name}: <b>{point.weight}</b><br/>'
         }
     } as WordcloudSeriesOptions);
 
