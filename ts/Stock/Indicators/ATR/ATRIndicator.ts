@@ -128,6 +128,7 @@ class ATRIndicator extends SMAIndicator {
 
     public data: Array<ATRPoint> = void 0 as any;
     public points: Array<ATRPoint> = void 0 as any;
+    public options: ATROptions = void 0 as any;
 
     /* *
      *
