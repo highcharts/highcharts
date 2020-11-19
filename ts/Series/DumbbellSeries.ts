@@ -16,6 +16,9 @@
  *
  * */
 
+import type AreaRangePoint from './AreaRange/AreaRangePoint';
+import type AreaRangePointOptions from './AreaRange/AreaRangePointOptions';
+import type AreaRangeSeriesOptions from './AreaRange/AreaRangeSeriesOptions';
 import type ColorString from '../Core/Color/ColorString';
 import type ColorType from '../Core/Color/ColorType';
 import type ColumnMetricsObject from './Column/ColumnMetricsObject';
@@ -23,6 +26,7 @@ import type { SeriesStatesOptions } from '../Core/Series/SeriesOptions';
 import type { StatesOptionsKey } from '../Core/Series/StatesOptions';
 import type SVGAttributes from '../Core/Renderer/SVG/SVGAttributes';
 import type SVGPath from '../Core/Renderer/SVG/SVGPath';
+import AreaRangeSeries from './AreaRange/AreaRangeSeries.js';
 import BaseSeries from '../Core/Series/Series.js';
 const { seriesTypes } = BaseSeries;
 import ColumnSeries from './Column/ColumnSeries.js';
@@ -39,11 +43,10 @@ const {
     pick
 } = U;
 
-import './AreaRange/AreaRangeSeries.js';
 import './ColumnRangeSeries.js';
 import '../Core/Interaction.js';
 
-var areaRangeProto = seriesTypes.arearange.prototype,
+var areaRangeProto = AreaRangeSeries.prototype,
     columnRangeProto = seriesTypes.columnrange.prototype,
     areaRangePointProto = areaRangeProto.pointClass.prototype,
     TrackerMixin = H.TrackerMixin; // Interaction
@@ -95,9 +98,9 @@ declare global {
             public points: Array<DumbbellPoint>;
             public trackerGroups: Array<string>;
             public crispCol: ColumnSeries['crispCol'];
-            public translatePoint: AreaRangeSeries['translate'];
+            public translatePoint: typeof areaRangeProto['translate'];
             public setShapeArgs: ColumnRangeSeries['translate'];
-            public seriesDrawPoints: AreaRangeSeries['drawPoints'];
+            public seriesDrawPoints: typeof areaRangeProto['drawPoints'];
             public drawTracker: TrackerMixin['drawTrackerPoint'];
             public drawGraph: any;
             public columnMetrics: ColumnMetricsObject;
@@ -124,7 +127,7 @@ declare global {
  */
 declare module '../Core/Series/SeriesType' {
     interface SeriesTypeRegistry {
-        dumbbell: typeof Highcharts.AreaRangeSeries;
+        dumbbell: typeof AreaRangeSeries;
     }
 }
 

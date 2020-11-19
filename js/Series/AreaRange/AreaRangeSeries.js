@@ -21,19 +21,27 @@ var __extends = (this && this.__extends) || (function () {
         d.prototype = b === null ? Object.create(b) : (__.prototype = b.prototype, new __());
     };
 })();
+import AreaRangePoint from './AreaRangePoint.js';
 import AreaSeries from '../Area/AreaSeries.js';
+var areaProto = AreaSeries.prototype;
 import BaseSeries from '../../Core/Series/Series.js';
-var seriesTypes = BaseSeries.seriesTypes;
 import ColumnSeries from '../Column/ColumnSeries.js';
 var columnProto = ColumnSeries.prototype;
 import H from '../../Core/Globals.js';
 var noop = H.noop;
 import LineSeries from '../Line/LineSeries.js';
 var seriesProto = LineSeries.prototype;
-import Point from '../../Core/Series/Point.js';
-var pointProto = Point.prototype;
 import U from '../../Core/Utilities.js';
-var defined = U.defined, extend = U.extend, isArray = U.isArray, isNumber = U.isNumber, pick = U.pick, merge = U.merge;
+var defined = U.defined, extend = U.extend, isArray = U.isArray, pick = U.pick, merge = U.merge;
+/**
+ * The AreaRange series type.
+ *
+ * @private
+ * @class
+ * @name Highcharts.seriesTypes#arearange
+ *
+ * @augments Highcharts.Series
+ */
 /**
  *
  *  Class
@@ -492,122 +500,15 @@ var AreaRangeSeries = /** @class */ (function (_super) {
 extend(AreaRangeSeries.prototype, {
     pointArrayMap: ['low', 'high'],
     pointValKey: 'low',
-    deferTranslatePolar: true
+    deferTranslatePolar: true,
+    pointClass: AreaRangePoint
 });
-var AreaRangePoint = /** @class */ (function (_super) {
-    __extends(AreaRangePoint, _super);
-    function AreaRangePoint() {
-        /**
-         *
-         *  Functions
-         *
-         */
-        var _this = _super !== null && _super.apply(this, arguments) || this;
-        _this.high = void 0;
-        _this.low = void 0;
-        _this.options = void 0;
-        _this.plotHigh = void 0;
-        _this.plotLow = void 0;
-        _this.plotHighX = void 0;
-        _this.plotLowX = void 0;
-        _this.plotX = void 0;
-        _this.series = void 0;
-        return _this;
-    }
-    /**
-     * @private
-     */
-    AreaRangePoint.prototype.setState = function () {
-        var prevState = this.state, series = this.series, isPolar = series.chart.polar;
-        if (!defined(this.plotHigh)) {
-            // Boost doesn't calculate plotHigh
-            this.plotHigh = series.yAxis.toPixels(this.high, true);
-        }
-        if (!defined(this.plotLow)) {
-            // Boost doesn't calculate plotLow
-            this.plotLow = this.plotY = series.yAxis.toPixels(this.low, true);
-        }
-        if (series.stateMarkerGraphic) {
-            series.lowerStateMarkerGraphic = series.stateMarkerGraphic;
-            series.stateMarkerGraphic = series.upperStateMarkerGraphic;
-        }
-        // Change state also for the top marker
-        this.graphic = this.upperGraphic;
-        this.plotY = this.plotHigh;
-        if (isPolar) {
-            this.plotX = this.plotHighX;
-        }
-        // Top state:
-        pointProto.setState.apply(this, arguments);
-        this.state = prevState;
-        // Now restore defaults
-        this.plotY = this.plotLow;
-        this.graphic = this.lowerGraphic;
-        if (isPolar) {
-            this.plotX = this.plotLowX;
-        }
-        if (series.stateMarkerGraphic) {
-            series.upperStateMarkerGraphic = series.stateMarkerGraphic;
-            series.stateMarkerGraphic = series.lowerStateMarkerGraphic;
-            // Lower marker is stored at stateMarkerGraphic
-            // to avoid reference duplication (#7021)
-            series.lowerStateMarkerGraphic = void 0;
-        }
-        pointProto.setState.apply(this, arguments);
-    };
-    AreaRangePoint.prototype.haloPath = function () {
-        var isPolar = this.series.chart.polar, path = [];
-        // Bottom halo
-        this.plotY = this.plotLow;
-        if (isPolar) {
-            this.plotX = this.plotLowX;
-        }
-        if (this.isInside) {
-            path = pointProto.haloPath.apply(this, arguments);
-        }
-        // Top halo
-        this.plotY = this.plotHigh;
-        if (isPolar) {
-            this.plotX = this.plotHighX;
-        }
-        if (this.isTopInside) {
-            path = path.concat(pointProto.haloPath.apply(this, arguments));
-        }
-        return path;
-    };
-    AreaRangePoint.prototype.destroyElements = function () {
-        var graphics = ['lowerGraphic', 'upperGraphic'];
-        graphics.forEach(function (graphicName) {
-            if (this[graphicName]) {
-                this[graphicName] =
-                    this[graphicName].destroy();
-            }
-        }, this);
-        // Clear graphic for states, removed in the above each:
-        this.graphic = null;
-        return pointProto.destroyElements.apply(this, arguments);
-    };
-    AreaRangePoint.prototype.isValid = function () {
-        return isNumber(this.low) && isNumber(this.high);
-    };
-    return AreaRangePoint;
-}(AreaSeries.prototype.pointClass));
-AreaRangeSeries.prototype.pointClass = AreaRangePoint;
-extend(AreaRangeSeries.prototype.pointClass.prototype, {
-/**
- * Range series only. The high or maximum value for each data point.
- * @name Highcharts.Point#high
- * @type {number|undefined}
- */
-/**
- * Range series only. The low or minimum value for each data point.
- * @name Highcharts.Point#low
- * @type {number|undefined}
- */
-});
-import '../Area/AreaSeries.js';
-var areaProto = seriesTypes.area.prototype;
 BaseSeries.registerSeriesType('arearange', AreaRangeSeries);
+/* *
+ *
+ *  Default export
+ *
+ * */
 export default AreaRangeSeries;
 /**
  * The area range series is a carteseian series with higher and lower values for

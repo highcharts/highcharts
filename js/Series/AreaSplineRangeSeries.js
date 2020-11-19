@@ -8,6 +8,7 @@
  *
  * */
 'use strict';
+import AreaRangeSeries from './AreaRange/AreaRangeSeries.js';
 import BaseSeries from '../Core/Series/Series.js';
 import '../Core/Options.js';
 /**
