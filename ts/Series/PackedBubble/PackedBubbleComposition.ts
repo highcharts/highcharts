@@ -17,18 +17,19 @@
  * */
 
 import type PackedBubbleChart from './PackedBubbleChart';
-import type PackedBubblePoint from './PackedBubblePoint';
 import type PackedBubbleLayout from './PackedBubbleLayout';
+import type PackedBubblePoint from './PackedBubblePoint';
 import type PackedBubbleSeries from './PackedBubbleSeries';
 import Chart from '../../Core/Chart/Chart.js';
 import H from '../../Core/Globals.js';
+import '../../Series/Networkgraph/Layouts.js';
+const Reingold = H.layouts['reingold-fruchterman'];
 import U from '../../Core/Utilities.js';
 const {
     addEvent,
     extendClass,
     pick
 } = U;
-const Reingold = H.layouts['reingold-fruchterman'];
 
 /* *
  *
