@@ -24,7 +24,7 @@ import AreaSeries from '../Area/AreaSeries.js';
 import Point from '../../Core/Series/Point.js';
 var pointProto = Point.prototype;
 import U from '../../Core/Utilities.js';
-var defined = U.defined, extend = U.extend, isNumber = U.isNumber;
+var defined = U.defined, isNumber = U.isNumber;
 /* *
  *
  *  Class
@@ -133,7 +133,6 @@ var AreaRangePoint = /** @class */ (function (_super) {
     };
     return AreaRangePoint;
 }(AreaSeries.prototype.pointClass));
-extend(AreaRangePoint.prototype, {});
 /* *
  *
  *  Default export

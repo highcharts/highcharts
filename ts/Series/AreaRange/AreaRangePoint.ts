@@ -25,7 +25,6 @@ const { prototype: pointProto } = Point;
 import U from '../../Core/Utilities.js';
 const {
     defined,
-    extend,
     isNumber
 } = U;
 
@@ -171,10 +170,6 @@ class AreaRangePoint extends AreaSeries.prototype.pointClass {
         return isNumber(this.low) && isNumber(this.high);
     }
 }
-
-extend(AreaRangePoint.prototype, {
-
-});
 
 /* *
  *
