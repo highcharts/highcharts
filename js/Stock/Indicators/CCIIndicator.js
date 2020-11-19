@@ -5,10 +5,23 @@
  *  !!!!!!! SOURCE GETS TRANSPILED BY TYPESCRIPT. EDIT TS FILE ONLY. !!!!!!!
  * */
 'use strict';
+var __extends = (this && this.__extends) || (function () {
+    var extendStatics = function (d, b) {
+        extendStatics = Object.setPrototypeOf ||
+            ({ __proto__: [] } instanceof Array && function (d, b) { d.__proto__ = b; }) ||
+            function (d, b) { for (var p in b) if (b.hasOwnProperty(p)) d[p] = b[p]; };
+        return extendStatics(d, b);
+    };
+    return function (d, b) {
+        extendStatics(d, b);
+        function __() { this.constructor = d; }
+        d.prototype = b === null ? Object.create(b) : (__.prototype = b.prototype, new __());
+    };
+})();
 import BaseSeries from '../../Core/Series/Series.js';
+var SMAIndicator = BaseSeries.seriesTypes.sma;
 import U from '../../Core/Utilities.js';
-var isArray = U.isArray;
-// im port './SMAIndicator.js';
+var isArray = U.isArray, extend = U.extend, merge = U.merge;
 /* eslint-disable valid-jsdoc */
 // Utils:
 /**
@@ -30,6 +43,11 @@ function meanDeviation(arr, sma) {
     return sum;
 }
 /* eslint-enable valid-jsdoc */
+/* *
+ *
+ * Class
+ *
+ * */
 /**
  * The CCI series type.
  *
@@ -39,30 +57,36 @@ function meanDeviation(arr, sma) {
  *
  * @augments Highcharts.Series
  */
-BaseSeries.seriesType('cci', 'sma', 
-/**
- * Commodity Channel Index (CCI). This series requires `linkedTo` option to
- * be set.
- *
- * @sample stock/indicators/cci
- *         CCI indicator
- *
- * @extends      plotOptions.sma
- * @since        6.0.0
- * @product      highstock
- * @requires     stock/indicators/indicators
- * @requires     stock/indicators/cci
- * @optionparent plotOptions.cci
- */
-{
-    params: {
-        period: 14
+var CCIIndicator = /** @class */ (function (_super) {
+    __extends(CCIIndicator, _super);
+    function CCIIndicator() {
+        return _super !== null && _super.apply(this, arguments) || this;
     }
-}, 
+    /**
+     * Commodity Channel Index (CCI). This series requires `linkedTo` option to
+     * be set.
+     *
+     * @sample stock/indicators/cci
+     *         CCI indicator
+     *
+     * @extends      plotOptions.sma
+     * @since        6.0.0
+     * @product      highstock
+     * @requires     stock/indicators/indicators
+     * @requires     stock/indicators/cci
+     * @optionparent plotOptions.cci
+     */
+    CCIIndicator.defaultOptions = merge(SMAIndicator.defaultOptions, {
+        params: {
+            period: 14
+        }
+    });
+    return CCIIndicator;
+}(SMAIndicator));
 /**
  * @lends Highcharts.Series#
  */
-{
+extend(CCIIndicator.prototype, {
     getValues: function (series, params) {
         var period = params.period, xVal = series.xData, yVal = series.yData, yValLen = yVal ? yVal.length : 0, TP = [], periodTP = [], range = 1, CCI = [], xData = [], yData = [], CCIPoint, p, len, smaTP, TPtemp, meanDev, i;
         // CCI requires close value
@@ -96,6 +120,18 @@ BaseSeries.seriesType('cci', 'sma',
         };
     }
 });
+/* *
+ *
+ *  Registry
+ *
+ * */
+BaseSeries.registerSeriesType('cci', CCIIndicator);
+/* *
+ *
+ *  Default Export
+ *
+ * */
+export default CCIIndicator;
 /**
  * A `CCI` series. If the [type](#series.cci.type) option is not
  * specified, it is inherited from [chart.type](#chart.type).
