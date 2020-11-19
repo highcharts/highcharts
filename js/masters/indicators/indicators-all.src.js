@@ -15,7 +15,7 @@
 import '../../Stock/Indicators/SMA/SMAIndicator.js';
 import '../../Stock/Indicators/AD/ADIndicator.js';
 import '../../Stock/Indicators/AOIndicator.js';
-import '../../Stock/Indicators/AroonIndicator.js';
+import '../../Stock/Indicators/Aroon/AroonIndicator.js';
 import '../../Stock/Indicators/AroonOscillatorIndicator.js';
 import '../../Stock/Indicators/ATRIndicator.js';
 import '../../Stock/Indicators/BBIndicator.js';

@@ -8,15 +8,13 @@
 
 'use strict';
 
-import type CSSObject from '../../Core/Renderer/CSSObject';
-import type IndicatorValuesObject from './IndicatorValuesObject';
-import type LineSeries from '../../Series/Line/LineSeries';
-import type { PointMarkerOptions } from '../../Core/Series/PointOptions';
+import type IndicatorValuesObject from '../IndicatorValuesObject';
+import type LineSeries from '../../../Series/Line/LineSeries';
 import type {
-    SMAOptions,
-    SMAParamsOptions
-} from './SMA/SMAOptions';
-import type SMAPoint from './SMA/SMAPoint';
+    AroonOptions,
+    AroonParamsOptions
+} from '../Aroon/AroonOptions';
+import type AroonPoint from '../Aroon/AroonPoint';
 
 const {
     seriesTypes: {
@@ -24,37 +22,14 @@ const {
     }
 } = BaseSeries;
 
-import BaseSeries from '../../Core/Series/Series.js';
-import MultipleLinesMixin from '../../Mixins/MultipleLines.js';
-import U from '../../Core/Utilities.js';
+import BaseSeries from '../../../Core/Series/Series.js';
+import MultipleLinesMixin from '../../../Mixins/MultipleLines.js';
+import U from '../../../Core/Utilities.js';
 const {
     extend,
     merge,
     pick
 } = U;
-
-/**
- * Internal types
- * @private
- */
-declare global {
-    namespace Highcharts {
-        interface AroonIndicatorOptions
-            extends SMAOptions, MultipleLinesIndicatorOptions {
-            aroonDown?: Record<string, CSSObject>;
-            marker?: PointMarkerOptions;
-            params?: AroonIndicatorParamsOptions;
-            tooltip?: TooltipOptions;
-        }
-        interface AroonIndicatorParamsOptions
-            extends SMAParamsOptions {
-            period?: number;
-        }
-        class AroonIndicatorPoint extends SMAPoint {
-            public series: AroonIndicator;
-        }
-    }
-}
 
 /* eslint-disable valid-jsdoc */
 // Utils
@@ -118,7 +93,7 @@ class AroonIndicator extends SMAIndicator implements Highcharts.MultipleLinesInd
      * @requires     stock/indicators/aroon
      * @optionparent plotOptions.aroon
      */
-    public static defaultOptions: Highcharts.AroonIndicatorOptions = merge(SMAIndicator.defaultOptions, {
+    public static defaultOptions: AroonOptions = merge(SMAIndicator.defaultOptions, {
         /**
          * Paramters used in calculation of aroon series points.
          *
@@ -160,18 +135,18 @@ class AroonIndicator extends SMAIndicator implements Highcharts.MultipleLinesInd
         dataGrouping: {
             approximation: 'averages'
         }
-    } as Highcharts.AroonIndicatorOptions);
+    } as AroonOptions);
 
     /* *
      *
      *  Properties
      *
      * */
-    public data: Array<Highcharts.AroonIndicatorPoint> = void 0 as any;
+    public data: Array<AroonPoint> = void 0 as any;
 
-    public options: Highcharts.AroonIndicatorOptions = void 0 as any;
+    public options: AroonOptions = void 0 as any;
 
-    public points: Array<Highcharts.AroonIndicatorPoint> = void 0 as any;
+    public points: Array<AroonPoint> = void 0 as any;
 
     /* *
      *
@@ -180,7 +155,7 @@ class AroonIndicator extends SMAIndicator implements Highcharts.MultipleLinesInd
      * */
     public getValues<TLinkedSeries extends LineSeries>(
         series: TLinkedSeries,
-        params: Highcharts.AroonIndicatorParamsOptions
+        params: AroonParamsOptions
     ): IndicatorValuesObject<TLinkedSeries> {
         var period = (params.period as any),
             xVal: Array<number> = (series.xData as any),
@@ -240,38 +215,34 @@ class AroonIndicator extends SMAIndicator implements Highcharts.MultipleLinesInd
 * */
 
 interface AroonIndicator {
-    // data: Array<Highcharts.AroonIndicatorPoint>;
-    // getValues<TLinkedSeries extends LineSeries>(
-    //     series: TLinkedSeries,
-    //     params: Highcharts.AroonIndicatorParamsOptions
-    // ): IndicatorValuesObject<TLinkedSeries>;
-
-    linesApiNames: Highcharts.MultipleLinesMixin['linesApiNames'];
-    pointClass: typeof Highcharts.AroonIndicatorPoint;
-    getTranslatedLinesNames: Highcharts.MultipleLinesMixin[
-        'getTranslatedLinesNames'
-    ];
-    // nameBase: string;
-    // options: Highcharts.AroonIndicatorOptions;
-    // pointArrayMap: Highcharts.MultipleLinesMixin['pointArrayMap'];
-    // points: Array<Highcharts.AroonIndicatorPoint>;
-    // pointValKey: Highcharts.MultipleLinesMixin['pointValKey'];
-    // drawGraph: Highcharts.MultipleLinesMixin['drawGraph'];
+    pointArrayMap: Array<string>;
+    pointValKey: string;
+    nameComponents: Array<string>;
+    linesApiNames: Array<string>;
+    drawGraph: typeof MultipleLinesMixin.drawGraph;
+    getTranslatedLinesNames: typeof MultipleLinesMixin['getTranslatedLinesNames'];
+    toYData: typeof MultipleLinesMixin.toYData;
+    translate: typeof MultipleLinesMixin.translate;
+    pointClass: typeof AroonPoint;
 }
 
-extend(AroonIndicator.prototype, merge(MultipleLinesMixin, {
+extend(AroonIndicator.prototype, {
+    linesApiNames: ['aroonDown'],
     nameBase: 'Aroon',
     pointArrayMap: ['y', 'aroonDown'],
     pointValKey: 'y',
-    linesApiNames: ['aroonDown']
-}));
+    drawGraph: MultipleLinesMixin.drawGraph,
+    getTranslatedLinesNames: MultipleLinesMixin.getTranslatedLinesNames,
+    toYData: MultipleLinesMixin.toYData,
+    translate: MultipleLinesMixin.translate
+});
 
 /* *
  *
  *  Registry
  *
  * */
-declare module '../../Core/Series/SeriesType' {
+declare module '../../../Core/Series/SeriesType' {
     interface SeriesTypeRegistry {
         aroon: typeof AroonIndicator;
     }
