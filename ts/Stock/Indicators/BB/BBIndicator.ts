@@ -239,12 +239,6 @@ class BBIndicator extends SMAIndicator implements Highcharts.MultipleLinesIndica
     }
 }
 
-/* *
- *
- *  Prototype Properties
- *
- * */
-
 interface BBIndicator {
     pointArrayMap: Array<string>;
     pointValKey: string;
