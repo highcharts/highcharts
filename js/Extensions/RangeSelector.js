@@ -11,6 +11,7 @@
 import Axis from '../Core/Axis/Axis.js';
 import Chart from '../Core/Chart/Chart.js';
 import H from '../Core/Globals.js';
+var doc = H.doc;
 import O from '../Core/Options.js';
 var defaultOptions = O.defaultOptions;
 import SVGElement from '../Core/Renderer/SVG/SVGElement.js';
@@ -902,15 +903,30 @@ var RangeSelector = /** @class */ (function () {
      * @return {void}
      */
     RangeSelector.prototype.showInput = function (name) {
-        var inputGroup = this.inputGroup, dateBox = this[name + 'DateBox'], input = this[name + 'Input'];
-        var tempOffset = input.type === 'text' ? 0 : 40;
+        var dateBox = this[name + 'DateBox'], input = this[name + 'Input'], isTextInput = input.type === 'text';
+        var _a = this.inputGroup, translateX = _a.translateX, translateY = _a.translateY;
         css(input, {
-            left: (inputGroup.translateX + dateBox.x - tempOffset) + 'px',
-            top: inputGroup.translateY + 'px',
-            width: (dateBox.width - 2) + tempOffset + 'px',
-            height: (dateBox.height - 2) + 'px',
+            width: isTextInput ? ((dateBox.width - 2) + 'px') : 'auto',
+            height: isTextInput ? ((dateBox.height - 2) + 'px') : 'auto',
             border: '2px solid silver'
         });
+        if (isTextInput) {
+            css(input, {
+                left: (translateX + dateBox.x) + 'px',
+                top: translateY + 'px'
+            });
+            // Inputs of types date, time or datetime-local should be centered on
+            // top of the dateBox
+        }
+        else {
+            css(input, {
+                left: Math.min(Math.round(dateBox.x +
+                    translateX -
+                    (input.offsetWidth - dateBox.width) / 2), this.chart.chartWidth - input.offsetWidth) + 'px',
+                top: (translateY - (input.offsetHeight - dateBox.height) / 2) +
+                    'px'
+            });
+        }
     };
     /**
      * @private
@@ -1054,6 +1070,7 @@ var RangeSelector = /** @class */ (function () {
             css(input, extend({
                 position: 'absolute',
                 border: 0,
+                boxShadow: '0 0 15px rgba(0,0,0,0.3)',
                 width: '1px',
                 height: '1px',
                 padding: 0,

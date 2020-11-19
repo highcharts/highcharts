@@ -24,6 +24,9 @@ import type SVGAttributes from '../Core/Renderer/SVG/SVGAttributes';
 import Axis from '../Core/Axis/Axis.js';
 import Chart from '../Core/Chart/Chart.js';
 import H from '../Core/Globals.js';
+const {
+    doc
+} = H;
 import O from '../Core/Options.js';
 const { defaultOptions } = O;
 import SVGElement from '../Core/Renderer/SVG/SVGElement.js';
@@ -1300,19 +1303,39 @@ class RangeSelector {
      * @return {void}
      */
     public showInput(name: string): void {
-        var inputGroup = this.inputGroup,
-            dateBox = (this as any)[name + 'DateBox'],
-            input = (this as any)[name + 'Input'];
-
-        const tempOffset = input.type === 'text' ? 0 : 40;
+        var dateBox = (this as any)[name + 'DateBox'],
+            input = (this as any)[name + 'Input'],
+            isTextInput = input.type === 'text';
+        const { translateX, translateY } = this.inputGroup as any;
 
         css(input, {
-            left: ((inputGroup as any).translateX + dateBox.x - tempOffset) + 'px',
-            top: (inputGroup as any).translateY + 'px',
-            width: (dateBox.width - 2) + tempOffset + 'px',
-            height: (dateBox.height - 2) + 'px',
+            width: isTextInput ? ((dateBox.width - 2) + 'px') : 'auto',
+            height: isTextInput ? ((dateBox.height - 2) + 'px') : 'auto',
             border: '2px solid silver'
         });
+
+        if (isTextInput) {
+            css(input, {
+                left: (translateX + dateBox.x) + 'px',
+                top: translateY + 'px'
+            });
+
+        // Inputs of types date, time or datetime-local should be centered on
+        // top of the dateBox
+        } else {
+            css(input, {
+                left: Math.min(
+                    Math.round(
+                        dateBox.x +
+                        translateX -
+                        (input.offsetWidth - dateBox.width) / 2
+                    ),
+                    this.chart.chartWidth - input.offsetWidth
+                ) + 'px',
+                top: (translateY - (input.offsetHeight - dateBox.height) / 2) +
+                    'px'
+            });
+        }
     }
 
     /**
@@ -1502,6 +1525,7 @@ class RangeSelector {
             css(input, extend<CSSObject>({
                 position: 'absolute',
                 border: 0,
+                boxShadow: '0 0 15px rgba(0,0,0,0.3)',
                 width: '1px', // Chrome needs a pixel to see it
                 height: '1px',
                 padding: 0,
