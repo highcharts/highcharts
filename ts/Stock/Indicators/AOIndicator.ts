@@ -5,49 +5,38 @@
  *  !!!!!!! SOURCE GETS TRANSPILED BY TYPESCRIPT. EDIT TS FILE ONLY. !!!!!!!
  *
  * */
-
 'use strict';
-
 import type ColorString from '../../Core/Color/ColorString';
 import type ColumnSeries from '../../Series/Column/ColumnSeries';
 import type IndicatorValuesObject from './IndicatorValuesObject';
 import type LineSeries from '../../Series/Line/LineSeries';
 import type { SeriesStatesOptions } from '../../Core/Series/SeriesOptions';
-import type SMAIndicator from './SMA/SMAIndicator';
-import type SMAOptions from './SMA/SMAOptions';
+const {
+    seriesTypes: {
+        sma: SMAIndicator
+    }
+} = BaseSeries;
+import type {
+    SMAOptions,
+    SMAParamsOptions
+} from './SMA/SMAOptions';
 import type SMAPoint from './SMA/SMAPoint';
 import BaseSeries from '../../Core/Series/Series.js';
 import H from '../../Core/Globals.js';
 const { noop } = H;
 import U from '../../Core/Utilities.js';
 const {
+    extend,
+    merge,
     correctFloat,
     isArray
 } = U;
-
 /**
  * Internal types
  * @private
  */
 declare global {
     namespace Highcharts {
-        class AOIndicator extends SMAIndicator {
-            public data: Array<AOIndicatorPoint>;
-            public nameBase: string;
-            public nameComponents: Array<string>;
-            public options: AOIndicatorOptions;
-            public pointClass: typeof AOIndicatorPoint;
-            public points: Array<AOIndicatorPoint>;
-            public crispCol: ColumnSeries['crispCol'];
-            public drawGraph(): void;
-            public drawPoints: ColumnSeries['drawPoints'];
-            public getColumnMetrics: ColumnSeries['getColumnMetrics'];
-            public getValues<TLinkedSeries extends LineSeries>(
-                series: TLinkedSeries,
-            ): (IndicatorValuesObject<TLinkedSeries>|undefined);
-            public translate: ColumnSeries['translate'];
-        }
-
         interface AOIndicatorOptions extends SMAOptions {
             greaterBarColor?: ColorString;
             groupPadding?: number;
@@ -56,21 +45,16 @@ declare global {
             states?: SeriesStatesOptions<AOIndicator>;
             threshold?: number;
         }
-
         class AOIndicatorPoint extends SMAPoint {
             public series: AOIndicator;
         }
     }
 }
-
-declare module '../../Core/Series/SeriesType' {
-    interface SeriesTypeRegistry {
-        ao: typeof Highcharts.AOIndicator;
-    }
-}
-
-// im port './SMAIndicator.js';
-
+/* *
+ *
+ *  Class
+ *
+ * */
 /**
  * The AO series type
  *
@@ -80,9 +64,7 @@ declare module '../../Core/Series/SeriesType' {
  *
  * @augments Highcharts.Series
  */
-BaseSeries.seriesType<typeof Highcharts.AOIndicator>(
-    'ao',
-    'sma',
+class AOIndicator extends SMAIndicator {
     /**
      * Awesome Oscillator. This series requires the `linkedTo` option to
      * be set and should be loaded after the `stock/indicators/indicators.js`
@@ -100,7 +82,8 @@ BaseSeries.seriesType<typeof Highcharts.AOIndicator>(
      * @requires     stock/indicators/ao
      * @optionparent plotOptions.ao
      */
-    {
+    public static defaultOptions: Highcharts.AOIndicatorOptions =
+    merge(SMAIndicator.defaultOptions, {
         /**
          * Color of the Awesome oscillator series bar that is greater than the
          * previous one. Note that if a `color` is defined, the `color`
@@ -136,134 +119,151 @@ BaseSeries.seriesType<typeof Highcharts.AOIndicator>(
                 }
             }
         }
-    },
-    /**
-     * @lends Highcharts.Series#
-     */
-    {
-        nameBase: 'AO',
-        nameComponents: (false as any),
-
-        // Columns support:
-        markerAttribs: (noop as any),
-        getColumnMetrics: H.seriesTypes.column.prototype.getColumnMetrics,
-        crispCol: H.seriesTypes.column.prototype.crispCol,
-        translate: H.seriesTypes.column.prototype.translate,
-        drawPoints: H.seriesTypes.column.prototype.drawPoints,
-
-        drawGraph: function (this: Highcharts.AOIndicator): void {
-            var indicator = this,
-                options = indicator.options,
-                points = indicator.points,
-                userColor = indicator.userOptions.color,
-                positiveColor = options.greaterBarColor,
-                negativeColor = options.lowerBarColor,
-                firstPoint = points[0],
-                i;
-
-            if (!userColor && firstPoint) {
-                firstPoint.color = positiveColor;
-
-                for (i = 1; i < points.length; i++) {
-                    if ((points[i] as any).y > (points[i - 1] as any).y) {
-                        points[i].color = positiveColor;
-                    } else if (
-                        (points[i] as any).y < (points[i - 1] as any).y
-                    ) {
-                        points[i].color = negativeColor;
-                    } else {
-                        points[i].color = points[i - 1].color;
-                    }
+    } as Highcharts.AOIndicatorOptions);
+}
+/**
+     *
+     * Prototype Properties
+     *
+    **/
+interface AOIndicator {
+    data: Array<Highcharts.AOIndicatorPoint>;
+    nameBase: string;
+    nameComponents: Array<string>;
+    options: Highcharts.AOIndicatorOptions;
+    pointClass: typeof Highcharts.AOIndicatorPoint;
+    points: Array<Highcharts.AOIndicatorPoint>;
+    crispCol: ColumnSeries['crispCol'];
+    drawGraph(): void;
+    drawPoints: ColumnSeries['drawPoints'];
+    getColumnMetrics: ColumnSeries['getColumnMetrics'];
+    getValues<TLinkedSeries extends LineSeries>(
+        series: TLinkedSeries,
+    ): (IndicatorValuesObject<TLinkedSeries>|undefined);
+    translate: ColumnSeries['translate'];
+}
+extend(AOIndicator.prototype, {
+    nameBase: 'AO',
+    nameComponents: (false as any),
+    // Columns support:
+    markerAttribs: (noop as any),
+    getColumnMetrics: H.seriesTypes.column.prototype.getColumnMetrics,
+    crispCol: H.seriesTypes.column.prototype.crispCol,
+    translate: H.seriesTypes.column.prototype.translate,
+    drawPoints: H.seriesTypes.column.prototype.drawPoints,
+    drawGraph: function (this: AOIndicator): void {
+        var indicator = this,
+            options = indicator.options,
+            points = indicator.points,
+            userColor = indicator.userOptions.color,
+            positiveColor = options.greaterBarColor,
+            negativeColor = options.lowerBarColor,
+            firstPoint = points[0],
+            i;
+        if (!userColor && firstPoint) {
+            firstPoint.color = positiveColor;
+            for (i = 1; i < points.length; i++) {
+                if ((points[i] as any).y > (points[i - 1] as any).y) {
+                    points[i].color = positiveColor;
+                } else if (
+                    (points[i] as any).y < (points[i - 1] as any).y
+                ) {
+                    points[i].color = negativeColor;
+                } else {
+                    points[i].color = points[i - 1].color;
                 }
             }
-        },
-
-        getValues: function<TLinkedSeries extends LineSeries> (
-            series: TLinkedSeries
-        ): (IndicatorValuesObject<TLinkedSeries>|undefined) {
-            var shortPeriod = 5,
-                longPeriod = 34,
-                xVal: Array<number> = series.xData || [],
-                yVal: Array<number|null|undefined> =
-                    (series.yData as any) || [],
-                yValLen: number = yVal.length,
-                AO: Array<Array<number>> = [], // 0- date, 1- Awesome Oscillator
-                xData: Array<number> = [],
-                yData: Array<number> = [],
-                high = 1,
-                low = 2,
-                shortSum = 0,
-                longSum = 0,
-                shortSMA: number, // Shorter Period SMA
-                longSMA: number, // Longer Period SMA
-                awesome: number,
-                shortLastIndex: number,
-                longLastIndex: number,
-                price: number,
-                i: number,
-                j: number;
-
-            if (
-                xVal.length <= longPeriod ||
-                !isArray(yVal[0]) ||
-                yVal[0].length !== 4
-            ) {
-                return;
-            }
-
-            for (i = 0; i < longPeriod - 1; i++) {
-                price = ((yVal[i] as any)[high] + (yVal[i] as any)[low]) / 2;
-
-                if (i >= longPeriod - shortPeriod) {
-                    shortSum = correctFloat(shortSum + price);
-                }
-
-                longSum = correctFloat(longSum + price);
-            }
-
-            for (j = longPeriod - 1; j < yValLen; j++) {
-                price = ((yVal[j] as any)[high] + (yVal[j] as any)[low]) / 2;
-                shortSum = correctFloat(shortSum + price);
-                longSum = correctFloat(longSum + price);
-
-                shortSMA = shortSum / shortPeriod;
-                longSMA = longSum / longPeriod;
-
-                awesome = correctFloat(shortSMA - longSMA);
-
-                AO.push([xVal[j], awesome]);
-                xData.push(xVal[j]);
-                yData.push(awesome);
-
-                shortLastIndex = j + 1 - shortPeriod;
-                longLastIndex = j + 1 - longPeriod;
-
-                shortSum = correctFloat(
-                    shortSum -
-                    (
-                        (yVal[shortLastIndex] as any)[high] +
-                        (yVal[shortLastIndex] as any)[low]
-                    ) / 2
-                );
-                longSum = correctFloat(
-                    longSum -
-                    (
-                        (yVal[longLastIndex] as any)[high] +
-                        (yVal[longLastIndex] as any)[low]
-                    ) / 2
-                );
-            }
-
-
-            return {
-                values: AO,
-                xData: xData,
-                yData: yData
-            } as IndicatorValuesObject<TLinkedSeries>;
         }
+    },
+    getValues: function<TLinkedSeries extends LineSeries> (
+        series: TLinkedSeries
+    ): (IndicatorValuesObject<TLinkedSeries>|undefined) {
+        var shortPeriod = 5,
+            longPeriod = 34,
+            xVal: Array<number> = series.xData || [],
+            yVal: Array<number|null|undefined> =
+                (series.yData as any) || [],
+            yValLen: number = yVal.length,
+            AO: Array<Array<number>> = [], // 0- date, 1- Awesome Oscillator
+            xData: Array<number> = [],
+            yData: Array<number> = [],
+            high = 1,
+            low = 2,
+            shortSum = 0,
+            longSum = 0,
+            shortSMA: number, // Shorter Period SMA
+            longSMA: number, // Longer Period SMA
+            awesome: number,
+            shortLastIndex: number,
+            longLastIndex: number,
+            price: number,
+            i: number,
+            j: number;
+        if (
+            xVal.length <= longPeriod ||
+            !isArray(yVal[0]) ||
+            yVal[0].length !== 4
+        ) {
+            return;
+        }
+        for (i = 0; i < longPeriod - 1; i++) {
+            price = ((yVal[i] as any)[high] + (yVal[i] as any)[low]) / 2;
+            if (i >= longPeriod - shortPeriod) {
+                shortSum = correctFloat(shortSum + price);
+            }
+            longSum = correctFloat(longSum + price);
+        }
+        for (j = longPeriod - 1; j < yValLen; j++) {
+            price = ((yVal[j] as any)[high] + (yVal[j] as any)[low]) / 2;
+            shortSum = correctFloat(shortSum + price);
+            longSum = correctFloat(longSum + price);
+            shortSMA = shortSum / shortPeriod;
+            longSMA = longSum / longPeriod;
+            awesome = correctFloat(shortSMA - longSMA);
+            AO.push([xVal[j], awesome]);
+            xData.push(xVal[j]);
+            yData.push(awesome);
+            shortLastIndex = j + 1 - shortPeriod;
+            longLastIndex = j + 1 - longPeriod;
+            shortSum = correctFloat(
+                shortSum -
+                (
+                    (yVal[shortLastIndex] as any)[high] +
+                    (yVal[shortLastIndex] as any)[low]
+                ) / 2
+            );
+            longSum = correctFloat(
+                longSum -
+                (
+                    (yVal[longLastIndex] as any)[high] +
+                    (yVal[longLastIndex] as any)[low]
+                ) / 2
+            );
+        }
+        return {
+            values: AO,
+            xData: xData,
+            yData: yData
+        } as IndicatorValuesObject<TLinkedSeries>;
     }
-);
-
+});
+/* *
+ *
+ *  Registry
+ *
+ * */
+declare module '../../Core/Series/SeriesType' {
+    interface SeriesTypeRegistry {
+        ao: typeof AOIndicator;
+    }
+}
+BaseSeries.registerSeriesType('ao', AOIndicator);
+/* *
+ *
+ *  Default Export
+ *
+ * */
+export default AOIndicator;
 /**
  * An `AO` series. If the [type](#series.ao.type)
  * option is not specified, it is inherited from [chart.type](#chart.type).
@@ -278,5 +278,4 @@ BaseSeries.seriesType<typeof Highcharts.AOIndicator>(
  * @requires  stock/indicators/ao
  * @apioption series.ao
  */
-
 ''; // for including the above in the doclets
