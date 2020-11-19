@@ -10,9 +10,10 @@
 'use strict';
 import Chart from '../../Core/Chart/Chart.js';
 import H from '../../Core/Globals.js';
+import '../../Series/Networkgraph/Layouts.js';
+var Reingold = H.layouts['reingold-fruchterman'];
 import U from '../../Core/Utilities.js';
 var addEvent = U.addEvent, extendClass = U.extendClass, pick = U.pick;
-var Reingold = H.layouts['reingold-fruchterman'];
 /* *
  *
  *  Composition
