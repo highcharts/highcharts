@@ -33,23 +33,13 @@ var defined = U.defined, extend = U.extend, isNumber = U.isNumber;
 var AreaRangePoint = /** @class */ (function (_super) {
     __extends(AreaRangePoint, _super);
     function AreaRangePoint() {
-        /**
+        /* *
          *
          *  Properties
          *
-         */
+         * */
         var _this = _super !== null && _super.apply(this, arguments) || this;
-        /**
-         * Range series only. The high or maximum value for each data point.
-         * @name Highcharts.Point#high
-         * @type {number|undefined}
-         */
         _this.high = void 0;
-        /**
-         * Range series only. The low or minimum value for each data point.
-         * @name Highcharts.Point#low
-         * @type {number|undefined}
-         */
         _this.low = void 0;
         _this.options = void 0;
         _this.plotHigh = void 0;
@@ -60,11 +50,11 @@ var AreaRangePoint = /** @class */ (function (_super) {
         _this.series = void 0;
         return _this;
     }
-    /**
+    /* *
      *
      *  Functions
      *
-     */
+     * */
     /**
      * @private
      */
