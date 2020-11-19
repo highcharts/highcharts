@@ -16,30 +16,27 @@
  *
  * */
 
-import type {
-    DataLabelOptions,
-    DataLabelTextPathOptions
-} from '../../Core/Series/DataLabelOptions';
-import type {
-    BubblePointMarkerOptions,
-    BubblePointOptions
-} from '../Bubble/BubblePointOptions';
-import type BubbleSeriesOptions from '../Bubble/BubbleSeriesOptions';
-import type { SeriesStatesOptions } from '../../Core/Series/SeriesOptions';
+import type { BubblePointMarkerOptions } from '../Bubble/BubblePointOptions';
+import type PackedBubbleChart from './PackedBubbleChart';
+import type { PackedBubbleDataLabelFormatterObject } from './PackedBubbleDataLabelOptions';
+import type PackedBubbleLayout from './PackedBubbleLayout';
+import type PackedBubblePointOptions from './PackedBubblePointOptions';
+import type PackedBubbleSeriesOptions from './PackedBubbleSeriesOptions';
+import type Point from '../../Core/Series/Point.js';
 import type SVGAttributes from '../../Core/Renderer/SVG/SVGAttributes';
 import type SVGElement from '../../Core/Renderer/SVG/SVGElement';
 import BaseSeries from '../../Core/Series/Series.js';
 const {
     seriesTypes: {
-        bubble: BubbleSeries
+        bubble: BubbleSeries,
+        line: LineSeries
     }
 } = BaseSeries;
 import Chart from '../../Core/Chart/Chart.js';
 import Color from '../../Core/Color/Color.js';
 const { parse: color } = Color;
 import H from '../../Core/Globals.js';
-import LineSeries from '../../Series/Line/LineSeries.js';
-import Point from '../../Core/Series/Point.js';
+import PackedBubblePoint from './PackedBubblePoint.js';
 import U from '../../Core/Utilities.js';
 const {
     addEvent,
@@ -54,278 +51,9 @@ const {
     pick
 } = U;
 import '../../Series/Networkgraph/DraggableNodes.js';
+const dragNodesMixin = H.dragNodesMixin;
 import '../../Series/Networkgraph/Layouts.js';
-
-const Reingold = H.layouts['reingold-fruchterman'],
-    dragNodesMixin = H.dragNodesMixin;
-
-
-/* *
- *
- *  Declarations
- *
- * */
-
-declare module '../../Core/Chart/ChartLike' {
-    interface ChartLike {
-        getSelectedParentNodes(): Array<Highcharts.PackedBubblePoint>;
-    }
-}
-
-declare module '../../Core/Series/PointLike' {
-    interface PointLike {
-        degree?: number;
-    }
-}
-
-Chart.prototype.getSelectedParentNodes = function (): Array<Highcharts.PackedBubblePoint> {
-    const chart = this,
-        series = chart.series as Array<PackedBubbleSeries>,
-        selectedParentsNodes: Array<Highcharts.PackedBubblePoint> = [];
-
-    series.forEach((series): void => {
-        if (series.parentNode && series.parentNode.selected) {
-            selectedParentsNodes.push(series.parentNode);
-        }
-    });
-    return selectedParentsNodes;
-};
-
-(H.networkgraphIntegrations as any).packedbubble = {
-    repulsiveForceFunction: function (
-        d: number,
-        k: number,
-        node: Highcharts.PackedBubblePoint,
-        repNode: Highcharts.PackedBubblePoint
-    ): number {
-        return Math.min(
-            d,
-            ((node.marker as any).radius + (repNode.marker as any).radius) / 2
-        );
-    },
-    barycenter: function (this: Highcharts.PackedBubbleLayout): void {
-        var layout = this,
-            gravitationalConstant = layout.options.gravitationalConstant,
-            box = layout.box,
-            nodes = layout.nodes,
-            centerX,
-            centerY;
-
-        nodes.forEach(function (node: Highcharts.PackedBubblePoint): void {
-            if (layout.options.splitSeries && !node.isParentNode) {
-                centerX = (node.series.parentNode as any).plotX;
-                centerY = (node.series.parentNode as any).plotY;
-            } else {
-                centerX = box.width / 2;
-                centerY = box.height / 2;
-            }
-            if (!node.fixedPosition) {
-                (node.plotX as any) -=
-                    ((node.plotX as any) - (centerX as any)) *
-                    (gravitationalConstant as any) /
-                    (node.mass * Math.sqrt(nodes.length));
-
-                (node.plotY as any) -=
-                    ((node.plotY as any) - (centerY as any)) *
-                    (gravitationalConstant as any) /
-                    (node.mass * Math.sqrt(nodes.length));
-            }
-        });
-    },
-
-    repulsive: function (
-        this: Highcharts.PackedBubbleLayout,
-        node: Highcharts.PackedBubblePoint,
-        force: number,
-        distanceXY: Highcharts.Dictionary<number>,
-        repNode: Highcharts.PackedBubblePoint
-    ): void {
-        var factor = (
-                force * (this.diffTemperature as any) / (node.mass as any) /
-                (node.degree as any)
-            ),
-            x = distanceXY.x * factor,
-            y = distanceXY.y * factor;
-
-        if (!node.fixedPosition) {
-            (node.plotX as any) += x;
-            (node.plotY as any) += y;
-        }
-        if (!repNode.fixedPosition) {
-            (repNode.plotX as any) -= x;
-            (repNode.plotY as any) -= y;
-        }
-    },
-    integrate: H.networkgraphIntegrations.verlet.integrate,
-    getK: H.noop
-};
-
-H.layouts.packedbubble = extendClass(
-    Reingold,
-    {
-        beforeStep: function (this: Highcharts.PackedBubbleLayout): void {
-            if (this.options.marker) {
-                this.series.forEach(function (series): void {
-                    if (series) {
-                        (series as any).calculateParentRadius();
-                    }
-                });
-            }
-        },
-        setCircularPositions: function (
-            this: Highcharts.PackedBubbleLayout
-        ): void {
-            var layout = this,
-                box = layout.box,
-                nodes = layout.nodes,
-                nodesLength = nodes.length + 1,
-                angle = 2 * Math.PI / nodesLength,
-                centerX,
-                centerY,
-                radius = layout.options.initialPositionRadius;
-            nodes.forEach(function (
-                node: Highcharts.PackedBubblePoint,
-                index: number
-            ): void {
-                if (
-                    layout.options.splitSeries &&
-                    !node.isParentNode
-                ) {
-                    centerX = (node.series.parentNode as any).plotX;
-                    centerY = (node.series.parentNode as any).plotY;
-                } else {
-                    centerX = box.width / 2;
-                    centerY = box.height / 2;
-                }
-
-                node.plotX = node.prevX = pick(
-                    node.plotX,
-                    (centerX as any) +
-                    (radius as any) * Math.cos(node.index || index * angle)
-                );
-
-                node.plotY = node.prevY = pick(
-                    node.plotY,
-                    (centerY as any) +
-                    (radius as any) * Math.sin(node.index || index * angle)
-                );
-
-                node.dispX = 0;
-                node.dispY = 0;
-            });
-        },
-        repulsiveForces: function (this: Highcharts.PackedBubbleLayout): void {
-            var layout = this,
-                force,
-                distanceR,
-                distanceXY,
-                bubblePadding = layout.options.bubblePadding;
-
-            layout.nodes.forEach(function (
-                node: Highcharts.PackedBubblePoint
-            ): void {
-                node.degree = node.mass;
-                node.neighbours = 0;
-                layout.nodes.forEach(function (
-                    repNode: Highcharts.PackedBubblePoint
-                ): void {
-                    force = 0;
-                    if (
-                        // Node can not repulse itself:
-                        node !== repNode &&
-                        // Only close nodes affect each other:
-
-                        // Not dragged:
-                        !node.fixedPosition &&
-                        (
-                            layout.options.seriesInteraction ||
-                            node.series === repNode.series
-                        )
-                    ) {
-                        distanceXY = layout.getDistXY(node, repNode);
-                        distanceR = (
-                            layout.vectorLength(distanceXY) -
-                            (
-                                (node.marker as any).radius +
-                                (repNode.marker as any).radius +
-                                bubblePadding
-                            )
-                        );
-                        // TODO padding configurable
-                        if (distanceR < 0) {
-                            (node.degree as any) += 0.01;
-                            (node.neighbours as any)++;
-                            force = layout.repulsiveForce(
-                                -distanceR / Math.sqrt(node.neighbours as any),
-                                layout.k,
-                                node,
-                                repNode
-                            );
-                        }
-
-                        layout.force(
-                            'repulsive',
-                            node,
-                            force * repNode.mass,
-                            distanceXY,
-                            repNode,
-                            distanceR
-                        );
-                    }
-                });
-            });
-        },
-        applyLimitBox: function (
-            this: Highcharts.PackedBubbleLayout,
-            node: Highcharts.PackedBubblePoint
-        ): void {
-            var layout = this,
-                distanceXY,
-                distanceR,
-                factor = 0.01;
-
-            // parentNodeLimit should be used together
-            // with seriesInteraction: false
-            if (
-                layout.options.splitSeries &&
-                !node.isParentNode &&
-                layout.options.parentNodeLimit
-            ) {
-                distanceXY = layout.getDistXY(
-                    node,
-                    node.series.parentNode as any
-                );
-                distanceR = (
-                    (node.series.parentNodeRadius as any) -
-                    (node.marker as any).radius -
-                    layout.vectorLength(distanceXY)
-                );
-                if (
-                    distanceR < 0 &&
-                    distanceR > -2 * (node.marker as any).radius
-                ) {
-                    (node.plotX as any) -= distanceXY.x * factor;
-                    (node.plotY as any) -= distanceXY.y * factor;
-                }
-            }
-
-            Reingold.prototype.applyLimitBox.apply(this, arguments as any);
-        }
-    }
-);
-
-// Remove accumulated data points to redistribute all of them again
-// (i.e after hiding series by legend)
-
-addEvent(Chart as any, 'beforeRedraw', function (
-    this: Highcharts.PackedBubbleChart
-): void {
-    // eslint-disable-next-line no-invalid-this
-    if (this.allDataPoints) {
-        // eslint-disable-next-line no-invalid-this
-        delete this.allDataPoints;
-    }
-});
+import './PackedBubbleComposition.js';
 
 /* *
  *
@@ -369,7 +97,7 @@ class PackedBubbleSeries extends BubbleSeries implements Highcharts.DragNodesSer
      * @requires     highcharts-more
      * @optionparent plotOptions.packedbubble
      */
-    public static defaultOptions: Highcharts.PackedBubbleSeriesOptions = merge(BubbleSeries.defaultOptions, {
+    public static defaultOptions: PackedBubbleSeriesOptions = merge(BubbleSeries.defaultOptions, {
         /**
          * Minimum bubble size. Bubbles will automatically size between the
          * `minSize` and `maxSize` to reflect the value of each bubble.
@@ -480,7 +208,7 @@ class PackedBubbleSeries extends BubbleSeries implements Highcharts.DragNodesSer
             formatter: function (
                 this: (
                     Point.PointLabelObject|
-                    Highcharts.PackedBubbleDataLabelsFormatterContextObject
+                    PackedBubbleDataLabelFormatterObject
                 )
             ): (number|null) {
                 return (this.point as any).value;
@@ -500,7 +228,7 @@ class PackedBubbleSeries extends BubbleSeries implements Highcharts.DragNodesSer
             parentNodeFormatter: function (
                 this: (
                     Point.PointLabelObject|
-                    Highcharts.PackedBubbleDataLabelsFormatterContextObject
+                    PackedBubbleDataLabelFormatterObject
                 )
             ): string {
                 return (this as any).name;
@@ -679,7 +407,7 @@ class PackedBubbleSeries extends BubbleSeries implements Highcharts.DragNodesSer
             gravitationalConstant: 0.01,
             friction: -0.981
         }
-    } as Highcharts.PackedBubbleSeriesOptions);
+    } as PackedBubbleSeriesOptions);
 
     /* *
      *
@@ -687,19 +415,19 @@ class PackedBubbleSeries extends BubbleSeries implements Highcharts.DragNodesSer
      *
      * */
 
-    public chart: Highcharts.PackedBubbleChart = void 0 as any;
+    public chart: PackedBubbleChart = void 0 as any;
 
     public data: Array<PackedBubblePoint> = void 0 as any;
 
     public hoverPoint?: PackedBubblePoint;
 
-    public layout: Highcharts.PackedBubbleLayout = void 0 as any;
+    public layout: PackedBubbleLayout = void 0 as any;
 
-    public options: Highcharts.PackedBubbleSeriesOptions = void 0 as any;
+    public options: PackedBubbleSeriesOptions = void 0 as any;
 
     public parentNode?: PackedBubblePoint;
 
-    public parentNodeLayout?: Highcharts.PackedBubbleLayout;
+    public parentNodeLayout?: PackedBubbleLayout;
 
     public parentNodesGroup?: SVGElement;
 
@@ -723,10 +451,10 @@ class PackedBubbleSeries extends BubbleSeries implements Highcharts.DragNodesSer
      * Create a single array of all points from all series
      * @private
      */
-    public accumulateAllPoints(series: PackedBubbleSeries): Array<Highcharts.PackedBubbleData> {
+    public accumulateAllPoints(series: PackedBubbleSeries): Array<PackedBubbleSeries.Data> {
 
         var chart = series.chart,
-            allDataPoints = [] as Array<Highcharts.PackedBubbleData>,
+            allDataPoints = [] as Array<PackedBubbleSeries.Data>,
             i: number, j: number;
 
         for (i = 0; i < chart.series.length; i++) {
@@ -948,7 +676,7 @@ class PackedBubbleSeries extends BubbleSeries implements Highcharts.DragNodesSer
     public createParentNodes(): void {
         var series = this,
             chart = series.chart,
-            parentNodeLayout: Highcharts.PackedBubbleLayout = series.parentNodeLayout as any,
+            parentNodeLayout: PackedBubbleLayout = series.parentNodeLayout as any,
             nodeAdded,
             parentNode = series.parentNode,
             PackedBubblePoint = series.pointClass;
@@ -1203,10 +931,7 @@ class PackedBubbleSeries extends BubbleSeries implements Highcharts.DragNodesSer
             series.calculateZExtremes() :
             [minSize, maxSize];
 
-        (allDataPoints || []).forEach(function (
-            point: Highcharts.PackedBubbleData,
-            i: number
-        ): void {
+        (allDataPoints || []).forEach(function (point, i): void {
 
             value = useSimulation ?
                 clamp(
@@ -1259,9 +984,7 @@ class PackedBubbleSeries extends BubbleSeries implements Highcharts.DragNodesSer
      * @private
      * @param {Highcharts.Point} point The point that event occured.
      */
-    public onMouseUp(
-        point: Highcharts.PackedBubblePoint
-    ): void {
+    public onMouseUp(point: PackedBubblePoint): void {
         if (point.fixedPosition && !point.removed) {
             var distanceXY,
                 distanceR,
@@ -1269,9 +992,7 @@ class PackedBubbleSeries extends BubbleSeries implements Highcharts.DragNodesSer
                 parentNodeLayout = this.parentNodeLayout;
 
             if (parentNodeLayout && layout.options.dragBetweenSeries) {
-                parentNodeLayout.nodes.forEach(function (
-                    node: Highcharts.PackedBubblePoint
-                ): void {
+                parentNodeLayout.nodes.forEach(function (node): void {
                     if (
                         point && point.marker &&
                         node !== point.series.parentNode
@@ -1309,9 +1030,7 @@ class PackedBubbleSeries extends BubbleSeries implements Highcharts.DragNodesSer
      * @param {Array<Highcharts.PackedBubbleData>} allDataPoints All points from all series
      * @return {Array<Highcharts.PackedBubbleData>} Positions of all bubbles
      */
-    public placeBubbles(
-        allDataPoints: Array<Highcharts.PackedBubbleData>
-    ): Array<Highcharts.PackedBubbleData> {
+    public placeBubbles(allDataPoints: Array<PackedBubbleSeries.Data>): Array<PackedBubbleSeries.Data> {
 
         var series = this,
             checkOverlap = series.checkOverlap,
@@ -1321,15 +1040,12 @@ class PackedBubbleSeries extends BubbleSeries implements Highcharts.DragNodesSer
             j = 0,
             k = 0,
             calculatedBubble,
-            sortedArr: Array<Highcharts.PackedBubbleData>,
-            arr = [] as Array<Highcharts.PackedBubbleData>,
+            sortedArr: Array<PackedBubbleSeries.Data>,
+            arr = [] as Array<PackedBubbleSeries.Data>,
             i: number;
 
         // sort all points
-        sortedArr = allDataPoints.sort(function (
-            a: Highcharts.PackedBubbleData,
-            b: Highcharts.PackedBubbleData
-        ): number {
+        sortedArr = allDataPoints.sort(function (a, b): number {
             return (b[2] as any) - (a[2] as any);
         });
 
@@ -1813,6 +1529,8 @@ extend(PackedBubbleSeries.prototype, {
 
     pointArrayMap: ['value'],
 
+    pointClass: PackedBubblePoint,
+
     pointValKey: 'value',
 
     /**
@@ -1833,106 +1551,22 @@ extend(PackedBubbleSeries.prototype, {
 
 /* *
  *
- *  Class
+ *  Class Namespace
  *
  * */
 
-class PackedBubblePoint extends BubbleSeries.prototype.pointClass implements Highcharts.DragNodesPoint {
+namespace PackedBubbleSeries {
 
-    /* *
-     *
-     *  Properties
-     *
-     * */
-
-    public collisionNmb?: number;
-
-    public dataLabelOnNull?: boolean;
-
-    public degree: number = NaN;
-
-    public dispX?: number;
-
-    public dispY?: number;
-
-    public fixedPosition: Highcharts.DragNodesPoint['fixedPosition'];
-
-    public isParentNode?: boolean;
-
-    public mass: number = NaN;
-
-    public neighbours?: number;
-
-    public prevX?: number;
-
-    public prevY?: number;
-
-    public radius: number = NaN;
-
-    public removed?: boolean;
-
-    public options: Highcharts.PackedBubblePointOptions = void 0 as any;
-
-    public series: PackedBubbleSeries = void 0 as any;
-
-    public seriesIndex?: number;
-
-    public value: (number|null) = null;
-
-    /* *
-     *
-     *  Functions
-     *
-     * */
-
-    /* eslint-disable valid-jsdoc */
-
-    /**
-     * Destroy point.
-     * Then remove point from the layout.
-     * @private
-     */
-    public destroy(): void {
-        if (this.series.layout) {
-            this.series.layout.removeElementFromCollection(
-                this, this.series.layout.nodes
-            );
-        }
-        return Point.prototype.destroy.apply(this, arguments as any);
-    }
-
-    public firePointEvent(): void {
-        const point = this,
-            series = this.series,
-            seriesOptions = series.options;
-
-        if (this.isParentNode && seriesOptions.parentNode) {
-            const temp = seriesOptions.allowPointSelect;
-            seriesOptions.allowPointSelect = seriesOptions.parentNode.allowPointSelect;
-            Point.prototype.firePointEvent.apply(this, arguments);
-            seriesOptions.allowPointSelect = temp;
-        } else {
-            Point.prototype.firePointEvent.apply(this, arguments);
-        }
-    }
-
-    public select(): void {
-        const point = this,
-            series = this.series,
-            chart = series.chart;
-        if (point.isParentNode) {
-            chart.getSelectedPoints = chart.getSelectedParentNodes;
-            Point.prototype.select.apply(this, arguments);
-            chart.getSelectedPoints = Chart.prototype.getSelectedPoints;
-        } else {
-            Point.prototype.select.apply(this, arguments);
-        }
-    }
-
-    /* eslint-enable valid-jsdoc */
+    export type Data = [
+        (number|null),
+        (number|null),
+        (number|null),
+        number,
+        number,
+        PackedBubblePointOptions
+    ];
 
 }
-PackedBubbleSeries.prototype.pointClass = PackedBubblePoint;
 
 /* *
  *
@@ -1946,134 +1580,6 @@ declare module '../../Core/Series/SeriesType' {
     }
 }
 BaseSeries.registerSeriesType('packedbubble', PackedBubbleSeries);
-
-/**
- * Internal types
- * @private
- */
-declare global {
-    namespace Highcharts {
-        class PackedBubblePoint extends PackedBubbleSeries.prototype.pointClass implements DragNodesPoint {
-            public collisionNmb?: number;
-            public dataLabelOnNull?: boolean;
-            public degree: number;
-            public dispX?: number;
-            public dispY?: number;
-            public fixedPosition: DragNodesPoint['fixedPosition'];
-            public isParentNode?: boolean;
-            public mass: number;
-            public neighbours?: number;
-            public options: PackedBubblePointOptions;
-            public prevX?: number;
-            public prevY?: number;
-            public radius: number;
-            public removed?: boolean;
-            public series: PackedBubbleSeries;
-            public seriesIndex?: number;
-            public value: (number|null);
-        }
-        interface NetworkgraphLayout {
-            beforeStep?(): void;
-        }
-        interface NetworkgraphPackedBubbleIntegrationObject
-            extends NetworkgraphIntegrationObject
-        {
-            barycenter(): void;
-            getK: Function;
-            integrate: NetworkgraphVerletIntegrationObject['integrate'];
-            repulsive(
-                node: PackedBubblePoint,
-                force: number,
-                distanceXY: Dictionary<number>,
-                repNode: PackedBubblePoint
-            ): void;
-            repulsiveForceFunction(
-                d: number,
-                k: number,
-                node: PackedBubblePoint,
-                repNode: PackedBubblePoint
-            ): number;
-        }
-        interface PackedBubbleChart extends NetworkgraphChart {
-            allDataPoints: Array<PackedBubbleData>;
-            diffX: number;
-            diffY: number;
-            hoverPoint: PackedBubblePoint;
-            maxRadius: number;
-            minRadius: number;
-            rawPositions: Array<Array<number>>;
-            stages: Array<Array<(number|object|null)>>;
-        }
-        interface PackedBubbleDataLabelsFormatterCallbackFunction {
-            (this: (
-                Point.PointLabelObject|
-                PackedBubbleDataLabelsFormatterContextObject
-            )): (number|string|null|undefined);
-        }
-        interface PackedBubbleDataLabelsFormatterContextObject
-            extends Point.PointLabelObject
-        {
-            point: PackedBubblePoint;
-        }
-        interface PackedBubbleDataLabelsOptionsObject extends DataLabelOptions {
-            format?: string;
-            formatter?: PackedBubbleDataLabelsFormatterCallbackFunction;
-            parentNodeFormat?: string;
-            parentNodeFormatter?: (
-                PackedBubbleDataLabelsFormatterCallbackFunction
-            );
-            parentNodeTextPath?: DataLabelTextPathOptions;
-            textPath?: DataLabelTextPathOptions;
-        }
-        interface PackedBubbleLayout extends NetworkgraphLayout {
-            enableSimulation: boolean;
-            nodes: Array<PackedBubblePoint>;
-            options: PackedBubbleLayoutAlgorithmOptions;
-            series: Array<NetworkgraphSeries>;
-        }
-        interface PackedBubbleLayoutAlgorithmOptions
-            extends NetworkgraphLayoutAlgorithmOptions
-        {
-            bubblePadding?: number;
-            dragBetweenSeries?: boolean;
-            enableSimulation?: boolean;
-            friction?: number;
-            gravitationalConstant?: number;
-            initialPositionRadius?: number;
-            marker?: PackedBubbleSeriesOptions['marker'];
-            maxIterations?: number;
-            maxSpeed?: number;
-            parentNodeLimit?: boolean;
-            parentNodeOptions?: PackedBubbleLayoutAlgorithmOptions;
-            seriesInteraction?: boolean;
-            splitSeries?: boolean;
-        }
-
-        interface PackedBubbleParentNodeOptionsObject {
-            allowPointSelect?: boolean;
-        }
-        interface PackedBubblePointOptions extends BubblePointOptions {
-            mass?: number;
-        }
-        interface PackedBubbleSeriesOptions extends BubbleSeriesOptions {
-            parentNode?: PackedBubbleParentNodeOptionsObject;
-            dataLabels?: PackedBubbleDataLabelsOptionsObject;
-            draggable?: boolean;
-            layoutAlgorithm?: PackedBubbleLayoutAlgorithmOptions;
-            minSize?: (number|string);
-            states?: SeriesStatesOptions<PackedBubbleSeries>;
-            useSimulation?: boolean;
-        }
-        type PackedBubbleData = [
-            (number|null),
-            (number|null),
-            (number|null),
-            number,
-            number,
-            PackedBubblePointOptions
-        ];
-    }
-}
 
 /* *
  *

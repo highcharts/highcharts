@@ -12,7 +12,7 @@
 
 'use strict';
 
-import type LineSeries from '../Line/LineSeries';
+import type PackedBubbleChart from '../PackedBubble/PackedBubbleChart';
 import type Point from '../../Core/Series/Point';
 import Chart from '../../Core/Chart/Chart.js';
 import A from '../../Core/Animation/AnimationUtilities.js';
@@ -949,7 +949,7 @@ addEvent(Chart as any, 'render', function (
 
 // disable simulation before print if enabled
 addEvent(Chart as any, 'beforePrint', function (
-    this: Highcharts.PackedBubbleChart
+    this: PackedBubbleChart
 ): void {
     if (this.graphLayoutsLookup) {
         this.graphLayoutsLookup.forEach(function (layout): void {
@@ -961,7 +961,7 @@ addEvent(Chart as any, 'beforePrint', function (
 
 // re-enable simulation after print
 addEvent(Chart as any, 'afterPrint', function (
-    this: Highcharts.PackedBubbleChart
+    this: PackedBubbleChart
 ): void {
     if (this.graphLayoutsLookup) {
         this.graphLayoutsLookup.forEach(function (layout): void {
