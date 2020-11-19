@@ -18,6 +18,7 @@
 
 import type AreaRangePoint from './AreaRange/AreaRangePoint';
 import type AreaRangePointOptions from './AreaRange/AreaRangePointOptions';
+import type AreaRangeSeries from './AreaRange/AreaRangeSeries';
 import type AreaRangeSeriesOptions from './AreaRange/AreaRangeSeriesOptions';
 import type ColorString from '../Core/Color/ColorString';
 import type ColorType from '../Core/Color/ColorType';
@@ -26,9 +27,17 @@ import type { SeriesStatesOptions } from '../Core/Series/SeriesOptions';
 import type { StatesOptionsKey } from '../Core/Series/StatesOptions';
 import type SVGAttributes from '../Core/Renderer/SVG/SVGAttributes';
 import type SVGPath from '../Core/Renderer/SVG/SVGPath';
-import AreaRangeSeries from './AreaRange/AreaRangeSeries.js';
 import BaseSeries from '../Core/Series/Series.js';
-const { seriesTypes } = BaseSeries;
+const {
+    seriesTypes: {
+        arearange: {
+            prototype: areaRangeProto
+        },
+        columnrange: {
+            prototype: columnRangeProto
+        }
+    }
+} = BaseSeries;
 import ColumnSeries from './Column/ColumnSeries.js';
 const { prototype: colProto } = ColumnSeries;
 import LineSeries from './Line/LineSeries.js';
@@ -45,9 +54,7 @@ const {
 import './ColumnRangeSeries.js';
 import '../Core/Interaction.js';
 
-var areaRangeProto = AreaRangeSeries.prototype,
-    columnRangeProto = seriesTypes.columnrange.prototype,
-    areaRangePointProto = areaRangeProto.pointClass.prototype,
+var areaRangePointProto = areaRangeProto.pointClass.prototype,
     TrackerMixin = H.TrackerMixin; // Interaction
 
 /* *

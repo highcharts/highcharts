@@ -16,7 +16,7 @@
  *
  * */
 
-import type AreaRangeDataLabelsOptionsObject from './AreaRangeDataLabelsOptionsObject';
+import type AreaRangeDataLabelOptions from './AreaRangeDataLabelOptions';
 import type AreaRangeSeriesOptions from './AreaRangeSeriesOptions';
 import type AreaPoint from '../Area/AreaPoint';
 import type RadialAxis from '../../Core/Axis/RadialAxis';
@@ -445,8 +445,8 @@ class AreaRangeSeries extends AreaSeries {
             point,
             up,
             inverted = this.chart.inverted,
-            upperDataLabelOptions: AreaRangeDataLabelsOptionsObject,
-            lowerDataLabelOptions: AreaRangeDataLabelsOptionsObject;
+            upperDataLabelOptions: AreaRangeDataLabelOptions,
+            lowerDataLabelOptions: AreaRangeDataLabelOptions;
 
         // Split into upper and lower options. If data labels is an array, the
         // first element is the upper label, the second is the lower.

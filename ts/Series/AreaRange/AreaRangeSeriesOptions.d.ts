@@ -14,7 +14,7 @@
  *
  * */
 
-import type AreaRangeDataLabelsOptionsObject from './AreaRangeDataLabelsOptionsObject';
+import type AreaRangeDataLabelOptions from './AreaRangeDataLabelOptions';
 import type AreaRangeSeries from './AreaRangeSeries';
 import type AreaSeriesOptions from '../Area/AreaSeriesOptions';
 import type { SeriesStatesOptions } from '../../Core/Series/SeriesOptions';
@@ -26,8 +26,8 @@ import type { SeriesStatesOptions } from '../../Core/Series/SeriesOptions';
  * */
 export interface AreaRangeSeriesOptions extends AreaSeriesOptions {
     dataLabels?: (
-        AreaRangeDataLabelsOptionsObject |
-        Array<AreaRangeDataLabelsOptionsObject>
+        AreaRangeDataLabelOptions |
+        Array<AreaRangeDataLabelOptions>
     );
     states?: SeriesStatesOptions<AreaRangeSeries>;
     trackByArea?: boolean;

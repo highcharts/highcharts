@@ -21,7 +21,7 @@ import type DataLabelOptions from '../../Core/Series/DataLabelOptions';
  *  Declarations
  *
  * */
-export interface AreaRangeDataLabelsOptionsObject extends DataLabelOptions {
+export interface AreaRangeDataLabelOptions extends DataLabelOptions {
     xHigh?: number;
     xLow?: number;
     yHigh?: number;
@@ -34,4 +34,4 @@ export interface AreaRangeDataLabelsOptionsObject extends DataLabelOptions {
  *
  * */
 
-export default AreaRangeDataLabelsOptionsObject;
+export default AreaRangeDataLabelOptions;
