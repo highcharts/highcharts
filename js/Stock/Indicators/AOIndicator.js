@@ -169,7 +169,7 @@ extend(AOIndicator.prototype, {
         };
     }
 });
-BaseSeries.registerSeriesType('aroon', AOIndicator);
+BaseSeries.registerSeriesType('ao', AOIndicator);
 /* *
  *
  *  Default Export
