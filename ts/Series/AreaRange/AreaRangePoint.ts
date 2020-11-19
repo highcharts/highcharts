@@ -70,6 +70,7 @@ class AreaRangePoint extends AreaSeries.prototype.pointClass {
     public plotX: number = void 0 as any;
     public series: AreaRangeSeries = void 0 as any;
     public upperGraphic?: SVGElement;
+
     /**
      *
      *  Functions

@@ -391,6 +391,22 @@ var AreaRangeSeries = /** @class */ (function (_super) {
             i++;
         }
     };
+    /**
+     * The area range series is a carteseian series with higher and lower
+     * values for each point along an X axis, where the area between the
+     * values is shaded.
+     *
+     * @sample {highcharts} highcharts/demo/arearange/
+     *         Area range chart
+     * @sample {highstock} stock/demo/arearange/
+     *         Area range chart
+     *
+     * @extends      plotOptions.area
+     * @product      highcharts highstock
+     * @excluding    stack, stacking
+     * @requires     highcharts-more
+     * @optionparent plotOptions.arearange
+     */
     AreaRangeSeries.defaultOptions = merge(AreaSeries.defaultOptions, {
         /**
          * @see [fillColor](#plotOptions.arearange.fillColor)
@@ -510,21 +526,6 @@ BaseSeries.registerSeriesType('arearange', AreaRangeSeries);
  *
  * */
 export default AreaRangeSeries;
-/**
- * The area range series is a carteseian series with higher and lower values for
- * each point along an X axis, where the area between the values is shaded.
- *
- * @sample {highcharts} highcharts/demo/arearange/
- *         Area range chart
- * @sample {highstock} stock/demo/arearange/
- *         Area range chart
- *
- * @extends      plotOptions.area
- * @product      highcharts highstock
- * @excluding    stack, stacking
- * @requires     highcharts-more
- * @optionparent plotOptions.arearange
- */
 /**
  * A `arearange` series. If the [type](#series.arearange.type) option is not
  * specified, it is inherited from [chart.type](#chart.type).
