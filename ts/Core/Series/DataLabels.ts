@@ -11,6 +11,7 @@
 'use strict';
 
 import type AlignObject from '../Renderer/AlignObject';
+import type AreaRangePoint from '../../Series/AreaRange/AreaRangePoint';
 import type BBoxObject from '../Renderer/BBoxObject';
 import type ColorString from '../Color/ColorString';
 import type ColumnPoint from '../../Series/Column/ColumnPoint';
@@ -1757,7 +1758,7 @@ if (seriesTypes.column) {
             // data label box for alignment
             dlBox = point.dlBox || point.shapeArgs,
             below = pick(
-                (point as Highcharts.AreaRangePoint).below, // range series
+                (point as AreaRangePoint).below, // range series
                 (point.plotY as any) >
                     pick(this.translatedThreshold, series.yAxis.len)
             ),

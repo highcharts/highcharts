@@ -60,7 +60,7 @@ const SOURCE_GLOBS = [
     'js/Maps/Map.js',
     'js/Maps/MapNavigation.js',
     'js/Series/Networkgraph/*.js',
-    'js/Series/AreaRangeSeries.js',
+    'js/Series/AreaRange/AreaRangeSeries.js',
     'js/Series/Line/LineSeries.js',
     'js/Series/Column/ColumnSeries.js',
     'js/Series/Map/MapSeries.js',

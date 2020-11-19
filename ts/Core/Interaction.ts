@@ -12,6 +12,7 @@
 
 import type AnimationOptionsObject from './Animation/AnimationOptionsObject';
 import type AreaSeries from '../Series/Area/AreaSeries';
+import type AreaRangeSeriesOptions from '../Series/AreaRange/AreaRangeSeriesOptions';
 import type PointerEvent from './PointerEvent';
 import type {
     PointEventsOptions,
@@ -313,7 +314,7 @@ const TrackerMixin = H.TrackerMixin = {
         var series = this,
             options = series.options,
             trackByArea =
-                (options as Highcharts.AreaRangeSeriesOptions).trackByArea,
+                (options as AreaRangeSeriesOptions).trackByArea,
             trackerPath = ([] as SVGPath).concat(
                 trackByArea ?
                     ((series as AreaSeries).areaPath as any) :

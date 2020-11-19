@@ -8,6 +8,7 @@
  *
  * */
 'use strict';
+import AreaRangeSeries from './AreaRange/AreaRangeSeries.js';
 import BaseSeries from '../Core/Series/Series.js';
 var seriesTypes = BaseSeries.seriesTypes;
 import ColumnSeries from './Column/ColumnSeries.js';
@@ -19,10 +20,9 @@ import H from '../Core/Globals.js';
 var noop = H.noop;
 import U from '../Core/Utilities.js';
 var extend = U.extend, pick = U.pick;
-import './AreaRange/AreaRangeSeries.js';
 import './ColumnRangeSeries.js';
 import '../Core/Interaction.js';
-var areaRangeProto = seriesTypes.arearange.prototype, columnRangeProto = seriesTypes.columnrange.prototype, areaRangePointProto = areaRangeProto.pointClass.prototype, TrackerMixin = H.TrackerMixin; // Interaction
+var areaRangeProto = AreaRangeSeries.prototype, columnRangeProto = seriesTypes.columnrange.prototype, areaRangePointProto = areaRangeProto.pointClass.prototype, TrackerMixin = H.TrackerMixin; // Interaction
 /* *
  *
  *  Class
