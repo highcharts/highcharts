@@ -415,6 +415,25 @@ Highcharts.prepareShot = function (chart) {
 };
 
 /**
+* Basic pretty-print SVG, each tag on a new line.
+* @param  {String} svg The SVG
+* @return {String}     Pretty SVG
+*/
+function prettyXML(svg) {
+    svg = svg
+        .replace(/>/g, '>\n')
+
+        // Don't introduce newlines inside tspans or links, it will make the text
+        // render differently
+        .replace(/<tspan([^>]*)>\n/g, '<tspan$1>')
+        .replace(/<\/tspan>\n/g, '</tspan>')
+        .replace(/<a([^>]*)>\n/g, '<a$1>')
+        .replace(/<\/a>\n/g, '</a>');
+
+    return svg;
+}
+
+/**
  * Get the SVG of a chart, or the first SVG in the page
  * @param  {Object} chart The chart
  * @return {String}       The SVG
@@ -445,7 +464,8 @@ function getSVG(chart) {
             svg = document.getElementsByTagName('svg')[0].outerHTML;
         }
     }
-    return svg;
+
+    return prettyXML(svg);
 }
 
 /**

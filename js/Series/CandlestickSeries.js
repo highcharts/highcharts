@@ -16,7 +16,7 @@ var defaultOptions = O.defaultOptions;
 import palette from '../Core/Palette.js';
 import U from '../Core/Utilities.js';
 var merge = U.merge;
-import './OHLCSeries.js';
+import './OHLC/OHLCSeries.js';
 /* *
  *
  *  Code

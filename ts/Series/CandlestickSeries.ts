@@ -17,6 +17,10 @@
  * */
 
 import type ColorType from '../Core/Color/ColorType';
+import type OHLCPoint from './OHLC/OHLCPoint';
+import type OHLCPointOptions from './OHLC/OHLCPointOptions';
+import type OHLCSeries from './OHLC/OHLCSeries';
+import type OHLCSeriesOptions from './OHLC/OHLCSeriesOptions';
 import type { SeriesStatesOptions } from '../Core/Series/SeriesOptions';
 import type { StatesOptionsKey } from '../Core/Series/StatesOptions';
 import type SVGAttributes from '../Core/Renderer/SVG/SVGAttributes';
@@ -30,7 +34,7 @@ import palette from '../Core/Palette.js';
 import U from '../Core/Utilities.js';
 const { merge } = U;
 
-import './OHLCSeries.js';
+import './OHLC/OHLCSeries.js';
 
 /* *
  *

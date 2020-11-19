@@ -19,7 +19,9 @@ QUnit.test("Axis offsets - test series clips.(#4371)", function (assert) {
             }]
         }).highcharts(),
         clipID = chart.series[0].group.attr("clip-path").replace(/"/g, ''),
-        clipElement = document.querySelectorAll(clipID.substring(4, clipID.length - 1) + ' rect')[0],
+        clipElement = document.querySelectorAll(
+            clipID.substring(4, clipID.length - 1) + ' rect'
+        )[0],
         clip = {
             width: clipElement.getAttribute("width"),
             height: clipElement.getAttribute("height"),

@@ -1331,6 +1331,13 @@ export default PieSeries;
  */
 
 /**
+ * @extends plotOptions.pie.dataLabels
+ * @excluding align, allowOverlap, inside, staggerLines, step
+ * @product   highcharts
+ * @apioption series.pie.dataLabels
+ */
+
+/**
  * @excluding legendItemClick
  * @product   highcharts
  * @apioption series.pie.events
