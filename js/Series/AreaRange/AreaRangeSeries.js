@@ -33,19 +33,19 @@ import LineSeries from '../Line/LineSeries.js';
 var seriesProto = LineSeries.prototype;
 import U from '../../Core/Utilities.js';
 var defined = U.defined, extend = U.extend, isArray = U.isArray, pick = U.pick, merge = U.merge;
+/* *
+ *
+ *  Class
+ *
+ * */
 /**
  * The AreaRange series type.
  *
  * @private
  * @class
- * @name Highcharts.seriesTypes#arearange
+ * @name Highcharts.seriesTypes.arearange
  *
  * @augments Highcharts.Series
- */
-/**
- *
- *  Class
- *
  */
 var AreaRangeSeries = /** @class */ (function (_super) {
     __extends(AreaRangeSeries, _super);
@@ -70,11 +70,11 @@ var AreaRangeSeries = /** @class */ (function (_super) {
         return _this;
         /* eslint-enable valid-jsdoc */
     }
-    /**
+    /* *
      *
      *  Functions
      *
-     */
+     * */
     /* eslint-disable valid-jsdoc */
     AreaRangeSeries.prototype.toYData = function (point) {
         return [point.low, point.high];

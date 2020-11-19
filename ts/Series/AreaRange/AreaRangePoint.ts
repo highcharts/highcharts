@@ -37,28 +37,18 @@ const {
 
 class AreaRangePoint extends AreaSeries.prototype.pointClass {
 
-    /**
+    /* *
      *
      *  Properties
      *
-     */
+     * */
 
     public _plotY?: number;
     public below?: boolean;
     public dataLabelUpper?: SVGElement;
     public isInside?: boolean;
     public isTopInside?: boolean;
-    /**
-     * Range series only. The high or maximum value for each data point.
-     * @name Highcharts.Point#high
-     * @type {number|undefined}
-     */
     public high: number = void 0 as any;
-    /**
-     * Range series only. The low or minimum value for each data point.
-     * @name Highcharts.Point#low
-     * @type {number|undefined}
-     */
     public low: number = void 0 as any;
     public lowerGraphic?: SVGElement;
     public options: AreaRangePointOptions = void 0 as any;
@@ -71,11 +61,11 @@ class AreaRangePoint extends AreaSeries.prototype.pointClass {
     public series: AreaRangeSeries = void 0 as any;
     public upperGraphic?: SVGElement;
 
-    /**
+    /* *
      *
      *  Functions
      *
-     */
+     * */
 
     /**
      * @private

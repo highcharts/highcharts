@@ -56,21 +56,20 @@ declare module '../../Core/Series/PointLike' {
     }
 }
 
+/* *
+ *
+ *  Class
+ *
+ * */
 
 /**
  * The AreaRange series type.
  *
  * @private
  * @class
- * @name Highcharts.seriesTypes#arearange
+ * @name Highcharts.seriesTypes.arearange
  *
  * @augments Highcharts.Series
- */
-
-/**
- *
- *  Class
- *
  */
 class AreaRangeSeries extends AreaSeries {
 
@@ -234,11 +233,11 @@ class AreaRangeSeries extends AreaSeries {
     public upperStateMarkerGraphic?: SVGElement;
     public xAxis: RadialAxis = void 0 as any;
 
-    /**
+    /* *
      *
      *  Functions
      *
-     */
+     * */
     /* eslint-disable valid-jsdoc */
 
     public toYData(point: AreaRangePoint): [number, number] {
@@ -658,11 +657,11 @@ class AreaRangeSeries extends AreaSeries {
     /* eslint-enable valid-jsdoc */
 }
 
-/**
+/* *
  *
  *  Prototype properties
  *
- */
+ * */
 interface AreaRangeSeries extends AreaSeries {
     pointClass: typeof AreaRangePoint;
     pointArrayMap: Array<string>;
