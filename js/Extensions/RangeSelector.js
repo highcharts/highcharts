@@ -854,7 +854,8 @@ var RangeSelector = /** @class */ (function () {
     RangeSelector.prototype.setInputValue = function (name, inputTime) {
         var options = this.chart.options.rangeSelector, time = this.chart.time, input = name === 'min' ? this.minInput : this.maxInput;
         if (input) {
-            var updatedTime = Number(input.getAttribute('data-hc-time'));
+            var hcTimeAttr = input.getAttribute('data-hc-time');
+            var updatedTime = defined(hcTimeAttr) ? Number(hcTimeAttr) : void 0;
             if (defined(inputTime)) {
                 var previousTime = updatedTime;
                 if (previousTime) {

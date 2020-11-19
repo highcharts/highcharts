@@ -1232,7 +1232,8 @@ class RangeSelector {
 
         if (input) {
 
-            let updatedTime = Number(input.getAttribute('data-hc-time'));
+            const hcTimeAttr = input.getAttribute('data-hc-time');
+            let updatedTime = defined(hcTimeAttr) ? Number(hcTimeAttr) : void 0;
 
             if (defined(inputTime)) {
                 const previousTime = updatedTime;

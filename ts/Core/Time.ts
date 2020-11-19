@@ -63,7 +63,7 @@ declare global {
             public variableTimezone: boolean;
             public dateFormat(
                 format: string,
-                timestamp: number,
+                timestamp?: number,
                 capitalize?: boolean
             ): string;
             public get(unit: TimeUnitValue, date: Date): number;
@@ -574,7 +574,7 @@ class Time {
      *        The desired format where various time representations are
      *        prefixed with %.
      *
-     * @param {number} timestamp
+     * @param {number} [timestamp]
      *        The JavaScript timestamp.
      *
      * @param {boolean} [capitalize=false]
@@ -585,7 +585,7 @@ class Time {
      */
     public dateFormat(
         format: string,
-        timestamp: number,
+        timestamp?: number,
         capitalize?: boolean
     ): string {
         if (!defined(timestamp) || isNaN(timestamp)) {
