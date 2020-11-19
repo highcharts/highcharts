@@ -924,7 +924,6 @@ var RangeSelector = /** @class */ (function () {
             width: '1px',
             height: '1px'
         });
-        this.setInputValue(name);
     };
     /**
      * @private
@@ -1078,15 +1077,28 @@ var RangeSelector = /** @class */ (function () {
             }
             // #10404 - move hide and blur outside focus
             rangeSelector.hideInput(name);
+            rangeSelector.setInputValue(name);
             input.blur(); // #4606
         };
+        var keyDown = false;
         // handle changes in the input boxes
-        input.onchange = updateExtremes;
+        input.onchange = function () {
+            updateExtremes();
+            // Blur input when clicking date input calendar
+            if (!keyDown) {
+                rangeSelector.hideInput(name);
+                input.blur();
+            }
+        };
         input.onkeypress = function (event) {
+            keyDown = true;
             // IE does not fire onchange on enter
             if (event.keyCode === 13) {
                 updateExtremes();
             }
+        };
+        input.onkeyup = function () {
+            keyDown = false;
         };
     };
     /**

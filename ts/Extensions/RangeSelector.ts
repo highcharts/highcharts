@@ -1327,7 +1327,6 @@ class RangeSelector {
             width: '1px',
             height: '1px'
         });
-        this.setInputValue(name);
     }
 
     /**
@@ -1514,11 +1513,12 @@ class RangeSelector {
         }
 
         // Blow up the input box
-        input.onfocus = function (): void {
+        input.onfocus = (): void => {
             rangeSelector.showInput(name);
         };
+
         // Hide away the input box
-        input.onblur = function (): void {
+        input.onblur = (): void => {
             // update extermes only when inputs are active
             if (input === H.doc.activeElement) { // Only when focused
                 // Update also when no `change` event is triggered, like when
@@ -1527,17 +1527,34 @@ class RangeSelector {
             }
             // #10404 - move hide and blur outside focus
             rangeSelector.hideInput(name);
+            rangeSelector.setInputValue(name);
             input.blur(); // #4606
         };
 
-        // handle changes in the input boxes
-        input.onchange = updateExtremes;
+        let keyDown = false;
 
-        input.onkeypress = function (event: KeyboardEvent): void {
+        // handle changes in the input boxes
+        input.onchange = (): void => {
+            updateExtremes();
+
+            // Blur input when clicking date input calendar
+            if (!keyDown) {
+                rangeSelector.hideInput(name);
+                input.blur();
+            }
+        };
+
+        input.onkeypress = (event: KeyboardEvent): void => {
+            keyDown = true;
+
             // IE does not fire onchange on enter
             if (event.keyCode === 13) {
                 updateExtremes();
             }
+        };
+
+        input.onkeyup = (): void => {
+            keyDown = false;
         };
     }
 
