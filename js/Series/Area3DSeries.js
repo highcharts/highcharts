@@ -34,7 +34,7 @@ wrap(seriesTypes.area.prototype, 'getGraphPath', function (proceed) {
             });
         }
     }
-    if (series.chart.is3d() && series.chart.options && series.chart.options.chart) {
+    if (series.chart.options && series.chart.options.chart) {
         options3d = series.chart.options.chart.options3d;
         bottomPoints = perspective(bottomPoints, series.chart, true).map(function (point) {
             return { plotX: point.x, plotY: point.y, plotZ: point.z };

@@ -71,7 +71,7 @@ wrap(seriesTypes.area.prototype, 'getGraphPath', function (
         }
     }
 
-    if (series.chart.is3d() && series.chart.options && series.chart.options.chart) {
+    if (series.chart.options && series.chart.options.chart) {
         options3d = series.chart.options.chart.options3d;
         bottomPoints = perspective(
             bottomPoints as any, series.chart, true
