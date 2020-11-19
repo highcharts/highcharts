@@ -22,7 +22,8 @@ import Point from '../../../Core/Series/Point.js';
 import U from '../../../Core/Utilities.js';
 const {
     defined,
-    extend
+    extend,
+    fireEvent
 } = U;
 
 declare module '../../../Core/Chart/ChartLike'{
@@ -719,10 +720,16 @@ extend(SeriesKeyboardNavigation.prototype, /** @lends Highcharts.SeriesKeyboardN
 
                 [[keys.enter, keys.space],
                     function (
-                        this: Highcharts.KeyboardNavigationHandler
+                        this: Highcharts.KeyboardNavigationHandler,
+                        keyCode: number,
+                        event: KeyboardEvent
                     ): number {
-                        if (chart.highlightedPoint) {
-                            chart.highlightedPoint.firePointEvent('click');
+                        const point = chart.highlightedPoint;
+                        if (point) {
+                            fireEvent(point.series, 'click', extend(event, {
+                                point
+                            }));
+                            point.firePointEvent('click');
                         }
                         return this.response.success;
                     }]
