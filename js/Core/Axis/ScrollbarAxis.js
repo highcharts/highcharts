@@ -42,6 +42,12 @@ var ScrollbarAxis = /** @class */ (function () {
                 axis.options.startOnTick = axis.options.endOnTick = false;
                 axis.scrollbar = new ScrollbarClass(axis.chart.renderer, axis.options.scrollbar, axis.chart);
                 addEvent(axis.scrollbar, 'changed', function (e) {
+                    var _a, _b;
+                    if ((((_a = this.chart.options.chart) === null || _a === void 0 ? void 0 : _a.type) === 'column' ||
+                        ((_b = this.chart.options.chart) === null || _b === void 0 ? void 0 : _b.type) === 'bar') &&
+                        !axis.options.min) {
+                        axis.options.min = 0;
+                    }
                     var axisMin = pick(axis.options && axis.options.min, axis.min), axisMax = pick(axis.options && axis.options.max, axis.max), unitedMin = defined(axis.dataMin) ?
                         Math.min(axisMin, axis.min, axis.dataMin) : axisMin, unitedMax = defined(axis.dataMax) ?
                         Math.max(axisMax, axis.max, axis.dataMax) : axisMax, range = unitedMax - unitedMin, to, from;

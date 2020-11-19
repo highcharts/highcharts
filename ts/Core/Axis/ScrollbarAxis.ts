@@ -75,6 +75,12 @@ class ScrollbarAxis {
                     this: Highcharts.Scrollbar,
                     e: Highcharts.ScrollbarChangedEventObject
                 ): void {
+                    if ((this.chart.options.chart?.type === 'column' ||
+                        this.chart.options.chart?.type === 'bar') &&
+                        !axis.options.min
+                    ) {
+                        axis.options.min = 0;
+                    }
                     var axisMin = pick(
                             axis.options && axis.options.min,
                             axis.min as any
