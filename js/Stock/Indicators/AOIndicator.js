@@ -6,12 +6,30 @@
  *
  * */
 'use strict';
+var __extends = (this && this.__extends) || (function () {
+    var extendStatics = function (d, b) {
+        extendStatics = Object.setPrototypeOf ||
+            ({ __proto__: [] } instanceof Array && function (d, b) { d.__proto__ = b; }) ||
+            function (d, b) { for (var p in b) if (b.hasOwnProperty(p)) d[p] = b[p]; };
+        return extendStatics(d, b);
+    };
+    return function (d, b) {
+        extendStatics(d, b);
+        function __() { this.constructor = d; }
+        d.prototype = b === null ? Object.create(b) : (__.prototype = b.prototype, new __());
+    };
+})();
+var SMAIndicator = BaseSeries.seriesTypes.sma;
 import BaseSeries from '../../Core/Series/Series.js';
 import H from '../../Core/Globals.js';
 var noop = H.noop;
 import U from '../../Core/Utilities.js';
-var correctFloat = U.correctFloat, isArray = U.isArray;
-// im port './SMAIndicator.js';
+var extend = U.extend, merge = U.merge, correctFloat = U.correctFloat, isArray = U.isArray;
+/* *
+ *
+ *  Class
+ *
+ * */
 /**
  * The AO series type
  *
@@ -21,65 +39,68 @@ var correctFloat = U.correctFloat, isArray = U.isArray;
  *
  * @augments Highcharts.Series
  */
-BaseSeries.seriesType('ao', 'sma', 
-/**
- * Awesome Oscillator. This series requires the `linkedTo` option to
- * be set and should be loaded after the `stock/indicators/indicators.js`
- *
- * @sample {highstock} stock/indicators/ao
- *         Awesome
- *
- * @extends      plotOptions.sma
- * @since        7.0.0
- * @product      highstock
- * @excluding    allAreas, colorAxis, joinBy, keys, navigatorOptions,
- *               params, pointInterval, pointIntervalUnit, pointPlacement,
- *               pointRange, pointStart, showInNavigator, stacking
- * @requires     stock/indicators/indicators
- * @requires     stock/indicators/ao
- * @optionparent plotOptions.ao
- */
-{
+var AOIndicator = /** @class */ (function (_super) {
+    __extends(AOIndicator, _super);
+    function AOIndicator() {
+        return _super !== null && _super.apply(this, arguments) || this;
+    }
     /**
-     * Color of the Awesome oscillator series bar that is greater than the
-     * previous one. Note that if a `color` is defined, the `color`
-     * takes precedence and the `greaterBarColor` is ignored.
+     * Awesome Oscillator. This series requires the `linkedTo` option to
+     * be set and should be loaded after the `stock/indicators/indicators.js`
      *
-     * @sample {highstock} stock/indicators/ao/
-     *         greaterBarColor
+     * @sample {highstock} stock/indicators/ao
+     *         Awesome
      *
-     * @type  {Highcharts.ColorString|Highcharts.GradientColorObject|Highcharts.PatternObject}
-     * @since 7.0.0
+     * @extends      plotOptions.sma
+     * @since        7.0.0
+     * @product      highstock
+     * @excluding    allAreas, colorAxis, joinBy, keys, navigatorOptions,
+     *               params, pointInterval, pointIntervalUnit, pointPlacement,
+     *               pointRange, pointStart, showInNavigator, stacking
+     * @requires     stock/indicators/indicators
+     * @requires     stock/indicators/ao
+     * @optionparent plotOptions.ao
      */
-    greaterBarColor: '#06B535',
-    /**
-     * Color of the Awesome oscillator series bar that is lower than the
-     * previous one. Note that if a `color` is defined, the `color`
-     * takes precedence and the `lowerBarColor` is ignored.
-     *
-     * @sample {highstock} stock/indicators/ao/
-     *         lowerBarColor
-     *
-     * @type  {Highcharts.ColorString|Highcharts.GradientColorObject|Highcharts.PatternObject}
-     * @since 7.0.0
-     */
-    lowerBarColor: '#F21313',
-    threshold: 0,
-    groupPadding: 0.2,
-    pointPadding: 0.2,
-    crisp: false,
-    states: {
-        hover: {
-            halo: {
-                size: 0
+    AOIndicator.defaultOptions = merge(SMAIndicator.defaultOptions, {
+        /**
+         * Color of the Awesome oscillator series bar that is greater than the
+         * previous one. Note that if a `color` is defined, the `color`
+         * takes precedence and the `greaterBarColor` is ignored.
+         *
+         * @sample {highstock} stock/indicators/ao/
+         *         greaterBarColor
+         *
+         * @type  {Highcharts.ColorString|Highcharts.GradientColorObject|Highcharts.PatternObject}
+         * @since 7.0.0
+         */
+        greaterBarColor: '#06B535',
+        /**
+         * Color of the Awesome oscillator series bar that is lower than the
+         * previous one. Note that if a `color` is defined, the `color`
+         * takes precedence and the `lowerBarColor` is ignored.
+         *
+         * @sample {highstock} stock/indicators/ao/
+         *         lowerBarColor
+         *
+         * @type  {Highcharts.ColorString|Highcharts.GradientColorObject|Highcharts.PatternObject}
+         * @since 7.0.0
+         */
+        lowerBarColor: '#F21313',
+        threshold: 0,
+        groupPadding: 0.2,
+        pointPadding: 0.2,
+        crisp: false,
+        states: {
+            hover: {
+                halo: {
+                    size: 0
+                }
             }
         }
-    }
-}, 
-/**
- * @lends Highcharts.Series#
- */
-{
+    });
+    return AOIndicator;
+}(SMAIndicator));
+extend(AOIndicator.prototype, {
     nameBase: 'AO',
     nameComponents: false,
     // Columns support:
@@ -148,6 +169,13 @@ BaseSeries.seriesType('ao', 'sma',
         };
     }
 });
+BaseSeries.registerSeriesType('aroon', AOIndicator);
+/* *
+ *
+ *  Default Export
+ *
+ * */
+export default AOIndicator;
 /**
  * An `AO` series. If the [type](#series.ao.type)
  * option is not specified, it is inherited from [chart.type](#chart.type).
