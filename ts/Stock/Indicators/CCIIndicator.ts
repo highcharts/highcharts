@@ -9,15 +9,23 @@
 
 import type IndicatorValuesObject from './IndicatorValuesObject';
 import type LineSeries from '../../Series/Line/LineSeries';
-import type SMAIndicator from './SMA/SMAIndicator';
 import type {
     SMAOptions,
     SMAParamsOptions
 } from './SMA/SMAOptions';
 import type SMAPoint from './SMA/SMAPoint';
 import BaseSeries from '../../Core/Series/Series.js';
+const {
+    seriesTypes: {
+        sma: SMAIndicator
+    }
+} = BaseSeries;
 import U from '../../Core/Utilities.js';
-const { isArray } = U;
+const {
+    isArray,
+    extend,
+    merge
+} = U;
 
 /**
  * Internal types
@@ -25,17 +33,6 @@ const { isArray } = U;
  */
 declare global {
     namespace Highcharts {
-        class CCIIndicator extends SMAIndicator {
-            public data: Array<CCIIndicatorPoint>;
-            public getValues<TLinkedSeries extends LineSeries>(
-                series: TLinkedSeries,
-                params: CCIIndicatorParamsOptions
-            ): (IndicatorValuesObject<TLinkedSeries>|undefined);
-            public pointClass: typeof CCIIndicatorPoint;
-            public points: Array<CCIIndicatorPoint>;
-            public options: CCIIndicatorOptions;
-        }
-
         interface CCIIndicatorOptions extends SMAOptions {
             params?: CCIIndicatorParamsOptions;
         }
@@ -49,14 +46,6 @@ declare global {
         }
     }
 }
-
-declare module '../../Core/Series/SeriesType' {
-    interface SeriesTypeRegistry {
-        cci: typeof Highcharts.CCIIndicator;
-    }
-}
-
-// im port './SMAIndicator.js';
 
 /* eslint-disable valid-jsdoc */
 // Utils:
@@ -86,6 +75,12 @@ function meanDeviation(arr: Array<number>, sma: number): number {
 
 /* eslint-enable valid-jsdoc */
 
+/* *
+ *
+ * Class
+ *
+ * */
+
 /**
  * The CCI series type.
  *
@@ -95,9 +90,7 @@ function meanDeviation(arr: Array<number>, sma: number): number {
  *
  * @augments Highcharts.Series
  */
-BaseSeries.seriesType<typeof Highcharts.CCIIndicator>(
-    'cci',
-    'sma',
+class CCIIndicator extends SMAIndicator {
     /**
      * Commodity Channel Index (CCI). This series requires `linkedTo` option to
      * be set.
@@ -112,78 +105,111 @@ BaseSeries.seriesType<typeof Highcharts.CCIIndicator>(
      * @requires     stock/indicators/cci
      * @optionparent plotOptions.cci
      */
-    {
+    public static defaultOptions: Highcharts.CCIIndicatorOptions = merge(SMAIndicator.defaultOptions, {
         params: {
             period: 14
         }
-    },
-    /**
-     * @lends Highcharts.Series#
-     */
-    {
-        getValues: function<TLinkedSeries extends LineSeries> (
-            series: TLinkedSeries,
-            params: Highcharts.CCIIndicatorParamsOptions
-        ): (IndicatorValuesObject<TLinkedSeries>|undefined) {
-            var period: number = (params.period as any),
-                xVal: Array<number> = (series.xData as any),
-                yVal: Array<Array<number>> = (series.yData as any),
-                yValLen: number = yVal ? yVal.length : 0,
-                TP: Array<number> = [],
-                periodTP: Array<number> = [],
-                range = 1,
-                CCI: Array<Array<number>> = [],
-                xData: Array<number> = [],
-                yData: Array<number> = [],
-                CCIPoint: number,
-                p: Array<number>,
-                len: number,
-                smaTP: number,
-                TPtemp: number,
-                meanDev: number,
-                i: number;
+    } as Highcharts.CCIIndicatorOptions);
+}
 
-            // CCI requires close value
-            if (
-                xVal.length <= period ||
-                !isArray(yVal[0]) ||
-                yVal[0].length !== 4
-            ) {
-                return;
-            }
+interface CCIIndicator {
+    data: Array<Highcharts.CCIIndicatorPoint>;
+    getValues<TLinkedSeries extends LineSeries>(
+        series: TLinkedSeries,
+        params: Highcharts.CCIIndicatorParamsOptions
+    ): (IndicatorValuesObject<TLinkedSeries>|undefined);
+    pointClass: typeof Highcharts.CCIIndicatorPoint;
+    points: Array<Highcharts.CCIIndicatorPoint>;
+    options: Highcharts.CCIIndicatorOptions;
+}
+/**
+ * @lends Highcharts.Series#
+ */
+extend(CCIIndicator.prototype, {
+    getValues: function<TLinkedSeries extends LineSeries> (
+        series: TLinkedSeries,
+        params: Highcharts.CCIIndicatorParamsOptions
+    ): (IndicatorValuesObject<TLinkedSeries>|undefined) {
+        var period: number = (params.period as any),
+            xVal: Array<number> = (series.xData as any),
+            yVal: Array<Array<number>> = (series.yData as any),
+            yValLen: number = yVal ? yVal.length : 0,
+            TP: Array<number> = [],
+            periodTP: Array<number> = [],
+            range = 1,
+            CCI: Array<Array<number>> = [],
+            xData: Array<number> = [],
+            yData: Array<number> = [],
+            CCIPoint: number,
+            p: Array<number>,
+            len: number,
+            smaTP: number,
+            TPtemp: number,
+            meanDev: number,
+            i: number;
 
-            // accumulate first N-points
-            while (range < period) {
-                p = yVal[range - 1];
-                TP.push((p[1] + p[2] + p[3]) / 3);
-                range++;
-            }
-
-            for (i = period; i <= yValLen; i++) {
-
-                p = yVal[i - 1];
-                TPtemp = (p[1] + p[2] + p[3]) / 3;
-                len = TP.push(TPtemp);
-                periodTP = TP.slice(len - period);
-
-                smaTP = sumArray(periodTP) / period;
-                meanDev = meanDeviation(periodTP, smaTP) / period;
-
-                CCIPoint = ((TPtemp - smaTP) / (0.015 * meanDev));
-
-                CCI.push([xVal[i - 1], CCIPoint]);
-                xData.push(xVal[i - 1]);
-                yData.push(CCIPoint);
-            }
-
-            return {
-                values: CCI,
-                xData: xData,
-                yData: yData
-            } as IndicatorValuesObject<TLinkedSeries>;
+        // CCI requires close value
+        if (
+            xVal.length <= period ||
+            !isArray(yVal[0]) ||
+            yVal[0].length !== 4
+        ) {
+            return;
         }
+
+        // accumulate first N-points
+        while (range < period) {
+            p = yVal[range - 1];
+            TP.push((p[1] + p[2] + p[3]) / 3);
+            range++;
+        }
+
+        for (i = period; i <= yValLen; i++) {
+
+            p = yVal[i - 1];
+            TPtemp = (p[1] + p[2] + p[3]) / 3;
+            len = TP.push(TPtemp);
+            periodTP = TP.slice(len - period);
+
+            smaTP = sumArray(periodTP) / period;
+            meanDev = meanDeviation(periodTP, smaTP) / period;
+
+            CCIPoint = ((TPtemp - smaTP) / (0.015 * meanDev));
+
+            CCI.push([xVal[i - 1], CCIPoint]);
+            xData.push(xVal[i - 1]);
+            yData.push(CCIPoint);
+        }
+
+        return {
+            values: CCI,
+            xData: xData,
+            yData: yData
+        } as IndicatorValuesObject<TLinkedSeries>;
     }
-);
+});
+
+declare module '../../Core/Series/SeriesType' {
+    interface SeriesTypeRegistry {
+        cci: typeof CCIIndicator;
+    }
+}
+
+/* *
+ *
+ *  Registry
+ *
+ * */
+
+BaseSeries.registerSeriesType('cci', CCIIndicator);
+
+/* *
+ *
+ *  Default Export
+ *
+ * */
+
+export default CCIIndicator;
 
 /**
  * A `CCI` series. If the [type](#series.cci.type) option is not
