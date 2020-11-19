@@ -7,45 +7,31 @@
 
 'use strict';
 
-import type IndicatorValuesObject from './IndicatorValuesObject';
-import type LineSeries from '../../Series/Line/LineSeries';
+/* *
+ *
+ * Imports
+ *gul
+ * */
+
+import type IndicatorValuesObject from '../IndicatorValuesObject';
+import type LineSeries from '../../../Series/Line/LineSeries';
 import type {
-    SMAOptions,
-    SMAParamsOptions
-} from './SMA/SMAOptions';
-import type SMAPoint from './SMA/SMAPoint';
-import BaseSeries from '../../Core/Series/Series.js';
+    CCIOptions,
+    CCIParamsOptions
+} from './CCIOptions';
+import type CCIPoint from './CCIPoint';
+import BaseSeries from '../../../Core/Series/Series.js';
 const {
     seriesTypes: {
         sma: SMAIndicator
     }
 } = BaseSeries;
-import U from '../../Core/Utilities.js';
+import U from '../../../Core/Utilities.js';
 const {
     isArray,
     extend,
     merge
 } = U;
-
-/**
- * Internal types
- * @private
- */
-declare global {
-    namespace Highcharts {
-        interface CCIIndicatorOptions extends SMAOptions {
-            params?: CCIIndicatorParamsOptions;
-        }
-
-        interface CCIIndicatorParamsOptions extends SMAParamsOptions {
-            // declared for inheritance
-        }
-
-        class CCIIndicatorPoint extends SMAPoint {
-            public series: CCIIndicator;
-        }
-    }
-}
 
 /* eslint-disable valid-jsdoc */
 // Utils:
@@ -105,11 +91,11 @@ class CCIIndicator extends SMAIndicator {
      * @requires     stock/indicators/cci
      * @optionparent plotOptions.cci
      */
-    public static defaultOptions: Highcharts.CCIIndicatorOptions = merge(SMAIndicator.defaultOptions, {
+    public static defaultOptions: CCIOptions = merge(SMAIndicator.defaultOptions, {
         params: {
             period: 14
         }
-    } as Highcharts.CCIIndicatorOptions);
+    } as CCIOptions);
 
     /* *
      *
@@ -117,13 +103,13 @@ class CCIIndicator extends SMAIndicator {
      *
      * */
 
-    public data: Array<Highcharts.CCIIndicatorPoint> = void 0 as any;
-    public points: Array<Highcharts.CCIIndicatorPoint> = void 0 as any;
-    public options: Highcharts.CCIIndicatorOptions = void 0 as any;
+    public data: Array<CCIPoint> = void 0 as any;
+    public points: Array<CCIPoint> = void 0 as any;
+    public options: CCIOptions = void 0 as any;
 
     public getValues<TLinkedSeries extends LineSeries>(
         series: TLinkedSeries,
-        params: Highcharts.CCIIndicatorParamsOptions
+        params: CCIParamsOptions
     ): (IndicatorValuesObject<TLinkedSeries>|undefined) {
         var period: number = (params.period as any),
             xVal: Array<number> = (series.xData as any),
@@ -191,10 +177,10 @@ class CCIIndicator extends SMAIndicator {
  * */
 
 interface CCIIndicator {
-    pointClass: typeof Highcharts.CCIIndicatorPoint;
+    pointClass: typeof CCIPoint;
 }
 
-declare module '../../Core/Series/SeriesType' {
+declare module '../../../Core/Series/SeriesType' {
     interface SeriesTypeRegistry {
         cci: typeof CCIIndicator;
     }

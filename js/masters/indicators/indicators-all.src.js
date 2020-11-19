@@ -19,7 +19,7 @@ import '../../Stock/Indicators/AroonIndicator.js';
 import '../../Stock/Indicators/AroonOscillatorIndicator.js';
 import '../../Stock/Indicators/ATRIndicator.js';
 import '../../Stock/Indicators/BBIndicator.js';
-import '../../Stock/Indicators/CCIIndicator.js';
+import '../../Stock/Indicators/CCI/CCIIndicator.js';
 import '../../Stock/Indicators/CMF/CMFIndicator.js';
 import '../../Stock/Indicators/DPOIndicator.js';
 import '../../Stock/Indicators/EMAIndicator.js';
