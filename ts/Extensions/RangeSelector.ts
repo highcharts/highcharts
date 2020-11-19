@@ -1346,6 +1346,7 @@ class RangeSelector {
      */
     public hideInput(name: string): void {
         css((this as any)[name + 'Input'], {
+            top: '-9999em',
             border: 0,
             width: '1px',
             height: '1px'
@@ -1510,9 +1511,7 @@ class RangeSelector {
             name: name,
             className: 'highcharts-range-selector',
             type: preferredInputType(options.inputDateFormat || '%b %e, %Y')
-        }, {
-            top: chart.plotTop + 'px' // prevent jump on focus in Firefox
-        }, div);
+        }, void 0, div);
 
         if (!chart.styledMode) {
             // Styles
