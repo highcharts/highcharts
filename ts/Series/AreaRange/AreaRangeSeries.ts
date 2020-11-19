@@ -20,8 +20,8 @@ import type AreaRangeDataLabelsOptionsObject from './AreaRangeDataLabelsOptionsO
 import type AreaRangeSeriesOptions from './AreaRangeSeriesOptions';
 import type AreaPoint from '../Area/AreaPoint';
 import type RadialAxis from '../../Core/Axis/RadialAxis';
+import type SVGElement from '../../Core/Renderer/SVG/SVGElement';
 import type SVGPath from '../../Core/Renderer/SVG/SVGPath';
-import type SVGElement from '../../core/Renderer/SVG/SVGElement';
 
 import AreaRangePoint from './AreaRangePoint.js';
 import AreaSeries from '../Area/AreaSeries.js';
@@ -80,8 +80,23 @@ class AreaRangeSeries extends AreaSeries {
      *
      */
 
+    /**
+     * The area range series is a carteseian series with higher and lower
+     * values for each point along an X axis, where the area between the
+     * values is shaded.
+     *
+     * @sample {highcharts} highcharts/demo/arearange/
+     *         Area range chart
+     * @sample {highstock} stock/demo/arearange/
+     *         Area range chart
+     *
+     * @extends      plotOptions.area
+     * @product      highcharts highstock
+     * @excluding    stack, stacking
+     * @requires     highcharts-more
+     * @optionparent plotOptions.arearange
+     */
     public static defaultOptions: AreaRangeSeriesOptions = merge(AreaSeries.defaultOptions, {
-
         /**
          * @see [fillColor](#plotOptions.arearange.fillColor)
          * @see [fillOpacity](#plotOptions.arearange.fillOpacity)
@@ -684,23 +699,6 @@ BaseSeries.registerSeriesType('arearange', AreaRangeSeries);
  * */
 
 export default AreaRangeSeries;
-
-/**
- * The area range series is a carteseian series with higher and lower values for
- * each point along an X axis, where the area between the values is shaded.
- *
- * @sample {highcharts} highcharts/demo/arearange/
- *         Area range chart
- * @sample {highstock} stock/demo/arearange/
- *         Area range chart
- *
- * @extends      plotOptions.area
- * @product      highcharts highstock
- * @excluding    stack, stacking
- * @requires     highcharts-more
- * @optionparent plotOptions.arearange
- */
-
 
 /**
  * A `arearange` series. If the [type](#series.arearange.type) option is not
