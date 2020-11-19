@@ -23,19 +23,6 @@ var SMAIndicator = BaseSeries.seriesTypes.sma;
 import BaseSeries from '../../Core/Series/Series.js';
 import U from '../../Core/Utilities.js';
 var extend = U.extend, merge = U.merge, correctFloat = U.correctFloat, pick = U.pick;
-// im port './SMAIndicator.js';
-/* eslint-disable valid-jsdoc */
-// Utils
-/**
- * @private
- */
-function accumulatePoints(sum, yVal, i, index, subtract) {
-    var price = pick(yVal[i][index], yVal[i]);
-    if (subtract) {
-        return correctFloat(sum - price);
-    }
-    return correctFloat(sum + price);
-}
 /* eslint-enable valid-jsdoc */
 /* *
  *
@@ -54,8 +41,63 @@ function accumulatePoints(sum, yVal, i, index, subtract) {
 var DPOIndicator = /** @class */ (function (_super) {
     __extends(DPOIndicator, _super);
     function DPOIndicator() {
-        return _super !== null && _super.apply(this, arguments) || this;
+        var _this = _super !== null && _super.apply(this, arguments) || this;
+        /* *
+        *
+        *   Properties
+        *
+        * */
+        _this.data = void 0;
+        _this.points = void 0;
+        return _this;
     }
+    /* *
+     *
+     *  Functions
+     *
+     * */
+    /**
+     * @lends Highcharts.Series#
+     */
+    DPOIndicator.prototype.accumulatePoints = function (sum, yVal, i, index, subtract) {
+        var price = pick(yVal[i][index], yVal[i]);
+        if (subtract) {
+            return correctFloat(sum - price);
+        }
+        return correctFloat(sum + price);
+    };
+    DPOIndicator.prototype.getValues = function (series, params) {
+        var period = params.period, index = params.index, offset = Math.floor(period / 2 + 1), range = period + offset, xVal = series.xData || [], yVal = series.yData || [], yValLen = yVal.length, 
+        // 0- date, 1- Detrended Price Oscillator
+        DPO = [], xData = [], yData = [], sum = 0, oscillator, periodIndex, rangeIndex, price, i, j;
+        if (xVal.length <= range) {
+            return;
+        }
+        // Accumulate first N-points for SMA
+        for (i = 0; i < period - 1; i++) {
+            sum = this.accumulatePoints(sum, yVal, i, index);
+        }
+        // Detrended Price Oscillator formula:
+        // DPO = Price - Simple moving average [from (n / 2 + 1) days ago]
+        for (j = 0; j <= yValLen - range; j++) {
+            periodIndex = j + period - 1;
+            rangeIndex = j + range - 1;
+            // adding the last period point
+            sum = this.accumulatePoints(sum, yVal, periodIndex, index);
+            price = pick(yVal[rangeIndex][index], yVal[rangeIndex]);
+            oscillator = price - sum / period;
+            // substracting the first period point
+            sum = this.accumulatePoints(sum, yVal, j, index, true);
+            DPO.push([xVal[rangeIndex], oscillator]);
+            xData.push(xVal[rangeIndex]);
+            yData.push(oscillator);
+        }
+        return {
+            values: DPO,
+            xData: xData,
+            yData: yData
+        };
+    };
     /**
      * Detrended Price Oscillator. This series requires the `linkedTo` option to
      * be set and should be loaded after the `stock/indicators/indicators.js`.
@@ -88,44 +130,6 @@ var DPOIndicator = /** @class */ (function (_super) {
     });
     return DPOIndicator;
 }(SMAIndicator));
-/**
- * @lends Highcharts.Series#
- */
-extend(DPOIndicator.prototype, {
-    nameBase: 'DPO',
-    getValues: function (series, params) {
-        var period = params.period, index = params.index, offset = Math.floor(period / 2 + 1), range = period + offset, xVal = series.xData || [], yVal = series.yData || [], yValLen = yVal.length, 
-        // 0- date, 1- Detrended Price Oscillator
-        DPO = [], xData = [], yData = [], sum = 0, oscillator, periodIndex, rangeIndex, price, i, j;
-        if (xVal.length <= range) {
-            return;
-        }
-        // Accumulate first N-points for SMA
-        for (i = 0; i < period - 1; i++) {
-            sum = accumulatePoints(sum, yVal, i, index);
-        }
-        // Detrended Price Oscillator formula:
-        // DPO = Price - Simple moving average [from (n / 2 + 1) days ago]
-        for (j = 0; j <= yValLen - range; j++) {
-            periodIndex = j + period - 1;
-            rangeIndex = j + range - 1;
-            // adding the last period point
-            sum = accumulatePoints(sum, yVal, periodIndex, index);
-            price = pick(yVal[rangeIndex][index], yVal[rangeIndex]);
-            oscillator = price - sum / period;
-            // substracting the first period point
-            sum = accumulatePoints(sum, yVal, j, index, true);
-            DPO.push([xVal[rangeIndex], oscillator]);
-            xData.push(xVal[rangeIndex]);
-            yData.push(oscillator);
-        }
-        return {
-            values: DPO,
-            xData: xData,
-            yData: yData
-        };
-    }
-});
 BaseSeries.registerSeriesType('dpo', DPOIndicator);
 /* *
  *

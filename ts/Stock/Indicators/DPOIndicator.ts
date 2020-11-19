@@ -49,30 +49,6 @@ declare global {
     }
 }
 
-// im port './SMAIndicator.js';
-
-/* eslint-disable valid-jsdoc */
-// Utils
-/**
- * @private
- */
-function accumulatePoints(
-    sum: number,
-    yVal: (Array<number> | Array<Array<number>>),
-    i: number,
-    index: number,
-    subtract?: boolean
-): number {
-    var price = pick<(number | undefined), number>(
-        (yVal[i] as any)[index], (yVal[i] as any)
-    );
-
-    if (subtract) {
-        return correctFloat(sum - price);
-    }
-    return correctFloat(sum + price);
-}
-
 /* eslint-enable valid-jsdoc */
 
 /* *
@@ -121,33 +97,43 @@ class DPOIndicator extends SMAIndicator {
             period: 21
         }
     } as Highcharts.DPOIndicatorOptions)
-}
 
-/* *
-*
-*   Prototype Properties
-*
-* */
+    /* *
+    *
+    *   Properties
+    *
+    * */
+    public data: Array<Highcharts.DPOIndicatorPoint> = void 0 as any;
+    public points: Array<Highcharts.DPOIndicatorPoint> = void 0 as any;
 
-interface DPOIndicator {
-    data: Array<Highcharts.DPOIndicatorPoint>;
-    nameBase: string;
-    options: Highcharts.DPOIndicatorOptions;
-    pointClass: typeof Highcharts.DPOIndicatorPoint;
-    points: Array<Highcharts.DPOIndicatorPoint>;
-    getValues<TLinkedSeries extends LineSeries>(
-        series: TLinkedSeries,
-        params: Highcharts.DPOIndicatorParamsOptions
-    ): (IndicatorValuesObject<TLinkedSeries> | undefined);
-}
+    /* *
+     *
+     *  Functions
+     *
+     * */
 
-/**
- * @lends Highcharts.Series#
- */
+    /**
+     * @lends Highcharts.Series#
+     */
 
-extend(DPOIndicator.prototype, {
-    nameBase: 'DPO',
-    getValues: function <TLinkedSeries extends LineSeries> (
+    private accumulatePoints(
+        sum: number,
+        yVal: (Array<number> | Array<Array<number>>),
+        i: number,
+        index: number,
+        subtract?: boolean
+    ): number {
+        var price = pick<(number | undefined), number>(
+            (yVal[i] as any)[index], (yVal[i] as any)
+        );
+
+        if (subtract) {
+            return correctFloat(sum - price);
+        }
+        return correctFloat(sum + price);
+    }
+
+    public getValues<TLinkedSeries extends LineSeries>(
         series: TLinkedSeries,
         params: Highcharts.DPOIndicatorParamsOptions
     ): (IndicatorValuesObject<TLinkedSeries> | undefined) {
@@ -177,7 +163,7 @@ extend(DPOIndicator.prototype, {
 
         // Accumulate first N-points for SMA
         for (i = 0; i < period - 1; i++) {
-            sum = accumulatePoints(sum, yVal, i, index);
+            sum = this.accumulatePoints(sum, yVal, i, index);
         }
 
         // Detrended Price Oscillator formula:
@@ -188,7 +174,7 @@ extend(DPOIndicator.prototype, {
             rangeIndex = j + range - 1;
 
             // adding the last period point
-            sum = accumulatePoints(sum, yVal, periodIndex, index);
+            sum = this.accumulatePoints(sum, yVal, periodIndex, index);
             price = pick<(number | undefined), number>(
                 (yVal[rangeIndex] as any)[index], (yVal[rangeIndex] as any)
             );
@@ -196,7 +182,7 @@ extend(DPOIndicator.prototype, {
             oscillator = price - sum / period;
 
             // substracting the first period point
-            sum = accumulatePoints(sum, yVal, j, index, true);
+            sum = this.accumulatePoints(sum, yVal, j, index, true);
 
             DPO.push([xVal[rangeIndex], oscillator]);
             xData.push(xVal[rangeIndex]);
@@ -209,7 +195,18 @@ extend(DPOIndicator.prototype, {
             yData: yData
         } as IndicatorValuesObject<TLinkedSeries>;
     }
-});
+}
+
+/* *
+*
+*   Prototype Properties
+*
+* */
+
+interface DPOIndicator {
+    nameBase: string;
+    options: Highcharts.DPOIndicatorOptions;
+}
 
 /* *
  *
