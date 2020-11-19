@@ -10,15 +10,23 @@
 
 import type IndicatorValuesObject from './IndicatorValuesObject';
 import type LineSeries from '../../Series/Line/LineSeries';
-import type SMAIndicator from './SMA/SMAIndicator';
 import type {
     SMAOptions,
     SMAParamsOptions
 } from './SMA/SMAOptions';
 import type SMAPoint from './SMA/SMAPoint';
 import BaseSeries from '../../Core/Series/Series.js';
+const {
+    seriesTypes: {
+        sma: SMAIndicator
+    }
+} = BaseSeries;
 import U from '../../Core/Utilities.js';
-const { isArray } = U;
+const {
+    extend,
+    isArray,
+    merge
+} = U;
 
 /**
  * Internal types
@@ -26,17 +34,6 @@ const { isArray } = U;
  */
 declare global {
     namespace Highcharts {
-        class MomentumIndicator extends SMAIndicator {
-            public data: Array<MomentumIndicatorPoint>;
-            public getValues<TLinkedSeries extends LineSeries>(
-                series: TLinkedSeries,
-                params: MomentumIndicatorParamsOptions
-            ): (IndicatorValuesObject<TLinkedSeries>|undefined);
-            public nameBase: string;
-            public options: MomentumIndicatorOptions;
-            public pointClass: typeof MomentumIndicatorPoint;
-            public points: Array<MomentumIndicatorPoint>;
-        }
 
         interface MomentumIndicatorParamsOptions
             extends SMAParamsOptions {
@@ -52,14 +49,6 @@ declare global {
         }
     }
 }
-
-declare module '../../Core/Series/SeriesType' {
-    interface SeriesTypeRegistry {
-        momentum: typeof Highcharts.MomentumIndicator;
-    }
-}
-
-// im port './SMAIndicator.js';
 
 /* eslint-disable require-jsdoc */
 
@@ -89,9 +78,7 @@ function populateAverage(
  *
  * @augments Highcharts.Series
  */
-BaseSeries.seriesType<typeof Highcharts.MomentumIndicator>(
-    'momentum',
-    'sma',
+class MomentumIndicator extends SMAIndicator {
     /**
      * Momentum. This series requires `linkedTo` option to be set.
      *
@@ -105,75 +92,109 @@ BaseSeries.seriesType<typeof Highcharts.MomentumIndicator>(
      * @requires     stock/indicators/momentum
      * @optionparent plotOptions.momentum
      */
-    {
+    public static defaultOptions: Highcharts.MomentumIndicatorOptions = merge(SMAIndicator.defaultOptions, {
         params: {
             period: 14
         }
-    },
-    /**
-     * @lends Highcharts.Series#
-     */
-    {
-        nameBase: 'Momentum',
-        getValues: function<TLinkedSeries extends LineSeries> (
-            series: TLinkedSeries,
-            params: Highcharts.MomentumIndicatorParamsOptions
-        ): (IndicatorValuesObject<TLinkedSeries>|undefined) {
-            var period: number = (params.period as any),
-                xVal: Array<number> = (series.xData as any),
-                yVal: Array<Array<number>> = (series.yData as any),
-                yValLen: number = yVal ? yVal.length : 0,
-                xValue: number = xVal[0],
-                yValue: (Array<number>|number) = yVal[0],
-                MM: Array<Array<number>> = [],
-                xData: Array<number> = [],
-                yData: Array<number> = [],
-                index: any,
-                i: number,
-                points: Array<Array<number>>,
-                MMPoint: [number, number];
+    } as Highcharts.MomentumIndicatorOptions);
+}
+/* *
+ *
+ *  Prototype Properties
+ *
+ * */
 
-            if (xVal.length <= period) {
-                return;
-            }
+interface MomentumIndicator {
+    data: Array<Highcharts.MomentumIndicatorPoint>;
+    getValues<TLinkedSeries extends LineSeries>(
+        series: TLinkedSeries,
+        params: Highcharts.MomentumIndicatorParamsOptions
+    ): (IndicatorValuesObject<TLinkedSeries>|undefined);
+    nameBase: string;
+    options: Highcharts.MomentumIndicatorOptions;
+    pointClass: typeof Highcharts.MomentumIndicatorPoint;
+    points: Array<Highcharts.MomentumIndicatorPoint>;
+} extend(MomentumIndicator.prototype, {
+    getValues: function<TLinkedSeries extends LineSeries> (
+        series: TLinkedSeries,
+        params: Highcharts.MomentumIndicatorParamsOptions
+    ): (IndicatorValuesObject<TLinkedSeries>|undefined) {
+        var period: number = (params.period as any),
+            xVal: Array<number> = (series.xData as any),
+            yVal: Array<Array<number>> = (series.yData as any),
+            yValLen: number = yVal ? yVal.length : 0,
+            xValue: number = xVal[0],
+            yValue: (Array<number>|number) = yVal[0],
+            MM: Array<Array<number>> = [],
+            xData: Array<number> = [],
+            yData: Array<number> = [],
+            index: any,
+            i: number,
+            points: Array<Array<number>>,
+            MMPoint: [number, number];
 
-            // Switch index for OHLC / Candlestick / Arearange
-            if (isArray(yVal[0])) {
-                yValue = (yVal[0][3] as any);
-            } else {
-                return;
-            }
-            // Starting point
-            points = [
-                [xValue, (yValue as any)]
-            ];
+        if (xVal.length <= period) {
+            return;
+        }
+
+        // Switch index for OHLC / Candlestick / Arearange
+        if (isArray(yVal[0])) {
+            yValue = (yVal[0][3] as any);
+        } else {
+            return;
+        }
+        // Starting point
+        points = [
+            [xValue, (yValue as any)]
+        ];
 
 
-            // Calculate value one-by-one for each period in visible data
-            for (i = (period + 1); i < yValLen; i++) {
-                MMPoint = (populateAverage as any)(
-                    points, xVal, yVal, i, period, index
-                );
-                MM.push(MMPoint);
-                xData.push(MMPoint[0]);
-                yData.push(MMPoint[1]);
-            }
-
+        // Calculate value one-by-one for each period in visible data
+        for (i = (period + 1); i < yValLen; i++) {
             MMPoint = (populateAverage as any)(
                 points, xVal, yVal, i, period, index
             );
             MM.push(MMPoint);
             xData.push(MMPoint[0]);
             yData.push(MMPoint[1]);
-
-            return {
-                values: MM,
-                xData: xData,
-                yData: yData
-            } as IndicatorValuesObject<TLinkedSeries>;
         }
+
+        MMPoint = (populateAverage as any)(
+            points, xVal, yVal, i, period, index
+        );
+        MM.push(MMPoint);
+        xData.push(MMPoint[0]);
+        yData.push(MMPoint[1]);
+
+        return {
+            values: MM,
+            xData: xData,
+            yData: yData
+        } as IndicatorValuesObject<TLinkedSeries>;
     }
-);
+});
+
+/* *
+ *
+ *  Registry
+ *
+ * */
+declare module '../../Core/Series/SeriesType' {
+    interface SeriesTypeRegistry {
+        momentum: typeof MomentumIndicator;
+    }
+}
+
+BaseSeries.registerSeriesType('momentum', MomentumIndicator);
+
+/* *
+ *
+ *  Default Export
+ *
+ * */
+
+export default MomentumIndicator;
+
 
 /**
  * A `Momentum` series. If the [type](#series.momentum.type) option is not
