@@ -32,7 +32,7 @@ import '../../Stock/Indicators/IKHIndicator.js';
 import '../../Stock/Indicators/KeltnerChannelsIndicator.js';
 import '../../Stock/Indicators/MACDIndicator.js';
 import '../../Stock/Indicators/MFIIndicator.js';
-import '../../Stock/Indicators/MomentumIndicator.js';
+import '../../Stock/Indicators/Momentum/MomentumIndicator.js';
 import '../../Stock/Indicators/NATRIndicator.js';
 import '../../Stock/Indicators/PivotPointsIndicator.js';
 import '../../Stock/Indicators/PPOIndicator.js';
