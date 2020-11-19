@@ -20,9 +20,9 @@ var __extends = (this && this.__extends) || (function () {
     };
 })();
 var SMAIndicator = BaseSeries.seriesTypes.sma;
-import BaseSeries from '../../Core/Series/Series.js';
-import MultipleLinesMixin from '../../Mixins/MultipleLines.js';
-import U from '../../Core/Utilities.js';
+import BaseSeries from '../../../Core/Series/Series.js';
+import MultipleLinesMixin from '../../../Mixins/MultipleLines.js';
+import U from '../../../Core/Utilities.js';
 var extend = U.extend, merge = U.merge, pick = U.pick;
 /* eslint-disable valid-jsdoc */
 // Utils
@@ -167,12 +167,16 @@ var AroonIndicator = /** @class */ (function (_super) {
     });
     return AroonIndicator;
 }(SMAIndicator));
-extend(AroonIndicator.prototype, merge(MultipleLinesMixin, {
+extend(AroonIndicator.prototype, {
+    linesApiNames: ['aroonDown'],
     nameBase: 'Aroon',
     pointArrayMap: ['y', 'aroonDown'],
     pointValKey: 'y',
-    linesApiNames: ['aroonDown']
-}));
+    drawGraph: MultipleLinesMixin.drawGraph,
+    getTranslatedLinesNames: MultipleLinesMixin.getTranslatedLinesNames,
+    toYData: MultipleLinesMixin.toYData,
+    translate: MultipleLinesMixin.translate
+});
 BaseSeries.registerSeriesType('aroon', AroonIndicator);
 /* *
  *

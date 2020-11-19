@@ -11,4 +11,4 @@
  * License: www.highcharts.com/license
  */
 'use strict';
-import '../../Stock/Indicators/AroonIndicator.js';
+import '../../Stock/Indicators/Aroon/AroonIndicator.js';
