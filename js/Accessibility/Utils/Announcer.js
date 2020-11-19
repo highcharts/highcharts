@@ -11,9 +11,10 @@
  * */
 'use strict';
 import H from '../../Core/Globals.js';
+var doc = H.doc;
 import DOMElementProvider from './DOMElementProvider.js';
 import HTMLUtilities from './HTMLUtilities.js';
-var visuallyHideElement = HTMLUtilities.visuallyHideElement;
+var setElAttrs = HTMLUtilities.setElAttrs, visuallyHideElement = HTMLUtilities.visuallyHideElement;
 var Announcer = /** @class */ (function () {
     function Announcer(chart, type) {
         this.chart = chart;
@@ -37,13 +38,27 @@ var Announcer = /** @class */ (function () {
         }, 1000);
     };
     Announcer.prototype.addAnnounceRegion = function (type) {
-        var chartContainer = this.chart.renderTo;
+        var chartContainer = this.chart.announcerContainer || this.createAnnouncerContainer();
         var div = this.domElementProvider.createElement('div');
-        div.setAttribute('aria-hidden', false);
-        div.setAttribute('aria-live', type);
+        setElAttrs(div, {
+            'aria-hidden': false,
+            'aria-live': type
+        });
         visuallyHideElement(div);
-        chartContainer.insertBefore(div, chartContainer.firstChild);
+        chartContainer.appendChild(div);
         return div;
+    };
+    Announcer.prototype.createAnnouncerContainer = function () {
+        var chart = this.chart;
+        var container = doc.createElement('div');
+        setElAttrs(container, {
+            'aria-hidden': false,
+            style: 'position:relative',
+            'class': 'highcharts-announcer-container'
+        });
+        chart.renderTo.insertBefore(container, chart.renderTo.firstChild);
+        chart.announcerContainer = container;
+        return container;
     };
     return Announcer;
 }());

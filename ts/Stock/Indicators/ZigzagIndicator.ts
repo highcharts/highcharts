@@ -10,7 +10,14 @@
 
 'use strict';
 
+import type IndicatorValuesObject from './IndicatorValuesObject';
 import type LineSeries from '../../Series/Line/LineSeries';
+import type SMAIndicator from './SMA/SMAIndicator';
+import type {
+    SMAOptions,
+    SMAParamsOptions
+} from './SMA/SMAOptions';
+import type SMAPoint from './SMA/SMAPoint';
 import BaseSeries from '../../Core/Series/Series.js';
 
 /**
@@ -32,15 +39,15 @@ declare global {
                 params: ZigzagIndicatorParamsOptions
             ): (IndicatorValuesObject<TLinkedSeries>|undefined);
         }
-        class ZigzagIndicatorPoint extends SMAIndicatorPoint {
+        class ZigzagIndicatorPoint extends SMAPoint {
             series: ZigzagIndicator;
         }
 
-        interface ZigzagIndicatorOptions extends SMAIndicatorOptions {
+        interface ZigzagIndicatorOptions extends SMAOptions {
             params?: ZigzagIndicatorParamsOptions;
         }
         interface ZigzagIndicatorParamsOptions
-            extends SMAIndicatorParamsOptions {
+            extends SMAParamsOptions {
             deviation?: number;
             highIndex?: number;
             index?: undefined;
@@ -126,7 +133,7 @@ BaseSeries.seriesType<typeof Highcharts.ZigzagIndicator>(
             this: Highcharts.ZigzagIndicator,
             series: TLinkedSeries,
             params: Highcharts.ZigzagIndicatorParamsOptions
-        ): (Highcharts.IndicatorValuesObject<TLinkedSeries>|undefined) {
+        ): (IndicatorValuesObject<TLinkedSeries>|undefined) {
             var lowIndex: number = params.lowIndex as any,
                 highIndex: number = params.highIndex as any,
                 deviation = (params.deviation as any) / 100,
@@ -261,7 +268,7 @@ BaseSeries.seriesType<typeof Highcharts.ZigzagIndicator>(
                 values: zigzag,
                 xData: xData,
                 yData: yData
-            } as Highcharts.IndicatorValuesObject<TLinkedSeries>;
+            } as IndicatorValuesObject<TLinkedSeries>;
         }
     }
 );

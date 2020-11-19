@@ -8,6 +8,13 @@
 
 'use strict';
 
+import type EMAIndicator from './EMA/EMAIndicator';
+import type {
+    EMAOptions,
+    EMAParamsOptions
+} from './EMA/EMAOptions';
+import type EMAPoint from './EMA/EMAPoint';
+import type IndicatorValuesObject from './IndicatorValuesObject';
 import type LineSeries from '../../Series/Line/LineSeries';
 import BaseSeries from '../../Core/Series/Series.js';
 import RequiredIndicatorMixin from '../../Mixins/IndicatorRequired.js';
@@ -36,15 +43,15 @@ declare global {
             public points: Array<APOIndicatorPoint>;
         }
 
-        interface APOIndicatorParamsOptions extends EMAIndicatorParamsOptions {
+        interface APOIndicatorParamsOptions extends EMAParamsOptions {
             periods?: Array<number>;
         }
 
-        class APOIndicatorPoint extends EMAIndicatorPoint {
+        class APOIndicatorPoint extends EMAPoint {
             public series: APOIndicator;
         }
 
-        interface APOIndicatorOptions extends EMAIndicatorOptions {
+        interface APOIndicatorOptions extends EMAOptions {
             params?: APOIndicatorParamsOptions;
         }
     }
@@ -132,7 +139,7 @@ BaseSeries.seriesType<typeof Highcharts.APOIndicator>(
         getValues: function<TLinkedSeries extends LineSeries> (
             series: TLinkedSeries,
             params: Highcharts.APOIndicatorParamsOptions
-        ): (Highcharts.IndicatorValuesObject<TLinkedSeries>|undefined) {
+        ): (IndicatorValuesObject<TLinkedSeries>|undefined) {
             var periods: Array<number> = (params.periods as any),
                 index: number = (params.index as any),
                 // 0- date, 1- Absolute price oscillator
@@ -142,12 +149,12 @@ BaseSeries.seriesType<typeof Highcharts.APOIndicator>(
                 periodsOffset: number,
                 // Shorter Period EMA
                 SPE: (
-                    Highcharts.IndicatorValuesObject<TLinkedSeries>|
+                    IndicatorValuesObject<TLinkedSeries>|
                     undefined
                 ),
                 // Longer Period EMA
                 LPE: (
-                    Highcharts.IndicatorValuesObject<TLinkedSeries>|
+                    IndicatorValuesObject<TLinkedSeries>|
                     undefined
                 ),
                 oscillator: number,
@@ -165,12 +172,12 @@ BaseSeries.seriesType<typeof Highcharts.APOIndicator>(
             SPE = EMA.prototype.getValues.call(this, series, {
                 index: index,
                 period: periods[0]
-            }) as Highcharts.IndicatorValuesObject<TLinkedSeries>;
+            }) as IndicatorValuesObject<TLinkedSeries>;
 
             LPE = EMA.prototype.getValues.call(this, series, {
                 index: index,
                 period: periods[1]
-            }) as Highcharts.IndicatorValuesObject<TLinkedSeries>;
+            }) as IndicatorValuesObject<TLinkedSeries>;
 
             // Check if ema is calculated properly, if not skip
             if (!SPE || !LPE) {
@@ -194,7 +201,7 @@ BaseSeries.seriesType<typeof Highcharts.APOIndicator>(
                 values: APO,
                 xData: xData,
                 yData: yData
-            } as Highcharts.IndicatorValuesObject<TLinkedSeries>;
+            } as IndicatorValuesObject<TLinkedSeries>;
         }
     }
 );

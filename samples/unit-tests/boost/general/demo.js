@@ -210,7 +210,8 @@ QUnit[Highcharts.hasWebGLSupport() ? 'test' : 'skip'](
 );
 
 QUnit[Highcharts.hasWebGLSupport() ? 'test' : 'skip'](
-    'Error handler while the series is not declared as an array of numbers and turbo threshold enabled, #13957.',
+    `Error handler while the series is not declared as an array of numbers and
+    turbo threshold enabled, #13957.`,
     function (assert) {
         Highcharts.addEvent(Highcharts.Chart, 'displayError', function (e) {
             assert.strictEqual(
@@ -235,5 +236,76 @@ QUnit[Highcharts.hasWebGLSupport() ? 'test' : 'skip'](
                 turboThreshold: 2
             }]
         });
+    }
+);
+
+QUnit[Highcharts.hasWebGLSupport() ? 'test' : 'skip'](
+    'The boost clip-path should have the same size as the chart area, #14444.',
+    function (assert) {
+        function generataSeries() {
+            const series = Array.from(Array(100)).map(function () {
+                return {
+                    data: Array.from(
+                        Array(10)).map(() => Math.round(Math.random() * 10)
+                    )
+                };
+            });
+            return series;
+        }
+
+        const chart = Highcharts.chart('container', {
+            chart: {
+                type: 'line',
+                zoomType: 'xy',
+                inverted: true
+            },
+            boost: {
+                enabled: true
+            },
+            legend: {
+                enabled: false
+            },
+            plotOptions: {
+                bar: {
+                    stacking: 'normal'
+                }
+            },
+            series: generataSeries()
+        });
+
+        assert.strictEqual(
+            chart.boostClipRect.attr('height'),
+            chart.plotHeight,
+            'Height of the plot area and clip-path should be the same.'
+        );
+        assert.strictEqual(
+            chart.boostClipRect.attr('width'),
+            chart.plotWidth,
+            'Width of the plot area and clip-path should be the same.'
+        );
+        chart.update({
+            xAxis: [{
+                max: 10,
+                height: '50%'
+            }, {
+                height: '50%',
+                max: 10,
+                linkedTo: 0
+            }],
+            yAxis: [{
+                max: 10,
+                height: '50%'
+            }, {
+                max: 10,
+                height: '50%',
+                linkedTo: 0
+            }]
+        });
+        assert.strictEqual(
+            chart.boostClipRect.attr('height'),
+            chart.yAxis[0].height,
+            `After setting the axis position manually, the boost clip-path
+            shouldn\'t be bigger than the axis size.`
+        );
     }
 );

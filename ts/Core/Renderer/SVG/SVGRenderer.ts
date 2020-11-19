@@ -8,7 +8,14 @@
  *
  * */
 
-import type AlignObject from '../AlignObject';
+'use strict';
+
+/* *
+ *
+ *  Imports
+ *
+ * */
+
 import type AnimationOptionsObject from '../../Animation/AnimationOptionsObject';
 import type BBoxObject from '../BBoxObject';
 import type ColorString from '../../Color/ColorString';
@@ -24,6 +31,7 @@ import type SVGPath from './SVGPath';
 import type SVGRendererLike from './SVGRendererLike';
 import Color from '../../Color/Color.js';
 import H from '../../Globals.js';
+import palette from '../../Palette.js';
 import SVGElement from './SVGElement.js';
 import SVGLabel from './SVGLabel.js';
 import U from '../../Utilities.js';
@@ -69,6 +77,9 @@ declare global {
             children?: Array<SVGDefinitionObject>;
             tagName?: string;
             textContent?: string;
+        }
+        interface SVGRenderer extends SVGRendererLike {
+            // nothing here yet
         }
         interface SymbolFunction {
             (
@@ -1628,11 +1639,11 @@ class SVGRenderer {
 
             // Normal state - prepare the attributes
             normalState = merge({
-                fill: '${palette.neutralColor3}',
-                stroke: '${palette.neutralColor20}',
+                fill: palette.neutralColor3,
+                stroke: palette.neutralColor20,
                 'stroke-width': 1,
                 style: {
-                    color: '${palette.neutralColor80}',
+                    color: palette.neutralColor80,
                     cursor: 'pointer',
                     fontWeight: 'normal'
                 }
@@ -1644,16 +1655,16 @@ class SVGRenderer {
 
             // Hover state
             hoverState = merge(normalState, {
-                fill: '${palette.neutralColor10}'
+                fill: palette.neutralColor10
             }, hoverState);
             hoverStyle = hoverState.style;
             delete hoverState.style;
 
             // Pressed state
             pressedState = merge(normalState, {
-                fill: '${palette.highlightColor10}',
+                fill: palette.highlightColor10,
                 style: {
-                    color: '${palette.neutralColor100}',
+                    color: palette.neutralColor100,
                     fontWeight: 'bold'
                 }
             }, pressedState);
@@ -1663,7 +1674,7 @@ class SVGRenderer {
             // Disabled state
             disabledState = merge(normalState, {
                 style: {
-                    color: '${palette.neutralColor20}'
+                    color: palette.neutralColor20
                 }
             }, disabledState);
             disabledStyle = disabledState.style;

@@ -8,6 +8,7 @@
 
 'use strict';
 
+import type IndicatorValuesObject from './IndicatorValuesObject';
 import type LineSeries from '../../Series/Line/LineSeries';
 import BaseSeries from '../../Core/Series/Series.js';
 import multipleLinesMixin from '../../Mixins/MultipleLines.js';
@@ -142,12 +143,12 @@ BaseSeries.seriesType<typeof Highcharts.AroonOscillatorIndicator>(
         getValues: function<TLinkedSeries extends LineSeries> (
             series: TLinkedSeries,
             params: Highcharts.AroonIndicatorParamsOptions
-        ): Highcharts.IndicatorValuesObject<TLinkedSeries> {
+        ): IndicatorValuesObject<TLinkedSeries> {
             // 0- date, 1- Aroon Oscillator
             var ARO: Array<Array<number>> = [],
                 xData: Array<number> = [],
                 yData: Array<number> = [],
-                aroon: Highcharts.IndicatorValuesObject<TLinkedSeries>,
+                aroon: IndicatorValuesObject<TLinkedSeries>,
                 aroonUp: number,
                 aroonDown: number,
                 oscillator: number,
@@ -156,7 +157,7 @@ BaseSeries.seriesType<typeof Highcharts.AroonOscillatorIndicator>(
             aroon = (
                 AROON.prototype.getValues.call(
                     this, series, params
-                ) as Highcharts.IndicatorValuesObject<TLinkedSeries>);
+                ) as IndicatorValuesObject<TLinkedSeries>);
 
             for (i = 0; i < aroon.yData.length; i++) {
                 aroonUp = (aroon.yData[i] as any)[0];
@@ -172,7 +173,7 @@ BaseSeries.seriesType<typeof Highcharts.AroonOscillatorIndicator>(
                 values: ARO,
                 xData: xData,
                 yData: yData
-            } as Highcharts.IndicatorValuesObject<TLinkedSeries>;
+            } as IndicatorValuesObject<TLinkedSeries>;
         }
     })
 );

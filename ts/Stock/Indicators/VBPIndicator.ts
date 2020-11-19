@@ -17,7 +17,14 @@ import type Chart from '../../Core/Chart/Chart';
 import type ColumnSeries from '../../Series/Column/ColumnSeries';
 import type CSSObject from '../../Core/Renderer/CSSObject';
 import type DataLabelOptions from '../../Core/Series/DataLabelOptions';
+import type IndicatorValuesObject from './IndicatorValuesObject';
 import type LineSeries from '../../Series/Line/LineSeries';
+import type SMAIndicator from './SMA/SMAIndicator';
+import type {
+    SMAOptions,
+    SMAParamsOptions
+} from './SMA/SMAOptions';
+import type SMAPoint from './SMA/SMAPoint';
 import type SVGAttributes from '../../Core/Renderer/SVG/SVGAttributes';
 import type SVGElement from '../../Core/Renderer/SVG/SVGElement';
 import type SVGPath from '../../Core/Renderer/SVG/SVGPath';
@@ -96,7 +103,7 @@ declare global {
             public zoneLinesSVG: SVGElement;
         }
 
-        interface VBPIndicatorParamsOptions extends SMAIndicatorParamsOptions {
+        interface VBPIndicatorParamsOptions extends SMAParamsOptions {
             ranges?: number;
             volumeSeriesID?: string;
         }
@@ -116,7 +123,7 @@ declare global {
             styles?: CSSObject;
         }
 
-        class VBPIndicatorPoint extends SMAIndicatorPoint {
+        class VBPIndicatorPoint extends SMAPoint {
             public barX: number;
             public destroy(): void;
             public negativeGraphic: unknown;
@@ -127,7 +134,7 @@ declare global {
             public volumePos: number;
         }
 
-        interface VBPIndicatorOptions extends SMAIndicatorOptions {
+        interface VBPIndicatorOptions extends SMAOptions {
             animationLimit?: number;
             crisp?: boolean;
             dataGrouping?: DataGroupingOptionsObject;
@@ -568,7 +575,7 @@ BaseSeries.seriesType<typeof Highcharts.VBPIndicator>(
             this: Highcharts.VBPIndicator,
             series: TLinkedSeries,
             params: Highcharts.VBPIndicatorParamsOptions
-        ): (Highcharts.IndicatorValuesObject<TLinkedSeries>|undefined) {
+        ): (IndicatorValuesObject<TLinkedSeries>|undefined) {
             var indicator = this,
                 xValues: Array<number> = series.processedXData,
                 yValues: Array<Array<number>> = (series.processedYData as any),
@@ -645,7 +652,7 @@ BaseSeries.seriesType<typeof Highcharts.VBPIndicator>(
                 values: VBP,
                 xData: xData,
                 yData: yData
-            } as Highcharts.IndicatorValuesObject<TLinkedSeries>;
+            } as IndicatorValuesObject<TLinkedSeries>;
         },
         // Specifing where each zone should start ans end
         specifyZones: function (

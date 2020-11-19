@@ -74,7 +74,8 @@ QUnit.test('Animation of grid lines and tick marks', function (assert) {
         chart.xAxis[0].ticks[1].gridLine.attr('d').split(' ')[1],
         halfwayPos1,
         15,
-        'Half way in the animation, the dying line should be half way between old and new position'
+        'Half way in the animation, the dying line should be half way ' +
+        'between old and new position'
     );
     assert.close(
         chart.xAxis[0].ticks[1].mark.attr('d').split(' ')[1],
@@ -87,7 +88,8 @@ QUnit.test('Animation of grid lines and tick marks', function (assert) {
         chart.xAxis[0].ticks[5].gridLine.attr('d').split(' ')[1],
         halfwayPos5,
         15,
-        'Half way in the animation, the new line should be half way between old and new position'
+        'Half way in the animation, the new line should be half way ' +
+        'between old and new position'
     );
     assert.close(
         chart.xAxis[0].ticks[5].mark.attr('d').split(' ')[1],

@@ -16,6 +16,7 @@ import type RadialAxis from '../Core/Axis/RadialAxis';
 import type SVGElement from '../Core/Renderer/SVG/SVGElement';
 import Chart from '../Core/Chart/Chart.js';
 import H from '../Core/Globals.js';
+import palette from '../Core/Palette.js';
 import Pointer from '../Core/Pointer.js';
 import U from '../Core/Utilities.js';
 const {
@@ -398,7 +399,7 @@ class Pane {
          * @since   2.3.0
          * @product highcharts
          */
-        borderColor: '${palette.neutralColor20}',
+        borderColor: palette.neutralColor20,
 
         /**
          * The background color or gradient for the pane.
@@ -415,8 +416,8 @@ class Pane {
 
             /** @ignore-option */
             stops: [
-                [0, '${palette.backgroundColor}'],
-                [1, '${palette.neutralColor10}']
+                [0, palette.backgroundColor],
+                [1, palette.neutralColor10]
             ]
 
         },

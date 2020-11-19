@@ -29,6 +29,7 @@ import H from '../../Core/Globals.js';
 var noop = H.noop;
 import LegendSymbolMixin from '../../Mixins/LegendSymbol.js';
 import LineSeries from '../../Series/Line/LineSeries.js';
+import palette from '../../Core/Palette.js';
 import PiePoint from './PiePoint.js';
 import SVGRenderer from '../../Core/Renderer/SVG/SVGRenderer.js';
 import U from '../../Core/Utilities.js';
@@ -134,7 +135,7 @@ var PieSeries = /** @class */ (function (_super) {
                     'stroke-width': options.borderWidth,
                     fill: options.fillColor || 'none',
                     stroke: options.color ||
-                        '${palette.neutralColor20}'
+                        palette.neutralColor20
                 });
             }
         }
@@ -901,7 +902,7 @@ var PieSeries = /** @class */ (function (_super) {
          *
          * @private
          */
-        borderColor: '${palette.backgroundColor}',
+        borderColor: palette.backgroundColor,
         /**
          * The width of the border surrounding each slice.
          *
@@ -1054,6 +1055,12 @@ export default PieSeries;
  * @type      {boolean}
  * @product   highcharts
  * @apioption series.pie.data.sliced
+ */
+/**
+ * @extends plotOptions.pie.dataLabels
+ * @excluding align, allowOverlap, inside, staggerLines, step
+ * @product   highcharts
+ * @apioption series.pie.dataLabels
  */
 /**
  * @excluding legendItemClick

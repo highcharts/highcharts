@@ -40,6 +40,8 @@ import type {
     SeriesTypeOptions,
     SeriesTypePlotOptions
 } from '../../Core/Series/SeriesType';
+import type SplinePoint from '../Spline/SplinePoint';
+import type SplineSeries from '../Spline/SplineSeries';
 import type { StatesOptionsKey } from '../../Core/Series/StatesOptions';
 import type SVGAttributes from '../../Core/Renderer/SVG/SVGAttributes';
 import type SVGPath from '../../Core/Renderer/SVG/SVGPath';
@@ -52,6 +54,7 @@ const { win } = H;
 import LegendSymbolMixin from '../../Mixins/LegendSymbol.js';
 import O from '../../Core/Options.js';
 const { defaultOptions } = O;
+import palette from '../../Core/Palette.js';
 import SVGElement from '../../Core/Renderer/SVG/SVGElement.js';
 import U from '../../Core/Utilities.js';
 const {
@@ -1230,7 +1233,7 @@ class LineSeries {
              *
              * @type {Highcharts.ColorString|Highcharts.GradientColorObject|Highcharts.PatternObject}
              */
-            lineColor: '${palette.backgroundColor}',
+            lineColor: palette.backgroundColor,
 
             /**
              * The width of the point marker's outline.
@@ -1447,7 +1450,7 @@ class LineSeries {
                      *
                      * @type {Highcharts.ColorString|Highcharts.GradientColorObject|Highcharts.PatternObject}
                      */
-                    fillColor: '${palette.neutralColor20}',
+                    fillColor: palette.neutralColor20,
 
                     /**
                      * The color of the point marker's outline. When
@@ -1458,7 +1461,7 @@ class LineSeries {
                      *
                      * @type {Highcharts.ColorString|Highcharts.GradientColorObject|Highcharts.PatternObject}
                      */
-                    lineColor: '${palette.neutralColor100}',
+                    lineColor: palette.neutralColor100,
 
                     /**
                      * The width of the point marker's outline.
@@ -5471,14 +5474,14 @@ class LineSeries {
 
                 // Generate the spline as defined in the SplineSeries object
                 } else if (
-                    (series as unknown as Partial<Highcharts.SplineSeries>).getPointSpline
+                    (series as unknown as Partial<SplineSeries>).getPointSpline
                 ) {
 
                     pathToPoint = [(
-                        series as unknown as Highcharts.SplineSeries
+                        series as unknown as SplineSeries
                     ).getPointSpline(
-                        points as Array<Highcharts.SplinePoint>,
-                        point as Highcharts.SplinePoint,
+                        points as Array<SplinePoint>,
+                        point as SplinePoint,
                         i
                     )];
 
@@ -5570,7 +5573,7 @@ class LineSeries {
                 (
                     options.lineColor ||
                     this.color ||
-                    '${palette.neutralColor20}' // when colorByPoint = true
+                    palette.neutralColor20 // when colorByPoint = true
                 ) as any,
                 options.dashStyle as any
             );

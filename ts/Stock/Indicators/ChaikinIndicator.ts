@@ -8,9 +8,21 @@
 
 'use strict';
 
+import type EMAIndicator from './EMA/EMAIndicator';
+import type {
+    EMAOptions,
+    EMAParamsOptions
+} from './EMA/EMAOptions';
+import type EMAPoint from './EMA/EMAPoint';
+import type IndicatorValuesObject from './IndicatorValuesObject';
 import type LineSeries from '../../Series/Line/LineSeries';
 import BaseSeries from '../../Core/Series/Series.js';
-const { seriesTypes } = BaseSeries;
+const {
+    seriesTypes: {
+        ad: AD,
+        ema: EMA
+    }
+} = BaseSeries;
 import RequiredIndicatorMixin from '../../Mixins/IndicatorRequired.js';
 import U from '../../Core/Utilities.js';
 const {
@@ -39,16 +51,16 @@ declare global {
         }
 
         interface ChaikinIndicatorParamsOptions
-            extends EMAIndicatorParamsOptions {
+            extends EMAParamsOptions {
             periods?: Array<number>;
             volumeSeriesID?: string;
         }
 
-        class ChaikinIndicatorPoint extends EMAIndicatorPoint {
+        class ChaikinIndicatorPoint extends EMAPoint {
             public series: ChaikinIndicator;
         }
 
-        interface ChaikinIndicatorOptions extends EMAIndicatorOptions {
+        interface ChaikinIndicatorOptions extends EMAOptions {
             params?: ChaikinIndicatorParamsOptions;
         }
     }
@@ -59,12 +71,6 @@ declare module '../../Core/Series/SeriesType' {
         chaikin: typeof Highcharts.ChaikinIndicator;
     }
 }
-
-import './ADIndicator.js';
-// im port './EMAIndicator.js';
-
-var EMA = seriesTypes.ema,
-    AD = seriesTypes.ad;
 
 /**
  * The Chaikin series type.
@@ -143,12 +149,12 @@ BaseSeries.seriesType<typeof Highcharts.ChaikinIndicator>(
         getValues: function<TLinkedSeries extends LineSeries> (
             series: TLinkedSeries,
             params: Highcharts.ChaikinIndicatorParamsOptions
-        ): (Highcharts.IndicatorValuesObject<TLinkedSeries>|undefined) {
+        ): (IndicatorValuesObject<TLinkedSeries>|undefined) {
             var periods: Array<number> = (params.periods as any),
                 period: number = (params.period as any),
                 // Accumulation Distribution Line data
                 ADL: (
-                    Highcharts.IndicatorValuesObject<TLinkedSeries>|undefined
+                    IndicatorValuesObject<TLinkedSeries>|undefined
                 ),
                 // 0- date, 1- Chaikin Oscillator
                 CHA: Array<Array<number>> = [],
@@ -157,12 +163,12 @@ BaseSeries.seriesType<typeof Highcharts.ChaikinIndicator>(
                 periodsOffset: number,
                 // Shorter Period EMA
                 SPE: (
-                    Highcharts.IndicatorValuesObject<TLinkedSeries>|
+                    IndicatorValuesObject<TLinkedSeries>|
                     undefined
                 ),
                 // Longer Period EMA
                 LPE: (
-                    Highcharts.IndicatorValuesObject<TLinkedSeries>|
+                    IndicatorValuesObject<TLinkedSeries>|
                     undefined
                 ),
                 oscillator: number,
@@ -180,7 +186,7 @@ BaseSeries.seriesType<typeof Highcharts.ChaikinIndicator>(
             ADL = AD.prototype.getValues.call(this, series, {
                 volumeSeriesID: params.volumeSeriesID,
                 period: period
-            }) as Highcharts.IndicatorValuesObject<TLinkedSeries>;
+            }) as IndicatorValuesObject<TLinkedSeries>;
 
             // Check if adl is calculated properly, if not skip
             if (!ADL) {
@@ -189,11 +195,11 @@ BaseSeries.seriesType<typeof Highcharts.ChaikinIndicator>(
 
             SPE = EMA.prototype.getValues.call(this, (ADL as any), {
                 period: periods[0]
-            }) as Highcharts.IndicatorValuesObject<TLinkedSeries>;
+            }) as IndicatorValuesObject<TLinkedSeries>;
 
             LPE = EMA.prototype.getValues.call(this, (ADL as any), {
                 period: periods[1]
-            }) as Highcharts.IndicatorValuesObject<TLinkedSeries>;
+            }) as IndicatorValuesObject<TLinkedSeries>;
 
             // Check if ema is calculated properly, if not skip
             if (!SPE || !LPE) {
@@ -217,7 +223,7 @@ BaseSeries.seriesType<typeof Highcharts.ChaikinIndicator>(
                 values: CHA,
                 xData: xData,
                 yData: yData
-            } as Highcharts.IndicatorValuesObject<TLinkedSeries>;
+            } as IndicatorValuesObject<TLinkedSeries>;
         }
     }
 );

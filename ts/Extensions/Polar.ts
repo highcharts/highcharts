@@ -357,7 +357,7 @@ if (seriesTypes.spline) {
      * @private
      */
     wrap(
-        seriesTypes.spline.prototype as Highcharts.SplineSeries,
+        seriesTypes.spline.prototype,
         'getPointSpline',
         function (
             this: Highcharts.PolarSeries,
@@ -400,12 +400,7 @@ if (seriesTypes.spline) {
     // #6430 Areasplinerange series use unwrapped getPointSpline method, so
     // we need to set this method again.
     if (seriesTypes.areasplinerange) {
-        (
-            seriesTypes.areasplinerange.prototype as Highcharts.AreaSplineSeries
-        ).getPointSpline =
-        (
-            seriesTypes.spline.prototype as Highcharts.SplineSeries
-        ).getPointSpline;
+        seriesTypes.areasplinerange.prototype.getPointSpline = seriesTypes.spline.prototype.getPointSpline;
     }
 }
 

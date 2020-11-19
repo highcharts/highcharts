@@ -12,6 +12,7 @@ import BaseSeries from '../Core/Series/Series.js';
 import H from '../Core/Globals.js';
 var noop = H.noop;
 import LineSeries from '../Series/Line/LineSeries.js';
+import palette from '../Core/Palette.js';
 import U from '../Core/Utilities.js';
 var clamp = U.clamp, isNumber = U.isNumber, merge = U.merge, pick = U.pick, pInt = U.pInt;
 import '../Core/Options.js';
@@ -63,7 +64,7 @@ BaseSeries.seriesType('gauge', 'line', {
      * @product highcharts
      */
     dataLabels: {
-        borderColor: '${palette.neutralColor20}',
+        borderColor: palette.neutralColor20,
         borderRadius: 3,
         borderWidth: 1,
         crop: false,
@@ -362,7 +363,7 @@ BaseSeries.seriesType('gauge', 'line', {
                     stroke: dialOptions.borderColor || 'none',
                     'stroke-width': dialOptions.borderWidth || 0,
                     fill: dialOptions.backgroundColor ||
-                        '${palette.neutralColor100}'
+                        palette.neutralColor100
                 });
             }
         });
@@ -387,9 +388,9 @@ BaseSeries.seriesType('gauge', 'line', {
                 series.pivot.attr({
                     'stroke-width': pivotOptions.borderWidth || 0,
                     stroke: pivotOptions.borderColor ||
-                        '${palette.neutralColor20}',
+                        palette.neutralColor20,
                     fill: pivotOptions.backgroundColor ||
-                        '${palette.neutralColor100}'
+                        palette.neutralColor100
                 });
             }
         }

@@ -12,17 +12,17 @@
  */
 'use strict';
 
-import '../../Stock/Indicators/SMAIndicator.js';
-import '../../Stock/Indicators/ADIndicator.js';
+import '../../Stock/Indicators/SMA/SMAIndicator.js';
+import '../../Stock/Indicators/AD/ADIndicator.js';
 import '../../Stock/Indicators/AOIndicator.js';
 import '../../Stock/Indicators/AroonIndicator.js';
 import '../../Stock/Indicators/AroonOscillatorIndicator.js';
 import '../../Stock/Indicators/ATRIndicator.js';
 import '../../Stock/Indicators/BBIndicator.js';
 import '../../Stock/Indicators/CCIIndicator.js';
-import '../../Stock/Indicators/CMFIndicator.js';
+import '../../Stock/Indicators/CMF/CMFIndicator.js';
 import '../../Stock/Indicators/DPOIndicator.js';
-import '../../Stock/Indicators/EMAIndicator.js';
+import '../../Stock/Indicators/EMA/EMAIndicator.js';
 import '../../Stock/Indicators/ChaikinIndicator.js';
 import '../../Stock/Indicators/DEMAIndicator.js';
 import '../../Stock/Indicators/TEMAIndicator.js';
@@ -50,5 +50,5 @@ import '../../Stock/Indicators/WilliamsRIndicator.js';
 import '../../Stock/Indicators/WMAIndicator.js';
 import '../../Stock/Indicators/ZigzagIndicator.js';
 import '../../Stock/Indicators/RegressionIndicators.js';
-import '../../Stock/Indicators/ABIndicator.js';
+import '../../Stock/Indicators/ABands/ABandsIndicator.js';
 import '../../Stock/Indicators/TrendLineIndicator.js';

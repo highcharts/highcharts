@@ -26,7 +26,7 @@ import type { SeriesZonesOptions } from '../../Core/Series/SeriesOptions';
  *
  * */
 
-export class LinePoint extends Point {
+declare class LinePoint extends Point {
     options: LinePointOptions;
     series: LineSeries;
 }

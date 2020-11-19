@@ -8,6 +8,13 @@
 
 'use strict';
 
+import type EMAIndicator from './EMA/EMAIndicator';
+import type {
+    EMAOptions,
+    EMAParamsOptions
+} from './EMA/EMAOptions';
+import type EMAPoint from './EMA/EMAPoint';
+import type IndicatorValuesObject from './IndicatorValuesObject';
 import type LineSeries from '../../Series/Line/LineSeries';
 import BaseSeries from '../../Core/Series/Series.js';
 import RequiredIndicatorMixin from '../../Mixins/IndicatorRequired.js';
@@ -61,15 +68,15 @@ declare global {
             EMApercent?: number;
         }
 
-        interface TEMAIndicatorParamsOptions extends EMAIndicatorParamsOptions {
+        interface TEMAIndicatorParamsOptions extends EMAParamsOptions {
             // for inheritance
         }
 
-        class TEMAIndicatorPoint extends EMAIndicatorPoint {
+        class TEMAIndicatorPoint extends EMAPoint {
             public series: TEMAIndicator;
         }
 
-        interface TEMAIndicatorOptions extends EMAIndicatorOptions {
+        interface TEMAIndicatorOptions extends EMAOptions {
             params?: TEMAIndicatorParamsOptions;
         }
 
@@ -178,7 +185,7 @@ BaseSeries.seriesType<typeof Highcharts.TEMAIndicator>(
             this: Highcharts.TEMAIndicator,
             series: TLinkedSeries,
             params: Highcharts.TEMAIndicatorParamsOptions
-        ): (Highcharts.IndicatorValuesObject<TLinkedSeries>|undefined) {
+        ): (IndicatorValuesObject<TLinkedSeries>|undefined) {
             var period: number = (params.period as any),
                 doubledPeriod = 2 * period,
                 tripledPeriod = 3 * period,
@@ -308,7 +315,7 @@ BaseSeries.seriesType<typeof Highcharts.TEMAIndicator>(
                 values: TEMA,
                 xData: xDataTema,
                 yData: yDataTema
-            } as Highcharts.IndicatorValuesObject<TLinkedSeries>;
+            } as IndicatorValuesObject<TLinkedSeries>;
         }
     }
 );

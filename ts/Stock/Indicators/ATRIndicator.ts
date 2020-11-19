@@ -8,7 +8,14 @@
 
 'use strict';
 
+import type IndicatorValuesObject from './IndicatorValuesObject';
 import type LineSeries from '../../Series/Line/LineSeries';
+import type SMAIndicator from './SMA/SMAIndicator';
+import type {
+    SMAOptions,
+    SMAParamsOptions
+} from './SMA/SMAOptions';
+import type SMAPoint from './SMA/SMAPoint';
 import BaseSeries from '../../Core/Series/Series.js';
 import U from '../../Core/Utilities.js';
 const {
@@ -31,15 +38,15 @@ declare global {
             ): (IndicatorValuesObject<TLinkedSeries>|undefined);
         }
 
-        interface ATRIndicatorOptions extends SMAIndicatorOptions {
+        interface ATRIndicatorOptions extends SMAOptions {
             params?: ATRIndicatorParamsOptions;
         }
 
-        interface ATRIndicatorParamsOptions extends SMAIndicatorParamsOptions {
+        interface ATRIndicatorParamsOptions extends SMAParamsOptions {
             // for inheritance
         }
 
-        class ATRIndicatorPoint extends SMAIndicatorPoint {
+        class ATRIndicatorPoint extends SMAPoint {
             public series: ATRIndicator
         }
     }
@@ -144,7 +151,7 @@ BaseSeries.seriesType<typeof Highcharts.ATRIndicator>(
         getValues: function<TLinkedSeries extends LineSeries> (
             series: TLinkedSeries,
             params: Highcharts.ATRIndicatorParamsOptions
-        ): (Highcharts.IndicatorValuesObject<TLinkedSeries>|undefined) {
+        ): (IndicatorValuesObject<TLinkedSeries>|undefined) {
             var period: number = (params.period as any),
                 xVal: Array<number> = (series.xData as any),
                 yVal: Array<Array<number>> = (series.yData as any),
@@ -205,7 +212,7 @@ BaseSeries.seriesType<typeof Highcharts.ATRIndicator>(
                 values: ATR,
                 xData: xData,
                 yData: yData
-            } as Highcharts.IndicatorValuesObject<TLinkedSeries>;
+            } as IndicatorValuesObject<TLinkedSeries>;
         }
 
     }

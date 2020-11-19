@@ -35,6 +35,7 @@ const {
 import Chart from '../../Core/Chart/Chart.js';
 import H from '../../Core/Globals.js';
 const { noop } = H;
+import palette from '../../Core/Palette.js';
 import U from '../../Core/Utilities.js';
 const {
     addEvent,
@@ -187,14 +188,14 @@ class FunnelSeries extends PieSeries {
                  *
                  * @type {Highcharts.ColorString|Highcharts.GradientColorObject|Highcharts.PatternObject}
                  */
-                color: '${palette.neutralColor20}',
+                color: palette.neutralColor20,
 
                 /**
                  * A specific border color for the selected point.
                  *
                  * @type {Highcharts.ColorString}
                  */
-                borderColor: '${palette.neutralColor100}'
+                borderColor: palette.neutralColor100
             }
         }
     } as FunnelSeriesOptions);

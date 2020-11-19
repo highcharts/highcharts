@@ -10,15 +10,23 @@
 
 import type ColorType from '../../Core/Color/ColorType';
 import type CSSObject from '../../Core/Renderer/CSSObject';
+import type IndicatorValuesObject from './IndicatorValuesObject';
 import type LineSeries from '../../Series/Line/LineSeries';
 import type Point from '../../Core/Series/Point';
 import type { SeriesOptions } from '../../Core/Series/SeriesOptions';
+import type SMAIndicator from './SMA/SMAIndicator';
+import type {
+    SMAOptions,
+    SMAParamsOptions
+} from './SMA/SMAOptions';
+import type SMAPoint from './SMA/SMAPoint';
 import type SVGAttributes from '../../Core/Renderer/SVG/SVGAttributes';
 import type SVGElement from '../../Core/Renderer/SVG/SVGElement';
 import BaseSeries from '../../Core/Series/Series.js';
 const {
     seriesTypes
 } = BaseSeries;
+import palette from '../../Core/Palette.js';
 import U from '../../Core/Utilities.js';
 const {
     correctFloat,
@@ -82,16 +90,16 @@ declare global {
         }
 
         interface SupertrendIndicatorParamsOptions
-            extends SMAIndicatorParamsOptions {
+            extends SMAParamsOptions {
             multiplier?: number;
         }
 
-        class SupertrendIndicatorPoint extends SMAIndicatorPoint {
+        class SupertrendIndicatorPoint extends SMAPoint {
             public series: SupertrendIndicator;
             public y: number;
         }
 
-        interface SupertrendIndicatorOptions extends SMAIndicatorOptions {
+        interface SupertrendIndicatorOptions extends SMAOptions {
             changeTrendLine?: Record<string, CSSObject>;
             fallingTrendColor?: ColorType;
             params?: SupertrendIndicatorParamsOptions;
@@ -185,7 +193,7 @@ BaseSeries.seriesType<typeof Highcharts.SupertrendIndicator>(
          *
          * @type {Highcharts.ColorString|Highcharts.GradientColorObject|Highcharts.PatternObject}
          */
-        risingTrendColor: '${palette.indicatorPositiveLine}',
+        risingTrendColor: palette.indicatorPositiveLine,
         /**
          * Color of the Supertrend series line that is above the main series.
          *
@@ -194,7 +202,7 @@ BaseSeries.seriesType<typeof Highcharts.SupertrendIndicator>(
          *
          * @type {Highcharts.ColorString|Highcharts.GradientColorObject|Highcharts.PatternObject}
          */
-        fallingTrendColor: '${palette.indicatorNegativeLine}',
+        fallingTrendColor: palette.indicatorNegativeLine,
         /**
          * The styles for the Supertrend line that intersect main series.
          *
@@ -213,7 +221,7 @@ BaseSeries.seriesType<typeof Highcharts.SupertrendIndicator>(
                  *
                  * @type {Highcharts.ColorString}
                  */
-                lineColor: '${palette.neutralColor80}',
+                lineColor: palette.neutralColor80,
 
                 /**
                  * The dash or dot style of the grid lines. For possible
@@ -573,7 +581,7 @@ BaseSeries.seriesType<typeof Highcharts.SupertrendIndicator>(
         getValues: function<TLinkedSeries extends LineSeries> (
             series: TLinkedSeries,
             params: Highcharts.SupertrendIndicatorParamsOptions
-        ): (Highcharts.IndicatorValuesObject<TLinkedSeries>|undefined) {
+        ): (IndicatorValuesObject<TLinkedSeries>|undefined) {
             var period: number = (params.period as any),
                 multiplier: number = (params.multiplier as any),
                 xVal: Array<number> = (series.xData as any),
@@ -666,7 +674,7 @@ BaseSeries.seriesType<typeof Highcharts.SupertrendIndicator>(
                 values: ST,
                 xData: xData,
                 yData: yData
-            } as Highcharts.IndicatorValuesObject<TLinkedSeries>;
+            } as IndicatorValuesObject<TLinkedSeries>;
         }
     }
 );

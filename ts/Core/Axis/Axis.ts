@@ -33,6 +33,7 @@ const {
 } = A;
 import Color from '../Color/Color.js';
 import H from '../Globals.js';
+import palette from '../Palette.js';
 import O from '../Options.js';
 const { defaultOptions } = O;
 import Tick from './Tick.js';
@@ -1785,7 +1786,7 @@ class Axis {
              */
             style: {
                 /** @internal */
-                color: '${palette.neutralColor60}',
+                color: palette.neutralColor60,
                 /** @internal */
                 cursor: 'default',
                 /** @internal */
@@ -2687,7 +2688,7 @@ class Axis {
              */
             style: {
                 /** @internal */
-                color: '${palette.neutralColor60}'
+                color: palette.neutralColor60
             }
         },
 
@@ -2814,7 +2815,7 @@ class Axis {
          * @type    {Highcharts.ColorType}
          * @default #f2f2f2
          */
-        minorGridLineColor: '${palette.neutralColor5}',
+        minorGridLineColor: palette.neutralColor5,
 
         /**
          * Width of the minor, secondary grid lines.
@@ -2842,7 +2843,7 @@ class Axis {
          * @type    {Highcharts.ColorType}
          * @default #999999
          */
-        minorTickColor: '${palette.neutralColor40}',
+        minorTickColor: palette.neutralColor40,
 
         /**
          * The color of the line marking the axis itself.
@@ -2864,7 +2865,7 @@ class Axis {
          * @type    {Highcharts.ColorType}
          * @default #ccd6eb
          */
-        lineColor: '${palette.highlightColor20}',
+        lineColor: palette.highlightColor20,
 
         /**
          * The width of the line marking the axis itself.
@@ -2903,7 +2904,7 @@ class Axis {
          * @type    {Highcharts.ColorType}
          * @default #e6e6e6
          */
-        gridLineColor: '${palette.neutralColor10}',
+        gridLineColor: palette.neutralColor10,
 
         // gridLineDashStyle: 'solid',
 
@@ -2966,7 +2967,7 @@ class Axis {
          * @type    {Highcharts.ColorType}
          * @default #ccd6eb
          */
-        tickColor: '${palette.highlightColor20}'
+        tickColor: palette.highlightColor20
 
         // tickWidth: 1
     };
@@ -3795,7 +3796,7 @@ class Axis {
              */
             style: {
                 /** @internal */
-                color: '${palette.neutralColor100}',
+                color: palette.neutralColor100,
                 /** @internal */
                 fontSize: '11px',
                 /** @internal */
@@ -4945,7 +4946,7 @@ class Axis {
             log = axis.logarithmic,
             zoomOffset,
             spaceAvailable: boolean,
-            closestDataRange: (number|undefined),
+            closestDataRange = 0,
             i,
             distance,
             xData,
@@ -4972,18 +4973,18 @@ class Axis {
                 axis.series.forEach(function (series): void {
                     xData = series.xData as any;
                     loopLength = series.xIncrement ? 1 : xData.length - 1;
-                    for (i = loopLength; i > 0; i--) {
-                        distance = xData[i] - xData[i - 1];
-                        if (
-                            typeof closestDataRange === 'undefined' ||
-                            distance < closestDataRange
-                        ) {
-                            closestDataRange = distance;
+
+                    if (xData.length > 1) {
+                        for (i = loopLength; i > 0; i--) {
+                            distance = xData[i] - xData[i - 1];
+                            if (!closestDataRange || distance < closestDataRange) {
+                                closestDataRange = distance;
+                            }
                         }
                     }
                 });
                 axis.minRange = Math.min(
-                    (closestDataRange as any) * 5,
+                    closestDataRange * 5,
                     (axis.dataMax as any) - (axis.dataMin as any)
                 );
             }
@@ -7744,10 +7745,10 @@ class Axis {
                             (
                                 categorized ?
                                     Color
-                                        .parse('${palette.highlightColor20}')
+                                        .parse(palette.highlightColor20)
                                         .setOpacity(0.25)
                                         .get() :
-                                    '${palette.neutralColor20}'
+                                    palette.neutralColor20
                             ),
                         'stroke-width': pick((options as any).width, 1)
                     }).css({

@@ -7,7 +7,8 @@ QUnit.test('Single point padding (#2846)', function (assert) {
                 type: 'column'
             },
             title: {
-                text: 'Issue #2846 caused 1px columns, overlapping in the center'
+                text: 'Issue #2846 caused 1px columns, ' +
+                    'overlapping in the center'
             },
             xAxis: {
                 type: 'datetime'

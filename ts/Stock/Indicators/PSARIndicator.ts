@@ -12,7 +12,14 @@
 
 'use strict';
 
+import type IndicatorValuesObject from './IndicatorValuesObject';
 import type LineSeries from '../../Series/Line/LineSeries';
+import type SMAIndicator from './SMA/SMAIndicator';
+import type {
+    SMAOptions,
+    SMAParamsOptions
+} from './SMA/SMAOptions';
+import type SMAPoint from './SMA/SMAPoint';
 import BaseSeries from '../../Core/Series/Series.js';
 
 /**
@@ -32,18 +39,18 @@ declare global {
             public points: Array<PSARIndicatorPoint>;
         }
 
-        interface PSARIndicatorParamsOptions extends SMAIndicatorParamsOptions {
+        interface PSARIndicatorParamsOptions extends SMAParamsOptions {
             decimals?: number;
             increment?: number;
             initialAccelerationFactor?: number;
             maxAccelerationFactor?: number;
         }
 
-        class PSARIndicatorPoint extends SMAIndicatorPoint {
+        class PSARIndicatorPoint extends SMAPoint {
             public series: PSARIndicator;
         }
 
-        interface PSARIndicatorOptions extends SMAIndicatorOptions {
+        interface PSARIndicatorOptions extends SMAOptions {
             params?: PSARIndicatorParamsOptions;
         }
     }
@@ -251,7 +258,7 @@ BaseSeries.seriesType<typeof Highcharts.PSARIndicator>(
         getValues: function<TLinkedSeries extends LineSeries> (
             series: TLinkedSeries,
             params: Highcharts.PSARIndicatorParamsOptions
-        ): (Highcharts.IndicatorValuesObject<TLinkedSeries>|undefined) {
+        ): (IndicatorValuesObject<TLinkedSeries>|undefined) {
             var xVal: Array<number> = (series.xData as any),
                 yVal: Array<Array<number>> = (series.yData as any),
                 // Extreme point is the lowest low for falling and highest high
@@ -381,7 +388,7 @@ BaseSeries.seriesType<typeof Highcharts.PSARIndicator>(
                 values: PSARArr,
                 xData: xData,
                 yData: yData
-            } as Highcharts.IndicatorValuesObject<TLinkedSeries>;
+            } as IndicatorValuesObject<TLinkedSeries>;
         }
     }
 );
