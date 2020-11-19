@@ -42,30 +42,19 @@ function populateAverage(points, xVal, yVal, i, period) {
 var MomentumIndicator = /** @class */ (function (_super) {
     __extends(MomentumIndicator, _super);
     function MomentumIndicator() {
-        return _super !== null && _super.apply(this, arguments) || this;
+        var _this = _super !== null && _super.apply(this, arguments) || this;
+        /* *
+        *
+        *  Prototype Properties
+        *
+        * */
+        _this.data = void 0;
+        _this.nameBase = void 0;
+        _this.options = void 0;
+        _this.points = void 0;
+        return _this;
     }
-    /**
-     * Momentum. This series requires `linkedTo` option to be set.
-     *
-     * @sample stock/indicators/momentum
-     *         Momentum indicator
-     *
-     * @extends      plotOptions.sma
-     * @since        6.0.0
-     * @product      highstock
-     * @requires     stock/indicators/indicators
-     * @requires     stock/indicators/momentum
-     * @optionparent plotOptions.momentum
-     */
-    MomentumIndicator.defaultOptions = merge(SMAIndicator.defaultOptions, {
-        params: {
-            period: 14
-        }
-    });
-    return MomentumIndicator;
-}(SMAIndicator));
-extend(MomentumIndicator.prototype, {
-    getValues: function (series, params) {
+    MomentumIndicator.prototype.getValues = function (series, params) {
         var period = params.period, xVal = series.xData, yVal = series.yData, yValLen = yVal ? yVal.length : 0, xValue = xVal[0], yValue = yVal[0], MM = [], xData = [], yData = [], index, i, points, MMPoint;
         if (xVal.length <= period) {
             return;
@@ -97,8 +86,27 @@ extend(MomentumIndicator.prototype, {
             xData: xData,
             yData: yData
         };
-    }
-});
+    };
+    /**
+     * Momentum. This series requires `linkedTo` option to be set.
+     *
+     * @sample stock/indicators/momentum
+     *         Momentum indicator
+     *
+     * @extends      plotOptions.sma
+     * @since        6.0.0
+     * @product      highstock
+     * @requires     stock/indicators/indicators
+     * @requires     stock/indicators/momentum
+     * @optionparent plotOptions.momentum
+     */
+    MomentumIndicator.defaultOptions = merge(SMAIndicator.defaultOptions, {
+        params: {
+            period: 14
+        }
+    });
+    return MomentumIndicator;
+}(SMAIndicator));
 BaseSeries.registerSeriesType('momentum', MomentumIndicator);
 /* *
  *

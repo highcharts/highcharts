@@ -97,25 +97,19 @@ class MomentumIndicator extends SMAIndicator {
             period: 14
         }
     } as Highcharts.MomentumIndicatorOptions);
-}
-/* *
- *
- *  Prototype Properties
- *
- * */
 
-interface MomentumIndicator {
-    data: Array<Highcharts.MomentumIndicatorPoint>;
+    /* *
+    *
+    *  Prototype Properties
+    *
+    * */
+
+    public data: Array<Highcharts.MomentumIndicatorPoint> = void 0 as any;
+    nameBase: string = void 0 as any;
+    options: Highcharts.MomentumIndicatorOptions = void 0 as any;
+    points: Array<Highcharts.MomentumIndicatorPoint> = void 0 as any;
+
     getValues<TLinkedSeries extends LineSeries>(
-        series: TLinkedSeries,
-        params: Highcharts.MomentumIndicatorParamsOptions
-    ): (IndicatorValuesObject<TLinkedSeries>|undefined);
-    nameBase: string;
-    options: Highcharts.MomentumIndicatorOptions;
-    pointClass: typeof Highcharts.MomentumIndicatorPoint;
-    points: Array<Highcharts.MomentumIndicatorPoint>;
-} extend(MomentumIndicator.prototype, {
-    getValues: function<TLinkedSeries extends LineSeries> (
         series: TLinkedSeries,
         params: Highcharts.MomentumIndicatorParamsOptions
     ): (IndicatorValuesObject<TLinkedSeries>|undefined) {
@@ -172,7 +166,17 @@ interface MomentumIndicator {
             yData: yData
         } as IndicatorValuesObject<TLinkedSeries>;
     }
-});
+}
+
+/* *
+ *
+ *  Prototype Properties
+ *
+ * */
+
+interface MomentumIndicator {
+    pointClass: typeof Highcharts.MomentumIndicatorPoint;
+}
 
 /* *
  *
