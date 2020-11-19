@@ -43,6 +43,7 @@ var ScrollbarAxis = /** @class */ (function () {
                 axis.scrollbar = new ScrollbarClass(axis.chart.renderer, axis.options.scrollbar, axis.chart);
                 addEvent(axis.scrollbar, 'changed', function (e) {
                     var _a, _b;
+                    // #13473 Bars shrink if min is not set while scrolling
                     if ((((_a = this.chart.options.chart) === null || _a === void 0 ? void 0 : _a.type) === 'column' ||
                         ((_b = this.chart.options.chart) === null || _b === void 0 ? void 0 : _b.type) === 'bar') &&
                         !axis.options.min) {
