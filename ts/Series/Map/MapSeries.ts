@@ -43,6 +43,7 @@ const { noop } = H;
 import LegendSymbolMixin from '../../Mixins/LegendSymbol.js';
 import LineSeries from '../Line/LineSeries.js';
 import mapModule from '../../Maps/Map.js';
+import palette from '../../Core/Palette.js';
 const {
     maps,
     splitPath
@@ -182,7 +183,7 @@ class MapSeries extends ScatterSeries {
          *
          * @private
          */
-        nullColor: '${palette.neutralColor3}',
+        nullColor: palette.neutralColor3,
 
         /**
          * Whether to allow pointer interaction like tooltips and mouse events
@@ -242,7 +243,7 @@ class MapSeries extends ScatterSeries {
          *
          * @private
          */
-        borderColor: '${palette.neutralColor20}',
+        borderColor: palette.neutralColor20,
 
         /**
          * The border width of each map area.
@@ -392,7 +393,7 @@ class MapSeries extends ScatterSeries {
                  * @product   highmaps
                  * @apioption plotOptions.series.states.select.color
                  */
-                color: '${palette.neutralColor20}'
+                color: palette.neutralColor20
             },
 
             inactive: {

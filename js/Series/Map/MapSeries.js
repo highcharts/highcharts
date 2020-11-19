@@ -32,6 +32,7 @@ var noop = H.noop;
 import LegendSymbolMixin from '../../Mixins/LegendSymbol.js';
 import LineSeries from '../Line/LineSeries.js';
 import mapModule from '../../Maps/Map.js';
+import palette from '../../Core/Palette.js';
 var maps = mapModule.maps, splitPath = mapModule.splitPath;
 import MapPoint from './MapPoint.js';
 import SVGRenderer from '../../Core/Renderer/SVG/SVGRenderer.js';
@@ -721,7 +722,7 @@ var MapSeries = /** @class */ (function (_super) {
          *
          * @private
          */
-        nullColor: '${palette.neutralColor3}',
+        nullColor: palette.neutralColor3,
         /**
          * Whether to allow pointer interaction like tooltips and mouse events
          * on null points.
@@ -775,7 +776,7 @@ var MapSeries = /** @class */ (function (_super) {
          *
          * @private
          */
-        borderColor: '${palette.neutralColor20}',
+        borderColor: palette.neutralColor20,
         /**
          * The border width of each map area.
          *
@@ -910,7 +911,7 @@ var MapSeries = /** @class */ (function (_super) {
                  * @product   highmaps
                  * @apioption plotOptions.series.states.select.color
                  */
-                color: '${palette.neutralColor20}'
+                color: palette.neutralColor20
             },
             inactive: {
                 opacity: 1

@@ -14,6 +14,7 @@ import ColumnSeries from './Column/ColumnSeries.js';
 var colProto = ColumnSeries.prototype;
 import LineSeries from './Line/LineSeries.js';
 var seriesProto = LineSeries.prototype;
+import palette from '../Core/Palette.js';
 import SVGRenderer from '../Core/Renderer/SVG/SVGRenderer.js';
 import H from '../Core/Globals.js';
 var noop = H.noop;
@@ -72,7 +73,7 @@ BaseSeries.seriesType('dumbbell', 'arearange', {
      * @since 8.0.0
      * @product   highcharts highstock
      */
-    lowColor: '${palette.neutralColor80}',
+    lowColor: palette.neutralColor80,
     /**
      * Color of the line that connects the dumbbell point's values.
      * By default it is the series' color.

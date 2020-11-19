@@ -25,6 +25,7 @@ import BaseSeries from '../../Core/Series/Series.js';
 var AreaRangeSeries = BaseSeries.seriesTypes.arearange;
 import BoxPlotSeries from '../BoxPlot/BoxPlotSeries.js';
 import ColumnSeries from '../Column/ColumnSeries.js';
+import palette from '../../Core/Palette.js';
 import U from '../../Core/Utilities.js';
 var merge = U.merge, extend = U.extend;
 /**
@@ -112,7 +113,7 @@ var ErrorBarSeries = /** @class */ (function (_super) {
          * @since   3.0
          * @product highcharts
          */
-        color: '${palette.neutralColor100}',
+        color: palette.neutralColor100,
         grouping: false,
         /**
          * The parent series of the error bar. The default value links it to

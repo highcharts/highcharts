@@ -22,6 +22,7 @@ const {
 
 import BoxPlotSeries from '../BoxPlot/BoxPlotSeries.js';
 import ColumnSeries from '../Column/ColumnSeries.js';
+import palette from '../../Core/Palette.js';
 import U from '../../Core/Utilities.js';
 const {
     merge,
@@ -77,7 +78,7 @@ class ErrorBarSeries extends BoxPlotSeries {
          * @since   3.0
          * @product highcharts
          */
-        color: '${palette.neutralColor100}',
+        color: palette.neutralColor100,
 
         grouping: false,
 

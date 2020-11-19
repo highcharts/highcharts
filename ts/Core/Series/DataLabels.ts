@@ -27,6 +27,7 @@ const { seriesTypes } = BaseSeries;
 import H from '../Globals.js';
 const { noop } = H;
 import LineSeries from '../../Series/Line/LineSeries.js';
+import palette from '../Palette.js';
 import U from '../Utilities.js';
 const {
     arrayMax,
@@ -574,7 +575,7 @@ LineSeries.prototype.drawDataLabels = function (): void {
                             labelOptions.color,
                             (style as any).color,
                             series.color,
-                            '${palette.neutralColor100}'
+                            palette.neutralColor100
                         );
                         // Get automated contrast color
                         if ((style as any).color === 'contrast') {
@@ -588,7 +589,7 @@ LineSeries.prototype.drawDataLabels = function (): void {
                                 labelDistance < 0 ||
                                 !!seriesOptions.stacking ?
                                 point.contrastColor :
-                                '${palette.neutralColor100}';
+                                palette.neutralColor100;
                         } else {
                             delete point.contrastColor;
                         }
@@ -1544,7 +1545,7 @@ if (seriesTypes.pie) {
                                             pointDataLabelsOptions as any
                                         ).connectorColor ||
                                         point.color ||
-                                        '${palette.neutralColor60}'
+                                        palette.neutralColor60
                                     )
                                 });
                             }

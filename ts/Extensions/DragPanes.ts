@@ -25,6 +25,7 @@ const {
     hasTouch
 } = H;
 import Axis from '../Core/Axis/Axis.js';
+import palette from '../Core/Palette.js';
 import Pointer from '../Core/Pointer.js';
 import U from '../Core/Utilities.js';
 const {
@@ -222,7 +223,7 @@ class AxisResizer {
              * @type     {Highcharts.ColorString}
              * @requires modules/drag-panes
              */
-            lineColor: '${palette.neutralColor20}',
+            lineColor: palette.neutralColor20,
 
             /**
              * Dash style of the control line.
