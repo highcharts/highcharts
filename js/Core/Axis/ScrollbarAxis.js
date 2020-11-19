@@ -46,7 +46,7 @@ var ScrollbarAxis = /** @class */ (function () {
                     // #13473 Bars shrink if min is not set while scrolling
                     if ((((_a = this.chart.options.chart) === null || _a === void 0 ? void 0 : _a.type) === 'column' ||
                         ((_b = this.chart.options.chart) === null || _b === void 0 ? void 0 : _b.type) === 'bar') &&
-                        !axis.options.min) {
+                        !defined(axis.options.min)) {
                         axis.options.min = 0;
                     }
                     var axisMin = pick(axis.options && axis.options.min, axis.min), axisMax = pick(axis.options && axis.options.max, axis.max), unitedMin = defined(axis.dataMin) ?

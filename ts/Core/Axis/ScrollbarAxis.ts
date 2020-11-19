@@ -78,7 +78,7 @@ class ScrollbarAxis {
                     // #13473 Bars shrink if min is not set while scrolling
                     if ((this.chart.options.chart?.type === 'column' ||
                         this.chart.options.chart?.type === 'bar') &&
-                        !axis.options.min
+                        !defined(axis.options.min)
                     ) {
                         axis.options.min = 0;
                     }
