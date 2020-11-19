@@ -11,4 +11,4 @@
  * License: www.highcharts.com/license
  */
 'use strict';
-import '../../Stock/Indicators/BBIndicator.js';
+import '../../Stock/Indicators/BB/BBIndicator.js';

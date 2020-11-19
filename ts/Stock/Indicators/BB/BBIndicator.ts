@@ -8,51 +8,26 @@
 
 'use strict';
 
-import type CSSObject from '../../Core/Renderer/CSSObject';
-import type IndicatorValuesObject from './IndicatorValuesObject';
-import type LineSeries from '../../Series/Line/LineSeries';
+import type IndicatorValuesObject from '../IndicatorValuesObject';
+import type LineSeries from '../../../Series/Line/LineSeries';
 import type {
-    SMAOptions,
-    SMAParamsOptions
-} from './SMA/SMAOptions';
-import type SMAPoint from './SMA/SMAPoint';
-import BaseSeries from '../../Core/Series/Series.js';
+    BBOptions,
+    BBParamsOptions
+} from './BBOptions';
+import type BBPoint from './BBPoint';
+import BaseSeries from '../../../Core/Series/Series.js';
 const {
     seriesTypes: {
         sma: SMAIndicator
     }
 } = BaseSeries;
-import MultipleLinesMixin from '../../Mixins/MultipleLines.js';
-import U from '../../Core/Utilities.js';
+import MultipleLinesMixin from '../../../Mixins/MultipleLines.js';
+import U from '../../../Core/Utilities.js';
 const {
     extend,
     isArray,
     merge
 } = U;
-
-/**
- * Internal types
- * @private
- */
-declare global {
-    namespace Highcharts {
-        interface BBIndicatorParamsOptions extends SMAParamsOptions {
-            standardDeviation?: number;
-        }
-
-        class BBIndicatorPoint extends SMAPoint {
-            public series: BBIndicator;
-        }
-
-        interface BBIndicatorOptions extends SMAOptions,
-            MultipleLinesIndicatorOptions {
-            bottomLine?: Record<string, CSSObject>;
-            params?: BBIndicatorParamsOptions;
-            topLine?: Record<string, CSSObject>;
-        }
-    }
-}
-
 
 /* eslint-disable valid-jsdoc */
 
@@ -108,7 +83,7 @@ class BBIndicator extends SMAIndicator implements Highcharts.MultipleLinesIndica
      * @requires     stock/indicators/bollinger-bands
      * @optionparent plotOptions.bb
      */
-    public static defaultOptions: Highcharts.BBIndicatorOptions = merge(SMAIndicator.defaultOptions, {
+    public static defaultOptions: BBOptions = merge(SMAIndicator.defaultOptions, {
         params: {
             period: 20,
             /**
@@ -161,7 +136,7 @@ class BBIndicator extends SMAIndicator implements Highcharts.MultipleLinesIndica
         dataGrouping: {
             approximation: 'averages'
         }
-    } as Highcharts.BBIndicatorOptions)
+    } as BBOptions)
 
     /* *
     *
@@ -169,11 +144,11 @@ class BBIndicator extends SMAIndicator implements Highcharts.MultipleLinesIndica
     *
     * */
 
-    public data: Array<Highcharts.BBIndicatorPoint> = void 0 as any;
+    public data: Array<BBPoint> = void 0 as any;
 
-    public options: Highcharts.BBIndicatorOptions = void 0 as any;
+    public options: BBOptions = void 0 as any;
 
-    public points: Array<Highcharts.BBIndicatorPoint> = void 0 as any;
+    public points: Array<BBPoint> = void 0 as any;
 
     public init(this: BBIndicator): void {
         BaseSeries.seriesTypes.sma.prototype.init.apply(this, arguments);
@@ -195,7 +170,7 @@ class BBIndicator extends SMAIndicator implements Highcharts.MultipleLinesIndica
 
     public getValues<TLinkedSeries extends LineSeries>(
         series: TLinkedSeries,
-        params: Highcharts.BBIndicatorParamsOptions
+        params: BBParamsOptions
     ): (IndicatorValuesObject<TLinkedSeries>|undefined) {
         var period: number = (params.period as any),
             standardDeviation: number = (params.standardDeviation as any),
@@ -279,7 +254,7 @@ interface BBIndicator {
     getTranslatedLinesNames: typeof MultipleLinesMixin.getTranslatedLinesNames;
     translate: typeof MultipleLinesMixin.translate;
     toYData: typeof MultipleLinesMixin.toYData;
-    pointClass: typeof Highcharts.BBIndicatorPoint;
+    pointClass: typeof BBPoint;
 }
 extend(BBIndicator.prototype, {
     pointArrayMap: ['top', 'middle', 'bottom'],
@@ -298,7 +273,7 @@ extend(BBIndicator.prototype, {
  *
  * */
 
-declare module '../../Core/Series/SeriesType' {
+declare module '../../../Core/Series/SeriesType' {
     interface SeriesTypeRegistry {
         bb: typeof BBIndicator;
     }

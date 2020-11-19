@@ -19,10 +19,10 @@ var __extends = (this && this.__extends) || (function () {
         d.prototype = b === null ? Object.create(b) : (__.prototype = b.prototype, new __());
     };
 })();
-import BaseSeries from '../../Core/Series/Series.js';
+import BaseSeries from '../../../Core/Series/Series.js';
 var SMAIndicator = BaseSeries.seriesTypes.sma;
-import MultipleLinesMixin from '../../Mixins/MultipleLines.js';
-import U from '../../Core/Utilities.js';
+import MultipleLinesMixin from '../../../Mixins/MultipleLines.js';
+import U from '../../../Core/Utilities.js';
 var extend = U.extend, isArray = U.isArray, merge = U.merge;
 /* eslint-disable valid-jsdoc */
 // Utils:
