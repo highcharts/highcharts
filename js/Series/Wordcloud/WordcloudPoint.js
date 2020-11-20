@@ -22,8 +22,9 @@ var __extends = (this && this.__extends) || (function () {
         d.prototype = b === null ? Object.create(b) : (__.prototype = b.prototype, new __());
     };
 })();
-import ColumnSeries from '../Column/ColumnSeries.js';
 import DrawPointMixin from '../../Mixins/DrawPoint.js';
+import BaseSeries from '../../Core/Series/Series.js';
+var ColumnSeries = BaseSeries.seriesTypes.column;
 import U from '../../Core/Utilities.js';
 var extend = U.extend;
 var WordcloudPoint = /** @class */ (function (_super) {

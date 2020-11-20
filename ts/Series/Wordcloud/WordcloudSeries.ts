@@ -23,7 +23,11 @@ import type {
     WordcloudSeriesRotationOptions
 } from './WordcloudSeriesOptions';
 import BaseSeries from '../../Core/Series/Series.js';
-import ColumnSeries from '../Column/ColumnSeries.js';
+const {
+    seriesTypes: {
+        column: ColumnSeries
+    }
+} = BaseSeries;
 import H from '../../Core/Globals.js';
 const { noop } = H;
 import LineSeries from '../Line/LineSeries.js';
@@ -46,53 +50,6 @@ const {
 } = U;
 import WordcloudPoint from './WordcloudPoint.js';
 import WordcloudUtils from './WordcloudUtils.js';
-
-import '../Column/ColumnSeries.js';
-
-/**
- * Internal types
- * @private
- */
-declare global {
-    namespace Highcharts {
-        interface WordcloudFieldObject extends PolygonBoxObject, SizeObject {
-            ratioX: number;
-            ratioY: number;
-        }
-        interface WordcloudPlacementFunction {
-            (
-                point: WordcloudPoint,
-                options: WordcloudPlacementOptionsObject
-            ): WordcloudPlacementObject;
-        }
-        interface WordcloudPlacementObject extends PositionObject {
-            rotation: (boolean|number);
-        }
-        interface WordcloudPlacementOptionsObject {
-            data: WordcloudSeries['data'];
-            field: WordcloudFieldObject;
-            placed: Array<WordcloudPoint>;
-            rotation: WordcloudSeriesRotationOptions;
-        }
-        interface WordcloudSpiralFunction {
-            (
-                attempt: number,
-                params?: WordcloudSpiralParamsObject
-            ): (boolean|PositionObject);
-        }
-        interface WordcloudSpiralParamsObject {
-            field: WordcloudFieldObject;
-        }
-        interface WordcloudTestOptionsObject {
-            field: WordcloudFieldObject;
-            placed: Array<WordcloudPoint>;
-            polygon: PolygonObject;
-            rectangle: PolygonBoxObject;
-            rotation: (boolean|number);
-            spiral: WordcloudSpiralFunction;
-        }
-    }
-}
 
 /**
  * @private
@@ -319,7 +276,7 @@ class WordcloudSeries extends ColumnSeries {
             placementStrategy = series.placementStrategy[
                 options.placementStrategy as any
             ],
-            spiral: Highcharts.WordcloudSpiralFunction,
+            spiral: WordcloudSeries.WordcloudSpiralFunction,
             rotation: WordcloudSeriesRotationOptions =
                 options.rotation as any,
             scale,
@@ -336,7 +293,7 @@ class WordcloudSeries extends ColumnSeries {
             ): number {
                 return b.weight - a.weight; // Sort descending
             }),
-            field: Highcharts.WordcloudFieldObject;
+            field: WordcloudSeries.WordcloudFieldObject;
 
         // Reset the scale before finding the dimensions (#11993).
         // SVGGRaphicsElement.getBBox() (used in SVGElement.getBBox(boolean))
@@ -535,11 +492,11 @@ class WordcloudSeries extends ColumnSeries {
  * Prototype properties
  *
  * */
-interface WordcloudSeries extends ColumnSeries {
-    placementStrategy: Record<string, Highcharts.WordcloudPlacementFunction>;
+interface WordcloudSeries {
+    placementStrategy: Record<string, WordcloudSeries.WordcloudPlacementFunction>;
     pointArrayMap: Array<string>;
     pointClass: typeof WordcloudPoint;
-    spirals: Record<string, Highcharts.WordcloudSpiralFunction>;
+    spirals: Record<string, WordcloudSeries.WordcloudSpiralFunction>;
     utils: typeof WordcloudUtils;
 }
 
@@ -556,8 +513,8 @@ extend(WordcloudSeries.prototype, {
     placementStrategy: {
         random: function (
             point: WordcloudPoint,
-            options: Highcharts.WordcloudPlacementOptionsObject
-        ): Highcharts.WordcloudPlacementObject {
+            options: WordcloudSeries.WordcloudPlacementOptionsObject
+        ): WordcloudSeries.WordcloudPlacementObject {
             var field = options.field,
                 r = options.rotation;
 
@@ -569,8 +526,8 @@ extend(WordcloudSeries.prototype, {
         },
         center: function (
             point: WordcloudPoint,
-            options: Highcharts.WordcloudPlacementOptionsObject
-        ): Highcharts.WordcloudPlacementObject {
+            options: WordcloudSeries.WordcloudPlacementOptionsObject
+        ): WordcloudSeries.WordcloudPlacementObject {
             var r = options.rotation;
 
             return {
@@ -610,6 +567,51 @@ declare module '../../Core/Series/SeriesType' {
 }
 
 BaseSeries.registerSeriesType('wordcloud', WordcloudSeries);
+
+/* *
+ *
+ *  Class Namespace
+ *
+ * */
+
+namespace WordcloudSeries {
+    export interface WordcloudFieldObject extends Highcharts.PolygonBoxObject, SizeObject {
+        ratioX: number;
+        ratioY: number;
+    }
+    export interface WordcloudPlacementFunction {
+        (
+            point: WordcloudPoint,
+            options: WordcloudPlacementOptionsObject
+        ): WordcloudPlacementObject;
+    }
+    export interface WordcloudPlacementObject extends PositionObject {
+        rotation: (boolean|number);
+    }
+    export interface WordcloudPlacementOptionsObject {
+        data: WordcloudSeries['data'];
+        field: WordcloudFieldObject;
+        placed: Array<WordcloudPoint>;
+        rotation: WordcloudSeriesRotationOptions;
+    }
+    export interface WordcloudSpiralFunction {
+        (
+            attempt: number,
+            params?: WordcloudSpiralParamsObject
+        ): (boolean|PositionObject);
+    }
+    export interface WordcloudSpiralParamsObject {
+        field: WordcloudFieldObject;
+    }
+    export interface WordcloudTestOptionsObject {
+        field: WordcloudFieldObject;
+        placed: Array<WordcloudPoint>;
+        polygon: Highcharts.PolygonObject;
+        rectangle: Highcharts.PolygonBoxObject;
+        rotation: (boolean|number);
+        spiral: WordcloudSpiralFunction;
+    }
+}
 
 /* *
  *
