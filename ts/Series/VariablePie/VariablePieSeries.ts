@@ -18,17 +18,17 @@
  *
  * */
 
-import type PiePoint from './Pie/PiePoint';
-import type PiePointOptions from './Pie/PiePointOptions';
-import type PieSeriesOptions from './Pie/PieSeriesOptions';
-import type { SeriesStatesOptions } from '../Core/Series/SeriesOptions';
-import BaseSeries from '../Core/Series/Series.js';
+import type PiePoint from '../Pie/PiePoint';
+import type PiePointOptions from '../Pie/PiePointOptions';
+import type PieSeriesOptions from '../Pie/PieSeriesOptions';
+import type { SeriesStatesOptions } from '../../Core/Series/SeriesOptions';
+import BaseSeries from '../../Core/Series/Series.js';
 const {
     seriesTypes: {
         pie: PieSeries
     }
 } = BaseSeries;
-import U from '../Core/Utilities.js';
+import U from '../../Core/Utilities.js';
 const {
     arrayMax,
     arrayMin,
@@ -526,7 +526,7 @@ extend(VariablePieSeries.prototype, {
  *
  * */
 
-declare module '../Core/Series/SeriesType' {
+declare module '../../Core/Series/SeriesType' {
     interface SeriesTypeRegistry {
         variablepie: typeof VariablePieSeries;
     }
