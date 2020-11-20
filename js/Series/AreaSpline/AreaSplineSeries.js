@@ -28,23 +28,28 @@ import BaseSeries from '../../Core/Series/Series.js';
 import LegendSymbolMixin from '../../Mixins/LegendSymbol.js';
 import U from '../../Core/Utilities.js';
 var extend = U.extend, merge = U.merge;
+/* *
+ *
+ *  Class
+ *
+ * */
+/**
+ * AreaSpline series type.
+ *
+ * @private
+ * @class
+ * @name Highcharts.seriesTypes.areaspline
+ *
+ * @augments Highcharts.Series
+ */
 var AreaSplineSeries = /** @class */ (function (_super) {
     __extends(AreaSplineSeries, _super);
     function AreaSplineSeries() {
-        /**
-         * The area spline series is an area series where the graph between the
-         * points is smoothed into a spline.
+        /* *
          *
-         * @sample {highcharts} highcharts/demo/areaspline/
-         *         Area spline chart
-         * @sample {highstock} stock/demo/areaspline/
-         *         Area spline chart
+         *  Static properties
          *
-         * @extends   plotOptions.area
-         * @excluding step, boostThreshold, boostBlending
-         * @product   highcharts highstock
-         * @apioption plotOptions.areaspline
-         */
+         * */
         var _this = _super !== null && _super.apply(this, arguments) || this;
         /* *
          *
@@ -57,6 +62,20 @@ var AreaSplineSeries = /** @class */ (function (_super) {
         _this.getStackPoints = areaProto.getStackPoints;
         return _this;
     }
+    /**
+     * The area spline series is an area series where the graph between the
+     * points is smoothed into a spline.
+     *
+     * @sample {highcharts} highcharts/demo/areaspline/
+     *         Area spline chart
+     * @sample {highstock} stock/demo/areaspline/
+     *         Area spline chart
+     *
+     * @extends   plotOptions.area
+     * @excluding step, boostThreshold, boostBlending
+     * @product   highcharts highstock
+     * @apioption plotOptions.areaspline
+     */
     /**
      * @see [fillColor](#plotOptions.areaspline.fillColor)
      * @see [fillOpacity](#plotOptions.areaspline.fillOpacity)
@@ -92,15 +111,6 @@ BaseSeries.registerSeriesType('areaspline', AreaSplineSeries);
  *
  * */
 export default AreaSplineSeries;
-/**
- * AreaSpline series type.
- *
- * @private
- * @class
- * @name Highcharts.seriesTypes.areaspline
- *
- * @augments Highcharts.Series
- */
 /**
  * A `areaspline` series. If the [type](#series.areaspline.type) option
  * is not specified, it is inherited from [chart.type](#chart.type).

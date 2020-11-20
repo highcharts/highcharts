@@ -16,11 +16,8 @@
  *
  * */
 
-import type AreaPoint from '../Area/AreaPoint';
-import type { SeriesStatesOptions } from '../../Core/Series/SeriesOptions';
-import type SplinePointOptions from '../Spline/SplinePointOptions';
-import type SplinePoint from '../Spline/SplinePoint';
-import type SplineSeriesOptions from '../Spline/SplineSeriesOptions';
+import type AreaSplineSeriesOptions from './AreaSplineSeriesOptions';
+import type AreaSplinePoint from './AreaSplinePoint';
 import AreaSeries from '../Area/AreaSeries.js';
 const { prototype: areaProto } = AreaSeries;
 import SplineSeries from '../Spline/SplineSeries.js';
@@ -32,7 +29,28 @@ const {
     merge
 } = U;
 
+/* *
+ *
+ *  Class
+ *
+ * */
+
+/**
+ * AreaSpline series type.
+ *
+ * @private
+ * @class
+ * @name Highcharts.seriesTypes.areaspline
+ *
+ * @augments Highcharts.Series
+ */
 class AreaSplineSeries extends SplineSeries {
+
+    /* *
+     *
+     *  Static properties
+     *
+     * */
 
     /**
      * The area spline series is an area series where the graph between the
@@ -71,10 +89,9 @@ class AreaSplineSeries extends SplineSeries {
      * @default   {highstock} 0.75
      * @apioption plotOptions.areaspline.fillOpacity
      */
-    public static defaultOptions: Highcharts.AreaSplineSeriesOptions = merge(
+    public static defaultOptions: AreaSplineSeriesOptions = merge(
         AreaSeries.defaultOptions,
-        {} as Highcharts.AreaSplineSeriesOptions
-
+        {} as AreaSplineSeriesOptions
     )
 
     /* *
@@ -83,49 +100,28 @@ class AreaSplineSeries extends SplineSeries {
      *
      * */
 
-    public data = void 0 as any;
-    public points = void 0 as any;
-    public options = void 0 as any;
+    public data: Array<AreaSplinePoint> = void 0 as any;
+    public points: Array<AreaSplinePoint> = void 0 as any;
+    public options: AreaSplineSeriesOptions = void 0 as any;
     public getStackPoints = areaProto.getStackPoints;
 }
 
+/* *
+ *
+ *  Prototype properties
+ *
+ * */
+interface AreaSplineSeries extends SplineSeries {
+    pointClass: typeof AreaSplinePoint;
+    getStackPoints: AreaSeries['getStackPoints'];
+    drawGraph: typeof AreaSeries.prototype.drawGraph;
+    drawLegendSymbol: typeof LegendSymbolMixin.drawRectangle;
+}
 extend(AreaSplineSeries.prototype, {
     getGraphPath: areaProto.getGraphPath,
     drawGraph: areaProto.drawGraph,
     drawLegendSymbol: LegendSymbolMixin.drawRectangle
 });
-
-/* *
- *
- *  Declarations
- *
- * */
-
-/**
- * Internal types
- * @private
- */
-declare global {
-    namespace Highcharts {
-        interface AreaSplinePointOptions extends SplinePointOptions {
-        }
-        interface AreaSplineSeriesOptions extends SplineSeriesOptions {
-            states?: SeriesStatesOptions<AreaSplineSeries>;
-        }
-        class AreaSplinePoint extends SplinePoint {
-            public isCliff?: AreaPoint['isCliff'];
-            public options: AreaSplinePointOptions;
-            public series: AreaSplineSeries;
-        }
-        class AreaSplineSeries extends SplineSeries {
-            public data: Array<AreaSplinePoint>;
-            public getStackPoints: AreaSeries['getStackPoints'];
-            public options: AreaSplineSeriesOptions;
-            public pointClass: typeof AreaSplinePoint;
-            public points: Array<AreaSplinePoint>;
-        }
-    }
-}
 
 /* *
  *
@@ -138,7 +134,7 @@ declare global {
  */
 declare module '../../Core/Series/SeriesType' {
     interface SeriesTypeRegistry {
-        areaspline: typeof Highcharts.AreaSplineSeries;
+        areaspline: typeof AreaSplineSeries;
     }
 }
 
@@ -152,15 +148,6 @@ BaseSeries.registerSeriesType('areaspline', AreaSplineSeries);
 
 export default AreaSplineSeries;
 
-/**
- * AreaSpline series type.
- *
- * @private
- * @class
- * @name Highcharts.seriesTypes.areaspline
- *
- * @augments Highcharts.Series
- */
 /**
  * A `areaspline` series. If the [type](#series.areaspline.type) option
  * is not specified, it is inherited from [chart.type](#chart.type).
