@@ -14,6 +14,7 @@ import H from '../Core/Globals.js';
 var doc = H.doc;
 import O from '../Core/Options.js';
 var defaultOptions = O.defaultOptions;
+import palette from '../Core/Palette.js';
 import SVGElement from '../Core/Renderer/SVG/SVGElement.js';
 import U from '../Core/Utilities.js';
 var addEvent = U.addEvent, createElement = U.createElement, css = U.css, defined = U.defined, destroyObjectProperties = U.destroyObjectProperties, discardElement = U.discardElement, extend = U.extend, fireEvent = U.fireEvent, isNumber = U.isNumber, merge = U.merge, objectEach = U.objectEach, pick = U.pick, pInt = U.pInt, splat = U.splat;
@@ -482,7 +483,7 @@ extend(defaultOptions, {
          */
         labelStyle: {
             /** @ignore */
-            color: '${palette.neutralColor60}'
+            color: palette.neutralColor60
         }
     }
 });
@@ -851,11 +852,14 @@ var RangeSelector = /** @class */ (function () {
      * @return {number}
      */
     RangeSelector.prototype.getInputValue = function (name) {
-        var input = this[name + 'Input'];
+        var input = name === 'min' ? this.minInput : this.maxInput;
         var options = this.chart.options.rangeSelector;
         var time = this.chart.time;
-        return ((input.type === 'text' && options.inputDateParser) ||
-            this.defaultInputDateParser)(input.value, time.useUTC, time);
+        if (input) {
+            return ((input.type === 'text' && options.inputDateParser) ||
+                this.defaultInputDateParser)(input.value, time.useUTC, time);
+        }
+        return 0;
     };
     /**
      * Set the internal and displayed value of a HTML input for the dates
@@ -867,15 +871,23 @@ var RangeSelector = /** @class */ (function () {
      * @return {void}
      */
     RangeSelector.prototype.setInputValue = function (name, inputTime) {
-        var options = this.chart.options.rangeSelector, time = this.chart.time, input = this[name + 'Input'];
-        if (defined(inputTime)) {
-            input.previousValue = input.HCTime;
-            input.HCTime = inputTime;
+        var options = this.chart.options.rangeSelector, time = this.chart.time, input = name === 'min' ? this.minInput : this.maxInput;
+        if (input) {
+            var hcTimeAttr = input.getAttribute('data-hc-time');
+            var updatedTime = defined(hcTimeAttr) ? Number(hcTimeAttr) : void 0;
+            if (defined(inputTime)) {
+                var previousTime = updatedTime;
+                if (previousTime) {
+                    input.setAttribute('data-hc-time-previous', previousTime);
+                }
+                input.setAttribute('data-hc-time', inputTime);
+                updatedTime = inputTime;
+            }
+            input.value = time.dateFormat(this.inputTypeFormats[input.type] || options.inputEditDateFormat || '%Y-%m-%d', updatedTime);
+            this[name + 'DateBox'].attr({
+                text: time.dateFormat(options.inputDateFormat || '%b %e, %Y', updatedTime)
+            });
         }
-        input.value = time.dateFormat(this.inputTypeFormats[input.type] || options.inputEditDateFormat || '%Y-%m-%d', input.HCTime);
-        this[name + 'DateBox'].attr({
-            text: time.dateFormat(options.inputDateFormat || '%b %e, %Y', input.HCTime)
-        });
     };
     /**
      * Set the min and max value of a HTML input for the dates
@@ -888,12 +900,14 @@ var RangeSelector = /** @class */ (function () {
      * @return {void}
      */
     RangeSelector.prototype.setInputExtremes = function (name, min, max) {
-        var input = this[name + 'Input'];
-        var format = this.inputTypeFormats[input.type];
-        var time = this.chart.time;
-        if (format) {
-            input.min = time.dateFormat(format, min);
-            input.max = time.dateFormat(format, max);
+        var input = name === 'min' ? this.minInput : this.maxInput;
+        if (input) {
+            var format = this.inputTypeFormats[input.type];
+            var time = this.chart.time;
+            if (format) {
+                input.min = time.dateFormat(format, min);
+                input.max = time.dateFormat(format, max);
+            }
         }
     };
     /**
@@ -985,7 +999,8 @@ var RangeSelector = /** @class */ (function () {
      * @return {void}
      */
     RangeSelector.prototype.drawInput = function (name) {
-        var rangeSelector = this, chart = rangeSelector.chart, chartStyle = chart.renderer.style || {}, renderer = chart.renderer, options = chart.options.rangeSelector, lang = defaultOptions.lang, div = rangeSelector.div, isMin = name === 'min', input, label, dateBox, inputGroup = this.inputGroup;
+        var _a = this, chart = _a.chart, div = _a.div, inputGroup = _a.inputGroup;
+        var rangeSelector = this, chartStyle = chart.renderer.style || {}, renderer = chart.renderer, options = chart.options.rangeSelector, lang = defaultOptions.lang, isMin = name === 'min', input, label, dateBox;
         /**
          * @private
          */
@@ -993,20 +1008,22 @@ var RangeSelector = /** @class */ (function () {
             var value = rangeSelector.getInputValue(name), chartAxis = chart.xAxis[0], dataAxis = chart.scroller && chart.scroller.xAxis ?
                 chart.scroller.xAxis :
                 chartAxis, dataMin = dataAxis.dataMin, dataMax = dataAxis.dataMax;
-            if (value !== input.previousValue && isNumber(value)) {
-                input.previousValue = value;
+            var maxInput = rangeSelector.maxInput, minInput = rangeSelector.minInput;
+            if (value !== Number(input.getAttribute('data-hc-time-previous')) &&
+                isNumber(value)) {
+                input.setAttribute('data-hc-time-previous', value);
                 // Validate the extremes. If it goes beyound the data min or
                 // max, use the actual data extreme (#2438).
-                if (isMin) {
-                    if (value > rangeSelector.maxInput.HCTime) {
+                if (isMin && maxInput && isNumber(dataMin)) {
+                    if (value > Number(maxInput.getAttribute('data-hc-time'))) {
                         value = void 0;
                     }
                     else if (value < dataMin) {
                         value = dataMin;
                     }
                 }
-                else {
-                    if (value < rangeSelector.minInput.HCTime) {
+                else if (minInput && isNumber(dataMax)) {
+                    if (value < Number(minInput.getAttribute('data-hc-time'))) {
                         value = void 0;
                     }
                     else if (value > dataMax) {
@@ -1047,7 +1064,7 @@ var RangeSelector = /** @class */ (function () {
         });
         if (!chart.styledMode) {
             dateBox.attr({
-                stroke: options.inputBoxBorderColor || '${palette.neutralColor20}',
+                stroke: options.inputBoxBorderColor || palette.neutralColor20,
                 'stroke-width': 1
             });
         }
@@ -1064,7 +1081,7 @@ var RangeSelector = /** @class */ (function () {
             // Styles
             label.css(merge(chartStyle, options.labelStyle));
             dateBox.css(merge({
-                color: '${palette.neutralColor80}'
+                color: palette.neutralColor80
             }, chartStyle, options.inputStyle));
             css(input, extend({
                 position: 'absolute',
@@ -1339,14 +1356,14 @@ var RangeSelector = /** @class */ (function () {
                         buttonGroup.getBBox().height + 10
                 });
             }
+            // Set or reset the input values
+            rangeSelector.setInputValue('min', min);
+            rangeSelector.setInputValue('max', max);
             var unionExtremes = (chart.scroller && chart.scroller.getUnionExtremes()) || chart.xAxis[0] || {};
             if (defined(unionExtremes.dataMin) && defined(unionExtremes.dataMax)) {
                 rangeSelector.setInputExtremes('min', unionExtremes.dataMin, Math.min(unionExtremes.dataMax, rangeSelector.getInputValue('max')));
                 rangeSelector.setInputExtremes('max', Math.max(unionExtremes.dataMin, rangeSelector.getInputValue('min')), unionExtremes.dataMax);
             }
-            // Set or reset the input values
-            rangeSelector.setInputValue('min', min);
-            rangeSelector.setInputValue('max', max);
             // skip animation
             rangeSelector.inputGroup.placed = animate;
         }
@@ -1406,10 +1423,11 @@ var RangeSelector = /** @class */ (function () {
         }
         rangeSelector.group.translate(options.x, options.y + Math.floor(translateY));
         // translate HTML inputs
-        if (inputEnabled !== false) {
-            rangeSelector.minInput.style.marginTop =
+        var minInput = rangeSelector.minInput, maxInput = rangeSelector.maxInput;
+        if (inputEnabled !== false && minInput && maxInput) {
+            minInput.style.marginTop =
                 rangeSelector.group.translateY + 'px';
-            rangeSelector.maxInput.style.marginTop =
+            maxInput.style.marginTop =
                 rangeSelector.group.translateY + 'px';
         }
         rangeSelector.rendered = true;

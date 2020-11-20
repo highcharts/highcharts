@@ -13,6 +13,7 @@ import BaseSeries from '../Core/Series/Series.js';
 var seriesTypes = BaseSeries.seriesTypes;
 import Chart from '../Core/Chart/Chart.js';
 import LineSeries from './Line/LineSeries.js';
+import palette from '../Core/Palette.js';
 import Point from '../Core/Series/Point.js';
 import StackItem from '../Extensions/Stacking.js';
 import U from '../Core/Utilities.js';
@@ -212,7 +213,7 @@ BaseSeries.seriesType('waterfall', 'column', {
      * @since   3.0
      * @product highcharts
      */
-    lineColor: '${palette.neutralColor80}',
+    lineColor: palette.neutralColor80,
     /**
      * A name for the dash style to use for the line connecting the columns
      * of the waterfall series. Possible values: Dash, DashDot, Dot, LongDash,
@@ -237,7 +238,7 @@ BaseSeries.seriesType('waterfall', 'column', {
      * @since   3.0
      * @product highcharts
      */
-    borderColor: '${palette.neutralColor80}',
+    borderColor: palette.neutralColor80,
     states: {
         hover: {
             lineWidthPlus: 0 // #3126

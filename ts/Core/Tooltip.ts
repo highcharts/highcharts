@@ -24,6 +24,7 @@ import H from './Globals.js';
 const {
     doc
 } = H;
+import palette from './Palette.js';
 import U from './Utilities.js';
 const {
     clamp,
@@ -1372,7 +1373,7 @@ class Tooltip {
                             options.borderColor ||
                             (point as any).color ||
                             currentSeries.color ||
-                            '${palette.neutralColor60}'
+                            palette.neutralColor60
                         )
                     });
                 }
@@ -1602,7 +1603,7 @@ class Tooltip {
                             options.borderColor ||
                             point.color ||
                             series.color ||
-                            '${palette.neutralColor80}'
+                            palette.neutralColor80
                         )
                     });
             }

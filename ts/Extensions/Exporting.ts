@@ -37,6 +37,7 @@ import O from '../Core/Options.js';
 const {
     defaultOptions
 } = O;
+import palette from '../Core/Palette.js';
 import SVGRenderer from '../Core/Renderer/SVG/SVGRenderer.js';
 import U from '../Core/Utilities.js';
 const {
@@ -587,9 +588,9 @@ merge(true, defaultOptions.navigation
          */
         menuStyle: {
             /** @ignore-option */
-            border: '1px solid ${palette.neutralColor40}',
+            border: `1px solid ${palette.neutralColor40}`,
             /** @ignore-option */
-            background: '${palette.backgroundColor}',
+            background: palette.backgroundColor,
             /** @ignore-option */
             padding: '5px 0'
         },
@@ -616,7 +617,7 @@ merge(true, defaultOptions.navigation
             /** @ignore-option */
             padding: '0.5em 1em',
             /** @ignore-option */
-            color: '${palette.neutralColor80}',
+            color: palette.neutralColor80,
             /** @ignore-option */
             background: 'none',
             /** @ignore-option */
@@ -644,9 +645,9 @@ merge(true, defaultOptions.navigation
          */
         menuItemHoverStyle: {
             /** @ignore-option */
-            background: '${palette.highlightColor80}',
+            background: palette.highlightColor80,
             /** @ignore-option */
-            color: '${palette.backgroundColor}'
+            color: palette.backgroundColor
         },
 
         /**
@@ -671,7 +672,7 @@ merge(true, defaultOptions.navigation
              * @type  {Highcharts.ColorString|Highcharts.GradientColorObject|Highcharts.PatternObject}
              * @since 2.0
              */
-            symbolFill: '${palette.neutralColor60}',
+            symbolFill: palette.neutralColor60,
 
             /**
              * The color of the symbol's stroke or line.
@@ -682,7 +683,7 @@ merge(true, defaultOptions.navigation
              * @type  {Highcharts.ColorString}
              * @since 2.0
              */
-            symbolStroke: '${palette.neutralColor60}',
+            symbolStroke: palette.neutralColor60,
 
             /**
              * The pixel stroke width of the symbol on the button.
@@ -2116,7 +2117,7 @@ extend(Chart.prototype, /** @lends Highcharts.Chart.prototype */ {
             );
 
         if (!chart.styledMode) {
-            attr.fill = pick(attr.fill, '${palette.backgroundColor}');
+            attr.fill = pick(attr.fill, palette.backgroundColor);
             attr.stroke = pick(attr.stroke, 'none');
         }
 
@@ -2170,7 +2171,7 @@ extend(Chart.prototype, /** @lends Highcharts.Chart.prototype */ {
 
         if (!chart.styledMode) {
             attr['stroke-linecap'] = 'round';
-            attr.fill = pick(attr.fill, '${palette.backgroundColor}');
+            attr.fill = pick(attr.fill, palette.backgroundColor);
             attr.stroke = pick(attr.stroke, 'none');
         }
 

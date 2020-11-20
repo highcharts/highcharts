@@ -16,7 +16,7 @@ import Chart from '../../../Core/Chart/Chart.js';
 import LineSeries from '../../../Series/Line/LineSeries.js';
 import Point from '../../../Core/Series/Point.js';
 import U from '../../../Core/Utilities.js';
-var defined = U.defined, extend = U.extend;
+var defined = U.defined, extend = U.extend, fireEvent = U.fireEvent;
 import KeyboardNavigationHandler from '../../KeyboardNavigationHandler.js';
 import EventProvider from '../../Utils/EventProvider.js';
 import ChartUtilities from '../../Utils/ChartUtilities.js';
@@ -453,9 +453,13 @@ extend(SeriesKeyboardNavigation.prototype, /** @lends Highcharts.SeriesKeyboardN
                 [inverted ? [keys.left, keys.right] : [keys.up, keys.down], function (keyCode) {
                         return keyboardNavigation.onKbdVertical(this, keyCode);
                     }],
-                [[keys.enter, keys.space], function () {
-                        if (chart.highlightedPoint) {
-                            chart.highlightedPoint.firePointEvent('click');
+                [[keys.enter, keys.space], function (keyCode, event) {
+                        var point = chart.highlightedPoint;
+                        if (point) {
+                            fireEvent(point.series, 'click', extend(event, {
+                                point: point
+                            }));
+                            point.firePointEvent('click');
                         }
                         return this.response.success;
                     }]

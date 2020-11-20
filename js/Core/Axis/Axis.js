@@ -12,6 +12,7 @@ import A from '../Animation/AnimationUtilities.js';
 var animObject = A.animObject;
 import Color from '../Color/Color.js';
 import H from '../Globals.js';
+import palette from '../Palette.js';
 import O from '../Options.js';
 var defaultOptions = O.defaultOptions;
 import Tick from './Tick.js';
@@ -3006,10 +3007,10 @@ var Axis = /** @class */ (function () {
                         stroke: options.color ||
                             (categorized ?
                                 Color
-                                    .parse('${palette.highlightColor20}')
+                                    .parse(palette.highlightColor20)
                                     .setOpacity(0.25)
                                     .get() :
-                                '${palette.neutralColor20}'),
+                                palette.neutralColor20),
                         'stroke-width': pick(options.width, 1)
                     }).css({
                         'pointer-events': 'none'
@@ -4008,7 +4009,7 @@ var Axis = /** @class */ (function () {
              */
             style: {
                 /** @internal */
-                color: '${palette.neutralColor60}',
+                color: palette.neutralColor60,
                 /** @internal */
                 cursor: 'default',
                 /** @internal */
@@ -4854,7 +4855,7 @@ var Axis = /** @class */ (function () {
              */
             style: {
                 /** @internal */
-                color: '${palette.neutralColor60}'
+                color: palette.neutralColor60
             }
         },
         /**
@@ -4975,7 +4976,7 @@ var Axis = /** @class */ (function () {
          * @type    {Highcharts.ColorType}
          * @default #f2f2f2
          */
-        minorGridLineColor: '${palette.neutralColor5}',
+        minorGridLineColor: palette.neutralColor5,
         /**
          * Width of the minor, secondary grid lines.
          *
@@ -5001,7 +5002,7 @@ var Axis = /** @class */ (function () {
          * @type    {Highcharts.ColorType}
          * @default #999999
          */
-        minorTickColor: '${palette.neutralColor40}',
+        minorTickColor: palette.neutralColor40,
         /**
          * The color of the line marking the axis itself.
          *
@@ -5022,7 +5023,7 @@ var Axis = /** @class */ (function () {
          * @type    {Highcharts.ColorType}
          * @default #ccd6eb
          */
-        lineColor: '${palette.highlightColor20}',
+        lineColor: palette.highlightColor20,
         /**
          * The width of the line marking the axis itself.
          *
@@ -5059,7 +5060,7 @@ var Axis = /** @class */ (function () {
          * @type    {Highcharts.ColorType}
          * @default #e6e6e6
          */
-        gridLineColor: '${palette.neutralColor10}',
+        gridLineColor: palette.neutralColor10,
         // gridLineDashStyle: 'solid',
         /**
          * The width of the grid lines extending the ticks across the plot area.
@@ -5117,7 +5118,7 @@ var Axis = /** @class */ (function () {
          * @type    {Highcharts.ColorType}
          * @default #ccd6eb
          */
-        tickColor: '${palette.highlightColor20}'
+        tickColor: palette.highlightColor20
         // tickWidth: 1
     };
     /**
@@ -5889,7 +5890,7 @@ var Axis = /** @class */ (function () {
              */
             style: {
                 /** @internal */
-                color: '${palette.neutralColor100}',
+                color: palette.neutralColor100,
                 /** @internal */
                 fontSize: '11px',
                 /** @internal */
