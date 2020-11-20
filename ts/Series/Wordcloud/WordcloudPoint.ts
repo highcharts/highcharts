@@ -13,9 +13,14 @@
 
 import type SizeObject from '../../Core/Renderer/SizeObject';
 import type WordcloudPointOptions from './WordcloudPointOptions';
-import ColumnSeries from '../Column/ColumnSeries.js';
 import DrawPointMixin from '../../Mixins/DrawPoint.js';
-import WordcloudSeries from './WordcloudSeries.js';
+import BaseSeries from '../../Core/Series/Series.js';
+const {
+    seriesTypes: {
+        column: ColumnSeries
+    }
+} = BaseSeries;
+import WordcloudSeries from './WordcloudSeries';
 import U from '../../Core/Utilities.js';
 const { extend } = U;
 

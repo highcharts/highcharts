@@ -16,6 +16,7 @@
  *
  * */
 import type WordcloudPoint from './WordcloudPoint';
+import type WordcloudSeries from './WordcloudSeries';
 import type PositionObject from '../../Core/Renderer/PositionObject';
 import PolygonMixin from '../../Mixins/Polygon.js';
 const {
@@ -154,9 +155,9 @@ namespace WordcloudUtils {
      */
     export function archimedeanSpiral(
         attempt: number,
-        params?: Highcharts.WordcloudSpiralParamsObject
+        params?: WordcloudSeries.WordcloudSpiralParamsObject
     ): (boolean|PositionObject) {
-        var field: Highcharts.WordcloudFieldObject = (params as any).field,
+        var field: WordcloudSeries.WordcloudFieldObject = (params as any).field,
             result: (boolean|PositionObject) = false,
             maxDelta = (field.width * field.width) + (field.height * field.height),
             t = attempt * 0.8; // 0.2 * 4 = 0.8. Enlarging the spiral.
@@ -192,7 +193,7 @@ namespace WordcloudUtils {
      */
     export function squareSpiral(
         attempt: number,
-        params?: Highcharts.WordcloudSpiralParamsObject
+        params?: WordcloudSeries.WordcloudSpiralParamsObject
     ): (boolean|PositionObject) {
         var a = attempt * 4,
             k = Math.ceil((Math.sqrt(a) - 1) / 2),
@@ -257,10 +258,10 @@ namespace WordcloudUtils {
      */
     export function rectangularSpiral(
         attempt: number,
-        params?: Highcharts.WordcloudSpiralParamsObject
+        params?: WordcloudSeries.WordcloudSpiralParamsObject
     ): (boolean|PositionObject) {
         var result: PositionObject = squareSpiral(attempt, params) as any,
-            field: Highcharts.WordcloudFieldObject = (params as any).field;
+            field: WordcloudSeries.WordcloudFieldObject = (params as any).field;
 
         if (result) {
             result.x *= field.ratioX;
@@ -345,7 +346,7 @@ namespace WordcloudUtils {
         targetWidth: number,
         targetHeight: number,
         data: Array<WordcloudPoint>
-    ): Highcharts.WordcloudFieldObject {
+    ): WordcloudSeries.WordcloudFieldObject {
         var info: Highcharts.Dictionary<number> = data.reduce(function (
                 obj: Highcharts.Dictionary<number>,
                 point: WordcloudPoint
@@ -455,12 +456,12 @@ namespace WordcloudUtils {
      * Function with access to spiral positions.
      */
     export function getSpiral(
-        fn: Highcharts.WordcloudSpiralFunction,
-        params: Highcharts.WordcloudSpiralParamsObject
-    ): Highcharts.WordcloudSpiralFunction {
+        fn: WordcloudSeries.WordcloudSpiralFunction,
+        params: WordcloudSeries.WordcloudSpiralParamsObject
+    ): WordcloudSeries.WordcloudSpiralFunction {
         var length = 10000,
             i: number,
-            arr: Array<ReturnType<Highcharts.WordcloudSpiralFunction>> = [];
+            arr: Array<ReturnType<WordcloudSeries.WordcloudSpiralFunction>> = [];
 
         for (i = 1; i < length; i++) {
             // @todo unnecessary amount of precaclulation
@@ -469,7 +470,7 @@ namespace WordcloudUtils {
 
         return function (
             attempt: number
-        ): ReturnType<Highcharts.WordcloudSpiralFunction> {
+        ): ReturnType<WordcloudSeries.WordcloudSpiralFunction> {
             return attempt <= length ? arr[attempt - 1] : false;
         };
     }
@@ -491,7 +492,7 @@ namespace WordcloudUtils {
      */
     export function outsidePlayingField(
         rect: Highcharts.PolygonBoxObject,
-        field: Highcharts.WordcloudFieldObject
+        field: WordcloudSeries.WordcloudFieldObject
     ): boolean {
         var playingField = {
             left: -(field.width / 2),
@@ -528,7 +529,7 @@ namespace WordcloudUtils {
      */
     export function intersectionTesting(
         point: WordcloudPoint,
-        options: Highcharts.WordcloudTestOptionsObject
+        options: WordcloudSeries.WordcloudTestOptionsObject
     ): (boolean|PositionObject) {
         var placed = options.placed,
             field = options.field,
@@ -591,9 +592,9 @@ namespace WordcloudUtils {
      * Returns the extended playing field with updated height and width.
      */
     export function extendPlayingField(
-        field: Highcharts.WordcloudFieldObject,
+        field: WordcloudSeries.WordcloudFieldObject,
         rectangle: Highcharts.PolygonBoxObject
-    ): Highcharts.WordcloudFieldObject {
+    ): WordcloudSeries.WordcloudFieldObject {
         var height: number,
             width: number,
             ratioX: number,
@@ -601,7 +602,7 @@ namespace WordcloudUtils {
             x: number,
             extendWidth: number,
             extendHeight: number,
-            result: Highcharts.WordcloudFieldObject;
+            result: WordcloudSeries.WordcloudFieldObject;
 
         if (isObject(field) && isObject(rectangle)) {
             height = (rectangle.bottom - rectangle.top);
@@ -650,9 +651,9 @@ namespace WordcloudUtils {
      * Returns a modified field object.
      */
     export function updateFieldBoundaries(
-        field: Highcharts.WordcloudFieldObject,
+        field: WordcloudSeries.WordcloudFieldObject,
         rectangle: Highcharts.PolygonBoxObject
-    ): Highcharts.WordcloudFieldObject {
+    ): WordcloudSeries.WordcloudFieldObject {
         // @todo improve type checking.
         if (!isNumber(field.left) || field.left > rectangle.left) {
             field.left = rectangle.left;

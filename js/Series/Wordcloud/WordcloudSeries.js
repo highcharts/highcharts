@@ -24,7 +24,7 @@ var __extends = (this && this.__extends) || (function () {
     };
 })();
 import BaseSeries from '../../Core/Series/Series.js';
-import ColumnSeries from '../Column/ColumnSeries.js';
+var ColumnSeries = BaseSeries.seriesTypes.column;
 import H from '../../Core/Globals.js';
 var noop = H.noop;
 import LineSeries from '../Line/LineSeries.js';
@@ -34,7 +34,6 @@ import U from '../../Core/Utilities.js';
 var extend = U.extend, find = U.find, isArray = U.isArray, isNumber = U.isNumber, isObject = U.isObject, merge = U.merge;
 import WordcloudPoint from './WordcloudPoint.js';
 import WordcloudUtils from './WordcloudUtils.js';
-import '../Column/ColumnSeries.js';
 /**
  * @private
  * @class
