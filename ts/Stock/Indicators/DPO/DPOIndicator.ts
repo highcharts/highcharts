@@ -8,48 +8,48 @@
 
 'use strict';
 
-import type IndicatorValuesObject from './IndicatorValuesObject';
-import type LineSeries from '../../Series/Line/LineSeries';
+import type IndicatorValuesObject from '../IndicatorValuesObject';
+import type LineSeries from '../../../Series/Line/LineSeries';
+import type {
+    DPOOptions,
+    DPOParamsOptions
+} from './DPOOptions';
+import type DPOPoint from './DPOPoint';
 const {
     seriesTypes: {
         sma: SMAIndicator
     }
 } = BaseSeries;
-import type {
-    SMAOptions,
-    SMAParamsOptions
-} from './SMA/SMAOptions';
-import type SMAPoint from './SMA/SMAPoint';
-import BaseSeries from '../../Core/Series/Series.js';
-import U from '../../Core/Utilities.js';
+import BaseSeries from '../../../Core/Series/Series.js';
+import U from '../../../Core/Utilities.js';
 const {
-    extend,
     merge,
     correctFloat,
     pick
 } = U;
 
+/* eslint-disable valid-jsdoc */
+// Utils:
+
 /**
- * Internal types
  * @private
  */
-declare global {
-    namespace Highcharts {
-        interface DPOIndicatorOptions extends SMAOptions {
-            params?: DPOIndicatorParamsOptions;
-        }
+function accumulatePoints(
+    sum: number,
+    yVal: (Array<number> | Array<Array<number>>),
+    i: number,
+    index: number,
+    subtract?: boolean
+): number {
+    var price = pick<(number | undefined), number>(
+        (yVal[i] as any)[index], (yVal[i] as any)
+    );
 
-        interface DPOIndicatorParamsOptions extends SMAParamsOptions {
-            // for inheritance
-        }
-
-        class DPOIndicatorPoint extends SMAPoint {
-            public series: DPOIndicator;
-        }
+    if (subtract) {
+        return correctFloat(sum - price);
     }
+    return correctFloat(sum + price);
 }
-
-/* eslint-enable valid-jsdoc */
 
 /* *
  *
@@ -85,7 +85,7 @@ class DPOIndicator extends SMAIndicator {
      * @requires     stock/indicators/dpo
      * @optionparent plotOptions.dpo
      */
-    public static defaultOptions: Highcharts.DPOIndicatorOptions = merge(SMAIndicator.defaultOptions, {
+    public static defaultOptions: DPOOptions = merge(SMAIndicator.defaultOptions, {
         /**
          * Parameters used in calculation of Detrended Price Oscillator series
          * points.
@@ -96,15 +96,16 @@ class DPOIndicator extends SMAIndicator {
              */
             period: 21
         }
-    } as Highcharts.DPOIndicatorOptions)
+    } as DPOOptions)
 
     /* *
     *
     *   Properties
     *
     * */
-    public data: Array<Highcharts.DPOIndicatorPoint> = void 0 as any;
-    public points: Array<Highcharts.DPOIndicatorPoint> = void 0 as any;
+
+    public data: Array<DPOPoint> = void 0 as any;
+    public points: Array<DPOPoint> = void 0 as any;
 
     /* *
      *
@@ -116,26 +117,9 @@ class DPOIndicator extends SMAIndicator {
      * @lends Highcharts.Series#
      */
 
-    private accumulatePoints(
-        sum: number,
-        yVal: (Array<number> | Array<Array<number>>),
-        i: number,
-        index: number,
-        subtract?: boolean
-    ): number {
-        var price = pick<(number | undefined), number>(
-            (yVal[i] as any)[index], (yVal[i] as any)
-        );
-
-        if (subtract) {
-            return correctFloat(sum - price);
-        }
-        return correctFloat(sum + price);
-    }
-
     public getValues<TLinkedSeries extends LineSeries>(
         series: TLinkedSeries,
-        params: Highcharts.DPOIndicatorParamsOptions
+        params: DPOParamsOptions
     ): (IndicatorValuesObject<TLinkedSeries> | undefined) {
         var period: number = (params.period as any),
             index: number = (params.index as any),
@@ -163,7 +147,7 @@ class DPOIndicator extends SMAIndicator {
 
         // Accumulate first N-points for SMA
         for (i = 0; i < period - 1; i++) {
-            sum = this.accumulatePoints(sum, yVal, i, index);
+            sum = accumulatePoints(sum, yVal, i, index);
         }
 
         // Detrended Price Oscillator formula:
@@ -174,7 +158,7 @@ class DPOIndicator extends SMAIndicator {
             rangeIndex = j + range - 1;
 
             // adding the last period point
-            sum = this.accumulatePoints(sum, yVal, periodIndex, index);
+            sum = accumulatePoints(sum, yVal, periodIndex, index);
             price = pick<(number | undefined), number>(
                 (yVal[rangeIndex] as any)[index], (yVal[rangeIndex] as any)
             );
@@ -182,7 +166,7 @@ class DPOIndicator extends SMAIndicator {
             oscillator = price - sum / period;
 
             // substracting the first period point
-            sum = this.accumulatePoints(sum, yVal, j, index, true);
+            sum = accumulatePoints(sum, yVal, j, index, true);
 
             DPO.push([xVal[rangeIndex], oscillator]);
             xData.push(xVal[rangeIndex]);
@@ -205,7 +189,7 @@ class DPOIndicator extends SMAIndicator {
 
 interface DPOIndicator {
     nameBase: string;
-    options: Highcharts.DPOIndicatorOptions;
+    options: DPOOptions;
 }
 
 /* *
@@ -213,7 +197,8 @@ interface DPOIndicator {
  *  Registry
  *
  * */
-declare module '../../Core/Series/SeriesType' {
+
+declare module '../../../Core/Series/SeriesType' {
     interface SeriesTypeRegistry {
         dpo: typeof DPOIndicator;
     }
