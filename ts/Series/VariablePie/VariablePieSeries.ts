@@ -18,10 +18,8 @@
  *
  * */
 
-import type PiePoint from '../Pie/PiePoint';
-import type PiePointOptions from '../Pie/PiePointOptions';
-import type PieSeriesOptions from '../Pie/PieSeriesOptions';
-import type { SeriesStatesOptions } from '../../Core/Series/SeriesOptions';
+import type VariablePiePoint from './VariablePiePoint';
+import type VariablePieSeriesOptions from './VariablePieSeriesOptions';
 import BaseSeries from '../../Core/Series/Series.js';
 const {
     seriesTypes: {
@@ -45,22 +43,6 @@ const {
  */
 declare global {
     namespace Highcharts {
-        class VariablePiePoint extends PiePoint {
-            public labelDistance: number;
-            public options: VariablePiePointOptions;
-            public series: VariablePieSeries;
-        }
-        interface VariablePiePointOptions extends PiePointOptions {
-        }
-        interface VariablePieSeriesOptions extends PieSeriesOptions {
-            maxPointSize?: (number|string);
-            minPointSize?: (number|string);
-            sizeBy?: VariablePieSizeByValue;
-            states?: SeriesStatesOptions<VariablePieSeries>;
-            zMax?: number;
-            zMin?: number;
-        }
-        type VariablePieSizeByValue = ('area'|'radius');
     }
 }
 
@@ -103,7 +85,7 @@ class VariablePieSeries extends PieSeries {
      * @requires     modules/variable-pie.js
      * @optionparent plotOptions.variablepie
      */
-    public static defaultOptions: Highcharts.VariablePieSeriesOptions = merge(PieSeries.defaultOptions, {
+    public static defaultOptions: VariablePieSeriesOptions = merge(PieSeries.defaultOptions, {
         /**
          * The minimum size of the points' radius related to chart's `plotArea`.
          * If a number is set, it applies in pixels.
@@ -171,7 +153,7 @@ class VariablePieSeries extends PieSeries {
         tooltip: {
             pointFormat: '<span style="color:{point.color}">\u25CF</span> {series.name}<br/>Value: {point.y}<br/>Size: {point.z}<br/>'
         }
-    } as Highcharts.VariablePieSeriesOptions);
+    } as VariablePieSeriesOptions);
 
     /* *
      *
@@ -179,11 +161,11 @@ class VariablePieSeries extends PieSeries {
      *
      * */
 
-    public data: Array<Highcharts.VariablePiePoint> = void 0 as any;
+    public data: Array<VariablePiePoint> = void 0 as any;
 
-    public options: Highcharts.VariablePieSeriesOptions = void 0 as any;
+    public options: VariablePieSeriesOptions = void 0 as any;
 
-    public points: Array<Highcharts.VariablePiePoint> = void 0 as any;
+    public points: Array<VariablePiePoint> = void 0 as any;
 
     public radii: Array<number> = void 0 as any;
 
@@ -358,7 +340,7 @@ class VariablePieSeries extends PieSeries {
             ignoreHiddenPoint = options.ignoreHiddenPoint,
             i: (number|undefined),
             len = points.length,
-            point: (Highcharts.VariablePiePoint|undefined),
+            point: (VariablePiePoint|undefined),
             pointRadii,
             pointRadiusX,
             pointRadiusY;
@@ -512,7 +494,7 @@ class VariablePieSeries extends PieSeries {
 interface VariablePieSeries {
     parallelArrays: Array<string>;
     pointArrayMap: Array<string>;
-    pointClass: typeof Highcharts.VariablePiePoint;
+    pointClass: typeof VariablePiePoint;
 }
 extend(VariablePieSeries.prototype, {
     pointArrayMap: ['y', 'z'],
