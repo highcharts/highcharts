@@ -47,6 +47,7 @@ const {
     }
 } = BaseSeries;
 import H from '../Core/Globals.js';
+import palette from '../Core/Palette.js';
 import U from '../Core/Utilities.js';
 const {
     css,
@@ -219,7 +220,7 @@ BaseSeries.seriesType<typeof Highcharts.OrganizationSeries>(
          * @type {Highcharts.ColorString}
          * @private
          */
-        borderColor: '${palette.neutralColor60}',
+        borderColor: palette.neutralColor60,
         /**
          * The border radius of the node cards.
          *
@@ -378,7 +379,7 @@ BaseSeries.seriesType<typeof Highcharts.OrganizationSeries>(
          * @type {Highcharts.ColorString}
          * @private
          */
-        linkColor: '${palette.neutralColor60}',
+        linkColor: palette.neutralColor60,
         /**
          * The line width of the links connecting nodes, in pixels.
          *

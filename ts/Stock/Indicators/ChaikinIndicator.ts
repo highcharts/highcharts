@@ -8,6 +8,12 @@
 
 'use strict';
 
+import type EMAIndicator from './EMA/EMAIndicator';
+import type {
+    EMAOptions,
+    EMAParamsOptions
+} from './EMA/EMAOptions';
+import type EMAPoint from './EMA/EMAPoint';
 import type IndicatorValuesObject from './IndicatorValuesObject';
 import type LineSeries from '../../Series/Line/LineSeries';
 import BaseSeries from '../../Core/Series/Series.js';
@@ -45,16 +51,16 @@ declare global {
         }
 
         interface ChaikinIndicatorParamsOptions
-            extends EMAIndicatorParamsOptions {
+            extends EMAParamsOptions {
             periods?: Array<number>;
             volumeSeriesID?: string;
         }
 
-        class ChaikinIndicatorPoint extends EMAIndicatorPoint {
+        class ChaikinIndicatorPoint extends EMAPoint {
             public series: ChaikinIndicator;
         }
 
-        interface ChaikinIndicatorOptions extends EMAIndicatorOptions {
+        interface ChaikinIndicatorOptions extends EMAOptions {
             params?: ChaikinIndicatorParamsOptions;
         }
     }

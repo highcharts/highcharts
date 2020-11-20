@@ -33,6 +33,7 @@ const {
         processData: seriesProcessData
     }
 } = LineSeries;
+import palette from '../../Core/Palette.js';
 import Point from '../Series/Point.js';
 const {
     prototype: {
@@ -690,12 +691,12 @@ addEvent(Axis, 'afterDrawCrosshair', function (
                 .attr({
                     fill: options.backgroundColor ||
                         (this.series[0] && this.series[0].color) ||
-                        '${palette.neutralColor60}',
+                        palette.neutralColor60,
                     stroke: options.borderColor || '',
                     'stroke-width': options.borderWidth || 0
                 })
                 .css(extend({
-                    color: '${palette.backgroundColor}',
+                    color: palette.backgroundColor,
                     fontWeight: 'normal',
                     fontSize: '11px',
                     textAlign: 'center'

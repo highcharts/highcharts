@@ -10,6 +10,7 @@
 'use strict';
 import Axis from './Axis.js';
 import H from '../Globals.js';
+import palette from '../../Core/Palette.js';
 /**
  * Options for plot bands on axes.
  *
@@ -74,7 +75,7 @@ var PlotLineOrBand = /** @class */ (function () {
         // Set the presentational attributes
         if (!axis.chart.styledMode) {
             if (isLine) {
-                attribs.stroke = color || '${palette.neutralColor40}';
+                attribs.stroke = color || palette.neutralColor40;
                 attribs['stroke-width'] = pick(options.width, 1);
                 if (options.dashStyle) {
                     attribs.dashstyle =
@@ -82,7 +83,7 @@ var PlotLineOrBand = /** @class */ (function () {
                 }
             }
             else if (isBand) { // plot band
-                attribs.fill = color || '${palette.highlightColor10}';
+                attribs.fill = color || palette.highlightColor10;
                 if (options.borderWidth) {
                     attribs.stroke = options.borderColor;
                     attribs['stroke-width'] = options.borderWidth;

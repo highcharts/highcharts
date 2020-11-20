@@ -35,6 +35,7 @@ const {
     svg,
     win
 } = H;
+import palette from '../../Core/Palette.js';
 import Pointer from '../../Core/Pointer.js';
 import SVGElement from '../../Core/Renderer/SVG/SVGElement.js';
 import SVGRenderer from '../../Core/Renderer/SVG/SVGRenderer3D.js';
@@ -1046,7 +1047,7 @@ if (!svg) {
                     // apply the opacity
                     markup = [
                         '<stroke color="',
-                        shadowOptions.color || '${palette.neutralColor100}',
+                        shadowOptions.color || palette.neutralColor100,
                         '" opacity="', shadowElementOpacity * i, '"/>'];
                     createElement(
                         renderer.prepVML(markup),

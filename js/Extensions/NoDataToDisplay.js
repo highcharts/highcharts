@@ -12,6 +12,7 @@
  *
  * */
 import Chart from '../Core/Chart/Chart.js';
+import palette from '../Core/Palette.js';
 import U from '../Core/Utilities.js';
 var addEvent = U.addEvent, extend = U.extend, getOptions = U.getOptions, merge = U.merge;
 var chartPrototype = Chart.prototype, defaultOptions = getOptions();
@@ -114,7 +115,7 @@ defaultOptions.noData = {
         /** @ignore */
         fontSize: '12px',
         /** @ignore */
-        color: '${palette.neutralColor60}'
+        color: palette.neutralColor60
     }
 };
 /**

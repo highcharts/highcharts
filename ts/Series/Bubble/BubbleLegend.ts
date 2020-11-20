@@ -28,6 +28,7 @@ import H from '../../Core/Globals.js';
 const { noop } = H;
 import Legend from '../../Core/Legend.js';
 import LineSeries from '../Line/LineSeries.js';
+import palette from '../../Core/Palette.js';
 import U from '../../Core/Utilities.js';
 const {
     addEvent,
@@ -672,7 +673,7 @@ class BubbleLegend {
             'font-size': (options.labels as any).style.fontSize,
             fill: pick(
                 (options.labels as any).style.color,
-                '${palette.neutralColor100}'
+                palette.neutralColor100
             ),
             'z-index': options.zIndex,
             align: rtl || labelsOnLeft ? 'right' : 'left'

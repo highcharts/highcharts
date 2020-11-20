@@ -35,6 +35,7 @@ import H from '../../Core/Globals.js';
 const { noop } = H;
 import LegendSymbolMixin from '../../Mixins/LegendSymbol.js';
 import LineSeries from '../Line/LineSeries.js';
+import palette from '../../Core/Palette.js';
 import U from '../../Core/Utilities.js';
 const {
     clamp,
@@ -383,7 +384,7 @@ class ColumnSeries extends LineSeries {
                  * @default #cccccc
                  * @product highcharts highstock gantt
                  */
-                color: '${palette.neutralColor20}',
+                color: palette.neutralColor20,
 
                 /**
                  * A specific border color for the selected point.
@@ -392,7 +393,7 @@ class ColumnSeries extends LineSeries {
                  * @default #000000
                  * @product highcharts highstock gantt
                  */
-                borderColor: '${palette.neutralColor100}'
+                borderColor: palette.neutralColor100
             }
         },
 
@@ -467,7 +468,7 @@ class ColumnSeries extends LineSeries {
          *
          * @private
          */
-        borderColor: '${palette.backgroundColor}'
+        borderColor: palette.backgroundColor
 
     });
 

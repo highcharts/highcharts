@@ -31,6 +31,7 @@ import FlagsPoint from './FlagsPoint.js';
 import H from '../../Core/Globals.js';
 const { noop } = H;
 import OnSeriesMixin from '../../Mixins/OnSeries.js';
+import palette from '../../Core/Palette.js';
 import SVGElement from '../../Core/Renderer/SVG/SVGElement.js';
 import U from '../../Core/Utilities.js';
 const {
@@ -263,7 +264,7 @@ class FlagsSeries extends ColumnSeries {
          * @type    {Highcharts.ColorString|Highcharts.GradientColorObject|Highcharts.PatternObject}
          * @product highstock
          */
-        fillColor: '${palette.backgroundColor}',
+        fillColor: palette.backgroundColor,
 
         /**
          * The color of the line/border of the flag.
@@ -298,7 +299,7 @@ class FlagsSeries extends ColumnSeries {
                  * @type    {Highcharts.ColorString|Highcharts.GradientColorObject|Highcharts.PatternObject}
                  * @product highstock
                  */
-                lineColor: '${palette.neutralColor100}',
+                lineColor: palette.neutralColor100,
 
                 /**
                  * The fill or background color of the flag.
@@ -306,7 +307,7 @@ class FlagsSeries extends ColumnSeries {
                  * @type    {Highcharts.ColorString|Highcharts.GradientColorObject|Highcharts.PatternObject}
                  * @product highstock
                  */
-                fillColor: '${palette.highlightColor20}'
+                fillColor: palette.highlightColor20
             }
         },
 

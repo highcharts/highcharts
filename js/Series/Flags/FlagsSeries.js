@@ -27,6 +27,7 @@ import FlagsPoint from './FlagsPoint.js';
 import H from '../../Core/Globals.js';
 var noop = H.noop;
 import OnSeriesMixin from '../../Mixins/OnSeries.js';
+import palette from '../../Core/Palette.js';
 import SVGElement from '../../Core/Renderer/SVG/SVGElement.js';
 import U from '../../Core/Utilities.js';
 var addEvent = U.addEvent, defined = U.defined, extend = U.extend, merge = U.merge, objectEach = U.objectEach, wrap = U.wrap;
@@ -391,7 +392,7 @@ var FlagsSeries = /** @class */ (function (_super) {
          * @type    {Highcharts.ColorString|Highcharts.GradientColorObject|Highcharts.PatternObject}
          * @product highstock
          */
-        fillColor: '${palette.backgroundColor}',
+        fillColor: palette.backgroundColor,
         /**
          * The color of the line/border of the flag.
          *
@@ -421,14 +422,14 @@ var FlagsSeries = /** @class */ (function (_super) {
                  * @type    {Highcharts.ColorString|Highcharts.GradientColorObject|Highcharts.PatternObject}
                  * @product highstock
                  */
-                lineColor: '${palette.neutralColor100}',
+                lineColor: palette.neutralColor100,
                 /**
                  * The fill or background color of the flag.
                  *
                  * @type    {Highcharts.ColorString|Highcharts.GradientColorObject|Highcharts.PatternObject}
                  * @product highstock
                  */
-                fillColor: '${palette.highlightColor20}'
+                fillColor: palette.highlightColor20
             }
         },
         /**
