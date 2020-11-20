@@ -548,6 +548,11 @@ extend(defaultOptions, {
          * The date format in the input boxes when not selected for editing.
          * Defaults to `%b %e, %Y`.
          *
+         * This is used to determine which type of input to show,
+         * `datetime-local`, `date` or `time` and falling back to `text` when
+         * the browser does not support the input type or the format contains
+         * milliseconds.
+         *
          * @sample {highstock} stock/rangeselector/input-format/
          *         Milliseconds in the range selector
          *
@@ -562,6 +567,8 @@ extend(defaultOptions, {
          * The first argument passed is a value to parse,
          * second is a boolean indicating use of the UTC time.
          *
+         * This will only get called for inputs of type `text`.
+         *
          * @sample {highstock} stock/rangeselector/input-format/
          *         Milliseconds in the range selector
          *
@@ -574,6 +581,8 @@ extend(defaultOptions, {
          * The date format in the input boxes when they are selected for
          * editing. This must be a format that is recognized by JavaScript
          * Date.parse.
+         *
+         * This will only be used for inputs of type `text`.
          *
          * @sample {highstock} stock/rangeselector/input-format/
          *         Milliseconds in the range selector
