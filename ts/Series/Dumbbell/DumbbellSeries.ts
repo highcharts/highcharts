@@ -38,6 +38,7 @@ const {
 } = BaseSeries;
 const { prototype: areaRangeProto } = AreaRangeSeries;
 import SVGRenderer from '../../Core/Renderer/SVG/SVGRenderer.js';
+import palette from '../../Core/Palette.js';
 import H from '../../Core/Globals.js';
 const { noop, TrackerMixin } = H;
 import U from '../../Core/Utilities.js';
@@ -127,7 +128,7 @@ class DumbbellSeries extends AreaRangeSeries {
              * @since 8.0.0
              * @product   highcharts highstock
              */
-            lowColor: '${palette.neutralColor80}',
+            lowColor: palette.neutralColor80,
             /**
              * Color of the line that connects the dumbbell point's values.
              * By default it is the series' color.
