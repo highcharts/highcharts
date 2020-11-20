@@ -8,6 +8,12 @@
 
 'use strict';
 
+import type EMAIndicator from './EMA/EMAIndicator';
+import type {
+    EMAOptions,
+    EMAParamsOptions
+} from './EMA/EMAOptions';
+import type EMAPoint from './EMA/EMAPoint';
 import type IndicatorValuesObject from './IndicatorValuesObject';
 import type LineSeries from '../../Series/Line/LineSeries';
 import BaseSeries from '../../Core/Series/Series.js';
@@ -62,15 +68,15 @@ declare global {
             EMApercent?: number;
         }
 
-        interface TEMAIndicatorParamsOptions extends EMAIndicatorParamsOptions {
+        interface TEMAIndicatorParamsOptions extends EMAParamsOptions {
             // for inheritance
         }
 
-        class TEMAIndicatorPoint extends EMAIndicatorPoint {
+        class TEMAIndicatorPoint extends EMAPoint {
             public series: TEMAIndicator;
         }
 
-        interface TEMAIndicatorOptions extends EMAIndicatorOptions {
+        interface TEMAIndicatorOptions extends EMAOptions {
             params?: TEMAIndicatorParamsOptions;
         }
 

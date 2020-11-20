@@ -30,6 +30,7 @@ import H from '../../Core/Globals.js';
 var noop = H.noop;
 import LegendSymbolMixin from '../../Mixins/LegendSymbol.js';
 import LineSeries from '../Line/LineSeries.js';
+import palette from '../../Core/Palette.js';
 import U from '../../Core/Utilities.js';
 var clamp = U.clamp, defined = U.defined, extend = U.extend, isArray = U.isArray, isNumber = U.isNumber, merge = U.merge, pick = U.pick, objectEach = U.objectEach;
 /**
@@ -830,7 +831,7 @@ var ColumnSeries = /** @class */ (function (_super) {
                  * @default #cccccc
                  * @product highcharts highstock gantt
                  */
-                color: '${palette.neutralColor20}',
+                color: palette.neutralColor20,
                 /**
                  * A specific border color for the selected point.
                  *
@@ -838,7 +839,7 @@ var ColumnSeries = /** @class */ (function (_super) {
                  * @default #000000
                  * @product highcharts highstock gantt
                  */
-                borderColor: '${palette.neutralColor100}'
+                borderColor: palette.neutralColor100
             }
         },
         dataLabels: {
@@ -905,7 +906,7 @@ var ColumnSeries = /** @class */ (function (_super) {
          *
          * @private
          */
-        borderColor: '${palette.backgroundColor}'
+        borderColor: palette.backgroundColor
     });
     return ColumnSeries;
 }(LineSeries));

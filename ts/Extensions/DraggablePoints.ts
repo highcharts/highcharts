@@ -13,6 +13,7 @@
 'use strict';
 
 import type AnimationOptionsObject from '../Core/Animation/AnimationOptionsObject';
+import type AreaRangePoint from '../Series/AreaRange/AreaRangePoint';
 import type BBoxObject from '../Core/Renderer/BBoxObject';
 import type BoxPlotPoint from '../Series/BoxPlot/BoxPlotPoint';
 import type BulletPoint from '../Series/Bullet/BulletPoint';
@@ -977,7 +978,7 @@ if (seriesTypes.arearange) {
             seriesTypes.columnrange.prototype.dragDropProps,
         // Use a circle covering the marker as drag handle
         arearangeHandleFormatter = function (
-            point: Highcharts.AreaRangePoint
+            point: AreaRangePoint
         ): SVGPath {
             var radius = point.graphic ?
                 point.graphic.getBBox().width / 2 + 1 :
@@ -1007,7 +1008,7 @@ if (seriesTypes.arearange) {
             resize: true,
             resizeSide: 'bottom',
             handlePositioner: function (
-                point: Highcharts.AreaRangePoint
+                point: AreaRangePoint
             ): PositionObject {
                 var bBox = point.lowerGraphic && point.lowerGraphic.getBBox();
 
@@ -1034,7 +1035,7 @@ if (seriesTypes.arearange) {
             resize: true,
             resizeSide: 'top',
             handlePositioner: function (
-                point: Highcharts.AreaRangePoint
+                point: AreaRangePoint
             ): PositionObject {
                 var bBox = point.upperGraphic && point.upperGraphic.getBBox();
 

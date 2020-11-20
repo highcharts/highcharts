@@ -9,20 +9,20 @@
  * */
 'use strict';
 import BaseSeries from '../Core/Series/Series.js';
-var seriesTypes = BaseSeries.seriesTypes;
+var _a = BaseSeries.seriesTypes, areaRangeProto = _a.arearange.prototype, columnRangeProto = _a.columnrange.prototype;
 import ColumnSeries from './Column/ColumnSeries.js';
 var colProto = ColumnSeries.prototype;
 import LineSeries from './Line/LineSeries.js';
 var seriesProto = LineSeries.prototype;
+import palette from '../Core/Palette.js';
 import SVGRenderer from '../Core/Renderer/SVG/SVGRenderer.js';
 import H from '../Core/Globals.js';
 var noop = H.noop;
 import U from '../Core/Utilities.js';
 var extend = U.extend, pick = U.pick;
-import './AreaRangeSeries.js';
 import './ColumnRangeSeries.js';
 import '../Core/Interaction.js';
-var areaRangeProto = seriesTypes.arearange.prototype, columnRangeProto = seriesTypes.columnrange.prototype, areaRangePointProto = areaRangeProto.pointClass.prototype, TrackerMixin = H.TrackerMixin; // Interaction
+var areaRangePointProto = areaRangeProto.pointClass.prototype, TrackerMixin = H.TrackerMixin; // Interaction
 /* *
  *
  *  Class
@@ -72,7 +72,7 @@ BaseSeries.seriesType('dumbbell', 'arearange', {
      * @since 8.0.0
      * @product   highcharts highstock
      */
-    lowColor: '${palette.neutralColor80}',
+    lowColor: palette.neutralColor80,
     /**
      * Color of the line that connects the dumbbell point's values.
      * By default it is the series' color.
