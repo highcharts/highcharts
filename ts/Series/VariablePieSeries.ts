@@ -12,19 +12,30 @@
 
 'use strict';
 
+/* *
+ *
+ *  Imports
+ *
+ * */
+
 import type PiePoint from './Pie/PiePoint';
 import type PiePointOptions from './Pie/PiePointOptions';
-import type PieSeries from './Pie/PieSeries';
 import type PieSeriesOptions from './Pie/PieSeriesOptions';
 import type { SeriesStatesOptions } from '../Core/Series/SeriesOptions';
 import BaseSeries from '../Core/Series/Series.js';
-const { seriesTypes } = BaseSeries;
+const {
+    seriesTypes: {
+        pie: PieSeries
+    }
+} = BaseSeries;
 import U from '../Core/Utilities.js';
 const {
     arrayMax,
     arrayMin,
     clamp,
+    extend,
     fireEvent,
+    merge,
     pick
 } = U;
 
@@ -38,24 +49,6 @@ declare global {
             public labelDistance: number;
             public options: VariablePiePointOptions;
             public series: VariablePieSeries;
-        }
-        class VariablePieSeries extends PieSeries {
-            public data: Array<VariablePiePoint>;
-            public options: VariablePieSeriesOptions;
-            public parallelArrays: Array<string>;
-            public pointArrayMap: Array<string>;
-            public pointClass: typeof VariablePiePoint;
-            public points: Array<VariablePiePoint>;
-            public radii: Array<number>;
-            public calculateExtremes(): void;
-            public getRadii(
-                zMin: number,
-                zMax: number,
-                minSize: number,
-                maxSize: number
-            ): void;
-            public redraw(): void;
-            public zValEval(zVal: (number|string|undefined)): (boolean|null);
         }
         interface VariablePiePointOptions extends PiePointOptions {
         }
@@ -72,20 +65,6 @@ declare global {
 }
 
 /**
- * @private
- */
-declare module '../Core/Series/SeriesType' {
-    interface SeriesTypeRegistry {
-        variablepie: typeof Highcharts.VariablePieSeries;
-    }
-}
-
-import '../Core/Options.js';
-import './Pie/PieSeries.js';
-
-var pieProto = seriesTypes.pie.prototype;
-
-/**
  * @typedef {"area"|"radius"} Highcharts.VariablePieSizeByValue
  */
 
@@ -100,9 +79,14 @@ var pieProto = seriesTypes.pie.prototype;
  *
  * @augments Highcharts.Series
  */
-BaseSeries.seriesType<typeof Highcharts.VariablePieSeries>(
-    'variablepie',
-    'pie',
+class VariablePieSeries extends PieSeries {
+
+    /* *
+     *
+     *  Static Properties
+     *
+     * */
+
     /**
      * A variable pie series is a two dimensional series type, where each point
      * renders an Y and Z value.  Each point is drawn as a pie slice where the
@@ -119,7 +103,7 @@ BaseSeries.seriesType<typeof Highcharts.VariablePieSeries>(
      * @requires     modules/variable-pie.js
      * @optionparent plotOptions.variablepie
      */
-    {
+    public static defaultOptions: Highcharts.VariablePieSeriesOptions = merge(PieSeries.defaultOptions, {
         /**
          * The minimum size of the points' radius related to chart's `plotArea`.
          * If a number is set, it applies in pixels.
@@ -187,315 +171,379 @@ BaseSeries.seriesType<typeof Highcharts.VariablePieSeries>(
         tooltip: {
             pointFormat: '<span style="color:{point.color}">\u25CF</span> {series.name}<br/>Value: {point.y}<br/>Size: {point.z}<br/>'
         }
-    }, {
-        pointArrayMap: ['y', 'z'],
-        parallelArrays: ['x', 'y', 'z'],
+    } as Highcharts.VariablePieSeriesOptions);
 
-        // It is needed to null series.center on chart redraw. Probably good
-        // idea will be to add this option in directly in pie series.
-        redraw: function (this: Highcharts.VariablePieSeries): void {
-            this.center = null as any;
-            (pieProto.redraw as any).call(this, arguments);
-        },
+    /* *
+     *
+     *  Properties
+     *
+     * */
 
-        // For arrayMin and arrayMax calculations array shouldn't have
-        // null/undefined/string values. In this case it is needed to check if
-        // points Z value is a Number.
-        zValEval: function (
-            this: Highcharts.VariablePieSeries,
-            zVal: (number|string|undefined)
-        ): (boolean|null) {
-            if (typeof zVal === 'number' && !isNaN(zVal)) {
-                return true;
+    public data: Array<Highcharts.VariablePiePoint> = void 0 as any;
+
+    public options: Highcharts.VariablePieSeriesOptions = void 0 as any;
+
+    public points: Array<Highcharts.VariablePiePoint> = void 0 as any;
+
+}
+
+/* *
+ *
+ *  Prototype Properties
+ *
+ * */
+
+interface VariablePieSeries {
+    parallelArrays: Array<string>;
+    pointArrayMap: Array<string>;
+    pointClass: typeof Highcharts.VariablePiePoint;
+    radii: Array<number>;
+    calculateExtremes(): void;
+    getRadii(
+        zMin: number,
+        zMax: number,
+        minSize: number,
+        maxSize: number
+    ): void;
+    redraw(): void;
+    zValEval(zVal: (number|string|undefined)): (boolean|null);
+}
+extend(VariablePieSeries.prototype, {
+    pointArrayMap: ['y', 'z'],
+    parallelArrays: ['x', 'y', 'z'],
+
+    // It is needed to null series.center on chart redraw. Probably good
+    // idea will be to add this option in directly in pie series.
+    redraw: function (this: VariablePieSeries): void {
+        this.center = null as any;
+        PieSeries.prototype.redraw.apply(this, arguments);
+    },
+
+    // For arrayMin and arrayMax calculations array shouldn't have
+    // null/undefined/string values. In this case it is needed to check if
+    // points Z value is a Number.
+    zValEval: function (
+        this: VariablePieSeries,
+        zVal: (number|string|undefined)
+    ): (boolean|null) {
+        if (typeof zVal === 'number' && !isNaN(zVal)) {
+            return true;
+        }
+        return null;
+    },
+
+    // Before standard translate method for pie chart it is needed to
+    // calculate min/max radius of each pie slice based on its Z value.
+    calculateExtremes: function (this: VariablePieSeries): void {
+        var series = this,
+            chart = series.chart,
+            plotWidth = chart.plotWidth,
+            plotHeight = chart.plotHeight,
+            seriesOptions = series.options,
+            slicingRoom = 2 * (seriesOptions.slicedOffset || 0),
+            zMin: (number|undefined),
+            zMax: (number|undefined),
+            zData: Array<number> = series.zData as any,
+            smallestSize = Math.min(plotWidth, plotHeight) - slicingRoom,
+            // Min and max size of pie slice:
+            extremes: Highcharts.Dictionary<number> = {},
+            // In pie charts size of a pie is changed to make space for
+            // dataLabels, then series.center is changing.
+            positions = series.center || series.getCenter();
+
+        ['minPointSize', 'maxPointSize'].forEach(function (
+            prop: string
+        ): void {
+            var length: (number|string) = (seriesOptions as any)[prop],
+                isPercent = /%$/.test(length as any);
+
+            length = parseInt(length as any, 10);
+            extremes[prop] = isPercent ?
+                smallestSize * length / 100 :
+                length * 2; // Because it should be radius, not diameter.
+        });
+
+        series.minPxSize = positions[3] + extremes.minPointSize;
+        series.maxPxSize = clamp(
+            positions[2],
+            positions[3] + extremes.minPointSize,
+            extremes.maxPointSize
+        );
+
+        if (zData.length) {
+            zMin = pick(
+                seriesOptions.zMin,
+                arrayMin(zData.filter(series.zValEval))
+            );
+            zMax = pick(
+                seriesOptions.zMax,
+                arrayMax(zData.filter(series.zValEval))
+            );
+            this.getRadii(zMin, zMax, series.minPxSize, series.maxPxSize);
+        }
+    },
+
+    /* eslint-disable valid-jsdoc */
+
+    /**
+     * Finding radius of series points based on their Z value and min/max Z
+     * value for all series.
+     *
+     * @private
+     * @function Highcharts.Series#getRadii
+     *
+     * @param {number} zMin
+     *        Min threshold for Z value. If point's Z value is smaller that
+     *        zMin, point will have the smallest possible radius.
+     *
+     * @param {number} zMax
+     *        Max threshold for Z value. If point's Z value is bigger that
+     *        zMax, point will have the biggest possible radius.
+     *
+     * @param {number} minSize
+     *        Minimal pixel size possible for radius.
+     *
+     * @param {numbner} maxSize
+     *        Minimal pixel size possible for radius.
+     *
+     * @return {void}
+     */
+    getRadii: function (
+        this: VariablePieSeries,
+        zMin: number,
+        zMax: number,
+        minSize: number,
+        maxSize: number
+    ): void {
+        var i = 0,
+            pos: (number|undefined),
+            zData: Array<number> = this.zData as any,
+            len = zData.length,
+            radii: Array<number> = [],
+            options = this.options,
+            sizeByArea = options.sizeBy !== 'radius',
+            zRange = zMax - zMin,
+            value: (number|null|undefined),
+            radius: (number|undefined);
+
+
+        // Calculate radius for all pie slice's based on their Z values
+        for (i; i < len; i++) {
+            // if zData[i] is null/undefined/string we need to take zMin for
+            // smallest radius.
+            value = this.zValEval(zData[i]) ? zData[i] : zMin;
+
+            if (value <= zMin) {
+                radius = minSize / 2;
+            } else if (value >= zMax) {
+                radius = maxSize / 2;
+            } else {
+                // Relative size, a number between 0 and 1
+                pos = zRange > 0 ? (value - zMin) / zRange : 0.5;
+
+                if (sizeByArea) {
+                    pos = Math.sqrt(pos);
+                }
+
+                radius = Math.ceil(minSize + pos * (maxSize - minSize)) / 2;
             }
-            return null;
-        },
+            radii.push(radius);
+        }
+        this.radii = radii;
+    },
 
-        // Before standard translate method for pie chart it is needed to
-        // calculate min/max radius of each pie slice based on its Z value.
-        calculateExtremes: function (this: Highcharts.VariablePieSeries): void {
-            var series = this,
-                chart = series.chart,
-                plotWidth = chart.plotWidth,
-                plotHeight = chart.plotHeight,
-                seriesOptions = series.options,
-                slicingRoom = 2 * (seriesOptions.slicedOffset || 0),
-                zMin: (number|undefined),
-                zMax: (number|undefined),
-                zData: Array<number> = series.zData as any,
-                smallestSize = Math.min(plotWidth, plotHeight) - slicingRoom,
-                // Min and max size of pie slice:
-                extremes: Highcharts.Dictionary<number> = {},
-                // In pie charts size of a pie is changed to make space for
-                // dataLabels, then series.center is changing.
-                positions = series.center || series.getCenter();
+    /* eslint-enable valid-jsdoc */
 
-            ['minPointSize', 'maxPointSize'].forEach(function (
-                prop: string
-            ): void {
-                var length: (number|string) = (seriesOptions as any)[prop],
-                    isPercent = /%$/.test(length as any);
+    // Extend translate by updating radius for each pie slice instead of
+    // using one global radius.
+    translate: function (
+        this: VariablePieSeries,
+        positions: Array<number>
+    ): void {
 
-                length = parseInt(length as any, 10);
-                extremes[prop] = isPercent ?
-                    smallestSize * length / 100 :
-                    length * 2; // Because it should be radius, not diameter.
-            });
+        this.generatePoints();
 
-            series.minPxSize = positions[3] + extremes.minPointSize;
-            series.maxPxSize = clamp(
-                positions[2],
-                positions[3] + extremes.minPointSize,
-                extremes.maxPointSize
+        var series = this,
+            cumulative = 0,
+            precision = 1000, // issue #172
+            options = series.options,
+            slicedOffset: number = options.slicedOffset as any,
+            connectorOffset = slicedOffset + (options.borderWidth || 0),
+            finalConnectorOffset: (number|undefined),
+            start,
+            end,
+            angle,
+            startAngle = options.startAngle || 0,
+            startAngleRad = Math.PI / 180 * (startAngle - 90),
+            endAngleRad = Math.PI / 180 * (pick(
+                options.endAngle,
+                startAngle + 360
+            ) - 90),
+            circ = endAngleRad - startAngleRad, // 2 * Math.PI,
+            points = series.points,
+            // the x component of the radius vector for a given point
+            radiusX: (number|undefined),
+            radiusY: (number|undefined),
+            labelDistance = (options.dataLabels as any).distance,
+            ignoreHiddenPoint = options.ignoreHiddenPoint,
+            i: (number|undefined),
+            len = points.length,
+            point: (Highcharts.VariablePiePoint|undefined),
+            pointRadii,
+            pointRadiusX,
+            pointRadiusY;
+
+        series.startAngleRad = startAngleRad;
+        series.endAngleRad = endAngleRad;
+        // Use calculateExtremes to get series.radii array.
+        series.calculateExtremes();
+
+        // Get positions - either an integer or a percentage string must be
+        // given. If positions are passed as a parameter, we're in a
+        // recursive loop for adjusting space for data labels.
+        if (!positions) {
+            series.center = positions = series.getCenter();
+        }
+
+        // Calculate the geometry for each point
+        for (i = 0; i < len; i++) {
+
+            point = points[i];
+            pointRadii = series.radii[i];
+
+            // Used for distance calculation for specific point.
+            point.labelDistance = pick(
+                point.options.dataLabels &&
+                point.options.dataLabels.distance,
+                labelDistance
             );
 
-            if (zData.length) {
-                zMin = pick(
-                    seriesOptions.zMin,
-                    arrayMin(zData.filter(series.zValEval))
-                );
-                zMax = pick(
-                    seriesOptions.zMax,
-                    arrayMax(zData.filter(series.zValEval))
-                );
-                this.getRadii(zMin, zMax, series.minPxSize, series.maxPxSize);
+            // Saved for later dataLabels distance calculation.
+            series.maxLabelDistance = Math.max(
+                series.maxLabelDistance || 0,
+                point.labelDistance
+            );
+
+            // set start and end angle
+            start = startAngleRad + (cumulative * circ);
+            if (!ignoreHiddenPoint || point.visible) {
+                cumulative += (point.percentage as any) / 100;
             }
-        },
+            end = startAngleRad + (cumulative * circ);
 
-        /* eslint-disable valid-jsdoc */
+            // set the shape
+            point.shapeType = 'arc';
+            point.shapeArgs = {
+                x: positions[0],
+                y: positions[1],
+                r: pointRadii,
+                innerR: positions[3] / 2,
+                start: Math.round(start * precision) / precision,
+                end: Math.round(end * precision) / precision
+            };
 
-        /**
-         * Finding radius of series points based on their Z value and min/max Z
-         * value for all series.
-         *
-         * @private
-         * @function Highcharts.Series#getRadii
-         *
-         * @param {number} zMin
-         *        Min threshold for Z value. If point's Z value is smaller that
-         *        zMin, point will have the smallest possible radius.
-         *
-         * @param {number} zMax
-         *        Max threshold for Z value. If point's Z value is bigger that
-         *        zMax, point will have the biggest possible radius.
-         *
-         * @param {number} minSize
-         *        Minimal pixel size possible for radius.
-         *
-         * @param {numbner} maxSize
-         *        Minimal pixel size possible for radius.
-         *
-         * @return {void}
-         */
-        getRadii: function (
-            this: Highcharts.VariablePieSeries,
-            zMin: number,
-            zMax: number,
-            minSize: number,
-            maxSize: number
-        ): void {
-            var i = 0,
-                pos: (number|undefined),
-                zData: Array<number> = this.zData as any,
-                len = zData.length,
-                radii: Array<number> = [],
-                options = this.options,
-                sizeByArea = options.sizeBy !== 'radius',
-                zRange = zMax - zMin,
-                value: (number|null|undefined),
-                radius: (number|undefined);
-
-
-            // Calculate radius for all pie slice's based on their Z values
-            for (i; i < len; i++) {
-                // if zData[i] is null/undefined/string we need to take zMin for
-                // smallest radius.
-                value = this.zValEval(zData[i]) ? zData[i] : zMin;
-
-                if (value <= zMin) {
-                    radius = minSize / 2;
-                } else if (value >= zMax) {
-                    radius = maxSize / 2;
-                } else {
-                    // Relative size, a number between 0 and 1
-                    pos = zRange > 0 ? (value - zMin) / zRange : 0.5;
-
-                    if (sizeByArea) {
-                        pos = Math.sqrt(pos);
-                    }
-
-                    radius = Math.ceil(minSize + pos * (maxSize - minSize)) / 2;
-                }
-                radii.push(radius);
-            }
-            this.radii = radii;
-        },
-
-        /* eslint-enable valid-jsdoc */
-
-        // Extend translate by updating radius for each pie slice instead of
-        // using one global radius.
-        translate: function (
-            this: Highcharts.VariablePieSeries,
-            positions: Array<number>
-        ): void {
-
-            this.generatePoints();
-
-            var series = this,
-                cumulative = 0,
-                precision = 1000, // issue #172
-                options = series.options,
-                slicedOffset: number = options.slicedOffset as any,
-                connectorOffset = slicedOffset + (options.borderWidth || 0),
-                finalConnectorOffset: (number|undefined),
-                start,
-                end,
-                angle,
-                startAngle = options.startAngle || 0,
-                startAngleRad = Math.PI / 180 * (startAngle - 90),
-                endAngleRad = Math.PI / 180 * (pick(
-                    options.endAngle,
-                    startAngle + 360
-                ) - 90),
-                circ = endAngleRad - startAngleRad, // 2 * Math.PI,
-                points = series.points,
-                // the x component of the radius vector for a given point
-                radiusX: (number|undefined),
-                radiusY: (number|undefined),
-                labelDistance = (options.dataLabels as any).distance,
-                ignoreHiddenPoint = options.ignoreHiddenPoint,
-                i: (number|undefined),
-                len = points.length,
-                point: (Highcharts.VariablePiePoint|undefined),
-                pointRadii,
-                pointRadiusX,
-                pointRadiusY;
-
-            series.startAngleRad = startAngleRad;
-            series.endAngleRad = endAngleRad;
-            // Use calculateExtremes to get series.radii array.
-            series.calculateExtremes();
-
-            // Get positions - either an integer or a percentage string must be
-            // given. If positions are passed as a parameter, we're in a
-            // recursive loop for adjusting space for data labels.
-            if (!positions) {
-                series.center = positions = series.getCenter();
+            // The angle must stay within -90 and 270 (#2645)
+            angle = (end + start) / 2;
+            if (angle > 1.5 * Math.PI) {
+                angle -= 2 * Math.PI;
+            } else if (angle < -Math.PI / 2) {
+                angle += 2 * Math.PI;
             }
 
-            // Calculate the geometry for each point
-            for (i = 0; i < len; i++) {
+            // Center for the sliced out slice
+            point.slicedTranslation = {
+                translateX: Math.round(Math.cos(angle) * slicedOffset),
+                translateY: Math.round(Math.sin(angle) * slicedOffset)
+            };
 
-                point = points[i];
-                pointRadii = series.radii[i];
+            // set the anchor point for tooltips
+            radiusX = Math.cos(angle) * positions[2] / 2;
+            radiusY = Math.sin(angle) * positions[2] / 2;
+            pointRadiusX = Math.cos(angle) * pointRadii;
+            pointRadiusY = Math.sin(angle) * pointRadii;
+            point.tooltipPos = [
+                positions[0] + radiusX * 0.7,
+                positions[1] + radiusY * 0.7
+            ];
 
-                // Used for distance calculation for specific point.
-                point.labelDistance = pick(
-                    point.options.dataLabels &&
-                    point.options.dataLabels.distance,
-                    labelDistance
-                );
+            point.half = angle < -Math.PI / 2 || angle > Math.PI / 2 ?
+                1 :
+                0;
+            point.angle = angle;
 
-                // Saved for later dataLabels distance calculation.
-                series.maxLabelDistance = Math.max(
-                    series.maxLabelDistance || 0,
-                    point.labelDistance
-                );
+            // Set the anchor point for data labels. Use point.labelDistance
+            // instead of labelDistance // #1174
+            // finalConnectorOffset - not override connectorOffset value.
+            finalConnectorOffset = Math.min(
+                connectorOffset,
+                point.labelDistance / 5
+            ); // #1678
 
-                // set start and end angle
-                start = startAngleRad + (cumulative * circ);
-                if (!ignoreHiddenPoint || point.visible) {
-                    cumulative += (point.percentage as any) / 100;
-                }
-                end = startAngleRad + (cumulative * circ);
-
-                // set the shape
-                point.shapeType = 'arc';
-                point.shapeArgs = {
-                    x: positions[0],
-                    y: positions[1],
-                    r: pointRadii,
-                    innerR: positions[3] / 2,
-                    start: Math.round(start * precision) / precision,
-                    end: Math.round(end * precision) / precision
-                };
-
-                // The angle must stay within -90 and 270 (#2645)
-                angle = (end + start) / 2;
-                if (angle > 1.5 * Math.PI) {
-                    angle -= 2 * Math.PI;
-                } else if (angle < -Math.PI / 2) {
-                    angle += 2 * Math.PI;
-                }
-
-                // Center for the sliced out slice
-                point.slicedTranslation = {
-                    translateX: Math.round(Math.cos(angle) * slicedOffset),
-                    translateY: Math.round(Math.sin(angle) * slicedOffset)
-                };
-
-                // set the anchor point for tooltips
-                radiusX = Math.cos(angle) * positions[2] / 2;
-                radiusY = Math.sin(angle) * positions[2] / 2;
-                pointRadiusX = Math.cos(angle) * pointRadii;
-                pointRadiusY = Math.sin(angle) * pointRadii;
-                point.tooltipPos = [
-                    positions[0] + radiusX * 0.7,
-                    positions[1] + radiusY * 0.7
-                ];
-
-                point.half = angle < -Math.PI / 2 || angle > Math.PI / 2 ?
-                    1 :
-                    0;
-                point.angle = angle;
-
-                // Set the anchor point for data labels. Use point.labelDistance
-                // instead of labelDistance // #1174
-                // finalConnectorOffset - not override connectorOffset value.
-                finalConnectorOffset = Math.min(
-                    connectorOffset,
-                    point.labelDistance / 5
-                ); // #1678
-
-                point.labelPosition = {
-                    natural: {
-                        // initial position of the data label - it's utilized
-                        // for finding the final position for the label
+            point.labelPosition = {
+                natural: {
+                    // initial position of the data label - it's utilized
+                    // for finding the final position for the label
+                    x: positions[0] + pointRadiusX +
+                        Math.cos(angle) * point.labelDistance,
+                    y: positions[1] + pointRadiusY +
+                        Math.sin(angle) * point.labelDistance
+                },
+                'final': {
+                    // used for generating connector path -
+                    // initialized later in drawDataLabels function
+                    // x: undefined,
+                    // y: undefined
+                },
+                // left - pie on the left side of the data label
+                // right - pie on the right side of the data label
+                alignment: point.half ? 'right' : 'left',
+                connectorPosition: {
+                    breakAt: { // used in connectorShapes.fixedOffset
                         x: positions[0] + pointRadiusX +
-                            Math.cos(angle) * point.labelDistance,
+                            Math.cos(angle) * finalConnectorOffset,
                         y: positions[1] + pointRadiusY +
-                            Math.sin(angle) * point.labelDistance
+                            Math.sin(angle) * finalConnectorOffset
                     },
-                    'final': {
-                        // used for generating connector path -
-                        // initialized later in drawDataLabels function
-                        // x: undefined,
-                        // y: undefined
-                    },
-                    // left - pie on the left side of the data label
-                    // right - pie on the right side of the data label
-                    alignment: point.half ? 'right' : 'left',
-                    connectorPosition: {
-                        breakAt: { // used in connectorShapes.fixedOffset
-                            x: positions[0] + pointRadiusX +
-                                Math.cos(angle) * finalConnectorOffset,
-                            y: positions[1] + pointRadiusY +
-                                Math.sin(angle) * finalConnectorOffset
-                        },
-                        touchingSliceAt: { // middle of the arc
-                            x: positions[0] + pointRadiusX,
-                            y: positions[1] + pointRadiusY
-                        }
+                    touchingSliceAt: { // middle of the arc
+                        x: positions[0] + pointRadiusX,
+                        y: positions[1] + pointRadiusY
                     }
-                };
+                }
+            };
 
-            }
-
-            fireEvent(series, 'afterTranslate');
         }
+
+        fireEvent(series, 'afterTranslate');
     }
-);
+});
+
+
+/* *
+ *
+ *  Registry
+ *
+ * */
+
+declare module '../Core/Series/SeriesType' {
+    interface SeriesTypeRegistry {
+        variablepie: typeof VariablePieSeries;
+    }
+}
+BaseSeries.registerSeriesType('variablepie', VariablePieSeries);
+
+/* *
+ *
+ *  Default Export
+ *
+ * */
+
+export default VariablePieSeries;
+
+/* *
+ *
+ *  API Options
+ *
+ * */
 
 /**
  * A `variablepie` series. If the [type](#series.variablepie.type) option is not
