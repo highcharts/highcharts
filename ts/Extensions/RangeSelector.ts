@@ -1408,7 +1408,7 @@ class RangeSelector {
         }
 
         if (time && useUTC) {
-            date += time.getTimezoneOffset(date) * 60 * 1000;
+            date += time.getTimezoneOffset(date);
         }
 
         return date;

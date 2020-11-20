@@ -992,7 +992,7 @@ var RangeSelector = /** @class */ (function () {
             date = Date.UTC(pInt(parts[0]), pInt(parts[1]) - 1, pInt(parts[2]));
         }
         if (time && useUTC) {
-            date += time.getTimezoneOffset(date) * 60 * 1000;
+            date += time.getTimezoneOffset(date);
         }
         return date;
     };
