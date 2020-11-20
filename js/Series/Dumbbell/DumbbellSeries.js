@@ -30,7 +30,7 @@ import BaseSeries from '../../Core/Series/Series.js';
 var _a = BaseSeries.seriesTypes, AreaRangeSeries = _a.arearange, columnRangeProto = _a.columnrange.prototype;
 var areaRangeProto = AreaRangeSeries.prototype;
 import SVGRenderer from '../../Core/Renderer/SVG/SVGRenderer.js';
-import palette from '../../Core/Palette.js';
+import palette from '../../Core/Color/Palette.js';
 import H from '../../Core/Globals.js';
 var noop = H.noop, TrackerMixin = H.TrackerMixin;
 import U from '../../Core/Utilities.js';

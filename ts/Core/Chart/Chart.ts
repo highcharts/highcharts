@@ -46,7 +46,7 @@ import Legend from '../Legend.js';
 import MSPointer from '../MSPointer.js';
 import O from '../Options.js';
 const { defaultOptions } = O;
-import palette from '../../Core/Palette.js';
+import palette from '../../Core/Color/Palette.js';
 import Pointer from '../Pointer.js';
 import SVGRenderer from '../Renderer/SVG/SVGRenderer.js';
 import Time from '../Time.js';

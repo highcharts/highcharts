@@ -24,7 +24,7 @@ import H from './Globals.js';
 const {
     doc
 } = H;
-import palette from './Palette.js';
+import palette from './Color/Palette.js';
 import U from './Utilities.js';
 const {
     clamp,

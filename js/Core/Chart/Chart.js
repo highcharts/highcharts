@@ -18,7 +18,7 @@ import Legend from '../Legend.js';
 import MSPointer from '../MSPointer.js';
 import O from '../Options.js';
 var defaultOptions = O.defaultOptions;
-import palette from '../../Core/Palette.js';
+import palette from '../../Core/Color/Palette.js';
 import Pointer from '../Pointer.js';
 import Time from '../Time.js';
 import U from '../Utilities.js';

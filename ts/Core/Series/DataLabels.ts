@@ -28,7 +28,7 @@ const { seriesTypes } = BaseSeries;
 import H from '../Globals.js';
 const { noop } = H;
 import LineSeries from '../../Series/Line/LineSeries.js';
-import palette from '../Palette.js';
+import palette from '../Color/Palette.js';
 import U from '../Utilities.js';
 const {
     arrayMax,

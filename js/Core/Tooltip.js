@@ -10,7 +10,7 @@
 'use strict';
 import H from './Globals.js';
 var doc = H.doc;
-import palette from './Palette.js';
+import palette from './Color/Palette.js';
 import U from './Utilities.js';
 var clamp = U.clamp, css = U.css, defined = U.defined, discardElement = U.discardElement, extend = U.extend, fireEvent = U.fireEvent, format = U.format, isNumber = U.isNumber, isString = U.isString, merge = U.merge, pick = U.pick, splat = U.splat, syncTimeout = U.syncTimeout, timeUnits = U.timeUnits;
 /**

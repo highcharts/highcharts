@@ -8,7 +8,7 @@
 'use strict';
 import BaseSeries from '../../Core/Series/Series.js';
 var seriesTypes = BaseSeries.seriesTypes;
-import palette from '../../Core/Palette.js';
+import palette from '../../Core/Color/Palette.js';
 import U from '../../Core/Utilities.js';
 var correctFloat = U.correctFloat, isArray = U.isArray, merge = U.merge, objectEach = U.objectEach;
 // im port './ATRIndicator.js';

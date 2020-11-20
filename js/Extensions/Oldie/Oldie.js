@@ -15,7 +15,7 @@ import Color from '../../Core/Color/Color.js';
 var color = Color.parse;
 import H from '../../Core/Globals.js';
 var deg2rad = H.deg2rad, doc = H.doc, noop = H.noop, svg = H.svg, win = H.win;
-import palette from '../../Core/Palette.js';
+import palette from '../../Core/Color/Palette.js';
 import Pointer from '../../Core/Pointer.js';
 import SVGElement from '../../Core/Renderer/SVG/SVGElement.js';
 import SVGRenderer from '../../Core/Renderer/SVG/SVGRenderer3D.js';

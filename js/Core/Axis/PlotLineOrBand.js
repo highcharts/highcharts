@@ -10,7 +10,7 @@
 'use strict';
 import Axis from './Axis.js';
 import H from '../Globals.js';
-import palette from '../../Core/Palette.js';
+import palette from '../../Core/Color/Palette.js';
 /**
  * Options for plot bands on axes.
  *

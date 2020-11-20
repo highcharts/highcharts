@@ -30,7 +30,7 @@ import ColumnSeries from './Column/ColumnSeries.js';
 const { prototype: columnProto } = ColumnSeries;
 import O from '../Core/Options.js';
 const { defaultOptions } = O;
-import palette from '../Core/Palette.js';
+import palette from '../Core/Color/Palette.js';
 import U from '../Core/Utilities.js';
 const { merge } = U;
 

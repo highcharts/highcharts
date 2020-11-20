@@ -17,7 +17,7 @@ import type CSSObject from '../../Core/Renderer/CSSObject';
 import type { HTMLDOMElement } from '../../Core/Renderer/DOMElementType';
 import type LineSeries from '../../Series/Line/LineSeries';
 import type Point from '../../Core/Series/Point';
-import palette from '../../Core/Palette.js';
+import palette from '../../Core/Color/Palette.js';
 
 declare module '../../Core/Series/PointOptions' {
     interface PointOptions {
