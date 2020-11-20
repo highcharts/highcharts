@@ -6,50 +6,28 @@
  *
  * */
 'use strict';
-import type ColorString from '../../Core/Color/ColorString';
-import type ColumnSeries from '../../Series/Column/ColumnSeries';
-import type IndicatorValuesObject from './IndicatorValuesObject';
-import type LineSeries from '../../Series/Line/LineSeries';
-import type { SeriesStatesOptions } from '../../Core/Series/SeriesOptions';
+import type ColumnSeries from '../../../Series/Column/ColumnSeries';
+import type IndicatorValuesObject from '../IndicatorValuesObject';
+import type LineSeries from '../../../Series/Line/LineSeries';
 const {
     seriesTypes: {
         sma: SMAIndicator
     }
 } = BaseSeries;
 import type {
-    SMAOptions,
-    SMAParamsOptions
-} from './SMA/SMAOptions';
-import type SMAPoint from './SMA/SMAPoint';
-import BaseSeries from '../../Core/Series/Series.js';
-import H from '../../Core/Globals.js';
+    AOOptions
+} from './AOOptions';
+import type AOPoint from './AOPoint';
+import BaseSeries from '../../../Core/Series/Series.js';
+import H from '../../../Core/Globals.js';
 const { noop } = H;
-import U from '../../Core/Utilities.js';
+import U from '../../../Core/Utilities.js';
 const {
     extend,
     merge,
     correctFloat,
     isArray
 } = U;
-/**
- * Internal types
- * @private
- */
-declare global {
-    namespace Highcharts {
-        interface AOIndicatorOptions extends SMAOptions {
-            greaterBarColor?: ColorString;
-            groupPadding?: number;
-            lowerBarColor?: ColorString;
-            pointPadding?: number;
-            states?: SeriesStatesOptions<AOIndicator>;
-            threshold?: number;
-        }
-        class AOIndicatorPoint extends SMAPoint {
-            public series: AOIndicator;
-        }
-    }
-}
 /* *
  *
  *  Class
@@ -64,6 +42,7 @@ declare global {
  *
  * @augments Highcharts.Series
  */
+
 class AOIndicator extends SMAIndicator {
     /**
      * Awesome Oscillator. This series requires the `linkedTo` option to
@@ -82,7 +61,7 @@ class AOIndicator extends SMAIndicator {
      * @requires     stock/indicators/ao
      * @optionparent plotOptions.ao
      */
-    public static defaultOptions: Highcharts.AOIndicatorOptions =
+    public static defaultOptions: AOOptions =
     merge(SMAIndicator.defaultOptions, {
         /**
          * Color of the Awesome oscillator series bar that is greater than the
@@ -119,20 +98,15 @@ class AOIndicator extends SMAIndicator {
                 }
             }
         }
-    } as Highcharts.AOIndicatorOptions);
+    } as AOOptions);
 }
-/**
-     *
-     * Prototype Properties
-     *
-    **/
 interface AOIndicator {
-    data: Array<Highcharts.AOIndicatorPoint>;
+    data: Array<AOPoint>;
     nameBase: string;
     nameComponents: Array<string>;
-    options: Highcharts.AOIndicatorOptions;
-    pointClass: typeof Highcharts.AOIndicatorPoint;
-    points: Array<Highcharts.AOIndicatorPoint>;
+    options: AOOptions;
+    pointClass: typeof AOPoint;
+    points: Array<AOPoint>;
     crispCol: ColumnSeries['crispCol'];
     drawGraph(): void;
     drawPoints: ColumnSeries['drawPoints'];
@@ -252,7 +226,7 @@ extend(AOIndicator.prototype, {
  *  Registry
  *
  * */
-declare module '../../Core/Series/SeriesType' {
+declare module '../../../Core/Series/SeriesType' {
     interface SeriesTypeRegistry {
         ao: typeof AOIndicator;
     }
