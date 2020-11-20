@@ -71,6 +71,11 @@ var CCIIndicator = /** @class */ (function (_super) {
         _this.options = void 0;
         return _this;
     }
+    /* *
+     *
+     *  Functions
+     *
+     * */
     CCIIndicator.prototype.getValues = function (series, params) {
         var period = params.period, xVal = series.xData, yVal = series.yData, yValLen = yVal ? yVal.length : 0, TP = [], periodTP = [], range = 1, CCI = [], xData = [], yData = [], CCIPoint, p, len, smaTP, TPtemp, meanDev, i;
         // CCI requires close value
@@ -124,11 +129,6 @@ var CCIIndicator = /** @class */ (function (_super) {
     });
     return CCIIndicator;
 }(SMAIndicator));
-/* *
- *
- *  Registry
- *
- * */
 BaseSeries.registerSeriesType('cci', CCIIndicator);
 /* *
  *

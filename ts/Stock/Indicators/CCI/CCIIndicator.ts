@@ -10,7 +10,7 @@
 /* *
  *
  * Imports
- *gul
+ *
  * */
 
 import type IndicatorValuesObject from '../IndicatorValuesObject';
@@ -107,6 +107,12 @@ class CCIIndicator extends SMAIndicator {
     public points: Array<CCIPoint> = void 0 as any;
     public options: CCIOptions = void 0 as any;
 
+    /* *
+     *
+     *  Functions
+     *
+     * */
+
     public getValues<TLinkedSeries extends LineSeries>(
         series: TLinkedSeries,
         params: CCIParamsOptions
@@ -180,17 +186,17 @@ interface CCIIndicator {
     pointClass: typeof CCIPoint;
 }
 
-declare module '../../../Core/Series/SeriesType' {
-    interface SeriesTypeRegistry {
-        cci: typeof CCIIndicator;
-    }
-}
-
 /* *
  *
  *  Registry
  *
  * */
+
+declare module '../../../Core/Series/SeriesType' {
+    interface SeriesTypeRegistry {
+        cci: typeof CCIIndicator;
+    }
+}
 
 BaseSeries.registerSeriesType('cci', CCIIndicator);
 
