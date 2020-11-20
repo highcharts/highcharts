@@ -12,6 +12,7 @@
 
 'use strict';
 
+import type NetworkgraphSeries from './Networkgraph';
 import type PackedBubbleChart from '../PackedBubble/PackedBubbleChart';
 import type Point from '../../Core/Series/Point';
 import Chart from '../../Core/Chart/Chart.js';

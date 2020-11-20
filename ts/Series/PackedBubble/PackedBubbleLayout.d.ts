@@ -14,6 +14,7 @@
  *
  * */
 
+import type NetworkgraphSeries from '../Networkgraph/Networkgraph';
 import type PackedBubblePoint from './PackedBubblePoint';
 import type PackedBubbleSeriesOptions from './PackedBubbleSeriesOptions';
 
@@ -39,7 +40,7 @@ export interface PackedBubbleLayout extends Highcharts.NetworkgraphLayout {
     enableSimulation: boolean;
     nodes: Array<PackedBubblePoint>;
     options: PackedBubbleLayoutAlgorithmOptions;
-    series: Array<Highcharts.NetworkgraphSeries>;
+    series: Array<NetworkgraphSeries>;
 }
 
 export interface PackedBubbleLayoutAlgorithmOptions extends Highcharts.NetworkgraphLayoutAlgorithmOptions {
