@@ -40,7 +40,7 @@ import GeometryCirclesModule from '../../Mixins/GeometryCircles.js';
 var getAreaOfCircle = GeometryCirclesModule.getAreaOfCircle, getAreaOfIntersectionBetweenCircles = GeometryCirclesModule.getAreaOfIntersectionBetweenCircles, getCircleCircleIntersection = GeometryCirclesModule.getCircleCircleIntersection, getCirclesIntersectionPolygon = GeometryCirclesModule.getCirclesIntersectionPolygon, getOverlapBetweenCirclesByDistance = GeometryCirclesModule.getOverlapBetweenCircles, isCircle1CompletelyOverlappingCircle2 = GeometryCirclesModule.isCircle1CompletelyOverlappingCircle2, isPointInsideAllCircles = GeometryCirclesModule.isPointInsideAllCircles, isPointInsideCircle = GeometryCirclesModule.isPointInsideCircle, isPointOutsideAllCircles = GeometryCirclesModule.isPointOutsideAllCircles;
 import NelderMeadMixin from '../../Mixins/NelderMead.js';
 var nelderMead = NelderMeadMixin.nelderMead;
-import palette from '../../Core/Palette.js';
+import palette from '../../Core/Color/Palette.js';
 import VennPoint from './VennPoint.js';
 import VennUtils from './VennUtils.js';
 import U from '../../Core/Utilities.js';

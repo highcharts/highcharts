@@ -12,7 +12,7 @@ import BaseSeries from '../Core/Series/Series.js';
 import H from '../Core/Globals.js';
 var noop = H.noop;
 import LineSeries from '../Series/Line/LineSeries.js';
-import palette from '../Core/Palette.js';
+import palette from '../Core/Color/Palette.js';
 import U from '../Core/Utilities.js';
 var clamp = U.clamp, isNumber = U.isNumber, merge = U.merge, pick = U.pick, pInt = U.pInt;
 import '../Core/Options.js';

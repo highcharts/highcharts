@@ -62,7 +62,7 @@ const {
 } = GeometryCirclesModule;
 import NelderMeadMixin from '../../Mixins/NelderMead.js';
 const { nelderMead } = NelderMeadMixin;
-import palette from '../../Core/Palette.js';
+import palette from '../../Core/Color/Palette.js';
 import VennPoint from './VennPoint.js';
 import VennUtils from './VennUtils.js';
 import U from '../../Core/Utilities.js';

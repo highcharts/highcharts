@@ -30,7 +30,7 @@ import H from '../../Core/Globals.js';
 var noop = H.noop;
 import LegendSymbolMixin from '../../Mixins/LegendSymbol.js';
 import LineSeries from '../Line/LineSeries.js';
-import palette from '../../Core/Palette.js';
+import palette from '../../Core/Color/Palette.js';
 import U from '../../Core/Utilities.js';
 var clamp = U.clamp, defined = U.defined, extend = U.extend, isArray = U.isArray, isNumber = U.isNumber, merge = U.merge, pick = U.pick, objectEach = U.objectEach;
 /**

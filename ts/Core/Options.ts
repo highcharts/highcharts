@@ -35,7 +35,7 @@ import Color from './Color/Color.js';
 const {
     parse: color
 } = Color;
-import palette from './Palette.js';
+import palette from './Color/Palette.js';
 import Time from './Time.js';
 import U from './Utilities.js';
 const {

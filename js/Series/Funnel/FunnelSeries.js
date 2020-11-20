@@ -28,7 +28,7 @@ var _a = BaseSeries.seriesTypes, LineSeries = _a.line, PieSeries = _a.pie;
 import Chart from '../../Core/Chart/Chart.js';
 import H from '../../Core/Globals.js';
 var noop = H.noop;
-import palette from '../../Core/Palette.js';
+import palette from '../../Core/Color/Palette.js';
 import U from '../../Core/Utilities.js';
 var addEvent = U.addEvent, extend = U.extend, fireEvent = U.fireEvent, isArray = U.isArray, merge = U.merge, pick = U.pick;
 /**

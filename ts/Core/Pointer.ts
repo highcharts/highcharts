@@ -24,7 +24,7 @@ const {
     charts,
     noop
 } = H;
-import palette from '../Core/Palette.js';
+import palette from '../Core/Color/Palette.js';
 import Tooltip from './Tooltip.js';
 import U from './Utilities.js';
 const {

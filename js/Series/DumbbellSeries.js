@@ -14,7 +14,7 @@ import ColumnSeries from './Column/ColumnSeries.js';
 var colProto = ColumnSeries.prototype;
 import LineSeries from './Line/LineSeries.js';
 var seriesProto = LineSeries.prototype;
-import palette from '../Core/Palette.js';
+import palette from '../Core/Color/Palette.js';
 import SVGRenderer from '../Core/Renderer/SVG/SVGRenderer.js';
 import H from '../Core/Globals.js';
 var noop = H.noop;

@@ -32,7 +32,7 @@ var noop = H.noop;
 import LegendSymbolMixin from '../../Mixins/LegendSymbol.js';
 import LineSeries from '../Line/LineSeries.js';
 import mapModule from '../../Maps/Map.js';
-import palette from '../../Core/Palette.js';
+import palette from '../../Core/Color/Palette.js';
 var maps = mapModule.maps, splitPath = mapModule.splitPath;
 import MapPoint from './MapPoint.js';
 import SVGRenderer from '../../Core/Renderer/SVG/SVGRenderer.js';

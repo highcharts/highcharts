@@ -31,7 +31,7 @@ import type SVGPath from './SVGPath';
 import type SVGRendererLike from './SVGRendererLike';
 import Color from '../../Color/Color.js';
 import H from '../../Globals.js';
-import palette from '../../Palette.js';
+import palette from '../../Color/Palette.js';
 import SVGElement from './SVGElement.js';
 import SVGLabel from './SVGLabel.js';
 import U from '../../Utilities.js';

@@ -3,7 +3,7 @@
  * the 'gulp palette' task. Palette colors are defined in highcharts.scss.
  */
 /* eslint comma-dangle: 0, max-len: 0 */
-import type ColorString from './Color/ColorString';
+import type ColorString from './ColorString';
 const palette = {
     /**
      * Colors for data series and points.

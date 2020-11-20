@@ -10,7 +10,7 @@
 'use strict';
 import Axis from './Axis/Axis.js';
 import H from './Globals.js';
-import palette from './Palette.js';
+import palette from './Color/Palette.js';
 import ScrollbarAxis from './Axis/ScrollbarAxis.js';
 import U from './Utilities.js';
 var addEvent = U.addEvent, correctFloat = U.correctFloat, defined = U.defined, destroyObjectProperties = U.destroyObjectProperties, fireEvent = U.fireEvent, merge = U.merge, pick = U.pick, removeEvent = U.removeEvent;

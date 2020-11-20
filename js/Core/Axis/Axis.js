@@ -12,7 +12,7 @@ import A from '../Animation/AnimationUtilities.js';
 var animObject = A.animObject;
 import Color from '../Color/Color.js';
 import H from '../Globals.js';
-import palette from '../Palette.js';
+import palette from '../Color/Palette.js';
 import O from '../Options.js';
 var defaultOptions = O.defaultOptions;
 import Tick from './Tick.js';
