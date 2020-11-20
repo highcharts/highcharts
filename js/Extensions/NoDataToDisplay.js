@@ -12,7 +12,7 @@
  *
  * */
 import Chart from '../Core/Chart/Chart.js';
-import palette from '../Core/Palette.js';
+import palette from '../Core/Color/Palette.js';
 import U from '../Core/Utilities.js';
 var addEvent = U.addEvent, extend = U.extend, getOptions = U.getOptions, merge = U.merge;
 var chartPrototype = Chart.prototype, defaultOptions = getOptions();

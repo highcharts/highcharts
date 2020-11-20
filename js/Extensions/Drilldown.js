@@ -23,7 +23,7 @@ var noop = H.noop;
 import LineSeries from '../Series/Line/LineSeries.js';
 import O from '../Core/Options.js';
 var defaultOptions = O.defaultOptions;
-import palette from '../Core/Palette.js';
+import palette from '../Core/Color/Palette.js';
 import Point from '../Core/Series/Point.js';
 import SVGRenderer from '../Core/Renderer/SVG/SVGRenderer.js';
 import Tick from '../Core/Axis/Tick.js';

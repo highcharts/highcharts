@@ -18,7 +18,7 @@ import type SVGAttributes from '../Renderer/SVG/SVGAttributes';
 import type SVGElement from '../Renderer/SVG/SVGElement';
 import type Tick from './Tick';
 import type TreeGridAxis from './TreeGridAxis';
-import palette from '../../Core/Palette.js';
+import palette from '../../Core/Color/Palette.js';
 import U from '../Utilities.js';
 const {
     addEvent,
