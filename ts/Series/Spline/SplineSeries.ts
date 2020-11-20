@@ -62,7 +62,7 @@ class SplineSeries extends LineSeries {
      * @product      highcharts highstock
      * @optionparent plotOptions.spline
      */
-    public static defaultOptions: SplineSeriesOptions = merge(LineSeries.defaultOptions, {});
+    public static defaultOptions: SplineSeriesOptions = merge(LineSeries.defaultOptions);
 
     /* *
      *

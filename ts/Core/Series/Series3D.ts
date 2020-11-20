@@ -67,7 +67,7 @@ class Series3D extends LineSeries {
      *
      * */
 
-    public static defaultOptions = merge(LineSeries.defaultOptions, {});
+    public static defaultOptions = merge(LineSeries.defaultOptions);
 
     /* *
      *
