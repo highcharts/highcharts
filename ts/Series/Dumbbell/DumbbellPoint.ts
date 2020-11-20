@@ -46,7 +46,7 @@ class DumbbellPoint extends AreaRangePoint {
     public options: DumbbellPointOptions = void 0 as any;
     public connector: Highcharts.SVGElement = void 0 as any;
     public pointWidth: number = void 0 as any;
-    public pointSetState: typeof AreaRangePoint.prototype.setState = noop;
+    public pointSetState: typeof AreaRangePoint.prototype.setState = super.setState;
 
     /* *
      *
@@ -125,17 +125,16 @@ class DumbbellPoint extends AreaRangePoint {
  *
  * */
 
-const { isValid, destroyElements } = AreaRangePoint.prototype;
 interface DumbbellPoint extends AreaRangePoint {
-    destroyElements: typeof destroyElements;
-    isValid: typeof isValid;
+    destroyElements: typeof AreaRangePoint.prototype.destroyElements;
+    isValid: typeof AreaRangePoint.prototype.isValid;
 }
 
 extend(DumbbellPoint.prototype, {
     // seriesTypes doesn't inherit from arearange point proto so put below
     // methods rigidly.
-    destroyElements,
-    isValid
+    destroyElements: AreaRangePoint.prototype.destroyElements,
+    isValid: AreaRangePoint.prototype.isValid
 });
 
 /* *

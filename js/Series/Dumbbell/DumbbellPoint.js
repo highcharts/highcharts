@@ -44,7 +44,7 @@ var DumbbellPoint = /** @class */ (function (_super) {
         _this.options = void 0;
         _this.connector = void 0;
         _this.pointWidth = void 0;
-        _this.pointSetState = noop;
+        _this.pointSetState = _super.prototype.setState;
         return _this;
     }
     /* *
@@ -89,17 +89,11 @@ var DumbbellPoint = /** @class */ (function (_super) {
     };
     return DumbbellPoint;
 }(AreaRangePoint));
-/* *
- *
- *  Prototype Properties
- *
- * */
-var _a = AreaRangePoint.prototype, isValid = _a.isValid, destroyElements = _a.destroyElements;
 extend(DumbbellPoint.prototype, {
     // seriesTypes doesn't inherit from arearange point proto so put below
     // methods rigidly.
-    destroyElements: destroyElements,
-    isValid: isValid
+    destroyElements: AreaRangePoint.prototype.destroyElements,
+    isValid: AreaRangePoint.prototype.isValid
 });
 /* *
  *
