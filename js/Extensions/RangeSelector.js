@@ -1369,8 +1369,9 @@ var RangeSelector = /** @class */ (function () {
             rangeSelector.setInputValue('max', max);
             var unionExtremes = (chart.scroller && chart.scroller.getUnionExtremes()) || chart.xAxis[0] || {};
             if (defined(unionExtremes.dataMin) && defined(unionExtremes.dataMax)) {
-                rangeSelector.setInputExtremes('min', unionExtremes.dataMin, Math.min(unionExtremes.dataMax, rangeSelector.getInputValue('max')));
-                rangeSelector.setInputExtremes('max', Math.max(unionExtremes.dataMin, rangeSelector.getInputValue('min')), unionExtremes.dataMax);
+                var minRange = chart.xAxis[0].minRange || 0;
+                rangeSelector.setInputExtremes('min', unionExtremes.dataMin, Math.min(unionExtremes.dataMax, rangeSelector.getInputValue('max')) - minRange);
+                rangeSelector.setInputExtremes('max', Math.max(unionExtremes.dataMin, rangeSelector.getInputValue('min')) + minRange, unionExtremes.dataMax);
             }
             // skip animation
             rangeSelector.inputGroup.placed = animate;

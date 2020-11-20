@@ -1972,14 +1972,16 @@ class RangeSelector {
             ) || chart.xAxis[0] || {};
 
             if (defined(unionExtremes.dataMin) && defined(unionExtremes.dataMax)) {
+                const minRange = chart.xAxis[0].minRange || 0;
+
                 rangeSelector.setInputExtremes(
                     'min',
                     unionExtremes.dataMin,
-                    Math.min(unionExtremes.dataMax, rangeSelector.getInputValue('max'))
+                    Math.min(unionExtremes.dataMax, rangeSelector.getInputValue('max')) - minRange
                 );
                 rangeSelector.setInputExtremes(
                     'max',
-                    Math.max(unionExtremes.dataMin, rangeSelector.getInputValue('min')),
+                    Math.max(unionExtremes.dataMin, rangeSelector.getInputValue('min')) + minRange,
                     unionExtremes.dataMax
                 );
             }
