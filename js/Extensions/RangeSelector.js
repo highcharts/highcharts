@@ -905,8 +905,14 @@ var RangeSelector = /** @class */ (function () {
             var format = this.inputTypeFormats[input.type];
             var time = this.chart.time;
             if (format) {
-                input.min = time.dateFormat(format, min);
-                input.max = time.dateFormat(format, max);
+                var newMin = time.dateFormat(format, min);
+                if (input.min !== newMin) {
+                    input.min = newMin;
+                }
+                var newMax = time.dateFormat(format, max);
+                if (input.max !== newMax) {
+                    input.max = newMax;
+                }
             }
         }
     };
@@ -1124,11 +1130,13 @@ var RangeSelector = /** @class */ (function () {
             }
         };
         input.onkeypress = function (event) {
-            keyDown = true;
             // IE does not fire onchange on enter
             if (event.keyCode === 13) {
                 updateExtremes();
             }
+        };
+        input.onkeydown = function () {
+            keyDown = true;
         };
         input.onkeyup = function () {
             keyDown = false;

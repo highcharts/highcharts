@@ -1304,8 +1304,14 @@ class RangeSelector {
             const time = this.chart.time;
 
             if (format) {
-                input.min = time.dateFormat(format, min);
-                input.max = time.dateFormat(format, max);
+                const newMin = time.dateFormat(format, min);
+                if (input.min !== newMin) {
+                    input.min = newMin;
+                }
+                const newMax = time.dateFormat(format, max);
+                if (input.max !== newMax) {
+                    input.max = newMax;
+                }
             }
         }
     }
@@ -1590,12 +1596,14 @@ class RangeSelector {
         };
 
         input.onkeypress = (event: KeyboardEvent): void => {
-            keyDown = true;
-
             // IE does not fire onchange on enter
             if (event.keyCode === 13) {
                 updateExtremes();
             }
+        };
+
+        input.onkeydown = (): void => {
+            keyDown = true;
         };
 
         input.onkeyup = (): void => {
