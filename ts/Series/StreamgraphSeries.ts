@@ -12,6 +12,10 @@
 
 'use strict';
 
+import type AreaSplinePoint from './AreaSpline/AreaSplinePoint';
+import type AreaSplinePointOptions from './AreaSpline/AreaSplinePointOptions';
+import type AreaSplineSeries from './AreaSpline/AreaSplineSeries.js';
+import type AreaSplineSeriesOptions from './AreaSpline/AreaSplineSeriesOptions';
 import type { SeriesStatesOptions } from '../Core/Series/SeriesOptions';
 import BaseSeries from '../Core/Series/Series.js';
 
