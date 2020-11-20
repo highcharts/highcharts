@@ -13,6 +13,7 @@
 import BaseSeries from '../Core/Series/Series.js';
 var base = BaseSeries.seriesTypes.sankey.prototype;
 import H from '../Core/Globals.js';
+import palette from '../Core/Palette.js';
 import U from '../Core/Utilities.js';
 var css = U.css, pick = U.pick, wrap = U.wrap;
 /**
@@ -64,7 +65,7 @@ BaseSeries.seriesType('organization', 'sankey',
      * @type {Highcharts.ColorString}
      * @private
      */
-    borderColor: '${palette.neutralColor60}',
+    borderColor: palette.neutralColor60,
     /**
      * The border radius of the node cards.
      *
@@ -194,7 +195,7 @@ BaseSeries.seriesType('organization', 'sankey',
      * @type {Highcharts.ColorString}
      * @private
      */
-    linkColor: '${palette.neutralColor60}',
+    linkColor: palette.neutralColor60,
     /**
      * The line width of the links connecting nodes, in pixels.
      *

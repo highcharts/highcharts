@@ -18,6 +18,7 @@ import Legend from '../Legend.js';
 import MSPointer from '../MSPointer.js';
 import O from '../Options.js';
 var defaultOptions = O.defaultOptions;
+import palette from '../../Core/Palette.js';
 import Pointer from '../Pointer.js';
 import Time from '../Time.js';
 import U from '../Utilities.js';
@@ -688,10 +689,10 @@ var Chart = /** @class */ (function () {
         var chart = this;
         // Default style
         var style = name === 'title' ? {
-            color: '${palette.neutralColor80}',
+            color: palette.neutralColor80,
             fontSize: this.options.isStock ? '16px' : '18px' // #2944
         } : {
-            color: '${palette.neutralColor60}'
+            color: palette.neutralColor60
         };
         // Merge default options with explicit options
         var options = this.options[name] = merge(

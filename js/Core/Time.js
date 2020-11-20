@@ -402,7 +402,7 @@ var Time = /** @class */ (function () {
      *        The desired format where various time representations are
      *        prefixed with %.
      *
-     * @param {number} timestamp
+     * @param {number} [timestamp]
      *        The JavaScript timestamp.
      *
      * @param {boolean} [capitalize=false]

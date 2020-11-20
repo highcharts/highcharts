@@ -90,10 +90,7 @@ declare module './Series/SeriesLike' {
         stateMarkerGraphic?: SVGElement;
         tracker?: SVGElement;
         trackerGroups?: Array<string>;
-        drawTracker: (
-            Highcharts.TrackerMixin['drawTrackerGraph']|
-            Highcharts.TrackerMixin['drawTrackerPoint']
-        );
+        drawTracker(this: LineSeries): void;
         hide(): void;
         onMouseOut(): void;
         onMouseOver(): void;

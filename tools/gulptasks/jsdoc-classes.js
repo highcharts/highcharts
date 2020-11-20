@@ -66,7 +66,7 @@ const SOURCE_GLOBS = [
     'js/Series/Map/MapSeries.js',
     'js/Series/OrganizationSeries.js',
     'js/Series/Pie/PieSeries.js',
-    'js/Series/PackedBubbleSeries.js',
+    'js/Series/PackedBubble/PackedBubbleSeries.js',
     'js/Series/Sankey/SankeySeries.js',
     'js/Series/SunburstSeries.js',
     'js/Series/TimelineSeries.js'
