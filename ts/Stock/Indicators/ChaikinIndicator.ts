@@ -8,7 +8,6 @@
 
 'use strict';
 
-import type EMAIndicator from './EMA/EMAIndicator';
 import type {
     EMAOptions,
     EMAParamsOptions
@@ -20,13 +19,15 @@ import BaseSeries from '../../Core/Series/Series.js';
 const {
     seriesTypes: {
         ad: AD,
-        ema: EMA
+        ema: EMAIndicator
     }
 } = BaseSeries;
 import RequiredIndicatorMixin from '../../Mixins/IndicatorRequired.js';
 import U from '../../Core/Utilities.js';
 const {
     correctFloat,
+    extend,
+    merge,
     error
 } = U;
 
@@ -36,20 +37,6 @@ const {
  */
 declare global {
     namespace Highcharts {
-        class ChaikinIndicator extends EMAIndicator {
-            public data: Array<ChaikinIndicatorPoint>;
-            public init(): void;
-            public getValues<TLinkedSeries extends LineSeries>(
-                series: TLinkedSeries,
-                params: ChaikinIndicatorParamsOptions
-            ): (IndicatorValuesObject<TLinkedSeries>|undefined)
-            public nameBase: string;
-            public nameComponents: Array<string>;
-            public options: ChaikinIndicatorOptions;
-            public pointClass: typeof ChaikinIndicatorPoint;
-            public points: Array<ChaikinIndicatorPoint>;
-        }
-
         interface ChaikinIndicatorParamsOptions
             extends EMAParamsOptions {
             periods?: Array<number>;
@@ -66,11 +53,11 @@ declare global {
     }
 }
 
-declare module '../../Core/Series/SeriesType' {
-    interface SeriesTypeRegistry {
-        chaikin: typeof Highcharts.ChaikinIndicator;
-    }
-}
+/* *
+ *
+ *  Class
+ *
+ * */
 
 /**
  * The Chaikin series type.
@@ -81,9 +68,7 @@ declare module '../../Core/Series/SeriesType' {
  *
  * @augments Highcharts.Series
  */
-BaseSeries.seriesType<typeof Highcharts.ChaikinIndicator>(
-    'chaikin',
-    'ema',
+class ChaikinIndicator extends EMAIndicator {
     /**
      * Chaikin Oscillator. This series requires the `linkedTo` option to
      * be set and should be loaded after the `stock/indicators/indicators.js`
@@ -103,7 +88,8 @@ BaseSeries.seriesType<typeof Highcharts.ChaikinIndicator>(
      * @requires     stock/indicators/chaikin
      * @optionparent plotOptions.chaikin
      */
-    {
+
+    public static defaultOptions: Highcharts.ChaikinIndicatorOptions = merge(EMAIndicator.defaultOptions, {
         /**
          * Paramters used in calculation of Chaikin Oscillator
          * series points.
@@ -125,108 +111,142 @@ BaseSeries.seriesType<typeof Highcharts.ChaikinIndicator>(
              */
             periods: [3, 10]
         }
+    } as Highcharts.ChaikinIndicatorOptions);
+}
+
+/* *
+ *
+ *  Prototype Properties
+ *
+ * */
+interface ChaikinIndicator {
+    data: Array<Highcharts.ChaikinIndicatorPoint>;
+    options: Highcharts.ChaikinIndicatorOptions;
+    pointClass: typeof Highcharts.ChaikinIndicatorPoint;
+    points: Array<Highcharts.ChaikinIndicatorPoint>;
+    init(): void;
+    getValues<TLinkedSeries extends LineSeries> (
+        series: TLinkedSeries,
+        params: Highcharts.ChaikinIndicatorParamsOptions
+    ): (IndicatorValuesObject<TLinkedSeries>|undefined);
+}
+
+extend(ChaikinIndicator.prototype, {
+    nameBase: 'Chaikin Osc',
+    nameComponents: ['periods'],
+    init: function (this: ChaikinIndicator): void {
+        var args = arguments,
+            ctx = this;
+
+        RequiredIndicatorMixin.isParentLoaded(
+            (EMAIndicator as any),
+            'ema',
+            ctx.type,
+            function (indicator: Highcharts.Indicator): undefined {
+                indicator.prototype.init.apply(ctx, args);
+                return;
+            }
+        );
     },
-    /**
-     * @lends Highcharts.Series#
-     */
-    {
-        nameBase: 'Chaikin Osc',
-        nameComponents: ['periods'],
-        init: function (this: Highcharts.ChaikinIndicator): void {
-            var args = arguments,
-                ctx = this;
+    getValues: function<TLinkedSeries extends LineSeries> (
+        series: TLinkedSeries,
+        params: Highcharts.ChaikinIndicatorParamsOptions
+    ): (IndicatorValuesObject<TLinkedSeries>|undefined) {
+        var periods: Array<number> = (params.periods as any),
+            period: number = (params.period as any),
+            // Accumulation Distribution Line data
+            ADL: (
+                IndicatorValuesObject<TLinkedSeries>|undefined
+            ),
+            // 0- date, 1- Chaikin Oscillator
+            CHA: Array<Array<number>> = [],
+            xData: Array<number> = [],
+            yData: Array<number> = [],
+            periodsOffset: number,
+            // Shorter Period EMA
+            SPE: (
+                IndicatorValuesObject<TLinkedSeries>|
+                undefined
+            ),
+            // Longer Period EMA
+            LPE: (
+                IndicatorValuesObject<TLinkedSeries>|
+                undefined
+            ),
+            oscillator: number,
+            i: number;
 
-            RequiredIndicatorMixin.isParentLoaded(
-                (EMA as any),
-                'ema',
-                ctx.type,
-                function (indicator: Highcharts.Indicator): undefined {
-                    indicator.prototype.init.apply(ctx, args);
-                    return;
-                }
+        // Check if periods are correct
+        if (periods.length !== 2 || periods[1] <= periods[0]) {
+            error(
+                'Error: "Chaikin requires two periods. Notice, first ' +
+                'period should be lower than the second one."'
             );
-        },
-        getValues: function<TLinkedSeries extends LineSeries> (
-            series: TLinkedSeries,
-            params: Highcharts.ChaikinIndicatorParamsOptions
-        ): (IndicatorValuesObject<TLinkedSeries>|undefined) {
-            var periods: Array<number> = (params.periods as any),
-                period: number = (params.period as any),
-                // Accumulation Distribution Line data
-                ADL: (
-                    IndicatorValuesObject<TLinkedSeries>|undefined
-                ),
-                // 0- date, 1- Chaikin Oscillator
-                CHA: Array<Array<number>> = [],
-                xData: Array<number> = [],
-                yData: Array<number> = [],
-                periodsOffset: number,
-                // Shorter Period EMA
-                SPE: (
-                    IndicatorValuesObject<TLinkedSeries>|
-                    undefined
-                ),
-                // Longer Period EMA
-                LPE: (
-                    IndicatorValuesObject<TLinkedSeries>|
-                    undefined
-                ),
-                oscillator: number,
-                i: number;
-
-            // Check if periods are correct
-            if (periods.length !== 2 || periods[1] <= periods[0]) {
-                error(
-                    'Error: "Chaikin requires two periods. Notice, first ' +
-                    'period should be lower than the second one."'
-                );
-                return;
-            }
-
-            ADL = AD.prototype.getValues.call(this, series, {
-                volumeSeriesID: params.volumeSeriesID,
-                period: period
-            }) as IndicatorValuesObject<TLinkedSeries>;
-
-            // Check if adl is calculated properly, if not skip
-            if (!ADL) {
-                return;
-            }
-
-            SPE = EMA.prototype.getValues.call(this, (ADL as any), {
-                period: periods[0]
-            }) as IndicatorValuesObject<TLinkedSeries>;
-
-            LPE = EMA.prototype.getValues.call(this, (ADL as any), {
-                period: periods[1]
-            }) as IndicatorValuesObject<TLinkedSeries>;
-
-            // Check if ema is calculated properly, if not skip
-            if (!SPE || !LPE) {
-                return;
-            }
-
-            periodsOffset = periods[1] - periods[0];
-
-            for (i = 0; i < LPE.yData.length; i++) {
-                oscillator = correctFloat(
-                    (SPE as any).yData[i + periodsOffset] -
-                    (LPE as any).yData[i]
-                );
-
-                CHA.push([(LPE as any).xData[i], oscillator]);
-                xData.push((LPE as any).xData[i]);
-                yData.push(oscillator);
-            }
-
-            return {
-                values: CHA,
-                xData: xData,
-                yData: yData
-            } as IndicatorValuesObject<TLinkedSeries>;
+            return;
         }
+
+        ADL = AD.prototype.getValues.call(this, series, {
+            volumeSeriesID: params.volumeSeriesID,
+            period: period
+        }) as IndicatorValuesObject<TLinkedSeries>;
+
+        // Check if adl is calculated properly, if not skip
+        if (!ADL) {
+            return;
+        }
+
+        SPE = EMAIndicator.prototype.getValues.call(this, (ADL as any), {
+            period: periods[0]
+        }) as IndicatorValuesObject<TLinkedSeries>;
+
+        LPE = EMAIndicator.prototype.getValues.call(this, (ADL as any), {
+            period: periods[1]
+        }) as IndicatorValuesObject<TLinkedSeries>;
+
+        // Check if ema is calculated properly, if not skip
+        if (!SPE || !LPE) {
+            return;
+        }
+
+        periodsOffset = periods[1] - periods[0];
+
+        for (i = 0; i < LPE.yData.length; i++) {
+            oscillator = correctFloat(
+                (SPE as any).yData[i + periodsOffset] -
+                (LPE as any).yData[i]
+            );
+
+            CHA.push([(LPE as any).xData[i], oscillator]);
+            xData.push((LPE as any).xData[i]);
+            yData.push(oscillator);
+        }
+
+        return {
+            values: CHA,
+            xData: xData,
+            yData: yData
+        } as IndicatorValuesObject<TLinkedSeries>;
     }
-);
+});
+
+/* *
+ *
+ *  Registry
+ *
+ * */
+declare module '../../Core/Series/SeriesType' {
+    interface SeriesTypeRegistry {
+        chaikin: typeof ChaikinIndicator;
+    }
+}
+BaseSeries.registerSeriesType('chaikin', ChaikinIndicator);
+
+/* *
+ *
+ *  Default Export
+ *
+ * */
+export default ChaikinIndicator;
 
 /**
  * A `Chaikin Oscillator` series. If the [type](#series.chaikin.type)

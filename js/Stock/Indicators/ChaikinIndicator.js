@@ -6,11 +6,29 @@
  *
  * */
 'use strict';
+var __extends = (this && this.__extends) || (function () {
+    var extendStatics = function (d, b) {
+        extendStatics = Object.setPrototypeOf ||
+            ({ __proto__: [] } instanceof Array && function (d, b) { d.__proto__ = b; }) ||
+            function (d, b) { for (var p in b) if (b.hasOwnProperty(p)) d[p] = b[p]; };
+        return extendStatics(d, b);
+    };
+    return function (d, b) {
+        extendStatics(d, b);
+        function __() { this.constructor = d; }
+        d.prototype = b === null ? Object.create(b) : (__.prototype = b.prototype, new __());
+    };
+})();
 import BaseSeries from '../../Core/Series/Series.js';
-var _a = BaseSeries.seriesTypes, AD = _a.ad, EMA = _a.ema;
+var _a = BaseSeries.seriesTypes, AD = _a.ad, EMAIndicator = _a.ema;
 import RequiredIndicatorMixin from '../../Mixins/IndicatorRequired.js';
 import U from '../../Core/Utilities.js';
-var correctFloat = U.correctFloat, error = U.error;
+var correctFloat = U.correctFloat, extend = U.extend, merge = U.merge, error = U.error;
+/* *
+ *
+ *  Class
+ *
+ * */
 /**
  * The Chaikin series type.
  *
@@ -20,58 +38,61 @@ var correctFloat = U.correctFloat, error = U.error;
  *
  * @augments Highcharts.Series
  */
-BaseSeries.seriesType('chaikin', 'ema', 
-/**
- * Chaikin Oscillator. This series requires the `linkedTo` option to
- * be set and should be loaded after the `stock/indicators/indicators.js`
- * and `stock/indicators/ema.js`.
- *
- * @sample {highstock} stock/indicators/chaikin
- *         Chaikin Oscillator
- *
- * @extends      plotOptions.ema
- * @since        7.0.0
- * @product      highstock
- * @excluding    allAreas, colorAxis, joinBy, keys, navigatorOptions,
- *               pointInterval, pointIntervalUnit, pointPlacement,
- *               pointRange, pointStart, showInNavigator, stacking
- * @requires     stock/indicators/indicators
- * @requires     stock/indicators/ema
- * @requires     stock/indicators/chaikin
- * @optionparent plotOptions.chaikin
- */
-{
-    /**
-     * Paramters used in calculation of Chaikin Oscillator
-     * series points.
-     *
-     * @excluding index, period
-     */
-    params: {
-        /**
-         * The id of volume series which is mandatory.
-         * For example using OHLC data, volumeSeriesID='volume' means
-         * the indicator will be calculated using OHLC and volume values.
-         */
-        volumeSeriesID: 'volume',
-        /**
-         * Periods for Chaikin Oscillator calculations.
-         *
-         * @type    {Array<number>}
-         * @default [3, 10]
-         */
-        periods: [3, 10]
+var ChaikinIndicator = /** @class */ (function (_super) {
+    __extends(ChaikinIndicator, _super);
+    function ChaikinIndicator() {
+        return _super !== null && _super.apply(this, arguments) || this;
     }
-}, 
-/**
- * @lends Highcharts.Series#
- */
-{
+    /**
+     * Chaikin Oscillator. This series requires the `linkedTo` option to
+     * be set and should be loaded after the `stock/indicators/indicators.js`
+     * and `stock/indicators/ema.js`.
+     *
+     * @sample {highstock} stock/indicators/chaikin
+     *         Chaikin Oscillator
+     *
+     * @extends      plotOptions.ema
+     * @since        7.0.0
+     * @product      highstock
+     * @excluding    allAreas, colorAxis, joinBy, keys, navigatorOptions,
+     *               pointInterval, pointIntervalUnit, pointPlacement,
+     *               pointRange, pointStart, showInNavigator, stacking
+     * @requires     stock/indicators/indicators
+     * @requires     stock/indicators/ema
+     * @requires     stock/indicators/chaikin
+     * @optionparent plotOptions.chaikin
+     */
+    ChaikinIndicator.defaultOptions = merge(EMAIndicator.defaultOptions, {
+        /**
+         * Paramters used in calculation of Chaikin Oscillator
+         * series points.
+         *
+         * @excluding index, period
+         */
+        params: {
+            /**
+             * The id of volume series which is mandatory.
+             * For example using OHLC data, volumeSeriesID='volume' means
+             * the indicator will be calculated using OHLC and volume values.
+             */
+            volumeSeriesID: 'volume',
+            /**
+             * Periods for Chaikin Oscillator calculations.
+             *
+             * @type    {Array<number>}
+             * @default [3, 10]
+             */
+            periods: [3, 10]
+        }
+    });
+    return ChaikinIndicator;
+}(EMAIndicator));
+extend(ChaikinIndicator.prototype, {
     nameBase: 'Chaikin Osc',
     nameComponents: ['periods'],
     init: function () {
         var args = arguments, ctx = this;
-        RequiredIndicatorMixin.isParentLoaded(EMA, 'ema', ctx.type, function (indicator) {
+        RequiredIndicatorMixin.isParentLoaded(EMAIndicator, 'ema', ctx.type, function (indicator) {
             indicator.prototype.init.apply(ctx, args);
             return;
         });
@@ -100,10 +121,10 @@ BaseSeries.seriesType('chaikin', 'ema',
         if (!ADL) {
             return;
         }
-        SPE = EMA.prototype.getValues.call(this, ADL, {
+        SPE = EMAIndicator.prototype.getValues.call(this, ADL, {
             period: periods[0]
         });
-        LPE = EMA.prototype.getValues.call(this, ADL, {
+        LPE = EMAIndicator.prototype.getValues.call(this, ADL, {
             period: periods[1]
         });
         // Check if ema is calculated properly, if not skip
@@ -125,6 +146,13 @@ BaseSeries.seriesType('chaikin', 'ema',
         };
     }
 });
+BaseSeries.registerSeriesType('chaikin', ChaikinIndicator);
+/* *
+ *
+ *  Default Export
+ *
+ * */
+export default ChaikinIndicator;
 /**
  * A `Chaikin Oscillator` series. If the [type](#series.chaikin.type)
  * option is not specified, it is inherited from [chart.type](#chart.type).
