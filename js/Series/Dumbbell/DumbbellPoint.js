@@ -21,8 +21,6 @@ var __extends = (this && this.__extends) || (function () {
         d.prototype = b === null ? Object.create(b) : (__.prototype = b.prototype, new __());
     };
 })();
-import BaseSeries from '../../Core/Series/Series.js';
-var _a = BaseSeries;
 import AreaRangePoint from '../AreaRange/AreaRangePoint.js';
 import H from '../../Core/Globals.js';
 var noop = H.noop;
@@ -96,7 +94,7 @@ var DumbbellPoint = /** @class */ (function (_super) {
  *  Prototype Properties
  *
  * */
-var _b = AreaRangePoint.prototype, isValid = _b.isValid, destroyElements = _b.destroyElements;
+var _a = AreaRangePoint.prototype, isValid = _a.isValid, destroyElements = _a.destroyElements;
 extend(DumbbellPoint.prototype, {
     // seriesTypes doesn't inherit from arearange point proto so put below
     // methods rigidly.

@@ -16,12 +16,8 @@
  *
  * */
 
+import type DumbbellSeries from './DumbbellSeries.js';
 import type DumbbellPointOptions from './DumbbellPointOptions';
-
-import DumbbellSeries from './DumbbellSeries.js';
-import BaseSeries from '../../Core/Series/Series.js';
-const {
-} = BaseSeries;
 
 import AreaRangePoint from '../AreaRange/AreaRangePoint.js';
 import H from '../../Core/Globals.js';

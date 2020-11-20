@@ -38,7 +38,6 @@ const {
 } = BaseSeries;
 const { prototype: areaRangeProto } = AreaRangeSeries;
 import SVGRenderer from '../../Core/Renderer/SVG/SVGRenderer.js';
-
 import H from '../../Core/Globals.js';
 const { noop, TrackerMixin } = H;
 import U from '../../Core/Utilities.js';
