@@ -64,11 +64,11 @@ declare global {
     }
 }
 
-/**
- * @typedef {"area"|"radius"} Highcharts.VariablePieSizeByValue
- */
-
-''; // detach doclets above
+/* *
+ *
+ *  Class
+ *
+ * */
 
 /**
  * The variablepie series type.
@@ -185,56 +185,22 @@ class VariablePieSeries extends PieSeries {
 
     public points: Array<Highcharts.VariablePiePoint> = void 0 as any;
 
-}
+    public radii: Array<number> = void 0 as any;
 
-/* *
- *
- *  Prototype Properties
- *
- * */
+    /* *
+     *
+     *  Functions
+     *
+     * */
 
-interface VariablePieSeries {
-    parallelArrays: Array<string>;
-    pointArrayMap: Array<string>;
-    pointClass: typeof Highcharts.VariablePiePoint;
-    radii: Array<number>;
-    calculateExtremes(): void;
-    getRadii(
-        zMin: number,
-        zMax: number,
-        minSize: number,
-        maxSize: number
-    ): void;
-    redraw(): void;
-    zValEval(zVal: (number|string|undefined)): (boolean|null);
-}
-extend(VariablePieSeries.prototype, {
-    pointArrayMap: ['y', 'z'],
-    parallelArrays: ['x', 'y', 'z'],
+    /* eslint-disable valid-jsdoc */
 
-    // It is needed to null series.center on chart redraw. Probably good
-    // idea will be to add this option in directly in pie series.
-    redraw: function (this: VariablePieSeries): void {
-        this.center = null as any;
-        PieSeries.prototype.redraw.apply(this, arguments);
-    },
-
-    // For arrayMin and arrayMax calculations array shouldn't have
-    // null/undefined/string values. In this case it is needed to check if
-    // points Z value is a Number.
-    zValEval: function (
-        this: VariablePieSeries,
-        zVal: (number|string|undefined)
-    ): (boolean|null) {
-        if (typeof zVal === 'number' && !isNaN(zVal)) {
-            return true;
-        }
-        return null;
-    },
-
-    // Before standard translate method for pie chart it is needed to
-    // calculate min/max radius of each pie slice based on its Z value.
-    calculateExtremes: function (this: VariablePieSeries): void {
+    /**
+     * Before standard translate method for pie chart it is needed to calculate
+     * min/max radius of each pie slice based on its Z value.
+     * @private
+     */
+    calculateExtremes(): void {
         var series = this,
             chart = series.chart,
             plotWidth = chart.plotWidth,
@@ -281,9 +247,7 @@ extend(VariablePieSeries.prototype, {
             );
             this.getRadii(zMin, zMax, series.minPxSize, series.maxPxSize);
         }
-    },
-
-    /* eslint-disable valid-jsdoc */
+    }
 
     /**
      * Finding radius of series points based on their Z value and min/max Z
@@ -293,23 +257,20 @@ extend(VariablePieSeries.prototype, {
      * @function Highcharts.Series#getRadii
      *
      * @param {number} zMin
-     *        Min threshold for Z value. If point's Z value is smaller that
-     *        zMin, point will have the smallest possible radius.
+     * Min threshold for Z value. If point's Z value is smaller that zMin, point
+     * will have the smallest possible radius.
      *
      * @param {number} zMax
-     *        Max threshold for Z value. If point's Z value is bigger that
-     *        zMax, point will have the biggest possible radius.
+     * Max threshold for Z value. If point's Z value is bigger that zMax, point
+     * will have the biggest possible radius.
      *
      * @param {number} minSize
-     *        Minimal pixel size possible for radius.
+     * Minimal pixel size possible for radius.
      *
      * @param {numbner} maxSize
-     *        Minimal pixel size possible for radius.
-     *
-     * @return {void}
+     * Minimal pixel size possible for radius.
      */
-    getRadii: function (
-        this: VariablePieSeries,
+    public getRadii(
         zMin: number,
         zMax: number,
         minSize: number,
@@ -350,16 +311,25 @@ extend(VariablePieSeries.prototype, {
             radii.push(radius);
         }
         this.radii = radii;
-    },
+    }
 
-    /* eslint-enable valid-jsdoc */
 
-    // Extend translate by updating radius for each pie slice instead of
-    // using one global radius.
-    translate: function (
-        this: VariablePieSeries,
-        positions: Array<number>
-    ): void {
+    /**
+     * It is needed to null series.center on chart redraw. Probably good idea
+     * will be to add this option in directly in pie series.
+     * @private
+     */
+    public redraw(): void {
+        this.center = null as any;
+        super.redraw.apply(this, arguments);
+    }
+
+    /**
+     * Extend translate by updating radius for each pie slice instead of using
+     * one global radius.
+     * @private
+     */
+    public translate(positions?: Array<number>): void {
 
         this.generatePoints();
 
@@ -515,6 +485,38 @@ extend(VariablePieSeries.prototype, {
 
         fireEvent(series, 'afterTranslate');
     }
+
+    /**
+     * For arrayMin and arrayMax calculations array shouldn't have
+     * null/undefined/string values. In this case it is needed to check if
+     * points Z value is a Number.
+     * @private
+     */
+    public zValEval(zVal: (number|string|undefined)): (boolean|null) {
+        if (typeof zVal === 'number' && !isNaN(zVal)) {
+            return true;
+        }
+        return null;
+    }
+
+    /* eslint-enable valid-jsdoc */
+
+}
+
+/* *
+ *
+ *  Prototype Properties
+ *
+ * */
+
+interface VariablePieSeries {
+    parallelArrays: Array<string>;
+    pointArrayMap: Array<string>;
+    pointClass: typeof Highcharts.VariablePiePoint;
+}
+extend(VariablePieSeries.prototype, {
+    pointArrayMap: ['y', 'z'],
+    parallelArrays: ['x', 'y', 'z']
 });
 
 
@@ -538,6 +540,18 @@ BaseSeries.registerSeriesType('variablepie', VariablePieSeries);
  * */
 
 export default VariablePieSeries;
+
+/* *
+ *
+ *  API Declarations
+ *
+ * */
+
+/**
+ * @typedef {"area"|"radius"} Highcharts.VariablePieSizeByValue
+ */
+
+''; // detach doclets above
 
 /* *
  *
