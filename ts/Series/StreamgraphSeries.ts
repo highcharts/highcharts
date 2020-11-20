@@ -55,7 +55,7 @@ declare module '../Core/Series/SeriesType' {
     }
 }
 
-import '../Series/AreaSplineSeries.js';
+import './AreaSpline/AreaSplineSeries.js';
 
 /**
  * @private
