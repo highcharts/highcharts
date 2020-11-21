@@ -23,6 +23,7 @@ export interface AlignObject {
     verticalAlign?: VerticalAlignValue;
     x?: number;
     y?: number;
+    width?: number;
 }
 
 /* *
