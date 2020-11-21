@@ -1125,240 +1125,278 @@ var RangeSelector = /** @class */ (function () {
      * @return {void}
      */
     RangeSelector.prototype.render = function (min, max) {
-        var rangeSelector = this, chart = rangeSelector.chart, renderer = chart.renderer, container = chart.container, chartOptions = chart.options, navButtonOptions = (chartOptions.exporting &&
-            chartOptions.exporting.enabled !== false &&
-            chartOptions.navigation &&
-            chartOptions.navigation.buttonOptions), lang = defaultOptions.lang, div = rangeSelector.div, options = chartOptions.rangeSelector, 
+        var chart = this.chart, renderer = chart.renderer, container = chart.container, chartOptions = chart.options, options = chartOptions.rangeSelector, 
         // Place inputs above the container
         inputsZIndex = pick(chartOptions.chart.style &&
-            chartOptions.chart.style.zIndex, 0) + 1, floating = options.floating, buttons = rangeSelector.buttons, inputGroup = rangeSelector.inputGroup, buttonTheme = options.buttonTheme, buttonPosition = options.buttonPosition, inputPosition = options.inputPosition, inputEnabled = options.inputEnabled, states = buttonTheme && buttonTheme.states, plotLeft = chart.plotLeft, buttonLeft, buttonGroup = rangeSelector.buttonGroup, group, groupHeight, rendered = rangeSelector.rendered, verticalAlign = rangeSelector.options.verticalAlign, legend = chart.legend, legendOptions = legend && legend.options, buttonPositionY = buttonPosition.y, inputPositionY = inputPosition.y, animate = chart.hasLoaded, verb = animate ? 'animate' : 'attr', exportingX = 0, alignTranslateY, legendHeight, minPosition, translateY = 0, translateX;
+            chartOptions.chart.style.zIndex, 0) + 1, inputEnabled = options.inputEnabled !== false, rendered = this.rendered;
         if (options.enabled === false) {
             return;
         }
         // create the elements
         if (!rendered) {
-            rangeSelector.group = group = renderer.g('range-selector-group')
+            this.group = renderer.g('range-selector-group')
                 .attr({
                 zIndex: 7
             })
                 .add();
-            rangeSelector.buttonGroup = buttonGroup =
-                renderer.g('range-selector-buttons').add(group);
-            rangeSelector.zoomText = renderer
-                .text(lang.rangeSelectorZoom, 0, 15)
-                .add(buttonGroup);
-            if (!chart.styledMode) {
-                rangeSelector.zoomText.css(options.labelStyle);
-                buttonTheme['stroke-width'] =
-                    pick(buttonTheme['stroke-width'], 0);
-            }
-            rangeSelector.buttonOptions.forEach(function (rangeOptions, i) {
-                buttons[i] = renderer
-                    .button(rangeOptions.text, 0, 0, function (e) {
-                    // extract events from button object and call
-                    var buttonEvents = (rangeOptions.events &&
-                        rangeOptions.events.click), callDefaultEvent;
-                    if (buttonEvents) {
-                        callDefaultEvent =
-                            buttonEvents.call(rangeOptions, e);
-                    }
-                    if (callDefaultEvent !== false) {
-                        rangeSelector.clickButton(i);
-                    }
-                    rangeSelector.isActive = true;
-                }, buttonTheme, states && states.hover, states && states.select, states && states.disabled)
-                    .attr({
-                    'text-align': 'center'
-                })
-                    .add(buttonGroup);
-                if (rangeOptions.title) {
-                    buttons[i].attr('title', rangeOptions.title);
-                }
+            this.div = createElement('div', null, {
+                position: 'relative',
+                height: 0,
+                zIndex: inputsZIndex
             });
-            // first create a wrapper outside the container in order to make
+            this.renderButtons();
+            // First create a wrapper outside the container in order to make
             // the inputs work and make export correct
-            if (inputEnabled !== false) {
-                rangeSelector.div = div = createElement('div', null, {
-                    position: 'relative',
-                    height: 0,
-                    zIndex: inputsZIndex
-                });
-                container.parentNode.insertBefore(div, container);
+            if (inputEnabled && container.parentNode) {
+                container.parentNode.insertBefore(this.div, container);
                 // Create the group to keep the inputs
-                rangeSelector.inputGroup = inputGroup =
-                    renderer.g('input-group').add(group);
-                inputGroup.offset = 0;
-                rangeSelector.drawInput('min');
-                rangeSelector.drawInput('max');
+                this.inputGroup = renderer.g('input-group').add(this.group);
+                this.inputGroup.offset = 0;
+                this.drawInput('min');
+                this.drawInput('max');
             }
         }
-        // #8769, allow dynamically updating margins
-        rangeSelector.zoomText[verb]({
-            x: pick(plotLeft + buttonPosition.x, plotLeft)
-        });
-        // button start position
-        buttonLeft = pick(plotLeft + buttonPosition.x, plotLeft) +
-            rangeSelector.zoomText.getBBox().width + 5;
-        rangeSelector.buttonOptions.forEach(function (rangeOptions, i) {
-            buttons[i][verb]({ x: buttonLeft });
-            // increase button position for the next button
-            buttonLeft += buttons[i].width + pick(options.buttonSpacing, 5);
-        });
-        plotLeft = chart.plotLeft - chart.spacing[3];
-        rangeSelector.updateButtonStates();
-        // detect collisiton with exporting
-        if (navButtonOptions &&
-            this.titleCollision(chart) &&
-            verticalAlign === 'top' &&
-            buttonPosition.align === 'right' && ((buttonPosition.y +
-            buttonGroup.getBBox().height - 12) <
-            ((navButtonOptions.y || 0) +
-                navButtonOptions.height))) {
-            exportingX = -40;
-        }
-        translateX = buttonPosition.x - chart.spacing[3];
-        if (buttonPosition.align === 'right') {
-            translateX += exportingX - plotLeft; // (#13014)
-        }
-        else if (buttonPosition.align === 'center') {
-            translateX -= plotLeft / 2;
-        }
-        // align button group
-        buttonGroup.align({
-            y: buttonPosition.y,
-            width: buttonGroup.getBBox().width,
-            align: buttonPosition.align,
-            x: translateX
-        }, true, chart.spacingBox);
-        // skip animation
-        rangeSelector.group.placed = animate;
-        rangeSelector.buttonGroup.placed = animate;
-        if (inputEnabled !== false) {
-            var inputGroupX, inputGroupWidth, buttonGroupX, buttonGroupWidth;
-            // detect collision with exporting
-            if (navButtonOptions &&
-                this.titleCollision(chart) &&
-                verticalAlign === 'top' &&
-                inputPosition.align === 'right' && ((inputPosition.y -
-                inputGroup.getBBox().height - 12) <
-                ((navButtonOptions.y || 0) +
-                    navButtonOptions.height +
-                    chart.spacing[0]))) {
-                exportingX = -40;
-            }
-            else {
-                exportingX = 0;
-            }
-            if (inputPosition.align === 'left') {
-                translateX = plotLeft;
-            }
-            else if (inputPosition.align === 'right') {
-                translateX = -Math.max(chart.axisOffset[1], -exportingX);
-            }
-            // Update the alignment to the updated spacing box
-            inputGroup.align({
-                y: inputPosition.y,
-                width: inputGroup.getBBox().width,
-                align: inputPosition.align,
-                // fix wrong getBBox() value on right align
-                x: inputPosition.x + translateX - 2
-            }, true, chart.spacingBox);
-            // detect collision
-            inputGroupX = (inputGroup.alignAttr.translateX +
-                inputGroup.alignOptions.x -
-                exportingX +
-                // getBBox for detecing left margin
-                inputGroup.getBBox().x +
-                // 2px padding to not overlap input and label
-                2);
-            inputGroupWidth = inputGroup.alignOptions.width;
-            buttonGroupX = buttonGroup.alignAttr.translateX +
-                buttonGroup.getBBox().x;
-            // 20 is minimal spacing between elements
-            buttonGroupWidth = buttonGroup.getBBox().width + 20;
-            if ((inputPosition.align ===
-                buttonPosition.align) || ((buttonGroupX + buttonGroupWidth > inputGroupX) &&
-                (inputGroupX + inputGroupWidth > buttonGroupX) &&
-                (buttonPositionY <
-                    (inputPositionY +
-                        inputGroup.getBBox().height)))) {
-                inputGroup.attr({
-                    translateX: inputGroup.alignAttr.translateX +
-                        (chart.axisOffset[1] >= -exportingX ? 0 : -exportingX),
-                    translateY: inputGroup.alignAttr.translateY +
-                        buttonGroup.getBBox().height + 10
-                });
-            }
+        if (inputEnabled) {
             // Set or reset the input values
-            rangeSelector.setInputValue('min', min);
-            rangeSelector.setInputValue('max', max);
-            // skip animation
-            rangeSelector.inputGroup.placed = animate;
+            this.setInputValue('min', min);
+            this.setInputValue('max', max);
         }
-        // vertical align
-        rangeSelector.group.align({
-            verticalAlign: verticalAlign
-        }, true, chart.spacingBox);
-        // set position
-        groupHeight =
-            rangeSelector.group.getBBox().height + 20; // # 20 padding
-        alignTranslateY =
-            rangeSelector.group.alignAttr.translateY;
-        // calculate bottom position
-        if (verticalAlign === 'bottom') {
-            legendHeight = (legendOptions &&
-                legendOptions.verticalAlign === 'bottom' &&
-                legendOptions.enabled &&
-                !legendOptions.floating ?
-                legend.legendHeight + pick(legendOptions.margin, 10) :
-                0);
-            groupHeight = groupHeight + legendHeight - 20;
-            translateY = (alignTranslateY -
-                groupHeight -
-                (floating ? 0 : options.y) -
-                (chart.titleOffset ? chart.titleOffset[2] : 0) -
-                10 // 10 spacing
-            );
+        this.alignElements();
+        this.rendered = true;
+    };
+    /**
+     * Render the range buttons. This only runs the first time, later the
+     * positioning is laid out in alignElements.
+     *
+     * @private
+     * @function Highcharts.RangeSelector#renderButtons
+     * @return {void}
+     */
+    RangeSelector.prototype.renderButtons = function () {
+        var _this = this;
+        var lang = defaultOptions.lang;
+        var renderer = this.chart.renderer;
+        var options = this.options;
+        var buttons = this.buttons;
+        var buttonTheme = options.buttonTheme;
+        var states = buttonTheme && buttonTheme.states;
+        this.buttonGroup = renderer.g('range-selector-buttons').add(this.group);
+        this.zoomText = renderer
+            .text(lang.rangeSelectorZoom, 0, 15)
+            .add(this.buttonGroup);
+        if (!this.chart.styledMode) {
+            this.zoomText.css(options.labelStyle);
+            buttonTheme['stroke-width'] =
+                pick(buttonTheme['stroke-width'], 0);
         }
-        if (verticalAlign === 'top') {
-            if (floating) {
-                translateY = 0;
+        this.buttonOptions.forEach(function (rangeOptions, i) {
+            buttons[i] = renderer
+                .button(rangeOptions.text, 0, 0, function (e) {
+                // extract events from button object and call
+                var buttonEvents = (rangeOptions.events &&
+                    rangeOptions.events.click), callDefaultEvent;
+                if (buttonEvents) {
+                    callDefaultEvent =
+                        buttonEvents.call(rangeOptions, e);
+                }
+                if (callDefaultEvent !== false) {
+                    _this.clickButton(i);
+                }
+                _this.isActive = true;
+            }, buttonTheme, states && states.hover, states && states.select, states && states.disabled)
+                .attr({
+                'text-align': 'center'
+            })
+                .add(_this.buttonGroup);
+            if (rangeOptions.title) {
+                buttons[i].attr('title', rangeOptions.title);
             }
-            if (chart.titleOffset && chart.titleOffset[0]) {
-                translateY = chart.titleOffset[0];
+        });
+    };
+    /**
+     * Align the elements horizontally and vertically.
+     *
+     * @private
+     * @function Highcharts.RangeSelector#alignElements
+     * @return {void}
+     */
+    RangeSelector.prototype.alignElements = function () {
+        var _a = this, buttonGroup = _a.buttonGroup, buttons = _a.buttons, chart = _a.chart, group = _a.group, inputGroup = _a.inputGroup, options = _a.options, zoomText = _a.zoomText;
+        var chartOptions = chart.options;
+        var navButtonOptions = (chartOptions.exporting &&
+            chartOptions.exporting.enabled !== false &&
+            chartOptions.navigation &&
+            chartOptions.navigation.buttonOptions);
+        var verb = chart.hasLoaded ? 'animate' : 'attr';
+        var buttonPosition = options.buttonPosition, inputPosition = options.inputPosition, verticalAlign = options.verticalAlign;
+        var exportingX = 0;
+        var plotLeft = chart.plotLeft;
+        var buttonLeft = plotLeft;
+        if (group && buttonPosition && inputPosition) {
+            var translateX = (buttonPosition.x || 0) - chart.spacing[3];
+            if (buttonGroup) {
+                if (zoomText) {
+                    // #8769, allow dynamically updating margins
+                    zoomText[verb]({
+                        x: pick(plotLeft + (buttonPosition.x || 0), plotLeft)
+                    });
+                    // Button start position
+                    buttonLeft += (buttonPosition.x || 0) +
+                        zoomText.getBBox().width + 5;
+                }
+                this.buttonOptions.forEach(function (rangeOptions, i) {
+                    buttons[i][verb]({ x: buttonLeft });
+                    // increase button position for the next button
+                    buttonLeft += buttons[i].width +
+                        pick(options.buttonSpacing, 5);
+                });
+                plotLeft -= chart.spacing[3];
+                this.updateButtonStates();
+                // Detect collision between button group and exporting
+                if (navButtonOptions &&
+                    this.titleCollision(chart) &&
+                    verticalAlign === 'top' &&
+                    buttonPosition.align === 'right' && (((buttonPosition.y || 0) +
+                    buttonGroup.getBBox().height - 12) <
+                    ((navButtonOptions.y || 0) +
+                        (navButtonOptions.height || 0)))) {
+                    exportingX = -40;
+                }
+                if (buttonPosition.align === 'right') {
+                    translateX += exportingX - plotLeft; // #13014
+                }
+                else if (buttonPosition.align === 'center') {
+                    translateX -= plotLeft / 2;
+                }
+                // Align button group
+                buttonGroup.align({
+                    y: buttonPosition.y,
+                    width: buttonGroup.getBBox().width,
+                    align: buttonPosition.align,
+                    x: translateX
+                }, true, chart.spacingBox);
+                // Skip animation
+                group.placed = buttonGroup.placed = chart.hasLoaded;
             }
-            translateY += ((chart.margin[0] - chart.spacing[0]) || 0);
-        }
-        else if (verticalAlign === 'middle') {
-            if (inputPositionY === buttonPositionY) {
-                if (inputPositionY < 0) {
-                    translateY = alignTranslateY + minPosition;
+            if (inputGroup) {
+                // Detect collision with exporting button
+                if (navButtonOptions &&
+                    this.titleCollision(chart) &&
+                    verticalAlign === 'top' &&
+                    inputPosition.align === 'right' && (((inputPosition.y || 0) -
+                    inputGroup.getBBox().height - 12) <
+                    ((navButtonOptions.y || 0) +
+                        (navButtonOptions.height || 0) +
+                        chart.spacing[0]))) {
+                    exportingX = -40;
                 }
                 else {
+                    exportingX = 0;
+                }
+                if (inputPosition.align === 'left') {
+                    translateX = plotLeft;
+                }
+                else if (inputPosition.align === 'right') {
+                    translateX = -Math.max(chart.axisOffset[1], -exportingX);
+                }
+                // Update the alignment to the updated spacing box
+                inputGroup.align({
+                    y: inputPosition.y,
+                    width: inputGroup.getBBox().width,
+                    align: inputPosition.align,
+                    // fix wrong getBBox() value on right align
+                    x: (inputPosition.x || 0) + translateX - 2
+                }, true, chart.spacingBox);
+                if (buttonGroup) {
+                    // Detect collision
+                    var inputGroupX = (inputGroup.alignAttr.translateX +
+                        inputGroup.alignOptions.x -
+                        exportingX +
+                        // getBBox for detecing left margin
+                        inputGroup.getBBox().x +
+                        // 2px padding to not overlap input and label
+                        2);
+                    var inputGroupWidth = inputGroup.alignOptions.width;
+                    var buttonGroupX = buttonGroup.alignAttr.translateX +
+                        buttonGroup.getBBox().x;
+                    // 20 is minimal spacing between elements
+                    var buttonGroupWidth = buttonGroup.getBBox().width + 20;
+                    if ((inputPosition.align === buttonPosition.align) ||
+                        ((buttonGroupX + buttonGroupWidth > inputGroupX) &&
+                            (inputGroupX + inputGroupWidth > buttonGroupX) &&
+                            ((buttonPosition.y || 0) <
+                                ((inputPosition.y || 0) +
+                                    inputGroup.getBBox().height)))) {
+                        // Move the input group down
+                        inputGroup.attr({
+                            translateX: inputGroup.alignAttr.translateX + (chart.axisOffset[1] >= -exportingX ?
+                                0 :
+                                -exportingX),
+                            translateY: inputGroup.alignAttr.translateY +
+                                buttonGroup.getBBox().height + 10
+                        });
+                    }
+                }
+                // Skip animation
+                inputGroup.placed = chart.hasLoaded;
+            }
+            // Vertical align
+            group.align({
+                verticalAlign: verticalAlign
+            }, true, chart.spacingBox);
+            var alignTranslateY = group.alignAttr.translateY;
+            // Set position
+            var groupHeight = group.getBBox().height + 20; // # 20 padding
+            var translateY = 0;
+            // Calculate bottom position
+            if (verticalAlign === 'bottom') {
+                var legendOptions = chart.legend && chart.legend.options;
+                var legendHeight = (legendOptions &&
+                    legendOptions.verticalAlign === 'bottom' &&
+                    legendOptions.enabled &&
+                    !legendOptions.floating ?
+                    (chart.legend.legendHeight +
+                        pick(legendOptions.margin, 10)) :
+                    0);
+                groupHeight = groupHeight + legendHeight - 20;
+                translateY = (alignTranslateY -
+                    groupHeight -
+                    (options.floating ? 0 : options.y) -
+                    (chart.titleOffset ? chart.titleOffset[2] : 0) -
+                    10 // 10 spacing
+                );
+            }
+            if (verticalAlign === 'top') {
+                if (options.floating) {
+                    translateY = 0;
+                }
+                if (chart.titleOffset && chart.titleOffset[0]) {
+                    translateY = chart.titleOffset[0];
+                }
+                translateY += ((chart.margin[0] - chart.spacing[0]) || 0);
+            }
+            else if (verticalAlign === 'middle') {
+                if (inputPosition.y === buttonPosition.y) {
                     translateY = alignTranslateY;
                 }
+                else if (inputPosition.y || buttonPosition.y) {
+                    if ((inputPosition.y || 0) < 0 ||
+                        (buttonPosition.y || 0) < 0) {
+                        translateY -= Math.min(inputPosition.y || 0, buttonPosition.y || 0);
+                    }
+                    else {
+                        translateY = alignTranslateY - groupHeight;
+                    }
+                }
             }
-            else if (inputPositionY || buttonPositionY) {
-                if (inputPositionY < 0 ||
-                    buttonPositionY < 0) {
-                    translateY -= Math.min(inputPositionY, buttonPositionY);
-                }
-                else {
-                    translateY =
-                        alignTranslateY - groupHeight + minPosition;
-                }
+            group.translate(options.x || 0, (options.y || 0) + Math.floor(translateY));
+            // Translate HTML inputs
+            var _b = this, minInput = _b.minInput, maxInput = _b.maxInput;
+            if (options.inputEnabled !== false && minInput && maxInput) {
+                minInput.style.marginTop = group.translateY + 'px';
+                maxInput.style.marginTop = group.translateY + 'px';
             }
         }
-        rangeSelector.group.translate(options.x, options.y + Math.floor(translateY));
-        // translate HTML inputs
-        var minInput = rangeSelector.minInput, maxInput = rangeSelector.maxInput;
-        if (inputEnabled !== false && minInput && maxInput) {
-            minInput.style.marginTop =
-                rangeSelector.group.translateY + 'px';
-            maxInput.style.marginTop =
-                rangeSelector.group.translateY + 'px';
-        }
-        rangeSelector.rendered = true;
     };
     /**
      * Extracts height of range selector
