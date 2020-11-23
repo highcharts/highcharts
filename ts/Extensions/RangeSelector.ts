@@ -78,11 +78,6 @@ declare global {
         interface RangeSelectorParseCallbackFunction {
             (value: string, useUTC: boolean, time?: Time): number;
         }
-        interface RangeSelectorButtonPositionOptions {
-            align: AlignValue;
-            x: number;
-            y: number;
-        }
         interface RangeSelectorButtonsEventsOptions {
             click?: RangeSelectorClickCallbackFunction;
         }
@@ -100,14 +95,9 @@ declare global {
             text: string;
             type?: RangeSelectorButtonTypeValue;
         }
-        interface RangeSelectorInputPositionOptions {
-            align: AlignValue;
-            x: number;
-            y: number;
-        }
         interface RangeSelectorOptions {
             allButtonsEnabled: boolean;
-            buttonPosition: RangeSelectorButtonPositionOptions;
+            buttonPosition: RangeSelectorPositionOptions;
             buttons?: Array<RangeSelectorButtonsOptions>;
             buttonSpacing: number;
             buttonTheme: SVGAttributes;
@@ -121,11 +111,16 @@ declare global {
             inputDateParser?: RangeSelectorParseCallbackFunction;
             inputEditDateFormat: string;
             inputEnabled: boolean;
-            inputPosition: RangeSelectorInputPositionOptions;
+            inputPosition: RangeSelectorPositionOptions;
             inputStyle: CSSObject;
             labelStyle: CSSObject;
             selected?: number;
             verticalAlign: VerticalAlignValue;
+            x: number;
+            y: number;
+        }
+        interface RangeSelectorPositionOptions {
+            align: AlignValue;
             x: number;
             y: number;
         }
@@ -1735,7 +1730,33 @@ class RangeSelector {
             verticalAlign
         } = options;
 
-        let exportingX = 0;
+        // Get the X offset required to avoid overlapping with the exporting
+        // button. This is is used both by the buttonGroup and the inputGroup.
+        const getXOffsetForExportButton = (
+            group: SVGElement,
+            position: Highcharts.RangeSelectorPositionOptions
+        ): number => {
+            if (
+                navButtonOptions &&
+                this.titleCollision(chart) &&
+                verticalAlign === 'top' &&
+                position.align === 'right' && (
+                    (
+                        position.y -
+                        group.getBBox().height - 12
+                    ) <
+                    (
+                        (navButtonOptions.y || 0) +
+                        (navButtonOptions.height || 0) +
+                        chart.spacing[0]
+                    )
+                )
+            ) {
+                return -40;
+            }
+            return 0;
+        };
+
         let plotLeft = chart.plotLeft;
         let buttonLeft = plotLeft;
 
@@ -1772,26 +1793,13 @@ class RangeSelector {
                 this.updateButtonStates();
 
                 // Detect collision between button group and exporting
-                if (
-                    navButtonOptions &&
-                    this.titleCollision(chart) &&
-                    verticalAlign === 'top' &&
-                    buttonPosition.align === 'right' && (
-                        (
-                            buttonPosition.y +
-                            buttonGroup.getBBox().height - 12
-                        ) <
-                        (
-                            (navButtonOptions.y || 0) +
-                            (navButtonOptions.height || 0)
-                        )
-                    )
-                ) {
-                    exportingX = -40;
-                }
+                const xOffsetForExportButton = getXOffsetForExportButton(
+                    buttonGroup,
+                    buttonPosition
+                );
 
                 if (buttonPosition.align === 'right') {
-                    translateX += exportingX - plotLeft; // #13014
+                    translateX += xOffsetForExportButton - plotLeft; // #13014
                 } else if (buttonPosition.align === 'center') {
                     translateX -= plotLeft / 2;
                 }
@@ -1811,32 +1819,19 @@ class RangeSelector {
 
             if (inputGroup) {
 
-                // Detect collision with exporting button
-                if (
-                    navButtonOptions &&
-                    this.titleCollision(chart) &&
-                    verticalAlign === 'top' &&
-                    inputPosition.align === 'right' && (
-                        (
-                            inputPosition.y -
-                            inputGroup.getBBox().height - 12
-                        ) <
-                        (
-                            (navButtonOptions.y || 0) +
-                            (navButtonOptions.height || 0) +
-                            chart.spacing[0]
-                        )
-                    )
-                ) {
-                    exportingX = -40;
-                } else {
-                    exportingX = 0;
-                }
+                // Detect collision between the input group and exporting button
+                const xOffsetForExportButton = getXOffsetForExportButton(
+                    inputGroup,
+                    inputPosition
+                );
 
                 if (inputPosition.align === 'left') {
                     translateX = plotLeft;
                 } else if (inputPosition.align === 'right') {
-                    translateX = -Math.max(chart.axisOffset[1], -exportingX);
+                    translateX = -Math.max(
+                        chart.axisOffset[1],
+                        -xOffsetForExportButton
+                    );
                 }
 
                 // Update the alignment to the updated spacing box
@@ -1850,51 +1845,7 @@ class RangeSelector {
 
 
                 if (buttonGroup) {
-
-                    // Detect collision
-                    const inputGroupX = (
-                        inputGroup.alignAttr.translateX +
-                        inputGroup.alignOptions.x -
-                        exportingX +
-                        // getBBox for detecing left margin
-                        inputGroup.getBBox().x +
-                        // 2px padding to not overlap input and label
-                        2
-                    );
-
-                    const inputGroupWidth = inputGroup.alignOptions.width;
-
-                    const buttonGroupX = buttonGroup.alignAttr.translateX +
-                        buttonGroup.getBBox().x;
-                    // 20 is minimal spacing between elements
-                    const buttonGroupWidth = buttonGroup.getBBox().width + 20;
-
-                    if (
-                        (inputPosition.align === buttonPosition.align) ||
-                        (
-                            (buttonGroupX + buttonGroupWidth > inputGroupX) &&
-                            (inputGroupX + inputGroupWidth > buttonGroupX) &&
-                            (
-                                buttonPosition.y <
-                                (
-                                    inputPosition.y +
-                                    inputGroup.getBBox().height
-                                )
-                            )
-                        )
-                    ) {
-                        // Move the input group down
-                        inputGroup.attr({
-                            translateX: inputGroup.alignAttr.translateX + (
-                                chart.axisOffset[1] >= -exportingX ?
-                                    0 :
-                                    -exportingX
-                            ),
-                            translateY: inputGroup.alignAttr.translateY +
-                                buttonGroup.getBBox().height + 10
-                        });
-
-                    }
+                    this.handleCollision(xOffsetForExportButton);
                 }
 
                 // Skip animation
@@ -1976,6 +1927,77 @@ class RangeSelector {
             if (options.inputEnabled && minInput && maxInput) {
                 minInput.style.marginTop = group.translateY + 'px';
                 maxInput.style.marginTop = group.translateY + 'px';
+            }
+        }
+    }
+
+    /**
+     * Handle collision between the button group and the input group
+     *
+     * @private
+     * @function Highcharts.RangeSelector#handleCollision
+     *
+     * @param  {number} xOffsetForExportButton
+     *                  The X offset of the group required to make room for the
+     *                  exporting button
+     * @return {void}
+     */
+    public handleCollision(xOffsetForExportButton: number): void {
+        const {
+            chart,
+            buttonGroup,
+            inputGroup
+        } = this;
+
+        const {
+            buttonPosition,
+            inputPosition
+        } = this.options;
+
+        // Detect collision
+        if (inputGroup && buttonGroup) {
+            const inputGroupX = (
+                inputGroup.alignAttr.translateX +
+                inputGroup.alignOptions.x -
+                xOffsetForExportButton +
+                // getBBox for detecing left margin
+                inputGroup.getBBox().x +
+                // 2px padding to not overlap input and label
+                2
+            );
+
+            const inputGroupWidth = inputGroup.alignOptions.width;
+
+            const buttonGroupX = buttonGroup.alignAttr.translateX +
+                buttonGroup.getBBox().x;
+            // 20 is minimal spacing between elements
+            const buttonGroupWidth = buttonGroup.getBBox().width + 20;
+
+            if (
+                (inputPosition.align === buttonPosition.align) ||
+                (
+                    (buttonGroupX + buttonGroupWidth > inputGroupX) &&
+                    (inputGroupX + inputGroupWidth > buttonGroupX) &&
+                    (
+                        buttonPosition.y <
+                        (
+                            inputPosition.y +
+                            inputGroup.getBBox().height
+                        )
+                    )
+                )
+            ) {
+                // Move the input group down
+                inputGroup.attr({
+                    translateX: inputGroup.alignAttr.translateX + (
+                        chart.axisOffset[1] >= -xOffsetForExportButton ?
+                            0 :
+                            -xOffsetForExportButton
+                    ),
+                    translateY: inputGroup.alignAttr.translateY +
+                        buttonGroup.getBBox().height + 10
+                });
+
             }
         }
     }
