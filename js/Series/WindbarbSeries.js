@@ -88,6 +88,150 @@ var WindbarbSeries = /** @class */ (function (_super) {
         _this.points = void 0;
         return _this;
     }
+    /* *
+     *
+     * Functions
+     *
+     * */
+    WindbarbSeries.prototype.init = function (chart, options) {
+        registerApproximation();
+        LineSeries.prototype.init.call(this, chart, options);
+    };
+    // Get presentational attributes.
+    WindbarbSeries.prototype.pointAttribs = function (point, state) {
+        var options = this.options, stroke = point.color || this.color, strokeWidth = this.options.lineWidth;
+        if (state) {
+            stroke = options.states[state].color || stroke;
+            strokeWidth =
+                (options.states[state].lineWidth || strokeWidth) +
+                    (options.states[state].lineWidthPlus || 0);
+        }
+        return {
+            'stroke': stroke,
+            'stroke-width': strokeWidth
+        };
+    };
+    // Create a single wind arrow. It is later rotated around the zero
+    // centerpoint.
+    WindbarbSeries.prototype.windArrow = function (point) {
+        var knots = point.value * 1.943844, level = point.beaufortLevel, path, barbs, u = this.options.vectorLength / 20, pos = -10;
+        if (point.isNull) {
+            return [];
+        }
+        if (level === 0) {
+            return this.chart.renderer.symbols.circle(-10 * u, -10 * u, 20 * u, 20 * u);
+        }
+        // The stem and the arrow head
+        path = [
+            ['M', 0, 7 * u],
+            ['L', -1.5 * u, 7 * u],
+            ['L', 0, 10 * u],
+            ['L', 1.5 * u, 7 * u],
+            ['L', 0, 7 * u],
+            ['L', 0, -10 * u] // top
+        ];
+        // For each full 50 knots, add a pennant
+        barbs = (knots - knots % 50) / 50; // pennants
+        if (barbs > 0) {
+            while (barbs--) {
+                path.push(pos === -10 ? ['L', 0, pos * u] : ['M', 0, pos * u], ['L', 5 * u, pos * u + 2], ['L', 0, pos * u + 4]);
+                // Substract from the rest and move position for next
+                knots -= 50;
+                pos += 7;
+            }
+        }
+        // For each full 10 knots, add a full barb
+        barbs = (knots - knots % 10) / 10;
+        if (barbs > 0) {
+            while (barbs--) {
+                path.push(pos === -10 ? ['L', 0, pos * u] : ['M', 0, pos * u], ['L', 7 * u, pos * u]);
+                knots -= 10;
+                pos += 3;
+            }
+        }
+        // For each full 5 knots, add a half barb
+        barbs = (knots - knots % 5) / 5; // half barbs
+        if (barbs > 0) {
+            while (barbs--) {
+                path.push(pos === -10 ? ['L', 0, pos * u] : ['M', 0, pos * u], ['L', 4 * u, pos * u]);
+                knots -= 5;
+                pos += 3;
+            }
+        }
+        return path;
+    };
+    WindbarbSeries.prototype.translate = function () {
+        var beaufortFloor = this.beaufortFloor, beaufortName = this.beaufortName;
+        OnSeriesMixin.translate.call(this);
+        this.points.forEach(function (point) {
+            var level = 0;
+            // Find the beaufort level (zero based)
+            for (; level < beaufortFloor.length; level++) {
+                if (beaufortFloor[level] > point.value) {
+                    break;
+                }
+            }
+            point.beaufortLevel = level - 1;
+            point.beaufort = beaufortName[level - 1];
+        });
+    };
+    WindbarbSeries.prototype.drawPoints = function () {
+        var chart = this.chart, yAxis = this.yAxis, inverted = chart.inverted, shapeOffset = this.options.vectorLength / 2;
+        this.points.forEach(function (point) {
+            var plotX = point.plotX, plotY = point.plotY;
+            // Check if it's inside the plot area, but only for the X
+            // dimension.
+            if (this.options.clip === false ||
+                chart.isInsidePlot(plotX, 0, false)) {
+                // Create the graphic the first time
+                if (!point.graphic) {
+                    point.graphic = this.chart.renderer
+                        .path()
+                        .add(this.markerGroup)
+                        .addClass('highcharts-point ' +
+                        'highcharts-color-' +
+                        pick(point.colorIndex, point.series.colorIndex));
+                }
+                // Position the graphic
+                point.graphic
+                    .attr({
+                    d: this.windArrow(point),
+                    translateX: plotX + this.options.xOffset,
+                    translateY: plotY + this.options.yOffset,
+                    rotation: point.direction
+                });
+                if (!this.chart.styledMode) {
+                    point.graphic
+                        .attr(this.pointAttribs(point));
+                }
+            }
+            else if (point.graphic) {
+                point.graphic = point.graphic.destroy();
+            }
+            // Set the tooltip anchor position
+            point.tooltipPos = [
+                plotX + this.options.xOffset +
+                    (inverted && !this.onSeries ? shapeOffset : 0),
+                plotY + this.options.yOffset -
+                    (inverted ?
+                        0 :
+                        shapeOffset + yAxis.pos - chart.plotTop)
+            ]; // #6327
+        }, this);
+    };
+    // Fade in the arrows on initializing series.
+    WindbarbSeries.prototype.animate = function (init) {
+        if (init) {
+            this.markerGroup.attr({
+                opacity: 0.01
+            });
+        }
+        else {
+            this.markerGroup.animate({
+                opacity: 1
+            }, animObject(this.options.animation));
+        }
+    };
     /**
      * Wind barbs are a convenient way to represent wind speed and direction in
      * one graphical form. Wind direction is given by the stem direction, and
@@ -206,149 +350,10 @@ extend(WindbarbSeries.prototype, {
     beaufortFloor: [0, 0.3, 1.6, 3.4, 5.5, 8.0, 10.8, 13.9, 17.2, 20.8,
         24.5, 28.5, 32.7],
     trackerGroups: ['markerGroup'],
-    init: function (chart, options) {
-        registerApproximation();
-        LineSeries.prototype.init.call(this, chart, options);
-    },
-    // Get presentational attributes.
-    pointAttribs: function (point, state) {
-        var options = this.options, stroke = point.color || this.color, strokeWidth = this.options.lineWidth;
-        if (state) {
-            stroke = options.states[state].color || stroke;
-            strokeWidth =
-                (options.states[state].lineWidth || strokeWidth) +
-                    (options.states[state].lineWidthPlus || 0);
-        }
-        return {
-            'stroke': stroke,
-            'stroke-width': strokeWidth
-        };
-    },
     markerAttribs: function () {
         return;
     },
     getPlotBox: OnSeriesMixin.getPlotBox,
-    // Create a single wind arrow. It is later rotated around the zero
-    // centerpoint.
-    windArrow: function (point) {
-        var knots = point.value * 1.943844, level = point.beaufortLevel, path, barbs, u = this.options.vectorLength / 20, pos = -10;
-        if (point.isNull) {
-            return [];
-        }
-        if (level === 0) {
-            return this.chart.renderer.symbols.circle(-10 * u, -10 * u, 20 * u, 20 * u);
-        }
-        // The stem and the arrow head
-        path = [
-            ['M', 0, 7 * u],
-            ['L', -1.5 * u, 7 * u],
-            ['L', 0, 10 * u],
-            ['L', 1.5 * u, 7 * u],
-            ['L', 0, 7 * u],
-            ['L', 0, -10 * u] // top
-        ];
-        // For each full 50 knots, add a pennant
-        barbs = (knots - knots % 50) / 50; // pennants
-        if (barbs > 0) {
-            while (barbs--) {
-                path.push(pos === -10 ? ['L', 0, pos * u] : ['M', 0, pos * u], ['L', 5 * u, pos * u + 2], ['L', 0, pos * u + 4]);
-                // Substract from the rest and move position for next
-                knots -= 50;
-                pos += 7;
-            }
-        }
-        // For each full 10 knots, add a full barb
-        barbs = (knots - knots % 10) / 10;
-        if (barbs > 0) {
-            while (barbs--) {
-                path.push(pos === -10 ? ['L', 0, pos * u] : ['M', 0, pos * u], ['L', 7 * u, pos * u]);
-                knots -= 10;
-                pos += 3;
-            }
-        }
-        // For each full 5 knots, add a half barb
-        barbs = (knots - knots % 5) / 5; // half barbs
-        if (barbs > 0) {
-            while (barbs--) {
-                path.push(pos === -10 ? ['L', 0, pos * u] : ['M', 0, pos * u], ['L', 4 * u, pos * u]);
-                knots -= 5;
-                pos += 3;
-            }
-        }
-        return path;
-    },
-    translate: function () {
-        var beaufortFloor = this.beaufortFloor, beaufortName = this.beaufortName;
-        OnSeriesMixin.translate.call(this);
-        this.points.forEach(function (point) {
-            var level = 0;
-            // Find the beaufort level (zero based)
-            for (; level < beaufortFloor.length; level++) {
-                if (beaufortFloor[level] > point.value) {
-                    break;
-                }
-            }
-            point.beaufortLevel = level - 1;
-            point.beaufort = beaufortName[level - 1];
-        });
-    },
-    drawPoints: function () {
-        var chart = this.chart, yAxis = this.yAxis, inverted = chart.inverted, shapeOffset = this.options.vectorLength / 2;
-        this.points.forEach(function (point) {
-            var plotX = point.plotX, plotY = point.plotY;
-            // Check if it's inside the plot area, but only for the X
-            // dimension.
-            if (this.options.clip === false ||
-                chart.isInsidePlot(plotX, 0, false)) {
-                // Create the graphic the first time
-                if (!point.graphic) {
-                    point.graphic = this.chart.renderer
-                        .path()
-                        .add(this.markerGroup)
-                        .addClass('highcharts-point ' +
-                        'highcharts-color-' +
-                        pick(point.colorIndex, point.series.colorIndex));
-                }
-                // Position the graphic
-                point.graphic
-                    .attr({
-                    d: this.windArrow(point),
-                    translateX: plotX + this.options.xOffset,
-                    translateY: plotY + this.options.yOffset,
-                    rotation: point.direction
-                });
-                if (!this.chart.styledMode) {
-                    point.graphic
-                        .attr(this.pointAttribs(point));
-                }
-            }
-            else if (point.graphic) {
-                point.graphic = point.graphic.destroy();
-            }
-            // Set the tooltip anchor position
-            point.tooltipPos = [
-                plotX + this.options.xOffset +
-                    (inverted && !this.onSeries ? shapeOffset : 0),
-                plotY + this.options.yOffset -
-                    (inverted ?
-                        0 :
-                        shapeOffset + yAxis.pos - chart.plotTop)
-            ]; // #6327
-        }, this);
-    },
-    // Fade in the arrows on initializing series.
-    animate: function (init) {
-        if (init) {
-            this.markerGroup.attr({
-                opacity: 0.01
-            });
-        }
-        else {
-            this.markerGroup.animate({
-                opacity: 1
-            }, animObject(this.options.animation));
-        }
-    },
     // Don't invert the marker group (#4960)
     invertGroups: noop,
     // No data extremes for the Y axis
@@ -370,13 +375,16 @@ var WindbarbPoint = /** @class */ (function (_super) {
         _this.series = void 0;
         return _this;
     }
+    /* *
+     *
+     * Functions
+     *
+     * */
+    WindbarbPoint.prototype.isValid = function () {
+        return isNumber(this.value) && this.value >= 0;
+    };
     return WindbarbPoint;
 }(ColumnSeries.prototype.pointClass));
-extend(WindbarbPoint.prototype, {
-    isValid: function () {
-        return isNumber(this.value) && this.value >= 0;
-    }
-});
 WindbarbSeries.prototype.pointClass = WindbarbPoint;
 BaseSeries.registerSeriesType('windbarb', WindbarbSeries);
 /* *
