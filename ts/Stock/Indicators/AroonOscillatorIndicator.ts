@@ -15,12 +15,17 @@ import type {
     AroonParamsOptions
 } from './Aroon/AroonOptions';
 import type AroonPoint from './Aroon/AroonPoint';
-import type AroonIndicator from './Aroon/AroonIndicator';
+const {
+    seriesTypes: {
+        aroon: AroonIndicator
+    }
+} = BaseSeries;
 import BaseSeries from '../../Core/Series/Series.js';
 import multipleLinesMixin from '../../Mixins/MultipleLines.js';
 import requiredIndicator from '../../Mixins/IndicatorRequired.js';
 import U from '../../Core/Utilities.js';
 const {
+    extend,
     merge
 } = U;
 
@@ -30,22 +35,6 @@ const {
  */
 declare global {
     namespace Highcharts {
-        class AroonOscillatorIndicator extends AroonIndicator implements MultipleLinesIndicator {
-            public data: Array<AroonOscillatorIndicatorPoint>;
-            public getValues<TLinkedSeries extends LineSeries>(
-                series: TLinkedSeries,
-                params: AroonParamsOptions
-            ): IndicatorValuesObject<TLinkedSeries>;
-            public init(): void;
-            public nameBase: string;
-            public options: AroonOscillatorIndicatorOptions;
-            public pointArrayMap: MultipleLinesMixin['pointArrayMap'];
-            public pointClass: typeof AroonOscillatorIndicatorPoint;
-            public points: Array<AroonOscillatorIndicatorPoint>;
-            public pointValKey: MultipleLinesMixin['pointValKey'];
-            public linesApiNames: MultipleLinesMixin['linesApiNames'];
-        }
-
         interface AroonOscillatorIndicatorParamsOptions
             extends AroonParamsOptions {
             // for inheritance
@@ -63,15 +52,13 @@ declare global {
     }
 }
 
-declare module '../../Core/Series/SeriesType' {
-    interface SeriesTypeRegistry {
-        aroonoscillator: typeof Highcharts.AroonOscillatorIndicator;
-    }
-}
+const AROON = BaseSeries.seriesTypes.aroon;
 
-// im port './AroonIndicator.js';
-
-var AROON = BaseSeries.seriesTypes.aroon;
+/* *
+ *
+ *  Class
+ *
+ * */
 
 /**
  * The Aroon Oscillator series type.
@@ -82,9 +69,7 @@ var AROON = BaseSeries.seriesTypes.aroon;
  *
  * @augments Highcharts.Series
  */
-BaseSeries.seriesType<typeof Highcharts.AroonOscillatorIndicator>(
-    'aroonoscillator',
-    'aroon',
+class AroonOscillatorIndicator extends AroonIndicator implements Highcharts.MultipleLinesIndicator {
     /**
      * Aroon Oscillator. This series requires the `linkedTo` option to be set
      * and should be loaded after the `stock/indicators/indicators.js` and
@@ -105,7 +90,7 @@ BaseSeries.seriesType<typeof Highcharts.AroonOscillatorIndicator>(
      * @requires     stock/indicators/aroon-oscillator
      * @optionparent plotOptions.aroonoscillator
      */
-    {
+    public static defaultOptions: Highcharts.AroonOscillatorIndicatorOptions = merge(AroonIndicator.defaultOptions, {
         /**
          * Paramters used in calculation of aroon oscillator series points.
          *
@@ -123,66 +108,108 @@ BaseSeries.seriesType<typeof Highcharts.AroonOscillatorIndicator>(
         tooltip: {
             pointFormat: '<span style="color:{point.color}">\u25CF</span><b> {series.name}</b>: {point.y}'
         }
-    },
-    /**
-     * @lends Highcharts.Series#
-     */
-    merge(multipleLinesMixin, {
-        nameBase: 'Aroon Oscillator',
-        pointArrayMap: ['y'],
-        pointValKey: 'y',
-        linesApiNames: [],
-        init: function (this: Highcharts.AroonOscillatorIndicator): void {
-            var args = arguments,
-                ctx = this;
+    } as Highcharts.AroonOscillatorIndicatorOptions);
+}
 
-            requiredIndicator.isParentLoaded(
-                (AROON as any),
-                'aroon',
-                ctx.type,
-                function (indicator: Highcharts.Indicator): undefined {
-                    indicator.prototype.init.apply(ctx, args);
-                    return;
-                }
-            );
-        },
-        getValues: function<TLinkedSeries extends LineSeries> (
-            series: TLinkedSeries,
-            params: AroonParamsOptions
-        ): IndicatorValuesObject<TLinkedSeries> {
-            // 0- date, 1- Aroon Oscillator
-            var ARO: Array<Array<number>> = [],
-                xData: Array<number> = [],
-                yData: Array<number> = [],
-                aroon: IndicatorValuesObject<TLinkedSeries>,
-                aroonUp: number,
-                aroonDown: number,
-                oscillator: number,
-                i: number;
+/* *
+*
+*   Prototype Properties
+*
+* */
 
-            aroon = (
-                AROON.prototype.getValues.call(
-                    this, series, params
-                ) as IndicatorValuesObject<TLinkedSeries>);
+interface AroonOscillatorIndicator {
+    data: Array<Highcharts.AroonOscillatorIndicatorPoint>;
+    getValues<TLinkedSeries extends LineSeries>(
+        series: TLinkedSeries,
+        params: AroonParamsOptions
+    ): IndicatorValuesObject<TLinkedSeries>;
+    init(): void;
+    nameBase: string;
+    options: Highcharts.AroonOscillatorIndicatorOptions;
+    pointArrayMap: Highcharts.MultipleLinesMixin['pointArrayMap'];
+    pointClass: typeof Highcharts.AroonOscillatorIndicatorPoint;
+    points: Array<Highcharts.AroonOscillatorIndicatorPoint>;
+    pointValKey: Highcharts.MultipleLinesMixin['pointValKey'];
+    linesApiNames: Highcharts.MultipleLinesMixin['linesApiNames'];
+}
 
-            for (i = 0; i < aroon.yData.length; i++) {
-                aroonUp = (aroon.yData[i] as any)[0];
-                aroonDown = (aroon.yData[i] as any)[1];
-                oscillator = aroonUp - aroonDown;
+extend(AroonOscillatorIndicator.prototype, merge(multipleLinesMixin, {
+    nameBase: 'Aroon Oscillator',
+    pointArrayMap: ['y'],
+    pointValKey: 'y',
+    linesApiNames: [],
+    init: function (this: AroonOscillatorIndicator): void {
+        var args = arguments,
+            ctx = this;
 
-                ARO.push([aroon.xData[i], oscillator]);
-                xData.push(aroon.xData[i]);
-                yData.push(oscillator);
+        requiredIndicator.isParentLoaded(
+            (AROON as any),
+            'aroon',
+            ctx.type,
+            function (indicator: Highcharts.Indicator): undefined {
+                indicator.prototype.init.apply(ctx, args);
+                return;
             }
+        );
+    },
+    getValues: function<TLinkedSeries extends LineSeries> (
+        series: TLinkedSeries,
+        params: AroonParamsOptions
+    ): IndicatorValuesObject<TLinkedSeries> {
+        // 0- date, 1- Aroon Oscillator
+        var ARO: Array<Array<number>> = [],
+            xData: Array<number> = [],
+            yData: Array<number> = [],
+            aroon: IndicatorValuesObject<TLinkedSeries>,
+            aroonUp: number,
+            aroonDown: number,
+            oscillator: number,
+            i: number;
 
-            return {
-                values: ARO,
-                xData: xData,
-                yData: yData
-            } as IndicatorValuesObject<TLinkedSeries>;
+        aroon = (
+            AROON.prototype.getValues.call(
+                this, series, params
+            ) as IndicatorValuesObject<TLinkedSeries>);
+
+        for (i = 0; i < aroon.yData.length; i++) {
+            aroonUp = (aroon.yData[i] as any)[0];
+            aroonDown = (aroon.yData[i] as any)[1];
+            oscillator = aroonUp - aroonDown;
+
+            ARO.push([aroon.xData[i], oscillator]);
+            xData.push(aroon.xData[i]);
+            yData.push(oscillator);
         }
-    })
-);
+
+        return {
+            values: ARO,
+            xData: xData,
+            yData: yData
+        } as IndicatorValuesObject<TLinkedSeries>;
+    }
+}));
+
+/* *
+ *
+ *  Registry
+ *
+ * */
+
+declare module '../../Core/Series/SeriesType' {
+    interface SeriesTypeRegistry {
+        aroonoscillator: typeof AroonOscillatorIndicator;
+    }
+}
+
+BaseSeries.registerSeriesType('aroonoscillator', AroonOscillatorIndicator);
+
+/* *
+ *
+ *  Default Export
+ *
+ * */
+
+export default AroonOscillatorIndicator;
 
 /**
  * An `Aroon Oscillator` series. If the [type](#series.aroonoscillator.type)
