@@ -32,36 +32,8 @@ var noop = H.noop;
 import LineSeries from '../Line/LineSeries.js';
 import OnSeriesMixin from '../../Mixins/OnSeries.js';
 import U from '../../Core/Utilities.js';
-var extend = U.extend, isNumber = U.isNumber, merge = U.merge, pick = U.pick;
-import '../Column/ColumnSeries.js';
-// eslint-disable-next-line valid-jsdoc
-/**
- * Once off, register the windbarb approximation for data grouping. This can be
- * called anywhere (not necessarily in the translate function), but must happen
- * after the data grouping module is loaded and before the wind barb series uses
- * it.
- * @private
- */
-function registerApproximation() {
-    if (H.approximations && !H.approximations.windbarb) {
-        H.approximations.windbarb = function (values, directions) {
-            var vectorX = 0, vectorY = 0, i, len = values.length;
-            for (i = 0; i < len; i++) {
-                vectorX += values[i] * Math.cos(directions[i] * H.deg2rad);
-                vectorY += values[i] * Math.sin(directions[i] * H.deg2rad);
-            }
-            return [
-                // Wind speed
-                values.reduce(function (sum, value) {
-                    return sum + value;
-                }, 0) / values.length,
-                // Wind direction
-                Math.atan2(vectorY, vectorX) / H.deg2rad
-            ];
-        };
-    }
-}
-registerApproximation();
+var extend = U.extend, merge = U.merge, pick = U.pick;
+import WindbarbPoint from './WindbarbPoint.js';
 /**
  * @private
  * @class
@@ -90,11 +62,43 @@ var WindbarbSeries = /** @class */ (function (_super) {
     }
     /* *
      *
+     * Static functions
+     *
+     * */
+    // eslint-disable-next-line valid-jsdoc
+    /**
+     * Once off, register the windbarb approximation for data grouping. This can
+     * be called anywhere (not necessarily in the translate function), but must
+     * happen after the data grouping module is loaded and before the
+     * wind barb series uses it.
+     * @private
+     */
+    WindbarbSeries.registerApproximation = function () {
+        if (H.approximations && !H.approximations.windbarb) {
+            H.approximations.windbarb = function (values, directions) {
+                var vectorX = 0, vectorY = 0, i, len = values.length;
+                for (i = 0; i < len; i++) {
+                    vectorX += values[i] * Math.cos(directions[i] * H.deg2rad);
+                    vectorY += values[i] * Math.sin(directions[i] * H.deg2rad);
+                }
+                return [
+                    // Wind speed
+                    values.reduce(function (sum, value) {
+                        return sum + value;
+                    }, 0) / values.length,
+                    // Wind direction
+                    Math.atan2(vectorY, vectorX) / H.deg2rad
+                ];
+            };
+        }
+    };
+    /* *
+     *
      * Functions
      *
      * */
     WindbarbSeries.prototype.init = function (chart, options) {
-        registerApproximation();
+        WindbarbSeries.registerApproximation();
         LineSeries.prototype.init.call(this, chart, options);
     };
     // Get presentational attributes.
@@ -359,33 +363,13 @@ extend(WindbarbSeries.prototype, {
     // No data extremes for the Y axis
     getExtremes: function () { return ({}); }
 });
-var WindbarbPoint = /** @class */ (function (_super) {
-    __extends(WindbarbPoint, _super);
-    function WindbarbPoint() {
-        var _this = _super !== null && _super.apply(this, arguments) || this;
-        /* *
-         *
-         * Properties
-         *
-         * */
-        _this.beaufort = void 0;
-        _this.beaufortLevel = void 0;
-        _this.direction = void 0;
-        _this.options = void 0;
-        _this.series = void 0;
-        return _this;
-    }
-    /* *
-     *
-     * Functions
-     *
-     * */
-    WindbarbPoint.prototype.isValid = function () {
-        return isNumber(this.value) && this.value >= 0;
-    };
-    return WindbarbPoint;
-}(ColumnSeries.prototype.pointClass));
 WindbarbSeries.prototype.pointClass = WindbarbPoint;
+/* *
+ *
+ * Registry
+ *
+ * */
+WindbarbSeries.registerApproximation();
 BaseSeries.registerSeriesType('windbarb', WindbarbSeries);
 /* *
  *

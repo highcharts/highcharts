@@ -13,14 +13,11 @@
 'use strict';
 
 import type Chart from '../../Core/Chart/Chart';
-import type ColumnPoint from '../Column/ColumnPoint';
-import type ColumnPointOptions from '../Column/ColumnPointOptions';
-import type ColumnSeriesOptions from '../Column/ColumnSeriesOptions';
 import type DataExtremesObject from '../../Core/Series/DataExtremesObject';
-import type { SeriesStatesOptions } from '../../Core/Series/SeriesOptions';
 import type { StatesOptionsKey } from '../../Core/Series/StatesOptions';
 import type SVGAttributes from '../../Core/Renderer/SVG/SVGAttributes';
 import type SVGPath from '../../Core/Renderer/SVG/SVGPath';
+import type WindbarbSeriesOptions from './WindbarbSeriesOptions';
 import A from '../../Core/Animation/AnimationUtilities.js';
 const { animObject } = A;
 import BaseSeries from '../../Core/Series/Series.js';
@@ -32,80 +29,10 @@ import OnSeriesMixin from '../../Mixins/OnSeries.js';
 import U from '../../Core/Utilities.js';
 const {
     extend,
-    isNumber,
     merge,
     pick
 } = U;
-
-import '../Column/ColumnSeries.js';
-
-/**
- * Internal types
- * @private
- */
-declare global {
-    namespace Highcharts {
-        interface DataGroupingApproximationsDictionary {
-            windbarb?(
-                values: Array<number>,
-                directions: Array<number>
-            ): Array<number>;
-        }
-        interface WindbarbPointOptions extends ColumnPointOptions {
-            direction?: number;
-            value?: number;
-        }
-        interface WindbarbSeriesOptions extends ColumnSeriesOptions {
-            onSeries?: (string|null);
-            states?: SeriesStatesOptions<WindbarbSeries>;
-            vectorLength?: number;
-            xOffset?: number;
-            yOffset?: number;
-        }
-    }
-}
-
-// eslint-disable-next-line valid-jsdoc
-/**
- * Once off, register the windbarb approximation for data grouping. This can be
- * called anywhere (not necessarily in the translate function), but must happen
- * after the data grouping module is loaded and before the wind barb series uses
- * it.
- * @private
- */
-function registerApproximation(): void {
-    if (H.approximations && !H.approximations.windbarb) {
-        H.approximations.windbarb = function (
-            values: Array<number>,
-            directions: Array<number>
-        ): Array<number> {
-            var vectorX = 0,
-                vectorY = 0,
-                i,
-                len = values.length;
-
-            for (i = 0; i < len; i++) {
-                vectorX += values[i] * Math.cos(
-                    directions[i] * H.deg2rad
-                );
-                vectorY += values[i] * Math.sin(
-                    directions[i] * H.deg2rad
-                );
-            }
-
-            return [
-                // Wind speed
-                values.reduce(function (sum: number, value: number): number {
-                    return sum + value;
-                }, 0) / values.length,
-                // Wind direction
-                Math.atan2(vectorY, vectorX) / H.deg2rad
-            ];
-        };
-    }
-}
-
-registerApproximation();
+import WindbarbPoint from './WindbarbPoint.js';
 
 /**
  * @private
@@ -141,7 +68,7 @@ class WindbarbSeries extends ColumnSeries {
      * @optionparent plotOptions.windbarb
      */
 
-    public static defaultOptions: Highcharts.WindbarbSeriesOptions = merge(ColumnSeries.defaultOptions, {
+    public static defaultOptions: WindbarbSeriesOptions = merge(ColumnSeries.defaultOptions, {
         /**
          * Data grouping options for the wind barbs. In Highcharts, this
          * requires the `modules/datagrouping.js` module to be loaded. In
@@ -233,12 +160,57 @@ class WindbarbSeries extends ColumnSeries {
 
     /* *
      *
+     * Static functions
+     *
+     * */
+    // eslint-disable-next-line valid-jsdoc
+    /**
+     * Once off, register the windbarb approximation for data grouping. This can
+     * be called anywhere (not necessarily in the translate function), but must
+     * happen after the data grouping module is loaded and before the
+     * wind barb series uses it.
+     * @private
+     */
+    public static registerApproximation(): void {
+        if (H.approximations && !H.approximations.windbarb) {
+            H.approximations.windbarb = function (
+                values: Array<number>,
+                directions: Array<number>
+            ): Array<number> {
+                var vectorX = 0,
+                    vectorY = 0,
+                    i,
+                    len = values.length;
+
+                for (i = 0; i < len; i++) {
+                    vectorX += values[i] * Math.cos(
+                        directions[i] * H.deg2rad
+                    );
+                    vectorY += values[i] * Math.sin(
+                        directions[i] * H.deg2rad
+                    );
+                }
+
+                return [
+                    // Wind speed
+                    values.reduce(function (sum: number, value: number): number {
+                        return sum + value;
+                    }, 0) / values.length,
+                    // Wind direction
+                    Math.atan2(vectorY, vectorX) / H.deg2rad
+                ];
+            };
+        }
+    }
+
+    /* *
+     *
      * Properties
      *
      * */
 
     public data: Array<WindbarbPoint> = void 0 as any;
-    public options: Highcharts.WindbarbSeriesOptions = void 0 as any;
+    public options: WindbarbSeriesOptions = void 0 as any;
     public points: Array<WindbarbPoint> = void 0 as any;
 
     /* *
@@ -248,9 +220,9 @@ class WindbarbSeries extends ColumnSeries {
      * */
     public init(
         chart: Chart,
-        options: Highcharts.WindbarbSeriesOptions
+        options: WindbarbSeriesOptions
     ): void {
-        registerApproximation();
+        WindbarbSeries.registerApproximation();
         LineSeries.prototype.init.call(this, chart, options);
     }
 
@@ -485,33 +457,6 @@ extend(WindbarbSeries.prototype, {
     getExtremes: (): DataExtremesObject => ({})
 });
 
-class WindbarbPoint extends ColumnSeries.prototype.pointClass {
-    /* *
-     *
-     * Properties
-     *
-     * */
-    public beaufort: string = void 0 as any;
-    public beaufortLevel: number = void 0 as any;
-    public direction: number = void 0 as any;
-    public options: Highcharts.WindbarbPointOptions = void 0 as any;
-    public series: WindbarbSeries = void 0 as any;
-
-    /* *
-     *
-     * Functions
-     *
-     * */
-    public isValid(): boolean {
-        return isNumber(this.value) && this.value >= 0;
-    }
-
-}
-
-interface WindbarbPoint {
-    value: number;
-}
-
 WindbarbSeries.prototype.pointClass = WindbarbPoint;
 
 /* *
@@ -519,6 +464,8 @@ WindbarbSeries.prototype.pointClass = WindbarbPoint;
  * Registry
  *
  * */
+WindbarbSeries.registerApproximation();
+
 declare module '../../Core/Series/SeriesType' {
     interface SeriesTypeRegistry {
         windbarb: typeof WindbarbSeries;
