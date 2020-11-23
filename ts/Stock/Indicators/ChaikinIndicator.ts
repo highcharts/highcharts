@@ -112,29 +112,24 @@ class ChaikinIndicator extends EMAIndicator {
             periods: [3, 10]
         }
     } as Highcharts.ChaikinIndicatorOptions);
-}
 
-/* *
- *
- *  Prototype Properties
- *
- * */
-interface ChaikinIndicator {
-    data: Array<Highcharts.ChaikinIndicatorPoint>;
-    options: Highcharts.ChaikinIndicatorOptions;
-    pointClass: typeof Highcharts.ChaikinIndicatorPoint;
-    points: Array<Highcharts.ChaikinIndicatorPoint>;
-    init(): void;
-    getValues<TLinkedSeries extends LineSeries> (
-        series: TLinkedSeries,
-        params: Highcharts.ChaikinIndicatorParamsOptions
-    ): (IndicatorValuesObject<TLinkedSeries>|undefined);
-}
+    /* *
+     *
+     *  Properties
+     *
+     * */
+    public data: Array<Highcharts.ChaikinIndicatorPoint> = void 0 as any;
 
-extend(ChaikinIndicator.prototype, {
-    nameBase: 'Chaikin Osc',
-    nameComponents: ['periods'],
-    init: function (this: ChaikinIndicator): void {
+    public options: Highcharts.ChaikinIndicatorOptions = void 0 as any;
+
+    public points: Array<Highcharts.ChaikinIndicatorPoint> = void 0 as any;
+
+    /* *
+     *
+     *  Functions
+     *
+     * */
+    init(this: ChaikinIndicator): void {
         var args = arguments,
             ctx = this;
 
@@ -147,8 +142,9 @@ extend(ChaikinIndicator.prototype, {
                 return;
             }
         );
-    },
-    getValues: function<TLinkedSeries extends LineSeries> (
+    }
+
+    getValues<TLinkedSeries extends LineSeries>(
         series: TLinkedSeries,
         params: Highcharts.ChaikinIndicatorParamsOptions
     ): (IndicatorValuesObject<TLinkedSeries>|undefined) {
@@ -227,6 +223,20 @@ extend(ChaikinIndicator.prototype, {
             yData: yData
         } as IndicatorValuesObject<TLinkedSeries>;
     }
+}
+
+/* *
+ *
+ *  Prototype Properties
+ *
+ * */
+interface ChaikinIndicator {
+    pointClass: typeof Highcharts.ChaikinIndicatorPoint;
+}
+
+extend(ChaikinIndicator.prototype, {
+    nameBase: 'Chaikin Osc',
+    nameComponents: ['periods']
 });
 
 /* *
