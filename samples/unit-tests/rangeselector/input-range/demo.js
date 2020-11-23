@@ -469,3 +469,115 @@ QUnit.test('#14416: Range selector ignored chart.time.timezoneOffset',
         );
     }
 );
+
+QUnit.test('Input types', assert => {
+    const supports = type => {
+        const el = document.createElement('input');
+        el.type = type;
+        return el.type === type;
+    };
+
+    const chart = Highcharts.stockChart('container', {
+        xAxis: {
+            minRange: 3600 * 1000 // one hour
+        },
+        series: [
+            {
+                pointInterval: 24 * 3600 * 1000,
+                data: [1, 3, 2, 4, 3, 5, 4, 6, 3, 4, 2, 3, 1, 2, 1]
+            }
+        ]
+    });
+
+    const axis = chart.xAxis[0];
+
+    const parse = str =>
+        Highcharts.RangeSelector.prototype.defaultInputDateParser(
+            str,
+            chart.time.useUTC,
+            chart.time
+        );
+
+    [
+        () => chart.rangeSelector.minInput,
+        () => chart.rangeSelector.maxInput
+    ].forEach(input => {
+        chart.update({
+            rangeSelector: {
+                inputDateFormat: '%b %e, %Y'
+            }
+        });
+
+        if (supports('date')) {
+            assert.strictEqual(
+                input().type,
+                'date',
+                'Default format should result in date input'
+            );
+
+            assert.notStrictEqual(
+                input().min,
+                '',
+                'Input min should be set'
+            );
+            const min = parse(input().min);
+            assert.ok(
+                min >= axis.min &&
+                min <= axis.max - axis.minRange,
+                'Min should be within extremes'
+            );
+
+            assert.notStrictEqual(
+                input().max,
+                '',
+                'Input max should be set'
+            );
+            const max = parse(input().max);
+            assert.ok(
+                max >= axis.min + axis.minRange &&
+                max <= axis.max,
+                'Max should be within extremes'
+            );
+        }
+
+        if (supports('datetime-local')) {
+            chart.update({
+                rangeSelector: {
+                    inputDateFormat: '%b %e, %Y %H:%M:%S'
+                }
+            });
+
+            assert.strictEqual(
+                input().type,
+                'datetime-local',
+                'Format with date + time should result in datetime-local input'
+            );
+        }
+
+        if (supports('time')) {
+            chart.update({
+                rangeSelector: {
+                    inputDateFormat: '%H:%M:%S'
+                }
+            });
+
+            assert.strictEqual(
+                input().type,
+                'time',
+                'Format with time should result in time input'
+            );
+
+            chart.update({
+                rangeSelector: {
+                    inputDateFormat: '%H:%M:%S.%L'
+                }
+            });
+
+            assert.strictEqual(
+                input().type,
+                'text',
+                'Format with milliseconds should result in text input'
+            );
+        }
+    });
+});
