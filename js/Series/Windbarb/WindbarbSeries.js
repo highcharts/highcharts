@@ -23,17 +23,17 @@ var __extends = (this && this.__extends) || (function () {
         d.prototype = b === null ? Object.create(b) : (__.prototype = b.prototype, new __());
     };
 })();
-import A from '../Core/Animation/AnimationUtilities.js';
+import A from '../../Core/Animation/AnimationUtilities.js';
 var animObject = A.animObject;
-import BaseSeries from '../Core/Series/Series.js';
-import ColumnSeries from './Column/ColumnSeries.js';
-import H from '../Core/Globals.js';
+import BaseSeries from '../../Core/Series/Series.js';
+import ColumnSeries from '../Column/ColumnSeries.js';
+import H from '../../Core/Globals.js';
 var noop = H.noop;
-import LineSeries from './Line/LineSeries.js';
-import OnSeriesMixin from '../Mixins/OnSeries.js';
-import U from '../Core/Utilities.js';
+import LineSeries from '../Line/LineSeries.js';
+import OnSeriesMixin from '../../Mixins/OnSeries.js';
+import U from '../../Core/Utilities.js';
 var extend = U.extend, isNumber = U.isNumber, merge = U.merge, pick = U.pick;
-import './Column/ColumnSeries.js';
+import '../Column/ColumnSeries.js';
 // eslint-disable-next-line valid-jsdoc
 /**
  * Once off, register the windbarb approximation for data grouping. This can be

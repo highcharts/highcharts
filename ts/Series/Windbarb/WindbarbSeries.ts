@@ -12,24 +12,24 @@
 
 'use strict';
 
-import type Chart from '../Core/Chart/Chart';
-import type ColumnPoint from './Column/ColumnPoint';
-import type ColumnPointOptions from './Column/ColumnPointOptions';
-import type ColumnSeriesOptions from './Column/ColumnSeriesOptions';
-import type DataExtremesObject from '../Core/Series/DataExtremesObject';
-import type { SeriesStatesOptions } from '../Core/Series/SeriesOptions';
-import type { StatesOptionsKey } from '../Core/Series/StatesOptions';
-import type SVGAttributes from '../Core/Renderer/SVG/SVGAttributes';
-import type SVGPath from '../Core/Renderer/SVG/SVGPath';
-import A from '../Core/Animation/AnimationUtilities.js';
+import type Chart from '../../Core/Chart/Chart';
+import type ColumnPoint from '../Column/ColumnPoint';
+import type ColumnPointOptions from '../Column/ColumnPointOptions';
+import type ColumnSeriesOptions from '../Column/ColumnSeriesOptions';
+import type DataExtremesObject from '../../Core/Series/DataExtremesObject';
+import type { SeriesStatesOptions } from '../../Core/Series/SeriesOptions';
+import type { StatesOptionsKey } from '../../Core/Series/StatesOptions';
+import type SVGAttributes from '../../Core/Renderer/SVG/SVGAttributes';
+import type SVGPath from '../../Core/Renderer/SVG/SVGPath';
+import A from '../../Core/Animation/AnimationUtilities.js';
 const { animObject } = A;
-import BaseSeries from '../Core/Series/Series.js';
-import ColumnSeries from './Column/ColumnSeries.js';
-import H from '../Core/Globals.js';
+import BaseSeries from '../../Core/Series/Series.js';
+import ColumnSeries from '../Column/ColumnSeries.js';
+import H from '../../Core/Globals.js';
 const { noop } = H;
-import LineSeries from './Line/LineSeries.js';
-import OnSeriesMixin from '../Mixins/OnSeries.js';
-import U from '../Core/Utilities.js';
+import LineSeries from '../Line/LineSeries.js';
+import OnSeriesMixin from '../../Mixins/OnSeries.js';
+import U from '../../Core/Utilities.js';
 const {
     extend,
     isNumber,
@@ -37,7 +37,7 @@ const {
     pick
 } = U;
 
-import './Column/ColumnSeries.js';
+import '../Column/ColumnSeries.js';
 
 /**
  * Internal types
@@ -519,7 +519,7 @@ WindbarbSeries.prototype.pointClass = WindbarbPoint;
  * Registry
  *
  * */
-declare module '../Core/Series/SeriesType' {
+declare module '../../Core/Series/SeriesType' {
     interface SeriesTypeRegistry {
         windbarb: typeof WindbarbSeries;
     }
