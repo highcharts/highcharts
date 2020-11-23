@@ -41,63 +41,49 @@ var correctFloat = U.correctFloat, extend = U.extend, merge = U.merge, error = U
 var ChaikinIndicator = /** @class */ (function (_super) {
     __extends(ChaikinIndicator, _super);
     function ChaikinIndicator() {
-        return _super !== null && _super.apply(this, arguments) || this;
-    }
-    /**
-     * Chaikin Oscillator. This series requires the `linkedTo` option to
-     * be set and should be loaded after the `stock/indicators/indicators.js`
-     * and `stock/indicators/ema.js`.
-     *
-     * @sample {highstock} stock/indicators/chaikin
-     *         Chaikin Oscillator
-     *
-     * @extends      plotOptions.ema
-     * @since        7.0.0
-     * @product      highstock
-     * @excluding    allAreas, colorAxis, joinBy, keys, navigatorOptions,
-     *               pointInterval, pointIntervalUnit, pointPlacement,
-     *               pointRange, pointStart, showInNavigator, stacking
-     * @requires     stock/indicators/indicators
-     * @requires     stock/indicators/ema
-     * @requires     stock/indicators/chaikin
-     * @optionparent plotOptions.chaikin
-     */
-    ChaikinIndicator.defaultOptions = merge(EMAIndicator.defaultOptions, {
         /**
-         * Paramters used in calculation of Chaikin Oscillator
-         * series points.
+         * Chaikin Oscillator. This series requires the `linkedTo` option to
+         * be set and should be loaded after the `stock/indicators/indicators.js`
+         * and `stock/indicators/ema.js`.
          *
-         * @excluding index, period
+         * @sample {highstock} stock/indicators/chaikin
+         *         Chaikin Oscillator
+         *
+         * @extends      plotOptions.ema
+         * @since        7.0.0
+         * @product      highstock
+         * @excluding    allAreas, colorAxis, joinBy, keys, navigatorOptions,
+         *               pointInterval, pointIntervalUnit, pointPlacement,
+         *               pointRange, pointStart, showInNavigator, stacking
+         * @requires     stock/indicators/indicators
+         * @requires     stock/indicators/ema
+         * @requires     stock/indicators/chaikin
+         * @optionparent plotOptions.chaikin
          */
-        params: {
-            /**
-             * The id of volume series which is mandatory.
-             * For example using OHLC data, volumeSeriesID='volume' means
-             * the indicator will be calculated using OHLC and volume values.
-             */
-            volumeSeriesID: 'volume',
-            /**
-             * Periods for Chaikin Oscillator calculations.
-             *
-             * @type    {Array<number>}
-             * @default [3, 10]
-             */
-            periods: [3, 10]
-        }
-    });
-    return ChaikinIndicator;
-}(EMAIndicator));
-extend(ChaikinIndicator.prototype, {
-    nameBase: 'Chaikin Osc',
-    nameComponents: ['periods'],
-    init: function () {
+        var _this = _super !== null && _super.apply(this, arguments) || this;
+        /* *
+         *
+         *  Properties
+         *
+         * */
+        _this.data = void 0;
+        _this.options = void 0;
+        _this.points = void 0;
+        return _this;
+    }
+    /* *
+     *
+     *  Functions
+     *
+     * */
+    ChaikinIndicator.prototype.init = function () {
         var args = arguments, ctx = this;
         RequiredIndicatorMixin.isParentLoaded(EMAIndicator, 'ema', ctx.type, function (indicator) {
             indicator.prototype.init.apply(ctx, args);
             return;
         });
-    },
-    getValues: function (series, params) {
+    };
+    ChaikinIndicator.prototype.getValues = function (series, params) {
         var periods = params.periods, period = params.period, 
         // Accumulation Distribution Line data
         ADL, 
@@ -144,7 +130,35 @@ extend(ChaikinIndicator.prototype, {
             xData: xData,
             yData: yData
         };
-    }
+    };
+    ChaikinIndicator.defaultOptions = merge(EMAIndicator.defaultOptions, {
+        /**
+         * Paramters used in calculation of Chaikin Oscillator
+         * series points.
+         *
+         * @excluding index, period
+         */
+        params: {
+            /**
+             * The id of volume series which is mandatory.
+             * For example using OHLC data, volumeSeriesID='volume' means
+             * the indicator will be calculated using OHLC and volume values.
+             */
+            volumeSeriesID: 'volume',
+            /**
+             * Periods for Chaikin Oscillator calculations.
+             *
+             * @type    {Array<number>}
+             * @default [3, 10]
+             */
+            periods: [3, 10]
+        }
+    });
+    return ChaikinIndicator;
+}(EMAIndicator));
+extend(ChaikinIndicator.prototype, {
+    nameBase: 'Chaikin Osc',
+    nameComponents: ['periods']
 });
 BaseSeries.registerSeriesType('chaikin', ChaikinIndicator);
 /* *
