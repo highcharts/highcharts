@@ -22,8 +22,6 @@ var __extends = (this && this.__extends) || (function () {
     };
 })();
 import AreaRangePoint from '../AreaRange/AreaRangePoint.js';
-import H from '../../Core/Globals.js';
-var noop = H.noop;
 import U from '../../Core/Utilities.js';
 var extend = U.extend, pick = U.pick;
 /* *
@@ -89,12 +87,6 @@ var DumbbellPoint = /** @class */ (function (_super) {
     };
     return DumbbellPoint;
 }(AreaRangePoint));
-extend(DumbbellPoint.prototype, {
-    // seriesTypes doesn't inherit from arearange point proto so put below
-    // methods rigidly.
-    destroyElements: AreaRangePoint.prototype.destroyElements,
-    isValid: AreaRangePoint.prototype.isValid
-});
 /* *
  *
  *  Default export

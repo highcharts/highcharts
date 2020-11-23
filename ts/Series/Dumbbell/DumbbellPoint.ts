@@ -20,8 +20,6 @@ import type DumbbellSeries from './DumbbellSeries.js';
 import type DumbbellPointOptions from './DumbbellPointOptions';
 
 import AreaRangePoint from '../AreaRange/AreaRangePoint.js';
-import H from '../../Core/Globals.js';
-const { noop } = H;
 import U from '../../Core/Utilities.js';
 const {
     extend,
@@ -117,25 +115,6 @@ class DumbbellPoint extends AreaRangePoint {
         point.connector[verb](series.getConnectorAttribs(point));
     }
 }
-
-
-/* *
- *
- *  Prototype Properties
- *
- * */
-
-interface DumbbellPoint extends AreaRangePoint {
-    destroyElements: typeof AreaRangePoint.prototype.destroyElements;
-    isValid: typeof AreaRangePoint.prototype.isValid;
-}
-
-extend(DumbbellPoint.prototype, {
-    // seriesTypes doesn't inherit from arearange point proto so put below
-    // methods rigidly.
-    destroyElements: AreaRangePoint.prototype.destroyElements,
-    isValid: AreaRangePoint.prototype.isValid
-});
 
 /* *
  *
