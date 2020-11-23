@@ -538,6 +538,12 @@ QUnit.test('Input types', assert => {
                 max <= axis.max,
                 'Max should be within extremes'
             );
+        } else {
+            assert.strictEqual(
+                input().type,
+                'text',
+                'Input type should be text when there is no support'
+            );
         }
 
         if (supports('datetime-local')) {
