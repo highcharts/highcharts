@@ -360,6 +360,8 @@ extend(defaultOptions, {
          * the browser does not support the input type or the format contains
          * milliseconds.
          *
+         * @sample {highstock} stock/rangeselector/input-type/
+         *         Input types
          * @sample {highstock} stock/rangeselector/input-format/
          *         Milliseconds in the range selector
          *
