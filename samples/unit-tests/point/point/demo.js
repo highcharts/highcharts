@@ -695,7 +695,10 @@ QUnit.test('Deselecting points', function (assert) {
 QUnit.test('#14623: colorIndex Series.update()', assert => {
     const chart = Highcharts.chart('container', {
         series: [{
-            data: [29.9, 71.5, 106.4, 129.2, 144.0, 176.0],
+            data: [29.9, {
+                colorIndex: 4,
+                y: 71.5
+            }, 106.4, 129.2, 144.0, 176.0],
             colorIndex: 1
         }]
     });
@@ -708,5 +711,21 @@ QUnit.test('#14623: colorIndex Series.update()', assert => {
         chart.series[0].points[0].colorIndex,
         2,
         'Point.colorIndex should be updated'
+    );
+
+    chart.series[0].points[0].update({
+        colorIndex: 3
+    });
+
+    assert.strictEqual(
+        chart.series[0].points[0].colorIndex,
+        3,
+        'Point.colorIndex should be updated'
+    );
+
+    assert.strictEqual(
+        chart.series[0].points[1].colorIndex,
+        4,
+        'Point.colorIndex should be correct'
     );
 });
