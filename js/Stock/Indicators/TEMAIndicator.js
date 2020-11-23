@@ -6,12 +6,24 @@
  *
  * */
 'use strict';
+var __extends = (this && this.__extends) || (function () {
+    var extendStatics = function (d, b) {
+        extendStatics = Object.setPrototypeOf ||
+            ({ __proto__: [] } instanceof Array && function (d, b) { d.__proto__ = b; }) ||
+            function (d, b) { for (var p in b) if (b.hasOwnProperty(p)) d[p] = b[p]; };
+        return extendStatics(d, b);
+    };
+    return function (d, b) {
+        extendStatics(d, b);
+        function __() { this.constructor = d; }
+        d.prototype = b === null ? Object.create(b) : (__.prototype = b.prototype, new __());
+    };
+})();
 import BaseSeries from '../../Core/Series/Series.js';
+var EMAIndicator = BaseSeries.seriesTypes.ema;
 import RequiredIndicatorMixin from '../../Mixins/IndicatorRequired.js';
 import U from '../../Core/Utilities.js';
-var correctFloat = U.correctFloat, isArray = U.isArray;
-// im port './EMAIndicator.js';
-var EMAindicator = BaseSeries.seriesTypes.ema;
+var correctFloat = U.correctFloat, extend = U.extend, isArray = U.isArray, merge = U.merge;
 /**
  * The TEMA series type.
  *
@@ -21,41 +33,44 @@ var EMAindicator = BaseSeries.seriesTypes.ema;
  *
  * @augments Highcharts.Series
  */
-BaseSeries.seriesType('tema', 'ema', 
-/**
- * Triple exponential moving average (TEMA) indicator. This series requires
- * `linkedTo` option to be set and should be loaded after the
- * `stock/indicators/indicators.js` and `stock/indicators/ema.js`.
- *
- * @sample {highstock} stock/indicators/tema
- *         TEMA indicator
- *
- * @extends      plotOptions.ema
- * @since        7.0.0
- * @product      highstock
- * @excluding    allAreas, colorAxis, compare, compareBase, joinBy, keys,
- *               navigatorOptions, pointInterval, pointIntervalUnit,
- *               pointPlacement, pointRange, pointStart, showInNavigator,
- *               stacking
- * @requires     stock/indicators/indicators
- * @requires     stock/indicators/ema
- * @requires     stock/indicators/tema
- * @optionparent plotOptions.tema
- */
-{}, 
-/**
- * @lends Highcharts.Series#
- */
-{
+var TEMAIndicator = /** @class */ (function (_super) {
+    __extends(TEMAIndicator, _super);
+    function TEMAIndicator() {
+        return _super !== null && _super.apply(this, arguments) || this;
+    }
+    /**
+     * Triple exponential moving average (TEMA) indicator. This series requires
+     * `linkedTo` option to be set and should be loaded after the
+     * `stock/indicators/indicators.js` and `stock/indicators/ema.js`.
+     *
+     * @sample {highstock} stock/indicators/tema
+     *         TEMA indicator
+     *
+     * @extends      plotOptions.ema
+     * @since        7.0.0
+     * @product      highstock
+     * @excluding    allAreas, colorAxis, compare, compareBase, joinBy, keys,
+     *               navigatorOptions, pointInterval, pointIntervalUnit,
+     *               pointPlacement, pointRange, pointStart, showInNavigator,
+     *               stacking
+     * @requires     stock/indicators/indicators
+     * @requires     stock/indicators/ema
+     * @requires     stock/indicators/tema
+     * @optionparent plotOptions.tema
+     */
+    TEMAIndicator.defaultOptions = merge(EMAIndicator.defaultOptions, {});
+    return TEMAIndicator;
+}(EMAIndicator));
+extend(TEMAIndicator.prototype, {
     init: function () {
         var args = arguments, ctx = this;
-        RequiredIndicatorMixin.isParentLoaded(EMAindicator, 'ema', ctx.type, function (indicator) {
+        RequiredIndicatorMixin.isParentLoaded(EMAIndicator, 'ema', ctx.type, function (indicator) {
             indicator.prototype.init.apply(ctx, args);
             return;
         });
     },
     getEMA: function (yVal, prevEMA, SMA, index, i, xVal) {
-        return EMAindicator.prototype.calculateEma(xVal || [], yVal, typeof i === 'undefined' ? 1 : i, this.chart.series[0].EMApercent, prevEMA, typeof index === 'undefined' ? -1 : index, SMA);
+        return EMAIndicator.prototype.calculateEma(xVal || [], yVal, typeof i === 'undefined' ? 1 : i, this.chart.series[0].EMApercent, prevEMA, typeof index === 'undefined' ? -1 : index, SMA);
     },
     getTemaPoint: function (xVal, tripledPeriod, EMAlevels, i) {
         var TEMAPoint = [
@@ -87,7 +102,7 @@ BaseSeries.seriesType('tema', 'ema',
         }
         // Accumulate first N-points
         accumulatePeriodPoints =
-            EMAindicator.prototype.accumulatePeriodPoints(period, index, yVal);
+            EMAIndicator.prototype.accumulatePeriodPoints(period, index, yVal);
         // first point
         SMA = accumulatePeriodPoints / period;
         accumulatePeriodPoints = 0;
@@ -150,6 +165,13 @@ BaseSeries.seriesType('tema', 'ema',
         };
     }
 });
+BaseSeries.registerSeriesType('tema', TEMAIndicator);
+/* *
+ *
+ *  Default Export
+ *
+ * */
+export default TEMAIndicator;
 /**
  * A `TEMA` series. If the [type](#series.ema.type) option is not
  * specified, it is inherited from [chart.type](#chart.type).

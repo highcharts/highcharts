@@ -7,7 +7,7 @@
  * */
 
 'use strict';
-
+import type TEMAIndicator from './TEMAIndicator';
 import BaseSeries from '../../Core/Series/Series.js';
 import RequiredIndicatorMixin from '../../Mixins/IndicatorRequired.js';
 import U from '../../Core/Utilities.js';
