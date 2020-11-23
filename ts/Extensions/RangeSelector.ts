@@ -70,7 +70,7 @@ declare global {
             range?: (null|number|RangeSelectorButtonsOptions);
         }
         interface Options {
-            rangeSelector?: RangeSelectorOptions;
+            rangeSelector?: DeepPartial<RangeSelectorOptions>;
         }
         interface RangeSelectorClickCallbackFunction {
             (e: Event): (boolean|undefined);
@@ -79,9 +79,9 @@ declare global {
             (value: string, useUTC: boolean, time?: Time): number;
         }
         interface RangeSelectorButtonPositionOptions {
-            align?: AlignValue;
-            x?: number;
-            y?: number;
+            align: AlignValue;
+            x: number;
+            y: number;
         }
         interface RangeSelectorButtonsEventsOptions {
             click?: RangeSelectorClickCallbackFunction;
@@ -97,38 +97,37 @@ declare global {
             offsetMax?: number;
             offsetMin?: number;
             preserveDataGrouping?: boolean;
-            text?: string;
+            text: string;
             type?: RangeSelectorButtonTypeValue;
         }
         interface RangeSelectorInputPositionOptions {
-            align?: AlignValue;
-            x?: number;
-            y?: number;
+            align: AlignValue;
+            x: number;
+            y: number;
         }
         interface RangeSelectorOptions {
-            allButtonsEnabled?: boolean;
-            buttonPosition?: RangeSelectorButtonPositionOptions;
+            allButtonsEnabled: boolean;
+            buttonPosition: RangeSelectorButtonPositionOptions;
             buttons?: Array<RangeSelectorButtonsOptions>;
-            buttonSpacing?: number;
-            buttonTheme?: SVGAttributes;
+            buttonSpacing: number;
+            buttonTheme: SVGAttributes;
             enabled?: boolean;
-            floating?: boolean;
-            height?: (number|undefined);
-            inputBoxBorderColor?: ColorString;
-            inputBoxHeight?: number;
-            inputBoxStyle?: CSSObject;
-            inputBoxWidth?: number;
-            inputDateFormat?: string;
+            floating: boolean;
+            height?: number;
+            inputBoxBorderColor: ColorString;
+            inputBoxHeight: number;
+            inputBoxWidth: number;
+            inputDateFormat: string;
             inputDateParser?: RangeSelectorParseCallbackFunction;
-            inputEditDateFormat?: string;
-            inputEnabled?: boolean;
-            inputPosition?: RangeSelectorInputPositionOptions;
-            inputStyle?: CSSObject;
-            labelStyle?: CSSObject;
+            inputEditDateFormat: string;
+            inputEnabled: boolean;
+            inputPosition: RangeSelectorInputPositionOptions;
+            inputStyle: CSSObject;
+            labelStyle: CSSObject;
             selected?: number;
-            verticalAlign?: VerticalAlignValue;
-            x?: number;
-            y?: number;
+            verticalAlign: VerticalAlignValue;
+            x: number;
+            y: number;
         }
         class RangeSelector {
             public constructor(chart: Chart);
@@ -234,11 +233,9 @@ extend(defaultOptions, {
          * @sample {highstock} stock/rangeselector/allbuttonsenabled-true/
          *         All buttons enabled
          *
-         * @type      {boolean}
-         * @default   false
          * @since     2.0.3
-         * @apioption rangeSelector.allButtonsEnabled
          */
+        allButtonsEnabled: false,
 
         /**
          * An array of configuration objects for the buttons.
@@ -280,8 +277,8 @@ extend(defaultOptions, {
          *         Data grouping by buttons
          *
          * @type      {Array<*>}
-         * @apioption rangeSelector.buttons
          */
+        buttons: void 0,
 
         /**
          * How many units of the defined type the button should span. If `type`
@@ -391,22 +388,19 @@ extend(defaultOptions, {
 
         /**
          * The space in pixels between the buttons in the range selector.
-         *
-         * @type      {number}
-         * @default   0
-         * @apioption rangeSelector.buttonSpacing
          */
+        buttonSpacing: 5,
 
         /**
-         * Enable or disable the range selector.
+         * Enable or disable the range selector. Default to `true` for stock
+         * charts, using the `stockChart` factory.
          *
          * @sample {highstock} stock/rangeselector/enabled/
          *         Disable the range selector
          *
-         * @type      {boolean}
-         * @default   true
-         * @apioption rangeSelector.enabled
+         * @default {highstock} true
          */
+        enabled: void 0,
 
         /**
          * The vertical alignment of the rangeselector box. Allowed properties
@@ -498,10 +492,9 @@ extend(defaultOptions, {
          *         Styling the buttons and inputs
          *
          * @type      {Highcharts.ColorString}
-         * @default   #cccccc
          * @since     1.3.7
-         * @apioption rangeSelector.inputBoxBorderColor
          */
+        inputBoxBorderColor: palette.neutralColor20,
 
         /**
          * The pixel height of the date input boxes.
@@ -509,23 +502,9 @@ extend(defaultOptions, {
          * @sample {highstock} stock/rangeselector/styling/
          *         Styling the buttons and inputs
          *
-         * @type      {number}
-         * @default   17
          * @since     1.3.7
-         * @apioption rangeSelector.inputBoxHeight
          */
-
-        /**
-         * CSS for the container DIV holding the input boxes. Deprecated as
-         * of 1.2.5\. Use [inputPosition](#rangeSelector.inputPosition) instead.
-         *
-         * @sample {highstock} stock/rangeselector/styling/
-         *         Styling the buttons and inputs
-         *
-         * @deprecated
-         * @type      {Highcharts.CSSObject}
-         * @apioption rangeSelector.inputBoxStyle
-         */
+        inputBoxHeight: 17,
 
         /**
          * The pixel width of the date input boxes.
@@ -533,11 +512,9 @@ extend(defaultOptions, {
          * @sample {highstock} stock/rangeselector/styling/
          *         Styling the buttons and inputs
          *
-         * @type      {number}
-         * @default   90
          * @since     1.3.7
-         * @apioption rangeSelector.inputBoxWidth
          */
+        inputBoxWidth: 90,
 
         /**
          * The date format in the input boxes when not selected for editing.
@@ -546,10 +523,8 @@ extend(defaultOptions, {
          * @sample {highstock} stock/rangeselector/input-format/
          *         Milliseconds in the range selector
          *
-         * @type      {string}
-         * @default   %b %e, %Y
-         * @apioption rangeSelector.inputDateFormat
          */
+        inputDateFormat: '%b %e, %Y',
 
         /**
          * A custom callback function to parse values entered in the input boxes
@@ -562,8 +537,8 @@ extend(defaultOptions, {
          *
          * @type      {Highcharts.RangeSelectorParseCallbackFunction}
          * @since     1.3.3
-         * @apioption rangeSelector.inputDateParser
          */
+        inputDateParser: void 0,
 
         /**
          * The date format in the input boxes when they are selected for
@@ -573,10 +548,8 @@ extend(defaultOptions, {
          * @sample {highstock} stock/rangeselector/input-format/
          *         Milliseconds in the range selector
          *
-         * @type      {string}
-         * @default   %Y-%m-%d
-         * @apioption rangeSelector.inputEditDateFormat
          */
+        inputEditDateFormat: '%Y-%m-%d',
 
         /**
          * Enable or disable the date input boxes. Defaults to enabled when
@@ -585,10 +558,8 @@ extend(defaultOptions, {
          * @sample {highstock} stock/rangeselector/input-datepicker/
          *         Extending the input with a jQuery UI datepicker
          *
-         * @type      {boolean}
-         * @default   true
-         * @apioption rangeSelector.inputEnabled
          */
+        inputEnabled: true,
 
         /**
          * Positioning for the input boxes. Allowed properties are `align`,
@@ -625,8 +596,8 @@ extend(defaultOptions, {
          * The index of the button to appear pre-selected.
          *
          * @type      {number}
-         * @apioption rangeSelector.selected
          */
+        selected: void 0,
 
         /**
          * Positioning for the button row.
@@ -671,6 +642,7 @@ extend(defaultOptions, {
          * @type      {Highcharts.CSSObject}
          * @apioption rangeSelector.inputStyle
          */
+        inputStyle: {},
 
         /**
          * CSS styles for the labels - the Zoom, From and To texts.
@@ -687,7 +659,7 @@ extend(defaultOptions, {
             /** @ignore */
             color: palette.neutralColor60
         }
-    }
+    } as Highcharts.RangeSelectorOptions
 });
 
 defaultOptions.lang = merge(
@@ -1225,8 +1197,7 @@ class RangeSelector {
         name: string,
         inputTime?: number
     ): void {
-        var options =
-            this.chart.options.rangeSelector as Highcharts.RangeSelectorOptions,
+        var options = this.options,
             time = this.chart.time,
             input = name === 'min' ? this.minInput : this.maxInput;
 
@@ -1245,12 +1216,12 @@ class RangeSelector {
             }
 
             input.value = time.dateFormat(
-                options.inputEditDateFormat || '%Y-%m-%d',
+                options.inputEditDateFormat,
                 updatedTime
             );
             (this as any)[name + 'DateBox'].attr({
                 text: time.dateFormat(
-                    options.inputDateFormat || '%b %e, %Y',
+                    options.inputDateFormat,
                     updatedTime
                 )
             });
@@ -1435,8 +1406,8 @@ class RangeSelector {
             .addClass('highcharts-range-input')
             .attr({
                 padding: 2,
-                width: options.inputBoxWidth || 90,
-                height: options.inputBoxHeight || 17,
+                width: options.inputBoxWidth,
+                height: options.inputBoxHeight,
                 'text-align': 'center'
             })
             .on('click', function (): void {
@@ -1448,8 +1419,7 @@ class RangeSelector {
 
         if (!chart.styledMode) {
             dateBox.attr({
-                stroke:
-                    options.inputBoxBorderColor || palette.neutralColor20,
+                stroke: options.inputBoxBorderColor,
                 'stroke-width': 1
             });
         }
@@ -1487,7 +1457,7 @@ class RangeSelector {
                 fontSize: chartStyle.fontSize,
                 fontFamily: chartStyle.fontFamily,
                 top: '-9999em' // #4798
-            }, options.inputStyle as any));
+            }, options.inputStyle));
         }
 
         // Blow up the input box
@@ -1568,10 +1538,10 @@ class RangeSelector {
                 time.Date.UTC(year, 0, 1) : // eslint-disable-line new-cap
                 +new time.Date(year, 0, 1);
 
-        min = Math.max(dataMin || 0, startOfYear);
-        now = now.getTime() as any;
+        min = Math.max(dataMin, startOfYear);
+        const ts = now.getTime();
         return {
-            max: Math.min(dataMax || (now as any), now as any),
+            max: Math.min(dataMax || ts, ts),
             min: min
         };
     }
@@ -1606,7 +1576,7 @@ class RangeSelector {
                 (chartOptions.chart as any).style.zIndex,
                 0
             ) + 1,
-            inputEnabled = options.inputEnabled !== false,
+            inputEnabled = options.inputEnabled,
             rendered = this.rendered;
 
         if (options.enabled === false) {
@@ -1622,7 +1592,7 @@ class RangeSelector {
                 })
                 .add();
 
-            this.div = createElement('div', null as any, {
+            this.div = createElement('div', void 0, {
                 position: 'relative',
                 height: 0,
                 zIndex: inputsZIndex
@@ -1684,10 +1654,9 @@ class RangeSelector {
 
         if (!this.chart.styledMode) {
 
-            this.zoomText.css(options.labelStyle as any);
+            this.zoomText.css(options.labelStyle);
 
-            (buttonTheme as any)['stroke-width'] =
-                pick((buttonTheme as any)['stroke-width'], 0);
+            buttonTheme['stroke-width'] = pick(buttonTheme['stroke-width'], 0);
         }
         this.buttonOptions.forEach((
             rangeOptions: Highcharts.RangeSelectorButtonsOptions,
@@ -1696,7 +1665,7 @@ class RangeSelector {
 
             buttons[i] = renderer
                 .button(
-                    rangeOptions.text as any,
+                    rangeOptions.text,
                     0,
                     0,
                     (e: (Event|Highcharts.Dictionary<any>)): void => {
@@ -1772,17 +1741,17 @@ class RangeSelector {
 
         if (group && buttonPosition && inputPosition) {
 
-            let translateX = (buttonPosition.x || 0) - chart.spacing[3];
+            let translateX = buttonPosition.x - chart.spacing[3];
 
             if (buttonGroup) {
                 if (zoomText) {
                     // #8769, allow dynamically updating margins
                     zoomText[verb]({
-                        x: pick(plotLeft + (buttonPosition.x || 0), plotLeft)
+                        x: pick(plotLeft + buttonPosition.x, plotLeft)
                     });
 
                     // Button start position
-                    buttonLeft += (buttonPosition.x || 0) +
+                    buttonLeft += buttonPosition.x +
                         zoomText.getBBox().width + 5;
                 }
 
@@ -1795,8 +1764,7 @@ class RangeSelector {
                     buttons[i][verb]({ x: buttonLeft });
 
                     // increase button position for the next button
-                    buttonLeft += buttons[i].width +
-                        pick(options.buttonSpacing, 5);
+                    buttonLeft += buttons[i].width + options.buttonSpacing;
                 });
 
 
@@ -1810,7 +1778,7 @@ class RangeSelector {
                     verticalAlign === 'top' &&
                     buttonPosition.align === 'right' && (
                         (
-                            (buttonPosition.y || 0) +
+                            buttonPosition.y +
                             buttonGroup.getBBox().height - 12
                         ) <
                         (
@@ -1850,7 +1818,7 @@ class RangeSelector {
                     verticalAlign === 'top' &&
                     inputPosition.align === 'right' && (
                         (
-                            (inputPosition.y || 0) -
+                            inputPosition.y -
                             inputGroup.getBBox().height - 12
                         ) <
                         (
@@ -1877,7 +1845,7 @@ class RangeSelector {
                     width: inputGroup.getBBox().width,
                     align: inputPosition.align,
                     // fix wrong getBBox() value on right align
-                    x: (inputPosition.x || 0) + translateX - 2
+                    x: inputPosition.x + translateX - 2
                 }, true, chart.spacingBox);
 
 
@@ -1907,9 +1875,9 @@ class RangeSelector {
                             (buttonGroupX + buttonGroupWidth > inputGroupX) &&
                             (inputGroupX + inputGroupWidth > buttonGroupX) &&
                             (
-                                (buttonPosition.y || 0) <
+                                buttonPosition.y <
                                 (
-                                    (inputPosition.y || 0) +
+                                    inputPosition.y +
                                     inputGroup.getBBox().height
                                 )
                             )
@@ -1963,7 +1931,7 @@ class RangeSelector {
                 translateY = (
                     alignTranslateY -
                     groupHeight -
-                    (options.floating ? 0 : (options.y as any)) -
+                    (options.floating ? 0 : options.y) -
                     (chart.titleOffset ? chart.titleOffset[2] : 0) -
                     10 // 10 spacing
                 );
@@ -1985,12 +1953,12 @@ class RangeSelector {
                     translateY = alignTranslateY;
                 } else if (inputPosition.y || buttonPosition.y) {
                     if (
-                        (inputPosition.y || 0) < 0 ||
-                        (buttonPosition.y || 0) < 0
+                        inputPosition.y < 0 ||
+                        buttonPosition.y < 0
                     ) {
                         translateY -= Math.min(
-                            inputPosition.y || 0,
-                            buttonPosition.y || 0
+                            inputPosition.y,
+                            buttonPosition.y
                         );
                     } else {
                         translateY = alignTranslateY - groupHeight;
@@ -1999,13 +1967,13 @@ class RangeSelector {
             }
 
             group.translate(
-                options.x || 0,
-                (options.y || 0) + Math.floor(translateY)
+                options.x,
+                options.y + Math.floor(translateY)
             );
 
             // Translate HTML inputs
             const { minInput, maxInput } = this;
-            if (options.inputEnabled !== false && minInput && maxInput) {
+            if (options.inputEnabled && minInput && maxInput) {
                 minInput.style.marginTop = group.translateY + 'px';
                 maxInput.style.marginTop = group.translateY + 'px';
             }
@@ -2027,8 +1995,8 @@ class RangeSelector {
             inputPosition = options.inputPosition,
             buttonPosition = options.buttonPosition,
             yPosition = options.y,
-            buttonPositionY = (buttonPosition as any).y,
-            inputPositionY = (inputPosition as any).y,
+            buttonPositionY = buttonPosition.y,
+            inputPositionY = inputPosition.y,
             rangeSelectorHeight = 0,
             minPosition;
 
@@ -2039,13 +2007,13 @@ class RangeSelector {
         rangeSelectorHeight = rangeSelectorGroup ?
             // 13px to keep back compatibility
             (rangeSelectorGroup.getBBox(true).height) + 13 +
-                (yPosition as any) :
+                yPosition :
             0;
 
-        minPosition = Math.min(inputPositionY as any, buttonPositionY as any);
+        minPosition = Math.min(inputPositionY, buttonPositionY);
 
-        if (((inputPositionY as any) < 0 && (buttonPositionY as any) < 0) ||
-            ((inputPositionY as any) > 0 && (buttonPositionY as any) > 0)
+        if ((inputPositionY < 0 && buttonPositionY < 0) ||
+            (inputPositionY > 0 && buttonPositionY > 0)
         ) {
             rangeSelectorHeight += Math.abs(minPosition);
         }
@@ -2091,7 +2059,7 @@ class RangeSelector {
         this.destroy();
         this.init(chart);
 
-        (chart.rangeSelector as any).render();
+        this.render();
     }
 
     /**
@@ -2105,8 +2073,12 @@ class RangeSelector {
             minInput = rSelector.minInput,
             maxInput = rSelector.maxInput;
 
-        (rSelector.unMouseDown as any)();
-        (rSelector.unResize as any)();
+        if (rSelector.unMouseDown) {
+            rSelector.unMouseDown();
+        }
+        if (rSelector.unResize) {
+            rSelector.unResize();
+        }
 
         // Destroy elements in collections
         destroyObjectProperties(rSelector.buttons);
@@ -2248,8 +2220,8 @@ Axis.prototype.minFromRange = function (
 if (!H.RangeSelector) {
     // Initialize rangeselector for stock charts
     addEvent(Chart, 'afterGetContainer', function (): void {
-        if ((this.options.rangeSelector as any).enabled) {
-            this.rangeSelector = new (RangeSelector as any)(this);
+        if (this.options.rangeSelector?.enabled) {
+            this.rangeSelector = new RangeSelector(this);
         }
     });
 
@@ -2292,8 +2264,7 @@ if (!H.RangeSelector) {
 
         var chart = this,
             options = e.options,
-            optionsRangeSelector =
-                options.rangeSelector as Highcharts.RangeSelectorOptions,
+            optionsRangeSelector = options.rangeSelector,
             rangeSelector = chart.rangeSelector,
             verticalAlign,
             extraBottomMarginWas = this.extraBottomMargin,
@@ -2302,10 +2273,11 @@ if (!H.RangeSelector) {
         if (
             optionsRangeSelector &&
             optionsRangeSelector.enabled &&
-            !defined(rangeSelector)
+            !defined(rangeSelector) &&
+            this.options.rangeSelector
         ) {
-            (this.options.rangeSelector as any).enabled = true;
-            this.rangeSelector = new (RangeSelector as any)(this);
+            this.options.rangeSelector.enabled = true;
+            this.rangeSelector = new RangeSelector(this);
         }
 
         this.extraBottomMargin = false;
@@ -2388,29 +2360,31 @@ if (!H.RangeSelector) {
          * @private
          */
         function renderRangeSelector(): void {
-            extremes = chart.xAxis[0].getExtremes();
-            legend = chart.legend;
-            verticalAlign = rangeSelector?.options.verticalAlign;
+            if (rangeSelector) {
+                extremes = chart.xAxis[0].getExtremes();
+                legend = chart.legend;
+                verticalAlign = rangeSelector?.options.verticalAlign;
 
-            if (isNumber(extremes.min)) {
-                (rangeSelector as any).render(extremes.min, extremes.max);
-            }
-
-            // Re-align the legend so that it's below the rangeselector
-            if (
-                rangeSelector && legend.display &&
-                verticalAlign === 'top' &&
-                verticalAlign === legend.options.verticalAlign
-            ) {
-                // Create a new alignment box for the legend.
-                alignTo = merge(chart.spacingBox);
-                if (legend.options.layout === 'vertical') {
-                    alignTo.y = chart.plotTop;
-                } else {
-                    alignTo.y += rangeSelector.getHeight();
+                if (isNumber(extremes.min)) {
+                    rangeSelector.render(extremes.min, extremes.max);
                 }
-                legend.group.placed = false; // Don't animate the alignment.
-                legend.align(alignTo);
+
+                // Re-align the legend so that it's below the rangeselector
+                if (
+                    legend.display &&
+                    verticalAlign === 'top' &&
+                    verticalAlign === legend.options.verticalAlign
+                ) {
+                    // Create a new alignment box for the legend.
+                    alignTo = merge(chart.spacingBox);
+                    if (legend.options.layout === 'vertical') {
+                        alignTo.y = chart.plotTop;
+                    } else {
+                        alignTo.y += rangeSelector.getHeight();
+                    }
+                    legend.group.placed = false; // Don't animate the alignment.
+                    legend.align(alignTo);
+                }
             }
         }
 
@@ -2439,7 +2413,7 @@ if (!H.RangeSelector) {
             }
         });
     });
-    H.RangeSelector = RangeSelector as any;
+    H.RangeSelector = RangeSelector;
 }
 
 export default H.RangeSelector;
