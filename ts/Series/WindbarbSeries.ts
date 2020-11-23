@@ -241,44 +241,21 @@ class WindbarbSeries extends ColumnSeries {
     public options: Highcharts.WindbarbSeriesOptions = void 0 as any;
     public points: Array<WindbarbPoint> = void 0 as any;
 
-}
-
-interface WindbarbSeries {
-    beaufortFloor: Array<number>;
-    beaufortName: Array<string>;
-    getPlotBox: Highcharts.OnSeriesMixin['getPlotBox'];
-    onSeries: Highcharts.OnSeriesSeries['onSeries'];
-    parallelArrays: Array<string>;
-    pointArrayMap: Array<string>;
-    pointClass: typeof WindbarbPoint;
-    trackerGroups: Array<string>;
-    windArrow(point: WindbarbPoint): (SVGElement|SVGPath);
-
-}
-
-extend(WindbarbSeries.prototype, {
-    pointArrayMap: ['value', 'direction'],
-    parallelArrays: ['x', 'value', 'direction'],
-    beaufortName: ['Calm', 'Light air', 'Light breeze',
-        'Gentle breeze', 'Moderate breeze', 'Fresh breeze',
-        'Strong breeze', 'Near gale', 'Gale', 'Strong gale', 'Storm',
-        'Violent storm', 'Hurricane'],
-    beaufortFloor: [0, 0.3, 1.6, 3.4, 5.5, 8.0, 10.8, 13.9, 17.2, 20.8,
-        24.5, 28.5, 32.7], // @todo dictionary with names?
-    trackerGroups: ['markerGroup'],
-
-    init: function (
-        this: WindbarbSeries,
+    /* *
+     *
+     * Functions
+     *
+     * */
+    public init(
         chart: Chart,
         options: Highcharts.WindbarbSeriesOptions
     ): void {
         registerApproximation();
         LineSeries.prototype.init.call(this, chart, options);
-    },
+    }
 
     // Get presentational attributes.
-    pointAttribs: function (
-        this: WindbarbSeries,
+    public pointAttribs(
         point: WindbarbPoint,
         state?: StatesOptionsKey
     ): SVGAttributes {
@@ -297,17 +274,10 @@ extend(WindbarbSeries.prototype, {
             'stroke': stroke,
             'stroke-width': strokeWidth
         };
-    },
-    markerAttribs: function (): undefined {
-        return;
-    } as any,
-    getPlotBox: OnSeriesMixin.getPlotBox,
+    }
     // Create a single wind arrow. It is later rotated around the zero
     // centerpoint.
-    windArrow: function (
-        this: WindbarbSeries,
-        point: WindbarbPoint
-    ): (SVGElement|SVGPath) {
+    public windArrow(point: WindbarbPoint): (SVGElement|SVGPath) {
         var knots = point.value * 1.943844,
             level = point.beaufortLevel,
             path: SVGPath,
@@ -380,9 +350,9 @@ extend(WindbarbSeries.prototype, {
             }
         }
         return path;
-    },
+    }
 
-    translate: function (this: WindbarbSeries): void {
+    public translate(): void {
         var beaufortFloor = this.beaufortFloor,
             beaufortName = this.beaufortName;
 
@@ -403,10 +373,8 @@ extend(WindbarbSeries.prototype, {
             point.beaufort = beaufortName[level - 1];
 
         });
-
-    },
-
-    drawPoints: function (this: WindbarbSeries): void {
+    }
+    public drawPoints(): void {
         var chart = this.chart,
             yAxis = this.yAxis,
             inverted = chart.inverted,
@@ -465,13 +433,11 @@ extend(WindbarbSeries.prototype, {
                     )
             ]; // #6327
         }, this);
-    },
+    }
 
     // Fade in the arrows on initializing series.
-    animate: function (
-        this: WindbarbSeries,
-        init?: boolean
-    ): void {
+    public animate(
+        init?: boolean): void {
         if (init) {
             (this.markerGroup as any).attr({
                 opacity: 0.01
@@ -481,11 +447,40 @@ extend(WindbarbSeries.prototype, {
                 opacity: 1
             }, animObject(this.options.animation));
         }
-    },
+    }
 
+
+}
+
+interface WindbarbSeries {
+    beaufortFloor: Array<number>;
+    beaufortName: Array<string>;
+    getPlotBox: Highcharts.OnSeriesMixin['getPlotBox'];
+    onSeries: Highcharts.OnSeriesSeries['onSeries'];
+    parallelArrays: Array<string>;
+    pointArrayMap: Array<string>;
+    pointClass: typeof WindbarbPoint;
+    trackerGroups: Array<string>;
+    windArrow(point: WindbarbPoint): (SVGElement|SVGPath);
+
+}
+
+extend(WindbarbSeries.prototype, {
+    pointArrayMap: ['value', 'direction'],
+    parallelArrays: ['x', 'value', 'direction'],
+    beaufortName: ['Calm', 'Light air', 'Light breeze',
+        'Gentle breeze', 'Moderate breeze', 'Fresh breeze',
+        'Strong breeze', 'Near gale', 'Gale', 'Strong gale', 'Storm',
+        'Violent storm', 'Hurricane'],
+    beaufortFloor: [0, 0.3, 1.6, 3.4, 5.5, 8.0, 10.8, 13.9, 17.2, 20.8,
+        24.5, 28.5, 32.7], // @todo dictionary with names?
+    trackerGroups: ['markerGroup'],
+    markerAttribs: function (): undefined {
+        return;
+    } as any,
+    getPlotBox: OnSeriesMixin.getPlotBox,
     // Don't invert the marker group (#4960)
     invertGroups: noop as any,
-
     // No data extremes for the Y axis
     getExtremes: (): DataExtremesObject => ({})
 });
@@ -501,17 +496,21 @@ class WindbarbPoint extends ColumnSeries.prototype.pointClass {
     public direction: number = void 0 as any;
     public options: Highcharts.WindbarbPointOptions = void 0 as any;
     public series: WindbarbSeries = void 0 as any;
+
+    /* *
+     *
+     * Functions
+     *
+     * */
+    public isValid(): boolean {
+        return isNumber(this.value) && this.value >= 0;
+    }
+
 }
 
 interface WindbarbPoint {
     value: number;
 }
-
-extend(WindbarbPoint.prototype, {
-    isValid: function (this: WindbarbPoint): boolean {
-        return isNumber(this.value) && this.value >= 0;
-    }
-});
 
 WindbarbSeries.prototype.pointClass = WindbarbPoint;
 
