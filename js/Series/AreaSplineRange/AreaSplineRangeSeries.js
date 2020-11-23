@@ -26,22 +26,60 @@ import AreaRangeSeries from '../AreaRange/AreaRangeSeries.js';
 import U from '../../Core/Utilities.js';
 var merge = U.merge, extend = U.extend;
 import '../../Core/Options.js';
+/* *
+ *
+ *  Class
+ *
+ * */
+/**
+ * The areasplinerange series type.
+ *
+ * @private
+ * @class
+ * @name Highcharts.seriesTypes.areasplinerange
+ *
+ * @augments Highcharts.Series
+ */
 var AreaSplineRangeSeries = /** @class */ (function (_super) {
     __extends(AreaSplineRangeSeries, _super);
     function AreaSplineRangeSeries() {
-        return _super !== null && _super.apply(this, arguments) || this;
+        /* *
+         *
+         *  Static properties
+         *
+         * */
+        var _this = _super !== null && _super.apply(this, arguments) || this;
+        /* *
+         *
+         *  Properties
+         *
+         * */
+        _this.options = void 0;
+        _this.data = void 0;
+        _this.points = void 0;
+        return _this;
     }
-    /* *
-     *
-     *  Static properties
-     *
-     * */
     /**
-    * @see [fillColor](#plotOptions.areasplinerange.fillColor)
-    * @see [fillOpacity](#plotOptions.areasplinerange.fillOpacity)
-    *
-    * @apioption plotOptions.areasplinerange.color
-    */
+     * The area spline range is a cartesian series type with higher and
+     * lower Y values along an X axis. The area inside the range is colored, and
+     * the graph outlining the area is a smoothed spline.
+     *
+     * @sample {highstock|highstock} stock/demo/areasplinerange/
+     *         Area spline range
+     *
+     * @extends   plotOptions.arearange
+     * @since     2.3.0
+     * @excluding step, boostThreshold, boostBlending
+     * @product   highcharts highstock
+     * @requires  highcharts-more
+     * @apioption plotOptions.areasplinerange
+     */
+    /**
+     * @see [fillColor](#plotOptions.areasplinerange.fillColor)
+     * @see [fillOpacity](#plotOptions.areasplinerange.fillOpacity)
+     *
+     * @apioption plotOptions.areasplinerange.color
+     */
     /**
      * @see [color](#plotOptions.areasplinerange.color)
      * @see [fillOpacity](#plotOptions.areasplinerange.fillOpacity)
@@ -69,21 +107,11 @@ BaseSeries.registerSeriesType('areasplinerange', AreaSplineRangeSeries);
  *
  * */
 export default AreaSplineRangeSeries;
-/**
- * The area spline range is a cartesian series type with higher and
- * lower Y values along an X axis. The area inside the range is colored, and
- * the graph outlining the area is a smoothed spline.
+/* *
  *
- * @sample {highstock|highstock} stock/demo/areasplinerange/
- *         Area spline range
+ *  API options
  *
- * @extends   plotOptions.arearange
- * @since     2.3.0
- * @excluding step, boostThreshold, boostBlending
- * @product   highcharts highstock
- * @requires  highcharts-more
- * @apioption plotOptions.areasplinerange
- */
+ * */
 /**
  * A `areasplinerange` series. If the [type](#series.areasplinerange.type)
  * option is not specified, it is inherited from [chart.type](#chart.type).
