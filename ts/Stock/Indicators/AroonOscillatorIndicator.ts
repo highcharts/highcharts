@@ -109,50 +109,23 @@ class AroonOscillatorIndicator extends AroonIndicator implements Highcharts.Mult
             pointFormat: '<span style="color:{point.color}">\u25CF</span><b> {series.name}</b>: {point.y}'
         }
     } as Highcharts.AroonOscillatorIndicatorOptions);
-}
 
-/* *
-*
-*   Prototype Properties
-*
-* */
+    /* *
+     *
+     *  Properties
+     *
+     * */
 
-interface AroonOscillatorIndicator {
-    data: Array<Highcharts.AroonOscillatorIndicatorPoint>;
-    getValues<TLinkedSeries extends LineSeries>(
-        series: TLinkedSeries,
-        params: AroonParamsOptions
-    ): IndicatorValuesObject<TLinkedSeries>;
-    init(): void;
-    nameBase: string;
-    options: Highcharts.AroonOscillatorIndicatorOptions;
-    pointArrayMap: Highcharts.MultipleLinesMixin['pointArrayMap'];
-    pointClass: typeof Highcharts.AroonOscillatorIndicatorPoint;
-    points: Array<Highcharts.AroonOscillatorIndicatorPoint>;
-    pointValKey: Highcharts.MultipleLinesMixin['pointValKey'];
-    linesApiNames: Highcharts.MultipleLinesMixin['linesApiNames'];
-}
+    public data: Array<Highcharts.AroonOscillatorIndicatorPoint> = void 0 as any;
+    public options: Highcharts.AroonOscillatorIndicatorOptions = void 0 as any;
+    public points: Array<Highcharts.AroonOscillatorIndicatorPoint> = void 0 as any;
 
-extend(AroonOscillatorIndicator.prototype, merge(multipleLinesMixin, {
-    nameBase: 'Aroon Oscillator',
-    pointArrayMap: ['y'],
-    pointValKey: 'y',
-    linesApiNames: [],
-    init: function (this: AroonOscillatorIndicator): void {
-        var args = arguments,
-            ctx = this;
-
-        requiredIndicator.isParentLoaded(
-            (AROON as any),
-            'aroon',
-            ctx.type,
-            function (indicator: Highcharts.Indicator): undefined {
-                indicator.prototype.init.apply(ctx, args);
-                return;
-            }
-        );
-    },
-    getValues: function<TLinkedSeries extends LineSeries> (
+    /* *
+     *
+     *  Functions
+     *
+     * */
+    public getValues<TLinkedSeries extends LineSeries>(
         series: TLinkedSeries,
         params: AroonParamsOptions
     ): IndicatorValuesObject<TLinkedSeries> {
@@ -187,6 +160,42 @@ extend(AroonOscillatorIndicator.prototype, merge(multipleLinesMixin, {
             yData: yData
         } as IndicatorValuesObject<TLinkedSeries>;
     }
+
+    public init(this: AroonOscillatorIndicator): void {
+        var args = arguments,
+            ctx = this;
+
+        requiredIndicator.isParentLoaded(
+            (AROON as any),
+            'aroon',
+            ctx.type,
+            function (indicator: Highcharts.Indicator): undefined {
+                indicator.prototype.init.apply(ctx, args);
+                return;
+            }
+        );
+    }
+}
+
+/* *
+*
+*   Prototype Properties
+*
+* */
+
+interface AroonOscillatorIndicator {
+    nameBase: string;
+    pointArrayMap: Highcharts.MultipleLinesMixin['pointArrayMap'];
+    pointClass: typeof Highcharts.AroonOscillatorIndicatorPoint;
+    pointValKey: Highcharts.MultipleLinesMixin['pointValKey'];
+    linesApiNames: Highcharts.MultipleLinesMixin['linesApiNames'];
+}
+
+extend(AroonOscillatorIndicator.prototype, merge(multipleLinesMixin, {
+    nameBase: 'Aroon Oscillator',
+    pointArrayMap: ['y'],
+    pointValKey: 'y',
+    linesApiNames: []
 }));
 
 /* *
