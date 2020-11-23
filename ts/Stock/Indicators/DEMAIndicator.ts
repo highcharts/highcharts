@@ -8,7 +8,6 @@
 
 'use strict';
 
-import type EMAIndicator from './EMA/EMAIndicator';
 import type {
     EMAOptions,
     EMAParamsOptions
@@ -17,11 +16,18 @@ import type EMAPoint from './EMA/EMAPoint';
 import type IndicatorValuesObject from './IndicatorValuesObject';
 import type LineSeries from '../../Series/Line/LineSeries';
 import BaseSeries from '../../Core/Series/Series.js';
+const {
+    seriesTypes: {
+        ema: EMAIndicator
+    }
+} = BaseSeries;
 import RequiredIndicatorMixin from '../../Mixins/IndicatorRequired.js';
 import U from '../../Core/Utilities.js';
 const {
     correctFloat,
-    isArray
+    extend,
+    isArray,
+    merge
 } = U;
 
 
@@ -31,27 +37,6 @@ const {
  */
 declare global {
     namespace Highcharts {
-
-        class DEMAIndicator extends EMAIndicator {
-            public data: Array<DEMAIndicatorPoint>;
-            public getEMA(
-                yVal: (Array<number>|Array<Array<number>>),
-                prevEMA: (number|undefined),
-                SMA: number,
-                index?: number,
-                i?: number,
-                xVal?: Array<number>
-            ): [number, number];
-            public getValues<TLinkedSeries extends LineSeries>(
-                series: TLinkedSeries,
-                params: DEMAIndicatorParamsOptions
-            ): (IndicatorValuesObject<TLinkedSeries>|undefined);
-            public init(): void;
-            public options: DEMAIndicatorOptions;
-            public pointClass: typeof DEMAIndicatorPoint;
-            public points: Array<DEMAIndicatorPoint>;
-        }
-
         interface DEMAIndicatorLinkedParentSeries extends LineSeries {
             EMApercent?: number;
         }
@@ -70,16 +55,6 @@ declare global {
     }
 }
 
-declare module '../../Core/Series/SeriesType' {
-    interface SeriesTypeRegistry {
-        dema: typeof Highcharts.DEMAIndicator;
-    }
-}
-
-// im port './EMAIndicator.js';
-
-var EMAindicator = BaseSeries.seriesTypes.ema;
-
 /**
  * The DEMA series Type
  *
@@ -89,9 +64,7 @@ var EMAindicator = BaseSeries.seriesTypes.ema;
  *
  * @augments Highcharts.Series
  */
-BaseSeries.seriesType<typeof Highcharts.DEMAIndicator>(
-    'dema',
-    'ema',
+class DEMAIndicator extends EMAIndicator {
     /**
      * Double exponential moving average (DEMA) indicator. This series requires
      * `linkedTo` option to be set and should be loaded after the
@@ -112,147 +85,181 @@ BaseSeries.seriesType<typeof Highcharts.DEMAIndicator>(
      * @requires     stock/indicators/dema
      * @optionparent plotOptions.dema
      */
-    {},
-    /**
-     * @lends Highcharts.Series#
-     */
-    {
-        init: function (this: Highcharts.DEMAIndicator): void {
-            var args = arguments,
-                ctx = this;
+    public static defaultOptions: Highcharts.DEMAIndicatorOptions = merge(EMAIndicator.defaultOptions, {
 
-            RequiredIndicatorMixin.isParentLoaded(
-                (EMAindicator as any),
-                'ema',
-                ctx.type,
-                function (indicator: Highcharts.Indicator): undefined {
-                    indicator.prototype.init.apply(ctx, args);
-                    return;
-                }
-            );
-        },
-        getEMA: function (
-            this: Highcharts.DEMAIndicator,
-            yVal: (Array<number>|Array<Array<number>>),
-            prevEMA: (number|undefined),
-            SMA: number,
-            index?: number,
-            i?: number,
-            xVal?: Array<number>
-        ): [number, number] {
+    } as Highcharts.DEMAIndicatorOptions)
+}
 
-            return EMAindicator.prototype.calculateEma(
-                xVal || [],
-                yVal,
-                typeof i === 'undefined' ? 1 : i,
-                (this.chart.series[0] as any).EMApercent,
-                prevEMA,
-                typeof index === 'undefined' ? -1 : index,
-                SMA
-            );
-        },
+interface DEMAIndicator {
+    data: Array<Highcharts.DEMAIndicatorPoint>;
+    getEMA(
+        yVal: (Array<number>|Array<Array<number>>),
+        prevEMA: (number|undefined),
+        SMA: number,
+        index?: number,
+        i?: number,
+        xVal?: Array<number>
+    ): [number, number];
+    getValues<TLinkedSeries extends LineSeries>(
+        series: TLinkedSeries,
+        params: Highcharts.DEMAIndicatorParamsOptions
+    ): (IndicatorValuesObject<TLinkedSeries>|undefined);
+    init(): void;
+    options: Highcharts.DEMAIndicatorOptions;
+    pointClass: typeof Highcharts.DEMAIndicatorPoint;
+    points: Array<Highcharts.DEMAIndicatorPoint>;
+} extend(DEMAIndicator.prototype, {
+    init: function (this: DEMAIndicator): void {
+        var args = arguments,
+            ctx = this;
 
-        getValues: function<
-            TLinkedSeries extends Highcharts.DEMAIndicatorLinkedParentSeries
-        > (
-            this: Highcharts.DEMAIndicator,
-            series: TLinkedSeries,
-            params: Highcharts.DEMAIndicatorParamsOptions
-        ): (IndicatorValuesObject<TLinkedSeries>|undefined) {
-            var period: number = (params.period as any),
-                doubledPeriod: number = 2 * period,
-                xVal: Array<number> = (series.xData as any),
-                yVal: Array<Array<number>> = (series.yData as any),
-                yValLen: number = yVal ? yVal.length : 0,
-                index = -1,
-                accumulatePeriodPoints = 0,
-                SMA = 0,
-                DEMA: Array<Array<number>> = [],
-                xDataDema: Array<number> = [],
-                yDataDema: Array<number> = [],
-                EMA = 0,
-                // EMA(EMA)
-                EMAlevel2: number,
-                // EMA of previous point
-                prevEMA: (number|undefined),
-                prevEMAlevel2: (number|undefined),
-                // EMA values array
-                EMAvalues: Array<number> = [],
-                i: number,
-                DEMAPoint: [number, number];
-
-            series.EMApercent = (2 / (period + 1));
-
-            // Check period, if bigger than EMA points length, skip
-            if (yValLen < 2 * period - 1) {
+        RequiredIndicatorMixin.isParentLoaded(
+            (EMAIndicator as any),
+            'ema',
+            ctx.type,
+            function (indicator: Highcharts.Indicator): undefined {
+                indicator.prototype.init.apply(ctx, args);
                 return;
             }
+        );
+    },
+    getEMA: function (
+        this: DEMAIndicator,
+        yVal: (Array<number>|Array<Array<number>>),
+        prevEMA: (number|undefined),
+        SMA: number,
+        index?: number,
+        i?: number,
+        xVal?: Array<number>
+    ): [number, number] {
 
-            // Switch index for OHLC / Candlestick / Arearange
-            if (isArray(yVal[0])) {
-                index = params.index ? params.index : 0;
-            }
+        return EMAIndicator.prototype.calculateEma(
+            xVal || [],
+            yVal,
+            typeof i === 'undefined' ? 1 : i,
+            (this.chart.series[0] as any).EMApercent,
+            prevEMA,
+            typeof index === 'undefined' ? -1 : index,
+            SMA
+        );
+    },
 
-            // Accumulate first N-points
-            accumulatePeriodPoints =
-                EMAindicator.prototype.accumulatePeriodPoints(
-                    period,
-                    index,
-                    yVal
-                );
+    getValues: function<
+        TLinkedSeries extends Highcharts.DEMAIndicatorLinkedParentSeries
+    > (
+        this: DEMAIndicator,
+        series: TLinkedSeries,
+        params: Highcharts.DEMAIndicatorParamsOptions
+    ): (IndicatorValuesObject<TLinkedSeries>|undefined) {
+        var period: number = (params.period as any),
+            doubledPeriod: number = 2 * period,
+            xVal: Array<number> = (series.xData as any),
+            yVal: Array<Array<number>> = (series.yData as any),
+            yValLen: number = yVal ? yVal.length : 0,
+            index = -1,
+            accumulatePeriodPoints = 0,
+            SMA = 0,
+            DEMA: Array<Array<number>> = [],
+            xDataDema: Array<number> = [],
+            yDataDema: Array<number> = [],
+            EMA = 0,
+            // EMA(EMA)
+            EMAlevel2: number,
+            // EMA of previous point
+            prevEMA: (number|undefined),
+            prevEMAlevel2: (number|undefined),
+            // EMA values array
+            EMAvalues: Array<number> = [],
+            i: number,
+            DEMAPoint: [number, number];
 
-            // first point
-            SMA = accumulatePeriodPoints / period;
-            accumulatePeriodPoints = 0;
+        series.EMApercent = (2 / (period + 1));
 
-            // Calculate value one-by-one for each period in visible data
-            for (i = period; i < yValLen + 2; i++) {
-                if (i < yValLen + 1) {
-                    EMA = this.getEMA(
-                        yVal,
-                        prevEMA,
-                        SMA,
-                        index,
-                        i
-                    )[1];
-                    EMAvalues.push(EMA);
-                }
-                prevEMA = EMA;
-
-                // Summing first period points for EMA(EMA)
-                if (i < doubledPeriod) {
-                    accumulatePeriodPoints += EMA;
-                } else {
-                    // Calculate DEMA
-                    // First DEMA point
-                    if (i === doubledPeriod) {
-                        SMA = accumulatePeriodPoints / period;
-                    }
-                    EMA = EMAvalues[i - period - 1];
-                    EMAlevel2 = this.getEMA(
-                        [EMA],
-                        prevEMAlevel2,
-                        SMA
-                    )[1];
-                    DEMAPoint = [
-                        xVal[i - 2],
-                        correctFloat(2 * EMA - EMAlevel2)
-                    ];
-                    DEMA.push(DEMAPoint);
-                    xDataDema.push(DEMAPoint[0]);
-                    yDataDema.push(DEMAPoint[1]);
-                    prevEMAlevel2 = EMAlevel2;
-                }
-            }
-
-            return {
-                values: DEMA,
-                xData: xDataDema,
-                yData: yDataDema
-            } as IndicatorValuesObject<TLinkedSeries>;
+        // Check period, if bigger than EMA points length, skip
+        if (yValLen < 2 * period - 1) {
+            return;
         }
+
+        // Switch index for OHLC / Candlestick / Arearange
+        if (isArray(yVal[0])) {
+            index = params.index ? params.index : 0;
+        }
+
+        // Accumulate first N-points
+        accumulatePeriodPoints =
+            EMAIndicator.prototype.accumulatePeriodPoints(
+                period,
+                index,
+                yVal
+            );
+
+        // first point
+        SMA = accumulatePeriodPoints / period;
+        accumulatePeriodPoints = 0;
+
+        // Calculate value one-by-one for each period in visible data
+        for (i = period; i < yValLen + 2; i++) {
+            if (i < yValLen + 1) {
+                EMA = this.getEMA(
+                    yVal,
+                    prevEMA,
+                    SMA,
+                    index,
+                    i
+                )[1];
+                EMAvalues.push(EMA);
+            }
+            prevEMA = EMA;
+
+            // Summing first period points for EMA(EMA)
+            if (i < doubledPeriod) {
+                accumulatePeriodPoints += EMA;
+            } else {
+                // Calculate DEMA
+                // First DEMA point
+                if (i === doubledPeriod) {
+                    SMA = accumulatePeriodPoints / period;
+                }
+                EMA = EMAvalues[i - period - 1];
+                EMAlevel2 = this.getEMA(
+                    [EMA],
+                    prevEMAlevel2,
+                    SMA
+                )[1];
+                DEMAPoint = [
+                    xVal[i - 2],
+                    correctFloat(2 * EMA - EMAlevel2)
+                ];
+                DEMA.push(DEMAPoint);
+                xDataDema.push(DEMAPoint[0]);
+                yDataDema.push(DEMAPoint[1]);
+                prevEMAlevel2 = EMAlevel2;
+            }
+        }
+
+        return {
+            values: DEMA,
+            xData: xDataDema,
+            yData: yDataDema
+        } as IndicatorValuesObject<TLinkedSeries>;
     }
-);
+});
+
+declare module '../../Core/Series/SeriesType' {
+    interface SeriesTypeRegistry {
+        dema: typeof DEMAIndicator;
+    }
+}
+
+BaseSeries.registerSeriesType('dema', DEMAIndicator);
+
+/* *
+ *
+ *  Default Export
+ *
+ * */
+
+export default DEMAIndicator;
 
 /**
  * A `DEMA` series. If the [type](#series.ema.type) option is not
