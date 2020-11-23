@@ -23,6 +23,7 @@ const {
 } = BaseSeries;
 import U from '../../../Core/Utilities.js';
 const {
+    extend,
     isArray,
     merge
 } = U;
@@ -76,7 +77,6 @@ class MomentumIndicator extends SMAIndicator {
     } as MomentumOptions);
 
     public data: Array<MomentumPoint> = void 0 as any;
-    public nameBase: string = void 0 as any;
     public options: MomentumOptions = void 0 as any;
     public points: Array<MomentumPoint> = void 0 as any;
 
@@ -148,6 +148,9 @@ class MomentumIndicator extends SMAIndicator {
 interface MomentumIndicator {
     pointClass: typeof MomentumPoint;
 }
+extend(MomentumIndicator.prototype, {
+    nameBase: 'Momentum'
+});
 
 /* *
  *

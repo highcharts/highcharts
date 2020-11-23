@@ -22,7 +22,7 @@ var __extends = (this && this.__extends) || (function () {
 import BaseSeries from '../../../Core/Series/Series.js';
 var SMAIndicator = BaseSeries.seriesTypes.sma;
 import U from '../../../Core/Utilities.js';
-var isArray = U.isArray, merge = U.merge;
+var extend = U.extend, isArray = U.isArray, merge = U.merge;
 /* eslint-disable require-jsdoc */
 function populateAverage(points, xVal, yVal, i, period) {
     var mmY = yVal[i - 1][3] - yVal[i - period - 1][3], mmX = xVal[i - 1];
@@ -44,7 +44,6 @@ var MomentumIndicator = /** @class */ (function (_super) {
     function MomentumIndicator() {
         var _this = _super !== null && _super.apply(this, arguments) || this;
         _this.data = void 0;
-        _this.nameBase = void 0;
         _this.options = void 0;
         _this.points = void 0;
         return _this;
@@ -102,6 +101,9 @@ var MomentumIndicator = /** @class */ (function (_super) {
     });
     return MomentumIndicator;
 }(SMAIndicator));
+extend(MomentumIndicator.prototype, {
+    nameBase: 'Momentum'
+});
 BaseSeries.registerSeriesType('momentum', MomentumIndicator);
 /* *
  *
