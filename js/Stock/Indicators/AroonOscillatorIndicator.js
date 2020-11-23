@@ -6,13 +6,31 @@
  *
  * */
 'use strict';
+var __extends = (this && this.__extends) || (function () {
+    var extendStatics = function (d, b) {
+        extendStatics = Object.setPrototypeOf ||
+            ({ __proto__: [] } instanceof Array && function (d, b) { d.__proto__ = b; }) ||
+            function (d, b) { for (var p in b) if (b.hasOwnProperty(p)) d[p] = b[p]; };
+        return extendStatics(d, b);
+    };
+    return function (d, b) {
+        extendStatics(d, b);
+        function __() { this.constructor = d; }
+        d.prototype = b === null ? Object.create(b) : (__.prototype = b.prototype, new __());
+    };
+})();
+var AroonIndicator = BaseSeries.seriesTypes.aroon;
 import BaseSeries from '../../Core/Series/Series.js';
 import multipleLinesMixin from '../../Mixins/MultipleLines.js';
 import requiredIndicator from '../../Mixins/IndicatorRequired.js';
 import U from '../../Core/Utilities.js';
-var merge = U.merge;
-// im port './AroonIndicator.js';
+var extend = U.extend, merge = U.merge;
 var AROON = BaseSeries.seriesTypes.aroon;
+/* *
+ *
+ *  Class
+ *
+ * */
 /**
  * The Aroon Oscillator series type.
  *
@@ -22,50 +40,53 @@ var AROON = BaseSeries.seriesTypes.aroon;
  *
  * @augments Highcharts.Series
  */
-BaseSeries.seriesType('aroonoscillator', 'aroon', 
-/**
- * Aroon Oscillator. This series requires the `linkedTo` option to be set
- * and should be loaded after the `stock/indicators/indicators.js` and
- * `stock/indicators/aroon.js`.
- *
- * @sample {highstock} stock/indicators/aroon-oscillator
- *         Aroon Oscillator
- *
- * @extends      plotOptions.aroon
- * @since        7.0.0
- * @product      highstock
- * @excluding    allAreas, aroonDown, colorAxis, compare, compareBase,
- *               joinBy, keys, navigatorOptions, pointInterval,
- *               pointIntervalUnit, pointPlacement, pointRange, pointStart,
- *               showInNavigator, stacking
- * @requires     stock/indicators/indicators
- * @requires     stock/indicators/aroon
- * @requires     stock/indicators/aroon-oscillator
- * @optionparent plotOptions.aroonoscillator
- */
-{
-    /**
-     * Paramters used in calculation of aroon oscillator series points.
-     *
-     * @excluding periods, index
-     */
-    params: {
-        /**
-         * Period for Aroon Oscillator
-         *
-         * @since   7.0.0
-         * @product highstock
-         */
-        period: 25
-    },
-    tooltip: {
-        pointFormat: '<span style="color:{point.color}">\u25CF</span><b> {series.name}</b>: {point.y}'
+var AroonOscillatorIndicator = /** @class */ (function (_super) {
+    __extends(AroonOscillatorIndicator, _super);
+    function AroonOscillatorIndicator() {
+        return _super !== null && _super.apply(this, arguments) || this;
     }
-}, 
-/**
- * @lends Highcharts.Series#
- */
-merge(multipleLinesMixin, {
+    /**
+     * Aroon Oscillator. This series requires the `linkedTo` option to be set
+     * and should be loaded after the `stock/indicators/indicators.js` and
+     * `stock/indicators/aroon.js`.
+     *
+     * @sample {highstock} stock/indicators/aroon-oscillator
+     *         Aroon Oscillator
+     *
+     * @extends      plotOptions.aroon
+     * @since        7.0.0
+     * @product      highstock
+     * @excluding    allAreas, aroonDown, colorAxis, compare, compareBase,
+     *               joinBy, keys, navigatorOptions, pointInterval,
+     *               pointIntervalUnit, pointPlacement, pointRange, pointStart,
+     *               showInNavigator, stacking
+     * @requires     stock/indicators/indicators
+     * @requires     stock/indicators/aroon
+     * @requires     stock/indicators/aroon-oscillator
+     * @optionparent plotOptions.aroonoscillator
+     */
+    AroonOscillatorIndicator.defaultOptions = merge(AroonIndicator.defaultOptions, {
+        /**
+         * Paramters used in calculation of aroon oscillator series points.
+         *
+         * @excluding periods, index
+         */
+        params: {
+            /**
+             * Period for Aroon Oscillator
+             *
+             * @since   7.0.0
+             * @product highstock
+             */
+            period: 25
+        },
+        tooltip: {
+            pointFormat: '<span style="color:{point.color}">\u25CF</span><b> {series.name}</b>: {point.y}'
+        }
+    });
+    return AroonOscillatorIndicator;
+}(AroonIndicator));
+extend(AroonOscillatorIndicator.prototype, merge(multipleLinesMixin, {
     nameBase: 'Aroon Oscillator',
     pointArrayMap: ['y'],
     pointValKey: 'y',
@@ -96,6 +117,13 @@ merge(multipleLinesMixin, {
         };
     }
 }));
+BaseSeries.registerSeriesType('aroonoscillator', AroonOscillatorIndicator);
+/* *
+ *
+ *  Default Export
+ *
+ * */
+export default AroonOscillatorIndicator;
 /**
  * An `Aroon Oscillator` series. If the [type](#series.aroonoscillator.type)
  * option is not specified, it is inherited from [chart.type](#chart.type).
