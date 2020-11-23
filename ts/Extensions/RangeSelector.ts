@@ -1272,7 +1272,7 @@ class RangeSelector {
 
             if (defined(inputTime)) {
                 const previousTime = updatedTime;
-                if (previousTime) {
+                if (defined(previousTime)) {
                     input.setAttribute('data-hc-time-previous', previousTime);
                 }
                 input.setAttribute('data-hc-time', inputTime);

@@ -886,7 +886,7 @@ var RangeSelector = /** @class */ (function () {
             var updatedTime = defined(hcTimeAttr) ? Number(hcTimeAttr) : void 0;
             if (defined(inputTime)) {
                 var previousTime = updatedTime;
-                if (previousTime) {
+                if (defined(previousTime)) {
                     input.setAttribute('data-hc-time-previous', previousTime);
                 }
                 input.setAttribute('data-hc-time', inputTime);
