@@ -55,8 +55,6 @@ QUnit.test('Center the halo on the point(#4689)', function (assert) {
     }
 });
 
-/* global TestController */
-
 QUnit.test(
     'Point inactive state - basics',
     function (assert) {
@@ -372,13 +370,15 @@ QUnit.test('Dynamic point states', function (assert) {
             },
             series: [{
                 type: 'line',
-                data: [1, 2, 1, 2, 1, 3, 3, 5, 6, 6, 54, 4, 3, 3, 2, 2, 2, 3, 4, 4, 5, 56, 7, 7],
+                data: [1, 2, 1, 2, 1, 3, 3, 5, 6, 6, 54,
+                    4, 3, 3, 2, 2, 2, 3, 4, 4, 5, 56, 7, 7],
                 marker: {
                     enabled: false
                 }
             }, {
                 type: 'line',
-                data: [1, 2, 1, 2, 1, 3, 3, 5, 6, 6, 54, 4, 3, 3, 2, 2, 2, 3, 4, 4, 5, 56, 7, 7].reverse(),
+                data: [1, 2, 1, 2, 1, 3, 3, 5, 6, 6, 54,
+                    4, 3, 3, 2, 2, 2, 3, 4, 4, 5, 56, 7, 7].reverse(),
                 marker: {
                     enabled: false
                 }
@@ -437,81 +437,86 @@ QUnit.test('Custom point.group option (#5681)', function (assert) {
     });
 });
 
-QUnit.test('Update className after initially selected (#5777)', function (assert) {
+QUnit.test('Update className after initially selected (#5777)',
+    function (assert) {
+        ['line', 'column', 'pie'].forEach(function (type) {
+            var chart = Highcharts.chart('container', {
 
-    ['line', 'column', 'pie'].forEach(function (type) {
-        var chart = Highcharts.chart('container', {
+                chart: {
+                    type: type,
+                    animation: false
+                },
 
-            chart: {
-                type: type,
-                animation: false
-            },
+                series: [{
+                    data: [{
+                        y: 1,
+                        selected: true,
+                        sliced: true
+                    }, {
+                        y: 2
+                    }, {
+                        y: 3
+                    }],
+                    allowPointSelect: true,
+                    animation: false
+                }]
 
-            series: [{
-                data: [{
-                    y: 1,
-                    selected: true,
-                    sliced: true
-                }, {
-                    y: 2
-                }, {
-                    y: 3
-                }],
-                allowPointSelect: true,
-                animation: false
-            }]
+            });
 
+            assert.strictEqual(
+                chart.series[0].points[0].graphic
+                    .hasClass('highcharts-point-select'),
+                true,
+                'Class is there initially (' + type + ')'
+            );
+
+            // Select the second point, first point should toggle back to
+            // unselected
+            chart.series[0].points[1].select();
+            assert.strictEqual(
+                chart.series[0].points[0].graphic
+                    .hasClass('highcharts-point-select'),
+                false,
+                'Selected class is removed (' + type + ')'
+            );
         });
+    }
+);
 
-        assert.strictEqual(
-            chart.series[0].points[0].graphic.hasClass('highcharts-point-select'),
-            true,
-            'Class is there initially (' + type + ')'
-        );
+QUnit.test('Update className with Point.update (#6454)',
+    function (assert) {
+        ['line', 'column', 'pie'].forEach(function (type) {
+            var chart = Highcharts.chart('container', {
 
-        // Select the second point, first point should toggle back to unselected
-        chart.series[0].points[1].select();
-        assert.strictEqual(
-            chart.series[0].points[0].graphic.hasClass('highcharts-point-select'),
-            false,
-            'Selected class is removed (' + type + ')'
-        );
-    });
-});
+                chart: {
+                    type: type,
+                    animation: false
+                },
 
-QUnit.test('Update className with Point.update (#6454)', function (assert) {
+                series: [{
+                    data: [10, 20, 30],
+                    animation: false
+                }]
 
-    ['line', 'column', 'pie'].forEach(function (type) {
-        var chart = Highcharts.chart('container', {
+            });
 
-            chart: {
-                type: type,
-                animation: false
-            },
+            assert.strictEqual(
+                chart.series[0].points[0].graphic.hasClass('updated'),
+                false,
+                'Ready...'
+            );
 
-            series: [{
-                data: [10, 20, 30],
-                animation: false
-            }]
-
+            chart.series[0].points[0].update({
+                className: 'updated'
+            });
+            assert.strictEqual(
+                chart.series[0].points[0].graphic.hasClass('updated'),
+                true,
+                'Point.update successfully applied class name (' + type + ')'
+            );
         });
-
-        assert.strictEqual(
-            chart.series[0].points[0].graphic.hasClass('updated'),
-            false,
-            'Ready...'
-        );
-
-        chart.series[0].points[0].update({
-            className: 'updated'
-        });
-        assert.strictEqual(
-            chart.series[0].points[0].graphic.hasClass('updated'),
-            true,
-            'Point.update successfully applied class name (' + type + ')'
-        );
-    });
-});
+    }
+);
 
 QUnit.test(
     'Point with negative color has only one highcharts-negative class',
@@ -684,5 +689,24 @@ QUnit.test('Deselecting points', function (assert) {
         chart.series[0].options.data['-1'],
         undefined,
         'No fake points in series.options.data after deselecting other points.'
+    );
+});
+
+QUnit.test('#14623: colorIndex Series.update()', assert => {
+    const chart = Highcharts.chart('container', {
+        series: [{
+            data: [29.9, 71.5, 106.4, 129.2, 144.0, 176.0],
+            colorIndex: 1
+        }]
+    });
+
+    chart.series[0].update({
+        colorIndex: 2
+    });
+
+    assert.strictEqual(
+        chart.series[0].points[0].colorIndex,
+        2,
+        'Point.colorIndex should be updated'
     );
 });
