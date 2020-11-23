@@ -23,6 +23,7 @@ const {
 import BaseSeries from '../../../Core/Series/Series.js';
 import U from '../../../Core/Utilities.js';
 const {
+    extend,
     merge,
     correctFloat,
     pick
@@ -191,6 +192,10 @@ class DPOIndicator extends SMAIndicator {
 interface DPOIndicator {
     nameBase: string;
 }
+
+extend(DPOIndicator.prototype, {
+    nameBase: 'DPO'
+});
 
 /* *
  *

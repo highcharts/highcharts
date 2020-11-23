@@ -22,7 +22,7 @@ var __extends = (this && this.__extends) || (function () {
 var SMAIndicator = BaseSeries.seriesTypes.sma;
 import BaseSeries from '../../../Core/Series/Series.js';
 import U from '../../../Core/Utilities.js';
-var merge = U.merge, correctFloat = U.correctFloat, pick = U.pick;
+var extend = U.extend, merge = U.merge, correctFloat = U.correctFloat, pick = U.pick;
 /* eslint-disable valid-jsdoc */
 // Utils:
 /**
@@ -135,6 +135,9 @@ var DPOIndicator = /** @class */ (function (_super) {
     });
     return DPOIndicator;
 }(SMAIndicator));
+extend(DPOIndicator.prototype, {
+    nameBase: 'DPO'
+});
 BaseSeries.registerSeriesType('dpo', DPOIndicator);
 /* *
  *
