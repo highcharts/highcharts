@@ -96,7 +96,7 @@ var AreaSplineSeries = /** @class */ (function (_super) {
      * @default   {highstock} 0.75
      * @apioption plotOptions.areaspline.fillOpacity
      */
-    AreaSplineSeries.defaultOptions = merge(AreaSeries.defaultOptions, {});
+    AreaSplineSeries.defaultOptions = merge(SplineSeries.defaultOptions, AreaSeries.defaultOptions);
     return AreaSplineSeries;
 }(SplineSeries));
 extend(AreaSplineSeries.prototype, {

@@ -90,8 +90,8 @@ class AreaSplineSeries extends SplineSeries {
      * @apioption plotOptions.areaspline.fillOpacity
      */
     public static defaultOptions: AreaSplineSeriesOptions = merge(
-        AreaSeries.defaultOptions,
-        {} as AreaSplineSeriesOptions
+        SplineSeries.defaultOptions,
+        AreaSeries.defaultOptions
     )
 
     /* *
