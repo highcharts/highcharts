@@ -22,7 +22,7 @@ var __extends = (this && this.__extends) || (function () {
 import BaseSeries from '../../../Core/Series/Series.js';
 var ATRIndicator = BaseSeries.seriesTypes.atr;
 import U from '../../../Core/Utilities.js';
-var merge = U.merge;
+var merge = U.merge, extend = U.extend;
 /**
  * The NATR series type.
  *
@@ -44,7 +44,6 @@ var NATRIndicator = /** @class */ (function (_super) {
          *  Properties
          *
          * */
-        _this.requiredIndicators = ['atr'];
         _this.data = void 0;
         _this.points = void 0;
         _this.options = void 0;
@@ -89,6 +88,9 @@ var NATRIndicator = /** @class */ (function (_super) {
     });
     return NATRIndicator;
 }(ATRIndicator));
+extend(NATRIndicator.prototype, {
+    requiredIndicators: ['atr']
+});
 BaseSeries.registerSeriesType('natr', NATRIndicator);
 /* *
  *

@@ -23,7 +23,8 @@ const {
 } = BaseSeries;
 import U from '../../../Core/Utilities.js';
 const {
-    merge
+    merge,
+    extend
 } = U;
 /**
  * The NATR series type.
@@ -67,7 +68,6 @@ class NATRIndicator extends ATRIndicator {
      *
      * */
 
-    public requiredIndicators = ['atr'];
     public data: Array<NATRPoint> = void 0 as any;
     public points: Array<NATRPoint> = void 0 as any;
     public options: NATROptions = void 0 as any;
@@ -117,6 +117,10 @@ class NATRIndicator extends ATRIndicator {
 interface NATRIndicator {
     pointClass: typeof NATRPoint;
 }
+
+extend(NATRIndicator.prototype, {
+    requiredIndicators: ['atr']
+});
 
 /* *
  *
