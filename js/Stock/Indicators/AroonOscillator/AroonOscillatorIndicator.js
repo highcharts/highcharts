@@ -20,10 +20,10 @@ var __extends = (this && this.__extends) || (function () {
     };
 })();
 var AroonIndicator = BaseSeries.seriesTypes.aroon;
-import BaseSeries from '../../Core/Series/Series.js';
-import multipleLinesMixin from '../../Mixins/MultipleLines.js';
-import requiredIndicator from '../../Mixins/IndicatorRequired.js';
-import U from '../../Core/Utilities.js';
+import BaseSeries from '../../../Core/Series/Series.js';
+import multipleLinesMixin from '../../../Mixins/MultipleLines.js';
+import requiredIndicator from '../../../Mixins/IndicatorRequired.js';
+import U from '../../../Core/Utilities.js';
 var extend = U.extend, merge = U.merge;
 var AROON = BaseSeries.seriesTypes.aroon;
 /* *

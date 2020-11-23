@@ -8,49 +8,26 @@
 
 'use strict';
 
-import type IndicatorValuesObject from './IndicatorValuesObject';
-import type LineSeries from '../../Series/Line/LineSeries';
+import type IndicatorValuesObject from '../IndicatorValuesObject';
+import type LineSeries from '../../../Series/Line/LineSeries';
 import type {
-    AroonOptions,
-    AroonParamsOptions
-} from './Aroon/AroonOptions';
-import type AroonPoint from './Aroon/AroonPoint';
+    AroonOscillatorOptions,
+    AroonOscillatorParamsOptions
+} from '../AroonOscillator/AroonOscillatorOptions';
+import type AroonOscillatorPoint from '../AroonOscillator/AroonOscillatorPoint';
 const {
     seriesTypes: {
         aroon: AroonIndicator
     }
 } = BaseSeries;
-import BaseSeries from '../../Core/Series/Series.js';
-import multipleLinesMixin from '../../Mixins/MultipleLines.js';
-import requiredIndicator from '../../Mixins/IndicatorRequired.js';
-import U from '../../Core/Utilities.js';
+import BaseSeries from '../../../Core/Series/Series.js';
+import multipleLinesMixin from '../../../Mixins/MultipleLines.js';
+import requiredIndicator from '../../../Mixins/IndicatorRequired.js';
+import U from '../../../Core/Utilities.js';
 const {
     extend,
     merge
 } = U;
-
-/**
- * Internal types
- * @private
- */
-declare global {
-    namespace Highcharts {
-        interface AroonOscillatorIndicatorParamsOptions
-            extends AroonParamsOptions {
-            // for inheritance
-        }
-
-        class AroonOscillatorIndicatorPoint extends AroonPoint {
-            public series: AroonOscillatorIndicator;
-        }
-
-        interface AroonOscillatorIndicatorOptions
-            extends AroonOptions {
-            params?: AroonOscillatorIndicatorParamsOptions;
-            tooltip?: TooltipOptions;
-        }
-    }
-}
 
 const AROON = BaseSeries.seriesTypes.aroon;
 
@@ -90,7 +67,7 @@ class AroonOscillatorIndicator extends AroonIndicator implements Highcharts.Mult
      * @requires     stock/indicators/aroon-oscillator
      * @optionparent plotOptions.aroonoscillator
      */
-    public static defaultOptions: Highcharts.AroonOscillatorIndicatorOptions = merge(AroonIndicator.defaultOptions, {
+    public static defaultOptions: AroonOscillatorOptions = merge(AroonIndicator.defaultOptions, {
         /**
          * Paramters used in calculation of aroon oscillator series points.
          *
@@ -108,7 +85,7 @@ class AroonOscillatorIndicator extends AroonIndicator implements Highcharts.Mult
         tooltip: {
             pointFormat: '<span style="color:{point.color}">\u25CF</span><b> {series.name}</b>: {point.y}'
         }
-    } as Highcharts.AroonOscillatorIndicatorOptions);
+    } as AroonOscillatorOptions);
 
     /* *
      *
@@ -116,18 +93,19 @@ class AroonOscillatorIndicator extends AroonIndicator implements Highcharts.Mult
      *
      * */
 
-    public data: Array<Highcharts.AroonOscillatorIndicatorPoint> = void 0 as any;
-    public options: Highcharts.AroonOscillatorIndicatorOptions = void 0 as any;
-    public points: Array<Highcharts.AroonOscillatorIndicatorPoint> = void 0 as any;
+    public data: Array<AroonOscillatorPoint> = void 0 as any;
+    public options: AroonOscillatorOptions = void 0 as any;
+    public points: Array<AroonOscillatorPoint> = void 0 as any;
 
     /* *
      *
      *  Functions
      *
      * */
+
     public getValues<TLinkedSeries extends LineSeries>(
         series: TLinkedSeries,
-        params: AroonParamsOptions
+        params: AroonOscillatorParamsOptions
     ): IndicatorValuesObject<TLinkedSeries> {
         // 0- date, 1- Aroon Oscillator
         var ARO: Array<Array<number>> = [],
@@ -186,7 +164,7 @@ class AroonOscillatorIndicator extends AroonIndicator implements Highcharts.Mult
 interface AroonOscillatorIndicator {
     nameBase: string;
     pointArrayMap: Highcharts.MultipleLinesMixin['pointArrayMap'];
-    pointClass: typeof Highcharts.AroonOscillatorIndicatorPoint;
+    pointClass: typeof AroonOscillatorPoint;
     pointValKey: Highcharts.MultipleLinesMixin['pointValKey'];
     linesApiNames: Highcharts.MultipleLinesMixin['linesApiNames'];
 }
@@ -204,7 +182,7 @@ extend(AroonOscillatorIndicator.prototype, merge(multipleLinesMixin, {
  *
  * */
 
-declare module '../../Core/Series/SeriesType' {
+declare module '../../../Core/Series/SeriesType' {
     interface SeriesTypeRegistry {
         aroonoscillator: typeof AroonOscillatorIndicator;
     }
