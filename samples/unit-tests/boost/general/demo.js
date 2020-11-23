@@ -210,7 +210,8 @@ QUnit[Highcharts.hasWebGLSupport() ? 'test' : 'skip'](
 );
 
 QUnit[Highcharts.hasWebGLSupport() ? 'test' : 'skip'](
-    'Error handler while the series is not declared as an array of numbers and turbo threshold enabled, #13957.',
+    `Error handler while the series is not declared as an array of numbers and
+    turbo threshold enabled, #13957.`,
     function (assert) {
         Highcharts.addEvent(Highcharts.Chart, 'displayError', function (e) {
             assert.strictEqual(
@@ -244,7 +245,9 @@ QUnit[Highcharts.hasWebGLSupport() ? 'test' : 'skip'](
         function generataSeries() {
             const series = Array.from(Array(100)).map(function () {
                 return {
-                    data: Array.from(Array(10)).map(() => Math.round(Math.random() * 10))
+                    data: Array.from(
+                        Array(10)).map(() => Math.round(Math.random() * 10)
+                    )
                 };
             });
             return series;
@@ -301,7 +304,8 @@ QUnit[Highcharts.hasWebGLSupport() ? 'test' : 'skip'](
         assert.strictEqual(
             chart.boostClipRect.attr('height'),
             chart.yAxis[0].height,
-            'After setting the axis position manually, the boost clip-path shouldn\'t be bigger than the axis size.'
+            `After setting the axis position manually, the boost clip-path
+            shouldn\'t be bigger than the axis size.`
         );
     }
 );

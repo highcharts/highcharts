@@ -16,6 +16,10 @@
  *
  * */
 
+import type AreaRangePoint from './AreaRange/AreaRangePoint';
+import type AreaRangePointOptions from './AreaRange/AreaRangePointOptions';
+import type AreaRangeSeries from './AreaRange/AreaRangeSeries';
+import type AreaRangeSeriesOptions from './AreaRange/AreaRangeSeriesOptions';
 import type ColorString from '../Core/Color/ColorString';
 import type ColorType from '../Core/Color/ColorType';
 import type ColumnMetricsObject from './Column/ColumnMetricsObject';
@@ -24,11 +28,21 @@ import type { StatesOptionsKey } from '../Core/Series/StatesOptions';
 import type SVGAttributes from '../Core/Renderer/SVG/SVGAttributes';
 import type SVGPath from '../Core/Renderer/SVG/SVGPath';
 import BaseSeries from '../Core/Series/Series.js';
-const { seriesTypes } = BaseSeries;
+const {
+    seriesTypes: {
+        arearange: {
+            prototype: areaRangeProto
+        },
+        columnrange: {
+            prototype: columnRangeProto
+        }
+    }
+} = BaseSeries;
 import ColumnSeries from './Column/ColumnSeries.js';
 const { prototype: colProto } = ColumnSeries;
 import LineSeries from './Line/LineSeries.js';
 const { prototype: seriesProto } = LineSeries;
+import palette from '../Core/Color/Palette.js';
 import SVGRenderer from '../Core/Renderer/SVG/SVGRenderer.js';
 import H from '../Core/Globals.js';
 const { noop } = H;
@@ -38,13 +52,10 @@ const {
     pick
 } = U;
 
-import './AreaRangeSeries.js';
 import './ColumnRangeSeries.js';
 import '../Core/Interaction.js';
 
-var areaRangeProto = seriesTypes.arearange.prototype,
-    columnRangeProto = seriesTypes.columnrange.prototype,
-    areaRangePointProto = areaRangeProto.pointClass.prototype,
+var areaRangePointProto = areaRangeProto.pointClass.prototype,
     TrackerMixin = H.TrackerMixin; // Interaction
 
 /* *
@@ -94,9 +105,9 @@ declare global {
             public points: Array<DumbbellPoint>;
             public trackerGroups: Array<string>;
             public crispCol: ColumnSeries['crispCol'];
-            public translatePoint: AreaRangeSeries['translate'];
+            public translatePoint: typeof areaRangeProto['translate'];
             public setShapeArgs: ColumnRangeSeries['translate'];
-            public seriesDrawPoints: AreaRangeSeries['drawPoints'];
+            public seriesDrawPoints: typeof areaRangeProto['drawPoints'];
             public drawTracker: TrackerMixin['drawTrackerPoint'];
             public drawGraph: any;
             public columnMetrics: ColumnMetricsObject;
@@ -123,7 +134,7 @@ declare global {
  */
 declare module '../Core/Series/SeriesType' {
     interface SeriesTypeRegistry {
-        dumbbell: typeof Highcharts.AreaRangeSeries;
+        dumbbell: typeof AreaRangeSeries;
     }
 }
 
@@ -177,7 +188,7 @@ BaseSeries.seriesType<typeof Highcharts.DumbbellSeries>('dumbbell', 'arearange',
      * @since 8.0.0
      * @product   highcharts highstock
      */
-    lowColor: '${palette.neutralColor80}',
+    lowColor: palette.neutralColor80,
     /**
      * Color of the line that connects the dumbbell point's values.
      * By default it is the series' color.

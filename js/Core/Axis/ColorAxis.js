@@ -33,6 +33,7 @@ var noop = H.noop;
 import Legend from '../Legend.js';
 import LegendSymbolMixin from '../../Mixins/LegendSymbol.js';
 import LineSeries from '../../Series/Line/LineSeries.js';
+import palette from '../../Core/Color/Palette.js';
 import Point from '../Series/Point.js';
 import U from '../Utilities.js';
 var addEvent = U.addEvent, erase = U.erase, extend = U.extend, isNumber = U.isNumber, merge = U.merge, pick = U.pick, splat = U.splat;
@@ -920,7 +921,7 @@ var ColorAxis = /** @class */ (function (_super) {
              * @type    {Highcharts.ColorString|Highcharts.GradientColorObject|Highcharts.PatternObject}
              * @product highcharts highstock highmaps
              */
-            color: '${palette.neutralColor40}'
+            color: palette.neutralColor40
         },
         /**
          * The axis labels show the number for each tick.
@@ -962,7 +963,7 @@ var ColorAxis = /** @class */ (function (_super) {
          * @type    {Highcharts.ColorString|Highcharts.GradientColorObject|Highcharts.PatternObject}
          * @product highcharts highstock highmaps
          */
-        minColor: '${palette.highlightColor10}',
+        minColor: palette.highlightColor10,
         /**
          * The color to represent the maximum of the color axis. Unless
          * [dataClasses](#colorAxis.dataClasses) or
@@ -981,7 +982,7 @@ var ColorAxis = /** @class */ (function (_super) {
          * @type    {Highcharts.ColorString|Highcharts.GradientColorObject|Highcharts.PatternObject}
          * @product highcharts highstock highmaps
          */
-        maxColor: '${palette.highlightColor100}',
+        maxColor: palette.highlightColor100,
         /**
          * Color stops for the gradient of a scalar color axis. Use this in
          * cases where a linear gradient between a `minColor` and `maxColor`

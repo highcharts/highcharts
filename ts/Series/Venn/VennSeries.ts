@@ -62,6 +62,7 @@ const {
 } = GeometryCirclesModule;
 import NelderMeadMixin from '../../Mixins/NelderMead.js';
 const { nelderMead } = NelderMeadMixin;
+import palette from '../../Core/Color/Palette.js';
 import VennPoint from './VennPoint.js';
 import VennUtils from './VennUtils.js';
 import U from '../../Core/Utilities.js';
@@ -197,7 +198,7 @@ class VennSeries extends ScatterSeries {
      * @optionparent plotOptions.venn
      */
     public static defaultOptions: VennSeriesOptions = merge(ScatterSeries.defaultOptions, {
-        borderColor: '${palette.neutralColor20}',
+        borderColor: palette.neutralColor20,
         borderDashStyle: 'solid' as any,
         borderWidth: 1,
         brighten: 0,
@@ -224,14 +225,14 @@ class VennSeries extends ScatterSeries {
              */
             hover: {
                 opacity: 1,
-                borderColor: '${palette.neutralColor80}'
+                borderColor: palette.neutralColor80
             },
             /**
              * @excluding halo
              */
             select: {
-                color: '${palette.neutralColor20}',
-                borderColor: '${palette.neutralColor100}',
+                color: palette.neutralColor20,
+                borderColor: palette.neutralColor100,
                 animation: false
             },
             inactive: {

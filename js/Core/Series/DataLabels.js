@@ -15,6 +15,7 @@ var seriesTypes = BaseSeries.seriesTypes;
 import H from '../Globals.js';
 var noop = H.noop;
 import LineSeries from '../../Series/Line/LineSeries.js';
+import palette from '../Color/Palette.js';
 import U from '../Utilities.js';
 var arrayMax = U.arrayMax, clamp = U.clamp, defined = U.defined, extend = U.extend, fireEvent = U.fireEvent, format = U.format, isArray = U.isArray, merge = U.merge, objectEach = U.objectEach, pick = U.pick, relativeLength = U.relativeLength, splat = U.splat, stableSort = U.stableSort;
 /**
@@ -281,7 +282,7 @@ LineSeries.prototype.drawDataLabels = function () {
                     rotation = labelOptions.rotation;
                     if (!chart.styledMode) {
                         // Determine the color
-                        style.color = pick(labelOptions.color, style.color, series.color, '${palette.neutralColor100}');
+                        style.color = pick(labelOptions.color, style.color, series.color, palette.neutralColor100);
                         // Get automated contrast color
                         if (style.color === 'contrast') {
                             point.contrastColor = renderer.getContrast((point.color || series.color));
@@ -290,7 +291,7 @@ LineSeries.prototype.drawDataLabels = function () {
                                 labelDistance < 0 ||
                                 !!seriesOptions.stacking ?
                                 point.contrastColor :
-                                '${palette.neutralColor100}';
+                                palette.neutralColor100;
                         }
                         else {
                             delete point.contrastColor;
@@ -929,7 +930,7 @@ if (seriesTypes.pie) {
                                     'stroke-width': connectorWidth,
                                     'stroke': (pointDataLabelsOptions.connectorColor ||
                                         point.color ||
-                                        '${palette.neutralColor60}')
+                                        palette.neutralColor60)
                                 });
                             }
                         }

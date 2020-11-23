@@ -35,6 +35,7 @@ import LineSeries from '../Series/Line/LineSeries.js';
 import NavigatorAxis from './Axis/NavigatorAxis.js';
 import O from './Options.js';
 const { defaultOptions } = O;
+import palette from './Color/Palette.js';
 import Scrollbar from './Scrollbar.js';
 import U from './Utilities.js';
 const {
@@ -411,14 +412,14 @@ extend(defaultOptions, {
              *
              * @type    {Highcharts.ColorString|Highcharts.GradientColorObject|Highcharts.PatternObject}
              */
-            backgroundColor: '${palette.neutralColor5}',
+            backgroundColor: palette.neutralColor5,
 
             /**
              * The stroke for the handle border and the stripes inside.
              *
              * @type    {Highcharts.ColorString|Highcharts.GradientColorObject|Highcharts.PatternObject}
              */
-            borderColor: '${palette.neutralColor40}'
+            borderColor: palette.neutralColor40
         },
 
         /**
@@ -436,7 +437,7 @@ extend(defaultOptions, {
          * @type    {Highcharts.ColorString|Highcharts.GradientColorObject|Highcharts.PatternObject}
          * @default rgba(102,133,194,0.3)
          */
-        maskFill: color('${palette.highlightColor60}').setOpacity(0.3).get(),
+        maskFill: color(palette.highlightColor60).setOpacity(0.3).get(),
 
         /**
          * The color of the line marking the currently zoomed area in the
@@ -448,7 +449,7 @@ extend(defaultOptions, {
          * @type    {Highcharts.ColorString|Highcharts.GradientColorObject|Highcharts.PatternObject}
          * @default #cccccc
          */
-        outlineColor: '${palette.neutralColor20}',
+        outlineColor: palette.neutralColor20,
 
         /**
          * The width of the line marking the currently zoomed area in the
@@ -657,7 +658,7 @@ extend(defaultOptions, {
 
             lineWidth: 0,
 
-            gridLineColor: '${palette.neutralColor10}',
+            gridLineColor: palette.neutralColor10,
 
             gridLineWidth: 1,
 
@@ -672,7 +673,7 @@ extend(defaultOptions, {
                  */
                 style: {
                     /** @ignore */
-                    color: '${palette.neutralColor40}'
+                    color: palette.neutralColor40
                 },
 
                 x: 3,

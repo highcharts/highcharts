@@ -28,6 +28,7 @@ var _a = BaseSeries.seriesTypes, LineSeries = _a.line, PieSeries = _a.pie;
 import Chart from '../../Core/Chart/Chart.js';
 import H from '../../Core/Globals.js';
 var noop = H.noop;
+import palette from '../../Core/Color/Palette.js';
 import U from '../../Core/Utilities.js';
 var addEvent = U.addEvent, extend = U.extend, fireEvent = U.fireEvent, isArray = U.isArray, merge = U.merge, pick = U.pick;
 /**
@@ -409,13 +410,13 @@ var FunnelSeries = /** @class */ (function (_super) {
                  *
                  * @type {Highcharts.ColorString|Highcharts.GradientColorObject|Highcharts.PatternObject}
                  */
-                color: '${palette.neutralColor20}',
+                color: palette.neutralColor20,
                 /**
                  * A specific border color for the selected point.
                  *
                  * @type {Highcharts.ColorString}
                  */
-                borderColor: '${palette.neutralColor100}'
+                borderColor: palette.neutralColor100
             }
         }
     });

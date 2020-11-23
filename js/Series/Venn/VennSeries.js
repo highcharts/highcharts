@@ -40,6 +40,7 @@ import GeometryCirclesModule from '../../Mixins/GeometryCircles.js';
 var getAreaOfCircle = GeometryCirclesModule.getAreaOfCircle, getAreaOfIntersectionBetweenCircles = GeometryCirclesModule.getAreaOfIntersectionBetweenCircles, getCircleCircleIntersection = GeometryCirclesModule.getCircleCircleIntersection, getCirclesIntersectionPolygon = GeometryCirclesModule.getCirclesIntersectionPolygon, getOverlapBetweenCirclesByDistance = GeometryCirclesModule.getOverlapBetweenCircles, isCircle1CompletelyOverlappingCircle2 = GeometryCirclesModule.isCircle1CompletelyOverlappingCircle2, isPointInsideAllCircles = GeometryCirclesModule.isPointInsideAllCircles, isPointInsideCircle = GeometryCirclesModule.isPointInsideCircle, isPointOutsideAllCircles = GeometryCirclesModule.isPointOutsideAllCircles;
 import NelderMeadMixin from '../../Mixins/NelderMead.js';
 var nelderMead = NelderMeadMixin.nelderMead;
+import palette from '../../Core/Color/Palette.js';
 import VennPoint from './VennPoint.js';
 import VennUtils from './VennUtils.js';
 import U from '../../Core/Utilities.js';
@@ -483,7 +484,7 @@ var VennSeries = /** @class */ (function (_super) {
      * @optionparent plotOptions.venn
      */
     VennSeries.defaultOptions = merge(ScatterSeries.defaultOptions, {
-        borderColor: '${palette.neutralColor20}',
+        borderColor: palette.neutralColor20,
         borderDashStyle: 'solid',
         borderWidth: 1,
         brighten: 0,
@@ -510,14 +511,14 @@ var VennSeries = /** @class */ (function (_super) {
              */
             hover: {
                 opacity: 1,
-                borderColor: '${palette.neutralColor80}'
+                borderColor: palette.neutralColor80
             },
             /**
              * @excluding halo
              */
             select: {
-                color: '${palette.neutralColor20}',
-                borderColor: '${palette.neutralColor100}',
+                color: palette.neutralColor20,
+                borderColor: palette.neutralColor100,
                 animation: false
             },
             inactive: {

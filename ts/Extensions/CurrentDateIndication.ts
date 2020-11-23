@@ -20,6 +20,7 @@ import type ColorString from '../Core/Color/ColorString';
 import type CSSObject from '../Core/Renderer/CSSObject';
 import type DashStyleValue from '../Core/Renderer/DashStyleValue';
 import Axis from '../Core/Axis/Axis.js';
+import palette from '../Core/Color/Palette.js';
 
 /**
  * Internal types
@@ -93,7 +94,7 @@ const defaultConfig: (
      * @apioption xAxis.currentDateIndicator
      */
     currentDateIndicator: true,
-    color: '${palette.highlightColor20}',
+    color: palette.highlightColor20,
     width: 2,
     /**
      * @declare Highcharts.AxisCurrentDateIndicatorLabelOptions

@@ -11,6 +11,7 @@
  * */
 'use strict';
 import Axis from '../Core/Axis/Axis.js';
+import palette from '../Core/Color/Palette.js';
 import U from '../Core/Utilities.js';
 var addEvent = U.addEvent, merge = U.merge, wrap = U.wrap;
 import PlotLineOrBand from '../Core/Axis/PlotLineOrBand.js';
@@ -34,7 +35,7 @@ var defaultConfig = {
      * @apioption xAxis.currentDateIndicator
      */
     currentDateIndicator: true,
-    color: '${palette.highlightColor20}',
+    color: palette.highlightColor20,
     width: 2,
     /**
      * @declare Highcharts.AxisCurrentDateIndicatorLabelOptions

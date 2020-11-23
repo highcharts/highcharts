@@ -16,6 +16,10 @@
  *
  * */
 
+import type AreaRangePoint from './AreaRange/AreaRangePoint';
+import type AreaRangePointOptions from './AreaRange/AreaRangePointOptions';
+import type AreaRangeSeries from './AreaRange/AreaRangeSeries.js';
+import type AreaRangeSeriesOptions from './AreaRange/AreaRangeSeriesOptions';
 import type BBoxObject from '../Core/Renderer/BBoxObject';
 import type ColumnMetricsObject from './Column/ColumnMetricsObject';
 import type ColumnPoint from './Column/ColumnPoint';
@@ -67,7 +71,7 @@ declare global {
             public pointAttribs: ColumnSeries['pointAttribs'];
             public pointClass: typeof ColumnRangePoint;
             public points: Array<ColumnRangePoint>;
-            public polarArc: AreaRangeSeries['polarArc'];
+            public polarArc: typeof AreaRangeSeries.prototype['polarArc'];
             public translate(): void;
         }
         interface ColumnRangePointOptions extends AreaRangePointOptions {

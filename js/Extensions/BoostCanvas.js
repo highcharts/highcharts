@@ -19,6 +19,7 @@ var color = Color.parse;
 import H from '../Core/Globals.js';
 var doc = H.doc, noop = H.noop;
 import LineSeries from '../Series/Line/LineSeries.js';
+import palette from '../Core/Color/Palette.js';
 import Series from '../Core/Series/Series.js';
 import U from '../Core/Utilities.js';
 var addEvent = U.addEvent, extend = U.extend, fireEvent = U.fireEvent, isNumber = U.isNumber, merge = U.merge, pick = U.pick, wrap = U.wrap;
@@ -293,7 +294,7 @@ var initCanvasBoost = function () {
             if (rawData.length > 99999) {
                 chart.options.loading = merge(loadingOptions, {
                     labelStyle: {
-                        backgroundColor: color('${palette.backgroundColor}').setOpacity(0.75).get(),
+                        backgroundColor: color(palette.backgroundColor).setOpacity(0.75).get(),
                         padding: '1em',
                         borderRadius: '0.5em'
                     },

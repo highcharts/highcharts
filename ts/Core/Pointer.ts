@@ -24,6 +24,7 @@ const {
     charts,
     noop
 } = H;
+import palette from '../Core/Color/Palette.js';
 import Tooltip from './Tooltip.js';
 import U from './Utilities.js';
 const {
@@ -466,7 +467,7 @@ class Pointer {
                         selectionMarker.attr({
                             fill: (
                                 chartOptions.selectionMarkerFill ||
-                                color('${palette.highlightColor80}')
+                                color(palette.highlightColor80)
                                     .setOpacity(0.25).get()
                             )
                         });
