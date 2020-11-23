@@ -43,8 +43,47 @@ var AROON = BaseSeries.seriesTypes.aroon;
 var AroonOscillatorIndicator = /** @class */ (function (_super) {
     __extends(AroonOscillatorIndicator, _super);
     function AroonOscillatorIndicator() {
-        return _super !== null && _super.apply(this, arguments) || this;
+        var _this = _super !== null && _super.apply(this, arguments) || this;
+        /* *
+         *
+         *  Properties
+         *
+         * */
+        _this.data = void 0;
+        _this.options = void 0;
+        _this.points = void 0;
+        return _this;
     }
+    /* *
+     *
+     *  Functions
+     *
+     * */
+    AroonOscillatorIndicator.prototype.getValues = function (series, params) {
+        // 0- date, 1- Aroon Oscillator
+        var ARO = [], xData = [], yData = [], aroon, aroonUp, aroonDown, oscillator, i;
+        aroon = AROON.prototype.getValues.call(this, series, params);
+        for (i = 0; i < aroon.yData.length; i++) {
+            aroonUp = aroon.yData[i][0];
+            aroonDown = aroon.yData[i][1];
+            oscillator = aroonUp - aroonDown;
+            ARO.push([aroon.xData[i], oscillator]);
+            xData.push(aroon.xData[i]);
+            yData.push(oscillator);
+        }
+        return {
+            values: ARO,
+            xData: xData,
+            yData: yData
+        };
+    };
+    AroonOscillatorIndicator.prototype.init = function () {
+        var args = arguments, ctx = this;
+        requiredIndicator.isParentLoaded(AROON, 'aroon', ctx.type, function (indicator) {
+            indicator.prototype.init.apply(ctx, args);
+            return;
+        });
+    };
     /**
      * Aroon Oscillator. This series requires the `linkedTo` option to be set
      * and should be loaded after the `stock/indicators/indicators.js` and
@@ -90,32 +129,7 @@ extend(AroonOscillatorIndicator.prototype, merge(multipleLinesMixin, {
     nameBase: 'Aroon Oscillator',
     pointArrayMap: ['y'],
     pointValKey: 'y',
-    linesApiNames: [],
-    init: function () {
-        var args = arguments, ctx = this;
-        requiredIndicator.isParentLoaded(AROON, 'aroon', ctx.type, function (indicator) {
-            indicator.prototype.init.apply(ctx, args);
-            return;
-        });
-    },
-    getValues: function (series, params) {
-        // 0- date, 1- Aroon Oscillator
-        var ARO = [], xData = [], yData = [], aroon, aroonUp, aroonDown, oscillator, i;
-        aroon = AROON.prototype.getValues.call(this, series, params);
-        for (i = 0; i < aroon.yData.length; i++) {
-            aroonUp = aroon.yData[i][0];
-            aroonDown = aroon.yData[i][1];
-            oscillator = aroonUp - aroonDown;
-            ARO.push([aroon.xData[i], oscillator]);
-            xData.push(aroon.xData[i]);
-            yData.push(oscillator);
-        }
-        return {
-            values: ARO,
-            xData: xData,
-            yData: yData
-        };
-    }
+    linesApiNames: []
 }));
 BaseSeries.registerSeriesType('aroonoscillator', AroonOscillatorIndicator);
 /* *
