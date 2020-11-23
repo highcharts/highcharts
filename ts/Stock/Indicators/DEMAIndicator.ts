@@ -25,7 +25,6 @@ import RequiredIndicatorMixin from '../../Mixins/IndicatorRequired.js';
 import U from '../../Core/Utilities.js';
 const {
     correctFloat,
-    extend,
     isArray,
     merge
 } = U;
@@ -88,28 +87,12 @@ class DEMAIndicator extends EMAIndicator {
     public static defaultOptions: Highcharts.DEMAIndicatorOptions = merge(EMAIndicator.defaultOptions, {
 
     } as Highcharts.DEMAIndicatorOptions)
-}
 
-interface DEMAIndicator {
-    data: Array<Highcharts.DEMAIndicatorPoint>;
-    getEMA(
-        yVal: (Array<number>|Array<Array<number>>),
-        prevEMA: (number|undefined),
-        SMA: number,
-        index?: number,
-        i?: number,
-        xVal?: Array<number>
-    ): [number, number];
-    getValues<TLinkedSeries extends LineSeries>(
-        series: TLinkedSeries,
-        params: Highcharts.DEMAIndicatorParamsOptions
-    ): (IndicatorValuesObject<TLinkedSeries>|undefined);
-    init(): void;
-    options: Highcharts.DEMAIndicatorOptions;
-    pointClass: typeof Highcharts.DEMAIndicatorPoint;
-    points: Array<Highcharts.DEMAIndicatorPoint>;
-} extend(DEMAIndicator.prototype, {
-    init: function (this: DEMAIndicator): void {
+    public data: Array<Highcharts.DEMAIndicatorPoint> = void 0 as any;
+    public options: Highcharts.DEMAIndicatorOptions = void 0 as any;
+    public points: Array<Highcharts.DEMAIndicatorPoint> = void 0 as any;
+
+    public init(this: DEMAIndicator): void {
         var args = arguments,
             ctx = this;
 
@@ -122,8 +105,9 @@ interface DEMAIndicator {
                 return;
             }
         );
-    },
-    getEMA: function (
+    }
+
+    public getEMA(
         this: DEMAIndicator,
         yVal: (Array<number>|Array<Array<number>>),
         prevEMA: (number|undefined),
@@ -142,11 +126,11 @@ interface DEMAIndicator {
             typeof index === 'undefined' ? -1 : index,
             SMA
         );
-    },
+    }
 
-    getValues: function<
+    public getValues<
         TLinkedSeries extends Highcharts.DEMAIndicatorLinkedParentSeries
-    > (
+    >(
         this: DEMAIndicator,
         series: TLinkedSeries,
         params: Highcharts.DEMAIndicatorParamsOptions
@@ -243,7 +227,11 @@ interface DEMAIndicator {
             yData: yDataDema
         } as IndicatorValuesObject<TLinkedSeries>;
     }
-});
+}
+
+interface DEMAIndicator {
+    pointClass: typeof Highcharts.DEMAIndicatorPoint;
+}
 
 declare module '../../Core/Series/SeriesType' {
     interface SeriesTypeRegistry {

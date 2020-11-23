@@ -23,7 +23,7 @@ import BaseSeries from '../../Core/Series/Series.js';
 var EMAIndicator = BaseSeries.seriesTypes.ema;
 import RequiredIndicatorMixin from '../../Mixins/IndicatorRequired.js';
 import U from '../../Core/Utilities.js';
-var correctFloat = U.correctFloat, extend = U.extend, isArray = U.isArray, merge = U.merge;
+var correctFloat = U.correctFloat, isArray = U.isArray, merge = U.merge;
 /**
  * The DEMA series Type
  *
@@ -36,43 +36,23 @@ var correctFloat = U.correctFloat, extend = U.extend, isArray = U.isArray, merge
 var DEMAIndicator = /** @class */ (function (_super) {
     __extends(DEMAIndicator, _super);
     function DEMAIndicator() {
-        return _super !== null && _super.apply(this, arguments) || this;
+        var _this = _super !== null && _super.apply(this, arguments) || this;
+        _this.data = void 0;
+        _this.options = void 0;
+        _this.points = void 0;
+        return _this;
     }
-    /**
-     * Double exponential moving average (DEMA) indicator. This series requires
-     * `linkedTo` option to be set and should be loaded after the
-     * `stock/indicators/indicators.js` and `stock/indicators/ema.js`.
-     *
-     * @sample {highstock} stock/indicators/dema
-     *         DEMA indicator
-     *
-     * @extends      plotOptions.ema
-     * @since        7.0.0
-     * @product      highstock
-     * @excluding    allAreas, colorAxis, compare, compareBase, joinBy, keys,
-     *               navigatorOptions, pointInterval, pointIntervalUnit,
-     *               pointPlacement, pointRange, pointStart, showInNavigator,
-     *               stacking
-     * @requires     stock/indicators/indicators
-     * @requires     stock/indicators/ema
-     * @requires     stock/indicators/dema
-     * @optionparent plotOptions.dema
-     */
-    DEMAIndicator.defaultOptions = merge(EMAIndicator.defaultOptions, {});
-    return DEMAIndicator;
-}(EMAIndicator));
-extend(DEMAIndicator.prototype, {
-    init: function () {
+    DEMAIndicator.prototype.init = function () {
         var args = arguments, ctx = this;
         RequiredIndicatorMixin.isParentLoaded(EMAIndicator, 'ema', ctx.type, function (indicator) {
             indicator.prototype.init.apply(ctx, args);
             return;
         });
-    },
-    getEMA: function (yVal, prevEMA, SMA, index, i, xVal) {
+    };
+    DEMAIndicator.prototype.getEMA = function (yVal, prevEMA, SMA, index, i, xVal) {
         return EMAIndicator.prototype.calculateEma(xVal || [], yVal, typeof i === 'undefined' ? 1 : i, this.chart.series[0].EMApercent, prevEMA, typeof index === 'undefined' ? -1 : index, SMA);
-    },
-    getValues: function (series, params) {
+    };
+    DEMAIndicator.prototype.getValues = function (series, params) {
         var period = params.period, doubledPeriod = 2 * period, xVal = series.xData, yVal = series.yData, yValLen = yVal ? yVal.length : 0, index = -1, accumulatePeriodPoints = 0, SMA = 0, DEMA = [], xDataDema = [], yDataDema = [], EMA = 0, 
         // EMA(EMA)
         EMAlevel2, 
@@ -129,8 +109,30 @@ extend(DEMAIndicator.prototype, {
             xData: xDataDema,
             yData: yDataDema
         };
-    }
-});
+    };
+    /**
+     * Double exponential moving average (DEMA) indicator. This series requires
+     * `linkedTo` option to be set and should be loaded after the
+     * `stock/indicators/indicators.js` and `stock/indicators/ema.js`.
+     *
+     * @sample {highstock} stock/indicators/dema
+     *         DEMA indicator
+     *
+     * @extends      plotOptions.ema
+     * @since        7.0.0
+     * @product      highstock
+     * @excluding    allAreas, colorAxis, compare, compareBase, joinBy, keys,
+     *               navigatorOptions, pointInterval, pointIntervalUnit,
+     *               pointPlacement, pointRange, pointStart, showInNavigator,
+     *               stacking
+     * @requires     stock/indicators/indicators
+     * @requires     stock/indicators/ema
+     * @requires     stock/indicators/dema
+     * @optionparent plotOptions.dema
+     */
+    DEMAIndicator.defaultOptions = merge(EMAIndicator.defaultOptions, {});
+    return DEMAIndicator;
+}(EMAIndicator));
 BaseSeries.registerSeriesType('dema', DEMAIndicator);
 /* *
  *
