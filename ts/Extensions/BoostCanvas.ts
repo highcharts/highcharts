@@ -32,7 +32,7 @@ const {
     noop
 } = H;
 import LineSeries from '../Series/Line/LineSeries.js';
-import palette from '../Core/Palette.js';
+import palette from '../Core/Color/Palette.js';
 import Series from '../Core/Series/Series.js';
 import U from '../Core/Utilities.js';
 const {

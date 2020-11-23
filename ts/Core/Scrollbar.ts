@@ -17,7 +17,7 @@ import type SVGElement from './Renderer/SVG/SVGElement';
 import type SVGPath from './Renderer/SVG/SVGPath';
 import Axis from './Axis/Axis.js';
 import H from './Globals.js';
-import palette from './Palette.js';
+import palette from './Color/Palette.js';
 import ScrollbarAxis from './Axis/ScrollbarAxis.js';
 import U from './Utilities.js';
 const {

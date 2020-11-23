@@ -13,7 +13,7 @@ import Chart from '../Chart/Chart.js';
 import H from '../Globals.js';
 import LineSeries from '../../Series/Line/LineSeries.js';
 var _a = LineSeries.prototype, seriesInit = _a.init, seriesProcessData = _a.processData;
-import palette from '../../Core/Palette.js';
+import palette from '../../Core/Color/Palette.js';
 import Point from '../Series/Point.js';
 var pointTooltipFormatter = Point.prototype.tooltipFormatter;
 import SVGRenderer from '../Renderer/SVG/SVGRenderer.js';

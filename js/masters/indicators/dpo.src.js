@@ -11,4 +11,4 @@
  * License: www.highcharts.com/license
  */
 'use strict';
-import '../../Stock/Indicators/DPOIndicator.js';
+import '../../Stock/Indicators/DPO/DPOIndicator.js';

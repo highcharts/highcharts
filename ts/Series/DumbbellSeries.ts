@@ -42,7 +42,7 @@ import ColumnSeries from './Column/ColumnSeries.js';
 const { prototype: colProto } = ColumnSeries;
 import LineSeries from './Line/LineSeries.js';
 const { prototype: seriesProto } = LineSeries;
-import palette from '../Core/Palette.js';
+import palette from '../Core/Color/Palette.js';
 import SVGRenderer from '../Core/Renderer/SVG/SVGRenderer.js';
 import H from '../Core/Globals.js';
 const { noop } = H;

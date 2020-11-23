@@ -10,6 +10,12 @@
 
 import type IndicatorValuesObject from './IndicatorValuesObject';
 import type LineSeries from '../../Series/Line/LineSeries';
+import type {
+    AroonOptions,
+    AroonParamsOptions
+} from './Aroon/AroonOptions';
+import type AroonPoint from './Aroon/AroonPoint';
+import type AroonIndicator from './Aroon/AroonIndicator';
 import BaseSeries from '../../Core/Series/Series.js';
 import multipleLinesMixin from '../../Mixins/MultipleLines.js';
 import requiredIndicator from '../../Mixins/IndicatorRequired.js';
@@ -28,7 +34,7 @@ declare global {
             public data: Array<AroonOscillatorIndicatorPoint>;
             public getValues<TLinkedSeries extends LineSeries>(
                 series: TLinkedSeries,
-                params: AroonIndicatorParamsOptions
+                params: AroonParamsOptions
             ): IndicatorValuesObject<TLinkedSeries>;
             public init(): void;
             public nameBase: string;
@@ -41,16 +47,16 @@ declare global {
         }
 
         interface AroonOscillatorIndicatorParamsOptions
-            extends AroonIndicatorParamsOptions {
+            extends AroonParamsOptions {
             // for inheritance
         }
 
-        class AroonOscillatorIndicatorPoint extends AroonIndicatorPoint {
+        class AroonOscillatorIndicatorPoint extends AroonPoint {
             public series: AroonOscillatorIndicator;
         }
 
         interface AroonOscillatorIndicatorOptions
-            extends AroonIndicatorOptions {
+            extends AroonOptions {
             params?: AroonOscillatorIndicatorParamsOptions;
             tooltip?: TooltipOptions;
         }
@@ -142,7 +148,7 @@ BaseSeries.seriesType<typeof Highcharts.AroonOscillatorIndicator>(
         },
         getValues: function<TLinkedSeries extends LineSeries> (
             series: TLinkedSeries,
-            params: Highcharts.AroonIndicatorParamsOptions
+            params: AroonParamsOptions
         ): IndicatorValuesObject<TLinkedSeries> {
             // 0- date, 1- Aroon Oscillator
             var ARO: Array<Array<number>> = [],

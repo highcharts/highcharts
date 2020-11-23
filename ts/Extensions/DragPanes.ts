@@ -25,7 +25,7 @@ const {
     hasTouch
 } = H;
 import Axis from '../Core/Axis/Axis.js';
-import palette from '../Core/Palette.js';
+import palette from '../Core/Color/Palette.js';
 import Pointer from '../Core/Pointer.js';
 import U from '../Core/Utilities.js';
 const {

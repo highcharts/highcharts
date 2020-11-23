@@ -33,7 +33,7 @@ const {
 } = A;
 import Color from '../Color/Color.js';
 import H from '../Globals.js';
-import palette from '../Palette.js';
+import palette from '../Color/Palette.js';
 import O from '../Options.js';
 const { defaultOptions } = O;
 import Tick from './Tick.js';

@@ -17,7 +17,7 @@ import H from '../../Core/Globals.js';
 var noop = H.noop;
 import Legend from '../../Core/Legend.js';
 import LineSeries from '../Line/LineSeries.js';
-import palette from '../../Core/Palette.js';
+import palette from '../../Core/Color/Palette.js';
 import U from '../../Core/Utilities.js';
 var addEvent = U.addEvent, arrayMax = U.arrayMax, arrayMin = U.arrayMin, isNumber = U.isNumber, merge = U.merge, objectEach = U.objectEach, pick = U.pick, setOptions = U.setOptions, stableSort = U.stableSort, wrap = U.wrap;
 /**

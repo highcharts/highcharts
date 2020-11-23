@@ -23,7 +23,7 @@ import type SVGElement from '../Renderer/SVG/SVGAttributes';
 import type SVGPath from '../Renderer/SVG/SVGPath';
 import Axis from './Axis.js';
 import H from '../Globals.js';
-import palette from '../../Core/Palette.js';
+import palette from '../../Core/Color/Palette.js';
 
 /**
  * Internal types

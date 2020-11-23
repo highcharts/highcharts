@@ -432,7 +432,7 @@ var solidGaugeOptions: Highcharts.SolidGaugeSeriesOptions = {
      * @sample {highcharts} highcharts/plotoptions/solidgauge-threshold/
      *         Zero threshold with negative and positive values
      *
-     * @type      {number}
+     * @type      {number|null}
      * @since     5.0.3
      * @product   highcharts
      * @apioption plotOptions.solidgauge.threshold
