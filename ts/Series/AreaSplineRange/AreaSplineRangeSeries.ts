@@ -7,47 +7,69 @@
  *  !!!!!!! SOURCE GETS TRANSPILED BY TYPESCRIPT. EDIT TS FILE ONLY. !!!!!!!
  *
  * */
+
 'use strict';
-var __extends = (this && this.__extends) || (function () {
-    var extendStatics = function (d, b) {
-        extendStatics = Object.setPrototypeOf ||
-            ({ __proto__: [] } instanceof Array && function (d, b) { d.__proto__ = b; }) ||
-            function (d, b) { for (var p in b) if (b.hasOwnProperty(p)) d[p] = b[p]; };
-        return extendStatics(d, b);
-    };
-    return function (d, b) {
-        extendStatics(d, b);
-        function __() { this.constructor = d; }
-        d.prototype = b === null ? Object.create(b) : (__.prototype = b.prototype, new __());
-    };
-})();
-import BaseSeries from '../Core/Series/Series.js';
-import AreaRangeSeries from './AreaRange/AreaRangeSeries.js';
-import U from '../Core/Utilities.js';
-var merge = U.merge, extend = U.extend;
-import '../Core/Options.js';
-var AreaSplineRangeSeries = /** @class */ (function (_super) {
-    __extends(AreaSplineRangeSeries, _super);
-    function AreaSplineRangeSeries() {
-        return _super !== null && _super.apply(this, arguments) || this;
+
+import type AreaRangePoint from '../AreaRange/AreaRangePoint';
+import type AreaRangePointOptions from '../AreaRange/AreaRangePointOptions';
+import type AreaRangeSeriesOptions from '../AreaRange/AreaRangeSeriesOptions';
+import type { SeriesStatesOptions } from '../../Core/Series/SeriesOptions';
+import type SplineSeries from '../Spline/SplineSeries';
+import BaseSeries from '../../Core/Series/Series.js';
+import AreaRangeSeries from '../AreaRange/AreaRangeSeries.js';
+import U from '../../Core/Utilities.js';
+const { merge, extend } = U;
+
+/**
+ * Internal types
+ * @private
+ */
+declare global {
+    namespace Highcharts {
+        class AreaSplineRangePoint extends AreaRangePoint {
+            public option: AreaSplineRangePointOptions;
+            public series: AreaSplineRangeSeries;
+        }
+        class AreaSplineRangeSeries extends AreaRangeSeries {
+            public data: Array<AreaSplineRangePoint>;
+            public getPointSpline: SplineSeries['getPointSpline'];
+            public options: AreaSplineRangeSeriesOptions;
+            public pointClass: typeof AreaSplineRangePoint;
+            public points: Array<AreaSplineRangePoint>;
+        }
+        interface AreaSplineRangePointOptions extends AreaRangePointOptions {
+        }
+        interface AreaSplineRangeSeriesOptions extends AreaRangeSeriesOptions {
+            states?: SeriesStatesOptions<AreaSplineSeries>;
+        }
     }
+}
+
+import '../../Core/Options.js';
+
+
+class AreaSplineRangeSeries extends AreaRangeSeries {
+
     /* *
      *
      *  Static properties
      *
      * */
+
     /**
     * @see [fillColor](#plotOptions.areasplinerange.fillColor)
     * @see [fillOpacity](#plotOptions.areasplinerange.fillOpacity)
     *
     * @apioption plotOptions.areasplinerange.color
     */
+
     /**
      * @see [color](#plotOptions.areasplinerange.color)
      * @see [fillOpacity](#plotOptions.areasplinerange.fillOpacity)
      *
      * @apioption plotOptions.areasplinerange.fillColor
      */
+
     /**
      * @see [color](#plotOptions.areasplinerange.color)
      * @see [fillColor](#plotOptions.areasplinerange.fillColor)
@@ -56,19 +78,41 @@ var AreaSplineRangeSeries = /** @class */ (function (_super) {
      * @default   {highstock} 0.75
      * @apioption plotOptions.areasplinerange.fillOpacity
      */
-    AreaSplineRangeSeries.defaultOptions = merge(AreaRangeSeries.defaultOptions, {});
-    return AreaSplineRangeSeries;
-}(AreaRangeSeries));
+    public static defaultOptions: Highcharts.AreaSplineRangeSeriesOptions = merge(
+        AreaRangeSeries.defaultOptions,
+        {
+        } as Highcharts.AreaSplineRangeSeriesOptions);
+}
+
 extend(AreaSplineRangeSeries.prototype, {
     getPointSpline: BaseSeries.seriesTypes.spline.prototype.getPointSpline
 });
+
+/* *
+ *
+ *  Registry
+ *
+ * */
+
+/**
+ * @private
+ */
+declare module '../../Core/Series/SeriesType' {
+    interface SeriesTypeRegistry {
+        areasplinerange: typeof Highcharts.AreaSplineRangeSeries;
+    }
+}
+
 BaseSeries.registerSeriesType('areasplinerange', AreaSplineRangeSeries);
+
 /* *
  *
  *  Default export
  *
  * */
+
 export default AreaSplineRangeSeries;
+
 /**
  * The area spline range is a cartesian series type with higher and
  * lower Y values along an X axis. The area inside the range is colored, and
@@ -84,6 +128,7 @@ export default AreaSplineRangeSeries;
  * @requires  highcharts-more
  * @apioption plotOptions.areasplinerange
  */
+
 /**
  * A `areasplinerange` series. If the [type](#series.areasplinerange.type)
  * option is not specified, it is inherited from [chart.type](#chart.type).
@@ -94,12 +139,14 @@ export default AreaSplineRangeSeries;
  * @requires  highcharts-more
  * @apioption series.areasplinerange
  */
+
 /**
  * @see [fillColor](#series.areasplinerange.fillColor)
  * @see [fillOpacity](#series.areasplinerange.fillOpacity)
  *
  * @apioption series.areasplinerange.color
  */
+
 /**
  * An array of data points for the series. For the `areasplinerange`
  * series type, points can be given in the following ways:
@@ -154,12 +201,14 @@ export default AreaSplineRangeSeries;
  * @product   highcharts highstock
  * @apioption series.areasplinerange.data
  */
+
 /**
  * @see [color](#series.areasplinerange.color)
  * @see [fillOpacity](#series.areasplinerange.fillOpacity)
  *
  * @apioption series.areasplinerange.fillColor
  */
+
 /**
  * @see [color](#series.areasplinerange.color)
  * @see [fillColor](#series.areasplinerange.fillColor)
@@ -168,4 +217,5 @@ export default AreaSplineRangeSeries;
  * @default   {highstock} 0.75
  * @apioption series.areasplinerange.fillOpacity
  */
+
 ''; // adds doclets above to transpiled file
