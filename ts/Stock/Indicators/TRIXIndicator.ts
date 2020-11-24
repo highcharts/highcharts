@@ -27,9 +27,9 @@ declare global {
             public getTemaPoint(
                 xVal: Array<number>,
                 tripledPeriod: number,
-                EMAlevels: EMAIndicatorLevelsObject,
+                EMAlevels: Highcharts.EMAIndicatorLevelsObject,
                 i: number
-            ): ([number, (number|null)]|undefined);
+            ): [number, number]
             public options: TRIXIndicatorOptions;
             public pointClass: typeof TRIXIndicatorPoint;
             public points: Array<TRIXIndicatorPoint>;
@@ -52,7 +52,7 @@ declare global {
 
 declare module '../../Core/Series/SeriesType' {
     interface SeriesTypeRegistry {
-        tema: typeof Highcharts.TRIXIndicator;
+        trix: typeof Highcharts.TRIXIndicator;
     }
 }
 

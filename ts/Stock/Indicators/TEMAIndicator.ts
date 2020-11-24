@@ -25,7 +25,6 @@ import RequiredIndicatorMixin from '../../Mixins/IndicatorRequired.js';
 import U from '../../Core/Utilities.js';
 const {
     correctFloat,
-    extend,
     isArray,
     merge
 } = U;
@@ -97,35 +96,12 @@ class TEMAIndicator extends EMAIndicator {
     public static defaultOptions: Highcharts.TEMAIndicatorOptions = merge(EMAIndicator.defaultOptions, {
 
     } as Highcharts.TEMAIndicatorOptions)
-}
 
+    public data: Array<Highcharts.TEMAIndicatorPoint> = void 0 as any;
+    public options: Highcharts.TEMAIndicatorOptions = void 0 as any;
+    public points: Array<Highcharts.TEMAIndicatorPoint> = void 0 as any;
 
-interface TEMAIndicator {
-    data: Array<Highcharts.TEMAIndicatorPoint>;
-    getEMA(
-        yVal: (Array<number>|Array<Array<number>>),
-        prevEMA: (number|undefined),
-        SMA: number,
-        index?: number,
-        i?: number,
-        xVal?: Array<number>
-    ): [number, number];
-    getTemaPoint(
-        xVal: Array<number>,
-        tripledPeriod: number,
-        EMAlevels: Highcharts.EMAIndicatorLevelsObject,
-        i: number
-    ): ([number, (number|null)]|undefined);
-    getValues<TLinkedSeries extends LineSeries>(
-        series: TLinkedSeries,
-        params: Highcharts.TEMAIndicatorParamsOptions
-    ): (IndicatorValuesObject<TLinkedSeries>|undefined);
-    init(): void;
-    options: Highcharts.TEMAIndicatorOptions;
-    pointClass: typeof Highcharts.TEMAIndicatorPoint;
-    points: Array<Highcharts.TEMAIndicatorPoint>;
-} extend(TEMAIndicator.prototype, {
-    init: function (this: TEMAIndicator): void {
+    public init(this: TEMAIndicator): void {
         var args = arguments,
             ctx = this;
 
@@ -138,8 +114,9 @@ interface TEMAIndicator {
                 return;
             }
         );
-    },
-    getEMA: function (
+    }
+
+    public getEMA(
         this: TEMAIndicator,
         yVal: (Array<number>|Array<Array<number>>),
         prevEMA: (number|undefined),
@@ -157,8 +134,9 @@ interface TEMAIndicator {
             typeof index === 'undefined' ? -1 : index,
             SMA
         );
-    },
-    getTemaPoint: function (
+    }
+
+    public getTemaPoint(
         xVal: Array<number>,
         tripledPeriod: number,
         EMAlevels: Highcharts.EMAIndicatorLevelsObject,
@@ -173,10 +151,11 @@ interface TEMAIndicator {
         ];
 
         return TEMAPoint;
-    },
-    getValues: function<
+    }
+
+    public getValues<
         TLinkedSeries extends Highcharts.TEMAIndicatorLinkedParentSeries
-    > (
+    >(
         this: TEMAIndicator,
         series: TLinkedSeries,
         params: Highcharts.TEMAIndicatorParamsOptions
@@ -313,7 +292,10 @@ interface TEMAIndicator {
         } as IndicatorValuesObject<TLinkedSeries>;
     }
 }
-);
+
+interface TEMAIndicator {
+    pointClass: typeof Highcharts.TEMAIndicatorPoint;
+}
 
 declare module '../../Core/Series/SeriesType' {
     interface SeriesTypeRegistry {
