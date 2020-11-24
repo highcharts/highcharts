@@ -12,9 +12,15 @@
 
 'use strict';
 
+/* *
+ *
+ *  Imports
+ *
+ * */
+
 import type PieSeries from './Pie/PieSeries';
 import type SankeyPointOptions from './Sankey/SankeyPointOptions';
-import type SankeySeries from './Sankey/SankeySeries';
+import type SankeySeriesType from './Sankey/SankeySeries';
 import type SankeySeriesOptions from './Sankey/SankeySeriesOptions';
 import type { SeriesStatesOptions } from '../Core/Series/SeriesOptions';
 import type SVGAttributes from '../Core/Renderer/SVG/SVGAttributes';
@@ -24,13 +30,16 @@ const { animObject } = A;
 import BaseSeries from '../Core/Series/Series.js';
 const {
     seriesTypes: {
-        sankey: {
-            prototype: base
-        }
+        sankey: SankeySeries
     }
 } = BaseSeries;
 import H from '../Core/Globals.js';
 import NodesMixin from '../Mixins/Nodes.js';
+import U from '../Core/Utilities.js';
+const {
+    extend,
+    merge
+} = U;
 
 /**
  * Internal types
@@ -38,8 +47,6 @@ import NodesMixin from '../Mixins/Nodes.js';
  */
 declare global {
     namespace Highcharts {
-        interface DependencyWheelColumnArray<T = DependencyWheelPoint> extends SankeySeries.ColumnArray<T> {
-        }
         interface DependencyWheelPointOptions extends SankeyPointOptions {
         }
         interface DependencyWheelSeriesOptions extends SankeySeriesOptions {
@@ -47,47 +54,6 @@ declare global {
             startAngle?: number;
             states?: SeriesStatesOptions<DependencyWheelSeries>;
         }
-        class DependencyWheelPoint extends SankeySeries.prototype.pointClass {
-            public angle: number;
-            public dataLabelPath?: SVGElement;
-            public fromNode: DependencyWheelPoint;
-            public getSum: () => number;
-            public index: number;
-            public isValid: () => boolean;
-            public linksFrom: Array<DependencyWheelPoint>;
-            public linksTo: Array<DependencyWheelPoint>;
-            public offset: (point: DependencyWheelPoint) => (number|undefined);
-            public options: DependencyWheelPointOptions;
-            public series: DependencyWheelSeries;
-            public setState: NodesMixin['setNodeState'];
-            public shapeArgs: SVGAttributes;
-            public toNode: DependencyWheelPoint;
-            public getDataLabelPath(label: SVGElement): SVGElement;
-        }
-        class DependencyWheelSeries extends SankeySeries {
-            public animate: (init?: boolean) => void;
-            public createNode: (id: string) => DependencyWheelPoint;
-            public data: Array<DependencyWheelPoint>;
-            public getCenter: PieSeries['getCenter'];
-            public options: DependencyWheelSeriesOptions;
-            public orderNodes: boolean;
-            public nodeColumns: Array<DependencyWheelColumnArray>;
-            public nodes: Array<DependencyWheelPoint>;
-            public pointClass: typeof DependencyWheelPoint;
-            public points: Array<DependencyWheelPoint>;
-            public createNodeColumns(): Array<SankeySeries.ColumnArray>;
-            public getNodePadding(): number;
-            public translate(): void;
-        }
-    }
-}
-
-/**
- * @private
- */
-declare module '../Core/Series/SeriesType' {
-    interface SeriesTypeRegistry {
-        dependencywheel: typeof Highcharts.DependencyWheelSeries;
     }
 }
 
@@ -98,9 +64,14 @@ declare module '../Core/Series/SeriesType' {
  *
  * @augments Highcharts.seriesTypes.sankey
  */
-BaseSeries.seriesType<typeof Highcharts.DependencyWheelSeries>(
-    'dependencywheel',
-    'sankey',
+class DependencyWheelSeries extends SankeySeries {
+
+    /* *
+     *
+     *  Static Properties
+     *
+     * */
+
     /**
      * A dependency wheel chart is a type of flow diagram, where all nodes are
      * laid out in a circle, and the flow between the are drawn as link bands.
@@ -115,7 +86,7 @@ BaseSeries.seriesType<typeof Highcharts.DependencyWheelSeries>(
      * @requires     modules/dependency-wheel
      * @optionparent plotOptions.dependencywheel
      */
-    {
+    public static defaultOptions: Highcharts.DependencyWheelSeriesOptions = merge(SankeySeries.defaultOptions, {
         /**
          * The center of the wheel relative to the plot area. Can be
          * percentages or pixel values. The default behaviour is to
@@ -132,343 +103,441 @@ BaseSeries.seriesType<typeof Highcharts.DependencyWheelSeries>(
          * The start angle of the dependency wheel, in degrees where 0 is up.
          */
         startAngle: 0
-    }, {
-        orderNodes: false,
-        getCenter: BaseSeries.seriesTypes.pie.prototype.getCenter,
+    } as Highcharts.DependencyWheelSeriesOptions);
 
-        /* eslint-disable valid-jsdoc */
+    /* *
+     *
+     *  Properties
+     *
+     * */
 
-        /**
-         * Dependency wheel has only one column, it runs along the perimeter.
-         * @private
-         */
-        createNodeColumns: function (
-            this: Highcharts.DependencyWheelSeries
-        ): Array<SankeySeries.ColumnArray> {
-            var columns = [this.createNodeColumn()];
-            this.nodes.forEach(function (
-                node: Highcharts.DependencyWheelPoint
-            ): void {
-                node.column = 0;
-                columns[0].push(node);
-            });
-            return columns;
-        },
+    public data: Array<DependencyWheelPoint> = void 0 as any;
 
-        /**
-         * Translate from vertical pixels to perimeter.
-         * @private
-         */
-        getNodePadding: function (
-            this: Highcharts.DependencyWheelSeries
-        ): number {
-            return (this.options.nodePadding as any) / Math.PI;
-        },
+    public options: Highcharts.DependencyWheelSeriesOptions = void 0 as any;
 
-        createNode: function (
-            this: Highcharts.DependencyWheelSeries,
-            id: string
-        ): Highcharts.DependencyWheelPoint {
-            var node = base.createNode.call(
-                this,
-                id
-            ) as Highcharts.DependencyWheelPoint;
-            node.index = this.nodes.length - 1;
+    public nodes: Array<DependencyWheelPoint> = void 0 as any;
 
-            /**
-             * Return the sum of incoming and outgoing links.
-             * @private
-             */
-            node.getSum = function (
-                this: Highcharts.DependencyWheelPoint
-            ): number {
-                return node.linksFrom
-                    .concat(node.linksTo)
-                    .reduce(function (
-                        acc: number,
-                        link: Highcharts.DependencyWheelPoint
-                    ): number {
-                        return acc + (link.weight as any);
-                    }, 0);
-            };
+    public points: Array<DependencyWheelPoint> = void 0 as any;
 
-            /**
-             * Get the offset in weight values of a point/link.
-             * @private
-             */
-            node.offset = function (
-                point: Highcharts.DependencyWheelPoint
-            ): (number|undefined) {
+}
 
-                var offset = 0,
-                    i: number,
-                    links = node.linksFrom.concat(node.linksTo),
-                    sliced: (boolean|undefined);
+/* *
+ *
+ *  Prototype Properties
+ *
+ * */
 
-                /**
-                 * @private
-                 */
-                function otherNode(
-                    link: Highcharts.DependencyWheelPoint
-                ): Highcharts.DependencyWheelPoint {
-                    if (link.fromNode === node) {
-                        return link.toNode;
-                    }
-                    return link.fromNode;
-                }
+interface DependencyWheelSeries {
+    animate: (init?: boolean) => void;
+    createNode: (id: string) => DependencyWheelPoint;
+    getCenter: PieSeries['getCenter'];
+    orderNodes: boolean;
+    nodeColumns: Array<DependencyWheelSeries.ColumnArray>;
+    pointClass: typeof DependencyWheelPoint;
+    createNodeColumns(): Array<SankeySeriesType.ColumnArray>;
+    getNodePadding(): number;
+    translate(): void;
+}
+extend(DependencyWheelSeries.prototype, {
+    orderNodes: false,
+    getCenter: BaseSeries.seriesTypes.pie.prototype.getCenter,
 
-                // Sort and slice the links to avoid links going out of each
-                // node crossing each other.
-                links.sort(function (
-                    a: Highcharts.DependencyWheelPoint,
-                    b: Highcharts.DependencyWheelPoint
-                ): number {
-                    return otherNode(a).index - otherNode(b).index;
-                });
-                for (i = 0; i < links.length; i++) {
-                    if (otherNode(links[i]).index > node.index) {
-                        links = links.slice(0, i).reverse().concat(
-                            links.slice(i).reverse()
-                        );
-                        sliced = true;
-                        break;
-                    }
-                }
-                if (!sliced) {
-                    links.reverse();
-                }
+    /* eslint-disable valid-jsdoc */
 
-                for (i = 0; i < links.length; i++) {
-                    if (links[i] === point) {
-                        return offset;
-                    }
-                    offset += links[i].weight as any;
-                }
-            };
-
-            return node;
-        },
-
-        /**
-         * @private
-         * @todo Override the refactored sankey translateLink and translateNode
-         * functions instead of the whole translate function.
-         */
-        translate: function (this: Highcharts.DependencyWheelSeries): void {
-
-            var options = this.options,
-                factor = 2 * Math.PI /
-                    (this.chart.plotHeight + this.getNodePadding()),
-                center = this.getCenter(),
-                startAngle = ((options.startAngle as any) - 90) * H.deg2rad;
-
-            base.translate.call(this);
-
-            this.nodeColumns[0].forEach(function (
-                node: Highcharts.DependencyWheelPoint
-            ): void {
-                // Don't render the nodes if sum is 0 #12453
-                if (node.sum) {
-                    var shapeArgs = node.shapeArgs,
-                        centerX = center[0],
-                        centerY = center[1],
-                        r = center[2] / 2,
-                        innerR = r - (options.nodeWidth as any),
-                        start = startAngle + factor * shapeArgs.y,
-                        end = startAngle +
-                            factor * (shapeArgs.y + shapeArgs.height);
-
-                    // Middle angle
-                    node.angle = start + (end - start) / 2;
-
-                    node.shapeType = 'arc';
-                    node.shapeArgs = {
-                        x: centerX,
-                        y: centerY,
-                        r: r,
-                        innerR: innerR,
-                        start: start,
-                        end: end
-                    };
-
-                    node.dlBox = {
-                        x: centerX + Math.cos((start + end) / 2) * (r + innerR) / 2,
-                        y: centerY + Math.sin((start + end) / 2) * (r + innerR) / 2,
-                        width: 1,
-                        height: 1
-                    };
-
-                    // Draw the links from this node
-                    node.linksFrom.forEach(function (
-                        point: Highcharts.DependencyWheelPoint
-                    ): void {
-                        if (point.linkBase) {
-                            var distance;
-                            var corners = point.linkBase.map(function (
-                                top: number,
-                                i: number
-                            ): Highcharts.Dictionary<number> {
-                                var angle = factor * top,
-                                    x = Math.cos(startAngle + angle) * (innerR + 1),
-                                    y = Math.sin(startAngle + angle) * (innerR + 1),
-                                    curveFactor: number = options.curveFactor as any;
-
-                                // The distance between the from and to node
-                                // along the perimeter. This affect how curved
-                                // the link is, so that links between neighbours
-                                // don't extend too far towards the center.
-                                distance = Math.abs(
-                                    point.linkBase[3 - i] * factor - angle
-                                );
-                                if (distance > Math.PI) {
-                                    distance = 2 * Math.PI - distance;
-                                }
-                                distance = distance * innerR;
-                                if (distance < innerR) {
-                                    curveFactor *= (distance / innerR);
-                                }
-
-
-                                return {
-                                    x: centerX + x,
-                                    y: centerY + y,
-                                    cpX: centerX + (1 - curveFactor) * x,
-                                    cpY: centerY + (1 - curveFactor) * y
-                                };
-                            });
-
-                            point.shapeArgs = {
-                                d: [[
-                                    'M',
-                                    corners[0].x, corners[0].y
-                                ], [
-                                    'A',
-                                    innerR, innerR,
-                                    0,
-                                    0, // long arc
-                                    1, // clockwise
-                                    corners[1].x, corners[1].y
-                                ], [
-                                    'C',
-                                    corners[1].cpX, corners[1].cpY,
-                                    corners[2].cpX, corners[2].cpY,
-                                    corners[2].x, corners[2].y
-                                ], [
-                                    'A',
-                                    innerR, innerR,
-                                    0,
-                                    0,
-                                    1,
-                                    corners[3].x, corners[3].y
-                                ], [
-                                    'C',
-                                    corners[3].cpX, corners[3].cpY,
-                                    corners[0].cpX, corners[0].cpY,
-                                    corners[0].x, corners[0].y
-                                ]]
-                            };
-                        }
-
-                    });
-                }
-            });
-        },
-
-        animate: function (
-            this: Highcharts.DependencyWheelSeries,
-            init?: boolean
+    /**
+     * Dependency wheel has only one column, it runs along the perimeter.
+     * @private
+     */
+    createNodeColumns: function (
+        this: DependencyWheelSeries
+    ): Array<SankeySeriesType.ColumnArray> {
+        var columns = [this.createNodeColumn()];
+        this.nodes.forEach(function (
+            node: DependencyWheelPoint
         ): void {
-            if (!init) {
-                var duration = animObject(this.options.animation).duration,
-                    step = (duration / 2) / this.nodes.length;
-                this.nodes.forEach(function (
-                    point: Highcharts.DependencyWheelPoint,
-                    i: number
-                ): void {
-                    var graphic = point.graphic;
-                    if (graphic) {
-                        graphic.attr({ opacity: 0 });
-                        setTimeout(function (): void {
-                            (graphic as any).animate(
-                                { opacity: 1 },
-                                { duration: step }
-                            );
-                        }, step * i);
-                    }
-                }, this);
-                this.points.forEach(function (
-                    point: Highcharts.DependencyWheelPoint
-                ): void {
-                    var graphic = point.graphic;
-                    if (!point.isNode && graphic) {
-                        graphic.attr({ opacity: 0 })
-                            .animate({
-                                opacity: 1
-                            }, this.options.animation);
-                    }
-                }, this);
-
-            }
-        }
-
-        /* eslint-enable valid-jsdoc */
-
+            node.column = 0;
+            columns[0].push(node);
+        });
+        return columns;
     },
 
-    // Point class
-    {
-        setState: NodesMixin.setNodeState,
+    /**
+     * Translate from vertical pixels to perimeter.
+     * @private
+     */
+    getNodePadding: function (
+        this: DependencyWheelSeries
+    ): number {
+        return (this.options.nodePadding as any) / Math.PI;
+    },
 
-        /* eslint-disable valid-jsdoc */
+    createNode: function (
+        this: DependencyWheelSeries,
+        id: string
+    ): DependencyWheelPoint {
+        var node = SankeySeries.prototype.createNode.call(
+            this,
+            id
+        ) as DependencyWheelPoint;
+        node.index = this.nodes.length - 1;
 
         /**
-         * Return a text path that the data label uses.
+         * Return the sum of incoming and outgoing links.
          * @private
          */
-        getDataLabelPath: function (
-            this: Highcharts.DependencyWheelPoint,
-            label: SVGElement
-        ): SVGElement {
-            var renderer = this.series.chart.renderer,
-                shapeArgs = this.shapeArgs,
-                upperHalf = this.angle < 0 || this.angle > Math.PI,
-                start = shapeArgs.start,
-                end = shapeArgs.end;
+        node.getSum = function (
+            this: DependencyWheelPoint
+        ): number {
+            return node.linksFrom
+                .concat(node.linksTo)
+                .reduce(function (
+                    acc: number,
+                    link: DependencyWheelPoint
+                ): number {
+                    return acc + (link.weight as any);
+                }, 0);
+        };
 
-            if (!this.dataLabelPath) {
-                this.dataLabelPath = renderer
-                    .arc({
-                        open: true,
-                        longArc: Math.abs(Math.abs(start) - Math.abs(end)) < Math.PI ? 0 : 1
-                    })
-                    // Add it inside the data label group so it gets destroyed
-                    // with the label
-                    .add(label);
+        /**
+         * Get the offset in weight values of a point/link.
+         * @private
+         */
+        node.offset = function (
+            point: DependencyWheelPoint
+        ): (number|undefined) {
+
+            var offset = 0,
+                i: number,
+                links = node.linksFrom.concat(node.linksTo),
+                sliced: (boolean|undefined);
+
+            /**
+             * @private
+             */
+            function otherNode(
+                link: DependencyWheelPoint
+            ): DependencyWheelPoint {
+                if (link.fromNode === node) {
+                    return link.toNode;
+                }
+                return link.fromNode;
             }
 
-            this.dataLabelPath.attr({
-                x: shapeArgs.x,
-                y: shapeArgs.y,
-                r: (
-                    shapeArgs.r +
-                    ((this.dataLabel as any).options.distance || 0)
-                ),
-                start: (upperHalf ? start : end),
-                end: (upperHalf ? end : start),
-                clockwise: +upperHalf
+            // Sort and slice the links to avoid links going out of each
+            // node crossing each other.
+            links.sort(function (a, b): number {
+                return otherNode(a).index - otherNode(b).index;
             });
+            for (i = 0; i < links.length; i++) {
+                if (otherNode(links[i]).index > node.index) {
+                    links = links.slice(0, i).reverse().concat(
+                        links.slice(i).reverse()
+                    );
+                    sliced = true;
+                    break;
+                }
+            }
+            if (!sliced) {
+                links.reverse();
+            }
 
-            return this.dataLabelPath;
-        },
-        isValid: function (this: Highcharts.DependencyWheelPoint): boolean {
-            // No null points here
-            return true;
+            for (i = 0; i < links.length; i++) {
+                if (links[i] === point) {
+                    return offset;
+                }
+                offset += links[i].weight as any;
+            }
+        };
+
+        return node;
+    },
+
+    /**
+     * @private
+     * @todo Override the refactored sankey translateLink and translateNode
+     * functions instead of the whole translate function.
+     */
+    translate: function (this: DependencyWheelSeries): void {
+
+        var options = this.options,
+            factor = 2 * Math.PI /
+                (this.chart.plotHeight + this.getNodePadding()),
+            center = this.getCenter(),
+            startAngle = ((options.startAngle as any) - 90) * H.deg2rad;
+
+        SankeySeries.prototype.translate.call(this);
+
+        this.nodeColumns[0].forEach(function (node): void {
+            // Don't render the nodes if sum is 0 #12453
+            if (node.sum) {
+                var shapeArgs = node.shapeArgs,
+                    centerX = center[0],
+                    centerY = center[1],
+                    r = center[2] / 2,
+                    innerR = r - (options.nodeWidth as any),
+                    start = startAngle + factor * shapeArgs.y,
+                    end = startAngle +
+                        factor * (shapeArgs.y + shapeArgs.height);
+
+                // Middle angle
+                node.angle = start + (end - start) / 2;
+
+                node.shapeType = 'arc';
+                node.shapeArgs = {
+                    x: centerX,
+                    y: centerY,
+                    r: r,
+                    innerR: innerR,
+                    start: start,
+                    end: end
+                };
+
+                node.dlBox = {
+                    x: centerX + Math.cos((start + end) / 2) * (r + innerR) / 2,
+                    y: centerY + Math.sin((start + end) / 2) * (r + innerR) / 2,
+                    width: 1,
+                    height: 1
+                };
+
+                // Draw the links from this node
+                node.linksFrom.forEach(function (point): void {
+                    if (point.linkBase) {
+                        var distance;
+                        var corners = point.linkBase.map(function (
+                            top: number,
+                            i: number
+                        ): Highcharts.Dictionary<number> {
+                            var angle = factor * top,
+                                x = Math.cos(startAngle + angle) * (innerR + 1),
+                                y = Math.sin(startAngle + angle) * (innerR + 1),
+                                curveFactor: number = options.curveFactor as any;
+
+                            // The distance between the from and to node
+                            // along the perimeter. This affect how curved
+                            // the link is, so that links between neighbours
+                            // don't extend too far towards the center.
+                            distance = Math.abs(
+                                point.linkBase[3 - i] * factor - angle
+                            );
+                            if (distance > Math.PI) {
+                                distance = 2 * Math.PI - distance;
+                            }
+                            distance = distance * innerR;
+                            if (distance < innerR) {
+                                curveFactor *= (distance / innerR);
+                            }
+
+
+                            return {
+                                x: centerX + x,
+                                y: centerY + y,
+                                cpX: centerX + (1 - curveFactor) * x,
+                                cpY: centerY + (1 - curveFactor) * y
+                            };
+                        });
+
+                        point.shapeArgs = {
+                            d: [[
+                                'M',
+                                corners[0].x, corners[0].y
+                            ], [
+                                'A',
+                                innerR, innerR,
+                                0,
+                                0, // long arc
+                                1, // clockwise
+                                corners[1].x, corners[1].y
+                            ], [
+                                'C',
+                                corners[1].cpX, corners[1].cpY,
+                                corners[2].cpX, corners[2].cpY,
+                                corners[2].x, corners[2].y
+                            ], [
+                                'A',
+                                innerR, innerR,
+                                0,
+                                0,
+                                1,
+                                corners[3].x, corners[3].y
+                            ], [
+                                'C',
+                                corners[3].cpX, corners[3].cpY,
+                                corners[0].cpX, corners[0].cpY,
+                                corners[0].x, corners[0].y
+                            ]]
+                        };
+                    }
+
+                });
+            }
+        });
+    },
+
+    animate: function (
+        this: DependencyWheelSeries,
+        init?: boolean
+    ): void {
+        if (!init) {
+            var duration = animObject(this.options.animation).duration,
+                step = (duration / 2) / this.nodes.length;
+            this.nodes.forEach(function (point, i): void {
+                var graphic = point.graphic;
+                if (graphic) {
+                    graphic.attr({ opacity: 0 });
+                    setTimeout(function (): void {
+                        (graphic as any).animate(
+                            { opacity: 1 },
+                            { duration: step }
+                        );
+                    }, step * i);
+                }
+            }, this);
+            this.points.forEach(function (point): void {
+                var graphic = point.graphic;
+                if (!point.isNode && graphic) {
+                    graphic.attr({ opacity: 0 })
+                        .animate({
+                            opacity: 1
+                        }, this.options.animation);
+                }
+            }, this);
+
+        }
+    }
+});
+
+/* *
+ *
+ *  Namespace
+ *
+ * */
+
+namespace DependencyWheelSeries {
+    export interface ColumnArray<T = DependencyWheelPoint> extends SankeySeriesType.ColumnArray<T> {
+        // nothing here yets
+    }
+}
+
+/* *
+ *
+ *  Class
+ *
+ * */
+
+class DependencyWheelPoint extends SankeySeries.prototype.pointClass {
+
+    /* *
+     *
+     *  Properties
+     *
+     * */
+
+    public options: Highcharts.DependencyWheelPointOptions = void 0 as any;
+
+    public series: DependencyWheelSeries = void 0 as any;
+
+}
+
+/* *
+ *
+ *  Prototype Properties
+ *
+ * */
+
+interface DependencyWheelPoint {
+    angle: number;
+    dataLabelPath?: SVGElement;
+    fromNode: DependencyWheelPoint;
+    getSum: () => number;
+    index: number;
+    isValid: () => boolean;
+    linksFrom: Array<DependencyWheelPoint>;
+    linksTo: Array<DependencyWheelPoint>;
+    offset: (point: DependencyWheelPoint) => (number|undefined);
+    shapeArgs: SVGAttributes;
+    toNode: DependencyWheelPoint;
+    getDataLabelPath(label: SVGElement): SVGElement;
+    setState: typeof NodesMixin['setNodeState'];
+}
+extend(DependencyWheelPoint.prototype, {
+    setState: NodesMixin.setNodeState,
+
+    /* eslint-disable valid-jsdoc */
+
+    /**
+     * Return a text path that the data label uses.
+     * @private
+     */
+    getDataLabelPath: function (
+        this: DependencyWheelPoint,
+        label: SVGElement
+    ): SVGElement {
+        var renderer = this.series.chart.renderer,
+            shapeArgs = this.shapeArgs,
+            upperHalf = this.angle < 0 || this.angle > Math.PI,
+            start = shapeArgs.start,
+            end = shapeArgs.end;
+
+        if (!this.dataLabelPath) {
+            this.dataLabelPath = renderer
+                .arc({
+                    open: true,
+                    longArc: Math.abs(Math.abs(start) - Math.abs(end)) < Math.PI ? 0 : 1
+                })
+                // Add it inside the data label group so it gets destroyed
+                // with the label
+                .add(label);
         }
 
-        /* eslint-enable valid-jsdoc */
+        this.dataLabelPath.attr({
+            x: shapeArgs.x,
+            y: shapeArgs.y,
+            r: (
+                shapeArgs.r +
+                ((this.dataLabel as any).options.distance || 0)
+            ),
+            start: (upperHalf ? start : end),
+            end: (upperHalf ? end : start),
+            clockwise: +upperHalf
+        });
 
+        return this.dataLabelPath;
+    },
+    isValid: function (this: DependencyWheelPoint): boolean {
+        // No null points here
+        return true;
     }
-);
+
+    /* eslint-enable valid-jsdoc */
+});
+
+/* *
+ *
+ *  Registry
+ *
+ * */
+
+declare module '../Core/Series/SeriesType' {
+    interface SeriesTypeRegistry {
+        dependencywheel: typeof DependencyWheelSeries;
+    }
+}
+DependencyWheelSeries.prototype.pointClass = DependencyWheelPoint;
+BaseSeries.registerSeriesType('dependencywheel', DependencyWheelSeries);
+
+/* *
+ *
+ *  Default Export
+ *
+ * */
+
+export default DependencyWheelSeries;
+
+/* *
+ *
+ *  API Options
+ *
+ * */
 
 /**
  * A `dependencywheel` series. If the [type](#series.dependencywheel.type)
