@@ -261,37 +261,12 @@ class XRangeSeries extends ColumnSeries {
     public data: Array<XRangePoint> = void 0 as any;
     public options: Highcharts.XRangeSeriesOptions = void 0 as any;
     public points: Array<XRangePoint> = void 0 as any;
-}
 
-/* *
- *
- * Prototype properties
- *
- * */
-interface XRangeSeries {
-    animate: LineSeries['animate'];
-    cropShoulder: number;
-    getExtremesFromAll: boolean;
-    parallelArrays: Array<string>;
-    pointClass: typeof XRangePoint;
-    requireSorting: boolean;
-    type: string;
-    x2Data: Array<(number|undefined)>;
-    drawPoint(point: XRangePoint, verb: string): void;
-    getAnimationVerb(): string;
-    translatePoint(point: XRangePoint): void;
-}
-
-extend(XRangeSeries.prototype, {
-    type: 'xrange',
-    parallelArrays: ['x', 'x2', 'y'],
-    requireSorting: false,
-    animate: seriesTypes.line.prototype.animate,
-    cropShoulder: 1,
-    getExtremesFromAll: true,
-    autoIncrement: H.noop as any,
-    buildKDTree: H.noop as any,
-
+    /* *
+     *
+     * Functions
+     *
+     * */
     /* eslint-disable valid-jsdoc */
 
     /**
@@ -299,11 +274,10 @@ extend(XRangeSeries.prototype, {
      * @function Highcarts.seriesTypes.xrange#init
      * @return {void}
      */
-    init: function (this: XRangeSeries): void {
+    public init(): void {
         seriesTypes.column.prototype.init.apply(this, arguments as any);
-
         this.options.stacking = void 0; // #13161
-    },
+    }
 
     /**
      * Borrow the column series metrics, but with swapped axes. This gives
@@ -314,9 +288,7 @@ extend(XRangeSeries.prototype, {
      *
      * @return {Highcharts.ColumnMetricsObject}
      */
-    getColumnMetrics: function (
-        this: XRangeSeries
-    ): ColumnMetricsObject {
+    public getColumnMetrics(): ColumnMetricsObject {
         var metrics,
             chart = this.chart;
 
@@ -339,7 +311,7 @@ extend(XRangeSeries.prototype, {
         swapAxes();
 
         return metrics;
-    },
+    }
 
     /**
      * Override cropData to show a point where x or x2 is outside visible
@@ -360,8 +332,7 @@ extend(XRangeSeries.prototype, {
      *
      * @return {*}
      */
-    cropData: function (
-        this: XRangeSeries,
+    public cropData(
         xData: Array<number>,
         yData: Array<number>,
         min: number,
@@ -376,7 +347,8 @@ extend(XRangeSeries.prototype, {
         crop.xData = xData.slice(crop.start, crop.end);
 
         return crop;
-    },
+    }
+
     /**
      * Finds the index of an existing point that matches the given point
      * options.
@@ -387,10 +359,7 @@ extend(XRangeSeries.prototype, {
      * @returns {number|undefined} Returns index of a matching point,
      * returns undefined if no match is found.
      */
-    findPointIndex: function (
-        this: XRangeSeries,
-        options: Highcharts.XRangePointOptions
-    ): (number|undefined) {
+    public findPointIndex(options: Highcharts.XRangePointOptions): (number|undefined) {
         const { cropped, cropStart, points } = this;
         const { id } = options;
         let pointIndex: (number|undefined);
@@ -428,17 +397,14 @@ extend(XRangeSeries.prototype, {
         }
 
         return pointIndex;
-    },
+    }
     /**
      * @private
      * @function Highcharts.Series#translatePoint
      *
      * @param {Highcharts.Point} point
      */
-    translatePoint: function (
-        this: XRangeSeries,
-        point: XRangePoint
-    ): void {
+    public translatePoint(point: XRangePoint): void {
         var series = this,
             xAxis = series.xAxis,
             yAxis = series.yAxis,
@@ -595,18 +561,18 @@ extend(XRangeSeries.prototype, {
                 height: shapeArgs.height
             };
         }
-    },
+    }
 
     /**
      * @private
      * @function Highcharts.Series#translate
      */
-    translate: function (this: XRangeSeries): void {
+    public translate(): void {
         columnProto.translate.apply(this, arguments as any);
         this.points.forEach(function (point: XRangePoint): void {
             this.translatePoint(point);
         }, this);
-    },
+    }
 
     /**
      * Draws a single point in the series. Needed for partial fill.
@@ -623,9 +589,8 @@ extend(XRangeSeries.prototype, {
      * @param {"animate"|"attr"} verb
      *        'animate' (animates changes) or 'attr' (sets options)
      */
-    drawPoint: function (
-        this: XRangeSeries,
-        point: XRangePoint,
+    public drawPoint(
+        point: Highcharts.XRangePoint,
         verb: string
     ): void {
         var series = this,
@@ -736,13 +701,13 @@ extend(XRangeSeries.prototype, {
         } else if (graphic) {
             point.graphic = graphic.destroy(); // #1269
         }
-    },
+    }
 
     /**
      * @private
      * @function Highcharts.Series#drawPoints
      */
-    drawPoints: function (this: XRangeSeries): void {
+    public drawPoints(): void {
         var series = this,
             verb = series.getAnimationVerb();
 
@@ -752,8 +717,7 @@ extend(XRangeSeries.prototype, {
         ): void {
             series.drawPoint(point, verb);
         });
-    },
-
+    }
 
     /**
      * Returns "animate", or "attr" if the number of points is above the
@@ -764,7 +728,7 @@ extend(XRangeSeries.prototype, {
      *
      * @return {string}
      */
-    getAnimationVerb: function (this: XRangeSeries): string {
+    public getAnimationVerb(): string {
         return (
             this.chart.pointCount < (this.options.animationLimit || 250) ?
                 'animate' :
@@ -785,6 +749,37 @@ extend(XRangeSeries.prototype, {
     //*/
 
     /* eslint-enable valid-jsdoc */
+
+}
+
+/* *
+ *
+ * Prototype properties
+ *
+ * */
+interface XRangeSeries {
+    animate: LineSeries['animate'];
+    cropShoulder: number;
+    getExtremesFromAll: boolean;
+    parallelArrays: Array<string>;
+    pointClass: typeof XRangePoint;
+    requireSorting: boolean;
+    type: string;
+    x2Data: Array<(number|undefined)>;
+    drawPoint(point: XRangePoint, verb: string): void;
+    getAnimationVerb(): string;
+    translatePoint(point: XRangePoint): void;
+}
+
+extend(XRangeSeries.prototype, {
+    type: 'xrange',
+    parallelArrays: ['x', 'x2', 'y'],
+    requireSorting: false,
+    animate: seriesTypes.line.prototype.animate,
+    cropShoulder: 1,
+    getExtremesFromAll: true,
+    autoIncrement: H.noop as any,
+    buildKDTree: H.noop as any
 });
 
 class XRangePoint extends ColumnSeries.prototype.pointClass {
@@ -797,28 +792,11 @@ class XRangePoint extends ColumnSeries.prototype.pointClass {
     public options: Highcharts.XRangePointOptions = void 0 as any;
     public series: XRangeSeries = void 0 as any;
 
-}
-
-/* *
- *
- * Prototype Properties
- *
- * */
-interface XRangePoint {
-    clipRectArgs?: RectangleObject;
-    isValid: () => boolean;
-    len?: number;
-    partialFill: Highcharts.XRangePointOptions['partialFill'];
-    partShapeArgs?: Highcharts.XRangePartialFillObject;
-    setState: Point['setState'];
-    shapeType: string;
-    tooltipDateKeys: Array<string>;
-    x2?: number;
-    yCategory?: string;
-
-}
-
-extend(XRangePoint.prototype, {
+    /* *
+     *
+     * Functions
+     *
+     * */
     /**
      * The ending X value of the range point.
      * @name Highcharts.Point#x2
@@ -841,7 +819,7 @@ extend(XRangePoint.prototype, {
     /**
      * @private
      */
-    resolveColor: function (this: XRangePoint): void {
+    public resolveColor(this: XRangePoint): void {
         var series = this.series,
             colorByPoint;
 
@@ -859,7 +837,7 @@ extend(XRangePoint.prototype, {
             this.color = series.color;
         }
 
-    },
+    }
     /**
      * Extend init to have y default to 0.
      *
@@ -868,7 +846,7 @@ extend(XRangePoint.prototype, {
      *
      * @return {Highcharts.Point}
      */
-    init: function (this: XRangePoint): XRangePoint {
+    public init(): XRangePoint {
         Point.prototype.init.apply(this, arguments as any);
 
         if (!this.y) {
@@ -876,17 +854,17 @@ extend(XRangePoint.prototype, {
         }
 
         return this;
-    },
+    }
 
     /**
      * @private
      * @function Highcharts.Point#setState
      */
-    setState: function (this: XRangePoint): void {
+    public setState(): void {
         Point.prototype.setState.apply(this, arguments as any);
 
         this.series.drawPoint(this, this.series.getAnimationVerb());
-    },
+    }
 
     /**
      * @private
@@ -895,9 +873,7 @@ extend(XRangePoint.prototype, {
      * @return {Highcharts.PointLabelObject}
      */
     // Add x2 and yCategory to the available properties for tooltip formats
-    getLabelConfig: function (
-        this: XRangePoint
-    ): Highcharts.XRangePointLabelObject {
+    public getLabelConfig(): Highcharts.XRangePointLabelObject {
         var point = this,
             cfg: Highcharts.XRangePointLabelObject =
                 Point.prototype.getLabelConfig.call(point) as any,
@@ -906,8 +882,9 @@ extend(XRangePoint.prototype, {
         cfg.x2 = point.x2;
         cfg.yCategory = point.yCategory = yCats && yCats[point.y as any];
         return cfg;
-    },
-    tooltipDateKeys: ['x', 'x2'],
+    }
+
+    public tooltipDateKeys = ['x', 'x2']
 
     /**
      * @private
@@ -915,13 +892,32 @@ extend(XRangePoint.prototype, {
      *
      * @return {boolean}
      */
-    isValid: function (this: XRangePoint): boolean {
+    public isValid(): boolean {
         return typeof this.x === 'number' &&
         typeof this.x2 === 'number';
     }
 
     /* eslint-enable valid-jsdoc */
-});
+
+}
+
+/* *
+ *
+ * Prototype Properties
+ *
+ * */
+interface XRangePoint {
+    clipRectArgs?: RectangleObject;
+    isValid: () => boolean;
+    len?: number;
+    partialFill: Highcharts.XRangePointOptions['partialFill'];
+    partShapeArgs?: Highcharts.XRangePartialFillObject;
+    shapeType: string;
+    tooltipDateKeys: Array<string>;
+    x2?: number;
+    yCategory?: string;
+
+}
 
 XRangeSeries.prototype.pointClass = XRangePoint;
 
