@@ -26,7 +26,7 @@ var __extends = (this && this.__extends) || (function () {
 import A from '../Core/Animation/AnimationUtilities.js';
 var animObject = A.animObject;
 import BaseSeries from '../Core/Series/Series.js';
-var SankeySeries = BaseSeries.seriesTypes.sankey;
+var _a = BaseSeries.seriesTypes, PieSeries = _a.pie, SankeySeries = _a.sankey;
 import H from '../Core/Globals.js';
 import NodesMixin from '../Mixins/Nodes.js';
 import U from '../Core/Utilities.js';
@@ -54,67 +54,42 @@ var DependencyWheelSeries = /** @class */ (function (_super) {
          * */
         _this.data = void 0;
         _this.options = void 0;
+        _this.nodeColumns = void 0;
         _this.nodes = void 0;
         _this.points = void 0;
         return _this;
+        /* eslint-enable valid-jsdoc */
     }
-    /**
-     * A dependency wheel chart is a type of flow diagram, where all nodes are
-     * laid out in a circle, and the flow between the are drawn as link bands.
+    /* *
      *
-     * @sample highcharts/demo/dependency-wheel/
-     *         Dependency wheel
+     *  Functions
      *
-     * @extends      plotOptions.sankey
-     * @exclude      dataSorting
-     * @since        7.1.0
-     * @product      highcharts
-     * @requires     modules/dependency-wheel
-     * @optionparent plotOptions.dependencywheel
-     */
-    DependencyWheelSeries.defaultOptions = merge(SankeySeries.defaultOptions, {
-        /**
-         * The center of the wheel relative to the plot area. Can be
-         * percentages or pixel values. The default behaviour is to
-         * center the wheel inside the plot area.
-         *
-         * @type    {Array<number|string|null>}
-         * @default [null, null]
-         * @product highcharts
-         */
-        center: [null, null],
-        curveFactor: 0.6,
-        /**
-         * The start angle of the dependency wheel, in degrees where 0 is up.
-         */
-        startAngle: 0
-    });
-    return DependencyWheelSeries;
-}(SankeySeries));
-extend(DependencyWheelSeries.prototype, {
-    orderNodes: false,
-    getCenter: BaseSeries.seriesTypes.pie.prototype.getCenter,
+     * */
     /* eslint-disable valid-jsdoc */
-    /**
-     * Dependency wheel has only one column, it runs along the perimeter.
-     * @private
-     */
-    createNodeColumns: function () {
-        var columns = [this.createNodeColumn()];
-        this.nodes.forEach(function (node) {
-            node.column = 0;
-            columns[0].push(node);
-        });
-        return columns;
-    },
-    /**
-     * Translate from vertical pixels to perimeter.
-     * @private
-     */
-    getNodePadding: function () {
-        return this.options.nodePadding / Math.PI;
-    },
-    createNode: function (id) {
+    DependencyWheelSeries.prototype.animate = function (init) {
+        if (!init) {
+            var duration = animObject(this.options.animation).duration, step = (duration / 2) / this.nodes.length;
+            this.nodes.forEach(function (point, i) {
+                var graphic = point.graphic;
+                if (graphic) {
+                    graphic.attr({ opacity: 0 });
+                    setTimeout(function () {
+                        graphic.animate({ opacity: 1 }, { duration: step });
+                    }, step * i);
+                }
+            }, this);
+            this.points.forEach(function (point) {
+                var graphic = point.graphic;
+                if (!point.isNode && graphic) {
+                    graphic.attr({ opacity: 0 })
+                        .animate({
+                        opacity: 1
+                    }, this.options.animation);
+                }
+            }, this);
+        }
+    };
+    DependencyWheelSeries.prototype.createNode = function (id) {
         var node = SankeySeries.prototype.createNode.call(this, id);
         node.index = this.nodes.length - 1;
         /**
@@ -166,13 +141,32 @@ extend(DependencyWheelSeries.prototype, {
             }
         };
         return node;
-    },
+    };
+    /**
+     * Dependency wheel has only one column, it runs along the perimeter.
+     * @private
+     */
+    DependencyWheelSeries.prototype.createNodeColumns = function () {
+        var columns = [this.createNodeColumn()];
+        this.nodes.forEach(function (node) {
+            node.column = 0;
+            columns[0].push(node);
+        });
+        return columns;
+    };
+    /**
+     * Translate from vertical pixels to perimeter.
+     * @private
+     */
+    DependencyWheelSeries.prototype.getNodePadding = function () {
+        return this.options.nodePadding / Math.PI;
+    };
     /**
      * @private
      * @todo Override the refactored sankey translateLink and translateNode
      * functions instead of the whole translate function.
      */
-    translate: function () {
+    DependencyWheelSeries.prototype.translate = function () {
         var options = this.options, factor = 2 * Math.PI /
             (this.chart.plotHeight + this.getNodePadding()), center = this.getCenter(), startAngle = (options.startAngle - 90) * H.deg2rad;
         SankeySeries.prototype.translate.call(this);
@@ -257,30 +251,43 @@ extend(DependencyWheelSeries.prototype, {
                 });
             }
         });
-    },
-    animate: function (init) {
-        if (!init) {
-            var duration = animObject(this.options.animation).duration, step = (duration / 2) / this.nodes.length;
-            this.nodes.forEach(function (point, i) {
-                var graphic = point.graphic;
-                if (graphic) {
-                    graphic.attr({ opacity: 0 });
-                    setTimeout(function () {
-                        graphic.animate({ opacity: 1 }, { duration: step });
-                    }, step * i);
-                }
-            }, this);
-            this.points.forEach(function (point) {
-                var graphic = point.graphic;
-                if (!point.isNode && graphic) {
-                    graphic.attr({ opacity: 0 })
-                        .animate({
-                        opacity: 1
-                    }, this.options.animation);
-                }
-            }, this);
-        }
-    }
+    };
+    /**
+     * A dependency wheel chart is a type of flow diagram, where all nodes are
+     * laid out in a circle, and the flow between the are drawn as link bands.
+     *
+     * @sample highcharts/demo/dependency-wheel/
+     *         Dependency wheel
+     *
+     * @extends      plotOptions.sankey
+     * @exclude      dataSorting
+     * @since        7.1.0
+     * @product      highcharts
+     * @requires     modules/dependency-wheel
+     * @optionparent plotOptions.dependencywheel
+     */
+    DependencyWheelSeries.defaultOptions = merge(SankeySeries.defaultOptions, {
+        /**
+         * The center of the wheel relative to the plot area. Can be
+         * percentages or pixel values. The default behaviour is to
+         * center the wheel inside the plot area.
+         *
+         * @type    {Array<number|string|null>}
+         * @default [null, null]
+         * @product highcharts
+         */
+        center: [null, null],
+        curveFactor: 0.6,
+        /**
+         * The start angle of the dependency wheel, in degrees where 0 is up.
+         */
+        startAngle: 0
+    });
+    return DependencyWheelSeries;
+}(SankeySeries));
+extend(DependencyWheelSeries.prototype, {
+    orderNodes: false,
+    getCenter: PieSeries.prototype.getCenter
 });
 /* *
  *
@@ -296,20 +303,29 @@ var DependencyWheelPoint = /** @class */ (function (_super) {
          *
          * */
         var _this = _super !== null && _super.apply(this, arguments) || this;
+        _this.angle = void 0;
+        _this.fromNode = void 0;
+        _this.index = void 0;
+        _this.linksFrom = void 0;
+        _this.linksTo = void 0;
         _this.options = void 0;
         _this.series = void 0;
+        _this.shapeArgs = void 0;
+        _this.toNode = void 0;
         return _this;
+        /* eslint-enable valid-jsdoc */
     }
-    return DependencyWheelPoint;
-}(SankeySeries.prototype.pointClass));
-extend(DependencyWheelPoint.prototype, {
-    setState: NodesMixin.setNodeState,
+    /* *
+     *
+     *  Functions
+     *
+     * */
     /* eslint-disable valid-jsdoc */
     /**
      * Return a text path that the data label uses.
      * @private
      */
-    getDataLabelPath: function (label) {
+    DependencyWheelPoint.prototype.getDataLabelPath = function (label) {
         var renderer = this.series.chart.renderer, shapeArgs = this.shapeArgs, upperHalf = this.angle < 0 || this.angle > Math.PI, start = shapeArgs.start, end = shapeArgs.end;
         if (!this.dataLabelPath) {
             this.dataLabelPath = renderer
@@ -331,12 +347,15 @@ extend(DependencyWheelPoint.prototype, {
             clockwise: +upperHalf
         });
         return this.dataLabelPath;
-    },
-    isValid: function () {
+    };
+    DependencyWheelPoint.prototype.isValid = function () {
         // No null points here
         return true;
-    }
-    /* eslint-enable valid-jsdoc */
+    };
+    return DependencyWheelPoint;
+}(SankeySeries.prototype.pointClass));
+extend(DependencyWheelPoint.prototype, {
+    setState: NodesMixin.setNodeState
 });
 DependencyWheelSeries.prototype.pointClass = DependencyWheelPoint;
 BaseSeries.registerSeriesType('dependencywheel', DependencyWheelSeries);
