@@ -16,6 +16,7 @@
 import type Axis from '../Core/Axis/Axis';
 import type BBoxObject from '../Core/Renderer/BBoxObject';
 import type DataLabelOptions from '../Core/Series/DataLabelOptions';
+import type HeatmapSeries from './HeatmapSeries';
 import type Point from '../Core/Series/Point';
 import type { SeriesStatesOptions } from '../Core/Series/SeriesOptions';
 import type SVGPath from '../Core/Renderer/SVG/SVGPath';
@@ -57,7 +58,7 @@ declare module '../Core/Series/SeriesOptions' {
  */
 declare global {
     namespace Highcharts {
-        class TilemapPoint extends HeatmapPoint implements ColorPoint {
+        class TilemapPoint extends HeatmapSeries.prototype.pointClass implements ColorPoint {
             public option: TilemapPointOptions;
             public pointPadding?: number;
             public radius: number;
