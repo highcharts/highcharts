@@ -6,12 +6,31 @@
  *
  * */
 'use strict';
+var __extends = (this && this.__extends) || (function () {
+    var extendStatics = function (d, b) {
+        extendStatics = Object.setPrototypeOf ||
+            ({ __proto__: [] } instanceof Array && function (d, b) { d.__proto__ = b; }) ||
+            function (d, b) { for (var p in b) if (b.hasOwnProperty(p)) d[p] = b[p]; };
+        return extendStatics(d, b);
+    };
+    return function (d, b) {
+        extendStatics(d, b);
+        function __() { this.constructor = d; }
+        d.prototype = b === null ? Object.create(b) : (__.prototype = b.prototype, new __());
+    };
+})();
+var SMAIndicator = BaseSeries.seriesTypes.sma;
 import BaseSeries from '../../Core/Series/Series.js';
 var seriesTypes = BaseSeries.seriesTypes;
 import H from '../../Core/Globals.js';
 var noop = H.noop;
 import U from '../../Core/Utilities.js';
-var correctFloat = U.correctFloat, defined = U.defined, merge = U.merge;
+var extend = U.extend, correctFloat = U.correctFloat, defined = U.defined, merge = U.merge;
+/**
+ *
+ * Class
+ *
+ */
 // im port './EMAIndicator.js';
 // im port './SMAIndicator.js';
 var SMA = seriesTypes.sma, EMA = seriesTypes.ema;
@@ -24,115 +43,118 @@ var SMA = seriesTypes.sma, EMA = seriesTypes.ema;
  *
  * @augments Highcharts.Series
  */
-BaseSeries.seriesType('macd', 'sma', 
-/**
- * Moving Average Convergence Divergence (MACD). This series requires
- * `linkedTo` option to be set and should be loaded after the
- * `stock/indicators/indicators.js` and `stock/indicators/ema.js`.
- *
- * @sample stock/indicators/macd
- *         MACD indicator
- *
- * @extends      plotOptions.sma
- * @since        6.0.0
- * @product      highstock
- * @requires     stock/indicators/indicators
- * @requires     stock/indicators/macd
- * @optionparent plotOptions.macd
- */
-{
-    params: {
-        /**
-         * The short period for indicator calculations.
-         */
-        shortPeriod: 12,
-        /**
-         * The long period for indicator calculations.
-         */
-        longPeriod: 26,
-        /**
-         * The base period for signal calculations.
-         */
-        signalPeriod: 9,
-        period: 26
-    },
+var MACDIndicator = /** @class */ (function (_super) {
+    __extends(MACDIndicator, _super);
+    function MACDIndicator() {
+        return _super !== null && _super.apply(this, arguments) || this;
+    }
     /**
-     * The styles for signal line
+     * Moving Average Convergence Divergence (MACD). This series requires
+     * `linkedTo` option to be set and should be loaded after the
+     * `stock/indicators/indicators.js` and `stock/indicators/ema.js`.
+     *
+     * @sample stock/indicators/macd
+     *         MACD indicator
+     *
+     * @extends      plotOptions.sma
+     * @since        6.0.0
+     * @product      highstock
+     * @requires     stock/indicators/indicators
+     * @requires     stock/indicators/macd
+     * @optionparent plotOptions.macd
      */
-    signalLine: {
-        /**
-         * @sample stock/indicators/macd-zones
-         *         Zones in MACD
-         *
-         * @extends plotOptions.macd.zones
-         */
-        zones: [],
-        styles: {
+    MACDIndicator.defaultOptions = merge(SMAIndicator.defaultOptions, {
+        params: {
             /**
-             * Pixel width of the line.
+             * The short period for indicator calculations.
              */
-            lineWidth: 1,
+            shortPeriod: 12,
             /**
-             * Color of the line.
+             * The long period for indicator calculations.
+             */
+            longPeriod: 26,
+            /**
+             * The base period for signal calculations.
+             */
+            signalPeriod: 9,
+            period: 26
+        },
+        /**
+         * The styles for signal line
+         */
+        signalLine: {
+            /**
+             * @sample stock/indicators/macd-zones
+             *         Zones in MACD
              *
-             * @type  {Highcharts.ColorString}
+             * @extends plotOptions.macd.zones
              */
-            lineColor: void 0
-        }
-    },
-    /**
-     * The styles for macd line
-     */
-    macdLine: {
-        /**
-         * @sample stock/indicators/macd-zones
-         *         Zones in MACD
-         *
-         * @extends plotOptions.macd.zones
-         */
-        zones: [],
-        styles: {
-            /**
-             * Pixel width of the line.
-             */
-            lineWidth: 1,
-            /**
-             * Color of the line.
-             *
-             * @type  {Highcharts.ColorString}
-             */
-            lineColor: void 0
-        }
-    },
-    /**
-     * @type {number|null}
-     */
-    threshold: 0,
-    groupPadding: 0.1,
-    pointPadding: 0.1,
-    crisp: false,
-    states: {
-        hover: {
-            halo: {
-                size: 0
+            zones: [],
+            styles: {
+                /**
+                 * Pixel width of the line.
+                 */
+                lineWidth: 1,
+                /**
+                 * Color of the line.
+                 *
+                 * @type  {Highcharts.ColorString}
+                 */
+                lineColor: void 0
             }
-        }
-    },
-    tooltip: {
-        pointFormat: '<span style="color:{point.color}">\u25CF</span> <b> {series.name}</b><br/>' +
-            'Value: {point.MACD}<br/>' +
-            'Signal: {point.signal}<br/>' +
-            'Histogram: {point.y}<br/>'
-    },
-    dataGrouping: {
-        approximation: 'averages'
-    },
-    minPointLength: 0
-}, 
-/**
- * @lends Highcharts.Series#
- */
-{
+        },
+        /**
+         * The styles for macd line
+         */
+        macdLine: {
+            /**
+             * @sample stock/indicators/macd-zones
+             *         Zones in MACD
+             *
+             * @extends plotOptions.macd.zones
+             */
+            zones: [],
+            styles: {
+                /**
+                 * Pixel width of the line.
+                 */
+                lineWidth: 1,
+                /**
+                 * Color of the line.
+                 *
+                 * @type  {Highcharts.ColorString}
+                 */
+                lineColor: void 0
+            }
+        },
+        /**
+         * @type {number|null}
+         */
+        threshold: 0,
+        groupPadding: 0.1,
+        pointPadding: 0.1,
+        crisp: false,
+        states: {
+            hover: {
+                halo: {
+                    size: 0
+                }
+            }
+        },
+        tooltip: {
+            pointFormat: '<span style="color:{point.color}">\u25CF</span> <b> {series.name}</b><br/>' +
+                'Value: {point.MACD}<br/>' +
+                'Signal: {point.signal}<br/>' +
+                'Histogram: {point.y}<br/>'
+        },
+        dataGrouping: {
+            approximation: 'averages'
+        },
+        minPointLength: 0
+    });
+    return MACDIndicator;
+}(SMAIndicator));
+extend(MACDIndicator.prototype, {
     nameComponents: ['longPeriod', 'shortPeriod', 'signalPeriod'],
     requiredIndicators: ['ema'],
     // "y" value is treated as Histogram data
@@ -342,6 +364,13 @@ BaseSeries.seriesType('macd', 'sma',
         };
     }
 });
+BaseSeries.registerSeriesType('macd', MACDIndicator);
+/* *
+ *
+ *  Default Export
+ *
+ * */
+export default MACDIndicator;
 /**
  * A `MACD` series. If the [type](#series.macd.type) option is not
  * specified, it is inherited from [chart.type](#chart.type).
