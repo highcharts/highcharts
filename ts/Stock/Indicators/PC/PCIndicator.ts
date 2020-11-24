@@ -8,51 +8,27 @@
 
 'use strict';
 
-import type CSSObject from '../../Core/Renderer/CSSObject';
-import type IndicatorValuesObject from './IndicatorValuesObject';
-import type LineSeries from '../../Series/Line/LineSeries';
+import type IndicatorValuesObject from '../IndicatorValuesObject';
+import type LineSeries from '../../../Series/Line/LineSeries';
 const {
     seriesTypes: {
         sma: SMAIndicator
     }
 } = BaseSeries;
 import type {
-    SMAOptions,
-    SMAParamsOptions
-} from './SMA/SMAOptions';
-import type SMAPoint from './SMA/SMAPoint';
-import BaseSeries from '../../Core/Series/Series.js';
-import palette from '../../Core/Color/Palette.js';
-import MultipleLinesMixin from '../../Mixins/MultipleLines.js';
-import ReduceArrayMixin from '../../Mixins/ReduceArray.js';
-import U from '../../Core/Utilities.js';
+    PCOptions,
+    PCParamsOptions
+} from '../PC/PCOptions';
+import type PCPoint from './PCPoint';
+import BaseSeries from '../../../Core/Series/Series.js';
+import palette from '../../../Core/Color/Palette.js';
+import MultipleLinesMixin from '../../../Mixins/MultipleLines.js';
+import ReduceArrayMixin from '../../../Mixins/ReduceArray.js';
+import U from '../../../Core/Utilities.js';
 const {
     merge,
     extend
 } = U;
-
-/**
- * Internal types
- * @private
- */
-declare global {
-    namespace Highcharts {
-        interface PCIndicatorParamsOptions extends SMAParamsOptions {
-            // for inheritance
-        }
-
-        class PCIndicatorPoint extends SMAPoint {
-            public series: PCIndicator;
-        }
-
-        interface PCIndicatorOptions extends SMAOptions,
-            MultipleLinesIndicatorOptions {
-            params?: PCIndicatorParamsOptions;
-            bottomLine: Record<string, CSSObject>;
-            topLine: Record<string, CSSObject>;
-        }
-    }
-}
 
 const getArrayExtremes = ReduceArrayMixin.getArrayExtremes;
 
@@ -90,7 +66,7 @@ class PCIndicator extends SMAIndicator implements Highcharts.MultipleLinesIndica
      * @requires     stock/indicators/price-channel
      * @optionparent plotOptions.pc
      */
-    public static defaultOptions: Highcharts.PCIndicatorOptions = merge(SMAIndicator.defaultOptions, {
+    public static defaultOptions: PCOptions = merge(SMAIndicator.defaultOptions, {
         /**
          * @excluding index
          */
@@ -131,7 +107,7 @@ class PCIndicator extends SMAIndicator implements Highcharts.MultipleLinesIndica
         dataGrouping: {
             approximation: 'averages'
         }
-    } as Highcharts.PCIndicatorOptions);
+    } as PCOptions);
 
     /* *
     *
@@ -139,9 +115,9 @@ class PCIndicator extends SMAIndicator implements Highcharts.MultipleLinesIndica
     *
     * */
 
-    public data: Array<Highcharts.PCIndicatorPoint> = void 0 as any;
-    public options: Highcharts.PCIndicatorOptions = void 0 as any;
-    public points: Array<Highcharts.PCIndicatorPoint> = void 0 as any;
+    public data: Array<PCPoint> = void 0 as any;
+    public options: PCOptions = void 0 as any;
+    public points: Array<PCPoint> = void 0 as any;
 
     /* *
     *
@@ -151,7 +127,7 @@ class PCIndicator extends SMAIndicator implements Highcharts.MultipleLinesIndica
 
     public getValues<TLinkedSeries extends LineSeries>(
         series: TLinkedSeries,
-        params: Highcharts.PCIndicatorParamsOptions
+        params: PCParamsOptions
     ): (IndicatorValuesObject<TLinkedSeries> | undefined) {
         var period: number = (params.period as any),
             xVal: Array<number> = (series.xData as any),
@@ -210,7 +186,7 @@ interface PCIndicator {
     nameBase: string;
     nameComponents: Array<string>;
     pointArrayMap: Array<string>;
-    pointClass: typeof Highcharts.PCIndicatorPoint;
+    pointClass: typeof PCPoint;
     pointValKey: string;
 }
 
@@ -228,7 +204,7 @@ extend(PCIndicator.prototype, merge(MultipleLinesMixin, {
  *
  * */
 
-declare module '../../Core/Series/SeriesType' {
+declare module '../../../Core/Series/SeriesType' {
     interface SeriesTypeRegistry {
         pc: typeof PCIndicator;
     }

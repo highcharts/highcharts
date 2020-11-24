@@ -20,11 +20,11 @@ var __extends = (this && this.__extends) || (function () {
     };
 })();
 var SMAIndicator = BaseSeries.seriesTypes.sma;
-import BaseSeries from '../../Core/Series/Series.js';
-import palette from '../../Core/Color/Palette.js';
-import MultipleLinesMixin from '../../Mixins/MultipleLines.js';
-import ReduceArrayMixin from '../../Mixins/ReduceArray.js';
-import U from '../../Core/Utilities.js';
+import BaseSeries from '../../../Core/Series/Series.js';
+import palette from '../../../Core/Color/Palette.js';
+import MultipleLinesMixin from '../../../Mixins/MultipleLines.js';
+import ReduceArrayMixin from '../../../Mixins/ReduceArray.js';
+import U from '../../../Core/Utilities.js';
 var merge = U.merge, extend = U.extend;
 var getArrayExtremes = ReduceArrayMixin.getArrayExtremes;
 /* *

@@ -36,7 +36,7 @@ import '../../Stock/Indicators/Momentum/MomentumIndicator.js';
 import '../../Stock/Indicators/NATRIndicator.js';
 import '../../Stock/Indicators/PivotPointsIndicator.js';
 import '../../Stock/Indicators/PPOIndicator.js';
-import '../../Stock/Indicators/PCIndicator.js';
+import '../../Stock/Indicators/PC/PCIndicator.js';
 import '../../Stock/Indicators/PriceEnvelopesIndicator.js';
 import '../../Stock/Indicators/PSARIndicator.js';
 import '../../Stock/Indicators/ROCIndicator.js';
