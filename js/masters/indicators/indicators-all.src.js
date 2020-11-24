@@ -25,7 +25,7 @@ import '../../Stock/Indicators/DPO/DPOIndicator.js';
 import '../../Stock/Indicators/EMA/EMAIndicator.js';
 import '../../Stock/Indicators/ChaikinIndicator.js';
 import '../../Stock/Indicators/DEMAIndicator.js';
-import '../../Stock/Indicators/TEMAIndicator.js';
+import '../../Stock/Indicators/TEMA/TEMAIndicator.js';
 import '../../Stock/Indicators/TRIXIndicator.js';
 import '../../Stock/Indicators/APOIndicator.js';
 import '../../Stock/Indicators/IKHIndicator.js';

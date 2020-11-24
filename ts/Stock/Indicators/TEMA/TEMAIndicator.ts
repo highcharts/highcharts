@@ -9,20 +9,20 @@
 'use strict';
 
 import type {
-    EMAOptions,
-    EMAParamsOptions
-} from './EMA/EMAOptions';
-import type EMAPoint from './EMA/EMAPoint';
-import type IndicatorValuesObject from './IndicatorValuesObject';
-import type LineSeries from '../../Series/Line/LineSeries';
-import BaseSeries from '../../Core/Series/Series.js';
+    TEMAOptions,
+    TEMAParamsOptions
+} from './TEMAOptions';
+import type TEMAPoint from './TEMAPoint';
+import type IndicatorValuesObject from '../IndicatorValuesObject';
+import type LineSeries from '../../../Series/Line/LineSeries';
+import BaseSeries from '../../../Core/Series/Series.js';
 const {
     seriesTypes: {
         ema: EMAIndicator
     }
 } = BaseSeries;
-import RequiredIndicatorMixin from '../../Mixins/IndicatorRequired.js';
-import U from '../../Core/Utilities.js';
+import RequiredIndicatorMixin from '../../../Mixins/IndicatorRequired.js';
+import U from '../../../Core/Utilities.js';
 const {
     correctFloat,
     isArray,
@@ -46,19 +46,6 @@ declare global {
         interface TEMAIndicatorLinkedParentSeries extends LineSeries {
             EMApercent?: number;
         }
-
-        interface TEMAIndicatorParamsOptions extends EMAParamsOptions {
-            // for inheritance
-        }
-
-        class TEMAIndicatorPoint extends EMAPoint {
-            public series: TEMAIndicator;
-        }
-
-        interface TEMAIndicatorOptions extends EMAOptions {
-            params?: TEMAIndicatorParamsOptions;
-        }
-
     }
 }
 
@@ -93,13 +80,13 @@ class TEMAIndicator extends EMAIndicator {
      * @requires     stock/indicators/tema
      * @optionparent plotOptions.tema
      */
-    public static defaultOptions: Highcharts.TEMAIndicatorOptions = merge(EMAIndicator.defaultOptions, {
+    public static defaultOptions: TEMAOptions = merge(EMAIndicator.defaultOptions, {
 
-    } as Highcharts.TEMAIndicatorOptions)
+    } as TEMAOptions)
 
-    public data: Array<Highcharts.TEMAIndicatorPoint> = void 0 as any;
-    public options: Highcharts.TEMAIndicatorOptions = void 0 as any;
-    public points: Array<Highcharts.TEMAIndicatorPoint> = void 0 as any;
+    public data: Array<TEMAPoint> = void 0 as any;
+    public options: TEMAOptions = void 0 as any;
+    public points: Array<TEMAPoint> = void 0 as any;
 
     public init(this: TEMAIndicator): void {
         var args = arguments,
@@ -158,7 +145,7 @@ class TEMAIndicator extends EMAIndicator {
     >(
         this: TEMAIndicator,
         series: TLinkedSeries,
-        params: Highcharts.TEMAIndicatorParamsOptions
+        params: TEMAParamsOptions
     ): (IndicatorValuesObject<TLinkedSeries>|undefined) {
         var period: number = (params.period as any),
             doubledPeriod = 2 * period,
@@ -294,10 +281,10 @@ class TEMAIndicator extends EMAIndicator {
 }
 
 interface TEMAIndicator {
-    pointClass: typeof Highcharts.TEMAIndicatorPoint;
+    pointClass: typeof TEMAPoint;
 }
 
-declare module '../../Core/Series/SeriesType' {
+declare module '../../../Core/Series/SeriesType' {
     interface SeriesTypeRegistry {
         tema: typeof TEMAIndicator;
     }

@@ -7,7 +7,12 @@
  * */
 
 'use strict';
-import type TEMAIndicator from './TEMAIndicator';
+import type TEMAIndicator from './TEMA/TEMAIndicator';
+import type {
+    TEMAOptions,
+    TEMAParamsOptions
+} from './TEMA/TEMAOptions';
+import type TEMAPoint from './TEMA/TEMAPoint';
 import BaseSeries from '../../Core/Series/Series.js';
 import RequiredIndicatorMixin from '../../Mixins/IndicatorRequired.js';
 import U from '../../Core/Utilities.js';
@@ -36,15 +41,15 @@ declare global {
         }
 
         interface TRIXIndicatorParamsOptions
-            extends TEMAIndicatorParamsOptions {
+            extends TEMAParamsOptions {
             // for inheritance
         }
 
-        class TRIXIndicatorPoint extends TEMAIndicatorPoint {
+        class TRIXIndicatorPoint extends TEMAPoint {
             public series: TRIXIndicator;
         }
 
-        interface TRIXIndicatorOptions extends TEMAIndicatorOptions {
+        interface TRIXIndicatorOptions extends TEMAOptions {
             params?: TRIXIndicatorParamsOptions;
         }
     }
