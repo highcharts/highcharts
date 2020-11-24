@@ -110,7 +110,7 @@ declare module '../Core/Series/SeriesType' {
 import '../Extensions/CurrentDateIndication.js';
 import '../Extensions/StaticScale.js';
 import '../Gantt/Pathfinder.js';
-import XRangeSeries from './XRangeSeries.js';
+import XRangeSeries from './XRange/XRangeSeries.js';
 
 var parent = seriesTypes.xrange;
 

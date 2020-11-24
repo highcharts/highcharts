@@ -18,28 +18,28 @@
  *
  * */
 
-import type ColorType from '../Core/Color/ColorString';
-import type ColumnMetricsObject from './Column/ColumnMetricsObject';
-import type ColumnPoint from './Column/ColumnPoint';
-import type ColumnPointOptions from './Column/ColumnPointOptions';
-import type ColumnSeriesOptions from './Column/ColumnSeriesOptions';
-import type PositionObject from '../Core/Renderer/PositionObject';
-import type RectangleObject from '../Core/Renderer/RectangleObject';
+import type ColorType from '../../Core/Color/ColorString';
+import type ColumnMetricsObject from '../Column/ColumnMetricsObject';
+import type ColumnPoint from '../Column/ColumnPoint';
+import type ColumnPointOptions from '../Column/ColumnPointOptions';
+import type ColumnSeriesOptions from '../Column/ColumnSeriesOptions';
+import type PositionObject from '../../Core/Renderer/PositionObject';
+import type RectangleObject from '../../Core/Renderer/RectangleObject';
 import type {
     SeriesStateHoverOptions,
     SeriesStatesOptions
-} from '../Core/Series/SeriesOptions';
-import type SizeObject from '../Core/Renderer/SizeObject';
-import Axis from '../Core/Axis/Axis.js';
-import BaseSeries from '../Core/Series/Series.js';
-import H from '../Core/Globals.js';
-import Color from '../Core/Color/Color.js';
+} from '../../Core/Series/SeriesOptions';
+import type SizeObject from '../../Core/Renderer/SizeObject';
+import Axis from '../../Core/Axis/Axis.js';
+import BaseSeries from '../../Core/Series/Series.js';
+import H from '../../Core/Globals.js';
+import Color from '../../Core/Color/Color.js';
 const { parse: color } = Color;
-import ColumnSeries from './Column/ColumnSeries.js';
+import ColumnSeries from '../Column/ColumnSeries.js';
 const { prototype: columnProto } = ColumnSeries;
-import LineSeries from './Line/LineSeries.js';
-import Point from '../Core/Series/Point.js';
-import U from '../Core/Utilities.js';
+import LineSeries from '../Line/LineSeries.js';
+import Point from '../../Core/Series/Point.js';
+import U from '../../Core/Utilities.js';
 const {
     addEvent,
     clamp,
@@ -145,7 +145,7 @@ function getColorByCategory(
     };
 }
 
-import './Column/ColumnSeries.js';
+import '../Column/ColumnSeries.js';
 
 
 /**
@@ -954,7 +954,7 @@ addEvent(Axis, 'afterGetSeriesExtremes', function (): void {
  * Registry
  *
  * */
-declare module '../Core/Series/SeriesType' {
+declare module '../../Core/Series/SeriesType' {
     interface SeriesTypeRegistry {
         xrange: typeof XRangeSeries;
     }

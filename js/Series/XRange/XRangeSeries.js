@@ -23,16 +23,16 @@ var __extends = (this && this.__extends) || (function () {
         d.prototype = b === null ? Object.create(b) : (__.prototype = b.prototype, new __());
     };
 })();
-import Axis from '../Core/Axis/Axis.js';
-import BaseSeries from '../Core/Series/Series.js';
-import H from '../Core/Globals.js';
-import Color from '../Core/Color/Color.js';
+import Axis from '../../Core/Axis/Axis.js';
+import BaseSeries from '../../Core/Series/Series.js';
+import H from '../../Core/Globals.js';
+import Color from '../../Core/Color/Color.js';
 var color = Color.parse;
-import ColumnSeries from './Column/ColumnSeries.js';
+import ColumnSeries from '../Column/ColumnSeries.js';
 var columnProto = ColumnSeries.prototype;
-import LineSeries from './Line/LineSeries.js';
-import Point from '../Core/Series/Point.js';
-import U from '../Core/Utilities.js';
+import LineSeries from '../Line/LineSeries.js';
+import Point from '../../Core/Series/Point.js';
+import U from '../../Core/Utilities.js';
 var addEvent = U.addEvent, clamp = U.clamp, correctFloat = U.correctFloat, defined = U.defined, extend = U.extend, find = U.find, isNumber = U.isNumber, isObject = U.isObject, merge = U.merge, pick = U.pick;
 /* *
  * @interface Highcharts.PointOptionsObject in parts/Point.ts
@@ -67,7 +67,7 @@ function getColorByCategory(series, point) {
         color: color
     };
 }
-import './Column/ColumnSeries.js';
+import '../Column/ColumnSeries.js';
 /**
  * @private
  * @class
