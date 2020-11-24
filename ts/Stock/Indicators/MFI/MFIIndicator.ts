@@ -12,47 +12,26 @@
 
 'use strict';
 
-import type IndicatorValuesObject from './IndicatorValuesObject';
-import type LineSeries from '../../Series/Line/LineSeries';
+import type IndicatorValuesObject from '../IndicatorValuesObject';
+import type LineSeries from '../../../Series/Line/LineSeries';
 const {
     seriesTypes: {
         sma: SMAIndicator
     }
 } = BaseSeries;
 import type {
-    SMAOptions,
-    SMAParamsOptions
-} from './SMA/SMAOptions';
-import type SMAPoint from './SMA/SMAPoint';
-import BaseSeries from '../../Core/Series/Series.js';
-import U from '../../Core/Utilities.js';
+    MFIOptions,
+    MFIParamsOptions
+} from '../MFI/MFIOptions';
+import type MFIPoint from './MFIPoint';
+import BaseSeries from '../../../Core/Series/Series.js';
+import U from '../../../Core/Utilities.js';
 const {
     extend,
     merge,
     error,
     isArray
 } = U;
-
-/**
- * Internal types
- * @private
- */
-declare global {
-    namespace Highcharts {
-        interface MFIIndicatorParamsOptions extends SMAParamsOptions {
-            volumeSeriesID?: string;
-            decimals?: number;
-        }
-
-        class MFIIndicatorPoint extends SMAPoint {
-            public series: MFIIndicator;
-        }
-
-        interface MFIIndicatorOptions extends SMAOptions {
-            params?: MFIIndicatorParamsOptions;
-        }
-    }
-}
 
 /* eslint-disable require-jsdoc */
 
@@ -108,7 +87,7 @@ class MFIIndicator extends SMAIndicator {
      * @requires     stock/indicators/mfi
      * @optionparent plotOptions.mfi
      */
-    public static defaultOptions: Highcharts.MFIIndicatorOptions = merge(SMAIndicator.defaultOptions, {
+    public static defaultOptions: MFIOptions = merge(SMAIndicator.defaultOptions, {
         /**
          * @excluding index
          */
@@ -126,16 +105,16 @@ class MFIIndicator extends SMAIndicator {
             decimals: 4
 
         }
-    } as Highcharts.MFIIndicatorOptions);
+    } as MFIOptions);
 
     /* *
     *
     *  Properties
     *
     * */
-    public data: Array<Highcharts.MFIIndicatorPoint> = void 0 as any;
-    public options: Highcharts.MFIIndicatorOptions = void 0 as any;
-    public points: Array<Highcharts.MFIIndicatorPoint> = void 0 as any;
+    public data: Array<MFIPoint> = void 0 as any;
+    public options: MFIOptions = void 0 as any;
+    public points: Array<MFIPoint> = void 0 as any;
 
     /* *
     *
@@ -144,7 +123,7 @@ class MFIIndicator extends SMAIndicator {
     * */
     public getValues<TLinkedSeries extends LineSeries>(
         series: TLinkedSeries,
-        params: Highcharts.MFIIndicatorParamsOptions
+        params: MFIParamsOptions
     ): (IndicatorValuesObject<TLinkedSeries> | undefined) {
         var period: number = (params.period as any),
             xVal: Array<number> = (series.xData as any),
@@ -261,7 +240,7 @@ class MFIIndicator extends SMAIndicator {
 
 interface MFIIndicator {
     nameBase: string;
-    pointClass: typeof Highcharts.MFIIndicatorPoint;
+    pointClass: typeof MFIPoint;
 }
 
 extend(MFIIndicator.prototype, {
@@ -274,7 +253,7 @@ extend(MFIIndicator.prototype, {
  *
  * */
 
-declare module '../../Core/Series/SeriesType' {
+declare module '../../../Core/Series/SeriesType' {
     interface SeriesTypeRegistry {
         mfi: typeof MFIIndicator;
     }
