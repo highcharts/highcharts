@@ -25,7 +25,7 @@ import BaseSeries from '../../Core/Series/Series.js';
 import ColumnSeries from '../Column/ColumnSeries.js';
 import H from '../../Core/Globals.js';
 var noop = H.noop;
-import palette from '../../Core/Palette.js';
+import palette from '../../Core/Color/Palette.js';
 import U from '../../Core/Utilities.js';
 var extend = U.extend, merge = U.merge, pick = U.pick;
 /**

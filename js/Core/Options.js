@@ -12,7 +12,7 @@ import H from './Globals.js';
 var isTouchDevice = H.isTouchDevice, svg = H.svg;
 import Color from './Color/Color.js';
 var color = Color.parse;
-import palette from './Palette.js';
+import palette from './Color/Palette.js';
 import Time from './Time.js';
 import U from './Utilities.js';
 var merge = U.merge;

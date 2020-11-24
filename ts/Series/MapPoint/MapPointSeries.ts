@@ -23,7 +23,7 @@ const {
         scatter: ScatterSeries
     }
 } = BaseSeries;
-import palette from '../../Core/Palette.js';
+import palette from '../../Core/Color/Palette.js';
 import MapPointPoint from './MapPointPoint.js';
 import Point from '../../Core/Series/Point.js';
 import U from '../../Core/Utilities.js';

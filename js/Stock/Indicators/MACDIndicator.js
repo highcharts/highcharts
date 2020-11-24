@@ -104,6 +104,9 @@ BaseSeries.seriesType('macd', 'sma',
             lineColor: void 0
         }
     },
+    /**
+     * @type {number|null}
+     */
     threshold: 0,
     groupPadding: 0.1,
     pointPadding: 0.1,

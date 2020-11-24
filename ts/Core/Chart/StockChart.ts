@@ -33,7 +33,7 @@ const {
         processData: seriesProcessData
     }
 } = LineSeries;
-import palette from '../../Core/Palette.js';
+import palette from '../../Core/Color/Palette.js';
 import Point from '../Series/Point.js';
 const {
     prototype: {

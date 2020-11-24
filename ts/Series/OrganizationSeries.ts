@@ -47,7 +47,7 @@ const {
     }
 } = BaseSeries;
 import H from '../Core/Globals.js';
-import palette from '../Core/Palette.js';
+import palette from '../Core/Color/Palette.js';
 import U from '../Core/Utilities.js';
 const {
     css,
@@ -87,7 +87,7 @@ declare global {
                 dataLabel: SVGElement,
                 options: OrganizationDataLabelsOptionsObject
             ): void;
-            public createNode: (id: string) => NodesPoint;
+            public createNode(id: string): OrganizationPoint;
             public createNodeColumn(): OrganizationColumnArray;
             public curvedPath(
                 path: SVGPath,

@@ -19,7 +19,7 @@ var color = Color.parse;
 import H from '../Core/Globals.js';
 var doc = H.doc, noop = H.noop;
 import LineSeries from '../Series/Line/LineSeries.js';
-import palette from '../Core/Palette.js';
+import palette from '../Core/Color/Palette.js';
 import Series from '../Core/Series/Series.js';
 import U from '../Core/Utilities.js';
 var addEvent = U.addEvent, extend = U.extend, fireEvent = U.fireEvent, isNumber = U.isNumber, merge = U.merge, pick = U.pick, wrap = U.wrap;

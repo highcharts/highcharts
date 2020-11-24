@@ -37,7 +37,7 @@ import O from '../Core/Options.js';
 const {
     defaultOptions
 } = O;
-import palette from '../Core/Palette.js';
+import palette from '../Core/Color/Palette.js';
 import SVGRenderer from '../Core/Renderer/SVG/SVGRenderer.js';
 import U from '../Core/Utilities.js';
 const {

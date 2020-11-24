@@ -20,7 +20,7 @@ import type ColorString from '../Core/Color/ColorString';
 import type CSSObject from '../Core/Renderer/CSSObject';
 import type DashStyleValue from '../Core/Renderer/DashStyleValue';
 import Axis from '../Core/Axis/Axis.js';
-import palette from '../Core/Palette.js';
+import palette from '../Core/Color/Palette.js';
 
 /**
  * Internal types

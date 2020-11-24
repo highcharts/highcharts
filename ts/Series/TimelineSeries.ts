@@ -38,7 +38,7 @@ const {
 import H from '../Core/Globals.js';
 import LegendSymbolMixin from '../Mixins/LegendSymbol.js';
 import LineSeries from '../Series/Line/LineSeries.js';
-import palette from '../Core/Palette.js';
+import palette from '../Core/Color/Palette.js';
 import Point from '../Core/Series/Point.js';
 import SVGElement from '../Core/Renderer/SVG/SVGElement.js';
 import U from '../Core/Utilities.js';

@@ -48,7 +48,7 @@ const {
     SVG_NS,
     win
 } = H;
-import palette from '../../Palette.js';
+import palette from '../../Color/Palette.js';
 import U from '../../Utilities.js';
 const {
     attr,

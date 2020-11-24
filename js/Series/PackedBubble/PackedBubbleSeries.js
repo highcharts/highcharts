@@ -28,7 +28,7 @@ var color = Color.parse;
 import H from '../../Core/Globals.js';
 import PackedBubblePoint from './PackedBubblePoint.js';
 import U from '../../Core/Utilities.js';
-var addEvent = U.addEvent, clamp = U.clamp, defined = U.defined, extend = U.extend, extendClass = U.extendClass, fireEvent = U.fireEvent, isArray = U.isArray, isNumber = U.isNumber, merge = U.merge, pick = U.pick;
+var addEvent = U.addEvent, clamp = U.clamp, defined = U.defined, extend = U.extend, fireEvent = U.fireEvent, isArray = U.isArray, isNumber = U.isNumber, merge = U.merge, pick = U.pick;
 import '../../Series/Networkgraph/DraggableNodes.js';
 var dragNodesMixin = H.dragNodesMixin;
 import './PackedBubbleComposition.js';
