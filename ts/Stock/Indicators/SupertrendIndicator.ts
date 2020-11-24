@@ -26,7 +26,7 @@ import BaseSeries from '../../Core/Series/Series.js';
 const {
     seriesTypes
 } = BaseSeries;
-import palette from '../../Core/Palette.js';
+import palette from '../../Core/Color/Palette.js';
 import U from '../../Core/Utilities.js';
 const {
     correctFloat,

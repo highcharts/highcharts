@@ -23,7 +23,7 @@ var __extends = (this && this.__extends) || (function () {
 })();
 import BaseSeries from '../../Core/Series/Series.js';
 var ScatterSeries = BaseSeries.seriesTypes.scatter;
-import palette from '../../Core/Palette.js';
+import palette from '../../Core/Color/Palette.js';
 import MapPointPoint from './MapPointPoint.js';
 import U from '../../Core/Utilities.js';
 var extend = U.extend, merge = U.merge;

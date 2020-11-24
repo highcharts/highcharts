@@ -47,7 +47,7 @@ const {
     }
 } = BaseSeries;
 import H from '../Core/Globals.js';
-import palette from '../Core/Palette.js';
+import palette from '../Core/Color/Palette.js';
 import U from '../Core/Utilities.js';
 const {
     css,

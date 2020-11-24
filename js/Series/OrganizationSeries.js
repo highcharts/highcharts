@@ -13,7 +13,7 @@
 import BaseSeries from '../Core/Series/Series.js';
 var base = BaseSeries.seriesTypes.sankey.prototype;
 import H from '../Core/Globals.js';
-import palette from '../Core/Palette.js';
+import palette from '../Core/Color/Palette.js';
 import U from '../Core/Utilities.js';
 var css = U.css, pick = U.pick, wrap = U.wrap;
 /**

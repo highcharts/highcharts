@@ -9,4 +9,4 @@
  * License: www.highcharts.com/license
  */
 'use strict';
-import '../../Series/WordcloudSeries.js';
+import '../../Series/Wordcloud/WordcloudSeries.js';

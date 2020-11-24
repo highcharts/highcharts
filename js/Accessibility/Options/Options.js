@@ -10,7 +10,7 @@
  *
  * */
 'use strict';
-import palette from '../../Core/Palette.js';
+import palette from '../../Core/Color/Palette.js';
 /**
  * Formatter callback for the accessibility announcement.
  *

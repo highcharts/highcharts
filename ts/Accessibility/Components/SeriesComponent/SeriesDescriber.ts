@@ -60,6 +60,7 @@ declare global {
     namespace Highcharts {
         interface AccessibilityPoint {
             accessibility?: AccessibilityPointStateObject;
+            value?: (number|null);
         }
         interface AccessibilityPointStateObject {
             valueDescription?: string;
@@ -424,7 +425,7 @@ function getPointValue(
         valueSuffix = a11yPointOpts.valueSuffix ||
             tooltipOptions.valueSuffix || '',
         fallbackKey: ('value'|'y') = (
-            typeof (point as Highcharts.PackedBubblePoint).value !==
+            typeof point.value !==
             'undefined' ?
                 'value' : 'y'
         ),

@@ -35,7 +35,7 @@ import LineSeries from '../Series/Line/LineSeries.js';
 import NavigatorAxis from './Axis/NavigatorAxis.js';
 import O from './Options.js';
 const { defaultOptions } = O;
-import palette from './Palette.js';
+import palette from './Color/Palette.js';
 import Scrollbar from './Scrollbar.js';
 import U from './Utilities.js';
 const {
