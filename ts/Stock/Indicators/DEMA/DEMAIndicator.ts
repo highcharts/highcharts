@@ -9,20 +9,20 @@
 'use strict';
 
 import type {
-    EMAOptions,
-    EMAParamsOptions
-} from './EMA/EMAOptions';
-import type EMAPoint from './EMA/EMAPoint';
-import type IndicatorValuesObject from './IndicatorValuesObject';
-import type LineSeries from '../../Series/Line/LineSeries';
-import BaseSeries from '../../Core/Series/Series.js';
+    DEMAOptions,
+    DEMAParamsOptions
+} from './DEMAOptions';
+import type DEMAPoint from './DEMAPoint';
+import type IndicatorValuesObject from '../IndicatorValuesObject';
+import type LineSeries from '../../../Series/Line/LineSeries';
+import BaseSeries from '../../../Core/Series/Series.js';
 const {
     seriesTypes: {
         ema: EMAIndicator
     }
 } = BaseSeries;
-import RequiredIndicatorMixin from '../../Mixins/IndicatorRequired.js';
-import U from '../../Core/Utilities.js';
+import RequiredIndicatorMixin from '../../../Mixins/IndicatorRequired.js';
+import U from '../../../Core/Utilities.js';
 const {
     correctFloat,
     isArray,
@@ -38,18 +38,6 @@ declare global {
     namespace Highcharts {
         interface DEMAIndicatorLinkedParentSeries extends LineSeries {
             EMApercent?: number;
-        }
-
-        interface DEMAIndicatorParamsOptions extends EMAParamsOptions {
-            // for inheritance.
-        }
-
-        class DEMAIndicatorPoint extends EMAPoint {
-            public series: DEMAIndicator;
-        }
-
-        interface DEMAIndicatorOptions extends EMAOptions {
-            params?: DEMAIndicatorParamsOptions;
         }
     }
 }
@@ -84,13 +72,13 @@ class DEMAIndicator extends EMAIndicator {
      * @requires     stock/indicators/dema
      * @optionparent plotOptions.dema
      */
-    public static defaultOptions: Highcharts.DEMAIndicatorOptions = merge(EMAIndicator.defaultOptions, {
+    public static defaultOptions: DEMAOptions = merge(EMAIndicator.defaultOptions, {
 
-    } as Highcharts.DEMAIndicatorOptions)
+    } as DEMAOptions)
 
-    public data: Array<Highcharts.DEMAIndicatorPoint> = void 0 as any;
-    public options: Highcharts.DEMAIndicatorOptions = void 0 as any;
-    public points: Array<Highcharts.DEMAIndicatorPoint> = void 0 as any;
+    public data: Array<DEMAPoint> = void 0 as any;
+    public options: DEMAOptions = void 0 as any;
+    public points: Array<DEMAPoint> = void 0 as any;
 
     public init(this: DEMAIndicator): void {
         var args = arguments,
@@ -133,7 +121,7 @@ class DEMAIndicator extends EMAIndicator {
     >(
         this: DEMAIndicator,
         series: TLinkedSeries,
-        params: Highcharts.DEMAIndicatorParamsOptions
+        params: DEMAParamsOptions
     ): (IndicatorValuesObject<TLinkedSeries>|undefined) {
         var period: number = (params.period as any),
             doubledPeriod: number = 2 * period,
@@ -230,10 +218,10 @@ class DEMAIndicator extends EMAIndicator {
 }
 
 interface DEMAIndicator {
-    pointClass: typeof Highcharts.DEMAIndicatorPoint;
+    pointClass: typeof DEMAPoint;
 }
 
-declare module '../../Core/Series/SeriesType' {
+declare module '../../../Core/Series/SeriesType' {
     interface SeriesTypeRegistry {
         dema: typeof DEMAIndicator;
     }
