@@ -7798,6 +7798,10 @@ class Axis {
     *
     */
     public hasVerticalPanning(): boolean {
+        if (!this.chart.options.chart?.panning?.enabled) {
+            // #14624
+            return false;
+        }
         return /y/.test(this.chart.options.chart?.panning?.type || '');
     }
 
