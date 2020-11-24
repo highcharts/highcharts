@@ -14,7 +14,11 @@
 
 import type IndicatorValuesObject from './IndicatorValuesObject';
 import type LineSeries from '../../Series/Line/LineSeries';
-import type SMAIndicator from './SMA/SMAIndicator';
+const {
+    seriesTypes: {
+        sma: SMAIndicator
+    }
+} = BaseSeries;
 import type {
     SMAOptions,
     SMAParamsOptions
@@ -23,6 +27,8 @@ import type SMAPoint from './SMA/SMAPoint';
 import BaseSeries from '../../Core/Series/Series.js';
 import U from '../../Core/Utilities.js';
 const {
+    extend,
+    merge,
     error,
     isArray
 } = U;
@@ -33,18 +39,6 @@ const {
  */
 declare global {
     namespace Highcharts {
-        class MFIIndicator extends SMAIndicator {
-            public data: Array<MFIIndicatorPoint>;
-            public getValues<TLinkedSeries extends LineSeries>(
-                series: TLinkedSeries,
-                params: MFIIndicatorParamsOptions
-            ): (IndicatorValuesObject<TLinkedSeries>|undefined);
-            public nameBase: string;
-            public options: MFIIndicatorOptions;
-            public pointClass: typeof MFIIndicatorPoint;
-            public points: Array<MFIIndicatorPoint>;
-        }
-
         interface MFIIndicatorParamsOptions extends SMAParamsOptions {
             volumeSeriesID?: string;
             decimals?: number;
@@ -59,14 +53,6 @@ declare global {
         }
     }
 }
-
-declare module '../../Core/Series/SeriesType' {
-    interface SeriesTypeRegistry {
-        mfi: typeof Highcharts.MFIIndicator;
-    }
-}
-
-// im port './SMAIndicator.js';
 
 /* eslint-disable require-jsdoc */
 
@@ -92,6 +78,12 @@ function calculateRawMoneyFlow(typicalPrice: number, volume: number): number {
 
 /* eslint-enable require-jsdoc */
 
+/* *
+ *
+ *  Class
+ *
+ * */
+
 /**
  * The MFI series type.
  *
@@ -101,9 +93,7 @@ function calculateRawMoneyFlow(typicalPrice: number, volume: number): number {
  *
  * @augments Highcharts.Series
  */
-BaseSeries.seriesType<typeof Highcharts.MFIIndicator>(
-    'mfi',
-    'sma',
+class MFIIndicator extends SMAIndicator {
     /**
      * Money Flow Index. This series requires `linkedTo` option to be set and
      * should be loaded after the `stock/indicators/indicators.js` file.
@@ -118,7 +108,7 @@ BaseSeries.seriesType<typeof Highcharts.MFIIndicator>(
      * @requires     stock/indicators/mfi
      * @optionparent plotOptions.mfi
      */
-    {
+    public static defaultOptions: Highcharts.MFIIndicatorOptions = merge(SMAIndicator.defaultOptions, {
         /**
          * @excluding index
          */
@@ -136,123 +126,169 @@ BaseSeries.seriesType<typeof Highcharts.MFIIndicator>(
             decimals: 4
 
         }
-    },
-    /**
-     * @lends Highcharts.Series#
-     */
-    {
-        nameBase: 'Money Flow Index',
-        getValues: function<TLinkedSeries extends LineSeries> (
-            series: TLinkedSeries,
-            params: Highcharts.MFIIndicatorParamsOptions
-        ): (IndicatorValuesObject<TLinkedSeries>|undefined) {
-            var period: number = (params.period as any),
-                xVal: Array<number> = (series.xData as any),
-                yVal: Array<Array<number>> = (series.yData as any),
-                yValLen: number = yVal ? yVal.length : 0,
-                decimals: number = (params.decimals as any),
-                // MFI starts calculations from the second point
-                // Cause we need to calculate change between two points
-                range = 1,
-                volumeSeries: (LineSeries|undefined) = (
-                    series.chart.get((params.volumeSeriesID as any)) as any
-                ),
-                yValVolume: Array<number> = (
-                    volumeSeries && (volumeSeries.yData as any)
-                ),
-                MFI: Array<Array<number>> = [],
-                isUp = false,
-                xData: Array<number> = [],
-                yData: Array<number> = [],
-                positiveMoneyFlow: Array<number> = [],
-                negativeMoneyFlow: Array<number> = [],
-                newTypicalPrice: number,
-                oldTypicalPrice: number,
-                rawMoneyFlow: number,
-                negativeMoneyFlowSum: number,
-                positiveMoneyFlowSum: number,
-                moneyFlowRatio: number,
-                MFIPoint: number,
-                i: number;
+    } as Highcharts.MFIIndicatorOptions);
 
-            if (!volumeSeries) {
-                error(
-                    'Series ' +
-                    params.volumeSeriesID +
-                    ' not found! Check `volumeSeriesID`.',
-                    true,
-                    series.chart
-                );
-                return;
-            }
+    /* *
+    *
+    *  Properties
+    *
+    * */
+    public data: Array<Highcharts.MFIIndicatorPoint> = void 0 as any;
+    public options: Highcharts.MFIIndicatorOptions = void 0 as any;
+    public points: Array<Highcharts.MFIIndicatorPoint> = void 0 as any;
 
-            // MFI requires high low and close values
-            if (
-                (xVal.length <= period) || !isArray(yVal[0]) ||
-                yVal[0].length !== 4 ||
-                !yValVolume
-            ) {
-                return;
-            }
-            // Calculate first typical price
+    /* *
+    *
+    *  Functions
+    *
+    * */
+    public getValues<TLinkedSeries extends LineSeries>(
+        series: TLinkedSeries,
+        params: Highcharts.MFIIndicatorParamsOptions
+    ): (IndicatorValuesObject<TLinkedSeries> | undefined) {
+        var period: number = (params.period as any),
+            xVal: Array<number> = (series.xData as any),
+            yVal: Array<Array<number>> = (series.yData as any),
+            yValLen: number = yVal ? yVal.length : 0,
+            decimals: number = (params.decimals as any),
+            // MFI starts calculations from the second point
+            // Cause we need to calculate change between two points
+            range = 1,
+            volumeSeries: (LineSeries | undefined) = (
+                series.chart.get((params.volumeSeriesID as any)) as any
+            ),
+            yValVolume: Array<number> = (
+                volumeSeries && (volumeSeries.yData as any)
+            ),
+            MFI: Array<Array<number>> = [],
+            isUp = false,
+            xData: Array<number> = [],
+            yData: Array<number> = [],
+            positiveMoneyFlow: Array<number> = [],
+            negativeMoneyFlow: Array<number> = [],
+            newTypicalPrice: number,
+            oldTypicalPrice: number,
+            rawMoneyFlow: number,
+            negativeMoneyFlowSum: number,
+            positiveMoneyFlowSum: number,
+            moneyFlowRatio: number,
+            MFIPoint: number,
+            i: number;
+
+        if (!volumeSeries) {
+            error(
+                'Series ' +
+                params.volumeSeriesID +
+                ' not found! Check `volumeSeriesID`.',
+                true,
+                series.chart
+            );
+            return;
+        }
+
+        // MFI requires high low and close values
+        if (
+            (xVal.length <= period) || !isArray(yVal[0]) ||
+            yVal[0].length !== 4 ||
+            !yValVolume
+        ) {
+            return;
+        }
+        // Calculate first typical price
+        newTypicalPrice = calculateTypicalPrice(yVal[range]);
+        // Accumulate first N-points
+        while (range < period + 1) {
+            // Calculate if up or down
+            oldTypicalPrice = newTypicalPrice;
             newTypicalPrice = calculateTypicalPrice(yVal[range]);
-            // Accumulate first N-points
-            while (range < period + 1) {
+            isUp = newTypicalPrice >= oldTypicalPrice;
+            // Calculate raw money flow
+            rawMoneyFlow = calculateRawMoneyFlow(
+                newTypicalPrice,
+                yValVolume[range]
+            );
+            // Add to array
+            positiveMoneyFlow.push(isUp ? rawMoneyFlow : 0);
+            negativeMoneyFlow.push(isUp ? 0 : rawMoneyFlow);
+            range++;
+        }
+        for (i = range - 1; i < yValLen; i++) {
+            if (i > range - 1) {
+                // Remove first point from array
+                positiveMoneyFlow.shift();
+                negativeMoneyFlow.shift();
                 // Calculate if up or down
                 oldTypicalPrice = newTypicalPrice;
-                newTypicalPrice = calculateTypicalPrice(yVal[range]);
-                isUp = newTypicalPrice >= oldTypicalPrice;
+                newTypicalPrice = calculateTypicalPrice(yVal[i]);
+                isUp = newTypicalPrice > oldTypicalPrice;
                 // Calculate raw money flow
                 rawMoneyFlow = calculateRawMoneyFlow(
                     newTypicalPrice,
-                    yValVolume[range]
+                    yValVolume[i]
                 );
                 // Add to array
                 positiveMoneyFlow.push(isUp ? rawMoneyFlow : 0);
                 negativeMoneyFlow.push(isUp ? 0 : rawMoneyFlow);
-                range++;
-            }
-            for (i = range - 1; i < yValLen; i++) {
-                if (i > range - 1) {
-                    // Remove first point from array
-                    positiveMoneyFlow.shift();
-                    negativeMoneyFlow.shift();
-                    // Calculate if up or down
-                    oldTypicalPrice = newTypicalPrice;
-                    newTypicalPrice = calculateTypicalPrice(yVal[i]);
-                    isUp = newTypicalPrice > oldTypicalPrice;
-                    // Calculate raw money flow
-                    rawMoneyFlow = calculateRawMoneyFlow(
-                        newTypicalPrice,
-                        yValVolume[i]
-                    );
-                    // Add to array
-                    positiveMoneyFlow.push(isUp ? rawMoneyFlow : 0);
-                    negativeMoneyFlow.push(isUp ? 0 : rawMoneyFlow);
-                }
-
-                // Calculate sum of negative and positive money flow:
-                negativeMoneyFlowSum = sumArray(negativeMoneyFlow);
-                positiveMoneyFlowSum = sumArray(positiveMoneyFlow);
-
-                moneyFlowRatio = positiveMoneyFlowSum / negativeMoneyFlowSum;
-                MFIPoint = toFixed(
-                    100 - (100 / (1 + moneyFlowRatio)),
-                    decimals
-                );
-                MFI.push([xVal[i], MFIPoint]);
-                xData.push(xVal[i]);
-                yData.push(MFIPoint);
             }
 
-            return {
-                values: MFI,
-                xData: xData,
-                yData: yData
-            } as IndicatorValuesObject<TLinkedSeries>;
+            // Calculate sum of negative and positive money flow:
+            negativeMoneyFlowSum = sumArray(negativeMoneyFlow);
+            positiveMoneyFlowSum = sumArray(positiveMoneyFlow);
+
+            moneyFlowRatio = positiveMoneyFlowSum / negativeMoneyFlowSum;
+            MFIPoint = toFixed(
+                100 - (100 / (1 + moneyFlowRatio)),
+                decimals
+            );
+            MFI.push([xVal[i], MFIPoint]);
+            xData.push(xVal[i]);
+            yData.push(MFIPoint);
         }
+
+        return {
+            values: MFI,
+            xData: xData,
+            yData: yData
+        } as IndicatorValuesObject<TLinkedSeries>;
     }
-);
+}
+
+/* *
+*
+*   Prototype Properties
+*
+* */
+
+interface MFIIndicator {
+    nameBase: string;
+    pointClass: typeof Highcharts.MFIIndicatorPoint;
+}
+
+extend(MFIIndicator.prototype, {
+    nameBase: 'Money Flow Index'
+});
+
+/* *
+ *
+ *  Registry
+ *
+ * */
+
+declare module '../../Core/Series/SeriesType' {
+    interface SeriesTypeRegistry {
+        mfi: typeof MFIIndicator;
+    }
+}
+
+BaseSeries.registerSeriesType('mfi', MFIIndicator);
+
+/* *
+ *
+ *  Default Export
+ *
+ * */
+
+export default MFIIndicator;
 
 /**
  * A `MFI` series. If the [type](#series.mfi.type) option is not specified, it
