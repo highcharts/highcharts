@@ -20,9 +20,9 @@ var __extends = (this && this.__extends) || (function () {
     };
 })();
 var EMAIndicator = BaseSeries.seriesTypes.ema;
-import BaseSeries from '../../Core/Series/Series.js';
-import RequiredIndicatorMixin from '../../Mixins/IndicatorRequired.js';
-import U from '../../Core/Utilities.js';
+import BaseSeries from '../../../Core/Series/Series.js';
+import RequiredIndicatorMixin from '../../../Mixins/IndicatorRequired.js';
+import U from '../../../Core/Utilities.js';
 var extend = U.extend, merge = U.merge, error = U.error;
 var EMA = BaseSeries.seriesTypes.ema;
 /* *
