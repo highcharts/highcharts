@@ -18,7 +18,6 @@
  *
  * */
 
-import type PieSeries from './Pie/PieSeries';
 import type SankeyPointOptions from './Sankey/SankeyPointOptions';
 import type SankeySeriesType from './Sankey/SankeySeries';
 import type SankeySeriesOptions from './Sankey/SankeySeriesOptions';
@@ -30,6 +29,7 @@ const { animObject } = A;
 import BaseSeries from '../Core/Series/Series.js';
 const {
     seriesTypes: {
+        pie: PieSeries,
         sankey: SankeySeries
     }
 } = BaseSeries;
@@ -115,66 +115,50 @@ class DependencyWheelSeries extends SankeySeries {
 
     public options: Highcharts.DependencyWheelSeriesOptions = void 0 as any;
 
+    public nodeColumns: Array<DependencyWheelSeries.ColumnArray> = void 0 as any;
+
     public nodes: Array<DependencyWheelPoint> = void 0 as any;
 
     public points: Array<DependencyWheelPoint> = void 0 as any;
 
-}
-
-/* *
- *
- *  Prototype Properties
- *
- * */
-
-interface DependencyWheelSeries {
-    animate: (init?: boolean) => void;
-    createNode: (id: string) => DependencyWheelPoint;
-    getCenter: PieSeries['getCenter'];
-    orderNodes: boolean;
-    nodeColumns: Array<DependencyWheelSeries.ColumnArray>;
-    pointClass: typeof DependencyWheelPoint;
-    createNodeColumns(): Array<SankeySeriesType.ColumnArray>;
-    getNodePadding(): number;
-    translate(): void;
-}
-extend(DependencyWheelSeries.prototype, {
-    orderNodes: false,
-    getCenter: BaseSeries.seriesTypes.pie.prototype.getCenter,
+    /* *
+     *
+     *  Functions
+     *
+     * */
 
     /* eslint-disable valid-jsdoc */
 
-    /**
-     * Dependency wheel has only one column, it runs along the perimeter.
-     * @private
-     */
-    createNodeColumns: function (
-        this: DependencyWheelSeries
-    ): Array<SankeySeriesType.ColumnArray> {
-        var columns = [this.createNodeColumn()];
-        this.nodes.forEach(function (
-            node: DependencyWheelPoint
-        ): void {
-            node.column = 0;
-            columns[0].push(node);
-        });
-        return columns;
-    },
+    public animate(init?: boolean): void {
+        if (!init) {
+            var duration = animObject(this.options.animation).duration,
+                step = (duration / 2) / this.nodes.length;
+            this.nodes.forEach(function (point, i): void {
+                var graphic = point.graphic;
+                if (graphic) {
+                    graphic.attr({ opacity: 0 });
+                    setTimeout(function (): void {
+                        (graphic as any).animate(
+                            { opacity: 1 },
+                            { duration: step }
+                        );
+                    }, step * i);
+                }
+            }, this);
+            this.points.forEach(function (point): void {
+                var graphic = point.graphic;
+                if (!point.isNode && graphic) {
+                    graphic.attr({ opacity: 0 })
+                        .animate({
+                            opacity: 1
+                        }, this.options.animation);
+                }
+            }, this);
 
-    /**
-     * Translate from vertical pixels to perimeter.
-     * @private
-     */
-    getNodePadding: function (
-        this: DependencyWheelSeries
-    ): number {
-        return (this.options.nodePadding as any) / Math.PI;
-    },
+        }
+    }
 
-    createNode: function (
-        this: DependencyWheelSeries,
-        id: string
-    ): DependencyWheelPoint {
+    public createNode(id: string): DependencyWheelPoint {
         var node = SankeySeries.prototype.createNode.call(
             this,
             id
@@ -250,14 +234,37 @@ extend(DependencyWheelSeries.prototype, {
         };
 
         return node;
-    },
+    }
+
+    /**
+     * Dependency wheel has only one column, it runs along the perimeter.
+     * @private
+     */
+    public createNodeColumns(): Array<SankeySeriesType.ColumnArray> {
+        var columns = [this.createNodeColumn()];
+        this.nodes.forEach(function (
+            node: DependencyWheelPoint
+        ): void {
+            node.column = 0;
+            columns[0].push(node);
+        });
+        return columns;
+    }
+
+    /**
+     * Translate from vertical pixels to perimeter.
+     * @private
+     */
+    public getNodePadding(): number {
+        return (this.options.nodePadding as any) / Math.PI;
+    }
 
     /**
      * @private
      * @todo Override the refactored sankey translateLink and translateNode
      * functions instead of the whole translate function.
      */
-    translate: function (this: DependencyWheelSeries): void {
+    public translate(): void {
 
         var options = this.options,
             factor = 2 * Math.PI /
@@ -371,39 +378,26 @@ extend(DependencyWheelSeries.prototype, {
                 });
             }
         });
-    },
-
-    animate: function (
-        this: DependencyWheelSeries,
-        init?: boolean
-    ): void {
-        if (!init) {
-            var duration = animObject(this.options.animation).duration,
-                step = (duration / 2) / this.nodes.length;
-            this.nodes.forEach(function (point, i): void {
-                var graphic = point.graphic;
-                if (graphic) {
-                    graphic.attr({ opacity: 0 });
-                    setTimeout(function (): void {
-                        (graphic as any).animate(
-                            { opacity: 1 },
-                            { duration: step }
-                        );
-                    }, step * i);
-                }
-            }, this);
-            this.points.forEach(function (point): void {
-                var graphic = point.graphic;
-                if (!point.isNode && graphic) {
-                    graphic.attr({ opacity: 0 })
-                        .animate({
-                            opacity: 1
-                        }, this.options.animation);
-                }
-            }, this);
-
-        }
     }
+
+    /* eslint-enable valid-jsdoc */
+
+}
+
+/* *
+ *
+ *  Prototype Properties
+ *
+ * */
+
+interface DependencyWheelSeries {
+    getCenter: typeof PieSeries.prototype.getCenter;
+    orderNodes: boolean;
+    pointClass: typeof DependencyWheelPoint;
+}
+extend(DependencyWheelSeries.prototype, {
+    orderNodes: false,
+    getCenter: PieSeries.prototype.getCenter
 });
 
 /* *
@@ -432,35 +426,29 @@ class DependencyWheelPoint extends SankeySeries.prototype.pointClass {
      *
      * */
 
+    public angle: number = void 0 as any;
+
+    public fromNode: DependencyWheelPoint = void 0 as any;
+
+    public index: number = void 0 as any;
+
+    public linksFrom: Array<DependencyWheelPoint> = void 0 as any;
+
+    public linksTo: Array<DependencyWheelPoint> = void 0 as any;
+
     public options: Highcharts.DependencyWheelPointOptions = void 0 as any;
 
     public series: DependencyWheelSeries = void 0 as any;
 
-}
+    public shapeArgs: SVGAttributes = void 0 as any;
 
-/* *
- *
- *  Prototype Properties
- *
- * */
+    public toNode: DependencyWheelPoint = void 0 as any;
 
-interface DependencyWheelPoint {
-    angle: number;
-    dataLabelPath?: SVGElement;
-    fromNode: DependencyWheelPoint;
-    getSum: () => number;
-    index: number;
-    isValid: () => boolean;
-    linksFrom: Array<DependencyWheelPoint>;
-    linksTo: Array<DependencyWheelPoint>;
-    offset: (point: DependencyWheelPoint) => (number|undefined);
-    shapeArgs: SVGAttributes;
-    toNode: DependencyWheelPoint;
-    getDataLabelPath(label: SVGElement): SVGElement;
-    setState: typeof NodesMixin['setNodeState'];
-}
-extend(DependencyWheelPoint.prototype, {
-    setState: NodesMixin.setNodeState,
+    /* *
+     *
+     *  Functions
+     *
+     * */
 
     /* eslint-disable valid-jsdoc */
 
@@ -468,10 +456,7 @@ extend(DependencyWheelPoint.prototype, {
      * Return a text path that the data label uses.
      * @private
      */
-    getDataLabelPath: function (
-        this: DependencyWheelPoint,
-        label: SVGElement
-    ): SVGElement {
+    public getDataLabelPath(label: SVGElement): SVGElement {
         var renderer = this.series.chart.renderer,
             shapeArgs = this.shapeArgs,
             upperHalf = this.angle < 0 || this.angle > Math.PI,
@@ -502,13 +487,28 @@ extend(DependencyWheelPoint.prototype, {
         });
 
         return this.dataLabelPath;
-    },
-    isValid: function (this: DependencyWheelPoint): boolean {
+    }
+
+    public isValid(): boolean {
         // No null points here
         return true;
     }
 
     /* eslint-enable valid-jsdoc */
+
+}
+
+/* *
+ *
+ *  Prototype Properties
+ *
+ * */
+
+interface DependencyWheelPoint {
+    setState: typeof NodesMixin['setNodeState'];
+}
+extend(DependencyWheelPoint.prototype, {
+    setState: NodesMixin.setNodeState
 });
 
 /* *
