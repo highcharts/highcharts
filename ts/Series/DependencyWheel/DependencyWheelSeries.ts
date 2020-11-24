@@ -18,24 +18,24 @@
  *
  * */
 
-import type SankeyPointOptions from './Sankey/SankeyPointOptions';
-import type SankeySeriesType from './Sankey/SankeySeries';
-import type SankeySeriesOptions from './Sankey/SankeySeriesOptions';
-import type { SeriesStatesOptions } from '../Core/Series/SeriesOptions';
-import type SVGAttributes from '../Core/Renderer/SVG/SVGAttributes';
-import type SVGElement from '../Core/Renderer/SVG/SVGElement';
-import A from '../Core/Animation/AnimationUtilities.js';
+import type SankeyPointOptions from '../Sankey/SankeyPointOptions';
+import type SankeySeriesType from '../Sankey/SankeySeries';
+import type SankeySeriesOptions from '../Sankey/SankeySeriesOptions';
+import type { SeriesStatesOptions } from '../../Core/Series/SeriesOptions';
+import type SVGAttributes from '../../Core/Renderer/SVG/SVGAttributes';
+import type SVGElement from '../../Core/Renderer/SVG/SVGElement';
+import A from '../../Core/Animation/AnimationUtilities.js';
 const { animObject } = A;
-import BaseSeries from '../Core/Series/Series.js';
+import BaseSeries from '../../Core/Series/Series.js';
 const {
     seriesTypes: {
         pie: PieSeries,
         sankey: SankeySeries
     }
 } = BaseSeries;
-import H from '../Core/Globals.js';
-import NodesMixin from '../Mixins/Nodes.js';
-import U from '../Core/Utilities.js';
+import H from '../../Core/Globals.js';
+import NodesMixin from '../../Mixins/Nodes.js';
+import U from '../../Core/Utilities.js';
 const {
     extend,
     merge
@@ -517,7 +517,7 @@ extend(DependencyWheelPoint.prototype, {
  *
  * */
 
-declare module '../Core/Series/SeriesType' {
+declare module '../../Core/Series/SeriesType' {
     interface SeriesTypeRegistry {
         dependencywheel: typeof DependencyWheelSeries;
     }
