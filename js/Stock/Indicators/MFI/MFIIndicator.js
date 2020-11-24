@@ -24,8 +24,8 @@ var __extends = (this && this.__extends) || (function () {
     };
 })();
 var SMAIndicator = BaseSeries.seriesTypes.sma;
-import BaseSeries from '../../Core/Series/Series.js';
-import U from '../../Core/Utilities.js';
+import BaseSeries from '../../../Core/Series/Series.js';
+import U from '../../../Core/Utilities.js';
 var extend = U.extend, merge = U.merge, error = U.error, isArray = U.isArray;
 /* eslint-disable require-jsdoc */
 // Utils:
