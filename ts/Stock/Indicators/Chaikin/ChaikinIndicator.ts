@@ -9,49 +9,29 @@
 'use strict';
 
 import type {
-    EMAOptions,
-    EMAParamsOptions
-} from './EMA/EMAOptions';
-import type EMAPoint from './EMA/EMAPoint';
-import type IndicatorValuesObject from './IndicatorValuesObject';
-import type LineSeries from '../../Series/Line/LineSeries';
-import BaseSeries from '../../Core/Series/Series.js';
+    ChaikinOptions,
+    ChaikinParamsOptions
+} from './ChaikinOptions';
+import type ChaikinPoint from './ChaikinPoint';
+import type IndicatorValuesObject from '../IndicatorValuesObject';
+import type LineSeries from '../../../Series/Line/LineSeries';
+
 const {
     seriesTypes: {
         ad: AD,
         ema: EMAIndicator
     }
 } = BaseSeries;
-import RequiredIndicatorMixin from '../../Mixins/IndicatorRequired.js';
-import U from '../../Core/Utilities.js';
+
+import BaseSeries from '../../../Core/Series/Series.js';
+import RequiredIndicatorMixin from '../../../Mixins/IndicatorRequired.js';
+import U from '../../../Core/Utilities.js';
 const {
     correctFloat,
     extend,
     merge,
     error
 } = U;
-
-/**
- * Internal types
- * @private
- */
-declare global {
-    namespace Highcharts {
-        interface ChaikinIndicatorParamsOptions
-            extends EMAParamsOptions {
-            periods?: Array<number>;
-            volumeSeriesID?: string;
-        }
-
-        class ChaikinIndicatorPoint extends EMAPoint {
-            public series: ChaikinIndicator;
-        }
-
-        interface ChaikinIndicatorOptions extends EMAOptions {
-            params?: ChaikinIndicatorParamsOptions;
-        }
-    }
-}
 
 /* *
  *
@@ -88,8 +68,7 @@ class ChaikinIndicator extends EMAIndicator {
      * @requires     stock/indicators/chaikin
      * @optionparent plotOptions.chaikin
      */
-
-    public static defaultOptions: Highcharts.ChaikinIndicatorOptions = merge(EMAIndicator.defaultOptions, {
+    public static defaultOptions: ChaikinOptions = merge(EMAIndicator.defaultOptions, {
         /**
          * Paramters used in calculation of Chaikin Oscillator
          * series points.
@@ -111,18 +90,18 @@ class ChaikinIndicator extends EMAIndicator {
              */
             periods: [3, 10]
         }
-    } as Highcharts.ChaikinIndicatorOptions);
+    } as ChaikinOptions);
 
     /* *
      *
      *  Properties
      *
      * */
-    public data: Array<Highcharts.ChaikinIndicatorPoint> = void 0 as any;
+    public data: Array<ChaikinPoint> = void 0 as any;
 
-    public options: Highcharts.ChaikinIndicatorOptions = void 0 as any;
+    public options: ChaikinOptions = void 0 as any;
 
-    public points: Array<Highcharts.ChaikinIndicatorPoint> = void 0 as any;
+    public points: Array<ChaikinPoint> = void 0 as any;
 
     /* *
      *
@@ -146,7 +125,7 @@ class ChaikinIndicator extends EMAIndicator {
 
     getValues<TLinkedSeries extends LineSeries>(
         series: TLinkedSeries,
-        params: Highcharts.ChaikinIndicatorParamsOptions
+        params: ChaikinParamsOptions
     ): (IndicatorValuesObject<TLinkedSeries>|undefined) {
         var periods: Array<number> = (params.periods as any),
             period: number = (params.period as any),
@@ -231,7 +210,9 @@ class ChaikinIndicator extends EMAIndicator {
  *
  * */
 interface ChaikinIndicator {
-    pointClass: typeof Highcharts.ChaikinIndicatorPoint;
+    nameBase: string;
+    nameComponents: Array<string>;
+    pointClass: typeof ChaikinPoint;
 }
 
 extend(ChaikinIndicator.prototype, {
@@ -244,7 +225,7 @@ extend(ChaikinIndicator.prototype, {
  *  Registry
  *
  * */
-declare module '../../Core/Series/SeriesType' {
+declare module '../../../Core/Series/SeriesType' {
     interface SeriesTypeRegistry {
         chaikin: typeof ChaikinIndicator;
     }

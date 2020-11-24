@@ -19,10 +19,10 @@ var __extends = (this && this.__extends) || (function () {
         d.prototype = b === null ? Object.create(b) : (__.prototype = b.prototype, new __());
     };
 })();
-import BaseSeries from '../../Core/Series/Series.js';
 var _a = BaseSeries.seriesTypes, AD = _a.ad, EMAIndicator = _a.ema;
-import RequiredIndicatorMixin from '../../Mixins/IndicatorRequired.js';
-import U from '../../Core/Utilities.js';
+import BaseSeries from '../../../Core/Series/Series.js';
+import RequiredIndicatorMixin from '../../../Mixins/IndicatorRequired.js';
+import U from '../../../Core/Utilities.js';
 var correctFloat = U.correctFloat, extend = U.extend, merge = U.merge, error = U.error;
 /* *
  *
@@ -41,25 +41,6 @@ var correctFloat = U.correctFloat, extend = U.extend, merge = U.merge, error = U
 var ChaikinIndicator = /** @class */ (function (_super) {
     __extends(ChaikinIndicator, _super);
     function ChaikinIndicator() {
-        /**
-         * Chaikin Oscillator. This series requires the `linkedTo` option to
-         * be set and should be loaded after the `stock/indicators/indicators.js`
-         * and `stock/indicators/ema.js`.
-         *
-         * @sample {highstock} stock/indicators/chaikin
-         *         Chaikin Oscillator
-         *
-         * @extends      plotOptions.ema
-         * @since        7.0.0
-         * @product      highstock
-         * @excluding    allAreas, colorAxis, joinBy, keys, navigatorOptions,
-         *               pointInterval, pointIntervalUnit, pointPlacement,
-         *               pointRange, pointStart, showInNavigator, stacking
-         * @requires     stock/indicators/indicators
-         * @requires     stock/indicators/ema
-         * @requires     stock/indicators/chaikin
-         * @optionparent plotOptions.chaikin
-         */
         var _this = _super !== null && _super.apply(this, arguments) || this;
         /* *
          *
@@ -131,6 +112,25 @@ var ChaikinIndicator = /** @class */ (function (_super) {
             yData: yData
         };
     };
+    /**
+     * Chaikin Oscillator. This series requires the `linkedTo` option to
+     * be set and should be loaded after the `stock/indicators/indicators.js`
+     * and `stock/indicators/ema.js`.
+     *
+     * @sample {highstock} stock/indicators/chaikin
+     *         Chaikin Oscillator
+     *
+     * @extends      plotOptions.ema
+     * @since        7.0.0
+     * @product      highstock
+     * @excluding    allAreas, colorAxis, joinBy, keys, navigatorOptions,
+     *               pointInterval, pointIntervalUnit, pointPlacement,
+     *               pointRange, pointStart, showInNavigator, stacking
+     * @requires     stock/indicators/indicators
+     * @requires     stock/indicators/ema
+     * @requires     stock/indicators/chaikin
+     * @optionparent plotOptions.chaikin
+     */
     ChaikinIndicator.defaultOptions = merge(EMAIndicator.defaultOptions, {
         /**
          * Paramters used in calculation of Chaikin Oscillator
