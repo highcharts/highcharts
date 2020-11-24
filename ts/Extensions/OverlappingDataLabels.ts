@@ -83,33 +83,35 @@ addEvent(Chart, 'render', function collectAndHide(): void {
             series.visible &&
             !((dlOptions as any).enabled === false && !series._hasPointLabels)
         ) { // #3866
-            ((series.nodes || series.points) as any).forEach(function (
-                point: (Highcharts.NodesPoint|Point)
-            ): void {
-                if (point.visible) {
-                    var dataLabels = (
-                        isArray(point.dataLabels) ?
-                            point.dataLabels :
-                            (point.dataLabel ? [point.dataLabel] : [])
-                    );
+            const push = (points: Point[]): void =>
+                points.forEach((point: Point): void => {
+                    if (point.visible) {
+                        var dataLabels = (
+                            isArray(point.dataLabels) ?
+                                point.dataLabels :
+                                (point.dataLabel ? [point.dataLabel] : [])
+                        );
 
-                    dataLabels.forEach(function (
-                        label: SVGElement
-                    ): void {
-                        var options = label.options;
+                        dataLabels.forEach(function (
+                            label: SVGElement
+                        ): void {
+                            var options = label.options;
 
-                        label.labelrank = pick(
-                            options.labelrank,
-                            (point as any).labelrank,
-                            point.shapeArgs && point.shapeArgs.height
-                        ); // #4118
+                            label.labelrank = pick(
+                                options.labelrank,
+                                (point as any).labelrank,
+                                point.shapeArgs && point.shapeArgs.height
+                            ); // #4118
 
-                        if (!options.allowOverlap) {
-                            labels.push(label);
-                        }
-                    });
-                }
-            });
+                            if (!options.allowOverlap) {
+                                labels.push(label);
+                            }
+                        });
+                    }
+                });
+
+            push(series.nodes || []);
+            push(series.points);
         }
     });
 
