@@ -29,19 +29,6 @@ const {
     merge
 } = U;
 
-
-/**
- * Internal types
- * @private
- */
-declare global {
-    namespace Highcharts {
-        interface DEMAIndicatorLinkedParentSeries extends LineSeries {
-            EMApercent?: number;
-        }
-    }
-}
-
 /**
  * The DEMA series Type
  *
@@ -72,9 +59,7 @@ class DEMAIndicator extends EMAIndicator {
      * @requires     stock/indicators/dema
      * @optionparent plotOptions.dema
      */
-    public static defaultOptions: DEMAOptions = merge(EMAIndicator.defaultOptions, {
-
-    } as DEMAOptions)
+    public static defaultOptions: DEMAOptions = merge(EMAIndicator.defaultOptions)
 
     public data: Array<DEMAPoint> = void 0 as any;
     public options: DEMAOptions = void 0 as any;
@@ -117,7 +102,7 @@ class DEMAIndicator extends EMAIndicator {
     }
 
     public getValues<
-        TLinkedSeries extends Highcharts.DEMAIndicatorLinkedParentSeries
+        TLinkedSeries extends LineSeries
     >(
         this: DEMAIndicator,
         series: TLinkedSeries,
@@ -221,6 +206,11 @@ interface DEMAIndicator {
     pointClass: typeof DEMAPoint;
 }
 
+declare module '../../../Core/Series/SeriesLike' {
+    interface SeriesLike {
+        EMApercent?: number;
+    }
+}
 declare module '../../../Core/Series/SeriesType' {
     interface SeriesTypeRegistry {
         dema: typeof DEMAIndicator;

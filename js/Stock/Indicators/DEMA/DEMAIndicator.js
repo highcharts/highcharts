@@ -130,7 +130,7 @@ var DEMAIndicator = /** @class */ (function (_super) {
      * @requires     stock/indicators/dema
      * @optionparent plotOptions.dema
      */
-    DEMAIndicator.defaultOptions = merge(EMAIndicator.defaultOptions, {});
+    DEMAIndicator.defaultOptions = merge(EMAIndicator.defaultOptions);
     return DEMAIndicator;
 }(EMAIndicator));
 BaseSeries.registerSeriesType('dema', DEMAIndicator);
