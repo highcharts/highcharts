@@ -12,7 +12,6 @@ import type CSSObject from '../../Core/Renderer/CSSObject';
 import type IndicatorValuesObject from './IndicatorValuesObject';
 import type LineSeries from '../../Series/Line/LineSeries';
 import type { PointMarkerOptions } from '../../Core/Series/PointOptions';
-import type SMAIndicator from './SMA/SMAIndicator';
 import type {
     SMAOptions,
     SMAParamsOptions
@@ -20,12 +19,17 @@ import type {
 import type SMAPoint from './SMA/SMAPoint';
 import BaseSeries from '../../Core/Series/Series.js';
 const {
-    seriesTypes
+    seriesTypes: {
+        sma: SMAIndicator,
+        ema: EMAIndicator,
+        atr: ATRIndicator
+    }
 } = BaseSeries;
 import MultipleLinesMixin from '../../Mixins/MultipleLines.js';
 import U from '../../Core/Utilities.js';
 const {
     correctFloat,
+    extend,
     merge
 } = U;
 
@@ -80,20 +84,6 @@ declare global {
     }
 }
 
-declare module '../../Core/Series/SeriesType' {
-    interface SeriesTypeRegistry {
-        keltnerchannels: typeof Highcharts.KeltnerChannelsIndicator;
-    }
-}
-
-// im port './ATRIndicator.js';
-// im port './EMAIndicator.js';
-// im port './SMAIndicator.js';
-
-var SMA = seriesTypes.sma,
-    EMA = seriesTypes.ema,
-    ATR = seriesTypes.atr;
-
 /**
  * The Keltner Channels series type.
  *
@@ -103,9 +93,7 @@ var SMA = seriesTypes.sma,
  *
  * @augments Highcharts.Series
  */
-BaseSeries.seriesType<typeof Highcharts.KeltnerChannelsIndicator>(
-    'keltnerchannels',
-    'sma',
+class KeltnerChannelsIndicator extends SMAIndicator {
     /**
      * Keltner Channels. This series requires the `linkedTo` option to be set
      * and should be loaded after the `stock/indicators/indicators.js`,
@@ -125,7 +113,7 @@ BaseSeries.seriesType<typeof Highcharts.KeltnerChannelsIndicator>(
      * @requires     stock/indicators/keltner-channels
      * @optionparent plotOptions.keltnerchannels
      */
-    {
+    public static defaultOptions: Highcharts.KeltnerChannelsIndicatorOptions = merge(SMAIndicator.defaultOptions, {
         params: {
             period: 20,
             /**
@@ -179,102 +167,141 @@ BaseSeries.seriesType<typeof Highcharts.KeltnerChannelsIndicator>(
             approximation: 'averages'
         },
         lineWidth: 1
-    },
-    /**
-     * @lends Highcharts.Series#
-     */
-    merge(MultipleLinesMixin, {
-        pointArrayMap: ['top', 'middle', 'bottom'],
-        pointValKey: 'middle',
-        nameBase: 'Keltner Channels',
-        nameComponents: ['period', 'periodATR', 'multiplierATR'],
-        linesApiNames: ['topLine', 'bottomLine'],
-        requiredIndicators: ['ema', 'atr'],
-        init: function (this: Highcharts.KeltnerChannelsIndicator): void {
-            SMA.prototype.init.apply(this, arguments);
-            // Set default color for lines:
-            this.options = merge({
-                topLine: {
-                    styles: {
-                        lineColor: this.color
-                    }
-                },
-                bottomLine: {
-                    styles: {
-                        lineColor: this.color
-                    }
+    } as Highcharts.KeltnerChannelsIndicatorOptions)
+}
+
+interface KeltnerChannelsIndicator {
+    data: Array<Highcharts.KeltnerChannelsIndicatorPoint>;
+    linesApiNames: Highcharts.MultipleLinesMixin['linesApiNames'];
+    nameBase: string;
+    nameComponents: Array<string>;
+    options: Highcharts.KeltnerChannelsIndicatorOptions;
+    pointArrayMap: Highcharts.MultipleLinesMixin['pointArrayMap'];
+    pointClass: typeof Highcharts.KeltnerChannelsIndicatorPoint;
+    points: Array<Highcharts.KeltnerChannelsIndicatorPoint>;
+    pointValKey: Highcharts.MultipleLinesMixin['pointValKey'];
+    requiredIndicators: Array<string>;
+    getTranslatedLinesNames: Highcharts.MultipleLinesMixin[
+        'getTranslatedLinesNames'
+    ];
+    getValues<TLinkedSeries extends LineSeries>(
+        series: TLinkedSeries,
+        params: Highcharts.KeltnerChannelsIndicatorParamsOptions
+    ): (IndicatorValuesObject<TLinkedSeries>|undefined);
+}
+
+extend(KeltnerChannelsIndicator.prototype, {
+    drawGraph: MultipleLinesMixin.drawGraph,
+    getTranslatedLinesNames: MultipleLinesMixin.getTranslatedLinesNames,
+    translate: MultipleLinesMixin.translate,
+    toYData: MultipleLinesMixin.toYData,
+    pointArrayMap: ['top', 'middle', 'bottom'],
+    pointValKey: 'middle',
+    nameBase: 'Keltner Channels',
+    nameComponents: ['period', 'periodATR', 'multiplierATR'],
+    linesApiNames: ['topLine', 'bottomLine'],
+    requiredIndicators: ['ema', 'atr'],
+    init: function (this: Highcharts.KeltnerChannelsIndicator): void {
+        BaseSeries.seriesTypes.sma.prototype.init.apply(this, arguments);
+        // Set default color for lines:
+        this.options = merge({
+            topLine: {
+                styles: {
+                    lineColor: this.color
                 }
-            }, this.options);
-        },
-        getValues: function<TLinkedSeries extends LineSeries> (
-            series: TLinkedSeries,
-            params: Highcharts.KeltnerChannelsIndicatorParamsOptions
-        ): (IndicatorValuesObject<TLinkedSeries>|undefined) {
-            var period = (params.period as any),
-                periodATR: number = (params.periodATR as any),
-                multiplierATR: number = (params.multiplierATR as any),
-                index: number = (params.index as any),
-                yVal: Array<Array<number>> = series.yData as any,
-                yValLen: number = yVal ? yVal.length : 0,
-                // Keltner Channels array structure:
-                // 0-date, 1-top line, 2-middle line, 3-bottom line
-                KC: Array<Array<number>> = [],
-                // middle line, top line and bottom lineI
-                ML: number,
-                TL: number,
-                BL: number,
-                date: number,
-                seriesEMA: (
-                    IndicatorValuesObject<TLinkedSeries>|
-                    undefined
-                ) = EMA.prototype.getValues(series,
-                    {
-                        period: period,
-                        index: index
-                    }),
-                seriesATR: (
-                    IndicatorValuesObject<TLinkedSeries>|undefined
-                ) =
-                    ATR.prototype.getValues(series,
-                        {
-                            period: periodATR
-                        }),
-                pointEMA: Array<number>,
-                pointATR: Array<number>,
-                xData: Array<number> = [],
-                yData: Array<Array<number>> = [],
-                i: number;
-
-            if (yValLen < period) {
-                return;
+            },
+            bottomLine: {
+                styles: {
+                    lineColor: this.color
+                }
             }
+        }, this.options);
+    },
+    getValues: function<TLinkedSeries extends LineSeries> (
+        series: TLinkedSeries,
+        params: Highcharts.KeltnerChannelsIndicatorParamsOptions
+    ): (IndicatorValuesObject<TLinkedSeries>|undefined) {
+        var period = (params.period as any),
+            periodATR: number = (params.periodATR as any),
+            multiplierATR: number = (params.multiplierATR as any),
+            index: number = (params.index as any),
+            yVal: Array<Array<number>> = series.yData as any,
+            yValLen: number = yVal ? yVal.length : 0,
+            // Keltner Channels array structure:
+            // 0-date, 1-top line, 2-middle line, 3-bottom line
+            KC: Array<Array<number>> = [],
+            // middle line, top line and bottom lineI
+            ML: number,
+            TL: number,
+            BL: number,
+            date: number,
+            seriesEMA: (
+                IndicatorValuesObject<TLinkedSeries>|
+                undefined
+            ) = BaseSeries.seriesTypes.ema.prototype.getValues(series,
+                {
+                    period: period,
+                    index: index
+                }),
+            seriesATR: (
+                IndicatorValuesObject<TLinkedSeries>|undefined
+            ) =
+            BaseSeries.seriesTypes.atr.prototype.getValues(series,
+                {
+                    period: periodATR
+                }),
+            pointEMA: Array<number>,
+            pointATR: Array<number>,
+            xData: Array<number> = [],
+            yData: Array<Array<number>> = [],
+            i: number;
 
-            for (i = period; i <= yValLen; i++) {
-                pointEMA = (seriesEMA as any).values[i - period];
-                pointATR = (seriesATR as any).values[i - periodATR];
-                date = pointEMA[0];
-                TL = correctFloat(pointEMA[1] + (multiplierATR * pointATR[1]));
-                BL = correctFloat(pointEMA[1] - (multiplierATR * pointATR[1]));
-                ML = pointEMA[1];
-                KC.push([date, TL, ML, BL]);
-                xData.push(date);
-                yData.push([TL, ML, BL]);
-            }
-
-            return {
-                values: KC,
-                xData: xData,
-                yData: yData
-            } as IndicatorValuesObject<TLinkedSeries>;
+        if (yValLen < period) {
+            return;
         }
-    })
-);
+
+        for (i = period; i <= yValLen; i++) {
+            pointEMA = (seriesEMA as any).values[i - period];
+            pointATR = (seriesATR as any).values[i - periodATR];
+            date = pointEMA[0];
+            TL = correctFloat(pointEMA[1] + (multiplierATR * pointATR[1]));
+            BL = correctFloat(pointEMA[1] - (multiplierATR * pointATR[1]));
+            ML = pointEMA[1];
+            KC.push([date, TL, ML, BL]);
+            xData.push(date);
+            yData.push([TL, ML, BL]);
+        }
+
+        return {
+            values: KC,
+            xData: xData,
+            yData: yData
+        } as IndicatorValuesObject<TLinkedSeries>;
+    }
+});
+
+
+declare module '../../Core/Series/SeriesType' {
+    interface SeriesTypeRegistry {
+        keltnerchannels: typeof Highcharts.KeltnerChannelsIndicator;
+    }
+}
+
+BaseSeries.registerSeriesType('keltnerchannels', KeltnerChannelsIndicator);
+
+/* *
+ *
+ *  Default Export
+ *
+ * */
+
+export default KeltnerChannelsIndicator;
 
 /**
  * A Keltner Channels indicator. If the [type](#series.keltnerchannels.type)
  * option is not specified, it is inherited from[chart.type](#chart.type).
  *
- * @extends      series,plotOptions.keltnerchannels
+ * @extends      series,plotOptions.sma
  * @since        7.0.0
  * @product      highstock
  * @excluding    allAreas, colorAxis, compare, compareBase, dataParser, dataURL,
