@@ -24,7 +24,7 @@ import BaseSeries from '../../../Core/Series/Series.js';
 import RequiredIndicatorMixin from '../../../Mixins/IndicatorRequired.js';
 import U from '../../../Core/Utilities.js';
 var extend = U.extend, merge = U.merge, error = U.error;
-var EMA = BaseSeries.seriesTypes.ema;
+//const EMA = BaseSeries.seriesTypes.ema;
 /* *
  *
  *  Class
@@ -72,11 +72,11 @@ var APOIndicator = /** @class */ (function (_super) {
                 'should be lower than the second one."');
             return;
         }
-        SPE = EMA.prototype.getValues.call(this, series, {
+        SPE = EMAIndicator.prototype.getValues.call(this, series, {
             index: index,
             period: periods[0]
         });
-        LPE = EMA.prototype.getValues.call(this, series, {
+        LPE = EMAIndicator.prototype.getValues.call(this, series, {
             index: index,
             period: periods[1]
         });
@@ -100,7 +100,7 @@ var APOIndicator = /** @class */ (function (_super) {
     };
     APOIndicator.prototype.init = function () {
         var args = arguments, ctx = this;
-        RequiredIndicatorMixin.isParentLoaded(EMA, 'ema', ctx.type, function (indicator) {
+        RequiredIndicatorMixin.isParentLoaded(EMAIndicator, 'ema', ctx.type, function (indicator) {
             indicator.prototype.init.apply(ctx, args);
             return;
         });
