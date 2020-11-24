@@ -29,8 +29,6 @@ const {
     error
 } = U;
 
-const EMA = BaseSeries.seriesTypes.ema;
-
 /* *
  *
  *  Class
@@ -133,12 +131,12 @@ class APOIndicator extends EMAIndicator {
             return;
         }
 
-        SPE = EMA.prototype.getValues.call(this, series, {
+        SPE = EMAIndicator.prototype.getValues.call(this, series, {
             index: index,
             period: periods[0]
         }) as IndicatorValuesObject<TLinkedSeries>;
 
-        LPE = EMA.prototype.getValues.call(this, series, {
+        LPE = EMAIndicator.prototype.getValues.call(this, series, {
             index: index,
             period: periods[1]
         }) as IndicatorValuesObject<TLinkedSeries>;
@@ -173,7 +171,7 @@ class APOIndicator extends EMAIndicator {
             ctx = this;
 
         RequiredIndicatorMixin.isParentLoaded(
-            (EMA as any),
+            (EMAIndicator as any),
             'ema',
             ctx.type,
             function (indicator: Highcharts.Indicator): undefined {
