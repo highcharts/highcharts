@@ -6,10 +6,23 @@
  *
  * */
 'use strict';
-import BaseSeries from '../../Core/Series/Series.js';
-import U from '../../Core/Utilities.js';
-var isArray = U.isArray;
-// im port './SMAIndicator.js';
+var __extends = (this && this.__extends) || (function () {
+    var extendStatics = function (d, b) {
+        extendStatics = Object.setPrototypeOf ||
+            ({ __proto__: [] } instanceof Array && function (d, b) { d.__proto__ = b; }) ||
+            function (d, b) { for (var p in b) if (b.hasOwnProperty(p)) d[p] = b[p]; };
+        return extendStatics(d, b);
+    };
+    return function (d, b) {
+        extendStatics(d, b);
+        function __() { this.constructor = d; }
+        d.prototype = b === null ? Object.create(b) : (__.prototype = b.prototype, new __());
+    };
+})();
+import BaseSeries from '../../../Core/Series/Series.js';
+var SMAIndicator = BaseSeries.seriesTypes.sma;
+import U from '../../../Core/Utilities.js';
+var isArray = U.isArray, merge = U.merge;
 /* eslint-disable require-jsdoc */
 // Utils:
 function toFixed(a, n) {
@@ -25,39 +38,26 @@ function toFixed(a, n) {
  *
  * @augments Highcharts.Series
  */
-BaseSeries.seriesType('rsi', 'sma', 
-/**
- * Relative strength index (RSI) technical indicator. This series
- * requires the `linkedTo` option to be set and should be loaded after
- * the `stock/indicators/indicators.js` file.
- *
- * @sample stock/indicators/rsi
- *         RSI indicator
- *
- * @extends      plotOptions.sma
- * @since        6.0.0
- * @product      highstock
- * @requires     stock/indicators/indicators
- * @requires     stock/indicators/rsi
- * @optionparent plotOptions.rsi
- */
-{
-    /**
-     * @excluding index
-     */
-    params: {
-        period: 14,
-        /**
-         * Number of maximum decimals that are used in RSI calculations.
-         */
-        decimals: 4
+var RSIIndicator = /** @class */ (function (_super) {
+    __extends(RSIIndicator, _super);
+    function RSIIndicator() {
+        var _this = _super !== null && _super.apply(this, arguments) || this;
+        /* *
+         *
+         *  Properties
+         *
+         * */
+        _this.data = void 0;
+        _this.points = void 0;
+        _this.options = void 0;
+        return _this;
     }
-}, 
-/**
- * @lends Highcharts.Series#
- */
-{
-    getValues: function (series, params) {
+    /* *
+     *
+     *  Functions
+     *
+     * */
+    RSIIndicator.prototype.getValues = function (series, params) {
         var period = params.period, xVal = series.xData, yVal = series.yData, yValLen = yVal ? yVal.length : 0, decimals = params.decimals, 
         // RSI starts calculations from the second point
         // Cause we need to calculate change between two points
@@ -116,8 +116,37 @@ BaseSeries.seriesType('rsi', 'sma',
             xData: xData,
             yData: yData
         };
-    }
-});
+    };
+    /**
+     * Relative strength index (RSI) technical indicator. This series
+     * requires the `linkedTo` option to be set and should be loaded after
+     * the `stock/indicators/indicators.js` file.
+     *
+     * @sample stock/indicators/rsi
+     *         RSI indicator
+     *
+     * @extends      plotOptions.sma
+     * @since        6.0.0
+     * @product      highstock
+     * @requires     stock/indicators/indicators
+     * @requires     stock/indicators/rsi
+     * @optionparent plotOptions.rsi
+     */
+    RSIIndicator.defaultOptions = merge(SMAIndicator.defaultOptions, {
+        params: {
+            period: 14,
+            decimals: 4
+        }
+    });
+    return RSIIndicator;
+}(SMAIndicator));
+BaseSeries.registerSeriesType('rsi', RSIIndicator);
+/* *
+ *
+ *  Default Export
+ *
+ * */
+export default RSIIndicator;
 /**
  * A `RSI` series. If the [type](#series.rsi.type) option is not
  * specified, it is inherited from [chart.type](#chart.type).
