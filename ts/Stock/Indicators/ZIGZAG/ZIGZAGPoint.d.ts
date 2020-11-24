@@ -12,7 +12,7 @@
  *
  * */
 
-import type ZIGZAGIndicator from './ZIGZAGIndicator';
+import type ZIGZAGIndicator from './ZigzagIndicator';
 import type SMAPoint from '../SMA/SMAPoint';
 
 /* *
