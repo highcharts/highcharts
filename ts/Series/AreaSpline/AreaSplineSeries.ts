@@ -103,7 +103,6 @@ class AreaSplineSeries extends SplineSeries {
     public data: Array<AreaSplinePoint> = void 0 as any;
     public points: Array<AreaSplinePoint> = void 0 as any;
     public options: AreaSplineSeriesOptions = void 0 as any;
-    public getStackPoints = areaProto.getStackPoints;
 }
 
 /* *
@@ -117,8 +116,10 @@ interface AreaSplineSeries extends SplineSeries {
     drawGraph: typeof AreaSeries.prototype.drawGraph;
     drawLegendSymbol: typeof LegendSymbolMixin.drawRectangle;
 }
+
 extend(AreaSplineSeries.prototype, {
     getGraphPath: areaProto.getGraphPath,
+    getStackPoints: areaProto.getStackPoints,
     drawGraph: areaProto.drawGraph,
     drawLegendSymbol: LegendSymbolMixin.drawRectangle
 });
