@@ -59,7 +59,6 @@ var AreaSplineSeries = /** @class */ (function (_super) {
         _this.data = void 0;
         _this.points = void 0;
         _this.options = void 0;
-        _this.getStackPoints = areaProto.getStackPoints;
         return _this;
     }
     /**
@@ -101,6 +100,7 @@ var AreaSplineSeries = /** @class */ (function (_super) {
 }(SplineSeries));
 extend(AreaSplineSeries.prototype, {
     getGraphPath: areaProto.getGraphPath,
+    getStackPoints: areaProto.getStackPoints,
     drawGraph: areaProto.drawGraph,
     drawLegendSymbol: LegendSymbolMixin.drawRectangle
 });
