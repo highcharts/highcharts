@@ -20,7 +20,7 @@ var isNumber = U.isNumber, merge = U.merge, pick = U.pick, splat = U.splat;
 import '../Extensions/CurrentDateIndication.js';
 import '../Extensions/StaticScale.js';
 import '../Gantt/Pathfinder.js';
-import './XRangeSeries.js';
+import XRangeSeries from './XRangeSeries.js';
 var parent = seriesTypes.xrange;
 /**
  * @private
