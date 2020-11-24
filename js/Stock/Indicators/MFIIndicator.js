@@ -10,10 +10,23 @@
  *
  * */
 'use strict';
+var __extends = (this && this.__extends) || (function () {
+    var extendStatics = function (d, b) {
+        extendStatics = Object.setPrototypeOf ||
+            ({ __proto__: [] } instanceof Array && function (d, b) { d.__proto__ = b; }) ||
+            function (d, b) { for (var p in b) if (b.hasOwnProperty(p)) d[p] = b[p]; };
+        return extendStatics(d, b);
+    };
+    return function (d, b) {
+        extendStatics(d, b);
+        function __() { this.constructor = d; }
+        d.prototype = b === null ? Object.create(b) : (__.prototype = b.prototype, new __());
+    };
+})();
+var SMAIndicator = BaseSeries.seriesTypes.sma;
 import BaseSeries from '../../Core/Series/Series.js';
 import U from '../../Core/Utilities.js';
-var error = U.error, isArray = U.isArray;
-// im port './SMAIndicator.js';
+var extend = U.extend, merge = U.merge, error = U.error, isArray = U.isArray;
 /* eslint-disable require-jsdoc */
 // Utils:
 function sumArray(array) {
@@ -31,6 +44,11 @@ function calculateRawMoneyFlow(typicalPrice, volume) {
     return typicalPrice * volume;
 }
 /* eslint-enable require-jsdoc */
+/* *
+ *
+ *  Class
+ *
+ * */
 /**
  * The MFI series type.
  *
@@ -40,45 +58,26 @@ function calculateRawMoneyFlow(typicalPrice, volume) {
  *
  * @augments Highcharts.Series
  */
-BaseSeries.seriesType('mfi', 'sma', 
-/**
- * Money Flow Index. This series requires `linkedTo` option to be set and
- * should be loaded after the `stock/indicators/indicators.js` file.
- *
- * @sample stock/indicators/mfi
- *         Money Flow Index Indicator
- *
- * @extends      plotOptions.sma
- * @since        6.0.0
- * @product      highstock
- * @requires     stock/indicators/indicators
- * @requires     stock/indicators/mfi
- * @optionparent plotOptions.mfi
- */
-{
-    /**
-     * @excluding index
-     */
-    params: {
-        period: 14,
-        /**
-         * The id of volume series which is mandatory.
-         * For example using OHLC data, volumeSeriesID='volume' means
-         * the indicator will be calculated using OHLC and volume values.
-         */
-        volumeSeriesID: 'volume',
-        /**
-         * Number of maximum decimals that are used in MFI calculations.
-         */
-        decimals: 4
+var MFIIndicator = /** @class */ (function (_super) {
+    __extends(MFIIndicator, _super);
+    function MFIIndicator() {
+        var _this = _super !== null && _super.apply(this, arguments) || this;
+        /* *
+        *
+        *  Properties
+        *
+        * */
+        _this.data = void 0;
+        _this.options = void 0;
+        _this.points = void 0;
+        return _this;
     }
-}, 
-/**
- * @lends Highcharts.Series#
- */
-{
-    nameBase: 'Money Flow Index',
-    getValues: function (series, params) {
+    /* *
+    *
+    *  Functions
+    *
+    * */
+    MFIIndicator.prototype.getValues = function (series, params) {
         var period = params.period, xVal = series.xData, yVal = series.yData, yValLen = yVal ? yVal.length : 0, decimals = params.decimals, 
         // MFI starts calculations from the second point
         // Cause we need to calculate change between two points
@@ -139,8 +138,51 @@ BaseSeries.seriesType('mfi', 'sma',
             xData: xData,
             yData: yData
         };
-    }
+    };
+    /**
+     * Money Flow Index. This series requires `linkedTo` option to be set and
+     * should be loaded after the `stock/indicators/indicators.js` file.
+     *
+     * @sample stock/indicators/mfi
+     *         Money Flow Index Indicator
+     *
+     * @extends      plotOptions.sma
+     * @since        6.0.0
+     * @product      highstock
+     * @requires     stock/indicators/indicators
+     * @requires     stock/indicators/mfi
+     * @optionparent plotOptions.mfi
+     */
+    MFIIndicator.defaultOptions = merge(SMAIndicator.defaultOptions, {
+        /**
+         * @excluding index
+         */
+        params: {
+            period: 14,
+            /**
+             * The id of volume series which is mandatory.
+             * For example using OHLC data, volumeSeriesID='volume' means
+             * the indicator will be calculated using OHLC and volume values.
+             */
+            volumeSeriesID: 'volume',
+            /**
+             * Number of maximum decimals that are used in MFI calculations.
+             */
+            decimals: 4
+        }
+    });
+    return MFIIndicator;
+}(SMAIndicator));
+extend(MFIIndicator.prototype, {
+    nameBase: 'Money Flow Index'
 });
+BaseSeries.registerSeriesType('mfi', MFIIndicator);
+/* *
+ *
+ *  Default Export
+ *
+ * */
+export default MFIIndicator;
 /**
  * A `MFI` series. If the [type](#series.mfi.type) option is not specified, it
  * is inherited from [chart.type](#chart.type).
