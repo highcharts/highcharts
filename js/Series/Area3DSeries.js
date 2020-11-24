@@ -39,9 +39,11 @@ wrap(seriesTypes.area.prototype, 'getGraphPath', function (proceed) {
         bottomPoints = perspective(bottomPoints, series.chart, true).map(function (point) {
             return { plotX: point.x, plotY: point.y, plotZ: point.z };
         });
-        if (series.group && options3d && options3d.depth) {
+        if (series.group && options3d && options3d.depth && options3d.beta) {
             series.group.attr({
-                zIndex: Math.max(1, options3d.depth - Math.round(series.data[0].plotZ || 0))
+                zIndex: Math.max(1, (options3d.beta > 270 || options3d.beta < 90) ?
+                    options3d.depth - Math.round(series.zPadding || 0) :
+                    Math.round(series.zPadding || 0))
             });
         }
     }
