@@ -172,10 +172,11 @@ extend(KeltnerChannelsIndicator.prototype, {
     nameBase: 'Keltner Channels',
     nameComponents: ['period', 'periodATR', 'multiplierATR'],
     linesApiNames: ['topLine', 'bottomLine'],
-    requiredIndicators: ['ema', 'atr'], drawGraph: MultipleLinesMixin.drawGraph,
+    requiredIndicators: ['ema', 'atr'],
+    drawGraph: MultipleLinesMixin.drawGraph,
     getTranslatedLinesNames: MultipleLinesMixin.getTranslatedLinesNames,
     translate: MultipleLinesMixin.translate,
-    toYData: MultipleLinesMixin.toYData,
+    toYData: MultipleLinesMixin.toYData
 });
 BaseSeries.registerSeriesType('keltnerchannels', KeltnerChannelsIndicator);
 /* *
