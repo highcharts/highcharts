@@ -35,16 +35,11 @@ const {
  */
 declare global {
     namespace Highcharts {
-
         interface EMAIndicatorLevelsObject {
             level1: number;
             level2: number;
             level3: number;
             prevLevel3: number;
-        }
-
-        interface TEMAIndicatorLinkedParentSeries extends LineSeries {
-            EMApercent?: number;
         }
     }
 }
@@ -80,9 +75,7 @@ class TEMAIndicator extends EMAIndicator {
      * @requires     stock/indicators/tema
      * @optionparent plotOptions.tema
      */
-    public static defaultOptions: TEMAOptions = merge(EMAIndicator.defaultOptions, {
-
-    } as TEMAOptions)
+    public static defaultOptions: TEMAOptions = merge(EMAIndicator.defaultOptions)
 
     public data: Array<TEMAPoint> = void 0 as any;
     public options: TEMAOptions = void 0 as any;
@@ -141,7 +134,7 @@ class TEMAIndicator extends EMAIndicator {
     }
 
     public getValues<
-        TLinkedSeries extends Highcharts.TEMAIndicatorLinkedParentSeries
+        TLinkedSeries extends LineSeries
     >(
         this: TEMAIndicator,
         series: TLinkedSeries,
@@ -283,7 +276,11 @@ class TEMAIndicator extends EMAIndicator {
 interface TEMAIndicator {
     pointClass: typeof TEMAPoint;
 }
-
+declare module '../../../Core/Series/SeriesLike' {
+    interface SeriesLike {
+        EMApercent?: number;
+    }
+}
 declare module '../../../Core/Series/SeriesType' {
     interface SeriesTypeRegistry {
         tema: typeof TEMAIndicator;

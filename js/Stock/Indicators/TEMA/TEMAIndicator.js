@@ -164,7 +164,7 @@ var TEMAIndicator = /** @class */ (function (_super) {
      * @requires     stock/indicators/tema
      * @optionparent plotOptions.tema
      */
-    TEMAIndicator.defaultOptions = merge(EMAIndicator.defaultOptions, {});
+    TEMAIndicator.defaultOptions = merge(EMAIndicator.defaultOptions);
     return TEMAIndicator;
 }(EMAIndicator));
 BaseSeries.registerSeriesType('tema', TEMAIndicator);
