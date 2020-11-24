@@ -18,12 +18,8 @@
  *
  * */
 
-import type SankeyPointOptions from '../Sankey/SankeyPointOptions';
+import type DependencyWheelSeriesOptions from './DependencyWheelSeriesOptions';
 import type SankeySeriesType from '../Sankey/SankeySeries';
-import type SankeySeriesOptions from '../Sankey/SankeySeriesOptions';
-import type { SeriesStatesOptions } from '../../Core/Series/SeriesOptions';
-import type SVGAttributes from '../../Core/Renderer/SVG/SVGAttributes';
-import type SVGElement from '../../Core/Renderer/SVG/SVGElement';
 import A from '../../Core/Animation/AnimationUtilities.js';
 const { animObject } = A;
 import BaseSeries from '../../Core/Series/Series.js';
@@ -33,29 +29,20 @@ const {
         sankey: SankeySeries
     }
 } = BaseSeries;
+import DependencyWheelPoint from './DependencyWheelPoint.js';
 import H from '../../Core/Globals.js';
-import NodesMixin from '../../Mixins/Nodes.js';
+const { deg2rad } = H;
 import U from '../../Core/Utilities.js';
 const {
     extend,
     merge
 } = U;
 
-/**
- * Internal types
- * @private
- */
-declare global {
-    namespace Highcharts {
-        interface DependencyWheelPointOptions extends SankeyPointOptions {
-        }
-        interface DependencyWheelSeriesOptions extends SankeySeriesOptions {
-            center?: Array<(number|string|null)>;
-            startAngle?: number;
-            states?: SeriesStatesOptions<DependencyWheelSeries>;
-        }
-    }
-}
+/* *
+ *
+ *  Class
+ *
+ * */
 
 /**
  * @private
@@ -86,7 +73,7 @@ class DependencyWheelSeries extends SankeySeries {
      * @requires     modules/dependency-wheel
      * @optionparent plotOptions.dependencywheel
      */
-    public static defaultOptions: Highcharts.DependencyWheelSeriesOptions = merge(SankeySeries.defaultOptions, {
+    public static defaultOptions: DependencyWheelSeriesOptions = merge(SankeySeries.defaultOptions, {
         /**
          * The center of the wheel relative to the plot area. Can be
          * percentages or pixel values. The default behaviour is to
@@ -103,7 +90,7 @@ class DependencyWheelSeries extends SankeySeries {
          * The start angle of the dependency wheel, in degrees where 0 is up.
          */
         startAngle: 0
-    } as Highcharts.DependencyWheelSeriesOptions);
+    } as DependencyWheelSeriesOptions);
 
     /* *
      *
@@ -113,7 +100,7 @@ class DependencyWheelSeries extends SankeySeries {
 
     public data: Array<DependencyWheelPoint> = void 0 as any;
 
-    public options: Highcharts.DependencyWheelSeriesOptions = void 0 as any;
+    public options: DependencyWheelSeriesOptions = void 0 as any;
 
     public nodeColumns: Array<DependencyWheelSeries.ColumnArray> = void 0 as any;
 
@@ -270,7 +257,7 @@ class DependencyWheelSeries extends SankeySeries {
             factor = 2 * Math.PI /
                 (this.chart.plotHeight + this.getNodePadding()),
             center = this.getCenter(),
-            startAngle = ((options.startAngle as any) - 90) * H.deg2rad;
+            startAngle = ((options.startAngle as any) - 90) * deg2rad;
 
         SankeySeries.prototype.translate.call(this);
 
@@ -313,7 +300,7 @@ class DependencyWheelSeries extends SankeySeries {
                         var corners = point.linkBase.map(function (
                             top: number,
                             i: number
-                        ): Highcharts.Dictionary<number> {
+                        ): Record<string, number> {
                             var angle = factor * top,
                                 x = Math.cos(startAngle + angle) * (innerR + 1),
                                 y = Math.sin(startAngle + angle) * (innerR + 1),
@@ -411,105 +398,6 @@ namespace DependencyWheelSeries {
         // nothing here yets
     }
 }
-
-/* *
- *
- *  Class
- *
- * */
-
-class DependencyWheelPoint extends SankeySeries.prototype.pointClass {
-
-    /* *
-     *
-     *  Properties
-     *
-     * */
-
-    public angle: number = void 0 as any;
-
-    public fromNode: DependencyWheelPoint = void 0 as any;
-
-    public index: number = void 0 as any;
-
-    public linksFrom: Array<DependencyWheelPoint> = void 0 as any;
-
-    public linksTo: Array<DependencyWheelPoint> = void 0 as any;
-
-    public options: Highcharts.DependencyWheelPointOptions = void 0 as any;
-
-    public series: DependencyWheelSeries = void 0 as any;
-
-    public shapeArgs: SVGAttributes = void 0 as any;
-
-    public toNode: DependencyWheelPoint = void 0 as any;
-
-    /* *
-     *
-     *  Functions
-     *
-     * */
-
-    /* eslint-disable valid-jsdoc */
-
-    /**
-     * Return a text path that the data label uses.
-     * @private
-     */
-    public getDataLabelPath(label: SVGElement): SVGElement {
-        var renderer = this.series.chart.renderer,
-            shapeArgs = this.shapeArgs,
-            upperHalf = this.angle < 0 || this.angle > Math.PI,
-            start = shapeArgs.start,
-            end = shapeArgs.end;
-
-        if (!this.dataLabelPath) {
-            this.dataLabelPath = renderer
-                .arc({
-                    open: true,
-                    longArc: Math.abs(Math.abs(start) - Math.abs(end)) < Math.PI ? 0 : 1
-                })
-                // Add it inside the data label group so it gets destroyed
-                // with the label
-                .add(label);
-        }
-
-        this.dataLabelPath.attr({
-            x: shapeArgs.x,
-            y: shapeArgs.y,
-            r: (
-                shapeArgs.r +
-                ((this.dataLabel as any).options.distance || 0)
-            ),
-            start: (upperHalf ? start : end),
-            end: (upperHalf ? end : start),
-            clockwise: +upperHalf
-        });
-
-        return this.dataLabelPath;
-    }
-
-    public isValid(): boolean {
-        // No null points here
-        return true;
-    }
-
-    /* eslint-enable valid-jsdoc */
-
-}
-
-/* *
- *
- *  Prototype Properties
- *
- * */
-
-interface DependencyWheelPoint {
-    setState: typeof NodesMixin['setNodeState'];
-}
-extend(DependencyWheelPoint.prototype, {
-    setState: NodesMixin.setNodeState
-});
 
 /* *
  *
