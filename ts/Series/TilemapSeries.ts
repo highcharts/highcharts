@@ -76,7 +76,7 @@ declare global {
             public tileShape: TilemapShapeObject;
             public translateColors: ColorSeries['translateColors'];
             public drawPoints(): void;
-            public getSeriesPixelPadding(axis: Axis): Dictionary<number>;
+            public getSeriesPixelPadding(axis: Axis): Record<string, number>;
             public setOptions(): TilemapSeriesOptions;
             public translate(): void;
         }
@@ -106,7 +106,7 @@ declare global {
             ): SVGPath;
             translate(this: TilemapSeries): void;
         }
-        let tileShapeTypes: Dictionary<TilemapShapeObject>;
+        let tileShapeTypes: Record<string, TilemapShapeObject>;
         type TilemapShapeValue = ('circle'|'diamond'|'hexagon'|'square');
     }
 }
