@@ -23,7 +23,7 @@ import '../../Stock/Indicators/CCI/CCIIndicator.js';
 import '../../Stock/Indicators/CMF/CMFIndicator.js';
 import '../../Stock/Indicators/DPO/DPOIndicator.js';
 import '../../Stock/Indicators/EMA/EMAIndicator.js';
-import '../../Stock/Indicators/ChaikinIndicator.js';
+import '../../Stock/Indicators/Chaikin/ChaikinIndicator.js';
 import '../../Stock/Indicators/DEMAIndicator.js';
 import '../../Stock/Indicators/TEMAIndicator.js';
 import '../../Stock/Indicators/TRIXIndicator.js';
