@@ -39,26 +39,6 @@ const {
  */
 declare global {
     namespace Highcharts {
-        class KeltnerChannelsIndicator extends SMAIndicator implements MultipleLinesIndicator {
-            public data: Array<KeltnerChannelsIndicatorPoint>;
-            public linesApiNames: MultipleLinesMixin['linesApiNames'];
-            public nameBase: string;
-            public nameComponents: Array<string>;
-            public options: KeltnerChannelsIndicatorOptions;
-            public pointArrayMap: MultipleLinesMixin['pointArrayMap'];
-            public pointClass: typeof KeltnerChannelsIndicatorPoint;
-            public points: Array<KeltnerChannelsIndicatorPoint>;
-            public pointValKey: MultipleLinesMixin['pointValKey'];
-            public requiredIndicators: Array<string>;
-            public getTranslatedLinesNames: MultipleLinesMixin[
-                'getTranslatedLinesNames'
-            ];
-            public getValues<TLinkedSeries extends LineSeries>(
-                series: TLinkedSeries,
-                params: KeltnerChannelsIndicatorParamsOptions
-            ): (IndicatorValuesObject<TLinkedSeries>|undefined)
-        }
-
         interface KeltnerChannelsIndicatorOptions
             extends SMAOptions, MultipleLinesIndicatorOptions {
             bottomLine?: Record<string, CSSObject>;
@@ -93,7 +73,7 @@ declare global {
  *
  * @augments Highcharts.Series
  */
-class KeltnerChannelsIndicator extends SMAIndicator {
+class KeltnerChannelsIndicator extends SMAIndicator implements Highcharts.MultipleLinesIndicator {
     /**
      * Keltner Channels. This series requires the `linkedTo` option to be set
      * and should be loaded after the `stock/indicators/indicators.js`,
@@ -168,40 +148,12 @@ class KeltnerChannelsIndicator extends SMAIndicator {
         },
         lineWidth: 1
     } as Highcharts.KeltnerChannelsIndicatorOptions)
-}
 
-interface KeltnerChannelsIndicator {
-    data: Array<Highcharts.KeltnerChannelsIndicatorPoint>;
-    linesApiNames: Highcharts.MultipleLinesMixin['linesApiNames'];
-    nameBase: string;
-    nameComponents: Array<string>;
-    options: Highcharts.KeltnerChannelsIndicatorOptions;
-    pointArrayMap: Highcharts.MultipleLinesMixin['pointArrayMap'];
-    pointClass: typeof Highcharts.KeltnerChannelsIndicatorPoint;
-    points: Array<Highcharts.KeltnerChannelsIndicatorPoint>;
-    pointValKey: Highcharts.MultipleLinesMixin['pointValKey'];
-    requiredIndicators: Array<string>;
-    getTranslatedLinesNames: Highcharts.MultipleLinesMixin[
-        'getTranslatedLinesNames'
-    ];
-    getValues<TLinkedSeries extends LineSeries>(
-        series: TLinkedSeries,
-        params: Highcharts.KeltnerChannelsIndicatorParamsOptions
-    ): (IndicatorValuesObject<TLinkedSeries>|undefined);
-}
+    public data: Array<Highcharts.KeltnerChannelsIndicatorPoint> = void 0 as any;
+    public options: Highcharts.KeltnerChannelsIndicatorOptions = void 0 as any;
+    public points: Array<Highcharts.KeltnerChannelsIndicatorPoint> = void 0 as any;
 
-extend(KeltnerChannelsIndicator.prototype, {
-    drawGraph: MultipleLinesMixin.drawGraph,
-    getTranslatedLinesNames: MultipleLinesMixin.getTranslatedLinesNames,
-    translate: MultipleLinesMixin.translate,
-    toYData: MultipleLinesMixin.toYData,
-    pointArrayMap: ['top', 'middle', 'bottom'],
-    pointValKey: 'middle',
-    nameBase: 'Keltner Channels',
-    nameComponents: ['period', 'periodATR', 'multiplierATR'],
-    linesApiNames: ['topLine', 'bottomLine'],
-    requiredIndicators: ['ema', 'atr'],
-    init: function (this: Highcharts.KeltnerChannelsIndicator): void {
+    public init(this: KeltnerChannelsIndicator): void {
         BaseSeries.seriesTypes.sma.prototype.init.apply(this, arguments);
         // Set default color for lines:
         this.options = merge({
@@ -216,8 +168,9 @@ extend(KeltnerChannelsIndicator.prototype, {
                 }
             }
         }, this.options);
-    },
-    getValues: function<TLinkedSeries extends LineSeries> (
+    }
+
+    public getValues <TLinkedSeries extends LineSeries>(
         series: TLinkedSeries,
         params: Highcharts.KeltnerChannelsIndicatorParamsOptions
     ): (IndicatorValuesObject<TLinkedSeries>|undefined) {
@@ -278,12 +231,39 @@ extend(KeltnerChannelsIndicator.prototype, {
             yData: yData
         } as IndicatorValuesObject<TLinkedSeries>;
     }
-});
+}
 
+interface KeltnerChannelsIndicator {
+    linesApiNames: Highcharts.MultipleLinesMixin['linesApiNames'];
+    nameBase: string;
+    nameComponents: Array<string>;
+    pointArrayMap: Highcharts.MultipleLinesMixin['pointArrayMap'];
+    pointValKey: Highcharts.MultipleLinesMixin['pointValKey'];
+    requiredIndicators: Array<string>;
+
+    pointClass: typeof Highcharts.KeltnerChannelsIndicatorPoint;
+
+    drawGraph: typeof MultipleLinesMixin.drawGraph;
+    getTranslatedLinesNames: typeof MultipleLinesMixin.getTranslatedLinesNames;
+    translate: typeof MultipleLinesMixin.translate;
+    toYData: typeof MultipleLinesMixin.toYData;
+}
+extend(KeltnerChannelsIndicator.prototype, {
+    pointArrayMap: ['top', 'middle', 'bottom'],
+    pointValKey: 'middle',
+    nameBase: 'Keltner Channels',
+    nameComponents: ['period', 'periodATR', 'multiplierATR'],
+    linesApiNames: ['topLine', 'bottomLine'],
+    requiredIndicators: ['ema', 'atr'],
+    drawGraph: MultipleLinesMixin.drawGraph,
+    getTranslatedLinesNames: MultipleLinesMixin.getTranslatedLinesNames,
+    translate: MultipleLinesMixin.translate,
+    toYData: MultipleLinesMixin.toYData
+});
 
 declare module '../../Core/Series/SeriesType' {
     interface SeriesTypeRegistry {
-        keltnerchannels: typeof Highcharts.KeltnerChannelsIndicator;
+        keltnerchannels: typeof KeltnerChannelsIndicator;
     }
 }
 
