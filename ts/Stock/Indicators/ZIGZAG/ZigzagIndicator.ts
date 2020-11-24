@@ -13,10 +13,10 @@
 import type IndicatorValuesObject from '../IndicatorValuesObject';
 import type LineSeries from '../../../Series/Line/LineSeries';
 import type {
-    ZIGZAGOptions,
-    ZIGZAGParamsOptions
+    ZigzagOptions,
+    ZigzagParamsOptions
 } from './ZigzagOptions';
-import type ZIGZAGPoint from './ZigzagPoint';
+import type ZigzagPoint from './ZigzagPoint';
 import BaseSeries from '../../../Core/Series/Series.js';
 const {
     seriesTypes: {
@@ -45,7 +45,7 @@ const {
  * @augments Highcharts.Series
  */
 
-class ZIGZAGIndicator extends SMAIndicator {
+class ZigzagIndicator extends SMAIndicator {
     /**
      * Zig Zag indicator.
      *
@@ -61,7 +61,7 @@ class ZIGZAGIndicator extends SMAIndicator {
      * @requires     stock/indicators/zigzag
      * @optionparent plotOptions.zigzag
      */
-    public static defaultOptions: ZIGZAGOptions = merge(SMAIndicator.defaultOptions, {
+    public static defaultOptions: ZigzagOptions = merge(SMAIndicator.defaultOptions, {
         /**
          * @excluding index, period
          */
@@ -90,7 +90,7 @@ class ZIGZAGIndicator extends SMAIndicator {
              */
             deviation: 1
         }
-    } as ZIGZAGOptions);
+    } as ZigzagOptions);
 
     /* *
      *
@@ -98,9 +98,9 @@ class ZIGZAGIndicator extends SMAIndicator {
      *
      * */
 
-    public data: Array<ZIGZAGPoint> = void 0 as any;
-    public points: Array<ZIGZAGPoint> = void 0 as any;
-    public options: ZIGZAGOptions = void 0 as any;
+    public data: Array<ZigzagPoint> = void 0 as any;
+    public points: Array<ZigzagPoint> = void 0 as any;
+    public options: ZigzagOptions = void 0 as any;
 
     /* *
      *
@@ -109,7 +109,7 @@ class ZIGZAGIndicator extends SMAIndicator {
      * */
     getValues<TLinkedSeries extends LineSeries>(
         series: TLinkedSeries,
-        params: ZIGZAGParamsOptions
+        params: ZigzagParamsOptions
     ): (IndicatorValuesObject<TLinkedSeries>|undefined) {
         var lowIndex: number = params.lowIndex as any,
             highIndex: number = params.highIndex as any,
@@ -255,11 +255,11 @@ class ZIGZAGIndicator extends SMAIndicator {
  *
  * */
 
-interface ZIGZAGIndicator {
-    pointClass: typeof ZIGZAGPoint;
+interface ZigzagIndicator {
+    pointClass: typeof ZigzagPoint;
 }
 
-extend(ZIGZAGIndicator.prototype, {
+extend(ZigzagIndicator.prototype, {
     nameComponents: ['deviation'],
     nameSuffixes: ['%'],
     nameBase: 'Zig Zag'
@@ -273,12 +273,12 @@ extend(ZIGZAGIndicator.prototype, {
 
 declare module '../../../Core/Series/SeriesType' {
     interface SeriesTypeRegistry {
-        zigzag: typeof ZIGZAGIndicator;
+        zigzag: typeof ZigzagIndicator;
     }
 }
 
 
-BaseSeries.registerSeriesType('zigzag', ZIGZAGIndicator);
+BaseSeries.registerSeriesType('zigzag', ZigzagIndicator);
 
 /* *
  *
@@ -286,7 +286,7 @@ BaseSeries.registerSeriesType('zigzag', ZIGZAGIndicator);
  *
  * */
 
-export default ZIGZAGIndicator;
+export default ZigzagIndicator;
 
 
 /**

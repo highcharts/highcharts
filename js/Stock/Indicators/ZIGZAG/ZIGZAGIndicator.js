@@ -39,9 +39,9 @@ var merge = U.merge, extend = U.extend;
  *
  * @augments Highcharts.Series
  */
-var ZIGZAGIndicator = /** @class */ (function (_super) {
-    __extends(ZIGZAGIndicator, _super);
-    function ZIGZAGIndicator() {
+var ZigzagIndicator = /** @class */ (function (_super) {
+    __extends(ZigzagIndicator, _super);
+    function ZigzagIndicator() {
         var _this = _super !== null && _super.apply(this, arguments) || this;
         /* *
          *
@@ -58,7 +58,7 @@ var ZIGZAGIndicator = /** @class */ (function (_super) {
      *  Functions
      *
      * */
-    ZIGZAGIndicator.prototype.getValues = function (series, params) {
+    ZigzagIndicator.prototype.getValues = function (series, params) {
         var lowIndex = params.lowIndex, highIndex = params.highIndex, deviation = params.deviation / 100, deviations = {
             'low': 1 + deviation,
             'high': 1 - deviation
@@ -166,7 +166,7 @@ var ZIGZAGIndicator = /** @class */ (function (_super) {
      * @requires     stock/indicators/zigzag
      * @optionparent plotOptions.zigzag
      */
-    ZIGZAGIndicator.defaultOptions = merge(SMAIndicator.defaultOptions, {
+    ZigzagIndicator.defaultOptions = merge(SMAIndicator.defaultOptions, {
         /**
          * @excluding index, period
          */
@@ -196,20 +196,20 @@ var ZIGZAGIndicator = /** @class */ (function (_super) {
             deviation: 1
         }
     });
-    return ZIGZAGIndicator;
+    return ZigzagIndicator;
 }(SMAIndicator));
-extend(ZIGZAGIndicator.prototype, {
+extend(ZigzagIndicator.prototype, {
     nameComponents: ['deviation'],
     nameSuffixes: ['%'],
     nameBase: 'Zig Zag'
 });
-BaseSeries.registerSeriesType('zigzag', ZIGZAGIndicator);
+BaseSeries.registerSeriesType('zigzag', ZigzagIndicator);
 /* *
  *
  *  Default Export
  *
  * */
-export default ZIGZAGIndicator;
+export default ZigzagIndicator;
 /**
  * A `Zig Zag` series. If the [type](#series.zigzag.type) option is not
  * specified, it is inherited from [chart.type](#chart.type).

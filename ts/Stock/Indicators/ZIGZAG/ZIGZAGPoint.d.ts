@@ -12,7 +12,7 @@
  *
  * */
 
-import type ZIGZAGIndicator from './ZigzagIndicator';
+import type ZigzagIndicator from './ZigzagIndicator';
 import type SMAPoint from '../SMA/SMAPoint';
 
 /* *
@@ -21,8 +21,8 @@ import type SMAPoint from '../SMA/SMAPoint';
  *
  * */
 
-declare class ZIGZAGPoint extends SMAPoint {
-    public series: ZIGZAGIndicator;
+declare class ZigzagPoint extends SMAPoint {
+    public series: ZigzagIndicator;
 }
 
 /* *
@@ -31,4 +31,4 @@ declare class ZIGZAGPoint extends SMAPoint {
  *
  * */
 
-export default ZIGZAGPoint;
+export default ZigzagPoint;
