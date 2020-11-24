@@ -32,4 +32,4 @@ export interface BBParamsOptions extends SMAParamsOptions {
     // for inheritance
 }
 
-export default EMAOptions;
+export default BBOptions;
