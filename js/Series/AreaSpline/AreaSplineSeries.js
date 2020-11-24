@@ -8,11 +8,26 @@
  *
  * */
 'use strict';
-import BaseSeries from '../Core/Series/Series.js';
-var areaProto = BaseSeries.seriesTypes.area.prototype;
-import LegendSymbolMixin from '../Mixins/LegendSymbol.js';
-import O from '../Core/Options.js';
-var defaultOptions = O.defaultOptions;
+var __extends = (this && this.__extends) || (function () {
+    var extendStatics = function (d, b) {
+        extendStatics = Object.setPrototypeOf ||
+            ({ __proto__: [] } instanceof Array && function (d, b) { d.__proto__ = b; }) ||
+            function (d, b) { for (var p in b) if (b.hasOwnProperty(p)) d[p] = b[p]; };
+        return extendStatics(d, b);
+    };
+    return function (d, b) {
+        extendStatics(d, b);
+        function __() { this.constructor = d; }
+        d.prototype = b === null ? Object.create(b) : (__.prototype = b.prototype, new __());
+    };
+})();
+import AreaSeries from '../Area/AreaSeries.js';
+var areaProto = AreaSeries.prototype;
+import SplineSeries from '../Spline/SplineSeries.js';
+import BaseSeries from '../../Core/Series/Series.js';
+import LegendSymbolMixin from '../../Mixins/LegendSymbol.js';
+import U from '../../Core/Utilities.js';
+var extend = U.extend, merge = U.merge;
 /* *
  *
  *  Class
@@ -27,47 +42,75 @@ var defaultOptions = O.defaultOptions;
  *
  * @augments Highcharts.Series
  */
-BaseSeries.seriesType('areaspline', 'spline', 
-/**
- * The area spline series is an area series where the graph between the
- * points is smoothed into a spline.
- *
- * @sample {highcharts} highcharts/demo/areaspline/
- *         Area spline chart
- * @sample {highstock} stock/demo/areaspline/
- *         Area spline chart
- *
- * @extends   plotOptions.area
- * @excluding step, boostThreshold, boostBlending
- * @product   highcharts highstock
- * @apioption plotOptions.areaspline
- */
-/**
- * @see [fillColor](#plotOptions.areaspline.fillColor)
- * @see [fillOpacity](#plotOptions.areaspline.fillOpacity)
- *
- * @apioption plotOptions.areaspline.color
- */
-/**
- * @see [color](#plotOptions.areaspline.color)
- * @see [fillOpacity](#plotOptions.areaspline.fillOpacity)
- *
- * @apioption plotOptions.areaspline.fillColor
- */
-/**
- * @see [color](#plotOptions.areaspline.color)
- * @see [fillColor](#plotOptions.areaspline.fillColor)
- *
- * @default   {highcharts} 0.75
- * @default   {highstock} 0.75
- * @apioption plotOptions.areaspline.fillOpacity
- */
-defaultOptions.plotOptions.area, {
-    getStackPoints: areaProto.getStackPoints,
+var AreaSplineSeries = /** @class */ (function (_super) {
+    __extends(AreaSplineSeries, _super);
+    function AreaSplineSeries() {
+        /* *
+         *
+         *  Static properties
+         *
+         * */
+        var _this = _super !== null && _super.apply(this, arguments) || this;
+        /* *
+         *
+         *  Properties
+         *
+         * */
+        _this.data = void 0;
+        _this.points = void 0;
+        _this.options = void 0;
+        return _this;
+    }
+    /**
+     * The area spline series is an area series where the graph between the
+     * points is smoothed into a spline.
+     *
+     * @sample {highcharts} highcharts/demo/areaspline/
+     *         Area spline chart
+     * @sample {highstock} stock/demo/areaspline/
+     *         Area spline chart
+     *
+     * @extends   plotOptions.area
+     * @excluding step, boostThreshold, boostBlending
+     * @product   highcharts highstock
+     * @apioption plotOptions.areaspline
+     */
+    /**
+     * @see [fillColor](#plotOptions.areaspline.fillColor)
+     * @see [fillOpacity](#plotOptions.areaspline.fillOpacity)
+     *
+     * @apioption plotOptions.areaspline.color
+     */
+    /**
+     * @see [color](#plotOptions.areaspline.color)
+     * @see [fillOpacity](#plotOptions.areaspline.fillOpacity)
+     *
+     * @apioption plotOptions.areaspline.fillColor
+     */
+    /**
+     * @see [color](#plotOptions.areaspline.color)
+     * @see [fillColor](#plotOptions.areaspline.fillColor)
+     *
+     * @default   {highcharts} 0.75
+     * @default   {highstock} 0.75
+     * @apioption plotOptions.areaspline.fillOpacity
+     */
+    AreaSplineSeries.defaultOptions = merge(SplineSeries.defaultOptions, AreaSeries.defaultOptions);
+    return AreaSplineSeries;
+}(SplineSeries));
+extend(AreaSplineSeries.prototype, {
     getGraphPath: areaProto.getGraphPath,
+    getStackPoints: areaProto.getStackPoints,
     drawGraph: areaProto.drawGraph,
     drawLegendSymbol: LegendSymbolMixin.drawRectangle
 });
+BaseSeries.registerSeriesType('areaspline', AreaSplineSeries);
+/* *
+ *
+ *  Default export
+ *
+ * */
+export default AreaSplineSeries;
 /**
  * A `areaspline` series. If the [type](#series.areaspline.type) option
  * is not specified, it is inherited from [chart.type](#chart.type).

@@ -731,7 +731,7 @@ var Point = /** @class */ (function () {
         else {
             colorIndex = series.colorIndex;
         }
-        this.colorIndex = pick(this.colorIndex, colorIndex);
+        this.colorIndex = pick(this.options.colorIndex, colorIndex);
     };
     /**
      * Set a value in an object, on the property defined by key. The key

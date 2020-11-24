@@ -87,7 +87,7 @@ declare global {
                 dataLabel: SVGElement,
                 options: OrganizationDataLabelsOptionsObject
             ): void;
-            public createNode: (id: string) => NodesPoint;
+            public createNode(id: string): OrganizationPoint;
             public createNodeColumn(): OrganizationColumnArray;
             public curvedPath(
                 path: SVGPath,
