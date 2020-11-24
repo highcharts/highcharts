@@ -36,8 +36,60 @@ var correctFloat = U.correctFloat, extend = U.extend, merge = U.merge;
 var KeltnerChannelsIndicator = /** @class */ (function (_super) {
     __extends(KeltnerChannelsIndicator, _super);
     function KeltnerChannelsIndicator() {
-        return _super !== null && _super.apply(this, arguments) || this;
+        var _this = _super !== null && _super.apply(this, arguments) || this;
+        _this.data = void 0;
+        _this.options = void 0;
+        _this.points = void 0;
+        return _this;
     }
+    KeltnerChannelsIndicator.prototype.init = function () {
+        BaseSeries.seriesTypes.sma.prototype.init.apply(this, arguments);
+        // Set default color for lines:
+        this.options = merge({
+            topLine: {
+                styles: {
+                    lineColor: this.color
+                }
+            },
+            bottomLine: {
+                styles: {
+                    lineColor: this.color
+                }
+            }
+        }, this.options);
+    };
+    KeltnerChannelsIndicator.prototype.getValues = function (series, params) {
+        var period = params.period, periodATR = params.periodATR, multiplierATR = params.multiplierATR, index = params.index, yVal = series.yData, yValLen = yVal ? yVal.length : 0, 
+        // Keltner Channels array structure:
+        // 0-date, 1-top line, 2-middle line, 3-bottom line
+        KC = [], 
+        // middle line, top line and bottom lineI
+        ML, TL, BL, date, seriesEMA = BaseSeries.seriesTypes.ema.prototype.getValues(series, {
+            period: period,
+            index: index
+        }), seriesATR = BaseSeries.seriesTypes.atr.prototype.getValues(series, {
+            period: periodATR
+        }), pointEMA, pointATR, xData = [], yData = [], i;
+        if (yValLen < period) {
+            return;
+        }
+        for (i = period; i <= yValLen; i++) {
+            pointEMA = seriesEMA.values[i - period];
+            pointATR = seriesATR.values[i - periodATR];
+            date = pointEMA[0];
+            TL = correctFloat(pointEMA[1] + (multiplierATR * pointATR[1]));
+            BL = correctFloat(pointEMA[1] - (multiplierATR * pointATR[1]));
+            ML = pointEMA[1];
+            KC.push([date, TL, ML, BL]);
+            xData.push(date);
+            yData.push([TL, ML, BL]);
+        }
+        return {
+            values: KC,
+            xData: xData,
+            yData: yData
+        };
+    };
     /**
      * Keltner Channels. This series requires the `linkedTo` option to be set
      * and should be loaded after the `stock/indicators/indicators.js`,
@@ -115,64 +167,15 @@ var KeltnerChannelsIndicator = /** @class */ (function (_super) {
     return KeltnerChannelsIndicator;
 }(SMAIndicator));
 extend(KeltnerChannelsIndicator.prototype, {
-    drawGraph: MultipleLinesMixin.drawGraph,
-    getTranslatedLinesNames: MultipleLinesMixin.getTranslatedLinesNames,
-    translate: MultipleLinesMixin.translate,
-    toYData: MultipleLinesMixin.toYData,
     pointArrayMap: ['top', 'middle', 'bottom'],
     pointValKey: 'middle',
     nameBase: 'Keltner Channels',
     nameComponents: ['period', 'periodATR', 'multiplierATR'],
     linesApiNames: ['topLine', 'bottomLine'],
-    requiredIndicators: ['ema', 'atr'],
-    init: function () {
-        BaseSeries.seriesTypes.sma.prototype.init.apply(this, arguments);
-        // Set default color for lines:
-        this.options = merge({
-            topLine: {
-                styles: {
-                    lineColor: this.color
-                }
-            },
-            bottomLine: {
-                styles: {
-                    lineColor: this.color
-                }
-            }
-        }, this.options);
-    },
-    getValues: function (series, params) {
-        var period = params.period, periodATR = params.periodATR, multiplierATR = params.multiplierATR, index = params.index, yVal = series.yData, yValLen = yVal ? yVal.length : 0, 
-        // Keltner Channels array structure:
-        // 0-date, 1-top line, 2-middle line, 3-bottom line
-        KC = [], 
-        // middle line, top line and bottom lineI
-        ML, TL, BL, date, seriesEMA = BaseSeries.seriesTypes.ema.prototype.getValues(series, {
-            period: period,
-            index: index
-        }), seriesATR = BaseSeries.seriesTypes.atr.prototype.getValues(series, {
-            period: periodATR
-        }), pointEMA, pointATR, xData = [], yData = [], i;
-        if (yValLen < period) {
-            return;
-        }
-        for (i = period; i <= yValLen; i++) {
-            pointEMA = seriesEMA.values[i - period];
-            pointATR = seriesATR.values[i - periodATR];
-            date = pointEMA[0];
-            TL = correctFloat(pointEMA[1] + (multiplierATR * pointATR[1]));
-            BL = correctFloat(pointEMA[1] - (multiplierATR * pointATR[1]));
-            ML = pointEMA[1];
-            KC.push([date, TL, ML, BL]);
-            xData.push(date);
-            yData.push([TL, ML, BL]);
-        }
-        return {
-            values: KC,
-            xData: xData,
-            yData: yData
-        };
-    }
+    requiredIndicators: ['ema', 'atr'], drawGraph: MultipleLinesMixin.drawGraph,
+    getTranslatedLinesNames: MultipleLinesMixin.getTranslatedLinesNames,
+    translate: MultipleLinesMixin.translate,
+    toYData: MultipleLinesMixin.toYData,
 });
 BaseSeries.registerSeriesType('keltnerchannels', KeltnerChannelsIndicator);
 /* *
