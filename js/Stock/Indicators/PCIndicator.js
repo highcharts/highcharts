@@ -6,14 +6,32 @@
  *
  * */
 'use strict';
+var __extends = (this && this.__extends) || (function () {
+    var extendStatics = function (d, b) {
+        extendStatics = Object.setPrototypeOf ||
+            ({ __proto__: [] } instanceof Array && function (d, b) { d.__proto__ = b; }) ||
+            function (d, b) { for (var p in b) if (b.hasOwnProperty(p)) d[p] = b[p]; };
+        return extendStatics(d, b);
+    };
+    return function (d, b) {
+        extendStatics(d, b);
+        function __() { this.constructor = d; }
+        d.prototype = b === null ? Object.create(b) : (__.prototype = b.prototype, new __());
+    };
+})();
+var SMAIndicator = BaseSeries.seriesTypes.sma;
 import BaseSeries from '../../Core/Series/Series.js';
 import palette from '../../Core/Color/Palette.js';
 import MultipleLinesMixin from '../../Mixins/MultipleLines.js';
 import ReduceArrayMixin from '../../Mixins/ReduceArray.js';
 import U from '../../Core/Utilities.js';
-var merge = U.merge;
-// im port './SMAIndicator.js';
+var merge = U.merge, extend = U.extend;
 var getArrayExtremes = ReduceArrayMixin.getArrayExtremes;
+/* *
+ *
+ *  Class
+ *
+ * */
 /**
  * The Price Channel series type.
  *
@@ -23,77 +41,26 @@ var getArrayExtremes = ReduceArrayMixin.getArrayExtremes;
  *
  * @augments Highcharts.Series
  */
-BaseSeries.seriesType('pc', 'sma', 
-/**
- * Price channel (PC). This series requires the `linkedTo` option to be
- * set and should be loaded after the `stock/indicators/indicators.js`.
- *
- * @sample {highstock} stock/indicators/price-channel
- *         Price Channel
- *
- * @extends      plotOptions.sma
- * @since        7.0.0
- * @product      highstock
- * @excluding    allAreas, colorAxis, compare, compareBase, joinBy, keys,
- *               navigatorOptions, pointInterval, pointIntervalUnit,
- *               pointPlacement, pointRange, pointStart, showInNavigator,
- *               stacking
- * @requires     stock/indicators/indicators
- * @requires     stock/indicators/price-channel
- * @optionparent plotOptions.pc
- */
-{
-    /**
-     * @excluding index
-     */
-    params: {
-        period: 20
-    },
-    lineWidth: 1,
-    topLine: {
-        styles: {
-            /**
-             * Color of the top line. If not set, it's inherited from
-             * [plotOptions.pc.color](#plotOptions.pc.color).
-             *
-             * @type {Highcharts.ColorString}
-             */
-            lineColor: palette.colors[2],
-            /**
-             * Pixel width of the line.
-             */
-            lineWidth: 1
-        }
-    },
-    bottomLine: {
-        styles: {
-            /**
-             * Color of the bottom line. If not set, it's inherited from
-             * [plotOptions.pc.color](#plotOptions.pc.color).
-             *
-             * @type {Highcharts.ColorString}
-             */
-            lineColor: palette.colors[8],
-            /**
-             * Pixel width of the line.
-             */
-            lineWidth: 1
-        }
-    },
-    dataGrouping: {
-        approximation: 'averages'
+var PCIndicator = /** @class */ (function (_super) {
+    __extends(PCIndicator, _super);
+    function PCIndicator() {
+        var _this = _super !== null && _super.apply(this, arguments) || this;
+        /* *
+        *
+        *  Properties
+        *
+        * */
+        _this.data = void 0;
+        _this.options = void 0;
+        _this.points = void 0;
+        return _this;
     }
-}, 
-/**
- * @lends Highcharts.Series#
- */
-merge(MultipleLinesMixin, {
-    pointArrayMap: ['top', 'middle', 'bottom'],
-    pointValKey: 'middle',
-    nameBase: 'Price Channel',
-    nameComponents: ['period'],
-    linesApiNames: ['topLine', 'bottomLine'],
-    getValues: function (series, params) {
+    /* *
+    *
+    *  Functions
+    *
+    * */
+    PCIndicator.prototype.getValues = function (series, params) {
         var period = params.period, xVal = series.xData, yVal = series.yData, yValLen = yVal ? yVal.length : 0, 
         // 0- date, 1-top line, 2-middle line, 3-bottom line
         PC = [], 
@@ -118,8 +85,83 @@ merge(MultipleLinesMixin, {
             xData: xData,
             yData: yData
         };
-    }
+    };
+    /**
+     * Price channel (PC). This series requires the `linkedTo` option to be
+     * set and should be loaded after the `stock/indicators/indicators.js`.
+     *
+     * @sample {highstock} stock/indicators/price-channel
+     *         Price Channel
+     *
+     * @extends      plotOptions.sma
+     * @since        7.0.0
+     * @product      highstock
+     * @excluding    allAreas, colorAxis, compare, compareBase, joinBy, keys,
+     *               navigatorOptions, pointInterval, pointIntervalUnit,
+     *               pointPlacement, pointRange, pointStart, showInNavigator,
+     *               stacking
+     * @requires     stock/indicators/indicators
+     * @requires     stock/indicators/price-channel
+     * @optionparent plotOptions.pc
+     */
+    PCIndicator.defaultOptions = merge(SMAIndicator.defaultOptions, {
+        /**
+         * @excluding index
+         */
+        params: {
+            period: 20
+        },
+        lineWidth: 1,
+        topLine: {
+            styles: {
+                /**
+                 * Color of the top line. If not set, it's inherited from
+                 * [plotOptions.pc.color](#plotOptions.pc.color).
+                 *
+                 * @type {Highcharts.ColorString}
+                 */
+                lineColor: palette.colors[2],
+                /**
+                 * Pixel width of the line.
+                 */
+                lineWidth: 1
+            }
+        },
+        bottomLine: {
+            styles: {
+                /**
+                 * Color of the bottom line. If not set, it's inherited from
+                 * [plotOptions.pc.color](#plotOptions.pc.color).
+                 *
+                 * @type {Highcharts.ColorString}
+                 */
+                lineColor: palette.colors[8],
+                /**
+                 * Pixel width of the line.
+                 */
+                lineWidth: 1
+            }
+        },
+        dataGrouping: {
+            approximation: 'averages'
+        }
+    });
+    return PCIndicator;
+}(SMAIndicator));
+extend(PCIndicator.prototype, merge(MultipleLinesMixin, {
+    pointArrayMap: ['top', 'middle', 'bottom'],
+    pointValKey: 'middle',
+    nameBase: 'Price Channel',
+    nameComponents: ['period'],
+    linesApiNames: ['topLine', 'bottomLine']
 }));
+BaseSeries.registerSeriesType('pc', PCIndicator);
+/* *
+ *
+ *  Default Export
+ *
+ * */
+export default PCIndicator;
 /**
  * A Price channel indicator. If the [type](#series.pc.type) option is not
  * specified, it is inherited from [chart.type](#chart.type).

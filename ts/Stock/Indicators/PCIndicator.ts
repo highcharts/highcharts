@@ -11,7 +11,11 @@
 import type CSSObject from '../../Core/Renderer/CSSObject';
 import type IndicatorValuesObject from './IndicatorValuesObject';
 import type LineSeries from '../../Series/Line/LineSeries';
-import type SMAIndicator from './SMA/SMAIndicator';
+const {
+    seriesTypes: {
+        sma: SMAIndicator
+    }
+} = BaseSeries;
 import type {
     SMAOptions,
     SMAParamsOptions
@@ -23,7 +27,8 @@ import MultipleLinesMixin from '../../Mixins/MultipleLines.js';
 import ReduceArrayMixin from '../../Mixins/ReduceArray.js';
 import U from '../../Core/Utilities.js';
 const {
-    merge
+    merge,
+    extend
 } = U;
 
 /**
@@ -32,26 +37,6 @@ const {
  */
 declare global {
     namespace Highcharts {
-        class PCIndicator extends SMAIndicator
-            implements MultipleLinesIndicator {
-            public data: Array<PCIndicatorPoint>;
-            public getTranslatedLinesNames: MultipleLinesMixin[
-                'getTranslatedLinesNames'
-            ];
-            public getValues<TLinkedSeries extends LineSeries>(
-                series: TLinkedSeries,
-                params: PCIndicatorParamsOptions
-            ): (IndicatorValuesObject<TLinkedSeries>|undefined);
-            public linesApiNames: MultipleLinesMixin['linesApiNames'];
-            public nameBase: string;
-            public nameComponents: Array<string>;
-            public options: PCIndicatorOptions;
-            public pointArrayMap: Array<string>;
-            public pointClass: typeof PCIndicatorPoint;
-            public points: Array<PCIndicatorPoint>;
-            public pointValKey: string;
-        }
-
         interface PCIndicatorParamsOptions extends SMAParamsOptions {
             // for inheritance
         }
@@ -69,15 +54,13 @@ declare global {
     }
 }
 
-declare module '../../Core/Series/SeriesType' {
-    interface SeriesTypeRegistry {
-        pc: typeof Highcharts.PCIndicator;
-    }
-}
+const getArrayExtremes = ReduceArrayMixin.getArrayExtremes;
 
-// im port './SMAIndicator.js';
-
-var getArrayExtremes = ReduceArrayMixin.getArrayExtremes;
+/* *
+ *
+ *  Class
+ *
+ * */
 
 /**
  * The Price Channel series type.
@@ -88,9 +71,7 @@ var getArrayExtremes = ReduceArrayMixin.getArrayExtremes;
  *
  * @augments Highcharts.Series
  */
-BaseSeries.seriesType<typeof Highcharts.PCIndicator>(
-    'pc',
-    'sma',
+class PCIndicator extends SMAIndicator implements Highcharts.MultipleLinesIndicator {
     /**
      * Price channel (PC). This series requires the `linkedTo` option to be
      * set and should be loaded after the `stock/indicators/indicators.js`.
@@ -109,7 +90,7 @@ BaseSeries.seriesType<typeof Highcharts.PCIndicator>(
      * @requires     stock/indicators/price-channel
      * @optionparent plotOptions.pc
      */
-    {
+    public static defaultOptions: Highcharts.PCIndicatorOptions = merge(SMAIndicator.defaultOptions, {
         /**
          * @excluding index
          */
@@ -150,63 +131,118 @@ BaseSeries.seriesType<typeof Highcharts.PCIndicator>(
         dataGrouping: {
             approximation: 'averages'
         }
-    },
-    /**
-     * @lends Highcharts.Series#
-     */
-    merge(MultipleLinesMixin, {
-        pointArrayMap: ['top', 'middle', 'bottom'],
-        pointValKey: 'middle',
-        nameBase: 'Price Channel',
-        nameComponents: ['period'],
-        linesApiNames: ['topLine', 'bottomLine'],
-        getValues: function<TLinkedSeries extends LineSeries> (
-            series: TLinkedSeries,
-            params: Highcharts.PCIndicatorParamsOptions
-        ): (IndicatorValuesObject<TLinkedSeries>|undefined) {
-            var period: number = (params.period as any),
-                xVal: Array<number> = (series.xData as any),
-                yVal: Array<Array<number>> = (series.yData as any),
-                yValLen: number = yVal ? yVal.length : 0,
-                // 0- date, 1-top line, 2-middle line, 3-bottom line
-                PC: Array<Array<number>> = [],
-                // middle line, top line and bottom line
-                ML: number,
-                TL: number,
-                BL: number,
-                date: number,
-                low = 2,
-                high = 1,
-                xData: Array<number> = [],
-                yData: Array<Array<number>> = [],
-                slicedY: Array<Array<number>>,
-                extremes: [number, number],
-                i: number;
+    } as Highcharts.PCIndicatorOptions);
 
-            if (yValLen < period) {
-                return;
-            }
+    /* *
+    *
+    *  Properties
+    *
+    * */
 
-            for (i = period; i <= yValLen; i++) {
-                date = xVal[i - 1];
-                slicedY = yVal.slice(i - period, i);
-                extremes = getArrayExtremes(slicedY, low as any, high as any);
-                TL = extremes[1];
-                BL = extremes[0];
-                ML = (TL + BL) / 2;
-                PC.push([date, TL, ML, BL]);
-                xData.push(date);
-                yData.push([TL, ML, BL]);
-            }
+    public data: Array<Highcharts.PCIndicatorPoint> = void 0 as any;
+    public options: Highcharts.PCIndicatorOptions = void 0 as any;
+    public points: Array<Highcharts.PCIndicatorPoint> = void 0 as any;
 
-            return {
-                values: PC,
-                xData: xData,
-                yData: yData
-            } as IndicatorValuesObject<TLinkedSeries>;
+    /* *
+    *
+    *  Functions
+    *
+    * */
+
+    public getValues<TLinkedSeries extends LineSeries>(
+        series: TLinkedSeries,
+        params: Highcharts.PCIndicatorParamsOptions
+    ): (IndicatorValuesObject<TLinkedSeries> | undefined) {
+        var period: number = (params.period as any),
+            xVal: Array<number> = (series.xData as any),
+            yVal: Array<Array<number>> = (series.yData as any),
+            yValLen: number = yVal ? yVal.length : 0,
+            // 0- date, 1-top line, 2-middle line, 3-bottom line
+            PC: Array<Array<number>> = [],
+            // middle line, top line and bottom line
+            ML: number,
+            TL: number,
+            BL: number,
+            date: number,
+            low = 2,
+            high = 1,
+            xData: Array<number> = [],
+            yData: Array<Array<number>> = [],
+            slicedY: Array<Array<number>>,
+            extremes: [number, number],
+            i: number;
+
+        if (yValLen < period) {
+            return;
         }
-    })
-);
+
+        for (i = period; i <= yValLen; i++) {
+            date = xVal[i - 1];
+            slicedY = yVal.slice(i - period, i);
+            extremes = getArrayExtremes(slicedY, low as any, high as any);
+            TL = extremes[1];
+            BL = extremes[0];
+            ML = (TL + BL) / 2;
+            PC.push([date, TL, ML, BL]);
+            xData.push(date);
+            yData.push([TL, ML, BL]);
+        }
+
+        return {
+            values: PC,
+            xData: xData,
+            yData: yData
+        } as IndicatorValuesObject<TLinkedSeries>;
+    }
+}
+
+/* *
+*
+*   Prototype Properties
+*
+* */
+
+interface PCIndicator {
+    getTranslatedLinesNames: Highcharts.MultipleLinesMixin[
+        'getTranslatedLinesNames'
+    ];
+    linesApiNames: Highcharts.MultipleLinesMixin['linesApiNames'];
+    nameBase: string;
+    nameComponents: Array<string>;
+    pointArrayMap: Array<string>;
+    pointClass: typeof Highcharts.PCIndicatorPoint;
+    pointValKey: string;
+}
+
+extend(PCIndicator.prototype, merge(MultipleLinesMixin, {
+    pointArrayMap: ['top', 'middle', 'bottom'],
+    pointValKey: 'middle',
+    nameBase: 'Price Channel',
+    nameComponents: ['period'],
+    linesApiNames: ['topLine', 'bottomLine']
+}));
+
+/* *
+ *
+ *  Registry
+ *
+ * */
+
+declare module '../../Core/Series/SeriesType' {
+    interface SeriesTypeRegistry {
+        pc: typeof PCIndicator;
+    }
+}
+
+BaseSeries.registerSeriesType('pc', PCIndicator);
+
+/* *
+ *
+ *  Default Export
+ *
+ * */
+
+export default PCIndicator;
 
 /**
  * A Price channel indicator. If the [type](#series.pc.type) option is not
