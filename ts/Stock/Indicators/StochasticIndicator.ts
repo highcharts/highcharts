@@ -131,37 +131,12 @@ class StochasticIndicator extends SMAIndicator {
             approximation: 'averages'
         }
     } as Highcharts.StochasticIndicatorOptions)
-}
 
-interface StochasticIndicator {
-    data: Array<Highcharts.StochasticIndicatorPoint>;
-    getTranslatedLinesNames: Highcharts.MultipleLinesMixin[
-        'getTranslatedLinesNames'
-    ];
-    getValues<TLinkedSeries extends LineSeries>(
-        series: TLinkedSeries,
-        params: Highcharts.StochasticIndicatorParamsOptions
-    ): (IndicatorValuesObject<TLinkedSeries>|undefined);
-    init(): void;
-    linesApiNames: Array<string>;
-    nameBase: string;
-    nameComponents: Array<string>;
-    options: Highcharts.StochasticIndicatorOptions;
-    parallelArrays: Array<string>;
-    pointArrayMap: Array<string>;
-    pointClass: typeof Highcharts.StochasticIndicatorPoint;
-    points: Array<Highcharts.StochasticIndicatorPoint>;
-    pointValKey: string;
-}
+    public data: Array<Highcharts.StochasticIndicatorPoint> = void 0 as any;
+    public options: Highcharts.StochasticIndicatorOptions = void 0 as any;
+    public points: Array<Highcharts.StochasticIndicatorPoint> = void 0 as any;
 
-extend(StochasticIndicator.prototype, {
-    nameComponents: ['periods'],
-    nameBase: 'Stochastic',
-    pointArrayMap: ['y', 'smoothed'],
-    parallelArrays: ['x', 'y', 'smoothed'],
-    pointValKey: 'y',
-    linesApiNames: ['smoothedLine'],
-    init: function (this: StochasticIndicator): void {
+    public init(this: StochasticIndicator): void {
         BaseSeries.seriesTypes.sma.prototype.init.apply(this, arguments);
 
         // Set default color for lines:
@@ -172,8 +147,9 @@ extend(StochasticIndicator.prototype, {
                 }
             }
         }, this.options);
-    },
-    getValues: function<TLinkedSeries extends LineSeries> (
+    }
+
+    public getValues <TLinkedSeries extends LineSeries>(
         this: StochasticIndicator,
         series: TLinkedSeries,
         params: Highcharts.StochasticIndicatorParamsOptions
@@ -250,6 +226,30 @@ extend(StochasticIndicator.prototype, {
             yData: yData
         } as IndicatorValuesObject<TLinkedSeries>;
     }
+}
+
+interface StochasticIndicator {
+    linesApiNames: Array<string>;
+    nameBase: string;
+    nameComponents: Array<string>;
+    parallelArrays: Array<string>;
+    pointArrayMap: Array<string>;
+    pointClass: typeof Highcharts.StochasticIndicatorPoint;
+    pointValKey: string;
+
+    getTranslatedLinesNames: typeof MultipleLinesMixin[
+        'getTranslatedLinesNames'
+    ];
+}
+extend(StochasticIndicator.prototype, {
+    nameComponents: ['periods'],
+    nameBase: 'Stochastic',
+    pointArrayMap: ['y', 'smoothed'],
+    parallelArrays: ['x', 'y', 'smoothed'],
+    pointValKey: 'y',
+    linesApiNames: ['smoothedLine'],
+
+    getTranslatedLinesNames: MultipleLinesMixin.getTranslatedLinesNames
 });
 
 declare module '../../Core/Series/SeriesType' {
