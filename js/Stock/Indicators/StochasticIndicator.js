@@ -21,6 +21,7 @@ var __extends = (this && this.__extends) || (function () {
 })();
 import BaseSeries from '../../Core/Series/Series.js';
 var SMAIndicator = BaseSeries.seriesTypes.sma;
+import MultipleLinesMixin from '../../Mixins/MultipleLines.js';
 import ReduceArrayMixin from '../../Mixins/ReduceArray.js';
 import U from '../../Core/Utilities.js';
 var extend = U.extend, isArray = U.isArray, merge = U.merge;
@@ -36,8 +37,65 @@ var extend = U.extend, isArray = U.isArray, merge = U.merge;
 var StochasticIndicator = /** @class */ (function (_super) {
     __extends(StochasticIndicator, _super);
     function StochasticIndicator() {
-        return _super !== null && _super.apply(this, arguments) || this;
+        var _this = _super !== null && _super.apply(this, arguments) || this;
+        _this.data = void 0;
+        _this.options = void 0;
+        _this.points = void 0;
+        return _this;
     }
+    StochasticIndicator.prototype.init = function () {
+        BaseSeries.seriesTypes.sma.prototype.init.apply(this, arguments);
+        // Set default color for lines:
+        this.options = merge({
+            smoothedLine: {
+                styles: {
+                    lineColor: this.color
+                }
+            }
+        }, this.options);
+    };
+    StochasticIndicator.prototype.getValues = function (series, params) {
+        var periodK = params.periods[0], periodD = params.periods[1], xVal = series.xData, yVal = series.yData, yValLen = yVal ? yVal.length : 0, 
+        // 0- date, 1-%K, 2-%D
+        SO = [], xData = [], yData = [], slicedY, close = 3, low = 2, high = 1, CL, HL, LL, K, D = null, points, extremes, i;
+        // Stochastic requires close value
+        if (yValLen < periodK ||
+            !isArray(yVal[0]) ||
+            yVal[0].length !== 4) {
+            return;
+        }
+        // For a N-period, we start from N-1 point, to calculate Nth point
+        // That is why we later need to comprehend slice() elements list
+        // with (+1)
+        for (i = periodK - 1; i < yValLen; i++) {
+            slicedY = yVal.slice(i - periodK + 1, i + 1);
+            // Calculate %K
+            extremes = ReduceArrayMixin.getArrayExtremes(slicedY, low, high);
+            LL = extremes[0]; // Lowest low in %K periods
+            CL = yVal[i][close] - LL;
+            HL = extremes[1] - LL;
+            K = CL / HL * 100;
+            xData.push(xVal[i]);
+            yData.push([K, null]);
+            // Calculate smoothed %D, which is SMA of %K
+            if (i >= (periodK - 1) + (periodD - 1)) {
+                points = BaseSeries.seriesTypes.sma.prototype.getValues.call(this, {
+                    xData: xData.slice(-periodD),
+                    yData: yData.slice(-periodD)
+                }, {
+                    period: periodD
+                });
+                D = points.yData[0];
+            }
+            SO.push([xVal[i], K, D]);
+            yData[yData.length - 1][1] = D;
+        }
+        return {
+            values: SO,
+            xData: xData,
+            yData: yData
+        };
+    };
     /**
      * Stochastic oscillator. This series requires the `linkedTo` option to be
      * set and should be loaded after the `stock/indicators/indicators.js` file.
@@ -109,59 +167,7 @@ extend(StochasticIndicator.prototype, {
     parallelArrays: ['x', 'y', 'smoothed'],
     pointValKey: 'y',
     linesApiNames: ['smoothedLine'],
-    init: function () {
-        BaseSeries.seriesTypes.sma.prototype.init.apply(this, arguments);
-        // Set default color for lines:
-        this.options = merge({
-            smoothedLine: {
-                styles: {
-                    lineColor: this.color
-                }
-            }
-        }, this.options);
-    },
-    getValues: function (series, params) {
-        var periodK = params.periods[0], periodD = params.periods[1], xVal = series.xData, yVal = series.yData, yValLen = yVal ? yVal.length : 0, 
-        // 0- date, 1-%K, 2-%D
-        SO = [], xData = [], yData = [], slicedY, close = 3, low = 2, high = 1, CL, HL, LL, K, D = null, points, extremes, i;
-        // Stochastic requires close value
-        if (yValLen < periodK ||
-            !isArray(yVal[0]) ||
-            yVal[0].length !== 4) {
-            return;
-        }
-        // For a N-period, we start from N-1 point, to calculate Nth point
-        // That is why we later need to comprehend slice() elements list
-        // with (+1)
-        for (i = periodK - 1; i < yValLen; i++) {
-            slicedY = yVal.slice(i - periodK + 1, i + 1);
-            // Calculate %K
-            extremes = ReduceArrayMixin.getArrayExtremes(slicedY, low, high);
-            LL = extremes[0]; // Lowest low in %K periods
-            CL = yVal[i][close] - LL;
-            HL = extremes[1] - LL;
-            K = CL / HL * 100;
-            xData.push(xVal[i]);
-            yData.push([K, null]);
-            // Calculate smoothed %D, which is SMA of %K
-            if (i >= (periodK - 1) + (periodD - 1)) {
-                points = BaseSeries.seriesTypes.sma.prototype.getValues.call(this, {
-                    xData: xData.slice(-periodD),
-                    yData: yData.slice(-periodD)
-                }, {
-                    period: periodD
-                });
-                D = points.yData[0];
-            }
-            SO.push([xVal[i], K, D]);
-            yData[yData.length - 1][1] = D;
-        }
-        return {
-            values: SO,
-            xData: xData,
-            yData: yData
-        };
-    }
+    getTranslatedLinesNames: MultipleLinesMixin.getTranslatedLinesNames
 });
 BaseSeries.registerSeriesType('stochastic', StochasticIndicator);
 /* *
