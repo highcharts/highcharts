@@ -139,7 +139,7 @@ var PiePoint = /** @class */ (function (_super) {
             // handles full series.
             ['graphic', 'dataLabel', 'connector', 'shadowGroup'].forEach(function (key) {
                 if (point[key]) {
-                    point[key][vis ? 'show' : 'hide'](true);
+                    point[key][vis ? 'show' : 'hide'](vis);
                 }
             });
             if (point.legendItem) {
