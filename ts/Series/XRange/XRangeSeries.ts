@@ -61,11 +61,6 @@ import './XRangeComposition.js';
  * @requires modules/xrange
  */
 
-const seriesTypes = BaseSeries.seriesTypes;
-
-import '../Column/ColumnSeries.js';
-
-
 /**
  * @private
  * @class
@@ -193,7 +188,7 @@ class XRangeSeries extends ColumnSeries {
      * @return {void}
      */
     public init(): void {
-        seriesTypes.column.prototype.init.apply(this, arguments as any);
+        BaseSeries.seriesTypes.column.prototype.init.apply(this, arguments as any);
         this.options.stacking = void 0; // #13161
     }
 
@@ -690,7 +685,7 @@ extend(XRangeSeries.prototype, {
     type: 'xrange',
     parallelArrays: ['x', 'x2', 'y'],
     requireSorting: false,
-    animate: seriesTypes.line.prototype.animate,
+    animate: BaseSeries.seriesTypes.line.prototype.animate,
     cropShoulder: 1,
     getExtremesFromAll: true,
     autoIncrement: H.noop as any,
