@@ -12,13 +12,11 @@
 
 'use strict';
 
-import type AreaSplinePoint from '../AreaSpline/AreaSplinePoint';
-import type AreaSplinePointOptions from '../AreaSpline/AreaSplinePointOptions';
-import type AreaSplineSeriesOptions from '../AreaSpline/AreaSplineSeriesOptions';
-import type { SeriesStatesOptions } from '../../Core/Series/SeriesOptions';
+import type StreamgraphPoint from './StreamgraphPoint';
+import type StreamgraphSeriesOptions from './StreamgraphSeriesOptions';
+
 import AreaSplineSeries from '../AreaSpline/AreaSplineSeries.js';
 import BaseSeries from '../../Core/Series/Series.js';
-
 import U from '../../Core/Utilities.js';
 const {
     merge,
@@ -26,37 +24,8 @@ const {
 } = U;
 
 /**
- * Internal types
- * @private
- */
-declare global {
-    namespace Highcharts {
-        class StreamgraphPoint extends AreaSplinePoint {
-            public options: StreamgraphPointOptions;
-            public series: StreamgraphSeries;
-        }
-        class StreamgraphSeries extends AreaSplineSeries {
-            public data: Array<StreamgraphPoint>;
-            public negStacks: boolean;
-            public options: StreamgraphSeriesOptions;
-            public pointClass: typeof StreamgraphPoint;
-            public points: Array<StreamgraphPoint>;
-            public streamStacker(
-                pointExtremes: Array<number>,
-                stack: Dictionary<number>,
-                i: number
-            ): void;
-        }
-        interface StreamgraphPointOptions extends AreaSplinePointOptions {
-        }
-        interface StreamgraphSeriesOptions extends AreaSplineSeriesOptions {
-            fillOpacity?: number;
-            states?: SeriesStatesOptions<StreamgraphSeries>;
-        }
-    }
-}
-
-/**
+ * Streamgraph series type
+ *
  * @private
  * @class
  * @name Highcharts.seriesTypes.streamgraph
@@ -112,9 +81,9 @@ class StreamgraphSeries extends AreaSplineSeries {
      *
      * */
 
-    public data: Array<Highcharts.StreamgraphPoint> = void 0 as any;
-    public points: Array<Highcharts.StreamgraphPoint>= void 0 as any;
-    public options: Highcharts.StreamgraphSeriesOptions = void 0 as any;
+    public data: Array<StreamgraphPoint> = void 0 as any;
+    public points: Array<StreamgraphPoint> = void 0 as any;
+    public options: StreamgraphSeriesOptions = void 0 as any;
 
     /* *
      *
@@ -139,6 +108,11 @@ class StreamgraphSeries extends AreaSplineSeries {
     }
 }
 
+interface StreamgraphSeries {
+    negStacks: boolean;
+    pointClass: typeof StreamgraphPoint;
+}
+
 extend(StreamgraphSeries.prototype, {
     negStacks: false
 });
@@ -154,7 +128,7 @@ extend(StreamgraphSeries.prototype, {
  */
 declare module '../../Core/Series/SeriesType' {
     interface SeriesTypeRegistry {
-        streamgraph: typeof Highcharts.StreamgraphSeries;
+        streamgraph: typeof StreamgraphSeries;
     }
 }
 

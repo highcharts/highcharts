@@ -28,6 +28,8 @@ import BaseSeries from '../../Core/Series/Series.js';
 import U from '../../Core/Utilities.js';
 var merge = U.merge, extend = U.extend;
 /**
+ * Streamgraph series type
+ *
  * @private
  * @class
  * @name Highcharts.seriesTypes.streamgraph
