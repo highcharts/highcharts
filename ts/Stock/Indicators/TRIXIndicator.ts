@@ -32,7 +32,7 @@ declare global {
             public getTemaPoint(
                 xVal: Array<number>,
                 tripledPeriod: number,
-                EMAlevels: Highcharts.EMAIndicatorLevelsObject,
+                EMAlevels: TEMAIndicator.EMALevelsObject,
                 i: number
             ): [number, number]
             public options: TRIXIndicatorOptions;
@@ -119,7 +119,7 @@ BaseSeries.seriesType<typeof Highcharts.TRIXIndicator>(
         getTemaPoint: function (
             xVal: Array<number>,
             tripledPeriod: number,
-            EMAlevels: Highcharts.EMAIndicatorLevelsObject,
+            EMAlevels: TEMAIndicator.EMALevelsObject,
             i: number
         ): ([number, (number|null)]|undefined) {
             if (i > tripledPeriod) {

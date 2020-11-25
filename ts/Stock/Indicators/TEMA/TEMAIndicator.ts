@@ -29,18 +29,17 @@ const {
     merge
 } = U;
 
-/**
- * Internal types
- * @private
- */
-declare global {
-    namespace Highcharts {
-        interface EMAIndicatorLevelsObject {
-            level1: number;
-            level2: number;
-            level3: number;
-            prevLevel3: number;
-        }
+/* *
+ *
+ *  Class Namespace
+ *
+ * */
+namespace TEMAIndicator {
+    export interface EMALevelsObject {
+        level1: number;
+        level2: number;
+        level3: number;
+        prevLevel3: number;
     }
 }
 
@@ -119,7 +118,7 @@ class TEMAIndicator extends EMAIndicator {
     public getTemaPoint(
         xVal: Array<number>,
         tripledPeriod: number,
-        EMAlevels: Highcharts.EMAIndicatorLevelsObject,
+        EMAlevels: TEMAIndicator.EMALevelsObject,
         i: number
     ): [number, number] {
         var TEMAPoint: [number, number] = [
@@ -164,7 +163,7 @@ class TEMAIndicator extends EMAIndicator {
             // EMA = level1
             // EMA(EMA) = level2,
             // EMA(EMA(EMA)) = level3,
-            EMAlevels: Highcharts.EMAIndicatorLevelsObject = ({} as any);
+            EMAlevels: TEMAIndicator.EMALevelsObject = ({} as any);
 
         series.EMApercent = (2 / (period + 1));
 
