@@ -20,11 +20,17 @@ QUnit.test('Panning inverted chart(#4077)', function (assert) {
             },
 
             xAxis: {
-                categories: ['Jan', 'Feb', 'Mar', 'Apr', 'May', 'Jun', 'Jul', 'Aug', 'Sep', 'Oct', 'Nov', 'Dec']
+                categories: [
+                    'Jan', 'Feb', 'Mar', 'Apr', 'May', 'Jun',
+                    'Jul', 'Aug', 'Sep', 'Oct', 'Nov', 'Dec'
+                ]
             },
 
             series: [{
-                data: [29.9, 71.5, 106.4, 129.2, 144.0, 176.0, 135.6, 148.5, 216.4, 194.1, 95.6, 54.4],
+                data: [
+                    29.9, 71.5, 106.4, 129.2, 144.0, 176.0,
+                    135.6, 148.5, 216.4, 194.1, 95.6, 54.4
+                ],
                 animation: false
             }]
         }),
@@ -130,7 +136,10 @@ QUnit.test('Zoom and pan key', function (assert) {
             },
 
             xAxis: {
-                categories: ['Jan', 'Feb', 'Mar', 'Apr', 'May', 'Jun', 'Jul', 'Aug', 'Sep', 'Oct', 'Nov', 'Dec'],
+                categories: [
+                    'Jan', 'Feb', 'Mar', 'Apr', 'May', 'Jun',
+                    'Jul', 'Aug', 'Sep', 'Oct', 'Nov', 'Dec'
+                ],
                 reversed: true // #7857
             },
             yAxis: {
@@ -139,7 +148,10 @@ QUnit.test('Zoom and pan key', function (assert) {
             },
 
             series: [{
-                data: [29.9, 71.5, 106.4, 129.2, 144.0, 176.0, 135.6, 148.5, 216.4, 194.1, 95.6, 54.4]
+                data: [
+                    29.9, 71.5, 106.4, 129.2, 144.0, 176.0, 135.6,
+                    148.5, 216.4, 194.1, 95.6, 54.4
+                ]
             }]
         }),
         controller = new TestController(chart);
@@ -196,7 +208,8 @@ QUnit.test('Zoom and pan key', function (assert) {
     );
 
     // Pan
-    delete chart.pointer.chartPosition; // delete cache, QUnit header is moving chart
+    // delete cache, QUnit header is moving chart
+    delete chart.pointer.chartPosition;
     controller.mouseDown(100, 200, { shiftKey: true });
     for (var x = 110; x < 400; x += 10) {
         controller.mouseMove(x, 100, { shiftKey: true });
@@ -291,55 +304,58 @@ QUnit.test('Stock (ordinal axis) panning (#6276)', function (assert) {
     );
 });
 
-QUnit.test('Ordinal axis panning, when data is equally spaced (#13334).', function (assert) {
-    var chart = Highcharts.stockChart('container', {
-        xAxis: {
-            min: Date.UTC(2020, 1, 6),
-            max: Date.UTC(2020, 1, 9)
-        },
-        series: [{
-            data: [{
-                x: Date.UTC(2020, 1, 1),
-                y: 10
-            }, {
-                x: Date.UTC(2020, 1, 2),
-                y: 11
-            }, {
-                x: Date.UTC(2020, 1, 3),
-                y: 12
-            }, {
-                x: Date.UTC(2020, 1, 4),
-                y: 14
-            }, {
-                x: Date.UTC(2020, 1, 5),
-                y: 15
-            }, {
-                x: Date.UTC(2020, 1, 6),
-                y: 16
-            }, {
-                x: Date.UTC(2020, 1, 7),
-                y: 14
-            }, {
-                x: Date.UTC(2020, 1, 8),
-                y: 15
-            }, {
-                x: Date.UTC(2020, 1, 9),
-                y: 16
+QUnit.test(
+    'Ordinal axis panning, when data is equally spaced (#13334).',
+    function (assert) {
+        var chart = Highcharts.stockChart('container', {
+            xAxis: {
+                min: Date.UTC(2020, 1, 6),
+                max: Date.UTC(2020, 1, 9)
+            },
+            series: [{
+                data: [{
+                    x: Date.UTC(2020, 1, 1),
+                    y: 10
+                }, {
+                    x: Date.UTC(2020, 1, 2),
+                    y: 11
+                }, {
+                    x: Date.UTC(2020, 1, 3),
+                    y: 12
+                }, {
+                    x: Date.UTC(2020, 1, 4),
+                    y: 14
+                }, {
+                    x: Date.UTC(2020, 1, 5),
+                    y: 15
+                }, {
+                    x: Date.UTC(2020, 1, 6),
+                    y: 16
+                }, {
+                    x: Date.UTC(2020, 1, 7),
+                    y: 14
+                }, {
+                    x: Date.UTC(2020, 1, 8),
+                    y: 15
+                }, {
+                    x: Date.UTC(2020, 1, 9),
+                    y: 16
+                }]
             }]
-        }]
-    });
+        });
 
-    var controller = new TestController(chart),
-        initialMin = chart.xAxis[0].min;
+        var controller = new TestController(chart),
+            initialMin = chart.xAxis[0].min;
 
-    controller.pan([100, 200], [200, 200]);
+        controller.pan([100, 200], [200, 200]);
 
-    assert.notEqual(
-        initialMin,
-        chart.xAxis[0].min,
-        'Chart should pan horizontally.'
-    );
-});
+        assert.notEqual(
+            initialMin,
+            chart.xAxis[0].min,
+            'Chart should pan horizontally.'
+        );
+    }
+);
 
 QUnit.test('Pan all the way to extremes (#5863)', function (assert) {
     var chart = Highcharts.chart('container', {
@@ -371,12 +387,15 @@ QUnit.test('Pan all the way to extremes (#5863)', function (assert) {
                 10871, 10824, 10577, 10527, 10475, 10421, 10358]
         }, {
             name: 'USSR/Russia',
-            data: [5, 25, 50, 120, 150, 200, 426, 660, 869, 1060, 1605, 2471, 3322,
-                4238, 5221, 6129, 7089, 8339, 9399, 10538, 11643, 13092, 14478,
-                15915, 17385, 19055, 21205, 23044, 25393, 27935, 30062, 32049,
-                33952, 35804, 37431, 39197, 45000, 43000, 41000, 39000, 37000,
-                35000, 33000, 31000, 29000, 27000, 25000, 24000, 23000, 22000,
-                21000, 20000, 19000, 18000, 18000, 17000]
+            data: [
+                5, 25, 50, 120, 150, 200, 426, 660, 869, 1060, 1605, 2471,
+                3322, 4238, 5221, 6129, 7089, 8339, 9399, 10538, 11643,
+                13092, 14478, 15915, 17385, 19055, 21205, 23044, 25393,
+                27935, 30062, 32049, 33952, 35804, 37431, 39197, 45000,
+                43000, 41000, 39000, 37000, 35000, 33000, 31000, 29000,
+                27000, 25000, 24000, 23000, 22000, 21000, 20000, 19000,
+                18000, 18000, 17000
+            ]
         }]
     });
 
@@ -405,82 +424,127 @@ QUnit.test('Pan all the way to extremes (#5863)', function (assert) {
     );
 });
 
-QUnit.test('Pan in vertical direction, and both directions. (Highstock only)', function (assert) {
-    var chart = Highcharts.stockChart('container', {
-        chart: {
-            width: 600,
-            panning: {
-                type: 'y'
-            }
-        },
-        title: {
-            text: 'AAPL stock price by minute'
-        },
-        rangeSelector: {
-            selected: 1,
-            inputEnabled: false
-        },
-        series: [{
-            data: (function () {
-                var arr = [];
-                var y = 1;
-                for (
-                    var x = Date.UTC(2017, 0, 1); x < Date.UTC(2017, 11, 31); x += 24 * 36e5
-                ) {
-                    if (y % 7 !== 0) {
-                        arr.push([x, y]);
-                    }
-                    y++;
+QUnit.test(
+    'Pan in vertical direction, and both directions. (Highstock only)',
+    function (assert) {
+        var chart = Highcharts.stockChart('container', {
+            chart: {
+                width: 600,
+                panning: {
+                    type: 'y'
                 }
-                return arr;
-            }())
-        }]
-    });
+            },
+            title: {
+                text: 'AAPL stock price by minute'
+            },
+            rangeSelector: {
+                selected: 1,
+                inputEnabled: false
+            },
+            series: [{
+                data: (function () {
+                    var arr = [];
+                    var y = 1;
+                    for (
+                        var x = Date.UTC(2017, 0, 1);
+                        x < Date.UTC(2017, 11, 31);
+                        x += 24 * 36e5
+                    ) {
+                        if (y % 7 !== 0) {
+                            arr.push([x, y]);
+                        }
+                        y++;
+                    }
+                    return arr;
+                }())
+            }]
+        });
 
-    var controller = new TestController(chart);
+        var controller = new TestController(chart);
 
-    var initialMin = chart.yAxis[0].min,
-        initialRange = chart.yAxis[0].max - chart.yAxis[0].min;
+        var initialMin = chart.yAxis[0].min,
+            initialRange = chart.yAxis[0].max - chart.yAxis[0].min;
 
-    // Pan in vertical direction
-    controller.pan([100, 200], [100, 100]);
+        // Pan in vertical direction
+        controller.pan([100, 200], [100, 100]);
 
-    assert.ok(
-        chart.yAxis[0].min < initialMin,
-        'Has panned in Y direction.'
-    );
+        assert.ok(
+            chart.yAxis[0].min < initialMin,
+            'Has panned in Y direction.'
+        );
 
-    assert.strictEqual(
-        Highcharts.correctFloat(chart.yAxis[0].max - chart.yAxis[0].min),
-        Highcharts.correctFloat(initialRange),
-        'Has preserved range.'
-    );
+        assert.strictEqual(
+            Highcharts.correctFloat(chart.yAxis[0].max - chart.yAxis[0].min),
+            Highcharts.correctFloat(initialRange),
+            'Has preserved range.'
+        );
 
-    chart.update({
-        chart: {
-            panning: {
-                type: 'xy'
+        chart.update({
+            chart: {
+                panning: {
+                    type: 'xy'
+                }
             }
-        }
-    });
+        });
 
-    var initialXMin = chart.xAxis[0].min,
-        initialYMin = chart.yAxis[0].min,
-        initialXRange = chart.xAxis[0].max - chart.xAxis[0].min,
-        initialYRange = Highcharts.correctFloat(chart.yAxis[0].max - chart.yAxis[0].min);
+        var initialXMin = chart.xAxis[0].min,
+            initialYMin = chart.yAxis[0].min,
+            initialXRange = chart.xAxis[0].max - chart.xAxis[0].min,
+            initialYRange = Highcharts.correctFloat(
+                chart.yAxis[0].max - chart.yAxis[0].min
+            );
 
-    // Pan in both directions
-    controller.pan([100, 100], [150, 150]);
+        // Pan in both directions
+        controller.pan([100, 100], [150, 150]);
 
-    assert.ok(
-        chart.xAxis[0].min < initialXMin &&
-        chart.yAxis[0].min > initialYMin,
-        'Has panned in both directions.'
-    );
+        assert.ok(
+            chart.xAxis[0].min < initialXMin &&
+            chart.yAxis[0].min > initialYMin,
+            'Has panned in both directions.'
+        );
 
-    assert.ok(
-        chart.xAxis[0].max - chart.xAxis[0].min === initialXRange &&
-        Highcharts.correctFloat(chart.yAxis[0].max - chart.yAxis[0].min) === initialYRange,
-        'Has preserved range.'
-    );
-});
+        assert.ok(
+            chart.xAxis[0].max - chart.xAxis[0].min === initialXRange &&
+            Highcharts.correctFloat(
+                chart.yAxis[0].max - chart.yAxis[0].min
+            ) === initialYRange,
+            'Has preserved range.'
+        );
+    }
+);
+
+QUnit.test(
+    'Panning should be disabled when type is set but not enabled (#14624)',
+    function (assert) {
+        var chart = Highcharts.chart('container', {
+            chart: {
+                panning: {
+                    type: 'xy',
+                    enabled: false
+                },
+                height: 480
+            },
+            yAxis: [{
+                index: 0
+            }, {
+                title: {
+                    text: "Value (B)"
+                }
+            }],
+            series: [{
+                data: [
+                    [1605898200426, -49.985682],
+                    [1605902399496, 52.004364]
+                ]
+            }, {
+                data: [
+                    [1605898200426, -0.081397],
+                    [1605902399496, -0.013002]
+                ]
+            }]
+        });
+
+        var actualMin = chart.yAxis[0].getExtremes().min;
+        assert.strictEqual(actualMin, -75, 'Min must be -75; not panning');
+    }
+);
