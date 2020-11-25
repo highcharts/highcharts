@@ -23,10 +23,10 @@ var __extends = (this && this.__extends) || (function () {
         d.prototype = b === null ? Object.create(b) : (__.prototype = b.prototype, new __());
     };
 })();
-import BaseSeries from '../Core/Series/Series.js';
+import BaseSeries from '../../Core/Series/Series.js';
 var AreaSplineSeries = BaseSeries.seriesTypes.areaspline;
-import DerivedSeriesMixin from '../Mixins/DerivedSeries.js';
-import U from '../Core/Utilities.js';
+import DerivedSeriesMixin from '../../Mixins/DerivedSeries.js';
+import U from '../../Core/Utilities.js';
 var correctFloat = U.correctFloat, extend = U.extend, isNumber = U.isNumber, merge = U.merge;
 /**
  * Bell curve class
