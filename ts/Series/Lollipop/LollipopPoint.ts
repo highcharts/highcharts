@@ -43,10 +43,13 @@ class LollipopPoint extends DumbbellPoint {
  *  Prototype properties
  *
  * */
+interface LollipopPoint {
+    pointSetState: typeof areaProto.pointClass.prototype.setState;
+    init: typeof Point.prototype.init;
+}
 
 extend(LollipopPoint.prototype, {
     pointSetState: areaProto.pointClass.prototype.setState,
-    setState: DumbbellPoint.prototype.setState,
     // Does not work with the inherited `isvalid`
     isValid: Point.prototype.isValid,
     init: function (

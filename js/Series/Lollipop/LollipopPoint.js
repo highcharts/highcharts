@@ -42,14 +42,8 @@ var LollipopPoint = /** @class */ (function (_super) {
     }
     return LollipopPoint;
 }(DumbbellPoint));
-/* *
- *
- *  Prototype properties
- *
- * */
 extend(LollipopPoint.prototype, {
     pointSetState: areaProto.pointClass.prototype.setState,
-    setState: DumbbellPoint.prototype.setState,
     // Does not work with the inherited `isvalid`
     isValid: Point.prototype.isValid,
     init: function (series, options, x) {
