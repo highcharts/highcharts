@@ -12,14 +12,14 @@
 
 'use strict';
 
-import type AreaSplinePoint from './AreaSpline/AreaSplinePoint';
-import type AreaSplinePointOptions from './AreaSpline/AreaSplinePointOptions';
-import type AreaSplineSeriesOptions from './AreaSpline/AreaSplineSeriesOptions';
-import type { SeriesStatesOptions } from '../Core/Series/SeriesOptions';
-import AreaSplineSeries from './AreaSpline/AreaSplineSeries.js';
-import BaseSeries from '../Core/Series/Series.js';
+import type AreaSplinePoint from '../AreaSpline/AreaSplinePoint';
+import type AreaSplinePointOptions from '../AreaSpline/AreaSplinePointOptions';
+import type AreaSplineSeriesOptions from '../AreaSpline/AreaSplineSeriesOptions';
+import type { SeriesStatesOptions } from '../../Core/Series/SeriesOptions';
+import AreaSplineSeries from '../AreaSpline/AreaSplineSeries.js';
+import BaseSeries from '../../Core/Series/Series.js';
 
-import U from '../Core/Utilities.js';
+import U from '../../Core/Utilities.js';
 const {
     merge,
     extend
@@ -152,7 +152,7 @@ extend(StreamgraphSeries.prototype, {
 /**
  * @private
  */
-declare module '../Core/Series/SeriesType' {
+declare module '../../Core/Series/SeriesType' {
     interface SeriesTypeRegistry {
         streamgraph: typeof Highcharts.StreamgraphSeries;
     }
