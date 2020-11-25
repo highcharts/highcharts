@@ -19,6 +19,7 @@ import HTMLUtilities from '../Utils/HTMLUtilities.js';
 var setElAttrs = HTMLUtilities.setElAttrs;
 import KeyboardNavigationHandler from '../KeyboardNavigationHandler.js';
 import U from '../../Core/Utilities.js';
+import RangeSelector from '../../Extensions/RangeSelector.js';
 var extend = U.extend;
 /* eslint-disable no-invalid-this, valid-jsdoc */
 /**
@@ -67,6 +68,13 @@ H.Chart.prototype.highlightRangeSelectorButton = function (ix) {
     }
     return false;
 };
+// Range selector does not have destroy-setup for class instance events - so
+// we set it on the class and call the component from here.
+H.addEvent(RangeSelector, 'afterBtnClick', function () {
+    var _a;
+    var component = (_a = this.chart.accessibility) === null || _a === void 0 ? void 0 : _a.components.rangeSelector;
+    return component === null || component === void 0 ? void 0 : component.onAfterBtnClick();
+});
 /**
  * The RangeSelectorComponent class
  *
@@ -82,18 +90,8 @@ extend(RangeSelectorComponent.prototype, /** @lends Highcharts.RangeSelectorComp
      * @private
      */
     init: function () {
-        var _this = this;
         var chart = this.chart;
         this.announcer = new Announcer(chart, 'polite');
-        if (chart.rangeSelector) {
-            this.addEvent(chart, 'afterRangeSelectorBtnClick', function () {
-                var axisRangeDescription = getAxisRangeDescription(chart.xAxis[0]);
-                var announcement = chart.langFormat('accessibility.rangeSelector.clickButtonAnnouncement', { chart: chart, axisRangeDescription: axisRangeDescription });
-                if (announcement) {
-                    _this.announcer.announce(announcement);
-                }
-            });
-        }
     },
     /**
      * Called on first render/updates to the chart, including options changes.
@@ -204,6 +202,19 @@ extend(RangeSelectorComponent.prototype, /** @lends Highcharts.RangeSelectorComp
             this.fakeClickEvent(chart.rangeSelector.buttons[chart.highlightedRangeSelectorItemIx].element);
         }
         return response.success;
+    },
+    /**
+     * Called whenever a range selector button has been clicked, either by
+     * mouse, touch, or kbd/voice/other.
+     * @private
+     */
+    onAfterBtnClick: function () {
+        var chart = this.chart;
+        var axisRangeDescription = getAxisRangeDescription(chart.xAxis[0]);
+        var announcement = chart.langFormat('accessibility.rangeSelector.clickButtonAnnouncement', { chart: chart, axisRangeDescription: axisRangeDescription });
+        if (announcement) {
+            this.announcer.announce(announcement);
+        }
     },
     /**
      * Get navigation for the range selector input boxes.
