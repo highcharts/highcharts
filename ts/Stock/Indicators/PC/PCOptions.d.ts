@@ -21,8 +21,7 @@ import type {
 *  Declarations
 *
 * */
-export interface PCOptions extends SMAOptions,
-    Highcharts.MultipleLinesIndicatorOptions {
+export interface PCOptions extends SMAOptions, Highcharts.MultipleLinesIndicatorOptions {
     params?: PCParamsOptions;
     bottomLine: Record<string, CSSObject>;
     topLine: Record<string, CSSObject>;
