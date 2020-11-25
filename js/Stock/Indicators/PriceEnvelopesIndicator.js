@@ -6,11 +6,23 @@
  *
  * */
 'use strict';
+var __extends = (this && this.__extends) || (function () {
+    var extendStatics = function (d, b) {
+        extendStatics = Object.setPrototypeOf ||
+            ({ __proto__: [] } instanceof Array && function (d, b) { d.__proto__ = b; }) ||
+            function (d, b) { for (var p in b) if (b.hasOwnProperty(p)) d[p] = b[p]; };
+        return extendStatics(d, b);
+    };
+    return function (d, b) {
+        extendStatics(d, b);
+        function __() { this.constructor = d; }
+        d.prototype = b === null ? Object.create(b) : (__.prototype = b.prototype, new __());
+    };
+})();
 import BaseSeries from '../../Core/Series/Series.js';
+var SMAIndicator = BaseSeries.seriesTypes.sma;
 import U from '../../Core/Utilities.js';
-var isArray = U.isArray, merge = U.merge;
-// im port './SMAIndicator.js';
-var SMA = BaseSeries.seriesTypes.sma;
+var extend = U.extend, isArray = U.isArray, merge = U.merge;
 /**
  * The Price Envelopes series type.
  *
@@ -20,86 +32,89 @@ var SMA = BaseSeries.seriesTypes.sma;
  *
  * @augments Highcharts.Series
  */
-BaseSeries.seriesType('priceenvelopes', 'sma', 
-/**
- * Price envelopes indicator based on [SMA](#plotOptions.sma) calculations.
- * This series requires the `linkedTo` option to be set and should be loaded
- * after the `stock/indicators/indicators.js` file.
- *
- * @sample stock/indicators/price-envelopes
- *         Price envelopes
- *
- * @extends      plotOptions.sma
- * @since        6.0.0
- * @product      highstock
- * @requires     stock/indicators/indicators
- * @requires     stock/indicators/price-envelopes
- * @optionparent plotOptions.priceenvelopes
- */
-{
-    marker: {
-        enabled: false
-    },
-    tooltip: {
-        pointFormat: '<span style="color:{point.color}">\u25CF</span><b> {series.name}</b><br/>Top: {point.top}<br/>Middle: {point.middle}<br/>Bottom: {point.bottom}<br/>'
-    },
-    params: {
-        period: 20,
-        /**
-         * Percentage above the moving average that should be displayed.
-         * 0.1 means 110%. Relative to the calculated value.
-         */
-        topBand: 0.1,
-        /**
-         * Percentage below the moving average that should be displayed.
-         * 0.1 means 90%. Relative to the calculated value.
-         */
-        bottomBand: 0.1
-    },
-    /**
-     * Bottom line options.
-     */
-    bottomLine: {
-        styles: {
-            /**
-             * Pixel width of the line.
-             */
-            lineWidth: 1,
-            /**
-             * Color of the line. If not set, it's inherited from
-             * [plotOptions.priceenvelopes.color](
-             * #plotOptions.priceenvelopes.color).
-             *
-             * @type {Highcharts.ColorString}
-             */
-            lineColor: void 0
-        }
-    },
-    /**
-     * Top line options.
-     *
-     * @extends plotOptions.priceenvelopes.bottomLine
-     */
-    topLine: {
-        styles: {
-            lineWidth: 1
-        }
-    },
-    dataGrouping: {
-        approximation: 'averages'
+var PriceEnvelopesIndicator = /** @class */ (function (_super) {
+    __extends(PriceEnvelopesIndicator, _super);
+    function PriceEnvelopesIndicator() {
+        return _super !== null && _super.apply(this, arguments) || this;
     }
-}, 
-/**
- * @lends Highcharts.Series#
- */
-{
+    /**
+     * Price envelopes indicator based on [SMA](#plotOptions.sma) calculations.
+     * This series requires the `linkedTo` option to be set and should be loaded
+     * after the `stock/indicators/indicators.js` file.
+     *
+     * @sample stock/indicators/price-envelopes
+     *         Price envelopes
+     *
+     * @extends      plotOptions.sma
+     * @since        6.0.0
+     * @product      highstock
+     * @requires     stock/indicators/indicators
+     * @requires     stock/indicators/price-envelopes
+     * @optionparent plotOptions.priceenvelopes
+     */
+    PriceEnvelopesIndicator.defaultOptions = merge(SMAIndicator.defaultOptions, {
+        marker: {
+            enabled: false
+        },
+        tooltip: {
+            pointFormat: '<span style="color:{point.color}">\u25CF</span><b> {series.name}</b><br/>Top: {point.top}<br/>Middle: {point.middle}<br/>Bottom: {point.bottom}<br/>'
+        },
+        params: {
+            period: 20,
+            /**
+             * Percentage above the moving average that should be displayed.
+             * 0.1 means 110%. Relative to the calculated value.
+             */
+            topBand: 0.1,
+            /**
+             * Percentage below the moving average that should be displayed.
+             * 0.1 means 90%. Relative to the calculated value.
+             */
+            bottomBand: 0.1
+        },
+        /**
+         * Bottom line options.
+         */
+        bottomLine: {
+            styles: {
+                /**
+                 * Pixel width of the line.
+                 */
+                lineWidth: 1,
+                /**
+                 * Color of the line. If not set, it's inherited from
+                 * [plotOptions.priceenvelopes.color](
+                 * #plotOptions.priceenvelopes.color).
+                 *
+                 * @type {Highcharts.ColorString}
+                 */
+                lineColor: void 0
+            }
+        },
+        /**
+         * Top line options.
+         *
+         * @extends plotOptions.priceenvelopes.bottomLine
+         */
+        topLine: {
+            styles: {
+                lineWidth: 1
+            }
+        },
+        dataGrouping: {
+            approximation: 'averages'
+        }
+    });
+    return PriceEnvelopesIndicator;
+}(SMAIndicator));
+extend(PriceEnvelopesIndicator.prototype, {
     nameComponents: ['period', 'topBand', 'bottomBand'],
     nameBase: 'Price envelopes',
     pointArrayMap: ['top', 'middle', 'bottom'],
     parallelArrays: ['x', 'y', 'top', 'bottom'],
     pointValKey: 'middle',
     init: function () {
-        SMA.prototype.init.apply(this, arguments);
+        BaseSeries.seriesTypes.sma.prototype.init.apply(this, arguments);
         // Set default color for lines:
         this.options = merge({
             topLine: {
@@ -119,7 +134,7 @@ BaseSeries.seriesType('priceenvelopes', 'sma',
     },
     translate: function () {
         var indicator = this, translatedEnvelopes = ['plotTop', 'plotMiddle', 'plotBottom'];
-        SMA.prototype.translate.apply(indicator);
+        BaseSeries.seriesTypes.sma.prototype.translate.apply(indicator);
         indicator.points.forEach(function (point) {
             [point.top, point.middle, point.bottom].forEach(function (value, i) {
                 if (value !== null) {
@@ -155,7 +170,7 @@ BaseSeries.seriesType('priceenvelopes', 'sma',
             indicator.points = deviations[i];
             indicator.options = merge(middleLineOptions[lineName].styles, gappedExtend);
             indicator.graph = indicator['graph' + lineName];
-            SMA.prototype.drawGraph.call(indicator);
+            BaseSeries.seriesTypes.sma.prototype.drawGraph.call(indicator);
             // Now save lines:
             indicator['graph' + lineName] = indicator.graph;
         });
@@ -163,7 +178,7 @@ BaseSeries.seriesType('priceenvelopes', 'sma',
         indicator.points = middleLinePoints;
         indicator.options = middleLineOptions;
         indicator.graph = middleLinePath;
-        SMA.prototype.drawGraph.call(indicator);
+        BaseSeries.seriesTypes.sma.prototype.drawGraph.call(indicator);
     },
     getValues: function (series, params) {
         var period = params.period, topPercent = params.topBand, botPercent = params.bottomBand, xVal = series.xData, yVal = series.yData, yValLen = yVal ? yVal.length : 0, 
@@ -180,7 +195,7 @@ BaseSeries.seriesType('priceenvelopes', 'sma',
         for (i = period; i <= yValLen; i++) {
             slicedX = xVal.slice(i - period, i);
             slicedY = yVal.slice(i - period, i);
-            point = SMA.prototype.getValues.call(this, {
+            point = BaseSeries.seriesTypes.sma.prototype.getValues.call(this, {
                 xData: slicedX,
                 yData: slicedY
             }, params);
@@ -199,6 +214,13 @@ BaseSeries.seriesType('priceenvelopes', 'sma',
         };
     }
 });
+BaseSeries.registerSeriesType('priceenvelopes', PriceEnvelopesIndicator);
+/* *
+ *
+ *  Default Export
+ *
+ * */
+export default PriceEnvelopesIndicator;
 /**
  * A price envelopes indicator. If the [type](#series.priceenvelopes.type)
  * option is not specified, it is inherited from [chart.type](#chart.type).
