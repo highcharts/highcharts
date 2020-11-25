@@ -1487,9 +1487,13 @@ var LineSeries = /** @class */ (function () {
             }
             // Set the the plotY value, reset it for redraws
             // #3201
-            point.plotY = ((typeof yValue === 'number' && yValue !== Infinity) ?
-                limitedRange(yAxis.translate(yValue, 0, 1, 0, 1)) :
-                void 0);
+            point.plotY = void 0;
+            if (typeof yValue === 'number' && yValue !== Infinity) {
+                var translated = yAxis.translate(yValue, false, true, false, true);
+                if (typeof translated !== 'undefined') {
+                    point.plotY = limitedRange(translated);
+                }
+            }
             point.isInside = this.isPointInside(point);
             // Set client related positions for mouse tracking
             point.clientX = dynamicallyPlaced ?
