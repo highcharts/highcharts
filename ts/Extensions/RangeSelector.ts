@@ -920,7 +920,7 @@ class RangeSelector {
             );
         }
 
-        fireEvent(chart, 'afterRangeSelectorBtnClick');
+        fireEvent(this, 'afterBtnClick');
     }
 
     /**

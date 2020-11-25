@@ -30,6 +30,7 @@ const {
 } = HTMLUtilities;
 import KeyboardNavigationHandler from '../KeyboardNavigationHandler.js';
 import U from '../../Core/Utilities.js';
+import RangeSelector from '../../Extensions/RangeSelector.js';
 const {
     extend
 } = U;
@@ -57,6 +58,7 @@ declare global {
             public getRangeSelectorButtonNavigation(
             ): KeyboardNavigationHandler;
             public getRangeSelectorInputNavigation(): KeyboardNavigationHandler;
+            public onAfterBtnClick(): void;
             public onButtonNavKbdArrowKey(
                 keyboardNavigationHandler: KeyboardNavigationHandler,
                 keyCode: number
@@ -141,6 +143,14 @@ H.Chart.prototype.highlightRangeSelectorButton = function (
 };
 
 
+// Range selector does not have destroy-setup for class instance events - so
+// we set it on the class and call the component from here.
+H.addEvent(RangeSelector, 'afterBtnClick', function (): void {
+    const component = this.chart.accessibility?.components.rangeSelector;
+    return component?.onAfterBtnClick();
+});
+
+
 /**
  * The RangeSelectorComponent class
  *
@@ -160,20 +170,6 @@ extend(RangeSelectorComponent.prototype, /** @lends Highcharts.RangeSelectorComp
     init: function (this: Highcharts.RangeSelectorComponent): void {
         const chart = this.chart;
         this.announcer = new Announcer(chart, 'polite');
-
-        if (chart.rangeSelector) {
-            this.addEvent(chart, 'afterRangeSelectorBtnClick', (): void => {
-                const axisRangeDescription = getAxisRangeDescription(chart.xAxis[0]);
-                const announcement = chart.langFormat(
-                    'accessibility.rangeSelector.clickButtonAnnouncement',
-                    { chart, axisRangeDescription }
-                );
-
-                if (announcement) {
-                    this.announcer.announce(announcement);
-                }
-            });
-        }
     },
 
 
@@ -355,6 +351,27 @@ extend(RangeSelectorComponent.prototype, /** @lends Highcharts.RangeSelectorComp
         }
 
         return response.success;
+    },
+
+
+    /**
+     * Called whenever a range selector button has been clicked, either by
+     * mouse, touch, or kbd/voice/other.
+     * @private
+     */
+    onAfterBtnClick: function (
+        this: Highcharts.RangeSelectorComponent
+    ): void {
+        const chart = this.chart;
+        const axisRangeDescription = getAxisRangeDescription(chart.xAxis[0]);
+        const announcement = chart.langFormat(
+            'accessibility.rangeSelector.clickButtonAnnouncement',
+            { chart, axisRangeDescription }
+        );
+
+        if (announcement) {
+            this.announcer.announce(announcement);
+        }
     },
 
 

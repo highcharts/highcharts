@@ -645,7 +645,7 @@ var RangeSelector = /** @class */ (function () {
                 rangeSelectorButton: rangeOptions
             });
         }
-        fireEvent(chart, 'afterRangeSelectorBtnClick');
+        fireEvent(this, 'afterBtnClick');
     };
     /**
      * Set the selected option. This method only sets the internal flag, it
