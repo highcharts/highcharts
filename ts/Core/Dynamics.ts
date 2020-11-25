@@ -1613,6 +1613,8 @@ extend(LineSeries.prototype, /** @lends Series.prototype */ {
         }
         if (seriesTypes[newType || initialType]) {
             extend(series, seriesTypes[newType || initialType].prototype);
+            // The events are tied to the prototype chain, don't copy
+            delete series.hcEvents;
         } else {
             error(
                 17,
