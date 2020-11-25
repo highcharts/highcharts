@@ -18,20 +18,18 @@
  *
  * */
 
-import type PiePointOptions from '../Pie/PiePointOptions';
-import type PieSeriesOptions from '../Pie/PieSeriesOptions';
-import type { PointMarkerOptions } from '../../Core/Series/PointOptions';
-import type { SeriesStatesOptions } from '../../Core/Series/SeriesOptions';
+import type { ItemPointMarkerOptions } from './ItemPointOptions';
+import type ItemSeriesOptions from './ItemSeriesOptions';
 import type SVGAttributes from '../../Core/Renderer/SVG/SVGAttributes';
 import type SVGElement from '../../Core/Renderer/SVG/SVGElement';
 import BaseSeries from '../../Core/Series/Series.js';
 const {
     seriesTypes: {
-        line: LineSeries,
         pie: PieSeries
     }
 } = BaseSeries;
 import H from '../../Core/Globals.js';
+import ItemPoint from './ItemPoint.js';
 import O from '../../Core/Options.js';
 const { defaultOptions } = O;
 import U from '../../Core/Utilities.js';
@@ -44,36 +42,6 @@ const {
     objectEach,
     pick
 } = U;
-
-/**
- * Internal types
- * @private
- */
-declare global {
-    namespace Highcharts {
-        interface ItemPointOptions extends PiePointOptions {
-        }
-        interface ItemPointMarkerOptions extends PointMarkerOptions {
-            radius: undefined;
-        }
-        interface ItemRowObject {
-            colCount: number;
-            rowLength: number;
-            rowRadius: number;
-        }
-        interface ItemRowContainerObject {
-            angle: number;
-            row: ItemRowObject;
-        }
-        interface ItemSeriesOptions extends PieSeriesOptions {
-            itemPadding?: number;
-            layout?: string;
-            marker?: ItemPointMarkerOptions;
-            rows?: number;
-            states?: SeriesStatesOptions<ItemSeries>;
-        }
-    }
-}
 
 /* *
  *
@@ -127,7 +95,7 @@ class ItemSeries extends PieSeries {
      * @requires     modules/item-series
      * @optionparent plotOptions.item
      */
-    public static defaultOptions: Highcharts.ItemSeriesOptions = merge(PieSeries.defaultOptions, {
+    public static defaultOptions: ItemSeriesOptions = merge(PieSeries.defaultOptions, {
         /**
          * In circular view, the end angle of the item layout, in degrees where
          * 0 is up.
@@ -192,7 +160,7 @@ class ItemSeries extends PieSeries {
          * @type {undefined|number}
          */
         startAngle: void 0
-    } as Highcharts.ItemSeriesOptions);
+    } as ItemSeriesOptions);
 
     /* *
      *
@@ -206,7 +174,7 @@ class ItemSeries extends PieSeries {
 
     public itemSize?: number;
 
-    public options: Highcharts.ItemSeriesOptions = void 0 as any;
+    public options: ItemSeriesOptions = void 0 as any;
 
     public points: Array<ItemPoint> = void 0 as any;
 
@@ -253,8 +221,7 @@ class ItemSeries extends PieSeries {
         var series = this,
             options = this.options,
             renderer = series.chart.renderer,
-            seriesMarkerOptions: Highcharts.ItemPointMarkerOptions =
-                options.marker as any,
+            seriesMarkerOptions: ItemPointMarkerOptions = options.marker as any,
             borderWidth: number = this.borderWidth as any,
             crisp = borderWidth % 2 ? 0.5 : 1,
             i = 0,
@@ -443,8 +410,8 @@ class ItemSeries extends PieSeries {
             ),
             itemCount = Number.MAX_VALUE,
             finalItemCount: (number|undefined),
-            rows: (Array<Highcharts.ItemRowObject>|undefined),
-            testRows: (Array<Highcharts.ItemRowObject>|undefined),
+            rows: (Array<ItemSeries.RowObject>|undefined),
+            testRows: (Array<ItemSeries.RowObject>|undefined),
             rowsOption = this.options.rows,
             // How many rows (arcs) should be used
             rowFraction = (diameter - innerSize) / diameter,
@@ -519,7 +486,7 @@ class ItemSeries extends PieSeries {
          * Wrapped object with angle and row
          * @return {void}
          */
-        function cutOffRow(item: Highcharts.ItemRowContainerObject): void {
+        function cutOffRow(item: ItemSeries.RowContainerObject): void {
             if (overshoot > 0) {
                 item.row.colCount--;
                 overshoot--;
@@ -529,19 +496,14 @@ class ItemSeries extends PieSeries {
             rows
                 // Return a simplified representation of the angle of
                 // the last slot within each row.
-                .map(function (
-                    row: Highcharts.ItemRowObject
-                ): Highcharts.ItemRowContainerObject {
+                .map(function (row): ItemSeries.RowContainerObject {
                     return {
                         angle: row.colCount / row.rowLength,
                         row: row
                     };
                 })
                 // Sort by the angles...
-                .sort(function (
-                    a: Highcharts.ItemRowContainerObject,
-                    b: Highcharts.ItemRowContainerObject
-                ): number {
+                .sort(function (a, b): number {
                     return b.angle - a.angle;
                 })
                 // ...so that we can ignore the items with the lowest
@@ -554,7 +516,7 @@ class ItemSeries extends PieSeries {
                 .forEach(cutOffRow);
         }
 
-        rows.forEach(function (row: Highcharts.ItemRowObject): void {
+        rows.forEach(function (row): void {
             var rowRadius = row.rowRadius,
                 colCount = row.colCount;
             increment = colCount ? fullAngle / colCount : 0;
@@ -627,42 +589,16 @@ namespace ItemSeries {
     export interface GeometryObject extends Highcharts.GeometryObject {
         angle: number;
     }
+    export interface RowContainerObject {
+        angle: number;
+        row: RowObject;
+    }
+    export interface RowObject {
+        colCount: number;
+        rowLength: number;
+        rowRadius: number;
+    }
 }
-
-/* *
- *
- *  Class
- *
- * */
-
-class ItemPoint extends PieSeries.prototype.pointClass {
-
-    /* *
-     *
-     *  Properties
-     *
-     * */
-
-    public graphics: Record<string, SVGElement> = void 0 as any;
-
-    public options: Highcharts.ItemPointOptions = void 0 as any;
-
-    public series: ItemSeries = void 0 as any;
-
-}
-
-/* *
- *
- *  Prototype Properties
- *
- * */
-
-interface ItemPoint {
-    haloPath: typeof LineSeries.prototype.pointClass.prototype.haloPath;
-}
-extend(ItemPoint.prototype, {
-    haloPath: LineSeries.prototype.pointClass.prototype.haloPath
-});
 
 /* *
  *

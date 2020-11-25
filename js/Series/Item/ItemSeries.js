@@ -24,8 +24,9 @@ var __extends = (this && this.__extends) || (function () {
     };
 })();
 import BaseSeries from '../../Core/Series/Series.js';
-var _a = BaseSeries.seriesTypes, LineSeries = _a.line, PieSeries = _a.pie;
+var PieSeries = BaseSeries.seriesTypes.pie;
 import H from '../../Core/Globals.js';
+import ItemPoint from './ItemPoint.js';
 import O from '../../Core/Options.js';
 var defaultOptions = O.defaultOptions;
 import U from '../../Core/Utilities.js';
@@ -426,30 +427,6 @@ var ItemSeries = /** @class */ (function (_super) {
 }(PieSeries));
 extend(ItemSeries.prototype, {
     markerAttribs: void 0
-});
-/* *
- *
- *  Class
- *
- * */
-var ItemPoint = /** @class */ (function (_super) {
-    __extends(ItemPoint, _super);
-    function ItemPoint() {
-        /* *
-         *
-         *  Properties
-         *
-         * */
-        var _this = _super !== null && _super.apply(this, arguments) || this;
-        _this.graphics = void 0;
-        _this.options = void 0;
-        _this.series = void 0;
-        return _this;
-    }
-    return ItemPoint;
-}(PieSeries.prototype.pointClass));
-extend(ItemPoint.prototype, {
-    haloPath: LineSeries.prototype.pointClass.prototype.haloPath
 });
 ItemSeries.prototype.pointClass = ItemPoint;
 BaseSeries.registerSeriesType('item', ItemSeries);
