@@ -29,7 +29,7 @@ import '../../Stock/Indicators/TEMA/TEMAIndicator.js';
 import '../../Stock/Indicators/TRIXIndicator.js';
 import '../../Stock/Indicators/APO/APOIndicator.js';
 import '../../Stock/Indicators/IKHIndicator.js';
-import '../../Stock/Indicators/KeltnerChannelsIndicator.js';
+import '../../Stock/Indicators/KeltnerChannels/KeltnerChannelsIndicator.js';
 import '../../Stock/Indicators/MACDIndicator.js';
 import '../../Stock/Indicators/MFI/MFIIndicator.js';
 import '../../Stock/Indicators/Momentum/MomentumIndicator.js';
