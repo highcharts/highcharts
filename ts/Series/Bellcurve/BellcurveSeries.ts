@@ -18,22 +18,20 @@
  *
  * */
 
-import type AreaSplinePoint from './AreaSpline/AreaSplinePoint';
-import type AreaSplinePointOptions from './AreaSpline/AreaSplinePointOptions';
-import type AreaSplineSeriesOptions from './AreaSpline/AreaSplineSeriesOptions';
+import type BellcurvePoint from './BellcurvePoint';
+import type BellcurveSeriesOptions from './BellcurveSeriesOptions';
 import type {
     PointOptions,
     PointShortOptions
-} from '../Core/Series/PointOptions';
-import type { SeriesStatesOptions } from '../Core/Series/SeriesOptions';
-import BaseSeries from '../Core/Series/Series.js';
+} from '../../Core/Series/PointOptions';
+import BaseSeries from '../../Core/Series/Series.js';
 const {
     seriesTypes: {
         areaspline: AreaSplineSeries
     }
 } = BaseSeries;
-import DerivedSeriesMixin from '../Mixins/DerivedSeries.js';
-import U from '../Core/Utilities.js';
+import DerivedSeriesMixin from '../../Mixins/DerivedSeries.js';
+import U from '../../Core/Utilities.js';
 const {
     correctFloat,
     extend,
@@ -47,21 +45,6 @@ const {
  */
 declare global {
     namespace Highcharts {
-        class BellcurvePoint extends AreaSplinePoint {
-            public option: BellcurvePointOptions;
-            public series: BellcurveSeries;
-        }
-        interface BellcurvePointOptions extends AreaSplinePointOptions {
-        }
-        interface BellcurveSeriesOptions
-            extends AreaSplineSeriesOptions, DerivedSeriesOptions
-        {
-            baseSeries?: (number|string);
-            data?: undefined;
-            intervals?: number;
-            pointsInInterval?: number;
-            states?: SeriesStatesOptions<BellcurveSeries>;
-        }
     }
 }
 
@@ -99,7 +82,7 @@ class BellcurveSeries extends AreaSplineSeries {
      * @requires     modules/bellcurve
      * @optionparent plotOptions.bellcurve
      */
-    public static defaultOptions: Highcharts.BellcurveSeriesOptions = merge(AreaSplineSeries.defaultOptions, {
+    public static defaultOptions: BellcurveSeriesOptions = merge(AreaSplineSeries.defaultOptions, {
         /**
          * @see [fillColor](#plotOptions.bellcurve.fillColor)
          * @see [fillOpacity](#plotOptions.bellcurve.fillOpacity)
@@ -145,7 +128,7 @@ class BellcurveSeries extends AreaSplineSeries {
             enabled: false
         }
 
-    } as Highcharts.BellcurveSeriesOptions);
+    } as BellcurveSeriesOptions);
 
     /* *
      *
@@ -212,13 +195,13 @@ class BellcurveSeries extends AreaSplineSeries {
      *
      * */
 
-    public data: Array<Highcharts.BellcurvePoint> = void 0 as any;
+    public data: Array<BellcurvePoint> = void 0 as any;
 
     public mean?: number;
 
-    public options: Highcharts.BellcurveSeriesOptions = void 0 as any;
+    public options: BellcurveSeriesOptions = void 0 as any;
 
-    public points: Array<Highcharts.BellcurvePoint> = void 0 as any;
+    public points: Array<BellcurvePoint> = void 0 as any;
 
     public standardDeviation?: number;
 
@@ -301,7 +284,7 @@ interface BellcurveSeries extends Highcharts.DerivedSeries {
     hasDerivedData: Highcharts.DerivedSeries['hasDerivedData'];
     initialised: Highcharts.DerivedSeries['initialised'];
     init: typeof DerivedSeriesMixin['init'];
-    pointClass: typeof Highcharts.BellcurvePoint;
+    pointClass: typeof BellcurvePoint;
     setBaseSeries: typeof DerivedSeriesMixin['setBaseSeries'];
 }
 extend(BellcurveSeries.prototype, {
@@ -318,7 +301,7 @@ extend(BellcurveSeries.prototype, {
  *
  * */
 
-declare module '../Core/Series/SeriesType' {
+declare module '../../Core/Series/SeriesType' {
     interface SeriesTypeRegistry {
         bellcurve: typeof BellcurveSeries;
     }
