@@ -35,8 +35,112 @@ var extend = U.extend, isArray = U.isArray, merge = U.merge;
 var PriceEnvelopesIndicator = /** @class */ (function (_super) {
     __extends(PriceEnvelopesIndicator, _super);
     function PriceEnvelopesIndicator() {
-        return _super !== null && _super.apply(this, arguments) || this;
+        var _this = _super !== null && _super.apply(this, arguments) || this;
+        _this.data = void 0;
+        _this.options = void 0;
+        _this.points = void 0;
+        return _this;
     }
+    PriceEnvelopesIndicator.prototype.init = function () {
+        BaseSeries.seriesTypes.sma.prototype.init.apply(this, arguments);
+        // Set default color for lines:
+        this.options = merge({
+            topLine: {
+                styles: {
+                    lineColor: this.color
+                }
+            },
+            bottomLine: {
+                styles: {
+                    lineColor: this.color
+                }
+            }
+        }, this.options);
+    };
+    PriceEnvelopesIndicator.prototype.toYData = function (point) {
+        return [point.top, point.middle, point.bottom];
+    };
+    PriceEnvelopesIndicator.prototype.translate = function () {
+        var indicator = this, translatedEnvelopes = ['plotTop', 'plotMiddle', 'plotBottom'];
+        BaseSeries.seriesTypes.sma.prototype.translate.apply(indicator);
+        indicator.points.forEach(function (point) {
+            [point.top, point.middle, point.bottom].forEach(function (value, i) {
+                if (value !== null) {
+                    point[translatedEnvelopes[i]] =
+                        indicator.yAxis.toPixels(value, true);
+                }
+            });
+        });
+    };
+    PriceEnvelopesIndicator.prototype.drawGraph = function () {
+        var indicator = this, middleLinePoints = indicator.points, pointsLength = middleLinePoints.length, middleLineOptions = (indicator.options), middleLinePath = indicator.graph, gappedExtend = {
+            options: {
+                gapSize: middleLineOptions.gapSize
+            }
+        }, deviations = [[], []], // top and bottom point place holders
+        point;
+        // Generate points for top and bottom lines:
+        while (pointsLength--) {
+            point = middleLinePoints[pointsLength];
+            deviations[0].push({
+                plotX: point.plotX,
+                plotY: point.plotTop,
+                isNull: point.isNull
+            });
+            deviations[1].push({
+                plotX: point.plotX,
+                plotY: point.plotBottom,
+                isNull: point.isNull
+            });
+        }
+        // Modify options and generate lines:
+        ['topLine', 'bottomLine'].forEach(function (lineName, i) {
+            indicator.points = deviations[i];
+            indicator.options = merge(middleLineOptions[lineName].styles, gappedExtend);
+            indicator.graph = indicator['graph' + lineName];
+            BaseSeries.seriesTypes.sma.prototype.drawGraph.call(indicator);
+            // Now save lines:
+            indicator['graph' + lineName] = indicator.graph;
+        });
+        // Restore options and draw a middle line:
+        indicator.points = middleLinePoints;
+        indicator.options = middleLineOptions;
+        indicator.graph = middleLinePath;
+        BaseSeries.seriesTypes.sma.prototype.drawGraph.call(indicator);
+    };
+    PriceEnvelopesIndicator.prototype.getValues = function (series, params) {
+        var period = params.period, topPercent = params.topBand, botPercent = params.bottomBand, xVal = series.xData, yVal = series.yData, yValLen = yVal ? yVal.length : 0, 
+        // 0- date, 1-top line, 2-middle line, 3-bottom line
+        PE = [], 
+        // middle line, top line and bottom line
+        ML, TL, BL, date, xData = [], yData = [], slicedX, slicedY, point, i;
+        // Price envelopes requires close value
+        if (xVal.length < period ||
+            !isArray(yVal[0]) ||
+            yVal[0].length !== 4) {
+            return;
+        }
+        for (i = period; i <= yValLen; i++) {
+            slicedX = xVal.slice(i - period, i);
+            slicedY = yVal.slice(i - period, i);
+            point = BaseSeries.seriesTypes.sma.prototype.getValues.call(this, {
+                xData: slicedX,
+                yData: slicedY
+            }, params);
+            date = point.xData[0];
+            ML = point.yData[0];
+            TL = ML * (1 + topPercent);
+            BL = ML * (1 - botPercent);
+            PE.push([date, TL, ML, BL]);
+            xData.push(date);
+            yData.push([TL, ML, BL]);
+        }
+        return {
+            values: PE,
+            xData: xData,
+            yData: yData
+        };
+    };
     /**
      * Price envelopes indicator based on [SMA](#plotOptions.sma) calculations.
      * This series requires the `linkedTo` option to be set and should be loaded
@@ -113,106 +217,6 @@ extend(PriceEnvelopesIndicator.prototype, {
     pointArrayMap: ['top', 'middle', 'bottom'],
     parallelArrays: ['x', 'y', 'top', 'bottom'],
     pointValKey: 'middle',
-    init: function () {
-        BaseSeries.seriesTypes.sma.prototype.init.apply(this, arguments);
-        // Set default color for lines:
-        this.options = merge({
-            topLine: {
-                styles: {
-                    lineColor: this.color
-                }
-            },
-            bottomLine: {
-                styles: {
-                    lineColor: this.color
-                }
-            }
-        }, this.options);
-    },
-    toYData: function (point) {
-        return [point.top, point.middle, point.bottom];
-    },
-    translate: function () {
-        var indicator = this, translatedEnvelopes = ['plotTop', 'plotMiddle', 'plotBottom'];
-        BaseSeries.seriesTypes.sma.prototype.translate.apply(indicator);
-        indicator.points.forEach(function (point) {
-            [point.top, point.middle, point.bottom].forEach(function (value, i) {
-                if (value !== null) {
-                    point[translatedEnvelopes[i]] =
-                        indicator.yAxis.toPixels(value, true);
-                }
-            });
-        });
-    },
-    drawGraph: function () {
-        var indicator = this, middleLinePoints = indicator.points, pointsLength = middleLinePoints.length, middleLineOptions = (indicator.options), middleLinePath = indicator.graph, gappedExtend = {
-            options: {
-                gapSize: middleLineOptions.gapSize
-            }
-        }, deviations = [[], []], // top and bottom point place holders
-        point;
-        // Generate points for top and bottom lines:
-        while (pointsLength--) {
-            point = middleLinePoints[pointsLength];
-            deviations[0].push({
-                plotX: point.plotX,
-                plotY: point.plotTop,
-                isNull: point.isNull
-            });
-            deviations[1].push({
-                plotX: point.plotX,
-                plotY: point.plotBottom,
-                isNull: point.isNull
-            });
-        }
-        // Modify options and generate lines:
-        ['topLine', 'bottomLine'].forEach(function (lineName, i) {
-            indicator.points = deviations[i];
-            indicator.options = merge(middleLineOptions[lineName].styles, gappedExtend);
-            indicator.graph = indicator['graph' + lineName];
-            BaseSeries.seriesTypes.sma.prototype.drawGraph.call(indicator);
-            // Now save lines:
-            indicator['graph' + lineName] = indicator.graph;
-        });
-        // Restore options and draw a middle line:
-        indicator.points = middleLinePoints;
-        indicator.options = middleLineOptions;
-        indicator.graph = middleLinePath;
-        BaseSeries.seriesTypes.sma.prototype.drawGraph.call(indicator);
-    },
-    getValues: function (series, params) {
-        var period = params.period, topPercent = params.topBand, botPercent = params.bottomBand, xVal = series.xData, yVal = series.yData, yValLen = yVal ? yVal.length : 0, 
-        // 0- date, 1-top line, 2-middle line, 3-bottom line
-        PE = [], 
-        // middle line, top line and bottom line
-        ML, TL, BL, date, xData = [], yData = [], slicedX, slicedY, point, i;
-        // Price envelopes requires close value
-        if (xVal.length < period ||
-            !isArray(yVal[0]) ||
-            yVal[0].length !== 4) {
-            return;
-        }
-        for (i = period; i <= yValLen; i++) {
-            slicedX = xVal.slice(i - period, i);
-            slicedY = yVal.slice(i - period, i);
-            point = BaseSeries.seriesTypes.sma.prototype.getValues.call(this, {
-                xData: slicedX,
-                yData: slicedY
-            }, params);
-            date = point.xData[0];
-            ML = point.yData[0];
-            TL = ML * (1 + topPercent);
-            BL = ML * (1 - botPercent);
-            PE.push([date, TL, ML, BL]);
-            xData.push(date);
-            yData.push([TL, ML, BL]);
-        }
-        return {
-            values: PE,
-            xData: xData,
-            yData: yData
-        };
-    }
 });
 BaseSeries.registerSeriesType('priceenvelopes', PriceEnvelopesIndicator);
 /* *

@@ -145,36 +145,12 @@ class PriceEnvelopesIndicator extends SMAIndicator {
             approximation: 'averages'
         }
     } as Highcharts.PriceEnvelopesIndicatorOptions)
-}
 
-interface PriceEnvelopesIndicator {
-    data: Array<Highcharts.PriceEnvelopesIndicatorPoint>;
-    drawGraph(): void;
-    init(): void;
-    getValues<TLinkedSeries extends LineSeries>(
-        series: TLinkedSeries,
-        params: Highcharts.PriceEnvelopesIndicatorParamsOptions
-    ): (IndicatorValuesObject<TLinkedSeries>|undefined);
-    nameBase: string;
-    options: Highcharts.PriceEnvelopesIndicatorOptions;
-    parallelArrays: Array<string>;
-    pointArrayMap: Array<string>;
-    pointClass: typeof Highcharts.PriceEnvelopesIndicatorPoint;
-    points: Array<Highcharts.PriceEnvelopesIndicatorPoint>;
-    pointValKey: string;
-    toYData(
-        point: Highcharts.PriceEnvelopesIndicatorPoint
-    ): [number, number, number];
-    translate(): void;
-}
+    public data: Array<Highcharts.PriceEnvelopesIndicatorPoint> = void 0 as any;
+    public options: Highcharts.PriceEnvelopesIndicatorOptions = void 0 as any;
+    public points: Array<Highcharts.PriceEnvelopesIndicatorPoint> = void 0 as any;
 
-extend(PriceEnvelopesIndicator.prototype, {
-    nameComponents: ['period', 'topBand', 'bottomBand'],
-    nameBase: 'Price envelopes',
-    pointArrayMap: ['top', 'middle', 'bottom'],
-    parallelArrays: ['x', 'y', 'top', 'bottom'],
-    pointValKey: 'middle',
-    init: function (this: PriceEnvelopesIndicator): void {
+    public init(): void {
         BaseSeries.seriesTypes.sma.prototype.init.apply(this, arguments);
 
         // Set default color for lines:
@@ -190,13 +166,15 @@ extend(PriceEnvelopesIndicator.prototype, {
                 }
             }
         }, this.options);
-    },
-    toYData: function (
+    }
+
+    public toYData(
         point: Highcharts.PriceEnvelopesIndicatorPoint
     ): [number, number, number] {
         return [point.top, point.middle, point.bottom];
-    },
-    translate: function (this: PriceEnvelopesIndicator): void {
+    }
+
+    public translate(this: PriceEnvelopesIndicator): void {
         var indicator = this,
             translatedEnvelopes = ['plotTop', 'plotMiddle', 'plotBottom'];
 
@@ -216,8 +194,9 @@ extend(PriceEnvelopesIndicator.prototype, {
                 );
             }
         );
-    },
-    drawGraph: function (this: PriceEnvelopesIndicator): void {
+    }
+
+    public drawGraph(this: PriceEnvelopesIndicator): void {
         var indicator = this,
             middleLinePoints: Array<
             Highcharts.PriceEnvelopesIndicatorPoint
@@ -276,8 +255,9 @@ extend(PriceEnvelopesIndicator.prototype, {
         indicator.options = middleLineOptions;
         indicator.graph = middleLinePath;
         BaseSeries.seriesTypes.sma.prototype.drawGraph.call(indicator);
-    },
-    getValues: function<TLinkedSeries extends LineSeries> (
+    }
+
+    public getValues <TLinkedSeries extends LineSeries>(
         series: TLinkedSeries,
         params: Highcharts.PriceEnvelopesIndicatorParamsOptions
     ): (IndicatorValuesObject<TLinkedSeries>|undefined) {
@@ -334,6 +314,23 @@ extend(PriceEnvelopesIndicator.prototype, {
             yData: yData
         } as IndicatorValuesObject<TLinkedSeries>;
     }
+}
+
+interface PriceEnvelopesIndicator {
+    nameBase: string;
+    parallelArrays: Array<string>;
+    pointArrayMap: Array<string>;
+    pointValKey: string;
+
+    pointClass: typeof Highcharts.PriceEnvelopesIndicatorPoint;
+}
+
+extend(PriceEnvelopesIndicator.prototype, {
+    nameComponents: ['period', 'topBand', 'bottomBand'],
+    nameBase: 'Price envelopes',
+    pointArrayMap: ['top', 'middle', 'bottom'],
+    parallelArrays: ['x', 'y', 'top', 'bottom'],
+    pointValKey: 'middle'
 });
 
 declare module '../../Core/Series/SeriesType' {
