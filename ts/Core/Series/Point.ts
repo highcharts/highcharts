@@ -961,7 +961,7 @@ class Point {
             colorIndex = series.colorIndex as any;
         }
 
-        this.colorIndex = pick(this.colorIndex, colorIndex);
+        this.colorIndex = pick(this.options.colorIndex, colorIndex);
     }
 
     /**

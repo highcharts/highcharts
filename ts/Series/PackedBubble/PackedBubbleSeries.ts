@@ -43,7 +43,6 @@ const {
     clamp,
     defined,
     extend,
-    extendClass,
     fireEvent,
     isArray,
     isNumber,

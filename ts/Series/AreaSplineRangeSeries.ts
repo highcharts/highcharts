@@ -14,6 +14,7 @@ import type AreaRangePoint from './AreaRange/AreaRangePoint';
 import type AreaRangePointOptions from './AreaRange/AreaRangePointOptions';
 import type AreaRangeSeries from './AreaRange/AreaRangeSeries';
 import type AreaRangeSeriesOptions from './AreaRange/AreaRangeSeriesOptions';
+import type AreaSplineSeries from './AreaSpline/AreaSplineSeries';
 import type { SeriesStatesOptions } from '../Core/Series/SeriesOptions';
 import type SplineSeries from './Spline/SplineSeries';
 import BaseSeries from '../Core/Series/Series.js';
@@ -69,7 +70,7 @@ import '../Core/Options.js';
  * @requires  highcharts-more
  * @apioption plotOptions.areasplinerange
  */
-BaseSeries.seriesType<typeof Highcharts.AreaSplineSeries>(
+BaseSeries.seriesType<typeof AreaSplineSeries>(
     'areasplinerange',
     'arearange',
     /**
