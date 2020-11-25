@@ -5,7 +5,9 @@
  *  !!!!!!! SOURCE GETS TRANSPILED BY TYPESCRIPT. EDIT TS FILE ONLY. !!!!!!!
  *
  * */
+
 'use strict';
+
 import type ColumnSeries from '../../../Series/Column/ColumnSeries';
 import type IndicatorValuesObject from '../IndicatorValuesObject';
 import type LineSeries from '../../../Series/Line/LineSeries';
@@ -28,11 +30,13 @@ const {
     correctFloat,
     isArray
 } = U;
+
 /* *
  *
  *  Class
  *
  * */
+
 /**
  * The AO series type
  *
@@ -42,6 +46,7 @@ const {
  *
  * @augments Highcharts.Series
  */
+
 class AOIndicator extends SMAIndicator {
     /**
      * Awesome Oscillator. This series requires the `linkedTo` option to
@@ -99,6 +104,7 @@ class AOIndicator extends SMAIndicator {
         }
     } as AOOptions);
 }
+
 interface AOIndicator {
     data: Array<AOPoint>;
     nameBase: string;
@@ -115,15 +121,18 @@ interface AOIndicator {
     ): (IndicatorValuesObject<TLinkedSeries>|undefined);
     translate: ColumnSeries['translate'];
 }
+
 extend(AOIndicator.prototype, {
     nameBase: 'AO',
     nameComponents: (false as any),
+
     // Columns support:
     markerAttribs: (noop as any),
     getColumnMetrics: H.seriesTypes.column.prototype.getColumnMetrics,
     crispCol: H.seriesTypes.column.prototype.crispCol,
     translate: H.seriesTypes.column.prototype.translate,
     drawPoints: H.seriesTypes.column.prototype.drawPoints,
+
     drawGraph: function (this: AOIndicator): void {
         var indicator = this,
             options = indicator.options,
@@ -133,8 +142,10 @@ extend(AOIndicator.prototype, {
             negativeColor = options.lowerBarColor,
             firstPoint = points[0],
             i;
+
         if (!userColor && firstPoint) {
             firstPoint.color = positiveColor;
+
             for (i = 1; i < points.length; i++) {
                 if ((points[i] as any).y > (points[i - 1] as any).y) {
                     points[i].color = positiveColor;
@@ -148,6 +159,7 @@ extend(AOIndicator.prototype, {
             }
         }
     },
+
     getValues: function<TLinkedSeries extends LineSeries> (
         series: TLinkedSeries
     ): (IndicatorValuesObject<TLinkedSeries>|undefined) {
@@ -172,6 +184,7 @@ extend(AOIndicator.prototype, {
             price: number,
             i: number,
             j: number;
+
         if (
             xVal.length <= longPeriod ||
             !isArray(yVal[0]) ||
@@ -179,6 +192,7 @@ extend(AOIndicator.prototype, {
         ) {
             return;
         }
+
         for (i = 0; i < longPeriod - 1; i++) {
             price = ((yVal[i] as any)[high] + (yVal[i] as any)[low]) / 2;
             if (i >= longPeriod - shortPeriod) {
@@ -186,18 +200,24 @@ extend(AOIndicator.prototype, {
             }
             longSum = correctFloat(longSum + price);
         }
+
         for (j = longPeriod - 1; j < yValLen; j++) {
             price = ((yVal[j] as any)[high] + (yVal[j] as any)[low]) / 2;
             shortSum = correctFloat(shortSum + price);
             longSum = correctFloat(longSum + price);
+
             shortSMA = shortSum / shortPeriod;
             longSMA = longSum / longPeriod;
+
             awesome = correctFloat(shortSMA - longSMA);
+
             AO.push([xVal[j], awesome]);
             xData.push(xVal[j]);
             yData.push(awesome);
+
             shortLastIndex = j + 1 - shortPeriod;
             longLastIndex = j + 1 - longPeriod;
+
             shortSum = correctFloat(
                 shortSum -
                 (
@@ -213,6 +233,8 @@ extend(AOIndicator.prototype, {
                 ) / 2
             );
         }
+
+
         return {
             values: AO,
             xData: xData,
@@ -220,23 +242,29 @@ extend(AOIndicator.prototype, {
         } as IndicatorValuesObject<TLinkedSeries>;
     }
 });
+
 /* *
  *
  *  Registry
  *
  * */
+
 declare module '../../../Core/Series/SeriesType' {
     interface SeriesTypeRegistry {
         ao: typeof AOIndicator;
     }
 }
+
 BaseSeries.registerSeriesType('ao', AOIndicator);
+
 /* *
  *
  *  Default Export
  *
  * */
+
 export default AOIndicator;
+
 /**
  * An `AO` series. If the [type](#series.ao.type)
  * option is not specified, it is inherited from [chart.type](#chart.type).
