@@ -12,8 +12,13 @@
 
 'use strict';
 
+/* *
+ *
+ *  Imports
+ *
+ * */
+
 import type AreaSplinePoint from './AreaSpline/AreaSplinePoint';
-import type AreaSplineSeries from './AreaSpline/AreaSplineSeries';
 import type AreaSplinePointOptions from './AreaSpline/AreaSplinePointOptions';
 import type AreaSplineSeriesOptions from './AreaSpline/AreaSplineSeriesOptions';
 import type {
@@ -22,22 +27,19 @@ import type {
 } from '../Core/Series/PointOptions';
 import type { SeriesStatesOptions } from '../Core/Series/SeriesOptions';
 import BaseSeries from '../Core/Series/Series.js';
+const {
+    seriesTypes: {
+        areaspline: AreaSplineSeries
+    }
+} = BaseSeries;
 import DerivedSeriesMixin from '../Mixins/DerivedSeries.js';
 import U from '../Core/Utilities.js';
 const {
     correctFloat,
+    extend,
     isNumber,
     merge
 } = U;
-
-/**
- * @private
- */
-declare module '../Core/Series/SeriesType' {
-    interface SeriesTypeRegistry {
-        bellcurve: typeof Highcharts.BellcurveSeries;
-    }
-}
 
 /**
  * Internal types
@@ -48,32 +50,6 @@ declare global {
         class BellcurvePoint extends AreaSplinePoint {
             public option: BellcurvePointOptions;
             public series: BellcurveSeries;
-        }
-        class BellcurveSeries
-            extends AreaSplineSeries
-            implements DerivedSeries {
-            public addBaseSeriesEvents: DerivedSeriesMixin[
-                'addBaseSeriesEvents'
-            ];
-            public addEvents: DerivedSeriesMixin['addEvents'];
-            public data: Array<BellcurvePoint>;
-            public eventRemovers: DerivedSeries['eventRemovers'];
-            public hasDerivedData: DerivedSeriesMixin['hasDerivedData'];
-            public init: DerivedSeriesMixin['init'];
-            public initialised: DerivedSeries['initialised'];
-            public mean?: number;
-            public options: BellcurveSeriesOptions;
-            public pointClass: typeof BellcurvePoint;
-            public points: Array<BellcurvePoint>;
-            public setBaseSeries: DerivedSeriesMixin['setBaseSeries'];
-            public setDerivedData: DerivedSeriesMixin['setDerivedData'];
-            public standardDeviation?: number;
-            public derivedData(
-                mean: number,
-                standardDeviation: number
-            ): Array<Array<number>>;
-            public setMean(): void;
-            public setStandardDeviation(): void;
         }
         interface BellcurvePointOptions extends AreaSplinePointOptions {
         }
@@ -89,63 +65,6 @@ declare global {
     }
 }
 
-/* ************************************************************************** *
- *  BELL CURVE                                                                *
- * ************************************************************************** */
-
-/* eslint-disable valid-jsdoc */
-
-/**
- * @private
- */
-function mean(data: Array<number>): (number|false) {
-    var length = data.length,
-        sum = data.reduce(function (sum: number, value: number): number {
-            return (sum += value);
-        }, 0);
-
-    return length > 0 && sum / length;
-}
-
-/**
- * @private
- */
-function standardDeviation(
-    data: Array<number>,
-    average?: number
-): (number|false) {
-    var len = data.length,
-        sum;
-
-    average = isNumber(average) ? average : (mean(data) as any);
-
-    sum = data.reduce(function (sum: number, value: number): number {
-        var diff = value - (average as any);
-
-        return (sum += diff * diff);
-    }, 0);
-
-    return len > 1 && Math.sqrt(sum / (len - 1));
-}
-
-/**
- * @private
- */
-function normalDensity(
-    x: number,
-    mean: number,
-    standardDeviation: number
-): number {
-    var translation = x - mean;
-
-    return Math.exp(
-        -(translation * translation) /
-        (2 * standardDeviation * standardDeviation)
-    ) / (standardDeviation * Math.sqrt(2 * Math.PI));
-}
-
-/* eslint-enable valid-jsdoc */
-
 /**
  * Bell curve class
  *
@@ -155,7 +74,13 @@ function normalDensity(
  *
  * @augments Highcharts.Series
  */
-BaseSeries.seriesType<typeof Highcharts.BellcurveSeries>('bellcurve', 'areaspline'
+class BellcurveSeries extends AreaSplineSeries {
+
+    /* *
+     *
+     *  Static Properties
+     *
+     * */
 
     /**
      * A bell curve is an areaspline series which represents the probability
@@ -174,7 +99,7 @@ BaseSeries.seriesType<typeof Highcharts.BellcurveSeries>('bellcurve', 'areasplin
      * @requires     modules/bellcurve
      * @optionparent plotOptions.bellcurve
      */
-    , {
+    public static defaultOptions: Highcharts.BellcurveSeriesOptions = merge(AreaSplineSeries.defaultOptions, {
         /**
          * @see [fillColor](#plotOptions.bellcurve.fillColor)
          * @see [fillOpacity](#plotOptions.bellcurve.fillOpacity)
@@ -220,65 +145,199 @@ BaseSeries.seriesType<typeof Highcharts.BellcurveSeries>('bellcurve', 'areasplin
             enabled: false
         }
 
-    }, merge(DerivedSeriesMixin, {
-        setMean: function (this: Highcharts.BellcurveSeries): void {
-            this.mean = correctFloat(
-                mean(
-                    (this.baseSeries as any).yData
-                ) as any
-            );
-        },
+    } as Highcharts.BellcurveSeriesOptions);
 
-        setStandardDeviation: function (
-            this: Highcharts.BellcurveSeries
-        ): void {
-            this.standardDeviation = correctFloat(
-                standardDeviation(
-                    (this.baseSeries as any).yData,
-                    this.mean as any
-                ) as any
-            );
-        },
+    /* *
+     *
+     *  Static Functions
+     *
+     * */
 
-        setDerivedData: function (
-            this: Highcharts.BellcurveSeries
-        ): Array<(PointOptions|PointShortOptions)> {
-            if ((this.baseSeries as any).yData.length > 1) {
-                this.setMean();
-                this.setStandardDeviation();
-                this.setData(
-                    this.derivedData(
-                        this.mean as any,
-                        this.standardDeviation as any
-                    ),
-                    false
-                );
-            }
-            return (void 0) as any;
-        },
+    /* eslint-disable valid-jsdoc */
 
-        derivedData: function (
-            this: Highcharts.BellcurveSeries,
-            mean: number,
-            standardDeviation: number
-        ): Array<Array<number>> {
-            var intervals = this.options.intervals,
-                pointsInInterval = this.options.pointsInInterval,
-                x = mean - (intervals as any) * standardDeviation,
-                stop = (intervals as any) * (pointsInInterval as any) * 2 + 1,
-                increment = standardDeviation / (pointsInInterval as any),
-                data: Array<Array<number>> = [],
-                i: number;
+    /**
+     * @private
+     */
+    private static mean(data: Array<number>): (number|false) {
+        var length = data.length,
+            sum = data.reduce(function (sum: number, value: number): number {
+                return (sum += value);
+            }, 0);
 
-            for (i = 0; i < stop; i++) {
-                data.push([x, normalDensity(x, mean, standardDeviation)]);
-                x += increment;
-            }
+        return length > 0 && sum / length;
+    }
 
-            return data;
+    /**
+     * @private
+     */
+    private static standardDeviation(
+        data: Array<number>,
+        average?: number
+    ): (number|false) {
+        var len = data.length,
+            sum;
+
+        average = isNumber(average) ? average : (BellcurveSeries.mean(data) as any);
+
+        sum = data.reduce(function (sum: number, value: number): number {
+            var diff = value - (average as any);
+
+            return (sum += diff * diff);
+        }, 0);
+
+        return len > 1 && Math.sqrt(sum / (len - 1));
+    }
+
+    /**
+     * @private
+     */
+    private static normalDensity(
+        x: number,
+        mean: number,
+        standardDeviation: number
+    ): number {
+        var translation = x - mean;
+
+        return Math.exp(
+            -(translation * translation) /
+            (2 * standardDeviation * standardDeviation)
+        ) / (standardDeviation * Math.sqrt(2 * Math.PI));
+    }
+
+    /* eslint-enable valid-jsdoc */
+
+    /* *
+     *
+     *  Properties
+     *
+     * */
+
+    public data: Array<Highcharts.BellcurvePoint> = void 0 as any;
+
+    public mean?: number;
+
+    public options: Highcharts.BellcurveSeriesOptions = void 0 as any;
+
+    public points: Array<Highcharts.BellcurvePoint> = void 0 as any;
+
+    public standardDeviation?: number;
+
+    /* *
+     *
+     *  Functions
+     *
+     * */
+
+    /* eslint-disable valid-jsdoc */
+
+    public derivedData(
+        mean: number,
+        standardDeviation: number
+    ): Array<Array<number>> {
+        var intervals = this.options.intervals,
+            pointsInInterval = this.options.pointsInInterval,
+            x = mean - (intervals as any) * standardDeviation,
+            stop = (intervals as any) * (pointsInInterval as any) * 2 + 1,
+            increment = standardDeviation / (pointsInInterval as any),
+            data: Array<Array<number>> = [],
+            i: number;
+
+        for (i = 0; i < stop; i++) {
+            data.push([x, BellcurveSeries.normalDensity(x, mean, standardDeviation)]);
+            x += increment;
         }
-    })
-);
+
+        return data;
+    }
+
+    public setDerivedData(): Array<(PointOptions|PointShortOptions)> {
+        if ((this.baseSeries as any).yData.length > 1) {
+            this.setMean();
+            this.setStandardDeviation();
+            this.setData(
+                this.derivedData(
+                    this.mean as any,
+                    this.standardDeviation as any
+                ),
+                false
+            );
+        }
+        return (void 0) as any;
+    }
+
+    public setMean(): void {
+        this.mean = correctFloat(
+            BellcurveSeries.mean(
+                (this.baseSeries as any).yData
+            ) as any
+        );
+    }
+
+    public setStandardDeviation(): void {
+        this.standardDeviation = correctFloat(
+            BellcurveSeries.standardDeviation(
+                (this.baseSeries as any).yData,
+                this.mean as any
+            ) as any
+        );
+    }
+
+    /* eslint-enable valid-jsdoc */
+
+}
+
+/* *
+ *
+ *  Prototype Properties
+ *
+ * */
+
+interface BellcurveSeries extends Highcharts.DerivedSeries {
+    addBaseSeriesEvents: typeof DerivedSeriesMixin['addBaseSeriesEvents'];
+    addEvents: typeof DerivedSeriesMixin['addEvents'];
+    destroy: typeof DerivedSeriesMixin['destroy'];
+    drawLegendSymbol: typeof AreaSplineSeries.prototype.drawLegendSymbol;
+    eventRemovers: Highcharts.DerivedSeries['eventRemovers'];
+    hasDerivedData: Highcharts.DerivedSeries['hasDerivedData'];
+    initialised: Highcharts.DerivedSeries['initialised'];
+    init: typeof DerivedSeriesMixin['init'];
+    pointClass: typeof Highcharts.BellcurvePoint;
+    setBaseSeries: typeof DerivedSeriesMixin['setBaseSeries'];
+}
+extend(BellcurveSeries.prototype, {
+    addBaseSeriesEvents: DerivedSeriesMixin.addBaseSeriesEvents,
+    addEvents: DerivedSeriesMixin.addEvents,
+    destroy: DerivedSeriesMixin.destroy,
+    init: DerivedSeriesMixin.init,
+    setBaseSeries: DerivedSeriesMixin.setBaseSeries
+});
+
+/* *
+ *
+ *  Registry
+ *
+ * */
+
+declare module '../Core/Series/SeriesType' {
+    interface SeriesTypeRegistry {
+        bellcurve: typeof BellcurveSeries;
+    }
+}
+BaseSeries.registerSeriesType('bellcurve', BellcurveSeries);
+
+/* *
+ *
+ *  Default Export
+ *
+ * */
+
+export default BellcurveSeries;
+
+/* *
+ *
+ *  API Options
+ *
+ * */
 
 /**
  * A `bellcurve` series. If the [type](#series.bellcurve.type) option is not
