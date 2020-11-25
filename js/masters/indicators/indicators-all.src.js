@@ -45,7 +45,7 @@ import '../../Stock/Indicators/StochasticIndicator.js';
 import '../../Stock/Indicators/SlowStochasticIndicator.js';
 import '../../Stock/Indicators/SupertrendIndicator.js';
 import '../../Stock/Indicators/VBPIndicator.js';
-import '../../Stock/Indicators/VWAPIndicator.js';
+import '../../Stock/Indicators/VWAP/VWAPIndicator.js';
 import '../../Stock/Indicators/WilliamsRIndicator.js';
 import '../../Stock/Indicators/WMAIndicator.js';
 import '../../Stock/Indicators/Zigzag/ZigzagIndicator.js';
