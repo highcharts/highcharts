@@ -18,7 +18,8 @@ import type {
 } from '../../Core/Series/SeriesOptions';
 const {
     seriesTypes: {
-        sma: SMAIndicator
+        sma: SMAIndicator,
+        ema: EMAIndicator
     }
 } = BaseSeries;
 import type {
@@ -104,12 +105,6 @@ declare global {
  * Class
  *
  */
-
-// im port './EMAIndicator.js';
-// im port './SMAIndicator.js';
-
-var SMA = seriesTypes.sma,
-    EMA = seriesTypes.ema;
 
 /**
  * The MACD series type.
@@ -274,7 +269,7 @@ extend(MACDIndicator.prototype, {
     init: function (
         this: MACDIndicator
     ): void {
-        SMA.prototype.init.apply(this, arguments);
+        BaseSeries.seriesTypes.sma.prototype.init.apply(this, arguments);
 
         // Check whether series is initialized. It may be not initialized,
         // when any of required indicators is missing.
@@ -341,7 +336,7 @@ extend(MACDIndicator.prototype, {
         this.graphmacd = this.graphmacd && this.graphmacd.destroy();
         this.graphsignal = this.graphsignal && this.graphsignal.destroy();
 
-        SMA.prototype.destroy.apply(this, arguments);
+        BaseSeries.seriesTypes.sma.prototype.destroy.apply(this, arguments);
     },
     drawPoints: H.seriesTypes.column.prototype.drawPoints,
     drawGraph: function (this: MACDIndicator): void {
@@ -397,7 +392,7 @@ extend(MACDIndicator.prototype, {
                 indicator.zones =
                 (indicator as any)[indicator.currentLineZone].zones;
 
-                SMA.prototype.drawGraph.call(indicator);
+                BaseSeries.seriesTypes.sma.prototype.drawGraph.call(indicator);
                 (indicator as any)['graph' + lineName] = indicator.graph;
             }
         );
@@ -414,7 +409,7 @@ extend(MACDIndicator.prototype, {
         props: Array<Array<string>>
     ): Array<Array<string>> {
         var allZones: Array<Array<string>> =
-        SMA.prototype.getZonesGraphs.call(this, props),
+        BaseSeries.seriesTypes.sma.prototype.getZonesGraphs.call(this, props),
             currentZones: Array<Array<string>> = allZones;
 
         if (this.currentLineZone) {
@@ -442,7 +437,7 @@ extend(MACDIndicator.prototype, {
 
         // signalZones.zones contains all zones:
         this.zones = (this.signalZones.zones as any);
-        SMA.prototype.applyZones.call(this);
+        BaseSeries.seriesTypes.sma.prototype.applyZones.call(this);
 
         // applyZones hides only main series.graph, hide macd line manually
         if (this.graphmacd && (this.options.macdLine as any).zones.length) {
@@ -471,14 +466,14 @@ extend(MACDIndicator.prototype, {
         }
 
         // Calculating the short and long EMA used when calculating the MACD
-        shortEMA = (EMA.prototype.getValues(
+        shortEMA = (BaseSeries.seriesTypes.ema.prototype.getValues(
             series,
             {
                 period: params.shortPeriod
             }
         ) as any);
 
-        longEMA = (EMA.prototype.getValues(
+        longEMA = (BaseSeries.seriesTypes.ema.prototype.getValues(
             series,
             {
                 period: params.longPeriod
@@ -516,7 +511,7 @@ extend(MACDIndicator.prototype, {
         }
 
         // Setting the signalline (Signal Line: X-day EMA of MACD line).
-        signalLine = (EMA.prototype.getValues(
+        signalLine = (BaseSeries.seriesTypes.ema.prototype.getValues(
             ({
                 xData: xMACD,
                 yData: yMACD
