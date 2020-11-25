@@ -10,14 +10,33 @@
  *
  * */
 'use strict';
+var __extends = (this && this.__extends) || (function () {
+    var extendStatics = function (d, b) {
+        extendStatics = Object.setPrototypeOf ||
+            ({ __proto__: [] } instanceof Array && function (d, b) { d.__proto__ = b; }) ||
+            function (d, b) { for (var p in b) if (b.hasOwnProperty(p)) d[p] = b[p]; };
+        return extendStatics(d, b);
+    };
+    return function (d, b) {
+        extendStatics(d, b);
+        function __() { this.constructor = d; }
+        d.prototype = b === null ? Object.create(b) : (__.prototype = b.prototype, new __());
+    };
+})();
 import BaseSeries from '../Core/Series/Series.js';
+var _a = BaseSeries.seriesTypes, LineSeries = _a.line, PieSeries = _a.pie;
 import H from '../Core/Globals.js';
 import O from '../Core/Options.js';
 var defaultOptions = O.defaultOptions;
 import U from '../Core/Utilities.js';
 var defined = U.defined, extend = U.extend, fireEvent = U.fireEvent, isNumber = U.isNumber, merge = U.merge, objectEach = U.objectEach, pick = U.pick;
-import './Pie/PieSeries.js';
-var piePoint = BaseSeries.seriesTypes.pie.prototype.pointClass.prototype;
+/* *
+ *
+ *  Class
+ *
+ * */
+// Inherits pie as the most tested non-cartesian series with individual point
+// legend, tooltips etc. Only downside is we need to re-enable marker options.
 /**
  * The item series type.
  *
@@ -29,101 +48,118 @@ var piePoint = BaseSeries.seriesTypes.pie.prototype.pointClass.prototype;
  *
  * @augments Highcharts.seriesTypes.pie
  */
-BaseSeries.seriesType('item', 
-// Inherits pie as the most tested non-cartesian series with individual
-// point legend, tooltips etc. Only downside is we need to re-enable
-// marker options.
-'pie', 
-/**
- * An item chart is an infographic chart where a number of items are laid
- * out in either a rectangular or circular pattern. It can be used to
- * visualize counts within a group, or for the circular pattern, typically
- * a parliament.
- *
- * The circular layout has much in common with a pie chart. Many of the item
- * series options, like `center`, `size` and data label positioning, are
- * inherited from the pie series and don't apply for rectangular layouts.
- *
- * @sample       highcharts/demo/parliament-chart
- *               Parliament chart (circular item chart)
- * @sample       highcharts/series-item/rectangular
- *               Rectangular item chart
- * @sample       highcharts/series-item/symbols
- *               Infographic with symbols
- *
- * @extends      plotOptions.pie
- * @since        7.1.0
- * @product      highcharts
- * @excluding    borderColor, borderWidth, depth, linecap, shadow,
- *               slicedOffset
- * @requires     modules/item-series
- * @optionparent plotOptions.item
- */
-{
+var ItemSeries = /** @class */ (function (_super) {
+    __extends(ItemSeries, _super);
+    function ItemSeries() {
+        /* *
+         *
+         *  Static Properties
+         *
+         * */
+        var _this = _super !== null && _super.apply(this, arguments) || this;
+        _this.data = void 0;
+        _this.options = void 0;
+        _this.points = void 0;
+        return _this;
+        /* *
+         *
+         *  Functions
+         *
+         * */
+        /* eslint-disable valid-jsdoc */
+        /* eslint-enable valid-jsdoc */
+    }
     /**
-     * In circular view, the end angle of the item layout, in degrees where
-     * 0 is up.
+     * An item chart is an infographic chart where a number of items are laid
+     * out in either a rectangular or circular pattern. It can be used to
+     * visualize counts within a group, or for the circular pattern, typically
+     * a parliament.
      *
-     * @sample highcharts/demo/parliament-chart
-     *         Parliament chart
-     * @type {undefined|number}
-     */
-    endAngle: void 0,
-    /**
-     * In circular view, the size of the inner diameter of the circle. Can
-     * be a percentage or pixel value. Percentages are relative to the outer
-     * perimeter. Pixel values are given as integers.
+     * The circular layout has much in common with a pie chart. Many of the item
+     * series options, like `center`, `size` and data label positioning, are
+     * inherited from the pie series and don't apply for rectangular layouts.
      *
-     * If the `rows` option is set, it overrides the `innerSize` setting.
+     * @sample       highcharts/demo/parliament-chart
+     *               Parliament chart (circular item chart)
+     * @sample       highcharts/series-item/rectangular
+     *               Rectangular item chart
+     * @sample       highcharts/series-item/symbols
+     *               Infographic with symbols
      *
-     * @sample highcharts/demo/parliament-chart
-     *         Parliament chart
-     * @type {string|number}
+     * @extends      plotOptions.pie
+     * @since        7.1.0
+     * @product      highcharts
+     * @excluding    borderColor, borderWidth, depth, linecap, shadow,
+     *               slicedOffset
+     * @requires     modules/item-series
+     * @optionparent plotOptions.item
      */
-    innerSize: '40%',
-    /**
-     * The padding between the items, given in relative size where the size
-     * of the item is 1.
-     * @type {number}
-     */
-    itemPadding: 0.1,
-    /**
-     * The layout of the items in rectangular view. Can be either
-     * `horizontal` or `vertical`.
-     * @sample highcharts/series-item/symbols
-     *         Horizontal layout
-     * @type {string}
-     */
-    layout: 'vertical',
-    /**
-     * @extends plotOptions.series.marker
-     */
-    marker: merge(defaultOptions.plotOptions.line.marker, {
-        radius: null
-    }),
-    /**
-     * The number of rows to display in the rectangular or circular view. If
-     * the `innerSize` is set, it will be overridden by the `rows` setting.
-     *
-     * @sample highcharts/series-item/rows-columns
-     *         Fixed row count
-     * @type {number}
-     */
-    rows: void 0,
-    crisp: false,
-    showInLegend: true,
-    /**
-     * In circular view, the start angle of the item layout, in degrees
-     * where 0 is up.
-     *
-     * @sample highcharts/demo/parliament-chart
-     *         Parliament chart
-     * @type {undefined|number}
-     */
-    startAngle: void 0
-}, 
-// Prototype members
-{
+    ItemSeries.defaultOptions = merge(PieSeries.defaultOptions, {
+        /**
+         * In circular view, the end angle of the item layout, in degrees where
+         * 0 is up.
+         *
+         * @sample highcharts/demo/parliament-chart
+         *         Parliament chart
+         * @type {undefined|number}
+         */
+        endAngle: void 0,
+        /**
+         * In circular view, the size of the inner diameter of the circle. Can
+         * be a percentage or pixel value. Percentages are relative to the outer
+         * perimeter. Pixel values are given as integers.
+         *
+         * If the `rows` option is set, it overrides the `innerSize` setting.
+         *
+         * @sample highcharts/demo/parliament-chart
+         *         Parliament chart
+         * @type {string|number}
+         */
+        innerSize: '40%',
+        /**
+         * The padding between the items, given in relative size where the size
+         * of the item is 1.
+         * @type {number}
+         */
+        itemPadding: 0.1,
+        /**
+         * The layout of the items in rectangular view. Can be either
+         * `horizontal` or `vertical`.
+         * @sample highcharts/series-item/symbols
+         *         Horizontal layout
+         * @type {string}
+         */
+        layout: 'vertical',
+        /**
+         * @extends plotOptions.series.marker
+         */
+        marker: merge(defaultOptions.plotOptions.line.marker, {
+            radius: null
+        }),
+        /**
+         * The number of rows to display in the rectangular or circular view. If
+         * the `innerSize` is set, it will be overridden by the `rows` setting.
+         *
+         * @sample highcharts/series-item/rows-columns
+         *         Fixed row count
+         * @type {number}
+         */
+        rows: void 0,
+        crisp: false,
+        showInLegend: true,
+        /**
+         * In circular view, the start angle of the item layout, in degrees
+         * where 0 is up.
+         *
+         * @sample highcharts/demo/parliament-chart
+         *         Parliament chart
+         * @type {undefined|number}
+         */
+        startAngle: void 0
+    });
+    return ItemSeries;
+}(PieSeries));
+extend(ItemSeries.prototype, {
     markerAttribs: void 0,
     translate: function (positions) {
         // Initialize chart without setting data, #13379.
@@ -384,15 +420,39 @@ BaseSeries.seriesType('item',
             }, this.options.animation);
         }
     }
-}, 
-// Point class
-{
-    connectorShapes: piePoint.connectorShapes,
-    getConnectorPath: piePoint.getConnectorPath,
-    setVisible: piePoint.setVisible,
-    getTranslate: piePoint.getTranslate,
-    isValid: piePoint.isValid
 });
+/* *
+ *
+ *  Class
+ *
+ * */
+var ItemPoint = /** @class */ (function (_super) {
+    __extends(ItemPoint, _super);
+    function ItemPoint() {
+        /* *
+         *
+         *  Properties
+         *
+         * */
+        var _this = _super !== null && _super.apply(this, arguments) || this;
+        _this.graphics = void 0;
+        _this.options = void 0;
+        _this.series = void 0;
+        return _this;
+    }
+    return ItemPoint;
+}(PieSeries.prototype.pointClass));
+extend(ItemPoint.prototype, {
+    haloPath: LineSeries.prototype.pointClass.prototype.haloPath
+});
+ItemSeries.prototype.pointClass = ItemPoint;
+BaseSeries.registerSeriesType('item', ItemSeries);
+/* *
+ *
+ *  Default Export
+ *
+ * */
+export default ItemSeries;
 /* *
  *
  *  API Options
