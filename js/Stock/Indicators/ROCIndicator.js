@@ -8,10 +8,23 @@
  *
  * */
 'use strict';
+var __extends = (this && this.__extends) || (function () {
+    var extendStatics = function (d, b) {
+        extendStatics = Object.setPrototypeOf ||
+            ({ __proto__: [] } instanceof Array && function (d, b) { d.__proto__ = b; }) ||
+            function (d, b) { for (var p in b) if (b.hasOwnProperty(p)) d[p] = b[p]; };
+        return extendStatics(d, b);
+    };
+    return function (d, b) {
+        extendStatics(d, b);
+        function __() { this.constructor = d; }
+        d.prototype = b === null ? Object.create(b) : (__.prototype = b.prototype, new __());
+    };
+})();
 import BaseSeries from '../../Core/Series/Series.js';
+var SMAIndicator = BaseSeries.seriesTypes.sma;
 import U from '../../Core/Utilities.js';
-var isArray = U.isArray;
-// im port './SMAIndicator.js';
+var isArray = U.isArray, merge = U.merge, extend = U.extend;
 /* eslint-disable require-jsdoc */
 // Utils:
 function populateAverage(xVal, yVal, i, period, index) {
@@ -39,6 +52,11 @@ function populateAverage(xVal, yVal, i, period, index) {
     return [xVal[i], rocY];
 }
 /* eslint-enable require-jsdoc */
+/* *
+ *
+ *  Class
+ *
+ * */
 /**
  * The ROC series type.
  *
@@ -48,39 +66,42 @@ function populateAverage(xVal, yVal, i, period, index) {
  *
  * @augments Highcharts.Series
  */
-BaseSeries.seriesType('roc', 'sma', 
-/**
- * Rate of change indicator (ROC). The indicator value for each point
- * is defined as:
- *
- * `(C - Cn) / Cn * 100`
- *
- * where: `C` is the close value of the point of the same x in the
- * linked series and `Cn` is the close value of the point `n` periods
- * ago. `n` is set through [period](#plotOptions.roc.params.period).
- *
- * This series requires `linkedTo` option to be set.
- *
- * @sample stock/indicators/roc
- *         Rate of change indicator
- *
- * @extends      plotOptions.sma
- * @since        6.0.0
- * @product      highstock
- * @requires     stock/indicators/indicators
- * @requires     stock/indicators/roc
- * @optionparent plotOptions.roc
- */
-{
-    params: {
-        index: 3,
-        period: 9
+var ROCIndicator = /** @class */ (function (_super) {
+    __extends(ROCIndicator, _super);
+    function ROCIndicator() {
+        return _super !== null && _super.apply(this, arguments) || this;
     }
-}, 
-/**
- * @lends Highcharts.Series#
- */
-{
+    /**
+     * Rate of change indicator (ROC). The indicator value for each point
+     * is defined as:
+     *
+     * `(C - Cn) / Cn * 100`
+     *
+     * where: `C` is the close value of the point of the same x in the
+     * linked series and `Cn` is the close value of the point `n` periods
+     * ago. `n` is set through [period](#plotOptions.roc.params.period).
+     *
+     * This series requires `linkedTo` option to be set.
+     *
+     * @sample stock/indicators/roc
+     *         Rate of change indicator
+     *
+     * @extends      plotOptions.sma
+     * @since        6.0.0
+     * @product      highstock
+     * @requires     stock/indicators/indicators
+     * @requires     stock/indicators/roc
+     * @optionparent plotOptions.roc
+     */
+    ROCIndicator.defaultOptions = merge(SMAIndicator.defaultOptions, {
+        params: {
+            index: 3,
+            period: 9
+        }
+    });
+    return ROCIndicator;
+}(SMAIndicator));
+extend(ROCIndicator.prototype, {
     nameBase: 'Rate of Change',
     getValues: function (series, params) {
         var period = params.period, xVal = series.xData, yVal = series.yData, yValLen = yVal ? yVal.length : 0, ROC = [], xData = [], yData = [], i, index = -1, ROCPoint;
@@ -108,6 +129,13 @@ BaseSeries.seriesType('roc', 'sma',
         };
     }
 });
+BaseSeries.registerSeriesType('roc', ROCIndicator);
+/* *
+ *
+ *  Default Export
+ *
+ * */
+export default ROCIndicator;
 /**
  * A `ROC` series. If the [type](#series.wma.type) option is not
  * specified, it is inherited from [chart.type](#chart.type).

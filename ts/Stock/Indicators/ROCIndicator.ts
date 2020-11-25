@@ -12,16 +12,24 @@
 
 import type IndicatorValuesObject from './IndicatorValuesObject';
 import type LineSeries from '../../Series/Line/LineSeries';
-import type SMAIndicator from './SMA/SMAIndicator';
 import type {
     SMAOptions,
     SMAParamsOptions
 } from './SMA/SMAOptions';
 import type SMAPoint from './SMA/SMAPoint';
+
 import BaseSeries from '../../Core/Series/Series.js';
-import U from '../../Core/Utilities.js';
 const {
-    isArray
+    seriesTypes: {
+        sma: SMAIndicator
+    }
+} = BaseSeries;
+import U from '../../Core/Utilities.js';
+
+const {
+    isArray,
+    merge,
+    extend
 } = U;
 
 /**
@@ -30,19 +38,6 @@ const {
  */
 declare global {
     namespace Highcharts {
-
-        class ROCIndicator extends SMAIndicator {
-            public data: Array<ROCIndicatorPoint>;
-            public getValues<TLinkedSeries extends LineSeries>(
-                series: TLinkedSeries,
-                params: ROCIndicatorParamsOptions
-            ): (IndicatorValuesObject<TLinkedSeries>|undefined);
-            public nameBase: string;
-            public options: ROCIndicatorOptions;
-            public pointClass: typeof ROCIndicatorPoint;
-            public points: Array<ROCIndicatorPoint>;
-        }
-
         interface ROCIndicatorParamsOptions extends SMAParamsOptions {
             // for inheritance
         }
@@ -56,14 +51,6 @@ declare global {
         }
     }
 }
-
-declare module '../../Core/Series/SeriesType' {
-    interface SeriesTypeRegistry {
-        roc: typeof Highcharts.ROCIndicator;
-    }
-}
-
-// im port './SMAIndicator.js';
 
 /* eslint-disable require-jsdoc */
 
@@ -103,6 +90,12 @@ function populateAverage(
 
 /* eslint-enable require-jsdoc */
 
+/* *
+ *
+ *  Class
+ *
+ * */
+
 /**
  * The ROC series type.
  *
@@ -112,9 +105,7 @@ function populateAverage(
  *
  * @augments Highcharts.Series
  */
-BaseSeries.seriesType<typeof Highcharts.ROCIndicator>(
-    'roc',
-    'sma',
+class ROCIndicator extends SMAIndicator {
     /**
      * Rate of change indicator (ROC). The indicator value for each point
      * is defined as:
@@ -137,60 +128,96 @@ BaseSeries.seriesType<typeof Highcharts.ROCIndicator>(
      * @requires     stock/indicators/roc
      * @optionparent plotOptions.roc
      */
-    {
+    public static defaultOptions: Highcharts.ROCIndicatorOptions = merge(SMAIndicator.defaultOptions, {
         params: {
             index: 3,
             period: 9
         }
-    },
-    /**
-     * @lends Highcharts.Series#
-     */
-    {
-        nameBase: 'Rate of Change',
-        getValues: function<TLinkedSeries extends LineSeries> (
-            series: TLinkedSeries,
-            params: Highcharts.ROCIndicatorParamsOptions
-        ): (IndicatorValuesObject<TLinkedSeries>|undefined) {
-            var period: number = (params.period as any),
-                xVal: Array<number> = (series.xData as any),
-                yVal: Array<Array<number>> = (series.yData as any),
-                yValLen: number = yVal ? yVal.length : 0,
-                ROC: Array<Array<(number|null)>> = [],
-                xData: Array<number> = [],
-                yData: Array<(number|null)> = [],
-                i: number,
-                index = -1,
-                ROCPoint: [number, (number|null)];
+    } as Highcharts.ROCIndicatorOptions);
+}
 
-            // Period is used as a number of time periods ago, so we need more
-            // (at least 1 more) data than the period value
-            if (xVal.length <= period) {
-                return;
-            }
+/* *
+ *
+ *  Prototype Properties
+ *
+ * */
+interface ROCIndicator {
+    data: Array<Highcharts.ROCIndicatorPoint>;
+    getValues<TLinkedSeries extends LineSeries>(
+        series: TLinkedSeries,
+        params: Highcharts.ROCIndicatorParamsOptions
+    ): (IndicatorValuesObject<TLinkedSeries>|undefined);
+    nameBase: string;
+    options: Highcharts.ROCIndicatorOptions;
+    pointClass: typeof Highcharts.ROCIndicatorPoint;
+    points: Array<Highcharts.ROCIndicatorPoint>;
+}
 
-            // Switch index for OHLC / Candlestick / Arearange
-            if (isArray(yVal[0])) {
-                index = (params.index as any);
-            }
+extend(ROCIndicator.prototype, {
+    nameBase: 'Rate of Change',
+    getValues: function<TLinkedSeries extends LineSeries> (
+        series: TLinkedSeries,
+        params: Highcharts.ROCIndicatorParamsOptions
+    ): (IndicatorValuesObject<TLinkedSeries>|undefined) {
+        var period: number = (params.period as any),
+            xVal: Array<number> = (series.xData as any),
+            yVal: Array<Array<number>> = (series.yData as any),
+            yValLen: number = yVal ? yVal.length : 0,
+            ROC: Array<Array<(number|null)>> = [],
+            xData: Array<number> = [],
+            yData: Array<(number|null)> = [],
+            i: number,
+            index = -1,
+            ROCPoint: [number, (number|null)];
 
-            // i = period <-- skip first N-points
-            // Calculate value one-by-one for each period in visible data
-            for (i = period; i < yValLen; i++) {
-                ROCPoint = populateAverage(xVal, yVal, i, period, index);
-                ROC.push(ROCPoint);
-                xData.push(ROCPoint[0]);
-                yData.push(ROCPoint[1]);
-            }
-
-            return {
-                values: ROC,
-                xData: xData,
-                yData: yData
-            } as IndicatorValuesObject<TLinkedSeries>;
+        // Period is used as a number of time periods ago, so we need more
+        // (at least 1 more) data than the period value
+        if (xVal.length <= period) {
+            return;
         }
+
+        // Switch index for OHLC / Candlestick / Arearange
+        if (isArray(yVal[0])) {
+            index = (params.index as any);
+        }
+
+        // i = period <-- skip first N-points
+        // Calculate value one-by-one for each period in visible data
+        for (i = period; i < yValLen; i++) {
+            ROCPoint = populateAverage(xVal, yVal, i, period, index);
+            ROC.push(ROCPoint);
+            xData.push(ROCPoint[0]);
+            yData.push(ROCPoint[1]);
+        }
+
+        return {
+            values: ROC,
+            xData: xData,
+            yData: yData
+        } as IndicatorValuesObject<TLinkedSeries>;
     }
-);
+});
+
+/* *
+ *
+ *  Registry
+ *
+ * */
+declare module '../../Core/Series/SeriesType' {
+    interface SeriesTypeRegistry {
+        roc: typeof ROCIndicator;
+    }
+}
+
+BaseSeries.registerSeriesType('roc', ROCIndicator);
+
+/* *
+ *
+ *  Default Export
+ *
+ * */
+
+export default ROCIndicator;
 
 /**
  * A `ROC` series. If the [type](#series.wma.type) option is not
