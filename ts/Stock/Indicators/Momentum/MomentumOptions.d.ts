@@ -23,13 +23,13 @@ import type {
  *
  * */
 
-export interface BBOptions extends SMAOptions, Highcharts.MultipleLinesIndicatorOptions{
-    params?: BBParamsOptions;
+export interface MomentumOptions extends SMAOptions {
+    params?: MomentumParamsOptions;
+    period: number;
 }
 
-export interface BBParamsOptions extends SMAParamsOptions {
-    standardDeviation: number;
+export interface MomentumParamsOptions extends SMAParamsOptions {
     // for inheritance
 }
 
-export default BBOptions;
+export default MomentumOptions;
