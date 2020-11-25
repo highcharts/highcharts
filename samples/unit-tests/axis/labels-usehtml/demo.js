@@ -59,7 +59,13 @@ QUnit.test('Reset text with with useHTML (#4928)', function (assert) {
             text: null
         },
         xAxis: {
-            categories: ["Nick Presta", "Nathan Duthoit", "Jude", "Sarah", "Michael Warkentin", "Cam", "Vivian", "Brooke", "Jack", "Ash", "Andrew", "Dieter", "Brian", "Satraj", "Yoseph", "Henry", "James", "Fisher", "Cathy", "Azucena", "Katie", "Rustin", "Andrea"],
+            categories: [
+                "Nick Presta", "Nathan Duthoit", "Jude", "Sarah",
+                "Michael Warkentin", "Cam", "Vivian", "Brooke",
+                "Jack", "Ash", "Andrew", "Dieter", "Brian", "Satraj",
+                "Yoseph", "Henry", "James", "Fisher", "Cathy", "Azucena",
+                "Katie", "Rustin", "Andrea"
+            ],
             title: {
                 text: null
             },
@@ -74,7 +80,10 @@ QUnit.test('Reset text with with useHTML (#4928)', function (assert) {
             enabled: false
         },
         series: [{
-            data: [4, 1, 6.7, 1.2, 1.3, 1.3, 7.6, 1.85, 1.85, 2, 0.5, 1.5, 2, 4.15, 2, 1, 2, 2, 2.5, 2, 0.5, 0.5, 5]
+            data: [
+                4, 1, 6.7, 1.2, 1.3, 1.3, 7.6, 1.85, 1.85, 2,
+                0.5, 1.5, 2, 4.15, 2, 1, 2, 2, 2.5, 2, 0.5, 0.5, 5
+            ]
         }],
         exporting: {
             enabled: false
@@ -113,7 +122,25 @@ QUnit.test('Auto rotated labels with useHTML', function (assert) {
         },
 
         xAxis: {
-            categories: ['Foo Foo Foo Foo Foo Foo Foo Foo Foo Foo Foo Foo Foo Foo Foo Foo Foo Foo Foo Foo Foo Foo Foo Foo Foo Foo Foo Foo Foo Foo Foo Foo Foo Foo Foo Foo Foo Foo Foo Foo Foo Foo Foo Foo Foo Foo Foo Foo Foo Foo Foo Foo Foo Foo Foo Foo Foo Foo Foo Foo Foo Foo Foo Foo Foo Foo Foo Foo Foo Foo ', 'Bar Bar Bar Bar Bar Bar Bar Bar Bar Bar Bar Bar Bar Bar Bar Bar Bar Bar Bar ', 'a a a a a a a a a a a a a a a a a a a a a a a a a a a a a a a a a a a a a a a a a a a a a a a a a a a a a a a a a a a a a a a a a a a a a a a a a a a a a a a a a a a a a a a a a a a a a a a a a a a a a a a a a a a a a a a a a a a a a a a a a a a a a a a a a a a a a a a a a a a a a a a a a a a a a a a a a a a a a a a a a a a a a a a a a a a a a a a a a a a a a a a a a a a a a a a a a a a a a a a a a a a a a a a a a a a a a a a a '],
+            categories: [
+                'Foo Foo Foo Foo Foo Foo Foo Foo Foo Foo Foo Foo Foo ' +
+                'Foo Foo Foo Foo Foo Foo Foo Foo Foo Foo Foo Foo Foo ' +
+                'Foo Foo Foo Foo Foo Foo Foo Foo Foo Foo Foo Foo Foo ' +
+                'Foo Foo Foo Foo Foo Foo Foo Foo Foo Foo Foo Foo Foo ' +
+                'Foo Foo Foo Foo Foo Foo Foo Foo Foo Foo Foo Foo Foo ' +
+                'Foo Foo Foo Foo Foo ',
+                'Bar Bar Bar Bar Bar Bar Bar Bar Bar Bar Bar Bar Bar ' +
+                'Bar Bar Bar Bar Bar Bar ',
+                'a a a a a a a a a a a a a a a a a a a a a a a a a a ' +
+                'a a a a a a a a a a a a a a a a a a a a a a a a a a ' +
+                'a a a a a a a a a a a a a a a a a a a a a a a a a a ' +
+                'a a a a a a a a a a a a a a a a a a a a a a a a a a ' +
+                'a a a a a a a a a a a a a a a a a a a a a a a a a a ' +
+                'a a a a a a a a a a a a a a a a a a a a a a a a a a ' +
+                'a a a a a a a a a a a a a a a a a a a a a a a a a a ' +
+                'a a a a a a a a a a a a a a a a a a a a a a a a a a ' +
+                'a a a a a a a a '
+            ],
 
             labels: {
                 useHTML: true
@@ -149,7 +176,10 @@ QUnit.test('Bounding box for rotated label', function (assert) {
             text: 'with useHTML enabled on Axis labels'
         },
         xAxis: {
-            categories: ['This really looooong title name will be cut off', 'Feb'],
+            categories: [
+                'This really looooong title name will be cut off',
+                'Feb'
+            ],
             labels: {
                 useHTML: true,
                 rotation: 45,
@@ -473,7 +503,20 @@ QUnit.test('Ellipsis on single-word labels (#9537)', function (assert) {
         },
 
         xAxis: {
-            categories: ['JanuaryJanuary', 'February', 'March', 'April', 'May', 'June', 'July', 'August', 'September', 'October', 'November', 'December'],
+            categories: [
+                'JanuaryJanuary',
+                'February',
+                'March',
+                'April',
+                'May',
+                'June',
+                'July',
+                'August',
+                'September',
+                'October',
+                'November',
+                'December'
+            ],
             labels: {
                 rotation: 0,
                 useHTML: true
@@ -481,7 +524,10 @@ QUnit.test('Ellipsis on single-word labels (#9537)', function (assert) {
         },
 
         series: [{
-            data: [29.9, 71.5, 106.4, 129.2, 144.0, 176.0, 135.6, 148.5, 216.4, 194.1, 95.6, 54.4]
+            data: [
+                29.9, 71.5, 106.4, 129.2, 144.0, 176.0,
+                135.6, 148.5, 216.4, 194.1, 95.6, 54.4
+            ]
         }]
     });
 
@@ -492,64 +538,74 @@ QUnit.test('Ellipsis on single-word labels (#9537)', function (assert) {
     );
 
     assert.ok(
-        parseFloat(chart.xAxis[0].ticks[0].label.element.style.left) >= chart.plotLeft,
+        parseFloat(
+            chart.xAxis[0]
+                .ticks[0]
+                .label
+                .element
+                .style
+                .left
+        ) >= chart.plotLeft,
         'The label should be within the tick bounds'
     );
 });
 
 // Highcharts 8.1.2, Issue #13762
-QUnit.test('Overlapping of xAxis labels (useHTML: true) in polar chart (#13762)', function (assert) {
-    var chart = Highcharts.chart('container', {
-            chart: {
-                polar: true,
-                width: 600,
-                height: 400
-            },
-            xAxis: {
-                tickmarkPlacement: 'on',
-                labels: {
-                    useHTML: true
+QUnit.test(
+    'Overlapping of xAxis labels (useHTML: true) in polar chart (#13762)',
+    function (assert) {
+        var chart = Highcharts.chart('container', {
+                chart: {
+                    polar: true,
+                    width: 600,
+                    height: 400
                 },
-                categories: [
-                    'CATEGORY1',
-                    'CATEGORY2',
-                    'CATEGORY3',
-                    'CATEGORY4',
-                    'CATEGORY5',
-                    'CATEGORY6',
-                    'CATEGORY7',
-                    'CATEGORY8',
-                    'CATEGORY9',
-                    'CATEGORY10',
-                    'CATEGORY11',
-                    'CATEGORY12'
-                ]
-            },
-            series: [{
-                pointPlacement: 'on',
-                data: (numberOfPoints => {
-                    var data = [];
-                    while (numberOfPoints) {
-                        data.push(100);
-                        numberOfPoints--;
-                    }
-                    return data;
-                })(12)
-            }]
-        }),
-        ticks = chart.xAxis[0].ticks,
-        visible = true;
+                xAxis: {
+                    tickmarkPlacement: 'on',
+                    labels: {
+                        useHTML: true
+                    },
+                    categories: [
+                        'CATEGORY1',
+                        'CATEGORY2',
+                        'CATEGORY3',
+                        'CATEGORY4',
+                        'CATEGORY5',
+                        'CATEGORY6',
+                        'CATEGORY7',
+                        'CATEGORY8',
+                        'CATEGORY9',
+                        'CATEGORY10',
+                        'CATEGORY11',
+                        'CATEGORY12'
+                    ]
+                },
+                series: [{
+                    pointPlacement: 'on',
+                    data: (numberOfPoints => {
+                        var data = [];
+                        while (numberOfPoints) {
+                            data.push(100);
+                            numberOfPoints--;
+                        }
+                        return data;
+                    })(12)
+                }]
+            }),
+            ticks = chart.xAxis[0].ticks,
+            visible = true;
 
-    for (var prop in ticks) {
-        if (Object.prototype.hasOwnProperty.call(ticks, prop)) {
-            if (!ticks[prop].label.opacity) {
-                visible = false;
+        for (var prop in ticks) {
+            if (Object.prototype.hasOwnProperty.call(ticks, prop)) {
+                if (!ticks[prop].label.opacity) {
+                    visible = false;
+                }
             }
         }
-    }
 
-    assert.ok(
-        visible,
-        'All xAxis labels are visible'
-    );
-});
+        assert.ok(
+            visible,
+            'All xAxis labels are visible'
+        );
+    }
+);

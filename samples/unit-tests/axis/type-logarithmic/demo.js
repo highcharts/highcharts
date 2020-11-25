@@ -55,54 +55,69 @@ QUnit.test('Automatic column width on log X axis (#4870)', function (assert) {
     );
 });
 
-QUnit.test('Missing minor tick lines before and after extremes for a column chart.', function (assert) {
-    var chart = $('#container').highcharts({
-            xAxis: {
-                minorTickInterval: 1 // easier for tests - otherwise floating numbers in JS gives error, for example: 0.9-0.3 = 0.6000000001 etc. but we need to test strict numbers
+QUnit.test(
+    'Missing minor tick lines before and after extremes for a column chart.',
+    function (assert) {
+        var chart = $('#container').highcharts({
+                xAxis: {
+                    // easier for tests - otherwise floating numbers in JS
+                    //gives error, for example: 0.9-0.3 = 0.6000000001 etc.
+                    //but we need to test strict numbers
+                    minorTickInterval: 1
+                },
+                series: [{
+                    data: [
+                        29.9, 71.5, 106.4, 129.2, 144.0, 176.0,
+                        135.6, 148.5, 216.4, 194.1, 95.6, 54.4
+                    ],
+                    pointInterval: 10,
+                    type: 'column'
+                }]
+            }).highcharts(),
+            minorTicks = chart.xAxis[0].minorTicks,
+            firstTick = minorTicks['-6'],
+            lastTick = minorTicks['116'],
+            UNDEFINED;
+
+        assert.strictEqual(
+            firstTick !== UNDEFINED &&
+            firstTick.gridLine !== UNDEFINED &&
+            firstTick.gridLine.element instanceof SVGElement,
+            true,
+            "Proper first minor tick."
+        );
+        assert.strictEqual(
+            lastTick !== UNDEFINED &&
+            lastTick.gridLine !== UNDEFINED &&
+            lastTick.gridLine.element instanceof SVGElement,
+            true,
+            "Proper last minor tick."
+        );
+    }
+);
+
+QUnit.test(
+    'Minor ticks should not affect extremes (#6330)',
+    function (assert) {
+        var chart = Highcharts.chart('container', {
+            yAxis: {
+                type: 'logarithmic',
+                minorTickInterval: 'auto'
             },
+
             series: [{
-                data: [29.9, 71.5, 106.4, 129.2, 144.0, 176.0, 135.6, 148.5, 216.4, 194.1, 95.6, 54.4],
-                pointInterval: 10,
-                type: 'column'
+                data: [3, 12, 3]
             }]
-        }).highcharts(),
-        minorTicks = chart.xAxis[0].minorTicks,
-        firstTick = minorTicks['-6'],
-        lastTick = minorTicks['116'],
-        UNDEFINED;
 
-    assert.strictEqual(
-        firstTick !== UNDEFINED && firstTick.gridLine !== UNDEFINED && firstTick.gridLine.element instanceof SVGElement,
-        true,
-        "Proper first minor tick."
-    );
-    assert.strictEqual(
-        lastTick !== UNDEFINED && lastTick.gridLine !== UNDEFINED && lastTick.gridLine.element instanceof SVGElement,
-        true,
-        "Proper last minor tick."
-    );
-});
+        });
 
-QUnit.test('Minor ticks should not affect extremes (#6330)', function (assert) {
-    var chart = Highcharts.chart('container', {
-        yAxis: {
-            type: 'logarithmic',
-            minorTickInterval: 'auto'
-        },
-
-        series: [{
-            data: [3, 12, 3]
-        }]
-
-    });
-
-    var extremes = chart.yAxis[0].getExtremes();
-    assert.ok(
-        extremes.max > extremes.dataMax,
-        'Y axis max is bigger than data'
-    );
-
-});
+        var extremes = chart.yAxis[0].getExtremes();
+        assert.ok(
+            extremes.max > extremes.dataMax,
+            'Y axis max is bigger than data'
+        );
+    }
+);
 
 QUnit.test(
     'Minor ticks should extend past major ticks (#6330)',
@@ -264,7 +279,7 @@ QUnit.test('Y axis minimum got stuck (#3353)', function (assert) {
     assert.strictEqual(
         preUpdatesTick,
         postUpdatesTick,
-        "Y minimum value should not be changed when updating yAxis type"
+        'Y minimum value should not be changed when updating yAxis type'
     );
 });
 
@@ -301,54 +316,62 @@ QUnit.test('Negative values on the log axes.', function (assert) {
     assert.strictEqual(
         chart.xAxis[0].dataMin,
         1,
-        "Negative xValues should not be present on the log axis under the xAxis.dataMin."
+        'Negative xValues should not be present on the log axis under ' +
+        'the xAxis.dataMin.'
     );
 
     assert.strictEqual(
         chart.yAxis[0].dataMin,
         2,
-        "Negative yValues should not be present on the log axis under the xAxis.dataMin."
+        'Negative yValues should not be present on the log axis under ' +
+        'the xAxis.dataMin.'
     );
 
     assert.strictEqual(
         chart.xAxis[1].dataMin,
         -3,
-        "Negative xValues should be present on the log axis under the xAxis.dataMin."
+        'Negative xValues should be present on the log axis under ' +
+        'the xAxis.dataMin.'
     );
 
     assert.strictEqual(
         chart.yAxis[1].dataMin,
         -5,
-        "Negative yValues should be present on the log axis under the yAxis.dataMin."
+        'Negative yValues should be present on the log axis under ' +
+        'the yAxis.dataMin.'
     );
 
     assert.deepEqual(
         chart.series[0].points.map(point => point.isNull),
         [true, true, true, true, false],
-        "Points with negative value should be discarded when both axes are logarithmic.  "
+        'Points with negative value should be discarded when both axes ' +
+        'are logarithmic.  '
     );
 
     assert.deepEqual(
         chart.series[1].points.map(point => point.isNull),
         [true, true, true, false, false],
-        "Points with negative xValues should be discarded when xAxis is logarithmic."
+        'Points with negative xValues should be discarded when xAxis ' +
+        'is logarithmic.'
     );
 
     assert.deepEqual(
         chart.series[2].points.map(point => point.isNull),
         [true, false, true, true, false],
-        "Points with negative yValues should be discarded when yAxis is logarithmic."
+        'Points with negative yValues should be discarded when yAxis ' +
+        'is logarithmic.'
     );
 
     assert.strictEqual(
         chart.series[3].points.filter(point => point.isNull).length,
         0,
-        "Points with negative value should not be discarded when both axes are linear."
+        'Points with negative value should not be discarded when both ' +
+        'axes are linear.'
     );
 
     assert.ok(
         true,
-        "Should not throw error."
+        'Should not throw error.'
     );
 
 });

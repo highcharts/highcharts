@@ -32,6 +32,7 @@ const {
     noop
 } = H;
 import LineSeries from '../Series/Line/LineSeries.js';
+import palette from '../Core/Color/Palette.js';
 import Series from '../Core/Series/Series.js';
 import U from '../Core/Utilities.js';
 const {
@@ -565,7 +566,7 @@ const initCanvasBoost = function (): void {
             if (rawData.length > 99999) {
                 chart.options.loading = merge(loadingOptions, {
                     labelStyle: {
-                        backgroundColor: color('${palette.backgroundColor}').setOpacity(0.75).get(),
+                        backgroundColor: color(palette.backgroundColor).setOpacity(0.75).get(),
                         padding: '1em',
                         borderRadius: '0.5em'
                     },

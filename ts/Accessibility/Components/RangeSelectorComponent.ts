@@ -77,10 +77,6 @@ declare global {
                 langKey: string
             ): void;
         }
-        interface RangeSelector {
-            maxInput?: HTMLDOMElement;
-            minInput?: HTMLDOMElement;
-        }
     }
 }
 
@@ -91,18 +87,14 @@ declare global {
  * @private
  */
 function shouldRunInputNavigation(chart: Chart): boolean {
-    var inputVisible = (
+    return Boolean(
         chart.rangeSelector &&
         chart.rangeSelector.inputGroup &&
         chart.rangeSelector.inputGroup.element
-            .getAttribute('visibility') !== 'hidden'
-    );
-
-    return (
-        inputVisible &&
+            .getAttribute('visibility') !== 'hidden' &&
         (chart.options.rangeSelector as any).inputEnabled !== false &&
-        (chart.rangeSelector as any).minInput &&
-        (chart.rangeSelector as any).maxInput
+        chart.rangeSelector.minInput &&
+        chart.rangeSelector.maxInput
     );
 }
 

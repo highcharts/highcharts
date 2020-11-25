@@ -22,6 +22,7 @@ import H from '../Core/Globals.js';
 var noop = H.noop;
 import LegendSymbolMixin from '../Mixins/LegendSymbol.js';
 import LineSeries from './Line/LineSeries.js';
+import palette from '../Core/Color/Palette.js';
 import Point from '../Core/Series/Point.js';
 import TreeSeriesMixin from '../Mixins/TreeSeries.js';
 var getColor = TreeSeriesMixin.getColor, getLevelOptions = TreeSeriesMixin.getLevelOptions, updateRootId = TreeSeriesMixin.updateRootId;
@@ -469,7 +470,7 @@ BaseSeries.seriesType('treemap', 'scatter'
      *
      * @type {Highcharts.ColorString}
      */
-    borderColor: '${palette.neutralColor10}',
+    borderColor: palette.neutralColor10,
     /**
      * The width of the border surrounding each tree map item.
      */
@@ -498,7 +499,7 @@ BaseSeries.seriesType('treemap', 'scatter'
             /**
              * The border color for the hovered state.
              */
-            borderColor: '${palette.neutralColor40}',
+            borderColor: palette.neutralColor40,
             /**
              * Brightness for the hovered point. Defaults to 0 if the
              * heatmap series is loaded first, otherwise 0.1.

@@ -59,6 +59,7 @@ const {
 } = H;
 import LegendSymbolMixin from '../Mixins/LegendSymbol.js';
 import LineSeries from './Line/LineSeries.js';
+import palette from '../Core/Color/Palette.js';
 import Point from '../Core/Series/Point.js';
 import TreeSeriesMixin from '../Mixins/TreeSeries.js';
 const {
@@ -873,7 +874,7 @@ BaseSeries.seriesType<typeof Highcharts.TreemapSeries>(
          *
          * @type {Highcharts.ColorString}
          */
-        borderColor: '${palette.neutralColor10}',
+        borderColor: palette.neutralColor10,
 
         /**
          * The width of the border surrounding each tree map item.
@@ -908,7 +909,7 @@ BaseSeries.seriesType<typeof Highcharts.TreemapSeries>(
                 /**
                  * The border color for the hovered state.
                  */
-                borderColor: '${palette.neutralColor40}',
+                borderColor: palette.neutralColor40,
 
                 /**
                  * Brightness for the hovered point. Defaults to 0 if the

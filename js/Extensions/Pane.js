@@ -10,6 +10,7 @@
 'use strict';
 import Chart from '../Core/Chart/Chart.js';
 import H from '../Core/Globals.js';
+import palette from '../Core/Color/Palette.js';
 import Pointer from '../Core/Pointer.js';
 import U from '../Core/Utilities.js';
 var addEvent = U.addEvent, extend = U.extend, merge = U.merge, pick = U.pick, splat = U.splat;
@@ -158,7 +159,7 @@ var Pane = /** @class */ (function () {
              * @since   2.3.0
              * @product highcharts
              */
-            borderColor: '${palette.neutralColor20}',
+            borderColor: palette.neutralColor20,
             /**
              * The background color or gradient for the pane.
              *
@@ -172,8 +173,8 @@ var Pane = /** @class */ (function () {
                 linearGradient: { x1: 0, y1: 0, x2: 0, y2: 1 },
                 /** @ignore-option */
                 stops: [
-                    [0, '${palette.backgroundColor}'],
-                    [1, '${palette.neutralColor10}']
+                    [0, palette.backgroundColor],
+                    [1, palette.neutralColor10]
                 ]
             },
             /** @ignore-option */

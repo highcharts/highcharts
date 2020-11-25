@@ -29,7 +29,10 @@ QUnit.test("Ellipsis should be reset after zoom (#4678)", function (assert) {
         },
 
         series: [{
-            data: [29.9, 71.5, 106.4, 129.2, 144.0, 176.0, 135.6, 148.5, 216.4, 194.1, 95.6, 54.4]
+            data: [
+                29.9, 71.5, 106.4, 129.2, 144.0, 176.0,
+                135.6, 148.5, 216.4, 194.1, 95.6, 54.4
+            ]
         }]
     }).highcharts();
 
@@ -64,30 +67,38 @@ QUnit.test("Ellipsis should be reset after zoom (#4678)", function (assert) {
 
 });
 
-QUnit.test('#5034: No ellipsis for multiline labels where there is room', function (assert) {
-    var chart = Highcharts.chart('container', {
+QUnit.test(
+    '#5034: No ellipsis for multiline labels where there is room',
+    function (assert) {
+        var chart = Highcharts.chart('container', {
 
-        chart: {
-            type: "bar",
-            width: 450
-        },
-        xAxis: {
-            categories: ["Cat1", "Cat2 bla bla bla bla bla bla bla bla bla bla", "Cat3 bla bla bla bla bla bla bla"]
-        },
-        series: [{
-            data: [1, 2, 3]
-        }]
-    });
+            chart: {
+                type: "bar",
+                width: 450
+            },
+            xAxis: {
+                categories: [
+                    'Cat1',
+                    'Cat2 bla bla bla bla bla bla bla bla bla bla',
+                    'Cat3 bla bla bla bla bla bla bla'
+                ]
+            },
+            series: [{
+                data: [1, 2, 3]
+            }]
+        });
 
 
-    assert.ok(
-        chart.xAxis[0].ticks[1].label.getBBox().height > chart.xAxis[0].ticks[0].label.getBBox().height,
-        'Second label is multiple lines'
-    );
+        assert.ok(
+            chart.xAxis[0].ticks[1].label.getBBox().height >
+            chart.xAxis[0].ticks[0].label.getBBox().height,
+            'Second label is multiple lines'
+        );
 
-    assert.strictEqual(
-        chart.xAxis[0].ticks[1].label.getBBox().height,
-        chart.xAxis[0].ticks[2].label.getBBox().height,
-        'Third label is same as second'
-    );
-});
+        assert.strictEqual(
+            chart.xAxis[0].ticks[1].label.getBBox().height,
+            chart.xAxis[0].ticks[2].label.getBBox().height,
+            'Third label is same as second'
+        );
+    }
+);

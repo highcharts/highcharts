@@ -38,6 +38,7 @@ const {
 import H from '../Core/Globals.js';
 import LegendSymbolMixin from '../Mixins/LegendSymbol.js';
 import LineSeries from '../Series/Line/LineSeries.js';
+import palette from '../Core/Color/Palette.js';
 import Point from '../Core/Series/Point.js';
 import SVGElement from '../Core/Renderer/SVG/SVGElement.js';
 import U from '../Core/Utilities.js';
@@ -261,15 +262,15 @@ BaseSeries.seriesType<typeof Highcharts.TimelineSeries>('timeline', 'line',
              */
             alternate: true,
 
-            backgroundColor: '${palette.backgroundColor}',
+            backgroundColor: palette.backgroundColor,
 
             borderWidth: 1,
 
-            borderColor: '${palette.neutralColor40}',
+            borderColor: palette.neutralColor40,
 
             borderRadius: 3,
 
-            color: '${palette.neutralColor80}',
+            color: palette.neutralColor80,
 
             /**
              * The color of the line connecting the data label to the point.

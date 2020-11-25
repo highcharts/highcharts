@@ -13,9 +13,10 @@ import ColumnSeries from './Column/ColumnSeries.js';
 var columnProto = ColumnSeries.prototype;
 import O from '../Core/Options.js';
 var defaultOptions = O.defaultOptions;
+import palette from '../Core/Color/Palette.js';
 import U from '../Core/Utilities.js';
 var merge = U.merge;
-import './OHLCSeries.js';
+import './OHLC/OHLCSeries.js';
 /* *
  *
  *  Code
@@ -90,7 +91,7 @@ var candlestickOptions = {
      * @default #000000
      * @product highstock
      */
-    lineColor: '${palette.neutralColor100}',
+    lineColor: palette.neutralColor100,
     /**
      * The pixel width of the candlestick line/border. Defaults to `1`.
      *
@@ -116,7 +117,7 @@ var candlestickOptions = {
      * @default #ffffff
      * @product highstock
      */
-    upColor: '${palette.backgroundColor}',
+    upColor: palette.backgroundColor,
     /**
      * @product highstock
      */

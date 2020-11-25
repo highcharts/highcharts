@@ -63,7 +63,7 @@ declare global {
             public variableTimezone: boolean;
             public dateFormat(
                 format: string,
-                timestamp: number,
+                timestamp?: number,
                 capitalize?: boolean
             ): string;
             public get(unit: TimeUnitValue, date: Date): number;
@@ -406,8 +406,7 @@ class Time {
          * The time object has options allowing for variable time zones, meaning
          * the axis ticks or series data needs to consider this.
          */
-        this.variableTimezone = !!(
-            !useUTC ||
+        this.variableTimezone = useUTC && !!(
             options.getTimezoneOffset ||
             options.timezone
         );
@@ -575,7 +574,7 @@ class Time {
      *        The desired format where various time representations are
      *        prefixed with %.
      *
-     * @param {number} timestamp
+     * @param {number} [timestamp]
      *        The JavaScript timestamp.
      *
      * @param {boolean} [capitalize=false]
@@ -586,7 +585,7 @@ class Time {
      */
     public dateFormat(
         format: string,
-        timestamp: number,
+        timestamp?: number,
         capitalize?: boolean
     ): string {
         if (!defined(timestamp) || isNaN(timestamp)) {
@@ -855,7 +854,7 @@ class Time {
             min = minDate.getTime();
 
             // Handle local timezone offset
-            if (time.variableTimezone) {
+            if (time.variableTimezone || !time.useUTC) {
 
                 // Detect whether we need to take the DST crossover into
                 // consideration. If we're crossing over DST, the day length may

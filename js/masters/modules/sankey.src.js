@@ -10,4 +10,4 @@
  * License: www.highcharts.com/license
  */
 'use strict';
-import '../../Series/SankeySeries.js';
+import '../../Series/Sankey/SankeySeries.js';

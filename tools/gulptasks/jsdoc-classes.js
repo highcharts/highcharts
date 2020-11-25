@@ -60,14 +60,14 @@ const SOURCE_GLOBS = [
     'js/Maps/Map.js',
     'js/Maps/MapNavigation.js',
     'js/Series/Networkgraph/*.js',
-    'js/Series/AreaRangeSeries.js',
+    'js/Series/AreaRange/AreaRangeSeries.js',
     'js/Series/Line/LineSeries.js',
     'js/Series/Column/ColumnSeries.js',
     'js/Series/Map/MapSeries.js',
     'js/Series/OrganizationSeries.js',
     'js/Series/Pie/PieSeries.js',
-    'js/Series/PackedBubbleSeries.js',
-    'js/Series/SankeySeries.js',
+    'js/Series/PackedBubble/PackedBubbleSeries.js',
+    'js/Series/Sankey/SankeySeries.js',
     'js/Series/SunburstSeries.js',
     'js/Series/TimelineSeries.js'
 ];

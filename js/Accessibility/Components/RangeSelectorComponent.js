@@ -26,11 +26,10 @@ var extend = U.extend;
  * @private
  */
 function shouldRunInputNavigation(chart) {
-    var inputVisible = (chart.rangeSelector &&
+    return Boolean(chart.rangeSelector &&
         chart.rangeSelector.inputGroup &&
         chart.rangeSelector.inputGroup.element
-            .getAttribute('visibility') !== 'hidden');
-    return (inputVisible &&
+            .getAttribute('visibility') !== 'hidden' &&
         chart.options.rangeSelector.inputEnabled !== false &&
         chart.rangeSelector.minInput &&
         chart.rangeSelector.maxInput);

@@ -23,6 +23,7 @@ import type SVGElement from '../Renderer/SVG/SVGAttributes';
 import type SVGPath from '../Renderer/SVG/SVGPath';
 import Axis from './Axis.js';
 import H from '../Globals.js';
+import palette from '../../Core/Color/Palette.js';
 
 /**
  * Internal types
@@ -261,7 +262,7 @@ class PlotLineOrBand {
         // Set the presentational attributes
         if (!axis.chart.styledMode) {
             if (isLine) {
-                attribs.stroke = color || '${palette.neutralColor40}';
+                attribs.stroke = color || palette.neutralColor40;
                 attribs['stroke-width'] = pick(
                     (options as Highcharts.AxisPlotLinesOptions).width,
                     1
@@ -272,7 +273,7 @@ class PlotLineOrBand {
                 }
 
             } else if (isBand) { // plot band
-                attribs.fill = color || '${palette.highlightColor10}';
+                attribs.fill = color || palette.highlightColor10;
                 if ((options as Highcharts.AxisPlotBandsOptions).borderWidth) {
                     attribs.stroke = (
                         options as Highcharts.AxisPlotBandsOptions

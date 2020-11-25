@@ -13,12 +13,14 @@
 'use strict';
 
 import type AnimationOptionsObject from '../Core/Animation/AnimationOptionsObject';
+import type AreaRangePoint from '../Series/AreaRange/AreaRangePoint';
 import type BBoxObject from '../Core/Renderer/BBoxObject';
 import type BoxPlotPoint from '../Series/BoxPlot/BoxPlotPoint';
 import type BulletPoint from '../Series/Bullet/BulletPoint';
 import type ColorString from '../Core/Color/ColorString';
 import type ColorType from '../Core/Color/ColorType';
 import type ColumnPoint from '../Series/Column/ColumnPoint';
+import type OHLCPoint from '../Series/OHLC/OHLCPoint';
 import type PointerEvent from '../Core/PointerEvent';
 import type { PointOptions, PointShortOptions } from '../Core/Series/PointOptions';
 import type PositionObject from '../Core/Renderer/PositionObject';
@@ -858,7 +860,7 @@ if (seriesTypes.ohlc) {
             resize: true,
             resizeSide: 'bottom',
             handlePositioner: function (
-                point: Highcharts.OHLCPoint
+                point: OHLCPoint
             ): PositionObject {
                 return {
                     x: (point.shapeArgs as any).x,
@@ -868,7 +870,7 @@ if (seriesTypes.ohlc) {
             handleFormatter: columnDragDropProps.y.handleFormatter,
             propValidate: function (
                 val: number,
-                point: Highcharts.OHLCPoint
+                point: OHLCPoint
             ): boolean {
                 return val <= point.open && val <= point.close;
             }
@@ -888,7 +890,7 @@ if (seriesTypes.ohlc) {
             resize: true,
             resizeSide: 'top',
             handlePositioner: function (
-                point: Highcharts.OHLCPoint
+                point: OHLCPoint
             ): PositionObject {
                 return {
                     x: (point.shapeArgs as any).x,
@@ -898,7 +900,7 @@ if (seriesTypes.ohlc) {
             handleFormatter: columnDragDropProps.y.handleFormatter,
             propValidate: function (
                 val: number,
-                point: Highcharts.OHLCPoint
+                point: OHLCPoint
             ): boolean {
                 return val >= point.open && val >= point.close;
             }
@@ -916,11 +918,11 @@ if (seriesTypes.ohlc) {
             axis: 'y',
             move: true,
             resize: true,
-            resizeSide: function (point: Highcharts.OHLCPoint): string {
+            resizeSide: function (point: OHLCPoint): string {
                 return point.open >= point.close ? 'top' : 'bottom';
             },
             handlePositioner: function (
-                point: Highcharts.OHLCPoint
+                point: OHLCPoint
             ): PositionObject {
                 return {
                     x: (point.shapeArgs as any).x,
@@ -930,7 +932,7 @@ if (seriesTypes.ohlc) {
             handleFormatter: columnDragDropProps.y.handleFormatter,
             propValidate: function (
                 val: number,
-                point: Highcharts.OHLCPoint
+                point: OHLCPoint
             ): boolean {
                 return val <= point.high && val >= point.low;
             }
@@ -948,11 +950,11 @@ if (seriesTypes.ohlc) {
             axis: 'y',
             move: true,
             resize: true,
-            resizeSide: function (point: Highcharts.OHLCPoint): string {
+            resizeSide: function (point: OHLCPoint): string {
                 return point.open >= point.close ? 'bottom' : 'top';
             },
             handlePositioner: function (
-                point: Highcharts.OHLCPoint
+                point: OHLCPoint
             ): PositionObject {
                 return {
                     x: (point.shapeArgs as any).x,
@@ -962,7 +964,7 @@ if (seriesTypes.ohlc) {
             handleFormatter: columnDragDropProps.y.handleFormatter,
             propValidate: function (
                 val: number,
-                point: Highcharts.OHLCPoint
+                point: OHLCPoint
             ): boolean {
                 return val <= point.high && val >= point.low;
             }
@@ -976,7 +978,7 @@ if (seriesTypes.arearange) {
             seriesTypes.columnrange.prototype.dragDropProps,
         // Use a circle covering the marker as drag handle
         arearangeHandleFormatter = function (
-            point: Highcharts.AreaRangePoint
+            point: AreaRangePoint
         ): SVGPath {
             var radius = point.graphic ?
                 point.graphic.getBBox().width / 2 + 1 :
@@ -1006,7 +1008,7 @@ if (seriesTypes.arearange) {
             resize: true,
             resizeSide: 'bottom',
             handlePositioner: function (
-                point: Highcharts.AreaRangePoint
+                point: AreaRangePoint
             ): PositionObject {
                 var bBox = point.lowerGraphic && point.lowerGraphic.getBBox();
 
@@ -1033,7 +1035,7 @@ if (seriesTypes.arearange) {
             resize: true,
             resizeSide: 'top',
             handlePositioner: function (
-                point: Highcharts.AreaRangePoint
+                point: AreaRangePoint
             ): PositionObject {
                 var bBox = point.upperGraphic && point.upperGraphic.getBBox();
 

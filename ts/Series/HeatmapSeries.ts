@@ -39,6 +39,7 @@ const { noop } = H;
 import Point from '../Core/Series/Point.js';
 import LegendSymbolMixin from '../Mixins/LegendSymbol.js';
 import LineSeries from '../Series/Line/LineSeries.js';
+import palette from '../Core/Color/Palette.js';
 import SVGRenderer from '../Core/Renderer/SVG/SVGRenderer.js';
 import U from '../Core/Utilities.js';
 const {
@@ -272,7 +273,7 @@ BaseSeries.seriesType<typeof Highcharts.HeatmapSeries>(
          *
          * @type {Highcharts.ColorString|Highcharts.GradientColorObject|Highcharts.PatternObject}
          */
-        nullColor: '${palette.neutralColor3}',
+        nullColor: palette.neutralColor3,
 
         dataLabels: {
             formatter: function (): (number|null) { // #2945

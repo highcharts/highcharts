@@ -17,6 +17,7 @@ import type CSSObject from '../Core/Renderer/CSSObject';
 import type SVGAttributes from '../Core/Renderer/SVG/SVGAttributes';
 import type SVGElement from '../Core/Renderer/SVG/SVGElement';
 import Chart from '../Core/Chart/Chart.js';
+import palette from '../Core/Color/Palette.js';
 import U from '../Core/Utilities.js';
 const {
     addEvent,
@@ -172,7 +173,7 @@ defaultOptions.noData = {
         /** @ignore */
         fontSize: '12px',
         /** @ignore */
-        color: '${palette.neutralColor60}'
+        color: palette.neutralColor60
     }
 
 };

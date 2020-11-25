@@ -10,6 +10,7 @@
 'use strict';
 import H from './Globals.js';
 var doc = H.doc;
+import palette from './Color/Palette.js';
 import U from './Utilities.js';
 var clamp = U.clamp, css = U.css, defined = U.defined, discardElement = U.discardElement, extend = U.extend, fireEvent = U.fireEvent, format = U.format, isNumber = U.isNumber, isString = U.isString, merge = U.merge, pick = U.pick, splat = U.splat, syncTimeout = U.syncTimeout, timeUnits = U.timeUnits;
 /**
@@ -909,7 +910,7 @@ var Tooltip = /** @class */ (function () {
                         stroke: (options.borderColor ||
                             point.color ||
                             currentSeries.color ||
-                            '${palette.neutralColor60}')
+                            palette.neutralColor60)
                     });
                 }
                 tooltip.updatePosition({
@@ -1063,7 +1064,7 @@ var Tooltip = /** @class */ (function () {
                     stroke: (options.borderColor ||
                         point.color ||
                         series.color ||
-                        '${palette.neutralColor80}')
+                        palette.neutralColor80)
                 });
             }
             return tt;

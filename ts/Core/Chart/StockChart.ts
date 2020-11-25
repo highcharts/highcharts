@@ -10,17 +10,36 @@
 
 'use strict';
 
+/* *
+ *
+ *  Imports
+ *
+ * */
+
 import type BBoxObject from '../Renderer/BBoxObject';
 import type DataExtremesObject from '../Series/DataExtremesObject';
 import type { HTMLDOMElement } from '../Renderer/DOMElementType';
 import type PointerEvent from '../PointerEvent';
 import type { SeriesTypePlotOptions } from '../Series/SeriesType';
+import type SVGElement from '../Renderer/SVG/SVGElement';
 import type SVGPath from '../Renderer/SVG/SVGPath';
 import Axis from '../Axis/Axis.js';
 import Chart from '../Chart/Chart.js';
 import H from '../Globals.js';
 import LineSeries from '../../Series/Line/LineSeries.js';
+const {
+    prototype: {
+        init: seriesInit,
+        processData: seriesProcessData
+    }
+} = LineSeries;
+import palette from '../../Core/Color/Palette.js';
 import Point from '../Series/Point.js';
+const {
+    prototype: {
+        tooltipFormatter: pointTooltipFormatter
+    }
+} = Point;
 import SVGRenderer from '../Renderer/SVG/SVGRenderer.js';
 import U from '../Utilities.js';
 const {
@@ -39,6 +58,30 @@ const {
     pick,
     splat
 } = U;
+
+import '../Pointer.js';
+// Has a dependency on Navigator due to the use of
+// defaultOptions.navigator
+import '../Navigator.js';
+// Has a dependency on Scrollbar due to the use of
+// defaultOptions.scrollbar
+import '../Scrollbar.js';
+// Has a dependency on RangeSelector due to the use of
+// defaultOptions.rangeSelector
+import '../../Extensions/RangeSelector.js';
+
+/* *
+ *
+ *  Declarations
+ *
+ * */
+
+declare module '../Axis/Types' {
+    interface AxisLike {
+        crossLabel?: SVGElement;
+        setCompare(compare?: string, redraw?: boolean): void;
+    }
+}
 
 declare module './ChartLike' {
     interface ChartLike {
@@ -69,104 +112,35 @@ declare module '../Series/SeriesOptions' {
     }
 }
 
+declare class StockChart extends Chart {
+    // nothing here yet
+}
+
+declare module '../Renderer/SVG/SVGRendererLike' {
+    interface SVGRendererLike {
+        crispPolyLine(points: SVGPath, width: number): SVGPath;
+    }
+}
+
 /**
  * Internal types
  * @private
  */
 declare global {
     namespace Highcharts {
-        interface Axis {
-            crossLabel?: SVGElement;
-            setCompare(compare?: string, redraw?: boolean): void;
-        }
-
         interface Options {
             isStock?: boolean;
         }
-        interface SVGRenderer {
-            crispPolyLine(points: SVGPath, width: number): SVGPath;
-        }
-        interface VMLRenderer {
-            crispPolyLine(points: SVGPath, width: number): SVGPath;
-        }
-        class StockChart extends Chart {
-        }
-        function stockChart(): StockChart;
     }
 }
 
-import '../Pointer.js';
-// Has a dependency on Navigator due to the use of
-// defaultOptions.navigator
-import '../Navigator.js';
-// Has a dependency on Scrollbar due to the use of
-// defaultOptions.scrollbar
-import '../Scrollbar.js';
-// Has a dependency on RangeSelector due to the use of
-// defaultOptions.rangeSelector
-import '../../Extensions/RangeSelector.js';
-
-var seriesProto = LineSeries.prototype,
-    seriesInit = seriesProto.init,
-    seriesProcessData = seriesProto.processData,
-    pointTooltipFormatter = Point.prototype.tooltipFormatter;
-
-/**
- * Compare the values of the series against the first non-null, non-
- * zero value in the visible range. The y axis will show percentage
- * or absolute change depending on whether `compare` is set to `"percent"`
- * or `"value"`. When this is applied to multiple series, it allows
- * comparing the development of the series against each other. Adds
- * a `change` field to every point object.
- *
- * @see [compareBase](#plotOptions.series.compareBase)
- * @see [Axis.setCompare()](/class-reference/Highcharts.Axis#setCompare)
- *
- * @sample {highstock} stock/plotoptions/series-compare-percent/
- *         Percent
- * @sample {highstock} stock/plotoptions/series-compare-value/
- *         Value
- *
- * @type      {string}
- * @since     1.0.1
- * @product   highstock
- * @apioption plotOptions.series.compare
- */
-
-/**
- * Defines if comparison should start from the first point within the visible
- * range or should start from the first point **before** the range.
- *
- * In other words, this flag determines if first point within the visible range
- * will have 0% (`compareStart=true`) or should have been already calculated
- * according to the previous point (`compareStart=false`).
- *
- * @sample {highstock} stock/plotoptions/series-comparestart/
- *         Calculate compare within visible range
- *
- * @type      {boolean}
- * @default   false
- * @since     6.0.0
- * @product   highstock
- * @apioption plotOptions.series.compareStart
- */
-
-/**
- * When [compare](#plotOptions.series.compare) is `percent`, this option
- * dictates whether to use 0 or 100 as the base of comparison.
- *
- * @sample {highstock} stock/plotoptions/series-comparebase/
- *         Compare base is 100
- *
- * @type       {number}
- * @default    0
- * @since      5.0.6
- * @product    highstock
- * @validvalue [0, 100]
- * @apioption  plotOptions.series.compareBase
- */
-
 /* eslint-disable no-invalid-this, valid-jsdoc */
+
+/* *
+ *
+ *  Factory
+ *
+ * */
 
 /**
  * Factory function for creating new stock charts. Creates a new
@@ -204,11 +178,11 @@ var seriesProto = LineSeries.prototype,
  * @return {Highcharts.Chart}
  *         The chart object.
  */
-H.StockChart = H.stockChart = function (
+function stockChart(
     a: (string|HTMLDOMElement|Highcharts.Options),
     b?: (Chart.CallbackFunction|Highcharts.Options),
     c?: Chart.CallbackFunction
-): Highcharts.StockChart {
+): StockChart {
     var hasRenderToArg = isString(a) || (a as any).nodeName,
         options = arguments[hasRenderToArg ? 1 : 0],
         userOptions = options,
@@ -343,7 +317,13 @@ H.StockChart = H.stockChart = function (
     return hasRenderToArg ?
         new Chart(a as any, options, c) :
         new Chart(options, b as any);
-} as any;
+}
+
+/* *
+ *
+ *  Compositions
+ *
+ * */
 
 // Handle som Stock-specific series defaults, override the plotOptions before
 // series options are handled.
@@ -711,12 +691,12 @@ addEvent(Axis, 'afterDrawCrosshair', function (
                 .attr({
                     fill: options.backgroundColor ||
                         (this.series[0] && this.series[0].color) ||
-                        '${palette.neutralColor60}',
+                        palette.neutralColor60,
                     stroke: options.borderColor || '',
                     'stroke-width': options.borderWidth || 0
                 })
                 .css(extend({
-                    color: '${palette.backgroundColor}',
+                    color: palette.backgroundColor,
                     fontWeight: 'normal',
                     fontSize: '11px',
                     textAlign: 'center'
@@ -822,7 +802,7 @@ addEvent(Axis, 'afterDrawCrosshair', function (
  * @ignore
  * @function Highcharts.Series#init
  */
-seriesProto.init = function (): void {
+LineSeries.prototype.init = function (): void {
 
     // Call base method
     seriesInit.apply(this, arguments as any);
@@ -842,7 +822,7 @@ seriesProto.init = function (): void {
  * @param {string} [compare]
  *        Can be one of `null` (default), `"percent"` or `"value"`.
  */
-seriesProto.setCompare = function (compare?: string): void {
+LineSeries.prototype.setCompare = function (compare?: string): void {
 
     // Set or unset the modifyValue method
     this.modifyValue = (compare === 'value' || compare === 'percent') ?
@@ -896,7 +876,7 @@ seriesProto.setCompare = function (compare?: string): void {
  * @ignore
  * @function Highcharts.Series#processData
  */
-seriesProto.processData = function (force?: boolean): (boolean|undefined) {
+LineSeries.prototype.processData = function (force?: boolean): (boolean|undefined) {
     var series = this,
         i,
         keyIndex = -1,
@@ -1082,7 +1062,7 @@ addEvent(LineSeries, 'render', function (): void {
 });
 
 addEvent(Chart, 'update', function (
-    this: Highcharts.StockChart,
+    this: StockChart,
     e: { options: Highcharts.Options }
 ): void {
     var options = e.options;
@@ -1096,3 +1076,83 @@ addEvent(Chart, 'update', function (
         delete options.scrollbar;
     }
 });
+
+/* *
+ *
+ *  Compatibility
+ *
+ * */
+
+(H as any).StockChart = (H as any).stockChart = stockChart;
+
+/* *
+ *
+ *  Default Export
+ *
+ * */
+
+export default stockChart;
+
+/* *
+ *
+ *  API Options
+ *
+ * */
+
+
+/**
+ * Compare the values of the series against the first non-null, non-
+ * zero value in the visible range. The y axis will show percentage
+ * or absolute change depending on whether `compare` is set to `"percent"`
+ * or `"value"`. When this is applied to multiple series, it allows
+ * comparing the development of the series against each other. Adds
+ * a `change` field to every point object.
+ *
+ * @see [compareBase](#plotOptions.series.compareBase)
+ * @see [Axis.setCompare()](/class-reference/Highcharts.Axis#setCompare)
+ *
+ * @sample {highstock} stock/plotoptions/series-compare-percent/
+ *         Percent
+ * @sample {highstock} stock/plotoptions/series-compare-value/
+ *         Value
+ *
+ * @type      {string}
+ * @since     1.0.1
+ * @product   highstock
+ * @apioption plotOptions.series.compare
+ */
+
+/**
+ * Defines if comparison should start from the first point within the visible
+ * range or should start from the first point **before** the range.
+ *
+ * In other words, this flag determines if first point within the visible range
+ * will have 0% (`compareStart=true`) or should have been already calculated
+ * according to the previous point (`compareStart=false`).
+ *
+ * @sample {highstock} stock/plotoptions/series-comparestart/
+ *         Calculate compare within visible range
+ *
+ * @type      {boolean}
+ * @default   false
+ * @since     6.0.0
+ * @product   highstock
+ * @apioption plotOptions.series.compareStart
+ */
+
+/**
+ * When [compare](#plotOptions.series.compare) is `percent`, this option
+ * dictates whether to use 0 or 100 as the base of comparison.
+ *
+ * @sample {highstock} stock/plotoptions/series-comparebase/
+ *         Compare base is 100
+ *
+ * @type       {number}
+ * @default    0
+ * @since      5.0.6
+ * @product    highstock
+ * @validvalue [0, 100]
+ * @apioption  plotOptions.series.compareBase
+ */
+
+''; // keeps doclets above in transpiled file

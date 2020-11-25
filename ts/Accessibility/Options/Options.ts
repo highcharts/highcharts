@@ -17,6 +17,7 @@ import type CSSObject from '../../Core/Renderer/CSSObject';
 import type { HTMLDOMElement } from '../../Core/Renderer/DOMElementType';
 import type LineSeries from '../../Series/Line/LineSeries';
 import type Point from '../../Core/Series/Point';
+import palette from '../../Core/Color/Palette.js';
 
 declare module '../../Core/Series/PointOptions' {
     interface PointOptions {
@@ -671,7 +672,7 @@ var options: DeepPartial<Highcharts.Options> = {
                  */
                 style: {
                     /** @internal */
-                    color: '${palette.highlightColor80}',
+                    color: palette.highlightColor80,
                     /** @internal */
                     lineWidth: 2,
                     /** @internal */

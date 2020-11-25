@@ -64,6 +64,9 @@ BaseSeries.seriesType('ao', 'sma',
      * @since 7.0.0
      */
     lowerBarColor: '#F21313',
+    /**
+     * @type {number|null}
+     */
     threshold: 0,
     groupPadding: 0.2,
     pointPadding: 0.2,

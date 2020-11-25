@@ -1,56 +1,71 @@
-QUnit.test("Zooming too tight on left category should show full category (#4536)", function (assert) {
-    var chart = $('#container').highcharts({
-        chart: {
-            type: 'column'
-        },
-        xAxis: {
-            categories: ['Jan', 'Feb', 'Mar', 'Apr', 'May', 'Jun', 'Jul', 'Aug', 'Sep', 'Oct', 'Nov', 'Dec'],
-            minRange: 0.99
-        },
+QUnit.test(
+    'Zooming too tight on left category should show full category (#4536)',
+    function (assert) {
+        var chart = $('#container').highcharts({
+            chart: {
+                type: 'column'
+            },
+            xAxis: {
+                categories: [
+                    'Jan', 'Feb', 'Mar', 'Apr', 'May', 'Jun',
+                    'Jul', 'Aug', 'Sep', 'Oct', 'Nov', 'Dec'
+                ],
+                minRange: 0.99
+            },
 
-        series: [{
-            data: [29.9, 71.5, 106.4, 129.2, 144.0, 176.0, 135.6, 148.5, 216.4, 194.1, 95.6, 54.4]
-        }, {
-            data: [144.0, 176.0, 135.6, 148.5, 216.4, 194.1, 95.6, 54.4, 29.9, 71.5, 106.4, 129.2]
-        }, {
-            data: [144.0, 176.0, 135.6, 148.5, 216.4, 194.1, 95.6, 54.4, 29.9, 71.5, 106.4, 129.2]
-        }]
-    }).highcharts();
+            series: [{
+                data: [
+                    29.9, 71.5, 106.4, 129.2, 144.0, 176.0,
+                    135.6, 148.5, 216.4, 194.1, 95.6, 54.4
+                ]
+            }, {
+                data: [
+                    144.0, 176.0, 135.6, 148.5, 216.4, 194.1,
+                    95.6, 54.4, 29.9, 71.5, 106.4, 129.2
+                ]
+            }, {
+                data: [
+                    144.0, 176.0, 135.6, 148.5, 216.4, 194.1,
+                    95.6, 54.4, 29.9, 71.5, 106.4, 129.2
+                ]
+            }]
+        }).highcharts();
 
-    assert.strictEqual(
-        chart.xAxis[0].min,
-        0,
-        "Starting min"
-    );
-    assert.strictEqual(
-        chart.xAxis[0].max,
-        11,
-        "Starting max"
-    );
+        assert.strictEqual(
+            chart.xAxis[0].min,
+            0,
+            "Starting min"
+        );
+        assert.strictEqual(
+            chart.xAxis[0].max,
+            11,
+            "Starting max"
+        );
 
 
-    chart.xAxis[0].setExtremes(0, 0.5);
-    assert.strictEqual(
-        chart.xAxis[0].min,
-        0,
-        "Ending min"
-    );
-    assert.strictEqual(
-        chart.xAxis[0].max,
-        0.99,
-        "Ending max"
-    );
-    assert.strictEqual(
-        typeof chart.xAxis[0].minPixelPadding,
-        'number',
-        "Category padding is a number"
-    );
-    assert.strictEqual(
-        chart.xAxis[0].minPixelPadding > 0,
-        true,
-        "Category padding is more than 0"
-    );
-});
+        chart.xAxis[0].setExtremes(0, 0.5);
+        assert.strictEqual(
+            chart.xAxis[0].min,
+            0,
+            "Ending min"
+        );
+        assert.strictEqual(
+            chart.xAxis[0].max,
+            0.99,
+            "Ending max"
+        );
+        assert.strictEqual(
+            typeof chart.xAxis[0].minPixelPadding,
+            'number',
+            "Category padding is a number"
+        );
+        assert.strictEqual(
+            chart.xAxis[0].minPixelPadding > 0,
+            true,
+            "Category padding is more than 0"
+        );
+    }
+);
 
 QUnit.test('Log axis extremes, issue #934', function (assert) {
     var chart = new Highcharts.Chart({
@@ -141,63 +156,84 @@ QUnit.test('Log axis extremes and precision', function (assert) {
     );
 });
 
-QUnit.test("setExtremes shouldn't return undefined min or max after zooming.(#1655)", function (assert) {
-    var min,
-        max,
-        UNDEFINED,
-        chart = new Highcharts.StockChart({
-            chart: {
-                renderTo: 'container',
-                zoomType: 'x'
-            },
+QUnit.test(
+    'setExtremes shouldn\'t return undefined min or max after zooming.(#1655)',
+    function (assert) {
+        var min,
+            max,
+            UNDEFINED,
+            chart = new Highcharts.StockChart({
+                chart: {
+                    renderTo: 'container',
+                    zoomType: 'x'
+                },
 
-            series: [{
-                data: [
-                    [Date.UTC(2011, 1), 1],
-                    [Date.UTC(2012, 1), 1]
-                ]
-            }],
+                series: [{
+                    data: [
+                        [Date.UTC(2011, 1), 1],
+                        [Date.UTC(2012, 1), 1]
+                    ]
+                }],
 
-            xAxis: {
-                events: {
-                    setExtremes: function (event) {
-                        min = event.min;
-                        max = event.max;
+                xAxis: {
+                    events: {
+                        setExtremes: function (event) {
+                            min = event.min;
+                            max = event.max;
+                        }
                     }
                 }
-            }
-        });
+            });
 
-    // Set testing extremes:
-    chart.xAxis[0].setExtremes(Date.UTC(2010, 1), Date.UTC(2013, 1), true, false);
+        // Set testing extremes:
+        chart.xAxis[0].setExtremes(
+            Date.UTC(2010, 1),
+            Date.UTC(2013, 1),
+            true,
+            false
+        );
 
-    // Imitate left side zooming:
-    chart.pointer.selectionMarker = chart.renderer.rect(chart.plotLeft + 50, chart.plotTop, 200, chart.plotHeight).add();
-    chart.pointer.hasDragged = true;
-    chart.pointer.drop({});
+        // Imitate left side zooming:
+        chart.pointer.selectionMarker = chart.renderer.rect(
+            chart.plotLeft + 50,
+            chart.plotTop, 200,
+            chart.plotHeight
+        ).add();
+        chart.pointer.hasDragged = true;
+        chart.pointer.drop({});
 
-    // Test:
-    assert.strictEqual(
-        min !== UNDEFINED,
-        true,
-        'Proper minimum'
-    );
+        // Test:
+        assert.strictEqual(
+            min !== UNDEFINED,
+            true,
+            'Proper minimum'
+        );
 
-    // Reset extremes for a second test:
-    chart.xAxis[0].setExtremes(Date.UTC(2010, 1), Date.UTC(2013, 1), true, false);
+        // Reset extremes for a second test:
+        chart.xAxis[0].setExtremes(
+            Date.UTC(2010, 1),
+            Date.UTC(2013, 1),
+            true,
+            false
+        );
 
-    // Imitate right side zooming:
-    chart.pointer.selectionMarker = chart.renderer.rect(chart.plotLeft + 200, chart.plotTop, 200, chart.plotHeight).add();
-    chart.pointer.hasDragged = true;
-    chart.pointer.drop({});
+        // Imitate right side zooming:
+        chart.pointer.selectionMarker = chart.renderer.rect(
+            chart.plotLeft + 200,
+            chart.plotTop, 200,
+            chart.plotHeight
+        ).add();
+        chart.pointer.hasDragged = true;
+        chart.pointer.drop({});
 
-    // Test:
-    assert.strictEqual(
-        max !== UNDEFINED,
-        true,
-        'Proper maximum'
-    );
-});
+        // Test:
+        assert.strictEqual(
+            max !== UNDEFINED,
+            true,
+            'Proper maximum'
+        );
+    }
+);
 
 QUnit.test('getSeriesExtremes', function (assert) {
     var getSeriesExtremes = Highcharts.Axis.prototype.getSeriesExtremes,
@@ -485,15 +521,24 @@ QUnit.test(
                     enabled: true
                 },
                 series: [{
-                    data: getRandomData(Date.UTC(2000, 0, 1), Date.UTC(2000, 0, 5))
+                    data: getRandomData(
+                        Date.UTC(2000, 0, 1),
+                        Date.UTC(2000, 0, 5)
+                    )
                 }, {
                     data: getRandomData(min, max)
                 }, {
-                    data: getRandomData(Date.UTC(2000, 0, 1), Date.UTC(2001, 0, 1)),
+                    data: getRandomData(
+                        Date.UTC(2000, 0, 1),
+                        Date.UTC(2001, 0, 1)
+                    ),
                     type: 'column',
                     visible: false
                 }, {
-                    data: getRandomData(Date.UTC(2000, 0, 1), Date.UTC(2001, 0, 1)),
+                    data: getRandomData(
+                        Date.UTC(2000, 0, 1),
+                        Date.UTC(2001, 0, 1)
+                    ),
                     type: 'column',
                     visible: false
                 }]
@@ -550,7 +595,10 @@ QUnit.test('Touch pan categories (#3075)', function (assert) {
         },
 
         series: [{
-            data: [29.9, 71.5, 106.4, 129.2, 144.0, 176.0, 135.6, 148.5, 216.4, 194.1, 95.6, 54.4]
+            data: [
+                29.9, 71.5, 106.4, 129.2, 144.0, 176.0,
+                135.6, 148.5, 216.4, 194.1, 95.6, 54.4
+            ]
         }]
 
     }, function (template) {
@@ -618,45 +666,47 @@ QUnit.test('Touch pan categories (#3075)', function (assert) {
 
 // Highcharts v4.0.1, Issue #3104
 // Touch panning falls back to data range, ignores axis min and max
-QUnit.test('Touch panning falls back to data range (#3104)', function (assert) {
+QUnit.test(
+    'Touch panning falls back to data range (#3104)',
+    function (assert) {
+        var chart = Highcharts.chart('container', {
+            chart: {
+                zoomType: 'x'
+            },
+            xAxis: {
+                min: 0,
+                max: 10
+            },
+            series: [{
+                name: 'blue',
+                color: 'blue',
+                data: [1, 4, 3, 4, 5, 5, 4],
+                pointStart: 4
+            }]
+        }, function (chart) {
+            chart.xAxis[0].setExtremes(2, 15, true, false);
+        });
+        var controller = new TestController(chart),
+            tickPositions = chart.axes[0].tickPositions,
+            touchPointX = (chart.plotSizeX + chart.plotLeft) / 2,
+            touchPointY = (chart.plotSizeY + chart.plotTop) / 2;
 
-    var chart = Highcharts.chart('container', {
-        chart: {
-            zoomType: 'x'
-        },
-        xAxis: {
-            min: 0,
-            max: 10
-        },
-        series: [{
-            name: 'blue',
-            color: 'blue',
-            data: [1, 4, 3, 4, 5, 5, 4],
-            pointStart: 4
-        }]
-    }, function (chart) {
-        chart.xAxis[0].setExtremes(2, 15, true, false);
-    });
-    var controller = new TestController(chart),
-        tickPositions = chart.axes[0].tickPositions,
-        touchPointX = (chart.plotSizeX + chart.plotLeft) / 2,
-        touchPointY = (chart.plotSizeY + chart.plotTop) / 2;
+        controller.slide(
+            [touchPointX, touchPointY],
+            [touchPointX + 100, touchPointY],
+            undefined,
+            true
+        );
 
-    controller.slide(
-        [touchPointX, touchPointY],
-        [touchPointX + 100, touchPointY],
-        undefined,
-        true
-    );
+        var tickPositionsAfterSlide =  chart.axes[0].tickPositions;
 
-    var tickPositionsAfterSlide =  chart.axes[0].tickPositions;
-
-    assert.deepEqual(
-        tickPositions,
-        tickPositionsAfterSlide,
-        "Tick positions has changed after touch sliding"
-    );
-});
+        assert.deepEqual(
+            tickPositions,
+            tickPositionsAfterSlide,
+            "Tick positions has changed after touch sliding"
+        );
+    }
+);
 
 QUnit.test('Column zooming and Y axis extremes (#9944)', assert => {
     const chart = Highcharts.chart('container', {
@@ -678,32 +728,36 @@ QUnit.test('Column zooming and Y axis extremes (#9944)', assert => {
     );
 });
 
-QUnit.test('When data grouping disabled and the axis extremes set out of the data range, the chart shouldn\'t crash, #13934.', function (assert) {
-    const chart = Highcharts.stockChart('container', {
-        plotOptions: {
-            series: {
-                dataGrouping: {
-                    enabled: false
+QUnit.test(
+    'When data grouping disabled and the axis extremes set out of ' +
+    'the data range, the chart shouldn\'t crash, #13934.',
+    function (assert) {
+        const chart = Highcharts.stockChart('container', {
+            plotOptions: {
+                series: {
+                    dataGrouping: {
+                        enabled: false
+                    }
                 }
-            }
-        },
-        xAxis: {
-            minRange: 1,
-            min: 1533235200000,
-            max: 1533235200000
-        },
-        series: [{
-            data: [
-                [1563235200000, 0],
-                [1563321600000, 1],
-                [1563408000000, 2],
-                [1563494400000, 3],
-                [1563753600000, 4]
-            ]
-        }]
-    });
-    assert.ok(
-        chart,
-        'The chart exist '
-    );
-});
+            },
+            xAxis: {
+                minRange: 1,
+                min: 1533235200000,
+                max: 1533235200000
+            },
+            series: [{
+                data: [
+                    [1563235200000, 0],
+                    [1563321600000, 1],
+                    [1563408000000, 2],
+                    [1563494400000, 3],
+                    [1563753600000, 4]
+                ]
+            }]
+        });
+        assert.ok(
+            chart,
+            'The chart exist '
+        );
+    }
+);

@@ -26,6 +26,7 @@ import BaseSeries from '../../Core/Series/Series.js';
 const {
     seriesTypes
 } = BaseSeries;
+import palette from '../../Core/Color/Palette.js';
 import U from '../../Core/Utilities.js';
 const {
     correctFloat,
@@ -192,7 +193,7 @@ BaseSeries.seriesType<typeof Highcharts.SupertrendIndicator>(
          *
          * @type {Highcharts.ColorString|Highcharts.GradientColorObject|Highcharts.PatternObject}
          */
-        risingTrendColor: '${palette.indicatorPositiveLine}',
+        risingTrendColor: palette.indicatorPositiveLine,
         /**
          * Color of the Supertrend series line that is above the main series.
          *
@@ -201,7 +202,7 @@ BaseSeries.seriesType<typeof Highcharts.SupertrendIndicator>(
          *
          * @type {Highcharts.ColorString|Highcharts.GradientColorObject|Highcharts.PatternObject}
          */
-        fallingTrendColor: '${palette.indicatorNegativeLine}',
+        fallingTrendColor: palette.indicatorNegativeLine,
         /**
          * The styles for the Supertrend line that intersect main series.
          *
@@ -220,7 +221,7 @@ BaseSeries.seriesType<typeof Highcharts.SupertrendIndicator>(
                  *
                  * @type {Highcharts.ColorString}
                  */
-                lineColor: '${palette.neutralColor80}',
+                lineColor: palette.neutralColor80,
 
                 /**
                  * The dash or dot style of the grid lines. For possible

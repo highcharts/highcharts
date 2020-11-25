@@ -46,6 +46,7 @@ import Legend from '../Legend.js';
 import MSPointer from '../MSPointer.js';
 import O from '../Options.js';
 const { defaultOptions } = O;
+import palette from '../../Core/Color/Palette.js';
 import Pointer from '../Pointer.js';
 import SVGRenderer from '../Renderer/SVG/SVGRenderer.js';
 import Time from '../Time.js';
@@ -1019,10 +1020,10 @@ class Chart {
 
         // Default style
         const style = name === 'title' ? {
-            color: '${palette.neutralColor80}',
+            color: palette.neutralColor80,
             fontSize: this.options.isStock ? '16px' : '18px' // #2944
         } : {
-            color: '${palette.neutralColor60}'
+            color: palette.neutralColor60
         };
 
         // Merge default options with explicit options

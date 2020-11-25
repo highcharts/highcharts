@@ -24,6 +24,7 @@ import BaseSeries from '../../Core/Series/Series.js';
 import ColumnSeries from '../Column/ColumnSeries.js';
 import H from '../../Core/Globals.js';
 const { noop } = H;
+import palette from '../../Core/Color/Palette.js';
 import U from '../../Core/Utilities.js';
 const {
     extend,
@@ -115,7 +116,7 @@ class BoxPlotSeries extends ColumnSeries {
          * @since   3.0
          * @product highcharts
          */
-        fillColor: '${palette.backgroundColor}',
+        fillColor: palette.backgroundColor,
 
         /**
          * The width of the line surrounding the box. If any of

@@ -13,7 +13,7 @@
 import '../../Core/Axis/OrdinalAxis.js';
 import './broken-axis.src.js';
 import '../../Extensions/DataGrouping.js';
-import '../../Series/OHLCSeries.js';
+import '../../Series/OHLC/OHLCSeries.js';
 import '../../Series/CandlestickSeries.js';
 import '../../Series/Flags/FlagsSeries.js';
 import '../../Core/Scrollbar.js';
