@@ -24,33 +24,6 @@ var _a = BaseSeries.seriesTypes, SMAIndicator = _a.sma, EMAIndicator = _a.ema, A
 import MultipleLinesMixin from '../../../Mixins/MultipleLines.js';
 import U from '../../../Core/Utilities.js';
 var correctFloat = U.correctFloat, extend = U.extend, merge = U.merge;
-// /**
-//  * Internal types
-//  * @private
-//  */
-// declare global {
-//     namespace Highcharts {
-//         interface KeltnerChannelsIndicatorOptions
-//             extends SMAOptions, MultipleLinesIndicatorOptions {
-//             bottomLine?: Record<string, CSSObject>;
-//             marker?: PointMarkerOptions;
-//             params?: KeltnerChannelsIndicatorParamsOptions;
-//             tooltip?: TooltipOptions;
-//             topLine?: Record<string, CSSObject>;
-//         }
-//         interface KeltnerChannelsIndicatorParamsOptions
-//             extends SMAParamsOptions {
-//             periodATR?: number;
-//             multiplierATR?: number;
-//         }
-//         interface KeltnerChannelsLinkedParentSeries extends LineSeries {
-//             yData: Array<Array<number>>;
-//         }
-//         class KeltnerChannelsIndicatorPoint extends SMAPoint {
-//             public series: KeltnerChannelsIndicator;
-//         }
-//     }
-// }
 /**
  * The Keltner Channels series type.
  *
