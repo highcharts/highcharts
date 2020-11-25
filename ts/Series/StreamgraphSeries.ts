@@ -14,10 +14,16 @@
 
 import type AreaSplinePoint from './AreaSpline/AreaSplinePoint';
 import type AreaSplinePointOptions from './AreaSpline/AreaSplinePointOptions';
-import type AreaSplineSeries from './AreaSpline/AreaSplineSeries.js';
 import type AreaSplineSeriesOptions from './AreaSpline/AreaSplineSeriesOptions';
 import type { SeriesStatesOptions } from '../Core/Series/SeriesOptions';
+import AreaSplineSeries from './AreaSpline/AreaSplineSeries.js';
 import BaseSeries from '../Core/Series/Series.js';
+
+import U from '../Core/Utilities.js';
+const {
+    merge,
+    extend
+} = U;
 
 /**
  * Internal types
@@ -52,24 +58,12 @@ declare global {
 
 /**
  * @private
- */
-declare module '../Core/Series/SeriesType' {
-    interface SeriesTypeRegistry {
-        streamgraph: typeof Highcharts.StreamgraphSeries;
-    }
-}
-
-import './AreaSpline/AreaSplineSeries.js';
-
-/**
- * @private
  * @class
  * @name Highcharts.seriesTypes.streamgraph
  *
  * @augments Highcharts.Series
  */
-BaseSeries.seriesType<typeof Highcharts.StreamgraphSeries>('streamgraph', 'areaspline'
-
+class StreamgraphSeries extends AreaSplineSeries {
     /**
      * A streamgraph is a type of stacked area graph which is displaced around a
      * central axis, resulting in a flowing, organic shape.
@@ -83,7 +77,7 @@ BaseSeries.seriesType<typeof Highcharts.StreamgraphSeries>('streamgraph', 'areas
      * @requires     modules/streamgraph
      * @optionparent plotOptions.streamgraph
      */
-    , {
+    public static defaultOptions = merge(AreaSplineSeries.defaultOptions, {
         /**
          * @see [fillColor](#plotOptions.streamgraph.fillColor)
          * @see [fillOpacity](#plotOptions.streamgraph.fillOpacity)
@@ -110,29 +104,75 @@ BaseSeries.seriesType<typeof Highcharts.StreamgraphSeries>('streamgraph', 'areas
             enabled: false
         },
         stacking: 'stream'
-        // Prototype functions
-    }, {
-        negStacks: false,
+    });
 
-        // Modifier function for stream stacks. It simply moves the point up or
-        // down in order to center the full stack vertically.
-        streamStacker: function (
-            this: Highcharts.StreamgraphSeries,
-            pointExtremes: Array<number>,
-            stack: Highcharts.Dictionary<number>,
-            i: number
-        ): void {
+    /* *
+     *
+     *  Properties
+     *
+     * */
+
+    public data: Array<Highcharts.StreamgraphPoint> = void 0 as any;
+    public points: Array<Highcharts.StreamgraphPoint>= void 0 as any;
+    public options: Highcharts.StreamgraphSeriesOptions = void 0 as any;
+
+    /* *
+     *
+     *  Functions
+     *
+     * */
+
+    // Modifier function for stream stacks. It simply moves the point up or
+    // down in order to center the full stack vertically.
+    public streamStacker(
+        pointExtremes: Array<number>,
+        stack: Highcharts.Dictionary<number>,
+        i: number
+    ): void {
         // Y bottom value
-            pointExtremes[0] -= stack.total / 2;
-            // Y value
-            pointExtremes[1] -= stack.total / 2;
+        pointExtremes[0] -= stack.total / 2;
+        // Y value
+        pointExtremes[1] -= stack.total / 2;
 
-            // Record the Y data for use when getting axis extremes
-            (this.stackedYData as any)[i] = pointExtremes as any;
-        }
+        // Record the Y data for use when getting axis extremes
+        (this.stackedYData as any)[i] = pointExtremes as any;
     }
-);
+}
 
+extend(StreamgraphSeries.prototype, {
+    negStacks: false
+});
+
+/* *
+ *
+ *  Registry
+ *
+ * */
+
+/**
+ * @private
+ */
+declare module '../Core/Series/SeriesType' {
+    interface SeriesTypeRegistry {
+        streamgraph: typeof Highcharts.StreamgraphSeries;
+    }
+}
+
+BaseSeries.registerSeriesType('streamgraph', StreamgraphSeries);
+
+/* *
+ *
+ *  Default export
+ *
+ * */
+
+export default StreamgraphSeries;
+
+/* *
+ *
+ *  API options
+ *
+ * */
 
 /**
  * A `streamgraph` series. If the [type](#series.streamgraph.type) option is not
