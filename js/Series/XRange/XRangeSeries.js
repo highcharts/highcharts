@@ -41,7 +41,6 @@ import './XRangeComposition.js';
 * @type {number|undefined}
 * @requires modules/xrange
 */
-//const seriesTypes = BaseSeries.seriesTypes;
 /**
  * @private
  * @class
