@@ -10,21 +10,22 @@
 
 'use strict';
 
-import type AreaSeries from './Area/AreaSeries';
-import type DumbbellSeries from './Dumbbell/DumbbellSeries';
 import type DumbbellSeriesOptions from './Dumbbell/DumbbellSeriesOptions';
 import type DumbbellPointOptions from './Dumbbell/DumbbellPointOptions';
 import type { SeriesStatesOptions } from '../Core/Series/SeriesOptions';
+import AreaSeries from './Area/AreaSeries.js';
+import DumbbellSeries from './Dumbbell/DumbbellSeries.js';
+import DumbbellPoint from './Dumbbell/DumbbellPoint.js';
 import BaseSeries from '../Core/Series/Series.js';
-const { seriesTypes } = BaseSeries;
+import Point from '../Core/Series/Point.js';
 import ColumnSeries from './Column/ColumnSeries.js';
 const { prototype: colProto } = ColumnSeries;
-import H from '../Core/Globals.js';
-import Point from '../Core/Series/Point.js';
 import U from '../Core/Utilities.js';
 const {
     isObject,
-    pick
+    pick,
+    merge,
+    extend
 } = U;
 
 /**
@@ -39,36 +40,157 @@ declare global {
             lowColor?: undefined;
             states?: SeriesStatesOptions<LollipopSeries>;
         }
-        class LollipopPoint extends DumbbellSeries.prototype.pointClass {
+        class LollipopPoint extends DumbbellPoint {
             public series: LollipopSeries;
             public options: LollipopPointOptions;
         }
-        class LollipopSeries extends DumbbellSeries {
-            public data: Array<LollipopPoint>;
-            public options: LollipopSeriesOptions;
-            public pointClass: typeof LollipopPoint;
-            public points: Array<LollipopPoint>;
-            public translatePoint: AreaSeries['translate'];
-            public drawPoint: AreaSeries['drawPoints'];
-            public drawDataLabels: ColumnSeries['drawDataLabels'];
-            public setShapeArgs: ColumnSeries['translate'];
-        }
     }
 }
+
+const areaProto = BaseSeries.seriesTypes.area.prototype;
+
+/* *
+ *
+ *  Class
+ *
+ * */
+
+class LollipopSeries extends DumbbellSeries {
+
+    /* *
+     *
+     *  Static properties
+     *
+     * */
+
+    public static defaultOptions: Highcharts.LollipopSeriesOptions = merge(
+        DumbbellSeries.defaultOptions,
+        {
+            /** @ignore-option */
+            lowColor: void 0,
+            /** @ignore-option */
+            threshold: 0,
+            /** @ignore-option */
+            connectorWidth: 1,
+            /** @ignore-option */
+            groupPadding: 0.2,
+            /** @ignore-option */
+            pointPadding: 0.1,
+            /** @ignore-option */
+            states: {
+                hover: {
+                    /** @ignore-option */
+                    lineWidthPlus: 0,
+                    /** @ignore-option */
+                    connectorWidthPlus: 1,
+                    /** @ignore-option */
+                    halo: false
+                }
+            },
+            tooltip: {
+                pointFormat: '<span style="color:{series.color}">●</span> {series.name}: <b>{point.y}</b><br/>'
+            }
+        } as Highcharts.LollipopSeriesOptions);
+
+    /* *
+     *
+     *  Properties
+     *
+     * */
+
+    public data: Array<LollipopPoint> = void 0 as any;
+    public options: Highcharts.LollipopSeriesOptions = void 0 as any;
+    public points: Array<LollipopPoint> = void 0 as any;
+
+    /* *
+     *
+     *  Functions
+     *
+     * */
+}
+
+/* *
+ *
+ *  Prototype properties
+ *
+ * */
+
+interface LollipopSeries extends DumbbellSeries {
+    data: Array<LollipopPoint>;
+    options: Highcharts.LollipopSeriesOptions;
+    pointClass: typeof Highcharts.LollipopPoint;
+    points: Array<LollipopPoint>;
+    pointArrayMap: Array<string>;
+    pointValKey: string;
+    translatePoint: AreaSeries['translate'];
+    drawPoint: AreaSeries['drawPoints'];
+    drawDataLabels: ColumnSeries['drawDataLabels'];
+    setShapeArgs: ColumnSeries['translate'];
+}
+
+extend(LollipopSeries.prototype, {
+    pointArrayMap: ['y'],
+    pointValKey: 'y',
+    toYData: function (point: Highcharts.LollipopPoint): Array<number> {
+        return [pick(point.y, point.low)];
+    },
+    translatePoint: areaProto.translate,
+    drawPoint: areaProto.drawPoints,
+    drawDataLabels: colProto.drawDataLabels,
+    setShapeArgs: colProto.translate
+});
+
+class LollipopPoint extends DumbbellPoint {
+    public series: LollipopSeries = void 0 as any;
+    public options: Highcharts.LollipopPointOptions = void 0 as any;
+}
+
+
+LollipopSeries.prototype.pointClass = LollipopPoint;
+
+extend(LollipopSeries.prototype.pointClass.prototype, {
+    pointSetState: areaProto.pointClass.prototype.setState,
+    setState: DumbbellPoint.prototype.setState,
+    // Does not work with the inherited `isvalid`
+    isValid: Point.prototype.isValid,
+    init: function (
+        series: LollipopSeries,
+        options: Highcharts.LollipopPointOptions,
+        x?: number
+    ): Point {
+        if (isObject(options) && 'low' in options) {
+            options.y = options.low;
+            delete options.low;
+        }
+        return Point.prototype.init.apply(this, arguments);
+    }
+});
+
+/* *
+ *
+ *  Registry
+ *
+ * */
+
 
 /**
  * @private
  */
 declare module '../Core/Series/SeriesType' {
     interface SeriesTypeRegistry {
-        lollipop: typeof Highcharts.LollipopSeries;
+        lollipop: typeof LollipopSeries;
     }
 }
 
-import './Area/AreaSeries.js';
-import './Dumbbell/DumbbellSeries.js';
+BaseSeries.registerSeriesType('lollipop', LollipopSeries);
 
-const areaProto = seriesTypes.area.prototype;
+/* *
+ *
+ *  Default export
+ *
+ * */
+
+export default LollipopSeries;
 
 /**
  * The lollipop series is a carteseian series with a line anchored from
@@ -88,56 +210,6 @@ const areaProto = seriesTypes.area.prototype;
  * @since 8.0.0
  * @optionparent plotOptions.lollipop
  */
-BaseSeries.seriesType<typeof Highcharts.LollipopSeries>('lollipop', 'dumbbell', {
-    /** @ignore-option */
-    lowColor: void 0,
-    /** @ignore-option */
-    threshold: 0,
-    /** @ignore-option */
-    connectorWidth: 1,
-    /** @ignore-option */
-    groupPadding: 0.2,
-    /** @ignore-option */
-    pointPadding: 0.1,
-    /** @ignore-option */
-    states: {
-        hover: {
-            /** @ignore-option */
-            lineWidthPlus: 0,
-            /** @ignore-option */
-            connectorWidthPlus: 1,
-            /** @ignore-option */
-            halo: false
-        }
-    },
-    tooltip: {
-        pointFormat: '<span style="color:{series.color}">●</span> {series.name}: <b>{point.y}</b><br/>'
-    }
-}, {
-    pointArrayMap: ['y'],
-    pointValKey: 'y',
-    toYData: function (point: Highcharts.LollipopPoint): Array<number> {
-        return [pick(point.y, point.low)];
-    },
-    translatePoint: areaProto.translate,
-    drawPoint: areaProto.drawPoints,
-    drawDataLabels: colProto.drawDataLabels,
-    setShapeArgs: colProto.translate
-}, {
-    pointSetState: areaProto.pointClass.prototype.setState,
-    setState: H.seriesTypes.dumbbell.prototype.pointClass.prototype.setState,
-    init: function (
-        series: Highcharts.LollipopSeries,
-        options: Highcharts.LollipopPointOptions,
-        x?: number
-    ): Point {
-        if (isObject(options) && 'low' in options) {
-            options.y = options.low;
-            delete options.low;
-        }
-        return Point.prototype.init.apply(this, arguments);
-    }
-});
 
 /**
  * The `lollipop` series. If the [type](#series.lollipop.type) option is

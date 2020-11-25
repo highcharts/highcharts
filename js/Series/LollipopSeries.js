@@ -8,17 +8,127 @@
  *
  * */
 'use strict';
+var __extends = (this && this.__extends) || (function () {
+    var extendStatics = function (d, b) {
+        extendStatics = Object.setPrototypeOf ||
+            ({ __proto__: [] } instanceof Array && function (d, b) { d.__proto__ = b; }) ||
+            function (d, b) { for (var p in b) if (b.hasOwnProperty(p)) d[p] = b[p]; };
+        return extendStatics(d, b);
+    };
+    return function (d, b) {
+        extendStatics(d, b);
+        function __() { this.constructor = d; }
+        d.prototype = b === null ? Object.create(b) : (__.prototype = b.prototype, new __());
+    };
+})();
+import DumbbellSeries from './Dumbbell/DumbbellSeries.js';
+import DumbbellPoint from './Dumbbell/DumbbellPoint.js';
 import BaseSeries from '../Core/Series/Series.js';
-var seriesTypes = BaseSeries.seriesTypes;
+import Point from '../Core/Series/Point.js';
 import ColumnSeries from './Column/ColumnSeries.js';
 var colProto = ColumnSeries.prototype;
-import H from '../Core/Globals.js';
-import Point from '../Core/Series/Point.js';
 import U from '../Core/Utilities.js';
-var isObject = U.isObject, pick = U.pick;
-import './Area/AreaSeries.js';
-import './Dumbbell/DumbbellSeries.js';
-var areaProto = seriesTypes.area.prototype;
+var isObject = U.isObject, pick = U.pick, merge = U.merge, extend = U.extend;
+var areaProto = BaseSeries.seriesTypes.area.prototype;
+/* *
+ *
+ *  Class
+ *
+ * */
+var LollipopSeries = /** @class */ (function (_super) {
+    __extends(LollipopSeries, _super);
+    function LollipopSeries() {
+        /* *
+         *
+         *  Static properties
+         *
+         * */
+        var _this = _super !== null && _super.apply(this, arguments) || this;
+        /* *
+         *
+         *  Properties
+         *
+         * */
+        _this.data = void 0;
+        _this.options = void 0;
+        _this.points = void 0;
+        return _this;
+        /* *
+         *
+         *  Functions
+         *
+         * */
+    }
+    LollipopSeries.defaultOptions = merge(DumbbellSeries.defaultOptions, {
+        /** @ignore-option */
+        lowColor: void 0,
+        /** @ignore-option */
+        threshold: 0,
+        /** @ignore-option */
+        connectorWidth: 1,
+        /** @ignore-option */
+        groupPadding: 0.2,
+        /** @ignore-option */
+        pointPadding: 0.1,
+        /** @ignore-option */
+        states: {
+            hover: {
+                /** @ignore-option */
+                lineWidthPlus: 0,
+                /** @ignore-option */
+                connectorWidthPlus: 1,
+                /** @ignore-option */
+                halo: false
+            }
+        },
+        tooltip: {
+            pointFormat: '<span style="color:{series.color}">●</span> {series.name}: <b>{point.y}</b><br/>'
+        }
+    });
+    return LollipopSeries;
+}(DumbbellSeries));
+extend(LollipopSeries.prototype, {
+    pointArrayMap: ['y'],
+    pointValKey: 'y',
+    toYData: function (point) {
+        return [pick(point.y, point.low)];
+    },
+    translatePoint: areaProto.translate,
+    drawPoint: areaProto.drawPoints,
+    drawDataLabels: colProto.drawDataLabels,
+    setShapeArgs: colProto.translate
+});
+var LollipopPoint = /** @class */ (function (_super) {
+    __extends(LollipopPoint, _super);
+    function LollipopPoint() {
+        var _this = _super !== null && _super.apply(this, arguments) || this;
+        _this.series = void 0;
+        _this.options = void 0;
+        return _this;
+    }
+    return LollipopPoint;
+}(DumbbellPoint));
+LollipopSeries.prototype.pointClass = LollipopPoint;
+extend(LollipopSeries.prototype.pointClass.prototype, {
+    pointSetState: areaProto.pointClass.prototype.setState,
+    setState: DumbbellPoint.prototype.setState,
+    // Does not work with the inherited `isvalid`
+    isValid: Point.prototype.isValid,
+    init: function (series, options, x) {
+        if (isObject(options) && 'low' in options) {
+            options.y = options.low;
+            delete options.low;
+        }
+        return Point.prototype.init.apply(this, arguments);
+    }
+});
+BaseSeries.registerSeriesType('lollipop', LollipopSeries);
+/* *
+ *
+ *  Default export
+ *
+ * */
+export default LollipopSeries;
 /**
  * The lollipop series is a carteseian series with a line anchored from
  * the x axis and a dot at the end to mark the value.
@@ -37,52 +147,6 @@ var areaProto = seriesTypes.area.prototype;
  * @since 8.0.0
  * @optionparent plotOptions.lollipop
  */
-BaseSeries.seriesType('lollipop', 'dumbbell', {
-    /** @ignore-option */
-    lowColor: void 0,
-    /** @ignore-option */
-    threshold: 0,
-    /** @ignore-option */
-    connectorWidth: 1,
-    /** @ignore-option */
-    groupPadding: 0.2,
-    /** @ignore-option */
-    pointPadding: 0.1,
-    /** @ignore-option */
-    states: {
-        hover: {
-            /** @ignore-option */
-            lineWidthPlus: 0,
-            /** @ignore-option */
-            connectorWidthPlus: 1,
-            /** @ignore-option */
-            halo: false
-        }
-    },
-    tooltip: {
-        pointFormat: '<span style="color:{series.color}">●</span> {series.name}: <b>{point.y}</b><br/>'
-    }
-}, {
-    pointArrayMap: ['y'],
-    pointValKey: 'y',
-    toYData: function (point) {
-        return [pick(point.y, point.low)];
-    },
-    translatePoint: areaProto.translate,
-    drawPoint: areaProto.drawPoints,
-    drawDataLabels: colProto.drawDataLabels,
-    setShapeArgs: colProto.translate
-}, {
-    pointSetState: areaProto.pointClass.prototype.setState,
-    setState: H.seriesTypes.dumbbell.prototype.pointClass.prototype.setState,
-    init: function (series, options, x) {
-        if (isObject(options) && 'low' in options) {
-            options.y = options.low;
-            delete options.low;
-        }
-        return Point.prototype.init.apply(this, arguments);
-    }
-});
 /**
  * The `lollipop` series. If the [type](#series.lollipop.type) option is
  * not specified, it is inherited from [chart.type](#chart.type).
