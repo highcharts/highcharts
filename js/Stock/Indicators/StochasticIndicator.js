@@ -6,13 +6,24 @@
  *
  * */
 'use strict';
+var __extends = (this && this.__extends) || (function () {
+    var extendStatics = function (d, b) {
+        extendStatics = Object.setPrototypeOf ||
+            ({ __proto__: [] } instanceof Array && function (d, b) { d.__proto__ = b; }) ||
+            function (d, b) { for (var p in b) if (b.hasOwnProperty(p)) d[p] = b[p]; };
+        return extendStatics(d, b);
+    };
+    return function (d, b) {
+        extendStatics(d, b);
+        function __() { this.constructor = d; }
+        d.prototype = b === null ? Object.create(b) : (__.prototype = b.prototype, new __());
+    };
+})();
 import BaseSeries from '../../Core/Series/Series.js';
-import MultipleLinesMixin from '../../Mixins/MultipleLines.js';
+var SMAIndicator = BaseSeries.seriesTypes.sma;
 import ReduceArrayMixin from '../../Mixins/ReduceArray.js';
 import U from '../../Core/Utilities.js';
-var isArray = U.isArray, merge = U.merge;
-// im port './SMAIndicator.js';
-var SMA = BaseSeries.seriesTypes.sma, getArrayExtremes = ReduceArrayMixin.getArrayExtremes;
+var extend = U.extend, isArray = U.isArray, merge = U.merge;
 /**
  * The Stochastic series type.
  *
@@ -22,73 +33,76 @@ var SMA = BaseSeries.seriesTypes.sma, getArrayExtremes = ReduceArrayMixin.getArr
  *
  * @augments Highcharts.Series
  */
-BaseSeries.seriesType('stochastic', 'sma', 
-/**
- * Stochastic oscillator. This series requires the `linkedTo` option to be
- * set and should be loaded after the `stock/indicators/indicators.js` file.
- *
- * @sample stock/indicators/stochastic
- *         Stochastic oscillator
- *
- * @extends      plotOptions.sma
- * @since        6.0.0
- * @product      highstock
- * @excluding    allAreas, colorAxis, joinBy, keys, navigatorOptions,
- *               pointInterval, pointIntervalUnit, pointPlacement,
- *               pointRange, pointStart, showInNavigator, stacking
- * @requires     stock/indicators/indicators
- * @requires     stock/indicators/stochastic
- * @optionparent plotOptions.stochastic
- */
-{
-    /**
-     * @excluding index, period
-     */
-    params: {
-        /**
-         * Periods for Stochastic oscillator: [%K, %D].
-         *
-         * @type    {Array<number,number>}
-         * @default [14, 3]
-         */
-        periods: [14, 3]
-    },
-    marker: {
-        enabled: false
-    },
-    tooltip: {
-        pointFormat: '<span style="color:{point.color}">\u25CF</span><b> {series.name}</b><br/>%K: {point.y}<br/>%D: {point.smoothed}<br/>'
-    },
-    /**
-     * Smoothed line options.
-     */
-    smoothedLine: {
-        /**
-         * Styles for a smoothed line.
-         */
-        styles: {
-            /**
-             * Pixel width of the line.
-             */
-            lineWidth: 1,
-            /**
-             * Color of the line. If not set, it's inherited from
-             * [plotOptions.stochastic.color
-             * ](#plotOptions.stochastic.color).
-             *
-             * @type {Highcharts.ColorString}
-             */
-            lineColor: void 0
-        }
-    },
-    dataGrouping: {
-        approximation: 'averages'
+var StochasticIndicator = /** @class */ (function (_super) {
+    __extends(StochasticIndicator, _super);
+    function StochasticIndicator() {
+        return _super !== null && _super.apply(this, arguments) || this;
     }
-}, 
-/**
- * @lends Highcharts.Series#
- */
-merge(MultipleLinesMixin, {
+    /**
+     * Stochastic oscillator. This series requires the `linkedTo` option to be
+     * set and should be loaded after the `stock/indicators/indicators.js` file.
+     *
+     * @sample stock/indicators/stochastic
+     *         Stochastic oscillator
+     *
+     * @extends      plotOptions.sma
+     * @since        6.0.0
+     * @product      highstock
+     * @excluding    allAreas, colorAxis, joinBy, keys, navigatorOptions,
+     *               pointInterval, pointIntervalUnit, pointPlacement,
+     *               pointRange, pointStart, showInNavigator, stacking
+     * @requires     stock/indicators/indicators
+     * @requires     stock/indicators/stochastic
+     * @optionparent plotOptions.stochastic
+     */
+    StochasticIndicator.defaultOptions = merge(SMAIndicator.defaultOptions, {
+        /**
+         * @excluding index, period
+         */
+        params: {
+            /**
+             * Periods for Stochastic oscillator: [%K, %D].
+             *
+             * @type    {Array<number,number>}
+             * @default [14, 3]
+             */
+            periods: [14, 3]
+        },
+        marker: {
+            enabled: false
+        },
+        tooltip: {
+            pointFormat: '<span style="color:{point.color}">\u25CF</span><b> {series.name}</b><br/>%K: {point.y}<br/>%D: {point.smoothed}<br/>'
+        },
+        /**
+         * Smoothed line options.
+         */
+        smoothedLine: {
+            /**
+             * Styles for a smoothed line.
+             */
+            styles: {
+                /**
+                 * Pixel width of the line.
+                 */
+                lineWidth: 1,
+                /**
+                 * Color of the line. If not set, it's inherited from
+                 * [plotOptions.stochastic.color
+                 * ](#plotOptions.stochastic.color).
+                 *
+                 * @type {Highcharts.ColorString}
+                 */
+                lineColor: void 0
+            }
+        },
+        dataGrouping: {
+            approximation: 'averages'
+        }
+    });
+    return StochasticIndicator;
+}(SMAIndicator));
+extend(StochasticIndicator.prototype, {
     nameComponents: ['periods'],
     nameBase: 'Stochastic',
     pointArrayMap: ['y', 'smoothed'],
@@ -96,7 +110,7 @@ merge(MultipleLinesMixin, {
     pointValKey: 'y',
     linesApiNames: ['smoothedLine'],
     init: function () {
-        SMA.prototype.init.apply(this, arguments);
+        BaseSeries.seriesTypes.sma.prototype.init.apply(this, arguments);
         // Set default color for lines:
         this.options = merge({
             smoothedLine: {
@@ -122,7 +136,7 @@ merge(MultipleLinesMixin, {
         for (i = periodK - 1; i < yValLen; i++) {
             slicedY = yVal.slice(i - periodK + 1, i + 1);
             // Calculate %K
-            extremes = getArrayExtremes(slicedY, low, high);
+            extremes = ReduceArrayMixin.getArrayExtremes(slicedY, low, high);
             LL = extremes[0]; // Lowest low in %K periods
             CL = yVal[i][close] - LL;
             HL = extremes[1] - LL;
@@ -131,7 +145,7 @@ merge(MultipleLinesMixin, {
             yData.push([K, null]);
             // Calculate smoothed %D, which is SMA of %K
             if (i >= (periodK - 1) + (periodD - 1)) {
-                points = SMA.prototype.getValues.call(this, {
+                points = BaseSeries.seriesTypes.sma.prototype.getValues.call(this, {
                     xData: xData.slice(-periodD),
                     yData: yData.slice(-periodD)
                 }, {
@@ -148,7 +162,14 @@ merge(MultipleLinesMixin, {
             yData: yData
         };
     }
-}));
+});
+BaseSeries.registerSeriesType('stochastic', StochasticIndicator);
+/* *
+ *
+ *  Default Export
+ *
+ * */
+export default StochasticIndicator;
 /**
  * A Stochastic indicator. If the [type](#series.stochastic.type) option is not
  * specified, it is inherited from [chart.type](#chart.type).
