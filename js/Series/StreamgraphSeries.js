@@ -11,7 +11,7 @@
  * */
 'use strict';
 import BaseSeries from '../Core/Series/Series.js';
-import '../Series/AreaSplineSeries.js';
+import './AreaSpline/AreaSplineSeries.js';
 /**
  * @private
  * @class
