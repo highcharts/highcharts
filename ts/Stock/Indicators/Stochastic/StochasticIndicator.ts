@@ -8,56 +8,27 @@
 
 'use strict';
 
-import type CSSObject from '../../Core/Renderer/CSSObject';
-import type IndicatorValuesObject from './IndicatorValuesObject';
-import type LineSeries from '../../Series/Line/LineSeries';
-import type { PointMarkerOptions } from '../../Core/Series/PointOptions';
+import type IndicatorValuesObject from '../IndicatorValuesObject';
+import type LineSeries from '../../../Series/Line/LineSeries';
 import type {
-    SMAOptions,
-    SMAParamsOptions
-} from './SMA/SMAOptions';
-import type SMAPoint from './SMA/SMAPoint';
-import BaseSeries from '../../Core/Series/Series.js';
+    StochasticOptions,
+    StochasticParamsOptions
+} from './StochasticOptions';
+import type StochasticPoint from './StochasticPoint';
+import BaseSeries from '../../../Core/Series/Series.js';
 const {
     seriesTypes: {
         sma: SMAIndicator
     }
 } = BaseSeries;
-import MultipleLinesMixin from '../../Mixins/MultipleLines.js';
-import ReduceArrayMixin from '../../Mixins/ReduceArray.js';
-import U from '../../Core/Utilities.js';
+import MultipleLinesMixin from '../../../Mixins/MultipleLines.js';
+import ReduceArrayMixin from '../../../Mixins/ReduceArray.js';
+import U from '../../../Core/Utilities.js';
 const {
     extend,
     isArray,
     merge
 } = U;
-
-/**
- * Internal types
- * @private
- */
-declare global {
-    namespace Highcharts {
-
-        interface StochasticIndicatorParamsOptions
-            extends SMAParamsOptions {
-            periods?: Array<number>;
-        }
-
-        class StochasticIndicatorPoint extends SMAPoint {
-            public series: StochasticIndicator;
-        }
-
-        interface StochasticIndicatorOptions
-            extends SMAOptions, MultipleLinesIndicatorOptions {
-            dataGrouping?: DataGroupingOptionsObject;
-            marker?: PointMarkerOptions;
-            params?: StochasticIndicatorParamsOptions;
-            smoothedLine?: Record<string, CSSObject>;
-            tooltip?: TooltipOptions;
-        }
-    }
-}
 
 /**
  * The Stochastic series type.
@@ -86,7 +57,7 @@ class StochasticIndicator extends SMAIndicator {
      * @requires     stock/indicators/stochastic
      * @optionparent plotOptions.stochastic
      */
-    public static defaultOptions: Highcharts.StochasticIndicatorOptions = merge(SMAIndicator.defaultOptions, {
+    public static defaultOptions: StochasticOptions = merge(SMAIndicator.defaultOptions, {
         /**
          * @excluding index, period
          */
@@ -130,13 +101,13 @@ class StochasticIndicator extends SMAIndicator {
         dataGrouping: {
             approximation: 'averages'
         }
-    } as Highcharts.StochasticIndicatorOptions)
+    } as StochasticOptions)
 
-    public data: Array<Highcharts.StochasticIndicatorPoint> = void 0 as any;
-    public options: Highcharts.StochasticIndicatorOptions = void 0 as any;
-    public points: Array<Highcharts.StochasticIndicatorPoint> = void 0 as any;
+    public data: Array<StochasticPoint> = void 0 as any;
+    public options: StochasticOptions = void 0 as any;
+    public points: Array<StochasticPoint> = void 0 as any;
 
-    public init(this: StochasticIndicator): void {
+    public init(): void {
         BaseSeries.seriesTypes.sma.prototype.init.apply(this, arguments);
 
         // Set default color for lines:
@@ -150,9 +121,8 @@ class StochasticIndicator extends SMAIndicator {
     }
 
     public getValues <TLinkedSeries extends LineSeries>(
-        this: StochasticIndicator,
         series: TLinkedSeries,
-        params: Highcharts.StochasticIndicatorParamsOptions
+        params: StochasticParamsOptions
     ): (IndicatorValuesObject<TLinkedSeries>|undefined) {
         var periodK: number = (params.periods as any)[0],
             periodD: number = (params.periods as any)[1],
@@ -234,7 +204,7 @@ interface StochasticIndicator {
     nameComponents: Array<string>;
     parallelArrays: Array<string>;
     pointArrayMap: Array<string>;
-    pointClass: typeof Highcharts.StochasticIndicatorPoint;
+    pointClass: typeof StochasticPoint;
     pointValKey: string;
 
     getTranslatedLinesNames: typeof MultipleLinesMixin[
@@ -252,7 +222,7 @@ extend(StochasticIndicator.prototype, {
     getTranslatedLinesNames: MultipleLinesMixin.getTranslatedLinesNames
 });
 
-declare module '../../Core/Series/SeriesType' {
+declare module '../../../Core/Series/SeriesType' {
     interface SeriesTypeRegistry {
         stochastic: typeof StochasticIndicator;
     }

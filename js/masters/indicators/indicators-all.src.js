@@ -41,7 +41,7 @@ import '../../Stock/Indicators/PriceEnvelopesIndicator.js';
 import '../../Stock/Indicators/PSAR/PSARIndicator.js';
 import '../../Stock/Indicators/ROCIndicator.js';
 import '../../Stock/Indicators/RSI/RSIIndicator.js';
-import '../../Stock/Indicators/StochasticIndicator.js';
+import '../../Stock/Indicators/Stochastic/StochasticIndicator.js';
 import '../../Stock/Indicators/SlowStochasticIndicator.js';
 import '../../Stock/Indicators/SupertrendIndicator.js';
 import '../../Stock/Indicators/VBPIndicator.js';
