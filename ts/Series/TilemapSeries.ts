@@ -16,7 +16,7 @@
 import type Axis from '../Core/Axis/Axis';
 import type BBoxObject from '../Core/Renderer/BBoxObject';
 import type DataLabelOptions from '../Core/Series/DataLabelOptions';
-import type HeatmapSeries from './HeatmapSeries';
+import type HeatmapSeries from './Heatmap/HeatmapSeries';
 import type Point from '../Core/Series/Point';
 import type { SeriesStatesOptions } from '../Core/Series/SeriesOptions';
 import type SVGPath from '../Core/Renderer/SVG/SVGPath';
@@ -119,8 +119,6 @@ declare module '../Core/Series/SeriesType' {
         tilemap: typeof Highcharts.TilemapSeries;
     }
 }
-
-import '../Series/HeatmapSeries.js';
 
 /**
  * @typedef {"circle"|"diamond"|"hexagon"|"square"} Highcharts.TilemapShapeValue
