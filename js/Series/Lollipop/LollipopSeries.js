@@ -21,13 +21,13 @@ var __extends = (this && this.__extends) || (function () {
         d.prototype = b === null ? Object.create(b) : (__.prototype = b.prototype, new __());
     };
 })();
-import DumbbellSeries from './Dumbbell/DumbbellSeries.js';
-import DumbbellPoint from './Dumbbell/DumbbellPoint.js';
-import BaseSeries from '../Core/Series/Series.js';
-import Point from '../Core/Series/Point.js';
-import ColumnSeries from './Column/ColumnSeries.js';
+import DumbbellSeries from '../Dumbbell/DumbbellSeries.js';
+import DumbbellPoint from '../Dumbbell/DumbbellPoint.js';
+import BaseSeries from '../../Core/Series/Series.js';
+import Point from '../../Core/Series/Point.js';
+import ColumnSeries from '../Column/ColumnSeries.js';
 var colProto = ColumnSeries.prototype;
-import U from '../Core/Utilities.js';
+import U from '../../Core/Utilities.js';
 var isObject = U.isObject, pick = U.pick, merge = U.merge, extend = U.extend;
 var areaProto = BaseSeries.seriesTypes.area.prototype;
 /* *
