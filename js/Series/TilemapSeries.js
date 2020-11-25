@@ -17,7 +17,6 @@ var colorPointMixin = ColorSeriesModule.colorPointMixin;
 import H from '../Core/Globals.js';
 import U from '../Core/Utilities.js';
 var addEvent = U.addEvent, clamp = U.clamp, extend = U.extend, pick = U.pick;
-import '../Series/HeatmapSeries.js';
 /**
  * @typedef {"circle"|"diamond"|"hexagon"|"square"} Highcharts.TilemapShapeValue
  */

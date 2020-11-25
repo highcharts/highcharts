@@ -17,7 +17,7 @@
 
 import type AreaSeries from '../Series/Area/AreaSeries';
 import type ColumnSeries from '../Series/Column/ColumnSeries';
-import type HeatmapSeries from '../Series/HeatmapSeries';
+import type HeatmapSeries from '../Series/Heatmap/HeatmapSeries';
 import type HTMLElement from '../Core/Renderer/HTML/HTMLElement';
 import type {
     PointOptions,
