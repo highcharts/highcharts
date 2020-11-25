@@ -23,17 +23,16 @@ var __extends = (this && this.__extends) || (function () {
         d.prototype = b === null ? Object.create(b) : (__.prototype = b.prototype, new __());
     };
 })();
-import Axis from '../../Core/Axis/Axis.js';
 import BaseSeries from '../../Core/Series/Series.js';
+var _a = BaseSeries.seriesTypes, ColumnSeries = _a.column, LineSeries = _a.line;
 import H from '../../Core/Globals.js';
 import Color from '../../Core/Color/Color.js';
 var color = Color.parse;
-import ColumnSeries from '../Column/ColumnSeries.js';
 var columnProto = ColumnSeries.prototype;
-import LineSeries from '../Line/LineSeries.js';
-import Point from '../../Core/Series/Point.js';
 import U from '../../Core/Utilities.js';
-var addEvent = U.addEvent, clamp = U.clamp, correctFloat = U.correctFloat, defined = U.defined, extend = U.extend, find = U.find, isNumber = U.isNumber, isObject = U.isObject, merge = U.merge, pick = U.pick;
+var clamp = U.clamp, correctFloat = U.correctFloat, defined = U.defined, extend = U.extend, find = U.find, isNumber = U.isNumber, isObject = U.isObject, merge = U.merge, pick = U.pick;
+import XRangePoint from './XRangePoint.js';
+import './XRangeComposition.js';
 /* *
  * @interface Highcharts.PointOptionsObject in parts/Point.ts
  */ /**
@@ -43,30 +42,6 @@ var addEvent = U.addEvent, clamp = U.clamp, correctFloat = U.correctFloat, defin
 * @requires modules/xrange
 */
 var seriesTypes = BaseSeries.seriesTypes;
-/**
- * Return color of a point based on its category.
- *
- * @private
- * @function getColorByCategory
- *
- * @param {object} series
- *        The series which the point belongs to.
- *
- * @param {object} point
- *        The point to calculate its color for.
- *
- * @return {object}
- *         Returns an object containing the properties color and colorIndex.
- */
-function getColorByCategory(series, point) {
-    var colors = series.options.colors || series.chart.options.colors, colorCount = colors ?
-        colors.length :
-        series.chart.options.chart.colorCount, colorIndex = point.y % colorCount, color = colors && colors[colorIndex];
-    return {
-        colorIndex: colorIndex,
-        color: color
-    };
-}
 import '../Column/ColumnSeries.js';
 /**
  * @private
@@ -501,134 +476,8 @@ extend(XRangeSeries.prototype, {
     cropShoulder: 1,
     getExtremesFromAll: true,
     autoIncrement: H.noop,
-    buildKDTree: H.noop
-});
-var XRangePoint = /** @class */ (function (_super) {
-    __extends(XRangePoint, _super);
-    function XRangePoint() {
-        var _this = _super !== null && _super.apply(this, arguments) || this;
-        /* *
-         *
-         * Properties
-         *
-         * */
-        _this.options = void 0;
-        _this.series = void 0;
-        _this.tooltipDateKeys = ['x', 'x2'];
-        return _this;
-        /* eslint-enable valid-jsdoc */
-    }
-    /* *
-     *
-     * Functions
-     *
-     * */
-    /**
-     * The ending X value of the range point.
-     * @name Highcharts.Point#x2
-     * @type {number|undefined}
-     * @requires modules/xrange
-     */
-    /**
-     * Extend applyOptions so that `colorByPoint` for x-range means that one
-     * color is applied per Y axis category.
-     *
-     * @private
-     * @function Highcharts.Point#applyOptions
-     *
-     * @return {Highcharts.Series}
-     */
-    /* eslint-disable valid-jsdoc */
-    /**
-     * @private
-     */
-    XRangePoint.prototype.resolveColor = function () {
-        var series = this.series, colorByPoint;
-        if (series.options.colorByPoint && !this.options.color) {
-            colorByPoint = getColorByCategory(series, this);
-            if (!series.chart.styledMode) {
-                this.color = colorByPoint.color;
-            }
-            if (!this.options.colorIndex) {
-                this.colorIndex = colorByPoint.colorIndex;
-            }
-        }
-        else if (!this.color) {
-            this.color = series.color;
-        }
-    };
-    /**
-     * Extend init to have y default to 0.
-     *
-     * @private
-     * @function Highcharts.Point#init
-     *
-     * @return {Highcharts.Point}
-     */
-    XRangePoint.prototype.init = function () {
-        Point.prototype.init.apply(this, arguments);
-        if (!this.y) {
-            this.y = 0;
-        }
-        return this;
-    };
-    /**
-     * @private
-     * @function Highcharts.Point#setState
-     */
-    XRangePoint.prototype.setState = function () {
-        Point.prototype.setState.apply(this, arguments);
-        this.series.drawPoint(this, this.series.getAnimationVerb());
-    };
-    /**
-     * @private
-     * @function Highcharts.Point#getLabelConfig
-     *
-     * @return {Highcharts.PointLabelObject}
-     */
-    // Add x2 and yCategory to the available properties for tooltip formats
-    XRangePoint.prototype.getLabelConfig = function () {
-        var point = this, cfg = Point.prototype.getLabelConfig.call(point), yCats = point.series.yAxis.categories;
-        cfg.x2 = point.x2;
-        cfg.yCategory = point.yCategory = yCats && yCats[point.y];
-        return cfg;
-    };
-    /**
-     * @private
-     * @function Highcharts.Point#isValid
-     *
-     * @return {boolean}
-     */
-    XRangePoint.prototype.isValid = function () {
-        return typeof this.x === 'number' &&
-            typeof this.x2 === 'number';
-    };
-    return XRangePoint;
-}(ColumnSeries.prototype.pointClass));
-XRangeSeries.prototype.pointClass = XRangePoint;
-/**
- * Max x2 should be considered in xAxis extremes
- */
-addEvent(Axis, 'afterGetSeriesExtremes', function () {
-    var axis = this, // eslint-disable-line no-invalid-this
-    axisSeries = axis.series, dataMax, modMax;
-    if (axis.isXAxis) {
-        dataMax = pick(axis.dataMax, -Number.MAX_VALUE);
-        axisSeries.forEach(function (series) {
-            if (series.x2Data) {
-                series.x2Data
-                    .forEach(function (val) {
-                    if (val > dataMax) {
-                        dataMax = val;
-                        modMax = true;
-                    }
-                });
-            }
-        });
-        if (modMax) {
-            axis.dataMax = dataMax;
-        }
-    }
+    buildKDTree: H.noop,
+    pointClass: XRangePoint
 });
 BaseSeries.registerSeriesType('xrange', XRangeSeries);
 /* *

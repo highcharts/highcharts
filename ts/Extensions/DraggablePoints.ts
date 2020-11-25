@@ -27,6 +27,7 @@ import type PositionObject from '../Core/Renderer/PositionObject';
 import type SVGAttributes from '../Core/Renderer/SVG/SVGAttributes';
 import type SVGElement from '../Core/Renderer/SVG/SVGElement';
 import type SVGPath from '../Core/Renderer/SVG/SVGPath';
+import type XRangePoint from '../Series/XRange/XRangePoint';
 import Chart from '../Core/Chart/Chart.js';
 import H from '../Core/Globals.js';
 import LineSeries from '../Series/Line/LineSeries.js';
@@ -1071,7 +1072,7 @@ if (seriesTypes.xrange) {
     // x value. shapeArgs does not take yAxis reversed etc into account, so we
     // use axis.toPixels to handle positioning.
     var xrangeHandlePositioner = function (
-            point: Highcharts.XRangePoint,
+            point: XRangePoint,
             xProp: string
         ): PositionObject {
             var series = point.series,
@@ -1118,14 +1119,14 @@ if (seriesTypes.xrange) {
                 resize: true,
                 resizeSide: 'left',
                 handlePositioner: function (
-                    point: Highcharts.XRangePoint
+                    point: XRangePoint
                 ): PositionObject {
                     return xrangeHandlePositioner(point, 'x');
                 },
                 handleFormatter: horizHandleFormatter,
                 propValidate: function (
                     val: number,
-                    point: Highcharts.XRangePoint
+                    point: XRangePoint
                 ): boolean {
                     return val <= (point.x2 as any);
                 }
@@ -1145,14 +1146,14 @@ if (seriesTypes.xrange) {
                 resize: true,
                 resizeSide: 'right',
                 handlePositioner: function (
-                    point: Highcharts.XRangePoint
+                    point: XRangePoint
                 ): PositionObject {
                     return xrangeHandlePositioner(point, 'x2');
                 },
                 handleFormatter: horizHandleFormatter,
                 propValidate: function (
                     val: number,
-                    point: Highcharts.XRangePoint
+                    point: XRangePoint
                 ): boolean {
                     return val >= (point.x as any);
                 }

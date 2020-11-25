@@ -17,31 +17,28 @@
  *  Imports
  *
  * */
-
-import type ColorType from '../../Core/Color/ColorString';
 import type ColumnMetricsObject from '../Column/ColumnMetricsObject';
-import type ColumnPoint from '../Column/ColumnPoint';
-import type ColumnPointOptions from '../Column/ColumnPointOptions';
-import type ColumnSeriesOptions from '../Column/ColumnSeriesOptions';
 import type PositionObject from '../../Core/Renderer/PositionObject';
-import type RectangleObject from '../../Core/Renderer/RectangleObject';
-import type {
-    SeriesStateHoverOptions,
-    SeriesStatesOptions
-} from '../../Core/Series/SeriesOptions';
+import type { SeriesStateHoverOptions } from '../../Core/Series/SeriesOptions';
 import type SizeObject from '../../Core/Renderer/SizeObject';
-import Axis from '../../Core/Axis/Axis.js';
+import type {
+    XRangePointOptions,
+    XRangePointPartialFillOptions
+} from './XRangePointOptions';
+import type XRangeSeriesOptions from './XRangeSeriesOptions';
 import BaseSeries from '../../Core/Series/Series.js';
+const {
+    seriesTypes: {
+        column: ColumnSeries,
+        line: LineSeries
+    }
+} = BaseSeries;
 import H from '../../Core/Globals.js';
 import Color from '../../Core/Color/Color.js';
 const { parse: color } = Color;
-import ColumnSeries from '../Column/ColumnSeries.js';
 const { prototype: columnProto } = ColumnSeries;
-import LineSeries from '../Line/LineSeries.js';
-import Point from '../../Core/Series/Point.js';
 import U from '../../Core/Utilities.js';
 const {
-    addEvent,
     clamp,
     correctFloat,
     defined,
@@ -52,55 +49,8 @@ const {
     merge,
     pick
 } = U;
-
-/**
- * Internal types
- * @private
- */
-declare global {
-    namespace Highcharts {
-        class XRangePoint extends ColumnPoint {
-            public clipRectArgs?: RectangleObject;
-            public isValid: () => boolean;
-            public len?: number;
-            public options: XRangePointOptions;
-            public partialFill: XRangePointOptions['partialFill'];
-            public partShapeArgs?: XRangePartialFillObject;
-            public series: XRangeSeries;
-            public setState: Point['setState'];
-            public shapeType: string;
-            public tooltipDateKeys: Array<string>;
-            public x2?: number;
-            public yCategory?: string;
-            public init(): XRangePoint;
-            public resolveColor(): void;
-        }
-        interface XRangePartialFillObject extends PositionObject, SizeObject {
-            r?: number;
-        }
-        interface XRangePointLabelObject extends Point.PointLabelObject {
-            x2?: XRangePoint['x2'];
-            yCategory?: XRangePoint['yCategory'];
-        }
-        interface XRangePointOptions extends ColumnPointOptions {
-            partialFill?: XRangePointPartialFillOptions;
-            x2?: number;
-        }
-        interface XRangePointPartialFillOptions {
-            amount?: number;
-            fill?: ColorType;
-            height?: number;
-            width?: number;
-            r?: number;
-            x?: number;
-            y?: number;
-        }
-        interface XRangeSeriesOptions extends ColumnSeriesOptions {
-            partialFill?: XRangePointPartialFillOptions;
-            states?: SeriesStatesOptions<XRangeSeries>;
-        }
-    }
-}
+import XRangePoint from './XRangePoint.js';
+import './XRangeComposition.js';
 
 /* *
  * @interface Highcharts.PointOptionsObject in parts/Point.ts
@@ -112,38 +62,6 @@ declare global {
  */
 
 const seriesTypes = BaseSeries.seriesTypes;
-
-/**
- * Return color of a point based on its category.
- *
- * @private
- * @function getColorByCategory
- *
- * @param {object} series
- *        The series which the point belongs to.
- *
- * @param {object} point
- *        The point to calculate its color for.
- *
- * @return {object}
- *         Returns an object containing the properties color and colorIndex.
- */
-function getColorByCategory(
-    series: LineSeries,
-    point: Point
-): Highcharts.Dictionary<any> {
-    var colors = series.options.colors || series.chart.options.colors,
-        colorCount = colors ?
-            colors.length :
-            (series.chart.options.chart as any).colorCount,
-        colorIndex = (point.y as any) % colorCount,
-        color = colors && colors[colorIndex];
-
-    return {
-        colorIndex: colorIndex,
-        color: color
-    };
-}
 
 import '../Column/ColumnSeries.js';
 
@@ -185,7 +103,7 @@ class XRangeSeries extends ColumnSeries {
      * @requires     modules/xrange
      * @optionparent plotOptions.xrange
      */
-    public static defaultOptions: Highcharts.XRangeSeriesOptions = merge(ColumnSeries.defaultOptions, {
+    public static defaultOptions: XRangeSeriesOptions = merge(ColumnSeries.defaultOptions, {
         /**
          * A partial fill for each point, typically used to visualize how much
          * of a task is performed. The partial fill object can be set either on
@@ -251,7 +169,7 @@ class XRangeSeries extends ColumnSeries {
 
         pointRange: 0
 
-    } as Highcharts.XRangeSeriesOptions);
+    } as XRangeSeriesOptions);
 
     /* *
      *
@@ -259,7 +177,7 @@ class XRangeSeries extends ColumnSeries {
      *
      * */
     public data: Array<XRangePoint> = void 0 as any;
-    public options: Highcharts.XRangeSeriesOptions = void 0 as any;
+    public options: XRangeSeriesOptions = void 0 as any;
     public points: Array<XRangePoint> = void 0 as any;
 
     /* *
@@ -359,7 +277,7 @@ class XRangeSeries extends ColumnSeries {
      * @returns {number|undefined} Returns index of a matching point,
      * returns undefined if no match is found.
      */
-    public findPointIndex(options: Highcharts.XRangePointOptions): (number|undefined) {
+    public findPointIndex(options: XRangePointOptions): (number|undefined) {
         const { cropped, cropStart, points } = this;
         const { id } = options;
         let pointIndex: (number|undefined);
@@ -425,7 +343,7 @@ class XRangeSeries extends ColumnSeries {
             widthDifference,
             shapeArgs,
             partialFill: (
-                Highcharts.XRangePointPartialFillOptions|
+                XRangePointPartialFillOptions|
                 undefined
             ),
             inverted = this.chart.inverted,
@@ -590,7 +508,7 @@ class XRangeSeries extends ColumnSeries {
      *        'animate' (animates changes) or 'attr' (sets options)
      */
     public drawPoint(
-        point: Highcharts.XRangePoint,
+        point: XRangePoint,
         verb: string
     ): void {
         var series = this,
@@ -758,7 +676,7 @@ class XRangeSeries extends ColumnSeries {
  *
  * */
 interface XRangeSeries {
-    animate: LineSeries['animate'];
+    animate: typeof LineSeries.prototype.animate;
     cropShoulder: number;
     getExtremesFromAll: boolean;
     parallelArrays: Array<string>;
@@ -766,9 +684,6 @@ interface XRangeSeries {
     requireSorting: boolean;
     type: string;
     x2Data: Array<(number|undefined)>;
-    drawPoint(point: XRangePoint, verb: string): void;
-    getAnimationVerb(): string;
-    translatePoint(point: XRangePoint): void;
 }
 
 extend(XRangeSeries.prototype, {
@@ -779,175 +694,20 @@ extend(XRangeSeries.prototype, {
     cropShoulder: 1,
     getExtremesFromAll: true,
     autoIncrement: H.noop as any,
-    buildKDTree: H.noop as any
+    buildKDTree: H.noop as any,
+    pointClass: XRangePoint
 });
-
-class XRangePoint extends ColumnSeries.prototype.pointClass {
-
-    /* *
-     *
-     * Properties
-     *
-     * */
-    public options: Highcharts.XRangePointOptions = void 0 as any;
-    public series: XRangeSeries = void 0 as any;
-
-    /* *
-     *
-     * Functions
-     *
-     * */
-    /**
-     * The ending X value of the range point.
-     * @name Highcharts.Point#x2
-     * @type {number|undefined}
-     * @requires modules/xrange
-     */
-
-    /**
-     * Extend applyOptions so that `colorByPoint` for x-range means that one
-     * color is applied per Y axis category.
-     *
-     * @private
-     * @function Highcharts.Point#applyOptions
-     *
-     * @return {Highcharts.Series}
-     */
-
-    /* eslint-disable valid-jsdoc */
-
-    /**
-     * @private
-     */
-    public resolveColor(this: XRangePoint): void {
-        var series = this.series,
-            colorByPoint;
-
-        if (series.options.colorByPoint && !this.options.color) {
-            colorByPoint = getColorByCategory(series, this);
-
-            if (!series.chart.styledMode) {
-                this.color = colorByPoint.color;
-            }
-
-            if (!this.options.colorIndex) {
-                this.colorIndex = colorByPoint.colorIndex;
-            }
-        } else if (!this.color) {
-            this.color = series.color;
-        }
-
-    }
-    /**
-     * Extend init to have y default to 0.
-     *
-     * @private
-     * @function Highcharts.Point#init
-     *
-     * @return {Highcharts.Point}
-     */
-    public init(): XRangePoint {
-        Point.prototype.init.apply(this, arguments as any);
-
-        if (!this.y) {
-            this.y = 0;
-        }
-
-        return this;
-    }
-
-    /**
-     * @private
-     * @function Highcharts.Point#setState
-     */
-    public setState(): void {
-        Point.prototype.setState.apply(this, arguments as any);
-
-        this.series.drawPoint(this, this.series.getAnimationVerb());
-    }
-
-    /**
-     * @private
-     * @function Highcharts.Point#getLabelConfig
-     *
-     * @return {Highcharts.PointLabelObject}
-     */
-    // Add x2 and yCategory to the available properties for tooltip formats
-    public getLabelConfig(): Highcharts.XRangePointLabelObject {
-        var point = this,
-            cfg: Highcharts.XRangePointLabelObject =
-                Point.prototype.getLabelConfig.call(point) as any,
-            yCats: Array<string> = point.series.yAxis.categories as any;
-
-        cfg.x2 = point.x2;
-        cfg.yCategory = point.yCategory = yCats && yCats[point.y as any];
-        return cfg;
-    }
-
-    public tooltipDateKeys = ['x', 'x2']
-
-    /**
-     * @private
-     * @function Highcharts.Point#isValid
-     *
-     * @return {boolean}
-     */
-    public isValid(): boolean {
-        return typeof this.x === 'number' &&
-        typeof this.x2 === 'number';
-    }
-
-    /* eslint-enable valid-jsdoc */
-
-}
 
 /* *
  *
- * Prototype Properties
+ * Class namespace
  *
  * */
-interface XRangePoint {
-    clipRectArgs?: RectangleObject;
-    isValid: () => boolean;
-    len?: number;
-    partialFill: Highcharts.XRangePointOptions['partialFill'];
-    partShapeArgs?: Highcharts.XRangePartialFillObject;
-    shapeType: string;
-    tooltipDateKeys: Array<string>;
-    x2?: number;
-    yCategory?: string;
-
-}
-
-XRangeSeries.prototype.pointClass = XRangePoint;
-
-/**
- * Max x2 should be considered in xAxis extremes
- */
-addEvent(Axis, 'afterGetSeriesExtremes', function (): void {
-    var axis = this, // eslint-disable-line no-invalid-this
-        axisSeries = axis.series,
-        dataMax: (number|undefined),
-        modMax: (boolean|undefined);
-
-    if (axis.isXAxis) {
-        dataMax = pick(axis.dataMax, -Number.MAX_VALUE);
-        axisSeries.forEach(function (series): void {
-            if ((series as XRangeSeries).x2Data) {
-                (series as XRangeSeries).x2Data
-                    .forEach(function (val: (number|undefined)): void {
-                        if ((val as any) > (dataMax as any)) {
-                            dataMax = val;
-                            modMax = true;
-                        }
-                    });
-            }
-        });
-        if (modMax) {
-            axis.dataMax = dataMax;
-        }
+namespace XRangeSeries {
+    interface XRangePartialFillObject extends PositionObject, SizeObject {
+        r?: number;
     }
-});
+}
 
 /* *
  *
