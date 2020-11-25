@@ -14,7 +14,6 @@ import type IndicatorValuesObject from './IndicatorValuesObject';
 import type LineSeries from '../../Series/Line/LineSeries';
 import type Point from '../../Core/Series/Point';
 import type { SeriesOptions } from '../../Core/Series/SeriesOptions';
-import type SMAIndicator from './SMA/SMAIndicator';
 import type {
     SMAOptions,
     SMAParamsOptions
@@ -24,13 +23,17 @@ import type SVGAttributes from '../../Core/Renderer/SVG/SVGAttributes';
 import type SVGElement from '../../Core/Renderer/SVG/SVGElement';
 import BaseSeries from '../../Core/Series/Series.js';
 const {
-    seriesTypes
+    seriesTypes: {
+        atr: ATRIndicator,
+        sma: SMAIndicator
+    }
 } = BaseSeries;
 import palette from '../../Core/Color/Palette.js';
 import U from '../../Core/Utilities.js';
 const {
     correctFloat,
     isArray,
+    extend,
     merge,
     objectEach
 } = U;
@@ -72,23 +75,6 @@ declare global {
             [index: string]: (Record<string, SVGAttributes>|undefined);
         }
 
-        class SupertrendIndicator extends SMAIndicator {
-            public data: Array<SupertrendIndicatorPoint>;
-            public drawGraph(): void;
-            public getValues<TLinkedSeries extends LineSeries>(
-                series: TLinkedSeries,
-                params: SupertrendIndicatorParamsOptions
-            ): (IndicatorValuesObject<TLinkedSeries>|undefined);
-            public init(): void;
-            public linkedParent: SupertrendLinkedParentObject;
-            public nameBase: string;
-            public nameComponents: Array<string>;
-            public options: SupertrendIndicatorOptions;
-            public requiredIndicators: Array<string>;
-            public pointClass: typeof SupertrendIndicatorPoint;
-            public points: Array<SupertrendIndicatorPoint>;
-        }
-
         interface SupertrendIndicatorParamsOptions
             extends SMAParamsOptions {
             multiplier?: number;
@@ -108,18 +94,6 @@ declare global {
     }
 }
 
-declare module '../../Core/Series/SeriesType' {
-    interface SeriesTypeRegistry {
-        supertrend: typeof Highcharts.SupertrendIndicator;
-    }
-}
-
-// im port './ATRIndicator.js';
-// im port './SMAIndicator.js';
-
-var ATR = seriesTypes.atr,
-    SMA = seriesTypes.sma;
-
 /* eslint-disable require-jsdoc */
 // Utils:
 function createPointObj(
@@ -136,6 +110,12 @@ function createPointObj(
 
 /* eslint-enable require-jsdoc */
 
+/* *
+ *
+ *  Class
+ *
+ * */
+
 /**
  * The Supertrend series type.
  *
@@ -145,9 +125,7 @@ function createPointObj(
  *
  * @augments Highcharts.Series
  */
-BaseSeries.seriesType<typeof Highcharts.SupertrendIndicator>(
-    'supertrend',
-    'sma',
+class SupertrendIndicator extends SMAIndicator {
     /**
      * Supertrend indicator. This series requires the `linkedTo` option to be
      * set and should be loaded after the `stock/indicators/indicators.js` and
@@ -167,7 +145,7 @@ BaseSeries.seriesType<typeof Highcharts.SupertrendIndicator>(
      * @requires     stock/indicators/supertrend
      * @optionparent plotOptions.supertrend
      */
-    {
+    public static defaultOptions: Highcharts.SupertrendIndicatorOptions = merge(SMAIndicator.defaultOptions, {
         /**
          * Paramters used in calculation of Supertrend indicator series points.
          *
@@ -239,445 +217,483 @@ BaseSeries.seriesType<typeof Highcharts.SupertrendIndicator>(
                 dashStyle: 'LongDash'
             }
         }
+    } as Highcharts.SupertrendIndicatorOptions);
+}
+
+/* *
+ *
+ *  Prototype Properties
+ *
+ * */
+interface SupertrendIndicator {
+    data: Array<Highcharts.SupertrendIndicatorPoint>;
+    drawGraph(): void;
+    getValues<TLinkedSeries extends LineSeries>(
+        series: TLinkedSeries,
+        params: Highcharts.SupertrendIndicatorParamsOptions
+    ): (IndicatorValuesObject<TLinkedSeries>|undefined);
+    init(): void;
+    linkedParent: Highcharts.SupertrendLinkedParentObject;
+    nameBase: string;
+    nameComponents: Array<string>;
+    options: Highcharts.SupertrendIndicatorOptions;
+    requiredIndicators: Array<string>;
+    pointClass: typeof Highcharts.SupertrendIndicatorPoint;
+    points: Array<Highcharts.SupertrendIndicatorPoint>;
+}
+
+extend(SupertrendIndicator.prototype, {
+    init: function (this: SupertrendIndicator): void {
+        var options: Highcharts.SupertrendIndicatorOptions,
+            parentOptions: SeriesOptions;
+
+        SMAIndicator.prototype.init.apply(this, arguments);
+
+        options = this.options;
+        parentOptions = this.linkedParent.options;
+
+        // Indicator cropThreshold has to be equal linked series one
+        // reduced by period due to points comparison in drawGraph method
+        // (#9787)
+        options.cropThreshold = (
+            (parentOptions.cropThreshold as any) -
+            ((options.params as any).period - 1)
+        );
     },
-    /**
-     * @lends Highcharts.Series.prototype
-     */
-    {
-        nameBase: 'Supertrend',
-        nameComponents: ['multiplier', 'period'],
-        requiredIndicators: ['atr'],
-        init: function (this: Highcharts.SupertrendIndicator): void {
-            var options: Highcharts.SupertrendIndicatorOptions,
-                parentOptions: SeriesOptions;
+    drawGraph: function (this: SupertrendIndicator): void {
+        var indicator = this,
+            indicOptions: Highcharts.SupertrendIndicatorOptions =
+            indicator.options,
 
-            SMA.prototype.init.apply(this, arguments);
+            // Series that indicator is linked to
+            mainSeries = indicator.linkedParent,
+            mainLinePoints: Array<(
+                Highcharts.SupertrendLinkedParentPointObject
+            )> = (mainSeries ? mainSeries.points : []),
+            indicPoints: Array<Highcharts.SupertrendIndicatorPoint> =
+            indicator.points,
+            indicPath: (SVGElement|undefined) = indicator.graph,
+            indicPointsLen: number = indicPoints.length,
 
-            options = this.options;
-            parentOptions = this.linkedParent.options;
+            // Points offset between lines
+            tempOffset: number = mainLinePoints.length - indicPointsLen,
+            offset: number = tempOffset > 0 ? tempOffset : 0,
+            // @todo: fix when ichi-moku indicator is merged to master.
+            gappedExtend: Highcharts.SupertrendGappedExtensionObject = {
+                options: {
+                    gapSize: indicOptions.gapSize
+                }
+            },
 
-            // Indicator cropThreshold has to be equal linked series one
-            // reduced by period due to points comparison in drawGraph method
-            // (#9787)
-            options.cropThreshold = (
-                (parentOptions.cropThreshold as any) -
-                ((options.params as any).period - 1)
-            );
-        },
-        drawGraph: function (this: Highcharts.SupertrendIndicator): void {
-            var indicator = this,
-                indicOptions: Highcharts.SupertrendIndicatorOptions =
-                indicator.options,
+            // Sorted supertrend points array
+            groupedPoitns: Highcharts.SupertrendGroupedPointsObject = {
+                top: [], // Rising trend line points
+                bottom: [], // Falling trend line points
+                intersect: [] // Change trend line points
+            },
 
-                // Series that indicator is linked to
-                mainSeries = indicator.linkedParent,
-                mainLinePoints: Array<(
-                    Highcharts.SupertrendLinkedParentPointObject
-                )> = (mainSeries ? mainSeries.points : []),
-                indicPoints: Array<Highcharts.SupertrendIndicatorPoint> =
-                indicator.points,
-                indicPath: (SVGElement|undefined) = indicator.graph,
-                indicPointsLen: number = indicPoints.length,
-
-                // Points offset between lines
-                tempOffset: number = mainLinePoints.length - indicPointsLen,
-                offset: number = tempOffset > 0 ? tempOffset : 0,
-                // @todo: fix when ichi-moku indicator is merged to master.
-                gappedExtend: Highcharts.SupertrendGappedExtensionObject = {
-                    options: {
-                        gapSize: indicOptions.gapSize
+            // Options for trend lines
+            supertrendLineOptions:
+            Highcharts.SupertrendLineObject = {
+                top: {
+                    styles: {
+                        lineWidth: indicOptions.lineWidth,
+                        lineColor: (
+                            indicOptions.fallingTrendColor ||
+                            indicOptions.color
+                        ),
+                        dashStyle: indicOptions.dashStyle
                     }
                 },
-
-                // Sorted supertrend points array
-                groupedPoitns: Highcharts.SupertrendGroupedPointsObject = {
-                    top: [], // Rising trend line points
-                    bottom: [], // Falling trend line points
-                    intersect: [] // Change trend line points
+                bottom: {
+                    styles: {
+                        lineWidth: indicOptions.lineWidth,
+                        lineColor: (
+                            indicOptions.risingTrendColor ||
+                            indicOptions.color
+                        ),
+                        dashStyle: indicOptions.dashStyle
+                    }
                 },
+                intersect: indicOptions.changeTrendLine
+            },
+            close = 3,
 
-                // Options for trend lines
-                supertrendLineOptions:
-                Highcharts.SupertrendLineObject = {
-                    top: {
-                        styles: {
-                            lineWidth: indicOptions.lineWidth,
-                            lineColor: (
-                                indicOptions.fallingTrendColor ||
-                                indicOptions.color
-                            ),
-                            dashStyle: indicOptions.dashStyle
-                        }
-                    },
-                    bottom: {
-                        styles: {
-                            lineWidth: indicOptions.lineWidth,
-                            lineColor: (
-                                indicOptions.risingTrendColor ||
-                                indicOptions.color
-                            ),
-                            dashStyle: indicOptions.dashStyle
-                        }
-                    },
-                    intersect: indicOptions.changeTrendLine
-                },
-                close = 3,
+            // Supertrend line point
+            point: Highcharts.SupertrendIndicatorPoint,
 
-                // Supertrend line point
-                point: Highcharts.SupertrendIndicatorPoint,
+            // Supertrend line next point (has smaller x pos than point)
+            nextPoint: Highcharts.SupertrendIndicatorPoint,
 
-                // Supertrend line next point (has smaller x pos than point)
-                nextPoint: Highcharts.SupertrendIndicatorPoint,
+            // Main series points
+            mainPoint: Highcharts.SupertrendLinkedParentPointObject,
+            nextMainPoint: Highcharts.SupertrendLinkedParentPointObject,
 
-                // Main series points
-                mainPoint: Highcharts.SupertrendLinkedParentPointObject,
-                nextMainPoint: Highcharts.SupertrendLinkedParentPointObject,
+            // Used when supertrend and main points are shifted
+            // relative to each other
+            prevMainPoint: Highcharts.SupertrendLinkedParentPointObject,
+            prevPrevMainPoint: Highcharts.SupertrendLinkedParentPointObject,
 
-                // Used when supertrend and main points are shifted
-                // relative to each other
-                prevMainPoint: Highcharts.SupertrendLinkedParentPointObject,
-                prevPrevMainPoint: Highcharts.SupertrendLinkedParentPointObject,
+            // Used when particular point color is set
+            pointColor: ColorType,
 
-                // Used when particular point color is set
-                pointColor: ColorType,
+            // Temporary points that fill groupedPoitns array
+            newPoint: Highcharts.SupertrendIndicatorPoint,
+            newNextPoint: Highcharts.SupertrendIndicatorPoint;
 
-                // Temporary points that fill groupedPoitns array
-                newPoint: Highcharts.SupertrendIndicatorPoint,
-                newNextPoint: Highcharts.SupertrendIndicatorPoint;
+        // Loop which sort supertrend points
+        while (indicPointsLen--) {
+            point = indicPoints[indicPointsLen];
+            nextPoint = indicPoints[indicPointsLen - 1];
+            mainPoint = mainLinePoints[indicPointsLen - 1 + offset];
+            nextMainPoint = mainLinePoints[indicPointsLen - 2 + offset];
+            prevMainPoint = mainLinePoints[indicPointsLen + offset];
+            prevPrevMainPoint = mainLinePoints[indicPointsLen + offset + 1];
+            pointColor = (point.options.color as any);
+            newPoint = {
+                x: point.x,
+                plotX: point.plotX,
+                plotY: point.plotY,
+                isNull: false
+            } as Highcharts.SupertrendIndicatorPoint;
 
-            // Loop which sort supertrend points
-            while (indicPointsLen--) {
-                point = indicPoints[indicPointsLen];
-                nextPoint = indicPoints[indicPointsLen - 1];
-                mainPoint = mainLinePoints[indicPointsLen - 1 + offset];
-                nextMainPoint = mainLinePoints[indicPointsLen - 2 + offset];
-                prevMainPoint = mainLinePoints[indicPointsLen + offset];
-                prevPrevMainPoint = mainLinePoints[indicPointsLen + offset + 1];
-                pointColor = (point.options.color as any);
-                newPoint = {
-                    x: point.x,
-                    plotX: point.plotX,
-                    plotY: point.plotY,
+            // When mainPoint is the last one (left plot area edge)
+            // but supertrend has additional one
+            if (
+                !nextMainPoint &&
+                mainPoint && mainSeries.yData[mainPoint.index - 1]
+            ) {
+                nextMainPoint = createPointObj(
+                    mainSeries, mainPoint.index - 1, close
+                );
+            }
+
+            // When prevMainPoint is the last one (right plot area edge)
+            // but supertrend has additional one (and points are shifted)
+            if (
+                !prevPrevMainPoint &&
+                prevMainPoint && mainSeries.yData[prevMainPoint.index + 1]
+            ) {
+                prevPrevMainPoint = createPointObj(
+                    mainSeries, prevMainPoint.index + 1, close
+                );
+            }
+
+            // When points are shifted (right or left plot area edge)
+            if (
+                !mainPoint &&
+                nextMainPoint && mainSeries.yData[nextMainPoint.index + 1]
+            ) {
+                mainPoint = createPointObj(
+                    mainSeries, nextMainPoint.index + 1, close
+                );
+            } else if (
+                !mainPoint &&
+                prevMainPoint && mainSeries.yData[prevMainPoint.index - 1]
+            ) {
+                mainPoint = createPointObj(
+                    mainSeries, prevMainPoint.index - 1, close
+                );
+            }
+
+            // Check if points are shifted relative to each other
+            if (
+                point &&
+                mainPoint &&
+                prevMainPoint &&
+                nextMainPoint &&
+                point.x !== mainPoint.x
+            ) {
+                if (point.x === prevMainPoint.x) {
+                    nextMainPoint = mainPoint;
+                    mainPoint = prevMainPoint;
+                } else if (point.x === nextMainPoint.x) {
+                    mainPoint = nextMainPoint;
+                    nextMainPoint = ({
+                        close: mainSeries.yData[mainPoint.index - 1][close],
+                        x: mainSeries.xData[mainPoint.index - 1]
+                    } as any);
+                } else if (
+                    prevPrevMainPoint && point.x === prevPrevMainPoint.x
+                ) {
+                    mainPoint = prevPrevMainPoint;
+                    nextMainPoint = prevMainPoint;
+                }
+            }
+
+            if (nextPoint && nextMainPoint && mainPoint) {
+
+                newNextPoint = {
+                    x: nextPoint.x,
+                    plotX: nextPoint.plotX,
+                    plotY: nextPoint.plotY,
                     isNull: false
                 } as Highcharts.SupertrendIndicatorPoint;
 
-                // When mainPoint is the last one (left plot area edge)
-                // but supertrend has additional one
                 if (
-                    !nextMainPoint &&
-                    mainPoint && mainSeries.yData[mainPoint.index - 1]
+                    point.y >= mainPoint.close &&
+                    nextPoint.y >= nextMainPoint.close
                 ) {
-                    nextMainPoint = createPointObj(
-                        mainSeries, mainPoint.index - 1, close
+                    point.color = (
+                        pointColor || indicOptions.fallingTrendColor ||
+                        indicOptions.color
                     );
-                }
+                    groupedPoitns.top.push(newPoint);
 
-                // When prevMainPoint is the last one (right plot area edge)
-                // but supertrend has additional one (and points are shifted)
-                if (
-                    !prevPrevMainPoint &&
-                    prevMainPoint && mainSeries.yData[prevMainPoint.index + 1]
-                ) {
-                    prevPrevMainPoint = createPointObj(
-                        mainSeries, prevMainPoint.index + 1, close
-                    );
-                }
-
-                // When points are shifted (right or left plot area edge)
-                if (
-                    !mainPoint &&
-                    nextMainPoint && mainSeries.yData[nextMainPoint.index + 1]
-                ) {
-                    mainPoint = createPointObj(
-                        mainSeries, nextMainPoint.index + 1, close
-                    );
                 } else if (
-                    !mainPoint &&
-                    prevMainPoint && mainSeries.yData[prevMainPoint.index - 1]
+                    point.y < mainPoint.close &&
+                    nextPoint.y < nextMainPoint.close
                 ) {
-                    mainPoint = createPointObj(
-                        mainSeries, prevMainPoint.index - 1, close
+                    point.color = (
+                        pointColor || indicOptions.risingTrendColor ||
+                        indicOptions.color
                     );
-                }
+                    groupedPoitns.bottom.push(newPoint);
 
-                // Check if points are shifted relative to each other
-                if (
-                    point &&
-                    mainPoint &&
-                    prevMainPoint &&
-                    nextMainPoint &&
-                    point.x !== mainPoint.x
-                ) {
-                    if (point.x === prevMainPoint.x) {
-                        nextMainPoint = mainPoint;
-                        mainPoint = prevMainPoint;
-                    } else if (point.x === nextMainPoint.x) {
-                        mainPoint = nextMainPoint;
-                        nextMainPoint = ({
-                            close: mainSeries.yData[mainPoint.index - 1][close],
-                            x: mainSeries.xData[mainPoint.index - 1]
-                        } as any);
-                    } else if (
-                        prevPrevMainPoint && point.x === prevPrevMainPoint.x
-                    ) {
-                        mainPoint = prevPrevMainPoint;
-                        nextMainPoint = prevMainPoint;
-                    }
-                }
+                } else {
+                    groupedPoitns.intersect.push(newPoint);
+                    groupedPoitns.intersect.push(newNextPoint);
 
-                if (nextPoint && nextMainPoint && mainPoint) {
-
-                    newNextPoint = {
-                        x: nextPoint.x,
-                        plotX: nextPoint.plotX,
-                        plotY: nextPoint.plotY,
-                        isNull: false
-                    } as Highcharts.SupertrendIndicatorPoint;
+                    // Additional null point to make a gap in line
+                    groupedPoitns.intersect.push(merge(newNextPoint, {
+                        isNull: true
+                    }));
 
                     if (
                         point.y >= mainPoint.close &&
-                        nextPoint.y >= nextMainPoint.close
-                    ) {
-                        point.color = (
-                            pointColor || indicOptions.fallingTrendColor ||
-                            indicOptions.color
-                        );
-                        groupedPoitns.top.push(newPoint);
-
-                    } else if (
-                        point.y < mainPoint.close &&
                         nextPoint.y < nextMainPoint.close
                     ) {
                         point.color = (
-                            pointColor || indicOptions.risingTrendColor ||
-                            indicOptions.color
-                        );
-                        groupedPoitns.bottom.push(newPoint);
-
-                    } else {
-                        groupedPoitns.intersect.push(newPoint);
-                        groupedPoitns.intersect.push(newNextPoint);
-
-                        // Additional null point to make a gap in line
-                        groupedPoitns.intersect.push(merge(newNextPoint, {
-                            isNull: true
-                        }));
-
-                        if (
-                            point.y >= mainPoint.close &&
-                            nextPoint.y < nextMainPoint.close
-                        ) {
-                            point.color = (
-                                pointColor || indicOptions.fallingTrendColor ||
-                                indicOptions.color
-                            );
-                            nextPoint.color = (
-                                pointColor || indicOptions.risingTrendColor ||
-                                indicOptions.color
-                            );
-                            groupedPoitns.top.push(newPoint);
-                            groupedPoitns.top.push(merge(newNextPoint, {
-                                isNull: true
-                            }));
-                        } else if (
-                            point.y < mainPoint.close &&
-                            nextPoint.y >= nextMainPoint.close
-                        ) {
-                            point.color = (
-                                pointColor || indicOptions.risingTrendColor ||
-                                indicOptions.color
-                            );
-                            nextPoint.color = (
-                                pointColor || indicOptions.fallingTrendColor ||
-                                indicOptions.color
-                            );
-                            groupedPoitns.bottom.push(newPoint);
-                            groupedPoitns.bottom.push(merge(newNextPoint, {
-                                isNull: true
-                            }));
-                        }
-                    }
-                } else if (mainPoint) {
-                    if (point.y >= mainPoint.close) {
-                        point.color = (
                             pointColor || indicOptions.fallingTrendColor ||
                             indicOptions.color
                         );
+                        nextPoint.color = (
+                            pointColor || indicOptions.risingTrendColor ||
+                            indicOptions.color
+                        );
                         groupedPoitns.top.push(newPoint);
-                    } else {
+                        groupedPoitns.top.push(merge(newNextPoint, {
+                            isNull: true
+                        }));
+                    } else if (
+                        point.y < mainPoint.close &&
+                        nextPoint.y >= nextMainPoint.close
+                    ) {
                         point.color = (
                             pointColor || indicOptions.risingTrendColor ||
                             indicOptions.color
                         );
+                        nextPoint.color = (
+                            pointColor || indicOptions.fallingTrendColor ||
+                            indicOptions.color
+                        );
                         groupedPoitns.bottom.push(newPoint);
+                        groupedPoitns.bottom.push(merge(newNextPoint, {
+                            isNull: true
+                        }));
                     }
                 }
+            } else if (mainPoint) {
+                if (point.y >= mainPoint.close) {
+                    point.color = (
+                        pointColor || indicOptions.fallingTrendColor ||
+                        indicOptions.color
+                    );
+                    groupedPoitns.top.push(newPoint);
+                } else {
+                    point.color = (
+                        pointColor || indicOptions.risingTrendColor ||
+                        indicOptions.color
+                    );
+                    groupedPoitns.bottom.push(newPoint);
+                }
+            }
+        }
+
+        // Generate lines:
+        objectEach(groupedPoitns,
+            function (values, lineName): void {
+                indicator.points = values;
+                indicator.options = merge(
+                    (supertrendLineOptions as any)[lineName].styles,
+                    gappedExtend
+                );
+                indicator.graph = (indicator as any)[
+                    'graph' + lineName + 'Line'
+                ];
+                SMAIndicator.prototype.drawGraph.call(indicator);
+
+                // Now save line
+                (indicator as any)[
+                    'graph' + lineName + 'Line'
+                ] = indicator.graph;
+            }
+        );
+
+        // Restore options:
+        indicator.points = indicPoints;
+        indicator.options = indicOptions;
+        indicator.graph = indicPath;
+    },
+
+    // Supertrend (Multiplier, Period) Formula:
+
+    // BASIC UPPERBAND = (HIGH + LOW) / 2 + Multiplier * ATR(Period)
+    // BASIC LOWERBAND = (HIGH + LOW) / 2 - Multiplier * ATR(Period)
+
+    // FINAL UPPERBAND =
+    //     IF(
+    //      Current BASICUPPERBAND  < Previous FINAL UPPERBAND AND
+    //      Previous Close > Previous FINAL UPPERBAND
+    //     ) THEN (Current BASIC UPPERBAND)
+    //     ELSE (Previous FINALUPPERBAND)
+
+    // FINAL LOWERBAND =
+    //     IF(
+    //      Current BASIC LOWERBAND  > Previous FINAL LOWERBAND AND
+    //      Previous Close < Previous FINAL LOWERBAND
+    //     ) THEN (Current BASIC LOWERBAND)
+    //     ELSE (Previous FINAL LOWERBAND)
+
+    // SUPERTREND =
+    //     IF(
+    //      Previous Supertrend == Previous FINAL UPPERBAND AND
+    //      Current Close < Current FINAL UPPERBAND
+    //     ) THAN Current FINAL UPPERBAND
+    //     ELSE IF(
+    //      Previous Supertrend == Previous FINAL LOWERBAND AND
+    //      Current Close < Current FINAL LOWERBAND
+    //     ) THAN Current FINAL UPPERBAND
+    //     ELSE IF(
+    //      Previous Supertrend == Previous FINAL UPPERBAND AND
+    //      Current Close > Current FINAL UPPERBAND
+    //     ) THAN Current FINAL LOWERBAND
+    //     ELSE IF(
+    //      Previous Supertrend == Previous FINAL LOWERBAND AND
+    //      Current Close > Current FINAL LOWERBAND
+    //     ) THAN Current FINAL LOWERBAND
+
+
+    getValues: function<TLinkedSeries extends LineSeries> (
+        series: TLinkedSeries,
+        params: Highcharts.SupertrendIndicatorParamsOptions
+    ): (IndicatorValuesObject<TLinkedSeries>|undefined) {
+        var period: number = (params.period as any),
+            multiplier: number = (params.multiplier as any),
+            xVal: Array<number> = (series.xData as any),
+            yVal: Array<Array<number>> = (series.yData as any),
+            ATRData: Array<number> = [],
+            // 0- date, 1- Supertrend indicator
+            ST: Array<Array<(number|undefined)>> = [],
+            xData: Array<number> = [],
+            yData: Array<(number|undefined)> = [],
+            close = 3,
+            low = 2,
+            high = 1,
+            periodsOffset = (period === 0) ? 0 : period - 1,
+            basicUp: number,
+            basicDown: number,
+            finalUp: Array<number> = [],
+            finalDown: Array<number> = [],
+            supertrend: (number|undefined),
+            prevFinalUp: number,
+            prevFinalDown: number,
+            prevST: (number|undefined), // previous Supertrend
+            prevY: Array<number>,
+            y: Array<number>,
+            i: number;
+
+        if (
+            (xVal.length <= period) || !isArray(yVal[0]) ||
+            yVal[0].length !== 4 || period < 0
+        ) {
+            return;
+        }
+
+        ATRData = (ATRIndicator.prototype.getValues.call(this, series, {
+            period: period
+        }) as any).yData;
+
+        for (i = 0; i < ATRData.length; i++) {
+            y = yVal[periodsOffset + i];
+            prevY = yVal[periodsOffset + i - 1] || [];
+            prevFinalUp = finalUp[i - 1];
+            prevFinalDown = finalDown[i - 1];
+            prevST = yData[i - 1];
+
+            if (i === 0) {
+                prevFinalUp = prevFinalDown = prevST = 0;
             }
 
-            // Generate lines:
-            objectEach(groupedPoitns,
-                function (values, lineName): void {
-                    indicator.points = values;
-                    indicator.options = merge(
-                        (supertrendLineOptions as any)[lineName].styles,
-                        gappedExtend
-                    );
-                    indicator.graph = (indicator as any)[
-                        'graph' + lineName + 'Line'
-                    ];
-                    SMA.prototype.drawGraph.call(indicator);
-
-                    // Now save line
-                    (indicator as any)[
-                        'graph' + lineName + 'Line'
-                    ] = indicator.graph;
-                }
+            basicUp = correctFloat(
+                (y[high] + y[low]) / 2 + multiplier * ATRData[i]
+            );
+            basicDown = correctFloat(
+                (y[high] + y[low]) / 2 - multiplier * ATRData[i]
             );
 
-            // Restore options:
-            indicator.points = indicPoints;
-            indicator.options = indicOptions;
-            indicator.graph = indicPath;
-        },
-
-        // Supertrend (Multiplier, Period) Formula:
-
-        // BASIC UPPERBAND = (HIGH + LOW) / 2 + Multiplier * ATR(Period)
-        // BASIC LOWERBAND = (HIGH + LOW) / 2 - Multiplier * ATR(Period)
-
-        // FINAL UPPERBAND =
-        //     IF(
-        //      Current BASICUPPERBAND  < Previous FINAL UPPERBAND AND
-        //      Previous Close > Previous FINAL UPPERBAND
-        //     ) THEN (Current BASIC UPPERBAND)
-        //     ELSE (Previous FINALUPPERBAND)
-
-        // FINAL LOWERBAND =
-        //     IF(
-        //      Current BASIC LOWERBAND  > Previous FINAL LOWERBAND AND
-        //      Previous Close < Previous FINAL LOWERBAND
-        //     ) THEN (Current BASIC LOWERBAND)
-        //     ELSE (Previous FINAL LOWERBAND)
-
-        // SUPERTREND =
-        //     IF(
-        //      Previous Supertrend == Previous FINAL UPPERBAND AND
-        //      Current Close < Current FINAL UPPERBAND
-        //     ) THAN Current FINAL UPPERBAND
-        //     ELSE IF(
-        //      Previous Supertrend == Previous FINAL LOWERBAND AND
-        //      Current Close < Current FINAL LOWERBAND
-        //     ) THAN Current FINAL UPPERBAND
-        //     ELSE IF(
-        //      Previous Supertrend == Previous FINAL UPPERBAND AND
-        //      Current Close > Current FINAL UPPERBAND
-        //     ) THAN Current FINAL LOWERBAND
-        //     ELSE IF(
-        //      Previous Supertrend == Previous FINAL LOWERBAND AND
-        //      Current Close > Current FINAL LOWERBAND
-        //     ) THAN Current FINAL LOWERBAND
-
-
-        getValues: function<TLinkedSeries extends LineSeries> (
-            series: TLinkedSeries,
-            params: Highcharts.SupertrendIndicatorParamsOptions
-        ): (IndicatorValuesObject<TLinkedSeries>|undefined) {
-            var period: number = (params.period as any),
-                multiplier: number = (params.multiplier as any),
-                xVal: Array<number> = (series.xData as any),
-                yVal: Array<Array<number>> = (series.yData as any),
-                ATRData: Array<number> = [],
-                // 0- date, 1- Supertrend indicator
-                ST: Array<Array<(number|undefined)>> = [],
-                xData: Array<number> = [],
-                yData: Array<(number|undefined)> = [],
-                close = 3,
-                low = 2,
-                high = 1,
-                periodsOffset = (period === 0) ? 0 : period - 1,
-                basicUp: number,
-                basicDown: number,
-                finalUp: Array<number> = [],
-                finalDown: Array<number> = [],
-                supertrend: (number|undefined),
-                prevFinalUp: number,
-                prevFinalDown: number,
-                prevST: (number|undefined), // previous Supertrend
-                prevY: Array<number>,
-                y: Array<number>,
-                i: number;
+            if (
+                (basicUp < prevFinalUp) ||
+                (prevY[close] > prevFinalUp)
+            ) {
+                finalUp[i] = basicUp;
+            } else {
+                finalUp[i] = prevFinalUp;
+            }
 
             if (
-                (xVal.length <= period) || !isArray(yVal[0]) ||
-                yVal[0].length !== 4 || period < 0
+                (basicDown > prevFinalDown) ||
+                (prevY[close] < prevFinalDown)
             ) {
-                return;
+                finalDown[i] = basicDown;
+            } else {
+                finalDown[i] = prevFinalDown;
             }
 
-            ATRData = (ATR.prototype.getValues.call(this, series, {
-                period: period
-            }) as any).yData;
-
-            for (i = 0; i < ATRData.length; i++) {
-                y = yVal[periodsOffset + i];
-                prevY = yVal[periodsOffset + i - 1] || [];
-                prevFinalUp = finalUp[i - 1];
-                prevFinalDown = finalDown[i - 1];
-                prevST = yData[i - 1];
-
-                if (i === 0) {
-                    prevFinalUp = prevFinalDown = prevST = 0;
-                }
-
-                basicUp = correctFloat(
-                    (y[high] + y[low]) / 2 + multiplier * ATRData[i]
-                );
-                basicDown = correctFloat(
-                    (y[high] + y[low]) / 2 - multiplier * ATRData[i]
-                );
-
-                if (
-                    (basicUp < prevFinalUp) ||
-                    (prevY[close] > prevFinalUp)
-                ) {
-                    finalUp[i] = basicUp;
-                } else {
-                    finalUp[i] = prevFinalUp;
-                }
-
-                if (
-                    (basicDown > prevFinalDown) ||
-                    (prevY[close] < prevFinalDown)
-                ) {
-                    finalDown[i] = basicDown;
-                } else {
-                    finalDown[i] = prevFinalDown;
-                }
-
-                if (prevST === prevFinalUp && y[close] < finalUp[i] ||
-                    prevST === prevFinalDown && y[close] < finalDown[i]
-                ) {
-                    supertrend = finalUp[i];
-                } else if (
-                    prevST === prevFinalUp && y[close] > finalUp[i] ||
-                    prevST === prevFinalDown && y[close] > finalDown[i]
-                ) {
-                    supertrend = finalDown[i];
-                }
-
-                ST.push([xVal[periodsOffset + i], supertrend]);
-                xData.push(xVal[periodsOffset + i]);
-                yData.push(supertrend);
+            if (prevST === prevFinalUp && y[close] < finalUp[i] ||
+                prevST === prevFinalDown && y[close] < finalDown[i]
+            ) {
+                supertrend = finalUp[i];
+            } else if (
+                prevST === prevFinalUp && y[close] > finalUp[i] ||
+                prevST === prevFinalDown && y[close] > finalDown[i]
+            ) {
+                supertrend = finalDown[i];
             }
 
-            return {
-                values: ST,
-                xData: xData,
-                yData: yData
-            } as IndicatorValuesObject<TLinkedSeries>;
+            ST.push([xVal[periodsOffset + i], supertrend]);
+            xData.push(xVal[periodsOffset + i]);
+            yData.push(supertrend);
         }
+
+        return {
+            values: ST,
+            xData: xData,
+            yData: yData
+        } as IndicatorValuesObject<TLinkedSeries>;
     }
-);
+});
+
+/* *
+ *
+ *  Registry
+ *
+ * */
+declare module '../../Core/Series/SeriesType' {
+    interface SeriesTypeRegistry {
+        supertrend: typeof SupertrendIndicator;
+    }
+}
+
+BaseSeries.registerSeriesType('supertrend', SupertrendIndicator);
+
+/* *
+ *
+ *  Default Export
+ *
+ * */
+
+export default SupertrendIndicator;
 
 /**
  * A `Supertrend indicator` series. If the [type](#series.supertrend.type)
