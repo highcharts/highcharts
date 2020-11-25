@@ -20,14 +20,11 @@ import type AnimationOptionsObject from '../Core/Animation/AnimationOptionsObjec
 import type ColorAxis from '../Core/Axis/ColorAxis';
 import type ColorType from '../Core/Color/ColorType';
 import type DataExtremesObject from '../Core/Series/DataExtremesObject';
+import type Point from '../Core/Series/Point.js';
 import type { PointStateHoverOptions } from '../Core/Series/PointOptions';
-import type ScatterPoint from './Scatter/ScatterPoint';
 import type ScatterPointOptions from './Scatter/ScatterPointOptions';
 import type ScatterSeriesOptions from './Scatter/ScatterSeriesOptions';
-import type {
-    SeriesOptions,
-    SeriesStatesOptions
-} from '../Core/Series/SeriesOptions';
+import type { SeriesStatesOptions } from '../Core/Series/SeriesOptions';
 import type { StatesOptionsKey } from '../Core/Series/StatesOptions';
 import type SVGAttributes from '../Core/Renderer/SVG/SVGAttributes';
 import type SVGPath from '../Core/Renderer/SVG/SVGPath';
@@ -45,7 +42,6 @@ const {
 } = ColorMapMixin;
 import H from '../Core/Globals.js';
 const { noop } = H;
-import Point from '../Core/Series/Point.js';
 import LegendSymbolMixin from '../Mixins/LegendSymbol.js';
 import LineSeries from '../Series/Line/LineSeries.js';
 import palette from '../Core/Color/Palette.js';
@@ -747,60 +743,33 @@ interface HeatmapSeries {
     colorAttribs: typeof colorMapSeriesMixin.colorAttribs;
     colorKey: typeof colorMapSeriesMixin.colorKey;
     drawLegendSymbol: typeof LegendSymbolMixin.drawRectangle;
+    getSymbol: typeof LineSeries.prototype.getSymbol;
     parallelArrays: typeof colorMapSeriesMixin.parallelArrays;
     pointArrayMap: Array<string>;
     pointClass: typeof HeatmapPoint;
     trackerGroups: typeof colorMapSeriesMixin.trackerGroups;
-    drawPoints(): void;
-    getExtremes(): DataExtremesObject;
-    getValidPoints(
-        points?: Array<HeatmapPoint>,
-        insideOnly?: boolean
-    ): Array<Point>;
-    hasData(): boolean;
-    markerAttribs(
-        this: HeatmapSeries,
-        point: HeatmapPoint
-    ): SVGAttributes;
-    pointAttribs(
-        point?: HeatmapPoint,
-        state?: StatesOptionsKey
-    ): SVGAttributes;
-    setClip(): void;
-    setOptions(
-        itemOptions: SeriesOptions
-    ): this['options'];
-    translate(): void;
 }
 extend(HeatmapSeries.prototype, {
-
-    axisTypes: colorMapSeriesMixin.axisTypes,
-
-    colorKey: colorMapSeriesMixin.colorKey,
-
-    directTouch: true,
-
-    hasPointSpecificOptions: true,
-
-    getExtremesFromAll: true,
-
-    parallelArrays: colorMapSeriesMixin.parallelArrays,
-
-    pointArrayMap: ['y', 'value'],
-
-    trackerGroups: colorMapSeriesMixin.trackerGroups,
 
     /**
      * @private
      */
     alignDataLabel: ColumnSeries.prototype.alignDataLabel,
 
+    axisTypes: colorMapSeriesMixin.axisTypes,
+
     colorAttribs: colorMapSeriesMixin.colorAttribs,
+
+    colorKey: colorMapSeriesMixin.colorKey,
+
+    directTouch: true,
 
     /**
      * @private
      */
     drawLegendSymbol: LegendSymbolMixin.drawRectangle,
+
+    hasPointSpecificOptions: true,
 
     /**
      * @ignore
@@ -808,7 +777,15 @@ extend(HeatmapSeries.prototype, {
      */
     getBox: noop as any,
 
-    getSymbol: LineSeries.prototype.getSymbol
+    getExtremesFromAll: true,
+
+    getSymbol: LineSeries.prototype.getSymbol,
+
+    parallelArrays: colorMapSeriesMixin.parallelArrays,
+
+    pointArrayMap: ['y', 'value'],
+
+    trackerGroups: colorMapSeriesMixin.trackerGroups
 
 });
 
@@ -853,7 +830,7 @@ class HeatmapPoint extends ScatterSeries.prototype.pointClass {
         options: Highcharts.HeatmapPointOptions,
         x?: number
     ): HeatmapPoint {
-        var point = Point.prototype
+        const point: HeatmapPoint = LineSeries.prototype.pointClass.prototype
             .applyOptions.call(this, options, x) as any;
 
         point.formatPrefix =
@@ -922,7 +899,7 @@ class HeatmapPoint extends ScatterSeries.prototype.pointClass {
 
         // Handle marker's fixed width, and height values including border
         // and pointPadding while calculating cell attributes.
-        [['width', 'x'], ['height', 'y']].forEach(function (dimension: string[]): void {
+        [['width', 'x'], ['height', 'y']].forEach(function (dimension): void {
             const prop = dimension[0],
                 direction = dimension[1];
 
@@ -1020,7 +997,6 @@ interface HeatmapPoint {
 }
 extend(HeatmapPoint.prototype, {
     dataLabelOnNull: colorMapPointMixin.dataLabelOnNull,
-    isValid: colorMapPointMixin.isValid,
     setState: colorMapPointMixin.setState
 });
 

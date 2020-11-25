@@ -27,7 +27,6 @@ import ColorMapMixin from '../Mixins/ColorMapSeries.js';
 var colorMapPointMixin = ColorMapMixin.colorMapPointMixin, colorMapSeriesMixin = ColorMapMixin.colorMapSeriesMixin;
 import H from '../Core/Globals.js';
 var noop = H.noop;
-import Point from '../Core/Series/Point.js';
 import LegendSymbolMixin from '../Mixins/LegendSymbol.js';
 import LineSeries from '../Series/Line/LineSeries.js';
 import palette from '../Core/Color/Palette.js';
@@ -531,29 +530,29 @@ var HeatmapSeries = /** @class */ (function (_super) {
     return HeatmapSeries;
 }(ScatterSeries));
 extend(HeatmapSeries.prototype, {
-    axisTypes: colorMapSeriesMixin.axisTypes,
-    colorKey: colorMapSeriesMixin.colorKey,
-    directTouch: true,
-    hasPointSpecificOptions: true,
-    getExtremesFromAll: true,
-    parallelArrays: colorMapSeriesMixin.parallelArrays,
-    pointArrayMap: ['y', 'value'],
-    trackerGroups: colorMapSeriesMixin.trackerGroups,
     /**
      * @private
      */
     alignDataLabel: ColumnSeries.prototype.alignDataLabel,
+    axisTypes: colorMapSeriesMixin.axisTypes,
     colorAttribs: colorMapSeriesMixin.colorAttribs,
+    colorKey: colorMapSeriesMixin.colorKey,
+    directTouch: true,
     /**
      * @private
      */
     drawLegendSymbol: LegendSymbolMixin.drawRectangle,
+    hasPointSpecificOptions: true,
     /**
      * @ignore
      * @deprecated
      */
     getBox: noop,
-    getSymbol: LineSeries.prototype.getSymbol
+    getExtremesFromAll: true,
+    getSymbol: LineSeries.prototype.getSymbol,
+    parallelArrays: colorMapSeriesMixin.parallelArrays,
+    pointArrayMap: ['y', 'value'],
+    trackerGroups: colorMapSeriesMixin.trackerGroups
 });
 /* *
  *
@@ -587,7 +586,7 @@ var HeatmapPoint = /** @class */ (function (_super) {
      * @private
      */
     HeatmapPoint.prototype.applyOptions = function (options, x) {
-        var point = Point.prototype
+        var point = LineSeries.prototype.pointClass.prototype
             .applyOptions.call(this, options, x);
         point.formatPrefix =
             point.isNull || point.value === null ?
@@ -666,7 +665,6 @@ var HeatmapPoint = /** @class */ (function (_super) {
 }(ScatterSeries.prototype.pointClass));
 extend(HeatmapPoint.prototype, {
     dataLabelOnNull: colorMapPointMixin.dataLabelOnNull,
-    isValid: colorMapPointMixin.isValid,
     setState: colorMapPointMixin.setState
 });
 HeatmapSeries.prototype.pointClass = HeatmapPoint;
