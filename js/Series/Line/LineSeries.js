@@ -2691,7 +2691,7 @@ var LineSeries = /** @class */ (function () {
             factor = axis.reversed ? -0.5 : 0.5; // #11955
         }
         return isNumber(factor) ?
-            factor * pick(pointRange, axis.pointRange) :
+            factor * (pointRange || axis.pointRange) :
             0;
     };
     /**
