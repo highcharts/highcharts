@@ -10,12 +10,25 @@
  *
  * */
 'use strict';
+var __extends = (this && this.__extends) || (function () {
+    var extendStatics = function (d, b) {
+        extendStatics = Object.setPrototypeOf ||
+            ({ __proto__: [] } instanceof Array && function (d, b) { d.__proto__ = b; }) ||
+            function (d, b) { for (var p in b) if (b.hasOwnProperty(p)) d[p] = b[p]; };
+        return extendStatics(d, b);
+    };
+    return function (d, b) {
+        extendStatics(d, b);
+        function __() { this.constructor = d; }
+        d.prototype = b === null ? Object.create(b) : (__.prototype = b.prototype, new __());
+    };
+})();
 import Axis from '../Core/Axis/Axis.js';
 import BaseSeries from '../Core/Series/Series.js';
-var seriesTypes = BaseSeries.seriesTypes;
+var ColumnSeries = BaseSeries.seriesTypes.column;
 import H from '../Core/Globals.js';
 import U from '../Core/Utilities.js';
-var addEvent = U.addEvent, isNumber = U.isNumber, pick = U.pick, wrap = U.wrap;
+var addEvent = U.addEvent, extend = U.extend, isNumber = U.isNumber, merge = U.merge, pick = U.pick, wrap = U.wrap;
 import './Area/AreaSeries.js';
 /* *
  *
@@ -29,45 +42,65 @@ import './Area/AreaSeries.js';
  *
  * @augments Highcharts.Series
  */
-BaseSeries.seriesType('variwide', 'column'
-/**
- * A variwide chart (related to marimekko chart) is a column chart with a
- * variable width expressing a third dimension.
- *
- * @sample {highcharts} highcharts/demo/variwide/
- *         Variwide chart
- * @sample {highcharts} highcharts/series-variwide/inverted/
- *         Inverted variwide chart
- * @sample {highcharts} highcharts/series-variwide/datetime/
- *         Variwide columns on a datetime axis
- *
- * @extends      plotOptions.column
- * @since        6.0.0
- * @product      highcharts
- * @excluding    boostThreshold, crisp, depth, edgeColor, edgeWidth,
- *               groupZPadding, boostBlending
- * @requires     modules/variwide
- * @optionparent plotOptions.variwide
- */
-, {
+var VariwideSeries = /** @class */ (function (_super) {
+    __extends(VariwideSeries, _super);
+    function VariwideSeries() {
+        var _this = _super !== null && _super.apply(this, arguments) || this;
+        /* *
+         *
+         * Properties
+         *
+         * */
+        _this.data = void 0;
+        _this.options = void 0;
+        return _this;
+    }
+    /* *
+     *
+     * Static properties
+     *
+     * */
     /**
-     * In a variwide chart, the point padding is 0 in order to express the
-     * horizontal stacking of items.
+     * A variwide chart (related to marimekko chart) is a column chart with a
+     * variable width expressing a third dimension.
+     *
+     * @sample {highcharts} highcharts/demo/variwide/
+     *         Variwide chart
+     * @sample {highcharts} highcharts/series-variwide/inverted/
+     *         Inverted variwide chart
+     * @sample {highcharts} highcharts/series-variwide/datetime/
+     *         Variwide columns on a datetime axis
+     *
+     * @extends      plotOptions.column
+     * @since        6.0.0
+     * @product      highcharts
+     * @excluding    boostThreshold, crisp, depth, edgeColor, edgeWidth,
+     *               groupZPadding, boostBlending
+     * @requires     modules/variwide
+     * @optionparent plotOptions.variwide
      */
-    pointPadding: 0,
-    /**
-     * In a variwide chart, the group padding is 0 in order to express the
-     * horizontal stacking of items.
-     */
-    groupPadding: 0
-}, {
+    VariwideSeries.defaultOptions = merge(ColumnSeries.defaultOptions, {
+        /**
+         * In a variwide chart, the point padding is 0 in order to express the
+         * horizontal stacking of items.
+         */
+        pointPadding: 0,
+        /**
+         * In a variwide chart, the group padding is 0 in order to express the
+         * horizontal stacking of items.
+         */
+        groupPadding: 0
+    });
+    return VariwideSeries;
+}(ColumnSeries));
+extend(VariwideSeries.prototype, {
     irregularWidths: true,
     pointArrayMap: ['y', 'z'],
     parallelArrays: ['x', 'y', 'z'],
     processData: function (force) {
         this.totalZ = 0;
         this.relZ = [];
-        seriesTypes.column.prototype.processData.call(this, force);
+        BaseSeries.seriesTypes.column.prototype.processData.call(this, force);
         (this.xAxis.reversed ?
             this.zData.slice().reverse() :
             this.zData).forEach(function (z, i) {
@@ -117,7 +150,7 @@ BaseSeries.seriesType('variwide', 'column'
         // Temporarily disable crisping when computing original shapeArgs
         var crispOption = this.options.crisp, xAxis = this.xAxis;
         this.options.crisp = false;
-        seriesTypes.column.prototype.translate.call(this);
+        BaseSeries.seriesTypes.column.prototype.translate.call(this);
         // Reset option
         this.options.crisp = crispOption;
         var inverted = this.chart.inverted, crisp = this.borderWidth % 2 / 2;
@@ -180,12 +213,40 @@ BaseSeries.seriesType('variwide', 'column'
             }
         });
     }
-    // Point functions
-}, {
+});
+/* *
+ *
+ * VariwidePoint class
+ *
+ * */
+var VariwidePoint = /** @class */ (function (_super) {
+    __extends(VariwidePoint, _super);
+    function VariwidePoint() {
+        var _this = _super !== null && _super.apply(this, arguments) || this;
+        /* *
+         *
+         * Properites
+         *
+         * */
+        _this.options = void 0;
+        _this.series = void 0;
+        return _this;
+    }
+    return VariwidePoint;
+}(ColumnSeries.prototype.pointClass));
+extend(VariwidePoint.prototype, {
     isValid: function () {
         return isNumber(this.y) && isNumber(this.z);
     }
 });
+VariwideSeries.prototype.pointClass = VariwidePoint;
+BaseSeries.registerSeriesType('variwide', VariwideSeries);
+/* *
+ *
+ * Default export
+ *
+ * */
+export default VariwideSeries;
 H.Tick.prototype.postTranslate = function (xy, xOrY, index) {
     var axis = this.axis, pos = xy[xOrY] - axis.pos;
     if (!axis.horiz) {
@@ -242,6 +303,11 @@ wrap(H.Tick.prototype, 'getLabelPosition', function (proceed, x, y, label, horiz
     }
     return xy;
 });
+/* *
+ *
+ * API Options
+ *
+ * */
 /**
  * A `variwide` series. If the [type](#series.variwide.type) option is not
  * specified, it is inherited from [chart.type](#chart.type).
