@@ -33,37 +33,6 @@ const {
     merge
 } = U;
 
-// /**
-//  * Internal types
-//  * @private
-//  */
-// declare global {
-//     namespace Highcharts {
-//         interface KeltnerChannelsIndicatorOptions
-//             extends SMAOptions, MultipleLinesIndicatorOptions {
-//             bottomLine?: Record<string, CSSObject>;
-//             marker?: PointMarkerOptions;
-//             params?: KeltnerChannelsIndicatorParamsOptions;
-//             tooltip?: TooltipOptions;
-//             topLine?: Record<string, CSSObject>;
-//         }
-
-//         interface KeltnerChannelsIndicatorParamsOptions
-//             extends SMAParamsOptions {
-//             periodATR?: number;
-//             multiplierATR?: number;
-//         }
-
-//         interface KeltnerChannelsLinkedParentSeries extends LineSeries {
-//             yData: Array<Array<number>>;
-//         }
-
-//         class KeltnerChannelsIndicatorPoint extends SMAPoint {
-//             public series: KeltnerChannelsIndicator;
-//         }
-//     }
-// }
-
 /**
  * The Keltner Channels series type.
  *
