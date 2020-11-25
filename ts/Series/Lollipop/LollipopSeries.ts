@@ -10,44 +10,26 @@
 
 'use strict';
 
-import type DumbbellSeriesOptions from '../Dumbbell/DumbbellSeriesOptions';
-import type DumbbellPointOptions from '../Dumbbell/DumbbellPointOptions';
-import type { SeriesStatesOptions } from '../../Core/Series/SeriesOptions';
+/* *
+ *
+ *  Imports
+ *
+ * */
+
+import type LollipopSeriesOptions from './LollipopSeriesOptions';
+import LollipopPoint from './LollipopPoint.js';
 import AreaSeries from '../Area/AreaSeries.js';
+const { prototype: areaProto } = AreaSeries;
 import DumbbellSeries from '../Dumbbell/DumbbellSeries.js';
-import DumbbellPoint from '../Dumbbell/DumbbellPoint.js';
 import BaseSeries from '../../Core/Series/Series.js';
-import Point from '../../Core/Series/Point.js';
 import ColumnSeries from '../Column/ColumnSeries.js';
 const { prototype: colProto } = ColumnSeries;
 import U from '../../Core/Utilities.js';
 const {
-    isObject,
     pick,
     merge,
     extend
 } = U;
-
-/**
- * Internal types
- * @private
- */
-declare global {
-    namespace Highcharts {
-        interface LollipopPointOptions extends DumbbellPointOptions {
-        }
-        interface LollipopSeriesOptions extends DumbbellSeriesOptions {
-            lowColor?: undefined;
-            states?: SeriesStatesOptions<LollipopSeries>;
-        }
-        class LollipopPoint extends DumbbellPoint {
-            public series: LollipopSeries;
-            public options: LollipopPointOptions;
-        }
-    }
-}
-
-const areaProto = BaseSeries.seriesTypes.area.prototype;
 
 /* *
  *
@@ -55,6 +37,16 @@ const areaProto = BaseSeries.seriesTypes.area.prototype;
  *
  * */
 
+/**
+ * lollipop series type
+ *
+ * @private
+ * @class
+ * @name Highcharts.seriesTypes.lollipop
+ *
+ * @augments Highcharts.Series
+ *
+ */
 class LollipopSeries extends DumbbellSeries {
 
     /* *
@@ -63,7 +55,25 @@ class LollipopSeries extends DumbbellSeries {
      *
      * */
 
-    public static defaultOptions: Highcharts.LollipopSeriesOptions = merge(
+    /**
+     * The lollipop series is a carteseian series with a line anchored from
+     * the x axis and a dot at the end to mark the value.
+     * Requires `highcharts-more.js`, `modules/dumbbell.js` and
+     * `modules/lollipop.js`.
+     *
+     * @sample {highcharts} highcharts/demo/lollipop/
+     *         Lollipop chart
+     * @sample {highcharts} highcharts/series-dumbbell/styled-mode-dumbbell/
+     *         Styled mode
+     *
+     * @extends      plotOptions.dumbbell
+     * @product      highcharts highstock
+     * @excluding    fillColor, fillOpacity, lineWidth, stack, stacking,
+     *               lowColor, stickyTracking, trackByArea
+     * @since 8.0.0
+     * @optionparent plotOptions.lollipop
+     */
+    public static defaultOptions: LollipopSeriesOptions = merge(
         DumbbellSeries.defaultOptions,
         {
             /** @ignore-option */
@@ -90,7 +100,7 @@ class LollipopSeries extends DumbbellSeries {
             tooltip: {
                 pointFormat: '<span style="color:{series.color}">●</span> {series.name}: <b>{point.y}</b><br/>'
             }
-        } as Highcharts.LollipopSeriesOptions);
+        } as LollipopSeriesOptions);
 
     /* *
      *
@@ -99,14 +109,9 @@ class LollipopSeries extends DumbbellSeries {
      * */
 
     public data: Array<LollipopPoint> = void 0 as any;
-    public options: Highcharts.LollipopSeriesOptions = void 0 as any;
+    public options: LollipopSeriesOptions = void 0 as any;
     public points: Array<LollipopPoint> = void 0 as any;
 
-    /* *
-     *
-     *  Functions
-     *
-     * */
 }
 
 /* *
@@ -116,10 +121,7 @@ class LollipopSeries extends DumbbellSeries {
  * */
 
 interface LollipopSeries extends DumbbellSeries {
-    data: Array<LollipopPoint>;
-    options: Highcharts.LollipopSeriesOptions;
-    pointClass: typeof Highcharts.LollipopPoint;
-    points: Array<LollipopPoint>;
+    pointClass: typeof LollipopPoint;
     pointArrayMap: Array<string>;
     pointValKey: string;
     translatePoint: AreaSeries['translate'];
@@ -131,39 +133,14 @@ interface LollipopSeries extends DumbbellSeries {
 extend(LollipopSeries.prototype, {
     pointArrayMap: ['y'],
     pointValKey: 'y',
-    toYData: function (point: Highcharts.LollipopPoint): Array<number> {
+    toYData: function (point: LollipopPoint): Array<number> {
         return [pick(point.y, point.low)];
     },
     translatePoint: areaProto.translate,
     drawPoint: areaProto.drawPoints,
     drawDataLabels: colProto.drawDataLabels,
-    setShapeArgs: colProto.translate
-});
-
-class LollipopPoint extends DumbbellPoint {
-    public series: LollipopSeries = void 0 as any;
-    public options: Highcharts.LollipopPointOptions = void 0 as any;
-}
-
-
-LollipopSeries.prototype.pointClass = LollipopPoint;
-
-extend(LollipopSeries.prototype.pointClass.prototype, {
-    pointSetState: areaProto.pointClass.prototype.setState,
-    setState: DumbbellPoint.prototype.setState,
-    // Does not work with the inherited `isvalid`
-    isValid: Point.prototype.isValid,
-    init: function (
-        series: LollipopSeries,
-        options: Highcharts.LollipopPointOptions,
-        x?: number
-    ): Point {
-        if (isObject(options) && 'low' in options) {
-            options.y = options.low;
-            delete options.low;
-        }
-        return Point.prototype.init.apply(this, arguments);
-    }
+    setShapeArgs: colProto.translate,
+    pointClass: LollipopPoint
 });
 
 /* *
@@ -171,7 +148,6 @@ extend(LollipopSeries.prototype.pointClass.prototype, {
  *  Registry
  *
  * */
-
 
 /**
  * @private
@@ -191,25 +167,6 @@ BaseSeries.registerSeriesType('lollipop', LollipopSeries);
  * */
 
 export default LollipopSeries;
-
-/**
- * The lollipop series is a carteseian series with a line anchored from
- * the x axis and a dot at the end to mark the value.
- * Requires `highcharts-more.js`, `modules/dumbbell.js` and
- * `modules/lollipop.js`.
- *
- * @sample {highcharts} highcharts/demo/lollipop/
- *         Lollipop chart
- * @sample {highcharts} highcharts/series-dumbbell/styled-mode-dumbbell/
- *         Styled mode
- *
- * @extends      plotOptions.dumbbell
- * @product      highcharts highstock
- * @excluding    fillColor, fillOpacity, lineWidth, stack, stacking, lowColor,
- *               stickyTracking, trackByArea
- * @since 8.0.0
- * @optionparent plotOptions.lollipop
- */
 
 /**
  * The `lollipop` series. If the [type](#series.lollipop.type) option is
