@@ -23,12 +23,12 @@ var __extends = (this && this.__extends) || (function () {
         d.prototype = b === null ? Object.create(b) : (__.prototype = b.prototype, new __());
     };
 })();
-import BaseSeries from '../Core/Series/Series.js';
+import BaseSeries from '../../Core/Series/Series.js';
 var _a = BaseSeries.seriesTypes, LineSeries = _a.line, PieSeries = _a.pie;
-import H from '../Core/Globals.js';
-import O from '../Core/Options.js';
+import H from '../../Core/Globals.js';
+import O from '../../Core/Options.js';
 var defaultOptions = O.defaultOptions;
-import U from '../Core/Utilities.js';
+import U from '../../Core/Utilities.js';
 var defined = U.defined, extend = U.extend, fireEvent = U.fireEvent, isNumber = U.isNumber, merge = U.merge, objectEach = U.objectEach, pick = U.pick;
 /* *
  *
