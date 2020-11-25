@@ -18,24 +18,23 @@
  *
  * */
 
-import type PiePoint from './Pie/PiePoint';
-import type PiePointOptions from './Pie/PiePointOptions';
-import type PieSeriesOptions from './Pie/PieSeriesOptions';
-import type { PointMarkerOptions } from '../Core/Series/PointOptions';
-import type { SeriesStatesOptions } from '../Core/Series/SeriesOptions';
-import type SVGAttributes from '../Core/Renderer/SVG/SVGAttributes';
-import type SVGElement from '../Core/Renderer/SVG/SVGElement';
-import BaseSeries from '../Core/Series/Series.js';
+import type PiePointOptions from '../Pie/PiePointOptions';
+import type PieSeriesOptions from '../Pie/PieSeriesOptions';
+import type { PointMarkerOptions } from '../../Core/Series/PointOptions';
+import type { SeriesStatesOptions } from '../../Core/Series/SeriesOptions';
+import type SVGAttributes from '../../Core/Renderer/SVG/SVGAttributes';
+import type SVGElement from '../../Core/Renderer/SVG/SVGElement';
+import BaseSeries from '../../Core/Series/Series.js';
 const {
     seriesTypes: {
         line: LineSeries,
         pie: PieSeries
     }
 } = BaseSeries;
-import H from '../Core/Globals.js';
-import O from '../Core/Options.js';
+import H from '../../Core/Globals.js';
+import O from '../../Core/Options.js';
 const { defaultOptions } = O;
-import U from '../Core/Utilities.js';
+import U from '../../Core/Utilities.js';
 const {
     defined,
     extend,
@@ -671,7 +670,7 @@ extend(ItemPoint.prototype, {
  *
  * */
 
-declare module '../Core/Series/SeriesType' {
+declare module '../../Core/Series/SeriesType' {
     interface SeriesTypeRegistry {
         item: typeof ItemSeries;
     }

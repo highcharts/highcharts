@@ -10,4 +10,4 @@
  * License: www.highcharts.com/license
  */
 'use strict';
-import '../../Series/ItemSeries.js';
+import '../../Series/Item/ItemSeries.js';
