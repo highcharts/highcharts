@@ -26,10 +26,9 @@ var __extends = (this && this.__extends) || (function () {
 import A from '../../Core/Animation/AnimationUtilities.js';
 var animObject = A.animObject;
 import BaseSeries from '../../Core/Series/Series.js';
-import ColumnSeries from '../Column/ColumnSeries.js';
+var _a = BaseSeries.seriesTypes, ColumnSeries = _a.column, LineSeries = _a.line;
 import H from '../../Core/Globals.js';
 var noop = H.noop;
-import LineSeries from '../Line/LineSeries.js';
 import OnSeriesMixin from '../../Mixins/OnSeries.js';
 import U from '../../Core/Utilities.js';
 var extend = U.extend, merge = U.merge, pick = U.pick;
@@ -236,6 +235,12 @@ var WindbarbSeries = /** @class */ (function (_super) {
             }, animObject(this.options.animation));
         }
     };
+    WindbarbSeries.prototype.markerAttribs = function (point, state) {
+        return {};
+    };
+    WindbarbSeries.prototype.getExtremes = function () {
+        return {};
+    };
     /**
      * Wind barbs are a convenient way to represent wind speed and direction in
      * one graphical form. Wind direction is given by the stem direction, and
@@ -354,14 +359,9 @@ extend(WindbarbSeries.prototype, {
     beaufortFloor: [0, 0.3, 1.6, 3.4, 5.5, 8.0, 10.8, 13.9, 17.2, 20.8,
         24.5, 28.5, 32.7],
     trackerGroups: ['markerGroup'],
-    markerAttribs: function () {
-        return;
-    },
     getPlotBox: OnSeriesMixin.getPlotBox,
     // Don't invert the marker group (#4960)
-    invertGroups: noop,
-    // No data extremes for the Y axis
-    getExtremes: function () { return ({}); }
+    invertGroups: noop
 });
 WindbarbSeries.prototype.pointClass = WindbarbPoint;
 /* *

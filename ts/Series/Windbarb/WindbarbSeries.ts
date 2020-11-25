@@ -21,10 +21,14 @@ import type WindbarbSeriesOptions from './WindbarbSeriesOptions';
 import A from '../../Core/Animation/AnimationUtilities.js';
 const { animObject } = A;
 import BaseSeries from '../../Core/Series/Series.js';
-import ColumnSeries from '../Column/ColumnSeries.js';
+const {
+    seriesTypes: {
+        column: ColumnSeries,
+        line: LineSeries
+    }
+} = BaseSeries;
 import H from '../../Core/Globals.js';
 const { noop } = H;
-import LineSeries from '../Line/LineSeries.js';
 import OnSeriesMixin from '../../Mixins/OnSeries.js';
 import U from '../../Core/Utilities.js';
 const {
@@ -421,7 +425,16 @@ class WindbarbSeries extends ColumnSeries {
         }
     }
 
+    public markerAttribs(
+        point: WindbarbPoint,
+        state?: StatesOptionsKey
+    ): SVGAttributes {
+        return {};
+    }
 
+    public getExtremes(): DataExtremesObject {
+        return {};
+    }
 }
 
 interface WindbarbSeries {
@@ -432,7 +445,6 @@ interface WindbarbSeries {
     parallelArrays: Array<string>;
     pointArrayMap: Array<string>;
     pointClass: typeof WindbarbPoint;
-    trackerGroups: Array<string>;
     windArrow(point: WindbarbPoint): (SVGElement|SVGPath);
 
 }
@@ -447,14 +459,9 @@ extend(WindbarbSeries.prototype, {
     beaufortFloor: [0, 0.3, 1.6, 3.4, 5.5, 8.0, 10.8, 13.9, 17.2, 20.8,
         24.5, 28.5, 32.7], // @todo dictionary with names?
     trackerGroups: ['markerGroup'],
-    markerAttribs: function (): undefined {
-        return;
-    } as any,
     getPlotBox: OnSeriesMixin.getPlotBox,
     // Don't invert the marker group (#4960)
-    invertGroups: noop as any,
-    // No data extremes for the Y axis
-    getExtremes: (): DataExtremesObject => ({})
+    invertGroups: noop as any
 });
 
 WindbarbSeries.prototype.pointClass = WindbarbPoint;
