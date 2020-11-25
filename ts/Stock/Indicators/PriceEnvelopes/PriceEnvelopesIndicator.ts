@@ -8,62 +8,38 @@
 
 'use strict';
 
-import type CSSObject from '../../Core/Renderer/CSSObject';
-import type IndicatorValuesObject from './IndicatorValuesObject';
-import type LineSeries from '../../Series/Line/LineSeries';
+import type IndicatorValuesObject from '../IndicatorValuesObject';
+import type LineSeries from '../../../Series/Line/LineSeries';
 import type {
-    SMAOptions,
-    SMAParamsOptions
-} from './SMA/SMAOptions';
-import type SMAPoint from './SMA/SMAPoint';
-import type SVGElement from '../../Core/Renderer/SVG/SVGElement';
-import BaseSeries from '../../Core/Series/Series.js';
+    PriceEnvelopesOptions,
+    PriceEnvelopesParamsOptions
+} from './PriceEnvelopesOptions';
+import type PriceEnvelopesPoint from './PriceEnvelopesPoint';
+import type SVGElement from '../../../Core/Renderer/SVG/SVGElement';
+import BaseSeries from '../../../Core/Series/Series.js';
 const {
     seriesTypes: {
         sma: SMAIndicator
     }
 } = BaseSeries;
-import U from '../../Core/Utilities.js';
+import U from '../../../Core/Utilities.js';
 const {
     extend,
     isArray,
     merge
 } = U;
 
-/**
- * Internal types
- * @private
- */
-declare global {
-    namespace Highcharts {
-        interface PriceEnvelopesIndicatorGappedExtensionObject {
-            options?: PriceEnvelopesIndicatorGappedExtensionOptions;
-        }
-
-        interface PriceEnvelopesIndicatorGappedExtensionOptions {
-            gapSize?: number;
-        }
-
-        interface PriceEnvelopesIndicatorParamsOptions
-            extends SMAParamsOptions {
-            topBand?: number;
-            bottomBand?: number;
-        }
-
-        class PriceEnvelopesIndicatorPoint extends SMAPoint {
-            public bottom: number;
-            public middle: number;
-            public series: PriceEnvelopesIndicator;
-            public plotBottom: number;
-            public plotTop: number;
-            public top: number;
-        }
-
-        interface PriceEnvelopesIndicatorOptions extends SMAOptions {
-            params?: PriceEnvelopesIndicatorParamsOptions;
-            bottomLine?: Record<string, CSSObject>;
-            topLine?: Record<string, CSSObject>;
-        }
+/* *
+ *
+ *  Class Namespace
+ *
+ * */
+namespace PriceEnvelopesIndicator {
+    export interface PriceEnvelopesIndicatorGappedExtensionObject {
+        options?: PriceEnvelopesIndicatorGappedExtensionOptions;
+    }
+    export interface PriceEnvelopesIndicatorGappedExtensionOptions {
+        gapSize?: number;
     }
 }
 
@@ -92,7 +68,7 @@ class PriceEnvelopesIndicator extends SMAIndicator {
      * @requires     stock/indicators/price-envelopes
      * @optionparent plotOptions.priceenvelopes
      */
-    public static defaultOptions: Highcharts.PriceEnvelopesIndicatorOptions = merge(SMAIndicator.defaultOptions, {
+    public static defaultOptions: PriceEnvelopesOptions = merge(SMAIndicator.defaultOptions, {
         marker: {
             enabled: false
         },
@@ -144,11 +120,11 @@ class PriceEnvelopesIndicator extends SMAIndicator {
         dataGrouping: {
             approximation: 'averages'
         }
-    } as Highcharts.PriceEnvelopesIndicatorOptions)
+    } as PriceEnvelopesOptions)
 
-    public data: Array<Highcharts.PriceEnvelopesIndicatorPoint> = void 0 as any;
-    public options: Highcharts.PriceEnvelopesIndicatorOptions = void 0 as any;
-    public points: Array<Highcharts.PriceEnvelopesIndicatorPoint> = void 0 as any;
+    public data: Array<PriceEnvelopesPoint> = void 0 as any;
+    public options: PriceEnvelopesOptions = void 0 as any;
+    public points: Array<PriceEnvelopesPoint> = void 0 as any;
 
     public init(): void {
         BaseSeries.seriesTypes.sma.prototype.init.apply(this, arguments);
@@ -169,12 +145,12 @@ class PriceEnvelopesIndicator extends SMAIndicator {
     }
 
     public toYData(
-        point: Highcharts.PriceEnvelopesIndicatorPoint
+        point: PriceEnvelopesPoint
     ): [number, number, number] {
         return [point.top, point.middle, point.bottom];
     }
 
-    public translate(this: PriceEnvelopesIndicator): void {
+    public translate(): void {
         var indicator = this,
             translatedEnvelopes = ['plotTop', 'plotMiddle', 'plotBottom'];
 
@@ -182,7 +158,7 @@ class PriceEnvelopesIndicator extends SMAIndicator {
 
         indicator.points.forEach(
             function (
-                point: Highcharts.PriceEnvelopesIndicatorPoint
+                point: PriceEnvelopesPoint
             ): void {
                 [point.top, point.middle, point.bottom].forEach(
                     function (value: number, i: number): void {
@@ -196,28 +172,28 @@ class PriceEnvelopesIndicator extends SMAIndicator {
         );
     }
 
-    public drawGraph(this: PriceEnvelopesIndicator): void {
+    public drawGraph(): void {
         var indicator = this,
             middleLinePoints: Array<
-            Highcharts.PriceEnvelopesIndicatorPoint
+            PriceEnvelopesPoint
             > = indicator.points,
             pointsLength: number = middleLinePoints.length,
-            middleLineOptions: Highcharts.PriceEnvelopesIndicatorOptions = (
+            middleLineOptions: PriceEnvelopesOptions = (
                 indicator.options
             ),
             middleLinePath: (
                 SVGElement|undefined
             ) = indicator.graph,
             gappedExtend:
-            Highcharts.PriceEnvelopesIndicatorGappedExtensionObject = {
+            PriceEnvelopesIndicator.PriceEnvelopesIndicatorGappedExtensionObject = {
                 options: {
                     gapSize: middleLineOptions.gapSize
                 }
             },
             deviations: Array<Array<(
-                Partial<Highcharts.PriceEnvelopesIndicatorPoint>
+                Partial<PriceEnvelopesPoint>
             )>> = [[], []], // top and bottom point place holders
-            point: Highcharts.PriceEnvelopesIndicatorPoint;
+            point: PriceEnvelopesPoint;
 
         // Generate points for top and bottom lines:
         while (pointsLength--) {
@@ -259,7 +235,7 @@ class PriceEnvelopesIndicator extends SMAIndicator {
 
     public getValues <TLinkedSeries extends LineSeries>(
         series: TLinkedSeries,
-        params: Highcharts.PriceEnvelopesIndicatorParamsOptions
+        params: PriceEnvelopesParamsOptions
     ): (IndicatorValuesObject<TLinkedSeries>|undefined) {
         var period: number = (params.period as any),
             topPercent: number = (params.topBand as any),
@@ -322,7 +298,7 @@ interface PriceEnvelopesIndicator {
     pointArrayMap: Array<string>;
     pointValKey: string;
 
-    pointClass: typeof Highcharts.PriceEnvelopesIndicatorPoint;
+    pointClass: typeof PriceEnvelopesPoint;
 }
 
 extend(PriceEnvelopesIndicator.prototype, {
@@ -333,7 +309,7 @@ extend(PriceEnvelopesIndicator.prototype, {
     pointValKey: 'middle'
 });
 
-declare module '../../Core/Series/SeriesType' {
+declare module '../../../Core/Series/SeriesType' {
     interface SeriesTypeRegistry {
         priceenvelopes: typeof PriceEnvelopesIndicator;
     }
