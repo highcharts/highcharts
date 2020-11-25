@@ -21,8 +21,6 @@ const {
     extend
 } = U;
 
-import '../../Core/Options.js';
-
 /* *
  *
  *  Class
@@ -84,10 +82,7 @@ class AreaSplineRangeSeries extends AreaRangeSeries {
      * @default   {highstock} 0.75
      * @apioption plotOptions.areasplinerange.fillOpacity
      */
-    public static defaultOptions: AreaSplineRangeSeriesOptions = merge(
-        AreaRangeSeries.defaultOptions,
-        {} as AreaSplineRangeSeriesOptions
-    );
+    public static defaultOptions: AreaSplineRangeSeriesOptions = merge(AreaRangeSeries.defaultOptions);
 
     /* *
      *

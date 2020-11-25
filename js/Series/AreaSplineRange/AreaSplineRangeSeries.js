@@ -25,7 +25,6 @@ import BaseSeries from '../../Core/Series/Series.js';
 import AreaRangeSeries from '../AreaRange/AreaRangeSeries.js';
 import U from '../../Core/Utilities.js';
 var merge = U.merge, extend = U.extend;
-import '../../Core/Options.js';
 /* *
  *
  *  Class
@@ -94,7 +93,7 @@ var AreaSplineRangeSeries = /** @class */ (function (_super) {
      * @default   {highstock} 0.75
      * @apioption plotOptions.areasplinerange.fillOpacity
      */
-    AreaSplineRangeSeries.defaultOptions = merge(AreaRangeSeries.defaultOptions, {});
+    AreaSplineRangeSeries.defaultOptions = merge(AreaRangeSeries.defaultOptions);
     return AreaSplineRangeSeries;
 }(AreaRangeSeries));
 extend(AreaSplineRangeSeries.prototype, {
