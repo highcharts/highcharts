@@ -134,28 +134,24 @@ class ROCIndicator extends SMAIndicator {
             period: 9
         }
     } as Highcharts.ROCIndicatorOptions);
-}
 
-/* *
- *
- *  Prototype Properties
- *
- * */
-interface ROCIndicator {
-    data: Array<Highcharts.ROCIndicatorPoint>;
-    getValues<TLinkedSeries extends LineSeries>(
-        series: TLinkedSeries,
-        params: Highcharts.ROCIndicatorParamsOptions
-    ): (IndicatorValuesObject<TLinkedSeries>|undefined);
-    nameBase: string;
-    options: Highcharts.ROCIndicatorOptions;
-    pointClass: typeof Highcharts.ROCIndicatorPoint;
-    points: Array<Highcharts.ROCIndicatorPoint>;
-}
+    /* *
+     *
+     *  Properties
+     *
+     * */
+    public data: Array<Highcharts.ROCIndicatorPoint> = void 0 as any;
 
-extend(ROCIndicator.prototype, {
-    nameBase: 'Rate of Change',
-    getValues: function<TLinkedSeries extends LineSeries> (
+    public options: Highcharts.ROCIndicatorOptions = void 0 as any;
+
+    public points: Array<Highcharts.ROCIndicatorPoint> = void 0 as any;
+
+    /* *
+     *
+     *  Functions
+     *
+     * */
+    public getValues<TLinkedSeries extends LineSeries>(
         series: TLinkedSeries,
         params: Highcharts.ROCIndicatorParamsOptions
     ): (IndicatorValuesObject<TLinkedSeries>|undefined) {
@@ -196,6 +192,20 @@ extend(ROCIndicator.prototype, {
             yData: yData
         } as IndicatorValuesObject<TLinkedSeries>;
     }
+}
+
+/* *
+ *
+ *  Prototype Properties
+ *
+ * */
+interface ROCIndicator {
+    nameBase: string;
+    pointClass: typeof Highcharts.ROCIndicatorPoint;
+}
+
+extend(ROCIndicator.prototype, {
+    nameBase: 'Rate of Change'
 });
 
 /* *

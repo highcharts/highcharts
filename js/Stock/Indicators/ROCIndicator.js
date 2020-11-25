@@ -69,8 +69,47 @@ function populateAverage(xVal, yVal, i, period, index) {
 var ROCIndicator = /** @class */ (function (_super) {
     __extends(ROCIndicator, _super);
     function ROCIndicator() {
-        return _super !== null && _super.apply(this, arguments) || this;
+        var _this = _super !== null && _super.apply(this, arguments) || this;
+        /* *
+         *
+         *  Properties
+         *
+         * */
+        _this.data = void 0;
+        _this.options = void 0;
+        _this.points = void 0;
+        return _this;
     }
+    /* *
+     *
+     *  Functions
+     *
+     * */
+    ROCIndicator.prototype.getValues = function (series, params) {
+        var period = params.period, xVal = series.xData, yVal = series.yData, yValLen = yVal ? yVal.length : 0, ROC = [], xData = [], yData = [], i, index = -1, ROCPoint;
+        // Period is used as a number of time periods ago, so we need more
+        // (at least 1 more) data than the period value
+        if (xVal.length <= period) {
+            return;
+        }
+        // Switch index for OHLC / Candlestick / Arearange
+        if (isArray(yVal[0])) {
+            index = params.index;
+        }
+        // i = period <-- skip first N-points
+        // Calculate value one-by-one for each period in visible data
+        for (i = period; i < yValLen; i++) {
+            ROCPoint = populateAverage(xVal, yVal, i, period, index);
+            ROC.push(ROCPoint);
+            xData.push(ROCPoint[0]);
+            yData.push(ROCPoint[1]);
+        }
+        return {
+            values: ROC,
+            xData: xData,
+            yData: yData
+        };
+    };
     /**
      * Rate of change indicator (ROC). The indicator value for each point
      * is defined as:
@@ -102,32 +141,7 @@ var ROCIndicator = /** @class */ (function (_super) {
     return ROCIndicator;
 }(SMAIndicator));
 extend(ROCIndicator.prototype, {
-    nameBase: 'Rate of Change',
-    getValues: function (series, params) {
-        var period = params.period, xVal = series.xData, yVal = series.yData, yValLen = yVal ? yVal.length : 0, ROC = [], xData = [], yData = [], i, index = -1, ROCPoint;
-        // Period is used as a number of time periods ago, so we need more
-        // (at least 1 more) data than the period value
-        if (xVal.length <= period) {
-            return;
-        }
-        // Switch index for OHLC / Candlestick / Arearange
-        if (isArray(yVal[0])) {
-            index = params.index;
-        }
-        // i = period <-- skip first N-points
-        // Calculate value one-by-one for each period in visible data
-        for (i = period; i < yValLen; i++) {
-            ROCPoint = populateAverage(xVal, yVal, i, period, index);
-            ROC.push(ROCPoint);
-            xData.push(ROCPoint[0]);
-            yData.push(ROCPoint[1]);
-        }
-        return {
-            values: ROC,
-            xData: xData,
-            yData: yData
-        };
-    }
+    nameBase: 'Rate of Change'
 });
 BaseSeries.registerSeriesType('roc', ROCIndicator);
 /* *
