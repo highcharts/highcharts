@@ -8,16 +8,16 @@
 
 'use strict';
 
-import type CSSObject from '../../Core/Renderer/CSSObject';
-import type IndicatorValuesObject from './IndicatorValuesObject';
-import type LineSeries from '../../Series/Line/LineSeries';
-import type { PointMarkerOptions } from '../../Core/Series/PointOptions';
+import type CSSObject from '../../../Core/Renderer/CSSObject';
+import type IndicatorValuesObject from '../IndicatorValuesObject';
+import type LineSeries from '../../../Series/Line/LineSeries';
+import type { PointMarkerOptions } from '../../../Core/Series/PointOptions';
 import type {
-    SMAOptions,
-    SMAParamsOptions
-} from './SMA/SMAOptions';
-import type SMAPoint from './SMA/SMAPoint';
-import BaseSeries from '../../Core/Series/Series.js';
+    KeltnerChannelsOptions,
+    KeltnerChannelsParamsOptions
+} from './KeltnerChannelsOptions';
+import type KeltnerChannelsPoint from './KeltnerChannelsPoint';
+import BaseSeries from '../../../Core/Series/Series.js';
 const {
     seriesTypes: {
         sma: SMAIndicator,
@@ -25,44 +25,44 @@ const {
         atr: ATRIndicator
     }
 } = BaseSeries;
-import MultipleLinesMixin from '../../Mixins/MultipleLines.js';
-import U from '../../Core/Utilities.js';
+import MultipleLinesMixin from '../../../Mixins/MultipleLines.js';
+import U from '../../../Core/Utilities.js';
 const {
     correctFloat,
     extend,
     merge
 } = U;
 
-/**
- * Internal types
- * @private
- */
-declare global {
-    namespace Highcharts {
-        interface KeltnerChannelsIndicatorOptions
-            extends SMAOptions, MultipleLinesIndicatorOptions {
-            bottomLine?: Record<string, CSSObject>;
-            marker?: PointMarkerOptions;
-            params?: KeltnerChannelsIndicatorParamsOptions;
-            tooltip?: TooltipOptions;
-            topLine?: Record<string, CSSObject>;
-        }
+// /**
+//  * Internal types
+//  * @private
+//  */
+// declare global {
+//     namespace Highcharts {
+//         interface KeltnerChannelsIndicatorOptions
+//             extends SMAOptions, MultipleLinesIndicatorOptions {
+//             bottomLine?: Record<string, CSSObject>;
+//             marker?: PointMarkerOptions;
+//             params?: KeltnerChannelsIndicatorParamsOptions;
+//             tooltip?: TooltipOptions;
+//             topLine?: Record<string, CSSObject>;
+//         }
 
-        interface KeltnerChannelsIndicatorParamsOptions
-            extends SMAParamsOptions {
-            periodATR?: number;
-            multiplierATR?: number;
-        }
+//         interface KeltnerChannelsIndicatorParamsOptions
+//             extends SMAParamsOptions {
+//             periodATR?: number;
+//             multiplierATR?: number;
+//         }
 
-        interface KeltnerChannelsLinkedParentSeries extends LineSeries {
-            yData: Array<Array<number>>;
-        }
+//         interface KeltnerChannelsLinkedParentSeries extends LineSeries {
+//             yData: Array<Array<number>>;
+//         }
 
-        class KeltnerChannelsIndicatorPoint extends SMAPoint {
-            public series: KeltnerChannelsIndicator;
-        }
-    }
-}
+//         class KeltnerChannelsIndicatorPoint extends SMAPoint {
+//             public series: KeltnerChannelsIndicator;
+//         }
+//     }
+// }
 
 /**
  * The Keltner Channels series type.
@@ -93,7 +93,7 @@ class KeltnerChannelsIndicator extends SMAIndicator implements Highcharts.Multip
      * @requires     stock/indicators/keltner-channels
      * @optionparent plotOptions.keltnerchannels
      */
-    public static defaultOptions: Highcharts.KeltnerChannelsIndicatorOptions = merge(SMAIndicator.defaultOptions, {
+    public static defaultOptions: KeltnerChannelsOptions = merge(SMAIndicator.defaultOptions, {
         params: {
             period: 20,
             /**
@@ -147,11 +147,11 @@ class KeltnerChannelsIndicator extends SMAIndicator implements Highcharts.Multip
             approximation: 'averages'
         },
         lineWidth: 1
-    } as Highcharts.KeltnerChannelsIndicatorOptions)
+    } as KeltnerChannelsOptions)
 
-    public data: Array<Highcharts.KeltnerChannelsIndicatorPoint> = void 0 as any;
-    public options: Highcharts.KeltnerChannelsIndicatorOptions = void 0 as any;
-    public points: Array<Highcharts.KeltnerChannelsIndicatorPoint> = void 0 as any;
+    public data: Array<KeltnerChannelsPoint> = void 0 as any;
+    public options: KeltnerChannelsOptions = void 0 as any;
+    public points: Array<KeltnerChannelsPoint> = void 0 as any;
 
     public init(this: KeltnerChannelsIndicator): void {
         BaseSeries.seriesTypes.sma.prototype.init.apply(this, arguments);
@@ -172,7 +172,7 @@ class KeltnerChannelsIndicator extends SMAIndicator implements Highcharts.Multip
 
     public getValues <TLinkedSeries extends LineSeries>(
         series: TLinkedSeries,
-        params: Highcharts.KeltnerChannelsIndicatorParamsOptions
+        params: KeltnerChannelsParamsOptions
     ): (IndicatorValuesObject<TLinkedSeries>|undefined) {
         var period = (params.period as any),
             periodATR: number = (params.periodATR as any),
@@ -241,7 +241,7 @@ interface KeltnerChannelsIndicator {
     pointValKey: Highcharts.MultipleLinesMixin['pointValKey'];
     requiredIndicators: Array<string>;
 
-    pointClass: typeof Highcharts.KeltnerChannelsIndicatorPoint;
+    pointClass: typeof KeltnerChannelsPoint;
 
     drawGraph: typeof MultipleLinesMixin.drawGraph;
     getTranslatedLinesNames: typeof MultipleLinesMixin.getTranslatedLinesNames;
@@ -261,7 +261,7 @@ extend(KeltnerChannelsIndicator.prototype, {
     toYData: MultipleLinesMixin.toYData
 });
 
-declare module '../../Core/Series/SeriesType' {
+declare module '../../../Core/Series/SeriesType' {
     interface SeriesTypeRegistry {
         keltnerchannels: typeof KeltnerChannelsIndicator;
     }
