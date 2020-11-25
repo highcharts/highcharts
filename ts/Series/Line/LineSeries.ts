@@ -6432,7 +6432,7 @@ class LineSeries {
         }
 
         return isNumber(factor) ?
-            factor * pick(pointRange, axis.pointRange) :
+            factor * (pointRange || axis.pointRange) :
             0;
     }
 
