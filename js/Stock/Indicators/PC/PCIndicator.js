@@ -148,13 +148,6 @@ var PCIndicator = /** @class */ (function (_super) {
     });
     return PCIndicator;
 }(SMAIndicator));
-// extend(PCIndicator.prototype, merge(MultipleLinesMixin, {
-//     pointArrayMap: ['top', 'middle', 'bottom'],
-//     pointValKey: 'middle',
-//     nameBase: 'Price Channel',
-//     nameComponents: ['period'],
-//     linesApiNames: ['topLine', 'bottomLine']
-// }));
 extend(PCIndicator.prototype, {
     getTranslatedLinesNames: MultipleLinesMixin.getTranslatedLinesNames,
     drawGraph: MultipleLinesMixin.drawGraph,

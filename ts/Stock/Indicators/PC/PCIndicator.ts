@@ -190,13 +190,6 @@ interface PCIndicator {
     pointValKey: string;
 }
 
-// extend(PCIndicator.prototype, merge(MultipleLinesMixin, {
-//     pointArrayMap: ['top', 'middle', 'bottom'],
-//     pointValKey: 'middle',
-//     nameBase: 'Price Channel',
-//     nameComponents: ['period'],
-//     linesApiNames: ['topLine', 'bottomLine']
-// }));
 extend(PCIndicator.prototype, {
     getTranslatedLinesNames: MultipleLinesMixin.getTranslatedLinesNames,
     drawGraph: MultipleLinesMixin.drawGraph,
