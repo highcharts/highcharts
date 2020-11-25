@@ -10,47 +10,27 @@
 
 'use strict';
 
-import type IndicatorValuesObject from './IndicatorValuesObject';
-import type LineSeries from '../../Series/Line/LineSeries';
+import type IndicatorValuesObject from '../IndicatorValuesObject';
+import type LineSeries from '../../../Series/Line/LineSeries';
 import type {
-    SMAOptions,
-    SMAParamsOptions
-} from './SMA/SMAOptions';
-import type SMAPoint from './SMA/SMAPoint';
+    ROCOptions,
+    ROCParamsOptions
+} from './ROCOptions';
+import type ROCPoint from './ROCPoint';
 
-import BaseSeries from '../../Core/Series/Series.js';
+import BaseSeries from '../../../Core/Series/Series.js';
 const {
     seriesTypes: {
         sma: SMAIndicator
     }
 } = BaseSeries;
-import U from '../../Core/Utilities.js';
+import U from '../../../Core/Utilities.js';
 
 const {
     isArray,
     merge,
     extend
 } = U;
-
-/**
- * Internal types
- * @private
- */
-declare global {
-    namespace Highcharts {
-        interface ROCIndicatorParamsOptions extends SMAParamsOptions {
-            // for inheritance
-        }
-
-        class ROCIndicatorPoint extends SMAPoint {
-            public series: ROCIndicator;
-        }
-
-        interface ROCIndicatorOptions extends SMAOptions {
-            params?: ROCIndicatorParamsOptions;
-        }
-    }
-}
 
 /* eslint-disable require-jsdoc */
 
@@ -128,23 +108,23 @@ class ROCIndicator extends SMAIndicator {
      * @requires     stock/indicators/roc
      * @optionparent plotOptions.roc
      */
-    public static defaultOptions: Highcharts.ROCIndicatorOptions = merge(SMAIndicator.defaultOptions, {
+    public static defaultOptions: ROCOptions = merge(SMAIndicator.defaultOptions, {
         params: {
             index: 3,
             period: 9
         }
-    } as Highcharts.ROCIndicatorOptions);
+    } as ROCOptions);
 
     /* *
      *
      *  Properties
      *
      * */
-    public data: Array<Highcharts.ROCIndicatorPoint> = void 0 as any;
+    public data: Array<ROCPoint> = void 0 as any;
 
-    public options: Highcharts.ROCIndicatorOptions = void 0 as any;
+    public options: ROCOptions = void 0 as any;
 
-    public points: Array<Highcharts.ROCIndicatorPoint> = void 0 as any;
+    public points: Array<ROCPoint> = void 0 as any;
 
     /* *
      *
@@ -153,7 +133,7 @@ class ROCIndicator extends SMAIndicator {
      * */
     public getValues<TLinkedSeries extends LineSeries>(
         series: TLinkedSeries,
-        params: Highcharts.ROCIndicatorParamsOptions
+        params: ROCParamsOptions
     ): (IndicatorValuesObject<TLinkedSeries>|undefined) {
         var period: number = (params.period as any),
             xVal: Array<number> = (series.xData as any),
@@ -201,7 +181,7 @@ class ROCIndicator extends SMAIndicator {
  * */
 interface ROCIndicator {
     nameBase: string;
-    pointClass: typeof Highcharts.ROCIndicatorPoint;
+    pointClass: typeof ROCPoint;
 }
 
 extend(ROCIndicator.prototype, {
@@ -213,7 +193,7 @@ extend(ROCIndicator.prototype, {
  *  Registry
  *
  * */
-declare module '../../Core/Series/SeriesType' {
+declare module '../../../Core/Series/SeriesType' {
     interface SeriesTypeRegistry {
         roc: typeof ROCIndicator;
     }
