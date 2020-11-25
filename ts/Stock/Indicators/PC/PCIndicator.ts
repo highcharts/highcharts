@@ -10,16 +10,16 @@
 
 import type IndicatorValuesObject from '../IndicatorValuesObject';
 import type LineSeries from '../../../Series/Line/LineSeries';
-const {
-    seriesTypes: {
-        sma: SMAIndicator
-    }
-} = BaseSeries;
 import type {
     PCOptions,
     PCParamsOptions
 } from '../PC/PCOptions';
 import type PCPoint from './PCPoint';
+const {
+    seriesTypes: {
+        sma: SMAIndicator
+    }
+} = BaseSeries;
 import BaseSeries from '../../../Core/Series/Series.js';
 import palette from '../../../Core/Color/Palette.js';
 import MultipleLinesMixin from '../../../Mixins/MultipleLines.js';
@@ -190,13 +190,24 @@ interface PCIndicator {
     pointValKey: string;
 }
 
-extend(PCIndicator.prototype, merge(MultipleLinesMixin, {
+// extend(PCIndicator.prototype, merge(MultipleLinesMixin, {
+//     pointArrayMap: ['top', 'middle', 'bottom'],
+//     pointValKey: 'middle',
+//     nameBase: 'Price Channel',
+//     nameComponents: ['period'],
+//     linesApiNames: ['topLine', 'bottomLine']
+// }));
+extend(PCIndicator.prototype, {
+    getTranslatedLinesNames: MultipleLinesMixin.getTranslatedLinesNames,
+    drawGraph: MultipleLinesMixin.drawGraph,
+    toYData: MultipleLinesMixin.toYData,
     pointArrayMap: ['top', 'middle', 'bottom'],
     pointValKey: 'middle',
     nameBase: 'Price Channel',
     nameComponents: ['period'],
-    linesApiNames: ['topLine', 'bottomLine']
-}));
+    linesApiNames: ['topLine', 'bottomLine'],
+    translate: MultipleLinesMixin.translate
+});
 
 /* *
  *

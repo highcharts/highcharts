@@ -148,13 +148,24 @@ var PCIndicator = /** @class */ (function (_super) {
     });
     return PCIndicator;
 }(SMAIndicator));
-extend(PCIndicator.prototype, merge(MultipleLinesMixin, {
+// extend(PCIndicator.prototype, merge(MultipleLinesMixin, {
+//     pointArrayMap: ['top', 'middle', 'bottom'],
+//     pointValKey: 'middle',
+//     nameBase: 'Price Channel',
+//     nameComponents: ['period'],
+//     linesApiNames: ['topLine', 'bottomLine']
+// }));
+extend(PCIndicator.prototype, {
+    getTranslatedLinesNames: MultipleLinesMixin.getTranslatedLinesNames,
+    drawGraph: MultipleLinesMixin.drawGraph,
+    toYData: MultipleLinesMixin.toYData,
     pointArrayMap: ['top', 'middle', 'bottom'],
     pointValKey: 'middle',
     nameBase: 'Price Channel',
     nameComponents: ['period'],
-    linesApiNames: ['topLine', 'bottomLine']
-}));
+    linesApiNames: ['topLine', 'bottomLine'],
+    translate: MultipleLinesMixin.translate
+});
 BaseSeries.registerSeriesType('pc', PCIndicator);
 /* *
  *
