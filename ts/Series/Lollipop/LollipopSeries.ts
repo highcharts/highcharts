@@ -10,17 +10,17 @@
 
 'use strict';
 
-import type DumbbellSeriesOptions from './Dumbbell/DumbbellSeriesOptions';
-import type DumbbellPointOptions from './Dumbbell/DumbbellPointOptions';
-import type { SeriesStatesOptions } from '../Core/Series/SeriesOptions';
-import AreaSeries from './Area/AreaSeries.js';
-import DumbbellSeries from './Dumbbell/DumbbellSeries.js';
-import DumbbellPoint from './Dumbbell/DumbbellPoint.js';
-import BaseSeries from '../Core/Series/Series.js';
-import Point from '../Core/Series/Point.js';
-import ColumnSeries from './Column/ColumnSeries.js';
+import type DumbbellSeriesOptions from '../Dumbbell/DumbbellSeriesOptions';
+import type DumbbellPointOptions from '../Dumbbell/DumbbellPointOptions';
+import type { SeriesStatesOptions } from '../../Core/Series/SeriesOptions';
+import AreaSeries from '../Area/AreaSeries.js';
+import DumbbellSeries from '../Dumbbell/DumbbellSeries.js';
+import DumbbellPoint from '../Dumbbell/DumbbellPoint.js';
+import BaseSeries from '../../Core/Series/Series.js';
+import Point from '../../Core/Series/Point.js';
+import ColumnSeries from '../Column/ColumnSeries.js';
 const { prototype: colProto } = ColumnSeries;
-import U from '../Core/Utilities.js';
+import U from '../../Core/Utilities.js';
 const {
     isObject,
     pick,
@@ -176,7 +176,7 @@ extend(LollipopSeries.prototype.pointClass.prototype, {
 /**
  * @private
  */
-declare module '../Core/Series/SeriesType' {
+declare module '../../Core/Series/SeriesType' {
     interface SeriesTypeRegistry {
         lollipop: typeof LollipopSeries;
     }
