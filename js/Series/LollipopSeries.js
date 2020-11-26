@@ -17,7 +17,7 @@ import Point from '../Core/Series/Point.js';
 import U from '../Core/Utilities.js';
 var isObject = U.isObject, pick = U.pick;
 import './Area/AreaSeries.js';
-import './DumbbellSeries.js';
+import './Dumbbell/DumbbellSeries.js';
 var areaProto = seriesTypes.area.prototype;
 /**
  * The lollipop series is a carteseian series with a line anchored from
