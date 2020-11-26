@@ -82,6 +82,7 @@ class TrendLineIndicator extends SMAIndicator {
     * */
 
     public data: Array<TrendLinePoint> = void 0 as any;
+    public options: TrendLineOptions = void 0 as any;
     public points: Array<TrendLinePoint> = void 0 as any;
 
     /* *
@@ -152,7 +153,6 @@ class TrendLineIndicator extends SMAIndicator {
 
 interface TrendLineIndicator {
     nameBase: string;
-    options: TrendLineOptions;
     pointClass: typeof TrendLinePoint;
 }
 
