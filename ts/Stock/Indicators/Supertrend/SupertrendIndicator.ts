@@ -172,6 +172,8 @@ class SupertrendIndicator extends SMAIndicator {
      * */
     public data: Array<SupertrendPoint> = void 0 as any;
 
+    public linkedParent: SupertrendLinkedParentObject = void 0 as any;
+
     public options: SupertrendOptions = void 0 as any;
 
     public points: Array<SupertrendPoint> = void 0 as any;
@@ -181,7 +183,7 @@ class SupertrendIndicator extends SMAIndicator {
      *  Functions
      *
      * */
-    init(): void {
+    public init(): void {
         var options: SupertrendOptions,
             parentOptions: SeriesOptions;
 
@@ -199,7 +201,7 @@ class SupertrendIndicator extends SMAIndicator {
         );
     }
 
-    drawGraph(): void {
+    public drawGraph(): void {
         var indicator = this,
             indicOptions: SupertrendOptions =
             indicator.options,
@@ -510,7 +512,7 @@ class SupertrendIndicator extends SMAIndicator {
     //      Current Close > Current FINAL LOWERBAND
     //     ) THAN Current FINAL LOWERBAND
 
-    getValues<TLinkedSeries extends LineSeries>(
+    public getValues<TLinkedSeries extends LineSeries>(
         series: TLinkedSeries,
         params: SupertrendParamsOptions
     ): (IndicatorValuesObject<TLinkedSeries>|undefined) {
@@ -616,7 +618,6 @@ class SupertrendIndicator extends SMAIndicator {
  *
  * */
 interface SupertrendIndicator {
-    linkedParent: SupertrendLinkedParentObject;
     nameBase: string;
     nameComponents: Array<string>;
     requiredIndicators: Array<string>;
