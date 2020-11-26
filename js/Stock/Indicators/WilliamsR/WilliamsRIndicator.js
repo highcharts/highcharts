@@ -19,11 +19,11 @@ var __extends = (this && this.__extends) || (function () {
         d.prototype = b === null ? Object.create(b) : (__.prototype = b.prototype, new __());
     };
 })();
-import BaseSeries from '../../Core/Series/Series.js';
+import BaseSeries from '../../../Core/Series/Series.js';
 var SMAIndicator = BaseSeries.seriesTypes.sma;
-import ReduceArrayMixin from '../../Mixins/ReduceArray.js';
+import ReduceArrayMixin from '../../../Mixins/ReduceArray.js';
 var getArrayExtremes = ReduceArrayMixin.getArrayExtremes;
-import U from '../../Core/Utilities.js';
+import U from '../../../Core/Utilities.js';
 var extend = U.extend, isArray = U.isArray, merge = U.merge;
 /**
  * The Williams %R series type.

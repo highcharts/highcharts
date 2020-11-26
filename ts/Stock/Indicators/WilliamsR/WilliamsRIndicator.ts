@@ -8,48 +8,29 @@
 
 'use strict';
 
-import type IndicatorValuesObject from './IndicatorValuesObject';
-import type LineSeries from '../../Series/Line/LineSeries';
+import type IndicatorValuesObject from '../IndicatorValuesObject';
+import type LineSeries from '../../../Series/Line/LineSeries';
 import type {
-    SMAOptions,
-    SMAParamsOptions
-} from './SMA/SMAOptions';
-import type SMAPoint from './SMA/SMAPoint';
-import BaseSeries from '../../Core/Series/Series.js';
+    WilliamsROptions,
+    WilliamsRParamsOptions
+} from './WilliamsROptions';
+import type WilliamsRPoint from './WilliamsRPoint';
+import BaseSeries from '../../../Core/Series/Series.js';
 const {
     seriesTypes: {
         sma: SMAIndicator
     }
 } = BaseSeries;
-import ReduceArrayMixin from '../../Mixins/ReduceArray.js';
+import ReduceArrayMixin from '../../../Mixins/ReduceArray.js';
 const {
     getArrayExtremes
 } = ReduceArrayMixin;
-import U from '../../Core/Utilities.js';
+import U from '../../../Core/Utilities.js';
 const {
     extend,
     isArray,
     merge
 } = U;
-
-/**
- * Internal types
- * @private
- */
-declare global {
-    namespace Highcharts {
-        class WilliamsRIndicatorPoint extends SMAPoint {
-            series: WilliamsRIndicator;
-        }
-        interface WilliamsRIndicatorOptions extends SMAOptions {
-            params?: WilliamsRIndicatorParamsOptions;
-        }
-        interface WilliamsRIndicatorParamsOptions
-            extends SMAParamsOptions {
-            // for inheritance
-        }
-    }
-}
 
 /**
  * The Williams %R series type.
@@ -78,7 +59,7 @@ class WilliamsRIndicator extends SMAIndicator {
      * @requires     stock/indicators/williams-r
      * @optionparent plotOptions.williamsr
      */
-    public static defaultOptions: Highcharts.WilliamsRIndicatorOptions = merge(SMAIndicator.defaultOptions, {
+    public static defaultOptions: WilliamsROptions = merge(SMAIndicator.defaultOptions, {
         /**
          * Paramters used in calculation of Williams %R series points.
          * @excluding index
@@ -89,16 +70,16 @@ class WilliamsRIndicator extends SMAIndicator {
              */
             period: 14
         }
-    } as Highcharts.WilliamsRIndicatorOptions)
+    } as WilliamsROptions)
 
-    public data: Array<Highcharts.WilliamsRIndicatorPoint> = void 0 as any;
-    public options: Highcharts.WilliamsRIndicatorOptions = void 0 as any;
-    public points: Array<Highcharts.WilliamsRIndicatorPoint> = void 0 as any;
+    public data: Array<WilliamsRPoint> = void 0 as any;
+    public options: WilliamsROptions = void 0 as any;
+    public points: Array<WilliamsRPoint> = void 0 as any;
 
     public getValues <TLinkedSeries extends LineSeries>(
         this: WilliamsRIndicator,
         series: TLinkedSeries,
-        params: Highcharts.WilliamsRIndicatorParamsOptions
+        params: WilliamsRParamsOptions
     ): (IndicatorValuesObject<TLinkedSeries>|undefined) {
         var period: number = params.period as any,
             xVal: Array<number> = series.xData as any,
@@ -156,13 +137,13 @@ class WilliamsRIndicator extends SMAIndicator {
 }
 
 interface WilliamsRIndicator {
-    pointClass: typeof Highcharts.WilliamsRIndicatorPoint;
+    pointClass: typeof WilliamsRPoint;
 }
 extend(WilliamsRIndicator.prototype, {
     nameBase: 'Williams %R'
 });
 
-declare module '../../Core/Series/SeriesType' {
+declare module '../../../Core/Series/SeriesType' {
     interface SeriesTypeRegistry {
         williamsr: typeof WilliamsRIndicator;
     }
