@@ -23,13 +23,13 @@ var __extends = (this && this.__extends) || (function () {
         d.prototype = b === null ? Object.create(b) : (__.prototype = b.prototype, new __());
     };
 })();
-import Axis from '../Core/Axis/Axis.js';
-import BaseSeries from '../Core/Series/Series.js';
+import Axis from '../../Core/Axis/Axis.js';
+import BaseSeries from '../../Core/Series/Series.js';
 var ColumnSeries = BaseSeries.seriesTypes.column;
-import H from '../Core/Globals.js';
-import U from '../Core/Utilities.js';
+import H from '../../Core/Globals.js';
+import U from '../../Core/Utilities.js';
 var addEvent = U.addEvent, extend = U.extend, isNumber = U.isNumber, merge = U.merge, pick = U.pick, wrap = U.wrap;
-import './Area/AreaSeries.js';
+import '../Area/AreaSeries.js';
 /* *
  *
  *  Class

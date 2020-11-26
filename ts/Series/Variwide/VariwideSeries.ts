@@ -18,23 +18,23 @@
  *
  * */
 
-import type ColumnPointOptions from './Column/ColumnPointOptions';
-import type ColumnSeriesOptions from './Column/ColumnSeriesOptions';
-import type DataLabelOptions from '../Core/Series/DataLabelOptions';
-import type PositionObject from '../Core/Renderer/PositionObject';
-import type { SeriesStatesOptions } from '../Core/Series/SeriesOptions';
-import type StackingAxis from '../Core/Axis/StackingAxis';
-import type SVGElement from '../Core/Renderer/SVG/SVGElement';
-import Axis from '../Core/Axis/Axis.js';
-import BaseSeries from '../Core/Series/Series.js';
+import type ColumnPointOptions from '../Column/ColumnPointOptions';
+import type ColumnSeriesOptions from '../Column/ColumnSeriesOptions';
+import type DataLabelOptions from '../../Core/Series/DataLabelOptions';
+import type PositionObject from '../../Core/Renderer/PositionObject';
+import type { SeriesStatesOptions } from '../../Core/Series/SeriesOptions';
+import type StackingAxis from '../../Core/Axis/StackingAxis';
+import type SVGElement from '../../Core/Renderer/SVG/SVGElement';
+import Axis from '../../Core/Axis/Axis.js';
+import BaseSeries from '../../Core/Series/Series.js';
 const {
     seriesTypes: {
         column: ColumnSeries
     }
 
 } = BaseSeries;
-import H from '../Core/Globals.js';
-import U from '../Core/Utilities.js';
+import H from '../../Core/Globals.js';
+import U from '../../Core/Utilities.js';
 const {
     addEvent,
     extend,
@@ -44,7 +44,7 @@ const {
     wrap
 } = U;
 
-import './Area/AreaSeries.js';
+import '../Area/AreaSeries.js';
 
 /* *
  *
@@ -52,7 +52,7 @@ import './Area/AreaSeries.js';
  *
  * */
 
-declare module '../Core/Series/PointLike' {
+declare module '../../Core/Series/PointLike' {
     interface PointLike {
         crosshairWidth?: VariwidePoint['crosshairWidth'];
     }
@@ -422,7 +422,7 @@ VariwideSeries.prototype.pointClass = VariwidePoint;
  * Registry
  *
  * */
-declare module '../Core/Series/SeriesType' {
+declare module '../../Core/Series/SeriesType' {
     interface SeriesTypeRegistry {
         variwide: typeof VariwideSeries;
     }
