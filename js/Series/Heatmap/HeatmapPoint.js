@@ -22,10 +22,9 @@ var __extends = (this && this.__extends) || (function () {
     };
 })();
 import BaseSeries from '../../Core/Series/Series.js';
-var ScatterSeries = BaseSeries.seriesTypes.scatter;
+var _a = BaseSeries.seriesTypes, LineSeries = _a.line, ScatterSeries = _a.scatter;
 import ColorMapMixin from '../../Mixins/ColorMapSeries.js';
 var colorMapPointMixin = ColorMapMixin.colorMapPointMixin;
-import LineSeries from '../../Series/Line/LineSeries.js';
 import U from '../../Core/Utilities.js';
 var clamp = U.clamp, extend = U.extend, pick = U.pick;
 /* *
