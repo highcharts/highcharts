@@ -1748,9 +1748,7 @@ var addEvent = H.addEvent = function (el, type, fn, options) {
     };
     events[type].push(eventObject);
     // Order the calls
-    events[type].sort(function (a, b) {
-        return a.order - b.order;
-    });
+    events[type].sort(function (a, b) { return a.order - b.order; });
     // Return a function that can be called to remove this event.
     return function () {
         removeEvent(el, type, fn);
@@ -1921,9 +1919,7 @@ var fireEvent = H.fireEvent = function (el, type, eventArguments, defaultFunctio
         // events are already sorted in the addEvent function.
         if (multilevel) {
             // Order the calls
-            events.sort(function (a, b) {
-                return a.order - b.order;
-            });
+            events.sort(function (a, b) { return a.order - b.order; });
         }
         // Call the collected event handlers
         events.forEach(function (obj) {

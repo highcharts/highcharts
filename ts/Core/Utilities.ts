@@ -2375,12 +2375,10 @@ const addEvent = H.addEvent = function<T> (
     events[type].push(eventObject);
 
     // Order the calls
-    events[type].sort(function (
+    events[type].sort((
         a: Highcharts.EventWrapperObject<T>,
         b: Highcharts.EventWrapperObject<T>
-    ): number {
-        return a.order - b.order;
-    });
+    ): number => a.order - b.order);
 
     // Return a function that can be called to remove this event.
     return function (): void {
@@ -2591,12 +2589,10 @@ const fireEvent = H.fireEvent = function<T> (
         // events are already sorted in the addEvent function.
         if (multilevel) {
             // Order the calls
-            events.sort(function (
+            events.sort((
                 a: Highcharts.EventWrapperObject<T>,
                 b: Highcharts.EventWrapperObject<T>
-            ): number {
-                return a.order - b.order;
-            });
+            ): number => a.order - b.order);
         }
 
         // Call the collected event handlers
