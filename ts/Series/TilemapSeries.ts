@@ -16,6 +16,9 @@
 import type Axis from '../Core/Axis/Axis';
 import type BBoxObject from '../Core/Renderer/BBoxObject';
 import type DataLabelOptions from '../Core/Series/DataLabelOptions';
+import type HeatmapPointOptions from './Heatmap/HeatmapPointOptions';
+import type HeatmapSeries from './Heatmap/HeatmapSeries';
+import type HeatmapSeriesOptions from './Heatmap/HeatmapSeriesOptions';
 import type Point from '../Core/Series/Point';
 import type { SeriesStatesOptions } from '../Core/Series/SeriesOptions';
 import type SVGPath from '../Core/Renderer/SVG/SVGPath';
@@ -57,7 +60,7 @@ declare module '../Core/Series/SeriesOptions' {
  */
 declare global {
     namespace Highcharts {
-        class TilemapPoint extends HeatmapPoint implements ColorPoint {
+        class TilemapPoint extends HeatmapSeries.prototype.pointClass implements ColorPoint {
             public option: TilemapPointOptions;
             public pointPadding?: number;
             public radius: number;
@@ -75,7 +78,7 @@ declare global {
             public tileShape: TilemapShapeObject;
             public translateColors: ColorSeries['translateColors'];
             public drawPoints(): void;
-            public getSeriesPixelPadding(axis: Axis): Dictionary<number>;
+            public getSeriesPixelPadding(axis: Axis): Record<string, number>;
             public setOptions(): TilemapSeriesOptions;
             public translate(): void;
         }
@@ -105,7 +108,7 @@ declare global {
             ): SVGPath;
             translate(this: TilemapSeries): void;
         }
-        let tileShapeTypes: Dictionary<TilemapShapeObject>;
+        let tileShapeTypes: Record<string, TilemapShapeObject>;
         type TilemapShapeValue = ('circle'|'diamond'|'hexagon'|'square');
     }
 }
@@ -118,8 +121,6 @@ declare module '../Core/Series/SeriesType' {
         tilemap: typeof Highcharts.TilemapSeries;
     }
 }
-
-import '../Series/HeatmapSeries.js';
 
 /**
  * @typedef {"circle"|"diamond"|"hexagon"|"square"} Highcharts.TilemapShapeValue
