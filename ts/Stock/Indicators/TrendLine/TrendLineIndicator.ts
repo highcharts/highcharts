@@ -8,46 +8,25 @@
 
 'use strict';
 
-import type IndicatorValuesObject from './IndicatorValuesObject';
-import type LineSeries from '../../Series/Line/LineSeries';
+import type IndicatorValuesObject from '../IndicatorValuesObject';
+import type LineSeries from '../../../Series/Line/LineSeries';
 import type {
-    SMAOptions,
-    SMAParamsOptions
-} from './SMA/SMAOptions';
-import type SMAPoint from './SMA/SMAPoint';
+    TrendLineOptions,
+    TrendLineParamsOptions
+} from './TrendLineOptions';
+import type TrendLinePoint from './TrendLinePoint';
 const {
     seriesTypes: {
         sma: SMAIndicator
     }
 } = BaseSeries;
-import BaseSeries from '../../Core/Series/Series.js';
-import U from '../../Core/Utilities.js';
+import BaseSeries from '../../../Core/Series/Series.js';
+import U from '../../../Core/Utilities.js';
 const {
     extend,
     merge,
     isArray
 } = U;
-
-/**
- * Internal types
- * @private
- */
-declare global {
-    namespace Highcharts {
-        interface TrendLineIndicatorParamsOptions
-            extends SMAParamsOptions {
-            // for inheritance
-        }
-
-        class TrendLineIndicatorPoint extends SMAPoint {
-            public series: TrendLineIndicator;
-        }
-
-        interface TrendLineIndicatorOptions extends SMAOptions {
-            params?: TrendLineIndicatorParamsOptions;
-        }
-    }
-}
 
 /* *
  *
@@ -80,7 +59,7 @@ class TrendLineIndicator extends SMAIndicator {
      * @requires     stock/indicators/trendline
      * @optionparent plotOptions.trendline
      */
-    public static defaultOptions: Highcharts.TrendLineIndicatorOptions = merge(SMAIndicator.defaultOptions, {
+    public static defaultOptions: TrendLineOptions = merge(SMAIndicator.defaultOptions, {
         /**
          * @excluding period
          */
@@ -94,16 +73,16 @@ class TrendLineIndicator extends SMAIndicator {
              */
             index: 3
         }
-    } as Highcharts.TrendLineIndicatorOptions);
+    } as TrendLineOptions);
 
     /* *
     *
     *   Properties
     *
     * */
-    public data: Array<Highcharts.TrendLineIndicatorPoint> = void 0 as any;
-    public points: Array<Highcharts.TrendLineIndicatorPoint> = void 0 as any;
 
+    public data: Array<TrendLinePoint> = void 0 as any;
+    public points: Array<TrendLinePoint> = void 0 as any;
 
     /* *
      *
@@ -113,7 +92,7 @@ class TrendLineIndicator extends SMAIndicator {
 
     public getValues<TLinkedSeries extends LineSeries>(
         series: TLinkedSeries,
-        params: Highcharts.TrendLineIndicatorParamsOptions
+        params: TrendLineParamsOptions
     ): IndicatorValuesObject<TLinkedSeries> {
         var xVal: Array<number> = (series.xData as any),
             yVal: Array<Array<number>> = (series.yData as any),
@@ -173,8 +152,8 @@ class TrendLineIndicator extends SMAIndicator {
 
 interface TrendLineIndicator {
     nameBase: string;
-    options: Highcharts.TrendLineIndicatorOptions;
-    pointClass: typeof Highcharts.TrendLineIndicatorPoint;
+    options: TrendLineOptions;
+    pointClass: typeof TrendLinePoint;
 }
 
 extend(TrendLineIndicator.prototype, {
@@ -188,7 +167,7 @@ extend(TrendLineIndicator.prototype, {
  *
  * */
 
-declare module '../../Core/Series/SeriesType' {
+declare module '../../../Core/Series/SeriesType' {
     interface SeriesTypeRegistry {
         trendline: typeof TrendLineIndicator;
     }

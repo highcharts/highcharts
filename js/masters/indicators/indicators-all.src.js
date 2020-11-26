@@ -51,4 +51,4 @@ import '../../Stock/Indicators/WMAIndicator.js';
 import '../../Stock/Indicators/Zigzag/ZigzagIndicator.js';
 import '../../Stock/Indicators/RegressionIndicators.js';
 import '../../Stock/Indicators/ABands/ABandsIndicator.js';
-import '../../Stock/Indicators/TrendLineIndicator.js';
+import '../../Stock/Indicators/TrendLine/TrendLineIndicator.js';
