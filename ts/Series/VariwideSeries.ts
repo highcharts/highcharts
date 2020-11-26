@@ -18,7 +18,6 @@
  *
  * */
 
-import type ColumnPoint from './Column/ColumnPoint';
 import type ColumnPointOptions from './Column/ColumnPointOptions';
 import type ColumnSeriesOptions from './Column/ColumnSeriesOptions';
 import type DataLabelOptions from '../Core/Series/DataLabelOptions';
@@ -145,38 +144,12 @@ class VariwideSeries extends ColumnSeries {
     public data: Array<VariwidePoint> = void 0 as any;
     public options: Highcharts.VariwideSeriesOptions = void 0 as any;
 
-}
-
-/* *
- *
- * Prototype properties
- *
- * */
-interface VariwideSeries {
-    irregularWidths: boolean;
-    parallelArrays: Array<string>;
-    pointArrayMap: Array<string>;
-    pointClass: typeof VariwidePoint;
-    points: Array<VariwidePoint>;
-    relZ: Array<number>;
-    totalZ: number;
-    zData?: Array<number>;
-    correctStackLabels(): void;
-    postTranslate(
-        index: number,
-        x: number,
-        point?: VariwidePoint
-    ): number;
-
-}
-extend(VariwideSeries.prototype, {
-    irregularWidths: true,
-    pointArrayMap: ['y', 'z'],
-    parallelArrays: ['x', 'y', 'z'],
-    processData: function (
-        this: VariwideSeries,
-        force?: boolean
-    ): undefined {
+    /* *
+     *
+     * Functions
+     *
+     * */
+    public processData(force?: boolean): undefined {
         this.totalZ = 0;
         this.relZ = [];
         BaseSeries.seriesTypes.column.prototype.processData.call(this, force);
@@ -201,7 +174,7 @@ extend(VariwideSeries.prototype, {
             this.xAxis.zData = this.zData; // Used for label rank
         }
         return;
-    },
+    }
 
     /* eslint-disable valid-jsdoc */
 
@@ -224,8 +197,7 @@ extend(VariwideSeries.prototype, {
      * @return {number}
      *         Distorted X position
      */
-    postTranslate: function (
-        this: VariwideSeries,
+    public postTranslate(
         index: number,
         x: number,
         point?: VariwidePoint
@@ -254,12 +226,12 @@ extend(VariwideSeries.prototype, {
         (linearSlotRight - linearSlotLeft);
 
         return ret;
-    },
+    }
 
     /* eslint-enable valid-jsdoc */
 
     // Extend translation by distoring X position based on Z.
-    translate: function (this: VariwideSeries): void {
+    public translate(): void {
 
         // Temporarily disable crisping when computing original shapeArgs
         var crispOption = this.options.crisp,
@@ -335,10 +307,10 @@ extend(VariwideSeries.prototype, {
         if (this.options.stacking) {
             this.correctStackLabels();
         }
-    },
+    }
 
     // Function that corrects stack labels positions
-    correctStackLabels: function (this: VariwideSeries): void {
+    public correctStackLabels(): void {
         var series = this,
             options = series.options,
             yAxis = series.yAxis as StackingAxis,
@@ -377,6 +349,34 @@ extend(VariwideSeries.prototype, {
             }
         });
     }
+}
+
+/* *
+ *
+ * Prototype properties
+ *
+ * */
+interface VariwideSeries {
+    irregularWidths: boolean;
+    parallelArrays: Array<string>;
+    pointArrayMap: Array<string>;
+    pointClass: typeof VariwidePoint;
+    points: Array<VariwidePoint>;
+    relZ: Array<number>;
+    totalZ: number;
+    zData?: Array<number>;
+    correctStackLabels(): void;
+    postTranslate(
+        index: number,
+        x: number,
+        point?: VariwidePoint
+    ): number;
+
+}
+extend(VariwideSeries.prototype, {
+    irregularWidths: true,
+    pointArrayMap: ['y', 'z'],
+    parallelArrays: ['x', 'y', 'z']
 });
 
 /* *
@@ -394,6 +394,15 @@ class VariwidePoint extends ColumnSeries.prototype.pointClass {
     public options: Highcharts.VariwidePointOptions = void 0 as any;
     public series: VariwideSeries = void 0 as any;
 
+    /* *
+     *
+     * Functions
+     *
+     * */
+    public isValid(): boolean {
+        return isNumber(this.y) && isNumber(this.z);
+    }
+
 }
 
 /* *
@@ -406,11 +415,6 @@ interface VariwidePoint {
     isValid: () => boolean;
 }
 
-extend(VariwidePoint.prototype, {
-    isValid: function (this: VariwidePoint): boolean {
-        return isNumber(this.y) && isNumber(this.z);
-    }
-});
 VariwideSeries.prototype.pointClass = VariwidePoint;
 
 /* *
