@@ -7798,11 +7798,12 @@ class Axis {
     *
     */
     public hasVerticalPanning(): boolean {
-        if (!this.chart.options.chart?.panning?.enabled) {
-            // #14624
-            return false;
-        }
-        return /y/.test(this.chart.options.chart?.panning?.type || '');
+        const panningOptions = this.chart.options.chart?.panning;
+        return Boolean(
+            panningOptions &&
+            panningOptions.enabled && // #14624
+            /y/.test(panningOptions.type)
+        );
     }
 
     /**
