@@ -1,20 +1,24 @@
-QUnit.test("Handles should not be overlapped by xAxis labels (#2908)", function (assert) {
-    var chart = $('#container').highcharts('StockChart', {
-        navigator: {
-            height: 20
-        },
-        series: [{
-            data: [29.9, 71.5, 106.4, 129.2, 144.0, 176.0, 135.6, 148.5, 216.4, 194.1, 95.6, 54.4]
-        }]
-    }).highcharts();
+QUnit.test(
+    "Handles should not be overlapped by xAxis labels (#2908)",
+    function (assert) {
+        var chart = $('#container').highcharts('StockChart', {
+            navigator: {
+                height: 20
+            },
+            series: [{
+                data: [29.9, 71.5, 106.4, 129.2, 144.0, 176.0, 135.6,
+                    148.5, 216.4, 194.1, 95.6, 54.4]
+            }]
+        }).highcharts();
 
 
-    assert.strictEqual(
-        chart.scroller.handles[0].zIndex >= chart.scroller.xAxis.labelGroup.zIndex,
-        true,
-        "Labels no overlap handles"
-    );
-});
+        assert.ok(
+            chart.scroller.handles[0].zIndex >=
+                chart.scroller.xAxis.labelGroup.zIndex,
+            "Labels no overlap handles"
+        );
+    }
+);
 
 QUnit.test('Navigator (#4053)', function (assert) {
     var chart = new Highcharts.StockChart({
@@ -196,7 +200,8 @@ QUnit.test(
         assert.notEqual(
             secondShadeXBeforeTranslate,
             secondShadeBBox.x,
-            'Second shade should not be in the same position as after mousemove (#12573).'
+            'Second shade should not be in the same position as after ' +
+            'mousemove (#12573).'
         );
 
         assert.deepEqual(
@@ -212,8 +217,8 @@ QUnit.test(
                 chart.plotLeft + firstShadeBBox.width,
                 chart.plotLeft + firstShadeBBox.width + secondShadeBBox.width
             ],
-            'Navigator shades, outline and handles should be properly translated after ' +
-            'yAxis label reserve more space (#12573).'
+            'Navigator shades, outline and handles should be properly ' +
+            'translated after yAxis label reserve more space (#12573).'
         );
 
         chart = Highcharts.stockChart('container', {
@@ -402,101 +407,111 @@ QUnit.test('Missing points using navigator (#5699)', function (assert) {
     }, 0);
 });
 
-QUnit.test('#3961 - Zone zAxis shouldn\'t cause errors in Navigator series.', function (assert) {
-    var chart = $('#container').highcharts('StockChart', {
-        series: [{
-            type: 'bubble',
-            data: [
-                [0, 10, 20],
-                [1, 10, 20]
-            ]
-        }]
-    }).highcharts();
-
-    assert.strictEqual(
-        chart.scroller.handles.length !== 0, // handles are not rendered when we get error in zones
-        true,
-        'No errors in zones for bubble series.'
-    );
-});
-
-QUnit.test('Extremes in navigator with empty series initalized (#5390)', function (assert) {
-
-    var chart = Highcharts.stockChart('container', {
-            series: []
-        }),
-        series = [{
-            data: [{
-                x: 1465102500000,
-                y: 0.0057043973610007015
-            }, {
-                x: 1465251900000,
-                y: 0.020374603343000786
+QUnit.test(
+    '#3961 - Zone zAxis shouldn\'t cause errors in Navigator series.',
+    function (assert) {
+        var chart = $('#container').highcharts('StockChart', {
+            series: [{
+                type: 'bubble',
+                data: [
+                    [0, 10, 20],
+                    [1, 10, 20]
+                ]
             }]
-        }, {
-            data: [{
-                x: 1465102800000,
-                y: 23
-            }, {
-                x: 1465252200000,
-                y: 77
-            }]
-        }, {
-            data: [{
-                x: 1465102800000,
-                y: 1.2800000000000011
-            }, {
-                x: 1465252200000,
-                y: 1.3199999999999932
-            }]
-        }],
-        points = [{
-            data: [{
-                x: 1464951300000,
-                y: 0.04950855198299564
-            }, {
-                x: 1465100700000,
-                y: 0.007108723524993366
-            }]
-        }, {
-            data: [{
-                x: 1464951600000,
-                y: 101
-            }, {
-                x: 1465101000000,
-                y: 18
-            }]
-        }, {
-            data: [{
-                x: 1464951600000,
-                y: 1.5
-            }, {
-                x: 1465101000000,
-                y: 1.2399999999999949
-            }]
-        }];
+        }).highcharts();
 
-    Highcharts.each(series, function (s) {
-        chart.addSeries(s, false);
-    });
-    chart.xAxis[0].setExtremes();
+        assert.notStrictEqual(
+            // handles are not rendered when we get error in zones
+            chart.scroller.handles.length,
+            0,
+            'No errors in zones for bubble series.'
+        );
+    }
+);
 
-    Highcharts.each(points, function (s, index) {
-        if (chart.series[index].options.id !== "highcharts-navigator-series") {
-            Highcharts.each(s.data, function (p) {
-                chart.series[index].addPoint(p, false);
-            });
-        }
-    });
-    chart.xAxis[0].setExtremes();
+QUnit.test(
+    'Extremes in navigator with empty series initalized (#5390)',
+    function (assert) {
 
-    assert.strictEqual(
-        chart.xAxis[1].getExtremes().max,
-        1465251900000,
-        'Correct extremes in navigator'
-    );
+        var chart = Highcharts.stockChart('container', {
+                series: []
+            }),
+            series = [{
+                data: [{
+                    x: 1465102500000,
+                    y: 0.0057043973610007015
+                }, {
+                    x: 1465251900000,
+                    y: 0.020374603343000786
+                }]
+            }, {
+                data: [{
+                    x: 1465102800000,
+                    y: 23
+                }, {
+                    x: 1465252200000,
+                    y: 77
+                }]
+            }, {
+                data: [{
+                    x: 1465102800000,
+                    y: 1.2800000000000011
+                }, {
+                    x: 1465252200000,
+                    y: 1.3199999999999932
+                }]
+            }],
+            points = [{
+                data: [{
+                    x: 1464951300000,
+                    y: 0.04950855198299564
+                }, {
+                    x: 1465100700000,
+                    y: 0.007108723524993366
+                }]
+            }, {
+                data: [{
+                    x: 1464951600000,
+                    y: 101
+                }, {
+                    x: 1465101000000,
+                    y: 18
+                }]
+            }, {
+                data: [{
+                    x: 1464951600000,
+                    y: 1.5
+                }, {
+                    x: 1465101000000,
+                    y: 1.2399999999999949
+                }]
+            }];
 
-});
+        Highcharts.each(series, function (s) {
+            chart.addSeries(s, false);
+        });
+        chart.xAxis[0].setExtremes();
+
+        Highcharts.each(points, function (s, index) {
+            if (
+                chart.series[index].options.id !==
+                "highcharts-navigator-series"
+            ) {
+                Highcharts.each(s.data, function (p) {
+                    chart.series[index].addPoint(p, false);
+                });
+            }
+        });
+        chart.xAxis[0].setExtremes();
+
+        assert.strictEqual(
+            chart.xAxis[1].getExtremes().max,
+            1465251900000,
+            'Correct extremes in navigator'
+        );
+
+    }
+);
 
 QUnit.test('Add point and disabled navigator (#3452)', function (assert) {
 
@@ -616,103 +631,111 @@ QUnit.test('Empty scroller with Axis min set (#5172)', function (assert) {
     );
 });
 
-QUnit.test('Update navigator series on series update (#4923)', function (assert) {
+QUnit.test(
+    'Update navigator series on series update (#4923)',
+    function (assert) {
 
-    var chart = Highcharts.stockChart('container', {
-        series: [{
-            animation: false,
-            data: [
-                { x: 0, y: 0 },
-                { x: 1, y: 1 },
-                { x: 2, y: 2 },
-                { x: 3, y: 3 },
-                { x: 4, y: 4 },
-                { x: 5, y: 5 },
-                { x: 6, y: 6 },
-                { x: 7, y: 7 },
-                { x: 8, y: 8 },
-                { x: 9, y: 9 }
-            ],
-            dataGrouping: {
-                enabled: false
-            }
-        }]
-    });
-
-    var pathWidth = chart.series[1].graph.getBBox().width;
-
-    assert.strictEqual(
-        typeof pathWidth,
-        'number',
-        'Path width is set'
-    );
-    assert.ok(
-        pathWidth > 500,
-        'Path is more than 500px wide'
-    );
-
-    chart.series[0].addPoint([10, 10]);
-    assert.strictEqual(
-        chart.series[1].graph.getBBox().width,
-        pathWidth,
-        'Path width is updated'
-    );
-});
-
-
-QUnit.test('Moving navigator with no series should not break axis (#7411)', function (assert) {
-    var chart = Highcharts.stockChart('container', {
-            chart: {
-                animation: false
-            },
-            navigator: {
-                series: {
-                    visible: false
-                }
-            },
-            rangeSelector: {
-                selected: 4
-            },
+        var chart = Highcharts.stockChart('container', {
             series: [{
                 animation: false,
                 data: [
-                    { x: 1000000, y: 0 },
-                    { x: 100000001, y: 1 },
-                    { x: 1000000002, y: 2 },
-                    { x: 10000000004, y: 4 },
-                    { x: 100000000005, y: 5 },
-                    { x: 1000000000007, y: 7 }
-                ]
+                    { x: 0, y: 0 },
+                    { x: 1, y: 1 },
+                    { x: 2, y: 2 },
+                    { x: 3, y: 3 },
+                    { x: 4, y: 4 },
+                    { x: 5, y: 5 },
+                    { x: 6, y: 6 },
+                    { x: 7, y: 7 },
+                    { x: 8, y: 8 },
+                    { x: 9, y: 9 }
+                ],
+                dataGrouping: {
+                    enabled: false
+                }
             }]
-        }),
-        controller = new TestController(chart),
-        rightHandle = chart.navigator.handles[1],
-        isNum = Highcharts.isNumber;
+        });
 
-    assert.ok(
-        isNum(chart.xAxis[0].userMax),
-        'Axis should have proper extremes before messing with navigator.'
-    );
+        var pathWidth = chart.series[1].graph.getBBox().width;
 
-    // Make the nav do its rendering by simulating mouse click and drag on
-    // right handle.
-    function navRender() {
-        var x = rightHandle.x + rightHandle.translateX + rightHandle.width / 2,
-            y = rightHandle.y + rightHandle.translateY + rightHandle.height / 2;
-        controller.triggerEvent('mousedown', x, y);
-        controller.triggerEvent('mousemove', x, y);
-        controller.triggerEvent('mouseup', x, y);
+        assert.strictEqual(
+            typeof pathWidth,
+            'number',
+            'Path width is set'
+        );
+        assert.ok(
+            pathWidth > 500,
+            'Path is more than 500px wide'
+        );
+
+        chart.series[0].addPoint([10, 10]);
+        assert.strictEqual(
+            chart.series[1].graph.getBBox().width,
+            pathWidth,
+            'Path width is updated'
+        );
     }
+);
 
-    navRender();
-    chart.series[0].hide();
-    navRender();
 
-    assert.ok(
-        isNum(chart.xAxis[0].userMax),
-        'Axis should have proper extremes after messing with navigator.'
-    );
-});
+QUnit.test(
+    'Moving navigator with no series should not break axis (#7411)',
+    function (assert) {
+        var chart = Highcharts.stockChart('container', {
+                chart: {
+                    animation: false
+                },
+                navigator: {
+                    series: {
+                        visible: false
+                    }
+                },
+                rangeSelector: {
+                    selected: 4
+                },
+                series: [{
+                    animation: false,
+                    data: [
+                        { x: 1000000, y: 0 },
+                        { x: 100000001, y: 1 },
+                        { x: 1000000002, y: 2 },
+                        { x: 10000000004, y: 4 },
+                        { x: 100000000005, y: 5 },
+                        { x: 1000000000007, y: 7 }
+                    ]
+                }]
+            }),
+            controller = new TestController(chart),
+            rightHandle = chart.navigator.handles[1],
+            isNum = Highcharts.isNumber;
+
+        assert.ok(
+            isNum(chart.xAxis[0].userMax),
+            'Axis should have proper extremes before messing with navigator.'
+        );
+
+        // Make the nav do its rendering by simulating mouse click and drag on
+        // right handle.
+        function navRender() {
+            var x = rightHandle.x + rightHandle.translateX +
+                    rightHandle.width / 2,
+                y = rightHandle.y + rightHandle.translateY +
+                    rightHandle.height / 2;
+            controller.triggerEvent('mousedown', x, y);
+            controller.triggerEvent('mousemove', x, y);
+            controller.triggerEvent('mouseup', x, y);
+        }
+
+        navRender();
+        chart.series[0].hide();
+        navRender();
+
+        assert.ok(
+            isNum(chart.xAxis[0].userMax),
+            'Axis should have proper extremes after messing with navigator.'
+        );
+    }
+);
 
 QUnit.test(
     'Highcharts events tests',
@@ -733,10 +756,11 @@ QUnit.test(
             }
         });
 
-        assert.strictEqual(
-            chart.series[0].hcEvents.updatedData.length,
-            0,
-            'Update of adaptToUpdatedData should remove all related events (#8038)'
+        assert.ok(
+            !chart.series[0].hcEvents ||
+            !chart.series[0].hcEvents.updatedData ||
+            chart.series[0].hcEvents.updatedData.length === 0,
+            'Update of adaptToUpdatedData should remove all events (#8038)'
         );
 
         assert.strictEqual(
@@ -920,35 +944,38 @@ QUnit.test('stickToMin and stickToMax', function (assert) {
     );
 });
 
-QUnit.test('Update an unrelated dynamically added chart series (#8430)', function (assert) {
-    var chart = Highcharts.stockChart('container', {
-        series: [],
-        navigator: {
-            adaptToUpdatedData: false,
-            series: {
-                id: "navigator",
-                data: []
+QUnit.test(
+    'Update an unrelated dynamically added chart series (#8430)',
+    function (assert) {
+        var chart = Highcharts.stockChart('container', {
+            series: [],
+            navigator: {
+                adaptToUpdatedData: false,
+                series: {
+                    id: "navigator",
+                    data: []
+                }
             }
-        }
-    });
+        });
 
-    chart.addSeries({
-        id: "series1"
-    });
+        chart.addSeries({
+            id: "series1"
+        });
 
-    chart.get("navigator").setData([
-        { x: 0, y: 1 },
-        { x: 1, y: 10 }
-    ]);
+        chart.get("navigator").setData([
+            { x: 0, y: 1 },
+            { x: 1, y: 10 }
+        ]);
 
-    chart.get("series1").update({});
+        chart.get("series1").update({});
 
-    assert.strictEqual(
-        chart.navigator.series[0].points.length,
-        2,
-        'Correct number of points in navigator series (#8430).'
-    );
-});
+        assert.strictEqual(
+            chart.navigator.series[0].points.length,
+            2,
+            'Correct number of points in navigator series (#8430).'
+        );
+    }
+);
 
 QUnit.test('Add a navigator by chart update (#7067)', function (assert) {
     var chart = Highcharts.stockChart('container', {
@@ -1001,7 +1028,8 @@ QUnit.test('Navigator with adding series on chart load.', function (assert) {
             events: {
                 load: function (event) {
                     this.navigator.onMouseUp(event);
-                    const xStr = this.navigator.shades[1].element.getAttribute('x');
+                    const xStr = this.navigator.shades[1].element
+                        .getAttribute('x');
                     assert.notEqual(
                         /^[\-0-9\.]+$/.test(xStr) || xStr === null,
                         false,
@@ -1016,29 +1044,33 @@ QUnit.test('Navigator with adding series on chart load.', function (assert) {
     });
 });
 
-QUnit.test('yAxis in navigator does not match the one in the chart, #14060.', function (assert) {
-    const chart = Highcharts.stockChart('container', {
-        yAxis: {
-            reversed: true
-        },
-        series: [{
-            data: [1, 2, 3]
-        }]
-    });
-
-    assert.ok(
-        chart.navigator.yAxis.reversed,
-        'Navigator should inherit the reversed property from the main axis.'
-    );
-    chart.update({
-        navigator: {
+QUnit.test(
+    'yAxis in navigator does not match the one in the chart, #14060.',
+    function (assert) {
+        const chart = Highcharts.stockChart('container', {
             yAxis: {
-                reversed: false
+                reversed: true
+            },
+            series: [{
+                data: [1, 2, 3]
+            }]
+        });
+
+        assert.ok(
+            chart.navigator.yAxis.reversed,
+            'Navigator should inherit the reversed property from the main axis.'
+        );
+        chart.update({
+            navigator: {
+                yAxis: {
+                    reversed: false
+                }
             }
-        }
-    });
-    assert.notOk(
-        chart.navigator.yAxis.reversed,
-        'Navigator options should have higher priority and the axis should not be reversed anymore.'
-    );
-});
+        });
+        assert.notOk(
+            chart.navigator.yAxis.reversed,
+            'Navigator options should have higher priority and the axis ' +
+            'should not be reversed anymore.'
+        );
+    }
+);
