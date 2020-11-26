@@ -90,6 +90,7 @@ class PPOIndicator extends EMAIndicator {
     * */
 
     public data: Array<PPOPoint> = void 0 as any;
+    public options: PPOOptions = void 0 as any;
     public points: Array<PPOPoint> = void 0 as any;
 
     /* *
@@ -191,7 +192,6 @@ class PPOIndicator extends EMAIndicator {
 * */
 
 interface PPOIndicator {
-    options: PPOOptions;
     nameBase: string;
     nameComponents: Array<string>;
     pointClass: typeof PPOPoint;
