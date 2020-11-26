@@ -218,32 +218,24 @@ class SupertrendIndicator extends SMAIndicator {
             }
         }
     } as Highcharts.SupertrendIndicatorOptions);
-}
 
-/* *
- *
- *  Prototype Properties
- *
- * */
-interface SupertrendIndicator {
-    data: Array<Highcharts.SupertrendIndicatorPoint>;
-    drawGraph(): void;
-    getValues<TLinkedSeries extends LineSeries>(
-        series: TLinkedSeries,
-        params: Highcharts.SupertrendIndicatorParamsOptions
-    ): (IndicatorValuesObject<TLinkedSeries>|undefined);
-    init(): void;
-    linkedParent: Highcharts.SupertrendLinkedParentObject;
-    nameBase: string;
-    nameComponents: Array<string>;
-    options: Highcharts.SupertrendIndicatorOptions;
-    requiredIndicators: Array<string>;
-    pointClass: typeof Highcharts.SupertrendIndicatorPoint;
-    points: Array<Highcharts.SupertrendIndicatorPoint>;
-}
+    /* *
+     *
+     *  Properties
+     *
+     * */
+    public data: Array<Highcharts.SupertrendIndicatorPoint> = void 0 as any;
 
-extend(SupertrendIndicator.prototype, {
-    init: function (this: SupertrendIndicator): void {
+    public options: Highcharts.SupertrendIndicatorOptions = void 0 as any;
+
+    public points: Array<Highcharts.SupertrendIndicatorPoint> = void 0 as any;
+
+    /* *
+     *
+     *  Functions
+     *
+     * */
+    init(): void {
         var options: Highcharts.SupertrendIndicatorOptions,
             parentOptions: SeriesOptions;
 
@@ -259,8 +251,9 @@ extend(SupertrendIndicator.prototype, {
             (parentOptions.cropThreshold as any) -
             ((options.params as any).period - 1)
         );
-    },
-    drawGraph: function (this: SupertrendIndicator): void {
+    }
+
+    drawGraph(): void {
         var indicator = this,
             indicOptions: Highcharts.SupertrendIndicatorOptions =
             indicator.options,
@@ -534,7 +527,7 @@ extend(SupertrendIndicator.prototype, {
         indicator.points = indicPoints;
         indicator.options = indicOptions;
         indicator.graph = indicPath;
-    },
+    }
 
     // Supertrend (Multiplier, Period) Formula:
 
@@ -573,8 +566,7 @@ extend(SupertrendIndicator.prototype, {
     //      Current Close > Current FINAL LOWERBAND
     //     ) THAN Current FINAL LOWERBAND
 
-
-    getValues: function<TLinkedSeries extends LineSeries> (
+    getValues<TLinkedSeries extends LineSeries>(
         series: TLinkedSeries,
         params: Highcharts.SupertrendIndicatorParamsOptions
     ): (IndicatorValuesObject<TLinkedSeries>|undefined) {
@@ -672,6 +664,25 @@ extend(SupertrendIndicator.prototype, {
             yData: yData
         } as IndicatorValuesObject<TLinkedSeries>;
     }
+}
+
+/* *
+ *
+ *  Prototype Properties
+ *
+ * */
+interface SupertrendIndicator {
+    linkedParent: Highcharts.SupertrendLinkedParentObject;
+    nameBase: string;
+    nameComponents: Array<string>;
+    requiredIndicators: Array<string>;
+    pointClass: typeof Highcharts.SupertrendIndicatorPoint;
+}
+
+extend(SupertrendIndicator.prototype, {
+    nameBase: 'Supertrend',
+    nameComponents: ['multiplier', 'period'],
+    requiredIndicators: ['atr']
 });
 
 /* *
