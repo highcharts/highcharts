@@ -88,32 +88,37 @@ var columnRangeOptions = {
 var ColumnRangeSeries = /** @class */ (function (_super) {
     __extends(ColumnRangeSeries, _super);
     function ColumnRangeSeries() {
-        return _super !== null && _super.apply(this, arguments) || this;
+        /* *
+         *
+         *  Static properties
+         *
+         * */
+        var _this = _super !== null && _super.apply(this, arguments) || this;
+        /* *
+         *
+         *  Properties
+         *
+         * */
+        _this.data = void 0;
+        _this.points = void 0;
+        _this.options = void 0;
+        return _this;
     }
     /* *
      *
-     *  Static properties
+     *  Functions
      *
      * */
-    ColumnRangeSeries.defaultOptions = merge(defaultOptions.plotOptions.column, defaultOptions.plotOptions.arearange, columnRangeOptions);
-    return ColumnRangeSeries;
-}(AreaRangeSeries));
-/* *
- *
- *  Prototype properties
- *
- * */
-extend(ColumnRangeSeries.prototype, {
-    setOptions: function () {
+    ColumnRangeSeries.prototype.setOptions = function () {
         merge(true, arguments[0], { stacking: void 0 }); // #14359 Prevent side-effect from stacking.
         return arearangeProto.setOptions.apply(this, arguments);
-    },
+    };
     // eslint-disable-next-line valid-jsdoc
     /**
      * Translate data points from raw values x and y to plotX and plotY
      * @private
      */
-    translate: function () {
+    ColumnRangeSeries.prototype.translate = function () {
         var series = this, yAxis = series.yAxis, xAxis = series.xAxis, startAngleRad = xAxis.startAngleRad, start, chart = series.chart, isRadial = series.xAxis.isRadial, safeDistance = Math.max(chart.chartWidth, chart.chartHeight) + 999, plotHigh;
         // eslint-disable-next-line valid-jsdoc
         /**
@@ -166,41 +171,50 @@ extend(ColumnRangeSeries.prototype, {
                 ]; // don't inherit from column tooltip position - #3372
             }
         });
-    },
+    };
+    // Overrides from modules that may be loaded after this module
+    ColumnRangeSeries.prototype.crispCol = function () {
+        return columnProto.crispCol.apply(this, arguments);
+    };
+    ColumnRangeSeries.prototype.drawPoints = function () {
+        return columnProto.drawPoints.apply(this, arguments);
+    };
+    ColumnRangeSeries.prototype.drawTracker = function () {
+        return columnProto.drawTracker.apply(this, arguments);
+    };
+    ColumnRangeSeries.prototype.getColumnMetrics = function () {
+        return columnProto.getColumnMetrics.apply(this, arguments);
+    };
+    ColumnRangeSeries.prototype.pointAttribs = function () {
+        return columnProto.pointAttribs.apply(this, arguments);
+    };
+    ColumnRangeSeries.prototype.adjustForMissingColumns = function () {
+        return columnProto.adjustForMissingColumns.apply(this, arguments);
+    };
+    ColumnRangeSeries.prototype.animate = function () {
+        return columnProto.animate.apply(this, arguments);
+    };
+    ColumnRangeSeries.prototype.translate3dPoints = function () {
+        return columnProto.translate3dPoints.apply(this, arguments);
+    };
+    ColumnRangeSeries.prototype.translate3dShapes = function () {
+        return columnProto.translate3dShapes.apply(this, arguments);
+    };
+    ColumnRangeSeries.defaultOptions = merge(defaultOptions.plotOptions.column, defaultOptions.plotOptions.arearange, columnRangeOptions);
+    return ColumnRangeSeries;
+}(AreaRangeSeries));
+/* *
+ *
+ *  Prototype properties
+ *
+ * */
+extend(ColumnRangeSeries.prototype, {
     directTouch: true,
     trackerGroups: ['group', 'dataLabelsGroup'],
     drawGraph: noop,
     getSymbol: noop,
-    // Overrides from modules that may be loaded after this module
-    crispCol: function () {
-        return columnProto.crispCol.apply(this, arguments);
-    },
-    drawPoints: function () {
-        return columnProto.drawPoints.apply(this, arguments);
-    },
-    drawTracker: function () {
-        return columnProto.drawTracker.apply(this, arguments);
-    },
-    getColumnMetrics: function () {
-        return columnProto.getColumnMetrics.apply(this, arguments);
-    },
-    pointAttribs: function () {
-        return columnProto.pointAttribs.apply(this, arguments);
-    },
-    adjustForMissingColumns: function () {
-        return columnProto.adjustForMissingColumns.apply(this, arguments);
-    },
-    animate: function () {
-        return columnProto.animate.apply(this, arguments);
-    },
     polarArc: function () {
         return columnProto.polarArc.apply(this, arguments);
-    },
-    translate3dPoints: function () {
-        return columnProto.translate3dPoints.apply(this, arguments);
-    },
-    translate3dShapes: function () {
-        return columnProto.translate3dShapes.apply(this, arguments);
     }
 });
 var ColumnRangePoint = /** @class */ (function (_super) {
