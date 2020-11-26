@@ -487,7 +487,7 @@ extend(VBPIndicator.prototype, {
     markerAttribs: noop,
     drawGraph: noop,
     getColumnMetrics: columnPrototype.getColumnMetrics,
-    crispCol: columnPrototype.crispCol,
+    crispCol: columnPrototype.crispCol
 });
 var VBPIndicatorPoint = /** @class */ (function (_super) {
     __extends(VBPIndicatorPoint, _super);
