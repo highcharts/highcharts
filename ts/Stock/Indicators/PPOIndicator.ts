@@ -8,7 +8,6 @@
 
 'use strict';
 
-import type EMAIndicator from './EMA/EMAIndicator';
 import type {
     EMAOptions,
     EMAParamsOptions
@@ -16,11 +15,18 @@ import type {
 import type EMAPoint from './EMA/EMAPoint';
 import type IndicatorValuesObject from './IndicatorValuesObject';
 import type LineSeries from '../../Series/Line/LineSeries';
-import BaseSeries from '../../Core/Globals.js';
+const {
+    seriesTypes: {
+        ema: EMAIndicator
+    }
+} = BaseSeries;
+import BaseSeries from '../../Core/Series/Series.js';
 import RequiredIndicatorMixin from '../../Mixins/IndicatorRequired.js';
 import U from '../../Core/Utilities.js';
 const {
     correctFloat,
+    extend,
+    merge,
     error
 } = U;
 
@@ -30,20 +36,6 @@ const {
  */
 declare global {
     namespace Highcharts {
-
-        class PPOIndicator extends EMAIndicator {
-            public data: Array<PPOIndicatorPoint>;
-            public getValues<TLinkedSeries extends LineSeries>(
-                series: TLinkedSeries,
-                params: PPOIndicatorParamsOptions
-            ): (IndicatorValuesObject<TLinkedSeries>|undefined);
-            public init(): void;
-            public options: PPOIndicatorOptions;
-            public nameBase: string;
-            public nameComponents: Array<string>;
-            public pointClass: typeof PPOIndicatorPoint;
-            public points: Array<PPOIndicatorPoint>;
-        }
 
         interface PPOIndicatorParamsOptions extends EMAParamsOptions {
             periods?: Array<number>;
@@ -59,15 +51,11 @@ declare global {
     }
 }
 
-declare module '../../Core/Series/SeriesType' {
-    interface SeriesTypeRegistry {
-        ppo: typeof Highcharts.PPOIndicator;
-    }
-}
-
-// im port './EMAIndicator.js';
-
-var EMA = BaseSeries.seriesTypes.ema;
+/* *
+ *
+ *  Class
+ *
+ * */
 
 /**
  * The PPO series type.
@@ -78,9 +66,7 @@ var EMA = BaseSeries.seriesTypes.ema;
  *
  * @augments Highcharts.Series
  */
-BaseSeries.seriesType<typeof Highcharts.PPOIndicator>(
-    'ppo',
-    'ema',
+class PPOIndicator extends EMAIndicator {
     /**
      * Percentage Price Oscillator. This series requires the
      * `linkedTo` option to be set and should be loaded after the
@@ -100,7 +86,7 @@ BaseSeries.seriesType<typeof Highcharts.PPOIndicator>(
      * @requires     stock/indicators/ppo
      * @optionparent plotOptions.ppo
      */
-    {
+    public static defaultOptions: Highcharts.PPOIndicatorOptions = merge(EMAIndicator.defaultOptions, {
         /**
          * Paramters used in calculation of Percentage Price Oscillator series
          * points.
@@ -116,98 +102,148 @@ BaseSeries.seriesType<typeof Highcharts.PPOIndicator>(
              */
             periods: [12, 26]
         }
-    },
-    /**
-     * @lends Highcharts.Series.prototype
-     */
-    {
-        nameBase: 'PPO',
-        nameComponents: ['periods'],
-        init: function (this: Highcharts.PPOIndicator): void {
-            var args = arguments,
-                ctx = this;
+    } as Highcharts.PPOIndicatorOptions);
 
-            RequiredIndicatorMixin.isParentLoaded(
-                (EMA as any),
-                'ema',
-                ctx.type,
-                function (indicator: Highcharts.Indicator): undefined {
-                    indicator.prototype.init.apply(ctx, args);
-                    return;
-                }
-            );
-        },
-        getValues: function<TLinkedSeries extends LineSeries> (
-            series: TLinkedSeries,
-            params: Highcharts.PPOIndicatorParamsOptions
-        ): (IndicatorValuesObject<TLinkedSeries>|undefined) {
-            var periods: Array<number> = (params.periods as any),
-                index: number = (params.index as any),
-                // 0- date, 1- Percentage Price Oscillator
-                PPO: Array<Array<number>> = [],
-                xData: Array<number> = [],
-                yData: Array<number> = [],
-                periodsOffset: number,
-                // Shorter Period EMA
-                SPE: (
-                    IndicatorValuesObject<TLinkedSeries>|
-                    undefined
-                ),
-                // Longer Period EMA
-                LPE: (
-                    IndicatorValuesObject<TLinkedSeries>|
-                    undefined
-                ),
-                oscillator: number,
-                i: number;
+    /* *
+    *
+    *   Properties
+    *
+    * */
 
-            // Check if periods are correct
-            if (periods.length !== 2 || periods[1] <= periods[0]) {
-                error(
-                    'Error: "PPO requires two periods. Notice, first period ' +
-                    'should be lower than the second one."'
-                );
+    public data: Array<Highcharts.PPOIndicatorPoint> = void 0 as any;
+    public points: Array<Highcharts.PPOIndicatorPoint> = void 0 as any;
+
+    /* *
+     *
+     *  Functions
+     *
+     * */
+
+    public init(this: PPOIndicator): void {
+        var args = arguments,
+            ctx = this;
+
+        RequiredIndicatorMixin.isParentLoaded(
+            (EMAIndicator as any),
+            'ema',
+            ctx.type,
+            function (indicator: Highcharts.Indicator): undefined {
+                indicator.prototype.init.apply(ctx, args);
                 return;
             }
-
-            SPE = EMA.prototype.getValues.call(this, series, {
-                index: index,
-                period: periods[0]
-            }) as IndicatorValuesObject<TLinkedSeries>;
-
-            LPE = EMA.prototype.getValues.call(this, series, {
-                index: index,
-                period: periods[1]
-            }) as IndicatorValuesObject<TLinkedSeries>;
-
-            // Check if ema is calculated properly, if not skip
-            if (!SPE || !LPE) {
-                return;
-            }
-
-            periodsOffset = periods[1] - periods[0];
-
-            for (i = 0; i < LPE.yData.length; i++) {
-                oscillator = correctFloat(
-                    ((SPE as any).yData[i + periodsOffset] -
-                    (LPE as any).yData[i]) /
-                    (LPE as any).yData[i] *
-                    100
-                );
-
-                PPO.push([(LPE as any).xData[i], oscillator]);
-                xData.push((LPE as any).xData[i]);
-                yData.push(oscillator);
-            }
-
-            return {
-                values: PPO,
-                xData: xData,
-                yData: yData
-            } as IndicatorValuesObject<TLinkedSeries>;
-        }
+        );
     }
-);
+
+    public getValues<TLinkedSeries extends LineSeries>(
+        series: TLinkedSeries,
+        params: Highcharts.PPOIndicatorParamsOptions
+    ): (IndicatorValuesObject<TLinkedSeries> | undefined) {
+        var periods: Array<number> = (params.periods as any),
+            index: number = (params.index as any),
+            // 0- date, 1- Percentage Price Oscillator
+            PPO: Array<Array<number>> = [],
+            xData: Array<number> = [],
+            yData: Array<number> = [],
+            periodsOffset: number,
+            // Shorter Period EMA
+            SPE: (
+                IndicatorValuesObject<TLinkedSeries> |
+                undefined
+            ),
+            // Longer Period EMA
+            LPE: (
+                IndicatorValuesObject<TLinkedSeries> |
+                undefined
+            ),
+            oscillator: number,
+            i: number;
+
+        // Check if periods are correct
+        if (periods.length !== 2 || periods[1] <= periods[0]) {
+            error(
+                'Error: "PPO requires two periods. Notice, first period ' +
+                'should be lower than the second one."'
+            );
+            return;
+        }
+
+        SPE = EMAIndicator.prototype.getValues.call(this, series, {
+            index: index,
+            period: periods[0]
+        }) as IndicatorValuesObject<TLinkedSeries>;
+
+        LPE = EMAIndicator.prototype.getValues.call(this, series, {
+            index: index,
+            period: periods[1]
+        }) as IndicatorValuesObject<TLinkedSeries>;
+
+        // Check if ema is calculated properly, if not skip
+        if (!SPE || !LPE) {
+            return;
+        }
+
+        periodsOffset = periods[1] - periods[0];
+
+        for (i = 0; i < LPE.yData.length; i++) {
+            oscillator = correctFloat(
+                ((SPE as any).yData[i + periodsOffset] -
+                    (LPE as any).yData[i]) /
+                (LPE as any).yData[i] *
+                100
+            );
+
+            PPO.push([(LPE as any).xData[i], oscillator]);
+            xData.push((LPE as any).xData[i]);
+            yData.push(oscillator);
+        }
+
+        return {
+            values: PPO,
+            xData: xData,
+            yData: yData
+        } as IndicatorValuesObject<TLinkedSeries>;
+    }
+}
+
+/* *
+*
+*   Prototype Properties
+*
+* */
+
+interface PPOIndicator {
+    options: Highcharts.PPOIndicatorOptions;
+    nameBase: string;
+    nameComponents: Array<string>;
+    pointClass: typeof Highcharts.PPOIndicatorPoint;
+}
+
+extend(PPOIndicator.prototype, {
+    nameBase: 'PPO',
+    nameComponents: ['periods']
+});
+
+/* *
+ *
+ *  Registry
+ *
+ * */
+
+declare module '../../Core/Series/SeriesType' {
+    interface SeriesTypeRegistry {
+        ppo: typeof PPOIndicator;
+    }
+}
+
+BaseSeries.registerSeriesType('ppo', PPOIndicator);
+
+/* *
+ *
+ *  Default Export
+ *
+ * */
+
+export default PPOIndicator;
 
 /**
  * A `Percentage Price Oscillator` series. If the [type](#series.ppo.type)
