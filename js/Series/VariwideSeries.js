@@ -57,47 +57,10 @@ var VariwideSeries = /** @class */ (function (_super) {
     }
     /* *
      *
-     * Static properties
+     * Functions
      *
      * */
-    /**
-     * A variwide chart (related to marimekko chart) is a column chart with a
-     * variable width expressing a third dimension.
-     *
-     * @sample {highcharts} highcharts/demo/variwide/
-     *         Variwide chart
-     * @sample {highcharts} highcharts/series-variwide/inverted/
-     *         Inverted variwide chart
-     * @sample {highcharts} highcharts/series-variwide/datetime/
-     *         Variwide columns on a datetime axis
-     *
-     * @extends      plotOptions.column
-     * @since        6.0.0
-     * @product      highcharts
-     * @excluding    boostThreshold, crisp, depth, edgeColor, edgeWidth,
-     *               groupZPadding, boostBlending
-     * @requires     modules/variwide
-     * @optionparent plotOptions.variwide
-     */
-    VariwideSeries.defaultOptions = merge(ColumnSeries.defaultOptions, {
-        /**
-         * In a variwide chart, the point padding is 0 in order to express the
-         * horizontal stacking of items.
-         */
-        pointPadding: 0,
-        /**
-         * In a variwide chart, the group padding is 0 in order to express the
-         * horizontal stacking of items.
-         */
-        groupPadding: 0
-    });
-    return VariwideSeries;
-}(ColumnSeries));
-extend(VariwideSeries.prototype, {
-    irregularWidths: true,
-    pointArrayMap: ['y', 'z'],
-    parallelArrays: ['x', 'y', 'z'],
-    processData: function (force) {
+    VariwideSeries.prototype.processData = function (force) {
         this.totalZ = 0;
         this.relZ = [];
         BaseSeries.seriesTypes.column.prototype.processData.call(this, force);
@@ -112,7 +75,7 @@ extend(VariwideSeries.prototype, {
             this.xAxis.zData = this.zData; // Used for label rank
         }
         return;
-    },
+    };
     /* eslint-disable valid-jsdoc */
     /**
      * Translate an x value inside a given category index into the distorted
@@ -133,7 +96,7 @@ extend(VariwideSeries.prototype, {
      * @return {number}
      *         Distorted X position
      */
-    postTranslate: function (index, x, point) {
+    VariwideSeries.prototype.postTranslate = function (index, x, point) {
         var axis = this.xAxis, relZ = this.relZ, i = axis.reversed ? relZ.length - index : index, goRight = axis.reversed ? -1 : 1, len = axis.len, totalZ = this.totalZ, linearSlotLeft = i / relZ.length * len, linearSlotRight = (i + goRight) / relZ.length * len, slotLeft = (pick(relZ[i], totalZ) / totalZ) * len, slotRight = (pick(relZ[i + goRight], totalZ) / totalZ) * len, xInsideLinearSlot = x - linearSlotLeft, ret;
         // Set crosshairWidth for every point (#8173)
         if (point) {
@@ -143,10 +106,10 @@ extend(VariwideSeries.prototype, {
             xInsideLinearSlot * (slotRight - slotLeft) /
                 (linearSlotRight - linearSlotLeft);
         return ret;
-    },
+    };
     /* eslint-enable valid-jsdoc */
     // Extend translation by distoring X position based on Z.
-    translate: function () {
+    VariwideSeries.prototype.translate = function () {
         // Temporarily disable crisping when computing original shapeArgs
         var crispOption = this.options.crisp, xAxis = this.xAxis;
         this.options.crisp = false;
@@ -192,9 +155,9 @@ extend(VariwideSeries.prototype, {
         if (this.options.stacking) {
             this.correctStackLabels();
         }
-    },
+    };
     // Function that corrects stack labels positions
-    correctStackLabels: function () {
+    VariwideSeries.prototype.correctStackLabels = function () {
         var series = this, options = series.options, yAxis = series.yAxis, pointStack, pointWidth, stack, xValue;
         series.points.forEach(function (point) {
             xValue = point.x;
@@ -212,7 +175,49 @@ extend(VariwideSeries.prototype, {
                 }
             }
         });
-    }
+    };
+    /* *
+     *
+     * Static properties
+     *
+     * */
+    /**
+     * A variwide chart (related to marimekko chart) is a column chart with a
+     * variable width expressing a third dimension.
+     *
+     * @sample {highcharts} highcharts/demo/variwide/
+     *         Variwide chart
+     * @sample {highcharts} highcharts/series-variwide/inverted/
+     *         Inverted variwide chart
+     * @sample {highcharts} highcharts/series-variwide/datetime/
+     *         Variwide columns on a datetime axis
+     *
+     * @extends      plotOptions.column
+     * @since        6.0.0
+     * @product      highcharts
+     * @excluding    boostThreshold, crisp, depth, edgeColor, edgeWidth,
+     *               groupZPadding, boostBlending
+     * @requires     modules/variwide
+     * @optionparent plotOptions.variwide
+     */
+    VariwideSeries.defaultOptions = merge(ColumnSeries.defaultOptions, {
+        /**
+         * In a variwide chart, the point padding is 0 in order to express the
+         * horizontal stacking of items.
+         */
+        pointPadding: 0,
+        /**
+         * In a variwide chart, the group padding is 0 in order to express the
+         * horizontal stacking of items.
+         */
+        groupPadding: 0
+    });
+    return VariwideSeries;
+}(ColumnSeries));
+extend(VariwideSeries.prototype, {
+    irregularWidths: true,
+    pointArrayMap: ['y', 'z'],
+    parallelArrays: ['x', 'y', 'z']
 });
 /* *
  *
@@ -232,13 +237,16 @@ var VariwidePoint = /** @class */ (function (_super) {
         _this.series = void 0;
         return _this;
     }
+    /* *
+     *
+     * Functions
+     *
+     * */
+    VariwidePoint.prototype.isValid = function () {
+        return isNumber(this.y) && isNumber(this.z);
+    };
     return VariwidePoint;
 }(ColumnSeries.prototype.pointClass));
-extend(VariwidePoint.prototype, {
-    isValid: function () {
-        return isNumber(this.y) && isNumber(this.z);
-    }
-});
 VariwideSeries.prototype.pointClass = VariwidePoint;
 BaseSeries.registerSeriesType('variwide', VariwideSeries);
 /* *
