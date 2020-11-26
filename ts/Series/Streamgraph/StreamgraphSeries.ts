@@ -15,8 +15,12 @@
 import type StreamgraphPoint from './StreamgraphPoint';
 import type StreamgraphSeriesOptions from './StreamgraphSeriesOptions';
 
-import AreaSplineSeries from '../AreaSpline/AreaSplineSeries.js';
 import BaseSeries from '../../Core/Series/Series.js';
+const {
+    seriesTypes: {
+        areaspline: AreaSplineSeries
+    }
+} = BaseSeries;
 import U from '../../Core/Utilities.js';
 const {
     merge,
@@ -46,7 +50,7 @@ class StreamgraphSeries extends AreaSplineSeries {
      * @requires     modules/streamgraph
      * @optionparent plotOptions.streamgraph
      */
-    public static defaultOptions = merge(AreaSplineSeries.defaultOptions, {
+    public static defaultOptions: StreamgraphSeriesOptions = merge(AreaSplineSeries.defaultOptions, {
         /**
          * @see [fillColor](#plotOptions.streamgraph.fillColor)
          * @see [fillOpacity](#plotOptions.streamgraph.fillOpacity)
@@ -73,7 +77,7 @@ class StreamgraphSeries extends AreaSplineSeries {
             enabled: false
         },
         stacking: 'stream'
-    });
+    } as StreamgraphSeriesOptions);
 
     /* *
      *
