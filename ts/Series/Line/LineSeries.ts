@@ -4665,7 +4665,7 @@ class LineSeries {
             // Set the the plotY value, reset it for redraws
             // #3201
             point.plotY = void 0;
-            if (typeof yValue === 'number' && yValue !== Infinity) {
+            if (isNumber(yValue)) {
                 const translated = yAxis.translate(
                     yValue, false, true, false, true
                 );
