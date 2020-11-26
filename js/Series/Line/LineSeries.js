@@ -1488,7 +1488,7 @@ var LineSeries = /** @class */ (function () {
             // Set the the plotY value, reset it for redraws
             // #3201
             point.plotY = void 0;
-            if (typeof yValue === 'number' && yValue !== Infinity) {
+            if (isNumber(yValue)) {
                 var translated = yAxis.translate(yValue, false, true, false, true);
                 if (typeof translated !== 'undefined') {
                     point.plotY = limitedRange(translated);
