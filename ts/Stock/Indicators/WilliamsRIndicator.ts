@@ -90,21 +90,12 @@ class WilliamsRIndicator extends SMAIndicator {
             period: 14
         }
     } as Highcharts.WilliamsRIndicatorOptions)
-}
 
-interface WilliamsRIndicator {
-    data: Array<Highcharts.WilliamsRIndicatorPoint>;
-    getValues<TLinkedSeries extends LineSeries>(
-        series: TLinkedSeries,
-        params: Highcharts.WilliamsRIndicatorParamsOptions
-    ): (IndicatorValuesObject<TLinkedSeries>|undefined);
-    options: Highcharts.WilliamsRIndicatorOptions;
-    pointClass: typeof Highcharts.WilliamsRIndicatorPoint;
-    points: Array<Highcharts.WilliamsRIndicatorPoint>;
-}
-extend(WilliamsRIndicator.prototype, {
-    nameBase: 'Williams %R',
-    getValues: function<TLinkedSeries extends LineSeries> (
+    public data: Array<Highcharts.WilliamsRIndicatorPoint> = void 0 as any;
+    public options: Highcharts.WilliamsRIndicatorOptions = void 0 as any;
+    public points: Array<Highcharts.WilliamsRIndicatorPoint> = void 0 as any;
+
+    public getValues <TLinkedSeries extends LineSeries>(
         this: WilliamsRIndicator,
         series: TLinkedSeries,
         params: Highcharts.WilliamsRIndicatorParamsOptions
@@ -162,6 +153,13 @@ extend(WilliamsRIndicator.prototype, {
             yData: yData
         } as IndicatorValuesObject<TLinkedSeries>;
     }
+}
+
+interface WilliamsRIndicator {
+    pointClass: typeof Highcharts.WilliamsRIndicatorPoint;
+}
+extend(WilliamsRIndicator.prototype, {
+    nameBase: 'Williams %R'
 });
 
 declare module '../../Core/Series/SeriesType' {

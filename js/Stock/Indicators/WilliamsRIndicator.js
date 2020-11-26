@@ -37,42 +37,13 @@ var extend = U.extend, isArray = U.isArray, merge = U.merge;
 var WilliamsRIndicator = /** @class */ (function (_super) {
     __extends(WilliamsRIndicator, _super);
     function WilliamsRIndicator() {
-        return _super !== null && _super.apply(this, arguments) || this;
+        var _this = _super !== null && _super.apply(this, arguments) || this;
+        _this.data = void 0;
+        _this.options = void 0;
+        _this.points = void 0;
+        return _this;
     }
-    /**
-     * Williams %R. This series requires the `linkedTo` option to be
-     * set and should be loaded after the `stock/indicators/indicators.js`.
-     *
-     * @sample {highstock} stock/indicators/williams-r
-     *         Williams %R
-     *
-     * @extends      plotOptions.sma
-     * @since        7.0.0
-     * @product      highstock
-     * @excluding    allAreas, colorAxis, joinBy, keys, navigatorOptions,
-     *               pointInterval, pointIntervalUnit, pointPlacement,
-     *               pointRange, pointStart, showInNavigator, stacking
-     * @requires     stock/indicators/indicators
-     * @requires     stock/indicators/williams-r
-     * @optionparent plotOptions.williamsr
-     */
-    WilliamsRIndicator.defaultOptions = merge(SMAIndicator.defaultOptions, {
-        /**
-         * Paramters used in calculation of Williams %R series points.
-         * @excluding index
-         */
-        params: {
-            /**
-             * Period for Williams %R oscillator
-             */
-            period: 14
-        }
-    });
-    return WilliamsRIndicator;
-}(SMAIndicator));
-extend(WilliamsRIndicator.prototype, {
-    nameBase: 'Williams %R',
-    getValues: function (series, params) {
+    WilliamsRIndicator.prototype.getValues = function (series, params) {
         var period = params.period, xVal = series.xData, yVal = series.yData, yValLen = yVal ? yVal.length : 0, WR = [], // 0- date, 1- Williams %R
         xData = [], yData = [], slicedY, close = 3, low = 2, high = 1, extremes, R, HH, // Highest high value in period
         LL, // Lowest low value in period
@@ -105,7 +76,40 @@ extend(WilliamsRIndicator.prototype, {
             xData: xData,
             yData: yData
         };
-    }
+    };
+    /**
+     * Williams %R. This series requires the `linkedTo` option to be
+     * set and should be loaded after the `stock/indicators/indicators.js`.
+     *
+     * @sample {highstock} stock/indicators/williams-r
+     *         Williams %R
+     *
+     * @extends      plotOptions.sma
+     * @since        7.0.0
+     * @product      highstock
+     * @excluding    allAreas, colorAxis, joinBy, keys, navigatorOptions,
+     *               pointInterval, pointIntervalUnit, pointPlacement,
+     *               pointRange, pointStart, showInNavigator, stacking
+     * @requires     stock/indicators/indicators
+     * @requires     stock/indicators/williams-r
+     * @optionparent plotOptions.williamsr
+     */
+    WilliamsRIndicator.defaultOptions = merge(SMAIndicator.defaultOptions, {
+        /**
+         * Paramters used in calculation of Williams %R series points.
+         * @excluding index
+         */
+        params: {
+            /**
+             * Period for Williams %R oscillator
+             */
+            period: 14
+        }
+    });
+    return WilliamsRIndicator;
+}(SMAIndicator));
+extend(WilliamsRIndicator.prototype, {
+    nameBase: 'Williams %R'
 });
 BaseSeries.registerSeriesType('williamsr', WilliamsRIndicator);
 /* *
