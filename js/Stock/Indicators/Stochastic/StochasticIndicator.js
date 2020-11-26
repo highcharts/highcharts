@@ -167,7 +167,10 @@ extend(StochasticIndicator.prototype, {
     parallelArrays: ['x', 'y', 'smoothed'],
     pointValKey: 'y',
     linesApiNames: ['smoothedLine'],
-    getTranslatedLinesNames: MultipleLinesMixin.getTranslatedLinesNames
+    drawGraph: MultipleLinesMixin.drawGraph,
+    getTranslatedLinesNames: MultipleLinesMixin.getTranslatedLinesNames,
+    translate: MultipleLinesMixin.translate,
+    toYData: MultipleLinesMixin.toYData
 });
 BaseSeries.registerSeriesType('stochastic', StochasticIndicator);
 /* *
