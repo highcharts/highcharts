@@ -2481,12 +2481,6 @@ const removeEvent = H.removeEvent = function removeEvent<T>(
                 removeAllEvents(events);
                 events[type] = [];
             }
-            if (events[type].length === 0) {
-                delete events[type];
-            }
-            if (Object.keys(owner.hcEvents).length === 0) {
-                delete owner.hcEvents;
-            }
         } else {
             removeAllEvents(events);
             delete owner.hcEvents;
