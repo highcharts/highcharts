@@ -21,18 +21,17 @@ var __extends = (this && this.__extends) || (function () {
         d.prototype = b === null ? Object.create(b) : (__.prototype = b.prototype, new __());
     };
 })();
-import AreaRangePoint from './AreaRange/AreaRangePoint.js';
-import AreaRangeSeries from './AreaRange/AreaRangeSeries.js';
-import BaseSeries from '../Core/Series/Series.js';
-import ColumnSeries from './Column/ColumnSeries.js';
+import AreaRangePoint from '../AreaRange/AreaRangePoint.js';
+import BaseSeries from '../../Core/Series/Series.js';
+var _a = BaseSeries.seriesTypes, AreaRangeSeries = _a.arearange, ColumnSeries = _a.column;
 var columnProto = ColumnSeries.prototype;
-import H from '../Core/Globals.js';
+var arearangeProto = AreaRangeSeries.prototype;
+import H from '../../Core/Globals.js';
 var noop = H.noop;
-import O from '../Core/Options.js';
+import O from '../../Core/Options.js';
 var defaultOptions = O.defaultOptions;
-import U from '../Core/Utilities.js';
+import U from '../../Core/Utilities.js';
 var clamp = U.clamp, merge = U.merge, pick = U.pick, extend = U.extend;
-var arearangeProto = BaseSeries.seriesTypes.arearange.prototype;
 /**
  * The column range is a cartesian series type with higher and lower
  * Y values along an X axis. To display horizontal bars, set
@@ -200,7 +199,7 @@ var ColumnRangeSeries = /** @class */ (function (_super) {
     ColumnRangeSeries.prototype.translate3dShapes = function () {
         return columnProto.translate3dShapes.apply(this, arguments);
     };
-    ColumnRangeSeries.defaultOptions = merge(defaultOptions.plotOptions.column, defaultOptions.plotOptions.arearange, columnRangeOptions);
+    ColumnRangeSeries.defaultOptions = merge(ColumnSeries.defaultOptions, AreaRangeSeries.defaultOptions, columnRangeOptions);
     return ColumnRangeSeries;
 }(AreaRangeSeries));
 /* *
@@ -228,6 +227,12 @@ var ColumnRangePoint = /** @class */ (function (_super) {
 }(AreaRangePoint));
 ColumnRangeSeries.prototype.pointClass = ColumnRangePoint;
 BaseSeries.registerSeriesType('columnrange', ColumnRangeSeries);
+/* *
+ *
+ *  Default export
+ *
+ * */
+export default ColumnRangeSeries;
 /* *
  *
  *  API options

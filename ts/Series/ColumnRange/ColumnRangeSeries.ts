@@ -16,23 +16,29 @@
  *
  * */
 
-import type AreaRangePointOptions from './AreaRange/AreaRangePointOptions';
-import type AreaRangeSeriesOptions from './AreaRange/AreaRangeSeriesOptions';
-import type BBoxObject from '../Core/Renderer/BBoxObject';
-import type ColumnMetricsObject from './Column/ColumnMetricsObject';
-import type ColumnPoint from './Column/ColumnPoint';
-import type { SeriesStatesOptions } from '../Core/Series/SeriesOptions';
-import type SVGAttributes from '../Core/Renderer/SVG/SVGAttributes';
-import AreaRangePoint from './AreaRange/AreaRangePoint.js';
-import AreaRangeSeries from './AreaRange/AreaRangeSeries.js';
-import BaseSeries from '../Core/Series/Series.js';
-import ColumnSeries from './Column/ColumnSeries.js';
+import type AreaRangePointOptions from '../AreaRange/AreaRangePointOptions';
+import type AreaRangeSeriesOptions from '../AreaRange/AreaRangeSeriesOptions';
+import type BBoxObject from '../../Core/Renderer/BBoxObject';
+import type ColumnMetricsObject from '../Column/ColumnMetricsObject';
+import type ColumnPoint from '../Column/ColumnPoint';
+import type { SeriesStatesOptions } from '../../Core/Series/SeriesOptions';
+import type SVGAttributes from '../../Core/Renderer/SVG/SVGAttributes';
+import AreaRangePoint from '../AreaRange/AreaRangePoint.js';
+import BaseSeries from '../../Core/Series/Series.js';
+const {
+    seriesTypes: {
+        arearange: AreaRangeSeries,
+        column: ColumnSeries
+    }
+} = BaseSeries;
+
 const { prototype: columnProto } = ColumnSeries;
-import H from '../Core/Globals.js';
+const { prototype: arearangeProto } = AreaRangeSeries;
+import H from '../../Core/Globals.js';
 const { noop } = H;
-import O from '../Core/Options.js';
+import O from '../../Core/Options.js';
 const { defaultOptions } = O;
-import U from '../Core/Utilities.js';
+import U from '../../Core/Utilities.js';
 const {
     clamp,
     merge,
@@ -61,15 +67,15 @@ declare global {
             public shapeType: ColumnPoint['shapeType'];
         }
         class ColumnRangeSeries extends AreaRangeSeries {
-            public adjustForMissingColumns: ColumnSeries['adjustForMissingColumns'];
-            public animate: ColumnSeries['animate'];
-            public crispCol: ColumnSeries['crispCol'];
+            public adjustForMissingColumns: typeof columnProto['adjustForMissingColumns'];
+            public animate: typeof columnProto['animate'];
+            public crispCol: typeof columnProto['crispCol'];
             public data: Array<ColumnRangePoint>;
-            public drawPoints: ColumnSeries['drawPoints'];
-            public drawTracker: ColumnSeries['drawTracker'];
-            public getColumnMetrics: ColumnSeries['getColumnMetrics'];
+            public drawPoints: typeof columnProto['drawPoints'];
+            public drawTracker: typeof columnProto['drawTracker'];
+            public getColumnMetrics: typeof columnProto['getColumnMetrics'];
             public options: ColumnRangeSeriesOptions;
-            public pointAttribs: ColumnSeries['pointAttribs'];
+            public pointAttribs: typeof columnProto['pointAttribs'];
             public pointClass: typeof ColumnRangePoint;
             public points: Array<ColumnRangePoint>;
             public polarArc: typeof AreaRangeSeries.prototype['polarArc'];
@@ -83,8 +89,6 @@ declare global {
         }
     }
 }
-
-var arearangeProto = BaseSeries.seriesTypes.arearange.prototype;
 
 /**
  * The column range is a cartesian series type with higher and lower
@@ -154,8 +158,8 @@ class ColumnRangeSeries extends AreaRangeSeries {
      * */
 
     public static defaultOptions: Highcharts.ColumnRangeSeriesOptions = merge(
-        (defaultOptions.plotOptions as any).column,
-        (defaultOptions.plotOptions as any).arearange,
+        ColumnSeries.defaultOptions,
+        AreaRangeSeries.defaultOptions,
         columnRangeOptions as Highcharts.ColumnRangeSeriesOptions
     )
 
@@ -336,13 +340,21 @@ ColumnRangeSeries.prototype.pointClass = ColumnRangePoint;
 /**
  * @private
  */
-declare module '../Core/Series/SeriesType' {
+declare module '../../Core/Series/SeriesType' {
     interface SeriesTypeRegistry {
         columnrange: typeof Highcharts.ColumnRangeSeries;
     }
 }
 
 BaseSeries.registerSeriesType('columnrange', ColumnRangeSeries);
+
+/* *
+ *
+ *  Default export
+ *
+ * */
+
+export default ColumnRangeSeries;
 
 /* *
  *
