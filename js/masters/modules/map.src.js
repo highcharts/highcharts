@@ -19,6 +19,6 @@ import '../../Series/Map/MapSeries.js';
 import '../../Series/MapLine/MapLineSeries.js';
 import '../../Series/MapPoint/MapPointSeries.js';
 import '../../Series/MapBubble/MapBubbleSeries.js';
-import '../../Series/HeatmapSeries.js';
+import '../../Series/Heatmap/HeatmapSeries.js';
 import '../../Extensions/GeoJSON.js';
 import '../../Maps/Map.js';
