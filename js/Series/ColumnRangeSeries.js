@@ -8,6 +8,21 @@
  *
  * */
 'use strict';
+var __extends = (this && this.__extends) || (function () {
+    var extendStatics = function (d, b) {
+        extendStatics = Object.setPrototypeOf ||
+            ({ __proto__: [] } instanceof Array && function (d, b) { d.__proto__ = b; }) ||
+            function (d, b) { for (var p in b) if (b.hasOwnProperty(p)) d[p] = b[p]; };
+        return extendStatics(d, b);
+    };
+    return function (d, b) {
+        extendStatics(d, b);
+        function __() { this.constructor = d; }
+        d.prototype = b === null ? Object.create(b) : (__.prototype = b.prototype, new __());
+    };
+})();
+import AreaRangePoint from './AreaRange/AreaRangePoint.js';
+import AreaRangeSeries from './AreaRange/AreaRangeSeries.js';
 import BaseSeries from '../Core/Series/Series.js';
 import ColumnSeries from './Column/ColumnSeries.js';
 var columnProto = ColumnSeries.prototype;
@@ -16,7 +31,7 @@ var noop = H.noop;
 import O from '../Core/Options.js';
 var defaultOptions = O.defaultOptions;
 import U from '../Core/Utilities.js';
-var clamp = U.clamp, merge = U.merge, pick = U.pick;
+var clamp = U.clamp, merge = U.merge, pick = U.pick, extend = U.extend;
 var arearangeProto = BaseSeries.seriesTypes.arearange.prototype;
 /**
  * The column range is a cartesian series type with higher and lower
@@ -56,6 +71,11 @@ var columnRangeOptions = {
         }
     }
 };
+/* *
+ *
+ *  Class
+ *
+ * */
 /**
  * The ColumnRangeSeries class
  *
@@ -65,7 +85,25 @@ var columnRangeOptions = {
  *
  * @augments Highcharts.Series
  */
-BaseSeries.seriesType('columnrange', 'arearange', merge(defaultOptions.plotOptions.column, defaultOptions.plotOptions.arearange, columnRangeOptions), {
+var ColumnRangeSeries = /** @class */ (function (_super) {
+    __extends(ColumnRangeSeries, _super);
+    function ColumnRangeSeries() {
+        return _super !== null && _super.apply(this, arguments) || this;
+    }
+    /* *
+     *
+     *  Static properties
+     *
+     * */
+    ColumnRangeSeries.defaultOptions = merge(defaultOptions.plotOptions.column, defaultOptions.plotOptions.arearange, columnRangeOptions);
+    return ColumnRangeSeries;
+}(AreaRangeSeries));
+/* *
+ *
+ *  Prototype properties
+ *
+ * */
+extend(ColumnRangeSeries.prototype, {
     setOptions: function () {
         merge(true, arguments[0], { stacking: void 0 }); // #14359 Prevent side-effect from stacking.
         return arearangeProto.setOptions.apply(this, arguments);
@@ -164,9 +202,23 @@ BaseSeries.seriesType('columnrange', 'arearange', merge(defaultOptions.plotOptio
     translate3dShapes: function () {
         return columnProto.translate3dShapes.apply(this, arguments);
     }
-}, {
-    setState: columnProto.pointClass.prototype.setState
 });
+var ColumnRangePoint = /** @class */ (function (_super) {
+    __extends(ColumnRangePoint, _super);
+    function ColumnRangePoint() {
+        var _this = _super !== null && _super.apply(this, arguments) || this;
+        _this.setState = columnProto.pointClass.prototype.setState;
+        return _this;
+    }
+    return ColumnRangePoint;
+}(AreaRangePoint));
+ColumnRangeSeries.prototype.pointClass = ColumnRangePoint;
+BaseSeries.registerSeriesType('columnrange', ColumnRangeSeries);
+/* *
+ *
+ *  API options
+ *
+ * */
 /**
  * A `columnrange` series. If the [type](#series.columnrange.type)
  * option is not specified, it is inherited from
