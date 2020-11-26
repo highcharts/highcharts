@@ -37,12 +37,15 @@ var unhideChartElementFromAT = ChartUtilities.unhideChartElementFromAT,
     getAxisDescription = ChartUtilities.getAxisDescription;
 
 import HTMLUtilities from '../Utils/HTMLUtilities.js';
-var addClass = HTMLUtilities.addClass,
-    setElAttrs = HTMLUtilities.setElAttrs,
-    escapeStringForHTML = HTMLUtilities.escapeStringForHTML,
-    stripHTMLTagsFromString = HTMLUtilities.stripHTMLTagsFromString,
-    getElement = HTMLUtilities.getElement,
-    visuallyHideElement = HTMLUtilities.visuallyHideElement;
+const {
+    addClass,
+    escapeStringForHTML,
+    getElement,
+    getHeadingTagNameForElement,
+    setElAttrs,
+    stripHTMLTagsFromString,
+    visuallyHideElement
+} = HTMLUtilities;
 
 declare module '../../Core/Chart/ChartLike' {
     interface ChartLike {
@@ -507,6 +510,7 @@ extend(InfoRegionsComponent.prototype, /** @lends Highcharts.InfoRegionsComponen
                 { chart: chart }
             ),
             context = {
+                headingTagName: getHeadingTagNameForElement(chart.renderTo),
                 chartTitle: getChartTitle(chart),
                 typeDescription: this.getTypeDescriptionText(),
                 chartSubtitle: this.getSubtitleText(),
