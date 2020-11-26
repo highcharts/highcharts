@@ -66,63 +66,65 @@ QUnit.test('Undefined value (#6589)', function (assert) {
 
 });
 
-QUnit.test('Update to negative (#7113) + Empty pie look (#5526)', function (assert) {
-    var chart = Highcharts.chart('container', {
-        accessibility: {
-            enabled: false // A11y forces graphic for null points
-        },
+QUnit.test('Update to negative (#7113) + Empty pie look (#5526)',
+    function (assert) {
+        var chart = Highcharts.chart('container', {
+            accessibility: {
+                enabled: false // A11y forces graphic for null points
+            },
 
-        chart: {
-            type: 'pie',
-            width: 600
-        },
+            chart: {
+                type: 'pie',
+                width: 600
+            },
 
-        series: [{
-            data: [10, 10, 10]
-            //data: [-10, -10, -10]
-        }]
-    });
+            series: [{
+                data: [10, 10, 10]
+                //data: [-10, -10, -10]
+            }]
+        });
 
-    // Issue #7113
-    chart.series[0].setData([-10, -10, -10]);
-    assert.strictEqual(
-        chart.series[0].points[0].graphic,
-        undefined,
-        'Graphic should be removed'
-    );
+        // Issue #7113
+        chart.series[0].setData([-10, -10, -10]);
+        assert.strictEqual(
+            chart.series[0].points[0].graphic,
+            undefined,
+            'Graphic should be removed'
+        );
 
-    //Issue #13101
-    chart.series[0].points[0].select(false, false);
+        //Issue #13101
+        chart.series[0].points[0].select(false, false);
 
-    // Issue #5526
-    assert.ok(
-        Highcharts.defined(chart.series[0].graph),
-        'Empty pie graphic is created.'
-    );
+        // Issue #5526
+        assert.ok(
+            Highcharts.defined(chart.series[0].graph),
+            'Empty pie graphic is created.'
+        );
 
-    chart.update({
-        plotOptions: {
-            pie: {
-                innerSize: 40,
-                startAngle: -90,
-                endAngle: 90,
-                center: ['50%', '75%']
+        chart.update({
+            plotOptions: {
+                pie: {
+                    innerSize: 40,
+                    startAngle: -90,
+                    endAngle: 90,
+                    center: ['50%', '75%']
+                }
+            },
+
+            series: {
+                data: []
             }
-        },
+        });
 
-        series: {
-            data: []
-        }
-    });
+        var graph = chart.series[0].graph;
 
-    var graph = chart.series[0].graph;
-
-    // Issue #13229
-    assert.ok(
-        graph.pathArray,
-        'Path should be drawn instead of a circle (#13229).'
-    );
-});
+        // Issue #13229
+        assert.ok(
+            graph.pathArray,
+            'Path should be drawn instead of a circle (#13229).'
+        );
+    }
+);
 
 QUnit.test('Updating point visibility (#8428)', function (assert) {
     var chart = Highcharts.chart('container', {
@@ -207,5 +209,40 @@ QUnit.test('Updating point visibility (#8428)', function (assert) {
     assert.ok(
         isHidden(point.dataLabel),
         'Hidden point should not have a data label'
+    );
+});
+
+QUnit.test('#14246: ignoreHiddenPoint legend click', assert => {
+    const chart = Highcharts.chart('container', {
+        series: [{
+            type: 'pie',
+            data: [6, 3, 2, 4],
+            showInLegend: true,
+            ignoreHiddenPoint: false
+        }]
+    });
+
+    const point = chart.series[0].points[0];
+
+    Highcharts.fireEvent(point.legendItem.element, 'click');
+    assert.strictEqual(
+        point.graphic.attr('visibility'),
+        'hidden',
+        'Point should be hidden'
+    );
+    assert.ok(
+        chart.isInsidePlot(point.graphic.x, point.graphic.y),
+        'Point graphic should be inside plot'
+    );
+
+    Highcharts.fireEvent(point.legendItem.element, 'click');
+    assert.notStrictEqual(
+        point.graphic.attr('visibility'),
+        'hidden',
+        'Point should be visible'
+    );
+    assert.ok(
+        chart.isInsidePlot(point.graphic.x, point.graphic.y),
+        'Point graphic should be inside plot'
     );
 });

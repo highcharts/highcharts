@@ -59,7 +59,9 @@ QUnit.test('Sankey', function (assert) {
     series.data[0].setState('hover');
 
     assert.strictEqual(
-        Highcharts.color(series.data[0].graphic.element.getAttribute('fill')).get('rgb'),
+        Highcharts.color(
+            series.data[0].graphic.element.getAttribute('fill')
+        ).get('rgb'),
         'rgb(255,0,0)',
         'Hover color correct'
     );
@@ -530,7 +532,8 @@ QUnit.test(
             .length;
         assert.ok(
             numberOfCurves > 4,
-            'The link should have a complex, circular structure, not direct (#12882)'
+            'The link should have a complex, circular structure, ' +
+            'not direct (#12882)'
         );
 
     }
@@ -687,7 +690,8 @@ QUnit.test(
         assert.strictEqual(
             chart.series[0].nodes[4].id,
             'Netherlands',
-            'This node id(position) should not been have changed after the update (#12453)'
+            'This node id(position) should not been have changed ' +
+            'after the update (#12453)'
         );
     }
 );
@@ -723,7 +727,8 @@ QUnit.test(
         assert.strictEqual(
             chart.series[0].nodes[2].sum,
             59,
-            'For this node value from the point with linkTo null should be added to sum (#12666)'
+            'For this node value from the point with linkTo null should ' +
+            'be added to sum (#12666)'
         );
     }
 );
@@ -768,14 +773,96 @@ QUnit.test(
         assert.strictEqual(
             nodeYAfterUpdate - nodeYBeforeUpdate,
             newMinLinkWidth,
-            'For this node the difference of the nodeY value should be equal to the new minLinkWidth after the update (#13308)'
+            'For this node the difference of the nodeY value should be equal ' +
+            'to the new minLinkWidth after the update (#13308)'
         );
 
         assert.close(
             factorBeforeUpdate,
             factorAfterUpdate,
             0.02,
-            'The translate-factor value should not be changed significantly while changing the minLinkWidth (#13308)'
+            'The translate-factor value should not be changed significantly ' +
+            'while changing the minLinkWidth (#13308)'
         );
     }
 );
+
+QUnit.test('#14584: Sankey overlapping datalabels', assert => {
+    const chart = Highcharts.chart('container', {
+        plotOptions: {
+            sankey: {
+                dataLabels: {
+                    allowOverlap: false,
+                    padding: 0,
+                    formatter: function () {
+                        return 'links: ' + this.point.from;
+                    },
+                    nodeFormatter: function () {
+                        return 'node: ' + this.key;
+                    },
+                    style: {
+                        fontSize: "10px",
+                        fontWeight: "normal"
+                    }
+                }
+            }
+        },
+        series: [{
+            type: 'sankey',
+            keys: ['from', 'to', 'weight'],
+            data: [
+                ['Brazil', 'Portugal', 5],
+                ['Brazil', 'France', 1],
+                ['Brazil', 'Spain', 1],
+                ['Brazil', 'England', 1],
+                ['Canada', 'Portugal', 1],
+                ['Canada', 'France', 5],
+                ['Canada', 'England', 1],
+                ['Mexico', 'Portugal', 1],
+                ['Mexico', 'France', 1],
+                ['Mexico', 'Spain', 5],
+                ['Mexico', 'England', 1],
+                ['USA', 'Portugal', 1],
+                ['USA', 'France', 1],
+                ['USA', 'Spain', 1],
+                ['USA', 'England', 5],
+                ['Portugal', 'Angola', 2],
+                ['Portugal', 'Senegal', 1],
+                ['Portugal', 'Morocco', 1],
+                ['Portugal', 'South Africa', 3],
+                ['France', 'Angola', 1],
+                ['France', 'Senegal', 3],
+                ['France', 'Mali', 3],
+                ['France', 'Morocco', 3],
+                ['France', 'South Africa', 1],
+                ['Spain', 'Senegal', 1],
+                ['Spain', 'Morocco', 3],
+                ['Spain', 'South Africa', 1],
+                ['England', 'Angola', 1],
+                ['England', 'Senegal', 1],
+                ['England', 'Morocco', 2],
+                ['England', 'South Africa', 7],
+                ['South Africa', 'China', 5],
+                ['South Africa', 'India', 1],
+                ['South Africa', 'Japan', 3],
+                ['Angola', 'China', 5],
+                ['Angola', 'India', 1],
+                ['Angola', 'Japan', 3],
+                ['Senegal', 'China', 5],
+                ['Senegal', 'India', 1],
+                ['Senegal', 'Japan', 3],
+                ['Mali', 'China', 5],
+                ['Mali', 'India', 1],
+                ['Mali', 'Japan', 3],
+                ['Morocco', 'China', 5],
+                ['Morocco', 'India', 1],
+                ['Morocco', 'Japan', 3]
+            ]
+        }]
+    });
+
+    assert.ok(
+        chart.series[0].points.some(p => p.dataLabel.attr('opacity') === 0),
+        'Some of the point datalabels should be hidden'
+    );
+});

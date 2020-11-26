@@ -216,7 +216,7 @@ class PiePoint extends Point {
             ['graphic', 'dataLabel', 'connector', 'shadowGroup'].forEach(
                 function (key: string): void {
                     if ((point as any)[key]) {
-                        (point as any)[key][vis ? 'show' : 'hide'](true);
+                        (point as any)[key][vis ? 'show' : 'hide'](vis);
                     }
                 }
             );

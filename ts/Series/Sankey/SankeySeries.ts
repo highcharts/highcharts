@@ -18,6 +18,7 @@
  *
  * */
 
+import type Chart from '../../Core/Chart/Chart';
 import type {
     SankeyDataLabelFormatterContext,
     SankeyDataLabelOptions
@@ -451,7 +452,6 @@ class SankeySeries extends ColumnSeries {
 
     /* eslint-disable valid-jsdoc */
 
-
     /**
      * Create a node column.
      * @private
@@ -603,7 +603,6 @@ class SankeySeries extends ColumnSeries {
 
         return columns;
     }
-
 
     /**
      * Extend generatePoints by adding the nodes, which are Point objects
@@ -1155,11 +1154,11 @@ class SankeySeries extends ColumnSeries {
  * */
 
 interface SankeySeries extends Highcharts.NodesSeries {
-    animate: typeof LineSeries.prototype.animate;
-    createNode: Highcharts.NodesMixin['createNode'];
+    animate(init?: boolean): void;
+    createNode(id: string): SankeyPoint;
     destroy: Highcharts.NodesMixin['destroy'];
     forceDL: boolean;
-    init: typeof ColumnSeries.prototype.init;
+    init(chart: Chart, options: SankeySeriesOptions): void;
     invertable: boolean;
     isCartesian: boolean;
     orderNodes: boolean;

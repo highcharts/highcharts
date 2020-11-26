@@ -8,4 +8,4 @@
  * License: www.highcharts.com/license
  */
 'use strict';
-import '../../Series/DumbbellSeries.js';
+import '../../Series/Dumbbell/DumbbellSeries.js';

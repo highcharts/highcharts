@@ -17,6 +17,7 @@
 
 import type AreaSeries from '../Series/Area/AreaSeries';
 import type ColumnSeries from '../Series/Column/ColumnSeries';
+import type HeatmapSeries from '../Series/Heatmap/HeatmapSeries';
 import type HTMLElement from '../Core/Renderer/HTML/HTMLElement';
 import type {
     PointOptions,
@@ -122,7 +123,7 @@ var seriesTypes = Series.seriesTypes,
 const initCanvasBoost = function (): void {
     if (H.seriesTypes.heatmap) {
         wrap(H.seriesTypes.heatmap.prototype, 'drawPoints', function (
-            this: Highcharts.HeatmapSeries
+            this: HeatmapSeries
         ): void {
             var chart = this.chart,
                 ctx = this.getContext(),
@@ -133,9 +134,7 @@ const initCanvasBoost = function (): void {
             if (ctx) {
 
                 // draw the columns
-                this.points.forEach(function (
-                    point: Highcharts.HeatmapPoint
-                ): void {
+                this.points.forEach(function (point): void {
                     var plotY = point.plotY,
                         shapeArgs: SVGAttributes,
                         pointAttr: SVGAttributes;
