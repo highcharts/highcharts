@@ -9,47 +9,26 @@
 'use strict';
 
 import type {
-    EMAOptions,
-    EMAParamsOptions
-} from './EMA/EMAOptions';
-import type EMAPoint from './EMA/EMAPoint';
-import type IndicatorValuesObject from './IndicatorValuesObject';
-import type LineSeries from '../../Series/Line/LineSeries';
+    PPOOptions,
+    PPOParamsOptions
+} from './PPOOptions';
+import type PPOPoint from './PPOPoint';
+import type IndicatorValuesObject from '../IndicatorValuesObject';
+import type LineSeries from '../../../Series/Line/LineSeries';
 const {
     seriesTypes: {
         ema: EMAIndicator
     }
 } = BaseSeries;
-import BaseSeries from '../../Core/Series/Series.js';
-import RequiredIndicatorMixin from '../../Mixins/IndicatorRequired.js';
-import U from '../../Core/Utilities.js';
+import BaseSeries from '../../../Core/Series/Series.js';
+import RequiredIndicatorMixin from '../../../Mixins/IndicatorRequired.js';
+import U from '../../../Core/Utilities.js';
 const {
     correctFloat,
     extend,
     merge,
     error
 } = U;
-
-/**
- * Internal types
- * @private
- */
-declare global {
-    namespace Highcharts {
-
-        interface PPOIndicatorParamsOptions extends EMAParamsOptions {
-            periods?: Array<number>;
-        }
-
-        class PPOIndicatorPoint extends EMAPoint {
-            public series: PPOIndicator;
-        }
-
-        interface PPOIndicatorOptions extends EMAOptions {
-            params?: PPOIndicatorParamsOptions;
-        }
-    }
-}
 
 /* *
  *
@@ -86,7 +65,7 @@ class PPOIndicator extends EMAIndicator {
      * @requires     stock/indicators/ppo
      * @optionparent plotOptions.ppo
      */
-    public static defaultOptions: Highcharts.PPOIndicatorOptions = merge(EMAIndicator.defaultOptions, {
+    public static defaultOptions: PPOOptions = merge(EMAIndicator.defaultOptions, {
         /**
          * Paramters used in calculation of Percentage Price Oscillator series
          * points.
@@ -102,7 +81,7 @@ class PPOIndicator extends EMAIndicator {
              */
             periods: [12, 26]
         }
-    } as Highcharts.PPOIndicatorOptions);
+    } as PPOOptions);
 
     /* *
     *
@@ -110,8 +89,8 @@ class PPOIndicator extends EMAIndicator {
     *
     * */
 
-    public data: Array<Highcharts.PPOIndicatorPoint> = void 0 as any;
-    public points: Array<Highcharts.PPOIndicatorPoint> = void 0 as any;
+    public data: Array<PPOPoint> = void 0 as any;
+    public points: Array<PPOPoint> = void 0 as any;
 
     /* *
      *
@@ -136,7 +115,7 @@ class PPOIndicator extends EMAIndicator {
 
     public getValues<TLinkedSeries extends LineSeries>(
         series: TLinkedSeries,
-        params: Highcharts.PPOIndicatorParamsOptions
+        params: PPOParamsOptions
     ): (IndicatorValuesObject<TLinkedSeries> | undefined) {
         var periods: Array<number> = (params.periods as any),
             index: number = (params.index as any),
@@ -212,10 +191,10 @@ class PPOIndicator extends EMAIndicator {
 * */
 
 interface PPOIndicator {
-    options: Highcharts.PPOIndicatorOptions;
+    options: PPOOptions;
     nameBase: string;
     nameComponents: Array<string>;
-    pointClass: typeof Highcharts.PPOIndicatorPoint;
+    pointClass: typeof PPOPoint;
 }
 
 extend(PPOIndicator.prototype, {
@@ -229,7 +208,7 @@ extend(PPOIndicator.prototype, {
  *
  * */
 
-declare module '../../Core/Series/SeriesType' {
+declare module '../../../Core/Series/SeriesType' {
     interface SeriesTypeRegistry {
         ppo: typeof PPOIndicator;
     }
