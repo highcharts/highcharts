@@ -12,6 +12,10 @@
 
 'use strict';
 
+import type AreaSplinePoint from './AreaSpline/AreaSplinePoint';
+import type AreaSplineSeries from './AreaSpline/AreaSplineSeries';
+import type AreaSplinePointOptions from './AreaSpline/AreaSplinePointOptions';
+import type AreaSplineSeriesOptions from './AreaSpline/AreaSplineSeriesOptions';
 import type {
     PointOptions,
     PointShortOptions
