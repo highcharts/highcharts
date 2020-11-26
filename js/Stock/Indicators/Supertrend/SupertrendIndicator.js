@@ -58,6 +58,7 @@ var SupertrendIndicator = /** @class */ (function (_super) {
          *
          * */
         _this.data = void 0;
+        _this.linkedParent = void 0;
         _this.options = void 0;
         _this.points = void 0;
         return _this;
