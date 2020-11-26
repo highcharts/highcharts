@@ -39,7 +39,7 @@ const {
  *
  * @augments Highcharts.Series
  */
-class StochasticIndicator extends SMAIndicator {
+class StochasticIndicator extends SMAIndicator implements Highcharts.MultipleLinesMixin {
     /**
      * Stochastic oscillator. This series requires the `linkedTo` option to be
      * set and should be loaded after the `stock/indicators/indicators.js` file.
@@ -207,9 +207,10 @@ interface StochasticIndicator {
     pointClass: typeof StochasticPoint;
     pointValKey: string;
 
-    getTranslatedLinesNames: typeof MultipleLinesMixin[
-        'getTranslatedLinesNames'
-    ];
+    drawGraph: typeof MultipleLinesMixin.drawGraph;
+    getTranslatedLinesNames: typeof MultipleLinesMixin.getTranslatedLinesNames;
+    translate: typeof MultipleLinesMixin.translate;
+    toYData: typeof MultipleLinesMixin.toYData;
 }
 extend(StochasticIndicator.prototype, {
     nameComponents: ['periods'],
@@ -219,7 +220,10 @@ extend(StochasticIndicator.prototype, {
     pointValKey: 'y',
     linesApiNames: ['smoothedLine'],
 
-    getTranslatedLinesNames: MultipleLinesMixin.getTranslatedLinesNames
+    drawGraph: MultipleLinesMixin.drawGraph,
+    getTranslatedLinesNames: MultipleLinesMixin.getTranslatedLinesNames,
+    translate: MultipleLinesMixin.translate,
+    toYData: MultipleLinesMixin.toYData
 });
 
 declare module '../../../Core/Series/SeriesType' {
