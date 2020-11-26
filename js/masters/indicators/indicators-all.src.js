@@ -30,7 +30,7 @@ import '../../Stock/Indicators/TRIXIndicator.js';
 import '../../Stock/Indicators/APOIndicator.js';
 import '../../Stock/Indicators/IKHIndicator.js';
 import '../../Stock/Indicators/KeltnerChannelsIndicator.js';
-import '../../Stock/Indicators/MACDIndicator.js';
+import '../../Stock/Indicators/MACD/MACDIndicator.js';
 import '../../Stock/Indicators/MFIIndicator.js';
 import '../../Stock/Indicators/Momentum/MomentumIndicator.js';
 import '../../Stock/Indicators/NATRIndicator.js';
