@@ -224,10 +224,8 @@ extend(ScatterSeries.prototype, {
  *
  * */
 /* eslint-disable no-invalid-this */
-addEvent(LineSeries, 'afterTranslate', function () {
-    if (this instanceof ScatterSeries) {
-        this.applyJitter();
-    }
+addEvent(ScatterSeries, 'afterTranslate', function () {
+    this.applyJitter();
 });
 BaseSeries.registerSeriesType('scatter', ScatterSeries);
 /* *
