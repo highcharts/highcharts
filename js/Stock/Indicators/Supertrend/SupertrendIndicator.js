@@ -19,10 +19,10 @@ var __extends = (this && this.__extends) || (function () {
         d.prototype = b === null ? Object.create(b) : (__.prototype = b.prototype, new __());
     };
 })();
-import BaseSeries from '../../Core/Series/Series.js';
+import BaseSeries from '../../../Core/Series/Series.js';
 var _a = BaseSeries.seriesTypes, ATRIndicator = _a.atr, SMAIndicator = _a.sma;
-import palette from '../../Core/Color/Palette.js';
-import U from '../../Core/Utilities.js';
+import palette from '../../../Core/Color/Palette.js';
+import U from '../../../Core/Utilities.js';
 var correctFloat = U.correctFloat, isArray = U.isArray, extend = U.extend, merge = U.merge, objectEach = U.objectEach;
 /* eslint-disable require-jsdoc */
 // Utils:
