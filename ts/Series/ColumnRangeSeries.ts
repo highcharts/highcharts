@@ -16,15 +16,15 @@
  *
  * */
 
-import type AreaRangePoint from './AreaRange/AreaRangePoint';
 import type AreaRangePointOptions from './AreaRange/AreaRangePointOptions';
-import type AreaRangeSeries from './AreaRange/AreaRangeSeries.js';
 import type AreaRangeSeriesOptions from './AreaRange/AreaRangeSeriesOptions';
 import type BBoxObject from '../Core/Renderer/BBoxObject';
 import type ColumnMetricsObject from './Column/ColumnMetricsObject';
 import type ColumnPoint from './Column/ColumnPoint';
 import type { SeriesStatesOptions } from '../Core/Series/SeriesOptions';
 import type SVGAttributes from '../Core/Renderer/SVG/SVGAttributes';
+import AreaRangePoint from './AreaRange/AreaRangePoint.js';
+import AreaRangeSeries from './AreaRange/AreaRangeSeries.js';
 import BaseSeries from '../Core/Series/Series.js';
 import ColumnSeries from './Column/ColumnSeries.js';
 const { prototype: columnProto } = ColumnSeries;
@@ -36,7 +36,8 @@ import U from '../Core/Utilities.js';
 const {
     clamp,
     merge,
-    pick
+    pick,
+    extend
 } = U;
 
 /* *
@@ -80,15 +81,6 @@ declare global {
             minPointLength?: number;
             states?: SeriesStatesOptions<ColumnRangeSeries>;
         }
-    }
-}
-
-/**
- * @private
- */
-declare module '../Core/Series/SeriesType' {
-    interface SeriesTypeRegistry {
-        columnrange: typeof Highcharts.ColumnRangeSeries;
     }
 }
 
@@ -137,6 +129,12 @@ var columnRangeOptions: Highcharts.ColumnRangeSeriesOptions = {
     }
 };
 
+/* *
+ *
+ *  Class
+ *
+ * */
+
 /**
  * The ColumnRangeSeries class
  *
@@ -146,11 +144,29 @@ var columnRangeOptions: Highcharts.ColumnRangeSeriesOptions = {
  *
  * @augments Highcharts.Series
  */
-BaseSeries.seriesType<typeof Highcharts.ColumnRangeSeries>('columnrange', 'arearange', merge(
-    (defaultOptions.plotOptions as any).column,
-    (defaultOptions.plotOptions as any).arearange,
-    columnRangeOptions
-), {
+
+class ColumnRangeSeries extends AreaRangeSeries {
+
+    /* *
+     *
+     *  Static properties
+     *
+     * */
+
+    public static defaultOptions: Highcharts.ColumnRangeSeriesOptions = merge(
+        (defaultOptions.plotOptions as any).column,
+        (defaultOptions.plotOptions as any).arearange,
+        columnRangeOptions as Highcharts.ColumnRangeSeriesOptions
+    )
+}
+
+/* *
+ *
+ *  Prototype properties
+ *
+ * */
+
+extend(ColumnRangeSeries.prototype, {
     setOptions: function (this: Highcharts.ColumnRangeSeries): Highcharts.ColumnRangeSeriesOptions {
         merge(true, arguments[0], { stacking: void 0 }); // #14359 Prevent side-effect from stacking.
         return arearangeProto.setOptions.apply(this, arguments);
@@ -290,10 +306,36 @@ BaseSeries.seriesType<typeof Highcharts.ColumnRangeSeries>('columnrange', 'arear
     translate3dShapes: function (this: Highcharts.ColumnRangeSeries): void {
         return columnProto.translate3dShapes.apply(this, arguments as any);
     }
-}, {
-    setState: columnProto.pointClass.prototype.setState
 });
 
+class ColumnRangePoint extends AreaRangePoint {
+    public setState = columnProto.pointClass.prototype.setState;
+}
+
+ColumnRangeSeries.prototype.pointClass = ColumnRangePoint;
+
+/* *
+ *
+ *  Registry
+ *
+ * */
+
+/**
+ * @private
+ */
+declare module '../Core/Series/SeriesType' {
+    interface SeriesTypeRegistry {
+        columnrange: typeof Highcharts.ColumnRangeSeries;
+    }
+}
+
+BaseSeries.registerSeriesType('columnrange', ColumnRangeSeries);
+
+/* *
+ *
+ *  API options
+ *
+ * */
 
 /**
  * A `columnrange` series. If the [type](#series.columnrange.type)
