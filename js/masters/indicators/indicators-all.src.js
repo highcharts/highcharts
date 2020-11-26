@@ -43,7 +43,7 @@ import '../../Stock/Indicators/ROCIndicator.js';
 import '../../Stock/Indicators/RSI/RSIIndicator.js';
 import '../../Stock/Indicators/StochasticIndicator.js';
 import '../../Stock/Indicators/SlowStochasticIndicator.js';
-import '../../Stock/Indicators/SupertrendIndicator.js';
+import '../../Stock/Indicators/Supertrend/SupertrendIndicator.js';
 import '../../Stock/Indicators/VBPIndicator.js';
 import '../../Stock/Indicators/VWAPIndicator.js';
 import '../../Stock/Indicators/WilliamsRIndicator.js';

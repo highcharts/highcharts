@@ -8,28 +8,30 @@
 
 'use strict';
 
-import type ColorType from '../../Core/Color/ColorType';
-import type CSSObject from '../../Core/Renderer/CSSObject';
-import type IndicatorValuesObject from './IndicatorValuesObject';
-import type LineSeries from '../../Series/Line/LineSeries';
-import type Point from '../../Core/Series/Point';
-import type { SeriesOptions } from '../../Core/Series/SeriesOptions';
+import type ColorType from '../../../Core/Color/ColorType';
+import type IndicatorValuesObject from '../IndicatorValuesObject';
+import type LineSeries from '../../../Series/Line/LineSeries';
+import type { SeriesOptions } from '../../../Core/Series/SeriesOptions';
 import type {
-    SMAOptions,
-    SMAParamsOptions
-} from './SMA/SMAOptions';
-import type SMAPoint from './SMA/SMAPoint';
-import type SVGAttributes from '../../Core/Renderer/SVG/SVGAttributes';
-import type SVGElement from '../../Core/Renderer/SVG/SVGElement';
-import BaseSeries from '../../Core/Series/Series.js';
+    SupertrendOptions,
+    SupertrendParamsOptions,
+    SupertrendLinkedParentPointObject,
+    SupertrendLinkedParentObject,
+    SupertrendGappedExtensionObject,
+    SupertrendGroupedPointsObject,
+    SupertrendLineObject
+} from './SupertrendOptions';
+import type SupertrendPoint from './SupertrendPoint';
+import type SVGElement from '../../../Core/Renderer/SVG/SVGElement';
+import BaseSeries from '../../../Core/Series/Series.js';
 const {
     seriesTypes: {
         atr: ATRIndicator,
         sma: SMAIndicator
     }
 } = BaseSeries;
-import palette from '../../Core/Color/Palette.js';
-import U from '../../Core/Utilities.js';
+import palette from '../../../Core/Color/Palette.js';
+import U from '../../../Core/Utilities.js';
 const {
     correctFloat,
     isArray,
@@ -38,69 +40,13 @@ const {
     objectEach
 } = U;
 
-/**
- * Internal types
- * @private
- */
-declare global {
-    namespace Highcharts {
-        interface SupertrendLinkedParentPointObject extends Point {
-            close: number;
-            index: number;
-            x: number;
-        }
-
-        interface SupertrendLinkedParentObject extends LineSeries {
-            data: Array<SupertrendLinkedParentPointObject>;
-            points: Array<SupertrendLinkedParentPointObject>;
-            xData: Array<number>;
-            yData: Array<Array<number>>;
-        }
-
-        interface SupertrendGappedExtensionObject {
-            options?: SupertrendGappedExtensionOptions;
-        }
-
-        interface SupertrendGappedExtensionOptions {
-            gapSize?: number;
-        }
-
-        interface SupertrendGroupedPointsObject {
-            bottom: Array<SupertrendIndicatorPoint>;
-            intersect: Array<SupertrendIndicatorPoint>;
-            top: Array<SupertrendIndicatorPoint>;
-        }
-
-        interface SupertrendLineObject {
-            [index: string]: (Record<string, SVGAttributes>|undefined);
-        }
-
-        interface SupertrendIndicatorParamsOptions
-            extends SMAParamsOptions {
-            multiplier?: number;
-        }
-
-        class SupertrendIndicatorPoint extends SMAPoint {
-            public series: SupertrendIndicator;
-            public y: number;
-        }
-
-        interface SupertrendIndicatorOptions extends SMAOptions {
-            changeTrendLine?: Record<string, CSSObject>;
-            fallingTrendColor?: ColorType;
-            params?: SupertrendIndicatorParamsOptions;
-            risingTrendColor?: ColorType;
-        }
-    }
-}
-
 /* eslint-disable require-jsdoc */
 // Utils:
 function createPointObj(
-    mainSeries: Highcharts.SupertrendLinkedParentObject,
+    mainSeries: SupertrendLinkedParentObject,
     index: number,
     close: number
-): Highcharts.SupertrendLinkedParentPointObject {
+): SupertrendLinkedParentPointObject {
     return {
         index: index,
         close: mainSeries.yData[index][close],
@@ -145,7 +91,7 @@ class SupertrendIndicator extends SMAIndicator {
      * @requires     stock/indicators/supertrend
      * @optionparent plotOptions.supertrend
      */
-    public static defaultOptions: Highcharts.SupertrendIndicatorOptions = merge(SMAIndicator.defaultOptions, {
+    public static defaultOptions: SupertrendOptions = merge(SMAIndicator.defaultOptions, {
         /**
          * Paramters used in calculation of Supertrend indicator series points.
          *
@@ -217,18 +163,18 @@ class SupertrendIndicator extends SMAIndicator {
                 dashStyle: 'LongDash'
             }
         }
-    } as Highcharts.SupertrendIndicatorOptions);
+    } as SupertrendOptions);
 
     /* *
      *
      *  Properties
      *
      * */
-    public data: Array<Highcharts.SupertrendIndicatorPoint> = void 0 as any;
+    public data: Array<SupertrendPoint> = void 0 as any;
 
-    public options: Highcharts.SupertrendIndicatorOptions = void 0 as any;
+    public options: SupertrendOptions = void 0 as any;
 
-    public points: Array<Highcharts.SupertrendIndicatorPoint> = void 0 as any;
+    public points: Array<SupertrendPoint> = void 0 as any;
 
     /* *
      *
@@ -236,7 +182,7 @@ class SupertrendIndicator extends SMAIndicator {
      *
      * */
     init(): void {
-        var options: Highcharts.SupertrendIndicatorOptions,
+        var options: SupertrendOptions,
             parentOptions: SeriesOptions;
 
         SMAIndicator.prototype.init.apply(this, arguments);
@@ -255,15 +201,14 @@ class SupertrendIndicator extends SMAIndicator {
 
     drawGraph(): void {
         var indicator = this,
-            indicOptions: Highcharts.SupertrendIndicatorOptions =
+            indicOptions: SupertrendOptions =
             indicator.options,
 
             // Series that indicator is linked to
             mainSeries = indicator.linkedParent,
-            mainLinePoints: Array<(
-                Highcharts.SupertrendLinkedParentPointObject
-            )> = (mainSeries ? mainSeries.points : []),
-            indicPoints: Array<Highcharts.SupertrendIndicatorPoint> =
+            mainLinePoints: Array<(SupertrendLinkedParentPointObject)> =
+                (mainSeries ? mainSeries.points : []),
+            indicPoints: Array<SupertrendPoint> =
             indicator.points,
             indicPath: (SVGElement|undefined) = indicator.graph,
             indicPointsLen: number = indicPoints.length,
@@ -272,22 +217,21 @@ class SupertrendIndicator extends SMAIndicator {
             tempOffset: number = mainLinePoints.length - indicPointsLen,
             offset: number = tempOffset > 0 ? tempOffset : 0,
             // @todo: fix when ichi-moku indicator is merged to master.
-            gappedExtend: Highcharts.SupertrendGappedExtensionObject = {
+            gappedExtend: SupertrendGappedExtensionObject = {
                 options: {
                     gapSize: indicOptions.gapSize
                 }
             },
 
             // Sorted supertrend points array
-            groupedPoitns: Highcharts.SupertrendGroupedPointsObject = {
+            groupedPoitns: SupertrendGroupedPointsObject = {
                 top: [], // Rising trend line points
                 bottom: [], // Falling trend line points
                 intersect: [] // Change trend line points
             },
 
             // Options for trend lines
-            supertrendLineOptions:
-            Highcharts.SupertrendLineObject = {
+            supertrendLineOptions: SupertrendLineObject = {
                 top: {
                     styles: {
                         lineWidth: indicOptions.lineWidth,
@@ -313,26 +257,26 @@ class SupertrendIndicator extends SMAIndicator {
             close = 3,
 
             // Supertrend line point
-            point: Highcharts.SupertrendIndicatorPoint,
+            point: SupertrendPoint,
 
             // Supertrend line next point (has smaller x pos than point)
-            nextPoint: Highcharts.SupertrendIndicatorPoint,
+            nextPoint: SupertrendPoint,
 
             // Main series points
-            mainPoint: Highcharts.SupertrendLinkedParentPointObject,
-            nextMainPoint: Highcharts.SupertrendLinkedParentPointObject,
+            mainPoint: SupertrendLinkedParentPointObject,
+            nextMainPoint: SupertrendLinkedParentPointObject,
 
             // Used when supertrend and main points are shifted
             // relative to each other
-            prevMainPoint: Highcharts.SupertrendLinkedParentPointObject,
-            prevPrevMainPoint: Highcharts.SupertrendLinkedParentPointObject,
+            prevMainPoint: SupertrendLinkedParentPointObject,
+            prevPrevMainPoint: SupertrendLinkedParentPointObject,
 
             // Used when particular point color is set
             pointColor: ColorType,
 
             // Temporary points that fill groupedPoitns array
-            newPoint: Highcharts.SupertrendIndicatorPoint,
-            newNextPoint: Highcharts.SupertrendIndicatorPoint;
+            newPoint: SupertrendPoint,
+            newNextPoint: SupertrendPoint;
 
         // Loop which sort supertrend points
         while (indicPointsLen--) {
@@ -348,7 +292,7 @@ class SupertrendIndicator extends SMAIndicator {
                 plotX: point.plotX,
                 plotY: point.plotY,
                 isNull: false
-            } as Highcharts.SupertrendIndicatorPoint;
+            } as SupertrendPoint;
 
             // When mainPoint is the last one (left plot area edge)
             // but supertrend has additional one
@@ -421,7 +365,7 @@ class SupertrendIndicator extends SMAIndicator {
                     plotX: nextPoint.plotX,
                     plotY: nextPoint.plotY,
                     isNull: false
-                } as Highcharts.SupertrendIndicatorPoint;
+                } as SupertrendPoint;
 
                 if (
                     point.y >= mainPoint.close &&
@@ -568,7 +512,7 @@ class SupertrendIndicator extends SMAIndicator {
 
     getValues<TLinkedSeries extends LineSeries>(
         series: TLinkedSeries,
-        params: Highcharts.SupertrendIndicatorParamsOptions
+        params: SupertrendParamsOptions
     ): (IndicatorValuesObject<TLinkedSeries>|undefined) {
         var period: number = (params.period as any),
             multiplier: number = (params.multiplier as any),
@@ -672,11 +616,11 @@ class SupertrendIndicator extends SMAIndicator {
  *
  * */
 interface SupertrendIndicator {
-    linkedParent: Highcharts.SupertrendLinkedParentObject;
+    linkedParent: SupertrendLinkedParentObject;
     nameBase: string;
     nameComponents: Array<string>;
     requiredIndicators: Array<string>;
-    pointClass: typeof Highcharts.SupertrendIndicatorPoint;
+    pointClass: typeof SupertrendPoint;
 }
 
 extend(SupertrendIndicator.prototype, {
@@ -690,7 +634,7 @@ extend(SupertrendIndicator.prototype, {
  *  Registry
  *
  * */
-declare module '../../Core/Series/SeriesType' {
+declare module '../../../Core/Series/SeriesType' {
     interface SeriesTypeRegistry {
         supertrend: typeof SupertrendIndicator;
     }
