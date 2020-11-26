@@ -10,15 +10,21 @@
 
 import type IndicatorValuesObject from './IndicatorValuesObject';
 import type LineSeries from '../../Series/Line/LineSeries';
-import type SMAIndicator from './SMA/SMAIndicator';
 import type {
     SMAOptions,
     SMAParamsOptions
 } from './SMA/SMAOptions';
 import type SMAPoint from './SMA/SMAPoint';
+const {
+    seriesTypes: {
+        sma: SMAIndicator
+    }
+} = BaseSeries;
 import BaseSeries from '../../Core/Series/Series.js';
 import U from '../../Core/Utilities.js';
 const {
+    extend,
+    merge,
     isArray
 } = U;
 
@@ -28,18 +34,6 @@ const {
  */
 declare global {
     namespace Highcharts {
-        class TrendLineIndicator extends SMAIndicator {
-            public data: Array<TrendLineIndicatorPoint>;
-            public getValues<TLinkedSeries extends LineSeries>(
-                series: TLinkedSeries,
-                params: TrendLineIndicatorParamsOptions
-            ): IndicatorValuesObject<TLinkedSeries>;
-            public nameBase: string;
-            public options: TrendLineIndicatorOptions;
-            public pointClass: typeof TrendLineIndicatorPoint;
-            public points: Array<TrendLineIndicatorPoint>;
-        }
-
         interface TrendLineIndicatorParamsOptions
             extends SMAParamsOptions {
             // for inheritance
@@ -55,13 +49,11 @@ declare global {
     }
 }
 
-declare module '../../Core/Series/SeriesType' {
-    interface SeriesTypeRegistry {
-        trendline: typeof Highcharts.TrendLineIndicator;
-    }
-}
-
-// im port './SMAIndicator.js';
+/* *
+ *
+ *  Class
+ *
+ * */
 
 /**
  * The Trend line series type.
@@ -72,9 +64,7 @@ declare module '../../Core/Series/SeriesType' {
  *
  * @augments Highcharts.Series
  */
-BaseSeries.seriesType<typeof Highcharts.TrendLineIndicator>(
-    'trendline',
-    'sma',
+class TrendLineIndicator extends SMAIndicator {
     /**
      * Trendline (linear regression) fits a straight line to the selected data
      * using a method called the Sum Of Least Squares. This series requires the
@@ -90,7 +80,7 @@ BaseSeries.seriesType<typeof Highcharts.TrendLineIndicator>(
      * @requires     stock/indicators/trendline
      * @optionparent plotOptions.trendline
      */
-    {
+    public static defaultOptions: Highcharts.TrendLineIndicatorOptions = merge(SMAIndicator.defaultOptions, {
         /**
          * @excluding period
          */
@@ -104,73 +94,115 @@ BaseSeries.seriesType<typeof Highcharts.TrendLineIndicator>(
              */
             index: 3
         }
-    },
-    /**
-     * @lends Highcharts.Series#
-     */
-    {
-        nameBase: 'Trendline',
-        nameComponents: (false as any),
-        getValues: function<TLinkedSeries extends LineSeries> (
-            series: TLinkedSeries,
-            params: Highcharts.TrendLineIndicatorParamsOptions
-        ): IndicatorValuesObject<TLinkedSeries> {
-            var xVal: Array<number> = (series.xData as any),
-                yVal: Array<Array<number>> = (series.yData as any),
-                LR: Array<Array<number>> = [],
-                xData: Array<number> = [],
-                yData: Array<number> = [],
-                sumX = 0,
-                sumY = 0,
-                sumXY = 0,
-                sumX2 = 0,
-                xValLength: number = xVal.length,
-                index: number = (params.index as any),
-                alpha: number,
-                beta: number,
-                i: number,
-                x: number,
-                y: number;
+    } as Highcharts.TrendLineIndicatorOptions);
 
-            // Get sums:
-            for (i = 0; i < xValLength; i++) {
-                x = xVal[i];
-                y = isArray(yVal[i]) ? yVal[i][index] : (yVal[i] as any);
-                sumX += x;
-                sumY += y;
-                sumXY += x * y;
-                sumX2 += x * x;
-            }
+    /* *
+    *
+    *   Properties
+    *
+    * */
+    public data: Array<Highcharts.TrendLineIndicatorPoint> = void 0 as any;
+    public points: Array<Highcharts.TrendLineIndicatorPoint> = void 0 as any;
 
-            // Get slope and offset:
-            alpha = (xValLength * sumXY - sumX * sumY) /
-                (xValLength * sumX2 - sumX * sumX);
 
-            if (isNaN(alpha)) {
-                alpha = 0;
-            }
+    /* *
+     *
+     *  Functions
+     *
+     * */
 
-            beta = (sumY - alpha * sumX) / xValLength;
+    public getValues<TLinkedSeries extends LineSeries>(
+        series: TLinkedSeries,
+        params: Highcharts.TrendLineIndicatorParamsOptions
+    ): IndicatorValuesObject<TLinkedSeries> {
+        var xVal: Array<number> = (series.xData as any),
+            yVal: Array<Array<number>> = (series.yData as any),
+            LR: Array<Array<number>> = [],
+            xData: Array<number> = [],
+            yData: Array<number> = [],
+            sumX = 0,
+            sumY = 0,
+            sumXY = 0,
+            sumX2 = 0,
+            xValLength: number = xVal.length,
+            index: number = (params.index as any),
+            alpha: number,
+            beta: number,
+            i: number,
+            x: number,
+            y: number;
 
-            // Calculate linear regression:
-            for (i = 0; i < xValLength; i++) {
-                x = xVal[i];
-                y = alpha * x + beta;
-
-                // Prepare arrays required for getValues() method
-                LR[i] = [x, y];
-                xData[i] = x;
-                yData[i] = y;
-            }
-
-            return {
-                xData: xData,
-                yData: yData,
-                values: LR
-            } as IndicatorValuesObject<TLinkedSeries>;
+        // Get sums:
+        for (i = 0; i < xValLength; i++) {
+            x = xVal[i];
+            y = isArray(yVal[i]) ? yVal[i][index] : (yVal[i] as any);
+            sumX += x;
+            sumY += y;
+            sumXY += x * y;
+            sumX2 += x * x;
         }
+
+        // Get slope and offset:
+        alpha = (xValLength * sumXY - sumX * sumY) /
+            (xValLength * sumX2 - sumX * sumX);
+
+        if (isNaN(alpha)) {
+            alpha = 0;
+        }
+
+        beta = (sumY - alpha * sumX) / xValLength;
+
+        // Calculate linear regression:
+        for (i = 0; i < xValLength; i++) {
+            x = xVal[i];
+            y = alpha * x + beta;
+
+            // Prepare arrays required for getValues() method
+            LR[i] = [x, y];
+            xData[i] = x;
+            yData[i] = y;
+        }
+
+        return {
+            xData: xData,
+            yData: yData,
+            values: LR
+        } as IndicatorValuesObject<TLinkedSeries>;
     }
-);
+}
+
+interface TrendLineIndicator {
+    nameBase: string;
+    options: Highcharts.TrendLineIndicatorOptions;
+    pointClass: typeof Highcharts.TrendLineIndicatorPoint;
+}
+
+extend(TrendLineIndicator.prototype, {
+    nameBase: 'Trendline',
+    nameComponents: (false as any)
+});
+
+/* *
+ *
+ *  Registry
+ *
+ * */
+
+declare module '../../Core/Series/SeriesType' {
+    interface SeriesTypeRegistry {
+        trendline: typeof TrendLineIndicator;
+    }
+}
+
+BaseSeries.registerSeriesType('trendline', TrendLineIndicator);
+
+/* *
+ *
+ *  Default Export
+ *
+ * */
+
+export default TrendLineIndicator;
 
 /**
  * A `TrendLine` series. If the [type](#series.trendline.type) option is not
