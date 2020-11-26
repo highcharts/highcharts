@@ -6,12 +6,25 @@
  *
  * */
 'use strict';
+var __extends = (this && this.__extends) || (function () {
+    var extendStatics = function (d, b) {
+        extendStatics = Object.setPrototypeOf ||
+            ({ __proto__: [] } instanceof Array && function (d, b) { d.__proto__ = b; }) ||
+            function (d, b) { for (var p in b) if (b.hasOwnProperty(p)) d[p] = b[p]; };
+        return extendStatics(d, b);
+    };
+    return function (d, b) {
+        extendStatics(d, b);
+        function __() { this.constructor = d; }
+        d.prototype = b === null ? Object.create(b) : (__.prototype = b.prototype, new __());
+    };
+})();
 import BaseSeries from '../../Core/Series/Series.js';
+var SMAIndicator = BaseSeries.seriesTypes.sma;
 import ReduceArrayMixin from '../../Mixins/ReduceArray.js';
 var getArrayExtremes = ReduceArrayMixin.getArrayExtremes;
 import U from '../../Core/Utilities.js';
-var isArray = U.isArray;
-// im port './SMAIndicator.js';
+var extend = U.extend, isArray = U.isArray, merge = U.merge;
 /**
  * The Williams %R series type.
  *
@@ -21,40 +34,43 @@ var isArray = U.isArray;
  *
  * @augments Highcharts.Series
  */
-BaseSeries.seriesType('williamsr', 'sma', 
-/**
- * Williams %R. This series requires the `linkedTo` option to be
- * set and should be loaded after the `stock/indicators/indicators.js`.
- *
- * @sample {highstock} stock/indicators/williams-r
- *         Williams %R
- *
- * @extends      plotOptions.sma
- * @since        7.0.0
- * @product      highstock
- * @excluding    allAreas, colorAxis, joinBy, keys, navigatorOptions,
- *               pointInterval, pointIntervalUnit, pointPlacement,
- *               pointRange, pointStart, showInNavigator, stacking
- * @requires     stock/indicators/indicators
- * @requires     stock/indicators/williams-r
- * @optionparent plotOptions.williamsr
- */
-{
-    /**
-     * Paramters used in calculation of Williams %R series points.
-     * @excluding index
-     */
-    params: {
-        /**
-         * Period for Williams %R oscillator
-         */
-        period: 14
+var WilliamsRIndicator = /** @class */ (function (_super) {
+    __extends(WilliamsRIndicator, _super);
+    function WilliamsRIndicator() {
+        return _super !== null && _super.apply(this, arguments) || this;
     }
-}, 
-/**
- * @lends Highcharts.Series#
- */
-{
+    /**
+     * Williams %R. This series requires the `linkedTo` option to be
+     * set and should be loaded after the `stock/indicators/indicators.js`.
+     *
+     * @sample {highstock} stock/indicators/williams-r
+     *         Williams %R
+     *
+     * @extends      plotOptions.sma
+     * @since        7.0.0
+     * @product      highstock
+     * @excluding    allAreas, colorAxis, joinBy, keys, navigatorOptions,
+     *               pointInterval, pointIntervalUnit, pointPlacement,
+     *               pointRange, pointStart, showInNavigator, stacking
+     * @requires     stock/indicators/indicators
+     * @requires     stock/indicators/williams-r
+     * @optionparent plotOptions.williamsr
+     */
+    WilliamsRIndicator.defaultOptions = merge(SMAIndicator.defaultOptions, {
+        /**
+         * Paramters used in calculation of Williams %R series points.
+         * @excluding index
+         */
+        params: {
+            /**
+             * Period for Williams %R oscillator
+             */
+            period: 14
+        }
+    });
+    return WilliamsRIndicator;
+}(SMAIndicator));
+extend(WilliamsRIndicator.prototype, {
     nameBase: 'Williams %R',
     getValues: function (series, params) {
         var period = params.period, xVal = series.xData, yVal = series.yData, yValLen = yVal ? yVal.length : 0, WR = [], // 0- date, 1- Williams %R
@@ -91,6 +107,13 @@ BaseSeries.seriesType('williamsr', 'sma',
         };
     }
 });
+BaseSeries.registerSeriesType('williamsr', WilliamsRIndicator);
+/* *
+ *
+ *  Default Export
+ *
+ * */
+export default WilliamsRIndicator;
 /**
  * A `Williams %R Oscillator` series. If the [type](#series.williamsr.type)
  * option is not specified, it is inherited from [chart.type](#chart.type).
