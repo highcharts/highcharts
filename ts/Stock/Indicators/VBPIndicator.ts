@@ -23,7 +23,6 @@ import type {
     SMAOptions,
     SMAParamsOptions
 } from './SMA/SMAOptions';
-import type SMAPoint from './SMA/SMAPoint';
 import type SVGAttributes from '../../Core/Renderer/SVG/SVGAttributes';
 import type SVGElement from '../../Core/Renderer/SVG/SVGElement';
 import type SVGPath from '../../Core/Renderer/SVG/SVGPath';
@@ -235,69 +234,12 @@ class VBPIndicator extends SMAIndicator {
             verticalAlign: 'top'
         }
     } as Highcharts.VBPIndicatorOptions)
-}
-interface VBPIndicator {
-    addCustomEvents(
-        baseSeries: LineSeries,
-        volumeSeries: LineSeries
-    ): VBPIndicator;
-    animate(init: boolean): void;
-    crispCol: ColumnSeries['crispCol'];
-    data: Array<VBPIndicatorPoint>;
-    drawPoints(): void;
-    drawZones(
-        chart: Chart,
-        yAxis: AxisType,
-        zonesValues: Array<number>,
-        zonesStyles: CSSObject
-    ): void;
-    getColumnMetrics: ColumnSeries['getColumnMetrics'];
-    getValues<TLinkedSeries extends LineSeries>(
-        series: TLinkedSeries,
-        params: Highcharts.VBPIndicatorParamsOptions
-    ): (IndicatorValuesObject<TLinkedSeries>|undefined);
-    init(chart: Chart): VBPIndicator;
-    nameBase: string;
-    negWidths: Array<number>;
-    options: Highcharts.VBPIndicatorOptions;
-    posNegVolume(initVol: boolean, pos: boolean): void;
-    pointClass: typeof VBPIndicatorPoint;
-    points: Array<VBPIndicatorPoint>;
-    posWidths: Array<number>;
-    priceZones: Array<Highcharts.VBPIndicatorPriceZoneObject>;
-    rangeStep: number;
-    specifyZones(
-        isOHLC: boolean,
-        xValues: Array<number>,
-        yValues: Array<Array<number>>,
-        ranges: number,
-        volumeSeries: LineSeries
-    ): Array<Highcharts.VBPIndicatorPriceZoneObject>;
-    translate(): void;
-    volumePerZone(
-        isOHLC: boolean,
-        priceZones: Array<Highcharts.VBPIndicatorPriceZoneObject>,
-        volumeSeries: LineSeries,
-        xValues: Array<number>,
-        yValues: Array<Array<number>>
-    ): Array<Highcharts.VBPIndicatorPriceZoneObject>;
-    volumeDataArray: Array<number>;
-    zoneStarts: Array<number>;
-    zoneLinesSVG: SVGElement;
-}
 
-extend(VBPIndicator.prototype, {
-    nameBase: 'Volume by Price',
-    bindTo: {
-        series: false,
-        eventName: 'afterSetExtremes'
-    },
-    calculateOn: 'render',
-    markerAttribs: (noop as any),
-    drawGraph: (noop as any),
-    getColumnMetrics: columnPrototype.getColumnMetrics,
-    crispCol: columnPrototype.crispCol,
-    init: function (
+    public data: Array<VBPIndicatorPoint> = void 0 as any;
+    public options: Highcharts.VBPIndicatorOptions = void 0 as any;
+    public points: Array<VBPIndicatorPoint> = void 0 as any;
+
+    public init(
         this: VBPIndicator,
         chart: Chart
     ): VBPIndicator {
@@ -315,9 +257,10 @@ extend(VBPIndicator.prototype, {
         indicator.addCustomEvents(baseSeries, volumeSeries);
 
         return indicator;
-    },
+    }
+
     // Adds events related with removing series
-    addCustomEvents: function (
+    public addCustomEvents(
         this: VBPIndicator,
         baseSeries: LineSeries,
         volumeSeries: LineSeries
@@ -357,9 +300,10 @@ extend(VBPIndicator.prototype, {
         }
 
         return indicator;
-    },
+    }
+
     // Initial animation
-    animate: function (
+    public animate(
         this: VBPIndicator,
         init: boolean
     ): void {
@@ -387,8 +331,9 @@ extend(VBPIndicator.prototype, {
             );
 
         }
-    },
-    drawPoints: function (this: VBPIndicator): void {
+    }
+
+    public drawPoints(this: VBPIndicator): void {
         var indicator = this;
 
         if ((indicator.options.volumeDivision as any).enabled) {
@@ -398,9 +343,10 @@ extend(VBPIndicator.prototype, {
         }
 
         columnPrototype.drawPoints.apply(indicator, arguments);
-    },
+    }
+
     // Function responsible for dividing volume into positive and negative
-    posNegVolume: function (
+    public posNegVolume(
         this: VBPIndicator,
         initVol: boolean,
         pos: boolean
@@ -462,8 +408,9 @@ extend(VBPIndicator.prototype, {
                 (point.shapeArgs as any).x :
                 indicator.posWidths[i];
         }
-    },
-    translate: function (this: VBPIndicator): void {
+    }
+
+    public translate(this: VBPIndicator): void {
         var indicator = this,
             options: Highcharts.VBPIndicatorOptions = indicator.options,
             chart: Chart = indicator.chart,
@@ -554,8 +501,9 @@ extend(VBPIndicator.prototype, {
                 );
             }
         }
-    },
-    getValues: function<TLinkedSeries extends LineSeries> (
+    }
+
+    public getValues <TLinkedSeries extends LineSeries>(
         this: VBPIndicator,
         series: TLinkedSeries,
         params: Highcharts.VBPIndicatorParamsOptions
@@ -637,9 +585,10 @@ extend(VBPIndicator.prototype, {
             xData: xData,
             yData: yData
         } as IndicatorValuesObject<TLinkedSeries>;
-    },
+    }
+
     // Specifing where each zone should start ans end
-    specifyZones: function (
+    public specifyZones(
         this: VBPIndicator,
         isOHLC: boolean,
         xValues: Array<number>,
@@ -701,9 +650,10 @@ extend(VBPIndicator.prototype, {
             xValues,
             yValues
         );
-    },
+    }
+
     // Calculating sum of volume values for a specific zone
-    volumePerZone: function (
+    public volumePerZone(
         this: VBPIndicator,
         isOHLC: boolean,
         priceZones: Array<Highcharts.VBPIndicatorPriceZoneObject>,
@@ -793,9 +743,10 @@ extend(VBPIndicator.prototype, {
         );
 
         return priceZones;
-    },
+    }
+
     // Function responsoble for drawing additional lines indicating zones
-    drawZones: function (
+    public drawZones(
         this: VBPIndicator,
         chart: Chart,
         yAxis: AxisType,
@@ -840,30 +791,88 @@ extend(VBPIndicator.prototype, {
                     .add(indicator.group);
         }
     }
+}
+
+interface VBPIndicator {
+    nameBase: string;
+    negWidths: Array<number>;
+    pointClass: typeof VBPIndicatorPoint;
+    posWidths: Array<number>;
+    priceZones: Array<Highcharts.VBPIndicatorPriceZoneObject>;
+    rangeStep: number;
+    volumeDataArray: Array<number>;
+    zoneStarts: Array<number>;
+    zoneLinesSVG: SVGElement;
+
+    addCustomEvents(
+        baseSeries: LineSeries,
+        volumeSeries: LineSeries
+    ): VBPIndicator;
+    animate(init: boolean): void;
+    crispCol: ColumnSeries['crispCol'];
+    drawPoints(): void;
+    drawZones(
+        chart: Chart,
+        yAxis: AxisType,
+        zonesValues: Array<number>,
+        zonesStyles: CSSObject
+    ): void;
+    getColumnMetrics: ColumnSeries['getColumnMetrics'];
+    getValues<TLinkedSeries extends LineSeries>(
+        series: TLinkedSeries,
+        params: Highcharts.VBPIndicatorParamsOptions
+    ): (IndicatorValuesObject<TLinkedSeries>|undefined);
+    init(chart: Chart): VBPIndicator;
+    posNegVolume(initVol: boolean, pos: boolean): void;
+    specifyZones(
+        isOHLC: boolean,
+        xValues: Array<number>,
+        yValues: Array<Array<number>>,
+        ranges: number,
+        volumeSeries: LineSeries
+    ): Array<Highcharts.VBPIndicatorPriceZoneObject>;
+    translate(): void;
+    volumePerZone(
+        isOHLC: boolean,
+        priceZones: Array<Highcharts.VBPIndicatorPriceZoneObject>,
+        volumeSeries: LineSeries,
+        xValues: Array<number>,
+        yValues: Array<Array<number>>
+    ): Array<Highcharts.VBPIndicatorPriceZoneObject>;
+}
+
+extend(VBPIndicator.prototype, {
+    nameBase: 'Volume by Price',
+    bindTo: {
+        series: false,
+        eventName: 'afterSetExtremes'
+    },
+    calculateOn: 'render',
+    markerAttribs: (noop as any),
+    drawGraph: (noop as any),
+    getColumnMetrics: columnPrototype.getColumnMetrics,
+    crispCol: columnPrototype.crispCol
 });
+
 class VBPIndicatorPoint extends SMAIndicator.prototype.pointClass {
 
-}
-interface VBPIndicatorPoint {
-    barX: number;
-    destroy(): void;
-    negativeGraphic: unknown;
-    pointWidth: number;
-    series: VBPIndicator;
-    volumeAll: number;
-    volumeNeg: number;
-    volumePos: number;
-}
-extend(VBPIndicatorPoint.prototype, {
+    public barX: number = void 0 as any;
+    public negativeGraphic: unknown = void 0 as any;
+    public pointWidth: number = void 0 as any;
+    public series: VBPIndicator = void 0 as any;
+    public volumeAll: number = void 0 as any;
+    public volumeNeg: number = void 0 as any;
+    public volumePos: number = void 0 as any;
+
     // Required for destroying negative part of volume
-    destroy: function (this: VBPIndicatorPoint): void {
+    public destroy(this: VBPIndicatorPoint): void {
         // @todo: this.negativeGraphic doesn't seem to be used anywhere
         if (this.negativeGraphic) {
             this.negativeGraphic = (this.negativeGraphic as any).destroy();
         }
         return Point.prototype.destroy.apply(this, arguments);
     }
-});
+}
 
 declare module '../../Core/Series/SeriesType' {
     interface SeriesTypeRegistry {
