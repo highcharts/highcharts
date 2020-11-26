@@ -17,8 +17,15 @@
  * */
 import type LollipopPointOptions from './LollipopPointOptions';
 import type LollipopSeries from './LollipopSeries';
-import AreaSeries from '../Area/AreaSeries.js';
-const { prototype: areaProto } = AreaSeries;
+
+import BaseSeries from '../../Core/Series/Series.js';
+const {
+    seriesTypes: {
+        area: {
+            prototype: areaProto
+        }
+    }
+} = BaseSeries;
 import DumbbellPoint from '../Dumbbell/DumbbellPoint.js';
 import Point from '../../Core/Series/Point.js';
 import U from '../../Core/Utilities.js';

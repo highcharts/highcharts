@@ -22,12 +22,8 @@ var __extends = (this && this.__extends) || (function () {
     };
 })();
 import LollipopPoint from './LollipopPoint.js';
-import AreaSeries from '../Area/AreaSeries.js';
-var areaProto = AreaSeries.prototype;
-import DumbbellSeries from '../Dumbbell/DumbbellSeries.js';
 import BaseSeries from '../../Core/Series/Series.js';
-import ColumnSeries from '../Column/ColumnSeries.js';
-var colProto = ColumnSeries.prototype;
+var _a = BaseSeries.seriesTypes, areaProto = _a.area.prototype, colProto = _a.column.prototype, DumbbellSeries = _a.dumbbell;
 import U from '../../Core/Utilities.js';
 var pick = U.pick, merge = U.merge, extend = U.extend;
 /* *
