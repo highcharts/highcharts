@@ -158,26 +158,34 @@ class ColumnRangeSeries extends AreaRangeSeries {
         (defaultOptions.plotOptions as any).arearange,
         columnRangeOptions as Highcharts.ColumnRangeSeriesOptions
     )
-}
 
-/* *
- *
- *  Prototype properties
- *
- * */
+    /* *
+     *
+     *  Properties
+     *
+     * */
 
-extend(ColumnRangeSeries.prototype, {
-    setOptions: function (this: Highcharts.ColumnRangeSeries): Highcharts.ColumnRangeSeriesOptions {
+    public data = void 0 as any;
+    public points = void 0 as any;
+    public options = void 0 as any;
+
+    /* *
+     *
+     *  Functions
+     *
+     * */
+
+    public setOptions(): Highcharts.ColumnRangeSeriesOptions {
         merge(true, arguments[0], { stacking: void 0 }); // #14359 Prevent side-effect from stacking.
         return arearangeProto.setOptions.apply(this, arguments);
-    },
+    }
 
     // eslint-disable-next-line valid-jsdoc
     /**
      * Translate data points from raw values x and y to plotX and plotY
      * @private
      */
-    translate: function (this: Highcharts.ColumnRangeSeries): void {
+    public translate(): void {
         var series = this,
             yAxis = series.yAxis,
             xAxis = series.xAxis,
@@ -263,49 +271,54 @@ extend(ColumnRangeSeries.prototype, {
                     ]; // don't inherit from column tooltip position - #3372
             }
         });
-    },
+    }
+
+    // Overrides from modules that may be loaded after this module
+    public crispCol(): BBoxObject {
+        return columnProto.crispCol.apply(this, arguments as any);
+    }
+    public drawPoints(): void {
+        return columnProto.drawPoints.apply(this, arguments as any);
+    }
+    public drawTracker(): void {
+        return columnProto.drawTracker.apply(this, arguments as any);
+    }
+    public getColumnMetrics(): ColumnMetricsObject {
+        return columnProto.getColumnMetrics.apply(this, arguments as any);
+    }
+    public pointAttribs(): SVGAttributes {
+        return columnProto.pointAttribs.apply(this, arguments as any);
+    }
+    public adjustForMissingColumns(): number {
+        return columnProto.adjustForMissingColumns.apply(this, arguments);
+    }
+    public animate(): void {
+        return columnProto.animate.apply(this, arguments as any);
+    }
+    public translate3dPoints(): void {
+        return columnProto.translate3dPoints.apply(this, arguments as any);
+    }
+    public translate3dShapes(): void {
+        return columnProto.translate3dShapes.apply(this, arguments as any);
+    }
+}
+
+/* *
+ *
+ *  Prototype properties
+ *
+ * */
+
+extend(ColumnRangeSeries.prototype, {
     directTouch: true,
     trackerGroups: ['group', 'dataLabelsGroup'],
     drawGraph: noop as any,
     getSymbol: noop as any,
 
-    // Overrides from modules that may be loaded after this module
-    crispCol: function (
-        this: Highcharts.ColumnRangeSeries
-    ): BBoxObject {
-        return columnProto.crispCol.apply(this, arguments as any);
-    },
-    drawPoints: function (this: Highcharts.ColumnRangeSeries): void {
-        return columnProto.drawPoints.apply(this, arguments as any);
-    },
-    drawTracker: function (this: Highcharts.ColumnRangeSeries): void {
-        return columnProto.drawTracker.apply(this, arguments as any);
-    },
-    getColumnMetrics: function (
-        this: Highcharts.ColumnRangeSeries
-    ): ColumnMetricsObject {
-        return columnProto.getColumnMetrics.apply(this, arguments as any);
-    },
-    pointAttribs: function (
-        this: Highcharts.ColumnRangeSeries
-    ): SVGAttributes {
-        return columnProto.pointAttribs.apply(this, arguments as any);
-    },
-    adjustForMissingColumns: function (this: Highcharts.ColumnRangeSeries): number {
-        return columnProto.adjustForMissingColumns.apply(this, arguments);
-    },
-    animate: function (this: Highcharts.ColumnRangeSeries): void {
-        return columnProto.animate.apply(this, arguments as any);
-    },
     polarArc: function (this: Highcharts.ColumnRangeSeries): void {
         return (columnProto as any).polarArc.apply(this, arguments);
-    },
-    translate3dPoints: function (this: Highcharts.ColumnRangeSeries): void {
-        return columnProto.translate3dPoints.apply(this, arguments as any);
-    },
-    translate3dShapes: function (this: Highcharts.ColumnRangeSeries): void {
-        return columnProto.translate3dShapes.apply(this, arguments as any);
     }
+
 });
 
 class ColumnRangePoint extends AreaRangePoint {
