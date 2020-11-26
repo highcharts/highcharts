@@ -22,19 +22,18 @@ var __extends = (this && this.__extends) || (function () {
     };
 })();
 import BaseSeries from '../../Core/Series/Series.js';
-var _a = BaseSeries.seriesTypes, ColumnSeries = _a.column, ScatterSeries = _a.scatter;
+var _a = BaseSeries.seriesTypes, ColumnSeries = _a.column, LineSeries = _a.line, ScatterSeries = _a.scatter;
 import ColorMapMixin from '../../Mixins/ColorMapSeries.js';
-var colorMapPointMixin = ColorMapMixin.colorMapPointMixin, colorMapSeriesMixin = ColorMapMixin.colorMapSeriesMixin;
+var colorMapSeriesMixin = ColorMapMixin.colorMapSeriesMixin;
 import H from '../../Core/Globals.js';
 var noop = H.noop;
 import HeatmapPoint from './HeatmapPoint.js';
 import LegendSymbolMixin from '../../Mixins/LegendSymbol.js';
-import LineSeries from '../../Series/Line/LineSeries.js';
 import palette from '../../Core/Color/Palette.js';
 import SVGRenderer from '../../Core/Renderer/SVG/SVGRenderer.js';
 var symbols = SVGRenderer.prototype.symbols;
 import U from '../../Core/Utilities.js';
-var clamp = U.clamp, extend = U.extend, fireEvent = U.fireEvent, isNumber = U.isNumber, merge = U.merge, pick = U.pick;
+var extend = U.extend, fireEvent = U.fireEvent, isNumber = U.isNumber, merge = U.merge, pick = U.pick;
 /* *
  *
  *  Class

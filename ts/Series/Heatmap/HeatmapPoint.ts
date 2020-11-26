@@ -22,12 +22,12 @@ import type SVGPath from '../../Core/Renderer/SVG/SVGPath';
 import BaseSeries from '../../Core/Series/Series.js';
 const {
     seriesTypes: {
+        line: LineSeries,
         scatter: ScatterSeries
     }
 } = BaseSeries;
 import ColorMapMixin from '../../Mixins/ColorMapSeries.js';
 const { colorMapPointMixin } = ColorMapMixin;
-import LineSeries from '../../Series/Line/LineSeries.js';
 import U from '../../Core/Utilities.js';
 const {
     clamp,

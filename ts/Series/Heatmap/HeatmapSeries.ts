@@ -28,19 +28,16 @@ import BaseSeries from '../../Core/Series/Series.js';
 const {
     seriesTypes: {
         column: ColumnSeries,
+        line: LineSeries,
         scatter: ScatterSeries
     }
 } = BaseSeries;
 import ColorMapMixin from '../../Mixins/ColorMapSeries.js';
-const {
-    colorMapPointMixin,
-    colorMapSeriesMixin
-} = ColorMapMixin;
+const { colorMapSeriesMixin } = ColorMapMixin;
 import H from '../../Core/Globals.js';
 const { noop } = H;
 import HeatmapPoint from './HeatmapPoint.js';
 import LegendSymbolMixin from '../../Mixins/LegendSymbol.js';
-import LineSeries from '../../Series/Line/LineSeries.js';
 import palette from '../../Core/Color/Palette.js';
 import SVGRenderer from '../../Core/Renderer/SVG/SVGRenderer.js';
 const {
@@ -50,7 +47,6 @@ const {
 } = SVGRenderer;
 import U from '../../Core/Utilities.js';
 const {
-    clamp,
     extend,
     fireEvent,
     isNumber,
