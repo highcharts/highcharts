@@ -430,6 +430,8 @@ BaseSeries.seriesType<typeof Highcharts.XRangeSeries>('xrange', 'column'
                     series.columnMetrics as any,
                 options = series.options,
                 minPointLength = options.minPointLength || 0,
+                oldColWidth = point.shapeArgs?.width / 2,
+                seriesXOffset = series.pointXOffset = metrics.offset,
                 plotX = point.plotX,
                 posX = pick(point.x2, (point.x as any) + (point.len || 0)),
                 plotX2 = xAxis.translate(
@@ -501,6 +503,16 @@ BaseSeries.seriesType<typeof Highcharts.XRangeSeries>('xrange', 'column'
                 r: series.options.borderRadius
             };
 
+            // Move tooltip to default position
+            if (!inverted) {
+                (point.tooltipPos as any)[0] -= oldColWidth +
+                seriesXOffset -
+                point.shapeArgs?.width / 2;
+            } else {
+                (point.tooltipPos as any)[1] += seriesXOffset +
+                oldColWidth;
+            }
+
             // Align data labels inside the shape and inside the plot area
             dlLeft = point.shapeArgs.x;
             dlRight = dlLeft + point.shapeArgs.width;
@@ -526,15 +538,12 @@ BaseSeries.seriesType<typeof Highcharts.XRangeSeries>('xrange', 'column'
             tooltipYOffset = series.columnMetrics ?
                 series.columnMetrics.offset : -metrics.width / 2;
 
-            // Limit position by the correct axis size (#9727)
-            tooltipPos[xIndex] = clamp(
-                tooltipPos[xIndex] + (
-                    (!inverted ? 1 : -1) * (xAxis.reversed ? -1 : 1) *
-                    (length / 2)
-                ),
-                0,
-                xAxis.len - 1
-            );
+            // Centering tooltip position (#14147)
+            if (!inverted) {
+                tooltipPos[xIndex] += (xAxis.reversed ? -1 : 0) * point.shapeArgs.width;
+            } else {
+                tooltipPos[xIndex] += point.shapeArgs.width / 2;
+            }
             tooltipPos[yIndex] = clamp(
                 tooltipPos[yIndex] + (
                     (inverted ? -1 : 1) * tooltipYOffset
