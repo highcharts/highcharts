@@ -600,19 +600,19 @@
 
         const results = [];
 
-        function LineSeries() {}
-        LineSeries.prototype.type = 'line';
+        function Series() {}
+        Series.prototype.type = 'line';
 
-        const ColumnSeries = Highcharts.extendClass(LineSeries, {
+        const ColumnSeries = Highcharts.extendClass(Series, {
             type: 'column'
         });
         const item = new ColumnSeries();
 
 
         addEvent(
-            LineSeries,
+            Series,
             'touch',
-            () => results.push('LineSeries')
+            () => results.push('Series')
         );
         addEvent(
             ColumnSeries,
@@ -629,8 +629,18 @@
         fireEvent(item, 'touch');
         assert.deepEqual(
             results,
-            ['LineSeries', 'ColumnSeries', 'item'],
+            ['Series', 'ColumnSeries', 'item'],
             'All levels of the prototype chain should fire'
+        );
+
+        const line = new Series();
+        results.length = 0;
+        fireEvent(line, 'touch');
+        assert.deepEqual(
+            results,
+            ['Series'],
+            `Only the Series class event should fire on a Series
+            instance`
         );
 
         // Removed
@@ -639,13 +649,13 @@
         fireEvent(item, 'touch');
         assert.deepEqual(
             results,
-            ['LineSeries', 'item'],
+            ['Series', 'item'],
             'Remaining levels of the prototype chain should fire'
         );
 
         // Remove all
         results.length = 0;
-        removeEvent(LineSeries, 'touch');
+        removeEvent(Series, 'touch');
         removeEvent(item, 'touch');
         fireEvent(item, 'touch');
         assert.deepEqual(
@@ -657,15 +667,15 @@
         // Add randomly ordered events spread over the prototype chain
         results.length = 0;
         addEvent(
-            LineSeries,
+            Series,
             'touch',
-            () => results.push('LineSeries.3'),
+            () => results.push('Series.3'),
             { order: 3 }
         );
         addEvent(
-            LineSeries,
+            Series,
             'touch',
-            () => results.push('LineSeries.1'),
+            () => results.push('Series.1'),
             { order: 1 }
         );
 
@@ -701,9 +711,9 @@
             [
                 'item.-1',
                 'ColumnSeries.0',
-                'LineSeries.1',
+                'Series.1',
                 'ColumnSeries.2',
-                'LineSeries.3',
+                'Series.3',
                 'item.4'
             ],
             'Events should fire in order across the prototype chain'
