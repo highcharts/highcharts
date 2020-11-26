@@ -18,12 +18,18 @@
 
 import type LollipopSeriesOptions from './LollipopSeriesOptions';
 import LollipopPoint from './LollipopPoint.js';
-import AreaSeries from '../Area/AreaSeries.js';
-const { prototype: areaProto } = AreaSeries;
-import DumbbellSeries from '../Dumbbell/DumbbellSeries.js';
 import BaseSeries from '../../Core/Series/Series.js';
-import ColumnSeries from '../Column/ColumnSeries.js';
-const { prototype: colProto } = ColumnSeries;
+const {
+    seriesTypes: {
+        area: {
+            prototype: areaProto
+        },
+        column: {
+            prototype: colProto
+        },
+        dumbbell: DumbbellSeries
+    }
+} = BaseSeries;
 import U from '../../Core/Utilities.js';
 const {
     pick,
@@ -120,14 +126,14 @@ class LollipopSeries extends DumbbellSeries {
  *
  * */
 
-interface LollipopSeries extends DumbbellSeries {
+interface LollipopSeries {
     pointClass: typeof LollipopPoint;
     pointArrayMap: Array<string>;
     pointValKey: string;
-    translatePoint: AreaSeries['translate'];
-    drawPoint: AreaSeries['drawPoints'];
-    drawDataLabels: ColumnSeries['drawDataLabels'];
-    setShapeArgs: ColumnSeries['translate'];
+    translatePoint: typeof areaProto['translate'];
+    drawPoint: typeof areaProto['drawPoints'];
+    drawDataLabels: typeof colProto['drawDataLabels'];
+    setShapeArgs: typeof colProto['translate'];
 }
 
 extend(LollipopSeries.prototype, {

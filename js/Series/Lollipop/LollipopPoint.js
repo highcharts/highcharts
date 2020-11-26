@@ -21,8 +21,8 @@ var __extends = (this && this.__extends) || (function () {
         d.prototype = b === null ? Object.create(b) : (__.prototype = b.prototype, new __());
     };
 })();
-import AreaSeries from '../Area/AreaSeries.js';
-var areaProto = AreaSeries.prototype;
+import BaseSeries from '../../Core/Series/Series.js';
+var areaProto = BaseSeries.seriesTypes.area.prototype;
 import DumbbellPoint from '../Dumbbell/DumbbellPoint.js';
 import Point from '../../Core/Series/Point.js';
 import U from '../../Core/Utilities.js';
