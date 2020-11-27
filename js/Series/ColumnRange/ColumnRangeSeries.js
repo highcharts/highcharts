@@ -21,15 +21,13 @@ var __extends = (this && this.__extends) || (function () {
         d.prototype = b === null ? Object.create(b) : (__.prototype = b.prototype, new __());
     };
 })();
-import AreaRangePoint from '../AreaRange/AreaRangePoint.js';
+import ColumnRangePoint from './ColumnRangePoint.js';
 import BaseSeries from '../../Core/Series/Series.js';
 var _a = BaseSeries.seriesTypes, AreaRangeSeries = _a.arearange, ColumnSeries = _a.column;
 var columnProto = ColumnSeries.prototype;
 var arearangeProto = AreaRangeSeries.prototype;
 import H from '../../Core/Globals.js';
 var noop = H.noop;
-import O from '../../Core/Options.js';
-var defaultOptions = O.defaultOptions;
 import U from '../../Core/Utilities.js';
 var clamp = U.clamp, merge = U.merge, pick = U.pick, extend = U.extend;
 /**
@@ -202,11 +200,6 @@ var ColumnRangeSeries = /** @class */ (function (_super) {
     ColumnRangeSeries.defaultOptions = merge(ColumnSeries.defaultOptions, AreaRangeSeries.defaultOptions, columnRangeOptions);
     return ColumnRangeSeries;
 }(AreaRangeSeries));
-/* *
- *
- *  Prototype properties
- *
- * */
 extend(ColumnRangeSeries.prototype, {
     directTouch: true,
     trackerGroups: ['group', 'dataLabelsGroup'],
@@ -214,18 +207,9 @@ extend(ColumnRangeSeries.prototype, {
     getSymbol: noop,
     polarArc: function () {
         return columnProto.polarArc.apply(this, arguments);
-    }
+    },
+    pointClass: ColumnRangePoint
 });
-var ColumnRangePoint = /** @class */ (function (_super) {
-    __extends(ColumnRangePoint, _super);
-    function ColumnRangePoint() {
-        var _this = _super !== null && _super.apply(this, arguments) || this;
-        _this.setState = columnProto.pointClass.prototype.setState;
-        return _this;
-    }
-    return ColumnRangePoint;
-}(AreaRangePoint));
-ColumnRangeSeries.prototype.pointClass = ColumnRangePoint;
 BaseSeries.registerSeriesType('columnrange', ColumnRangeSeries);
 /* *
  *
